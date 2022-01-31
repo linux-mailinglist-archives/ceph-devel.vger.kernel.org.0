@@ -2,57 +2,57 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id 6051F4A4B21
-	for <lists+ceph-devel@lfdr.de>; Mon, 31 Jan 2022 16:58:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F60D4A4B22
+	for <lists+ceph-devel@lfdr.de>; Mon, 31 Jan 2022 16:58:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379961AbiAaP6f (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 31 Jan 2022 10:58:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57266 "EHLO
+        id S1379963AbiAaP6g (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 31 Jan 2022 10:58:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379958AbiAaP6d (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 31 Jan 2022 10:58:33 -0500
-Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD0D2C06173B
-        for <ceph-devel@vger.kernel.org>; Mon, 31 Jan 2022 07:58:32 -0800 (PST)
-Received: by mail-wm1-x32b.google.com with SMTP id n8so10563311wmk.3
-        for <ceph-devel@vger.kernel.org>; Mon, 31 Jan 2022 07:58:32 -0800 (PST)
+        with ESMTP id S1379960AbiAaP6e (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 31 Jan 2022 10:58:34 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94718C061714
+        for <ceph-devel@vger.kernel.org>; Mon, 31 Jan 2022 07:58:33 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id w11so26297139wra.4
+        for <ceph-devel@vger.kernel.org>; Mon, 31 Jan 2022 07:58:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=l59SmEfhe5VrFF/Mv46A3pnWk0K5Upz2o+LdNXFdhtI=;
-        b=GQKEpXFnsdqFoG6vh2SGs/NsxNhXILlKw6rFDr4QURnu2ifu5fh0uyEDYUudiG/2bt
-         GCp8G+hrZjiYfeRIVsHsv/3/+bvAP36PJ+9ndsbgUQozTUzS3ZBsLP1gPDDk8UE5SfMA
-         FPPGQ9XvNmTYhyxfdvPH1lRi7n1P06cJrHAdPQKPkRg4mx0CD4PCMmq0c1cPafDa/HKj
-         FXzjoCE7kayY+5fEbLg46mJNNORQB43Ewha1hIPp1ZEBkoU6NwW4kuymo9x3ZiS0MO3f
-         Ojmaa8v+iZrxBBwh+XQMF5OJL9b+hhSOVUeJdj2ElzXAJjJraWpT60GuaRCj6PnviWQ1
-         /Pug==
+        bh=ewB/ZaI+lPAf4o/wsBKlQARJTnksfEGNDWmJFRWnWD4=;
+        b=JHp8WTvWv1B0cCTCtE1NxCrlgWVT+qQkOKEa3bIPhJKsX5K9lu2S0Gj/SNJVZdbbaC
+         1VWTasuYy2qtPxxXL5AOSzlof6o/qRUUD8kk7SQOMJyVK5lPc1m4iKXdAcXmVLhNCAv9
+         IyHl78uzh3cu7r/0c5rp6mKOhUN4OCkY4HN2D7xI55ZWek29W90FPg1SVB5X2u313rFX
+         LkA+UpoUwOU+Sr5ISmu4amsVbhCGDqTt1jBbs80/0ZSeqPQaQLHngNn9XCgOIsErDN5x
+         OrnB0ILZdFYR+uPGXUwwfsHIgXXtHXyyH9JVriv7qQWWowPySc6V392hYoWahA8mYYYI
+         keWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=l59SmEfhe5VrFF/Mv46A3pnWk0K5Upz2o+LdNXFdhtI=;
-        b=cxH+uV9586hfe1wqTZaF/nqWJ7VwKEf8EEAfowoLqxL8e9PfE35GU71vNryo79Lwut
-         T4nqUUCUFREHyhIoWD+dgAoUjc7fskbDl3b1NIfcO6XAj7VhCdIMcwThp5I1QqhD1dWf
-         SbQ6SVtrviON+9vyZC/8YXTmlGJDUX5lhkV/d7sdg/pZ9/MIOZiaBpeU4ihZeFxTievR
-         xoPRQAzC0kZCw8KAGHRx8UBHvVRrftsAUqf9t7mr4nBfeVI8tcZ8IPKUhuFzGeDWrqNm
-         rPakD9jEiZi63JKDrG41a4Dre2iXI84J2y4MFNR+BVISeoSfdHo9TXtb4Z7pY50vK7wU
-         qsIg==
-X-Gm-Message-State: AOAM532hIWeZ7ZaQ4dNRpmhlAmID7C9i7ziWeh4bXQBZP8WWv2w/MHkX
-        P7Er535obdLmgdVWuAqA5E96uPqEcvQ=
-X-Google-Smtp-Source: ABdhPJxS1ar0pvviyOEc+JOWG+CUG0ZhcRnh1ZiFVT7W2V5tUoGS9yevZ4NwhyaLzCEpZ+KljkpfJA==
-X-Received: by 2002:a05:600c:3ac5:: with SMTP id d5mr5267272wms.101.1643644711262;
-        Mon, 31 Jan 2022 07:58:31 -0800 (PST)
+        bh=ewB/ZaI+lPAf4o/wsBKlQARJTnksfEGNDWmJFRWnWD4=;
+        b=h1tO1SrZbvYmYxr+O+u2nCue6TmEW5Wcj0rR9jGlCVsH9g79Vg0wf+V/dIXEFRn55p
+         bgCiaKysMK949Mozzf2XlSkMkA/XBtR0gsF0Hk9saKDpqBlOppQH0sZBlsQJeBPAw3Zm
+         5rqDC/1PGGBw1jBpTdq+guNJ47MkMz6DDF63X+lJLAuSZVZ2JdgT5HyLI56sPC3hS23v
+         QQ7Ff5cHFj6Xs8fsMDy3l4hkbShxLz3tzeJQcNbUEaHw0TVkSkZHyrFE73EVw3uRw/bB
+         nIzp/lYFGtgs7sHHLOWvVf2T1CoUaSKsMU2Dwx5ThvXXdGHz/rKOs+fX7SiFsvMIAK93
+         Mqzg==
+X-Gm-Message-State: AOAM530SFR86DvJ053+Jz4vZVaITNJ9Hlrq33AfiT2t5JPDklhkkMrkC
+        JEPnVP0doeyc98emsLml0dHl/ePKsJ8=
+X-Google-Smtp-Source: ABdhPJxQYB2C8eCp0tXQz8qxM3HnztSzzrrPtjZyXw2B2uNd/ilQ87fJ94asqxqCprVdOw7KoRhtHA==
+X-Received: by 2002:a5d:6488:: with SMTP id o8mr15624264wri.24.1643644712072;
+        Mon, 31 Jan 2022 07:58:32 -0800 (PST)
 Received: from kwango.local (ip-89-102-68-162.net.upcbroadband.cz. [89.102.68.162])
-        by smtp.gmail.com with ESMTPSA id m8sm11997075wrn.106.2022.01.31.07.58.30
+        by smtp.gmail.com with ESMTPSA id m8sm11997075wrn.106.2022.01.31.07.58.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 31 Jan 2022 07:58:30 -0800 (PST)
+        Mon, 31 Jan 2022 07:58:31 -0800 (PST)
 From:   Ilya Dryomov <idryomov@gmail.com>
 To:     ceph-devel@vger.kernel.org
 Cc:     Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH 1/2] libceph: make recv path in secure mode work the same as send path
-Date:   Mon, 31 Jan 2022 16:58:45 +0100
-Message-Id: <20220131155846.32411-2-idryomov@gmail.com>
+Subject: [PATCH 2/2] libceph: optionally use bounce buffer on recv path in crc mode
+Date:   Mon, 31 Jan 2022 16:58:46 +0100
+Message-Id: <20220131155846.32411-3-idryomov@gmail.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20220131155846.32411-1-idryomov@gmail.com>
 References: <20220131155846.32411-1-idryomov@gmail.com>
@@ -62,408 +62,326 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The recv path of secure mode is intertwined with that of crc mode.
-While it's slightly more efficient that way (the ciphertext is read
-into the destination buffer and decrypted in place, thus avoiding
-two potentially heavy memory allocations for the bounce buffer and
-the corresponding sg array), it isn't really amenable to changes.
-Sacrifice that edge and align with the send path which always uses
-a full-sized bounce buffer (currently there is no other way -- if
-the kernel crypto API ever grows support for streaming (piecewise)
-en/decryption for GCM [1], we would be able to easily take advantage
-of that on both sides).
+Both msgr1 and msgr2 in crc mode are zero copy in the sense that
+message data is read from the socket directly into the destination
+buffer.  We assume that the destination buffer is stable (i.e. remains
+unchanged while it is being read to) though.  Otherwise, CRC errors
+ensue:
 
-[1] https://lore.kernel.org/all/20141225202830.GA18794@gondor.apana.org.au/
+  libceph: read_partial_message 0000000048edf8ad data crc 1063286393 != exp. 228122706
+  libceph: osd1 (1)192.168.122.1:6843 bad crc/signature
 
+  libceph: bad data crc, calculated 57958023, expected 1805382778
+  libceph: osd2 (2)192.168.122.1:6876 integrity error, bad crc
+
+Introduce rxbounce option to enable use of a bounce buffer when
+receiving message data.  In particular this is needed if a mapped
+image is a Windows VM disk, passed to QEMU.  Windows has a system-wide
+"dummy" page that may be mapped into the destination buffer (potentially
+more than once into the same buffer) by the Windows Memory Manager in
+an effort to generate a single large I/O [1][2].  QEMU makes a point of
+preserving overlap relationships when cloning I/O vectors, so krbd gets
+exposed to this behaviour.
+
+[1] "What Is Really in That MDL?"
+    https://docs.microsoft.com/en-us/previous-versions/windows/hardware/design/dn614012(v=vs.85)
+[2] https://blogs.msmvps.com/kernelmustard/2005/05/04/dummy-pages/
+
+URL: https://bugzilla.redhat.com/show_bug.cgi?id=1973317
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 ---
- include/linux/ceph/messenger.h |   4 +
- net/ceph/messenger_v2.c        | 231 ++++++++++++++++++++++-----------
- 2 files changed, 162 insertions(+), 73 deletions(-)
+ include/linux/ceph/libceph.h   |  1 +
+ include/linux/ceph/messenger.h |  1 +
+ net/ceph/ceph_common.c         |  7 ++++
+ net/ceph/messenger.c           |  4 +++
+ net/ceph/messenger_v1.c        | 54 +++++++++++++++++++++++++++----
+ net/ceph/messenger_v2.c        | 58 ++++++++++++++++++++++++++--------
+ 6 files changed, 105 insertions(+), 20 deletions(-)
 
+diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
+index 6a89ea410e43..edf62eaa6285 100644
+--- a/include/linux/ceph/libceph.h
++++ b/include/linux/ceph/libceph.h
+@@ -35,6 +35,7 @@
+ #define CEPH_OPT_TCP_NODELAY      (1<<4) /* TCP_NODELAY on TCP sockets */
+ #define CEPH_OPT_NOMSGSIGN        (1<<5) /* don't sign msgs (msgr1) */
+ #define CEPH_OPT_ABORT_ON_FULL    (1<<6) /* abort w/ ENOSPC when full */
++#define CEPH_OPT_RXBOUNCE         (1<<7) /* double-buffer read data */
+ 
+ #define CEPH_OPT_DEFAULT   (CEPH_OPT_TCP_NODELAY)
+ 
 diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenger.h
-index ff99ce094cfa..6c6b6ea52bb8 100644
+index 6c6b6ea52bb8..e7f2fb2fc207 100644
 --- a/include/linux/ceph/messenger.h
 +++ b/include/linux/ceph/messenger.h
-@@ -383,6 +383,10 @@ struct ceph_connection_v2_info {
- 	struct ceph_gcm_nonce in_gcm_nonce;
- 	struct ceph_gcm_nonce out_gcm_nonce;
+@@ -461,6 +461,7 @@ struct ceph_connection {
+ 	struct ceph_msg *out_msg;        /* sending message (== tail of
+ 					    out_sent) */
  
-+	struct page **in_enc_pages;
-+	int in_enc_page_cnt;
-+	int in_enc_resid;
-+	int in_enc_i;
- 	struct page **out_enc_pages;
- 	int out_enc_page_cnt;
- 	int out_enc_resid;
-diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-index c4099b641b38..d34349f112b0 100644
---- a/net/ceph/messenger_v2.c
-+++ b/net/ceph/messenger_v2.c
-@@ -57,8 +57,9 @@
- #define IN_S_HANDLE_CONTROL_REMAINDER	3
- #define IN_S_PREPARE_READ_DATA		4
- #define IN_S_PREPARE_READ_DATA_CONT	5
--#define IN_S_HANDLE_EPILOGUE		6
--#define IN_S_FINISH_SKIP		7
-+#define IN_S_PREPARE_READ_ENC_PAGE	6
-+#define IN_S_HANDLE_EPILOGUE		7
-+#define IN_S_FINISH_SKIP		8
++	struct page *bounce_page;
+ 	u32 in_front_crc, in_middle_crc, in_data_crc;  /* calculated crc */
  
- #define OUT_S_QUEUE_DATA		1
- #define OUT_S_QUEUE_DATA_CONT		2
-@@ -1032,22 +1033,41 @@ static int decrypt_control_remainder(struct ceph_connection *con)
- 			 padded_len(rem_len) + CEPH_GCM_TAG_LEN);
- }
+ 	struct timespec64 last_keepalive_ack; /* keepalive2 ack stamp */
+diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+index ecc400a0b7bb..4c6441536d55 100644
+--- a/net/ceph/ceph_common.c
++++ b/net/ceph/ceph_common.c
+@@ -246,6 +246,7 @@ enum {
+ 	Opt_cephx_sign_messages,
+ 	Opt_tcp_nodelay,
+ 	Opt_abort_on_full,
++	Opt_rxbounce,
+ };
  
--static int decrypt_message(struct ceph_connection *con)
-+static int decrypt_tail(struct ceph_connection *con)
+ enum {
+@@ -295,6 +296,7 @@ static const struct fs_parameter_spec ceph_parameters[] = {
+ 	fsparam_u32	("osdkeepalive",		Opt_osdkeepalivetimeout),
+ 	fsparam_enum	("read_from_replica",		Opt_read_from_replica,
+ 			 ceph_param_read_from_replica),
++	fsparam_flag	("rxbounce",			Opt_rxbounce),
+ 	fsparam_enum	("ms_mode",			Opt_ms_mode,
+ 			 ceph_param_ms_mode),
+ 	fsparam_string	("secret",			Opt_secret),
+@@ -584,6 +586,9 @@ int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
+ 	case Opt_abort_on_full:
+ 		opt->flags |= CEPH_OPT_ABORT_ON_FULL;
+ 		break;
++	case Opt_rxbounce:
++		opt->flags |= CEPH_OPT_RXBOUNCE;
++		break;
+ 
+ 	default:
+ 		BUG();
+@@ -660,6 +665,8 @@ int ceph_print_client_options(struct seq_file *m, struct ceph_client *client,
+ 		seq_puts(m, "notcp_nodelay,");
+ 	if (show_all && (opt->flags & CEPH_OPT_ABORT_ON_FULL))
+ 		seq_puts(m, "abort_on_full,");
++	if (opt->flags & CEPH_OPT_RXBOUNCE)
++		seq_puts(m, "rxbounce,");
+ 
+ 	if (opt->mount_timeout != CEPH_MOUNT_TIMEOUT_DEFAULT)
+ 		seq_printf(m, "mount_timeout=%d,",
+diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+index 45eba2dcb67a..d3bb656308b4 100644
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -515,6 +515,10 @@ static void ceph_con_reset_protocol(struct ceph_connection *con)
+ 		ceph_msg_put(con->out_msg);
+ 		con->out_msg = NULL;
+ 	}
++	if (con->bounce_page) {
++		__free_page(con->bounce_page);
++		con->bounce_page = NULL;
++	}
+ 
+ 	if (ceph_msgr2(from_msgr(con->msgr)))
+ 		ceph_con_v2_reset_protocol(con);
+diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
+index 2cb5ffdf071a..6b014eca3a13 100644
+--- a/net/ceph/messenger_v1.c
++++ b/net/ceph/messenger_v1.c
+@@ -992,8 +992,7 @@ static int read_partial_message_section(struct ceph_connection *con,
+ 
+ static int read_partial_msg_data(struct ceph_connection *con)
  {
-+	struct sg_table enc_sgt = {};
- 	struct sg_table sgt = {};
-+	int tail_len;
+-	struct ceph_msg *msg = con->in_msg;
+-	struct ceph_msg_data_cursor *cursor = &msg->cursor;
++	struct ceph_msg_data_cursor *cursor = &con->in_msg->cursor;
+ 	bool do_datacrc = !ceph_test_opt(from_msgr(con->msgr), NOCRC);
+ 	struct page *page;
+ 	size_t page_offset;
+@@ -1001,9 +1000,6 @@ static int read_partial_msg_data(struct ceph_connection *con)
+ 	u32 crc = 0;
  	int ret;
  
-+	tail_len = tail_onwire_len(con->in_msg, true);
-+	ret = sg_alloc_table_from_pages(&enc_sgt, con->v2.in_enc_pages,
-+					con->v2.in_enc_page_cnt, 0, tail_len,
-+					GFP_NOIO);
-+	if (ret)
-+		goto out;
-+
- 	ret = setup_message_sgs(&sgt, con->in_msg, FRONT_PAD(con->v2.in_buf),
- 			MIDDLE_PAD(con->v2.in_buf), DATA_PAD(con->v2.in_buf),
- 			con->v2.in_buf, true);
- 	if (ret)
- 		goto out;
- 
--	ret = gcm_crypt(con, false, sgt.sgl, sgt.sgl,
--			tail_onwire_len(con->in_msg, true));
-+	dout("%s con %p msg %p enc_page_cnt %d sg_cnt %d\n", __func__, con,
-+	     con->in_msg, con->v2.in_enc_page_cnt, sgt.orig_nents);
-+	ret = gcm_crypt(con, false, enc_sgt.sgl, sgt.sgl, tail_len);
-+	if (ret)
-+		goto out;
-+
-+	WARN_ON(!con->v2.in_enc_page_cnt);
-+	ceph_release_page_vector(con->v2.in_enc_pages,
-+				 con->v2.in_enc_page_cnt);
-+	con->v2.in_enc_pages = NULL;
-+	con->v2.in_enc_page_cnt = 0;
- 
- out:
- 	sg_free_table(&sgt);
-+	sg_free_table(&enc_sgt);
- 	return ret;
+-	if (!msg->num_data_items)
+-		return -EIO;
+-
+ 	if (do_datacrc)
+ 		crc = con->in_data_crc;
+ 	while (cursor->total_resid) {
+@@ -1031,6 +1027,46 @@ static int read_partial_msg_data(struct ceph_connection *con)
+ 	return 1;	/* must return > 0 to indicate success */
  }
  
-@@ -1737,8 +1757,7 @@ static void prepare_read_data(struct ceph_connection *con)
- {
- 	struct bio_vec bv;
- 
--	if (!con_secure(con))
--		con->in_data_crc = -1;
-+	con->in_data_crc = -1;
- 	ceph_msg_data_cursor_init(&con->v2.in_cursor, con->in_msg,
- 				  data_len(con->in_msg));
- 
-@@ -1751,11 +1770,10 @@ static void prepare_read_data_cont(struct ceph_connection *con)
- {
- 	struct bio_vec bv;
- 
--	if (!con_secure(con))
--		con->in_data_crc = ceph_crc32c_page(con->in_data_crc,
--						    con->v2.in_bvec.bv_page,
--						    con->v2.in_bvec.bv_offset,
--						    con->v2.in_bvec.bv_len);
-+	con->in_data_crc = ceph_crc32c_page(con->in_data_crc,
-+					    con->v2.in_bvec.bv_page,
-+					    con->v2.in_bvec.bv_offset,
-+					    con->v2.in_bvec.bv_len);
- 
- 	ceph_msg_data_advance(&con->v2.in_cursor, con->v2.in_bvec.bv_len);
- 	if (con->v2.in_cursor.total_resid) {
-@@ -1766,21 +1784,100 @@ static void prepare_read_data_cont(struct ceph_connection *con)
- 	}
- 
- 	/*
--	 * We've read all data.  Prepare to read data padding (if any)
--	 * and epilogue.
-+	 * We've read all data.  Prepare to read epilogue.
- 	 */
- 	reset_in_kvecs(con);
--	if (con_secure(con)) {
--		if (need_padding(data_len(con->in_msg)))
--			add_in_kvec(con, DATA_PAD(con->v2.in_buf),
--				    padding_len(data_len(con->in_msg)));
--		add_in_kvec(con, con->v2.in_buf, CEPH_EPILOGUE_SECURE_LEN);
-+	add_in_kvec(con, con->v2.in_buf, CEPH_EPILOGUE_PLAIN_LEN);
-+	con->v2.in_state = IN_S_HANDLE_EPILOGUE;
++static int read_partial_msg_data_bounce(struct ceph_connection *con)
++{
++	struct ceph_msg_data_cursor *cursor = &con->in_msg->cursor;
++	struct page *page;
++	size_t off, len;
++	u32 crc;
++	int ret;
++
++	if (unlikely(!con->bounce_page)) {
++		con->bounce_page = alloc_page(GFP_NOIO);
++		if (!con->bounce_page) {
++			pr_err("failed to allocate bounce page\n");
++			return -ENOMEM;
++		}
++	}
++
++	crc = con->in_data_crc;
++	while (cursor->total_resid) {
++		if (!cursor->resid) {
++			ceph_msg_data_advance(cursor, 0);
++			continue;
++		}
++
++		page = ceph_msg_data_next(cursor, &off, &len, NULL);
++		ret = ceph_tcp_recvpage(con->sock, con->bounce_page, 0, len);
++		if (ret <= 0) {
++			con->in_data_crc = crc;
++			return ret;
++		}
++
++		crc = crc32c(crc, page_address(con->bounce_page), ret);
++		memcpy_to_page(page, off, page_address(con->bounce_page), ret);
++
++		ceph_msg_data_advance(cursor, ret);
++	}
++	con->in_data_crc = crc;
++
++	return 1;	/* must return > 0 to indicate success */
 +}
 +
-+static void prepare_read_tail_plain(struct ceph_connection *con)
-+{
-+	struct ceph_msg *msg = con->in_msg;
+ /*
+  * read (part of) a message.
+  */
+@@ -1141,7 +1177,13 @@ static int read_partial_message(struct ceph_connection *con)
+ 
+ 	/* (page) data */
+ 	if (data_len) {
+-		ret = read_partial_msg_data(con);
++		if (!m->num_data_items)
++			return -EIO;
 +
-+	if (!front_len(msg) && !middle_len(msg)) {
-+		WARN_ON(!data_len(msg));
-+		prepare_read_data(con);
-+		return;
-+	}
-+
-+	reset_in_kvecs(con);
-+	if (front_len(msg)) {
-+		WARN_ON(front_len(msg) > msg->front_alloc_len);
-+		add_in_kvec(con, msg->front.iov_base, front_len(msg));
-+		msg->front.iov_len = front_len(msg);
-+	} else {
-+		msg->front.iov_len = 0;
-+	}
-+	if (middle_len(msg)) {
-+		WARN_ON(middle_len(msg) > msg->middle->alloc_len);
-+		add_in_kvec(con, msg->middle->vec.iov_base, middle_len(msg));
-+		msg->middle->vec.iov_len = middle_len(msg);
-+	} else if (msg->middle) {
-+		msg->middle->vec.iov_len = 0;
-+	}
-+
-+	if (data_len(msg)) {
-+		con->v2.in_state = IN_S_PREPARE_READ_DATA;
- 	} else {
- 		add_in_kvec(con, con->v2.in_buf, CEPH_EPILOGUE_PLAIN_LEN);
-+		con->v2.in_state = IN_S_HANDLE_EPILOGUE;
-+	}
-+}
-+
-+static void prepare_read_enc_page(struct ceph_connection *con)
-+{
-+	struct bio_vec bv;
-+
-+	dout("%s con %p i %d resid %d\n", __func__, con, con->v2.in_enc_i,
-+	     con->v2.in_enc_resid);
-+	WARN_ON(!con->v2.in_enc_resid);
-+
-+	bv.bv_page = con->v2.in_enc_pages[con->v2.in_enc_i];
-+	bv.bv_offset = 0;
-+	bv.bv_len = min(con->v2.in_enc_resid, (int)PAGE_SIZE);
-+
-+	set_in_bvec(con, &bv);
-+	con->v2.in_enc_i++;
-+	con->v2.in_enc_resid -= bv.bv_len;
-+
-+	if (con->v2.in_enc_resid) {
-+		con->v2.in_state = IN_S_PREPARE_READ_ENC_PAGE;
-+		return;
++		if (ceph_test_opt(from_msgr(con->msgr), RXBOUNCE))
++			ret = read_partial_msg_data_bounce(con);
++		else
++			ret = read_partial_msg_data(con);
+ 		if (ret <= 0)
+ 			return ret;
  	}
-+
-+	/*
-+	 * We are set to read the last piece of ciphertext (ending
-+	 * with epilogue) + auth tag.
-+	 */
-+	WARN_ON(con->v2.in_enc_i != con->v2.in_enc_page_cnt);
- 	con->v2.in_state = IN_S_HANDLE_EPILOGUE;
- }
- 
-+static int prepare_read_tail_secure(struct ceph_connection *con)
-+{
-+	struct page **enc_pages;
-+	int enc_page_cnt;
-+	int tail_len;
-+
-+	tail_len = tail_onwire_len(con->in_msg, true);
-+	WARN_ON(!tail_len);
-+
-+	enc_page_cnt = calc_pages_for(0, tail_len);
-+	enc_pages = ceph_alloc_page_vector(enc_page_cnt, GFP_NOIO);
-+	if (IS_ERR(enc_pages))
-+		return PTR_ERR(enc_pages);
-+
-+	WARN_ON(con->v2.in_enc_pages || con->v2.in_enc_page_cnt);
-+	con->v2.in_enc_pages = enc_pages;
-+	con->v2.in_enc_page_cnt = enc_page_cnt;
-+	con->v2.in_enc_resid = tail_len;
-+	con->v2.in_enc_i = 0;
-+
-+	prepare_read_enc_page(con);
-+	return 0;
-+}
-+
- static void __finish_skip(struct ceph_connection *con)
- {
- 	con->in_seq++;
-@@ -2589,46 +2686,13 @@ static int __handle_control(struct ceph_connection *con, void *p)
- 	}
- 
- 	msg = con->in_msg;  /* set in process_message_header() */
--	if (!front_len(msg) && !middle_len(msg)) {
--		if (!data_len(msg))
--			return process_message(con);
--
--		prepare_read_data(con);
--		return 0;
--	}
--
--	reset_in_kvecs(con);
--	if (front_len(msg)) {
--		WARN_ON(front_len(msg) > msg->front_alloc_len);
--		add_in_kvec(con, msg->front.iov_base, front_len(msg));
--		msg->front.iov_len = front_len(msg);
--
--		if (con_secure(con) && need_padding(front_len(msg)))
--			add_in_kvec(con, FRONT_PAD(con->v2.in_buf),
--				    padding_len(front_len(msg)));
--	} else {
--		msg->front.iov_len = 0;
--	}
--	if (middle_len(msg)) {
--		WARN_ON(middle_len(msg) > msg->middle->alloc_len);
--		add_in_kvec(con, msg->middle->vec.iov_base, middle_len(msg));
--		msg->middle->vec.iov_len = middle_len(msg);
-+	if (!front_len(msg) && !middle_len(msg) && !data_len(msg))
-+		return process_message(con);
- 
--		if (con_secure(con) && need_padding(middle_len(msg)))
--			add_in_kvec(con, MIDDLE_PAD(con->v2.in_buf),
--				    padding_len(middle_len(msg)));
--	} else if (msg->middle) {
--		msg->middle->vec.iov_len = 0;
--	}
-+	if (con_secure(con))
-+		return prepare_read_tail_secure(con);
- 
--	if (data_len(msg)) {
--		con->v2.in_state = IN_S_PREPARE_READ_DATA;
--	} else {
--		add_in_kvec(con, con->v2.in_buf,
--			    con_secure(con) ? CEPH_EPILOGUE_SECURE_LEN :
--					      CEPH_EPILOGUE_PLAIN_LEN);
--		con->v2.in_state = IN_S_HANDLE_EPILOGUE;
--	}
-+	prepare_read_tail_plain(con);
+diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+index d34349f112b0..8a101f5d4c23 100644
+--- a/net/ceph/messenger_v2.c
++++ b/net/ceph/messenger_v2.c
+@@ -1753,7 +1753,7 @@ static int prepare_read_control_remainder(struct ceph_connection *con)
  	return 0;
  }
  
-@@ -2717,7 +2781,7 @@ static int handle_epilogue(struct ceph_connection *con)
- 	int ret;
- 
- 	if (con_secure(con)) {
--		ret = decrypt_message(con);
-+		ret = decrypt_tail(con);
- 		if (ret) {
- 			if (ret == -EBADMSG)
- 				con->error_msg = "integrity error, bad epilogue auth tag";
-@@ -2792,6 +2856,10 @@ static int populate_in_iter(struct ceph_connection *con)
- 			prepare_read_data_cont(con);
- 			ret = 0;
- 			break;
-+		case IN_S_PREPARE_READ_ENC_PAGE:
-+			prepare_read_enc_page(con);
-+			ret = 0;
-+			break;
- 		case IN_S_HANDLE_EPILOGUE:
- 			ret = handle_epilogue(con);
- 			break;
-@@ -3326,20 +3394,16 @@ void ceph_con_v2_revoke(struct ceph_connection *con)
- 
- static void revoke_at_prepare_read_data(struct ceph_connection *con)
+-static void prepare_read_data(struct ceph_connection *con)
++static int prepare_read_data(struct ceph_connection *con)
  {
--	int remaining;  /* data + [data padding] + epilogue */
-+	int remaining;
- 	int resid;
+ 	struct bio_vec bv;
  
-+	WARN_ON(con_secure(con));
- 	WARN_ON(!data_len(con->in_msg));
- 	WARN_ON(!iov_iter_is_kvec(&con->v2.in_iter));
- 	resid = iov_iter_count(&con->v2.in_iter);
- 	WARN_ON(!resid);
+@@ -1762,23 +1762,55 @@ static void prepare_read_data(struct ceph_connection *con)
+ 				  data_len(con->in_msg));
  
--	if (con_secure(con))
--		remaining = padded_len(data_len(con->in_msg)) +
--			    CEPH_EPILOGUE_SECURE_LEN;
--	else
--		remaining = data_len(con->in_msg) + CEPH_EPILOGUE_PLAIN_LEN;
--
-+	remaining = data_len(con->in_msg) + CEPH_EPILOGUE_PLAIN_LEN;
- 	dout("%s con %p resid %d remaining %d\n", __func__, con, resid,
- 	     remaining);
- 	con->v2.in_iter.count -= resid;
-@@ -3350,8 +3414,9 @@ static void revoke_at_prepare_read_data(struct ceph_connection *con)
- static void revoke_at_prepare_read_data_cont(struct ceph_connection *con)
- {
- 	int recved, resid;  /* current piece of data */
--	int remaining;  /* [data padding] + epilogue */
-+	int remaining;
- 
-+	WARN_ON(con_secure(con));
- 	WARN_ON(!data_len(con->in_msg));
- 	WARN_ON(!iov_iter_is_bvec(&con->v2.in_iter));
- 	resid = iov_iter_count(&con->v2.in_iter);
-@@ -3363,12 +3428,7 @@ static void revoke_at_prepare_read_data_cont(struct ceph_connection *con)
- 		ceph_msg_data_advance(&con->v2.in_cursor, recved);
- 	WARN_ON(resid > con->v2.in_cursor.total_resid);
- 
--	if (con_secure(con))
--		remaining = padding_len(data_len(con->in_msg)) +
--			    CEPH_EPILOGUE_SECURE_LEN;
--	else
--		remaining = CEPH_EPILOGUE_PLAIN_LEN;
--
-+	remaining = CEPH_EPILOGUE_PLAIN_LEN;
- 	dout("%s con %p total_resid %zu remaining %d\n", __func__, con,
- 	     con->v2.in_cursor.total_resid, remaining);
- 	con->v2.in_iter.count -= resid;
-@@ -3376,11 +3436,26 @@ static void revoke_at_prepare_read_data_cont(struct ceph_connection *con)
- 	con->v2.in_state = IN_S_FINISH_SKIP;
+ 	get_bvec_at(&con->v2.in_cursor, &bv);
+-	set_in_bvec(con, &bv);
++	if (ceph_test_opt(from_msgr(con->msgr), RXBOUNCE)) {
++		if (unlikely(!con->bounce_page)) {
++			con->bounce_page = alloc_page(GFP_NOIO);
++			if (!con->bounce_page) {
++				pr_err("failed to allocate bounce page\n");
++				return -ENOMEM;
++			}
++		}
++
++		bv.bv_page = con->bounce_page;
++		bv.bv_offset = 0;
++		set_in_bvec(con, &bv);
++	} else {
++		set_in_bvec(con, &bv);
++	}
+ 	con->v2.in_state = IN_S_PREPARE_READ_DATA_CONT;
++	return 0;
  }
  
-+static void revoke_at_prepare_read_enc_page(struct ceph_connection *con)
-+{
-+	int resid;  /* current enc page (not necessarily data) */
-+
-+	WARN_ON(!con_secure(con));
-+	WARN_ON(!iov_iter_is_bvec(&con->v2.in_iter));
-+	resid = iov_iter_count(&con->v2.in_iter);
-+	WARN_ON(!resid || resid > con->v2.in_bvec.bv_len);
-+
-+	dout("%s con %p resid %d enc_resid %d\n", __func__, con, resid,
-+	     con->v2.in_enc_resid);
-+	con->v2.in_iter.count -= resid;
-+	set_in_skip(con, resid + con->v2.in_enc_resid);
-+	con->v2.in_state = IN_S_FINISH_SKIP;
-+}
-+
- static void revoke_at_handle_epilogue(struct ceph_connection *con)
+ static void prepare_read_data_cont(struct ceph_connection *con)
  {
- 	int resid;
+ 	struct bio_vec bv;
  
--	WARN_ON(!iov_iter_is_kvec(&con->v2.in_iter));
- 	resid = iov_iter_count(&con->v2.in_iter);
- 	WARN_ON(!resid);
- 
-@@ -3399,6 +3474,9 @@ void ceph_con_v2_revoke_incoming(struct ceph_connection *con)
- 	case IN_S_PREPARE_READ_DATA_CONT:
- 		revoke_at_prepare_read_data_cont(con);
- 		break;
-+	case IN_S_PREPARE_READ_ENC_PAGE:
-+		revoke_at_prepare_read_enc_page(con);
-+		break;
- 	case IN_S_HANDLE_EPILOGUE:
- 		revoke_at_handle_epilogue(con);
- 		break;
-@@ -3432,6 +3510,13 @@ void ceph_con_v2_reset_protocol(struct ceph_connection *con)
- 	clear_out_sign_kvecs(con);
- 	free_conn_bufs(con);
- 
-+	if (con->v2.in_enc_pages) {
-+		WARN_ON(!con->v2.in_enc_page_cnt);
-+		ceph_release_page_vector(con->v2.in_enc_pages,
-+					 con->v2.in_enc_page_cnt);
-+		con->v2.in_enc_pages = NULL;
-+		con->v2.in_enc_page_cnt = 0;
+-	con->in_data_crc = ceph_crc32c_page(con->in_data_crc,
+-					    con->v2.in_bvec.bv_page,
+-					    con->v2.in_bvec.bv_offset,
+-					    con->v2.in_bvec.bv_len);
++	if (ceph_test_opt(from_msgr(con->msgr), RXBOUNCE)) {
++		con->in_data_crc = crc32c(con->in_data_crc,
++					  page_address(con->bounce_page),
++					  con->v2.in_bvec.bv_len);
++
++		get_bvec_at(&con->v2.in_cursor, &bv);
++		memcpy_to_page(bv.bv_page, bv.bv_offset,
++			       page_address(con->bounce_page),
++			       con->v2.in_bvec.bv_len);
++	} else {
++		con->in_data_crc = ceph_crc32c_page(con->in_data_crc,
++						    con->v2.in_bvec.bv_page,
++						    con->v2.in_bvec.bv_offset,
++						    con->v2.in_bvec.bv_len);
 +	}
- 	if (con->v2.out_enc_pages) {
- 		WARN_ON(!con->v2.out_enc_page_cnt);
- 		ceph_release_page_vector(con->v2.out_enc_pages,
+ 
+ 	ceph_msg_data_advance(&con->v2.in_cursor, con->v2.in_bvec.bv_len);
+ 	if (con->v2.in_cursor.total_resid) {
+ 		get_bvec_at(&con->v2.in_cursor, &bv);
+-		set_in_bvec(con, &bv);
++		if (ceph_test_opt(from_msgr(con->msgr), RXBOUNCE)) {
++			bv.bv_page = con->bounce_page;
++			bv.bv_offset = 0;
++			set_in_bvec(con, &bv);
++		} else {
++			set_in_bvec(con, &bv);
++		}
+ 		WARN_ON(con->v2.in_state != IN_S_PREPARE_READ_DATA_CONT);
+ 		return;
+ 	}
+@@ -1791,14 +1823,13 @@ static void prepare_read_data_cont(struct ceph_connection *con)
+ 	con->v2.in_state = IN_S_HANDLE_EPILOGUE;
+ }
+ 
+-static void prepare_read_tail_plain(struct ceph_connection *con)
++static int prepare_read_tail_plain(struct ceph_connection *con)
+ {
+ 	struct ceph_msg *msg = con->in_msg;
+ 
+ 	if (!front_len(msg) && !middle_len(msg)) {
+ 		WARN_ON(!data_len(msg));
+-		prepare_read_data(con);
+-		return;
++		return prepare_read_data(con);
+ 	}
+ 
+ 	reset_in_kvecs(con);
+@@ -1823,6 +1854,7 @@ static void prepare_read_tail_plain(struct ceph_connection *con)
+ 		add_in_kvec(con, con->v2.in_buf, CEPH_EPILOGUE_PLAIN_LEN);
+ 		con->v2.in_state = IN_S_HANDLE_EPILOGUE;
+ 	}
++	return 0;
+ }
+ 
+ static void prepare_read_enc_page(struct ceph_connection *con)
+@@ -2692,8 +2724,7 @@ static int __handle_control(struct ceph_connection *con, void *p)
+ 	if (con_secure(con))
+ 		return prepare_read_tail_secure(con);
+ 
+-	prepare_read_tail_plain(con);
+-	return 0;
++	return prepare_read_tail_plain(con);
+ }
+ 
+ static int handle_preamble(struct ceph_connection *con)
+@@ -2849,8 +2880,7 @@ static int populate_in_iter(struct ceph_connection *con)
+ 			ret = handle_control_remainder(con);
+ 			break;
+ 		case IN_S_PREPARE_READ_DATA:
+-			prepare_read_data(con);
+-			ret = 0;
++			ret = prepare_read_data(con);
+ 			break;
+ 		case IN_S_PREPARE_READ_DATA_CONT:
+ 			prepare_read_data_cont(con);
 -- 
 2.19.2
 
