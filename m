@@ -2,79 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id E01B84A40FF
-	for <lists+ceph-devel@lfdr.de>; Mon, 31 Jan 2022 12:01:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BA074A47D6
+	for <lists+ceph-devel@lfdr.de>; Mon, 31 Jan 2022 14:12:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358811AbiAaLBj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 31 Jan 2022 06:01:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43020 "EHLO
+        id S1378596AbiAaNMa (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 31 Jan 2022 08:12:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358510AbiAaLAe (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 31 Jan 2022 06:00:34 -0500
-Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE293C0613F0
-        for <ceph-devel@vger.kernel.org>; Mon, 31 Jan 2022 02:59:46 -0800 (PST)
-Received: by mail-io1-xd42.google.com with SMTP id y84so16423276iof.0
-        for <ceph-devel@vger.kernel.org>; Mon, 31 Jan 2022 02:59:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:sender:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=FANIUiWvB3mdY3zLX2DODg2pUIL5eGT5wlydl6jYk40=;
-        b=OjUeAkMVzEddLMMo5PnTCjKyhCs1ageGmC5+cFdXpsSEtg6JbUDTvXCRmwfTUCSofJ
-         slj36zZmhn3J4uwPw0DJBjnv3hUS5m+nEauuYDUNcCWjc1f+d0I+yOjKIUc0Pgz+j5Ue
-         rRdRGfWkjcSXGfwT+M+UDneKFOQe0c6aLr+5TauC2FupNgb1qyGc5yiIkJ8k0NAmHZhf
-         anrjd59/OgrastnWs4ZkrvFaIDjw5pd3eh107tNZ/TuMjnW3micCxNZKM2MDkg13GKwm
-         O5Q6tfm8j18o2CLpoCl1kG865M+uxrSOQqgPJI+OJu79ECke4sTf94bEwDsB5fZLVwuG
-         tdrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:sender:from:date
-         :message-id:subject:to:content-transfer-encoding;
-        bh=FANIUiWvB3mdY3zLX2DODg2pUIL5eGT5wlydl6jYk40=;
-        b=MtiNkfIAwZJgsffIWuymwkwd3q9NFbA2u6TXLQ7TRUi9/HHPUiuht0at0GKydgvEHc
-         5cpJ6U5BVZCrLtbpir6QKFkK5cPXp8Xp3vS5xQxVc9t2t1wpsSWaXhePMMKOnWhe8Ryj
-         1KJzFlNEZH9oguMNtIwl7Jc3S8zT261tVHZBByTmF2y/0/+cfHmUkpTj/6SSDQxU52xW
-         0cviG5HR5exbG0efLyxT5PrBfSWT481V0bQenbWj7hbGjB+p/cOudn+omMKEfTKjGKWW
-         nLnmeXJH4Q4sJ40TAkRk3S15Wl98Yc6FgkGPJMoiaBP/Bjp6mIw9Rf6I0Ikat1zySOAy
-         Nosg==
-X-Gm-Message-State: AOAM533UntDRCvwjRqIQqB5RsGX6Q2jvALnTfgf1m7ftCgEhxtKcDuU5
-        +kxXwe2GC+r2Jn5Z2txe/df7UArspkCq727cr/s=
-X-Google-Smtp-Source: ABdhPJx07OLMUPeEc0ImjaiJBKF2Mcc3ZmsWTIoSvX2FNfz03c1HE0RFqesREnjvPqYHKyL/ALkhu5ugV57XI3T5t/k=
-X-Received: by 2002:a6b:441a:: with SMTP id r26mr10856124ioa.211.1643626786286;
- Mon, 31 Jan 2022 02:59:46 -0800 (PST)
+        with ESMTP id S1378573AbiAaNM1 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 31 Jan 2022 08:12:27 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4799C061714;
+        Mon, 31 Jan 2022 05:12:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=a0hve9Zah0GLqzeFulizCrPjPl4njK9R2PBNHZL7apA=; b=g1/eWZJ918eTkgUtvMoL5izh9i
+        Owrg8UXzWhZ4euJ5rmNmyKv8w3D5s3PzqdRFd4JGFN1v8KvZWfOislDJeYS/2HhBHEbzl0ZVwks7Y
+        s52PZ0PrtSTTxWmiZnIQc/3zfoxLDw4sWIuiSYdaNFoIuq4MDeZNIYuwe/rweivtHGroM3x98FRTF
+        RD2fV7EJBoS70u7wUR0dBKam5/B7VEzyyF2M8/vsplRvhFSU59jGKvXo6aK2LxZDKzZT65BgX1EmO
+        SJDx0NRR1aXlsG8bgesE4+QBS8/+Nr/BYDMO2gPBh9TRKADGKKpap+xqNNmYfvgj5BWfhju/FPydz
+        YxLQzzDg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nEWTa-009sqV-3i; Mon, 31 Jan 2022 13:12:10 +0000
+Date:   Mon, 31 Jan 2022 13:12:10 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] fuse: remove reliance on bdi congestion
+Message-ID: <YffgKva2Dz3cTwhr@casper.infradead.org>
+References: <164360127045.4233.2606812444285122570.stgit@noble.brown>
+ <164360183348.4233.761031466326833349.stgit@noble.brown>
+ <YfdlbxezYSOSYmJf@casper.infradead.org>
+ <164360446180.18996.6767388833611575467@noble.neil.brown.name>
 MIME-Version: 1.0
-Reply-To: daniellakyle60@gmail.com
-Sender: drdanielmorris11111@gmail.com
-Received: by 2002:a05:6638:1248:0:0:0:0 with HTTP; Mon, 31 Jan 2022 02:59:45
- -0800 (PST)
-From:   Mrs daniell akyle <daniellakyle60@gmail.com>
-Date:   Mon, 31 Jan 2022 11:59:45 +0100
-X-Google-Sender-Auth: xE_x512-NJSetLeK1z_d90RC9Q0
-Message-ID: <CAKFcj-P8h0HeDMtZZnog7Sh8cFMKV7095BN2fQnUMpCGPgmhFg@mail.gmail.com>
-Subject: Ahoj
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <164360446180.18996.6767388833611575467@noble.neil.brown.name>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Pozdravy
-Jmenuji se pan=C3=AD Daniella Kyleov=C3=A1, je mi 58 let
-Filip=C3=ADny. V sou=C4=8Dasn=C3=A9 dob=C4=9B jsem hospitalizov=C3=A1n na F=
-ilip=C3=ADn=C3=A1ch, kde jsem
-podstupuje l=C3=A9=C4=8Dbu akutn=C3=ADho karcinomu j=C3=ADcnu. jsem um=C3=
-=ADraj=C3=ADc=C3=AD,
-vdova, kter=C3=A1 se rozhodla darovat =C4=8D=C3=A1st sv=C3=A9ho majetku spo=
-lehliv=C3=A9 osob=C4=9B
-kter=C3=A1 tyto pen=C3=ADze pou=C5=BEije na pomoc chud=C3=BDm a m=C3=A9n=C4=
-=9B privilegovan=C3=BDm. Chci
-poskytnout dar ve v=C3=BD=C5=A1i 3 700 000 =C2=A3 na sirotky nebo charitati=
-vn=C3=AD organizace
-ve va=C5=A1=C3=AD oblasti. Zvl=C3=A1dne=C5=A1 to? Pokud jste ochotni tuto n=
-ab=C3=ADdku p=C5=99ijmout
-a ud=C4=9Blejte p=C5=99esn=C4=9B tak, jak v=C3=A1m =C5=99=C3=ADk=C3=A1m, pa=
-k se mi vra=C5=A5te pro dal=C5=A1=C3=AD vysv=C4=9Btlen=C3=AD.
-pozdravy
-Pan=C3=AD Daniella Kyleov=C3=A1
+On Mon, Jan 31, 2022 at 03:47:41PM +1100, NeilBrown wrote:
+> On Mon, 31 Jan 2022, Matthew Wilcox wrote:
+> > > +++ b/fs/fuse/file.c
+> > > @@ -958,6 +958,8 @@ static void fuse_readahead(struct readahead_control *rac)
+> > >  
+> > >  	if (fuse_is_bad(inode))
+> > >  		return;
+> > > +	if (fc->num_background >= fc->congestion_threshold)
+> > > +		return;
+> > 
+> > This seems like a bad idea to me.  If we don't even start reads on
+> > readahead pages, they'll get ->readpage called on them one at a time
+> > and the reading thread will block.  It's going to lead to some nasty
+> > performance problems, exactly when you don't want them.  Better to
+> > queue the reads internally and wait for congestion to ease before
+> > submitting the read.
+> > 
+> 
+> Isn't that exactly what happens now? page_cache_async_ra() sees that
+> inode_read_congested() returns true, so it doesn't start readahead.
+> ???
+
+It's rather different.  Imagine the readahead window has expanded to
+256kB (64 pages).  Today, we see congestion and don't do anything.
+That means we miss the async readahed opportunity, find a missing
+page and end up calling into page_cache_sync_ra(), by which time
+we may or may not be congested.
+
+If the inode_read_congested() in page_cache_async_ra() is removed and
+the patch above is added to replace it, we'll allocate those 64 pages and
+add them to the page cache.  But then we'll return without starting IO.
+When we hit one of those !uptodate pages, we'll call ->readpage on it,
+but we won't do anything to the other 63 pages.  So we'll go through a
+protracted slow period of sending 64 reads, one at a time, whether or
+not congestion has eased.  Then we'll hit a missing page and proceed
+to the sync ra case as above.
+
+(I'm assuming this is a workload which does a linear scan and so
+readahead is actually effective)
