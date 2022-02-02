@@ -1,99 +1,179 @@
 Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.lfdr.de (Postfix) with ESMTP id C74B74A637F
-	for <lists+ceph-devel@lfdr.de>; Tue,  1 Feb 2022 19:17:59 +0100 (CET)
+Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
+	by mail.lfdr.de (Postfix) with ESMTP id 47E6C4A70EF
+	for <lists+ceph-devel@lfdr.de>; Wed,  2 Feb 2022 13:40:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241810AbiBASRu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 1 Feb 2022 13:17:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49964 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241861AbiBASRZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 1 Feb 2022 13:17:25 -0500
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31FC5C06173D
-        for <ceph-devel@vger.kernel.org>; Tue,  1 Feb 2022 10:17:25 -0800 (PST)
-Received: by mail-yb1-xb2c.google.com with SMTP id g14so53468064ybs.8
-        for <ceph-devel@vger.kernel.org>; Tue, 01 Feb 2022 10:17:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=6oocvFn67FgTqXA+P51TKsOctFDYWwow3mxyJ+Py+qc=;
-        b=CHO4AQSnUEQn8EGd2jLr3mmVBTkBaDtduIVeO4hmyr7l0mpSdaFLiXSX7+hruYk0XB
-         c1GbU48W5RZ8xno1e2Jy257d7YZLjJMLLPE6Z/xShMJHtrt5yx3cNa9rEci1v9zLgUjj
-         5dxbaBajnW+GRISBvjYgTII6/rJweZ96kl43lqjSAblmUXCklLiuc1odleCbe30QsgjG
-         ajZPQ53ZOnhXz0HmIyElaE4k7ON8W1XDYgpRvSFABfcqXDvSQnoglGJh4xxsqb1oyaiq
-         IoQrvJ8qpLGWX+s0Mv2mBdyeSujRDcfVthw5MCOcE2uhcFQThn0yUsAN4YHSL5KPEkYG
-         4uxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=6oocvFn67FgTqXA+P51TKsOctFDYWwow3mxyJ+Py+qc=;
-        b=NYEMD4PUe5yN0MrPAFhTv19oRWR8RfdtmxqDMKjPGpGkhO/P4m5iduDEQJRDg6W2mw
-         aTbn+9UQQ9ubYTQHFYXE0wyg9uXlsWtB1SkSOp2T3i7DVYyz1mZnWouujknjhkmp/Qlc
-         DN+ZE7n0nkamCxQcSlKR9p/Nvoxqo/8GtVW3DkCNmCXzlhItxi85OC/vXEGP6ormsbCF
-         NSSA4R6KpXAmfnUv50ubUxH8UMvXiqeHeAnMgFzqAB8UBi4IHOGOs5IG3gFA6eKObl7w
-         L4mrb4MlzGfFkhEbiVJt7alhnoviVIfaG6N80NDRKF6HrVt4D/a8y/1C9owSwSG6SPeR
-         uhUg==
-X-Gm-Message-State: AOAM532jCyX97jl95FZcgBCJRykW719KwGQqxvWzNbWCM7VpddnROF8h
-        ZndYg2z39unDnHpW0W8oUmvSm7SyTelhmOVcUq8=
-X-Google-Smtp-Source: ABdhPJwKntBe9cRwZJh3MRRsz764uxiw15RsCvu/zPG4JyqC1bjNMZT2zk7w96MXygGM3WCvJ67DIe8F+OqOd4wCuAU=
-X-Received: by 2002:a25:ac9:: with SMTP id 192mr38463259ybk.615.1643739444222;
- Tue, 01 Feb 2022 10:17:24 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a5b:ac4:0:0:0:0:0 with HTTP; Tue, 1 Feb 2022 10:17:21 -0800 (PST)
-Reply-To: uchennailobitenone@gmail.com
-From:   uchenna <robertanderson6120@gmail.com>
-Date:   Tue, 1 Feb 2022 10:17:21 -0800
-Message-ID: <CAG4ip=iC-0qdSVOZ-5DOrS=BJ781vvuSQwU3fQvSn3_+EpWWtw@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
+        id S231748AbiBBMk4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 2 Feb 2022 07:40:56 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:48984 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1344179AbiBBMkz (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Feb 2022 07:40:55 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B062B6177D
+        for <ceph-devel@vger.kernel.org>; Wed,  2 Feb 2022 12:40:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9994C004E1;
+        Wed,  2 Feb 2022 12:40:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643805655;
+        bh=SJg/wqOL8TLLZNgIP2T1Nvb/O1PCMcraHCYauZpBUg4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=rxCPq8RXpK34UjevBVSmM9jNI7jjDraHeiLuFKfH1qbRp8UslU8TnBe2uWTss+Apl
+         H9Hc0pTN77Y2JCzT2B9aIAFbr0z4oW8y+NpVOSa5GaHnvy0nBvUQEM4jbNLhl4s7fw
+         yI/Iheo6AXNL18JOQPlay7F3jcKMhVpNbiHh5VGAjAveh/4QwjdzwEpWaPYBNE0yWA
+         WyvEKV3VEHhXwEFwnARIbh1DNO/HDVydzpGDYWN0UxRxQCZAq4mPtxzW02mk3scHXL
+         7VGV0IG5SQjGLiLrqZdfaMfa4IO3Jrlh9Dyp0YwQXgowp7NKXpEW2iZev9GozozlW1
+         6g8Tr5J8d5iWg==
+Message-ID: <a6a08d6ea41b996568fdf16314fec83b34234626.camel@kernel.org>
+Subject: Re: [PATCH] ceph: wake waiters on any IMPORT that grants new caps
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "Yan, Zheng" <ukernel@gmail.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Date:   Wed, 02 Feb 2022 07:40:52 -0500
+In-Reply-To: <CAAM7YAn+8H5nv_Y3hBDtEGA5=jbtsG8-RX=dGU6wB3RRH-HGmw@mail.gmail.com>
+References: <20220127200849.96580-1-jlayton@kernel.org>
+         <CAAM7YAmcj4JQ64EHWRTAVnEGnhfSN1OSUCSuOoi2PhOT8s_cHg@mail.gmail.com>
+         <61d982d3a9a3d2ba39de755be5559391221061fb.camel@kernel.org>
+         <CAAM7YAn+8H5nv_Y3hBDtEGA5=jbtsG8-RX=dGU6wB3RRH-HGmw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Aandacht alstublieft,
+On Wed, 2022-02-02 at 03:36 +0800, Yan, Zheng wrote:
+> 
+> 
+> Jeff Layton <jlayton@kernel.org>于2022年1月29日 周六18:36写道：
+> > On Sat, 2022-01-29 at 11:14 +0800, Yan, Zheng wrote:
+> > > On Sat, Jan 29, 2022 at 2:32 AM Jeff Layton <jlayton@kernel.org>
+> > > wrote:
+> > > > 
+> > > > I've noticed an intermittent hang waiting for caps in some
+> > > > testing. What
+> > > > I see is that the client will try to get caps for an operation
+> > > > (e.g. a
+> > > > read), and ends up waiting on the waitqueue forever. The caps
+> > > > debugfs
+> > > > file however shows that the caps it's waiting on have already
+> > > > been
+> > > > granted.
+> > > > 
+> > > > The current grant handling code will wake the waitqueue when it
+> > > > sees
+> > > > that there are newly-granted caps in the issued set. On an
+> > > > import
+> > > > however, we'll end up adding a new cap first, which fools the
+> > > > logic into
+> > > > thinking that nothing has changed. A later hack in the code
+> > > > works around
+> > > > this, but only for auth caps.
+> > > 
+> > > not right. handle_cap_import() saves old issued to extra_info-
+> > > >issued.
+> > > 
+> > 
+> > It does save the old issued value to extra_info->issued, but
+> > handle_cap
+> > grant consults cap->issued for most of its logic. It does check
+> > against
+> > extra_info->issued for auth caps to determine whether to wake
+> > waiters,
+> > but doesn't do that for non-auth caps. This patch corrects that.
+> > 
+> 
+> 
+> non auth mds never imports caps. ‘ci->i_auth_cap != cap’ happened only
+> when client receives out-of-order messages for successive cap
+> import/export. It’s unlikely in your case because you saw caps were
+> there.
+> 
 
-Ik ben Bar. uchenna ilobi , Hoe gaat het met je, ik hoop dat je in
-orde en gezond bent? Dit is om u te informeren dat ik de transactie
-succesvol heb afgerond met de hulp van een nieuwe partner uit
-Venezuela en nu het fonds is overgemaakt naar Venezuela op de
-bankrekening van de nieuwe partner.
+Ok! I'll drop this patch, and keep hunting for how we're not getting
+awoken. Let me know if you see any gaps in how "wake" gets set.
 
-Ondertussen heb ik besloten om u te compenseren met een bedrag van US$
-350.000,00 (driehonderdvijftigduizend Amerikaanse dollars) vanwege uw
-inspanningen in het verleden, hoewel u me langs de lijn teleurstelde.
-Maar desalniettemin ben ik erg blij met de succesvolle afronding van
-de transactie zonder enig probleem en dat is de reden waarom ik heb
-besloten om u te compenseren met het bedrag van US $ 350.000,00 zodat
-u de vreugde met mij zult delen.
+Thanks,
+Jeff
 
-Ik raad u aan om contact op te nemen met mijn secretaresse voor een
-ATM-kaart van US $ 350.000,00, die ik voor u heb bewaard. Neem nu
-zonder vertraging contact met hem op.
+> 
+> > 
+> > If you think this patch isn't right, can you elaborate on why and
+> > what
+> > would make it correct?
+> > 
+> > Thanks,
+> > Jeff
+> > 
+> > > > 
+> > > > Ensure we wake the waiters whenever we get an IMPORT that grants
+> > > > new
+> > > > caps for the inode.
+> > > > 
+> > > > URL: https://tracker.ceph.com/issues/54044
+> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > ---
+> > > >   fs/ceph/caps.c | 23 ++++++++++++-----------
+> > > >   1 file changed, 12 insertions(+), 11 deletions(-)
+> > > > 
+> > > > I'm still testing this patch, but I think this may be the cause
+> > > > of some
+> > > > mysterious hangs I've hit in testing.
+> > > > 
+> > > > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> > > > index e668cdb9c99e..06b65a68e920 100644
+> > > > --- a/fs/ceph/caps.c
+> > > > +++ b/fs/ceph/caps.c
+> > > > @@ -3541,21 +3541,22 @@ static void handle_cap_grant(struct
+> > > > inode *inode,
+> > > >                          fill_inline = true;
+> > > >          }
+> > > > 
+> > > > -       if (ci->i_auth_cap == cap &&
+> > > > -           le32_to_cpu(grant->op) == CEPH_CAP_OP_IMPORT) {
+> > > > +       if (le32_to_cpu(grant->op) == CEPH_CAP_OP_IMPORT) {
+> > > >                  if (newcaps & ~extra_info->issued)
+> > > >                          wake = true;
+> > > > 
+> > > > -               if (ci->i_requested_max_size > max_size ||
+> > > > -                   !(le32_to_cpu(grant->wanted) &
+> > > > CEPH_CAP_ANY_FILE_WR)) {
+> > > > -                       /* re-request max_size if necessary */
+> > > > -                       ci->i_requested_max_size = 0;
+> > > > -                       wake = true;
+> > > > -               }
+> > > > +               if (ci->i_auth_cap == cap) {
+> > > > +                       if (ci->i_requested_max_size > max_size
+> > > > ||
+> > > > +                           !(le32_to_cpu(grant->wanted) &
+> > > > CEPH_CAP_ANY_FILE_WR)) {
+> > > > +                               /* re-request max_size if
+> > > > necessary */
+> > > > +                               ci->i_requested_max_size = 0;
+> > > > +                               wake = true;
+> > > > +                       }
+> > > > 
+> > > > -               ceph_kick_flushing_inode_caps(session, ci);
+> > > > -               spin_unlock(&ci->i_ceph_lock);
+> > > > -               up_read(&session->s_mdsc->snap_rwsem);
+> > > > +                       ceph_kick_flushing_inode_caps(session,
+> > > > ci);
+> > > > +                       spin_unlock(&ci->i_ceph_lock);
+> > > > +                       up_read(&session->s_mdsc->snap_rwsem);
+> > > > +               }
+> > > >          } else {
+> > > >                  spin_unlock(&ci->i_ceph_lock);
+> > > >          }
+> > > > --
+> > > > 2.34.1
+> > > > 
+> > 
 
-Naam: Solomon brandewijn
-
-E-mail:solomonbrandyfiveone@gmail.com
-
-Gelieve hem de volgende onderstaande informatie te herbevestigen:
-
-Uw volledige naam_________________________
-Jouw adres__________________________
-Jouw land___________________________
-Je leeftijd______________________________
-Uw beroep________________________
-Uw mobiele telefoonnummer______________________
-
-Houd er rekening mee dat als u hem de bovenstaande informatie niet
-volledig heeft gestuurd, hij de geldautomaat niet aan u zal vrijgeven
-omdat hij er zeker van moet zijn dat u het bent. Vraag hem om u het
-totale bedrag van ($ 350.000,00) ATM-kaart te sturen, die ik voor u
-heb bewaard.
-
-Hartelijke groeten,
-
-Meneer uchenna ilobi
+-- 
+Jeff Layton <jlayton@kernel.org>
