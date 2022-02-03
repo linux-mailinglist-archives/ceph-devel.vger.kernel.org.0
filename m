@@ -2,41 +2,41 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 156604A8B52
-	for <lists+ceph-devel@lfdr.de>; Thu,  3 Feb 2022 19:15:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 671054A8BC4
+	for <lists+ceph-devel@lfdr.de>; Thu,  3 Feb 2022 19:38:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345884AbiBCSPK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 3 Feb 2022 13:15:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54604 "EHLO
+        id S1353523AbiBCSis (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 3 Feb 2022 13:38:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbiBCSPI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 3 Feb 2022 13:15:08 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64624C061714
-        for <ceph-devel@vger.kernel.org>; Thu,  3 Feb 2022 10:15:08 -0800 (PST)
+        with ESMTP id S234230AbiBCSis (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 3 Feb 2022 13:38:48 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AADAC061714
+        for <ceph-devel@vger.kernel.org>; Thu,  3 Feb 2022 10:38:48 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 22DEFB8354A
-        for <ceph-devel@vger.kernel.org>; Thu,  3 Feb 2022 18:15:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BB96C340E8;
-        Thu,  3 Feb 2022 18:15:05 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A91DE61901
+        for <ceph-devel@vger.kernel.org>; Thu,  3 Feb 2022 18:38:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2C07C340E8;
+        Thu,  3 Feb 2022 18:38:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643912105;
-        bh=QqD0odqnx5Qe7gTXQlRKAe80pQwGexDo+m0yBGDsE+c=;
+        s=k20201202; t=1643913527;
+        bh=e5+gWwYsz1tyEzEVBI24Ux/FWpGVcvNOxLROsj659fA=;
         h=From:To:Cc:Subject:Date:From;
-        b=BmgCXPoQjNHGNlLrxeYudTDxYVni1A7qM3zRw4S/g8w+YDH3kp96t9pGUXeYxPZ3G
-         MZCAPORsQNh6j+ECO/tqFuwGtBDxK+5Q87WuY8DujCzn2VM+cjw3ccFk6StrWuo3Kn
-         o4z4XkpfGYCEJeSyooGEzp/SXtKzL/kzgpSns8HZ/eodJVHbgTu7v4n3KX021sQ6PY
-         GtUF5ePrm7c1uj0NNn0zrEp8dLPY0xOEvoVbhsgdAoEJi3zAr2t1AwKbXbQleXyqSR
-         W+6/11QwUGEe+TJ2/xUhydzle4qLfjm+jzWqR7nTng3lChO9ylbNLkInri0c8hq9EL
-         ueLA4KvLelRIg==
+        b=kUm95yKvsaBKjQz/HPOoTapSNY039TaL/+R/XXL47PejO+jnha4g/PTf9vAQcrftK
+         YDGPxVd1Z0vDfL5asDeBvgUSI9jond2wdRKD3TRJgBfze+yf4qsut5VLkjBpVEpBfm
+         5fTaN1jEkYyiJO5zt9girpL7GhkkRP1lQjlaeabahZJoNg8qCAUM4IoMIhZUZELguE
+         Qb7VagrNAHpPCBonxr3kLj33Lb7LQQOGIWAJc+myuKUD+nzvHdOd7zo5kWfDQpXmCB
+         wkiQ/3/JRWjN/UWwD3sfMJfZZPWWnk1rrt3zY4I+89QCsPvJXF+WM0O1/fw9RiM9qm
+         4BWp5CA+7+EaQ==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     idryomov@gmail.com
-Subject: [PATCH] ceph: eliminate req->r_wait_for_completion
-Date:   Thu,  3 Feb 2022 13:15:04 -0500
-Message-Id: <20220203181504.90807-1-jlayton@kernel.org>
+Subject: [PATCH] ceph: eliminate req->r_wait_for_completion from ceph_mds_request
+Date:   Thu,  3 Feb 2022 13:38:45 -0500
+Message-Id: <20220203183845.93932-1-jlayton@kernel.org>
 X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -56,13 +56,15 @@ save a total of 24 bytes per.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/locks.c      |  6 +++---
+ fs/ceph/locks.c      |  8 ++++----
  fs/ceph/mds_client.c | 11 ++++++-----
  fs/ceph/mds_client.h |  9 +++++----
- 3 files changed, 14 insertions(+), 12 deletions(-)
+ 3 files changed, 15 insertions(+), 13 deletions(-)
+
+v2: actually change ceph_mdsc_do_request to ceph_mdsc_submit_request
 
 diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
-index d1f154aec249..81336b62bb99 100644
+index d1f154aec249..3e2843e86e27 100644
 --- a/fs/ceph/locks.c
 +++ b/fs/ceph/locks.c
 @@ -111,10 +111,10 @@ static int ceph_lock_message(u8 lock_type, u16 operation, struct inode *inode,
@@ -72,7 +74,8 @@ index d1f154aec249..81336b62bb99 100644
 -	if (wait)
 -		req->r_wait_for_completion = ceph_lock_wait_for_completion;
 -
- 	err = ceph_mdsc_do_request(mdsc, inode, req);
+-	err = ceph_mdsc_do_request(mdsc, inode, req);
++	err = ceph_mdsc_submit_request(mdsc, inode, req);
 +	if (!err)
 +		err = ceph_mdsc_wait_request(mdsc, req, wait ?
 +					ceph_lock_wait_for_completion : NULL);
