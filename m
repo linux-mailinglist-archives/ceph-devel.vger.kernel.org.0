@@ -2,166 +2,78 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 671054A8BC4
-	for <lists+ceph-devel@lfdr.de>; Thu,  3 Feb 2022 19:38:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 828634A8F51
+	for <lists+ceph-devel@lfdr.de>; Thu,  3 Feb 2022 21:46:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353523AbiBCSis (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 3 Feb 2022 13:38:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234230AbiBCSis (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 3 Feb 2022 13:38:48 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AADAC061714
-        for <ceph-devel@vger.kernel.org>; Thu,  3 Feb 2022 10:38:48 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A91DE61901
-        for <ceph-devel@vger.kernel.org>; Thu,  3 Feb 2022 18:38:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2C07C340E8;
-        Thu,  3 Feb 2022 18:38:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643913527;
-        bh=e5+gWwYsz1tyEzEVBI24Ux/FWpGVcvNOxLROsj659fA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=kUm95yKvsaBKjQz/HPOoTapSNY039TaL/+R/XXL47PejO+jnha4g/PTf9vAQcrftK
-         YDGPxVd1Z0vDfL5asDeBvgUSI9jond2wdRKD3TRJgBfze+yf4qsut5VLkjBpVEpBfm
-         5fTaN1jEkYyiJO5zt9girpL7GhkkRP1lQjlaeabahZJoNg8qCAUM4IoMIhZUZELguE
-         Qb7VagrNAHpPCBonxr3kLj33Lb7LQQOGIWAJc+myuKUD+nzvHdOd7zo5kWfDQpXmCB
-         wkiQ/3/JRWjN/UWwD3sfMJfZZPWWnk1rrt3zY4I+89QCsPvJXF+WM0O1/fw9RiM9qm
-         4BWp5CA+7+EaQ==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com
-Subject: [PATCH] ceph: eliminate req->r_wait_for_completion from ceph_mds_request
-Date:   Thu,  3 Feb 2022 13:38:45 -0500
-Message-Id: <20220203183845.93932-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        id S1354936AbiBCUp1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 3 Feb 2022 15:45:27 -0500
+Received: from [106.75.181.135] ([106.75.181.135]:57731 "EHLO ts3card.com"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1355612AbiBCUn0 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
+        Thu, 3 Feb 2022 15:43:26 -0500
+Message-ID: <20220204044325428451@ts3card.com>
+From:   =?utf-8?B?44OI44Oo44K/44OV44Kh44Kk44OK44Oz44K55qCq5byP5Lya56S+?= 
+        <info@ts3card.com>
+To:     <ceph-devel@vger.kernel.org>
+Subject: =?utf-8?B?44CQVFMzIFRTIENVQklDQ0FSROOAkemHjeimgQ==?=
+        =?utf-8?B?OuW/heOBmuOBiuiqreOBv+OBj+OBoOOBleOBhA==?=
+Date:   Fri, 4 Feb 2022 04:43:11 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: base64
+X-mailer: Qniozo 2
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-...and instead just pass the wait function on the stack.
+4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB
+4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB
+4pSB4pSBDQoNCuKYheOAgi46KjpUUyBDVUJJQyBDQVJE5Lya5ZOh5YCL5Lq65oOF5aCx5aSJ5pu0
+44CC4piF44CCLjoqOg0KDQrilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHi
+lIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHi
+lIHilIHilIHilIHilIHilIHilIHilIENCg0KDQpUUyBDVUJJQyBDQVJE5Lya5ZOh5qijDQoNCuOB
+k+OBruOBn+OBs+OBr+OAgVRTIENVQklDIENBUkRF44Oh44O844Or44K144O844OT44K544KS44GU
+5Yip55So44GE44Gf44Gg44GN44GC44KK44GM44Go44GG44GU44GW44GE44G+44GZ44CCDQoNCuW9
+k+ekvuOBr+OCu+OCreODpeODquODhuOCo+OCt+OCueODhuODoOOBruWkp+W5heOBquOCouODg+OD
+l+OCsOODrOODvOODieOCkuWun+aWveOBl+OBpuOBhOOCi+OBn+OCgeOAgeWAi+S6uuaDheWgseOB
+rg0K5YaN6KqN6Ki844GM5a6M5LqG44GZ44KL44G+44Gn44CBVFMgQ1VCSUMgQ0FSROODoeODs+OD
+kOODvOOBruOCteODvOODk+OCueOBr+OBmeOBueOBpuWBnOatouOBleOCjOOBvuOBmeOAgg0KDQrm
+nKzml6XjgYvjgonjgIFUUyBDVUJJQyBDQVJE44Oh44Oz44OQ44O844Gu44Om44O844K244O844GM
+6YCa5bi45L2/55So44GX44Gf44GE5aC05ZCI44Gv44CBMjTmmYLplpPku6XlhoXjgasNCuS7peS4
+i+OBruWAi+S6uuaDheWgseaUueWWhOiqjeiovOOCkuihjOOBhuW/heimgeOBjOOBguOCiuOBvuOB
+meaJv+iqjeW+jOOBq+OBruOBv+S9v+eUqOOBp+OBjeOBvuOBmSANCg0K44Ot44Kw44Kk44Oz6KqN
+6Ki8Omh0dHBzOi8vbXktdHMzY2FyZC1jb20uamFjY3NpY21jbHViLnRvcA0KDQrjgZPjga7jgrXj
+g7zjg5Pjgrnjga/jgIFUUyBDVUJJQyBDQVJE44Oh44OO44OQ44O85bCC55So44Gu6YCa55+l44K1
+44O844OT44K544Gn44GZ44CC44GT44Gu44Oh44O844Or44Gu5YaF5a65DQrjgavjgZTms6jmhI/j
+gYTjgZ/jgaDjgY3jgIHkuI3lv4XopoHjgarntJvlpLHjgpLpgb/jgZHjgabjgY/jgaDjgZXjgYTj
+gIINCg0K4pSP4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB
+4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB
+4pSB4pSB4pSTDQoNCuOAgOKWoOacrOODoeODvOODq+OBr+mAgeS/oeWwgueUqOOBruOBn+OCgeOA
+geOBk+OBoeOCieOBruODoeODvOODq+OCouODieODrOOCueOBq+OBlOi/lOS/oeOBhOOBn+OBoOOB
+hOOBpuOCgg0K44CA44CA5a++5b+c44Gv44GE44Gf44GX44GL44Gt44G+44GZ44Gu44Gn44GU5LqG
+5om/44GP44Gg44GV44GE44CCDQrjgIDjgIDjgarjgYrjgIHmnKzjg6Hjg7zjg6vjgavjgaTjgYTj
+gabjgYrlv4PlvZPjgZ/jgorjgYzjgarjgYTloLTlkIjjgavjga/jgIENCuOAgCDjgYrmiYvmlbDj
+gafjgZnjgYzjgIHkuIvoqJjjgYrllY/jgYTlkIjjgo/jgZvlhYjjgb7jgafjgYrpm7voqbHjgavj
+gabpgKPntaHjgpLjgYrpoZjjgYTjgYTjgZ/jgZfjgb7jgZnjgIINCg0K44CAPT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KDQrj
+gIDilqDnmbrooYzvvJpUUyBDVUJJQyBDQVJE44CM44OG44Kj44O844Ko44K544Kt44Ol44O844OT
+44OD44Kv44Kr44O844OJ44CNDQrjgIDjgIDjgIDjgIDjgIAgaHR0cHM6Ly90c2N1YmljLmNvbS8N
+CuOAgOOAgOOAgOOAgOOAgOODiOODqOOCv+ODleOCoeOCpOODiuODs+OCueagquW8j+S8muekvg0K
+44CA44CA44CA44CA44CA44CSNDUxLTYwMTTjgIDmhJvnn6XnnIzlkI3lj6TlsYvluILopb/ljLrn
+iZvls7bnlLo255WqMeWPtw0KDQrjgIDilqDmnKzjg6Hjg7zjg6vjgavjgaTjgYTjgabjga7jgYrl
+lY/jgYTlkIjjgo/jgZvvvJoNCuKXj1RPWU9UQSwgREFJSEFUU1UsIOOCuOOCp+ODvOODoOOCuSwg
+44OI44Oo44K/44Os44Oz44K/44Kr44O8IEZEQ+OBrg0K44CA44CA44CA44CA44CA44CAVFMgQ1VC
+SUMgQ0FSRCwgVFMgQ1VCSUMgVklFVyBDQVJE44KS44GK5oyB44Gh44Gu5pa544Gv44GT44Gh44KJ
+DQrjgIDjgIDjgIDjgIDjgIDjgIDjgqTjg7Pjg5Xjgqnjg6Hjg7zjgrfjg6fjg7Pjg4fjgrnjgq8N
+CuOAgOOAgOOAgOOAgOOAgOOAgFsg5p2x5LqsIF3jgIAwM++8jTU2MTfvvI0yNTExDQrjgIDjgIDj
+gIDjgIDjgIDjgIBb5ZCN5Y+k5bGLXeOAgDA1Mu+8jTIzOe+8jTI1MTENCig5OjAw772eMTc6MzAg
+5bm05Lit54Sh5LyRIOW5tOacq+W5tOWni+mZpOOBjykNCuKXj+S4iuiomOS7peWkluOBruOCq+OD
+vOODieS8muWToeOBleOBvuOBr+OAgeOBiuaJi+aMgeOBoeOBruOCq+ODvOODieWIuOmdouijj+OB
+q+iomOi8ieOBrg0K44CA44CA44CA44CA44CA44CA44Kr44O844OJ44Gr6Zai44GZ44KL44GK5ZWP
+44GE5ZCI44KP44Gb6Zu76Kmx55Wq5Y+344Gr44GK44GL44GR44GP44Gg44GV44GEDQrjgIDjgIDj
+gIDjgIDjgIANCuKUl+KUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKU
+geKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKU
+geKUgeKUgeKUgeKUmw0K
 
-Make ceph_mdsc_wait_request non-static, and add an argument for wait for
-completion. Then have ceph_lock_message call ceph_mdsc_submit_request,
-and ceph_mdsc_wait_request and pass in the pointer to
-ceph_lock_wait_for_completion.
-
-While we're in there, rearrange some fields in ceph_mds_request, so we
-save a total of 24 bytes per.
-
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/locks.c      |  8 ++++----
- fs/ceph/mds_client.c | 11 ++++++-----
- fs/ceph/mds_client.h |  9 +++++----
- 3 files changed, 15 insertions(+), 13 deletions(-)
-
-v2: actually change ceph_mdsc_do_request to ceph_mdsc_submit_request
-
-diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
-index d1f154aec249..3e2843e86e27 100644
---- a/fs/ceph/locks.c
-+++ b/fs/ceph/locks.c
-@@ -111,10 +111,10 @@ static int ceph_lock_message(u8 lock_type, u16 operation, struct inode *inode,
- 	req->r_args.filelock_change.length = cpu_to_le64(length);
- 	req->r_args.filelock_change.wait = wait;
- 
--	if (wait)
--		req->r_wait_for_completion = ceph_lock_wait_for_completion;
--
--	err = ceph_mdsc_do_request(mdsc, inode, req);
-+	err = ceph_mdsc_submit_request(mdsc, inode, req);
-+	if (!err)
-+		err = ceph_mdsc_wait_request(mdsc, req, wait ?
-+					ceph_lock_wait_for_completion : NULL);
- 	if (!err && operation == CEPH_MDS_OP_GETFILELOCK) {
- 		fl->fl_pid = -le64_to_cpu(req->r_reply_info.filelock_reply->pid);
- 		if (CEPH_LOCK_SHARED == req->r_reply_info.filelock_reply->type)
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 5937cbfafd31..72ba22de2b46 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2974,15 +2974,16 @@ int ceph_mdsc_submit_request(struct ceph_mds_client *mdsc, struct inode *dir,
- 	return err;
- }
- 
--static int ceph_mdsc_wait_request(struct ceph_mds_client *mdsc,
--				  struct ceph_mds_request *req)
-+int ceph_mdsc_wait_request(struct ceph_mds_client *mdsc,
-+			   struct ceph_mds_request *req,
-+			   ceph_mds_request_wait_callback_t wait_func)
- {
- 	int err;
- 
- 	/* wait */
- 	dout("do_request waiting\n");
--	if (!req->r_timeout && req->r_wait_for_completion) {
--		err = req->r_wait_for_completion(mdsc, req);
-+	if (wait_func) {
-+		err = wait_func(mdsc, req);
- 	} else {
- 		long timeleft = wait_for_completion_killable_timeout(
- 					&req->r_completion,
-@@ -3039,7 +3040,7 @@ int ceph_mdsc_do_request(struct ceph_mds_client *mdsc,
- 	/* issue */
- 	err = ceph_mdsc_submit_request(mdsc, dir, req);
- 	if (!err)
--		err = ceph_mdsc_wait_request(mdsc, req);
-+		err = ceph_mdsc_wait_request(mdsc, req, NULL);
- 	dout("do_request %p done, result %d\n", req, err);
- 	return err;
- }
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 97c7f7bfa55f..ab12f3ce81a3 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -274,8 +274,8 @@ struct ceph_mds_request {
- 
- 	union ceph_mds_request_args r_args;
- 	int r_fmode;        /* file mode, if expecting cap */
--	const struct cred *r_cred;
- 	int r_request_release_offset;
-+	const struct cred *r_cred;
- 	struct timespec64 r_stamp;
- 
- 	/* for choosing which mds to send this request to */
-@@ -296,12 +296,11 @@ struct ceph_mds_request {
- 	struct ceph_msg  *r_reply;
- 	struct ceph_mds_reply_info_parsed r_reply_info;
- 	int r_err;
--
-+	u32               r_readdir_offset;
- 
- 	struct page *r_locked_page;
- 	int r_dir_caps;
- 	int r_num_caps;
--	u32               r_readdir_offset;
- 
- 	unsigned long r_timeout;  /* optional.  jiffies, 0 is "wait forever" */
- 	unsigned long r_started;  /* start time to measure timeout against */
-@@ -329,7 +328,6 @@ struct ceph_mds_request {
- 	struct completion r_completion;
- 	struct completion r_safe_completion;
- 	ceph_mds_request_callback_t r_callback;
--	ceph_mds_request_wait_callback_t r_wait_for_completion;
- 	struct list_head  r_unsafe_item;  /* per-session unsafe list item */
- 
- 	long long	  r_dir_release_cnt;
-@@ -507,6 +505,9 @@ ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode);
- extern int ceph_mdsc_submit_request(struct ceph_mds_client *mdsc,
- 				    struct inode *dir,
- 				    struct ceph_mds_request *req);
-+int ceph_mdsc_wait_request(struct ceph_mds_client *mdsc,
-+			struct ceph_mds_request *req,
-+			ceph_mds_request_wait_callback_t wait_func);
- extern int ceph_mdsc_do_request(struct ceph_mds_client *mdsc,
- 				struct inode *dir,
- 				struct ceph_mds_request *req);
--- 
-2.34.1
 
