@@ -2,64 +2,63 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D8A124A9E75
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Feb 2022 18:58:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2C974A9E78
+	for <lists+ceph-devel@lfdr.de>; Fri,  4 Feb 2022 18:59:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377265AbiBDR63 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 4 Feb 2022 12:58:29 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:38246 "EHLO
-        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377260AbiBDR61 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Feb 2022 12:58:27 -0500
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7B5A8B83881;
-        Fri,  4 Feb 2022 17:58:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 23A51C340FD;
-        Fri,  4 Feb 2022 17:58:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1643997505;
-        bh=Qd1QpO029yfnEIyPKFG+DXXvp4tuXxLyUSA5ZjYqMSc=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=lLM+rlmOYVdkhetfNpvS61CMU4RFL/qAhuE1Up0orpXCUq8V2CmbHZIchADtLMn1P
-         3grnhZlR6yxKLWsQUeXQDeSccFcc6zDamSV+0N3mTbW11eFpQ+BZ74+Q7R9tU+35aM
-         oftsblTlsphCebslT9mgmz9wpFHjumxlB8LLWGSn+gPGN5HcwbLpaj9vtpuZ3i/+O6
-         u4jYAPxrMTqzMZDdXy4HbwYgb0utXB509+62Klm+TBYG2Y9myGOsr1TvIqfXrVo0wm
-         TI0WLYKnd8g2ZOszNVctrF9YHjL6KnPOqVApoJehGFpPn1sS44C0Km4wGUApVwIGjY
-         lsGkKgWGhKe0A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E90FBC6D4EA;
-        Fri,  4 Feb 2022 17:58:24 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph fixes for 5.17-rc3
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220204131518.13859-1-idryomov@gmail.com>
-References: <20220204131518.13859-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220204131518.13859-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-5.17-rc3
-X-PR-Tracked-Commit-Id: 038b8d1d1ab1cce11a158d30bf080ff41a2cfd15
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: cff7f2237c2b494a07c90f70291588d218b77e14
-Message-Id: <164399750495.18890.15474672888789225709.pr-tracker-bot@kernel.org>
-Date:   Fri, 04 Feb 2022 17:58:24 +0000
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S243129AbiBDR7j (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 4 Feb 2022 12:59:39 -0500
+Received: from [106.75.179.222] ([106.75.179.222]:50318 "EHLO
+        mail.uccard.co.jp" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S236969AbiBDR7i (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Feb 2022 12:59:38 -0500
+Date:   Sat, 5 Feb 2022 01:59:25 +0800
+From:   =?utf-8?B?44Ki44OD44OI44Om44O844ON44OD44OI?= 
+        <atu@mail.uccard.co.jp>
+To:     <ceph-devel@vger.kernel.org>
+Subject: =?utf-8?B?44CQ44Om44O844K344O844Kr44O844OJ44CR44GU5pys5Lq65qeY56K66KqN5a6M5LqG44Gu44GU6YCj?=
+        =?utf-8?B?57Wh?=
+Message-ID: <20220205015938322210@mail.uccard.co.jp>
+X-mailer: Foxmail 6, 13, 102, 15 [en]
+Mime-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The pull request you sent on Fri,  4 Feb 2022 14:15:18 +0100:
+44GT44Gu44Gf44G044Gv44CBVUPjgqvjg7zjg4njgpLjgZTliKnnlKjjgYTjgZ/jgaDjgY3jgYLj
+gorjgYzjgajjgYbjgZTjgZbjgYTjgb7jgZnjgIINCg0K44GU5pys5Lq65qeY56K66KqN44Gu44Gf
+44KB44Gu6KqN6Ki844GM6KGM44KP44KM44G+44GX44Gf44Gu44Gn44CB44GK55+l44KJ44Gb44GE
+44Gf44GX44G+44GZ44CCDQoNCuacrOOCteODvOODk+OCueOBr+OAgeS4h+OBjOS4gOOAgeOBlOac
+rOS6uuanmOS7peWkluOBq+OCiOOCi+S4jeato+ODreOCsOOCpOODs8K35pON5L2c562J44GM44GC
+44Gj44Gf5aC05ZCI44Gr44CB44GK5a6i5qeY44GM6YCf44KE44GLDQrjgavnorroqo3jgafjgY3j
+govjgojjgYbjgIHov73liqDoqo3oqLzjga7pg73luqbjgIHjg6Hjg7zjg6vjgpLpgIHkv6HjgZnj
+govjgrXjg7zjg5PjgrnjgafjgZnjgIINCg0K44GK5b+D5b2T44KK44Gu44Gq44GE5aC05ZCI44KE
+5LiN5a+p44Gq54K5562J44GU44GW44GE44G+44GX44Gf44KJ44CB5b6h5pep44KB44Gr56K66KqN
+44GX44Gm44GP44Gg44GV44GE44CCDQrjgIrmnKzkurrnorroqo3jga7mlrnms5XjgIsNCg0K4pa8
+44Oe44Kk44Oa44O844K444KI44KK5pys5Lq656K66KqN44KS5a6f5pa944GZ44KLDQogaHR0cHM6
+Ly9hcGktc2Fpc29uY2FyZC1jby1qcC51Y2NhcmQyLnh5eg0KDQoNCg0K77yc44GK5ZWP5ZCI44Gb
+5YWI77yeDQrjgJDmoKrlvI/kvJrnpL7jgq/jg6zjg4fjgqPjgrvjgr7jg7PnmbrooYzjga5VQ+OC
+q+ODvOODieOCkuOBiuaMgeOBoeOBruaWueOAkQ0K44CA44CA5p2x5Lqs44CA44CAMDMtNjg5My04
+MjAwDQrjgIDjgIDlpKfpmKrjgIDjgIAwNi03NzA5LTg1NTUNCuOAgOWWtualreaZgumWk+OAgDk6
+MDDvvZ4xNzowMOOAgDEvMeS8keOBvw0KDQrjgJDmoKrlvI/kvJrnpL7jgq/jg6zjg4fjgqPjgrvj
+gr7jg7PnmbrooYzku6XlpJbjga5VQ+OCq+ODvOODieOCkuOBiuaMgeOBoeOBruaWueOAkQ0K44CA
+44CA5p2x5Lqs44CA44CAMDMtNjg5My00MjcwDQrjgIDjgIDlpKfpmKrjgIDjgIAwNi03NzA5LTgy
+MjMNCuOAgOWWtualreaZgumWk+OAgDk6MDDvvZ4xNzowMOOAgDEvMeS8keOBvw0KDQrjg7vjg7vj
+g7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vj
+g7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vj
+g7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vj
+g7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7sNCuKAu+OBk+OB
+ruODoeODvOODq+OBr+OAjOOCouODg+ODiOODpuODvOODjeODg+ODiO+8geOAjeOBi+OCieiHquWL
+lemFjeS/oeOBl+OBpuOBiuOCiuOBvuOBmeOAgg0K4oC75pys44Oh44O844Or44Gr44GU6L+U5L+h
+44GE44Gf44Gg44GN44G+44GX44Gm44KC44CB44GU6LOq5ZWP44O744GU5L6d6aC844Gq44Gp44Gr
+DQrjgIDjgYrnrZTjgYjjgafjgY3jgb7jgZvjgpPjga7jgafjgIHjgYLjgonjgYvjgZjjgoHjgZTk
+uobmib/jgY/jgaDjgZXjgYTjgIINCuODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+OD
+u+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+OD
+u+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+OD
+u+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+OD
+u+ODu+ODu+ODu+ODu+ODu+ODuw0K44Ki44OD44OI44Om44O844ON44OD44OIDQoNCjIwMjIvMi81
+MTo1OTozNw0K
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-5.17-rc3
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cff7f2237c2b494a07c90f70291588d218b77e14
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
