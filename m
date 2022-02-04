@@ -2,78 +2,92 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 828634A8F51
-	for <lists+ceph-devel@lfdr.de>; Thu,  3 Feb 2022 21:46:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 513594A99C5
+	for <lists+ceph-devel@lfdr.de>; Fri,  4 Feb 2022 14:15:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354936AbiBCUp1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 3 Feb 2022 15:45:27 -0500
-Received: from [106.75.181.135] ([106.75.181.135]:57731 "EHLO ts3card.com"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1355612AbiBCUn0 (ORCPT <rfc822;ceph-devel@vger.kernel.org>);
-        Thu, 3 Feb 2022 15:43:26 -0500
-Message-ID: <20220204044325428451@ts3card.com>
-From:   =?utf-8?B?44OI44Oo44K/44OV44Kh44Kk44OK44Oz44K55qCq5byP5Lya56S+?= 
-        <info@ts3card.com>
-To:     <ceph-devel@vger.kernel.org>
-Subject: =?utf-8?B?44CQVFMzIFRTIENVQklDQ0FSROOAkemHjeimgQ==?=
-        =?utf-8?B?OuW/heOBmuOBiuiqreOBv+OBj+OBoOOBleOBhA==?=
-Date:   Fri, 4 Feb 2022 04:43:11 +0800
+        id S1352465AbiBDNPC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 4 Feb 2022 08:15:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58022 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1350186AbiBDNPC (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Feb 2022 08:15:02 -0500
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B80CC061714;
+        Fri,  4 Feb 2022 05:15:02 -0800 (PST)
+Received: by mail-ed1-x52b.google.com with SMTP id m11so13078635edi.13;
+        Fri, 04 Feb 2022 05:15:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wlf/9/9pC1/FBmXcXyBT4VyTkvuSdtfrd6W4gAtkuYY=;
+        b=ffPb315I/3bwNF2HMPkoa2aCMni5mGXcD2a50QtmHSVJyV3Q0V+sAAk8bU6CvZdSWG
+         VJddLmCSy2+7Ww8mc1sHz1IrOp+HIduGuRqSDLAxVLAwnGE/Ux4equHwBsO7rE2VHR56
+         9XJZ8Cq7+SU6wdgJLqpyRWWy9dUFqXV9M/AV6W0UPPJmzNlDZNr7WzJoJx2PQ586mg59
+         bfP+lrUFMgPDIzar5Kv4BkxHUCkTtbjcvCiIL9ECzIGg79NuRnVL8fgRnVlKwfCSEblN
+         HNHvh/lE8pTWXXl+k77ctfNbJJZkPw6P9yAUbtYQYQxA7DiZKO2cJ0/YzY6OVbaJ87Z6
+         PKzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wlf/9/9pC1/FBmXcXyBT4VyTkvuSdtfrd6W4gAtkuYY=;
+        b=tGMqvzzT0lpGh6Jg+eamr0XTU4Tovrfs7lc3z5/RihQe9XzSfI989w30Xkc9dZsw+4
+         XSbiRsHg8dyvY8kjkxBSD2nHHb+2kuFmBp4Y4csZE+qk01ofu7u75ViYo8GDJZC7Oevh
+         RRXZB9rB+ST8FdEEiAflHSdKoLk69Mohdog9q3IiBjY9oadIW0U/EH1wdmVzdLVcmWeW
+         ezYSrg5Q4R4NpQT5+572ujjSJEcl7X9GXUlfKkqJvRFnS6iBOgFSy9ziqjko+SACL7d5
+         mTm2ZnYnrOxEE2MmGNB5WzheLUFeWeXeamJ5flHMT4qrRcsp1qKDNLG1V52JmsvY6S7l
+         ml9g==
+X-Gm-Message-State: AOAM531WiodUaReOqTdO3i2BpNcwh5o16GvRToGcc4lNrxBJiqGf4o/h
+        2QbMluwA/MZ72Se/YomXDYw=
+X-Google-Smtp-Source: ABdhPJwsVYGu3pqboKYhFBhnfnS2t7meLiUDAYHcpfj8EeYrCAkgIiO+Jge6E5oUfCxeN/L6rO3DzA==
+X-Received: by 2002:a05:6402:520d:: with SMTP id s13mr2958767edd.132.1643980500495;
+        Fri, 04 Feb 2022 05:15:00 -0800 (PST)
+Received: from kwango.redhat.com (ip-89-102-68-162.net.upcbroadband.cz. [89.102.68.162])
+        by smtp.gmail.com with ESMTPSA id z6sm655157ejd.35.2022.02.04.05.14.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Feb 2022 05:15:00 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 5.17-rc3
+Date:   Fri,  4 Feb 2022 14:15:18 +0100
+Message-Id: <20220204131518.13859-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: base64
-X-mailer: Qniozo 2
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB
-4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB
-4pSB4pSBDQoNCuKYheOAgi46KjpUUyBDVUJJQyBDQVJE5Lya5ZOh5YCL5Lq65oOF5aCx5aSJ5pu0
-44CC4piF44CCLjoqOg0KDQrilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHi
-lIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHi
-lIHilIHilIHilIHilIHilIHilIHilIENCg0KDQpUUyBDVUJJQyBDQVJE5Lya5ZOh5qijDQoNCuOB
-k+OBruOBn+OBs+OBr+OAgVRTIENVQklDIENBUkRF44Oh44O844Or44K144O844OT44K544KS44GU
-5Yip55So44GE44Gf44Gg44GN44GC44KK44GM44Go44GG44GU44GW44GE44G+44GZ44CCDQoNCuW9
-k+ekvuOBr+OCu+OCreODpeODquODhuOCo+OCt+OCueODhuODoOOBruWkp+W5heOBquOCouODg+OD
-l+OCsOODrOODvOODieOCkuWun+aWveOBl+OBpuOBhOOCi+OBn+OCgeOAgeWAi+S6uuaDheWgseOB
-rg0K5YaN6KqN6Ki844GM5a6M5LqG44GZ44KL44G+44Gn44CBVFMgQ1VCSUMgQ0FSROODoeODs+OD
-kOODvOOBruOCteODvOODk+OCueOBr+OBmeOBueOBpuWBnOatouOBleOCjOOBvuOBmeOAgg0KDQrm
-nKzml6XjgYvjgonjgIFUUyBDVUJJQyBDQVJE44Oh44Oz44OQ44O844Gu44Om44O844K244O844GM
-6YCa5bi45L2/55So44GX44Gf44GE5aC05ZCI44Gv44CBMjTmmYLplpPku6XlhoXjgasNCuS7peS4
-i+OBruWAi+S6uuaDheWgseaUueWWhOiqjeiovOOCkuihjOOBhuW/heimgeOBjOOBguOCiuOBvuOB
-meaJv+iqjeW+jOOBq+OBruOBv+S9v+eUqOOBp+OBjeOBvuOBmSANCg0K44Ot44Kw44Kk44Oz6KqN
-6Ki8Omh0dHBzOi8vbXktdHMzY2FyZC1jb20uamFjY3NpY21jbHViLnRvcA0KDQrjgZPjga7jgrXj
-g7zjg5Pjgrnjga/jgIFUUyBDVUJJQyBDQVJE44Oh44OO44OQ44O85bCC55So44Gu6YCa55+l44K1
-44O844OT44K544Gn44GZ44CC44GT44Gu44Oh44O844Or44Gu5YaF5a65DQrjgavjgZTms6jmhI/j
-gYTjgZ/jgaDjgY3jgIHkuI3lv4XopoHjgarntJvlpLHjgpLpgb/jgZHjgabjgY/jgaDjgZXjgYTj
-gIINCg0K4pSP4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB
-4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB
-4pSB4pSB4pSTDQoNCuOAgOKWoOacrOODoeODvOODq+OBr+mAgeS/oeWwgueUqOOBruOBn+OCgeOA
-geOBk+OBoeOCieOBruODoeODvOODq+OCouODieODrOOCueOBq+OBlOi/lOS/oeOBhOOBn+OBoOOB
-hOOBpuOCgg0K44CA44CA5a++5b+c44Gv44GE44Gf44GX44GL44Gt44G+44GZ44Gu44Gn44GU5LqG
-5om/44GP44Gg44GV44GE44CCDQrjgIDjgIDjgarjgYrjgIHmnKzjg6Hjg7zjg6vjgavjgaTjgYTj
-gabjgYrlv4PlvZPjgZ/jgorjgYzjgarjgYTloLTlkIjjgavjga/jgIENCuOAgCDjgYrmiYvmlbDj
-gafjgZnjgYzjgIHkuIvoqJjjgYrllY/jgYTlkIjjgo/jgZvlhYjjgb7jgafjgYrpm7voqbHjgavj
-gabpgKPntaHjgpLjgYrpoZjjgYTjgYTjgZ/jgZfjgb7jgZnjgIINCg0K44CAPT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KDQrj
-gIDilqDnmbrooYzvvJpUUyBDVUJJQyBDQVJE44CM44OG44Kj44O844Ko44K544Kt44Ol44O844OT
-44OD44Kv44Kr44O844OJ44CNDQrjgIDjgIDjgIDjgIDjgIAgaHR0cHM6Ly90c2N1YmljLmNvbS8N
-CuOAgOOAgOOAgOOAgOOAgOODiOODqOOCv+ODleOCoeOCpOODiuODs+OCueagquW8j+S8muekvg0K
-44CA44CA44CA44CA44CA44CSNDUxLTYwMTTjgIDmhJvnn6XnnIzlkI3lj6TlsYvluILopb/ljLrn
-iZvls7bnlLo255WqMeWPtw0KDQrjgIDilqDmnKzjg6Hjg7zjg6vjgavjgaTjgYTjgabjga7jgYrl
-lY/jgYTlkIjjgo/jgZvvvJoNCuKXj1RPWU9UQSwgREFJSEFUU1UsIOOCuOOCp+ODvOODoOOCuSwg
-44OI44Oo44K/44Os44Oz44K/44Kr44O8IEZEQ+OBrg0K44CA44CA44CA44CA44CA44CAVFMgQ1VC
-SUMgQ0FSRCwgVFMgQ1VCSUMgVklFVyBDQVJE44KS44GK5oyB44Gh44Gu5pa544Gv44GT44Gh44KJ
-DQrjgIDjgIDjgIDjgIDjgIDjgIDjgqTjg7Pjg5Xjgqnjg6Hjg7zjgrfjg6fjg7Pjg4fjgrnjgq8N
-CuOAgOOAgOOAgOOAgOOAgOOAgFsg5p2x5LqsIF3jgIAwM++8jTU2MTfvvI0yNTExDQrjgIDjgIDj
-gIDjgIDjgIDjgIBb5ZCN5Y+k5bGLXeOAgDA1Mu+8jTIzOe+8jTI1MTENCig5OjAw772eMTc6MzAg
-5bm05Lit54Sh5LyRIOW5tOacq+W5tOWni+mZpOOBjykNCuKXj+S4iuiomOS7peWkluOBruOCq+OD
-vOODieS8muWToeOBleOBvuOBr+OAgeOBiuaJi+aMgeOBoeOBruOCq+ODvOODieWIuOmdouijj+OB
-q+iomOi8ieOBrg0K44CA44CA44CA44CA44CA44CA44Kr44O844OJ44Gr6Zai44GZ44KL44GK5ZWP
-44GE5ZCI44KP44Gb6Zu76Kmx55Wq5Y+344Gr44GK44GL44GR44GP44Gg44GV44GEDQrjgIDjgIDj
-gIDjgIDjgIANCuKUl+KUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKU
-geKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKU
-geKUgeKUgeKUgeKUmw0K
+Hi Linus,
 
+The following changes since commit 26291c54e111ff6ba87a164d85d4a4e134b7315c:
 
+  Linux 5.17-rc2 (2022-01-30 15:37:07 +0200)
+
+are available in the Git repository at:
+
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.17-rc3
+
+for you to fetch changes up to 038b8d1d1ab1cce11a158d30bf080ff41a2cfd15:
+
+  libceph: optionally use bounce buffer on recv path in crc mode (2022-02-02 18:50:36 +0100)
+
+----------------------------------------------------------------
+A patch to make it possible to disable zero copy path in the messenger
+to avoid checksum or authentication tag mismatches and ensuing session
+resets in case the destination buffer isn't guaranteed to be stable.
+
+----------------------------------------------------------------
+Ilya Dryomov (2):
+      libceph: make recv path in secure mode work the same as send path
+      libceph: optionally use bounce buffer on recv path in crc mode
+
+ include/linux/ceph/libceph.h   |   1 +
+ include/linux/ceph/messenger.h |   5 +
+ net/ceph/ceph_common.c         |   7 ++
+ net/ceph/messenger.c           |   4 +
+ net/ceph/messenger_v1.c        |  54 ++++++++-
+ net/ceph/messenger_v2.c        | 250 ++++++++++++++++++++++++++++++-----------
+ 6 files changed, 251 insertions(+), 70 deletions(-)
