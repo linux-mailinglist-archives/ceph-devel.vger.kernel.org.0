@@ -2,92 +2,64 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 513594A99C5
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Feb 2022 14:15:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8A124A9E75
+	for <lists+ceph-devel@lfdr.de>; Fri,  4 Feb 2022 18:58:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352465AbiBDNPC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 4 Feb 2022 08:15:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58022 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350186AbiBDNPC (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Feb 2022 08:15:02 -0500
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B80CC061714;
-        Fri,  4 Feb 2022 05:15:02 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id m11so13078635edi.13;
-        Fri, 04 Feb 2022 05:15:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Wlf/9/9pC1/FBmXcXyBT4VyTkvuSdtfrd6W4gAtkuYY=;
-        b=ffPb315I/3bwNF2HMPkoa2aCMni5mGXcD2a50QtmHSVJyV3Q0V+sAAk8bU6CvZdSWG
-         VJddLmCSy2+7Ww8mc1sHz1IrOp+HIduGuRqSDLAxVLAwnGE/Ux4equHwBsO7rE2VHR56
-         9XJZ8Cq7+SU6wdgJLqpyRWWy9dUFqXV9M/AV6W0UPPJmzNlDZNr7WzJoJx2PQ586mg59
-         bfP+lrUFMgPDIzar5Kv4BkxHUCkTtbjcvCiIL9ECzIGg79NuRnVL8fgRnVlKwfCSEblN
-         HNHvh/lE8pTWXXl+k77ctfNbJJZkPw6P9yAUbtYQYQxA7DiZKO2cJ0/YzY6OVbaJ87Z6
-         PKzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Wlf/9/9pC1/FBmXcXyBT4VyTkvuSdtfrd6W4gAtkuYY=;
-        b=tGMqvzzT0lpGh6Jg+eamr0XTU4Tovrfs7lc3z5/RihQe9XzSfI989w30Xkc9dZsw+4
-         XSbiRsHg8dyvY8kjkxBSD2nHHb+2kuFmBp4Y4csZE+qk01ofu7u75ViYo8GDJZC7Oevh
-         RRXZB9rB+ST8FdEEiAflHSdKoLk69Mohdog9q3IiBjY9oadIW0U/EH1wdmVzdLVcmWeW
-         ezYSrg5Q4R4NpQT5+572ujjSJEcl7X9GXUlfKkqJvRFnS6iBOgFSy9ziqjko+SACL7d5
-         mTm2ZnYnrOxEE2MmGNB5WzheLUFeWeXeamJ5flHMT4qrRcsp1qKDNLG1V52JmsvY6S7l
-         ml9g==
-X-Gm-Message-State: AOAM531WiodUaReOqTdO3i2BpNcwh5o16GvRToGcc4lNrxBJiqGf4o/h
-        2QbMluwA/MZ72Se/YomXDYw=
-X-Google-Smtp-Source: ABdhPJwsVYGu3pqboKYhFBhnfnS2t7meLiUDAYHcpfj8EeYrCAkgIiO+Jge6E5oUfCxeN/L6rO3DzA==
-X-Received: by 2002:a05:6402:520d:: with SMTP id s13mr2958767edd.132.1643980500495;
-        Fri, 04 Feb 2022 05:15:00 -0800 (PST)
-Received: from kwango.redhat.com (ip-89-102-68-162.net.upcbroadband.cz. [89.102.68.162])
-        by smtp.gmail.com with ESMTPSA id z6sm655157ejd.35.2022.02.04.05.14.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Feb 2022 05:15:00 -0800 (PST)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 5.17-rc3
-Date:   Fri,  4 Feb 2022 14:15:18 +0100
-Message-Id: <20220204131518.13859-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1377265AbiBDR63 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 4 Feb 2022 12:58:29 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:38246 "EHLO
+        ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1377260AbiBDR61 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Feb 2022 12:58:27 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7B5A8B83881;
+        Fri,  4 Feb 2022 17:58:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 23A51C340FD;
+        Fri,  4 Feb 2022 17:58:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643997505;
+        bh=Qd1QpO029yfnEIyPKFG+DXXvp4tuXxLyUSA5ZjYqMSc=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=lLM+rlmOYVdkhetfNpvS61CMU4RFL/qAhuE1Up0orpXCUq8V2CmbHZIchADtLMn1P
+         3grnhZlR6yxKLWsQUeXQDeSccFcc6zDamSV+0N3mTbW11eFpQ+BZ74+Q7R9tU+35aM
+         oftsblTlsphCebslT9mgmz9wpFHjumxlB8LLWGSn+gPGN5HcwbLpaj9vtpuZ3i/+O6
+         u4jYAPxrMTqzMZDdXy4HbwYgb0utXB509+62Klm+TBYG2Y9myGOsr1TvIqfXrVo0wm
+         TI0WLYKnd8g2ZOszNVctrF9YHjL6KnPOqVApoJehGFpPn1sS44C0Km4wGUApVwIGjY
+         lsGkKgWGhKe0A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E90FBC6D4EA;
+        Fri,  4 Feb 2022 17:58:24 +0000 (UTC)
+Subject: Re: [GIT PULL] Ceph fixes for 5.17-rc3
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20220204131518.13859-1-idryomov@gmail.com>
+References: <20220204131518.13859-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20220204131518.13859-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-5.17-rc3
+X-PR-Tracked-Commit-Id: 038b8d1d1ab1cce11a158d30bf080ff41a2cfd15
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: cff7f2237c2b494a07c90f70291588d218b77e14
+Message-Id: <164399750495.18890.15474672888789225709.pr-tracker-bot@kernel.org>
+Date:   Fri, 04 Feb 2022 17:58:24 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Fri,  4 Feb 2022 14:15:18 +0100:
 
-The following changes since commit 26291c54e111ff6ba87a164d85d4a4e134b7315c:
+> https://github.com/ceph/ceph-client.git tags/ceph-for-5.17-rc3
 
-  Linux 5.17-rc2 (2022-01-30 15:37:07 +0200)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/cff7f2237c2b494a07c90f70291588d218b77e14
 
-are available in the Git repository at:
+Thank you!
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-5.17-rc3
-
-for you to fetch changes up to 038b8d1d1ab1cce11a158d30bf080ff41a2cfd15:
-
-  libceph: optionally use bounce buffer on recv path in crc mode (2022-02-02 18:50:36 +0100)
-
-----------------------------------------------------------------
-A patch to make it possible to disable zero copy path in the messenger
-to avoid checksum or authentication tag mismatches and ensuing session
-resets in case the destination buffer isn't guaranteed to be stable.
-
-----------------------------------------------------------------
-Ilya Dryomov (2):
-      libceph: make recv path in secure mode work the same as send path
-      libceph: optionally use bounce buffer on recv path in crc mode
-
- include/linux/ceph/libceph.h   |   1 +
- include/linux/ceph/messenger.h |   5 +
- net/ceph/ceph_common.c         |   7 ++
- net/ceph/messenger.c           |   4 +
- net/ceph/messenger_v1.c        |  54 ++++++++-
- net/ceph/messenger_v2.c        | 250 ++++++++++++++++++++++++++++++-----------
- 6 files changed, 251 insertions(+), 70 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
