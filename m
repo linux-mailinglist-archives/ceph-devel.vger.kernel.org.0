@@ -2,63 +2,97 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2C974A9E78
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Feb 2022 18:59:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36D7A4AA99C
+	for <lists+ceph-devel@lfdr.de>; Sat,  5 Feb 2022 16:17:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243129AbiBDR7j (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 4 Feb 2022 12:59:39 -0500
-Received: from [106.75.179.222] ([106.75.179.222]:50318 "EHLO
-        mail.uccard.co.jp" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S236969AbiBDR7i (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Feb 2022 12:59:38 -0500
-Date:   Sat, 5 Feb 2022 01:59:25 +0800
-From:   =?utf-8?B?44Ki44OD44OI44Om44O844ON44OD44OI?= 
-        <atu@mail.uccard.co.jp>
-To:     <ceph-devel@vger.kernel.org>
-Subject: =?utf-8?B?44CQ44Om44O844K344O844Kr44O844OJ44CR44GU5pys5Lq65qeY56K66KqN5a6M5LqG44Gu44GU6YCj?=
-        =?utf-8?B?57Wh?=
-Message-ID: <20220205015938322210@mail.uccard.co.jp>
-X-mailer: Foxmail 6, 13, 102, 15 [en]
-Mime-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1357694AbiBEPRI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 5 Feb 2022 10:17:08 -0500
+Received: from dfw.source.kernel.org ([139.178.84.217]:35598 "EHLO
+        dfw.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229940AbiBEPRI (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 5 Feb 2022 10:17:08 -0500
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 35BAF60F66
+        for <ceph-devel@vger.kernel.org>; Sat,  5 Feb 2022 15:17:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F7ACC340E8;
+        Sat,  5 Feb 2022 15:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1644074227;
+        bh=rTmuwX1z2Dy3mOMinjpZu3OXl/JdUSCfeuM79G+L4sM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PdsAOsWRSjpxmxDGyTOfLYuAzJMoOnQ4d+L3rmcWg3m7JGmNm7bjhRXQu7CiTwCBy
+         Rx9C2gThDNeLgWSqllhDQOvnDQ5erCp1ANbTiFOst7xE8OdU/swN7gM0emdgnPdI6I
+         bSk9nJRcKOflU+0mBAXPkCuhAeWr8r/zOjcKKGRCEa3zdFtX+4GKOAF66fiQjRxfFv
+         E9N66PnW1mbc9Eyn33BZBFYxumXiynE848eLn9nLpY/hmgqYZQutmvz7NkQZ7GgfmC
+         h1mOgB6rsjKHdR2n4OyONRBH+CDO8bRJ5LJKN8gW0OXjxC/gb+PkAfWP66uqF5s+zM
+         bPNVgpfwzqTBg==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, pdonnell@redhat.com
+Subject: [PATCH] ceph: wait for async create reply before sending any cap messages
+Date:   Sat,  5 Feb 2022 10:17:05 -0500
+Message-Id: <20220205151705.36309-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-44GT44Gu44Gf44G044Gv44CBVUPjgqvjg7zjg4njgpLjgZTliKnnlKjjgYTjgZ/jgaDjgY3jgYLj
-gorjgYzjgajjgYbjgZTjgZbjgYTjgb7jgZnjgIINCg0K44GU5pys5Lq65qeY56K66KqN44Gu44Gf
-44KB44Gu6KqN6Ki844GM6KGM44KP44KM44G+44GX44Gf44Gu44Gn44CB44GK55+l44KJ44Gb44GE
-44Gf44GX44G+44GZ44CCDQoNCuacrOOCteODvOODk+OCueOBr+OAgeS4h+OBjOS4gOOAgeOBlOac
-rOS6uuanmOS7peWkluOBq+OCiOOCi+S4jeato+ODreOCsOOCpOODs8K35pON5L2c562J44GM44GC
-44Gj44Gf5aC05ZCI44Gr44CB44GK5a6i5qeY44GM6YCf44KE44GLDQrjgavnorroqo3jgafjgY3j
-govjgojjgYbjgIHov73liqDoqo3oqLzjga7pg73luqbjgIHjg6Hjg7zjg6vjgpLpgIHkv6HjgZnj
-govjgrXjg7zjg5PjgrnjgafjgZnjgIINCg0K44GK5b+D5b2T44KK44Gu44Gq44GE5aC05ZCI44KE
-5LiN5a+p44Gq54K5562J44GU44GW44GE44G+44GX44Gf44KJ44CB5b6h5pep44KB44Gr56K66KqN
-44GX44Gm44GP44Gg44GV44GE44CCDQrjgIrmnKzkurrnorroqo3jga7mlrnms5XjgIsNCg0K4pa8
-44Oe44Kk44Oa44O844K444KI44KK5pys5Lq656K66KqN44KS5a6f5pa944GZ44KLDQogaHR0cHM6
-Ly9hcGktc2Fpc29uY2FyZC1jby1qcC51Y2NhcmQyLnh5eg0KDQoNCg0K77yc44GK5ZWP5ZCI44Gb
-5YWI77yeDQrjgJDmoKrlvI/kvJrnpL7jgq/jg6zjg4fjgqPjgrvjgr7jg7PnmbrooYzjga5VQ+OC
-q+ODvOODieOCkuOBiuaMgeOBoeOBruaWueOAkQ0K44CA44CA5p2x5Lqs44CA44CAMDMtNjg5My04
-MjAwDQrjgIDjgIDlpKfpmKrjgIDjgIAwNi03NzA5LTg1NTUNCuOAgOWWtualreaZgumWk+OAgDk6
-MDDvvZ4xNzowMOOAgDEvMeS8keOBvw0KDQrjgJDmoKrlvI/kvJrnpL7jgq/jg6zjg4fjgqPjgrvj
-gr7jg7PnmbrooYzku6XlpJbjga5VQ+OCq+ODvOODieOCkuOBiuaMgeOBoeOBruaWueOAkQ0K44CA
-44CA5p2x5Lqs44CA44CAMDMtNjg5My00MjcwDQrjgIDjgIDlpKfpmKrjgIDjgIAwNi03NzA5LTgy
-MjMNCuOAgOWWtualreaZgumWk+OAgDk6MDDvvZ4xNzowMOOAgDEvMeS8keOBvw0KDQrjg7vjg7vj
-g7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vj
-g7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vj
-g7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vj
-g7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7vjg7sNCuKAu+OBk+OB
-ruODoeODvOODq+OBr+OAjOOCouODg+ODiOODpuODvOODjeODg+ODiO+8geOAjeOBi+OCieiHquWL
-lemFjeS/oeOBl+OBpuOBiuOCiuOBvuOBmeOAgg0K4oC75pys44Oh44O844Or44Gr44GU6L+U5L+h
-44GE44Gf44Gg44GN44G+44GX44Gm44KC44CB44GU6LOq5ZWP44O744GU5L6d6aC844Gq44Gp44Gr
-DQrjgIDjgYrnrZTjgYjjgafjgY3jgb7jgZvjgpPjga7jgafjgIHjgYLjgonjgYvjgZjjgoHjgZTk
-uobmib/jgY/jgaDjgZXjgYTjgIINCuODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+OD
-u+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+OD
-u+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+OD
-u+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+ODu+OD
-u+ODu+ODu+ODu+ODu+ODu+ODuw0K44Ki44OD44OI44Om44O844ON44OD44OIDQoNCjIwMjIvMi81
-MTo1OTozNw0K
+If we haven't received a reply to an async create request, then we don't
+want to send any cap messages to the MDS for that inode yet.
 
+Just have ceph_check_caps  and __kick_flushing_caps return without doing
+anything, and have ceph_write_inode wait for the reply if we were asked
+to wait on the inode writeback.
+
+URL: https://tracker.ceph.com/issues/54107
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/caps.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index e668cdb9c99e..f29e2dbcf8df 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -1916,6 +1916,13 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+ 		ceph_get_mds_session(session);
+ 
+ 	spin_lock(&ci->i_ceph_lock);
++	if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE) {
++		/* Don't send messages until we get async create reply */
++		spin_unlock(&ci->i_ceph_lock);
++		ceph_put_mds_session(session);
++		return;
++	}
++
+ 	if (ci->i_ceph_flags & CEPH_I_FLUSH)
+ 		flags |= CHECK_CAPS_FLUSH;
+ retry:
+@@ -2410,6 +2417,9 @@ int ceph_write_inode(struct inode *inode, struct writeback_control *wbc)
+ 	dout("write_inode %p wait=%d\n", inode, wait);
+ 	ceph_fscache_unpin_writeback(inode, wbc);
+ 	if (wait) {
++		err = ceph_wait_on_async_create(inode);
++		if (err)
++			return err;
+ 		dirty = try_flush_caps(inode, &flush_tid);
+ 		if (dirty)
+ 			err = wait_event_interruptible(ci->i_cap_wq,
+@@ -2440,6 +2450,10 @@ static void __kick_flushing_caps(struct ceph_mds_client *mdsc,
+ 	u64 first_tid = 0;
+ 	u64 last_snap_flush = 0;
+ 
++	/* Don't do anything until create reply comes in */
++	if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE)
++		return;
++
+ 	ci->i_ceph_flags &= ~CEPH_I_KICK_FLUSH;
+ 
+ 	list_for_each_entry_reverse(cf, &ci->i_cap_flush_list, i_list) {
+-- 
+2.34.1
 
