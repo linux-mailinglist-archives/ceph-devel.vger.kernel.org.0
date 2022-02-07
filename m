@@ -2,159 +2,154 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C4044ABFDD
-	for <lists+ceph-devel@lfdr.de>; Mon,  7 Feb 2022 14:49:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A2654AC353
+	for <lists+ceph-devel@lfdr.de>; Mon,  7 Feb 2022 16:29:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358103AbiBGNox (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 7 Feb 2022 08:44:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54438 "EHLO
+        id S236164AbiBGP3K (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 7 Feb 2022 10:29:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386976AbiBGNRQ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 7 Feb 2022 08:17:16 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 87226C0401DE
-        for <ceph-devel@vger.kernel.org>; Mon,  7 Feb 2022 05:17:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1644239821;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5b9YB1LucKdQ8z+iasQgelRq9dbhUULbU2amePcHtr0=;
-        b=OgZgyRImlBoENqs5qklPzOZMgUBfQ7eKmye9u3yLxX0KgyRiXsMim5DHiegDxkzjhU2suw
-        BmoJatJXBIgYh21ArYKjS++EDQAqa7Zi7jIuF3O9xNKuuH6smNvUU70EdxgTJxkU+JmVeq
-        k0RmtmVHuiw5dFKZy8F1pbkZhiK1CSM=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-622-LNHW95urPKeLHty9EcNn7Q-1; Mon, 07 Feb 2022 08:17:00 -0500
-X-MC-Unique: LNHW95urPKeLHty9EcNn7Q-1
-Received: by mail-pj1-f69.google.com with SMTP id bj11-20020a17090b088b00b001b8ba3e7ce7so2711981pjb.2
-        for <ceph-devel@vger.kernel.org>; Mon, 07 Feb 2022 05:17:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=5b9YB1LucKdQ8z+iasQgelRq9dbhUULbU2amePcHtr0=;
-        b=U+NdHGJ9aYl9Z+oAHsvGyOHlI3pX/S6txd6c3rQ2jU+eYiUAqtH4xe+EI8zYLXR2IV
-         jwU9q458QdG0jNsnVwIuf2CF4zZ58V4+ypQzy8gYWuBW82RnGNA83S/tFCczg8OnLKVU
-         Sg/xwZPiIJXxl6zO3oOTjAalyog+vqvYlay79TJPk9wsPb0utECDJtOCzCPRT6OhV5yC
-         q9A7qFE2r5Lw4j92cAx/L1gnAi9Rekkeq3aZ4DOQ32kIrIQPdhEN7U0TeqXsah4MVxi/
-         vVzMXMHIDd6T/hk7CpzzlwzaQjXvrisnpNQHYOyc/ngmacCDqVQwxbQ5t/QSDF6Cx4YN
-         Qtxg==
-X-Gm-Message-State: AOAM531GMfIKg9I8Q09H0/3qVqAXEk649ZW5HxU+3c4yWXjsJcw3/7Ud
-        B3EeftrpFEuC52X8Hj4tirR2gNHRMzSt+e7X7k80LJbBpKZyP6TqN97xi0w+UFiuE3DqbtfyqY6
-        hZZ/mq4QqzbnV0l/8O9/7H3iLWMMnJhns8LNv5LhcI8CU42l9J6C8wEMCmFVFfd63yEDAEh8=
-X-Received: by 2002:a17:902:b493:: with SMTP id y19mr15942719plr.97.1644239818764;
-        Mon, 07 Feb 2022 05:16:58 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzJQCmodgvC5U+4ynBT+oN+twFuwQoApWm6lNYOrIWMVljtPjp1yoYNoiMBcXyORzaVRtdy8g==
-X-Received: by 2002:a17:902:b493:: with SMTP id y19mr15942692plr.97.1644239818369;
-        Mon, 07 Feb 2022 05:16:58 -0800 (PST)
-Received: from [10.72.12.64] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id b4sm12182539pfv.188.2022.02.07.05.16.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Feb 2022 05:16:58 -0800 (PST)
-Subject: Re: [PATCH] ceph: wait for async create reply before sending any cap
- messages
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, pdonnell@redhat.com,
-        Ceph Development <ceph-devel@vger.kernel.org>
-References: <20220205151705.36309-1-jlayton@kernel.org>
- <60e4e14e-687b-7f8a-8dc9-548bd41619a4@redhat.com>
- <199f8e951498f261174d8c9656b6feafdcded7ad.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <6db9c335-85f6-e299-b87f-9d0c5091ee4a@redhat.com>
-Date:   Mon, 7 Feb 2022 21:16:53 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        with ESMTP id S1443515AbiBGPNW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 7 Feb 2022 10:13:22 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F35AC03E925
+        for <ceph-devel@vger.kernel.org>; Mon,  7 Feb 2022 07:12:35 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id A8AC1CE1119
+        for <ceph-devel@vger.kernel.org>; Mon,  7 Feb 2022 15:12:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F1D4C004E1;
+        Mon,  7 Feb 2022 15:12:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1644246751;
+        bh=y5eBoOQCmBnke15eTNUqktXXLsmR5tUo9jEaWpozvNk=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Lf16VtQuPeYlQHpef3ctxawnU8esAzUWSgzFYrK2i3yJWMU7HLKzbpU2af2FZpL+e
+         bgZ2F1nCIxpvl97AAcd0w79B7lqBPia7Me65hIlLcTcybju0K9I82lFOr4GiPOxezq
+         lgYl1h6DAOujgKnwR3K/OEHuM2dVvhIF76yMaFK62dWQLrVY/XMU3uJ08rJSQe42AC
+         tlLZ6jwJoKxjLjQQVgbN3lQLIe/E6R4dwaHgLAKXil5/Dc7ssUa6QITgkjD+nVfDmQ
+         gPvIJ8izP2gPW3ZUxR0JFsc4Zee+hvMlKYSL/z2O3rnDapl03dhEcKGu4SuqM8rDJk
+         +IJiS5r64/Iyg==
+Message-ID: <77bd8ec8fb97107deb57c641b5e471b8eeb828c8.camel@kernel.org>
+Subject: Re: [PATCH] ceph: fail the request directly if handle_reply gets an
+ ESTALE
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org, Sage Weil <sage@newdream.net>,
+        Gregory Farnum <gfarnum@redhat.com>,
+        ukernel <ukernel@gmail.com>
+Date:   Mon, 07 Feb 2022 10:12:29 -0500
+In-Reply-To: <20220207050340.872893-1-xiubli@redhat.com>
+References: <20220207050340.872893-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
 MIME-Version: 1.0
-In-Reply-To: <199f8e951498f261174d8c9656b6feafdcded7ad.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Mon, 2022-02-07 at 13:03 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> If MDS return ESTALE, that means the MDS has already iterated all
+> the possible active MDSes including the auth MDS or the inode is
+> under purging. No need to retry in auth MDS and will just return
+> ESTALE directly.
+> 
 
-On 2/7/22 9:08 PM, Jeff Layton wrote:
-> On Mon, 2022-02-07 at 14:54 +0800, Xiubo Li wrote:
->> On 2/5/22 11:17 PM, Jeff Layton wrote:
->>> If we haven't received a reply to an async create request, then we don't
->>> want to send any cap messages to the MDS for that inode yet.
->>>
->>> Just have ceph_check_caps  and __kick_flushing_caps return without doing
->>> anything, and have ceph_write_inode wait for the reply if we were asked
->>> to wait on the inode writeback.
->>>
->>> URL: https://tracker.ceph.com/issues/54107
->>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
->>> ---
->>>    fs/ceph/caps.c | 14 ++++++++++++++
->>>    1 file changed, 14 insertions(+)
->>>
->>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
->>> index e668cdb9c99e..f29e2dbcf8df 100644
->>> --- a/fs/ceph/caps.c
->>> +++ b/fs/ceph/caps.c
->>> @@ -1916,6 +1916,13 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
->>>    		ceph_get_mds_session(session);
->>>    
->>>    	spin_lock(&ci->i_ceph_lock);
->>> +	if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE) {
->>> +		/* Don't send messages until we get async create reply */
->>> +		spin_unlock(&ci->i_ceph_lock);
->>> +		ceph_put_mds_session(session);
->>> +		return;
->>> +	}
->>> +
->>>    	if (ci->i_ceph_flags & CEPH_I_FLUSH)
->>>    		flags |= CHECK_CAPS_FLUSH;
->>>    retry:
->>> @@ -2410,6 +2417,9 @@ int ceph_write_inode(struct inode *inode, struct writeback_control *wbc)
->>>    	dout("write_inode %p wait=%d\n", inode, wait);
->>>    	ceph_fscache_unpin_writeback(inode, wbc);
->>>    	if (wait) {
->>> +		err = ceph_wait_on_async_create(inode);
->>> +		if (err)
->>> +			return err;
->>>    		dirty = try_flush_caps(inode, &flush_tid);
->>>    		if (dirty)
->>>    			err = wait_event_interruptible(ci->i_cap_wq,
->>> @@ -2440,6 +2450,10 @@ static void __kick_flushing_caps(struct ceph_mds_client *mdsc,
->>>    	u64 first_tid = 0;
->>>    	u64 last_snap_flush = 0;
->>>    
->>> +	/* Don't do anything until create reply comes in */
->>> +	if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE)
->>> +		return;
->>> +
->>>    	ci->i_ceph_flags &= ~CEPH_I_KICK_FLUSH;
->>>    
->>>    	list_for_each_entry_reverse(cf, &ci->i_cap_flush_list, i_list) {
->> Is it also possible in case that just after the async unlinking request
->> is submit and a flush cap request is fired ? Then in MDS side the inode
->> could be removed from the cache and then the flush cap request comes.
->>
->>
->>
-> Yes. I think that race should be fairly benign though. The MDS might
-> drop the update onto the floor when it can't find the inode, but since
-> the inode is already stale, I don't think we really care...
+When you say "purging" here, do you mean that it's effectively being
+cleaned up after being unlinked? Or is it just being purged from the
+MDS's cache?
 
-Yeah, I also didn't see this will be a problem from the kclient code for 
-now.
+> Or it will cause definite loop for retrying it.
+> 
+> URL: https://tracker.ceph.com/issues/53504
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/mds_client.c | 29 -----------------------------
+>  1 file changed, 29 deletions(-)
+> 
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 93e5e3c4ba64..c918d2ac8272 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -3368,35 +3368,6 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
+>  
+>  	result = le32_to_cpu(head->result);
+>  
+> -	/*
+> -	 * Handle an ESTALE
+> -	 * if we're not talking to the authority, send to them
+> -	 * if the authority has changed while we weren't looking,
+> -	 * send to new authority
+> -	 * Otherwise we just have to return an ESTALE
+> -	 */
+> -	if (result == -ESTALE) {
+> -		dout("got ESTALE on request %llu\n", req->r_tid);
+> -		req->r_resend_mds = -1;
+> -		if (req->r_direct_mode != USE_AUTH_MDS) {
+> -			dout("not using auth, setting for that now\n");
+> -			req->r_direct_mode = USE_AUTH_MDS;
+> -			__do_request(mdsc, req);
+> -			mutex_unlock(&mdsc->mutex);
+> -			goto out;
+> -		} else  {
+> -			int mds = __choose_mds(mdsc, req, NULL);
+> -			if (mds >= 0 && mds != req->r_session->s_mds) {
+> -				dout("but auth changed, so resending\n");
+> -				__do_request(mdsc, req);
+> -				mutex_unlock(&mdsc->mutex);
+> -				goto out;
+> -			}
+> -		}
+> -		dout("have to return ESTALE on request %llu\n", req->r_tid);
+> -	}
+> -
+> -
+>  	if (head->safe) {
+>  		set_bit(CEPH_MDS_R_GOT_SAFE, &req->r_req_flags);
+>  		__unregister_request(mdsc, req);
 
-LGTM.
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+(cc'ing Greg, Sage and Zheng)
 
->
+This patch sort of contradicts the original design, AFAICT, and I'm not
+sure what the correct behavior should be. I could use some
+clarification.
 
+The original code (from the 2009 merge) would tolerate 2 ESTALEs before
+giving up and returning that to userland. Then in 2010, Greg added this
+commit:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e55b71f802fd448a79275ba7b263fe1a8639be5f
+
+...which would presumably make it retry indefinitely as long as the auth
+MDS kept changing. Then, Zheng made this change in 2013:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ca18bede048e95a749d13410ce1da4ad0ffa7938
+
+...which seems to try to do the same thing, but detected the auth mds
+change in a different way.
+
+Is that where livelock detection was broken? Or was there some
+corresponding change to __choose_mds that should prevent infinitely
+looping on the same request?
+
+In NFS, ESTALE errors mean that the filehandle (inode) no longer exists
+and that the server has forgotten about it. Does it mean the same thing
+to the ceph MDS?
+
+Has the behavior of the MDS changed such that these retries are no
+longer necessary on an ESTALE? If so, when did this change, and does the
+client need to do anything to detect what behavior it should be using?
+-- 
+Jeff Layton <jlayton@kernel.org>
