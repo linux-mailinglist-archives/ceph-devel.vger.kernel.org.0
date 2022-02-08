@@ -2,103 +2,106 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8917C4AC72F
-	for <lists+ceph-devel@lfdr.de>; Mon,  7 Feb 2022 18:23:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F9D14AD02E
+	for <lists+ceph-devel@lfdr.de>; Tue,  8 Feb 2022 05:11:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237499AbiBGRW5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 7 Feb 2022 12:22:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36186 "EHLO
+        id S1346558AbiBHELd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 7 Feb 2022 23:11:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1392027AbiBGRMH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 7 Feb 2022 12:12:07 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 853D2C03E943
-        for <ceph-devel@vger.kernel.org>; Mon,  7 Feb 2022 09:11:28 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 2FC01CE1178
-        for <ceph-devel@vger.kernel.org>; Mon,  7 Feb 2022 17:11:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B214DC004E1;
-        Mon,  7 Feb 2022 17:11:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644253883;
-        bh=ShwbwQx7EGnF5L1MMNLYgeDejhdQ9LxlxtAKzAwAx24=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ey2/tpPjcUZ3cSThilNwh19k81NR+UMP3Ueq/EXGyajZHFK8NcP2nN090GG5TvFCg
-         rcGMwpTCHIRLSE4GGVAbq5UHOB9lCr7rCWqBgsp4dzr3bdyGd6jv19ngJROO8rSj0w
-         soT14gJ4uZc4iS2OpGID0uSlRf5SqMguNglsYPcPLZSKLx0fy5D0c34KP0Rzif88mI
-         TmzL1lzooC7hTxGNu2Tmfx7z9Y30NETG/i5yOThHXNGbN95LfeFS57mXN8LxWR0sKV
-         nRMcvWq8wFzTDsn5Tf0k/Fj8C5e4hpCl964i5EE6Uq8RXxeTrN/nBRTxD9bVxeKFT9
-         5cDXbz53TOjiw==
-Message-ID: <9ee4afece5bc3445ed19a3344a11eeab697ff37e.camel@kernel.org>
-Subject: Re: [PATCH] ceph: fail the request directly if handle_reply gets an
- ESTALE
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Gregory Farnum <gfarnum@redhat.com>
-Cc:     Dan van der Ster <dan@vanderster.com>,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Venky Shankar <vshankar@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        Sage Weil <sage@newdream.net>, ukernel <ukernel@gmail.com>
-Date:   Mon, 07 Feb 2022 12:11:21 -0500
-In-Reply-To: <CAJ4mKGb3j_QNMuKmccoj43jswoReb_iP8wnJi3f-mpaN++PC7w@mail.gmail.com>
-References: <20220207050340.872893-1-xiubli@redhat.com>
-         <77bd8ec8fb97107deb57c641b5e471b8eeb828c8.camel@kernel.org>
-         <CAJ4mKGbHyn-oQwL8D3Ove0d2tD++VEXOTMSj5EDbcBk3SFX=2w@mail.gmail.com>
-         <d6f16704da303eca4d62aee58eecacb45f76f45a.camel@kernel.org>
-         <CAJ4mKGb3j_QNMuKmccoj43jswoReb_iP8wnJi3f-mpaN++PC7w@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
+        with ESMTP id S1344043AbiBHELc (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 7 Feb 2022 23:11:32 -0500
+Received: from mail-pj1-x1041.google.com (mail-pj1-x1041.google.com [IPv6:2607:f8b0:4864:20::1041])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CB8EC0401DC
+        for <ceph-devel@vger.kernel.org>; Mon,  7 Feb 2022 20:11:32 -0800 (PST)
+Received: by mail-pj1-x1041.google.com with SMTP id g15-20020a17090a67cf00b001b7d5b6bedaso1396615pjm.4
+        for <ceph-devel@vger.kernel.org>; Mon, 07 Feb 2022 20:11:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=4HWW3srFwPeoeibWEbuFvJKgAXfTYBcpWGvdOE3ZrkM=;
+        b=NGmCHjD9xS/vhthg2c0kE9x6Up1v3czTz0fYlp+eteLFKn4QTMgz4zife7C/iae7O/
+         FJcExb4QLfBd+VTa8Lk2TBHp4I5vrNeMs5xq3iZl+k/tcgtNchRnL9DtgsYUyhi2Bhop
+         C3bh4m3OBzJmxwJCBRCunsOjAz3uXhrUC4LRru6Ax+vsX8i78T8M8vJU/J8KVPnQcAjk
+         JNexHN2Gcbn0zetHzTi4DPTS5SH7OrPmxmEhCg0puEByPDSsNnjZ4+/0Qhll7dIL8nOZ
+         +InepEANihq1NfccjVJqqK26TgWkG5fA0clEfQE52A1T5XCuvZKlBmoAsV9I8r9VcPsC
+         8Sxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=4HWW3srFwPeoeibWEbuFvJKgAXfTYBcpWGvdOE3ZrkM=;
+        b=h7/FLw0Q0G63+QBRkjm5hSGmekCNO62EaJXvyOuEASzslAQ/bmoGi0hXAHINTjQSB9
+         DlUkxK+j+xpjwdqCH3LXU+nlb+BKaIW3PEvbc/fd+m8XuKWsKYgjWxGDcBnqDDiI8L7q
+         XIyDK7ijfXGF3RkNquC5wcKAVaBfkBmsa7UA/09UmWM1cRMjrMU2jGuVIWnWxm3rAX5B
+         ZUnKTvBbHVZqEC8AUdkzU2WAOLfIEK/NsO0SHNvmwOw0Y9WA/xuzda4AFDktuaEp1Egr
+         6BbVyub3EkIm2qmimlzzAfuXGrNWBqIgv6fSl+BkOdsCyhEIEDnqMenFnww35mViKU1O
+         dQvw==
+X-Gm-Message-State: AOAM533Drj37tPzW8PY0Ry3luJ2lQRRQm3noOgKgqVKEw5kW2EU0E1Pe
+        KPGfLIISADyUhw5wf9JNSBtgv1AqJJJJQUBJw00=
+X-Google-Smtp-Source: ABdhPJy98odlWAEVLCRtiT2/nBCDQ7HjDdmdZUPPz7eV+FUuorsr/1Uyq6godsvXoj8k+R0xQ4Q8y4DAXgFYCCa8gcc=
+X-Received: by 2002:a17:90a:741:: with SMTP id s1mr2401900pje.161.1644293491493;
+ Mon, 07 Feb 2022 20:11:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Received: by 2002:a05:6a10:178d:0:0:0:0 with HTTP; Mon, 7 Feb 2022 20:11:30
+ -0800 (PST)
+Reply-To: selassie.abebe@yandex.com
+From:   "Mr. Timo Helenius" <juanangelino0001@gmail.com>
+Date:   Mon, 7 Feb 2022 20:11:30 -0800
+Message-ID: <CAE93Of2dv8bAguKdgkWjrW+UUGb-Mu_+pV1krmevrcPMr4e4Bw@mail.gmail.com>
+Subject: Revamped Catastrophe
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: Yes, score=5.2 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_HK_NAME_FM_MR_MRS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:1041 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [juanangelino0001[at]gmail.com]
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [juanangelino0001[at]gmail.com]
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        *  0.0 T_HK_NAME_FM_MR_MRS No description available.
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  3.4 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2022-02-07 at 08:28 -0800, Gregory Farnum wrote:
-> On Mon, Feb 7, 2022 at 8:13 AM Jeff Layton <jlayton@kernel.org> wrote:
-> > The tracker bug mentions that this occurs after an MDS is restarted.
-> > Could this be the result of clients relying on delete-on-last-close
-> > behavior?
-> 
-> Oooh, I didn't actually look at the tracker.
-> 
-> > 
-> > IOW, we have a situation where a file is opened and then unlinked, and
-> > userland is actively doing I/O to it. The thing gets moved into the
-> > strays dir, but isn't unlinked yet because we have open files against
-> > it. Everything works fine at this point...
-> > 
-> > Then, the MDS restarts and the inode gets purged altogether. Client
-> > reconnects and tries to reclaim his open, and gets ESTALE.
-> 
-> Uh, okay. So I didn't do a proper audit before I sent my previous
-> reply, but one of the cases I did see was that the MDS returns ESTALE
-> if you try to do a name lookup on an inode in the stray directory. I
-> don't know if that's what is happening here or not? But perhaps that's
-> the root of the problem in this case.
-> 
-> Oh, nope, I see it's issuing getattr requests. That doesn't do ESTALE
-> directly so it must indeed be coming out of MDCache::path_traverse.
-> 
-> The MDS shouldn't move an inode into the purge queue on restart unless
-> there were no clients with caps on it (that state is persisted to disk
-> so it knows). Maybe if the clients don't make the reconnect window
-> it's dropping them all and *then* moves it into purge queue? I think
-> we need to identify what's happening there before we issue kernel
-> client changes, Xiubo?
+--=20
+The International Monetary Fund (IMF) Executive Board has approved
+immediate grant relief for citizen of 25 IMF's members nation.
 
-
-Agreed. I think we need to understand why he's seeing ESTALE errors in
-the first place, but it sounds like retrying on an ESTALE error isn't
-likely to be helpful.
--- 
-Jeff Layton <jlayton@kernel.org>
+This is under the IMF=E2=80=99s revamped Catastrophe Containment and Relief
+Trust (CCRT) as part of the Fund=E2=80=99s response to help address the imp=
+act
+of the COVID-19 pandemic.
+Reply to this
+Email;selassie.abebe@yandex.com
+Best regards and Stay Safe
+Mr. Timo Helenius
+Copyright @ 2022
