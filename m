@@ -2,117 +2,464 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD78C4B0A31
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Feb 2022 11:03:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 090BC4B0A7A
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Feb 2022 11:23:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239293AbiBJKCY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 10 Feb 2022 05:02:24 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47652 "EHLO
+        id S239585AbiBJKWy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 10 Feb 2022 05:22:54 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:40434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234215AbiBJKCY (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Feb 2022 05:02:24 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDB28BE0;
-        Thu, 10 Feb 2022 02:02:25 -0800 (PST)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 775E721115;
-        Thu, 10 Feb 2022 10:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1644487344; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lcBtRTov0U4scR5M2Iy2myhqZeOwAIyV54RcClAbhV4=;
-        b=UVJHxaJMKmE/DO/JZe3iVbVw3GQe2kQmip1zYFYiRYyI1pZTASyk8ODPUH85ZCuqzCIWsi
-        rV6USU5SNQRHNVVtN7czjs/tg9jgYBrlYPUuVDHO/aShUUH/4xIgSIpkWiWmMUD14J4lqn
-        gHBmV7fgdq0Mk5zS8kvpWhMAHojnEdM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1644487344;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lcBtRTov0U4scR5M2Iy2myhqZeOwAIyV54RcClAbhV4=;
-        b=3uOBgMN4Wr+d5mCyhO6cp6IQhYZtOH8ULuhOgZdIotrLORbzqWHkWV4veZpJWP42oTgmJG
-        NOB6bjhLKtWqFVCQ==
-Received: from quack3.suse.cz (unknown [10.163.28.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 0BE01A3B97;
-        Thu, 10 Feb 2022 10:02:23 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id BEB02A05BC; Thu, 10 Feb 2022 11:02:22 +0100 (CET)
-Date:   Thu, 10 Feb 2022 11:02:22 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
-        Wu Fengguang <fengguang.wu@intel.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        with ESMTP id S239532AbiBJKWv (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Feb 2022 05:22:51 -0500
+Received: from mail-vk1-xa2b.google.com (mail-vk1-xa2b.google.com [IPv6:2607:f8b0:4864:20::a2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53509FE7
+        for <ceph-devel@vger.kernel.org>; Thu, 10 Feb 2022 02:21:25 -0800 (PST)
+Received: by mail-vk1-xa2b.google.com with SMTP id d27so2769869vkn.5
+        for <ceph-devel@vger.kernel.org>; Thu, 10 Feb 2022 02:21:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6joIL1Etj/9eSMIaJdFCy+6aKXmrQGrsjeLix9Ls5Bg=;
+        b=SWtnbq0IzzOwL+SUXZl/++OIuu1S2lqXwuUqYpLPhm47rn/HCYOthkDr3ottfDAxFn
+         0WVr1s3lqMnCIjvxWKgF+ZFeUkT6H+ruBIBaPvd5s6MITWPB5K3w+N0Fw7xnNgs9Ih2+
+         QphAThjijmjVILaA0WPWWQY9eP/7pqaSbuImgK7ITVGSWmbECCvWu59JHrA+lHmw6Oo3
+         MBLErX6EIZteME7lHyJch2I6PkoN+wkxaBDtTWEFacX2cDwED93Uryz9Qo8etghHlOEg
+         Xj5+IN3fEsOqqMtuwceh0TapBgS5LD5xo8YY4MVBPOT7h6ynD4E9OFOKdTQF7hqgdeGk
+         dJSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6joIL1Etj/9eSMIaJdFCy+6aKXmrQGrsjeLix9Ls5Bg=;
+        b=iCHug/uuVXZBBXvU5ubeW3WjO9GQxi3UWUy4A0mMEavqpljXeghILv73AZpN/y+4A2
+         TNknYXfBdETYPrawJwgzgtV++JnDrocrfN/zPoCAHcw0sldAvXxqREbd9Si7EtM4iOIP
+         r7O0aiK7yOSGbcPrAPnZrWvLyWAeGKXpBTcnPVyJUIWwytnvALZiX/5Yv6E+mpCyktdu
+         ZmQSfhOpzqzPHqnDPDZqglhXyE+cr3HWPcV5TqaI0ZS0PRR/8VoGYxXkyop35xyAooLK
+         rqoxvX6lUD8GgUm7+fPWRXM+e/awjs1PxKpbXnV0kNzrvaBZ2rkvC1MFa4lsBQrOb0fW
+         n6LQ==
+X-Gm-Message-State: AOAM533fK4er2PimiM6iiBalRPeEgojRUwdb0sCY92urtOzRXxU3YOTW
+        HoUxeCMcjBIOa1WoLg3VmH4EjsvovtE7pwWf9zM=
+X-Google-Smtp-Source: ABdhPJwDwbrRESl9ZM3/2COOy45vJIaYYqMuVeQVM9I6c27TUnGGce+PEsKka+wQEss9Va6EL+P+t4sQ8LlPLDPVs4A=
+X-Received: by 2002:a05:6122:511:: with SMTP id x17mr2243648vko.24.1644488484265;
+ Thu, 10 Feb 2022 02:21:24 -0800 (PST)
+MIME-Version: 1.0
+References: <20220210032156.156924-1-mchangir@redhat.com> <20220210032156.156924-2-mchangir@redhat.com>
+ <3aa1f569-bd53-8694-ea9a-13256d902b69@redhat.com>
+In-Reply-To: <3aa1f569-bd53-8694-ea9a-13256d902b69@redhat.com>
+From:   Milind Changire <milindchangire@gmail.com>
+Date:   Thu, 10 Feb 2022 15:51:12 +0530
+Message-ID: <CANmksPR_iJwWPqj7CgTibzDwXVH2bw4RXP_ZkPtYEgvh7eBDFQ@mail.gmail.com>
+Subject: Re: [PATCH v7 1/1] ceph: add getvxattr op
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Milind Changire <mchangir@redhat.com>,
         Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 10/11] block/bfq-iosched.c: use "false" rather than
- "BLK_RW_ASYNC"
-Message-ID: <20220210100222.f2nmwwb5pcfmejvw@quack3.lan>
-References: <164447124918.23354.17858831070003318849.stgit@noble.brown>
- <164447147264.23354.2763356897218946255.stgit@noble.brown>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <164447147264.23354.2763356897218946255.stgit@noble.brown>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu 10-02-22 16:37:52, NeilBrown wrote:
-> bfq_get_queue() expects a "bool" for the third arg, so pass "false"
-> rather than "BLK_RW_ASYNC" which will soon be removed.
-> 
-> Acked-by: Jens Axboe <axboe@kernel.dk>
-> Signed-off-by: NeilBrown <neilb@suse.de>
+On Thu, Feb 10, 2022 at 2:23 PM Xiubo Li <xiubli@redhat.com> wrote:
+>
+>
+> On 2/10/22 11:21 AM, Milind Changire wrote:
+> > Problem:
+> > Directory vxattrs like ceph.dir.pin* and ceph.dir.layout* may not be
+> > propagated to the client as frequently to keep them updated. This
+> > creates vxattr availability problems.
+> >
+> > Solution:
+> > Adds new getvxattr op to fetch ceph.dir.pin*, ceph.dir.layout* and
+> > ceph.file.layout* vxattrs.
+> > If the entire layout for a dir or a file is being set, then it is
+> > expected that the layout be set in standard JSON format. Individual
+> > field value retrieval is not wrapped in JSON. The JSON format also
+> > applies while setting the vxattr if the entire layout is being set in
+> > one go.
+> > As a temporary measure, setting a vxattr can also be done in the old
+> > format. The old format will be deprecated in the future.
+> >
+> > URL: https://tracker.ceph.com/issues/51062
+> > Signed-off-by: Milind Changire <mchangir@redhat.com>
+> > ---
+> >   fs/ceph/inode.c              | 104 +++++++++++++++++++++++++++++++++++
+> >   fs/ceph/mds_client.c         |  32 +++++++++++
+> >   fs/ceph/mds_client.h         |  24 +++++++-
+> >   fs/ceph/strings.c            |   1 +
+> >   fs/ceph/super.h              |   1 +
+> >   fs/ceph/xattr.c              |  15 ++++-
+> >   include/linux/ceph/ceph_fs.h |   1 +
+> >   7 files changed, 175 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > index e3322fcb2e8d..7d05863a43db 100644
+> > --- a/fs/ceph/inode.c
+> > +++ b/fs/ceph/inode.c
+> > @@ -2291,6 +2291,110 @@ int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
+> >       return err;
+> >   }
+> >
+> > +int ceph_vet_session(struct ceph_mds_client *mdsc,
+> > +                  struct ceph_mds_request *req,
+> > +                  bool *random)
+> > +{
+> > +     struct ceph_inode_info *ci = ceph_inode(req->r_inode);
+> > +     struct ceph_mds_session *session;
+> > +     int mds_with_getvxattr_support = 0;
+> > +     int idx = MDS_RANK_UNAVAILABLE;
+> > +     int rnd;
+> > +     int i;
+> > +
+> > +     if (req->r_op == CEPH_MDS_OP_GETVXATTR) {
+> > +             session = ci->i_auth_cap->session;
+>
+> I think you missed to fix this, as Jeff mentioned the ci->i_auth_cap is
+> possibly be NULL.
+>
+> The code could be something like:
+>
+>      session = ci->i_auth_cap ? ci->i_auth_cap->session : NULL;
 
-Looks good. Feel free to add:
+thanks for pointing this out
+will fix in v8 patch
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+>
+> > +             /* check if the auth mds supports the getvxattr feature */
+> > +             if (session &&
+> > +                 test_bit(CEPHFS_FEATURE_GETVXATTR, &session->s_features)) {
+> > +                     for (i = 0; i < mdsc->max_sessions; i++) {
+> > +                             if (mdsc->sessions[i] && session == mdsc->sessions[i]) {
+> > +                                     idx = i;
+> > +                                     break;
+> > +                             }
+> > +                     }
+>
+> You could just return 'session->s_mds' here.
 
-								Honza
+ack
 
-> ---
->  block/bfq-iosched.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-> index 0c612a911696..4e645ae1e066 100644
-> --- a/block/bfq-iosched.c
-> +++ b/block/bfq-iosched.c
-> @@ -5448,7 +5448,7 @@ static void bfq_check_ioprio_change(struct bfq_io_cq *bic, struct bio *bio)
->  	bfqq = bic_to_bfqq(bic, false);
->  	if (bfqq) {
->  		bfq_release_process_ref(bfqd, bfqq);
-> -		bfqq = bfq_get_queue(bfqd, bio, BLK_RW_ASYNC, bic, true);
-> +		bfqq = bfq_get_queue(bfqd, bio, false, bic, true);
->  		bic_set_bfqq(bic, bfqq, false);
->  	}
->  
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+>
+> > +             } else {
+> > +                     for (i = 0; i < mdsc->max_sessions; i++) {
+> > +                             if (mdsc->sessions[i] &&
+> > +                                 test_bit(CEPHFS_FEATURE_GETVXATTR,
+> > +                                          &mdsc->sessions[i]->s_features))
+> > +                                     mds_with_getvxattr_support++;
+> > +                     }
+> > +                     if (!mds_with_getvxattr_support)
+> > +                             goto out;
+> > +
+> > +                     /* choose a random mds with getvxattr support */
+> > +                     rnd = prandom_u32() % mds_with_getvxattr_support;
+> > +                     for (i = 0; i < mdsc->max_sessions; i++) {
+> > +                             if (mdsc->sessions[i] &&
+> > +                                 test_bit(CEPHFS_FEATURE_GETVXATTR,
+> > +                                          &mdsc->sessions[i]->s_features)) {
+> > +                                     if (rnd)
+> > +                                             rnd--;
+> > +                                     if (!rnd) {
+> > +                                             idx = i;
+> > +                                             break;
+> > +                                     }
+> > +                             }
+> > +                     }
+> > +                     *random = true;
+>
+> The 'random' could be NULL here.
+
+ack
+
+>
+>
+> > +             }
+> > +     }
+> > +out:
+> > +     return idx;
+> > +}
+> > +
+> > +int ceph_do_getvxattr(struct inode *inode, const char *name, void *value,
+> > +                   size_t size)
+> > +{
+> > +     struct ceph_fs_client *fsc = ceph_sb_to_client(inode->i_sb);
+> > +     struct ceph_mds_client *mdsc = fsc->mdsc;
+> > +     struct ceph_mds_request *req;
+> > +     int mode = USE_AUTH_MDS;
+> > +     int err;
+> > +     char *xattr_value;
+> > +     size_t xattr_value_len;
+> > +
+> > +     req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETVXATTR, mode);
+> > +     if (IS_ERR(req)) {
+> > +             err = -ENOMEM;
+> > +             goto out;
+> > +     }
+> > +
+> > +     req->r_path2 = kstrdup(name, GFP_NOFS);
+> > +     if (!req->r_path2) {
+> > +             err = -ENOMEM;
+> > +             goto put;
+> > +     }
+> > +
+> > +     ihold(inode);
+> > +     req->r_inode = inode;
+> > +     err = ceph_mdsc_do_request(mdsc, NULL, req);
+> > +     if (err < 0)
+> > +             goto put;
+> > +
+> > +     xattr_value = req->r_reply_info.xattr_info.xattr_value;
+> > +     xattr_value_len = req->r_reply_info.xattr_info.xattr_value_len;
+> > +
+> > +     dout("do_getvxattr xattr_value_len:%zu, size:%zu\n", xattr_value_len, size);
+> > +
+> > +     err = (int)xattr_value_len;
+> > +     if (size == 0)
+> > +             goto put;
+> > +
+> > +     if (xattr_value_len > size) {
+> > +             err = -ERANGE;
+> > +             goto put;
+> > +     }
+> > +
+> > +     memcpy(value, xattr_value, xattr_value_len);
+> > +put:
+> > +     ceph_mdsc_put_request(req);
+> > +out:
+> > +     dout("do_getvxattr result=%d\n", err);
+> > +     return err;
+> > +}
+> > +
+> >
+> >   /*
+> >    * Check inode permissions.  We verify we have a valid value for
+> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > index c30eefc0ac19..87df4ef6880b 100644
+> > --- a/fs/ceph/mds_client.c
+> > +++ b/fs/ceph/mds_client.c
+> > @@ -555,6 +555,29 @@ static int parse_reply_info_create(void **p, void *end,
+> >       return -EIO;
+> >   }
+> >
+> > +static int parse_reply_info_getvxattr(void **p, void *end,
+> > +                                   struct ceph_mds_reply_info_parsed *info,
+> > +                                   u64 features)
+> > +{
+> > +     u8 struct_v, struct_compat;
+> > +     u32 struct_len;
+> > +     u32 value_len;
+> > +
+> > +     ceph_decode_8_safe(p, end, struct_v, bad);
+> > +     ceph_decode_8_safe(p, end, struct_compat, bad);
+> > +     ceph_decode_32_safe(p, end, struct_len, bad);
+> > +     ceph_decode_32_safe(p, end, value_len, bad);
+> > +
+> > +     if (value_len == end - *p) {
+> > +       info->xattr_info.xattr_value = *p;
+> > +       info->xattr_info.xattr_value_len = value_len;
+> > +       *p = end;
+> > +       return value_len;
+> > +     }
+> > +bad:
+> > +     return -EIO;
+> > +}
+> > +
+> >   /*
+> >    * parse extra results
+> >    */
+> > @@ -570,6 +593,8 @@ static int parse_reply_info_extra(void **p, void *end,
+> >               return parse_reply_info_readdir(p, end, info, features);
+> >       else if (op == CEPH_MDS_OP_CREATE)
+> >               return parse_reply_info_create(p, end, info, features, s);
+> > +     else if (op == CEPH_MDS_OP_GETVXATTR)
+> > +             return parse_reply_info_getvxattr(p, end, info, features);
+> >       else
+> >               return -EIO;
+> >   }
+> > @@ -1041,6 +1066,9 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
+> >       if (mode == USE_RANDOM_MDS)
+> >               goto random;
+> >
+> > +     if (mode == USE_VETTED_MDS)
+>
+> Where sets this flag ?
+
+:P     oops!
+I built the infrastructure, but forgot to tie it all together
+will fix in v8 patch
+
+>
+>
+>
+> > +             return req->r_vet_session(mdsc, req, random);
+> > +
+> >       inode = NULL;
+> >       if (req->r_inode) {
+> >               if (ceph_snap(req->r_inode) != CEPH_SNAPDIR) {
+> > @@ -2770,6 +2798,10 @@ static void __do_request(struct ceph_mds_client *mdsc,
+> >       put_request_session(req);
+> >
+> >       mds = __choose_mds(mdsc, req, &random);
+> > +     if (mds == MDS_RANK_UNAVAILABLE) {
+> > +             err = -EOPNOTSUPP;
+> > +             goto finish;
+> > +     }
+> >       if (mds < 0 ||
+> >           ceph_mdsmap_get_state(mdsc->mdsmap, mds) < CEPH_MDS_STATE_ACTIVE) {
+> >               if (test_bit(CEPH_MDS_R_ASYNC, &req->r_req_flags)) {
+> > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> > index 97c7f7bfa55f..94230fae9e71 100644
+> > --- a/fs/ceph/mds_client.h
+> > +++ b/fs/ceph/mds_client.h
+> > @@ -29,8 +29,10 @@ enum ceph_feature_type {
+> >       CEPHFS_FEATURE_MULTI_RECONNECT,
+> >       CEPHFS_FEATURE_DELEG_INO,
+> >       CEPHFS_FEATURE_METRIC_COLLECT,
+> > +     CEPHFS_FEATURE_ALTERNATE_NAME,
+> > +     CEPHFS_FEATURE_GETVXATTR,
+> >
+> > -     CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_METRIC_COLLECT,
+> > +     CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_GETVXATTR,
+> >   };
+> >
+> >   /*
+> > @@ -45,6 +47,8 @@ enum ceph_feature_type {
+> >       CEPHFS_FEATURE_MULTI_RECONNECT,         \
+> >       CEPHFS_FEATURE_DELEG_INO,               \
+> >       CEPHFS_FEATURE_METRIC_COLLECT,          \
+> > +     CEPHFS_FEATURE_ALTERNATE_NAME,          \
+> > +     CEPHFS_FEATURE_GETVXATTR,               \
+> >                                               \
+> >       CEPHFS_FEATURE_MAX,                     \
+> >   }
+> > @@ -100,6 +104,11 @@ struct ceph_mds_reply_dir_entry {
+> >       loff_t                        offset;
+> >   };
+> >
+> > +struct ceph_mds_reply_xattr {
+> > +     char *xattr_value;
+> > +     size_t xattr_value_len;
+> > +};
+> > +
+> >   /*
+> >    * parsed info about an mds reply, including information about
+> >    * either: 1) the target inode and/or its parent directory and dentry,
+> > @@ -115,6 +124,7 @@ struct ceph_mds_reply_info_parsed {
+> >       char                          *dname;
+> >       u32                           dname_len;
+> >       struct ceph_mds_reply_lease   *dlease;
+> > +     struct ceph_mds_reply_xattr   xattr_info;
+> >
+> >       /* extra */
+> >       union {
+> > @@ -222,6 +232,14 @@ enum {
+> >       USE_ANY_MDS,
+> >       USE_RANDOM_MDS,
+> >       USE_AUTH_MDS,   /* prefer authoritative mds for this metadata item */
+> > +     USE_VETTED_MDS  /* eg. use an mds supporting particular feature */
+> > +};
+> > +
+> > +/*
+> > + * special mds rank
+> > + */
+> > +enum {
+> > +     MDS_RANK_UNAVAILABLE = (int)0x80000000 /* INT_MIN */
+> >   };
+> >
+> >   struct ceph_mds_request;
+> > @@ -337,6 +355,10 @@ struct ceph_mds_request {
+> >       int               r_readdir_cache_idx;
+> >
+> >       struct ceph_cap_reservation r_caps_reservation;
+> > +     /* return mds rank to send request to */
+> > +     int (*r_vet_session)(struct ceph_mds_client *mdsc,
+> > +                          struct ceph_mds_request *req,
+> > +                          bool *random);
+> >   };
+> >
+> >   struct ceph_pool_perm {
+> > diff --git a/fs/ceph/strings.c b/fs/ceph/strings.c
+> > index 573bb9556fb5..e36e8948e728 100644
+> > --- a/fs/ceph/strings.c
+> > +++ b/fs/ceph/strings.c
+> > @@ -60,6 +60,7 @@ const char *ceph_mds_op_name(int op)
+> >       case CEPH_MDS_OP_LOOKUPINO:  return "lookupino";
+> >       case CEPH_MDS_OP_LOOKUPNAME:  return "lookupname";
+> >       case CEPH_MDS_OP_GETATTR:  return "getattr";
+> > +     case CEPH_MDS_OP_GETVXATTR:  return "getvxattr";
+> >       case CEPH_MDS_OP_SETXATTR: return "setxattr";
+> >       case CEPH_MDS_OP_SETATTR: return "setattr";
+> >       case CEPH_MDS_OP_RMXATTR: return "rmxattr";
+> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > index ac331aa07cfa..a627fa69668e 100644
+> > --- a/fs/ceph/super.h
+> > +++ b/fs/ceph/super.h
+> > @@ -1043,6 +1043,7 @@ static inline bool ceph_inode_is_shutdown(struct inode *inode)
+> >
+> >   /* xattr.c */
+> >   int __ceph_setxattr(struct inode *, const char *, const void *, size_t, int);
+> > +int ceph_do_getvxattr(struct inode *inode, const char *name, void *value, size_t size);
+> >   ssize_t __ceph_getxattr(struct inode *, const char *, void *, size_t);
+> >   extern ssize_t ceph_listxattr(struct dentry *, char *, size_t);
+> >   extern struct ceph_buffer *__ceph_build_xattrs_blob(struct ceph_inode_info *ci);
+> > diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> > index fcf7dfdecf96..557749882aa2 100644
+> > --- a/fs/ceph/xattr.c
+> > +++ b/fs/ceph/xattr.c
+> > @@ -923,9 +923,12 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
+> >   {
+> >       struct ceph_inode_info *ci = ceph_inode(inode);
+> >       struct ceph_inode_xattr *xattr;
+> > -     struct ceph_vxattr *vxattr = NULL;
+> > +     struct ceph_vxattr *vxattr;
+> >       int req_mask;
+> > -     ssize_t err;
+> > +     ssize_t err = -ENODATA;
+> > +
+> > +     if (strncmp(name, XATTR_CEPH_PREFIX, XATTR_CEPH_PREFIX_LEN))
+> > +             goto out_nounlock;
+> >
+> >       /* let's see if a virtual xattr was requested */
+> >       vxattr = ceph_match_vxattr(inode, name);
+> > @@ -945,6 +948,13 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
+> >                               err = -ERANGE;
+> >               }
+> >               return err;
+> > +     } else {
+> > +             err = -ENODATA;
+> > +             spin_unlock(&ci->i_ceph_lock);
+> > +             err = ceph_do_getvxattr(inode, name, value, size);
+> > +             spin_lock(&ci->i_ceph_lock);
+> > +
+> > +             goto out;
+> >       }
+> >
+> >       req_mask = __get_request_mask(inode);
+> > @@ -997,6 +1007,7 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
+> >               ci->i_ceph_flags |= CEPH_I_SEC_INITED;
+> >   out:
+> >       spin_unlock(&ci->i_ceph_lock);
+> > +out_nounlock:
+> >       return err;
+> >   }
+> >
+> > diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+> > index 7ad6c3d0db7d..66db21ac5f0c 100644
+> > --- a/include/linux/ceph/ceph_fs.h
+> > +++ b/include/linux/ceph/ceph_fs.h
+> > @@ -328,6 +328,7 @@ enum {
+> >       CEPH_MDS_OP_LOOKUPPARENT = 0x00103,
+> >       CEPH_MDS_OP_LOOKUPINO  = 0x00104,
+> >       CEPH_MDS_OP_LOOKUPNAME = 0x00105,
+> > +     CEPH_MDS_OP_GETVXATTR  = 0x00106,
+> >
+> >       CEPH_MDS_OP_SETXATTR   = 0x01105,
+> >       CEPH_MDS_OP_RMXATTR    = 0x01106,
+>
