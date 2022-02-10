@@ -2,59 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 853F84B0811
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Feb 2022 09:23:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 639834B08E6
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Feb 2022 09:53:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237360AbiBJIWz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 10 Feb 2022 03:22:55 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56710 "EHLO
+        id S237999AbiBJIxj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 10 Feb 2022 03:53:39 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237329AbiBJIWx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Feb 2022 03:22:53 -0500
+        with ESMTP id S236738AbiBJIxi (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Feb 2022 03:53:38 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E2D3D109E
-        for <ceph-devel@vger.kernel.org>; Thu, 10 Feb 2022 00:22:53 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D3454D4A
+        for <ceph-devel@vger.kernel.org>; Thu, 10 Feb 2022 00:53:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1644481372;
+        s=mimecast20190719; t=1644483219;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=mP7CLa73MNckcHzj3Z9bIP87Zh1fl91j8NKqj/anmY4=;
-        b=JRmNEejtJxpzX9KpzIMvh2rjuFnMyKITR6VlZloe2FacLpciNyCytLYA5y8PxixLhwkYED
-        x5EIHGXRnzjuhzlOFstuUC9bf/I47IhasDx1gdEB6UpbEBByrJHtnoUuglL8U0a5XYrjJV
-        em4e/LVmdAHcXFJNU+oLD1H+gV3zMgo=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=Nr0K7FT2qlO6DXj1+50nGJYec4GyIclmMsGSWDLHvCY=;
+        b=Fq/DzebuKsl/i89Q/MMyfBDBoO3KC3AEZ/GSfuFccp8m4NtAA5XEOAZjT9wsZRvTyCj6A4
+        J5mezi+U6xqcaryX9e7qdXwoXxHRtEMMsS3yKF1WkIEt8Dkm+ZIlz4NK4qNhzbaFqnownA
+        qPC0KVCPN3SHijFef9EBq8KL2CF6YFI=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-79-kjj12DvnP9WPBHGctg1aOA-1; Thu, 10 Feb 2022 03:22:51 -0500
-X-MC-Unique: kjj12DvnP9WPBHGctg1aOA-1
-Received: by mail-pj1-f70.google.com with SMTP id hi22-20020a17090b30d600b001b8b33cf0efso3781474pjb.1
-        for <ceph-devel@vger.kernel.org>; Thu, 10 Feb 2022 00:22:51 -0800 (PST)
+ us-mta-533-DnrVwx3eMDaEYAITD7YXLg-1; Thu, 10 Feb 2022 03:53:37 -0500
+X-MC-Unique: DnrVwx3eMDaEYAITD7YXLg-1
+Received: by mail-pj1-f71.google.com with SMTP id 62-20020a17090a09c400b001b80b0742b0so3486888pjo.8
+        for <ceph-devel@vger.kernel.org>; Thu, 10 Feb 2022 00:53:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=mP7CLa73MNckcHzj3Z9bIP87Zh1fl91j8NKqj/anmY4=;
-        b=WRxbH7p5E/8FcE7CYb2dJDtW71nitvZLJGPYgV4fRFuZmZB4IdCnHhkgS2sh+C/F/r
-         EetmItlS2mRbGqIncxCo2lLhf6V+JaBatDZ28D57p66vYM0sHbslrA9Ke/JXQLTHZh55
-         CMhLvTPpbVuW6wXRkqdCfI6YqXqN6COsFkQ0nfDbHosJhIv6k14Jzzw3mcQBV2TXAA2H
-         8NY2DxIjaAk8Lp/4GXTZ9I8kwOXt7Vl2l4e+fhrrK8Y8RE235Me0u7DkZaFWh/cN9lCx
-         CwClGhphssbizR5IWwjCQUa6+wWw2QMDwWCfj2tx/SLQE7xjUeM/LdlbSTDe0PfcEL6B
-         Q3mA==
-X-Gm-Message-State: AOAM5311Lyre3BK/cyQhK8bjOC3q+M0gDL9uKRzX08GSdUancEpteTH4
-        UIj17twer1yrYuRQ6ZoO8hn/Xf2rGz8XyxCqhXnnxoM+a0tf5S8BcxRokTBWoaRKFXuEQBYTdp2
-        NtGDHoeN3Uq9YIRy0RM46DOuNfDYolvymEKAX1ky+xunM32oPHTuk2mlbCkfSlFaqPNVAqeE=
-X-Received: by 2002:a65:4d0f:: with SMTP id i15mr5342066pgt.464.1644481370214;
-        Thu, 10 Feb 2022 00:22:50 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzBxCQaH6V4K7I5riCmGw8GincfQWKXWHt8e/vfhARBaQCMeS3STPG5HVmybkzuIwcHRCvtuA==
-X-Received: by 2002:a65:4d0f:: with SMTP id i15mr5342042pgt.464.1644481369776;
-        Thu, 10 Feb 2022 00:22:49 -0800 (PST)
+        bh=Nr0K7FT2qlO6DXj1+50nGJYec4GyIclmMsGSWDLHvCY=;
+        b=jSeZQnKusJVJER0xRqztM9mYYsCNS8hfstbXhsgMZYttHu0lEUzPDjzo8XmdZ0MnmB
+         Q1lyzGAeWq7P+TFmlbWlsLAfIB5GdmQKwUPQGYhkjXvqP5vKeUh4uPXVwv6ugP8v1aI0
+         ZIDXKljMLzysPFgpfdAEL3S1rHCzQP8UTImSBujoEVchzlt2vBmifDv9yNcK5yMs6eut
+         ylZwB4b+0sLXF8wmPcTCfDTTzz9XvY+WRgh9VoQxPKcUAcvGIjLUjywjh9XfwSlHPUlD
+         gepizx750M8WSVbUNylbE6CzW6qtUoN7EmbSV3Nry0gqmJp/hB00VcG98rzPLFIuN+ze
+         t+1w==
+X-Gm-Message-State: AOAM530KOI13uVG7a4NA/rvTuACko6gXwjxqDt8aB2l+aE8svVANcfQX
+        oLWDFI863eihrmBZ5M2u1UBxv/FLJf5xEWiWuC2IO1CtjdGVYPFoQEQnSqDbcbRP7s69b1dSUJb
+        yz7RkKvsenflBijHi6vtsXNRp0uDF0cccJQCGuP3vnlK4RrzMXz7e/qg/iyVb1Hsoo/64ae0=
+X-Received: by 2002:a63:b90f:: with SMTP id z15mr5401127pge.73.1644483216088;
+        Thu, 10 Feb 2022 00:53:36 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxhZrkAjeSNZC1ih3I3mAbc10LbmEtcad6UnUpBfE5hm11KfOFYwLLIid3LfYdjL5IvlleCQg==
+X-Received: by 2002:a63:b90f:: with SMTP id z15mr5401107pge.73.1644483215532;
+        Thu, 10 Feb 2022 00:53:35 -0800 (PST)
 Received: from [10.72.12.153] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id m23sm21231989pff.201.2022.02.10.00.22.45
+        by smtp.gmail.com with ESMTPSA id lr8sm1551756pjb.11.2022.02.10.00.53.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Feb 2022 00:22:49 -0800 (PST)
+        Thu, 10 Feb 2022 00:53:34 -0800 (PST)
 Subject: Re: [PATCH v7 1/1] ceph: add getvxattr op
 To:     Milind Changire <milindchangire@gmail.com>
 Cc:     Milind Changire <mchangir@redhat.com>,
@@ -64,14 +64,14 @@ Cc:     Milind Changire <mchangir@redhat.com>,
 References: <20220210032156.156924-1-mchangir@redhat.com>
  <20220210032156.156924-2-mchangir@redhat.com>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <ebdc7ed0-ed28-8a6c-3bd4-5f22bafee8f8@redhat.com>
-Date:   Thu, 10 Feb 2022 16:22:30 +0800
+Message-ID: <3aa1f569-bd53-8694-ea9a-13256d902b69@redhat.com>
+Date:   Thu, 10 Feb 2022 16:53:20 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
 In-Reply-To: <20220210032156.156924-2-mchangir@redhat.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
@@ -125,10 +125,6 @@ On 2/10/22 11:21 AM, Milind Changire wrote:
 > +		     struct ceph_mds_request *req,
 > +		     bool *random)
 > +{
-
-This function is defined but not used anywhere ?
-
-
 > +	struct ceph_inode_info *ci = ceph_inode(req->r_inode);
 > +	struct ceph_mds_session *session;
 > +	int mds_with_getvxattr_support = 0;
@@ -138,6 +134,14 @@ This function is defined but not used anywhere ?
 > +
 > +	if (req->r_op == CEPH_MDS_OP_GETVXATTR) {
 > +		session = ci->i_auth_cap->session;
+
+I think you missed to fix this, as Jeff mentioned the ci->i_auth_cap is 
+possibly be NULL.
+
+The code could be something like:
+
+     session = ci->i_auth_cap ? ci->i_auth_cap->session : NULL;
+
 > +		/* check if the auth mds supports the getvxattr feature */
 > +		if (session &&
 > +		    test_bit(CEPHFS_FEATURE_GETVXATTR, &session->s_features)) {
@@ -147,6 +151,10 @@ This function is defined but not used anywhere ?
 > +					break;
 > +				}
 > +			}
+
+You could just return 'session->s_mds' here.
+
+
 > +		} else {
 > +			for (i = 0; i < mdsc->max_sessions; i++) {
 > +				if (mdsc->sessions[i] &&
@@ -172,6 +180,10 @@ This function is defined but not used anywhere ?
 > +				}
 > +			}
 > +			*random = true;
+
+The 'random' could be NULL here.
+
+
 > +		}
 > +	}
 > +out:
@@ -280,6 +292,11 @@ This function is defined but not used anywhere ?
 >   		goto random;
 >   
 > +	if (mode == USE_VETTED_MDS)
+
+Where sets this flag ?
+
+
+
 > +		return req->r_vet_session(mdsc, req, random);
 > +
 >   	inode = NULL;
