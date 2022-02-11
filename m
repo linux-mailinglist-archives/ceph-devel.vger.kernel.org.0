@@ -2,74 +2,87 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1266C4B24B3
-	for <lists+ceph-devel@lfdr.de>; Fri, 11 Feb 2022 12:46:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F0804B255C
+	for <lists+ceph-devel@lfdr.de>; Fri, 11 Feb 2022 13:12:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349586AbiBKLq2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 11 Feb 2022 06:46:28 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58924 "EHLO
+        id S1349878AbiBKMM3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 11 Feb 2022 07:12:29 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230229AbiBKLq1 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 11 Feb 2022 06:46:27 -0500
-Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC4D9EAE
-        for <ceph-devel@vger.kernel.org>; Fri, 11 Feb 2022 03:46:26 -0800 (PST)
-Received: by mail-lf1-x12e.google.com with SMTP id f10so15958251lfu.8
-        for <ceph-devel@vger.kernel.org>; Fri, 11 Feb 2022 03:46:26 -0800 (PST)
+        with ESMTP id S1346291AbiBKMM2 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 11 Feb 2022 07:12:28 -0500
+Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94542E56
+        for <ceph-devel@vger.kernel.org>; Fri, 11 Feb 2022 04:12:27 -0800 (PST)
+Received: by mail-qv1-xf2c.google.com with SMTP id fh9so8359442qvb.1
+        for <ceph-devel@vger.kernel.org>; Fri, 11 Feb 2022 04:12:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=McOiSDNoaeF50/hXDWelqddidRWV0jMwYc8ldu3TNkk=;
-        b=RXWcdqDlHkbo8ZrQ/4/FRUQSWiETxIRhM/PfTwrxzTZhJghDT83Fp1w7Vj5XsmZbkp
-         ftxPtWX6OyH9rv9S9RM2ZwE5DtsrI3qMMvr03AiZplZtRF9oS82mTMTQYfIGr7HqXhqz
-         HymZZKhOKGeqoi0vJ61yO8GcRVtxUBQ+VglmWVo8R+6YCa4cty4DZXGJiNl2c9V2GkK1
-         +P0zjglXDidc/WiNCbc+hVATzeG7np29AOoH5081X3LNORLrqX8nMIaSpIVrfgzWtLgK
-         ENb+vhZjcPQ9t5tRJFMN78ixZ+Ekly2ABt0ibonhE2i0iieX0tA/SYCtynXZ4WpeV0Pq
-         ZRzg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ONeXesWkDq1T1rGiHOjrw8MGGvxhsHkA+E5J4kI2J6I=;
+        b=BrC5A+YeNBSEr5tyuqQZs+HFEoVBBGTY3ZwM0lNDtwdJOvuQlSAhAjXx2yPUB8cqfQ
+         UujBEuWg/0rBp7hzRhcyDoi3IaB68n4gE4mmgujQqaoMeWqOq4Ll2HpvZ6drvz9aAVKX
+         iSlCYPm7cKVeJ72GYYhJRvYm3IDGIeBlZVD/sdyCUIbkjCg8cEzKE5kFQ3d7GhvM3kKo
+         RIdC/SXKj4iuKV78IVHvirhEw/zf1bLnJkrBKRsm4iyp+dV/WzfRkTAguvOd93lzdtJL
+         uG4vj8RICez7cnzai3a1vyw0dbkqj5v2bAv8xNNkGMhLoj5PMgksnGSHBn+mzTuLj+Uk
+         Yp5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
-         :from:date:message-id:subject:to:content-transfer-encoding;
-        bh=McOiSDNoaeF50/hXDWelqddidRWV0jMwYc8ldu3TNkk=;
-        b=2zUfeKFAnIcAmmETlktz99x0WUPiwchXTXIpCWy9IRs5n1IATB52BUeNpvCMhCmb+4
-         4WZ5hw8ipI/ztx5zPxoy74KUUBY/siIp/e+D5HBXEQ04h1HBwLRa3ifBhiC5HReGY2xr
-         cdlfAqq666elOStdGf53tNw3PdyETRTP2Qyv8aPOmFF9k7kJQzAU+9rgQ316KWspEs9S
-         F+dDQluoP5OlXSwdJ5PhCnSC41H1VyqA6/L9VJk9yjtcdfmyyIEa0STPjn/QKBrG53zJ
-         wyHvkF/hR0P6auuefAVKpxKSnksiw/rhsr6zNXFNmCtk/MtzHWE29rhlpdibgQ3W0YWp
-         yh5g==
-X-Gm-Message-State: AOAM532mdMzdwUYgUbvT/YojOBdmsLuEFRCtY7h8T16plGKD1Y3hEDkX
-        GnspRJUZbQTpod04ouXumWPmdpazGcy/DuH5Bw==
-X-Google-Smtp-Source: ABdhPJx73iVOBK2n6KXHvwEuWwvOn8JDig8v5HKFTT7NaRPmh/zA1XwS7w/4IzRxp0VzXPZqRe4//7PoLXWFEMwBi1g=
-X-Received: by 2002:a05:6512:1083:: with SMTP id j3mr932357lfg.94.1644579985282;
- Fri, 11 Feb 2022 03:46:25 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ONeXesWkDq1T1rGiHOjrw8MGGvxhsHkA+E5J4kI2J6I=;
+        b=TxOMxIF0PEEWJj+EsCci+V4qgUgCsgzdsemm03MDI82Kv44vQisTZSD4+TfH0g/Fsq
+         SS03oWV/GOSCt54xtQgzEzsXAI4EI8F5QpascEosSdaLelzuYu23K1vxvZ+LFn5tsjsR
+         Z7B27AWjVnW4Jmuv3kP0iOTcrfMJI4qmabvqStGjSSk520WpakCF3TAu84wXfn2MBK+Z
+         7D9+Su/zRUtDVx3oeDRwSQKwCVy2g/9TWeyg6bgiicmitQBMpunRjoknQ1LV43SzlMgh
+         e0Pb/C8jmh4Ep/j1bJwp4i13MbuWZ/iToTgePyFHNxj2PSV0SIq6owTMtbXyXvN9BVxC
+         DrKQ==
+X-Gm-Message-State: AOAM530KnAvVFisnmTMJBJZb8uHl+or+21l1AFBuRepgoOWBwTvj6JYq
+        Dr6mspNqUzlTiIemXjtVVRk=
+X-Google-Smtp-Source: ABdhPJz5a+woH/tNbQonUArsmCUrc4O3HCCqC//E19rOgAaMWwcj4OMVErhpBOzbm0PjqXwEqLskbQ==
+X-Received: by 2002:a0c:ed23:: with SMTP id u3mr768109qvq.74.1644581546720;
+        Fri, 11 Feb 2022 04:12:26 -0800 (PST)
+Received: from vossi01.front.sepia.ceph.com ([8.43.84.3])
+        by smtp.gmail.com with ESMTPSA id w10sm13389270qtj.73.2022.02.11.04.12.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Feb 2022 04:12:26 -0800 (PST)
+From:   Milind Changire <milindchangire@gmail.com>
+X-Google-Original-From: Milind Changire <mchangir@redhat.com>
+To:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+Cc:     Milind Changire <mchangir@redhat.com>
+Subject: [PATCH v9 0/1] ceph: add getvxattr support
+Date:   Fri, 11 Feb 2022 12:12:16 +0000
+Message-Id: <20220211121217.166680-1-mchangir@redhat.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Received: by 2002:aa6:cd83:0:b0:19a:858a:7abd with HTTP; Fri, 11 Feb 2022
- 03:46:24 -0800 (PST)
-Reply-To: worldbankinternational002@aol.com
-In-Reply-To: <CAApybxPgoBnENfVnG7xqC_HOpmcGFnW3H7kGb+1PDDyixiVTBA@mail.gmail.com>
-References: <CAApybxMxFW1V5HGLfirSbwUxK4MqbRicMddiQOUkt+b3PUw5jg@mail.gmail.com>
- <CAApybxNQXd__tQk_LZUmkq6yJTKgZ-gTq-wrpJH+mXP+9kb3RA@mail.gmail.com> <CAApybxPgoBnENfVnG7xqC_HOpmcGFnW3H7kGb+1PDDyixiVTBA@mail.gmail.com>
-From:   Ora bank <azukaike70@gmail.com>
-Date:   Fri, 11 Feb 2022 11:46:24 +0000
-Message-ID: <CAApybxO2a8UF8KHFxuamJ84gdZQGaKBVqPoxEFZZ9jt3MnQ55A@mail.gmail.com>
-Subject: =?UTF-8?B?15zXoNem15cyMDIy?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-X-Spam-Status: No, score=2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: **
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-15TXkNedINen15nXkdec16og15DXqiDXlNee15vXqteRINei15wg15TXoNeZ16bXl9eV158g16nX
-nNeaINep15nXk9eo15nXmiDXkNeV16rXmiDXk9eo15og15vXqteV15HXqiDXlNee15nXmdecINep
-15zXmiA2LDUwMCQ/DQoxKSDXlNei15HXqNeUINee15HXoNenINec15HXoNenLg0KMikg157Xqdec
-15XXlyDXm9eh16TXldee15gg15DXp9eh16TXqNehLg0K
+changes to v9:
+* dropped mds session vetting
+
+Milind Changire (1):
+  ceph: add getvxattr op
+
+ fs/ceph/inode.c              | 51 ++++++++++++++++++++++++++++++++++++
+ fs/ceph/mds_client.c         | 25 ++++++++++++++++++
+ fs/ceph/mds_client.h         |  6 +++++
+ fs/ceph/strings.c            |  1 +
+ fs/ceph/super.h              |  1 +
+ fs/ceph/xattr.c              |  9 +++++--
+ include/linux/ceph/ceph_fs.h |  1 +
+ 7 files changed, 92 insertions(+), 2 deletions(-)
+
+-- 
+2.31.1
+
