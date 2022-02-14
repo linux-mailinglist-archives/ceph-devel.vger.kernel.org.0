@@ -2,137 +2,89 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 01C104B2853
-	for <lists+ceph-devel@lfdr.de>; Fri, 11 Feb 2022 15:52:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB2C54B410B
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Feb 2022 06:01:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351056AbiBKOwk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 11 Feb 2022 09:52:40 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47446 "EHLO
+        id S236461AbiBNFBV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Feb 2022 00:01:21 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:43066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245724AbiBKOwj (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 11 Feb 2022 09:52:39 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48E8D131;
-        Fri, 11 Feb 2022 06:52:38 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 049C7B82A75;
-        Fri, 11 Feb 2022 14:52:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A6DFC340E9;
-        Fri, 11 Feb 2022 14:52:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644591155;
-        bh=F3GpJ6eC6nAG2fUQjoncES3V8qvJcO/nw1ng30P3vi0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=OhO7y/aluDHAY44Vsty4HdqZOJQ3NOStynrt09Rejwuts2cveX2kGSEDadVahqytw
-         CubSeScFs93oIUMYagMhYq7pBFDJG7qJtycdg+l/6YlocpOX9GCT1e2JX60IhG+PIz
-         wWyRaAWhiuhWsPzWGEaGO5/9iUm25JzZYADpHmwJEIBe+gjxAGnbpRzzCK+4sXQCGh
-         m6mFo3D3QU/tSMSn85kCayLgf27u2CwY66sPix+PtE/2Du0/GiE+SXOoRc/83hED2P
-         ZzNzjjiwuRockRh4D9UDPo8y2vVVr1B/SpnaqoM5IAFTz/vAZkhgBOSkb3ODbt+9Bw
-         2FyL8NnOHdjYA==
-Message-ID: <f959ba0ab5916b5954fdf96eca49e0a85f581b61.camel@kernel.org>
-Subject: Re: [RFC PATCH v10 10/48] ceph: implement -o test_dummy_encryption
- mount option
-From:   Jeff Layton <jlayton@kernel.org>
-To:     =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, idryomov@gmail.com
-Date:   Fri, 11 Feb 2022 09:52:34 -0500
-In-Reply-To: <87h795v7fn.fsf@brahms.olymp>
-References: <20220111191608.88762-1-jlayton@kernel.org>
-         <20220111191608.88762-11-jlayton@kernel.org> <87h795v7fn.fsf@brahms.olymp>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
+        with ESMTP id S231903AbiBNFBU (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Feb 2022 00:01:20 -0500
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4069451E4D
+        for <ceph-devel@vger.kernel.org>; Sun, 13 Feb 2022 21:01:13 -0800 (PST)
+Received: by mail-qt1-x829.google.com with SMTP id r9so3358413qta.1
+        for <ceph-devel@vger.kernel.org>; Sun, 13 Feb 2022 21:01:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2lYKeBgdudtc0HFjQNeS9daNlOvFry1GveKYBhMC+ag=;
+        b=IRsWoU3BH30imFEvIjFS9i1R4Rbo1hjRTqQneiK+/7E/65RoXsbRDB+whPCqRebtfs
+         m2/D+x89lY5QTPZxzwJHWStwO51mdZV9eQA7AV9mhRZ1h87ZcXwoPwXCn5tPbfqCrxqD
+         dQVzB359/uHW/+zEuqALns1e+gyhZtjd1cXd5J+r8AOsYi/AR3sqqf+oRhAFE+dxH0X2
+         0pj5Bq3HFKocY8As+DUeWqxfVSbj3YvVNJNXiGUrzGhmQb9a6xwSzBxc4frJF3iYmSI9
+         7wwdthdYwiTacxM4BoY8F7/jdOTpJlYA9wpyG/Y/m1LbrTDLQtqyv3EvvOFjv5x66j/3
+         idPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2lYKeBgdudtc0HFjQNeS9daNlOvFry1GveKYBhMC+ag=;
+        b=N/9NTKOo4WpyFoSkkyXhMALXRpk61SNGC6Tu1HBD8thaXQh4Y0TOt4taDU4N/R4pVp
+         XescNpxJLVYNZScVfkykCaV5dMDfm5WizUlFefNrvskvmZlcGo3BCTE/Hm6ux2seksyi
+         zsIv/5xwR58IuKBEQxT3K5qAYzJrEtzVdHOhVhU4qnxbzwpg4yXqam6QqaPR+tKvrZni
+         BRPOhNA7Rpu2jjK/yHU73gYU1AytLx7DEod6XTlvpS1GF9WagsXxAFddIGqUab1UDAcK
+         U07+mAjqcGtqBnoAuaOL2mguFMwYZjplAz8wF1VsKlkzuNTuB+MyHJ/hS9UC1iMXvdR0
+         Q2jg==
+X-Gm-Message-State: AOAM532s4PJRlGlUGvB9uOHEDDPOQxd87ymeFb8V02GZYxz+QALAtSTQ
+        YmI3RBqttcU3of1puc3qH5agVna7vKHxO3oH
+X-Google-Smtp-Source: ABdhPJzuLYNmVmElLjv7lCLVcmtNzpWppzU0hJFHctzB10FB0jT3XjvnK+BzZH+2skKXasubBuaeIg==
+X-Received: by 2002:ac8:7771:: with SMTP id h17mr8375429qtu.454.1644814872365;
+        Sun, 13 Feb 2022 21:01:12 -0800 (PST)
+Received: from vossi01.front.sepia.ceph.com ([8.43.84.3])
+        by smtp.gmail.com with ESMTPSA id br35sm15229586qkb.118.2022.02.13.21.01.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Feb 2022 21:01:11 -0800 (PST)
+From:   Milind Changire <milindchangire@gmail.com>
+X-Google-Original-From: Milind Changire <mchangir@redhat.com>
+To:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+Cc:     Milind Changire <mchangir@redhat.com>
+Subject: [PATCH v10 0/1] ceph: add getvxattr op
+Date:   Mon, 14 Feb 2022 05:01:00 +0000
+Message-Id: <20220214050101.178045-1-mchangir@redhat.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2022-02-11 at 13:50 +0000, Luís Henriques wrote:
-> Jeff Layton <jlayton@kernel.org> writes:
-> 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/ceph/crypto.c | 53 ++++++++++++++++++++++++++++++++
-> >  fs/ceph/crypto.h | 26 ++++++++++++++++
-> >  fs/ceph/inode.c  | 10 ++++--
-> >  fs/ceph/super.c  | 79 ++++++++++++++++++++++++++++++++++++++++++++++--
-> >  fs/ceph/super.h  | 12 +++++++-
-> >  fs/ceph/xattr.c  |  3 ++
-> >  6 files changed, 177 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-> > index a513ff373b13..017f31eacb74 100644
-> > --- a/fs/ceph/crypto.c
-> > +++ b/fs/ceph/crypto.c
-> > @@ -4,6 +4,7 @@
-> >  #include <linux/fscrypt.h>
-> >  
-> >  #include "super.h"
-> > +#include "mds_client.h"
-> >  #include "crypto.h"
-> >  
-> >  static int ceph_crypt_get_context(struct inode *inode, void *ctx, size_t len)
-> > @@ -64,9 +65,20 @@ static bool ceph_crypt_empty_dir(struct inode *inode)
-> >  	return ci->i_rsubdirs + ci->i_rfiles == 1;
-> >  }
-> >  
-> > +void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc)
-> > +{
-> > +	fscrypt_free_dummy_policy(&fsc->dummy_enc_policy);
-> > +}
-> > +
-> > +static const union fscrypt_policy *ceph_get_dummy_policy(struct super_block *sb)
-> > +{
-> > +	return ceph_sb_to_client(sb)->dummy_enc_policy.policy;
-> > +}
-> > +
-> >  static struct fscrypt_operations ceph_fscrypt_ops = {
-> >  	.get_context		= ceph_crypt_get_context,
-> >  	.set_context		= ceph_crypt_set_context,
-> > +	.get_dummy_policy	= ceph_get_dummy_policy,
-> >  	.empty_dir		= ceph_crypt_empty_dir,
-> >  };
-> >  
-> > @@ -74,3 +86,44 @@ void ceph_fscrypt_set_ops(struct super_block *sb)
-> >  {
-> >  	fscrypt_set_ops(sb, &ceph_fscrypt_ops);
-> >  }
-> > +
-> > +int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
-> > +				 struct ceph_acl_sec_ctx *as)
-> > +{
-> > +	int ret, ctxsize;
-> > +	bool encrypted = false;
-> > +	struct ceph_inode_info *ci = ceph_inode(inode);
-> > +
-> > +	ret = fscrypt_prepare_new_inode(dir, inode, &encrypted);
-> > +	if (ret)
-> > +		return ret;
-> > +	if (!encrypted)
-> > +		return 0;
-> > +
-> > +	as->fscrypt_auth = kzalloc(sizeof(*as->fscrypt_auth), GFP_KERNEL);
-> > +	if (!as->fscrypt_auth)
-> > +		return -ENOMEM;
-> > +
-> 
-> Isn't this memory allocation leaking bellow in the error paths?
-> 
-> (Yeah, I'm finally (but slowly) catching up with this series... my memory
-> is blurry and there are a lot of things I forgot...)
-> 
-> Cheers,
+changes to v10:
+* commit message updated
+* comments added to response decoding for skipped fields
+* -ENODATA is now returned by client if server responds with -EOPNOTSUPP
 
-No. If an error bubbles back up here, we'll eventually call
-ceph_release_acl_sec_ctx on the thing, and it'll be kfreed then.
+Milind Changire (1):
+  ceph: add getvxattr op
+
+ fs/ceph/inode.c              | 51 ++++++++++++++++++++++++++++++++++++
+ fs/ceph/mds_client.c         | 24 +++++++++++++++++
+ fs/ceph/mds_client.h         |  6 +++++
+ fs/ceph/strings.c            |  1 +
+ fs/ceph/super.h              |  1 +
+ fs/ceph/xattr.c              | 13 +++++++--
+ include/linux/ceph/ceph_fs.h |  1 +
+ 7 files changed, 95 insertions(+), 2 deletions(-)
+
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.31.1
+
