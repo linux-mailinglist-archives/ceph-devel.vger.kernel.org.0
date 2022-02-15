@@ -2,46 +2,49 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E6DF4B706B
-	for <lists+ceph-devel@lfdr.de>; Tue, 15 Feb 2022 17:39:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 168BB4B73C2
+	for <lists+ceph-devel@lfdr.de>; Tue, 15 Feb 2022 17:44:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239402AbiBOOwO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 15 Feb 2022 09:52:14 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33962 "EHLO
+        id S240182AbiBOPc1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 15 Feb 2022 10:32:27 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239274AbiBOOvw (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Feb 2022 09:51:52 -0500
+        with ESMTP id S240184AbiBOPbk (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Feb 2022 10:31:40 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3CBA10335B
-        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 06:50:46 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DFE311EF1F
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 07:29:51 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6533A61465
-        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 14:50:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9349C340ED;
-        Tue, 15 Feb 2022 14:50:45 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0B132615EF
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 15:29:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B457C340EB;
+        Tue, 15 Feb 2022 15:29:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644936646;
-        bh=Y1UepD996ZVBQeXTYQkVW8UOJyx2GCaPuAI4XzeJAsA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AIPUou5n6UR/EVKG91WTyB3gaLf26Jo+n8x6h96nYsNyvO/bw5+W+XeSxmnY9Ga7o
-         BF3NQzRUy6DTATPHgEOiOlR+ID/bHFfvYOiMltOwnM1EDhM0TO3fn3KsJJ3X4cxpeg
-         TGHHCAUahIpdm0pdNo1t9WBQRHnrlQ92oH2b/kRoXo+YhBO7bCKtwjhcyZBIuzI3Qk
-         qiiR0F68S4/5BUhkD6dGoLesntM7u/jJV5grWdwY4kQNc/6RFfI1FVNGVrG7qg0T9A
-         g7rBnypBhaK0o6kW57aOjPYGc8kPEq7U97yXcgtDgbR47TCXyI7oA8Fsp8+og8+pYK
-         II2QiGhahKjBA==
+        s=k20201202; t=1644938990;
+        bh=D40woMpFnDCV4QKUrWCoolILFn8ghJNzcwQCz3QPyhw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=FBenrIwx6Z7QU8B/Afq/k3B+Sf76kW+GC8Vo+kje04A31QCzFMBDKapOnTGvubzj4
+         zHlToZF8yH8uyYCcE9JbT+g1HcAtIGy1T7pXuDF/KdbsgMIp9jlT/1iWA9N/7/WIL6
+         HqT+CMf6oFSC8sz8IROnf89HyJtsxHXSuo0cRNLgh01oVIPLp92lMOoypJz+gmJoqt
+         qUKO97XTHGc0AHE2YB2Cx/+W5mgA4BckFFMvLyk1qov08xbl6zU49zome44UPtmWk+
+         8OW+fewaGeS66bawIw5Aw3F0huEEH4hIpqAzYq1qmcq3M7aDq8YstxpWp/HuWl4ORB
+         aYBWtcTe1NDOQ==
+Message-ID: <c90eb21a2ed72859ef366bd88a7fa42f41ee0113.camel@kernel.org>
+Subject: Re: [PATCH 1/3] ceph: move to a dedicated slabcache for
+ ceph_cap_snap
 From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com
-Subject: [RFC PATCH 5/5] ceph: switch to sparse reads
-Date:   Tue, 15 Feb 2022 09:50:41 -0500
-Message-Id: <20220215145041.26065-6-jlayton@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220215145041.26065-1-jlayton@kernel.org>
-References: <20220215145041.26065-1-jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
+Date:   Tue, 15 Feb 2022 10:29:48 -0500
+In-Reply-To: <20220215122316.7625-2-xiubli@redhat.com>
+References: <20220215122316.7625-1-xiubli@redhat.com>
+         <20220215122316.7625-2-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -52,52 +55,118 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Switch the cephfs client to use sparse reads instead of normal ones.
+On Tue, 2022-02-15 at 20:23 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> There could be huge number of capsnap queued in a short time, on
+> x86_64 it's 248 bytes, which will be rounded up to 256 bytes by
+> kzalloc. Move this to a dedicated slabcache to save 8 bytes for
+> each.
+> 
+> For the kmalloc-256 slab cache, the actual size will be 512 bytes:
+> kmalloc-256        21797  74656    512   32    4 : tunables, etc
+> 
+> For a dedicated slab cache the real size is 312 bytes:
+> ceph_cap_snap          0      0    312   52    4 : tunables, etc
+> 
+> So actually we can save 200 bytes for each.
+> 
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/snap.c               | 5 +++--
+>  fs/ceph/super.c              | 7 +++++++
+>  fs/ceph/super.h              | 2 +-
+>  include/linux/ceph/libceph.h | 1 +
+>  4 files changed, 12 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> index b41e6724c591..c787775eaf2a 100644
+> --- a/fs/ceph/snap.c
+> +++ b/fs/ceph/snap.c
+> @@ -482,7 +482,7 @@ static void ceph_queue_cap_snap(struct ceph_inode_info *ci)
+>  	struct ceph_buffer *old_blob = NULL;
+>  	int used, dirty;
+>  
+> -	capsnap = kzalloc(sizeof(*capsnap), GFP_NOFS);
+> +	capsnap = kmem_cache_alloc(ceph_cap_snap_cachep, GFP_NOFS);
+>  	if (!capsnap) {
+>  		pr_err("ENOMEM allocating ceph_cap_snap on %p\n", inode);
+>  		return;
+> @@ -603,7 +603,8 @@ static void ceph_queue_cap_snap(struct ceph_inode_info *ci)
+>  	spin_unlock(&ci->i_ceph_lock);
+>  
+>  	ceph_buffer_put(old_blob);
+> -	kfree(capsnap);
+> +	if (capsnap)
+> +		kmem_cache_free(ceph_cap_snap_cachep, capsnap);
+>  	ceph_put_snap_context(old_snapc);
+>  }
+>  
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index bf79f369aec6..978463fa822c 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -864,6 +864,7 @@ static void destroy_fs_client(struct ceph_fs_client *fsc)
+>   */
+>  struct kmem_cache *ceph_inode_cachep;
+>  struct kmem_cache *ceph_cap_cachep;
+> +struct kmem_cache *ceph_cap_snap_cachep;
+>  struct kmem_cache *ceph_cap_flush_cachep;
+>  struct kmem_cache *ceph_dentry_cachep;
+>  struct kmem_cache *ceph_file_cachep;
+> @@ -892,6 +893,9 @@ static int __init init_caches(void)
+>  	ceph_cap_cachep = KMEM_CACHE(ceph_cap, SLAB_MEM_SPREAD);
+>  	if (!ceph_cap_cachep)
+>  		goto bad_cap;
+> +	ceph_cap_snap_cachep = KMEM_CACHE(ceph_cap_snap, SLAB_MEM_SPREAD);
+> +	if (!ceph_cap_snap_cachep)
+> +		goto bad_cap_snap;
+>  	ceph_cap_flush_cachep = KMEM_CACHE(ceph_cap_flush,
+>  					   SLAB_RECLAIM_ACCOUNT|SLAB_MEM_SPREAD);
+>  	if (!ceph_cap_flush_cachep)
+> @@ -931,6 +935,8 @@ static int __init init_caches(void)
+>  bad_dentry:
+>  	kmem_cache_destroy(ceph_cap_flush_cachep);
+>  bad_cap_flush:
+> +	kmem_cache_destroy(ceph_cap_snap_cachep);
+> +bad_cap_snap:
+>  	kmem_cache_destroy(ceph_cap_cachep);
+>  bad_cap:
+>  	kmem_cache_destroy(ceph_inode_cachep);
+> @@ -947,6 +953,7 @@ static void destroy_caches(void)
+>  
+>  	kmem_cache_destroy(ceph_inode_cachep);
+>  	kmem_cache_destroy(ceph_cap_cachep);
+> +	kmem_cache_destroy(ceph_cap_snap_cachep);
+>  	kmem_cache_destroy(ceph_cap_flush_cachep);
+>  	kmem_cache_destroy(ceph_dentry_cachep);
+>  	kmem_cache_destroy(ceph_file_cachep);
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index c0718d5a8fb8..2d08104c8955 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -231,7 +231,7 @@ static inline void ceph_put_cap_snap(struct ceph_cap_snap *capsnap)
+>  	if (refcount_dec_and_test(&capsnap->nref)) {
+>  		if (capsnap->xattr_blob)
+>  			ceph_buffer_put(capsnap->xattr_blob);
+> -		kfree(capsnap);
+> +		kmem_cache_free(ceph_cap_snap_cachep, capsnap);
+>  	}
+>  }
+>  
+> diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
+> index edf62eaa6285..00af2c98da75 100644
+> --- a/include/linux/ceph/libceph.h
+> +++ b/include/linux/ceph/libceph.h
+> @@ -284,6 +284,7 @@ DEFINE_RB_LOOKUP_FUNC(name, type, keyfld, nodefld)
+>  
+>  extern struct kmem_cache *ceph_inode_cachep;
+>  extern struct kmem_cache *ceph_cap_cachep;
+> +extern struct kmem_cache *ceph_cap_snap_cachep;
+>  extern struct kmem_cache *ceph_cap_flush_cachep;
+>  extern struct kmem_cache *ceph_dentry_cachep;
+>  extern struct kmem_cache *ceph_file_cachep;
 
-XXX: doesn't currently work since OSD doesn't support truncate_seq
-     on a sparse read. See: https://tracker.ceph.com/issues/54280
-
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/addr.c | 2 +-
- fs/ceph/file.c | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 46e0881ae8b2..565cc2197dd1 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -317,7 +317,7 @@ static void ceph_netfs_issue_op(struct netfs_read_subrequest *subreq)
- 		return;
- 
- 	req = ceph_osdc_new_request(&fsc->client->osdc, &ci->i_layout, vino, subreq->start, &len,
--			0, 1, CEPH_OSD_OP_READ,
-+			0, 1, CEPH_OSD_OP_SPARSE_READ,
- 			CEPH_OSD_FLAG_READ | fsc->client->osdc.client->options->read_from_replica,
- 			NULL, ci->i_truncate_seq, ci->i_truncate_size, false);
- 	if (IS_ERR(req)) {
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index feb75eb1cd82..d1956a20c627 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -934,7 +934,7 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
- 
- 		req = ceph_osdc_new_request(osdc, &ci->i_layout,
- 					ci->i_vino, off, &len, 0, 1,
--					CEPH_OSD_OP_READ, CEPH_OSD_FLAG_READ,
-+					CEPH_OSD_OP_SPARSE_READ, CEPH_OSD_FLAG_READ,
- 					NULL, ci->i_truncate_seq,
- 					ci->i_truncate_size, false);
- 		if (IS_ERR(req)) {
-@@ -1291,7 +1291,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
- 					    vino, pos, &size, 0,
- 					    1,
- 					    write ? CEPH_OSD_OP_WRITE :
--						    CEPH_OSD_OP_READ,
-+						    CEPH_OSD_OP_SPARSE_READ,
- 					    flags, snapc,
- 					    ci->i_truncate_seq,
- 					    ci->i_truncate_size,
+Looks good. I'll plan to merge this into testing branch.
 -- 
-2.34.1
-
+Jeff Layton <jlayton@kernel.org>
