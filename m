@@ -2,64 +2,67 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 128C34B6746
+	by mail.lfdr.de (Postfix) with ESMTP id AA12D4B6748
 	for <lists+ceph-devel@lfdr.de>; Tue, 15 Feb 2022 10:18:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235751AbiBOJRR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 15 Feb 2022 04:17:17 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44728 "EHLO
+        id S235752AbiBOJRT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 15 Feb 2022 04:17:19 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:44974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235747AbiBOJRR (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Feb 2022 04:17:17 -0500
+        with ESMTP id S235753AbiBOJRT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Feb 2022 04:17:19 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 92FF6AE54
-        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 01:17:07 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0881AAE6F
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 01:17:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1644916626;
+        s=mimecast20190719; t=1644916629;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=VnPiU1Qy3yqpU/b3Z9r+xuf1edGX1aazobnu8piUvc0=;
-        b=evYE9Jntv8DNnxpUxrXzbyeyqfWfWXGMFun6+IS3jZxg/Vx6hnE4P0HEpFWbIDVRLSzZC3
-        C0mhz24ax1+1wWh5+qhGulehl4EvyehO2x6KT8tY++5dOVGguA9i8gL7regpSGBgq8lcR6
-        l/K90mBW01EpuN8Jb8d7dceKsfNgsRE=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Eiu+Fs9WTha6ja/10Sm+YNnaJJVJZmbeDmhwpLOfjS8=;
+        b=aOuFsUtL1447G8AgfZJfSSv7F0Z6w0kgjBSVuZkDBig2UbCJc7kQGwgrhXRwPcrSREOhLd
+        YJd4aDa02yDnjTOuOIzGXTC4lGl+RRzy2QNDVB+mnczgGV27tF4f0Fu04TNaujqpSZFr/L
+        UKneUVaqSNr41VIhgQHvXO35gELlaBw=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-445-gcRW4c0pMlCUgZHUHMbomg-1; Tue, 15 Feb 2022 04:17:05 -0500
-X-MC-Unique: gcRW4c0pMlCUgZHUHMbomg-1
-Received: by mail-pf1-f199.google.com with SMTP id g19-20020aa796b3000000b004e136dcec34so2778647pfk.23
-        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 01:17:05 -0800 (PST)
+ us-mta-517-fk6E_0HUMCmqcSJNx5zUuQ-1; Tue, 15 Feb 2022 04:17:08 -0500
+X-MC-Unique: fk6E_0HUMCmqcSJNx5zUuQ-1
+Received: by mail-pj1-f71.google.com with SMTP id q40-20020a17090a17ab00b001bafa89b70aso636060pja.2
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 01:17:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VnPiU1Qy3yqpU/b3Z9r+xuf1edGX1aazobnu8piUvc0=;
-        b=Rj5qkVkkYLL/So/ytWmA/M6Z6y7DQXPDDifbnNkmVwJFRfQELpyhPUSaf1n9NmBC67
-         lLKe7LJPLIJowVRqGBc133XtpGQDicjIQbEicfz1EnQqcDooDzcJqldUSMUxc8km/pzk
-         Ls0P3WPde3hkQXjf48X7hxwgSPe6sSp4M87WXrJY5w/vhMfAnX734fdv/6kNWJqDCUnO
-         +3LB4ow332LmEEBlX/Tiy62ukWaYYyFi4DTiOGlM/44zbVlSM7XIwEO6zRKTM4WsRHyl
-         nP7daCqkImCZtQ1VCan0yIhWUqvm309xjZRM1w+7dOv0Mw4aCLpcw4jcP/5zESvvc6NE
-         6BQA==
-X-Gm-Message-State: AOAM53391A0T6d7Gq67W5W+Y4N5oELqhITLx75s7OAkqIBts+VTyDVDk
-        SLvO7fhN2FF343MBNLmCSZOuwMpEXJ6hbWKS7rf6/v/mNAePOhtmBZ1smMp1g1PCghtCYVtwM6v
-        abY4TFB0PfHbrc9G/2G5YYQ==
-X-Received: by 2002:a17:903:2309:: with SMTP id d9mr3210178plh.74.1644916624205;
-        Tue, 15 Feb 2022 01:17:04 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJx0IkdLuek2i0js6E3BcnboabCk8ZyzRxxirU5d0L26PU79Bcwsbv+V7EvDk/mbisRT8ptlHA==
-X-Received: by 2002:a17:903:2309:: with SMTP id d9mr3210153plh.74.1644916623931;
-        Tue, 15 Feb 2022 01:17:03 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Eiu+Fs9WTha6ja/10Sm+YNnaJJVJZmbeDmhwpLOfjS8=;
+        b=R4wmpNHvPlv5GjbPN9e9sOtboo89spOzmZQcw1RpNt4pUyia1TAXHgycxfDsL9we8r
+         l6wmfwUlWNI2Q9xexwu6MZCrhgxUVauOd6wGh7OlsRD3R41xZF54jVJ6CQC7O79Gqb27
+         zTz5qjfuCmct9MemdvPr2pkgBlJDZl57X1w4Yx0qGmRYdu/aQ3JSyE+Fc++aHxDSvVfi
+         eR4NdUl81H+OSVIKy3Dqazwh8V9XUjDXEreab3zpTd4AzcMK/a0YBanwdH1DwOPN8aYU
+         6UqTMAcZyTkEd+LD9ovhDXw043YZauUlzCNL+R9VLT+ZNP5AASUYl47wyNS2Zx0kDB4A
+         UfMA==
+X-Gm-Message-State: AOAM530wZIDdgubquVhZPLOWTDPo3DcZcOVVKHGmIB3Im2Fso1zJNwOi
+        iOIqZlqd39Re8B+0A3UEXu8R+9VjeTo1LeSUddfGrVY43xSVqD2RR0aVCV3vavSsPssaCj0hAO6
+        OSu/jSyv3nanDWDqEBNh+Qg==
+X-Received: by 2002:a17:902:c40b:: with SMTP id k11mr3230575plk.58.1644916626653;
+        Tue, 15 Feb 2022 01:17:06 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzx29bGiHjkeGNXKvV+ch5hYkiSOUz7ifGwfDHdmyFhvbG/k/nAb0WuHowQlpAsB/GVADJTTA==
+X-Received: by 2002:a17:902:c40b:: with SMTP id k11mr3230554plk.58.1644916626401;
+        Tue, 15 Feb 2022 01:17:06 -0800 (PST)
 Received: from h3ckers-pride.redhat.com ([124.123.80.180])
-        by smtp.gmail.com with ESMTPSA id kk14sm16569550pjb.26.2022.02.15.01.17.01
+        by smtp.gmail.com with ESMTPSA id kk14sm16569550pjb.26.2022.02.15.01.17.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Feb 2022 01:17:03 -0800 (PST)
+        Tue, 15 Feb 2022 01:17:05 -0800 (PST)
 From:   Venky Shankar <vshankar@redhat.com>
 To:     jlayton@redhat.com, xiubli@redhat.com
 Cc:     ceph-devel@vger.kernel.org, Venky Shankar <vshankar@redhat.com>
-Subject: [PATCH 0/3] ceph: forward average read/write/metadata latency
-Date:   Tue, 15 Feb 2022 14:46:54 +0530
-Message-Id: <20220215091657.104079-1-vshankar@redhat.com>
+Subject: [PATCH 1/3] ceph: track average r/w/m latency
+Date:   Tue, 15 Feb 2022 14:46:55 +0530
+Message-Id: <20220215091657.104079-2-vshankar@redhat.com>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20220215091657.104079-1-vshankar@redhat.com>
+References: <20220215091657.104079-1-vshankar@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -72,32 +75,81 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Right now, cumulative read/write/metadata latencies are tracked
-and are periodically forwarded to the MDS. These meterics are not
-particularly useful. A much more useful metric is the average latency
-and standard deviation (stdev) which is what this series of patches
-aims to do.
+Make the math a bit simpler to understand (should not
+effect execution speeds).
 
-The userspace (libcephfs+tool) changes are here::
+Signed-off-by: Venky Shankar <vshankar@redhat.com>
+---
+ fs/ceph/metric.c | 29 +++++++++++++++--------------
+ fs/ceph/metric.h |  1 +
+ 2 files changed, 16 insertions(+), 14 deletions(-)
 
-          https://github.com/ceph/ceph/pull/41397
-
-Note that the cumulative latencies are still forwarded to the MDS but
-the tool (cephfs-top) ignores it altogether.
-
-Latency standard deviation is calculated in `cephfs-top` tool.
-
-Venky Shankar (3):
-  ceph: track average r/w/m latency
-  ceph: include average/stdev r/w/m latency in mds metrics
-  ceph: use tracked average r/w/m latencies to display metrics in
-    debugfs
-
- fs/ceph/debugfs.c |  2 +-
- fs/ceph/metric.c  | 44 +++++++++++++++++++++++----------------
- fs/ceph/metric.h  | 52 +++++++++++++++++++++++++++++++++--------------
- 3 files changed, 65 insertions(+), 33 deletions(-)
-
+diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
+index a9cd23561a0d..73e98d45442a 100644
+--- a/fs/ceph/metric.c
++++ b/fs/ceph/metric.c
+@@ -250,6 +250,7 @@ int ceph_metric_init(struct ceph_client_metric *m)
+ 		metric->size_max = 0;
+ 		metric->total = 0;
+ 		metric->latency_sum = 0;
++		metric->latency_avg = 0;
+ 		metric->latency_sq_sum = 0;
+ 		metric->latency_min = KTIME_MAX;
+ 		metric->latency_max = 0;
+@@ -307,20 +308,19 @@ void ceph_metric_destroy(struct ceph_client_metric *m)
+ 		max = new;			\
+ }
+ 
+-static inline void __update_stdev(ktime_t total, ktime_t lsum,
+-				  ktime_t *sq_sump, ktime_t lat)
++static inline void __update_mean_and_stdev(ktime_t total, ktime_t *lavg,
++					   ktime_t *sq_sump, ktime_t lat)
+ {
+-	ktime_t avg, sq;
+-
+-	if (unlikely(total == 1))
+-		return;
+-
+-	/* the sq is (lat - old_avg) * (lat - new_avg) */
+-	avg = DIV64_U64_ROUND_CLOSEST((lsum - lat), (total - 1));
+-	sq = lat - avg;
+-	avg = DIV64_U64_ROUND_CLOSEST(lsum, total);
+-	sq = sq * (lat - avg);
+-	*sq_sump += sq;
++	ktime_t avg;
++
++	if (unlikely(total == 1)) {
++		*lavg = lat;
++	} else {
++		/* the sq is (lat - old_avg) * (lat - new_avg) */
++		avg = *lavg + div64_s64(lat - *lavg, total);
++		*sq_sump += (lat - *lavg)*(lat - avg);
++		*lavg = avg;
++	}
+ }
+ 
+ void ceph_update_metrics(struct ceph_metric *m,
+@@ -339,6 +339,7 @@ void ceph_update_metrics(struct ceph_metric *m,
+ 	METRIC_UPDATE_MIN_MAX(m->size_min, m->size_max, size);
+ 	m->latency_sum += lat;
+ 	METRIC_UPDATE_MIN_MAX(m->latency_min, m->latency_max, lat);
+-	__update_stdev(total, m->latency_sum, &m->latency_sq_sum, lat);
++	__update_mean_and_stdev(total, &m->latency_avg,	&m->latency_sq_sum,
++				lat);
+ 	spin_unlock(&m->lock);
+ }
+diff --git a/fs/ceph/metric.h b/fs/ceph/metric.h
+index 5b2bb2897056..c47ba0074e49 100644
+--- a/fs/ceph/metric.h
++++ b/fs/ceph/metric.h
+@@ -137,6 +137,7 @@ struct ceph_metric {
+ 	u64 size_min;
+ 	u64 size_max;
+ 	ktime_t latency_sum;
++	ktime_t latency_avg;
+ 	ktime_t latency_sq_sum;
+ 	ktime_t latency_min;
+ 	ktime_t latency_max;
 -- 
 2.27.0
 
