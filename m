@@ -2,45 +2,45 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 168BB4B73C2
-	for <lists+ceph-devel@lfdr.de>; Tue, 15 Feb 2022 17:44:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C88C4B7824
+	for <lists+ceph-devel@lfdr.de>; Tue, 15 Feb 2022 21:51:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240182AbiBOPc1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 15 Feb 2022 10:32:27 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47742 "EHLO
+        id S237252AbiBOQ57 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 15 Feb 2022 11:57:59 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240184AbiBOPbk (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Feb 2022 10:31:40 -0500
+        with ESMTP id S236268AbiBOQ56 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Feb 2022 11:57:58 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DFE311EF1F
-        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 07:29:51 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26122F11B2
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 08:57:48 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0B132615EF
-        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 15:29:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B457C340EB;
-        Tue, 15 Feb 2022 15:29:49 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B611761468
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 16:57:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF306C340EB;
+        Tue, 15 Feb 2022 16:57:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1644938990;
-        bh=D40woMpFnDCV4QKUrWCoolILFn8ghJNzcwQCz3QPyhw=;
+        s=k20201202; t=1644944267;
+        bh=SNP6Zj4Va0675NmWl0wYJIitLhw5ENQCd4nEk6VA2/o=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=FBenrIwx6Z7QU8B/Afq/k3B+Sf76kW+GC8Vo+kje04A31QCzFMBDKapOnTGvubzj4
-         zHlToZF8yH8uyYCcE9JbT+g1HcAtIGy1T7pXuDF/KdbsgMIp9jlT/1iWA9N/7/WIL6
-         HqT+CMf6oFSC8sz8IROnf89HyJtsxHXSuo0cRNLgh01oVIPLp92lMOoypJz+gmJoqt
-         qUKO97XTHGc0AHE2YB2Cx/+W5mgA4BckFFMvLyk1qov08xbl6zU49zome44UPtmWk+
-         8OW+fewaGeS66bawIw5Aw3F0huEEH4hIpqAzYq1qmcq3M7aDq8YstxpWp/HuWl4ORB
-         aYBWtcTe1NDOQ==
-Message-ID: <c90eb21a2ed72859ef366bd88a7fa42f41ee0113.camel@kernel.org>
-Subject: Re: [PATCH 1/3] ceph: move to a dedicated slabcache for
- ceph_cap_snap
+        b=Wa5LH+hu5DDXY+rdYuEe9LtsYw9jTrUZZBRwVfFZLSoCTuilTw/pJs5Cauo6ighyf
+         0/1G2fB4aVlXOXWdptNywNR5k0cQBKdOzuHQGHmfsh5ybWbVSBz8LJayd+F7biH5U1
+         nFGMBehGn/o4hqZO70BPlAAKx0Bd7MAgpWLV+rp5N0GEc0QHarnBTipWzo9bHA5lmw
+         A34ovlqoREWCprP+Hx1DC5WcctVdXrDPhS4G46U4XsApU+JzEL8dA0gAe1xF7rse/p
+         vZygBeyS/o1WdFCY28J6b6rR7V1ZYgC6588kUm/eYi3B3Z9K/lD8I3t2km55KM+hI5
+         /wp951nfGyOTQ==
+Message-ID: <7239f8b4e48ce1e0fcba850ae183c5225f6e774b.camel@kernel.org>
+Subject: Re: [PATCH 2/3] ceph: move kzalloc under i_ceph_lock with
+ GFP_ATOMIC flag
 From:   Jeff Layton <jlayton@kernel.org>
 To:     xiubli@redhat.com
 Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
-Date:   Tue, 15 Feb 2022 10:29:48 -0500
-In-Reply-To: <20220215122316.7625-2-xiubli@redhat.com>
+Date:   Tue, 15 Feb 2022 11:57:45 -0500
+In-Reply-To: <20220215122316.7625-3-xiubli@redhat.com>
 References: <20220215122316.7625-1-xiubli@redhat.com>
-         <20220215122316.7625-2-xiubli@redhat.com>
+         <20220215122316.7625-3-xiubli@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
 MIME-Version: 1.0
@@ -58,115 +58,99 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 On Tue, 2022-02-15 at 20:23 +0800, xiubli@redhat.com wrote:
 > From: Xiubo Li <xiubli@redhat.com>
 > 
-> There could be huge number of capsnap queued in a short time, on
-> x86_64 it's 248 bytes, which will be rounded up to 256 bytes by
-> kzalloc. Move this to a dedicated slabcache to save 8 bytes for
-> each.
+> There has one case that the snaprealm has been updated and then
+> it will iterate all the inode under it and try to queue a cap
+> snap for it. But in some case there has millions of subdirectries
+> or files under it and most of them no any Fw or dirty pages and
+> then will just be skipped.
 > 
-> For the kmalloc-256 slab cache, the actual size will be 512 bytes:
-> kmalloc-256        21797  74656    512   32    4 : tunables, etc
-> 
-> For a dedicated slab cache the real size is 312 bytes:
-> ceph_cap_snap          0      0    312   52    4 : tunables, etc
-> 
-> So actually we can save 200 bytes for each.
-> 
+> URL: https://tracker.ceph.com/issues/44100
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  fs/ceph/snap.c               | 5 +++--
->  fs/ceph/super.c              | 7 +++++++
->  fs/ceph/super.h              | 2 +-
->  include/linux/ceph/libceph.h | 1 +
->  4 files changed, 12 insertions(+), 3 deletions(-)
+>  fs/ceph/snap.c | 37 +++++++++++++++++++++++++++----------
+>  1 file changed, 27 insertions(+), 10 deletions(-)
 > 
 > diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-> index b41e6724c591..c787775eaf2a 100644
+> index c787775eaf2a..d075d3ce5f6d 100644
 > --- a/fs/ceph/snap.c
 > +++ b/fs/ceph/snap.c
-> @@ -482,7 +482,7 @@ static void ceph_queue_cap_snap(struct ceph_inode_info *ci)
+> @@ -477,19 +477,21 @@ static bool has_new_snaps(struct ceph_snap_context *o,
+>  static void ceph_queue_cap_snap(struct ceph_inode_info *ci)
+>  {
+>  	struct inode *inode = &ci->vfs_inode;
+> -	struct ceph_cap_snap *capsnap;
+> +	struct ceph_cap_snap *capsnap = NULL;
+>  	struct ceph_snap_context *old_snapc, *new_snapc;
 >  	struct ceph_buffer *old_blob = NULL;
 >  	int used, dirty;
->  
-> -	capsnap = kzalloc(sizeof(*capsnap), GFP_NOFS);
-> +	capsnap = kmem_cache_alloc(ceph_cap_snap_cachep, GFP_NOFS);
->  	if (!capsnap) {
->  		pr_err("ENOMEM allocating ceph_cap_snap on %p\n", inode);
->  		return;
-> @@ -603,7 +603,8 @@ static void ceph_queue_cap_snap(struct ceph_inode_info *ci)
->  	spin_unlock(&ci->i_ceph_lock);
->  
->  	ceph_buffer_put(old_blob);
-> -	kfree(capsnap);
-> +	if (capsnap)
-> +		kmem_cache_free(ceph_cap_snap_cachep, capsnap);
->  	ceph_put_snap_context(old_snapc);
->  }
->  
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index bf79f369aec6..978463fa822c 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -864,6 +864,7 @@ static void destroy_fs_client(struct ceph_fs_client *fsc)
->   */
->  struct kmem_cache *ceph_inode_cachep;
->  struct kmem_cache *ceph_cap_cachep;
-> +struct kmem_cache *ceph_cap_snap_cachep;
->  struct kmem_cache *ceph_cap_flush_cachep;
->  struct kmem_cache *ceph_dentry_cachep;
->  struct kmem_cache *ceph_file_cachep;
-> @@ -892,6 +893,9 @@ static int __init init_caches(void)
->  	ceph_cap_cachep = KMEM_CACHE(ceph_cap, SLAB_MEM_SPREAD);
->  	if (!ceph_cap_cachep)
->  		goto bad_cap;
-> +	ceph_cap_snap_cachep = KMEM_CACHE(ceph_cap_snap, SLAB_MEM_SPREAD);
-> +	if (!ceph_cap_snap_cachep)
-> +		goto bad_cap_snap;
->  	ceph_cap_flush_cachep = KMEM_CACHE(ceph_cap_flush,
->  					   SLAB_RECLAIM_ACCOUNT|SLAB_MEM_SPREAD);
->  	if (!ceph_cap_flush_cachep)
-> @@ -931,6 +935,8 @@ static int __init init_caches(void)
->  bad_dentry:
->  	kmem_cache_destroy(ceph_cap_flush_cachep);
->  bad_cap_flush:
-> +	kmem_cache_destroy(ceph_cap_snap_cachep);
-> +bad_cap_snap:
->  	kmem_cache_destroy(ceph_cap_cachep);
->  bad_cap:
->  	kmem_cache_destroy(ceph_inode_cachep);
-> @@ -947,6 +953,7 @@ static void destroy_caches(void)
->  
->  	kmem_cache_destroy(ceph_inode_cachep);
->  	kmem_cache_destroy(ceph_cap_cachep);
-> +	kmem_cache_destroy(ceph_cap_snap_cachep);
->  	kmem_cache_destroy(ceph_cap_flush_cachep);
->  	kmem_cache_destroy(ceph_dentry_cachep);
->  	kmem_cache_destroy(ceph_file_cachep);
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index c0718d5a8fb8..2d08104c8955 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -231,7 +231,7 @@ static inline void ceph_put_cap_snap(struct ceph_cap_snap *capsnap)
->  	if (refcount_dec_and_test(&capsnap->nref)) {
->  		if (capsnap->xattr_blob)
->  			ceph_buffer_put(capsnap->xattr_blob);
-> -		kfree(capsnap);
-> +		kmem_cache_free(ceph_cap_snap_cachep, capsnap);
+> -
+> -	capsnap = kmem_cache_alloc(ceph_cap_snap_cachep, GFP_NOFS);
+> -	if (!capsnap) {
+> -		pr_err("ENOMEM allocating ceph_cap_snap on %p\n", inode);
+> -		return;
+> +	bool need_flush = false;
+> +	bool atomic_alloc_mem_failed = false;
+> +
+> +retry:
+> +	if (unlikely(atomic_alloc_mem_failed)) {
+> +	        capsnap = kmem_cache_alloc(ceph_cap_snap_cachep, GFP_NOFS);
+> +		if (!capsnap) {
+> +			pr_err("ENOMEM allocating ceph_cap_snap on %p\n", inode);
+> +			return;
+> +		}
 >  	}
->  }
+> -	capsnap->cap_flush.is_capsnap = true;
+> -	INIT_LIST_HEAD(&capsnap->cap_flush.i_list);
+> -	INIT_LIST_HEAD(&capsnap->cap_flush.g_list);
 >  
-> diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
-> index edf62eaa6285..00af2c98da75 100644
-> --- a/include/linux/ceph/libceph.h
-> +++ b/include/linux/ceph/libceph.h
-> @@ -284,6 +284,7 @@ DEFINE_RB_LOOKUP_FUNC(name, type, keyfld, nodefld)
+>  	spin_lock(&ci->i_ceph_lock);
+>  	used = __ceph_caps_used(ci);
+> @@ -532,7 +534,7 @@ static void ceph_queue_cap_snap(struct ceph_inode_info *ci)
+>  	 */
+>  	if (has_new_snaps(old_snapc, new_snapc)) {
+>  		if (dirty & (CEPH_CAP_ANY_EXCL|CEPH_CAP_FILE_WR))
+> -			capsnap->need_flush = true;
+> +			need_flush = true;
+>  	} else {
+>  		if (!(used & CEPH_CAP_FILE_WR) &&
+>  		    ci->i_wrbuffer_ref_head == 0) {
+> @@ -542,6 +544,21 @@ static void ceph_queue_cap_snap(struct ceph_inode_info *ci)
+>  		}
+>  	}
 >  
->  extern struct kmem_cache *ceph_inode_cachep;
->  extern struct kmem_cache *ceph_cap_cachep;
-> +extern struct kmem_cache *ceph_cap_snap_cachep;
->  extern struct kmem_cache *ceph_cap_flush_cachep;
->  extern struct kmem_cache *ceph_dentry_cachep;
->  extern struct kmem_cache *ceph_file_cachep;
+> +	if (!capsnap) {
+> +	        capsnap = kmem_cache_alloc(ceph_cap_snap_cachep, GFP_ATOMIC);
+> +		if (unlikely(!capsnap)) {
+> +			pr_err("ENOMEM atomic allocating ceph_cap_snap on %p\n",
+> +			       inode);
+> +			spin_unlock(&ci->i_ceph_lock);
+> +			atomic_alloc_mem_failed = true;
+> +			goto retry;
+> +		}
+> +	}
+> +	capsnap->need_flush = need_flush;
+> +	capsnap->cap_flush.is_capsnap = true;
+> +	INIT_LIST_HEAD(&capsnap->cap_flush.i_list);
+> +	INIT_LIST_HEAD(&capsnap->cap_flush.g_list);
+> +
+>  	dout("queue_cap_snap %p cap_snap %p queuing under %p %s %s\n",
+>  	     inode, capsnap, old_snapc, ceph_cap_string(dirty),
+>  	     capsnap->need_flush ? "" : "no_flush");
 
-Looks good. I'll plan to merge this into testing branch.
+I'm not so thrilled with this patch.
+
+First, are you sure you want GFP_ATOMIC here? Something like GFP_NOWAIT
+may be better since you have a fallback so the kernel can still make
+forward progress on reclaim if this returns NULL.
+
+That said, this is pretty kludgey. I'd much prefer to see something that
+didn't require this sort of hack. Maybe instead you could have
+queue_realm_cap_snaps do the allocation and pass a (struct ceph_cap_snap
+**) pointer in, and it can set the thing to NULL if it ends up using it?
+
+That way, we still don't do the allocation under spinlock and you only
+end up allocating the number you need (plus maybe one or two on the
+edges).
+
 -- 
 Jeff Layton <jlayton@kernel.org>
