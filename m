@@ -2,53 +2,64 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD97C4B6BF6
-	for <lists+ceph-devel@lfdr.de>; Tue, 15 Feb 2022 13:23:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 029394B6C00
+	for <lists+ceph-devel@lfdr.de>; Tue, 15 Feb 2022 13:27:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237249AbiBOMXs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 15 Feb 2022 07:23:48 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:33258 "EHLO
+        id S237656AbiBOM13 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 15 Feb 2022 07:27:29 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236233AbiBOMXr (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Feb 2022 07:23:47 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 21750107AAB
-        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 04:23:37 -0800 (PST)
+        with ESMTP id S237654AbiBOM12 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Feb 2022 07:27:28 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 81D2A107AAB
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 04:27:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1644927816;
+        s=mimecast20190719; t=1644928037;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=HQ+xivxB43tXo4RERtGauY3YUoCYvZW5H6WAxoSHvXU=;
-        b=crcu2mjoengkWMk2Kg5bvq+veu2cKBWpQ8OL+g9bOdUxcnPVvqEi71eL0s/tZrVMh+WFC2
-        dBedGb828j3kMGVBMhAQdf+4V9TBlMRbxglaicARCZK2OOv9N07iFJOwNxTcK2fxg60zEO
-        yvae8hvX1BnEXc3SV+N1eJGQD3ZhRbE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=EPA0emrN45sLOLoUZ83X5/DG0RI4rr9kYq9aYKrJ41A=;
+        b=GLVB49uHpULGWCj8t/caOM8Ph3LivpvpxzOuF+7SruKCuKzrUYNu2MWkFaAqEG3G2kb69L
+        GR1gh16zpTG61+Ztzx9f6sUyKP4EHfRwFZZA2cICp8Pe2BAdnJrAI9DPTLHFN15TZ71bEJ
+        zOHBIeD+cEj2cQ6c4oUSytb8uydVEis=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-270-5J2XDh1oPDSiS2Xy13hrwQ-1; Tue, 15 Feb 2022 07:23:35 -0500
-X-MC-Unique: 5J2XDh1oPDSiS2Xy13hrwQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0666B2F26;
-        Tue, 15 Feb 2022 12:23:34 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3FF01101F6CF;
-        Tue, 15 Feb 2022 12:23:32 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, vshankar@redhat.com,
-        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH 3/3] ceph: do no update snapshot context when there is no new snapshot
-Date:   Tue, 15 Feb 2022 20:23:16 +0800
-Message-Id: <20220215122316.7625-4-xiubli@redhat.com>
-In-Reply-To: <20220215122316.7625-1-xiubli@redhat.com>
-References: <20220215122316.7625-1-xiubli@redhat.com>
+ us-mta-343-9WYOrwdkPtCFurx8fXWwuw-1; Tue, 15 Feb 2022 07:27:16 -0500
+X-MC-Unique: 9WYOrwdkPtCFurx8fXWwuw-1
+Received: by mail-lf1-f70.google.com with SMTP id 27-20020ac25f1b000000b0043edb7bf7e7so6092644lfq.20
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 04:27:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EPA0emrN45sLOLoUZ83X5/DG0RI4rr9kYq9aYKrJ41A=;
+        b=vmYmeBr1vqNkdnYCwRbp+3TCVR2C74YB38f+tqm0pU6bvbg96U4x5MtwXFFN0HwDq1
+         GwVEi01sBlk2sSCTcvsGoRAjL4uMKuqxaIFbhr45umI1p2aPDbJOUMKTk+9B/PW5alsp
+         jiCL9W6KR8NIqG1bQ8XpCHEzFbmA3UZmeqvcm+Gq/Jh5A68hIPlsOf+1qlG+Mm7GnaDe
+         nRVL3Prs/CMygGEMfjERn9UrW5135lnDv7WywN7lMgsh4c9Bc6+UgMOJe20oJwEUW5Fw
+         WAXPrguiqUlloGDEmdNVWDyZXHjoCXfumFJLTvMQhx9bPsj7VvjPnXBvHFXffinDzmSg
+         sgSw==
+X-Gm-Message-State: AOAM531hfv9yvk3dMkVvg2vj1/VwQR+ywWy7ETYMmfEw8B877bl42ANR
+        EFtK7IQsTNhynKYrlKSv+48/DdIdLchzxIsH7kyPJwkOQk7gnbUjJGRMaNMOj9c0BAkp2vygZIY
+        G4cAzWzSij9bLIfB3/niv4yk7dz5drVYyGgDStg==
+X-Received: by 2002:a2e:880a:: with SMTP id x10mr2337083ljh.310.1644928034963;
+        Tue, 15 Feb 2022 04:27:14 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJz5UJZnxtdQ4xBKrk5ndZ5VI/AER9nWZrGMcAk2I4dmB/jpmoqPPFfe8DtpqFYlP/vpl9ppq1dXS5/naeXJnA0=
+X-Received: by 2002:a2e:880a:: with SMTP id x10mr2337070ljh.310.1644928034746;
+ Tue, 15 Feb 2022 04:27:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+References: <20220215091657.104079-1-vshankar@redhat.com> <3f74605528367ae8935aaade101c168198e3996f.camel@redhat.com>
+In-Reply-To: <3f74605528367ae8935aaade101c168198e3996f.camel@redhat.com>
+From:   Venky Shankar <vshankar@redhat.com>
+Date:   Tue, 15 Feb 2022 17:56:38 +0530
+Message-ID: <CACPzV1n+LDTzraas9_FCU_xvdoQPMX6t3s6Y10-yPDBYFfFkHQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] ceph: forward average read/write/metadata latency
+To:     Jeff Layton <jlayton@redhat.com>
+Cc:     Xiubo Li <xiubli@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -59,75 +70,50 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Tue, Feb 15, 2022 at 5:08 PM Jeff Layton <jlayton@redhat.com> wrote:
+>
+> On Tue, 2022-02-15 at 14:46 +0530, Venky Shankar wrote:
+> > Right now, cumulative read/write/metadata latencies are tracked
+> > and are periodically forwarded to the MDS. These meterics are not
+> > particularly useful. A much more useful metric is the average latency
+> > and standard deviation (stdev) which is what this series of patches
+> > aims to do.
+> >
+> > The userspace (libcephfs+tool) changes are here::
+> >
+> >           https://github.com/ceph/ceph/pull/41397
+> >
+> > Note that the cumulative latencies are still forwarded to the MDS but
+> > the tool (cephfs-top) ignores it altogether.
+> >
+> > Latency standard deviation is calculated in `cephfs-top` tool.
+> >
+> > Venky Shankar (3):
+> >   ceph: track average r/w/m latency
+> >   ceph: include average/stdev r/w/m latency in mds metrics
+> >   ceph: use tracked average r/w/m latencies to display metrics in
+> >     debugfs
+> >
+> >  fs/ceph/debugfs.c |  2 +-
+> >  fs/ceph/metric.c  | 44 +++++++++++++++++++++++----------------
+> >  fs/ceph/metric.h  | 52 +++++++++++++++++++++++++++++++++--------------
+> >  3 files changed, 65 insertions(+), 33 deletions(-)
+> >
+>
+> Looks good, Venky. Merged into testing branch. I did make a small change
+> to the last patch to fix a compiler warning. PTAL and make sure you're
+> OK with it.
 
-No need to update snapshot context when any of the following two
-cases happens:
-1: if my context seq matches realm's seq and realm has no parent.
-2: if my context seq equals or is larger than my parent's, this
-   works because we rebuild_snap_realms() works _downward_ in
-   hierarchy after each update.
+Looks good. Thanks for the fix.
 
-This fix will avoid those inodes which accidently calling
-ceph_queue_cap_snap() and make no sense, for exmaple:
+>
+> Thanks,
+> --
+> Jeff Layton <jlayton@redhat.com>
+>
 
-There have 6 directories like:
 
-/dir_X1/dir_X2/dir_X3/
-/dir_Y1/dir_Y2/dir_Y3/
-
-Firstly, make a snapshot under /dir_X1/dir_X2/.snap/snap_X2, then
-make a root snapshot under /.snap/root_snap. And every time when
-we make snapshots under /dir_Y1/..., the kclient will always try
-to rebuild the snap context for snap_X2 realm and finally will
-always try to queue cap snaps for dir_Y2 and dir_Y3, which makes
-no sense.
-
-That's because the snap_X2's seq is 2 and root_snap's seq is 3.
-So when creating a new snapshot under /dir_Y1/... the new seq
-will be 4, and then the mds will send kclient a snapshot backtrace
-in _downward_ in hierarchy: seqs 4, 3. Then in ceph_update_snap_trace()
-it will always rebuild the from the last realm, that's the root_snap.
-So later when rebuilding the snap context it will always rebuild
-the snap_X2 realm and then try to queue cap snaps for all the inodes
-related in snap_X2 realm, and we are seeing the logs like:
-
-"ceph:  queue_cap_snap 00000000a42b796b nothing dirty|writing"
-
-URL: https://tracker.ceph.com/issues/44100
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/snap.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
-
-diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-index d075d3ce5f6d..1f24a5de81e7 100644
---- a/fs/ceph/snap.c
-+++ b/fs/ceph/snap.c
-@@ -341,14 +341,16 @@ static int build_snap_context(struct ceph_snap_realm *realm,
- 		num += parent->cached_context->num_snaps;
- 	}
- 
--	/* do i actually need to update?  not if my context seq
--	   matches realm seq, and my parents' does to.  (this works
--	   because we rebuild_snap_realms() works _downward_ in
--	   hierarchy after each update.) */
-+	/* do i actually need to update? No need when any of the following
-+	 * two cases:
-+	 * #1: if my context seq matches realm's seq and realm has no parent.
-+	 * #2: if my context seq equals or is larger than my parent's, this
-+	 *     works because we rebuild_snap_realms() works _downward_ in
-+	 *     hierarchy after each update.
-+	 */
- 	if (realm->cached_context &&
--	    realm->cached_context->seq == realm->seq &&
--	    (!parent ||
--	     realm->cached_context->seq >= parent->cached_context->seq)) {
-+	    ((realm->cached_context->seq == realm->seq && !parent) ||
-+	     (parent && realm->cached_context->seq >= parent->cached_context->seq))) {
- 		dout("build_snap_context %llx %p: %p seq %lld (%u snaps)"
- 		     " (unchanged)\n",
- 		     realm->ino, realm, realm->cached_context,
 -- 
-2.27.0
+Cheers,
+Venky
 
