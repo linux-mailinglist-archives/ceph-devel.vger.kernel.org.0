@@ -2,148 +2,140 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 872424B8D94
-	for <lists+ceph-devel@lfdr.de>; Wed, 16 Feb 2022 17:13:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F16704B913B
+	for <lists+ceph-devel@lfdr.de>; Wed, 16 Feb 2022 20:34:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236168AbiBPQNc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 16 Feb 2022 11:13:32 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58264 "EHLO
+        id S233389AbiBPTeF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 16 Feb 2022 14:34:05 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:50904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236198AbiBPQNZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 16 Feb 2022 11:13:25 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A5D1ECB2A;
-        Wed, 16 Feb 2022 08:13:09 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 743B41F383;
-        Wed, 16 Feb 2022 16:13:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1645027988; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nrkHpDQ0Iq5S31UNYEnjNtq7DQVZFxeFOdhBjdU+8+o=;
-        b=wMK6nZrsIezU2PrbmwsOAkOK11UKhlmRS7FJsjYBTHVysJkMagS5QYyt4o3SAqRLK7Btmn
-        CGztLwBOlifTL4L9DIqMLvTRObRuUFeHlrHyT8WhG7vz0/97SCkQvQxzQ6nSd27d3tfMJJ
-        TLuQ6KWa98hOwcPKQmuXf74YH2SjmFs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1645027988;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nrkHpDQ0Iq5S31UNYEnjNtq7DQVZFxeFOdhBjdU+8+o=;
-        b=RK8wCgeLOlyrCxDXxUlr+3hEoxFgHUBPRsTRpy4GJP+2tmXqLHyq5PTh93fnNZ+Vkrg8lc
-        d2H5FZZkGmWOkQCA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F3C5013B15;
-        Wed, 16 Feb 2022 16:13:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id HP2OOJMiDWJPSQAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Wed, 16 Feb 2022 16:13:07 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id e2651311;
-        Wed, 16 Feb 2022 16:13:21 +0000 (UTC)
-From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, idryomov@gmail.com
-Subject: Re: [RFC PATCH v10 00/48] ceph+fscrypt: full support
-References: <20220111191608.88762-1-jlayton@kernel.org>
-        <87r185tjpi.fsf@brahms.olymp>
-        <62e06980ebc36c91e368e4d8bfa340b5ff291369.camel@kernel.org>
-Date:   Wed, 16 Feb 2022 16:13:21 +0000
-In-Reply-To: <62e06980ebc36c91e368e4d8bfa340b5ff291369.camel@kernel.org> (Jeff
-        Layton's message of "Mon, 14 Feb 2022 13:39:34 -0500")
-Message-ID: <87iltessbi.fsf@brahms.olymp>
+        with ESMTP id S232083AbiBPTeE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 16 Feb 2022 14:34:04 -0500
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F314B1F3F2E
+        for <ceph-devel@vger.kernel.org>; Wed, 16 Feb 2022 11:33:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1645040029; x=1676576029;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=bAzoMRtf+I24Zmqs4+cnXW5HieIQnHKD6dEjmJa1llk=;
+  b=b4pzbkLmxDHN6vM8oefzqp1uDJmzg3FLl1i8N5MPyDZRy8coUODA5ie9
+   J6tjoZmEigfhX93yUJCiNKwYiFhf1piHI9u8CjZ5BOBIWnvskJrW4IgP7
+   echOMfJasqy1twPCWWoDa2gXOawwSz8ZFQiT/GbUqvHezkMD3UbtUuyCa
+   u3g87uLLshsQ75xLAXxOueqDFcwwqhXPhJXohyQZ76LjA7KvKPVdSqzFd
+   utCtaAVkKv3wWVDPV+EDbISK9LYG2+EzE6Oeh/BtNhPEIfXGGI8w3GzQO
+   Wm6jT32orI50YUYfM+uFm+aek8Q39eITts+fEgGS4j8oqq1r4dDRHMeDs
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10260"; a="250649720"
+X-IronPort-AV: E=Sophos;i="5.88,374,1635231600"; 
+   d="scan'208";a="250649720"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Feb 2022 11:33:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,374,1635231600"; 
+   d="scan'208";a="540299842"
+Received: from lkp-server01.sh.intel.com (HELO d95dc2dabeb1) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 16 Feb 2022 11:33:48 -0800
+Received: from kbuild by d95dc2dabeb1 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nKQ3f-000B3l-C9; Wed, 16 Feb 2022 19:33:47 +0000
+Date:   Thu, 17 Feb 2022 03:33:42 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        ceph-devel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+Subject: [ceph-client:testing 13/14] fs/ceph/snap.c:438:14: warning: variable
+ '_realm' is uninitialized when used here
+Message-ID: <202202170318.82LIXBXX-lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> writes:
+tree:   https://github.com/ceph/ceph-client.git testing
+head:   91e59cfc6ca1a2bf594f60474996c71047edd1e5
+commit: 7c7e63bc9910b15ffd1f791838ff0a919058f97c [13/14] ceph: eliminate the recursion when rebuilding the snap context
+config: hexagon-randconfig-r005-20220216 (https://download.01.org/0day-ci/archive/20220217/202202170318.82LIXBXX-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 0e628a783b935c70c80815db6c061ec84f884af5)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/ceph/ceph-client/commit/7c7e63bc9910b15ffd1f791838ff0a919058f97c
+        git remote add ceph-client https://github.com/ceph/ceph-client.git
+        git fetch --no-tags ceph-client testing
+        git checkout 7c7e63bc9910b15ffd1f791838ff0a919058f97c
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash fs/ceph/
 
-> On Mon, 2022-02-14 at 17:57 +0000, Lu=C3=ADs Henriques wrote:
->> Jeff Layton <jlayton@kernel.org> writes:
->>=20
->> > This patchset represents a (mostly) complete rough draft of fscrypt
->> > support for cephfs. The context, filename and symlink support is more =
-or
->> > less the same as the versions posted before, and comprise the first ha=
-lf
->> > of the patches.
->> >=20
->> > The new bits here are the size handling changes and support for content
->> > encryption, in buffered, direct and synchronous codepaths. Much of this
->> > code is still very rough and needs a lot of cleanup work.
->> >=20
->> > fscrypt support relies on some MDS changes that are being tracked here:
->> >=20
->> >     https://github.com/ceph/ceph/pull/43588
->> >=20
->>=20
->> Please correct me if I'm wrong (and I've a feeling that I *will* be
->> wrong): we're still missing some mechanism that prevents clients that do
->> not support fscrypt from creating new files in an encryption directory,
->> right?  I'm pretty sure I've discussed this "somewhere" with "someone",
->> but I can't remember anything else.
->>=20
->> At this point, I can create an encrypted directory and, from a different
->> client (that doesn't support fscrypt), create a new non-encrypted file in
->> that directory.  The result isn't good, of course.
->>=20
->> I guess that a new feature bit can be used so that the MDS won't allow a=
-ny
->> sort of operations (or, at least, write/create operations) on encrypted
->> dirs from clients that don't have this bit set.
->>=20
->> So, am I missing something or is this still on the TODO list?
->>=20
->> (I can try to have a look at it if this is still missing.)
->>=20
->> Cheers,
->
-> It's still on the TODO list.
->
-> Basically, I think we'll want to allow non-fscrypt-enabled clients to
-> stat and readdir in an fscrypt-enabled directory tree, and unlink files
-> and directories in it.
->
-> They should have no need to do anything else. You can't run backups from
-> such clients since you wouldn't have the real size or crypto context.
-> --=20
-> Jeff Layton <jlayton@kernel.org>
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-OK, I've looked at the code and I've a patch that works (sort of).  Here's
-what I've done:
+All warnings (new ones prefixed by >>):
 
-I'm blocking all the dangerous Ops (CEPH_MDS_OP_{CREATE,MKDIR,...}) early
-in the client requests handling code.  I.e., returning -EROFS if the
-client session doesn't have the feature *and* the inode has fscrypt_auth
-set.
+>> fs/ceph/snap.c:438:14: warning: variable '_realm' is uninitialized when used here [-Wuninitialized]
+                           list_del(&_realm->rebuild_item);
+                                     ^~~~~~
+   fs/ceph/snap.c:430:33: note: initialize the variable '_realm' to silence this warning
+                   struct ceph_snap_realm *_realm, *child;
+                                                 ^
+                                                  = NULL
+   1 warning generated.
 
-It sort of works (I still need to find if I need any locks, that's black
-magic for me!), but it won't prevent a client from doing things like
-appending garbage to an encrypted file.  Doing this will obviously make
-that file useless, but it's not that much different from non-encrypted
-files (sure, in this case it might be possible to recover some data).  But
-I'm not seeing an easy way to caps into this mix.
 
-Cheers,
---=20
-Lu=C3=ADs
+vim +/_realm +438 fs/ceph/snap.c
+
+   417	
+   418	/*
+   419	 * rebuild snap context for the given realm and all of its children.
+   420	 */
+   421	static void rebuild_snap_realms(struct ceph_snap_realm *realm,
+   422					struct list_head *dirty_realms)
+   423	{
+   424		LIST_HEAD(realm_queue);
+   425		int last = 0;
+   426	
+   427		list_add_tail(&realm->rebuild_item, &realm_queue);
+   428	
+   429		while (!list_empty(&realm_queue)) {
+   430			struct ceph_snap_realm *_realm, *child;
+   431	
+   432			/*
+   433			 * If the last building failed dues to memory
+   434			 * issue, just empty the realm_queue and return
+   435			 * to avoid infinite loop.
+   436			 */
+   437			if (last < 0) {
+ > 438				list_del(&_realm->rebuild_item);
+   439				continue;
+   440			}
+   441	
+   442			_realm = list_first_entry(&realm_queue,
+   443						  struct ceph_snap_realm,
+   444						  rebuild_item);
+   445			last = build_snap_context(_realm, &realm_queue, dirty_realms);
+   446			dout("rebuild_snap_realms %llx %p, %s\n", _realm->ino, _realm,
+   447			     last > 0 ? "is deferred" : !last ? "succeeded" : "failed");
+   448	
+   449			list_for_each_entry(child, &_realm->children, child_item)
+   450				list_add_tail(&child->rebuild_item, &realm_queue);
+   451	
+   452			/* last == 1 means need to build parent first */
+   453			if (last <= 0)
+   454				list_del(&_realm->rebuild_item);
+   455		}
+   456	}
+   457	
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
