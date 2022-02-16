@@ -2,175 +2,148 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B610E4B8BE4
-	for <lists+ceph-devel@lfdr.de>; Wed, 16 Feb 2022 15:58:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 872424B8D94
+	for <lists+ceph-devel@lfdr.de>; Wed, 16 Feb 2022 17:13:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235269AbiBPO6f (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 16 Feb 2022 09:58:35 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38620 "EHLO
+        id S236168AbiBPQNc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 16 Feb 2022 11:13:32 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:58264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232406AbiBPO6e (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 16 Feb 2022 09:58:34 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4882A66FA2
-        for <ceph-devel@vger.kernel.org>; Wed, 16 Feb 2022 06:58:22 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S236198AbiBPQNZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 16 Feb 2022 11:13:25 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A5D1ECB2A;
+        Wed, 16 Feb 2022 08:13:09 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E4C21618F7
-        for <ceph-devel@vger.kernel.org>; Wed, 16 Feb 2022 14:58:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5DE6C004E1;
-        Wed, 16 Feb 2022 14:58:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645023501;
-        bh=yQRaV08b6yYawP0//XFrE6u4IX1kHI9ZzRQ6l+MR24Y=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=d/LUJzvjI5mpBpeI2om/wg9YRUjKcN3rwg8oAQfYDzJhQrBMcgqc0weESbao8ctbr
-         wDhH75XJQWEOH5T9laseJ/ZAjIKQ3LTwXx+X9mr7IarwSiiKHxY/NcnFjPMQiX9tdh
-         PCZQsNEEQaC4cKP+4metft3gzIHmDZPiqygSXfmdUNITxXmLeeSnJFCNj0bLsvBZlO
-         seFfc+VlMZNt5eTpdcTiPGGvENGAC7rvVG75cJ+3tB0cMiqcT4Z9bbQ2nqcxOo89Qt
-         lEic2LLg53GV1rhE8YQ8UltwwuXplmxWm9HAFJcv/xtkbunE80K1gYgCJrIxFwiSsb
-         Dz4sMj+ymqTOQ==
-Message-ID: <28350c955afc4f07030ba465cb492605bf5889da.camel@kernel.org>
-Subject: Re: [PATCH 1/3] ceph: move to a dedicated slabcache for
- ceph_cap_snap
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
-Date:   Wed, 16 Feb 2022 09:58:19 -0500
-In-Reply-To: <20220215122316.7625-2-xiubli@redhat.com>
-References: <20220215122316.7625-1-xiubli@redhat.com>
-         <20220215122316.7625-2-xiubli@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.3 (3.42.3-1.fc35) 
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 743B41F383;
+        Wed, 16 Feb 2022 16:13:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1645027988; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nrkHpDQ0Iq5S31UNYEnjNtq7DQVZFxeFOdhBjdU+8+o=;
+        b=wMK6nZrsIezU2PrbmwsOAkOK11UKhlmRS7FJsjYBTHVysJkMagS5QYyt4o3SAqRLK7Btmn
+        CGztLwBOlifTL4L9DIqMLvTRObRuUFeHlrHyT8WhG7vz0/97SCkQvQxzQ6nSd27d3tfMJJ
+        TLuQ6KWa98hOwcPKQmuXf74YH2SjmFs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1645027988;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nrkHpDQ0Iq5S31UNYEnjNtq7DQVZFxeFOdhBjdU+8+o=;
+        b=RK8wCgeLOlyrCxDXxUlr+3hEoxFgHUBPRsTRpy4GJP+2tmXqLHyq5PTh93fnNZ+Vkrg8lc
+        d2H5FZZkGmWOkQCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id F3C5013B15;
+        Wed, 16 Feb 2022 16:13:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id HP2OOJMiDWJPSQAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Wed, 16 Feb 2022 16:13:07 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id e2651311;
+        Wed, 16 Feb 2022 16:13:21 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, idryomov@gmail.com
+Subject: Re: [RFC PATCH v10 00/48] ceph+fscrypt: full support
+References: <20220111191608.88762-1-jlayton@kernel.org>
+        <87r185tjpi.fsf@brahms.olymp>
+        <62e06980ebc36c91e368e4d8bfa340b5ff291369.camel@kernel.org>
+Date:   Wed, 16 Feb 2022 16:13:21 +0000
+In-Reply-To: <62e06980ebc36c91e368e4d8bfa340b5ff291369.camel@kernel.org> (Jeff
+        Layton's message of "Mon, 14 Feb 2022 13:39:34 -0500")
+Message-ID: <87iltessbi.fsf@brahms.olymp>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2022-02-15 at 20:23 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> There could be huge number of capsnap queued in a short time, on
-> x86_64 it's 248 bytes, which will be rounded up to 256 bytes by
-> kzalloc. Move this to a dedicated slabcache to save 8 bytes for
-> each.
-> 
-> For the kmalloc-256 slab cache, the actual size will be 512 bytes:
-> kmalloc-256        21797  74656    512   32    4 : tunables, etc
-> 
-> For a dedicated slab cache the real size is 312 bytes:
-> ceph_cap_snap          0      0    312   52    4 : tunables, etc
-> 
-> So actually we can save 200 bytes for each.
-> 
+Jeff Layton <jlayton@kernel.org> writes:
 
-I dropped everything but the top paragraph in the description above. On
-non-debug kernels, kmalloc-256 is indeed 256 bytes. The inflation you're
-seeing is almost certainly from sort of kernel debugging options.
+> On Mon, 2022-02-14 at 17:57 +0000, Lu=C3=ADs Henriques wrote:
+>> Jeff Layton <jlayton@kernel.org> writes:
+>>=20
+>> > This patchset represents a (mostly) complete rough draft of fscrypt
+>> > support for cephfs. The context, filename and symlink support is more =
+or
+>> > less the same as the versions posted before, and comprise the first ha=
+lf
+>> > of the patches.
+>> >=20
+>> > The new bits here are the size handling changes and support for content
+>> > encryption, in buffered, direct and synchronous codepaths. Much of this
+>> > code is still very rough and needs a lot of cleanup work.
+>> >=20
+>> > fscrypt support relies on some MDS changes that are being tracked here:
+>> >=20
+>> >     https://github.com/ceph/ceph/pull/43588
+>> >=20
+>>=20
+>> Please correct me if I'm wrong (and I've a feeling that I *will* be
+>> wrong): we're still missing some mechanism that prevents clients that do
+>> not support fscrypt from creating new files in an encryption directory,
+>> right?  I'm pretty sure I've discussed this "somewhere" with "someone",
+>> but I can't remember anything else.
+>>=20
+>> At this point, I can create an encrypted directory and, from a different
+>> client (that doesn't support fscrypt), create a new non-encrypted file in
+>> that directory.  The result isn't good, of course.
+>>=20
+>> I guess that a new feature bit can be used so that the MDS won't allow a=
+ny
+>> sort of operations (or, at least, write/create operations) on encrypted
+>> dirs from clients that don't have this bit set.
+>>=20
+>> So, am I missing something or is this still on the TODO list?
+>>=20
+>> (I can try to have a look at it if this is still missing.)
+>>=20
+>> Cheers,
+>
+> It's still on the TODO list.
+>
+> Basically, I think we'll want to allow non-fscrypt-enabled clients to
+> stat and readdir in an fscrypt-enabled directory tree, and unlink files
+> and directories in it.
+>
+> They should have no need to do anything else. You can't run backups from
+> such clients since you wouldn't have the real size or crypto context.
+> --=20
+> Jeff Layton <jlayton@kernel.org>
 
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/snap.c               | 5 +++--
->  fs/ceph/super.c              | 7 +++++++
->  fs/ceph/super.h              | 2 +-
->  include/linux/ceph/libceph.h | 1 +
->  4 files changed, 12 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-> index b41e6724c591..c787775eaf2a 100644
-> --- a/fs/ceph/snap.c
-> +++ b/fs/ceph/snap.c
-> @@ -482,7 +482,7 @@ static void ceph_queue_cap_snap(struct ceph_inode_info *ci)
->  	struct ceph_buffer *old_blob = NULL;
->  	int used, dirty;
->  
-> -	capsnap = kzalloc(sizeof(*capsnap), GFP_NOFS);
-> +	capsnap = kmem_cache_alloc(ceph_cap_snap_cachep, GFP_NOFS);
->  	if (!capsnap) {
->  		pr_err("ENOMEM allocating ceph_cap_snap on %p\n", inode);
->  		return;
-> @@ -603,7 +603,8 @@ static void ceph_queue_cap_snap(struct ceph_inode_info *ci)
->  	spin_unlock(&ci->i_ceph_lock);
->  
->  	ceph_buffer_put(old_blob);
-> -	kfree(capsnap);
-> +	if (capsnap)
-> +		kmem_cache_free(ceph_cap_snap_cachep, capsnap);
->  	ceph_put_snap_context(old_snapc);
->  }
->  
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index bf79f369aec6..978463fa822c 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -864,6 +864,7 @@ static void destroy_fs_client(struct ceph_fs_client *fsc)
->   */
->  struct kmem_cache *ceph_inode_cachep;
->  struct kmem_cache *ceph_cap_cachep;
-> +struct kmem_cache *ceph_cap_snap_cachep;
->  struct kmem_cache *ceph_cap_flush_cachep;
->  struct kmem_cache *ceph_dentry_cachep;
->  struct kmem_cache *ceph_file_cachep;
-> @@ -892,6 +893,9 @@ static int __init init_caches(void)
->  	ceph_cap_cachep = KMEM_CACHE(ceph_cap, SLAB_MEM_SPREAD);
->  	if (!ceph_cap_cachep)
->  		goto bad_cap;
-> +	ceph_cap_snap_cachep = KMEM_CACHE(ceph_cap_snap, SLAB_MEM_SPREAD);
-> +	if (!ceph_cap_snap_cachep)
-> +		goto bad_cap_snap;
->  	ceph_cap_flush_cachep = KMEM_CACHE(ceph_cap_flush,
->  					   SLAB_RECLAIM_ACCOUNT|SLAB_MEM_SPREAD);
->  	if (!ceph_cap_flush_cachep)
-> @@ -931,6 +935,8 @@ static int __init init_caches(void)
->  bad_dentry:
->  	kmem_cache_destroy(ceph_cap_flush_cachep);
->  bad_cap_flush:
-> +	kmem_cache_destroy(ceph_cap_snap_cachep);
-> +bad_cap_snap:
->  	kmem_cache_destroy(ceph_cap_cachep);
->  bad_cap:
->  	kmem_cache_destroy(ceph_inode_cachep);
-> @@ -947,6 +953,7 @@ static void destroy_caches(void)
->  
->  	kmem_cache_destroy(ceph_inode_cachep);
->  	kmem_cache_destroy(ceph_cap_cachep);
-> +	kmem_cache_destroy(ceph_cap_snap_cachep);
->  	kmem_cache_destroy(ceph_cap_flush_cachep);
->  	kmem_cache_destroy(ceph_dentry_cachep);
->  	kmem_cache_destroy(ceph_file_cachep);
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index c0718d5a8fb8..2d08104c8955 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -231,7 +231,7 @@ static inline void ceph_put_cap_snap(struct ceph_cap_snap *capsnap)
->  	if (refcount_dec_and_test(&capsnap->nref)) {
->  		if (capsnap->xattr_blob)
->  			ceph_buffer_put(capsnap->xattr_blob);
-> -		kfree(capsnap);
-> +		kmem_cache_free(ceph_cap_snap_cachep, capsnap);
->  	}
->  }
->  
-> diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
-> index edf62eaa6285..00af2c98da75 100644
-> --- a/include/linux/ceph/libceph.h
-> +++ b/include/linux/ceph/libceph.h
-> @@ -284,6 +284,7 @@ DEFINE_RB_LOOKUP_FUNC(name, type, keyfld, nodefld)
->  
->  extern struct kmem_cache *ceph_inode_cachep;
->  extern struct kmem_cache *ceph_cap_cachep;
-> +extern struct kmem_cache *ceph_cap_snap_cachep;
->  extern struct kmem_cache *ceph_cap_flush_cachep;
->  extern struct kmem_cache *ceph_dentry_cachep;
->  extern struct kmem_cache *ceph_file_cachep;
+OK, I've looked at the code and I've a patch that works (sort of).  Here's
+what I've done:
 
--- 
-Jeff Layton <jlayton@kernel.org>
+I'm blocking all the dangerous Ops (CEPH_MDS_OP_{CREATE,MKDIR,...}) early
+in the client requests handling code.  I.e., returning -EROFS if the
+client session doesn't have the feature *and* the inode has fscrypt_auth
+set.
+
+It sort of works (I still need to find if I need any locks, that's black
+magic for me!), but it won't prevent a client from doing things like
+appending garbage to an encrypted file.  Doing this will obviously make
+that file useless, but it's not that much different from non-encrypted
+files (sure, in this case it might be possible to recover some data).  But
+I'm not seeing an easy way to caps into this mix.
+
+Cheers,
+--=20
+Lu=C3=ADs
