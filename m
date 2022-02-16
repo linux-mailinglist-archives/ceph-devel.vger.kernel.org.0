@@ -2,75 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 08FBB4B7BF7
-	for <lists+ceph-devel@lfdr.de>; Wed, 16 Feb 2022 01:31:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F6664B7BFD
+	for <lists+ceph-devel@lfdr.de>; Wed, 16 Feb 2022 01:36:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239604AbiBPAaw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 15 Feb 2022 19:30:52 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53422 "EHLO
+        id S237731AbiBPAg0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 15 Feb 2022 19:36:26 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245187AbiBPAav (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Feb 2022 19:30:51 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8570EF70E9
-        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 16:30:36 -0800 (PST)
+        with ESMTP id S235223AbiBPAgZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Feb 2022 19:36:25 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A200827B33
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 16:36:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1644971435;
+        s=mimecast20190719; t=1644971773;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=q6MVjNpyqaYfu50bpGCP5UJNJsPnNl1n1nQG1vEhglU=;
-        b=N4Gs4wzPWRUqLAkk4oPDjV6jSAj/0jTuHX9gBfTIhQOzU8enbM/B8W2pe06HLA41cTfGhB
-        EOcij2cwiF2qMKnnf6kXU54ZJHVbhGePDhRMItrwMBMGUg0PpSIgNIEPJtPQw6/E6rI8wv
-        0RXBzFtkyCwbyrCEX7BjpammEeN5/oM=
+        bh=mOM1I4AQvS5CPZi0DwCYMJ1p4P5QCYej5a5pbnhO6Jg=;
+        b=N5OW5CcbatBa5mZVjY6MvRzhQZeuaW4w80FaQyHTX8Zhxx2utU3yGzT55hpeDfwhWbzzoU
+        d/leWqmaleQRLmEpXUyu/4j2M0NJar7INyD31AEaZTCKrCuHyJARRd69D7Rnld0gADDoMS
+        fcFcdybeN514vGjlnvJJpS2VeS+Ssqo=
 Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
  [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-92-45l4KrFPMkyKBRx0x32Z7g-1; Tue, 15 Feb 2022 19:30:34 -0500
-X-MC-Unique: 45l4KrFPMkyKBRx0x32Z7g-1
-Received: by mail-pf1-f198.google.com with SMTP id y28-20020aa793dc000000b004e160274e3eso423695pff.18
-        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 16:30:34 -0800 (PST)
+ us-mta-659-E5LZ5hCKMj2ACIegtygUQQ-1; Tue, 15 Feb 2022 19:36:12 -0500
+X-MC-Unique: E5LZ5hCKMj2ACIegtygUQQ-1
+Received: by mail-pf1-f198.google.com with SMTP id a22-20020aa79716000000b004e16e3cc5fcso447499pfg.11
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Feb 2022 16:36:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=q6MVjNpyqaYfu50bpGCP5UJNJsPnNl1n1nQG1vEhglU=;
-        b=Go1UdKsuObh8HT6E3pVSLzpmeApXuHOj3XSI4vjbCM52dXNQZtJBlbByf709kQX5HY
-         S9E1azmA/7xt5ZOVSKMe3KRItOrq3z96fUhR3BaFoR0YpdrY11E3x9wT9DTWdWD41Guz
-         T9u5b/kASATatU28PP/5pg3KMtTu+NvDBahdAhWRXFRdXeU62sQwlBxEYeyaFj1C3oFS
-         xH4uXdJ+2VlnlQulbh0Oaj9sGjq1L+UJ1S76VZiRshtpC9CkAeUlrFfkvSNrHYmZmY9c
-         fSt2jQfGaDRa3d3v5vwc0IPvIvzNcbWBrV0ooNJkOfldBozqhYRUxBj4qQb8PQm3vwAv
-         8hJA==
-X-Gm-Message-State: AOAM530aHkv+5kyTTWkXaveaQnFUoGJ/IT8XGhKCgzP/tSyummJSIUG1
-        aWg7bhEJj1SBCe0PCky+3pXtcZqRLLqOjctb76EVdEPK2G7eDmRYmIceKvVvshX+M3IPfdauITw
-        Gln9IS31DliXJNBRUy/aBJ8/2Q8F2nIC4upGMMSJqNrvLJHw9yIva27F2Kh6hV8l2ToBHgPI=
-X-Received: by 2002:a17:90a:2b82:b0:1b8:8d7c:98b with SMTP id u2-20020a17090a2b8200b001b88d7c098bmr7481783pjd.22.1644971432994;
-        Tue, 15 Feb 2022 16:30:32 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzSUSiZP2RN90BEbAX/TGTcGpUDYq+C6p8dFwuhm8B1rVBxECT68JWUoQLHVtNW4RhwPRBDdA==
-X-Received: by 2002:a17:90a:2b82:b0:1b8:8d7c:98b with SMTP id u2-20020a17090a2b8200b001b88d7c098bmr7481753pjd.22.1644971432649;
-        Tue, 15 Feb 2022 16:30:32 -0800 (PST)
+        bh=mOM1I4AQvS5CPZi0DwCYMJ1p4P5QCYej5a5pbnhO6Jg=;
+        b=4IXLZYme2wIswWx8csX5MG98R0MW2FG85eGemaujcTPSWO676HLPuzbMCEpH+T+Woi
+         iR6Q5CqHR5yzPYmAHN309KjBjWLCLDfihImkIgYaK2uCzjNH4in0OmPl57RXO1cD26Pq
+         Onb1ppKcnski/sjG7+0YUa1Ugs1fT3fjwmVlUo2he8mScwKZ9+NIPpJA3C4pmSKMPT8I
+         cjufXyLvtymhsXvlBeo01b35giCu/2Lb/i3UZNIUNORsjQwithQobsiHbbDMRYFVePfb
+         OqKoQBwzAYh04nXaBjcSFJUksHhleL0shyCKGgV88uQeH/pFxf9PeaU/Aos20TxCYh9U
+         fUsQ==
+X-Gm-Message-State: AOAM531AoGJPoHKwb0BbFb6u/cOsfyw1N9bx3ljSw6gVAWS/7B5GtGxo
+        akZCqG3mgynj5Zog534SpAO5GMb3TzlGAZFWAA5evP1rDfg3clQB2Pede2px4cO10uB9khH46QH
+        Pygai/Angx6AV8+rTGtRh53SyCjKyIv8HECQASDxU1+BlJjvvG9TKUE377V9sYq/r5HPFtMY=
+X-Received: by 2002:a17:90b:4c8e:b0:1b9:d23f:bf62 with SMTP id my14-20020a17090b4c8e00b001b9d23fbf62mr7352625pjb.160.1644971770674;
+        Tue, 15 Feb 2022 16:36:10 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyNCLHv4u12L+ap4Rk7ZZz0V0X7YlWUDbeC+0M/Z0dUUoFep1xgXg5cdfesNohQ5rr2RklBTA==
+X-Received: by 2002:a17:90b:4c8e:b0:1b9:d23f:bf62 with SMTP id my14-20020a17090b4c8e00b001b9d23fbf62mr7352590pjb.160.1644971770324;
+        Tue, 15 Feb 2022 16:36:10 -0800 (PST)
 Received: from [10.72.12.153] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id k24sm13028579pfi.174.2022.02.15.16.30.30
+        by smtp.gmail.com with ESMTPSA id ob12sm11121034pjb.5.2022.02.15.16.36.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Feb 2022 16:30:31 -0800 (PST)
+        Tue, 15 Feb 2022 16:36:09 -0800 (PST)
 Subject: Re: [PATCH 3/3] ceph: do no update snapshot context when there is no
  new snapshot
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
 References: <20220215122316.7625-1-xiubli@redhat.com>
  <20220215122316.7625-4-xiubli@redhat.com>
- <13786a0450214e715a01337989660a52f869230c.camel@kernel.org>
+ <73043655720d093ae7ab1f4eb25456a5792cece4.camel@kernel.org>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <4c65e7ce-b214-5351-57eb-fcdd5dd5b517@redhat.com>
-Date:   Wed, 16 Feb 2022 08:30:28 +0800
+Message-ID: <caa86c6f-3283-588e-0ad6-624216de986d@redhat.com>
+Date:   Wed, 16 Feb 2022 08:36:02 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <13786a0450214e715a01337989660a52f869230c.camel@kernel.org>
+In-Reply-To: <73043655720d093ae7ab1f4eb25456a5792cece4.camel@kernel.org>
 Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
@@ -83,7 +83,7 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 2/16/22 1:05 AM, Jeff Layton wrote:
+On 2/16/22 2:35 AM, Jeff Layton wrote:
 > On Tue, 2022-02-15 at 20:23 +0800, xiubli@redhat.com wrote:
 >> From: Xiubo Li <xiubli@redhat.com>
 >>
@@ -145,6 +145,23 @@ On 2/16/22 1:05 AM, Jeff Layton wrote:
 >> +	 *     works because we rebuild_snap_realms() works _downward_ in
 >> +	 *     hierarchy after each update.
 >> +	 */
+> This may be, but that downward building is done via unbounded recursion
+> in rebuild_snap_realms().
+>
+> I'm ok with taking this patch in the short term, but I would really like
+> to see steps made to eliminate recursion from this code altogether. A
+> sufficiently deep hierarchy could blow out the stack. How could we
+> redesign this code to avoid it?
+
+Yeah, the recursion really a potential issue here, let me figure out one 
+method to eliminate it later in the following patches, there has some 
+other code also may need to improve, and I am still going through the 
+code, not very clear yet. But not related to the perfermance issue this 
+patch is trying to fix.
+
+-- Xiubo
+
+>
 >>   	if (realm->cached_context &&
 >> -	    realm->cached_context->seq == realm->seq &&
 >> -	    (!parent ||
@@ -154,17 +171,4 @@ On 2/16/22 1:05 AM, Jeff Layton wrote:
 >>   		dout("build_snap_context %llx %p: %p seq %lld (%u snaps)"
 >>   		     " (unchanged)\n",
 >>   		     realm->ino, realm, realm->cached_context,
-> I've never had a good feel for the snaprealm handling code, so I'll
-> leave it to others that do to comment on whether your logic makes sense.
->
-> Either way, I don't think this patch depends on the earlier two, does
-> it? The comment is a nice addition though.
-
-Right.
-
-Thanks.
-
->
-> Acked-by: Jeff Layton <jlayton@kernel.org>
->
 
