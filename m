@@ -2,148 +2,149 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F2E0E4B9ADB
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Feb 2022 09:27:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 522144B9DC2
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Feb 2022 11:57:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237504AbiBQI1D (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Feb 2022 03:27:03 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55538 "EHLO
+        id S239379AbiBQK4Q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Feb 2022 05:56:16 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237513AbiBQI1A (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Feb 2022 03:27:00 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 821B02CCA9
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Feb 2022 00:26:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1645086403;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TeFnEmJWZq4X2Wn53QOuaBv1oKw/hLXJfx6e+aIgAbM=;
-        b=gO9wq41L/5eSeR5/oHdUAWBPKjLWgzSEpBvg1+9sA7N8qk1WVwQwfY+xYwELFa2+Zo0lEf
-        0C31hB6msX7S1DVRTNuxTiq2udgCQ5StT/gKI+YaDBzHXUANUARakI4UuUgGqKs74rE2F2
-        jCZ39+xRfL47eVd7SAC7SAhakDHm0vY=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-144-Lac5Q4maNy-FSv4KxuiT7w-1; Thu, 17 Feb 2022 03:26:42 -0500
-X-MC-Unique: Lac5Q4maNy-FSv4KxuiT7w-1
-Received: by mail-pg1-f198.google.com with SMTP id 37-20020a630e65000000b0036c461afa9aso2608212pgo.20
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Feb 2022 00:26:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=TeFnEmJWZq4X2Wn53QOuaBv1oKw/hLXJfx6e+aIgAbM=;
-        b=u3OqAy4CkDmq3dnVl5m3LS7MQZNrQpW3gBLu5C0GAI2QTRh3uMWfjUUFz/TbxvnVrF
-         gdBtQztLxnUkfMtUqPDWnPsQBQ0UxJCBNTEEH/q+grfCT9+ZGO0wtjYFITtezbUhO+i9
-         YNWqrTdcNkNyAqir/yWoKYeDw6JyXIg+OX9ugAidNuDFh1++qLXR2SDXdr6sYyr9cqWm
-         0CoZmpa0gU/hzk/RE9U36roZrHhv9MZAs/EZSEB647jX1w6sn789YmraC3NlSQoL8kpw
-         oyxtjN6kse5j1R28xvgWGfwr5BeANGh1I4xVHqZtM5WuOcJkJkEkhXZ83t2sOUbKKfkZ
-         4l4A==
-X-Gm-Message-State: AOAM531edp5CfV17MzaB4fcPJPHjBqpjz7JhGlJgkyXPFsPZMKglhvxn
-        G86ASX0Gt11hF5KLsdhiRBMwMxQBk745yQZiP9OIuYels/c1yAe9urabf2eM2/1AyFw/PYfMFLH
-        +SHMDhA9xRA+OvFHtaRJ1a9zaWyQNbyrpmHz/GiW0BI6QSWIGLhm7LCp3QRJ833ed670NvcE=
-X-Received: by 2002:a63:4005:0:b0:373:9ac7:fec1 with SMTP id n5-20020a634005000000b003739ac7fec1mr1579453pga.12.1645086401221;
-        Thu, 17 Feb 2022 00:26:41 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzYggSZlZ+aMeyAXtqjrzeAVqndFQsNd2xV5fgXjCwb8c0BdUpIT8NLDBP4BRZ9j/V96B8UUg==
-X-Received: by 2002:a63:4005:0:b0:373:9ac7:fec1 with SMTP id n5-20020a634005000000b003739ac7fec1mr1579433pga.12.1645086400825;
-        Thu, 17 Feb 2022 00:26:40 -0800 (PST)
-Received: from [10.72.12.153] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id o8sm1668429pfu.90.2022.02.17.00.26.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Feb 2022 00:26:40 -0800 (PST)
-Subject: Re: [PATCH] ceph: zero the dir_entries memory when allocating it
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
-References: <20220217081542.21182-1-xiubli@redhat.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <aff12af7-f420-6acc-9c64-2cf8897865ef@redhat.com>
-Date:   Thu, 17 Feb 2022 16:26:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        with ESMTP id S239425AbiBQK4A (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Feb 2022 05:56:00 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3428429413B
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Feb 2022 02:55:46 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 9E025CE2B10
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Feb 2022 10:55:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60F9AC340ED;
+        Thu, 17 Feb 2022 10:55:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645095342;
+        bh=ZrsJw2kQHW4CITDMQm3E85apxW1QoqNCKZiZFdvS3zo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=HBJgLcOqejCMZbyZzcIFbEDNRD90t/osvLSoIJiCIbrzlmTAiIzIdEQ2f8T4KmZhu
+         FxPCg4gtMLkdpDdo6MEfIYhmKNJpRxdyfZfU2wd6uZ2weNJ3fjefSecNcfzxIBEdgB
+         v5EQmGkzceh2ATEaBklk0RGmJPjoc/4ooXvMfkB9ptF5zFEEiZuB9FDXED0hl5vMpk
+         CZdcXxk6jT5t3lARb+8WzUb7UyKlgTkbEijyd6a7at2Uu8orlfsq8q9R4O7wEp8mbR
+         d09lxb0MopKvKgX6COjZ0cXQwy6t3pFs6WKVYbWxqv1Aqtklq0d70b6uLP/jVTOsO7
+         K7sSk2Tjdmd5w==
+Message-ID: <896b780d82a37a04e0533b69049c0112d4327055.camel@kernel.org>
+Subject: Re: [PATCH 3/3] ceph: do no update snapshot context when there is
+ no new snapshot
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "Yan, Zheng" <ukernel@gmail.com>, Xiubo Li <xiubli@redhat.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Venky Shankar <vshankar@redhat.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Date:   Thu, 17 Feb 2022 05:55:41 -0500
+In-Reply-To: <CAAM7YAn8QtZZORXbczE4cLdvGrrEW=AeaAM22f9EK4YNopo+qg@mail.gmail.com>
+References: <20220215122316.7625-1-xiubli@redhat.com>
+         <20220215122316.7625-4-xiubli@redhat.com>
+         <CAAM7YAn8QtZZORXbczE4cLdvGrrEW=AeaAM22f9EK4YNopo+qg@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
-In-Reply-To: <20220217081542.21182-1-xiubli@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Jeff,
+On Thu, 2022-02-17 at 11:03 +0800, Yan, Zheng wrote:
+> On Tue, Feb 15, 2022 at 11:04 PM <xiubli@redhat.com> wrote:
+> > 
+> > From: Xiubo Li <xiubli@redhat.com>
+> > 
+> > No need to update snapshot context when any of the following two
+> > cases happens:
+> > 1: if my context seq matches realm's seq and realm has no parent.
+> > 2: if my context seq equals or is larger than my parent's, this
+> >    works because we rebuild_snap_realms() works _downward_ in
+> >    hierarchy after each update.
+> > 
+> > This fix will avoid those inodes which accidently calling
+> > ceph_queue_cap_snap() and make no sense, for exmaple:
+> > 
+> > There have 6 directories like:
+> > 
+> > /dir_X1/dir_X2/dir_X3/
+> > /dir_Y1/dir_Y2/dir_Y3/
+> > 
+> > Firstly, make a snapshot under /dir_X1/dir_X2/.snap/snap_X2, then
+> > make a root snapshot under /.snap/root_snap. And every time when
+> > we make snapshots under /dir_Y1/..., the kclient will always try
+> > to rebuild the snap context for snap_X2 realm and finally will
+> > always try to queue cap snaps for dir_Y2 and dir_Y3, which makes
+> > no sense.
+> > 
+> > That's because the snap_X2's seq is 2 and root_snap's seq is 3.
+> > So when creating a new snapshot under /dir_Y1/... the new seq
+> > will be 4, and then the mds will send kclient a snapshot backtrace
+> > in _downward_ in hierarchy: seqs 4, 3. Then in ceph_update_snap_trace()
+> > it will always rebuild the from the last realm, that's the root_snap.
+> > So later when rebuilding the snap context it will always rebuild
+> > the snap_X2 realm and then try to queue cap snaps for all the inodes
+> > related in snap_X2 realm, and we are seeing the logs like:
+> > 
+> > "ceph:  queue_cap_snap 00000000a42b796b nothing dirty|writing"
+> > 
+> > URL: https://tracker.ceph.com/issues/44100
+> > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > ---
+> >  fs/ceph/snap.c | 16 +++++++++-------
+> >  1 file changed, 9 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> > index d075d3ce5f6d..1f24a5de81e7 100644
+> > --- a/fs/ceph/snap.c
+> > +++ b/fs/ceph/snap.c
+> > @@ -341,14 +341,16 @@ static int build_snap_context(struct ceph_snap_realm *realm,
+> >                 num += parent->cached_context->num_snaps;
+> >         }
+> > 
+> > -       /* do i actually need to update?  not if my context seq
+> > -          matches realm seq, and my parents' does to.  (this works
+> > -          because we rebuild_snap_realms() works _downward_ in
+> > -          hierarchy after each update.) */
+> > +       /* do i actually need to update? No need when any of the following
+> > +        * two cases:
+> > +        * #1: if my context seq matches realm's seq and realm has no parent.
+> > +        * #2: if my context seq equals or is larger than my parent's, this
+> > +        *     works because we rebuild_snap_realms() works _downward_ in
+> > +        *     hierarchy after each update.
+> > +        */
+> >         if (realm->cached_context &&
+> > -           realm->cached_context->seq == realm->seq &&
+> > -           (!parent ||
+> > -            realm->cached_context->seq >= parent->cached_context->seq)) {
+> > +           ((realm->cached_context->seq == realm->seq && !parent) ||
+> > +            (parent && realm->cached_context->seq >= parent->cached_context->seq))) {
+> 
+> With this change. When you mksnap on  /dir_Y1/, its snap context keeps
+> unchanged. In ceph_update_snap_trace, reset the 'invalidate' variable
+> for each realm should fix this issue.
+> 
 
-This could resolve the issue I mentioned in the fscrypt mail thread.
+This comment is terribly vague. "invalidate" is a local variable in that
+function and isn't set on a per-realm basis.
 
-cp: cannot access './dir___683': No buffer space available
-cp: cannot access './dir___686': No buffer space available
-cp: cannot access './dir___687': No buffer space available
-cp: cannot access './dir___688': No buffer space available
-cp: cannot access './dir___689': No buffer space available
-cp: cannot access './dir___693': No buffer space available
-
-...
-
-[root@lxbceph1 kcephfs]# diff ./dir___997 /data/backup/kernel/dir___997
-diff: ./dir___997: No buffer space available
+Could you suggest a patch on top of Xiubo's patch instead?
 
 
-The dmesg logs:
+> >                 dout("build_snap_context %llx %p: %p seq %lld (%u snaps),
+> >                      " (unchanged)\n",
+> >                      realm->ino, realm, realm->cached_context,
+> > --
+> > 2.27.0
+> > 
 
-<7>[ 1256.918228] ceph:  do_getattr inode 0000000089964a71 mask AsXsFs
-mode 040755
-<7>[ 1256.918232] ceph:  __ceph_caps_issued_mask ino 0x100000009be cap
-0000000014f1c64b issued pAsLsXsFs (mask AsXsFs)
-<7>[ 1256.918237] ceph:  __touch_cap 0000000089964a71 cap
-0000000014f1c64b mds0
-<7>[ 1256.918250] ceph:  readdir 0000000089964a71 file 00000000065cb689
-pos 0
-<7>[ 1256.918254] ceph:  readdir off 0 -> '.'
-<7>[ 1256.918258] ceph:  readdir off 1 -> '..'
-<4>[ 1256.918262] fscrypt (ceph, inode 1099511630270): Error -105
-getting encryption context
-<7>[ 1256.918269] ceph:  readdir 0000000089964a71 file 00000000065cb689
-pos 2
-<4>[ 1256.918273] fscrypt (ceph, inode 1099511630270): Error -105
-getting encryption context
-<7>[ 1256.918288] ceph:  release inode 0000000089964a71 dir file
-00000000065cb689
-<7>[ 1256.918310] ceph:  __ceph_caps_issued_mask ino 0x1 cap
-00000000aa2afb8b issued pAsLsXsFs (mask Fs)
-<7>[ 1257.574593] ceph:  mdsc delayed_work
-
-
-On 2/17/22 4:15 PM, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
->
-> This potentially will cause bug in future if using the old ceph
-> version and some members may skipped initialized in handle_reply.
->
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->   fs/ceph/mds_client.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 93e5e3c4ba64..c3b1e73c5fbf 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -2286,7 +2286,8 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds_request *req,
->   	order = get_order(size * num_entries);
->   	while (order >= 0) {
->   		rinfo->dir_entries = (void*)__get_free_pages(GFP_KERNEL |
-> -							     __GFP_NOWARN,
-> +							     __GFP_NOWARN |
-> +							     __GFP_ZERO,
->   							     order);
->   		if (rinfo->dir_entries)
->   			break;
-
+-- 
+Jeff Layton <jlayton@kernel.org>
