@@ -2,148 +2,155 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 895474B964D
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Feb 2022 04:04:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A2BB4B9687
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Feb 2022 04:19:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232362AbiBQDEN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 16 Feb 2022 22:04:13 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:47896 "EHLO
+        id S232675AbiBQDTK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 16 Feb 2022 22:19:10 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232338AbiBQDEM (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 16 Feb 2022 22:04:12 -0500
-Received: from mail-vs1-xe33.google.com (mail-vs1-xe33.google.com [IPv6:2607:f8b0:4864:20::e33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6E2F23BF38
-        for <ceph-devel@vger.kernel.org>; Wed, 16 Feb 2022 19:03:58 -0800 (PST)
-Received: by mail-vs1-xe33.google.com with SMTP id w4so4752689vsq.1
-        for <ceph-devel@vger.kernel.org>; Wed, 16 Feb 2022 19:03:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NrdvGKbptPcrdymwpDHTV5m3GS8h1iRQwhNOti4Sz98=;
-        b=G/T2KuegvyUPPS8EUMKGVyM8ib/sA2D2CPVN2kffcJ2Lbo8/xQlWmFv5r3TXdkhWT/
-         Y9+x/wDMxHIbXFhzqCmRgEROfl1HOHcbnrBF0uXfyHyJl5gtF5HNtbtYQSoR3SpiKhk9
-         XzZdWd5A9slGaQBQ/eaSE2v0anPVOfbRCyk6f5t+YnBx5eEC3XbmhKdlas/AytXwcsj9
-         0cT+FisyxDReKqcOuYeYkvR6zPn+lXPcfg7hwT7AETdSB7eOGud+v8zGiqi8U3YmmKep
-         rBN9IsvHEgdpxNoZ7pT6HMA1la/Fp6Df8USqWSAkdWEqIl1CBbiA1QYsGwqqazJlZMxQ
-         0X1A==
+        with ESMTP id S229554AbiBQDTJ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 16 Feb 2022 22:19:09 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0B46726E7BF
+        for <ceph-devel@vger.kernel.org>; Wed, 16 Feb 2022 19:18:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1645067934;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=6K3rC1PHy/hXmpDUlj3pCxHWej2kvgfhOuEMDSX0T0A=;
+        b=gQDZ3usCjw+izTwFrzIvJ2bh4eA8vhSJ25PKZdD1/UdBMglhgepo35Sh5wqSsX7aCFrCQb
+        EQZtQ327bI/zgI3T6DgR1ArFiumyzFqIVtLfmrMgVXrQCJiXlP1JN5G+JL8dof+iIcdCeH
+        vamPMyWlWWCsamVpXHEmCPzPzXD0eZM=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-663-DV3j-0PUNj2woxGf5Nwrlw-1; Wed, 16 Feb 2022 22:18:53 -0500
+X-MC-Unique: DV3j-0PUNj2woxGf5Nwrlw-1
+Received: by mail-qk1-f199.google.com with SMTP id q5-20020ae9dc05000000b00507225deac5so2988852qkf.5
+        for <ceph-devel@vger.kernel.org>; Wed, 16 Feb 2022 19:18:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NrdvGKbptPcrdymwpDHTV5m3GS8h1iRQwhNOti4Sz98=;
-        b=QJ/LdZa7IzhXXsQkWHHEqvzQYc7inJfOtvACxMkUAZrBwvn2bGCN6mJ+x5+AqA2lIm
-         KeLP1hesDytBZpxlrvZ0FA8Wy8g9K0K0vZXc9UMwQio6P0gkKvJG3FA3sXtmYj5ncwzn
-         z/Jz085ToTLPOfPeYL2v/e9o9ndREsvaq5hl9kNSv2xaKpV409hFCLZYCspsQr+6i+Zk
-         6NO60BnyMzuTQeWsh2GhrPGbCIX+DT26rnrtIq0Lgax/K0H08qZkBPvgR1Bgz+RdHDHF
-         TZdXVVewDS7nu3WVXZYiTYdzjA1H7eT21lEYfatcaLXXznnGjTAgn15hKFrX29NLWXqV
-         ma8Q==
-X-Gm-Message-State: AOAM533lXniWfFyIGChmHgketGumruE/gVGP2yVg9aMVCMUkgOS7vVSL
-        2TIzx4a5P7Q/0AFnQDkzg6dHwkPKyMo+vIeX8j8=
-X-Google-Smtp-Source: ABdhPJw58/pWDBKTyFOS9zvrRepwTh+ha7JSSbzrdcZIHpJfdfSe5q8JQlPaOkEZWX2ae5mq7J5Z4gkgivAyMdTg0oc=
-X-Received: by 2002:a67:e005:0:b0:31b:74eb:1005 with SMTP id
- c5-20020a67e005000000b0031b74eb1005mr381853vsl.50.1645067037864; Wed, 16 Feb
- 2022 19:03:57 -0800 (PST)
+        bh=6K3rC1PHy/hXmpDUlj3pCxHWej2kvgfhOuEMDSX0T0A=;
+        b=NAx8mbv9WlvVjJGuEZe8ZMvZpU84NFqg50t/yy1VUvWMzxAIXLs/CMwIKCC62UVn5X
+         9Gor5XAmjOVWan9OhI6Ytwahh/mQVW0tZQWkfRvIeZZQelvx3i7VzKalhidp+DN6/fJv
+         YYuUL0RouRRaMyXg9WwwhTdAPyZBCgd7RN7IX7mou/TbUd2k1LFOlyLsKgsmlnGA6Fyk
+         8vlTZTWAZM5PWzrFH1CW3hue95waQypYBstq7d1mNEZUzyBt/3exhPrrE5W1sfEfRy4Z
+         VTXlDTFHNm8nCbXCVYxtef+0rDQsuQ+RCzi8jxRnLkqdDBMQztSiN//aN1wIUMIHrPMu
+         IHSw==
+X-Gm-Message-State: AOAM530Mv130MuyZJiy18JIdLRYaZ74XfTMys8xbfq91EyVTsYlj4dkw
+        rbVa9xege2HDnjpBhTHAkYg8J8y54vo1oGrOLO3dwpaWput89XOriB1grMJof2oHKYJXvWNTU25
+        Kkq+kVlfubiMqLY4sg53mM2OZ/bTGCABHWyLz+g==
+X-Received: by 2002:a05:620a:284d:b0:5ff:320d:c0a5 with SMTP id h13-20020a05620a284d00b005ff320dc0a5mr487400qkp.681.1645067933390;
+        Wed, 16 Feb 2022 19:18:53 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzxD7lJGVGv2AZuUyPo03BtDOX3qME34SYTFKWY5SKKYso6X5pPDR4PD9EL7RLJ/6rp6arl4jNU3/RtDeZ6kAE=
+X-Received: by 2002:a05:620a:284d:b0:5ff:320d:c0a5 with SMTP id
+ h13-20020a05620a284d00b005ff320dc0a5mr487393qkp.681.1645067933029; Wed, 16
+ Feb 2022 19:18:53 -0800 (PST)
 MIME-Version: 1.0
-References: <20220215122316.7625-1-xiubli@redhat.com> <20220215122316.7625-4-xiubli@redhat.com>
-In-Reply-To: <20220215122316.7625-4-xiubli@redhat.com>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Thu, 17 Feb 2022 11:03:46 +0800
-Message-ID: <CAAM7YAn8QtZZORXbczE4cLdvGrrEW=AeaAM22f9EK4YNopo+qg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ceph: do no update snapshot context when there is no
- new snapshot
+References: <20220207050340.872893-1-xiubli@redhat.com> <77bd8ec8fb97107deb57c641b5e471b8eeb828c8.camel@kernel.org>
+ <CAJ4mKGbHyn-oQwL8D3Ove0d2tD++VEXOTMSj5EDbcBk3SFX=2w@mail.gmail.com>
+ <d6f16704da303eca4d62aee58eecacb45f76f45a.camel@kernel.org>
+ <CAJ4mKGb3j_QNMuKmccoj43jswoReb_iP8wnJi3f-mpaN++PC7w@mail.gmail.com>
+ <9ee4afece5bc3445ed19a3344a11eeab697ff37e.camel@kernel.org> <3e2d66b0-a0e9-be31-a803-f7a4ff687c78@redhat.com>
+In-Reply-To: <3e2d66b0-a0e9-be31-a803-f7a4ff687c78@redhat.com>
+From:   Gregory Farnum <gfarnum@redhat.com>
+Date:   Wed, 16 Feb 2022 19:18:40 -0800
+Message-ID: <CAJ4mKGYr+9YkWPVtnXUMdF5yvw1mi8Mi7BoLV-9nzdfxfO9xVQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fail the request directly if handle_reply gets an ESTALE
 To:     Xiubo Li <xiubli@redhat.com>
 Cc:     Jeff Layton <jlayton@kernel.org>,
+        Dan van der Ster <dan@vanderster.com>,
         Ilya Dryomov <idryomov@gmail.com>,
         Venky Shankar <vshankar@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Sage Weil <sage@newdream.net>, ukernel <ukernel@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Feb 15, 2022 at 11:04 PM <xiubli@redhat.com> wrote:
+On Tue, Feb 8, 2022 at 10:00 PM Xiubo Li <xiubli@redhat.com> wrote:
 >
-> From: Xiubo Li <xiubli@redhat.com>
 >
-> No need to update snapshot context when any of the following two
-> cases happens:
-> 1: if my context seq matches realm's seq and realm has no parent.
-> 2: if my context seq equals or is larger than my parent's, this
->    works because we rebuild_snap_realms() works _downward_ in
->    hierarchy after each update.
+> On 2/8/22 1:11 AM, Jeff Layton wrote:
+> > On Mon, 2022-02-07 at 08:28 -0800, Gregory Farnum wrote:
+> >> On Mon, Feb 7, 2022 at 8:13 AM Jeff Layton <jlayton@kernel.org> wrote:
+> >>> The tracker bug mentions that this occurs after an MDS is restarted.
+> >>> Could this be the result of clients relying on delete-on-last-close
+> >>> behavior?
+> >> Oooh, I didn't actually look at the tracker.
+> >>
+> >>> IOW, we have a situation where a file is opened and then unlinked, and
+> >>> userland is actively doing I/O to it. The thing gets moved into the
+> >>> strays dir, but isn't unlinked yet because we have open files against
+> >>> it. Everything works fine at this point...
+> >>>
+> >>> Then, the MDS restarts and the inode gets purged altogether. Client
+> >>> reconnects and tries to reclaim his open, and gets ESTALE.
+> >> Uh, okay. So I didn't do a proper audit before I sent my previous
+> >> reply, but one of the cases I did see was that the MDS returns ESTALE
+> >> if you try to do a name lookup on an inode in the stray directory. I
+> >> don't know if that's what is happening here or not? But perhaps that's
+> >> the root of the problem in this case.
+> >>
+> >> Oh, nope, I see it's issuing getattr requests. That doesn't do ESTALE
+> >> directly so it must indeed be coming out of MDCache::path_traverse.
+> >>
+> >> The MDS shouldn't move an inode into the purge queue on restart unless
+> >> there were no clients with caps on it (that state is persisted to disk
+> >> so it knows). Maybe if the clients don't make the reconnect window
+> >> it's dropping them all and *then* moves it into purge queue? I think
+> >> we need to identify what's happening there before we issue kernel
+> >> client changes, Xiubo?
+> >
+> > Agreed. I think we need to understand why he's seeing ESTALE errors in
+> > the first place, but it sounds like retrying on an ESTALE error isn't
+> > likely to be helpful.
 >
-> This fix will avoid those inodes which accidently calling
-> ceph_queue_cap_snap() and make no sense, for exmaple:
+> There has one case that could cause the inode to be put into the purge
+> queue:
 >
-> There have 6 directories like:
+> 1, When unlinking a file and just after the unlink journal log is
+> flushed and the MDS is restart or replaced by a standby MDS. The unlink
+> journal log will contain the a straydn and the straydn will link to the
+> related CInode.
 >
-> /dir_X1/dir_X2/dir_X3/
-> /dir_Y1/dir_Y2/dir_Y3/
+> 2, The new starting MDS will replay this unlink journal log in
+> up:standby_replay state.
 >
-> Firstly, make a snapshot under /dir_X1/dir_X2/.snap/snap_X2, then
-> make a root snapshot under /.snap/root_snap. And every time when
-> we make snapshots under /dir_Y1/..., the kclient will always try
-> to rebuild the snap context for snap_X2 realm and finally will
-> always try to queue cap snaps for dir_Y2 and dir_Y3, which makes
+> 3, The MDCache::upkeep_main() thread will try to trim MDCache, and it
+> will possibly trim the straydn. Since the clients haven't reconnected
+> the sessions, so the CInode won't have any client cap. So when trimming
+> the straydn and CInode, the CInode will be put into the purge queue.
+>
+> 4, After up:reconnect, when retrying the getattr requests the MDS will
+> return ESTALE.
+>
+> This should be fixed in https://github.com/ceph/ceph/pull/41667
+> recently, it will just enables trim() in up:active state.
+>
+> I also went through the ESTALE related code in MDS, this patch still
+> makes sense and when getting an ESTALE errno to retry the request make
 > no sense.
->
-> That's because the snap_X2's seq is 2 and root_snap's seq is 3.
-> So when creating a new snapshot under /dir_Y1/... the new seq
-> will be 4, and then the mds will send kclient a snapshot backtrace
-> in _downward_ in hierarchy: seqs 4, 3. Then in ceph_update_snap_trace()
-> it will always rebuild the from the last realm, that's the root_snap.
-> So later when rebuilding the snap context it will always rebuild
-> the snap_X2 realm and then try to queue cap snaps for all the inodes
-> related in snap_X2 realm, and we are seeing the logs like:
->
-> "ceph:  queue_cap_snap 00000000a42b796b nothing dirty|writing"
->
-> URL: https://tracker.ceph.com/issues/44100
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/snap.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
->
-> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-> index d075d3ce5f6d..1f24a5de81e7 100644
-> --- a/fs/ceph/snap.c
-> +++ b/fs/ceph/snap.c
-> @@ -341,14 +341,16 @@ static int build_snap_context(struct ceph_snap_realm *realm,
->                 num += parent->cached_context->num_snaps;
->         }
->
-> -       /* do i actually need to update?  not if my context seq
-> -          matches realm seq, and my parents' does to.  (this works
-> -          because we rebuild_snap_realms() works _downward_ in
-> -          hierarchy after each update.) */
-> +       /* do i actually need to update? No need when any of the following
-> +        * two cases:
-> +        * #1: if my context seq matches realm's seq and realm has no parent.
-> +        * #2: if my context seq equals or is larger than my parent's, this
-> +        *     works because we rebuild_snap_realms() works _downward_ in
-> +        *     hierarchy after each update.
-> +        */
->         if (realm->cached_context &&
-> -           realm->cached_context->seq == realm->seq &&
-> -           (!parent ||
-> -            realm->cached_context->seq >= parent->cached_context->seq)) {
-> +           ((realm->cached_context->seq == realm->seq && !parent) ||
-> +            (parent && realm->cached_context->seq >= parent->cached_context->seq))) {
 
-With this change. When you mksnap on  /dir_Y1/, its snap context keeps
-unchanged. In ceph_update_snap_trace, reset the 'invalidate' variable
-for each realm should fix this issue.
+Thanks for checking; this sounds good to me.
 
->                 dout("build_snap_context %llx %p: %p seq %lld (%u snaps),
->                      " (unchanged)\n",
->                      realm->ino, realm, realm->cached_context,
-> --
-> 2.27.0
+Acked-by: Greg Farnum <gfarnum@redhat.com>
+
 >
+> BRs
+>
+> Xiubo
+>
+>
+
