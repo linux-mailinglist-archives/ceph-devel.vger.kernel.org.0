@@ -2,73 +2,70 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BE2854B9AD5
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Feb 2022 09:25:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2E0E4B9ADB
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Feb 2022 09:27:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237487AbiBQIZg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Feb 2022 03:25:36 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53924 "EHLO
+        id S237504AbiBQI1D (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Feb 2022 03:27:03 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:55538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233888AbiBQIZf (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Feb 2022 03:25:35 -0500
+        with ESMTP id S237513AbiBQI1A (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Feb 2022 03:27:00 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 76CA2298ACD
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Feb 2022 00:25:21 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 821B02CCA9
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Feb 2022 00:26:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1645086320;
+        s=mimecast20190719; t=1645086403;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=MNXmWL/SfUW4dVBb5/T3bnYmxC5N+BjlH2+TCW/Y10w=;
-        b=N8d9lXubX6xFFXtTmIN7oDV1Lr8rkEOjVEJdFvDzGBaU3z5GflajddNRU774MuESx5/eJi
-        ShYXjbIxdQRO/9bFGcrQhFKoez+RKv0xsQdXAq0+PIIEv2y5p1O4bu3MpjJ++kzxRrsFMh
-        aRBVmYvJjmg/x10rNGYYU4b7wWOBXXw=
+        bh=TeFnEmJWZq4X2Wn53QOuaBv1oKw/hLXJfx6e+aIgAbM=;
+        b=gO9wq41L/5eSeR5/oHdUAWBPKjLWgzSEpBvg1+9sA7N8qk1WVwQwfY+xYwELFa2+Zo0lEf
+        0C31hB6msX7S1DVRTNuxTiq2udgCQ5StT/gKI+YaDBzHXUANUARakI4UuUgGqKs74rE2F2
+        jCZ39+xRfL47eVd7SAC7SAhakDHm0vY=
 Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
  [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-142-Ebz6CGSiNya49DP-hWWSqA-1; Thu, 17 Feb 2022 03:25:19 -0500
-X-MC-Unique: Ebz6CGSiNya49DP-hWWSqA-1
-Received: by mail-pg1-f198.google.com with SMTP id j33-20020a63fc21000000b0036833c630bcso2606153pgi.14
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Feb 2022 00:25:18 -0800 (PST)
+ us-mta-144-Lac5Q4maNy-FSv4KxuiT7w-1; Thu, 17 Feb 2022 03:26:42 -0500
+X-MC-Unique: Lac5Q4maNy-FSv4KxuiT7w-1
+Received: by mail-pg1-f198.google.com with SMTP id 37-20020a630e65000000b0036c461afa9aso2608212pgo.20
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Feb 2022 00:26:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=MNXmWL/SfUW4dVBb5/T3bnYmxC5N+BjlH2+TCW/Y10w=;
-        b=bR09w0bXKK2nqfDAX4HqolRvp5VoLYHgeEA0735K8YQghMNyveI/Py9pksO2IQgVY6
-         oDTCfhpcqCsTSkJt3sB7qtGP84bPIE1Bp92q6ujfv40ufKtbmqjKFAu4gTXEhbvGMyJ2
-         DhrISoQUdgBjnJ/9+wu0a6c514VqWUAM4x/XskzeTXr0dvxj3XHjNlRMew0vbCZE2fWS
-         5mYR/puJn0tdur5F2ZiYV9PD1DINLAQyKLF67gv3wAhbszUUq/L/oBtypSO+EJzlH9u8
-         jFQexyTsgL8IkUrb2C/osTdigD8H0Otm5A06tc8/KMpzuUdvW38ald6E2oETWzIjWKlB
-         iP0A==
-X-Gm-Message-State: AOAM532vK9/aNKINPbZp+bnUo179CBJp0wzBlFJIB5ZpItunXHEAk63K
-        YX0R4KGXT/T2YB3Re109VyhhnSW5NOrNGzslqVjuEcFXp8cmYbHdHW/nBot4buGUlPcmYou1VUO
-        pR7fJ6L0ReY1nfGZJ9ZujhA==
-X-Received: by 2002:a17:902:c789:b0:14d:ae35:1ac3 with SMTP id w9-20020a170902c78900b0014dae351ac3mr1846588pla.64.1645086317941;
-        Thu, 17 Feb 2022 00:25:17 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwJjVop5oVlB4G5J7rhADXql8UHMMeFrOvqL59GK0Glm51F/el9byJR8fLQTm0LUpfT4aR2Jg==
-X-Received: by 2002:a17:902:c789:b0:14d:ae35:1ac3 with SMTP id w9-20020a170902c78900b0014dae351ac3mr1846580pla.64.1645086317633;
-        Thu, 17 Feb 2022 00:25:17 -0800 (PST)
+        bh=TeFnEmJWZq4X2Wn53QOuaBv1oKw/hLXJfx6e+aIgAbM=;
+        b=u3OqAy4CkDmq3dnVl5m3LS7MQZNrQpW3gBLu5C0GAI2QTRh3uMWfjUUFz/TbxvnVrF
+         gdBtQztLxnUkfMtUqPDWnPsQBQ0UxJCBNTEEH/q+grfCT9+ZGO0wtjYFITtezbUhO+i9
+         YNWqrTdcNkNyAqir/yWoKYeDw6JyXIg+OX9ugAidNuDFh1++qLXR2SDXdr6sYyr9cqWm
+         0CoZmpa0gU/hzk/RE9U36roZrHhv9MZAs/EZSEB647jX1w6sn789YmraC3NlSQoL8kpw
+         oyxtjN6kse5j1R28xvgWGfwr5BeANGh1I4xVHqZtM5WuOcJkJkEkhXZ83t2sOUbKKfkZ
+         4l4A==
+X-Gm-Message-State: AOAM531edp5CfV17MzaB4fcPJPHjBqpjz7JhGlJgkyXPFsPZMKglhvxn
+        G86ASX0Gt11hF5KLsdhiRBMwMxQBk745yQZiP9OIuYels/c1yAe9urabf2eM2/1AyFw/PYfMFLH
+        +SHMDhA9xRA+OvFHtaRJ1a9zaWyQNbyrpmHz/GiW0BI6QSWIGLhm7LCp3QRJ833ed670NvcE=
+X-Received: by 2002:a63:4005:0:b0:373:9ac7:fec1 with SMTP id n5-20020a634005000000b003739ac7fec1mr1579453pga.12.1645086401221;
+        Thu, 17 Feb 2022 00:26:41 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzYggSZlZ+aMeyAXtqjrzeAVqndFQsNd2xV5fgXjCwb8c0BdUpIT8NLDBP4BRZ9j/V96B8UUg==
+X-Received: by 2002:a63:4005:0:b0:373:9ac7:fec1 with SMTP id n5-20020a634005000000b003739ac7fec1mr1579433pga.12.1645086400825;
+        Thu, 17 Feb 2022 00:26:40 -0800 (PST)
 Received: from [10.72.12.153] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id j15sm49753108pfj.102.2022.02.17.00.25.14
+        by smtp.gmail.com with ESMTPSA id o8sm1668429pfu.90.2022.02.17.00.26.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Feb 2022 00:25:17 -0800 (PST)
-Subject: Re: [RFC PATCH v10 07/48] ceph: parse new fscrypt_auth and
- fscrypt_file fields in inode traces
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, idryomov@gmail.com
-References: <20220111191608.88762-1-jlayton@kernel.org>
- <20220111191608.88762-8-jlayton@kernel.org>
+        Thu, 17 Feb 2022 00:26:40 -0800 (PST)
+Subject: Re: [PATCH] ceph: zero the dir_entries memory when allocating it
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
+References: <20220217081542.21182-1-xiubli@redhat.com>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <4faa6b1e-1e64-da2e-f722-0fc75fec51b7@redhat.com>
-Date:   Thu, 17 Feb 2022 16:25:11 +0800
+Message-ID: <aff12af7-f420-6acc-9c64-2cf8897865ef@redhat.com>
+Date:   Thu, 17 Feb 2022 16:26:36 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <20220111191608.88762-8-jlayton@kernel.org>
+In-Reply-To: <20220217081542.21182-1-xiubli@redhat.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
@@ -82,116 +79,31 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Hi Jeff,
 
-On 1/12/22 3:15 AM, Jeff Layton wrote:
-> ...and store them in the ceph_inode_info.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/ceph/file.c       |  2 ++
->   fs/ceph/inode.c      | 18 ++++++++++++++-
->   fs/ceph/mds_client.c | 55 ++++++++++++++++++++++++++++++++++++++++++++
->   fs/ceph/mds_client.h |  4 ++++
->   fs/ceph/super.h      |  6 +++++
->   5 files changed, 84 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index ace72a052254..5937a25ddddd 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -597,6 +597,8 @@ static int ceph_finish_async_create(struct inode *dir, struct inode *inode,
->   	iinfo.xattr_data = xattr_buf;
->   	memset(iinfo.xattr_data, 0, iinfo.xattr_len);
->   
-> +	/* FIXME: set fscrypt_auth and fscrypt_file */
-> +
->   	in.ino = cpu_to_le64(vino.ino);
->   	in.snapid = cpu_to_le64(CEPH_NOSNAP);
->   	in.version = cpu_to_le64(1);	// ???
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 649d7a059d7b..d090fe081093 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -609,7 +609,10 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
->   	INIT_WORK(&ci->i_work, ceph_inode_work);
->   	ci->i_work_mask = 0;
->   	memset(&ci->i_btime, '\0', sizeof(ci->i_btime));
-> -
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	ci->fscrypt_auth = NULL;
-> +	ci->fscrypt_auth_len = 0;
-> +#endif
->   	ceph_fscache_inode_init(ci);
->   
->   	return &ci->vfs_inode;
-> @@ -620,6 +623,9 @@ void ceph_free_inode(struct inode *inode)
->   	struct ceph_inode_info *ci = ceph_inode(inode);
->   
->   	kfree(ci->i_symlink);
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	kfree(ci->fscrypt_auth);
-> +#endif
->   	kmem_cache_free(ceph_inode_cachep, ci);
->   }
->   
-> @@ -1020,6 +1026,16 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
->   		xattr_blob = NULL;
->   	}
->   
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	if (iinfo->fscrypt_auth_len && !ci->fscrypt_auth) {
-> +		ci->fscrypt_auth_len = iinfo->fscrypt_auth_len;
-> +		ci->fscrypt_auth = iinfo->fscrypt_auth;
-> +		iinfo->fscrypt_auth = NULL;
-> +		iinfo->fscrypt_auth_len = 0;
-> +		inode_set_flags(inode, S_ENCRYPTED, S_ENCRYPTED);
-> +	}
-> +#endif
-> +
->   	/* finally update i_version */
->   	if (le64_to_cpu(info->version) > ci->i_version)
->   		ci->i_version = le64_to_cpu(info->version);
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 57cf21c9199f..bd824e989449 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -184,8 +184,50 @@ static int parse_reply_info_in(void **p, void *end,
->   			info->rsnaps = 0;
->   		}
->   
-> +		if (struct_v >= 5) {
-> +			u32 alen;
-> +
-> +			ceph_decode_32_safe(p, end, alen, bad);
-> +
-> +			while (alen--) {
-> +				u32 len;
-> +
-> +				/* key */
-> +				ceph_decode_32_safe(p, end, len, bad);
-> +				ceph_decode_skip_n(p, end, len, bad);
-> +				/* value */
-> +				ceph_decode_32_safe(p, end, len, bad);
-> +				ceph_decode_skip_n(p, end, len, bad);
-> +			}
-> +		}
-> +
-> +		/* fscrypt flag -- ignore */
-> +		if (struct_v >= 6)
-> +			ceph_decode_skip_8(p, end, bad);
-> +
-> +		info->fscrypt_auth = NULL;
-> +		info->fscrypt_file = NULL;
-
-The 'fscrypt_auth_len' and 'fscrypt_file_len' should also be reset here. 
-Or we will hit the issue I mentioned as bellow:
-
+This could resolve the issue I mentioned in the fscrypt mail thread.
 
 cp: cannot access './dir___683': No buffer space available
 cp: cannot access './dir___686': No buffer space available
+cp: cannot access './dir___687': No buffer space available
+cp: cannot access './dir___688': No buffer space available
+cp: cannot access './dir___689': No buffer space available
+cp: cannot access './dir___693': No buffer space available
+
+...
+
+[root@lxbceph1 kcephfs]# diff ./dir___997 /data/backup/kernel/dir___997
+diff: ./dir___997: No buffer space available
+
 
 The dmesg logs:
 
+<7>[ 1256.918228] ceph:  do_getattr inode 0000000089964a71 mask AsXsFs
+mode 040755
+<7>[ 1256.918232] ceph:  __ceph_caps_issued_mask ino 0x100000009be cap
+0000000014f1c64b issued pAsLsXsFs (mask AsXsFs)
+<7>[ 1256.918237] ceph:  __touch_cap 0000000089964a71 cap
+0000000014f1c64b mds0
 <7>[ 1256.918250] ceph:  readdir 0000000089964a71 file 00000000065cb689
 pos 0
 <7>[ 1256.918254] ceph:  readdir off 0 -> '.'
@@ -202,97 +114,36 @@ getting encryption context
 pos 2
 <4>[ 1256.918273] fscrypt (ceph, inode 1099511630270): Error -105
 getting encryption context
+<7>[ 1256.918288] ceph:  release inode 0000000089964a71 dir file
+00000000065cb689
+<7>[ 1256.918310] ceph:  __ceph_caps_issued_mask ino 0x1 cap
+00000000aa2afb8b issued pAsLsXsFs (mask Fs)
+<7>[ 1257.574593] ceph:  mdsc delayed_work
 
 
-This can be reproduced when using an old ceph cluster without fscrypt 
-support.
-
-And also I have sent out one fix to zero the memory when allocating it 
-in ceph_readdir() to fix the potential bug like this.
-
-Thanks
-
-BRs
-
--- Xiubo
-
-
-> +		if (struct_v >= 7) {
-> +			ceph_decode_32_safe(p, end, info->fscrypt_auth_len, bad);
-> +			if (info->fscrypt_auth_len) {
-> +				info->fscrypt_auth = kmalloc(info->fscrypt_auth_len, GFP_KERNEL);
-> +				if (!info->fscrypt_auth)
-> +					return -ENOMEM;
-> +				ceph_decode_copy_safe(p, end, info->fscrypt_auth,
-> +						      info->fscrypt_auth_len, bad);
-> +			}
-> +			ceph_decode_32_safe(p, end, info->fscrypt_file_len, bad);
-> +			if (info->fscrypt_file_len) {
-> +				info->fscrypt_file = kmalloc(info->fscrypt_file_len, GFP_KERNEL);
-> +				if (!info->fscrypt_file)
-> +					return -ENOMEM;
-> +				ceph_decode_copy_safe(p, end, info->fscrypt_file,
-> +						      info->fscrypt_file_len, bad);
-> +			}
-> +		}
->   		*p = end;
->   	} else {
-> +		/* legacy (unversioned) struct */
->   		if (features & CEPH_FEATURE_MDS_INLINE_DATA) {
->   			ceph_decode_64_safe(p, end, info->inline_version, bad);
->   			ceph_decode_32_safe(p, end, info->inline_len, bad);
-> @@ -626,8 +668,21 @@ static int parse_reply_info(struct ceph_mds_session *s, struct ceph_msg *msg,
->   
->   static void destroy_reply_info(struct ceph_mds_reply_info_parsed *info)
->   {
-> +	int i;
-> +
-> +	kfree(info->diri.fscrypt_auth);
-> +	kfree(info->diri.fscrypt_file);
-> +	kfree(info->targeti.fscrypt_auth);
-> +	kfree(info->targeti.fscrypt_file);
->   	if (!info->dir_entries)
->   		return;
-> +
-> +	for (i = 0; i < info->dir_nr; i++) {
-> +		struct ceph_mds_reply_dir_entry *rde = info->dir_entries + i;
-> +
-> +		kfree(rde->inode.fscrypt_auth);
-> +		kfree(rde->inode.fscrypt_file);
-> +	}
->   	free_pages((unsigned long)info->dir_entries, get_order(info->dir_buf_size));
->   }
->   
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index c3986a412fb5..98a8710807d1 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -88,6 +88,10 @@ struct ceph_mds_reply_info_in {
->   	s32 dir_pin;
->   	struct ceph_timespec btime;
->   	struct ceph_timespec snap_btime;
-> +	u8 *fscrypt_auth;
-> +	u8 *fscrypt_file;
-> +	u32 fscrypt_auth_len;
-> +	u32 fscrypt_file_len;
->   	u64 rsnaps;
->   	u64 change_attr;
->   };
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 532ee9fca878..5b4092e5f291 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -433,6 +433,12 @@ struct ceph_inode_info {
->   	struct work_struct i_work;
->   	unsigned long  i_work_mask;
->   
-> +#ifdef CONFIG_FS_ENCRYPTION
-> +	u32 fscrypt_auth_len;
-> +	u32 fscrypt_file_len;
-> +	u8 *fscrypt_auth;
-> +	u8 *fscrypt_file;
-> +#endif
->   #ifdef CONFIG_CEPH_FSCACHE
->   	struct fscache_cookie *fscache;
->   #endif
+On 2/17/22 4:15 PM, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> This potentially will cause bug in future if using the old ceph
+> version and some members may skipped initialized in handle_reply.
+>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>   fs/ceph/mds_client.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 93e5e3c4ba64..c3b1e73c5fbf 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -2286,7 +2286,8 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds_request *req,
+>   	order = get_order(size * num_entries);
+>   	while (order >= 0) {
+>   		rinfo->dir_entries = (void*)__get_free_pages(GFP_KERNEL |
+> -							     __GFP_NOWARN,
+> +							     __GFP_NOWARN |
+> +							     __GFP_ZERO,
+>   							     order);
+>   		if (rinfo->dir_entries)
+>   			break;
 
