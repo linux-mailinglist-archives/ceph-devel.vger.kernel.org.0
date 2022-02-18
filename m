@@ -2,65 +2,81 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 12B0F4BA45A
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Feb 2022 16:28:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42FAB4BAF0C
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Feb 2022 02:10:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242474AbiBQP2q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Feb 2022 10:28:46 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:37900 "EHLO
+        id S231195AbiBRBKE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Feb 2022 20:10:04 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:39864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242467AbiBQP2p (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Feb 2022 10:28:45 -0500
-Received: from mail-ua1-x932.google.com (mail-ua1-x932.google.com [IPv6:2607:f8b0:4864:20::932])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 626EC2B0B2D
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Feb 2022 07:28:30 -0800 (PST)
-Received: by mail-ua1-x932.google.com with SMTP id d22so2853444uaw.2
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Feb 2022 07:28:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uITQhHhbHpmobcrDHIOHBss+LDfp35e2NW2ZE5OLZnI=;
-        b=R5Z1VNy5z5SD+8yTf1fc5uPHd6pj8X5BJDl109AlQUdxrxvLPeH83WcxhedUbCfVzV
-         oWRQerRLDXqxTqblU+dYwddVTwFMyoo0mcbnOctV4ic6fnUh4fChp6uYL+8owuChonqX
-         0S6nXgptH+0rWeRvOUYpyvTtI7kW8x3wbVzDRDU9Ng2eoAcNaPZQWa1f0+BkaudxXZ6G
-         g9V7jnnUmkzJSX3exPW2iTxnxNAJtlvj8laEoF7SzyK1NU0KLsUwgy1kVqwJAv3UeIj8
-         OVfK6PtXMl6Vt7iX1oDhmCMp1txiccSiWkXb63pBb4TDb3HUSwoyEk2XSnlLNW/3da85
-         vxQw==
+        with ESMTP id S231174AbiBRBKD (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Feb 2022 20:10:03 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 64BEB205CA
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Feb 2022 17:09:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1645146583;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=77v//07Q7Ub0x6y6b3OazX/wTU5H+y/7bl9FrnzFqoM=;
+        b=hjxrCvmuk5CkrzYFQLMEwk99rz+rLGL8gGGdQmKkOKgv0PRsWysCKhV0ulh8uQrVrRzQ7E
+        UzzsfGPtFwvb4BYT2zeLs/NssDEEneYkkZR7BJAEWpWBMpvusPeo0IY6fSN+SVAS7UZccs
+        rouoFiiMXA43QoaW9faUi53ystEXsFU=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-135-BbEi-ZmhMKS4Q-z0Pscl1Q-1; Thu, 17 Feb 2022 20:09:42 -0500
+X-MC-Unique: BbEi-ZmhMKS4Q-z0Pscl1Q-1
+Received: by mail-pj1-f72.google.com with SMTP id f2-20020a17090a4a8200b001b7dac53bd6so3929920pjh.4
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Feb 2022 17:09:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uITQhHhbHpmobcrDHIOHBss+LDfp35e2NW2ZE5OLZnI=;
-        b=TUo7T9olm3UY0CNu8xrsoup2NJoXacgoh1kzczt3zLWRBIu3ipJBnULO6kfHSnvl7Y
-         MMytTuNf1Gl953m22OclL8gDmOS9ROziRZqqKo6J/vda8hHvByn6eZSO1nStARhLLM0R
-         3Zig0AMCZ54M2fUwnePpeM7Llg+k7yGBJlC970waGG74Gw4J3nTfUCDp2fPSg6COtVCS
-         xQYvTG1JMCAqY5dutwejw17z1OgKas/10n8VrvjlywQDDpWu0gygUh3z7fkxC33dyarB
-         alcZr34YmQJ5kuM/pQd3gOpxofmmhbBS07Rd+Bxtp5JXF1n2/RpzfTX2JuYe5WZczeb7
-         DIQw==
-X-Gm-Message-State: AOAM532mV7pAlltnIry0t8vYgLg6lY1USuPOHlfgU8gtRhYMM1+Ngp4y
-        I6BW8Le5Ol8Kgr4uEArHIMfGEHlvncXtdkmFFgg=
-X-Google-Smtp-Source: ABdhPJznrkOI6l8AmACLtkscziXM+ZpXeFn3mC+DO6d22z4ZQRpRWrmzLxxHlYkdst3piwzZUjXCbMgrrxKX63eIDDU=
-X-Received: by 2002:ab0:849:0:b0:341:77e6:5883 with SMTP id
- b9-20020ab00849000000b0034177e65883mr845885uaf.67.1645111709373; Thu, 17 Feb
- 2022 07:28:29 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=77v//07Q7Ub0x6y6b3OazX/wTU5H+y/7bl9FrnzFqoM=;
+        b=Wyp5QwBbqb160BoDcqllhMJy/x7o0JzdgvxpI4/Xgbchqioi0TCDal+8ZYHx8V7zlc
+         QajhTRk1YahAhVII/38IrhCiurT63xQEhcZGKXnML7Mik3Z0TWJgX5z1uHGdEWgCZIIY
+         gGWGL0e2xBjYM07rMCAD+v9M/wkz7Z+NxuEmytYGNMkS4G3Cd7S3D6UM0o3GmZJsiYY6
+         +xjFSli268lfaMHsYPHz0phwAkD3TS5+D0HuVwCvx/7/AfbKYwHXpyk1iy+ZurMLaZr2
+         2L8qDU3NA9x1QlIJNkmc7oXNdQqCTKWdgoMjZqj12Hd7ZetfoT+pdW8mibLdJePUqeeG
+         nb3A==
+X-Gm-Message-State: AOAM5334N5+hDT2eH0TChg3FQK911cDpC4UR1E+tTl48qMNbvW9ogqUt
+        iVhI/qpwhvFYmO2TnEJHp3/gojCfuduXQiYdngPnSVfEj7WeVnyMsTYQ0M4ZZNXQh+BAq4XIAnV
+        ealtnAwj683gBCcv2AgFoZA==
+X-Received: by 2002:a17:90a:2e07:b0:1b9:e28d:4f6d with SMTP id q7-20020a17090a2e0700b001b9e28d4f6dmr10059631pjd.81.1645146581243;
+        Thu, 17 Feb 2022 17:09:41 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwNnV1at+3ISbtwHH1vcv7uVWPCT98tmw/1kAkk/ypaov14xXhYNxViiblMVH4UghKULgWIiw==
+X-Received: by 2002:a17:90a:2e07:b0:1b9:e28d:4f6d with SMTP id q7-20020a17090a2e0700b001b9e28d4f6dmr10059608pjd.81.1645146580901;
+        Thu, 17 Feb 2022 17:09:40 -0800 (PST)
+Received: from [10.72.12.153] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id o1sm9089281pgv.47.2022.02.17.17.09.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Feb 2022 17:09:40 -0800 (PST)
+Subject: Re: [RFC PATCH v10 07/48] ceph: parse new fscrypt_auth and
+ fscrypt_file fields in inode traces
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, idryomov@gmail.com
+References: <20220111191608.88762-1-jlayton@kernel.org>
+ <20220111191608.88762-8-jlayton@kernel.org>
+ <4faa6b1e-1e64-da2e-f722-0fc75fec51b7@redhat.com>
+ <91736a9af23930729a7079dfaf77d3933464fa9f.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <7d77fcf4-72f0-329d-7791-01c3193a47da@redhat.com>
+Date:   Fri, 18 Feb 2022 09:09:34 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-References: <20220215122316.7625-1-xiubli@redhat.com> <20220215122316.7625-4-xiubli@redhat.com>
- <CAAM7YAn8QtZZORXbczE4cLdvGrrEW=AeaAM22f9EK4YNopo+qg@mail.gmail.com> <896b780d82a37a04e0533b69049c0112d4327055.camel@kernel.org>
-In-Reply-To: <896b780d82a37a04e0533b69049c0112d4327055.camel@kernel.org>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Thu, 17 Feb 2022 23:28:18 +0800
-Message-ID: <CAAM7YAnfs0eiJKGoHv_UjDi9D7U1vc3oEFuujeviCfAf_DXjfQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ceph: do no update snapshot context when there is no
- new snapshot
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Venky Shankar <vshankar@redhat.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+In-Reply-To: <91736a9af23930729a7079dfaf77d3933464fa9f.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,136 +84,228 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Feb 17, 2022 at 6:55 PM Jeff Layton <jlayton@kernel.org> wrote:
+
+On 2/17/22 7:39 PM, Jeff Layton wrote:
+> On Thu, 2022-02-17 at 16:25 +0800, Xiubo Li wrote:
+>> On 1/12/22 3:15 AM, Jeff Layton wrote:
+>>> ...and store them in the ceph_inode_info.
+>>>
+>>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>>> ---
+>>>    fs/ceph/file.c       |  2 ++
+>>>    fs/ceph/inode.c      | 18 ++++++++++++++-
+>>>    fs/ceph/mds_client.c | 55 ++++++++++++++++++++++++++++++++++++++++++++
+>>>    fs/ceph/mds_client.h |  4 ++++
+>>>    fs/ceph/super.h      |  6 +++++
+>>>    5 files changed, 84 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>>> index ace72a052254..5937a25ddddd 100644
+>>> --- a/fs/ceph/file.c
+>>> +++ b/fs/ceph/file.c
+>>> @@ -597,6 +597,8 @@ static int ceph_finish_async_create(struct inode *dir, struct inode *inode,
+>>>    	iinfo.xattr_data = xattr_buf;
+>>>    	memset(iinfo.xattr_data, 0, iinfo.xattr_len);
+>>>    
+>>> +	/* FIXME: set fscrypt_auth and fscrypt_file */
+>>> +
+>>>    	in.ino = cpu_to_le64(vino.ino);
+>>>    	in.snapid = cpu_to_le64(CEPH_NOSNAP);
+>>>    	in.version = cpu_to_le64(1);	// ???
+>>> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+>>> index 649d7a059d7b..d090fe081093 100644
+>>> --- a/fs/ceph/inode.c
+>>> +++ b/fs/ceph/inode.c
+>>> @@ -609,7 +609,10 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
+>>>    	INIT_WORK(&ci->i_work, ceph_inode_work);
+>>>    	ci->i_work_mask = 0;
+>>>    	memset(&ci->i_btime, '\0', sizeof(ci->i_btime));
+>>> -
+>>> +#ifdef CONFIG_FS_ENCRYPTION
+>>> +	ci->fscrypt_auth = NULL;
+>>> +	ci->fscrypt_auth_len = 0;
+>>> +#endif
+>>>    	ceph_fscache_inode_init(ci);
+>>>    
+>>>    	return &ci->vfs_inode;
+>>> @@ -620,6 +623,9 @@ void ceph_free_inode(struct inode *inode)
+>>>    	struct ceph_inode_info *ci = ceph_inode(inode);
+>>>    
+>>>    	kfree(ci->i_symlink);
+>>> +#ifdef CONFIG_FS_ENCRYPTION
+>>> +	kfree(ci->fscrypt_auth);
+>>> +#endif
+>>>    	kmem_cache_free(ceph_inode_cachep, ci);
+>>>    }
+>>>    
+>>> @@ -1020,6 +1026,16 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+>>>    		xattr_blob = NULL;
+>>>    	}
+>>>    
+>>> +#ifdef CONFIG_FS_ENCRYPTION
+>>> +	if (iinfo->fscrypt_auth_len && !ci->fscrypt_auth) {
+>>> +		ci->fscrypt_auth_len = iinfo->fscrypt_auth_len;
+>>> +		ci->fscrypt_auth = iinfo->fscrypt_auth;
+>>> +		iinfo->fscrypt_auth = NULL;
+>>> +		iinfo->fscrypt_auth_len = 0;
+>>> +		inode_set_flags(inode, S_ENCRYPTED, S_ENCRYPTED);
+>>> +	}
+>>> +#endif
+>>> +
+>>>    	/* finally update i_version */
+>>>    	if (le64_to_cpu(info->version) > ci->i_version)
+>>>    		ci->i_version = le64_to_cpu(info->version);
+>>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+>>> index 57cf21c9199f..bd824e989449 100644
+>>> --- a/fs/ceph/mds_client.c
+>>> +++ b/fs/ceph/mds_client.c
+>>> @@ -184,8 +184,50 @@ static int parse_reply_info_in(void **p, void *end,
+>>>    			info->rsnaps = 0;
+>>>    		}
+>>>    
+>>> +		if (struct_v >= 5) {
+>>> +			u32 alen;
+>>> +
+>>> +			ceph_decode_32_safe(p, end, alen, bad);
+>>> +
+>>> +			while (alen--) {
+>>> +				u32 len;
+>>> +
+>>> +				/* key */
+>>> +				ceph_decode_32_safe(p, end, len, bad);
+>>> +				ceph_decode_skip_n(p, end, len, bad);
+>>> +				/* value */
+>>> +				ceph_decode_32_safe(p, end, len, bad);
+>>> +				ceph_decode_skip_n(p, end, len, bad);
+>>> +			}
+>>> +		}
+>>> +
+>>> +		/* fscrypt flag -- ignore */
+>>> +		if (struct_v >= 6)
+>>> +			ceph_decode_skip_8(p, end, bad);
+>>> +
+>>> +		info->fscrypt_auth = NULL;
+>>> +		info->fscrypt_file = NULL;
+>> The 'fscrypt_auth_len' and 'fscrypt_file_len' should also be reset here.
+>> Or we will hit the issue I mentioned as bellow:
+>>
+>>
+>> cp: cannot access './dir___683': No buffer space available
+>> cp: cannot access './dir___686': No buffer space available
+>>
+>> The dmesg logs:
+>>
+>> <7>[ 1256.918250] ceph:  readdir 0000000089964a71 file 00000000065cb689
+>> pos 0
+>> <7>[ 1256.918254] ceph:  readdir off 0 -> '.'
+>> <7>[ 1256.918258] ceph:  readdir off 1 -> '..'
+>> <4>[ 1256.918262] fscrypt (ceph, inode 1099511630270): Error -105
+>> getting encryption context
+>> <7>[ 1256.918269] ceph:  readdir 0000000089964a71 file 00000000065cb689
+>> pos 2
+>> <4>[ 1256.918273] fscrypt (ceph, inode 1099511630270): Error -105
+>> getting encryption context
+>>
+>>
+>> This can be reproduced when using an old ceph cluster without fscrypt
+>> support.
+>>
+>> And also I have sent out one fix to zero the memory when allocating it
+>> in ceph_readdir() to fix the potential bug like this.
+>>
+>> Thanks
+>>
+>> BRs
+>>
+>> -- Xiubo
+>>
+>>
+> Good catch, Xiubo.
 >
-> On Thu, 2022-02-17 at 11:03 +0800, Yan, Zheng wrote:
-> > On Tue, Feb 15, 2022 at 11:04 PM <xiubli@redhat.com> wrote:
-> > >
-> > > From: Xiubo Li <xiubli@redhat.com>
-> > >
-> > > No need to update snapshot context when any of the following two
-> > > cases happens:
-> > > 1: if my context seq matches realm's seq and realm has no parent.
-> > > 2: if my context seq equals or is larger than my parent's, this
-> > >    works because we rebuild_snap_realms() works _downward_ in
-> > >    hierarchy after each update.
-> > >
-> > > This fix will avoid those inodes which accidently calling
-> > > ceph_queue_cap_snap() and make no sense, for exmaple:
-> > >
-> > > There have 6 directories like:
-> > >
-> > > /dir_X1/dir_X2/dir_X3/
-> > > /dir_Y1/dir_Y2/dir_Y3/
-> > >
-> > > Firstly, make a snapshot under /dir_X1/dir_X2/.snap/snap_X2, then
-> > > make a root snapshot under /.snap/root_snap. And every time when
-> > > we make snapshots under /dir_Y1/..., the kclient will always try
-> > > to rebuild the snap context for snap_X2 realm and finally will
-> > > always try to queue cap snaps for dir_Y2 and dir_Y3, which makes
-> > > no sense.
-> > >
-> > > That's because the snap_X2's seq is 2 and root_snap's seq is 3.
-> > > So when creating a new snapshot under /dir_Y1/... the new seq
-> > > will be 4, and then the mds will send kclient a snapshot backtrace
-> > > in _downward_ in hierarchy: seqs 4, 3. Then in ceph_update_snap_trace()
-> > > it will always rebuild the from the last realm, that's the root_snap.
-> > > So later when rebuilding the snap context it will always rebuild
-> > > the snap_X2 realm and then try to queue cap snaps for all the inodes
-> > > related in snap_X2 realm, and we are seeing the logs like:
-> > >
-> > > "ceph:  queue_cap_snap 00000000a42b796b nothing dirty|writing"
-> > >
-> > > URL: https://tracker.ceph.com/issues/44100
-> > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> > > ---
-> > >  fs/ceph/snap.c | 16 +++++++++-------
-> > >  1 file changed, 9 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-> > > index d075d3ce5f6d..1f24a5de81e7 100644
-> > > --- a/fs/ceph/snap.c
-> > > +++ b/fs/ceph/snap.c
-> > > @@ -341,14 +341,16 @@ static int build_snap_context(struct ceph_snap_realm *realm,
-> > >                 num += parent->cached_context->num_snaps;
-> > >         }
-> > >
-> > > -       /* do i actually need to update?  not if my context seq
-> > > -          matches realm seq, and my parents' does to.  (this works
-> > > -          because we rebuild_snap_realms() works _downward_ in
-> > > -          hierarchy after each update.) */
-> > > +       /* do i actually need to update? No need when any of the following
-> > > +        * two cases:
-> > > +        * #1: if my context seq matches realm's seq and realm has no parent.
-> > > +        * #2: if my context seq equals or is larger than my parent's, this
-> > > +        *     works because we rebuild_snap_realms() works _downward_ in
-> > > +        *     hierarchy after each update.
-> > > +        */
-> > >         if (realm->cached_context &&
-> > > -           realm->cached_context->seq == realm->seq &&
-> > > -           (!parent ||
-> > > -            realm->cached_context->seq >= parent->cached_context->seq)) {
-> > > +           ((realm->cached_context->seq == realm->seq && !parent) ||
-> > > +            (parent && realm->cached_context->seq >= parent->cached_context->seq))) {
-> >
-> > With this change. When you mksnap on  /dir_Y1/, its snap context keeps
-> > unchanged. In ceph_update_snap_trace, reset the 'invalidate' variable
-> > for each realm should fix this issue.
-> >
->
-> This comment is terribly vague. "invalidate" is a local variable in that
-> function and isn't set on a per-realm basis.
->
-> Could you suggest a patch on top of Xiubo's patch instead?
->
+> I merged your patch into the testing branch, and fixed this patch to
+> also zero out the fscrypt_auth_len and fscrypt_file_len. I've also
+> rebased the wip-fscrypt branch onto the current testing branch.
 
-something like this (not tested)
+Sure, I will test it.
 
-diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-index af502a8245f0..6ef41764008b 100644
---- a/fs/ceph/snap.c
-+++ b/fs/ceph/snap.c
-@@ -704,7 +704,8 @@ int ceph_update_snap_trace(struct ceph_mds_client *mdsc,
-        __le64 *prior_parent_snaps;        /* encoded */
-        struct ceph_snap_realm *realm = NULL;
-        struct ceph_snap_realm *first_realm = NULL;
--       int invalidate = 0;
-+       struct ceph_snap_realm *realm_to_inval = NULL;
-+       int invalidate;
-        int err = -ENOMEM;
-        LIST_HEAD(dirty_realms);
+-- Xiubo
 
-@@ -712,6 +713,7 @@ int ceph_update_snap_trace(struct ceph_mds_client *mdsc,
+>>> +		if (struct_v >= 7) {
+>>> +			ceph_decode_32_safe(p, end, info->fscrypt_auth_len, bad);
+>>> +			if (info->fscrypt_auth_len) {
+>>> +				info->fscrypt_auth = kmalloc(info->fscrypt_auth_len, GFP_KERNEL);
+>>> +				if (!info->fscrypt_auth)
+>>> +					return -ENOMEM;
+>>> +				ceph_decode_copy_safe(p, end, info->fscrypt_auth,
+>>> +						      info->fscrypt_auth_len, bad);
+>>> +			}
+>>> +			ceph_decode_32_safe(p, end, info->fscrypt_file_len, bad);
+>>> +			if (info->fscrypt_file_len) {
+>>> +				info->fscrypt_file = kmalloc(info->fscrypt_file_len, GFP_KERNEL);
+>>> +				if (!info->fscrypt_file)
+>>> +					return -ENOMEM;
+>>> +				ceph_decode_copy_safe(p, end, info->fscrypt_file,
+>>> +						      info->fscrypt_file_len, bad);
+>>> +			}
+>>> +		}
+>>>    		*p = end;
+>>>    	} else {
+>>> +		/* legacy (unversioned) struct */
+>>>    		if (features & CEPH_FEATURE_MDS_INLINE_DATA) {
+>>>    			ceph_decode_64_safe(p, end, info->inline_version, bad);
+>>>    			ceph_decode_32_safe(p, end, info->inline_len, bad);
+>>> @@ -626,8 +668,21 @@ static int parse_reply_info(struct ceph_mds_session *s, struct ceph_msg *msg,
+>>>    
+>>>    static void destroy_reply_info(struct ceph_mds_reply_info_parsed *info)
+>>>    {
+>>> +	int i;
+>>> +
+>>> +	kfree(info->diri.fscrypt_auth);
+>>> +	kfree(info->diri.fscrypt_file);
+>>> +	kfree(info->targeti.fscrypt_auth);
+>>> +	kfree(info->targeti.fscrypt_file);
+>>>    	if (!info->dir_entries)
+>>>    		return;
+>>> +
+>>> +	for (i = 0; i < info->dir_nr; i++) {
+>>> +		struct ceph_mds_reply_dir_entry *rde = info->dir_entries + i;
+>>> +
+>>> +		kfree(rde->inode.fscrypt_auth);
+>>> +		kfree(rde->inode.fscrypt_file);
+>>> +	}
+>>>    	free_pages((unsigned long)info->dir_entries, get_order(info->dir_buf_size));
+>>>    }
+>>>    
+>>> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+>>> index c3986a412fb5..98a8710807d1 100644
+>>> --- a/fs/ceph/mds_client.h
+>>> +++ b/fs/ceph/mds_client.h
+>>> @@ -88,6 +88,10 @@ struct ceph_mds_reply_info_in {
+>>>    	s32 dir_pin;
+>>>    	struct ceph_timespec btime;
+>>>    	struct ceph_timespec snap_btime;
+>>> +	u8 *fscrypt_auth;
+>>> +	u8 *fscrypt_file;
+>>> +	u32 fscrypt_auth_len;
+>>> +	u32 fscrypt_file_len;
+>>>    	u64 rsnaps;
+>>>    	u64 change_attr;
+>>>    };
+>>> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+>>> index 532ee9fca878..5b4092e5f291 100644
+>>> --- a/fs/ceph/super.h
+>>> +++ b/fs/ceph/super.h
+>>> @@ -433,6 +433,12 @@ struct ceph_inode_info {
+>>>    	struct work_struct i_work;
+>>>    	unsigned long  i_work_mask;
+>>>    
+>>> +#ifdef CONFIG_FS_ENCRYPTION
+>>> +	u32 fscrypt_auth_len;
+>>> +	u32 fscrypt_file_len;
+>>> +	u8 *fscrypt_auth;
+>>> +	u8 *fscrypt_file;
+>>> +#endif
+>>>    #ifdef CONFIG_CEPH_FSCACHE
+>>>    	struct fscache_cookie *fscache;
+>>>    #endif
 
-        dout("update_snap_trace deletion=%d\n", deletion);
- more:
-+       invalidate = 0;
-        ceph_decode_need(&p, e, sizeof(*ri), bad);
-        ri = p;
-        p += sizeof(*ri);
-@@ -774,8 +776,10 @@ int ceph_update_snap_trace(struct ceph_mds_client *mdsc,
-             realm, invalidate, p, e);
-
-        /* invalidate when we reach the _end_ (root) of the trace */
--       if (invalidate && p >= e)
--               rebuild_snap_realms(realm, &dirty_realms);
-+       if (invalidate)
-+               realm_to_inval = realm;
-+       if (realm_to_inval && p >= e)
-+               rebuild_snap_realms(realm_to_inval, &dirty_realms);
-
-        if (!first_realm)
-                first_realm = realm;
-
-
-
->
-> > >                 dout("build_snap_context %llx %p: %p seq %lld (%u snaps),
-> > >                      " (unchanged)\n",
-> > >                      realm->ino, realm, realm->cached_context,
-> > > --
-> > > 2.27.0
-> > >
->
-> --
-> Jeff Layton <jlayton@kernel.org>
