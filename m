@@ -2,48 +2,52 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 112474BC875
-	for <lists+ceph-devel@lfdr.de>; Sat, 19 Feb 2022 13:58:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F3B74BC877
+	for <lists+ceph-devel@lfdr.de>; Sat, 19 Feb 2022 14:01:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242321AbiBSM6N (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 19 Feb 2022 07:58:13 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:48892 "EHLO
+        id S242329AbiBSNBW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 19 Feb 2022 08:01:22 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:60426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242261AbiBSM6M (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 19 Feb 2022 07:58:12 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E9F21D423C
-        for <ceph-devel@vger.kernel.org>; Sat, 19 Feb 2022 04:57:53 -0800 (PST)
+        with ESMTP id S233494AbiBSNBW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 19 Feb 2022 08:01:22 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FFF11FFF7F
+        for <ceph-devel@vger.kernel.org>; Sat, 19 Feb 2022 05:01:03 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BD51D60AD5
-        for <ceph-devel@vger.kernel.org>; Sat, 19 Feb 2022 12:57:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B17C1C004E1;
-        Sat, 19 Feb 2022 12:57:51 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D5437B80019
+        for <ceph-devel@vger.kernel.org>; Sat, 19 Feb 2022 13:01:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDEEAC004E1;
+        Sat, 19 Feb 2022 13:00:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1645275472;
-        bh=0vhAB4pQBvnm3Sg63AehFt+FX5KIPH4bdi8PqIVn78A=;
+        s=k20201202; t=1645275660;
+        bh=aF1CWGmSS7aUR/0R8C2xpEYZut8gfIeZxAhSS3JKBHw=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=IEkbbm0rUECqxxmwL3/Bc6lFXcxTeXReT7Pa2nLjKZA9YrpVqBoiM2NGBj9kJxIaE
-         EeQyx6AjUExX117mkoNJlmlvQs8OwQhD89L6lry+UQbuNexWyD4X/nBhXQIIkYXGM0
-         UrnoGXtzCBgCTJqyNIeaSC1WNj73l/d7fPMmzr+MMEUdrpWN/gmetsR1hRuE3lLfi7
-         rjNPSap4VpxC5HCKYwHMrXrpYygwo6Jh8180ub8+St+gIHWXvELeS3xehpaRl95gB6
-         d6hZB4m6rSNK5AAsPzRAgYNWrZavH7aO9KgUm5vaiDDQjIs/WMJuKaMLTqBtj/WF/Y
-         8db8jETKe7MUA==
-Message-ID: <a60d6e77d6d16eda7b2837eff18a3c7678160d9b.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: eliminate the recursion when rebuilding the
- snap context
+        b=MU6sY/Ei0LgTwQ/kNUv4Ix210mSqklJWIe1JhdGSF4Fo4ITQ3hz+C9iUU6tEFr66E
+         NfxVBkPL3VBDjNvugmxIPYhIW+tKBX3VeHPDitWMximSOPk9r8ub1EPXK7l+8oHaJg
+         bdIS3sa1xYKSrqIMF5zD39IaRaUU75k6do8GkUAv+Dfvt8yBTfSZY7T3XYW5bwDY5a
+         RoLL78MwvZtNUKGusKDT7CvW9+OI6WP8JCuVvEvva831umhpv/qgnmyzc6Ls8oasu7
+         lBOC+lEk8Wk17min9IB4YWovNy5DYopy17XoS9hQ96+XzMEhzJYxqlUQej5ExhZ41X
+         ZtjzYM24Wth2w==
+Message-ID: <69d3b31e3f249a74df89eade581270be8e101f7a.camel@kernel.org>
+Subject: Re: [PATCH v2] ceph: do not update snapshot context when there is
+ no new snapshot
 From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
-Date:   Sat, 19 Feb 2022 07:57:50 -0500
-In-Reply-To: <20220219065617.43718-1-xiubli@redhat.com>
-References: <20220219065617.43718-1-xiubli@redhat.com>
+To:     Xiubo Li <xiubli@redhat.com>,
+        =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
+Cc:     idryomov@gmail.com, vshankar@redhat.com, ukernel@gmail.com,
+        ceph-devel@vger.kernel.org
+Date:   Sat, 19 Feb 2022 08:00:58 -0500
+In-Reply-To: <2d694ae4-5e06-7729-3dd5-063b5ab76ffd@redhat.com>
+References: <20220218024722.7952-1-xiubli@redhat.com>
+         <877d9si0b1.fsf@brahms.olymp>
+         <2d694ae4-5e06-7729-3dd5-063b5ab76ffd@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -54,127 +58,24 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sat, 2022-02-19 at 14:56 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
+On Sat, 2022-02-19 at 10:35 +0800, Xiubo Li wrote:
+> On 2/19/22 12:53 AM, Luís Henriques wrote:
+> > Hi!
+> > 
+> > I'm seeing the BUG below when running a simple fsstress on an encrypted
+> > directory.  Reverting this commit seems to make it go away, but I'm not
+> > yet 100% sure this is the culprit (I just wanted to report it before going
+> > offline for the weekend.)
 > 
-> Use a list instead of recursion to avoid possible stack overflow.
-> 
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
-> 
-> V2:
-> - Do not insert the child realms when building snapc for the parents
+> BTW, were you using the 'testing' branch ? It seems Jeff has not 
+> included the fscrypt patches yet in it.
 > 
 > 
->  fs/ceph/snap.c  | 57 +++++++++++++++++++++++++++++++++++++++++--------
->  fs/ceph/super.h |  2 ++
->  2 files changed, 50 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-> index bc5ec72d958c..722ddd166013 100644
-> --- a/fs/ceph/snap.c
-> +++ b/fs/ceph/snap.c
-> @@ -127,6 +127,7 @@ static struct ceph_snap_realm *ceph_create_snap_realm(
->  	INIT_LIST_HEAD(&realm->child_item);
->  	INIT_LIST_HEAD(&realm->empty_item);
->  	INIT_LIST_HEAD(&realm->dirty_item);
-> +	INIT_LIST_HEAD(&realm->rebuild_item);
->  	INIT_LIST_HEAD(&realm->inodes_with_caps);
->  	spin_lock_init(&realm->inodes_with_caps_lock);
->  	__insert_snap_realm(&mdsc->snap_realms, realm);
-> @@ -320,7 +321,8 @@ static int cmpu64_rev(const void *a, const void *b)
->   * build the snap context for a given realm.
->   */
->  static int build_snap_context(struct ceph_snap_realm *realm,
-> -			      struct list_head* dirty_realms)
-> +			      struct list_head *realm_queue,
-> +			      struct list_head *dirty_realms)
->  {
->  	struct ceph_snap_realm *parent = realm->parent;
->  	struct ceph_snap_context *snapc;
-> @@ -334,9 +336,9 @@ static int build_snap_context(struct ceph_snap_realm *realm,
->  	 */
->  	if (parent) {
->  		if (!parent->cached_context) {
-> -			err = build_snap_context(parent, dirty_realms);
-> -			if (err)
-> -				goto fail;
-> +			/* add to the queue head */
-> +			list_add(&parent->rebuild_item, realm_queue);
-> +			return 1;
->  		}
->  		num += parent->cached_context->num_snaps;
->  	}
-> @@ -420,13 +422,50 @@ static int build_snap_context(struct ceph_snap_realm *realm,
->  static void rebuild_snap_realms(struct ceph_snap_realm *realm,
->  				struct list_head *dirty_realms)
->  {
-> -	struct ceph_snap_realm *child;
-> +	LIST_HEAD(realm_queue);
-> +	int last = 0;
-> +	bool skip = false;
->  
-> -	dout("rebuild_snap_realms %llx %p\n", realm->ino, realm);
-> -	build_snap_context(realm, dirty_realms);
-> +	list_add_tail(&realm->rebuild_item, &realm_queue);
->  
-> -	list_for_each_entry(child, &realm->children, child_item)
-> -		rebuild_snap_realms(child, dirty_realms);
-> +	while (!list_empty(&realm_queue)) {
-> +		struct ceph_snap_realm *_realm, *child;
-> +
-> +		_realm = list_first_entry(&realm_queue,
-> +					  struct ceph_snap_realm,
-> +					  rebuild_item);
-> +
-> +		/*
-> +		 * If the last building failed dues to memory
-> +		 * issue, just empty the realm_queue and return
-> +		 * to avoid infinite loop.
-> +		 */
-> +		if (last < 0) {
-> +			list_del_init(&_realm->rebuild_item);
-> +			continue;
-> +		}
-> +
-> +		last = build_snap_context(_realm, &realm_queue, dirty_realms);
-> +		dout("rebuild_snap_realms %llx %p, %s\n", _realm->ino, _realm,
-> +		     last > 0 ? "is deferred" : !last ? "succeeded" : "failed");
-> +
-> +		/* is any child in the list ? */
-> +		list_for_each_entry(child, &_realm->children, child_item) {
-> +			if (!list_empty(&child->rebuild_item)) {
-> +				skip = true;
-> +				break;
-> +			}
-> +		}
-> +
-> +		if (!skip) {
-> +			list_for_each_entry(child, &_realm->children, child_item)
-> +				list_add_tail(&child->rebuild_item, &realm_queue);
-> +		}
-> +
-> +		/* last == 1 means need to build parent first */
-> +		if (last <= 0)
-> +			list_del_init(&_realm->rebuild_item);
-> +	}
->  }
->  
->  
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index a17bd01a8957..baac800a6d11 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -885,6 +885,8 @@ struct ceph_snap_realm {
->  
->  	struct list_head dirty_item;     /* if realm needs new context */
->  
-> +	struct list_head rebuild_item;   /* rebuild snap realms _downward_ in hierarchy */
-> +
->  	/* the current set of snaps for this realm */
->  	struct ceph_snap_context *cached_context;
->  
 
-Looks good. I dropped the one in the testing branch and merged this one.
+I went ahead and rebased the wip-fscrypt branch onto the latest testing
+branch yesterday, and again this morning. It should now be based on the
+current testing branch (with your latest fixes).
+
+Thanks,
 -- 
 Jeff Layton <jlayton@kernel.org>
