@@ -2,145 +2,237 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 860714BEE80
-	for <lists+ceph-devel@lfdr.de>; Tue, 22 Feb 2022 02:14:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F9D24BF0C6
+	for <lists+ceph-devel@lfdr.de>; Tue, 22 Feb 2022 05:10:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235600AbiBVAYG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 21 Feb 2022 19:24:06 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36038 "EHLO
+        id S241490AbiBVDVW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 21 Feb 2022 22:21:22 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234048AbiBVAYF (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 21 Feb 2022 19:24:05 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9E4E82AFE
-        for <ceph-devel@vger.kernel.org>; Mon, 21 Feb 2022 16:23:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1645489417;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        with ESMTP id S241468AbiBVDVP (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 21 Feb 2022 22:21:15 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5541193E3;
+        Mon, 21 Feb 2022 19:20:48 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 756FA210FF;
+        Tue, 22 Feb 2022 03:20:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1645500047; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=akHBZE/+AmFcHVxuto43YDYtC8jEQC4yWVGjirQk9DE=;
-        b=gtep1vRu0BvtzsM4qKwfmpY/0B1gGmhOic2lqJgv5GmhiuqRsDDv8TRP3hlqgF7ugNwpzl
-        qPIUCI05Cu9la2l3AbJI+PVuF5WO8BeAqxDl2djoG0xFXX1EsRFzwvnVEfGhjMx2j4nTpy
-        fziaGqHjVrfjxb1Vl/Ta2ja5lqlMQng=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-636-1MpkjQWwOsGJNhZZW0hEEg-1; Mon, 21 Feb 2022 19:23:36 -0500
-X-MC-Unique: 1MpkjQWwOsGJNhZZW0hEEg-1
-Received: by mail-pj1-f71.google.com with SMTP id c14-20020a17090a8d0e00b001bc72e5c3ecso134076pjo.3
-        for <ceph-devel@vger.kernel.org>; Mon, 21 Feb 2022 16:23:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=akHBZE/+AmFcHVxuto43YDYtC8jEQC4yWVGjirQk9DE=;
-        b=pJIOJDzAk9b1hI8bXSvyoVJbAxZWXrD0SKznmq9dPIS31KIX8U9EKDaSqN5ZXNw2Io
-         DdYnVtLQp31EFnISjcnOiBODsuiBUinDmrPsmuHUe/FHV8UOUUYVJnp0phVHoWNZ25KQ
-         oC/XHZ7QLAjZDqC5n8UYvbL+y3MLhaMXljuWJoxjd8pYLI4eJfIYgT+qFRS4Y3ooDYRR
-         xqApTXb8vcXEwu/BlLAbsgXjNFiZe42SWMQTtZAb+QYUQ7/Td54ZQN8bQgUeuNdAgslh
-         B8/5U6wyLmF0TVQhEVbDcLkmLy5STKiH83RFXtPFRTMC3yGzxvsceaG8te6AwcQp4rp1
-         JYSw==
-X-Gm-Message-State: AOAM531Yf9WTPToTuIYWcNdZjNbYjJk1kRCQpasioVDS38VDYTKEs1by
-        Xe6IsOBrSnUPJvzxf+6NCp0ZakrPCd0jDKWHd0V/acNxvqVM7GwQFuf0K2oFFBfS5lGBbFkvtzG
-        xYkQq7m+CtsfSMks89xaU89U+SRKYQW7TN3ghXLPfBk8zaEIqwSk7OJc+tg/L7WA5ZPllSD8=
-X-Received: by 2002:a17:90a:7845:b0:1b9:159c:148e with SMTP id y5-20020a17090a784500b001b9159c148emr1401625pjl.136.1645489415051;
-        Mon, 21 Feb 2022 16:23:35 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxgJMTXqsdRrH7WTk8bmdh2miY08tm3yWjnT4BbnP5kGHLEwy5l/9O2+WXfe3H13wcaTme5VQ==
-X-Received: by 2002:a17:90a:7845:b0:1b9:159c:148e with SMTP id y5-20020a17090a784500b001b9159c148emr1401595pjl.136.1645489414670;
-        Mon, 21 Feb 2022 16:23:34 -0800 (PST)
-Received: from [10.72.12.114] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id s2sm14643461pfk.3.2022.02.21.16.23.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Feb 2022 16:23:34 -0800 (PST)
-Subject: Re: [PATCH v3] ceph: do not update snapshot context when there is no
- new snapshot
-To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
-Cc:     jlayton@kernel.org, idryomov@gmail.com, vshankar@redhat.com,
-        ceph-devel@vger.kernel.org
-References: <20220219062833.30192-1-xiubli@redhat.com>
- <87y224xjaf.fsf@brahms.olymp>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <f3dcaf0e-705e-10ad-aa89-b92c765dfdbd@redhat.com>
-Date:   Tue, 22 Feb 2022 08:23:28 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        bh=OVO5L5oh76QqfW3n1oDvBos2Yawv0E43OsrqMmz97u8=;
+        b=Cx4lOcCSZ4xZdlO/0dt8OvOiHYMvfFgE8dneyy4gx9SAbx/jm5IA5BhEiUt8c8MGgChw8S
+        lV0AvwUZ9O2angScciMT5S/cugRbdvDnpm+SMpxcXp1h2pdra88SQyfZY9lVnTX5Tr8Dg4
+        oB5Wo4vGigfE2skk7MCoyKNYLxDuocs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1645500047;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=OVO5L5oh76QqfW3n1oDvBos2Yawv0E43OsrqMmz97u8=;
+        b=SRC+OazRSNJPy370sTVlIzOM0il7qZEAvTNiLN6R//xLWhOCX5g8q6QwhVzoewi3VDD6wO
+        l60QJmE012FgycCQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0E23613BA7;
+        Tue, 22 Feb 2022 03:20:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id m6yZK4NWFGJLWwAAMHmgww
+        (envelope-from <neilb@suse.de>); Tue, 22 Feb 2022 03:20:35 +0000
+Subject: [PATCH 11/11] Remove congestion tracking framework.
+From:   NeilBrown <neilb@suse.de>
+To:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
+        Wu Fengguang <fengguang.wu@intel.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-nilfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 22 Feb 2022 14:17:17 +1100
+Message-ID: <164549983747.9187.6171768583526866601.stgit@noble.brown>
+In-Reply-To: <164549971112.9187.16871723439770288255.stgit@noble.brown>
+References: <164549971112.9187.16871723439770288255.stgit@noble.brown>
+User-Agent: StGit/0.23
 MIME-Version: 1.0
-In-Reply-To: <87y224xjaf.fsf@brahms.olymp>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+This framework is no longer used - so discard it.
 
-On 2/22/22 12:43 AM, Luís Henriques wrote:
-> xiubli@redhat.com writes:
->
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> We will only track the uppest parent snapshot realm from which we
->> need to rebuild the snapshot contexts _downward_ in hierarchy. For
->> all the others having no new snapshot we will do nothing.
->>
->> This fix will avoid calling ceph_queue_cap_snap() on some inodes
->> inappropriately. For example, with the code in mainline, suppose there
->> are 2 directory hierarchies (with 6 directories total), like this:
->>
->> /dir_X1/dir_X2/dir_X3/
->> /dir_Y1/dir_Y2/dir_Y3/
->>
->> Firstly, make a snapshot under /dir_X1/dir_X2/.snap/snap_X2, then make a
->> root snapshot under /.snap/root_snap. Every time we make snapshots under
->> /dir_Y1/..., the kclient will always try to rebuild the snap context for
->> snap_X2 realm and finally will always try to queue cap snaps for dir_Y2
->> and dir_Y3, which makes no sense.
->>
->> That's because the snap_X2's seq is 2 and root_snap's seq is 3. So when
->> creating a new snapshot under /dir_Y1/... the new seq will be 4, and
->> the mds will send the kclient a snapshot backtrace in _downward_
->> order: seqs 4, 3.
->>
->> When ceph_update_snap_trace() is called, it will always rebuild the from
->> the last realm, that's the root_snap. So later when rebuilding the snap
->> context, the current logic will always cause it to rebuild the snap_X2
->> realm and then try to queue cap snaps for all the inodes related in that
->> realm, even though it's not necessary.
->>
->> This is accompanied by a lot of these sorts of dout messages:
->>
->>      "ceph:  queue_cap_snap 00000000a42b796b nothing dirty|writing"
->>
->> Fix the logic to avoid this situation.
->>
->> Also, the 'invalidate' word is not precise here. In actuality, it will
->> cause a rebuild of the existing snapshot contexts or just build
->> non-existant ones. Rename it to 'rebuild_snapcs'.
->>
->> URL: https://tracker.ceph.com/issues/44100
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> Signed-off-by: Jeff Layton <jlayton@kernel.org>
->> ---
->>
->>
->>
->> V3:
->> - Fixed the crash issue reproduced by Luís.
-> Thanks, I can confirm I'm no longer seeing this issue.
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ include/linux/backing-dev-defs.h |    8 -----
+ include/linux/backing-dev.h      |    2 -
+ include/trace/events/writeback.h |   28 -------------------
+ mm/backing-dev.c                 |   57 --------------------------------------
+ 4 files changed, 95 deletions(-)
 
-Cool, thanks Luis.
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index 993c5628a726..e863c88df95f 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -207,14 +207,6 @@ struct backing_dev_info {
+ #endif
+ };
+ 
+-enum {
+-	BLK_RW_ASYNC	= 0,
+-	BLK_RW_SYNC	= 1,
+-};
+-
+-void clear_bdi_congested(struct backing_dev_info *bdi, int sync);
+-void set_bdi_congested(struct backing_dev_info *bdi, int sync);
+-
+ struct wb_lock_cookie {
+ 	bool locked;
+ 	unsigned long flags;
+diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
+index 2d764566280c..87ce24d238f3 100644
+--- a/include/linux/backing-dev.h
++++ b/include/linux/backing-dev.h
+@@ -135,8 +135,6 @@ static inline bool writeback_in_progress(struct bdi_writeback *wb)
+ 
+ struct backing_dev_info *inode_to_bdi(struct inode *inode);
+ 
+-long congestion_wait(int sync, long timeout);
+-
+ static inline bool mapping_can_writeback(struct address_space *mapping)
+ {
+ 	return inode_to_bdi(mapping->host)->capabilities & BDI_CAP_WRITEBACK;
+diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
+index a345b1e12daf..86b2a82da546 100644
+--- a/include/trace/events/writeback.h
++++ b/include/trace/events/writeback.h
+@@ -735,34 +735,6 @@ TRACE_EVENT(writeback_sb_inodes_requeue,
+ 	)
+ );
+ 
+-DECLARE_EVENT_CLASS(writeback_congest_waited_template,
+-
+-	TP_PROTO(unsigned int usec_timeout, unsigned int usec_delayed),
+-
+-	TP_ARGS(usec_timeout, usec_delayed),
+-
+-	TP_STRUCT__entry(
+-		__field(	unsigned int,	usec_timeout	)
+-		__field(	unsigned int,	usec_delayed	)
+-	),
+-
+-	TP_fast_assign(
+-		__entry->usec_timeout	= usec_timeout;
+-		__entry->usec_delayed	= usec_delayed;
+-	),
+-
+-	TP_printk("usec_timeout=%u usec_delayed=%u",
+-			__entry->usec_timeout,
+-			__entry->usec_delayed)
+-);
+-
+-DEFINE_EVENT(writeback_congest_waited_template, writeback_congestion_wait,
+-
+-	TP_PROTO(unsigned int usec_timeout, unsigned int usec_delayed),
+-
+-	TP_ARGS(usec_timeout, usec_delayed)
+-);
+-
+ DECLARE_EVENT_CLASS(writeback_single_inode_template,
+ 
+ 	TP_PROTO(struct inode *inode,
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index eae96dfe0261..7176af65b103 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -1005,60 +1005,3 @@ const char *bdi_dev_name(struct backing_dev_info *bdi)
+ 	return bdi->dev_name;
+ }
+ EXPORT_SYMBOL_GPL(bdi_dev_name);
+-
+-static wait_queue_head_t congestion_wqh[2] = {
+-		__WAIT_QUEUE_HEAD_INITIALIZER(congestion_wqh[0]),
+-		__WAIT_QUEUE_HEAD_INITIALIZER(congestion_wqh[1])
+-	};
+-static atomic_t nr_wb_congested[2];
+-
+-void clear_bdi_congested(struct backing_dev_info *bdi, int sync)
+-{
+-	wait_queue_head_t *wqh = &congestion_wqh[sync];
+-	enum wb_congested_state bit;
+-
+-	bit = sync ? WB_sync_congested : WB_async_congested;
+-	if (test_and_clear_bit(bit, &bdi->wb.congested))
+-		atomic_dec(&nr_wb_congested[sync]);
+-	smp_mb__after_atomic();
+-	if (waitqueue_active(wqh))
+-		wake_up(wqh);
+-}
+-EXPORT_SYMBOL(clear_bdi_congested);
+-
+-void set_bdi_congested(struct backing_dev_info *bdi, int sync)
+-{
+-	enum wb_congested_state bit;
+-
+-	bit = sync ? WB_sync_congested : WB_async_congested;
+-	if (!test_and_set_bit(bit, &bdi->wb.congested))
+-		atomic_inc(&nr_wb_congested[sync]);
+-}
+-EXPORT_SYMBOL(set_bdi_congested);
+-
+-/**
+- * congestion_wait - wait for a backing_dev to become uncongested
+- * @sync: SYNC or ASYNC IO
+- * @timeout: timeout in jiffies
+- *
+- * Waits for up to @timeout jiffies for a backing_dev (any backing_dev) to exit
+- * write congestion.  If no backing_devs are congested then just wait for the
+- * next write to be completed.
+- */
+-long congestion_wait(int sync, long timeout)
+-{
+-	long ret;
+-	unsigned long start = jiffies;
+-	DEFINE_WAIT(wait);
+-	wait_queue_head_t *wqh = &congestion_wqh[sync];
+-
+-	prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
+-	ret = io_schedule_timeout(timeout);
+-	finish_wait(wqh, &wait);
+-
+-	trace_writeback_congestion_wait(jiffies_to_usecs(timeout),
+-					jiffies_to_usecs(jiffies - start));
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL(congestion_wait);
 
-- Xiubo
-
->
-> Cheers,
 
