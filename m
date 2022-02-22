@@ -2,312 +2,137 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 543B54BF027
-	for <lists+ceph-devel@lfdr.de>; Tue, 22 Feb 2022 05:10:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78A504BF217
+	for <lists+ceph-devel@lfdr.de>; Tue, 22 Feb 2022 07:28:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239926AbiBVDSq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 21 Feb 2022 22:18:46 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:42058 "EHLO
+        id S230266AbiBVG2o (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 22 Feb 2022 01:28:44 -0500
+Received: from gmail-smtp-in.l.google.com ([23.128.96.19]:58462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233775AbiBVDSp (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 21 Feb 2022 22:18:45 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 935F2F73;
-        Mon, 21 Feb 2022 19:18:20 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 4E595210E8;
-        Tue, 22 Feb 2022 03:18:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1645499899; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3OkKqvLyN2IhyRSty9OyAuPcNggTPekSnj8bweppnlI=;
-        b=jR/KoIwlb6a3UIr9TrCV5x1JdEiSvjSp64jWgiX6/QBhrvQ3QyWIEyjxgLghsJfBCPxxgD
-        DdGdhnsB9Wf59g9oa8zhvS58vIMffM/YaIo1dRAKLasBYhr7J1fAbxZjdvjckRvVKeVEQg
-        awA0pHItXie5pbWiNeEJolCy85RKnq0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1645499899;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3OkKqvLyN2IhyRSty9OyAuPcNggTPekSnj8bweppnlI=;
-        b=DPgRC/NXf1A2dDURE4U2DmW+Z4JIxwtdK7HAUPmPgIYi3sHRPQol0/VNvqhfFSOPBJC3mp
-        qGJzsvqSDhrXvcBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3F53C13BA7;
-        Tue, 22 Feb 2022 03:18:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id J95fN/BVFGJvWgAAMHmgww
-        (envelope-from <neilb@suse.de>); Tue, 22 Feb 2022 03:18:08 +0000
-Subject: [PATCH 02/11] MM: document and polish read-ahead code.
-From:   NeilBrown <neilb@suse.de>
-To:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
-        Wu Fengguang <fengguang.wu@intel.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-nilfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 22 Feb 2022 14:17:17 +1100
-Message-ID: <164549983734.9187.11586890887006601405.stgit@noble.brown>
-In-Reply-To: <164549971112.9187.16871723439770288255.stgit@noble.brown>
-References: <164549971112.9187.16871723439770288255.stgit@noble.brown>
-User-Agent: StGit/0.23
+        with ESMTP id S229656AbiBVG2m (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 22 Feb 2022 01:28:42 -0500
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19801C4840
+        for <ceph-devel@vger.kernel.org>; Mon, 21 Feb 2022 22:28:18 -0800 (PST)
+Received: by mail-yb1-xb32.google.com with SMTP id y189so17353757ybe.4
+        for <ceph-devel@vger.kernel.org>; Mon, 21 Feb 2022 22:28:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:sender:from:date:message-id:subject:to;
+        bh=oeXnfgK9BOKBTMDptF2I1vpIGSBc56TF64IaWy5xIn0=;
+        b=dYpXk22pfkcrAIrlI7iVo7mDREiQ0Con8WFg/1Fbl1TryK1pPaXvrJ3x16mfUQQ0uT
+         NeDmf9HRW/Q2v+ToDTZDS8KFuLk0QLCTfqxE8knOAMdh6ovgRYIijvc4P1CP2blI2LXG
+         fJyqA1RgkhECNiaHulrSnvCZNT6zIP5D0aytcWO5FB0Z3OY6VMWcpXOYkp+Bg2uEvNeL
+         AS2mh7ClAI2UTxgaQu5iZk6aruX9nq7WC37nmQwltg5rLfHoph/h5ZYXH0rvP2Awiy0U
+         7qBnYUeGNTJ689Yl8szK/Fpw6iXHBT5zqqm4Hx1cPUmwFnaWo5k3MvA3+Nxi1l5H6zh8
+         SufA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to;
+        bh=oeXnfgK9BOKBTMDptF2I1vpIGSBc56TF64IaWy5xIn0=;
+        b=Z+r3HOBVczBlFuacpyLKD+L19Wo5LAMsxfvfq7i9pi7P1PqU5fYYp/+zMfUQV320YT
+         Sjzf3Qr4+rK1mNl1E6TBL8TYiVNigGcQx5tvDXr5gY6wrjz98sS8FwiAsvDrfr8NGZGT
+         MXpLNRaj1AnPBQ+55i55WnwVi7uly85FlUMJiCdnyzIggyb7X+IerpwoQ4gRnK35BcJR
+         kqQ8iFZhfRl7kATCx0mi8YDmaN5jyz1UU47zOv2fRnw80NjkxXO9zXTzAWUuZtBK3Ivz
+         CKMbJPa8YyomHll3LKZtO7yJoapvuYS3B1UGkI+/e8lnRE4l0xir2TcoiM66GI8ex5wq
+         VwVA==
+X-Gm-Message-State: AOAM5309r7FjFRfHorGjdd4nhXZXdQPDr15mBtgV3YjgCxmeWc5ymcCT
+        o3No+83hM0PfFWmwsKmRPGKXHxaiSaXs2IgHbHU=
+X-Google-Smtp-Source: ABdhPJyM0PApRc10NMUzsbHSVLWke1R/1Bu18PdKeugDtXaSLSY9csfEoAZ9+WYRHqTh6yexetS+qnyUTpaYE0rR/tk=
+X-Received: by 2002:a25:6e07:0:b0:61d:7c44:9f17 with SMTP id
+ j7-20020a256e07000000b0061d7c449f17mr21287941ybc.205.1645511297242; Mon, 21
+ Feb 2022 22:28:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Sender: vmrjude906@gmail.com
+Received: by 2002:a05:7010:9810:b0:210:8a2e:596d with HTTP; Mon, 21 Feb 2022
+ 22:28:16 -0800 (PST)
+From:   "Mrs.Joan Chen" <mrs.joan71chen@gmail.com>
+Date:   Tue, 22 Feb 2022 06:28:16 +0000
+X-Google-Sender-Auth: G8bbrkxoBToWVttuU9gtJOVRyMI
+Message-ID: <CAHKUWg8_uO__NqERhdRkH8-+x0CA2YEf3zOB-8B2wWa_2KieXA@mail.gmail.com>
+Subject: Dear Child of God
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=7.9 required=5.0 tests=ADVANCE_FEE_5_NEW_MONEY,
+        BAYES_50,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,HK_SCAM,LOTS_OF_MONEY,
+        MONEY_FRAUD_8,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_HK_NAME_FM_MR_MRS,T_SCC_BODY_TEXT_LINE,UNDISC_MONEY,URG_BIZ
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:b32 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5038]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [mrs.joan71chen[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [vmrjude906[at]gmail.com]
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.0 HK_SCAM No description available.
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  0.0 T_HK_NAME_FM_MR_MRS No description available.
+        *  0.6 URG_BIZ Contains urgent matter
+        *  0.0 LOTS_OF_MONEY Huge... sums of money
+        *  0.0 MONEY_FRAUD_8 Lots of money and very many fraud phrases
+        *  3.0 ADVANCE_FEE_5_NEW_MONEY Advance Fee fraud and lots of money
+        *  3.5 UNDISC_MONEY Undisclosed recipients + money/fraud signs
+X-Spam-Level: *******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Add some "big-picture" documentation for read-ahead and polish the code
-to make it fit this documentation.
+Dear Child of God,
 
-The meaning of ->async_size is clarified to match its name.
-i.e. Any request to ->readahead() has a sync part and an async part.
-The caller will wait for the sync pages to complete, but will not wait
-for the async pages.  The first async page is still marked PG_readahead
+Calvary Greetings in the name of the LORD Almighty and Our LORD JESUS
+CHRIST the giver of every good thing. Good day and compliments of the
+seasons, i know this letter will definitely come to you as a huge
+surprise, but I implore you to take the time to go through it
+carefully as the decision you make will go off a long way to determine
+my future and continued existence. I am Mrs.Joan Chen aging widow of
+57 years old suffering from long time illness.I have some funds I
+inherited from my late husband, the sum of (21 Million Dollars) and I
+needed a very honest and God fearing who can withdraw this money then
+use the funds for Charity works. I WISH TO GIVE THIS FUNDS TO YOU FOR
+CHARITY WORKS. I found your email address from the internet after
+honest prayers to the LORD to bring me a helper and i decided to
+contact you if you may be willing and interested to handle these trust
+funds in good faith before anything happens to me.
 
-Note that the current function names page_cache_sync_ra() and
-page_cache_async_ra() are misleading.  All ra request are partly sync
-and partly async, so either part can be empty.
-A page_cache_sync_ra() request will usually set ->async_size non-zero,
-implying it is not all synchronous.
-When a non-zero req_count is passed to page_cache_async_ra(), the
-implication is that some prefix of the request is synchronous, though
-the calculation made there is incorrect - I haven't tried to fix it.
+I accept this decision because I do not have any child who will
+inherit this money after I die. I want your urgent reply to me so that
+I will give you the deposit receipt which the SECURITY COMPANY issued
+to me as next of kin for immediate transfer of the money to your
+account in your country, to start the good work of God, I want you to
+use the 20/percent of the total amount to help yourself in doing the
+project. I am desperately in keen need of assistance and I have
+summoned up courage to contact you for this task, you must not fail me
+and the millions of the poor people in our todays WORLD. This is no
+stolen money and there are no dangers involved,100% RISK FREE with
+full legal proof. Please if you would be able to use the funds for the
+Charity works kindly let me know immediately.I will appreciate your
+utmost confidentiality and trust in this matter to accomplish my heart
+desire, as I don't want anything that will jeopardize my last wish.
+Please
+kindly respond quickly for further details.
 
-Signed-off-by: NeilBrown <neilb@suse.de>
----
- Documentation/core-api/mm-api.rst |   19 ++++++-
- Documentation/filesystems/vfs.rst |   16 ++++--
- include/linux/fs.h                |    9 +++
- mm/readahead.c                    |   99 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 133 insertions(+), 10 deletions(-)
+Hoping to receive your response as soon as possible.
 
-diff --git a/Documentation/core-api/mm-api.rst b/Documentation/core-api/mm-api.rst
-index 395835f9289f..f5b2f92822c8 100644
---- a/Documentation/core-api/mm-api.rst
-+++ b/Documentation/core-api/mm-api.rst
-@@ -58,15 +58,30 @@ Virtually Contiguous Mappings
- File Mapping and Page Cache
- ===========================
- 
--.. kernel-doc:: mm/readahead.c
--   :export:
-+Filemap
-+-------
- 
- .. kernel-doc:: mm/filemap.c
-    :export:
- 
-+Readahead
-+---------
-+
-+.. kernel-doc:: mm/readahead.c
-+   :doc: Readahead Overview
-+
-+.. kernel-doc:: mm/readahead.c
-+   :export:
-+
-+Writeback
-+---------
-+
- .. kernel-doc:: mm/page-writeback.c
-    :export:
- 
-+Truncate
-+--------
-+
- .. kernel-doc:: mm/truncate.c
-    :export:
- 
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index bf5c48066fac..b4a0baa46dcc 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -806,12 +806,16 @@ cache in your filesystem.  The following members are defined:
- 	object.  The pages are consecutive in the page cache and are
- 	locked.  The implementation should decrement the page refcount
- 	after starting I/O on each page.  Usually the page will be
--	unlocked by the I/O completion handler.  If the filesystem decides
--	to stop attempting I/O before reaching the end of the readahead
--	window, it can simply return.  The caller will decrement the page
--	refcount and unlock the remaining pages for you.  Set PageUptodate
--	if the I/O completes successfully.  Setting PageError on any page
--	will be ignored; simply unlock the page if an I/O error occurs.
-+	unlocked by the I/O completion handler.  The set of pages are
-+	divided into some sync pages followed by some async pages,
-+	rac->ra->async_size gives the number of async pages.  The
-+	filesystem should attempt to read all sync pages but may decide
-+	to stop once it reaches the async pages.  If it does decide to
-+	stop attempting I/O, it can simply return.  The caller will
-+	remove the remaining pages from the address space, unlock them
-+	and decrement the page refcount.  Set PageUptodate if the I/O
-+	completes successfully.  Setting PageError on any page will be
-+	ignored; simply unlock the page if an I/O error occurs.
- 
- ``readpages``
- 	called by the VM to read pages associated with the address_space
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e2d892b201b0..8b5c486bd4a2 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -930,10 +930,15 @@ struct fown_struct {
-  * struct file_ra_state - Track a file's readahead state.
-  * @start: Where the most recent readahead started.
-  * @size: Number of pages read in the most recent readahead.
-- * @async_size: Start next readahead when this many pages are left.
-- * @ra_pages: Maximum size of a readahead request.
-+ * @async_size: Numer of pages that were/are not needed immediately
-+ *      and so were/are genuinely "ahead".  Start next readahead when
-+ *      the first of these pages is accessed.
-+ * @ra_pages: Maximum size of a readahead request, copied from the bdi.
-  * @mmap_miss: How many mmap accesses missed in the page cache.
-  * @prev_pos: The last byte in the most recent read request.
-+ *
-+ * When this structure is passed to ->readahead(), the "most recent"
-+ * readahead means the current readahead.
-  */
- struct file_ra_state {
- 	pgoff_t start;
-diff --git a/mm/readahead.c b/mm/readahead.c
-index cf0dcf89eb69..73b2bc5302e0 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -8,6 +8,105 @@
-  *		Initial version.
-  */
- 
-+/**
-+ * DOC: Readahead Overview
-+ *
-+ * Readahead is used to read content into the page cache before it is
-+ * explicitly requested by the application.  Readahead only ever
-+ * attempts to read pages that are not yet in the page cache.  If a
-+ * page is present but not up-to-date, readahead will not try to read
-+ * it. In that case a simple ->readpage() will be requested.
-+ *
-+ * Readahead is triggered when an application read request (whether a
-+ * systemcall or a page fault) finds that the requested page is not in
-+ * the page cache, or that it is in the page cache and has the
-+ * %PG_readahead flag set.  This flag indicates that the page was loaded
-+ * as part of a previous read-ahead request and now that it has been
-+ * accessed, it is time for the next read-ahead.
-+ *
-+ * Each readahead request is partly synchronous read, and partly async
-+ * read-ahead.  This is reflected in the struct file_ra_state which
-+ * contains ->size being to total number of pages, and ->async_size
-+ * which is the number of pages in the async section.  The first page in
-+ * this async section will have %PG_readahead set as a trigger for a
-+ * subsequent read ahead.  Once a series of sequential reads has been
-+ * established, there should be no need for a synchronous component and
-+ * all read ahead request will be fully asynchronous.
-+ *
-+ * When either of the triggers causes a readahead, three numbers need to
-+ * be determined: the start of the region, the size of the region, and
-+ * the size of the async tail.
-+ *
-+ * The start of the region is simply the first page address at or after
-+ * the accessed address, which is not currently populated in the page
-+ * cache.  This is found with a simple search in the page cache.
-+ *
-+ * The size of the async tail is determined by subtracting the size that
-+ * was explicitly requested from the determined request size, unless
-+ * this would be less than zero - then zero is used.  NOTE THIS
-+ * CALCULATION IS WRONG WHEN THE START OF THE REGION IS NOT THE ACCESSED
-+ * PAGE.
-+ *
-+ * The size of the region is normally determined from the size of the
-+ * previous readahead which loaded the preceding pages.  This may be
-+ * discovered from the struct file_ra_state for simple sequential reads,
-+ * or from examining the state of the page cache when multiple
-+ * sequential reads are interleaved.  Specifically: where the readahead
-+ * was triggered by the %PG_readahead flag, the size of the previous
-+ * readahead is assumed to be the number of pages from the triggering
-+ * page to the start of the new readahead.  In these cases, the size of
-+ * the previous readahead is scaled, often doubled, for the new
-+ * readahead, though see get_next_ra_size() for details.
-+ *
-+ * If the size of the previous read cannot be determined, the number of
-+ * preceding pages in the page cache is used to estimate the size of
-+ * a previous read.  This estimate could easily be misled by random
-+ * reads being coincidentally adjacent, so it is ignored unless it is
-+ * larger than the current request, and it is not scaled up, unless it
-+ * is at the start of file.
-+ *
-+ * In general read ahead is accelerated at the start of the file, as
-+ * reads from there are often sequential.  There are other minor
-+ * adjustments to the read ahead size in various special cases and these
-+ * are best discovered by reading the code.
-+ *
-+ * The above calculation determines the readahead, to which any requested
-+ * read size may be added.
-+ *
-+ * Readahead requests are sent to the filesystem using the ->readahead()
-+ * address space operation, for which mpage_readahead() is a canonical
-+ * implementation.  ->readahead() should normally initiate reads on all
-+ * pages, but may fail to read any or all pages without causing an IO
-+ * error.  The page cache reading code will issue a ->readpage() request
-+ * for any page which ->readahead() does not provided, and only an error
-+ * from this will be final.
-+ *
-+ * ->readahead() will generally call readahead_page() repeatedly to get
-+ * each page from those prepared for read ahead.  It may fail to read a
-+ * page by:
-+ *
-+ * * not calling readahead_page() sufficiently many times, effectively
-+ *   ignoring some pages, as might be appropriate if the path to
-+ *   storage is congested.
-+ *
-+ * * failing to actually submit a read request for a given page,
-+ *   possibly due to insufficient resources, or
-+ *
-+ * * getting an error during subsequent processing of a request.
-+ *
-+ * In the last two cases, the page should be unlocked to indicate that
-+ * the read attempt has failed.  In the first case the page will be
-+ * unlocked by the caller.
-+ *
-+ * Those pages not in the final ``async_size`` of the request should be
-+ * considered to be important and ->readahead() should not fail them due
-+ * to congestion or temporary resource unavailability, but should wait
-+ * for necessary resources (e.g.  memory or indexing information) to
-+ * become available.  Pages in the final ``async_size`` may be
-+ * considered less urgent and failure to read them is more acceptable.
-+ * They will eventually be read individually using ->readpage().
-+ */
-+
- #include <linux/kernel.h>
- #include <linux/dax.h>
- #include <linux/gfp.h>
+Your urgently responses is needed
 
-
+Thanks and Remain blessed
+Mrs.Joan Chen
