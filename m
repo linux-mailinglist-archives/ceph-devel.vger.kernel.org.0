@@ -2,93 +2,179 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE9DB4C10AE
-	for <lists+ceph-devel@lfdr.de>; Wed, 23 Feb 2022 11:48:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DF5C4C1118
+	for <lists+ceph-devel@lfdr.de>; Wed, 23 Feb 2022 12:16:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238907AbiBWKs5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 23 Feb 2022 05:48:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58708 "EHLO
+        id S236519AbiBWLQv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 23 Feb 2022 06:16:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237755AbiBWKs4 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 23 Feb 2022 05:48:56 -0500
-Received: from mail-wr1-x430.google.com (mail-wr1-x430.google.com [IPv6:2a00:1450:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 302A35A0BA
-        for <ceph-devel@vger.kernel.org>; Wed, 23 Feb 2022 02:48:29 -0800 (PST)
-Received: by mail-wr1-x430.google.com with SMTP id p9so38845060wra.12
-        for <ceph-devel@vger.kernel.org>; Wed, 23 Feb 2022 02:48:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:from:mime-version:content-transfer-encoding
-         :content-description:subject:to:date:reply-to;
-        bh=eaaB5Fi4OIw8X99OdVt3/5VwsoSH3pqqZ03p7mumtcE=;
-        b=edMJZSBQEhAZRjGd0CzjEBigO0//mLUFiVkoXvTZxVmAZa0cBgBALLO8UBeu5LauPN
-         IfwGfF0k1nYMYQ0m1wd4HZNNQIG+kQjXI2QWUgeubfg6x9Jv+QldFMySqu1OeYgB30GI
-         N7cG+cYolaVxsqmIeh+pZ8YX2ylLG/46Byb4un2ldtTYdTRgPY5CoXF8WEjXhegP2ZSM
-         n6MDF/FvUi/jM5Hu+Vml+cPIMq+3jSua3FqZyqqs5WtlaUJuSrg/jT7MfIoV0Q+QOdnw
-         imaZe83dBQqjWMuAwvT6NNoWZoqZUrBavdh2NYVNa6eMFEt2GA5lvafAAmOOr2qiW4kA
-         KnLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:from:mime-version
-         :content-transfer-encoding:content-description:subject:to:date
-         :reply-to;
-        bh=eaaB5Fi4OIw8X99OdVt3/5VwsoSH3pqqZ03p7mumtcE=;
-        b=tclRks3BL/K8GKP4gojKaRw4HcVyYg1N5OQ0SVSPQhymHV1DgdSo/e7CaqHsmN7pYW
-         rAArsNfZTk/7yS44w8PIb75zMH0pWuSTXQ5HDktfjjDqb8NSyyqF/G2S9yrs9QVuyiY8
-         MTrcUeKRclIgwivu4oaa6oLJP7w75vbYBcAsObv+1CcrehaOf8Qa9xiLw+A3bbaIZcN9
-         EkjYAyp2nUwVQfH76Z01UGQ+ssj91CDq1meZT6dY0pDcZBOWzAZEr+zU8uJJfpkypPEM
-         qODTz+J7wCPBnM19mJG45tSZoJIJw+Rl4DXrAo/2IxufrzZM+bUasdFOUnC1Pjq06sqN
-         OhbA==
-X-Gm-Message-State: AOAM531yXobhNSPlOgu4dKhJ7uKWSAYLLUvPko9FXl+QOUF3XYVFFEXd
-        Ysef6iUYkNmpVO1/VAHuTQc=
-X-Google-Smtp-Source: ABdhPJzIrK3yaiTgqnqs6Us6k97ogpgR2ar1O1TwhtpX0CTWfurLL6zcTzAoWBxoP/jbpF2gLaIn4Q==
-X-Received: by 2002:adf:ce82:0:b0:1e3:2bdd:8243 with SMTP id r2-20020adfce82000000b001e32bdd8243mr22551859wrn.259.1645613307833;
-        Wed, 23 Feb 2022 02:48:27 -0800 (PST)
-Received: from [192.168.0.133] ([5.193.8.34])
-        by smtp.gmail.com with ESMTPSA id h10sm48947274wrt.57.2022.02.23.02.48.24
-        (version=TLS1 cipher=AES128-SHA bits=128/128);
-        Wed, 23 Feb 2022 02:48:26 -0800 (PST)
-Message-ID: <621610fa.1c69fb81.ffe6a.d4ee@mx.google.com>
-From:   Mrs Maria Elisabeth Schaeffler 
-        <canadainvestigationboard@gmail.com>
-X-Google-Original-From: Mrs Maria Elisabeth Schaeffler
-Content-Type: text/plain; charset="iso-8859-1"
-MIME-Version: 1.0
+        with ESMTP id S238399AbiBWLQu (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 23 Feb 2022 06:16:50 -0500
+X-Greylist: delayed 326 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 23 Feb 2022 03:16:22 PST
+Received: from 1.mo301.mail-out.ovh.net (1.mo301.mail-out.ovh.net [137.74.110.64])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 512348EB74
+        for <ceph-devel@vger.kernel.org>; Wed, 23 Feb 2022 03:16:22 -0800 (PST)
+Received: from DAGFR5EX1.OVH.local (unknown [51.255.55.251])
+        by mo301.mail-out.ovh.net (Postfix) with ESMTPS id 711888B9A0;
+        Wed, 23 Feb 2022 12:10:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ovhcloud.com;
+        s=mailout; t=1645614654;
+        bh=9Yqa9HlzREnoF9BGIlvexbdc9LXQVtnd7rWIsVTTpVU=;
+        h=From:To:Subject:Date:From;
+        b=o/jmkxOEA1PHvoZXDZuDLYbDb6hFvASb3J3JdQ9+SIhExA2fJZvXvOiSWljPjVJ9A
+         YpXnNHtmVlPqQdOiAACIpo4+usfMJiJ1FZbeVXbK6lCvBEgggliy3FU8qgCI7dm5tx
+         G2j1KzVCBq0T3pc5919NZuIA6kX/p34xzNHNTEn8=
+Received: from DAGFR5EX1.OVH.local (172.16.2.14) by DAGFR5EX1.OVH.local
+ (172.16.2.14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.15; Wed, 23 Feb
+ 2022 12:10:36 +0100
+Received: from DAGFR5EX1.OVH.local ([fe80::5db2:3b17:f01b:563]) by
+ DAGFR5EX1.OVH.local ([fe80::5db2:3b17:f01b:563%9]) with mapi id
+ 15.02.0986.015; Wed, 23 Feb 2022 12:10:36 +0100
+From:   Bartosz Rabiega <bartosz.rabiega@ovhcloud.com>
+To:     dev <dev@ceph.io>, ceph-devel <ceph-devel@vger.kernel.org>
+Subject: Benching ceph for high speed RBD
+Thread-Topic: Benching ceph for high speed RBD
+Thread-Index: AQHYKKV9OXzrB6o4jEqreqsypK/B7g==
+Date:   Wed, 23 Feb 2022 11:10:35 +0000
+Message-ID: <d55c21fb8ba54ee1b8b1e60ccc0bb21b@ovhcloud.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [109.190.254.30]
+x-ovh-corplimit-skip: true
+Content-Type: text/plain; charset="Windows-1252"
 Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Spende
-To:     Recipients <Mrs@vger.kernel.org>
-Date:   Wed, 23 Feb 2022 14:48:19 +0400
-Reply-To: elisabethschaeffler01@gmail.com
-X-Spam-Status: No, score=2.0 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        FREEMAIL_REPLYTO_END_DIGIT,LOTS_OF_MONEY,MONEY_FREEMAIL_REPTO,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,TO_MALFORMED,
-        T_HK_NAME_FM_MR_MRS,T_SCC_BODY_TEXT_LINE autolearn=no
+MIME-Version: 1.0
+X-Ovh-Tracer-Id: 1602718518934756937
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: 0
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrledtgddvgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecunecujfgurhephffvufhtfffkihgtgfggsehtqhhjtddttdehnecuhfhrohhmpeeurghrthhoshiiucftrggsihgvghgruceosggrrhhtohhsiidrrhgrsghivghgrgesohhvhhgtlhhouhgurdgtohhmqeenucggtffrrghtthgvrhhnpedvtdeuhffhjeduudeftddthfefudeviedvgeelgeejkeevkefgudfhiedtudetvdenucffohhmrghinheptggvphhhrdgtohhmpdhgihhthhhusgdrtghomhenucfkpheptddrtddrtddrtddpuddtledrudeltddrvdehgedrfedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopefftefihffthefgigdurdfqggfjrdhlohgtrghlpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpegsrghrthhoshiirdhrrggsihgvghgrsehovhhhtghlohhuugdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopegtvghphhdquggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
-X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hallo,
+Hello cephers,
 
-Ich bin Frau Maria Elisabeth Schaeffler, eine deutsche Wirtschaftsmagnatin,=
- Investorin und Philanthropin. Ich bin der Vorsitzende von Wipro Limited. I=
-ch habe 25 Prozent meines pers=F6nlichen Verm=F6gens f=FCr wohlt=E4tige Zwe=
-cke ausgegeben. Und ich habe auch versprochen zu geben
-der Rest von 25% geht dieses Jahr 2021 an Einzelpersonen. Ich habe mich ent=
-schlossen, Ihnen 1.500.000,00 Euro zu spenden. Wenn Sie an meiner Spende in=
-teressiert sind, kontaktieren Sie mich f=FCr weitere Informationen.
+I've recently been doing some intensive performance benchmarks of different=
+ ceph versions.
+I'm trying to figure out perf numbers which can be achieved for high speed =
+ceph setup for RBD (3x replica).
+From what I can see there is a significant perf drop on 16.2.x series (4k w=
+rites).
+I can't find any clear reason for such behavior.
 
-Sie k=F6nnen auch =FCber den untenstehenden Link mehr =FCber mich lesen
+Hardware setup
+--------------
+3x backend servers
+CPU: 2x AMD EPYC 7402 24-Core (48c+48t)
+Storage: 24x NVMe
+Network: 40gbps
+OS: Ubuntu Focal
+Kernel: 5.15.0-18-generic
+
+4x client servers
+CPU: 2x AMD EPYC 7402 24-Core (48c+48t)
+Network: 40gbps
+OS: Ubuntu Focal
+Kernel: 5.11.0-37-generic
+
+Software config
+---------------
+72 OSDs in total (24 OSDs per host)
+1 OSD per NVMe drive
+Each OSD runs in LXD container
+Scrub disabled
+Deep-scrub disabled
+Ceph balancer off
+1 pool 'rbd':
+- 1024 PG
+- PG autoscaler off
+
+Test environment
+----------------
+- 128 rbd images (default features, size 128GB)
+- All the images are fully written before any tests are done! (4194909 obje=
+cts allocated)
+- client version ceph 16.2.7 vanilla eu.ceph.com
+- Each client runs fio with rbd engine (librbd) against 32 rbd images (4x32=
+ in total)
 
 
-https://en.wikipedia.org/wiki/Maria-Elisabeth_Schaeffler
+Tests
+----------------
+qd - queue depth (number of IOs issued simultaneously to single RBD image)
 
-Sch=F6ne Gr=FC=DFe
-Gesch=E4ftsf=FChrer Wipro Limited
-Maria-Elisabeth_Schaeffler
-Email: elisabethschaeffler01@gmail.com
+IOPS tests
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+- random IO 4k, 4qd
+- random IO 4k, 64qd
+
+Write			4k 4qd	4k 64qd
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+14.2.16			69630	132093
+14.2.22			97491	156288
+15.2.14			77586	93003
+*15.2.14 =96 canonical	110424	168943
+16.2.0			70526	85827
+16.2.2			69897	85231
+16.2.4			64713	84046
+16.2.5			62099	85053
+16.2.6			68394	83070
+16.2.7			66974	78601
+
+	=09
+Read			4k 4qd	4k 64qd
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+14.2.16			692848	816109
+14.2.22			693027	830485
+15.2.14			676784	702233
+*15.2.14 =96 canonical	749404	792385
+16.2.0			610798	636195
+16.2.2			606924	637611
+16.2.4			611093	630590
+16.2.5			603162	632599
+16.2.6			603013	627246
+16.2.7			-	-
+
+* Very oddly the best perf was achieved with build Ceph 15.2.14 from canoni=
+cal 15.2.14-0ubuntu0.20.04.2
+14.2.22 performs very well
+15.2.14 from canonical is the best in terms of writes.
+16.2.x series writes are quite poor comparing to other versions.
+
+BW tests
+=3D=3D=3D=3D=3D=3D=3D=3D
+- sequential IO 64k, 64qd
+
+These results are mostly the same for all ceph versions.
+Writes ~4.2 GB/s
+Reads ~12 GB/s
+
+Seems that results here are limited by network bandwitdh.
+
+
+Questions
+---------
+Is there any reason for the performance drop in 16.x series?
+I'm looking for some help/recommendations to get as much IOPS as possible (=
+especially for writes, as reads are good enough)
+
+We've been trying to find out what makes the difference in canonical builds=
+. A few leads indicates that
+extraopts +=3D -DCMAKE_BUILD_TYPE=3DRelWithDebInfo was not set for builds f=
+rom ceph foundation=20
+https://github.com/ceph/ceph/blob/master/do_cmake.sh#L86
+How to check this, would someone be able to take a look there?
+
+BR
+Bartosz Rabiega
+
