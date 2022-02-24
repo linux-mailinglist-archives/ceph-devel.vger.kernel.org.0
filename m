@@ -2,118 +2,152 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 683604C29B4
-	for <lists+ceph-devel@lfdr.de>; Thu, 24 Feb 2022 11:40:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AEFE4C2AC9
+	for <lists+ceph-devel@lfdr.de>; Thu, 24 Feb 2022 12:22:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233466AbiBXKjA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 24 Feb 2022 05:39:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43936 "EHLO
+        id S232825AbiBXLWF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 24 Feb 2022 06:22:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231714AbiBXKi6 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Feb 2022 05:38:58 -0500
-Received: from 2.mo302.mail-out.ovh.net (2.mo302.mail-out.ovh.net [137.74.110.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0C4A247750
-        for <ceph-devel@vger.kernel.org>; Thu, 24 Feb 2022 02:38:27 -0800 (PST)
-Received: from DAGFR5EX1.OVH.local (unknown [51.255.55.251])
-        by mo302.mail-out.ovh.net (Postfix) with ESMTPS id 81CD666A59;
-        Thu, 24 Feb 2022 11:38:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ovhcloud.com;
-        s=mailout; t=1645699105;
-        bh=y/f6vD3mtxpyAON9IYj1KbSZnnl3x+5+s/SMbCFbC0s=;
-        h=Date:Subject:To:References:From:In-Reply-To:From;
-        b=TlY6XqdtnrLL11oxYY9PoxOKjCwAGEWhCBG0Q5PjF03xQT7tTKR5mFhvf0sZb1z02
-         FjLjaD3v/245/9obR5eYwsNhyUynXVTpXO98eFK8Aj4CDQh2W6H7OgPu4Wrj8xgrKc
-         OZQXbi+vtVwClpd4NEB9Wo31Ju1LuhwyoC7ETUY8=
-Received: from [10.15.52.118] (109.190.254.30) by DAGFR5EX1.OVH.local
- (172.16.2.14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.986.15; Thu, 24 Feb
- 2022 11:38:24 +0100
-Message-ID: <c9e1294b-b905-0a34-4b32-3d7b5d46c03a@ovhcloud.com>
-Date:   Thu, 24 Feb 2022 11:38:23 +0100
+        with ESMTP id S230236AbiBXLWE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Feb 2022 06:22:04 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4259B1CE;
+        Thu, 24 Feb 2022 03:21:31 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id F23651F37F;
+        Thu, 24 Feb 2022 11:21:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1645701690; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=oJU8mNCuvdPjtG+kxUCL1MNwiSJQCMqrnSDUyRWAPys=;
+        b=fbrLd3uYGGuF/+gtgOTc42jy43SBVwMaRLN9Jyjq5Q7kJTFS2NCF/eGWTFihYz3ZuVAO/W
+        2Xu155AIWIa5aQE2Yn3kqLHhqurbQ+J8vibQwWSMCIjzpjO7ODhCKl7S5JRnMnSDIvcz3I
+        KEd7y3uTKgMSv9d0SiU2rdws2TYqFRI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1645701690;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=oJU8mNCuvdPjtG+kxUCL1MNwiSJQCMqrnSDUyRWAPys=;
+        b=pimrS9guo0/mLaKBn4sTcUW5Kr+erSaQ5pN956+PIe12zIFsX+NuJKBHZAHm8mzWD0gQgZ
+        YGrZG6YXWfuNI4BA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 82DF6139F3;
+        Thu, 24 Feb 2022 11:21:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id IsL4HDlqF2IHWAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Thu, 24 Feb 2022 11:21:29 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id b5956cca;
+        Thu, 24 Feb 2022 11:21:43 +0000 (UTC)
+From:   =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
+Subject: [RFC PATCH] ceph: add support for encrypted snapshot names
+Date:   Thu, 24 Feb 2022 11:21:42 +0000
+Message-Id: <20220224112142.18052-1-lhenriques@suse.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: Benching ceph for high speed RBD
-Content-Language: en-US
-To:     Mark Nelson <mnelson@redhat.com>, dev <dev@ceph.io>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-References: <d55c21fb8ba54ee1b8b1e60ccc0bb21b@ovhcloud.com>
- <47a841af-6bcd-8e8d-d6dd-2071f435bd6f@redhat.com>
- <2062509e562b439098aef109146d2cf9@ovhcloud.com>
- <d6092114-9f99-157d-1808-10bd7f0bc446@redhat.com>
-From:   "bartosz.rabiega@ovhcloud.com" <bartosz.rabiega@ovhcloud.com>
-In-Reply-To: <d6092114-9f99-157d-1808-10bd7f0bc446@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [109.190.254.30]
-X-ClientProxiedBy: DAGFR9EX2.OVH.local (172.16.2.27) To DAGFR5EX1.OVH.local
- (172.16.2.14)
-X-OVH-CORPLIMIT-SKIP: true
-X-Ovh-Tracer-Id: 6926817704563367497
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrledvgddujecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfhfhfgjtgfgihesthekredttdefjeenucfhrhhomhepfdgsrghrthhoshiirdhrrggsihgvghgrsehovhhhtghlohhuugdrtghomhdfuceosggrrhhtohhsiidrrhgrsghivghgrgesohhvhhgtlhhouhgurdgtohhmqeenucggtffrrghtthgvrhhnpeehveegjeefveeuhfduvdejfeehffethefftdejveffudffgeeutdfgvddtveduteenucffohhmrghinheptggvphhhrdgtohhmpdhusghunhhtuhdrtghomhenucfkpheptddrtddrtddrtddpuddtledrudeltddrvdehgedrfedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopefftefihffthefgigdurdfqggfjrdhlohgtrghlpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpegsrghrthhoshiirdhrrggsihgvghgrsehovhhhtghlohhuugdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopegtvghphhdquggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hey,
+Since filenames in encrypted directories are already encrypted and shown
+as a base64-encoded string when the directory is locked, snapshot names
+should show a similar behaviour.
 
-To be precise about ceph versions
+Signed-off-by: Luís Henriques <lhenriques@suse.de>
+---
+ fs/ceph/dir.c   | 15 +++++++++++++++
+ fs/ceph/inode.c | 10 +++++++++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
 
-15.2.14 from http://eu.ceph.com/debian-15.2.14/
-15.2.15 from http://eu.ceph.com/debian-15.2.15/
-- both of these versions reach
-~75k 4k qd4 writes
-~650k 4k qd64 reads
-re-tested on 15.2.14 vanilla yesterday on a fresh cluster, 1h fio per 
-each test)
+Support on the MDS for names that'll be > MAX_NAME when base64 encoded is
+still TBD.  I thought it would be something easy to do, but snapshots
+don't seem to make use of the CDir/CDentry (which is where alternate_name
+is stored on the MDS).  I'm still looking into this, but I may need some
+help there :-(
 
-15.2.14 (15.2.14-0ubuntu0.20.04.2) from 
-http://archive.ubuntu.com/ubuntu/dists/focal-updates/universe
-- this one for some reason is special (build options?)
-~110k 4k qd4 writes
-~750k 4k qd64 reads
-also tested on a fresh cluster with 1h fio runs
+Cheers,
+--
+Luís
 
-The PCIe scheduler thing looks very interesting. Although I think the 
-issue is limited in my setup as each container is pinned to the NUMA 
-node where corresponding NVMe is connected. So only the network card 
-might be in a different NUMA.
-
-BR
-
-
-On 2/23/22 22:33, Mark Nelson wrote:
-> Hi Bartosz,
-> 
-> 
-> Yep, my IOPS results are calculated the same way.  Basically just a sum 
-> of the averages as reported by fio with numjobs=1.  My numbers are 
-> obviously higher, but I'm giving the OSDs a heck of a lot more CPU and 
-> aggregate PCIe/Mem bus than you are so it's not unexpected.  It's 
-> interesting that 15.2.14 is showing the best results in your testing but 
-> none of the 15.2.X tests in my setup showed any real advantage.  Perhaps 
-> it has something to do with the way you aged/upgraded the cluster.
-> 
-> 
-> One issue that may be relevant for you:  At the 2021 Supercomputing Ceph 
-> BOF, Andras Pataki from the Flatiron Institute presented findings on 
-> their dual socket AMD Rome nodes where they were seeing significant 
-> performance impact when running lots of NVMe drives.  They believe the 
-> result was due to PCIe scheduler contention/latency with wide variations 
-> in performance depending on which CPU OSDs landed on relative to the 
-> NVMe drives and network.  AMD Rome systems typically have a special bios 
-> setting called "Preferred I/O" that improves scheduling for a single 
-> given PCIe device (which works), but at the expense of other PCIe 
-> devices so it doesn't really help.  I don't know if there is a recording 
-> of the talk, but it was extremely good. I suspect that may be impacting 
-> your tests, especially if the container setup is resulting in lots of 
-> OSDs landing on the wrong CPU relative to the NVMe drive.
-> 
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index a449f4a07c07..20ae600ee7cd 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1065,6 +1065,13 @@ static int ceph_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+ 		op = CEPH_MDS_OP_MKSNAP;
+ 		dout("mksnap dir %p snap '%pd' dn %p\n", dir,
+ 		     dentry, dentry);
++		/* XXX missing support for alternate_name in snapshots */
++		if (IS_ENCRYPTED(dir) && (dentry->d_name.len >= 189)) {
++			dout("encrypted snapshot name too long: %pd len: %d\n",
++			     dentry, dentry->d_name.len);
++			err = -ENAMETOOLONG;
++			goto out;
++		}
+ 	} else if (ceph_snap(dir) == CEPH_NOSNAP) {
+ 		dout("mkdir dir %p dn %p mode 0%ho\n", dir, dentry, mode);
+ 		op = CEPH_MDS_OP_MKDIR;
+@@ -1109,6 +1116,14 @@ static int ceph_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+ 	    !req->r_reply_info.head->is_target &&
+ 	    !req->r_reply_info.head->is_dentry)
+ 		err = ceph_handle_notrace_create(dir, dentry);
++
++	/*
++	 * If we have created a snapshot we need to clear the cache, otherwise
++	 * snapshot will show encrypted filenames in readdir.
++	 */
++	if (ceph_snap(dir) == CEPH_SNAPDIR)
++		d_drop(dentry);
++
+ out_req:
+ 	ceph_mdsc_put_request(req);
+ out:
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 8b0832271fdf..080824610b73 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -182,6 +182,13 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+ 	ci->i_rbytes = 0;
+ 	ci->i_btime = ceph_inode(parent)->i_btime;
+ 
++	/* if encrypted, just borough fscrypt_auth from parent */
++	if (IS_ENCRYPTED(parent)) {
++		struct ceph_inode_info *pci = ceph_inode(parent);
++		inode->i_flags |= S_ENCRYPTED;
++		ci->fscrypt_auth_len = pci->fscrypt_auth_len;
++		ci->fscrypt_auth = pci->fscrypt_auth;
++	}
+ 	if (inode->i_state & I_NEW) {
+ 		inode->i_op = &ceph_snapdir_iops;
+ 		inode->i_fop = &ceph_snapdir_fops;
+@@ -632,7 +639,8 @@ void ceph_free_inode(struct inode *inode)
+ 
+ 	kfree(ci->i_symlink);
+ #ifdef CONFIG_FS_ENCRYPTION
+-	kfree(ci->fscrypt_auth);
++	if (ceph_snap(inode) != CEPH_SNAPDIR)
++		kfree(ci->fscrypt_auth);
+ #endif
+ 	fscrypt_free_inode(inode);
+ 	kmem_cache_free(ceph_inode_cachep, ci);
