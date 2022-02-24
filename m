@@ -2,152 +2,151 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AEFE4C2AC9
-	for <lists+ceph-devel@lfdr.de>; Thu, 24 Feb 2022 12:22:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 740D94C2AEB
+	for <lists+ceph-devel@lfdr.de>; Thu, 24 Feb 2022 12:30:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232825AbiBXLWF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 24 Feb 2022 06:22:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38988 "EHLO
+        id S230162AbiBXLbI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 24 Feb 2022 06:31:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230236AbiBXLWE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Feb 2022 06:22:04 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4259B1CE;
-        Thu, 24 Feb 2022 03:21:31 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        with ESMTP id S229525AbiBXLbH (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Feb 2022 06:31:07 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBC5928A113;
+        Thu, 24 Feb 2022 03:30:37 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id F23651F37F;
-        Thu, 24 Feb 2022 11:21:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1645701690; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=oJU8mNCuvdPjtG+kxUCL1MNwiSJQCMqrnSDUyRWAPys=;
-        b=fbrLd3uYGGuF/+gtgOTc42jy43SBVwMaRLN9Jyjq5Q7kJTFS2NCF/eGWTFihYz3ZuVAO/W
-        2Xu155AIWIa5aQE2Yn3kqLHhqurbQ+J8vibQwWSMCIjzpjO7ODhCKl7S5JRnMnSDIvcz3I
-        KEd7y3uTKgMSv9d0SiU2rdws2TYqFRI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1645701690;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=oJU8mNCuvdPjtG+kxUCL1MNwiSJQCMqrnSDUyRWAPys=;
-        b=pimrS9guo0/mLaKBn4sTcUW5Kr+erSaQ5pN956+PIe12zIFsX+NuJKBHZAHm8mzWD0gQgZ
-        YGrZG6YXWfuNI4BA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 82DF6139F3;
-        Thu, 24 Feb 2022 11:21:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id IsL4HDlqF2IHWAAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Thu, 24 Feb 2022 11:21:29 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id b5956cca;
-        Thu, 24 Feb 2022 11:21:43 +0000 (UTC)
-From:   =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
-Subject: [RFC PATCH] ceph: add support for encrypted snapshot names
-Date:   Thu, 24 Feb 2022 11:21:42 +0000
-Message-Id: <20220224112142.18052-1-lhenriques@suse.de>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 75964B82575;
+        Thu, 24 Feb 2022 11:30:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE696C340E9;
+        Thu, 24 Feb 2022 11:30:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1645702235;
+        bh=NEiEy8aPQXv4YCvSSvu1CrwZcw8hIl0XdkWsb+8kvdc=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=lzpWsjsxoWJp5qkJ96UqX80NBnU+UC1GaWf56BLmCibrCohLLcjWbwrFK+UFLdIgS
+         M3+IVpmCOF1k1d18hfO0Yq0UaOYTv8twIThmyrZyJtS0BaI+IBuZ8GbGCLoCA4Nfky
+         uw0HWHltyCjHAtOKREnE0y6956nBervDeobT4ihNlqBT6q1gMuJz1O6ENY8jS1nD30
+         C4oS6GqmHNV9tEmM4VTc/rfnlTTnWEqSE78JNNYFLUpVx8tkL5Lpk/To+UfIvaeCaj
+         xXDDgEeajWU/EpVj5VTsQF8+WQbltJex+TSRMA276bz7hfF54LMk8fLTqs2VgkV0uj
+         ELHbDgvjlTNSA==
+Message-ID: <e8ec98a9c4fab9b7aa099001f09ff9b11f0c3f96.camel@kernel.org>
+Subject: Re: [PATCH 06/11] ceph: remove reliance on bdi congestion
+From:   Jeff Layton <jlayton@kernel.org>
+To:     NeilBrown <neilb@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
+        Wu Fengguang <fengguang.wu@intel.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 24 Feb 2022 06:30:31 -0500
+In-Reply-To: <164568131640.25116.884631856219777713@noble.neil.brown.name>
+References: <164549971112.9187.16871723439770288255.stgit@noble.brown>
+        , <164549983739.9187.14895675781408171186.stgit@noble.brown>
+        , <ccc81eb5c23f933137c5da8d5050540cc54e58f0.camel@kernel.org>
+         <164568131640.25116.884631856219777713@noble.neil.brown.name>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Since filenames in encrypted directories are already encrypted and shown
-as a base64-encoded string when the directory is locked, snapshot names
-should show a similar behaviour.
+On Thu, 2022-02-24 at 16:41 +1100, NeilBrown wrote:
+> On Thu, 24 Feb 2022, Jeff Layton wrote:
+> > On Tue, 2022-02-22 at 14:17 +1100, NeilBrown wrote:
+> > > The bdi congestion tracking in not widely used and will be removed.
+> > > 
+> > > CEPHfs is one of a small number of filesystems that uses it, setting
+> > > just the async (write) congestion flags at what it determines are
+> > > appropriate times.
+> > > 
+> > > The only remaining effect of the async flag is to cause (some)
+> > > WB_SYNC_NONE writes to be skipped.
+> > > 
+> > > So instead of setting the flag, set an internal flag and change:
+> > >  - .writepages to do nothing if WB_SYNC_NONE and the flag is set
+> > >  - .writepage to return AOP_WRITEPAGE_ACTIVATE if WB_SYNC_NONE
+> > >     and the flag is set.
+> > > 
+> > > The writepages change causes a behavioural change in that pageout() can
+> > > now return PAGE_ACTIVATE instead of PAGE_KEEP, so SetPageActive() will
+> > > be called on the page which (I think) wil further delay the next attempt
+> > > at writeout.  This might be a good thing.
+> > > 
+> > > Signed-off-by: NeilBrown <neilb@suse.de>
+> > 
+> > Maybe. I have to wonder whether all of this is really useful.
+> > 
+> > When things are congested we'll avoid trying to issue new writeback
+> > requests. Note that we don't prevent new pages from being dirtied here -
+> > - only their being written back.
+> > 
+> > This also doesn't do anything in the DIO or sync_write cases, so if we
+> > lose caps or are doing DIO, we'll just keep churning out "unlimited"
+> > writes in those cases anyway.
+> 
+> I think the point of congestion tracking is to differentiate between
+> sync and async IO.  Or maybe "required" and "optional".
+> Eventually the "optional" IO will become required, but if we can delay
+> it until a time when there is less "required" io, then maybe we can
+> improve perceived latency.
+> 
+> "optional" IO here is write-back and read-ahead.  If the load of
+> "required" IO is bursty, and if we can shuffle that optional stuff into
+> the quiet periods, we might win.
+> 
 
-Signed-off-by: Luís Henriques <lhenriques@suse.de>
----
- fs/ceph/dir.c   | 15 +++++++++++++++
- fs/ceph/inode.c | 10 +++++++++-
- 2 files changed, 24 insertions(+), 1 deletion(-)
+In that case, maybe we should be counting in-flight reads too and deny
+readahead when the count crosses some threshold? It seems a bit silly to
+only look at writes when it comes to "congestion".
 
-Support on the MDS for names that'll be > MAX_NAME when base64 encoded is
-still TBD.  I thought it would be something easy to do, but snapshots
-don't seem to make use of the CDir/CDentry (which is where alternate_name
-is stored on the MDS).  I'm still looking into this, but I may need some
-help there :-(
+> Whether this is a real need is an important question that I don't have an
+> answer for.  And whether it is better to leave delayed requests in the
+> page cache, or in the low-level queue with sync requests able to
+> over-take them - I don't know.  If you have multiple low-level queue as
+> you say you can with ceph, then lower might be better.
+> 
+> The block layer has REQ_RAHEAD ..  maybe those request get should get a
+> lower priority ... though I don't think they do.
+> NFS has a 3 level priority queue, with write-back going at a lower
+> priority ... I think... for NFSv3 at least.
+> 
+> Sometimes I suspect that as all our transports have become faster, we
+> have been able to ignore the extra latency caused by poor scheduling of
+> optional requests.  But at other times when my recently upgraded desktop
+> is struggling to view a web page while compiling a kernel ...  I wonder
+> if maybe we don't have the balance right any more.
+> 
+> So maybe you are right - maybe we can rip all this stuff out.
+> 
 
-Cheers,
---
-Luís
+I lean more toward just removing it. The existing implementation seems a
+bit half-baked with the gaps in what's being counted. Granted, the
+default congestion threshold is pretty high with modern memory sizes, so
+it probably doesn't come into play much in practice, but removing it
+would reduce some complexity in the client.
 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index a449f4a07c07..20ae600ee7cd 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1065,6 +1065,13 @@ static int ceph_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
- 		op = CEPH_MDS_OP_MKSNAP;
- 		dout("mksnap dir %p snap '%pd' dn %p\n", dir,
- 		     dentry, dentry);
-+		/* XXX missing support for alternate_name in snapshots */
-+		if (IS_ENCRYPTED(dir) && (dentry->d_name.len >= 189)) {
-+			dout("encrypted snapshot name too long: %pd len: %d\n",
-+			     dentry, dentry->d_name.len);
-+			err = -ENAMETOOLONG;
-+			goto out;
-+		}
- 	} else if (ceph_snap(dir) == CEPH_NOSNAP) {
- 		dout("mkdir dir %p dn %p mode 0%ho\n", dir, dentry, mode);
- 		op = CEPH_MDS_OP_MKDIR;
-@@ -1109,6 +1116,14 @@ static int ceph_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
- 	    !req->r_reply_info.head->is_target &&
- 	    !req->r_reply_info.head->is_dentry)
- 		err = ceph_handle_notrace_create(dir, dentry);
-+
-+	/*
-+	 * If we have created a snapshot we need to clear the cache, otherwise
-+	 * snapshot will show encrypted filenames in readdir.
-+	 */
-+	if (ceph_snap(dir) == CEPH_SNAPDIR)
-+		d_drop(dentry);
-+
- out_req:
- 	ceph_mdsc_put_request(req);
- out:
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 8b0832271fdf..080824610b73 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -182,6 +182,13 @@ struct inode *ceph_get_snapdir(struct inode *parent)
- 	ci->i_rbytes = 0;
- 	ci->i_btime = ceph_inode(parent)->i_btime;
- 
-+	/* if encrypted, just borough fscrypt_auth from parent */
-+	if (IS_ENCRYPTED(parent)) {
-+		struct ceph_inode_info *pci = ceph_inode(parent);
-+		inode->i_flags |= S_ENCRYPTED;
-+		ci->fscrypt_auth_len = pci->fscrypt_auth_len;
-+		ci->fscrypt_auth = pci->fscrypt_auth;
-+	}
- 	if (inode->i_state & I_NEW) {
- 		inode->i_op = &ceph_snapdir_iops;
- 		inode->i_fop = &ceph_snapdir_fops;
-@@ -632,7 +639,8 @@ void ceph_free_inode(struct inode *inode)
- 
- 	kfree(ci->i_symlink);
- #ifdef CONFIG_FS_ENCRYPTION
--	kfree(ci->fscrypt_auth);
-+	if (ceph_snap(inode) != CEPH_SNAPDIR)
-+		kfree(ci->fscrypt_auth);
- #endif
- 	fscrypt_free_inode(inode);
- 	kmem_cache_free(ceph_inode_cachep, ci);
+-- 
+Jeff Layton <jlayton@kernel.org>
