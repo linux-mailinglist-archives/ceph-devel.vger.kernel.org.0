@@ -2,59 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B9F644C3DF0
-	for <lists+ceph-devel@lfdr.de>; Fri, 25 Feb 2022 06:36:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 434644C3EA4
+	for <lists+ceph-devel@lfdr.de>; Fri, 25 Feb 2022 07:55:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237567AbiBYFhL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 25 Feb 2022 00:37:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42544 "EHLO
+        id S237957AbiBYGzp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 25 Feb 2022 01:55:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237261AbiBYFhK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 25 Feb 2022 00:37:10 -0500
+        with ESMTP id S231365AbiBYGzo (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 25 Feb 2022 01:55:44 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3CFE027B29
-        for <ceph-devel@vger.kernel.org>; Thu, 24 Feb 2022 21:36:35 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 107602C0322
+        for <ceph-devel@vger.kernel.org>; Thu, 24 Feb 2022 22:55:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1645767394;
+        s=mimecast20190719; t=1645772112;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=/EmBOuIHlG591wLcgnhpf7mq1SLYtaesSG4JYPO3Ae4=;
-        b=QPSUZ9iVfS68lqtMpbX+jS7c2Bnux5thcdaH1nsixJC4AKgJ9dwZ8TwaDBQdbqDGkro2/p
-        hPPzbswDkYl3TadYBASVPxhbxnY9r565pogGeuU6ETPmAwB8qOQtjLUS31h2G0fQJPeyj7
-        EiIrtXEQ9SxwGeP4NKa1q2xxIF2c1i8=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=PWyr1+nn1ycpMnL9tgTudXWXj3ncKczWOpiUDmDKaMU=;
+        b=feBSXBcc+Sg9Y3G8aJrY+8XLQ1yrn3rwFPz/0Lzdc/mtRM2z29tni+4StI03AjrXXu1laG
+        SmoCVOLPpzLCvc/TW7FnrEqn8ChjX+D8OpSvHiaBHYekrpWYAZO0xfm1qhtHeeD4tZZ0j+
+        aIX5i4ZQi4RCG/XGjKCOgIgMvcjJ+tw=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-596-XIE10A77PJu7vckrVDdv6Q-1; Fri, 25 Feb 2022 00:36:32 -0500
-X-MC-Unique: XIE10A77PJu7vckrVDdv6Q-1
-Received: by mail-pl1-f198.google.com with SMTP id l6-20020a170903120600b0014f43ba55f3so2420419plh.11
-        for <ceph-devel@vger.kernel.org>; Thu, 24 Feb 2022 21:36:32 -0800 (PST)
+ us-mta-230-Xvx_O2-bOaiDgR6oauWxnA-1; Fri, 25 Feb 2022 01:55:10 -0500
+X-MC-Unique: Xvx_O2-bOaiDgR6oauWxnA-1
+Received: by mail-pj1-f71.google.com with SMTP id q68-20020a17090a17ca00b001bc1004382fso2803904pja.1
+        for <ceph-devel@vger.kernel.org>; Thu, 24 Feb 2022 22:55:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=/EmBOuIHlG591wLcgnhpf7mq1SLYtaesSG4JYPO3Ae4=;
-        b=oQe1b3eBM4Fe9IE6Py1T6kKLQtTmEHTJ8VSgL+oHkR7aTCfD/nVzrsz5w5iFyEfSmp
-         jrSPK43QSvRQ5ydc7LKzM3VY77UWlU6s2JSbVNc+zHdEFsgiQbrU4fB5A3cJHuIuKedn
-         3OcLUb40hH+VdTs5ULjlB54R17zM9X+O2p4dD8ZOuFzQsju6pR+JRpbdSpJzrMVAs+2f
-         40N8g8FW34LpTNZzbg9sFPf8pds9jCHOtc09nA9gC644G2/gmkaIqAWqnYZ9UEncUHV0
-         9TxrhEQ4UiI6+TMS6T7RfWAfh6cxlBVulN1nyGZdNEdJ4FoUU52Y0Z/vMPRfxoIqx8XG
-         5kyw==
-X-Gm-Message-State: AOAM5327oC5qpUGa3sDzq757bLQvCgAwL/K9zoXrQakhPynODoA/3D3F
-        AONkjfME/uYTxGoHgwNxFhJvAd0z6Kr3Ap3+AoSUsPWl8/h/JMRa6QPJn5jDCyFBvwacbW0cj/R
-        vI5x8DNF5EzpLu5LXaVrmAg==
-X-Received: by 2002:a17:902:f70d:b0:14f:a1e1:b9b3 with SMTP id h13-20020a170902f70d00b0014fa1e1b9b3mr5870752plo.36.1645767391208;
-        Thu, 24 Feb 2022 21:36:31 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJwiiXsd4xahPwiW6r0AIofmiUU0MlMH3nliR/roKSNeVm9RBYdvRY2BJ9FFuPjqkgJwyFWaPw==
-X-Received: by 2002:a17:902:f70d:b0:14f:a1e1:b9b3 with SMTP id h13-20020a170902f70d00b0014fa1e1b9b3mr5870730plo.36.1645767390901;
-        Thu, 24 Feb 2022 21:36:30 -0800 (PST)
+        bh=PWyr1+nn1ycpMnL9tgTudXWXj3ncKczWOpiUDmDKaMU=;
+        b=S1Yd2ojo4PremGiM+8U29E7NPEgROvYvYL6/EzbNdP9OXQDio1D9n1KQPuVsIZR5k2
+         EtdBrhgY7AUk5tMbA2XqM5M65vl1KwBL/82OgQR427A/7rcPJ6l+VkFSeMClRGZrwIl1
+         qdknctDY6NFw7puho8bKp2m1upbIIqE/oS4DCA6boBgIQK64Ldw41Y2ssAimkp8wBAtu
+         USvDceD9fbc+tuor7EFz9UlbGqnMkpeK2WWLa597cZT5bo4sSD6T9G38wvTpUSoGNgLp
+         RvQnoEalDQXuToTx6LnToeERVENUs9LxOHKFRU1tZmjvtQgj53FGHGxYOmPxMbH8sXLC
+         n3/g==
+X-Gm-Message-State: AOAM5326Ie33mMB5ErFirEJs9Gm7EQDOXOaZnm+MAf9egubTeaA811gF
+        JpZkyh9QCfNEc8Ns2vMRmssDHd9dAsMSMpkCPyUVdFocZj2DS5vfjdIeiKp2sIrYd1Z3Hg7htQX
+        36Q97Ltv/kcBuyxuvr4AlEg==
+X-Received: by 2002:a17:902:bc42:b0:14f:e6d0:fb7b with SMTP id t2-20020a170902bc4200b0014fe6d0fb7bmr5888106plz.127.1645772109660;
+        Thu, 24 Feb 2022 22:55:09 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJxtd3ZsH2CuHzm/9LXkb+uvUEeUpL2X1D92aAAfH0lysp6YrwdKIgEP8tYr93QlRapJJ1M5dA==
+X-Received: by 2002:a17:902:bc42:b0:14f:e6d0:fb7b with SMTP id t2-20020a170902bc4200b0014fe6d0fb7bmr5888093plz.127.1645772109411;
+        Thu, 24 Feb 2022 22:55:09 -0800 (PST)
 Received: from [10.72.12.114] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id u37-20020a056a0009a500b004e1414d69besm1398278pfg.151.2022.02.24.21.36.27
+        by smtp.gmail.com with ESMTPSA id y5-20020a056a00180500b004e1bea9c587sm1889962pfa.67.2022.02.24.22.55.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Feb 2022 21:36:30 -0800 (PST)
+        Thu, 24 Feb 2022 22:55:08 -0800 (PST)
 Subject: Re: [RFC PATCH] ceph: add support for encrypted snapshot names
 To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
         Jeff Layton <jlayton@kernel.org>,
@@ -62,8 +62,8 @@ To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
 Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20220224112142.18052-1-lhenriques@suse.de>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <27801620-b3fd-d556-c100-409632f91661@redhat.com>
-Date:   Fri, 25 Feb 2022 13:36:24 +0800
+Message-ID: <7d2a798d-ce32-4bf7-b184-267bb79f44e3@redhat.com>
+Date:   Fri, 25 Feb 2022 14:55:02 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
@@ -99,14 +99,6 @@ On 2/24/22 7:21 PM, Luís Henriques wrote:
 > don't seem to make use of the CDir/CDentry (which is where alternate_name
 > is stored on the MDS).  I'm still looking into this, but I may need some
 > help there :-(
-
-Yeah, good catch. The snapshot handler in MDS hasn't handled this case 
-yet, though the kclient has passed it to MDS server.
-
-The snapshot alternate_name raw ciphertext should be stored in SnapInfo 
-struct along with the 'name'.
-
-
 >
 > Cheers,
 > --
@@ -127,11 +119,6 @@ struct along with the 'name'.
 > +			err = -ENAMETOOLONG;
 > +			goto out;
 > +		}
-
-We should fix the MDS side bug and then this workaroud will be no needed.
-
-- Xiubo
-
 >   	} else if (ceph_snap(dir) == CEPH_NOSNAP) {
 >   		dout("mkdir dir %p dn %p mode 0%ho\n", dir, dentry, mode);
 >   		op = CEPH_MDS_OP_MKDIR;
@@ -144,6 +131,12 @@ We should fix the MDS side bug and then this workaroud will be no needed.
 > +	 * If we have created a snapshot we need to clear the cache, otherwise
 > +	 * snapshot will show encrypted filenames in readdir.
 > +	 */
+
+Do you mean dencrypted filenames ?
+
+- Xiubo
+
+
 > +	if (ceph_snap(dir) == CEPH_SNAPDIR)
 > +		d_drop(dentry);
 > +
