@@ -2,79 +2,79 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 69F954C34B4
-	for <lists+ceph-devel@lfdr.de>; Thu, 24 Feb 2022 19:26:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F644C3DF0
+	for <lists+ceph-devel@lfdr.de>; Fri, 25 Feb 2022 06:36:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232797AbiBXS05 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 24 Feb 2022 13:26:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36138 "EHLO
+        id S237567AbiBYFhL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 25 Feb 2022 00:37:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229853AbiBXS0z (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Feb 2022 13:26:55 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 572BA2E681;
-        Thu, 24 Feb 2022 10:26:25 -0800 (PST)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id CC4F41F44A;
-        Thu, 24 Feb 2022 18:26:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1645727183; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        with ESMTP id S237261AbiBYFhK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 25 Feb 2022 00:37:10 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3CFE027B29
+        for <ceph-devel@vger.kernel.org>; Thu, 24 Feb 2022 21:36:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1645767394;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fvd1oinbrzDNEtVw09f73DrWCGrH8uj1AxQnI+XDYsA=;
-        b=bkp1oVJXbWkpid09cmm13sNPWmUCuhaHiS++4pZepB3FkldFh7aCskaPIOft1q+ADmBIFJ
-        A6PnUX6wxF1vyHGVXr2dfZNx+WiatfwzHBBqe3itmGYWUZQ1Y4aRsDtgvSTQpipqYrsNeQ
-        9rbGMo5ALz4T0wNVzbygll+R7NJsp3c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1645727183;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=fvd1oinbrzDNEtVw09f73DrWCGrH8uj1AxQnI+XDYsA=;
-        b=jWApK2AmDJVMG8GSfFG05r6OWPvoyyhtsY2beZhfc9a6eTJ5NVMmGZXLdtlQOfh01M1VpN
-        9gOSsdIcUkyQimDA==
-Received: from quack3.suse.cz (unknown [10.163.28.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 04F60A3B81;
-        Thu, 24 Feb 2022 18:26:23 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id A8999A0605; Thu, 24 Feb 2022 19:26:22 +0100 (CET)
-Date:   Thu, 24 Feb 2022 19:26:22 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-        Wu Fengguang <fengguang.wu@intel.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        bh=/EmBOuIHlG591wLcgnhpf7mq1SLYtaesSG4JYPO3Ae4=;
+        b=QPSUZ9iVfS68lqtMpbX+jS7c2Bnux5thcdaH1nsixJC4AKgJ9dwZ8TwaDBQdbqDGkro2/p
+        hPPzbswDkYl3TadYBASVPxhbxnY9r565pogGeuU6ETPmAwB8qOQtjLUS31h2G0fQJPeyj7
+        EiIrtXEQ9SxwGeP4NKa1q2xxIF2c1i8=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-596-XIE10A77PJu7vckrVDdv6Q-1; Fri, 25 Feb 2022 00:36:32 -0500
+X-MC-Unique: XIE10A77PJu7vckrVDdv6Q-1
+Received: by mail-pl1-f198.google.com with SMTP id l6-20020a170903120600b0014f43ba55f3so2420419plh.11
+        for <ceph-devel@vger.kernel.org>; Thu, 24 Feb 2022 21:36:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=/EmBOuIHlG591wLcgnhpf7mq1SLYtaesSG4JYPO3Ae4=;
+        b=oQe1b3eBM4Fe9IE6Py1T6kKLQtTmEHTJ8VSgL+oHkR7aTCfD/nVzrsz5w5iFyEfSmp
+         jrSPK43QSvRQ5ydc7LKzM3VY77UWlU6s2JSbVNc+zHdEFsgiQbrU4fB5A3cJHuIuKedn
+         3OcLUb40hH+VdTs5ULjlB54R17zM9X+O2p4dD8ZOuFzQsju6pR+JRpbdSpJzrMVAs+2f
+         40N8g8FW34LpTNZzbg9sFPf8pds9jCHOtc09nA9gC644G2/gmkaIqAWqnYZ9UEncUHV0
+         9TxrhEQ4UiI6+TMS6T7RfWAfh6cxlBVulN1nyGZdNEdJ4FoUU52Y0Z/vMPRfxoIqx8XG
+         5kyw==
+X-Gm-Message-State: AOAM5327oC5qpUGa3sDzq757bLQvCgAwL/K9zoXrQakhPynODoA/3D3F
+        AONkjfME/uYTxGoHgwNxFhJvAd0z6Kr3Ap3+AoSUsPWl8/h/JMRa6QPJn5jDCyFBvwacbW0cj/R
+        vI5x8DNF5EzpLu5LXaVrmAg==
+X-Received: by 2002:a17:902:f70d:b0:14f:a1e1:b9b3 with SMTP id h13-20020a170902f70d00b0014fa1e1b9b3mr5870752plo.36.1645767391208;
+        Thu, 24 Feb 2022 21:36:31 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJwiiXsd4xahPwiW6r0AIofmiUU0MlMH3nliR/roKSNeVm9RBYdvRY2BJ9FFuPjqkgJwyFWaPw==
+X-Received: by 2002:a17:902:f70d:b0:14f:a1e1:b9b3 with SMTP id h13-20020a170902f70d00b0014fa1e1b9b3mr5870730plo.36.1645767390901;
+        Thu, 24 Feb 2022 21:36:30 -0800 (PST)
+Received: from [10.72.12.114] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id u37-20020a056a0009a500b004e1414d69besm1398278pfg.151.2022.02.24.21.36.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Feb 2022 21:36:30 -0800 (PST)
+Subject: Re: [RFC PATCH] ceph: add support for encrypted snapshot names
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
         Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
-        ceph-devel@vger.kernel.org, drbd-dev@lists.linbit.com,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 02/11] MM: document and polish read-ahead code.
-Message-ID: <20220224182622.n7abfey3asszyq3x@quack3.lan>
-References: <164447124918.23354.17858831070003318849.stgit@noble.brown>
- <164447147257.23354.2801426518649016278.stgit@noble.brown>
- <20220210122440.vqth5mwsqtv6vjpq@quack3.lan>
- <164453611721.27779.1299851963795418722@noble.neil.brown.name>
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220224112142.18052-1-lhenriques@suse.de>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <27801620-b3fd-d556-c100-409632f91661@redhat.com>
+Date:   Fri, 25 Feb 2022 13:36:24 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <164453611721.27779.1299851963795418722@noble.neil.brown.name>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+In-Reply-To: <20220224112142.18052-1-lhenriques@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,126 +82,101 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri 11-02-22 10:35:17, NeilBrown wrote:
-> On Thu, 10 Feb 2022, Jan Kara wrote:
-> > Hi Neil!
-> > 
-> > On Thu 10-02-22 16:37:52, NeilBrown wrote:
-> > > Add some "big-picture" documentation for read-ahead and polish the code
-> > > to make it fit this documentation.
-> > > 
-> > > The meaning of ->async_size is clarified to match its name.
-> > > i.e. Any request to ->readahead() has a sync part and an async part.
-> > > The caller will wait for the sync pages to complete, but will not wait
-> > > for the async pages.  The first async page is still marked PG_readahead
-> 
-> Thanks for the review!
-> 
-> > 
-> > So I don't think this is how the code was meant. My understanding of
-> > readahead comes from a comment:
-> 
-> I can't be sure what was "meant" but what I described is very close to
-> what the code actually does.
-> 
-> > 
-> > /*
-> >  * On-demand readahead design.
-> >  *
-> > ....
-> > 
-> > in mm/readahead.c. The ra->size is how many pages should be read.
-> > ra->async_size is the "lookahead size" meaning that we should place a
-> > marker (PageReadahead) at "ra->size - ra->async_size" to trigger next
-> > readahead.
-> 
-> This description of PageReadahead and ->async_size focuses on *what*
-> happens, not *why*.  Importantly it doesn't help answer the question "What
-> should I set ->async_size to?"
 
-Sorry for delayed reply. I was on vacation and then catching up with stuff.
-I know you have submitted another version of the patches but not much has
-changed in this regard so I figured it might be better to continue
-discussion here.
-
-So my answer to "What should I set ->async_size to?" is: Ideally so that it
-takes application to process data between ->async_size and ->size as long
-as it takes the disk to load the next chunk of data into the page cache.
-This is explained in the comment:
-
- * To overlap application thinking time and disk I/O time, we do
- * `readahead pipelining': Do not wait until the application consumed all
- * readahead pages and stalled on the missing page at readahead_index;
- * Instead, submit an asynchronous readahead I/O as soon as there are
- * only async_size pages left in the readahead window. Normally async_size
- * will be equal to size, for maximum pipelining.
-
-Now because things such as think time or time to read pages is difficult to
-estimate, we just end up triggering next readahead as soon as we are at least
-a bit confident application is going to use the pages. But I don't think
-there was ever any intent to have "sync" and "async" parts of the request
-or that ->size - ->async_size is what must be read. Any function in the
-readahead code is free to return without doing anything regardless of
-passed parameters and the caller needs to deal with that, ->size is just a
-hint to the filesystem how much we expect to be useful to read...
-
-> The implication in the code is that when we sequentially access a page
-> that was read-ahead (read before it was explicitly requested), we trigger
-> more read ahead.  So ->async_size should refer to that part of the
-> readahead request which was not explicitly requested.  With that
-> understanding, it becomes possible to audit all the places that
-> ->async_size are set and to see if they make sense.
-
-I don't think this "implication" was ever intended :) But it may have
-happened that some guesses how big ->async_size should be have ended like
-that because of the impracticality of the original definition of how large
-->async_size should be.
-
-In fact I kind of like what you suggest ->async_size should be - it is
-possible to actually implement that unlike the original definition - but it
-is more of "let's redesign how readahead size is chosen" than "let's
-document how readahead size is chosen" :).
-
-> > > Note that the current function names page_cache_sync_ra() and
-> > > page_cache_async_ra() are misleading.  All ra request are partly sync
-> > > and partly async, so either part can be empty.
-> > 
-> > The meaning of these names IMO is:
-> > page_cache_sync_ra() - tell readahead that we currently need a page
-> > ractl->_index and would prefer req_count pages fetched ahead.
-> 
-> I don't think that is what req_count means.  req_count is the number of
-> pages that are needed *now* to satisfy the current read request.
-> page_cache_sync_ra() has the job of determining how many more pages (if
-> any) to read-ahead to satisfy future requests.  Sometimes it reads
-> another req_count - sometimes not.
-
-So this is certainly true for page_cache_sync_readahead() call in
-filemap_get_pages() but the call of page_cache_sync_ra() from
-do_sync_mmap_readahead() does not quite follow what you say - we need only
-one page there but request more.
-
-> > page_cache_async_ra() - called when we hit the lookahead marker to give
-> > opportunity to readahead code to prefetch more pages.
-> 
-> Yes, but page_cache_async_ra() is given a req_count which, as above, is
-> the number of pages needed to satisfy *this* request.  That wouldn't
-> make sense if it was a pure future-readahead request.
-
-Again, usage of req_count in page_cache_async_ra() is not always the number
-of pages immediately needed.
-
-> In practice, the word "sync" is used to mean "page was missing" and
-> "async" here means "PG_readahead was found".  But that isn't what those
-> words usually mean.
+On 2/24/22 7:21 PM, Luís Henriques wrote:
+> Since filenames in encrypted directories are already encrypted and shown
+> as a base64-encoded string when the directory is locked, snapshot names
+> should show a similar behaviour.
 >
-> They both call ondemand_readahead() passing False or True respectively
-> to hit_readahead_marker - which makes that meaning clear in the code...
-> but it still isn't clear in the name.
+> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> ---
+>   fs/ceph/dir.c   | 15 +++++++++++++++
+>   fs/ceph/inode.c | 10 +++++++++-
+>   2 files changed, 24 insertions(+), 1 deletion(-)
+>
+> Support on the MDS for names that'll be > MAX_NAME when base64 encoded is
+> still TBD.  I thought it would be something easy to do, but snapshots
+> don't seem to make use of the CDir/CDentry (which is where alternate_name
+> is stored on the MDS).  I'm still looking into this, but I may need some
+> help there :-(
 
-I agree the naming is somewhat confusing :)
+Yeah, good catch. The snapshot handler in MDS hasn't handled this case 
+yet, though the kclient has passed it to MDS server.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+The snapshot alternate_name raw ciphertext should be stored in SnapInfo 
+struct along with the 'name'.
+
+
+>
+> Cheers,
+> --
+> Luís
+>
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index a449f4a07c07..20ae600ee7cd 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -1065,6 +1065,13 @@ static int ceph_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+>   		op = CEPH_MDS_OP_MKSNAP;
+>   		dout("mksnap dir %p snap '%pd' dn %p\n", dir,
+>   		     dentry, dentry);
+> +		/* XXX missing support for alternate_name in snapshots */
+> +		if (IS_ENCRYPTED(dir) && (dentry->d_name.len >= 189)) {
+> +			dout("encrypted snapshot name too long: %pd len: %d\n",
+> +			     dentry, dentry->d_name.len);
+> +			err = -ENAMETOOLONG;
+> +			goto out;
+> +		}
+
+We should fix the MDS side bug and then this workaroud will be no needed.
+
+- Xiubo
+
+>   	} else if (ceph_snap(dir) == CEPH_NOSNAP) {
+>   		dout("mkdir dir %p dn %p mode 0%ho\n", dir, dentry, mode);
+>   		op = CEPH_MDS_OP_MKDIR;
+> @@ -1109,6 +1116,14 @@ static int ceph_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+>   	    !req->r_reply_info.head->is_target &&
+>   	    !req->r_reply_info.head->is_dentry)
+>   		err = ceph_handle_notrace_create(dir, dentry);
+> +
+> +	/*
+> +	 * If we have created a snapshot we need to clear the cache, otherwise
+> +	 * snapshot will show encrypted filenames in readdir.
+> +	 */
+> +	if (ceph_snap(dir) == CEPH_SNAPDIR)
+> +		d_drop(dentry);
+> +
+>   out_req:
+>   	ceph_mdsc_put_request(req);
+>   out:
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 8b0832271fdf..080824610b73 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -182,6 +182,13 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+>   	ci->i_rbytes = 0;
+>   	ci->i_btime = ceph_inode(parent)->i_btime;
+>   
+> +	/* if encrypted, just borough fscrypt_auth from parent */
+> +	if (IS_ENCRYPTED(parent)) {
+> +		struct ceph_inode_info *pci = ceph_inode(parent);
+> +		inode->i_flags |= S_ENCRYPTED;
+> +		ci->fscrypt_auth_len = pci->fscrypt_auth_len;
+> +		ci->fscrypt_auth = pci->fscrypt_auth;
+> +	}
+>   	if (inode->i_state & I_NEW) {
+>   		inode->i_op = &ceph_snapdir_iops;
+>   		inode->i_fop = &ceph_snapdir_fops;
+> @@ -632,7 +639,8 @@ void ceph_free_inode(struct inode *inode)
+>   
+>   	kfree(ci->i_symlink);
+>   #ifdef CONFIG_FS_ENCRYPTION
+> -	kfree(ci->fscrypt_auth);
+> +	if (ceph_snap(inode) != CEPH_SNAPDIR)
+> +		kfree(ci->fscrypt_auth);
+>   #endif
+>   	fscrypt_free_inode(inode);
+>   	kmem_cache_free(ceph_inode_cachep, ci);
+>
+
