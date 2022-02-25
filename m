@@ -2,135 +2,187 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 490384C40EC
-	for <lists+ceph-devel@lfdr.de>; Fri, 25 Feb 2022 10:06:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13C1E4C41BA
+	for <lists+ceph-devel@lfdr.de>; Fri, 25 Feb 2022 10:46:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236785AbiBYJHN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 25 Feb 2022 04:07:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55304 "EHLO
+        id S232400AbiBYJqT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 25 Feb 2022 04:46:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231588AbiBYJHM (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 25 Feb 2022 04:07:12 -0500
-Received: from mail-il1-x12a.google.com (mail-il1-x12a.google.com [IPv6:2607:f8b0:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67A2729C99
-        for <ceph-devel@vger.kernel.org>; Fri, 25 Feb 2022 01:06:41 -0800 (PST)
-Received: by mail-il1-x12a.google.com with SMTP id w4so3797119ilj.5
-        for <ceph-devel@vger.kernel.org>; Fri, 25 Feb 2022 01:06:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=+es4NtbGTalT5oP3GV+xtuy893MsQfDwsU74MLZoOUI=;
-        b=busUWXoL29xjS4Oroh4MNq/VuTlpIUyrZU0384tALdS/bsXhjunfXWcNWa2UtO6Tuo
-         BYuwIen0cEJQB3d928soubYfZ/Sb//mBfFhjP4XAl1x2AEU6qlSypVo2ddYSKVzwn+gh
-         sMbSkNS7JcHPDjSTMturK3o3/fk8Bb74+Jf2soL6UYE4sMu5/DKYOtyV4ayNS40RzFn+
-         H5qWe8VONn8rMMDwMqpZ2YhkwlyRhLPkC1aIYfoeWcu+JqwRBSkNPNgwIwES6ecba4m4
-         sb1wTQDgzw9dZf7gk4DbIckHADmsHd4mjMMnBpHy9FhZ4PeMs/JtOk0Q5eETvI237NNB
-         uoQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
-         :from:date:message-id:subject:to:content-transfer-encoding;
-        bh=+es4NtbGTalT5oP3GV+xtuy893MsQfDwsU74MLZoOUI=;
-        b=1aW7kTsubsaB2baurQR/eOLVI9k4iyfHm/Ch3QKjcoKTaLGBOVlaKxapVIHdFkB29I
-         UfUkt6ZsIVWTYI6mno7MxDxf7tO3J9V2/HhJUnL7TTBtLZVjw/S1Kgo7H18tEM+7+0jy
-         vyutOss8fncwHw+aa0JlxtSi7WujeuKYpUeoQfHEhFWsSfKXm4to2BtOc2Cgp4dTDv+K
-         tYB6K5LkRVMOUzBMmFXH7LyvHHNi2quZ2uE++4cvf1sVNK3w3HNRinKJFh/nnLEh3KyX
-         SED8OpfE/qdjqOACyqv7hR11jm9yrv/n+714bTreWUmPPsrI7TuHwfYjI8XtH+9vPp+B
-         EdwA==
-X-Gm-Message-State: AOAM532gGeJpuMVhhEH3SwOdW/qhqilPpjQCA1Dqg7qHVu9td/Pu/W1Q
-        ZpCFduquFl0Xsp5lLFgAYxb1FH6KhhwXGSQApVA=
-X-Google-Smtp-Source: ABdhPJyjORSSjLqWX6YpwnxsnkKgdnVvqKB6irMTGzYgptcjB+X/7HMKTqjOk+/wtXim9OWFQzfhHiXG2KpXVM+rc/c=
-X-Received: by 2002:a05:6e02:1aa1:b0:2be:6c4b:69e2 with SMTP id
- l1-20020a056e021aa100b002be6c4b69e2mr5423798ilv.32.1645780000446; Fri, 25 Feb
- 2022 01:06:40 -0800 (PST)
+        with ESMTP id S239223AbiBYJqS (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 25 Feb 2022 04:46:18 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6263B23A18E;
+        Fri, 25 Feb 2022 01:45:46 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 213291F380;
+        Fri, 25 Feb 2022 09:45:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1645782345; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7LBl4bfGMT+fn7Rt+b0Ek5//1CvY7wnB9+HNkNJDIjU=;
+        b=fWNule7cfAd0d0S/AEJ7vYsMQcLLCBWpgkjasfNafgLaKerE+u/GYEWmgoykBWiqkD7OPr
+        s37PJYJ4rOtU1Xk4Lx5J1JK38m4SDwcMbsuvEFqvpWpdhXns0dxIwiBue79uNky+hgIJsU
+        i3zQwstpHsV/FaHKs/we35itkQflLmo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1645782345;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7LBl4bfGMT+fn7Rt+b0Ek5//1CvY7wnB9+HNkNJDIjU=;
+        b=vPaeBACAZjQJlkt6pfvtosYexKewwvCcU5Ue1kosUQs0AuMwpiDy3lhia0V5RdQOoDvlH5
+        ElyfkG2miww8tPAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AFD1D13B96;
+        Fri, 25 Feb 2022 09:45:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Um0FJ0ilGGIxYAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Fri, 25 Feb 2022 09:45:44 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 5a82c583;
+        Fri, 25 Feb 2022 09:45:58 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] ceph: add support for encrypted snapshot names
+References: <20220224112142.18052-1-lhenriques@suse.de>
+        <27801620-b3fd-d556-c100-409632f91661@redhat.com>
+Date:   Fri, 25 Feb 2022 09:45:58 +0000
+In-Reply-To: <27801620-b3fd-d556-c100-409632f91661@redhat.com> (Xiubo Li's
+        message of "Fri, 25 Feb 2022 13:36:24 +0800")
+Message-ID: <87lexzi8ix.fsf@brahms.olymp>
 MIME-Version: 1.0
-Received: by 2002:a05:6e04:2008:0:0:0:0 with HTTP; Fri, 25 Feb 2022 01:06:39
- -0800 (PST)
-Reply-To: redcrosssociety@hellokitty.com
-In-Reply-To: <CAFRqpdmB-4TRObd1OVGhryzvBBekC9dLedhT6__UuWO9JXS_Eg@mail.gmail.com>
-References: <CAFRqpdktsjaexqmAmxv8+0e_=nUkforqH-n-uh0odnqj7_MDOA@mail.gmail.com>
- <CAFRqpdkebmFvqr-86-BhBt52zp0YgpMBfBYx1ppS7+qmT80f-w@mail.gmail.com>
- <CAFRqpd=xpVka=B+Yct9Xi=3KrKZT-gJQgpqQ3QUNEY1_aMP4KQ@mail.gmail.com>
- <CAFRqpdmw+Wc575+O-9hdgm9L_vMN4JC-xHp8tf5n33UxE9Nfjw@mail.gmail.com>
- <CAFRqpd=w_DQ+JwPFBwG_ZhuXhct31o0FJ=-kjkaqY_KwdZPMsw@mail.gmail.com>
- <CAFRqpd=C_eYSL0wxBzSzuw3Uri=xYtBoH_OPE2GxejgaSL63nw@mail.gmail.com>
- <CAFRqpdnLxHUMvMzP1SwY3cubLb23isGHx+xYRGLLP8OBi7aXwg@mail.gmail.com>
- <CAFRqpdmA30HXvTkScWXMNcpRKmDhf4pTZQinBYgJxhdiz0NZ7g@mail.gmail.com>
- <CAFRqpdnhUoVivpEU=ELFKrrua+bsiGOatMBOMT8=GODFN9r9bg@mail.gmail.com>
- <CAFRqpdmDDQmzf61Og8gyd=_PJ5wecPX0F9Mw70dmCxCGqY6HnQ@mail.gmail.com>
- <CAFRqpdnQHK72UUQyZxG3f4dofj=z46hooxkq-TM7AxNb-5hiog@mail.gmail.com>
- <CAFRqpdkuMuKcL5vuX5R2sjb40zs3rezqa7khW+rBTmyAUWXWPw@mail.gmail.com>
- <CAFRqpdmaDdMaOTtxM2xR_HLkWsDfNpkaA9tfq7yQb0XPrOG=1g@mail.gmail.com>
- <CAFRqpdm-PdtuRuGn69V+ofqqr=RB_MOxMuArbgLZRC7P-0PL7Q@mail.gmail.com>
- <CAFRqpdn5G-3kZ3Rm2SxTaJUUbkJ8xzUc-PnxjKy+s0Aqq5yjCA@mail.gmail.com>
- <CAFRqpdmkA3jFerOtV-U2j=33GEd0CVX5yBeeh378eOLi=f6i8Q@mail.gmail.com>
- <CAFRqpdmVYNe8dMx-U6DL2jhMp8iT6FJuZe_-qWMduOY6kVbjmg@mail.gmail.com>
- <CAFRqpdkcxzOeuLYXLV_wq88iXn1eG3RZDQDebNMJwnprNx1_5A@mail.gmail.com>
- <CAFRqpd=9YTD60q__YX3P+EPrshR5eQFHpe=gRJFDj7F7fiNTsw@mail.gmail.com> <CAFRqpdmB-4TRObd1OVGhryzvBBekC9dLedhT6__UuWO9JXS_Eg@mail.gmail.com>
-From:   "Mr. Stevenson" <mathews2019riaan@gmail.com>
-Date:   Fri, 25 Feb 2022 11:06:39 +0200
-Message-ID: <CAFRqpd=bidX8mH6+1WLUyCfywpds+ybUfTsDmbLWt4nnPMQ7YQ@mail.gmail.com>
-Subject: Compensation Relief Fund.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: Yes, score=5.3 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_SCAM,
-        LOTS_OF_MONEY,MILLION_HUNDRED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_HK_NAME_FM_MR_MRS,T_SCC_BODY_TEXT_LINE,UNDISC_MONEY,
-        XFER_LOTSA_MONEY autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:12a listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [mathews2019riaan[at]gmail.com]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.2 MILLION_HUNDRED BODY: Million "One to Nine" Hundred
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        *  0.0 LOTS_OF_MONEY Huge... sums of money
-        *  0.0 T_HK_NAME_FM_MR_MRS No description available.
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  0.0 HK_SCAM No description available.
-        *  1.0 XFER_LOTSA_MONEY Transfer a lot of money
-        *  3.5 UNDISC_MONEY Undisclosed recipients + money/fraud signs
-X-Spam-Level: *****
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-/\/\/ Contact Me Please..
+Xiubo Li <xiubli@redhat.com> writes:
 
-My name is Mr. Ewen Stevenson, Group Chief Financial Officer from HSBC
-Bank of United Kingdom in Manchester. I was directed by HSBC Bank of
-United Kingdom to pay the sum of =C2=A31,500,000.00 (One Million Five
-Hundred Thousand Pounds) to you as your Compensation Fund due to
-Covid-19 pandemic and other transaction you were engaged in the past
-and spent your hard earn money, efforts and finally did not receive
-the fund.
+> On 2/24/22 7:21 PM, Lu=C3=ADs Henriques wrote:
+>> Since filenames in encrypted directories are already encrypted and shown
+>> as a base64-encoded string when the directory is locked, snapshot names
+>> should show a similar behaviour.
+>>
+>> Signed-off-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
+>> ---
+>>   fs/ceph/dir.c   | 15 +++++++++++++++
+>>   fs/ceph/inode.c | 10 +++++++++-
+>>   2 files changed, 24 insertions(+), 1 deletion(-)
+>>
+>> Support on the MDS for names that'll be > MAX_NAME when base64 encoded is
+>> still TBD.  I thought it would be something easy to do, but snapshots
+>> don't seem to make use of the CDir/CDentry (which is where alternate_name
+>> is stored on the MDS).  I'm still looking into this, but I may need some
+>> help there :-(
+>
+> Yeah, good catch. The snapshot handler in MDS hasn't handled this case ye=
+t,
+> though the kclient has passed it to MDS server.
+>
+> The snapshot alternate_name raw ciphertext should be stored in SnapInfo s=
+truct
+> along with the 'name'.
+>
+>
+>>
+>> Cheers,
+>> --
+>> Lu=C3=ADs
+>>
+>> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+>> index a449f4a07c07..20ae600ee7cd 100644
+>> --- a/fs/ceph/dir.c
+>> +++ b/fs/ceph/dir.c
+>> @@ -1065,6 +1065,13 @@ static int ceph_mkdir(struct user_namespace *mnt_=
+userns, struct inode *dir,
+>>   		op =3D CEPH_MDS_OP_MKSNAP;
+>>   		dout("mksnap dir %p snap '%pd' dn %p\n", dir,
+>>   		     dentry, dentry);
+>> +		/* XXX missing support for alternate_name in snapshots */
+>> +		if (IS_ENCRYPTED(dir) && (dentry->d_name.len >=3D 189)) {
+>> +			dout("encrypted snapshot name too long: %pd len: %d\n",
+>> +			     dentry, dentry->d_name.len);
+>> +			err =3D -ENAMETOOLONG;
+>> +			goto out;
+>> +		}
+>
+> We should fix the MDS side bug and then this workaroud will be no needed.
 
-Kindly respond to this message in order to direct you on how you will
-receive the fund by Bank Wire Transfer to any of your nominated bank
-account within 5 working days without any further delay.
+Yep, I've been looking into that too but it's taking a bit to understand
+all that's going on there.  I'm still trying, but the MDS code (and C++ in
+general) is a bit... challenging.
 
-I look forward to receive your reply thanks.
+Cheers,
+--=20
+Lu=C3=ADs
 
-Email: redcrosssociety@hellokitty.com
-Tel: +44-745-127-4775(WhatsApp me)
-Regards
-Mr. Ewen Stevenson
-(Group Chief Financial Officer)
-England United Kingdom
+>
+> - Xiubo
+>
+>>   	} else if (ceph_snap(dir) =3D=3D CEPH_NOSNAP) {
+>>   		dout("mkdir dir %p dn %p mode 0%ho\n", dir, dentry, mode);
+>>   		op =3D CEPH_MDS_OP_MKDIR;
+>> @@ -1109,6 +1116,14 @@ static int ceph_mkdir(struct user_namespace *mnt_=
+userns, struct inode *dir,
+>>   	    !req->r_reply_info.head->is_target &&
+>>   	    !req->r_reply_info.head->is_dentry)
+>>   		err =3D ceph_handle_notrace_create(dir, dentry);
+>> +
+>> +	/*
+>> +	 * If we have created a snapshot we need to clear the cache, otherwise
+>> +	 * snapshot will show encrypted filenames in readdir.
+>> +	 */
+>> +	if (ceph_snap(dir) =3D=3D CEPH_SNAPDIR)
+>> +		d_drop(dentry);
+>> +
+>>   out_req:
+>>   	ceph_mdsc_put_request(req);
+>>   out:
+>> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+>> index 8b0832271fdf..080824610b73 100644
+>> --- a/fs/ceph/inode.c
+>> +++ b/fs/ceph/inode.c
+>> @@ -182,6 +182,13 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+>>   	ci->i_rbytes =3D 0;
+>>   	ci->i_btime =3D ceph_inode(parent)->i_btime;
+>>   +	/* if encrypted, just borough fscrypt_auth from parent */
+>> +	if (IS_ENCRYPTED(parent)) {
+>> +		struct ceph_inode_info *pci =3D ceph_inode(parent);
+>> +		inode->i_flags |=3D S_ENCRYPTED;
+>> +		ci->fscrypt_auth_len =3D pci->fscrypt_auth_len;
+>> +		ci->fscrypt_auth =3D pci->fscrypt_auth;
+>> +	}
+>>   	if (inode->i_state & I_NEW) {
+>>   		inode->i_op =3D &ceph_snapdir_iops;
+>>   		inode->i_fop =3D &ceph_snapdir_fops;
+>> @@ -632,7 +639,8 @@ void ceph_free_inode(struct inode *inode)
+>>     	kfree(ci->i_symlink);
+>>   #ifdef CONFIG_FS_ENCRYPTION
+>> -	kfree(ci->fscrypt_auth);
+>> +	if (ceph_snap(inode) !=3D CEPH_SNAPDIR)
+>> +		kfree(ci->fscrypt_auth);
+>>   #endif
+>>   	fscrypt_free_inode(inode);
+>>   	kmem_cache_free(ceph_inode_cachep, ci);
+>>
+>
