@@ -2,55 +2,55 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 13C1E4C41BA
-	for <lists+ceph-devel@lfdr.de>; Fri, 25 Feb 2022 10:46:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A4324C41C0
+	for <lists+ceph-devel@lfdr.de>; Fri, 25 Feb 2022 10:48:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232400AbiBYJqT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 25 Feb 2022 04:46:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58034 "EHLO
+        id S239119AbiBYJtC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 25 Feb 2022 04:49:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239223AbiBYJqS (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 25 Feb 2022 04:46:18 -0500
+        with ESMTP id S233675AbiBYJtC (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 25 Feb 2022 04:49:02 -0500
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6263B23A18E;
-        Fri, 25 Feb 2022 01:45:46 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 472B32255A8;
+        Fri, 25 Feb 2022 01:48:30 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 213291F380;
-        Fri, 25 Feb 2022 09:45:45 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 0523C1F380;
+        Fri, 25 Feb 2022 09:48:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1645782345; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1645782509; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7LBl4bfGMT+fn7Rt+b0Ek5//1CvY7wnB9+HNkNJDIjU=;
-        b=fWNule7cfAd0d0S/AEJ7vYsMQcLLCBWpgkjasfNafgLaKerE+u/GYEWmgoykBWiqkD7OPr
-        s37PJYJ4rOtU1Xk4Lx5J1JK38m4SDwcMbsuvEFqvpWpdhXns0dxIwiBue79uNky+hgIJsU
-        i3zQwstpHsV/FaHKs/we35itkQflLmo=
+        bh=b5P4zVYBKfq9PaqqHPI7HgucU9j+DVcXognLTQWrknQ=;
+        b=Z4Tv7DRXcrN/Fg/4rhQtoqbR0F+ItAF3Gdyhbkxg9gG/PKqwvlc5TuYfBhJrxPntYRdTpb
+        ZJEn6Il2TfmmMgOUrKSi11cdxP956hQQBh+N72nUV6jvjLrWlvKPwqBOzQ3MDl3WG1roqm
+        3p7xTU2EpU7e032OvIrjXpenvo5JRrs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1645782345;
+        s=susede2_ed25519; t=1645782509;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7LBl4bfGMT+fn7Rt+b0Ek5//1CvY7wnB9+HNkNJDIjU=;
-        b=vPaeBACAZjQJlkt6pfvtosYexKewwvCcU5Ue1kosUQs0AuMwpiDy3lhia0V5RdQOoDvlH5
-        ElyfkG2miww8tPAw==
+        bh=b5P4zVYBKfq9PaqqHPI7HgucU9j+DVcXognLTQWrknQ=;
+        b=vEKhzATAKezWEJ7UK90x1rmj7syMsxg+id66QPLtWh7PSpsK1tBjktlkI283qzqb2/574B
+        ucOtVIqQr09c22Cg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AFD1D13B96;
-        Fri, 25 Feb 2022 09:45:44 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9247713B96;
+        Fri, 25 Feb 2022 09:48:28 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id Um0FJ0ilGGIxYAAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Fri, 25 Feb 2022 09:45:44 +0000
+        id S6ubIOylGGJrYQAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Fri, 25 Feb 2022 09:48:28 +0000
 Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 5a82c583;
-        Fri, 25 Feb 2022 09:45:58 +0000 (UTC)
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 6e4be55a;
+        Fri, 25 Feb 2022 09:48:42 +0000 (UTC)
 From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
 To:     Xiubo Li <xiubli@redhat.com>
 Cc:     Jeff Layton <jlayton@kernel.org>,
@@ -58,11 +58,11 @@ Cc:     Jeff Layton <jlayton@kernel.org>,
         linux-kernel@vger.kernel.org
 Subject: Re: [RFC PATCH] ceph: add support for encrypted snapshot names
 References: <20220224112142.18052-1-lhenriques@suse.de>
-        <27801620-b3fd-d556-c100-409632f91661@redhat.com>
-Date:   Fri, 25 Feb 2022 09:45:58 +0000
-In-Reply-To: <27801620-b3fd-d556-c100-409632f91661@redhat.com> (Xiubo Li's
-        message of "Fri, 25 Feb 2022 13:36:24 +0800")
-Message-ID: <87lexzi8ix.fsf@brahms.olymp>
+        <7d2a798d-ce32-4bf7-b184-267bb79f44e3@redhat.com>
+Date:   Fri, 25 Feb 2022 09:48:42 +0000
+In-Reply-To: <7d2a798d-ce32-4bf7-b184-267bb79f44e3@redhat.com> (Xiubo Li's
+        message of "Fri, 25 Feb 2022 14:55:02 +0800")
+Message-ID: <87h78ni8ed.fsf@brahms.olymp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
@@ -94,16 +94,6 @@ Xiubo Li <xiubli@redhat.com> writes:
 >> don't seem to make use of the CDir/CDentry (which is where alternate_name
 >> is stored on the MDS).  I'm still looking into this, but I may need some
 >> help there :-(
->
-> Yeah, good catch. The snapshot handler in MDS hasn't handled this case ye=
-t,
-> though the kclient has passed it to MDS server.
->
-> The snapshot alternate_name raw ciphertext should be stored in SnapInfo s=
-truct
-> along with the 'name'.
->
->
 >>
 >> Cheers,
 >> --
@@ -125,20 +115,6 @@ userns, struct inode *dir,
 >> +			err =3D -ENAMETOOLONG;
 >> +			goto out;
 >> +		}
->
-> We should fix the MDS side bug and then this workaroud will be no needed.
-
-Yep, I've been looking into that too but it's taking a bit to understand
-all that's going on there.  I'm still trying, but the MDS code (and C++ in
-general) is a bit... challenging.
-
-Cheers,
---=20
-Lu=C3=ADs
-
->
-> - Xiubo
->
 >>   	} else if (ceph_snap(dir) =3D=3D CEPH_NOSNAP) {
 >>   		dout("mkdir dir %p dn %p mode 0%ho\n", dir, dentry, mode);
 >>   		op =3D CEPH_MDS_OP_MKDIR;
@@ -152,6 +128,22 @@ userns, struct inode *dir,
 >> +	 * If we have created a snapshot we need to clear the cache, otherwise
 >> +	 * snapshot will show encrypted filenames in readdir.
 >> +	 */
+>
+> Do you mean dencrypted filenames ?
+
+What I see without this d_drop() is that, if I run an 'ls' in a snapshot
+directory immediately after creating it, the filenames in that snapshot
+will be encrypted.  Maybe there's a bug somewhere else and this d_drop()
+isn't the right fix...?
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+>
+> - Xiubo
+>
+>
 >> +	if (ceph_snap(dir) =3D=3D CEPH_SNAPDIR)
 >> +		d_drop(dentry);
 >> +
