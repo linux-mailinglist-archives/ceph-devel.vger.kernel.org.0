@@ -2,71 +2,71 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C9B1A4C655D
-	for <lists+ceph-devel@lfdr.de>; Mon, 28 Feb 2022 10:05:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C13864C6568
+	for <lists+ceph-devel@lfdr.de>; Mon, 28 Feb 2022 10:06:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230262AbiB1JF3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 28 Feb 2022 04:05:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43776 "EHLO
+        id S233420AbiB1JG5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 28 Feb 2022 04:06:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234331AbiB1JFY (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 28 Feb 2022 04:05:24 -0500
+        with ESMTP id S231265AbiB1JG4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 28 Feb 2022 04:06:56 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EC83360069
-        for <ceph-devel@vger.kernel.org>; Mon, 28 Feb 2022 01:04:16 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6628F33EBF
+        for <ceph-devel@vger.kernel.org>; Mon, 28 Feb 2022 01:06:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646039055;
+        s=mimecast20190719; t=1646039177;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=i+mp1Gsc68V8Jg+6zptzQKSeXDN79CiroH1hEmeErD0=;
-        b=S1aYBH8mYNHIZVIfnA7TIABO5LJyDsENvi73Pg0hqWvnuTmCwsOgfdr5eXr7WovZGQM7N8
-        kXTsyOtoR0b9ncvjkitulBffetJDCmh049yXF4NQeLhd3VTMP1N/u5ratFYTtVnOzCZWuu
-        ZzgDnYQL5argF0Oq6mybDDvwWpfNelA=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=UxOjvPrFBNhJz+yCZfcLG8UksIx5f8f03DNf3zt+I9k=;
+        b=Djlwebcz1Vfr0irMXMEZKOwDrCm5kW7dpDyqt+wm2tttZ5yTYqUK+80csHCs2Hybk8OmSX
+        TZMRDpsXE3j7fiacxISRirpJoycPJCwCRSvlhzYo3MkUo5GfBF6+GSgccxYn15h6g3GxUf
+        xV6Il/LuUXQsb8hg6vJKytH1FcztAXI=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-662-12i9MWBtNmSmcwUUOZZ7nQ-1; Mon, 28 Feb 2022 04:04:14 -0500
-X-MC-Unique: 12i9MWBtNmSmcwUUOZZ7nQ-1
-Received: by mail-pj1-f72.google.com with SMTP id c15-20020a17090a674f00b001bc9019ce17so8447455pjm.8
-        for <ceph-devel@vger.kernel.org>; Mon, 28 Feb 2022 01:04:14 -0800 (PST)
+ us-mta-610-5sC_Um54N1Ox_BDVrAzMRg-1; Mon, 28 Feb 2022 04:06:15 -0500
+X-MC-Unique: 5sC_Um54N1Ox_BDVrAzMRg-1
+Received: by mail-pg1-f198.google.com with SMTP id u10-20020a63df0a000000b0037886b8707bso1444759pgg.23
+        for <ceph-devel@vger.kernel.org>; Mon, 28 Feb 2022 01:06:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=i+mp1Gsc68V8Jg+6zptzQKSeXDN79CiroH1hEmeErD0=;
-        b=pTrCrbhJ/bbAlXmrpSw69zZoXHBiKPmJiie+0P/fCsVmNSVb0weMKWqlple3Slw+Qv
-         fZKi4wTAF60OhZb9fU1ZTlDFYR2L832sjtRsWhlmtrVoqGftGiVxswasHOUFKbEQGr9e
-         FGV30pBQ6x2szajflWQThSN0GK61HgnX5HgLeCMTRdo9RsyDYR4UAAZ2p72Bx6C5EFdO
-         pBjCvvQbPiFCz6RX5D9B8o0ZVpyuYjUXMVobecLasRWGZfEuU4Qvdarvs+RVPzAbpN3d
-         DKVUj12KTDNUBe+zpfMDEgatFIvlVE8HcRpNzIV7csCDbst1SMorQLj5DVK1axRK21ws
-         IYOA==
-X-Gm-Message-State: AOAM530IZfk0MuEGQ1uonUgqiVy3yQVH3yIAdfsyUHNBWqZZ90K1GdI1
-        IwDr1j2RSqlm/dRl7mLV3sOwFKoSDUVWmPbFILf7xqfVek6x2TsOM8QbeFRvvfh7hItVpfbvz4C
-        GJ8J5yEjmsjTF/5QMorgxRcyR33wbn1mDgcROkCiV++lZ2uGns8Rl77l57U/6aWDywaVMvck=
-X-Received: by 2002:a17:902:ce8a:b0:14f:fd0e:e4a4 with SMTP id f10-20020a170902ce8a00b0014ffd0ee4a4mr19812962plg.47.1646039053302;
-        Mon, 28 Feb 2022 01:04:13 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJz3ieaPo8l+pWtoVeF3WBJ9jEM4Jt7ZtCn3bLlsBuTAPLpwxASPmMKZw7X+nW3dhz8/BV0EAw==
-X-Received: by 2002:a17:902:ce8a:b0:14f:fd0e:e4a4 with SMTP id f10-20020a170902ce8a00b0014ffd0ee4a4mr19812928plg.47.1646039052914;
-        Mon, 28 Feb 2022 01:04:12 -0800 (PST)
+        bh=UxOjvPrFBNhJz+yCZfcLG8UksIx5f8f03DNf3zt+I9k=;
+        b=1vrhDfvp+h8vOAdIQ5FTfO+NsnWTx1xeBD7kBwTWEl/Kfsc3K/k2sw/2B1r1LegCZr
+         he374I0XbjSr9/LjELhHM5w0HplwFY/2SlYZOgDjjMAqLt4dHo/SUORg64rEXTA2C0eK
+         /lXWX4NyyRR4YyJTPWpGanb0ROL/rOucVs4tewp7/Wd+i2trcJu6mQTi5HaggL96i8OV
+         3ViPU2nw9CfFStY2NWRnedsfNWLlQ5YVhz1XgS2w965WnJQWVf4Wo/NSL4jKBidOs8RB
+         5Qe+crkptdrYNrdjkUIeVmeb4QNzgCPYVnP3pcJ+q2xm5PNIeTle1ZW+WMaJ/a0Yy2l0
+         TVcg==
+X-Gm-Message-State: AOAM530WB4MQJIolTRRVw53hCJqZ5lKE4eqi3e5uew+UHpPOT5Mh+Ss1
+        dAowwtG9SO1lKvwJlAUBqb7gWCARS4kQxiSCDl68a5Xe0w87Phzum//5o/UmEmzqQtFI81JwbuD
+        QhrLJ11TfVMCpSSYY20rc12v8VL1fMT1E4/QO3MLKDh4Fg3xw2/wHcceTrnsowJTNu5nDiRw=
+X-Received: by 2002:a17:90a:a08c:b0:1bc:ff05:6f18 with SMTP id r12-20020a17090aa08c00b001bcff056f18mr13642523pjp.190.1646039173056;
+        Mon, 28 Feb 2022 01:06:13 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzqDVBHkxWNW23mYX5EPrlwZjQ9LNqdaCvxrZFoqefF64M9lXbeGwQt/pSHonAmKWDKKF513Q==
+X-Received: by 2002:a17:90a:a08c:b0:1bc:ff05:6f18 with SMTP id r12-20020a17090aa08c00b001bcff056f18mr13642500pjp.190.1646039172688;
+        Mon, 28 Feb 2022 01:06:12 -0800 (PST)
 Received: from [10.72.12.114] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id on18-20020a17090b1d1200b001b9cfbfbf00sm9628551pjb.40.2022.02.28.01.04.08
+        by smtp.gmail.com with ESMTPSA id bh3-20020a056a02020300b00378b62df320sm1467643pgb.73.2022.02.28.01.06.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Feb 2022 01:04:12 -0800 (PST)
-Subject: Re: [PATCH v2] ceph: fail the request when failing to decode dentry
+        Mon, 28 Feb 2022 01:06:12 -0800 (PST)
+Subject: Re: [PATCH] ceph: increase the offset when fail to decode dentry
  names
 To:     jlayton@kernel.org
 Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
-References: <20220228090239.159467-1-xiubli@redhat.com>
+References: <20220228071442.48733-1-xiubli@redhat.com>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <0ab61353-50cc-314e-9710-9dced59e957a@redhat.com>
-Date:   Mon, 28 Feb 2022 17:04:05 +0800
+Message-ID: <38cb4ef5-657b-8b15-82ea-6d41784f09d9@redhat.com>
+Date:   Mon, 28 Feb 2022 17:06:05 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <20220228090239.159467-1-xiubli@redhat.com>
+In-Reply-To: <20220228071442.48733-1-xiubli@redhat.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -81,10 +81,17 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Tag as V2.
+There still has bugs when skipping this.
+
+We should just fail the readdir request and propagate the error to user 
+space.
+
+Sent a V2 to fix it.
+
+- Xiubo
 
 
-On 2/28/22 5:02 PM, xiubli@redhat.com wrote:
+On 2/28/22 3:14 PM, xiubli@redhat.com wrote:
 > From: Xiubo Li <xiubli@redhat.com>
 >
 > ------------[ cut here ]------------
@@ -99,21 +106,12 @@ On 2/28/22 5:02 PM, xiubli@redhat.com wrote:
 >
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->
-> V2:
-> - fail the request instead, because it's hard to handle the
->    corresponding code in ceph_readdir(). At the same time we
->    should propagate the error to user space.
->
->
->
->   fs/ceph/dir.c        | 13 +++++++------
->   fs/ceph/inode.c      |  5 +++--
->   fs/ceph/mds_client.c |  2 +-
->   3 files changed, 11 insertions(+), 9 deletions(-)
+>   fs/ceph/dir.c   | 13 +++++++------
+>   fs/ceph/inode.c |  3 ++-
+>   2 files changed, 9 insertions(+), 7 deletions(-)
 >
 > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index a449f4a07c07..6be0c1f793c2 100644
+> index a449f4a07c07..f28eb568e0e2 100644
 > --- a/fs/ceph/dir.c
 > +++ b/fs/ceph/dir.c
 > @@ -534,6 +534,13 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
@@ -122,9 +120,9 @@ On 2/28/22 5:02 PM, xiubli@redhat.com wrote:
 >   
 > +		err = ceph_fname_to_usr(&fname, &tname, &oname, NULL);
 > +		if (err) {
-> +			pr_err("%s unable to decode %.*s, got %d\n", __func__,
-> +			       rde->name_len, rde->name, err);
-> +			goto out;
+> +			pr_warn("Unable to decode %.*s. Skipping it.\n", rde->name_len, rde->name);
+> +			ctx->pos++;
+> +			continue;
 > +		}
 > +
 >   		BUG_ON(rde->offset < ctx->pos);
@@ -144,32 +142,17 @@ On 2/28/22 5:02 PM, xiubli@redhat.com wrote:
 >   			      ceph_present_ino(inode->i_sb, le64_to_cpu(rde->inode.in->ino)),
 >   			      le32_to_cpu(rde->inode.in->mode) >> 12)) {
 > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 8b0832271fdf..2bc2f02b84e8 100644
+> index 8b0832271fdf..b1552e6a6f0e 100644
 > --- a/fs/ceph/inode.c
 > +++ b/fs/ceph/inode.c
-> @@ -1898,8 +1898,9 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+> @@ -1898,7 +1898,8 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
 >   
 >   		err = ceph_fname_to_usr(&fname, &tname, &oname, &is_nokey);
 >   		if (err) {
 > -			dout("Unable to decode %.*s. Skipping it.", rde->name_len, rde->name);
-> -			continue;
-> +			pr_err("%s unable to decode %.*s, got %d\n", __func__,
-> +			       rde->name_len, rde->name, err);
-> +			goto out;
+> +			fpos_offset++;
+> +			pr_warn("Unable to decode %.*s. Skipping it.", rde->name_len, rde->name);
+>   			continue;
 >   		}
 >   
->   		dname.name = oname.name;
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 914a6e68bb56..94b4c6508044 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -3474,7 +3474,7 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
->   	if (err == 0) {
->   		if (result == 0 && (req->r_op == CEPH_MDS_OP_READDIR ||
->   				    req->r_op == CEPH_MDS_OP_LSSNAP))
-> -			ceph_readdir_prepopulate(req, req->r_session);
-> +			err = ceph_readdir_prepopulate(req, req->r_session);
->   	}
->   	current->journal_info = NULL;
->   	mutex_unlock(&req->r_fill_mutex);
 
