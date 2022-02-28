@@ -2,255 +2,78 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CB4CC4C602A
-	for <lists+ceph-devel@lfdr.de>; Mon, 28 Feb 2022 01:42:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BD034C621D
+	for <lists+ceph-devel@lfdr.de>; Mon, 28 Feb 2022 05:20:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231918AbiB1Amz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 27 Feb 2022 19:42:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58386 "EHLO
+        id S232957AbiB1EVR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 27 Feb 2022 23:21:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231156AbiB1Amy (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 27 Feb 2022 19:42:54 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AB4944A914
-        for <ceph-devel@vger.kernel.org>; Sun, 27 Feb 2022 16:42:16 -0800 (PST)
+        with ESMTP id S232958AbiB1EVP (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 27 Feb 2022 23:21:15 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1ED823EA8F
+        for <ceph-devel@vger.kernel.org>; Sun, 27 Feb 2022 20:20:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646008935;
+        s=mimecast20190719; t=1646022037;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JHrjwMpfBP3gi6xfVSDaBGn0AmRTXFmr0egdfIuL0WU=;
-        b=R/V8HcReiAdFGTP7krhzsK6VNQCqEVn85Spf+MTlP/8S8Ax58JNZKZkNMHUHYU8fhV8e95
-        NvxAaFDc+99IBJRFPOLqwb46/m5VvqwCkipl8e9Dc8TGh74U8Q+sEAfzAKPeJopFe1ML95
-        E6+gK5cjt/2D/SGVo6jvKHOEYn8vJAI=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=h7fU9XylpYaxBjeYSj/3OcKuS7WC3APJPCMbxybS8sc=;
+        b=FZQZc5Cbxrx49Fyiv6KWvtKhQTh9m2seqzjHXglRrMweADnPYSlsmLPSl0w6S8qjzm7Jvb
+        v1OCPzifTn5ue78L6njX6opUTFG2KxFwkY9CXYfi1wdozOf9u6cz2ASOY2pShGo6H0uCOK
+        wkxAjDOswucuMsODK5Idt9EktuTD/ZY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-83-ez43kbLXNuGMoYvRzTv5kA-1; Sun, 27 Feb 2022 19:42:14 -0500
-X-MC-Unique: ez43kbLXNuGMoYvRzTv5kA-1
-Received: by mail-pg1-f200.google.com with SMTP id z10-20020a634c0a000000b0036c5eb39076so5606778pga.18
-        for <ceph-devel@vger.kernel.org>; Sun, 27 Feb 2022 16:42:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=JHrjwMpfBP3gi6xfVSDaBGn0AmRTXFmr0egdfIuL0WU=;
-        b=R2RvwlHFt276h5Z2h8cGVjlCwad4kHvETeK2vBCTKUoWipX5EEtY6tJqqvZ0L0hmqN
-         aDFNZsLHvRGymlfRuR/kCp2g8n293j6AH9o6rbj2EwMsNYXNwRqCsDTbJi9ABX5cM37P
-         264DWXdcFP+TDzA+xyVZ6O91RmUF0CEqm2qIYsVpegwHNCoc1/r1VGF2NZqLZzBdd4et
-         duvsOk/fywBT49vdhiWqHnN6XgHFxJ8L/DAz4CMiCS37S/T/dRa7YaQC9ceilMPKWZx3
-         uU3KlCI2z9hr6TpiDLB7E2HBab9qvrldRgGvc0EdSTGbxlJklDbfokaSWKmTeC4izJae
-         yQ/A==
-X-Gm-Message-State: AOAM530jvnC4WIR3JTepsc684XLMQAh6zvKjg+qTfd5tGunln3UbwyME
-        A4NEzBL06uRVUcOAcraGCnd+AXNysKEmQmTMUoTUkRRs9iNgGZgaGJS1axw52jTs/bby1nIylbE
-        rkAvTPWQQkNX+Ajq0cUhLbA==
-X-Received: by 2002:a05:6a00:248c:b0:4ce:1932:80dd with SMTP id c12-20020a056a00248c00b004ce193280ddmr18897800pfv.48.1646008933158;
-        Sun, 27 Feb 2022 16:42:13 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzMInzZhGvmQ+IHOCk2Q1kWb0M60m+eTtK6ym47pdNZvA38UDH0my5y3Qt0DVGNINJ7HSfbXw==
-X-Received: by 2002:a05:6a00:248c:b0:4ce:1932:80dd with SMTP id c12-20020a056a00248c00b004ce193280ddmr18897778pfv.48.1646008932854;
-        Sun, 27 Feb 2022 16:42:12 -0800 (PST)
-Received: from [10.72.12.114] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id q13-20020aa7960d000000b004f13804c100sm10202732pfg.165.2022.02.27.16.42.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Feb 2022 16:42:12 -0800 (PST)
-Subject: Re: [RFC PATCH] ceph: add support for encrypted snapshot names
-To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220224112142.18052-1-lhenriques@suse.de>
- <7d2a798d-ce32-4bf7-b184-267bb79f44e3@redhat.com>
- <87h78ni8ed.fsf@brahms.olymp>
- <3bc5797e-f23e-6416-4626-161e34c409ff@redhat.com>
- <871qzpu12m.fsf@brahms.olymp>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <277bf08e-2547-f29a-ec91-86647ab455d4@redhat.com>
-Date:   Mon, 28 Feb 2022 08:42:05 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+ us-mta-112-Q86wSbIGOE2g9sjudBEx8A-1; Sun, 27 Feb 2022 23:20:35 -0500
+X-MC-Unique: Q86wSbIGOE2g9sjudBEx8A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 8CB4A1006AA5;
+        Mon, 28 Feb 2022 04:20:34 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E9C08452FA;
+        Mon, 28 Feb 2022 04:20:27 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, vshankar@redhat.com, lhenriques@suse.de,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH 0/3] ceph: encrypt the snapshot directories
+Date:   Mon, 28 Feb 2022 12:20:22 +0800
+Message-Id: <20220228042025.30806-1-xiubli@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <871qzpu12m.fsf@brahms.olymp>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-
-On 2/26/22 10:58 PM, Luís Henriques wrote:
-> Xiubo Li <xiubli@redhat.com> writes:
->
->> On 2/25/22 5:48 PM, Luís Henriques wrote:
->>> Xiubo Li <xiubli@redhat.com> writes:
->>>
->>>> On 2/24/22 7:21 PM, Luís Henriques wrote:
->>>>> Since filenames in encrypted directories are already encrypted and shown
->>>>> as a base64-encoded string when the directory is locked, snapshot names
->>>>> should show a similar behaviour.
->>>>>
->>>>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
->>>>> ---
->>>>>     fs/ceph/dir.c   | 15 +++++++++++++++
->>>>>     fs/ceph/inode.c | 10 +++++++++-
->>>>>     2 files changed, 24 insertions(+), 1 deletion(-)
->>>>>
->>>>> Support on the MDS for names that'll be > MAX_NAME when base64 encoded is
->>>>> still TBD.  I thought it would be something easy to do, but snapshots
->>>>> don't seem to make use of the CDir/CDentry (which is where alternate_name
->>>>> is stored on the MDS).  I'm still looking into this, but I may need some
->>>>> help there :-(
->>>>>
->>>>> Cheers,
->>>>> --
->>>>> Luís
->>>>>
->>>>> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
->>>>> index a449f4a07c07..20ae600ee7cd 100644
->>>>> --- a/fs/ceph/dir.c
->>>>> +++ b/fs/ceph/dir.c
->>>>> @@ -1065,6 +1065,13 @@ static int ceph_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
->>>>>     		op = CEPH_MDS_OP_MKSNAP;
->>>>>     		dout("mksnap dir %p snap '%pd' dn %p\n", dir,
->>>>>     		     dentry, dentry);
->>>>> +		/* XXX missing support for alternate_name in snapshots */
->>>>> +		if (IS_ENCRYPTED(dir) && (dentry->d_name.len >= 189)) {
->>>>> +			dout("encrypted snapshot name too long: %pd len: %d\n",
->>>>> +			     dentry, dentry->d_name.len);
->>>>> +			err = -ENAMETOOLONG;
->>>>> +			goto out;
->>>>> +		}
->>>>>     	} else if (ceph_snap(dir) == CEPH_NOSNAP) {
->>>>>     		dout("mkdir dir %p dn %p mode 0%ho\n", dir, dentry, mode);
->>>>>     		op = CEPH_MDS_OP_MKDIR;
->>>>> @@ -1109,6 +1116,14 @@ static int ceph_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
->>>>>     	    !req->r_reply_info.head->is_target &&
->>>>>     	    !req->r_reply_info.head->is_dentry)
->>>>>     		err = ceph_handle_notrace_create(dir, dentry);
->>>>> +
->>>>> +	/*
->>>>> +	 * If we have created a snapshot we need to clear the cache, otherwise
->>>>> +	 * snapshot will show encrypted filenames in readdir.
->>>>> +	 */
->>>> Do you mean dencrypted filenames ?
->>> What I see without this d_drop() is that, if I run an 'ls' in a snapshot
->>> directory immediately after creating it, the filenames in that snapshot
->>> will be encrypted.  Maybe there's a bug somewhere else and this d_drop()
->>> isn't the right fix...?
->> BTW, how did you reproduce this ?
->>
->> The snapshot name hasn't encrypted yet ? Did you add one patch to do this ?
-> I don't think I understand what you're referring to.  I haven't looked
-> into you patch (probably won't be able to do in before Wednesday) but if
-> you remove the d_drop() in ceph_mkdir() in this patch, here's what I use
-> to reproduce the issue:
->
-> 	# mkdir mydir
-> 	# fscrypt encrypt mydir
-> 	# cd mydir
-> 	# create a few files
-> 	# mkdir .snap/snapshot-01
-> 	# ls -l .snap/snapshot-01
-
-This is my test by using the branch 'wip-fscrypt' branch:
-
-[root@lxbceph1 kcephfs]# cd mydir/
-[root@lxbceph1 mydir]# mkdir a b cd
-[root@lxbceph1 mydir]# ls
-a  b  c
-[root@lxbceph1 mydir]# ls .snap
-[root@lxbceph1 mydir]# mkdir .snap/mydir_snap1
-[root@lxbceph1 mydir]# ls .snap/mydir_snap1
-a  b  c
-[root@lxbceph1 mydir]# ls .snap/
-mydir_snap1
-[root@lxbceph1 mydir]# touch file1 file2 file3
-[root@lxbceph1 mydir]# mkdir .snap/mydir_snap2
-[root@lxbceph1 mydir]# ls .snap/mydir_snap2
-a  b  c  file1  file2  file3
-[root@lxbceph1 mydir]# ls .snap/
-mydir_snap1  mydir_snap2
-[root@lxbceph1 mydir]# ls
-a  b  c  file1  file2  file3
-
-[root@lxbceph1 mydir]# cd ..
-[root@lxbceph1 kcephfs]# fscrypt lock mydir/
-"mydir/" is now locked.
-[root@lxbceph1 kcephfs]# cd mydir/
-[root@lxbceph1 mydir]# ls
-5D7Q8T0rdSRiJZnvbpCWRFQnLb3BxO4-zyVHsFCH98o 
-LWbsdS2rvuCALUXE0TrTqbuElw4zU6cZHg62-LY5GMA 
-u2nEDclQZAdtetYqQ7aCWNFwu8-1FDH9vI6pM4o6ZN8
--fKqUSM9DGlT1KNE-pkygEXAdjwf9fTDROA_6ZkDEio 
-m42jW1zJs75o2dx0bEHNmEWx9GmYXxHveSmBFagwPOw 
-ZLYwBnb7WT78Saz5RFEOdrKn3OLb6AfHk-IElAmEVps
-
-[root@lxbceph1 mydir]# ls .snap/
-mydir_snap1  mydir_snap2
-
-[root@lxbceph1 mydir]# ls .snap/mydir_snap1
-LWbsdS2rvuCALUXE0TrTqbuElw4zU6cZHg62-LY5GMA 
-m42jW1zJs75o2dx0bEHNmEWx9GmYXxHveSmBFagwPOw 
-ZLYwBnb7WT78Saz5RFEOdrKn3OLb6AfHk-IElAmEVps
-[root@lxbceph1 mydir]# ls .snap/mydir_snap2
-5D7Q8T0rdSRiJZnvbpCWRFQnLb3BxO4-zyVHsFCH98o 
-LWbsdS2rvuCALUXE0TrTqbuElw4zU6cZHg62-LY5GMA 
-u2nEDclQZAdtetYqQ7aCWNFwu8-1FDH9vI6pM4o6ZN8
--fKqUSM9DGlT1KNE-pkygEXAdjwf9fTDROA_6ZkDEio 
-m42jW1zJs75o2dx0bEHNmEWx9GmYXxHveSmBFagwPOw 
-ZLYwBnb7WT78Saz5RFEOdrKn3OLb6AfHk-IElAmEVps
-
-[root@lxbceph1 mydir]# cd ..
-[root@lxbceph1 kcephfs]# fscrypt unlock mydir/
-Enter custom passphrase for protector "l":
-"mydir/" is now unlocked and ready for use.
-[root@lxbceph1 kcephfs]# cd mydir/
-[root@lxbceph1 mydir]# ls
-a  b  c  file1  file2  file3
-[root@lxbceph1 mydir]# ls .snap/mydir_snap1
-a  b  c
-[root@lxbceph1 mydir]# ls .snap/mydir_snap2
-a  b  c  file1  file2  file3
-[root@lxbceph1 mydir]#
+From: Xiubo Li <xiubli@redhat.com>
 
 
-We can see that only the "mydir_snap1" and "mydir_snap2" snapshot names 
-are not encrypted when the 'mydir' is locked, my patch above is fixing 
-this issue. All the others work as expected.
 
 
->
-> And this would show the contents 'snapshot-01' but with the filenames
-> encrypted, even with 'mydir' isn't locked.
->
-> With this d_drop(), this behaviour will go away, i.e. you'll see the
-> correct (unencrypted) filenames.
+Xiubo Li (3):
+  ceph: add ceph_get_snap_parent_inode() support
+  ceph: use the parent inode of '.snap' to dencrypt the names for
+    readdir
+  ceph: use the parent inode of '.snap' to encrypt name to build path
 
-The tests above without this changes in your patch.
+ fs/ceph/dir.c        | 17 ++++++++++-------
+ fs/ceph/inode.c      | 15 +++++++++------
+ fs/ceph/mds_client.c | 33 ++++++++++++++++++++-------------
+ fs/ceph/snap.c       | 24 ++++++++++++++++++++++++
+ fs/ceph/super.h      |  1 +
+ 5 files changed, 64 insertions(+), 26 deletions(-)
 
-
-> Also, after locking 'mydir' (fscrypt lock mydir), an 'ls' in the snapshot
-> directory ('ls mydir/.snap') will show the _encrypted_ snapshot names and
-> an 'ls' in the snapshot itself ('ls mydir/.snap/<ENCRYPTED NAME>') will
-> show the encrypted filenames as in an 'ls mydir'.
-
-Not sure whether I missed something here, so strange I couldn't 
-reproduce it.
-
-BTW, which branch were you using to test this ?
-
-I will post my patch to fix the issue I mentioned.
-
-- Xiubo
-
-> Cheers,
+-- 
+2.27.0
 
