@@ -2,89 +2,85 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 938D44C8CB4
-	for <lists+ceph-devel@lfdr.de>; Tue,  1 Mar 2022 14:33:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E0F34C8CF1
+	for <lists+ceph-devel@lfdr.de>; Tue,  1 Mar 2022 14:49:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235051AbiCANdl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 1 Mar 2022 08:33:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36492 "EHLO
+        id S232577AbiCANuS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 1 Mar 2022 08:50:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234601AbiCANdk (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 1 Mar 2022 08:33:40 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C00E2457A4
-        for <ceph-devel@vger.kernel.org>; Tue,  1 Mar 2022 05:32:59 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S230081AbiCANuS (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 1 Mar 2022 08:50:18 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 66895E12
+        for <ceph-devel@vger.kernel.org>; Tue,  1 Mar 2022 05:49:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646142572;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=pmOyrVp9ACkhck676p3JiJUvCDTwZfJa29gRgw4iZdQ=;
+        b=i6+hHo22j2+XdbOmX+5jVBvTkT1xcAJrWpyc3TPeIfutMFnaioBxKd6aoWI8kmksOjGbFD
+        MaCI6srHgRZOh3UA6tzhIFOhZSwN3Oq8f1jjJfED+NzSrP44zTtBWoQbEy0pp70Wt1N/Kn
+        ZN9rt5mWujQFSAZYaA7E6H1orHzfBp8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-524-Jnc8_IUKPXqiByohe-epTw-1; Tue, 01 Mar 2022 08:49:31 -0500
+X-MC-Unique: Jnc8_IUKPXqiByohe-epTw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 62800B818F9
-        for <ceph-devel@vger.kernel.org>; Tue,  1 Mar 2022 13:32:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F985C340EE;
-        Tue,  1 Mar 2022 13:32:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646141577;
-        bh=WIppM7P+V1CnwSMDlwkNJ7K/36TyHuSnAWb8CGDfvV8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=lOVHmSjRCG3n0xQ6gmg+z/RS01KeVo+dlRSvhLXiu9VPQcSyrKg2HNkQ33ahHSCkA
-         4BTpzw1vd0Tz2RkxYdbuHC59JBEkOI+uPwg0wYPAp658Ck/991Q/BTrimbvy/V7Gqw
-         Z0QF1sOetRTrMXQdcSftvzaQUYy3er0QTydtTCB1A+8SSIEMGUMOoObehR0Odx7y04
-         KrYHVEN85MGBzKI6h6eHbwHFpFsDPycVjdXQYBqBMJRaxN3pOfWci3NbsIHTSI1Yl0
-         /Jett4rhkrl6d3e2ZeDYqSYiOmlnAu4Dp0KgiuQ1/LIs+Jb1L7m2DLxl+4lcCECcGw
-         PYTBOLyR9dLDg==
-Message-ID: <47503f447a0269583612f141f09568899b2b2e1d.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: fix memory leakage in ceph_readdir
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
-Date:   Tue, 01 Mar 2022 08:32:55 -0500
-In-Reply-To: <20220301131726.439070-1-xiubli@redhat.com>
-References: <20220301131726.439070-1-xiubli@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 49194FC85;
+        Tue,  1 Mar 2022 13:49:30 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.37.0])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6FE317C020;
+        Tue,  1 Mar 2022 13:49:24 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+To:     Ilya Dryomov <idryomov@gmail.com>
+cc:     dhowells@redhat.com, Ceph Development <ceph-devel@vger.kernel.org>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Making 3 ceph patches available to rebase netfslib patches on
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3079338.1646142563.1@warthog.procyon.org.uk>
+Date:   Tue, 01 Mar 2022 13:49:23 +0000
+Message-ID: <3079339.1646142563@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2022-03-01 at 21:17 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/dir.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index 0cf6afe283e9..bf69678d6434 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -478,8 +478,10 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
->  					2 : (fpos_off(rde->offset) + 1);
->  			err = note_last_dentry(dfi, rde->name, rde->name_len,
->  					       next_offset);
-> -			if (err)
-> +			if (err) {
-> +				ceph_mdsc_put_request(dfi->last_readdir);
->  				return err;
-> +			}
->  		} else if (req->r_reply_info.dir_end) {
->  			dfi->next_offset = 2;
->  			/* keep last name */
-> @@ -521,6 +523,7 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
->  			      ceph_present_ino(inode->i_sb, le64_to_cpu(rde->inode.in->ino)),
->  			      le32_to_cpu(rde->inode.in->mode) >> 12)) {
->  			dout("filldir stopping us...\n");
-> +			ceph_mdsc_put_request(dfi->last_readdir);
->  			return 0;
->  		}
->  		ctx->pos++;
+Hi Ilya,
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Could you pick three ceph commits onto the branch you're going to use for the
+next merge window?  They're on the testing branch, but I'm assuming that's not
+going to be presented to Linus, given the do-not-merge commits it also has on
+it.
+
+I'd like to rebase my netfslib patchset on it so that we don't have two views
+of the same thing.
+
+The three commits are:
+
+9579e41d45c961a52ffa619c4a77d78f2f782c19
+ceph: switch netfs read ops to use rreq->inode instead of rreq->mapping->host
+
+85fc162016ac8d19e28877a15f55c0fa4b47713b
+ceph: Make ceph_netfs_issue_op() handle inlined data 
+
+f9ee82ff4db2310eb4ba5458ef08f89eaa0b0c20
+ceph: Uninline the data on a file opened for writing
+
+Thanks,
+David
+
