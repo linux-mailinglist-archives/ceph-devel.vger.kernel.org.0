@@ -2,149 +2,202 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D15F24C8C73
-	for <lists+ceph-devel@lfdr.de>; Tue,  1 Mar 2022 14:20:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D22164C8C9B
+	for <lists+ceph-devel@lfdr.de>; Tue,  1 Mar 2022 14:27:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234981AbiCANVd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 1 Mar 2022 08:21:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38856 "EHLO
+        id S234354AbiCAN22 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 1 Mar 2022 08:28:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232019AbiCANVb (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 1 Mar 2022 08:21:31 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCE6D9BBA2
-        for <ceph-devel@vger.kernel.org>; Tue,  1 Mar 2022 05:20:50 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 70AC8B818F6
-        for <ceph-devel@vger.kernel.org>; Tue,  1 Mar 2022 13:20:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83A49C340F0;
-        Tue,  1 Mar 2022 13:20:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646140848;
-        bh=gumkSBzwSbEE0zPiz6fQfZwl/5DisRa0WE5jO3ZnJd0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Jg/YMG26661bNd1B+Zcn9JPXzlnsVpbO5AGFihF5iZ2XnzX1T9F83Etyk2Rt+ZrQp
-         K3NNwxvBHcHQ0rMDCg5sHZvT80iPPBmbOg6Qubn27eV/bnFIi/m65B3O03B5ZPCIQ5
-         5NxmQDqTFO3+ChlDCaV9BBAT1Kvpw0Y4XrmMDYiadEDHbWiv9mkSCqv9GeP1hvJ7TT
-         4rBUBrjKjAVAFYhIjEMKN9pwPtYnAyCOYlh5ON/PD6JzCz5Mc8jSJkoluTHoUEElMg
-         45APCrCX+OhzkZaXhScy3PPNAfxyALgUztYqd/3DP6jc4sAPi4jUsPC+t2cDVa7AUq
-         Il2Mr2mxDchOA==
-Message-ID: <7a75180f14638377db5917d82d0d40c2b86950c7.camel@kernel.org>
-Subject: Re: [PATCH v2 1/7] ceph: fail the request when failing to decode
- dentry names
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, vshankar@redhat.com, lhenriques@suse.de,
-        ceph-devel@vger.kernel.org
-Date:   Tue, 01 Mar 2022 08:20:44 -0500
-In-Reply-To: <20220301113015.498041-2-xiubli@redhat.com>
-References: <20220301113015.498041-1-xiubli@redhat.com>
-         <20220301113015.498041-2-xiubli@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
+        with ESMTP id S234037AbiCAN20 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 1 Mar 2022 08:28:26 -0500
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CEDD1FA68
+        for <ceph-devel@vger.kernel.org>; Tue,  1 Mar 2022 05:27:44 -0800 (PST)
+Received: by mail-il1-x135.google.com with SMTP id i14so697996ilv.4
+        for <ceph-devel@vger.kernel.org>; Tue, 01 Mar 2022 05:27:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0rqEHtyUvKInY3eDADJFtpu+gdfZq4axYpoJEFqNG8M=;
+        b=I2qodJt4VEaNZJyZteahkXLrk3gcBP6spDM9mba7O5eU1RB0noMF3SaBN+E8vfdw3Y
+         GW1Qja0562jHy97CnNHFiAvEnhDIzFZuk2nVuHxePbR8HX9rviCDiIna9neO0UiGoLDn
+         jsXu+RAKBdy7qxqlxo03hClTY9xe+rR+zNfDg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0rqEHtyUvKInY3eDADJFtpu+gdfZq4axYpoJEFqNG8M=;
+        b=dzIJ56Ra6Z0J8GEX0tKaQQiIsSCSRe1dzR3PGXV1lAAn5qrbYdU+2YeZr7jMIwVnFA
+         PPKKxoMIHSwTLFSlgvW14uWSgOW3jTOEmrnEwvjJn9PKbUziAzElEbM0eB1kwfkTNU61
+         xjeCAn0NOR4mrWggrr5NLwKTXCce8alWjFxawTIQ5d6SHOmX/5y8dY/TJEwbechkOSKv
+         DLJ+3OvlqIQ5G4qsMYVWLjziErTmzxjBFdAbhPaxfH5V7OtvI02q4vpHSfntQ2/L1wV3
+         vr6btBJaFUWVAXmffOYazwJB2SnAX3b80wea1xnkKIuL75HDtD6Rc9O50CBrU5NfHxnh
+         ieCA==
+X-Gm-Message-State: AOAM531Hb4G5+4VZ7bbkw0EXHJzUkP/OBz7lN8c0A4VjoqtRyAmNhU6Y
+        2gm8wZFLLTfIIAjxpU/rOfLhuSrLdLdcYwKC0LA3Ig==
+X-Google-Smtp-Source: ABdhPJwFD3IYwN4qrYy++4yIV02k4VVunIMIlONHamgVoi7ny6ji/ttTCSgiD81N18MIcwz3ac7fQNZ2oqyazBRiwXg=
+X-Received: by 2002:a92:ca4a:0:b0:2ba:878e:fd12 with SMTP id
+ q10-20020a92ca4a000000b002ba878efd12mr22464625ilo.139.1646141263901; Tue, 01
+ Mar 2022 05:27:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <164549971112.9187.16871723439770288255.stgit@noble.brown> <164549983737.9187.2627117501000365074.stgit@noble.brown>
+In-Reply-To: <164549983737.9187.2627117501000365074.stgit@noble.brown>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 1 Mar 2022 14:27:33 +0100
+Message-ID: <CAJfpegsGOFD46KM8pxFAemokv9OOsCSHk=ag6jZZ=VscijMXZQ@mail.gmail.com>
+Subject: Re: [PATCH 04/11] fuse: remove reliance on bdi congestion
+To:     NeilBrown <neilb@suse.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, Jan Kara <jack@suse.cz>,
+        Wu Fengguang <fengguang.wu@intel.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Paolo Valente <paolo.valente@linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-doc@vger.kernel.org,
+        linux-mm <linux-mm@kvack.org>, linux-nilfs@vger.kernel.org,
+        Linux NFS list <linux-nfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Ext4 <linux-ext4@vger.kernel.org>, ceph-devel@vger.kernel.org,
+        drbd-dev@lists.linbit.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2022-03-01 at 19:30 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> ------------[ cut here ]------------
-> kernel BUG at fs/ceph/dir.c:537!
-> invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> CPU: 16 PID: 21641 Comm: ls Tainted: G            E     5.17.0-rc2+ #92
-> Hardware name: Red Hat RHEV Hypervisor, BIOS 1.11.0-2.el7 04/01/2014
-> 
-> The corresponding code in ceph_readdir() is:
-> 
-> 	BUG_ON(rde->offset < ctx->pos);
-> 
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+On Tue, 22 Feb 2022 at 04:18, NeilBrown <neilb@suse.de> wrote:
+>
+> The bdi congestion tracking in not widely used and will be removed.
+>
+> Fuse is one of a small number of filesystems that uses it, setting both
+> the sync (read) and async (write) congestion flags at what it determines
+> are appropriate times.
+>
+> The only remaining effect of the sync flag is to cause read-ahead to be
+> skipped.
+> The only remaining effect of the async flag is to cause (some)
+> WB_SYNC_NONE writes to be skipped.
+>
+> So instead of setting the flags, change:
+>  - .readahead to stop when it has submitted all non-async pages
+>     for read.
+>  - .writepages to do nothing if WB_SYNC_NONE and the flag would be set
+>  - .writepage to return AOP_WRITEPAGE_ACTIVATE if WB_SYNC_NONE
+>     and the flag would be set.
+>
+> The writepages change causes a behavioural change in that pageout() can
+> now return PAGE_ACTIVATE instead of PAGE_KEEP, so SetPageActive() will
+> be called on the page which (I think) will further delay the next attempt
+> at writeout.  This might be a good thing.
+>
+> Signed-off-by: NeilBrown <neilb@suse.de>
 > ---
->  fs/ceph/dir.c        | 13 +++++++------
->  fs/ceph/inode.c      |  5 +++--
->  fs/ceph/mds_client.c |  2 +-
->  3 files changed, 11 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index a449f4a07c07..6be0c1f793c2 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -534,6 +534,13 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
->  					    .ctext_len	= rde->altname_len };
->  		u32 olen = oname.len;
->  
-> +		err = ceph_fname_to_usr(&fname, &tname, &oname, NULL);
-> +		if (err) {
-> +			pr_err("%s unable to decode %.*s, got %d\n", __func__,
-> +			       rde->name_len, rde->name, err);
-> +			goto out;
-> +		}
-> +
->  		BUG_ON(rde->offset < ctx->pos);
->  		BUG_ON(!rde->inode.in);
->  
-> @@ -542,12 +549,6 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
->  		     i, rinfo->dir_nr, ctx->pos,
->  		     rde->name_len, rde->name, &rde->inode.in);
->  
-> -		err = ceph_fname_to_usr(&fname, &tname, &oname, NULL);
-> -		if (err) {
-> -			dout("Unable to decode %.*s. Skipping it.\n", rde->name_len, rde->name);
-> -			continue;
-> -		}
+>  fs/fuse/control.c |   17 -----------------
+>  fs/fuse/dev.c     |    8 --------
+>  fs/fuse/file.c    |   17 +++++++++++++++++
+>  3 files changed, 17 insertions(+), 25 deletions(-)
+>
+> diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+> index 000d2e5627e9..7cede9a3bc96 100644
+> --- a/fs/fuse/control.c
+> +++ b/fs/fuse/control.c
+> @@ -164,7 +164,6 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
+>  {
+>         unsigned val;
+>         struct fuse_conn *fc;
+> -       struct fuse_mount *fm;
+>         ssize_t ret;
+>
+>         ret = fuse_conn_limit_write(file, buf, count, ppos, &val,
+> @@ -178,22 +177,6 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
+>         down_read(&fc->killsb);
+>         spin_lock(&fc->bg_lock);
+>         fc->congestion_threshold = val;
 > -
->  		if (!dir_emit(ctx, oname.name, oname.len,
->  			      ceph_present_ino(inode->i_sb, le64_to_cpu(rde->inode.in->ino)),
->  			      le32_to_cpu(rde->inode.in->mode) >> 12)) {
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 8b0832271fdf..2bc2f02b84e8 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -1898,8 +1898,9 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
->  
->  		err = ceph_fname_to_usr(&fname, &tname, &oname, &is_nokey);
->  		if (err) {
-> -			dout("Unable to decode %.*s. Skipping it.", rde->name_len, rde->name);
-> -			continue;
-> +			pr_err("%s unable to decode %.*s, got %d\n", __func__,
-> +			       rde->name_len, rde->name, err);
-> +			goto out;
->  		}
->  
+> -       /*
+> -        * Get any fuse_mount belonging to this fuse_conn; s_bdi is
+> -        * shared between all of them
+> -        */
+> -
+> -       if (!list_empty(&fc->mounts)) {
+> -               fm = list_first_entry(&fc->mounts, struct fuse_mount, fc_entry);
+> -               if (fc->num_background < fc->congestion_threshold) {
+> -                       clear_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
+> -                       clear_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
+> -               } else {
+> -                       set_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
+> -                       set_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
+> -               }
+> -       }
+>         spin_unlock(&fc->bg_lock);
+>         up_read(&fc->killsb);
+>         fuse_conn_put(fc);
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index cd54a529460d..e1b4a846c90d 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -315,10 +315,6 @@ void fuse_request_end(struct fuse_req *req)
+>                                 wake_up(&fc->blocked_waitq);
+>                 }
+>
+> -               if (fc->num_background == fc->congestion_threshold && fm->sb) {
+> -                       clear_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
+> -                       clear_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
+> -               }
+>                 fc->num_background--;
+>                 fc->active_background--;
+>                 flush_bg_queue(fc);
+> @@ -540,10 +536,6 @@ static bool fuse_request_queue_background(struct fuse_req *req)
+>                 fc->num_background++;
+>                 if (fc->num_background == fc->max_background)
+>                         fc->blocked = 1;
+> -               if (fc->num_background == fc->congestion_threshold && fm->sb) {
+> -                       set_bdi_congested(fm->sb->s_bdi, BLK_RW_SYNC);
+> -                       set_bdi_congested(fm->sb->s_bdi, BLK_RW_ASYNC);
+> -               }
+>                 list_add_tail(&req->list, &fc->bg_queue);
+>                 flush_bg_queue(fc);
+>                 queued = true;
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 829094451774..94747bac3489 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -966,6 +966,14 @@ static void fuse_readahead(struct readahead_control *rac)
+>                 struct fuse_io_args *ia;
+>                 struct fuse_args_pages *ap;
+>
+> +               if (fc->num_background >= fc->congestion_threshold &&
+> +                   rac->ra->async_size >= readahead_count(rac))
+> +                       /*
+> +                        * Congested and only async pages left, so skip the
+> +                        * rest.
+> +                        */
+> +                       break;
 
+Ah, you are taking care of it here...
 
-Is this really an improvement? Suppose I have one dentry with a corrupt
-name. Do I want to fail a readdir request which might allow me to get at
-other dentries in that directory that isn't corrupt?
+Regarding the async part: a potential (corner?) case is if task A is
+reading region X and triggering readahead for region Y and at the same
+time task B is reading region Y.  In the congestion case it can happen
+that non-uptodate pages in Y are truncated off the pagecache while B
+is waiting for them to become uptodate.
 
-Maybe we should try to emit some placeholder there?
+This shouldn't be too hard to trigger, just need two sequential
+readers of the same file, where one is just ahead of the other.  I'll
+try to do a test program for this case specifically.
 
-
->  		dname.name = oname.name;
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 914a6e68bb56..94b4c6508044 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -3474,7 +3474,7 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
->  	if (err == 0) {
->  		if (result == 0 && (req->r_op == CEPH_MDS_OP_READDIR ||
->  				    req->r_op == CEPH_MDS_OP_LSSNAP))
-> -			ceph_readdir_prepopulate(req, req->r_session);
-> +			err = ceph_readdir_prepopulate(req, req->r_session);
->  	}
->  	current->journal_info = NULL;
->  	mutex_unlock(&req->r_fill_mutex);
-
--- 
-Jeff Layton <jlayton@kernel.org>
+Thanks,
+Miklos
