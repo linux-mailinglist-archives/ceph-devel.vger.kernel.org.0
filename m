@@ -2,257 +2,117 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E5D304C8C48
-	for <lists+ceph-devel@lfdr.de>; Tue,  1 Mar 2022 14:10:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C211E4C8C54
+	for <lists+ceph-devel@lfdr.de>; Tue,  1 Mar 2022 14:13:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234920AbiCANLi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 1 Mar 2022 08:11:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47104 "EHLO
+        id S232892AbiCANNx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 1 Mar 2022 08:13:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232939AbiCANLh (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 1 Mar 2022 08:11:37 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98B7620F56;
-        Tue,  1 Mar 2022 05:10:55 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 0B264CE0490;
-        Tue,  1 Mar 2022 13:10:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC0D7C340EE;
-        Tue,  1 Mar 2022 13:10:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646140252;
-        bh=Q3ALUNiJP3tH93zumbyGEqNo1zCA/OC+QE23POQCNbU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=nFwmcyaPWK3dIfFZ9+OZtl+DJKoA7Tw8vdbIeMHs5Nse7yRwpWPWWn2PJcVH16WJ6
-         MFgBmxJ+Kn+6bLqpslvT83T8l0SF60iFHgKTQIc3cePSzc1pu8ym6SA3DwZfsumiNq
-         6UFLaVXAQKclYEGQ2y+cK4E8B8ml7GBRWwOMxg9r1FPkJ2YVQCCjm/I9XtVjLbUWXf
-         SNp8h41jgJgoGCZPifePeq8mH+ZVWoO7J3ljGlwuV1foYPl/mzjOWoOQpFN0JQIr+e
-         HPAful414j7iiFg0eYW8M+whaEpO9dcO20ctEYa3hJPJ7ZOpTsMELmVMmtvYCqPIWP
-         xUzXfJ2Z6TIcw==
-Message-ID: <c5c1cf58efbbef6e13a2a7ca067ffaeeae15c1d4.camel@kernel.org>
-Subject: Re: [RFC PATCH v10 11/48] ceph: decode alternate_name in lease info
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, idryomov@gmail.com
-Date:   Tue, 01 Mar 2022 08:10:50 -0500
-In-Reply-To: <ae096a5b-2f2e-c392-e598-59fd82b44734@redhat.com>
-References: <20220111191608.88762-1-jlayton@kernel.org>
-         <20220111191608.88762-12-jlayton@kernel.org>
-         <ae096a5b-2f2e-c392-e598-59fd82b44734@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
+        with ESMTP id S231549AbiCANNx (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 1 Mar 2022 08:13:53 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5C06E24BFF
+        for <ceph-devel@vger.kernel.org>; Tue,  1 Mar 2022 05:13:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646140391;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Pa/93NjB/f6EauEUP8czWGYsdEfpwkCjjkpWmEDM3gU=;
+        b=Z6aHMYQ6dgiE55pnqaKARKyFyg0rC/a+P8Ihgwselif9y7hwZusffZf89krQdDfAnVySJv
+        b+uqJJwdCacr+041LUvgsvAY8pS9HKIUSPgOt0FKdeH1VTyKa5Z4UxOvI0S7/y6ahDbREj
+        PG+hR03PeDnJDE0uXxUrRFeW6XK+eTM=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-150-r75cNq5GNKOQx4NJPmuR7g-1; Tue, 01 Mar 2022 08:13:10 -0500
+X-MC-Unique: r75cNq5GNKOQx4NJPmuR7g-1
+Received: by mail-pf1-f198.google.com with SMTP id d5-20020a623605000000b004e01ccd08abso9771177pfa.10
+        for <ceph-devel@vger.kernel.org>; Tue, 01 Mar 2022 05:13:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Pa/93NjB/f6EauEUP8czWGYsdEfpwkCjjkpWmEDM3gU=;
+        b=ypTjIl7dwLr5wF30UP5rgSsJdOflT49Ug2SDBJofZM6LWoRbniGJsxqWJJg7z2ec5C
+         Gv3RBTrc8kzr7PSmtd5RzDU95wyymoB4vtmmJe4QoA/AGWaPAGtVAVKjMR3hdr2L+G7n
+         dNjICoDPT2mU589VXcShU00JYnQLjpsouMjvEKJQzK7bvXDGPzYdMoWYHc1LFW3Vt6Fk
+         spj1tc4VtFFT8WlR3WIIRyfLFNNzrmP2uavTdTluVINMMD5KzxAoZHhHWtQedeMzUFM1
+         MmxA8MVtEX9u1OoYoH5M8YtFHZVWEqGlYcm0pW/plIAHHoDY9c4VniYhzAubH/AWkU7c
+         dDAQ==
+X-Gm-Message-State: AOAM531N6Lqrf7L5e2t4TOMQcaCfu+PGgLGo0wawWnfYh3hBq8yurs4J
+        zYjTCMzD2EC3gXMYnIsPogj+489bBg0AQG77uJflHbRhnCRrFjRPglyXr2MMmFMkTAnOEJ8fMBv
+        DzN/5FARX+Nr7kI//mPID4QLdsXUbUEIWHFOUeQq0p5kv2Ug9G0zuN3nDjoa+Rb8FoaCp5sg=
+X-Received: by 2002:aa7:9902:0:b0:4cb:95a7:a4c4 with SMTP id z2-20020aa79902000000b004cb95a7a4c4mr26994397pff.85.1646140389212;
+        Tue, 01 Mar 2022 05:13:09 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJznq+e915tNmOdqhjKxQNpKe8bqFuAb5EoSOR5iVvJ4DjvZs3OEuAqg9t6le+9tvLIWbFOZeA==
+X-Received: by 2002:aa7:9902:0:b0:4cb:95a7:a4c4 with SMTP id z2-20020aa79902000000b004cb95a7a4c4mr26994357pff.85.1646140388773;
+        Tue, 01 Mar 2022 05:13:08 -0800 (PST)
+Received: from [10.72.12.114] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id s42-20020a056a0017aa00b004df8133df4asm18610252pfg.179.2022.03.01.05.13.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 01 Mar 2022 05:13:08 -0800 (PST)
+Subject: Re: [PATCH] ceph: fix memory leakage in ceph_readdir
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
+References: <20220301055915.425624-1-xiubli@redhat.com>
+ <baa7c5eaa9304c60aa87f5304faa84d5ce0ea038.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <654024fb-cd88-ca25-631d-694a8c3dacc7@redhat.com>
+Date:   Tue, 1 Mar 2022 21:13:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <baa7c5eaa9304c60aa87f5304faa84d5ce0ea038.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2022-03-01 at 18:57 +0800, Xiubo Li wrote:
-> On 1/12/22 3:15 AM, Jeff Layton wrote:
-> > Ceph is a bit different from local filesystems, in that we don't want
-> > to store filenames as raw binary data, since we may also be dealing
-> > with clients that don't support fscrypt.
-> > 
-> > We could just base64-encode the encrypted filenames, but that could
-> > leave us with filenames longer than NAME_MAX. It turns out that the
-> > MDS doesn't care much about filename length, but the clients do.
-> > 
-> > To manage this, we've added a new "alternate name" field that can be
-> > optionally added to any dentry that we'll use to store the binary
-> > crypttext of the filename if its base64-encoded value will be longer
-> > than NAME_MAX. When a dentry has one of these names attached, the MDS
-> > will send it along in the lease info, which we can then store for
-> > later usage.
-> > 
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >   fs/ceph/mds_client.c | 40 ++++++++++++++++++++++++++++++----------
-> >   fs/ceph/mds_client.h | 11 +++++++----
-> >   2 files changed, 37 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index 34a4f6dbac9d..709f3f654555 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -306,27 +306,44 @@ static int parse_reply_info_dir(void **p, void *end,
-> >   
-> >   static int parse_reply_info_lease(void **p, void *end,
-> >   				  struct ceph_mds_reply_lease **lease,
-> > -				  u64 features)
-> > +				  u64 features, u32 *altname_len, u8 **altname)
-> >   {
-> > +	u8 struct_v;
-> > +	u32 struct_len;
-> > +
-> >   	if (features == (u64)-1) {
-> > -		u8 struct_v, struct_compat;
-> > -		u32 struct_len;
-> > +		u8 struct_compat;
-> > +
-> >   		ceph_decode_8_safe(p, end, struct_v, bad);
-> >   		ceph_decode_8_safe(p, end, struct_compat, bad);
-> > +
-> >   		/* struct_v is expected to be >= 1. we only understand
-> >   		 * encoding whose struct_compat == 1. */
-> >   		if (!struct_v || struct_compat != 1)
-> >   			goto bad;
-> > +
-> >   		ceph_decode_32_safe(p, end, struct_len, bad);
-> > -		ceph_decode_need(p, end, struct_len, bad);
-> > -		end = *p + struct_len;
-> 
-> Hi Jeff,
-> 
-> This is buggy, more detail please see https://tracker.ceph.com/issues/54430.
-> 
-> The following patch will fix it. We should skip the extra memories anyway.
-> 
-> 
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 94b4c6508044..3dea96df4769 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -326,6 +326,7 @@ static int parse_reply_info_lease(void **p, void *end,
->                          goto bad;
-> 
->                  ceph_decode_32_safe(p, end, struct_len, bad);
-> +               end = *p + struct_len;
+
+On 3/1/22 8:49 PM, Jeff Layton wrote:
+> On Tue, 2022-03-01 at 13:59 +0800, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/ceph/dir.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+>> index 0cf6afe283e9..6184cf123fa2 100644
+>> --- a/fs/ceph/dir.c
+>> +++ b/fs/ceph/dir.c
+>> @@ -521,6 +521,7 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+>>   			      ceph_present_ino(inode->i_sb, le64_to_cpu(rde->inode.in->ino)),
+>>   			      le32_to_cpu(rde->inode.in->mode) >> 12)) {
+>>   			dout("filldir stopping us...\n");
+>> +			ceph_mdsc_put_request(dfi->last_readdir);
+>>   			return 0;
+>>   		}
+>>   		ctx->pos++;
+> Good catch!
+>
+> It looks like there is another missing put around line 482 after the
+> note_last_dentry call. Could you fix that one up in the same patch?
+>
+Sure. Will fix it.
+
+- Xiubo
 
 
-There may be a bug here, but this doesn't look like the right fix. "end"
-denotes the end of the buffer we're decoding. We don't generally want to
-go changing it like this. Consider what would happen if the original
-"end" was shorter than *p + struct_len.
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+>
 
-
->          } else {
->                  struct_len = sizeof(**lease);
->                  *altname_len = 0;
-> @@ -346,6 +347,7 @@ static int parse_reply_info_lease(void **p, void *end,
->                          *altname = NULL;
->                          *altname_len = 0;
->                  }
-> +               *p = end;
-
-
-I think we just have to do the math here. Maybe this should be something
-like this?
-
-    *p += struct_len - sizeof(**lease) - *altname_len;
-
->          }
->          return 0;
->   bad:
-> 
-> 
-> 
-
-
-> > +	} else {
-> > +		struct_len = sizeof(**lease);
-> > +		*altname_len = 0;
-> > +		*altname = NULL;
-> >   	}
-> >   
-> > -	ceph_decode_need(p, end, sizeof(**lease), bad);
-> > +	ceph_decode_need(p, end, struct_len, bad);
-> >   	*lease = *p;
-> >   	*p += sizeof(**lease);
-> > -	if (features == (u64)-1)
-> > -		*p = end;
-> > +
-> > +	if (features == (u64)-1) {
-> > +		if (struct_v >= 2) {
-> > +			ceph_decode_32_safe(p, end, *altname_len, bad);
-> > +			ceph_decode_need(p, end, *altname_len, bad);
-> > +			*altname = *p;
-> > +			*p += *altname_len;
-> > +		} else {
-> > +			*altname = NULL;
-> > +			*altname_len = 0;
-> > +		}
-> > +	}
-> >   	return 0;
-> >   bad:
-> >   	return -EIO;
-> > @@ -356,7 +373,8 @@ static int parse_reply_info_trace(void **p, void *end,
-> >   		info->dname = *p;
-> >   		*p += info->dname_len;
-> >   
-> > -		err = parse_reply_info_lease(p, end, &info->dlease, features);
-> > +		err = parse_reply_info_lease(p, end, &info->dlease, features,
-> > +					     &info->altname_len, &info->altname);
-> >   		if (err < 0)
-> >   			goto out_bad;
-> >   	}
-> > @@ -423,9 +441,11 @@ static int parse_reply_info_readdir(void **p, void *end,
-> >   		dout("parsed dir dname '%.*s'\n", rde->name_len, rde->name);
-> >   
-> >   		/* dentry lease */
-> > -		err = parse_reply_info_lease(p, end, &rde->lease, features);
-> > +		err = parse_reply_info_lease(p, end, &rde->lease, features,
-> > +					     &rde->altname_len, &rde->altname);
-> >   		if (err)
-> >   			goto out_bad;
-> > +
-> >   		/* inode */
-> >   		err = parse_reply_info_in(p, end, &rde->inode, features);
-> >   		if (err < 0)
-> > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> > index e7d2c8a1b9c1..128901a847af 100644
-> > --- a/fs/ceph/mds_client.h
-> > +++ b/fs/ceph/mds_client.h
-> > @@ -29,8 +29,8 @@ enum ceph_feature_type {
-> >   	CEPHFS_FEATURE_MULTI_RECONNECT,
-> >   	CEPHFS_FEATURE_DELEG_INO,
-> >   	CEPHFS_FEATURE_METRIC_COLLECT,
-> > -
-> > -	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_METRIC_COLLECT,
-> > +	CEPHFS_FEATURE_ALTERNATE_NAME,
-> > +	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_ALTERNATE_NAME,
-> >   };
-> >   
-> >   /*
-> > @@ -45,8 +45,7 @@ enum ceph_feature_type {
-> >   	CEPHFS_FEATURE_MULTI_RECONNECT,		\
-> >   	CEPHFS_FEATURE_DELEG_INO,		\
-> >   	CEPHFS_FEATURE_METRIC_COLLECT,		\
-> > -						\
-> > -	CEPHFS_FEATURE_MAX,			\
-> > +	CEPHFS_FEATURE_ALTERNATE_NAME,		\
-> >   }
-> >   #define CEPHFS_FEATURES_CLIENT_REQUIRED {}
-> >   
-> > @@ -98,7 +97,9 @@ struct ceph_mds_reply_info_in {
-> >   
-> >   struct ceph_mds_reply_dir_entry {
-> >   	char                          *name;
-> > +	u8			      *altname;
-> >   	u32                           name_len;
-> > +	u32			      altname_len;
-> >   	struct ceph_mds_reply_lease   *lease;
-> >   	struct ceph_mds_reply_info_in inode;
-> >   	loff_t			      offset;
-> > @@ -117,7 +118,9 @@ struct ceph_mds_reply_info_parsed {
-> >   	struct ceph_mds_reply_info_in diri, targeti;
-> >   	struct ceph_mds_reply_dirfrag *dirfrag;
-> >   	char                          *dname;
-> > +	u8			      *altname;
-> >   	u32                           dname_len;
-> > +	u32                           altname_len;
-> >   	struct ceph_mds_reply_lease   *dlease;
-> >   
-> >   	/* extra */
-> 
-
--- 
-Jeff Layton <jlayton@kernel.org>
