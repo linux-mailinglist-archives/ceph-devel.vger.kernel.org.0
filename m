@@ -2,140 +2,81 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E42054CA79E
-	for <lists+ceph-devel@lfdr.de>; Wed,  2 Mar 2022 15:10:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BBBC4CA933
+	for <lists+ceph-devel@lfdr.de>; Wed,  2 Mar 2022 16:37:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242828AbiCBOLR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 2 Mar 2022 09:11:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55500 "EHLO
+        id S234434AbiCBPie (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 2 Mar 2022 10:38:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242829AbiCBOLP (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Mar 2022 09:11:15 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C1C868CD9F
-        for <ceph-devel@vger.kernel.org>; Wed,  2 Mar 2022 06:10:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646230157;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5swNkmYPSGEFEJQlUtEQfEkaj7nkgGR+CfMdUAmvgXc=;
-        b=ZWWiMatDIXhpCJljTWqouyRMKVx9JKG/nAKXxsLOIuCGnBu8dFflQmnlNOixEAOmwJxuin
-        aOloXsZEkGrYajPml9exi9GXdw9oQDyHuqwUUiVat8JT4jo8c1Fk10AQ7uHypJNpgdAHgF
-        I/AWGqbqrTg73vf0tZ6NTq0Y0pL8uCw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-571-elnK2NENPGqFdG8Z8_k1Pg-1; Wed, 02 Mar 2022 09:09:12 -0500
-X-MC-Unique: elnK2NENPGqFdG8Z8_k1Pg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S234995AbiCBPid (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Mar 2022 10:38:33 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78BEE4666B
+        for <ceph-devel@vger.kernel.org>; Wed,  2 Mar 2022 07:37:48 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 06100801AFE;
-        Wed,  2 Mar 2022 14:09:10 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1C7368496F;
-        Wed,  2 Mar 2022 14:09:06 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 19/19] afs: Maintain netfs_i_context::remote_i_size
-From:   David Howells <dhowells@redhat.com>
-To:     linux-cachefs@redhat.com
-Cc:     linux-afs@lists.infradead.org, dhowells@redhat.com,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 02 Mar 2022 14:09:06 +0000
-Message-ID: <164623014626.3564931.8375344024648265358.stgit@warthog.procyon.org.uk>
-In-Reply-To: <164622970143.3564931.3656393397237724303.stgit@warthog.procyon.org.uk>
-References: <164622970143.3564931.3656393397237724303.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/1.4
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0052BB82035
+        for <ceph-devel@vger.kernel.org>; Wed,  2 Mar 2022 15:37:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61872C004E1;
+        Wed,  2 Mar 2022 15:37:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646235465;
+        bh=75aV2bHavbZb0zvDFn5M11UWAQrfK4p8c/lq2voF5O0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BO/jdyLlKcihfJ1ZMkSnA855OExnwbgwcvRsHahtMDYfBD8T/rqNbL0FKun/1tklF
+         Yr2pBqJwBva2UXgqETBhXm43RU+4Ievss5/EncHtxLtMPclNI1lb3Kem/g5CgHO/mE
+         6ljgyhMOk3VzLUvUlSSpox5xY0x7DcwPJu7YgLifmreUeNFbWGHvJupTizK4eAGceo
+         Ytdib0qdH1RRAkO9DdV0+hDN87xtmjmgbsJRZiNoN7nwop0gx+VIdjYyfX3ul/aDE/
+         wOzv1ZRwv/cLCF0cULT66psP1CKApoAKTOnlHAaFi2q9aP5fYGysxSeLa+HJvUbDSp
+         6lROIRtwojgig==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     ceph-devel@vger.kernel.org
+Cc:     idryomov@gmail.com, xiubli@redhat.com
+Subject: [PATCH] libceph: fix last_piece calculation in ceph_msg_data_pages_advance
+Date:   Wed,  2 Mar 2022 10:37:44 -0500
+Message-Id: <20220302153744.43541-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Make afs use netfslib's tracking for the server's idea of what the current
-inode size is independently of inode->i_size.  We really want to use this
-value when calculating the new vnode size when initiating a StoreData RPC
-op rather than the size stat() presents to the user (ie. inode->i_size) as
-the latter is affected by as-yet uncommitted writes.
+It's possible we'll have less than a page's worth of residual data, that
+is stradding the last two pages in the array. That will make it
+incorrectly set the last_piece boolean when it shouldn't.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-cachefs@redhat.com
-cc: linux-afs@lists.infradead.org
+Account for a non-zero cursor->page_offset when advancing.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
+ net/ceph/messenger.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
- fs/afs/inode.c |    1 +
- fs/afs/write.c |    7 +++----
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 5b5e40197655..2fe402483ad5 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -246,6 +246,7 @@ static void afs_apply_status(struct afs_operation *op,
- 		 * idea of what the size should be that's not the same as
- 		 * what's on the server.
- 		 */
-+		vnode->netfs_ctx.remote_i_size = status->size;
- 		if (change_size) {
- 			afs_set_i_size(vnode, status->size);
- 			inode->i_ctime = t;
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index e4b47f67a408..85c9056ba9fb 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -353,9 +353,10 @@ static const struct afs_operation_ops afs_store_data_operation = {
- static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t pos,
- 			  bool laundering)
- {
-+	struct netfs_i_context *ictx = &vnode->netfs_ctx;
- 	struct afs_operation *op;
- 	struct afs_wb_key *wbk = NULL;
--	loff_t size = iov_iter_count(iter), i_size;
-+	loff_t size = iov_iter_count(iter);
- 	int ret = -ENOKEY;
+diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+index d3bb656308b4..3f8453773cc8 100644
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -894,10 +894,9 @@ static bool ceph_msg_data_pages_advance(struct ceph_msg_data_cursor *cursor,
+ 		return false;   /* no more data */
  
- 	_enter("%s{%llx:%llu.%u},%llx,%llx",
-@@ -377,15 +378,13 @@ static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t
- 		return -ENOMEM;
- 	}
- 
--	i_size = i_size_read(&vnode->vfs_inode);
+ 	/* Move on to the next page; offset is already at 0 */
 -
- 	afs_op_set_vnode(op, 0, vnode);
- 	op->file[0].dv_delta = 1;
- 	op->file[0].modification = true;
- 	op->store.write_iter = iter;
- 	op->store.pos = pos;
- 	op->store.size = size;
--	op->store.i_size = max(pos + size, i_size);
-+	op->store.i_size = max(pos + size, ictx->remote_i_size);
- 	op->store.laundering = laundering;
- 	op->mtime = vnode->vfs_inode.i_mtime;
- 	op->flags |= AFS_OPERATION_UNINTR;
-
+ 	BUG_ON(cursor->page_index >= cursor->page_count);
+ 	cursor->page_index++;
+-	cursor->last_piece = cursor->resid <= PAGE_SIZE;
++	cursor->last_piece = cursor->page_offset + cursor->resid <= PAGE_SIZE;
+ 
+ 	return true;
+ }
+-- 
+2.35.1
 
