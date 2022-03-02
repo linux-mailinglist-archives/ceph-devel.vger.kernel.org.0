@@ -2,48 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C93E4C9FF2
-	for <lists+ceph-devel@lfdr.de>; Wed,  2 Mar 2022 09:54:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 777364C9FF4
+	for <lists+ceph-devel@lfdr.de>; Wed,  2 Mar 2022 09:54:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235752AbiCBIzG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 2 Mar 2022 03:55:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51740 "EHLO
+        id S231660AbiCBIzL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 2 Mar 2022 03:55:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231660AbiCBIzF (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Mar 2022 03:55:05 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F2FC35FF12
-        for <ceph-devel@vger.kernel.org>; Wed,  2 Mar 2022 00:54:22 -0800 (PST)
+        with ESMTP id S240259AbiCBIzK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Mar 2022 03:55:10 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5343B5FF2D
+        for <ceph-devel@vger.kernel.org>; Wed,  2 Mar 2022 00:54:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646211261;
+        s=mimecast20190719; t=1646211266;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=J/5yevSOCXz94WPZ10ux99lzPrDEpIwpkCvyTJd4pLs=;
-        b=IBNmF25Zye9lW+ysWPtXxsIrofOuxhiqGpbiNhhnxuntez97B/IVuk+TJ206A/e2fVXBRG
-        efsk4LzOtt4ISX1k6bCAWbv9ukob1hbsdYdUvSggrz0pZb6CZJqE4hOh8l5Zn4H65/PM35
-        m72zjX4CwjE08m6WmnTZssbV7W3GfXc=
+        bh=WcjgSGGQqZabXZBVqDRGvtr5s3kqrhUmGA1CTEaqEoQ=;
+        b=JcwDGSgo4VnzAI1oJD2ITn9k0FPe1N8F6hvmBD12EGDjUiT+NIFR6IpXxnS7pvUg80LcqZ
+        RI/F044JNz9AQIC0iD4ZEoG4ZST62K5SVMidQcTozCsIHVhBxVfKcOmKOpwnko8vVwwJIU
+        vwjdqa/Go5I/gKMSGbkMmIMLteW8pkg=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-416-IYUtJD6vOQ2M3yjxHiSz7A-1; Wed, 02 Mar 2022 03:54:20 -0500
-X-MC-Unique: IYUtJD6vOQ2M3yjxHiSz7A-1
+ us-mta-45-RQpGkEytOr2w6OqxZlh_DA-1; Wed, 02 Mar 2022 03:54:23 -0500
+X-MC-Unique: RQpGkEytOr2w6OqxZlh_DA-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E9A0A1854E21;
-        Wed,  2 Mar 2022 08:54:19 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 325E51091DA1;
+        Wed,  2 Mar 2022 08:54:22 +0000 (UTC)
 Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2F3704D727;
-        Wed,  2 Mar 2022 08:54:17 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6BD71646D0;
+        Wed,  2 Mar 2022 08:54:20 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     jlayton@kernel.org
 Cc:     idryomov@gmail.com, vshankar@redhat.com,
         ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH 1/2] ceph: fix inode reference leakage in ceph_get_snapdir()
-Date:   Wed,  2 Mar 2022 16:54:01 +0800
-Message-Id: <20220302085402.64740-2-xiubli@redhat.com>
+Subject: [PATCH 2/2] ceph: fix a NULL pointer dereference in ceph_handle_caps()
+Date:   Wed,  2 Mar 2022 16:54:02 +0800
+Message-Id: <20220302085402.64740-3-xiubli@redhat.com>
 In-Reply-To: <20220302085402.64740-1-xiubli@redhat.com>
 References: <20220302085402.64740-1-xiubli@redhat.com>
 MIME-Version: 1.0
@@ -61,50 +61,33 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Xiubo Li <xiubli@redhat.com>
 
-The ceph_get_inode() will search for or insert a new inode into the
-hash for the given vino, and return a reference to it. If new is
-non-NULL, its reference is consumed.
-
-We should release the reference when in error handing cases.
+The ceph_find_inode() may will fail and return NULL.
 
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/ceph/inode.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ fs/ceph/caps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 8b0832271fdf..cbeba8a93a07 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -164,13 +164,13 @@ struct inode *ceph_get_snapdir(struct inode *parent)
- 	if (!S_ISDIR(parent->i_mode)) {
- 		pr_warn_once("bad snapdir parent type (mode=0%o)\n",
- 			     parent->i_mode);
--		return ERR_PTR(-ENOTDIR);
-+		goto err;
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 0b36020207fd..0762b55fdbcb 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -4303,7 +4303,6 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ 
+ 	/* lookup ino */
+ 	inode = ceph_find_inode(mdsc->fsc->sb, vino);
+-	ci = ceph_inode(inode);
+ 	dout(" op %s ino %llx.%llx inode %p\n", ceph_cap_op_name(op), vino.ino,
+ 	     vino.snap, inode);
+ 
+@@ -4333,6 +4332,7 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ 		}
+ 		goto flush_cap_releases;
  	}
++	ci = ceph_inode(inode);
  
- 	if (!(inode->i_state & I_NEW) && !S_ISDIR(inode->i_mode)) {
- 		pr_warn_once("bad snapdir inode type (mode=0%o)\n",
- 			     inode->i_mode);
--		return ERR_PTR(-ENOTDIR);
-+		goto err;
- 	}
- 
- 	inode->i_mode = parent->i_mode;
-@@ -190,6 +190,12 @@ struct inode *ceph_get_snapdir(struct inode *parent)
- 	}
- 
- 	return inode;
-+err:
-+	if ((inode->i_state & I_NEW))
-+		discard_new_inode(inode);
-+	else
-+		iput(inode);
-+	return ERR_PTR(-ENOTDIR);
- }
- 
- const struct inode_operations ceph_file_iops = {
+ 	/* these will work even if we don't have a cap yet */
+ 	switch (op) {
 -- 
 2.27.0
 
