@@ -2,67 +2,67 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FDFE4CE54A
-	for <lists+ceph-devel@lfdr.de>; Sat,  5 Mar 2022 15:34:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 436B34CE566
+	for <lists+ceph-devel@lfdr.de>; Sat,  5 Mar 2022 15:56:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231332AbiCEOf2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 5 Mar 2022 09:35:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54374 "EHLO
+        id S231859AbiCEO50 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 5 Mar 2022 09:57:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiCEOf2 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 5 Mar 2022 09:35:28 -0500
+        with ESMTP id S229656AbiCEO5Z (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 5 Mar 2022 09:57:25 -0500
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0583A4162C;
-        Sat,  5 Mar 2022 06:34:38 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A31C9396AE;
+        Sat,  5 Mar 2022 06:56:35 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id AD2E61F38E;
-        Sat,  5 Mar 2022 14:34:36 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 60E481F38E;
+        Sat,  5 Mar 2022 14:56:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1646490876; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1646492194; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=6jvn6usLbCQxA25jgqsaOq2N8KJNQyCUH1bEKc0db2E=;
-        b=Q7CfJfHjazC7014CUJGGnkKeMXAl3lc2wmQBXKwFuTeZo5Ho0FPCZrJ43XfDoUwZ9LwjRG
-        BgrP0SfJhkWS1dKGV7vZEhOwFPB/fc3VVom+5v7/LYdGLAzkwjckYx+hareU1dvZRCDaMf
-        pMvxP0AM5CR8D6zAdsqOTDj8GuQhcHI=
+        bh=Jp5Wvbe6b7Bf06yAjd7FM+rHWIKWVoVK1y8+Zp4O8dw=;
+        b=XmvePgKUuL9Ym+RXKAAweGwNfLsajH4+93iGDbWjnheMuQqOS0Xoas9jAZJDm0GoSdHtnR
+        vdAV1tw0IsDHny0zTWCgOJKYjKhcvNtnvF9uylglGvr2XG1hD4xLw03mbWt/DGge3GCbgk
+        xrosyxSahLs+9AkGMBZp2L7Wt/ccIKo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1646490876;
+        s=susede2_ed25519; t=1646492194;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=6jvn6usLbCQxA25jgqsaOq2N8KJNQyCUH1bEKc0db2E=;
-        b=QCkWaB9jJGkBr3ycD0Hg1xGa5k0pESBOOTA6OhBDklaY1LUFfw/Yst8PQ1LdztG9Br4+4/
-        pvublvB1uWq222Dg==
+        bh=Jp5Wvbe6b7Bf06yAjd7FM+rHWIKWVoVK1y8+Zp4O8dw=;
+        b=4WmqA8beWlH1y1PFB7pNfSB3ps2EiCmHnL22xKoaLmOISE3KSHkZ3j7baUZfWhEkGjHoIF
+        HT7jtf7CZH6/y0DA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 428D813519;
-        Sat,  5 Mar 2022 14:34:36 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EE0F613519;
+        Sat,  5 Mar 2022 14:56:33 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id ZD+WDPx0I2K4WgAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Sat, 05 Mar 2022 14:34:36 +0000
+        id 8abJNiF6I2KMYAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Sat, 05 Mar 2022 14:56:33 +0000
 Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 13ded349;
-        Sat, 5 Mar 2022 14:34:52 +0000 (UTC)
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 4730fb07;
+        Sat, 5 Mar 2022 14:56:49 +0000 (UTC)
 From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
         ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] ceph: add support for encrypted snapshot names
+Subject: Re: [PATCH 0/3] ceph: minor fixes and encrypted snapshot names
 References: <20220304161403.19295-1-lhenriques@suse.de>
-        <20220304161403.19295-4-lhenriques@suse.de>
-        <c3d26fbd7691155cedc06dd44344d868f4d9112a.camel@kernel.org>
-Date:   Sat, 05 Mar 2022 14:34:52 +0000
-In-Reply-To: <c3d26fbd7691155cedc06dd44344d868f4d9112a.camel@kernel.org> (Jeff
-        Layton's message of "Fri, 04 Mar 2022 13:25:44 -0500")
-Message-ID: <87czj0o4c3.fsf@brahms.olymp>
+        <87fsnx4rb3.fsf@brahms.olymp>
+        <e7f91d0be0f41320e5a4f38ded1bde166626a17f.camel@kernel.org>
+Date:   Sat, 05 Mar 2022 14:56:49 +0000
+In-Reply-To: <e7f91d0be0f41320e5a4f38ded1bde166626a17f.camel@kernel.org> (Jeff
+        Layton's message of "Fri, 04 Mar 2022 13:30:50 -0500")
+Message-ID: <878rtoo3bi.fsf@brahms.olymp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
@@ -78,75 +78,63 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 Jeff Layton <jlayton@kernel.org> writes:
 
-> On Fri, 2022-03-04 at 16:14 +0000, Lu=C3=ADs Henriques wrote:
->> Since filenames in encrypted directories are already encrypted and shown
->> as a base64-encoded string when the directory is locked, snapshot names
->> should show a similar behaviour.
+> On Fri, 2022-03-04 at 16:26 +0000, Lu=C3=ADs Henriques wrote:
+>> Lu=C3=ADs Henriques <lhenriques@suse.de> writes:
 >>=20
->> Signed-off-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
->> ---
->>  fs/ceph/dir.c   |  9 +++++++++
->>  fs/ceph/inode.c | 13 +++++++++++++
->>  2 files changed, 22 insertions(+)
+>> > Hi!
+>> >=20
+>> > I'm sending another iteration of the encrypted snapshot names patch.  =
+This
+>> > patch assumes PR#45224 [1] to be merged as it adds support for the
+>> > alternate names.
+>> >=20
+>> > Two notes:
+>> >=20
+>> > 1. Patch 0001 is just a small fix from another fscrypt patch.  It's
+>> >    probably better to simply squash it.
+>> >=20
+>> > 2. I'm not sure how easy it is to hit the UAF fixed by patch 0002.  I =
+can
+>> >    reproduce it easily by commenting the code that adds the
+>> >    DCACHE_NOKEY_NAME flag in patch 0003.
 >>=20
->> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
->> index 934402f5e9e6..17d2f18a1fd1 100644
->> --- a/fs/ceph/dir.c
->> +++ b/fs/ceph/dir.c
->> @@ -1069,6 +1069,15 @@ static int ceph_mkdir(struct user_namespace *mnt_=
-userns, struct inode *dir,
->>  		op =3D CEPH_MDS_OP_MKSNAP;
->>  		dout("mksnap dir %p snap '%pd' dn %p\n", dir,
->>  		     dentry, dentry);
->> +		/*
->> +		 * Encrypted snapshots require d_revalidate to force a
->> +		 * LOOKUPSNAP to cleanup dcache
->> +		 */
->> +		if (IS_ENCRYPTED(dir)) {
->> +			spin_lock(&dentry->d_lock);
->> +			dentry->d_flags |=3D DCACHE_NOKEY_NAME;
->> +			spin_unlock(&dentry->d_lock);
->> +		}
->>  	} else if (ceph_snap(dir) =3D=3D CEPH_NOSNAP) {
->>  		dout("mkdir dir %p dn %p mode 0%ho\n", dir, dentry, mode);
->>  		op =3D CEPH_MDS_OP_MKDIR;
->> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
->> index 8b0832271fdf..357335a11384 100644
->> --- a/fs/ceph/inode.c
->> +++ b/fs/ceph/inode.c
->> @@ -182,6 +182,19 @@ struct inode *ceph_get_snapdir(struct inode *parent)
->>  	ci->i_rbytes =3D 0;
->>  	ci->i_btime =3D ceph_inode(parent)->i_btime;
->>=20=20
->> +	/* if encrypted, just borrow fscrypt_auth from parent */
->> +	if (IS_ENCRYPTED(parent)) {
->> +		struct ceph_inode_info *pci =3D ceph_inode(parent);
->> +
->> +		ci->fscrypt_auth =3D kmemdup(pci->fscrypt_auth,
->> +					   pci->fscrypt_auth_len,
->> +					   GFP_KERNEL);
->> +		if (ci->fscrypt_auth) {
->> +			inode->i_flags |=3D S_ENCRYPTED;
->> +			ci->fscrypt_auth_len =3D pci->fscrypt_auth_len;
->> +		} else
->> +			dout("Failed to alloc memory for fscrypt_auth in snapdir\n");
+>> Obviously, immediately after sending this patchset I realized I failed to
+>> mention a very (*VERY*) important note:
+>>=20
+>> Snapshot names can not start with a '_'.  I think the reason is related
+>> with the 'long snapshot names', but I can't really remember the details
+>> anymore.  The point is that an encrypted snapshot name base64-encoded
+>> *may* end-up starting with an '_' as we're using the base64-url variant.
+>>=20
+>> I really don't know if it's possible to fix that.  I guess that in that
+>> case the user will get an error and fail to create the snapshot but he'll
+>> be clueless because the reason.  Probably a warning can be added to the
+>> kernel logs, but maybe there are other ideas.
+>>=20
 >
-> Should we return an error in this case?
+>
+> Ouch. Is that imposed by the MDS? It'd be best if we could remove that
+> limitation from it altogether if we can.
 
-Yeah, definitely.  I'll add that and send out v2.  Thanks.
+I do remember hitting this limitation in the past, but a quick grep didn't
+show anything in the documentation about it.  This seems to have been
+added to the MDS a *long* time ago, with commit 068553473c82 ("mds: adjust
+trace encoding, clean up snap naming") but (as usual) there aren't a lot
+of details.
+
+>
+> If we can't, then we might be able to get away with prepending all the
+> encrypted names with some legal characte. Then when we go to decrypt it
+> we just strip that off.
+
+This is probably the best way to fix it, but it's worth trying to find
+out the origins of this limitation.  I do seem to remember some obscure
+reasons, related with the long snap names (for which Xiubo has a patch),
+which will start with '_'.  But yeah I'll have to go dig deeper.
+
+> We could also consider changing the base64 routine to use something else
+> in lieu of '_' but that's more of a hassle.
 
 Cheers,
 --=20
 Lu=C3=ADs
-
-
->
->> +	}
->>  	if (inode->i_state & I_NEW) {
->>  		inode->i_op =3D &ceph_snapdir_iops;
->>  		inode->i_fop =3D &ceph_snapdir_fops;
->
-> Seems simple and straightforward at first glance.
-> --=20
-> Jeff Layton <jlayton@kernel.org>
-
