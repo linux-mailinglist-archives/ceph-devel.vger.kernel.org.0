@@ -2,72 +2,73 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 219464D1874
-	for <lists+ceph-devel@lfdr.de>; Tue,  8 Mar 2022 13:57:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 248C44D1896
+	for <lists+ceph-devel@lfdr.de>; Tue,  8 Mar 2022 14:02:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238441AbiCHM6P (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 8 Mar 2022 07:58:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33556 "EHLO
+        id S242757AbiCHNDU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 8 Mar 2022 08:03:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233163AbiCHM6N (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Mar 2022 07:58:13 -0500
+        with ESMTP id S241987AbiCHNDR (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Mar 2022 08:03:17 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A2B8B47563
-        for <ceph-devel@vger.kernel.org>; Tue,  8 Mar 2022 04:57:15 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CD03147AE4
+        for <ceph-devel@vger.kernel.org>; Tue,  8 Mar 2022 05:02:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646744234;
+        s=mimecast20190719; t=1646744540;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=2Q6vEx5WzCr/zAXFQhGnhmlRY+o2THj29T62ZLB50XI=;
-        b=FcVSr0yAOdIMBgJL3FjhgR/xp2gd9TaVCuKobbrzkzz8/DhY9QYCXl5ZbcsDvKTZgqZnjL
-        RuMNq0rxbeUY+UbUtH24nrRrQB8fC7o1kPFiVw6UvisDEimyyBBFfbFC11U5n7DpIMPLEg
-        x60iZzGLvFFQHusLVXQdsQbqfVqfoik=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=Cql/HSNomgYV1o8V0OCNLShCieOItyJLG/C4lpfQMRs=;
+        b=eY/9kJXqWFjnV0KJZ1RgxoGNCZlas9C+WWFPlRJsHzODKEfFT45EdOFvQd7ZngU/erEyeu
+        g/FhgVmH0zLj+KfVNgWTk6G0W4BN4iIlmBjRg0MmW3Tg0Asu8ITdNvplH4frOy+ZQWc29b
+        SEiLJqSEISPE43yQxK6JoP83lqCHX5M=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-588-mIZD8WMGPTaltoreiq8OiQ-1; Tue, 08 Mar 2022 07:57:13 -0500
-X-MC-Unique: mIZD8WMGPTaltoreiq8OiQ-1
-Received: by mail-pj1-f72.google.com with SMTP id j10-20020a17090a7e8a00b001bbef243093so1623146pjl.1
-        for <ceph-devel@vger.kernel.org>; Tue, 08 Mar 2022 04:57:13 -0800 (PST)
+ us-mta-114-uNXO09p0Oh2Ilvltkg4OOA-1; Tue, 08 Mar 2022 08:02:18 -0500
+X-MC-Unique: uNXO09p0Oh2Ilvltkg4OOA-1
+Received: by mail-pl1-f198.google.com with SMTP id u8-20020a170903124800b0015195a5826cso9197967plh.4
+        for <ceph-devel@vger.kernel.org>; Tue, 08 Mar 2022 05:02:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=2Q6vEx5WzCr/zAXFQhGnhmlRY+o2THj29T62ZLB50XI=;
-        b=08+MqMyvJ37F3s9D5RUCWeRhMW927tZIidFdFQqHDRKRXnrpL9xl8SSc5EI0LAkbJB
-         1N85NTdk4npIugmw+tIPTv2KIalgky6u85Nx3tkR8W6/BI2nCfK5RiYtToiWf+1t1STf
-         DyFx3dfOCsOLeHU+oJWn7jtjeD08V8Gq2rOtPDSS0sWfGOaBijxdEwEGHPbA87+fKAlf
-         7cNTqYgr0e9nrnUQdQBh/miDkD8A9Ku9Xcp08apNHCDmqQp5yYhOtIo7ZjA4xzaBrGVF
-         VxInV4dDmjSZD2i7okAYwwjVULxsHrJT7V29w1YIa90ufJ2R3hskFuDIDICnS9/dSHZm
-         Wh1w==
-X-Gm-Message-State: AOAM530AhRHGnJce/Zyxt3tC3v7WKzu9WtJ/0e2YFa5vUBdtBQScx91b
-        7gCoP/WomJbAz1FSuOlmkzJ5o5DEGTNy2Ob60md+ZtxJIWvOA/9sO4bA69zgpOg+aTjPZosLbxu
-        SgjR6vbvFJyk6YBZ0YypdUhjflUioKZ6Av+oM5LnwN2C/YnyRfK1ii4P5v7VOuQw7AfisyYQ=
-X-Received: by 2002:a05:6a00:3099:b0:4f6:d297:5f99 with SMTP id bh25-20020a056a00309900b004f6d2975f99mr18079657pfb.60.1646744232378;
-        Tue, 08 Mar 2022 04:57:12 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJy64ygdAiYTfCVCE61VbDavcdu5tsWNfoip++HQGz3jKwBd5EAsadaMzH4X1V3TN1BI0MT/CQ==
-X-Received: by 2002:a05:6a00:3099:b0:4f6:d297:5f99 with SMTP id bh25-20020a056a00309900b004f6d2975f99mr18079637pfb.60.1646744232010;
-        Tue, 08 Mar 2022 04:57:12 -0800 (PST)
+        bh=Cql/HSNomgYV1o8V0OCNLShCieOItyJLG/C4lpfQMRs=;
+        b=IW4dY+9FjkPt6koNc8DFTJ97M3Xsvuea0ttuolWm2MvBXs/jJu2V2NFYgWrZHuF3n+
+         o1q1D4GouRhc80mSbqoYQPpyaeJEv47YCIlc8hRhCeWemBJcdxJHt2fZwZW86INf5D+S
+         hlwFz64SF+RhBdPxkd0/dN8EjgXTtlNWm8Ar3PKAKNfOLfRZff3oFt3Hhwli6yr0Y7aW
+         EnurLiGcrIQTfe4/pUE7t1tVEwm97WCt4OyQZIpu5QlFl88VRUX6YZKuntLzBchCb2qC
+         A6rPJYKrY4oCbSYGwv9kfsRV2/HTXcp+sbnfxmX28WXWmyN2CE6IMZ2qwIRTNiHknjFG
+         Udpw==
+X-Gm-Message-State: AOAM531HUw3jgVqVUIZE792FbseL6yQKAm5PvPQ5beV0DpT0QEcGkSrN
+        Lb4HayYzqQo2HI7fOpEoir1TgL+7V5WYBmQhXvJ3OP7XShtAMKl3r4AXsFtOGVSW60ZXGA5qYlr
+        YML/FdqVk/CaxJ7f6TGIwea3q5iMi52K2NJM5QFIbi8prlhTvOeEo+2bF556tsqwl8e/xolM=
+X-Received: by 2002:a65:5842:0:b0:374:58b8:2563 with SMTP id s2-20020a655842000000b0037458b82563mr14146734pgr.52.1646744536426;
+        Tue, 08 Mar 2022 05:02:16 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyM4PlWeaDB5nceLxrbgla6QMj2lVp1RfNNFLHu69YB7Zam8GnWsA7MgRNeu5s145lBFvailQ==
+X-Received: by 2002:a65:5842:0:b0:374:58b8:2563 with SMTP id s2-20020a655842000000b0037458b82563mr14146697pgr.52.1646744535869;
+        Tue, 08 Mar 2022 05:02:15 -0800 (PST)
 Received: from [10.72.13.171] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id l62-20020a633e41000000b0037fee1843dbsm10474475pga.25.2022.03.08.04.57.08
+        by smtp.gmail.com with ESMTPSA id z13-20020a63e10d000000b003733d6c90e4sm14728548pgh.82.2022.03.08.05.02.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Mar 2022 04:57:11 -0800 (PST)
-Subject: Re: [PATCH v2 0/4] ceph: forward average read/write/metadata latency
-To:     Venky Shankar <vshankar@redhat.com>, jlayton@redhat.com,
-        idryomov@gmail.com
-Cc:     ceph-devel@vger.kernel.org
-References: <20220308124219.771527-1-vshankar@redhat.com>
+        Tue, 08 Mar 2022 05:02:14 -0800 (PST)
+Subject: Re: [RFC PATCH] libceph: wait for con->work to finish when cancelling
+ con
+To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com
+Cc:     vshankar@redhat.com, ceph-devel@vger.kernel.org
+References: <20220308095948.1294468-1-xiubli@redhat.com>
+ <5c8f08abf692f7f4f4f0112d90c72b8aaa1ab63b.camel@kernel.org>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <4aa814b5-f651-8bde-456c-62003c074215@redhat.com>
-Date:   Tue, 8 Mar 2022 20:57:05 +0800
+Message-ID: <8e6a10af-ee88-12af-537b-f322ff50d93d@redhat.com>
+Date:   Tue, 8 Mar 2022 21:02:09 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <20220308124219.771527-1-vshankar@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <5c8f08abf692f7f4f4f0112d90c72b8aaa1ab63b.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -82,44 +83,45 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 3/8/22 8:42 PM, Venky Shankar wrote:
-> v2
->    - rename to_ceph_timespec() to ktime_to_ceph_timespec()
->    - use ceph_encode_timespec64() helper
+On 3/8/22 7:45 PM, Jeff Layton wrote:
+> On Tue, 2022-03-08 at 17:59 +0800, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> When reconnecting MDS it will reopen the con with new ip address,
+>> but the when opening the con with new address it couldn't be sure
+>> that the stale work has finished. So it's possible that the stale
+>> work queued will use the new data.
+>>
+>> This will use cancel_delayed_work_sync() instead.
+>>
+>> URL: https://tracker.ceph.com/issues/54461
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   net/ceph/messenger.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+>> index d3bb656308b4..32eb5dc00583 100644
+>> --- a/net/ceph/messenger.c
+>> +++ b/net/ceph/messenger.c
+>> @@ -1416,7 +1416,7 @@ static void queue_con(struct ceph_connection *con)
+>>   
+>>   static void cancel_con(struct ceph_connection *con)
+>>   {
+>> -	if (cancel_delayed_work(&con->work)) {
+>> +	if (cancel_delayed_work_sync(&con->work)) {
+>>   		dout("%s %p\n", __func__, con);
+>>   		con->ops->put(con);
+>>   	}
+> Won't this deadlock?
 >
-> Jeff,
->
-> To apply these, please drop commit range f4bf256..840d9f0 from testing branch.
->
-> Right now, cumulative read/write/metadata latencies are tracked
-> and are periodically forwarded to the MDS. These meterics are not
-> particularly useful. A much more useful metric is the average latency
-> and standard deviation (stdev) which is what this series of patches
-> aims to do.
->
-> The userspace (libcephfs+tool) changes are here::
->
->            https://github.com/ceph/ceph/pull/41397
->
-> Note that the cumulative latencies are still forwarded to the MDS but
-> the tool (cephfs-top) ignores it altogether.
->
-> Latency standard deviation is calculated in `cephfs-top` tool.
->
-> Venky Shankar (4):
->    ceph: use ktime_to_timespec64() rather than jiffies_to_timespec64()
->    ceph: track average r/w/m latency
->    ceph: include average/stdev r/w/m latency in mds metrics
->    ceph: use tracked average r/w/m latencies to display metrics in
->      debugfs
->
->   fs/ceph/debugfs.c |  5 ++--
->   fs/ceph/metric.c  | 63 +++++++++++++++++++++++++++--------------------
->   fs/ceph/metric.h  | 63 ++++++++++++++++++++++++++++++-----------------
->   3 files changed, 79 insertions(+), 52 deletions(-)
->
-The series LGTM.
+> This function is called from ceph_con_close with the con->mutex held.
+> The work will try to take the same mutex and will get stuck. If you want
+> to do this, then you may also need to change it to call cancel_con after
+> dropping the mutex.
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+Yeah, correct :-)
+
+- Xiubo
 
 
