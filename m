@@ -2,166 +2,173 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C82C04D27B9
-	for <lists+ceph-devel@lfdr.de>; Wed,  9 Mar 2022 05:07:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 115194D2C64
+	for <lists+ceph-devel@lfdr.de>; Wed,  9 Mar 2022 10:45:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231668AbiCIDW6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 8 Mar 2022 22:22:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46996 "EHLO
+        id S232179AbiCIJp2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 9 Mar 2022 04:45:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231605AbiCIDW5 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Mar 2022 22:22:57 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BB5F415AF22
-        for <ceph-devel@vger.kernel.org>; Tue,  8 Mar 2022 19:21:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646796118;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3Wq4xvWxBRiCC/tuaXNwlLSiMAVLJzfGzMfCjYZ/yOM=;
-        b=Z8EgN5jkgiAlx/rop3bIgFQim74lDLf4OF3dnADYy3oLCoid/+X+4kwhOkbymt8/62fiV4
-        e/iZ2Kcvf6MJbZS0HhpxDMBXZMS5SqiQxezUnmAsHPFk2CrYCgcE1pmrbrjWiFnq3zwnlt
-        c1OHnT7mvcBQsh7q32fOCSz4s8gSpyQ=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-7-Uoh2vQQgPA6Sn5ikdNAUgw-1; Tue, 08 Mar 2022 22:21:57 -0500
-X-MC-Unique: Uoh2vQQgPA6Sn5ikdNAUgw-1
-Received: by mail-pj1-f72.google.com with SMTP id t10-20020a17090a5d8a00b001bed9556134so2917904pji.5
-        for <ceph-devel@vger.kernel.org>; Tue, 08 Mar 2022 19:21:57 -0800 (PST)
+        with ESMTP id S231905AbiCIJp1 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 9 Mar 2022 04:45:27 -0500
+Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0CDC1405FF
+        for <ceph-devel@vger.kernel.org>; Wed,  9 Mar 2022 01:44:28 -0800 (PST)
+Received: by mail-vs1-xe36.google.com with SMTP id u124so1626009vsb.10
+        for <ceph-devel@vger.kernel.org>; Wed, 09 Mar 2022 01:44:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=B/eaqdxBnbb6HucScnd5BlJir7S3zhxtPTS5yrwxe4o=;
+        b=i8P/Dlyc6RfYqpfzILBZ5p7RyAnsN9KoPTk9EjczMGX2WLWH2OHwt9PidRLyTe+VBg
+         3HD2azoIVWQgWGH8RsJOcY+tmNgOVilhRqDjD4TqNm9gPQ7Cn5XzgPpOh7KMb8Qo9waO
+         w0DJ5Ky/Wmvq/5wMIVHy5jYhB/dUMYILgeR+5P42uCn+4+0IDle+rkTcQ/l0iCM7q944
+         6dum5NK78GyQ0Fd2E3HchtLlscCFMFHmONKVC8J1QtSCF7LPmljRJ1vEYpYF8f8Baupl
+         jDXw5KiRFpeOWAsrTYRr+Qehu7NbBNDLlfYegdjCKOjZC+AJ87+KU3rsyFT2/Y+3sPRH
+         1vEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=3Wq4xvWxBRiCC/tuaXNwlLSiMAVLJzfGzMfCjYZ/yOM=;
-        b=xhFEHSmTt6pFvRmoPxEZ7r03atUM9vvs5axSK9EXEuFskHk9inOPPAh0/IzD0mVevA
-         uNXOPrIfjtyH6b9hAoxQY88XfXEt2loO4KFBvZfQhqc8JcBBo/N4xdOnX5Yh8hyPM1G0
-         CJI43eDM1jtzz+GGKw0zYLA6cVWDGdMkwGHoe2vqhyT1kkzi/6s7fuS12VklKxxiblNS
-         T9PzkPNQGnueaoRofk5+MiMMtqDK69GVYp6gA412FFF2wuPQIXNjJhWCR8ENhi8kM32n
-         mm2bbfmt6nSPm4v8Ef2XNRU+28HZ6fPIhTsBkMoxr5fD+9IilLaQAmjwrnrtgB1Yo9Gd
-         kGrw==
-X-Gm-Message-State: AOAM531eBtKTBkuizJauK0BaqdoQ9fFL33tmXFzlAj6fKv1ffNz8ST0G
-        9BvCROEypkzfc2BaOemWxQWvOBCj/dJhgXg30ASgeaAe+isrWGoH8GreuhEdUlB5GsXe79KfXIg
-        ZwNRbMPVZpCwy0NvkItaEaESTVCuYM+XN+PTWFt23TEPxeb5upm0tENCaTHFc09oAf7IqHNw=
-X-Received: by 2002:a17:90b:17ca:b0:1bf:6188:cb5e with SMTP id me10-20020a17090b17ca00b001bf6188cb5emr8091747pjb.89.1646796116270;
-        Tue, 08 Mar 2022 19:21:56 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxwG3kXMbl2f2vSkJHOxSPF2Nory8QW15OiyEb8OfPRd8w9f2jRiSPCDLatV3uEBzo7ZFzymQ==
-X-Received: by 2002:a17:90b:17ca:b0:1bf:6188:cb5e with SMTP id me10-20020a17090b17ca00b001bf6188cb5emr8091726pjb.89.1646796115819;
-        Tue, 08 Mar 2022 19:21:55 -0800 (PST)
-Received: from [10.72.13.171] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id g28-20020a63111c000000b00374646abc42sm493607pgl.36.2022.03.08.19.21.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Mar 2022 19:21:54 -0800 (PST)
-Subject: Re: [PATCH v5] ceph: do not dencrypt the dentry name twice for
- readdir
-To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
-Cc:     jlayton@kernel.org, idryomov@gmail.com, vshankar@redhat.com,
-        ceph-devel@vger.kernel.org
-References: <20220305122527.1102109-1-xiubli@redhat.com>
- <87h788z67y.fsf@brahms.olymp>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <a5d1050b-c922-e5a8-8cee-4b74b4695b73@redhat.com>
-Date:   Wed, 9 Mar 2022 11:21:48 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=B/eaqdxBnbb6HucScnd5BlJir7S3zhxtPTS5yrwxe4o=;
+        b=KSloB6yIRFKkXHhyJssisW4vvJ7CDTVEGaDkvlCoWULtwK9VGBSCcSgnndGrHTGSjQ
+         YN6EIPMpuMkNnn0tNAgkFvxNm7I/Ew/JYmsHcGREgBio/CSYJ07lUS1N4rfVI7kBYo2H
+         XzPEvgfiCq9S2fLZ6tPv8vJsg6WBUXV+NU8ffZIYhrq5dMcQC10r4817HUmwgEw4phgo
+         z4/Suldt6jiMl3zLtnv2RGewb6TR3Ee7UhgcDHsbxP9roDhojIeddd8fs9hlaGRAyIUp
+         lRZIk3a8wzBRvmtJPCtXiB7ZEsADCQyhblGF8GY1EWtL4hQuN+DkS7/awm+FhJjQwOwM
+         OUcQ==
+X-Gm-Message-State: AOAM533MaDthLk47X7DL4XmpPNL3tevhX234Hd+Bc8Cj99pXkvmPKbin
+        9Lahx2OZYzjwSyVyNLOmtDQxmZrQPj0wejG4UFY=
+X-Google-Smtp-Source: ABdhPJzwAvhGpqHJksSBs9sQKfq9nvemtu9ogZfj2ASCCqPZ8qnhA9OUPrfMxNe0dVKzAA0qNe7dMZVco5uPQ5EP8Rg=
+X-Received: by 2002:a67:efca:0:b0:320:9220:daff with SMTP id
+ s10-20020a67efca000000b003209220daffmr9074786vsp.57.1646819067725; Wed, 09
+ Mar 2022 01:44:27 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <87h788z67y.fsf@brahms.olymp>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20220308132322.1309992-1-xiubli@redhat.com> <d8836bda20bdf1c23a42045e002d99165481230e.camel@kernel.org>
+ <e4f01a2b-5237-7aaf-75db-4f18a63c42e1@redhat.com> <CAOi1vP8njuV0HVmP+K+ehHdW07frc6wJ8GcJe3DhVK=Wv6Vi4w@mail.gmail.com>
+ <6cd01bfa-3e50-29b4-d20d-4672abc5a2b0@redhat.com>
+In-Reply-To: <6cd01bfa-3e50-29b4-d20d-4672abc5a2b0@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Wed, 9 Mar 2022 10:44:56 +0100
+Message-ID: <CAOi1vP_eQKMqRpbfUgpaorm+NxFTOsiFSBcmaa6Tj4iRnYQL=Q@mail.gmail.com>
+Subject: Re: [PATCH v2] libceph: wait for con->work to finish when cancelling con
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Venky Shankar <vshankar@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Wed, Mar 9, 2022 at 2:47 AM Xiubo Li <xiubli@redhat.com> wrote:
+>
+>
+> On 3/8/22 11:36 PM, Ilya Dryomov wrote:
+> > On Tue, Mar 8, 2022 at 3:24 PM Xiubo Li <xiubli@redhat.com> wrote:
+> >>
+> >> On 3/8/22 9:37 PM, Jeff Layton wrote:
+> >>> On Tue, 2022-03-08 at 21:23 +0800, xiubli@redhat.com wrote:
+> >>>> From: Xiubo Li <xiubli@redhat.com>
+> >>>>
+> >>>> When reconnecting MDS it will reopen the con with new ip address,
+> >>>> but the when opening the con with new address it couldn't be sure
+> >>>> that the stale work has finished. So it's possible that the stale
+> >>>> work queued will use the new data.
+> >>>>
+> >>>> This will use cancel_delayed_work_sync() instead.
+> >>>>
+> >>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> >>>> ---
+> >>>>
+> >>>> V2:
+> >>>> - Call cancel_con() after dropping the mutex
+> >>>>
+> >>>>
+> >>>>    net/ceph/messenger.c | 4 ++--
+> >>>>    1 file changed, 2 insertions(+), 2 deletions(-)
+> >>>>
+> >>>> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+> >>>> index d3bb656308b4..62e39f63f94c 100644
+> >>>> --- a/net/ceph/messenger.c
+> >>>> +++ b/net/ceph/messenger.c
+> >>>> @@ -581,8 +581,8 @@ void ceph_con_close(struct ceph_connection *con)
+> >>>>
+> >>>>       ceph_con_reset_protocol(con);
+> >>>>       ceph_con_reset_session(con);
+> >>>> -    cancel_con(con);
+> >>>>       mutex_unlock(&con->mutex);
+> >>>> +    cancel_con(con);
+> >>> Now the question is: Is it safe to cancel this work outside the mutex or
+> >>> will this open up any races. Unfortunately with coarse-grained locks
+> >>> like this, it's hard to tell what the lock actually protects.
+> >>>
+> >>> If we need to keep the cancel inside the lock for some reason, you could
+> >>> instead just add a "flush_workqueue()" after dropping the mutex in the
+> >>> above function.
+> >>>
+> >>> So, this looks reasonable to me at first glance, but I'd like Ilya to
+> >>> ack this before we merge it.
+> >> IMO it should be okay, since the 'queue_con(con)', which doing the
+> >> similar things, also outside the mutex.
+> > Hi Xiubo,
+> >
+> > I read the patch description and skimmed through the linked trackers
+> > but I don't understand the issue.  ceph_con_workfn() holds con->mutex
+> > for most of the time it's running and cancel_delayed_work() is called
+> > under the same con->mutex.  It's true that ceph_con_workfn() work may
+> > not be finished by the time ceph_con_close() returns but I don't see
+> > how that can result in anything bad happening.
+> >
+> > Can you explain the issue in more detail, with pointers to specific
+> > code snippets in the MDS client and the messenger?  Where exactly is
+> > the "new data" (what data, please be specific) gets misused by the
+> > "stale work"?
+>
+> The tracker I attached in V1 is not exact, please ignore that.
+>
+>  From the current code, there has one case that for ceph fs in
+> send_mds_reconnect():
+>
+> 4256         ceph_con_close(&session->s_con);
+> 4257         ceph_con_open(&session->s_con,
+> 4258                       CEPH_ENTITY_TYPE_MDS, mds,
+> 4259                       ceph_mdsmap_get_addr(mdsc->mdsmap, mds));
+>
+> If in ceph_con_close() just before cancelling the con->work, it was
+> already fired but then the queue thread was just scheduled out when the
+> con->work was trying to take the con->mutex.
+>
+> And then in ceph_con_open() it will update the con->state to
+> 'CEPH_CON_S_PREOPEN' and other members then queue the con->work again.
 
-On 3/9/22 1:47 AM, Luís Henriques wrote:
-> xiubli@redhat.com writes:
->
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> For the readdir request the dentries will be pasred and dencrypted
->> in ceph_readdir_prepopulate(). And in ceph_readdir() we could just
->> get the dentry name from the dentry cache instead of parsing and
->> dencrypting them again. This could improve performance.
->>
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>
->> V5:
->> - fix typo of CEPH_ENCRYPTED_LONG_SNAP_NAME_MAX macro
->> - release the rde->dentry in destroy_reply_info
->>
->>
->>   fs/ceph/crypto.h     |  8 ++++++
->>   fs/ceph/dir.c        | 59 +++++++++++++++++++++-----------------------
->>   fs/ceph/inode.c      |  7 ++++++
->>   fs/ceph/mds_client.c |  2 ++
->>   fs/ceph/mds_client.h |  1 +
->>   5 files changed, 46 insertions(+), 31 deletions(-)
->>
->> diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
->> index 1e08f8a64ad6..c85cb8c8bd79 100644
->> --- a/fs/ceph/crypto.h
->> +++ b/fs/ceph/crypto.h
->> @@ -83,6 +83,14 @@ static inline u32 ceph_fscrypt_auth_len(struct ceph_fscrypt_auth *fa)
->>    */
->>   #define CEPH_NOHASH_NAME_MAX (189 - SHA256_DIGEST_SIZE)
->>   
->> +/*
->> + * The encrypted long snap name will be in format of
->> + * "_${ENCRYPTED-LONG-SNAP-NAME}_${INODE-NUM}". And will set the max longth
->> + * to sizeof('_') + NAME_MAX + sizeof('_') + max of sizeof(${INO}) + extra 7
->> + * bytes to align the total size to 8 bytes.
->> + */
->> +#define CEPH_ENCRYPTED_LONG_SNAP_NAME_MAX (1 + 255 + 1 + 16 + 7)
->> +
-> I think this constant needs to be defined in a different way and we need
-> to keep the snapshots names length a bit shorter than NAME_MAX.  And I'm
-> not talking just about the encrypted snapshots.
->
-> Right now, ceph PR#45192 fixes an MDS limitation that is keeping long
-> snapshot names smaller than 80 characters.  With this limitation we would
-> need to keep the snapshot names < 64:
->
->     '_' + <name> + '_' + '<inode#>' '\0'
->      1  +   64   +  1  +    12     +  1 = 80
->
-> Note however that currently clients *do* allow to create snapshots with
-> bigger names.  And if we do that we'll get an error when doing an LSSNAP
-> on a .snap subdirectory that will contain the corresponding long name:
->
->    # mkdir a/.snap/123456qwertasdfgzxcvb7890yuiophjklnm123456qwertasdfgzxcvb78912345
->    # ls -li a/b/.snap
->    ls: a/b/.snap/_123456qwertasdfgzxcvb7890yuiophjklnm123456qwertasdfgzxcvb78912345_109951162777: No such file or directory
->
-> We can limit the snapshot names on creation, but this should probably be
-> handled on the MDS side (so that old clients won't break anything).  Does
-> this make sense?  I can work on an MDS patch for this but... to which
-> length should names be limited? NAME_MAX - (2*'_' + <inode len>)?  Or
-> should we take base64-encoded names already into account?
->
-> (Sorry, I'm jumping around between PRs and patches, and trying to make any
-> sense out of the snapshots code :-/ )
+But ceph_con_close() releases con->mutex before returning, so the
+work that was trying to grab con->mutex would immediately grab it,
+encounter CEPH_CON_S_CLOSED and bail.
 
-For fscrypt case I think it's okay, because the max len of the encrypted 
-name will be 189 bytes, so even plusing the extra 2 * sizeof('_') - 
-sizeof(<inode#>)  == 15 bytes with ceph PR#41592 it should work well.
+>
+> That means the con->work will be run twice with the state
+> 'CEPH_CON_S_PREOPEN'.
 
-But for none fscrypt case, we must limit the max len to NAME_MAX - 2 * 
-sizeof('_') - sizeof(<inode#>) == 255 - 2 - 13 == 240. So fixing this in 
-MDS side makes sense IMO.
+... so this is very unlikely.  But even it happens somehow, again
+I don't see how that can result in anything bad happening: whoever
+sees CEPH_CON_S_PREOPEN first would transition con to the initial
+"opening" state (e.g. CEPH_CON_S_V1_BANNER for msgr1).
 
-- Xiubo
+>
+> I am not sure whether will this cause strange issues like the URL I
+> attached in V1.
 
-> Cheers,
+Until you can pin point the messenger as the root cause of those
+issues, I'd recommend dropping this patch.
 
+Thanks,
+
+                Ilya
