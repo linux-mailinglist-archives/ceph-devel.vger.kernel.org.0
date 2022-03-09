@@ -2,141 +2,134 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AFBB24D257F
-	for <lists+ceph-devel@lfdr.de>; Wed,  9 Mar 2022 02:14:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B48C54D2585
+	for <lists+ceph-devel@lfdr.de>; Wed,  9 Mar 2022 02:14:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229833AbiCIBE3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 8 Mar 2022 20:04:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47126 "EHLO
+        id S229899AbiCIBHK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 8 Mar 2022 20:07:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229797AbiCIBD6 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Mar 2022 20:03:58 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ADABA26E2B6
-        for <ceph-devel@vger.kernel.org>; Tue,  8 Mar 2022 16:41:14 -0800 (PST)
+        with ESMTP id S229732AbiCIBHD (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Mar 2022 20:07:03 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 235741390C4
+        for <ceph-devel@vger.kernel.org>; Tue,  8 Mar 2022 16:46:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646786473;
+        s=mimecast20190719; t=1646786785;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=p+pgcNpWd9Z0Lg44C5ppkgCdlhM7jaOoTuVvdLpsIEA=;
-        b=dFODF/usA6C+pnJ+t9+8Kq5vJjoCqX0xNdVCaP6lj8o1srf/nMRlilqASr91402EqWG3zB
-        JPmj9FAc3DR2p90ENlo1gcu3kjpoob8wnmLs1dXYfq4RcLPG7DeUSpynYoG5Zjw2oRhxcs
-        WQF8QNxX0yxp8tmGr2vPtSlJoj+kAp0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=J1HoSNHaKJxiXTIro01sKw6b2jsQX8ctyZCofPBbDWY=;
+        b=WX183+6lmw1Ud6E2LVnt0hsVYYJUSsZpCWli6vb2C+4I2f2hnJoAVyJ2ZAY4GkNFapllPJ
+        vMvE2Qxn6j3izBwm3wQ98INHlTxnsjxPKkTxA3aE5Tge38AELo7nYbdkyEEZpiVrMADCve
+        4LNOBIhC2peYiOXent7c8ioqrC2gMuM=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-433-x6cLh8qPM5mvnMPkDZgq8w-1; Tue, 08 Mar 2022 18:30:07 -0500
-X-MC-Unique: x6cLh8qPM5mvnMPkDZgq8w-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DE1671006AA9;
-        Tue,  8 Mar 2022 23:30:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D9F755DBA7;
-        Tue,  8 Mar 2022 23:30:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v2 19/19] afs: Maintain netfs_i_context::remote_i_size
-From:   David Howells <dhowells@redhat.com>
-To:     linux-cachefs@redhat.com
-Cc:     linux-afs@lists.infradead.org, dhowells@redhat.com,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 08 Mar 2022 23:30:02 +0000
-Message-ID: <164678220204.1200972.17408022517463940584.stgit@warthog.procyon.org.uk>
-In-Reply-To: <164678185692.1200972.597611902374126174.stgit@warthog.procyon.org.uk>
-References: <164678185692.1200972.597611902374126174.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/1.4
+ us-mta-191-FNKkuaxmOyKCDLL7lVr9uQ-1; Tue, 08 Mar 2022 19:46:24 -0500
+X-MC-Unique: FNKkuaxmOyKCDLL7lVr9uQ-1
+Received: by mail-pj1-f70.google.com with SMTP id c14-20020a17090a674e00b001bf1c750f9bso2658454pjm.9
+        for <ceph-devel@vger.kernel.org>; Tue, 08 Mar 2022 16:46:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=J1HoSNHaKJxiXTIro01sKw6b2jsQX8ctyZCofPBbDWY=;
+        b=0Rt0GJhbC4ToCdC+l7jaHFC0JUJPyb5PN/THwF3Njv8JtB1laauW+mKBgRqxwfuDUf
+         yOGFM76OUHfeViNU6AHkEnmqGUJnEkskWoTdIZYuFXbTzsILTrt19qe6urrvBOTuC4wX
+         R1UQHbfZ7aHOi9wJtlQi9lnLC/T3pQS3zHZ6PPNL2/TsQWjHVCcGSHUlutcrqUpG7ay6
+         dMzHf1LoRGPMfTKhNzxyH3VvBBmlcEzSMUcMYa8epJuXA5H41lPWWnWhzvYV/4VYWyFp
+         33cLHOieRHrLseB0AmkyRDfhnX1a1XGRFZJpGDwjDnHNqsnQ1P3w9w99+cOw09k1TVqg
+         6lCA==
+X-Gm-Message-State: AOAM532DkZguM9lB+30n1MYaw7JFeYGD3dYGJmfrRqktqbVjPlrfiLZ+
+        0GXt5uEsQe7hqpCezwXULfiXlUOcmqm/4Axu63DEAsqNja0H0gRfjrzBP+i/hx+Jx80IeILukSR
+        +iqwZErKa41d1DiBthISTnR7lkbTB7l7t5f+K8Q2KyfP+ogf7gajnQ90OrsmGEQSJdrDQJsU=
+X-Received: by 2002:a17:902:8f8b:b0:149:6639:4b86 with SMTP id z11-20020a1709028f8b00b0014966394b86mr20860769plo.60.1646786782792;
+        Tue, 08 Mar 2022 16:46:22 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyK218gI8qvzEu2jwJtIkXPC0XgjQoJSFNOGjF0lMzEAT4nMn9XwPDRLk6g9+o5YQCL+A7wmg==
+X-Received: by 2002:a17:902:8f8b:b0:149:6639:4b86 with SMTP id z11-20020a1709028f8b00b0014966394b86mr20860755plo.60.1646786782417;
+        Tue, 08 Mar 2022 16:46:22 -0800 (PST)
+Received: from [10.72.13.171] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id j16-20020a63e750000000b00373598b8cbfsm271938pgk.74.2022.03.08.16.46.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 08 Mar 2022 16:46:21 -0800 (PST)
+Subject: Re: [PATCH v3] ceph: fix memory leakage in ceph_readdir
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
+References: <20220305115259.1076790-1-xiubli@redhat.com>
+ <008e0b72ab9412afe8f2dcf9f47ad4f000c44228.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <dea9ffeb-fae0-9b33-2787-f46e7ffbd277@redhat.com>
+Date:   Wed, 9 Mar 2022 08:46:16 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <008e0b72ab9412afe8f2dcf9f47ad4f000c44228.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+Content-Language: en-US
 X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Make afs use netfslib's tracking for the server's idea of what the current
-inode size is independently of inode->i_size.  We really want to use this
-value when calculating the new vnode size when initiating a StoreData RPC
-op rather than the size stat() presents to the user (ie. inode->i_size) as
-the latter is affected by as-yet uncommitted writes.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-cachefs@redhat.com
-cc: linux-afs@lists.infradead.org
+On 3/8/22 11:06 PM, Jeff Layton wrote:
+> On Sat, 2022-03-05 at 19:52 +0800, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> Reset the last_readdir at the same time.
+>>
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/ceph/dir.c | 11 ++++++++++-
+>>   1 file changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+>> index 6be0c1f793c2..6df2a91af236 100644
+>> --- a/fs/ceph/dir.c
+>> +++ b/fs/ceph/dir.c
+>> @@ -498,8 +498,11 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+>>   					2 : (fpos_off(rde->offset) + 1);
+>>   			err = note_last_dentry(dfi, rde->name, rde->name_len,
+>>   					       next_offset);
+>> -			if (err)
+>> +			if (err) {
+>> +				ceph_mdsc_put_request(dfi->last_readdir);
+>> +				dfi->last_readdir = NULL;
+>>   				goto out;
+>> +			}
+> Looks good, but this doesn't apply cleanly to the testing branch since
+> it still does a "return 0" there instead of "goto out". I adapted it to
+> work with testing branch and will do some testing with it today.
+>
+I think I was working on the wip-fscrypt branch. Thanks Jeff.
 
-Link: https://lore.kernel.org/r/164623014626.3564931.8375344024648265358.stgit@warthog.procyon.org.uk/ # v1
----
+- Xiubo
 
- fs/afs/inode.c |    1 +
- fs/afs/write.c |    7 +++----
- 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 5b5e40197655..2fe402483ad5 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -246,6 +246,7 @@ static void afs_apply_status(struct afs_operation *op,
- 		 * idea of what the size should be that's not the same as
- 		 * what's on the server.
- 		 */
-+		vnode->netfs_ctx.remote_i_size = status->size;
- 		if (change_size) {
- 			afs_set_i_size(vnode, status->size);
- 			inode->i_ctime = t;
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index e4b47f67a408..85c9056ba9fb 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -353,9 +353,10 @@ static const struct afs_operation_ops afs_store_data_operation = {
- static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t pos,
- 			  bool laundering)
- {
-+	struct netfs_i_context *ictx = &vnode->netfs_ctx;
- 	struct afs_operation *op;
- 	struct afs_wb_key *wbk = NULL;
--	loff_t size = iov_iter_count(iter), i_size;
-+	loff_t size = iov_iter_count(iter);
- 	int ret = -ENOKEY;
- 
- 	_enter("%s{%llx:%llu.%u},%llx,%llx",
-@@ -377,15 +378,13 @@ static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t
- 		return -ENOMEM;
- 	}
- 
--	i_size = i_size_read(&vnode->vfs_inode);
--
- 	afs_op_set_vnode(op, 0, vnode);
- 	op->file[0].dv_delta = 1;
- 	op->file[0].modification = true;
- 	op->store.write_iter = iter;
- 	op->store.pos = pos;
- 	op->store.size = size;
--	op->store.i_size = max(pos + size, i_size);
-+	op->store.i_size = max(pos + size, ictx->remote_i_size);
- 	op->store.laundering = laundering;
- 	op->mtime = vnode->vfs_inode.i_mtime;
- 	op->flags |= AFS_OPERATION_UNINTR;
-
+>>   		} else if (req->r_reply_info.dir_end) {
+>>   			dfi->next_offset = 2;
+>>   			/* keep last name */
+>> @@ -552,6 +555,12 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+>>   		if (!dir_emit(ctx, oname.name, oname.len,
+>>   			      ceph_present_ino(inode->i_sb, le64_to_cpu(rde->inode.in->ino)),
+>>   			      le32_to_cpu(rde->inode.in->mode) >> 12)) {
+>> +			/*
+>> +			 * NOTE: Here no need to put the 'dfi->last_readdir',
+>> +			 * because when dir_emit stops us it's most likely
+>> +			 * doesn't have enough memory, etc. So for next readdir
+>> +			 * it will continue.
+>> +			 */
+>>   			dout("filldir stopping us...\n");
+>>   			err = 0;
+>>   			goto out;
 
