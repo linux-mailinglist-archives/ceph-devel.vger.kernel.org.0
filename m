@@ -2,59 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CCFE4D2CDC
-	for <lists+ceph-devel@lfdr.de>; Wed,  9 Mar 2022 11:12:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B93204D2CF3
+	for <lists+ceph-devel@lfdr.de>; Wed,  9 Mar 2022 11:17:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229536AbiCIKMj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 9 Mar 2022 05:12:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37774 "EHLO
+        id S229668AbiCIKS3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 9 Mar 2022 05:18:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbiCIKMj (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 9 Mar 2022 05:12:39 -0500
+        with ESMTP id S229492AbiCIKSZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 9 Mar 2022 05:18:25 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A8EF916A591
-        for <ceph-devel@vger.kernel.org>; Wed,  9 Mar 2022 02:11:37 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2E40916A5BC
+        for <ceph-devel@vger.kernel.org>; Wed,  9 Mar 2022 02:17:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646820696;
+        s=mimecast20190719; t=1646821044;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Cbfb366ZkDSzxZK5jYsxwTNE/kSKHXFjtV5zW8Uhs+w=;
-        b=iAE7svMQJrdnSIZ02b5SBFSfEXDTzfaiwAYZvdDaha33bY+5115ASBplDPqJdJeuCkajdA
-        7n1U6tp7qx6ETJw0uGv5bAE7MmWWE6NRXxYkFKDMoznt+/ghlDtvRK7gbpFN6UfLeoqwi9
-        4XCtUMOgnho+cZdUwYb9aMHu+cvOiK4=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=5Mb3Dzv4PuVTfwuOZ3U/bZUkm14X1FBnu7l0ZDO/Cy0=;
+        b=gAryzCgyiWywmhVcoRxHl8+YllhGUmeL/6bsUI3IG1U7tuD7oz4Q0nHpUxPAkmfuP1CLG1
+        mHi6PdcpHqWwRRjY/OusWs93SBcO0n3ZFKriMgeS3jOQaqICP23AruA5ai/u7RwlY443fV
+        z66mOlK7Ls7k4RPEaYD1vql0SRykxkk=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-427-NALdZ9j-P7SuZ8xxvZxaYA-1; Wed, 09 Mar 2022 05:11:35 -0500
-X-MC-Unique: NALdZ9j-P7SuZ8xxvZxaYA-1
-Received: by mail-pj1-f71.google.com with SMTP id e14-20020a17090a684e00b001bf09ac2385so1300960pjm.1
-        for <ceph-devel@vger.kernel.org>; Wed, 09 Mar 2022 02:11:35 -0800 (PST)
+ us-mta-621-MQ_3_PhqPeC51U19K9KYuw-1; Wed, 09 Mar 2022 05:17:23 -0500
+X-MC-Unique: MQ_3_PhqPeC51U19K9KYuw-1
+Received: by mail-pl1-f199.google.com with SMTP id p20-20020a170902e35400b00151c5d5a3b6so915091plc.9
+        for <ceph-devel@vger.kernel.org>; Wed, 09 Mar 2022 02:17:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=Cbfb366ZkDSzxZK5jYsxwTNE/kSKHXFjtV5zW8Uhs+w=;
-        b=xmJiswAzEXrs7kw0UpJdPLevc98isaHVL77XEvo1DHH7v3Q4K1jZBAp8pKGRtWD3+8
-         /scMeSNrkjMzx0i983wFrb7L26/Jv3CNGR5mpf9WgTxgGXXbKjq6565Q+yCiHQyD46f3
-         9ai7TmTjp93mhNfWWXmVQ3ldWgJYKZB/h9EAnQMU3a2VUzgwLEKOxc4otzeHvj0EVgwl
-         zI/FBoK7LIrwyjsUi44Es7fnBfVCvoRydPZWB0MABulAa5aT9YAGeG2MoYI9ZfsWcDPv
-         /jNA72s8NoX98lPKQRem0+JOSsfdnPXTOtZ2qtsgnTQWtqZhNur9MuvIJJQ3D5PKZ2pJ
-         pcVQ==
-X-Gm-Message-State: AOAM533qTvZ9evuL2Uj3fvowGL4/b3S0/0Gi0ToXXyfchT8+FA35evtP
-        Zc1Y+ytPoyXsNQDNLQuHpYnbY8RyNxbwKlnbLQTQ1qIYVp8d63aTts7f1OnVLXPwygstzZktkNp
-        NZ+g5Vcr2BdSJPVRvaE0kZ/+NvzFWhSn2zEczxJYJ2AdXdmptAMAXlT1ogoZ9NgBRB3qO/MM=
-X-Received: by 2002:a05:6a00:2402:b0:4e1:3df2:5373 with SMTP id z2-20020a056a00240200b004e13df25373mr22489189pfh.40.1646820693961;
-        Wed, 09 Mar 2022 02:11:33 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxmbXGZ+9ncuZD1NDPes+76iDkr13m8C2jdbHJQ7FK7zBuFf9uHKe8neY2OK3NHbv+P44M5gQ==
-X-Received: by 2002:a05:6a00:2402:b0:4e1:3df2:5373 with SMTP id z2-20020a056a00240200b004e13df25373mr22489148pfh.40.1646820693553;
-        Wed, 09 Mar 2022 02:11:33 -0800 (PST)
+        bh=5Mb3Dzv4PuVTfwuOZ3U/bZUkm14X1FBnu7l0ZDO/Cy0=;
+        b=MV5WtBVEv1w77AGFz7sBwDb0uwhzFI4knW/4mIF8EA1lcltUplzJziaDb1fkVx//lr
+         mWL1ZM2hMXMTcqB2pv26C6tNr0JJ6b/gDfTvg4IL7Sgb/EP084KPeDetrioLN/w8W7vK
+         TiVrGzjHPOeEbPs5MtFaW38oARu8Y4T9+oYozWEsy0d3cTv1WGuy2nfX+QCmuCbMixR7
+         Z6E4O8SY8aeDmBsa3D3neClN/zCUrKhqrc2ra5nnaZP/5UZXGmqiV++cw4EHVDUZt4qm
+         xQ4++d+dN3A2X8KtkcT4n8z8g69kkCfsWeZLXqH9G5dllI/bXxR0fqMMAx5kMbruOZ3i
+         SZFQ==
+X-Gm-Message-State: AOAM5331kOUFByVEpR738su20DJc2VNi6dObFV0enPdAxSwMuBuXKkxO
+        WBpiGDXu+gsYgTqgBShJ6R87XVBGc94dmC/Y1oTd0VyMBnOLM8PQzs1EhyK+FTZ46x0lZ4TPDBc
+        Wa2CdMEIBVIcNsG2CHeA4VA1yfSQmJ274sxWjhh5XZKsVrAXfjY2jnpvLuP6jRalpra2w7GQ=
+X-Received: by 2002:a63:85c8:0:b0:380:3444:d682 with SMTP id u191-20020a6385c8000000b003803444d682mr13008330pgd.163.1646821040793;
+        Wed, 09 Mar 2022 02:17:20 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzwcQDWydB1CqP76vtExp63A1lmJ5LN5wX8ochf7jnTPs5QQHfCT++SyVA/3uSHWf6z9ddPYQ==
+X-Received: by 2002:a63:85c8:0:b0:380:3444:d682 with SMTP id u191-20020a6385c8000000b003803444d682mr13008308pgd.163.1646821040405;
+        Wed, 09 Mar 2022 02:17:20 -0800 (PST)
 Received: from [10.72.13.171] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id b16-20020a056a00115000b004f6ff260c9esm2181671pfm.207.2022.03.09.02.11.29
+        by smtp.gmail.com with ESMTPSA id h2-20020a056a00218200b004f6519ce666sm2376908pfi.170.2022.03.09.02.17.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Mar 2022 02:11:31 -0800 (PST)
+        Wed, 09 Mar 2022 02:17:19 -0800 (PST)
 Subject: Re: [PATCH v5] ceph: do not dencrypt the dentry name twice for
  readdir
 To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
@@ -65,8 +65,8 @@ References: <20220305122527.1102109-1-xiubli@redhat.com>
  <a5d1050b-c922-e5a8-8cee-4b74b4695b73@redhat.com>
  <87v8wn78jq.fsf@brahms.olymp>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <84fc2bde-2fe8-ec78-1145-2cc010259f38@redhat.com>
-Date:   Wed, 9 Mar 2022 18:11:25 +0800
+Message-ID: <6db10915-ed91-08fe-2887-50f4d418628b@redhat.com>
+Date:   Wed, 9 Mar 2022 18:17:13 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
@@ -129,6 +129,15 @@ On 3/9/22 5:57 PM, Luís Henriques wrote:
 >>>> + */
 >>>> +#define CEPH_ENCRYPTED_LONG_SNAP_NAME_MAX (1 + 255 + 1 + 16 + 7)
 >>>> +
+
+So for this the max length of the long snap name shouldn't exceed 
+NAME_MAX in both cases, I will remove this macro and use NAME_MAX 
+directly instead.
+
+- Xiubo
+
+
+
 >>> I think this constant needs to be defined in a different way and we need
 >>> to keep the snapshots names length a bit shorter than NAME_MAX.  And I'm
 >>> not talking just about the encrypted snapshots.
@@ -160,21 +169,7 @@ On 3/9/22 5:57 PM, Luís Henriques wrote:
 >> will be 189 bytes, so even plusing the extra 2 * sizeof('_') - sizeof(<inode#>)
 >> == 15 bytes with ceph PR#41592 it should work well.
 > Is it really 189 bytes, or 252, which is the result of base64 encoding 189
-> bytes?
-
-Yeah, you are right, I misread that. The 252 is from 189 * 4 / 3, which 
-will be the base64 encoded name.
-
-So, I think you should fix this to make the totally of base64 encode 
-name won't bigger than 240 = 255 - 15. So the CEPH_NOHASH_NAME_MAX 
-should be:
-
-#define CEPH_NOHASH_NAME_MAX (180 - SHA256_DIGEST_SIZE)
-
-?
-
-
->   Reading the documentation in the CEPH_NOHASH_NAME_MAX definition
+> bytes?  Reading the documentation in the CEPH_NOHASH_NAME_MAX definition
 > it seems to be 252.  And in that case we need to limit the names length
 > even further.
 >
@@ -184,10 +179,6 @@ should be:
 > Yeah, I suppose this makes sense.  I can send out a PR soon with this, and
 > try to document it somewhere.  But it may make sense to merge both PRs at
 > the same time and *backport* them to older releases.
-
-Yeah, make sense.
-
-- Xiubo
-
+>
 > Cheers,
 
