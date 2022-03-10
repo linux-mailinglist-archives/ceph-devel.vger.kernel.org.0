@@ -2,86 +2,72 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6867D4D50A4
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Mar 2022 18:34:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B318B4D50A8
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Mar 2022 18:34:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245078AbiCJRfo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 10 Mar 2022 12:35:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34824 "EHLO
+        id S245118AbiCJRfw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 10 Mar 2022 12:35:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244031AbiCJRfm (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Mar 2022 12:35:42 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 17CCA18C79E
-        for <ceph-devel@vger.kernel.org>; Thu, 10 Mar 2022 09:34:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646933679;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        with ESMTP id S240641AbiCJRfr (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Mar 2022 12:35:47 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17B1018A783;
+        Thu, 10 Mar 2022 09:34:46 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id B943821118;
+        Thu, 10 Mar 2022 17:34:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1646933684; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=+sI8yl68F8AaSxc5/19rLFgsuz0y8nt6Rj/YSh3VHaE=;
-        b=Obbk4XFJSBLnZCrcjJnf7o/YP1Owenk1T61mvUfxzyNj9nTXbrHgPT7X9/zDgtrY8UVci1
-        yvbAVvnI7Hgy864nILc2ebO1CQc9X4kWzvRaHTA2bPq7dTp2q1eTnlt+aJnMnatYR8c0UW
-        Lrnv9/7Nh54f4En3uGdo6g+n9weR658=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-626-bQCyg879MD2w7-nAsHBBVQ-1; Thu, 10 Mar 2022 12:34:38 -0500
-X-MC-Unique: bQCyg879MD2w7-nAsHBBVQ-1
-Received: by mail-qv1-f70.google.com with SMTP id g8-20020a0cdf08000000b004354e0aa0cdso5374073qvl.17
-        for <ceph-devel@vger.kernel.org>; Thu, 10 Mar 2022 09:34:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=+sI8yl68F8AaSxc5/19rLFgsuz0y8nt6Rj/YSh3VHaE=;
-        b=ffThF+74J9bnWR4Lwvmixf4O3WZ2q2+RgEJDvoSwzq8Q4+mZ10GhosARIuulAauVK5
-         KunX+T8IPmv0QO6r0kq5AJ+CgbjawWQm3kBfg9dnBwNwQOHpbq9w0+7ibBznx57KGKrt
-         pqeQGawE/u7BGSMIZ1Q3g6IjtnqNlpYz9Gjn5oOxzh1wrUjDU2/1ZxKP8wbz5erWemfg
-         NydB26Pv9f3J6/cBQnKOSFywsVD0x4RM/d05ADVPdamX3JSw03bYBdPfRZZrr/qdOc6j
-         gnw4Xv2fdkhjGiEoi7maamFBWH8OXKBOgJZOdhcquUU9QRXTYJg/MjpGMZy0y/Jvvx1f
-         ms7A==
-X-Gm-Message-State: AOAM533rSOho10EBhmITV/srr0ne/Hn59J6CKjIYOctdopk+3R0Eh9zj
-        rCL57hO0Qx+IGGfJPp33GOkBGdIWEXL7RxdENPdnodABR03Mcn+fxKal1xY7bUaX0uZziLryUJ2
-        GwrhaGCqVQI5MgGWic1Ciuw==
-X-Received: by 2002:ac8:5f84:0:b0:2e0:6965:c999 with SMTP id j4-20020ac85f84000000b002e06965c999mr4925469qta.477.1646933676593;
-        Thu, 10 Mar 2022 09:34:36 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJzM49ZVae3bPgm0svuUu3uf+AJzp4pMchlkgmKNd23/D20Xgvy0iFYR1hc8U1liK5jF6Izwyg==
-X-Received: by 2002:ac8:5f84:0:b0:2e0:6965:c999 with SMTP id j4-20020ac85f84000000b002e06965c999mr4925451qta.477.1646933676349;
-        Thu, 10 Mar 2022 09:34:36 -0800 (PST)
-Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id t28-20020a05620a005c00b00662fb1899d2sm2562187qkt.0.2022.03.10.09.34.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Mar 2022 09:34:35 -0800 (PST)
-Message-ID: <dd054c962818716e718bd9b446ee5322ca097675.camel@redhat.com>
-Subject: Re: [PATCH v3 12/20] ceph: Make ceph_init_request() check caps on
- readahead
-From:   Jeff Layton <jlayton@redhat.com>
-To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
-Cc:     ceph-devel@vger.kernel.org,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 10 Mar 2022 12:34:34 -0500
-In-Reply-To: <164692907694.2099075.10081819855690054094.stgit@warthog.procyon.org.uk>
-References: <164692883658.2099075.5745824552116419504.stgit@warthog.procyon.org.uk>
-         <164692907694.2099075.10081819855690054094.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
+        bh=9KDfpWUXGgNfwg4pSY2tFwPFDpbdq51qGNZu1umBHBc=;
+        b=Y/2lVPlInBMkrgJSrPMjHHlOLqn6BrGzAizjvO9safctGhfDiHuVQndxq+p6nWyVW0A9qe
+        SxgyKSGqd0hTqSHpv79Uf/XSFUQjJDOTD+qD+FC5K1LDwpw3JX1PhvaBPBi2AfMRYgJi8r
+        eTvDtHVhu9JUDUa9fbulBk3q3S8XjIw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1646933684;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9KDfpWUXGgNfwg4pSY2tFwPFDpbdq51qGNZu1umBHBc=;
+        b=jafbHF8U0MxchYh5bs34Hpq3mUAYqVpgCPedjIMwahSMukKrASxczdXGOA+GN3C4SQm6BV
+        979YKxLretGua9Cg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 55F7813A66;
+        Thu, 10 Mar 2022 17:34:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id jDUkEbQ2KmJbNAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Thu, 10 Mar 2022 17:34:44 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 7fb2f45e;
+        Thu, 10 Mar 2022 17:34:58 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/2] Add support for snapshot names encryption
+References: <20220310172616.16212-1-lhenriques@suse.de>
+Date:   Thu, 10 Mar 2022 17:34:58 +0000
+In-Reply-To: <20220310172616.16212-1-lhenriques@suse.de> (=?utf-8?Q?=22Lu?=
+ =?utf-8?Q?=C3=ADs?= Henriques"'s
+        message of "Thu, 10 Mar 2022 17:26:14 +0000")
+Message-ID: <87ilsl7ltp.fsf@brahms.olymp>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -89,128 +75,50 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2022-03-10 at 16:17 +0000, David Howells wrote:
-> Move the caps check from ceph_readahead() to ceph_init_request(),
-> conditional on the origin being NETFS_READAHEAD so that in a future patch,
-> ceph can point its ->readahead() vector directly at netfs_readahead().
-> 
-> Changes
-> =======
-> ver #3)
->  - Split from the patch to add a netfs inode context[1].
->  - Need to store the caps got in rreq->netfs_priv for later freeing.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: ceph-devel@vger.kernel.org
-> cc: linux-cachefs@redhat.com
-> Link: https://lore.kernel.org/r/8af0d47f17d89c06bbf602496dd845f2b0bf25b3.camel@kernel.org/ [1]
-> ---
-> 
->  fs/ceph/addr.c |   69 +++++++++++++++++++++++++++++++++-----------------------
->  1 file changed, 41 insertions(+), 28 deletions(-)
-> 
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 9189257476f8..6d056db41f50 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -354,6 +354,45 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
->  	dout("%s: result %d\n", __func__, err);
->  }
->  
-> +static int ceph_init_request(struct netfs_io_request *rreq, struct file *file)
-> +{
-> +	struct inode *inode = rreq->inode;
-> +	int got = 0, want = CEPH_CAP_FILE_CACHE;
-> +	int ret = 0;
-> +
-> +	if (file) {
-> +		struct ceph_rw_context *rw_ctx;
-> +		struct ceph_file_info *fi = file->private_data;
-> +
-> +		rw_ctx = ceph_find_rw_context(fi);
-> +		if (rw_ctx)
-> +			return 0;
-> +	}
-> +
-> +	if (rreq->origin != NETFS_READAHEAD)
-> +		return 0;
-> +
+Lu=C3=ADs Henriques <lhenriques@suse.de> writes:
 
-^^^
-I think you should move this check above the if (file) block above it.
-We don't need to anything at all if we're not in readahead.
+> Hi!
+>
+> So, I've changed this code back into and RFC as I'm not sure yet if this
+> is it's final form.  I think the 2 patches in this series should probably
+> be squashed into a single patch.  I decided to keep them separate as the
+> 1st one is simple (it's the same patch I had already sent), and the 2nd
+> patch adds a lot more complexity to the whole thing.
+>
+> So, I've looked at Xiubo initial patch for handling snapshots long names.
+> It was complex, of course, and it required extra MDS changes.  I *think*
+> my approach is slightly simpler, but I'm not entirely sure yet that I'm
+> handling every case.
+>
+> In order to test this code the following PRs are required:
+>
+>   mds: add protection from clients without fscrypt support #45073
+>   mds: use the whole string as the snapshot long name #45192
+>   mds: support alternate names for snapshots #45224
+>   mds: limit the snapshot names to 240 characters #45312
+>
+> Comments are welcome, I'm still testing these patches and I do expect to
+> find that something is still missing.  And I do expect to find bugs.
+> These strings parsing scares me a lot, but I couldn't see a simpler
+> approach.
 
-> +	/*
-> +	 * readahead callers do not necessarily hold Fcb caps
-> +	 * (e.g. fadvise, madvise).
-> +	 */
-> +	ret = ceph_try_get_caps(inode, CEPH_CAP_FILE_RD, want, true, &got);
-> +	if (ret < 0) {
-> +		dout("start_read %p, error getting cap\n", inode);
-> +		return ret;
-> +	}
-> +
-> +	if (!(got & want)) {
-> +		dout("start_read %p, no cache cap\n", inode);
-> +		return -EACCES;
-> +	}
-> +	if (ret == 0)
-> +		return -EACCES;
-> +
-> +	rreq->netfs_priv = (void *)(uintptr_t)got;
-> +	return 0;
-> +}
-> +
->  static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
->  {
->  	struct inode *inode = mapping->host;
-> @@ -365,7 +404,7 @@ static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
->  }
->  
->  static const struct netfs_request_ops ceph_netfs_read_ops = {
-> -	.is_cache_enabled	= ceph_is_cache_enabled,
-> +	.init_request		= ceph_init_request,
->  	.begin_cache_operation	= ceph_begin_cache_operation,
->  	.issue_read		= ceph_netfs_issue_read,
->  	.expand_readahead	= ceph_netfs_expand_readahead,
-> @@ -393,33 +432,7 @@ static int ceph_readpage(struct file *file, struct page *subpage)
->  
->  static void ceph_readahead(struct readahead_control *ractl)
->  {
-> -	struct inode *inode = file_inode(ractl->file);
-> -	struct ceph_file_info *fi = ractl->file->private_data;
-> -	struct ceph_rw_context *rw_ctx;
-> -	int got = 0;
-> -	int ret = 0;
-> -
-> -	if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
-> -		return;
-> -
-> -	rw_ctx = ceph_find_rw_context(fi);
-> -	if (!rw_ctx) {
-> -		/*
-> -		 * readahead callers do not necessarily hold Fcb caps
-> -		 * (e.g. fadvise, madvise).
-> -		 */
-> -		int want = CEPH_CAP_FILE_CACHE;
-> -
-> -		ret = ceph_try_get_caps(inode, CEPH_CAP_FILE_RD, want, true, &got);
-> -		if (ret < 0)
-> -			dout("start_read %p, error getting cap\n", inode);
-> -		else if (!(got & want))
-> -			dout("start_read %p, no cache cap\n", inode);
-> -
-> -		if (ret <= 0)
-> -			return;
-> -	}
-> -	netfs_readahead(ractl, &ceph_netfs_read_ops, (void *)(uintptr_t)got);
-> +	netfs_readahead(ractl, &ceph_netfs_read_ops, NULL);
->  }
->  
->  #ifdef CONFIG_CEPH_FSCACHE
-> 
-> 
+Again, I forgot to mention in the cover-letter that handling
+base64-encoded snapshots that start with '_' is still missing.  That's
+next on my list.
 
--- 
-Jeff Layton <jlayton@redhat.com>
+Cheers,
+--=20
+Lu=C3=ADs
+
+>
+> Lu=C3=ADs Henriques (2):
+>   ceph: add support for encrypted snapshot names
+>   ceph: add support for handling encrypted snapshot names in subtree
+>
+>  fs/ceph/crypto.c | 146 +++++++++++++++++++++++++++++++++++++++++------
+>  fs/ceph/crypto.h |   9 ++-
+>  fs/ceph/dir.c    |   9 +++
+>  fs/ceph/inode.c  |  13 +++++
+>  4 files changed, 156 insertions(+), 21 deletions(-)
+>
 
