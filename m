@@ -2,46 +2,46 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E35C14D44CC
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Mar 2022 11:36:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03C9D4D44D0
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Mar 2022 11:38:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241353AbiCJKh5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 10 Mar 2022 05:37:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40908 "EHLO
+        id S237220AbiCJKjL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 10 Mar 2022 05:39:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232932AbiCJKhx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Mar 2022 05:37:53 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99CA64C41C
-        for <ceph-devel@vger.kernel.org>; Thu, 10 Mar 2022 02:36:52 -0800 (PST)
+        with ESMTP id S232033AbiCJKjK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Mar 2022 05:39:10 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 590BD45789
+        for <ceph-devel@vger.kernel.org>; Thu, 10 Mar 2022 02:38:09 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 09A26CE22C8
-        for <ceph-devel@vger.kernel.org>; Thu, 10 Mar 2022 10:36:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAA92C340E8;
-        Thu, 10 Mar 2022 10:36:48 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id C4B4DCE22C4
+        for <ceph-devel@vger.kernel.org>; Thu, 10 Mar 2022 10:38:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAE47C340E8;
+        Thu, 10 Mar 2022 10:38:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646908609;
-        bh=410oyzUyqBjnVDB9+LqGrhnG+2I/Y3fiRDt4vk68Vto=;
+        s=k20201202; t=1646908686;
+        bh=vq5a8UlpM8lSO/KbT/o0wm1nyK3XKd3yt/gdmTQRuCI=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=O7bJ4Y93r64NX8xBW3RaOOF35836tS1esd279clz3yd/ojE7a2CJq5YCS+FHHs3TE
-         G3OeUBD+2ZllOTOdg2zoFyeHnTZ2w5OTEypUJbJmdL4PmrJLGjL38kwIUYL02iLjEN
-         +sI1Qe8RxM/HMCKASxpB09XNqYPItbHmdEtgD4ahtcV+YTDhyV8nCntKvkuCJyJYdV
-         AO0hOn6L83Hfm0Ip1YcKCB19V0I4RfV6hhm7kslrPd3Df9twjZp15nyS+evrkWx+VH
-         1/oIHoiDyzcl82/Ijss0GOWltAxzuicTBqZgmg7P1uayGTIGcHByIRB1g8oxEvvYEu
-         7VTD9Nd46QeVw==
-Message-ID: <b53ce2d4d085f94490e715253cf269a8d5dbdebf.camel@kernel.org>
+        b=LrrwcPqZxXVz8IqEAQHLcl4KU5XknWTR8/Egk4fk4ZJHkHY91v32UswVtNN/c9WZT
+         X/s39fXoMEe+gPnlIwwMBWe6DYcpTKhT+WGCJUBdK469ljQikdv0EQ+puY5Z7kw51F
+         7xC1aK+aUsEmO11EnKRB4jKYD7Svrce0wAOl7kwV8ISLMR029WOh9pQ9R5GJeH8mHO
+         hEh0LFxKSS8Ap2RnCyMKlcvVDkESuCCMPh2XnOehtFfSfJpDwwSQBbtWjUjloNkU3z
+         CME1kGq1KNCPNNRBSzrk1AipZdpbcI0yc3FNpgAY42ylzPWLliu9U2zvIQq5AuKV3+
+         jToN0lN3QVX1Q==
+Message-ID: <88dbdd1f9e826c98e4e625583d9e8bbf88f40967.camel@kernel.org>
 Subject: Re: [PATCH V7] ceph: do not dencrypt the dentry name twice for
  readdir
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Xiubo Li <xiubli@redhat.com>
 Cc:     idryomov@gmail.com, vshankar@redhat.com, lhenriques@suse.de,
         ceph-devel@vger.kernel.org
-Date:   Thu, 10 Mar 2022 05:36:47 -0500
-In-Reply-To: <b0605e1e-5c54-d250-8e93-773638d36ab6@redhat.com>
+Date:   Thu, 10 Mar 2022 05:38:04 -0500
+In-Reply-To: <0b800fbd-15b7-857f-1049-76cf996fb7e6@redhat.com>
 References: <20220309135914.95804-1-xiubli@redhat.com>
-         <b0605e1e-5c54-d250-8e93-773638d36ab6@redhat.com>
+         <0b800fbd-15b7-857f-1049-76cf996fb7e6@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
@@ -56,7 +56,7 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2022-03-10 at 14:08 +0800, Xiubo Li wrote:
+On Thu, 2022-03-10 at 16:22 +0800, Xiubo Li wrote:
 > On 3/9/22 9:59 PM, xiubli@redhat.com wrote:
 > > From: Xiubo Li <xiubli@redhat.com>
 > > 
@@ -130,6 +130,13 @@ On Thu, 2022-03-10 at 14:08 +0800, Xiubo Li wrote:
 > > +		goto out;
 > > +	}
 > > +
+> 
+> This should move up before the 'more' tag.
+> 
+
+Yep, good catch.
+
+> 
 > >   	for (; i < rinfo->dir_nr; i++) {
 > >   		struct ceph_mds_reply_dir_entry *rde = rinfo->dir_entries + i;
 > > -		struct ceph_fname fname = { .dir	= inode,
@@ -163,23 +170,15 @@ On Thu, 2022-03-10 at 14:08 +0800, Xiubo Li wrote:
 > > +		name_len = dn->d_name.len;
 > > +		spin_unlock(&dn->d_lock);
 > > +
-> 
-> Hi Jeff,
-> 
-> BTW, does the dn->d_lock is must here ? From the code comments, the 
-> d_lock intends to protect the 'd_flag' and 'd_lockref.count'.
-> 
-> In ceph code I found some places are using the d_lock when accessing the 
-> d_name, some are not. And in none ceph code, they will almost never use 
-> the d_lock to protect the d_name.
-> 
-
-It's probably not needed. The d_name can only change if there are no
-other outstanding references to the dentry.
-
-> 
-> 
 > > +		dentry_name[name_len] = '\0';
+> 
+> Possibly caused by this. Since it useless here and I will remove it.
+> 
+> 
+
+Seems plausible. If you send a v8 patch, I can give it another test and
+see if it fixes it.
+
 > > +		dout("readdir (%d/%d) -> %llx '%s' %p\n",
 > > +		     i, rinfo->dir_nr, ctx->pos, dentry_name, &rde->inode.in);
 > > +
