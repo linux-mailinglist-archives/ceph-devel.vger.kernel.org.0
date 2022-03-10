@@ -2,59 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 82FAE4D40FD
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Mar 2022 07:08:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDA7A4D426F
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Mar 2022 09:25:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236932AbiCJGJo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 10 Mar 2022 01:09:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40030 "EHLO
+        id S237194AbiCJIZ4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 10 Mar 2022 03:25:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233571AbiCJGJn (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Mar 2022 01:09:43 -0500
+        with ESMTP id S240305AbiCJIZv (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Mar 2022 03:25:51 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 917F16C1ED
-        for <ceph-devel@vger.kernel.org>; Wed,  9 Mar 2022 22:08:38 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9435813548A
+        for <ceph-devel@vger.kernel.org>; Thu, 10 Mar 2022 00:24:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646892518;
+        s=mimecast20190719; t=1646900688;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ummWPydrZU32XVQM1qw8zSNU4atwFzj08LvibiRYkJI=;
-        b=JQxs/PWuvxkDILS6vK9NGsg/NVeoyRcyE63j9pZ0rGhdd6Hup9LPnwxVUNVu6f4thr/aDk
-        wWYIrYwmu2kDB+Tdk8CB2btRPCtsU8v+BY5NNoxQQEuOZOnZd1V1i3OFvHmXCQuO/YStJ0
-        QYQr6XzycZKBmjgsChrn0PNOvNuu/mY=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=0QFRnDDKz/tPs4sAjR/vs1wsdotC5HW0yxMdIFoQK0Y=;
+        b=Ih/LorrUOX7Dq/T37ir39tbXs28gZtTC+mgdKa48tBPStxWQ6d0DGTRzr0F5Tr2Xv6vka3
+        stocnzW7HyBc26HkjtANlCPGXWW+1MbXLPHh80QOdY4NCtXZ5osNwawtG3/MA383aBnj8J
+        mlQp9l3TgEYtdXAPMkg8WaI77cX7D/Q=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-81-kLD5OJdPOCaj81dzmTAGPA-1; Thu, 10 Mar 2022 01:08:37 -0500
-X-MC-Unique: kLD5OJdPOCaj81dzmTAGPA-1
-Received: by mail-pj1-f71.google.com with SMTP id q9-20020a17090a7a8900b001bf0a7d9dfdso2777757pjf.4
-        for <ceph-devel@vger.kernel.org>; Wed, 09 Mar 2022 22:08:36 -0800 (PST)
+ us-mta-147-73-cKVtvPfSvWQiZgdUxVA-1; Thu, 10 Mar 2022 03:23:13 -0500
+X-MC-Unique: 73-cKVtvPfSvWQiZgdUxVA-1
+Received: by mail-pl1-f198.google.com with SMTP id x6-20020a1709029a4600b0014efe26b04fso2343694plv.21
+        for <ceph-devel@vger.kernel.org>; Thu, 10 Mar 2022 00:23:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=ummWPydrZU32XVQM1qw8zSNU4atwFzj08LvibiRYkJI=;
-        b=ajmQqOnN3SPBgZaphdf68faEsHSuZ+C5eyo01Q8o1qBmGr/RRcEnQKzzCuqGKH5efF
-         i1idsWM/CU3eXqZvZfuA1liKlC0DLMqPpZmOooZSjRQU7q0TX9C+3PL5vNyP6BlhkHCL
-         fY1wIuU3NqNl6iu/3XbHLwVKfM5hTUR6evTNlIseShw7/fiTERoi9pUfyJvwZNmItGq/
-         HiiA8fGbuP5hk55RSvekO790oQIWXGS/vLiLWa3t0g3VzOxNSdzLZ6IYuYByGd0FTkwc
-         VPSK/8afqfTgdNoLwFZzsKdwN8zScIHGsSpHgDHOcYyGDxkzD8+qh6MM48zJTX1H+dt9
-         RD3Q==
-X-Gm-Message-State: AOAM532vUlUgmveVZCBrsbcfzqEFFIk4Nvd5EpWla5VxsgaCm+lRPjfH
-        FBDl1Foh3aKW/J6/O4cT6IQA+NcVR+IR4R6c4Tbupmm1Qk8kWXMcAnrrDq30G1Nozhm+JUn+A2d
-        pfCoCszMbF0Tn3+m35t2rVXNXMMBQDsOXy2fbPdYZPYedv/EaMiKqDyxp23MuWgGMt7EMdC0=
-X-Received: by 2002:a63:ea53:0:b0:341:a28e:16b9 with SMTP id l19-20020a63ea53000000b00341a28e16b9mr2794665pgk.259.1646892515233;
-        Wed, 09 Mar 2022 22:08:35 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJxm7p6txtamATized8CC+um5BzF1usvMUwpIplqxqK7BoMqStgFZZp4/QU8jfMye40CemCmZQ==
-X-Received: by 2002:a63:ea53:0:b0:341:a28e:16b9 with SMTP id l19-20020a63ea53000000b00341a28e16b9mr2794644pgk.259.1646892514828;
-        Wed, 09 Mar 2022 22:08:34 -0800 (PST)
+        bh=0QFRnDDKz/tPs4sAjR/vs1wsdotC5HW0yxMdIFoQK0Y=;
+        b=m3mRK/MTq3vldGbrE1iuWrYWj2TIeYukIaw2UfQ8NcqXn6KhuDHQKJlhchxKgr4gsE
+         4nUvyaQxedk74eZlvhkmStY21o4+/3aIC7zicfncMrCPu+hJ+xoR/uXkxomJAcsi0857
+         CAIcUrWf3upl/nWpoxGpOc3yZM2ZsCiLQ4OyHdfCvpwvr/jfmtODYaxGuhMlQEpIBZNY
+         JkwhXFm3pxk5fvl69DXAYtYEjnXSsKn6CgsSWoscIzhkyLMhSFr/kMgqX7/6+ITw8HeH
+         v4BNPuD7jxgLswqq09YNJb46/ZiEXbs5HoTj/hxzB67nAs2sunrxuVaIfHkisAmN716G
+         11fA==
+X-Gm-Message-State: AOAM533JBR0V/n7ysygJfXtErYaREolRGg/f9S6WnGjiqSpa6LPYgOGh
+        UaFgnBHD6aBlwIWh+rBv5Z1od7Uf9AAlxUedhmOcgY/xstNURvVH6yPV2LP6OMRvRPr5vsN3aIw
+        du8KGmRYy4PrCPH/6eNVPCiP0pFrRP9FvAzKeFlswfYtZldwUnhSGSSok5PB6VC4bbCTLcJs=
+X-Received: by 2002:a63:541f:0:b0:380:c188:6600 with SMTP id i31-20020a63541f000000b00380c1886600mr3082979pgb.374.1646900591578;
+        Thu, 10 Mar 2022 00:23:11 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJyPJWg+TCYVOOZC9kWHekcCQNCy3bCzq2aYwm376voDaZIGPTxX4G72JAoQz4ngnAVF7jUTTg==
+X-Received: by 2002:a63:541f:0:b0:380:c188:6600 with SMTP id i31-20020a63541f000000b00380c1886600mr3082942pgb.374.1646900591102;
+        Thu, 10 Mar 2022 00:23:11 -0800 (PST)
 Received: from [10.72.12.132] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id m4-20020a17090a7f8400b001bef3fc3938sm4481317pjl.49.2022.03.09.22.08.31
+        by smtp.gmail.com with ESMTPSA id j5-20020a17090a31c500b001bf37d6abe1sm9282179pjf.45.2022.03.10.00.23.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Mar 2022 22:08:34 -0800 (PST)
+        Thu, 10 Mar 2022 00:23:10 -0800 (PST)
 Subject: Re: [PATCH V7] ceph: do not dencrypt the dentry name twice for
  readdir
 To:     jlayton@kernel.org
@@ -62,8 +62,8 @@ Cc:     idryomov@gmail.com, vshankar@redhat.com, lhenriques@suse.de,
         ceph-devel@vger.kernel.org
 References: <20220309135914.95804-1-xiubli@redhat.com>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <b0605e1e-5c54-d250-8e93-773638d36ab6@redhat.com>
-Date:   Thu, 10 Mar 2022 14:08:16 +0800
+Message-ID: <0b800fbd-15b7-857f-1049-76cf996fb7e6@redhat.com>
+Date:   Thu, 10 Mar 2022 16:22:33 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
@@ -156,6 +156,10 @@ On 3/9/22 9:59 PM, xiubli@redhat.com wrote:
 > +		goto out;
 > +	}
 > +
+
+This should move up before the 'more' tag.
+
+
 >   	for (; i < rinfo->dir_nr; i++) {
 >   		struct ceph_mds_reply_dir_entry *rde = rinfo->dir_entries + i;
 > -		struct ceph_fname fname = { .dir	= inode,
@@ -189,20 +193,11 @@ On 3/9/22 9:59 PM, xiubli@redhat.com wrote:
 > +		name_len = dn->d_name.len;
 > +		spin_unlock(&dn->d_lock);
 > +
-
-Hi Jeff,
-
-BTW, does the dn->d_lock is must here ? From the code comments, the 
-d_lock intends to protect the 'd_flag' and 'd_lockref.count'.
-
-In ceph code I found some places are using the d_lock when accessing the 
-d_name, some are not. And in none ceph code, they will almost never use 
-the d_lock to protect the d_name.
-
-- Xiubo
-
-
 > +		dentry_name[name_len] = '\0';
+
+Possibly caused by this. Since it useless here and I will remove it.
+
+
 > +		dout("readdir (%d/%d) -> %llx '%s' %p\n",
 > +		     i, rinfo->dir_nr, ctx->pos, dentry_name, &rde->inode.in);
 > +
