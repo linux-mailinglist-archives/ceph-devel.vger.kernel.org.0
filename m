@@ -2,91 +2,141 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 527304D596E
-	for <lists+ceph-devel@lfdr.de>; Fri, 11 Mar 2022 05:15:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 61DA64D5DFF
+	for <lists+ceph-devel@lfdr.de>; Fri, 11 Mar 2022 09:59:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345722AbiCKEQ0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 10 Mar 2022 23:16:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53570 "EHLO
+        id S243929AbiCKJAj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 11 Mar 2022 04:00:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231511AbiCKEQZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Mar 2022 23:16:25 -0500
+        with ESMTP id S243794AbiCKJAe (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 11 Mar 2022 04:00:34 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 621BC1A128D
-        for <ceph-devel@vger.kernel.org>; Thu, 10 Mar 2022 20:15:23 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C99661BB721
+        for <ceph-devel@vger.kernel.org>; Fri, 11 Mar 2022 00:59:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646972122;
+        s=mimecast20190719; t=1646989170;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=JKYPDvqPLukhBuKtprbeOw+vsUiYYpk7dx/igaoEdd0=;
-        b=BLLqbKoe6njfZh06DU1iRa2q6nFhdcT9lh1cKL7gECAJ73fOOMSNCHXKwTwi2Hh5J1GVC5
-        x5PF0PHtO1TvdToQEBagUN87u2OrVluXcUCDjvFM9XmUaSK8OGeeQkyZXBs4Jd2pYBxQWT
-        TdQZfPTG2/7e/uee91+gZEYIlBYIy0E=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=h1N2UA4IRcQ5yuritNYyqad7YdVxQSw6/fgBt3P2aNk=;
+        b=hlHvhLCdzfbN+iCVgdpZxDHrkgUh5T9O9S6Mt7oNYQzGAnSZggz3201YXxlymETn7zwr7T
+        s5SFMvegR8Dka9jReR2qihVeB3xoW1VnuFAISNbuqVjb6ZKYmc1Fjyf0CMHkWn2xiO6oVR
+        wxk+5snsmArjkoUs+sut41MutnL/Cdw=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-569-rHgG9bzqPQOK0GIeytNTog-1; Thu, 10 Mar 2022 23:15:19 -0500
-X-MC-Unique: rHgG9bzqPQOK0GIeytNTog-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id ABA6B51DC;
-        Fri, 11 Mar 2022 04:15:17 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A44734CEFB;
-        Fri, 11 Mar 2022 04:15:09 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, vshankar@redhat.com, lhenriques@suse.de,
-        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: fix base64 encoded name's length check in ceph_fname_to_usr()
-Date:   Fri, 11 Mar 2022 12:15:05 +0800
-Message-Id: <20220311041505.160241-1-xiubli@redhat.com>
+ us-mta-627-iZDku8nXOC6nuiUNpSCt7Q-1; Fri, 11 Mar 2022 03:59:29 -0500
+X-MC-Unique: iZDku8nXOC6nuiUNpSCt7Q-1
+Received: by mail-pg1-f199.google.com with SMTP id 196-20020a6307cd000000b0038027886594so4498334pgh.4
+        for <ceph-devel@vger.kernel.org>; Fri, 11 Mar 2022 00:59:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=h1N2UA4IRcQ5yuritNYyqad7YdVxQSw6/fgBt3P2aNk=;
+        b=aOdNQm7t4QSpJUA1TggL7gBAeU6ok2rceyEz+J2S/TKBEh7up/I8Ak5E2OPeFq00oA
+         Y9pJNfR8LcsV0EGt8ncom04JgZbAaqVESVx3dJ71mNDDwZz6L7fgKkK5udrnVku5tGom
+         TiFF5fNBRboDNmbSfyECtZvzol9uptxUWVHEYFsc68rwXkFeFPlR4FX677h2IiEgBdvj
+         JP90q5P1EkhOignRliBCPjvjRPThSQlI6wMR6Z9a84H0aPGP6AFZOcXhqcDO38rklPyK
+         09zpC/gi3wKWVxn1JN5N9hPYXEA5pbd2Q2ql8kGXkRu+CjsEp0u18dqLJfeZlJutNUx5
+         QDgQ==
+X-Gm-Message-State: AOAM533MyYClsNlQckHUITzPK8rE+JGI7hSfd8NDeYUzqxgDOVm4p1aH
+        P0snREldFuL4lmwXCg2GFz8bW8Qb2wDbYyBMsRAX4RwbsiHHXlsgfmXEHS5rlW4J0x6WZH7dfjF
+        ALwKLY0rG2LpSz72qbTNZU7bsxKyyQhrbW55nEovwZQ3zKoIGdM63S66MayOHsmwHZqX/nl4=
+X-Received: by 2002:a05:6a00:174b:b0:4f7:8e44:6fdb with SMTP id j11-20020a056a00174b00b004f78e446fdbmr1421261pfc.64.1646989168017;
+        Fri, 11 Mar 2022 00:59:28 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzOXvXZakD9Ac30l/7OiEiF9StPOako0AaiCIg3M/RunQJ4GJCMUQ/kaSdj4mq6HK8Wi762MQ==
+X-Received: by 2002:a05:6a00:174b:b0:4f7:8e44:6fdb with SMTP id j11-20020a056a00174b00b004f78e446fdbmr1421234pfc.64.1646989167638;
+        Fri, 11 Mar 2022 00:59:27 -0800 (PST)
+Received: from [10.72.12.132] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id y20-20020aa78054000000b004f6f267dcc9sm9289474pfm.187.2022.03.11.00.59.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Mar 2022 00:59:26 -0800 (PST)
+Subject: Re: [PATCH] ceph: allow `ceph.dir.rctime' xattr to be updatable
+To:     Venky Shankar <vshankar@redhat.com>, jlayton@redhat.com,
+        idryomov@gmail.com
+Cc:     ceph-devel@vger.kernel.org
+References: <20220310143419.14284-1-vshankar@redhat.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <844eb610-54d1-5bcd-bc8c-5e4d1f898f21@redhat.com>
+Date:   Fri, 11 Mar 2022 16:59:16 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+In-Reply-To: <20220310143419.14284-1-vshankar@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
 
-The fname->name is based64_encoded names and the max long shouldn't
-exceed the NAME_MAX.
+On 3/10/22 10:34 PM, Venky Shankar wrote:
+> `rctime' has been a pain point in cephfs due to its buggy
+> nature - inconsistent values reported and those sorts.
+> Fixing rctime is non-trivial needing an overall redesign
+> of the entire nested statistics infrastructure.
+>
+> As a workaround, PR
+>
+>       http://github.com/ceph/ceph/pull/37938
+>
+> allows this extended attribute to be manually set. This allows
+> users to "fixup" inconsistency rctime values. While this sounds
+> messy, its probably the wisest approach allowing users/scripts
+> to workaround buggy rctime values.
+>
+> The above PR enables Ceph MDS to allow manually setting
+> rctime extended attribute with the corresponding user-land
+> changes. We may as well allow the same to be done via kclient
+> for parity.
+>
+> Signed-off-by: Venky Shankar <vshankar@redhat.com>
+> ---
+>   fs/ceph/xattr.c | 10 +++++++++-
+>   1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index afec84088471..8c2dc2c762a4 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -366,6 +366,14 @@ static ssize_t ceph_vxattrcb_auth_mds(struct ceph_inode_info *ci,
+>   	}
+>   #define XATTR_RSTAT_FIELD(_type, _name)			\
+>   	XATTR_NAME_CEPH(_type, _name, VXATTR_FLAG_RSTAT)
+> +#define XATTR_RSTAT_FIELD_UPDATABLE(_type, _name)			\
+> +	{								\
+> +		.name = CEPH_XATTR_NAME(_type, _name),			\
+> +		.name_size = sizeof (CEPH_XATTR_NAME(_type, _name)),	\
+> +		.getxattr_cb = ceph_vxattrcb_ ## _type ## _ ## _name,	\
+> +		.exists_cb = NULL,					\
+> +		.flags = VXATTR_FLAG_RSTAT,				\
+> +	}
+>   #define XATTR_LAYOUT_FIELD(_type, _name, _field)			\
+>   	{								\
+>   		.name = CEPH_XATTR_NAME2(_type, _name, _field),	\
+> @@ -404,7 +412,7 @@ static struct ceph_vxattr ceph_dir_vxattrs[] = {
+>   	XATTR_RSTAT_FIELD(dir, rsubdirs),
+>   	XATTR_RSTAT_FIELD(dir, rsnaps),
+>   	XATTR_RSTAT_FIELD(dir, rbytes),
+> -	XATTR_RSTAT_FIELD(dir, rctime),
+> +	XATTR_RSTAT_FIELD_UPDATABLE(dir, rctime),
+>   	{
+>   		.name = "ceph.dir.pin",
+>   		.name_size = sizeof("ceph.dir.pin"),
 
-The FSCRYPT_BASE64URL_CHARS(NAME_MAX) will be 255 * 4 / 3.
+LGTM.
 
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
 
-Note:
-
-This patch is bansed on the wip-fscrpt branch in ceph-client repo.
-
-
- fs/ceph/crypto.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index 5a87e7385d3f..560481b6c964 100644
---- a/fs/ceph/crypto.c
-+++ b/fs/ceph/crypto.c
-@@ -205,7 +205,7 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
- 	}
- 
- 	/* Sanity check that the resulting name will fit in the buffer */
--	if (fname->name_len > FSCRYPT_BASE64URL_CHARS(NAME_MAX))
-+	if (fname->name_len > NAME_MAX || fname->ctext_len > NAME_MAX)
- 		return -EIO;
- 
- 	ret = __fscrypt_prepare_readdir(fname->dir);
--- 
-2.27.0
 
