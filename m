@@ -2,111 +2,260 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CE6DC4D6462
-	for <lists+ceph-devel@lfdr.de>; Fri, 11 Mar 2022 16:16:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E69B4D65AE
+	for <lists+ceph-devel@lfdr.de>; Fri, 11 Mar 2022 17:02:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344729AbiCKPR0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 11 Mar 2022 10:17:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43396 "EHLO
+        id S1349931AbiCKQDv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 11 Mar 2022 11:03:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242902AbiCKPR0 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 11 Mar 2022 10:17:26 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 472AC1C57C8
-        for <ceph-devel@vger.kernel.org>; Fri, 11 Mar 2022 07:16:22 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S1350455AbiCKQDs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 11 Mar 2022 11:03:48 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE496151C5B
+        for <ceph-devel@vger.kernel.org>; Fri, 11 Mar 2022 08:02:43 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E7059B82C08
-        for <ceph-devel@vger.kernel.org>; Fri, 11 Mar 2022 15:16:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CC72C340ED;
-        Fri, 11 Mar 2022 15:16:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647011779;
-        bh=FiiVn8pATNVj5V2nVJqD+XQ7KGEVNEsWSPqrSiF4Pk4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=GsknqK4aABrldlqKcvzXwZqaU3QZEfQa06F5efGk38k3f6bftuQNNSPh8dAjfcI5p
-         XuMDIarB/2Rqect8eQhkOa4Dco1HFz/Fcpt1FMIs0EYwx/suxq9E1nvnMAkUN2MWI7
-         XGXgxAABILwI2yJV9H60GFyqUdA2AzNtCV0TFQ5y4Tn0Xf87fn7Pl8DPiDqfoFxxeh
-         hZBmZxdMgzmYQfXm1ol9LToemp4JQ0NeFO566ECOih0eGIoNBWlQgiJs94PohZslpb
-         NCts06Uas/r2SpXjGYU4idD7VfXkI19VG/Ur0UADdWTf6GQhDSMQ//CEFTz15uQjqA
-         e3GaVQoaNgonQ==
-Message-ID: <12877268cdbd9fabfec0ee40e8684467984e15f5.camel@kernel.org>
-Subject: Re: [PATCH] ceph: allow `ceph.dir.rctime' xattr to be updatable
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Venky Shankar <vshankar@redhat.com>, idryomov@gmail.com
-Cc:     xiubli@redhat.com, ceph-devel@vger.kernel.org
-Date:   Fri, 11 Mar 2022 10:16:17 -0500
-In-Reply-To: <20220310143419.14284-1-vshankar@redhat.com>
-References: <20220310143419.14284-1-vshankar@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
+        by smtp-out2.suse.de (Postfix) with ESMTPS id DCD0B1F381;
+        Fri, 11 Mar 2022 16:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1647014561; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=I7gz1mFbHDot2kQ3QbR6hxwMTg5AwQzKrq8DTaKYQKc=;
+        b=hUmiKAvm0HjfoBV/5mYxMGXFLp0TYnRsF/TTAZ6Pfc2zgPuOzZctJCWvokYh4KGeNjegyg
+        YZvc51a9qSWboZnLnWZvsJTIu92t4HutfpoNYo+IJUAh1JxvjCHMv5XcWwPCa1lkhOReNG
+        rEM7Mg84rHEkDLXQmIZ6clEUPceclZM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1647014561;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=I7gz1mFbHDot2kQ3QbR6hxwMTg5AwQzKrq8DTaKYQKc=;
+        b=r6qnT9GoqwHGgZ3kPl4Z0aPYC+OSgXUV2GgyBm8ZDnK2zmZe1XPegFFDJ3NqArz2yInt3W
+        Gd5Z+CLmIuJH+4Bg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 85AC213A89;
+        Fri, 11 Mar 2022 16:02:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id nQpnHaFyK2LlHwAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Fri, 11 Mar 2022 16:02:41 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id a12a6740;
+        Fri, 11 Mar 2022 16:02:57 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     xiubli@redhat.com
+Cc:     jlayton@kernel.org, idryomov@gmail.com, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org
+Subject: Re: [PATCH 0/4] ceph: dencrypt the dentry names early and once for
+ readdir
+References: <20220311104558.157283-1-xiubli@redhat.com>
+Date:   Fri, 11 Mar 2022 16:02:57 +0000
+In-Reply-To: <20220311104558.157283-1-xiubli@redhat.com> (xiubli@redhat.com's
+        message of "Fri, 11 Mar 2022 18:45:54 +0800")
+Message-ID: <87ee3879zi.fsf@brahms.olymp>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2022-03-10 at 09:34 -0500, Venky Shankar wrote:
-> `rctime' has been a pain point in cephfs due to its buggy
-> nature - inconsistent values reported and those sorts.
-> Fixing rctime is non-trivial needing an overall redesign
-> of the entire nested statistics infrastructure.
-> 
-> As a workaround, PR
-> 
->      http://github.com/ceph/ceph/pull/37938
-> 
-> allows this extended attribute to be manually set. This allows
-> users to "fixup" inconsistency rctime values. While this sounds
-> messy, its probably the wisest approach allowing users/scripts
-> to workaround buggy rctime values.
-> 
-> The above PR enables Ceph MDS to allow manually setting
-> rctime extended attribute with the corresponding user-land
-> changes. We may as well allow the same to be done via kclient
-> for parity.
-> 
-> Signed-off-by: Venky Shankar <vshankar@redhat.com>
-> ---
->  fs/ceph/xattr.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index afec84088471..8c2dc2c762a4 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -366,6 +366,14 @@ static ssize_t ceph_vxattrcb_auth_mds(struct ceph_inode_info *ci,
->  	}
->  #define XATTR_RSTAT_FIELD(_type, _name)			\
->  	XATTR_NAME_CEPH(_type, _name, VXATTR_FLAG_RSTAT)
-> +#define XATTR_RSTAT_FIELD_UPDATABLE(_type, _name)			\
-> +	{								\
-> +		.name = CEPH_XATTR_NAME(_type, _name),			\
-> +		.name_size = sizeof (CEPH_XATTR_NAME(_type, _name)),	\
-> +		.getxattr_cb = ceph_vxattrcb_ ## _type ## _ ## _name,	\
-> +		.exists_cb = NULL,					\
-> +		.flags = VXATTR_FLAG_RSTAT,				\
-> +	}
->  #define XATTR_LAYOUT_FIELD(_type, _name, _field)			\
->  	{								\
->  		.name = CEPH_XATTR_NAME2(_type, _name, _field),	\
-> @@ -404,7 +412,7 @@ static struct ceph_vxattr ceph_dir_vxattrs[] = {
->  	XATTR_RSTAT_FIELD(dir, rsubdirs),
->  	XATTR_RSTAT_FIELD(dir, rsnaps),
->  	XATTR_RSTAT_FIELD(dir, rbytes),
-> -	XATTR_RSTAT_FIELD(dir, rctime),
-> +	XATTR_RSTAT_FIELD_UPDATABLE(dir, rctime),
->  	{
->  		.name = "ceph.dir.pin",
->  		.name_size = sizeof("ceph.dir.pin"),
 
-Thanks Venky, looks good. Merged into testing branch.
--- 
-Jeff Layton <jlayton@kernel.org>
+Hi Xiubo,
+
+I've started reviewing this patchset but, while running some quick tests,
+I've seen found a bug.  I was testing with fstests, but I can easily
+reproduce it simply using 'src/dirhash_collide', from fstests:
+
+- mount filesystem and create an encrypted directory
+
+- run that application on the encrypted (unlocked) directory:
+    # cd mydir
+    # $FSTESTSDIR/src/dirhash_collide -d -n 10000 .
+
+- umount filesystem and mount it again
+
+- do an 'ls' in 'mydir' and I get:
+
+[  115.807181] ------------[ cut here ]------------
+[  115.807865] WARNING: CPU: 0 PID: 220 at fs/ceph/crypto.c:138 ceph_encode=
+_encrypted_dname+0x1e6/0x240 [ceph]
+[  115.809298] Modules linked in: ceph libceph
+[  115.809881] CPU: 0 PID: 220 Comm: ls Not tainted 5.17.0-rc6+ #91
+[  115.810720] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS =
+rel-1.15.0-0-g2dd4b9b-rebuilt.opensuse.org 04/01/2014
+[  115.812298] RIP: 0010:ceph_encode_encrypted_dname+0x1e6/0x240 [ceph]
+[  115.813238] Code: 48 8b 44 24 50 48 89 85 ad 00 00 00 48 8b 44 24 58 48 =
+89 85 b5 00 00 00 e9 2f ff ff ff 48 89 ef e8 6f dd 17 e1 e9 45 ff ff ff <0f=
+> 0b e9 a2 fe ff ff 417
+[  115.815800] RSP: 0018:ffffc90000487bc0 EFLAGS: 00010246=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20
+[  115.816519] RAX: 0000000000000000 RBX: 1ffff92000090f78 RCX: ffffffffa01=
+4654e=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.817502] RDX: dffffc0000000000 RSI: ffffc90000487d58 RDI: ffff8880791=
+b3230=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.818466] RBP: ffffc90000487e90 R08: 0000000000000007 R09: ffff8880605=
+d8748=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.819445] R10: fffffbfff05a79b3 R11: 0000000000000001 R12: ffff8880791=
+b2fe8=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.820437] R13: ffff88807f88ae00 R14: ffffc90000487d58 R15: 00000000000=
+00000=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.821424] FS:  00007fe454541800(0000) GS:ffff888060c00000(0000) knlGS:=
+0000000000000000=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.822526] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20
+[  115.823308] CR2: 00007fe454530058 CR3: 000000000d6a0000 CR4: 00000000000=
+006b0=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.824296] Call Trace:=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20
+[  115.824646]  <TASK>=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20
+[  115.824963]  ? ceph_fscrypt_as_ctx_to_req+0x40/0x40 [ceph]=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20
+[  115.825774]  ? create_object.isra.0+0x34a/0x4b0=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.826418]  ? preempt_count_sub+0x18/0xc0=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.827069]  ? _raw_spin_unlock_irqrestore+0x28/0x40=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.827815]  ceph_readdir+0xe24/0x1fa0 [ceph]=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.828459]  ? preempt_count_sub+0x18/0xc0=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.829028]  ? preempt_count_sub+0x18/0xc0=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.829604]  ? ceph_d_revalidate+0x970/0x970 [ceph]=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.830314]  ? down_write_killable+0xb2/0x110=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.830921]  ? __down_killable+0x200/0x200=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.831488]  iterate_dir+0xe9/0x2a0=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.831995]  __x64_sys_getdents64+0xf2/0x1c0=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.832587]  ? __x64_sys_getdents+0x1c0/0x1c0=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.833203]  ? handle_mm_fault+0x1c3/0x230=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[  115.833778]  ? compat_fillonedir+0x1b0/0x1b0
+[  115.834419]  ? do_user_addr_fault+0x32b/0x940
+[  115.835048]  do_syscall_64+0x43/0x90
+[  115.835575]  entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+After this, I also see some KASAN NULL pointers, but I assume it's the
+result of the above bug.
+
+Cheers,
+--=20
+Lu=C3=ADs
