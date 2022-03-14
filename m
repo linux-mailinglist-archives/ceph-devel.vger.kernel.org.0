@@ -2,115 +2,240 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F6164D82E2
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Mar 2022 13:10:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44E474D8BCB
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Mar 2022 19:32:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240821AbiCNMLj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Mar 2022 08:11:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54764 "EHLO
+        id S243658AbiCNSd3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Mar 2022 14:33:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242810AbiCNMK5 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Mar 2022 08:10:57 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4D2E2FFD8
-        for <ceph-devel@vger.kernel.org>; Mon, 14 Mar 2022 05:09:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S236981AbiCNSd2 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Mar 2022 14:33:28 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4342E3DDC9;
+        Mon, 14 Mar 2022 11:32:18 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A21AE6135D
-        for <ceph-devel@vger.kernel.org>; Mon, 14 Mar 2022 12:09:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2C36C340ED;
-        Mon, 14 Mar 2022 12:09:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647259781;
-        bh=FGW8MCPR7HElej5vwVfENjAEVc0ZOi+y4IRlN+LrleQ=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=GrmIXwWrUU6fy9v7wG3HyKO1P8c/sCipHbJPRXhyWOflUpuyimMqLYdyZa5NAgMyQ
-         U/rgczUoka8InOzHOfzIp3KxRAicrHeE+bEqgklEDTTcGv4Y8pFyX4zZlk5j3lhzJ8
-         wMCSVQjQwjFktXMv1NqBiXYtx8AqnIQjzDNUDvk5HybUOszZMhUYdoXnNZlnrJON82
-         /A563nCJ6C6NoVz8m7cra7k3jeXqmDbsKgEKVE2H8LZk4YuDjd8WiDC0W67ygcbET0
-         4BKAGjaGiE5HZ2mqXpcMBH7GiywWfAqxfe+NEKdZoKBFvwHcrU4uwQ7qciNAIcMtse
-         5dwgbfoudQHaQ==
-Message-ID: <d2cd0dd047c40686d2b5e3b64131112a95581a60.camel@kernel.org>
-Subject: Re: [PATCH 3/3] ceph: convert to sparse reads
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org,
-        idryomov@gmail.com
-Date:   Mon, 14 Mar 2022 08:09:39 -0400
-In-Reply-To: <393b92d5-ce25-92dd-936f-049d7a819d13@redhat.com>
-References: <20220309123323.20593-1-jlayton@kernel.org>
-         <20220309123323.20593-4-jlayton@kernel.org>
-         <393b92d5-ce25-92dd-936f-049d7a819d13@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
+        by smtp-out2.suse.de (Postfix) with ESMTPS id E7E221F380;
+        Mon, 14 Mar 2022 18:32:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1647282736; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=98d+th+oWPXG7Pqx5Hg0uyktonyAKLNM8DWBEN4FGOA=;
+        b=VaXRnyNdaa1th6WOphggldbQAGMnRhvIE5R5k2Kcaujv3HN/p079HyuSf/QzFOsHPuqwyw
+        A3+FvIXLWES5tZU4O3x1gdoMr8Jz+ChAqIOqZNwpUtH9FQOj4eerasf75Y/j7B3NP/rRDM
+        X1HwGu7mKxdIjTWspUS4MrA+tYREPwU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1647282736;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=98d+th+oWPXG7Pqx5Hg0uyktonyAKLNM8DWBEN4FGOA=;
+        b=Gq8GL66dBWLI3fEGo7mNNUZ3BtFRz76CWtMt6m7VXXyPvG7MxrQQAPIiDm8P/ctrjNxy7A
+        EYNwwqJTa7yOVMDg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7FA6A13ADA;
+        Mon, 14 Mar 2022 18:32:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id lTdWGzCKL2JvYAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Mon, 14 Mar 2022 18:32:16 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 649ed029;
+        Mon, 14 Mar 2022 18:32:34 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/2] ceph: add support for encrypted snapshot names
+References: <20220310172616.16212-1-lhenriques@suse.de>
+        <20220310172616.16212-2-lhenriques@suse.de>
+        <fdf774cd-3cca-14e5-d5aa-44de70bb89f0@redhat.com>
+        <2d69e6dd-b047-13fe-7dc5-2c64190e0e8a@redhat.com>
+        <cff2b7ac-d4bb-4096-06a9-79b41b31a57a@redhat.com>
+Date:   Mon, 14 Mar 2022 18:32:34 +0000
+In-Reply-To: <cff2b7ac-d4bb-4096-06a9-79b41b31a57a@redhat.com> (Xiubo Li's
+        message of "Mon, 14 Mar 2022 13:17:30 +0800")
+Message-ID: <87o8288jwd.fsf@brahms.olymp>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2022-03-14 at 10:22 +0800, Xiubo Li wrote:
-> On 3/9/22 8:33 PM, Jeff Layton wrote:
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >   fs/ceph/addr.c | 2 +-
-> >   fs/ceph/file.c | 4 ++--
-> >   2 files changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> > index 752c421c9922..f42440d7102b 100644
-> > --- a/fs/ceph/addr.c
-> > +++ b/fs/ceph/addr.c
-> > @@ -317,7 +317,7 @@ static void ceph_netfs_issue_op(struct netfs_read_subrequest *subreq)
-> >   		return;
-> >   
-> >   	req = ceph_osdc_new_request(&fsc->client->osdc, &ci->i_layout, vino, subreq->start, &len,
-> > -			0, 1, CEPH_OSD_OP_READ,
-> > +			0, 1, CEPH_OSD_OP_SPARSE_READ,
-> 
-> For this possibly should we add one option to disable it ? Just in case 
-> we need to debug the fscrypt or something else when we hit the 
-> read/write related issue ?
-> 
-> 
+Xiubo Li <xiubli@redhat.com> writes:
 
-Yeah, it's probably a reasonable thing to add. I had that at one point
-in development and dropped it. Let me see if I can resurrect that before
-I post a v2.
+> On 3/14/22 10:45 AM, Xiubo Li wrote:
+>>
+>> On 3/12/22 4:30 PM, Xiubo Li wrote:
+>>>
+>>> On 3/11/22 1:26 AM, Lu=C3=ADs Henriques wrote:
+>>>> Since filenames in encrypted directories are already encrypted and sho=
+wn
+>>>> as a base64-encoded string when the directory is locked, snapshot names
+>>>> should show a similar behaviour.
+>>>>
+>>>> Signed-off-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
+>>>> ---
+>>>> =C2=A0 fs/ceph/dir.c=C2=A0=C2=A0 |=C2=A0 9 +++++++++
+>>>> =C2=A0 fs/ceph/inode.c | 13 +++++++++++++
+>>>> =C2=A0 2 files changed, 22 insertions(+)
+>>>>
+>>>> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+>>>> index 6df2a91af236..123e3b9c8161 100644
+>>>> --- a/fs/ceph/dir.c
+>>>> +++ b/fs/ceph/dir.c
+>>>> @@ -1075,6 +1075,15 @@ static int ceph_mkdir(struct user_namespace
+>>>> *mnt_userns, struct inode *dir,
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 op =3D CEPH_MDS=
+_OP_MKSNAP;
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dout("mksnap di=
+r %p snap '%pd' dn %p\n", dir,
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 dentry, dentry);
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Encrypted snapshot=
+s require d_revalidate to force a
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * LOOKUPSNAP to clea=
+nup dcache
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ENCRYPTED(dir)) {
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sp=
+in_lock(&dentry->d_lock);
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 de=
+ntry->d_flags |=3D DCACHE_NOKEY_NAME;
+>>>
+>>> I think this is not correct fix of this issue.
+>>>
+>>> Actually this dentry's name is a KEY NAME, which is human readable name.
+>>>
+>>> DCACHE_NOKEY_NAME means the base64_encoded names. This usually will be =
+set
+>>> when filling a new dentry if the directory is locked. If the directory =
+is
+>>> unlocked the directory inode will be set with the key.
+>>>
+>>> The root cause should be the snapshot's inode doesn't correctly set the
+>>> encrypt stuff when you are reading from it.
+>>>
+>>> NOTE: when you are 'ls -l .snap/snapXXX' the snapXXX dentry name is cor=
+rect,
+>>> it's just corrupted for the file or directory names under snapXXX/.
+>>>
+>> When mksnap in ceph_mkdir() before sending the request out it will creat=
+e a
+>> new inode for the snapshot dentry and then will fill the ci->fscrypt_aut=
+h from
+>> .snap's inode, please see ceph_mkdir()->ceph_new_inode().
+>>
+>> And in the mksnap request reply it will try to fill the ci->fscrypt_auth=
+ again
+>> but failed because it was already filled. This time the auth info is from
+>> .snap's parent dir from MDS side. In this patch in theory they should be=
+ the
+>> same, but I am still not sure why when decrypting the dentry names in sn=
+apXXX
+>> will fail.
+>>
+>> I just guess it possibly will depend on the inode number from the related
+>> inode or something else. Before the request reply it seems the inode isn=
+'t set
+>> the inode number ?
+>>
+> It should be the ci_nonce's problem.
 
-> 
-> >   			CEPH_OSD_FLAG_READ | fsc->client->osdc.client->options->read_from_replica,
-> >   			NULL, ci->i_truncate_seq, ci->i_truncate_size, false);
-> >   	if (IS_ERR(req)) {
-> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > index feb75eb1cd82..d1956a20c627 100644
-> > --- a/fs/ceph/file.c
-> > +++ b/fs/ceph/file.c
-> > @@ -934,7 +934,7 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
-> >   
-> >   		req = ceph_osdc_new_request(osdc, &ci->i_layout,
-> >   					ci->i_vino, off, &len, 0, 1,
-> > -					CEPH_OSD_OP_READ, CEPH_OSD_FLAG_READ,
-> > +					CEPH_OSD_OP_SPARSE_READ, CEPH_OSD_FLAG_READ,
-> >   					NULL, ci->i_truncate_seq,
-> >   					ci->i_truncate_size, false);
-> >   		if (IS_ERR(req)) {
-> > @@ -1291,7 +1291,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
-> >   					    vino, pos, &size, 0,
-> >   					    1,
-> >   					    write ? CEPH_OSD_OP_WRITE :
-> > -						    CEPH_OSD_OP_READ,
-> > +						    CEPH_OSD_OP_SPARSE_READ,
-> >   					    flags, snapc,
-> >   					    ci->i_truncate_seq,
-> >   					    ci->i_truncate_size,
-> 
+OK, you were right.  However, I don't see a simple way around it.  And I
+don't think that adding a fscrypt new interface to copy an existent nonce
+makes sense.
 
--- 
-Jeff Layton <jlayton@kernel.org>
+So, here's another possible option: instead of setting the
+DCACHE_NOKEY_NAME flag, we could simply do d_invalidate(dentry) before
+leaving ceph_mkdir (if we're creating an encrypted snapshot, of course).
+Would this be acceptable?
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+
+> In the ceph_mkdir()->ceph_new_inode() it will generate a new random nonce=
+ and
+> then setup the fscrypt context for the inode of .snap/snapXXX. But this c=
+ontext
+> is not correct, because the context of .snap/snapXXX should always be inh=
+erit
+> from .snap's parent, which will be sent from the MDS in the request reply.
+>
+>
+>> - Xiubo
+>>
+>>>
+>>>> + spin_unlock(&dentry->d_lock);
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else if (ceph_snap(dir) =3D=3D CEPH_N=
+OSNAP) {
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dout("mkdir dir=
+ %p dn %p mode 0%ho\n", dir, dentry, mode);
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 op =3D CEPH_MDS=
+_OP_MKDIR;
+>>>> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+>>>> index b573a0f33450..81d3d554d261 100644
+>>>> --- a/fs/ceph/inode.c
+>>>> +++ b/fs/ceph/inode.c
+>>>> @@ -182,6 +182,19 @@ struct inode *ceph_get_snapdir(struct inode *pare=
+nt)
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ci->i_rbytes =3D 0;
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ci->i_btime =3D ceph_inode(parent)->i_b=
+time;
+>>>> =C2=A0 +=C2=A0=C2=A0=C2=A0 /* if encrypted, just borrow fscrypt_auth f=
+rom parent */
+>>>> +=C2=A0=C2=A0=C2=A0 if (IS_ENCRYPTED(parent)) {
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct ceph_inode_info *pc=
+i =3D ceph_inode(parent);
+>>>> +
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ci->fscrypt_auth =3D kmemd=
+up(pci->fscrypt_auth,
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pci->fscryp=
+t_auth_len,
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 GFP_KERNEL);
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ci->fscrypt_auth) {
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 in=
+ode->i_flags |=3D S_ENCRYPTED;
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ci=
+->fscrypt_auth_len =3D pci->fscrypt_auth_len;
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else
+>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 do=
+ut("Failed to alloc memory for fscrypt_auth in snapdir\n");
+>>>> +=C2=A0=C2=A0=C2=A0 }
+>>>
+>>> Here I think Jeff has already commented it in your last version, it sho=
+uld
+>>> fail by returning NULL ?
+>>>
+>>> - Xiubo
+>>>
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (inode->i_state & I_NEW) {
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 inode->i_op =3D=
+ &ceph_snapdir_iops;
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 inode->i_fop =
+=3D &ceph_snapdir_fops;
+>>>>
+>
