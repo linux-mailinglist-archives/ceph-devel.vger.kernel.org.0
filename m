@@ -2,199 +2,178 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A551A4D948E
-	for <lists+ceph-devel@lfdr.de>; Tue, 15 Mar 2022 07:24:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAD534D9547
+	for <lists+ceph-devel@lfdr.de>; Tue, 15 Mar 2022 08:29:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345188AbiCOGZL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 15 Mar 2022 02:25:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49310 "EHLO
+        id S1345432AbiCOHa0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 15 Mar 2022 03:30:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345186AbiCOGZJ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Mar 2022 02:25:09 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F3D705F8B
-        for <ceph-devel@vger.kernel.org>; Mon, 14 Mar 2022 23:23:57 -0700 (PDT)
+        with ESMTP id S238926AbiCOHaZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Mar 2022 03:30:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 09ABA4B1CA
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Mar 2022 00:29:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647325437;
+        s=mimecast20190719; t=1647329351;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=uRB/8G7jsmT5DDceI/Qojw4MB86/QorNAkYi2Xr5UJ8=;
-        b=aqGNYBMDVN+/lWqB1K1nkH7Qpi5YcKhQ+jwNIUZ8dWtFG8BkRQzAn36AGHiqLDJetdAVGf
-        FhvAY3wzats5Wsog7ott+SBDIVZrOrEKys9M5K2OdJJ1XGMvWZkggJ7agPfYoLhGRuUwAc
-        21wDIJpjPAQPKrtpAmJNTt8hV8G4CEw=
+        bh=tqny6Q9W5Y9KFhHBJHThu4E5vRlpSkXvSXYfrC4FolQ=;
+        b=Hp7HijigsSdAamRqmNgT6yyHxPV6Q/2f0n8IFVGXRzA4klGpUDtsIGDSSijq08VEFwEzgh
+        qmfa19cNugoMc8IhqXiHpzDw2UXcRYA0S8gbHeB+kkZs3vICeQ2sd4nmuuOUA5WVZJoBLq
+        G7jpd1caDAdZhzRdIkgQ2O7DeXT8qW0=
 Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
  [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-282-q8FlxyzLMZGQPcVl88QakQ-1; Tue, 15 Mar 2022 02:23:55 -0400
-X-MC-Unique: q8FlxyzLMZGQPcVl88QakQ-1
-Received: by mail-pj1-f69.google.com with SMTP id s20-20020a17090ad49400b001bf481fae01so865844pju.1
-        for <ceph-devel@vger.kernel.org>; Mon, 14 Mar 2022 23:23:54 -0700 (PDT)
+ us-mta-281-yvbXfTUvPMSK2QEAT7cc6Q-1; Tue, 15 Mar 2022 03:29:10 -0400
+X-MC-Unique: yvbXfTUvPMSK2QEAT7cc6Q-1
+Received: by mail-pj1-f69.google.com with SMTP id mm2-20020a17090b358200b001bf529127dfso1368929pjb.6
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Mar 2022 00:29:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=uRB/8G7jsmT5DDceI/Qojw4MB86/QorNAkYi2Xr5UJ8=;
-        b=g4rGYtGyDx8ftKZ7CUJAt1zCR8j4GoI24Gu4Krwv+tNnMroSiXU6qxtj7DWB/9G5Qk
-         YOTft8EWdMQvSH8M6h7Xb1tIcqCZMinePPiV+uoFLPV/AM9Sn1UB3vzCm71RKwaSMASt
-         Kp0spA9OjP8njTgMfWaEgSmJYO/8Xaytnf0fx5/bHHz819mCR6DKieMgfKLkgO2TJ2dA
-         Ch57MPQ2xvwus9cxekFw+3NzEUjc2gBpF7FmYVb+iBxUu60Ly3spgaBflD6tWOfOhYtL
-         czd0hdDvL62LVbnTWriWD/FId9KnVlh+DgNvTgXMOo8QpoaT2V2tfaSoyDo2OcoJCVDP
-         AQ+g==
-X-Gm-Message-State: AOAM531cI3ytslxEhYZl/bC7ila/vmCObth6SKg/UkC7RQU0GvAr/qKR
-        dZJBstT+0wgx9i205RJ+CuFKBeChr+rVtPPwfuwmbsRRqifH6FKgOj7k6ZtbmKTSIRVgqaTQHSS
-        6SICBfojKmAlwH3G+lX/xeQ==
-X-Received: by 2002:a17:902:a40f:b0:14b:61:b19e with SMTP id p15-20020a170902a40f00b0014b0061b19emr26541321plq.20.1647325433450;
-        Mon, 14 Mar 2022 23:23:53 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJziDXpT2Awqd792CiMPkXwov1xASL2P20CUaSen02Ztaqk+78kRB38eKu/Rg08q5AFYGWYN9g==
-X-Received: by 2002:a17:902:a40f:b0:14b:61:b19e with SMTP id p15-20020a170902a40f00b0014b0061b19emr26541310plq.20.1647325433156;
-        Mon, 14 Mar 2022 23:23:53 -0700 (PDT)
+        bh=tqny6Q9W5Y9KFhHBJHThu4E5vRlpSkXvSXYfrC4FolQ=;
+        b=BMXECwm6sX4nPO2e60pWANLMRFN6Ta5+HnKiLLpcn+HAX3aFJM3CKg9SO9trQjdMaQ
+         sAl6kMSEsjZ3KtrYOmc7KmZ2YoXozwSUhjAFi91C2PXXAdy+4FXb3pd1eWzOL1r8rT/A
+         ENkxrpe0Xu/E2Xru8r/0+ZhbfVoAK86ueGO9hsX6F+GAnEkhty1YBN9fZ8YVHVtR9Pwn
+         VgHAh93bL+sTcDnM7tXtrAjEINUNLdjpJyIjgHoMfeT0oTYRXyHiDPtLhje8ZX6bsque
+         ZYC11tY+mS/O67j8cppZXcp/QVicS2yP4IPoVh6yN/R6uqdfgQwMxGL7Pekp6rOVCmb7
+         3u5Q==
+X-Gm-Message-State: AOAM530WgbqnlyryZsWag5LVCI7i85vdGIhTp7wQbMKPc/W9DsuhOWGz
+        TlDPIr/kADtDg/uKaP3PPPCNDzDaMRMep6Kf2mBbBPDdhQm8kfAYClNCoo24ZUtSHVTJVe73ZxV
+        RrKyBK97wMUHHKKGrR/8Y2w==
+X-Received: by 2002:a17:902:cec4:b0:151:a696:149b with SMTP id d4-20020a170902cec400b00151a696149bmr26713365plg.145.1647329348868;
+        Tue, 15 Mar 2022 00:29:08 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxJnBiLRzkOX84CVfstDVr/suiTNGdSD8dC1pni0NyqO4P/FclTzCF09xoWY3NWAehzrSuEoA==
+X-Received: by 2002:a17:902:cec4:b0:151:a696:149b with SMTP id d4-20020a170902cec400b00151a696149bmr26713339plg.145.1647329348485;
+        Tue, 15 Mar 2022 00:29:08 -0700 (PDT)
 Received: from [10.72.12.110] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id o65-20020a17090a0a4700b001bef5cffea7sm1803071pjo.0.2022.03.14.23.23.50
+        by smtp.gmail.com with ESMTPSA id f13-20020a056a001acd00b004f76d35c1dcsm18839886pfv.104.2022.03.15.00.29.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Mar 2022 23:23:52 -0700 (PDT)
-Subject: Re: [PATCH 0/3] ceph: support for sparse read in msgr2 crc path
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        idryomov@gmail.com
-References: <20220309123323.20593-1-jlayton@kernel.org>
+        Tue, 15 Mar 2022 00:29:07 -0700 (PDT)
+Subject: Re: [RFC PATCH 1/2] ceph: add support for encrypted snapshot names
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20220310172616.16212-1-lhenriques@suse.de>
+ <20220310172616.16212-2-lhenriques@suse.de>
+ <fdf774cd-3cca-14e5-d5aa-44de70bb89f0@redhat.com>
+ <2d69e6dd-b047-13fe-7dc5-2c64190e0e8a@redhat.com>
+ <cff2b7ac-d4bb-4096-06a9-79b41b31a57a@redhat.com>
+ <87o8288jwd.fsf@brahms.olymp>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <f9ee2a7d-f8da-6056-c659-6f7c168cd93b@redhat.com>
-Date:   Tue, 15 Mar 2022 14:23:34 +0800
+Message-ID: <7aedb4b9-11e4-cfa1-986f-75cf8706c6c0@redhat.com>
+Date:   Tue, 15 Mar 2022 15:28:48 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <20220309123323.20593-1-jlayton@kernel.org>
+In-Reply-To: <87o8288jwd.fsf@brahms.olymp>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Jeff,
 
-I hit the following crash by using the latest wip-fscrypt branch:
+On 3/15/22 2:32 AM, Luís Henriques wrote:
+> Xiubo Li <xiubli@redhat.com> writes:
+>
+>> On 3/14/22 10:45 AM, Xiubo Li wrote:
+>>> On 3/12/22 4:30 PM, Xiubo Li wrote:
+>>>> On 3/11/22 1:26 AM, Luís Henriques wrote:
+>>>>> Since filenames in encrypted directories are already encrypted and shown
+>>>>> as a base64-encoded string when the directory is locked, snapshot names
+>>>>> should show a similar behaviour.
+>>>>>
+>>>>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+>>>>> ---
+>>>>>    fs/ceph/dir.c   |  9 +++++++++
+>>>>>    fs/ceph/inode.c | 13 +++++++++++++
+>>>>>    2 files changed, 22 insertions(+)
+>>>>>
+>>>>> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+>>>>> index 6df2a91af236..123e3b9c8161 100644
+>>>>> --- a/fs/ceph/dir.c
+>>>>> +++ b/fs/ceph/dir.c
+>>>>> @@ -1075,6 +1075,15 @@ static int ceph_mkdir(struct user_namespace
+>>>>> *mnt_userns, struct inode *dir,
+>>>>>            op = CEPH_MDS_OP_MKSNAP;
+>>>>>            dout("mksnap dir %p snap '%pd' dn %p\n", dir,
+>>>>>                 dentry, dentry);
+>>>>> +        /*
+>>>>> +         * Encrypted snapshots require d_revalidate to force a
+>>>>> +         * LOOKUPSNAP to cleanup dcache
+>>>>> +         */
+>>>>> +        if (IS_ENCRYPTED(dir)) {
+>>>>> +            spin_lock(&dentry->d_lock);
+>>>>> +            dentry->d_flags |= DCACHE_NOKEY_NAME;
+>>>> I think this is not correct fix of this issue.
+>>>>
+>>>> Actually this dentry's name is a KEY NAME, which is human readable name.
+>>>>
+>>>> DCACHE_NOKEY_NAME means the base64_encoded names. This usually will be set
+>>>> when filling a new dentry if the directory is locked. If the directory is
+>>>> unlocked the directory inode will be set with the key.
+>>>>
+>>>> The root cause should be the snapshot's inode doesn't correctly set the
+>>>> encrypt stuff when you are reading from it.
+>>>>
+>>>> NOTE: when you are 'ls -l .snap/snapXXX' the snapXXX dentry name is correct,
+>>>> it's just corrupted for the file or directory names under snapXXX/.
+>>>>
+>>> When mksnap in ceph_mkdir() before sending the request out it will create a
+>>> new inode for the snapshot dentry and then will fill the ci->fscrypt_auth from
+>>> .snap's inode, please see ceph_mkdir()->ceph_new_inode().
+>>>
+>>> And in the mksnap request reply it will try to fill the ci->fscrypt_auth again
+>>> but failed because it was already filled. This time the auth info is from
+>>> .snap's parent dir from MDS side. In this patch in theory they should be the
+>>> same, but I am still not sure why when decrypting the dentry names in snapXXX
+>>> will fail.
+>>>
+>>> I just guess it possibly will depend on the inode number from the related
+>>> inode or something else. Before the request reply it seems the inode isn't set
+>>> the inode number ?
+>>>
+>> It should be the ci_nonce's problem.
+> OK, you were right.  However, I don't see a simple way around it.  And I
+> don't think that adding a fscrypt new interface to copy an existent nonce
+> makes sense.
+>
+> So, here's another possible option: instead of setting the
+> DCACHE_NOKEY_NAME flag, we could simply do d_invalidate(dentry) before
+> leaving ceph_mkdir (if we're creating an encrypted snapshot, of course).
+> Would this be acceptable?
 
-<5>[245348.815462] Key type ceph unregistered
-<5>[245545.560567] Key type ceph registered
-<6>[245545.566723] libceph: loaded (mon/osd proto 15/24)
-<6>[245545.775116] ceph: loaded (mds proto 32)
-<6>[245545.822200] libceph: mon2 (1)10.72.47.117:40843 session established
-<6>[245545.829658] libceph: client5000 fsid 
-2b9c5f33-3f43-4f89-945d-2a1b6372c5af
-<4>[245583.531648] ------------[ cut here ]------------
-<2>[245583.531701] kernel BUG at net/ceph/messenger.c:1032!
-<4>[245583.531929] invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-<4>[245583.532030] CPU: 2 PID: 283539 Comm: kworker/2:0 Tainted: 
-G            E     5.17.0-rc6+ #98
-<4>[245583.532050] Hardware name: Red Hat RHEV Hypervisor, BIOS 
-1.11.0-2.el7 04/01/2014
-<4>[245583.532086] Workqueue: ceph-msgr ceph_con_workfn [libceph]
-<4>[245583.532380] RIP: 0010:ceph_msg_data_cursor_init+0x79/0x80 [libceph]
-<4>[245583.532592] Code: 8d 7b 08 e8 39 99 00 dc 48 8d 7b 18 48 89 6b 08 
-e8 ec 97 00 dc c7 43 18 00 00 00 00 48 89 df 5b 5d 41 5c e9 89 c7 ff ff 
-0f 0b <0f> 0b 0f 0b 0f 1f 00 0f 1f 44 00 00 41 57 41 56 41 55 49 89 cd 41
-<4>[245583.532609] RSP: 0018:ffffc90018847c10 EFLAGS: 00010287
-<4>[245583.532654] RAX: 0000000000000000 RBX: ffff888244ff3850 RCX: 
-ffffffffc10bd850
-<4>[245583.532683] RDX: dffffc0000000000 RSI: ffff888244ff37d0 RDI: 
-ffff888244ff3838
-<4>[245583.532705] RBP: ffff888244ff37d0 R08: 00000000000000d1 R09: 
-ffffed10489fe701
-<4>[245583.532726] R10: ffff888244ff3804 R11: ffffed10489fe700 R12: 
-00000000000000d1
-<4>[245583.532746] R13: ffff8882d1adb030 R14: ffff8882d1adb408 R15: 
-0000000000000000
-<4>[245583.532764] FS:  0000000000000000(0000) GS:ffff8887ccd00000(0000) 
-knlGS:0000000000000000
-<4>[245583.532785] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-<4>[245583.532797] CR2: 00007fb991665000 CR3: 0000000368ebe001 CR4: 
-00000000007706e0
-<4>[245583.532809] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 
-0000000000000000
-<4>[245583.532820] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 
-0000000000000400
-<4>[245583.532831] PKRU: 55555554
-<4>[245583.532840] Call Trace:
-<4>[245583.532852]  <TASK>
-<4>[245583.532863]  ceph_con_v1_try_read+0xd21/0x15c0 [libceph]
-<4>[245583.533124]  ? ceph_tcp_sendpage+0x100/0x100 [libceph]
-<4>[245583.533348]  ? load_balance+0x1240/0x1240
-<4>[245583.533655]  ? dequeue_entity+0x18b/0x6f0
-<4>[245583.533690]  ? mutex_lock+0x8e/0xe0
-<4>[245583.533869]  ? __mutex_lock_slowpath+0x10/0x10
-<4>[245583.533887]  ? _raw_spin_unlock+0x16/0x30
-<4>[245583.533906]  ? __switch_to+0x2fa/0x690
-<4>[245583.534007]  ceph_con_workfn+0x545/0x940 [libceph]
-<4>[245583.534234]  process_one_work+0x3c1/0x6e0
-<4>[245583.534340]  worker_thread+0x57/0x580
-<4>[245583.534363]  ? process_one_work+0x6e0/0x6e0
-<4>[245583.534382]  kthread+0x160/0x190
-<4>[245583.534421]  ? kthread_complete_and_exit+0x20/0x20
-<4>[245583.534477]  ret_from_fork+0x1f/0x30
-<4>[245583.534544]  </TASK>
-...
+I think there has one simple way. Just think about without setting the 
+fscrypt_auth for the '.snap' dir's inode, that is without your this 
+patch it works well.
 
-<4>[245583.535413] RIP: 0010:ceph_msg_data_cursor_init+0x79/0x80 [libceph]
-<4>[245583.535627] Code: 8d 7b 08 e8 39 99 00 dc 48 8d 7b 18 48 89 6b 08 
-e8 ec 97 00 dc c7 43 18 00 00 00 00 48 89 df 5b 5d 41 5c e9 89 c7 ff ff 
-0f 0b <0f> 0b 0f 0b 0f 1f 00 0f 1f 44 00 00 41 57 41 56 41 55 49 89 cd 41
-<4>[245583.535644] RSP: 0018:ffffc90018847c10 EFLAGS: 00010287
-<4>[245583.535720] RAX: 0000000000000000 RBX: ffff888244ff3850 RCX: 
-ffffffffc10bd850
-<4>[245583.535745] RDX: dffffc0000000000 RSI: ffff888244ff37d0 RDI: 
-ffff888244ff3838
-<4>[245583.535769] RBP: ffff888244ff37d0 R08: 00000000000000d1 R09: 
-ffffed10489fe701
+That's because when we create a snapshot under '.snap' dir, since the 
+'.snap' dir related inode doesn't have the fscrypt_auth been filled, so 
+when creating a new inode for the snapshot it won't fill the 
+fscrypt_auth for the new inode. And then in the handle_reply() it can 
+fill the fscrypt auth as expected.
 
-Seems caused by the parse read ?
+You can make sure that in the ceph_new_inode() just skip setting the 
+fscrypt_auth for the new inode if the parent dir is a snapdir, that is 
+'.snap/'. And this will just leave it to be filled in the handle_reply().
+
+-- Xiubo
 
 
-
-On 3/9/22 8:33 PM, Jeff Layton wrote:
-> This patchset is a revised version of the one I sent a couple of weeks
-> ago. This adds support for sparse reads to libceph, and changes cephfs
-> over to use instead of non-sparse reads. The sparse read codepath is a
-> drop in replacement for regular reads, so the upper layers should be
-> able to use it interchangeibly.
 >
-> This is necessary for the (ongoing) fscrypt work. We need to know which
-> regions in a file are actually sparse so that we can avoid decrypting
-> them.
->
-> The next step is to add the same support to the msgr2 secure codepath.
-> Currently that code sets up a scatterlist with the final destination
-> data pages in it and passes that to the decrypt routine so that the
-> decrypted data is written directly to the destination.
->
-> My thinking here is to change that to decrypt the data in-place for
-> sparse reads, and then we'll just parse the decrypted buffer via
-> calling sparse_read and copy the data into the right places.
->
-> Ilya, does that sound sane? Is it OK to pass gcm_crypt two different
-> scatterlists with a region that overlaps?
->
-> Jeff Layton (3):
->    libceph: add sparse read support to msgr2 crc state machine
->    libceph: add sparse read support to OSD client
->    ceph: convert to sparse reads
->
->   fs/ceph/addr.c                  |   2 +-
->   fs/ceph/file.c                  |   4 +-
->   include/linux/ceph/messenger.h  |  31 +++++
->   include/linux/ceph/osd_client.h |  38 ++++++
->   net/ceph/messenger.c            |   1 +
->   net/ceph/messenger_v2.c         | 215 ++++++++++++++++++++++++++++++--
->   net/ceph/osd_client.c           | 163 ++++++++++++++++++++++--
->   7 files changed, 435 insertions(+), 19 deletions(-)
->
+> Cheers,
 
