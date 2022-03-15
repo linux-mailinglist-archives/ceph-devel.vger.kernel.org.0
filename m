@@ -2,44 +2,44 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 369124D9B25
-	for <lists+ceph-devel@lfdr.de>; Tue, 15 Mar 2022 13:26:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 757374D9B68
+	for <lists+ceph-devel@lfdr.de>; Tue, 15 Mar 2022 13:41:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348245AbiCOM13 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 15 Mar 2022 08:27:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54136 "EHLO
+        id S238875AbiCOMm3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 15 Mar 2022 08:42:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239134AbiCOM13 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Mar 2022 08:27:29 -0400
+        with ESMTP id S235627AbiCOMm1 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Mar 2022 08:42:27 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB601532E4
-        for <ceph-devel@vger.kernel.org>; Tue, 15 Mar 2022 05:26:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BFFC31207
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Mar 2022 05:41:16 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 76FEC6151D
-        for <ceph-devel@vger.kernel.org>; Tue, 15 Mar 2022 12:26:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 808ECC340EE;
-        Tue, 15 Mar 2022 12:26:16 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B447061525
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Mar 2022 12:41:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96100C340E8;
+        Tue, 15 Mar 2022 12:41:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647347176;
-        bh=7VXOAkkyS+1laY0hmXlZz8plmtnsWeXjmxMJSnosvnY=;
+        s=k20201202; t=1647348075;
+        bh=fUiZVnJLIe0aBP3NjnReM590r6caten3S0nsPmOlem0=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=HIrJU6gpMSRJHWNuPKq0bO67I55jY/THkVnK0kZOImMkQjK3EExBIIGI7EPOXnmaO
-         8oXjkPjWCXKV1B7wjAa/4hNKFjb9I8aD/WiD8ArDEa/frfgMxdNJ0uk9CDMvSxc5So
-         sEWHPqw1KSQPbr74gzOTjCVqOQezPQDr9Q3Z9IT/k7TM6cPaV+F4iPpxirVpmnojV/
-         CfC9wAn9jTysZGmeQj/iunlB76poEwCmwPLq45j93J2qe2E0pIYWoNBo+EOcIC3+M6
-         wuDQRpPws3kf6k84NADbUyI+YDsM0oe4Z683K/yIG5fsk6WLNZufiCpDq3xx/FakCJ
-         rKTV9c+puvxdw==
-Message-ID: <1ce10b6639b34759a701602d9172aec59e23c03b.camel@kernel.org>
-Subject: Re: [PATCH] ceph: get snap_rwsem read lock in handle_cap_export for
- ceph_add_cap
+        b=PT4jbAtqPMljFIVXlHf/q8VkltiNfVqDQMnH9QSNsXGB0aKv5eabaJ/k6Orgyy59V
+         fQ+LC3B/x6JE6eV8i5p0625JtOSQsNqoGE1LvYdTQtTKMIU8ELn0Vlnva4EmaNNCYF
+         Bq7z7LJWCc7yy2OOnRF4Ml4RWij9XBAdiTuhJk36L5YtjjJWxQbDd0gmn6Q6iuI/90
+         xqLnf/EpYkZYXGR6/jE35lyS9Z1dO+eb6d08z1cV3aebCoIhj/+fwVXjyhjHiDqHeB
+         KZtJU3gyETaiPCuqmJIu4oslm6G26GU2mvzeALN5FqlsbBFyqfzaTliqP982aPOqEJ
+         TTmB2pm7ZivUA==
+Message-ID: <db065a435d712ca9ec9245bdad3f43dc8e271385.camel@kernel.org>
+Subject: Re: [PATCH v2] ceph: send the fscrypt_auth to MDS via request
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Niels Dossche <dossche.niels@gmail.com>, ceph-devel@vger.kernel.org
-Cc:     Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 15 Mar 2022 08:26:15 -0400
-In-Reply-To: <20220314200717.52033-1-dossche.niels@gmail.com>
-References: <20220314200717.52033-1-dossche.niels@gmail.com>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, vshankar@redhat.com, lhenriques@suse.de,
+        ceph-devel@vger.kernel.org
+Date:   Tue, 15 Mar 2022 08:41:13 -0400
+In-Reply-To: <20220315093741.25664-1-xiubli@redhat.com>
+References: <20220315093741.25664-1-xiubli@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
@@ -54,41 +54,133 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2022-03-14 at 21:07 +0100, Niels Dossche wrote:
-> ceph_add_cap says in its function documentation that the caller should
-> hold the read lock on the session snap_rwsem. Furthermore, not only
-> ceph_add_cap needs that lock, when it calls to ceph_lookup_snap_realm it
-> eventually calls ceph_get_snap_realm which states via lockdep that
-> snap_rwsem needs to be held. handle_cap_export calls ceph_add_cap
-> without that mdsc->snap_rwsem held. Thus, since ceph_get_snap_realm
-> and ceph_add_cap both need the lock, the common place to acquire that
-> lock is inside handle_cap_export.
+On Tue, 2022-03-15 at 17:37 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
 > 
-> Signed-off-by: Niels Dossche <dossche.niels@gmail.com>
+> Currently when creating new files or directories the kclient will
+> create a new inode and fill the fscrypt auth locally, without sending
+> it to MDS via requests. Then the MDS reply with it to empty too.
+> And the kclient will update it later together with the cap update
+> requests.
+> 
+> It's buggy if just after the create requests succeeds but the kclient
+> crash and reboot, then in MDS side the fscrypt_auth will keep empty.
+> 
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  fs/ceph/caps.c | 2 ++
->  1 file changed, 2 insertions(+)
 > 
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index b472cd066d1c..0dd60db285b1 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -3903,8 +3903,10 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
->  		/* add placeholder for the export tagert */
->  		int flag = (cap == ci->i_auth_cap) ? CEPH_CAP_FLAG_AUTH : 0;
->  		tcap = new_cap;
-> +		down_read(&mdsc->snap_rwsem);
->  		ceph_add_cap(inode, tsession, t_cap_id, issued, 0,
->  			     t_seq - 1, t_mseq, (u64)-1, flag, &new_cap);
-> +		up_read(&mdsc->snap_rwsem);
+> V2:
+> - Fix the compile errors without CONFIG_FS_ENCRYPTION enabled.
+> 
+> 
+> 
+>  fs/ceph/dir.c  | 43 +++++++++++++++++++++++++++++++++++++++++--
+>  fs/ceph/file.c | 17 ++++++++++++++++-
+>  2 files changed, 57 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index 5ae5cb778389..8675898a4336 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -904,8 +904,22 @@ static int ceph_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+>  		goto out_req;
+>  	}
 >  
->  		if (!list_empty(&ci->i_cap_flush_list) &&
->  		    ci->i_auth_cap == tcap) {
+> -	if (S_ISREG(mode) && IS_ENCRYPTED(dir))
+> -		set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
+> +	if (IS_ENCRYPTED(dir)) {
+> +#ifdef CONFIG_FS_ENCRYPTION
+> +		struct ceph_inode_info *ci = ceph_inode(req->r_new_inode);
+> +
+> +		req->r_fscrypt_auth = kmemdup(ci->fscrypt_auth,
+> +					      ci->fscrypt_auth_len,
+> +					      GFP_KERNEL);
+> +		if (!req->r_fscrypt_auth) {
+> +			err = -ENOMEM;
+> +			goto out_req;
+> +		}
+> +#endif
 
-Looks good. The other ceph_add_cap callsites already hold this.
+I thought ceph_as_ctx_to_req was supposed to populate this field. If
+that's not happening here then there is a bug in that codepath, and we
+should just fix that instead of doing a workaround like this.
 
-Merged into ceph testing branch.
+> +
+> +		if (S_ISREG(mode))
+> +			set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
+> +	}
+>  
+>  	req->r_dentry = dget(dentry);
+>  	req->r_num_caps = 2;
+> @@ -1008,6 +1022,18 @@ static int ceph_symlink(struct user_namespace *mnt_userns, struct inode *dir,
+>  	ihold(dir);
+>  
+>  	if (IS_ENCRYPTED(req->r_new_inode)) {
+> +#ifdef CONFIG_FS_ENCRYPTION
+> +		struct ceph_inode_info *ci = ceph_inode(req->r_new_inode);
+> +
+> +		req->r_fscrypt_auth = kmemdup(ci->fscrypt_auth,
+> +					      ci->fscrypt_auth_len,
+> +					      GFP_KERNEL);
+> +		if (!req->r_fscrypt_auth) {
+> +			err = -ENOMEM;
+> +			goto out_req;
+> +		}
+> +#endif
+> +
+>  		err = prep_encrypted_symlink_target(req, dest);
+>  		if (err)
+>  			goto out_req;
+> @@ -1081,6 +1107,19 @@ static int ceph_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+>  		goto out_req;
+>  	}
+>  
+> +#ifdef CONFIG_FS_ENCRYPTION
+> +	if (IS_ENCRYPTED(dir)) {
+> +		struct ceph_inode_info *ci = ceph_inode(req->r_new_inode);
+> +
+> +		req->r_fscrypt_auth = kmemdup(ci->fscrypt_auth,
+> +					      ci->fscrypt_auth_len,
+> +					      GFP_KERNEL);
+> +		if (!req->r_fscrypt_auth) {
+> +			err = -ENOMEM;
+> +			goto out_req;
+> +		}
+> +	}
+> +#endif
+>  	req->r_dentry = dget(dentry);
+>  	req->r_num_caps = 2;
+>  	req->r_parent = dir;
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 61ffbda5b934..70ac41d6e0d4 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -771,9 +771,24 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
+>  	req->r_args.open.mask = cpu_to_le32(mask);
+>  	req->r_parent = dir;
+>  	ihold(dir);
+> -	if (IS_ENCRYPTED(dir))
+> +	if (IS_ENCRYPTED(dir)) {
+>  		set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
+>  
+> +#ifdef CONFIG_FS_ENCRYPTION
+> +		if (new_inode) {
+> +			struct ceph_inode_info *ci = ceph_inode(new_inode);
+> +
+> +			req->r_fscrypt_auth = kmemdup(ci->fscrypt_auth,
+> +						      ci->fscrypt_auth_len,
+> +						      GFP_KERNEL);
+> +			if (!req->r_fscrypt_auth) {
+> +				err = -ENOMEM;
+> +				goto out_req;
+> +			}
+> +		}
+> +#endif
+> +	}
+> +
+>  	if (flags & O_CREAT) {
+>  		struct ceph_file_layout lo;
+>  
 
-Thanks!
 -- 
 Jeff Layton <jlayton@kernel.org>
