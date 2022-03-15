@@ -2,101 +2,137 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 63EFD4D8DD6
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Mar 2022 21:07:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 165BE4D919E
+	for <lists+ceph-devel@lfdr.de>; Tue, 15 Mar 2022 01:32:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244932AbiCNUIt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Mar 2022 16:08:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45340 "EHLO
+        id S1344002AbiCOAcp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Mar 2022 20:32:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241865AbiCNUIs (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Mar 2022 16:08:48 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EB0740A28
-        for <ceph-devel@vger.kernel.org>; Mon, 14 Mar 2022 13:07:37 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id qx21so36509901ejb.13
-        for <ceph-devel@vger.kernel.org>; Mon, 14 Mar 2022 13:07:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=18Jw+ZkKUsIRzWPTkwV9KvPjnCoNDMpqlNvMHml2UlI=;
-        b=C8bnpxy9oUm+U8EWB8xnUrHCC7kr5eGE2mIB37aHBT0GQ+tnsxuNoMxaR7dxlEZUQO
-         JN6eILjJK6+9zg1HTyBGaqzXz1mFOzBKAsTp2e4Y3tbZRu0W5kBkf9sELpR+NU7x1Pkr
-         gQYQ6CZAUqEoeJb0x5ltFLhbdlRvJ30RZcQMKuuSS70Vm4+nZij4nnDtob+ZqandC/aT
-         tktQr/riA30batlo53AE0kFKB+e3V1HG+MVI7TcMJnPbY2ePs21s2gZtMkl6y1fH70/e
-         uZUYZYwTkV1G5XG92gTIftOyn0UnBqGKcTb3GfE8qndAStffgMKsQ9pf0qNoG1L0jB/M
-         aXjA==
+        with ESMTP id S245732AbiCOAco (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Mar 2022 20:32:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 371BE5F8E
+        for <ceph-devel@vger.kernel.org>; Mon, 14 Mar 2022 17:31:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1647304292;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=L7EBqnZ8mqaw+n24Sv6+8ZAJBh1i2JI4bSVlOC2YTgU=;
+        b=IYEz+G7gTu+CIz/FTddFtaZqs8eDo3j8VdI2xRBqm+b85g3dNy2gDKOYRhBDhCQktq2yeZ
+        6F/U9wsSP2GPR9TcwcRe1M25XDii7t0S1ujPJCXIGToA+tPCckW6aoHpMGVaE9RUySMPP1
+        jX1R5dDRfOJj5wCCDtxaiAYeJSPHuB4=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-106-XRiyJ29jNsi82cV91VxhKA-1; Mon, 14 Mar 2022 20:31:30 -0400
+X-MC-Unique: XRiyJ29jNsi82cV91VxhKA-1
+Received: by mail-pj1-f71.google.com with SMTP id q21-20020a17090a2e1500b001c44f70fd38so6665210pjd.6
+        for <ceph-devel@vger.kernel.org>; Mon, 14 Mar 2022 17:31:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=18Jw+ZkKUsIRzWPTkwV9KvPjnCoNDMpqlNvMHml2UlI=;
-        b=hXFFWboI6hUoKb9ChFAR1VrbcvzKOZM/kDBK/okgoirPzBmKzmx8Xh3/FqvmsK9/YE
-         AoO9zQUDGO45tfW+cWxhITVcJohNJQ4d6dQZnxAFi7hilLLaYk+/taAV+8jYCRwlhZj1
-         WrueaR02lXFDrmRvhYfQFJf80BApKaGXr0Ug0m5ecJNAURvjLrszEcbkzm/NM8SF0vr6
-         oiSzQKLOTjO3l+hF8r92RjTNhN7jaVreT7gmxUilcCanAfyWsXNJw96/hG4cMDHUGW39
-         IvqjBMxNmdQNpjIqa2QfQh3LaSFKT4LV5KCoCmsfPTVB8oigqW1Of96o+jtZIIIyKVHr
-         qQYA==
-X-Gm-Message-State: AOAM531vcY0f1u1g+oAC7nwCcwLeLP+cf2vDOYWslpTBEF44zHPhjsWN
-        D10QF3ewWFo5BMesBgP3hXkv5h4hetHPUw==
-X-Google-Smtp-Source: ABdhPJwoK5pCFWWByW082ior9KwQYiXCS3YFa7m1s+Fvd8wg/Q67EUc4Vd3fMJpk59JN7OwT9Gy/DA==
-X-Received: by 2002:a17:907:e8e:b0:6db:472e:804a with SMTP id ho14-20020a1709070e8e00b006db472e804amr20329598ejc.529.1647288455723;
-        Mon, 14 Mar 2022 13:07:35 -0700 (PDT)
-Received: from nlaptop.localdomain (ptr-dtfv0poj8u7zblqwbt6.18120a2.ip6.access.telenet.be. [2a02:1811:cc83:eef0:f2b6:6987:9238:41ca])
-        by smtp.gmail.com with ESMTPSA id u5-20020a170906b10500b006ce6fa4f510sm7205554ejy.165.2022.03.14.13.07.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Mar 2022 13:07:35 -0700 (PDT)
-From:   Niels Dossche <dossche.niels@gmail.com>
-To:     ceph-devel@vger.kernel.org
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Niels Dossche <dossche.niels@gmail.com>
-Subject: [PATCH] ceph: get snap_rwsem read lock in handle_cap_export for ceph_add_cap
-Date:   Mon, 14 Mar 2022 21:07:18 +0100
-Message-Id: <20220314200717.52033-1-dossche.niels@gmail.com>
-X-Mailer: git-send-email 2.35.1
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=L7EBqnZ8mqaw+n24Sv6+8ZAJBh1i2JI4bSVlOC2YTgU=;
+        b=hniieRzV4222pmxc1C7zWn7I5H7+fhcDvlmi5qNe0kaG+nbV6ArP0rOUD8Y2DthjKP
+         mOxau8n5S95b9XE8ACtms7XC+ibCRsJe3oYzGigDTMSbq8pveAsz2st64zv1PolxaFm6
+         wfQ/FESuZ3jVFpepdRWSPOmUdlW8wg/M9qK8ybzWeYPfrRAPMm9uo9fT4mvLpOGOVxv+
+         41JYYISH83TGXvlhrmbqSQ0yTWA9JAL104eLTGlqXjIiJYZQE6S9hnkMlWxUN6PE1W2w
+         AQLnS48t1dToiORz1sGdveqx8eJ5MhIqg4KBwIs9nc87e8z0SKVK4/1wKTR+h+ZHw/m+
+         hGnQ==
+X-Gm-Message-State: AOAM530bzPGLBCm2dp/OMdABiNbsEwj1WcZeBwegA0Ajf7GODYZHRxnh
+        BCjFPkgPpqIJjPRSbfuBRrhcpM2fLCoJqoIzAFCGuLxQ3E2Rks6agN9P2JQqxYmaPc2pR8UP9WP
+        Mv/DflzpcSKiL2LQmFe4NO/gOlHGHcn0CEhpP9Cf3uB7RB2r8PwGWL6xRpXp12FidFfhMqzQ=
+X-Received: by 2002:aa7:85d8:0:b0:4f6:8ae9:16a8 with SMTP id z24-20020aa785d8000000b004f68ae916a8mr26389852pfn.15.1647304289039;
+        Mon, 14 Mar 2022 17:31:29 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxnxwvQbyA2xZBfgicVHI6ZU2eWsAIiUO2KLx64SBOKSppEifU6C7oT57Zvtnb0kWcJKeAWAA==
+X-Received: by 2002:aa7:85d8:0:b0:4f6:8ae9:16a8 with SMTP id z24-20020aa785d8000000b004f68ae916a8mr26389830pfn.15.1647304288710;
+        Mon, 14 Mar 2022 17:31:28 -0700 (PDT)
+Received: from [10.72.12.110] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id x29-20020aa79a5d000000b004f0ef1822d3sm20586763pfj.128.2022.03.14.17.31.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Mar 2022 17:31:28 -0700 (PDT)
+Subject: Re: [PATCH v2 0/4] ceph: dencrypt the dentry names early and once for
+ readdir
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     idryomov@gmail.com, vshankar@redhat.com, lhenriques@suse.de,
+        ceph-devel@vger.kernel.org
+References: <20220314022837.32303-1-xiubli@redhat.com>
+ <6310d5de6cc441b07eb8144aab1c3c0fe3739e5a.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <3d2dd743-4de9-9974-3d10-bd6bfe0445af@redhat.com>
+Date:   Tue, 15 Mar 2022 08:31:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <6310d5de6cc441b07eb8144aab1c3c0fe3739e5a.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-ceph_add_cap says in its function documentation that the caller should
-hold the read lock on the session snap_rwsem. Furthermore, not only
-ceph_add_cap needs that lock, when it calls to ceph_lookup_snap_realm it
-eventually calls ceph_get_snap_realm which states via lockdep that
-snap_rwsem needs to be held. handle_cap_export calls ceph_add_cap
-without that mdsc->snap_rwsem held. Thus, since ceph_get_snap_realm
-and ceph_add_cap both need the lock, the common place to acquire that
-lock is inside handle_cap_export.
 
-Signed-off-by: Niels Dossche <dossche.niels@gmail.com>
----
- fs/ceph/caps.c | 2 ++
- 1 file changed, 2 insertions(+)
+On 3/15/22 2:38 AM, Jeff Layton wrote:
+> On Mon, 2022-03-14 at 10:28 +0800, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> This is a new approach to improve the readdir and based the previous
+>> discussion in another thread:
+>>
+>> https://patchwork.kernel.org/project/ceph-devel/list/?series=621901
+>>
+>> Just start a new thread for this.
+>>
+>> As Jeff suggested, this patch series will dentrypt the dentry name
+>> during parsing the readdir data in handle_reply(). And then in both
+>> ceph_readdir_prepopulate() and ceph_readdir() we will use the
+>> dencrypted name directly.
+>>
+>> NOTE: we will base64_dencode and dencrypt the names in-place instead
+>> of allocating tmp buffers. For base64_dencode it's safe because the
+>> dencoded string buffer will always be shorter.
+>>
+>>
+>> V2:
+>> - Fix the WARN issue reported by Luis, thanks.
+>>
+>>
+>> Xiubo Li (4):
+>>    ceph: pass the request to parse_reply_info_readdir()
+>>    ceph: add ceph_encode_encrypted_dname() helper
+>>    ceph: dencrypt the dentry names early and once for readdir
+>>    ceph: clean up the ceph_readdir() code
+>>
+>>   fs/ceph/crypto.c     |  25 ++++++++---
+>>   fs/ceph/crypto.h     |   2 +
+>>   fs/ceph/dir.c        |  64 +++++++++------------------
+>>   fs/ceph/inode.c      |  37 ++--------------
+>>   fs/ceph/mds_client.c | 101 ++++++++++++++++++++++++++++++++++++-------
+>>   fs/ceph/mds_client.h |   4 +-
+>>   6 files changed, 133 insertions(+), 100 deletions(-)
+>>
+> This looks good, Xiubo. I did some testing with these earlier and they
+> seemed to work great.
+>
+> I've gone ahead and merged these into the wip-fscrypt branch. It may be
+> best to eventually squash these down, but it's probably fine to leave
+> them on top as well.
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index b472cd066d1c..0dd60db285b1 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -3903,8 +3903,10 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
- 		/* add placeholder for the export tagert */
- 		int flag = (cap == ci->i_auth_cap) ? CEPH_CAP_FLAG_AUTH : 0;
- 		tcap = new_cap;
-+		down_read(&mdsc->snap_rwsem);
- 		ceph_add_cap(inode, tsession, t_cap_id, issued, 0,
- 			     t_seq - 1, t_mseq, (u64)-1, flag, &new_cap);
-+		up_read(&mdsc->snap_rwsem);
- 
- 		if (!list_empty(&ci->i_cap_flush_list) &&
- 		    ci->i_auth_cap == tcap) {
--- 
-2.35.1
+Sure Jeff, thanks.
+
+- Xiubo
+
+> Thanks!
 
