@@ -2,79 +2,73 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AAD534D9547
-	for <lists+ceph-devel@lfdr.de>; Tue, 15 Mar 2022 08:29:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 853D14D960D
+	for <lists+ceph-devel@lfdr.de>; Tue, 15 Mar 2022 09:19:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345432AbiCOHa0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 15 Mar 2022 03:30:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36442 "EHLO
+        id S1345829AbiCOIU6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 15 Mar 2022 04:20:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238926AbiCOHaZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Mar 2022 03:30:25 -0400
+        with ESMTP id S1345827AbiCOIU6 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 15 Mar 2022 04:20:58 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 09ABA4B1CA
-        for <ceph-devel@vger.kernel.org>; Tue, 15 Mar 2022 00:29:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F32B84BFEB
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Mar 2022 01:19:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647329351;
+        s=mimecast20190719; t=1647332386;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=tqny6Q9W5Y9KFhHBJHThu4E5vRlpSkXvSXYfrC4FolQ=;
-        b=Hp7HijigsSdAamRqmNgT6yyHxPV6Q/2f0n8IFVGXRzA4klGpUDtsIGDSSijq08VEFwEzgh
-        qmfa19cNugoMc8IhqXiHpzDw2UXcRYA0S8gbHeB+kkZs3vICeQ2sd4nmuuOUA5WVZJoBLq
-        G7jpd1caDAdZhzRdIkgQ2O7DeXT8qW0=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=3uXmagTXpajgb16CBvtp/WGdSbWtbXyqqh5a7pgAtr8=;
+        b=T/o7pYQ0OkXORvy7Z802IEO68W+zoDRE/gIVJ9Im1ou9Z1LH3uOOQBzyP8J3VJ/g8eb5wQ
+        GH4hHXhxLdML2sOk/eTApvzaA+hIXLeX1vc/k6RU+UbZ09Du3kVsATkwCMxwkQzzPChy5X
+        CqjomECqnwiXFco/Du1djM013ZAV5lY=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-281-yvbXfTUvPMSK2QEAT7cc6Q-1; Tue, 15 Mar 2022 03:29:10 -0400
-X-MC-Unique: yvbXfTUvPMSK2QEAT7cc6Q-1
-Received: by mail-pj1-f69.google.com with SMTP id mm2-20020a17090b358200b001bf529127dfso1368929pjb.6
-        for <ceph-devel@vger.kernel.org>; Tue, 15 Mar 2022 00:29:09 -0700 (PDT)
+ us-mta-447-ZI0yOhbSNFaPKBQxJVpKUg-1; Tue, 15 Mar 2022 04:19:44 -0400
+X-MC-Unique: ZI0yOhbSNFaPKBQxJVpKUg-1
+Received: by mail-pf1-f199.google.com with SMTP id 16-20020a621910000000b004f783aad863so8296625pfz.15
+        for <ceph-devel@vger.kernel.org>; Tue, 15 Mar 2022 01:19:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=tqny6Q9W5Y9KFhHBJHThu4E5vRlpSkXvSXYfrC4FolQ=;
-        b=BMXECwm6sX4nPO2e60pWANLMRFN6Ta5+HnKiLLpcn+HAX3aFJM3CKg9SO9trQjdMaQ
-         sAl6kMSEsjZ3KtrYOmc7KmZ2YoXozwSUhjAFi91C2PXXAdy+4FXb3pd1eWzOL1r8rT/A
-         ENkxrpe0Xu/E2Xru8r/0+ZhbfVoAK86ueGO9hsX6F+GAnEkhty1YBN9fZ8YVHVtR9Pwn
-         VgHAh93bL+sTcDnM7tXtrAjEINUNLdjpJyIjgHoMfeT0oTYRXyHiDPtLhje8ZX6bsque
-         ZYC11tY+mS/O67j8cppZXcp/QVicS2yP4IPoVh6yN/R6uqdfgQwMxGL7Pekp6rOVCmb7
-         3u5Q==
-X-Gm-Message-State: AOAM530WgbqnlyryZsWag5LVCI7i85vdGIhTp7wQbMKPc/W9DsuhOWGz
-        TlDPIr/kADtDg/uKaP3PPPCNDzDaMRMep6Kf2mBbBPDdhQm8kfAYClNCoo24ZUtSHVTJVe73ZxV
-        RrKyBK97wMUHHKKGrR/8Y2w==
-X-Received: by 2002:a17:902:cec4:b0:151:a696:149b with SMTP id d4-20020a170902cec400b00151a696149bmr26713365plg.145.1647329348868;
-        Tue, 15 Mar 2022 00:29:08 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxJnBiLRzkOX84CVfstDVr/suiTNGdSD8dC1pni0NyqO4P/FclTzCF09xoWY3NWAehzrSuEoA==
-X-Received: by 2002:a17:902:cec4:b0:151:a696:149b with SMTP id d4-20020a170902cec400b00151a696149bmr26713339plg.145.1647329348485;
-        Tue, 15 Mar 2022 00:29:08 -0700 (PDT)
+        bh=3uXmagTXpajgb16CBvtp/WGdSbWtbXyqqh5a7pgAtr8=;
+        b=mUDthWHq6yyo2nVq1Y6OBBkG39Vsl7UBV/CTfjUM7UyYSTV9tCy623ZJpW2nMrd/lN
+         xZr0nnH+GMHlMETH86ny0O0t5FUj79gRenv9F8/qL2dwnErn5l6lD2YR4uZp+6kRtdlI
+         K3wNkzi4i+FOXNVFXl0Lj0mP9l1nm6K0OdDfIWOmEMmyMR4WalXOhXcqtabP6q4D7MH+
+         WKj+sBV2XA3FebrlQz7ycBx4QrNdWW5om24JzWOqnkDjzuEikivyEQUN6XH/p/nsJIg1
+         X4xygOfUtGTEReJ6zo0+K7demoh6cQGbf3VdbcaCseZDxpKPdgFVKQBA8ulsQ2b1yOoP
+         NNgw==
+X-Gm-Message-State: AOAM533bQAMgnwdtMgWMLWLg2eAiW0ddNaLcgqzgdvjgunnC5bgwzDkh
+        7nI14Led5YFT6fUPAMyTyz4FO1w4mpwO7VQ3MFCEYmbEUVtQ73atSIqWZnaXVbzlSx/T2FZNbNs
+        D8jkxrPr2TWibtMT/PIYGAg==
+X-Received: by 2002:a17:902:8b87:b0:14d:7920:e54a with SMTP id ay7-20020a1709028b8700b0014d7920e54amr26714353plb.140.1647332383768;
+        Tue, 15 Mar 2022 01:19:43 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwcZVy2vN+4L06UglQsYXv6Y56X5wbu6QcFU6qiL6fvqxCvk2p4b/shZhWwAWrkWfQo0pSpXw==
+X-Received: by 2002:a17:902:8b87:b0:14d:7920:e54a with SMTP id ay7-20020a1709028b8700b0014d7920e54amr26714334plb.140.1647332383539;
+        Tue, 15 Mar 2022 01:19:43 -0700 (PDT)
 Received: from [10.72.12.110] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id f13-20020a056a001acd00b004f76d35c1dcsm18839886pfv.104.2022.03.15.00.29.05
+        by smtp.gmail.com with ESMTPSA id z72-20020a627e4b000000b004f70cbcb06esm22275374pfc.49.2022.03.15.01.19.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Mar 2022 00:29:07 -0700 (PDT)
-Subject: Re: [RFC PATCH 1/2] ceph: add support for encrypted snapshot names
-To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220310172616.16212-1-lhenriques@suse.de>
- <20220310172616.16212-2-lhenriques@suse.de>
- <fdf774cd-3cca-14e5-d5aa-44de70bb89f0@redhat.com>
- <2d69e6dd-b047-13fe-7dc5-2c64190e0e8a@redhat.com>
- <cff2b7ac-d4bb-4096-06a9-79b41b31a57a@redhat.com>
- <87o8288jwd.fsf@brahms.olymp>
+        Tue, 15 Mar 2022 01:19:42 -0700 (PDT)
+Subject: Re: [PATCH] ceph: get snap_rwsem read lock in handle_cap_export for
+ ceph_add_cap
+To:     Niels Dossche <dossche.niels@gmail.com>, ceph-devel@vger.kernel.org
+Cc:     Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>
+References: <20220314200717.52033-1-dossche.niels@gmail.com>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <7aedb4b9-11e4-cfa1-986f-75cf8706c6c0@redhat.com>
-Date:   Tue, 15 Mar 2022 15:28:48 +0800
+Message-ID: <8d67b726-776a-c9d1-281b-481ff98b6fa3@redhat.com>
+Date:   Tue, 15 Mar 2022 16:19:26 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <87o8288jwd.fsf@brahms.olymp>
+In-Reply-To: <20220314200717.52033-1-dossche.niels@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
 X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
@@ -87,93 +81,38 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 3/15/22 2:32 AM, Luís Henriques wrote:
-> Xiubo Li <xiubli@redhat.com> writes:
+On 3/15/22 4:07 AM, Niels Dossche wrote:
+> ceph_add_cap says in its function documentation that the caller should
+> hold the read lock on the session snap_rwsem. Furthermore, not only
+> ceph_add_cap needs that lock, when it calls to ceph_lookup_snap_realm it
+> eventually calls ceph_get_snap_realm which states via lockdep that
+> snap_rwsem needs to be held. handle_cap_export calls ceph_add_cap
+> without that mdsc->snap_rwsem held. Thus, since ceph_get_snap_realm
+> and ceph_add_cap both need the lock, the common place to acquire that
+> lock is inside handle_cap_export.
 >
->> On 3/14/22 10:45 AM, Xiubo Li wrote:
->>> On 3/12/22 4:30 PM, Xiubo Li wrote:
->>>> On 3/11/22 1:26 AM, Luís Henriques wrote:
->>>>> Since filenames in encrypted directories are already encrypted and shown
->>>>> as a base64-encoded string when the directory is locked, snapshot names
->>>>> should show a similar behaviour.
->>>>>
->>>>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
->>>>> ---
->>>>>    fs/ceph/dir.c   |  9 +++++++++
->>>>>    fs/ceph/inode.c | 13 +++++++++++++
->>>>>    2 files changed, 22 insertions(+)
->>>>>
->>>>> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
->>>>> index 6df2a91af236..123e3b9c8161 100644
->>>>> --- a/fs/ceph/dir.c
->>>>> +++ b/fs/ceph/dir.c
->>>>> @@ -1075,6 +1075,15 @@ static int ceph_mkdir(struct user_namespace
->>>>> *mnt_userns, struct inode *dir,
->>>>>            op = CEPH_MDS_OP_MKSNAP;
->>>>>            dout("mksnap dir %p snap '%pd' dn %p\n", dir,
->>>>>                 dentry, dentry);
->>>>> +        /*
->>>>> +         * Encrypted snapshots require d_revalidate to force a
->>>>> +         * LOOKUPSNAP to cleanup dcache
->>>>> +         */
->>>>> +        if (IS_ENCRYPTED(dir)) {
->>>>> +            spin_lock(&dentry->d_lock);
->>>>> +            dentry->d_flags |= DCACHE_NOKEY_NAME;
->>>> I think this is not correct fix of this issue.
->>>>
->>>> Actually this dentry's name is a KEY NAME, which is human readable name.
->>>>
->>>> DCACHE_NOKEY_NAME means the base64_encoded names. This usually will be set
->>>> when filling a new dentry if the directory is locked. If the directory is
->>>> unlocked the directory inode will be set with the key.
->>>>
->>>> The root cause should be the snapshot's inode doesn't correctly set the
->>>> encrypt stuff when you are reading from it.
->>>>
->>>> NOTE: when you are 'ls -l .snap/snapXXX' the snapXXX dentry name is correct,
->>>> it's just corrupted for the file or directory names under snapXXX/.
->>>>
->>> When mksnap in ceph_mkdir() before sending the request out it will create a
->>> new inode for the snapshot dentry and then will fill the ci->fscrypt_auth from
->>> .snap's inode, please see ceph_mkdir()->ceph_new_inode().
->>>
->>> And in the mksnap request reply it will try to fill the ci->fscrypt_auth again
->>> but failed because it was already filled. This time the auth info is from
->>> .snap's parent dir from MDS side. In this patch in theory they should be the
->>> same, but I am still not sure why when decrypting the dentry names in snapXXX
->>> will fail.
->>>
->>> I just guess it possibly will depend on the inode number from the related
->>> inode or something else. Before the request reply it seems the inode isn't set
->>> the inode number ?
->>>
->> It should be the ci_nonce's problem.
-> OK, you were right.  However, I don't see a simple way around it.  And I
-> don't think that adding a fscrypt new interface to copy an existent nonce
-> makes sense.
+> Signed-off-by: Niels Dossche <dossche.niels@gmail.com>
+> ---
+>   fs/ceph/caps.c | 2 ++
+>   1 file changed, 2 insertions(+)
 >
-> So, here's another possible option: instead of setting the
-> DCACHE_NOKEY_NAME flag, we could simply do d_invalidate(dentry) before
-> leaving ceph_mkdir (if we're creating an encrypted snapshot, of course).
-> Would this be acceptable?
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index b472cd066d1c..0dd60db285b1 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -3903,8 +3903,10 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
+>   		/* add placeholder for the export tagert */
+>   		int flag = (cap == ci->i_auth_cap) ? CEPH_CAP_FLAG_AUTH : 0;
+>   		tcap = new_cap;
+> +		down_read(&mdsc->snap_rwsem);
+>   		ceph_add_cap(inode, tsession, t_cap_id, issued, 0,
+>   			     t_seq - 1, t_mseq, (u64)-1, flag, &new_cap);
+> +		up_read(&mdsc->snap_rwsem);
+>   
+>   		if (!list_empty(&ci->i_cap_flush_list) &&
+>   		    ci->i_auth_cap == tcap) {
 
-I think there has one simple way. Just think about without setting the 
-fscrypt_auth for the '.snap' dir's inode, that is without your this 
-patch it works well.
+LGTM.
 
-That's because when we create a snapshot under '.snap' dir, since the 
-'.snap' dir related inode doesn't have the fscrypt_auth been filled, so 
-when creating a new inode for the snapshot it won't fill the 
-fscrypt_auth for the new inode. And then in the handle_reply() it can 
-fill the fscrypt auth as expected.
-
-You can make sure that in the ceph_new_inode() just skip setting the 
-fscrypt_auth for the new inode if the parent dir is a snapdir, that is 
-'.snap/'. And this will just leave it to be filled in the handle_reply().
-
--- Xiubo
-
-
->
-> Cheers,
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
 
