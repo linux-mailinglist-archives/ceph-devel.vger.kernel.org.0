@@ -2,83 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B1D04DADE0
-	for <lists+ceph-devel@lfdr.de>; Wed, 16 Mar 2022 10:53:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E24F4DAE94
+	for <lists+ceph-devel@lfdr.de>; Wed, 16 Mar 2022 12:00:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345510AbiCPJzD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 16 Mar 2022 05:55:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34844 "EHLO
+        id S1355219AbiCPLBm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 16 Mar 2022 07:01:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233065AbiCPJzC (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 16 Mar 2022 05:55:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8D29833880
-        for <ceph-devel@vger.kernel.org>; Wed, 16 Mar 2022 02:53:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647424427;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
+        with ESMTP id S1343563AbiCPLBl (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 16 Mar 2022 07:01:41 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFEBC60077;
+        Wed, 16 Mar 2022 04:00:26 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 7C1961F390;
+        Wed, 16 Mar 2022 11:00:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1647428425; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=GKIxI5M0cMdNXtMuPCI0/xjFwhBA7tUayHYhgBqjQpk=;
-        b=bSetSp/ggxXK5j48n+CP5tzgWd1rgGZajwbM8pxw+tmO+/Cb7KQTbb6jz6M6sjEiNE7eHX
-        vZt5OHoNpoHTBrz7GC9tj/str5MH5PmButDeEN9+iIKDJZeX7fuXpV6GkjW6lBIz0R6aYW
-        hSb3B+ROu0/DTtJO0eVXwS8Ya7l94Ek=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-318-w-I0QQrNMW2t7V3XMGH1Kg-1; Wed, 16 Mar 2022 05:53:46 -0400
-X-MC-Unique: w-I0QQrNMW2t7V3XMGH1Kg-1
-Received: by mail-pf1-f198.google.com with SMTP id c62-20020a621c41000000b004f7ea6d51bcso1521315pfc.22
-        for <ceph-devel@vger.kernel.org>; Wed, 16 Mar 2022 02:53:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=GKIxI5M0cMdNXtMuPCI0/xjFwhBA7tUayHYhgBqjQpk=;
-        b=qcE03nf9iH2hE9bdnbwYbl/tyNzD5Ev5FbjYhFE858SFcMP8yU3I+tjVhGlx0QNAeF
-         LxDi/ds8LjDPyCpgZRLNdnWWKw6gjDVHckqgNHxQzEQX+gD1LoVfrW10eWDwxAljX75b
-         ML0B2EOfcUw1COWk3e63mXSGJGHeaYV/tMJbmyI7yu5s5ladPJLLeQNI8SSzvXlCOwBt
-         pKffmbaszEOWuejFPvf7i2QXSGMTv7Ktwe2kPNPlI3xf1DLm3WQt4OCbYYPH6iHIUCmq
-         CXR5P2iaTi3AhtlMR+cpvx04R77KM9i+NmEoAkScZ8MLMlr8mHZYSyR5++073+LdB7JQ
-         GVYg==
-X-Gm-Message-State: AOAM531NQhhEEBZstva5I4+oX5XAZ6SttGKYHTvxbiDD38O9ZUFozJRS
-        EYgYa8y9ROQ3VT1h+VIDEtPePgbHsFvzh5wz4thHPxQSmsj8G0cxzFIYCGUHAdYxYqAUAp+aXK0
-        5zPxJOTvp4jQoYDU3YrPSHQ==
-X-Received: by 2002:a63:5751:0:b0:381:4050:143a with SMTP id h17-20020a635751000000b003814050143amr10882907pgm.410.1647424425068;
-        Wed, 16 Mar 2022 02:53:45 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJylx1gX+TVQU1OfmkBMemqM+4ddJ9dyc1Qf5XSO702yy7LGmeoDEr0YAIxrve5Qgu9wZFy6Fw==
-X-Received: by 2002:a63:5751:0:b0:381:4050:143a with SMTP id h17-20020a635751000000b003814050143amr10882891pgm.410.1647424424764;
-        Wed, 16 Mar 2022 02:53:44 -0700 (PDT)
-Received: from [10.72.12.110] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id o7-20020a056a00214700b004c169d45699sm2219516pfk.184.2022.03.16.02.53.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Mar 2022 02:53:43 -0700 (PDT)
-Subject: Re: [PATCH 0/3] ceph: support for sparse read in msgr2 crc path
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        idryomov@gmail.com
-References: <20220309123323.20593-1-jlayton@kernel.org>
- <f9ee2a7d-f8da-6056-c659-6f7c168cd93b@redhat.com>
- <5016766a07f38d16e6fea66b2ad9da7076bf4a9b.camel@kernel.org>
- <61be495f-c54e-42dc-27e8-8ffb3dfcb415@redhat.com>
- <7e115f2fb22ba5335ed247eb6f30a1fec1654d1b.camel@kernel.org>
- <d4b920c6-6afe-4506-77d4-0e6415a894ad@redhat.com>
- <0101c170ef8388f307c25556854992f5fe7704be.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <bc943cf7-023d-0ee7-030a-dc1e1f38eed0@redhat.com>
-Date:   Wed, 16 Mar 2022 17:53:39 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        bh=sM70Iz/zzL8rdDARgecMacKzOr4IAgxW59+OOfyajuQ=;
+        b=uU0cZRVlBKXUf/R+jLICWslqJDd9nE4DVFsBsr85qy8VMNx8Y3oGHNSslldU0n6fDRb389
+        +Hoc6bOUghHybUFl3OHytyDkNj2ulIGCObYx1y2wmsyGRwj0oJpoaChl9GzAo61zNwUNhV
+        aXL7WpVovZFQBeGQAW8nrGJujmi4FiY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1647428425;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=sM70Iz/zzL8rdDARgecMacKzOr4IAgxW59+OOfyajuQ=;
+        b=Ik1zk3N8Zy8woyUX6ule6XPSOFHo8qUlysfb/Q/VRWocIJpxc7Sy1VW8P3tw8Xfgcx/Fw1
+        +dy1sQ8LP+X8X3Bw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1C125139FE;
+        Wed, 16 Mar 2022 11:00:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 75vxA0nDMWLCKwAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Wed, 16 Mar 2022 11:00:25 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 0a1379f3;
+        Wed, 16 Mar 2022 11:00:42 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 2/3] ceph: add support for handling encrypted
+ snapshot names
+References: <20220315161959.19453-1-lhenriques@suse.de>
+        <20220315161959.19453-3-lhenriques@suse.de>
+        <972eafc3-93a3-b523-4ad2-e234b3664635@redhat.com>
+Date:   Wed, 16 Mar 2022 11:00:42 +0000
+In-Reply-To: <972eafc3-93a3-b523-4ad2-e234b3664635@redhat.com> (Xiubo Li's
+        message of "Wed, 16 Mar 2022 08:47:43 +0800")
+Message-ID: <87r172i2lh.fsf@brahms.olymp>
 MIME-Version: 1.0
-In-Reply-To: <0101c170ef8388f307c25556854992f5fe7704be.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -86,137 +78,395 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Xiubo Li <xiubli@redhat.com> writes:
 
-On 3/15/22 9:33 PM, Jeff Layton wrote:
-> On Tue, 2022-03-15 at 19:12 +0800, Xiubo Li wrote:
->> On 3/15/22 7:10 PM, Jeff Layton wrote:
->>> On Tue, 2022-03-15 at 19:03 +0800, Xiubo Li wrote:
->>>> On 3/15/22 6:12 PM, Jeff Layton wrote:
->>>>> On Tue, 2022-03-15 at 14:23 +0800, Xiubo Li wrote:
->>>>>> Hi Jeff,
->>>>>>
->>>>>> I hit the following crash by using the latest wip-fscrypt branch:
->>>>>>
->>>>>> <5>[245348.815462] Key type ceph unregistered
->>>>>> <5>[245545.560567] Key type ceph registered
->>>>>> <6>[245545.566723] libceph: loaded (mon/osd proto 15/24)
->>>>>> <6>[245545.775116] ceph: loaded (mds proto 32)
->>>>>> <6>[245545.822200] libceph: mon2 (1)10.72.47.117:40843 session established
->>>>>> <6>[245545.829658] libceph: client5000 fsid
->>>>>> 2b9c5f33-3f43-4f89-945d-2a1b6372c5af
->>>>>> <4>[245583.531648] ------------[ cut here ]------------
->>>>>> <2>[245583.531701] kernel BUG at net/ceph/messenger.c:1032!
->>>>>> <4>[245583.531929] invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
->>>>>> <4>[245583.532030] CPU: 2 PID: 283539 Comm: kworker/2:0 Tainted:
->>>>>> G            E     5.17.0-rc6+ #98
->>>>>> <4>[245583.532050] Hardware name: Red Hat RHEV Hypervisor, BIOS
->>>>>> 1.11.0-2.el7 04/01/2014
->>>>>> <4>[245583.532086] Workqueue: ceph-msgr ceph_con_workfn [libceph]
->>>>>> <4>[245583.532380] RIP: 0010:ceph_msg_data_cursor_init+0x79/0x80 [libceph]
->>>>>> <4>[245583.532592] Code: 8d 7b 08 e8 39 99 00 dc 48 8d 7b 18 48 89 6b 08
->>>>>> e8 ec 97 00 dc c7 43 18 00 00 00 00 48 89 df 5b 5d 41 5c e9 89 c7 ff ff
->>>>>> 0f 0b <0f> 0b 0f 0b 0f 1f 00 0f 1f 44 00 00 41 57 41 56 41 55 49 89 cd 41
->>>>>> <4>[245583.532609] RSP: 0018:ffffc90018847c10 EFLAGS: 00010287
->>>>>> <4>[245583.532654] RAX: 0000000000000000 RBX: ffff888244ff3850 RCX:
->>>>>> ffffffffc10bd850
->>>>>> <4>[245583.532683] RDX: dffffc0000000000 RSI: ffff888244ff37d0 RDI:
->>>>>> ffff888244ff3838
->>>>>> <4>[245583.532705] RBP: ffff888244ff37d0 R08: 00000000000000d1 R09:
->>>>>> ffffed10489fe701
->>>>>> <4>[245583.532726] R10: ffff888244ff3804 R11: ffffed10489fe700 R12:
->>>>>> 00000000000000d1
->>>>>> <4>[245583.532746] R13: ffff8882d1adb030 R14: ffff8882d1adb408 R15:
->>>>>> 0000000000000000
->>>>>> <4>[245583.532764] FS:  0000000000000000(0000) GS:ffff8887ccd00000(0000)
->>>>>> knlGS:0000000000000000
->>>>>> <4>[245583.532785] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>> <4>[245583.532797] CR2: 00007fb991665000 CR3: 0000000368ebe001 CR4:
->>>>>> 00000000007706e0
->>>>>> <4>[245583.532809] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
->>>>>> 0000000000000000
->>>>>> <4>[245583.532820] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
->>>>>> 0000000000000400
->>>>>> <4>[245583.532831] PKRU: 55555554
->>>>>> <4>[245583.532840] Call Trace:
->>>>>> <4>[245583.532852]  <TASK>
->>>>>> <4>[245583.532863]  ceph_con_v1_try_read+0xd21/0x15c0 [libceph]
->>>>>> <4>[245583.533124]  ? ceph_tcp_sendpage+0x100/0x100 [libceph]
->>>>>> <4>[245583.533348]  ? load_balance+0x1240/0x1240
->>>>>> <4>[245583.533655]  ? dequeue_entity+0x18b/0x6f0
->>>>>> <4>[245583.533690]  ? mutex_lock+0x8e/0xe0
->>>>>> <4>[245583.533869]  ? __mutex_lock_slowpath+0x10/0x10
->>>>>> <4>[245583.533887]  ? _raw_spin_unlock+0x16/0x30
->>>>>> <4>[245583.533906]  ? __switch_to+0x2fa/0x690
->>>>>> <4>[245583.534007]  ceph_con_workfn+0x545/0x940 [libceph]
->>>>>> <4>[245583.534234]  process_one_work+0x3c1/0x6e0
->>>>>> <4>[245583.534340]  worker_thread+0x57/0x580
->>>>>> <4>[245583.534363]  ? process_one_work+0x6e0/0x6e0
->>>>>> <4>[245583.534382]  kthread+0x160/0x190
->>>>>> <4>[245583.534421]  ? kthread_complete_and_exit+0x20/0x20
->>>>>> <4>[245583.534477]  ret_from_fork+0x1f/0x30
->>>>>> <4>[245583.534544]  </TASK>
->>>>>> ...
->>>>>>
->>>>>> <4>[245583.535413] RIP: 0010:ceph_msg_data_cursor_init+0x79/0x80 [libceph]
->>>>>> <4>[245583.535627] Code: 8d 7b 08 e8 39 99 00 dc 48 8d 7b 18 48 89 6b 08
->>>>>> e8 ec 97 00 dc c7 43 18 00 00 00 00 48 89 df 5b 5d 41 5c e9 89 c7 ff ff
->>>>>> 0f 0b <0f> 0b 0f 0b 0f 1f 00 0f 1f 44 00 00 41 57 41 56 41 55 49 89 cd 41
->>>>>> <4>[245583.535644] RSP: 0018:ffffc90018847c10 EFLAGS: 00010287
->>>>>> <4>[245583.535720] RAX: 0000000000000000 RBX: ffff888244ff3850 RCX:
->>>>>> ffffffffc10bd850
->>>>>> <4>[245583.535745] RDX: dffffc0000000000 RSI: ffff888244ff37d0 RDI:
->>>>>> ffff888244ff3838
->>>>>> <4>[245583.535769] RBP: ffff888244ff37d0 R08: 00000000000000d1 R09:
->>>>>> ffffed10489fe701
->>>>>>
->>>>>> Seems caused by the parse read ?
->>>>>>
->>>>>>
->>>>> You mean sparse read? Those patches aren't in the wip-fscrypt branch
->>>>> yet, so I wouldn't think them a factor here. What commit was at the top
->>>>> of your branch?
->>>>>
->>>>> If you're testing the latest sparse read patches on top of wip-fscrypt,
->>>>> then those only work with msgr2 so far. Using msgr1 with it is likely to
->>>>> have problems.
->>>> Okay, it seems another patch series. But I am not sure, this is the
->>>> latest commits in the wip-fscrypt branch I hit the issue:
->>>>
->>>>
->>>> ce03ef535e7b SQUASH: OSD
->>>> 5020f1a5464b ceph: convert to sparse reads
->>>> 8614b45d3758 libceph: add sparse read support to OSD client
->>>> a11c3b2673aa libceph: add sparse read support to msgr2 crc state machine
->>>> a020a702a220 (origin/testing) ceph: allow `ceph.dir.rctime' xattr to be
->>>> updatable
->>>>
->>>> I just switched back to the branch I pulled days ago, it works well:
->>>>
->>>> Yeah, I am using the '--msgr1'. Maybe this is a problem. I will try
->>>> '--msgr2' later.
->>>>
->>> That makes sense. That oops is probably expected with msgr1 and the
->>> sparse read code. If you test with "-o ms_mode=crc" then it should
->>> (hopefully!) work.
->> Sure.
+> On 3/16/22 12:19 AM, Lu=C3=ADs Henriques wrote:
+>> When creating a snapshot, the .snap directories for every subdirectory w=
+ill
+>> show the snapshot name in the "long format":
 >>
+>>    # mkdir .snap/my-snap
+>>    # ls my-dir/.snap/
+>>    _my-snap_1099511627782
 >>
->>> My plan is eventually to add support to all 3 msgr codepaths (v1, v2-
->>> crc, and v2-secure), but I'd like some feedback from Ilya on what I have
->>> so far before I do that.
->>>
->> I will help test your related patches tomorrow.
+>> Encrypted snapshots will need to be able to handle these snapshot names =
+by
+>> encrypting/decrypting only the snapshot part of the string ('my-snap').
 >>
-> Thanks.
+>> Also, since the MDS prevents snapshot names to be bigger than 240 charac=
+ters
+>> it is necessary to adapt CEPH_NOHASH_NAME_MAX to accommodate this extra
+>> limitation.
+>>
+>> Signed-off-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
+>> ---
+>>   fs/ceph/crypto.c | 158 +++++++++++++++++++++++++++++++++++++++++------
+>>   fs/ceph/crypto.h |  11 ++--
+>>   2 files changed, 145 insertions(+), 24 deletions(-)
+>>
+>> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+>> index c125a79019b3..06a4b918201c 100644
+>> --- a/fs/ceph/crypto.c
+>> +++ b/fs/ceph/crypto.c
+>> @@ -128,18 +128,95 @@ void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_re=
+quest *req, struct ceph_acl_se
+>>   	swap(req->r_fscrypt_auth, as->fscrypt_auth);
+>>   }
+>>   -int ceph_encode_encrypted_dname(const struct inode *parent, struct qs=
+tr
+>> *d_name, char *buf)
+>> +/*
+>> + * User-created snapshots can't start with '_'.  Snapshots that start w=
+ith this
+>> + * character are special (hint: there aren't real snapshots) and use the
+>> + * following format:
+>> + *
+>> + *   _<SNAPSHOT-NAME>_<INODE-NUMBER>
+>> + *
+>> + * where:
+>> + *  - <SNAPSHOT-NAME> - the real snapshot name that may need to be decr=
+ypted,
+>> + *  - <INODE-NUMBER> - the inode number for the actual snapshot
+>> + *
+>> + * This function parses these snapshot names and returns the inode
+>> + * <INODE-NUMBER>.  'name_len' will also bet set with the <SNAPSHOT-NAM=
+E>
+>> + * length.
+>> + */
+>> +static struct inode *parse_longname(const struct inode *parent, const c=
+har *name,
+>> +				    int *name_len)
+>>   {
+>> +	struct inode *dir =3D NULL;
+>> +	struct ceph_vino vino =3D { .snap =3D CEPH_NOSNAP };
+>> +	char *inode_number;
+>> +	char *name_end;
+>> +	int orig_len =3D *name_len;
+>> +	int ret =3D -EIO;
+>> +
+>> +	/* Skip initial '_' */
+>> +	name++;
+>> +	name_end =3D strrchr(name, '_');
+>> +	if (!name_end) {
+>> +		dout("Failed to parse long snapshot name: %s\n", name);
+>> +		return ERR_PTR(-EIO);
+>> +	}
+>> +	*name_len =3D (name_end - name);
+>> +	if (*name_len <=3D 0) {
+>> +		pr_err("Failed to parse long snapshot name\n");
+>> +		return ERR_PTR(-EIO);
+>> +	}
+>> +
+>> +	/* Get the inode number */
+>> +	inode_number =3D kmemdup_nul(name_end + 1,
+>> +				   orig_len - *name_len - 2,
+>> +				   GFP_KERNEL);
+>> +	if (!inode_number)
+>> +		return ERR_PTR(-ENOMEM);
+>> +	ret =3D kstrtou64(inode_number, 0, &vino.ino);
+>> +	if (ret) {
+>> +		dout("Failed to parse inode number: %s\n", name);
+>> +		dir =3D ERR_PTR(ret);
+>> +		goto out;
+>> +	}
+>> +
+>> +	/* And finally the inode */
+>> +	dir =3D ceph_get_inode(parent->i_sb, vino, NULL);
 >
-> I think this was my mistake. I pushed the wrong branch into wip-fscrypt
-> from my tree and it ended up having the sparse read patches for the last
-> day or so. I've dropped those from the branch for now.
-Sure.
-> We'll want them eventually, but they're still a little too bleeding-edge
-> at this point.
+> Maybe you should use ceph_find_inode() here ? We shouldn't insert a new o=
+ne
+> here. And IMO the parent dir inode must be in the cache...
 
-Yeah.
+Right, that makes sense.  I'll swap it for the ceph_find_inode().
 
-Thanks
+>> +	if (IS_ERR(dir))
+>> +		dout("Can't find inode %s (%s)\n", inode_number, name);
+>> +
+>> +out:
+>> +	kfree(inode_number);
+>> +	return dir;
+>> +}
+>
+> Here I think you have missed one case, not all the long snap names are ne=
+eded to
+> be dencrypted if they are from the parent snap realms, who are not encryp=
+ted,
+> for example:
+>
+> mkdir dir1
+>
+> fscrypt encrypt dir1
+>
+> mkdir dir1/dir2
+>
+> mkdir .snap/root_snap
+>
+> mkdir dir1/.snap/dir1_snap
+>
+> ls dir1/dir2/.snap/
+>
+> _root_snap_1=C2=A0 _dir1_snap_1099511628283
+>
+> You shouldn't encrypt the "_root_snap_1" long name.
+
+Ah!  Good catch!  Yes, this case isn't being covered.  I'll fix it with by
+following your suggestion bellow.
+
+>> +
+>> +int ceph_encode_encrypted_dname(struct inode *parent, struct qstr *d_na=
+me, char *buf)
+>> +{
+>> +	struct inode *dir =3D parent;
+>> +	struct qstr iname;
+>>   	u32 len;
+>> +	int name_len;
+>>   	int elen;
+>>   	int ret;
+>> -	u8 *cryptbuf;
+>> +	u8 *cryptbuf =3D NULL;
+>>     	if (!fscrypt_has_encryption_key(parent)) {
+>>   		memcpy(buf, d_name->name, d_name->len);
+>>   		return d_name->len;
+>>   	}
+>>   +	iname.name =3D d_name->name;
+>> +	name_len =3D d_name->len;
+>> +
+>> +	/* Handle the special case of snapshot names that start with '_' */
+>> +	if ((ceph_snap(dir) =3D=3D CEPH_SNAPDIR) && (name_len > 0) &&
+>> +	    (iname.name[0] =3D=3D '_')) {
+>> +		dir =3D parse_longname(parent, iname.name, &name_len);
+>> +		if (IS_ERR(dir))
+>> +			return PTR_ERR(dir);
+>> +		iname.name++; /* skip initial '_' */
+>> +	}
+>> +	iname.len =3D name_len;
+>> +
+>
+> Maybe you can do this just before checking the fscrypt_has_encryption_key=
+() to
+> fix the issue mentioned above ?
+>
+>
+>>   	/*
+>>   	 * convert cleartext d_name to ciphertext
+>>   	 * if result is longer than CEPH_NOKEY_NAME_MAX,
+>> @@ -147,18 +224,22 @@ int ceph_encode_encrypted_dname(const struct inode=
+ *parent, struct qstr *d_name,
+>>   	 *
+>>   	 * See: fscrypt_setup_filename
+>>   	 */
+>> -	if (!fscrypt_fname_encrypted_size(parent, d_name->len, NAME_MAX, &len))
+>> -		return -ENAMETOOLONG;
+>> +	if (!fscrypt_fname_encrypted_size(dir, iname.len, NAME_MAX, &len)) {
+>> +		elen =3D -ENAMETOOLONG;
+>> +		goto out;
+>> +	}
+>>     	/* Allocate a buffer appropriate to hold the result */
+>>   	cryptbuf =3D kmalloc(len > CEPH_NOHASH_NAME_MAX ? NAME_MAX : len, GFP=
+_KERNEL);
+>> -	if (!cryptbuf)
+>> -		return -ENOMEM;
+>> +	if (!cryptbuf) {
+>> +		elen =3D -ENOMEM;
+>> +		goto out;
+>> +	}
+>>   -	ret =3D fscrypt_fname_encrypt(parent, d_name, cryptbuf, len);
+>> +	ret =3D fscrypt_fname_encrypt(dir, &iname, cryptbuf, len);
+>>   	if (ret) {
+>> -		kfree(cryptbuf);
+>> -		return ret;
+>> +		elen =3D ret;
+>> +		goto out;
+>>   	}
+>>     	/* hash the end if the name is long enough */
+>> @@ -174,12 +255,24 @@ int ceph_encode_encrypted_dname(const struct inode=
+ *parent, struct qstr *d_name,
+>>     	/* base64 encode the encrypted name */
+>>   	elen =3D fscrypt_base64url_encode(cryptbuf, len, buf);
+>> -	kfree(cryptbuf);
+>>   	dout("base64-encoded ciphertext name =3D %.*s\n", elen, buf);
+>> +
+>> +	if ((elen > 0) && (dir !=3D parent)) {
+>> +		char tmp_buf[FSCRYPT_BASE64URL_CHARS(NAME_MAX)];
+>> +
+>
+> Do we really need FSCRYPT_BASE64URL_CHARS(NAME_MAX) ? Since you have fix =
+the
+> 189->180 code, then the encrypted long snap name shouldn't exceed 255.
+>
+> I think the NAME_MAX is enough.
+
+Yes, correct.  I'll change that too.
+
+> And also you should check the elen here it shouldn't exceed 240 after enc=
+rypted,
+> or should we fail it here directly with a warning log ?
+
+Right, that should probably be logged.  I'll had that check.
+
+Thanks a lot for your review, Xiubo.
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+>> +		elen =3D snprintf(tmp_buf, sizeof(tmp_buf), "_%.*s_%ld",
+>> +				elen, buf, dir->i_ino);
+>> +		memcpy(buf, tmp_buf, elen);
+>> +	}
+>> +
+>> +out:
+>> +	kfree(cryptbuf);
+>> +	if (dir !=3D parent)
+>> +		iput(dir);
+>>   	return elen;
+>>   }
+>>   -int ceph_encode_encrypted_fname(const struct inode *parent, struct de=
+ntry
+>> *dentry, char *buf)
+>> +int ceph_encode_encrypted_fname(struct inode *parent, struct dentry *de=
+ntry, char *buf)
+>>   {
+>>   	WARN_ON_ONCE(!fscrypt_has_encryption_key(parent));
+>>   @@ -204,11 +297,14 @@ int ceph_encode_encrypted_fname(const struct ino=
+de
+>> *parent, struct dentry *dentr
+>>   int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_s=
+tr *tname,
+>>   		      struct fscrypt_str *oname, bool *is_nokey)
+>>   {
+>> -	int ret;
+>> +	struct inode *dir =3D fname->dir;
+>>   	struct fscrypt_str _tname =3D FSTR_INIT(NULL, 0);
+>>   	struct fscrypt_str iname;
+>> +	char *name =3D fname->name;
+>> +	int name_len =3D fname->name_len;
+>> +	int ret;
+>>   -	if (!IS_ENCRYPTED(fname->dir)) {
+>> +	if (!IS_ENCRYPTED(dir)) {
+>>   		oname->name =3D fname->name;
+>>   		oname->len =3D fname->name_len;
+>>   		return 0;
+>> @@ -218,15 +314,24 @@ int ceph_fname_to_usr(const struct ceph_fname *fna=
+me, struct fscrypt_str *tname,
+>>   	if (fname->name_len > NAME_MAX || fname->ctext_len > NAME_MAX)
+>>   		return -EIO;
+>>   -	ret =3D __fscrypt_prepare_readdir(fname->dir);
+>> +	/* Handle the special case of snapshot names that start with '_' */
+>> +	if ((ceph_snap(dir) =3D=3D CEPH_SNAPDIR) && (name_len > 0) &&
+>> +	    (name[0] =3D=3D '_')) {
+>> +		dir =3D parse_longname(dir, name, &name_len);
+>> +		if (IS_ERR(dir))
+>> +			return PTR_ERR(dir);
+>> +		name++; /* skip initial '_' */
+>> +	}
+>> +
+>> +	ret =3D __fscrypt_prepare_readdir(dir);
+>>   	if (ret)
+>> -		return ret;
+>> +		goto out_inode;
+>>     	/*
+>>   	 * Use the raw dentry name as sent by the MDS instead of
+>>   	 * generating a nokey name via fscrypt.
+>>   	 */
+>> -	if (!fscrypt_has_encryption_key(fname->dir)) {
+>> +	if (!fscrypt_has_encryption_key(dir)) {
+>>   		if (fname->no_copy)
+>>   			oname->name =3D fname->name;
+>>   		else
+>> @@ -234,7 +339,8 @@ int ceph_fname_to_usr(const struct ceph_fname *fname=
+, struct fscrypt_str *tname,
+>>   		oname->len =3D fname->name_len;
+>>   		if (is_nokey)
+>>   			*is_nokey =3D true;
+>> -		return 0;
+>> +		ret =3D 0;
+>> +		goto out_inode;
+>>   	}
+>>     	if (fname->ctext_len =3D=3D 0) {
+>> @@ -243,11 +349,11 @@ int ceph_fname_to_usr(const struct ceph_fname *fna=
+me, struct fscrypt_str *tname,
+>>   		if (!tname) {
+>>   			ret =3D fscrypt_fname_alloc_buffer(NAME_MAX, &_tname);
+>>   			if (ret)
+>> -				return ret;
+>> +				goto out_inode;
+>>   			tname =3D &_tname;
+>>   		}
+>>   -		declen =3D fscrypt_base64url_decode(fname->name, fname->name_len,
+>> tname->name);
+>> +		declen =3D fscrypt_base64url_decode(name, name_len, tname->name);
+>>   		if (declen <=3D 0) {
+>>   			ret =3D -EIO;
+>>   			goto out;
+>> @@ -259,9 +365,21 @@ int ceph_fname_to_usr(const struct ceph_fname *fnam=
+e, struct fscrypt_str *tname,
+>>   		iname.len =3D fname->ctext_len;
+>>   	}
+>>   -	ret =3D fscrypt_fname_disk_to_usr(fname->dir, 0, 0, &iname, oname);
+>> +	ret =3D fscrypt_fname_disk_to_usr(dir, 0, 0, &iname, oname);
+>> +	if (!ret && (dir !=3D fname->dir)) {
+>> +		char tmp_buf[FSCRYPT_BASE64URL_CHARS(NAME_MAX)];
+>> +
+>> +		name_len =3D snprintf(tmp_buf, sizeof(tmp_buf), "_%.*s_%ld",
+>> +				    oname->len, oname->name, dir->i_ino);
+>> +		memcpy(oname->name, tmp_buf, name_len);
+>> +		oname->len =3D name_len;
+>> +	}
+>> +
+>>   out:
+>>   	fscrypt_fname_free_buffer(&_tname);
+>> +out_inode:
+>> +	if ((dir !=3D fname->dir) && !IS_ERR(dir))
+>> +		iput(dir);
+>>   	return ret;
+>>   }
+>>   diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
+>> index 185fb4799a6d..e38a842e02a6 100644
+>> --- a/fs/ceph/crypto.h
+>> +++ b/fs/ceph/crypto.h
+>> @@ -76,13 +76,16 @@ static inline u32 ceph_fscrypt_auth_len(struct ceph_=
+fscrypt_auth *fa)
+>>    * smaller size. If the ciphertext name is longer than the value below=
+, then
+>>    * sha256 hash the remaining bytes.
+>>    *
+>> - * 189 bytes =3D> 252 bytes base64-encoded, which is <=3D NAME_MAX (255)
+>> + * 180 bytes =3D> 240 bytes base64-encoded, which is <=3D NAME_MAX (255)
+>> + *
+>> + * (Note: 240 bytes is the maximum size allowed for snapshot names to t=
+ake into
+>> + *  account the format: '_<SNAPSHOT-NAME>_<INODE-NUMBER>')
+>>    *
+>>    * Note that for long names that end up having their tail portion hash=
+ed, we
+>>    * must also store the full encrypted name (in the dentry's alternate_=
+name
+>>    * field).
+>>    */
+>> -#define CEPH_NOHASH_NAME_MAX (189 - SHA256_DIGEST_SIZE)
+>> +#define CEPH_NOHASH_NAME_MAX (180 - SHA256_DIGEST_SIZE)
+>>     void ceph_fscrypt_set_ops(struct super_block *sb);
+>>   @@ -91,8 +94,8 @@ void ceph_fscrypt_free_dummy_policy(struct ceph_fs_c=
+lient
+>> *fsc);
+>>   int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inod=
+e,
+>>   				 struct ceph_acl_sec_ctx *as);
+>>   void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req, struct c=
+eph_acl_sec_ctx *as);
+>> -int ceph_encode_encrypted_dname(const struct inode *parent, struct qstr=
+ *d_name, char *buf);
+>> -int ceph_encode_encrypted_fname(const struct inode *parent, struct dent=
+ry *dentry, char *buf);
+>> +int ceph_encode_encrypted_dname(struct inode *parent, struct qstr *d_na=
+me, char *buf);
+>> +int ceph_encode_encrypted_fname(struct inode *parent, struct dentry *de=
+ntry, char *buf);
+>>     static inline int ceph_fname_alloc_buffer(struct inode *parent, stru=
+ct
+>> fscrypt_str *fname)
+>>   {
+>>
+>
 
