@@ -2,82 +2,82 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD2F14DC44E
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Mar 2022 11:53:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A6984DC461
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Mar 2022 12:02:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232763AbiCQKyT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Mar 2022 06:54:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49322 "EHLO
+        id S232790AbiCQLEB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Mar 2022 07:04:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232759AbiCQKyR (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Mar 2022 06:54:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 15AE712606
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Mar 2022 03:53:01 -0700 (PDT)
+        with ESMTP id S232774AbiCQLEB (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Mar 2022 07:04:01 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C8DF31DFDF6
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Mar 2022 04:02:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647514380;
+        s=mimecast20190719; t=1647514963;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=I3Y4/CLqhjaWTGSLzXYdOZpML+2A1bgpqt0T/9LDPBM=;
-        b=XURyK2yVL4WDr5cDjKxCp5zzTv8fF+GlMItv4VyMXkzKabQg9+tjApnj3gZIKhFh35Fdcl
-        C5nJmPPtNfD3kgAgXcxY32/HHECdXogGeA6E8IleQTj9Wxw+OIlP16JjeiXN7SQgw/NXwa
-        ZTp9CrVbM1s3gloDlu8blHDvxiixDnA=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=cXeXA633cVJ0LM/fTbIriWK2KPHFVHlaSXmXHmrJHuE=;
+        b=TjzAJVdhmUSdDo8GVziUW68lFde70vSx1FlmW532Z1pq9bT7zobyokhWgb38frgNxw2dYL
+        n31avcjucisQCoj8RFksEhpf3QnBc7AyC3HWCypinI132GiDkhP4Swy8grYI9py47074S2
+        DYsIKDTQm4r7BoqJudg+qiCvYM6Z6ws=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-302-fSUaNAqPP4e4aBMBWySRoQ-1; Thu, 17 Mar 2022 06:52:59 -0400
-X-MC-Unique: fSUaNAqPP4e4aBMBWySRoQ-1
-Received: by mail-pj1-f71.google.com with SMTP id lr15-20020a17090b4b8f00b001c646e432baso4987951pjb.3
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Mar 2022 03:52:58 -0700 (PDT)
+ us-mta-159-9NiNWcQIOtGw4TLtlO0yNg-1; Thu, 17 Mar 2022 07:02:42 -0400
+X-MC-Unique: 9NiNWcQIOtGw4TLtlO0yNg-1
+Received: by mail-pj1-f72.google.com with SMTP id q21-20020a17090a2e1500b001c44f70fd38so3183320pjd.6
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Mar 2022 04:02:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=I3Y4/CLqhjaWTGSLzXYdOZpML+2A1bgpqt0T/9LDPBM=;
-        b=xejXLGh7Xb1s91vEojV/JN8csU+LPxoKAg2+agH8tCyFLyQZhuyinmKzLjaHfuMXBT
-         K4JNP/ekhFO8LN0w98bJyr59H6Vx+TukwFfpcHMaVCm+3AgnCOKT3rfbTYUTS/Edsz5w
-         LtAJFkj8xn5p7HrRY44t6h7XbJ2uwytLh5hP2JdKx8grnUQhZfGUoszAYTtIbFuKUhFe
-         0EFw9glB0AGHYi2N5bSDdl1N/2O/OSZGq17sgwLolzm+rtyPNFFRNpd1KoB/4EUvnG7V
-         Maa+LHhmZluY1qrzteXb3rwweQxRNTnYK1n8lKNzjz61/YLFTIGXumhZ2/+MzJUqjf71
-         /W5w==
-X-Gm-Message-State: AOAM533dECfKAZPIoVUGyaFhHdeKbY2TvmhvTN2+sddtP1jcVUEr5xre
-        Mw2Z49Li4uo4srm88HVfEpzpI7/aFHHNu8cuJHx1Jn0X3VCwM6lIvyQrYrahGA94YJxB1vq3RWv
-        zKcgnw8u8OCyQV1/uYV6/VA==
-X-Received: by 2002:a17:902:e748:b0:153:b484:bdf4 with SMTP id p8-20020a170902e74800b00153b484bdf4mr4354128plf.66.1647514377761;
-        Thu, 17 Mar 2022 03:52:57 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyxIHAji0XWgoCyeZFRlJJWn6FJI3OqUsIPbFtAonZujfJV8v0NR2E2ydutT0wtLk1xlHS8GQ==
-X-Received: by 2002:a17:902:e748:b0:153:b484:bdf4 with SMTP id p8-20020a170902e74800b00153b484bdf4mr4354106plf.66.1647514377486;
-        Thu, 17 Mar 2022 03:52:57 -0700 (PDT)
+        bh=cXeXA633cVJ0LM/fTbIriWK2KPHFVHlaSXmXHmrJHuE=;
+        b=2GM2cp/boCda0IRaLbwXmjcZuNZKFzXRxbujDMkVh7kGH7TgmBCSzZk7tH+cn/sHym
+         LuyAsCJG75Zs8RuIcvY/JHUaKaAfG19JXM00aEs5J2objfiiIg9nP4sKLa1L6cZLLDTS
+         ss33/FjiRNzuBWDpYksfarXwoUV2O2Lpjf1J9gae6WMmBrk4M3Q9w/82rfDyMgVX/eox
+         8pvNiGmOQ5gP2AZWvwwZjy0MSOq9KgMXkjzKoqp1L3IIqptKO3PIgHPlPvBVYnr7dVDM
+         cYoMyDFS+qRUQaznYOevWLRwB5XeQ8FvQcLcyBTE6vH4V4BMeLKMJV42fZoj3tSqWhZM
+         0OZA==
+X-Gm-Message-State: AOAM531bbytZ7JiFle7og9crXzes8f8fMGNln4tDalRJYaL4IrHly98k
+        gsz/jjOQ5DtKQv/r9ahIlrRCfhzHYpGN6a3uyVLHuw3X91yAR5NkIaz1+NSjFfJG/J1KGN4XaoF
+        JoI92cr+S1j+aZ4MiyUYeTw==
+X-Received: by 2002:a05:6a00:2182:b0:4f6:5051:61db with SMTP id h2-20020a056a00218200b004f6505161dbmr4330477pfi.40.1647514961134;
+        Thu, 17 Mar 2022 04:02:41 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxffglap+v5MUI+kVmbnqT1uzfdTGAL3EPrbxLZLqztCmhYGIklsmmjv87OoBNqs7vKc8TCVg==
+X-Received: by 2002:a05:6a00:2182:b0:4f6:5051:61db with SMTP id h2-20020a056a00218200b004f6505161dbmr4330445pfi.40.1647514960792;
+        Thu, 17 Mar 2022 04:02:40 -0700 (PDT)
 Received: from [10.72.12.110] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id 134-20020a63008c000000b00380e72483a6sm5219291pga.7.2022.03.17.03.52.52
+        by smtp.gmail.com with ESMTPSA id kk12-20020a17090b4a0c00b001bed1ff3717sm5549766pjb.6.2022.03.17.04.02.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Mar 2022 03:52:56 -0700 (PDT)
+        Thu, 17 Mar 2022 04:02:40 -0700 (PDT)
 Subject: Re: [RFC PATCH v2 0/3] ceph: add support for snapshot names
  encryption
-To:     Jeff Layton <jlayton@kernel.org>,
-        =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
         Ceph Development <ceph-devel@vger.kernel.org>,
         linux-kernel@vger.kernel.org
 References: <20220315161959.19453-1-lhenriques@suse.de>
  <5b53e812-d49b-45f0-1219-3dbc96febbc1@redhat.com>
- <329abedd9d9938de95bf4f5600acdcd6a846e6be.camel@kernel.org>
+ <87bky4j36l.fsf@brahms.olymp>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <3c8b78c4-5392-b81c-e76f-64fcce4f3c0f@redhat.com>
-Date:   Thu, 17 Mar 2022 18:52:49 +0800
+Message-ID: <64d590ad-ae0c-21c2-f24d-1be3e7662578@redhat.com>
+Date:   Thu, 17 Mar 2022 19:02:34 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <329abedd9d9938de95bf4f5600acdcd6a846e6be.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
+In-Reply-To: <87bky4j36l.fsf@brahms.olymp>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -87,81 +87,51 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 3/17/22 6:01 PM, Jeff Layton wrote:
-> I'm not sure we want to worry about .snap directories here since they
-> aren't "real". IIRC, snaps are inherited from parents too, so you could
-> do something like
+On 3/17/22 6:14 PM, LuÃ­s Henriques wrote:
+> Xiubo Li <xiubli@redhat.com> writes:
 >
->      mkdir dir1
->      mkdir dir1/.snap/snap1
->      mkdir dir1/dir2
->      fscrypt encrypt dir1/dir2
->
-> There should be nothing to prevent encrypting dir2, but I'm pretty sure
-> dir2/.snap will not be empty at that point.
-
-If we don't take care of this. Then we don't know which snapshots should 
-do encrypt/dencrypt and which shouldn't when building the path in lookup 
-and when reading the snapdir ?
-
--- Xiubo
-
->
-> -- Jeff
->
-> On Thu, 2022-03-17 at 13:27 +0800, Xiubo Li wrote:
 >> Hi Luis,
 >>
 >> There has another issue you need to handle at the same time.
 >>
->> Currently only the empty directory could be enabled the file encryption,
->> such as for the following command:
+>> Currently only the empty directory could be enabled the file encryption, such as
+>> for the following command:
 >>
 >> $ fscrypt encrypt mydir/
 >>
 >> But should we also make sure that the mydir/.snap/ is empty ?
 >>
->> Here the 'empty' is not totally empty, which allows it should allow long
->> snap names exist.
+>> Here the 'empty' is not totally empty, which allows it should allow long snap
+>> names exist.
 >>
 >> Make sense ?
->>
->> - Xiubo
->>
->>
->> On 3/16/22 12:19 AM, Luís Henriques wrote:
->>> Hi!
->>>
->>> A couple of changes since v1:
->>>
->>> - Dropped the dentry->d_flags change in ceph_mkdir().  Thanks to Xiubo
->>>     suggestion, patch 0001 now skips calling ceph_fscrypt_prepare_context()
->>>     if we're handling a snapshot.
->>>
->>> - Added error handling to ceph_get_snapdir() in patch 0001 (Jeff had
->>>     already pointed that out but I forgot to include that change in previous
->>>     revision).
->>>
->>> - Rebased patch 0002 to the latest wip-fscrypt branch.
->>>
->>> - Added some documentation regarding snapshots naming restrictions.
->>>
->>> As before, in order to test this code the following PRs are required:
->>>
->>>     mds: add protection from clients without fscrypt support #45073
->>>     mds: use the whole string as the snapshot long name #45192
->>>     mds: support alternate names for snapshots #45224
->>>     mds: limit the snapshot names to 240 characters #45312
->>>
->>> Luís Henriques (3):
->>>     ceph: add support for encrypted snapshot names
->>>     ceph: add support for handling encrypted snapshot names
->>>     ceph: update documentation regarding snapshot naming limitations
->>>
->>>    Documentation/filesystems/ceph.rst |  10 ++
->>>    fs/ceph/crypto.c                   | 158 +++++++++++++++++++++++++----
->>>    fs/ceph/crypto.h                   |  11 +-
->>>    fs/ceph/inode.c                    |  31 +++++-
->>>    4 files changed, 182 insertions(+), 28 deletions(-)
->>>
+> Right, actually I had came across that question in the past but completely
+> forgot about it.
+>
+> Right now we simply check the dir stats to ensure a directory is empty.
+> We could add an extra check in ceph_crypt_empty_dir() to ensure that there
+> are no snapshots _above_ that directory (i.e. that there are no
+> "mydir/.snap/_name_xxxxx").
+>
+> Unfortunately, I don't know enough of snapshots implementation details to
+> understand if it's a problem to consider a directory as being empty (in
+> the fscrypt context) when there are these '_name_xxx' directories.  My
+> feeling is that this is not a problem but I really don't know.
+>
+> Do you (or anyone) have any ideas/suggestions?
+
+There is no need to care about the long snap names in .snap, because 
+they are all from the parent snaprealms.
+
+What you need to make sure is that there shouldn't have any local 
+snapshot before encrypting the directory.
+
+If we don't make sure about this then when encrypting/decrypting the 
+snapshot names you will hit errors in theory.
+
+But I didn't test this yet, you can try.
+
+-- Xiubo
+
+> Cheers,
 
