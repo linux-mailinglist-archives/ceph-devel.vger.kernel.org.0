@@ -2,74 +2,76 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F22394DBBFF
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Mar 2022 02:00:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACE034DBED4
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Mar 2022 06:56:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240840AbiCQBBZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 16 Mar 2022 21:01:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53266 "EHLO
+        id S229485AbiCQF6K (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Mar 2022 01:58:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236207AbiCQBBY (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 16 Mar 2022 21:01:24 -0400
+        with ESMTP id S229477AbiCQF6J (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Mar 2022 01:58:09 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 854CA13E31
-        for <ceph-devel@vger.kernel.org>; Wed, 16 Mar 2022 18:00:09 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BB07710CF10
+        for <ceph-devel@vger.kernel.org>; Wed, 16 Mar 2022 22:27:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647478808;
+        s=mimecast20190719; t=1647494830;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Jdc7+/zoeQZ/umjX1ZgOUUo+m9bpze5R20d4mqOyMGw=;
-        b=M3S+nxl9DoABKStPh24NK2nAr4in1iNmC8hYP/qkmaQiW1bPwsxmrICpOJgejMcmf6IGzM
-        wpclWrQUR4yeK8Bpsa/bJgKDgeqrvvI7dhww6MiKA4yDkYZjFILV+Faqm4rzNaxvmvOcP3
-        a1lU9iNdXT0TaZhT9YNJOBBBRDitLvE=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=tv87CG7LG3XKpxDNEZ+GwPodON4sdnWxi1QyglUUWzI=;
+        b=SGBqu+Foh3O8/2PUh5QoWuDzCPM8RuJqVswr2pOfg96xH8Y30oCUpeLqS5uw9t7SRTTgmk
+        4v63uF5q+SMajRy10ir7E7618bP1V5fkXSkkbzhDWdUdQozzHKkAdFQVV5Dg6FwNV3tBvI
+        YmkONhUWkPFDkZ/Sz8aeKhCbyueOAlc=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-384-YD_qV_J_PFGtzV9yUrkMlw-1; Wed, 16 Mar 2022 21:00:07 -0400
-X-MC-Unique: YD_qV_J_PFGtzV9yUrkMlw-1
-Received: by mail-pf1-f199.google.com with SMTP id f18-20020a623812000000b004f6a259bbf4so2625214pfa.7
-        for <ceph-devel@vger.kernel.org>; Wed, 16 Mar 2022 18:00:07 -0700 (PDT)
+ us-mta-124-lln9ambkMuqq53tTRRGIaA-1; Thu, 17 Mar 2022 01:27:09 -0400
+X-MC-Unique: lln9ambkMuqq53tTRRGIaA-1
+Received: by mail-pj1-f71.google.com with SMTP id q21-20020a17090a2e1500b001c44f70fd38so2771888pjd.6
+        for <ceph-devel@vger.kernel.org>; Wed, 16 Mar 2022 22:27:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=Jdc7+/zoeQZ/umjX1ZgOUUo+m9bpze5R20d4mqOyMGw=;
-        b=rYtaP5xNvPQr5/RJRf45lUwqxrOS/i/uX7xLCh3NHejq9JGeNo+nPK4LnWVLHgLeCf
-         HjkaEKHuP8hzweaVtIt3Mpbcssen6UKKz27exfeHUEcJ7SjOmkhRGZm1mNGN/qI/fqEQ
-         qNn0wgMyV/3RcpHuLbgQgd1fDPRCS1U9Hmwkql/A9Eoi8wJYJajw5QIy3076mNC5dnlD
-         f70PdEMWIidBnCCArtPKsdwgP3L7ehUuUb+WqVeiOQsK09LCEuSyqQ3AZOle0wJx6CU1
-         m/FNkXwHcRwMUG6ySFBP47/P4bHn+EhX9uesu+EdPEL063PydEqwk9YACWTvF6XHkzWa
-         F9Hw==
-X-Gm-Message-State: AOAM532/oDuIooWOssRL3ZyJWwnUsHiE4cmKf4Ev6/a7guxpwVmG2lHb
-        qUq2QSSSpbTpfKBtiQ7gqhEghJSmwer9GEpmxuWxDawRTRu5GQnsoZX3AWgnm6BvPXDUP/1Fc9q
-        ol8uS6EQzBvof3jp4N3APRBiHZfx+sgHWe3NZJ5RJcKhPRnlt2uj+IoyK1snFfqwUWOoApVs=
-X-Received: by 2002:a17:902:7002:b0:14d:76b9:2303 with SMTP id y2-20020a170902700200b0014d76b92303mr2543825plk.155.1647478805950;
-        Wed, 16 Mar 2022 18:00:05 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz6b1g5/p/L/qJXXDAJNpi9g5vSSsoDiHq3k0TK2jvag6ghQ3nPSzobtcU4jKi0iGUE1sS7AA==
-X-Received: by 2002:a17:902:7002:b0:14d:76b9:2303 with SMTP id y2-20020a170902700200b0014d76b92303mr2543790plk.155.1647478805568;
-        Wed, 16 Mar 2022 18:00:05 -0700 (PDT)
+        bh=tv87CG7LG3XKpxDNEZ+GwPodON4sdnWxi1QyglUUWzI=;
+        b=cIbNRnUhjLFPuIFH5NyvXBsyS2i8GylubNptKAAIjJGZ5CUcZZJQIyM4R0fa1lt2F4
+         u81YLTGghDNHGcOMbLE9GINDgvSoQ2cCuTbkWWML63MOmiSM5olAUwiO5DfjQ+hSgkvw
+         Q8Xd9yyrkTyAQ6/0ee3h8kSL0keXeZDzKxr1J5zx7+L4U+Al8VCzvFtC324XF5DMNNa4
+         tDzn8/Ouyii0quJ8sR5pP6l3uZYKdUnV1uWkk5MJs2l2LIJZ9flxV5G+MVoDHq+fe0Bv
+         IPkVUhlbe4/2BcM6V/Y5NSGFgx/8asQ8f1Rv2R+n1MmqO4fhbA0x2R2Jxm/F4tUA/lYS
+         +NYA==
+X-Gm-Message-State: AOAM531zjbtmA2rAziL2QKn5QdNMiIrWawG3D6NQ1jOhe4a2zlVX/HYG
+        rMaI5D8UigL9Q/JSs0uL7NBW1cjEyGvQUYBZN6CGovTzHsQeUi4qK0NrzYUc4Am4MAPxYqYduHq
+        LOPU+YJb+QTQoC8ZKM9NTKg==
+X-Received: by 2002:a17:902:ce8a:b0:153:191:b24e with SMTP id f10-20020a170902ce8a00b001530191b24emr3011980plg.135.1647494827971;
+        Wed, 16 Mar 2022 22:27:07 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJznSB+E+HfjEDlJ6+UMu/rrJfeYA0TD89epzRt55YVmSkSlYTG5o0vA572uSkle0tFT0sPMlw==
+X-Received: by 2002:a17:902:ce8a:b0:153:191:b24e with SMTP id f10-20020a170902ce8a00b001530191b24emr3011963plg.135.1647494827705;
+        Wed, 16 Mar 2022 22:27:07 -0700 (PDT)
 Received: from [10.72.12.110] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id e6-20020a63aa06000000b00380c8bed5a6sm3918492pgf.46.2022.03.16.18.00.02
+        by smtp.gmail.com with ESMTPSA id r4-20020a638f44000000b0038105776895sm4160156pgn.76.2022.03.16.22.27.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Mar 2022 18:00:05 -0700 (PDT)
-Subject: Re: [PATCH] ceph: fix the buf size and use NAME_SIZE instead
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, vshankar@redhat.com, lhenriques@suse.de,
-        ceph-devel@vger.kernel.org
-References: <20220316035100.68406-1-xiubli@redhat.com>
- <8ee63a9ada6574932a66821b11eb91c491543754.camel@kernel.org>
+        Wed, 16 Mar 2022 22:27:07 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 0/3] ceph: add support for snapshot names
+ encryption
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
+References: <20220315161959.19453-1-lhenriques@suse.de>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        linux-kernel@vger.kernel.org
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <bd306053-8c9c-0550-7ff1-d0d7aa25e518@redhat.com>
-Date:   Thu, 17 Mar 2022 09:00:00 +0800
+Message-ID: <5b53e812-d49b-45f0-1219-3dbc96febbc1@redhat.com>
+Date:   Thu, 17 Mar 2022 13:27:01 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <8ee63a9ada6574932a66821b11eb91c491543754.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20220315161959.19453-1-lhenriques@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
@@ -82,53 +84,58 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Hi Luis,
 
-On 3/16/22 7:50 PM, Jeff Layton wrote:
-> On Wed, 2022-03-16 at 11:51 +0800, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> Since the base64_encrypted file name shouldn't exceed the NAME_SIZE,
->> no need to allocate a buffer from the stack that long.
->>
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>
->> Jeff, you can just squash this into the previous commit.
->>
->>
->>   fs/ceph/mds_client.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
->> index c51b07ec72cf..cd0c780a6f84 100644
->> --- a/fs/ceph/mds_client.c
->> +++ b/fs/ceph/mds_client.c
->> @@ -2579,7 +2579,7 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase, int for
->>   			parent = dget_parent(cur);
->>   		} else {
->>   			int len, ret;
->> -			char buf[FSCRYPT_BASE64URL_CHARS(NAME_MAX)];
->> +			char buf[NAME_MAX];
->>   
->>   			/*
->>   			 * Proactively copy name into buf, in case we need to present
-> Thanks Xiubo. I folded this into:
->
->      ceph: add encrypted fname handling to ceph_mdsc_build_path
->
-> ...and merged in the other patches you sent earlier today.
->
-> I also went ahead and squashed down the readdir patches that you sent
-> yesterday, so that we could get rid of the interim readdir handling that
-> I had originally written.
->
-> It might need a bit more cleanup -- some of the deltas in the merged
-> patch probably belong in earlier commits, but it should be ok for now.
->
-> Please take a look and make sure I didn't miss anything there.
+There has another issue you need to handle at the same time.
 
-Sure, will check it today.
+Currently only the empty directory could be enabled the file encryption, 
+such as for the following command:
+
+$ fscrypt encrypt mydir/
+
+But should we also make sure that the mydir/.snap/ is empty ?
+
+Here the 'empty' is not totally empty, which allows it should allow long 
+snap names exist.
+
+Make sense ?
 
 - Xiubo
 
+
+On 3/16/22 12:19 AM, Luís Henriques wrote:
+> Hi!
+>
+> A couple of changes since v1:
+>
+> - Dropped the dentry->d_flags change in ceph_mkdir().  Thanks to Xiubo
+>    suggestion, patch 0001 now skips calling ceph_fscrypt_prepare_context()
+>    if we're handling a snapshot.
+>
+> - Added error handling to ceph_get_snapdir() in patch 0001 (Jeff had
+>    already pointed that out but I forgot to include that change in previous
+>    revision).
+>
+> - Rebased patch 0002 to the latest wip-fscrypt branch.
+>
+> - Added some documentation regarding snapshots naming restrictions.
+>
+> As before, in order to test this code the following PRs are required:
+>
+>    mds: add protection from clients without fscrypt support #45073
+>    mds: use the whole string as the snapshot long name #45192
+>    mds: support alternate names for snapshots #45224
+>    mds: limit the snapshot names to 240 characters #45312
+>
+> Luís Henriques (3):
+>    ceph: add support for encrypted snapshot names
+>    ceph: add support for handling encrypted snapshot names
+>    ceph: update documentation regarding snapshot naming limitations
+>
+>   Documentation/filesystems/ceph.rst |  10 ++
+>   fs/ceph/crypto.c                   | 158 +++++++++++++++++++++++++----
+>   fs/ceph/crypto.h                   |  11 +-
+>   fs/ceph/inode.c                    |  31 +++++-
+>   4 files changed, 182 insertions(+), 28 deletions(-)
+>
 
