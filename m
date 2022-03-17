@@ -2,74 +2,83 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A01F94DC3CA
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Mar 2022 11:15:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD2F14DC44E
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Mar 2022 11:53:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232499AbiCQKQB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Mar 2022 06:16:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37460 "EHLO
+        id S232763AbiCQKyT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Mar 2022 06:54:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232517AbiCQKP7 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Mar 2022 06:15:59 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E90501DEA84;
-        Thu, 17 Mar 2022 03:14:40 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id A71331F38D;
-        Thu, 17 Mar 2022 10:14:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1647512079; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        with ESMTP id S232759AbiCQKyR (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Mar 2022 06:54:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 15AE712606
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Mar 2022 03:53:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1647514380;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=EkHzWOqcfA+EWvx9G34ymicMu1mMDdlE+2xRd+Bpe3Y=;
-        b=MgsTYbL3M8BjxDf5Pfv5izxmYt0KoJoZXvJYfbE0NhkpzvA2SdRn4OvT98c7M5ybrk8s3c
-        nJHYhF9wGs8DjFfSGLWQU9bbyIX1Efmxe3Xygwv+QJPMDMhOld9L963N3zilu946fx1oYd
-        GyWwjH6TroPx0ruEvbdlwLRE4uNZ/GU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1647512079;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EkHzWOqcfA+EWvx9G34ymicMu1mMDdlE+2xRd+Bpe3Y=;
-        b=6sNI6ikjHIbqqUSbSQj+pf0+tVN12oDSMIrVFr3AnE02+v4ksRcZOJQnY58iv/RssQ6qJ5
-        gOGTHWxPLIzBDVBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4299F13B4B;
-        Thu, 17 Mar 2022 10:14:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id BQRlDQ8KM2KvNgAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Thu, 17 Mar 2022 10:14:39 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 49333f2e;
-        Thu, 17 Mar 2022 10:14:58 +0000 (UTC)
-From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
+        bh=I3Y4/CLqhjaWTGSLzXYdOZpML+2A1bgpqt0T/9LDPBM=;
+        b=XURyK2yVL4WDr5cDjKxCp5zzTv8fF+GlMItv4VyMXkzKabQg9+tjApnj3gZIKhFh35Fdcl
+        C5nJmPPtNfD3kgAgXcxY32/HHECdXogGeA6E8IleQTj9Wxw+OIlP16JjeiXN7SQgw/NXwa
+        ZTp9CrVbM1s3gloDlu8blHDvxiixDnA=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-302-fSUaNAqPP4e4aBMBWySRoQ-1; Thu, 17 Mar 2022 06:52:59 -0400
+X-MC-Unique: fSUaNAqPP4e4aBMBWySRoQ-1
+Received: by mail-pj1-f71.google.com with SMTP id lr15-20020a17090b4b8f00b001c646e432baso4987951pjb.3
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Mar 2022 03:52:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=I3Y4/CLqhjaWTGSLzXYdOZpML+2A1bgpqt0T/9LDPBM=;
+        b=xejXLGh7Xb1s91vEojV/JN8csU+LPxoKAg2+agH8tCyFLyQZhuyinmKzLjaHfuMXBT
+         K4JNP/ekhFO8LN0w98bJyr59H6Vx+TukwFfpcHMaVCm+3AgnCOKT3rfbTYUTS/Edsz5w
+         LtAJFkj8xn5p7HrRY44t6h7XbJ2uwytLh5hP2JdKx8grnUQhZfGUoszAYTtIbFuKUhFe
+         0EFw9glB0AGHYi2N5bSDdl1N/2O/OSZGq17sgwLolzm+rtyPNFFRNpd1KoB/4EUvnG7V
+         Maa+LHhmZluY1qrzteXb3rwweQxRNTnYK1n8lKNzjz61/YLFTIGXumhZ2/+MzJUqjf71
+         /W5w==
+X-Gm-Message-State: AOAM533dECfKAZPIoVUGyaFhHdeKbY2TvmhvTN2+sddtP1jcVUEr5xre
+        Mw2Z49Li4uo4srm88HVfEpzpI7/aFHHNu8cuJHx1Jn0X3VCwM6lIvyQrYrahGA94YJxB1vq3RWv
+        zKcgnw8u8OCyQV1/uYV6/VA==
+X-Received: by 2002:a17:902:e748:b0:153:b484:bdf4 with SMTP id p8-20020a170902e74800b00153b484bdf4mr4354128plf.66.1647514377761;
+        Thu, 17 Mar 2022 03:52:57 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyxIHAji0XWgoCyeZFRlJJWn6FJI3OqUsIPbFtAonZujfJV8v0NR2E2ydutT0wtLk1xlHS8GQ==
+X-Received: by 2002:a17:902:e748:b0:153:b484:bdf4 with SMTP id p8-20020a170902e74800b00153b484bdf4mr4354106plf.66.1647514377486;
+        Thu, 17 Mar 2022 03:52:57 -0700 (PDT)
+Received: from [10.72.12.110] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id 134-20020a63008c000000b00380e72483a6sm5219291pga.7.2022.03.17.03.52.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Mar 2022 03:52:56 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 0/3] ceph: add support for snapshot names
+ encryption
+To:     Jeff Layton <jlayton@kernel.org>,
+        =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
         Ceph Development <ceph-devel@vger.kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 0/3] ceph: add support for snapshot names encryption
 References: <20220315161959.19453-1-lhenriques@suse.de>
-        <5b53e812-d49b-45f0-1219-3dbc96febbc1@redhat.com>
-Date:   Thu, 17 Mar 2022 10:14:58 +0000
-In-Reply-To: <5b53e812-d49b-45f0-1219-3dbc96febbc1@redhat.com> (Xiubo Li's
-        message of "Thu, 17 Mar 2022 13:27:01 +0800")
-Message-ID: <87bky4j36l.fsf@brahms.olymp>
+ <5b53e812-d49b-45f0-1219-3dbc96febbc1@redhat.com>
+ <329abedd9d9938de95bf4f5600acdcd6a846e6be.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <3c8b78c4-5392-b81c-e76f-64fcce4f3c0f@redhat.com>
+Date:   Thu, 17 Mar 2022 18:52:49 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+In-Reply-To: <329abedd9d9938de95bf4f5600acdcd6a846e6be.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,84 +86,82 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Xiubo Li <xiubli@redhat.com> writes:
 
-> Hi Luis,
+On 3/17/22 6:01 PM, Jeff Layton wrote:
+> I'm not sure we want to worry about .snap directories here since they
+> aren't "real". IIRC, snaps are inherited from parents too, so you could
+> do something like
 >
-> There has another issue you need to handle at the same time.
+>      mkdir dir1
+>      mkdir dir1/.snap/snap1
+>      mkdir dir1/dir2
+>      fscrypt encrypt dir1/dir2
 >
-> Currently only the empty directory could be enabled the file encryption, =
-such as
-> for the following command:
->
-> $ fscrypt encrypt mydir/
->
-> But should we also make sure that the mydir/.snap/ is empty ?
->
-> Here the 'empty' is not totally empty, which allows it should allow long =
-snap
-> names exist.
->
-> Make sense ?
+> There should be nothing to prevent encrypting dir2, but I'm pretty sure
+> dir2/.snap will not be empty at that point.
 
-Right, actually I had came across that question in the past but completely
-forgot about it.
+If we don't take care of this. Then we don't know which snapshots should 
+do encrypt/dencrypt and which shouldn't when building the path in lookup 
+and when reading the snapdir ?
 
-Right now we simply check the dir stats to ensure a directory is empty.
-We could add an extra check in ceph_crypt_empty_dir() to ensure that there
-are no snapshots _above_ that directory (i.e. that there are no
-"mydir/.snap/_name_xxxxx").
-
-Unfortunately, I don't know enough of snapshots implementation details to
-understand if it's a problem to consider a directory as being empty (in
-the fscrypt context) when there are these '_name_xxx' directories.  My
-feeling is that this is not a problem but I really don't know.
-
-Do you (or anyone) have any ideas/suggestions?
-
-Cheers,
---=20
-Lu=C3=ADs
+-- Xiubo
 
 >
-> - Xiubo
+> -- Jeff
 >
->
-> On 3/16/22 12:19 AM, Lu=C3=ADs Henriques wrote:
->> Hi!
+> On Thu, 2022-03-17 at 13:27 +0800, Xiubo Li wrote:
+>> Hi Luis,
 >>
->> A couple of changes since v1:
+>> There has another issue you need to handle at the same time.
 >>
->> - Dropped the dentry->d_flags change in ceph_mkdir().  Thanks to Xiubo
->>    suggestion, patch 0001 now skips calling ceph_fscrypt_prepare_context=
-()
->>    if we're handling a snapshot.
+>> Currently only the empty directory could be enabled the file encryption,
+>> such as for the following command:
 >>
->> - Added error handling to ceph_get_snapdir() in patch 0001 (Jeff had
->>    already pointed that out but I forgot to include that change in previ=
-ous
->>    revision).
+>> $ fscrypt encrypt mydir/
 >>
->> - Rebased patch 0002 to the latest wip-fscrypt branch.
+>> But should we also make sure that the mydir/.snap/ is empty ?
 >>
->> - Added some documentation regarding snapshots naming restrictions.
+>> Here the 'empty' is not totally empty, which allows it should allow long
+>> snap names exist.
 >>
->> As before, in order to test this code the following PRs are required:
+>> Make sense ?
 >>
->>    mds: add protection from clients without fscrypt support #45073
->>    mds: use the whole string as the snapshot long name #45192
->>    mds: support alternate names for snapshots #45224
->>    mds: limit the snapshot names to 240 characters #45312
+>> - Xiubo
 >>
->> Lu=C3=ADs Henriques (3):
->>    ceph: add support for encrypted snapshot names
->>    ceph: add support for handling encrypted snapshot names
->>    ceph: update documentation regarding snapshot naming limitations
 >>
->>   Documentation/filesystems/ceph.rst |  10 ++
->>   fs/ceph/crypto.c                   | 158 +++++++++++++++++++++++++----
->>   fs/ceph/crypto.h                   |  11 +-
->>   fs/ceph/inode.c                    |  31 +++++-
->>   4 files changed, 182 insertions(+), 28 deletions(-)
->>
->
+>> On 3/16/22 12:19 AM, Luís Henriques wrote:
+>>> Hi!
+>>>
+>>> A couple of changes since v1:
+>>>
+>>> - Dropped the dentry->d_flags change in ceph_mkdir().  Thanks to Xiubo
+>>>     suggestion, patch 0001 now skips calling ceph_fscrypt_prepare_context()
+>>>     if we're handling a snapshot.
+>>>
+>>> - Added error handling to ceph_get_snapdir() in patch 0001 (Jeff had
+>>>     already pointed that out but I forgot to include that change in previous
+>>>     revision).
+>>>
+>>> - Rebased patch 0002 to the latest wip-fscrypt branch.
+>>>
+>>> - Added some documentation regarding snapshots naming restrictions.
+>>>
+>>> As before, in order to test this code the following PRs are required:
+>>>
+>>>     mds: add protection from clients without fscrypt support #45073
+>>>     mds: use the whole string as the snapshot long name #45192
+>>>     mds: support alternate names for snapshots #45224
+>>>     mds: limit the snapshot names to 240 characters #45312
+>>>
+>>> Luís Henriques (3):
+>>>     ceph: add support for encrypted snapshot names
+>>>     ceph: add support for handling encrypted snapshot names
+>>>     ceph: update documentation regarding snapshot naming limitations
+>>>
+>>>    Documentation/filesystems/ceph.rst |  10 ++
+>>>    fs/ceph/crypto.c                   | 158 +++++++++++++++++++++++++----
+>>>    fs/ceph/crypto.h                   |  11 +-
+>>>    fs/ceph/inode.c                    |  31 +++++-
+>>>    4 files changed, 182 insertions(+), 28 deletions(-)
+>>>
+
