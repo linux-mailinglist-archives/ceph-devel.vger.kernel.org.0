@@ -2,104 +2,133 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D36A4DB23A
-	for <lists+ceph-devel@lfdr.de>; Wed, 16 Mar 2022 15:12:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F22394DBBFF
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Mar 2022 02:00:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350420AbiCPONf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 16 Mar 2022 10:13:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56168 "EHLO
+        id S240840AbiCQBBZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 16 Mar 2022 21:01:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352804AbiCPONd (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 16 Mar 2022 10:13:33 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1491066FB7
-        for <ceph-devel@vger.kernel.org>; Wed, 16 Mar 2022 07:12:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BBD08B81B75
-        for <ceph-devel@vger.kernel.org>; Wed, 16 Mar 2022 14:12:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33BE5C340E9;
-        Wed, 16 Mar 2022 14:12:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647439936;
-        bh=+Nd4ENNH9RBOaFgICMFY3tf9UAphDrGSGIn1NP2Zs58=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=oneWdMdJDvhiqFixOVsZy4olJ1N8GkgfYZ+d0j1bZqwpBpAvvnYXThWa9oEXti3H6
-         rJvaUFKMpaWhuTIdNGDBso/CghlJBJf1x5u6L6HL+Ey/Wb3Is7Pfry02a39+v1k6ny
-         jCoxyC6OfAYdef+oV1s7tIlIOLHuwhLFgszqFX4Rnu2G5P/4xjzQBaJv+aYaB3TJz+
-         wqdFmCg9A/1WyRGcdljHyJp9cyQM+GRTLyVPE0fhq9ipK73Ke1xGGmx06RideSmqOb
-         MOfJSpESUa+E17scLOZe3z+5IcYikBkVE1PoVBNClX+d8vX1Dd/D3LTDR6I+I73vTu
-         EZif2m5I7vCwA==
-Message-ID: <53f0a25ce305b60d02d0d9ac8ea0be192cdcfbc0.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: get snap_rwsem read lock in handle_cap_export
- for ceph_add_cap
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Niels Dossche <dossche.niels@gmail.com>, ceph-devel@vger.kernel.org
-Cc:     Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 16 Mar 2022 10:12:14 -0400
-In-Reply-To: <20220315152946.12912-1-dossche.niels@gmail.com>
-References: <20220315152946.12912-1-dossche.niels@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
+        with ESMTP id S236207AbiCQBBY (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 16 Mar 2022 21:01:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 854CA13E31
+        for <ceph-devel@vger.kernel.org>; Wed, 16 Mar 2022 18:00:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1647478808;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Jdc7+/zoeQZ/umjX1ZgOUUo+m9bpze5R20d4mqOyMGw=;
+        b=M3S+nxl9DoABKStPh24NK2nAr4in1iNmC8hYP/qkmaQiW1bPwsxmrICpOJgejMcmf6IGzM
+        wpclWrQUR4yeK8Bpsa/bJgKDgeqrvvI7dhww6MiKA4yDkYZjFILV+Faqm4rzNaxvmvOcP3
+        a1lU9iNdXT0TaZhT9YNJOBBBRDitLvE=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-384-YD_qV_J_PFGtzV9yUrkMlw-1; Wed, 16 Mar 2022 21:00:07 -0400
+X-MC-Unique: YD_qV_J_PFGtzV9yUrkMlw-1
+Received: by mail-pf1-f199.google.com with SMTP id f18-20020a623812000000b004f6a259bbf4so2625214pfa.7
+        for <ceph-devel@vger.kernel.org>; Wed, 16 Mar 2022 18:00:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Jdc7+/zoeQZ/umjX1ZgOUUo+m9bpze5R20d4mqOyMGw=;
+        b=rYtaP5xNvPQr5/RJRf45lUwqxrOS/i/uX7xLCh3NHejq9JGeNo+nPK4LnWVLHgLeCf
+         HjkaEKHuP8hzweaVtIt3Mpbcssen6UKKz27exfeHUEcJ7SjOmkhRGZm1mNGN/qI/fqEQ
+         qNn0wgMyV/3RcpHuLbgQgd1fDPRCS1U9Hmwkql/A9Eoi8wJYJajw5QIy3076mNC5dnlD
+         f70PdEMWIidBnCCArtPKsdwgP3L7ehUuUb+WqVeiOQsK09LCEuSyqQ3AZOle0wJx6CU1
+         m/FNkXwHcRwMUG6ySFBP47/P4bHn+EhX9uesu+EdPEL063PydEqwk9YACWTvF6XHkzWa
+         F9Hw==
+X-Gm-Message-State: AOAM532/oDuIooWOssRL3ZyJWwnUsHiE4cmKf4Ev6/a7guxpwVmG2lHb
+        qUq2QSSSpbTpfKBtiQ7gqhEghJSmwer9GEpmxuWxDawRTRu5GQnsoZX3AWgnm6BvPXDUP/1Fc9q
+        ol8uS6EQzBvof3jp4N3APRBiHZfx+sgHWe3NZJ5RJcKhPRnlt2uj+IoyK1snFfqwUWOoApVs=
+X-Received: by 2002:a17:902:7002:b0:14d:76b9:2303 with SMTP id y2-20020a170902700200b0014d76b92303mr2543825plk.155.1647478805950;
+        Wed, 16 Mar 2022 18:00:05 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJz6b1g5/p/L/qJXXDAJNpi9g5vSSsoDiHq3k0TK2jvag6ghQ3nPSzobtcU4jKi0iGUE1sS7AA==
+X-Received: by 2002:a17:902:7002:b0:14d:76b9:2303 with SMTP id y2-20020a170902700200b0014d76b92303mr2543790plk.155.1647478805568;
+        Wed, 16 Mar 2022 18:00:05 -0700 (PDT)
+Received: from [10.72.12.110] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id e6-20020a63aa06000000b00380c8bed5a6sm3918492pgf.46.2022.03.16.18.00.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Mar 2022 18:00:05 -0700 (PDT)
+Subject: Re: [PATCH] ceph: fix the buf size and use NAME_SIZE instead
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     idryomov@gmail.com, vshankar@redhat.com, lhenriques@suse.de,
+        ceph-devel@vger.kernel.org
+References: <20220316035100.68406-1-xiubli@redhat.com>
+ <8ee63a9ada6574932a66821b11eb91c491543754.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <bd306053-8c9c-0550-7ff1-d0d7aa25e518@redhat.com>
+Date:   Thu, 17 Mar 2022 09:00:00 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
+In-Reply-To: <8ee63a9ada6574932a66821b11eb91c491543754.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Language: en-US
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2022-03-15 at 16:29 +0100, Niels Dossche wrote:
-> ceph_add_cap says in its function documentation that the caller should
-> hold the read lock on the session snap_rwsem. Furthermore, not only
-> ceph_add_cap needs that lock, when it calls to ceph_lookup_snap_realm it
-> eventually calls ceph_get_snap_realm which states via lockdep that
-> snap_rwsem needs to be held. handle_cap_export calls ceph_add_cap
-> without that mdsc->snap_rwsem held. Thus, since ceph_get_snap_realm
-> and ceph_add_cap both need the lock, the common place to acquire that
-> lock is inside handle_cap_export.
-> 
-> Signed-off-by: Niels Dossche <dossche.niels@gmail.com>
-> ---
->  fs/ceph/caps.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index b472cd066d1c..a23cf2a528bc 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -3856,6 +3856,7 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
->  	dout("handle_cap_export inode %p ci %p mds%d mseq %d target %d\n",
->  	     inode, ci, mds, mseq, target);
->  retry:
-> +	down_read(&mdsc->snap_rwsem);
->  	spin_lock(&ci->i_ceph_lock);
->  	cap = __get_cap_for_mds(ci, mds);
->  	if (!cap || cap->cap_id != le64_to_cpu(ex->cap_id))
-> @@ -3919,6 +3920,7 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
->  	}
->  
->  	spin_unlock(&ci->i_ceph_lock);
-> +	up_read(&mdsc->snap_rwsem);
->  	mutex_unlock(&session->s_mutex);
->  
->  	/* open target session */
-> @@ -3944,6 +3946,7 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
->  
->  out_unlock:
->  	spin_unlock(&ci->i_ceph_lock);
-> +	up_read(&mdsc->snap_rwsem);
->  	mutex_unlock(&session->s_mutex);
->  	if (tsession) {
->  		mutex_unlock(&tsession->s_mutex);
 
-Looks good. Merged into testing branch.
+On 3/16/22 7:50 PM, Jeff Layton wrote:
+> On Wed, 2022-03-16 at 11:51 +0800, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> Since the base64_encrypted file name shouldn't exceed the NAME_SIZE,
+>> no need to allocate a buffer from the stack that long.
+>>
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>
+>> Jeff, you can just squash this into the previous commit.
+>>
+>>
+>>   fs/ceph/mds_client.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+>> index c51b07ec72cf..cd0c780a6f84 100644
+>> --- a/fs/ceph/mds_client.c
+>> +++ b/fs/ceph/mds_client.c
+>> @@ -2579,7 +2579,7 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase, int for
+>>   			parent = dget_parent(cur);
+>>   		} else {
+>>   			int len, ret;
+>> -			char buf[FSCRYPT_BASE64URL_CHARS(NAME_MAX)];
+>> +			char buf[NAME_MAX];
+>>   
+>>   			/*
+>>   			 * Proactively copy name into buf, in case we need to present
+> Thanks Xiubo. I folded this into:
+>
+>      ceph: add encrypted fname handling to ceph_mdsc_build_path
+>
+> ...and merged in the other patches you sent earlier today.
+>
+> I also went ahead and squashed down the readdir patches that you sent
+> yesterday, so that we could get rid of the interim readdir handling that
+> I had originally written.
+>
+> It might need a bit more cleanup -- some of the deltas in the merged
+> patch probably belong in earlier commits, but it should be ok for now.
+>
+> Please take a look and make sure I didn't miss anything there.
 
-Thanks!
--- 
-Jeff Layton <jlayton@kernel.org>
+Sure, will check it today.
+
+- Xiubo
+
+
