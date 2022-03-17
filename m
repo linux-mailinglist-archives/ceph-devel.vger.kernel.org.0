@@ -2,132 +2,159 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CB254DC380
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Mar 2022 11:01:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A01F94DC3CA
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Mar 2022 11:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232285AbiCQKCp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Mar 2022 06:02:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38764 "EHLO
+        id S232499AbiCQKQB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Mar 2022 06:16:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232072AbiCQKCo (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Mar 2022 06:02:44 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0AF9D4479;
-        Thu, 17 Mar 2022 03:01:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S232517AbiCQKP7 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Mar 2022 06:15:59 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E90501DEA84;
+        Thu, 17 Mar 2022 03:14:40 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 341B261785;
-        Thu, 17 Mar 2022 10:01:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21CF1C340E9;
-        Thu, 17 Mar 2022 10:01:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647511287;
-        bh=WrEc+afiy/d9loZ1E8J9sV516aOJOmYPwqhlqgRxzJo=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=CurBUm3P0nv5dWNYXj7K80PuEjfS2/OXEHDyqBxr8Nk+RXRTp3pS7HIbpOusokcLm
-         xaqPVVUBcEWu8vVE3+YFJTg0sCVk3QnADJU3p+Sj4Jaof0ZVYsrhVZ9eBNFcdWCGM0
-         fmzujH9gi9jBDoSOxP7Xr54DZUKI7Pnz1HmiyCgKaR07aHdsl2Xt/ECfGxck0GKY2f
-         qwTMOqHvzZws+w47tCKdiBj3+drDxmBSeT41GXCb835v9TlLIF5Q7pmt/Z5jn/CpVo
-         IgBG4JDUQvTy+Z/C2Bgl9icnB5U2V8Lu/RcurvW9ZlvNabzpZcwWQ3MwjfMO4T/CXk
-         iYAJMCIbCL5RQ==
-Message-ID: <329abedd9d9938de95bf4f5600acdcd6a846e6be.camel@kernel.org>
-Subject: Re: [RFC PATCH v2 0/3] ceph: add support for snapshot names
- encryption
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>,
-        =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        by smtp-out2.suse.de (Postfix) with ESMTPS id A71331F38D;
+        Thu, 17 Mar 2022 10:14:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1647512079; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EkHzWOqcfA+EWvx9G34ymicMu1mMDdlE+2xRd+Bpe3Y=;
+        b=MgsTYbL3M8BjxDf5Pfv5izxmYt0KoJoZXvJYfbE0NhkpzvA2SdRn4OvT98c7M5ybrk8s3c
+        nJHYhF9wGs8DjFfSGLWQU9bbyIX1Efmxe3Xygwv+QJPMDMhOld9L963N3zilu946fx1oYd
+        GyWwjH6TroPx0ruEvbdlwLRE4uNZ/GU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1647512079;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=EkHzWOqcfA+EWvx9G34ymicMu1mMDdlE+2xRd+Bpe3Y=;
+        b=6sNI6ikjHIbqqUSbSQj+pf0+tVN12oDSMIrVFr3AnE02+v4ksRcZOJQnY58iv/RssQ6qJ5
+        gOGTHWxPLIzBDVBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4299F13B4B;
+        Thu, 17 Mar 2022 10:14:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id BQRlDQ8KM2KvNgAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Thu, 17 Mar 2022 10:14:39 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 49333f2e;
+        Thu, 17 Mar 2022 10:14:58 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
         Ceph Development <ceph-devel@vger.kernel.org>,
         linux-kernel@vger.kernel.org
-Date:   Thu, 17 Mar 2022 06:01:25 -0400
-In-Reply-To: <5b53e812-d49b-45f0-1219-3dbc96febbc1@redhat.com>
+Subject: Re: [RFC PATCH v2 0/3] ceph: add support for snapshot names encryption
 References: <20220315161959.19453-1-lhenriques@suse.de>
-         <5b53e812-d49b-45f0-1219-3dbc96febbc1@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
+        <5b53e812-d49b-45f0-1219-3dbc96febbc1@redhat.com>
+Date:   Thu, 17 Mar 2022 10:14:58 +0000
+In-Reply-To: <5b53e812-d49b-45f0-1219-3dbc96febbc1@redhat.com> (Xiubo Li's
+        message of "Thu, 17 Mar 2022 13:27:01 +0800")
+Message-ID: <87bky4j36l.fsf@brahms.olymp>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-8.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-I'm not sure we want to worry about .snap directories here since they
-aren't "real". IIRC, snaps are inherited from parents too, so you could
-do something like
+Xiubo Li <xiubli@redhat.com> writes:
 
-    mkdir dir1
-    mkdir dir1/.snap/snap1
-    mkdir dir1/dir2
-    fscrypt encrypt dir1/dir2
-
-There should be nothing to prevent encrypting dir2, but I'm pretty sure
-dir2/.snap will not be empty at that point.
-
--- Jeff 
-
-On Thu, 2022-03-17 at 13:27 +0800, Xiubo Li wrote:
 > Hi Luis,
-> 
+>
 > There has another issue you need to handle at the same time.
-> 
-> Currently only the empty directory could be enabled the file encryption, 
-> such as for the following command:
-> 
+>
+> Currently only the empty directory could be enabled the file encryption, =
+such as
+> for the following command:
+>
 > $ fscrypt encrypt mydir/
-> 
+>
 > But should we also make sure that the mydir/.snap/ is empty ?
-> 
-> Here the 'empty' is not totally empty, which allows it should allow long 
-> snap names exist.
-> 
+>
+> Here the 'empty' is not totally empty, which allows it should allow long =
+snap
+> names exist.
+>
 > Make sense ?
-> 
-> - Xiubo
-> 
-> 
-> On 3/16/22 12:19 AM, Luís Henriques wrote:
-> > Hi!
-> > 
-> > A couple of changes since v1:
-> > 
-> > - Dropped the dentry->d_flags change in ceph_mkdir().  Thanks to Xiubo
-> >    suggestion, patch 0001 now skips calling ceph_fscrypt_prepare_context()
-> >    if we're handling a snapshot.
-> > 
-> > - Added error handling to ceph_get_snapdir() in patch 0001 (Jeff had
-> >    already pointed that out but I forgot to include that change in previous
-> >    revision).
-> > 
-> > - Rebased patch 0002 to the latest wip-fscrypt branch.
-> > 
-> > - Added some documentation regarding snapshots naming restrictions.
-> > 
-> > As before, in order to test this code the following PRs are required:
-> > 
-> >    mds: add protection from clients without fscrypt support #45073
-> >    mds: use the whole string as the snapshot long name #45192
-> >    mds: support alternate names for snapshots #45224
-> >    mds: limit the snapshot names to 240 characters #45312
-> > 
-> > Luís Henriques (3):
-> >    ceph: add support for encrypted snapshot names
-> >    ceph: add support for handling encrypted snapshot names
-> >    ceph: update documentation regarding snapshot naming limitations
-> > 
-> >   Documentation/filesystems/ceph.rst |  10 ++
-> >   fs/ceph/crypto.c                   | 158 +++++++++++++++++++++++++----
-> >   fs/ceph/crypto.h                   |  11 +-
-> >   fs/ceph/inode.c                    |  31 +++++-
-> >   4 files changed, 182 insertions(+), 28 deletions(-)
-> > 
-> 
 
--- 
-Jeff Layton <jlayton@kernel.org>
+Right, actually I had came across that question in the past but completely
+forgot about it.
+
+Right now we simply check the dir stats to ensure a directory is empty.
+We could add an extra check in ceph_crypt_empty_dir() to ensure that there
+are no snapshots _above_ that directory (i.e. that there are no
+"mydir/.snap/_name_xxxxx").
+
+Unfortunately, I don't know enough of snapshots implementation details to
+understand if it's a problem to consider a directory as being empty (in
+the fscrypt context) when there are these '_name_xxx' directories.  My
+feeling is that this is not a problem but I really don't know.
+
+Do you (or anyone) have any ideas/suggestions?
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+>
+> - Xiubo
+>
+>
+> On 3/16/22 12:19 AM, Lu=C3=ADs Henriques wrote:
+>> Hi!
+>>
+>> A couple of changes since v1:
+>>
+>> - Dropped the dentry->d_flags change in ceph_mkdir().  Thanks to Xiubo
+>>    suggestion, patch 0001 now skips calling ceph_fscrypt_prepare_context=
+()
+>>    if we're handling a snapshot.
+>>
+>> - Added error handling to ceph_get_snapdir() in patch 0001 (Jeff had
+>>    already pointed that out but I forgot to include that change in previ=
+ous
+>>    revision).
+>>
+>> - Rebased patch 0002 to the latest wip-fscrypt branch.
+>>
+>> - Added some documentation regarding snapshots naming restrictions.
+>>
+>> As before, in order to test this code the following PRs are required:
+>>
+>>    mds: add protection from clients without fscrypt support #45073
+>>    mds: use the whole string as the snapshot long name #45192
+>>    mds: support alternate names for snapshots #45224
+>>    mds: limit the snapshot names to 240 characters #45312
+>>
+>> Lu=C3=ADs Henriques (3):
+>>    ceph: add support for encrypted snapshot names
+>>    ceph: add support for handling encrypted snapshot names
+>>    ceph: update documentation regarding snapshot naming limitations
+>>
+>>   Documentation/filesystems/ceph.rst |  10 ++
+>>   fs/ceph/crypto.c                   | 158 +++++++++++++++++++++++++----
+>>   fs/ceph/crypto.h                   |  11 +-
+>>   fs/ceph/inode.c                    |  31 +++++-
+>>   4 files changed, 182 insertions(+), 28 deletions(-)
+>>
+>
