@@ -2,79 +2,81 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AB6A4DD497
-	for <lists+ceph-devel@lfdr.de>; Fri, 18 Mar 2022 07:03:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAE224DD638
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Mar 2022 09:32:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232659AbiCRGEk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 18 Mar 2022 02:04:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41690 "EHLO
+        id S231642AbiCRIdp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 18 Mar 2022 04:33:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232661AbiCRGEi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 18 Mar 2022 02:04:38 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CA6E4674D9
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Mar 2022 23:03:18 -0700 (PDT)
+        with ESMTP id S229492AbiCRIdo (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 18 Mar 2022 04:33:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C72EA27CE0D
+        for <ceph-devel@vger.kernel.org>; Fri, 18 Mar 2022 01:32:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647583398;
+        s=mimecast20190719; t=1647592344;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fmFalPzK6JUaQQpOZ25rYPlnmBsXnYpj9zq1v6bIaiE=;
-        b=aB18Ke5GUene037nAp9VIJJoZKLZ7Qif3pXFGj04NpYnnuBH6KNqOFOjfcTPSR/v090ZQQ
-        3swD2DZy2765+S+fjXFfEKB+1+VcvxOh+AFmwJfXqyynPwNkp25mMyMz/CYxGY4kKG0CI1
-        pmLbii7rR+dPvIkP2oBQn3GDziwi+Sg=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=z21mgAaVERhRl6nUpUORqr1xOUtC7LpDvCRsTkgirW0=;
+        b=Oz6agsZqUIe4VTbtHZE2dneUp2x9i2vbs0JrFGI80coVhPRjPqsNZCi/Lfmj0JqIHAsdZ8
+        OFzF1ty18fm1gZp0q+ROLGmFhPuB59vTMau39OMTYXuF0ZEaxrKGVHYsD26DEStySgo6a5
+        lzHf0vcGm0oiKqXwQ7gqqrQVK3Fs8Oc=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-131-m1nl3BVlOu64Ld8ZG9MGUg-1; Fri, 18 Mar 2022 02:03:17 -0400
-X-MC-Unique: m1nl3BVlOu64Ld8ZG9MGUg-1
-Received: by mail-pg1-f200.google.com with SMTP id q13-20020a638c4d000000b003821725ad66so1610125pgn.23
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Mar 2022 23:03:16 -0700 (PDT)
+ us-mta-374-tTggIVOBOmKG_SZKzMGvJg-1; Fri, 18 Mar 2022 04:32:23 -0400
+X-MC-Unique: tTggIVOBOmKG_SZKzMGvJg-1
+Received: by mail-pg1-f197.google.com with SMTP id u4-20020a63b544000000b0037c62d8b0ecso3057715pgo.13
+        for <ceph-devel@vger.kernel.org>; Fri, 18 Mar 2022 01:32:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=fmFalPzK6JUaQQpOZ25rYPlnmBsXnYpj9zq1v6bIaiE=;
-        b=QGXb0WJWgX/IwfESX6W37yrvYppBNKHHSalG/mLlUXkHQdTnbZ+YoroFz+fHRXp8oL
-         xQQNiwawpyHINpp1CDveeOGNWssHQICOpT4MFkz4nacHMMgud0yTx80cjrWuZfdoNJWp
-         4ibEipPuKf5LEEq9bSMeL/9YREXXBj6tq2pEZ509dtqloKz4o89SAL3xm9bV+D3pTr4Z
-         AHbmnVN6xOyHOvfDjd/bwlfNbncq8lucv62276SryRX5lmQEkzkc0WBd70tmIjzi267e
-         w9rtzMw9CZZAaT6IK+YFsmbEKxAgqOJLQE9qsI5SFKz88eVDyZKbNZWxbKNclGogdCut
-         yj4g==
-X-Gm-Message-State: AOAM532JeBFgzx+9DaNeMDm7o4hj/93KX9luUBAyD/DXc+cLIGo8fMK/
-        0WRdW/7hMe/c6MIKcns6xpebhRPm2GNhcTeG0eAv5Lu1X7aNgpG/jmAiXNbyQHy5JnHGWLJ7MrS
-        KxkyhkyKvJFuaMjkzOcCIe6TO3H3NZnbPWSwhPeA38GeaMaO/AKZY7iIsyGhoLtX2kHWgjB8=
-X-Received: by 2002:a17:90b:4a44:b0:1bf:8deb:9435 with SMTP id lb4-20020a17090b4a4400b001bf8deb9435mr20390885pjb.16.1647583395627;
-        Thu, 17 Mar 2022 23:03:15 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwQN/GI1LJ9H0OGt33KzjULIrUsOBD6QqA4jAPzNAzPdnWz1rGRibdH4zdRdnYg59Hbx8CKXA==
-X-Received: by 2002:a17:90b:4a44:b0:1bf:8deb:9435 with SMTP id lb4-20020a17090b4a4400b001bf8deb9435mr20390859pjb.16.1647583395222;
-        Thu, 17 Mar 2022 23:03:15 -0700 (PDT)
+        bh=z21mgAaVERhRl6nUpUORqr1xOUtC7LpDvCRsTkgirW0=;
+        b=J175rp8Fg0gVP8UePVcgug5rJAj6qwBDRVYs+75syFh+s6W8GqNwmX+WhQVThCEEY/
+         rOmmLjzNyadBicjl/WF/8yI61lidu3DMqAALhT/WIHGePQ7to0k7l+7y9nn4/xWmWOET
+         0b7/VRo0sNwDT4cHq8mNk9QgCpJBfwdT2iEjIOddtFROaclriioahYGlviKMnXdj26Ry
+         qoqTVYXENAZZiImAFIJNRi1eCsL2aZxVDq1qU7tbr/5TfjCyhE4USRV2p3NpaPDMwfFb
+         yZiSSLspNh5W76QPxvaR9lSH+zMc/01tnQu5SHYW/MaikbHSbNA7gpx5vEcrsffC21Mx
+         ECmw==
+X-Gm-Message-State: AOAM531jdFWiHRnLCzXu3dmfRUGIfGvydbUuWeFX6riLumfLRxl7Kkaj
+        0+B5UMSrMx1Crpe8B6AfDd+lHKklFjc2J2wO9U8PpsftYJHHXwlUfIro541X5DtQ5aMfzSvswz7
+        ZU+1l/t9X6cBCNAXyRMs9JQ==
+X-Received: by 2002:a65:6943:0:b0:376:333b:1025 with SMTP id w3-20020a656943000000b00376333b1025mr7006338pgq.164.1647592341613;
+        Fri, 18 Mar 2022 01:32:21 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzFZCK1PpQfF+1W7Sj08bQLdJEW6ice992ozsF4Ucge04G9kGugKrcIqE+1t/SQpv8XG39h5Q==
+X-Received: by 2002:a65:6943:0:b0:376:333b:1025 with SMTP id w3-20020a656943000000b00376333b1025mr7006310pgq.164.1647592341165;
+        Fri, 18 Mar 2022 01:32:21 -0700 (PDT)
 Received: from [10.72.12.110] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id j18-20020a633c12000000b0038204629cc9sm3344525pga.10.2022.03.17.23.03.11
+        by smtp.gmail.com with ESMTPSA id d9-20020a056a0010c900b004f774c13e96sm9313615pfu.19.2022.03.18.01.32.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Mar 2022 23:03:14 -0700 (PDT)
-Subject: Re: [PATCH] ceph: fix the buf size and use NAME_SIZE instead
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, vshankar@redhat.com, lhenriques@suse.de,
-        ceph-devel@vger.kernel.org
-References: <20220316035100.68406-1-xiubli@redhat.com>
- <8ee63a9ada6574932a66821b11eb91c491543754.camel@kernel.org>
+        Fri, 18 Mar 2022 01:32:20 -0700 (PDT)
+Subject: Re: [RFC PATCH v3 4/4] ceph: replace base64url by the encoding used
+ for mailbox names
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220317154521.6615-1-lhenriques@suse.de>
+ <20220317154521.6615-5-lhenriques@suse.de>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <ed3117ba-cd20-e385-3b4c-a94cd329c5a0@redhat.com>
-Date:   Fri, 18 Mar 2022 14:03:04 +0800
+Message-ID: <6ac92645-dede-b87c-3731-2280d59f8d8e@redhat.com>
+Date:   Fri, 18 Mar 2022 16:32:15 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <8ee63a9ada6574932a66821b11eb91c491543754.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20220317154521.6615-5-lhenriques@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,52 +85,140 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 3/16/22 7:50 PM, Jeff Layton wrote:
-> On Wed, 2022-03-16 at 11:51 +0800, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> Since the base64_encrypted file name shouldn't exceed the NAME_SIZE,
->> no need to allocate a buffer from the stack that long.
->>
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>
->> Jeff, you can just squash this into the previous commit.
->>
->>
->>   fs/ceph/mds_client.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
->> index c51b07ec72cf..cd0c780a6f84 100644
->> --- a/fs/ceph/mds_client.c
->> +++ b/fs/ceph/mds_client.c
->> @@ -2579,7 +2579,7 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase, int for
->>   			parent = dget_parent(cur);
->>   		} else {
->>   			int len, ret;
->> -			char buf[FSCRYPT_BASE64URL_CHARS(NAME_MAX)];
->> +			char buf[NAME_MAX];
->>   
->>   			/*
->>   			 * Proactively copy name into buf, in case we need to present
-> Thanks Xiubo. I folded this into:
+On 3/17/22 11:45 PM, Luís Henriques wrote:
+> The base64url encoding includes the '_' character, which may cause problems
+> in snapshot names (if the name starts with '_').  Thus, use the base64
+> encoding defined for IMAP mailbox names (RFC 3501), which uses '+' and ','
+> instead of '-' and '_'.
 >
->      ceph: add encrypted fname handling to ceph_mdsc_build_path
+> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> ---
+>   fs/ceph/crypto.c | 51 ++++++++++++++++++++++++++++++++++++++++++++++--
+>   fs/ceph/crypto.h |  3 +++
+>   fs/ceph/dir.c    |  2 +-
+>   fs/ceph/inode.c  |  2 +-
+>   4 files changed, 54 insertions(+), 4 deletions(-)
 >
-> ...and merged in the other patches you sent earlier today.
->
-> I also went ahead and squashed down the readdir patches that you sent
-> yesterday, so that we could get rid of the interim readdir handling that
-> I had originally written.
->
-> It might need a bit more cleanup -- some of the deltas in the merged
-> patch probably belong in earlier commits, but it should be ok for now.
->
-> Please take a look and make sure I didn't miss anything there.
+> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+> index caa9863dee93..d6f1c444ce91 100644
+> --- a/fs/ceph/crypto.c
+> +++ b/fs/ceph/crypto.c
+> @@ -7,6 +7,53 @@
+>   #include "mds_client.h"
+>   #include "crypto.h"
+>   
+> +static const char base64_table[65] =
+> +        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
+> +
+> +int ceph_base64_encode(const u8 *src, int srclen, char *dst)
+> +{
+> +	u32 ac = 0;
+> +	int bits = 0;
+> +	int i;
+> +	char *cp = dst;
+> +
+> +	for (i = 0; i < srclen; i++) {
+> +		ac = (ac << 8) | src[i];
+> +		bits += 8;
+> +		do {
+> +			bits -= 6;
+> +			*cp++ = base64_table[(ac >> bits) & 0x3f];
+> +		} while (bits >= 6);
+> +	}
+> +	if (bits)
+> +		*cp++ = base64_table[(ac << (6 - bits)) & 0x3f];
+> +	return cp - dst;
+> +}
+> +
+> +int ceph_base64_decode(const char *src, int srclen, u8 *dst)
+> +{
+> +	u32 ac = 0;
+> +	int bits = 0;
+> +	int i;
+> +	u8 *bp = dst;
+> +
+> +	for (i = 0; i < srclen; i++) {
+> +		const char *p = strchr(base64_table, src[i]);
+> +
+> +		if (p == NULL || src[i] == 0)
+> +			return -1;
+> +		ac = (ac << 6) | (p - base64_table);
+> +		bits += 6;
+> +		if (bits >= 8) {
+> +			bits -= 8;
+> +			*bp++ = (u8)(ac >> bits);
+> +		}
+> +	}
+> +	if (ac & ((1 << bits) - 1))
+> +		return -1;
+> +	return bp - dst;
+> +}
 
-I have gone through the wip-fscrypt, all these look fine.
+Maybe this should be in fs/crypto.c ?
 
 -- Xiubo
 
+> +
+>   static int ceph_crypt_get_context(struct inode *inode, void *ctx, size_t len)
+>   {
+>   	struct ceph_inode_info *ci = ceph_inode(inode);
+> @@ -260,7 +307,7 @@ int ceph_encode_encrypted_dname(struct inode *parent, struct qstr *d_name, char
+>   	}
+>   
+>   	/* base64 encode the encrypted name */
+> -	elen = fscrypt_base64url_encode(cryptbuf, len, buf);
+> +	elen = ceph_base64_encode(cryptbuf, len, buf);
+>   	dout("base64-encoded ciphertext name = %.*s\n", elen, buf);
+>   
+>   	WARN_ON(elen > (CEPH_NOHASH_NAME_MAX + SHA256_DIGEST_SIZE));
+> @@ -365,7 +412,7 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
+>   			tname = &_tname;
+>   		}
+>   
+> -		declen = fscrypt_base64url_decode(name, name_len, tname->name);
+> +		declen = ceph_base64_decode(name, name_len, tname->name);
+>   		if (declen <= 0) {
+>   			ret = -EIO;
+>   			goto out;
+> diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
+> index 3273d076a9e5..d22316011810 100644
+> --- a/fs/ceph/crypto.h
+> +++ b/fs/ceph/crypto.h
+> @@ -93,6 +93,9 @@ static inline u32 ceph_fscrypt_auth_len(struct ceph_fscrypt_auth *fa)
+>    */
+>   #define CEPH_NOHASH_NAME_MAX (180 - SHA256_DIGEST_SIZE)
+>   
+> +int ceph_base64_encode(const u8 *src, int srclen, char *dst);
+> +int ceph_base64_decode(const char *src, int srclen, u8 *dst);
+> +
+>   void ceph_fscrypt_set_ops(struct super_block *sb);
+>   
+>   void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc);
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index 5ae5cb778389..417d8c3a7edd 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -960,7 +960,7 @@ static int prep_encrypted_symlink_target(struct ceph_mds_request *req, const cha
+>   		goto out;
+>   	}
+>   
+> -	len = fscrypt_base64url_encode(osd_link.name, osd_link.len, req->r_path2);
+> +	len = ceph_base64_encode(osd_link.name, osd_link.len, req->r_path2);
+>   	req->r_path2[len] = '\0';
+>   out:
+>   	fscrypt_fname_free_buffer(&osd_link);
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 359e29896f16..8fd493257e0b 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -875,7 +875,7 @@ static int decode_encrypted_symlink(const char *encsym, int enclen, u8 **decsym)
+>   	if (!sym)
+>   		return -ENOMEM;
+>   
+> -	declen = fscrypt_base64url_decode(encsym, enclen, sym);
+> +	declen = ceph_base64_decode(encsym, enclen, sym);
+>   	if (declen < 0) {
+>   		pr_err("%s: can't decode symlink (%d). Content: %.*s\n", __func__, declen, enclen, encsym);
+>   		kfree(sym);
+>
 
