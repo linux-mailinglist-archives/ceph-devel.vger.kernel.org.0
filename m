@@ -2,196 +2,216 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EB504E560E
-	for <lists+ceph-devel@lfdr.de>; Wed, 23 Mar 2022 17:09:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04D794E56FA
+	for <lists+ceph-devel@lfdr.de>; Wed, 23 Mar 2022 17:56:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238546AbiCWQKi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 23 Mar 2022 12:10:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48586 "EHLO
+        id S239328AbiCWQ5a (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 23 Mar 2022 12:57:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238404AbiCWQKi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 23 Mar 2022 12:10:38 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E5533982C;
-        Wed, 23 Mar 2022 09:09:08 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        with ESMTP id S236920AbiCWQ53 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 23 Mar 2022 12:57:29 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F5A46E4E1;
+        Wed, 23 Mar 2022 09:55:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id E7B20210F4;
-        Wed, 23 Mar 2022 16:09:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1648051746; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=2IxN7z4Sowx/xzRwzK7+Dz4IqTH5apCK98k/xw/792U=;
-        b=IzlWM6Z33nCChekfuT91r1CRDrJqIn/RZpZzB5RprlEkjVOeBHk+JJDwzSnbs+e6igAyj3
-        mGIB58F/Y8wWGUkH+449prECjd1pCNCNxNhn0U7m3I/cMzeAS+WBwrSj6pfEQd+rdUiYSv
-        Zu9a19NlRQ+fQ+95ueKKoCYJEdWgEdQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1648051746;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=2IxN7z4Sowx/xzRwzK7+Dz4IqTH5apCK98k/xw/792U=;
-        b=BeNQbJ5WtwrNPNXWqI2QNFjDeM8PSbLUkfoBhOgzzOiiaJmGjzVVTrIly9EG9Z0UOfz2tK
-        i6zboW2FTwcXzVAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8E3C212FC5;
-        Wed, 23 Mar 2022 16:09:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 9/myHyJGO2IMfgAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Wed, 23 Mar 2022 16:09:06 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 48c22cc6;
-        Wed, 23 Mar 2022 16:09:26 +0000 (UTC)
-From:   =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, fstests@vger.kernel.org,
-        =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
-Subject: [PATCH] ceph/001: add extra check for remote object copies
-Date:   Wed, 23 Mar 2022 16:09:25 +0000
-Message-Id: <20220323160925.7142-1-lhenriques@suse.de>
+        by sin.source.kernel.org (Postfix) with ESMTPS id DAA26CE1F8E;
+        Wed, 23 Mar 2022 16:55:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98F3FC340F2;
+        Wed, 23 Mar 2022 16:55:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648054554;
+        bh=81nfjiQFeTPRAGOqW0aoil91fkoUvymS7z9RcUla0K0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=ofyi97hboKxpE/pTa+ftOp/+oZCRyHADhyI8FcijbBV3/CvCk42BCVN059vz4KwUa
+         gE1wn43OEVpNIw242WOqUiRZn9ABQiK1kbuqyqmLBAR24Eo3kzWEEB2gkvr1NaM86f
+         4Qz8Vep6KzvW5c7Ll1nh994LjHqnNvGoD2Rx9ZG49BRt/rUViVf5R2eP1/7xA/TLEF
+         jWDOXFUxVpSqjxwG18ZOpYjc/EhVMW64CSS0phvAxOuqmnFnJXamy8hvud33+ZR1hO
+         pviv9ZN4azZ84nG9xsOKfZd0NfDcJ4Jq1YkaN5+4gJDv4Lf0TarZ6rR22T8YRRh195
+         IIfAg8Us2S/gg==
+Message-ID: <9a3dab30b8657351ab6a73de533b7e3f2a41f72a.camel@kernel.org>
+Subject: Re: [RFC PATCH v11 08/51] ceph: add support for
+ fscrypt_auth/fscrypt_file to cap messages
+From:   Jeff Layton <jlayton@kernel.org>
+To:     idryomov@gmail.com, xiubli@redhat.com
+Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lhenriques@suse.de
+Date:   Wed, 23 Mar 2022 12:55:52 -0400
+In-Reply-To: <20220322141316.41325-9-jlayton@kernel.org>
+References: <20220322141316.41325-1-jlayton@kernel.org>
+         <20220322141316.41325-9-jlayton@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Ceph kernel client now has a facility to check stats for certain operations.
-One of these operations is the 'copyfrom', the operation that is used to offload
-to the OSDs the copy of objects from, for example, the copy_file_range()
-syscall.
+On Tue, 2022-03-22 at 10:12 -0400, Jeff Layton wrote:
+> Add support for new version 12 cap messages that carry the new
+> fscrypt_auth and fscrypt_file fields from the inode.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/caps.c | 76 +++++++++++++++++++++++++++++++++++++++++---------
+>  1 file changed, 63 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 7d8ef67a1032..b0b7688331b4 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -13,6 +13,7 @@
+>  #include "super.h"
+>  #include "mds_client.h"
+>  #include "cache.h"
+> +#include "crypto.h"
+>  #include <linux/ceph/decode.h>
+>  #include <linux/ceph/messenger.h>
+>  
+> @@ -1214,15 +1215,12 @@ struct cap_msg_args {
+>  	umode_t			mode;
+>  	bool			inline_data;
+>  	bool			wake;
+> +	u32			fscrypt_auth_len;
+> +	u32			fscrypt_file_len;
+> +	u8			fscrypt_auth[sizeof(struct ceph_fscrypt_auth)]; // for context
+> +	u8			fscrypt_file[sizeof(u64)]; // for size
+>  };
+>  
+> -/*
+> - * cap struct size + flock buffer size + inline version + inline data size +
+> - * osd_epoch_barrier + oldest_flush_tid
+> - */
+> -#define CAP_MSG_SIZE (sizeof(struct ceph_mds_caps) + \
+> -		      4 + 8 + 4 + 4 + 8 + 4 + 4 + 4 + 8 + 8 + 4)
+> -
+>  /* Marshal up the cap msg to the MDS */
+>  static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
+>  {
+> @@ -1238,7 +1236,7 @@ static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
+>  	     arg->size, arg->max_size, arg->xattr_version,
+>  	     arg->xattr_buf ? (int)arg->xattr_buf->vec.iov_len : 0);
+>  
+> -	msg->hdr.version = cpu_to_le16(10);
+> +	msg->hdr.version = cpu_to_le16(12);
+>  	msg->hdr.tid = cpu_to_le64(arg->flush_tid);
+>  
+>  	fc = msg->front.iov_base;
+> @@ -1309,6 +1307,21 @@ static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
+>  
+>  	/* Advisory flags (version 10) */
+>  	ceph_encode_32(&p, arg->flags);
+> +
+> +	/* dirstats (version 11) - these are r/o on the client */
+> +	ceph_encode_64(&p, 0);
+> +	ceph_encode_64(&p, 0);
+> +
+> +#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
+> +	/* fscrypt_auth and fscrypt_file (version 12) */
+> +	ceph_encode_32(&p, arg->fscrypt_auth_len);
+> +	ceph_encode_copy(&p, arg->fscrypt_auth, arg->fscrypt_auth_len);
+> +	ceph_encode_32(&p, arg->fscrypt_file_len);
+> +	ceph_encode_copy(&p, arg->fscrypt_file, arg->fscrypt_file_len);
+> +#else /* CONFIG_FS_ENCRYPTION */
+> +	ceph_encode_32(&p, 0);
+> +	ceph_encode_32(&p, 0);
+> +#endif /* CONFIG_FS_ENCRYPTION */
+>  }
+>  
+>  /*
+> @@ -1430,8 +1443,37 @@ static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
+>  		}
+>  	}
+>  	arg->flags = flags;
+> +#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
+> +	if (ci->fscrypt_auth_len &&
+> +	    WARN_ON_ONCE(ci->fscrypt_auth_len != sizeof(struct ceph_fscrypt_auth))) {
 
-This patch changes ceph/001 to add an extra check to verify that the copies
-performed by the test are _really_ remote copies and not simple read+write
-operations.
+The above WARN_ON_ONCE is too strict, and causes the client to reject v1
+fscrypt contexts (as well as throw the warning). That should be a ">"
+instead. I've fixed this in my tree and pushed the fix into wip-fscrypt.
 
-Signed-off-by: Luís Henriques <lhenriques@suse.de>
----
- common/ceph    | 10 ++++++++
- tests/ceph/001 | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 76 insertions(+)
 
-diff --git a/common/ceph b/common/ceph
-index ca756dda8dd3..d6f24df177e7 100644
---- a/common/ceph
-+++ b/common/ceph
-@@ -28,3 +28,13 @@ _require_ceph_vxattr_caps()
- 	$GETFATTR_PROG -n "ceph.caps" $TEST_DIR >/dev/null 2>&1 \
- 	  || _notrun "ceph.caps vxattr not supported"
- }
-+
-+_ceph_get_cluster_fsid()
-+{
-+	$GETFATTR_PROG --only-values -n "ceph.cluster_fsid" $TEST_DIR 2>/dev/null
-+}
-+
-+_ceph_get_client_id()
-+{
-+	$GETFATTR_PROG --only-values -n "ceph.client_id" $TEST_DIR 2>/dev/null
-+}
-diff --git a/tests/ceph/001 b/tests/ceph/001
-index 5a828567d500..7970ce352bab 100755
---- a/tests/ceph/001
-+++ b/tests/ceph/001
-@@ -30,6 +30,10 @@ workdir=$TEST_DIR/test-$seq
- rm -rf $workdir
- mkdir $workdir
- 
-+cluster_fsid=$(_ceph_get_cluster_fsid)
-+client_id=$(_ceph_get_client_id)
-+metrics_dir="$DEBUGFS_MNT/ceph/$cluster_fsid.$client_id/metrics"
-+
- check_range()
- {
- 	local file=$1
-@@ -40,8 +44,68 @@ check_range()
- 	[ $? -eq 0 ] && echo "file $file is not '$val' in [ $off0 $off1 ]"
- }
- 
-+#
-+# The metrics file has the following fields:
-+#   1. item
-+#   2. total
-+#   3. avg_sz(bytes)
-+#   4. min_sz(bytes)
-+#   5. max_sz(bytes)
-+#   6. total_sz(bytes)
-+get_copyfrom_total_copies()
-+{
-+	local total=0
-+
-+	if [ -d $metrics_dir ]; then
-+		total=$(grep copyfrom $metrics_dir/size | tr -s '[:space:]' | cut -d ' ' -f 2)
-+	fi
-+	echo $total
-+}
-+get_copyfrom_total_size()
-+{
-+	local total=0
-+
-+	if [ -d $metrics_dir ]; then
-+		total=$(grep copyfrom $metrics_dir/size | tr -s '[:space:]' | cut -d ' ' -f 6)
-+	fi
-+	echo $total
-+}
-+
-+# This function checks that the metrics file has the expected values for number
-+# of remote object copies and the total size of the copies.  For this, it
-+# expects a input:
-+#   $1 - initial number copies in metrics file (field 'total')
-+#   $2 - initial total size in bytes in metrics file (field 'total_sz')
-+#   $3 - object size used for copies
-+#   $4 - number of remote objects copied
-+check_copyfrom_metrics()
-+{
-+	local c0=$1
-+	local s0=$2
-+	local objsz=$3
-+	local copies=$4
-+	local c1=$(get_copyfrom_total_copies)
-+	local s1=$(get_copyfrom_total_size)
-+	local sum
-+
-+	if [ ! -d $metrics_dir ]; then
-+		return # skip metrics check if debugfs isn't mounted
-+	fi
-+
-+	sum=$(($c0+$copies))
-+	if [ $sum -ne $c1 ]; then
-+		echo "Wrong number of remote copies.  Expected $sum, got $c1"
-+	fi
-+	sum=$(($s0+$copies*$objsz))
-+	if [ $sum -ne $s1 ]; then
-+		echo "Wrong size of remote copies.  Expected $sum, got $s1"
-+	fi
-+}
-+
- run_copy_range_tests()
- {
-+	total_copies=$(get_copyfrom_total_copies)
-+	total_size=$(get_copyfrom_total_size)
- 	objsz=$1
- 	halfobj=$(($objsz / 2))
- 	file="$workdir/file-$objsz"
-@@ -203,6 +267,8 @@ run_copy_range_tests()
- 	check_range $dest $(($objsz * 2 + $halfobj)) $objsz 63
- 	check_range $dest $(($objsz * 3 + $halfobj)) $halfobj 64
- 
-+	# Confirm that we've done a total of 24 object copies
-+	check_copyfrom_metrics $total_copies $total_size $objsz 24
- }
- 
- echo "Object size: 65536" # CEPH_MIN_STRIPE_UNIT
+> +		/* Don't set this if it isn't right size */
+> +		arg->fscrypt_auth_len = 0;
+> +	} else {
+> +		arg->fscrypt_auth_len = ci->fscrypt_auth_len;
+> +		memcpy(arg->fscrypt_auth, ci->fscrypt_auth,
+> +			min_t(size_t, ci->fscrypt_auth_len, sizeof(arg->fscrypt_auth)));
+> +	}
+> +	/* FIXME: use this to track "real" size */
+> +	arg->fscrypt_file_len = 0;
+> +#endif /* CONFIG_FS_ENCRYPTION */
+>  }
+>  
+> +#define CAP_MSG_FIXED_FIELDS (sizeof(struct ceph_mds_caps) + \
+> +		      4 + 8 + 4 + 4 + 8 + 4 + 4 + 4 + 8 + 8 + 4 + 8 + 8 + 4 + 4)
+> +
+> +#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
+> +static inline int cap_msg_size(struct cap_msg_args *arg)
+> +{
+> +	return CAP_MSG_FIXED_FIELDS + arg->fscrypt_auth_len +
+> +			arg->fscrypt_file_len;
+> +}
+> +#else
+> +static inline int cap_msg_size(struct cap_msg_args *arg)
+> +{
+> +	return CAP_MSG_FIXED_FIELDS;
+> +}
+> +#endif /* CONFIG_FS_ENCRYPTION */
+> +
+>  /*
+>   * Send a cap msg on the given inode.
+>   *
+> @@ -1442,7 +1484,7 @@ static void __send_cap(struct cap_msg_args *arg, struct ceph_inode_info *ci)
+>  	struct ceph_msg *msg;
+>  	struct inode *inode = &ci->vfs_inode;
+>  
+> -	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, CAP_MSG_SIZE, GFP_NOFS, false);
+> +	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, cap_msg_size(arg), GFP_NOFS, false);
+>  	if (!msg) {
+>  		pr_err("error allocating cap msg: ino (%llx.%llx) flushing %s tid %llu, requeuing cap.\n",
+>  		       ceph_vinop(inode), ceph_cap_string(arg->dirty),
+> @@ -1468,10 +1510,6 @@ static inline int __send_flush_snap(struct inode *inode,
+>  	struct cap_msg_args	arg;
+>  	struct ceph_msg		*msg;
+>  
+> -	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, CAP_MSG_SIZE, GFP_NOFS, false);
+> -	if (!msg)
+> -		return -ENOMEM;
+> -
+>  	arg.session = session;
+>  	arg.ino = ceph_vino(inode).ino;
+>  	arg.cid = 0;
+> @@ -1509,6 +1547,18 @@ static inline int __send_flush_snap(struct inode *inode,
+>  	arg.flags = 0;
+>  	arg.wake = false;
+>  
+> +	/*
+> +	 * No fscrypt_auth changes from a capsnap. It will need
+> +	 * to update fscrypt_file on size changes (TODO).
+> +	 */
+> +	arg.fscrypt_auth_len = 0;
+> +	arg.fscrypt_file_len = 0;
+> +
+> +	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, cap_msg_size(&arg),
+> +			   GFP_NOFS, false);
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+>  	encode_cap_msg(msg, &arg);
+>  	ceph_con_send(&arg.session->s_con, msg);
+>  	return 0;
+
+-- 
+Jeff Layton <jlayton@kernel.org>
