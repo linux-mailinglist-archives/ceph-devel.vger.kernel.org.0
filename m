@@ -2,167 +2,144 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DE634E67BB
-	for <lists+ceph-devel@lfdr.de>; Thu, 24 Mar 2022 18:25:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2AD64E680C
+	for <lists+ceph-devel@lfdr.de>; Thu, 24 Mar 2022 18:46:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348722AbiCXR0v (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 24 Mar 2022 13:26:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39866 "EHLO
+        id S1352321AbiCXRr5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 24 Mar 2022 13:47:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234168AbiCXR0u (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Mar 2022 13:26:50 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D4B04D63D;
-        Thu, 24 Mar 2022 10:25:18 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id a17so6421220edm.9;
-        Thu, 24 Mar 2022 10:25:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=n4IHohZfNhxIELfk0O0C8Svu0kWT5bRkI2fJh/C2zgs=;
-        b=MYlhUF/HBx16m5ik87ELtjf2YuF6geOeLvoTwuekMaJRyvamJaCLfQs0ItVL2YYuBY
-         iBLtUGGrfk4brxV813B/L2sVOM0aKCQ2YvkNW+2guKzfP9ovRBNov1hhcniCr32B7eTq
-         SpgKkB3TyxPrXnUksSudinXKQQEOmBlrruAM9rq0dsH3qPUfIS4Lj3aE41TuRI9/FaXP
-         zowLc31B9ZVqtmZYPMG74z9tEvqCLiyVZoI7yIoM9PyiGafrUXFDg4PYkInbFJApVuz2
-         sQ5cDLx9NmHIkhTGZqiAjYUAqQCwqMJSKNA93t42TAN9E5TgqY1BcUtiTc8UR/vjaCZz
-         Z4Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=n4IHohZfNhxIELfk0O0C8Svu0kWT5bRkI2fJh/C2zgs=;
-        b=Yhoena4Ws5oXwj4VHvEHBR7hCbBaE9KV6sjHqK2CrvQvAGxEvaQFlsEumdMdwKEcI+
-         MH9nltDOE4wNtpbtKidZsQpG0CTU2oohuLjUGyEn/kkRIwmQC4lN5SJ2IXkc5QT/7rYK
-         hBcCEgKtQoeO2nlXutiA+WdMkka2Dj8r6okZhgvLLrkGEXmgSiCiEpnhysxbCVFgV3OX
-         R418uP36kD/Cxq3mRnEz6rs2KkSfPNUpmfFHakb/ER4TaRPUSYAD6BB2QgviFYJ38WSv
-         3lMgAuspaQY0bEhz/E1XB57wqX/jNgDP7IZ3jcPf2ICBRTIwemy8Ro87x2TlXJL4BXje
-         +sDg==
-X-Gm-Message-State: AOAM532MBdIEVAMEDNFI7qdnJY3lCXR1f1pI/+/xMU0VEp4hYClh9Csn
-        Zs3KGG1N/PuvwknoIJoqa/2nnQgIuco=
-X-Google-Smtp-Source: ABdhPJw5viWiKisWEADO+O57N7NcAn41nsAwUZRQ602vKp3eXEk79Lux/afbNYwkxdb1jExcfI3K2A==
-X-Received: by 2002:a05:6402:11d2:b0:419:7cd7:b25 with SMTP id j18-20020a05640211d200b004197cd70b25mr7768503edw.19.1648142716646;
-        Thu, 24 Mar 2022 10:25:16 -0700 (PDT)
-Received: from kwango.redhat.com (ip-89-102-68-162.net.upcbroadband.cz. [89.102.68.162])
-        by smtp.gmail.com with ESMTPSA id y17-20020a056402359100b0041926ea1e12sm1708517edc.53.2022.03.24.10.25.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Mar 2022 10:25:16 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>
-Subject: [GIT PULL] Ceph updates for 5.18-rc1
-Date:   Thu, 24 Mar 2022 18:25:54 +0100
-Message-Id: <20220324172554.12797-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
+        with ESMTP id S243676AbiCXRr4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Mar 2022 13:47:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FCBAB246A;
+        Thu, 24 Mar 2022 10:46:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D1A6D619EC;
+        Thu, 24 Mar 2022 17:46:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E33DC340EC;
+        Thu, 24 Mar 2022 17:46:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648143983;
+        bh=OcjId5T49OJaEhbKeAWDg/6fz9gw1xv3vjc13O1bZ4g=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LvXXaceKIAoBBrRK+diIA8BIMwyrryXqJrDI0HuOk+l9iDm6ynsThowM61FoxZfgZ
+         6uJ+hfnH35j5RoIm+CckaqMtHudY+GrKSVEE23K2W92lKX+yUbg3tyMCWMEOwhg07K
+         wu2aDxcdkNeadTnuLCXa2M4IKMSmZqCdb1rkCYXs4AEPRTxg4w57Sofn+DvthTNhWg
+         +lT8IQwUXLTkZY82u6Bp83B3AS+REY3iJivS7N4fGaa+jLoZvcOhbsUwnsaZ6KlpyW
+         6yLC76FPrZj6XyEEjkwR9LPsK4a/tHsCUJMGs/CWH1DRFXM/6eoM5fdZhVMJIF9Bss
+         vtFr8DpRlbAbg==
+Date:   Thu, 24 Mar 2022 17:46:21 +0000
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
+Cc:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com,
+        xiubli@redhat.com, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v11 02/51] fscrypt: export fscrypt_base64url_encode
+ and fscrypt_base64url_decode
+Message-ID: <YjyubQgfbQbUn4Ct@gmail.com>
+References: <20220322141316.41325-1-jlayton@kernel.org>
+ <20220322141316.41325-3-jlayton@kernel.org>
+ <87zglgoi1e.fsf@brahms.olymp>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <87zglgoi1e.fsf@brahms.olymp>
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
+On Wed, Mar 23, 2022 at 02:33:17PM +0000, Luís Henriques wrote:
+> Hi Eric,
+> 
+> Jeff Layton <jlayton@kernel.org> writes:
+> 
+> > Ceph is going to add fscrypt support, but we still want encrypted
+> > filenames to be composed of printable characters, so we can maintain
+> > compatibility with clients that don't support fscrypt.
+> >
+> > We could just adopt fscrypt's current nokey name format, but that is
+> > subject to change in the future, and it also contains dirhash fields
+> > that we don't need for cephfs. Because of this, we're going to concoct
+> > our own scheme for encoding encrypted filenames. It's very similar to
+> > fscrypt's current scheme, but doesn't bother with the dirhash fields.
+> >
+> > The ceph encoding scheme will use base64 encoding as well, and we also
+> > want it to avoid characters that are illegal in filenames. Export the
+> > fscrypt base64 encoding/decoding routines so we can use them in ceph's
+> > fscrypt implementation.
+> >
+> > Acked-by: Eric Biggers <ebiggers@google.com>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/crypto/fname.c       | 8 ++++----
+> >  include/linux/fscrypt.h | 5 +++++
+> >  2 files changed, 9 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+> > index a9be4bc74a94..1e4233c95005 100644
+> > --- a/fs/crypto/fname.c
+> > +++ b/fs/crypto/fname.c
+> > @@ -182,8 +182,6 @@ static int fname_decrypt(const struct inode *inode,
+> >  static const char base64url_table[65] =
+> >  	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+> >  
+> > -#define FSCRYPT_BASE64URL_CHARS(nbytes)	DIV_ROUND_UP((nbytes) * 4, 3)
+> > -
+> >  /**
+> >   * fscrypt_base64url_encode() - base64url-encode some binary data
+> >   * @src: the binary data to encode
+> > @@ -198,7 +196,7 @@ static const char base64url_table[65] =
+> >   * Return: the length of the resulting base64url-encoded string in bytes.
+> >   *	   This will be equal to FSCRYPT_BASE64URL_CHARS(srclen).
+> >   */
+> > -static int fscrypt_base64url_encode(const u8 *src, int srclen, char *dst)
+> > +int fscrypt_base64url_encode(const u8 *src, int srclen, char *dst)
+> 
+> I know you've ACK'ed this patch already, but I was wondering if you'd be
+> open to change these encode/decode interfaces so that they could be used
+> for non-url base64 too.
+> 
+> My motivation is that ceph has this odd limitation where snapshot names
+> can not start with the '_' character.  And I've an RFC that adds snapshot
+> names encryption support which, unfortunately, can end up starting with
+> this char after base64 encoding.
+> 
+> So, my current proposal is to use a different encoding table.  I was
+> thinking about the IMAP mailboxes naming which uses '+' and ',' instead of
+> the '-' and '_', but any other charset would be OK (except those that
+> include '/' of course).  So, instead of adding yet another base64
+> implementation to the kernel, I was wondering if you'd be OK accepting a
+> patch to add an optional arg to these encoding/decoding functions to pass
+> an alternative table.  Or, if you'd prefer, keep the existing interface
+> but turning these functions into wrappers to more generic functions.
+> 
+> Obviously, Jeff, please feel free to comment too if you have any reserves
+> regarding this approach.
+> 
+> Cheers,
+> -- 
+> Luís
+> 
 
-The following changes since commit 7e57714cd0ad2d5bb90e50b5096a0e671dec1ef3:
+Base64 encoding/decoding is trivial enough that I think you should just add your
+own functions to fs/ceph/ for now if you need yet another Base64 variant.  If we
+were to add general functions that allow "building your own" Base64 variant, I
+think they'd belong in lib/, not fs/crypto/.  (I objected to lib/ in the first
+version of Jeff's patchset because that patchset proposed adding just the old,
+idiosyncratic fscrypt Base64 variant to lib/ and just calling it "base64", which
+was misleading.  But, if there were to be properly documented functions to
+"build your own" Base64 variant, allowing control over both the character set
+and whether padding is done, lib/ would be the place...)
 
-  Linux 5.17-rc6 (2022-02-27 14:36:33 -0800)
-
-are available in the Git repository at:
-
-  https://github.com/ceph/ceph-client.git tags/ceph-for-5.18-rc1
-
-for you to fetch changes up to f639d9867eea647005dc824e0e24f39ffc50d4e4:
-
-  ceph: fix memory leak in ceph_readdir when note_last_dentry returns error (2022-03-21 13:35:16 +0100)
-
-----------------------------------------------------------------
-The highlights are:
-
-- several changes to how snap context and snap realms are tracked
-  (Xiubo Li).  In particular, this should resolve a long-standing
-  issue of high kworker CPU usage and various stalls caused by
-  needless iteration over all inodes in the snap realm.
-
-- async create fixes to address hangs in some edge cases (Jeff Layton)
-
-- support for getvxattr MDS op for querying server-side xattrs, such
-  as file/directory layouts and ephemeral pins (Milind Changire)
-
-- average latency is now maintained for all metrics (Venky Shankar)
-
-- some tweaks around handling inline data to make it fit better with
-  netfs helper library (David Howells)
-
-Also a couple of memory leaks got plugged along with a few assorted
-fixups.  Last but not least, Xiubo has stepped up to serve as a CephFS
-co-maintainer.
-
-----------------------------------------------------------------
-Dan Carpenter (1):
-      ceph: uninitialized variable in debug output
-
-David Howells (2):
-      ceph: make ceph_netfs_issue_op() handle inlined data
-      ceph: uninline the data on a file opened for writing
-
-Jeff Layton (6):
-      ceph: switch netfs read ops to use rreq->inode instead of rreq->mapping->host
-      ceph: eliminate req->r_wait_for_completion from ceph_mds_request
-      ceph: wait for async create reply before sending any cap messages
-      ceph: wake waiters after failed async create
-      libceph: drop else branches in prepare_read_data{,_cont}
-      MAINTAINERS: add Xiubo Li as cephfs co-maintainer
-
-Milind Changire (1):
-      ceph: add getvxattr op
-
-Venky Shankar (4):
-      ceph: use ktime_to_timespec64() rather than jiffies_to_timespec64()
-      ceph: track average r/w/m latency
-      ceph: include average/stdev r/w/m latency in mds metrics
-      ceph: use tracked average r/w/m latencies to display metrics in debugfs
-
-Xiubo Li (12):
-      ceph: fail the request directly if handle_reply gets an ESTALE
-      ceph: move to a dedicated slabcache for ceph_cap_snap
-      ceph: zero the dir_entries memory when allocating it
-      ceph: do not update snapshot context when there is no new snapshot
-      ceph: eliminate the recursion when rebuilding the snap context
-      ceph: remove incorrect and unused CEPH_INO_DOTDOT macro
-      ceph: do not release the global snaprealm until unmounting
-      ceph: allocate capsnap memory outside of ceph_queue_cap_snap()
-      ceph: misc fix for code style and logs
-      ceph: fix inode reference leakage in ceph_get_snapdir()
-      ceph: assign the ci only when the inode isn't NULL
-      ceph: fix memory leak in ceph_readdir when note_last_dentry returns error
-
-hongnanli (1):
-      ceph: fix comments mentioning i_mutex
-
- MAINTAINERS                  |   2 +
- fs/ceph/addr.c               | 240 ++++++++++++++++++---------------------
- fs/ceph/caps.c               |  16 ++-
- fs/ceph/debugfs.c            |   5 +-
- fs/ceph/dir.c                |  17 ++-
- fs/ceph/file.c               |  83 ++++++++------
- fs/ceph/inode.c              |  65 ++++++++++-
- fs/ceph/locks.c              |   8 +-
- fs/ceph/mds_client.c         |  69 ++++++------
- fs/ceph/mds_client.h         |  15 ++-
- fs/ceph/metric.c             |  63 ++++++-----
- fs/ceph/metric.h             |  63 +++++++----
- fs/ceph/snap.c               | 263 +++++++++++++++++++++++++++----------------
- fs/ceph/strings.c            |   1 +
- fs/ceph/super.c              |   7 ++
- fs/ceph/super.h              |   9 +-
- fs/ceph/xattr.c              |  13 ++-
- include/linux/ceph/ceph_fs.h |   5 +-
- include/linux/ceph/libceph.h |   1 +
- net/ceph/messenger_v2.c      |   8 +-
- 20 files changed, 577 insertions(+), 376 deletions(-)
+- Eric
