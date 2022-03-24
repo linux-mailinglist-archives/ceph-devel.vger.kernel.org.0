@@ -2,64 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C6B114E5F41
-	for <lists+ceph-devel@lfdr.de>; Thu, 24 Mar 2022 08:21:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DE634E67BB
+	for <lists+ceph-devel@lfdr.de>; Thu, 24 Mar 2022 18:25:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348476AbiCXHWr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 24 Mar 2022 03:22:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56796 "EHLO
+        id S1348722AbiCXR0v (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 24 Mar 2022 13:26:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242373AbiCXHWo (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Mar 2022 03:22:44 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ADAD986F9;
-        Thu, 24 Mar 2022 00:21:13 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id r13so7309255ejd.5;
-        Thu, 24 Mar 2022 00:21:13 -0700 (PDT)
+        with ESMTP id S234168AbiCXR0u (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Mar 2022 13:26:50 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D4B04D63D;
+        Thu, 24 Mar 2022 10:25:18 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id a17so6421220edm.9;
+        Thu, 24 Mar 2022 10:25:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=L8t/rxY8yvEceEcSHYnXjymDX7m07BTfnPsMbsacLCE=;
-        b=Td6lnLH/iruIZ4mx+aAqQafW+QnS0cKUyBO9/9JyZRZK0RKswmoPiW+EHpBnzYMBll
-         jgqss9CUEHP+ky5KHFkHEkoh1/JBQD1+I6PxPbp1vGK90mriH7Y3dsR7wgo+y59C93hQ
-         s9xi3SjjPw9Si53jEekr8kdc2jKrl5rkTg31PN65vsWSlNZZMElgVNWVJcDdh8r8Jyak
-         vvlRWRKgTSQF7YSACyI2zgQxpqxiAqr9CXA9ek8kqCEahUBnqEhjj92Ddd2wF25Pqn2M
-         tQ/N8jFGOqAaerJ4zgoQDg2D5iI4BxFmjfoAMp1QT0nHTBJ6YTKpPMYRF5zt/T2fAIa3
-         rg8A==
+        bh=n4IHohZfNhxIELfk0O0C8Svu0kWT5bRkI2fJh/C2zgs=;
+        b=MYlhUF/HBx16m5ik87ELtjf2YuF6geOeLvoTwuekMaJRyvamJaCLfQs0ItVL2YYuBY
+         iBLtUGGrfk4brxV813B/L2sVOM0aKCQ2YvkNW+2guKzfP9ovRBNov1hhcniCr32B7eTq
+         SpgKkB3TyxPrXnUksSudinXKQQEOmBlrruAM9rq0dsH3qPUfIS4Lj3aE41TuRI9/FaXP
+         zowLc31B9ZVqtmZYPMG74z9tEvqCLiyVZoI7yIoM9PyiGafrUXFDg4PYkInbFJApVuz2
+         sQ5cDLx9NmHIkhTGZqiAjYUAqQCwqMJSKNA93t42TAN9E5TgqY1BcUtiTc8UR/vjaCZz
+         Z4Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=L8t/rxY8yvEceEcSHYnXjymDX7m07BTfnPsMbsacLCE=;
-        b=UDcLumBCgnc2lmc5bsOc/ZtXfE4aT0nW+d2qlKxVWIbo8orjc643xpdjJa72YWkKpX
-         nIqNplXMYGdqJHFE99oHu9V3bic2WfkuTi6w9NUBzhnj2lwk/WlMbeafXvOA2JbirpPB
-         6a5ZSaMlNPQzWcicIWvu0RpMyyMG9CQUrvRC7msHt3sXjixBfyhwuWS9teyKGy6K6o5v
-         S9nhwN9wIGF6REbtIwh3LIUk18nOlnecUtZb45rZoCujI+2AlJdQpniBjxPu9ns2xB/U
-         3A4eX9iJ/Yqn+A3OPtFKqX8lVN5j9aNdmHs9QRjMOcyAxg8mShQERMRZLY4SoBueCOeH
-         gG0w==
-X-Gm-Message-State: AOAM530owdbqazicQJiBm82OeNRWoz2CmALcQGDqb16Xzy73lm5ZiUim
-        2l3fUGPmma3wR7yCOyifNxE=
-X-Google-Smtp-Source: ABdhPJx6LGoPkFEFkoaZyd3WBwpMSKmhSaujWAgVjTGkfEJZBG+4bfYn+4vbts3FB+vBfIrYJ+UHfw==
-X-Received: by 2002:a17:906:3ad1:b0:6ce:a880:7745 with SMTP id z17-20020a1709063ad100b006cea8807745mr4221888ejd.46.1648106472018;
-        Thu, 24 Mar 2022 00:21:12 -0700 (PDT)
-Received: from localhost.localdomain (i130160.upc-i.chello.nl. [62.195.130.160])
-        by smtp.googlemail.com with ESMTPSA id m4-20020a17090672c400b006e0035654b0sm780758ejl.84.2022.03.24.00.21.11
+        bh=n4IHohZfNhxIELfk0O0C8Svu0kWT5bRkI2fJh/C2zgs=;
+        b=Yhoena4Ws5oXwj4VHvEHBR7hCbBaE9KV6sjHqK2CrvQvAGxEvaQFlsEumdMdwKEcI+
+         MH9nltDOE4wNtpbtKidZsQpG0CTU2oohuLjUGyEn/kkRIwmQC4lN5SJ2IXkc5QT/7rYK
+         hBcCEgKtQoeO2nlXutiA+WdMkka2Dj8r6okZhgvLLrkGEXmgSiCiEpnhysxbCVFgV3OX
+         R418uP36kD/Cxq3mRnEz6rs2KkSfPNUpmfFHakb/ER4TaRPUSYAD6BB2QgviFYJ38WSv
+         3lMgAuspaQY0bEhz/E1XB57wqX/jNgDP7IZ3jcPf2ICBRTIwemy8Ro87x2TlXJL4BXje
+         +sDg==
+X-Gm-Message-State: AOAM532MBdIEVAMEDNFI7qdnJY3lCXR1f1pI/+/xMU0VEp4hYClh9Csn
+        Zs3KGG1N/PuvwknoIJoqa/2nnQgIuco=
+X-Google-Smtp-Source: ABdhPJw5viWiKisWEADO+O57N7NcAn41nsAwUZRQ602vKp3eXEk79Lux/afbNYwkxdb1jExcfI3K2A==
+X-Received: by 2002:a05:6402:11d2:b0:419:7cd7:b25 with SMTP id j18-20020a05640211d200b004197cd70b25mr7768503edw.19.1648142716646;
+        Thu, 24 Mar 2022 10:25:16 -0700 (PDT)
+Received: from kwango.redhat.com (ip-89-102-68-162.net.upcbroadband.cz. [89.102.68.162])
+        by smtp.gmail.com with ESMTPSA id y17-20020a056402359100b0041926ea1e12sm1708517edc.53.2022.03.24.10.25.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Mar 2022 00:21:11 -0700 (PDT)
-From:   Jakob Koschel <jakobkoschel@gmail.com>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        Jens Axboe <axboe@kernel.dk>, ceph-devel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@kernel.org>,
-        "Brian Johannesmeyer" <bjohannesmeyer@gmail.com>,
-        Cristiano Giuffrida <c.giuffrida@vu.nl>,
-        "Bos, H.J." <h.j.bos@vu.nl>, Jakob Koschel <jakobkoschel@gmail.com>
-Subject: [PATCH] rbd: replace usage of found with dedicated list iterator variable
-Date:   Thu, 24 Mar 2022 08:20:50 +0100
-Message-Id: <20220324072050.62242-1-jakobkoschel@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 24 Mar 2022 10:25:16 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>
+Subject: [GIT PULL] Ceph updates for 5.18-rc1
+Date:   Thu, 24 Mar 2022 18:25:54 +0100
+Message-Id: <20220324172554.12797-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -72,60 +67,102 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-To move the list iterator variable into the list_for_each_entry_*()
-macro in the future it should be avoided to use the list iterator
-variable after the loop body.
+Hi Linus,
 
-To *never* use the list iterator variable after the loop it was
-concluded to use a separate iterator variable instead of a
-found boolean [1].
+The following changes since commit 7e57714cd0ad2d5bb90e50b5096a0e671dec1ef3:
 
-This removes the need to use a found variable and simply checking if
-the variable was set, can determine if the break/goto was hit.
+  Linux 5.17-rc6 (2022-02-27 14:36:33 -0800)
 
-Link: https://lore.kernel.org/all/CAHk-=wgRr_D8CB-D9Kg-c=EHreAsk5SqXPwr9Y7k9sA6cWXJ6w@mail.gmail.com/
-Signed-off-by: Jakob Koschel <jakobkoschel@gmail.com>
----
- drivers/block/rbd.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+are available in the Git repository at:
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index b844432bad20..e5f891d058e8 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -756,24 +756,23 @@ static struct rbd_client *__rbd_get_client(struct rbd_client *rbdc)
-  */
- static struct rbd_client *rbd_client_find(struct ceph_options *ceph_opts)
- {
--	struct rbd_client *client_node;
--	bool found = false;
-+	struct rbd_client *client_node = NULL, *iter;
- 
- 	if (ceph_opts->flags & CEPH_OPT_NOSHARE)
- 		return NULL;
- 
- 	spin_lock(&rbd_client_list_lock);
--	list_for_each_entry(client_node, &rbd_client_list, node) {
--		if (!ceph_compare_options(ceph_opts, client_node->client)) {
--			__rbd_get_client(client_node);
-+	list_for_each_entry(iter, &rbd_client_list, node) {
-+		if (!ceph_compare_options(ceph_opts, iter->client)) {
-+			__rbd_get_client(iter);
- 
--			found = true;
-+			client_node = iter;
- 			break;
- 		}
- 	}
- 	spin_unlock(&rbd_client_list_lock);
- 
--	return found ? client_node : NULL;
-+	return client_node;
- }
- 
- /*
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.18-rc1
 
-base-commit: f443e374ae131c168a065ea1748feac6b2e76613
--- 
-2.25.1
+for you to fetch changes up to f639d9867eea647005dc824e0e24f39ffc50d4e4:
 
+  ceph: fix memory leak in ceph_readdir when note_last_dentry returns error (2022-03-21 13:35:16 +0100)
+
+----------------------------------------------------------------
+The highlights are:
+
+- several changes to how snap context and snap realms are tracked
+  (Xiubo Li).  In particular, this should resolve a long-standing
+  issue of high kworker CPU usage and various stalls caused by
+  needless iteration over all inodes in the snap realm.
+
+- async create fixes to address hangs in some edge cases (Jeff Layton)
+
+- support for getvxattr MDS op for querying server-side xattrs, such
+  as file/directory layouts and ephemeral pins (Milind Changire)
+
+- average latency is now maintained for all metrics (Venky Shankar)
+
+- some tweaks around handling inline data to make it fit better with
+  netfs helper library (David Howells)
+
+Also a couple of memory leaks got plugged along with a few assorted
+fixups.  Last but not least, Xiubo has stepped up to serve as a CephFS
+co-maintainer.
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      ceph: uninitialized variable in debug output
+
+David Howells (2):
+      ceph: make ceph_netfs_issue_op() handle inlined data
+      ceph: uninline the data on a file opened for writing
+
+Jeff Layton (6):
+      ceph: switch netfs read ops to use rreq->inode instead of rreq->mapping->host
+      ceph: eliminate req->r_wait_for_completion from ceph_mds_request
+      ceph: wait for async create reply before sending any cap messages
+      ceph: wake waiters after failed async create
+      libceph: drop else branches in prepare_read_data{,_cont}
+      MAINTAINERS: add Xiubo Li as cephfs co-maintainer
+
+Milind Changire (1):
+      ceph: add getvxattr op
+
+Venky Shankar (4):
+      ceph: use ktime_to_timespec64() rather than jiffies_to_timespec64()
+      ceph: track average r/w/m latency
+      ceph: include average/stdev r/w/m latency in mds metrics
+      ceph: use tracked average r/w/m latencies to display metrics in debugfs
+
+Xiubo Li (12):
+      ceph: fail the request directly if handle_reply gets an ESTALE
+      ceph: move to a dedicated slabcache for ceph_cap_snap
+      ceph: zero the dir_entries memory when allocating it
+      ceph: do not update snapshot context when there is no new snapshot
+      ceph: eliminate the recursion when rebuilding the snap context
+      ceph: remove incorrect and unused CEPH_INO_DOTDOT macro
+      ceph: do not release the global snaprealm until unmounting
+      ceph: allocate capsnap memory outside of ceph_queue_cap_snap()
+      ceph: misc fix for code style and logs
+      ceph: fix inode reference leakage in ceph_get_snapdir()
+      ceph: assign the ci only when the inode isn't NULL
+      ceph: fix memory leak in ceph_readdir when note_last_dentry returns error
+
+hongnanli (1):
+      ceph: fix comments mentioning i_mutex
+
+ MAINTAINERS                  |   2 +
+ fs/ceph/addr.c               | 240 ++++++++++++++++++---------------------
+ fs/ceph/caps.c               |  16 ++-
+ fs/ceph/debugfs.c            |   5 +-
+ fs/ceph/dir.c                |  17 ++-
+ fs/ceph/file.c               |  83 ++++++++------
+ fs/ceph/inode.c              |  65 ++++++++++-
+ fs/ceph/locks.c              |   8 +-
+ fs/ceph/mds_client.c         |  69 ++++++------
+ fs/ceph/mds_client.h         |  15 ++-
+ fs/ceph/metric.c             |  63 ++++++-----
+ fs/ceph/metric.h             |  63 +++++++----
+ fs/ceph/snap.c               | 263 +++++++++++++++++++++++++++----------------
+ fs/ceph/strings.c            |   1 +
+ fs/ceph/super.c              |   7 ++
+ fs/ceph/super.h              |   9 +-
+ fs/ceph/xattr.c              |  13 ++-
+ include/linux/ceph/ceph_fs.h |   5 +-
+ include/linux/ceph/libceph.h |   1 +
+ net/ceph/messenger_v2.c      |   8 +-
+ 20 files changed, 577 insertions(+), 376 deletions(-)
