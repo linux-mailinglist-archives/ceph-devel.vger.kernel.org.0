@@ -2,216 +2,130 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04D794E56FA
-	for <lists+ceph-devel@lfdr.de>; Wed, 23 Mar 2022 17:56:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6B114E5F41
+	for <lists+ceph-devel@lfdr.de>; Thu, 24 Mar 2022 08:21:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239328AbiCWQ5a (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 23 Mar 2022 12:57:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57912 "EHLO
+        id S1348476AbiCXHWr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 24 Mar 2022 03:22:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236920AbiCWQ53 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 23 Mar 2022 12:57:29 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F5A46E4E1;
-        Wed, 23 Mar 2022 09:55:57 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id DAA26CE1F8E;
-        Wed, 23 Mar 2022 16:55:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98F3FC340F2;
-        Wed, 23 Mar 2022 16:55:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648054554;
-        bh=81nfjiQFeTPRAGOqW0aoil91fkoUvymS7z9RcUla0K0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ofyi97hboKxpE/pTa+ftOp/+oZCRyHADhyI8FcijbBV3/CvCk42BCVN059vz4KwUa
-         gE1wn43OEVpNIw242WOqUiRZn9ABQiK1kbuqyqmLBAR24Eo3kzWEEB2gkvr1NaM86f
-         4Qz8Vep6KzvW5c7Ll1nh994LjHqnNvGoD2Rx9ZG49BRt/rUViVf5R2eP1/7xA/TLEF
-         jWDOXFUxVpSqjxwG18ZOpYjc/EhVMW64CSS0phvAxOuqmnFnJXamy8hvud33+ZR1hO
-         pviv9ZN4azZ84nG9xsOKfZd0NfDcJ4Jq1YkaN5+4gJDv4Lf0TarZ6rR22T8YRRh195
-         IIfAg8Us2S/gg==
-Message-ID: <9a3dab30b8657351ab6a73de533b7e3f2a41f72a.camel@kernel.org>
-Subject: Re: [RFC PATCH v11 08/51] ceph: add support for
- fscrypt_auth/fscrypt_file to cap messages
-From:   Jeff Layton <jlayton@kernel.org>
-To:     idryomov@gmail.com, xiubli@redhat.com
-Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lhenriques@suse.de
-Date:   Wed, 23 Mar 2022 12:55:52 -0400
-In-Reply-To: <20220322141316.41325-9-jlayton@kernel.org>
-References: <20220322141316.41325-1-jlayton@kernel.org>
-         <20220322141316.41325-9-jlayton@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
+        with ESMTP id S242373AbiCXHWo (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Mar 2022 03:22:44 -0400
+Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ADAD986F9;
+        Thu, 24 Mar 2022 00:21:13 -0700 (PDT)
+Received: by mail-ej1-x62d.google.com with SMTP id r13so7309255ejd.5;
+        Thu, 24 Mar 2022 00:21:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=L8t/rxY8yvEceEcSHYnXjymDX7m07BTfnPsMbsacLCE=;
+        b=Td6lnLH/iruIZ4mx+aAqQafW+QnS0cKUyBO9/9JyZRZK0RKswmoPiW+EHpBnzYMBll
+         jgqss9CUEHP+ky5KHFkHEkoh1/JBQD1+I6PxPbp1vGK90mriH7Y3dsR7wgo+y59C93hQ
+         s9xi3SjjPw9Si53jEekr8kdc2jKrl5rkTg31PN65vsWSlNZZMElgVNWVJcDdh8r8Jyak
+         vvlRWRKgTSQF7YSACyI2zgQxpqxiAqr9CXA9ek8kqCEahUBnqEhjj92Ddd2wF25Pqn2M
+         tQ/N8jFGOqAaerJ4zgoQDg2D5iI4BxFmjfoAMp1QT0nHTBJ6YTKpPMYRF5zt/T2fAIa3
+         rg8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=L8t/rxY8yvEceEcSHYnXjymDX7m07BTfnPsMbsacLCE=;
+        b=UDcLumBCgnc2lmc5bsOc/ZtXfE4aT0nW+d2qlKxVWIbo8orjc643xpdjJa72YWkKpX
+         nIqNplXMYGdqJHFE99oHu9V3bic2WfkuTi6w9NUBzhnj2lwk/WlMbeafXvOA2JbirpPB
+         6a5ZSaMlNPQzWcicIWvu0RpMyyMG9CQUrvRC7msHt3sXjixBfyhwuWS9teyKGy6K6o5v
+         S9nhwN9wIGF6REbtIwh3LIUk18nOlnecUtZb45rZoCujI+2AlJdQpniBjxPu9ns2xB/U
+         3A4eX9iJ/Yqn+A3OPtFKqX8lVN5j9aNdmHs9QRjMOcyAxg8mShQERMRZLY4SoBueCOeH
+         gG0w==
+X-Gm-Message-State: AOAM530owdbqazicQJiBm82OeNRWoz2CmALcQGDqb16Xzy73lm5ZiUim
+        2l3fUGPmma3wR7yCOyifNxE=
+X-Google-Smtp-Source: ABdhPJx6LGoPkFEFkoaZyd3WBwpMSKmhSaujWAgVjTGkfEJZBG+4bfYn+4vbts3FB+vBfIrYJ+UHfw==
+X-Received: by 2002:a17:906:3ad1:b0:6ce:a880:7745 with SMTP id z17-20020a1709063ad100b006cea8807745mr4221888ejd.46.1648106472018;
+        Thu, 24 Mar 2022 00:21:12 -0700 (PDT)
+Received: from localhost.localdomain (i130160.upc-i.chello.nl. [62.195.130.160])
+        by smtp.googlemail.com with ESMTPSA id m4-20020a17090672c400b006e0035654b0sm780758ejl.84.2022.03.24.00.21.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Mar 2022 00:21:11 -0700 (PDT)
+From:   Jakob Koschel <jakobkoschel@gmail.com>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Jens Axboe <axboe@kernel.dk>, ceph-devel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mike Rapoport <rppt@kernel.org>,
+        "Brian Johannesmeyer" <bjohannesmeyer@gmail.com>,
+        Cristiano Giuffrida <c.giuffrida@vu.nl>,
+        "Bos, H.J." <h.j.bos@vu.nl>, Jakob Koschel <jakobkoschel@gmail.com>
+Subject: [PATCH] rbd: replace usage of found with dedicated list iterator variable
+Date:   Thu, 24 Mar 2022 08:20:50 +0100
+Message-Id: <20220324072050.62242-1-jakobkoschel@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2022-03-22 at 10:12 -0400, Jeff Layton wrote:
-> Add support for new version 12 cap messages that carry the new
-> fscrypt_auth and fscrypt_file fields from the inode.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/ceph/caps.c | 76 +++++++++++++++++++++++++++++++++++++++++---------
->  1 file changed, 63 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index 7d8ef67a1032..b0b7688331b4 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -13,6 +13,7 @@
->  #include "super.h"
->  #include "mds_client.h"
->  #include "cache.h"
-> +#include "crypto.h"
->  #include <linux/ceph/decode.h>
->  #include <linux/ceph/messenger.h>
->  
-> @@ -1214,15 +1215,12 @@ struct cap_msg_args {
->  	umode_t			mode;
->  	bool			inline_data;
->  	bool			wake;
-> +	u32			fscrypt_auth_len;
-> +	u32			fscrypt_file_len;
-> +	u8			fscrypt_auth[sizeof(struct ceph_fscrypt_auth)]; // for context
-> +	u8			fscrypt_file[sizeof(u64)]; // for size
->  };
->  
-> -/*
-> - * cap struct size + flock buffer size + inline version + inline data size +
-> - * osd_epoch_barrier + oldest_flush_tid
-> - */
-> -#define CAP_MSG_SIZE (sizeof(struct ceph_mds_caps) + \
-> -		      4 + 8 + 4 + 4 + 8 + 4 + 4 + 4 + 8 + 8 + 4)
-> -
->  /* Marshal up the cap msg to the MDS */
->  static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
->  {
-> @@ -1238,7 +1236,7 @@ static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
->  	     arg->size, arg->max_size, arg->xattr_version,
->  	     arg->xattr_buf ? (int)arg->xattr_buf->vec.iov_len : 0);
->  
-> -	msg->hdr.version = cpu_to_le16(10);
-> +	msg->hdr.version = cpu_to_le16(12);
->  	msg->hdr.tid = cpu_to_le64(arg->flush_tid);
->  
->  	fc = msg->front.iov_base;
-> @@ -1309,6 +1307,21 @@ static void encode_cap_msg(struct ceph_msg *msg, struct cap_msg_args *arg)
->  
->  	/* Advisory flags (version 10) */
->  	ceph_encode_32(&p, arg->flags);
-> +
-> +	/* dirstats (version 11) - these are r/o on the client */
-> +	ceph_encode_64(&p, 0);
-> +	ceph_encode_64(&p, 0);
-> +
-> +#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
-> +	/* fscrypt_auth and fscrypt_file (version 12) */
-> +	ceph_encode_32(&p, arg->fscrypt_auth_len);
-> +	ceph_encode_copy(&p, arg->fscrypt_auth, arg->fscrypt_auth_len);
-> +	ceph_encode_32(&p, arg->fscrypt_file_len);
-> +	ceph_encode_copy(&p, arg->fscrypt_file, arg->fscrypt_file_len);
-> +#else /* CONFIG_FS_ENCRYPTION */
-> +	ceph_encode_32(&p, 0);
-> +	ceph_encode_32(&p, 0);
-> +#endif /* CONFIG_FS_ENCRYPTION */
->  }
->  
->  /*
-> @@ -1430,8 +1443,37 @@ static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
->  		}
->  	}
->  	arg->flags = flags;
-> +#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
-> +	if (ci->fscrypt_auth_len &&
-> +	    WARN_ON_ONCE(ci->fscrypt_auth_len != sizeof(struct ceph_fscrypt_auth))) {
+To move the list iterator variable into the list_for_each_entry_*()
+macro in the future it should be avoided to use the list iterator
+variable after the loop body.
 
-The above WARN_ON_ONCE is too strict, and causes the client to reject v1
-fscrypt contexts (as well as throw the warning). That should be a ">"
-instead. I've fixed this in my tree and pushed the fix into wip-fscrypt.
+To *never* use the list iterator variable after the loop it was
+concluded to use a separate iterator variable instead of a
+found boolean [1].
 
+This removes the need to use a found variable and simply checking if
+the variable was set, can determine if the break/goto was hit.
 
-> +		/* Don't set this if it isn't right size */
-> +		arg->fscrypt_auth_len = 0;
-> +	} else {
-> +		arg->fscrypt_auth_len = ci->fscrypt_auth_len;
-> +		memcpy(arg->fscrypt_auth, ci->fscrypt_auth,
-> +			min_t(size_t, ci->fscrypt_auth_len, sizeof(arg->fscrypt_auth)));
-> +	}
-> +	/* FIXME: use this to track "real" size */
-> +	arg->fscrypt_file_len = 0;
-> +#endif /* CONFIG_FS_ENCRYPTION */
->  }
->  
-> +#define CAP_MSG_FIXED_FIELDS (sizeof(struct ceph_mds_caps) + \
-> +		      4 + 8 + 4 + 4 + 8 + 4 + 4 + 4 + 8 + 8 + 4 + 8 + 8 + 4 + 4)
-> +
-> +#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
-> +static inline int cap_msg_size(struct cap_msg_args *arg)
-> +{
-> +	return CAP_MSG_FIXED_FIELDS + arg->fscrypt_auth_len +
-> +			arg->fscrypt_file_len;
-> +}
-> +#else
-> +static inline int cap_msg_size(struct cap_msg_args *arg)
-> +{
-> +	return CAP_MSG_FIXED_FIELDS;
-> +}
-> +#endif /* CONFIG_FS_ENCRYPTION */
-> +
->  /*
->   * Send a cap msg on the given inode.
->   *
-> @@ -1442,7 +1484,7 @@ static void __send_cap(struct cap_msg_args *arg, struct ceph_inode_info *ci)
->  	struct ceph_msg *msg;
->  	struct inode *inode = &ci->vfs_inode;
->  
-> -	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, CAP_MSG_SIZE, GFP_NOFS, false);
-> +	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, cap_msg_size(arg), GFP_NOFS, false);
->  	if (!msg) {
->  		pr_err("error allocating cap msg: ino (%llx.%llx) flushing %s tid %llu, requeuing cap.\n",
->  		       ceph_vinop(inode), ceph_cap_string(arg->dirty),
-> @@ -1468,10 +1510,6 @@ static inline int __send_flush_snap(struct inode *inode,
->  	struct cap_msg_args	arg;
->  	struct ceph_msg		*msg;
->  
-> -	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, CAP_MSG_SIZE, GFP_NOFS, false);
-> -	if (!msg)
-> -		return -ENOMEM;
-> -
->  	arg.session = session;
->  	arg.ino = ceph_vino(inode).ino;
->  	arg.cid = 0;
-> @@ -1509,6 +1547,18 @@ static inline int __send_flush_snap(struct inode *inode,
->  	arg.flags = 0;
->  	arg.wake = false;
->  
-> +	/*
-> +	 * No fscrypt_auth changes from a capsnap. It will need
-> +	 * to update fscrypt_file on size changes (TODO).
-> +	 */
-> +	arg.fscrypt_auth_len = 0;
-> +	arg.fscrypt_file_len = 0;
-> +
-> +	msg = ceph_msg_new(CEPH_MSG_CLIENT_CAPS, cap_msg_size(&arg),
-> +			   GFP_NOFS, false);
-> +	if (!msg)
-> +		return -ENOMEM;
-> +
->  	encode_cap_msg(msg, &arg);
->  	ceph_con_send(&arg.session->s_con, msg);
->  	return 0;
+Link: https://lore.kernel.org/all/CAHk-=wgRr_D8CB-D9Kg-c=EHreAsk5SqXPwr9Y7k9sA6cWXJ6w@mail.gmail.com/
+Signed-off-by: Jakob Koschel <jakobkoschel@gmail.com>
+---
+ drivers/block/rbd.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index b844432bad20..e5f891d058e8 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -756,24 +756,23 @@ static struct rbd_client *__rbd_get_client(struct rbd_client *rbdc)
+  */
+ static struct rbd_client *rbd_client_find(struct ceph_options *ceph_opts)
+ {
+-	struct rbd_client *client_node;
+-	bool found = false;
++	struct rbd_client *client_node = NULL, *iter;
+ 
+ 	if (ceph_opts->flags & CEPH_OPT_NOSHARE)
+ 		return NULL;
+ 
+ 	spin_lock(&rbd_client_list_lock);
+-	list_for_each_entry(client_node, &rbd_client_list, node) {
+-		if (!ceph_compare_options(ceph_opts, client_node->client)) {
+-			__rbd_get_client(client_node);
++	list_for_each_entry(iter, &rbd_client_list, node) {
++		if (!ceph_compare_options(ceph_opts, iter->client)) {
++			__rbd_get_client(iter);
+ 
+-			found = true;
++			client_node = iter;
+ 			break;
+ 		}
+ 	}
+ 	spin_unlock(&rbd_client_list_lock);
+ 
+-	return found ? client_node : NULL;
++	return client_node;
+ }
+ 
+ /*
+
+base-commit: f443e374ae131c168a065ea1748feac6b2e76613
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.25.1
+
