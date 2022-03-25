@@ -2,187 +2,178 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B86984E7062
-	for <lists+ceph-devel@lfdr.de>; Fri, 25 Mar 2022 11:00:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 360D24E72AA
+	for <lists+ceph-devel@lfdr.de>; Fri, 25 Mar 2022 13:02:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358590AbiCYKAY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 25 Mar 2022 06:00:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55908 "EHLO
+        id S1353901AbiCYMEN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 25 Mar 2022 08:04:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230496AbiCYKAY (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 25 Mar 2022 06:00:24 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 035666E2A8;
-        Fri, 25 Mar 2022 02:58:50 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id B534E1F745;
-        Fri, 25 Mar 2022 09:58:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1648202328; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qE3ijpN3JzxZRinNK3bY7itv2EzK7o8jpCboIZgMOrk=;
-        b=PiSKKvvvD9ORMpFiph9LNgdYzV+1b+SMiJWH8a4ZrvzPNMxCx+92w8//Nwh5pnbfJSh/s2
-        ttAfN+KbiBcZmf3T1nmmoILzLPFl20o/tSjESDUKWqqPaMEBHNwwPMNRp4xNsvAxobKpJd
-        P/paw+0XfHloh17+LRUhgob+mmXd3IE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1648202328;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qE3ijpN3JzxZRinNK3bY7itv2EzK7o8jpCboIZgMOrk=;
-        b=iO2SonJglDeQTgQPlWaycm3HefPzlzqXev9YSaQnny+TqDUSe2ZKnyqRkDOEJltuDNFcsq
-        8xCLxwlSnQUZzrAg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 38053132E9;
-        Fri, 25 Mar 2022 09:58:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id wW3qCliSPWIHDwAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Fri, 25 Mar 2022 09:58:48 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 4fb5c2e5;
-        Fri, 25 Mar 2022 09:59:08 +0000 (UTC)
-From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com,
-        xiubli@redhat.com, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-fscrypt@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v11 02/51] fscrypt: export fscrypt_base64url_encode
- and fscrypt_base64url_decode
-References: <20220322141316.41325-1-jlayton@kernel.org>
-        <20220322141316.41325-3-jlayton@kernel.org>
-        <87zglgoi1e.fsf@brahms.olymp> <YjyubQgfbQbUn4Ct@gmail.com>
-Date:   Fri, 25 Mar 2022 09:59:08 +0000
-In-Reply-To: <YjyubQgfbQbUn4Ct@gmail.com> (Eric Biggers's message of "Thu, 24
-        Mar 2022 17:46:21 +0000")
-Message-ID: <87sfr6nyj7.fsf@brahms.olymp>
+        with ESMTP id S1344291AbiCYMEM (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 25 Mar 2022 08:04:12 -0400
+Received: from mail-vk1-xa34.google.com (mail-vk1-xa34.google.com [IPv6:2607:f8b0:4864:20::a34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C012AD4C92
+        for <ceph-devel@vger.kernel.org>; Fri, 25 Mar 2022 05:02:38 -0700 (PDT)
+Received: by mail-vk1-xa34.google.com with SMTP id w123so4106797vkg.7
+        for <ceph-devel@vger.kernel.org>; Fri, 25 Mar 2022 05:02:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1eUbx1Pdc/s/6DST5Wdsu/HaXlFiszD/xbQXUyI3F/A=;
+        b=jiyJOrTBWHo+az//mLN7RlqOP1Ra6k/xQtwL9VIp7Z1NXh2GncanUf7LxuaNJ17WdT
+         jB8KG78gdIZstyjHhJCvVBJJsZ4qxBGO1ZP1xc7N3vpTcDwA8iQhHieXjmiQaFM2pzSX
+         XZ89Dui4JGHioxwmgip3msewQZ01vMMQMhdRyq97oEUqj70a6rOqrpmliREa4YBj2B0A
+         nyg8x7VhQ+BG69KC8rFqMyEdpwXmjMzpi6SfGP3RytvOQCVRyvELZ+E9hdEksC+qPp9f
+         qMPSrr9M/LPDRSP0har0Jqh99VxvbXlTUwyiIJm+5k6TMUJrYMxI38cdT8LBQvloM9s3
+         WHrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1eUbx1Pdc/s/6DST5Wdsu/HaXlFiszD/xbQXUyI3F/A=;
+        b=pMIxGxIu3++Ech7iLhtyNoNYuCZXbPhr8LfnFambX925R0qC6S1WfCxjLqeTSnKUtQ
+         UyJYiooW/qQlvMcdUQzdHdTdfXHmVvxJxniYembnBlhoYI0YTRG1MDUYrNSetbwRWB3s
+         ydL/jHpnh28UIxfcXtd86WhUuWnYjiDkh4TPuNd3ETfn5qGm8GI2MW9qcB990caf698P
+         anIFtSf8kq37l5ia0grlfblRXbYksodBa4SW8k67yPuZVRdwcBprj+3AfHye8ejY2kcw
+         p4Qk2OQRclVlVKfyXAxo+yMRI52fAvxCOJDx5+gppaWDHF5ysodZep0Sh2iXcYZ7Vhhg
+         542w==
+X-Gm-Message-State: AOAM532PxkBq88YEY5waFbMP6tg4tbZpqttNzCSSqwmqirKWbDyy9rWk
+        quZ6AxPcZk+lIuYyBRYLJR9ijIBCQYoASE3YdXk=
+X-Google-Smtp-Source: ABdhPJy1a1HrEoxINOYWV1t11XjPMt8tyOk/LMe3L8/zZxIyRqMNeg8hmbhKZZPRpPjV+D/SNsM8rIJIlNA5vlmCoPY=
+X-Received: by 2002:a05:6122:8c8:b0:32a:7010:c581 with SMTP id
+ 8-20020a05612208c800b0032a7010c581mr4733296vkg.32.1648209757259; Fri, 25 Mar
+ 2022 05:02:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <d0a7e3d1-f9ca-994e-fa6e-b730b443346d@cybozu.co.jp>
+ <CAOi1vP9SXGRzQF=Thy70QO0NyGjpPBtmCWyF4pfODJNPrWoX0A@mail.gmail.com>
+ <f6f40fc0-5154-57ac-c28a-3d58ed15bd77@cybozu.co.jp> <CAOi1vP9zXPek_LKkrT-OvZ0Xa0B=pz90y33TM_CVmsvcH8HPGw@mail.gmail.com>
+ <050545f4-ff14-9d18-d323-850e06f61745@cybozu.co.jp> <CAMym5wvL-pKduh8mqyqP6U2u+bLyA15CYaZUHVMc=iV+hALwxw@mail.gmail.com>
+In-Reply-To: <CAMym5wvL-pKduh8mqyqP6U2u+bLyA15CYaZUHVMc=iV+hALwxw@mail.gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Fri, 25 Mar 2022 13:03:11 +0100
+Message-ID: <CAOi1vP-xkO7RNqPtnABAQ8491b2G5xhoVZAcW4sXFSQEzb4qQA@mail.gmail.com>
+Subject: Re: [PATCH v2] libceph: print fsid and client gid with mon id and osd id
+To:     Satoru Takeuchi <satoru.takeuchi@gmail.com>
+Cc:     Daichi Mukai <daichi-mukai@cybozu.co.jp>,
+        Ceph Development <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Eric Biggers <ebiggers@kernel.org> writes:
-
-> On Wed, Mar 23, 2022 at 02:33:17PM +0000, Lu=C3=ADs Henriques wrote:
->> Hi Eric,
->>=20
->> Jeff Layton <jlayton@kernel.org> writes:
->>=20
->> > Ceph is going to add fscrypt support, but we still want encrypted
->> > filenames to be composed of printable characters, so we can maintain
->> > compatibility with clients that don't support fscrypt.
->> >
->> > We could just adopt fscrypt's current nokey name format, but that is
->> > subject to change in the future, and it also contains dirhash fields
->> > that we don't need for cephfs. Because of this, we're going to concoct
->> > our own scheme for encoding encrypted filenames. It's very similar to
->> > fscrypt's current scheme, but doesn't bother with the dirhash fields.
->> >
->> > The ceph encoding scheme will use base64 encoding as well, and we also
->> > want it to avoid characters that are illegal in filenames. Export the
->> > fscrypt base64 encoding/decoding routines so we can use them in ceph's
->> > fscrypt implementation.
->> >
->> > Acked-by: Eric Biggers <ebiggers@google.com>
->> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
->> > ---
->> >  fs/crypto/fname.c       | 8 ++++----
->> >  include/linux/fscrypt.h | 5 +++++
->> >  2 files changed, 9 insertions(+), 4 deletions(-)
->> >
->> > diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
->> > index a9be4bc74a94..1e4233c95005 100644
->> > --- a/fs/crypto/fname.c
->> > +++ b/fs/crypto/fname.c
->> > @@ -182,8 +182,6 @@ static int fname_decrypt(const struct inode *inode,
->> >  static const char base64url_table[65] =3D
->> >  	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
->> >=20=20
->> > -#define FSCRYPT_BASE64URL_CHARS(nbytes)	DIV_ROUND_UP((nbytes) * 4, 3)
->> > -
->> >  /**
->> >   * fscrypt_base64url_encode() - base64url-encode some binary data
->> >   * @src: the binary data to encode
->> > @@ -198,7 +196,7 @@ static const char base64url_table[65] =3D
->> >   * Return: the length of the resulting base64url-encoded string in by=
-tes.
->> >   *	   This will be equal to FSCRYPT_BASE64URL_CHARS(srclen).
->> >   */
->> > -static int fscrypt_base64url_encode(const u8 *src, int srclen, char *=
-dst)
->> > +int fscrypt_base64url_encode(const u8 *src, int srclen, char *dst)
->>=20
->> I know you've ACK'ed this patch already, but I was wondering if you'd be
->> open to change these encode/decode interfaces so that they could be used
->> for non-url base64 too.
->>=20
->> My motivation is that ceph has this odd limitation where snapshot names
->> can not start with the '_' character.  And I've an RFC that adds snapshot
->> names encryption support which, unfortunately, can end up starting with
->> this char after base64 encoding.
->>=20
->> So, my current proposal is to use a different encoding table.  I was
->> thinking about the IMAP mailboxes naming which uses '+' and ',' instead =
-of
->> the '-' and '_', but any other charset would be OK (except those that
->> include '/' of course).  So, instead of adding yet another base64
->> implementation to the kernel, I was wondering if you'd be OK accepting a
->> patch to add an optional arg to these encoding/decoding functions to pass
->> an alternative table.  Or, if you'd prefer, keep the existing interface
->> but turning these functions into wrappers to more generic functions.
->>=20
->> Obviously, Jeff, please feel free to comment too if you have any reserves
->> regarding this approach.
->>=20
->> Cheers,
->> --=20
->> Lu=C3=ADs
->>=20
+On Fri, Mar 25, 2022 at 3:54 AM Satoru Takeuchi
+<satoru.takeuchi@gmail.com> wrote:
 >
-> Base64 encoding/decoding is trivial enough that I think you should just a=
-dd your
-> own functions to fs/ceph/ for now if you need yet another Base64 variant.=
-  If we
-> were to add general functions that allow "building your own" Base64 varia=
-nt, I
-> think they'd belong in lib/, not fs/crypto/.  (I objected to lib/ in the =
-first
-> version of Jeff's patchset because that patchset proposed adding just the=
- old,
-> idiosyncratic fscrypt Base64 variant to lib/ and just calling it "base64"=
-, which
-> was misleading.  But, if there were to be properly documented functions to
-> "build your own" Base64 variant, allowing control over both the character=
- set
-> and whether padding is done, lib/ would be the place...)
+> Hi Ilya
+>
+> > >>> Hi Daichi,
+> > >>>
+> > >>> I would suggest two things:
+> > >>>
+> > >>> 1) Leave dout messages alone for now.  They aren't shown by default and
+> > >>>      are there for developers to do debugging.  In that setting, multiple
+> > >>>      clusters or client instances should be rare.
+> > >>
+> > >> Sure, I'll leave dout messages alone.
+> > >>
+> > >>> 2) For pr_info/pr_warn/etc messages, make the format consistent and
+> > >>>      more grepable, e.g.
+> > >>>
+> > >>>        libceph (<fsid> <gid>): <message>
+> > >>>
+> > >>>        libceph (ef1ab157-688c-483b-a94d-0aeec9ca44e0 4181): osd10 down
+> > >>>
+> > >>>      as I suggested earlier.  Sometimes printing just the fsid, sometimes
+> > >>>      the fsid and the gid and sometimes none is undesirable.
+> > >>
+> > >> Let me confirm two points:
+> > >>
+> > >> - For consistency, should all pr_info/pr_warn/etc messages in libceph
+> > >>     uses format with fsid and gid? Or does your suggestion means messages
+> > >>     with osd or mon id (i.e. messages which I had edited in this patch)
+> > >>     should have consistent format?
+> > >
+> > > Definitely not all messages.  I'd start with those that are most common
+> > > and that _you_ think are important to distinguish between.  Whether mon
+> > > or osd id is included is probably irrelevant.
+> > >
+> > > The reason I'm deferring to you here is that I haven't seen this come
+> > > up as an issue.  99% of users would connect to a single Ceph cluster
+> > > (which means a single fsid) with a single libceph instance (which means
+> > > a single gid).
+> > >
+> > > But consistency is very important, so IMO a particular message should
+> > > either be not touched at all or be converted to a consistent format.
+> > >
+> > >>
+> > >> - What should be displayed if fsid or gid cannot be obtained? For example,
+> > >>     we may not know fsid yet when establishing session with mon. Also,
+> > >>     decode_new_up_state_weight() outputs message like "osd10 down" etc, but
+> > >>     it seems not easy to get client gid within this function. This is why
+> > >>     there are sometimes fsid only and sometimes gid only and sometimes both
+> > >>     in my patch.
+> > >
+> > > For when the mon session is being established, do nothing (i.e.
+> > > leave existing messages as is).  For after the fsid and gid become
+> > > known, either convert to a consistent format with both fsid and gid or
+> > > do nothing if the message isn't important.  If this causes too much
+> > > code churn because of additional parameters being passed around, we may
+> > > need to reconsider whether this change is worth it at all.
+> >
+> > Thank you for your kind comments. They are very helpful for me. I'll think
+> > again about when fsid and gid in the logs are useful.
+> >
+> > Daichi
+>
+> There are multiple Ceph clusters in our system. A cluster provides RBD
+> on top of HDD
+> and another cluster provides RBD on top of SSD. All Ceph(more
+> precisely, Rook/Ceph)
+> clusters are in one Kubernetes cluster. Many types of
+> applications(Pods) can co-exist
+> for each node and there is not so special that an application consumes RBD(SSD)
+> and another application consumes RBD(HDD) are on the same node. In
+> this case, it's
+> very useful to distinguish from which cluster each kernel message comes.
+>
+> We've already encountered trouble that could have been solved earlier
+> if this fix is applied.
+> We encountered slow I/Os in an application using RBD(HDD) and found
+> that there were
+> some "OSD n down/up" messages. Then we took some time to confirm whether these
+> messages were related to the problem because there was another
+> application using RBD(SSD)
+> in the same node and it's hard to know these messages were about
+> RBD(HDD) cluster.
+>
+> What we really need for now is to clear from which "OSD n down/up"
+> messages come.
+> So, how about adding "libceph (<fsid> <gid>):" prefix to these two
+> messages and don't touch
+> any other messages? Does it make sense?
 
-OK, that makes sense.  I agree that the right place for a generic
-implementation would be somewhere out of the fs/crypto/ directory.  I
-guess that, for now, I'll follow your advice and keep a local
-implementation (in fact, the libceph *has* already an implementation!).
+Hi Satoru,
 
-But adding a generic implementation and clean-up all the different
-implementations in the kernel tree is probably a nice project.  For the
-future.  Maybe.  *sigh*
+Sure, starting with just these two messages is fine with me but if
+I were you I would also cover the other three similar messages that
+may be reported while processing new osdmaps:
 
-Cheers,
---=20
-Lu=C3=ADs
+    osd<id> down
+    osd<id> up
+
+    +
+
+    osd<id> weight ...
+    osd<id> primary-affinity ...
+    osd<id> does not exist
+
+Thanks,
+
+                Ilya
