@@ -2,118 +2,76 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 43F5B4E7CBE
-	for <lists+ceph-devel@lfdr.de>; Sat, 26 Mar 2022 01:22:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E4454E8871
+	for <lists+ceph-devel@lfdr.de>; Sun, 27 Mar 2022 17:27:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229484AbiCYTR2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 25 Mar 2022 15:17:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57622 "EHLO
+        id S235860AbiC0P3E (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 27 Mar 2022 11:29:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229500AbiCYTRZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 25 Mar 2022 15:17:25 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A19A1D7898
-        for <ceph-devel@vger.kernel.org>; Fri, 25 Mar 2022 11:58:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C38C0B82865
-        for <ceph-devel@vger.kernel.org>; Fri, 25 Mar 2022 18:40:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEF96C004DD;
-        Fri, 25 Mar 2022 18:40:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648233648;
-        bh=hSw7t/ht1ptPxvtAHJ/BGfbHvZ5GZjT8xRe9LoN4BSQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ajHU0Rl0HUmXadKVltiMoEK/x9CUbQDgfGu9kwQvdhjjBc2/c7C0Dtkt/ZqFDmGJT
-         6ETR0kG0dQ8NpGH6np97y/i8ul2+VbuvbfHiGEmr5BUF9fiB1k7JMtKELtOVdH/uXL
-         pNxhYFsa8TYHiNPM0Up/oBy13X/Jk4Ovj0bPm2L8WKXwwox/zPW4M6Tebhp+JequU9
-         kFgKimUngMiFcd5NPiN5cU7bB7t4DNYG8WgdYf1M1OyWLUcVjWZkLVd5oTtSM+ttJX
-         IIj93dDwe/DaCEqB3xt29rwww+4xRFbMobgu94ZTaA6PwzmUYPpfS3l7vy42V3toFe
-         P4ZRrzjZ7zrtw==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, xiubli@redhat.com,
-        =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
-Subject: [PATCH] ceph: add a has_stable_inodes operation for ceph
-Date:   Fri, 25 Mar 2022 14:40:46 -0400
-Message-Id: <20220325184046.236663-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S233863AbiC0P3D (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 27 Mar 2022 11:29:03 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 459A813FB0
+        for <ceph-devel@vger.kernel.org>; Sun, 27 Mar 2022 08:27:25 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id u16so16964805wru.4
+        for <ceph-devel@vger.kernel.org>; Sun, 27 Mar 2022 08:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:mime-version:content-transfer-encoding
+         :content-description:subject:to:from:date:reply-to;
+        bh=aCO23HKSt4P6Qx5ktvRU5/PddHSIjWschsN7cgdoQwg=;
+        b=XgII2EuLnnVHzU2zvHbpbrDmkSwxAPD5xJxlgRMlZg7juwh4psPu6j88ky3harSHZz
+         IucDmYLDcXoXj3PzBIBqTgWQ0y9uTx2UAgBQrsNkWqWUQDmaGJkuecM/BpfiTuZYhF0e
+         4O4Efo/ThlSOwPJ/oJSgOPqA18WCWfsADXDj3J9QsVaggsAlYlp8KizQDTqUgDGFUKsn
+         oImkfFpTT5unrAle/RqXQyXT3Hjp97h0haPOtCSiGpSjs3BTiFAMwvynyg60y2h8ixOK
+         F/sr0iYiMkxeXdOUlhXYDYKZ7VqVYqN2FGeaYUKJX9qzMPVxq8vxZx8t4Yyo91gND97Q
+         VhWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:content-description:subject:to:from:date
+         :reply-to;
+        bh=aCO23HKSt4P6Qx5ktvRU5/PddHSIjWschsN7cgdoQwg=;
+        b=jcSuc4nLsV/1bFhluTgnIT91dHBokOAJo2fxpeo/64L2uoG5LmMCLFBpOgaSp/4Nbz
+         Tp69KZoO2xTk69cTxkDtQqMMkbvuTkvAn+2GtkCeqp6jpzeuL+N64YYMaYjWOnlqnmTe
+         MxLjc3oG3bx/7KXPKbYSA2oQhMJozYDS5Au8CkhZGKOmSdnMzYbWmKSxARyIRFIrC5Z4
+         OyeTUycWk3tqHANw5PLGiwMyGq+UtPOAvQfALG0FSa5EF1iD05yQvY55+ohhvc3PK8lE
+         7l9p7N4Ro+/cQnCC+/ivnUjpxbB4Nq1f60LjusUFDCl8OC+EWzAhyzmMRRkOCJyi3mK7
+         n9gw==
+X-Gm-Message-State: AOAM531Fn+88+YdyypRtFb2YgUGM62H+xI5DheTPQB8HmFOUpO7aqr13
+        7hdQmmkjTul5VtXo2vBmEo8=
+X-Google-Smtp-Source: ABdhPJxWKsUMkJ1kdUogrVYqPST3oOVJhrHXva4lsNhiHQsvzUDBJKSrp9XN0qOK2VRizdw58LIGtQ==
+X-Received: by 2002:adf:8bdd:0:b0:205:b18d:366d with SMTP id w29-20020adf8bdd000000b00205b18d366dmr7287376wra.622.1648394843739;
+        Sun, 27 Mar 2022 08:27:23 -0700 (PDT)
+Received: from [192.168.0.102] ([105.112.32.237])
+        by smtp.gmail.com with ESMTPSA id u11-20020a5d6acb000000b002058148822bsm14160610wrw.63.2022.03.27.08.27.18
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Sun, 27 Mar 2022 08:27:23 -0700 (PDT)
+Message-ID: <6240825b.1c69fb81.71602.51fd@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: =?utf-8?q?Ein_finanzieller_Beitrag_von_915=2E000=2C00_=E2=82=AC=2E?=
+To:     ekeleu712@gmail.com
+From:   ekeleu712@gmail.com
+Date:   Sun, 27 Mar 2022 08:27:11 -0700
+Reply-To: samathahoopes734@gmail.com
+X-Spam-Status: No, score=2.1 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: **
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-...and just have it return true. It should never change inode numbers
-out from under us, as they are baked into the object names.
+Hallo,
 
-Reported-by: Luís Henriques <lhenriques@suse.de>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/crypto.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
-
-diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index 2a8f95885e7d..3a9214b1e8b3 100644
---- a/fs/ceph/crypto.c
-+++ b/fs/ceph/crypto.c
-@@ -59,6 +59,11 @@ static int ceph_crypt_set_context(struct inode *inode, const void *ctx, size_t l
- 	return ret;
- }
- 
-+static const union fscrypt_policy *ceph_get_dummy_policy(struct super_block *sb)
-+{
-+	return ceph_sb_to_client(sb)->dummy_enc_policy.policy;
-+}
-+
- static bool ceph_crypt_empty_dir(struct inode *inode)
- {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
-@@ -66,14 +71,9 @@ static bool ceph_crypt_empty_dir(struct inode *inode)
- 	return ci->i_rsubdirs + ci->i_rfiles == 1;
- }
- 
--void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc)
-+static bool ceph_crypt_has_stable_inodes(struct super_block *sb)
- {
--	fscrypt_free_dummy_policy(&fsc->dummy_enc_policy);
--}
--
--static const union fscrypt_policy *ceph_get_dummy_policy(struct super_block *sb)
--{
--	return ceph_sb_to_client(sb)->dummy_enc_policy.policy;
-+	return true;
- }
- 
- static struct fscrypt_operations ceph_fscrypt_ops = {
-@@ -82,6 +82,7 @@ static struct fscrypt_operations ceph_fscrypt_ops = {
- 	.set_context		= ceph_crypt_set_context,
- 	.get_dummy_policy	= ceph_get_dummy_policy,
- 	.empty_dir		= ceph_crypt_empty_dir,
-+	.has_stable_inodes	= ceph_crypt_has_stable_inodes,
- };
- 
- void ceph_fscrypt_set_ops(struct super_block *sb)
-@@ -89,6 +90,11 @@ void ceph_fscrypt_set_ops(struct super_block *sb)
- 	fscrypt_set_ops(sb, &ceph_fscrypt_ops);
- }
- 
-+void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc)
-+{
-+	fscrypt_free_dummy_policy(&fsc->dummy_enc_policy);
-+}
-+
- int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
- 				 struct ceph_acl_sec_ctx *as)
- {
--- 
-2.35.1
-
+  Die Li Ka Shing Foundation w=C3=BCnscht Ihnen alles Gute, Ihnen wurde ein=
+e finanzielle Spende in H=C3=B6he von 915.000,00 =E2=82=AC zugesprochen. Ko=
+ntaktieren Sie mich f=C3=BCr weitere Informationen
