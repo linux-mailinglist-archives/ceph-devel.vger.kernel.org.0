@@ -2,110 +2,101 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7E6E4E9220
-	for <lists+ceph-devel@lfdr.de>; Mon, 28 Mar 2022 11:58:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E0994E9282
+	for <lists+ceph-devel@lfdr.de>; Mon, 28 Mar 2022 12:28:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240110AbiC1J7t (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 28 Mar 2022 05:59:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44540 "EHLO
+        id S240251AbiC1KaH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 28 Mar 2022 06:30:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240108AbiC1J7s (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 28 Mar 2022 05:59:48 -0400
-Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EB77B3F;
-        Mon, 28 Mar 2022 02:58:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1648461485; i=@fujitsu.com;
-        bh=tIPy4adwYZIuoOjNmuljqHfyDRJc1g60N4qT6SaNBec=;
-        h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type;
-        b=Y1s6vN3gC6Qf+fIMHENMqG6brvL6y8AjKhk1PnQKp9U1C70QCIV7ovdfLC7FTSIyC
-         4dXejIpnIKnfzlVwgDd/GfCiIl8PfkiuIoNFxxRiRP34sXKfkC081h8qAUR5NyISZN
-         BfTeNc1tAa70NPfYPFXNwiSDmP7BQjWJToTXZLogyFzxPE5OUWaJKrqCxxt3E68sOK
-         o7aM3qE1potG3wX7/XOwMldfDGTxWDIqvJa70AOswMjMxeaZpckr4bOZ23uYJOVnYG
-         3rLIviJcSNpVYLWsujZhIF4N1CDsZd979foP8gEUnYwdNTs6q+UNYJngRsEwndwtH8
-         RnkRxjYMLZW7g==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRWlGSWpSXmKPExsViZ8MxSXdtm2O
-  SwdE2eYsPNycxWWw5do/R4ueyVewWe/aeZLE4//c4qwOrx6lFEh6bVnWyeXzeJOex6clbpgCW
-  KNbMvKT8igTWjNOrvjMV9LJVdCzxamDsZe1i5OIQEtjCKPHqxlEmCGcBk8TXKQvZIJw9jBJPO
-  2aydzFycrAJaEo861zADGKLCDhKvGifwQJiMwsUSNw9M5cVxBYWCJZ4cWw5WA2LgKrE0/XtQI
-  M4OHgFPCQmdhaChCUEFCSmPHwPVsIrIChxcuYTqDESEgdfvGCGqFGUuNTxjRHCrpCYNauNCcJ
-  Wk7h6bhPzBEb+WUjaZyFpX8DItIrROqkoMz2jJDcxM0fX0MBA19DQVNfYXNfQzEgvsUo3US+1
-  VLc8tbhEF8gtL9ZLLS7WK67MTc5J0ctLLdnECAzrlGLVRTsY96/6qXeIUZKDSUmU1yjTMUmIL
-  yk/pTIjsTgjvqg0J7X4EKMMB4eSBO+tZqCcYFFqempFWmYOMMZg0hIcPEoivKZNQGne4oLE3O
-  LMdIjUKUZFKXHehlaghABIIqM0D64NFteXGGWlhHkZGRgYhHgKUotyM0tQ5V8xinMwKgnzurQ
-  ATeHJzCuBm/4KaDET0OK172xBFpckIqSkGpgWhOoEHDH826fyYPFLqXV3V6X/L9ws8b7my9FI
-  v78VjX67sjfm52pc4hRaumXyCaVlZ1Uv1+/6cqOZS/Xv5X3mXA4zngo6W6o0TfrA6PEgeU3A4
-  Q8O9pKWTVzx7a7RbbJ6+0x3W36bIdDCMO+iSGii4+XQnXHl8pvl+3xmqk7btPQpe9vZWTd+Kd
-  w5xMYR3TT9K/dum9SnXLfTftc/l8kwS+I7dULpHSPbpzszLZds1ixRFYqIT5Xhuae6stav68O
-  ax6uiW/lnZv3sXbytvTtJd6WvjlNJZ9qBS3EPc2Nbdy2dNlHq+S3Vjbv2pXfXbj40aeMDuQeJ
-  X8JO/Lp5mSNr0671b+xvpfw6svRh68wqJZbijERDLeai4kQAHBxUwGYDAAA=
-X-Env-Sender: xuyang2018.jy@fujitsu.com
-X-Msg-Ref: server-19.tower-565.messagelabs.com!1648461485!185071!1
-X-Originating-IP: [62.60.8.146]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.85.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 26699 invoked from network); 28 Mar 2022 09:58:05 -0000
-Received: from unknown (HELO n03ukasimr02.n03.fujitsu.local) (62.60.8.146)
-  by server-19.tower-565.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 28 Mar 2022 09:58:05 -0000
-Received: from n03ukasimr02.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTP id 19A2E100440;
-        Mon, 28 Mar 2022 10:58:05 +0100 (BST)
-Received: from R01UKEXCASM126.r01.fujitsu.local (unknown [10.183.43.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        with ESMTP id S234993AbiC1KaG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 28 Mar 2022 06:30:06 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07C22522D8;
+        Mon, 28 Mar 2022 03:28:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTPS id 0CDDD100331;
-        Mon, 28 Mar 2022 10:58:05 +0100 (BST)
-Received: from localhost.localdomain (10.167.220.84) by
- R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Mon, 28 Mar 2022 10:57:52 +0100
-From:   Yang Xu <xuyang2018.jy@fujitsu.com>
-To:     <linux-fsdevel@vger.kernel.org>, <ceph-devel@vger.kernel.org>
-CC:     <viro@zeniv.linux.org.uk>, <david@fromorbit.com>,
-        <jlayton@kernel.org>, Yang Xu <xuyang2018.jy@fujitsu.com>
-Subject: [PATCH v1 3/3] ceph: Remove S_ISGID clear code in ceph_finish_async_create
-Date:   Mon, 28 Mar 2022 17:58:29 +0800
-Message-ID: <1648461509-2330-1-git-send-email-xuyang2018.jy@fujitsu.com>
-X-Mailer: git-send-email 1.8.3.1
+        by ams.source.kernel.org (Postfix) with ESMTPS id B035FB80FC0;
+        Mon, 28 Mar 2022 10:28:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1411C340F0;
+        Mon, 28 Mar 2022 10:28:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648463303;
+        bh=mbW5lOE0DiwZdxys0cKvpTjDkJc1/stJnOezmtZoeSY=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=JXWSYY8sovEf/LSZ79BbS/TkTb4uxARjJVpjLYdk3R+LH36tDuhsMWWJlNKZ5pQpg
+         WXsWCYqqtps+5zv61bLMSzPNdvxdlH+OvsuB5EYL4ErDQYWShFsFSYYXTq8F6Wt4+2
+         nbfq1vN8eCO2JwT2/VYWmLKfzidzIfx1LdS2eqS3wCBuB/muzU1SZc1Owo1uwp44oa
+         s4QhlKD0s0uUrvQNJLATtyep1XI1qWTrLPBlq6xZzKZj8FT5aTOpl2MRmXnZkH7kgr
+         tKyMU3jOgI7xUrF7OIzrR+Nm6nZ3swnMPkj6+0DMNcvtiWfvnDIIHHwaHH46O3E7Pl
+         KBiGqwecokyyA==
+Message-ID: <cd928bbbba3260dfe6ce4a964185a377b4a767cd.camel@kernel.org>
+Subject: Re: [PATCH] ceph: remove unused CEPH_MDS_LEASE_RELEASE related code
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 28 Mar 2022 06:28:21 -0400
+In-Reply-To: <20220328022535.847164-1-xiubli@redhat.com>
+References: <20220328022535.847164-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.220.84]
-X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
- R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
-X-Virus-Scanned: ClamAV using ClamSMTP
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Since vfs has stripped S_ISGID, we don't need this code any more.
+On Mon, 2022-03-28 at 10:25 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> The ceph_mdsc_lease_release() has been removed by commit(8aa152c77890)
+> and the CEPH_MDS_LEASE_RELEASE will never be used.
+> 
 
-Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
----
- fs/ceph/file.c | 4 ----
- 1 file changed, 4 deletions(-)
+Like it says in Documentation/process/5.Posting.rst:
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index bbed3224ad68..f69dafabb65b 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -620,10 +620,6 @@ static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
- 		/* Directories always inherit the setgid bit. */
- 		if (S_ISDIR(mode))
- 			mode |= S_ISGID;
--		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
--			 !in_group_p(dir->i_gid) &&
--			 !capable_wrt_inode_uidgid(&init_user_ns, dir, CAP_FSETID))
--			mode &= ~S_ISGID;
- 	} else {
- 		in.gid = cpu_to_le32(from_kgid(&init_user_ns, current_fsgid()));
- 	}
--- 
-2.27.0
+"...and please provide both the commit ID and the title when citing
+commits"
 
+You might want to reword this with something like:
+
+"ceph_mdsc_lease_release was removed by commit 8aa152c77890 (ceph:
+remove ceph_mdsc_lease_release). ceph_mdsc_lease_send_msg will never
+call this function with CEPH_MDS_LEASE_RELEASE."
+
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/mds_client.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 459c6f23915f..a89ee866ebbb 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -4424,12 +4424,6 @@ void ceph_mdsc_lease_send_msg(struct ceph_mds_session *session,
+>  	memcpy((void *)(lease + 1) + 4,
+>  	       dentry->d_name.name, dentry->d_name.len);
+>  	spin_unlock(&dentry->d_lock);
+> -	/*
+> -	 * if this is a preemptive lease RELEASE, no need to
+> -	 * flush request stream, since the actual request will
+> -	 * soon follow.
+> -	 */
+> -	msg->more_to_follow = (action == CEPH_MDS_LEASE_RELEASE);
+>  
+>  	ceph_con_send(&session->s_con, msg);
+>  }
+
+It might be possible to trim this function back further. There's only
+one caller and it always calls this with the same "action" value. Still,
+this looks fine...
+
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
