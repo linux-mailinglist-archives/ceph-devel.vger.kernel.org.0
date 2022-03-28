@@ -2,44 +2,49 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C02D4EA193
-	for <lists+ceph-devel@lfdr.de>; Mon, 28 Mar 2022 22:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6CB74EA2B6
+	for <lists+ceph-devel@lfdr.de>; Tue, 29 Mar 2022 00:16:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345062AbiC1UgU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 28 Mar 2022 16:36:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49900 "EHLO
+        id S229870AbiC1WPe (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 28 Mar 2022 18:15:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346663AbiC1Ufg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 28 Mar 2022 16:35:36 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7714030F6C
-        for <ceph-devel@vger.kernel.org>; Mon, 28 Mar 2022 13:33:55 -0700 (PDT)
+        with ESMTP id S229712AbiC1WP0 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 28 Mar 2022 18:15:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC23E28AB0C;
+        Mon, 28 Mar 2022 15:07:08 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2C39BB81213
-        for <ceph-devel@vger.kernel.org>; Mon, 28 Mar 2022 20:33:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A71CC340ED;
-        Mon, 28 Mar 2022 20:33:52 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3D6D06153C;
+        Mon, 28 Mar 2022 21:41:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2256EC340ED;
+        Mon, 28 Mar 2022 21:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648499632;
-        bh=FENCWwYjL1xc76hPvsKB9kB9RshvINQJSU8gQpus9zg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=dInTWAXHtQRxJgrs4NMqs4dTxO1JDrsSIQlVGDdwRzrJloeOs62Jc9tFKNmHcuFqH
-         OKF0Zj1A6JSAjY8LR4VW7dPrWBM6Y1m6f0XyV7LdLn5y+tNcSeU79R8s4KvxQyBKGS
-         AzF+MjuoFE1Jnd5a0etN4hUbivLXF1OVrX+Rg1iQjPDZDeXdvJgIAQpvMR01RYCYCx
-         9QzqphUc/pktDc3mamEJGl+GcUvGhfpICzz3K/gSb9RPFtuXk8urbk0ezoVDW7dWq2
-         TUEmb6oltKp5Ha22aJ4yvaeNNtfsgCUEHFh6SRlENeT7E7x88baLI4AA6e5NNk4kCF
-         1va/iCfumiTng==
+        s=k20201202; t=1648503699;
+        bh=9eqkVxFD2Kacygi3vpts5s7jHVaoYVLrpTEOsLr633g=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=iwtsvsquYmktNJv8VP8HpQuVK5fGfsDyhzEUyqXltnwCxdS6QM0kQiBdTRAm8tOJC
+         C4k5B5iKOj3EoQB0TR2BPr6bdUkZl3RVdD8ihegsc2rJWvSf6ucKDwmv2bW2gUyjq4
+         hmz+ZPOU3HEZw0t1gK+b/ThDLnxqPfMFT6u4629/CHQ4ulGr2jBo0TUTmd1Jbe1hTZ
+         Y6ZIu/dQA7rtRt1BHoTo5+D/CkWYdcIPczyshJtLIN7NgatzcdsoSsH4MHPf+WK2xe
+         FyTNJHbP+JNNc2oHQtdIsYMxPbonBF8Nv0RRh7RpIr39TuCc/qqnvoJs6RkXVaNNMj
+         HCfX3KZCIOsyw==
+Message-ID: <9b799a29ec8bc87386bc370a03a11b33ac948209.camel@kernel.org>
+Subject: Re: [PATCH v2] ceph: remove unused CEPH_MDS_LEASE_RELEASE related
+ code
 From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, xiubli@redhat.com, lhenriques@suse.de
-Subject: [PATCH] ceph: set DCACHE_NOKEY_NAME in atomic open
-Date:   Mon, 28 Mar 2022 16:33:51 -0400
-Message-Id: <20220328203351.79603-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.35.1
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 28 Mar 2022 17:41:37 -0400
+In-Reply-To: <20220328131026.923174-1-xiubli@redhat.com>
+References: <20220328131026.923174-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -50,43 +55,34 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Atomic open can act as a lookup if handed a dentry that is negative on
-the MDS. Ensure that we set DCACHE_NOKEY_NAME on the dentry in
-atomic_open, if we don't have the key for the parent. Otherwise, we can
-end up validating the dentry inappropriately if someone later adds a
-key.
+On Mon, 2022-03-28 at 21:10 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> ceph_mdsc_lease_release was removed by commit 8aa152c77890 (ceph:
+> remove ceph_mdsc_lease_release). ceph_mdsc_lease_send_msg will never
+> call this function with CEPH_MDS_LEASE_RELEASE.
+> 
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/mds_client.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 459c6f23915f..a89ee866ebbb 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -4424,12 +4424,6 @@ void ceph_mdsc_lease_send_msg(struct ceph_mds_session *session,
+>  	memcpy((void *)(lease + 1) + 4,
+>  	       dentry->d_name.name, dentry->d_name.len);
+>  	spin_unlock(&dentry->d_lock);
+> -	/*
+> -	 * if this is a preemptive lease RELEASE, no need to
+> -	 * flush request stream, since the actual request will
+> -	 * soon follow.
+> -	 */
+> -	msg->more_to_follow = (action == CEPH_MDS_LEASE_RELEASE);
+>  
+>  	ceph_con_send(&session->s_con, msg);
+>  }
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/file.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-Another patch for the fscrypt series.
-
-A much less heavy-handed fix for generic/580 and generic/593. I'll
-probably fold this into an earlier patch in the series since it appears
-to be a straightforward bug.
-
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index eb04dc8f1f93..5072570c2203 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -765,8 +765,14 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 	req->r_args.open.mask = cpu_to_le32(mask);
- 	req->r_parent = dir;
- 	ihold(dir);
--	if (IS_ENCRYPTED(dir))
-+	if (IS_ENCRYPTED(dir)) {
- 		set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
-+		if (!fscrypt_has_encryption_key(dir)) {
-+			spin_lock(&dentry->d_lock);
-+			dentry->d_flags |= DCACHE_NOKEY_NAME;
-+			spin_unlock(&dentry->d_lock);
-+		}
-+	}
- 
- 	if (flags & O_CREAT) {
- 		struct ceph_file_layout lo;
--- 
-2.35.1
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
