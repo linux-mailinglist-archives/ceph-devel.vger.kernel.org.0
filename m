@@ -2,76 +2,89 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E4454E8871
-	for <lists+ceph-devel@lfdr.de>; Sun, 27 Mar 2022 17:27:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD85F4E8C13
+	for <lists+ceph-devel@lfdr.de>; Mon, 28 Mar 2022 04:25:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235860AbiC0P3E (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 27 Mar 2022 11:29:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36240 "EHLO
+        id S237560AbiC1C1d (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 27 Mar 2022 22:27:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233863AbiC0P3D (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 27 Mar 2022 11:29:03 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 459A813FB0
-        for <ceph-devel@vger.kernel.org>; Sun, 27 Mar 2022 08:27:25 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id u16so16964805wru.4
-        for <ceph-devel@vger.kernel.org>; Sun, 27 Mar 2022 08:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:mime-version:content-transfer-encoding
-         :content-description:subject:to:from:date:reply-to;
-        bh=aCO23HKSt4P6Qx5ktvRU5/PddHSIjWschsN7cgdoQwg=;
-        b=XgII2EuLnnVHzU2zvHbpbrDmkSwxAPD5xJxlgRMlZg7juwh4psPu6j88ky3harSHZz
-         IucDmYLDcXoXj3PzBIBqTgWQ0y9uTx2UAgBQrsNkWqWUQDmaGJkuecM/BpfiTuZYhF0e
-         4O4Efo/ThlSOwPJ/oJSgOPqA18WCWfsADXDj3J9QsVaggsAlYlp8KizQDTqUgDGFUKsn
-         oImkfFpTT5unrAle/RqXQyXT3Hjp97h0haPOtCSiGpSjs3BTiFAMwvynyg60y2h8ixOK
-         F/sr0iYiMkxeXdOUlhXYDYKZ7VqVYqN2FGeaYUKJX9qzMPVxq8vxZx8t4Yyo91gND97Q
-         VhWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:content-description:subject:to:from:date
-         :reply-to;
-        bh=aCO23HKSt4P6Qx5ktvRU5/PddHSIjWschsN7cgdoQwg=;
-        b=jcSuc4nLsV/1bFhluTgnIT91dHBokOAJo2fxpeo/64L2uoG5LmMCLFBpOgaSp/4Nbz
-         Tp69KZoO2xTk69cTxkDtQqMMkbvuTkvAn+2GtkCeqp6jpzeuL+N64YYMaYjWOnlqnmTe
-         MxLjc3oG3bx/7KXPKbYSA2oQhMJozYDS5Au8CkhZGKOmSdnMzYbWmKSxARyIRFIrC5Z4
-         OyeTUycWk3tqHANw5PLGiwMyGq+UtPOAvQfALG0FSa5EF1iD05yQvY55+ohhvc3PK8lE
-         7l9p7N4Ro+/cQnCC+/ivnUjpxbB4Nq1f60LjusUFDCl8OC+EWzAhyzmMRRkOCJyi3mK7
-         n9gw==
-X-Gm-Message-State: AOAM531Fn+88+YdyypRtFb2YgUGM62H+xI5DheTPQB8HmFOUpO7aqr13
-        7hdQmmkjTul5VtXo2vBmEo8=
-X-Google-Smtp-Source: ABdhPJxWKsUMkJ1kdUogrVYqPST3oOVJhrHXva4lsNhiHQsvzUDBJKSrp9XN0qOK2VRizdw58LIGtQ==
-X-Received: by 2002:adf:8bdd:0:b0:205:b18d:366d with SMTP id w29-20020adf8bdd000000b00205b18d366dmr7287376wra.622.1648394843739;
-        Sun, 27 Mar 2022 08:27:23 -0700 (PDT)
-Received: from [192.168.0.102] ([105.112.32.237])
-        by smtp.gmail.com with ESMTPSA id u11-20020a5d6acb000000b002058148822bsm14160610wrw.63.2022.03.27.08.27.18
-        (version=TLS1 cipher=AES128-SHA bits=128/128);
-        Sun, 27 Mar 2022 08:27:23 -0700 (PDT)
-Message-ID: <6240825b.1c69fb81.71602.51fd@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        with ESMTP id S234955AbiC1C1c (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 27 Mar 2022 22:27:32 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1297B32EC8
+        for <ceph-devel@vger.kernel.org>; Sun, 27 Mar 2022 19:25:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1648434352;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=xsHhfUs66bbbXza3E8A4RMVlljtRM9C2VkSN3/JNqDo=;
+        b=DfIBEDdSW334X2D7mYirbWHMTp/YEGbTNlVI0GxCW/BDxiBdmnS+Dwwf5urxScWYcfWzlY
+        u4m8tYZtYfAsjztjAcX2PBhTFHHiPXvY23nG8N5fvOcoqlycAK4j7JLAy6GonhBq9LQHSn
+        oD6eB60LJ9B4B4E3kpFUGKFST07nErY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-54-pec7M6aaOvKoHry213u1uQ-1; Sun, 27 Mar 2022 22:25:48 -0400
+X-MC-Unique: pec7M6aaOvKoHry213u1uQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 17E6E811E78;
+        Mon, 28 Mar 2022 02:25:48 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7BE301400B1C;
+        Mon, 28 Mar 2022 02:25:44 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: remove unused CEPH_MDS_LEASE_RELEASE related code
+Date:   Mon, 28 Mar 2022 10:25:35 +0800
+Message-Id: <20220328022535.847164-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: =?utf-8?q?Ein_finanzieller_Beitrag_von_915=2E000=2C00_=E2=82=AC=2E?=
-To:     ekeleu712@gmail.com
-From:   ekeleu712@gmail.com
-Date:   Sun, 27 Mar 2022 08:27:11 -0700
-Reply-To: samathahoopes734@gmail.com
-X-Spam-Status: No, score=2.1 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: **
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.7
+X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hallo,
+From: Xiubo Li <xiubli@redhat.com>
 
-  Die Li Ka Shing Foundation w=C3=BCnscht Ihnen alles Gute, Ihnen wurde ein=
-e finanzielle Spende in H=C3=B6he von 915.000,00 =E2=82=AC zugesprochen. Ko=
-ntaktieren Sie mich f=C3=BCr weitere Informationen
+The ceph_mdsc_lease_release() has been removed by commit(8aa152c77890)
+and the CEPH_MDS_LEASE_RELEASE will never be used.
+
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/mds_client.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 459c6f23915f..a89ee866ebbb 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -4424,12 +4424,6 @@ void ceph_mdsc_lease_send_msg(struct ceph_mds_session *session,
+ 	memcpy((void *)(lease + 1) + 4,
+ 	       dentry->d_name.name, dentry->d_name.len);
+ 	spin_unlock(&dentry->d_lock);
+-	/*
+-	 * if this is a preemptive lease RELEASE, no need to
+-	 * flush request stream, since the actual request will
+-	 * soon follow.
+-	 */
+-	msg->more_to_follow = (action == CEPH_MDS_LEASE_RELEASE);
+ 
+ 	ceph_con_send(&session->s_con, msg);
+ }
+-- 
+2.27.0
+
