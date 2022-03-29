@@ -2,64 +2,65 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 23FF64EAA5C
-	for <lists+ceph-devel@lfdr.de>; Tue, 29 Mar 2022 11:19:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51D894EAAC3
+	for <lists+ceph-devel@lfdr.de>; Tue, 29 Mar 2022 11:53:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234603AbiC2JUr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 29 Mar 2022 05:20:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60736 "EHLO
+        id S234850AbiC2JzM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 29 Mar 2022 05:55:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234610AbiC2JUp (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 29 Mar 2022 05:20:45 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCF7E1B7AF
-        for <ceph-devel@vger.kernel.org>; Tue, 29 Mar 2022 02:19:01 -0700 (PDT)
+        with ESMTP id S231397AbiC2JzJ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 29 Mar 2022 05:55:09 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C1A212097
+        for <ceph-devel@vger.kernel.org>; Tue, 29 Mar 2022 02:53:26 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 5252C1FD32;
-        Tue, 29 Mar 2022 09:19:00 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 13E1321115;
+        Tue, 29 Mar 2022 09:53:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1648545540; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1648547605; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=wZgomvzikp+ZoGfc/44rJYFM17HbtMzc5apHurslBik=;
-        b=1CFjRoIykW2C3/odFdZ2d/nwgNhi1sLIAy6ro375q2tXG5T6x2edyX5Gw0Fz0B5+zZxffy
-        AWLFHOgYTNL4O8/2JWUba/+Mu2sTtfYw0b0zQhCQDG7kWT/X1oPvLXPgTtA52mwcC/xJ70
-        8h03xMry6mfrzIsf/q7qX+5JE6w4dEk=
+        bh=7kYpNKi8jXXMTPr//ADphAAsvbmHK7h5JUfszSnvFAQ=;
+        b=yX/eKy+grv+NywC/LEvVDkFThTkMZK1CwfN6k+ioj7SIVkyXwwlLkkHOofVRGV4jkB0mkO
+        50uKCU9eGG25SU+rrhd5oVankrj17ky+CC6qCJkZJ6Up0QfrXy1tq9ligZn7YF41J+JIRz
+        HuGQltWpMScu+uoSBmTTnH6rS7ufJ5Q=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1648545540;
+        s=susede2_ed25519; t=1648547605;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=wZgomvzikp+ZoGfc/44rJYFM17HbtMzc5apHurslBik=;
-        b=3PI9XyMF8QSmQwpVUHxRXiHsWCzz65rM7LOyIu/6mAlbsO05AjgtUORV62Aqw19bdvHLqu
-        lWNOz5F1698a5KBA==
+        bh=7kYpNKi8jXXMTPr//ADphAAsvbmHK7h5JUfszSnvFAQ=;
+        b=V/XzJl7Rrguyo1XTggtSeOhJWJDE+3SY+8FQ1BMudqNkt/hNtPJh+gN9BQhO5qYH/cZHua
+        vqJ24qelrq87PABg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 02A7813A7E;
-        Tue, 29 Mar 2022 09:18:59 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A6C6513A7E;
+        Tue, 29 Mar 2022 09:53:24 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id gNxEOQPPQmISRAAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Tue, 29 Mar 2022 09:18:59 +0000
+        id bYZjJRTXQmKIVAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Tue, 29 Mar 2022 09:53:24 +0000
 Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id f9b110f9;
-        Tue, 29 Mar 2022 09:19:16 +0000 (UTC)
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 6e6d671e;
+        Tue, 29 Mar 2022 09:53:46 +0000 (UTC)
 From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com, xiubli@redhat.com
-Subject: Re: [PATCH] ceph: set DCACHE_NOKEY_NAME in atomic open
-References: <20220328203351.79603-1-jlayton@kernel.org>
-Date:   Tue, 29 Mar 2022 10:19:16 +0100
-In-Reply-To: <20220328203351.79603-1-jlayton@kernel.org> (Jeff Layton's
-        message of "Mon, 28 Mar 2022 16:33:51 -0400")
-Message-ID: <87mth9qfor.fsf@brahms.olymp>
+To:     xiubli@redhat.com
+Cc:     jlayton@kernel.org, idryomov@gmail.com, vshankar@redhat.com,
+        gfarnum@redhat.com, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH] ceph: stop forwarding the request when exceeding 256 times
+References: <20220329080608.14667-1-xiubli@redhat.com>
+Date:   Tue, 29 Mar 2022 10:53:46 +0100
+In-Reply-To: <20220329080608.14667-1-xiubli@redhat.com> (xiubli@redhat.com's
+        message of "Tue, 29 Mar 2022 16:06:08 +0800")
+Message-ID: <87fsn1qe39.fsf@brahms.olymp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
@@ -73,58 +74,102 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> writes:
+xiubli@redhat.com writes:
 
-> Atomic open can act as a lookup if handed a dentry that is negative on
-> the MDS. Ensure that we set DCACHE_NOKEY_NAME on the dentry in
-> atomic_open, if we don't have the key for the parent. Otherwise, we can
-> end up validating the dentry inappropriately if someone later adds a
-> key.
+> From: Xiubo Li <xiubli@redhat.com>
 >
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> The type of 'num_fwd' in ceph 'MClientRequestForward' is 'int32_t',
+> while in 'ceph_mds_request_head' the type is '__u8'. So in case
+> the request bounces between MDSes exceeding 256 times, the client
+> will get stuck.
+>
+> In this case it's ususally a bug in MDS and continue bouncing the
+> request makes no sense.
+
+Ouch.  Nice catch.  This patch looks OK to me, just 2 minor comments
+bellow.
+
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  fs/ceph/file.c | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+>  fs/ceph/mds_client.c | 31 ++++++++++++++++++++++++++++---
+>  1 file changed, 28 insertions(+), 3 deletions(-)
 >
-> Another patch for the fscrypt series.
->
-> A much less heavy-handed fix for generic/580 and generic/593. I'll
-> probably fold this into an earlier patch in the series since it appears
-> to be a straightforward bug.
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index a89ee866ebbb..0bb6e7bc499c 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -3293,6 +3293,7 @@ static void handle_forward(struct ceph_mds_client *=
+mdsc,
+>  	int err =3D -EINVAL;
+>  	void *p =3D msg->front.iov_base;
+>  	void *end =3D p + msg->front.iov_len;
+> +	bool aborted =3D false;
+>=20=20
+>  	ceph_decode_need(&p, end, 2*sizeof(u32), bad);
+>  	next_mds =3D ceph_decode_32(&p);
+> @@ -3309,8 +3310,28 @@ static void handle_forward(struct ceph_mds_client =
+*mdsc,
+>  		dout("forward tid %llu aborted, unregistering\n", tid);
+>  		__unregister_request(mdsc, req);
+>  	} else if (fwd_seq <=3D req->r_num_fwd) {
+> -		dout("forward tid %llu to mds%d - old seq %d <=3D %d\n",
+> -		     tid, next_mds, req->r_num_fwd, fwd_seq);
+> +		/*
+> +		 * The type of 'num_fwd' in ceph 'MClientRequestForward'
+> +		 * is 'int32_t', while in 'ceph_mds_request_head' the
+> +		 * type is '__u8'. So in case the request bounces between
+> +		 * MDSes exceeding 256 times, the client will get stuck.
+> +		 *
+> +		 * In this case it's ususally a bug in MDS and continue
+> +		 * bouncing the request makes no sense.
+> +		 */
+> +		if (req->r_num_fwd =3D=3D 256) {
+> +			mutex_lock(&req->r_fill_mutex);
+> +			req->r_err =3D -EIO;
 
-Ah!  This seems to be it, thanks Jeff.  One thing that may be worth doing
-is to turn this pattern into an inline function, as it is repeated in a
-few other places.  But anyway:
+Not sure -EIO is the most appropriate.  Maybe -E2BIG... although not quite
+it either.
 
-Reviewed-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
+> +			set_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags);
+> +			mutex_unlock(&req->r_fill_mutex);
+> +			aborted =3D true;
+> +			dout("forward tid %llu to mds%d - seq overflowed %d <=3D %d\n",
+> +			     tid, next_mds, req->r_num_fwd, fwd_seq);
+> +			goto out;
+
+This 'goto' statement can be dropped, but one before (when the
+lookup_get_request() fails) needs to be adjusted, otherwise
+ceph_mdsc_put_request() may be called with a NULL pointer.
 
 Cheers,
 --=20
 Lu=C3=ADs
 
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index eb04dc8f1f93..5072570c2203 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -765,8 +765,14 @@ int ceph_atomic_open(struct inode *dir, struct dentr=
-y *dentry,
->  	req->r_args.open.mask =3D cpu_to_le32(mask);
->  	req->r_parent =3D dir;
->  	ihold(dir);
-> -	if (IS_ENCRYPTED(dir))
-> +	if (IS_ENCRYPTED(dir)) {
->  		set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
-> +		if (!fscrypt_has_encryption_key(dir)) {
-> +			spin_lock(&dentry->d_lock);
-> +			dentry->d_flags |=3D DCACHE_NOKEY_NAME;
-> +			spin_unlock(&dentry->d_lock);
+> +		} else {
+> +			dout("forward tid %llu to mds%d - old seq %d <=3D %d\n",
+> +			     tid, next_mds, req->r_num_fwd, fwd_seq);
 > +		}
-> +	}
+>  	} else {
+>  		/* resend. forward race not possible; mds would drop */
+>  		dout("forward tid %llu to mds%d (we resend)\n", tid, next_mds);
+> @@ -3322,9 +3343,13 @@ static void handle_forward(struct ceph_mds_client =
+*mdsc,
+>  		put_request_session(req);
+>  		__do_request(mdsc, req);
+>  	}
+> -	ceph_mdsc_put_request(req);
+>  out:
+>  	mutex_unlock(&mdsc->mutex);
+> +
+> +	/* kick calling process */
+> +	if (aborted)
+> +		complete_request(mdsc, req);
+> +	ceph_mdsc_put_request(req);
+>  	return;
 >=20=20
->  	if (flags & O_CREAT) {
->  		struct ceph_file_layout lo;
+>  bad:
 > --=20
 >
-> 2.35.1
+> 2.27.0
 >
 
