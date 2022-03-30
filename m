@@ -2,210 +2,190 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 62DD34EBF17
-	for <lists+ceph-devel@lfdr.de>; Wed, 30 Mar 2022 12:44:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA2534EBF66
+	for <lists+ceph-devel@lfdr.de>; Wed, 30 Mar 2022 12:59:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245542AbiC3KqN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 30 Mar 2022 06:46:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48756 "EHLO
+        id S245651AbiC3LBG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 30 Mar 2022 07:01:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245524AbiC3KqM (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Mar 2022 06:46:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A03981262F;
-        Wed, 30 Mar 2022 03:44:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S245677AbiC3LA5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Mar 2022 07:00:57 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2B9CDF70
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Mar 2022 03:59:11 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4677FB81BC1;
-        Wed, 30 Mar 2022 10:44:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58023C340EC;
-        Wed, 30 Mar 2022 10:44:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648637063;
-        bh=lfSEHL7fg6oV9uL5dH9Dtc5NS3Boz05b8/p+vW+NBow=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tQ14XWNu9WVAiqzDSMbkCKPafII1n9BpIkiOhY+u6GOw9kR1fByH8v8TFkHFoOK94
-         39azIDo8vgzF6HlNuvXy3S4vpAFkxOemu3yKnhsKP8Fitn1Ai6wqRwT9mZbnSEZyoC
-         OejM5XxHv7E54H1/I/nU0wRIiRjnXUDYyRCe2pmHqqSdrU/zk/koMBs4BH7QRyi7Ju
-         zZH7KGuqVTKmeYLl4uW/XNlx6Kto5Z60bCrzLsgKk2+kDmnq1WxSxVodg0QnHUGENK
-         1J8l8QSjSXaG9bjIKVtrVUinrSp3jQWtizcyzFvJ+pYZTsF/tChPvtZ0UFDbrdFrEP
-         dOdfXobKM3dGA==
-Date:   Wed, 30 Mar 2022 12:44:19 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Yang Xu <xuyang2018.jy@fujitsu.com>,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v1 2/3] vfs: strip file's S_ISGID mode on vfs instead of
- on filesystem
-Message-ID: <20220330104419.j7qwcf465hyms2tv@wittgenstein>
-References: <1648461389-2225-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <1648461389-2225-2-git-send-email-xuyang2018.jy@fujitsu.com>
- <4250135d7321841ee6bdf0487c576f311aa583aa.camel@kernel.org>
- <20220329221059.GN1609613@dread.disaster.area>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 8A2321F37B;
+        Wed, 30 Mar 2022 10:59:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1648637950; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=38xLAYWecz3UWc4PH6WQF86uJD9bJ/Wvrz+EgjkYMc4=;
+        b=Mfc8YlmA57mqMZhpkJge9JKHKTHypChBNUp1AssfwUshB+BNXsudTfUW/ZKzqaLdvuUAiK
+        M0DgPb6B3SZUlqJK2aRn06PdtMmldLOM5Qvc8Q2IRzo9w4pjlUqHqZV57+P0HpMVEasOpD
+        fP1djDiTO1tXQDgZB8tShXzMX9NCyzU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1648637950;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=38xLAYWecz3UWc4PH6WQF86uJD9bJ/Wvrz+EgjkYMc4=;
+        b=DJeftvaEKSreenzNPi1WPRCIp/hOyJBWdYckpe+apPAvxarailnRBcKQpgSYmxhXSyBssd
+        +nxt4nkwcq3j1sCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1A67813AF3;
+        Wed, 30 Mar 2022 10:59:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id pUNKA/43RGLVCQAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Wed, 30 Mar 2022 10:59:10 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 249a07b7;
+        Wed, 30 Mar 2022 10:59:31 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     xiubli@redhat.com
+Cc:     jlayton@kernel.org, idryomov@gmail.com, vshankar@redhat.com,
+        gfarnum@redhat.com, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH v3] ceph: stop forwarding the request when exceeding 256
+ times
+References: <20220330012521.170962-1-xiubli@redhat.com>
+Date:   Wed, 30 Mar 2022 11:59:31 +0100
+In-Reply-To: <20220330012521.170962-1-xiubli@redhat.com> (xiubli@redhat.com's
+        message of "Wed, 30 Mar 2022 09:25:21 +0800")
+Message-ID: <874k3fr9ik.fsf@brahms.olymp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220329221059.GN1609613@dread.disaster.area>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Mar 30, 2022 at 09:10:59AM +1100, Dave Chinner wrote:
-> On Tue, Mar 29, 2022 at 07:12:11AM -0400, Jeff Layton wrote:
-> > On Mon, 2022-03-28 at 17:56 +0800, Yang Xu wrote:
-> > > Currently, vfs only passes mode argument to filesystem, then use inode_init_owner()
-> > > to strip S_ISGID. Some filesystem(ie ext4/btrfs) will call inode_init_owner
-> > > firstly, then posxi acl setup, but xfs uses the contrary order. It will affect
-> > > S_ISGID clear especially umask with S_IXGRP.
-> > > 
-> > > Vfs has all the info it needs - it doesn't need the filesystems to do everything
-> > > correctly with the mode and ensuring that they order things like posix acl setup
-> > > functions correctly with inode_init_owner() to strip the SGID bit.
-> > > 
-> > > Just strip the SGID bit at the VFS, and then the filesystems can't get it wrong.
-> > > 
-> > > Also, the inode_sgid_strip() api should be used before IS_POSIXACL() because
-> > > this api may change mode by using umask but S_ISGID clear isn't related to
-> > > SB_POSIXACL flag.
-> > > 
-> > > Suggested-by: Dave Chinner <david@fromorbit.com>
-> > > Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
-> > > ---
-> > >  fs/inode.c | 4 ----
-> > >  fs/namei.c | 7 +++++--
-> > >  2 files changed, 5 insertions(+), 6 deletions(-)
-> > > 
-> > > diff --git a/fs/inode.c b/fs/inode.c
-> > > index 1f964e7f9698..a2dd71c2437e 100644
-> > > --- a/fs/inode.c
-> > > +++ b/fs/inode.c
-> > > @@ -2246,10 +2246,6 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
-> > >  		/* Directories are special, and always inherit S_ISGID */
-> > >  		if (S_ISDIR(mode))
-> > >  			mode |= S_ISGID;
-> > > -		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
-> > > -			 !in_group_p(i_gid_into_mnt(mnt_userns, dir)) &&
-> > > -			 !capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
-> > > -			mode &= ~S_ISGID;
-> > >  	} else
-> > >  		inode_fsgid_set(inode, mnt_userns);
-> > >  	inode->i_mode = mode;
-> > > diff --git a/fs/namei.c b/fs/namei.c
-> > > index 3f1829b3ab5b..e68a99e0ac96 100644
-> > > --- a/fs/namei.c
-> > > +++ b/fs/namei.c
-> > > @@ -3287,6 +3287,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
-> > >  	if (open_flag & O_CREAT) {
-> > >  		if (open_flag & O_EXCL)
-> > >  			open_flag &= ~O_TRUNC;
-> > > +		inode_sgid_strip(mnt_userns, dir->d_inode, &mode);
-> > >  		if (!IS_POSIXACL(dir->d_inode))
-> > >  			mode &= ~current_umask();
-> > >  		if (likely(got_write))
-> > > @@ -3521,6 +3522,8 @@ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
-> > >  	child = d_alloc(dentry, &slash_name);
-> > >  	if (unlikely(!child))
-> > >  		goto out_err;
-> > > +	inode_sgid_strip(mnt_userns, dir, &mode);
-> > > +
-> > >  	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
-> > >  	if (error)
-> > >  		goto out_err;
-> > > @@ -3849,14 +3852,14 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
-> > >  	error = PTR_ERR(dentry);
-> > >  	if (IS_ERR(dentry))
-> > >  		goto out1;
-> > > -
-> > > +	mnt_userns = mnt_user_ns(path.mnt);
-> > > +	inode_sgid_strip(mnt_userns, path.dentry->d_inode, &mode);
-> > >  	if (!IS_POSIXACL(path.dentry->d_inode))
-> > >  		mode &= ~current_umask();
-> > >  	error = security_path_mknod(&path, dentry, mode, dev);
-> > >  	if (error)
-> > >  		goto out2;
-> > >  
-> > > -	mnt_userns = mnt_user_ns(path.mnt);
-> > >  	switch (mode & S_IFMT) {
-> > >  		case 0: case S_IFREG:
-> > >  			error = vfs_create(mnt_userns, path.dentry->d_inode,
-> > 
-> > I haven't gone over this in detail, but have you tested this with NFS at
-> > all?
-> > 
-> > IIRC, NFS has to leave setuid/gid stripping to the server, so I wonder
-> > if this may end up running afoul of that by forcing the client to try
-> > and strip these bits.
-> 
-> All it means is that the mode passed to the NFS server for the
-> create already has the SGID bit stripped from it. It means the
-> client is no longer reliant on the server behaving correctly to
-> close this security hole.
-> 
-> That is, failing to strip the SGID bit appropriately in the local
-> context is a security issue. Hence local machine security requires
-> that the NFS client should try to strip the SGID to defend against
-> buggy/unfixed servers that fail to strip it appropriately and
-> thereby continute to expose the local machine to this SGID security
-> issue.
-> 
-> That's the problem here - the SGID stripping in inode_init_owner()
-> is not documented, wasn't reviewed, doesn't work correctly
-> across all filesystems and leaves nasty security landmines when the VFS
-> create mode and the stripped inode mode differ.
-> 
-> Various filesystems have workarounds, partial fixes or no fixes for
-> these issues and landmines. Hence we have a situation where we are
-> playing whack-a-mole to discover and slap band-aids over all the
-> places that inode_init_owner() based stripping does not work
-> correctly.
-> 
-> In XFS, this meant the problem was not orginally fixed by the
-> silent, unreviewed change to inode_init_owner() in 2018
-> because it didn't call inode_init_owner() at all. So 4 years after
-> the bug was "fixed" and the CVE released, we are still exposed to
-> the bug because *no filesystem people knew about it* and *nobody wrote a
-> regression test* to check that the probelm was fixed and stayed
-> fixed.
-> 
-> And now that XFS does call inode_init_owner(), we've subsequently
-> discovered that XFS still fail when default acls are enabled because
-> we create the ACL from the mode passed from the VFS, not the
-> stripped mode that results from inode_init_owner() being called.
-> 
-> See what I mean about landmines?
-> 
-> The fact is this: regardless of which filesystem is in use, failure
-> to strip the SGID correctly is considered a security failure that
-> needs to be fixed. The current VFS infrastructure requires the
-> filesystem to do everything right and not step on any landmines to
-> strip the SGID bit, when in fact it can easily be done at the VFS
-> and the filesystems then don't even need to be aware that the SGID
-> needs to be (or has been stripped) by the operation the user asked
-> to be done.
-> 
-> We need the architecture to be *secure by design*, not tacked onto
-> the side like it is now.  We need to stop trying to dance around
-> these landmines - it is *not working* and we are blowing our own
-> feet off repeatedly. This hurts a lot (especially in distro land)
-> so we need to take the responsibility for stripping SGID properly
-> away from the filesystems and put it where it belongs: in the VFS.
+xiubli@redhat.com writes:
 
-I agree. When I added tests for set*id stripping to xfstests for the
-sake of getting complete vfs coverage of idmapped mounts in generic/633
-I immediately found bugs. Once I made the testsuite useable by all
-filesystems we started seeing more.
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> The type of 'num_fwd' in ceph 'MClientRequestForward' is 'int32_t',
+> while in 'ceph_mds_request_head' the type is '__u8'. So in case
+> the request bounces between MDSes exceeding 256 times, the client
+> will get stuck.
+>
+> In this case it's ususally a bug in MDS and continue bouncing the
+> request makes no sense.
+>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>
+> V3:
+> - avoid usig the hardcode of 256
+>
+> V2:
+> - s/EIO/EMULTIHOP/
+> - Fixed dereferencing NULL seq bug
+> - Removed the out lable
+>
+>
+>  fs/ceph/mds_client.c | 39 ++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 34 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index a89ee866ebbb..e11d31401f12 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -3293,6 +3293,7 @@ static void handle_forward(struct ceph_mds_client *=
+mdsc,
+>  	int err =3D -EINVAL;
+>  	void *p =3D msg->front.iov_base;
+>  	void *end =3D p + msg->front.iov_len;
+> +	bool aborted =3D false;
+>=20=20
+>  	ceph_decode_need(&p, end, 2*sizeof(u32), bad);
+>  	next_mds =3D ceph_decode_32(&p);
+> @@ -3301,16 +3302,41 @@ static void handle_forward(struct ceph_mds_client=
+ *mdsc,
+>  	mutex_lock(&mdsc->mutex);
+>  	req =3D lookup_get_request(mdsc, tid);
+>  	if (!req) {
+> +		mutex_unlock(&mdsc->mutex);
+>  		dout("forward tid %llu to mds%d - req dne\n", tid, next_mds);
+> -		goto out;  /* dup reply? */
+> +		return;  /* dup reply? */
+>  	}
+>=20=20
+>  	if (test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
+>  		dout("forward tid %llu aborted, unregistering\n", tid);
+>  		__unregister_request(mdsc, req);
+>  	} else if (fwd_seq <=3D req->r_num_fwd) {
+> -		dout("forward tid %llu to mds%d - old seq %d <=3D %d\n",
+> -		     tid, next_mds, req->r_num_fwd, fwd_seq);
+> +		/*
+> +		 * The type of 'num_fwd' in ceph 'MClientRequestForward'
+> +		 * is 'int32_t', while in 'ceph_mds_request_head' the
+> +		 * type is '__u8'. So in case the request bounces between
+> +		 * MDSes exceeding 256 times, the client will get stuck.
+> +		 *
+> +		 * In this case it's ususally a bug in MDS and continue
+> +		 * bouncing the request makes no sense.
+> +		 *
+> +		 * In future this could be fixed in ceph code, so avoid
+> +		 * using the hardcode here.
+> +		 */
+> +		int max =3D sizeof_field(struct ceph_mds_request_head, num_fwd);
+> +		max =3D 1 << (max * BITS_PER_BYTE);
+> +		if (req->r_num_fwd >=3D max) {
+> +			mutex_lock(&req->r_fill_mutex);
+> +			req->r_err =3D -EMULTIHOP;
+> +			set_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags);
+> +			mutex_unlock(&req->r_fill_mutex);
+> +			aborted =3D true;
+> +			pr_warn_ratelimited("forward tid %llu seq overflow\n",
+> +					    tid);
+> +		} else {
+> +			dout("forward tid %llu to mds%d - old seq %d <=3D %d\n",
+> +			     tid, next_mds, req->r_num_fwd, fwd_seq);
+> +		}
+>  	} else {
+>  		/* resend. forward race not possible; mds would drop */
+>  		dout("forward tid %llu to mds%d (we resend)\n", tid, next_mds);
+> @@ -3322,9 +3348,12 @@ static void handle_forward(struct ceph_mds_client =
+*mdsc,
+>  		put_request_session(req);
+>  		__do_request(mdsc, req);
+>  	}
+> -	ceph_mdsc_put_request(req);
+> -out:
+>  	mutex_unlock(&mdsc->mutex);
+> +
+> +	/* kick calling process */
+> +	if (aborted)
+> +		complete_request(mdsc, req);
+> +	ceph_mdsc_put_request(req);
+>  	return;
+>=20=20
+>  bad:
+> --=20
+>
+> 2.27.0
+>
 
-I think we should add and use the new proposed stripping helper in the
-vfs - albeit with a slightly changed api and also use it in
-inode_init_owner(). While it is a delicate change in the worst case we
-end up removing additional privileges that's an acceptable regression
-risk to take.
+Yeah, looks good to me.  Thanks.
+
+Reviewed-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
+
+Cheers,
+--=20
+Lu=C3=ADs
