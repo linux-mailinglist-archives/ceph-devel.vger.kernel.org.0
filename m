@@ -2,119 +2,156 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ADF44EBB25
-	for <lists+ceph-devel@lfdr.de>; Wed, 30 Mar 2022 08:52:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FAE44EBEDD
+	for <lists+ceph-devel@lfdr.de>; Wed, 30 Mar 2022 12:35:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242583AbiC3GyC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 30 Mar 2022 02:54:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41098 "EHLO
+        id S245428AbiC3Khb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 30 Mar 2022 06:37:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241807AbiC3Gx5 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Mar 2022 02:53:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EA6EAB1AB1
-        for <ceph-devel@vger.kernel.org>; Tue, 29 Mar 2022 23:52:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1648623130;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=W8OjN7V6zHGzkSTKhC8h1PCpltbvW5VfKRM+E2vbm7U=;
-        b=P1PiF4MrznNIbyDy6X2jAnYw0FJLq/O1ZliWn4NURl7FB7vaajev9B/e/5kIKnZXwg1tfi
-        fqFuoETmj0qkn+MHlaZVX5xaIaPDosabCjbmPsPxE0RhrGfhEqC4MhucZtOFSmIdvmKtAL
-        gvuwkkBp02bI3JvzwlXa51D6f4E9aao=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-639-TsSQ8qwWPpGMpPGSwzDVBg-1; Wed, 30 Mar 2022 02:52:09 -0400
-X-MC-Unique: TsSQ8qwWPpGMpPGSwzDVBg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S245410AbiC3Kha (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Mar 2022 06:37:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4603B2BB23
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Mar 2022 03:35:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D220191BD84;
-        Wed, 30 Mar 2022 06:52:03 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D93D440D1B9B;
-        Wed, 30 Mar 2022 06:51:57 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org
-Cc:     idryomov@gmail.com, vshankar@redhat.com,
-        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: stop retrying the request when exceeding 256 times
-Date:   Wed, 30 Mar 2022 14:44:44 +0800
-Message-Id: <20220330064444.330384-1-xiubli@redhat.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D3F8761496
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Mar 2022 10:35:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B68FC340EE;
+        Wed, 30 Mar 2022 10:35:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648636544;
+        bh=2ns+ayi4V9FiXoxYTl0WqQKAneRwU/qllwZKvXnuFWo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=EPxmM7+ZqH2LDdoxMX03nFiaiDVwJAhp6O3G1Tgd6IOcwijdoCaLL2/IQSXDnLCrW
+         H9kH1aLxlDKBi6hIeqUqzZOO3NryhgtZ0NqRbqobEKq207aug6m0oOcK81C984we8v
+         zuRnvgZWo+gHbjoZJ2YQbVJehADBVR6f2TG6lWJMSleEeE3p/tqmst2Q/MdBjRY4EE
+         ggkBxpteIZST7eiNhMdfkeZCPljv6X59/nDmfvWjGfC8lCLYnQP7mMFA07MUOOTf7H
+         B1ovI19HAt43+352nHMWtY3kjyXXMffRMJ2ficlbwS3bv/Iix0Vntj9KQE9TleHeFi
+         csKzpIvZDgnug==
+Message-ID: <0d35a7866d5843357b58316e6c781f67be60469f.camel@kernel.org>
+Subject: Re: [PATCH v3] ceph: stop forwarding the request when exceeding 256
+ times
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, vshankar@redhat.com, gfarnum@redhat.com,
+        lhenriques@suse.de, ceph-devel@vger.kernel.org
+Date:   Wed, 30 Mar 2022 06:35:42 -0400
+In-Reply-To: <20220330012521.170962-1-xiubli@redhat.com>
+References: <20220330012521.170962-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Wed, 2022-03-30 at 09:25 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> The type of 'num_fwd' in ceph 'MClientRequestForward' is 'int32_t',
+> while in 'ceph_mds_request_head' the type is '__u8'. So in case
+> the request bounces between MDSes exceeding 256 times, the client
+> will get stuck.
+> 
+> In this case it's ususally a bug in MDS and continue bouncing the
+> request makes no sense.
+> 
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+> 
+> V3:
+> - avoid usig the hardcode of 256
+> 
+> V2:
+> - s/EIO/EMULTIHOP/
+> - Fixed dereferencing NULL seq bug
+> - Removed the out lable
+> 
+> 
+>  fs/ceph/mds_client.c | 39 ++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 34 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index a89ee866ebbb..e11d31401f12 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -3293,6 +3293,7 @@ static void handle_forward(struct ceph_mds_client *mdsc,
+>  	int err = -EINVAL;
+>  	void *p = msg->front.iov_base;
+>  	void *end = p + msg->front.iov_len;
+> +	bool aborted = false;
+>  
+>  	ceph_decode_need(&p, end, 2*sizeof(u32), bad);
+>  	next_mds = ceph_decode_32(&p);
+> @@ -3301,16 +3302,41 @@ static void handle_forward(struct ceph_mds_client *mdsc,
+>  	mutex_lock(&mdsc->mutex);
+>  	req = lookup_get_request(mdsc, tid);
+>  	if (!req) {
+> +		mutex_unlock(&mdsc->mutex);
+>  		dout("forward tid %llu to mds%d - req dne\n", tid, next_mds);
+> -		goto out;  /* dup reply? */
+> +		return;  /* dup reply? */
+>  	}
+>  
+>  	if (test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
+>  		dout("forward tid %llu aborted, unregistering\n", tid);
+>  		__unregister_request(mdsc, req);
+>  	} else if (fwd_seq <= req->r_num_fwd) {
+> -		dout("forward tid %llu to mds%d - old seq %d <= %d\n",
+> -		     tid, next_mds, req->r_num_fwd, fwd_seq);
+> +		/*
+> +		 * The type of 'num_fwd' in ceph 'MClientRequestForward'
+> +		 * is 'int32_t', while in 'ceph_mds_request_head' the
+> +		 * type is '__u8'. So in case the request bounces between
+> +		 * MDSes exceeding 256 times, the client will get stuck.
+> +		 *
+> +		 * In this case it's ususally a bug in MDS and continue
+> +		 * bouncing the request makes no sense.
+> +		 *
+> +		 * In future this could be fixed in ceph code, so avoid
+> +		 * using the hardcode here.
+> +		 */
+> +		int max = sizeof_field(struct ceph_mds_request_head, num_fwd);
+> +		max = 1 << (max * BITS_PER_BYTE);
+> +		if (req->r_num_fwd >= max) {
+> +			mutex_lock(&req->r_fill_mutex);
+> +			req->r_err = -EMULTIHOP;
+> +			set_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags);
+> +			mutex_unlock(&req->r_fill_mutex);
+> +			aborted = true;
+> +			pr_warn_ratelimited("forward tid %llu seq overflow\n",
+> +					    tid);
+> +		} else {
+> +			dout("forward tid %llu to mds%d - old seq %d <= %d\n",
+> +			     tid, next_mds, req->r_num_fwd, fwd_seq);
+> +		}
+>  	} else {
+>  		/* resend. forward race not possible; mds would drop */
+>  		dout("forward tid %llu to mds%d (we resend)\n", tid, next_mds);
+> @@ -3322,9 +3348,12 @@ static void handle_forward(struct ceph_mds_client *mdsc,
+>  		put_request_session(req);
+>  		__do_request(mdsc, req);
+>  	}
+> -	ceph_mdsc_put_request(req);
+> -out:
+>  	mutex_unlock(&mdsc->mutex);
+> +
+> +	/* kick calling process */
+> +	if (aborted)
+> +		complete_request(mdsc, req);
+> +	ceph_mdsc_put_request(req);
+>  	return;
+>  
+>  bad:
 
-The type of 'r_attempts' in kernel 'ceph_mds_request' is 'int',
-while in 'ceph_mds_request_head' the type of 'num_retry' is '__u8'.
-So in case the request retries exceeding 256 times, the MDS will
-receive a incorrect retry seq.
-
-In this case it's ususally a bug in MDS and continue retrying the
-request makes no sense. For now let's limit it to 256. In future
-this could be fixed in ceph code, so avoid using the hardcode here.
-
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/mds_client.c | 25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index e11d31401f12..f476c65fb985 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2679,7 +2679,28 @@ static int __prepare_send_request(struct ceph_mds_session *session,
- 	struct ceph_mds_client *mdsc = session->s_mdsc;
- 	struct ceph_mds_request_head_old *rhead;
- 	struct ceph_msg *msg;
--	int flags = 0;
-+	int flags = 0, max_retry;
-+
-+	/*
-+	 * The type of 'r_attempts' in kernel 'ceph_mds_request'
-+	 * is 'int', while in 'ceph_mds_request_head' the type of
-+	 * 'num_retry' is '__u8'. So in case the request retries
-+	 *  exceeding 256 times, the MDS will receive a incorrect
-+	 *  retry seq.
-+	 *
-+	 * In this case it's ususally a bug in MDS and continue
-+	 * retrying the request makes no sense.
-+	 *
-+	 * In future this could be fixed in ceph code, so avoid
-+	 * using the hardcode here.
-+	 */
-+	max_retry = sizeof_field(struct ceph_mds_request_head, num_retry);
-+	max_retry = 1 << (max_retry * BITS_PER_BYTE);
-+	if (req->r_attempts >= max_retry) {
-+		pr_warn_ratelimited("%s request tid %llu seq overflow\n",
-+				    __func__, req->r_tid);
-+		return -EMULTIHOP;
-+	}
- 
- 	req->r_attempts++;
- 	if (req->r_inode) {
-@@ -2691,7 +2712,7 @@ static int __prepare_send_request(struct ceph_mds_session *session,
- 		else
- 			req->r_sent_on_mseq = -1;
- 	}
--	dout("prepare_send_request %p tid %lld %s (attempt %d)\n", req,
-+	dout("%s %p tid %lld %s (attempt %d)\n", __func__, req,
- 	     req->r_tid, ceph_mds_op_name(req->r_op), req->r_attempts);
- 
- 	if (test_bit(CEPH_MDS_R_GOT_UNSAFE, &req->r_req_flags)) {
--- 
-2.27.0
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
