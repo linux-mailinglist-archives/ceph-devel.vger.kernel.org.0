@@ -2,126 +2,210 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6961F4EBF0A
-	for <lists+ceph-devel@lfdr.de>; Wed, 30 Mar 2022 12:43:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62DD34EBF17
+	for <lists+ceph-devel@lfdr.de>; Wed, 30 Mar 2022 12:44:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245507AbiC3Kos (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 30 Mar 2022 06:44:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43674 "EHLO
+        id S245542AbiC3KqN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 30 Mar 2022 06:46:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245505AbiC3Kor (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Mar 2022 06:44:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 36CA4269367
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Mar 2022 03:43:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1648636981;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2YDt5FkmAHELTyccuNt8deKhuBeooN2AAbjTBZhq7Rg=;
-        b=WTIbgwFlrip3tNcEwXIQBwJsam+7Vko1k5ATSaQKROXagElNHBGtx5eOE1HibeSBL9Ju6j
-        cd450uyf3THhx1tcKE957aZk+84lNsAAQ2Y7mRzNaO8cFEX5JFuDkDLnj6b3vb3RnHWQnu
-        1Od84qHsIKmgSK7iyD9d+6UKs4L2Jlw=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-100--cFOtFA2M1u2LbdA6nq9WQ-1; Wed, 30 Mar 2022 06:43:00 -0400
-X-MC-Unique: -cFOtFA2M1u2LbdA6nq9WQ-1
-Received: by mail-pf1-f198.google.com with SMTP id t66-20020a625f45000000b004fabd8f5cc1so11833224pfb.11
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Mar 2022 03:42:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=2YDt5FkmAHELTyccuNt8deKhuBeooN2AAbjTBZhq7Rg=;
-        b=vov3TxsCHkkhXi1Df+L0IpKmkCo8t6b2Mf2Q1xBXHzijX3vURCmQ3gHq5WjvYuG5UD
-         MjFDg9cEEujgPOnOJpaG49N3qrHj4DVxCO9TLWFzkZ9JmzDEsQjcCOqam4p+6H8pmBO9
-         p/rGf34rfcXMZzmpJkTn7c+9OIcgcAAhbEqy/Sir2mwSn0i4OdAksCbznKfIoe5cM6sK
-         1m4oVi8pUAISOzbge8senbZbwTpQlEnlWNfw7sM6AOGh33nRo7WiaYT3Myz0gBZG88kc
-         Rkw51/JRVroZC6TDyDP8i2cxnotk/1kYCRrdfS4Nabo+odS8A4X0GxtwQaN7Wj7b0oyr
-         HNTg==
-X-Gm-Message-State: AOAM5323jGOxpWWLvC0bTXuy7tjcDTuKKNieUiyqP3aCddKH7ySmJLTk
-        dlQUNIYF3PEZgNdlidKY0Hi18sOWAktOpB8infoTv0LXK0OGiJQZN3RVqwT0zVZAr+JDNtSkxxM
-        Hf9RO1ZNp65mj5bBB3J64Dtz0MTghC9UUvaXtzmpROJNniI+uy7fMlvGf/ZvcjxjjL5p8ZHY=
-X-Received: by 2002:a17:90a:d302:b0:1c9:9204:136a with SMTP id p2-20020a17090ad30200b001c99204136amr4214721pju.136.1648636978587;
-        Wed, 30 Mar 2022 03:42:58 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzFiy+5puOVNowvwBkPt5j5yE6Tz2x9inj5TCOjV7LDdufGuXuMuxUy9KUUWZkb37nZKV4kFg==
-X-Received: by 2002:a17:90a:d302:b0:1c9:9204:136a with SMTP id p2-20020a17090ad30200b001c99204136amr4214685pju.136.1648636978170;
-        Wed, 30 Mar 2022 03:42:58 -0700 (PDT)
-Received: from [10.72.12.110] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id lw4-20020a17090b180400b001c7327d09c3sm5987220pjb.53.2022.03.30.03.42.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Mar 2022 03:42:57 -0700 (PDT)
-Subject: Re: [PATCH] ceph: update the dlease for the hashed dentry when
- removing
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
-References: <20220330054956.271022-1-xiubli@redhat.com>
- <6046490a385d690326efe4c3a3396bfdf2fed4c9.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <45bee165-cdb4-ebb9-3adb-43dd663cc5c5@redhat.com>
-Date:   Wed, 30 Mar 2022 18:42:51 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        with ESMTP id S245524AbiC3KqM (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Mar 2022 06:46:12 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A03981262F;
+        Wed, 30 Mar 2022 03:44:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4677FB81BC1;
+        Wed, 30 Mar 2022 10:44:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58023C340EC;
+        Wed, 30 Mar 2022 10:44:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648637063;
+        bh=lfSEHL7fg6oV9uL5dH9Dtc5NS3Boz05b8/p+vW+NBow=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tQ14XWNu9WVAiqzDSMbkCKPafII1n9BpIkiOhY+u6GOw9kR1fByH8v8TFkHFoOK94
+         39azIDo8vgzF6HlNuvXy3S4vpAFkxOemu3yKnhsKP8Fitn1Ai6wqRwT9mZbnSEZyoC
+         OejM5XxHv7E54H1/I/nU0wRIiRjnXUDYyRCe2pmHqqSdrU/zk/koMBs4BH7QRyi7Ju
+         zZH7KGuqVTKmeYLl4uW/XNlx6Kto5Z60bCrzLsgKk2+kDmnq1WxSxVodg0QnHUGENK
+         1J8l8QSjSXaG9bjIKVtrVUinrSp3jQWtizcyzFvJ+pYZTsF/tChPvtZ0UFDbrdFrEP
+         dOdfXobKM3dGA==
+Date:   Wed, 30 Mar 2022 12:44:19 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Yang Xu <xuyang2018.jy@fujitsu.com>,
+        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v1 2/3] vfs: strip file's S_ISGID mode on vfs instead of
+ on filesystem
+Message-ID: <20220330104419.j7qwcf465hyms2tv@wittgenstein>
+References: <1648461389-2225-1-git-send-email-xuyang2018.jy@fujitsu.com>
+ <1648461389-2225-2-git-send-email-xuyang2018.jy@fujitsu.com>
+ <4250135d7321841ee6bdf0487c576f311aa583aa.camel@kernel.org>
+ <20220329221059.GN1609613@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <6046490a385d690326efe4c3a3396bfdf2fed4c9.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220329221059.GN1609613@dread.disaster.area>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Wed, Mar 30, 2022 at 09:10:59AM +1100, Dave Chinner wrote:
+> On Tue, Mar 29, 2022 at 07:12:11AM -0400, Jeff Layton wrote:
+> > On Mon, 2022-03-28 at 17:56 +0800, Yang Xu wrote:
+> > > Currently, vfs only passes mode argument to filesystem, then use inode_init_owner()
+> > > to strip S_ISGID. Some filesystem(ie ext4/btrfs) will call inode_init_owner
+> > > firstly, then posxi acl setup, but xfs uses the contrary order. It will affect
+> > > S_ISGID clear especially umask with S_IXGRP.
+> > > 
+> > > Vfs has all the info it needs - it doesn't need the filesystems to do everything
+> > > correctly with the mode and ensuring that they order things like posix acl setup
+> > > functions correctly with inode_init_owner() to strip the SGID bit.
+> > > 
+> > > Just strip the SGID bit at the VFS, and then the filesystems can't get it wrong.
+> > > 
+> > > Also, the inode_sgid_strip() api should be used before IS_POSIXACL() because
+> > > this api may change mode by using umask but S_ISGID clear isn't related to
+> > > SB_POSIXACL flag.
+> > > 
+> > > Suggested-by: Dave Chinner <david@fromorbit.com>
+> > > Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
+> > > ---
+> > >  fs/inode.c | 4 ----
+> > >  fs/namei.c | 7 +++++--
+> > >  2 files changed, 5 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/fs/inode.c b/fs/inode.c
+> > > index 1f964e7f9698..a2dd71c2437e 100644
+> > > --- a/fs/inode.c
+> > > +++ b/fs/inode.c
+> > > @@ -2246,10 +2246,6 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
+> > >  		/* Directories are special, and always inherit S_ISGID */
+> > >  		if (S_ISDIR(mode))
+> > >  			mode |= S_ISGID;
+> > > -		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
+> > > -			 !in_group_p(i_gid_into_mnt(mnt_userns, dir)) &&
+> > > -			 !capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
+> > > -			mode &= ~S_ISGID;
+> > >  	} else
+> > >  		inode_fsgid_set(inode, mnt_userns);
+> > >  	inode->i_mode = mode;
+> > > diff --git a/fs/namei.c b/fs/namei.c
+> > > index 3f1829b3ab5b..e68a99e0ac96 100644
+> > > --- a/fs/namei.c
+> > > +++ b/fs/namei.c
+> > > @@ -3287,6 +3287,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+> > >  	if (open_flag & O_CREAT) {
+> > >  		if (open_flag & O_EXCL)
+> > >  			open_flag &= ~O_TRUNC;
+> > > +		inode_sgid_strip(mnt_userns, dir->d_inode, &mode);
+> > >  		if (!IS_POSIXACL(dir->d_inode))
+> > >  			mode &= ~current_umask();
+> > >  		if (likely(got_write))
+> > > @@ -3521,6 +3522,8 @@ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
+> > >  	child = d_alloc(dentry, &slash_name);
+> > >  	if (unlikely(!child))
+> > >  		goto out_err;
+> > > +	inode_sgid_strip(mnt_userns, dir, &mode);
+> > > +
+> > >  	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
+> > >  	if (error)
+> > >  		goto out_err;
+> > > @@ -3849,14 +3852,14 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+> > >  	error = PTR_ERR(dentry);
+> > >  	if (IS_ERR(dentry))
+> > >  		goto out1;
+> > > -
+> > > +	mnt_userns = mnt_user_ns(path.mnt);
+> > > +	inode_sgid_strip(mnt_userns, path.dentry->d_inode, &mode);
+> > >  	if (!IS_POSIXACL(path.dentry->d_inode))
+> > >  		mode &= ~current_umask();
+> > >  	error = security_path_mknod(&path, dentry, mode, dev);
+> > >  	if (error)
+> > >  		goto out2;
+> > >  
+> > > -	mnt_userns = mnt_user_ns(path.mnt);
+> > >  	switch (mode & S_IFMT) {
+> > >  		case 0: case S_IFREG:
+> > >  			error = vfs_create(mnt_userns, path.dentry->d_inode,
+> > 
+> > I haven't gone over this in detail, but have you tested this with NFS at
+> > all?
+> > 
+> > IIRC, NFS has to leave setuid/gid stripping to the server, so I wonder
+> > if this may end up running afoul of that by forcing the client to try
+> > and strip these bits.
+> 
+> All it means is that the mode passed to the NFS server for the
+> create already has the SGID bit stripped from it. It means the
+> client is no longer reliant on the server behaving correctly to
+> close this security hole.
+> 
+> That is, failing to strip the SGID bit appropriately in the local
+> context is a security issue. Hence local machine security requires
+> that the NFS client should try to strip the SGID to defend against
+> buggy/unfixed servers that fail to strip it appropriately and
+> thereby continute to expose the local machine to this SGID security
+> issue.
+> 
+> That's the problem here - the SGID stripping in inode_init_owner()
+> is not documented, wasn't reviewed, doesn't work correctly
+> across all filesystems and leaves nasty security landmines when the VFS
+> create mode and the stripped inode mode differ.
+> 
+> Various filesystems have workarounds, partial fixes or no fixes for
+> these issues and landmines. Hence we have a situation where we are
+> playing whack-a-mole to discover and slap band-aids over all the
+> places that inode_init_owner() based stripping does not work
+> correctly.
+> 
+> In XFS, this meant the problem was not orginally fixed by the
+> silent, unreviewed change to inode_init_owner() in 2018
+> because it didn't call inode_init_owner() at all. So 4 years after
+> the bug was "fixed" and the CVE released, we are still exposed to
+> the bug because *no filesystem people knew about it* and *nobody wrote a
+> regression test* to check that the probelm was fixed and stayed
+> fixed.
+> 
+> And now that XFS does call inode_init_owner(), we've subsequently
+> discovered that XFS still fail when default acls are enabled because
+> we create the ACL from the mode passed from the VFS, not the
+> stripped mode that results from inode_init_owner() being called.
+> 
+> See what I mean about landmines?
+> 
+> The fact is this: regardless of which filesystem is in use, failure
+> to strip the SGID correctly is considered a security failure that
+> needs to be fixed. The current VFS infrastructure requires the
+> filesystem to do everything right and not step on any landmines to
+> strip the SGID bit, when in fact it can easily be done at the VFS
+> and the filesystems then don't even need to be aware that the SGID
+> needs to be (or has been stripped) by the operation the user asked
+> to be done.
+> 
+> We need the architecture to be *secure by design*, not tacked onto
+> the side like it is now.  We need to stop trying to dance around
+> these landmines - it is *not working* and we are blowing our own
+> feet off repeatedly. This hurts a lot (especially in distro land)
+> so we need to take the responsibility for stripping SGID properly
+> away from the filesystems and put it where it belongs: in the VFS.
 
-On 3/30/22 6:39 PM, Jeff Layton wrote:
-> On Wed, 2022-03-30 at 13:49 +0800, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> The MDS will always refresh the dentry lease when removing the files
->> or directories. And if the dentry is still hashed, we can update
->> the dentry lease and no need to do the lookup from the MDS later.
->>
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>   fs/ceph/inode.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
->> index 64b341f5e7bc..8cf55e6e609e 100644
->> --- a/fs/ceph/inode.c
->> +++ b/fs/ceph/inode.c
->> @@ -1467,10 +1467,12 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
->>   			} else if (have_lease) {
->>   				if (d_unhashed(dn))
->>   					d_add(dn, NULL);
->> +			}
->> +
->> +			if (!d_unhashed(dn) && have_lease)
->>   				update_dentry_lease(dir, dn,
->>   						    rinfo->dlease, session,
->>   						    req->r_request_started);
->> -			}
->>   			goto done;
->>   		}
->>   
-> I think this makes sense, since we can have a lease for a negative
-> dentry.
+I agree. When I added tests for set*id stripping to xfstests for the
+sake of getting complete vfs coverage of idmapped mounts in generic/633
+I immediately found bugs. Once I made the testsuite useable by all
+filesystems we started seeing more.
 
-Yeah, from the logs there really has many case will do that.
-
-Thanks Jeff.
-
->
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
->
-
+I think we should add and use the new proposed stripping helper in the
+vfs - albeit with a slightly changed api and also use it in
+inode_init_owner(). While it is a delicate change in the worst case we
+end up removing additional privileges that's an acceptable regression
+risk to take.
