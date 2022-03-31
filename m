@@ -2,45 +2,64 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A449F4EE461
-	for <lists+ceph-devel@lfdr.de>; Fri,  1 Apr 2022 00:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C70C54EE4AE
+	for <lists+ceph-devel@lfdr.de>; Fri,  1 Apr 2022 01:23:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242692AbiCaW6Y (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 31 Mar 2022 18:58:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49718 "EHLO
+        id S243010AbiCaXYl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 31 Mar 2022 19:24:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239309AbiCaW6X (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 31 Mar 2022 18:58:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD7A22325D6;
-        Thu, 31 Mar 2022 15:56:35 -0700 (PDT)
+        with ESMTP id S242937AbiCaXYh (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 31 Mar 2022 19:24:37 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9E5D5C353;
+        Thu, 31 Mar 2022 16:22:49 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5846361660;
-        Thu, 31 Mar 2022 22:56:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B302C340ED;
-        Thu, 31 Mar 2022 22:56:34 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5C2C2B82297;
+        Thu, 31 Mar 2022 23:22:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EDC5BC340ED;
+        Thu, 31 Mar 2022 23:22:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648767394;
-        bh=QThZI7tHhBglWLB+tvKaUGnhtbdylP2EGYTJaJlJio4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=J8JMzh4VJmddMyni9deTyx+5xAOEZMrVJqRn5OpAGfNxCl25S4PU+kOGwaeP5th7I
-         PFHpGI0Jd7D6poVg7TjGwDlJWbDz/QWr3iQMJiDqK2DFiVth8/hDEhDmh9G9cv5L6q
-         NmDfec+Md9goHnugcNR6kJJHVpzSkwRrdQpIB/KRy/ckIRZx6fCAEao72HgwPJA8fT
-         teOfdU0DxJAN6CFkVm2LAgd4aTEQt4hOI6p4K/zwkQ6FR21EHxnKbkhN8YZ1y42PXG
-         eFHJaXQCZKesogajnbqgTVf3BFmXZM6ZjmIl9U4YFIZeGqZvZhwjiGgYOLxiu1rAKH
-         XdO8bCnUj3d6Q==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     viro@zeniv.linux.org.uk
-Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: change test in inode_insert5 for adding to the sb list
-Date:   Thu, 31 Mar 2022 18:56:32 -0400
-Message-Id: <20220331225632.247244-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.35.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        s=k20201202; t=1648768967;
+        bh=cFAMfnRYRwexlQ80k5xK4/bktdJv0fyhc/nvasOcLSo=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=pTcM+bxBZsVhEHBrY6ebu5Cmk1+aCXLsOgWp/mU2iRlmn57LuxoT7dzpXi9j5fAvD
+         CIaUqPpOMCUXBffm2HoFE6HC46X9o2R40nzA4yU6Af5l56QBJUKWRl1RciX8DFAg2Z
+         xlTV0sOIhiHR05VPVfdbgYMf6ugOdwJZOkdk3qiA2P6NG2wcTRpYK+PhBa8XupZ7am
+         MNlnvupN2x8gNOeAF5RuVUoRIoETnY4RuO28YZMkfpQEPP9CGF1hXZRkWOUoRP1Wd1
+         lJr8tCu8ivfq6ga8dP5t2DEJkMILo0M4DDaAFHvhFcwtNHIYtZrHNi9Z23HKk0oHnn
+         bXEQbw+m+CCkg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D7C76E7BB0B;
+        Thu, 31 Mar 2022 23:22:46 +0000 (UTC)
+Subject: Re: [GIT PULL] netfs: Prep for write helpers
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <2639515.1648483225@warthog.procyon.org.uk>
+References: <2639515.1648483225@warthog.procyon.org.uk>
+X-PR-Tracked-List-Id: <linux-cifs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <2639515.1648483225@warthog.procyon.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/netfs-prep-20220318
+X-PR-Tracked-Commit-Id: ab487a4cdfca3d1ef12795a49eafe1144967e617
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f008b1d6e1e06bb61e9402aa8a1cfa681510e375
+Message-Id: <164876896687.28012.3947884678367341659.pr-tracker-bot@kernel.org>
+Date:   Thu, 31 Mar 2022 23:22:46 +0000
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Steve French <sfrench@samba.org>, ceph-devel@vger.kernel.org,
+        dhowells@redhat.com, linux-afs@lists.infradead.org,
+        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -51,78 +70,15 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The inode_insert5 currently looks at I_CREATING to decide whether to
-insert the inode into the sb list. This test is a bit ambiguous though
-as I_CREATING state is not directly related to that list.
+The pull request you sent on Mon, 28 Mar 2022 17:00:25 +0100:
 
-This test is also problematic for some upcoming ceph changes to add
-fscrypt support. We need to be able to allocate an inode using new_inode
-and insert it into the hash later if we end up using it, and doing that
-now means that we double add it and corrupt the list.
+> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/netfs-prep-20220318
 
-What we really want to know in this test is whether the inode is already
-in its superblock list, and then add it if it isn't. Have it test for
-list_empty instead and ensure that we always initialize the list by
-doing it in inode_init_once. It's only ever removed from the list with
-list_del_init, so that should be sufficient.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f008b1d6e1e06bb61e9402aa8a1cfa681510e375
 
-Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/inode.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+Thank you!
 
-This is the alternate approach that Al suggested to me on IRC. I think
-this is likely to be more robust in the long run, and we can avoid
-exporting another symbol.
-
-Al, if you're ok with this, would you mind taking this in via your tree?
-I'd like to see this in sit in linux-next for a bit so we can see if any
-benchmarks get dinged.
-
-diff --git a/fs/inode.c b/fs/inode.c
-index 63324df6fa27..e10cff5102d4 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -422,6 +422,7 @@ void inode_init_once(struct inode *inode)
- 	INIT_LIST_HEAD(&inode->i_io_list);
- 	INIT_LIST_HEAD(&inode->i_wb_list);
- 	INIT_LIST_HEAD(&inode->i_lru);
-+	INIT_LIST_HEAD(&inode->i_sb_list);
- 	__address_space_init_once(&inode->i_data);
- 	i_size_ordered_init(inode);
- }
-@@ -1021,7 +1022,6 @@ struct inode *new_inode_pseudo(struct super_block *sb)
- 		spin_lock(&inode->i_lock);
- 		inode->i_state = 0;
- 		spin_unlock(&inode->i_lock);
--		INIT_LIST_HEAD(&inode->i_sb_list);
- 	}
- 	return inode;
- }
-@@ -1165,7 +1165,6 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
- {
- 	struct hlist_head *head = inode_hashtable + hash(inode->i_sb, hashval);
- 	struct inode *old;
--	bool creating = inode->i_state & I_CREATING;
- 
- again:
- 	spin_lock(&inode_hash_lock);
-@@ -1199,7 +1198,13 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
- 	inode->i_state |= I_NEW;
- 	hlist_add_head_rcu(&inode->i_hash, head);
- 	spin_unlock(&inode->i_lock);
--	if (!creating)
-+
-+	/*
-+	 * Add it to the list if it wasn't already in,
-+	 * e.g. new_inode. We hold I_NEW at this point, so
-+	 * we should be safe to test i_sb_list locklessly.
-+	 */
-+	if (list_empty(&inode->i_sb_list))
- 		inode_sb_list_add(inode);
- unlock:
- 	spin_unlock(&inode_hash_lock);
 -- 
-2.35.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
