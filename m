@@ -2,43 +2,49 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CB40D4EF10E
-	for <lists+ceph-devel@lfdr.de>; Fri,  1 Apr 2022 16:39:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 193894EF37A
+	for <lists+ceph-devel@lfdr.de>; Fri,  1 Apr 2022 17:21:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347787AbiDAOgD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 1 Apr 2022 10:36:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39082 "EHLO
+        id S1351612AbiDAPHq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 1 Apr 2022 11:07:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347672AbiDAOd2 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 1 Apr 2022 10:33:28 -0400
+        with ESMTP id S1350270AbiDAOrW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 1 Apr 2022 10:47:22 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC29825A4B8
-        for <ceph-devel@vger.kernel.org>; Fri,  1 Apr 2022 07:30:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 927FD2A1E9B;
+        Fri,  1 Apr 2022 07:37:30 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2E249B8250D
-        for <ceph-devel@vger.kernel.org>; Fri,  1 Apr 2022 14:30:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78ED6C340EE;
-        Fri,  1 Apr 2022 14:30:29 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F0B39B82511;
+        Fri,  1 Apr 2022 14:37:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2078C340F2;
+        Fri,  1 Apr 2022 14:37:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648823429;
-        bh=bCLPElYR2G3TnjFxy/gUBVyqZWhCgRYui1vSVkt+hZI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=asC3rQl6eIVvCAC0UZAT5SgZYOTwKJi1AWX7TKNrQKU2u9LF0BdPsCz4UDB69nM3b
-         f1lm4TQF66+Q0aVMAPJvHeOZ/69A5fR5joQTknrEclwQzorKyo8yUNS1va5C/jjYw+
-         8kGk99X1Zj/j9XMGg256E6QmNTbm8UttW50rlZLd+t2zqgsy55oPwxZLrFehwryzWd
-         8pBKRMAAkUB+swKZnOT1/evXxpGvNP7duslBkPqHu5sEU4K0eWP20qDlhQs/mxav99
-         iX4k/00FzuvS0tKfheQUTFxnMZ3mpzs/eMOWffeDlhzBruBzVtd9LQL9Wa+xCjuNnN
-         n/ZITSeNbixvw==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, xiubli@redhat.com
-Subject: [PATCH] ceph: rework ceph_alloc_sparse_ext_map
-Date:   Fri,  1 Apr 2022 10:30:28 -0400
-Message-Id: <20220401143028.22039-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.35.1
+        s=k20201202; t=1648823848;
+        bh=mHKZ7ckdU7TkU9H+n/vpGu0Ah9I3UG0+uNUuTBwQZLc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JII1diyuvhjYivXhx7ID9YX4vZGs2JGv+Hnf8Mk6faARb8HOmg43oHK2haf0+URHf
+         UBnxHpsz3/leIXa7Fyiawo73+/klN8VUmSI8gAC1SLCjDXq/VQdGaao8UKYmjON2/Z
+         E9LS16LlNGHZRazgpfK6gnNkLEl1iM5Go+FINVTwHdMAFBIGpUMpBSA7gfOT4FkKuz
+         EJGefpVc4sHL398L6F2RF14NDTz3f/xGMgR/95yes6iuMDwHcXN+5DxgOB1C2GFelG
+         F6Bca2zaHxJ7eBhkel6G9eIPwgDu2CV2LhaqMawDsXneo2PQQ+kzDrvoyeQEK0hx3L
+         SuJe913gr3BvQ==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.16 105/109] ceph: fix inode reference leakage in ceph_get_snapdir()
+Date:   Fri,  1 Apr 2022 10:32:52 -0400
+Message-Id: <20220401143256.1950537-105-sashal@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220401143256.1950537-1-sashal@kernel.org>
+References: <20220401143256.1950537-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
@@ -50,140 +56,57 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Make it a wrapper around a version that requires a length and just have
-it default to CEPH_SPARSE_EXT_ARRAY_INITIAL.
+From: Xiubo Li <xiubli@redhat.com>
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+[ Upstream commit 322794d3355c33adcc4feace0045d85a8e4ed813 ]
+
+The ceph_get_inode() will search for or insert a new inode into the
+hash for the given vino, and return a reference to it. If new is
+non-NULL, its reference is consumed.
+
+We should release the reference when in error handing cases.
+
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ceph/addr.c                  |  3 +--
- fs/ceph/file.c                  |  8 ++++----
- fs/ceph/super.h                 |  7 -------
- include/linux/ceph/osd_client.h | 14 +++++++++++++-
- net/ceph/osd_client.c           |  4 ++--
- 5 files changed, 20 insertions(+), 16 deletions(-)
+ fs/ceph/inode.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-Another one for the sparse_read series. Again, I'll probably fold this
-into the appropriate patches and re-push into testing.
-
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index cc4f561bd03c..b85eb4963e57 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -346,8 +346,7 @@ static void ceph_netfs_issue_op(struct netfs_read_subrequest *subreq)
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index e3322fcb2e8d..6d87991cf67e 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -87,13 +87,13 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+ 	if (!S_ISDIR(parent->i_mode)) {
+ 		pr_warn_once("bad snapdir parent type (mode=0%o)\n",
+ 			     parent->i_mode);
+-		return ERR_PTR(-ENOTDIR);
++		goto err;
  	}
  
- 	if (sparse) {
--		err = ceph_alloc_sparse_ext_map(&req->r_ops[0],
--					CEPH_SPARSE_EXT_ARRAY_INITIAL);
-+		err = ceph_alloc_sparse_ext_map(&req->r_ops[0]);
- 		if (err) {
- 			ceph_osdc_put_request(req);
- 			goto out;
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 5072570c2203..64580a2edc1b 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1009,7 +1009,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+ 	if (!(inode->i_state & I_NEW) && !S_ISDIR(inode->i_mode)) {
+ 		pr_warn_once("bad snapdir inode type (mode=0%o)\n",
+ 			     inode->i_mode);
+-		return ERR_PTR(-ENOTDIR);
++		goto err;
+ 	}
  
- 		op = &req->r_ops[0];
- 		if (sparse) {
--			ret = ceph_alloc_sparse_ext_map(op, CEPH_SPARSE_EXT_ARRAY_INITIAL);
-+			ret = ceph_alloc_sparse_ext_map(op);
- 			if (ret) {
- 				ceph_osdc_put_request(req);
- 				break;
-@@ -1462,7 +1462,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
- 		osd_req_op_extent_osd_data_bvecs(req, 0, bvecs, num_pages, len);
- 		op = &req->r_ops[0];
- 		if (sparse) {
--			ret = ceph_alloc_sparse_ext_map(op, CEPH_SPARSE_EXT_ARRAY_INITIAL);
-+			ret = ceph_alloc_sparse_ext_map(op);
- 			if (ret) {
- 				ceph_osdc_put_request(req);
- 				break;
-@@ -1708,7 +1708,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
- 							 offset_in_page(first_pos),
- 							 false, false);
- 				/* We only expect a single extent here */
--				ret = ceph_alloc_sparse_ext_map(op, 1);
-+				ret = __ceph_alloc_sparse_ext_map(op, 1);
- 				if (ret) {
- 					ceph_osdc_put_request(req);
- 					ceph_release_page_vector(pages, num_pages);
-@@ -1727,7 +1727,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
- 							ci->i_truncate_seq);
- 				}
+ 	inode->i_mode = parent->i_mode;
+@@ -113,6 +113,12 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+ 	}
  
--				ret = ceph_alloc_sparse_ext_map(op, 1);
-+				ret = __ceph_alloc_sparse_ext_map(op, 1);
- 				if (ret) {
- 					ceph_osdc_put_request(req);
- 					ceph_release_page_vector(pages, num_pages);
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index d626d228bacc..e847afb8448f 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -81,13 +81,6 @@
- #define CEPH_CAPS_WANTED_DELAY_MIN_DEFAULT      5  /* cap release delay */
- #define CEPH_CAPS_WANTED_DELAY_MAX_DEFAULT     60  /* cap release delay */
- 
--/*
-- * How big an extent array should we preallocate for a sparse read? This is
-- * just a starting value.  If we get more than this back from the OSD, the
-- * receiver will reallocate.
-- */
--#define CEPH_SPARSE_EXT_ARRAY_INITIAL	16
--
- struct ceph_mount_options {
- 	unsigned int flags;
- 
-diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-index df092b678d58..8c7f34df66d3 100644
---- a/include/linux/ceph/osd_client.h
-+++ b/include/linux/ceph/osd_client.h
-@@ -556,7 +556,19 @@ extern struct ceph_osd_request *ceph_osdc_new_request(struct ceph_osd_client *,
- 				      u32 truncate_seq, u64 truncate_size,
- 				      bool use_mempool);
- 
--int ceph_alloc_sparse_ext_map(struct ceph_osd_req_op *op, int cnt);
-+int __ceph_alloc_sparse_ext_map(struct ceph_osd_req_op *op, int cnt);
-+
-+/*
-+ * How big an extent array should we preallocate for a sparse read? This is
-+ * just a starting value.  If we get more than this back from the OSD, the
-+ * receiver will reallocate.
-+ */
-+#define CEPH_SPARSE_EXT_ARRAY_INITIAL  16
-+
-+static inline int ceph_alloc_sparse_ext_map(struct ceph_osd_req_op *op)
-+{
-+	return __ceph_alloc_sparse_ext_map(op, CEPH_SPARSE_EXT_ARRAY_INITIAL);
-+}
- 
- extern void ceph_osdc_get_request(struct ceph_osd_request *req);
- extern void ceph_osdc_put_request(struct ceph_osd_request *req);
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index 5cb7635bb457..39d38b69a953 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -1165,7 +1165,7 @@ struct ceph_osd_request *ceph_osdc_new_request(struct ceph_osd_client *osdc,
+ 	return inode;
++err:
++	if ((inode->i_state & I_NEW))
++		discard_new_inode(inode);
++	else
++		iput(inode);
++	return ERR_PTR(-ENOTDIR);
  }
- EXPORT_SYMBOL(ceph_osdc_new_request);
  
--int ceph_alloc_sparse_ext_map(struct ceph_osd_req_op *op, int cnt)
-+int __ceph_alloc_sparse_ext_map(struct ceph_osd_req_op *op, int cnt)
- {
- 	op->extent.sparse_ext_cnt = cnt;
- 	op->extent.sparse_ext = kmalloc_array(cnt,
-@@ -1175,7 +1175,7 @@ int ceph_alloc_sparse_ext_map(struct ceph_osd_req_op *op, int cnt)
- 		return -ENOMEM;
- 	return 0;
- }
--EXPORT_SYMBOL(ceph_alloc_sparse_ext_map);
-+EXPORT_SYMBOL(__ceph_alloc_sparse_ext_map);
- 
- /*
-  * We keep osd requests in an rbtree, sorted by ->r_tid.
+ const struct inode_operations ceph_file_iops = {
 -- 
-2.35.1
+2.34.1
 
