@@ -2,46 +2,46 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FA084EF421
-	for <lists+ceph-devel@lfdr.de>; Fri,  1 Apr 2022 17:29:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23E874EF4D5
+	for <lists+ceph-devel@lfdr.de>; Fri,  1 Apr 2022 17:40:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350434AbiDAPHn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 1 Apr 2022 11:07:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57460 "EHLO
+        id S1351405AbiDAPHk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 1 Apr 2022 11:07:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352588AbiDAOvA (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 1 Apr 2022 10:51:00 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A26652B4481;
-        Fri,  1 Apr 2022 07:42:06 -0700 (PDT)
+        with ESMTP id S1349490AbiDAO5n (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 1 Apr 2022 10:57:43 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19AD915405E;
+        Fri,  1 Apr 2022 07:44:41 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 92DDEB824FD;
-        Fri,  1 Apr 2022 14:41:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93063C2BBE4;
-        Fri,  1 Apr 2022 14:41:53 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 84F29CE2589;
+        Fri,  1 Apr 2022 14:44:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36AEAC2BBE4;
+        Fri,  1 Apr 2022 14:44:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648824114;
-        bh=WK7tB+5PUmSKJ5UKAfBqMVxWt6Hj85EBkF01L8UeFSU=;
+        s=k20201202; t=1648824277;
+        bh=2SIjq9Xu9eYXN3ivwUc1NyjMjJKaqe9VVdl9oudmKek=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h8Cv9XFfjUdF95kumtAYFJeJAKMNCmHZSwHnF8Wc7kQuP2aSpNINs0ihNmVfjaHky
-         uHk1N59NQQ4TKqH+s34XebLTKUttya0G2hhPgMXfzvXHjCvnQCeky8dYLkwcZzdycu
-         EGiPTNTkLPPf9nV5H8pvYQBk2QGaxMLER42zhA81j7s/LumWvfS4AE98p3lv4M7nio
-         atUG79ssW9KPnssTMSGLkO/fwTmjBagk9M7n0B92lB3S4P3PiHE+tP6ybOkcu3GH9z
-         ZLbJWcF6GTBqXDpeRlaCnox5SE5g9NLHUF9mQxNrq/w3YbwQ018esACMFl26+rKNG3
-         JMsQKHUod8AVw==
+        b=d8/E7WdUCVmgfOSUDF1DhY1iCcPYvYdYjouuHdhID/M08SPOUgqkmHrHZ+JoHl4nR
+         IfEzezzHT6JizBDl3w3pHxFtcd5hIEIEdz+4dxoUhoIF3jY+h6QKhG0uaFtsnfh9RO
+         9Pg33Fpk/CJ37VOTKMI80/Y5oghHO7nxjdI8dhrEuEJa4nnGpA7t9aSf/NlGY7fbR/
+         KFi8uVNAZ5m4wOIR160gZc4gQGClBW9gN4SiRvYG8k/BjGZAGjNVYcl6d5xRpMlOjp
+         pQiWnEi6k4l9KQPEkBQNJKrwu9miZRW8ZeNhYhN3Ps5G0SFwhivRfPtsX1XsZFRfDO
+         f3xwR8tGiS0PQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 95/98] ceph: fix memory leak in ceph_readdir when note_last_dentry returns error
-Date:   Fri,  1 Apr 2022 10:37:39 -0400
-Message-Id: <20220401143742.1952163-95-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 63/65] ceph: fix memory leak in ceph_readdir when note_last_dentry returns error
+Date:   Fri,  1 Apr 2022 10:42:04 -0400
+Message-Id: <20220401144206.1953700-63-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220401143742.1952163-1-sashal@kernel.org>
-References: <20220401143742.1952163-1-sashal@kernel.org>
+In-Reply-To: <20220401144206.1953700-1-sashal@kernel.org>
+References: <20220401144206.1953700-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -72,7 +72,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 133dbd9338e7..d91fa53e12b3 100644
+index f63c1a090139..1fddb9cd3e88 100644
 --- a/fs/ceph/dir.c
 +++ b/fs/ceph/dir.c
 @@ -478,8 +478,11 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
