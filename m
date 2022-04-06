@@ -2,126 +2,137 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 37C724F588A
-	for <lists+ceph-devel@lfdr.de>; Wed,  6 Apr 2022 11:15:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 884D64F5AE0
+	for <lists+ceph-devel@lfdr.de>; Wed,  6 Apr 2022 12:40:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1452284AbiDFJJk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 6 Apr 2022 05:09:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53082 "EHLO
+        id S230164AbiDFKBg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 6 Apr 2022 06:01:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1451870AbiDFJEr (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 6 Apr 2022 05:04:47 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27510214057;
-        Tue,  5 Apr 2022 23:07:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=eypoqjBCbHteIGJMjEE77faduCfiNIsAQ0ydQeu7OQ0=; b=VptJyLJo1YdsSUby4Fd8E+r4Wf
-        u75rPubQZZ/yn7kcXtNA66cq//o6wORmNO306ozoa8JQt9/98VP+qYdEokdi0gKerj4PE3OuPTu8Q
-        h26M8bnuUyy+YQCYjo1RqpA3/aCzFHGcLsWag2ZHixgBhRcZoEIlcW3opNjmON+bZ+OgC/YI0u6sz
-        aGLKxbaAYtZUWCf6s02YkSBuNI+7SEUA0M0G1MZlz1sCKQq4Roo8U5n9rz4bFVVcw6Xtsem6nRg0D
-        kLp1HHY2R8qfLsl/g0pBVddgXjUpubdbXmsxIgH4DU7KvKflDKEXJplNCCWhXhcgX+rKhGC3+ptTE
-        sV6rOXrg==;
-Received: from 213-225-3-188.nat.highway.a1.net ([213.225.3.188] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nbyow-003w6T-7D; Wed, 06 Apr 2022 06:07:11 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
-        nbd@other.debian.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@oss.oracle.com, linux-mm@kvack.org
-Subject: [PATCH 27/27] direct-io: remove random prefetches
-Date:   Wed,  6 Apr 2022 08:05:16 +0200
-Message-Id: <20220406060516.409838-28-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220406060516.409838-1-hch@lst.de>
-References: <20220406060516.409838-1-hch@lst.de>
+        with ESMTP id S243452AbiDFKAY (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 6 Apr 2022 06:00:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 199741A9CB5
+        for <ceph-devel@vger.kernel.org>; Tue,  5 Apr 2022 23:28:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1649226529;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=l/O6WJnzHeES5MzV1iHizq7+45V776U6yPTcrafzRys=;
+        b=F3MBjAZxdmG7U0BXiXbyjSLxdakTuLOO8ABuOd5kNDIdCC6GQkvxfyfmuF2nfA+7u9D0KO
+        SqEsgXDzGitHRlNZVjfmq/dPX7qgYeHcrLDPPz9FLeRkw1YaOGyeXnGsTzJXBWBHLSVhqH
+        k18newDT0wFNLzheKFK/DhFtsz+L8GA=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-554-F1jcfXAUPxeqtH_v1cHP9w-1; Wed, 06 Apr 2022 02:28:47 -0400
+X-MC-Unique: F1jcfXAUPxeqtH_v1cHP9w-1
+Received: by mail-pl1-f199.google.com with SMTP id l9-20020a170902f68900b0015692da3c77so668221plg.19
+        for <ceph-devel@vger.kernel.org>; Tue, 05 Apr 2022 23:28:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=l/O6WJnzHeES5MzV1iHizq7+45V776U6yPTcrafzRys=;
+        b=nUbSe73vcJEkgA+O5snt9yaj7CFBgqGfXuWzBga1ZDBGpRDt9O7WJ1PBSC0KOIrr2j
+         Lt2ZxNfRs2JpjiHHVs6MjXps6F+LUb5Ks2bYUYYKyUWDlOc4qzdX9uvXEUd9A99Xnzk0
+         ZpkZsRr0fAFRWVamveLwrwI6PkTsdoBThOa/w83iwL4qDW24EMhksRJnY5j6xD9U4feG
+         o3lh/iHKLW7NaD5DJUCFxs34W1zlsxkRL5IxZUmNwqTBqv0jUopN4IwIVA+2tGPwAcYa
+         WeHY6gkz47XcIwO2i3QLmFpbiuCq0dHzhA6XtEH3bMwsxz+kMRLG4X031DmmltLSv8AX
+         q4aw==
+X-Gm-Message-State: AOAM530TtMkZCo6DjroWDUQCEsPMlFWpJrgB0nKLeihpN/YlzL9BGHDo
+        JyxoMF5hHhYJifmtdfD/wJZHwvV5BWd/vhvCJReS+hNRzefh8CBkWmqq2kEZ2fXQ1710HXUOTrZ
+        YDZs4u7Dbv442Qz3LvIdgdw==
+X-Received: by 2002:a17:903:1210:b0:151:fa59:95ef with SMTP id l16-20020a170903121000b00151fa5995efmr7366382plh.57.1649226526715;
+        Tue, 05 Apr 2022 23:28:46 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxZvWs4H8FX933o5QmfCgBqAZoT7G4kIpX1kSIZuQfv64mCK+4K29iDcIHPX48Uz7K6jAic+g==
+X-Received: by 2002:a17:903:1210:b0:151:fa59:95ef with SMTP id l16-20020a170903121000b00151fa5995efmr7366376plh.57.1649226526509;
+        Tue, 05 Apr 2022 23:28:46 -0700 (PDT)
+Received: from [10.72.13.31] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id f15-20020a056a001acf00b004fb2ad05521sm17845124pfv.215.2022.04.05.23.28.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 05 Apr 2022 23:28:45 -0700 (PDT)
+Subject: Re: [PATCH v2] ceph: invalidate pages when doing DIO in encrypted
+ inodes
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220401133243.1075-1-lhenriques@suse.de>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <d6407dd1-b6df-4de4-fe37-71b765b2088a@redhat.com>
+Date:   Wed, 6 Apr 2022 14:28:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
+In-Reply-To: <20220401133243.1075-1-lhenriques@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Language: en-US
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Randomly poking into block device internals for manual prefetches isn't
-exactly a very maintainable thing to do.  And none of the performance
-criticil direct I/O implementations still use this library function
-anyway, so just drop it.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/direct-io.c | 32 ++++----------------------------
- 1 file changed, 4 insertions(+), 28 deletions(-)
+On 4/1/22 9:32 PM, Luís Henriques wrote:
+> When doing DIO on an encrypted node, we need to invalidate the page cache in
+> the range being written to, otherwise the cache will include invalid data.
+>
+> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> ---
+>   fs/ceph/file.c | 11 ++++++++++-
+>   1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> Changes since v1:
+> - Replaced truncate_inode_pages_range() by invalidate_inode_pages2_range
+> - Call fscache_invalidate with FSCACHE_INVAL_DIO_WRITE if we're doing DIO
+>
+> Note: I'm not really sure this last change is required, it doesn't really
+> affect generic/647 result, but seems to be the most correct.
+>
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 5072570c2203..b2743c342305 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -1605,7 +1605,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+>   	if (ret < 0)
+>   		return ret;
+>   
+> -	ceph_fscache_invalidate(inode, false);
+> +	ceph_fscache_invalidate(inode, (iocb->ki_flags & IOCB_DIRECT));
+>   	ret = invalidate_inode_pages2_range(inode->i_mapping,
+>   					    pos >> PAGE_SHIFT,
+>   					    (pos + count - 1) >> PAGE_SHIFT);
 
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index aef06e607b405..840752006f601 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -1115,11 +1115,10 @@ static inline int drop_refcount(struct dio *dio)
-  * individual fields and will generate much worse code. This is important
-  * for the whole file.
-  */
--static inline ssize_t
--do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
--		      struct block_device *bdev, struct iov_iter *iter,
--		      get_block_t get_block, dio_iodone_t end_io,
--		      dio_submit_t submit_io, int flags)
-+ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
-+		struct block_device *bdev, struct iov_iter *iter,
-+		get_block_t get_block, dio_iodone_t end_io,
-+		dio_submit_t submit_io, int flags)
- {
- 	unsigned i_blkbits = READ_ONCE(inode->i_blkbits);
- 	unsigned blkbits = i_blkbits;
-@@ -1334,29 +1333,6 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	kmem_cache_free(dio_cache, dio);
- 	return retval;
- }
--
--ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
--			     struct block_device *bdev, struct iov_iter *iter,
--			     get_block_t get_block,
--			     dio_iodone_t end_io, dio_submit_t submit_io,
--			     int flags)
--{
--	/*
--	 * The block device state is needed in the end to finally
--	 * submit everything.  Since it's likely to be cache cold
--	 * prefetch it here as first thing to hide some of the
--	 * latency.
--	 *
--	 * Attempt to prefetch the pieces we likely need later.
--	 */
--	prefetch(&bdev->bd_disk->part_tbl);
--	prefetch(bdev->bd_disk->queue);
--	prefetch((char *)bdev->bd_disk->queue + SMP_CACHE_BYTES);
--
--	return do_blockdev_direct_IO(iocb, inode, bdev, iter, get_block,
--				     end_io, submit_io, flags);
--}
--
- EXPORT_SYMBOL(__blockdev_direct_IO);
- 
- static __init int dio_init(void)
--- 
-2.30.2
+The above has already invalidated the pages, why doesn't it work ?
+
+-- Xiubo
+
+> @@ -1895,6 +1895,15 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+>   		req->r_inode = inode;
+>   		req->r_mtime = mtime;
+>   
+> +		if (IS_ENCRYPTED(inode) && (iocb->ki_flags & IOCB_DIRECT)) {
+> +			ret = invalidate_inode_pages2_range(
+> +				inode->i_mapping,
+> +				write_pos >> PAGE_SHIFT,
+> +				(write_pos + write_len - 1) >> PAGE_SHIFT);
+> +			if (ret < 0)
+> +				dout("invalidate_inode_pages2_range returned %d\n", ret);
+> +		}
+> +
+>   		/* Set up the assertion */
+>   		if (rmw) {
+>   			/*
+>
 
