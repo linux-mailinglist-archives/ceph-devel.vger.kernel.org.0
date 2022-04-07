@@ -2,44 +2,57 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 600054F7E8C
-	for <lists+ceph-devel@lfdr.de>; Thu,  7 Apr 2022 14:02:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D58C4F8060
+	for <lists+ceph-devel@lfdr.de>; Thu,  7 Apr 2022 15:23:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239477AbiDGMEf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 7 Apr 2022 08:04:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53990 "EHLO
+        id S234372AbiDGNZS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 7 Apr 2022 09:25:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238937AbiDGMEd (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Apr 2022 08:04:33 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C224D7DE10
-        for <ceph-devel@vger.kernel.org>; Thu,  7 Apr 2022 05:02:33 -0700 (PDT)
+        with ESMTP id S232781AbiDGNZO (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Apr 2022 09:25:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6407C6C951;
+        Thu,  7 Apr 2022 06:23:14 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 31A5CCE2763
-        for <ceph-devel@vger.kernel.org>; Thu,  7 Apr 2022 12:02:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2115CC385A8;
-        Thu,  7 Apr 2022 12:02:30 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E3316618A3;
+        Thu,  7 Apr 2022 13:23:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D90BC385A4;
+        Thu,  7 Apr 2022 13:23:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649332950;
-        bh=fQoER+BnVliRbv0vPbyAzdmog57KftKQyE6WVVuuulY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sKbwtugKGOPf54xEjtBQkOHsEi1inRAJdiMFLT2GQwV9NWm+qzmKWzYWbMitoOYu/
-         U4GXNmhNJu4fvkbLN0AZZPgDg0xMY/MCdqIDOCGfrnlDhb/wHUqiboT3AZjqzes1r8
-         2Igqchp7oFxFPXC1gwD9kezJ+vHGikQ0fN0luhCoKPtBTlb6elSWGenevNdJuILvtt
-         NdRufst+z9WcNZihA5o4sIZ6IdQYtgiFR0PL3N6kmTq7S3ZGQbMrj3mI6UTx1nVBFz
-         h0rcKXljyZKCq9YrPYxapl1OrroM9xC2CqhpnYBgq9zTqC6eUCs+iqioMJrXTfc7gB
-         1b6UCJ8i5PbOA==
+        s=k20201202; t=1649337793;
+        bh=oZEldw/hpTF/Ftwr6fmefxDIheKyXM3a2fItpkOC8jY=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=iJ9v82RaC/voBPyims8Nb7r6DuDpW2p9PGKOCn6UeMhTZrMlfkGl3paDEzX43oaza
+         IWgXyEE4bAqVWtZc4OrJamarGBtv0WJSPPB4QjWiFopSWAcLpieeHwGZB4WmH+YwAh
+         Ib6sLF7PMUUyhWA84K9Ju7Gj8yTo9V3/400ndl8vrGSbaSBVpsKe2kJSTJt/D2o5zz
+         dMEWlN5XG3ipYf/w5DNQGi6tqBRf0wG0wHht4931N7ZKq/ouaSDariFymgUE0inVV7
+         rSCvz4OaeVuG3+mFpD3vrNAMFK+lfSwUIByA9X8tWShrhaCPai72FCSTUtsgKvH/aT
+         tkyhf8xywimsA==
+Message-ID: <aaa78c1f1bfa7b8da8d8be0f3dcf2a42c9b838fd.camel@kernel.org>
+Subject: Re: [PATCH v2] ceph: invalidate pages when doing DIO in encrypted
+ inodes
 From:   Jeff Layton <jlayton@kernel.org>
-To:     ceph-devel@vger.kernel.org, dhowells@redhat.com
-Cc:     idryomov@gmail.com, xiubli@redhat.com, linux-cachefs@redhat.com
-Subject: [RFC PATCH 5/5] ceph: switch to netfs_direct_read_iter
-Date:   Thu,  7 Apr 2022 08:02:24 -0400
-Message-Id: <20220407120224.76156-6-jlayton@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220407120224.76156-1-jlayton@kernel.org>
-References: <20220407120224.76156-1-jlayton@kernel.org>
+To:     =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>,
+        Xiubo Li <xiubli@redhat.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 07 Apr 2022 09:23:11 -0400
+In-Reply-To: <87pmlt85w5.fsf@brahms.olymp>
+References: <20220401133243.1075-1-lhenriques@suse.de>
+         <d6407dd1-b6df-4de4-fe37-71b765b2088a@redhat.com>
+         <878rsia391.fsf@brahms.olymp>
+         <6ba91390-83e8-8702-2729-dc432abd3cc5@redhat.com>
+         <87zgky8n0o.fsf@brahms.olymp>
+         <6306fba71325483a1ea22fa73250c8777ea647d7.camel@kernel.org>
+         <321104e6-36db-c143-a7ba-58f9199e6fb7@redhat.com>
+         <f0ed169ed02fe810076e959e9ec5455d9de4b4ff.camel@kernel.org>
+         <7023b537-e7b6-0dd9-42bf-9d601ef69b58@redhat.com>
+         <87pmlt85w5.fsf@brahms.olymp>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -52,105 +65,145 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/addr.c | 41 +++++++++++++++++++++++++++++------------
- fs/ceph/file.c |  3 +--
- 2 files changed, 30 insertions(+), 14 deletions(-)
+On Thu, 2022-04-07 at 12:55 +0100, Luís Henriques wrote:
+> Xiubo Li <xiubli@redhat.com> writes:
+> 
+> > On 4/6/22 9:41 PM, Jeff Layton wrote:
+> > > On Wed, 2022-04-06 at 21:10 +0800, Xiubo Li wrote:
+> > > > On 4/6/22 7:48 PM, Jeff Layton wrote:
+> > > > > On Wed, 2022-04-06 at 12:33 +0100, Luís Henriques wrote:
+> > > > > > Xiubo Li <xiubli@redhat.com> writes:
+> > > > > > 
+> > > > > > > On 4/6/22 6:57 PM, Luís Henriques wrote:
+> > > > > > > > Xiubo Li <xiubli@redhat.com> writes:
+> > > > > > > > 
+> > > > > > > > > On 4/1/22 9:32 PM, Luís Henriques wrote:
+> > > > > > > > > > When doing DIO on an encrypted node, we need to invalidate the page cache in
+> > > > > > > > > > the range being written to, otherwise the cache will include invalid data.
+> > > > > > > > > > 
+> > > > > > > > > > Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> > > > > > > > > > ---
+> > > > > > > > > >      fs/ceph/file.c | 11 ++++++++++-
+> > > > > > > > > >      1 file changed, 10 insertions(+), 1 deletion(-)
+> > > > > > > > > > 
+> > > > > > > > > > Changes since v1:
+> > > > > > > > > > - Replaced truncate_inode_pages_range() by invalidate_inode_pages2_range
+> > > > > > > > > > - Call fscache_invalidate with FSCACHE_INVAL_DIO_WRITE if we're doing DIO
+> > > > > > > > > > 
+> > > > > > > > > > Note: I'm not really sure this last change is required, it doesn't really
+> > > > > > > > > > affect generic/647 result, but seems to be the most correct.
+> > > > > > > > > > 
+> > > > > > > > > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > > > > > > > > > index 5072570c2203..b2743c342305 100644
+> > > > > > > > > > --- a/fs/ceph/file.c
+> > > > > > > > > > +++ b/fs/ceph/file.c
+> > > > > > > > > > @@ -1605,7 +1605,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+> > > > > > > > > >      	if (ret < 0)
+> > > > > > > > > >      		return ret;
+> > > > > > > > > >      -	ceph_fscache_invalidate(inode, false);
+> > > > > > > > > > +	ceph_fscache_invalidate(inode, (iocb->ki_flags & IOCB_DIRECT));
+> > > > > > > > > >      	ret = invalidate_inode_pages2_range(inode->i_mapping,
+> > > > > > > > > >      					    pos >> PAGE_SHIFT,
+> > > > > > > > > >      					    (pos + count - 1) >> PAGE_SHIFT);
+> > > > > > > > > The above has already invalidated the pages, why doesn't it work ?
+> > > > > > > > I suspect the reason is because later on we loop through the number of
+> > > > > > > > pages, call copy_page_from_iter() and then ceph_fscrypt_encrypt_pages().
+> > > > > > > Checked the 'copy_page_from_iter()', it will do the kmap for the pages but will
+> > > > > > > kunmap them again later. And they shouldn't update the i_mapping if I didn't
+> > > > > > > miss something important.
+> > > > > > > 
+> > > > > > > For 'ceph_fscrypt_encrypt_pages()' it will encrypt/dencrypt the context inplace,
+> > > > > > > IMO if it needs to map the page and it should also unmap it just like in
+> > > > > > > 'copy_page_from_iter()'.
+> > > > > > > 
+> > > > > > > I thought it possibly be when we need to do RMW, it may will update the
+> > > > > > > i_mapping when reading contents, but I checked the code didn't find any
+> > > > > > > place is doing this. So I am wondering where tha page caches come from ? If that
+> > > > > > > page caches really from reading the contents, then we should discard it instead
+> > > > > > > of flushing it back ?
+> > > > > > > 
+> > > > > > > BTW, what's the problem without this fixing ? xfstest fails ?
+> > > > > > Yes, generic/647 fails if you run it with test_dummy_encryption.  And I've
+> > > > > > also checked that the RMW code was never executed in this test.
+> > > > > > 
+> > > > > > But yeah I have assumed (perhaps wrongly) that the kmap/kunmap could
+> > > > > > change the inode->i_mapping.
+> > > > > > 
+> > > > > No, kmap/unmap are all about high memory and 32-bit architectures. Those
+> > > > > functions are usually no-ops on 64-bit arches.
+> > > > Yeah, right.
+> > > > 
+> > > > So they do nothing here.
+> > > > 
+> > > > > > In my debugging this seemed to be the case
+> > > > > > for the O_DIRECT path.  That's why I added this extra call here.
+> > > > > > 
+> > > > > I agree with Xiubo that we really shouldn't need to invalidate multiple
+> > > > > times.
+> > > > > 
+> > > > > I guess in this test, we have a DIO write racing with an mmap read
+> > > > > Probably what's happening is either that we can't invalidate the page
+> > > > > because it needs to be cleaned, or the mmap read is racing in just after
+> > > > > the invalidate occurs but before writeback.
+> > > > This sounds a possible case.
+> > > > 
+> > > > 
+> > > > > In any case, it might be interesting to see whether you're getting
+> > > > > -EBUSY back from the new invalidate_inode_pages2 calls with your patch.
+> > > > > 
+> > > > If it's really this case maybe this should be retried some where ?
+> > > > 
+> > > Possibly, or we may need to implement ->launder_folio.
+> > > 
+> > > Either way, we need to understand what's happening first and then we can
+> > > figure out a solution for it.
+> > 
+> > Yeah, make sense.
+> > 
+> 
+> OK, so here's what I got so far:
+> 
+> When we run this test *without* test_dummy_encryption, ceph_direct_read_write()
+> will be called and invalidate_inode_pages2_range() will do pretty much
+> nothing because the mapping will be empty (mapping_empty(inode->i_mapping)
+> will return 1).  If we use encryption, ceph_sync_write() will be called
+> instead and the mapping, obviously, be will be empty as well.
+> 
+> The difference between in encrypted vs non-encrypted (and the reason the
+> test passes without encryption) is that ceph_direct_read_write()
+> (non-encrypted) will call truncate_inode_pages_range() at a stage where
+> the mapping is not empty anymore (iter_get_bvecs_alloc will take care of
+> that).
+> 
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 0726494a0981..bc575bbbf8b7 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -201,7 +201,6 @@ static void finish_netfs_read(struct ceph_osd_request *req)
- 	struct ceph_fs_client *fsc = ceph_inode_to_client(req->r_inode);
- 	struct ceph_osd_data *osd_data = osd_req_op_extent_osd_data(req, 0);
- 	struct netfs_io_subrequest *subreq = req->r_priv;
--	int num_pages;
- 	int err = req->r_result;
- 
- 	ceph_update_read_metrics(&fsc->mdsc->metric, req->r_start_latency,
-@@ -216,13 +215,18 @@ static void finish_netfs_read(struct ceph_osd_request *req)
- 	else if (err == -EBLOCKLISTED)
- 		fsc->blocklisted = true;
- 
--	if (err >= 0 && err < subreq->len)
--		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-+	if (err >= 0) {
-+		if (err < subreq->len)
-+			__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-+		iov_iter_advance(&subreq->iter, err);
-+	}
-+	if (!iov_iter_is_bvec(&subreq->iter))
-+		ceph_put_page_vector(osd_data->pages,
-+				     calc_pages_for(osd_data->alignment,
-+				     osd_data->length),
-+				     false);
- 
- 	netfs_subreq_terminated(subreq, err, true);
--
--	num_pages = calc_pages_for(osd_data->alignment, osd_data->length);
--	ceph_put_page_vector(osd_data->pages, num_pages, false);
- 	iput(req->r_inode);
- }
- 
-@@ -285,6 +289,7 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
- 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
- 	struct ceph_osd_request *req;
- 	struct ceph_vino vino = ceph_vino(inode);
-+	struct iov_iter *iter = &subreq->iter;
- 	struct page **pages;
- 	size_t page_off;
- 	int err = 0;
-@@ -308,16 +313,28 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
- 		__func__, subreq->start, subreq->len, len, rreq->debug_id,
- 		subreq->debug_index, iov_iter_count(&subreq->iter));
- 
--	err = iov_iter_get_pages_alloc(&subreq->iter, &pages, len, &page_off);
--	if (err < 0) {
--		dout("%s: iov_ter_get_pages_alloc returned %d\n", __func__, err);
--		goto out;
-+	if (iov_iter_is_bvec(iter)) {
-+		/*
-+		 * FIXME: remove force cast, ideally by plumbing an IOV_ITER osd_data
-+		 * 	  variant.
-+		 */
-+		osd_req_op_extent_osd_data_bvecs(req, 0, (__force struct bio_vec *)iter->bvec,
-+				iter->nr_segs, len);
-+		goto submit;
- 	}
- 
--	/* FIXME: adjust the len in req downward if necessary */
--	len = err;
-+	err = iov_iter_get_pages_alloc(&subreq->iter, &pages, len, &page_off);
-+	if (err < len) {
-+		if (err < 0) {
-+			dout("%s: iov_ter_get_pages_alloc returned %d\n", __func__, err);
-+			goto out;
-+		}
-+		len = err;
-+		req->r_ops[0].extent.length = err;
-+	}
- 
- 	osd_req_op_extent_osd_data_pages(req, 0, pages, len, 0, false, false);
-+submit:
- 	req->r_callback = finish_netfs_read;
- 	req->r_priv = subreq;
- 	req->r_inode = inode;
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 6c9e837aa1d3..8271459b36dc 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1624,8 +1624,7 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 
- 		if (ci->i_inline_version == CEPH_INLINE_NONE) {
- 			if (!retry_op && (iocb->ki_flags & IOCB_DIRECT)) {
--				ret = ceph_direct_read_write(iocb, to,
--							     NULL, NULL);
-+				ret = netfs_direct_read_iter(iocb, to);
- 				if (ret >= 0 && ret < len)
- 					retry_op = CHECK_EOF;
- 			} else {
+Wait...why does iter_get_bvecs_alloc populate the mapping? The iter in
+this case is almost certainly an iov_iter from userland so none of this
+should have anything to do with the pagecache.
+
+I suspect the faulting in occurs via the mmap reader task, and that the
+truncate_inode_pages_range calls just happen enough to invalidate it.
+
+>  In the encryption path (ceph_sync_write) the mapping will be
+> filled with copy_page_from_iter(), which will fault and do the read.
+> Because we don't have the truncate_inode_pages_range(), the cache will
+> contain invalid data after the write.  And that's why the extra
+> invalidate_inode_pages2_range (or truncate_...) fixes this.
+> 
+
+I think what we may want to do is consider adding these calls into
+ceph_page_mkwrite:
+
+        if (direct_lock)
+                ceph_start_io_direct(inode);
+        else
+                ceph_start_io_write(inode);
+
+...and similar ones (for read) in ceph_filemap_fault, along with "end"
+calls to end the I/Os.
+
+This is how we handle races between buffered read/write and direct I/O,
+and I suspect the mmap codepaths may just need similar treatment.
+
+Thoughts?
 -- 
-2.35.1
-
+Jeff Layton <jlayton@kernel.org>
