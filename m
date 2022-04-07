@@ -2,152 +2,154 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E2714F87EA
-	for <lists+ceph-devel@lfdr.de>; Thu,  7 Apr 2022 21:16:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72DCF4F87ED
+	for <lists+ceph-devel@lfdr.de>; Thu,  7 Apr 2022 21:16:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231190AbiDGTRE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 7 Apr 2022 15:17:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40364 "EHLO
+        id S231415AbiDGTSK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 7 Apr 2022 15:18:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230280AbiDGTQ7 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Apr 2022 15:16:59 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2B63AAE5A
-        for <ceph-devel@vger.kernel.org>; Thu,  7 Apr 2022 12:14:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1649358896;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ScwoVRj/Z3c+akFDyumwZFSc5md9VQ6/hqaGifKY1Us=;
-        b=YscPpaBYE6CIJLaxFZGWv5qmc7HbXD1MD27Xn7LY8lqTAo4j84HsUJKT1BzBKSqlLpEHHL
-        d3fAPNeWKAZaFOV6aFN2wW/5PgttKAFNPkUaq3TCnIBe4hZD9ez1JIcHvP31VevJ6vmh3j
-        5/oPkPI9a7Yp/QBUgJ/tSuXardpaV7Q=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-497-swvC-LS-Pb2-0Qquk6Jx3A-1; Thu, 07 Apr 2022 15:14:55 -0400
-X-MC-Unique: swvC-LS-Pb2-0Qquk6Jx3A-1
-Received: by mail-pf1-f197.google.com with SMTP id d5-20020a62f805000000b0050566b4f4c0so1642685pfh.11
-        for <ceph-devel@vger.kernel.org>; Thu, 07 Apr 2022 12:14:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=ScwoVRj/Z3c+akFDyumwZFSc5md9VQ6/hqaGifKY1Us=;
-        b=nctKmAi4y5wNoK9oInDiPJDgdok6OIQQ1QbSaauv4BLzdxZGT+CatF5/LKuDGy57SJ
-         TVrs4OfYkQvVnA3eK4hWJnLLblWakVbqe5sC4mN5KYoUsLPpRyA3uBje2jXxcRnx3pCz
-         iG0VNQVglN7eGpQQOcbPGHljv/5iZ04yPbx9HjVxLPZVMtSlD79SDTgLJNHsBegBd2X1
-         AwOu7AUs0keNFxM5DoTzgfvtnFom3zReWURSxWlfcC7wZHHt2Z97CdW9X9Di3VjabKzz
-         a/BucEYs1bZaTN3Ks8B6XanAeCeDwYYQ3BtHQvMSQXDMVLhAR7PuYHhXUNr0OAAETNj5
-         0AwQ==
-X-Gm-Message-State: AOAM531ZgsX9yIkqfaSQgU9VM3ZJ0RIWrIUmFiMw5zBWdC9g7Ent6CwV
-        Nm5pPYID39s4BI0yeHjH+TTS1f+WvlhyNjTG1Bd9SccECRIgEfmENzpYU/o6KPGBfQIjTpiBoM/
-        fz6THsONMTgQCogZ50qxglYU0HbSg1bPKz1R+Mv0SL5QXJe3GBj0kFc3XbbkBqjlLjsVnUyw=
-X-Received: by 2002:a62:1d09:0:b0:4fd:8b00:d28 with SMTP id d9-20020a621d09000000b004fd8b000d28mr15815907pfd.81.1649358893781;
-        Thu, 07 Apr 2022 12:14:53 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz4aYwhDQkMPWdcWqpHpGMx+BKiK+ZDiySbrlcC/0hW9kcmF4qf7m24c2PCu8QeB0PLyMN9ZQ==
-X-Received: by 2002:a62:1d09:0:b0:4fd:8b00:d28 with SMTP id d9-20020a621d09000000b004fd8b000d28mr15815850pfd.81.1649358892977;
-        Thu, 07 Apr 2022 12:14:52 -0700 (PDT)
-Received: from [10.72.12.194] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id b16-20020a056a00115000b004f6ff260c9esm23099920pfm.207.2022.04.07.12.14.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Apr 2022 12:14:52 -0700 (PDT)
-Subject: Re: [PATCH 2/2] ceph: fix coherency issue when truncating file size
- for fscrypt
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, vshankar@redhat.com, lhenriques@suse.de,
-        ceph-devel@vger.kernel.org
-References: <20220407144112.8455-1-xiubli@redhat.com>
- <20220407144112.8455-3-xiubli@redhat.com>
- <3315c167cc44f38c4eb9ebe76685418e85c9b9f2.camel@kernel.org>
- <6439751daf27285f77239172a9bb5d5f0f80eede.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <fd37ed30-b066-ce4d-ba99-1a85d593c5d3@redhat.com>
-Date:   Fri, 8 Apr 2022 03:14:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        with ESMTP id S233268AbiDGTSJ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Apr 2022 15:18:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45D7313F5F;
+        Thu,  7 Apr 2022 12:16:06 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 18D2361E24;
+        Thu,  7 Apr 2022 19:16:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5521C385A6;
+        Thu,  7 Apr 2022 19:16:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649358965;
+        bh=f00Btqo5DlYfrezMEow0LHeltiwKLZP1dw5RpNj8PqU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=pmV6UORIfcoZ35qmnWfNUmbsgdEf6q+0/d3cbYHdOrPBecDHPOzFSZ++wVLcdeeg7
+         4feOXerToNzwVYBQcs9s55GVMo5o8bGJQxOV1Oln/zYbOf0bprZpaod8JR8Q+zwtkH
+         pbQ5p3OsnJqVlS5O+t3BO6Mzi1vRSRQMFL+zb98amlDxIbY2zDXfjyXgHavFDxUmgx
+         XngXE3QqZkyYv+iSae8+b/JrJublzOcnRWGFsDILbtmVoF7zj1o7PBgJbPwkV3c0RL
+         5zIZRJIl90va2X5MhCAdU+UoGldEstst38KJkOtqkJevrgM3pvobbmkVfM6LiAFg1v
+         Hws4fdNOKvMfg==
+Message-ID: <66740f5e59d52b600d5033a07b794b78dfaf3c18.camel@kernel.org>
+Subject: Re: [PATCH v4] ceph: invalidate pages when doing direct/sync writes
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>,
+        =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 07 Apr 2022 15:16:03 -0400
+In-Reply-To: <385d353d-56d8-8f2a-b468-2aae048f59ef@redhat.com>
+References: <20220407151521.7968-1-lhenriques@suse.de>
+         <385d353d-56d8-8f2a-b468-2aae048f59ef@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
-In-Reply-To: <6439751daf27285f77239172a9bb5d5f0f80eede.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-5.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Fri, 2022-04-08 at 03:03 +0800, Xiubo Li wrote:
+> On 4/7/22 11:15 PM, Luís Henriques wrote:
+> > When doing a direct/sync write, we need to invalidate the page cache in
+> > the range being written to.  If we don't do this, the cache will include
+> > invalid data as we just did a write that avoided the page cache.
+> > 
+> > Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> > ---
+> >   fs/ceph/file.c | 19 ++++++++++++++-----
+> >   1 file changed, 14 insertions(+), 5 deletions(-)
+> > 
+> > Changes since v3:
+> > - Dropped initial call to invalidate_inode_pages2_range()
+> > - Added extra comment to document invalidation
+> > 
+> > Changes since v2:
+> > - Invalidation needs to be done after a write
+> > 
+> > Changes since v1:
+> > - Replaced truncate_inode_pages_range() by invalidate_inode_pages2_range
+> > - Call fscache_invalidate with FSCACHE_INVAL_DIO_WRITE if we're doing DIO
+> > 
+> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > index 5072570c2203..97f764b2fbdd 100644
+> > --- a/fs/ceph/file.c
+> > +++ b/fs/ceph/file.c
+> > @@ -1606,11 +1606,6 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+> >   		return ret;
+> >   
+> >   	ceph_fscache_invalidate(inode, false);
+> > -	ret = invalidate_inode_pages2_range(inode->i_mapping,
+> > -					    pos >> PAGE_SHIFT,
+> > -					    (pos + count - 1) >> PAGE_SHIFT);
+> > -	if (ret < 0)
+> > -		dout("invalidate_inode_pages2_range returned %d\n", ret);
+> >   
+> >   	while ((len = iov_iter_count(from)) > 0) {
+> >   		size_t left;
+> > @@ -1938,6 +1933,20 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+> >   			break;
+> >   		}
+> >   		ceph_clear_error_write(ci);
+> > +
+> > +		/*
+> > +		 * we need to invalidate the page cache here, otherwise the
+> > +		 * cache will include invalid data in direct/sync writes.
+> > +		 */
+> > +		ret = invalidate_inode_pages2_range(
+> 
+> IMO we'd better use truncate_inode_pages_range() after write. The above 
+> means it's possibly will write the dirty pagecache back, which will 
+> overwrite and corrupt the disk data just wrote.
+> 
 
-On 4/7/22 11:38 PM, Jeff Layton wrote:
-> On Thu, 2022-04-07 at 11:33 -0400, Jeff Layton wrote:
->> On Thu, 2022-04-07 at 22:41 +0800, xiubli@redhat.com wrote:
->>> From: Xiubo Li <xiubli@redhat.com>
->>>
->>> When truncating the file size the MDS will help update the last
->>> encrypted block, and during this we need to make sure the client
->>> won't fill the pagecaches.
->>>
->>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>> ---
->>>   fs/ceph/inode.c | 7 ++++++-
->>>   1 file changed, 6 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
->>> index f4059d73edd5..cc1829ab497d 100644
->>> --- a/fs/ceph/inode.c
->>> +++ b/fs/ceph/inode.c
->>> @@ -2647,9 +2647,12 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
->>>   		req->r_num_caps = 1;
->>>   		req->r_stamp = attr->ia_ctime;
->>>   		if (fill_fscrypt) {
->>> +			filemap_invalidate_lock(inode->i_mapping);
->>>   			err = fill_fscrypt_truncate(inode, req, attr);
->>> -			if (err)
->>> +			if (err) {
->>> +				filemap_invalidate_unlock(inode->i_mapping);
->>>   				goto out;
->>> +			}
->>>   		}
->>>   
->>>   		/*
->>> @@ -2660,6 +2663,8 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
->>>   		 * it.
->>>   		 */
->>>   		err = ceph_mdsc_do_request(mdsc, NULL, req);
->>> +		if (fill_fscrypt)
->>> +			filemap_invalidate_unlock(inode->i_mapping);
->>>   		if (err == -EAGAIN && truncate_retry--) {
->>>   			dout("setattr %p result=%d (%s locally, %d remote), retry it!\n",
->>>   			     inode, err, ceph_cap_string(dirtied), mask);
->> Looks reasonable. Is there any reason we shouldn't do this in the non-
->> encrypted case too? I suppose it doesn't make as much difference in that
->> case.
+I disagree. We call filemap_write_and_wait_range at the start of this,
+so any data that was dirty when we called write() will be written back
+before the sync write.
 
-We only need this in encrypted case, which will do the RMW for the last 
-block.
+If we truncate the range, then we'll potentially lose writes that came
+in after write was issued but before truncate_inode_pages_range. I think
+we'd rather let what we just wrote be clobbered in this situation than
+lose a write altogether.
 
+All of this is somewhat academic though. If you're mixing buffered and
+direct writes like this without some sort of locking, then you're just
+asking for trouble. The aim here is "sane behavior to the best of our
+ability", but we can't expect it to always be sane when people do insane
+things. ;)
 
->> I'll plan to pull this and the other patch into the wip-fscrypt branch.
->> Should I just fold them into your earlier patches?
-Yeah, certainly.
-> OTOH...do we really need this? I'm not sure I understand the race you're
-> trying to prevent. Can you lay it out for me?
+> Though it seems impossible that these pagecaches will be marked dirty, 
+> but this call is misleading ?
+> 
 
-I am thinking during the RMW for the last block, the page fault still 
-could happen because the page fault function doesn't prevent that.
+Not impossible at all. You can open a file O_DIRECT and then mmap the fd
+for PROT_WRITE (or just open the file a second time and do it).
 
-And we should prevent it during the RMW is going on.
+We definitely recommend against mixing buffered and direct I/O, but
+nothing really prevents someone from doing it. If the user is properly
+using file locking, then there's really no reason it shouldn't work.
 
--- Xiubo
+> 
+> > +				inode->i_mapping,
+> > +				pos >> PAGE_SHIFT,
+> > +				(pos + len - 1) >> PAGE_SHIFT);
+> > +		if (ret < 0) {
+> > +			dout("invalidate_inode_pages2_range returned %d\n",
+> > +			     ret);
+> > +			ret = 0;
+> > +		}
+> >   		pos += len;
+> >   		written += len;
+> >   		dout("sync_write written %d\n", written);
+> > 
+> 
 
->
-> Thanks,
-
+-- 
+Jeff Layton <jlayton@kernel.org>
