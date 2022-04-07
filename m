@@ -2,66 +2,67 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 44B554F825F
-	for <lists+ceph-devel@lfdr.de>; Thu,  7 Apr 2022 17:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE9544F8268
+	for <lists+ceph-devel@lfdr.de>; Thu,  7 Apr 2022 17:04:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344262AbiDGPFP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 7 Apr 2022 11:05:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42418 "EHLO
+        id S1344418AbiDGPGq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 7 Apr 2022 11:06:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47578 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242225AbiDGPFO (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Apr 2022 11:05:14 -0400
+        with ESMTP id S233789AbiDGPGp (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Apr 2022 11:06:45 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9AC424591;
-        Thu,  7 Apr 2022 08:03:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A63D1EFE1C;
+        Thu,  7 Apr 2022 08:04:43 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 979EF1F85E;
-        Thu,  7 Apr 2022 15:03:13 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 0B9A11F85E;
+        Thu,  7 Apr 2022 15:04:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649343793; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1649343882; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=P2Y60UUpdzO4c/QznoyK437PUhA6xIvNYdqt68NitxY=;
-        b=kYgeAbzpzunMhckxZibDJdHxuJ601n8vSHGYrrxwCDMG8e1Bmg/7jm+dO7Yrt0mP0nyPD+
-        1gl2sOGYqMba6AQtRLIZWan0+yDxIEwOXeJiq1S/i5PkZU6kmJBA5Vt3wi4W5q07GXKhsP
-        cVs3g2qvXAHPQf20Zkc9mIGfXu7uuFM=
+        bh=tD8QcCdjsJv2ikAX8X2TNa5afoDm9tTHK0fQiiB6sHU=;
+        b=Is5qOJq3QJghtwg149CiqAXAjsC7zU3PmFttbMwrT+KwGOEsOj+Wmu9NbA2sPLnzVqNyWe
+        wnQMtxfzb+XBsQ12LdvR9jnuj9unwSLuEqqWRIqkPjlYGOBFgtDCo2RnDqi+kj3AmyfxzB
+        KgWm68sWP8pb+/oS18L6kq2lQ+P09D0=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649343793;
+        s=susede2_ed25519; t=1649343882;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=P2Y60UUpdzO4c/QznoyK437PUhA6xIvNYdqt68NitxY=;
-        b=heBsnwuHmVko6H1Zte3P++6tL4z/CdhC6qQnFfXHE9UlbUvWyJrBm7wz9xQLyjv5OK8v5Y
-        +Mx0ZOYcycuverDw==
+        bh=tD8QcCdjsJv2ikAX8X2TNa5afoDm9tTHK0fQiiB6sHU=;
+        b=ZCgY+/xBoL8YrgePptnI7y/0MnNlyi65+N0z6F2637eqlM68OMajhNlth5L7dPvfrWBdc1
+        nUnc1GpgB3SXBGDQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 47DEC13485;
-        Thu,  7 Apr 2022 15:03:13 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9EF3413485;
+        Thu,  7 Apr 2022 15:04:41 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id p6oNDzH9TmKVZAAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Thu, 07 Apr 2022 15:03:13 +0000
+        id m8DxI4n9TmJUZQAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Thu, 07 Apr 2022 15:04:41 +0000
 Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id e89d1ce4;
-        Thu, 7 Apr 2022 15:03:36 +0000 (UTC)
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 8f20ff87;
+        Thu, 7 Apr 2022 15:05:04 +0000 (UTC)
 From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v3] ceph: invalidate pages when doing direct/sync writes
 References: <20220407143834.7516-1-lhenriques@suse.de>
-        <96a44a4224b67b9ec36198bc0586064df5c4ad2a.camel@kernel.org>
-Date:   Thu, 07 Apr 2022 16:03:36 +0100
-In-Reply-To: <96a44a4224b67b9ec36198bc0586064df5c4ad2a.camel@kernel.org> (Jeff
-        Layton's message of "Thu, 07 Apr 2022 10:42:57 -0400")
-Message-ID: <87k0c17x6f.fsf@brahms.olymp>
+        <253c9edf-01c5-40a3-3a11-738f29df8142@redhat.com>
+Date:   Thu, 07 Apr 2022 16:05:04 +0100
+In-Reply-To: <253c9edf-01c5-40a3-3a11-738f29df8142@redhat.com> (Xiubo Li's
+        message of "Thu, 7 Apr 2022 22:48:20 +0800")
+Message-ID: <87fsmp7x3z.fsf@brahms.olymp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
@@ -75,38 +76,38 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> writes:
+Xiubo Li <xiubli@redhat.com> writes:
 
-> On Thu, 2022-04-07 at 15:38 +0100, Lu=C3=ADs Henriques wrote:
+> On 4/7/22 10:38 PM, Lu=C3=ADs Henriques wrote:
 >> When doing a direct/sync write, we need to invalidate the page cache in
 >> the range being written to.  If we don't do this, the cache will include
 >> invalid data as we just did a write that avoided the page cache.
->>=20
+>>
 >> Signed-off-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
 >> ---
->>  fs/ceph/file.c | 9 +++++++++
->>  1 file changed, 9 insertions(+)
->>=20
+>>   fs/ceph/file.c | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
 >> Ok, here's a new attempt.  After discussion in this thread and on IRC, I
 >> think this is the right fix.  generic/647 now passes with and without
 >> encryption.  Thanks!
->>=20
+>>
 >> Changes since v2:
 >> - Invalidation needs to be done after a write
->>=20
+>>
 >> Changes since v1:
 >> - Replaced truncate_inode_pages_range() by invalidate_inode_pages2_range
 >> - Call fscache_invalidate with FSCACHE_INVAL_DIO_WRITE if we're doing DIO
->>=20
+>>
 >> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
 >> index 5072570c2203..63e67eb60310 100644
 >> --- a/fs/ceph/file.c
 >> +++ b/fs/ceph/file.c
 >> @@ -1938,6 +1938,15 @@ ceph_sync_write(struct kiocb *iocb, struct iov_it=
 er *from, loff_t pos,
->>  			break;
->>  		}
->>  		ceph_clear_error_write(ci);
+>>   			break;
+>>   		}
+>>   		ceph_clear_error_write(ci);
 >> +		ret =3D invalidate_inode_pages2_range(
 >> +				inode->i_mapping,
 >> +				pos >> PAGE_SHIFT,
@@ -116,21 +117,19 @@ er *from, loff_t pos,
 >> +			     ret);
 >> +			ret =3D 0;
 >> +		}
->>  		pos +=3D len;
->>  		written +=3D len;
->>  		dout("sync_write written %d\n", written);
+>>   		pos +=3D len;
+>>   		written +=3D len;
+>>   		dout("sync_write written %d\n", written);
+>>
+> LGTM.
 >
-> Looks good. I suspect we can also remove the
-> invalidate_indode_pages2_range call earlier in this function too. I may
-> roll that into this patch.
+> Maybe it worth adding a comment to explain why we need this and where the
+> mapping come from ?
+>
+> Reviewed-by: Xiubo Li <xiubli@redhat.com>
+>
 
-Right, that occurred to me as well but I wasn't really sure that would be
-safe.
-
-> I'll give this an xfstests run with fscrypt enabled and see how it does.
-
-I'll do the same here, I just run a few tests on a vstart cluster.  But
-I'll definitely give it some more testing.
+Sure, I'll send out v4 with an extra comment.  Thanks.
 
 Cheers,
 --=20
