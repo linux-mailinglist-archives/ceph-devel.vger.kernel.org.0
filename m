@@ -2,171 +2,177 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B96BB4F7348
-	for <lists+ceph-devel@lfdr.de>; Thu,  7 Apr 2022 05:23:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 439E54F734E
+	for <lists+ceph-devel@lfdr.de>; Thu,  7 Apr 2022 05:23:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240493AbiDGDWc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 6 Apr 2022 23:22:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44282 "EHLO
+        id S240892AbiDGDXu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 6 Apr 2022 23:23:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240223AbiDGDWR (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 6 Apr 2022 23:22:17 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDCEF1777CF;
-        Wed,  6 Apr 2022 20:18:52 -0700 (PDT)
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 2372POVs012451;
-        Thu, 7 Apr 2022 03:18:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : message-id : references : date : in-reply-to : content-type :
- mime-version; s=corp-2021-07-09;
- bh=4R18pwpZs4MCAT1nUpfEebB1dGvjB+oR2X9XNPWO4p8=;
- b=K00aU85PLQqbvLtFWFoJrDU265LTE87Pk/HdBAP/k00+nUFnbt0HzC28qXULort8/5dT
- 0MHpiTEsWCfgWIp/VfQe9wiWPEAirP8mYmfSrg47AbJZDmThd0V1PsvRsYi51NPFYNvr
- NP2yLcU3EOsB2gWzmVP8aRKlbSwElWU+lSbkDiCvniySQOstZ1VwrWhBJ4RcKNHPBxrF
- V58nasvrQdpQg2m7CndmhycOsf0q09wIS8eq6lycZSkVJxROXgRbjAvJF9JwSI0MotNd
- lbjdKIs09wAmCsCRIasNHrHq321KOUHGDNEJaaEZd2owY8TuK0k2deMmuCCqk82rG8Ea 4w== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3f6cwcjad5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Apr 2022 03:18:27 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 23736PuX029482;
-        Thu, 7 Apr 2022 03:18:26 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2173.outbound.protection.outlook.com [104.47.56.173])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3f97wqsm3k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 07 Apr 2022 03:18:26 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=O25uO0BueHUJN4G5YWQ/pZKSQFUTVgJDOUxEmxaadRGxJcbSKf6kdI1i4cqtX0sTTskKg8DjCjxfpEobxGIx95JUiYel+ilDSgSrjxjEzhpN76YABubhkRT9yiZIJJpo9Zgbc0uz1GfQs8/NrbS57CinKt6dSFg4HHnOhnGLl5eOhQjfHJusa/VDx6Bef9BlsUjr/ZtM7hPrn6iY2/1nAUYuAYuPG/x/zAmi5qDm9F+cNQQNsoM6rfPflQUqJFw+LgzUYD5Mfl25IR0NILxV2mbpC2UJk8P4uYpdTnnd9gv13GoslRQIl1LQl0hjNLIgEVn7xLEh+HdKST2r0RQWmg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4R18pwpZs4MCAT1nUpfEebB1dGvjB+oR2X9XNPWO4p8=;
- b=V4FaobBp/9RjdJNp8dnQh12p8QjOIb2fJkFjC9yK/wFeOxgrMwGq6aDEyu1t3e/cPpNFd4iEKDVauxukGJE3e9ghhDQokDAXj2BfPVME+X29tAP73TSRBT2iiQ6dsiCJfEp6F5ySdFsz01vPqFchEGfYSlhMP5EuQRcHwWzBWcbfHg+l6NrSEftNeo6J9oEjJsYmBMcnFMSYUYv7QsiaVRdeuobHtXEAADOKFwf0nFxXL4mmiTp8Fi3DSFqIq8zG0BnnEHYl+hJXjBUGHMAvtHvB6WE5co2Mkk3EdhstyxkRMPV23wSosaSJTEiRO3up6fqaHR546MAgbjhPqikpLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4R18pwpZs4MCAT1nUpfEebB1dGvjB+oR2X9XNPWO4p8=;
- b=cxLXo3OvLrTa628//kIET7Ti0V6/UZFRGi9WHq1SXkLaJWXQcI3oYPMnBjQ7xLW0zTObAoEjQLfK43tQmNc6mLfp/lWYt8DWQCyoCc9Rnb//ecM/57CfmvxCySwNMe5n+PKd+Ig1TQXRcim1T4Kx5kFPFl088aE8yTpp0FEh3HM=
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
- by PH0PR10MB4408.namprd10.prod.outlook.com (2603:10b6:510:39::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.21; Thu, 7 Apr
- 2022 03:18:23 +0000
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::48e3:d153:6df4:fbed]) by PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::48e3:d153:6df4:fbed%4]) with mapi id 15.20.5144.022; Thu, 7 Apr 2022
- 03:18:23 +0000
-To:     Christoph Hellwig via Ocfs2-devel <ocfs2-devel@oss.oracle.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        jfs-discussion@lists.sourceforge.net,
-        linux-nvme@lists.infradead.org,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        dm-devel@redhat.com, target-devel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, drbd-dev@lists.linbit.com,
-        linux-s390@vger.kernel.org, linux-nilfs@vger.kernel.org,
-        linux-scsi@vger.kernel.org, cluster-devel@redhat.com,
-        xen-devel@lists.xenproject.org, linux-ext4@vger.kernel.org,
-        linux-um@lists.infradead.org, nbd@other.debian.org,
-        linux-block@vger.kernel.org, linux-bcache@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        ntfs3@lists.linux.dev, linux-btrfs@vger.kernel.org
-Subject: Re: [Ocfs2-devel] [PATCH 13/27] block: add a bdev_stable_writes helper
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <yq1mtgxintf.fsf@ca-mkp.ca.oracle.com>
-References: <20220406060516.409838-1-hch@lst.de>
-        <20220406060516.409838-14-hch@lst.de>
-Date:   Wed, 06 Apr 2022 23:18:21 -0400
-In-Reply-To: <20220406060516.409838-14-hch@lst.de> (Christoph Hellwig via
-        Ocfs2-devel's message of "Wed, 6 Apr 2022 08:05:02 +0200")
-Content-Type: text/plain
-X-ClientProxiedBy: SN1PR12CA0078.namprd12.prod.outlook.com
- (2603:10b6:802:20::49) To PH0PR10MB4759.namprd10.prod.outlook.com
- (2603:10b6:510:3d::12)
+        with ESMTP id S240457AbiDGDWU (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 6 Apr 2022 23:22:20 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 976DC193B6B
+        for <ceph-devel@vger.kernel.org>; Wed,  6 Apr 2022 20:19:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1649301557;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=HxLz3zyHyqBNEl5mzLYOYDAekjUvwtI7JSOgfNa7qL0=;
+        b=W32fv6OMSaSmxoAiJ8Jfi8HgwVzkUK25h+DYq7YxG8EeA12IiPgWKNdW7nIqBefE0KJR/r
+        2SOUgi9HFffUGwal0fQfM2dCBGNdm6d+VxQeNeRBFHZqUKAQkdHhm6WEDuVF9qAO4e4M8s
+        BMQ9o6yUsCFYvGPNIIz9JyMRjCshWJE=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-161-HGkyFiimOQe5z4MZELYvZA-1; Wed, 06 Apr 2022 23:19:15 -0400
+X-MC-Unique: HGkyFiimOQe5z4MZELYvZA-1
+Received: by mail-pj1-f69.google.com with SMTP id ob7-20020a17090b390700b001c692ec6de4so4981178pjb.7
+        for <ceph-devel@vger.kernel.org>; Wed, 06 Apr 2022 20:19:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=HxLz3zyHyqBNEl5mzLYOYDAekjUvwtI7JSOgfNa7qL0=;
+        b=iD4IOLeDKIPMDKfdr/covVOK/OYrUSVIXT4s1hGHU5/7TH6Oh+wmUseJQQ7MsF7gcY
+         pt1ynPZbVfBnYFBR10Jj3onifmvlMvlD7cI1+rhFW9UyBSzrGX7s41NEL8o+V1CdeGZl
+         i929Bc1ztsEACiKnDZNS7uuBzWLxb6wwSIvdQLkkJBJrqI3ZqNlmgjG5Cw71NrPSJiJ1
+         n2qfYKTKzkmoCj7zP2tXklqajDiCVvP7z4kQpT9cm3dOwpiri7HLZsBNIbSM/35oQCxv
+         RjlzcLyOPYqCo1UszlcEM8duovR/lPDBp8qsKc+ewsgtMWmH8Ubqx8J0mlfghS6IOKj7
+         rj/g==
+X-Gm-Message-State: AOAM531rLmAGLea3x6PVoPUGs5tbfg6bAvGwIEfGLuro5KMrpJoV5AGU
+        qjXILiIt+Y00lH4lgkD2OpBAMaxWthK3XJtyvmIajYY1g2dPz7Fj3tiPta0w+NO8cfiI+jSFnQL
+        u5ThBMEp3hjaWxxTNGEeIpw==
+X-Received: by 2002:a17:903:32c9:b0:154:3a2d:fa89 with SMTP id i9-20020a17090332c900b001543a2dfa89mr11669539plr.3.1649301554661;
+        Wed, 06 Apr 2022 20:19:14 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy47UeQA/BP4Recw3IDaoEcCmADnEMZ9FV5jr8lqu5QzGPbvQbcgymjzAy4WASLErv/HqHk3g==
+X-Received: by 2002:a17:903:32c9:b0:154:3a2d:fa89 with SMTP id i9-20020a17090332c900b001543a2dfa89mr11669531plr.3.1649301554379;
+        Wed, 06 Apr 2022 20:19:14 -0700 (PDT)
+Received: from [10.72.13.31] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id k14-20020aa7820e000000b004f7134a70cdsm20010617pfi.61.2022.04.06.20.19.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Apr 2022 20:19:13 -0700 (PDT)
+Subject: Re: [PATCH v2] ceph: invalidate pages when doing DIO in encrypted
+ inodes
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220401133243.1075-1-lhenriques@suse.de>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <cd8418a0-e0dc-c5ae-d49d-6248bb6fc4d6@redhat.com>
+Date:   Thu, 7 Apr 2022 11:19:09 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b2ad1994-3c3d-4e6a-83b6-08da18454625
-X-MS-TrafficTypeDiagnostic: PH0PR10MB4408:EE_
-X-Microsoft-Antispam-PRVS: <PH0PR10MB4408F2AE0D298AF4ACC6B2E08EE69@PH0PR10MB4408.namprd10.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: SLUvISXJLjYUGupRQ2XT1s9tBnJewgVitQqt3VbaYK1TlsSRvia+IY6r1cACAlU0Wa9sgavIuhykxLRm2HHe0Pdr64qYaVsO1e2Y/l7KspFO8oSlqX4OsmfRnYdI20hlWEaGs4kWvsvm/5mVwcwnyEKRAF5RE9SHBE1Knr0mMH/zSmqo4bp3hkT82WooPA8N5riuntQXkoB/rNN7cnESYFFPL2asRWA+jwPCZVUphEvJ5XPFvyT1z2Eq+NQwtwzdcvgLA+IBZswJePmovMcCLym7FxouJeyk0vlpY3eLrZNZhP/6ECTKFt+JJ0PAaO6eArEkX+hClm4sYV6QFop66FauGhK2UYdYYA4opvhsBScbB5d4Ed8/cQCqQQ+dhdvW9pdbQoPmm06l/Ahmogsm7wLzTX0M+JEoODGs33L2YsXb/cL8UawqLEDKnXTkjWs2M1XmfwZ/zkzZFNgzArnuUVx7eIPt65HU/Tk1oJrY5ysSRqrw4b3w46oDSItf5KrU9Dp9eoCGmADWlTqdgPqBj3kN9pTb8d0Oc2PybL2XdJH8pDG1B1GumdgkmZjBrEvoXcN6aVgIojHhHdUHDGeGkGQtFkG19FJ6njKmifx5j1yJA5ZsiOBoHwLYh6Zi5wpftFEN5GFzmaxFhO7stvzBoqXlPrLN/M+oOPsEm60V21SQkSDCCwDKlkOodU+X+oC+TQ95BXh9aAkiCMJct1gRlQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(508600001)(6512007)(26005)(6506007)(36916002)(52116002)(7416002)(83380400001)(186003)(5660300002)(2906002)(8936002)(54906003)(316002)(66946007)(38350700002)(38100700002)(6486002)(6862004)(66556008)(4326008)(8676002)(66476007)(86362001)(558084003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?xIsd0zLwcVDDnh7s1S0dJ4gppcaVSQwl81pqFbYz/+egH66fuo2Jc5jaKjrG?=
- =?us-ascii?Q?5iZ9E5EH+nYNwN8C6r3SBW1b9dbddV+7pieUtyv0jx1J2YD5Zzt/4MLaM/ko?=
- =?us-ascii?Q?I0nzssasq8sQbtr6/sAG7CmZrQpDLmiT+qpBj3wFUafqk85W+Drzww2xyEpz?=
- =?us-ascii?Q?wI0DSIThoePrDVlDDs8ivw9D3oeEGiNA1ioOAExJdUzArdsS8jer3gKF+rO2?=
- =?us-ascii?Q?ZvU220BzEAtzCOhzO8Ff/U2ZjsQ1TkmSKxflXEjpGHY0cJ6zhVVNNp3HB2iC?=
- =?us-ascii?Q?bX3J9jWoS4tsyz+wWwpJJrTnQJ4zPsO6+ki48PWPdsh2euaJ36jks7y94hZi?=
- =?us-ascii?Q?V/cN3QBs/4R9l81o4Uwurg0tzElEY/5T+H3wo6uTYg2ylkdH/Jmw+nqKzPGN?=
- =?us-ascii?Q?4YDGYkt9Sug99AMbl29IOHzCzYc1oUBMobgGJMbLklxYvuIgUIRrsWnRJuqi?=
- =?us-ascii?Q?ZIyHsyLPdR2QF6NwFaadAFAn1tjlB3IQVnjCjWkj7L+oJGFk7P8W/uJEo5Q5?=
- =?us-ascii?Q?T/c5ZzvwDW+94AZzbaWiENJI4Ctp/2vbovviAIZVOJEhMqaojguOJt2bRJMO?=
- =?us-ascii?Q?Y+748XcIrXL8IEUWvTiHgZYiOOsIhJzz0+hHIvk/yly9LJ1+hb4pRfxtnTC5?=
- =?us-ascii?Q?TMf3WWY/vby6rTVShdQNrzoNMGjnbcEHW7hNd4ZksoAX6LVufUAbUaL8PF6m?=
- =?us-ascii?Q?VBzXXc97sA+qu+HcVVA9PAVO5u2rWh6e0kIw7MFVLOcKd2Q/DqcKYobFs41O?=
- =?us-ascii?Q?qY1zIbQjB89zPwjOOdwl9orWX0fCdfuawnQpOhIToO1UVkhmzdymnn5Lkq+x?=
- =?us-ascii?Q?Xz3U/pDNM/7XXFjSc95PFNwEi/Rdc4l2bxSZMAdvqQZIGrzqapnBUMY4CD33?=
- =?us-ascii?Q?d5giA1c9NSqUUoQSi6SS3Oxsne/7mmvsWjGhDB02IB3O3qXiUVZGLVls3g1r?=
- =?us-ascii?Q?FGY3G0vC8ZetoHeQa8UMBfEYNwQ6KkCWJpwhGISTrgTb/Nq3vwYOP5kWdY3k?=
- =?us-ascii?Q?SAwF+RAnM4qU1Z4QNlCBrx662uuC9IawT2Kk9A+lXP16FAm8vQ9b6IOy2X3D?=
- =?us-ascii?Q?rQf3kx/nU4QPe2JannqJimA8cG+wIGuoTH0Xf7v8vbEIVt8dpGHnpSH6qIZj?=
- =?us-ascii?Q?sbTPBIThpBD6cDEiSSSjKMB9pZrBK1gwMWBy1kiw+T71IBnMkc0gjPpFkFO8?=
- =?us-ascii?Q?InOFEkVOZfl/2n5j8jRuyH8wA1H8KkddXKUwqZSERpwjVZmXvDo8Fp9laCpo?=
- =?us-ascii?Q?MmB40C2ECG/Cue6W8SMe5Y9zunHmiBcfxendBmJgFqnPzHwH65DkGs4y56eK?=
- =?us-ascii?Q?RU7FxGRN84qz5e01RViYgxspfOMT+NtQsKRINgp4oywm5U3jLnumrYnaYT1M?=
- =?us-ascii?Q?/sG2odArhsDNTeuPtDYCCTCKWNrFHuibcJ4SfhQVefycP+gdmnxHjEdB0p5e?=
- =?us-ascii?Q?wl3LG9BFWzfHBRcE24beJ2a60HJYtr5i51pQOOWU0+3NRhTcrkxMQarzn+o5?=
- =?us-ascii?Q?U6JvwGc1Sis+FYUsNIKJzbs07TCq2AeZmof1g/k779pG7UMHfg2oKC5dAD0o?=
- =?us-ascii?Q?0+diKePSeMM9CRHkEK58cTVlS+sTGDjnhSWvaOM2zOWO69Ny5CaatYLC+rAX?=
- =?us-ascii?Q?OHcId1N0UPO0A8mnGFLCCFEgJ72887m2LOfEr5JhHePt4eLhRXXQJ0jVUXrb?=
- =?us-ascii?Q?6Ag3ZB/97Kzn3SXO2TvruRccP3HpJnQWG/K+tS+j3t7o22HdESkN69evPfSL?=
- =?us-ascii?Q?kLkG+Yu6HtWm/SQFpdF0wHGl3iEZ90M=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2ad1994-3c3d-4e6a-83b6-08da18454625
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2022 03:18:23.6582
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hZ9wn6/Z6Gqa+JKgYT944VbgDZ5imkniqjRmEsIQ1javdBvsN1/Na1raINqCIDzfpbrVWYGXUV59K401IhUHeyecdeVGfgDhGALhkfADxIA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4408
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.425,18.0.850
- definitions=2022-04-06_13:2022-04-06,2022-04-06 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
- phishscore=0 mlxscore=0 mlxlogscore=946 adultscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2204070016
-X-Proofpoint-ORIG-GUID: Yoj1mmlMui-AZzQWBd4yidsBNyVdnJfj
-X-Proofpoint-GUID: Yoj1mmlMui-AZzQWBd4yidsBNyVdnJfj
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220401133243.1075-1-lhenriques@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Spam-Status: No, score=-5.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Hi Luis,
 
-Christoph,
+Please try the following patch, to see could it resolve your issue:
 
-> Add a helper to check the stable writes flag based on the block_device
-> instead of having to poke into the block layer internal request_queue.
 
-Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 5d39d8e54273..3507e4066de4 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -2011,6 +2011,7 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, 
+struct iov_iter *to)
+                      ceph_cap_string(got));
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+                 if (ci->i_inline_version == CEPH_INLINE_NONE) {
++ filemap_invalidate_lock(inode->i_mapping);
+                         if (!retry_op &&
+                             (iocb->ki_flags & IOCB_DIRECT) &&
+                             !IS_ENCRYPTED(inode)) {
+@@ -2021,6 +2022,7 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, 
+struct iov_iter *to)
+                         } else {
+                                 ret = ceph_sync_read(iocb, to, &retry_op);
+                         }
++ filemap_invalidate_unlock(inode->i_mapping);
+                 } else {
+                         retry_op = READ_INLINE;
+                 }
+@@ -2239,11 +2241,13 @@ static ssize_t ceph_write_iter(struct kiocb 
+*iocb, struct iov_iter *from)
+
+                 /* we might need to revert back to that point */
+                 data = *from;
++               filemap_invalidate_lock(inode->i_mapping);
+                 if ((iocb->ki_flags & IOCB_DIRECT) && !IS_ENCRYPTED(inode))
+                         written = ceph_direct_read_write(iocb, &data, 
+snapc,
+&prealloc_cf);
+                 else
+                         written = ceph_sync_write(iocb, &data, pos, snapc);
++               filemap_invalidate_unlock(inode->i_mapping);
+                 if (direct_lock)
+                         ceph_end_io_direct(inode);
+                 else
+
+
+
+On 4/1/22 9:32 PM, Luís Henriques wrote:
+> When doing DIO on an encrypted node, we need to invalidate the page cache in
+> the range being written to, otherwise the cache will include invalid data.
+>
+> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> ---
+>   fs/ceph/file.c | 11 ++++++++++-
+>   1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> Changes since v1:
+> - Replaced truncate_inode_pages_range() by invalidate_inode_pages2_range
+> - Call fscache_invalidate with FSCACHE_INVAL_DIO_WRITE if we're doing DIO
+>
+> Note: I'm not really sure this last change is required, it doesn't really
+> affect generic/647 result, but seems to be the most correct.
+>
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 5072570c2203..b2743c342305 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -1605,7 +1605,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+>   	if (ret < 0)
+>   		return ret;
+>   
+> -	ceph_fscache_invalidate(inode, false);
+> +	ceph_fscache_invalidate(inode, (iocb->ki_flags & IOCB_DIRECT));
+>   	ret = invalidate_inode_pages2_range(inode->i_mapping,
+>   					    pos >> PAGE_SHIFT,
+>   					    (pos + count - 1) >> PAGE_SHIFT);
+> @@ -1895,6 +1895,15 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+>   		req->r_inode = inode;
+>   		req->r_mtime = mtime;
+>   
+> +		if (IS_ENCRYPTED(inode) && (iocb->ki_flags & IOCB_DIRECT)) {
+> +			ret = invalidate_inode_pages2_range(
+> +				inode->i_mapping,
+> +				write_pos >> PAGE_SHIFT,
+> +				(write_pos + write_len - 1) >> PAGE_SHIFT);
+> +			if (ret < 0)
+> +				dout("invalidate_inode_pages2_range returned %d\n", ret);
+> +		}
+> +
+>   		/* Set up the assertion */
+>   		if (rmw) {
+>   			/*
+>
+
