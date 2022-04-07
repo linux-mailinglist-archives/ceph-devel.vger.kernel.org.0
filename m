@@ -2,219 +2,288 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BAB94F78DF
-	for <lists+ceph-devel@lfdr.de>; Thu,  7 Apr 2022 10:04:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6EAF4F7AFA
+	for <lists+ceph-devel@lfdr.de>; Thu,  7 Apr 2022 11:06:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242886AbiDGIGc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 7 Apr 2022 04:06:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48996 "EHLO
+        id S231474AbiDGJIQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 7 Apr 2022 05:08:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242826AbiDGIGW (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Apr 2022 04:06:22 -0400
+        with ESMTP id S229949AbiDGJIP (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Apr 2022 05:08:15 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C34160468;
-        Thu,  7 Apr 2022 01:03:18 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0A8763B0;
+        Thu,  7 Apr 2022 02:06:14 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id BA7481F859;
-        Thu,  7 Apr 2022 08:03:16 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id ED2481F85B;
+        Thu,  7 Apr 2022 09:06:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649318596; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1649322372; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7k0z5t+RkWgzil40AtKwhJmpL0iBjAFtHXia6nIwjc8=;
-        b=BFj1weRWNO0gJwf1a0jytpVaNV2SIOQyml/DNHaVaAYv+GWtC9RRp3Nkr1QhUY/V7QdLG9
-        baoJsXmF2FufEolsvsTPwbwZ3Or5/MyPwA8jPnqPoYDtXH5U9TjRT7F8cNWLR3Nqx6fvJv
-        Ws2fOIHqbo98FqfWwnQjig+YJFloGxM=
+        bh=Dum3SF0MI6FnOAJY62qBL8AI+owi/9ZpbV05X3S6Rl4=;
+        b=xBwZxAqNfyE+iB5/vIqwVf8Wr7grkEWsndIz7kWEBgX7hS+QECEtAhke+FoblsexrQN8oN
+        elyFKc3GlecpLwmChy0KyxEnQ5H7x4KwQT0ovYXU07KksK8eCHyA0zZIMHjjWdA7AIu9RE
+        upjcxoaNsuIHv7nLvEB2C/8ropF3HQk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649318596;
+        s=susede2_ed25519; t=1649322372;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7k0z5t+RkWgzil40AtKwhJmpL0iBjAFtHXia6nIwjc8=;
-        b=DjSOFiN41nmAx2XAVq/tnPaDKbkIhCw6FaIeWu9KyiZMi8ecy7DPyjacZPoBAIl6E7Jspy
-        2pyi9oy0n8T7WCDA==
+        bh=Dum3SF0MI6FnOAJY62qBL8AI+owi/9ZpbV05X3S6Rl4=;
+        b=0YlDnHvi6Mgkx1iaEQmppbm1yU8bxt+u/qxqCjUNCUOUgf7jkl3LHWQ0m+/ZMS6Z/t3HyA
+        kBe12Uh169nMfGAw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4CF8613485;
-        Thu,  7 Apr 2022 08:03:11 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9797813A66;
+        Thu,  7 Apr 2022 09:06:12 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id F2mtCL+aTmKlAgAAMHmgww
-        (envelope-from <colyli@suse.de>); Thu, 07 Apr 2022 08:03:11 +0000
-Message-ID: <9f91936a-7dd7-2ee6-3293-f199ada85210@suse.de>
-Date:   Thu, 7 Apr 2022 16:03:09 +0800
+        id RQ7ZIYSpTmLwIAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Thu, 07 Apr 2022 09:06:12 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 02b63267;
+        Thu, 7 Apr 2022 09:06:36 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ceph: invalidate pages when doing DIO in encrypted
+ inodes
+References: <20220401133243.1075-1-lhenriques@suse.de>
+        <cd8418a0-e0dc-c5ae-d49d-6248bb6fc4d6@redhat.com>
+Date:   Thu, 07 Apr 2022 10:06:36 +0100
+In-Reply-To: <cd8418a0-e0dc-c5ae-d49d-6248bb6fc4d6@redhat.com> (Xiubo Li's
+        message of "Thu, 7 Apr 2022 11:19:09 +0800")
+Message-ID: <87v8vl8dpf.fsf@brahms.olymp>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.7.0
-Subject: Re: [PATCH 22/27] block: refactor discard bio size limiting
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
-        nbd@other.debian.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@oss.oracle.com, linux-mm@kvack.org,
-        Jens Axboe <axboe@kernel.dk>
-References: <20220406060516.409838-1-hch@lst.de>
- <20220406060516.409838-23-hch@lst.de>
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <20220406060516.409838-23-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: multipart/mixed; boundary="=-=-="
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 4/6/22 2:05 PM, Christoph Hellwig wrote:
-> Move all the logic to limit the discard bio size into a common helper
-> so that it is better documented.
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+Xiubo Li <xiubli@redhat.com> writes:
+
+> Hi Luis,
 >
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Please try the following patch, to see could it resolve your issue:
 
-Acked-by: Coly Li <colyli@suse.de>
+No, this seems to deadlock when running my test.  I'm attaching the code
+I'm using to test it; it's part of generic/647 but I've removed all the
+other test cases that were passing.  I simply mount the filesystem with
+test_dummy_encryption and run this test.  With your patch it'll hang;
+without it it'll show "pwrite (O_DIRECT) is broken".  The extra
+invalidate_inode_pages2_range() will make it pass.
 
-
-Thanks for the change.
-
-Coly Li
-
-
-> ---
->   block/blk-lib.c | 59 ++++++++++++++++++++++++-------------------------
->   block/blk.h     | 14 ------------
->   2 files changed, 29 insertions(+), 44 deletions(-)
->
-> diff --git a/block/blk-lib.c b/block/blk-lib.c
-> index 237d60d8b5857..2ae32a722851c 100644
-> --- a/block/blk-lib.c
-> +++ b/block/blk-lib.c
-> @@ -10,6 +10,32 @@
->   
->   #include "blk.h"
->   
-> +static sector_t bio_discard_limit(struct block_device *bdev, sector_t sector)
-> +{
-> +	unsigned int discard_granularity =
-> +		bdev_get_queue(bdev)->limits.discard_granularity;
-> +	sector_t granularity_aligned_sector;
-> +
-> +	if (bdev_is_partition(bdev))
-> +		sector += bdev->bd_start_sect;
-> +
-> +	granularity_aligned_sector =
-> +		round_up(sector, discard_granularity >> SECTOR_SHIFT);
-> +
-> +	/*
-> +	 * Make sure subsequent bios start aligned to the discard granularity if
-> +	 * it needs to be split.
-> +	 */
-> +	if (granularity_aligned_sector != sector)
-> +		return granularity_aligned_sector - sector;
-> +
-> +	/*
-> +	 * Align the bio size to the discard granularity to make splitting the bio
-> +	 * at discard granularity boundaries easier in the driver if needed.
-> +	 */
-> +	return round_down(UINT_MAX, discard_granularity) >> SECTOR_SHIFT;
-> +}
-> +
->   int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
->   		sector_t nr_sects, gfp_t gfp_mask, int flags,
->   		struct bio **biop)
-> @@ -17,7 +43,7 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
->   	struct request_queue *q = bdev_get_queue(bdev);
->   	struct bio *bio = *biop;
->   	unsigned int op;
-> -	sector_t bs_mask, part_offset = 0;
-> +	sector_t bs_mask;
->   
->   	if (bdev_read_only(bdev))
->   		return -EPERM;
-> @@ -48,36 +74,9 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
->   	if (!nr_sects)
->   		return -EINVAL;
->   
-> -	/* In case the discard request is in a partition */
-> -	if (bdev_is_partition(bdev))
-> -		part_offset = bdev->bd_start_sect;
-> -
->   	while (nr_sects) {
-> -		sector_t granularity_aligned_lba, req_sects;
-> -		sector_t sector_mapped = sector + part_offset;
-> -
-> -		granularity_aligned_lba = round_up(sector_mapped,
-> -				q->limits.discard_granularity >> SECTOR_SHIFT);
-> -
-> -		/*
-> -		 * Check whether the discard bio starts at a discard_granularity
-> -		 * aligned LBA,
-> -		 * - If no: set (granularity_aligned_lba - sector_mapped) to
-> -		 *   bi_size of the first split bio, then the second bio will
-> -		 *   start at a discard_granularity aligned LBA on the device.
-> -		 * - If yes: use bio_aligned_discard_max_sectors() as the max
-> -		 *   possible bi_size of the first split bio. Then when this bio
-> -		 *   is split in device drive, the split ones are very probably
-> -		 *   to be aligned to discard_granularity of the device's queue.
-> -		 */
-> -		if (granularity_aligned_lba == sector_mapped)
-> -			req_sects = min_t(sector_t, nr_sects,
-> -					  bio_aligned_discard_max_sectors(q));
-> -		else
-> -			req_sects = min_t(sector_t, nr_sects,
-> -					  granularity_aligned_lba - sector_mapped);
-> -
-> -		WARN_ON_ONCE((req_sects << 9) > UINT_MAX);
-> +		sector_t req_sects =
-> +			min(nr_sects, bio_discard_limit(bdev, sector));
->   
->   		bio = blk_next_bio(bio, bdev, 0, op, gfp_mask);
->   		bio->bi_iter.bi_sector = sector;
-> diff --git a/block/blk.h b/block/blk.h
-> index 8ccbc6e076369..1fdc1d28e6d60 100644
-> --- a/block/blk.h
-> +++ b/block/blk.h
-> @@ -346,20 +346,6 @@ static inline unsigned int bio_allowed_max_sectors(struct request_queue *q)
->   	return round_down(UINT_MAX, queue_logical_block_size(q)) >> 9;
->   }
->   
-> -/*
-> - * The max bio size which is aligned to q->limits.discard_granularity. This
-> - * is a hint to split large discard bio in generic block layer, then if device
-> - * driver needs to split the discard bio into smaller ones, their bi_size can
-> - * be very probably and easily aligned to discard_granularity of the device's
-> - * queue.
-> - */
-> -static inline unsigned int bio_aligned_discard_max_sectors(
-> -					struct request_queue *q)
-> -{
-> -	return round_down(UINT_MAX, q->limits.discard_granularity) >>
-> -			SECTOR_SHIFT;
-> -}
-> -
->   /*
->    * Internal io_context interface
->    */
+Cheers,
+--=20
+Lu=C3=ADs
 
 
+--=-=-=
+Content-Type: text/x-csrc
+Content-Disposition: attachment; filename=647.c
+
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Copyright (c) 2021 Red Hat, Inc.  All Rights Reserved.
+ * Written by Andreas Gruenbacher (agruenba@redhat.com)
+ */
+
+/* Trigger page faults in the same file during read and write. */
+
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE /* to get definition of O_DIRECT flag. */
+#endif
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include <err.h>
+
+char *filename;
+unsigned int page_size;
+void *page;
+char *addr;
+int fd;
+ssize_t ret;
+
+/*
+ * Leave a hole at the beginning of the test file and initialize a block of
+ * @page_size bytes at offset @page_size to @c.  Then, reopen the file and
+ * mmap the first two pages.
+ */
+void init(char c, int flags)
+{
+	fd = open(filename, O_CREAT | O_TRUNC | O_WRONLY | O_DIRECT, 0666);
+	if (fd == -1)
+		goto fail;
+	memset(page, c, page_size);
+	ret = pwrite(fd, page, page_size, page_size);
+	if (ret != page_size)
+		goto fail;
+	if (close(fd))
+		goto fail;
+
+	fd = open(filename, flags);
+	if (fd == -1)
+		goto fail;
+	addr = mmap(NULL, 2 * page_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+	if (addr == MAP_FAILED)
+		err(1, NULL);
+	return;
+
+fail:
+	err(1, "%s", filename);
+}
+
+static ssize_t do_write(int fd, const void *buf, size_t count, off_t offset)
+{
+	ssize_t count2 = 0, ret;
+
+	do {
+		ret = pwrite(fd, buf, count, offset);
+		if (ret == -1) {
+			if (errno == EINTR)
+				continue;
+			break;
+		}
+		if (ret == 0)
+			break;
+		count2 += ret;
+		buf += ret;
+		count -= ret;
+	} while (count);
+	return count2;
+}
+
+int main(int argc, char *argv[])
+{
+	if (argc != 2)
+		errx(1, "no test filename argument given");
+	filename = argv[1];
+
+	page_size = ret = sysconf(_SC_PAGE_SIZE);
+	if (ret == -1)
+		err(1, NULL);
+
+	ret = posix_memalign(&page, page_size, page_size);
+	if (ret) {
+		errno = ENOMEM;
+		err(1, NULL);
+	}
+	init('d', O_RDWR | O_DIRECT);
+	ret = do_write(fd, addr + page_size, page_size, 0);
+	if (ret != page_size)
+		err(1, "pwrite %s (O_DIRECT): %ld != %u", filename, ret, page_size);
+	if (memcmp(addr, page, page_size))
+		errx(1, "pwrite (O_DIRECT) is broken");
+
+	if (fsync(fd))
+		errx(1, "fsync");
+	if (close(fd))
+		errx(1, "close");
+
+	if (unlink(filename))
+		err(1, "unlink %s", filename);
+
+	return 0;
+}
+
+--=-=-=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+
+DQo+DQo+DQo+IGRpZmYgLS1naXQgYS9mcy9jZXBoL2ZpbGUuYyBiL2ZzL2NlcGgvZmlsZS5jDQo+
+IGluZGV4IDVkMzlkOGU1NDI3My4uMzUwN2U0MDY2ZGU0IDEwMDY0NA0KPiAtLS0gYS9mcy9jZXBo
+L2ZpbGUuYw0KPiArKysgYi9mcy9jZXBoL2ZpbGUuYw0KPiBAQCAtMjAxMSw2ICsyMDExLDcgQEAg
+c3RhdGljIHNzaXplX3QgY2VwaF9yZWFkX2l0ZXIoc3RydWN0IGtpb2NiICppb2NiLCBzdHJ1Y3QN
+Cj4gaW92X2l0ZXIgKnRvKQ0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIGNlcGhfY2FwX3N0cmluZyhnb3QpKTsNCj4NCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIGlmIChjaS0+aV9pbmxpbmVfdmVyc2lvbiA9PSBDRVBIX0lOTElORV9OT05FKSB7DQo+
+ICsgZmlsZW1hcF9pbnZhbGlkYXRlX2xvY2soaW5vZGUtPmlfbWFwcGluZyk7DQo+IMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaWYgKCFyZXRyeV9vcCAmJg0K
+PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+KGlvY2ItPmtpX2ZsYWdzICYgSU9DQl9ESVJFQ1QpICYmDQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAhSVNfRU5DUllQVEVEKGlub2RlKSkg
+ew0KPiBAQCAtMjAyMSw2ICsyMDIyLDcgQEAgc3RhdGljIHNzaXplX3QgY2VwaF9yZWFkX2l0ZXIo
+c3RydWN0IGtpb2NiICppb2NiLCBzdHJ1Y3QNCj4gaW92X2l0ZXIgKnRvKQ0KPiDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH0gZWxzZSB7DQo+IMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJl
+dCA9IGNlcGhfc3luY19yZWFkKGlvY2IsIHRvLCAmcmV0cnlfb3ApOw0KPiDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIH0NCj4gKyBmaWxlbWFwX2ludmFsaWRh
+dGVfdW5sb2NrKGlub2RlLT5pX21hcHBpbmcpOw0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgfSBlbHNlIHsNCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCByZXRyeV9vcCA9IFJFQURfSU5MSU5FOw0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgfQ0KPiBAQCAtMjIzOSwxMSArMjI0MSwxMyBAQCBzdGF0aWMgc3NpemVfdCBjZXBo
+X3dyaXRlX2l0ZXIoc3RydWN0IGtpb2NiICppb2NiLA0KPiBzdHJ1Y3QgaW92X2l0ZXIgKmZyb20p
+DQo+DQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAvKiB3ZSBtaWdodCBuZWVkIHRv
+IHJldmVydCBiYWNrIHRvIHRoYXQgcG9pbnQgKi8NCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIGRhdGEgPSAqZnJvbTsNCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZmls
+ZW1hcF9pbnZhbGlkYXRlX2xvY2soaW5vZGUtPmlfbWFwcGluZyk7DQo+IMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCBpZiAoKGlvY2ItPmtpX2ZsYWdzICYgSU9DQl9ESVJFQ1QpICYmICFJ
+U19FTkNSWVBURUQoaW5vZGUpKQ0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIHdyaXR0ZW4gPSBjZXBoX2RpcmVjdF9yZWFkX3dyaXRlKGlvY2IsICZkYXRh
+LCBzbmFwYywNCj4gJnByZWFsbG9jX2NmKTsNCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIGVsc2UNCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCB3cml0dGVuID0gY2VwaF9zeW5jX3dyaXRlKGlvY2IsICZkYXRhLCBwb3MsIHNuYXBjKTsNCj4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgZmlsZW1hcF9pbnZhbGlkYXRlX3VubG9jayhp
+bm9kZS0+aV9tYXBwaW5nKTsNCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChk
+aXJlY3RfbG9jaykNCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBjZXBoX2VuZF9pb19kaXJlY3QoaW5vZGUpOw0KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgZWxzZQ0KPg0KPg0KPg0KPiBPbiA0LzEvMjIgOTozMiBQTSwgTHXDrXMgSGVucmlx
+dWVzIHdyb3RlOg0KPj4gV2hlbiBkb2luZyBESU8gb24gYW4gZW5jcnlwdGVkIG5vZGUsIHdlIG5l
+ZWQgdG8gaW52YWxpZGF0ZSB0aGUgcGFnZSBjYWNoZSBpbg0KPj4gdGhlIHJhbmdlIGJlaW5nIHdy
+aXR0ZW4gdG8sIG90aGVyd2lzZSB0aGUgY2FjaGUgd2lsbCBpbmNsdWRlIGludmFsaWQgZGF0YS4N
+Cj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBMdcOtcyBIZW5yaXF1ZXMgPGxoZW5yaXF1ZXNAc3VzZS5k
+ZT4NCj4+IC0tLQ0KPj4gICBmcy9jZXBoL2ZpbGUuYyB8IDExICsrKysrKysrKystDQo+PiAgIDEg
+ZmlsZSBjaGFuZ2VkLCAxMCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+Pg0KPj4gQ2hh
+bmdlcyBzaW5jZSB2MToNCj4+IC0gUmVwbGFjZWQgdHJ1bmNhdGVfaW5vZGVfcGFnZXNfcmFuZ2Uo
+KSBieSBpbnZhbGlkYXRlX2lub2RlX3BhZ2VzMl9yYW5nZQ0KPj4gLSBDYWxsIGZzY2FjaGVfaW52
+YWxpZGF0ZSB3aXRoIEZTQ0FDSEVfSU5WQUxfRElPX1dSSVRFIGlmIHdlJ3JlIGRvaW5nIERJTw0K
+Pj4NCj4+IE5vdGU6IEknbSBub3QgcmVhbGx5IHN1cmUgdGhpcyBsYXN0IGNoYW5nZSBpcyByZXF1
+aXJlZCwgaXQgZG9lc24ndCByZWFsbHkNCj4+IGFmZmVjdCBnZW5lcmljLzY0NyByZXN1bHQsIGJ1
+dCBzZWVtcyB0byBiZSB0aGUgbW9zdCBjb3JyZWN0Lg0KPj4NCj4+IGRpZmYgLS1naXQgYS9mcy9j
+ZXBoL2ZpbGUuYyBiL2ZzL2NlcGgvZmlsZS5jDQo+PiBpbmRleCA1MDcyNTcwYzIyMDMuLmIyNzQz
+YzM0MjMwNSAxMDA2NDQNCj4+IC0tLSBhL2ZzL2NlcGgvZmlsZS5jDQo+PiArKysgYi9mcy9jZXBo
+L2ZpbGUuYw0KPj4gQEAgLTE2MDUsNyArMTYwNSw3IEBAIGNlcGhfc3luY193cml0ZShzdHJ1Y3Qg
+a2lvY2IgKmlvY2IsIHN0cnVjdCBpb3ZfaXRlciAqZnJvbSwgbG9mZl90IHBvcywNCj4+ICAgCWlm
+IChyZXQgPCAwKQ0KPj4gICAJCXJldHVybiByZXQ7DQo+PiAgIC0JY2VwaF9mc2NhY2hlX2ludmFs
+aWRhdGUoaW5vZGUsIGZhbHNlKTsNCj4+ICsJY2VwaF9mc2NhY2hlX2ludmFsaWRhdGUoaW5vZGUs
+IChpb2NiLT5raV9mbGFncyAmIElPQ0JfRElSRUNUKSk7DQo+PiAgIAlyZXQgPSBpbnZhbGlkYXRl
+X2lub2RlX3BhZ2VzMl9yYW5nZShpbm9kZS0+aV9tYXBwaW5nLA0KPj4gICAJCQkJCSAgICBwb3Mg
+Pj4gUEFHRV9TSElGVCwNCj4+ICAgCQkJCQkgICAgKHBvcyArIGNvdW50IC0gMSkgPj4gUEFHRV9T
+SElGVCk7DQo+PiBAQCAtMTg5NSw2ICsxODk1LDE1IEBAIGNlcGhfc3luY193cml0ZShzdHJ1Y3Qg
+a2lvY2IgKmlvY2IsIHN0cnVjdCBpb3ZfaXRlciAqZnJvbSwgbG9mZl90IHBvcywNCj4+ICAgCQly
+ZXEtPnJfaW5vZGUgPSBpbm9kZTsNCj4+ICAgCQlyZXEtPnJfbXRpbWUgPSBtdGltZTsNCj4+ICAg
+KwkJaWYgKElTX0VOQ1JZUFRFRChpbm9kZSkgJiYgKGlvY2ItPmtpX2ZsYWdzICYgSU9DQl9ESVJF
+Q1QpKSB7DQo+PiArCQkJcmV0ID0gaW52YWxpZGF0ZV9pbm9kZV9wYWdlczJfcmFuZ2UoDQo+PiAr
+CQkJCWlub2RlLT5pX21hcHBpbmcsDQo+PiArCQkJCXdyaXRlX3BvcyA+PiBQQUdFX1NISUZULA0K
+Pj4gKwkJCQkod3JpdGVfcG9zICsgd3JpdGVfbGVuIC0gMSkgPj4gUEFHRV9TSElGVCk7DQo+PiAr
+CQkJaWYgKHJldCA8IDApDQo+PiArCQkJCWRvdXQoImludmFsaWRhdGVfaW5vZGVfcGFnZXMyX3Jh
+bmdlIHJldHVybmVkICVkXG4iLCByZXQpOw0KPj4gKwkJfQ0KPj4gKw0KPj4gICAJCS8qIFNldCB1
+cCB0aGUgYXNzZXJ0aW9uICovDQo+PiAgIAkJaWYgKHJtdykgew0KPj4gICAJCQkvKg0KPj4NCj4N
+Cg==
+--=-=-=--
