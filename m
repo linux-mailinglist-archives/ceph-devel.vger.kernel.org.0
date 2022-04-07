@@ -2,52 +2,53 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A4214F8959
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 Apr 2022 00:14:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FD944F89B2
+	for <lists+ceph-devel@lfdr.de>; Fri,  8 Apr 2022 00:15:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230047AbiDGUgI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 7 Apr 2022 16:36:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45350 "EHLO
+        id S230452AbiDGUn0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 7 Apr 2022 16:43:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230167AbiDGUgA (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Apr 2022 16:36:00 -0400
+        with ESMTP id S230448AbiDGUnS (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Apr 2022 16:43:18 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F09E33B014;
-        Thu,  7 Apr 2022 13:21:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59264396AC8
+        for <ceph-devel@vger.kernel.org>; Thu,  7 Apr 2022 13:32:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 40D4FB82919;
-        Thu,  7 Apr 2022 20:21:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A9CAC385A0;
-        Thu,  7 Apr 2022 20:21:43 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C65FCB8298A
+        for <ceph-devel@vger.kernel.org>; Thu,  7 Apr 2022 20:32:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9D10C385A0;
+        Thu,  7 Apr 2022 20:32:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649362904;
-        bh=aAhrXQxBRj4WNugGHY+9GVMQX5hwFeJidtueUCnQTWY=;
+        s=k20201202; t=1649363575;
+        bh=evX+IlyBFJBbvyf3l754MV1VJYssd+VekpcdJMO1Cc4=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=S21Jjxx4Id4duGdsHAGpiBp6xSthobM0Z655f8ZcV8TV+g4EbBjXUanFbjlQXIAJE
-         ZRMq34Gjr7sHaSC0gZoN05RjbNTVs3NdWSxFgZAFHYzvRGhaL2e7Vg22YUvcjQwpEB
-         1gUkxUXgDmWR+0+RAYiBowrsKvztQCJW8THXnQm5oVJKXO2CYd6dXSfdjkgbrpasXc
-         rThRWF0jDfVzdvZHwLpAepiiEnggjv7TxDPgL2R9c0yxAnRPbOXDTpumXH1oFZ6//I
-         tqznmo6A3za+asTGahH988ut4Ow8NhbZPrRAZhIuRG5H3G8ha1VfGQOGv64LVw+C/o
-         1CYiPa1Gk/hiQ==
-Message-ID: <c211631e19e8ed9c57cdb65a540ca3a38180016a.camel@kernel.org>
-Subject: Re: [PATCH v4] ceph: invalidate pages when doing direct/sync writes
+        b=cwjVUyeYgUhzstaY6BPmdvpZT3KEtKAm04j9+BRDy4cV9ZnogKNaOzcSaW4ZitkQU
+         kQf51peHgetoaMbp2zoZFgNTpDg6rIVNEUAnvghvZC+98LGQvZTHqYaERs3zidHKEn
+         jc6sAotEMnwOvIfuScpxqLK4vAhNS1zFrBMQBJi05QOdtzI7FX49xf9auSsJ+aR5pc
+         jnCIR9X8WeeeGjkz8IdA6Dnd9hJn5jmU7jgWNvF8AqYa76fv7gPoI7tT1TlaOeZTgy
+         oeco/vNVLZb+1eFAluzgKO8AvBQim3HBDT36JxL3w3oFsSMKacRpRr7Ob4fuNwR6CY
+         El0HTgjds8LWQ==
+Message-ID: <11456415d8729639ff7de083e833d49461d3c50c.camel@kernel.org>
+Subject: Re: [PATCH 2/2] ceph: fix coherency issue when truncating file size
+ for fscrypt
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>,
-        =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 07 Apr 2022 16:21:42 -0400
-In-Reply-To: <822cca41-f700-3cba-e2c8-d1fbe5a934b1@redhat.com>
-References: <20220407151521.7968-1-lhenriques@suse.de>
-         <385d353d-56d8-8f2a-b468-2aae048f59ef@redhat.com>
-         <66740f5e59d52b600d5033a07b794b78dfaf3c18.camel@kernel.org>
-         <822cca41-f700-3cba-e2c8-d1fbe5a934b1@redhat.com>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     idryomov@gmail.com, vshankar@redhat.com, lhenriques@suse.de,
+        ceph-devel@vger.kernel.org
+Date:   Thu, 07 Apr 2022 16:32:53 -0400
+In-Reply-To: <fd37ed30-b066-ce4d-ba99-1a85d593c5d3@redhat.com>
+References: <20220407144112.8455-1-xiubli@redhat.com>
+         <20220407144112.8455-3-xiubli@redhat.com>
+         <3315c167cc44f38c4eb9ebe76685418e85c9b9f2.camel@kernel.org>
+         <6439751daf27285f77239172a9bb5d5f0f80eede.camel@kernel.org>
+         <fd37ed30-b066-ce4d-ba99-1a85d593c5d3@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -58,115 +59,76 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2022-04-08 at 03:24 +0800, Xiubo Li wrote:
-> On 4/8/22 3:16 AM, Jeff Layton wrote:
-> > On Fri, 2022-04-08 at 03:03 +0800, Xiubo Li wrote:
-> > > On 4/7/22 11:15 PM, Luís Henriques wrote:
-> > > > When doing a direct/sync write, we need to invalidate the page cache in
-> > > > the range being written to.  If we don't do this, the cache will include
-> > > > invalid data as we just did a write that avoided the page cache.
+On Fri, 2022-04-08 at 03:14 +0800, Xiubo Li wrote:
+> On 4/7/22 11:38 PM, Jeff Layton wrote:
+> > On Thu, 2022-04-07 at 11:33 -0400, Jeff Layton wrote:
+> > > On Thu, 2022-04-07 at 22:41 +0800, xiubli@redhat.com wrote:
+> > > > From: Xiubo Li <xiubli@redhat.com>
 > > > > 
-> > > > Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> > > > When truncating the file size the MDS will help update the last
+> > > > encrypted block, and during this we need to make sure the client
+> > > > won't fill the pagecaches.
+> > > > 
+> > > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > > > > ---
-> > > >    fs/ceph/file.c | 19 ++++++++++++++-----
-> > > >    1 file changed, 14 insertions(+), 5 deletions(-)
+> > > >   fs/ceph/inode.c | 7 ++++++-
+> > > >   1 file changed, 6 insertions(+), 1 deletion(-)
 > > > > 
-> > > > Changes since v3:
-> > > > - Dropped initial call to invalidate_inode_pages2_range()
-> > > > - Added extra comment to document invalidation
-> > > > 
-> > > > Changes since v2:
-> > > > - Invalidation needs to be done after a write
-> > > > 
-> > > > Changes since v1:
-> > > > - Replaced truncate_inode_pages_range() by invalidate_inode_pages2_range
-> > > > - Call fscache_invalidate with FSCACHE_INVAL_DIO_WRITE if we're doing DIO
-> > > > 
-> > > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > > > index 5072570c2203..97f764b2fbdd 100644
-> > > > --- a/fs/ceph/file.c
-> > > > +++ b/fs/ceph/file.c
-> > > > @@ -1606,11 +1606,6 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
-> > > >    		return ret;
-> > > >    
-> > > >    	ceph_fscache_invalidate(inode, false);
-> > > > -	ret = invalidate_inode_pages2_range(inode->i_mapping,
-> > > > -					    pos >> PAGE_SHIFT,
-> > > > -					    (pos + count - 1) >> PAGE_SHIFT);
-> > > > -	if (ret < 0)
-> > > > -		dout("invalidate_inode_pages2_range returned %d\n", ret);
-> > > >    
-> > > >    	while ((len = iov_iter_count(from)) > 0) {
-> > > >    		size_t left;
-> > > > @@ -1938,6 +1933,20 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
-> > > >    			break;
-> > > >    		}
-> > > >    		ceph_clear_error_write(ci);
-> > > > +
-> > > > +		/*
-> > > > +		 * we need to invalidate the page cache here, otherwise the
-> > > > +		 * cache will include invalid data in direct/sync writes.
-> > > > +		 */
-> > > > +		ret = invalidate_inode_pages2_range(
-> > > IMO we'd better use truncate_inode_pages_range() after write. The above
-> > > means it's possibly will write the dirty pagecache back, which will
-> > > overwrite and corrupt the disk data just wrote.
-> > > 
-> > I disagree. We call filemap_write_and_wait_range at the start of this,
-> > so any data that was dirty when we called write() will be written back
-> > before the sync write.
-> > 
-> > If we truncate the range, then we'll potentially lose writes that came
-> > in after write was issued but before truncate_inode_pages_range. I think
-> > we'd rather let what we just wrote be clobbered in this situation than
-> > lose a write altogether.
-> > 
-> > All of this is somewhat academic though. If you're mixing buffered and
-> > direct writes like this without some sort of locking, then you're just
-> > asking for trouble. The aim here is "sane behavior to the best of our
-> > ability", but we can't expect it to always be sane when people do insane
-> > things. ;)
+> > > > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > > > index f4059d73edd5..cc1829ab497d 100644
+> > > > --- a/fs/ceph/inode.c
+> > > > +++ b/fs/ceph/inode.c
+> > > > @@ -2647,9 +2647,12 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
+> > > >   		req->r_num_caps = 1;
+> > > >   		req->r_stamp = attr->ia_ctime;
+> > > >   		if (fill_fscrypt) {
+> > > > +			filemap_invalidate_lock(inode->i_mapping);
+> > > >   			err = fill_fscrypt_truncate(inode, req, attr);
+> > > > -			if (err)
+> > > > +			if (err) {
+> > > > +				filemap_invalidate_unlock(inode->i_mapping);
+> > > >   				goto out;
+> > > > +			}
+> > > >   		}
+> > > >   
+> > > >   		/*
+> > > > @@ -2660,6 +2663,8 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
+> > > >   		 * it.
+> > > >   		 */
+> > > >   		err = ceph_mdsc_do_request(mdsc, NULL, req);
+> > > > +		if (fill_fscrypt)
+> > > > +			filemap_invalidate_unlock(inode->i_mapping);
+> > > >   		if (err == -EAGAIN && truncate_retry--) {
+> > > >   			dout("setattr %p result=%d (%s locally, %d remote), retry it!\n",
+> > > >   			     inode, err, ceph_cap_string(dirtied), mask);
+> > > Looks reasonable. Is there any reason we shouldn't do this in the non-
+> > > encrypted case too? I suppose it doesn't make as much difference in that
+> > > case.
 > 
-> Just in the case Luis hit. Before writing the new data the mapping 
-> happen when reading the src in copy_from_usr(). So once the writing done 
-> the pagecache is caching the stale contents.
+> We only need this in encrypted case, which will do the RMW for the last 
+> block.
+> 
+> 
+> > > I'll plan to pull this and the other patch into the wip-fscrypt branch.
+> > > Should I just fold them into your earlier patches?
+> Yeah, certainly.
+> > OTOH...do we really need this? I'm not sure I understand the race you're
+> > trying to prevent. Can you lay it out for me?
+> 
+> I am thinking during the RMW for the last block, the page fault still 
+> could happen because the page fault function doesn't prevent that.
+> 
+> And we should prevent it during the RMW is going on.
 > 
 
-Not just in that case.
+Right, but the RMW is being done using an anonymous page, and at this
+point in the process we haven't really touched the pagecache yet. That
+doesn't happen until __ceph_do_pending_vmtruncate.
 
-You could have 2 unrelated processes, one doing DIO writes and one doing
-mmap writes. You're likely to end up with a mess unless you're very
-careful with what you're doing, but there should be some expectation
-that it will work if you serialize things correctly and/or have them
-writing to their own areas of the file, etc.
-
-In any case, we'll never get perfect cache coherency, and I figure that
-until the write returns, what's in the pagecache ought to be considered
-valid.
-
-> > > Though it seems impossible that these pagecaches will be marked dirty,
-> > > but this call is misleading ?
-> > > 
-> > Not impossible at all. You can open a file O_DIRECT and then mmap the fd
-> > for PROT_WRITE (or just open the file a second time and do it).
-> > 
-> > We definitely recommend against mixing buffered and direct I/O, but
-> > nothing really prevents someone from doing it. If the user is properly
-> > using file locking, then there's really no reason it shouldn't work.
-> > 
-> > > > +				inode->i_mapping,
-> > > > +				pos >> PAGE_SHIFT,
-> > > > +				(pos + len - 1) >> PAGE_SHIFT);
-> > > > +		if (ret < 0) {
-> > > > +			dout("invalidate_inode_pages2_range returned %d\n",
-> > > > +			     ret);
-> > > > +			ret = 0;
-> > > > +		}
-> > > >    		pos += len;
-> > > >    		written += len;
-> > > >    		dout("sync_write written %d\n", written);
-> > > > 
-> 
+Most of the callers for filemap_invalidate_lock/_unlock are in the hole
+punching codepaths, and not so much in truncate. What outcome are you
+trying to prevent with this? Can you lay out the potential race and why
+it would be harmful?
 
 -- 
 Jeff Layton <jlayton@kernel.org>
