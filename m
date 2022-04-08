@@ -2,111 +2,53 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 491084F922C
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 Apr 2022 11:43:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61A304F9556
+	for <lists+ceph-devel@lfdr.de>; Fri,  8 Apr 2022 14:06:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233280AbiDHJpc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 8 Apr 2022 05:45:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42418 "EHLO
+        id S231670AbiDHMIc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 8 Apr 2022 08:08:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233309AbiDHJpa (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 8 Apr 2022 05:45:30 -0400
-Received: from EUR02-HE1-obe.outbound.protection.outlook.com (mail-oln040092068033.outbound.protection.outlook.com [40.92.68.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D9710EDF8
-        for <ceph-devel@vger.kernel.org>; Fri,  8 Apr 2022 02:43:25 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Eul7YeploMpBXyJg8ylAvaTumOLD6XxRT/+A2W4oFkfNir/1SsK2WpQJvZOrm+OVKzRgh2eA4kb3slpDgGO9geTJTFKsmsfEMgNsdsIvwU0gfT3hwm/2ipu1YKGxLK2knr/Xiag1OUwrgzp1IyGxlyDO3WZvQkiJbcfy3obQskbgmNHbEXSmeaKIVYpJR/o/+d8egPoy7QSXTkfF7ZCbaPOVsm9luDRYGaZoPEj3UzFcnlhOS7NJMTd8XGFA3RvOhjL8ResSypNtTg9MUU3diUnS5CrNWgkuU3AgTy7Z4ZLBdF6DzY83d4mRKbbgdH6onBoxc0aj9ouBpjSccCP5Iw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wz9mK3p2natdEkyIP8m8BdCd30AhfwYKHqVeQSJxNXQ=;
- b=lG+G52kqHFq+MJFTlidByU4v1qSayE8AsFz3rltgW4NKaU/C2q6fPaig+0ArDE0g+UCm6O3vcW3ib/yihDy8PIvppTVXo8//CvcTLzD/nLfOBrDHP7wzzOZRCzpWzhPnGNwifVbSeCM8HG2eYzV7wKqdkPLZMdsYuetwPgkug3T6i7psg5HL+F//18Buu7D276vAlhmjO86VY1mlt78Nf9ECc4jxJ4vB9QiCWPnnFQ1plgULuTm6tqvRJX0BrRfGaC1lyHXOmRFPqx5zVEoI1geqb7pkeIqSRE9Rjx+ugT7N8rCJeZ27gF9fNEmlcIb7bJiXZmO0F3aHi85EhWECEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wz9mK3p2natdEkyIP8m8BdCd30AhfwYKHqVeQSJxNXQ=;
- b=JbnjIiEojuqqClJVr25fY16k5lBCdZbOSc2AaEcVwDpEOWXh35wDIKCwoUBg9oEQJJja2QzdQHZS8AJsEzH0FEKX/8Fomdz9dgBNqhqNQmGWrcqtsyJkOhcAZUtnTFHuO+BBqlv8fOJM/4uTfk/XTepMvhxf7P1E8NpitQGxWfwXDqd6w/eAOm4PJhv6HinEWFGHMojhzfJBCDQawRsFoYaBnY2an1mylgPjsKPVZ+1V0vz6iyTqQTZBjcONhNbAvwEvpsK7Tv3Awe9xdReA7/H3PaaPaYWRNXcgKAuaqzTRqBe4OtGmZzQGoIzRPPXFe0BqxDXNDf6L6jO3Tv8YiA==
-Received: from VI1P193MB0464.EURP193.PROD.OUTLOOK.COM (2603:10a6:803:4a::20)
- by AM9P193MB1668.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:3eb::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.25; Fri, 8 Apr
- 2022 09:43:22 +0000
-Received: from VI1P193MB0464.EURP193.PROD.OUTLOOK.COM
- ([fe80::9112:8b0c:dc3f:766]) by VI1P193MB0464.EURP193.PROD.OUTLOOK.COM
- ([fe80::9112:8b0c:dc3f:766%6]) with mapi id 15.20.5144.022; Fri, 8 Apr 2022
- 09:43:22 +0000
-From:   Dominik Bracht <Bracht5@live.com>
-To:     "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Subject: OSD won't start ceph_assert(r == 0)
-Thread-Topic: OSD won't start ceph_assert(r == 0)
-Thread-Index: AQHYSy0VXsdfcV1Lck67u5Tx+rU8EA==
-Date:   Fri, 8 Apr 2022 09:43:21 +0000
-Message-ID: <7ac30a9724e248c5a6c8bafd03502860d16ce0f3.camel@live.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [GucYgQE9kySkduDl+E8tXdJ9ARUs6pze]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2d7b593e-e327-47e8-fc2c-08da1944385a
-x-ms-traffictypediagnostic: AM9P193MB1668:EE_
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: O4EBULEYWaLVAUxO6bWz8fMUY0h7P/2Z4SPy/pDtP5QLN32iNpKoVC5n+QRScjtAT9RmHX3z+dZbruhVxenyB3sxjNd+J+ZwYJQ8tZh3AvFWH8p0Qr6M59zMmIG9TsaIYEFRHfO2UgxIQ16IPiCVz+K+L56l6WqqgpYKzBxB4XezKnpqn0n6FVLTNq6YnSVyOzex3GRXei6I2OOivqOxGDjrAwKJqwLunuvZCSa7IpjeVoRAddfWzT0EBLNUaDNplejiYMNIDG59qbiYw0LhSNDrlKqilKTJcM748PUoasXSFQqBLtME7D+Srr0bzaYS85J+MX7Irwwk4cu/J6tTsUsk9iqkY4TDUfsUKu9ybmhe0UWJVDyAPbqfuEFxyioecoewL/HW9ZoFqSXt/3X733szG11suiuEJ65zRr6cQmgCsyzA1VqIHzhj1wiZ8twRFW88OW5ggbu80mW6OeKuHn03AisJ9NwhA+ild5RF2ZZOuGMMg+06hVYR7wCcfJJZd2XEAbcK+ZTIbsPltcG24HRooLlpbsxLcWLyqxduIweaAHVB3dGdbALWUzfuyAXNaKzPwA3YUGM7ou59RCGv5I2y4oV3pX9EmxRcQyllyx56Y2vtKFRmNBKSIpUuJhye
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NERVWGlwZ0ZmRGdtRmx4QWVXclRZZ1FwVmNOTEMyL0VDTGN3U1RSWGRMTjBy?=
- =?utf-8?B?S2ZJL1Zld24zWnpFL2RwLy9LNHNPQWlCKzVnTlNybVQvRkZxaEdReTlRV1lI?=
- =?utf-8?B?aGhhNW50dXNYOHNUb1pRQTA0QWRxdFhjVXhNRDl6Sm1uL1htdmJERk5nMDJZ?=
- =?utf-8?B?eVpaMlUyK3kvdm85blZkYzRncDRjakFrdE9ReVcvdHVkWjFDL0d4WUJlSVpW?=
- =?utf-8?B?akwveHZKYTJyS2hkYzByODhocWczbjVsWlpNSkcyR3lxNVo2TEJSYmpQOE82?=
- =?utf-8?B?WTNQUkY5Yk1zTVNhK0hMd3UyQzBQRjRBeU5LVWFXTTh6RlMrN3crU1QzeTh3?=
- =?utf-8?B?YzJDdlVrSFVyVUxjaGd0UlR5aC9BMGJKMTRITk0xQkJ2ZEpXdUNxV0VwRGxV?=
- =?utf-8?B?bk53U2RITGRLWWRGUUpjNmtuazYzNG01REd0cndkc0dkQUR2R1VvWEtRODdn?=
- =?utf-8?B?VFhJQi91M3Q5eTlUUU5WdFNKYk9RY0FySnJQa3I4aW45anhIZmRnelR2VE5y?=
- =?utf-8?B?N1pXWHJEa3ZwZ1JvLzlJYXN6a1lYUDlGbzJMVFZHWTJHdVdTaFRFdFJTWGkw?=
- =?utf-8?B?cnI5QzF4THBpWUtvd3dsa0VEcmdzdzY5aDdqcFY3QnhLQkJQaERBbjNnczR3?=
- =?utf-8?B?aitWV1ZpdXc4VjdQbXNyLzZWNEUwUDNNdjZSNnU5ai9vdkFXTWlTWWIrTkhM?=
- =?utf-8?B?NHRsdXdWYzBWVWxqTVZobXNMRHptK3RtOXUrM3pWYVVnTmltWUFUeHNKOWhG?=
- =?utf-8?B?aUE2cjd2NlY0YjZhM2NNNjlMWjFjRmlBK0dKZDF2WEJrSG8zdXdGUjRpM2Ux?=
- =?utf-8?B?QUZXS3lNbjljb2xmN3NJUTA0MlFoQmtSWE5KbEw1Yk9DMUNvUjhwU1p1UC81?=
- =?utf-8?B?WmF4dWF2TDJ2MzZyNWg1TmR2cytUVFd4dnZpa0QxdUFyUmh2M3RreTErd3B2?=
- =?utf-8?B?TUN0N1lscjN0M3dxNEZvY0d3d3pONWIyUlZHNTVhSXFjOVRRU0gxaUY5eUM3?=
- =?utf-8?B?NlZFeUpucGV2ZUczQTJ5MUNDR1pPVVEva2dnbmVXOGN3Y3RvOStvUCs3ajQw?=
- =?utf-8?B?LzAzMDhmaGxwWmlMTlp4bk8vU0xLSEYybWxCQTV1eHVONDdvVEtvZ1VnQ21x?=
- =?utf-8?B?R3N5d1NSWWdCUzcxM2F2MFZUd3ZWV0lWWFllTDd3eVJPd01nYWFJV0RKNDZn?=
- =?utf-8?B?YXZUSlZnTExMNisrZ29ib3laV1BFMWF2WjV5T1BUNnYvNVlxMEJBejVpUTJk?=
- =?utf-8?B?RVRSdGo3S0JOcmN2VWJBb2xEWEgxVVZuRUZ0ampibXRQemVwOU4xMWZjNGY2?=
- =?utf-8?B?Q3hGWVZLZVdVWW5TR0wraDBxLzhod1UxY1JSWWdQdDJ0ZEFEVTRqTFdMK3Q1?=
- =?utf-8?B?MDRZTDVCQi9LOStEUW5UQlpGODVqVUVlSTh2Wk9uYjYwRGwvNlhYdldzUWsy?=
- =?utf-8?B?VWUxLzJ6OVhGYmNyQXNkMFlPK09CK2FtTnZYaFRGNjJZU3NJd3dMb21kKzZB?=
- =?utf-8?B?dnJ3ZkhsYndsMkdLN2dnR01aSXY2Ym03Mm9rYzBPMU9DU0dNM0lGZjBiR21t?=
- =?utf-8?B?THNHS21ldHRUcUFZbnlTZTZ2NHZhSHFvYk9JYVJYdW16VHVnbHZ5bTd6RDVh?=
- =?utf-8?B?TnRFejY2bW1mMWd6bEwrSjVrM2xPOWdPR3ljTW42aHhmMTlCazhLMHdTclJS?=
- =?utf-8?B?R1c1cWcwRGZDekdYVVJGcEQ3MFlmRkRQY1VOQ2VlR21TMzFUUVdpN1dKOFR2?=
- =?utf-8?B?MVp5SHVYUHhEZFhYblFTUjRUTEtQS0dMSEo0a1VheThwcm1ubm9wM0hHQSs0?=
- =?utf-8?B?UlY4dm9wNGh0U05md2lNekNjQW9qTGFyUzBPcXVNQUZmZ0ZzQW15cE43MCs4?=
- =?utf-8?B?QTJ1aUptSWxHbW9kZWxwTnBsZ2t6MFludFdFZDBYMzdhQUVrSWRRbVV2RE5J?=
- =?utf-8?Q?HKJYDJyEIh8=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8A4951BFD9DCAF42A4C3BB56D08CD0BA@EURP193.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: base64
+        with ESMTP id S235565AbiDHMHb (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 8 Apr 2022 08:07:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02043F94EF;
+        Fri,  8 Apr 2022 05:04:59 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1244B62075;
+        Fri,  8 Apr 2022 12:04:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB0B0C385A8;
+        Fri,  8 Apr 2022 12:04:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649419495;
+        bh=DvBk2NjJx6xXxR2HYjxT2aaULsB7g1Rt0KWFngBdd8E=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=M51P4EIJLO414AKWYGjdmcOo1wICr/XU/d4sLqUWKXCvZlVosh/fGh7xdDLXXjMXh
+         af9h17GGPTvTPJw//GOCLPewgaMJGnD/4Lthuv94VRVkHVmpFKU+y1eel9H+4WCI/P
+         TUwYVh/2wvBqi0bhdWNrI+5QVUb7dDcFxD1iKTvug/R5NPnly1TTbQcLIeyjWNjItN
+         ng26CBwvQIWNN/PvEjbM6exg/0CMSn3RiLmEXs4zGe2yU8rTi8/w0C/Lx1s25hs0T/
+         V5jePEzuNuzhYX3ZBWwZRuTOC5y8yh7yeoA4ZuN5Hit+0VVwt3X1xbs31F8voYq4Qj
+         hmg6qLPUHXOpA==
+Message-ID: <947af0b22bf50affa504bc0ca45fb0e290fc7805.camel@kernel.org>
+Subject: Re: [PATCH v4] ceph: invalidate pages when doing direct/sync writes
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>,
+        =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 08 Apr 2022 08:04:53 -0400
+In-Reply-To: <0133ed11-bb90-9337-e787-66851cbbc379@redhat.com>
+References: <20220407151521.7968-1-lhenriques@suse.de>
+         <0133ed11-bb90-9337-e787-66851cbbc379@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-80ceb.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: VI1P193MB0464.EURP193.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d7b593e-e327-47e8-fc2c-08da1944385a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Apr 2022 09:43:21.9991
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9P193MB1668
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -114,114 +56,103 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-SGVsbG8gZXZlcnlvbmUsDQoNCmkgaGF2ZSBhbiBvc2QgdGhhdCByYW5kb21seSBqdXN0IGNyYXNo
-ZWQgYW5kIGlzIHJlZnVzaW5nIHRvIGNvbWUgdXANCmFnYWluLiBJIGZvdW5kIGEgc2ltaWxhciBs
-b29raW5nIGlzc3VlDQpodHRwczovL3RyYWNrZXIuY2VwaC5jb20vaXNzdWVzLzUwNjU2IGJ1dCB0
-aGUgd29ya2Fyb3VuZCB0byB1c2UgdGhlDQpiaXRtYXAgYWxsb2NhdG9yIHJ1bnMgaW50byB0aGUg
-c2FtZSBpc3N1ZQ0KDQpDcmFzaCBJbmZvOg0Kew0KICAgICJjcmFzaF9pZCI6ICIyMDIyLTA0LTA3
-VDE5OjI2OjQ0LjI0NTY2OFpfNzUxNmZkOWYtYmM4NC00Y2I1LWFmY2QtDQphNTRjNjQ3NTM2MzEi
-LA0KICAgICJ0aW1lc3RhbXAiOiAiMjAyMi0wNC0wN1QxOToyNjo0NC4yNDU2NjhaIiwNCiAgICAi
-cHJvY2Vzc19uYW1lIjogImNlcGgtb3NkIiwNCiAgICAiZW50aXR5X25hbWUiOiAib3NkLjgiLA0K
-ICAgICJjZXBoX3ZlcnNpb24iOiAiMTYuMi43IiwNCiAgICAidXRzbmFtZV9ob3N0bmFtZSI6ICJz
-aW5ub2giLA0KICAgICJ1dHNuYW1lX3N5c25hbWUiOiAiTGludXgiLA0KICAgICJ1dHNuYW1lX3Jl
-bGVhc2UiOiAiNS4xMy4xOS02LXB2ZSIsDQogICAgInV0c25hbWVfdmVyc2lvbiI6ICIjMSBTTVAg
-UFZFIDUuMTMuMTktMTQgKFRodSwgMTAgTWFyIDIwMjINCjE2OjI0OjUyICswMTAwKSIsDQogICAg
-InV0c25hbWVfbWFjaGluZSI6ICJ4ODZfNjQiLA0KICAgICJvc19uYW1lIjogIkRlYmlhbiBHTlUv
-TGludXggMTEgKGJ1bGxzZXllKSIsDQogICAgIm9zX2lkIjogIjExIiwNCiAgICAib3NfdmVyc2lv
-bl9pZCI6ICIxMSIsDQogICAgIm9zX3ZlcnNpb24iOiAiMTEgKGJ1bGxzZXllKSIsDQogICAgImFz
-c2VydF9jb25kaXRpb24iOiAiciA9PSAwIiwNCiAgICAiYXNzZXJ0X2Z1bmMiOiAidm9pZA0KQmx1
-ZUZTOjpfY29tcGFjdF9sb2dfYXN5bmMoc3RkOjp1bmlxdWVfbG9jazxzdGQ6Om11dGV4PiYpIiwN
-CiAgICAiYXNzZXJ0X2ZpbGUiOiAiLi9zcmMvb3MvYmx1ZXN0b3JlL0JsdWVGUy5jYyIsDQogICAg
-ImFzc2VydF9saW5lIjogMjM1MiwNCiAgICAiYXNzZXJ0X3RocmVhZF9uYW1lIjogImNlcGgtb3Nk
-IiwNCiAgICAiYXNzZXJ0X21zZyI6ICIuL3NyYy9vcy9ibHVlc3RvcmUvQmx1ZUZTLmNjOiBJbiBm
-dW5jdGlvbiAndm9pZA0KQmx1ZUZTOjpfY29tcGFjdF9sb2dfYXN5bmMoc3RkOjp1bmlxdWVfbG9j
-azxzdGQ6Om11dGV4PiYpJyB0aHJlYWQNCjdmZmJjZWQxYWYwMCB0aW1lIDIwMjItMDQtDQowN1Qy
-MToyNjo0NC4xOTQ1MjMrMDIwMFxuLi9zcmMvb3MvYmx1ZXN0b3JlL0JsdWVGUy5jYzogMjM1Mjog
-RkFJTEVEDQpjZXBoX2Fzc2VydChyID09IDApXG4iLA0KICAgICJiYWNrdHJhY2UiOiBbDQogICAg
-ICAgICIvbGliL3g4Nl82NC1saW51eC1nbnUvbGlicHRocmVhZC5zby4wKCsweDE0MTQwKQ0KWzB4
-N2ZmYmNmMzcyMTQwXSIsDQogICAgICAgICJnc2lnbmFsKCkiLA0KICAgICAgICAiYWJvcnQoKSIs
-DQogICAgICAgICIoY2VwaDo6X19jZXBoX2Fzc2VydF9mYWlsKGNoYXIgY29uc3QqLCBjaGFyIGNv
-bnN0KiwgaW50LCBjaGFyDQpjb25zdCopKzB4MTZlKSBbMHg1NTcxNmIyYmZiMzBdIiwNCiAgICAg
-ICAgIi91c3IvYmluL2NlcGgtb3NkKCsweGFiY2M3MSkgWzB4NTU3MTZiMmJmYzcxXSIsDQogICAg
-ICAgDQoiKEJsdWVGUzo6X2NvbXBhY3RfbG9nX2FzeW5jKHN0ZDo6dW5pcXVlX2xvY2s8c3RkOjpt
-dXRleD4mKSsweDFhMTMpDQpbMHg1NTcxNmI5YmEyNDNdIiwNCiAgICAgICAgIihCbHVlRlM6Ol9m
-bHVzaChCbHVlRlM6OkZpbGVXcml0ZXIqLCBib29sLA0Kc3RkOjp1bmlxdWVfbG9jazxzdGQ6Om11
-dGV4PiYpKzB4NjcpIFsweDU1NzE2YjliYTQ5N10iLA0KICAgICAgICAiKEJsdWVSb2Nrc1dyaXRh
-YmxlRmlsZTo6QXBwZW5kKHJvY2tzZGI6OlNsaWNlIGNvbnN0JikrMHgxMDApDQpbMHg1NTcxNmI5
-ZDI3ZDBdIiwNCiAgICAgICAgIihyb2Nrc2RiOjpMZWdhY3lXcml0YWJsZUZpbGVXcmFwcGVyOjpB
-cHBlbmQocm9ja3NkYjo6U2xpY2UNCmNvbnN0Jiwgcm9ja3NkYjo6SU9PcHRpb25zIGNvbnN0Jiwg
-cm9ja3NkYjo6SU9EZWJ1Z0NvbnRleHQqKSsweDQ4KQ0KWzB4NTU3MTZiZTk5MjRlXSIsDQogICAg
-ICAgICIocm9ja3NkYjo6V3JpdGFibGVGaWxlV3JpdGVyOjpXcml0ZUJ1ZmZlcmVkKGNoYXIgY29u
-c3QqLA0KdW5zaWduZWQgbG9uZykrMHgzMzgpIFsweDU1NzE2YzA3M2QxOF0iLA0KICAgICAgICAi
-KHJvY2tzZGI6OldyaXRhYmxlRmlsZVdyaXRlcjo6QXBwZW5kKHJvY2tzZGI6OlNsaWNlDQpjb25z
-dCYpKzB4NWQ3KSBbMHg1NTcxNmMwNzIyOWJdIiwNCiAgICAgICAgIihyb2Nrc2RiOjpCbG9ja0Jh
-c2VkVGFibGVCdWlsZGVyOjpXcml0ZVJhd0Jsb2NrKHJvY2tzZGI6OlNsaWNlDQpjb25zdCYsIHJv
-Y2tzZGI6OkNvbXByZXNzaW9uVHlwZSwgcm9ja3NkYjo6QmxvY2tIYW5kbGUqLCBib29sKSsweDEx
-ZCkNClsweDU1NzE2YzIzYzJkN10iLA0KICAgICAgICAiKHJvY2tzZGI6OkJsb2NrQmFzZWRUYWJs
-ZUJ1aWxkZXI6OldyaXRlQmxvY2socm9ja3NkYjo6U2xpY2UNCmNvbnN0Jiwgcm9ja3NkYjo6Qmxv
-Y2tIYW5kbGUqLCBib29sKSsweDdkMCkgWzB4NTU3MTZjMjNjMGJlXSIsDQogICAgICAgDQoiKHJv
-Y2tzZGI6OkJsb2NrQmFzZWRUYWJsZUJ1aWxkZXI6OldyaXRlQmxvY2socm9ja3NkYjo6QmxvY2tC
-dWlsZGVyKiwNCnJvY2tzZGI6OkJsb2NrSGFuZGxlKiwgYm9vbCkrMHg0OCkgWzB4NTU3MTZjMjNi
-OGRhXSIsDQogICAgICAgICIocm9ja3NkYjo6QmxvY2tCYXNlZFRhYmxlQnVpbGRlcjo6Rmx1c2go
-KSsweDlhKQ0KWzB4NTU3MTZjMjNiODhhXSIsDQogICAgICAgICIocm9ja3NkYjo6QmxvY2tCYXNl
-ZFRhYmxlQnVpbGRlcjo6QWRkKHJvY2tzZGI6OlNsaWNlIGNvbnN0JiwNCnJvY2tzZGI6OlNsaWNl
-IGNvbnN0JikrMHgxOTcpIFsweDU1NzE2YzIzYjNiZl0iLA0KICAgICAgICAiKHJvY2tzZGI6OkJ1
-aWxkVGFibGUoc3RkOjpfX2N4eDExOjpiYXNpY19zdHJpbmc8Y2hhciwNCnN0ZDo6Y2hhcl90cmFp
-dHM8Y2hhcj4sIHN0ZDo6YWxsb2NhdG9yPGNoYXI+ID4gY29uc3QmLCByb2Nrc2RiOjpFbnYqLA0K
-cm9ja3NkYjo6RmlsZVN5c3RlbSosIHJvY2tzZGI6OkltbXV0YWJsZUNGT3B0aW9ucyBjb25zdCYs
-DQpyb2Nrc2RiOjpNdXRhYmxlQ0ZPcHRpb25zIGNvbnN0Jiwgcm9ja3NkYjo6RmlsZU9wdGlvbnMg
-Y29uc3QmLA0Kcm9ja3NkYjo6VGFibGVDYWNoZSosIHJvY2tzZGI6OkludGVybmFsSXRlcmF0b3JC
-YXNlPHJvY2tzZGI6OlNsaWNlPiosDQpzdGQ6OnZlY3RvcjxzdGQ6OnVuaXF1ZV9wdHI8cm9ja3Nk
-Yjo6RnJhZ21lbnRlZFJhbmdlVG9tYnN0b25lSXRlcmF0b3IsDQpzdGQ6OmRlZmF1bHRfZGVsZXRl
-PHJvY2tzZGI6OkZyYWdtZW50ZWRSYW5nZVRvbWJzdG9uZUl0ZXJhdG9yPiA+LA0Kc3RkOjphbGxv
-Y2F0b3I8c3RkOjp1bmlxdWVfcHRyPHJvY2tzZGI6OkZyYWdtZW50ZWRSYW5nZVRvbWJzdG9uZUl0
-ZXJhdG8NCnIsIHN0ZDo6ZGVmYXVsdF9kZWxldGU8cm9ja3NkYjo6RnJhZ21lbnRlZFJhbmdlVG9t
-YnN0b25lSXRlcmF0b3I+ID4gPg0KPiwgcm9ja3NkYjo6RmlsZU1ldGFEYXRhKiwgcm9ja3NkYjo6
-SW50ZXJuYWxLZXlDb21wYXJhdG9yIGNvbnN0JiwNCnN0ZDo6dmVjdG9yPHN0ZDo6dW5pcXVlX3B0
-cjxyb2Nrc2RiOjpJbnRUYmxQcm9wQ29sbGVjdG9yRmFjdG9yeSwNCnN0ZDo6ZGVmYXVsdF9kZWxl
-dGU8cm9ja3NkYjo6SW50VGJsUHJvcENvbGxlY3RvckZhY3Rvcnk+ID4sDQpzdGQ6OmFsbG9jYXRv
-cjxzdGQ6OnVuaXF1ZV9wdHI8cm9ja3NkYjo6SW50VGJsUHJvcENvbGxlY3RvckZhY3RvcnksDQpz
-dGQ6OmRlZmF1bHRfZGVsZXRlPHJvY2tzZGI6OkludFRibFByb3BDb2xsZWN0b3JGYWN0b3J5PiA+
-ID4gPiBjb25zdCosDQp1bnNpZ25lZCBpbnQsIHN0ZDo6X19jeHgxMTo6YmFzaWNfc3RyaW5nPGNo
-YXIsIHN0ZDo6Y2hhcl90cmFpdHM8Y2hhcj4sDQpzdGQ6OmFsbG9jYXRvcjxjaGFyPiA+IGNvbnN0
-Jiwgc3RkOjp2ZWN0b3I8dW5zaWduZWQgbG9uZywNCnN0ZDo6YWxsb2NhdG9yPHVuc2lnbmVkIGxv
-bmc+ID4sIHVuc2lnbmVkIGxvbmcsDQpyb2Nrc2RiOjpTbmFwc2hvdENoZWNrZXIqLCByb2Nrc2Ri
-OjpDb21wcmVzc2lvblR5cGUsIHVuc2lnbmVkIGxvbmcsDQpyb2Nrc2RiOjpDb21wcmVzc2lvbk9w
-dGlvbnMgY29uc3QmLCBib29sLCByb2Nrc2RiOjpJbnRlcm5hbFN0YXRzKiwNCnJvY2tzZGI6OlRh
-YmxlRmlsZUNyZWF0aW9uUmVhc29uLCByb2Nrc2RiOjpFdmVudExvZ2dlciosIGludCwNCnJvY2tz
-ZGI6OkVudjo6SU9Qcmlvcml0eSwgcm9ja3NkYjo6VGFibGVQcm9wZXJ0aWVzKiwgaW50LCB1bnNp
-Z25lZA0KbG9uZywgdW5zaWduZWQgbG9uZywgcm9ja3NkYjo6RW52OjpXcml0ZUxpZmVUaW1lSGlu
-dCwgdW5zaWduZWQNCmxvbmcpKzB4NzgyKSBbMHg1NTcxNmMxYmU3MzJdIiwNCiAgICAgICAgIihy
-b2Nrc2RiOjpEQkltcGw6OldyaXRlTGV2ZWwwVGFibGVGb3JSZWNvdmVyeShpbnQsDQpyb2Nrc2Ri
-OjpDb2x1bW5GYW1pbHlEYXRhKiwgcm9ja3NkYjo6TWVtVGFibGUqLA0Kcm9ja3NkYjo6VmVyc2lv
-bkVkaXQqKSsweDVlYSkgWzB4NTU3MTZiZjM3MjI2XSIsDQogICAgICAgICIocm9ja3NkYjo6REJJ
-bXBsOjpSZWNvdmVyTG9nRmlsZXMoc3RkOjp2ZWN0b3I8dW5zaWduZWQgbG9uZywNCnN0ZDo6YWxs
-b2NhdG9yPHVuc2lnbmVkIGxvbmc+ID4gY29uc3QmLCB1bnNpZ25lZCBsb25nKiwgYm9vbCwNCmJv
-b2wqKSsweDFhZDEpIFsweDU1NzE2YmYzNWU5ZF0iLA0KICAgICAgIA0KIihyb2Nrc2RiOjpEQklt
-cGw6OlJlY292ZXIoc3RkOjp2ZWN0b3I8cm9ja3NkYjo6Q29sdW1uRmFtaWx5RGVzY3JpcHRvciwN
-CnN0ZDo6YWxsb2NhdG9yPHJvY2tzZGI6OkNvbHVtbkZhbWlseURlc2NyaXB0b3I+ID4gY29uc3Qm
-LCBib29sLCBib29sLA0KYm9vbCwgdW5zaWduZWQgbG9uZyopKzB4MTU5ZSkgWzB4NTU3MTZiZjMz
-M2Q0XSIsDQogICAgICAgICIocm9ja3NkYjo6REJJbXBsOjpPcGVuKHJvY2tzZGI6OkRCT3B0aW9u
-cyBjb25zdCYsDQpzdGQ6Ol9fY3h4MTE6OmJhc2ljX3N0cmluZzxjaGFyLCBzdGQ6OmNoYXJfdHJh
-aXRzPGNoYXI+LA0Kc3RkOjphbGxvY2F0b3I8Y2hhcj4gPiBjb25zdCYsDQpzdGQ6OnZlY3Rvcjxy
-b2Nrc2RiOjpDb2x1bW5GYW1pbHlEZXNjcmlwdG9yLA0Kc3RkOjphbGxvY2F0b3I8cm9ja3NkYjo6
-Q29sdW1uRmFtaWx5RGVzY3JpcHRvcj4gPiBjb25zdCYsDQpzdGQ6OnZlY3Rvcjxyb2Nrc2RiOjpD
-b2x1bW5GYW1pbHlIYW5kbGUqLA0Kc3RkOjphbGxvY2F0b3I8cm9ja3NkYjo6Q29sdW1uRmFtaWx5
-SGFuZGxlKj4gPiosIHJvY2tzZGI6OkRCKiosIGJvb2wsDQpib29sKSsweDY3NykgWzB4NTU3MTZi
-ZjM4NmNkXSIsDQogICAgICAgICIocm9ja3NkYjo6REI6Ok9wZW4ocm9ja3NkYjo6REJPcHRpb25z
-IGNvbnN0JiwNCnN0ZDo6X19jeHgxMTo6YmFzaWNfc3RyaW5nPGNoYXIsIHN0ZDo6Y2hhcl90cmFp
-dHM8Y2hhcj4sDQpzdGQ6OmFsbG9jYXRvcjxjaGFyPiA+IGNvbnN0JiwNCnN0ZDo6dmVjdG9yPHJv
-Y2tzZGI6OkNvbHVtbkZhbWlseURlc2NyaXB0b3IsDQpzdGQ6OmFsbG9jYXRvcjxyb2Nrc2RiOjpD
-b2x1bW5GYW1pbHlEZXNjcmlwdG9yPiA+IGNvbnN0JiwNCnN0ZDo6dmVjdG9yPHJvY2tzZGI6OkNv
-bHVtbkZhbWlseUhhbmRsZSosDQpzdGQ6OmFsbG9jYXRvcjxyb2Nrc2RiOjpDb2x1bW5GYW1pbHlI
-YW5kbGUqPiA+Kiwgcm9ja3NkYjo6REIqKikrMHg1MikNClsweDU1NzE2YmYzN2FhNF0iLA0KICAg
-ICAgICAiKFJvY2tzREJTdG9yZTo6ZG9fb3BlbihzdGQ6Om9zdHJlYW0mLCBib29sLCBib29sLA0K
-c3RkOjpfX2N4eDExOjpiYXNpY19zdHJpbmc8Y2hhciwgc3RkOjpjaGFyX3RyYWl0czxjaGFyPiwN
-CnN0ZDo6YWxsb2NhdG9yPGNoYXI+ID4gY29uc3QmKSsweDEwYTYpIFsweDU1NzE2YmU0ODhiNl0i
-LA0KICAgICAgICAiKEJsdWVTdG9yZTo6X29wZW5fZGIoYm9vbCwgYm9vbCwgYm9vbCkrMHhhMTkp
-DQpbMHg1NTcxNmI4YzZiMTldIiwNCiAgICAgICAgIihCbHVlU3RvcmU6Ol9vcGVuX2RiX2FuZF9h
-cm91bmQoYm9vbCwgYm9vbCkrMHgzMzIpDQpbMHg1NTcxNmI5MGJiOTJdIiwNCiAgICAgICAgIihC
-bHVlU3RvcmU6Ol9tb3VudCgpKzB4MTkxKSBbMHg1NTcxNmI5MGU1MzFdIiwNCiAgICAgICAgIihP
-U0Q6OmluaXQoKSsweDU4ZCkgWzB4NTU3MTZiM2I1NWVkXSIsDQogICAgICAgICJtYWluKCkiLA0K
-ICAgICAgICAiX19saWJjX3N0YXJ0X21haW4oKSIsDQogICAgICAgICJfc3RhcnQoKSINCiAgICBd
-DQp9DQo=
+On Fri, 2022-04-08 at 10:47 +0800, Xiubo Li wrote:
+> On 4/7/22 11:15 PM, Luís Henriques wrote:
+> > When doing a direct/sync write, we need to invalidate the page cache in
+> > the range being written to.  If we don't do this, the cache will include
+> > invalid data as we just did a write that avoided the page cache.
+> > 
+> > Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> > ---
+> >   fs/ceph/file.c | 19 ++++++++++++++-----
+> >   1 file changed, 14 insertions(+), 5 deletions(-)
+> > 
+> > Changes since v3:
+> > - Dropped initial call to invalidate_inode_pages2_range()
+> > - Added extra comment to document invalidation
+> > 
+> > Changes since v2:
+> > - Invalidation needs to be done after a write
+> > 
+> > Changes since v1:
+> > - Replaced truncate_inode_pages_range() by invalidate_inode_pages2_range
+> > - Call fscache_invalidate with FSCACHE_INVAL_DIO_WRITE if we're doing DIO
+> > 
+> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> > index 5072570c2203..97f764b2fbdd 100644
+> > --- a/fs/ceph/file.c
+> > +++ b/fs/ceph/file.c
+> > @@ -1606,11 +1606,6 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+> >   		return ret;
+> >   
+> >   	ceph_fscache_invalidate(inode, false);
+> > -	ret = invalidate_inode_pages2_range(inode->i_mapping,
+> > -					    pos >> PAGE_SHIFT,
+> > -					    (pos + count - 1) >> PAGE_SHIFT);
+> > -	if (ret < 0)
+> > -		dout("invalidate_inode_pages2_range returned %d\n", ret);
+> >   
+> >   	while ((len = iov_iter_count(from)) > 0) {
+> >   		size_t left;
+> > @@ -1938,6 +1933,20 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+> >   			break;
+> >   		}
+> >   		ceph_clear_error_write(ci);
+> > +
+> > +		/*
+> > +		 * we need to invalidate the page cache here, otherwise the
+> > +		 * cache will include invalid data in direct/sync writes.
+> > +		 */
+> > +		ret = invalidate_inode_pages2_range(
+> > +				inode->i_mapping,
+> > +				pos >> PAGE_SHIFT,
+> > +				(pos + len - 1) >> PAGE_SHIFT);
+> > +		if (ret < 0) {
+> > +			dout("invalidate_inode_pages2_range returned %d\n",
+> > +			     ret);
+> > +			ret = 0;
+> 
+> For this, IMO it's not safe. If we just ignore it the pagecache will 
+> still have invalid data.
+> 
+
+That data is not invalid. It's dirty data from a buffered write that
+raced with the DIO/sync write we're handling here. i.e. another write
+came in while we were already processing the DIO write, but after the
+point where we called filemap_write_and_wait.
+
+When two write() calls to the same data are racing like that, the
+outcome is undefined. We can't be certain which one will prevail as the
+kernel could handle them in either order.
+
+The good news with Ceph/RADOS is that you shouldn't end up with a torn
+write, unless the write happens to span multiple objects. Not much we
+can do about that though.
+
+> I think what the 'ceph_direct_read_write()' does is more correct, it 
+> will make sure all the dirty pages are writeback from the pagecaches by 
+> using 'invalidate_inode_pages2_range()' without blocking and later will 
+> do the invalidate blocked by using 'truncate_inode_pages_range()' if 
+> some pages are not unmaped in 'invalidate_inode_pages2_range()' when EBUSY.
+> 
+
+I'm not convinced this is any better, and it's attempting to impose a
+deterministic outcome on a situation that is non-deterministic by
+nature.
+
+> This can always be sure that the pagecache has no invalid data after 
+> write finishes. I think why it use the truncate helper here is because 
+> it's safe and there shouldn't have any buffer write happen for DIO ?
+> 
+> But from my understanding the 'ceph_direct_read_write()' is still buggy. 
+> What if the page fault happen just after 'truncate_inode_pages_range()' 
+> ? Will this happen ? Should we leave this to use the file lock to 
+> guarantee it in user space ?
+> 
+> Thought ?
+
+Again, we can't really predict what the outcome of two racing writes to
+the same area will do, so I don't see that there is a problem.
+
+-- 
+Jeff Layton <jlayton@kernel.org>
