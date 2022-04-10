@@ -2,122 +2,187 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 867B14FA8F6
-	for <lists+ceph-devel@lfdr.de>; Sat,  9 Apr 2022 16:33:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78C594FAB69
+	for <lists+ceph-devel@lfdr.de>; Sun, 10 Apr 2022 03:36:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235919AbiDIOfQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 9 Apr 2022 10:35:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56930 "EHLO
+        id S234388AbiDJBiN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 9 Apr 2022 21:38:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbiDIOfP (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 9 Apr 2022 10:35:15 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2512A35879;
-        Sat,  9 Apr 2022 07:33:07 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 207A11F864;
-        Sat,  9 Apr 2022 14:33:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649514786; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        with ESMTP id S234372AbiDJBiL (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 9 Apr 2022 21:38:11 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9F2E11F637
+        for <ceph-devel@vger.kernel.org>; Sat,  9 Apr 2022 18:35:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1649554557;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=BmOfl4NqddautzOtQrZ0dLuhiQSp1fB0SDxF8v7gYBA=;
-        b=SJlQufjnXjTQtqgkhM6MsOUPDPwOMZ6xGLQ76UNS6RR1cEGIg2CW/GZ7A0Nq9xE2LKzjCQ
-        zm4gbJFRwGS5ZR58/OOlzltxzH57NlfDQ1MS9kgXiNk7elM8N3NSClk0AEwvrheO6NCJzw
-        l51uuNG8cURr+Q1l6/il4XbIWcEO2Fg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649514786;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BmOfl4NqddautzOtQrZ0dLuhiQSp1fB0SDxF8v7gYBA=;
-        b=yiH+qx8I6hbeCP31rtrhbZE5qxMo8OqYiXG+UWOpJ9wghAOQqadl62X34RS7V0fnDyonaX
-        HzX10h1d2uotqQBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3F41913AA1;
-        Sat,  9 Apr 2022 14:32:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id m2GpARiZUWLHIgAAMHmgww
-        (envelope-from <colyli@suse.de>); Sat, 09 Apr 2022 14:32:56 +0000
-Message-ID: <f01ac878-9b0d-972b-70dc-6f3f61b9947b@suse.de>
-Date:   Sat, 9 Apr 2022 22:32:52 +0800
+        bh=6bdrTdEpXoC+pRTN3T6C67mZheo1ZjP0xTUA8lSZ2Xg=;
+        b=W7XiMUBAU7UkD+K0LFCTRwTe/FgP4DITvjNWQXjGQpP//+kawHTqU1ZVyidCBioXcMlOrP
+        TOqdNESUuoD9IZx5uji2dSQlxDsEF/YhQRFGanGqCcav1EWsrYSdUfZeBCnHrTgAX94kk3
+        QznQ16j4jtl+yvYU7Bc0nllc2E7YLms=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-224-UWhYqhsfNGSvEUFCyd1pFg-1; Sat, 09 Apr 2022 21:35:56 -0400
+X-MC-Unique: UWhYqhsfNGSvEUFCyd1pFg-1
+Received: by mail-pj1-f71.google.com with SMTP id rm11-20020a17090b3ecb00b001c713925e58so10134144pjb.6
+        for <ceph-devel@vger.kernel.org>; Sat, 09 Apr 2022 18:35:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=6bdrTdEpXoC+pRTN3T6C67mZheo1ZjP0xTUA8lSZ2Xg=;
+        b=fvOBSRvuJBVQhqLimG3fyqf+gmq4PfOJUD51/5iefQGORWl9UAtmtbFLazsAVbLbi3
+         Erk5nv1/3TqPJZWaDKB20m+blplG9z6qnZ1edPS1bKUQTt8SfkkwigSzEvNJlx2WJ/ec
+         A8yQ7zNbE79t/RYfn0v3tVfL6K/d51qTS3cCRpvjUyolEoDCYjXQoQee9yuLmITUC8iN
+         OrpRPA8TMDoMCjWFXY54PWpotDclcNGD4lqdOdZuQGo13MrK5rxIF4OomhS/p2YqrcEl
+         VKnqf5OTKwOvsarhq1b8hf+7HNoVxt2gXgdMoZmvaXnsA80049TfUo1GLBk4DJSDW9XI
+         IELQ==
+X-Gm-Message-State: AOAM533uVDgt7z2wKtlL/W4+ixb7RyXndoWKwkv5pYuOmsTt0FNofK4i
+        jaQ9VLqZdOtYuzy2ZJ+Ch4ulxAOUEXoCKXMV3/yyu9H93OQhfqSG7+UhNUqoB+ZtzjFdZTDCswq
+        IiFg+ODoOLqK5eQWSxRw6ew==
+X-Received: by 2002:a65:554c:0:b0:39c:ec55:3149 with SMTP id t12-20020a65554c000000b0039cec553149mr10322439pgr.372.1649554554708;
+        Sat, 09 Apr 2022 18:35:54 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJx+nuE8WXZx11sQrwKJH19Z9/KpqHfoZ/RQEX2751CNQp6WtaHMVSwxbh7srPiFuoYv00hgXQ==
+X-Received: by 2002:a65:554c:0:b0:39c:ec55:3149 with SMTP id t12-20020a65554c000000b0039cec553149mr10322428pgr.372.1649554554240;
+        Sat, 09 Apr 2022 18:35:54 -0700 (PDT)
+Received: from [10.72.12.194] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id y16-20020a63b510000000b00398d8b19bbfsm25650856pge.23.2022.04.09.18.35.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 09 Apr 2022 18:35:53 -0700 (PDT)
+Subject: Re: [PATCH v4] ceph: invalidate pages when doing direct/sync writes
+To:     Jeff Layton <jlayton@kernel.org>,
+        =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220407151521.7968-1-lhenriques@suse.de>
+ <0133ed11-bb90-9337-e787-66851cbbc379@redhat.com>
+ <947af0b22bf50affa504bc0ca45fb0e290fc7805.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <bf1758b0-5a0f-5c9f-ecdf-e3031fdd9678@redhat.com>
+Date:   Sun, 10 Apr 2022 09:35:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.7.0
-Subject: Re: [PATCH 26/27] block: decouple REQ_OP_SECURE_ERASE from
- REQ_OP_DISCARD
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
-        nbd@other.debian.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, Jens Axboe <axboe@kernel.dk>,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org,
-        ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com,
-        linux-mm@kvack.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        David Sterba <dsterba@suse.com>
-References: <20220409045043.23593-1-hch@lst.de>
- <20220409045043.23593-27-hch@lst.de>
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <20220409045043.23593-27-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <947af0b22bf50affa504bc0ca45fb0e290fc7805.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Language: en-US
+X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 4/9/22 12:50 PM, Christoph Hellwig wrote:
-> Secure erase is a very different operation from discard in that it is
-> a data integrity operation vs hint.  Fully split the limits and helper
-> infrastructure to make the separation more clear.
+
+On 4/8/22 8:04 PM, Jeff Layton wrote:
+> On Fri, 2022-04-08 at 10:47 +0800, Xiubo Li wrote:
+>> On 4/7/22 11:15 PM, Luís Henriques wrote:
+>>> When doing a direct/sync write, we need to invalidate the page cache in
+>>> the range being written to.  If we don't do this, the cache will include
+>>> invalid data as we just did a write that avoided the page cache.
+>>>
+>>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+>>> ---
+>>>    fs/ceph/file.c | 19 ++++++++++++++-----
+>>>    1 file changed, 14 insertions(+), 5 deletions(-)
+>>>
+>>> Changes since v3:
+>>> - Dropped initial call to invalidate_inode_pages2_range()
+>>> - Added extra comment to document invalidation
+>>>
+>>> Changes since v2:
+>>> - Invalidation needs to be done after a write
+>>>
+>>> Changes since v1:
+>>> - Replaced truncate_inode_pages_range() by invalidate_inode_pages2_range
+>>> - Call fscache_invalidate with FSCACHE_INVAL_DIO_WRITE if we're doing DIO
+>>>
+>>> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>>> index 5072570c2203..97f764b2fbdd 100644
+>>> --- a/fs/ceph/file.c
+>>> +++ b/fs/ceph/file.c
+>>> @@ -1606,11 +1606,6 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+>>>    		return ret;
+>>>    
+>>>    	ceph_fscache_invalidate(inode, false);
+>>> -	ret = invalidate_inode_pages2_range(inode->i_mapping,
+>>> -					    pos >> PAGE_SHIFT,
+>>> -					    (pos + count - 1) >> PAGE_SHIFT);
+>>> -	if (ret < 0)
+>>> -		dout("invalidate_inode_pages2_range returned %d\n", ret);
+>>>    
+>>>    	while ((len = iov_iter_count(from)) > 0) {
+>>>    		size_t left;
+>>> @@ -1938,6 +1933,20 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+>>>    			break;
+>>>    		}
+>>>    		ceph_clear_error_write(ci);
+>>> +
+>>> +		/*
+>>> +		 * we need to invalidate the page cache here, otherwise the
+>>> +		 * cache will include invalid data in direct/sync writes.
+>>> +		 */
+>>> +		ret = invalidate_inode_pages2_range(
+>>> +				inode->i_mapping,
+>>> +				pos >> PAGE_SHIFT,
+>>> +				(pos + len - 1) >> PAGE_SHIFT);
+>>> +		if (ret < 0) {
+>>> +			dout("invalidate_inode_pages2_range returned %d\n",
+>>> +			     ret);
+>>> +			ret = 0;
+>> For this, IMO it's not safe. If we just ignore it the pagecache will
+>> still have invalid data.
+>>
+> That data is not invalid. It's dirty data from a buffered write that
+> raced with the DIO/sync write we're handling here. i.e. another write
+> came in while we were already processing the DIO write, but after the
+> point where we called filemap_write_and_wait.
 >
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Acked-by: Christoph BÃ¶hmwalder <christoph.boehmwalder@linbit.com> [drbd]
-> Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com> [nifs2]
-> Acked-by: Coly Li <colyli@suse.de> [drbd]
+> When two write() calls to the same data are racing like that, the
+> outcome is undefined. We can't be certain which one will prevail as the
+> kernel could handle them in either order.
 
-Hi Christoph,
+Okay, I think you are right.
 
-My ACK is for bcache, not drbd here.
+-- Xiubo
 
-Thanks.
-
-
-Coly Li
-
-
-
-> Acked-by: David Sterba <dsterba@suse.com> [btrfs]
-
-
-
-
+>
+> The good news with Ceph/RADOS is that you shouldn't end up with a torn
+> write, unless the write happens to span multiple objects. Not much we
+> can do about that though.
+>
+>> I think what the 'ceph_direct_read_write()' does is more correct, it
+>> will make sure all the dirty pages are writeback from the pagecaches by
+>> using 'invalidate_inode_pages2_range()' without blocking and later will
+>> do the invalidate blocked by using 'truncate_inode_pages_range()' if
+>> some pages are not unmaped in 'invalidate_inode_pages2_range()' when EBUSY.
+>>
+> I'm not convinced this is any better, and it's attempting to impose a
+> deterministic outcome on a situation that is non-deterministic by
+> nature.
+>
+>> This can always be sure that the pagecache has no invalid data after
+>> write finishes. I think why it use the truncate helper here is because
+>> it's safe and there shouldn't have any buffer write happen for DIO ?
+>>
+>> But from my understanding the 'ceph_direct_read_write()' is still buggy.
+>> What if the page fault happen just after 'truncate_inode_pages_range()'
+>> ? Will this happen ? Should we leave this to use the file lock to
+>> guarantee it in user space ?
+>>
+>> Thought ?
+> Again, we can't really predict what the outcome of two racing writes to
+> the same area will do, so I don't see that there is a problem.
+>
 
