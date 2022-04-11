@@ -2,70 +2,90 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 826264FC25E
-	for <lists+ceph-devel@lfdr.de>; Mon, 11 Apr 2022 18:29:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAD1A4FC32A
+	for <lists+ceph-devel@lfdr.de>; Mon, 11 Apr 2022 19:26:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348603AbiDKQcA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 11 Apr 2022 12:32:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35116 "EHLO
+        id S1348843AbiDKR2l (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 11 Apr 2022 13:28:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348602AbiDKQb6 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 11 Apr 2022 12:31:58 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6580E5FA3
-        for <ceph-devel@vger.kernel.org>; Mon, 11 Apr 2022 09:29:41 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 2498F1F38D;
-        Mon, 11 Apr 2022 16:29:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649694580; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        with ESMTP id S1348817AbiDKR2j (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 11 Apr 2022 13:28:39 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB7692982C;
+        Mon, 11 Apr 2022 10:26:24 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 80BF421606;
+        Mon, 11 Apr 2022 17:26:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1649697983;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=COQpjZIeNXmIaP9jVFqBpG8sM4POQzEIHiib750Apqc=;
-        b=vCsEY0TNtRib7C9I8j3/uEyH2PvOpaB9H1xWbT45xwfjYDc4ucPWxH/N3e5SOipcYDKDI2
-        dvlPiwOsPLA0KpPH9dhC6ImiruGRuJ54LPdP5ij91d7Wx9zpPJVbG6RriwTltT/obKsAIW
-        y9IRQ7yJwQS+zMT/oz3GB+mEN6aoUQw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649694580;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        bh=ojOMmoWG3Vi82iwkKmDthce/DTUxrqsrVMcEPPdM3So=;
+        b=QZwWZVQwC0bnchneRkqJ/+jzsU6T9BsE/QwjE1iflJ8e+QPH7qzL+AxcI+atiGlV8qm9Lo
+        u8oIaWSdY7hbFlYvzT8ENcrgX9LIGNQj4Ik1HCmhtpjbfJ75vgExpzBPpp974aNYAtu6v8
+        bf5VKoGfQqIUb3Ou/OOGio4KxiUFZwg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1649697983;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=COQpjZIeNXmIaP9jVFqBpG8sM4POQzEIHiib750Apqc=;
-        b=/7ur0jzBQ5JG23yV+/fVM6H4kmPZ4Hzs7ycxll794/rRYMDIcB64S9RDVSQF7tvEvbp7tW
-        1YdDw/rODV5ZvlBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B5AEE13A93;
-        Mon, 11 Apr 2022 16:29:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id UTcWKXNXVGI9egAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Mon, 11 Apr 2022 16:29:39 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 52a1e85f;
-        Mon, 11 Apr 2022 16:30:05 +0000 (UTC)
-Date:   Mon, 11 Apr 2022 17:30:05 +0100
-From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
-To:     xiubli@redhat.com
-Cc:     jlayton@kernel.org, idryomov@gmail.com, vshankar@redhat.com,
-        ceph-devel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] ceph: fix caps reference leakage for fscrypt size
- truncating
-Message-ID: <YlRXjaKIX/cDeZqP@suse.de>
-References: <20220411001426.251679-1-xiubli@redhat.com>
- <20220411001426.251679-3-xiubli@redhat.com>
+        bh=ojOMmoWG3Vi82iwkKmDthce/DTUxrqsrVMcEPPdM3So=;
+        b=98et+OqtZl3DiPU61ep6rcrI2VbwKFWZL1iuQ8dNt7YkOb55uCdVju/GMJmDyvRi7cAHwR
+        HPLi3jycKdDWeJCw==
+Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
+        by relay2.suse.de (Postfix) with ESMTP id 1C7B9A3B83;
+        Mon, 11 Apr 2022 17:26:23 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 7FF53DA7F7; Mon, 11 Apr 2022 19:22:18 +0200 (CEST)
+Date:   Mon, 11 Apr 2022 19:22:18 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, dm-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-block@vger.kernel.org,
+        drbd-dev@lists.linbit.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
+        ocfs2-devel@oss.oracle.com, linux-mm@kvack.org,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH 08/27] btrfs: use bdev_max_active_zones instead of open
+ coding it
+Message-ID: <20220411172218.GT15609@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, dm-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-block@vger.kernel.org,
+        drbd-dev@lists.linbit.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
+        ocfs2-devel@oss.oracle.com, linux-mm@kvack.org,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>
+References: <20220409045043.23593-1-hch@lst.de>
+ <20220409045043.23593-9-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220411001426.251679-3-xiubli@redhat.com>
+In-Reply-To: <20220409045043.23593-9-hch@lst.de>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -76,43 +96,8 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Apr 11, 2022 at 08:14:26AM +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index a2ff964e332b..6788a1f88eb6 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -2301,7 +2301,6 @@ static int fill_fscrypt_truncate(struct inode *inode,
->  
->  	pos = orig_pos;
->  	ret = __ceph_sync_read(inode, &pos, &iter, &retry_op, &objver);
-> -	ceph_put_cap_refs(ci, got);
->  	if (ret < 0)
->  		goto out;
->  
-> @@ -2365,6 +2364,7 @@ static int fill_fscrypt_truncate(struct inode *inode,
->  out:
->  	dout("%s %p size dropping cap refs on %s\n", __func__,
->  	     inode, ceph_cap_string(got));
-> +	ceph_put_cap_refs(ci, got);
->  	kunmap_local(iov.iov_base);
->  	if (page)
->  		__free_pages(page, 0);
-> -- 
-> 2.27.0
-> 
+On Sat, Apr 09, 2022 at 06:50:24AM +0200, Christoph Hellwig wrote:
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-If the plan is to squash this into commit "ceph: add truncate size
-handling support for fscrypt" it may be worth also fix the
-kmap_local_page()/kunmap_local() as the first few 'goto out' jumps
-shouldn't be doing the kunmap.
-
-Cheers,
---
-Luís
+Acked-by: David Sterba <dsterba@suse.com>
