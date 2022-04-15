@@ -2,126 +2,74 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 31D25502328
-	for <lists+ceph-devel@lfdr.de>; Fri, 15 Apr 2022 06:58:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C50E5502399
+	for <lists+ceph-devel@lfdr.de>; Fri, 15 Apr 2022 07:11:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350221AbiDOFAU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 15 Apr 2022 01:00:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48250 "EHLO
+        id S232193AbiDOFNi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 15 Apr 2022 01:13:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349860AbiDOE6q (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 15 Apr 2022 00:58:46 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2EDF0B;
-        Thu, 14 Apr 2022 21:54:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=eypoqjBCbHteIGJMjEE77faduCfiNIsAQ0ydQeu7OQ0=; b=yel/I7wJHKQGgU++DGlNr4s6By
-        PhYVQZj76IsIJmZMeImq5Q6B2/aQRkMD3ug5dWOU3Jeh5aspjbtIuEjPut08JeM1WmCeQvYQ+tJ0f
-        U696Xi8dd1qtuDaSpjLkD+EO876944juvaQn7mqYu4AmZhVRFKFIBWZURNzhkvK80mkS4SdYE8ghg
-        5kwkeIFA+dIpz0sffz1xoP4BK6LoTUtTMKLOpm6yB1H7oV7nfL4grqbNBsJP5+jCEy6k9Hq/bQASA
-        9dlkqzozrnkdCC5ckIaWKU5KZigzG6TnQjnKvn/KI4zIY9eR4oRyKCNwIxfdzpwno3WYuY2QxxbuI
-        z9ygJJXA==;
-Received: from [2a02:1205:504b:4280:f5dd:42a4:896c:d877] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nfDyR-008Ptb-2k; Fri, 15 Apr 2022 04:54:23 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
-        nbd@other.debian.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@oss.oracle.com, linux-mm@kvack.org
-Subject: [PATCH 27/27] direct-io: remove random prefetches
-Date:   Fri, 15 Apr 2022 06:52:58 +0200
-Message-Id: <20220415045258.199825-28-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220415045258.199825-1-hch@lst.de>
-References: <20220415045258.199825-1-hch@lst.de>
+        with ESMTP id S245553AbiDOFM5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 15 Apr 2022 01:12:57 -0400
+X-Greylist: delayed 601 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 14 Apr 2022 22:10:18 PDT
+Received: from service.dqoiruk.cn (service.dqoiruk.cn [209.209.114.171])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AD5DEA1468
+        for <ceph-devel@vger.kernel.org>; Thu, 14 Apr 2022 22:10:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed/relaxed; s=mykey; d=service.dqoiruk.cn;
+ h=Content-Type:MIME-Version:Content-Transfer-Encoding:Content-Description:Subject:To:From:Date:Reply-To:Message-ID;
+ bh=/tkdQwjgg5q9RNlkjapqP2dZmJE=;
+ b=OYYhet+xxczwbn99rXyqMRbdbb0tRB6KniTbzm+BECR6vx37r6+eY/Flk1PJzKyKn6rzoS2KzwQ6
+   H0sLDStO+niyqtbElQ7XCFCLZO4Fg7vzDinBnInFbiquUC4CGuaefnAb23OOsATi44bq5GfSzxRn
+   FPK2NRPO0oFYfFw9/ho=
+Received: from infogo.23py1kceab5uho4wqi03gw4ffe.syx.internal.cloudapp.net (52.231.28.69) by service.dqoiruk.cn id hb3v3k0001g0 for <ceph-devel@vger.kernel.org>; Fri, 15 Apr 2022 07:59:37 +0300 (envelope-from <support@service.dqoiruk.cn>)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: waiting for your response
+To:     Recipients <support@service.dqoiruk.cn>
+From:   support@service.dqoiruk.cn
+Date:   Fri, 15 Apr 2022 04:59:33 +0000
+Reply-To: v42drts@gmail.com
+Message-ID: <0.0.4.ED0.1D850859BA96C6C.0@service.dqoiruk.cn>
+X-Spam-Status: Yes, score=5.7 required=5.0 tests=BAYES_99,BAYES_999,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_REPLYTO,
+        RCVD_IN_SORBS_DUL,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: *  0.0 RCVD_IN_SORBS_DUL RBL: SORBS: sent directly from dynamic IP
+        *      address
+        *      [209.209.114.171 listed in dnsbl.sorbs.net]
+        *  3.5 BAYES_99 BODY: Bayes spam probability is 99 to 100%
+        *      [score: 1.0000]
+        *  0.2 BAYES_999 BODY: Bayes spam probability is 99.9 to 100%
+        *      [score: 1.0000]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        * -0.0 SPF_HELO_PASS SPF: HELO matches SPF record
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  2.1 FREEMAIL_FORGED_REPLYTO Freemail in Reply-To, but not From
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Randomly poking into block device internals for manual prefetches isn't
-exactly a very maintainable thing to do.  And none of the performance
-criticil direct I/O implementations still use this library function
-anyway, so just drop it.
+I apologize for contacting you in this manner but the situation at hand dem=
+ands urgent attention. =
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/direct-io.c | 32 ++++----------------------------
- 1 file changed, 4 insertions(+), 28 deletions(-)
+My name is Dudin Vladimir Vasilyevich, one of Ivan Pavlov=E2=80=99s colleag=
+ues(Ivan Pavlov is the lawyer handling Aleksei Navalny case) You can google=
+ it .
+I have an important subject to share with you concerning jailed Kremlin cri=
+tic- Mr. Aleksei Navalny whose jail term  has been increased to 15years, le=
+aving huge funds trapped in one of the accounts for NGOs.
+Write back to me for more detail on how I will present you to the bank as o=
+ne of the beneficiaries for our mutual benefits.
 
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index aef06e607b405..840752006f601 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -1115,11 +1115,10 @@ static inline int drop_refcount(struct dio *dio)
-  * individual fields and will generate much worse code. This is important
-  * for the whole file.
-  */
--static inline ssize_t
--do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
--		      struct block_device *bdev, struct iov_iter *iter,
--		      get_block_t get_block, dio_iodone_t end_io,
--		      dio_submit_t submit_io, int flags)
-+ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
-+		struct block_device *bdev, struct iov_iter *iter,
-+		get_block_t get_block, dio_iodone_t end_io,
-+		dio_submit_t submit_io, int flags)
- {
- 	unsigned i_blkbits = READ_ONCE(inode->i_blkbits);
- 	unsigned blkbits = i_blkbits;
-@@ -1334,29 +1333,6 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	kmem_cache_free(dio_cache, dio);
- 	return retval;
- }
--
--ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
--			     struct block_device *bdev, struct iov_iter *iter,
--			     get_block_t get_block,
--			     dio_iodone_t end_io, dio_submit_t submit_io,
--			     int flags)
--{
--	/*
--	 * The block device state is needed in the end to finally
--	 * submit everything.  Since it's likely to be cache cold
--	 * prefetch it here as first thing to hide some of the
--	 * latency.
--	 *
--	 * Attempt to prefetch the pieces we likely need later.
--	 */
--	prefetch(&bdev->bd_disk->part_tbl);
--	prefetch(bdev->bd_disk->queue);
--	prefetch((char *)bdev->bd_disk->queue + SMP_CACHE_BYTES);
--
--	return do_blockdev_direct_IO(iocb, inode, bdev, iter, get_block,
--				     end_io, submit_io, flags);
--}
--
- EXPORT_SYMBOL(__blockdev_direct_IO);
- 
- static __init int dio_init(void)
--- 
-2.30.2
-
+Greetings.
+Dudin Vladimir Vasilyevich
