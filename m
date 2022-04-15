@@ -2,116 +2,189 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD0545027F6
-	for <lists+ceph-devel@lfdr.de>; Fri, 15 Apr 2022 12:05:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45E6C5028F2
+	for <lists+ceph-devel@lfdr.de>; Fri, 15 Apr 2022 13:53:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352092AbiDOKHT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 15 Apr 2022 06:07:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41530 "EHLO
+        id S1352728AbiDOLzx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 15 Apr 2022 07:55:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235926AbiDOKHS (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 15 Apr 2022 06:07:18 -0400
-Received: from mail1.bemta36.messagelabs.com (mail1.bemta36.messagelabs.com [85.158.142.113])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79E5B9FCB;
-        Fri, 15 Apr 2022 03:04:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1650017083; i=@fujitsu.com;
-        bh=2BEBt+KtqG1w23kjA03oL0N4j7CMYSd/9MBWpZADdAw=;
-        h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=bW3TaDdV0Lz8DzgF0QxGg1uM2d1wZG8DuvE3UVTnNFOCzRUeV0eDd502znGoRedpd
-         TxpYEclkcTimdkKEyO8CddXIKpHyB23+e0JLMbm9E/ft4soDZEtXQclB4/9k5XwVWw
-         RqgpAPLfEEbzR72sWCWxUQ3stdFeZEnfUtESjkIVT7fl/ht9rGDo+pOGWdP7Pf0deU
-         GnZWBYVOoy7c7IfbiqCXxKd2xhDHk6n0DIxQ3bhjQG9mkq+HM3hT+ScW24Kmz2JgxT
-         JoISNSb6q6ZWt8kLW1axzLUNJB2S476DYA/+5BuMCXRuRiFYgpd2ttTqfrcumKRInk
-         rXAiUQm3QsEqQ==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgleJIrShJLcpLzFFi42Kxs+GYpGvtHJl
-  k8KaT0+L14U+MFh9uTmKy2HLsHqPF5Sd8Fj+XrWK32LP3JIvFhQOnWS12/dnBbnH+73FWB06P
-  U4skPDat6mTz+LxJzmPTk7dMASxRrJl5SfkVCawZpzpPshX0slU8PHCRpYGxl7WLkYtDSGALo
-  8Sh+3sZIZwFTBLfPl1m6WLkBHL2MEp8ORIJYrMJaEo861zADGKLCLhILJywHqyBWeAKo8T19j
-  lgCWGBYIkp+1vBmlkEVCV6dkwDinNw8Ap4SrzrFAQJSwgoSEx5+B4szCngJfH/bC3EKk+JqZM
-  us4HYvAKCEidnPgGbwiwgIXHwxQtmiFZFiUsd3xgh7AqJWbPamCBsNYmr5zYxT2AUnIWkfRaS
-  9gWMTKsYbZOKMtMzSnITM3N0DQ0MdA0NTXXNLHWNjfUSq3QT9VJLdZNT80qKEoGyeonlxXqpx
-  cV6xZW5yTkpenmpJZsYgRGTUuyquIPxWt9PvUOMkhxMSqK8b0Ujk4T4kvJTKjMSizPii0pzUo
-  sPMcpwcChJ8P61B8oJFqWmp1akZeYAoxcmLcHBoyTCG2oNlOYtLkjMLc5Mh0idYlSUEucVdgJ
-  KCIAkMkrz4NpgCeMSo6yUMC8jAwODEE9BalFuZgmq/CtGcQ5GJWFeY5ApPJl5JXDTXwEtZgJa
-  /G1VKMjikkSElFQDk6KRdNR0Ld5fVzKaPO8Xm3fILncRsAuPy9j9xljL8cJ+7d2qLy3+vt2c8
-  rC0ReTm/UcVUjdfve4UMra+HCDwfZrrp1+f9gs45K/+trPFw9Wt2PPa2TYFx+XP776WmviltK
-  xa0PBvVtqV77MvSl5tWia85ryOWcHFAxsZJlqJfSj6Ifyg0mQ/c8WdinUVcVtneOR1Ni1wdDp
-  z6p+WzPJlr2SDk1pFDCsP5n8LlN47+/Fx3/e7bI7WJbPNvy9zTevTVsXGlQ+vnDSe8HbSbWG5
-  /P4fHmmPJm14wexfeiGvMfTfbQmjH1rli4OLs5peSly4Fnr4k158ZM9XU0v/VTnzWG9tfuPra
-  HFIPH9y7knWE0osxRmJhlrMRcWJAPSKhAmTAwAA
-X-Env-Sender: xuyang2018.jy@fujitsu.com
-X-Msg-Ref: server-12.tower-528.messagelabs.com!1650017082!67435!1
-X-Originating-IP: [62.60.8.146]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.85.8; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 4420 invoked from network); 15 Apr 2022 10:04:43 -0000
-Received: from unknown (HELO n03ukasimr02.n03.fujitsu.local) (62.60.8.146)
-  by server-12.tower-528.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 15 Apr 2022 10:04:43 -0000
-Received: from n03ukasimr02.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTP id 9E27110047A;
-        Fri, 15 Apr 2022 11:04:42 +0100 (BST)
-Received: from R01UKEXCASM126.r01.fujitsu.local (unknown [10.183.43.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        with ESMTP id S236334AbiDOLzw (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 15 Apr 2022 07:55:52 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ABCCA27C0;
+        Fri, 15 Apr 2022 04:53:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTPS id 919E2100467;
-        Fri, 15 Apr 2022 11:04:42 +0100 (BST)
-Received: from localhost.localdomain (10.167.220.84) by
- R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Fri, 15 Apr 2022 11:04:18 +0100
-From:   Yang Xu <xuyang2018.jy@fujitsu.com>
-To:     <david@fromorbit.com>, <djwong@kernel.org>, <brauner@kernel.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <ceph-devel@vger.kernel.org>,
-        <linux-nfs@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <viro@zeniv.linux.org.uk>, <jlayton@kernel.org>,
-        Yang Xu <xuyang2018.jy@fujitsu.com>
-Subject: [PATCH v3 7/7] ceph: Remove S_ISGID clear code in ceph_finish_async_create
-Date:   Fri, 15 Apr 2022 19:02:23 +0800
-Message-ID: <1650020543-24908-7-git-send-email-xuyang2018.jy@fujitsu.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1650020543-24908-1-git-send-email-xuyang2018.jy@fujitsu.com>
-References: <1650020543-24908-1-git-send-email-xuyang2018.jy@fujitsu.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id BD801B82C41;
+        Fri, 15 Apr 2022 11:53:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 092BCC385A5;
+        Fri, 15 Apr 2022 11:53:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650023601;
+        bh=jhkF3tVBl7jIZs5cgBtmYhJC0qLpSqyjnYjj8g67Rg0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=niwXtS6U4KwVg+zXiPd+eFy7phcu40nxoCELTCkKhG9WLjECHuQBxNs4tlZdn/fMl
+         +eKyyaX1+vCtyq2fK765AgnF7XKw7sr+yqH3pKy0R5OjBBHCJ6aQ70q7grXdboOfZS
+         uIyoNMl2v8/4ozsAlypNJ3zN6WLM1p5GiudE1oAy8Yg9qdUnNk47MNlb/D+C/yo09y
+         eySrN9As1Emtz0LV9qC4rxJnfUC8T6FyBjcLQnsvJgSFYHyr58cZjGTvTRHEpoDdW8
+         bZCKA+7HeUTaOBXcbHFBa3QmeX93gA5meslmv/ZbEw+Q/AtpOVPmeHZ9OZXMb8baYK
+         2cg1s9BaZ3XJw==
+Message-ID: <2ddf7fd69e03409b0a868e0e3ff21f1491cb41ae.camel@kernel.org>
+Subject: Re: [PATCH] ceph/001: add extra check for remote object copies
+From:   Jeff Layton <jlayton@kernel.org>
+To:     =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
+Cc:     ceph-devel@vger.kernel.org, fstests@vger.kernel.org
+Date:   Fri, 15 Apr 2022 07:53:19 -0400
+In-Reply-To: <20220323160925.7142-1-lhenriques@suse.de>
+References: <20220323160925.7142-1-lhenriques@suse.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.220.84]
-X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
- R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
-X-Virus-Scanned: ClamAV using ClamSMTP
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Since vfs has stripped S_ISGID, we don't need this code any more.
+On Wed, 2022-03-23 at 16:09 +0000, Luís Henriques wrote:
+> Ceph kernel client now has a facility to check stats for certain operations.
+> One of these operations is the 'copyfrom', the operation that is used to offload
+> to the OSDs the copy of objects from, for example, the copy_file_range()
+> syscall.
+> 
+> This patch changes ceph/001 to add an extra check to verify that the copies
+> performed by the test are _really_ remote copies and not simple read+write
+> operations.
+> 
+> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> ---
+>  common/ceph    | 10 ++++++++
+>  tests/ceph/001 | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 76 insertions(+)
+> 
+> diff --git a/common/ceph b/common/ceph
+> index ca756dda8dd3..d6f24df177e7 100644
+> --- a/common/ceph
+> +++ b/common/ceph
+> @@ -28,3 +28,13 @@ _require_ceph_vxattr_caps()
+>  	$GETFATTR_PROG -n "ceph.caps" $TEST_DIR >/dev/null 2>&1 \
+>  	  || _notrun "ceph.caps vxattr not supported"
+>  }
+> +
+> +_ceph_get_cluster_fsid()
+> +{
+> +	$GETFATTR_PROG --only-values -n "ceph.cluster_fsid" $TEST_DIR 2>/dev/null
+> +}
+> +
+> +_ceph_get_client_id()
+> +{
+> +	$GETFATTR_PROG --only-values -n "ceph.client_id" $TEST_DIR 2>/dev/null
+> +}
+> diff --git a/tests/ceph/001 b/tests/ceph/001
+> index 5a828567d500..7970ce352bab 100755
+> --- a/tests/ceph/001
+> +++ b/tests/ceph/001
+> @@ -30,6 +30,10 @@ workdir=$TEST_DIR/test-$seq
+>  rm -rf $workdir
+>  mkdir $workdir
+>  
+> +cluster_fsid=$(_ceph_get_cluster_fsid)
+> +client_id=$(_ceph_get_client_id)
+> +metrics_dir="$DEBUGFS_MNT/ceph/$cluster_fsid.$client_id/metrics"
+> +
+>  check_range()
+>  {
+>  	local file=$1
+> @@ -40,8 +44,68 @@ check_range()
+>  	[ $? -eq 0 ] && echo "file $file is not '$val' in [ $off0 $off1 ]"
+>  }
+>  
+> +#
+> +# The metrics file has the following fields:
+> +#   1. item
+> +#   2. total
+> +#   3. avg_sz(bytes)
+> +#   4. min_sz(bytes)
+> +#   5. max_sz(bytes)
+> +#   6. total_sz(bytes)
+> +get_copyfrom_total_copies()
+> +{
+> +	local total=0
+> +
+> +	if [ -d $metrics_dir ]; then
+> +		total=$(grep copyfrom $metrics_dir/size | tr -s '[:space:]' | cut -d ' ' -f 2)
 
-Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
----
- fs/ceph/file.c | 4 ----
- 1 file changed, 4 deletions(-)
+Some older kernels didn't keep copyfrom stats, but any kernel that has a
+$metrics_dir should have stats for copyfrom. This should be fine.
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 6c9e837aa1d3..8e3b99853333 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -651,10 +651,6 @@ static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
- 		/* Directories always inherit the setgid bit. */
- 		if (S_ISDIR(mode))
- 			mode |= S_ISGID;
--		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
--			 !in_group_p(dir->i_gid) &&
--			 !capable_wrt_inode_uidgid(&init_user_ns, dir, CAP_FSETID))
--			mode &= ~S_ISGID;
- 	} else {
- 		in.gid = cpu_to_le32(from_kgid(&init_user_ns, current_fsgid()));
- 	}
--- 
-2.27.0
+> +	fi
+> +	echo $total
+> +}
+> +get_copyfrom_total_size()
+> +{
+> +	local total=0
+> +
+> +	if [ -d $metrics_dir ]; then
+> +		total=$(grep copyfrom $metrics_dir/size | tr -s '[:space:]' | cut -d ' ' -f 6)
+> +	fi
+> +	echo $total
+> +}
+> +
+> +# This function checks that the metrics file has the expected values for number
+> +# of remote object copies and the total size of the copies.  For this, it
+> +# expects a input:
+> +#   $1 - initial number copies in metrics file (field 'total')
+> +#   $2 - initial total size in bytes in metrics file (field 'total_sz')
+> +#   $3 - object size used for copies
+> +#   $4 - number of remote objects copied
+> +check_copyfrom_metrics()
+> +{
+> +	local c0=$1
+> +	local s0=$2
+> +	local objsz=$3
+> +	local copies=$4
+> +	local c1=$(get_copyfrom_total_copies)
+> +	local s1=$(get_copyfrom_total_size)
+> +	local sum
+> +
+> +	if [ ! -d $metrics_dir ]; then
+> +		return # skip metrics check if debugfs isn't mounted
+> +	fi
+> +
+> +	sum=$(($c0+$copies))
+> +	if [ $sum -ne $c1 ]; then
+> +		echo "Wrong number of remote copies.  Expected $sum, got $c1"
+> +	fi
+> +	sum=$(($s0+$copies*$objsz))
+> +	if [ $sum -ne $s1 ]; then
+> +		echo "Wrong size of remote copies.  Expected $sum, got $s1"
+> +	fi
+> +}
+> +
+>  run_copy_range_tests()
+>  {
+> +	total_copies=$(get_copyfrom_total_copies)
+> +	total_size=$(get_copyfrom_total_size)
+>  	objsz=$1
+>  	halfobj=$(($objsz / 2))
+>  	file="$workdir/file-$objsz"
+> @@ -203,6 +267,8 @@ run_copy_range_tests()
+>  	check_range $dest $(($objsz * 2 + $halfobj)) $objsz 63
+>  	check_range $dest $(($objsz * 3 + $halfobj)) $halfobj 64
+>  
+> +	# Confirm that we've done a total of 24 object copies
+> +	check_copyfrom_metrics $total_copies $total_size $objsz 24
+>  }
+>  
+>  echo "Object size: 65536" # CEPH_MIN_STRIPE_UNIT
 
+LGTM
+
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
