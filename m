@@ -2,94 +2,148 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE6CD5059CB
-	for <lists+ceph-devel@lfdr.de>; Mon, 18 Apr 2022 16:28:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 431AF505A89
+	for <lists+ceph-devel@lfdr.de>; Mon, 18 Apr 2022 17:06:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244436AbiDRO0E (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 18 Apr 2022 10:26:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49130 "EHLO
+        id S238727AbiDRPId (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 18 Apr 2022 11:08:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345172AbiDROYp (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 18 Apr 2022 10:24:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6127D4F46D;
-        Mon, 18 Apr 2022 06:19:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S1345369AbiDRPHk (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 18 Apr 2022 11:07:40 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B8C2CE0A;
+        Mon, 18 Apr 2022 06:59:33 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 91A6860F6C;
-        Mon, 18 Apr 2022 13:19:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73C82C385A8;
-        Mon, 18 Apr 2022 13:19:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650287972;
-        bh=qwW+KXmZ4MpkbXf5CjQzDRPBp7owf1X79RhEF+DEUgI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=uY4DneylPE3wC7Cbk/kBwKtUJakpBeGILDpwfzSS/Ilq73esZIHZPEwzcDUWaGvcH
-         wI3aMlkQxqHffITqhsadwpQJw0plsH/aGW+jhgpqdPuElzcyDQCPPyyYMUm4VbxUiA
-         knaIew8MkzgCv7gl393zpRIYzzJEy55kDJWhFdA7xHqWIZpJBvQi9BVT85Sx0jUe5N
-         B+p6lVoF/HGTkl/np7jY1JCm/dLnpxDqPJQNY53EUhQDNSUutY+N0J74Lq4+Q58luS
-         Y79dQArcL6YYenzKzTBsPzpV5jMjSFK1XpyhrrAGTBf0FKBrur+yCT/84BqfqgsFN2
-         gQw0KXn5Ew6VQ==
-Message-ID: <73141a7e395ba9d78d5acded91c3658d78b4dca0.camel@kernel.org>
-Subject: Re: [PATCH] ceph: prevent snapshots to be created in encrypted
- locked directories
-From:   Jeff Layton <jlayton@kernel.org>
-To:     =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>,
-        Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 18 Apr 2022 09:19:30 -0400
-In-Reply-To: <0c5c361c6d65f5b2fdb1dc89fd4317f22cbc3e74.camel@kernel.org>
-References: <20220414135122.26821-1-lhenriques@suse.de>
-         <20220418130839.9862-1-lhenriques@suse.de>
-         <0c5c361c6d65f5b2fdb1dc89fd4317f22cbc3e74.camel@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
+        by smtp-out1.suse.de (Postfix) with ESMTPS id D1D5A2161D;
+        Mon, 18 Apr 2022 13:59:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1650290371; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=dq8YNbXAE834M1QUb2YVyiKzk/PMukhaArBlMLDdUQI=;
+        b=rWsXoUFdmWF9h2C9XaehirIrKSiHsyys3BkFa41aY3eU6+iSH8UAhHCgH1OVBH+WyyrFpn
+        dw/5bsEZFNtpC0fNGp1rhDieaknlnpVdzs52+uRjlgEyVWXNjVkCzIpeHNj8k0kHiFjzpc
+        Yn+RpSOcON+u1e9weLFHkdJLRwPAHew=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1650290371;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=dq8YNbXAE834M1QUb2YVyiKzk/PMukhaArBlMLDdUQI=;
+        b=UXDhCsIm868KMg44CpXYMbAB/ityAQ4j4utoEulTatT+2ciKRW92IyiiqJdSBMmBxfac3M
+        wvLGt5hwSzfWaFBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5343113A9B;
+        Mon, 18 Apr 2022 13:59:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id je1DEcNuXWLiOwAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Mon, 18 Apr 2022 13:59:31 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id a8b50ae4;
+        Mon, 18 Apr 2022 13:59:58 +0000 (UTC)
+From:   =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
+To:     Jeff Layton <jlayton@kernel.org>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
+Subject: [PATCH v5 0/5] ceph: add support for snapshot names encryption
+Date:   Mon, 18 Apr 2022 14:59:52 +0100
+Message-Id: <20220418135957.12056-1-lhenriques@suse.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2022-04-18 at 09:17 -0400, Jeff Layton wrote:
-> On Mon, 2022-04-18 at 14:08 +0100, Luís Henriques wrote:
-> > With snapshot names encryption we can not allow snapshots to be created in
-> > locked directories because the names wouldn't be encrypted.  This patch
-> > forces the directory to be unlocked to allow a snapshot to be created.
-> > 
-> > Signed-off-by: Luís Henriques <lhenriques@suse.de>
-> > ---
-> >  fs/ceph/dir.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> > index f48f1ff20927..93e2f08102a1 100644
-> > --- a/fs/ceph/dir.c
-> > +++ b/fs/ceph/dir.c
-> > @@ -1071,6 +1071,10 @@ static int ceph_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
-> >  		err = -EDQUOT;
-> >  		goto out;
-> >  	}
-> > +	if ((op == CEPH_MDS_OP_MKSNAP) && !fscrypt_has_encryption_key(dir)) {
-> > +		err = -ENOKEY;
-> > +		goto out;
-> > +	}
-> >  
-> >  
-> >  	req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
-> 
-> Looks good. I'll pull this and the v4 series into the wip-fscrypt later
-> todat.  
+Hi!
 
-Actually, I take it back...
+And here's yet another revision.  The main difference from v4 is the
+addition of a patch to prevent the creation of snapshots in directories
+that are encrypted but that are not unlocked (i.e. no key available).
 
-This check doesn't test whether the parent is encrypted. Doesn't it need
-to do that too before checking for the key?
--- 
-Jeff Layton <jlayton@kernel.org>
+As before, the following ceph PRs are required:
+
+  mds: add protection from clients without fscrypt support #45073
+  mds: use the whole string as the snapshot long name #45192
+  mds: support alternate names for snapshots #45224
+  mds: limit the snapshot names to 240 characters #45312
+
+Changes since v4:
+
+- Explicitly added the encoding base for kstrtou64() as we do know that
+  the inode numbers are in decimal.
+
+- New patch to prevent the creation of snapshots in encrypted directories
+  that do not have the key loaded.
+
+Changes since v3:
+
+- Fixed WARN_ON() in ceph_encode_encrypted_dname()
+
+- Updated documentation and copyright notice for the base64
+  encoding/decoding implementaiton which was taken from the fscrypt base.
+
+Changes since v2:
+
+- Use ceph_find_inode() instead of ceph_get_inode() for finding a snapshot
+  parent in function parse_longname().  I've also added a fallback to
+  ceph_get_inode() in case we fail to find the inode.  This may happen if,
+  for example, the mount root doesn't include that inode.  The iput() was
+  also complemented by a discard_new_inode() if the inode is in the I_NEW
+  state. (patch 0002)
+
+- Move the check for '_' snapshots further up in the ceph_fname_to_usr()
+  and ceph_encode_encrypted_dname().  This fixes the case pointed out by
+  Xiubo in v2. (patch 0002)
+
+- Use NAME_MAX for tmp arrays (patch 0002)
+
+- Added an extra patch for replacing the base64url encoding by a different
+  encoding standard, the one used for IMAP mailboxes (which uses '+' and
+  ',' instead of '-' and '_').  This should fix the issue with snapshot
+  names starting with '_'. (patch 0003)
+
+Changes since v1:
+
+- Dropped the dentry->d_flags change in ceph_mkdir().  Thanks to Xiubo
+  suggestion, patch 0001 now skips calling ceph_fscrypt_prepare_context()
+  if we're handling a snapshot.
+
+- Added error handling to ceph_get_snapdir() in patch 0001 (Jeff had
+  already pointed that out but I forgot to include that change in previous
+  revision).
+
+- Rebased patch 0002 to the latest wip-fscrypt branch.
+
+- Added some documentation regarding snapshots naming restrictions.
+
+
+LuÃ­s Henriques (5):
+  ceph: add support for encrypted snapshot names
+  ceph: add support for handling encrypted snapshot names
+  ceph: update documentation regarding snapshot naming limitations
+  ceph: replace base64url by the encoding used for mailbox names
+  ceph: prevent snapshots to be created in encrypted locked directories
+
+ Documentation/filesystems/ceph.rst |  10 ++
+ fs/ceph/crypto.c                   | 252 +++++++++++++++++++++++++----
+ fs/ceph/crypto.h                   |  14 +-
+ fs/ceph/dir.c                      |   7 +-
+ fs/ceph/inode.c                    |  33 +++-
+ 5 files changed, 278 insertions(+), 38 deletions(-)
+
