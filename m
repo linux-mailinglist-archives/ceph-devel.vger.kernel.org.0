@@ -2,132 +2,147 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB7EE504F07
-	for <lists+ceph-devel@lfdr.de>; Mon, 18 Apr 2022 12:52:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47F83504F24
+	for <lists+ceph-devel@lfdr.de>; Mon, 18 Apr 2022 13:00:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233025AbiDRKzf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 18 Apr 2022 06:55:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57874 "EHLO
+        id S237795AbiDRLDM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 18 Apr 2022 07:03:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbiDRKze (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 18 Apr 2022 06:55:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1599215FFB
-        for <ceph-devel@vger.kernel.org>; Mon, 18 Apr 2022 03:52:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1650279175;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uEX8a2lSylP9RYvKo7SCwSa4BCBvhhUQvbuCpcWqvSY=;
-        b=Rz9lZreSqNcuP9CGr6AZu1bDfV9CPWHP0hU2be5yM0Sa2pnZY50zm6wRCpAx9oUuJoi3Cr
-        3K/gv/DCSgL8wRk2eT0IJ/tbkfMwM2CQxvGPrGhaIMiHhncZq2RG28RbDQ2WFRvaTfRKB9
-        ySvZD8gjAnZb8kn+zYil3PESLQ1Zu00=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-557-O34sPLdAPA2jcipazRgW9Q-1; Mon, 18 Apr 2022 06:52:54 -0400
-X-MC-Unique: O34sPLdAPA2jcipazRgW9Q-1
-Received: by mail-pl1-f197.google.com with SMTP id u5-20020a17090282c500b00158e301f407so3332733plz.15
-        for <ceph-devel@vger.kernel.org>; Mon, 18 Apr 2022 03:52:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=uEX8a2lSylP9RYvKo7SCwSa4BCBvhhUQvbuCpcWqvSY=;
-        b=qHe+B+1pqz/YOk6z9NXzGQpuHmKWgoVoF5ZyhYY8opQmQrApOewkkKZecmw7HEy7T2
-         R5UhG4vSdCeCnlDSrVXdjdDNLv/3XOVx2sEeWOFuC2zk0eXPtNnz0xom/vRCqKKDW3s0
-         mItUk4CbUQiaAJe/wdlJ1fEUNHrTtPS3F0dgzD5B62TaVfdz/53iiemTciyyJXMIrxoq
-         Y0xZxgmlNlV+tDFiKik5QpcDckYdne5uObrAioAoHnmtWUU0SxPSfvi16gk9xW8F7eXS
-         7KxYNhQR3vHYaYgwB3S+f4mGFiJmWBHKomttORF6wavdG0fN8gPddbCuNu5/FcY9UYoN
-         DimA==
-X-Gm-Message-State: AOAM530A/STcGG+eZW61xHw8pqt8dpGvJhE+QtsENeO3hXS2chBjPeLL
-        hI7LzdxaedMSVOgFEyRNAne8t3qM6mKfNBY5dRQmdLurhMJ8d6mZfQX8DwfrQv2pqVNnc7GG1GP
-        PAnBoh9LuwkE5VyWWIbkLm8QeEaPwNdoestXNFQiT1dnuEQPXAGQbyTp5kLFqgtNO1d5kOew=
-X-Received: by 2002:a05:6a00:15d4:b0:50a:512e:92e9 with SMTP id o20-20020a056a0015d400b0050a512e92e9mr10569379pfu.28.1650279172694;
-        Mon, 18 Apr 2022 03:52:52 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyiQClXysmpI4I54w5RuLm0nHR9XNTq9ckcfYSRD6k0QgUKZeH5T+WJcjaaEnnYBc+VIfTf/Q==
-X-Received: by 2002:a05:6a00:15d4:b0:50a:512e:92e9 with SMTP id o20-20020a056a0015d400b0050a512e92e9mr10569350pfu.28.1650279172386;
-        Mon, 18 Apr 2022 03:52:52 -0700 (PDT)
-Received: from [10.72.12.77] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id p9-20020a17090a4f0900b001d2a3a58228sm2192795pjh.11.2022.04.18.03.52.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Apr 2022 03:52:51 -0700 (PDT)
-Subject: Re: [PATCH v2] ceph: fix possible NULL pointer dereference for
- req->r_session
-To:     Aaron Tomlin <atomlin@redhat.com>
-Cc:     jlayton@kernel.org, idryomov@gmail.com, vshankar@redhat.com,
+        with ESMTP id S231597AbiDRLDL (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 18 Apr 2022 07:03:11 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 988D4BF73
+        for <ceph-devel@vger.kernel.org>; Mon, 18 Apr 2022 04:00:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id EC4E4CE0FF7
+        for <ceph-devel@vger.kernel.org>; Mon, 18 Apr 2022 11:00:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82186C385A8;
+        Mon, 18 Apr 2022 11:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650279629;
+        bh=D0LGLlK3phMPA7wfdAGHsoK/uZj+WtEagC01q7n6EJs=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=NuWLlLcSGoK73gIqxlRrr/2bE6k+7xZwUAiPmklcka5DVcNylDF1m37MSuk68tv+O
+         sIG4NZmS17BdzgzTdc0cA6ZZ8dGb8l4k5jT2lhcmeI24Jh+biE3HRJQ1DZMq0aYjI9
+         ycBJAl0Hmn/w4JznuAHC6PaQiLRP/c4emTeL4UkLIhDxP9p/C7Ob5RTsYYCTV3WxvE
+         J0BNCVHXV5CKquGZc8Suu5JRBKubD3azLJOR3M3Ug8C9+v46wEwb8NQaxjewEJf2lu
+         xARKt92w9ef44SRTGX8M6xyr14ghO2F6gyPoXRMVbjxGvAJsLDdTF+mHSkEzIVqQPn
+         argUzIy+jTfFg==
+Message-ID: <54d0b7f67cc1c8302fc2d4ff6109d0090f6a4220.camel@kernel.org>
+Subject: Re: [RFC resend PATCH] ceph: fix statx AT_STATX_DONT_SYNC vs
+ AT_STATX_FORCE_SYNC check
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     idryomov@gmail.com, vshankar@redhat.com, dhowells@redhat.com,
         ceph-devel@vger.kernel.org
-References: <20220418014440.573533-1-xiubli@redhat.com>
- <20220418104318.4fb3jpdgnhje4b5d@ava.usersys.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <53d24ea4-554b-2df3-e4ee-6761f6ae5c8e@redhat.com>
-Date:   Mon, 18 Apr 2022 18:52:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+Date:   Mon, 18 Apr 2022 07:00:27 -0400
+In-Reply-To: <d81b7216-2694-4ec2-17b4-0869f485f757@redhat.com>
+References: <20220411093405.301667-1-xiubli@redhat.com>
+         <c013aafd233d4ec303238425b11f6c96c8a3b7a7.camel@kernel.org>
+         <b38b37bc-faa7-cbae-ce3a-f10c0818a293@redhat.com>
+         <d57a0fd93e18d065a0deb3c82dc43595e67b2326.camel@kernel.org>
+         <d81b7216-2694-4ec2-17b4-0869f485f757@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
 MIME-Version: 1.0
-In-Reply-To: <20220418104318.4fb3jpdgnhje4b5d@ava.usersys.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-6.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Mon, 2022-04-18 at 18:51 +0800, Xiubo Li wrote:
+> On 4/18/22 6:29 PM, Jeff Layton wrote:
+> > On Mon, 2022-04-18 at 18:25 +0800, Xiubo Li wrote:
+> > > On 4/18/22 6:15 PM, Jeff Layton wrote:
+> > > > On Mon, 2022-04-11 at 17:34 +0800, xiubli@redhat.com wrote:
+> > > > > From: Xiubo Li <xiubli@redhat.com>
+> > > > > 
+> > > > >   From the posix and the initial statx supporting commit comments,
+> > > > > the AT_STATX_DONT_SYNC is a lightweight stat flag and the
+> > > > > AT_STATX_FORCE_SYNC is a heaverweight one. And also checked all
+> > > > > the other current usage about these two flags they are all doing
+> > > > > the same, that is only when the AT_STATX_FORCE_SYNC is not set
+> > > > > and the AT_STATX_DONT_SYNC is set will they skip sync retriving
+> > > > > the attributes from storage.
+> > > > > 
+> > > > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > > > > ---
+> > > > >    fs/ceph/inode.c | 2 +-
+> > > > >    1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > > > > index 6788a1f88eb6..1ee6685def83 100644
+> > > > > --- a/fs/ceph/inode.c
+> > > > > +++ b/fs/ceph/inode.c
+> > > > > @@ -2887,7 +2887,7 @@ int ceph_getattr(struct user_namespace *mnt_userns, const struct path *path,
+> > > > >    		return -ESTALE;
+> > > > >    
+> > > > >    	/* Skip the getattr altogether if we're asked not to sync */
+> > > > > -	if (!(flags & AT_STATX_DONT_SYNC)) {
+> > > > > +	if ((flags & AT_STATX_SYNC_TYPE) != AT_STATX_DONT_SYNC) {
+> > > > >    		err = ceph_do_getattr(inode,
+> > > > >    				statx_to_caps(request_mask, inode->i_mode),
+> > > > >    				flags & AT_STATX_FORCE_SYNC);
+> > > > I don't get it.
+> > > > 
+> > > > The only way I can see that this is a problem is if someone sent down a
+> > > > mask with both DONT_SYNC and FORCE_SYNC set in it, and in that case I
+> > > > don't see that ignoring FORCE_SYNC would be wrong...
+> > > > 
+> > > There has 3 cases for the flags:
+> > > 
+> > > case1: flags & AT_STATX_SYNC_TYPE == 0
+> > > 
+> > > case2: flags & AT_STATX_SYNC_TYPE == AT_STATX_DONT_SYNC
+> > > 
+> > > case3: flags & AT_STATX_SYNC_TYPE == AT_STATX_DONT_SYNC |
+> > > AT_STATX_FORCE_SYNC
+> > > 
+> > > 
+> > > Only in case2, which is only the DONT_SYNC bit is set, will ignore
+> > > calling ceph_do_getattr() here. And for case3 it will ignore the
+> > > DONT_SYNC bit.
+> > > 
+> > Sure, but the patch doesn't functionally change the behavior of the
+> > code. It may make the condition more idiomatic to read, but I don't
+> > think there is a bug here.
+> 
+> -	if (!(flags & AT_STATX_DONT_SYNC)) {
+> 
+> 
+> For example, in both case2 and case3 the above condition is false, right 
+> ? That means for case3 it will ignore the FORCE_SYNC always.
+> 
+> +	if ((flags & AT_STATX_SYNC_TYPE) != AT_STATX_DONT_SYNC) {
+> 
+> For exmaple in case2 the above condition is false and then it will skip 
+> calling the ceph_do_getattr(). And in case3 the above condition is true, 
+> it will call the ceph_do_getattr(..., flags & FORCE_SYNC).
+> 
+> The logic changed, right ?
+> 
 
-On 4/18/22 6:43 PM, Aaron Tomlin wrote:
-> On Mon 2022-04-18 09:44 +0800, Xiubo Li wrote:
->> The request will be inserted into the ci->i_unsafe_dirops before
->> assigning the req->r_session, so it's possible that we will hit
->> NULL pointer dereference bug here.
->>
->> URL: https://tracker.ceph.com/issues/55327
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>   fs/ceph/caps.c | 4 ++++
->>   1 file changed, 4 insertions(+)
->>
->> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
->> index 69af17df59be..c70fd747c914 100644
->> --- a/fs/ceph/caps.c
->> +++ b/fs/ceph/caps.c
->> @@ -2333,6 +2333,8 @@ static int unsafe_request_wait(struct inode *inode)
->>   			list_for_each_entry(req, &ci->i_unsafe_dirops,
->>   					    r_unsafe_dir_item) {
->>   				s = req->r_session;
->> +				if (!s)
->> +					continue;
->>   				if (unlikely(s->s_mds >= max_sessions)) {
->>   					spin_unlock(&ci->i_unsafe_lock);
->>   					for (i = 0; i < max_sessions; i++) {
->> @@ -2353,6 +2355,8 @@ static int unsafe_request_wait(struct inode *inode)
->>   			list_for_each_entry(req, &ci->i_unsafe_iops,
->>   					    r_unsafe_target_item) {
->>   				s = req->r_session;
->> +				if (!s)
->> +					continue;
->>   				if (unlikely(s->s_mds >= max_sessions)) {
->>   					spin_unlock(&ci->i_unsafe_lock);
->>   					for (i = 0; i < max_sessions; i++) {
->> -- 
->> 2.36.0.rc1
-> Tested-by: Aaron Tomlin <atomlin@redhat.com>
->
-Hi Aaron,
+Yes, but my argument is that sending down a mask that has
+AT_STATX_DONT_SYNC|AT_STATX_FORCE_SYNC makes no sense whatsoever. You're
+simultaneously asking it to not fetch attributes and to forcibly fetch
+attributes. We're within our rights to just ignore FORCE_SYNC at that
+point.
 
-Thanks very much for you testing.
+Arguably, this ought to be caught in vfs_statx before we ever call down
+into the fs driver with something like:
 
-BTW, did you test this by using Livepatch or something else ?
+    if ((flags & AT_STATX_SYNC_TYPE) == (AT_STATX_DONT_SYNC|AT_STATX_FORCE_SYNC))
+	    return -EINVAL;
 
--- Xiubo
-
-
+David, should we add something like this, or is this too risky a change?
+-- 
+Jeff Layton <jlayton@kernel.org>
