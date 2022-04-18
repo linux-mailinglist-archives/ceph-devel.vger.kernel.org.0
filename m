@@ -2,116 +2,122 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FC30504EDD
-	for <lists+ceph-devel@lfdr.de>; Mon, 18 Apr 2022 12:30:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6882A504EF8
+	for <lists+ceph-devel@lfdr.de>; Mon, 18 Apr 2022 12:41:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235579AbiDRKc0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 18 Apr 2022 06:32:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43416 "EHLO
+        id S237801AbiDRKob (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 18 Apr 2022 06:44:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229579AbiDRKcZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 18 Apr 2022 06:32:25 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D88E7D7
-        for <ceph-devel@vger.kernel.org>; Mon, 18 Apr 2022 03:29:45 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 91C07B80EBE
-        for <ceph-devel@vger.kernel.org>; Mon, 18 Apr 2022 10:29:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFDC5C385A7;
-        Mon, 18 Apr 2022 10:29:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650277783;
-        bh=u4y5IYuHBTqhOJceiJ7UglYeZosrCJGQdywJ+zcxgVE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ninQIe3ASQwOUYCUSbp2LIU88tyRgZ9xhtHFCIP8ZD8PN/WMv8rTLjoEvcTOrSBQk
-         hMPet/Y+2PU7xXYi7B4jftB6UPfyu7HmSGozoHMHLx0QX0buKBEE+YUqTbua47Fwhr
-         DI2cjuSVDa39fCx4QJprPDoBLWjYDB0/bbrduc5oeRsyi3rEDssPcR6JYjn3rs67os
-         Orh1bQR3m7d7WIN+3T1FZK5mhReNbjWpn9WGVRC9nmW1Wk20RhpbG2puB4AnWsmTHn
-         lT4nS9COtPMoTP2K5F1lu1Y585d6pN3icHz8Hcr8SYaCTDwGFuMBn+fz2QgDNwVms4
-         H5aWWBANLpJFw==
-Message-ID: <d57a0fd93e18d065a0deb3c82dc43595e67b2326.camel@kernel.org>
-Subject: Re: [RFC resend PATCH] ceph: fix statx AT_STATX_DONT_SYNC vs
- AT_STATX_FORCE_SYNC check
-From:   Jeff Layton <jlayton@kernel.org>
+        with ESMTP id S237740AbiDRKoU (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 18 Apr 2022 06:44:20 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EC0B815FDF
+        for <ceph-devel@vger.kernel.org>; Mon, 18 Apr 2022 03:41:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1650278495;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qdyxAy4KUAkOorSsmWciKgIokGVX7y1HChDNCvudrfY=;
+        b=TI5NM+npOgEwGaozd8pnnSVSEPsxR5yDG5A4U+MZML6tZGQd8EyWd+ZwBiQc793H5neiQS
+        tZOmKT39j5vuJc9/qqi/U1J1pew7hzRHKcONQH+vBEHe83H3kUsVyAMtSJEqO1+JjoXwMh
+        IIrC4d7mjHuqwNo7UKV/YqyZo7iz3hI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-541-_adZEpgSMyKTKWGgacZZew-1; Mon, 18 Apr 2022 06:41:34 -0400
+X-MC-Unique: _adZEpgSMyKTKWGgacZZew-1
+Received: by mail-wm1-f71.google.com with SMTP id t187-20020a1c46c4000000b0038ebc45dbfcso1292787wma.2
+        for <ceph-devel@vger.kernel.org>; Mon, 18 Apr 2022 03:41:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qdyxAy4KUAkOorSsmWciKgIokGVX7y1HChDNCvudrfY=;
+        b=ktxfeDNrIB1XPx+J1h9Wz/Dx+23+/uTq1cK+IuYQpnBGxPswMZLA+VMK6XlK9I9L1H
+         uQxYjXYxcJMIA0wfN/JSXoKh3cK2bgNOJecCbRdX/pu5PKx28b4pcSEzL1jZNQaGgfwc
+         SnOGBcmWiPUdtFsnnc50UZJ/jEvKgypQCiut5QRVASUwC532NtHzWcn10C2wozAIrYzD
+         Nybsd/tkkAGvE5wcl5XUcx3PTCU+OPuQFjLELXWnfWTpFeCLb8K8pJpLVDruFKEXpZIQ
+         S9rJvVLNzpnxCftMxBRQ8LZ1qZuQlIII0Tr7sANUaXEgbgSLiOMXRC3lUwgka7X0SM12
+         NMwA==
+X-Gm-Message-State: AOAM530dEHNW6MupSL6BMzmfPB7Z23vRTItJWmcmcClKbFfEHF5SzfDB
+        Q1Z0wSLPZ5WF90d+Z59ROEU5k5enr3YQiSlUmfUmqw+OpGdaqSGeYqEMtDEFG+LSA2f3C/dOjkh
+        /lUc4GVCu7fRxwLfLsrjm
+X-Received: by 2002:a5d:6050:0:b0:207:a706:fa46 with SMTP id j16-20020a5d6050000000b00207a706fa46mr7548741wrt.369.1650278493167;
+        Mon, 18 Apr 2022 03:41:33 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzZY8t0CILsfbkc5OJuOqfeZb2sNxU2hjSxH/3oZGazOypYOIXtjW5BmowG7oOojMppppFFOg==
+X-Received: by 2002:a5d:6050:0:b0:207:a706:fa46 with SMTP id j16-20020a5d6050000000b00207a706fa46mr7548728wrt.369.1650278492994;
+        Mon, 18 Apr 2022 03:41:32 -0700 (PDT)
+Received: from localhost (cpc111743-lutn13-2-0-cust979.9-3.cable.virginm.net. [82.17.115.212])
+        by smtp.gmail.com with ESMTPSA id bi26-20020a05600c3d9a00b0038ed39dbf00sm12587532wmb.0.2022.04.18.03.41.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Apr 2022 03:41:31 -0700 (PDT)
+Date:   Mon, 18 Apr 2022 11:41:31 +0100
+From:   Aaron Tomlin <atomlin@redhat.com>
 To:     Xiubo Li <xiubli@redhat.com>
-Cc:     idryomov@gmail.com, vshankar@redhat.com, dhowells@redhat.com,
+Cc:     jlayton@kernel.org, idryomov@gmail.com, vshankar@redhat.com,
         ceph-devel@vger.kernel.org
-Date:   Mon, 18 Apr 2022 06:29:41 -0400
-In-Reply-To: <b38b37bc-faa7-cbae-ce3a-f10c0818a293@redhat.com>
-References: <20220411093405.301667-1-xiubli@redhat.com>
-         <c013aafd233d4ec303238425b11f6c96c8a3b7a7.camel@kernel.org>
-         <b38b37bc-faa7-cbae-ce3a-f10c0818a293@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
+Subject: Re: [PATCH v2] ceph: fix possible NULL pointer dereference for
+ req->r_session
+Message-ID: <20220418104131.4gjl73nlqgdh6n6c@ava.usersys.com>
+X-PGP-Key: http://pgp.mit.edu/pks/lookup?search=atomlin%40redhat.com
+X-PGP-Fingerprint: 7906 84EB FA8A 9638 8D1E  6E9B E2DE 9658 19CC 77D6
+References: <20220418014440.573533-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220418014440.573533-1-xiubli@redhat.com>
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2022-04-18 at 18:25 +0800, Xiubo Li wrote:
-> On 4/18/22 6:15 PM, Jeff Layton wrote:
-> > On Mon, 2022-04-11 at 17:34 +0800, xiubli@redhat.com wrote:
-> > > From: Xiubo Li <xiubli@redhat.com>
-> > > 
-> > >  From the posix and the initial statx supporting commit comments,
-> > > the AT_STATX_DONT_SYNC is a lightweight stat flag and the
-> > > AT_STATX_FORCE_SYNC is a heaverweight one. And also checked all
-> > > the other current usage about these two flags they are all doing
-> > > the same, that is only when the AT_STATX_FORCE_SYNC is not set
-> > > and the AT_STATX_DONT_SYNC is set will they skip sync retriving
-> > > the attributes from storage.
-> > > 
-> > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> > > ---
-> > >   fs/ceph/inode.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > > index 6788a1f88eb6..1ee6685def83 100644
-> > > --- a/fs/ceph/inode.c
-> > > +++ b/fs/ceph/inode.c
-> > > @@ -2887,7 +2887,7 @@ int ceph_getattr(struct user_namespace *mnt_userns, const struct path *path,
-> > >   		return -ESTALE;
-> > >   
-> > >   	/* Skip the getattr altogether if we're asked not to sync */
-> > > -	if (!(flags & AT_STATX_DONT_SYNC)) {
-> > > +	if ((flags & AT_STATX_SYNC_TYPE) != AT_STATX_DONT_SYNC) {
-> > >   		err = ceph_do_getattr(inode,
-> > >   				statx_to_caps(request_mask, inode->i_mode),
-> > >   				flags & AT_STATX_FORCE_SYNC);
-> > I don't get it.
-> > 
-> > The only way I can see that this is a problem is if someone sent down a
-> > mask with both DONT_SYNC and FORCE_SYNC set in it, and in that case I
-> > don't see that ignoring FORCE_SYNC would be wrong...
-> > 
-> There has 3 cases for the flags:
+On Mon 2022-04-18 09:44 +0800, Xiubo Li wrote:
+> The request will be inserted into the ci->i_unsafe_dirops before
+> assigning the req->r_session, so it's possible that we will hit
+> NULL pointer dereference bug here.
 > 
-> case1: flags & AT_STATX_SYNC_TYPE == 0
+> URL: https://tracker.ceph.com/issues/55327
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/caps.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> case2: flags & AT_STATX_SYNC_TYPE == AT_STATX_DONT_SYNC
-> 
-> case3: flags & AT_STATX_SYNC_TYPE == AT_STATX_DONT_SYNC | 
-> AT_STATX_FORCE_SYNC
-> 
-> 
-> Only in case2, which is only the DONT_SYNC bit is set, will ignore 
-> calling ceph_do_getattr() here. And for case3 it will ignore the 
-> DONT_SYNC bit.
-> 
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 69af17df59be..c70fd747c914 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -2333,6 +2333,8 @@ static int unsafe_request_wait(struct inode *inode)
+>  			list_for_each_entry(req, &ci->i_unsafe_dirops,
+>  					    r_unsafe_dir_item) {
+>  				s = req->r_session;
+> +				if (!s)
+> +					continue;
+>  				if (unlikely(s->s_mds >= max_sessions)) {
+>  					spin_unlock(&ci->i_unsafe_lock);
+>  					for (i = 0; i < max_sessions; i++) {
+> @@ -2353,6 +2355,8 @@ static int unsafe_request_wait(struct inode *inode)
+>  			list_for_each_entry(req, &ci->i_unsafe_iops,
+>  					    r_unsafe_target_item) {
+>  				s = req->r_session;
+> +				if (!s)
+> +					continue;
+>  				if (unlikely(s->s_mds >= max_sessions)) {
+>  					spin_unlock(&ci->i_unsafe_lock);
+>  					for (i = 0; i < max_sessions; i++) {
+> -- 
+> 2.36.0.rc1
 
-Sure, but the patch doesn't functionally change the behavior of the
-code. It may make the condition more idiomatic to read, but I don't
-think there is a bug here.
+Thanks Xiubo!
+
+Reviewed-by: Aaron Tomlin <atomlin@redhat.com>
 
 -- 
-Jeff Layton <jlayton@kernel.org>
+Aaron Tomlin
+
