@@ -2,95 +2,96 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C995150E646
-	for <lists+ceph-devel@lfdr.de>; Mon, 25 Apr 2022 18:54:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F8C50E75F
+	for <lists+ceph-devel@lfdr.de>; Mon, 25 Apr 2022 19:34:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241534AbiDYQ52 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 25 Apr 2022 12:57:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37900 "EHLO
+        id S244020AbiDYRhF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 25 Apr 2022 13:37:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235375AbiDYQ50 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 25 Apr 2022 12:57:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F6E43A739;
-        Mon, 25 Apr 2022 09:54:21 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 963F361338;
-        Mon, 25 Apr 2022 16:54:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC2B5C385A7;
-        Mon, 25 Apr 2022 16:54:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650905660;
-        bh=KXJVeHvfBoeQRSEK/W6Wv+6jM5VvVPCcOez/eDrDa1w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=re87esaQWebxX3nfjHmMciUuhhC1LDKwLCuG7M+0mkFIuf6LR+a/n4c9h1V+C54eG
-         DadjpAAgQP5J12j9f6RO2lqNhPVYbMn0weoP90W8++PUVGZ7OwY0OBLneHX6aOGg0s
-         V+6SMQxFOpDbiN/aDkuwcyVTU8uHG3zaGN3zm9PewFypc+FEnCh4ZjtvD8JOmM+ah/
-         ErgvD1qIdx4fC7mX4YZ4s24KS624NdBHSAxB/lkhjqKp4n88pnk/snSq0zUpBUyGDb
-         /omD9QlzDiqrLuXTUPgm/x8FvybYfkwJKTJE47IGJozAqtdZ5YENtG2WglOfwPe4Xo
-         J94od0WvEUWAA==
-Date:   Mon, 25 Apr 2022 09:54:19 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Yang Xu <xuyang2018.jy@fujitsu.com>
-Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, david@fromorbit.com, brauner@kernel.org,
-        willy@infradead.org, jlayton@kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v6 2/4] fs: Add missing umask strip in vfs_tmpfile
-Message-ID: <20220425165419.GE16996@magnolia>
+        with ESMTP id S233502AbiDYRhF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 25 Apr 2022 13:37:05 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CD636D1BC;
+        Mon, 25 Apr 2022 10:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=3HRykZfhFQlUA9mo6JlzyNhcWbuWLV1lxnc6LbaGpKM=; b=aaFjv5L3eBguFpcpde6lkfi5Oo
+        Q363Tx5wLZm8eK2NJAPosTPeiJV/o35yKr12LcSbgRmR59xKyFbgWqyPqEUEk1UkLixKzEj5lmzTc
+        9tZHheQ8+Qa6E+KmsIXpy5lKCRM4oF1NTAHNdDyxLYOncxDFym2P4wm05arC+Wdwoqhd8iB6T4+j6
+        geZmFU7iHWOpnxW06ywCdLodCiCGA61px/cV13clbnXgF8ACoKbplf8fPtBUVHbPRvAu8g7rSkX2f
+        0NI5mZV8qChTDMjuo3Adzyz87SuGc+iOb+la+VvAuMgo79DACJJDQ9hlvGmNYsomyYIa1JGppooBG
+        o67w22rQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nj2ax-008tDU-8x; Mon, 25 Apr 2022 17:33:55 +0000
+Date:   Mon, 25 Apr 2022 18:33:55 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     "xuyang2018.jy@fujitsu.com" <xuyang2018.jy@fujitsu.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>
+Subject: Re: [PATCH v6 1/4] fs: move sgid strip operation from
+ inode_init_owner into inode_sgid_strip
+Message-ID: <Ymbbg3XbN17l3Jir@casper.infradead.org>
 References: <1650856181-21350-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <1650856181-21350-2-git-send-email-xuyang2018.jy@fujitsu.com>
+ <YmYLVfZC3h8l7XY1@casper.infradead.org>
+ <62661F19.3020805@fujitsu.com>
+ <20220425112947.higk7uawxkcdcjgj@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1650856181-21350-2-git-send-email-xuyang2018.jy@fujitsu.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220425112947.higk7uawxkcdcjgj@wittgenstein>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Apr 25, 2022 at 11:09:39AM +0800, Yang Xu wrote:
-> All creation paths except for O_TMPFILE handle umask in the vfs directly
-> if the filesystem doesn't support or enable POSIX ACLs. If the filesystem
-> does then umask handling is deferred until posix_acl_create().
-> Because, O_TMPFILE misses umask handling in the vfs it will not honor
-> umask settings. Fix this by adding the missing umask handling.
+On Mon, Apr 25, 2022 at 01:29:47PM +0200, Christian Brauner wrote:
+> On Mon, Apr 25, 2022 at 03:08:36AM +0000, xuyang2018.jy@fujitsu.com wrote:
+> > on 2022/4/25 10:45, Matthew Wilcox wrote:
+> > > On Mon, Apr 25, 2022 at 11:09:38AM +0800, Yang Xu wrote:
+> > >> This has no functional change. Just create and export inode_sgid_strip
+> > >> api for the subsequent patch. This function is used to strip inode's
+> > >> S_ISGID mode when init a new inode.
+> > >
+> > > Why would you call this inode_sgid_strip() instead of
+> > > inode_strip_sgid()?
+> > 
+> > Because I treated "inode sgid(inode's sgid)" as a whole.
+> > 
+> > inode_strip_sgid sounds also ok, but now seems strip_inode_sgid seem 
+> > more clear because we strip inode sgid depend on not only inode's 
+> > condition but also depend on parent directory's condition.
+> > 
+> > What do you think about this?
+> > 
+> > ps: I can aceept the above several way, so if you insist, I can change 
+> > it to inode_strip_sgid.
 > 
-> Fixes: 60545d0d4610 ("[O_TMPFILE] it's still short a few helpers, but infrastructure should be OK now...")
-
-If I had a nickel for every time I felt like I was short a few
-helpers... ;)
-
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
-> Cc: <stable@vger.kernel.org> # 4.19+
-> Reported-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> Acked-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
-> ---
->  fs/namei.c | 2 ++
->  1 file changed, 2 insertions(+)
+> I agree with Willy. I think inode_strip_sgid() is better. It'll be in
+> good company as <object>_<verb>_<what?> is pretty common:
 > 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 509657fdf4f5..73646e28fae0 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3521,6 +3521,8 @@ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
->  	child = d_alloc(dentry, &slash_name);
->  	if (unlikely(!child))
->  		goto out_err;
-> +	if (!IS_POSIXACL(dir))
-> +		mode &= ~current_umask();
->  	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
->  	if (error)
->  		goto out_err;
-> -- 
-> 2.27.0
+> inode_update_atime()
+> inode_init_once()
+> inode_init_owner()
+> inode_init_early()
+> inode_add_lru()
+> inode_needs_sync()
+> inode_set_flags()
 > 
+> Maybe mode_remove_sgid() is even better because it makes it clear that
+> the change happens to @mode and not @dir. But I'm fine with
+> inode_strip_sgid() or inode_remove_sgid() too.
+
+Oh!  Yes, mode_strip_sgid() is better.  We're operating on the mode,
+not the inode.
