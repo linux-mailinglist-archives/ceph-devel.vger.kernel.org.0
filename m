@@ -2,48 +2,50 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EF7850E391
-	for <lists+ceph-devel@lfdr.de>; Mon, 25 Apr 2022 16:46:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C36E50E639
+	for <lists+ceph-devel@lfdr.de>; Mon, 25 Apr 2022 18:53:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235491AbiDYOtk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 25 Apr 2022 10:49:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52844 "EHLO
+        id S243629AbiDYQyu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 25 Apr 2022 12:54:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231472AbiDYOtj (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 25 Apr 2022 10:49:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12A72DCF
-        for <ceph-devel@vger.kernel.org>; Mon, 25 Apr 2022 07:46:35 -0700 (PDT)
+        with ESMTP id S238170AbiDYQys (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 25 Apr 2022 12:54:48 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A88D15FF7;
+        Mon, 25 Apr 2022 09:51:42 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A190F61670
-        for <ceph-devel@vger.kernel.org>; Mon, 25 Apr 2022 14:46:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9451EC385A4;
-        Mon, 25 Apr 2022 14:46:33 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 94EF2B811F5;
+        Mon, 25 Apr 2022 16:51:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EE83C385A4;
+        Mon, 25 Apr 2022 16:51:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650897994;
-        bh=oXf2PWCBA7tTTLBpAEjcuU1KzH8AigZffYmobNTOzUA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=sH/18AinG4eMaGqlqQmP5/HoGIeRAk7k0Nha2dhCOQsJd9MFvIHSuTLrAyk46p+AY
-         IieoMQZNMpY+5J2mtmtFiEp+AJ8JJZ88bEobBspRg3V2ZbmO8pB+zCboPuU5BU0Ucy
-         jZGq6v+nR+K436dcyp4Xl96/oSFvJuqCby1hWmgUZKC1DLbhcp1eoyV4lka9PQYyJR
-         eJaW9IECs3OAWchL0b9SEaEvWrZ7PpVg+CGD1HeZ4R4FVc83WpqLi6VWypKjn7ECoo
-         aKt7Sk+aTlL+K8C1Y7g1oTUYTjLEnwn1XgwpayVBjwcFvVfP/fA7hXV9LyIUANVv9x
-         yGoBtJlLmB3kg==
-Message-ID: <341b2f3a6eeecbf6a14574f60c11b5a689ac5978.camel@kernel.org>
-Subject: Re: [PATCH] ceph: fix possible deadlock when holding Fwb to get
- inline_data
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
-Date:   Mon, 25 Apr 2022 10:46:32 -0400
-In-Reply-To: <20220425115828.6966-1-xiubli@redhat.com>
-References: <20220425115828.6966-1-xiubli@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
+        s=k20201202; t=1650905500;
+        bh=mKE3vqjgRfRZyhS4u7bUPwgvx3bvnCHSXkuFNX0AxB4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vPw5oo35OJ3szHgghwDsaz3YZfR/M2NfyClOgG1aSOvyi/ErVLSKFmyhP5RtrYs7N
+         TYvKpjuxf2Av6T6zFnAWEZKM5TCvYd8DgsQeVzsC1UJKnzg9fyD0KPZRYMACM5Qhad
+         bUvYJxh0YqVv2C/G0IQZR4yTRtX1njS2lsMZBWGNwre6idLyXy6EnoMnttwwqru5ZT
+         U1p4YXVaqXPXHg2mTiZ7BnHaJ4+UDi/8nYU46M7NDXY1+E+8/DFxyyGnRX4dOy7+QJ
+         BX/leKdI+VDl7c/TCNPHCOLhrR3cx6m6UxbNneb40C03ajv88v4LshBzwnMow4AP5f
+         cZO2FmJt0RESg==
+Date:   Mon, 25 Apr 2022 09:51:39 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Yang Xu <xuyang2018.jy@fujitsu.com>
+Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, david@fromorbit.com, brauner@kernel.org,
+        willy@infradead.org, jlayton@kernel.org
+Subject: Re: [PATCH v6 3/4] fs: strip file's S_ISGID mode on vfs instead of
+ on underlying filesystem
+Message-ID: <20220425165139.GC16996@magnolia>
+References: <1650856181-21350-1-git-send-email-xuyang2018.jy@fujitsu.com>
+ <1650856181-21350-3-git-send-email-xuyang2018.jy@fujitsu.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1650856181-21350-3-git-send-email-xuyang2018.jy@fujitsu.com>
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -53,147 +55,235 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2022-04-25 at 19:58 +0800, Xiubo Li wrote:
-> 1, mount with wsync.
-> 2, create a file with O_RDWR, and the request was sent to mds.0:
+On Mon, Apr 25, 2022 at 11:09:40AM +0800, Yang Xu wrote:
+> Currently, vfs only passes mode argument to filesystem, then use inode_init_owner()
+> to strip S_ISGID. Some filesystem(ie ext4/btrfs) will call inode_init_owner
+> firstly, then posxi acl setup, but xfs uses the contrary order. It will
+> affect S_ISGID clear especially we filter S_IXGRP by umask or acl.
 > 
->    ceph_atomic_open()-->
->      ceph_mdsc_do_request(openc)
->      finish_open(file, dentry, ceph_open)-->
->        ceph_open()-->
->          ceph_init_file()-->
->            ceph_init_file_info()-->
->              ceph_uninline_data()-->
->              {
->                ...
->                if (inline_version == 1 || /* initial version, no data */
->                    inline_version == CEPH_INLINE_NONE)
->                      goto out_unlock;
->                ...
->              }
+> Regardless of which filesystem is in use, failure to strip the SGID correctly
+> is considered a security failure that needs to be fixed. The current VFS
+> infrastructure requires the filesystem to do everything right and not step on
+> any landmines to strip the SGID bit, when in fact it can easily be done at the
+> VFS and the filesystems then don't even need to be aware that the SGID needs
+> to be (or has been stripped) by the operation the user asked to be done.
 > 
-> The inline_version will be 1, which is the initial version for the
-> new create file. And here the ci->i_inline_version will keep with 1,
-> it's buggy.
+> Vfs has all the info it needs - it doesn't need the filesystems to do everything
+> correctly with the mode and ensuring that they order things like posix acl setup
+> functions correctly with inode_init_owner() to strip the SGID bit.
 > 
-> 3, buffer write to the file immediately:
+> Just strip the SGID bit at the VFS, and then the filesystem can't get it wrong.
 > 
->    ceph_write_iter()-->
->      ceph_get_caps(file, need=Fw, want=Fb, ...);
->      generic_perform_write()-->
->        a_ops->write_begin()-->
->          ceph_write_begin()-->
->            netfs_write_begin()-->
->              netfs_begin_read()-->
->                netfs_rreq_submit_slice()-->
->                  netfs_read_from_server()-->
->                    rreq->netfs_ops->issue_read()-->
->                      ceph_netfs_issue_read()-->
->                      {
->                        ...
->                        if (ci->i_inline_version != CEPH_INLINE_NONE &&
->                            ceph_netfs_issue_op_inline(subreq))
->                          return;
->                        ...
->                      }
->      ceph_put_cap_refs(ci, Fwb);
+> Also, the inode_sgid_strip() api should be used before IS_POSIXACL() because
+> this api may change mode.
 > 
-> The ceph_netfs_issue_op_inline() will send a getattr(Fsr) request to
-> mds.1.
+> Only the following places use inode_init_owner
+> "
+> arch/powerpc/platforms/cell/spufs/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode | S_IFDIR);
+> arch/powerpc/platforms/cell/spufs/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode | S_IFDIR);
+> fs/9p/vfs_inode.c:      inode_init_owner(&init_user_ns, inode, NULL, mode);
+> fs/bfs/dir.c:   inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/btrfs/inode.c:       inode_init_owner(mnt_userns, inode, dir, mode);
+> fs/btrfs/tests/btrfs-tests.c:   inode_init_owner(&init_user_ns, inode, NULL, S_IFREG);
+> fs/ext2/ialloc.c:               inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/ext4/ialloc.c:               inode_init_owner(mnt_userns, inode, dir, mode);
+> fs/f2fs/namei.c:        inode_init_owner(mnt_userns, inode, dir, mode);
+> fs/hfsplus/inode.c:     inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/hugetlbfs/inode.c:           inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/jfs/jfs_inode.c:     inode_init_owner(&init_user_ns, inode, parent, mode);
+> fs/minix/bitmap.c:      inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/nilfs2/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/ntfs3/inode.c:       inode_init_owner(mnt_userns, inode, dir, mode);
+> fs/ocfs2/dlmfs/dlmfs.c:         inode_init_owner(&init_user_ns, inode, NULL, mode);
+> fs/ocfs2/dlmfs/dlmfs.c: inode_init_owner(&init_user_ns, inode, parent, mode);
+> fs/ocfs2/namei.c:       inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/omfs/inode.c:        inode_init_owner(&init_user_ns, inode, NULL, mode);
+> fs/overlayfs/dir.c:     inode_init_owner(&init_user_ns, inode, dentry->d_parent->d_inode, mode);
+> fs/ramfs/inode.c:               inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/reiserfs/namei.c:    inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/sysv/ialloc.c:       inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/ubifs/dir.c: inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/udf/ialloc.c:        inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/ufs/ialloc.c:        inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/xfs/xfs_inode.c:             inode_init_owner(mnt_userns, inode, dir, mode);
+> fs/zonefs/super.c:      inode_init_owner(&init_user_ns, inode, parent, S_IFDIR | 0555);
+> kernel/bpf/inode.c:     inode_init_owner(&init_user_ns, inode, dir, mode);
+> mm/shmem.c:             inode_init_owner(&init_user_ns, inode, dir, mode);
+> "
 > 
-> 4, then the mds.1 will request the rd lock for CInode::filelock from
-> the auth mds.0, the mds.0 will do the CInode::filelock state transation
-> from excl --> sync, but it need to revoke the Fxwb caps back from the
-> clients.
+> They are used in filesystem to init new inode function and these init inode
+> functions are used by following operations:
+> mkdir
+> symlink
+> mknod
+> create
+> tmpfile
+> rename
 > 
-> While the kernel client has aleady held the Fwb caps and waiting for
-> the getattr(Fsr).
+> We don't care about mkdir because we don't strip SGID bit for directory except
+> fs.xfs.irix_sgid_inherit. But we even call prepare_mode() in do_mkdirat() since
+> inode_sgid_strip() will skip directories anyway. This will enforce the same
+> ordering for all relevant operations and it will make the code more uniform and
+> easier to understand by using new helper prepare_mode().
 > 
-> It's deadlock!!!!
+> symlink and rename only use valid mode that doesn't have SGID bit.
 > 
-> URL: https://tracker.ceph.com/issues/55377
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> We have added inode_sgid_strip api for the remaining operations.
+> 
+> In addition to the above six operations, four filesystems has a little difference
+> 1) btrfs has btrfs_create_subvol_root to create new inode but used non SGID bit
+>    mode and can ignore
+> 2) ocfs2 reflink function should add inode_sgid_strip api manually because this ioctl
+>    is only useful when backport reflink features to old kernels. ocfs2 still use vfs
+>    remap_range code to do reflink.
+> 3) spufs which doesn't really go hrough the regular VFS callpath because it has
+>    separate system call spu_create, but it t only allows the creation of
+>    directories and only allows bits in 0777 and can ignore
+> 4) bpf use vfs_mkobj in bpf_obj_do_pin with
+>    "S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask()) mode and
+>    use bpf_mkobj_ops in bpf_iter_link_pin_kernel with S_IFREG | S_IRUSR mode,
+>    so bpf is also not affected
+> 
+> This patch also changed grpid behaviour for ext4/xfs because the mode passed to
+> them may been changed by inode_sgid_strip.
+> 
+> Also as Christian Brauner said"
+> The patch itself is useful as it would move a security sensitive operation that is
+> currently burried in individual filesystems into the vfs layer. But it has a decent
+> regression  potential since it might strip filesystems that have so far relied on
+> getting the S_ISGID bit with a mode argument. So this needs a lot of testing and
+> long exposure in -next for at least one full kernel cycle."
+> 
+> Suggested-by: Dave Chinner <david@fromorbit.com>
+> Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
 > ---
->  fs/ceph/addr.c | 33 +++++++++++++++++++--------------
->  1 file changed, 19 insertions(+), 14 deletions(-)
+>  fs/inode.c         |  2 --
+>  fs/namei.c         | 22 +++++++++-------------
+>  fs/ocfs2/namei.c   |  1 +
+>  include/linux/fs.h | 11 +++++++++++
+>  4 files changed, 21 insertions(+), 15 deletions(-)
 > 
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 02722ac86d73..15e7b48cbc95 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -1641,7 +1641,7 @@ int ceph_uninline_data(struct file *file)
->  	struct inode *inode = file_inode(file);
->  	struct ceph_inode_info *ci = ceph_inode(inode);
->  	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
-> -	struct ceph_osd_request *req;
-> +	struct ceph_osd_request *req = NULL;
->  	struct ceph_cap_flush *prealloc_cf;
->  	struct folio *folio = NULL;
->  	u64 inline_version = CEPH_INLINE_NONE;
-> @@ -1649,10 +1649,23 @@ int ceph_uninline_data(struct file *file)
->  	int err = 0;
->  	u64 len;
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 78e7ef567e04..041c0837f248 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -2246,8 +2246,6 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
+>  		/* Directories are special, and always inherit S_ISGID */
+>  		if (S_ISDIR(mode))
+>  			mode |= S_ISGID;
+> -		else
+> -			mode = inode_sgid_strip(mnt_userns, dir, mode);
+>  	} else
+>  		inode_fsgid_set(inode, mnt_userns);
+>  	inode->i_mode = mode;
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 73646e28fae0..5b8e6288d503 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3287,8 +3287,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+>  	if (open_flag & O_CREAT) {
+>  		if (open_flag & O_EXCL)
+>  			open_flag &= ~O_TRUNC;
+> -		if (!IS_POSIXACL(dir->d_inode))
+> -			mode &= ~current_umask();
+> +		mode = prepare_mode(mnt_userns, dir->d_inode, mode);
+>  		if (likely(got_write))
+>  			create_error = may_o_create(mnt_userns, &nd->path,
+>  						    dentry, mode);
+> @@ -3521,8 +3520,7 @@ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
+>  	child = d_alloc(dentry, &slash_name);
+>  	if (unlikely(!child))
+>  		goto out_err;
+> -	if (!IS_POSIXACL(dir))
+> -		mode &= ~current_umask();
+> +	mode = prepare_mode(mnt_userns, dir, mode);
+>  	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
+>  	if (error)
+>  		goto out_err;
+> @@ -3850,13 +3848,12 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+>  	if (IS_ERR(dentry))
+>  		goto out1;
 >  
-> +	spin_lock(&ci->i_ceph_lock);
-> +	inline_version = ci->i_inline_version;
-> +	spin_unlock(&ci->i_ceph_lock);
+> -	if (!IS_POSIXACL(path.dentry->d_inode))
+> -		mode &= ~current_umask();
+> +	mnt_userns = mnt_user_ns(path.mnt);
+> +	mode = prepare_mode(mnt_userns, path.dentry->d_inode, mode);
+>  	error = security_path_mknod(&path, dentry, mode, dev);
+>  	if (error)
+>  		goto out2;
+>  
+> -	mnt_userns = mnt_user_ns(path.mnt);
+>  	switch (mode & S_IFMT) {
+>  		case 0: case S_IFREG:
+>  			error = vfs_create(mnt_userns, path.dentry->d_inode,
+> @@ -3943,6 +3940,7 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
+>  	struct path path;
+>  	int error;
+>  	unsigned int lookup_flags = LOOKUP_DIRECTORY;
+> +	struct user_namespace *mnt_userns;
+>  
+>  retry:
+>  	dentry = filename_create(dfd, name, &path, lookup_flags);
+> @@ -3950,15 +3948,13 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
+>  	if (IS_ERR(dentry))
+>  		goto out_putname;
+>  
+> -	if (!IS_POSIXACL(path.dentry->d_inode))
+> -		mode &= ~current_umask();
+> +	mnt_userns = mnt_user_ns(path.mnt);
+> +	mode = prepare_mode(mnt_userns, path.dentry->d_inode, mode);
+>  	error = security_path_mkdir(&path, dentry, mode);
+> -	if (!error) {
+> -		struct user_namespace *mnt_userns;
+> -		mnt_userns = mnt_user_ns(path.mnt);
+> +	if (!error)
+>  		error = vfs_mkdir(mnt_userns, path.dentry->d_inode, dentry,
+>  				  mode);
+> -	}
 > +
-> +	dout("uninline_data %p %llx.%llx inline_version %llu\n",
-> +	     inode, ceph_vinop(inode), inline_version);
-> +
-> +	if (inline_version == CEPH_INLINE_NONE)
-> +		return 0;
-> +
->  	prealloc_cf = ceph_alloc_cap_flush();
->  	if (!prealloc_cf)
->  		return -ENOMEM;
+>  	done_path_create(&path, dentry);
+>  	if (retry_estale(error, lookup_flags)) {
+>  		lookup_flags |= LOOKUP_REVAL;
+> diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
+> index c75fd54b9185..21f3da2e66c9 100644
+> --- a/fs/ocfs2/namei.c
+> +++ b/fs/ocfs2/namei.c
+> @@ -197,6 +197,7 @@ static struct inode *ocfs2_get_init_inode(struct inode *dir, umode_t mode)
+>  	 * callers. */
+>  	if (S_ISDIR(mode))
+>  		set_nlink(inode, 2);
+> +	mode = inode_sgid_strip(&init_user_ns, dir, mode);
+>  	inode_init_owner(&init_user_ns, inode, dir, mode);
+>  	status = dquot_initialize(inode);
+>  	if (status)
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 532de76c9b91..ca70cdf9c9e2 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3459,6 +3459,17 @@ static inline bool dir_relax_shared(struct inode *inode)
+>  	return !IS_DEADDIR(inode);
+>  }
 >  
-> +	if (inline_version == 1) /* initial version, no data */
-> +		goto out_uninline;
-> +
->  	folio = read_mapping_folio(inode->i_mapping, 0, file);
->  	if (IS_ERR(folio)) {
->  		err = PTR_ERR(folio);
-> @@ -1661,17 +1674,6 @@ int ceph_uninline_data(struct file *file)
->  
->  	folio_lock(folio);
->  
-> -	spin_lock(&ci->i_ceph_lock);
-> -	inline_version = ci->i_inline_version;
-> -	spin_unlock(&ci->i_ceph_lock);
-> -
-> -	dout("uninline_data %p %llx.%llx inline_version %llu\n",
-> -	     inode, ceph_vinop(inode), inline_version);
-> -
-> -	if (inline_version == 1 || /* initial version, no data */
-> -	    inline_version == CEPH_INLINE_NONE)
-> -		goto out_unlock;
-> -
->  	len = i_size_read(inode);
->  	if (len > folio_size(folio))
->  		len = folio_size(folio);
-> @@ -1736,6 +1738,7 @@ int ceph_uninline_data(struct file *file)
->  	ceph_update_write_metrics(&fsc->mdsc->metric, req->r_start_latency,
->  				  req->r_end_latency, len, err);
->  
-> +out_uninline:
->  	if (!err) {
->  		int dirty;
->  
-> @@ -1754,8 +1757,10 @@ int ceph_uninline_data(struct file *file)
->  	if (err == -ECANCELED)
->  		err = 0;
->  out_unlock:
-> -	folio_unlock(folio);
-> -	folio_put(folio);
-> +	if (folio) {
-> +		folio_unlock(folio);
-> +		folio_put(folio);
-> +	}
->  out:
->  	ceph_free_cap_flush(prealloc_cf);
->  	dout("uninline_data %p %llx.%llx inline_version %llu = %d\n",
+> +static inline umode_t prepare_mode(struct user_namespace *mnt_userns,
 
-Nice catch!
+You probably ought to make this more obviously a *file* mode preparation
+function by naming it "vfs_prepare_mode" or something.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+--D
+
+> +				   const struct inode *dir, umode_t mode)
+> +{
+> +	mode = inode_sgid_strip(mnt_userns, dir, mode);
+> +
+> +	if (!IS_POSIXACL(dir))
+> +		mode &= ~current_umask();
+> +
+> +	return mode;
+> +}
+> +
+>  extern bool path_noexec(const struct path *path);
+>  extern void inode_nohighmem(struct inode *inode);
+>  
+> -- 
+> 2.27.0
+> 
