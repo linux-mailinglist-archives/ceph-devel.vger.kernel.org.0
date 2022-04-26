@@ -2,79 +2,78 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F40950EEF2
-	for <lists+ceph-devel@lfdr.de>; Tue, 26 Apr 2022 04:54:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D20750EF1B
+	for <lists+ceph-devel@lfdr.de>; Tue, 26 Apr 2022 05:19:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242710AbiDZC5M (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 25 Apr 2022 22:57:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51710 "EHLO
+        id S242855AbiDZDWP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 25 Apr 2022 23:22:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242634AbiDZC5L (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 25 Apr 2022 22:57:11 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 87A8711F96E
-        for <ceph-devel@vger.kernel.org>; Mon, 25 Apr 2022 19:54:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1650941639;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+500b5GKzu7RWWw3KSFVj0nJ8mi1vlJI11+mnaPgRR4=;
-        b=ATXz10UC7ulTa8z/MsnlfMh1NYZ6quy8b2CGOAR6Lqu1mGgWpPzYuYCHEsKygovulkPMVi
-        71eE6i43XkWxhe/50mQ0eLKprbX28sdb6UgKf3Q/CWFkOw+6ELeC48sbscTczZXxu6WOOL
-        Opo/lRNHYwB4i6d4znGuhkuqaWir6Mw=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-298-sXBqR-SmNCeIlxDTzzTt4w-1; Mon, 25 Apr 2022 22:53:57 -0400
-X-MC-Unique: sXBqR-SmNCeIlxDTzzTt4w-1
-Received: by mail-pl1-f198.google.com with SMTP id i10-20020a1709026aca00b00158f14b4f2fso10536387plt.2
-        for <ceph-devel@vger.kernel.org>; Mon, 25 Apr 2022 19:53:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=+500b5GKzu7RWWw3KSFVj0nJ8mi1vlJI11+mnaPgRR4=;
-        b=Kc5gPNhve1LuGCEN0+jYGQ11uZ/e0kYaEcws4sze7lS0BYIP5pdPHm+Y7f6XWLj8nJ
-         yX+DWalcoJxrhGrZ+93BGwaxTesvpR9LhIZOwvkonsnHiJBaMiwfZf6HfeOduTsa8A1f
-         wKlO0q9mK9elzt28JOx3+tCHIo2KajRZK/RbOZX9i9vunDpTKGD/3PgiQgsBVxYv6mmk
-         8q0GoVMZGaZQIEweAl+TES/Sf69sbPotew99veIpIhk1mfDhFrRaXKPVrFhRwx6HEz1/
-         iuS+EJlVhxdhnaRniFbGsZ8M5ZJVGM6exrlJ6rtfjuQC9eDqELQl7dP2nIaaGdIznWY+
-         2BJg==
-X-Gm-Message-State: AOAM5330C0KkQ8bpQoavkWjh3xX7Kly5UjuYbrfwml73ZijUy6fxnPyF
-        pMq70quDsm9jBJQ+62VbnBgL5NZ+2o+ZOtyVBRHXqUiYSSlUbnCosgeLd4WUYXqu2tkg1FULDsA
-        tlSIwbuYfPSUobO3Jujdzsw==
-X-Received: by 2002:a17:90b:1a8f:b0:1d2:acdc:71d2 with SMTP id ng15-20020a17090b1a8f00b001d2acdc71d2mr24547233pjb.41.1650941636700;
-        Mon, 25 Apr 2022 19:53:56 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz6M05wZQX0yjlgxO/3ZfACIjcvj0GWnHA37N1kuHJczSNdp3/50aKpKIdERVTX3kfSO1LFlw==
-X-Received: by 2002:a17:90b:1a8f:b0:1d2:acdc:71d2 with SMTP id ng15-20020a17090b1a8f00b001d2acdc71d2mr24547213pjb.41.1650941636432;
-        Mon, 25 Apr 2022 19:53:56 -0700 (PDT)
-Received: from [10.72.12.77] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id t20-20020a63eb14000000b0039e28245722sm10941863pgh.54.2022.04.25.19.53.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 25 Apr 2022 19:53:55 -0700 (PDT)
-Subject: Re: [PATCH] ceph: fix setting of xattrs on async created inodes
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        John Fortin <fortinj66@gmail.com>,
-        Sri Ramanujam <sri@ramanujam.io>
-References: <20220425195427.60738-1-jlayton@kernel.org>
- <0263808c24d40c8672b17805327c585fe4b08703.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <c78f65ee-a43a-9994-bd28-f6d65f082aa2@redhat.com>
-Date:   Tue, 26 Apr 2022 10:53:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        with ESMTP id S240250AbiDZDWN (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 25 Apr 2022 23:22:13 -0400
+Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F917939B3;
+        Mon, 25 Apr 2022 20:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+        s=170520fj; t=1650943146; i=@fujitsu.com;
+        bh=u31o66RvqjlzILoXUByOPpepwtsEmCeLKTUxGK5xW5U=;
+        h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type;
+        b=ND58KwO4zE8xrHQEaDJYYpuDIlE0GA9HQJo6GCr5ZMYp/4MkYYo3JQPVY5aC1/MZ3
+         2BG2c9J3WPjQEweDKUel5jVCxo8IohKD0AewiSnN5oP5TWi/o9FBHzCV7MIMjBUT/y
+         wJqGbjAr3CKs/VNUz9ld/VES+IC9pN+soEskoMFHqv1iEDNFAI7lQ8dmm3rCMWJ5pY
+         6VIRuxt4Vky1XGemMsyJ3sUNKY88O7MtvXtwSFV8KEjXyP9p94dgqwqxJiSJlK4F+1
+         zJRHBaXK1N9IYtOO43tpAO/QcHvAm5g5mn/rAkHQPcMUM1S+qJs9bH0DadNOyqSiFN
+         fAMEyA0WWZa6A==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFIsWRWlGSWpSXmKPExsViZ8MRors8JT3
+  J4Opna4vXhz8xWny4OYnJYsuxe4wWl5/wWfxctordYs/ekywW5/8eZ7X4/WMOmwOHx6lFEh6b
+  V2h5bFrVyebxeZOcx6Ynb5kCWKNYM/OS8isSWDO6d11nKVgsXnF88Um2Bsb9wl2MXBxCAq8ZJ
+  Y59vcwC4exhlDg85xNjFyMnB5uApsSzzgXMILaIgKPEi/YZYEXMAocYJe4f6gJLCAukSPz81s
+  gOYrMIqEpcP/AFKM7BwSvgIdG+xhEkLCGgIDHl4Xuwcl4BQYmTM5+wgNjMAhISB1+8YIaoUZS
+  41PGNEcKukJg1q41pAiPvLCQts5C0LGBkWsVonVSUmZ5RkpuYmaNraGCga2hoqmtsqWtkYKCX
+  WKWbqJdaqlueWlyia6SXWF6sl1pcrFdcmZuck6KXl1qyiREYzCnF6id2MD5d+VPvEKMkB5OSK
+  O+WpPQkIb6k/JTKjMTijPii0pzU4kOMMhwcShK8rCA5waLU9NSKtMwcYGTBpCU4eJREeMtA0r
+  zFBYm5xZnpEKlTjLocT5+f2MssxJKXn5cqJc7rAoxTIQGQoozSPLgRsCi/xCgrJczLyMDAIMR
+  TkFqUm1mCKv+KUZyDUUmYlwNkCk9mXgncpldARzABHfGpNhXkiJJEhJRUA5N0cRO3b07m9ule
+  6VXyLt3zXySI+zocmlkweYntDMfE1aJPfl532nckZbmSy4P7slNE+5VSmo7O2pf4OG1/7Ufmp
+  Z4CYdWnc+byqr/LuOBy8GGCp/Cf+v/XFvi87LZNfRpl97Reo1yvct7+2vNX3/0/puT2WVVm0n
+  7LWXzP78xVscu+ZZpVOC00WyrrzzWF64xPTpf41p3/fbO5oGob87K6sz4VWks2rA0vrOjWefS
+  s97rdOTc/Zv+rTy+ItXz6d29XXdOFwFs/M5gUN+x9rTjTV1y78eSifs3/53nqOK5qz9wpumpB
+  LFdWUfT6tJvVF7d/+n8h1eqmpLvsmmOeMuKuIb6H836drijheWxn91KJpTgj0VCLuag4EQA9U
+  BtgbQMAAA==
+X-Env-Sender: xuyang2018.jy@fujitsu.com
+X-Msg-Ref: server-6.tower-571.messagelabs.com!1650943143!212575!1
+X-Originating-IP: [62.60.8.84]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.85.8; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 30478 invoked from network); 26 Apr 2022 03:19:03 -0000
+Received: from unknown (HELO mailhost3.uk.fujitsu.com) (62.60.8.84)
+  by server-6.tower-571.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 26 Apr 2022 03:19:03 -0000
+Received: from R01UKEXCASM126.r01.fujitsu.local ([10.183.43.178])
+        by mailhost3.uk.fujitsu.com (8.14.5/8.14.5) with ESMTP id 23Q3ItNM019448
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 26 Apr 2022 04:18:57 +0100
+Received: from localhost.localdomain (10.167.220.84) by
+ R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.32; Tue, 26 Apr 2022 04:18:48 +0100
+From:   Yang Xu <xuyang2018.jy@fujitsu.com>
+To:     <linux-fsdevel@vger.kernel.org>, <ceph-devel@vger.kernel.org>
+CC:     <viro@zeniv.linux.org.uk>, <david@fromorbit.com>,
+        <djwong@kernel.org>, <brauner@kernel.org>, <willy@infradead.org>,
+        <jlayton@kernel.org>, Yang Xu <xuyang2018.jy@fujitsu.com>
+Subject: [PATCH v7 1/4] fs: move sgid stripping operation from inode_init_owner into mode_strip_sgid
+Date:   Tue, 26 Apr 2022 12:19:49 +0800
+Message-ID: <1650946792-9545-1-git-send-email-xuyang2018.jy@fujitsu.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-In-Reply-To: <0263808c24d40c8672b17805327c585fe4b08703.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Type: text/plain
+X-Originating-IP: [10.167.220.84]
+X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
+ R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,78 +81,83 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+This has no functional change. Just create and export mode_strip_sgid
+api for the subsequent patch. This function is used to strip S_ISGID mode
+when init a new inode.
 
-On 4/26/22 3:57 AM, Jeff Layton wrote:
-> On Mon, 2022-04-25 at 15:54 -0400, Jeff Layton wrote:
->> Currently when we create a file, we spin up an xattr buffer to send
->> along with the create request. If we end up doing an async create
->> however, then we currently pass down a zero-length xattr buffer.
->>
->> Fix the code to send down the xattr buffer in req->r_pagelist. If the
->> xattrs span more than a page, however give up and don't try to do an
->> async create.
->>
->> Fixes: 9a8d03ca2e2c ("ceph: attempt to do async create when possible")
->> URL: https://bugzilla.redhat.com/show_bug.cgi?id=2063929
->> Reported-by: John Fortin <fortinj66@gmail.com>
->> Reported-by: Sri Ramanujam <sri@ramanujam.io>
->> Signed-off-by: Jeff Layton <jlayton@kernel.org>
->> ---
->>   fs/ceph/file.c | 16 +++++++++++++---
->>   1 file changed, 13 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
->> index 6c9e837aa1d3..8c8226c0feac 100644
->> --- a/fs/ceph/file.c
->> +++ b/fs/ceph/file.c
->> @@ -629,9 +629,15 @@ static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
->>   	iinfo.change_attr = 1;
->>   	ceph_encode_timespec64(&iinfo.btime, &now);
->>   
->> -	iinfo.xattr_len = ARRAY_SIZE(xattr_buf);
->> -	iinfo.xattr_data = xattr_buf;
->> -	memset(iinfo.xattr_data, 0, iinfo.xattr_len);
->> +	if (req->r_pagelist) {
->> +		iinfo.xattr_len = req->r_pagelist->length;
->> +		iinfo.xattr_data = req->r_pagelist->mapped_tail;
->> +	} else {
->> +		/* fake it */
->> +		iinfo.xattr_len = ARRAY_SIZE(xattr_buf);
->> +		iinfo.xattr_data = xattr_buf;
->> +		memset(iinfo.xattr_data, 0, iinfo.xattr_len);
->> +	}
->>   
->>   	in.ino = cpu_to_le64(vino.ino);
->>   	in.snapid = cpu_to_le64(CEPH_NOSNAP);
->> @@ -743,6 +749,10 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
->>   		err = ceph_security_init_secctx(dentry, mode, &as_ctx);
->>   		if (err < 0)
->>   			goto out_ctx;
->> +		/* Async create can't handle more than a page of xattrs */
->> +		if (as_ctx.pagelist &&
->> +		    !list_is_singular(&as_ctx.pagelist->head))
->> +			try_async = false;
->>   	} else if (!d_in_lookup(dentry)) {
->>   		/* If it's not being looked up, it's negative */
->>   		return -ENOENT;
-> Oh, I meant to mark this for stable as well. Xiubo, can you do that when
-> you merge it?
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
+---
+ fs/inode.c         | 37 +++++++++++++++++++++++++++++++++----
+ include/linux/fs.h |  2 ++
+ 2 files changed, 35 insertions(+), 4 deletions(-)
 
-Sure, Jeff.
-
-Looks nice. Merged into the testing branch.
-
-Thanks
-
--- Xiubo
-
-
-Looks good. I fixed up the minor spelling error in the comment that
-Venky noticed too. Merged into testing branch.
-
-Thanks,
-
-
-
-> Thanks,
+diff --git a/fs/inode.c b/fs/inode.c
+index 9d9b422504d1..e9a5f2ec2f89 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2246,10 +2246,8 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
+ 		/* Directories are special, and always inherit S_ISGID */
+ 		if (S_ISDIR(mode))
+ 			mode |= S_ISGID;
+-		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
+-			 !in_group_p(i_gid_into_mnt(mnt_userns, dir)) &&
+-			 !capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
+-			mode &= ~S_ISGID;
++		else
++			mode = mode_strip_sgid(mnt_userns, dir, mode);
+ 	} else
+ 		inode_fsgid_set(inode, mnt_userns);
+ 	inode->i_mode = mode;
+@@ -2405,3 +2403,34 @@ struct timespec64 current_time(struct inode *inode)
+ 	return timestamp_truncate(now, inode);
+ }
+ EXPORT_SYMBOL(current_time);
++
++/**
++ * mode_strip_sgid - handle the sgid bit for non-directories
++ * @mnt_userns: User namespace of the mount the inode was created from
++ * @dir: parent directory inode
++ * @mode: mode of the file to be created in @dir
++ *
++ * If the @mode of the new file has both the S_ISGID and S_IXGRP bit
++ * raised and @dir has the S_ISGID bit raised ensure that the caller is
++ * either in the group of the parent directory or they have CAP_FSETID
++ * in their user namespace and are privileged over the parent directory.
++ * In all other cases, strip the S_ISGID bit from @mode.
++ *
++ * Return: the new mode to use for the file
++ */
++umode_t mode_strip_sgid(struct user_namespace *mnt_userns,
++			 const struct inode *dir, umode_t mode)
++{
++	if (S_ISDIR(mode) || !dir || !(dir->i_mode & S_ISGID))
++		return mode;
++	if ((mode & (S_ISGID | S_IXGRP)) != (S_ISGID | S_IXGRP))
++		return mode;
++	if (in_group_p(i_gid_into_mnt(mnt_userns, dir)))
++		return mode;
++	if (capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
++		return mode;
++
++	mode &= ~S_ISGID;
++	return mode;
++}
++EXPORT_SYMBOL(mode_strip_sgid);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index bbde95387a23..98b44a2732f5 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1897,6 +1897,8 @@ extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
+ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
+ 		      const struct inode *dir, umode_t mode);
+ extern bool may_open_dev(const struct path *path);
++umode_t mode_strip_sgid(struct user_namespace *mnt_userns,
++			 const struct inode *dir, umode_t mode);
+ 
+ /*
+  * This is the "filldir" function type, used by readdir() to let
+-- 
+2.27.0
 
