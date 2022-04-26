@@ -2,50 +2,49 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F28250F02C
-	for <lists+ceph-devel@lfdr.de>; Tue, 26 Apr 2022 07:22:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 137D550F1BE
+	for <lists+ceph-devel@lfdr.de>; Tue, 26 Apr 2022 09:07:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236987AbiDZFZI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 26 Apr 2022 01:25:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38418 "EHLO
+        id S1343751AbiDZHKH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 26 Apr 2022 03:10:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233119AbiDZFZH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 26 Apr 2022 01:25:07 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B33215FF1;
-        Mon, 25 Apr 2022 22:22:00 -0700 (PDT)
+        with ESMTP id S1343813AbiDZHKD (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 26 Apr 2022 03:10:03 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7369C37AA9;
+        Tue, 26 Apr 2022 00:06:56 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 166BEB811F8;
-        Tue, 26 Apr 2022 05:21:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEFFDC385A4;
-        Tue, 26 Apr 2022 05:21:57 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 27715B81C68;
+        Tue, 26 Apr 2022 07:06:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A69C5C385A0;
+        Tue, 26 Apr 2022 07:06:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650950517;
-        bh=M7y9z2HMRLqwatvHl476GZFoUzQ6J5PmY1+GrAUh6+Q=;
+        s=k20201202; t=1650956813;
+        bh=oSzk4INeEyNYqL69BKf5W0+B/RgiGVMCN//FIn7UBhk=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FcILfOUMq+4QmPOE31Jx5+r6dnDQv1gEpy5JMQ190JTm+6BZyKeUnlHZeBIZuYBN2
-         6A3u34kJzV56sByYY/kP5QcSeSWY9mPZoi2NUcbIsly86dLu79SW3QQHHsx/aFnN7g
-         RePhDIv4IAO0bNkjDlTHnXXnX3JATlD3BvLV3lPkswjRDUt+Rwzls2OEUprvgRVozU
-         LTDf794VBGBCtMX1zn8xJT9d+iKzUfS2KetqYgZQpipb3bCD9JnVC88PnQSZht+xQB
-         RU+h+8v+OKQL7jS53FNoAOGs66aoSNrAEIa6MQpDxOl2ePyt/o7/ZpqCuOE2ljqivo
-         3BjjoYrGBP3cw==
-Date:   Mon, 25 Apr 2022 22:21:57 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
+        b=Cz8eCdcepHEQtuNEyaV0ocMBId8zoIVaBdV+6ZTytKrOMOcRPajGzorT4LLLVFEM8
+         DX33qSHMq36/OPFgiZJRV9kCUTUeuI59Ap4K3TNtDfhMr6xc49uRykF9zifqSnlcsU
+         THTQ0BTSefSqgb8mCTn2q/7x5kq81tkMRGqq/KraxvdChMBLMKdcTzq8p1IE5+RWfK
+         MhpuTsl8HXJuwBqxKa5GAjAaaYr68lHJI8yQObJ3Yal32WoBMHUp1BggTOPLInl6cY
+         QAZKTWP3jmnccyobut0njXzFN4Bjn/02qY98EIu+5q3uguZPZLCop8DD48MwCLGeCr
+         DpyfvizwTC5Lw==
+Date:   Tue, 26 Apr 2022 09:06:48 +0200
+From:   Christian Brauner <brauner@kernel.org>
 To:     Yang Xu <xuyang2018.jy@fujitsu.com>
 Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, david@fromorbit.com, brauner@kernel.org,
+        viro@zeniv.linux.org.uk, david@fromorbit.com, djwong@kernel.org,
         willy@infradead.org, jlayton@kernel.org
-Subject: Re: [PATCH v7 3/4] fs: strip file's S_ISGID mode on vfs instead of
- on underlying filesystem
-Message-ID: <20220426052157.GJ17059@magnolia>
+Subject: Re: [PATCH v7 1/4] fs: move sgid stripping operation from
+ inode_init_owner into mode_strip_sgid
+Message-ID: <20220426070648.3k6dahljcjhpggur@wittgenstein>
 References: <1650946792-9545-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <1650946792-9545-3-git-send-email-xuyang2018.jy@fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1650946792-9545-3-git-send-email-xuyang2018.jy@fujitsu.com>
+In-Reply-To: <1650946792-9545-1-git-send-email-xuyang2018.jy@fujitsu.com>
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -55,234 +54,34 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Apr 26, 2022 at 12:19:51PM +0800, Yang Xu wrote:
-> Currently, vfs only passes mode parameter to filesystem, then use inode_init_owner()
-> to strip S_ISGID. Some filesystem(ie ext4/btrfs) will call inode_init_owner
-> firstly, then posxi acl setup, but xfs uses the contrary order. It will
-> affect S_ISGID clear especially we filter S_IXGRP by umask or acl.
+On Tue, Apr 26, 2022 at 12:19:49PM +0800, Yang Xu wrote:
+> This has no functional change. Just create and export mode_strip_sgid
+> api for the subsequent patch. This function is used to strip S_ISGID mode
+> when init a new inode.
 > 
-> Regardless of which filesystem is in use, failure to strip the SGID correctly
-> is considered a security failure that needs to be fixed. The current VFS
-> infrastructure requires the filesystem to do everything right and not step on
-> any landmines to strip the SGID bit, when in fact it can easily be done at the
-> VFS and the filesystems then don't even need to be aware that the SGID needs
-> to be (or has been stripped) by the operation the user asked to be done.
-> 
-> Vfs has all the info it needs - it doesn't need the filesystems to do everything
-> correctly with the mode and ensuring that they order things like posix acl setup
-> functions correctly with inode_init_owner() to strip the SGID bit.
-> 
-> Just strip the SGID bit at the VFS, and then the filesystem can't get it wrong.
-> 
-> Also, the mode_strip_sgid() api should be used before IS_POSIXACL() because
-> this api may change mode.
-> 
-> Only the following places use inode_init_owner
-> "
-> arch/powerpc/platforms/cell/spufs/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode | S_IFDIR);
-> arch/powerpc/platforms/cell/spufs/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode | S_IFDIR);
-> fs/9p/vfs_inode.c:      inode_init_owner(&init_user_ns, inode, NULL, mode);
-> fs/bfs/dir.c:   inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/btrfs/inode.c:       inode_init_owner(mnt_userns, inode, dir, mode);
-> fs/btrfs/tests/btrfs-tests.c:   inode_init_owner(&init_user_ns, inode, NULL, S_IFREG);
-> fs/ext2/ialloc.c:               inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/ext4/ialloc.c:               inode_init_owner(mnt_userns, inode, dir, mode);
-> fs/f2fs/namei.c:        inode_init_owner(mnt_userns, inode, dir, mode);
-> fs/hfsplus/inode.c:     inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/hugetlbfs/inode.c:           inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/jfs/jfs_inode.c:     inode_init_owner(&init_user_ns, inode, parent, mode);
-> fs/minix/bitmap.c:      inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/nilfs2/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/ntfs3/inode.c:       inode_init_owner(mnt_userns, inode, dir, mode);
-> fs/ocfs2/dlmfs/dlmfs.c:         inode_init_owner(&init_user_ns, inode, NULL, mode);
-> fs/ocfs2/dlmfs/dlmfs.c: inode_init_owner(&init_user_ns, inode, parent, mode);
-> fs/ocfs2/namei.c:       inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/omfs/inode.c:        inode_init_owner(&init_user_ns, inode, NULL, mode);
-> fs/overlayfs/dir.c:     inode_init_owner(&init_user_ns, inode, dentry->d_parent->d_inode, mode);
-> fs/ramfs/inode.c:               inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/reiserfs/namei.c:    inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/sysv/ialloc.c:       inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/ubifs/dir.c: inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/udf/ialloc.c:        inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/ufs/ialloc.c:        inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/xfs/xfs_inode.c:             inode_init_owner(mnt_userns, inode, dir, mode);
-> fs/zonefs/super.c:      inode_init_owner(&init_user_ns, inode, parent, S_IFDIR | 0555);
-> kernel/bpf/inode.c:     inode_init_owner(&init_user_ns, inode, dir, mode);
-> mm/shmem.c:             inode_init_owner(&init_user_ns, inode, dir, mode);
-> "
-> 
-> They are used in filesystem to init new inode function and these init inode
-> functions are used by following operations:
-> mkdir
-> symlink
-> mknod
-> create
-> tmpfile
-> rename
-> 
-> We don't care about mkdir because we don't strip SGID bit for directory except
-> fs.xfs.irix_sgid_inherit. But we even call vfs_prepare_mode() in do_mkdirat() since
-> mode_strip_sgid() will skip directories anyway. This will enforce the same
-> ordering for all relevant operations and it will make the code more uniform and
-> easier to understand by using new helper vfs_prepare_mode().
-> 
-> symlink and rename only use valid mode that doesn't have SGID bit.
-> 
-> We have added mode_strip_sgid() api for the remaining operations.
-> 
-> In addition to the above six operations, four filesystems has a little difference
-> 1) btrfs has btrfs_create_subvol_root to create new inode but used non SGID bit
->    mode and can ignore
-> 2) ocfs2 reflink function should add mode_strip_sgid api manually because this ioctl
->    is unique and not added into vfs. It may use S_ISGID modd.
-> 3) spufs which doesn't really go hrough the regular VFS callpath because it has
->    separate system call spu_create, but it t only allows the creation of
->    directories and only allows bits in 0777 and can ignore
-> 4) bpf use vfs_mkobj in bpf_obj_do_pin with
->    "S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask()) mode and
->    use bpf_mkobj_ops in bpf_iter_link_pin_kernel with S_IFREG | S_IRUSR mode,
->    so bpf is also not affected
-> 
-> This patch also changed grpid behaviour for ext4/xfs because the mode passed to
-> them may been changed by vfs_prepare_mode.
-> 
-> Also as Christian Brauner said"
-> The patch itself is useful as it would move a security sensitive operation that is
-> currently burried in individual filesystems into the vfs layer. But it has a decent
-> regression potential since it might strip filesystems that have so far relied on
-> getting the S_ISGID bit with a mode argument. So this needs a lot of testing and
-> long exposure in -next for at least one full kernel cycle."
-> 
-> Suggested-by: Dave Chinner <david@fromorbit.com>
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 > Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
-
-Looks good!  Thank you for taking care of this! :)
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
 > ---
->  fs/inode.c         |  2 --
->  fs/namei.c         | 22 +++++++++-------------
->  fs/ocfs2/namei.c   |  1 +
->  include/linux/fs.h | 11 +++++++++++
->  4 files changed, 21 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index e9a5f2ec2f89..dd357f4b556d 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2246,8 +2246,6 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
->  		/* Directories are special, and always inherit S_ISGID */
->  		if (S_ISDIR(mode))
->  			mode |= S_ISGID;
-> -		else
-> -			mode = mode_strip_sgid(mnt_userns, dir, mode);
->  	} else
->  		inode_fsgid_set(inode, mnt_userns);
->  	inode->i_mode = mode;
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 73646e28fae0..5dbf00704ae8 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3287,8 +3287,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
->  	if (open_flag & O_CREAT) {
->  		if (open_flag & O_EXCL)
->  			open_flag &= ~O_TRUNC;
-> -		if (!IS_POSIXACL(dir->d_inode))
-> -			mode &= ~current_umask();
-> +		mode = vfs_prepare_mode(mnt_userns, dir->d_inode, mode);
->  		if (likely(got_write))
->  			create_error = may_o_create(mnt_userns, &nd->path,
->  						    dentry, mode);
-> @@ -3521,8 +3520,7 @@ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
->  	child = d_alloc(dentry, &slash_name);
->  	if (unlikely(!child))
->  		goto out_err;
-> -	if (!IS_POSIXACL(dir))
-> -		mode &= ~current_umask();
-> +	mode = vfs_prepare_mode(mnt_userns, dir, mode);
->  	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
->  	if (error)
->  		goto out_err;
-> @@ -3850,13 +3848,12 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
->  	if (IS_ERR(dentry))
->  		goto out1;
->  
-> -	if (!IS_POSIXACL(path.dentry->d_inode))
-> -		mode &= ~current_umask();
-> +	mnt_userns = mnt_user_ns(path.mnt);
-> +	mode = vfs_prepare_mode(mnt_userns, path.dentry->d_inode, mode);
->  	error = security_path_mknod(&path, dentry, mode, dev);
->  	if (error)
->  		goto out2;
->  
-> -	mnt_userns = mnt_user_ns(path.mnt);
->  	switch (mode & S_IFMT) {
->  		case 0: case S_IFREG:
->  			error = vfs_create(mnt_userns, path.dentry->d_inode,
-> @@ -3943,6 +3940,7 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
->  	struct path path;
->  	int error;
->  	unsigned int lookup_flags = LOOKUP_DIRECTORY;
-> +	struct user_namespace *mnt_userns;
->  
->  retry:
->  	dentry = filename_create(dfd, name, &path, lookup_flags);
-> @@ -3950,15 +3948,13 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
->  	if (IS_ERR(dentry))
->  		goto out_putname;
->  
-> -	if (!IS_POSIXACL(path.dentry->d_inode))
-> -		mode &= ~current_umask();
-> +	mnt_userns = mnt_user_ns(path.mnt);
-> +	mode = vfs_prepare_mode(mnt_userns, path.dentry->d_inode, mode);
->  	error = security_path_mkdir(&path, dentry, mode);
-> -	if (!error) {
-> -		struct user_namespace *mnt_userns;
-> -		mnt_userns = mnt_user_ns(path.mnt);
-> +	if (!error)
->  		error = vfs_mkdir(mnt_userns, path.dentry->d_inode, dentry,
->  				  mode);
-> -	}
-> +
->  	done_path_create(&path, dentry);
->  	if (retry_estale(error, lookup_flags)) {
->  		lookup_flags |= LOOKUP_REVAL;
-> diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
-> index c75fd54b9185..961d1cf54388 100644
-> --- a/fs/ocfs2/namei.c
-> +++ b/fs/ocfs2/namei.c
-> @@ -197,6 +197,7 @@ static struct inode *ocfs2_get_init_inode(struct inode *dir, umode_t mode)
->  	 * callers. */
->  	if (S_ISDIR(mode))
->  		set_nlink(inode, 2);
-> +	mode = mode_strip_sgid(&init_user_ns, dir, mode);
->  	inode_init_owner(&init_user_ns, inode, dir, mode);
->  	status = dquot_initialize(inode);
->  	if (status)
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 98b44a2732f5..914c8f28bb02 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3459,6 +3459,17 @@ static inline bool dir_relax_shared(struct inode *inode)
->  	return !IS_DEADDIR(inode);
->  }
->  
-> +static inline umode_t vfs_prepare_mode(struct user_namespace *mnt_userns,
-> +				   const struct inode *dir, umode_t mode)
-> +{
-> +	mode = mode_strip_sgid(mnt_userns, dir, mode);
-> +
-> +	if (!IS_POSIXACL(dir))
-> +		mode &= ~current_umask();
-> +
-> +	return mode;
-> +}
-> +
->  extern bool path_noexec(const struct path *path);
->  extern void inode_nohighmem(struct inode *inode);
->  
-> -- 
-> 2.27.0
-> 
+
+Since this is a very sensitive patch series I think we need to be
+annoyingly pedantic about the commit messages. This is really only
+necessary because of the nature of these changes so you'll forgive me
+for being really annoying about this. Here's what I'd change the commit
+message to:
+
+fs: add mode_strip_sgid() helper
+
+Add a dedicated helper to handle the setgid bit when creating a new file
+in a setgid directory. This is a preparatory patch for moving setgid
+stripping into the vfs. The patch contains no functional changes.
+
+Currently the setgid stripping logic is open-coded directly in
+inode_init_owner() and the individual filesystems are responsible for
+handling setgid inheritance. Since this has proven to be brittle as
+evidenced by old issues we uncovered over the last months (see [1] to
+[3] below) we will try to move this logic into the vfs.
+
+Link: e014f37db1a2 ("xfs: use setattr_copy to set vfs inode attributes" [1]
+Link: 01ea173e103e ("xfs: fix up non-directory creation in SGID directories") [2]
+Link: fd84bfdddd16 ("ceph: fix up non-directory creation in SGID directories") [3]
