@@ -2,188 +2,330 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5542A50F2D2
-	for <lists+ceph-devel@lfdr.de>; Tue, 26 Apr 2022 09:40:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 476C350F59D
+	for <lists+ceph-devel@lfdr.de>; Tue, 26 Apr 2022 10:54:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344155AbiDZHmq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 26 Apr 2022 03:42:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34348 "EHLO
+        id S241342AbiDZIsX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 26 Apr 2022 04:48:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344159AbiDZHmX (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 26 Apr 2022 03:42:23 -0400
-Received: from esa6.fujitsucc.c3s2.iphmx.com (esa6.fujitsucc.c3s2.iphmx.com [68.232.159.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 107101344FA;
-        Tue, 26 Apr 2022 00:39:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
-  t=1650958757; x=1682494757;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=HuoO/dvFxmdyK7AA4NNJB6gQhnBgcqUPNrrIguDUCuA=;
-  b=Pvi2BnomNqAtIDKNMcVi5AxF0zF2WmPOiM3VUd6DOD79JtMNhWwv9mRk
-   YsMrBWjBIqJDFSqj6KQtSUFeJdjJkJ2Ct53Ei6P1e7TmyuB1wo8ZKQdIp
-   JO0yDRxDuDD4ChAVbztLC6kpw7/9o2CUPA7ZpBTPBBmy5Jgoh0G5vMR+A
-   0Bnbd4C+YZxjVMDjRrCSHZSsiyUxIK9s+oZCnQ40MrkA3MTFgXpYLkxMp
-   lhge65BL/xdEGtJ4/v5q5S1xDvRYWHyZUsKu1hc1WUtyHSLHk0WxAjtn/
-   7yatIfF+MbDI+DrA71yL8XZthDKDCYkdRUG46Qr/RCJJg8ZvjDPy/OiBQ
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10328"; a="54700087"
-X-IronPort-AV: E=Sophos;i="5.90,290,1643641200"; 
-   d="scan'208";a="54700087"
-Received: from mail-os0jpn01lp2112.outbound.protection.outlook.com (HELO JPN01-OS0-obe.outbound.protection.outlook.com) ([104.47.23.112])
-  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2022 16:39:12 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=F6jhXbKrIYa7456qaSHjLUVBOuov2qoyg0rh9vHHGwUzJu50WJ1OgEcox3KjTLdYNr6I/ufthAc77WLoB2zl4V5iiTSTFxyGDMsVDbQzQXAAD136/2Ic1kcdO3g/ldp/BgNwMMxOBRhGTTklFG4k44qjyXtWibXlBWHxyM6qsAdLCA4GSSnMd8xJoU9sbCPX451d8rj89e0S0iBDR5HwkpuU3ZWgjdvDKoWM4A/6U8R/Wtiovxsc71YzhCVYIwZxvKKEk/4EidzCh9QGV1CwfLFUQDOhmgbJo9Xa45YMPffs86kGgVuzTPhTYlAR/mwhOrK4+78w2rddmR+IL7vS/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HuoO/dvFxmdyK7AA4NNJB6gQhnBgcqUPNrrIguDUCuA=;
- b=lYxPd5kZI5Dbe6YP2bD21snC8TO2SpuQJIAewtIp4P+u5RWYXH0LwFW0yz2xSie8PWeCIfmI9sIjkfIj6i8AN0izKaiqqYEpcBit8gWpEafSZWsbhEKlOUgmJctPmROBicv7p7bXe1qxf7Nmy71RkJH17kt6tkfVMiaHq0zwQWEyLS2vLMeguIhoPM5XWt4IUIPl6Y0RT2B6LUF8L/Qo4av6UkEw8ejaBnvpdwM4l37mzoA+o/MHPhZmjzfEcqv+kzK6g4rXA+t7w4GJYuAOCNPjuWokrTxHaZ9HLDDlQu7jyzATzBvjIppn2rnhtqWupBMUR3gdIrIY4TNDaboDKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
- dkim=pass header.d=fujitsu.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fujitsu.onmicrosoft.com; s=selector2-fujitsu-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HuoO/dvFxmdyK7AA4NNJB6gQhnBgcqUPNrrIguDUCuA=;
- b=jadaMGeh6c94Y9xLEELrqQuJfxZvi2lTBCoetDBI9P4knXfdMxOOxx8XATU5zXDSuSAcf7H7HyVhnXAmYgPjg4qjX+dtGzcg9lyZUwgZ2ANLT1AGKA1u8aQOSGQf2m0YWiC5nOpHRQc5dALOJbF1TeFGGfNx76Q+M10kq1CNt0w=
-Received: from TY2PR01MB4427.jpnprd01.prod.outlook.com (2603:1096:404:10d::20)
- by OS3PR01MB8367.jpnprd01.prod.outlook.com (2603:1096:604:192::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.13; Tue, 26 Apr
- 2022 07:39:08 +0000
-Received: from TY2PR01MB4427.jpnprd01.prod.outlook.com
- ([fe80::cc0c:b99b:e3db:479f]) by TY2PR01MB4427.jpnprd01.prod.outlook.com
- ([fe80::cc0c:b99b:e3db:479f%7]) with mapi id 15.20.5186.021; Tue, 26 Apr 2022
- 07:39:07 +0000
-From:   "xuyang2018.jy@fujitsu.com" <xuyang2018.jy@fujitsu.com>
-To:     Christian Brauner <brauner@kernel.org>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>
-Subject: Re: [PATCH v7 1/4] fs: move sgid stripping operation from
- inode_init_owner into mode_strip_sgid
-Thread-Topic: [PATCH v7 1/4] fs: move sgid stripping operation from
- inode_init_owner into mode_strip_sgid
-Thread-Index: AQHYWRxiXlzZQzop/keBoP18JzYMnK0BxisAgAAaNIA=
-Date:   Tue, 26 Apr 2022 07:39:07 +0000
-Message-ID: <6267B003.3050602@fujitsu.com>
+        with ESMTP id S1346584AbiDZIpL (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 26 Apr 2022 04:45:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6153C1CB4;
+        Tue, 26 Apr 2022 01:35:05 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AEA22618A2;
+        Tue, 26 Apr 2022 08:35:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A369C385A0;
+        Tue, 26 Apr 2022 08:35:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650962104;
+        bh=urtvNtYomLJK+ODI94zb12amwUYrTkkYSm3BkVlaLhY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mQ8OIqJHcmwrRUBiGTnsraZpOlIE8kg46TiSgw3a1sNNadZY1rVd8ciAW/t4VTafw
+         fGWnlqDg8iLG9yG/YQDy27L6KFOn9pRoLEK1xbpaADEsMKm0uWMVbeOYK+b9yP1fCZ
+         BICm9e7VJYZPn2pM86FbT3hSH35edWOXdbUKuRh3ll1EB+2moy/VogGu4WGYErygDO
+         F0SLg42OG4qtZ2Xlrd9IJdfkTKusKjLGR8trOVWBMbmAjCc0r7SiJBUAEyhPGZEq1O
+         2EiEsfaQIlHzRBoDeznYHFWvK85DROF80vFlOXrQCBell4jXh4yHSKtn/8vRoeQueW
+         xHH12bDtg5NHQ==
+Date:   Tue, 26 Apr 2022 10:34:58 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Yang Xu <xuyang2018.jy@fujitsu.com>, linux-fsdevel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        david@fromorbit.com, willy@infradead.org, jlayton@kernel.org
+Subject: Re: [PATCH v7 3/4] fs: strip file's S_ISGID mode on vfs instead of
+ on underlying filesystem
+Message-ID: <20220426083458.fdpiyfik3mxitzju@wittgenstein>
 References: <1650946792-9545-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <20220426070648.3k6dahljcjhpggur@wittgenstein>
-In-Reply-To: <20220426070648.3k6dahljcjhpggur@wittgenstein>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=fujitsu.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d9ed5a33-76a6-45c0-9945-08da2757d8a2
-x-ms-traffictypediagnostic: OS3PR01MB8367:EE_
-x-microsoft-antispam-prvs: <OS3PR01MB8367ABE76C56F98E109532FFFDFB9@OS3PR01MB8367.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 9JLlt0CUcBnSOF7WzAiEPmRr4zp+u6Tj8PAVhzDDGPp2FuCxqYcF9WedRl2TiMYmBbrB8tSK/fRL5s6k3ddBsRKurH4/lKj5kReWCQfu+7X0kiNpcsDXIVTfMiCoDiye1NGbbI36cryBZ3blnDMMQGjpBWb89I/JnnencSi1dnHoO4vM6xSmkUP+BNU7ZcC+kOTZyTGDoDXpjsRhUqzULbqaTfs8JiL+vcIqm6t5QuwLl7tZuP3NzZ9dLFLP8fiGHGwmVd1S9UtGzz88JrZWyVxF1gfzMUOTq6TD8hzbHjFidj1o9yRze/pSKggKOjYrDhEfSSrrl4UR00SjSBLCoglC9XfN0Xn+IECH3bgvHZPdTuF6oO6Tfc5pWAmHq33htz18JuAxUqRQudSa/vrjc84MyR4mjPJvX6mUnEyAQ/tCANieZ4kknUBCfH2IavM9m3tMtJdkDzSAO1MSrolGAPJrf2/Jj1cwf9eOWMOhmuTgKLm2RsVPuWlq/wf25lWNV5C/gpS2VYafuA3tyG4OU+AYzc3jLjaJa+bV1/9X+my2pYZCyGrmj9hJDiaLxy2qYhISkcYus020FGqYIASpoZ9FwwLBFEPPNtbQcDMTDEp6Wfh1NKSr/Hf2fbnv+UZAtJBSHsnQiTa9IJFpymIjG8/MSKNsj2XS+DuxRpYXQp8ti3SWSrsBM+/nfR9R5W0/JQHGQ7CCDbL0g3P75rXrdyNU9ebH6QMHz+Yr2uMfsFw=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB4427.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(86362001)(2906002)(91956017)(6506007)(87266011)(71200400001)(6916009)(2616005)(66556008)(64756008)(66946007)(85182001)(5660300002)(8676002)(66446008)(76116006)(33656002)(4326008)(316002)(8936002)(36756003)(66476007)(6486002)(54906003)(26005)(6512007)(38070700005)(38100700002)(82960400001)(122000001)(83380400001)(508600001)(45080400002)(186003)(168613001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TjVCTlZXMUlLSHN3a2NMNWdFTDM0cS9oTzBGcS9mVmFRaFE3ZnBGdE5DczQz?=
- =?utf-8?B?eEpNSEVGNTlDbnZUSWZLajNTMTcxTHNwYm5kdXcyT0VWblVKTThqN1paR1ZD?=
- =?utf-8?B?a1locFFsQ3NxcXVjOFRQMThZcGpUdFpISldFSm9XYzNCQm9oOGpZTVJLamow?=
- =?utf-8?B?K2FJbDFUdmgraW9CZXVMSXA1NFVGMW5oY3JJQk50aFVBekk4VGlRdk01ektW?=
- =?utf-8?B?ckJoajVETllBZlZURko1eXU4OXpBUTBZT0xOQjZaTkZPRHFwSU1ZbGQvRW1K?=
- =?utf-8?B?SGNhQitzaEVuZ2R1ZHFRTDdVZUFkMFluZUY1NUJzL3lBc3JndVBjZ1Zsalky?=
- =?utf-8?B?ZTczTUJWd29CM1pRek10QlVpdWpiL25pTGFHVU5TU0FqWHM3WUQxcnVYQ0pE?=
- =?utf-8?B?ZEVVb01Tc0dXRXF5V1BlNisxWC9pM3pzbDMvdTRjMnNycEsrZGhwcU9Ra0xQ?=
- =?utf-8?B?UCtCLzhTb3h5c015REJpYVZpM2VJU2xtc0huTGp3RG1lM0ZnbThteklpN2t2?=
- =?utf-8?B?SGh3MXV3ZDN4bmlaTWNBOWJhbVE1ZlB2V0d4UEpEMG94aHhoYmxMM21rdURB?=
- =?utf-8?B?Sm1POXpqQ0Nvd3ptczNFbnBYUmgvVmYvQUdhTEtDUEVlb1FCMWNyc2dja2RM?=
- =?utf-8?B?QnhJbVpSVDMwMk5JVHVKNXN4c2Uyd2k4cVhCNEwyVko4dXdPR2NJNThRMFhR?=
- =?utf-8?B?R0lkcDhkMk5yQWRiZjEzZFhxSnU0Tk1xV1E3S1NzSzNVNC9RMjhuWklTNkJS?=
- =?utf-8?B?Y09XaDJ0UGQ4VXRMNjRFUkgvR1owOHMzZS9LbmxOUnJlcWJkd3EvYmdBQ3lP?=
- =?utf-8?B?eGxXQUppRUVzbml1K0tLellmbnBsK0dEc3R5L2RYT2wzMjRrMDJpTVRCaFln?=
- =?utf-8?B?UDlpZzNOK1NWb1VJbTY3ZEczR2FHTG5lZkFUVWd0bHZ6ZUN6QjUyMnZXdEM3?=
- =?utf-8?B?cWdQOU00eGVGUWxIQlhDY29JZi91dHRIZnJKZGo0bi9YZU8yUmM4ZGMwOElv?=
- =?utf-8?B?V3FQYTJENlgvcmdjcDE4ZWR0dEUyRm90ZFMrRGUreVJaTzZ0VXcvV0l1YXR4?=
- =?utf-8?B?YjR6KzUvdXJhOHRzeEI1MjdaK3FOeW1WblVQcUtvRWVpVjcvdUQ5M0NRUG9R?=
- =?utf-8?B?M0hPWGhUOVVneitYcDFSWm0xSlF1VmVyTTZLOUxtSGFhSXJDTHZGa1pzbk44?=
- =?utf-8?B?MzJ1UDhEWkxiSExOUGd6a213R3BjRkhQNzhmZXZrdUpjeW02eWlDU01uZUpq?=
- =?utf-8?B?TzF6M3RhQnBQTVQ4cGdTNE8wcmZlMlNHblRBUFdFbnlEYU91TWZKdXliWFNa?=
- =?utf-8?B?MGRZV21MTnpUbmhnaXZ5K2tGQTgzbm9SM0JQWmlRbWFQUkZZeG5YRXp1a2hI?=
- =?utf-8?B?andabGplaEZFV0gzYkkvWmlHRGs4VGl0QWQ3a2NoREQ2a0ljSE1vWTVzdG95?=
- =?utf-8?B?T0xRcjNFbmcwUWVVcGxKTlZqZnZOM3BOalFYdEJEbVE4U1dKbEtyM0hpeTAv?=
- =?utf-8?B?Y1NzS0tXV1Z2QUtjVHNrNUgwa29ZODU2eHJGSGR1WVg2YWJXdFdVNWxPNVRr?=
- =?utf-8?B?NVlPdEhJUGxiRE5vcS9pMHBtQzIxU09XREZvYUlpbmVxclhaVktaMzloazNp?=
- =?utf-8?B?aGFUSlpIaXdxNER0OUQ3NkxicVRKaUxCWElGZXFrdEowZW4yM1I5RnNmc3FX?=
- =?utf-8?B?QzgzeisxK2NNbWpJVVhTVzQ1UitGVnhrS1RqbEs0MU9ReW02UVIyOU90czFM?=
- =?utf-8?B?MXREMTY5d1BmbVpKZHAxRHhVYUw1V0hGYmMzdFdVOCtwK0UzZHNmMU9jaUNj?=
- =?utf-8?B?TlUydnFGNUxTNlc1WDFJbzd0TnNoRGVsbERlZkZaMnROZkRVSFl2S29pRXlp?=
- =?utf-8?B?eWRGMFdxOC9JYmxVU04wdUxKa0NrbU5KdjlvOEQrMWJjN0g0MVFvcStZOGIr?=
- =?utf-8?B?N2VKRm1ta0JVM01kRTcxL3EzcGNlbkFHbzlVbGZac2YwVnJ2NmVQcEc2cDA4?=
- =?utf-8?B?RnVKQk9HSXpiUmI3RGI2Y2doVDN3RG1HRnJ4ejMrcXVDMk1zZlFzclNWcTdu?=
- =?utf-8?B?VEhER1lUdkhRZjZpWmlkZjF0NVByVFdRSzZUbjE3UHNUQlVIR1lzajZrUE9O?=
- =?utf-8?B?L2RvSUowV1VDZEdkSE9HU3pBeldHVCs0cTNla29JOGN5c2Jram95TXdlK2sx?=
- =?utf-8?B?cmhIY0w2dzZDRGR2U0hiaXBYTUE1Y05nZC84RmM0OWllMVZmYW1xVmtqSU9n?=
- =?utf-8?B?QVBaNkdnOWJJVEF4UEhGdm51UEZpTmZKK1hmejBMVlh3UXVFUjZwWjVnenhV?=
- =?utf-8?B?QXdHVzNiNVJDaHlYdzYxUTJjVkV6K1ZGeU0rdjB1NGlOYVJMZTFvTHJYdGly?=
- =?utf-8?Q?Fj2rnRBvsZ16JRUMA4mkuMcmgMx4eXIGxxcZQ?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2F986596A99F7C4A873FF8B393EF9F96@jpnprd01.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ <1650946792-9545-3-git-send-email-xuyang2018.jy@fujitsu.com>
+ <20220426052157.GJ17059@magnolia>
 MIME-Version: 1.0
-X-OriginatorOrg: fujitsu.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB4427.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9ed5a33-76a6-45c0-9945-08da2757d8a2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Apr 2022 07:39:07.6206
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: hIPvTcjkhiI+JyPMOCTzAnToWNIMvcDho4EVLoYDRytlrmVDvL0ASRWtHvIWnvFqWplWe2HTovDCIzWImRGKNVMFm6HVxRIaRjy0t3oWPwI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB8367
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220426052157.GJ17059@magnolia>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-b24gMjAyMi80LzI2IDE1OjA2LCBDaHJpc3RpYW4gQnJhdW5lciB3cm90ZToNCj4gT24gVHVlLCBB
-cHIgMjYsIDIwMjIgYXQgMTI6MTk6NDlQTSArMDgwMCwgWWFuZyBYdSB3cm90ZToNCj4+IFRoaXMg
-aGFzIG5vIGZ1bmN0aW9uYWwgY2hhbmdlLiBKdXN0IGNyZWF0ZSBhbmQgZXhwb3J0IG1vZGVfc3Ry
-aXBfc2dpZA0KPj4gYXBpIGZvciB0aGUgc3Vic2VxdWVudCBwYXRjaC4gVGhpcyBmdW5jdGlvbiBp
-cyB1c2VkIHRvIHN0cmlwIFNfSVNHSUQgbW9kZQ0KPj4gd2hlbiBpbml0IGEgbmV3IGlub2RlLg0K
-Pj4NCj4+IFJldmlld2VkLWJ5OiBEYXJyaWNrIEouIFdvbmc8ZGp3b25nQGtlcm5lbC5vcmc+DQo+
-PiBSZXZpZXdlZC1ieTogQ2hyaXN0aWFuIEJyYXVuZXIgKE1pY3Jvc29mdCk8YnJhdW5lckBrZXJu
-ZWwub3JnPg0KPj4gU2lnbmVkLW9mZi1ieTogWWFuZyBYdTx4dXlhbmcyMDE4Lmp5QGZ1aml0c3Uu
-Y29tPg0KPj4gLS0tDQo+DQo+IFNpbmNlIHRoaXMgaXMgYSB2ZXJ5IHNlbnNpdGl2ZSBwYXRjaCBz
-ZXJpZXMgSSB0aGluayB3ZSBuZWVkIHRvIGJlDQo+IGFubm95aW5nbHkgcGVkYW50aWMgYWJvdXQg
-dGhlIGNvbW1pdCBtZXNzYWdlcy4gVGhpcyBpcyByZWFsbHkgb25seQ0KPiBuZWNlc3NhcnkgYmVj
-YXVzZSBvZiB0aGUgbmF0dXJlIG9mIHRoZXNlIGNoYW5nZXMgc28geW91J2xsIGZvcmdpdmUgbWUN
-Cj4gZm9yIGJlaW5nIHJlYWxseSBhbm5veWluZyBhYm91dCB0aGlzLiBIZXJlJ3Mgd2hhdCBJJ2Qg
-Y2hhbmdlIHRoZSBjb21taXQNCj4gbWVzc2FnZSB0bzoNCj4NCj4gZnM6IGFkZCBtb2RlX3N0cmlw
-X3NnaWQoKSBoZWxwZXINCj4NCj4gQWRkIGEgZGVkaWNhdGVkIGhlbHBlciB0byBoYW5kbGUgdGhl
-IHNldGdpZCBiaXQgd2hlbiBjcmVhdGluZyBhIG5ldyBmaWxlDQo+IGluIGEgc2V0Z2lkIGRpcmVj
-dG9yeS4gVGhpcyBpcyBhIHByZXBhcmF0b3J5IHBhdGNoIGZvciBtb3Zpbmcgc2V0Z2lkDQo+IHN0
-cmlwcGluZyBpbnRvIHRoZSB2ZnMuIFRoZSBwYXRjaCBjb250YWlucyBubyBmdW5jdGlvbmFsIGNo
-YW5nZXMuDQo+DQo+IEN1cnJlbnRseSB0aGUgc2V0Z2lkIHN0cmlwcGluZyBsb2dpYyBpcyBvcGVu
-LWNvZGVkIGRpcmVjdGx5IGluDQo+IGlub2RlX2luaXRfb3duZXIoKSBhbmQgdGhlIGluZGl2aWR1
-YWwgZmlsZXN5c3RlbXMgYXJlIHJlc3BvbnNpYmxlIGZvcg0KPiBoYW5kbGluZyBzZXRnaWQgaW5o
-ZXJpdGFuY2UuIFNpbmNlIHRoaXMgaGFzIHByb3ZlbiB0byBiZSBicml0dGxlIGFzDQo+IGV2aWRl
-bmNlZCBieSBvbGQgaXNzdWVzIHdlIHVuY292ZXJlZCBvdmVyIHRoZSBsYXN0IG1vbnRocyAoc2Vl
-IFsxXSB0bw0KPiBbM10gYmVsb3cpIHdlIHdpbGwgdHJ5IHRvIG1vdmUgdGhpcyBsb2dpYyBpbnRv
-IHRoZSB2ZnMuDQo+DQo+IExpbms6IGUwMTRmMzdkYjFhMiAoInhmczogdXNlIHNldGF0dHJfY29w
-eSB0byBzZXQgdmZzIGlub2RlIGF0dHJpYnV0ZXMiIFsxXQ0KPiBMaW5rOiAwMWVhMTczZTEwM2Ug
-KCJ4ZnM6IGZpeCB1cCBub24tZGlyZWN0b3J5IGNyZWF0aW9uIGluIFNHSUQgZGlyZWN0b3JpZXMi
-KSBbMl0NCj4gTGluazogZmQ4NGJmZGRkZDE2ICgiY2VwaDogZml4IHVwIG5vbi1kaXJlY3Rvcnkg
-Y3JlYXRpb24gaW4gU0dJRCBkaXJlY3RvcmllcyIpIFszXQ0KDQpUaGlzIHNlZW1zIGJldHRlciwg
-dGhhbmtzLg0KDQpwczogU29ycnksIGZvcmdpdmUgbXkgcG9vciBhYmlsaXR5IGZvciB3cml0ZSB0
-aGlzLg0K
+On Mon, Apr 25, 2022 at 10:21:57PM -0700, Darrick J. Wong wrote:
+> On Tue, Apr 26, 2022 at 12:19:51PM +0800, Yang Xu wrote:
+> > Currently, vfs only passes mode parameter to filesystem, then use inode_init_owner()
+> > to strip S_ISGID. Some filesystem(ie ext4/btrfs) will call inode_init_owner
+> > firstly, then posxi acl setup, but xfs uses the contrary order. It will
+> > affect S_ISGID clear especially we filter S_IXGRP by umask or acl.
+> > 
+> > Regardless of which filesystem is in use, failure to strip the SGID correctly
+> > is considered a security failure that needs to be fixed. The current VFS
+> > infrastructure requires the filesystem to do everything right and not step on
+> > any landmines to strip the SGID bit, when in fact it can easily be done at the
+> > VFS and the filesystems then don't even need to be aware that the SGID needs
+> > to be (or has been stripped) by the operation the user asked to be done.
+> > 
+> > Vfs has all the info it needs - it doesn't need the filesystems to do everything
+> > correctly with the mode and ensuring that they order things like posix acl setup
+> > functions correctly with inode_init_owner() to strip the SGID bit.
+> > 
+> > Just strip the SGID bit at the VFS, and then the filesystem can't get it wrong.
+> > 
+> > Also, the mode_strip_sgid() api should be used before IS_POSIXACL() because
+> > this api may change mode.
+> > 
+> > Only the following places use inode_init_owner
+> > "
+> > arch/powerpc/platforms/cell/spufs/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode | S_IFDIR);
+> > arch/powerpc/platforms/cell/spufs/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode | S_IFDIR);
+> > fs/9p/vfs_inode.c:      inode_init_owner(&init_user_ns, inode, NULL, mode);
+> > fs/bfs/dir.c:   inode_init_owner(&init_user_ns, inode, dir, mode);
+> > fs/btrfs/inode.c:       inode_init_owner(mnt_userns, inode, dir, mode);
+> > fs/btrfs/tests/btrfs-tests.c:   inode_init_owner(&init_user_ns, inode, NULL, S_IFREG);
+> > fs/ext2/ialloc.c:               inode_init_owner(&init_user_ns, inode, dir, mode);
+> > fs/ext4/ialloc.c:               inode_init_owner(mnt_userns, inode, dir, mode);
+> > fs/f2fs/namei.c:        inode_init_owner(mnt_userns, inode, dir, mode);
+> > fs/hfsplus/inode.c:     inode_init_owner(&init_user_ns, inode, dir, mode);
+> > fs/hugetlbfs/inode.c:           inode_init_owner(&init_user_ns, inode, dir, mode);
+> > fs/jfs/jfs_inode.c:     inode_init_owner(&init_user_ns, inode, parent, mode);
+> > fs/minix/bitmap.c:      inode_init_owner(&init_user_ns, inode, dir, mode);
+> > fs/nilfs2/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode);
+> > fs/ntfs3/inode.c:       inode_init_owner(mnt_userns, inode, dir, mode);
+> > fs/ocfs2/dlmfs/dlmfs.c:         inode_init_owner(&init_user_ns, inode, NULL, mode);
+> > fs/ocfs2/dlmfs/dlmfs.c: inode_init_owner(&init_user_ns, inode, parent, mode);
+> > fs/ocfs2/namei.c:       inode_init_owner(&init_user_ns, inode, dir, mode);
+> > fs/omfs/inode.c:        inode_init_owner(&init_user_ns, inode, NULL, mode);
+> > fs/overlayfs/dir.c:     inode_init_owner(&init_user_ns, inode, dentry->d_parent->d_inode, mode);
+> > fs/ramfs/inode.c:               inode_init_owner(&init_user_ns, inode, dir, mode);
+> > fs/reiserfs/namei.c:    inode_init_owner(&init_user_ns, inode, dir, mode);
+> > fs/sysv/ialloc.c:       inode_init_owner(&init_user_ns, inode, dir, mode);
+> > fs/ubifs/dir.c: inode_init_owner(&init_user_ns, inode, dir, mode);
+> > fs/udf/ialloc.c:        inode_init_owner(&init_user_ns, inode, dir, mode);
+> > fs/ufs/ialloc.c:        inode_init_owner(&init_user_ns, inode, dir, mode);
+> > fs/xfs/xfs_inode.c:             inode_init_owner(mnt_userns, inode, dir, mode);
+> > fs/zonefs/super.c:      inode_init_owner(&init_user_ns, inode, parent, S_IFDIR | 0555);
+> > kernel/bpf/inode.c:     inode_init_owner(&init_user_ns, inode, dir, mode);
+> > mm/shmem.c:             inode_init_owner(&init_user_ns, inode, dir, mode);
+> > "
+> > 
+> > They are used in filesystem to init new inode function and these init inode
+> > functions are used by following operations:
+> > mkdir
+> > symlink
+> > mknod
+> > create
+> > tmpfile
+> > rename
+> > 
+> > We don't care about mkdir because we don't strip SGID bit for directory except
+> > fs.xfs.irix_sgid_inherit. But we even call vfs_prepare_mode() in do_mkdirat() since
+> > mode_strip_sgid() will skip directories anyway. This will enforce the same
+> > ordering for all relevant operations and it will make the code more uniform and
+> > easier to understand by using new helper vfs_prepare_mode().
+> > 
+> > symlink and rename only use valid mode that doesn't have SGID bit.
+> > 
+> > We have added mode_strip_sgid() api for the remaining operations.
+> > 
+> > In addition to the above six operations, four filesystems has a little difference
+> > 1) btrfs has btrfs_create_subvol_root to create new inode but used non SGID bit
+> >    mode and can ignore
+> > 2) ocfs2 reflink function should add mode_strip_sgid api manually because this ioctl
+> >    is unique and not added into vfs. It may use S_ISGID modd.
+> > 3) spufs which doesn't really go hrough the regular VFS callpath because it has
+> >    separate system call spu_create, but it t only allows the creation of
+> >    directories and only allows bits in 0777 and can ignore
+> > 4) bpf use vfs_mkobj in bpf_obj_do_pin with
+> >    "S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask()) mode and
+> >    use bpf_mkobj_ops in bpf_iter_link_pin_kernel with S_IFREG | S_IRUSR mode,
+> >    so bpf is also not affected
+> > 
+> > This patch also changed grpid behaviour for ext4/xfs because the mode passed to
+> > them may been changed by vfs_prepare_mode.
+> > 
+> > Also as Christian Brauner said"
+> > The patch itself is useful as it would move a security sensitive operation that is
+> > currently burried in individual filesystems into the vfs layer. But it has a decent
+> > regression potential since it might strip filesystems that have so far relied on
+> > getting the S_ISGID bit with a mode argument. So this needs a lot of testing and
+> > long exposure in -next for at least one full kernel cycle."
+> > 
+> > Suggested-by: Dave Chinner <david@fromorbit.com>
+> > Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
+> 
+> Looks good!  Thank you for taking care of this! :)
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+Agreed, thank you for taking care of this and sticking around through
+all the reviews.
+
+Since this is a very sensitive patch series I think we need to be
+annoyingly pedantic about the commit messages. This is really only
+necessary because of the nature of these changes so you'll forgive me
+for being really annoying about this. Here's what I'd change the commit
+messages to:
+
+It'd be great to get some more reviews and a thorough read of the commit
+message. We should aim to approriately express the advantages in
+relation to the associated regression risks:
+
+fs: move S_ISGID stripping into the vfs
+
+Creating files that have both the S_IXGRP and S_ISGID bit raised in
+directories that themselves have the S_ISGID bit set requires additional
+privileges to avoid security issues.
+
+When a filesystem creates a new inode it needs to take care that the
+caller is either in the group of the newly created inode or they have
+CAP_FSETID in their current user namespace and are privileged over the
+parent directory of the new inode. If any of these two conditions is
+true then the S_ISGID bit can be raised for an S_IXGRP file and if not
+it needs to be stripped.
+
+However, there are several key issues with the current state of things:
+
+* The S_ISGID stripping logic is entangled with umask stripping.
+
+  If a filesystem doesn't support or enable POSIX ACLs then umask
+  stripping is done directly in the vfs before calling into the
+  filesystem.
+  If the filesystem does support POSIX ACLs then unmask stripping may be
+  done in the filesystem itself when calling posix_acl_create().
+
+* Filesystems that don't rely on inode_init_owner() don't get S_ISGID
+  stripping logic.
+
+  While that may be intentional (e.g. network filesystems might just
+  defer setgid stripping to a server) it is often just a security issue.
+
+* The first two points taken together mean that there's a
+  non-standardized ordering between setgid stripping in
+  inode_init_owner() and posix_acl_create() both on the vfs level and
+  the filesystem level. The latter part is especially problematic since
+  each filesystem is technically free to order inode_init_owner() and
+  posix_acl_create() however it sees fit meaning that S_ISGID
+  inheritance might or might not be applied.
+
+* We do still have bugs in this areas years after the initial round of
+  setgid bugfixes.
+
+So the current state is quite messy and while we won't be able to make
+it completely clean as posix_acl_create() is still a filesystem specific
+call we can improve the S_SIGD stripping situation quite a bit by
+hoisting it out of inode_init_owner() and into the vfs creation
+operations. This means we alleviate the burden for filesystems to handle
+S_ISGID stripping correctly and can standardize the ordering between
+S_ISGID and umask stripping in the vfs.
+
+The S_ISGID bit is stripped before any umask is applied. This has the
+advantage that the ordering is unaffected by whether umask stripping is
+done by the vfs itself (if no POSIX ACLs are supported or enabled) or in
+the filesystem in posix_acl_create() (if POSIX ACLs are supported).
+
+To this end a new helper vfs_prepare_mode() is added which calls the
+previously added mode_strip_setgid() helper and strips the umask
+afterwards.
+
+All inode operations that create new filesystem objects have been
+updated to call vfs_prepare_mode() before passing the mode into the
+relevant inode operation of the filesystems. Care has been taken to
+ensure that the mode passed to the security hooks is the mode that is
+seen by the filesystem.
+
+Following is an overview of the filesystem specific and inode operations
+specific implications:
+
+arch/powerpc/platforms/cell/spufs/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode | S_IFDIR);
+arch/powerpc/platforms/cell/spufs/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode | S_IFDIR);
+fs/9p/vfs_inode.c:      inode_init_owner(&init_user_ns, inode, NULL, mode);
+fs/bfs/dir.c:   inode_init_owner(&init_user_ns, inode, dir, mode);
+fs/btrfs/inode.c:       inode_init_owner(mnt_userns, inode, dir, mode);
+fs/btrfs/tests/btrfs-tests.c:   inode_init_owner(&init_user_ns, inode, NULL, S_IFREG);
+fs/ext2/ialloc.c:               inode_init_owner(&init_user_ns, inode, dir, mode);
+fs/ext4/ialloc.c:               inode_init_owner(mnt_userns, inode, dir, mode);
+fs/f2fs/namei.c:        inode_init_owner(mnt_userns, inode, dir, mode);
+fs/hfsplus/inode.c:     inode_init_owner(&init_user_ns, inode, dir, mode);
+fs/hugetlbfs/inode.c:           inode_init_owner(&init_user_ns, inode, dir, mode);
+fs/jfs/jfs_inode.c:     inode_init_owner(&init_user_ns, inode, parent, mode);
+fs/minix/bitmap.c:      inode_init_owner(&init_user_ns, inode, dir, mode);
+fs/nilfs2/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode);
+fs/ntfs3/inode.c:       inode_init_owner(mnt_userns, inode, dir, mode);
+fs/ocfs2/dlmfs/dlmfs.c:         inode_init_owner(&init_user_ns, inode, NULL, mode);
+fs/ocfs2/dlmfs/dlmfs.c: inode_init_owner(&init_user_ns, inode, parent, mode);
+fs/ocfs2/namei.c:       inode_init_owner(&init_user_ns, inode, dir, mode);
+fs/omfs/inode.c:        inode_init_owner(&init_user_ns, inode, NULL, mode);
+fs/overlayfs/dir.c:     inode_init_owner(&init_user_ns, inode, dentry->d_parent->d_inode, mode);
+fs/ramfs/inode.c:               inode_init_owner(&init_user_ns, inode, dir, mode);
+fs/reiserfs/namei.c:    inode_init_owner(&init_user_ns, inode, dir, mode);
+fs/sysv/ialloc.c:       inode_init_owner(&init_user_ns, inode, dir, mode);
+fs/ubifs/dir.c: inode_init_owner(&init_user_ns, inode, dir, mode);
+fs/udf/ialloc.c:        inode_init_owner(&init_user_ns, inode, dir, mode);
+fs/ufs/ialloc.c:        inode_init_owner(&init_user_ns, inode, dir, mode);
+fs/xfs/xfs_inode.c:             inode_init_owner(mnt_userns, inode, dir, mode);
+fs/zonefs/super.c:      inode_init_owner(&init_user_ns, inode, parent, S_IFDIR | 0555);
+kernel/bpf/inode.c:     inode_init_owner(&init_user_ns, inode, dir, mode);
+mm/shmem.c:             inode_init_owner(&init_user_ns, inode, dir, mode);
+
+All of the above filesystems end up calling inode_init_owner() when new
+filesystem objects are created through the following ->mkdir(),
+->symlink(), ->mknod(), ->create(), ->tmpfile(), ->rename() inode
+operations.
+
+Since directories always inherit the S_ISGID bit with the exception of
+xfs when irix_sgid_inherit mode is turned on S_ISGID stripping doesn't
+apply. The ->symlink() inode operation trivially inherit the mode from
+the target and the ->rename() inode operation inherits the mode from the
+source inode.
+
+All other inode operations will have the S_ISGID bit stripped once in
+vfs_prepare_mode() before.
+
+In addition to this there are filesystems which allow the creation of
+filesystem objects through ioctl()s or - in the case of spufs -
+circumventing the vfs in other ways. If filesystem objects are created
+through ioctl()s the vfs doesn't know about it and can't apply regular
+permission checking including S_ISGID logic. Therfore, a filesystem
+relying on S_ISGID stripping in inode_init_owner() in their ioctl()
+callpath will be affected by moving this logic into the vfs.
+
+So we did our best to audit all filesystems in this regard:
+
+* btrfs allows the creation of filesystem objects through various
+  ioctls(). Snapshot creation literally takes a snapshot and so the mode
+  is fully preserved and S_ISGID stripping doesn't apply.
+
+  Creating a new subvolum relies on inode_init_owner() in
+  btrfs_new_inode() but only creates directories and doesn't raise
+  S_ISGID.
+
+* ocfs2 has a peculiar implementation of reflinks. In contrast to e.g.
+  xfs and btrfs FICLONE/FICLONERANGE ioctl() that is only concerned with
+  the actual extents ocfs2 uses a separate ioctl() that also creates the
+  target file.
+
+  Iow, ocfs2 circumvents the vfs entirely here and did indeed rely on
+  inode_init_owner() to strip the S_ISGID bit. This is the only place
+  where a filesystem needs to call mode_strip_sgid() directly but this
+  is self-inflicted pain tbh.
+
+* spufs doesn't go through the vfs at all and doesn't use ioctl()s
+  either. Instead it has a dedicated system call spufs_create() which
+  allows the creation of filesystem objects. But spufs only creates
+  directories and doesn't allo S_SIGID bits, i.e. it specifically only
+  allows 0777 bits.
+
+* bpf uses vfs_mkobj() but also doesn't allow S_ISGID bits to be created.
+
+While we did our best to audit everything there's a risk of regressions
+in here. However, for the sake of maintenance and given that we've seen
+a range of bugs years after S_ISGID inheritance issues were fixed (see
+[1]-[3]) the risk seems worth taking. In the worst case we will have to
+revert.
+
+Associated with this change is a new set of fstests to enforce the
+semantics for all new filesystems. 
