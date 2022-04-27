@@ -2,212 +2,383 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 538E05113B0
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 Apr 2022 10:42:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9F5B5114FD
+	for <lists+ceph-devel@lfdr.de>; Wed, 27 Apr 2022 12:47:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359523AbiD0Ipu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 27 Apr 2022 04:45:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50970 "EHLO
+        id S229996AbiD0KqX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 27 Apr 2022 06:46:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359525AbiD0Ipn (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 27 Apr 2022 04:45:43 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD7418596B;
-        Wed, 27 Apr 2022 01:42:32 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        with ESMTP id S229964AbiD0KqC (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 27 Apr 2022 06:46:02 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E62EA1C1DD1;
+        Wed, 27 Apr 2022 03:29:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 73459210E4;
-        Wed, 27 Apr 2022 08:42:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1651048951; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3MkX2zo0TuNDwvlqYwsfgILpgDcnb8YbF+QB6zauRZg=;
-        b=pCdqJSl1MrLnFHAPIckgSOTJTKm/z57vnNEAHETqYr8r/4EM6TF1+d4oBJ/GzBceOROwt5
-        Hi6vTxleGEviVdVpKAkgdEWnYTUmG2vbQWWZhlLWC3Zr4KTkmPA1LoW4/dvd4lW+iD7k+I
-        XP1fi8TsYQSbho44dCsq/wuVB47wx7o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1651048951;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3MkX2zo0TuNDwvlqYwsfgILpgDcnb8YbF+QB6zauRZg=;
-        b=R1CzZPweX+qaaBwQxjIl3mQsoiVkAy7q8/+r5sdTXdWfrfrkaUIvykHqixB3rJtwaUh5zf
-        jcZnAMUraWEbIMDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 082281323E;
-        Wed, 27 Apr 2022 08:42:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id L7+dOvYBaWISSwAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Wed, 27 Apr 2022 08:42:30 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id ff7efcaf;
-        Wed, 27 Apr 2022 08:43:01 +0000 (UTC)
-Date:   Wed, 27 Apr 2022 09:43:01 +0100
-From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, rptaylor@uvic.ca
-Subject: Re: [PATCH] ceph: fix statfs for subdir mounts
-Message-ID: <YmkCFeymZjoCZjQH@suse.de>
-References: <20220426161204.17896-1-lhenriques@suse.de>
- <461ed973-0d09-5049-7ffc-48e499448e63@redhat.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6C426B82576;
+        Wed, 27 Apr 2022 09:22:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DD70C385A7;
+        Wed, 27 Apr 2022 09:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651051327;
+        bh=onXoX5u0npwqKTIon13EJNfGXjQv81cfFzRb4TQR/dc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jLhIgScPS7R2CqTfhmHVMf/TU4Y+czL3f7z6OwMCOVsPbjYDrGs7UbYcZdBG7p/Jb
+         kRMrL/tHcqJToDf6+fC47MmTyhAd27t/bmeYz+AulJNl4roW/576hr4JMWkf8CHTTQ
+         8pQSTBAGlNdgjLlUr2Ca+/EkpB5VHGt7CYaiXzSuekQaR/tZTOS7YNmkS7VPdkOXSh
+         xHy3Q+lobGZVKLktdYFCe/x5OHqq07wCXUCZHszgpBtA00Xd6/JxEunW4dEBkFyBjz
+         7tKxnp7ffDI1MYrKMUEcHDAqMvoNYhfDsldJswaQrEN9ocaPPC2Kt4sgltWQ7KR6h3
+         rYmr5nVeGexRQ==
+Date:   Wed, 27 Apr 2022 11:22:01 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Yang Xu <xuyang2018.jy@fujitsu.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v8 3/4] fs: move S_ISGID stripping into the vfs
+Message-ID: <20220427092201.wvsdjbnc7b4dttaw@wittgenstein>
+References: <1650971490-4532-1-git-send-email-xuyang2018.jy@fujitsu.com>
+ <1650971490-4532-3-git-send-email-xuyang2018.jy@fujitsu.com>
+ <20220426103846.tzz66f2qxcxykws3@wittgenstein>
+ <CAOQ4uxhRMp4tM9nP+0yPHJyzPs6B2vtX6z51tBHWxE6V+UZREw@mail.gmail.com>
+ <CAJfpegu5uJiHgHmLcuSJ6+cQfOPB2aOBovHr4W5j_LU+reJsCw@mail.gmail.com>
+ <20220426145349.zxmahoq2app2lhip@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <461ed973-0d09-5049-7ffc-48e499448e63@redhat.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220426145349.zxmahoq2app2lhip@wittgenstein>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Apr 27, 2022 at 01:54:08PM +0800, Xiubo Li wrote:
+On Tue, Apr 26, 2022 at 04:53:49PM +0200, Christian Brauner wrote:
+> On Tue, Apr 26, 2022 at 01:52:11PM +0200, Miklos Szeredi wrote:
+> > On Tue, 26 Apr 2022 at 13:21, Amir Goldstein <amir73il@gmail.com> wrote:
+> > >
+> > > On Tue, Apr 26, 2022 at 1:38 PM Christian Brauner <brauner@kernel.org> wrote:
+> > 
+> > > > One thing that I just remembered and which I think I haven't mentioned
+> > > > so far is that moving S_ISGID stripping from filesystem callpaths into
+> > > > the vfs callpaths means that we're hoisting this logic out of vfs_*()
+> > > > helpers implicitly.
+> > > >
+> > > > So filesystems that call vfs_*() helpers directly can't rely on S_ISGID
+> > > > stripping being done in vfs_*() helpers anymore unless they pass the
+> > > > mode on from a prior run through the vfs.
+> > > >
+> > > > This mostly affects overlayfs which calls vfs_*() functions directly. So
+> > > > a typical overlayfs callstack would be (roughly - I'm omw to lunch):
+> > > >
+> > > > sys_mknod()
+> > > > -> do_mknodat(mode) // calls vfs_prepare_mode()
+> > > >    -> .mknod = ovl_mknod(mode)
+> > > >       -> ovl_create(mode)
+> > > >          -> vfs_mknod(mode)
+> > > >
+> > > > I think we are safe as overlayfs passes on the mode on from its own run
+> > > > through the vfs and then via vfs_*() to the underlying filesystem but it
+> > > > is worth point that out.
+> > > >
+> > > > Ccing Amir just for confirmation.
+> > >
+> > > Looks fine to me, but CC Miklos ...
+> > 
+> > Looks fine to me as well.  Overlayfs should share the mode (including
+> > the suid and sgid bits), owner, group and ACL's with the underlying
+> > filesystem, so clearing sgid based on overlay parent directory should
+> > result in the same mode as if it was done based on the parent
+> > directory on the underlying layer.
 > 
-> On 4/27/22 12:12 AM, Luís Henriques wrote:
-> > When doing a mount using as base a directory that has 'max_bytes' quotas
-> > statfs uses that value as the total; if a subdirectory is used instead,
-> > the same 'max_bytes' too in statfs, unless there is another quota set.
-> > 
-> > Unfortunately, if this subdirectory only has the 'max_files' quota set,
-> > then statfs uses the filesystem total.  Fix this by making sure we only
-> > lookup realms that contain the 'max_bytes' quota.
-> > 
-> > Link: https://tracker.ceph.com/issues/55090
-> > Cc: Ryan Taylor <rptaylor@uvic.ca>
-> > Signed-off-by: Luís Henriques <lhenriques@suse.de>
-> > ---
-> > Hi!
-> > 
-> > Unfortunately, I don't think this is the real fix for the bug reported in
-> > the tracker (or by Ryan on the mailing-list).  I haven't seen any
-> > reference to 'max_files' so I suspect Ryan and Dan are hitting another
-> > bug.  This can be easily checked by 'getfattr -n ceph.quota <subdir>'.
-> > 
-> > Also, Dan (in the tracker) states the bug is on the kernel client only but
-> > I can also see if in the fuse client.
-> > 
-> > Anyway, this patch fixes a real bug.
-> > 
-> >   fs/ceph/quota.c | 35 +++++++++++++++++++++++++++--------
-> >   1 file changed, 27 insertions(+), 8 deletions(-)
-> > 
-> > diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-> > index a338a3ec0dc4..235a8d06a8ee 100644
-> > --- a/fs/ceph/quota.c
-> > +++ b/fs/ceph/quota.c
-> > @@ -193,11 +193,17 @@ void ceph_cleanup_quotarealms_inodes(struct ceph_mds_client *mdsc)
-> >   	mutex_unlock(&mdsc->quotarealms_inodes_mutex);
-> >   }
-> > +enum quota_get_realm {
-> > +	QUOTA_GET_MAX_FILES,
-> > +	QUOTA_GET_MAX_BYTES,
-> > +	QUOTA_GET_ANY
-> > +};
-> > +
-> >   /*
-> >    * This function walks through the snaprealm for an inode and returns the
-> > - * ceph_snap_realm for the first snaprealm that has quotas set (either max_files
-> > - * or max_bytes).  If the root is reached, return the root ceph_snap_realm
-> > - * instead.
-> > + * ceph_snap_realm for the first snaprealm that has quotas set (max_files,
-> > + * max_bytes, or any, depending on the 'which_quota' argument).  If the root is
-> > + * reached, return the root ceph_snap_realm instead.
-> >    *
-> >    * Note that the caller is responsible for calling ceph_put_snap_realm() on the
-> >    * returned realm.
-> > @@ -209,7 +215,9 @@ void ceph_cleanup_quotarealms_inodes(struct ceph_mds_client *mdsc)
-> >    * will be restarted.
-> >    */
-> >   static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
-> > -					       struct inode *inode, bool retry)
-> > +					       struct inode *inode,
-> > +					       enum quota_get_realm which_quota,
-> > +					       bool retry)
-> >   {
-> >   	struct ceph_inode_info *ci = NULL;
-> >   	struct ceph_snap_realm *realm, *next;
-> > @@ -248,7 +256,17 @@ static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
-> >   		}
-> >   		ci = ceph_inode(in);
-> > -		has_quota = __ceph_has_any_quota(ci);
-> > +		switch (which_quota) {
-> > +		case QUOTA_GET_MAX_BYTES:
-> > +			has_quota = ci->i_max_bytes;
-> > +			break;
-> > +		case QUOTA_GET_MAX_FILES:
-> > +			has_quota = ci->i_max_files;
-> > +			break;
-> > +		default: /* QUOTA_GET_ANY */
-> > +			has_quota = __ceph_has_any_quota(ci);
+> Ah yes, good point.
 > 
-> How about moving this logic to __ceph_has_any_quota() by renaming it to
-> __ceph_has_quota(ci, enum quota_get_realm which) ?
+> > 
+> > AFAIU this logic is not affected by userns or mnt_userns, but
+> > Christian would be best to confirm that.
 > 
-> + static inline bool __ceph_has_quota(ci, enum quota_get_realm which) {
-> +		switch (which) {
-> +		case QUOTA_GET_MAX_BYTES:
-> +			return !!ci->i_max_bytes;
-> +			break;
-> +		case QUOTA_GET_MAX_FILES:
-> +			return !!ci->i_max_files;
-> +			break;
-> +		default: /* QUOTA_GET_ANY */
-> +			return !!(ci->i_max_files || ci->i_max_bytes);
-> + }
+> It does depend on it as S_ISGID stripping requires knowledge about
+> whether the caller has CAP_FSETID and is capable over the parent
+> directory or if they are in the group the file is owned by.
 > 
-> The other LGTM.
+> I think ultimately it might just come down to moving vfs_prepare_mode()
+> into vfs_*() helpers and not into the do_*at() helpers.
+> 
+> That would be cleaner anyway as right now we have this weird disconnect
+> between vfs_tmpfile() and vfs_{create,mknod,mkdir}(). IOW, vfs_tmpfile()
+> doesn't even have an associated do_*() wrapper where we could call
+> vfs_prepare_mode() from.
+> 
+> So ultimately it might be nicer if we do it in vfs_*() helpers anyway.
+> 
+> The less pretty thing about it will be that the security_path_*() hooks
+> also want a mode.
+> 
+> Right now these hooks receive the mode as it's passed in from userspace
+> minus umask but before S_ISGID stripping happens.
+> 
+> Whereas I think they should really see what the filesystem sees and
+> currently it's a bug that they see something else.
+> 
+> I need to think about this a bit.
 
-Thank you for the review, Xiubo.  Your suggestion makes sense, I'll send
-out v2 shortly.
+So on top of that series (though it should just be folded in), does that
+look reasonable?
 
-Cheers,
---
-Luís
+From e993f81caae60fee4f77b40d46ad3863ea383493 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Wed, 27 Apr 2022 10:53:35 +0200
+Subject: [PATCH] UNTESTED UNTESTED UNTESTED
 
+As I realized yesterday we need to move mode preparation into the vfs_*()
+instead of do_*() helpers as filesystems like overlayfs have the following
+callstacks:
 
-> 
-> -- Xiubo
-> 
-> 
-> > +			break;
-> > +		}
-> >   		iput(in);
-> >   		next = realm->parent;
-> > @@ -279,8 +297,8 @@ bool ceph_quota_is_same_realm(struct inode *old, struct inode *new)
-> >   	 * dropped and we can then restart the whole operation.
-> >   	 */
-> >   	down_read(&mdsc->snap_rwsem);
-> > -	old_realm = get_quota_realm(mdsc, old, true);
-> > -	new_realm = get_quota_realm(mdsc, new, false);
-> > +	old_realm = get_quota_realm(mdsc, old, QUOTA_GET_ANY, true);
-> > +	new_realm = get_quota_realm(mdsc, new, QUOTA_GET_ANY, false);
-> >   	if (PTR_ERR(new_realm) == -EAGAIN) {
-> >   		up_read(&mdsc->snap_rwsem);
-> >   		if (old_realm)
-> > @@ -483,7 +501,8 @@ bool ceph_quota_update_statfs(struct ceph_fs_client *fsc, struct kstatfs *buf)
-> >   	bool is_updated = false;
-> >   	down_read(&mdsc->snap_rwsem);
-> > -	realm = get_quota_realm(mdsc, d_inode(fsc->sb->s_root), true);
-> > +	realm = get_quota_realm(mdsc, d_inode(fsc->sb->s_root),
-> > +				QUOTA_GET_MAX_BYTES, true);
-> >   	up_read(&mdsc->snap_rwsem);
-> >   	if (!realm)
-> >   		return false;
-> > 
-> 
-> 
+sys_mknod(ovl_path, mode)
+-> do_mknodat(ovl_path, mode)
+   -> .mknod = ovl_mknod(ovl_path, mode)
+      -> vfs_mknod(xfs_path, mode)
+	 -> .mknod = xfs_vn_mknod(xfs_path, mode)
+
+and the requirement that this will yield the same mode as:
+
+sys_mknod(xfs_path, mode)
+-> do_mknodat(xfs_path, mode)
+   -> .mknod = xfs_vn_mknod(xfs_path, mode)
+
+By moving setgid stripping into vfs_*() helpers we achieve:
+
+- Moving setgid stripping out of the individual filesystem's responsibility.
+- Ensure that callers of vfs_*() helpers continue to get correct setgid
+  stripping.
+
+Another thing I realized while looking at this yesterday was the entanglement
+with security hooks. Security hooks currently see a different mode than the
+actual filesystem sees when it calls into inode_init_owner(). This patch
+doesn't change that!
+
+I originally thought that we might be able to make the security hooks see the
+same mode that the filesystem will see. However, I have doubts. First, I don't
+think that is achievable without more restructuring. Second, I don't think it's
+required as the hooks have clearly been placed before any vfs_*() calls and
+thereby have committed themselves to see the mode as passed in from userspace
+(minus the umask). We will simply continue doing just exactly that
+side-stepping the issue for now.
+
+Sketched-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+---
+ fs/namei.c         | 103 +++++++++++++++++++++++++++++++++++++++------
+ include/linux/fs.h |  11 -----
+ 2 files changed, 90 insertions(+), 24 deletions(-)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 5dbf00704ae8..8b83db15ae5f 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2998,6 +2998,71 @@ void unlock_rename(struct dentry *p1, struct dentry *p2)
+ }
+ EXPORT_SYMBOL(unlock_rename);
+ 
++/**
++ * mode_strip_umask - handle vfs umask stripping
++ * @dir:	parent directory of the new inode
++ * @mode:	mode of the new inode to be created in @dir
++ *
++ * Umask stripping depends on whether or not the filesystem supports POSIX
++ * ACLs. If the filesystem doesn't support it umask stripping is done directly
++ * in here. If the filesystem does support POSIX ACLs umask stripping is
++ * deferred until the filesystem calls posix_acl_create().
++ *
++ * Returns: mode
++ */
++static inline umode_t mode_strip_umask(const struct inode *dir, umode_t mode)
++{
++	if (!IS_POSIXACL(dir))
++		mode &= ~current_umask();
++	return mode;
++}
++
++/**
++ * vfs_prepare_mode - prepare the mode to be used for a new inode
++ * @mnt_userns:	user namespace of the mount the inode was found from
++ * @dir:	parent directory of the new inode
++ * @mode:	mode of the new inode
++ * @mask_perms:	allowed permission by the vfs
++ * @type:	type of file to be created
++ *
++ * This helper consolidates and enforces vfs restrictions on the @mode of a new
++ * object to be created.
++ *
++ * Umask stripping depends on whether the filesystem supports POSIX ACLs (see
++ * the kernel documentation for mode_strip_umask()). Moving umask stripping
++ * after setgid stripping allows the same ordering for both non-POSIX ACL and
++ * POSIX ACL supporting filesystems.
++ *
++ * Note that it's currently valid for @type to be 0 if a directory is created.
++ * Filesystems raise that flag individually and we need to check whether each
++ * filesystem can deal with receiving S_IFDIR from the vfs before we enforce a
++ * non-zero type.
++ *
++ * Returns: mode to be passed to the filesystem
++ */
++static inline umode_t vfs_prepare_mode(struct user_namespace *mnt_userns,
++				       const struct inode *dir, umode_t mode,
++				       umode_t mask_perms, umode_t type)
++{
++	/*
++	 * S_ISGID stripping depends on the mode of the new file so make sure
++	 * that the caller gives us this information and splat if we miss it.
++	 */
++	WARN_ON_ONCE((mode & S_IFMT) == 0);
++
++	mode = mode_strip_sgid(mnt_userns, dir, mode);
++	mode = mode_strip_umask(dir, mode);
++
++	/*
++	 * Apply the vfs mandated allowed permission mask and set the type of
++	 * file to be created before we call into the filesystem.
++	 */
++	mode &= (mask_perms & ~S_IFMT);
++	mode |= (type & S_IFMT);
++
++	return mode;
++}
++
+ /**
+  * vfs_create - create new file
+  * @mnt_userns:	user namespace of the mount the inode was found from
+@@ -3023,8 +3088,9 @@ int vfs_create(struct user_namespace *mnt_userns, struct inode *dir,
+ 
+ 	if (!dir->i_op->create)
+ 		return -EACCES;	/* shouldn't it be ENOSYS? */
+-	mode &= S_IALLUGO;
+-	mode |= S_IFREG;
++
++	mode = vfs_prepare_mode(mnt_userns, d_inode(path.dentry), mode,
++				S_IALLUGO, S_IFREG);
+ 	error = security_inode_create(dir, dentry, mode);
+ 	if (error)
+ 		return error;
+@@ -3287,7 +3353,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+ 	if (open_flag & O_CREAT) {
+ 		if (open_flag & O_EXCL)
+ 			open_flag &= ~O_TRUNC;
+-		mode = vfs_prepare_mode(mnt_userns, dir->d_inode, mode);
++		mode = vfs_prepare_mode(mnt_userns, dir->d_inode, mode, mode, mode);
+ 		if (likely(got_write))
+ 			create_error = may_o_create(mnt_userns, &nd->path,
+ 						    dentry, mode);
+@@ -3520,7 +3586,7 @@ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
+ 	child = d_alloc(dentry, &slash_name);
+ 	if (unlikely(!child))
+ 		goto out_err;
+-	mode = vfs_prepare_mode(mnt_userns, dir, mode);
++	mode = vfs_prepare_mode(mnt_userns, dir, mode, mode, mode);
+ 	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
+ 	if (error)
+ 		goto out_err;
+@@ -3798,6 +3864,8 @@ int vfs_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+ 	if (!dir->i_op->mknod)
+ 		return -EPERM;
+ 
++	mode = vfs_prepare_mode(mnt_userns, d_inode(path.dentry),
++				mode, mode, mode);
+ 	error = devcgroup_inode_mknod(mode, dev);
+ 	if (error)
+ 		return error;
+@@ -3848,12 +3916,13 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+ 	if (IS_ERR(dentry))
+ 		goto out1;
+ 
+-	mnt_userns = mnt_user_ns(path.mnt);
+-	mode = vfs_prepare_mode(mnt_userns, path.dentry->d_inode, mode);
+-	error = security_path_mknod(&path, dentry, mode, dev);
++	error = security_path_mknod(&path, dentry,
++				    mode_strip_umask(d_inode(path.dentry), mode),
++				    dev);
+ 	if (error)
+ 		goto out2;
+ 
++	mnt_userns = mnt_user_ns(path.mnt);
+ 	switch (mode & S_IFMT) {
+ 		case 0: case S_IFREG:
+ 			error = vfs_create(mnt_userns, path.dentry->d_inode,
+@@ -3919,7 +3988,13 @@ int vfs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+ 	if (!dir->i_op->mkdir)
+ 		return -EPERM;
+ 
+-	mode &= (S_IRWXUGO|S_ISVTX);
++	/*
++	 * Filesystems currently raise S_IFDIR individually. We should try and
++	 * fix that going forward passing it in from the vfs as we do for all
++	 * other files going forward.
++	 */
++	mode = vfs_prepare_mode(mnt_userns, d_inode(path.dentry),
++				mode, S_IRWXUGO | S_ISVTX, 0);
+ 	error = security_inode_mkdir(dir, dentry, mode);
+ 	if (error)
+ 		return error;
+@@ -3940,7 +4015,6 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
+ 	struct path path;
+ 	int error;
+ 	unsigned int lookup_flags = LOOKUP_DIRECTORY;
+-	struct user_namespace *mnt_userns;
+ 
+ retry:
+ 	dentry = filename_create(dfd, name, &path, lookup_flags);
+@@ -3948,12 +4022,15 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
+ 	if (IS_ERR(dentry))
+ 		goto out_putname;
+ 
+-	mnt_userns = mnt_user_ns(path.mnt);
+-	mode = vfs_prepare_mode(mnt_userns, path.dentry->d_inode, mode);
+-	error = security_path_mkdir(&path, dentry, mode);
+-	if (!error)
++	error = security_path_mkdir(&path, dentry,
++				    mode_strip_umask(d_inode(path.dentry), mode));
++	if (!error) {
++		struct user_namespace *mnt_userns;
++
++		mnt_userns = mnt_user_ns(path.mnt);
+ 		error = vfs_mkdir(mnt_userns, path.dentry->d_inode, dentry,
+ 				  mode);
++	}
+ 
+ 	done_path_create(&path, dentry);
+ 	if (retry_estale(error, lookup_flags)) {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 914c8f28bb02..98b44a2732f5 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3459,17 +3459,6 @@ static inline bool dir_relax_shared(struct inode *inode)
+ 	return !IS_DEADDIR(inode);
+ }
+ 
+-static inline umode_t vfs_prepare_mode(struct user_namespace *mnt_userns,
+-				   const struct inode *dir, umode_t mode)
+-{
+-	mode = mode_strip_sgid(mnt_userns, dir, mode);
+-
+-	if (!IS_POSIXACL(dir))
+-		mode &= ~current_umask();
+-
+-	return mode;
+-}
+-
+ extern bool path_noexec(const struct path *path);
+ extern void inode_nohighmem(struct inode *inode);
+ 
+-- 
+2.32.0
+
