@@ -2,45 +2,46 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AEC77512275
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 Apr 2022 21:18:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B387512273
+	for <lists+ceph-devel@lfdr.de>; Wed, 27 Apr 2022 21:18:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233960AbiD0TV3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 27 Apr 2022 15:21:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49974 "EHLO
+        id S233706AbiD0TVU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 27 Apr 2022 15:21:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233146AbiD0TTi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 27 Apr 2022 15:19:38 -0400
+        with ESMTP id S233552AbiD0TTj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 27 Apr 2022 15:19:39 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8249558E6F
-        for <ceph-devel@vger.kernel.org>; Wed, 27 Apr 2022 12:13:59 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14BC2562CF
+        for <ceph-devel@vger.kernel.org>; Wed, 27 Apr 2022 12:14:00 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EB9BA619E1
-        for <ceph-devel@vger.kernel.org>; Wed, 27 Apr 2022 19:13:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E849EC385AE;
-        Wed, 27 Apr 2022 19:13:57 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A409C61A01
+        for <ceph-devel@vger.kernel.org>; Wed, 27 Apr 2022 19:13:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E3EFC385A7;
+        Wed, 27 Apr 2022 19:13:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651086838;
-        bh=kCX8R1kkPJJOnSs8XNx7iv3azpkLUhrfho2wq6rtc70=;
+        s=k20201202; t=1651086839;
+        bh=HiyHoFuQT6U1dF5z+DwmZm40YsMHDM+nBxJbq1l1J3o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g8v3thTkQCioLodK88N+toIDsU5KSTgZ7OIunywQyReA8qScuFUZ9Z9JRrPXm6doE
-         jYNEAebXehccreBFHUcpQ9Ql8cirQ6slB2H8pRzSWO3GEvXinOCAeKB0H3CNdVCQRU
-         gyUOeWtcpfyE/sUeMozl+CNiWZQH+G2k4GYBtOvYdHnSWOuSzBtZ2dj3ke5esGbgsC
-         csWdXLBscTp0ltpvk/3Q/0xsvf5EFgccjDknrzaONOch2AfowM/HDrPc8m5MOJqcP3
-         ZkKUIgQI2BrZBb843KtIr1/S28IXhE84uFojydaBMD7uU1dPFgUhR60aIliP30NQlB
-         SS2gLEapEGlSA==
+        b=cnwbtxL3on29o+HLOku18+v1Tt+MOMqGr4kc7yrgEBnc4sSpm0DGN5Z94nbtqsgcr
+         tbwb4KP4RqAPzp70WZihAxIiNerxWPoEi88KKmyg0Ixh1sqY23mzJTwphKcIvKX362
+         UyDtjCuloPkba0LYWrubKs35yS+JsHA7BmBNg4LP5c4a6fZdvjnV0ZNqryJ8+um3cP
+         NRinlrNsWhZhl38DY0UcZWl+RUjtH4FXLh4W9hdUS07o7RlNXB9S+qsp30TMgFvsTn
+         qrK2CHnFgbIDbx99wnmi2yyIFH+BxzdK+ZtBGpHNAEsmYfZV0PeEXI2wdMkulZH1ap
+         rDVjohGYr8apg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     xiubli@redhat.com, lhenriques@suse.de, idryomov@gmail.com
-Subject: [PATCH v14 59/64] ceph: fscrypt support for writepages
-Date:   Wed, 27 Apr 2022 15:13:09 -0400
-Message-Id: <20220427191314.222867-60-jlayton@kernel.org>
+Subject: [PATCH v14 60/64] ceph: invalidate pages when doing direct/sync writes
+Date:   Wed, 27 Apr 2022 15:13:10 -0400
+Message-Id: <20220427191314.222867-61-jlayton@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220427191314.222867-1-jlayton@kernel.org>
 References: <20220427191314.222867-1-jlayton@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
@@ -51,186 +52,61 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Add the appropriate machinery to write back dirty data with encryption.
+From: Luís Henriques <lhenriques@suse.de>
 
+When doing a direct/sync write, we need to invalidate the page cache in
+the range being written to. If we don't do this, the cache will include
+invalid data as we just did a write that avoided the page cache.
+
+In the event that invalidation fails, just ignore the error. That likely
+just means that we raced with another task doing a buffered write, in
+which case we want to leave the page intact anyway.
+
+[ jlayton: minor comment update ]
+
+Signed-off-by: Luís Henriques <lhenriques@suse.de>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/addr.c   | 63 +++++++++++++++++++++++++++++++++++++++---------
- fs/ceph/crypto.h | 18 +++++++++++++-
- 2 files changed, 68 insertions(+), 13 deletions(-)
+ fs/ceph/file.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index f54940fc96ee..ed630196d6d3 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -547,10 +547,12 @@ static u64 get_writepages_data_length(struct inode *inode,
- 				      struct page *page, u64 start)
- {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
--	struct ceph_snap_context *snapc = page_snap_context(page);
-+	struct ceph_snap_context *snapc;
- 	struct ceph_cap_snap *capsnap = NULL;
- 	u64 end = i_size_read(inode);
-+	u64 ret;
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 3d8f0839b718..2a9d6dd37a65 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1614,11 +1614,6 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+ 		return ret;
  
-+	snapc = page_snap_context(ceph_fscrypt_pagecache_page(page));
- 	if (snapc != ci->i_head_snapc) {
- 		bool found = false;
- 		spin_lock(&ci->i_ceph_lock);
-@@ -565,9 +567,12 @@ static u64 get_writepages_data_length(struct inode *inode,
- 		spin_unlock(&ci->i_ceph_lock);
- 		WARN_ON(!found);
- 	}
--	if (end > page_offset(page) + thp_size(page))
--		end = page_offset(page) + thp_size(page);
--	return end > start ? end - start : 0;
-+	if (end > ceph_fscrypt_page_offset(page) + thp_size(page))
-+		end = ceph_fscrypt_page_offset(page) + thp_size(page);
-+	ret = end > start ? end - start : 0;
-+	if (ret && fscrypt_is_bounce_page(page))
-+		ret = round_up(ret, CEPH_FSCRYPT_BLOCK_SIZE);
-+	return ret;
- }
+ 	ceph_fscache_invalidate(inode, false);
+-	ret = invalidate_inode_pages2_range(inode->i_mapping,
+-					    pos >> PAGE_SHIFT,
+-					    (pos + count - 1) >> PAGE_SHIFT);
+-	if (ret < 0)
+-		dout("invalidate_inode_pages2_range returned %d\n", ret);
  
- /*
-@@ -791,6 +796,11 @@ static void writepages_finish(struct ceph_osd_request *req)
- 		total_pages += num_pages;
- 		for (j = 0; j < num_pages; j++) {
- 			page = osd_data->pages[j];
-+			if (fscrypt_is_bounce_page(page)) {
-+				page = fscrypt_pagecache_page(page);
-+				fscrypt_free_bounce_page(osd_data->pages[j]);
-+				osd_data->pages[j] = page;
-+			}
- 			BUG_ON(!page);
- 			WARN_ON(!PageUptodate(page));
- 
-@@ -1052,9 +1062,28 @@ static int ceph_writepages_start(struct address_space *mapping,
- 				    fsc->mount_options->congestion_kb))
- 				fsc->write_congested = true;
- 
--			pages[locked_pages++] = page;
--			pvec.pages[i] = NULL;
-+			if (IS_ENCRYPTED(inode)) {
-+				pages[locked_pages] =
-+					fscrypt_encrypt_pagecache_blocks(page,
-+						PAGE_SIZE, 0,
-+						locked_pages ? GFP_NOWAIT : GFP_NOFS);
-+				if (IS_ERR(pages[locked_pages])) {
-+					if (PTR_ERR(pages[locked_pages]) == -EINVAL)
-+						pr_err("%s: inode->i_blkbits=%hhu\n",
-+							__func__, inode->i_blkbits);
-+					/* better not fail on first page! */
-+					BUG_ON(locked_pages == 0);
-+					pages[locked_pages] = NULL;
-+					redirty_page_for_writepage(wbc, page);
-+					unlock_page(page);
-+					break;
-+				}
-+				++locked_pages;
-+			} else {
-+				pages[locked_pages++] = page;
-+			}
- 
-+			pvec.pages[i] = NULL;
- 			len += thp_size(page);
+ 	while ((len = iov_iter_count(from)) > 0) {
+ 		size_t left;
+@@ -1946,6 +1941,20 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
+ 			break;
  		}
- 
-@@ -1082,7 +1111,7 @@ static int ceph_writepages_start(struct address_space *mapping,
- 		}
- 
- new_request:
--		offset = page_offset(pages[0]);
-+		offset = ceph_fscrypt_page_offset(pages[0]);
- 		len = wsize;
- 
- 		req = ceph_osdc_new_request(&fsc->client->osdc,
-@@ -1103,8 +1132,8 @@ static int ceph_writepages_start(struct address_space *mapping,
- 						ceph_wbc.truncate_size, true);
- 			BUG_ON(IS_ERR(req));
- 		}
--		BUG_ON(len < page_offset(pages[locked_pages - 1]) +
--			     thp_size(page) - offset);
-+		BUG_ON(len < ceph_fscrypt_page_offset(pages[locked_pages - 1]) +
-+			     thp_size(pages[locked_pages - 1]) - offset);
- 
- 		req->r_callback = writepages_finish;
- 		req->r_inode = inode;
-@@ -1114,7 +1143,9 @@ static int ceph_writepages_start(struct address_space *mapping,
- 		data_pages = pages;
- 		op_idx = 0;
- 		for (i = 0; i < locked_pages; i++) {
--			u64 cur_offset = page_offset(pages[i]);
-+			struct page *page = ceph_fscrypt_pagecache_page(pages[i]);
+ 		ceph_clear_error_write(ci);
 +
-+			u64 cur_offset = page_offset(page);
- 			/*
- 			 * Discontinuity in page range? Ceph can handle that by just passing
- 			 * multiple extents in the write op.
-@@ -1143,9 +1174,9 @@ static int ceph_writepages_start(struct address_space *mapping,
- 				op_idx++;
- 			}
- 
--			set_page_writeback(pages[i]);
-+			set_page_writeback(page);
- 			if (caching)
--				ceph_set_page_fscache(pages[i]);
-+				ceph_set_page_fscache(page);
- 			len += thp_size(page);
- 		}
- 		ceph_fscache_write_to_cache(inode, offset, len, caching);
-@@ -1161,8 +1192,16 @@ static int ceph_writepages_start(struct address_space *mapping,
- 							 offset);
- 			len = max(len, min_len);
- 		}
-+		if (IS_ENCRYPTED(inode))
-+			len = round_up(len, CEPH_FSCRYPT_BLOCK_SIZE);
-+
- 		dout("writepages got pages at %llu~%llu\n", offset, len);
- 
-+		if (IS_ENCRYPTED(inode) &&
-+		    ((offset | len) & ~CEPH_FSCRYPT_BLOCK_MASK))
-+			pr_warn("%s: bad encrypted write offset=%lld len=%llu\n",
-+				__func__, offset, len);
-+
- 		osd_req_op_extent_osd_data_pages(req, op_idx, data_pages, len,
- 						 0, from_pool, false);
- 		osd_req_op_extent_update(req, op_idx, len);
-diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
-index bfda2220cb78..d1726307bdb8 100644
---- a/fs/ceph/crypto.h
-+++ b/fs/ceph/crypto.h
-@@ -154,6 +154,12 @@ int ceph_fscrypt_decrypt_extents(struct inode *inode, struct page **page, u64 of
- 				 struct ceph_sparse_extent *map, u32 ext_cnt);
- int ceph_fscrypt_encrypt_pages(struct inode *inode, struct page **page, u64 off,
- 				int len, gfp_t gfp);
-+
-+static inline struct page *ceph_fscrypt_pagecache_page(struct page *page)
-+{
-+	return fscrypt_is_bounce_page(page) ?  fscrypt_pagecache_page(page) : page;
-+}
-+
- #else /* CONFIG_FS_ENCRYPTION */
- 
- static inline void ceph_fscrypt_set_ops(struct super_block *sb)
-@@ -243,6 +249,16 @@ static inline int ceph_fscrypt_encrypt_pages(struct inode *inode, struct page **
- {
- 	return 0;
- }
-+
-+static inline struct page *ceph_fscrypt_pagecache_page(struct page *page)
-+{
-+	return page;
-+}
- #endif /* CONFIG_FS_ENCRYPTION */
- 
--#endif
-+static inline loff_t ceph_fscrypt_page_offset(struct page *page)
-+{
-+	return page_offset(ceph_fscrypt_pagecache_page(page));
-+}
-+
-+#endif /* _CEPH_CRYPTO_H */
++		/*
++		 * We successfully wrote to a range of the file. Declare
++		 * that region of the pagecache invalid.
++		 */
++		ret = invalidate_inode_pages2_range(
++				inode->i_mapping,
++				pos >> PAGE_SHIFT,
++				(pos + len - 1) >> PAGE_SHIFT);
++		if (ret < 0) {
++			dout("invalidate_inode_pages2_range returned %d\n",
++			     ret);
++			ret = 0;
++		}
+ 		pos += len;
+ 		written += len;
+ 		dout("sync_write written %d\n", written);
 -- 
 2.35.1
 
