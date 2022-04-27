@@ -2,41 +2,41 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A9B8751225C
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 Apr 2022 21:17:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F6D951225D
+	for <lists+ceph-devel@lfdr.de>; Wed, 27 Apr 2022 21:17:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233889AbiD0TUW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 27 Apr 2022 15:20:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38472 "EHLO
+        id S233157AbiD0TUZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 27 Apr 2022 15:20:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233157AbiD0TTP (ORCPT
+        with ESMTP id S233158AbiD0TTP (ORCPT
         <rfc822;ceph-devel@vger.kernel.org>); Wed, 27 Apr 2022 15:19:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD3BC35275
-        for <ceph-devel@vger.kernel.org>; Wed, 27 Apr 2022 12:13:37 -0700 (PDT)
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 771733585B
+        for <ceph-devel@vger.kernel.org>; Wed, 27 Apr 2022 12:13:38 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4F986619E1
-        for <ceph-devel@vger.kernel.org>; Wed, 27 Apr 2022 19:13:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CBF8C385AE;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 139DD619FE
+        for <ceph-devel@vger.kernel.org>; Wed, 27 Apr 2022 19:13:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02A91C385AF;
         Wed, 27 Apr 2022 19:13:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651086816;
-        bh=FZyYLQc6AH9ugDOKqB0hiuOEGVhGs2E/B8b2nLDlupk=;
+        s=k20201202; t=1651086817;
+        bh=/AUVTvtmG4mAQGdTKT2Q59sjU2xoAHAeTA2xzevGdpU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ruyj7nWVskA1eizEX70ZoXCZBQq+4Y5ltdfsm4ll1Ehr/gwAJvFLw/Sxw+cC5Kxrw
-         IowCqDhqvuEd0AMzRU80NMT1uakDDQ74qQGoH4u0XSZYNmSOCgV+PWNr9QMte1KYH7
-         QtFwVsxy1xWyhja8supUrGmLL2x7wjbDqiF1OMs/MSboxsR+I/kHu3SAPnCKGU7/1z
-         1MPWfewpR+4IV1iePUQ15mCltvfdw50C8Hcx7J9sz1GH9xDnn4k+CK8hM7uLHkF/Gu
-         z/ABxOxkhhn6VPAfiUPvquHKdQLED5JGvQNxecxsnb2GZDOK8DaKVudKwTSKdTFrpN
-         qnH2C7l0+CSow==
+        b=ULtERemNCWMLs3qMQ6JtfAQWtHQic2TSibtsE9zjvFI+rmyFLp78Yn0V1KI/3BOpL
+         qDv/2V68eAymxU4veyBgW+t3fuYe1nlSX+nU6Y0xFR9ejN0Wsnbip9JY50ouHF92Vo
+         je9OdsbxcBgiY8TN+mD6MaF2042zcbq8522KYKSZzpwQzjTPV8q+cptfULaMlK8lus
+         SMbSOjfaiNtEnJWwqsvh4i0x9OdbIJSmUzDNakBoU/HXeK8AXqcjBEAtgeAiJwjomV
+         oiqvE/NITMcsWs4ugTRPX1pRVfoaYDyc8u9fIvc/QVLFcZC677Fs2oeB8Jv80FawkN
+         K4pDs5zfMeXEg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     xiubli@redhat.com, lhenriques@suse.de, idryomov@gmail.com
-Subject: [PATCH v14 28/64] ceph: fix base64 encoded name's length check in ceph_fname_to_usr()
-Date:   Wed, 27 Apr 2022 15:12:38 -0400
-Message-Id: <20220427191314.222867-29-jlayton@kernel.org>
+Subject: [PATCH v14 29/64] ceph: add fscrypt support to ceph_fill_trace
+Date:   Wed, 27 Apr 2022 15:12:39 -0400
+Message-Id: <20220427191314.222867-30-jlayton@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220427191314.222867-1-jlayton@kernel.org>
 References: <20220427191314.222867-1-jlayton@kernel.org>
@@ -51,32 +51,81 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+When we get a dentry in a trace, decrypt the name so we can properly
+instantiate the dentry.
 
-The fname->name is based64_encoded names and the max long shouldn't
-exceed the NAME_MAX.
-
-The FSCRYPT_BASE64URL_CHARS(NAME_MAX) will be 255 * 4 / 3.
-
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/crypto.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ceph/inode.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index 7e1f66b35095..6fb2fd1a8af0 100644
---- a/fs/ceph/crypto.c
-+++ b/fs/ceph/crypto.c
-@@ -264,7 +264,7 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
- 	}
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index bd922d1cf0b6..cb82e74c80dd 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1405,8 +1405,15 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 		if (dir && req->r_op == CEPH_MDS_OP_LOOKUPNAME &&
+ 		    test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags) &&
+ 		    !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
++			bool is_nokey = false;
+ 			struct qstr dname;
+ 			struct dentry *dn, *parent;
++			struct fscrypt_str oname = FSTR_INIT(NULL, 0);
++			struct ceph_fname fname = { .dir	= dir,
++						    .name	= rinfo->dname,
++						    .ctext	= rinfo->altname,
++						    .name_len	= rinfo->dname_len,
++						    .ctext_len	= rinfo->altname_len };
  
- 	/* Sanity check that the resulting name will fit in the buffer */
--	if (fname->name_len > FSCRYPT_BASE64URL_CHARS(NAME_MAX))
-+	if (fname->name_len > NAME_MAX || fname->ctext_len > NAME_MAX)
- 		return -EIO;
+ 			BUG_ON(!rinfo->head->is_target);
+ 			BUG_ON(req->r_dentry);
+@@ -1414,8 +1421,20 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 			parent = d_find_any_alias(dir);
+ 			BUG_ON(!parent);
  
- 	ret = __fscrypt_prepare_readdir(fname->dir);
+-			dname.name = rinfo->dname;
+-			dname.len = rinfo->dname_len;
++			err = ceph_fname_alloc_buffer(dir, &oname);
++			if (err < 0) {
++				dput(parent);
++				goto done;
++			}
++
++			err = ceph_fname_to_usr(&fname, NULL, &oname, &is_nokey);
++			if (err < 0) {
++				dput(parent);
++				ceph_fname_free_buffer(dir, &oname);
++				goto done;
++			}
++			dname.name = oname.name;
++			dname.len = oname.len;
+ 			dname.hash = full_name_hash(parent, dname.name, dname.len);
+ 			tvino.ino = le64_to_cpu(rinfo->targeti.in->ino);
+ 			tvino.snap = le64_to_cpu(rinfo->targeti.in->snapid);
+@@ -1430,9 +1449,15 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 				     dname.len, dname.name, dn);
+ 				if (!dn) {
+ 					dput(parent);
++					ceph_fname_free_buffer(dir, &oname);
+ 					err = -ENOMEM;
+ 					goto done;
+ 				}
++				if (is_nokey) {
++					spin_lock(&dn->d_lock);
++					dn->d_flags |= DCACHE_NOKEY_NAME;
++					spin_unlock(&dn->d_lock);
++				}
+ 				err = 0;
+ 			} else if (d_really_is_positive(dn) &&
+ 				   (ceph_ino(d_inode(dn)) != tvino.ino ||
+@@ -1444,6 +1469,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 				dput(dn);
+ 				goto retry_lookup;
+ 			}
++			ceph_fname_free_buffer(dir, &oname);
+ 
+ 			req->r_dentry = dn;
+ 			dput(parent);
 -- 
 2.35.1
 
