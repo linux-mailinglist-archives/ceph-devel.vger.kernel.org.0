@@ -2,45 +2,46 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0898E512250
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 Apr 2022 21:16:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2677512253
+	for <lists+ceph-devel@lfdr.de>; Wed, 27 Apr 2022 21:16:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233950AbiD0TT6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 27 Apr 2022 15:19:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49664 "EHLO
+        id S234077AbiD0TUE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 27 Apr 2022 15:20:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiD0TTT (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 27 Apr 2022 15:19:19 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 343A93E5CC
-        for <ceph-devel@vger.kernel.org>; Wed, 27 Apr 2022 12:13:43 -0700 (PDT)
+        with ESMTP id S233519AbiD0TTS (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 27 Apr 2022 15:19:18 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 344953E5F8
+        for <ceph-devel@vger.kernel.org>; Wed, 27 Apr 2022 12:13:44 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9F4BAB8291D
-        for <ceph-devel@vger.kernel.org>; Wed, 27 Apr 2022 19:13:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D93DFC385A7;
-        Wed, 27 Apr 2022 19:13:41 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9A3CE619D0
+        for <ceph-devel@vger.kernel.org>; Wed, 27 Apr 2022 19:13:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F85DC385A9;
+        Wed, 27 Apr 2022 19:13:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651086822;
-        bh=hut6KkMw7enRcNIW7XMFvcipZJ2p7FmCZgzaP/3eiMw=;
+        s=k20201202; t=1651086823;
+        bh=055bRGvY8Rd9//uY4MNk52HNCIW2YMD+cbIrSeHBb+4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NN0ovzSakPEinle8B8pVhkRxPzYgLFw1J7eqLIPp/tlPA3vsYmuXCP8+246Nbr8Gz
-         8WUoy8trqJ224ncqxFg8SRfGW0pSZKxnhh5ah/WO1J+uuorhq24vCGbZWuOMmjcoAT
-         FrD2g/pJ5TmB6ahVhPhYr7J8RlgBkOB4VPAGspTRRnIi2gzrnQsw5RimVjG7SjQNbG
-         sK/F7OCSo0l8iWM1PIeq0EsFD/LvjB9Zpgy7jzjIr4DbT3S8UPcOL1WAyued3964K3
-         8mtCE4sIicFhdR7614O0ws9UlcwJ6k6D0aKsIfmMiR5le5zR0Zy5qkISoA3rs3jXo1
-         8t9WG0PskHuDQ==
+        b=UIkuPKZqIQ3M7JV2O39PNLsFcE1uRZmyNf2t+q6yz40y8/Oo+ZVYkkmVdy9PiMxIO
+         q/YlWMgpLNvm2PN3Pj0rYQ+k+yqsl69VmMBh1B7mMdn8J6sRF9oVj8NHb1CpK9Wq0Z
+         m4BAJ7twv9eLPQUphs7S0KGsxGx6yDKy6utjlaGJOCr9dDy0ZWpoqDfloAAQiJ2gTs
+         OTEruhSFe0/nDEY1a1ox5B0CnaH63xfVDXukpS3KGhB3TCpt7ieBKwNztdOxcN/CuU
+         nEggBpKcanumMfArofuAKnUhAtBFoo0yrbMGJExWCmVxec2aN6Rq9CoDgVXHOGISBE
+         Jk1K5g1KR3Y5g==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     xiubli@redhat.com, lhenriques@suse.de, idryomov@gmail.com
-Subject: [PATCH v14 36/64] ceph: add some fscrypt guardrails
-Date:   Wed, 27 Apr 2022 15:12:46 -0400
-Message-Id: <20220427191314.222867-37-jlayton@kernel.org>
+Subject: [PATCH v14 37/64] ceph: don't allow changing layout on encrypted files/directories
+Date:   Wed, 27 Apr 2022 15:12:47 -0400
+Message-Id: <20220427191314.222867-38-jlayton@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220427191314.222867-1-jlayton@kernel.org>
 References: <20220427191314.222867-1-jlayton@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
@@ -51,90 +52,32 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Add the appropriate calls into fscrypt for various actions, including
-link, rename, setattr, and the open codepaths.
+From: Luís Henriques <lhenriques@suse.de>
 
+Encryption is currently only supported on files/directories with layouts
+where stripe_count=1.  Forbid changing layouts when encryption is involved.
+
+Signed-off-by: Luis Henriques <lhenriques@suse.de>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/dir.c   |  8 ++++++++
- fs/ceph/file.c  | 14 +++++++++++++-
- fs/ceph/inode.c |  4 ++++
- 3 files changed, 25 insertions(+), 1 deletion(-)
+ fs/ceph/ioctl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 4a270438bb82..80ad094790c5 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1121,6 +1121,10 @@ static int ceph_link(struct dentry *old_dentry, struct inode *dir,
- 	if (ceph_snap(dir) != CEPH_NOSNAP)
- 		return -EROFS;
+diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
+index b9f0f4e460ab..9675ef3a6c47 100644
+--- a/fs/ceph/ioctl.c
++++ b/fs/ceph/ioctl.c
+@@ -294,6 +294,10 @@ static long ceph_set_encryption_policy(struct file *file, unsigned long arg)
+ 	struct inode *inode = file_inode(file);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
  
-+	err = fscrypt_prepare_link(old_dentry, dir, dentry);
-+	if (err)
-+		return err;
++	/* encrypted directories can't have striped layout */
++	if (ci->i_layout.stripe_count > 1)
++		return -EINVAL;
 +
- 	dout("link in dir %p old_dentry %p dentry %p\n", dir,
- 	     old_dentry, dentry);
- 	req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_LINK, USE_AUTH_MDS);
-@@ -1318,6 +1322,10 @@ static int ceph_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 	    (!ceph_quota_is_same_realm(old_dir, new_dir)))
- 		return -EXDEV;
- 
-+	err = fscrypt_prepare_rename(old_dir, old_dentry, new_dir, new_dentry, flags);
-+	if (err)
-+		return err;
-+
- 	dout("rename dir %p dentry %p to dir %p dentry %p\n",
- 	     old_dir, old_dentry, new_dir, new_dentry);
- 	req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index a519218ef942..8918aece8b5a 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -372,8 +372,13 @@ int ceph_open(struct inode *inode, struct file *file)
- 
- 	/* filter out O_CREAT|O_EXCL; vfs did that already.  yuck. */
- 	flags = file->f_flags & ~(O_CREAT|O_EXCL);
--	if (S_ISDIR(inode->i_mode))
-+	if (S_ISDIR(inode->i_mode)) {
- 		flags = O_DIRECTORY;  /* mds likes to know */
-+	} else if (S_ISREG(inode->i_mode)) {
-+		err = fscrypt_file_open(inode, file);
-+		if (err)
-+			return err;
-+	}
- 
- 	dout("open inode %p ino %llx.%llx file %p flags %d (%d)\n", inode,
- 	     ceph_vinop(inode), file, flags, file->f_flags);
-@@ -857,6 +862,13 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 		dout("atomic_open finish_no_open on dn %p\n", dn);
- 		err = finish_no_open(file, dn);
- 	} else {
-+		if (IS_ENCRYPTED(dir) &&
-+		    !fscrypt_has_permitted_context(dir, d_inode(dentry))) {
-+			pr_warn("Inconsistent encryption context (parent %llx:%llx child %llx:%llx)\n",
-+				ceph_vinop(dir), ceph_vinop(d_inode(dentry)));
-+			goto out_req;
-+		}
-+
- 		dout("atomic_open finish_open on dn %p\n", dn);
- 		if (req->r_op == CEPH_MDS_OP_CREATE && req->r_reply_info.has_create_ino) {
- 			struct inode *newino = d_inode(dentry);
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 06b9561db283..f9d07bd28c7f 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -2486,6 +2486,10 @@ int ceph_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 	if (ceph_inode_is_shutdown(inode))
- 		return -ESTALE;
- 
-+	err = fscrypt_prepare_setattr(dentry, attr);
-+	if (err)
-+		return err;
-+
- 	err = setattr_prepare(&init_user_ns, dentry, attr);
- 	if (err != 0)
- 		return err;
+ 	ret = vet_mds_for_fscrypt(file);
+ 	if (ret)
+ 		return ret;
 -- 
 2.35.1
 
