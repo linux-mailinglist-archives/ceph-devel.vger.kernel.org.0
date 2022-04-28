@@ -2,61 +2,51 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC5CE512DBE
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Apr 2022 10:07:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1908512E3A
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Apr 2022 10:26:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343614AbiD1IKb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 28 Apr 2022 04:10:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45126 "EHLO
+        id S1344075AbiD1I3I (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 28 Apr 2022 04:29:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233548AbiD1IK2 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 28 Apr 2022 04:10:28 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2984E5C87B;
-        Thu, 28 Apr 2022 01:07:15 -0700 (PDT)
+        with ESMTP id S1344180AbiD1I3F (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 28 Apr 2022 04:29:05 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B72FC972D6;
+        Thu, 28 Apr 2022 01:25:51 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B55A261F64;
-        Thu, 28 Apr 2022 08:07:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79133C385A9;
-        Thu, 28 Apr 2022 08:07:11 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5757361F96;
+        Thu, 28 Apr 2022 08:25:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CBAFC385A0;
+        Thu, 28 Apr 2022 08:25:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651133234;
-        bh=GLBy3cCOaaEcXZE1TXIk4VuMBE17BZY8JjWrsHY6bHE=;
+        s=k20201202; t=1651134350;
+        bh=7D++5Uv1MA0/29UijH6YdgqAj4cFjcElEo1390Ba2/w=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IJhmMUw4B4ufrbaKVvXkpQmaEg1CfwUWhOqXhPyRqbPQzdORxPVi0L/uLzotT98Br
-         IuFA2K616DmH73gc5jGSC5H58yI7oo6NEYawUUexVXGRAYIB50N2BIfVmUSSsdpOdM
-         oUsYt0bXXr5Vl9yQV7xGMCQFFX8eqGOrcrvfr+DH1KyGyqJUXQxs32kPg1Co2afIW7
-         xsEtLY2hjrryy7qDiEKwzOElybzIsux2FUqPAipLTYqYGhfMEHG5ZR7vEy8MiY1kNU
-         Tz7W77ts8qDa892jxFOXmk4jvB5oHlBRmY3SOgHnigDuDJmYTCwQs+TqSFD3rPeaNL
-         QDDKWf8vCXvqg==
-Date:   Thu, 28 Apr 2022 10:07:08 +0200
+        b=Jzu6n7X3wtUlKGcTd/+UrSmnw4n9c1GbiQHq1k6EMOJ0s1VRDexzY6MyyRERdLZQf
+         4abKNFoBPSLUVUVUrC95DK2iLqbW39pcZSf34t/kCSIK08+mX6bcEd/JwQifT2BM1t
+         zSJWqSzhgVrDCaTr3HboKt0S6LPXwgrP4X6OUMa38M7NXBPfSUeNCxxzory7tDWedU
+         yHPgGX93pgqsj40clqenqZR8kRA5l52HTPQeaGORleJm2KjSHS/hanTsOBFLPgi+z0
+         68MpJJ1P0jDL+ac/HXXNO4lnfCeL50zCaghvZPsG4ffXf9HF7Oea2IzrInzwWvO0bW
+         dUmVjOjIUGaFw==
+Date:   Thu, 28 Apr 2022 10:25:44 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Yang Xu <xuyang2018.jy@fujitsu.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-Subject: Re: [PATCH v8 3/4] fs: move S_ISGID stripping into the vfs
-Message-ID: <20220428080708.y76yhqwczwwmdvi4@wittgenstein>
+Cc:     Yang Xu <xuyang2018.jy@fujitsu.com>, linux-fsdevel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, david@fromorbit.com, djwong@kernel.org,
+        willy@infradead.org, jlayton@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v8 1/4] fs: add mode_strip_sgid() helper
+Message-ID: <20220428082544.7v5s3dfgtsda6hll@wittgenstein>
 References: <1650971490-4532-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <1650971490-4532-3-git-send-email-xuyang2018.jy@fujitsu.com>
- <20220426103846.tzz66f2qxcxykws3@wittgenstein>
- <CAOQ4uxhRMp4tM9nP+0yPHJyzPs6B2vtX6z51tBHWxE6V+UZREw@mail.gmail.com>
- <CAJfpegu5uJiHgHmLcuSJ6+cQfOPB2aOBovHr4W5j_LU+reJsCw@mail.gmail.com>
- <20220426145349.zxmahoq2app2lhip@wittgenstein>
- <20220427092201.wvsdjbnc7b4dttaw@wittgenstein>
- <Ymob0U33QNeJEeFs@zeniv-ca.linux.org.uk>
+ <Ymn05eNgOnaYy36R@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Ymob0U33QNeJEeFs@zeniv-ca.linux.org.uk>
+In-Reply-To: <Ymn05eNgOnaYy36R@zeniv-ca.linux.org.uk>
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -66,25 +56,43 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Apr 28, 2022 at 04:45:05AM +0000, Al Viro wrote:
-> On Wed, Apr 27, 2022 at 11:22:01AM +0200, Christian Brauner wrote:
+On Thu, Apr 28, 2022 at 01:59:01AM +0000, Al Viro wrote:
+> On Tue, Apr 26, 2022 at 07:11:27PM +0800, Yang Xu wrote:
+> > Add a dedicated helper to handle the setgid bit when creating a new file
+> > in a setgid directory. This is a preparatory patch for moving setgid
+> > stripping into the vfs. The patch contains no functional changes.
+> > 
+> > Currently the setgid stripping logic is open-coded directly in
+> > inode_init_owner() and the individual filesystems are responsible for
+> > handling setgid inheritance. Since this has proven to be brittle as
+> > evidenced by old issues we uncovered over the last months (see [1] to
+> > [3] below) we will try to move this logic into the vfs.
 > 
-> > +static inline umode_t vfs_prepare_mode(struct user_namespace *mnt_userns,
-> > +				       const struct inode *dir, umode_t mode,
-> > +				       umode_t mask_perms, umode_t type)
-> > +{
-> > +	/*
-> > +	 * S_ISGID stripping depends on the mode of the new file so make sure
-> > +	 * that the caller gives us this information and splat if we miss it.
-> > +	 */
-> > +	WARN_ON_ONCE((mode & S_IFMT) == 0);
-> 
-> <blink>
-> 
-> First of all, what happens if you call mknod("/tmp/blah", 0, 0)?  And the only
-> thing about type bits we care about is "is it a directory" - the sensitive
-> stuff is in the low 12 bits...  What is that check about?
+> First of all, inode_init_owner() is (and always had been) an optional helper.
 
-Do note that this is just an untested rough sketch to illustrate how to
-move it into vfs_*() helpers.
+The whole patch series was triggered because ever since I added setgid
+inheritance tests (see [1]) as part of the idmapped mounts test suite
+into xfstests we found 3 setgid inheritance bugs (The bugs are linked in
+the commit messages.).
+The bugs showed up whenever a filesystem didn't call inode_init_owner()
+or had custom code in place that deviated from expectations.
 
+That's what triggered this whole patch series. Yang took it on and seems
+here to see it through.
+
+I should point out that it was rather unclear what expectations are btw
+because of the ordering dependency between umask and POSIX ACLs and
+setgid stripping. I've describe this at length in the commit message I
+gave Yang.
+
+It took a lot of digging and over the course of me reviewing this patch
+series more and more corner-cases pop up that we haven't handled.
+
+> Filesystems are *NOT* required to call it, so putting any common functionality
+> in there had always been a mistake.
+
+See above. I pointed this out in earlier version.
+I very much agree which is why we should move it into the vfs proper if
+we can with reasonably minimal regression risk.
+
+[1]: https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/tree/src/idmapped-mounts/idmapped-mounts.c#n7812
