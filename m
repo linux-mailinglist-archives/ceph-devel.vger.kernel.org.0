@@ -2,47 +2,47 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67792513429
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Apr 2022 14:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D431B51342A
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Apr 2022 14:49:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346640AbiD1MwN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 28 Apr 2022 08:52:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43456 "EHLO
+        id S1346643AbiD1Mwp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 28 Apr 2022 08:52:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43834 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245277AbiD1MwM (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 28 Apr 2022 08:52:12 -0400
+        with ESMTP id S231487AbiD1Mwp (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 28 Apr 2022 08:52:45 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4049147051
-        for <ceph-devel@vger.kernel.org>; Thu, 28 Apr 2022 05:48:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 187F447051
+        for <ceph-devel@vger.kernel.org>; Thu, 28 Apr 2022 05:49:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1651150137;
+        s=mimecast20190719; t=1651150170;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding;
         bh=mXfwdcdotgDYx3rxWiNlYj9nINKcnzaBFflo9cbJawI=;
-        b=Kbfgtd09YmB9Dg/xRB/Zwc1N9nQtqG0zubeW1OLURh3rVHU4DbFbarMYRAU+SaCG6DT2rE
-        it7Do/UxxrzIenbixuQSmCHZCjNTsa5/w5l8P77074SNe9NZ3TId/YPWCWkSQY6xIlkriE
-        TrXYAv1YpT8KXP/s144rlX4ydp9cIWk=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+        b=QfAfvgVFB0+UQBYyEavogw67wn4sZSltRhWbDUBIvy8jRDt67CCOS7IYhxyt5W3saOSKTr
+        ZEooa+9+QxTFvpgC/MQW4rL+Utmtz1Uonx4wmBpCP/BGH8y85D2fnHbeKg0ZO4tbYKr+7E
+        FYDSpF1UFbZBMMFyqUmkbw6B3kcPjFw=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-399-o5mSFoFXMHWR4K-Gqed_HQ-1; Thu, 28 Apr 2022 08:48:56 -0400
-X-MC-Unique: o5mSFoFXMHWR4K-Gqed_HQ-1
+ us-mta-93-xAq0dSDgPOCM6YMnEtqkhw-1; Thu, 28 Apr 2022 08:49:27 -0400
+X-MC-Unique: xAq0dSDgPOCM6YMnEtqkhw-1
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B397D802803;
-        Thu, 28 Apr 2022 12:48:55 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AEA5F1C0BF11;
+        Thu, 28 Apr 2022 12:49:26 +0000 (UTC)
 Received: from localhost (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1667040869CB;
-        Thu, 28 Apr 2022 12:48:54 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 11F2040869CB;
+        Thu, 28 Apr 2022 12:49:25 +0000 (UTC)
 From:   Xiubo Li <xiubli@redhat.com>
 To:     jlayton@kernel.org
 Cc:     idryomov@gmail.com, vshankar@redhat.com,
         ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: try to queue a writeback if revoking fails
-Date:   Thu, 28 Apr 2022 20:48:52 +0800
-Message-Id: <20220428124852.80682-1-xiubli@redhat.com>
+Subject: [PATCH v2] ceph: try to queue a writeback if revoking fails
+Date:   Thu, 28 Apr 2022 20:49:23 +0800
+Message-Id: <20220428124923.80759-1-xiubli@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
