@@ -2,60 +2,47 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E145C513030
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Apr 2022 11:48:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57630513224
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Apr 2022 13:11:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232004AbiD1JuU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 28 Apr 2022 05:50:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57154 "EHLO
+        id S1345304AbiD1LON (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 28 Apr 2022 07:14:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348282AbiD1Jhz (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 28 Apr 2022 05:37:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EC4C95486;
-        Thu, 28 Apr 2022 02:34:41 -0700 (PDT)
+        with ESMTP id S1344942AbiD1LOM (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 28 Apr 2022 07:14:12 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6B1F220F4
+        for <ceph-devel@vger.kernel.org>; Thu, 28 Apr 2022 04:10:56 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E537260E06;
-        Thu, 28 Apr 2022 09:34:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94E0BC385A0;
-        Thu, 28 Apr 2022 09:34:37 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A13EDB8284D
+        for <ceph-devel@vger.kernel.org>; Thu, 28 Apr 2022 11:10:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E46DDC385A0;
+        Thu, 28 Apr 2022 11:10:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651138480;
-        bh=luhrz9r9PkXIPr7EQBPjoqFpOJw5lvxqAOITtpyxxwk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lzVWy6q9t87OUC3QzNKP10BsjhcXkz7XhDNJ3ULl8dzsqv8/vgQKekhOY/en2oqTn
-         vqS+C9/W7RjkzewBSbggCyE6DPIKpA0gRtz3r5hNEsSv1GshR79aFbXdfUdgIpkwSt
-         +WxuseiWlHPAPzJxJ5LZQSIE9fpUSm42s7Xx/firTIfkghKcpK6LRTf1ZVCFREtpRV
-         R32OLR9Tq3UyHZ6N7seWXo06iw6I4Vy6JnTBCfqtvVHt+QCd4VZ3MFj+WQmzKUlQj8
-         VqVuX0QGPdrl4ZxJPoDmnaK0hARHbGrQSKkvuh3OmBUmyd53EMjQ2MorttWFSN5gUq
-         JV+HnE3z92sOQ==
-Date:   Thu, 28 Apr 2022 11:34:34 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     "xuyang2018.jy@fujitsu.com" <xuyang2018.jy@fujitsu.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v8 1/4] fs: add mode_strip_sgid() helper
-Message-ID: <20220428093434.yc7hjjplvicugfqs@wittgenstein>
-References: <1650971490-4532-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <Ymn05eNgOnaYy36R@zeniv-ca.linux.org.uk>
- <Ymn4xPXXWe4LFhPZ@zeniv-ca.linux.org.uk>
- <626A08DA.3060802@fujitsu.com>
- <YmoAp+yWBpH5T8rt@zeniv-ca.linux.org.uk>
- <YmoGHrNVtfXsl6vM@zeniv-ca.linux.org.uk>
- <YmoOMz+3ul5uHclV@zeniv-ca.linux.org.uk>
+        s=k20201202; t=1651144254;
+        bh=ckrHKnDQnP7UVtHZlw3kbiEEaDa/nJcAlGecaZ7EkPI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=WzMM7USO8tyUMhfknnVR0OJ0txRF52elyvZg7VJRqotzfDRY1CaduZLK4bgUWDu6S
+         TvUQMaxH7RAd5gydttKqhiDOZgEvKtfq/tNWlH6JN+MGvNOCeeUSyZasfzlHeSTCOG
+         7l+IouDd1cL4XdQZYG+0oMmk/0m4CIZK/doSMZxCXR4n0KzRN6KtrcM0GLEPB6HsDi
+         llm+ID2DrkTHoF5ZH5AcfCLLT0jglx7lDeGGIiSXyYPxHTZvc8SrpYmyGkWmaH+tgQ
+         wIKca0qqWcIoQqBkIO3W36v79q+UBeRG3MzNcYjh0DJ6jevkIIjdQqLVEus7wAmlqs
+         dRzyNB1aHjXfQ==
+Message-ID: <ee8ed6ba25d5fc07796103547a6bf345fdab5695.camel@kernel.org>
+Subject: Re: [PATCH] ceph: try to queue a writeback if revoking fails
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
+Date:   Thu, 28 Apr 2022 07:10:52 -0400
+In-Reply-To: <20220428082949.11841-1-xiubli@redhat.com>
+References: <20220428082949.11841-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YmoOMz+3ul5uHclV@zeniv-ca.linux.org.uk>
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -65,41 +52,163 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Apr 28, 2022 at 03:46:59AM +0000, Al Viro wrote:
-> On Thu, Apr 28, 2022 at 03:12:30AM +0000, Al Viro wrote:
+On Thu, 2022-04-28 at 16:29 +0800, Xiubo Li wrote:
+> If the pagecaches writeback just finished and the i_wrbuffer_ref
+> reaches zero it will try to trigger ceph_check_caps(). But if just
+> before ceph_check_caps() the i_wrbuffer_ref could be increased
+> again by mmap/cache write, then the Fwb revoke will fail.
 > 
-> > > Note, BTW, that while XFS has inode_fsuid_set() on the non-inode_init_owner()
-> > > path, it doesn't have inode_fsgid_set() there.  Same goes for ext4, while
-> > > ext2 doesn't bother with either in such case...
-> > > 
-> > > Let's try to separate the issues here.  Jann, could you explain what makes
-> > > empty sgid files dangerous?
-> > 
-> > Found the original thread in old mailbox, and the method of avoiding the
-> > SGID removal on modification is usable.  Which answers the question above...
+> We need to try to queue a writeback in this case instead of
+> triggering the writeback by BDI's delayed work per 5 seconds.
 > 
-> OK, what do we want for grpid mounts?  Aside of "don't forget inode_fsuid_set(),
-> please", that is.  We don't want inode_fsgid_set() there (whatever went for
-> the parent directory should be the right value for the child).  Same "strip
+> URL: https://tracker.ceph.com/issues/55377
+> URL: https://tracker.ceph.com/issues/46904
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/caps.c  | 44 +++++++++++++++++++++++++++++++++++---------
+>  fs/ceph/super.h |  7 +++++++
+>  2 files changed, 42 insertions(+), 9 deletions(-)
+> 
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 906c95d2a4ed..0c0c8f5ae3b3 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -1912,6 +1912,7 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+>  	struct rb_node *p;
+>  	bool queue_invalidate = false;
+>  	bool tried_invalidate = false;
+> +	bool queue_writeback = false;
+>  
+>  	if (session)
+>  		ceph_get_mds_session(session);
+> @@ -2064,10 +2065,30 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+>  		}
+>  
+>  		/* completed revocation? going down and there are no caps? */
+> -		if (revoking && (revoking & cap_used) == 0) {
+> -			dout("completed revocation of %s\n",
+> -			     ceph_cap_string(cap->implemented & ~cap->issued));
+> -			goto ack;
+> +		if (revoking) {
+> +			if ((revoking & cap_used) == 0) {
+> +				dout("completed revocation of %s\n",
+> +				      ceph_cap_string(cap->implemented & ~cap->issued));
+> +				goto ack;
+> +			}
+> +
+> +			/*
+> +			 * If the "i_wrbuffer_ref" was increased by mmap or generic
+> +			 * cache write just before the ceph_check_caps() is called,
+> +			 * the Fb capability revoking will fail this time. Then we
+> +			 * must wait for the BDI's delayed work to flush the dirty
+> +			 * pages and to release the "i_wrbuffer_ref", which will cost
+> +			 * at most 5 seconds. That means the MDS needs to wait at
+> +			 * most 5 seconds to finished the Fb capability's revocation.
+> +			 *
+> +			 * Let's queue a writeback for it.
+> +			 */
+> +			if ((ci->i_last_caps &
+> +			     (CEPH_CAP_FAKE_WRBUFFER | CEPH_CAP_FILE_BUFFER)) &&
+> +			    ci->i_wrbuffer_ref && S_ISREG(inode->i_mode) &&
+> +			    (revoking & CEPH_CAP_FILE_BUFFER)) {
+> +				queue_writeback = true;
+> +			}
 
-Exactly. You sounded puzzled why we don't call that in an earlier mail.
+Is i_last_caps really necessary? It's handling seems very complex and
+it's not 100% clear to me what it's supposed to represent. I'm also not
+crazy about the FAKE_WRBUFFER thing.
 
-> SGID from non-directory child, unless we are in the resulting group"?
+It seems to me that we ought to queue writeback anytime Fb is being
+revoked and i_wrbuffer_ref is non 0. Maybe something like this instead
+would be simpler?
 
-Honestly, I think we should try and see if we can't use the same setgid
-inheritance enforcement of the new mode_strip_sgid() helper for the
-grpid mount option as well. Iow, just don't give the grpid mount option
-a separate setgid treatment and try it with the current approach.
+if (S_ISREG(inode->i_mode) && (revoking & CEPH_CAP_FILE_BUFFER) &&
+    ci->i_wrbuffer_ref)
+	queue_writeback = true;
 
-It'll allow us to move things into vfs proper which I think is a robust
-solution with clear semantics. It also gives us a uniform ordering wrt
-to umask stripping and POSIX ACLs.
 
-Yes, as we've pointed out in the thread this carries a non-zero
-regression risk. But so does the whole patch series. But this might end
-up being a big win security wise and makes maintenance way easier going
-forward.
 
-The current setgid situation is thoroughly messy though and we keep
-plugging holes. Even writing tests for the current situation is an
-almost herculean task let alone reviewing it.
+
+>  		}
+>  
+>  		/* want more caps from mds? */
+> @@ -2134,9 +2155,12 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags,
+>  		__cap_delay_requeue(mdsc, ci);
+>  	}
+>  
+> +	ci->i_last_caps = 0;
+>  	spin_unlock(&ci->i_ceph_lock);
+>  
+>  	ceph_put_mds_session(session);
+> +	if (queue_writeback)
+> +		ceph_queue_writeback(inode);
+>  	if (queue_invalidate)
+>  		ceph_queue_invalidate(inode);
+>  }
+> @@ -3084,16 +3108,16 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
+>  		--ci->i_pin_ref;
+>  	if (had & CEPH_CAP_FILE_RD)
+>  		if (--ci->i_rd_ref == 0)
+> -			last++;
+> +			last |= CEPH_CAP_FILE_RD;
+>  	if (had & CEPH_CAP_FILE_CACHE)
+>  		if (--ci->i_rdcache_ref == 0)
+> -			last++;
+> +			last |= CEPH_CAP_FILE_CACHE;
+>  	if (had & CEPH_CAP_FILE_EXCL)
+>  		if (--ci->i_fx_ref == 0)
+> -			last++;
+> +			last |= CEPH_CAP_FILE_EXCL;
+>  	if (had & CEPH_CAP_FILE_BUFFER) {
+>  		if (--ci->i_wb_ref == 0) {
+> -			last++;
+> +			last |= CEPH_CAP_FILE_BUFFER;
+>  			/* put the ref held by ceph_take_cap_refs() */
+>  			put++;
+>  			check_flushsnaps = true;
+> @@ -3103,7 +3127,7 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
+>  	}
+>  	if (had & CEPH_CAP_FILE_WR) {
+>  		if (--ci->i_wr_ref == 0) {
+> -			last++;
+> +			last |= CEPH_CAP_FILE_WR;
+>  			check_flushsnaps = true;
+>  			if (ci->i_wrbuffer_ref_head == 0 &&
+>  			    ci->i_dirty_caps == 0 &&
+> @@ -3131,6 +3155,7 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
+>  			flushsnaps = 1;
+>  		wake = 1;
+>  	}
+> +	ci->i_last_caps |= last;
+>  	spin_unlock(&ci->i_ceph_lock);
+>  
+>  	dout("put_cap_refs %p had %s%s%s\n", inode, ceph_cap_string(had),
+> @@ -3193,6 +3218,7 @@ void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int nr,
+>  	spin_lock(&ci->i_ceph_lock);
+>  	ci->i_wrbuffer_ref -= nr;
+>  	if (ci->i_wrbuffer_ref == 0) {
+> +		ci->i_last_caps |= CEPH_CAP_FAKE_WRBUFFER;
+>  		last = true;
+>  		put++;
+>  	}
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 73db7f6021f3..f275a41649af 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -362,6 +362,13 @@ struct ceph_inode_info {
+>  	struct ceph_cap *i_auth_cap;     /* authoritative cap, if any */
+>  	unsigned i_dirty_caps, i_flushing_caps;     /* mask of dirtied fields */
+>  
+> +	/*
+> +	 * The capabilities whose references reach to 0, and the bit
+> +	 * (CEPH_CAP_BITS) is for i_wrbuffer_ref.
+> +	 */
+> +#define CEPH_CAP_FAKE_WRBUFFER (1 << CEPH_CAP_BITS)
+> +	unsigned i_last_caps;
+> +
+>  	/*
+>  	 * Link to the auth cap's session's s_cap_dirty list. s_cap_dirty
+>  	 * is protected by the mdsc->cap_dirty_lock, but each individual item
+
+-- 
+Jeff Layton <jlayton@kernel.org>
