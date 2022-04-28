@@ -2,42 +2,42 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C342D5133A2
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Apr 2022 14:26:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32F3A5133B9
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Apr 2022 14:30:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346207AbiD1M3S (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 28 Apr 2022 08:29:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37326 "EHLO
+        id S1346174AbiD1Mcp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 28 Apr 2022 08:32:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346205AbiD1M3R (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 28 Apr 2022 08:29:17 -0400
+        with ESMTP id S1346234AbiD1Mco (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 28 Apr 2022 08:32:44 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C02945AF2
-        for <ceph-devel@vger.kernel.org>; Thu, 28 Apr 2022 05:26:03 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AB8AAF1E8
+        for <ceph-devel@vger.kernel.org>; Thu, 28 Apr 2022 05:29:30 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C5C1C61F8C
-        for <ceph-devel@vger.kernel.org>; Thu, 28 Apr 2022 12:26:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9885C385A9;
-        Thu, 28 Apr 2022 12:26:01 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ADC2161FE5
+        for <ceph-devel@vger.kernel.org>; Thu, 28 Apr 2022 12:29:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E9CFC385A9;
+        Thu, 28 Apr 2022 12:29:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651148762;
-        bh=sUzLNgZXEEI5JZO7sDbsZtb5nAFLmMWNqFDmokrvQI0=;
+        s=k20201202; t=1651148969;
+        bh=uqa2B+6KYGkU8mmw3D1e8koJITRCef/KxmLnPcVJhpc=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=CWHYf++SDAVXy8BPUQfxhX0tu9GROdS7KBx9HWry3DPKq9nqcT/99HINdr5bwkxHd
-         PtAvC8d4P7+KOJPKAGABGGnvkZHbaF2QZSUZPNJnlI3rWYgx/AglmcRa1hEAPX/oJc
-         YTnWYp1sGBJOeOzIhDCJNQ05azhy34dUXK1cDR676nTjiWqQJD4Y9voW9CgYoTj356
-         llmcH/aLj/6lv9RQeGOLqWuBxjNf7pMFxRLgUp/6Sp1uZMlyIocLI6vtHJacVnaV4q
-         yLlseAz9HJrNGZGC6eAY0jsWZ1c5zf09p0EBPa+iuUD1AniityiAAqpm/KlvlUf4we
-         Sr2DZeW4dEAhA==
-Message-ID: <a8e8d966822a0090c7e5ba398c7d8ab9fa5b5fe2.camel@kernel.org>
+        b=fen7aIM7/pdsT1s/UKgMrK18oticqMElI2Ps5voqoiPIAlctdJFDF0mwSjMFV/RAT
+         rXLPXvoZGuGNcXPiDVt6FOFV9wFX01w/Mr2GWkMC2OCkLWKRpuK4HVxavgn9kazz8G
+         nzI2JaI9J7rqoqznyQVFGMrjoU+LNQhwLgUWsQsAjv8UQdfYlCgiLv5qjF/q+CzCVo
+         fMUoQkYigAzBQy8snlR7CZbMcOPsvB2YCPUQ7rkbwtvkveD+jwxNXLFYo9Wqf2kQsK
+         nRyeBEoSWSht/9xlQBLxDPOPKbNh0hSz7vimKV9NKFDLwc4y8rhXlymYUzPayppHrw
+         ofe+x9FfEOG/g==
+Message-ID: <4d9eaa5f86ab1d4d4b33b0308de12d9384b0daba.camel@kernel.org>
 Subject: Re: [PATCH] ceph: don't retain the caps if they're being revoked
  and not used
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Xiubo Li <xiubli@redhat.com>
 Cc:     idryomov@gmail.com, vshankar@redhat.com, ceph-devel@vger.kernel.org
-Date:   Thu, 28 Apr 2022 08:26:00 -0400
+Date:   Thu, 28 Apr 2022 08:29:27 -0400
 In-Reply-To: <20220428121318.43125-1-xiubli@redhat.com>
 References: <20220428121318.43125-1-xiubli@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
@@ -84,7 +84,13 @@ On Thu, 2022-04-28 at 20:13 +0800, Xiubo Li wrote:
 >  		if (file_wanted) {
 >  			retain |= CEPH_CAP_ANY;       /* be greedy */
 
-Oh wow, I thought this was being done already! Curse the complex logic
-in this function.
+Actually maybe something like this would be simpler to understand?
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+/* Retain any caps that are actively in use */
+retain = used | CEPH_CAP_PIN;
+
+/* Also retain caps wanted by open files, if they aren't being revoked */
+retain |= (file_wanted & ~revoking);
+
+-- 
+Jeff Layton <jlayton@kernel.org>
