@@ -2,101 +2,72 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E337C5150B6
-	for <lists+ceph-devel@lfdr.de>; Fri, 29 Apr 2022 18:25:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7BA95158FA
+	for <lists+ceph-devel@lfdr.de>; Sat, 30 Apr 2022 01:29:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379024AbiD2Q3E (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 29 Apr 2022 12:29:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42592 "EHLO
+        id S1381803AbiD2XdB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 29 Apr 2022 19:33:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379069AbiD2Q3C (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 29 Apr 2022 12:29:02 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F67E2F3B4;
-        Fri, 29 Apr 2022 09:25:44 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id j6so16378568ejc.13;
-        Fri, 29 Apr 2022 09:25:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=34ayCITa8dYXGWWB8WPXJjeaFblJYmeptb2kr7f4iU0=;
-        b=TVUvbwegaQnGqR701zJMdkgQYCmrWcgThTVJv525MgEI7D8In96qWO3QbDarjNy2pc
-         ff+RskPVhDbyoZqNw8Max195h9GW3cih/zFhlP+mV792xxgMGDa2a2pBTbCU7A1vHsY5
-         L0KQKWBdn/Ta9cG1qicPqtWiF4T5i/iIEnMPdnUBLO7hznutdRBS3NYPE+rVYRNmWeYk
-         OWIKm5v+Jk4DmrLxu/vDI7WdjcJcNJs1+NX/lnOId/bBFY8zKApua1hFwxqX/AaBClq+
-         oIJMhU7qn6cQ3kYuRfyGNRRpPCl+W+7PQf6hfHcau3mTPEm7ZtEdzO54uzqqcpTjrmC8
-         BQig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=34ayCITa8dYXGWWB8WPXJjeaFblJYmeptb2kr7f4iU0=;
-        b=rhTfUtR44mWTzoHGWNw6GVwYUbXWlHgvjzv9cvyPfRM3jU4Ae8HKkF2EjhNDoSvq06
-         wXmGIcEhdd07ceb6v1xJgSMvOj4fMcd+l4zRIwRzMWtNnEJKpbFOJE8C3o5ZVsgMZe1v
-         ogfz5DxzTDYsyd+m+XQfbAfbrZIDb6brDNLcgg+HRiF7T9DfG4kYHyWBTP8t/xkVHB0q
-         up3aXs24Cn6zIMnKm0wW/IEeDqFTpC+KbmUfE3ZHMIjSTfqgwuc0shp/av51feT36R++
-         AWnfVi5//u8BuLpAf1E7KDbiy4pCXPgUSS8wI5lxdEaX6Nz2exBoBRm7ozLcBIy7VXes
-         cUMw==
-X-Gm-Message-State: AOAM531zISht4DUkDzsiMyXygqAgDJVxMGlYqKdgUSkutF4VeqPrQB3C
-        JD847npuxS/njl0Dzz0A2Lufxf4E4z8=
-X-Google-Smtp-Source: ABdhPJygZpqG8r2RdCHY31zc347HxwMs8a69/wpgogUHXVsdaCEvTah0m2+kRKpqMoR5eYoHCbInaQ==
-X-Received: by 2002:a17:906:9c82:b0:6df:c5f0:d456 with SMTP id fj2-20020a1709069c8200b006dfc5f0d456mr91511ejc.287.1651249542790;
-        Fri, 29 Apr 2022 09:25:42 -0700 (PDT)
-Received: from kwango.local (ip-89-102-68-162.net.upcbroadband.cz. [89.102.68.162])
-        by smtp.gmail.com with ESMTPSA id hf27-20020a1709072c5b00b006f3ef214e33sm779584ejc.153.2022.04.29.09.25.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Apr 2022 09:25:42 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 5.18-rc5
-Date:   Fri, 29 Apr 2022 18:26:32 +0200
-Message-Id: <20220429162632.29934-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.19.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        with ESMTP id S1381795AbiD2Xc7 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 29 Apr 2022 19:32:59 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44595CD64A;
+        Fri, 29 Apr 2022 16:29:40 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 01396B828F1;
+        Fri, 29 Apr 2022 23:29:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B76C4C385A7;
+        Fri, 29 Apr 2022 23:29:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651274977;
+        bh=kZrs/xiAEckX+b0ic9RlGktgTrirB1chaLCHBLfQVEU=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=PF6C0k2AyIDq/f7Vlj67fHL0ychlUlAZzUl24SoNmdpMhrsuwIudm6ngma0FPt04s
+         VFW5aObZKNnlPYEzWlHR82lF5OeLVCQQf4n8lXR3WY9WjLwnUI7C9wtrtD2Ps2Py/N
+         LQ/MeOG76qt0qaeKWGYeI6dhw3mxBrLT16nj+N4R7t/JzLUm0DkH6dWHCibHVm6i1m
+         TtctMYQR4nzkeYXV52UeBG3s2QLKyx5YGx3uKM5iheZIFHTilUqB8awPvQOGeWeu/r
+         CmYPTbeqx77/MoTiaVSeohhVYFEK0l143TxFTVnvh2T93Qu2BhO1Efc7Slbe+h5Jp0
+         eY8po4Jpg2hFA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A15CBF0383D;
+        Fri, 29 Apr 2022 23:29:37 +0000 (UTC)
+Subject: Re: [GIT PULL] Ceph fixes for 5.18-rc5
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20220429162632.29934-1-idryomov@gmail.com>
+References: <20220429162632.29934-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20220429162632.29934-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-5.18-rc5
+X-PR-Tracked-Commit-Id: 7acae6183cf37c48b8da48bbbdb78820fb3913f3
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: bd383b8e32f6aab08c9485b1fe86e2e932b1df69
+Message-Id: <165127497765.20495.16396468291637508679.pr-tracker-bot@kernel.org>
+Date:   Fri, 29 Apr 2022 23:29:37 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Fri, 29 Apr 2022 18:26:32 +0200:
 
-The following changes since commit af2d861d4cd2a4da5137f795ee3509e6f944a25b:
+> https://github.com/ceph/ceph-client.git tags/ceph-for-5.18-rc5
 
-  Linux 5.18-rc4 (2022-04-24 14:51:22 -0700)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/bd383b8e32f6aab08c9485b1fe86e2e932b1df69
 
-are available in the Git repository at:
+Thank you!
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-5.18-rc5
-
-for you to fetch changes up to 7acae6183cf37c48b8da48bbbdb78820fb3913f3:
-
-  ceph: fix possible NULL pointer dereference for req->r_session (2022-04-25 10:45:50 +0200)
-
-----------------------------------------------------------------
-A fix for a NULL dereference that turns out to be easily triggerable
-by fsync (marked for stable) and a false positive WARN and snap_rwsem
-locking fixups.
-
-----------------------------------------------------------------
-Ilya Dryomov (1):
-      libceph: disambiguate cluster/pool full log message
-
-Niels Dossche (1):
-      ceph: get snap_rwsem read lock in handle_cap_export for ceph_add_cap
-
-Xiubo Li (2):
-      ceph: remove incorrect session state check
-      ceph: fix possible NULL pointer dereference for req->r_session
-
- fs/ceph/caps.c        | 7 +++++++
- fs/ceph/mds_client.c  | 6 ------
- net/ceph/osd_client.c | 6 +++++-
- 3 files changed, 12 insertions(+), 7 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
