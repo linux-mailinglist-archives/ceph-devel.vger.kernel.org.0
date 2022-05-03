@@ -2,72 +2,69 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7BA95158FA
-	for <lists+ceph-devel@lfdr.de>; Sat, 30 Apr 2022 01:29:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD7F251838B
+	for <lists+ceph-devel@lfdr.de>; Tue,  3 May 2022 13:52:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381803AbiD2XdB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 29 Apr 2022 19:33:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51642 "EHLO
+        id S234936AbiECL4R convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Tue, 3 May 2022 07:56:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1381795AbiD2Xc7 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 29 Apr 2022 19:32:59 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44595CD64A;
-        Fri, 29 Apr 2022 16:29:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 01396B828F1;
-        Fri, 29 Apr 2022 23:29:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B76C4C385A7;
-        Fri, 29 Apr 2022 23:29:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651274977;
-        bh=kZrs/xiAEckX+b0ic9RlGktgTrirB1chaLCHBLfQVEU=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=PF6C0k2AyIDq/f7Vlj67fHL0ychlUlAZzUl24SoNmdpMhrsuwIudm6ngma0FPt04s
-         VFW5aObZKNnlPYEzWlHR82lF5OeLVCQQf4n8lXR3WY9WjLwnUI7C9wtrtD2Ps2Py/N
-         LQ/MeOG76qt0qaeKWGYeI6dhw3mxBrLT16nj+N4R7t/JzLUm0DkH6dWHCibHVm6i1m
-         TtctMYQR4nzkeYXV52UeBG3s2QLKyx5YGx3uKM5iheZIFHTilUqB8awPvQOGeWeu/r
-         CmYPTbeqx77/MoTiaVSeohhVYFEK0l143TxFTVnvh2T93Qu2BhO1Efc7Slbe+h5Jp0
-         eY8po4Jpg2hFA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A15CBF0383D;
-        Fri, 29 Apr 2022 23:29:37 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph fixes for 5.18-rc5
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20220429162632.29934-1-idryomov@gmail.com>
-References: <20220429162632.29934-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20220429162632.29934-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-5.18-rc5
-X-PR-Tracked-Commit-Id: 7acae6183cf37c48b8da48bbbdb78820fb3913f3
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: bd383b8e32f6aab08c9485b1fe86e2e932b1df69
-Message-Id: <165127497765.20495.16396468291637508679.pr-tracker-bot@kernel.org>
-Date:   Fri, 29 Apr 2022 23:29:37 +0000
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S234907AbiECL4R (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 May 2022 07:56:17 -0400
+X-Greylist: delayed 2978 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 03 May 2022 04:52:45 PDT
+Received: from mail.77msk.ru (mail.77msk.ru [84.204.203.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 27D792559F
+        for <ceph-devel@vger.kernel.org>; Tue,  3 May 2022 04:52:44 -0700 (PDT)
+Received: from mail.77msk.ru (proxysrv.domain007.com [192.168.2.20])
+        by hermes.domain007.com (Postfix) with ESMTP id E6021D481B5
+        for <ceph-devel@vger.kernel.org>; Tue,  3 May 2022 13:43:17 +0300 (MSK)
+Received: from asda.co.uk (unknown [20.97.211.134])
+        by gatekeeper.domain007.com (Postfix) with ESMTPSA id 83FA032009F
+        for <ceph-devel@vger.kernel.org>; Tue,  3 May 2022 13:43:17 +0300 (MSK)
+Reply-To: sales@asdaa.uk
+From:   ASDA Stores Limited <Hanes.Thomas2365@asda.co.uk>
+To:     ceph-devel@vger.kernel.org
+Subject: Procurement order from ASDA
+Date:   03 May 2022 10:43:17 +0000
+Message-ID: <20220503091903.241F6C7238DCDD50@asda.co.uk>
+MIME-Version: 1.0
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+X-Virus-Scanned: clamav-milter 0.102.4 at hermes
+X-Virus-Status: Clean
+X-Spam-Status: No, score=3.5 required=5.0 tests=BAYES_50,RCVD_IN_PSBL,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The pull request you sent on Fri, 29 Apr 2022 18:26:32 +0200:
+Dear ceph-devel
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-5.18-rc5
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/bd383b8e32f6aab08c9485b1fe86e2e932b1df69
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+We are interested in having some of your hot selling product in 
+our stores and outlets spread all over United Kingdom, Northern 
+Island and Africa. ASDA Stores Limited is one of the highest-
+ranking Wholesale & Retail outlets in the United Kingdom. 
+  
+We shall furnish our detailed company profile in our next 
+correspondent. However, it would be appreciated if you can send 
+us your catalog through email to learn more about your company's 
+products and wholesale quote. It is hopeful that we can start a 
+viable long-lasting business relationship (partnership) with you.  
+  
+  
+Your prompt response would be delightfully appreciated. 
+  
+Best Wishes 
+  
+  
+Hanes S. Thomas 
+Procurement Office. 
+ASDA Stores Limited 
+Tel:  + 44 - 7451271650 
+WhatsApp: + 44 – 7441440360 
+Website: www.asda.co.uk
