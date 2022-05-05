@@ -2,100 +2,106 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 36E3851B427
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 May 2022 02:09:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6ADC51B47B
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 May 2022 02:14:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237402AbiEEAFI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 4 May 2022 20:05:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39218 "EHLO
+        id S229951AbiEEAS3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 4 May 2022 20:18:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355315AbiEDXyz (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 May 2022 19:54:55 -0400
-Received: from mail-oa1-x43.google.com (mail-oa1-x43.google.com [IPv6:2001:4860:4864:20::43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1D2548888
-        for <ceph-devel@vger.kernel.org>; Wed,  4 May 2022 16:51:17 -0700 (PDT)
-Received: by mail-oa1-x43.google.com with SMTP id 586e51a60fabf-e5e433d66dso2790447fac.5
-        for <ceph-devel@vger.kernel.org>; Wed, 04 May 2022 16:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=ampHH5WJLIBWSsxWwzVjbk5pO9UBFxn81pZ6QIDzZtY=;
-        b=C8FRCRI8h6f7dQQ85qcYDQY7ppWHojyLa2FzUP3TRs4NevqyOcKofpQoCpFvBpLyM7
-         EF7k5XJwkS8J9n3sL3vtA6DF56S72cgpHfK3Y/xrAhveEiMuh5JPBshpn88URGHmAxU+
-         sFS4VH4kB3GswJzyaX4VtMo1vkS0uu6TAafU15jC3XIxKbvn6eRmN4gQXTko6B7FCWuh
-         WQEg/aOgZg5MHIQCPxh1CZuiGL/8COA6sWHjYfKqUKvAjqar1pxjC4CvoNpZAl76Jvgu
-         XtSq5w1h5xiJMrYNabgbVL39vs2utfBPCMgQZRlkXzC2JL9MMLe6ZYWk1hw94L1j+9W9
-         +YOg==
+        with ESMTP id S229512AbiEEAS2 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 May 2022 20:18:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4FFCE488BB
+        for <ceph-devel@vger.kernel.org>; Wed,  4 May 2022 17:14:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1651709690;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NL6kCfWNkdphJnV4oRw2YcLQPVbE//4Y+6oXMFyD+Ks=;
+        b=TohEu2gcQvsDRNkcmQAi0jNpZb1qA1PH9I3n99i/lBvESNFjtzY0kUXvQe4pzUiJAUFOPv
+        +InIuHenG3fHzEXW1Xs8lGZj/1lkb0fVgFIvCu/Yy0MDqzmBgq1Etrltn61GclYpHq5Jj0
+        soJGkciO8U129bl1+HWenLm+MiIyglU=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-177-aKstPuLvNgKsObUssou-oQ-1; Wed, 04 May 2022 20:14:49 -0400
+X-MC-Unique: aKstPuLvNgKsObUssou-oQ-1
+Received: by mail-pj1-f69.google.com with SMTP id o8-20020a17090a9f8800b001dc9f554c7fso1163328pjp.4
+        for <ceph-devel@vger.kernel.org>; Wed, 04 May 2022 17:14:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=ampHH5WJLIBWSsxWwzVjbk5pO9UBFxn81pZ6QIDzZtY=;
-        b=75evse9p8gbpMPtrVzha0y+NAcTRnBJ1ARgEszVCZ5Rp/IIx1YguGPcMOmvXEr81rD
-         kFIbi7/iNQU80rdlzf/M598+Uat5pGshMh9LsK2uMWmhXln0c7OfXdnciCat7vJjVIA7
-         ZNzdEj6pJwYQhqzKZvEQpalhUXdyedlrJw8DBG+SumCoXLLJNb2qbHCc0qOvwio1IPuO
-         4GNOIfQMt2PPXc5zdESlgGAdL3jD5fYbhaFfFKlcdpn1fQ7EnEffgPHMaRPGA9LHmlwd
-         g8xLQlTVt8u7+0kx16PYwoKxAehQAcy16x/Z0iFPScqQRKNEospgjPgit+Qw3ZksWHUo
-         uBMQ==
-X-Gm-Message-State: AOAM531cUrj0QKXgm48B795c2IR9Yq6pYlIVnGedvqaW+eiqURC/vyhm
-        Z3FSS1dBmFLWOHo1w4OZEGguC716ouRIUl8ILvs=
-X-Google-Smtp-Source: ABdhPJxA4Ha/hUkAwAC4dJc5XxPK5kro+yai3V9qxVeZWvF5aWQiORxrxPjbzozlKMsC54nHO04IcfskkX9d/TX7YNA=
-X-Received: by 2002:a05:6870:6005:b0:e6:515c:da5a with SMTP id
- t5-20020a056870600500b000e6515cda5amr1020559oaa.183.1651708276883; Wed, 04
- May 2022 16:51:16 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=NL6kCfWNkdphJnV4oRw2YcLQPVbE//4Y+6oXMFyD+Ks=;
+        b=ar+1Kai3VRk2Vz+aIgauOAkU+KXae/L3c8PU3mWPc/hu07ABUi6bU3LWUdmJZ9X746
+         KypQegWI4iXmM7OkSKh7VaOd/w2PTsxBbpCzmHLkkZvsPd1BIs6Bb9b9GHBs03oo5i/7
+         WBMaVDPERXkEu59exyxgSjVh07Of92FEYRE7eUZnwXNsbm3N520nP/e1DuBOP2p0+wpz
+         WQWUoEbRrrDr36OzJpqQJf/4KQMqxssnrQ80m+NqEqO1IMOmyRaa59hordjqGC2H5lyy
+         kjepJwlkrHMiJj4kxEcoFEkJCP1fVWno8kTM0dF4BfA8AroUGkcQQjSag4Wvd3CcHQFw
+         vAZQ==
+X-Gm-Message-State: AOAM532xUc8FlX7bGpz6yOyv+cEZ8cy79C8bodQRZgsLiMH8ryfJeD8X
+        +ENHA5NUdExVDBx6g2NuvBRolLNXBg077DYbOQmTtL4vRIIsQ1kC2rpffludoLnxr5CUD+YiXmQ
+        OaVsYsgYHgCs4HJ0edTX95Q==
+X-Received: by 2002:a63:8ac7:0:b0:3aa:fa62:5a28 with SMTP id y190-20020a638ac7000000b003aafa625a28mr20102634pgd.400.1651709687993;
+        Wed, 04 May 2022 17:14:47 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxjBUjcGtrPFaC6MNlqv9ygjk6VXoU9zuoc3UG0LZAZYuAty7WLg8IBZvTAci3eTuVreIAXDQ==
+X-Received: by 2002:a63:8ac7:0:b0:3aa:fa62:5a28 with SMTP id y190-20020a638ac7000000b003aafa625a28mr20102617pgd.400.1651709687785;
+        Wed, 04 May 2022 17:14:47 -0700 (PDT)
+Received: from [10.72.12.122] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id im22-20020a170902bb1600b0015e8d4eb1d9sm91725plb.35.2022.05.04.17.14.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 May 2022 17:14:47 -0700 (PDT)
+Subject: Re: [PATCH] ceph: report STATX_ATTR_ENCRYPTED on encrypted inodes
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Cc:     lhenriques@suse.de, idryomov@gmail.com
+References: <20220504110536.13418-1-jlayton@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <e1453800-723a-cc62-a34f-96611e7ead39@redhat.com>
+Date:   Thu, 5 May 2022 08:14:41 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Received: by 2002:a05:6802:1a9:0:0:0:0 with HTTP; Wed, 4 May 2022 16:51:16
- -0700 (PDT)
-Reply-To: ortegainvestmmentforrealinvest@gmail.com
-From:   Info <joybhector64@gmail.com>
-Date:   Thu, 5 May 2022 05:21:16 +0530
-Message-ID: <CAP7KLYjtz_qWKEF8hKvGtdp2G3HBY2yq5YNOBeM0Nc0=iV_NcA@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.3 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2001:4860:4864:20:0:0:0:43 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5001]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [joybhector64[at]gmail.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [joybhector64[at]gmail.com]
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  3.5 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+In-Reply-To: <20220504110536.13418-1-jlayton@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Spam-Status: No, score=-5.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
--- 
-I am an investor. I came from the USA and I have many investments all
-over the world.
 
-I want you to partner with me to invest in your country I am into many
-investment such as real Estate or buying of properties i can also
-invest money in any of existing business with equity royalty or by %
-percentage so on,
-Warm regards
+On 5/4/22 7:05 PM, Jeff Layton wrote:
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>   fs/ceph/inode.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> ...another minor patch for the fscrypt pile.
+>
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index ae9afc149da1..f7d56aaea27d 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -2979,6 +2979,10 @@ int ceph_getattr(struct user_namespace *mnt_userns, const struct path *path,
+>   			stat->nlink = 1 + 1 + ci->i_subdirs;
+>   	}
+>   
+> +	if (IS_ENCRYPTED(inode))
+> +		stat->attributes |= STATX_ATTR_ENCRYPTED;
+> +	stat->attributes_mask |= STATX_ATTR_ENCRYPTED;
+> +
+>   	stat->result_mask = request_mask & valid_mask;
+>   	return err;
+>   }
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
+
