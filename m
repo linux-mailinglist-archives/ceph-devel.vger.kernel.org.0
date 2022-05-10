@@ -2,230 +2,157 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BF66251FBBE
-	for <lists+ceph-devel@lfdr.de>; Mon,  9 May 2022 13:53:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0654520C0C
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 May 2022 05:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233436AbiEIL5P (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 9 May 2022 07:57:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56428 "EHLO
+        id S235629AbiEJDcM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 9 May 2022 23:32:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233433AbiEIL5N (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 9 May 2022 07:57:13 -0400
+        with ESMTP id S235827AbiEJDb3 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 9 May 2022 23:31:29 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 142C516A26A
-        for <ceph-devel@vger.kernel.org>; Mon,  9 May 2022 04:53:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C472B5DE60
+        for <ceph-devel@vger.kernel.org>; Mon,  9 May 2022 20:27:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652097198;
+        s=mimecast20190719; t=1652153234;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DFnuVWBKUlAOM9ixtZlQ/Ix8sF3yMfNi1uQg7WAyjek=;
-        b=e7C/h6DkgF8pnRou44V+ouXVi/RNkAC5kK1GobYyvj2ClbkD9kLLsi+VIo/6lzqzXTEE0I
-        fMyRB1CCiYx2PEJqaqDWmIELygc51DcBysbqqW6hd9oo9WVWXozqp7K8iwWMqIEzBRjVRn
-        sUgzCyhBtE4rkXJm38VHIc0EW9Qd7sg=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=nUpq+q51eEzVEqJ5wmSXQd0tgNfMLWL9fpZxn4g4jys=;
+        b=SGB4SeNX/OdcpK1E+szZ3/KspOUynHqtR2c6J8j5RqTM95h+KtbkOfKlbacK6glpexd02Y
+        1XH5CvMKdS5ruKufgYhtsJkLWphKzjY2N0wALZR/4s8j3L4eZLvKUUVyot6uHLJKa2Elf9
+        ST4sIYGn5Iq3eAL+OX2Peh2YcbIWmtY=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-662-09enw5khMhm7dYWRKshymg-1; Mon, 09 May 2022 07:53:17 -0400
-X-MC-Unique: 09enw5khMhm7dYWRKshymg-1
-Received: by mail-pl1-f197.google.com with SMTP id v8-20020a170902b7c800b0015e927ee201so8168129plz.12
-        for <ceph-devel@vger.kernel.org>; Mon, 09 May 2022 04:53:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=DFnuVWBKUlAOM9ixtZlQ/Ix8sF3yMfNi1uQg7WAyjek=;
-        b=2FfD77N0WvQlIQIvnqabwJD20u7oTQO0l9aCTvlRmUbfW4OL+YU3O1sm/vlnxPl2Jx
-         raWrhE6cA+0ez/11tszfUnYYIWb2STjEkxA/PgBNfpmwC45zlyftboWkNDqRrRyMw+iZ
-         3Qoj55EwEC6EPeUTpatwZ6/i3l+9VD/f4yxMnScCFeaVQcQMaLBv741YaF/l0Arz+iea
-         lV8VjY2+T90jZUmjPU7Rk2dGN248R7g9QrAgE3/A0oUcdZ3l8S79A9VEpBDfejv0wiY2
-         71koYXnCHHEYHAzIgsJaToMijSe2O7CPg8ADkgWMVk1vZBthSTbFWvP1cP8uFYN28BRG
-         XOAg==
-X-Gm-Message-State: AOAM5324dwKFWMaG41Rc3K2PIgbzUeebh/E3+4QoHcyYAtaLSc6fUOyO
-        c0+oA8ymMcOg5elIy06f8NcAFOBN7BBFql1z0fgnKk43Ni03MMxD0lfQ7JfCq0B7NC99KI8NlyC
-        4/YF4DzLODYr4Mp+Qzh3Iyw==
-X-Received: by 2002:a17:90b:4ac1:b0:1dc:20c4:6363 with SMTP id mh1-20020a17090b4ac100b001dc20c46363mr25962975pjb.79.1652097195820;
-        Mon, 09 May 2022 04:53:15 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxGQu0i7hUcWRQJN542eAEhfZPJH9Jm9kElio3e1lHTjh0BiH/yJ6QBQxwFo+wV5ovf/VH5IA==
-X-Received: by 2002:a17:90b:4ac1:b0:1dc:20c4:6363 with SMTP id mh1-20020a17090b4ac100b001dc20c46363mr25962957pjb.79.1652097195557;
-        Mon, 09 May 2022 04:53:15 -0700 (PDT)
-Received: from [10.72.12.57] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id a1-20020aa78e81000000b0050dc7628137sm8816721pfr.17.2022.05.09.04.53.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 May 2022 04:53:14 -0700 (PDT)
-Subject: Re: [PATCH v14 00/64] ceph+fscrypt: full support
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     lhenriques@suse.de, idryomov@gmail.com
-References: <20220427191314.222867-1-jlayton@kernel.org>
+ us-mta-52-BHzazZjjPSeThCaR7dudyg-1; Mon, 09 May 2022 23:27:09 -0400
+X-MC-Unique: BHzazZjjPSeThCaR7dudyg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 93A8E3C11A0D;
+        Tue, 10 May 2022 03:27:08 +0000 (UTC)
+Received: from localhost (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 18A04111E3EC;
+        Tue, 10 May 2022 03:27:05 +0000 (UTC)
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <bad2bc12-f97b-fcab-7d0d-764fec1ecee7@redhat.com>
-Date:   Mon, 9 May 2022 19:53:09 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+To:     jlayton@kernel.org
+Cc:     idryomov@gmail.com, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] ceph: fix possible NULL pointer dereference of the ci
+Date:   Tue, 10 May 2022 11:27:03 +0800
+Message-Id: <20220510032703.588333-1-xiubli@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20220427191314.222867-1-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff,
+When unmounting and if there still have some caps or capsnaps flushing
+still not get the acks it will wait and dump them, but for the capsnaps
+they didn't initialize the ->ci, so when deferencing the ->ci we will
+see the kernel crash:
 
-All the patches looks good to me. I saw you have fixed the "[PATCH v14 
-58/64]" in the wip-fscrypt branch.
+kernel: ceph: dump_cap_flushes: still waiting for cap flushes through 45572:
+kernel: ceph: 5000000008b:fffffffffffffffe Fw 23183 0 0
+kernel: ceph: 5000000008a:fffffffffffffffe Fw 23184 0 0
+kernel: ceph: 50000000089:fffffffffffffffe Fw 23185 0 0
+kernel: ceph: 50000000084:fffffffffffffffe Fw 23189 0 0
+kernel: ceph: 5000000007a:fffffffffffffffe Fw 23199 0 0
+kernel: ceph: 50000000094:fffffffffffffffe Fw 23374 0 0
+kernel: ceph: 50000000092:fffffffffffffffe Fw 23377 0 0
+kernel: ceph: 50000000091:fffffffffffffffe Fw 23378 0 0
+kernel: ceph: 5000000008e:fffffffffffffffe Fw 23380 0 0
+kernel: ceph: 50000000087:fffffffffffffffe Fw 23382 0 0
+kernel: ceph: 50000000086:fffffffffffffffe Fw 23383 0 0
+kernel: ceph: 50000000083:fffffffffffffffe Fw 23384 0 0
+kernel: ceph: 50000000082:fffffffffffffffe Fw 23385 0 0
+kernel: ceph: 50000000081:fffffffffffffffe Fw 23386 0 0
+kernel: ceph: 50000000080:fffffffffffffffe Fw 23387 0 0
+kernel: ceph: 5000000007e:fffffffffffffffe Fw 23389 0 0
+kernel: ceph: 5000000007b:fffffffffffffffe Fw 23392 0 0
+kernel: BUG: kernel NULL pointer dereference, address: 0000000000000780
+kernel: #PF: supervisor read access in kernel mode
+kernel: #PF: error_code(0x0000) - not-present page
+kernel: PGD 0 P4D 0
+kernel: Oops: 0000 [#1] PREEMPT SMP PTI
+kernel: CPU: 3 PID: 46268 Comm: umount Tainted: G S                5.18.0-rc2-ceph-g1771083b2f18 #1
+kernel: Hardware name: Supermicro SYS-5018R-WR/X10SRW-F, BIOS 2.0 12/17/2015
+kernel: RIP: 0010:ceph_mdsc_sync.cold.64+0x77/0xc3 [ceph]
+kernel: RSP: 0018:ffffc90009c4fda8 EFLAGS: 00010212
+kernel: RAX: 0000000000000000 RBX: ffff8881abf63000 RCX: 0000000000000000
+kernel: RDX: 0000000000000000 RSI: ffffffff823932ad RDI: 0000000000000000
+kernel: RBP: ffff8881abf634f0 R08: 0000000000005dc7 R09: c0000000ffffdfff
+kernel: R10: 0000000000000001 R11: ffffc90009c4fbc8 R12: 0000000000000001
+kernel: R13: 000000000000b204 R14: ffffffffa0ab3598 R15: ffff88815d36a110
+kernel: FS:  00007f50eb25e080(0000) GS:ffff88885fcc0000(0000) knlGS:0000000000000000
+kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kernel: CR2: 0000000000000780 CR3: 0000000116ea2003 CR4: 00000000003706e0
+kernel: DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+kernel: DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+kernel: Call Trace:
+kernel: <TASK>
+kernel: ? schedstat_stop+0x10/0x10
+kernel: ceph_sync_fs+0x2c/0x100 [ceph]
+kernel: sync_filesystem+0x6d/0x90
+kernel: generic_shutdown_super+0x22/0x120
+kernel: kill_anon_super+0x14/0x30
+kernel: ceph_kill_sb+0x36/0x90 [ceph]
+kernel: deactivate_locked_super+0x29/0x60
+kernel: cleanup_mnt+0xb8/0x140
+kernel: task_work_run+0x6d/0xb0
+kernel: exit_to_user_mode_prepare+0x226/0x230
+kernel: syscall_exit_to_user_mode+0x25/0x60
+kernel: do_syscall_64+0x40/0x80
+kernel: entry_SYSCALL_64_after_hwframe+0x44/0xae
 
-Feel free to add:
+Cc: stable@vger.kernel.org
+https://tracker.ceph.com/issues/55332
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/mds_client.c | 5 +++--
+ fs/ceph/snap.c       | 1 +
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
-
-Thanks.
-
--- Xiubo
-
-
-On 4/28/22 3:12 AM, Jeff Layton wrote:
-> Yet another ceph+fscrypt posting. The main changes since v13:
->
-> - rebased onto v5.18-rc4 + ceph testing branch patches, fixed up minor
->    merge conflicts, and squashed a few patches together
->
-> - squashed in a number of patches from Xiubo to fix issues with
->    truncation handling
->
-> - incorporated Luís' patches to encrypt snapshot names
->
-> - dropped a patch to export fscrypt's base64 implementation, since Luís'
->    snapshot implementation added a new variant that we need to use.
->
-> At this point, I'm mainly waiting on Al to merge this patch into -next
-> and eventually into v5.19:
->
->      fs: change test in inode_insert5 for adding to the sb list
->
-> Once that's in, it should clear the way for us to start merging the
-> rest of the pile (though probably not all at once).
->
-> There are also some mysterious failures that have cropped up in testing
-> with teuthology, particularly with thrash testing. We'll need to get to
-> the bottom of that before we can merge the bulk of these patches.
->
-> I've updated the wip-fscrypt branch in the ceph tree with this pile for
-> now. Help with testing would be welcome!
->
-> Jeff Layton (48):
->    libceph: add spinlock around osd->o_requests
->    libceph: define struct ceph_sparse_extent and add some helpers
->    libceph: add sparse read support to msgr2 crc state machine
->    libceph: add sparse read support to OSD client
->    libceph: support sparse reads on msgr2 secure codepath
->    libceph: add sparse read support to msgr1
->    ceph: add new mount option to enable sparse reads
->    fs: change test in inode_insert5 for adding to the sb list
->    fscrypt: export fscrypt_fname_encrypt and fscrypt_fname_encrypted_size
->    fscrypt: add fscrypt_context_for_new_inode
->    ceph: preallocate inode for ops that may create one
->    ceph: fscrypt_auth handling for ceph
->    ceph: ensure that we accept a new context from MDS for new inodes
->    ceph: add support for fscrypt_auth/fscrypt_file to cap messages
->    ceph: implement -o test_dummy_encryption mount option
->    ceph: decode alternate_name in lease info
->    ceph: add fscrypt ioctls
->    ceph: make ceph_msdc_build_path use ref-walk
->    ceph: add encrypted fname handling to ceph_mdsc_build_path
->    ceph: send altname in MClientRequest
->    ceph: encode encrypted name in dentry release
->    ceph: properly set DCACHE_NOKEY_NAME flag in lookup
->    ceph: set DCACHE_NOKEY_NAME in atomic open
->    ceph: make d_revalidate call fscrypt revalidator for encrypted
->      dentries
->    ceph: add helpers for converting names for userland presentation
->    ceph: add fscrypt support to ceph_fill_trace
->    ceph: create symlinks with encrypted and base64-encoded targets
->    ceph: make ceph_get_name decrypt filenames
->    ceph: add a new ceph.fscrypt.auth vxattr
->    ceph: add some fscrypt guardrails
->    libceph: add CEPH_OSD_OP_ASSERT_VER support
->    ceph: size handling for encrypted inodes in cap updates
->    ceph: fscrypt_file field handling in MClientRequest messages
->    ceph: get file size from fscrypt_file when present in inode traces
->    ceph: handle fscrypt fields in cap messages from MDS
->    ceph: update WARN_ON message to pr_warn
->    ceph: add infrastructure for file encryption and decryption
->    libceph: allow ceph_osdc_new_request to accept a multi-op read
->    ceph: disable fallocate for encrypted inodes
->    ceph: disable copy offload on encrypted inodes
->    ceph: don't use special DIO path for encrypted inodes
->    ceph: align data in pages in ceph_sync_write
->    ceph: add read/modify/write to ceph_sync_write
->    ceph: plumb in decryption during sync reads
->    ceph: add fscrypt decryption support to ceph_netfs_issue_op
->    ceph: set i_blkbits to crypto block size for encrypted inodes
->    ceph: add encryption support to writepage
->    ceph: fscrypt support for writepages
->
-> Luís Henriques (7):
->    ceph: add base64 endcoding routines for encrypted names
->    ceph: don't allow changing layout on encrypted files/directories
->    ceph: invalidate pages when doing direct/sync writes
->    ceph: add support for encrypted snapshot names
->    ceph: add support for handling encrypted snapshot names
->    ceph: update documentation regarding snapshot naming limitations
->    ceph: prevent snapshots to be created in encrypted locked directories
->
-> Xiubo Li (9):
->    ceph: make the ioctl cmd more readable in debug log
->    ceph: fix base64 encoded name's length check in ceph_fname_to_usr()
->    ceph: pass the request to parse_reply_info_readdir()
->    ceph: add ceph_encode_encrypted_dname() helper
->    ceph: add support to readdir for encrypted filenames
->    ceph: add __ceph_get_caps helper support
->    ceph: add __ceph_sync_read helper support
->    ceph: add object version support for sync read
->    ceph: add truncate size handling support for fscrypt
->
->   Documentation/filesystems/ceph.rst |  10 +
->   fs/ceph/Makefile                   |   1 +
->   fs/ceph/acl.c                      |   4 +-
->   fs/ceph/addr.c                     | 136 ++++--
->   fs/ceph/caps.c                     | 219 ++++++++--
->   fs/ceph/crypto.c                   | 638 +++++++++++++++++++++++++++++
->   fs/ceph/crypto.h                   | 264 ++++++++++++
->   fs/ceph/dir.c                      | 187 +++++++--
->   fs/ceph/export.c                   |  44 +-
->   fs/ceph/file.c                     | 598 ++++++++++++++++++++++-----
->   fs/ceph/inode.c                    | 579 +++++++++++++++++++++++---
->   fs/ceph/ioctl.c                    | 126 +++++-
->   fs/ceph/mds_client.c               | 465 +++++++++++++++++----
->   fs/ceph/mds_client.h               |  24 +-
->   fs/ceph/super.c                    | 107 ++++-
->   fs/ceph/super.h                    |  43 +-
->   fs/ceph/xattr.c                    |  29 ++
->   fs/crypto/fname.c                  |  36 +-
->   fs/crypto/fscrypt_private.h        |   9 +-
->   fs/crypto/hooks.c                  |   6 +-
->   fs/crypto/policy.c                 |  35 +-
->   fs/inode.c                         |  11 +-
->   include/linux/ceph/ceph_fs.h       |  21 +-
->   include/linux/ceph/messenger.h     |  32 ++
->   include/linux/ceph/osd_client.h    |  89 +++-
->   include/linux/ceph/rados.h         |   4 +
->   include/linux/fscrypt.h            |   5 +
->   net/ceph/messenger.c               |   1 +
->   net/ceph/messenger_v1.c            |  98 ++++-
->   net/ceph/messenger_v2.c            | 287 ++++++++++++-
->   net/ceph/osd_client.c              | 306 +++++++++++++-
->   31 files changed, 4009 insertions(+), 405 deletions(-)
->   create mode 100644 fs/ceph/crypto.c
->   create mode 100644 fs/ceph/crypto.h
->
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 46a13ea9d284..e8c87dea0551 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2001,10 +2001,11 @@ static void dump_cap_flushes(struct ceph_mds_client *mdsc, u64 want_tid)
+ 	list_for_each_entry(cf, &mdsc->cap_flush_list, g_list) {
+ 		if (cf->tid > want_tid)
+ 			break;
+-		pr_info("%llx:%llx %s %llu %llu %d\n",
++		pr_info("%llx:%llx %s %llu %llu %d%s\n",
+ 			ceph_vinop(&cf->ci->vfs_inode),
+ 			ceph_cap_string(cf->caps), cf->tid,
+-			cf->ci->i_last_cap_flush_ack, cf->wake);
++			cf->ci->i_last_cap_flush_ack, cf->wake,
++			cf->is_capsnap ? " is_capsnap" : "");
+ 	}
+ 	spin_unlock(&mdsc->cap_dirty_lock);
+ }
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index 322ee5add942..db1433ce666e 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -585,6 +585,7 @@ static void ceph_queue_cap_snap(struct ceph_inode_info *ci,
+ 	     ceph_cap_string(dirty), capsnap->need_flush ? "" : "no_flush");
+ 	ihold(inode);
+ 
++	capsnap->cap_flush.ci = ci;
+ 	capsnap->follows = old_snapc->seq;
+ 	capsnap->issued = __ceph_caps_issued(ci, NULL);
+ 	capsnap->dirty = dirty;
+-- 
+2.36.0.rc1
 
