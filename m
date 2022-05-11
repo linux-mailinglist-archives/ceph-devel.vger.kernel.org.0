@@ -2,103 +2,139 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 82502522AC7
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 May 2022 06:23:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D84A5523AE3
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 May 2022 18:53:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232026AbiEKEXv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 11 May 2022 00:23:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46450 "EHLO
+        id S1345128AbiEKQxq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 11 May 2022 12:53:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230393AbiEKEXt (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 May 2022 00:23:49 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C08EC3C4A2
-        for <ceph-devel@vger.kernel.org>; Tue, 10 May 2022 21:23:44 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id c9so735330plh.2
-        for <ceph-devel@vger.kernel.org>; Tue, 10 May 2022 21:23:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=w3fXqagdV6ARWiDPbvkyYPAzxiQLdd0lCJMoPe8dDH8=;
-        b=Pch7rUAX9MCFHwpyAmxNkr2ncZrpmjVnG3PJyHPXfeoV8bBDEhn4M5b511U3rmVjDE
-         1KfLMR9ecbDaur4edmblJUwf3XACVoedhMLWt44eFpLgIVcy8TY2rcPyCnZz+hEc2dmi
-         K1dxC+E6PazMsWc0fdeSLrmWumJn2mtt76ldwGmGc1YoRKejeaAuk22T+nySst7hzdjN
-         zUOlZYnOrybLBbSTtjgW4LEBQczXV7cLpWMppFwvx1gMaEAxjQkgUTcf5qTF6WKc36q8
-         0z80z/JS91a3ruCNENGazKCp8YRFd5flXSS/QfdgfEveATAAtoKwCTrvaJtljR+49IzX
-         wNpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=w3fXqagdV6ARWiDPbvkyYPAzxiQLdd0lCJMoPe8dDH8=;
-        b=w9XjqN3vjdqMaOwVupwP0JDrVG6zIbbcsOHk0XZcNvpVAivUlMvXb1cuXPxuHSb9Hw
-         WgC/HVhQba+5DX3FNURtDbSjVnAbaBlY/hHb7yfw2MR4F1KqTxUrDj+hRcqbpWwZS60q
-         D9RtbqdVATXiDtTyywxxXzV8L7e03VDnJIcbqeTJ38qNJHXzPMb8jaWwIgH7VMpchv+E
-         HY4uI3VDfFPCC5cMR/87rB2imp8B+zRw2S44rphjpiIT5TWrSH+EhDuUaKfdbCY9/fjF
-         F6WXBCkjBy7voTZ2lw10SeF73lxKC4tCxwEKZELrpvTsnv5hzD2qaik2MrWAXsRoycZc
-         /akQ==
-X-Gm-Message-State: AOAM531/iVIN6EdxrCm7J/JgvNLVdFJZwqGTKDU22AJCUp44KskJFTZn
-        4ItMEpJl8NSMfua1t7RgfPnnISgz/9Av0cHPglg=
-X-Google-Smtp-Source: ABdhPJxJs4nzuMfmP5boS0ffSAaXLrKDqKBvj1kNXu+C/kyS+OgFPM9tmbftl48ZHJmbTXOKZdnM0ko7/vFVBTvBZMs=
-X-Received: by 2002:a17:90b:1007:b0:1dc:9862:68af with SMTP id
- gm7-20020a17090b100700b001dc986268afmr3213093pjb.205.1652243024210; Tue, 10
- May 2022 21:23:44 -0700 (PDT)
+        with ESMTP id S236495AbiEKQxp (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 May 2022 12:53:45 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D816B167ED;
+        Wed, 11 May 2022 09:53:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 89F2EB82527;
+        Wed, 11 May 2022 16:53:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A02BEC340EE;
+        Wed, 11 May 2022 16:53:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652288021;
+        bh=e9vbk1Pqaf3l9bUqYJpN10NAUUig8p2n65wo8lvfY7c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=p3WRz7S2UkyN3pxwVr09s0NmSETrW0Q5CKXPOSe3oiinf94Em17VJbQCtOWaK5rr7
+         i1yViJY4ZZ4+S5sF0i0aNSGIMAq/F2HQIfIbEGoDAUoXQ7rQwhLOLA5WgnFqWgwRow
+         M9smy8pz9sBNJeudpxFpZHepn4SIIpwqFwL2IyQMjJ7MwzevGaTlv5mdaxpTJnjBGX
+         s9a0RCjVtpqPlW/4PWn83uicLqBCwq35NESUv1t+7AlawYVuC2CGEtdokKksA59M/k
+         Eyn/ThkSwUdKo/nyB/ChY1/TSgcDBDUYpVu9kD8gZAKh6ZB9EEfBSwRK1xzStBEzr4
+         WHnPIg0T1eJjg==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com, xiubli@redhat.com,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <dchinner@redhat.com>
+Subject: [PATCH v2] fs: change test in inode_insert5 for adding to the sb list
+Date:   Wed, 11 May 2022 12:53:39 -0400
+Message-Id: <20220511165339.85614-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.35.3
 MIME-Version: 1.0
-Received: by 2002:a05:6a10:319:0:0:0:0 with HTTP; Tue, 10 May 2022 21:23:41
- -0700 (PDT)
-From:   Private Mail <privatemail1961@gmail.com>
-Date:   Tue, 10 May 2022 21:23:41 -0700
-Message-ID: <CANjAOAg_uGZV8_euUey_BjE4C4EPi5QC0MAi_q-Qe+oZ-iQbfg@mail.gmail.com>
-Subject: Have you had this? It is for your Benefit
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=4.3 required=5.0 tests=ADVANCE_FEE_4_NEW_MONEY,
-        BAYES_50,DEAR_BENEFICIARY,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,FREEMAIL_REPLY,
-        LOTS_OF_MONEY,MONEY_FRAUD_5,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNDISC_MONEY autolearn=no autolearn_force=no
-        version=3.4.6
-X-Spam-Level: ****
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Our Ref: BG/WA0151/2022
+The inode_insert5 currently looks at I_CREATING to decide whether to
+insert the inode into the sb list. This test is a bit ambiguous though
+as I_CREATING state is not directly related to that list.
 
-Dear Beneficiary
+This test is also problematic for some upcoming ceph changes to add
+fscrypt support. We need to be able to allocate an inode using new_inode
+and insert it into the hash later if we end up using it, and doing that
+now means that we double add it and corrupt the list.
 
-Subject: An Estate of US$15.8 Million
+What we really want to know in this test is whether the inode is already
+in its superblock list, and then add it if it isn't. Have it test for
+list_empty instead and ensure that we always initialize the list by
+doing it in inode_init_once. It's only ever removed from the list with
+list_del_init, so that should be sufficient.
 
-Blount and Griffin Genealogical Investigators specializes in probate
-research to locate missing heirs and beneficiaries to estates in the
-United Kingdom and Europe.
+There doesn't seem to be any need to hold the inode_hash_lock for this
+operation either, so drop that before adding to to the list.
 
-We can also help you find wills, obtain copies of certificates, help
-you to administer an estate, as well as calculating how an estate,
-intestacy or trust should be distributed.
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+---
+ fs/inode.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-You may be entitled to a large pay out for an inheritance in Europe
-worth US$15.8 million. We have discovered an estate belonging to the
-late Depositor has remained unclaimed since he died in 2011 and we
-have strong reasons to believe you are the closest living relative to
-the deceased we can find.
+A small revision to the patch that I sent as part of the ceph+fscrypt
+series. I didn't see any need to hold the inode_hash_lock when adding
+the inode to the sb list, so do that outside the lock. I also revised
+the comment to be more clear.
 
-You may unknowingly be the heir of this person who died without
-leaving a will (intestate). We will conduct a probate research to
-prove your entitlement, and can submit a claim on your behalf all at
-no risk to yourselves.
+Al, I'm planning to merge this via the ceph tree since I have other
+patches that depend on it. Let me know if you'd rather take this via
+your tree instead.
 
-Our service fee of 10% will be paid to us after you have received the estate.
+diff --git a/fs/inode.c b/fs/inode.c
+index 9d9b422504d1..9d429247a4f0 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -422,6 +422,7 @@ void inode_init_once(struct inode *inode)
+ 	INIT_LIST_HEAD(&inode->i_io_list);
+ 	INIT_LIST_HEAD(&inode->i_wb_list);
+ 	INIT_LIST_HEAD(&inode->i_lru);
++	INIT_LIST_HEAD(&inode->i_sb_list);
+ 	__address_space_init_once(&inode->i_data);
+ 	i_size_ordered_init(inode);
+ }
+@@ -1021,7 +1022,6 @@ struct inode *new_inode_pseudo(struct super_block *sb)
+ 		spin_lock(&inode->i_lock);
+ 		inode->i_state = 0;
+ 		spin_unlock(&inode->i_lock);
+-		INIT_LIST_HEAD(&inode->i_sb_list);
+ 	}
+ 	return inode;
+ }
+@@ -1165,7 +1165,6 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+ {
+ 	struct hlist_head *head = inode_hashtable + hash(inode->i_sb, hashval);
+ 	struct inode *old;
+-	bool creating = inode->i_state & I_CREATING;
+ 
+ again:
+ 	spin_lock(&inode_hash_lock);
+@@ -1199,11 +1198,17 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+ 	inode->i_state |= I_NEW;
+ 	hlist_add_head_rcu(&inode->i_hash, head);
+ 	spin_unlock(&inode->i_lock);
+-	if (!creating)
+-		inode_sb_list_add(inode);
+ unlock:
+ 	spin_unlock(&inode_hash_lock);
+ 
++	/*
++	 * Add it to the sb list if it's not already. If there is an inode,
++	 * then it has I_NEW at this point, so it should be safe to test
++	 * i_sb_list locklessly.
++	 */
++	if (inode && list_empty(&inode->i_sb_list))
++		inode_sb_list_add(inode);
++
+ 	return inode;
+ }
+ EXPORT_SYMBOL(inode_insert5);
+-- 
+2.35.3
 
-The estate transfer process should take just a matter of days as we
-have the mechanism and expertise to get this done very quickly. This
-message may come to you as a shock, however we hope to work with you
-to transfer the estate to you as quickly as possible.
-
-Feel free to email our senior case worker Mr. Malcolm Casey on email:
-malcolmcasey68@yahoo.com for further discussions.
-
-With warm regards,
-
-Mr. Blount W. Gort, CEO.
