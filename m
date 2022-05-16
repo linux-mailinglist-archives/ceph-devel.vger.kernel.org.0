@@ -2,54 +2,77 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AC91527D45
-	for <lists+ceph-devel@lfdr.de>; Mon, 16 May 2022 08:00:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F6E952840B
+	for <lists+ceph-devel@lfdr.de>; Mon, 16 May 2022 14:21:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240031AbiEPGAK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 16 May 2022 02:00:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36386 "EHLO
+        id S241844AbiEPMVJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 16 May 2022 08:21:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236656AbiEPGAI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 May 2022 02:00:08 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C96B1B7BA;
-        Sun, 15 May 2022 23:00:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=g+o8sodhtoWcxq2TQAmheHP3R7
-        VBkKEY71gl0g0vVRzaD9BUIKs7lsqzoyS1A15NtFbMmOcvL0y9XtEGDxCXqrliXOL/1iNEGqvOqa4
-        uEMz3Sv6Q/WPq3hMpI4CW3qRMcGGHd9g73x2orGxE9Eiw4v6vqRJna7pui+5LMxp5QolNOWgxrh4X
-        AF3ZLNBNaBIStxL+qP6Eqwbc0JwAJVTuEAaVmEOq373MS9rCI8R1iB5EYOg259HP2u/izJua9rAcm
-        wFCkSLLgzknUpGmkLLKE8Yqh5xILqQLftUPTgJ8KD4ROaFRuRnD+nUtE5HPykWilKxGg9uqp0me2M
-        TJ30Acjw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nqTm0-0066N7-ST; Mon, 16 May 2022 06:00:04 +0000
-Date:   Sun, 15 May 2022 23:00:04 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     viro@zeniv.linux.org.uk, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: change test in inode_insert5 for adding to the sb
- list
-Message-ID: <YoHoZCeCjZmKg19U@infradead.org>
-References: <20220331225632.247244-1-jlayton@kernel.org>
+        with ESMTP id S241515AbiEPMVI (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 16 May 2022 08:21:08 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ADE782659
+        for <ceph-devel@vger.kernel.org>; Mon, 16 May 2022 05:21:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1652703666;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=2vplNptXwHAMGh0lZxOAIZAEP+KO2WKTxJNAPuttPjw=;
+        b=Mli6CDPYm2tmaT+TbkUst74v5xbGI/nHHky0FDaaqlPwD7+p5Ar3OR7aLBIuonL8VDJS3Q
+        NScwXVNEFdfG/x707TN1f9aU6yTCbjd/ttUS3ADpHsm+px3I/v9NWNBnHTmCKibR/ey8Rb
+        eT0YJTVYlRFJIRSZCZ5l9//mHN312tc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-434-ZG7EnukvMz-mjwpNc69W2g-1; Mon, 16 May 2022 08:21:01 -0400
+X-MC-Unique: ZG7EnukvMz-mjwpNc69W2g-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CCE4A10DEB2A;
+        Mon, 16 May 2022 12:20:55 +0000 (UTC)
+Received: from localhost (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 203F61121315;
+        Mon, 16 May 2022 12:20:54 +0000 (UTC)
+From:   Xiubo Li <xiubli@redhat.com>
+To:     jlayton@kernel.org, viro@zeniv.linux.org.uk
+Cc:     idryomov@gmail.com, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org, mcgrof@kernel.org,
+        akpm@linux-foundation.org, arnd@arndb.de,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH 0/2] ceph: wait async unlink to finish
+Date:   Mon, 16 May 2022 20:20:44 +0800
+Message-Id: <20220516122046.40655-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220331225632.247244-1-jlayton@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Looks good:
+Xiubo Li (2):
+  fs/dcache: add d_compare() helper support
+  ceph: wait the first reply of inflight unlink/rmdir
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+ fs/ceph/dir.c          | 55 ++++++++++++++++++++++++++++++---
+ fs/ceph/file.c         |  5 +++
+ fs/ceph/mds_client.c   | 69 ++++++++++++++++++++++++++++++++++++++++++
+ fs/ceph/mds_client.h   |  1 +
+ fs/ceph/super.c        |  2 ++
+ fs/ceph/super.h        | 18 ++++++++---
+ fs/dcache.c            | 15 +++++++++
+ include/linux/dcache.h |  2 ++
+ 8 files changed, 157 insertions(+), 10 deletions(-)
+
+-- 
+2.36.0.rc1
+
