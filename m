@@ -2,94 +2,125 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC92A52BC24
-	for <lists+ceph-devel@lfdr.de>; Wed, 18 May 2022 16:16:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5475E52BE8E
+	for <lists+ceph-devel@lfdr.de>; Wed, 18 May 2022 17:26:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238487AbiEROJE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 18 May 2022 10:09:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51080 "EHLO
+        id S238590AbiEROXg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 18 May 2022 10:23:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238471AbiEROJC (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 18 May 2022 10:09:02 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07BA8187DAB;
-        Wed, 18 May 2022 07:09:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C5345B820E3;
-        Wed, 18 May 2022 14:09:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5CB2C385A9;
-        Wed, 18 May 2022 14:08:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652882939;
-        bh=wzcmu1G8koPCKQdM0ZCd6UshnHAiOZecGxolrNIwL74=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=uonAdrzpNQs0HZTXpIpLdX8qhNybyA2I8BAjHtcgbCyjVTtckOyeozTcDn1EY7/bm
-         EE/uctpitm3Z9adKxutnMwDfIG3hKVSWZnOLqV/JbKTZzmcE7HF1klsCju0kZvFLPc
-         6DPnrgwgeGbXPGYG4Z1k/4YyfPhHhgQgaYey7n0JfRGjVjxPGm74IXbzm1z2NNEP5o
-         VG536SGup0BqYbwN2l34VYRv4eK6qGIY9Ec0eihbTfw69qSQUMRQFSx1dv9H16d/IQ
-         FFt/nYUnjIrYM3XGtIH4xql59GfB+5Iac79oAPws0W57zli3jYH8xXWfRXibcwgSlg
-         f3WaOR57tA88Q==
-Message-ID: <9e6761899e81c8b7d91091403b5aab6e628e605a.camel@kernel.org>
+        with ESMTP id S238583AbiEROXf (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 18 May 2022 10:23:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B9FB518358
+        for <ceph-devel@vger.kernel.org>; Wed, 18 May 2022 07:23:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1652883813;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xEnVe+thJMrj0C89/i9QBXS8K26hkY9sQCbQCmrjIxg=;
+        b=QaYS5HiPyscs3S0K6uYLrjm6Os45LLbCsNPutNDhdEIX5CslkZzc7x03II4DbUfkLFXk6U
+        620LtB/vUfU/9GP2frmKWuFa5TWt9MwJN6IrxQdzG3g7E3ZDY9uo9uoKpB9Vfr/CscFaRJ
+        wi7YIiArGPQgb8CbSSBkOU2snYOY96Y=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-617-Y2Cq0VKZNM6ALujhcToQ8A-1; Wed, 18 May 2022 10:23:32 -0400
+X-MC-Unique: Y2Cq0VKZNM6ALujhcToQ8A-1
+Received: by mail-pf1-f200.google.com with SMTP id f82-20020a623855000000b005182d5d2cdbso881122pfa.15
+        for <ceph-devel@vger.kernel.org>; Wed, 18 May 2022 07:23:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=xEnVe+thJMrj0C89/i9QBXS8K26hkY9sQCbQCmrjIxg=;
+        b=PR+Rh0106kLH5w1W+PUp89i0OfAvVdCXJiQgtWSTKWd4nQyJ889aqBYygpy9p/v4uU
+         4ff4eYNtJSwPdxEodTeCVA98EfTKsUIVjSGUETvZLjh8Vikf1rMl7ACnn42jgU8p9aYT
+         JHpEYmb2I9PS5ygE6W++JejKROLpEs9an+NmIenrhY4CBa2MxEclGAz6m1fkaAGlubhj
+         z3yapWEFKsQ5J7qYcSuJatsTcqB7+KLvJMhU2l1tFJiFjuFAC+4e34KV7lefKWeupFaR
+         8wxwJToES9HXnlGBFFgp1BQpcuxwKZ5vjLZY6GSIk+s8WclwgcA3Bk0SeO+31OF2Ryi9
+         ReSw==
+X-Gm-Message-State: AOAM530tT9Z6DcR5JXnBoFBBqQJbTmQ/n/5qDBfYhcHVpMgU2RlMJM/j
+        KjU0wm0Z4cDbO13CsTCJPEYACPEDurWAkvgopfkE7VEeTfraK0uJpqdGgLjirHcwOAbyGZTCxbJ
+        eCtFse2F4G8LMQ9dzvA8FuQ==
+X-Received: by 2002:a17:90b:1c8e:b0:1bf:364c:dd7a with SMTP id oo14-20020a17090b1c8e00b001bf364cdd7amr225172pjb.103.1652883811484;
+        Wed, 18 May 2022 07:23:31 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJw7BLP1J1H8f7oD1TY5TGuF+QDjgPJtGJ1rzPMQGjEi3Mxt4eMzgGqbzqjFJq4C8NXIHPKx2A==
+X-Received: by 2002:a17:90b:1c8e:b0:1bf:364c:dd7a with SMTP id oo14-20020a17090b1c8e00b001bf364cdd7amr225147pjb.103.1652883811225;
+        Wed, 18 May 2022 07:23:31 -0700 (PDT)
+Received: from [10.72.12.136] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id r19-20020a63ce53000000b003c6a80e54cfsm1620634pgi.75.2022.05.18.07.23.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 May 2022 07:23:30 -0700 (PDT)
 Subject: Re: [PATCH] ceph: remove redundant variable ino
-From:   Jeff Layton <jlayton@kernel.org>
 To:     Colin Ian King <colin.i.king@gmail.com>,
-        Xiubo Li <xiubli@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 18 May 2022 10:08:57 -0400
-In-Reply-To: <20220518085508.509104-1-colin.i.king@gmail.com>
 References: <20220518085508.509104-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.1 (3.44.1-1.fc36) 
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <5398e036-8150-ffd0-844e-719257c6e2f7@redhat.com>
+Date:   Wed, 18 May 2022 22:23:22 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20220518085508.509104-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2022-05-18 at 09:55 +0100, Colin Ian King wrote:
+
+On 5/18/22 4:55 PM, Colin Ian King wrote:
 > Variable ino is being assigned a value that is never read. The variable
 > and assignment are redundant, remove it.
->=20
+>
 > Cleans up clang scan build warning:
 > warning: Although the value stored to 'ino' is used in the enclosing
 > expression, the value is never actually read from 'ino'
 > [deadcode.DeadStores]
->=20
+>
 > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 > ---
->  fs/ceph/mds_client.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
+>   fs/ceph/mds_client.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
 > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
 > index 00c3de177dd6..20197f05faec 100644
 > --- a/fs/ceph/mds_client.c
 > +++ b/fs/ceph/mds_client.c
 > @@ -437,7 +437,7 @@ static int ceph_parse_deleg_inos(void **p, void *end,
->  	ceph_decode_32_safe(p, end, sets, bad);
->  	dout("got %u sets of delegated inodes\n", sets);
->  	while (sets--) {
+>   	ceph_decode_32_safe(p, end, sets, bad);
+>   	dout("got %u sets of delegated inodes\n", sets);
+>   	while (sets--) {
 > -		u64 start, len, ino;
 > +		u64 start, len;
-> =20
->  		ceph_decode_64_safe(p, end, start, bad);
->  		ceph_decode_64_safe(p, end, len, bad);
+>   
+>   		ceph_decode_64_safe(p, end, start, bad);
+>   		ceph_decode_64_safe(p, end, len, bad);
 > @@ -449,7 +449,7 @@ static int ceph_parse_deleg_inos(void **p, void *end,
->  			continue;
->  		}
->  		while (len--) {
-> -			int err =3D xa_insert(&s->s_delegated_inos, ino =3D start++,
-> +			int err =3D xa_insert(&s->s_delegated_inos, start++,
->  					    DELEGATED_INO_AVAILABLE,
->  					    GFP_KERNEL);
->  			if (!err) {
+>   			continue;
+>   		}
+>   		while (len--) {
+> -			int err = xa_insert(&s->s_delegated_inos, ino = start++,
+> +			int err = xa_insert(&s->s_delegated_inos, start++,
+>   					    DELEGATED_INO_AVAILABLE,
+>   					    GFP_KERNEL);
+>   			if (!err) {
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Merged into ceph-client/testing branch. Thanks!
+
+-- Xiubo
+
+
