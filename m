@@ -2,80 +2,56 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A6A3652C420
-	for <lists+ceph-devel@lfdr.de>; Wed, 18 May 2022 22:22:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1875E52C45C
+	for <lists+ceph-devel@lfdr.de>; Wed, 18 May 2022 22:33:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242509AbiERUWU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 18 May 2022 16:22:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37270 "EHLO
+        id S242457AbiERU3F (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 18 May 2022 16:29:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242494AbiERUWT (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 18 May 2022 16:22:19 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBAF3B8BDB
-        for <ceph-devel@vger.kernel.org>; Wed, 18 May 2022 13:22:16 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id w17-20020a17090a529100b001db302efed6so3161045pjh.4
-        for <ceph-devel@vger.kernel.org>; Wed, 18 May 2022 13:22:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MgCA3HhvCAXdmpcrypetaNA0L9iEcnT799fYDKq1FeY=;
-        b=eUyPQoUqfSD8xsDhA/B0vZLSwHoojYBvJnnLjVlugAxl3OcR1hp5mtTsL6x0DgAzjf
-         ewwSD6kN9Pz8wGhV7maiFqWQ+njNzpaPjLGOjIl9tm8a5xMbSz1Eo1CnoLqJu+qkhpOE
-         wQfEGMkesuPusTPpvsODQ3YOnyZkYPHvJPUu4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MgCA3HhvCAXdmpcrypetaNA0L9iEcnT799fYDKq1FeY=;
-        b=exOr9pOMpGJy5MYyJL84haJNP8lIGew+8bGwAHYLG6/HrdXAJn4Fx8WnUWdjRk1RTW
-         7kYcLkp73a72s/VYCrqCkPBKKFjUB6styR+YKayD3Wotl74EBvwy1lCr0mm0YVcOoJC2
-         1srfUF6UvDvOq55bN8pkNvLkEIhTTucRNlhGLjO/1gm+Dol9b/4ssF5AcqRqr01hWjYW
-         gFUfSQbzPjvxSxmTebyAbv14rYiqFKNYpc84LIM+klwvwVsd3cPFXLXbFn0wa0/rJbGx
-         ykyJF9869k5h0mSVCgjxPsuSx4p3TJij3BB86+769Q4uubiusU4LnJYrasK5v+psxvjc
-         ubHw==
-X-Gm-Message-State: AOAM531Nmknoyqo8I7mOavlfS+W4su0DHXHI5+kiqMlMq7Uae0V4qrtu
-        t5bNkOjW2fWB8VViI+dC1ZJ6kg==
-X-Google-Smtp-Source: ABdhPJznrLPyYbV5bbR8+4C6C1cVQu0Yq1fBrFhg67MPULK6ma0ssZNbmRiDeip1c6RHqNbq54OS2w==
-X-Received: by 2002:a17:90b:4c48:b0:1dc:a631:e353 with SMTP id np8-20020a17090b4c4800b001dca631e353mr1217248pjb.218.1652905336439;
-        Wed, 18 May 2022 13:22:16 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a18-20020a170902ecd200b0015e8d4eb1b6sm10837plh.0.2022.05.18.13.22.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 May 2022 13:22:16 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Jeff Layton <jlayton@kernel.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        William Kucharski <william.kucharski@oracle.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-hardening@vger.kernel.org
-Subject: [PATCH v2] netfs: Use container_of() for offset casting
-Date:   Wed, 18 May 2022 13:22:12 -0700
-Message-Id: <20220518202212.2322058-1-keescook@chromium.org>
-X-Mailer: git-send-email 2.32.0
+        with ESMTP id S242438AbiERU3F (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 18 May 2022 16:29:05 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A77EA21AA83;
+        Wed, 18 May 2022 13:29:03 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 6223FCE21BC;
+        Wed, 18 May 2022 20:29:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD5D3C385A9;
+        Wed, 18 May 2022 20:28:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652905739;
+        bh=kbStVxp5ZiFXjpJH5CFoNkxEfII1fEgtqybwAZYFiCI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=LbWqFIHKjY+2RF/ZRW0xN1ng7ugmUbkxG7Vv4sYABxrWbIQsmkpYhZ6c+cS/xpk6r
+         00ZpsFjzij7xMF65Sn+xH1US7zC6AEcsbuB7zzmpC1W3/r7flEhiy8cjz2xkQJ7zC4
+         WiAyv4fN31NS8LXW5kJalHq1llNvS2Spg9datzXtR0jOMQZsxjBctlk4nBKRWC9Esb
+         STuK8gH1d345ZavSIhu2+LHL9zfpFKuC/nN7b02auuIrqs5In8XvAyECXo0/VHEvQB
+         kY/JaXVlRElr2RnwxKqar7Vm9MiyOaeXuvOOEbA0/aAtIAvLkTtcd+/MpyZzqmO4t1
+         F8gHszlZMwSvw==
+Message-ID: <b6e662fb38e55d3cc5158a7d1a8ea1eb5cdae80e.camel@kernel.org>
+Subject: Re: [PATCH v4 2/2] ceph: wait the first reply of inflight async
+ unlink
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, idryomov@gmail.com,
+        viro@zeniv.linux.org.uk
+Cc:     willy@infradead.org, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org, arnd@arndb.de, mcgrof@kernel.org,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Date:   Wed, 18 May 2022 16:28:57 -0400
+In-Reply-To: <20220518144545.246604-3-xiubli@redhat.com>
+References: <20220518144545.246604-1-xiubli@redhat.com>
+         <20220518144545.246604-3-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.1 (3.44.1-1.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7332; h=from:subject; bh=qJGxhml2rFK2BJJgAS/PiywVQK/xYAr077qKmK7SVGo=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBihVVzlUQF9SKJKoYvrOpMzfZ8CGJau/PDLX18DAD6 bCJQ1zqJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCYoVVcwAKCRCJcvTf3G3AJlOGD/ 9kStftzMAF20n6V/iNDvJkfn96gEB/daLj6GWvY57giVsimoJCLOI4v+zZOus/nBPo0qEEbNZgjvma gr49UkgcThdX7m8bzkZUdifBScyaaOSYgXSuwSBJsyfMeHQutcw8IuCSomLejuLb8temYWMOzs9Bvb 37J2FabV8XTmGRTVfMrtgpVio7W2ZlNc7X+j8u1UiSUgYfsLG3Xj4qZdXsVBBUZFOtYnIqd8lvYfDT qFhL1MY8PURQAmrQOLZ7P72DJo76E5OR5CaSvUU/7NS/wZ38ojRUZ6/5vxwUODS9CLbJS6UlnyK2Gq p18x4qwXVfW79GTyCDTSX3unMTIkonUQbvOe4HG6LbINLtv84zpDaRHGasJfUisifaz+7s2gx2MzIC ENd4cRmetR/pHomBvpa0v8peH9TiigpTEMS6x0seW87HoedV6wL3QO/vQhQ35h5iD4ytOA6dow4dQM qddyT1tV8P1h902HdPf6uzMR+SoCQJaYDRkiJuJTwqeL/Hc9L0Gv4DqT9YVkCsBUy39/3kn7KIhRWg cQDqgCrf/fgX8qvQo+mBN64MiWcQIZZqeMEYFuMLqBvqtzmjXeBRH/cm5DF5PhRNzkMcnbvUpHg+Wm vWqs0Zb1xlTfnJaSA6VMpeXxoq9bRLehaMLryh9eQbe8PbcxQLPJsU7VFGaw==
-X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,191 +59,421 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-While randstruct was satisfied with using an open-coded "void *" offset
-cast for the netfs_i_context <-> inode casting, __builtin_object_size()
-as used by FORTIFY_SOURCE was not as easily fooled. Switch to using
-an internally defined netfs_i_context/inode struct for doing a full
-container_of() casting. This keeps both randstruct and __bos() happy
-under GCC 12. Silences:
+On Wed, 2022-05-18 at 22:45 +0800, Xiubo Li wrote:
+> In async unlink case the kclient won't wait for the first reply
+> from MDS and just drop all the links and unhash the dentry and then
+> succeeds immediately.
+>=20
+> For any new create/link/rename,etc requests followed by using the
+> same file names we must wait for the first reply of the inflight
+> unlink request, or the MDS possibly will fail these following
+> requests with -EEXIST if the inflight async unlink request was
+> delayed for some reasons.
+>=20
+> And the worst case is that for the none async openc request it will
+> successfully open the file if the CDentry hasn't been unlinked yet,
+> but later the previous delayed async unlink request will remove the
+> CDenty. That means the just created file is possiblly deleted later
+> by accident.
+>=20
+> We need to wait for the inflight async unlink requests to finish
+> when creating new files/directories by using the same file names.
+>=20
+> URL: https://tracker.ceph.com/issues/55332
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/dir.c        | 70 +++++++++++++++++++++++++++++++++++++++---
+>  fs/ceph/file.c       |  4 +++
+>  fs/ceph/mds_client.c | 73 ++++++++++++++++++++++++++++++++++++++++++++
+>  fs/ceph/mds_client.h |  1 +
+>  fs/ceph/super.c      |  3 ++
+>  fs/ceph/super.h      | 19 +++++++++---
+>  6 files changed, 160 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index eae417d71136..01e7facef9b2 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -856,6 +856,10 @@ static int ceph_mknod(struct user_namespace *mnt_use=
+rns, struct inode *dir,
+>  	if (ceph_snap(dir) !=3D CEPH_NOSNAP)
+>  		return -EROFS;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (ceph_quota_is_max_files_exceeded(dir)) {
+>  		err =3D -EDQUOT;
+>  		goto out;
+> @@ -918,6 +922,10 @@ static int ceph_symlink(struct user_namespace *mnt_u=
+serns, struct inode *dir,
+>  	if (ceph_snap(dir) !=3D CEPH_NOSNAP)
+>  		return -EROFS;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (ceph_quota_is_max_files_exceeded(dir)) {
+>  		err =3D -EDQUOT;
+>  		goto out;
+> @@ -968,9 +976,13 @@ static int ceph_mkdir(struct user_namespace *mnt_use=
+rns, struct inode *dir,
+>  	struct ceph_mds_client *mdsc =3D ceph_sb_to_mdsc(dir->i_sb);
+>  	struct ceph_mds_request *req;
+>  	struct ceph_acl_sec_ctx as_ctx =3D {};
+> -	int err =3D -EROFS;
+> +	int err;
+>  	int op;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (ceph_snap(dir) =3D=3D CEPH_SNAPDIR) {
+>  		/* mkdir .snap/foo is a MKSNAP */
+>  		op =3D CEPH_MDS_OP_MKSNAP;
+> @@ -980,6 +992,7 @@ static int ceph_mkdir(struct user_namespace *mnt_user=
+ns, struct inode *dir,
+>  		dout("mkdir dir %p dn %p mode 0%ho\n", dir, dentry, mode);
+>  		op =3D CEPH_MDS_OP_MKDIR;
+>  	} else {
+> +		err =3D -EROFS;
+>  		goto out;
+>  	}
+> =20
+> @@ -1037,6 +1050,10 @@ static int ceph_link(struct dentry *old_dentry, st=
+ruct inode *dir,
+>  	struct ceph_mds_request *req;
+>  	int err;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (ceph_snap(dir) !=3D CEPH_NOSNAP)
+>  		return -EROFS;
+> =20
+> @@ -1071,9 +1088,27 @@ static int ceph_link(struct dentry *old_dentry, st=
+ruct inode *dir,
+>  static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
+>  				 struct ceph_mds_request *req)
+>  {
+> +	struct dentry *dentry =3D req->r_dentry;
+> +	struct ceph_fs_client *fsc =3D ceph_sb_to_client(dentry->d_sb);
+> +	struct ceph_dentry_info *di =3D ceph_dentry(dentry);
+>  	int result =3D req->r_err ? req->r_err :
+>  			le32_to_cpu(req->r_reply_info.head->result);
+> =20
+> +	if (!test_bit(CEPH_DENTRY_ASYNC_UNLINK_BIT, &di->flags))
+> +		pr_warn("%s dentry %p:%pd async unlink bit is not set\n",
+> +			__func__, dentry, dentry);
+> +
 
-In file included from ./include/linux/string.h:253,
-                 from ./include/linux/ceph/ceph_debug.h:7,
-                 from fs/ceph/inode.c:2:
-In function ‘fortify_memset_chk’,
-    inlined from ‘netfs_i_context_init’ at ./include/linux/netfs.h:326:2,
-    inlined from ‘ceph_alloc_inode’ at fs/ceph/inode.c:463:2:
-./include/linux/fortify-string.h:242:25: warning: call to ‘__write_overflow_field’ declared with attribute warning:
-detected write beyond size of field (1st parameter); maybe use struct_group()? [-Wattribute-warning]
-  242 |                         __write_overflow_field(p_size_field, size);
-      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This is a pr_warn so it won't have a "ceph: " prefix or anything
+prepending it like dout messages do. You should probably prepend this
+with something like that.
 
-Reported-by: Jeff Layton <jlayton@kernel.org>
-Link: https://lore.kernel.org/lkml/d2ad3a3d7bdd794c6efb562d2f2b655fb67756b9.camel@kernel.org
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: David Howells <dhowells@redhat.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-v1: https://lore.kernel.org/lkml/20220517210230.864239-1-keescook@chromium.org
-v2:
- - Add macro for keeping all netfs users on the same page
- - Update documentation and each netfs user
----
- Documentation/filesystems/netfs_library.rst | 12 ++++------
- fs/9p/v9fs.h                                |  7 ++----
- fs/afs/internal.h                           |  7 +-----
- fs/ceph/super.h                             |  7 ++----
- fs/cifs/cifsglob.h                          |  7 ++----
- include/linux/netfs.h                       | 26 +++++++++++++++++++--
- 6 files changed, 36 insertions(+), 30 deletions(-)
+> +	spin_lock(&fsc->async_unlink_conflict_lock);
+> +	hash_del_rcu(&di->hnode);
+> +	spin_unlock(&fsc->async_unlink_conflict_lock);
+> +
+> +	spin_lock(&dentry->d_lock);
+> +	di->flags &=3D ~CEPH_DENTRY_ASYNC_UNLINK;
+> +	wake_up_bit(&di->flags, CEPH_DENTRY_ASYNC_UNLINK_BIT);
+> +	spin_unlock(&dentry->d_lock);
+> +
+> +	synchronize_rcu();
+> +
+>  	if (result =3D=3D -EJUKEBOX)
+>  		goto out;
+> =20
+> @@ -1081,7 +1116,7 @@ static void ceph_async_unlink_cb(struct ceph_mds_cl=
+ient *mdsc,
+>  	if (result) {
+>  		int pathlen =3D 0;
+>  		u64 base =3D 0;
+> -		char *path =3D ceph_mdsc_build_path(req->r_dentry, &pathlen,
+> +		char *path =3D ceph_mdsc_build_path(dentry, &pathlen,
+>  						  &base, 0);
+> =20
+>  		/* mark error on parent + clear complete */
+> @@ -1089,13 +1124,13 @@ static void ceph_async_unlink_cb(struct ceph_mds_=
+client *mdsc,
+>  		ceph_dir_clear_complete(req->r_parent);
+> =20
+>  		/* drop the dentry -- we don't know its status */
+> -		if (!d_unhashed(req->r_dentry))
+> -			d_drop(req->r_dentry);
+> +		if (!d_unhashed(dentry))
+> +			d_drop(dentry);
+> =20
+>  		/* mark inode itself for an error (since metadata is bogus) */
+>  		mapping_set_error(req->r_old_inode->i_mapping, result);
+> =20
+> -		pr_warn("ceph: async unlink failure path=3D(%llx)%s result=3D%d!\n",
+> +		pr_warn("async unlink failure path=3D(%llx)%s result=3D%d!\n",
 
-diff --git a/Documentation/filesystems/netfs_library.rst b/Documentation/filesystems/netfs_library.rst
-index 69f00179fdfe..8024d442833e 100644
---- a/Documentation/filesystems/netfs_library.rst
-+++ b/Documentation/filesystems/netfs_library.rst
-@@ -43,15 +43,13 @@ structure is defined::
- 	};
- 
- A network filesystem that wants to use netfs lib must place one of these
--directly after the VFS ``struct inode`` it allocates, usually as part of its
--own struct.  This can be done in a way similar to the following::
-+directly after the VFS ``struct inode`` it allocates, either by using
-+``struct netfs_i_c_pair`` or by using the ``DECLARE_NETFS_INODE()`` helper,
-+which arranges ``struct inode`` and ``struct netfs_i_context`` together
-+without a struct namespace::
- 
- 	struct my_inode {
--		struct {
--			/* These must be contiguous */
--			struct inode		vfs_inode;
--			struct netfs_i_context  netfs_ctx;
--		};
-+		DECLARE_NETFS_INODE(vfs_inode, netfs_ctx);
- 		...
- 	};
- 
-diff --git a/fs/9p/v9fs.h b/fs/9p/v9fs.h
-index ec0e8df3b2eb..595add687ac6 100644
---- a/fs/9p/v9fs.h
-+++ b/fs/9p/v9fs.h
-@@ -109,11 +109,8 @@ struct v9fs_session_info {
- #define V9FS_INO_INVALID_ATTR 0x01
- 
- struct v9fs_inode {
--	struct {
--		/* These must be contiguous */
--		struct inode	vfs_inode;	/* the VFS's inode record */
--		struct netfs_i_context netfs_ctx; /* Netfslib context */
--	};
-+	/* the VFS's inode record and the Netfslib context */
-+	DECLARE_NETFS_INODE(vfs_inode, netfs_ctx);
- 	struct p9_qid qid;
- 	unsigned int cache_validity;
- 	struct p9_fid *writeback_fid;
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 7b7ef945dc78..e2cb94196828 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -619,12 +619,7 @@ enum afs_lock_state {
-  * leak from one inode to another.
-  */
- struct afs_vnode {
--	struct {
--		/* These must be contiguous */
--		struct inode	vfs_inode;	/* the VFS's inode record */
--		struct netfs_i_context netfs_ctx; /* Netfslib context */
--	};
--
-+	DECLARE_NETFS_INODE(vfs_inode, netfs_ctx); /* VFS inode and Netfslib context */
- 	struct afs_volume	*volume;	/* volume on which vnode resides */
- 	struct afs_fid		fid;		/* the file identifier for this inode */
- 	struct afs_file_status	status;		/* AFS status info for this file */
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 20ceab74e871..7c36623bb42c 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -316,11 +316,8 @@ struct ceph_inode_xattrs_info {
-  * Ceph inode.
-  */
- struct ceph_inode_info {
--	struct {
--		/* These must be contiguous */
--		struct inode vfs_inode;
--		struct netfs_i_context netfs_ctx; /* Netfslib context */
--	};
-+	/* the VFS's inode record and the Netfslib context */
-+	DECLARE_NETFS_INODE(vfs_inode, netfs_ctx);
- 	struct ceph_vino i_vino;   /* ceph ino + snap */
- 
- 	spinlock_t i_ceph_lock;
-diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
-index 8de977c359b1..4a36dad99e32 100644
---- a/fs/cifs/cifsglob.h
-+++ b/fs/cifs/cifsglob.h
-@@ -1405,11 +1405,8 @@ void cifsFileInfo_put(struct cifsFileInfo *cifs_file);
-  */
- 
- struct cifsInodeInfo {
--	struct {
--		/* These must be contiguous */
--		struct inode	vfs_inode;	/* the VFS's inode record */
--		struct netfs_i_context netfs_ctx; /* Netfslib context */
--	};
-+	/* the VFS's inode record and the Netfslib context */
-+	DECLARE_NETFS_INODE(vfs_inode, netfs_ctx);
- 	bool can_cache_brlcks;
- 	struct list_head llist;	/* locks helb by this inode */
- 	/*
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 0c33b715cbfd..7facb11c9ac7 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -286,6 +286,28 @@ extern void netfs_put_subrequest(struct netfs_io_subrequest *subreq,
- 				 bool was_async, enum netfs_sreq_ref_trace what);
- extern void netfs_stats_show(struct seq_file *);
- 
-+/*
-+ * The struct netfs_i_context instance must always follow the VFS inode, so
-+ * struct netfs_i_c_pair enforces this. However, netfs users may want to
-+ * avoid a sub-struct namespace, so they can alternatively use the
-+ * DECLARE_NETFS_INODE macro to provide an anonymous union/struct wrapper,
-+ * allowing netfs internals to still correctly use container_of() against
-+ * the struct netfs_i_c_pair for casting between vfs_inode and netfs_ctx.
-+ */
-+struct netfs_i_c_pair {
-+	struct inode		vfs_inode;
-+	struct netfs_i_context	netfs_ctx;
-+};
-+
-+#define DECLARE_NETFS_INODE(_inode, _ctx)			\
-+	union {							\
-+		struct {					\
-+			struct inode		_inode;		\
-+			struct netfs_i_context	_ctx;		\
-+		};						\
-+		struct netfs_i_c_pair		netfs_inode;	\
-+	}
-+
- /**
-  * netfs_i_context - Get the netfs inode context from the inode
-  * @inode: The inode to query
-@@ -295,7 +317,7 @@ extern void netfs_stats_show(struct seq_file *);
-  */
- static inline struct netfs_i_context *netfs_i_context(struct inode *inode)
- {
--	return (void *)inode + sizeof(*inode);
-+	return &container_of(inode, struct netfs_i_c_pair, vfs_inode)->netfs_ctx;
- }
- 
- /**
-@@ -307,7 +329,7 @@ static inline struct netfs_i_context *netfs_i_context(struct inode *inode)
-  */
- static inline struct inode *netfs_inode(struct netfs_i_context *ctx)
- {
--	return (void *)ctx - sizeof(struct inode);
-+	return &container_of(ctx, struct netfs_i_c_pair, netfs_ctx)->vfs_inode;
- }
- 
- /**
--- 
-2.32.0
+Ditto here: why remove the prefix?
 
+>  			base, IS_ERR(path) ? "<<bad>>" : path, result);
+>  		ceph_mdsc_free_path(path, pathlen);
+>  	}
+> @@ -1180,6 +1215,8 @@ static int ceph_unlink(struct inode *dir, struct de=
+ntry *dentry)
+> =20
+>  	if (try_async && op =3D=3D CEPH_MDS_OP_UNLINK &&
+>  	    (req->r_dir_caps =3D get_caps_for_async_unlink(dir, dentry))) {
+> +		struct ceph_dentry_info *di =3D ceph_dentry(dentry);
+> +
+>  		dout("async unlink on %llu/%.*s caps=3D%s", ceph_ino(dir),
+>  		     dentry->d_name.len, dentry->d_name.name,
+>  		     ceph_cap_string(req->r_dir_caps));
+> @@ -1187,6 +1224,16 @@ static int ceph_unlink(struct inode *dir, struct d=
+entry *dentry)
+>  		req->r_callback =3D ceph_async_unlink_cb;
+>  		req->r_old_inode =3D d_inode(dentry);
+>  		ihold(req->r_old_inode);
+> +
+> +		spin_lock(&dentry->d_lock);
+> +		di->flags |=3D CEPH_DENTRY_ASYNC_UNLINK;
+> +		spin_unlock(&dentry->d_lock);
+> +
+> +		spin_lock(&fsc->async_unlink_conflict_lock);
+> +		hash_add_rcu(fsc->async_unlink_conflict, &di->hnode,
+> +			     dentry->d_name.hash);
+> +		spin_unlock(&fsc->async_unlink_conflict_lock);
+> +
+>  		err =3D ceph_mdsc_submit_request(mdsc, dir, req);
+>  		if (!err) {
+>  			/*
+> @@ -1198,6 +1245,15 @@ static int ceph_unlink(struct inode *dir, struct d=
+entry *dentry)
+>  		} else if (err =3D=3D -EJUKEBOX) {
+>  			try_async =3D false;
+>  			ceph_mdsc_put_request(req);
+> +
+> +			spin_lock(&dentry->d_lock);
+> +			di->flags &=3D ~CEPH_DENTRY_ASYNC_UNLINK;
+> +			spin_unlock(&dentry->d_lock);
+> +
+> +			spin_lock(&fsc->async_unlink_conflict_lock);
+> +			hash_del_rcu(&di->hnode);
+> +			spin_unlock(&fsc->async_unlink_conflict_lock);
+> +
+
+You're clearing the flag here before removing it from the hash. That
+might end up causing a waiter to trip the pr_warn in
+ceph_wait_on_conflict_unlink. You probably want to reverse the order
+here.
+
+>  			goto retry;
+>  		}
+>  	} else {
+> @@ -1237,6 +1293,10 @@ static int ceph_rename(struct user_namespace *mnt_=
+userns, struct inode *old_dir,
+>  	    (!ceph_quota_is_same_realm(old_dir, new_dir)))
+>  		return -EXDEV;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(new_dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	dout("rename dir %p dentry %p to dir %p dentry %p\n",
+>  	     old_dir, old_dentry, new_dir, new_dentry);
+>  	req =3D ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 8c8226c0feac..f039e799f5f4 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -740,6 +740,10 @@ int ceph_atomic_open(struct inode *dir, struct dentr=
+y *dentry,
+>  	if (dentry->d_name.len > NAME_MAX)
+>  		return -ENAMETOOLONG;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (flags & O_CREAT) {
+>  		if (ceph_quota_is_max_files_exceeded(dir))
+>  			return -EDQUOT;
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index e8c87dea0551..ffe52b7c6cbc 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -655,6 +655,79 @@ static void destroy_reply_info(struct ceph_mds_reply=
+_info_parsed *info)
+>  	free_pages((unsigned long)info->dir_entries, get_order(info->dir_buf_si=
+ze));
+>  }
+> =20
+> +/*
+> + * In async unlink case the kclient won't wait for the first reply
+> + * from MDS and just drop all the links and unhash the dentry and then
+> + * succeeds immediately.
+> + *
+> + * For any new create/link/rename,etc requests followed by using the
+> + * same file names we must wait for the first reply of the inflight
+> + * unlink request, or the MDS possibly will fail these following
+> + * requests with -EEXIST if the inflight async unlink request was
+> + * delayed for some reasons.
+> + *
+> + * And the worst case is that for the none async openc request it will
+> + * successfully open the file if the CDentry hasn't been unlinked yet,
+> + * but later the previous delayed async unlink request will remove the
+> + * CDenty. That means the just created file is possiblly deleted later
+> + * by accident.
+> + *
+> + * We need to wait for the inflight async unlink requests to finish
+> + * when creating new files/directories by using the same file names.
+> + */
+> +int ceph_wait_on_conflict_unlink(struct dentry *dentry)
+> +{
+> +	struct ceph_fs_client *fsc =3D ceph_sb_to_client(dentry->d_sb);
+> +	struct dentry *pdentry =3D dentry->d_parent;
+> +	struct dentry *udentry, *found =3D NULL;
+> +	struct ceph_dentry_info *di;
+> +	struct qstr dname;
+> +	u32 hash =3D dentry->d_name.hash;
+> +	int err;
+> +
+> +	dname.name =3D dentry->d_name.name;
+> +	dname.len =3D dentry->d_name.len;
+> +
+> +	rcu_read_lock();
+> +	hash_for_each_possible_rcu(fsc->async_unlink_conflict, di,
+> +				   hnode, hash) {
+> +		udentry =3D di->dentry;
+> +
+> +		spin_lock(&udentry->d_lock);
+> +		if (udentry->d_name.hash !=3D hash)
+> +			goto next;
+> +		if (unlikely(udentry->d_parent !=3D pdentry))
+> +			goto next;
+> +		if (!hash_hashed(&di->hnode))
+> +			goto next;
+> +
+> +		if (!test_bit(CEPH_DENTRY_ASYNC_UNLINK_BIT, &di->flags))
+> +			pr_warn("%s dentry %p:%pd async unlink bit is not set\n",
+> +				__func__, dentry, dentry);
+> +
+> +		if (d_compare(pdentry, udentry, &dname))
+> +			goto next;
+> +
+> +		spin_unlock(&udentry->d_lock);
+> +		found =3D dget(udentry);
+> +		break;
+> +next:
+> +		spin_unlock(&udentry->d_lock);
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	if (likely(!found))
+> +		return 0;
+> +
+> +	dout("%s dentry %p:%pd conflict with old %p:%pd\n", __func__,
+> +	     dentry, dentry, found, found);
+> +
+> +	err =3D wait_on_bit(&di->flags, CEPH_DENTRY_ASYNC_UNLINK_BIT,
+> +			  TASK_KILLABLE);
+> +	dput(found);
+> +	return err;
+> +}
+> +
+> =20
+>  /*
+>   * sessions
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 33497846e47e..d1ae679c52c3 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -582,6 +582,7 @@ static inline int ceph_wait_on_async_create(struct in=
+ode *inode)
+>  			   TASK_INTERRUPTIBLE);
+>  }
+> =20
+> +extern int ceph_wait_on_conflict_unlink(struct dentry *dentry);
+>  extern u64 ceph_get_deleg_ino(struct ceph_mds_session *session);
+>  extern int ceph_restore_deleg_ino(struct ceph_mds_session *session, u64 =
+ino);
+>  #endif
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index b73b4f75462c..6542b71f8627 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -816,6 +816,9 @@ static struct ceph_fs_client *create_fs_client(struct=
+ ceph_mount_options *fsopt,
+>  	if (!fsc->cap_wq)
+>  		goto fail_inode_wq;
+> =20
+> +	hash_init(fsc->async_unlink_conflict);
+> +	spin_lock_init(&fsc->async_unlink_conflict_lock);
+> +
+>  	spin_lock(&ceph_fsc_lock);
+>  	list_add_tail(&fsc->metric_wakeup, &ceph_fsc_list);
+>  	spin_unlock(&ceph_fsc_lock);
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 506d52633627..251e726ec628 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -19,6 +19,7 @@
+>  #include <linux/security.h>
+>  #include <linux/netfs.h>
+>  #include <linux/fscache.h>
+> +#include <linux/hashtable.h>
+> =20
+>  #include <linux/ceph/libceph.h>
+> =20
+> @@ -99,6 +100,8 @@ struct ceph_mount_options {
+>  	char *mon_addr;
+>  };
+> =20
+> +#define CEPH_ASYNC_CREATE_CONFLICT_BITS 8
+> +
+>  struct ceph_fs_client {
+>  	struct super_block *sb;
+> =20
+> @@ -124,6 +127,9 @@ struct ceph_fs_client {
+>  	struct workqueue_struct *inode_wq;
+>  	struct workqueue_struct *cap_wq;
+> =20
+> +	DECLARE_HASHTABLE(async_unlink_conflict, CEPH_ASYNC_CREATE_CONFLICT_BIT=
+S);
+> +	spinlock_t async_unlink_conflict_lock;
+> +
+>  #ifdef CONFIG_DEBUG_FS
+>  	struct dentry *debugfs_dentry_lru, *debugfs_caps;
+>  	struct dentry *debugfs_congestion_kb;
+> @@ -281,7 +287,8 @@ struct ceph_dentry_info {
+>  	struct dentry *dentry;
+>  	struct ceph_mds_session *lease_session;
+>  	struct list_head lease_list;
+> -	unsigned flags;
+> +	struct hlist_node hnode;
+> +	unsigned long flags;
+>  	int lease_shared_gen;
+>  	u32 lease_gen;
+>  	u32 lease_seq;
+> @@ -290,10 +297,12 @@ struct ceph_dentry_info {
+>  	u64 offset;
+>  };
+> =20
+> -#define CEPH_DENTRY_REFERENCED		1
+> -#define CEPH_DENTRY_LEASE_LIST		2
+> -#define CEPH_DENTRY_SHRINK_LIST		4
+> -#define CEPH_DENTRY_PRIMARY_LINK	8
+> +#define CEPH_DENTRY_REFERENCED		(1 << 0)
+> +#define CEPH_DENTRY_LEASE_LIST		(1 << 1)
+> +#define CEPH_DENTRY_SHRINK_LIST		(1 << 2)
+> +#define CEPH_DENTRY_PRIMARY_LINK	(1 << 3)
+> +#define CEPH_DENTRY_ASYNC_UNLINK_BIT	(4)
+> +#define CEPH_DENTRY_ASYNC_UNLINK	(1 << CEPH_DENTRY_ASYNC_UNLINK_BIT)
+> =20
+>  struct ceph_inode_xattrs_info {
+>  	/*
+
+--=20
+Jeff Layton <jlayton@kernel.org>
