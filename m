@@ -2,82 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 371E0530715
-	for <lists+ceph-devel@lfdr.de>; Mon, 23 May 2022 03:21:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02C5853073E
+	for <lists+ceph-devel@lfdr.de>; Mon, 23 May 2022 03:48:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344773AbiEWBVm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 22 May 2022 21:21:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52020 "EHLO
+        id S1347712AbiEWBsB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 22 May 2022 21:48:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239703AbiEWBVl (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 22 May 2022 21:21:41 -0400
+        with ESMTP id S231462AbiEWBr5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 22 May 2022 21:47:57 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 602E4A1B1
-        for <ceph-devel@vger.kernel.org>; Sun, 22 May 2022 18:21:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DD35C13FB9
+        for <ceph-devel@vger.kernel.org>; Sun, 22 May 2022 18:47:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653268899;
+        s=mimecast20190719; t=1653270473;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=QeksuAmJWYaEi0TQFOkREQ3m4yGhTUgNwHT42YPdtQw=;
-        b=KhgnPazIh/IZlUuLTQ/Bnn0k4+mY3vP+hfKdR67sCQOJmSdJhxSUa1cg4UU7BYaUH5qQJ9
-        IKFeIivkL3UqpW9OMe4nzcWcUW50D1rcD1IgXR9C2NMO6a/nyPjd7rxWpikIvrf9TXiubo
-        bA+ygvm5w2bDAWMurGK/2XjqF4hcstE=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=WT+3xtm/1G1Mw0jgI/ctgPUxHtE39wZNH4Ie2eOh0q4=;
+        b=dSrnNxBUmBZ0ygzhsLq/NdEqavCIyPx9FKNAn2QF935CN2zaOF+I0HWPIGCaIY7c1o6XwN
+        JoRvjxhdSKOxiFJNTCp9U2j1D8H/NAm2S1WqLsxkG1xebx7yehnsjS567rGjQwBOoUzbLL
+        2M7xBthn5LpMfc2fo4wwq0QlIXhSI80=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-195-kIUkl2rYMIuP8KLb1axrsQ-1; Sun, 22 May 2022 21:21:33 -0400
-X-MC-Unique: kIUkl2rYMIuP8KLb1axrsQ-1
-Received: by mail-pf1-f200.google.com with SMTP id y202-20020a6264d3000000b00518297f1410so5251651pfb.6
-        for <ceph-devel@vger.kernel.org>; Sun, 22 May 2022 18:21:32 -0700 (PDT)
+ us-mta-413-Vgi1pVfANqqSar62VPmuYA-1; Sun, 22 May 2022 21:47:49 -0400
+X-MC-Unique: Vgi1pVfANqqSar62VPmuYA-1
+Received: by mail-pj1-f70.google.com with SMTP id o14-20020a17090a4e8e00b001df68155c58so6761915pjh.3
+        for <ceph-devel@vger.kernel.org>; Sun, 22 May 2022 18:47:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=QeksuAmJWYaEi0TQFOkREQ3m4yGhTUgNwHT42YPdtQw=;
-        b=w3CmpR8G4NA2vEc7fnG4xtefJ5DL4Qzc5RQUV/AbVpCYgLfTeBnriI9mWI65acXMX7
-         7QD93lW4jU7nlLQjoUjIN7RCZF4M7E5tpdlKoNc4haupFliuLTPD/b8kCD9fb85m7UbL
-         TDLS+P35dXBi5pWwDnd8JlkdSUoGiL3pcPOfju8rGBM7+0HCwY+AQ2Rk7Ar/flF/uj2b
-         YoKCbiCqTpaOIfeDeR6Wbkv7moos6nSSIFRgyu/OsuA/q3Hf0p1HLDdkSH0xto5WFPU+
-         wvVTh1sJQrYKkmrjwiIM6PdVSJAW0lGLtTF1vePxCy2otYV8A99Z/TYNVSIVf+HjoeZh
-         lwZA==
-X-Gm-Message-State: AOAM532CFNblUWdAKO68FE5YRtfyMmd4r5rVZ4emD8LS5ZxYSDOwuMpD
-        eiw4DrwFTyu/wtfW1jJuVJ2hgD+o+DY2BRuurwML83WfalSqRLqp3i8e0Uy4NPK6GkhEPqksZd0
-        iOtcHtxqpoH36V89pZZOHaA==
-X-Received: by 2002:a17:90a:d903:b0:1df:a0da:20f0 with SMTP id c3-20020a17090ad90300b001dfa0da20f0mr23423497pjv.182.1653268892048;
-        Sun, 22 May 2022 18:21:32 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyNU9E4cxJdDWjM4BXDRtnTqV2SL+V24TO114v2WBtj4cxB6iy5/XCHNte78zG0bsganOQmLw==
-X-Received: by 2002:a17:90a:d903:b0:1df:a0da:20f0 with SMTP id c3-20020a17090ad90300b001dfa0da20f0mr23423486pjv.182.1653268891813;
-        Sun, 22 May 2022 18:21:31 -0700 (PDT)
+        bh=WT+3xtm/1G1Mw0jgI/ctgPUxHtE39wZNH4Ie2eOh0q4=;
+        b=8O/jhFZ1GwHDFJD7DZzOxGz5fb0K4BqlxYZXtItkCcPc2LzcFiqhfOnshnM05RfKDZ
+         xfub+4VxiDNTh5OG8Wk1+IIOLJD0eHIhjMDURuvF0f+OPUixJ38jKAulmrAq8iOw0tiI
+         znjRD9BmZeBs4g9s3lUmZbE1dNNwgTXiwhwhvu/duOTtHOJy1an2Vhs8WbhqbaPXqKDe
+         Fl/8EzdxMYIfLIl0qcYF6XHfr0lxSP+iN0YWdUa2uQd5xQ8zFA6haJOM7UmIYr5ZQILy
+         cUCqJQ5kdoCGfb5rOfVYmVTdrp9hzRMNq5tE30BKMOKIrD7xQZVo8eaFnd6jIg32nrA2
+         WI6A==
+X-Gm-Message-State: AOAM530We1YWqUAQuYsrssI0J3gUmo/13YROXILCVsXGv+OY8a6Bk6n6
+        wJvFxRRc2LYaTxJnCDWMCTYYzBSlG61ezXpdq0OSBgPSP0skzhfTx2pXfZ6q9KOR4k1C2hStntM
+        yUGQKI7EymJr0Q+gbuQ2XaA==
+X-Received: by 2002:a63:241:0:b0:3c5:fc11:ab56 with SMTP id 62-20020a630241000000b003c5fc11ab56mr18700296pgc.193.1653270467729;
+        Sun, 22 May 2022 18:47:47 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxOaa+JuRwD54B1yigi3Hc4SldL7sk0522tuSkQEjq8Sd8A5z03QukfHyL+m11L7qlmnHbKBA==
+X-Received: by 2002:a63:241:0:b0:3c5:fc11:ab56 with SMTP id 62-20020a630241000000b003c5fc11ab56mr18700281pgc.193.1653270467437;
+        Sun, 22 May 2022 18:47:47 -0700 (PDT)
 Received: from [10.72.12.81] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id a15-20020a170902710f00b0015e8d4eb283sm3677403pll.205.2022.05.22.18.21.25
+        by smtp.gmail.com with ESMTPSA id n11-20020a170902f60b00b0015ef27092aasm3733780plg.190.2022.05.22.18.47.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 May 2022 18:21:31 -0700 (PDT)
-Subject: Re: [PATCH 1/2] netfs: ->cleanup() op is always given a rreq pointer
- now
-To:     Jeff Layton <jlayton@kernel.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <165296980082.3595490.3561111064004493810.stgit@warthog.procyon.org.uk>
- <e5f6fee5518ce8e1b4fc5aa7038de1617a341c2f.camel@kernel.org>
+        Sun, 22 May 2022 18:47:46 -0700 (PDT)
+Subject: Re: [RFC PATCH] ceph: try to prevent exceeding the MDS maximum xattr
+ size
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220520115426.438-1-lhenriques@suse.de>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <72a1cb54-4632-659d-e6ec-2d754ab2fc28@redhat.com>
-Date:   Mon, 23 May 2022 09:21:23 +0800
+Message-ID: <13988024-efc7-2ab1-036a-eb1d2b2fbd15@redhat.com>
+Date:   Mon, 23 May 2022 09:47:41 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <e5f6fee5518ce8e1b4fc5aa7038de1617a341c2f.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20220520115426.438-1-lhenriques@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
@@ -90,191 +83,92 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 5/19/22 11:36 PM, Jeff Layton wrote:
-> On Thu, 2022-05-19 at 15:16 +0100, David Howells wrote:
->> As the ->init() netfs op is now used to set up the netfslib I/O request
->> rather than passing stuff in, thereby allowing the netfslib functions to be
->> pointed at directly by the address_space_operations struct, we're always
->> going to be able to pass an I/O request pointer to the cleanup function.
->>
->> Therefore, change the ->cleanup() function to take a pointer to the I/O
->> request rather than taking a pointer to the network filesystem's
->> address_space and a piece of private data.
->>
->> Also, rename ->cleanup() to ->free_request() to match the ->init_request()
->> function.
->>
->> Signed-off-by: David Howells <dhowells@redhat.com>
->> cc: Jeff Layton <jlayton@kernel.org>
->> cc: Steve French <sfrench@samba.org>
->> cc: Dominique Martinet <asmadeus@codewreck.org>
->> cc: Jeff Layton <jlayton@redhat.com>
->> cc: David Wysochanski <dwysocha@redhat.com>
->> cc: Ilya Dryomov <idryomov@gmail.com>
->> cc: v9fs-developer@lists.sourceforge.net
->> cc: ceph-devel@vger.kernel.org
->> cc: linux-afs@lists.infradead.org
->> cc: linux-cifs@vger.kernel.org
->> cc: linux-cachefs@redhat.com
->> cc: linux-fsdevel@vger.kernel.org
->> ---
->>
->>   fs/9p/vfs_addr.c      |   11 +++++------
->>   fs/afs/file.c         |    6 +++---
->>   fs/ceph/addr.c        |    9 ++++-----
->>   fs/netfs/objects.c    |    8 +++++---
->>   include/linux/netfs.h |    4 +++-
->>   5 files changed, 20 insertions(+), 18 deletions(-)
->>
->> diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
->> index 501128188343..002c482794dc 100644
->> --- a/fs/9p/vfs_addr.c
->> +++ b/fs/9p/vfs_addr.c
->> @@ -66,13 +66,12 @@ static int v9fs_init_request(struct netfs_io_request *rreq, struct file *file)
->>   }
->>   
->>   /**
->> - * v9fs_req_cleanup - Cleanup request initialized by v9fs_init_request
->> - * @mapping: unused mapping of request to cleanup
->> - * @priv: private data to cleanup, a fid, guaranted non-null.
->> + * v9fs_free_request - Cleanup request initialized by v9fs_init_rreq
->> + * @rreq: The I/O request to clean up
->>    */
->> -static void v9fs_req_cleanup(struct address_space *mapping, void *priv)
->> +static void v9fs_free_request(struct netfs_io_request *rreq)
->>   {
->> -	struct p9_fid *fid = priv;
->> +	struct p9_fid *fid = rreq->netfs_priv;
->>   
->>   	p9_client_clunk(fid);
->>   }
->> @@ -94,9 +93,9 @@ static int v9fs_begin_cache_operation(struct netfs_io_request *rreq)
->>   
->>   const struct netfs_request_ops v9fs_req_ops = {
->>   	.init_request		= v9fs_init_request,
->> +	.free_request		= v9fs_free_request,
->>   	.begin_cache_operation	= v9fs_begin_cache_operation,
->>   	.issue_read		= v9fs_issue_read,
->> -	.cleanup		= v9fs_req_cleanup,
->>   };
->>   
->>   /**
->> diff --git a/fs/afs/file.c b/fs/afs/file.c
->> index 26292a110a8f..b9ca72fbbcf9 100644
->> --- a/fs/afs/file.c
->> +++ b/fs/afs/file.c
->> @@ -383,17 +383,17 @@ static int afs_check_write_begin(struct file *file, loff_t pos, unsigned len,
->>   	return test_bit(AFS_VNODE_DELETED, &vnode->flags) ? -ESTALE : 0;
->>   }
->>   
->> -static void afs_priv_cleanup(struct address_space *mapping, void *netfs_priv)
->> +static void afs_free_request(struct netfs_io_request *rreq)
->>   {
->> -	key_put(netfs_priv);
->> +	key_put(rreq->netfs_priv);
->>   }
->>   
->>   const struct netfs_request_ops afs_req_ops = {
->>   	.init_request		= afs_init_request,
->> +	.free_request		= afs_free_request,
->>   	.begin_cache_operation	= afs_begin_cache_operation,
->>   	.check_write_begin	= afs_check_write_begin,
->>   	.issue_read		= afs_issue_read,
->> -	.cleanup		= afs_priv_cleanup,
->>   };
->>   
->>   int afs_write_inode(struct inode *inode, struct writeback_control *wbc)
->> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
->> index b6edcf89a429..ee8c1b099c4f 100644
->> --- a/fs/ceph/addr.c
->> +++ b/fs/ceph/addr.c
->> @@ -392,11 +392,10 @@ static int ceph_init_request(struct netfs_io_request *rreq, struct file *file)
->>   	return 0;
->>   }
->>   
->> -static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
->> +static void ceph_netfs_free_request(struct netfs_io_request *rreq)
->>   {
->> -	struct inode *inode = mapping->host;
->> -	struct ceph_inode_info *ci = ceph_inode(inode);
->> -	int got = (uintptr_t)priv;
->> +	struct ceph_inode_info *ci = ceph_inode(rreq->inode);
->> +	int got = (uintptr_t)rreq->netfs_priv;
->>   
->>   	if (got)
->>   		ceph_put_cap_refs(ci, got);
->> @@ -404,12 +403,12 @@ static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
->>   
->>   const struct netfs_request_ops ceph_netfs_ops = {
->>   	.init_request		= ceph_init_request,
->> +	.free_request		= ceph_netfs_free_request,
->>   	.begin_cache_operation	= ceph_begin_cache_operation,
->>   	.issue_read		= ceph_netfs_issue_read,
->>   	.expand_readahead	= ceph_netfs_expand_readahead,
->>   	.clamp_length		= ceph_netfs_clamp_length,
->>   	.check_write_begin	= ceph_netfs_check_write_begin,
->> -	.cleanup		= ceph_readahead_cleanup,
->>   };
->>   
->>   #ifdef CONFIG_CEPH_FSCACHE
->> diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
->> index e86107b30ba4..d6b8c0cbeb7c 100644
->> --- a/fs/netfs/objects.c
->> +++ b/fs/netfs/objects.c
->> @@ -75,10 +75,10 @@ static void netfs_free_request(struct work_struct *work)
->>   	struct netfs_io_request *rreq =
->>   		container_of(work, struct netfs_io_request, work);
->>   
->> -	netfs_clear_subrequests(rreq, false);
->> -	if (rreq->netfs_priv)
->> -		rreq->netfs_ops->cleanup(rreq->mapping, rreq->netfs_priv);
->>   	trace_netfs_rreq(rreq, netfs_rreq_trace_free);
->> +	netfs_clear_subrequests(rreq, false);
->> +	if (rreq->netfs_ops->free_request)
->> +		rreq->netfs_ops->free_request(rreq);
->>   	if (rreq->cache_resources.ops)
->>   		rreq->cache_resources.ops->end_operation(&rreq->cache_resources);
->>   	kfree(rreq);
->> @@ -140,6 +140,8 @@ static void netfs_free_subrequest(struct netfs_io_subrequest *subreq,
->>   	struct netfs_io_request *rreq = subreq->rreq;
->>   
->>   	trace_netfs_sreq(subreq, netfs_sreq_trace_free);
->> +	if (rreq->netfs_ops->free_subrequest)
->> +		rreq->netfs_ops->free_subrequest(subreq);
->>   	kfree(subreq);
->>   	netfs_stat_d(&netfs_n_rh_sreq);
->>   	netfs_put_request(rreq, was_async, netfs_rreq_trace_put_subreq);
->> diff --git a/include/linux/netfs.h b/include/linux/netfs.h
->> index c7bf1eaf51d5..1970c21b4f80 100644
->> --- a/include/linux/netfs.h
->> +++ b/include/linux/netfs.h
->> @@ -204,7 +204,10 @@ struct netfs_io_request {
->>    */
->>   struct netfs_request_ops {
->>   	int (*init_request)(struct netfs_io_request *rreq, struct file *file);
->> +	void (*free_request)(struct netfs_io_request *rreq);
->> +	void (*free_subrequest)(struct netfs_io_subrequest *rreq);
-> Do we need free_subrequest? It looks like nothing defines it in this
-> series.
+On 5/20/22 7:54 PM, Luís Henriques wrote:
+> The MDS tries to enforce a limit on the total key/values in extended
+> attributes.  However, this limit is enforced only if doing a synchronous
+> operation (MDS_OP_SETXATTR) -- if we're buffering the xattrs, the MDS
+> doesn't have a chance to enforce these limits.
+>
+> This patch forces the usage of the synchronous operation if xattrs size hits
+> the maximum size that is set on the MDS by default (64k).
+>
+> While there, fix a dout() that would trigger a printk warning:
+>
+> [   98.718078] ------------[ cut here ]------------
+> [   98.719012] precision 65536 too large
+> [   98.719039] WARNING: CPU: 1 PID: 3755 at lib/vsprintf.c:2703 vsnprintf+0x5e3/0x600
+> ...
+>
+> URL: https://tracker.ceph.com/issues/55725
+> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> ---
+>   fs/ceph/xattr.c | 17 +++++++++++++----
+>   1 file changed, 13 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index afec84088471..09751a5f028c 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -15,6 +15,12 @@
+>   #define XATTR_CEPH_PREFIX "ceph."
+>   #define XATTR_CEPH_PREFIX_LEN (sizeof (XATTR_CEPH_PREFIX) - 1)
+>   
+> +/*
+> + * Maximum size of xattrs the MDS can handle per inode by default.  This
+> + * includes the attribute name and 4+4 bytes for the key/value sizes.
+> + */
+> +#define MDS_MAX_XATTR_PAIRS_SIZE (1<<16) /* 64K */
 
-If this is needed in future, or shall we do this in 
-netfs_clear_subrequests() ?
+The max size is changeable in MDS side. Possibly we should do something 
+as mentioned in your ceph PR [1].
+
+@Jeff, any better idea ?
+
+
+[1] 
+https://github.com/ceph/ceph/pull/46357/commits/741f8ba36f14774834c0d5618519425ccf1ccc85#r878966753
+
+Thanks.
 
 -- Xiubo
 
->>   	int (*begin_cache_operation)(struct netfs_io_request *rreq);
->> +
->>   	void (*expand_readahead)(struct netfs_io_request *rreq);
->>   	bool (*clamp_length)(struct netfs_io_subrequest *subreq);
->>   	void (*issue_read)(struct netfs_io_subrequest *subreq);
->> @@ -212,7 +215,6 @@ struct netfs_request_ops {
->>   	int (*check_write_begin)(struct file *file, loff_t pos, unsigned len,
->>   				 struct folio *folio, void **_fsdata);
->>   	void (*done)(struct netfs_io_request *rreq);
->> -	void (*cleanup)(struct address_space *mapping, void *netfs_priv);
->>   };
->>   
->>   /*
->>
->>
+
+> +
+>   static int __remove_xattr(struct ceph_inode_info *ci,
+>   			  struct ceph_inode_xattr *xattr);
+>   
+> @@ -1078,7 +1084,7 @@ static int ceph_sync_setxattr(struct inode *inode, const char *name,
+>   			flags |= CEPH_XATTR_REMOVE;
+>   	}
+>   
+> -	dout("setxattr value=%.*s\n", (int)size, value);
+> +	dout("setxattr value size: ld\n", size);
+>   
+>   	/* do request */
+>   	req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+> @@ -1176,8 +1182,13 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+>   	spin_lock(&ci->i_ceph_lock);
+>   retry:
+>   	issued = __ceph_caps_issued(ci, NULL);
+> -	if (ci->i_xattrs.version == 0 || !(issued & CEPH_CAP_XATTR_EXCL))
+> +	required_blob_size = __get_required_blob_size(ci, name_len, val_len);
+> +	if ((ci->i_xattrs.version == 0) || !(issued & CEPH_CAP_XATTR_EXCL) ||
+> +	    (required_blob_size >= MDS_MAX_XATTR_PAIRS_SIZE)) {
+> +		dout("%s do sync setxattr: version: %llu blob size: %d\n",
+> +		     __func__, ci->i_xattrs.version, required_blob_size);
+>   		goto do_sync;
+> +	}
+>   
+>   	if (!lock_snap_rwsem && !ci->i_head_snapc) {
+>   		lock_snap_rwsem = true;
+> @@ -1193,8 +1204,6 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+>   	     ceph_cap_string(issued));
+>   	__build_xattrs(inode);
+>   
+> -	required_blob_size = __get_required_blob_size(ci, name_len, val_len);
+> -
+>   	if (!ci->i_xattrs.prealloc_blob ||
+>   	    required_blob_size > ci->i_xattrs.prealloc_blob->alloc_len) {
+>   		struct ceph_buffer *blob;
+>
 
