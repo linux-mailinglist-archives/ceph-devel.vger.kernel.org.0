@@ -2,81 +2,184 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0579D530963
-	for <lists+ceph-devel@lfdr.de>; Mon, 23 May 2022 08:12:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C24B530E32
+	for <lists+ceph-devel@lfdr.de>; Mon, 23 May 2022 12:43:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230263AbiEWGMk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 23 May 2022 02:12:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43520 "EHLO
+        id S233549AbiEWJqj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 23 May 2022 05:46:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236807AbiEWGMK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 23 May 2022 02:12:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AAF2F272
-        for <ceph-devel@vger.kernel.org>; Sun, 22 May 2022 23:12:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653286326;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zdXvbxe9TBvQlL5k5IXJSGdtX0v6lNlLaY17sAtSeoo=;
-        b=FVPod1deVecH71AtwoZUY8pstKjlm3edVysChbJtpdktFCMq7fYIvQk1rKvDVsipsIVnkG
-        D29e+68uwgl2wKbXDFQ9RAUMszZ8lbR2YVNq3ZX9I2qnYZ4pQAxW41CghcFsEk5t+pGCRj
-        eIY/rmiH3/K2/fXAHlbD8BKlq16dFJQ=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-520--Ln86PXDPeW6kkOhtvqsjg-1; Mon, 23 May 2022 02:08:52 -0400
-X-MC-Unique: -Ln86PXDPeW6kkOhtvqsjg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S233487AbiEWJqb (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 23 May 2022 05:46:31 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A57D1262D;
+        Mon, 23 May 2022 02:46:29 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9F6C7384F801;
-        Mon, 23 May 2022 06:08:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C42B2C27E97;
-        Mon, 23 May 2022 06:08:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <e5f6fee5518ce8e1b4fc5aa7038de1617a341c2f.camel@kernel.org>
-References: <e5f6fee5518ce8e1b4fc5aa7038de1617a341c2f.camel@kernel.org> <165296980082.3595490.3561111064004493810.stgit@warthog.procyon.org.uk>
-To:     Jeff Layton <jlayton@kernel.org>, Xiubo Li <xiubli@redhat.com>
-Cc:     dhowells@redhat.com, Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 5A4B521A56;
+        Mon, 23 May 2022 09:46:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1653299188; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GekKf6//40DiaCxW7x/Hs55TeT8ziwCO2ibyKExmano=;
+        b=pmUKfHvcesU5Kp9YpeKKlsV4pPc4HfQRr9NVbCDqxV3fMsTtVkQC2X0HKxvY7oi956depe
+        LeREyd/bYH8NL5spKy4AZEDNn0TrkDxZCqdwvr3rsPIE6x+Rwb6OIirI/tucSUPxpmQ1gw
+        uoTq81sw4nYBUIMOQ8eE8QwIKsPitvM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1653299188;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GekKf6//40DiaCxW7x/Hs55TeT8ziwCO2ibyKExmano=;
+        b=uqRLNoSlzvMnFPC8e+6XsEPu07Bkcp4Jd6KD+UBe/MNcjBT3ezWqNOKVPCnMQkNg8L8iCP
+        9ZDv0SnzrebgO+Dw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EAF99139F5;
+        Mon, 23 May 2022 09:46:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id BiCfNvNXi2IiawAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Mon, 23 May 2022 09:46:27 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 94e8ddd4;
+        Mon, 23 May 2022 09:47:06 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] netfs: ->cleanup() op is always given a rreq pointer now
+Subject: Re: [RFC PATCH] ceph: try to prevent exceeding the MDS maximum
+ xattr size
+References: <20220520115426.438-1-lhenriques@suse.de>
+        <13988024-efc7-2ab1-036a-eb1d2b2fbd15@redhat.com>
+Date:   Mon, 23 May 2022 10:47:06 +0100
+In-Reply-To: <13988024-efc7-2ab1-036a-eb1d2b2fbd15@redhat.com> (Xiubo Li's
+        message of "Mon, 23 May 2022 09:47:41 +0800")
+Message-ID: <874k1gmvhh.fsf@brahms.olymp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <460692.1653286129.1@warthog.procyon.org.uk>
-Date:   Mon, 23 May 2022 07:08:49 +0100
-Message-ID: <460693.1653286129@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> wrote:
+Xiubo Li <xiubli@redhat.com> writes:
 
-> Do we need free_subrequest? It looks like nothing defines it in this
-> series.
+> On 5/20/22 7:54 PM, Lu=C3=ADs Henriques wrote:
+>> The MDS tries to enforce a limit on the total key/values in extended
+>> attributes.  However, this limit is enforced only if doing a synchronous
+>> operation (MDS_OP_SETXATTR) -- if we're buffering the xattrs, the MDS
+>> doesn't have a chance to enforce these limits.
+>>
+>> This patch forces the usage of the synchronous operation if xattrs size =
+hits
+>> the maximum size that is set on the MDS by default (64k).
+>>
+>> While there, fix a dout() that would trigger a printk warning:
+>>
+>> [   98.718078] ------------[ cut here ]------------
+>> [   98.719012] precision 65536 too large
+>> [   98.719039] WARNING: CPU: 1 PID: 3755 at lib/vsprintf.c:2703 vsnprint=
+f+0x5e3/0x600
+>> ...
+>>
+>> URL: https://tracker.ceph.com/issues/55725
+>> Signed-off-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
+>> ---
+>>   fs/ceph/xattr.c | 17 +++++++++++++----
+>>   1 file changed, 13 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+>> index afec84088471..09751a5f028c 100644
+>> --- a/fs/ceph/xattr.c
+>> +++ b/fs/ceph/xattr.c
+>> @@ -15,6 +15,12 @@
+>>   #define XATTR_CEPH_PREFIX "ceph."
+>>   #define XATTR_CEPH_PREFIX_LEN (sizeof (XATTR_CEPH_PREFIX) - 1)
+>>   +/*
+>> + * Maximum size of xattrs the MDS can handle per inode by default.  This
+>> + * includes the attribute name and 4+4 bytes for the key/value sizes.
+>> + */
+>> +#define MDS_MAX_XATTR_PAIRS_SIZE (1<<16) /* 64K */
+>
+> The max size is changeable in MDS side. Possibly we should do something as
+> mentioned in your ceph PR [1].
+>
 
-These two patches add stuff that's used by stuff on my netfs-lib branch, but
-that's not going to be pushed this window, so I won't push these two patches
-for now.
+Right, as I mentioned in that PR, having clients that are aware of that
+limit will allow them to behave correctly.  But the MDS still needs to
+handle the case where these limits are exceeded (for ex. kernel clients
+that don't know about this limit).  So, we still need to do something
+similar to what I've proposed in there.
 
-David
+Cheers
+--=20
+Lu=C3=ADs
+
+> @Jeff, any better idea ?
+>
+>
+> [1]
+> https://github.com/ceph/ceph/pull/46357/commits/741f8ba36f14774834c0d5618=
+519425ccf1ccc85#r878966753
+>
+> Thanks.
+>
+> -- Xiubo
+>
+>
+>> +
+>>   static int __remove_xattr(struct ceph_inode_info *ci,
+>>   			  struct ceph_inode_xattr *xattr);
+>>   @@ -1078,7 +1084,7 @@ static int ceph_sync_setxattr(struct inode *inod=
+e,
+>> const char *name,
+>>   			flags |=3D CEPH_XATTR_REMOVE;
+>>   	}
+>>   -	dout("setxattr value=3D%.*s\n", (int)size, value);
+>> +	dout("setxattr value size: ld\n", size);
+>>     	/* do request */
+>>   	req =3D ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+>> @@ -1176,8 +1182,13 @@ int __ceph_setxattr(struct inode *inode, const ch=
+ar *name,
+>>   	spin_lock(&ci->i_ceph_lock);
+>>   retry:
+>>   	issued =3D __ceph_caps_issued(ci, NULL);
+>> -	if (ci->i_xattrs.version =3D=3D 0 || !(issued & CEPH_CAP_XATTR_EXCL))
+>> +	required_blob_size =3D __get_required_blob_size(ci, name_len, val_len);
+>> +	if ((ci->i_xattrs.version =3D=3D 0) || !(issued & CEPH_CAP_XATTR_EXCL)=
+ ||
+>> +	    (required_blob_size >=3D MDS_MAX_XATTR_PAIRS_SIZE)) {
+>> +		dout("%s do sync setxattr: version: %llu blob size: %d\n",
+>> +		     __func__, ci->i_xattrs.version, required_blob_size);
+>>   		goto do_sync;
+>> +	}
+>>     	if (!lock_snap_rwsem && !ci->i_head_snapc) {
+>>   		lock_snap_rwsem =3D true;
+>> @@ -1193,8 +1204,6 @@ int __ceph_setxattr(struct inode *inode, const cha=
+r *name,
+>>   	     ceph_cap_string(issued));
+>>   	__build_xattrs(inode);
+>>   -	required_blob_size =3D __get_required_blob_size(ci, name_len, val_le=
+n);
+>> -
+>>   	if (!ci->i_xattrs.prealloc_blob ||
+>>   	    required_blob_size > ci->i_xattrs.prealloc_blob->alloc_len) {
+>>   		struct ceph_buffer *blob;
+>>
+>
 
