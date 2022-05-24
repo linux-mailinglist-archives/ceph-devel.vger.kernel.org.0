@@ -2,283 +2,135 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D98CA533337
-	for <lists+ceph-devel@lfdr.de>; Wed, 25 May 2022 00:06:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B145A53334F
+	for <lists+ceph-devel@lfdr.de>; Wed, 25 May 2022 00:11:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240762AbiEXWGT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 24 May 2022 18:06:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33570 "EHLO
+        id S235243AbiEXWLx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 24 May 2022 18:11:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241099AbiEXWGS (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 24 May 2022 18:06:18 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49E31E9B
-        for <ceph-devel@vger.kernel.org>; Tue, 24 May 2022 15:06:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S233088AbiEXWLv (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 24 May 2022 18:11:51 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4F9C2FE4C;
+        Tue, 24 May 2022 15:11:49 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D26BBB81BF3
-        for <ceph-devel@vger.kernel.org>; Tue, 24 May 2022 22:06:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B225C34100;
-        Tue, 24 May 2022 22:06:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653429972;
-        bh=f1KpJhuCRQ9zJzqLsUzNmaI9x6gfMdwpy5JG6vtBUx4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=R+hXTWlqMS0rGEtoIJJek3XP62GwP4bMz5xMGfnaNocEnxgmuwpYZzcr+fCcKlYDd
-         yEJ0zFMcX15j3mzef/VzqbAd0mjO+ZtGSQNte7DbxVH4TPOXHios1xA3epcJni1nPl
-         P76XxmKa02N/WWAFlgchYsFRJfL5Kdt3DWAl33mlk1OmcV2XpAWwJuPOqDKvT9yxPQ
-         NND733t39BJmVzlqEJ+cAzYOAob1UXl0x1CX+XLhoDcsqTpwVHEFxuzoPOx21uyRRY
-         SsK9ygJ7YGFkLSNU0CMhnblhejE04tdiGQLviEGYiT64VxKse3NQYJY3hGAWG06lWc
-         TQuKnSEjyF5OQ==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     idryomov@gmail.com, xiubli@redhat.com
-Cc:     ceph-devel@vger.kernel.org
-Subject: [PATCH] libceph: drop last_piece flag from ceph_msg_data_cursor
-Date:   Tue, 24 May 2022 18:06:10 -0400
-Message-Id: <20220524220610.141970-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.36.1
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 69C041F8D6;
+        Tue, 24 May 2022 22:11:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1653430308; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qUilvDc5VpPdpdcvwIhX1OMwlgDV/cOZqTz70E/jD0k=;
+        b=rujv2iaf4e/RYx8Tr3LPueqlhGtAmXIUPpESCU8f41mEkFVa9RsXseT/GPSqDxcSuA5AyI
+        MqSLdjG19dQH3NN5h+h23Yu8lXAsrYWACMUsLvbYNMXep0cw8INIgtgMZR6w4jH+yYC38C
+        RMChYpf0I4C+CM2r+I/XQqg2rnVKv0Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1653430308;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qUilvDc5VpPdpdcvwIhX1OMwlgDV/cOZqTz70E/jD0k=;
+        b=q9FME0BqgFBf2Bqk64ceLm/TKCkWip/7QaxYdfFwVLRglrsnMhhHWS+CNStJa9lVyrW0wU
+        VMAszz5hv1anOxBQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2D9C413AE3;
+        Tue, 24 May 2022 22:11:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id xNPMCSRYjWLZVAAAMHmgww
+        (envelope-from <ddiss@suse.de>); Tue, 24 May 2022 22:11:48 +0000
+Date:   Wed, 25 May 2022 00:11:42 +0200
+From:   David Disseldorp <ddiss@suse.de>
+To:     =?UTF-8?B?THXDrXM=?= Henriques <lhenriques@suse.de>
+Cc:     Jeff Layton <jlayton@kernel.org>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        fstests@vger.kernel.org
+Subject: Re: [PATCH] ceph/005: verify correct statfs behaviour with quotas
+Message-ID: <20220525001142.0a17a41a@suse.de>
+In-Reply-To: <20220427143409.987-1-lhenriques@suse.de>
+References: <20220427143409.987-1-lhenriques@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-ceph_msg_data_next is always passed a NULL pointer for this field. Some
-of the "next" operations look at it in order to determine the length,
-but we can just take the min of the data on the page or cursor->resid.
+Hi Lu=C3=ADs,
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- include/linux/ceph/messenger.h |  4 +---
- net/ceph/messenger.c           | 40 +++++-----------------------------
- net/ceph/messenger_v1.c        |  6 ++---
- net/ceph/messenger_v2.c        |  2 +-
- 4 files changed, 10 insertions(+), 42 deletions(-)
+It looks like this one is still in need of review...
 
-diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenger.h
-index e7f2fb2fc207..99c1726be6ee 100644
---- a/include/linux/ceph/messenger.h
-+++ b/include/linux/ceph/messenger.h
-@@ -207,7 +207,6 @@ struct ceph_msg_data_cursor {
- 
- 	struct ceph_msg_data	*data;		/* current data item */
- 	size_t			resid;		/* bytes not yet consumed */
--	bool			last_piece;	/* current is last piece */
- 	bool			need_crc;	/* crc update needed */
- 	union {
- #ifdef CONFIG_BLOCK
-@@ -498,8 +497,7 @@ void ceph_con_discard_requeued(struct ceph_connection *con, u64 reconnect_seq);
- void ceph_msg_data_cursor_init(struct ceph_msg_data_cursor *cursor,
- 			       struct ceph_msg *msg, size_t length);
- struct page *ceph_msg_data_next(struct ceph_msg_data_cursor *cursor,
--				size_t *page_offset, size_t *length,
--				bool *last_piece);
-+				size_t *page_offset, size_t *length);
- void ceph_msg_data_advance(struct ceph_msg_data_cursor *cursor, size_t bytes);
- 
- u32 ceph_crc32c_page(u32 crc, struct page *page, unsigned int page_offset,
-diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-index d3bb656308b4..fae3edb46790 100644
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -728,7 +728,6 @@ static void ceph_msg_data_bio_cursor_init(struct ceph_msg_data_cursor *cursor,
- 		it->iter.bi_size = cursor->resid;
- 
- 	BUG_ON(cursor->resid < bio_iter_len(it->bio, it->iter));
--	cursor->last_piece = cursor->resid == bio_iter_len(it->bio, it->iter);
- }
- 
- static struct page *ceph_msg_data_bio_next(struct ceph_msg_data_cursor *cursor,
-@@ -754,10 +753,8 @@ static bool ceph_msg_data_bio_advance(struct ceph_msg_data_cursor *cursor,
- 	cursor->resid -= bytes;
- 	bio_advance_iter(it->bio, &it->iter, bytes);
- 
--	if (!cursor->resid) {
--		BUG_ON(!cursor->last_piece);
-+	if (!cursor->resid)
- 		return false;   /* no more data */
--	}
- 
- 	if (!bytes || (it->iter.bi_size && it->iter.bi_bvec_done &&
- 		       page == bio_iter_page(it->bio, it->iter)))
-@@ -770,9 +767,7 @@ static bool ceph_msg_data_bio_advance(struct ceph_msg_data_cursor *cursor,
- 			it->iter.bi_size = cursor->resid;
- 	}
- 
--	BUG_ON(cursor->last_piece);
- 	BUG_ON(cursor->resid < bio_iter_len(it->bio, it->iter));
--	cursor->last_piece = cursor->resid == bio_iter_len(it->bio, it->iter);
- 	return true;
- }
- #endif /* CONFIG_BLOCK */
-@@ -788,8 +783,6 @@ static void ceph_msg_data_bvecs_cursor_init(struct ceph_msg_data_cursor *cursor,
- 	cursor->bvec_iter.bi_size = cursor->resid;
- 
- 	BUG_ON(cursor->resid < bvec_iter_len(bvecs, cursor->bvec_iter));
--	cursor->last_piece =
--	    cursor->resid == bvec_iter_len(bvecs, cursor->bvec_iter);
- }
- 
- static struct page *ceph_msg_data_bvecs_next(struct ceph_msg_data_cursor *cursor,
-@@ -815,19 +808,14 @@ static bool ceph_msg_data_bvecs_advance(struct ceph_msg_data_cursor *cursor,
- 	cursor->resid -= bytes;
- 	bvec_iter_advance(bvecs, &cursor->bvec_iter, bytes);
- 
--	if (!cursor->resid) {
--		BUG_ON(!cursor->last_piece);
-+	if (!cursor->resid)
- 		return false;   /* no more data */
--	}
- 
- 	if (!bytes || (cursor->bvec_iter.bi_bvec_done &&
- 		       page == bvec_iter_page(bvecs, cursor->bvec_iter)))
- 		return false;	/* more bytes to process in this segment */
- 
--	BUG_ON(cursor->last_piece);
- 	BUG_ON(cursor->resid < bvec_iter_len(bvecs, cursor->bvec_iter));
--	cursor->last_piece =
--	    cursor->resid == bvec_iter_len(bvecs, cursor->bvec_iter);
- 	return true;
- }
- 
-@@ -853,7 +841,6 @@ static void ceph_msg_data_pages_cursor_init(struct ceph_msg_data_cursor *cursor,
- 	BUG_ON(page_count > (int)USHRT_MAX);
- 	cursor->page_count = (unsigned short)page_count;
- 	BUG_ON(length > SIZE_MAX - cursor->page_offset);
--	cursor->last_piece = cursor->page_offset + cursor->resid <= PAGE_SIZE;
- }
- 
- static struct page *
-@@ -868,11 +855,7 @@ ceph_msg_data_pages_next(struct ceph_msg_data_cursor *cursor,
- 	BUG_ON(cursor->page_offset >= PAGE_SIZE);
- 
- 	*page_offset = cursor->page_offset;
--	if (cursor->last_piece)
--		*length = cursor->resid;
--	else
--		*length = PAGE_SIZE - *page_offset;
--
-+	*length = min(cursor->resid, PAGE_SIZE - *page_offset);
- 	return data->pages[cursor->page_index];
- }
- 
-@@ -897,8 +880,6 @@ static bool ceph_msg_data_pages_advance(struct ceph_msg_data_cursor *cursor,
- 
- 	BUG_ON(cursor->page_index >= cursor->page_count);
- 	cursor->page_index++;
--	cursor->last_piece = cursor->resid <= PAGE_SIZE;
--
- 	return true;
- }
- 
-@@ -928,7 +909,6 @@ ceph_msg_data_pagelist_cursor_init(struct ceph_msg_data_cursor *cursor,
- 	cursor->resid = min(length, pagelist->length);
- 	cursor->page = page;
- 	cursor->offset = 0;
--	cursor->last_piece = cursor->resid <= PAGE_SIZE;
- }
- 
- static struct page *
-@@ -948,11 +928,7 @@ ceph_msg_data_pagelist_next(struct ceph_msg_data_cursor *cursor,
- 
- 	/* offset of first page in pagelist is always 0 */
- 	*page_offset = cursor->offset & ~PAGE_MASK;
--	if (cursor->last_piece)
--		*length = cursor->resid;
--	else
--		*length = PAGE_SIZE - *page_offset;
--
-+	*length = min(cursor->resid, PAGE_SIZE - *page_offset);
- 	return cursor->page;
- }
- 
-@@ -985,8 +961,6 @@ static bool ceph_msg_data_pagelist_advance(struct ceph_msg_data_cursor *cursor,
- 
- 	BUG_ON(list_is_last(&cursor->page->lru, &pagelist->head));
- 	cursor->page = list_next_entry(cursor->page, lru);
--	cursor->last_piece = cursor->resid <= PAGE_SIZE;
--
- 	return true;
- }
- 
-@@ -1044,8 +1018,7 @@ void ceph_msg_data_cursor_init(struct ceph_msg_data_cursor *cursor,
-  * Indicate whether this is the last piece in this data item.
-  */
- struct page *ceph_msg_data_next(struct ceph_msg_data_cursor *cursor,
--				size_t *page_offset, size_t *length,
--				bool *last_piece)
-+				size_t *page_offset, size_t *length)
- {
- 	struct page *page;
- 
-@@ -1074,8 +1047,6 @@ struct page *ceph_msg_data_next(struct ceph_msg_data_cursor *cursor,
- 	BUG_ON(*page_offset + *length > PAGE_SIZE);
- 	BUG_ON(!*length);
- 	BUG_ON(*length > cursor->resid);
--	if (last_piece)
--		*last_piece = cursor->last_piece;
- 
- 	return page;
- }
-@@ -1112,7 +1083,6 @@ void ceph_msg_data_advance(struct ceph_msg_data_cursor *cursor, size_t bytes)
- 	cursor->total_resid -= bytes;
- 
- 	if (!cursor->resid && cursor->total_resid) {
--		WARN_ON(!cursor->last_piece);
- 		cursor->data++;
- 		__ceph_msg_data_cursor_init(cursor);
- 		new_piece = true;
-diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
-index 6b014eca3a13..3ddbde87e4d6 100644
---- a/net/ceph/messenger_v1.c
-+++ b/net/ceph/messenger_v1.c
-@@ -495,7 +495,7 @@ static int write_partial_message_data(struct ceph_connection *con)
- 			continue;
- 		}
- 
--		page = ceph_msg_data_next(cursor, &page_offset, &length, NULL);
-+		page = ceph_msg_data_next(cursor, &page_offset, &length);
- 		if (length == cursor->total_resid)
- 			more = MSG_MORE;
- 		ret = ceph_tcp_sendpage(con->sock, page, page_offset, length,
-@@ -1008,7 +1008,7 @@ static int read_partial_msg_data(struct ceph_connection *con)
- 			continue;
- 		}
- 
--		page = ceph_msg_data_next(cursor, &page_offset, &length, NULL);
-+		page = ceph_msg_data_next(cursor, &page_offset, &length);
- 		ret = ceph_tcp_recvpage(con->sock, page, page_offset, length);
- 		if (ret <= 0) {
- 			if (do_datacrc)
-@@ -1050,7 +1050,7 @@ static int read_partial_msg_data_bounce(struct ceph_connection *con)
- 			continue;
- 		}
- 
--		page = ceph_msg_data_next(cursor, &off, &len, NULL);
-+		page = ceph_msg_data_next(cursor, &off, &len);
- 		ret = ceph_tcp_recvpage(con->sock, con->bounce_page, 0, len);
- 		if (ret <= 0) {
- 			con->in_data_crc = crc;
-diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-index c6e5bfc717d5..cc8ff81a50b7 100644
---- a/net/ceph/messenger_v2.c
-+++ b/net/ceph/messenger_v2.c
-@@ -862,7 +862,7 @@ static void get_bvec_at(struct ceph_msg_data_cursor *cursor,
- 		ceph_msg_data_advance(cursor, 0);
- 
- 	/* get a piece of data, cursor isn't advanced */
--	page = ceph_msg_data_next(cursor, &off, &len, NULL);
-+	page = ceph_msg_data_next(cursor, &off, &len);
- 
- 	bv->bv_page = page;
- 	bv->bv_offset = off;
--- 
-2.36.1
+On Wed, 27 Apr 2022 15:34:09 +0100, Lu=C3=ADs Henriques wrote:
 
+> When using a directory with 'max_bytes' quota as a base for a mount,
+> statfs shall use that 'max_bytes' value as the total disk size.  That
+> value shall be used even when using subdirectory as base for the mount.
+>=20
+> A bug was found where, when this subdirectory also had a 'max_files'
+> quota, the real filesystem size would be returned instead of the parent
+> 'max_bytes' quota value.  This test case verifies this bug is fixed.
+>=20
+> Signed-off-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
+> ---
+>  tests/ceph/005     | 40 ++++++++++++++++++++++++++++++++++++++++
+>  tests/ceph/005.out |  2 ++
+>  2 files changed, 42 insertions(+)
+>  create mode 100755 tests/ceph/005
+>  create mode 100644 tests/ceph/005.out
+>=20
+> diff --git a/tests/ceph/005 b/tests/ceph/005
+> new file mode 100755
+> index 000000000000..0763a235a677
+> --- /dev/null
+> +++ b/tests/ceph/005
+> @@ -0,0 +1,40 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (C) 2022 SUSE Linux Products GmbH. All Rights Reserved.
+> +#
+> +# FS QA Test 005
+> +#
+> +# Make sure statfs reports correct total size when:
+> +# 1. using a directory with 'max_byte' quota as base for a mount
+> +# 2. using a subdirectory of the above directory with 'max_files' quota
+> +#
+> +. ./common/preamble
+> +_begin_fstest auto quick quota
+> +
+> +_supported_fs generic
+> +_require_scratch
+> +
+> +_scratch_mount
+> +mkdir -p $SCRATCH_MNT/quota-dir/subdir
+> +
+> +# set quotas
+> +quota=3D$((1024*10000))
+> +$SETFATTR_PROG -n ceph.quota.max_bytes -v $quota $SCRATCH_MNT/quota-dir
+> +$SETFATTR_PROG -n ceph.quota.max_files -v $quota $SCRATCH_MNT/quota-dir/=
+subdir
+> +_scratch_unmount
+> +
+> +SCRATCH_DEV=3D$SCRATCH_DEV/quota-dir _scratch_mount
+
+Aside from the standard please-quote-your-variables gripe, I'm a little
+confused with the use of SCRATCH_DEV for this test. Network FSes where
+mkfs isn't provided don't generally use it. Is there any way that this
+could be run against TEST_DEV, or does the umount / mount complicate
+things too much?
+
+Cheers, David
