@@ -2,52 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 91742532F52
-	for <lists+ceph-devel@lfdr.de>; Tue, 24 May 2022 18:59:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37BDE532F57
+	for <lists+ceph-devel@lfdr.de>; Tue, 24 May 2022 19:01:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237643AbiEXQ7E (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 24 May 2022 12:59:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45042 "EHLO
+        id S239775AbiEXRB1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 24 May 2022 13:01:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbiEXQ7D (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 24 May 2022 12:59:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB76D6E8FC;
-        Tue, 24 May 2022 09:59:02 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 35AA36141D;
-        Tue, 24 May 2022 16:59:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D885C34100;
-        Tue, 24 May 2022 16:59:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653411541;
-        bh=k32M5bfCUFnFygn/Z63wbfvyD3ZA27qJmNHAvBdhOyM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=stWoBtRccCMJOXIQk8cvhxCmiDYQ8Jg5g6su0ZZt1O6aJaJRgUTe6BfFATc5HJteK
-         DvqteQERZVkSrORl/2pvY1MTgJSLPcisadilXQbAZ052AGAO1EusbyqR+c5Mce72mx
-         dF4fYPLwuJdscrguATO5yIssTz/FN0ACONu9lSXRqCBLya1X5z/7SsulMdZfteS20c
-         6IPZ0/vTpNTcVDirbIiOASzlRjv2scVA0/EEjw2C4xl5gNKM2KtPIBhj1ylHOeq0Wz
-         uXLjmXIuvVNtjvlxtgndojU1QRKKVSR1WXNjee9MkmlLz5jxJQn1X17Fso4gT3Ovob
-         layzTYiWShmzA==
-Message-ID: <abcdf2216946f436ca21b888882863c58d517b37.camel@kernel.org>
-Subject: Re: [PATCH] ceph: use correct index when encoding client supported
- features
-From:   Jeff Layton <jlayton@kernel.org>
-To:     =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>,
-        Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 24 May 2022 12:58:59 -0400
-In-Reply-To: <20220524160627.20893-1-lhenriques@suse.de>
-References: <20220524160627.20893-1-lhenriques@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.1 (3.44.1-1.fc36) 
+        with ESMTP id S239698AbiEXRBZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 24 May 2022 13:01:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 01BE9111E
+        for <ceph-devel@vger.kernel.org>; Tue, 24 May 2022 10:01:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1653411683;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=b54mK8xYCAhXsjzahjRnSBRagXlWJQyhFWbgJ8hoi5w=;
+        b=ZW4F7IBXPJQeU6N2k0atwSegBIGBCz3+i8amSq2OKQwfWYxQ4UJzrT3X2i9ih/B/y8uf6s
+        Y6cULfbQB11xQ/SupBMklKrcVHF5inyBJPc8z4Rd68MKhmDA+2zU1AlFtDKRxpqa7qTqNx
+        HbqhwMwBuCsK5BWBAxnxWPZ3H5f4Bnk=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-627-KGFcHVlnPIysB9EqL8NqXQ-1; Tue, 24 May 2022 12:59:33 -0400
+X-MC-Unique: KGFcHVlnPIysB9EqL8NqXQ-1
+Received: by mail-qv1-f70.google.com with SMTP id kk13-20020a056214508d00b004622b4b8762so5787559qvb.4
+        for <ceph-devel@vger.kernel.org>; Tue, 24 May 2022 09:59:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=b54mK8xYCAhXsjzahjRnSBRagXlWJQyhFWbgJ8hoi5w=;
+        b=I4adDCmmjPqls/Wcttf4eoZ+1WBJxuVGgLM+9emtc/GS+OeZwg4Nn3YgtfuqtAaEKV
+         gux6BQR6EecaVuWJqwZY5STGpUQ8pCJ7PDpQZy87IPIGCx3YhyFDMoiI7cY9QJ0bOQgs
+         0JYXe7wSj50EtUy4dcAo5oLJOkT0rBcD6W9SCmvrsAamINrWEA1NUGIvQUXJ0owQ562R
+         9ni7cJ89LvrkGNOUlSoxcirRk+c6NO2R4ybWeGDoAOqNTffnINJ+NoqI4hbPfKAAQRJD
+         ucgngGzOmgieohR4dBPl7NxS90UtneyI8wZuvUlvS85J9/+6czCtyjJ6QB10zR4Lj5Zv
+         qLHw==
+X-Gm-Message-State: AOAM530MeWuF6YptyzjKWfm2O1+yYBrWMfLykbrPBkemD7V/vnnwuNPl
+        jsEwkrowT7G+HHeksKsQHjh/nw303WN7jycTLqOSZzSNHCqVFPTJtMHn9oyUUty/fTy8/7e+6Dw
+        PeFwhofAkQpChAkaGJt7RcQ==
+X-Received: by 2002:a05:620a:b82:b0:6a3:9b26:d45 with SMTP id k2-20020a05620a0b8200b006a39b260d45mr6240286qkh.405.1653411572135;
+        Tue, 24 May 2022 09:59:32 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxPyK2cw49Zhkd3Nrx1cc7EK/KDdwr+rp6Aera4mFJx0isFVnaca45lMCeABPU1AAZM8KGS8A==
+X-Received: by 2002:a05:620a:b82:b0:6a3:9b26:d45 with SMTP id k2-20020a05620a0b8200b006a39b260d45mr6240267qkh.405.1653411571864;
+        Tue, 24 May 2022 09:59:31 -0700 (PDT)
+Received: from zlang-mailbox ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id k12-20020a05620a138c00b0069fcc501851sm6179209qki.78.2022.05.24.09.59.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 May 2022 09:59:31 -0700 (PDT)
+Date:   Wed, 25 May 2022 00:59:26 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     =?utf-8?B?THXDrXM=?= Henriques <lhenriques@suse.de>
+Cc:     fstests@vger.kernel.org, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH v2] ceph/001: skip metrics check if no copyfrom mount
+ option is used
+Message-ID: <20220524165926.dkighy46hi75mg6s@zlang-mailbox>
+References: <20220524094256.16746-1-lhenriques@suse.de>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220524094256.16746-1-lhenriques@suse.de>
+X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,67 +78,45 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2022-05-24 at 17:06 +0100, Lu=EDs Henriques wrote:
-> Feature bits have to be encoded into the correct locations.  This hasn't
-> been an issue so far because the only hole in the feature bits was in bit
-> 10 (CEPHFS_FEATURE_RECLAIM_CLIENT), which is located in the 2nd byte.  Wh=
-en
-> adding more bits that go beyond the this 2nd byte, the bug will show up.
->=20
-> Fixes: 9ba1e224538a ("ceph: allocate the correct amount of extra bytes fo=
-r the session features")
-> Signed-off-by: Lu=EDs Henriques <lhenriques@suse.de>
+On Tue, May 24, 2022 at 10:42:56AM +0100, Luís Henriques wrote:
+> Checking the metrics is only valid if 'copyfrom' mount option is
+> explicitly set, otherwise the kernel won't be doing any remote object
+> copies.  Fix the logic to skip this metrics checking if 'copyfrom' isn't
+> used.
+> 
+> Signed-off-by: Luís Henriques <lhenriques@suse.de>
 > ---
->  fs/ceph/mds_client.c | 7 +++++--
->  fs/ceph/mds_client.h | 2 --
->  2 files changed, 5 insertions(+), 4 deletions(-)
->=20
-> I hope I got this code right.  I found this issue when trying to add an
-> extra feature bit that would go beyond bit 15 and that wasn't showing up
-> on the MDS side.
->=20
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 1bd3e1bb0fdf..77e742b6fd30 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -1220,14 +1220,17 @@ static int encode_supported_features(void **p, vo=
-id *end)
->  	if (count > 0) {
->  		size_t i;
->  		size_t size =3D FEATURE_BYTES(count);
-> +		unsigned long bit;
-> =20
->  		if (WARN_ON_ONCE(*p + 4 + size > end))
->  			return -ERANGE;
-> =20
->  		ceph_encode_32(p, size);
->  		memset(*p, 0, size);
-> -		for (i =3D 0; i < count; i++)
-> -			((unsigned char*)(*p))[i / 8] |=3D BIT(feature_bits[i] % 8);
-> +		for (i =3D 0; i < count; i++) {
-> +			bit =3D feature_bits[i];
-> +			((unsigned char *)(*p))[bit / 8] |=3D BIT(bit % 8);
-> +		}
+>  tests/ceph/001 | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> Changes since v1:
+> - Quoted 'hascopyfrom' variable in 'if' statement; while there, added
+>   quotes to the 'if' statement just above.
 
-I wish we could just use __set_bit/__clear_bit here. It would be a lot
-easier to reason this out. Your logic looks correct to me though.
+Good to me,
+Reviewed-by: Zorro Lang <zlang@redhat.com>
 
+> 
+> diff --git a/tests/ceph/001 b/tests/ceph/001
+> index 7970ce352bab..060c4c450091 100755
+> --- a/tests/ceph/001
+> +++ b/tests/ceph/001
+> @@ -86,11 +86,15 @@ check_copyfrom_metrics()
+>  	local copies=$4
+>  	local c1=$(get_copyfrom_total_copies)
+>  	local s1=$(get_copyfrom_total_size)
+> +	local hascopyfrom=$(_fs_options $TEST_DEV | grep "copyfrom")
+>  	local sum
+>  
+> -	if [ ! -d $metrics_dir ]; then
+> +	if [ ! -d "$metrics_dir" ]; then
+>  		return # skip metrics check if debugfs isn't mounted
+>  	fi
+> +	if [ -z "$hascopyfrom" ]; then
+> +		return # ... or if we don't have copyfrom mount option
+> +	fi
+>  
+>  	sum=$(($c0+$copies))
+>  	if [ $sum -ne $c1 ]; then
+> 
 
->  		*p +=3D size;
->  	} else {
->  		if (WARN_ON_ONCE(*p + 4 > end))
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index 33497846e47e..12901e3a6823 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -45,8 +45,6 @@ enum ceph_feature_type {
->  	CEPHFS_FEATURE_MULTI_RECONNECT,		\
->  	CEPHFS_FEATURE_DELEG_INO,		\
->  	CEPHFS_FEATURE_METRIC_COLLECT,		\
-> -						\
-> -	CEPHFS_FEATURE_MAX,			\
->  }
->  #define CEPHFS_FEATURES_CLIENT_REQUIRED {}
-> =20
-
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
