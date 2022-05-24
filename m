@@ -2,74 +2,76 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B59CD531FF6
-	for <lists+ceph-devel@lfdr.de>; Tue, 24 May 2022 02:51:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A16453203D
+	for <lists+ceph-devel@lfdr.de>; Tue, 24 May 2022 03:20:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232363AbiEXAvh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 23 May 2022 20:51:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59092 "EHLO
+        id S232660AbiEXBUR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 23 May 2022 21:20:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229743AbiEXAvf (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 23 May 2022 20:51:35 -0400
+        with ESMTP id S231970AbiEXBUQ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 23 May 2022 21:20:16 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1F5E61FA6A
-        for <ceph-devel@vger.kernel.org>; Mon, 23 May 2022 17:51:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BF57E972BB
+        for <ceph-devel@vger.kernel.org>; Mon, 23 May 2022 18:20:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653353492;
+        s=mimecast20190719; t=1653355210;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=YYTIypUIAadfcSy41CGM20tQJDNF0c7lxi1JOJ+m/Z8=;
-        b=DfuAtgdGaAenDRRp4q9ByajuyWWKc9FvP9Go8PC8UDs/+bxryRfOpvEjfO8AYOEOWTdV1f
-        VzFyLI6DcVJrnfGyITJ1e3h7bve0sn3rbbkrkYU/3//yA2s6qh+bOGVZHW/b4ivsy1utat
-        vQk/AjKevr758u62s9oItF63BKl4SSw=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=JjBAtLVuW+IVhdLGX+nEfh5D6ivneZdTFo7a8oOuupk=;
+        b=DW23b66bfIacVVW4o4cYPG5XJNUAIUqWIRO5zJlEr1y4V1l2YLM6Wm3hzAkxeMprnd5rKM
+        vj/DmV0syHWQmbQI6Hs2iHSp0qlR2VcUyAth0qaT/5dwaha+Sj9LJTFck6SZd3j03lVqiD
+        2keEV8DRyKGJsR5iegSGSuOvCURCESo=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-341-bkPkZG__Nk6-bLdBTOAAdA-1; Mon, 23 May 2022 20:51:30 -0400
-X-MC-Unique: bkPkZG__Nk6-bLdBTOAAdA-1
-Received: by mail-pl1-f200.google.com with SMTP id x23-20020a170902b41700b0015ea144789fso8825569plr.13
-        for <ceph-devel@vger.kernel.org>; Mon, 23 May 2022 17:51:30 -0700 (PDT)
+ us-mta-553-Q0eegsvmO_ak7UqGkrRpVA-1; Mon, 23 May 2022 21:20:09 -0400
+X-MC-Unique: Q0eegsvmO_ak7UqGkrRpVA-1
+Received: by mail-pj1-f71.google.com with SMTP id o8-20020a17090a9f8800b001dc9f554c7fso9000801pjp.4
+        for <ceph-devel@vger.kernel.org>; Mon, 23 May 2022 18:20:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=YYTIypUIAadfcSy41CGM20tQJDNF0c7lxi1JOJ+m/Z8=;
-        b=Io2AJILWsiXaY+Ok5AO3LxKlqGW9f82iXGGK0GHpUq5Ia8C2E5RszCANbVMzSgaG5A
-         2W7EPSL6gOz1s55lBI29x5dZbvri9h+uk6WiYRDtFIGqpV7LmETGhFHYL09nVl9+uU1M
-         CtQDI08LixAyaoEhRsAXLpN5WbE7pDNC1+vwK4Topy6pg5HRbSXsaOS7WtFmxaZRiSEq
-         s8hAwBLUfnSZqK4HoPWs6VuCRdVD3CH2BBNe3f9vMoZmlWHRtF2lrrj6xNgqFyOaL4Is
-         /DMmMt9Y03oa2vHF+lFWc8Fkxa+u3jzx1i7wxZVfFxnZyOqQXhmN7lMOgrvXFYb52rBi
-         gFpQ==
-X-Gm-Message-State: AOAM533mAil3h1n4+6dtEvgCW/IXjl4dcVhUGQK5m/u1aHUd/KcMWSUF
-        kwsWOC1TG3btGk8ixDIe6QtiZ/cjSI0nJOfUxjQLY7/haUlXpZguYtDCTy5DyPZpa63YOJeqR4N
-        X2QrPrHJsMLHkQbrWfK2k6Q==
-X-Received: by 2002:a63:fc08:0:b0:3f9:e159:b114 with SMTP id j8-20020a63fc08000000b003f9e159b114mr13011206pgi.526.1653353489753;
-        Mon, 23 May 2022 17:51:29 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwH5R8vSDYh7Qy+89u7KjwlPHBHVSXcTSiatpbqsu0in/KQMdoJAbWkmpNFUQY2OLjaEKOovA==
-X-Received: by 2002:a63:fc08:0:b0:3f9:e159:b114 with SMTP id j8-20020a63fc08000000b003f9e159b114mr13011200pgi.526.1653353489558;
-        Mon, 23 May 2022 17:51:29 -0700 (PDT)
+        bh=JjBAtLVuW+IVhdLGX+nEfh5D6ivneZdTFo7a8oOuupk=;
+        b=k02Cg7UeoJu7swNX3PPNZeYfVxgVs6MzfQaIH4v3wL7NIvyKJLik674DKpB98gMzt/
+         /25LbpM8ZrZR0txyB8X4fONZUqEcIounxi3j8H+CPZZ7iRZsJewQce6ILT1iKxshqms0
+         SsS/w3IAMX4OocXtDrKxG0iVhM+LiRz7ciS6T4G7YXvd6AGzUAD+mc87Q2r5qil0+s2e
+         zT2mEOxi+YRHK/RptiOAxFiwJdenrHI7d4AG5zMbHi2eSCOqVqGjP+gul+ajcklkqkTo
+         /pLJnY4AdTp0ON5MYiZC/+WXvo8VRLqr+zaP9LInz+pANyobPTHZbKUQojxujPYSh07d
+         OvPg==
+X-Gm-Message-State: AOAM532/9xOhWnup9SBiYXcph++jeBZzx19EO1VOwi/gmnx8PPpsL7yA
+        uft4Jb07M8N2Rvc1GzC69CZCH4gQisXprAregv0kzT4T2S1e9ZjIK7oLLqKAhn2kEYHA/e2SmZP
+        X9dimGCPf9t3vo5qqvOtySA==
+X-Received: by 2002:a17:902:b601:b0:162:17c5:1fd9 with SMTP id b1-20020a170902b60100b0016217c51fd9mr10221759pls.16.1653355208455;
+        Mon, 23 May 2022 18:20:08 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy8PCrx4B3hjo9pzEm6nSbe+G9eskEIB9IzZjjZEjvpJRh3t+L5TD02tmV2Gv0cxP1MxZ1kWQ==
+X-Received: by 2002:a17:902:b601:b0:162:17c5:1fd9 with SMTP id b1-20020a170902b60100b0016217c51fd9mr10221741pls.16.1653355208208;
+        Mon, 23 May 2022 18:20:08 -0700 (PDT)
 Received: from [10.72.12.81] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id l13-20020a6542cd000000b003c619f3d086sm5367802pgp.2.2022.05.23.17.51.25
+        by smtp.gmail.com with ESMTPSA id it6-20020a17090afb0600b001d9927ef1desm311810pjb.34.2022.05.23.18.20.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 May 2022 17:51:28 -0700 (PDT)
-Subject: Re: [PATCH] MAINTAINERS: move myself from ceph "Maintainer" to
- "Reviewer"
-To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, linux-fsdevel@vger.kernel.org,
+        Mon, 23 May 2022 18:20:07 -0700 (PDT)
+Subject: Re: [PATCH] ceph: fix decoding of client session messages flags
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20220523172209.141504-1-jlayton@kernel.org>
+References: <20220523160951.8781-1-lhenriques@suse.de>
+ <1e1f7397d516f8b9780b08763f6338cd4ce83506.camel@kernel.org>
+ <87y1ysky25.fsf@brahms.olymp>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <70a4bb14-cdb7-2368-1a67-ab69d3ed9317@redhat.com>
-Date:   Tue, 24 May 2022 08:51:22 +0800
+Message-ID: <3a5e1fdc-6ace-d4bc-7bca-20854155d652@redhat.com>
+Date:   Tue, 24 May 2022 09:20:02 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <20220523172209.141504-1-jlayton@kernel.org>
+In-Reply-To: <87y1ysky25.fsf@brahms.olymp>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
@@ -82,43 +84,65 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 5/24/22 1:22 AM, Jeff Layton wrote:
-> Xiubo has graciously volunteered to take over for me as the Linux cephfs
-> client maintainer. Make it official by changing myself to be a
-> "Reviewer" for libceph and ceph.
+On 5/24/22 12:34 AM, Luís Henriques wrote:
+> Jeff Layton <jlayton@kernel.org> writes:
 >
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   MAINTAINERS | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d6d879cb0afd..39ec8fd2e996 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4547,8 +4547,8 @@ F:	drivers/power/supply/cw2015_battery.c
->   
->   CEPH COMMON CODE (LIBCEPH)
->   M:	Ilya Dryomov <idryomov@gmail.com>
-> -M:	Jeff Layton <jlayton@kernel.org>
->   M:	Xiubo Li <xiubli@redhat.com>
-> +R:	Jeff Layton <jlayton@kernel.org>
->   L:	ceph-devel@vger.kernel.org
->   S:	Supported
->   W:	http://ceph.com/
-> @@ -4558,9 +4558,9 @@ F:	include/linux/crush/
->   F:	net/ceph/
->   
->   CEPH DISTRIBUTED FILE SYSTEM CLIENT (CEPH)
-> -M:	Jeff Layton <jlayton@kernel.org>
->   M:	Xiubo Li <xiubli@redhat.com>
->   M:	Ilya Dryomov <idryomov@gmail.com>
-> +R:	Jeff Layton <jlayton@kernel.org>
->   L:	ceph-devel@vger.kernel.org
->   S:	Supported
->   W:	http://ceph.com/
+>> On Mon, 2022-05-23 at 17:09 +0100, Luís Henriques wrote:
+>>> The cephfs kernel client started to show  the message:
+>>>
+>>>   ceph: mds0 session blocklisted
+>>>
+>>> when mounting a filesystem.  This is due to the fact that the session
+>>> messages are being incorrectly decoded: the skip needs to take into
+>>> account the 'len'.
+>>>
+>>> While there, fixed some whitespaces too.
+>>>
+>>> Fixes: e1c9788cb397 ("ceph: don't rely on error_string to validate blocklisted session.")
+>>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+>>> ---
+>>>   fs/ceph/mds_client.c | 14 +++++++++-----
+>>>   1 file changed, 9 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+>>> index 00c3de177dd6..1bd3e1bb0fdf 100644
+>>> --- a/fs/ceph/mds_client.c
+>>> +++ b/fs/ceph/mds_client.c
+>>> @@ -3375,13 +3375,17 @@ static void handle_session(struct ceph_mds_session *session,
+>>>   	}
+>>>   
+>>>   	if (msg_version >= 5) {
+>>> -		u32 flags;
+>>> -		/* version >= 4, struct_v, struct_cv, len, metric_spec */
+>>> -	        ceph_decode_skip_n(&p, end, 2 + sizeof(u32) * 2, bad);
+>>> +		u32 flags, len;
+>>> +
+>>> +		/* version >= 4 */
+>>> +		ceph_decode_skip_16(&p, end, bad); /* struct_v, struct_cv */
+>>> +		ceph_decode_32_safe(&p, end, len, bad); /* len */
+>>> +		ceph_decode_skip_n(&p, end, len, bad); /* metric_spec */
+>>> +
+>>>   		/* version >= 5, flags   */
+>>> -                ceph_decode_32_safe(&p, end, flags, bad);
+>>> +		ceph_decode_32_safe(&p, end, flags, bad);
+>>>   		if (flags & CEPH_SESSION_BLOCKLISTED) {
+>>> -		        pr_warn("mds%d session blocklisted\n", session->s_mds);
+>>> +			pr_warn("mds%d session blocklisted\n", session->s_mds);
+>>>   			blocklisted = true;
+>>>   		}
+>>>   	}
+>> Good catch! Should we send this to stable too?
+> Ah, yeah.  I didn't explicitly tagged it as I assumed the 'Fixes:' would
+> be enough for that.  But it's probably better to do add the 'Cc: stable'
+> too.
 
-Thanks Jeff.
+Good catch! Merged into the testing branch and added the 'Cc: stable'.
 
-Acked-by: Xiubo Li <xiubli@redhat.com>
+Thanks Luis.
+
+-- Xiubo
+
+
+>> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Cheers,
 
