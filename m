@@ -2,129 +2,164 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B5F2533593
-	for <lists+ceph-devel@lfdr.de>; Wed, 25 May 2022 05:05:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E8875338D2
+	for <lists+ceph-devel@lfdr.de>; Wed, 25 May 2022 10:53:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235687AbiEYDE4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 24 May 2022 23:04:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36052 "EHLO
+        id S232431AbiEYIxU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 25 May 2022 04:53:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231518AbiEYDEy (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 24 May 2022 23:04:54 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 285B15FF03
-        for <ceph-devel@vger.kernel.org>; Tue, 24 May 2022 20:04:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1653447893; x=1684983893;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Vm1OsWaG6z4/aZh440UxY1H3RGG32dINyzjSovJWCww=;
-  b=F2OQfaT0ijj20NskXHzn75g8YV72eGEC4+y5UVTWq8Zbqz+mJ6ePegRB
-   TsGJVhKE0Re7Env0Qmt3MR+e9RjfXwhaD3wgiCZ2tfXqWqnJ9EmLqZaV8
-   lSTIYODoP4aDuH/8LEW4yHVulqYuk68KYf3W153NU8AeuzPI1kbgVBzLh
-   QsKnldsqT8BGgu9xiza14d+C5qanY9bVtY3RX1g9ehHmEGCMvm5nxP7uU
-   992ovz0NRF8pQamVJlmGnmMucClhyuhLByLe6wf++3VlM2AmWlxOpolHC
-   U9xuzW4BHfT3DQewLBmKLtHyACImQ0+hEGNTvL4Dyh1M5+Wsxe+4CMMPj
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10357"; a="334346516"
-X-IronPort-AV: E=Sophos;i="5.91,250,1647327600"; 
-   d="scan'208";a="334346516"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 May 2022 20:04:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,250,1647327600"; 
-   d="scan'208";a="608932683"
-Received: from lkp-server01.sh.intel.com (HELO db63a1be7222) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 24 May 2022 20:04:50 -0700
-Received: from kbuild by db63a1be7222 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nthKM-0002fO-2x;
-        Wed, 25 May 2022 03:04:50 +0000
-Date:   Wed, 25 May 2022 11:03:56 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com,
-        xiubli@redhat.com
-Cc:     kbuild-all@lists.01.org, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH] libceph: drop last_piece flag from ceph_msg_data_cursor
-Message-ID: <202205251055.ijbnX88Q-lkp@intel.com>
-References: <20220524220610.141970-1-jlayton@kernel.org>
+        with ESMTP id S229664AbiEYIxT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 25 May 2022 04:53:19 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 985586EC49;
+        Wed, 25 May 2022 01:53:17 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 5828321A30;
+        Wed, 25 May 2022 08:53:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1653468796; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6lvI5+7nkEUAhviAN89G0g3b4xRyPUSDr30NoCxU9Vg=;
+        b=CAxqpGc7pYz5m/NlN/dhvQq6DP7o3I/Mqrn4le2WAGC1zsMRRAWBa2DaUGKO+TXfZCT3w5
+        3F+wkg5cNsvcaMhgRoTAxIcnoKQGcHs8HmfIleAczwThWf9qWxi+iS+ab+hquYIo3cCciz
+        aQ71hwWE9fvkpeTYnP/N2sJfTtLtitI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1653468796;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6lvI5+7nkEUAhviAN89G0g3b4xRyPUSDr30NoCxU9Vg=;
+        b=zzuNro+lQr66Xd5esa0abbtW35iJnS1BhKalSA1miuKmaeXTOoPYJTgFz5yogGByEu0Cgu
+        Z5PZwLCqnbgD4sCQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E2B5613ADF;
+        Wed, 25 May 2022 08:53:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id GPaaNHvujWKNQQAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Wed, 25 May 2022 08:53:15 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id d9d65e37;
+        Wed, 25 May 2022 08:53:53 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     David Disseldorp <ddiss@suse.de>
+Cc:     Jeff Layton <jlayton@kernel.org>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        fstests@vger.kernel.org
+Subject: Re: [PATCH] ceph/005: verify correct statfs behaviour with quotas
+References: <20220427143409.987-1-lhenriques@suse.de>
+        <20220525001142.0a17a41a@suse.de>
+Date:   Wed, 25 May 2022 09:53:53 +0100
+In-Reply-To: <20220525001142.0a17a41a@suse.de> (David Disseldorp's message of
+        "Wed, 25 May 2022 00:11:42 +0200")
+Message-ID: <87pmk2kn6m.fsf@brahms.olymp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220524220610.141970-1-jlayton@kernel.org>
-X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Jeff,
+David Disseldorp <ddiss@suse.de> writes:
 
-I love your patch! Perhaps something to improve:
+> Hi Lu=C3=ADs,
+>
+> It looks like this one is still in need of review...
 
-[auto build test WARNING on ceph-client/for-linus]
-[also build test WARNING on v5.18 next-20220524]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+Ah! Thanks for reminding me about it, David!
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jeff-Layton/libceph-drop-last_piece-flag-from-ceph_msg_data_cursor/20220525-060709
-base:   https://github.com/ceph/ceph-client.git for-linus
-config: xtensa-randconfig-s031-20220524 (https://download.01.org/0day-ci/archive/20220525/202205251055.ijbnX88Q-lkp@intel.com/config)
-compiler: xtensa-linux-gcc (GCC) 11.3.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # apt-get install sparse
-        # sparse version: v0.6.4-14-g5a0004b5-dirty
-        # https://github.com/intel-lab-lkp/linux/commit/09a57bbfef50219b0f819adc621516e6b3344fe4
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Jeff-Layton/libceph-drop-last_piece-flag-from-ceph_msg_data_cursor/20220525-060709
-        git checkout 09a57bbfef50219b0f819adc621516e6b3344fe4
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=xtensa SHELL=/bin/bash net/ceph/
+>
+> On Wed, 27 Apr 2022 15:34:09 +0100, Lu=C3=ADs Henriques wrote:
+>
+>> When using a directory with 'max_bytes' quota as a base for a mount,
+>> statfs shall use that 'max_bytes' value as the total disk size.  That
+>> value shall be used even when using subdirectory as base for the mount.
+>>=20
+>> A bug was found where, when this subdirectory also had a 'max_files'
+>> quota, the real filesystem size would be returned instead of the parent
+>> 'max_bytes' quota value.  This test case verifies this bug is fixed.
+>>=20
+>> Signed-off-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
+>> ---
+>>  tests/ceph/005     | 40 ++++++++++++++++++++++++++++++++++++++++
+>>  tests/ceph/005.out |  2 ++
+>>  2 files changed, 42 insertions(+)
+>>  create mode 100755 tests/ceph/005
+>>  create mode 100644 tests/ceph/005.out
+>>=20
+>> diff --git a/tests/ceph/005 b/tests/ceph/005
+>> new file mode 100755
+>> index 000000000000..0763a235a677
+>> --- /dev/null
+>> +++ b/tests/ceph/005
+>> @@ -0,0 +1,40 @@
+>> +#! /bin/bash
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +# Copyright (C) 2022 SUSE Linux Products GmbH. All Rights Reserved.
+>> +#
+>> +# FS QA Test 005
+>> +#
+>> +# Make sure statfs reports correct total size when:
+>> +# 1. using a directory with 'max_byte' quota as base for a mount
+>> +# 2. using a subdirectory of the above directory with 'max_files' quota
+>> +#
+>> +. ./common/preamble
+>> +_begin_fstest auto quick quota
+>> +
+>> +_supported_fs generic
+>> +_require_scratch
+>> +
+>> +_scratch_mount
+>> +mkdir -p $SCRATCH_MNT/quota-dir/subdir
+>> +
+>> +# set quotas
+>> +quota=3D$((1024*10000))
+>> +$SETFATTR_PROG -n ceph.quota.max_bytes -v $quota $SCRATCH_MNT/quota-dir
+>> +$SETFATTR_PROG -n ceph.quota.max_files -v $quota $SCRATCH_MNT/quota-dir=
+/subdir
+>> +_scratch_unmount
+>> +
+>> +SCRATCH_DEV=3D$SCRATCH_DEV/quota-dir _scratch_mount
+>
+> Aside from the standard please-quote-your-variables gripe, I'm a little
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
+Sure, I'll fix those in next iteration.
 
+> confused with the use of SCRATCH_DEV for this test. Network FSes where
+> mkfs isn't provided don't generally use it. Is there any way that this
+> could be run against TEST_DEV, or does the umount / mount complicate
+> things too much?
 
-sparse warnings: (new ones prefixed by >>)
-   net/ceph/messenger.c: note: in included file (through arch/xtensa/include/asm/bitops.h, include/linux/bitops.h, include/linux/log2.h, ...):
-   arch/xtensa/include/asm/processor.h:103:2: sparse: sparse: Unsupported xtensa ABI
-   arch/xtensa/include/asm/processor.h:133:2: sparse: sparse: Unsupported Xtensa ABI
->> net/ceph/messenger.c:858:19: sparse: sparse: incompatible types in comparison expression (different type sizes):
->> net/ceph/messenger.c:858:19: sparse:    unsigned int *
->> net/ceph/messenger.c:858:19: sparse:    unsigned long *
-   net/ceph/messenger.c:931:19: sparse: sparse: incompatible types in comparison expression (different type sizes):
-   net/ceph/messenger.c:931:19: sparse:    unsigned int *
-   net/ceph/messenger.c:931:19: sparse:    unsigned long *
+When I looked at other tests doing similar things (i.e. changing the mount
+device during the test), they all seemed to be using SCRATCH_DEV.  I guess
+that I could change TEST_DEV instead.  I'll revisit this and see if that
+works.
 
-vim +858 net/ceph/messenger.c
+Anyway, regarding the usage of SCRATCH_DEV in cephfs, I've used several
+different approaches:
 
-   845	
-   846	static struct page *
-   847	ceph_msg_data_pages_next(struct ceph_msg_data_cursor *cursor,
-   848						size_t *page_offset, size_t *length)
-   849	{
-   850		struct ceph_msg_data *data = cursor->data;
-   851	
-   852		BUG_ON(data->type != CEPH_MSG_DATA_PAGES);
-   853	
-   854		BUG_ON(cursor->page_index >= cursor->page_count);
-   855		BUG_ON(cursor->page_offset >= PAGE_SIZE);
-   856	
-   857		*page_offset = cursor->page_offset;
- > 858		*length = min(cursor->resid, PAGE_SIZE - *page_offset);
-   859		return data->pages[cursor->page_index];
-   860	}
-   861	
+- Use 2 different filesystems created on the same cluster,
+- Use 2 volumes on the same filesystem, or
+- Simply use 2 directories in the same filesystem.
 
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+I tend to use the later most of the times, as it's easier to setup :-)
+
+Cheers,
+--=20
+Lu=C3=ADs
