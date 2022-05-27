@@ -2,86 +2,85 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FC135362B9
-	for <lists+ceph-devel@lfdr.de>; Fri, 27 May 2022 14:40:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C432F53660D
+	for <lists+ceph-devel@lfdr.de>; Fri, 27 May 2022 18:37:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351415AbiE0MkX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 27 May 2022 08:40:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54422 "EHLO
+        id S239231AbiE0QhA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 27 May 2022 12:37:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237444AbiE0Mj4 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 27 May 2022 08:39:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4C9F711CB4B
-        for <ceph-devel@vger.kernel.org>; Fri, 27 May 2022 05:27:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653654464;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RJxrf4ooyTqpiAItg7I/Q/q7XnsebEkQQNQ2A5YOD9I=;
-        b=Y7GFu+D67F3eWP27RIfvBCxs33FnVNXY0omDhB9Mw/XsxnsQSDqxZe3pYlvwo3aXnK6djs
-        OQnfu6mgvoaiTkg+YVU8EA38N44tVKrpKvMoWvQK+1OMM21wUBsbafa6hETQ10zBJhLX0f
-        mHKapFd8wVdYrevKrJZbPRXVSHr8SZw=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-251-jXjVmR17Pi2O2lmDWrKoXw-1; Fri, 27 May 2022 08:27:38 -0400
-X-MC-Unique: jXjVmR17Pi2O2lmDWrKoXw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S1349330AbiE0QfC (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 27 May 2022 12:35:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D4D63B2AE
+        for <ceph-devel@vger.kernel.org>; Fri, 27 May 2022 09:35:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 29875101AA45;
-        Fri, 27 May 2022 12:27:37 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2504E1410DD5;
-        Fri, 27 May 2022 12:27:34 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <202205190704.1DC660E5E@keescook>
-References: <202205190704.1DC660E5E@keescook> <165296786831.3591209.12111293034669289733.stgit@warthog.procyon.org.uk>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     dhowells@redhat.com, jlayton@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Steve French <smfrench@gmail.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-doc@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-fsdevek@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfs: Fix gcc-12 warning by embedding vfs inode in netfs_i_context
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ABD4D61DE3
+        for <ceph-devel@vger.kernel.org>; Fri, 27 May 2022 16:35:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A42D0C34113;
+        Fri, 27 May 2022 16:35:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653669301;
+        bh=07y+KNYUxKiYBieQmKF5O7aQOMxYfJyxhCU7PuTklxc=;
+        h=Subject:From:To:Cc:Date:From;
+        b=I9q8tNsSVGSpiXuPOMycmhhUtSLWzjKbzF4EU1p/kN5GM4D1Vf4W0qZBOWECviirn
+         ML6c/XFfuwSdBQW7K/5MrPPlMAzBkvM3EbHyoNzdnwA/tQM1aasf+z42hOBks0clAd
+         aJfMyZVCkNoLxYrsXvKLIquBbgqjtlNjCQ1yEFKBI8mOQsFMI8nzKDGX05HVeTZapK
+         u9uul1PnvNOz7ob5viyK7fQ1PT8pIy9EDb4Tjl10o92t5dFis1jyT/ZwbcXi0c7kfc
+         M4BgBYrvOrItf4gOXb/WZ8B497fDwpruZTjisUTQM9HJ6esQKepgWSqoQheTFgjF8P
+         KbQx02RErxsFw==
+Message-ID: <7de95a15fb97d7e60af6cbd9bac2150a17b9ad4f.camel@kernel.org>
+Subject: staging in the fscrypt patches
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
+Cc:     Luis Henriques <lhenriques@suse.com>,
+        ceph-devel <ceph-devel@vger.kernel.org>
+Date:   Fri, 27 May 2022 12:34:59 -0400
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.1 (3.44.1-1.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3598051.1653654453.1@warthog.procyon.org.uk>
-Date:   Fri, 27 May 2022 13:27:33 +0100
-Message-ID: <3598052.1653654453@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.7
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,HEXHASH_WORD,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Kees,
+Once the Ceph PR for this merge window has gone through, I'd like to
+start merging in some of the preliminary fscrypt patches. In particular,
+I'd like to merge these two patches into ceph-client/master so that they
+go to linux-next:
 
-Is v2 good for you?  I realise I left your R-b attached to it when I posted
-it, but I can remove that if you don't have time to review it.
+be2bc0698248 fscrypt: export fscrypt_fname_encrypt and fscrypt_fname_encryp=
+ted_size
+7feda88977b8 fscrypt: add fscrypt_context_for_new_inode
 
-David
+I'd like to see these in ceph-client/testing, so that they start getting
+some exposure in teuthology:
 
+477944c2ed29 libceph: add spinlock around osd->o_requests
+355d9572686c libceph: define struct ceph_sparse_extent and add some helpers
+229a3e2cf1c7 libceph: add sparse read support to msgr2 crc state machine
+a0a9795c2a2c libceph: add sparse read support to OSD client
+6a16e0951aaf libceph: support sparse reads on msgr2 secure codepath
+538b618f8726 libceph: add sparse read support to msgr1
+7ef4c2c39f05 ceph: add new mount option to enable sparse reads
+b609087729f4 ceph: preallocate inode for ops that may create one
+e66323d65639 ceph: make ceph_msdc_build_path use ref-walk
+
+...they don't add any new functionality (other than the sparse read
+stuff), but they do change "normal" operation in some ways that we'll
+need later, so I'd like to see them start being regularly tested.
+
+If that goes OK, then I'll plan to start merging another tranche a
+couple of weeks after that.
+
+Does that sound OK?
+--=20
+Jeff Layton <jlayton@kernel.org>
