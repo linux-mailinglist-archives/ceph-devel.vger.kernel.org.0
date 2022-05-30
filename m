@@ -2,118 +2,109 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ACA83536925
-	for <lists+ceph-devel@lfdr.de>; Sat, 28 May 2022 01:19:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D46405384AD
+	for <lists+ceph-devel@lfdr.de>; Mon, 30 May 2022 17:22:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352865AbiE0XSs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 27 May 2022 19:18:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45786 "EHLO
+        id S241239AbiE3PWD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 30 May 2022 11:22:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347750AbiE0XSs (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 27 May 2022 19:18:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DEF8F344FF
-        for <ceph-devel@vger.kernel.org>; Fri, 27 May 2022 16:18:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653693522;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lzjcwLEqQ1h8cY4/7Oyis5K+Ro4ryBP7YXyVB/dn90g=;
-        b=e7RG5tXe/h5Do1Um+C+as+V1EUoaetqE13iV+7rfBfdZQcoXiX4HIh7NU2eFVj0F6Bryyj
-        kTR4IL84X9+wzG1fC7QbUVBe3jIzzYUR0uFwUBU+w1HzUm3jcK8kPTs7czI/hO75FLGi6G
-        9efUmqiiOklF2/kHIcWTOdys4LUMRzQ=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-673-SM9jVFfOMuW3p3rD3pa2gg-1; Fri, 27 May 2022 19:18:41 -0400
-X-MC-Unique: SM9jVFfOMuW3p3rD3pa2gg-1
-Received: by mail-pf1-f199.google.com with SMTP id z24-20020a056a001d9800b0051868682940so3035075pfw.1
-        for <ceph-devel@vger.kernel.org>; Fri, 27 May 2022 16:18:41 -0700 (PDT)
+        with ESMTP id S243003AbiE3PU4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 30 May 2022 11:20:56 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 549F31790B6
+        for <ceph-devel@vger.kernel.org>; Mon, 30 May 2022 07:22:59 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id z20so11487967iof.1
+        for <ceph-devel@vger.kernel.org>; Mon, 30 May 2022 07:22:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=XJqXgw0Qi4Ge6Q57wB4GlvotoYnhUuSq68y9152a6AE=;
+        b=Uon8wdSqHAkD3+idsDwqsw5/RYE9GUuamAt3cXARqV3NAeDaGTFSLoXs/G0hoAHt+5
+         codSJJxeeG8vzFjwPvQIVi8pQwh8BHkUEnJ12EbeOHHixGjwXNoKXbv093UEgoEUQfeX
+         Wod0GKDhAdiR/Ye/ytirv8v0lLWuUvpQJix1wPyUwccxWGh+xUage9MXo7G5h4Fk521r
+         DI2oe8/v8oseOn3Ob0K+CIOBqiMgej7MNHpUOxL774B1gIBhklt7oanUcWy5rMkcHIBO
+         DPJxFGRqOeAdN5gDE89YSbgO4qUovR5BE7nFCFMjyJGWrnHFIj5hKg5UUE4gd+cXFCdp
+         hO1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=lzjcwLEqQ1h8cY4/7Oyis5K+Ro4ryBP7YXyVB/dn90g=;
-        b=YXJecZx5Z/5CfEsC6Bde7AOt8Q1AhQObTjQNgGycf9xIxjVfYzUkcUp34lS9+bpccA
-         LCVnhUxpwps0FUizNuPZZrSddR1rs1PBmz0/dL33bqhC+3274BJuW8DG6ixIY797La5g
-         RlmrFs0YGnuV7xGPP63aA7x5K0+zNLrYIe2mr+VBHFpp1vqCeH5HSFVDLk0UOrWW0LIj
-         n0FY/702r/rDB/BG2he1zEt2NIfh7c6bAGyZo3xPHmi6VGCKOwsR4eLk9NJ9Qlq0v8lA
-         qS9QfGgpeRCRC+dxcJt5W2HOc65y3H5Xc15r83e3VhW0vmLD9b3mYD9X5g8lMKYBkALm
-         NG3g==
-X-Gm-Message-State: AOAM53208KeFg9QbpNzuG/Snc0ZyUR2yekiL3GbCOx66oQ8pyNLWAhNE
-        QolFFusksZ7/Sp70Xs7ajNk93OV8cEBfYVXwPjZE+MC1WBaT+3EkW0E98Xm/vUZPLZADNz8736i
-        h/TItddMTQercMZFlbnEhbaWS+TPWabTznwFlxM296lGyUa7iA7IEXZYrrUqnCiukd6HhkZk=
-X-Received: by 2002:a62:8206:0:b0:518:3c6a:21ba with SMTP id w6-20020a628206000000b005183c6a21bamr44970171pfd.63.1653693520177;
-        Fri, 27 May 2022 16:18:40 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwNiV/6ANWgR5pw2I0aEPdh7/7coj3yqBKEUAw6IpQJ6I9bJjR7R96jnLTyh+IuAPjfjUxqbQ==
-X-Received: by 2002:a62:8206:0:b0:518:3c6a:21ba with SMTP id w6-20020a628206000000b005183c6a21bamr44970146pfd.63.1653693519751;
-        Fri, 27 May 2022 16:18:39 -0700 (PDT)
-Received: from [10.72.12.81] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id v1-20020aa78081000000b0050dc7628178sm4021490pff.82.2022.05.27.16.18.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 May 2022 16:18:39 -0700 (PDT)
-Subject: Re: staging in the fscrypt patches
-To:     Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     Luis Henriques <lhenriques@suse.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-References: <7de95a15fb97d7e60af6cbd9bac2150a17b9ad4f.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <29cbaebe-1bbb-b9d5-44c2-b29da32bb9fc@redhat.com>
-Date:   Sat, 28 May 2022 07:18:33 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=XJqXgw0Qi4Ge6Q57wB4GlvotoYnhUuSq68y9152a6AE=;
+        b=u3IJybnJRfCBg4pF72ColweAWpZq24UGZm+vE6uAf4XEWMjgHrXlCI1nCM3OrQ7hZE
+         Zmg9HMpxuUuVN8QhvNOiKRDr8KBd4BA7kNkOOAVVGM/0ZF+LvANxNJxu28NiF/SgaatJ
+         wTowuReOS1FXNUI4fnafUyQrAMLduOglZDu5HMp4wBhjAKeaN82q2Bhew8eKCKR1vwWZ
+         83Vny2RB3frxtzhfi6RjcWRZHN4Jooy2kVGxZWgX2yf27lvBCpFZRDIpzr/jYV8K6201
+         wX+JZJri1792QSlFgh/u1rIHpmtgQOoJE/xxS241diOje0YLm96mUueDsE7wUVbaBdnH
+         Gu3Q==
+X-Gm-Message-State: AOAM532lso6nytbo2X9o1Bdkf4HrnN0I6i0a1aBaYTYSf7OR68IMjNSj
+        bAEooLAI0RwfRjyJWLI6gAxEn3q59faixJaLk9o=
+X-Google-Smtp-Source: ABdhPJwtvJ+07dKTyr7TpOGjLPDpnwsexIyHiV/hfgzfTPNlT+ipRRN6pgsw9s1i3X6T+BTCXU16HSeeuxtReVm1TBY=
+X-Received: by 2002:a05:6638:498e:b0:32e:be76:f908 with SMTP id
+ cv14-20020a056638498e00b0032ebe76f908mr20858880jab.66.1653920570933; Mon, 30
+ May 2022 07:22:50 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <7de95a15fb97d7e60af6cbd9bac2150a17b9ad4f.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:a05:6622:f06:0:0:0:0 with HTTP; Mon, 30 May 2022 07:22:50
+ -0700 (PDT)
+Reply-To: barristerbenjamin221@gmail.com
+From:   Attorney Amadou <koadaidrissa1@gmail.com>
+Date:   Mon, 30 May 2022 07:22:50 -0700
+Message-ID: <CAOh7+P_+cJJknP6BJXj8NWX7nn8nkbA=aoSG2t49pestA9PG0g@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+X-Spam-Status: Yes, score=7.7 required=5.0 tests=BAYES_99,BAYES_999,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,FREEMAIL_REPLYTO,
+        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:d43 listed in]
+        [list.dnswl.org]
+        *  0.2 BAYES_999 BODY: Bayes spam probability is 99.9 to 100%
+        *      [score: 1.0000]
+        *  3.5 BAYES_99 BODY: Bayes spam probability is 99 to 100%
+        *      [score: 1.0000]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [koadaidrissa1[at]gmail.com]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [barristerbenjamin221[at]gmail.com]
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [koadaidrissa1[at]gmail.com]
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  2.7 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-
-On 5/28/22 12:34 AM, Jeff Layton wrote:
-> Once the Ceph PR for this merge window has gone through, I'd like to
-> start merging in some of the preliminary fscrypt patches. In particular,
-> I'd like to merge these two patches into ceph-client/master so that they
-> go to linux-next:
->
-> be2bc0698248 fscrypt: export fscrypt_fname_encrypt and fscrypt_fname_encrypted_size
-> 7feda88977b8 fscrypt: add fscrypt_context_for_new_inode
->
-> I'd like to see these in ceph-client/testing, so that they start getting
-> some exposure in teuthology:
->
-> 477944c2ed29 libceph: add spinlock around osd->o_requests
-> 355d9572686c libceph: define struct ceph_sparse_extent and add some helpers
-> 229a3e2cf1c7 libceph: add sparse read support to msgr2 crc state machine
-> a0a9795c2a2c libceph: add sparse read support to OSD client
-> 6a16e0951aaf libceph: support sparse reads on msgr2 secure codepath
-> 538b618f8726 libceph: add sparse read support to msgr1
-> 7ef4c2c39f05 ceph: add new mount option to enable sparse reads
-> b609087729f4 ceph: preallocate inode for ops that may create one
-> e66323d65639 ceph: make ceph_msdc_build_path use ref-walk
->
-> ...they don't add any new functionality (other than the sparse read
-> stuff), but they do change "normal" operation in some ways that we'll
-> need later, so I'd like to see them start being regularly tested.
->
-> If that goes OK, then I'll plan to start merging another tranche a
-> couple of weeks after that.
->
-> Does that sound OK?
-
-Sounds good to me.
-
--- Xiubo
-
-
+SGVsbG8gZGVhciBmcmllbmQuDQoNClBsZWFzZSBJIHdpbGwgbG92ZSB0byBkaXNjdXNzIHNvbWV0
+aGluZyB2ZXJ5IGltcG9ydGFudCB3aXRoIHlvdSwgSQ0Kd2lsbCBhcHByZWNpYXRlIGl0IGlmIHlv
+dSBncmFudCBtZSBhdWRpZW5jZS4NCg0KU2luY2VyZWx5Lg0KQmFycmlzdGVyIEFtYWRvdSBCZW5q
+YW1pbiBFc3EuDQouLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
+Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4NCuimquaEm+OB
+quOCi+WPi+S6uuOAgeOBk+OCk+OBq+OBoeOBr+OAgg0KDQrnp4Hjga/jgYLjgarjgZ/jgajpnZ7l
+uLjjgavph43opoHjgarjgZPjgajjgavjgaTjgYTjgaboqbHjgZflkIjjgYbjga7jgYzlpKflpb3j
+gY3jgafjgZnjgIHjgYLjgarjgZ/jgYznp4HjgavogbTooYbjgpLkuI7jgYjjgabjgY/jgozjgozj
+gbDnp4Hjga/jgZ3jgozjgpLmhJ/orJ3jgZfjgb7jgZnjgIINCg0K5b+D44GL44KJ44CCDQrjg5Dj
+g6rjgrnjgr/jg7zjgqLjg57jg4njgqXjg5njg7Pjgrjjg6Pjg5/jg7NFc3HjgIINCg==
