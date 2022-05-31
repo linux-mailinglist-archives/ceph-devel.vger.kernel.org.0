@@ -2,106 +2,116 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8014353934A
-	for <lists+ceph-devel@lfdr.de>; Tue, 31 May 2022 16:47:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5FA053935A
+	for <lists+ceph-devel@lfdr.de>; Tue, 31 May 2022 16:51:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345304AbiEaOrY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 31 May 2022 10:47:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53670 "EHLO
+        id S237838AbiEaOv1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 31 May 2022 10:51:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35638 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345303AbiEaOrX (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 31 May 2022 10:47:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41F2037BEC
-        for <ceph-devel@vger.kernel.org>; Tue, 31 May 2022 07:47:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9EFB0612B5
-        for <ceph-devel@vger.kernel.org>; Tue, 31 May 2022 14:47:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89B38C34114;
-        Tue, 31 May 2022 14:47:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654008442;
-        bh=uI1kjQ/viCnRm333VMpaOzgmjO2cRAG6f7Vi5rMNK/g=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=MB2G7BQVSPdv5y/ICd2EpPvfBTpWsYtE1U9KPHOTgce9QGVcHnLSLhvo73Gdl4Pl0
-         kV5PW3eeg5AfPPtQKXqf/frBRSlftU6Vn7IrXC4+go+uo4NIyBs3N93nZNbDntjwH9
-         JLO1jJW1iawFui37R2nmGzf1nhU+r0NiH83Neidv1QyfVKWHKrzUO8sT9+N0hPcHLe
-         pmIxf3XwIEgESrG/IafGeDcyiytp4EQeErBOqEnutzxS5es2/UTrtilG4j+oBpt4YH
-         KiTgJhC6USkk5ZwjIoB+LoTlzMt0wdH0Nwg9JZ70h+c9V7E1110eoX6PpdKtzhRkgg
-         dS0fIArFxDMjQ==
-Message-ID: <22048087125ec34b3cb08a9bbb68c00d17d5eeba.camel@kernel.org>
-Subject: Re: staging in the fscrypt patches
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     Luis Henriques <lhenriques@suse.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-Date:   Tue, 31 May 2022 10:47:20 -0400
-In-Reply-To: <29cbaebe-1bbb-b9d5-44c2-b29da32bb9fc@redhat.com>
-References: <7de95a15fb97d7e60af6cbd9bac2150a17b9ad4f.camel@kernel.org>
-         <29cbaebe-1bbb-b9d5-44c2-b29da32bb9fc@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.1 (3.44.1-1.fc36) 
+        with ESMTP id S230302AbiEaOvZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 31 May 2022 10:51:25 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 478CBF43;
+        Tue, 31 May 2022 07:51:24 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id c5-20020a1c3505000000b0038e37907b5bso1417136wma.0;
+        Tue, 31 May 2022 07:51:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:from:mime-version:content-transfer-encoding
+         :content-description:subject:to:date:reply-to;
+        bh=9qJkg5Z+wIWpmyUb7QfLD447DoWpF3sHM+p4Olw2jtM=;
+        b=LY85b+YelwpSeFQZmBU5Cb3ei+4/tViwA3UXOs2DvXuGlYS0lKwjqBTxIqxtPNYbDA
+         nyYrWaah0MmhHsH8wtFS/RuegPBOWNcUXKkIXs6LK4EPQn0AgDmRIRBzqDmrRYJb1ELb
+         GDK3m+1LRYEwuZaeVzCAMk45mXZlo0/xWZoeiaqb40vv9WTUva0cKMdnJBYbPYbvkNio
+         /H13pYse2UUK21O6SN3TsA9c+40icCHUHxI2j+oY2bc0Z+n6gI56fX0UamKEc79iOQ1T
+         vf5HC6iEZJ1c90FJKYRHXqSMY/SfoOWb8fRTIGjBGWI0XZ2fTiLrgIKoLskNMiGXCyYP
+         JxVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:from:mime-version
+         :content-transfer-encoding:content-description:subject:to:date
+         :reply-to;
+        bh=9qJkg5Z+wIWpmyUb7QfLD447DoWpF3sHM+p4Olw2jtM=;
+        b=0oiQ66pz0s2QM1c0bzcwym2mKoVZcDV4OPGHTbPcJj1FbHqZnZ8NSEkW2wLxikldKE
+         qq0vsal6/iCYHKGndnGKD15DiSvPfD8hOBzSnOxelnLFKqo639AE9prtgvyIWBZs68YU
+         Q0f2beR/SFcNH3CXzyh7bD3qADGqXx9wqay9ncLVYVDGuyM1D0oCxVXL73/zK2RuLo8A
+         sBIMqj5kW0qvXVGi/ljUF99hMjx/HIKCOZ8ol8tclQRwGeiFIGRKBgE8nP6Upf7itZ4D
+         KC1utdFuS7X0SozG+qOIsWjC5V6ULOTd/E8rv1xVfRJ3D7JbLZEmyEVsfkP7DTnD8FYJ
+         WIHA==
+X-Gm-Message-State: AOAM530JD+fnc/6kVGAl8uuA6W6Xyc6yEZw2c94wcdGUJackNvCWcDzV
+        hVZ8KwbUqGyHOfeLW+uAvkorC/QivQfmCQji
+X-Google-Smtp-Source: ABdhPJzlWMsUxHsZQj24GsdATDucKR12+FP0yqwmjYff3C64vwQ5rRnd1rzxoFfDAab0ekepqQRHBQ==
+X-Received: by 2002:a05:600c:4f96:b0:397:652a:69d0 with SMTP id n22-20020a05600c4f9600b00397652a69d0mr23718450wmq.16.1654008682863;
+        Tue, 31 May 2022 07:51:22 -0700 (PDT)
+Received: from DESKTOP-SGSHA6E.lan ([102.134.114.193])
+        by smtp.gmail.com with ESMTPSA id 26-20020a05600c029a00b0039bc95cf4b2sm2345333wmk.11.2022.05.31.07.51.13
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Tue, 31 May 2022 07:51:20 -0700 (PDT)
+Message-ID: <62962b68.1c69fb81.c16eb.a54f@mx.google.com>
+From:   Jerry McCumber <nm8086908@gmail.com>
+X-Google-Original-From: "Jerry McCumber" <jerry@gmail.com>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: Greetings Sir/Madam.
+To:     Recipients <jerry@gmail.com>
+Date:   Tue, 31 May 2022 14:49:18 -0700
+Reply-To: info0817155@gmail.com
+X-Spam-Status: Yes, score=5.5 required=5.0 tests=BAYES_50,DATE_IN_FUTURE_06_12,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,FREEMAIL_REPLYTO,
+        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,RCVD_IN_SORBS_WEB,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
+X-Spam-Report: *  1.5 RCVD_IN_SORBS_WEB RBL: SORBS: sender is an abusable web server
+        *      [102.134.114.193 listed in dnsbl.sorbs.net]
+        * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2a00:1450:4864:20:0:0:0:341 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [nm8086908[at]gmail.com]
+        *  1.9 DATE_IN_FUTURE_06_12 Date: is 6 to 12 hours after Received:
+        *      date
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [info0817155[at]gmail.com]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [nm8086908[at]gmail.com]
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sat, 2022-05-28 at 07:18 +0800, Xiubo Li wrote:
-> On 5/28/22 12:34 AM, Jeff Layton wrote:
-> > Once the Ceph PR for this merge window has gone through, I'd like to
-> > start merging in some of the preliminary fscrypt patches. In particular=
-,
-> > I'd like to merge these two patches into ceph-client/master so that the=
-y
-> > go to linux-next:
-> >=20
-> > be2bc0698248 fscrypt: export fscrypt_fname_encrypt and fscrypt_fname_en=
-crypted_size
-> > 7feda88977b8 fscrypt: add fscrypt_context_for_new_inode
-> >=20
-> > I'd like to see these in ceph-client/testing, so that they start gettin=
-g
-> > some exposure in teuthology:
-> >=20
-> > 477944c2ed29 libceph: add spinlock around osd->o_requests
-> > 355d9572686c libceph: define struct ceph_sparse_extent and add some hel=
-pers
-> > 229a3e2cf1c7 libceph: add sparse read support to msgr2 crc state machin=
-e
-> > a0a9795c2a2c libceph: add sparse read support to OSD client
-> > 6a16e0951aaf libceph: support sparse reads on msgr2 secure codepath
-> > 538b618f8726 libceph: add sparse read support to msgr1
-> > 7ef4c2c39f05 ceph: add new mount option to enable sparse reads
-> > b609087729f4 ceph: preallocate inode for ops that may create one
-> > e66323d65639 ceph: make ceph_msdc_build_path use ref-walk
-> >=20
-> > ...they don't add any new functionality (other than the sparse read
-> > stuff), but they do change "normal" operation in some ways that we'll
-> > need later, so I'd like to see them start being regularly tested.
-> >=20
-> > If that goes OK, then I'll plan to start merging another tranche a
-> > couple of weeks after that.
-> >=20
-> > Does that sound OK?
->=20
-> Sounds good to me.
->=20
-> -- Xiubo
->=20
->=20
+Greetings Sir/Madam.
 
-Done. I've gone ahead and merged these patches into the two branches.
-Please let me know if you encounter any issues from them!
+Kindly write back   As I am going to explain in detail why I contacted  you=
+. i am a lawyer and i have a very vital information that could help both of=
+ us.
 
-Thanks,
---=20
-Jeff Layton <jlayton@kernel.org>
+
+
+
+
+Jerry McCumber
+Jerry D. McCumber, P.C.: Law Firm=20
