@@ -2,52 +2,52 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C992538B02
-	for <lists+ceph-devel@lfdr.de>; Tue, 31 May 2022 07:51:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8A31538C59
+	for <lists+ceph-devel@lfdr.de>; Tue, 31 May 2022 09:57:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244087AbiEaFvZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 31 May 2022 01:51:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39790 "EHLO
+        id S244674AbiEaH5H (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 31 May 2022 03:57:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240070AbiEaFvY (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 31 May 2022 01:51:24 -0400
-Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05D4A663E6
-        for <ceph-devel@vger.kernel.org>; Mon, 30 May 2022 22:50:59 -0700 (PDT)
+        with ESMTP id S244569AbiEaH5G (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 31 May 2022 03:57:06 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CEDA1F623
+        for <ceph-devel@vger.kernel.org>; Tue, 31 May 2022 00:57:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1653976259; x=1685512259;
+  t=1653983825; x=1685519825;
   h=date:from:to:cc:subject:message-id:mime-version;
-  bh=5tbc2dUXSrDblMPikE6E/hurK+/ZWfHmH0eI55lgG9A=;
-  b=XhPf5uAhnN22budwNC6dDDhu0oL2cxCibCK+XSl29M8yfXQ8uAtWGKOg
-   np0dZogec2Zl7NTawfklPabdSe6IMj9ohK1u/0C70Jdbt3iX5BNCfFdsW
-   INlP0LuRV1yzPAZGa0ljZ15WA6XDnEHMt2xiLqGz1uWpfmwIhErApyn+L
-   PGXfnPnCJZw68QnxSaJ2UKGb9YgAOir0sRidGUocTboqyot1K9Vd2jGlF
-   khKwyf+aLuu1Yrg8wwfIJDW1YpYpd9eUs3lOtjSroW/Xog/xrNl+KRyv4
-   V9qfmrkKQDlfPZvOOKGtoXHOToALsJDCYUzrnuSwnM8st+TqJuxPaP+zr
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10363"; a="335805453"
+  bh=blAnd/CwLvYq8vuBHY6+jp83ZrdFmvIGwKowYFS60Ro=;
+  b=jpJCc7jGDe+wLGUEXOZhVAiI1oDP69x4f2FDIvr6gSBGu23MvU7LwsE8
+   HM7tof7wjZSKqUT7DUaAAUTQgfgiAsvYLV3nBafTg9ZebRLJW1moOQlkU
+   +xFPtjYd0IxHWQV1L3hRKoVyByooq7Run1XNcPdOojSJB/1rC7DqtFTrB
+   HTYiO/G/7FrsYcWJrl3YnNZ1eg/Pe/Bh3Jqykz4LzToRlWC/WMOKwlqq+
+   IgMZ4wZw59BwsUqTYfyluoDj0rpOcBQbI/DSQtktz1awtTpgB2BPgGEcT
+   g/2wVkekX8mxUxdnzRxb7kSp7n4/FS8qQviypfRBsruJ/PZYJ5+g9WKMn
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10363"; a="361551836"
 X-IronPort-AV: E=Sophos;i="5.91,264,1647327600"; 
-   d="scan'208";a="335805453"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2022 22:50:59 -0700
+   d="scan'208";a="361551836"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2022 00:57:05 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.91,264,1647327600"; 
-   d="scan'208";a="720160579"
+   d="scan'208";a="706464540"
 Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 30 May 2022 22:50:58 -0700
+  by orsmga004.jf.intel.com with ESMTP; 31 May 2022 00:57:03 -0700
 Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
         (envelope-from <lkp@intel.com>)
-        id 1nvumP-0002Nw-Ab;
-        Tue, 31 May 2022 05:50:57 +0000
-Date:   Tue, 31 May 2022 13:50:23 +0800
+        id 1nvwkQ-0002Ur-By;
+        Tue, 31 May 2022 07:57:02 +0000
+Date:   Tue, 31 May 2022 15:57:00 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
         ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [ceph-client:wip-fscrypt 6/64] net/ceph/osd_client.c:5702:51: error:
- too many arguments to function call, expected 3, have 4
-Message-ID: <202205311337.ZFkD1cPR-lkp@intel.com>
+Subject: [ceph-client:wip-fscrypt 8/64] net/ceph/messenger_v1.c:1019:49:
+ error: too many arguments to function call, expected 3, have 4
+Message-ID: <202205311559.ghi4Hs9C-lkp@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -63,18 +63,18 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 tree:   https://github.com/ceph/ceph-client.git wip-fscrypt
 head:   4a13fcc148c64143afe231bd0cae743b89c70177
-commit: 0614a83e4f104460d5bdb8ba414ab69b8fdbdb39 [6/64] libceph: add sparse read support to OSD client
-config: arm64-buildonly-randconfig-r002-20220531 (https://download.01.org/0day-ci/archive/20220531/202205311337.ZFkD1cPR-lkp@intel.com/config)
+commit: 2c136200054ea17849153ac4f55fe2abc99ee34e [8/64] libceph: add sparse read support to msgr1
+config: arm64-buildonly-randconfig-r002-20220531 (https://download.01.org/0day-ci/archive/20220531/202205311559.ghi4Hs9C-lkp@intel.com/config)
 compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project c825abd6b0198fb088d9752f556a70705bc99dfd)
 reproduce (this is a W=1 build):
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
         chmod +x ~/bin/make.cross
         # install arm64 cross compiling tool for clang build
         # apt-get install binutils-aarch64-linux-gnu
-        # https://github.com/ceph/ceph-client/commit/0614a83e4f104460d5bdb8ba414ab69b8fdbdb39
+        # https://github.com/ceph/ceph-client/commit/2c136200054ea17849153ac4f55fe2abc99ee34e
         git remote add ceph-client https://github.com/ceph/ceph-client.git
         git fetch --no-tags ceph-client wip-fscrypt
-        git checkout 0614a83e4f104460d5bdb8ba414ab69b8fdbdb39
+        git checkout 2c136200054ea17849153ac4f55fe2abc99ee34e
         # save the config file
         mkdir build_dir && cp config build_dir/.config
         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm64 SHELL=/bin/bash net/ceph/
@@ -84,35 +84,56 @@ Reported-by: kernel test robot <lkp@intel.com>
 
 All errors (new ones prefixed by >>):
 
->> net/ceph/osd_client.c:5702:51: error: too many arguments to function call, expected 3, have 4
-                   page = ceph_msg_data_next(cursor, &poff, &plen, &last);
-                          ~~~~~~~~~~~~~~~~~~                       ^~~~~
-   include/linux/ceph/messenger.h:527:14: note: 'ceph_msg_data_next' declared here
+>> net/ceph/messenger_v1.c:1019:49: error: too many arguments to function call, expected 3, have 4
+                   page = ceph_msg_data_next(cursor, &off, &len, NULL);
+                          ~~~~~~~~~~~~~~~~~~                     ^~~~
+   include/linux/stddef.h:8:14: note: expanded from macro 'NULL'
+   #define NULL ((void *)0)
+                ^~~~~~~~~~~
+   include/linux/ceph/messenger.h:531:14: note: 'ceph_msg_data_next' declared here
    struct page *ceph_msg_data_next(struct ceph_msg_data_cursor *cursor,
                 ^
    1 error generated.
 
 
-vim +5702 net/ceph/osd_client.c
+vim +1019 net/ceph/messenger_v1.c
 
-  5694	
-  5695	static void advance_cursor(struct ceph_msg_data_cursor *cursor, size_t len, bool zero)
-  5696	{
-  5697		while (len) {
-  5698			struct page *page;
-  5699			size_t poff, plen;
-  5700			bool last = false;
-  5701	
-> 5702			page = ceph_msg_data_next(cursor, &poff, &plen, &last);
-  5703			if (plen > len)
-  5704				plen = len;
-  5705			if (zero)
-  5706				zero_user_segment(page, poff, poff + plen);
-  5707			len -= plen;
-  5708			ceph_msg_data_advance(cursor, plen);
-  5709		}
-  5710	}
-  5711	
+  1000	
+  1001	static int read_sparse_msg_extent(struct ceph_connection *con, u32 *crc)
+  1002	{
+  1003		struct ceph_msg_data_cursor *cursor = &con->in_msg->cursor;
+  1004		bool do_bounce = ceph_test_opt(from_msgr(con->msgr), RXBOUNCE);
+  1005	
+  1006		if (do_bounce && unlikely(!con->bounce_page)) {
+  1007			con->bounce_page = alloc_page(GFP_NOIO);
+  1008			if (!con->bounce_page) {
+  1009				pr_err("failed to allocate bounce page\n");
+  1010				return -ENOMEM;
+  1011			}
+  1012		}
+  1013	
+  1014		while (cursor->sr_resid > 0) {
+  1015			struct page *page, *rpage;
+  1016			size_t off, len;
+  1017			int ret;
+  1018	
+> 1019			page = ceph_msg_data_next(cursor, &off, &len, NULL);
+  1020			rpage = do_bounce ? con->bounce_page : page;
+  1021	
+  1022			/* clamp to what remains in extent */
+  1023			len = min_t(int, len, cursor->sr_resid);
+  1024			ret = ceph_tcp_recvpage(con->sock, rpage, (int)off, len);
+  1025			if (ret <= 0)
+  1026				return ret;
+  1027			*crc = ceph_crc32c_page(*crc, rpage, off, ret);
+  1028			ceph_msg_data_advance(cursor, (size_t)ret);
+  1029			cursor->sr_resid -= ret;
+  1030			if (do_bounce)
+  1031				memcpy_page(page, off, rpage, off, ret);
+  1032		}
+  1033		return 1;
+  1034	}
+  1035	
 
 -- 
 0-DAY CI Kernel Test Service
