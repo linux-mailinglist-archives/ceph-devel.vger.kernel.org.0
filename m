@@ -2,66 +2,249 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9328753AF2D
-	for <lists+ceph-devel@lfdr.de>; Thu,  2 Jun 2022 00:50:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CD8153B1CD
+	for <lists+ceph-devel@lfdr.de>; Thu,  2 Jun 2022 04:50:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230500AbiFAU6Y (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 1 Jun 2022 16:58:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49046 "EHLO
+        id S233327AbiFBCdm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 1 Jun 2022 22:33:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43728 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230479AbiFAU6S (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Jun 2022 16:58:18 -0400
-Received: from mail-oa1-x2b.google.com (mail-oa1-x2b.google.com [IPv6:2001:4860:4864:20::2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC74F21C390
-        for <ceph-devel@vger.kernel.org>; Wed,  1 Jun 2022 13:58:14 -0700 (PDT)
-Received: by mail-oa1-x2b.google.com with SMTP id 586e51a60fabf-f2cbceefb8so4298189fac.11
-        for <ceph-devel@vger.kernel.org>; Wed, 01 Jun 2022 13:58:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=Gk4nfCem3ECRa7Gml0J0mN/3RZoOAdfGaQAqyHPKtiI=;
-        b=HLFKV03IvnCnmYNulbqEkPjTK3riUL87h2wHAPtiQ15M9iY6Q8e992KMQxJwLdk6f+
-         yc6asPWVRklcz8AY8oqwyi19SO9Z3FXfSKl8KIcHwdn2diZ16fcVN3Noj9XYHhxCnXOp
-         L86c6aBumcYcai1ti0jT0anzEO5LqUJSpP7KiFxQXIe3O9qnWY7viJfSABa1ly9ubc5O
-         7xqU4M/fQQEbpLLu8u6cCuAo0xRfp/5LoTJYIMP5ne/O4VXGwgI3hKlV02ue3fdzqvYA
-         6IABKhDngCz8ZKTuipfv5GZ/7HEqJFbM8x/u/85qQFiKTPs+Mb3XRU84XoMrlsTu1Zr+
-         PsMA==
+        with ESMTP id S233320AbiFBCdl (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Jun 2022 22:33:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AC2BD1F77C8
+        for <ceph-devel@vger.kernel.org>; Wed,  1 Jun 2022 19:33:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1654137217;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KfKQiZyiru8Yvpxrs4iJay6YbdDe/dy7mWV2Ajal/ZA=;
+        b=iXTPofYodTmnf7r0XU1D6xFkHgWSMpi1HdEelqwif9CxlVujVTy2skbQrCDCa8Z2vRsNjz
+        7gDHAWiGP0fey/hx0Xy1a2m8q7E4CKMmkEUxE63q3NwSw6yJgdlsrqnUiRLxK79S+n16gy
+        O0LwMOBsVJHFvdgfVxdrjRDIunNoxf0=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-646-nzr0RH_ZPeujMAtx4RPh8Q-1; Wed, 01 Jun 2022 22:33:36 -0400
+X-MC-Unique: nzr0RH_ZPeujMAtx4RPh8Q-1
+Received: by mail-pl1-f200.google.com with SMTP id g3-20020a170902868300b00163cd75c014so1941556plo.14
+        for <ceph-devel@vger.kernel.org>; Wed, 01 Jun 2022 19:33:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=Gk4nfCem3ECRa7Gml0J0mN/3RZoOAdfGaQAqyHPKtiI=;
-        b=aAiRwrr62723IcED3pTEKBegTijdLgqKpAfi9wUokgFgrlxc+lp9ILT2rSipEMwdIm
-         rlf3UMwbKIfFnDjNq+slMBB01FSoI9IymfUUAwXOHo1ImQ8HLcECsYoQfcHK2W4OYG1y
-         c1AYDpr4qrQ5IxDy5Ihmqm7+BdssJfSidKe2SKGcc5ZMU/SJZJFaJMXOIxf6rtbJhJ61
-         uh1pbk1S6kbCy9BlEZcQEKE74lEYlJ4V528xDNwuNkuxBiJTWWjztfrU28vRkPHTmf+P
-         kWfIutcOXAbxUykRRXer7VhoqZPLiEddyNaWEIYMd0evbmtOQabG6oj1ZX1sYS/02Zzi
-         ucww==
-X-Gm-Message-State: AOAM530gvxbcHFTIzuHOgAYMIP81NidE/eCxlvejyJoj7f3NGEO2L3/p
-        21mUbTOrRgSQcDgIoAvIw3jAUD6DumUFTP+0/7Hn3/gkdjI=
-X-Google-Smtp-Source: ABdhPJzieEZsH3sz7p7h/CGCrygaKC3twss2VqEDgMRTw52PjXyF0yZxDsfC/Wcw+CTWK4gcBihtpQQBph7O0cnThRw=
-X-Received: by 2002:a05:6870:308:b0:f1:ddfe:8ac5 with SMTP id
- m8-20020a056870030800b000f1ddfe8ac5mr16670934oaf.237.1654111051378; Wed, 01
- Jun 2022 12:17:31 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=KfKQiZyiru8Yvpxrs4iJay6YbdDe/dy7mWV2Ajal/ZA=;
+        b=S4Z9/ody2bQ4nVE9K1Ym7/Yioeqssga6v6pY/Do9hjqwlwnq9JotVprSuV5WuoGBDS
+         UP9ySAF+ClT2MkuWsAmaCPa4IkvArc+9KpA6g4kd3cJsmcwg21Mr3Eo1yium4F5ki3ZW
+         XBq3PQFTgxc10NQKlqq5D9nHOodZtdCQYVc4OGdz1rXGDhWoNXWg2VuxBPbrq0un7SDE
+         YmrXNesqZ/Az+3XCTOmSYxujhODmcWN54K8G0vJuCYKF8SNHBr3OFuXNORDZexhtg5R9
+         /doy9vpTbt0CO6BtrNV2Py9LfdBlomKxDA1+H2rlMJm7QcqrHqZNjBg15LqoRN0A7qYN
+         pj2Q==
+X-Gm-Message-State: AOAM533lEx5fVSNiy3qBfv8MyEmAxMvZW8FSwY0BEBCp41y1PrvMha7s
+        VnFEAb9DbJI2yWuNcuOaphjb044+9UGOu/aeXKdHjNXKRYJ2i0pd55BEq6i3+MsPEX19zayGGkB
+        gtMgagvYFRs7VJwBD/xjytw==
+X-Received: by 2002:a17:903:186:b0:161:f394:3e75 with SMTP id z6-20020a170903018600b00161f3943e75mr2459158plg.113.1654137215085;
+        Wed, 01 Jun 2022 19:33:35 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwB998KxnKGHyDwCclY9nhZOHclVs+2ntkxLSrZyXPf/5nvqaSv+MCqUMW8tc7NGhaKThdiHg==
+X-Received: by 2002:a17:903:186:b0:161:f394:3e75 with SMTP id z6-20020a170903018600b00161f3943e75mr2459130plg.113.1654137214545;
+        Wed, 01 Jun 2022 19:33:34 -0700 (PDT)
+Received: from [10.72.12.107] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id 137-20020a63018f000000b003fbfd5e4ddcsm2054751pgb.75.2022.06.01.19.33.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Jun 2022 19:33:33 -0700 (PDT)
+Subject: Re: [RFC PATCH v3] ceph: prevent a client from exceeding the MDS
+ maximum xattr size
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Gregory Farnum <gfarnum@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220601162939.12278-1-lhenriques@suse.de>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <b788a7f9-9177-0398-7d21-a19ce7e6c957@redhat.com>
+Date:   Thu, 2 Jun 2022 10:33:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Received: by 2002:a05:6358:3601:b0:a3:2139:251d with HTTP; Wed, 1 Jun 2022
- 12:17:30 -0700 (PDT)
-Reply-To: johnwinery@online.ee
-From:   johnwinery <alicejohnson8974@gmail.com>
-Date:   Wed, 1 Jun 2022 12:17:30 -0700
-Message-ID: <CAFqHCSSUC0MpbjYK8d-GCxOG4b6Qbk2uH3+xQDZte6cPBsxLGA@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220601162939.12278-1-lhenriques@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Greeting ,I had written an earlier mail to you but without response
+
+On 6/2/22 12:29 AM, Luís Henriques wrote:
+> The MDS tries to enforce a limit on the total key/values in extended
+> attributes.  However, this limit is enforced only if doing a synchronous
+> operation (MDS_OP_SETXATTR) -- if we're buffering the xattrs, the MDS
+> doesn't have a chance to enforce these limits.
+>
+> This patch adds support for decoding the xattrs maximum size setting that is
+> distributed in the mdsmap.  Then, when setting an xattr, the kernel client
+> will revert to do a synchronous operation if that maximum size is exceeded.
+>
+> While there, fix a dout() that would trigger a printk warning:
+>
+> [   98.718078] ------------[ cut here ]------------
+> [   98.719012] precision 65536 too large
+> [   98.719039] WARNING: CPU: 1 PID: 3755 at lib/vsprintf.c:2703 vsnprintf+0x5e3/0x600
+> ...
+>
+> URL: https://tracker.ceph.com/issues/55725
+> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> ---
+>   fs/ceph/mdsmap.c            | 27 +++++++++++++++++++++++----
+>   fs/ceph/xattr.c             | 12 ++++++++----
+>   include/linux/ceph/mdsmap.h |  1 +
+>   3 files changed, 32 insertions(+), 8 deletions(-)
+>
+> * Changes since v2
+>
+> Well, a lot has changed since v2!  Now the xattr max value setting is
+> obtained through the mdsmap, which needs to be decoded, and the feature
+> that was used in the previous revision was dropped.  The drawback is that
+> the MDS isn't unable to know in advance if a client is aware of this xattr
+> max value.
+>
+> * Changes since v1
+>
+> Added support for new feature bit to get the MDS max_xattr_pairs_size
+> setting.
+>
+> Also note that this patch relies on a patch that hasn't been merged yet
+> ("ceph: use correct index when encoding client supported features"),
+> otherwise the new feature bit won't be correctly encoded.
+>
+> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+> index 30387733765d..36b2bc18ca2a 100644
+> --- a/fs/ceph/mdsmap.c
+> +++ b/fs/ceph/mdsmap.c
+> @@ -13,6 +13,12 @@
+>   
+>   #include "super.h"
+>   
+> +/*
+> + * Maximum size of xattrs the MDS can handle per inode by default.  This
+> + * includes the attribute name and 4+4 bytes for the key/value sizes.
+> + */
+> +#define MDS_MAX_XATTR_SIZE (1<<16) /* 64K */
+> +
+>   #define CEPH_MDS_IS_READY(i, ignore_laggy) \
+>   	(m->m_info[i].state > 0 && ignore_laggy ? true : !m->m_info[i].laggy)
+>   
+> @@ -352,12 +358,10 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end, bool msgr2)
+>   		__decode_and_drop_type(p, end, u8, bad_ext);
+>   	}
+>   	if (mdsmap_ev >= 8) {
+> -		u32 name_len;
+>   		/* enabled */
+>   		ceph_decode_8_safe(p, end, m->m_enabled, bad_ext);
+> -		ceph_decode_32_safe(p, end, name_len, bad_ext);
+> -		ceph_decode_need(p, end, name_len, bad_ext);
+> -		*p += name_len;
+> +		/* fs_name */
+> +		ceph_decode_skip_string(p, end, bad_ext);
+>   	}
+>   	/* damaged */
+>   	if (mdsmap_ev >= 9) {
+> @@ -370,6 +374,21 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end, bool msgr2)
+>   	} else {
+>   		m->m_damaged = false;
+>   	}
+> +	if (mdsmap_ev >= 17) {
+> +		/* balancer */
+> +		ceph_decode_skip_string(p, end, bad_ext);
+> +		/* standby_count_wanted */
+> +		ceph_decode_skip_32(p, end, bad_ext);
+> +		/* old_max_mds */
+> +		ceph_decode_skip_32(p, end, bad_ext);
+> +		/* min_compat_client */
+> +		ceph_decode_skip_8(p, end, bad_ext);
+
+This is incorrect.
+
+If mdsmap_ev == 15 the min_compat_client will be a feature_bitset_t 
+instead of int8_t.
+
+
+> +		/* required_client_features */
+> +		ceph_decode_skip_set(p, end, 64, bad_ext);
+> +		ceph_decode_64_safe(p, end, m->m_max_xattr_size, bad_ext);
+> +	} else {
+> +		m->m_max_xattr_size = MDS_MAX_XATTR_SIZE;
+> +	}
+>   bad_ext:
+>   	dout("mdsmap_decode m_enabled: %d, m_damaged: %d, m_num_laggy: %d\n",
+>   	     !!m->m_enabled, !!m->m_damaged, m->m_num_laggy);
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 8c2dc2c762a4..67f046dac35c 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -1086,7 +1086,7 @@ static int ceph_sync_setxattr(struct inode *inode, const char *name,
+>   			flags |= CEPH_XATTR_REMOVE;
+>   	}
+>   
+> -	dout("setxattr value=%.*s\n", (int)size, value);
+> +	dout("setxattr value size: %ld\n", size);
+>   
+>   	/* do request */
+>   	req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+> @@ -1184,8 +1184,14 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+>   	spin_lock(&ci->i_ceph_lock);
+>   retry:
+>   	issued = __ceph_caps_issued(ci, NULL);
+> -	if (ci->i_xattrs.version == 0 || !(issued & CEPH_CAP_XATTR_EXCL))
+> +	required_blob_size = __get_required_blob_size(ci, name_len, val_len);
+> +	if ((ci->i_xattrs.version == 0) || !(issued & CEPH_CAP_XATTR_EXCL) ||
+> +	    (required_blob_size >= mdsc->mdsmap->m_max_xattr_size)) {
+
+Shouldn't it be '>' instead ?
+
+We'd better always force to do a sync request with old ceph. Just check 
+if the mdsmap_ev < 17. It's not safe to buffer it because it maybe 
+discarded as your ceph PR does.
+
+-- Xiubo
+
+> +		dout("%s do sync setxattr: version: %llu size: %d max: %llu\n",
+> +		     __func__, ci->i_xattrs.version, required_blob_size,
+> +		     mdsc->mdsmap->m_max_xattr_size);
+>   		goto do_sync;
+> +	}
+>   
+>   	if (!lock_snap_rwsem && !ci->i_head_snapc) {
+>   		lock_snap_rwsem = true;
+> @@ -1201,8 +1207,6 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+>   	     ceph_cap_string(issued));
+>   	__build_xattrs(inode);
+>   
+> -	required_blob_size = __get_required_blob_size(ci, name_len, val_len);
+> -
+>   	if (!ci->i_xattrs.prealloc_blob ||
+>   	    required_blob_size > ci->i_xattrs.prealloc_blob->alloc_len) {
+>   		struct ceph_buffer *blob;
+> diff --git a/include/linux/ceph/mdsmap.h b/include/linux/ceph/mdsmap.h
+> index 523fd0452856..4c3e0648dc27 100644
+> --- a/include/linux/ceph/mdsmap.h
+> +++ b/include/linux/ceph/mdsmap.h
+> @@ -25,6 +25,7 @@ struct ceph_mdsmap {
+>   	u32 m_session_timeout;          /* seconds */
+>   	u32 m_session_autoclose;        /* seconds */
+>   	u64 m_max_file_size;
+> +	u64 m_max_xattr_size;		/* maximum size for xattrs blob */
+>   	u32 m_max_mds;			/* expected up:active mds number */
+>   	u32 m_num_active_mds;		/* actual up:active mds number */
+>   	u32 possible_max_rank;		/* possible max rank index */
+>
+
