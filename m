@@ -2,232 +2,119 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9650853C9B7
-	for <lists+ceph-devel@lfdr.de>; Fri,  3 Jun 2022 14:13:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8923A53C9E7
+	for <lists+ceph-devel@lfdr.de>; Fri,  3 Jun 2022 14:24:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244167AbiFCMLH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 3 Jun 2022 08:11:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40800 "EHLO
+        id S244318AbiFCMYL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 3 Jun 2022 08:24:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237519AbiFCMLG (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 3 Jun 2022 08:11:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7568E2A260
-        for <ceph-devel@vger.kernel.org>; Fri,  3 Jun 2022 05:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1654258263;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7Z3LjMiWjgpqWErjXp179I71XhKOADdNqUblxAcCwck=;
-        b=EPU/W3XXi2IfFFxtNEjkmTsUIg+jp5NagseUTL44yDrc9T8+kYS/G8pRAenQ+4+p4AccNA
-        mGrW6RmoL8uAvxHMgEvw/tTrb6HP4Z7MtsYp+HwZOzn3+m4z4D92yF+MONeexx8YS3TA8R
-        qZgK/gE5oHOl+gC6I3/8pJcuDXU4eCY=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-292-95FLV3sDMvyc0f0oos3Vjg-1; Fri, 03 Jun 2022 08:11:02 -0400
-X-MC-Unique: 95FLV3sDMvyc0f0oos3Vjg-1
-Received: by mail-pg1-f199.google.com with SMTP id a23-20020a656557000000b003fa608197b9so3779986pgw.8
-        for <ceph-devel@vger.kernel.org>; Fri, 03 Jun 2022 05:11:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=7Z3LjMiWjgpqWErjXp179I71XhKOADdNqUblxAcCwck=;
-        b=t4IMdjlquIcCHDh07QhQeUZybZ5n4K2rPbJ/eVfUjZiE0jlxbHa78BLMHcGLN+1VMn
-         q79owtDX1lDRMMmIRpJAWgm63kLvTb1dMbY/NJkulgO2/zXy4GnLv4Ytq+VZZXJ8oT+n
-         G1+uIewNwkvu6KO5/GIsyVtOzi1A8pexGsCgpfDwDfhLbUicu4XC/aoCymRyj/x2r0R8
-         Rr6cWQqbvl99ESUfF7G6d/XJySKxthQU0jMbcV1zOQR20PyLyp0YmA18kAFu8Kb8Fom4
-         a8uPgaIwkPC4cfF/vyWQUpVmv/MlpLTyjo4iUrxx1q48d3bbCXZ9U8+UZbpu5wsemxep
-         cu/g==
-X-Gm-Message-State: AOAM530+hWb4wvFCswZb8aVxqCinO2asAqn0xRyRgaOrH72oQ4ek/nzk
-        PY/MHH+eDcA47tXjwgt3i53I9O+6nUDhPtPrIstgM0V3GIhGWvv1JV73/Z0Ao4opF1WMOz/zJs8
-        Pcmy43kdodcJFibK3xzyFmA==
-X-Received: by 2002:a17:90b:1b41:b0:1e0:17f:d17 with SMTP id nv1-20020a17090b1b4100b001e0017f0d17mr45210403pjb.85.1654258261068;
-        Fri, 03 Jun 2022 05:11:01 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwXAEt6b1gIV+ulJHkRaVntG6S3lb46daEwgSYEVScOXcm1Zd+bDgNZ0VcopvAvyGcbZbIZXw==
-X-Received: by 2002:a17:90b:1b41:b0:1e0:17f:d17 with SMTP id nv1-20020a17090b1b4100b001e0017f0d17mr45210371pjb.85.1654258260673;
-        Fri, 03 Jun 2022 05:11:00 -0700 (PDT)
-Received: from [10.72.12.54] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id y4-20020a17090322c400b001640d4744fesm5209324plg.55.2022.06.03.05.10.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Jun 2022 05:10:59 -0700 (PDT)
-Subject: Re: [RFC PATCH v4] ceph: prevent a client from exceeding the MDS
- maximum xattr size
-To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220602143652.28244-1-lhenriques@suse.de>
- <b89ca6a2-4332-b4db-2a40-ae3b00ebdf35@redhat.com>
- <87zgiu2cc7.fsf@brahms.olymp>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <6909ff58-c821-3fe6-c20e-436014e7c217@redhat.com>
-Date:   Fri, 3 Jun 2022 20:10:53 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        with ESMTP id S230159AbiFCMYK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 3 Jun 2022 08:24:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7B4B14D3F
+        for <ceph-devel@vger.kernel.org>; Fri,  3 Jun 2022 05:24:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7B16A615B7
+        for <ceph-devel@vger.kernel.org>; Fri,  3 Jun 2022 12:24:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68F14C385B8;
+        Fri,  3 Jun 2022 12:24:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654259048;
+        bh=gVHxMXp8mYvG1gF0v3CCDxyC9yE+WfvStTU+BzOEPYM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=tOhq3L8MQai22T3MxpUoQBw+RJ0JaZ31aBSuB3K0HQYWO85lC6f5//Wn94tT08wDf
+         w+i9jtKpZscXwIHoMwEPVmykICb4vlgS/I6YagoEwPmlBsCueclloGNXgi5rfWBSyT
+         wU+OxzlAVNFyN93gUeFld04Zc45cM7ikBwFqpiHy3fXvhBEbrkDq0BYvjVUWcHrbe9
+         MYhRroi5Y9cfyh+++ceRsJVszshUylvuurR4tPLuK1nzL5CviMewDLHbUvo4Qlbv66
+         9Z/a490UKFxSiOBo+FgLQQA7u9BsUy1VTMtnNPLhEC9KmUcZFzwa9ThYP4GOV4McOW
+         8M87GyAkb+Wiw==
+Message-ID: <d18e02c9d6652e533f8a81c92ab011d907b5f8fe.camel@kernel.org>
+Subject: Re: [PATCH v14 58/64] ceph: add encryption support to writepage
+From:   Jeff Layton <jlayton@kernel.org>
+To:     =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
+Cc:     ceph-devel@vger.kernel.org, xiubli@redhat.com, idryomov@gmail.com
+Date:   Fri, 03 Jun 2022 08:24:07 -0400
+In-Reply-To: <875yli3y34.fsf@brahms.olymp>
+References: <20220427191314.222867-1-jlayton@kernel.org>
+         <20220427191314.222867-59-jlayton@kernel.org>
+         <5a4d4ca805797f745fb9885fcd8d8d6252db0787.camel@kernel.org>
+         <875yli3y34.fsf@brahms.olymp>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.2 (3.44.2-1.fc36) 
 MIME-Version: 1.0
-In-Reply-To: <87zgiu2cc7.fsf@brahms.olymp>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Fri, 2022-06-03 at 10:17 +0100, Lu=EDs Henriques wrote:
+> Jeff Layton <jlayton@kernel.org> writes:
+>=20
+> > On Wed, 2022-04-27 at 15:13 -0400, Jeff Layton wrote:
+> > > Allow writepage to issue encrypted writes. Extend out the requested s=
+ize
+> > > and offset to cover complete blocks, and then encrypt and write them =
+to
+> > > the OSDs.
+> > >=20
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/ceph/addr.c | 34 +++++++++++++++++++++++++++-------
+> > >  1 file changed, 27 insertions(+), 7 deletions(-)
+> > >=20
+> > > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> > > index d65d431ec933..f54940fc96ee 100644
+> > > --- a/fs/ceph/addr.c
+> > > +++ b/fs/ceph/addr.c
+> > > @@ -586,10 +586,12 @@ static int writepage_nounlock(struct page *page=
+, struct writeback_control *wbc)
+> > >  	loff_t page_off =3D page_offset(page);
+> > >  	int err;
+> > >  	loff_t len =3D thp_size(page);
+> > > +	loff_t wlen;
+> > >  	struct ceph_writeback_ctl ceph_wbc;
+> > >  	struct ceph_osd_client *osdc =3D &fsc->client->osdc;
+> > >  	struct ceph_osd_request *req;
+> > >  	bool caching =3D ceph_is_cache_enabled(inode);
+> > > +	struct page *bounce_page =3D NULL;
+> > > =20
+> > >  	dout("writepage %p idx %lu\n", page, page->index);
+> > > =20
+> > > @@ -621,6 +623,8 @@ static int writepage_nounlock(struct page *page, =
+struct writeback_control *wbc)
+> > > =20
+> > >  	if (ceph_wbc.i_size < page_off + len)
+> > >  		len =3D ceph_wbc.i_size - page_off;
+> > > +	if (IS_ENCRYPTED(inode))
+> > > +		wlen =3D round_up(len, CEPH_FSCRYPT_BLOCK_SIZE);
+> > > =20
+> >=20
+> > The above is buggy. We're only setting "wlen" in the encrypted case. Yo=
+u
+> > would think that the compiler would catch that, but next usage of wlen
+> > just passes a pointer to it to another function and that cloaks the
+> > warning.
+>=20
+> Yikes!  That's indeed the sort of things we got used to have compilers
+> complaining about.  That must have been fun to figure this out.  Nice ;-)
+>=20
 
-On 6/3/22 7:52 PM, Luís Henriques wrote:
-> Xiubo Li <xiubli@redhat.com> writes:
->
->> On 6/2/22 10:36 PM, Luís Henriques wrote:
->>> The MDS tries to enforce a limit on the total key/values in extended
->>> attributes.  However, this limit is enforced only if doing a synchronous
->>> operation (MDS_OP_SETXATTR) -- if we're buffering the xattrs, the MDS
->>> doesn't have a chance to enforce these limits.
->>>
->>> This patch adds support for decoding the xattrs maximum size setting that is
->>> distributed in the mdsmap.  Then, when setting an xattr, the kernel client
->>> will revert to do a synchronous operation if that maximum size is exceeded.
->>>
->>> While there, fix a dout() that would trigger a printk warning:
->>>
->>> [   98.718078] ------------[ cut here ]------------
->>> [   98.719012] precision 65536 too large
->>> [   98.719039] WARNING: CPU: 1 PID: 3755 at lib/vsprintf.c:2703 vsnprintf+0x5e3/0x600
->>> ...
->>>
->>> URL: https://tracker.ceph.com/issues/55725
->>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
->>> ---
->>>    fs/ceph/mdsmap.c            | 28 ++++++++++++++++++++++++----
->>>    fs/ceph/xattr.c             | 12 ++++++++----
->>>    include/linux/ceph/mdsmap.h |  1 +
->>>    3 files changed, 33 insertions(+), 8 deletions(-)
->>>
->>> * Changes since v3
->>>
->>> As per Xiubo review:
->>>     - Always force a (sync) SETXATTR Op when connecting to an old cluster
->>>     - use '>' instead of '>='
->>> Also fixed the warning detected by 0day.
->>>
->>> * Changes since v2
->>>
->>> Well, a lot has changed since v2!  Now the xattr max value setting is
->>> obtained through the mdsmap, which needs to be decoded, and the feature
->>> that was used in the previous revision was dropped.  The drawback is that
->>> the MDS isn't unable to know in advance if a client is aware of this xattr
->>> max value.
->>>
->>> * Changes since v1
->>>
->>> Added support for new feature bit to get the MDS max_xattr_pairs_size
->>> setting.
->>>
->>> Also note that this patch relies on a patch that hasn't been merged yet
->>> ("ceph: use correct index when encoding client supported features"),
->>> otherwise the new feature bit won't be correctly encoded.
->>>
->>> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
->>> index 30387733765d..c6ce83a48175 100644
->>> --- a/fs/ceph/mdsmap.c
->>> +++ b/fs/ceph/mdsmap.c
->>> @@ -13,6 +13,12 @@
->>>      #include "super.h"
->>>    +/*
->>> + * Maximum size of xattrs the MDS can handle per inode by default.  This
->>> + * includes the attribute name and 4+4 bytes for the key/value sizes.
->>> + */
->>> +#define MDS_MAX_XATTR_SIZE (1<<16) /* 64K */
->> This macro makes no sense anymore, right ?
-> Ah, yeah.  That's still leftovers from the previous version.
->
->> I will merge this patch by removing this then.
-> Thanks!  Also... maybe you could also fix the (embarrassing) issue
-> detected by 0day that I _tried_ to fix but failed (see below).
->
->> -- Xiubo
->>
->>
->>> +
->>>    #define CEPH_MDS_IS_READY(i, ignore_laggy) \
->>>    	(m->m_info[i].state > 0 && ignore_laggy ? true : !m->m_info[i].laggy)
->>>    @@ -352,12 +358,10 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void
->>> *end, bool msgr2)
->>>    		__decode_and_drop_type(p, end, u8, bad_ext);
->>>    	}
->>>    	if (mdsmap_ev >= 8) {
->>> -		u32 name_len;
->>>    		/* enabled */
->>>    		ceph_decode_8_safe(p, end, m->m_enabled, bad_ext);
->>> -		ceph_decode_32_safe(p, end, name_len, bad_ext);
->>> -		ceph_decode_need(p, end, name_len, bad_ext);
->>> -		*p += name_len;
->>> +		/* fs_name */
->>> +		ceph_decode_skip_string(p, end, bad_ext);
->>>    	}
->>>    	/* damaged */
->>>    	if (mdsmap_ev >= 9) {
->>> @@ -370,6 +374,22 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end, bool msgr2)
->>>    	} else {
->>>    		m->m_damaged = false;
->>>    	}
->>> +	if (mdsmap_ev >= 17) {
->>> +		/* balancer */
->>> +		ceph_decode_skip_string(p, end, bad_ext);
->>> +		/* standby_count_wanted */
->>> +		ceph_decode_skip_32(p, end, bad_ext);
->>> +		/* old_max_mds */
->>> +		ceph_decode_skip_32(p, end, bad_ext);
->>> +		/* min_compat_client */
->>> +		ceph_decode_skip_8(p, end, bad_ext);
->>> +		/* required_client_features */
->>> +		ceph_decode_skip_set(p, end, 64, bad_ext);
->>> +		ceph_decode_64_safe(p, end, m->m_max_xattr_size, bad_ext);
->>> +	} else {
->>> +		/* This forces the usage of the (sync) SETXATTR Op */
->>> +		m->m_max_xattr_size = 0;
->>> +	}
->>>    bad_ext:
->>>    	dout("mdsmap_decode m_enabled: %d, m_damaged: %d, m_num_laggy: %d\n",
->>>    	     !!m->m_enabled, !!m->m_damaged, m->m_num_laggy);
->>> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
->>> index 8c2dc2c762a4..1be415e9220b 100644
->>> --- a/fs/ceph/xattr.c
->>> +++ b/fs/ceph/xattr.c
->>> @@ -1086,7 +1086,7 @@ static int ceph_sync_setxattr(struct inode *inode, const char *name,
->>>    			flags |= CEPH_XATTR_REMOVE;
->>>    	}
->>>    -	dout("setxattr value=%.*s\n", (int)size, value);
->>> +	dout("setxattr value size: %lu\n", size);
-> This should be "%zu" and not "%lu".  I'm OK sending v5 to fix these 2
-> issues if you prefer.
+Yeah. I remember that some older versions of gcc would complain about
+uninitialized vars when you passed a pointer to it to another function.
+That went away a while back, which was good since it often fired on
+false positives.
 
-Sure, please send a v5 for it.
-
-
->
-> [ And then there's also the MDS-side which hasn't been merged yet.  But
->    this patch is probably worth in itself as it will change the client
->    behavior to do the sync operation. ]
-
-It's okay, this will fix this issue when we are connecting to old cephs, 
-and we could force to do the sync request always.
-
-No need to wait the ceph PR.
-
--- Xiubo
-
->
-> Cheers,
-
+What would have been nice here would be for the compiler to notice that
+wlen was inconsistently initialized before we passed the pointer to the
+function. Not sure how hard that would be to catch though.
+--=20
+Jeff Layton <jlayton@kernel.org>
