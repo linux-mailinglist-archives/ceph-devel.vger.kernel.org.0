@@ -2,80 +2,123 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E1BA53DF1F
-	for <lists+ceph-devel@lfdr.de>; Mon,  6 Jun 2022 02:48:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F3A553DFDE
+	for <lists+ceph-devel@lfdr.de>; Mon,  6 Jun 2022 04:57:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348760AbiFFAkw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 5 Jun 2022 20:40:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38362 "EHLO
+        id S1349231AbiFFC5f (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 5 Jun 2022 22:57:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348779AbiFFAkt (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 5 Jun 2022 20:40:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6B51649C9B
-        for <ceph-devel@vger.kernel.org>; Sun,  5 Jun 2022 17:40:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1654476046;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ztkmqVnlNudKHK3nozyJXARq4S0vh4WAgBlCzt1poB4=;
-        b=ZCR8gUOtBs8GfyTl4v5saAEYw2QiaO5s95CGvVxXkji8BlaRGksHBkjPu9LddH1nhMRggk
-        6ZrY+OIjjFRAEN/XRy4ZOc2Qbuj36Dcuik+OJQudgy1Fzy+npTCrdOjIv/E5rHEz3uiJCZ
-        CO/Cu8AVQVmPtRtLYyWQrzk96im0RV8=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-416-wtB8W3lrOmiSG293ATNlRQ-1; Sun, 05 Jun 2022 20:40:45 -0400
-X-MC-Unique: wtB8W3lrOmiSG293ATNlRQ-1
-Received: by mail-pg1-f199.google.com with SMTP id z18-20020a656112000000b003fa0ac4b723so6138630pgu.5
-        for <ceph-devel@vger.kernel.org>; Sun, 05 Jun 2022 17:40:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=ztkmqVnlNudKHK3nozyJXARq4S0vh4WAgBlCzt1poB4=;
-        b=LcwbVdJbaJT8+/AqqGo5HFN/B7O2S+iGQiqkEBXKBYUV2sqVQN6gjJD6sbavpG6EHL
-         6qn3muQ9gPMzotWcQhr9J6w2ZFAfIXCptclTpb20Uvoo/pbK5b8MoLtYEmbF57dRSuIY
-         sRA9KJXotHSnQRDKYFKAYgNpQUa6A82oJe0JWBYhlfg+fqqWkfusSJLWJ1DXGBmVfm3r
-         YpAXGNCxrpq+e3OkpvkAuwqKjXx9vBAM/eQIgDNg/hIlfmbOeYFYH1GRtc/hgAWcnmIZ
-         4ZZgb6T6s7KGI6T3Ad4WZvDkic2pjQ5pT8j14Wd7Zf/jE9gplh2OwmVYKUacQIxV6KqN
-         IciA==
-X-Gm-Message-State: AOAM531AkG3lNduiMdPFdX5HSDXXZQ1lBB9dNk8WDzWBhSdmiB+s8vyV
-        AHCXc3Ku4tlOUO4m6zD6FgF+ENBJnpqAGj7NbbZ1DGwVdAmtbRiy4Wt/YxlJv+dxKJQL/JGivFb
-        Rtzi35OW8wSBbATqKbg0tlQ==
-X-Received: by 2002:a63:844a:0:b0:3fc:e1a0:b80d with SMTP id k71-20020a63844a000000b003fce1a0b80dmr16846794pgd.616.1654476044069;
-        Sun, 05 Jun 2022 17:40:44 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwtQsB/rHO6jVQtH0zjxtudP5oSFGZvjZj1UdtuM5h8TVy5SvctlmWYisl02MPCrsEhKmKlBA==
-X-Received: by 2002:a63:844a:0:b0:3fc:e1a0:b80d with SMTP id k71-20020a63844a000000b003fce1a0b80dmr16846781pgd.616.1654476043766;
-        Sun, 05 Jun 2022 17:40:43 -0700 (PDT)
-Received: from [10.72.12.54] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id x5-20020a170902a38500b001640beeebf1sm9128120pla.268.2022.06.05.17.40.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 05 Jun 2022 17:40:42 -0700 (PDT)
-Subject: Re: [PATCH v5] ceph: prevent a client from exceeding the MDS maximum
- xattr size
-To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Gregory Farnum <gfarnum@redhat.com>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220603132909.10166-1-lhenriques@suse.de>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <54a87be1-d46a-bc50-cf2d-1a094bb4c176@redhat.com>
-Date:   Mon, 6 Jun 2022 08:40:37 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
-MIME-Version: 1.0
-In-Reply-To: <20220603132909.10166-1-lhenriques@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        with ESMTP id S232695AbiFFC5e (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 5 Jun 2022 22:57:34 -0400
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2138.outbound.protection.outlook.com [40.107.215.138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C8FCE083
+        for <ceph-devel@vger.kernel.org>; Sun,  5 Jun 2022 19:57:31 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CeCEIuh/qqsnVIipxl3GSka2bJAMwJXS6OGr3dPHAJs0e038bzcwCTabT2BRWV0kIZZQfuQiMPbioIUKd/Waujry219HYboOXiDKXqSFeaMiHhQV4Lkg0vIbuRZK4YgwtbGl2Qi5NCP++RVE+U292nb6q4S0v9NjxxrIKGIqa4DaOzT78TfpcXVdsCzowY2+a6gFR+ev1wsN/5e6DA8yJyFZhhgaO95+Z3/dqK1TM0KC5KGgjUER3N+fQTQZb2b+pbfuANVhwMAWhH5cN7SvMsQnrWk/6OXWtER+0SgWYnA5u/zyqs4gYnFrGbN+UUGzVRXplZsOqjNuzMIs/ND6DA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pSCHyXaNWbLE2xuaCFFqGFJ32gJb1UYNC1CB2VZyEm0=;
+ b=OKzNLvIWoNDNLb6UFeDYLyPZhWFlsKiabjjwBqVuOEruwsJZ+JL8ReqyHWJY69mGAY6Yl8xZAVslZVXi/+Znz1R3iQw3rsK+544q9BIbKaJ+nHSNrG+M3dqAUG/wW3LVMtWjj3QICpuopjj0wOwQSd6HY4N6ZOTY37mwhuVy8saICPL/1zUjZMZ1uidL77aCBZm2JV4YGFEw9RwTyjqCIQgVN6TetgH2Ug8kwe/Huon0eabuqmWZHDrOOPh9afw9285ItED97xU0dCs1E2b7ZJ5HJGa1akNdTrkRkmcIpmcriO4coZxvF7NGz9LXiFgxWF9o0qqw02D5cyRagLkeJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cybozu.co.jp; dmarc=pass action=none header.from=cybozu.co.jp;
+ dkim=pass header.d=cybozu.co.jp; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cybozu.co.jp;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pSCHyXaNWbLE2xuaCFFqGFJ32gJb1UYNC1CB2VZyEm0=;
+ b=klfW0abC6GO3Wct8CosSYTp+1h432CNLocMG0ErRQoahllpY2n1aM2PthZlRrFEAP+bNNn5IHniGzrWIDf2Oyr5tU8V1RKEFV/LpR46SnK1as0VJeSnvSPIbtl/23lzd+SJ5+4lR9Tt/BYYFxMLAL0L7hH1ZZGblD3AftZEQdU4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=cybozu.co.jp;
+Received: from TY2PR03MB4254.apcprd03.prod.outlook.com (2603:1096:404:b1::17)
+ by SG2PR03MB2909.apcprd03.prod.outlook.com (2603:1096:3:20::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.9; Mon, 6 Jun
+ 2022 02:57:27 +0000
+Received: from TY2PR03MB4254.apcprd03.prod.outlook.com
+ ([fe80::3199:64a3:1b02:5465]) by TY2PR03MB4254.apcprd03.prod.outlook.com
+ ([fe80::3199:64a3:1b02:5465%6]) with mapi id 15.20.5332.009; Mon, 6 Jun 2022
+ 02:57:26 +0000
+Message-ID: <bfc20d2c-9198-2cb3-506a-4bae09c6cd68@cybozu.co.jp>
+Date:   Mon, 6 Jun 2022 11:57:25 +0900
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.10.0
+From:   Daichi Mukai <daichi-mukai@cybozu.co.jp>
+Subject: [PATCH v4] libceph: print fsid and client gid with osd id
+To:     Ceph Development <ceph-devel@vger.kernel.org>
+Cc:     Satoru Takeuchi <satoru.takeuchi@gmail.com>
 Content-Language: en-US
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TYAPR01CA0089.jpnprd01.prod.outlook.com
+ (2603:1096:404:2c::29) To TY2PR03MB4254.apcprd03.prod.outlook.com
+ (2603:1096:404:b1::17)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6f002798-0e85-4982-82a7-08da476849cd
+X-MS-TrafficTypeDiagnostic: SG2PR03MB2909:EE_
+X-Microsoft-Antispam-PRVS: <SG2PR03MB290996ACAAC1E2B65D87814EACA29@SG2PR03MB2909.apcprd03.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: YvxZ9EBzGLzHUpjSlN7k3Jxj25RTCHE7oy1iWUdJS61i52VLL+PXQYCIo9q1GmNrnSrGemHZShmtVKUVq5VbhlT/HmG1jCr2syrvsvhADPqaWnuZY58BF0gT1g7VlTMreloCgOOEaJN8Z0ykd5qTwG2tBUkCgmw8rMjc5cinzqXaFfRH4qL/wSmCuMyQEZ4v8ds1StXSlrac4FKUtdG6+a/5wkce9OMKxi7/ky+naPoG9VSacQ3X00ntGVjWeRSylaE7V85F2ZJ/0jmFUaEuwqBNs4PI/QtFJWVAknEbyNAzGSiCG0Yt9GCsDiV385ddmIImjENopwF/Au8Z1TBwCM9kh3CoBfhWSsfm/pnWtg7QhF6N0jV0uUjDxjbLFklyMDbZiTImaq1WOPb94PccDT3QDDVMQ0q+iuSvu4FKRzG8pK2b8nqSYpZ6V7G2OlZRZOKM5U0e2r8b+u1v3H05sC6xQvxkDA2nnxaYyUlb23enTR5tZ9gHmpAVCRsYCeTNMKBVbUQANbHlkbNW2UbJ0dZI8cRjJicz+PNraalWkHvHQ2ax1SrO1F1klhJEfdc+BjH768owDEoihExGkydvNkbnKviKWJ42NENgMUYbZAmhPW4vYOkHf/L1dvkFM+82eJDajQmwidSUOzXeTJjAxBd7+WXsnR0MShrLDzorn4ZeMqDTK3cg1BKbqq1wrztRz2MTScXgwy7vRdEN+7cq5bn+YiZvmgWALKJIshmP/6B8o99Ou36Nq/OAcWga1owJ1t3lPg8AD0U17PDk5YD+7g==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR03MB4254.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(316002)(6486002)(4326008)(8676002)(52116002)(66476007)(2906002)(31696002)(86362001)(6916009)(66946007)(66556008)(8936002)(36756003)(6506007)(83380400001)(6512007)(26005)(31686004)(2616005)(38350700002)(5660300002)(186003)(38100700002)(508600001)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dkpOQ2RQeE1MMEU3QW5jbkZxdjZFbHBZY0tlU0I5SXN3dXBZYWF0SDM4Rk4y?=
+ =?utf-8?B?b2tFZjdkbXYwU2FxR2J6RE5YdGc3ZkhSTzNRV3p5aGcxSUJ5bTVvNmdIQzZC?=
+ =?utf-8?B?MUNSOFpSeEhqNXNaSm1TOTJEeVZha0hMU2ZXWnZ3UFAwcy8wNHNmdE90QStn?=
+ =?utf-8?B?MVIzcStUL1JWZVNmSUs5SlNCZG1hZUdPNzNpSk9iTGhtTWNGM0tMSG1FUUNa?=
+ =?utf-8?B?ellIZEJwMDNmRXhtOFdIVzVJSlNPRWRjcmNMdWtCemVDOFpLdVpPWTYwc0h4?=
+ =?utf-8?B?R0hLbGFuYXVpcE5VR05obEtodEtyb1NyZmtJcTdLdWNyMHV6ODlzKzdpSVlh?=
+ =?utf-8?B?Rk1EVEZtdVdISVluYnR0a3J3bVpwMHNsM0JLTXIzaGk1YkNvbllhSUorZ0lP?=
+ =?utf-8?B?ayt3TzdFR25FYUdLMzU3NzBQZ3hqOHNJYzFGRU5UcTJ3T2x5c0E2LzlqVExX?=
+ =?utf-8?B?ZGc3eVhwVHl0RmROY1ZDUDBSK2k1K2VyMG1FcGF3eHNLanlKRDZGZEt6TlFE?=
+ =?utf-8?B?aHJMc0cxY1JRTWZOa24rcCtRRnl1dHBEeHVVOWFKRXptaUNWOHVWSjVqOUVs?=
+ =?utf-8?B?R21oYi85U1dsLzdIZVdXK3NWRzdyZjlsTVBvcm9Jalp1NDAyOThoQ3U5dTc2?=
+ =?utf-8?B?U054cEY3cVJ1SVloL1pBY1NpNGRSRjdzMHl0elBZRldSdGJnOWF1OS94RFhr?=
+ =?utf-8?B?SWhBZ0ZCeTE1UitxZ3YwTFY2WWhwamRVelBzWHU3Z1czcHpIWnpITUppUFd0?=
+ =?utf-8?B?YXVOU2FMbGhJMkZsRWoyOHc1VldtbytXS3lFN1ViMS9EMzVnQzR2cjRIWUV3?=
+ =?utf-8?B?clY0RmRuOVFBRUNIWGdKRjlkOWw0dVVmU1Z5N1F4RjVwWDhyd0pYZENncFh0?=
+ =?utf-8?B?L0xKTGtLUy83Ymp0NzNWSVNjNC94RWlBUkpBUUZCeHpMaXVyQkRjeGNvMGN2?=
+ =?utf-8?B?ckRxUmNDL1FhTnkrU0twOGM2MW1jL3U4SG9Pcktwb0ovQURPYm9sYk1wbmxy?=
+ =?utf-8?B?TlZsSWp0eW9VTkZNRFZ6S1dSOXduYUpKRDQ0MGdzbWJWNEN0Y25jT3FCWHlJ?=
+ =?utf-8?B?L1BsOWxBc2tFQmtGTDM2aG00aTEyTTJjazY5ZE5rb1I3Y1g4Um1CbmVqZWdr?=
+ =?utf-8?B?NzRjT3g1amlnSnYzK3Zac3RtYythdndpV2VaRUIydndEaVdTdjVIa2tQMGFn?=
+ =?utf-8?B?UGNZREFOZVFKL0pxRVVIZldzTno1cllOdnBtMkQwTEpCSjNhckg3OGh6OEpL?=
+ =?utf-8?B?RlJ4NjN5aWNvODM4bnlhamFldWovS1E0VFBoamJPZXVPRlFaT2ltcUpXWWhl?=
+ =?utf-8?B?aVRXM0xMUXpyZFlSME9pdnBVbitkSWpRQVNlSm8yWkJESUV4bmR6UXpPS1Ur?=
+ =?utf-8?B?TUtJdVplZGJBRjB0YW9qajJNckoxNytGbnBaUVpwUTlxak5wRzlaRk9BQ0FH?=
+ =?utf-8?B?blRraGdwOTUvNi9DSHd5QVNLMFhuMHdKQUxEdUxueXVMbGY5cVBKYytqcVZC?=
+ =?utf-8?B?QVNqSWxtOHVGVDBFdXhqTWF5N3lFaitZWmRzTURBTllHYkVoSklsWGVQZlJK?=
+ =?utf-8?B?dExJSUlhQkZJSkdmQ2dQWEQ4NCt0SHovY0tnNzMzSXlPWjJaUHE3TlY4MzZL?=
+ =?utf-8?B?c0FxUmxGVStYTWgraWZqbFJvcVJkSzNSSzFEa3J2azNFT2tlek1uRXQ2dThk?=
+ =?utf-8?B?N0h1Vm1xc01GMUJwRFlvMWlYZDV0OU85MmM5M1dRVnlFOEUrbVh6TDg5akh3?=
+ =?utf-8?B?YUFEalYrR01ERTBRRDRwN3NPQVd0dUpua21QdEpsT0o1a0hnZGI0Rjh5OUdq?=
+ =?utf-8?B?aDJrNFVCVWdoNFR3djA3cmwxN0tpa0FodHJ0U1o2S2pzblVrYlg4K1hSVXlo?=
+ =?utf-8?B?bk1PK1ZCQmhrZktZeENucHFSQTM1WGh2ZWV2T3ZKWWVkelFpcGZWWERCSTRP?=
+ =?utf-8?B?Um5LcEF2Yi9PTk1IM25HajM5eGZTd3J4RVd5SVpyMTlwNWl4UEtldEd3RXZF?=
+ =?utf-8?B?dVJDMXZ2MjN5VXJkZXhEMm51YUtsMG1wSGpyYW95ZkY3VmZPVWxZaUNhUnpi?=
+ =?utf-8?B?TWo0dEdZZFoyQVQ3c3BPY2RmZlQ3K1pjNkV6K2RJQThBYnByMUpzeVlLWkpM?=
+ =?utf-8?B?MmplNCtmMXFkSk1JQnNVSkQ4bjU1R3JiQ3V5aFVTdFBSMkFaa2F1TzZOM1Ft?=
+ =?utf-8?B?VitHdGRjZm10MVVxZE80UVFvUzBUMVRLMWs5cnEzcnd3RmJVejBMZTlwdEhD?=
+ =?utf-8?B?MDN0eTdXTkRFaWFkTjVka0Z1WnRhYjJUZGxTMkRYT0ovajBmakJ4blJ2c1ZY?=
+ =?utf-8?B?ZkY4MUx2N0NiaHhER2hDRHhSalJsME1UZkdVNGQ0N0RUUDFoTkJ4NXZtL2k3?=
+ =?utf-8?Q?PmbgfW7kcZKAoBNpxtjHrfxmFiECkOMGL4SDR?=
+X-OriginatorOrg: cybozu.co.jp
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f002798-0e85-4982-82a7-08da476849cd
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR03MB4254.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2022 02:57:26.8284
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3761f390-05f7-4386-9a0b-b6806c13b841
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YkqehMQmVmRn1QJaAmn+bnGQ/M73oGYK2LLtxstzYEVGCCfGwL9R65lAxyHUBtavAvcWXtEl9Oj33LsIll0KxKOjA5no8paIgEE6Zh4MhB2hUhyzNjJ7lT8JG5AL1h50
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR03MB2909
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,157 +126,169 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Print fsid and client gid in libceph log messages to distinct from which
+each message come.
 
-On 6/3/22 9:29 PM, Luís Henriques wrote:
-> The MDS tries to enforce a limit on the total key/values in extended
-> attributes.  However, this limit is enforced only if doing a synchronous
-> operation (MDS_OP_SETXATTR) -- if we're buffering the xattrs, the MDS
-> doesn't have a chance to enforce these limits.
->
-> This patch adds support for decoding the xattrs maximum size setting that is
-> distributed in the mdsmap.  Then, when setting an xattr, the kernel client
-> will revert to do a synchronous operation if that maximum size is exceeded.
->
-> While there, fix a dout() that would trigger a printk warning:
->
-> [   98.718078] ------------[ cut here ]------------
-> [   98.719012] precision 65536 too large
-> [   98.719039] WARNING: CPU: 1 PID: 3755 at lib/vsprintf.c:2703 vsnprintf+0x5e3/0x600
-> ...
->
-> URL: https://tracker.ceph.com/issues/55725
-> Signed-off-by: Luís Henriques <lhenriques@suse.de>
-> ---
->   fs/ceph/mdsmap.c            | 22 ++++++++++++++++++----
->   fs/ceph/xattr.c             | 12 ++++++++----
->   include/linux/ceph/mdsmap.h |  1 +
->   3 files changed, 27 insertions(+), 8 deletions(-)
->
-> * Changes since v4
->
-> - Dropped definition of MDS_MAX_XATTR_SIZE, which isn't needed anymore
-> - Fixed (finally?) the compilation warning detected by bot
-> (also dropped the RFC from the subject)
->
-> * Changes since v3
->
-> As per Xiubo review:
->    - Always force a (sync) SETXATTR Op when connecting to an old cluster
->    - use '>' instead of '>='
-> Also fixed the warning detected by 0day.
->
-> * Changes since v2
->
-> Well, a lot has changed since v2!  Now the xattr max value setting is
-> obtained through the mdsmap, which needs to be decoded, and the feature
-> that was used in the previous revision was dropped.  The drawback is that
-> the MDS isn't unable to know in advance if a client is aware of this xattr
-> max value.
->
-> * Changes since v1
->
-> Added support for new feature bit to get the MDS max_xattr_pairs_size
-> setting.
->
-> Also note that this patch relies on a patch that hasn't been merged yet
-> ("ceph: use correct index when encoding client supported features"),
-> otherwise the new feature bit won't be correctly encoded.
->
-> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
-> index 30387733765d..8d0a6d2c2da4 100644
-> --- a/fs/ceph/mdsmap.c
-> +++ b/fs/ceph/mdsmap.c
-> @@ -352,12 +352,10 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end, bool msgr2)
->   		__decode_and_drop_type(p, end, u8, bad_ext);
->   	}
->   	if (mdsmap_ev >= 8) {
-> -		u32 name_len;
->   		/* enabled */
->   		ceph_decode_8_safe(p, end, m->m_enabled, bad_ext);
-> -		ceph_decode_32_safe(p, end, name_len, bad_ext);
-> -		ceph_decode_need(p, end, name_len, bad_ext);
-> -		*p += name_len;
-> +		/* fs_name */
-> +		ceph_decode_skip_string(p, end, bad_ext);
->   	}
->   	/* damaged */
->   	if (mdsmap_ev >= 9) {
-> @@ -370,6 +368,22 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end, bool msgr2)
->   	} else {
->   		m->m_damaged = false;
->   	}
-> +	if (mdsmap_ev >= 17) {
-> +		/* balancer */
-> +		ceph_decode_skip_string(p, end, bad_ext);
-> +		/* standby_count_wanted */
-> +		ceph_decode_skip_32(p, end, bad_ext);
-> +		/* old_max_mds */
-> +		ceph_decode_skip_32(p, end, bad_ext);
-> +		/* min_compat_client */
-> +		ceph_decode_skip_8(p, end, bad_ext);
-> +		/* required_client_features */
-> +		ceph_decode_skip_set(p, end, 64, bad_ext);
-> +		ceph_decode_64_safe(p, end, m->m_max_xattr_size, bad_ext);
-> +	} else {
-> +		/* This forces the usage of the (sync) SETXATTR Op */
-> +		m->m_max_xattr_size = 0;
-> +	}
->   bad_ext:
->   	dout("mdsmap_decode m_enabled: %d, m_damaged: %d, m_num_laggy: %d\n",
->   	     !!m->m_enabled, !!m->m_damaged, m->m_num_laggy);
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index 8c2dc2c762a4..902323b12c35 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -1086,7 +1086,7 @@ static int ceph_sync_setxattr(struct inode *inode, const char *name,
->   			flags |= CEPH_XATTR_REMOVE;
->   	}
->   
-> -	dout("setxattr value=%.*s\n", (int)size, value);
-> +	dout("setxattr value size: %zu\n", size);
->   
->   	/* do request */
->   	req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
-> @@ -1184,8 +1184,14 @@ int __ceph_setxattr(struct inode *inode, const char *name,
->   	spin_lock(&ci->i_ceph_lock);
->   retry:
->   	issued = __ceph_caps_issued(ci, NULL);
-> -	if (ci->i_xattrs.version == 0 || !(issued & CEPH_CAP_XATTR_EXCL))
-> +	required_blob_size = __get_required_blob_size(ci, name_len, val_len);
-> +	if ((ci->i_xattrs.version == 0) || !(issued & CEPH_CAP_XATTR_EXCL) ||
-> +	    (required_blob_size > mdsc->mdsmap->m_max_xattr_size)) {
-> +		dout("%s do sync setxattr: version: %llu size: %d max: %llu\n",
-> +		     __func__, ci->i_xattrs.version, required_blob_size,
-> +		     mdsc->mdsmap->m_max_xattr_size);
->   		goto do_sync;
-> +	}
->   
->   	if (!lock_snap_rwsem && !ci->i_head_snapc) {
->   		lock_snap_rwsem = true;
-> @@ -1201,8 +1207,6 @@ int __ceph_setxattr(struct inode *inode, const char *name,
->   	     ceph_cap_string(issued));
->   	__build_xattrs(inode);
->   
-> -	required_blob_size = __get_required_blob_size(ci, name_len, val_len);
-> -
->   	if (!ci->i_xattrs.prealloc_blob ||
->   	    required_blob_size > ci->i_xattrs.prealloc_blob->alloc_len) {
->   		struct ceph_buffer *blob;
-> diff --git a/include/linux/ceph/mdsmap.h b/include/linux/ceph/mdsmap.h
-> index 523fd0452856..4c3e0648dc27 100644
-> --- a/include/linux/ceph/mdsmap.h
-> +++ b/include/linux/ceph/mdsmap.h
-> @@ -25,6 +25,7 @@ struct ceph_mdsmap {
->   	u32 m_session_timeout;          /* seconds */
->   	u32 m_session_autoclose;        /* seconds */
->   	u64 m_max_file_size;
-> +	u64 m_max_xattr_size;		/* maximum size for xattrs blob */
->   	u32 m_max_mds;			/* expected up:active mds number */
->   	u32 m_num_active_mds;		/* actual up:active mds number */
->   	u32 possible_max_rank;		/* possible max rank index */
->
-Merged into the testing branch. Thanks Luis.
+Signed-off-by: Satoru Takeuchi <satoru.takeuchi@gmail.com>
+Signed-off-by: Daichi Mukai <daichi-mukai@cybozu.co.jp>
+---
+  include/linux/ceph/osdmap.h |  2 +-
+  net/ceph/osd_client.c       |  3 ++-
+  net/ceph/osdmap.c           | 43 ++++++++++++++++++++++++++-----------
+  3 files changed, 34 insertions(+), 14 deletions(-)
 
--- Xiubo
+* Changes since v3
 
+- Rebased to latest mainline
 
+* Changes since v2
+
+- Set scope of this patch to log message for osd
+- Improved format of message
+
+* Changes since v1
+
+- Added client gid to log message
+
+diff --git a/include/linux/ceph/osdmap.h b/include/linux/ceph/osdmap.h
+index 5553019c3f07..a9216c64350c 100644
+--- a/include/linux/ceph/osdmap.h
++++ b/include/linux/ceph/osdmap.h
+@@ -253,7 +253,7 @@ static inline int ceph_decode_pgid(void **p, void *end, struct ceph_pg *pgid)
+  struct ceph_osdmap *ceph_osdmap_alloc(void);
+  struct ceph_osdmap *ceph_osdmap_decode(void **p, void *end, bool msgr2);
+  struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end, bool msgr2,
+-					     struct ceph_osdmap *map);
++					     struct ceph_osdmap *map, u64 gid);
+  extern void ceph_osdmap_destroy(struct ceph_osdmap *map);
+  
+  struct ceph_osds {
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index 9d82bb42e958..e9bd6c27c5ad 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -3945,7 +3945,8 @@ static int handle_one_map(struct ceph_osd_client *osdc,
+  	if (incremental)
+  		newmap = osdmap_apply_incremental(&p, end,
+  						  ceph_msgr2(osdc->client),
+-						  osdc->osdmap);
++						  osdc->osdmap,
++						  ceph_client_gid(osdc->client));
+  	else
+  		newmap = ceph_osdmap_decode(&p, end, ceph_msgr2(osdc->client));
+  	if (IS_ERR(newmap))
+diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
+index 2823bb3cff55..cd65677baff3 100644
+--- a/net/ceph/osdmap.c
++++ b/net/ceph/osdmap.c
+@@ -1549,8 +1549,23 @@ static int decode_primary_affinity(void **p, void *end,
+  	return -EINVAL;
+  }
+  
++static __printf(3, 4)
++void print_osd_info(struct ceph_fsid *fsid, u64 gid, const char *fmt, ...)
++{
++	struct va_format vaf;
++	va_list args;
++
++	va_start(args, fmt);
++	vaf.fmt = fmt;
++	vaf.va = &args;
++
++	printk(KERN_INFO "%s (%pU %lld): %pV", KBUILD_MODNAME, fsid, gid, &vaf);
++
++	va_end(args);
++}
++
+  static int decode_new_primary_affinity(void **p, void *end,
+-				       struct ceph_osdmap *map)
++				       struct ceph_osdmap *map, u64 gid)
+  {
+  	u32 n;
+  
+@@ -1566,7 +1581,8 @@ static int decode_new_primary_affinity(void **p, void *end,
+  		if (ret)
+  			return ret;
+  
+-		pr_info("osd%d primary-affinity 0x%x\n", osd, aff);
++		print_osd_info(&map->fsid, gid, "osd%d primary-affinity 0x%x\n",
++			       osd, aff);
+  	}
+  
+  	return 0;
+@@ -1825,7 +1841,8 @@ struct ceph_osdmap *ceph_osdmap_decode(void **p, void *end, bool msgr2)
+   *     new_state: { osd=6, xorstate=EXISTS } # clear osd_state
+   */
+  static int decode_new_up_state_weight(void **p, void *end, u8 struct_v,
+-				      bool msgr2, struct ceph_osdmap *map)
++				      bool msgr2, struct ceph_osdmap *map,
++				      u64 gid)
+  {
+  	void *new_up_client;
+  	void *new_state;
+@@ -1864,9 +1881,10 @@ static int decode_new_up_state_weight(void **p, void *end, u8 struct_v,
+  		osd = ceph_decode_32(p);
+  		w = ceph_decode_32(p);
+  		BUG_ON(osd >= map->max_osd);
+-		pr_info("osd%d weight 0x%x %s\n", osd, w,
+-		     w == CEPH_OSD_IN ? "(in)" :
+-		     (w == CEPH_OSD_OUT ? "(out)" : ""));
++		print_osd_info(&map->fsid, gid, "osd%d weight 0x%x %s\n",
++			       osd, w,
++			       w == CEPH_OSD_IN ? "(in)" :
++			       (w == CEPH_OSD_OUT ? "(out)" : ""));
+  		map->osd_weight[osd] = w;
+  
+  		/*
+@@ -1898,10 +1916,11 @@ static int decode_new_up_state_weight(void **p, void *end, u8 struct_v,
+  		BUG_ON(osd >= map->max_osd);
+  		if ((map->osd_state[osd] & CEPH_OSD_UP) &&
+  		    (xorstate & CEPH_OSD_UP))
+-			pr_info("osd%d down\n", osd);
++			print_osd_info(&map->fsid, gid, "osd%d down\n", osd);
+  		if ((map->osd_state[osd] & CEPH_OSD_EXISTS) &&
+  		    (xorstate & CEPH_OSD_EXISTS)) {
+-			pr_info("osd%d does not exist\n", osd);
++			print_osd_info(&map->fsid, gid, "osd%d does not exist\n",
++				       osd);
+  			ret = set_primary_affinity(map, osd,
+  						   CEPH_OSD_DEFAULT_PRIMARY_AFFINITY);
+  			if (ret)
+@@ -1931,7 +1950,7 @@ static int decode_new_up_state_weight(void **p, void *end, u8 struct_v,
+  
+  		dout("%s osd%d addr %s\n", __func__, osd, ceph_pr_addr(&addr));
+  
+-		pr_info("osd%d up\n", osd);
++		print_osd_info(&map->fsid, gid, "osd%d up\n", osd);
+  		map->osd_state[osd] |= CEPH_OSD_EXISTS | CEPH_OSD_UP;
+  		map->osd_addr[osd] = addr;
+  	}
+@@ -1947,7 +1966,7 @@ static int decode_new_up_state_weight(void **p, void *end, u8 struct_v,
+   * decode and apply an incremental map update.
+   */
+  struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end, bool msgr2,
+-					     struct ceph_osdmap *map)
++					     struct ceph_osdmap *map, u64 gid)
+  {
+  	struct ceph_fsid fsid;
+  	u32 epoch = 0;
+@@ -2033,7 +2052,7 @@ struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end, bool msgr2,
+  	}
+  
+  	/* new_up_client, new_state, new_weight */
+-	err = decode_new_up_state_weight(p, end, struct_v, msgr2, map);
++	err = decode_new_up_state_weight(p, end, struct_v, msgr2, map, gid);
+  	if (err)
+  		goto bad;
+  
+@@ -2051,7 +2070,7 @@ struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end, bool msgr2,
+  
+  	/* new_primary_affinity */
+  	if (struct_v >= 2) {
+-		err = decode_new_primary_affinity(p, end, map);
++		err = decode_new_primary_affinity(p, end, map, gid);
+  		if (err)
+  			goto bad;
+  	}
+-- 
+2.25.1
