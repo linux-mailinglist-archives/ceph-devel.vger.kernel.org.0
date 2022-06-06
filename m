@@ -2,48 +2,44 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ED7453E86A
-	for <lists+ceph-devel@lfdr.de>; Mon,  6 Jun 2022 19:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0A0F53F291
+	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jun 2022 01:31:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238818AbiFFNVu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 6 Jun 2022 09:21:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33562 "EHLO
+        id S235259AbiFFXbs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 6 Jun 2022 19:31:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238804AbiFFNVn (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 6 Jun 2022 09:21:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8140D2E6EC5
-        for <ceph-devel@vger.kernel.org>; Mon,  6 Jun 2022 06:21:42 -0700 (PDT)
+        with ESMTP id S235258AbiFFXbr (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 6 Jun 2022 19:31:47 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA0606A438
+        for <ceph-devel@vger.kernel.org>; Mon,  6 Jun 2022 16:31:46 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EF8EA61268
-        for <ceph-devel@vger.kernel.org>; Mon,  6 Jun 2022 13:21:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1AECC3411D;
-        Mon,  6 Jun 2022 13:21:40 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8FDFDB81C39
+        for <ceph-devel@vger.kernel.org>; Mon,  6 Jun 2022 23:31:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD61DC385A9;
+        Mon,  6 Jun 2022 23:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654521701;
-        bh=t0HMesijZ59biNI7iomWN6mqO0A8EKGR5ZokIYgW16o=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=aCAjNhu4qNehwZH2lpxV5PJlDPwukHPUSYvfpBJS0zgLdMtEy0cZHZbxwbSE4daBE
-         j9YePIdJlY3QsDEghbRTBw3W5xzyleR1r6fTOQ47YwkXjNGDTaNeNkwreItIEcfvpe
-         f+en4c/FSTP2q3VDw8Mq6SSeFeAVYnR5aVLmWTjghn33AnjbQTWfkqllRtt2SWXZDC
-         bXUC1YKXaZY4BXTiD1noQAkxKUEByBnYBsnSnkKGSIipKPbdT0sDxRstF1EGpKUdQg
-         344cLJ67pc36NidvLuwLUjTulC3VSMMAvuHAg1xpBg0+yY0PrCbLdj03au+78RbofT
-         +T8IZjnr1rsSg==
-Message-ID: <072ec646d68caf634c812e037b0364ae29f1d1d6.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: fix the incorrect comment for the
- ceph_mds_caps struct
+        s=k20201202; t=1654558304;
+        bh=cWRABr9NyaHY/Rqyk25+g44b06tbz+ergbwCfN42vLY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YyFYqzMsoLeb0ROdplEiJfoepGHNtWLZCsiCWN/MFTUsfLlQZWZLnFt8V/RIGBu6t
+         bC8kSQpngWKIPjGYD/0E6JWcjgQc6LWphQ4oYKJPip4/Z/6++zyzSbcK3EggsfXDaf
+         SkQ9/bib03HrehrkRxDT1Blx8lgSRI1vbxegLXBgGidUwR6mwbMfZ0FbpgNb5Oevlq
+         LIUqe68Sh5cilujr1I5ccdGcRFmrgxdzBgQ5cKtSkyAIjozSNdXi5mu8NnTzZqcGIo
+         oVgK4+DoUVHRXJ+YL/HQsst8Mf0FMdVOGuAGJr18kVC7kX7g2tcBuUcnfQP2GeAcSg
+         pmuKsPU291cJg==
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>, idryomov@gmail.com
-Cc:     lhenriques@suse.de, vshankar@redhat.com, ceph-devel@vger.kernel.org
-Date:   Mon, 06 Jun 2022 09:21:39 -0400
-In-Reply-To: <20220606131340.317483-1-xiubli@redhat.com>
-References: <20220606131340.317483-1-xiubli@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.2 (3.44.2-1.fc36) 
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org
+Subject: [PATCH] ceph: wait on async create before checking caps for syncfs
+Date:   Mon,  6 Jun 2022 19:31:42 -0400
+Message-Id: <20220606233142.150457-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -54,28 +50,34 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2022-06-06 at 21:13 +0800, Xiubo Li wrote:
-> The incorrect comment is misleading. Acutally the last members
-> in ceph_mds_caps strcut is a union for none export and export
-> bodies.
->=20
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  include/linux/ceph/ceph_fs.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-> index 86bf82dbd8b8..40740e234ce1 100644
-> --- a/include/linux/ceph/ceph_fs.h
-> +++ b/include/linux/ceph/ceph_fs.h
-> @@ -768,7 +768,7 @@ struct ceph_mds_caps {
->  	__le32 xattr_len;
->  	__le64 xattr_version;
-> =20
-> -	/* filelock */
-> +	/* a union of non-export and export bodies. */
->  	__le64 size, max_size, truncate_size;
->  	__le32 truncate_seq;
->  	struct ceph_timespec mtime, atime, ctime;
+Currently, we'll call ceph_check_caps, but if we're still waiting on the
+reply, we'll end up spinning around on the same inode in
+flush_dirty_session_caps. Wait for the async create reply before
+flushing caps.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Fixes: fbed7045f552 (ceph: wait for async create reply before sending any cap messages)
+URL: https://tracker.ceph.com/issues/55823
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/caps.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+I don't know if this will fix the tx queue stalls completely, but I
+haven't seen one with this patch in place. I think it makes sense on its
+own, either way.
+
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 0a48bf829671..5ecfff4b37c9 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -4389,6 +4389,7 @@ static void flush_dirty_session_caps(struct ceph_mds_session *s)
+ 		ihold(inode);
+ 		dout("flush_dirty_caps %llx.%llx\n", ceph_vinop(inode));
+ 		spin_unlock(&mdsc->cap_dirty_lock);
++		ceph_wait_on_async_create(inode);
+ 		ceph_check_caps(ci, CHECK_CAPS_FLUSH, NULL);
+ 		iput(inode);
+ 		spin_lock(&mdsc->cap_dirty_lock);
+-- 
+2.36.1
+
