@@ -2,80 +2,135 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BD5753E973
-	for <lists+ceph-devel@lfdr.de>; Mon,  6 Jun 2022 19:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48AC253E9BD
+	for <lists+ceph-devel@lfdr.de>; Mon,  6 Jun 2022 19:08:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234059AbiFFKgh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 6 Jun 2022 06:36:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33532 "EHLO
+        id S235670AbiFFLtL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 6 Jun 2022 07:49:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234038AbiFFKgg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 6 Jun 2022 06:36:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 574E62FE56
-        for <ceph-devel@vger.kernel.org>; Mon,  6 Jun 2022 03:36:34 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E085C60E9E
-        for <ceph-devel@vger.kernel.org>; Mon,  6 Jun 2022 10:36:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8798C3411D;
-        Mon,  6 Jun 2022 10:36:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654511793;
-        bh=3Swhf4lEY6Fwmh9KqcXgjvLDeJP1tn7ZKQ0GBhWBPvA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Kj6x1W3z8zxAzDMfhB9hzbdFLLKitMnOPXq1ZlRo/mG1Js9+qoViZ+XuN7snOvcJw
-         iLStGRKuIX+S7jyeSogH/xc6mHWTtwRhWszrCJi1liQyTB5cDl+zrJog6vSM/zjM07
-         qsUUSSOQVPx+3BwarFZkzsFnsgXiYBRDRd3NkPfnMFWvjM5YvEBBNH6YpyeJfgTfhm
-         CZqNQs99vY4uwrAEN2XhwIAS0Cjs9XGMK7CUGLQ0Br7LOa2eniQ67KcgZaCA+CLPu+
-         uk3GwUvVdVGGmoeOFooMTL1qe65vgWKqvvKoOLznPtfBdqBCTDgnkGi99ofARWfvpj
-         KvZDbZNfzL4pA==
-Message-ID: <9a484d2b73dc18b37da2ad2b770d15681057cb18.camel@kernel.org>
-Subject: Re: [PATCH] ceph: don't leak snap_rwsem in handle_cap_grant
-From:   Jeff Layton <jlayton@kernel.org>
-To:     =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
-Cc:     xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org
-Date:   Mon, 06 Jun 2022 06:36:31 -0400
-In-Reply-To: <87fski2j89.fsf@brahms.olymp>
-References: <20220603203957.55337-1-jlayton@kernel.org>
-         <87fski2j89.fsf@brahms.olymp>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.2 (3.44.2-1.fc36) 
+        with ESMTP id S235667AbiFFLtK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 6 Jun 2022 07:49:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6D8D423281D
+        for <ceph-devel@vger.kernel.org>; Mon,  6 Jun 2022 04:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1654516148;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=X8VqBPtYvjJUYWnb/CD2hKWgins7xlpes9uYmFwRv9Y=;
+        b=gkYWW7wTfyQrz5WJYz655LJdLGbsiNR4qkumvQQuaQCVLIQOQ2PZU3+Vse4n13dcxATYZn
+        9pT9b6porW9aea9K4tNHDUie5L4Hadd7x4BnFPl/rcw4hqcuCzUJACFjO+YJeaCHs/Y2w6
+        JiB1xA+H9ErxbaBHEX3TlYgk0v8OvQ8=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-460-p2fU53oLOMKpGPbT1nzMng-1; Mon, 06 Jun 2022 07:49:07 -0400
+X-MC-Unique: p2fU53oLOMKpGPbT1nzMng-1
+Received: by mail-pg1-f197.google.com with SMTP id 72-20020a63014b000000b003fce454aaf2so5171097pgb.6
+        for <ceph-devel@vger.kernel.org>; Mon, 06 Jun 2022 04:49:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=X8VqBPtYvjJUYWnb/CD2hKWgins7xlpes9uYmFwRv9Y=;
+        b=EAqCoh71n42f5dQIwYypYcxoHd6lbp+/M6oi6ZuZe9vkfWtKKgAJb2Yk3X5EtmDhV9
+         Fbj1CWdk6jNTE1rC4N6w5ukNqqWLUPhVFNd9I/cf8MRLLaGAU6u8/r//iJ5zhKC8m+Ug
+         k8qEz6wtLff4RP7mfza+aGI0s/ptlSJeaLBnq2zONLv4/gp3dySUhLteeunTDn6oddTG
+         aUij8lEPAABkbpR+wGqnKZb9u7qVVkj5g1Le6zMieyQKS1j5HKWafhIRGoSpzM/BKt+m
+         dwcQsOpzHmgNwnxkDu81nlDLvTngqZqs/wvl63E1ygahHY31pIe7p1kqkh4hh5nR+N4q
+         gb3Q==
+X-Gm-Message-State: AOAM532JrlFBvGaE7Q9/NtOaUsnYY/dfyMJYZ0M3CzXtoF+SPpplfA0S
+        FMBh0qUmlMwmuq8qVChr7NW1e717kHWEHS1StCQ/kX5JX8bXZpZJkBjPZxnt5RJfVmhnEaR3bew
+        fWlogFce2KqDQonK+7tR7gg==
+X-Received: by 2002:a63:83c8:0:b0:3fd:eead:c510 with SMTP id h191-20020a6383c8000000b003fdeeadc510mr319819pge.190.1654516146271;
+        Mon, 06 Jun 2022 04:49:06 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwPnTo1ZUuoV/+0AcuEn0EWGrKatmUA+sSfFSf8zCmyxzHlKqNPTCtGx1WXU+Q2DvOcilf7lw==
+X-Received: by 2002:a63:83c8:0:b0:3fd:eead:c510 with SMTP id h191-20020a6383c8000000b003fdeeadc510mr319801pge.190.1654516145994;
+        Mon, 06 Jun 2022 04:49:05 -0700 (PDT)
+Received: from [10.72.12.54] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id p2-20020a056a0026c200b0050dc76281e5sm6800125pfw.191.2022.06.06.04.49.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Jun 2022 04:49:05 -0700 (PDT)
+Subject: Re: [PATCH] ceph: fix incorrectly assigning random values to peer's
+ members
+To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com
+Cc:     vshankar@redhat.com, ceph-devel@vger.kernel.org,
+        ukernel <ukernel@gmail.com>
+References: <20220606072835.302935-1-xiubli@redhat.com>
+ <a60d5c710b68a7fff35113df0fac754d199db075.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <dd856694-cb42-a7d3-9b0f-bdac48a91047@redhat.com>
+Date:   Mon, 6 Jun 2022 19:48:59 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <a60d5c710b68a7fff35113df0fac754d199db075.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Spam-Status: No, score=-6.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2022-06-06 at 11:12 +0100, Lu=EDs Henriques wrote:
-> Jeff Layton <jlayton@kernel.org> writes:
->=20
-> > When handle_cap_grant is called on an IMPORT op, then the snap_rwsem is
-> > held and the function is expected to release it before returning. It
-> > currently fails to do that in all cases which could lead to a deadlock.
-> >=20
-> > URL: https://tracker.ceph.com/issues/55857
->=20
-> This looks good.  Maybe it could have here a 'Fixes: e8a4d26771547'.
-> Otherwise:
->=20
-> Reviewed-by: Lu=EDs Henriques <lhenriques@suse.de>
->=20
-> Cheers,
 
-Thanks,
+On 6/6/22 6:23 PM, Jeff Layton wrote:
+> On Mon, 2022-06-06 at 15:28 +0800, Xiubo Li wrote:
+>> For export the peer is empty in ceph.
+>>
+>> URL: https://tracker.ceph.com/issues/55857
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/ceph/caps.c | 15 +++++----------
+>>   1 file changed, 5 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+>> index 0a48bf829671..8efa46ff4282 100644
+>> --- a/fs/ceph/caps.c
+>> +++ b/fs/ceph/caps.c
+>> @@ -4127,16 +4127,11 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+>>   		p += flock_len;
+>>   	}
+>>   
+>> -	if (msg_version >= 3) {
+>> -		if (op == CEPH_CAP_OP_IMPORT) {
+>> -			if (p + sizeof(*peer) > end)
+>> -				goto bad;
+>> -			peer = p;
+>> -			p += sizeof(*peer);
+>> -		} else if (op == CEPH_CAP_OP_EXPORT) {
+>> -			/* recorded in unused fields */
+>> -			peer = (void *)&h->size;
+>> -		}
+>> +	if (msg_version >= 3 && op == CEPH_CAP_OP_IMPORT) {
+>> +		if (p + sizeof(*peer) > end)
+>> +			goto bad;
+>> +		peer = p;
+>> +		p += sizeof(*peer);
+>>   	}
+>>   
+>>   	if (msg_version >= 4) {
+> This was added in commit 11df2dfb61 (ceph: add imported caps when
+> handling cap export message). If peer should always be NULL on an
+> export, I wonder what he was thinking by adding this in the first place?
+> Zheng, could you take a look here?
+>
+> If this does turn out to be correct, then I think there is some further
+> cleanup you can do here, as you should be able to drop the peer argument
+> from handle_cap_export. That should also collapse some of the code down
+> in that function as well since lot of the target fields end up being 0s.
 
-Actually, I think this got broken in 6f05b30ea063a2 (ceph: reset
-i_requested_max_size if file write is not wanted).
+Okay, will drop this. The head structs are different in ceph and kernel.
 
-The problem is the && part of the condition. We need to release the
-rwsem regardless of whether ci->i_auth_cap =3D=3D cap.
---=20
-Jeff Layton <jlayton@kernel.org>
+-- Xiubo
+
+
