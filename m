@@ -2,46 +2,46 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3017C540E0E
-	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jun 2022 20:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40088540D7B
+	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jun 2022 20:49:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353788AbiFGSwB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 7 Jun 2022 14:52:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58040 "EHLO
+        id S1353899AbiFGSss (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 7 Jun 2022 14:48:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353987AbiFGSqX (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Jun 2022 14:46:23 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2A3218E447;
-        Tue,  7 Jun 2022 10:59:53 -0700 (PDT)
+        with ESMTP id S1354447AbiFGSrC (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Jun 2022 14:47:02 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F2DA51E48;
+        Tue,  7 Jun 2022 11:01:17 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9F947618DF;
-        Tue,  7 Jun 2022 17:59:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41CAFC3411C;
-        Tue,  7 Jun 2022 17:59:51 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BC60CB82374;
+        Tue,  7 Jun 2022 18:01:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88B97C341C4;
+        Tue,  7 Jun 2022 18:01:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654624792;
-        bh=u01qew0MMuUX1g5xeHaO2xVFfjnyS5wslX0x3lJMFqQ=;
+        s=k20201202; t=1654624874;
+        bh=hMR4mJxRTbcnFioLYn9YBF9bnoQ3ApVCooUwafH/D54=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c5pOGER7mM1basuYeWxlQygFYMBHXDu/Twm8M0AT2N7hBRhswE1imPKDVDWVBf1yu
-         Lmnhhg8NkmW5+nkAIhROxoGeAHuwKtE9oo6e4WAJ60smW9lkLmHVWP/oj3ubs+fZYa
-         l0xXIfGWTTuCzrojyBB/jRhqLJMpfamJ7XnDqt2MC3q2LFIIWIwK1LS85RvLasfNRN
-         HM/vwkaCQOa06CX/aWUbnVyReWCKRsLVbBbwTCzYNVOfgaeDEe2IfSJMFlZclCBnnm
-         m9/6VW3E4gUHeFc2+/RFnoV/GHCA3PfXdsX6mf+PfcSuH1hJo3eoBSZ7oyapf0jqG5
-         dsP7lA5E+ZzTw==
+        b=F4V/UA+oiV7p+ne/WapAU3ZslLjVRIQGr8SPvnE13yUGjWls/VF726ce5/GtcxjOL
+         vtvi6LxM3AQbeJUAGtdvqLVR8F+MX6XqWM7j9uie2JJc6HTNHS2Mg+hgu56mTGrPtU
+         haY7jbx6BGEHeJI1YdpDXuhcxJfVnyN68O7yY1lZ9yCFwMExARyc3kww+F+jj5jmwb
+         RE+XaM4T5Rz80KOb+R5E6Ws/cVGqKX7v/3ZgEZY3xyAP2n1k1oB//wGzkq7LXsQ+dY
+         DTWjsX/7sZtfCF7fWXTPKVZHqKOgG6zYtqqxJyJhjKSHLbjZGWQ1ASY1dTHqYIJHJ0
+         9gZEb6zf+H6xQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Venky Shankar <vshankar@redhat.com>, Xiubo Li <xiubli@redhat.com>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 28/38] ceph: allow ceph.dir.rctime xattr to be updatable
-Date:   Tue,  7 Jun 2022 13:58:23 -0400
-Message-Id: <20220607175835.480735-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 25/34] ceph: allow ceph.dir.rctime xattr to be updatable
+Date:   Tue,  7 Jun 2022 14:00:00 -0400
+Message-Id: <20220607180011.481266-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220607175835.480735-1-sashal@kernel.org>
-References: <20220607175835.480735-1-sashal@kernel.org>
+In-Reply-To: <20220607180011.481266-1-sashal@kernel.org>
+References: <20220607180011.481266-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -88,10 +88,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index 197cb1234341..76322c0f6e5f 100644
+index cb18ee637cb7..4bcf0226818d 100644
 --- a/fs/ceph/xattr.c
 +++ b/fs/ceph/xattr.c
-@@ -317,6 +317,14 @@ static ssize_t ceph_vxattrcb_snap_btime(struct ceph_inode_info *ci, char *val,
+@@ -316,6 +316,14 @@ static ssize_t ceph_vxattrcb_snap_btime(struct ceph_inode_info *ci, char *val,
  	}
  #define XATTR_RSTAT_FIELD(_type, _name)			\
  	XATTR_NAME_CEPH(_type, _name, VXATTR_FLAG_RSTAT)
@@ -106,7 +106,7 @@ index 197cb1234341..76322c0f6e5f 100644
  #define XATTR_LAYOUT_FIELD(_type, _name, _field)			\
  	{								\
  		.name = CEPH_XATTR_NAME2(_type, _name, _field),	\
-@@ -354,7 +362,7 @@ static struct ceph_vxattr ceph_dir_vxattrs[] = {
+@@ -353,7 +361,7 @@ static struct ceph_vxattr ceph_dir_vxattrs[] = {
  	XATTR_RSTAT_FIELD(dir, rfiles),
  	XATTR_RSTAT_FIELD(dir, rsubdirs),
  	XATTR_RSTAT_FIELD(dir, rbytes),
