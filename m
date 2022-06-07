@@ -2,70 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 76DD05412C0
-	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jun 2022 21:55:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA4375412BD
+	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jun 2022 21:55:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356482AbiFGTyM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 7 Jun 2022 15:54:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50004 "EHLO
+        id S1356801AbiFGTyP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 7 Jun 2022 15:54:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358627AbiFGTwr (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Jun 2022 15:52:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BB4A033A1E
-        for <ceph-devel@vger.kernel.org>; Tue,  7 Jun 2022 11:21:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1654626096;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=lLecFFHXRpdB7uUyPccCZkVXjsYC2e07njf3e6qCZ4w=;
-        b=RpvkE87XmM4TslqeRYMeuCkFfKBxCTPL85+XA388UgoEWVigIJHgYkJNfBtF6avOyxnwF/
-        AbJa55b3h3pBDAfghwS46JC/Ehle6/LlQYqtPv0YAIKsAXbhs2eT/IAIQM9ZjRx5/x+kJZ
-        y86U2Gs70mY6LDKRvAQhanObJXqrb7M=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-326-SVyRqpV6ODK7WwXN-stl-Q-1; Tue, 07 Jun 2022 14:21:34 -0400
-X-MC-Unique: SVyRqpV6ODK7WwXN-stl-Q-1
-Received: by mail-qt1-f199.google.com with SMTP id s7-20020ac85cc7000000b00304e11cb41fso9605431qta.4
-        for <ceph-devel@vger.kernel.org>; Tue, 07 Jun 2022 11:21:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date
-         :content-transfer-encoding:user-agent:mime-version;
-        bh=lLecFFHXRpdB7uUyPccCZkVXjsYC2e07njf3e6qCZ4w=;
-        b=NS/qagKpkCVTvlLIZRW6WAzxImVi9M7YgMwLBhspTMKxeJp5QPx8UsmV95aSWIBmiy
-         V+imPv5OrcTUrQW9bvak8x7CLUc8mg3sIVY5Z9CipBuvsVgz9fANkJW9KcSljb76Q7g1
-         KYcJKNYd0DNO/VgARw24yVihx6RSgkt81xpwBYhEfvgfcL5mLYwCdP7XEhG8yuc01Xnc
-         uT++W65fX9MAYuJ5kpy34VfBa88C+hn4JuBf6N0MY0/0oHJdCTh6LCvQbbB9ANpeZi9K
-         DWiSRr+NmcoA8I+5ezTJ0UJ7AgNiUQ4tiFOUGUYTLq8kKhZ8BKQtcKvDpHXU8iDfIJTF
-         qJ9g==
-X-Gm-Message-State: AOAM533e2Gn81ftH5fn0U2bCcST4KxLD+kaxGrYU987lE/N9F2KYd54M
-        ryWPgHi5v7jW4724aEs3wP1TH8NEshHoiJwzmzvzlkis6vxFGa2hCskLX5XE5kZOslqRTRp9moX
-        HAAL7BPN+d4Z8RRBURdKes5X132/OYFAeX8rmZbZ5gikuhyV7ogom8wCberqd+DY4YwGcdGNv
-X-Received: by 2002:a05:620a:d4c:b0:6a6:2df0:4d97 with SMTP id o12-20020a05620a0d4c00b006a62df04d97mr20116744qkl.478.1654626094118;
-        Tue, 07 Jun 2022 11:21:34 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzj7QoWPhTLJpflY+/I6kF4Wy2Uj83OoP90uT9RDuTMOQJvdqevOPTFPBvxtTULjbQ+mriwsA==
-X-Received: by 2002:a05:620a:d4c:b0:6a6:2df0:4d97 with SMTP id o12-20020a05620a0d4c00b006a62df04d97mr20116712qkl.478.1654626093696;
-        Tue, 07 Jun 2022 11:21:33 -0700 (PDT)
-Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id g11-20020a05620a40cb00b006a69f6793c5sm10626516qko.14.2022.06.07.11.21.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jun 2022 11:21:33 -0700 (PDT)
-Message-ID: <8ea706f2b7eec229c645e5c122689f5acc087671.camel@redhat.com>
-Subject: cephfs snapc writeback order
-From:   Jeff Layton <jlayton@redhat.com>
-To:     ceph-devel <ceph-devel@vger.kernel.org>, dev <dev@ceph.io>
-Cc:     Xiubo Li <xiubli@redhat.com>, Gregory Farnum <gfarnum@redhat.com>
-Date:   Tue, 07 Jun 2022 14:21:32 -0400
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.2 (3.44.2-1.fc36) 
+        with ESMTP id S1358756AbiFGTxJ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Jun 2022 15:53:09 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 324841B607C
+        for <ceph-devel@vger.kernel.org>; Tue,  7 Jun 2022 11:22:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A1B9DB82340
+        for <ceph-devel@vger.kernel.org>; Tue,  7 Jun 2022 18:22:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF772C34115;
+        Tue,  7 Jun 2022 18:22:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654626140;
+        bh=XJteR8Qgd8BEsQHViSmZb5hDHj6antr299hLmBauua4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=dLqtmnaONeI+0U3l1YUCuMA4zrhQ2SGmPYtGK0W5rYSZS6TQ7QNFkJ9DQQHUlKgsD
+         y54N0qeJiQwyclD0hxZlZNO54fzoQ2SBUpTzWROmG9dVIZoOb1FIFTtO/38ovybzGm
+         qz/fj/bciGI12BPLmBjIIOx3EbL3HJ21ffhwgzIbGiB6rOwUf687ixRX4y2KW0LjkR
+         oLjdbGnZDhFn3bnAeddahoCWFscz+JxEhWEOl/xIEgngik+q9SrfMS4pJ+oe1ebjBn
+         RJLAud73KEa84bwBqmX3w9fuBv3VUZSlzkWtJavjj9x10naa4sJniYsDWstNPVwVUc
+         v1j3nt2Uv4QVA==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>
+Subject: [PATCH] ceph: call netfs_subreq_terminated with was_async == false
+Date:   Tue,  7 Jun 2022 14:22:18 -0400
+Message-Id: <20220607182218.234138-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,17 +51,31 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-I'm taking a stab at converting ceph to use the netfs write helpers. One
-thing I'm seeing though is that the kclient takes great care to write
-back data to the OSDs in order of snap context age, such that an older
-snapc will get written back before a newer one. With the netfs helpers,
-that may not happen quite as naturally. We may end up with it trying to
-flush data for a newer snapc ahead of the older one.
+"was_async" is a bit misleadingly named. It's supposed to indicate
+whether it's safe to call blocking operations from the context you're
+calling it from, but it sounds like it's asking whether this was done
+via async operation. For ceph, this it's always called from kernel
+thread context so it should be safe to set this to false.
 
-My question is: is that necessarily a problem? We'd be sending along the
-correct info from the capsnap for each snapc, which seems like it should
-be sufficient to ensure that the writes get applied correctly. If we
-were to send these out of order, what would break and how?
---=20
-Jeff Layton <jlayton@redhat.com>
+Cc: David Howells <dhowells@redhat.com>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/addr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 3489444c55b9..39e2c64d008f 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -241,7 +241,7 @@ static void finish_netfs_read(struct ceph_osd_request *req)
+ 	if (err >= 0 && err < subreq->len)
+ 		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+ 
+-	netfs_subreq_terminated(subreq, err, true);
++	netfs_subreq_terminated(subreq, err, false);
+ 
+ 	num_pages = calc_pages_for(osd_data->alignment, osd_data->length);
+ 	ceph_put_page_vector(osd_data->pages, num_pages, false);
+-- 
+2.36.1
 
