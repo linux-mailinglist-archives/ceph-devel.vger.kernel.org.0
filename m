@@ -2,131 +2,133 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F77E5401D7
-	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jun 2022 16:57:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6187E540217
+	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jun 2022 17:05:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343618AbiFGO5K (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 7 Jun 2022 10:57:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44580 "EHLO
+        id S244982AbiFGPF4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 7 Jun 2022 11:05:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47768 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343612AbiFGO5J (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Jun 2022 10:57:09 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 225B1F5061;
-        Tue,  7 Jun 2022 07:57:08 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        with ESMTP id S1343845AbiFGPFz (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Jun 2022 11:05:55 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44443F68B0
+        for <ceph-devel@vger.kernel.org>; Tue,  7 Jun 2022 08:05:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id C33CE1F916;
-        Tue,  7 Jun 2022 14:57:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1654613826; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=A9Rvgtg9HKPFHzF0E5JqLvylQXRC6vGtm86k2c6/6jc=;
-        b=ngoCSuRU2A1MoYFVMreHAKMfq4m77oscljFhyHWm2QRBonOEtbKJbvJOhroDtE5kPrsqV+
-        ZiaszGagjzCYAvu2d6OL16pehyKlCOYIQHoXvQTWUJU2kBcYvAd22ws/plsGMEnHJjmWma
-        q5WzDNOhimN/NFyJnYOClxNolJO69PQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1654613826;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=A9Rvgtg9HKPFHzF0E5JqLvylQXRC6vGtm86k2c6/6jc=;
-        b=tYIJszqw8q1xnIw/PMezTR8KYg0Um/PLU2Agp+6ZMirstA+6ZE6Hs8ylBJ3sM5019PRCYE
-        1oZP15OAvGgykpCw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7C41B13A88;
-        Tue,  7 Jun 2022 14:57:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id ylY3G0Jnn2IjUwAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Tue, 07 Jun 2022 14:57:06 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 004ad014;
-        Tue, 7 Jun 2022 14:57:47 +0000 (UTC)
-Date:   Tue, 7 Jun 2022 15:57:47 +0100
-From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
-To:     Zorro Lang <zlang@redhat.com>
-Cc:     fstests@vger.kernel.org, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH v2] ceph/001: skip metrics check if no copyfrom mount
- option is used
-Message-ID: <Yp9na7/qSPxKuR5Y@suse.de>
-References: <20220524094256.16746-1-lhenriques@suse.de>
- <20220524165926.dkighy46hi75mg6s@zlang-mailbox>
- <Yp9ho/m0m3Su8ZzA@suse.de>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 03F16B820C0
+        for <ceph-devel@vger.kernel.org>; Tue,  7 Jun 2022 15:05:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66CF8C385A5;
+        Tue,  7 Jun 2022 15:05:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654614351;
+        bh=R39JnPbaq99/3qI5et3y8kdZ/iEDKB2XtRlk56mHlCA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hdWJpKA2pcXhBxjHRhnAFWbJoc77c3J/ZEchCRkVsitWOPC8VE0916dIYSCr1AVK9
+         LfoEmcH+/T3yf27/55oFO7SA9frtF15HTWcryOOLLo8qCFQknKBBiOOET+bl6KRPZO
+         EzSwwq1ANCs1x4KDkGz9h3S4Js9ztFTnmrE7Uo34VBwXfq4y9vGcJ1zf/5dODxg7AQ
+         RcBeoL/+7YeybETsd0f2Dv4SeFz0BURt2M3l5kOBsHWrCev7Fk3t/g9g4ydSHIxd2k
+         Txi3FOglW/qZdt/vw/UImJf88AfHn4wmSI7QmUf8TXziSPGYdawwkzaG65zYHgmR9h
+         dWmQmFJEEZGXA==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org
+Subject: [PATCH] ceph: convert to generic_file_llseek
+Date:   Tue,  7 Jun 2022 11:05:49 -0400
+Message-Id: <20220607150549.217390-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Yp9ho/m0m3Su8ZzA@suse.de>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jun 07, 2022 at 03:33:07PM +0100, Luís Henriques wrote:
-> On Wed, May 25, 2022 at 12:59:26AM +0800, Zorro Lang wrote:
-> > On Tue, May 24, 2022 at 10:42:56AM +0100, Luís Henriques wrote:
-> > > Checking the metrics is only valid if 'copyfrom' mount option is
-> > > explicitly set, otherwise the kernel won't be doing any remote object
-> > > copies.  Fix the logic to skip this metrics checking if 'copyfrom' isn't
-> > > used.
-> > > 
-> > > Signed-off-by: Luís Henriques <lhenriques@suse.de>
-> > > ---
-> > >  tests/ceph/001 | 6 +++++-
-> > >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > > 
-> > > Changes since v1:
-> > > - Quoted 'hascopyfrom' variable in 'if' statement; while there, added
-> > >   quotes to the 'if' statement just above.
-> > 
-> > Good to me,
-> > Reviewed-by: Zorro Lang <zlang@redhat.com>
-> 
-> Ping.
+There's no reason we need to lock the inode for write in order to handle
+an llseek. I suspect this should have been dropped in 2013 when we
+stopped doing vmtruncate in llseek.
 
-Ok, please ignore my last two emails about 2 missing patches.  I was
-looking at a local stale branch.  Sorry for the noise :-(
+With that gone, ceph_llseek is functionally equivalent to
+generic_file_llseek, so just call that after getting the size.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/file.c | 52 +++++---------------------------------------------
+ 1 file changed, 5 insertions(+), 47 deletions(-)
+
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 0c13a3f23c99..0e82a1c383ca 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1989,57 +1989,15 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+  */
+ static loff_t ceph_llseek(struct file *file, loff_t offset, int whence)
+ {
+-	struct inode *inode = file->f_mapping->host;
+-	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+-	loff_t i_size;
+-	loff_t ret;
+-
+-	inode_lock(inode);
+-
+ 	if (whence == SEEK_END || whence == SEEK_DATA || whence == SEEK_HOLE) {
++		struct inode *inode = file_inode(file);
++		int ret;
++
+ 		ret = ceph_do_getattr(inode, CEPH_STAT_CAP_SIZE, false);
+ 		if (ret < 0)
+-			goto out;
+-	}
+-
+-	i_size = i_size_read(inode);
+-	switch (whence) {
+-	case SEEK_END:
+-		offset += i_size;
+-		break;
+-	case SEEK_CUR:
+-		/*
+-		 * Here we special-case the lseek(fd, 0, SEEK_CUR)
+-		 * position-querying operation.  Avoid rewriting the "same"
+-		 * f_pos value back to the file because a concurrent read(),
+-		 * write() or lseek() might have altered it
+-		 */
+-		if (offset == 0) {
+-			ret = file->f_pos;
+-			goto out;
+-		}
+-		offset += file->f_pos;
+-		break;
+-	case SEEK_DATA:
+-		if (offset < 0 || offset >= i_size) {
+-			ret = -ENXIO;
+-			goto out;
+-		}
+-		break;
+-	case SEEK_HOLE:
+-		if (offset < 0 || offset >= i_size) {
+-			ret = -ENXIO;
+-			goto out;
+-		}
+-		offset = i_size;
+-		break;
++			return ret;
+ 	}
+-
+-	ret = vfs_setpos(file, offset, max(i_size, fsc->max_file_size));
+-
+-out:
+-	inode_unlock(inode);
+-	return ret;
++	return generic_file_llseek(file, offset, whence);
+ }
  
-Cheers,
---
-Luís
+ static inline void ceph_zero_partial_page(
+-- 
+2.36.1
 
-> 
-> > > 
-> > > diff --git a/tests/ceph/001 b/tests/ceph/001
-> > > index 7970ce352bab..060c4c450091 100755
-> > > --- a/tests/ceph/001
-> > > +++ b/tests/ceph/001
-> > > @@ -86,11 +86,15 @@ check_copyfrom_metrics()
-> > >  	local copies=$4
-> > >  	local c1=$(get_copyfrom_total_copies)
-> > >  	local s1=$(get_copyfrom_total_size)
-> > > +	local hascopyfrom=$(_fs_options $TEST_DEV | grep "copyfrom")
-> > >  	local sum
-> > >  
-> > > -	if [ ! -d $metrics_dir ]; then
-> > > +	if [ ! -d "$metrics_dir" ]; then
-> > >  		return # skip metrics check if debugfs isn't mounted
-> > >  	fi
-> > > +	if [ -z "$hascopyfrom" ]; then
-> > > +		return # ... or if we don't have copyfrom mount option
-> > > +	fi
-> > >  
-> > >  	sum=$(($c0+$copies))
-> > >  	if [ $sum -ne $c1 ]; then
-> > > 
-> > 
