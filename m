@@ -2,131 +2,186 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D0B2653F391
-	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jun 2022 03:51:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F42D53F54B
+	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jun 2022 06:55:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235177AbiFGBvL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 6 Jun 2022 21:51:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59842 "EHLO
+        id S236546AbiFGEzN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 7 Jun 2022 00:55:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232336AbiFGBvK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 6 Jun 2022 21:51:10 -0400
+        with ESMTP id S229713AbiFGEzL (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Jun 2022 00:55:11 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7C04DD19CC
-        for <ceph-devel@vger.kernel.org>; Mon,  6 Jun 2022 18:51:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 835A2D4103
+        for <ceph-devel@vger.kernel.org>; Mon,  6 Jun 2022 21:55:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1654566666;
+        s=mimecast20190719; t=1654577709;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=C74sLn2dhSMVXeDRSNp9jgCM3/sAq7h7LCyRhYv0wF8=;
-        b=C74xdhgnue8889QhNg7+YgaT2L+sOYd6unBRFB+eOWq504K2PS0RJFbL/3JAb7IcslIwbQ
-        A+SF27Akh8Zb3p2Q7jiAMUW3b6GQ7C6q6fieLcjoUY+Bmae3IOiD1S58RuvUcQ8US0u/ns
-        ZTJegUR5u2MZGQNcp3pMREaVGXqYmck=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=JJiGb1dZ7QAU9fFZYIH64Cw6eGjEIbU+yOmAU19NeuE=;
+        b=BfmmxQg7FpfJA/ewrxAH74pGCDid4gsijsQpqWowjQgw9wMgb/7huNNMfFitVAM4mMjsYy
+        cIDf8N5yJiRAB2UCwK7zvtliDXndNC20w47FtnG62UHtWuJprJO2wfgpYUzAfk6bP5QeEx
+        2UeszR01u6DfVtcrLOLL5rIkxM5t9Qo=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-490--C1uh5WfMD2iBvT-v2KqdQ-1; Mon, 06 Jun 2022 21:51:05 -0400
-X-MC-Unique: -C1uh5WfMD2iBvT-v2KqdQ-1
-Received: by mail-pj1-f70.google.com with SMTP id j23-20020a17090a061700b001e89529d397so874871pjj.6
-        for <ceph-devel@vger.kernel.org>; Mon, 06 Jun 2022 18:51:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=C74sLn2dhSMVXeDRSNp9jgCM3/sAq7h7LCyRhYv0wF8=;
-        b=zNsueDrwAHHnGwDGjFQWzVmCTjfRNJRo9s27jRGYg5ynbbbwrRSAmdkYFPdbQOxyvO
-         vVh/h7g1HIz/eFa7TYD1TIRiR9Jr06S26QvEhTjnrm55bRPJjnv1IZu2He6PjXX+Ocjf
-         RJr44lJrjKPfK1m+qlCx11niAcm1xPY/b8Awp2PSnAql/32plbKMbCTqKo4SZzkj9wWy
-         awPEPFM4tH8+TG44Xfl55qtUqXNA9zvkOOAFFXQGVicJ7iimSSSIAFQZgQ7kwBQgUvkc
-         EUA0M0xHTgAwS8R/4RTnFOmMXN+FcQYdFcgK2lPeDmFgnCMieZvTasQkkJiuwQA2pTKk
-         /+/g==
-X-Gm-Message-State: AOAM531lLmZFC57BlyfDG9dPFcX6W5Wq+KFfQQ6/uoSCaKMs9L5EWVue
-        JK1Z+JAM7RLkeZLW1PJvB11WDxrWtcnBuRiG1zkA+V3LPq64x6m8ftM0boCAnbCdAbbwaHrz5hw
-        gFvMRPxqh3p9mrM2UrMoHW4VLcFsnKnINCUgxZXHCGK1hDs3Xn/wDv6vBbdSgAR24h+OCfQk=
-X-Received: by 2002:a17:90a:6fc2:b0:1e3:2c21:c29f with SMTP id e60-20020a17090a6fc200b001e32c21c29fmr42201350pjk.191.1654566664200;
-        Mon, 06 Jun 2022 18:51:04 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyPAao/Cc6H/zQv5QXIsGcmPJXxaX4MUO7o3+mkNO0cdl1ilWchTNG/izHvPYmtDQL5HUF6CQ==
-X-Received: by 2002:a17:90a:6fc2:b0:1e3:2c21:c29f with SMTP id e60-20020a17090a6fc200b001e32c21c29fmr42201324pjk.191.1654566663826;
-        Mon, 06 Jun 2022 18:51:03 -0700 (PDT)
-Received: from [10.72.12.54] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id z12-20020a17090a8b8c00b001df666ebddesm13248979pjn.6.2022.06.06.18.51.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Jun 2022 18:51:03 -0700 (PDT)
-Subject: Re: [PATCH] ceph: wait on async create before checking caps for
- syncfs
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-References: <20220606233142.150457-1-jlayton@kernel.org>
- <e0dac29b-f6e6-84bd-c548-06106e345554@redhat.com>
- <82bb2d6f8c890405a276e3ceffaa6550681f3b38.camel@kernel.org>
+ us-mta-528-GML11etdOQerji_r4vMlog-1; Tue, 07 Jun 2022 00:55:05 -0400
+X-MC-Unique: GML11etdOQerji_r4vMlog-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3DD62101AA46;
+        Tue,  7 Jun 2022 04:55:05 +0000 (UTC)
+Received: from localhost (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7BF3B1121314;
+        Tue,  7 Jun 2022 04:55:04 +0000 (UTC)
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <d51679b8-d523-ce95-d8fc-9a6d3cc78cc6@redhat.com>
-Date:   Tue, 7 Jun 2022 09:50:58 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+To:     jlayton@kernel.org, idryomov@gmail.com
+Cc:     lhenriques@suse.de, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: don't get the inline data for new creating files
+Date:   Tue,  7 Jun 2022 12:54:53 +0800
+Message-Id: <20220607045454.71246-1-xiubli@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <82bb2d6f8c890405a276e3ceffaa6550681f3b38.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-6.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+If the 'i_inline_version' is 1, that means the file is just new
+created and there shouldn't have any inline data in it, we should
+skip retrieving the inline data from MDS.
 
-On 6/7/22 9:21 AM, Jeff Layton wrote:
-> On Tue, 2022-06-07 at 09:11 +0800, Xiubo Li wrote:
->> On 6/7/22 7:31 AM, Jeff Layton wrote:
->>> Currently, we'll call ceph_check_caps, but if we're still waiting on the
->>> reply, we'll end up spinning around on the same inode in
->>> flush_dirty_session_caps. Wait for the async create reply before
->>> flushing caps.
->>>
->>> Fixes: fbed7045f552 (ceph: wait for async create reply before sending any cap messages)
->>> URL: https://tracker.ceph.com/issues/55823
->>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
->>> ---
->>>    fs/ceph/caps.c | 1 +
->>>    1 file changed, 1 insertion(+)
->>>
->>> I don't know if this will fix the tx queue stalls completely, but I
->>> haven't seen one with this patch in place. I think it makes sense on its
->>> own, either way.
->>>
->>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
->>> index 0a48bf829671..5ecfff4b37c9 100644
->>> --- a/fs/ceph/caps.c
->>> +++ b/fs/ceph/caps.c
->>> @@ -4389,6 +4389,7 @@ static void flush_dirty_session_caps(struct ceph_mds_session *s)
->>>    		ihold(inode);
->>>    		dout("flush_dirty_caps %llx.%llx\n", ceph_vinop(inode));
->>>    		spin_unlock(&mdsc->cap_dirty_lock);
->>> +		ceph_wait_on_async_create(inode);
->>>    		ceph_check_caps(ci, CHECK_CAPS_FLUSH, NULL);
->>>    		iput(inode);
->>>    		spin_lock(&mdsc->cap_dirty_lock);
->> This looks good.
->>
->> Possibly we can add one dedicated list to store the async creating
->> inodes instead of getting stuck all the others ?
->>
-> I'd be open to that. I think we ought to take this patch first to fix
-> the immediate bug though, before we add extra complexity.
+This also could help reduce possiblity of dead lock issue introduce
+by the inline data and Fcr caps.
 
-Sounds good to me.
+Gradually we will remove the inline feature from kclient after ceph's
+scrub too have support to unline the inline data, currently this
+could help reduce the teuthology test failures.
 
-I will merge it to the testing branch for now and let's improve it later.
+This is possiblly could also fix a bug that for some old clients if
+they couldn't explictly uninline the inline data when writing, the
+inline version will keep as 1 always. We may always reading non-exist
+data from inline data.
 
-Thanks
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/addr.c  | 5 ++---
+ fs/ceph/caps.c  | 2 +-
+ fs/ceph/file.c  | 5 ++---
+ fs/ceph/inode.c | 5 +++--
+ fs/ceph/super.h | 8 ++++++++
+ 5 files changed, 16 insertions(+), 9 deletions(-)
 
--- Xiubo
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 40830cb9b599..dc975d64f1f4 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -318,8 +318,7 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
+ 	u64 len = subreq->len;
+ 	bool sparse = ceph_test_mount_opt(fsc, SPARSEREAD);
+ 
+-	if (ci->i_inline_version != CEPH_INLINE_NONE &&
+-	    ceph_netfs_issue_op_inline(subreq))
++	if (ceph_has_inline_data(ci) && ceph_netfs_issue_op_inline(subreq))
+ 		return;
+ 
+ 	req = ceph_osdc_new_request(&fsc->client->osdc, &ci->i_layout, vino, subreq->start, &len,
+@@ -1451,7 +1450,7 @@ static vm_fault_t ceph_filemap_fault(struct vm_fault *vmf)
+ 	     inode, off, ceph_cap_string(got));
+ 
+ 	if ((got & (CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO)) ||
+-	    ci->i_inline_version == CEPH_INLINE_NONE) {
++	    !ceph_has_inline_data(ci)) {
+ 		CEPH_DEFINE_RW_CONTEXT(rw_ctx, got);
+ 		ceph_add_rw_context(fi, &rw_ctx);
+ 		ret = filemap_fault(vmf);
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 0a48bf829671..4a2628799e99 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -3006,7 +3006,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+ 		}
+ 
+ 		if (S_ISREG(ci->vfs_inode.i_mode) &&
+-		    ci->i_inline_version != CEPH_INLINE_NONE &&
++		    ceph_has_inline_data(ci) &&
+ 		    (_got & (CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_LAZYIO)) &&
+ 		    i_size_read(inode) > 0) {
+ 			struct page *page =
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 0c13a3f23c99..252c3c248cd7 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -241,8 +241,7 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
+ 	INIT_LIST_HEAD(&fi->rw_contexts);
+ 	fi->filp_gen = READ_ONCE(ceph_inode_to_client(inode)->filp_gen);
+ 
+-	if ((file->f_mode & FMODE_WRITE) &&
+-	    ci->i_inline_version != CEPH_INLINE_NONE) {
++	if ((file->f_mode & FMODE_WRITE) && ceph_has_inline_data(ci)) {
+ 		ret = ceph_uninline_data(file);
+ 		if (ret < 0)
+ 			goto error;
+@@ -1686,7 +1685,7 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		     inode, ceph_vinop(inode), iocb->ki_pos, (unsigned)len,
+ 		     ceph_cap_string(got));
+ 
+-		if (ci->i_inline_version == CEPH_INLINE_NONE) {
++		if (!ceph_has_inline_data(ci)) {
+ 			if (!retry_op && (iocb->ki_flags & IOCB_DIRECT)) {
+ 				ret = ceph_direct_read_write(iocb, to,
+ 							     NULL, NULL);
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 66bfdced26b3..5c84b7f15dc7 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1118,7 +1118,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+ 	    iinfo->inline_version >= ci->i_inline_version) {
+ 		int cache_caps = CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO;
+ 		ci->i_inline_version = iinfo->inline_version;
+-		if (ci->i_inline_version != CEPH_INLINE_NONE &&
++		if (ceph_has_inline_data(ci) &&
+ 		    (locked_page || (info_caps & cache_caps)))
+ 			fill_inline = true;
+ 	}
+@@ -2396,7 +2396,8 @@ int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
+ 		if (inline_version == 0) {
+ 			/* the reply is supposed to contain inline data */
+ 			err = -EINVAL;
+-		} else if (inline_version == CEPH_INLINE_NONE) {
++		} else if (inline_version == CEPH_INLINE_NONE ||
++			   inline_version == 1) {
+ 			err = -ENODATA;
+ 		} else {
+ 			err = req->r_reply_info.targeti.inline_len;
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index c5e8665d0586..a25465b56687 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -1239,6 +1239,14 @@ extern int ceph_pool_perm_check(struct inode *inode, int need);
+ extern void ceph_pool_perm_destroy(struct ceph_mds_client* mdsc);
+ int ceph_purge_inode_cap(struct inode *inode, struct ceph_cap *cap, bool *invalidate);
+ 
++static inline bool ceph_has_inline_data(struct ceph_inode_info *ci)
++{
++	if (ci->i_inline_version == CEPH_INLINE_NONE ||
++	    ci->i_inline_version == 1) /* initial version, no data */
++		return false;
++	return true;
++}
++
+ /* file.c */
+ extern const struct file_operations ceph_file_fops;
+ 
+-- 
+2.36.0.rc1
 
