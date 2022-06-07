@@ -2,153 +2,126 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 509FA53FF2D
-	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jun 2022 14:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5478540173
+	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jun 2022 16:32:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244074AbiFGMn3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 7 Jun 2022 08:43:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52872 "EHLO
+        id S244447AbiFGOcb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 7 Jun 2022 10:32:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235690AbiFGMn2 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Jun 2022 08:43:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 86D571C91F
-        for <ceph-devel@vger.kernel.org>; Tue,  7 Jun 2022 05:43:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1654605806;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        with ESMTP id S229884AbiFGOc3 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Jun 2022 10:32:29 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F32A57B21;
+        Tue,  7 Jun 2022 07:32:27 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 6289921991;
+        Tue,  7 Jun 2022 14:32:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1654612346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=c00Ksb7eMAPjHP90uTIC7eq8xGmVJDrpEBh2hYRXSas=;
-        b=Ar1LyJF8RBaTwHJ67c+p7yJeVgWWMq69RJESAs5vd98rTW9uESPL+I52E3+7CwyM39ROxm
-        L2+tl5Z6X8pr9GCApwbAEk6MVTnhWG/SBF+l+5SkHSPhCGThZnv7F8sE8haoibFHgGW1Q/
-        kSLshjmIwzdffOm7vshxsq8v58PeuXo=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-615-eis4lO01Ocylhs9V65tQkQ-1; Tue, 07 Jun 2022 08:43:25 -0400
-X-MC-Unique: eis4lO01Ocylhs9V65tQkQ-1
-Received: by mail-pj1-f69.google.com with SMTP id q9-20020a17090a1b0900b001e87ad1beadso4052430pjq.1
-        for <ceph-devel@vger.kernel.org>; Tue, 07 Jun 2022 05:43:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=c00Ksb7eMAPjHP90uTIC7eq8xGmVJDrpEBh2hYRXSas=;
-        b=BhxdZpgqEkFuKJb5pqMQAW+rWQYdICXq30slSdCtTGzs5mNfYzyHGviI9lpiawaPZQ
-         lxn+X6nRQ49uO+iYh77eDU//zhxc7vipNhu7MOL44J9wzHUqDs0dpETql1WJHpeML6Zs
-         ThvOE1M7axNS0ZyFiYE8DryBDz7oKObaI55oiUB9tkOQ8MzE9rekqpA1CQs34nKfDP/6
-         FnUAIqI0OQz2aqY7BzmPOJ39lrxLybCz3bovP+tXpfifaZvf/x233k/zucv6T3Q41KCZ
-         1kIGXWAZgpHw7m6hL9/dle2TGjo0Y8vunLLjPXr/mHBwHVf9FLGV8TXkImDZkl0uqnKQ
-         mEdg==
-X-Gm-Message-State: AOAM531SFLGKYHttsajnmCOW9qA8I4ZtzIAZ3mLEGne8GEWSQuOH6Jdl
-        eCQuRUS7kpLO4mZI2MPDEbJrEFoorCWkQRLXzusuuZ3KdVV71goTGngenbBjCoMd+eE6/GM98vz
-        zYxVx8+EjK7RgCHTwVA8KVWcI9h6Oqqxq9xKDJ8omy6FtzwlxnUxjdeFjtv9ScxyZOD95DpU=
-X-Received: by 2002:a17:90a:1b61:b0:1e2:c247:bf5e with SMTP id q88-20020a17090a1b6100b001e2c247bf5emr32236508pjq.68.1654605803981;
-        Tue, 07 Jun 2022 05:43:23 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzgy9a9QpGP4ap0CUT2L2rv7HmjzwIRwYSI3zsQRlQFnYEkqR+6lMfLE+TwWuhE1Hv178hddg==
-X-Received: by 2002:a17:90a:1b61:b0:1e2:c247:bf5e with SMTP id q88-20020a17090a1b6100b001e2c247bf5emr32236489pjq.68.1654605803647;
-        Tue, 07 Jun 2022 05:43:23 -0700 (PDT)
-Received: from [10.72.12.54] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id u18-20020a62ed12000000b0050dc7628191sm12765868pfh.107.2022.06.07.05.43.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jun 2022 05:43:22 -0700 (PDT)
-Subject: Re: [PATCH] ceph: don't implement writepage
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-References: <20220607112703.17997-1-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <de924b6d-fc2f-175f-fc23-6ad04071a5b0@redhat.com>
-Date:   Tue, 7 Jun 2022 20:43:19 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        bh=I4emLTCIsOQsiQS0phw/LVM6r2iPjLA2WL2vfK3Okgc=;
+        b=E9TxjCFBZdV2BVBIF6D95zFm9Zb/Da+937+F6ZEbdVCC6GzIWCiLyQNHFUrCFQcjIWBtBy
+        HKcsvJp5D9CX7mYLAM7LOkpPt9GP5/r/Mdh+uxWK0pe/gxRgIAHiRW2SzGwsxQsTs0ezXR
+        sBaG20HeCcsLucuiRfOl0HGVsT9U8a0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1654612346;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=I4emLTCIsOQsiQS0phw/LVM6r2iPjLA2WL2vfK3Okgc=;
+        b=EsZNWx+JME1QsiG9JX1SSyEN50NZPIPren46ppPh3CDgA+oPdu+5e5DJskZiLf7EFQ9aso
+        QRp4ElJIrR2Y8eCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1C6B913638;
+        Tue,  7 Jun 2022 14:32:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id /NGOA3phn2L+RwAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Tue, 07 Jun 2022 14:32:26 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id fff50aa0;
+        Tue, 7 Jun 2022 14:33:07 +0000 (UTC)
+Date:   Tue, 7 Jun 2022 15:33:07 +0100
+From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
+To:     Zorro Lang <zlang@redhat.com>
+Cc:     fstests@vger.kernel.org, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH v2] ceph/001: skip metrics check if no copyfrom mount
+ option is used
+Message-ID: <Yp9ho/m0m3Su8ZzA@suse.de>
+References: <20220524094256.16746-1-lhenriques@suse.de>
+ <20220524165926.dkighy46hi75mg6s@zlang-mailbox>
 MIME-Version: 1.0
-In-Reply-To: <20220607112703.17997-1-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220524165926.dkighy46hi75mg6s@zlang-mailbox>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Wed, May 25, 2022 at 12:59:26AM +0800, Zorro Lang wrote:
+> On Tue, May 24, 2022 at 10:42:56AM +0100, Luís Henriques wrote:
+> > Checking the metrics is only valid if 'copyfrom' mount option is
+> > explicitly set, otherwise the kernel won't be doing any remote object
+> > copies.  Fix the logic to skip this metrics checking if 'copyfrom' isn't
+> > used.
+> > 
+> > Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> > ---
+> >  tests/ceph/001 | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > Changes since v1:
+> > - Quoted 'hascopyfrom' variable in 'if' statement; while there, added
+> >   quotes to the 'if' statement just above.
+> 
+> Good to me,
+> Reviewed-by: Zorro Lang <zlang@redhat.com>
 
-On 6/7/22 7:27 PM, Jeff Layton wrote:
-> Remove ceph_writepage as it's not strictly required these days.
->
-> To quote from commit 21b4ee7029c9 (xfs: drop ->writepage completely):
->
->      ->writepage is only used in one place - single page writeback from
->      memory reclaim. We only allow such writeback from kswapd, not from
->      direct memory reclaim, and so it is rarely used. When it comes from
->      kswapd, it is effectively random dirty page shoot-down, which is
->      horrible for IO patterns. We will already have background writeback
->      trying to clean all the dirty pages in memory as efficiently as
->      possible, so having kswapd interrupt our well formed IO stream only
->      slows things down. So get rid of xfs_vm_writepage() completely.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/ceph/addr.c | 25 -------------------------
->   1 file changed, 25 deletions(-)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 40830cb9b599..3489444c55b9 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -680,30 +680,6 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
->   	return err;
->   }
->   
-> -static int ceph_writepage(struct page *page, struct writeback_control *wbc)
-> -{
-> -	int err;
-> -	struct inode *inode = page->mapping->host;
-> -	BUG_ON(!inode);
-> -	ihold(inode);
-> -
-> -	if (wbc->sync_mode == WB_SYNC_NONE &&
-> -	    ceph_inode_to_client(inode)->write_congested)
-> -		return AOP_WRITEPAGE_ACTIVATE;
-> -
-> -	wait_on_page_fscache(page);
-> -
-> -	err = writepage_nounlock(page, wbc);
-> -	if (err == -ERESTARTSYS) {
-> -		/* direct memory reclaimer was killed by SIGKILL. return 0
-> -		 * to prevent caller from setting mapping/page error */
-> -		err = 0;
-> -	}
-> -	unlock_page(page);
-> -	iput(inode);
-> -	return err;
-> -}
-> -
->   /*
->    * async writeback completion handler.
->    *
-> @@ -1394,7 +1370,6 @@ static int ceph_write_end(struct file *file, struct address_space *mapping,
->   const struct address_space_operations ceph_aops = {
->   	.readpage = netfs_readpage,
->   	.readahead = netfs_readahead,
-> -	.writepage = ceph_writepage,
->   	.writepages = ceph_writepages_start,
->   	.write_begin = ceph_write_begin,
->   	.write_end = ceph_write_end,
+Ping.
 
-Sounds reasonable.
-
-Will merge it into the testing branch.
-
-Thanks Jeff!
-
--- Xiubo
+Cheers,
+--
+Luís
 
 
+> > 
+> > diff --git a/tests/ceph/001 b/tests/ceph/001
+> > index 7970ce352bab..060c4c450091 100755
+> > --- a/tests/ceph/001
+> > +++ b/tests/ceph/001
+> > @@ -86,11 +86,15 @@ check_copyfrom_metrics()
+> >  	local copies=$4
+> >  	local c1=$(get_copyfrom_total_copies)
+> >  	local s1=$(get_copyfrom_total_size)
+> > +	local hascopyfrom=$(_fs_options $TEST_DEV | grep "copyfrom")
+> >  	local sum
+> >  
+> > -	if [ ! -d $metrics_dir ]; then
+> > +	if [ ! -d "$metrics_dir" ]; then
+> >  		return # skip metrics check if debugfs isn't mounted
+> >  	fi
+> > +	if [ -z "$hascopyfrom" ]; then
+> > +		return # ... or if we don't have copyfrom mount option
+> > +	fi
+> >  
+> >  	sum=$(($c0+$copies))
+> >  	if [ $sum -ne $c1 ]; then
+> > 
+> 
