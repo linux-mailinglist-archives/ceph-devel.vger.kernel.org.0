@@ -2,64 +2,64 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B9CB5403F1
-	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jun 2022 18:40:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F7C954040E
+	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jun 2022 18:47:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344047AbiFGQkr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 7 Jun 2022 12:40:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43940 "EHLO
+        id S1345169AbiFGQrW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 7 Jun 2022 12:47:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245131AbiFGQkq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Jun 2022 12:40:46 -0400
+        with ESMTP id S1345174AbiFGQrU (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Jun 2022 12:47:20 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E302CC9641
-        for <ceph-devel@vger.kernel.org>; Tue,  7 Jun 2022 09:40:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C71CF1F607
+        for <ceph-devel@vger.kernel.org>; Tue,  7 Jun 2022 09:47:19 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 984B21F989;
-        Tue,  7 Jun 2022 16:40:44 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 7B6F51F989;
+        Tue,  7 Jun 2022 16:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1654620044; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1654620438; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=MUfwH7tVyUy4ukwu+59C99uTIyjdiapIigZlzei8HZU=;
-        b=fDXoic52b86QjDYWkhJmDOQn9GU5IDYSMrHMU2WsVqUno246UQm+cl+QeHYqmaB7zQkIeA
-        9coCw54YjFvn26ApRvfv2cj2RXQTfpdbGRsJ7r3bPmoUftmC9yDh0+Z9K1+TE63mc6wFwE
-        eLzdI9RFYLtW41HCytc4bnGTJXSfjBk=
+        bh=VitC4kryWKIQMDPXU/TRbHIEi98l6tvpvFElrpZpj04=;
+        b=z7AUjAxqp943YaC9nIaBvnG2Bk8RIxxgIiQYLC8UDyhp8dHxD6/s3QUIWWAEoPykqb3aR5
+        0UQdZmNvQTKlDYxrnxa9mmC+2E2To1aq02yZWAApogCHJC7qBOnkNgYY1h729H85OvUb1f
+        1DCV/PdlivGdHdmTl696uSkOjwvt1Jc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1654620044;
+        s=susede2_ed25519; t=1654620438;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=MUfwH7tVyUy4ukwu+59C99uTIyjdiapIigZlzei8HZU=;
-        b=zqtDjM5nnxBQUhcypYfAjnnjXY68bze5/ZWglykPrL0wNfSJMKRWR2QnSrMyBra2ogsbCz
-        jcMJ7v5py8euXZBg==
+        bh=VitC4kryWKIQMDPXU/TRbHIEi98l6tvpvFElrpZpj04=;
+        b=CVzoPhTsvkun55sEpsYDW1iEnhD2yMYYaM3lKwotiUzf5T+oHzaHyIQO/7uTlLObgHF4ZM
+        kf7SrISiZ7JtrWCQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4D75713638;
-        Tue,  7 Jun 2022 16:40:44 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 12B7713638;
+        Tue,  7 Jun 2022 16:47:18 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id uiKhD4x/n2K5fgAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Tue, 07 Jun 2022 16:40:44 +0000
+        id vq54ARaBn2KRAgAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Tue, 07 Jun 2022 16:47:18 +0000
 Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 71642313;
-        Tue, 7 Jun 2022 16:41:25 +0000 (UTC)
+        by brahms.olymp (OpenSMTPD) with ESMTPA id d849c1da;
+        Tue, 7 Jun 2022 16:47:59 +0000 (UTC)
 From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
 To:     Jeff Layton <jlayton@kernel.org>
 Cc:     xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH] ceph: don't implement writepage
-References: <20220607112703.17997-1-jlayton@kernel.org>
-Date:   Tue, 07 Jun 2022 17:41:25 +0100
-In-Reply-To: <20220607112703.17997-1-jlayton@kernel.org> (Jeff Layton's
-        message of "Tue, 7 Jun 2022 07:27:03 -0400")
-Message-ID: <87sfog8lze.fsf@brahms.olymp>
+Subject: Re: [PATCH] ceph: convert to generic_file_llseek
+References: <20220607150549.217390-1-jlayton@kernel.org>
+Date:   Tue, 07 Jun 2022 17:47:59 +0100
+In-Reply-To: <20220607150549.217390-1-jlayton@kernel.org> (Jeff Layton's
+        message of "Tue, 7 Jun 2022 11:05:49 -0400")
+Message-ID: <87o7z48log.fsf@brahms.olymp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
@@ -75,81 +75,100 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 Jeff Layton <jlayton@kernel.org> writes:
 
-> Remove ceph_writepage as it's not strictly required these days.
+> There's no reason we need to lock the inode for write in order to handle
+> an llseek. I suspect this should have been dropped in 2013 when we
+> stopped doing vmtruncate in llseek.
 >
-> To quote from commit 21b4ee7029c9 (xfs: drop ->writepage completely):
->
->     ->writepage is only used in one place - single page writeback from
->     memory reclaim. We only allow such writeback from kswapd, not from
->     direct memory reclaim, and so it is rarely used. When it comes from
->     kswapd, it is effectively random dirty page shoot-down, which is
->     horrible for IO patterns. We will already have background writeback
->     trying to clean all the dirty pages in memory as efficiently as
->     possible, so having kswapd interrupt our well formed IO stream only
->     slows things down. So get rid of xfs_vm_writepage() completely.
+> With that gone, ceph_llseek is functionally equivalent to
+> generic_file_llseek, so just call that after getting the size.
 >
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  fs/ceph/addr.c | 25 -------------------------
->  1 file changed, 25 deletions(-)
+>  fs/ceph/file.c | 52 +++++---------------------------------------------
+>  1 file changed, 5 insertions(+), 47 deletions(-)
+>
 
-The diffstat in particular looks great ;-)
+Nice!  I started reviewing your previous patch, and while checking other
+filesystems I wondered if the generic_* could be used instead.  And here
+it is.  And it may even fix races in the SEEK_CUR by locking f_lock.
 
 Reviewed-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
 
-Cheers
+Cheers,
 --=20
 Lu=C3=ADs
 
-
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 40830cb9b599..3489444c55b9 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -680,30 +680,6 @@ static int writepage_nounlock(struct page *page, str=
-uct writeback_control *wbc)
->  	return err;
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 0c13a3f23c99..0e82a1c383ca 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -1989,57 +1989,15 @@ static ssize_t ceph_write_iter(struct kiocb *iocb=
+, struct iov_iter *from)
+>   */
+>  static loff_t ceph_llseek(struct file *file, loff_t offset, int whence)
+>  {
+> -	struct inode *inode =3D file->f_mapping->host;
+> -	struct ceph_fs_client *fsc =3D ceph_inode_to_client(inode);
+> -	loff_t i_size;
+> -	loff_t ret;
+> -
+> -	inode_lock(inode);
+> -
+>  	if (whence =3D=3D SEEK_END || whence =3D=3D SEEK_DATA || whence =3D=3D =
+SEEK_HOLE) {
+> +		struct inode *inode =3D file_inode(file);
+> +		int ret;
+> +
+>  		ret =3D ceph_do_getattr(inode, CEPH_STAT_CAP_SIZE, false);
+>  		if (ret < 0)
+> -			goto out;
+> -	}
+> -
+> -	i_size =3D i_size_read(inode);
+> -	switch (whence) {
+> -	case SEEK_END:
+> -		offset +=3D i_size;
+> -		break;
+> -	case SEEK_CUR:
+> -		/*
+> -		 * Here we special-case the lseek(fd, 0, SEEK_CUR)
+> -		 * position-querying operation.  Avoid rewriting the "same"
+> -		 * f_pos value back to the file because a concurrent read(),
+> -		 * write() or lseek() might have altered it
+> -		 */
+> -		if (offset =3D=3D 0) {
+> -			ret =3D file->f_pos;
+> -			goto out;
+> -		}
+> -		offset +=3D file->f_pos;
+> -		break;
+> -	case SEEK_DATA:
+> -		if (offset < 0 || offset >=3D i_size) {
+> -			ret =3D -ENXIO;
+> -			goto out;
+> -		}
+> -		break;
+> -	case SEEK_HOLE:
+> -		if (offset < 0 || offset >=3D i_size) {
+> -			ret =3D -ENXIO;
+> -			goto out;
+> -		}
+> -		offset =3D i_size;
+> -		break;
+> +			return ret;
+>  	}
+> -
+> -	ret =3D vfs_setpos(file, offset, max(i_size, fsc->max_file_size));
+> -
+> -out:
+> -	inode_unlock(inode);
+> -	return ret;
+> +	return generic_file_llseek(file, offset, whence);
 >  }
 >=20=20
-> -static int ceph_writepage(struct page *page, struct writeback_control *w=
-bc)
-> -{
-> -	int err;
-> -	struct inode *inode =3D page->mapping->host;
-> -	BUG_ON(!inode);
-> -	ihold(inode);
-> -
-> -	if (wbc->sync_mode =3D=3D WB_SYNC_NONE &&
-> -	    ceph_inode_to_client(inode)->write_congested)
-> -		return AOP_WRITEPAGE_ACTIVATE;
-> -
-> -	wait_on_page_fscache(page);
-> -
-> -	err =3D writepage_nounlock(page, wbc);
-> -	if (err =3D=3D -ERESTARTSYS) {
-> -		/* direct memory reclaimer was killed by SIGKILL. return 0
-> -		 * to prevent caller from setting mapping/page error */
-> -		err =3D 0;
-> -	}
-> -	unlock_page(page);
-> -	iput(inode);
-> -	return err;
-> -}
-> -
->  /*
->   * async writeback completion handler.
->   *
-> @@ -1394,7 +1370,6 @@ static int ceph_write_end(struct file *file, struct=
- address_space *mapping,
->  const struct address_space_operations ceph_aops =3D {
->  	.readpage =3D netfs_readpage,
->  	.readahead =3D netfs_readahead,
-> -	.writepage =3D ceph_writepage,
->  	.writepages =3D ceph_writepages_start,
->  	.write_begin =3D ceph_write_begin,
->  	.write_end =3D ceph_write_end,
+>  static inline void ceph_zero_partial_page(
 > --=20
 >
 > 2.36.1
 >
+
