@@ -2,111 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BF9D542CC1
-	for <lists+ceph-devel@lfdr.de>; Wed,  8 Jun 2022 12:12:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15462542DDC
+	for <lists+ceph-devel@lfdr.de>; Wed,  8 Jun 2022 12:31:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235554AbiFHKLu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 8 Jun 2022 06:11:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36326 "EHLO
+        id S237143AbiFHKae (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 8 Jun 2022 06:30:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236487AbiFHKLL (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 8 Jun 2022 06:11:11 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EBB610FD2;
-        Wed,  8 Jun 2022 02:56:42 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        with ESMTP id S237858AbiFHK31 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 8 Jun 2022 06:29:27 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13ED6B4B7
+        for <ceph-devel@vger.kernel.org>; Wed,  8 Jun 2022 03:19:11 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 2DCB721BB0;
-        Wed,  8 Jun 2022 09:56:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1654682201; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=otIikhj1I7OO0jp5LB/nnTLTaJqx/zAzkWvWPuTXuKs=;
-        b=MDIAeKL7WbceJkDQfeZjLpKeU/uMXvCBOIIywJN5E7gkF8T9/ftolW+ZQ8cFBCQf5amxOU
-        CTCEnHBPoBMez1+rUEwj81YGRIQandz3mgH5QBF326N/IIYSIYaRseHaU+7Y9QMwq2DppC
-        6FGXF9yUdSP3P7EjAjdbYitqj74CJ0U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1654682201;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=otIikhj1I7OO0jp5LB/nnTLTaJqx/zAzkWvWPuTXuKs=;
-        b=+7glBNfmHGqFM4FJahY9c/+tc6tfYAGT4crsW4nc2/9O6yiTNGGI8smK/+lvxRprkHjY5c
-        Nom+NXhkARJtQkBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BD33313A15;
-        Wed,  8 Jun 2022 09:56:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id B6Q9K1hyoGLlbwAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Wed, 08 Jun 2022 09:56:40 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 5c10a013;
-        Wed, 8 Jun 2022 09:57:22 +0000 (UTC)
-Date:   Wed, 8 Jun 2022 10:57:22 +0100
-From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     fstests@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH 2/2] src/attr_replace_test: dynamically adjust the max
- xattr size
-Message-ID: <YqByggmCzXGAosM+@suse.de>
-References: <20220607151513.26347-1-lhenriques@suse.de>
- <20220607151513.26347-3-lhenriques@suse.de>
- <20220608002315.GT1098723@dread.disaster.area>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 88F25B826B8
+        for <ceph-devel@vger.kernel.org>; Wed,  8 Jun 2022 10:19:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB93AC34116;
+        Wed,  8 Jun 2022 10:19:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654683549;
+        bh=Otf6dFyekHK14C8z/ssthJqQauL8fxNqAZL4k2hoBGA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Gjng0XIcsBXSyQ1Gz3w2BUa28jpC0LEu+X1MgnBWtwFfP6U+gyK3chfPMiMRh/7ek
+         Ph1GubXFJ/hCtblOLJ9yCaAArf7DXTvf4H3s4WCZFzCPKpsN4YDQcNBSS8h1ekB1ue
+         1vbQewNbc/KXRsESMlvQ6xkxE1dlTPOUjOM7jszNZQbx7QzmC6zWX3nzyYpcFX/HnK
+         t30c6Gl2otFpxs4CgjK8he7YN1AstiC9MuPW6iIJ0tuK7AC266us4omgPFpRIv9P9F
+         mbRa7v063hA7gQRTY9GiT0ehq/Il4N18C9PnqUfm2tIAGISAnuShFHVVDSBdWhbd7v
+         7R5o6GnOPa+Gw==
+Message-ID: <a7c455aa0e96c1dbcbd8228ab6460d8acffe503f.camel@kernel.org>
+Subject: Re: [PATCH] ceph: don't implement writepage
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org
+Date:   Wed, 08 Jun 2022 06:19:07 -0400
+In-Reply-To: <YqBDs+u6qUHOprMv@infradead.org>
+References: <20220607112703.17997-1-jlayton@kernel.org>
+         <YqBDs+u6qUHOprMv@infradead.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.2 (3.44.2-1.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220608002315.GT1098723@dread.disaster.area>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jun 08, 2022 at 10:23:15AM +1000, Dave Chinner wrote:
-> On Tue, Jun 07, 2022 at 04:15:13PM +0100, Luís Henriques wrote:
-> > CephFS doesn't had a maximum xattr size.  Instead, it imposes a maximum
-> > size for the full set of an inode's xattrs names+values, which by default
-> > is 64K but it can be changed by a cluster admin.
-> > 
-> > Test generic/486 started to fail after fixing a ceph bug where this limit
-> > wasn't being imposed.  Adjust dynamically the size of the xattr being set
-> > if the error returned is -ENOSPC.
-> 
-> Ah, this shouldn't be getting anywhere near the 64kB limit unless
-> ceph is telling userspace it's block size is > 64kB:
-> 
-> size = sbuf.st_blksize * 3 / 4;
-> .....
-> size = MIN(size, XATTR_SIZE_MAX);
+On Tue, 2022-06-07 at 23:37 -0700, Christoph Hellwig wrote:
+> Do you have an urgent need for this?  I was actually planning on sending
+> a series to drop ->writepage entirely in the next weeks, and I'd pick
+> this patch up to avoid conflicts if possible.
+>=20
 
-Yep, that's exactly what is happening.  The cephfs kernel client reports
-here the value that is being used for ceph "object size", which defaults
-to 4M.  Hence, we'll set size to XATTR_SIZE_MAX.
 
-> Regardless, the correct thing to do here is pass the max supported
-> xattr size from the command line (because fstests knows what that it
-> for each filesystem type) rather than hard coding
-> XATTR_SIZE_MAX in the test.
+No, there's no urgent need for this. I was just following Willy's
+recommendation from LSF.
 
-OK, makes sense.  But then, for the ceph case, it becomes messy because we
-also need to know the attribute name to compute the maximum size.  I guess
-we'll need an extra argument for that too.
+> Note that you also need to implement ->migratepage to not lose any
+> functionality if dropping ->writepage, and comeing up with a good
+> solution for that is what has been delaying the series.
 
-Cheers,
---
-Luís
+Oh, I didn't realize that! I'll plan to drop this from our series for
+now. Let us know if you need us to carry any patches for this.
+
+Thanks!
+--=20
+Jeff Layton <jlayton@kernel.org>
