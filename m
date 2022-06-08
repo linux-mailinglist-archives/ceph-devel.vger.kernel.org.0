@@ -2,48 +2,45 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA4375412BD
-	for <lists+ceph-devel@lfdr.de>; Tue,  7 Jun 2022 21:55:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B0AA54235C
+	for <lists+ceph-devel@lfdr.de>; Wed,  8 Jun 2022 08:51:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356801AbiFGTyP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 7 Jun 2022 15:54:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50076 "EHLO
+        id S1383695AbiFHCrW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 7 Jun 2022 22:47:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358756AbiFGTxJ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Jun 2022 15:53:09 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 324841B607C
-        for <ceph-devel@vger.kernel.org>; Tue,  7 Jun 2022 11:22:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A1B9DB82340
-        for <ceph-devel@vger.kernel.org>; Tue,  7 Jun 2022 18:22:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF772C34115;
-        Tue,  7 Jun 2022 18:22:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654626140;
-        bh=XJteR8Qgd8BEsQHViSmZb5hDHj6antr299hLmBauua4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=dLqtmnaONeI+0U3l1YUCuMA4zrhQ2SGmPYtGK0W5rYSZS6TQ7QNFkJ9DQQHUlKgsD
-         y54N0qeJiQwyclD0hxZlZNO54fzoQ2SBUpTzWROmG9dVIZoOb1FIFTtO/38ovybzGm
-         qz/fj/bciGI12BPLmBjIIOx3EbL3HJ21ffhwgzIbGiB6rOwUf687ixRX4y2KW0LjkR
-         oLjdbGnZDhFn3bnAeddahoCWFscz+JxEhWEOl/xIEgngik+q9SrfMS4pJ+oe1ebjBn
-         RJLAud73KEa84bwBqmX3w9fuBv3VUZSlzkWtJavjj9x10naa4sJniYsDWstNPVwVUc
-         v1j3nt2Uv4QVA==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>
-Subject: [PATCH] ceph: call netfs_subreq_terminated with was_async == false
-Date:   Tue,  7 Jun 2022 14:22:18 -0400
-Message-Id: <20220607182218.234138-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.36.1
+        with ESMTP id S1385988AbiFHCiv (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Jun 2022 22:38:51 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 650851666BF;
+        Tue,  7 Jun 2022 17:16:52 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id CAB6B5EC630;
+        Wed,  8 Jun 2022 10:16:44 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nyjNK-003xZ3-R5; Wed, 08 Jun 2022 10:16:42 +1000
+Date:   Wed, 8 Jun 2022 10:16:42 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
+Cc:     fstests@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH 1/2] generic/020: adjust max_attrval_size for ceph
+Message-ID: <20220608001642.GS1098723@dread.disaster.area>
+References: <20220607151513.26347-1-lhenriques@suse.de>
+ <20220607151513.26347-2-lhenriques@suse.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <20220607151513.26347-2-lhenriques@suse.de>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=629fea6d
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=8nJEP1OIZ-IA:10 a=JPEYwPQDsx4A:10 a=7-415B0cAAAA:8
+        a=wmJgKgZtQlEYh2vbf0QA:9 a=wPNLvfGTeEIA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -51,31 +48,24 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-"was_async" is a bit misleadingly named. It's supposed to indicate
-whether it's safe to call blocking operations from the context you're
-calling it from, but it sounds like it's asking whether this was done
-via async operation. For ceph, this it's always called from kernel
-thread context so it should be safe to set this to false.
+On Tue, Jun 07, 2022 at 04:15:12PM +0100, Luís Henriques wrote:
+> CephFS doesn't had a maximum xattr size.  Instead, it imposes a maximum
+> size for the full set of an inode's xattrs names+values, which by default
+> is 64K but it can be changed by a cluster admin.
 
-Cc: David Howells <dhowells@redhat.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/addr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So given the max attr name length is fixed by the kernel at 255
+bytes (XATTR_NAME_MAX), that means the max value length is somewhere
+around 65000 bytes, not 1024 bytes?
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 3489444c55b9..39e2c64d008f 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -241,7 +241,7 @@ static void finish_netfs_read(struct ceph_osd_request *req)
- 	if (err >= 0 && err < subreq->len)
- 		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
- 
--	netfs_subreq_terminated(subreq, err, true);
-+	netfs_subreq_terminated(subreq, err, false);
- 
- 	num_pages = calc_pages_for(osd_data->alignment, osd_data->length);
- 	ceph_put_page_vector(osd_data->pages, num_pages, false);
+Really, we want to stress and exercise max supported sizes - if the
+admin reduces the max size on their test filesystems, that's not
+something we should be trying to work around in the test suite by
+preventing the test code from ever exercising attr values > 1024
+bytes.....
+
+Cheers,
+
+Dave.
 -- 
-2.36.1
-
+Dave Chinner
+david@fromorbit.com
