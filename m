@@ -2,54 +2,47 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EE76543206
-	for <lists+ceph-devel@lfdr.de>; Wed,  8 Jun 2022 15:58:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38834543EE0
+	for <lists+ceph-devel@lfdr.de>; Wed,  8 Jun 2022 23:53:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241070AbiFHN6P (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 8 Jun 2022 09:58:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38622 "EHLO
+        id S231277AbiFHVxr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 8 Jun 2022 17:53:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241069AbiFHN6P (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 8 Jun 2022 09:58:15 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E78C72AA9B9
-        for <ceph-devel@vger.kernel.org>; Wed,  8 Jun 2022 06:58:11 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 86BDBB827DF
-        for <ceph-devel@vger.kernel.org>; Wed,  8 Jun 2022 13:58:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF1CFC34116;
-        Wed,  8 Jun 2022 13:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654696689;
-        bh=YEvRoWZWq5JoQIRei9an0RMJ3xCwOT0jmUD7/5MTdL4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=PbF5TYf+kEuXgRNc8PSL9jP3RUdiOtcaOmXG6nTVovzdJlbVFbJqTXdzdrL/cI5rs
-         kWsIXMFxvJ+5kb+81qt+egPG4sRzBGTK/yDxtEaxBsN1JLQetKh1+IXzETW9DhILPi
-         imrksFsehIJy9cQYuP/fHtYfdiYTpWpFaFWaFEm9CGPqS04grqThE3UbjcPVYMCUFC
-         6FKE5t4+Rt1ICxPMsDaPL0V177Xmcr9D9JUAYlTn/5X/wa9wfDMfwo+OZOECqlmM+T
-         TrDiWl60MhLN1ejTdj9FTKDfycU4a8gv6iU1H4Airp7NRCSjXkI8D4PU9WrIPy6EC3
-         MANd53wvsHuEQ==
-Message-ID: <ed45a5ddc10dd805506419306d1eb7a8120fe2ad.camel@kernel.org>
-Subject: Re: [PATCH] ceph: wait on async create before checking caps for
- syncfs
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-Date:   Wed, 08 Jun 2022 09:58:07 -0400
-In-Reply-To: <d51679b8-d523-ce95-d8fc-9a6d3cc78cc6@redhat.com>
-References: <20220606233142.150457-1-jlayton@kernel.org>
-         <e0dac29b-f6e6-84bd-c548-06106e345554@redhat.com>
-         <82bb2d6f8c890405a276e3ceffaa6550681f3b38.camel@kernel.org>
-         <d51679b8-d523-ce95-d8fc-9a6d3cc78cc6@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.2 (3.44.2-1.fc36) 
+        with ESMTP id S229492AbiFHVxq (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 8 Jun 2022 17:53:46 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4AB361CFF2;
+        Wed,  8 Jun 2022 14:53:45 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id CA0DC10E755A;
+        Thu,  9 Jun 2022 07:53:43 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nz3cT-004Jeu-8P; Thu, 09 Jun 2022 07:53:41 +1000
+Date:   Thu, 9 Jun 2022 07:53:41 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
+Cc:     fstests@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH 1/2] generic/020: adjust max_attrval_size for ceph
+Message-ID: <20220608215341.GU1098723@dread.disaster.area>
+References: <20220607151513.26347-1-lhenriques@suse.de>
+ <20220607151513.26347-2-lhenriques@suse.de>
+ <20220608001642.GS1098723@dread.disaster.area>
+ <YqBwAHhf8Bzk7VSa@suse.de>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YqBwAHhf8Bzk7VSa@suse.de>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=62a11a68
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=8nJEP1OIZ-IA:10 a=JPEYwPQDsx4A:10 a=7-415B0cAAAA:8
+        a=j3QlSqe6CAlGx3RROSAA:9 a=wPNLvfGTeEIA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,58 +50,65 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2022-06-07 at 09:50 +0800, Xiubo Li wrote:
-> On 6/7/22 9:21 AM, Jeff Layton wrote:
-> > On Tue, 2022-06-07 at 09:11 +0800, Xiubo Li wrote:
-> > > On 6/7/22 7:31 AM, Jeff Layton wrote:
-> > > > Currently, we'll call ceph_check_caps, but if we're still waiting o=
-n the
-> > > > reply, we'll end up spinning around on the same inode in
-> > > > flush_dirty_session_caps. Wait for the async create reply before
-> > > > flushing caps.
-> > > >=20
-> > > > Fixes: fbed7045f552 (ceph: wait for async create reply before sendi=
-ng any cap messages)
-> > > > URL: https://tracker.ceph.com/issues/55823
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > ---
-> > > >    fs/ceph/caps.c | 1 +
-> > > >    1 file changed, 1 insertion(+)
-> > > >=20
-> > > > I don't know if this will fix the tx queue stalls completely, but I
-> > > > haven't seen one with this patch in place. I think it makes sense o=
-n its
-> > > > own, either way.
-> > > >=20
-> > > > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > > > index 0a48bf829671..5ecfff4b37c9 100644
-> > > > --- a/fs/ceph/caps.c
-> > > > +++ b/fs/ceph/caps.c
-> > > > @@ -4389,6 +4389,7 @@ static void flush_dirty_session_caps(struct c=
-eph_mds_session *s)
-> > > >    		ihold(inode);
-> > > >    		dout("flush_dirty_caps %llx.%llx\n", ceph_vinop(inode));
-> > > >    		spin_unlock(&mdsc->cap_dirty_lock);
-> > > > +		ceph_wait_on_async_create(inode);
-> > > >    		ceph_check_caps(ci, CHECK_CAPS_FLUSH, NULL);
-> > > >    		iput(inode);
-> > > >    		spin_lock(&mdsc->cap_dirty_lock);
-> > > This looks good.
-> > >=20
-> > > Possibly we can add one dedicated list to store the async creating
-> > > inodes instead of getting stuck all the others ?
-> > >=20
-> > I'd be open to that. I think we ought to take this patch first to fix
-> > the immediate bug though, before we add extra complexity.
->=20
-> Sounds good to me.
->=20
-> I will merge it to the testing branch for now and let's improve it later.
->=20
+On Wed, Jun 08, 2022 at 10:46:40AM +0100, Luís Henriques wrote:
+> On Wed, Jun 08, 2022 at 10:16:42AM +1000, Dave Chinner wrote:
+> > On Tue, Jun 07, 2022 at 04:15:12PM +0100, Luís Henriques wrote:
+> > > CephFS doesn't had a maximum xattr size.  Instead, it imposes a maximum
+> > > size for the full set of an inode's xattrs names+values, which by default
+> > > is 64K but it can be changed by a cluster admin.
+> > 
+> > So given the max attr name length is fixed by the kernel at 255
+> > bytes (XATTR_NAME_MAX), that means the max value length is somewhere
+> > around 65000 bytes, not 1024 bytes?
+> 
+> Right, but if the name is smaller (and in this test specifically we're not
+> using that XATTR_NAME_MAX), then that max value is > 65000.  Or if the
+> file already has some attributes set (which is the case in this test),
+> then this maximum will need to be adjusted accordingly.  (See below.)
+> 
+> > Really, we want to stress and exercise max supported sizes - if the
+> > admin reduces the max size on their test filesystems, that's not
+> > something we should be trying to work around in the test suite by
+> > preventing the test code from ever exercising attr values > 1024
+> > bytes.....
+> 
+> Agreed.  Xiubo also noted that and I also think this test shouldn't care
+> about other values.  I should drop (or at least rephrase) the reference to
+> different values in the commit text.
+> 
+> On Wed, Jun 08, 2022 at 04:41:25PM +0800, Xiubo Li wrote:
+> ...
+> > Why not fixing this by making sure that the total length of 'name' + 'value'
+> > == 64K instead for ceph case ?
+> 
+> The reason why I didn't do that is because the $testfile *already* has
+> another attribute set when we set this max value:
+> 
+> user.snrub="fish2\012"
+> 
+> which means that the maximum for this case will be:
+> 
+>  65536 - $max_attrval_namelen - strlen("user.snrub") - strlen("fish2\012")
+> 
+> I'll split the _attr_get_max() function in 2:
+> 
+>  * _attr_get_max() sets max_attrs which is needed in several places in
+>    generic/020
+>  * _attr_get_max_size() sets max_attrval_size, and gets called immediately
+>    before that value is needed so that it can take into account the
+>    current state.
+> 
+> Does this sound reasonable?
 
-Can we also mark this for stable? It's a pretty nasty bug, potentially.
-We should get this into mainline fairly soon.
+It seems like unnecessary additional complexity - keep it simple.
+Just set the max size for ceph to ~65000 and add a comment that says
+max name+val length for all ceph attrs is 64k and we need enough
+space of that space for two attr names...
 
-Thanks,
---=20
-Jeff Layton <jlayton@kernel.org>
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
