@@ -2,165 +2,140 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 88D54544264
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jun 2022 06:18:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23CCA5446E5
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jun 2022 11:08:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232817AbiFIESL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 Jun 2022 00:18:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43712 "EHLO
+        id S233647AbiFIJIz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 9 Jun 2022 05:08:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232593AbiFIESK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Jun 2022 00:18:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CD7FB3724B8
-        for <ceph-devel@vger.kernel.org>; Wed,  8 Jun 2022 21:18:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1654748286;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        with ESMTP id S232235AbiFIJIy (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Jun 2022 05:08:54 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA47E15A34;
+        Thu,  9 Jun 2022 02:08:52 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 98A4021DC0;
+        Thu,  9 Jun 2022 09:08:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1654765731; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=MjkqCDQw4wj3AHZbUKFy5bDcfPtOHf//uF0ZNSnDb9M=;
-        b=XdPAcGIvZENREX0FOuuQeACEEx+bN8+F8Doql3fjRdWfr4XIfPSRQy/LhcKaf4at2ZUbM+
-        4m57cDlKH/95DIUV0o/GpSggfK6o7KLrQMtIG/ajqQnYnNprye2xbBFC/TGjkKDVWlN+gI
-        bGQkccXThGT+hKrGxraA1pNXKxGsc6A=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-494--HZwLkDVP8-KwBPImPYhhg-1; Thu, 09 Jun 2022 00:18:04 -0400
-X-MC-Unique: -HZwLkDVP8-KwBPImPYhhg-1
-Received: by mail-pj1-f70.google.com with SMTP id 92-20020a17090a09e500b001d917022847so11597771pjo.1
-        for <ceph-devel@vger.kernel.org>; Wed, 08 Jun 2022 21:18:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=MjkqCDQw4wj3AHZbUKFy5bDcfPtOHf//uF0ZNSnDb9M=;
-        b=INKDhONf66zTLg873K3DmrHtoH+k1O5qKk9N6w7pRJvc+HbBKp0qSpRgzIuffsd6w+
-         BRQRNQmGugHY6RlNMoNCQELYtQmUw1WIo/u8RwdVk5+gw72xwGUK0H8kDIJICrepOwKp
-         M3fofvHpHsIDpRpiAPOybBFtnP34KhoJvfUVzWWfzcrtrw/SP1xX48mCqkAegTCHU1Hg
-         R0JAOjV+hLphqksX0bBs5YvTQTiilyjtM1QMTEyzuf0cxw+VADso7qo0MwFdeYqnnFYy
-         DKxw3v+fOhiC+QduOR6grm83Y8Q6nk33GcRqccd8geTnIvk9nyTHCG8fR1o0RzeIf7DS
-         hEiw==
-X-Gm-Message-State: AOAM531/lzJa1RZaMrZEG6Antl3r8PTiXuntAka1eIWeBBz2FdWq2TVt
-        Fx2+FHlDW6YAJHqZw+4PHu510q0owkabkVeHTOGIo+8IFJ2cxD7XLi0UVhKFyxxjk8IVKDBVAWl
-        CIMGUukSP4J7DTQKvdDGDe4vxP10N/ZK8cg02hZXFvURmi25qa2s8jGNCDkmI+HqkDcGCUaw=
-X-Received: by 2002:a63:3143:0:b0:3fc:6078:7e0f with SMTP id x64-20020a633143000000b003fc60787e0fmr32711835pgx.272.1654748283428;
-        Wed, 08 Jun 2022 21:18:03 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwY1NYImRKuMbi4cL/TL2r+YTtTIKux20huCQhCA8HZy71dXmAS127+UCqiKfw4e+p/+sTY3w==
-X-Received: by 2002:a63:3143:0:b0:3fc:6078:7e0f with SMTP id x64-20020a633143000000b003fc60787e0fmr32711818pgx.272.1654748283144;
-        Wed, 08 Jun 2022 21:18:03 -0700 (PDT)
-Received: from [10.72.12.54] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id nr11-20020a17090b240b00b001ea5ef30096sm291425pjb.10.2022.06.08.21.17.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jun 2022 21:18:02 -0700 (PDT)
-Subject: Re: [PATCH] ceph: wait on async create before checking caps for
- syncfs
-To:     "Yan, Zheng" <ukernel@gmail.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        ceph-devel <ceph-devel@vger.kernel.org>
-References: <20220606233142.150457-1-jlayton@kernel.org>
- <CAAM7YAmguEUbX7XWc9HV0traYT-CgKWdDWV8-OyjwLc2+Tk8EQ@mail.gmail.com>
- <eaa4e405-d7a5-7cf2-d9e2-4cce55f3c1f9@redhat.com>
- <CAAM7YAn7UBP-ip=71AcApu70wpvYLS9-q843LALkA9oyw8MqAw@mail.gmail.com>
- <115f53c7-4ad4-aa1f-05b0-66de7d2cdb03@redhat.com>
- <CAAM7YAnR2dir=8dhWKqYG1YMLVQ_YRADa3Kq=Q9MD-YaYbg5jA@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <b405ddd5-1df2-1568-6ea3-51279524e099@redhat.com>
-Date:   Thu, 9 Jun 2022 12:17:57 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        bh=tur5UU7rDgKRCd+tfbHeLW85gSO5UusdM+hm2YCM11k=;
+        b=nO3Ac60ug9vVLQBFH0j0aeY/W0kl4uClB9Q3JQNjNkXJXWWQwYG4gveZRDTBCatsG/XgYH
+        6Ez0ooj6wU/T8VDTdwoBmIljrUHdDxNLVu0TJOBRnIKOc8nZFCNdjwKIwAWl1LWzN29pDB
+        zzBk7+IDtpVkvgVlzJSGXwOHdAAvZGo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1654765731;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=tur5UU7rDgKRCd+tfbHeLW85gSO5UusdM+hm2YCM11k=;
+        b=cSUbMQX3N7kIQ/ZzVQj2DkdR91gCw20p0y3LTBJtMSNmeQYFoaOnqi12u9pT5B3+2cqBHG
+        EgjA93YK/a9OdWCQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 383BD13456;
+        Thu,  9 Jun 2022 09:08:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id zrLXCqO4oWLyYAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Thu, 09 Jun 2022 09:08:51 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 30e725ba;
+        Thu, 9 Jun 2022 09:09:33 +0000 (UTC)
+Date:   Thu, 9 Jun 2022 10:09:33 +0100
+From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     fstests@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH 1/2] generic/020: adjust max_attrval_size for ceph
+Message-ID: <YqG4zf2qD27nl4Vc@suse.de>
+References: <20220607151513.26347-1-lhenriques@suse.de>
+ <20220607151513.26347-2-lhenriques@suse.de>
+ <20220608001642.GS1098723@dread.disaster.area>
+ <YqBwAHhf8Bzk7VSa@suse.de>
+ <20220608215341.GU1098723@dread.disaster.area>
 MIME-Version: 1.0
-In-Reply-To: <CAAM7YAnR2dir=8dhWKqYG1YMLVQ_YRADa3Kq=Q9MD-YaYbg5jA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220608215341.GU1098723@dread.disaster.area>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Thu, Jun 09, 2022 at 07:53:41AM +1000, Dave Chinner wrote:
+> On Wed, Jun 08, 2022 at 10:46:40AM +0100, Luís Henriques wrote:
+> > On Wed, Jun 08, 2022 at 10:16:42AM +1000, Dave Chinner wrote:
+> > > On Tue, Jun 07, 2022 at 04:15:12PM +0100, Luís Henriques wrote:
+> > > > CephFS doesn't had a maximum xattr size.  Instead, it imposes a maximum
+> > > > size for the full set of an inode's xattrs names+values, which by default
+> > > > is 64K but it can be changed by a cluster admin.
+> > > 
+> > > So given the max attr name length is fixed by the kernel at 255
+> > > bytes (XATTR_NAME_MAX), that means the max value length is somewhere
+> > > around 65000 bytes, not 1024 bytes?
+> > 
+> > Right, but if the name is smaller (and in this test specifically we're not
+> > using that XATTR_NAME_MAX), then that max value is > 65000.  Or if the
+> > file already has some attributes set (which is the case in this test),
+> > then this maximum will need to be adjusted accordingly.  (See below.)
+> > 
+> > > Really, we want to stress and exercise max supported sizes - if the
+> > > admin reduces the max size on their test filesystems, that's not
+> > > something we should be trying to work around in the test suite by
+> > > preventing the test code from ever exercising attr values > 1024
+> > > bytes.....
+> > 
+> > Agreed.  Xiubo also noted that and I also think this test shouldn't care
+> > about other values.  I should drop (or at least rephrase) the reference to
+> > different values in the commit text.
+> > 
+> > On Wed, Jun 08, 2022 at 04:41:25PM +0800, Xiubo Li wrote:
+> > ...
+> > > Why not fixing this by making sure that the total length of 'name' + 'value'
+> > > == 64K instead for ceph case ?
+> > 
+> > The reason why I didn't do that is because the $testfile *already* has
+> > another attribute set when we set this max value:
+> > 
+> > user.snrub="fish2\012"
+> > 
+> > which means that the maximum for this case will be:
+> > 
+> >  65536 - $max_attrval_namelen - strlen("user.snrub") - strlen("fish2\012")
+> > 
+> > I'll split the _attr_get_max() function in 2:
+> > 
+> >  * _attr_get_max() sets max_attrs which is needed in several places in
+> >    generic/020
+> >  * _attr_get_max_size() sets max_attrval_size, and gets called immediately
+> >    before that value is needed so that it can take into account the
+> >    current state.
+> > 
+> > Does this sound reasonable?
+> 
+> It seems like unnecessary additional complexity - keep it simple.
+> Just set the max size for ceph to ~65000 and add a comment that says
+> max name+val length for all ceph attrs is 64k and we need enough
+> space of that space for two attr names...
 
-On 6/9/22 12:02 PM, Yan, Zheng wrote:
-> On Thu, Jun 9, 2022 at 11:56 AM Xiubo Li <xiubli@redhat.com> wrote:
->>
->> On 6/9/22 11:29 AM, Yan, Zheng wrote:
->>> On Thu, Jun 9, 2022 at 11:19 AM Xiubo Li <xiubli@redhat.com> wrote:
->>>> On 6/9/22 10:15 AM, Yan, Zheng wrote:
->>>>> The recent series of patches that add "wait on async xxxx" at various
->>>>> places do not seem correct. The correct fix should make mds avoid any
->>>>> wait when handling async requests.
->>>>>
->>>> In this case I am thinking what will happen if the async create request
->>>> is deferred, then the cap flush related request should fail to find the
->>>> ino.
->>>>
->>>> Should we wait ? Then how to distinguish from migrating a subtree and a
->>>> deferred async create cases ?
->>>>
->>> async op caps are revoked at freezingtree stage of subtree migration.
->>> see Locker::invalidate_lock_caches
->>>
->> Sorry I may not totally understand this issue.
->>
->> I think you mean in case of migration and then the MDS will revoke caps
->> for the async create files and then the kclient will send a MclientCap
->> request to mds, right ?
->>
->> If my understanding is correct, there is another case that:
->>
->> 1, async create a fileA
->>
->> 2, then write a lot of data to it and then release the Fw cap ref, and
->> if we should report the size to MDS, it will send a MclientCap request
->> to MDS too.
->>
->> 3, what if the async create of fileA was deferred due to some reason,
->> then the MclientCap request will fail to find the ino ?
->>
-> Async op should not be deferred in any case.
+OK, that sounds reasonable.  I'll send out v2 shortly.  Thanks.
 
-Recently we have hit a similar bug, caused by deferring a request and 
-requeuing it and the following request was executed before it.
-
-
->>>>> On Wed, Jun 8, 2022 at 12:56 PM Jeff Layton <jlayton@kernel.org> wrote:
->>>>>> Currently, we'll call ceph_check_caps, but if we're still waiting on the
->>>>>> reply, we'll end up spinning around on the same inode in
->>>>>> flush_dirty_session_caps. Wait for the async create reply before
->>>>>> flushing caps.
->>>>>>
->>>>>> Fixes: fbed7045f552 (ceph: wait for async create reply before sending any cap messages)
->>>>>> URL: https://tracker.ceph.com/issues/55823
->>>>>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
->>>>>> ---
->>>>>>     fs/ceph/caps.c | 1 +
->>>>>>     1 file changed, 1 insertion(+)
->>>>>>
->>>>>> I don't know if this will fix the tx queue stalls completely, but I
->>>>>> haven't seen one with this patch in place. I think it makes sense on its
->>>>>> own, either way.
->>>>>>
->>>>>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
->>>>>> index 0a48bf829671..5ecfff4b37c9 100644
->>>>>> --- a/fs/ceph/caps.c
->>>>>> +++ b/fs/ceph/caps.c
->>>>>> @@ -4389,6 +4389,7 @@ static void flush_dirty_session_caps(struct ceph_mds_session *s)
->>>>>>                    ihold(inode);
->>>>>>                    dout("flush_dirty_caps %llx.%llx\n", ceph_vinop(inode));
->>>>>>                    spin_unlock(&mdsc->cap_dirty_lock);
->>>>>> +               ceph_wait_on_async_create(inode);
->>>>>>                    ceph_check_caps(ci, CHECK_CAPS_FLUSH, NULL);
->>>>>>                    iput(inode);
->>>>>>                    spin_lock(&mdsc->cap_dirty_lock);
->>>>>> --
->>>>>> 2.36.1
->>>>>>
-
+Cheers,
+--
+Luís
