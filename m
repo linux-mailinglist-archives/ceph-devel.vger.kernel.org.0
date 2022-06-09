@@ -2,59 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B4307544262
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jun 2022 06:14:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88D54544264
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 Jun 2022 06:18:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232220AbiFIEOw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 Jun 2022 00:14:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57704 "EHLO
+        id S232817AbiFIESL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 9 Jun 2022 00:18:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbiFIEOv (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Jun 2022 00:14:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 90BF72F1810
-        for <ceph-devel@vger.kernel.org>; Wed,  8 Jun 2022 21:14:50 -0700 (PDT)
+        with ESMTP id S232593AbiFIESK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Jun 2022 00:18:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CD7FB3724B8
+        for <ceph-devel@vger.kernel.org>; Wed,  8 Jun 2022 21:18:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1654748089;
+        s=mimecast20190719; t=1654748286;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=e2AoUukwZ3uOBqWsuAdAue69/8GuB6OtEg0fhvzJImI=;
-        b=F3GrnHKfAG/tckEWI+8BGNEopMOmyDs+4Lp8Fi4UZj+RXmc28/6bXuycG3NgeJiP1VTpqU
-        VdAU661tf1cwUwkyo6k55l98W8wrkCrAZWDZOixKeR2Bo3SJIPmKd8u15cSPLtRh+oT/x/
-        OBj9OKH9hr9U8XbjDA9TTkL6DJtBefg=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=MjkqCDQw4wj3AHZbUKFy5bDcfPtOHf//uF0ZNSnDb9M=;
+        b=XdPAcGIvZENREX0FOuuQeACEEx+bN8+F8Doql3fjRdWfr4XIfPSRQy/LhcKaf4at2ZUbM+
+        4m57cDlKH/95DIUV0o/GpSggfK6o7KLrQMtIG/ajqQnYnNprye2xbBFC/TGjkKDVWlN+gI
+        bGQkccXThGT+hKrGxraA1pNXKxGsc6A=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-659-yi0AOWpiOD-OeaWjh8yh9A-1; Thu, 09 Jun 2022 00:14:48 -0400
-X-MC-Unique: yi0AOWpiOD-OeaWjh8yh9A-1
-Received: by mail-pf1-f199.google.com with SMTP id i19-20020aa79093000000b0050d44b83506so11800642pfa.22
-        for <ceph-devel@vger.kernel.org>; Wed, 08 Jun 2022 21:14:48 -0700 (PDT)
+ us-mta-494--HZwLkDVP8-KwBPImPYhhg-1; Thu, 09 Jun 2022 00:18:04 -0400
+X-MC-Unique: -HZwLkDVP8-KwBPImPYhhg-1
+Received: by mail-pj1-f70.google.com with SMTP id 92-20020a17090a09e500b001d917022847so11597771pjo.1
+        for <ceph-devel@vger.kernel.org>; Wed, 08 Jun 2022 21:18:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=e2AoUukwZ3uOBqWsuAdAue69/8GuB6OtEg0fhvzJImI=;
-        b=6OB5Lf+ql+J8S6wGBvYouYx8NnHzMl+q21OafMjlmbvYp897dms28bNOHQNIoHq4Za
-         13fniyWSIVsZIp7QnCMnjVp1j1/aAZPHdeef3w4BbOupsZuabmYgAJIDHwGqTLFFbjEs
-         HVxlGoZSTUzsu+cbQHOb1vggB2FTqcZy7iFK8ph86mhDtAPowulYPZVlU85IVn6FUsoZ
-         mZ5IzgJCMarHeRIUeqSRKy4EzgfnNQD1cXx/ptBtcI/N8o4d7xLVQP5IT6vQL1IvBIU0
-         K9wDDMC7RS+iTOf6+VhF4gaT8Xgp2KC35lkw7OayXRYTUXXVNrkD/plSlNtlgVn6Q+uy
-         fmjg==
-X-Gm-Message-State: AOAM533cRHedEPJGXaJNou9uGy0qVIlw7H+rN83sfW5dfYcKr1Q8JhFP
-        AmIYmR4g/ADrwoi2V0ULxI4L5rlOdATPzQN3BAjm8BDV8uojZED4WlraGZpq7UomW4X8BbK6reb
-        z/8MZ6LfvvvLPCMFYADJNckd0R3rnXVMSSvriPl3FNM8jR/FskOGrL1jRRpgOCErCShtwGeQ=
-X-Received: by 2002:a63:9142:0:b0:3fc:c021:e237 with SMTP id l63-20020a639142000000b003fcc021e237mr33391687pge.279.1654748087028;
-        Wed, 08 Jun 2022 21:14:47 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwIRFpBCEG5/ATAwhV4/m0vQ6QOweBXOBo2ZCFrfRYE+3Z7+glaE3DtjNaIziVytxOyGMp5NQ==
-X-Received: by 2002:a63:9142:0:b0:3fc:c021:e237 with SMTP id l63-20020a639142000000b003fcc021e237mr33391666pge.279.1654748086678;
-        Wed, 08 Jun 2022 21:14:46 -0700 (PDT)
+        bh=MjkqCDQw4wj3AHZbUKFy5bDcfPtOHf//uF0ZNSnDb9M=;
+        b=INKDhONf66zTLg873K3DmrHtoH+k1O5qKk9N6w7pRJvc+HbBKp0qSpRgzIuffsd6w+
+         BRQRNQmGugHY6RlNMoNCQELYtQmUw1WIo/u8RwdVk5+gw72xwGUK0H8kDIJICrepOwKp
+         M3fofvHpHsIDpRpiAPOybBFtnP34KhoJvfUVzWWfzcrtrw/SP1xX48mCqkAegTCHU1Hg
+         R0JAOjV+hLphqksX0bBs5YvTQTiilyjtM1QMTEyzuf0cxw+VADso7qo0MwFdeYqnnFYy
+         DKxw3v+fOhiC+QduOR6grm83Y8Q6nk33GcRqccd8geTnIvk9nyTHCG8fR1o0RzeIf7DS
+         hEiw==
+X-Gm-Message-State: AOAM531/lzJa1RZaMrZEG6Antl3r8PTiXuntAka1eIWeBBz2FdWq2TVt
+        Fx2+FHlDW6YAJHqZw+4PHu510q0owkabkVeHTOGIo+8IFJ2cxD7XLi0UVhKFyxxjk8IVKDBVAWl
+        CIMGUukSP4J7DTQKvdDGDe4vxP10N/ZK8cg02hZXFvURmi25qa2s8jGNCDkmI+HqkDcGCUaw=
+X-Received: by 2002:a63:3143:0:b0:3fc:6078:7e0f with SMTP id x64-20020a633143000000b003fc60787e0fmr32711835pgx.272.1654748283428;
+        Wed, 08 Jun 2022 21:18:03 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwY1NYImRKuMbi4cL/TL2r+YTtTIKux20huCQhCA8HZy71dXmAS127+UCqiKfw4e+p/+sTY3w==
+X-Received: by 2002:a63:3143:0:b0:3fc:6078:7e0f with SMTP id x64-20020a633143000000b003fc60787e0fmr32711818pgx.272.1654748283144;
+        Wed, 08 Jun 2022 21:18:03 -0700 (PDT)
 Received: from [10.72.12.54] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id ck6-20020a17090afe0600b001e880972840sm6845785pjb.29.2022.06.08.21.14.43
+        by smtp.gmail.com with ESMTPSA id nr11-20020a17090b240b00b001ea5ef30096sm291425pjb.10.2022.06.08.21.17.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Jun 2022 21:14:45 -0700 (PDT)
+        Wed, 08 Jun 2022 21:18:02 -0700 (PDT)
 Subject: Re: [PATCH] ceph: wait on async create before checking caps for
  syncfs
 To:     "Yan, Zheng" <ukernel@gmail.com>
@@ -68,8 +68,8 @@ References: <20220606233142.150457-1-jlayton@kernel.org>
  <115f53c7-4ad4-aa1f-05b0-66de7d2cdb03@redhat.com>
  <CAAM7YAnR2dir=8dhWKqYG1YMLVQ_YRADa3Kq=Q9MD-YaYbg5jA@mail.gmail.com>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <4010191e-5421-712e-e3fc-ea7f49b8dbce@redhat.com>
-Date:   Thu, 9 Jun 2022 12:14:41 +0800
+Message-ID: <b405ddd5-1df2-1568-6ea3-51279524e099@redhat.com>
+Date:   Thu, 9 Jun 2022 12:17:57 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
@@ -127,11 +127,8 @@ On 6/9/22 12:02 PM, Yan, Zheng wrote:
 >>
 > Async op should not be deferred in any case.
 
-I am still checking the 'mdcache->path_traverse()', in which it seems 
-could forward the request or requeue the request when failing to acquire 
-locks. And also in case [1].
-
-[1] https://github.com/ceph/ceph/blob/main/src/mds/Server.cc#L4501.
+Recently we have hit a similar bug, caused by deferring a request and 
+requeuing it and the following request was executed before it.
 
 
 >>>>> On Wed, Jun 8, 2022 at 12:56 PM Jeff Layton <jlayton@kernel.org> wrote:
