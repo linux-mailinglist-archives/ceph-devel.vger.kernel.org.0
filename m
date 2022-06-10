@@ -2,77 +2,52 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D4B335461D7
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jun 2022 11:24:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BAB95466EA
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jun 2022 14:54:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349080AbiFJJWF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 10 Jun 2022 05:22:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49836 "EHLO
+        id S1345613AbiFJMyD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 10 Jun 2022 08:54:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349111AbiFJJVs (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 10 Jun 2022 05:21:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 01D1119142E
-        for <ceph-devel@vger.kernel.org>; Fri, 10 Jun 2022 02:19:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1654852749;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=X0AMPbkKhpdg7q0DancqofewrNdx6mFHU0gwDtav3v0=;
-        b=SgWFfu5SfETH9O7QEjI2Qq7igvgQcHqaMgk125tPLBs75JyIFVWcnH+JVBPQ/eQ32KpDjV
-        7RXK8A4VBSYX2RN9ZUQDnzQXv6IFuH25CTPbza4u8UyuYBxJMCdCPZokjtmImhqRKCdgB0
-        kJ6aoHnr/p6Nwtuk+jOZmy8XWhJ4O40=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-644-cxoWNpQgNgSVqgGwEdKvvw-1; Fri, 10 Jun 2022 05:19:08 -0400
-X-MC-Unique: cxoWNpQgNgSVqgGwEdKvvw-1
-Received: by mail-qk1-f197.google.com with SMTP id bk10-20020a05620a1a0a00b006a6b1d676ebso13002089qkb.0
-        for <ceph-devel@vger.kernel.org>; Fri, 10 Jun 2022 02:19:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=X0AMPbkKhpdg7q0DancqofewrNdx6mFHU0gwDtav3v0=;
-        b=A0RjzFidPNqjgLnBqeigD6XQNBuypXwWsrd061f5xF5frusPYhiIDL3GNAE14cOKJ8
-         Pwpfe1mld5TAX8/0t8mw6c36zefTMO/biofAJw68AZlxLmSZ/LoYQ/ps2kVdXBOPMQqI
-         yiiD0UR9qZb4oN7ovevDNOgqlVOSNZD23aAtguvvid2fwbTyUjFkvgMdmdMo24Q3cbwH
-         GPeFHNwma5f1I1JycHj2g841WJae48OXUqHnT24UQCjsCgy6/fozU35D1mNvqvW/sWYJ
-         Ga5mi2DSkDLhcVw/+SqTkBTNgZdep+vOiowDXWh8bJNdEgCmB6Fp/8dFKcYxGF9fBXVD
-         3qXw==
-X-Gm-Message-State: AOAM531g8HzjDKia99VEv/zNnWItnQbiIJYQGPseUckaNir8xlZfgX7e
-        eB3RJ7HQ4cCPNRa59AgECwt1Zb+d0Uvq6dvzK1NxKQzUxSUIAa02uILZXd0LQqZbrCHBDZuClAm
-        Amdb8RIdPnuHa7IJnM5mVcw==
-X-Received: by 2002:a05:6214:5f8d:b0:464:6b1b:1bf2 with SMTP id ls13-20020a0562145f8d00b004646b1b1bf2mr33087142qvb.0.1654852747753;
-        Fri, 10 Jun 2022 02:19:07 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJyFzSDQQVuVx2QtTYthqX9570kQJUi1CSJocxBs0ABJubI2O6NQmCL556UriOzDh41WzCYopA==
-X-Received: by 2002:a05:6214:5f8d:b0:464:6b1b:1bf2 with SMTP id ls13-20020a0562145f8d00b004646b1b1bf2mr33087130qvb.0.1654852747481;
-        Fri, 10 Jun 2022 02:19:07 -0700 (PDT)
-Received: from zlang-mailbox ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id t69-20020a374648000000b006a71c420460sm4706121qka.22.2022.06.10.02.19.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jun 2022 02:19:06 -0700 (PDT)
-Date:   Fri, 10 Jun 2022 17:19:01 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     =?utf-8?B?THXDrXM=?= Henriques <lhenriques@suse.de>
-Cc:     fstests@vger.kernel.org, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] generic/486: adjust the max xattr size
-Message-ID: <20220610091901.is7qjqq3asr7hihh@zlang-mailbox>
-References: <20220609105343.13591-1-lhenriques@suse.de>
- <20220609105343.13591-3-lhenriques@suse.de>
- <4c4572a2-2681-c2f7-a8dc-55eb2f5fc077@redhat.com>
- <20220610072545.GY1098723@dread.disaster.area>
+        with ESMTP id S1345437AbiFJMyC (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 10 Jun 2022 08:54:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C3BDC50AC;
+        Fri, 10 Jun 2022 05:54:01 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DEB2560F54;
+        Fri, 10 Jun 2022 12:54:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33DFFC34114;
+        Fri, 10 Jun 2022 12:53:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654865640;
+        bh=Vk1Xzsk9tawsunC9ERMki7Pf7wP6hGAUYO03mruKpoc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tGTr0KRzXrECTM58cbpx/4cgTs3JUqmNtW3b5a1mBMtuaOfo9/bsoPuLMlEtAp8Sa
+         qIK2K4vT5VnKhcucsQhIHNDxkZ1ZzKLVG53MHrrkerhuCi7GmZuazIQUumqWJ9aT2G
+         q3zUtqK4Cfb/FIfCpDW/VtlRmoVTiFYliOFvWy67nu+x2PATu145zo2mggYtBAOsBy
+         bd2ozsor8ee3sITWz8A0ZlfqQbjy8ggz5C06+X8UhMZwupLn4IW9cKRcvnmMunKAuS
+         PGa8LtIKQ2Rg3CUNhdnvdJdJAImo1gn6N054mxTdCjWwKiJxiWUoWKBKRV3eq6s9i7
+         e4a6jQmKb4oAg==
+Date:   Fri, 10 Jun 2022 14:53:55 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Yang Xu <xuyang2018.jy@fujitsu.com>
+Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, david@fromorbit.com, djwong@kernel.org,
+        willy@infradead.org, jlayton@kernel.org
+Subject: Re: [PATCH v9 3/4] fs: move S_ISGID stripping into the vfs
+Message-ID: <20220610125355.r27nwi3jtipyo4ao@wittgenstein>
+References: <1653063037-2461-1-git-send-email-xuyang2018.jy@fujitsu.com>
+ <1653063037-2461-3-git-send-email-xuyang2018.jy@fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220610072545.GY1098723@dread.disaster.area>
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <1653063037-2461-3-git-send-email-xuyang2018.jy@fujitsu.com>
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,83 +55,292 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Jun 10, 2022 at 05:25:45PM +1000, Dave Chinner wrote:
-> On Fri, Jun 10, 2022 at 01:35:36PM +0800, Xiubo Li wrote:
-> > 
-> > On 6/9/22 6:53 PM, Luís Henriques wrote:
-> > > CephFS doesn't have a maximum xattr size.  Instead, it imposes a maximum
-> > > size for the full set of xattrs names+values, which by default is 64K.
-> > > And since ceph reports 4M as the blocksize (the default ceph object size),
-> > > generic/486 will fail in this filesystem because it will end up using
-> > > XATTR_SIZE_MAX to set the size of the 2nd (big) xattr value.
-> > > 
-> > > The fix is to adjust the max size in attr_replace_test so that it takes
-> > > into account the initial xattr name and value lengths.
-> > > 
-> > > Signed-off-by: Luís Henriques <lhenriques@suse.de>
-> > > ---
-> > >   src/attr_replace_test.c | 7 ++++++-
-> > >   1 file changed, 6 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/src/attr_replace_test.c b/src/attr_replace_test.c
-> > > index cca8dcf8ff60..1c8d1049a1d8 100644
-> > > --- a/src/attr_replace_test.c
-> > > +++ b/src/attr_replace_test.c
-> > > @@ -29,6 +29,11 @@ int main(int argc, char *argv[])
-> > >   	char *value;
-> > >   	struct stat sbuf;
-> > >   	size_t size = sizeof(value);
-> > > +	/*
-> > > +	 * Take into account the initial (small) xattr name and value sizes and
-> > > +	 * subtract them from the XATTR_SIZE_MAX maximum.
-> > > +	 */
-> > > +	size_t maxsize = XATTR_SIZE_MAX - strlen(name) - 1;
-> > 
-> > Why not use the statfs to get the filesystem type first ? And then just
-> > minus the strlen(name) for ceph only ?
+On Sat, May 21, 2022 at 12:10:36AM +0800, Yang Xu wrote:
+> Creating files that have both the S_IXGRP and S_ISGID bit raised in
+> directories that themselves have the S_ISGID bit set requires additional
+> privileges to avoid security issues.
 > 
-> No. The test mechanism has no business knowing what filesystem type
-> it is running on - the test itself is supposed to get the limits for
-> the filesystem type from the test infrastructure.
+> When a filesystem creates a new inode it needs to take care that the
+> caller is either in the group of the newly created inode or they have
+> CAP_FSETID in their current user namespace and are privileged over the
+> parent directory of the new inode. If any of these two conditions is
+> true then the S_ISGID bit can be raised for an S_IXGRP file and if not
+> it needs to be stripped.
 > 
-> As I've already said: the right thing to do is to pass the maximum
-> attr size for the test to use via the command line from the fstest
-> itself. As per g/020, the fstests infrastructure is where we encode
-> weird fs limit differences and behaviours based on $FSTYP.  Hacking
-> around weird filesystem specific behaviours deep inside random bits
-> of test source code is not maintainable.
+> However, there are several key issues with the current state of things:
 > 
-> AFAIA, only ceph is having a problem with this test, so it's trivial
-> to encode into g/486 with:
+> * The S_ISGID stripping logic is entangled with umask stripping.
 > 
-> # ceph has a weird dynamic maximum xattr size and block size that is
-> # much, much larger than the maximum supported attr size. Hence the
-> # replace test can't auto-probe a sane attr size and so we have
-> # to provide it with a maximum size that will work.
-> max_attr_size=65536
-> [ "$FSTYP" = "ceph" ] && max_attr_size=64000
-> attr_replace_test -m $max_attr_size .....
-> .....
+>   If a filesystem doesn't support or enable POSIX ACLs then umask
+>   stripping is done directly in the vfs before calling into the
+>   filesystem.
+>   If the filesystem does support POSIX ACLs then unmask stripping may be
+>   done in the filesystem itself when calling posix_acl_create().
+> 
+> * Filesystems that don't rely on inode_init_owner() don't get S_ISGID
+>   stripping logic.
+> 
+>   While that may be intentional (e.g. network filesystems might just
+>   defer setgid stripping to a server) it is often just a security issue.
+> 
+> * The first two points taken together mean that there's a
+>   non-standardized ordering between setgid stripping in
+>   inode_init_owner() and posix_acl_create() both on the vfs level and
+>   the filesystem level. The latter part is especially problematic since
+>   each filesystem is technically free to order inode_init_owner() and
+>   posix_acl_create() however it sees fit meaning that S_ISGID
+>   inheritance might or might not be applied.
+> 
+> * We do still have bugs in this areas years after the initial round of
+>   setgid bugfixes.
+> 
+> So the current state is quite messy and while we won't be able to make
+> it completely clean as posix_acl_create() is still a filesystem specific
+> call we can improve the S_SIGD stripping situation quite a bit by
+> hoisting it out of inode_init_owner() and into the vfs creation
+> operations. This means we alleviate the burden for filesystems to handle
+> S_ISGID stripping correctly and can standardize the ordering between
+> S_ISGID and umask stripping in the vfs.
+> 
+> The S_ISGID bit is stripped before any umask is applied. This has the
+> advantage that the ordering is unaffected by whether umask stripping is
+> done by the vfs itself (if no POSIX ACLs are supported or enabled) or in
+> the filesystem in posix_acl_create() (if POSIX ACLs are supported).
+> 
+> To this end a new helper vfs_prepare_mode() is added which calls the
+> previously added mode_strip_setgid() helper and strips the umask
+> afterwards.
+> 
+> All inode operations that create new filesystem objects have been
+> updated to call vfs_prepare_mode() before passing the mode into the
+> relevant inode operation of the filesystems. Care has been taken to
+> ensure that the mode passed to the security hooks is the mode that is
+> seen by the filesystem.
+> 
+> Moving S_ISGID stripping from filesystem callpaths into the vfs callpaths
+> means thatfilesystems that call vfs_*() helpers directly can't rely on
+> S_ISGID stripping being done in vfs_*() helpers anymore unless they pass the
+> mode on from a prior run through the vfs.
+> 
+> This mostly affects overlayfs which calls vfs_*() functions directly. So
+> a typical overlayfs callstack would be
+> sys_mknod()
+> -> do_mknodat(mode) // calls vfs_prepare_mode()
+>    -> .mknod = ovl_mknod(mode)
+>       -> ovl_create(mode)
+>          -> vfs_mknod(mode)
+> 
+> But it is safe as overlayfs passes on the mode on from its own run
+> through the vfs and then via vfs_*() to the underlying filesystem.
+> 
+> Following is an overview of the filesystem specific and inode operations
+> specific implications:
+> 
+> arch/powerpc/platforms/cell/spufs/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode | S_IFDIR);
+> arch/powerpc/platforms/cell/spufs/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode | S_IFDIR);
+> fs/9p/vfs_inode.c:      inode_init_owner(&init_user_ns, inode, NULL, mode);
+> fs/bfs/dir.c:   inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/btrfs/inode.c:       inode_init_owner(mnt_userns, inode, dir, mode);
+> fs/btrfs/tests/btrfs-tests.c:   inode_init_owner(&init_user_ns, inode, NULL, S_IFREG);
+> fs/ext2/ialloc.c:               inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/ext4/ialloc.c:               inode_init_owner(mnt_userns, inode, dir, mode);
+> fs/f2fs/namei.c:        inode_init_owner(mnt_userns, inode, dir, mode);
+> fs/hfsplus/inode.c:     inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/hugetlbfs/inode.c:           inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/jfs/jfs_inode.c:     inode_init_owner(&init_user_ns, inode, parent, mode);
+> fs/minix/bitmap.c:      inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/nilfs2/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/ntfs3/inode.c:       inode_init_owner(mnt_userns, inode, dir, mode);
+> fs/ocfs2/dlmfs/dlmfs.c:         inode_init_owner(&init_user_ns, inode, NULL, mode);
+> fs/ocfs2/dlmfs/dlmfs.c: inode_init_owner(&init_user_ns, inode, parent, mode);
+> fs/ocfs2/namei.c:       inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/omfs/inode.c:        inode_init_owner(&init_user_ns, inode, NULL, mode);
+> fs/overlayfs/dir.c:     inode_init_owner(&init_user_ns, inode, dentry->d_parent->d_inode, mode);
+> fs/ramfs/inode.c:               inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/reiserfs/namei.c:    inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/sysv/ialloc.c:       inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/ubifs/dir.c: inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/udf/ialloc.c:        inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/ufs/ialloc.c:        inode_init_owner(&init_user_ns, inode, dir, mode);
+> fs/xfs/xfs_inode.c:             inode_init_owner(mnt_userns, inode, dir, mode);
+> fs/zonefs/super.c:      inode_init_owner(&init_user_ns, inode, parent, S_IFDIR | 0555);
+> kernel/bpf/inode.c:     inode_init_owner(&init_user_ns, inode, dir, mode);
+> mm/shmem.c:             inode_init_owner(&init_user_ns, inode, dir, mode);
+> 
+> All of the above filesystems end up calling inode_init_owner() when new
+> filesystem objects are created through the following ->mkdir(),
+> ->symlink(), ->mknod(), ->create(), ->tmpfile(), ->rename() inode
+> operations.
+> 
+> Since directories always inherit the S_ISGID bit with the exception of
+> xfs when irix_sgid_inherit mode is turned on S_ISGID stripping doesn't
+> apply. The ->symlink() inode operation trivially inherit the mode from
+> the target and the ->rename() inode operation inherits the mode from the
+> source inode.
+> 
+> All other inode operations will have the S_ISGID bit stripped once in
+> vfs_prepare_mode() before.
+> 
+> In addition to this there are filesystems which allow the creation of
+> filesystem objects through ioctl()s or - in the case of spufs -
+> circumventing the vfs in other ways. If filesystem objects are created
+> through ioctl()s the vfs doesn't know about it and can't apply regular
+> permission checking including S_ISGID logic. Therfore, a filesystem
+> relying on S_ISGID stripping in inode_init_owner() in their ioctl()
+> callpath will be affected by moving this logic into the vfs.
+> 
+> So we did our best to audit all filesystems in this regard:
+> 
+> * btrfs allows the creation of filesystem objects through various
+>   ioctls(). Snapshot creation literally takes a snapshot and so the mode
+>   is fully preserved and S_ISGID stripping doesn't apply.
+> 
+>   Creating a new subvolum relies on inode_init_owner() in
+>   btrfs_new_inode() but only creates directories and doesn't raise
+>   S_ISGID.
+> 
+> * ocfs2 has a peculiar implementation of reflinks. In contrast to e.g.
+>   xfs and btrfs FICLONE/FICLONERANGE ioctl() that is only concerned with
+>   the actual extents ocfs2 uses a separate ioctl() that also creates the
+>   target file.
+> 
+>   Iow, ocfs2 circumvents the vfs entirely here and did indeed rely on
+>   inode_init_owner() to strip the S_ISGID bit. This is the only place
+>   where a filesystem needs to call mode_strip_sgid() directly but this
+>   is self-inflicted pain tbh.
+> 
+> * spufs doesn't go through the vfs at all and doesn't use ioctl()s
+>   either. Instead it has a dedicated system call spufs_create() which
+>   allows the creation of filesystem objects. But spufs only creates
+>   directories and doesn't allo S_SIGID bits, i.e. it specifically only
+>   allows 0777 bits.
+> 
+> * bpf uses vfs_mkobj() but also doesn't allow S_ISGID bits to be created.
+> 
+> This patch also changed grpid behaviour for ext4/xfs because the mode
+> passed to them may have been changed by vfs_prepare_mode.
+> 
+> While we did our best to audit everything there's a risk of regressions
+> in here. However, for the sake of maintenance and given that we've seen
+> a range of bugs years after S_ISGID inheritance issues were fixed (see
+> [1]-[3]) the risk seems worth taking. In the worst case we will have to
+> revert.
+> 
+> Associated with this change is a new set of fstests to enforce the
+> semantics for all new filesystems.
+> 
+> Link: e014f37db1a2 ("xfs: use setattr_copy to set vfs inode attributes") [1]
+> Link: 01ea173e103e ("xfs: fix up non-directory creation in SGID directories") [2]
+> Link: fd84bfdddd16 ("ceph: fix up non-directory creation in SGID directories") [3]
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> Suggested-by: Dave Chinner <david@fromorbit.com>
+> Reviewed-and-Tested-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
+> ---
+> v8->v9:
+> 1.move vfs_prepare_mode info fs/namei.c
+> 2. add grpid behaviour change in commit message
+> 3. also mention the overflay in commit meessage because it will use call vfs_mknod directly
+>  fs/inode.c       |  2 --
+>  fs/namei.c       | 33 ++++++++++++++++++++-------------
+>  fs/ocfs2/namei.c |  1 +
+>  3 files changed, 21 insertions(+), 15 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 37bd85981d38..42ecaf79aaaf 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -2246,8 +2246,6 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
+>  		/* Directories are special, and always inherit S_ISGID */
+>  		if (S_ISDIR(mode))
+>  			mode |= S_ISGID;
+> -		else
+> -			mode = mode_strip_sgid(mnt_userns, dir, mode);
+>  	} else
+>  		inode_fsgid_set(inode, mnt_userns);
+>  	inode->i_mode = mode;
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 73646e28fae0..8b60914861f5 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -2998,6 +2998,17 @@ void unlock_rename(struct dentry *p1, struct dentry *p2)
+>  }
+>  EXPORT_SYMBOL(unlock_rename);
+>  
+> +static inline umode_t vfs_prepare_mode(struct user_namespace *mnt_userns,
+> +				       const struct inode *dir, umode_t mode)
+> +{
+> +	mode = mode_strip_sgid(mnt_userns, dir, mode);
+> +
+> +	if (!IS_POSIXACL(dir))
+> +		mode &= ~current_umask();
+> +
+> +	return mode;
+> +}
+> +
+>  /**
+>   * vfs_create - create new file
+>   * @mnt_userns:	user namespace of the mount the inode was found from
+> @@ -3287,8 +3298,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+>  	if (open_flag & O_CREAT) {
+>  		if (open_flag & O_EXCL)
+>  			open_flag &= ~O_TRUNC;
+> -		if (!IS_POSIXACL(dir->d_inode))
+> -			mode &= ~current_umask();
+> +		mode = vfs_prepare_mode(mnt_userns, dir->d_inode, mode);
+>  		if (likely(got_write))
+>  			create_error = may_o_create(mnt_userns, &nd->path,
+>  						    dentry, mode);
+> @@ -3521,8 +3531,7 @@ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
+>  	child = d_alloc(dentry, &slash_name);
+>  	if (unlikely(!child))
+>  		goto out_err;
+> -	if (!IS_POSIXACL(dir))
+> -		mode &= ~current_umask();
+> +	mode = vfs_prepare_mode(mnt_userns, dir, mode);
+>  	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
+>  	if (error)
+>  		goto out_err;
+> @@ -3850,13 +3859,12 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+>  	if (IS_ERR(dentry))
+>  		goto out1;
+>  
+> -	if (!IS_POSIXACL(path.dentry->d_inode))
+> -		mode &= ~current_umask();
+> +	mnt_userns = mnt_user_ns(path.mnt);
+> +	mode = vfs_prepare_mode(mnt_userns, path.dentry->d_inode, mode);
 
-Agree. I'd recommend changing the attr_replace_test.c, make it have a
-default max xattr size (keep using the XATTR_SIZE_MAX or define one if
-it's not defined), then give it an optinal option which can specify a
-customed max xattr size from outside.
+This needs to move into vfs_mknod() itself to allow overlayfs to
+continue to rely on setgid stripping.
+See the relevant part in the _draft_ patch in [1].
 
-Then the test case (e.g. g/486) which uses attr_replace_test can
-specify a max xattr size if it needs. And it's easier to figure
-out what attr size is better for a specified fs in test case.
+>  	error = security_path_mknod(&path, dentry, mode, dev);
+>  	if (error)
+>  		goto out2;
+>  
+> -	mnt_userns = mnt_user_ns(path.mnt);
+>  	switch (mode & S_IFMT) {
+>  		case 0: case S_IFREG:
+>  			error = vfs_create(mnt_userns, path.dentry->d_inode,
+> @@ -3943,6 +3951,7 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
+>  	struct path path;
+>  	int error;
+>  	unsigned int lookup_flags = LOOKUP_DIRECTORY;
+> +	struct user_namespace *mnt_userns;
+>  
+>  retry:
+>  	dentry = filename_create(dfd, name, &path, lookup_flags);
+> @@ -3950,15 +3959,13 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
+>  	if (IS_ERR(dentry))
+>  		goto out_putname;
+>  
+> -	if (!IS_POSIXACL(path.dentry->d_inode))
+> -		mode &= ~current_umask();
+> +	mnt_userns = mnt_user_ns(path.mnt);
+> +	mode = vfs_prepare_mode(mnt_userns, path.dentry->d_inode, mode);
 
-Thanks,
-Zorro
+This needs to move into vfs_mkdir() itself to allow overlayfs to
+continue to rely on setgid stripping.
+See the relevant part in the _draft_ patch in [1].
 
-> 
-> Cheers,
-> 
-> Dave.
-> 
-> -- 
-> Dave Chinner
-> david@fromorbit.com
-> 
-
+[1]: https://lore.kernel.org/ceph-devel/20220427092201.wvsdjbnc7b4dttaw@wittgenstein
