@@ -2,85 +2,116 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A973546FEC
-	for <lists+ceph-devel@lfdr.de>; Sat, 11 Jun 2022 01:20:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 750AE547085
+	for <lists+ceph-devel@lfdr.de>; Sat, 11 Jun 2022 02:30:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348787AbiFJXUD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 10 Jun 2022 19:20:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39208 "EHLO
+        id S242913AbiFKAaO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 10 Jun 2022 20:30:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347575AbiFJXUC (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 10 Jun 2022 19:20:02 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23F70F3FB7
-        for <ceph-devel@vger.kernel.org>; Fri, 10 Jun 2022 16:19:58 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id u12so731858eja.8
-        for <ceph-devel@vger.kernel.org>; Fri, 10 Jun 2022 16:19:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mFUZ/4X/JukFzJtRWCj5IwVqnR0commkjm8Ld9IJoQA=;
-        b=AoxxrgfmaiG7fB01rWVX7//fR7hc8pfPaO6KuFkmEJpDpFR/HpqhwLdFQM6dVgzan3
-         DB7+Ryy9LWRyARZSjDc1y62fbB3v6E3HNwslaXd4JIbxny9dkIOf8ftYNIIBC41esAeu
-         4Gv6sMSeEfJjJ4Ad3imZr/QdI/L/mCWsQLeaA=
+        with ESMTP id S229693AbiFKAaN (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 10 Jun 2022 20:30:13 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0CC22A455
+        for <ceph-devel@vger.kernel.org>; Fri, 10 Jun 2022 17:30:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1654907411;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=5OL6vaR29CSd0C0Wg6l0H8lMEbOsp7IS06owvkzJSJc=;
+        b=N4y+pnLy+0fM0C5cfd38vpFMPzvzJlWaY/ey/3c0cWKy2TCzvZW5Ue/h1MOQtQiYSdgKXn
+        lb4SW715t+atCH/6i9O8rE+oa6AbKoTp0DkHebT7fxv+j+Z4M8lJKs9al39n0+/ArJ8Snn
+        Gviy7Si7JIY3qVGTpVP0HZjXEXMunwU=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-251-DjFV7Wi5P6i9uABw07_zDw-1; Fri, 10 Jun 2022 20:30:09 -0400
+X-MC-Unique: DjFV7Wi5P6i9uABw07_zDw-1
+Received: by mail-pf1-f200.google.com with SMTP id 144-20020a621496000000b0051ba2e95df2so333766pfu.11
+        for <ceph-devel@vger.kernel.org>; Fri, 10 Jun 2022 17:30:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mFUZ/4X/JukFzJtRWCj5IwVqnR0commkjm8Ld9IJoQA=;
-        b=J+C+MXvHHP459OH3jbwm4kEuAdn9RCqalcAUB6aQSEFers7vHX0kzsaMMNoUiTa6jv
-         TkQNzbMGUurFNLMyxPjt4ZXI0anRnfE9TyuJL44v+oGu2dMnc3fYkIdK6Tu1hYzCWUO2
-         ll1clY9o1g3X3XftMhxrKban8ye71th1mD3VGFuSEuz+zhFcnE9lUQvnAE4IzLgoCoau
-         06ko0KCfhj6tucjTgd5bCTCU5/tsYCIDDTN6NP55+2cbdYJRL0iET7KVPtHeHbHRLn+n
-         M1F8HwuN7TdDyukBFcG+k87AAiw32X2Vo9OZn+TTFtWBnCyEDbHA6ApdoJKFyCV91aTm
-         RDyQ==
-X-Gm-Message-State: AOAM531y/MmXgOK8GfeUDFd2hAw9fuFI6SPzbL9ImcrhU5tUCQcOfNRt
-        ywy7Rg2GmyXqioo2fzzNwYUHhoWv5yiJx/HB
-X-Google-Smtp-Source: ABdhPJxm3dQ0ME0Cjff6fPi3q1UaIuFG31gh0zOozDgNcWt2rhLiLzUHWvYs1rOl6sfMdQ/jSibhnw==
-X-Received: by 2002:a17:906:748a:b0:712:2427:3a8 with SMTP id e10-20020a170906748a00b00712242703a8mr3772470ejl.220.1654903197215;
-        Fri, 10 Jun 2022 16:19:57 -0700 (PDT)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com. [209.85.128.48])
-        by smtp.gmail.com with ESMTPSA id p7-20020a170906614700b0070f1b033de4sm180816ejl.200.2022.06.10.16.19.55
-        for <ceph-devel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=5OL6vaR29CSd0C0Wg6l0H8lMEbOsp7IS06owvkzJSJc=;
+        b=j0/ixaKFbhHqNjYzWTNFQ80JsVK1qkEKf5UZT+AiRZS3i99TaXSqkOZxK68BQq3AxP
+         lsacmO8WjKJxqqP8friGe333gJA3ZyTGFYVCmsEXlsmUZ1YDFkK20Tv0yDexlWmdkdaN
+         lgHYmp8MxzEuLspaQ7JKU8P5S0YKYIr6IXA/5CFsEsnTY+cKtRKvZXpb/tMge1pyAvYP
+         UAIlsK0Sg+GXPwgzqVZzFsY+zwLfFdlHoZ0EJAF+SPGTWVXLkUvSNvDnPgY0lyTsG7ab
+         Rvrmt3SY3hRDbvQFxgaSFUGIEQMRXQwAYVp54XeF/Y7fSzks2ZNnunEKlM0kieY3oDY3
+         M/tw==
+X-Gm-Message-State: AOAM531vhqZcr/NgN0TwJXzQjvGp4JdyV6NmXbjd9dJvNnbLFIaLApYN
+        CDH69FUSohsC3jTKGBD3GCCGEslJ0udhxp84fVusoAkREwGGrQ+4ppug3poWBkIGgX7RpIkUvnL
+        qk29AHzXBbTwPATLNsNgVRw==
+X-Received: by 2002:a17:902:d652:b0:168:bffe:e5fe with SMTP id y18-20020a170902d65200b00168bffee5femr4491562plh.81.1654907408737;
+        Fri, 10 Jun 2022 17:30:08 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxP0cVNtxNZgxGQUvFDzyRGFnacdSCJcsyUB1BEZWXu/kYMhTyBgSPE7t00vH1Xo8n3R65h8w==
+X-Received: by 2002:a17:902:d652:b0:168:bffe:e5fe with SMTP id y18-20020a170902d65200b00168bffee5femr4491547plh.81.1654907408482;
+        Fri, 10 Jun 2022 17:30:08 -0700 (PDT)
+Received: from [10.72.12.41] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id g2-20020aa78182000000b0051bf246ca2bsm157688pfi.100.2022.06.10.17.30.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jun 2022 16:19:55 -0700 (PDT)
-Received: by mail-wm1-f48.google.com with SMTP id a10so193059wmj.5
-        for <ceph-devel@vger.kernel.org>; Fri, 10 Jun 2022 16:19:55 -0700 (PDT)
-X-Received: by 2002:a05:600c:3485:b0:39c:7db5:f0f7 with SMTP id
- a5-20020a05600c348500b0039c7db5f0f7mr2015707wmq.8.1654903194928; Fri, 10 Jun
- 2022 16:19:54 -0700 (PDT)
+        Fri, 10 Jun 2022 17:30:07 -0700 (PDT)
+Subject: Re: [PATCH] ceph: call netfs_subreq_terminated with was_async ==
+ false
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        David Howells <dhowells@redhat.com>
+References: <20220607182218.234138-1-jlayton@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <7d3bb725-8f37-3088-52c4-ba22bc93445c@redhat.com>
+Date:   Sat, 11 Jun 2022 08:30:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-References: <165489100590.703883.11054313979289027590.stgit@warthog.procyon.org.uk>
-In-Reply-To: <165489100590.703883.11054313979289027590.stgit@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 10 Jun 2022 16:19:38 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgeW2nF5MZzmx6cPmS8mbq0kjP+VF5V76LNDLDjJ64hUA@mail.gmail.com>
-Message-ID: <CAHk-=wgeW2nF5MZzmx6cPmS8mbq0kjP+VF5V76LNDLDjJ64hUA@mail.gmail.com>
-Subject: Re: [RFC][PATCH 0/3] netfs, afs: Cleanups
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-        Jeff Layton <jlayton@kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, linux-erofs@lists.ozlabs.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <20220607182218.234138-1-jlayton@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Jun 10, 2022 at 12:56 PM David Howells <dhowells@redhat.com> wrote:
+
+On 6/8/22 2:22 AM, Jeff Layton wrote:
+> "was_async" is a bit misleadingly named. It's supposed to indicate
+> whether it's safe to call blocking operations from the context you're
+> calling it from, but it sounds like it's asking whether this was done
+> via async operation. For ceph, this it's always called from kernel
+> thread context so it should be safe to set this to false.
 >
-> Here are some cleanups, one for afs and a couple for netfs:
+> Cc: David Howells <dhowells@redhat.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>   fs/ceph/addr.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 3489444c55b9..39e2c64d008f 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -241,7 +241,7 @@ static void finish_netfs_read(struct ceph_osd_request *req)
+>   	if (err >= 0 && err < subreq->len)
+>   		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+>   
+> -	netfs_subreq_terminated(subreq, err, true);
+> +	netfs_subreq_terminated(subreq, err, false);
+>   
+>   	num_pages = calc_pages_for(osd_data->alignment, osd_data->length);
+>   	ceph_put_page_vector(osd_data->pages, num_pages, false);
 
-Pulled,
+Sorry, I think I missed this one.
 
-               Linus
+LGTM. Thanks Jeff !
+
+-- Xiubo
+
