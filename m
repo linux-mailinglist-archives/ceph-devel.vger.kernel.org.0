@@ -2,58 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC473547A46
-	for <lists+ceph-devel@lfdr.de>; Sun, 12 Jun 2022 15:10:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5825547A57
+	for <lists+ceph-devel@lfdr.de>; Sun, 12 Jun 2022 15:30:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236963AbiFLNKN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 12 Jun 2022 09:10:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58058 "EHLO
+        id S235661AbiFLNaO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 12 Jun 2022 09:30:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236962AbiFLNKN (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 12 Jun 2022 09:10:13 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3863617055
-        for <ceph-devel@vger.kernel.org>; Sun, 12 Jun 2022 06:10:10 -0700 (PDT)
+        with ESMTP id S232686AbiFLNaN (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 12 Jun 2022 09:30:13 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC6A229822
+        for <ceph-devel@vger.kernel.org>; Sun, 12 Jun 2022 06:30:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1655039410; x=1686575410;
+  t=1655040611; x=1686576611;
   h=date:from:to:cc:subject:message-id:mime-version;
-  bh=SxWO73rfdM9B0wT1nwNckaWx++odQfwK/5xeXVepsFo=;
-  b=mxo7shT8UZYS/OVjKAA/oDzRyOwovL2WPlii9URxC7AI5Nbc4CUT7B/z
-   ErHpvQF0vs4pUOlMIzwOiOUlOne/5GZGnp38iSsj0rgaD4bPPlmBvZF0I
-   uXnzc5qJ24GwAQ1uGn2+R42yLPCDtlj7ePAnJBPe6ZtmBgMaHf0wat0VT
-   Nar/BGxsa2l4OCUdaiVKemxLdfRpV/b5PvJT3ASlQEQTzx7n09cXHcp6g
-   5h4OuOxvah4SZv/afI8n0wm+auRCoFwF66iKNS9QUQd3m+ZA8pnkhqqHI
-   ExkHapQ4xJPjKwMSuXzeaYwY4PhT0rMDg0latrwNxS4/aMvKUyCgpcmaK
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10375"; a="364372208"
+  bh=5LKXzQLCQoh0rjoFQjl+3HcDItBh/kLW3+qqm6Tqcn4=;
+  b=ZB+ZpHe+W492F3AAAdjrlc4skAckrClHrdaWFtX3i1ZowZqdxCYjM2ja
+   lnkJeL4/2aVt0XyuFz05xbREmH0XHxPEDTajhCW4dYvOKsfCqnhXNqPyQ
+   //em5L8l3ItYWXfCUP7B5f1e+PM3fVf9A8gr+myxbj8M30Qgoe/Avo4MC
+   pSr2vUnsVPsz3ci/mRk3BIfD9pTQlHBMoMWaRuFW5hU9pvi2aJimAz4Rr
+   pMHBX1QQB4utK8DxO+Fy+lUXhCAoKy8BTWTS44VIr5rYx8b6x7ZwNuAJn
+   i+qPSo+gDWmXJE2pxiLpc53j0/Sb4Lb6BiMnghTJc8FEkzasIm/sDbghN
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10376"; a="257881511"
 X-IronPort-AV: E=Sophos;i="5.91,294,1647327600"; 
-   d="scan'208";a="364372208"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2022 06:10:09 -0700
+   d="scan'208";a="257881511"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jun 2022 06:30:10 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.91,294,1647327600"; 
-   d="scan'208";a="617133413"
+   d="scan'208";a="711600792"
 Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 12 Jun 2022 06:10:08 -0700
+  by orsmga004.jf.intel.com with ESMTP; 12 Jun 2022 06:30:08 -0700
 Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
         (envelope-from <lkp@intel.com>)
-        id 1o0NLz-000Jw3-Ir;
-        Sun, 12 Jun 2022 13:10:07 +0000
-Date:   Sun, 12 Jun 2022 21:09:24 +0800
+        id 1o0NfL-000Jwb-Uc;
+        Sun, 12 Jun 2022 13:30:07 +0000
+Date:   Sun, 12 Jun 2022 21:29:46 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Jeff Layton <jlayton@kernel.org>
-Cc:     kbuild-all@lists.01.org, ceph-devel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [ceph-client:testing 7/14] fs/ceph/addr.c:125:9: error: implicit
- declaration of function 'VM_WARN_ON_FOLIO'; did you mean 'VM_WARN_ON_ONCE'?
-Message-ID: <202206122152.diN4bDDL-lkp@intel.com>
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [ceph-client:testing 7/14] fs/ceph/addr.c:125:2: error: call to
+ undeclared function 'VM_WARN_ON_FOLIO'; ISO C99 and later do not support
+ implicit function declarations
+Message-ID: <202206122114.9T6bqADv-lkp@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,31 +65,31 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 tree:   https://github.com/ceph/ceph-client.git testing
 head:   3e303a58e3a89d254098138aa8488872bf73c9a4
 commit: 00043f493521923e81e179ef2e01a47941b07ef2 [7/14] ceph: switch back to testing for NULL folio->private in ceph_dirty_folio
-config: i386-randconfig-a005 (https://download.01.org/0day-ci/archive/20220612/202206122152.diN4bDDL-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-3) 11.3.0
+config: hexagon-randconfig-r023-20220612 (https://download.01.org/0day-ci/archive/20220612/202206122114.9T6bqADv-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 6466c9abf3674bade1f6ee859f24ebc7aaf9cd88)
 reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
         # https://github.com/ceph/ceph-client/commit/00043f493521923e81e179ef2e01a47941b07ef2
         git remote add ceph-client https://github.com/ceph/ceph-client.git
         git fetch --no-tags ceph-client testing
         git checkout 00043f493521923e81e179ef2e01a47941b07ef2
         # save the config file
         mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash fs/
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash fs/ceph/
 
 If you fix the issue, kindly add following tag where applicable
 Reported-by: kernel test robot <lkp@intel.com>
 
 All errors (new ones prefixed by >>):
 
-   fs/ceph/addr.c: In function 'ceph_dirty_folio':
->> fs/ceph/addr.c:125:9: error: implicit declaration of function 'VM_WARN_ON_FOLIO'; did you mean 'VM_WARN_ON_ONCE'? [-Werror=implicit-function-declaration]
-     125 |         VM_WARN_ON_FOLIO(folio->private, folio);
-         |         ^~~~~~~~~~~~~~~~
-         |         VM_WARN_ON_ONCE
-   cc1: some warnings being treated as errors
+>> fs/ceph/addr.c:125:2: error: call to undeclared function 'VM_WARN_ON_FOLIO'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+           VM_WARN_ON_FOLIO(folio->private, folio);
+           ^
+   1 error generated.
 
 
-vim +125 fs/ceph/addr.c
+vim +/VM_WARN_ON_FOLIO +125 fs/ceph/addr.c
 
     74	
     75	/*
