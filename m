@@ -2,74 +2,72 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF4DA547844
-	for <lists+ceph-devel@lfdr.de>; Sun, 12 Jun 2022 04:28:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F4015479A9
+	for <lists+ceph-devel@lfdr.de>; Sun, 12 Jun 2022 11:49:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233045AbiFLC01 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 11 Jun 2022 22:26:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40878 "EHLO
+        id S235905AbiFLJtT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 12 Jun 2022 05:49:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229781AbiFLC01 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 11 Jun 2022 22:26:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EE2FB69CDE
-        for <ceph-devel@vger.kernel.org>; Sat, 11 Jun 2022 19:26:25 -0700 (PDT)
+        with ESMTP id S232302AbiFLJtR (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 12 Jun 2022 05:49:17 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6631B1A3BA
+        for <ceph-devel@vger.kernel.org>; Sun, 12 Jun 2022 02:49:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1655000784;
+        s=mimecast20190719; t=1655027352;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Po+OITd9LduODB5Ll6LkiNrsN4yFiLHBsGMIZQJ3aw4=;
-        b=aW1ltQKxrVGECY5gvRvXY+cGbzhFNn7qvKqGlFA/wi4h1qx6+YfILKNNZT9imPUo3RV7XF
-        8zwmSdzI1YXAhJX1YZqQ3XXA9q77NvxuNIrl8VfLtJdO2gpXgvgFjwme10Hc824mOqr/9v
-        hz3yRbPXEZlB2j7RCQZrIM/hB8XRIDk=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=8ueojtz1qJqSwNeDQ6G0NW62ZJmgzyPTJLtBXSIbEn8=;
+        b=XGbtR24ZyakyPVh15tPDLou3HndTJcyTaQhgrKEy6djLihdAaqwY3vEHMYz5YWDihq41Px
+        KTBusAOwwcem+T2c6Xz/as6SWyra7ayQmaENUk0ksjgcD9J1ytfi0qmB3MVvS2Ekuru0tt
+        sbBqwLDKc1969pMlhzr+dbpL3KEdOBo=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-472-QHt0r0JCMq-rAvGg08s7hw-1; Sat, 11 Jun 2022 22:26:23 -0400
-X-MC-Unique: QHt0r0JCMq-rAvGg08s7hw-1
-Received: by mail-pg1-f200.google.com with SMTP id n8-20020a635908000000b00401a7b6235bso1717428pgb.5
-        for <ceph-devel@vger.kernel.org>; Sat, 11 Jun 2022 19:26:23 -0700 (PDT)
+ us-mta-261-IIaWSkV_PIiHCXFqv7Gvig-1; Sun, 12 Jun 2022 05:49:11 -0400
+X-MC-Unique: IIaWSkV_PIiHCXFqv7Gvig-1
+Received: by mail-pj1-f72.google.com with SMTP id lk16-20020a17090b33d000b001e68a9ac3a1so4366598pjb.2
+        for <ceph-devel@vger.kernel.org>; Sun, 12 Jun 2022 02:49:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=Po+OITd9LduODB5Ll6LkiNrsN4yFiLHBsGMIZQJ3aw4=;
-        b=WYuakp9SR2kn7znvZd2gTb0jPdlHyEWud+xik3aUoY4+hRTVgaNXlis5kTqNcsF3do
-         7LnNRRfNXOEhXE8us9E4yqkqAUbZGSa5sWA2+O0AFrmlUbsfuzC3VAmyugimQ/aZ/Tre
-         JeEZv/rxqgnDyjhTWNK7YaeWNuvD+uqwY3EUfeLcp9uVKvXgRfD2+7CWEg3HxVIs++7r
-         cx28zwFqaF6Nr5QKT26+IslknY2Kd5ITpS6iYgt7u/KtRqB7o6lHjRssbEe3t3z4S4px
-         0zI7ZsxUny75Bmu9vhfcAkGnEFOk9rtE04ZSmT9+enGwmkpyortVyHlIWTqTFL5QErl8
-         LEsw==
-X-Gm-Message-State: AOAM531j3EHzIIa1t2leQRZOfu7vPE/MhMgTB2FXJW74ZONM9Y+PzqQl
-        HzS0VFJ0c74InSvIlYzPg9qJEnAlMdL8qw597QU2kPFN5SZ3krUSMNnAL8X2A4Td9Z6ZWj4/uOs
-        eaKSQlQTShwxyQld6Ir7TmQ==
-X-Received: by 2002:a17:902:7449:b0:167:9520:d063 with SMTP id e9-20020a170902744900b001679520d063mr26178528plt.146.1655000781884;
-        Sat, 11 Jun 2022 19:26:21 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxSUdWj0g6z3wcj79WuGy61sOTinJ+Xh99UhjKXW2wg576bkRRUKMKz5+wx7YOmEnrejlsPhA==
-X-Received: by 2002:a17:902:7449:b0:167:9520:d063 with SMTP id e9-20020a170902744900b001679520d063mr26178517plt.146.1655000781571;
-        Sat, 11 Jun 2022 19:26:21 -0700 (PDT)
+        bh=8ueojtz1qJqSwNeDQ6G0NW62ZJmgzyPTJLtBXSIbEn8=;
+        b=CadbMePkZrqKgvVUjftgAxW0SAmFA4mSTswCw8n1mVmeuqRCFRmVu5GDp58TUi39/f
+         9/iCcYgZSEE6uVKPwYDdMHJ68BmEpTwLu/dSIUzdXQEAlEyOhb4QgyUejBcl6fUvT0t4
+         34Dflpv2ebc3RYaMbM+nedcY3vpJa6lzwNHJ8wE7TVFnOnG0sSPmRL2k6U/oKjPePghM
+         rHxa6T2yZ/9hlNKYc++TyP2N+xAjO9OaN8P4oPgiZ5Y9/KGNj5Pks6ZKpGPDji7qrPfM
+         LbAY2WoHcUzaZQIs14uoPxktt4scCjrlUqD4Y1BX1lH0hYMjBvL4dp3ow6PX7nGisGJd
+         cdyg==
+X-Gm-Message-State: AOAM533mlmJhueo8h0kWSIEoUgfLAz3Sds3UaTxUiOUDqVTdxj+zW4xU
+        uatFvd+J9xXor6WhYwDVxLLuKShRcglJ8ijFwGvcWX1msXwNyOYMqARwm21jjGEo61sMfbYFaIP
+        A4oaCVX/wU5KMr1o4hI9v4g==
+X-Received: by 2002:a63:2447:0:b0:3fd:b97e:7f0f with SMTP id k68-20020a632447000000b003fdb97e7f0fmr31143274pgk.516.1655027349343;
+        Sun, 12 Jun 2022 02:49:09 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxcU12zPAvIpmwm6g1gCPwF4wDI9URXG1GESIcb7MpnxC6rNtnvCuoRlZonmT1LwZLFoxmCIQ==
+X-Received: by 2002:a63:2447:0:b0:3fd:b97e:7f0f with SMTP id k68-20020a632447000000b003fdb97e7f0fmr31143263pgk.516.1655027349074;
+        Sun, 12 Jun 2022 02:49:09 -0700 (PDT)
 Received: from [10.72.12.41] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id s4-20020a170903200400b0016223016d79sm2188658pla.90.2022.06.11.19.26.17
+        by smtp.gmail.com with ESMTPSA id mi16-20020a17090b4b5000b001e0c1044ceasm2794010pjb.43.2022.06.12.02.49.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Jun 2022 19:26:20 -0700 (PDT)
-Subject: Re: [ceph-client:testing 7/9] lib/iov_iter.c:1464:9: warning:
- comparison of distinct pointer types ('typeof (nr * ((1UL) << (12)) - offset)
- *' (aka 'unsigned long *') and 'typeof (maxsize) *' (aka 'unsigned int *'))
-To:     kernel test robot <lkp@intel.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        ceph-devel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-References: <202206112305.4DdsErK8-lkp@intel.com>
+        Sun, 12 Jun 2022 02:49:08 -0700 (PDT)
+Subject: Re: [PATCH] ceph: switch back to testing for NULL folio->private in
+ ceph_dirty_folio
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>
+References: <20220610154013.68259-1-jlayton@kernel.org>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <a1a3edde-7b44-eb09-6695-e7c57356b96e@redhat.com>
-Date:   Sun, 12 Jun 2022 10:26:14 +0800
+Message-ID: <987101f4-3d93-3a8b-1a89-a63644523f48@redhat.com>
+Date:   Sun, 12 Jun 2022 17:49:03 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <202206112305.4DdsErK8-lkp@intel.com>
+In-Reply-To: <20220610154013.68259-1-jlayton@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -83,109 +81,61 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Thanks for the warning report.
 
-These was introduced by one DO NOT MEGE patch, which should go into 
-mainline via David Howells's tree IMO.
+On 6/10/22 11:40 PM, Jeff Layton wrote:
+> Willy requested that we change this back to warning on folio->private
+> being non-NULl. He's trying to kill off the PG_private flag, and so we'd
+> like to catch where it's non-NULL.
+>
+> Add a VM_WARN_ON_FOLIO (since it doesn't exist yet) and change over to
+> using that instead of VM_BUG_ON_FOLIO along with testing the ->private
+> pointer.
+>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>   fs/ceph/addr.c          | 2 +-
+>   include/linux/mmdebug.h | 9 +++++++++
+>   2 files changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index b43cc01a61db..b24d6bdb91db 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -122,7 +122,7 @@ static bool ceph_dirty_folio(struct address_space *mapping, struct folio *folio)
+>   	 * Reference snap context in folio->private.  Also set
+>   	 * PagePrivate so that we get invalidate_folio callback.
+>   	 */
+> -	VM_BUG_ON_FOLIO(folio_test_private(folio), folio);
+> +	VM_WARN_ON_FOLIO(folio->private, folio);
+>   	folio_attach_private(folio, snapc);
+>   
+>   	return ceph_fscache_dirty_folio(mapping, folio);
+> diff --git a/include/linux/mmdebug.h b/include/linux/mmdebug.h
+> index d7285f8148a3..5107bade2ab2 100644
+> --- a/include/linux/mmdebug.h
+> +++ b/include/linux/mmdebug.h
+> @@ -54,6 +54,15 @@ void dump_mm(const struct mm_struct *mm);
+>   	}								\
+>   	unlikely(__ret_warn_once);					\
+>   })
+> +#define VM_WARN_ON_FOLIO(cond, folio)		({			\
+> +	int __ret_warn = !!(cond);					\
+> +									\
+> +	if (unlikely(__ret_warn)) {					\
+> +		dump_page(&folio->page, "VM_WARN_ON_FOLIO(" __stringify(cond)")");\
+> +		WARN_ON(1);						\
+> +	}								\
+> +	unlikely(__ret_warn);						\
+> +})
+>   #define VM_WARN_ON_ONCE_FOLIO(cond, folio)	({			\
+>   	static bool __section(".data.once") __warned;			\
+>   	int __ret_warn_once = !!(cond);					\
+
+All tests passed except the known issues.
+
+Merged into testing branch, thanks Jeff!
 
 -- Xiubo
 
-
-On 6/11/22 11:10 PM, kernel test robot wrote:
-> tree:   https://github.com/ceph/ceph-client.git testing
-> head:   7b864d005b1f7f6a144420e180891b6401078407
-> commit: 3adeefbfca0fd57cc943b7ec0330385f48041f0c [7/9] [DO NOT MERGE] iov_iter: Fix iter_xarray_get_pages{,_alloc}()
-> config: riscv-randconfig-r034-20220611 (https://download.01.org/0day-ci/archive/20220611/202206112305.4DdsErK8-lkp@intel.com/config)
-> compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project ff4abe755279a3a47cc416ef80dbc900d9a98a19)
-> reproduce (this is a W=1 build):
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # install riscv cross compiling tool for clang build
->          # apt-get install binutils-riscv-linux-gnu
->          # https://github.com/ceph/ceph-client/commit/3adeefbfca0fd57cc943b7ec0330385f48041f0c
->          git remote add ceph-client https://github.com/ceph/ceph-client.git
->          git fetch --no-tags ceph-client testing
->          git checkout 3adeefbfca0fd57cc943b7ec0330385f48041f0c
->          # save the config file
->          mkdir build_dir && cp config build_dir/.config
->          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash
->
-> If you fix the issue, kindly add following tag where applicable
-> Reported-by: kernel test robot <lkp@intel.com>
->
-> All warnings (new ones prefixed by >>):
->
->>> lib/iov_iter.c:1464:9: warning: comparison of distinct pointer types ('typeof (nr * ((1UL) << (12)) - offset) *' (aka 'unsigned long *') and 'typeof (maxsize) *' (aka 'unsigned int *')) [-Wcompare-distinct-pointer-types]
->             return min(nr * PAGE_SIZE - offset, maxsize);
->                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->     include/linux/minmax.h:45:19: note: expanded from macro 'min'
->     #define min(x, y)       __careful_cmp(x, y, <)
->                             ^~~~~~~~~~~~~~~~~~~~~~
->     include/linux/minmax.h:36:24: note: expanded from macro '__careful_cmp'
->             __builtin_choose_expr(__safe_cmp(x, y), \
->                                   ^~~~~~~~~~~~~~~~
->     include/linux/minmax.h:26:4: note: expanded from macro '__safe_cmp'
->                     (__typecheck(x, y) && __no_side_effects(x, y))
->                      ^~~~~~~~~~~~~~~~~
->     include/linux/minmax.h:20:28: note: expanded from macro '__typecheck'
->             (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
->                        ~~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~
->     lib/iov_iter.c:1628:9: warning: comparison of distinct pointer types ('typeof (nr * ((1UL) << (12)) - offset) *' (aka 'unsigned long *') and 'typeof (maxsize) *' (aka 'unsigned int *')) [-Wcompare-distinct-pointer-types]
->             return min(nr * PAGE_SIZE - offset, maxsize);
->                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->     include/linux/minmax.h:45:19: note: expanded from macro 'min'
->     #define min(x, y)       __careful_cmp(x, y, <)
->                             ^~~~~~~~~~~~~~~~~~~~~~
->     include/linux/minmax.h:36:24: note: expanded from macro '__careful_cmp'
->             __builtin_choose_expr(__safe_cmp(x, y), \
->                                   ^~~~~~~~~~~~~~~~
->     include/linux/minmax.h:26:4: note: expanded from macro '__safe_cmp'
->                     (__typecheck(x, y) && __no_side_effects(x, y))
->                      ^~~~~~~~~~~~~~~~~
->     include/linux/minmax.h:20:28: note: expanded from macro '__typecheck'
->             (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
->                        ~~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~
->     2 warnings generated.
->
->
-> vim +1464 lib/iov_iter.c
->
->    1430	
->    1431	static ssize_t iter_xarray_get_pages(struct iov_iter *i,
->    1432					     struct page **pages, size_t maxsize,
->    1433					     unsigned maxpages, size_t *_start_offset)
->    1434	{
->    1435		unsigned nr, offset;
->    1436		pgoff_t index, count;
->    1437		size_t size = maxsize;
->    1438		loff_t pos;
->    1439	
->    1440		if (!size || !maxpages)
->    1441			return 0;
->    1442	
->    1443		pos = i->xarray_start + i->iov_offset;
->    1444		index = pos >> PAGE_SHIFT;
->    1445		offset = pos & ~PAGE_MASK;
->    1446		*_start_offset = offset;
->    1447	
->    1448		count = 1;
->    1449		if (size > PAGE_SIZE - offset) {
->    1450			size -= PAGE_SIZE - offset;
->    1451			count += size >> PAGE_SHIFT;
->    1452			size &= ~PAGE_MASK;
->    1453			if (size)
->    1454				count++;
->    1455		}
->    1456	
->    1457		if (count > maxpages)
->    1458			count = maxpages;
->    1459	
->    1460		nr = iter_xarray_populate_pages(pages, i->xarray, index, count);
->    1461		if (nr == 0)
->    1462			return 0;
->    1463	
->> 1464		return min(nr * PAGE_SIZE - offset, maxsize);
->    1465	}
->    1466	
->
 
