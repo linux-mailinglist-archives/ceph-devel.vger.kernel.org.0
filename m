@@ -2,180 +2,83 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF185547D25
-	for <lists+ceph-devel@lfdr.de>; Mon, 13 Jun 2022 02:56:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E66D35480E2
+	for <lists+ceph-devel@lfdr.de>; Mon, 13 Jun 2022 09:52:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230093AbiFMAu0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 12 Jun 2022 20:50:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37354 "EHLO
+        id S237894AbiFMHwL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 13 Jun 2022 03:52:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229928AbiFMAuZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 12 Jun 2022 20:50:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F26172C3
-        for <ceph-devel@vger.kernel.org>; Sun, 12 Jun 2022 17:50:23 -0700 (PDT)
+        with ESMTP id S237686AbiFMHwK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 13 Jun 2022 03:52:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 775D5B4B0
+        for <ceph-devel@vger.kernel.org>; Mon, 13 Jun 2022 00:52:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1655081423;
+        s=mimecast20190719; t=1655106728;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Bzh7MbU5hF0jYt2CNqara1gim4NRe9CyXFM41w1kueQ=;
-        b=UkrOocD9DxPCM+o1l1wHST8/251gTPyvroPZUaSK5+2PfvPQiHCgRXd3gtYlH260hBWavM
-        O30SXrUReMqIDLzMBV1lXj1a4hDxVbxcqcirCgnHEjZ2SPc6Z3d1kYZ7bkhbiPsJT4jOgJ
-        srtwgsWhM9aVLumtekTn49BY1ikhE1w=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=kYmfQDM+DfhvSVg+Z40jMXH9wbjOx+s0nx48dvNO000=;
+        b=Hy7oDy88owuCzhI/6Tu7/0Xk4JlVSVfx1AXFsP06y5mP1JDvMRGGyTe++BGAShkza5TLKA
+        19h+zLE8p6nIC4NPdfFwcpiYS//TGi9yFc1gcsz0RbqegKleMXbbx7aKtSeP1I0YzO0sH6
+        hSowViwVaQ48zGyfIYYDzjqjfRD9vBo=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-170-xJ4Q6huLO8yTGPO-RPw8uQ-1; Sun, 12 Jun 2022 20:50:21 -0400
-X-MC-Unique: xJ4Q6huLO8yTGPO-RPw8uQ-1
-Received: by mail-pj1-f71.google.com with SMTP id lk16-20020a17090b33d000b001e68a9ac3a1so5320993pjb.2
-        for <ceph-devel@vger.kernel.org>; Sun, 12 Jun 2022 17:50:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Bzh7MbU5hF0jYt2CNqara1gim4NRe9CyXFM41w1kueQ=;
-        b=FaCgWUuKThWshiV/4ksEkT8qHAiB9ymcKDPSJ5xLFPaSdpZVdUvRnKaxTam5W4YWv9
-         zxBq+spzDf9TEZU+rz9dW7GXvL04ZL3csoM52i6sjIbrZD90T94xsr41KRZK31JcABT8
-         9SMOlqUD8T9XcDDKaMhl0sbkb3p3/ix42SbjAm+rWzMtm0Wr3VYNTn/SNFdYSIJkKdiC
-         7d6Cw3zgHRhe+pgwmeCH/QkiJDSFRT/HhtqxTjt4ZFgmfdsI2ubfIunAsxtlmGRc8DoY
-         3AgbLtKfHIKxbdVwAwVL9gVGzWSD/tkMXCXExRsqEo9MIY6eI2Vx4ymG+vwApG7VNM/Z
-         fTGg==
-X-Gm-Message-State: AOAM532fuube9f9oZ/zbYkOt0exjl/j4EIznRP99LsKTfSZ5UbSLB95t
-        nuLCbSiDHtOKz8iL4SsDQAH1Q8i+MGUA6wkvbMZu2LmWwuOiawkXBAqVm0KbkyPlOubx8iShxdn
-        bisD+Xa3//6KAisOVhCP2E9DclU6/IUzy/yxuTUIuaqCwVRGKCVXMzAZyjn4a5Cmf9LpLKjg=
-X-Received: by 2002:a17:90b:4a0a:b0:1e8:5078:b574 with SMTP id kk10-20020a17090b4a0a00b001e85078b574mr12675347pjb.149.1655081420192;
-        Sun, 12 Jun 2022 17:50:20 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJy58pu7e+fmU4gaIg5kLoTJV47X2Rzvwvb1zljkZvFfbzpAb6B/hinZbHzN1jZh47hGjOF8+g==
-X-Received: by 2002:a17:90b:4a0a:b0:1e8:5078:b574 with SMTP id kk10-20020a17090b4a0a00b001e85078b574mr12675317pjb.149.1655081419848;
-        Sun, 12 Jun 2022 17:50:19 -0700 (PDT)
-Received: from [10.72.12.41] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id ij11-20020a170902ab4b00b0015e8d4eb1f9sm3625785plb.67.2022.06.12.17.50.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Jun 2022 17:50:19 -0700 (PDT)
-Subject: Re: [ceph-client:testing 7/14] fs/ceph/addr.c:125:2: error: call to
- undeclared function 'VM_WARN_ON_FOLIO'; ISO C99 and later do not support
- implicit function declarations
-To:     kernel test robot <lkp@intel.com>, Jeff Layton <jlayton@kernel.org>
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        ceph-devel@vger.kernel.org
-References: <202206122114.9T6bqADv-lkp@intel.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <8b7c8df1-df13-253b-5bfe-51c9c5c6f755@redhat.com>
-Date:   Mon, 13 Jun 2022 08:50:14 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+ us-mta-673-BJ3OKfNJMvC6mEERcGMcPA-1; Mon, 13 Jun 2022 03:52:05 -0400
+X-MC-Unique: BJ3OKfNJMvC6mEERcGMcPA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C69963C17301;
+        Mon, 13 Jun 2022 07:52:04 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.62])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D341E2166B26;
+        Mon, 13 Jun 2022 07:52:03 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <a1a3edde-7b44-eb09-6695-e7c57356b96e@redhat.com>
+References: <a1a3edde-7b44-eb09-6695-e7c57356b96e@redhat.com> <202206112305.4DdsErK8-lkp@intel.com>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     dhowells@redhat.com, kernel test robot <lkp@intel.com>,
+        llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        ceph-devel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+Subject: Re: [ceph-client:testing 7/9] lib/iov_iter.c:1464:9: warning: comparison of distinct pointer types ('typeof (nr * ((1UL) << (12)) - offset) *' (aka 'unsigned long *') and 'typeof (maxsize) *' (aka 'unsigned int *'))
 MIME-Version: 1.0
-In-Reply-To: <202206122114.9T6bqADv-lkp@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1069137.1655106723.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Mon, 13 Jun 2022 08:52:03 +0100
+Message-ID: <1069138.1655106723@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Xiubo Li <xiubli@redhat.com> wrote:
 
-On 6/12/22 9:29 PM, kernel test robot wrote:
-> tree:   https://github.com/ceph/ceph-client.git testing
-> head:   3e303a58e3a89d254098138aa8488872bf73c9a4
-> commit: 00043f493521923e81e179ef2e01a47941b07ef2 [7/14] ceph: switch back to testing for NULL folio->private in ceph_dirty_folio
-> config: hexagon-randconfig-r023-20220612 (https://download.01.org/0day-ci/archive/20220612/202206122114.9T6bqADv-lkp@intel.com/config)
-> compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 6466c9abf3674bade1f6ee859f24ebc7aaf9cd88)
-> reproduce (this is a W=1 build):
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # https://github.com/ceph/ceph-client/commit/00043f493521923e81e179ef2e01a47941b07ef2
->          git remote add ceph-client https://github.com/ceph/ceph-client.git
->          git fetch --no-tags ceph-client testing
->          git checkout 00043f493521923e81e179ef2e01a47941b07ef2
->          # save the config file
->          mkdir build_dir && cp config build_dir/.config
->          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash fs/ceph/
->
-> If you fix the issue, kindly add following tag where applicable
-> Reported-by: kernel test robot <lkp@intel.com>
->
-> All errors (new ones prefixed by >>):
->
->>> fs/ceph/addr.c:125:2: error: call to undeclared function 'VM_WARN_ON_FOLIO'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
->             VM_WARN_ON_FOLIO(folio->private, folio);
->             ^
->     1 error generated.
->
->
-> vim +/VM_WARN_ON_FOLIO +125 fs/ceph/addr.c
->
->      74	
->      75	/*
->      76	 * Dirty a page.  Optimistically adjust accounting, on the assumption
->      77	 * that we won't race with invalidate.  If we do, readjust.
->      78	 */
->      79	static bool ceph_dirty_folio(struct address_space *mapping, struct folio *folio)
->      80	{
->      81		struct inode *inode;
->      82		struct ceph_inode_info *ci;
->      83		struct ceph_snap_context *snapc;
->      84	
->      85		if (folio_test_dirty(folio)) {
->      86			dout("%p dirty_folio %p idx %lu -- already dirty\n",
->      87			     mapping->host, folio, folio->index);
->      88			VM_BUG_ON_FOLIO(!folio_test_private(folio), folio);
->      89			return false;
->      90		}
->      91	
->      92		inode = mapping->host;
->      93		ci = ceph_inode(inode);
->      94	
->      95		/* dirty the head */
->      96		spin_lock(&ci->i_ceph_lock);
->      97		BUG_ON(ci->i_wr_ref == 0); // caller should hold Fw reference
->      98		if (__ceph_have_pending_cap_snap(ci)) {
->      99			struct ceph_cap_snap *capsnap =
->     100					list_last_entry(&ci->i_cap_snaps,
->     101							struct ceph_cap_snap,
->     102							ci_item);
->     103			snapc = ceph_get_snap_context(capsnap->context);
->     104			capsnap->dirty_pages++;
->     105		} else {
->     106			BUG_ON(!ci->i_head_snapc);
->     107			snapc = ceph_get_snap_context(ci->i_head_snapc);
->     108			++ci->i_wrbuffer_ref_head;
->     109		}
->     110		if (ci->i_wrbuffer_ref == 0)
->     111			ihold(inode);
->     112		++ci->i_wrbuffer_ref;
->     113		dout("%p dirty_folio %p idx %lu head %d/%d -> %d/%d "
->     114		     "snapc %p seq %lld (%d snaps)\n",
->     115		     mapping->host, folio, folio->index,
->     116		     ci->i_wrbuffer_ref-1, ci->i_wrbuffer_ref_head-1,
->     117		     ci->i_wrbuffer_ref, ci->i_wrbuffer_ref_head,
->     118		     snapc, snapc->seq, snapc->num_snaps);
->     119		spin_unlock(&ci->i_ceph_lock);
->     120	
->     121		/*
->     122		 * Reference snap context in folio->private.  Also set
->     123		 * PagePrivate so that we get invalidate_folio callback.
->     124		 */
->   > 125		VM_WARN_ON_FOLIO(folio->private, folio);
+> Thanks for the warning report.
+> =
 
-Thanks for the report, I have fixed it by defining the VM_WARN_ON_FOLIO 
-macro in case the DEBUG_VM is disabled.
+> These was introduced by one DO NOT MEGE patch, which should go into main=
+line
+> via David Howells's tree IMO.
 
--- Xiubo
+That appears to have been fixed upstream.
 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/=
+?id=3D1c27f1fc1549f0e470429f5497a76ad28a37f21a
 
->     126		folio_attach_private(folio, snapc);
->     127	
->     128		return ceph_fscache_dirty_folio(mapping, folio);
->     129	}
->     130	
->
+David
 
