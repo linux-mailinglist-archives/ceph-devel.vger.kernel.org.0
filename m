@@ -2,64 +2,58 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 871DB54ADE1
-	for <lists+ceph-devel@lfdr.de>; Tue, 14 Jun 2022 12:04:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D4CD54B216
+	for <lists+ceph-devel@lfdr.de>; Tue, 14 Jun 2022 15:12:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233647AbiFNKEQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 14 Jun 2022 06:04:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50784 "EHLO
+        id S238880AbiFNNMg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 14 Jun 2022 09:12:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229583AbiFNKEP (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 14 Jun 2022 06:04:15 -0400
-Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6183124F1D;
-        Tue, 14 Jun 2022 03:04:14 -0700 (PDT)
-Received: by mail-ua1-x934.google.com with SMTP id a28so1360581uaj.10;
-        Tue, 14 Jun 2022 03:04:14 -0700 (PDT)
+        with ESMTP id S237111AbiFNNMf (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 14 Jun 2022 09:12:35 -0400
+Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A0BF1A83B
+        for <ceph-devel@vger.kernel.org>; Tue, 14 Jun 2022 06:12:33 -0700 (PDT)
+Received: by mail-ua1-x92a.google.com with SMTP id a28so1523252uaj.10
+        for <ceph-devel@vger.kernel.org>; Tue, 14 Jun 2022 06:12:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NUcA5veSvIKp9efGYaSuiwEPBAGLkgGB6k/vshTldpY=;
-        b=Ow4jD17EtDtXtVVIuidII2cS96qWGVvJ+yE+rHXtaAD8sOPcq2wlB11vzXf5lI6kSQ
-         fx6FeDAbXEbPlIwcG50VJmjIRsWklRlB1ROWabcb754n32jfxZisgZcFEm3WRxCnl7tZ
-         xsHVcf78F9f36XZlWQoVxeUGmFDR3Sls2HUj5GiTRdhwixQus+rSz+p7Muf6BPpHVe9q
-         WSnMCaVtYTIFI0Yq2nIdlJKswIr3tFHWh/mMKDXKV0nqQonNa3gaV+e7aO5RAG7sXSj/
-         l1qaTeIOrkBcZ6VCp9GrxGika7uuXZ8NoPIeF8beogXYYZZVs2/5+C0B0rm8h/ycrpL6
-         KieA==
+        bh=M52TgzVFxZYamGroET81gni50Yd/fFX+koTmyYLlmWw=;
+        b=OPuAiDcBCvGfdoJPaFaz8bq10haLSVvVHg4UyTbsA6UK1nnCHghovxUuKAgT3bw8FH
+         XW0eYI62CitLK9VH8VPkIFy+RnD4aUOed8J0Kh425zTKLiDtqj/SqmFkiQ+JXZ3n6wjo
+         D5hUypSeVbeexdvtUnShPTnRdoarF4F/xQG06DvHOvA0Y7NTaH/JiAF/GhqcL32Zg7iR
+         lu6JJMAReaW6yC9hvpD1HQT2KFDE5iNDIyNH07XwM4H4KxAeIA7NNNIxTmUmI07mGcCU
+         rk2A7hyZQAcKAaLFNIm3+RiDvZ3RNTHuDY4XCRcc/Uh06Rb770qA8p1f3lTLpmiQzLqv
+         1kiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NUcA5veSvIKp9efGYaSuiwEPBAGLkgGB6k/vshTldpY=;
-        b=DuA9UqwXsMHWzC8rqm8DWL0kqeLnA13Jsq2Hi6gJXY3nm6Ythww/il7eH237p7VrCm
-         Bogt8vUoYqNaECaowSRdEUPzudEBahkvDbW3EhQZRX5pjfDs5HPRwWq3LGsrIoE1DPGs
-         y73+Rlbl288IHO7ABFZU+uSwSgnkZXUlpS+xWB640Tnck8Ula76JlzdtMSrCtsVLZnE0
-         a69lw8eL2p5vFaGZvSiYUGDKnIW7LJEK/cyo0gcYQJ1sfVQ9TaZtq8IUvSWXLEz61O0R
-         sNp3+W+KZ7bkE2v5XnMZ5EEfCdogFiBg5ezoZq3OuyftHbRYptkn2zJ3XiO5SmAGr2fy
-         ZJeg==
-X-Gm-Message-State: AJIora+NkOd019gDmXAGUr6ABzY3GYeOOeXo9+SgJ+vainj/GtKSq/U+
-        wgtjZ1Z/4We0odBhlHfgQXOCJ1UX2kLqgZrqLQooHOc1bXs=
-X-Google-Smtp-Source: AGRyM1v2Yi2H90p8cw7CGAp0Um+hE8UMBQoM8l+Pz+i3FA88fIHdwGzIpPTvtAckFXEXG2EZHdDkw42ADqdWqd6PkNc=
+        bh=M52TgzVFxZYamGroET81gni50Yd/fFX+koTmyYLlmWw=;
+        b=exhJOOFU8KbDfWd6/HaN7JeyHTHFR4JPFLNTeLQaZVRnRzEhhfaaUM2x4Esm5BSriy
+         YyZ43+7ZDOmurTl7udxuUDAhdomOK7OhK4SP9yQWfmXdhfMNF3CxqsIfV32OFlZU1KWf
+         vuotCMJCF46vf4K+yDS3lVUM+y23Vozlj5rDmAw3Aen8dFSsFRFvfgIs/LytXIwpI9hL
+         yzRAON3eXkxgeqlo56qrRWF/+AmTEL+VVKmo3dDEtzerYqw/skSsOdga0VtuVg8kO6Nh
+         gp068j9LYta61zL2/N4z+6zafb75rphoEn6BaIWRQavWQQGDZRyIWBOTVq8MYYTh3f4w
+         X62w==
+X-Gm-Message-State: AJIora9Fq/zcxFM3SnFMjEcrfWoPOUgV/L0y70MdYaznZiluNXIUefJr
+        pkfRSnjFJb85bmdRDEjpdbMBwO1RHfW6hibv3ZE=
+X-Google-Smtp-Source: AGRyM1vYIgzx7bSLB6vikPvGAZzZCmXlE2MJFxwiEslSYmsILgqXJXQz8yxoRvuw5NCLeY1sBQUeQvtIop+ylaFmLyo=
 X-Received: by 2002:ab0:6d9a:0:b0:36e:5a86:92fb with SMTP id
- m26-20020ab06d9a000000b0036e5a8692fbmr1724054uah.38.1655201053486; Tue, 14
- Jun 2022 03:04:13 -0700 (PDT)
+ m26-20020ab06d9a000000b0036e5a8692fbmr2095283uah.38.1655212352568; Tue, 14
+ Jun 2022 06:12:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220614071059.23696-1-liqiong@nfschina.com>
-In-Reply-To: <20220614071059.23696-1-liqiong@nfschina.com>
+References: <bfc20d2c-9198-2cb3-506a-4bae09c6cd68@cybozu.co.jp>
+In-Reply-To: <bfc20d2c-9198-2cb3-506a-4bae09c6cd68@cybozu.co.jp>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 14 Jun 2022 12:03:56 +0200
-Message-ID: <CAOi1vP-xXk7SSkaQJziv-9j=WfpXYdVieaBmfsJXTnPTYDTOjQ@mail.gmail.com>
-Subject: Re: [PATCH] libceph: check pointer before assigned to "c->rules[]"
-To:     Li Qiong <liqiong@nfschina.com>
-Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, yuzhe@nfschina.com,
-        renyu@nfschina.com
+Date:   Tue, 14 Jun 2022 15:12:15 +0200
+Message-ID: <CAOi1vP9rrmWr7oyy1U_M+x6NSFeQWBZacBEooFgdKXYETVLJ6Q@mail.gmail.com>
+Subject: Re: [PATCH v4] libceph: print fsid and client gid with osd id
+To:     Daichi Mukai <daichi-mukai@cybozu.co.jp>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
+        Satoru Takeuchi <satoru.takeuchi@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
@@ -71,37 +65,185 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jun 14, 2022 at 9:12 AM Li Qiong <liqiong@nfschina.com> wrote:
+On Mon, Jun 6, 2022 at 8:00 AM Daichi Mukai <daichi-mukai@cybozu.co.jp> wrote:
 >
-> It should be better to check pointer firstly, then assign it
-> to c->rules[]. Refine code a little bit.
+> Print fsid and client gid in libceph log messages to distinct from which
+> each message come.
 >
-> Signed-off-by: Li Qiong <liqiong@nfschina.com>
+> Signed-off-by: Satoru Takeuchi <satoru.takeuchi@gmail.com>
+> Signed-off-by: Daichi Mukai <daichi-mukai@cybozu.co.jp>
 > ---
->  net/ceph/osdmap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   include/linux/ceph/osdmap.h |  2 +-
+>   net/ceph/osd_client.c       |  3 ++-
+>   net/ceph/osdmap.c           | 43 ++++++++++++++++++++++++++-----------
+>   3 files changed, 34 insertions(+), 14 deletions(-)
 >
+> * Changes since v3
+>
+> - Rebased to latest mainline
+>
+> * Changes since v2
+>
+> - Set scope of this patch to log message for osd
+> - Improved format of message
+>
+> * Changes since v1
+>
+> - Added client gid to log message
+>
+> diff --git a/include/linux/ceph/osdmap.h b/include/linux/ceph/osdmap.h
+> index 5553019c3f07..a9216c64350c 100644
+> --- a/include/linux/ceph/osdmap.h
+> +++ b/include/linux/ceph/osdmap.h
+> @@ -253,7 +253,7 @@ static inline int ceph_decode_pgid(void **p, void *end, struct ceph_pg *pgid)
+>   struct ceph_osdmap *ceph_osdmap_alloc(void);
+>   struct ceph_osdmap *ceph_osdmap_decode(void **p, void *end, bool msgr2);
+>   struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end, bool msgr2,
+> -                                            struct ceph_osdmap *map);
+> +                                            struct ceph_osdmap *map, u64 gid);
+>   extern void ceph_osdmap_destroy(struct ceph_osdmap *map);
+>
+>   struct ceph_osds {
+> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> index 9d82bb42e958..e9bd6c27c5ad 100644
+> --- a/net/ceph/osd_client.c
+> +++ b/net/ceph/osd_client.c
+> @@ -3945,7 +3945,8 @@ static int handle_one_map(struct ceph_osd_client *osdc,
+>         if (incremental)
+>                 newmap = osdmap_apply_incremental(&p, end,
+>                                                   ceph_msgr2(osdc->client),
+> -                                                 osdc->osdmap);
+> +                                                 osdc->osdmap,
+> +                                                 ceph_client_gid(osdc->client));
+>         else
+>                 newmap = ceph_osdmap_decode(&p, end, ceph_msgr2(osdc->client));
+>         if (IS_ERR(newmap))
 > diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-> index 2823bb3cff55..6ec5007f96dc 100644
+> index 2823bb3cff55..cd65677baff3 100644
 > --- a/net/ceph/osdmap.c
 > +++ b/net/ceph/osdmap.c
-> @@ -571,9 +571,9 @@ static struct crush_map *crush_decode(void *pbyval, void *end)
->                         goto bad;
->  #endif
->                 r = kmalloc(struct_size(r, steps, yes), GFP_NOFS);
-> -               c->rules[i] = r;
->                 if (r == NULL)
->                         goto badmem;
-> +               c->rules[i] = r;
->                 dout(" rule %d is at %p\n", i, r);
->                 r->len = yes;
->                 ceph_decode_copy_safe(p, end, &r->mask, 4, bad); /* 4 u8's */
-> --
-> 2.11.0
+> @@ -1549,8 +1549,23 @@ static int decode_primary_affinity(void **p, void *end,
+>         return -EINVAL;
+>   }
 >
+> +static __printf(3, 4)
+> +void print_osd_info(struct ceph_fsid *fsid, u64 gid, const char *fmt, ...)
+> +{
+> +       struct va_format vaf;
+> +       va_list args;
+> +
+> +       va_start(args, fmt);
+> +       vaf.fmt = fmt;
+> +       vaf.va = &args;
+> +
+> +       printk(KERN_INFO "%s (%pU %lld): %pV", KBUILD_MODNAME, fsid, gid, &vaf);
+> +
+> +       va_end(args);
+> +}
+> +
+>   static int decode_new_primary_affinity(void **p, void *end,
+> -                                      struct ceph_osdmap *map)
+> +                                      struct ceph_osdmap *map, u64 gid)
+>   {
+>         u32 n;
+>
+> @@ -1566,7 +1581,8 @@ static int decode_new_primary_affinity(void **p, void *end,
+>                 if (ret)
+>                         return ret;
+>
+> -               pr_info("osd%d primary-affinity 0x%x\n", osd, aff);
+> +               print_osd_info(&map->fsid, gid, "osd%d primary-affinity 0x%x\n",
+> +                              osd, aff);
+>         }
+>
+>         return 0;
+> @@ -1825,7 +1841,8 @@ struct ceph_osdmap *ceph_osdmap_decode(void **p, void *end, bool msgr2)
+>    *     new_state: { osd=6, xorstate=EXISTS } # clear osd_state
+>    */
+>   static int decode_new_up_state_weight(void **p, void *end, u8 struct_v,
+> -                                     bool msgr2, struct ceph_osdmap *map)
+> +                                     bool msgr2, struct ceph_osdmap *map,
+> +                                     u64 gid)
+>   {
+>         void *new_up_client;
+>         void *new_state;
+> @@ -1864,9 +1881,10 @@ static int decode_new_up_state_weight(void **p, void *end, u8 struct_v,
+>                 osd = ceph_decode_32(p);
+>                 w = ceph_decode_32(p);
+>                 BUG_ON(osd >= map->max_osd);
+> -               pr_info("osd%d weight 0x%x %s\n", osd, w,
+> -                    w == CEPH_OSD_IN ? "(in)" :
+> -                    (w == CEPH_OSD_OUT ? "(out)" : ""));
+> +               print_osd_info(&map->fsid, gid, "osd%d weight 0x%x %s\n",
+> +                              osd, w,
+> +                              w == CEPH_OSD_IN ? "(in)" :
+> +                              (w == CEPH_OSD_OUT ? "(out)" : ""));
+>                 map->osd_weight[osd] = w;
+>
+>                 /*
+> @@ -1898,10 +1916,11 @@ static int decode_new_up_state_weight(void **p, void *end, u8 struct_v,
+>                 BUG_ON(osd >= map->max_osd);
+>                 if ((map->osd_state[osd] & CEPH_OSD_UP) &&
+>                     (xorstate & CEPH_OSD_UP))
+> -                       pr_info("osd%d down\n", osd);
+> +                       print_osd_info(&map->fsid, gid, "osd%d down\n", osd);
+>                 if ((map->osd_state[osd] & CEPH_OSD_EXISTS) &&
+>                     (xorstate & CEPH_OSD_EXISTS)) {
+> -                       pr_info("osd%d does not exist\n", osd);
+> +                       print_osd_info(&map->fsid, gid, "osd%d does not exist\n",
+> +                                      osd);
+>                         ret = set_primary_affinity(map, osd,
+>                                                    CEPH_OSD_DEFAULT_PRIMARY_AFFINITY);
+>                         if (ret)
+> @@ -1931,7 +1950,7 @@ static int decode_new_up_state_weight(void **p, void *end, u8 struct_v,
+>
+>                 dout("%s osd%d addr %s\n", __func__, osd, ceph_pr_addr(&addr));
+>
+> -               pr_info("osd%d up\n", osd);
+> +               print_osd_info(&map->fsid, gid, "osd%d up\n", osd);
+>                 map->osd_state[osd] |= CEPH_OSD_EXISTS | CEPH_OSD_UP;
+>                 map->osd_addr[osd] = addr;
+>         }
+> @@ -1947,7 +1966,7 @@ static int decode_new_up_state_weight(void **p, void *end, u8 struct_v,
+>    * decode and apply an incremental map update.
+>    */
+>   struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end, bool msgr2,
+> -                                            struct ceph_osdmap *map)
+> +                                            struct ceph_osdmap *map, u64 gid)
+>   {
+>         struct ceph_fsid fsid;
+>         u32 epoch = 0;
+> @@ -2033,7 +2052,7 @@ struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end, bool msgr2,
+>         }
+>
+>         /* new_up_client, new_state, new_weight */
+> -       err = decode_new_up_state_weight(p, end, struct_v, msgr2, map);
+> +       err = decode_new_up_state_weight(p, end, struct_v, msgr2, map, gid);
+>         if (err)
+>                 goto bad;
+>
+> @@ -2051,7 +2070,7 @@ struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end, bool msgr2,
+>
+>         /* new_primary_affinity */
+>         if (struct_v >= 2) {
+> -               err = decode_new_primary_affinity(p, end, map);
+> +               err = decode_new_primary_affinity(p, end, map, gid);
+>                 if (err)
+>                         goto bad;
+>         }
+> --
+> 2.25.1
 
-This doesn't change anything as c->rules pointer array is zeroed out.
-Anyway, applied.
+Hi Daichi,
+
+I played with this a bit and decided that printing gid is not needed
+after all, given that only osdmap messages are changed.  Instead,
+I switched to printing epoch which can be very useful when debugging
+stuck OSD requests.  Here is the patch I ended up with:
+
+    https://github.com/ceph/ceph-client/commit/b5f9965fad5a4f3a8d17aa234167e8a85e1b9105
+
+Could you please take a look and let me know if you are OK with it?
 
 Thanks,
 
