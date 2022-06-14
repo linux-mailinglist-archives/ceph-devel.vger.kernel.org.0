@@ -2,35 +2,35 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 57B4054A486
-	for <lists+ceph-devel@lfdr.de>; Tue, 14 Jun 2022 04:09:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12D0E54A507
+	for <lists+ceph-devel@lfdr.de>; Tue, 14 Jun 2022 04:13:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230086AbiFNCIJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 13 Jun 2022 22:08:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42054 "EHLO
+        id S1352937AbiFNCLd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 13 Jun 2022 22:11:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351993AbiFNCGt (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 13 Jun 2022 22:06:49 -0400
+        with ESMTP id S1352799AbiFNCKa (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 13 Jun 2022 22:10:30 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A96C434663;
-        Mon, 13 Jun 2022 19:05:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EB7037034;
+        Mon, 13 Jun 2022 19:06:57 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4DE8CB8169E;
-        Tue, 14 Jun 2022 02:05:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEB35C36AFE;
-        Tue, 14 Jun 2022 02:05:47 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A627BB816B7;
+        Tue, 14 Jun 2022 02:06:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A2DBC3411B;
+        Tue, 14 Jun 2022 02:06:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655172349;
-        bh=g6hV2nEfu4q7fWk0v9EQw/74GXzsuzsOm5CE2k8SdLk=;
+        s=k20201202; t=1655172415;
+        bh=MVkI2BPptjtLvNDoy/pZ7wKxDFNl31lTvExydkfYsEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WV1B3BWjnbbp+ZS6bZVCISSJik1qJVQtada5i2i/slHyhSKgftk3wwTyqBCa48Oa6
-         D1VI3htojaAIT1K9wDDSpXJh4KJEtBitMcGxRnza5BzrE8ybVg0Dc0BbKLAF42KQfC
-         qlNmQdpzWwjfDkgjCz2XifXHM9xAzzFwrSOMpy4wDHbPUO86g16mGWxcUWND2u8H7u
-         uGWYCtllPGp/VCeW4FycWdt7254FVzNOuT40RPPkt5o+qCV98Q/rrGkvCB0dInlpR3
-         varYv69PBQJleT3V6Du49UleAvFeFuktu/pcP/LWt2oEcqznJ4SHF6nhCHI5mo6Djq
-         drSk/tqaThQNQ==
+        b=feKnvOAcBvepRybkUis19o3RATh9bVFy+fGbCFdXn6tSqPougdcPg/hO5RNR7n+Vq
+         Sb9kPfe0Cw8ApIIdz3xWfnBdZI+wMD3BXOIa9a6Sv9uRJo1GxzEHV9THkmQViTfjqr
+         Qvsf0C4JRptDsWQyxFN7YT686wwY6Y1jyGQJWQmEG5qkcQN/uo3Hh68hjn1ifWP91i
+         rAJOKBAbRc2anm0ctmr4lMVcYdeRLAUBhsAzvs6TBlxge/2sQjHFTqYGl123r0yEIP
+         gFBpqPRYBr3F1uZeE16bijYSmkisFM8/enMxN2oBI6UYJXCUXj5vVMxCtkzAmh7BTy
+         wPUb3ksGOmbmQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -39,12 +39,12 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, zyan@redhat.com,
         sage@redhat.com, idryomov@gmail.com, linux-afs@lists.infradead.org,
         ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.18 39/47] netfs: gcc-12: temporarily disable '-Wattribute-warning' for now
-Date:   Mon, 13 Jun 2022 22:04:32 -0400
-Message-Id: <20220614020441.1098348-39-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.17 35/43] netfs: gcc-12: temporarily disable '-Wattribute-warning' for now
+Date:   Mon, 13 Jun 2022 22:05:54 -0400
+Message-Id: <20220614020602.1098943-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220614020441.1098348-1-sashal@kernel.org>
-References: <20220614020441.1098348-1-sashal@kernel.org>
+In-Reply-To: <20220614020602.1098943-1-sashal@kernel.org>
+References: <20220614020602.1098943-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
@@ -132,7 +132,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 6 insertions(+)
 
 diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 30b066299d39..65b439cd53d2 100644
+index 0d6c0885b2d7..6b44940e7bef 100644
 --- a/fs/afs/inode.c
 +++ b/fs/afs/inode.c
 @@ -25,6 +25,9 @@
@@ -146,7 +146,7 @@ index 30b066299d39..65b439cd53d2 100644
  	.get_link	= page_get_link,
  };
 diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 63113e2a4890..83739dae5268 100644
+index c092dce0485c..51584854b176 100644
 --- a/fs/ceph/inode.c
 +++ b/fs/ceph/inode.c
 @@ -20,6 +20,9 @@
