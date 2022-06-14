@@ -2,80 +2,68 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C45554AD4A
-	for <lists+ceph-devel@lfdr.de>; Tue, 14 Jun 2022 11:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 871DB54ADE1
+	for <lists+ceph-devel@lfdr.de>; Tue, 14 Jun 2022 12:04:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356114AbiFNJYj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 14 Jun 2022 05:24:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34004 "EHLO
+        id S233647AbiFNKEQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 14 Jun 2022 06:04:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356119AbiFNJYX (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 14 Jun 2022 05:24:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 347FA48317
-        for <ceph-devel@vger.kernel.org>; Tue, 14 Jun 2022 02:23:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1655198584;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=wL500kuZofPLhlgg9MWpmsN25gKPcsSWCkD4qrvFYPQ=;
-        b=PtsGmZkAgW438UTZRKCzZYKxCY8hNHtNhwV9eiZHaxQPtLS0/CNHGfKYBUilhKEz0h8cvN
-        vu2/MDbQlkzbplVcDczG1smvHSYFyMbgQIuQXnk2cvAv1QPJKyNSDOub0t3JW48jh2SosM
-        gKygsqx0mQnHlCY4LFNBJszXdKtPFdA=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-132-9JwemaHFNziIgm37k5kTMg-1; Tue, 14 Jun 2022 05:23:03 -0400
-X-MC-Unique: 9JwemaHFNziIgm37k5kTMg-1
-Received: by mail-pj1-f70.google.com with SMTP id lw3-20020a17090b180300b001e31fad7d5aso7878370pjb.6
-        for <ceph-devel@vger.kernel.org>; Tue, 14 Jun 2022 02:23:03 -0700 (PDT)
+        with ESMTP id S229583AbiFNKEP (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 14 Jun 2022 06:04:15 -0400
+Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6183124F1D;
+        Tue, 14 Jun 2022 03:04:14 -0700 (PDT)
+Received: by mail-ua1-x934.google.com with SMTP id a28so1360581uaj.10;
+        Tue, 14 Jun 2022 03:04:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NUcA5veSvIKp9efGYaSuiwEPBAGLkgGB6k/vshTldpY=;
+        b=Ow4jD17EtDtXtVVIuidII2cS96qWGVvJ+yE+rHXtaAD8sOPcq2wlB11vzXf5lI6kSQ
+         fx6FeDAbXEbPlIwcG50VJmjIRsWklRlB1ROWabcb754n32jfxZisgZcFEm3WRxCnl7tZ
+         xsHVcf78F9f36XZlWQoVxeUGmFDR3Sls2HUj5GiTRdhwixQus+rSz+p7Muf6BPpHVe9q
+         WSnMCaVtYTIFI0Yq2nIdlJKswIr3tFHWh/mMKDXKV0nqQonNa3gaV+e7aO5RAG7sXSj/
+         l1qaTeIOrkBcZ6VCp9GrxGika7uuXZ8NoPIeF8beogXYYZZVs2/5+C0B0rm8h/ycrpL6
+         KieA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=wL500kuZofPLhlgg9MWpmsN25gKPcsSWCkD4qrvFYPQ=;
-        b=uF1II1dYNLWmi8NuMCoorrOjXVD2xMrxVdKpxGzTizkHyaleUzrH9pv4r886gIWbXm
-         i7lXiiMSo9446yPomaDbcxvdopZB/f9khxq/R7zilMIXDsBSbaRGqs8w72Am+LgLY1EV
-         pRnS4IRcgBwxALPjanX2O5zzBMYtznnpvF4+fSP45gs3TCriS0GPTOjVqvvRb+6pyMrm
-         yiNAYq8O8V1GilMniQqSPAx1Vl6XVB5KVr0sr5Tel+PXXD0UnDj+IEtivgDQW850EoUs
-         B1bVj8ODQlHZIFR2bhoAcCwFyvau2O4YJcxv9YurPmenxigtlgcR2i1wmIf+qfk0LcGI
-         2lcw==
-X-Gm-Message-State: AOAM531ZTH8vqQhSLZBkOaKooHttgH9UEFA/AfNIFTc7/XfNHdNGg6K4
-        3VkNlZ5DLHxjZlUTvusr56SPkZrWYjbG4BeE9uqv19jE6msSY2Ci3h2ud3I82Tvju4fxArEy86J
-        W+puye5qjy1pOeSJmLd2y1YNn84+D6jKgM9mREB0O+CMFGIXZQjEkmL003dcoCPIJtKKWdcs=
-X-Received: by 2002:a63:1d46:0:b0:3fd:df71:dac0 with SMTP id d6-20020a631d46000000b003fddf71dac0mr3735065pgm.258.1655198581947;
-        Tue, 14 Jun 2022 02:23:01 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzcGgH+akAFo0vy21bwAxO7etCG+oDCVa+C3+GEbh6r+OW4jesY61jKu90/RhECEgkZdqTjPQ==
-X-Received: by 2002:a63:1d46:0:b0:3fd:df71:dac0 with SMTP id d6-20020a631d46000000b003fddf71dac0mr3735043pgm.258.1655198581584;
-        Tue, 14 Jun 2022 02:23:01 -0700 (PDT)
-Received: from [10.72.12.99] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id r7-20020aa79627000000b0051bce5dc754sm6990536pfg.194.2022.06.14.02.22.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jun 2022 02:23:00 -0700 (PDT)
-Subject: Re: [PATCH v3 0/2] Two xattrs-related fixes for ceph
-To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
-        fstests@vger.kernel.org
-Cc:     David Disseldorp <ddiss@suse.de>, Zorro Lang <zlang@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-References: <20220613113142.4338-1-lhenriques@suse.de>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <e41f28f7-fbd0-e861-603f-0813b91fe3ed@redhat.com>
-Date:   Tue, 14 Jun 2022 17:22:54 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NUcA5veSvIKp9efGYaSuiwEPBAGLkgGB6k/vshTldpY=;
+        b=DuA9UqwXsMHWzC8rqm8DWL0kqeLnA13Jsq2Hi6gJXY3nm6Ythww/il7eH237p7VrCm
+         Bogt8vUoYqNaECaowSRdEUPzudEBahkvDbW3EhQZRX5pjfDs5HPRwWq3LGsrIoE1DPGs
+         y73+Rlbl288IHO7ABFZU+uSwSgnkZXUlpS+xWB640Tnck8Ula76JlzdtMSrCtsVLZnE0
+         a69lw8eL2p5vFaGZvSiYUGDKnIW7LJEK/cyo0gcYQJ1sfVQ9TaZtq8IUvSWXLEz61O0R
+         sNp3+W+KZ7bkE2v5XnMZ5EEfCdogFiBg5ezoZq3OuyftHbRYptkn2zJ3XiO5SmAGr2fy
+         ZJeg==
+X-Gm-Message-State: AJIora+NkOd019gDmXAGUr6ABzY3GYeOOeXo9+SgJ+vainj/GtKSq/U+
+        wgtjZ1Z/4We0odBhlHfgQXOCJ1UX2kLqgZrqLQooHOc1bXs=
+X-Google-Smtp-Source: AGRyM1v2Yi2H90p8cw7CGAp0Um+hE8UMBQoM8l+Pz+i3FA88fIHdwGzIpPTvtAckFXEXG2EZHdDkw42ADqdWqd6PkNc=
+X-Received: by 2002:ab0:6d9a:0:b0:36e:5a86:92fb with SMTP id
+ m26-20020ab06d9a000000b0036e5a8692fbmr1724054uah.38.1655201053486; Tue, 14
+ Jun 2022 03:04:13 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20220613113142.4338-1-lhenriques@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+References: <20220614071059.23696-1-liqiong@nfschina.com>
+In-Reply-To: <20220614071059.23696-1-liqiong@nfschina.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 14 Jun 2022 12:03:56 +0200
+Message-ID: <CAOi1vP-xXk7SSkaQJziv-9j=WfpXYdVieaBmfsJXTnPTYDTOjQ@mail.gmail.com>
+Subject: Re: [PATCH] libceph: check pointer before assigned to "c->rules[]"
+To:     Li Qiong <liqiong@nfschina.com>
+Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, yuzhe@nfschina.com,
+        renyu@nfschina.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,48 +71,38 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Tue, Jun 14, 2022 at 9:12 AM Li Qiong <liqiong@nfschina.com> wrote:
+>
+> It should be better to check pointer firstly, then assign it
+> to c->rules[]. Refine code a little bit.
+>
+> Signed-off-by: Li Qiong <liqiong@nfschina.com>
+> ---
+>  net/ceph/osdmap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
+> index 2823bb3cff55..6ec5007f96dc 100644
+> --- a/net/ceph/osdmap.c
+> +++ b/net/ceph/osdmap.c
+> @@ -571,9 +571,9 @@ static struct crush_map *crush_decode(void *pbyval, void *end)
+>                         goto bad;
+>  #endif
+>                 r = kmalloc(struct_size(r, steps, yes), GFP_NOFS);
+> -               c->rules[i] = r;
+>                 if (r == NULL)
+>                         goto badmem;
+> +               c->rules[i] = r;
+>                 dout(" rule %d is at %p\n", i, r);
+>                 r->len = yes;
+>                 ceph_decode_copy_safe(p, end, &r->mask, 4, bad); /* 4 u8's */
+> --
+> 2.11.0
+>
 
-On 6/13/22 7:31 PM, Luís Henriques wrote:
-> Hi!
->
-> A bug fix in ceph has made some changes in the way xattr limits are
-> enforced on the client side.  This requires some fixes on tests
-> generic/020 and generic/486.
->
-> * Changes since v2:
->
->    - patch 0001:
->      Add logic to compute the *real* maximum.  Kudos to David Disseldorp
->      for providing the right incantation to do the maths.  Also split
->      _attr_get_max() in two, so that they can be invoked from different
->      places in the test script.
->
->    - patch 002:
->      attr_replace_test now has an extra param as suggested by Dave Chinner,
->      and added fs-specific logic to the script.  No need to have an exact
->      maximum in this test, a big-enough value suffices.
->
-> * Changes since v1:
->
->    - patch 0001:
->      Set the max size for xattrs values to a 65000, so that it is close to
->      the maximum, but still able to accommodate any pre-existing xattr
->
->    - patch 0002:
->      Same thing as patch 0001, but in a more precise way: actually take
->      into account the exact sizes for name+value of a pre-existing xattr.
->
-> Luís Henriques (2):
->    generic/020: adjust max_attrval_size for ceph
->    generic/486: adjust the max xattr size
->
->   src/attr_replace_test.c | 30 ++++++++++++++++++++++++++----
->   tests/generic/020       | 33 +++++++++++++++++++++++++--------
->   tests/generic/486       | 11 ++++++++++-
->   3 files changed, 61 insertions(+), 13 deletions(-)
->
-This series looks good to me.
+This doesn't change anything as c->rules pointer array is zeroed out.
+Anyway, applied.
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+Thanks,
 
-
+                Ilya
