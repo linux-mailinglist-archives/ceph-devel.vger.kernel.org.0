@@ -2,141 +2,163 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B0FE754A361
-	for <lists+ceph-devel@lfdr.de>; Tue, 14 Jun 2022 03:03:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57B4054A486
+	for <lists+ceph-devel@lfdr.de>; Tue, 14 Jun 2022 04:09:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235158AbiFNBCN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 13 Jun 2022 21:02:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43382 "EHLO
+        id S230086AbiFNCIJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 13 Jun 2022 22:08:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229892AbiFNBCM (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 13 Jun 2022 21:02:12 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 82FEC2DA9E
-        for <ceph-devel@vger.kernel.org>; Mon, 13 Jun 2022 18:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1655168530;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Rj2mwv1zdgiRu1HK2i79zkHpfhDnYGDFOQMQkr4iXVM=;
-        b=SAt1EoLcznxtxRoodHLbuIOTHlfFGcQM822Rgn6A4GOY/lg8s8YlR3rK85w+KUa5R3o+Dd
-        iU179ljZ7VstWi9TCCKGIxQOGKLJHCTRi7KlY9eIHsE2Oey47W1Mx0vJxy3MZWU+sNiFNT
-        SrR8a2qm4O4hbkwQR+sH5jfV3wBpky8=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-481-dHJ0yg5lOX6YNxyPGDOV4g-1; Mon, 13 Jun 2022 21:02:09 -0400
-X-MC-Unique: dHJ0yg5lOX6YNxyPGDOV4g-1
-Received: by mail-pj1-f69.google.com with SMTP id hf12-20020a17090aff8c00b001e2c0a2584cso165410pjb.1
-        for <ceph-devel@vger.kernel.org>; Mon, 13 Jun 2022 18:02:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Rj2mwv1zdgiRu1HK2i79zkHpfhDnYGDFOQMQkr4iXVM=;
-        b=eduzavdKpOHR0vPRZs5KyQ6BonMg5bOidP/JZZys8vRibYeLIKYW3zXnCRwjH14fnW
-         0Moi49p6GG5xayP+cRYqHU0F+FMcHb8iTbyTL8FKPbTZyGiPxPcZfS9O4o+LoRcTxM5w
-         I8Auy2CKRV9UNjuoAR7i84r/pbxWACXY6VfEtOQvA5RiNuqc9Ej2uoYpY+tAVMHnP3pt
-         Uygx/kVekZm/7UyLg4ReW9NzuTY0MTGYuGWDZ/TCC7SYzoxC74jmNLVuku01AJXPh4d4
-         AHe+KYOT5QLOeP3RHwnC/SnUi5veancZEOvZHqCJIScgnlTzMaa69g7+4Y7NhUcS21AI
-         QkMQ==
-X-Gm-Message-State: AJIora/2ZSuZoa73jpafTsrmAq5lKo2WTwdeedFrxgzv/u3ztDJyW6XQ
-        /eWywtuedSeV3S7mSZyKkA5c8aMWJ0WPZU9xvyPMNHPqTlvpIpAe5JuFbpkH0yWGbF+ieEQLc2O
-        6fP4wrTupEpPyhQ0JJmN5L5QcAzhSdZXOWa/aRPstnYCN36qrqa0t9KlVF08zwURyRBWavJk=
-X-Received: by 2002:a17:902:848d:b0:168:ab37:327c with SMTP id c13-20020a170902848d00b00168ab37327cmr2048747plo.112.1655168527436;
-        Mon, 13 Jun 2022 18:02:07 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1uHFrs1S7e67sCUytp7r2RXRLzCTY8JFNfUAujy/rQIKGrAf827ao+WTDtAobbTYsIbviK3Uw==
-X-Received: by 2002:a17:902:848d:b0:168:ab37:327c with SMTP id c13-20020a170902848d00b00168ab37327cmr2048712plo.112.1655168527024;
-        Mon, 13 Jun 2022 18:02:07 -0700 (PDT)
-Received: from [10.72.12.41] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id y9-20020a170902864900b00168c1668a49sm5752693plt.85.2022.06.13.18.02.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jun 2022 18:02:06 -0700 (PDT)
-Subject: Re: [PATCH 2/2] ceph: update the auth cap when the async create req
- is forwarded
-To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
-Cc:     jlayton@kernel.org, idryomov@gmail.com, vshankar@redhat.com,
+        with ESMTP id S1351993AbiFNCGt (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 13 Jun 2022 22:06:49 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A96C434663;
+        Mon, 13 Jun 2022 19:05:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4DE8CB8169E;
+        Tue, 14 Jun 2022 02:05:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEB35C36AFE;
+        Tue, 14 Jun 2022 02:05:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655172349;
+        bh=g6hV2nEfu4q7fWk0v9EQw/74GXzsuzsOm5CE2k8SdLk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=WV1B3BWjnbbp+ZS6bZVCISSJik1qJVQtada5i2i/slHyhSKgftk3wwTyqBCa48Oa6
+         D1VI3htojaAIT1K9wDDSpXJh4KJEtBitMcGxRnza5BzrE8ybVg0Dc0BbKLAF42KQfC
+         qlNmQdpzWwjfDkgjCz2XifXHM9xAzzFwrSOMpy4wDHbPUO86g16mGWxcUWND2u8H7u
+         uGWYCtllPGp/VCeW4FycWdt7254FVzNOuT40RPPkt5o+qCV98Q/rrGkvCB0dInlpR3
+         varYv69PBQJleT3V6Du49UleAvFeFuktu/pcP/LWt2oEcqznJ4SHF6nhCHI5mo6Djq
+         drSk/tqaThQNQ==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        David Howells <dhowells@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, zyan@redhat.com,
+        sage@redhat.com, idryomov@gmail.com, linux-afs@lists.infradead.org,
         ceph-devel@vger.kernel.org
-References: <20220610043140.642501-1-xiubli@redhat.com>
- <20220610043140.642501-3-xiubli@redhat.com> <87r13seed5.fsf@brahms.olymp>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <ca7860a5-0176-15ce-1170-08ec18823921@redhat.com>
-Date:   Tue, 14 Jun 2022 09:02:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+Subject: [PATCH AUTOSEL 5.18 39/47] netfs: gcc-12: temporarily disable '-Wattribute-warning' for now
+Date:   Mon, 13 Jun 2022 22:04:32 -0400
+Message-Id: <20220614020441.1098348-39-sashal@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220614020441.1098348-1-sashal@kernel.org>
+References: <20220614020441.1098348-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87r13seed5.fsf@brahms.olymp>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-On 6/14/22 12:07 AM, Luís Henriques wrote:
-> Xiubo Li <xiubli@redhat.com> writes:
->
->> For async create we will always try to choose the auth MDS of frag
->> the dentry belonged to of the parent directory to send the request
->> and ususally this works fine, but if the MDS migrated the directory
->> to another MDS before it could be handled the request will be
->> forwarded. And then the auth cap will be changed.
->>
->> We need to update the auth cap in this case before the request is
->> forwarded.
->>
->> URL: https://tracker.ceph.com/issues/55857
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>   fs/ceph/file.c       | 12 +++++++++
->>   fs/ceph/mds_client.c | 58 ++++++++++++++++++++++++++++++++++++++++++++
->>   fs/ceph/super.h      |  2 ++
->>   3 files changed, 72 insertions(+)
->>
->> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
->> index 0e82a1c383ca..54acf76c5e9b 100644
->> --- a/fs/ceph/file.c
->> +++ b/fs/ceph/file.c
->> @@ -613,6 +613,7 @@ static int ceph_finish_async_create(struct inode *dir, struct inode *inode,
->>   	struct ceph_mds_reply_inode in = { };
->>   	struct ceph_mds_reply_info_in iinfo = { .in = &in };
->>   	struct ceph_inode_info *ci = ceph_inode(dir);
->> +	struct ceph_dentry_info *di = ceph_dentry(dentry);
->>   	struct timespec64 now;
->>   	struct ceph_string *pool_ns;
->>   	struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(dir->i_sb);
->> @@ -709,6 +710,12 @@ static int ceph_finish_async_create(struct inode *dir, struct inode *inode,
->>   		file->f_mode |= FMODE_CREATED;
->>   		ret = finish_open(file, dentry, ceph_open);
->>   	}
->> +
->> +	spin_lock(&dentry->d_lock);
->> +	di->flags &= ~CEPH_DENTRY_ASYNC_CREATE;
->> +	wake_up_bit(&di->flags, CEPH_DENTRY_ASYNC_CREATE_BIT);
->> +	spin_unlock(&dentry->d_lock);
-> Question: shouldn't we initialise 'di' *after* grabbing ->d_lock?  Ceph
-> code doesn't seem to be consistent with this regard, but my understanding
-> is that doing it this way is racy.  And if so, some other places may need
-> fixing.
+[ Upstream commit 507160f46c55913955d272ebf559d63809a8e560 ]
 
-BTW, do you mean some where like:
+This is a pure band-aid so that I can continue merging stuff from people
+while some of the gcc-12 fallout gets sorted out.
 
-'if (!test_bit(CEPH_DENTRY_ASYNC_UNLINK_BIT, &di->flags))' and 'di->hnode' ?
+In particular, gcc-12 is very unhappy about the kinds of pointer
+arithmetic tricks that netfs does, and that makes the fortify checks
+trigger in afs and ceph:
 
-If so, it's okay and no issue here.
+  In function ‘fortify_memset_chk’,
+      inlined from ‘netfs_i_context_init’ at include/linux/netfs.h:327:2,
+      inlined from ‘afs_set_netfs_context’ at fs/afs/inode.c:61:2,
+      inlined from ‘afs_root_iget’ at fs/afs/inode.c:543:2:
+  include/linux/fortify-string.h:258:25: warning: call to ‘__write_overflow_field’ declared with attribute warning: detected write beyond size of field (1st parameter); maybe use struct_group()? [-Wattribute-warning]
+    258 |                         __write_overflow_field(p_size_field, size);
+        |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
--- Xiubo
+and the reason is that netfs_i_context_init() is passed a 'struct inode'
+pointer, and then it does
 
+        struct netfs_i_context *ctx = netfs_i_context(inode);
 
-> Cheers,
+        memset(ctx, 0, sizeof(*ctx));
+
+where that netfs_i_context() function just does pointer arithmetic on
+the inode pointer, knowing that the netfs_i_context is laid out
+immediately after it in memory.
+
+This is all truly disgusting, since the whole "netfs_i_context is laid
+out immediately after it in memory" is not actually remotely true in
+general, but is just made to be that way for afs and ceph.
+
+See for example fs/cifs/cifsglob.h:
+
+  struct cifsInodeInfo {
+        struct {
+                /* These must be contiguous */
+                struct inode    vfs_inode;      /* the VFS's inode record */
+                struct netfs_i_context netfs_ctx; /* Netfslib context */
+        };
+	[...]
+
+and realize that this is all entirely wrong, and the pointer arithmetic
+that netfs_i_context() is doing is also very very wrong and wouldn't
+give the right answer if netfs_ctx had different alignment rules from a
+'struct inode', for example).
+
+Anyway, that's just a long-winded way to say "the gcc-12 warning is
+actually quite reasonable, and our code happens to work but is pretty
+disgusting".
+
+This is getting fixed properly, but for now I made the mistake of
+thinking "the week right after the merge window tends to be calm for me
+as people take a breather" and I did a sustem upgrade.  And I got gcc-12
+as a result, so to continue merging fixes from people and not have the
+end result drown in warnings, I am fixing all these gcc-12 issues I hit.
+
+Including with these kinds of temporary fixes.
+
+Cc: Kees Cook <keescook@chromium.org>
+Cc: David Howells <dhowells@redhat.com>
+Link: https://lore.kernel.org/all/AEEBCF5D-8402-441D-940B-105AA718C71F@chromium.org/
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/afs/inode.c  | 3 +++
+ fs/ceph/inode.c | 3 +++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 30b066299d39..65b439cd53d2 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -25,6 +25,9 @@
+ #include "internal.h"
+ #include "afs_fs.h"
+ 
++// Temporary: netfs does disgusting things with inode pointers
++#pragma GCC diagnostic ignored "-Wattribute-warning"
++
+ static const struct inode_operations afs_symlink_inode_operations = {
+ 	.get_link	= page_get_link,
+ };
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 63113e2a4890..83739dae5268 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -20,6 +20,9 @@
+ #include "cache.h"
+ #include <linux/ceph/decode.h>
+ 
++// Temporary: netfs does disgusting things with inode pointers
++#pragma GCC diagnostic ignored "-Wattribute-warning"
++
+ /*
+  * Ceph inode operations
+  *
+-- 
+2.35.1
 
