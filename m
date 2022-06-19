@@ -2,79 +2,128 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 964E054DE91
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jun 2022 12:02:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A76C550828
+	for <lists+ceph-devel@lfdr.de>; Sun, 19 Jun 2022 05:49:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359767AbiFPKCU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 16 Jun 2022 06:02:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51488 "EHLO
+        id S233863AbiFSDts (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 18 Jun 2022 23:49:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359730AbiFPKCU (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 Jun 2022 06:02:20 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41B065C872
-        for <ceph-devel@vger.kernel.org>; Thu, 16 Jun 2022 03:02:19 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-317710edb9dso9334267b3.0
-        for <ceph-devel@vger.kernel.org>; Thu, 16 Jun 2022 03:02:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=lLG88JCPgF7Yhflf4FNi4GQedsSNMbwmPtgneUr9Mu0=;
-        b=im/ZYAbaiwMmTl007UtG2Mzgn+aLC1QQFGl4tkRyYYRy7NWdW08nJiEtfIMLjlnqzL
-         zRtAKjKIM0QpRHCnscWeujsZoWuHRijmsV2rXyHgtdpW2/O/pS5K8oJmfWfLo1k1gBP6
-         wtQ8C3ZF64NkRso/Tk2Pb7uTgQ6LGMShw+KptXXQQbbS3amf6LnnsujwD1xQQ0+eG3Gz
-         oU4s6VZ0KAIHJe2Mc4jGse0WeTKmD0K6g5gXg7jAj3QXgftcIfGdRA5xHwlT4OVHWalv
-         D2e5spKWmTOPLHVtNi5I+/ySeqpVLLPdrlKKY2Lr/KkWRrIviF+8+zjM0+ZZXEjzYwKW
-         v6MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=lLG88JCPgF7Yhflf4FNi4GQedsSNMbwmPtgneUr9Mu0=;
-        b=Is4593CawpeYgpe9axEIdZnYidRvwbVq3AKlEp8N/RWHG4b2YwV+fASLa7XsZ0gF03
-         YA4DPFCkPk6JRcj++Qg5zPn1sELJhJnaZWj/flLC0Z/8KI8D3tP0Cr4GeBVpT5fgGVjk
-         fOagbj4aupvstzt9sBUUrO4ESQ6wvJ4CVxIbTO25sIpqND/dFSFGWqwaXaqh0w/TPq1H
-         cPBuxlESHP8YyzwhkcAihnfYaNdjyGsg1rTGCuhq2EPp5V0fmlinSOMPE35nLQybzw1c
-         yRtnowWW/24i9DUTHaBhANPwJqTWDGjyoG6279QCCvhH4U0kw4LxC+fkgiqWUxKA/pw7
-         cg8g==
-X-Gm-Message-State: AJIora+YLCrK4IOfzY/gnFO99wgzO77kny6YrGVXlbhOvERZ09SZxqke
-        OPTHCsgzOy/OIRuPkll4d8v5hpIfFXEFS6qAmss=
-X-Google-Smtp-Source: AGRyM1tvjJHtAefwAtNNFpmFBZex0LSOH58L6c5ShNsEUo/rYmZQBVjl8Z/MQMy4Jge7DkTta6gnXgiflacWGCGxpiE=
-X-Received: by 2002:a81:1341:0:b0:30c:3a7e:65e9 with SMTP id
- 62-20020a811341000000b0030c3a7e65e9mr4792110ywt.7.1655373738493; Thu, 16 Jun
- 2022 03:02:18 -0700 (PDT)
+        with ESMTP id S232925AbiFSDtr (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 18 Jun 2022 23:49:47 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FB1911A2E;
+        Sat, 18 Jun 2022 20:49:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=n0V/QlpU6hmWIFdXHN46nESAfJQsfOJKchpQNnTZHFk=; b=lB5e51TpUA5Mdiw/oLqx9Wojzj
+        4VqegTjVCIv8+QY7VhLBz7QLMc2q6Uit4Al/IVpbO7QEV8yq3eyCKE+HTg9V+Vg4IWpNJIODQb+0T
+        PzAGysuubC3g7J7kVXldRZ6O62EvLRe+CegcNSXSYGCProa4R0/YrMu0JUNuAui5yK9rYjHgvOmqm
+        eIZrSb1SZcULqtGuDbK0VPmD9mUjQZaB9poKaQvDX894BEsanLrTlS4GNkrdqCgl34phyY1LCgewE
+        GpGxEflGAE+cdgTLjjBHAuvXffFfDgRl1L6NGLksyQbdI8r3IOm0iP5CuN6qEM5BPQwTxVXHB+knE
+        611FfaKw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1o2lwP-0046RB-4e; Sun, 19 Jun 2022 03:49:37 +0000
+Date:   Sun, 19 Jun 2022 04:49:37 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com,
+        ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH] ceph: switch back to testing for NULL folio->private in
+ ceph_dirty_folio
+Message-ID: <Yq6c0fxTLJnnU0Ob@casper.infradead.org>
+References: <20220610154013.68259-1-jlayton@kernel.org>
+ <6189bdb3-6bfa-b85a-8df5-0fe94d7a962a@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a05:7110:808e:b0:184:acf6:584a with HTTP; Thu, 16 Jun 2022
- 03:02:18 -0700 (PDT)
-Reply-To: clmloans9@gmail.com
-From:   MR ANTHONY EDWARD <fizzypeace01@gmail.com>
-Date:   Thu, 16 Jun 2022 11:02:18 +0100
-Message-ID: <CALtVAbeCjx1cBxrNbOJa_Qq+nvdehvjazNn2+JZ-BhsfsQXy9A@mail.gmail.com>
-Subject: DARLEHENSANGEBOT
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=4.3 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_FM_MR_MRS,
-        T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6189bdb3-6bfa-b85a-8df5-0fe94d7a962a@redhat.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
-X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
---=20
-Ben=C3=B6tigen Sie ein Gesch=C3=A4ftsdarlehen oder ein Darlehen jeglicher A=
-rt?
-Wenn ja, kontaktieren Sie uns
+On Mon, Jun 13, 2022 at 08:48:40AM +0800, Xiubo Li wrote:
+> 
+> On 6/10/22 11:40 PM, Jeff Layton wrote:
+> > Willy requested that we change this back to warning on folio->private
+> > being non-NULl. He's trying to kill off the PG_private flag, and so we'd
+> > like to catch where it's non-NULL.
+> > 
+> > Add a VM_WARN_ON_FOLIO (since it doesn't exist yet) and change over to
+> > using that instead of VM_BUG_ON_FOLIO along with testing the ->private
+> > pointer.
+> > 
+> > Cc: Matthew Wilcox <willy@infradead.org>
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >   fs/ceph/addr.c          | 2 +-
+> >   include/linux/mmdebug.h | 9 +++++++++
+> >   2 files changed, 10 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> > index b43cc01a61db..b24d6bdb91db 100644
+> > --- a/fs/ceph/addr.c
+> > +++ b/fs/ceph/addr.c
+> > @@ -122,7 +122,7 @@ static bool ceph_dirty_folio(struct address_space *mapping, struct folio *folio)
+> >   	 * Reference snap context in folio->private.  Also set
+> >   	 * PagePrivate so that we get invalidate_folio callback.
+> >   	 */
+> > -	VM_BUG_ON_FOLIO(folio_test_private(folio), folio);
+> > +	VM_WARN_ON_FOLIO(folio->private, folio);
+> >   	folio_attach_private(folio, snapc);
+> >   	return ceph_fscache_dirty_folio(mapping, folio);
 
-*Vollst=C3=A4ndiger Name:
-* Ben=C3=B6tigte Menge:
-*Leihdauer:
-*Mobiltelefon:
-*Land:
+I found a couple of places where page->private needs to be NULLed out.
+Neither of them are Ceph's fault.  I decided that testing whether
+folio->private and PG_private are in agreement was better done in
+folio_unlock() than in any of the other potential places we could
+check for it.
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 8ef861297ffb..acef71f75e78 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1535,6 +1535,9 @@ void folio_unlock(struct folio *folio)
+ 	BUILD_BUG_ON(PG_waiters != 7);
+ 	BUILD_BUG_ON(PG_locked > 7);
+ 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
++	VM_BUG_ON_FOLIO(!folio_test_private(folio) &&
++			!folio_test_swapbacked(folio) &&
++			folio_get_private(folio), folio);
+ 	if (clear_bit_unlock_is_negative_byte(PG_locked, folio_flags(folio, 0)))
+ 		folio_wake_bit(folio, PG_locked);
+ }
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 2e2a8b5bc567..af0751a79c19 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2438,6 +2438,7 @@ static void __split_huge_page_tail(struct page *head, int tail,
+ 			page_tail);
+ 	page_tail->mapping = head->mapping;
+ 	page_tail->index = head->index + tail;
++	page_tail->private = 0;
+ 
+ 	/* Page flags must be visible before we make the page non-compound. */
+ 	smp_wmb();
+diff --git a/mm/migrate.c b/mm/migrate.c
+index eb62e026c501..fa8e36e74f0d 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1157,6 +1157,8 @@ static int unmap_and_move(new_page_t get_new_page,
+ 	newpage = get_new_page(page, private);
+ 	if (!newpage)
+ 		return -ENOMEM;
++	BUG_ON(compound_order(newpage) != compound_order(page));
++	newpage->private = 0;
+ 
+ 	rc = __unmap_and_move(page, newpage, force, mode);
+ 	if (rc == MIGRATEPAGE_SUCCESS)
