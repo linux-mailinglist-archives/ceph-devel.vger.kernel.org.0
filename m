@@ -2,158 +2,107 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 01CBB55780F
-	for <lists+ceph-devel@lfdr.de>; Thu, 23 Jun 2022 12:43:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71141557A17
+	for <lists+ceph-devel@lfdr.de>; Thu, 23 Jun 2022 14:16:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230159AbiFWKny (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 23 Jun 2022 06:43:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41784 "EHLO
+        id S231591AbiFWMQG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 23 Jun 2022 08:16:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230125AbiFWKnw (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 23 Jun 2022 06:43:52 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1F9C4888E
-        for <ceph-devel@vger.kernel.org>; Thu, 23 Jun 2022 03:43:50 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id A6EB31F96B;
-        Thu, 23 Jun 2022 10:43:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1655981029; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        with ESMTP id S229916AbiFWMQF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 23 Jun 2022 08:16:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 05DA62DA84
+        for <ceph-devel@vger.kernel.org>; Thu, 23 Jun 2022 05:16:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1655986563;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vNwqOOHT5dBpJ8gTjplGaKFyVNzXa06qJPLCNM5DDXo=;
-        b=Wg69b1ZK907KMrmd6kPlbeMStjTL00xXIoToCeydC3s1ebqLufaAD1Z82u8eutlVptLLr9
-        /q5MW7Ui2n3/k8xft96lYk2Wr5S+OMPH3osnDeLJtgIGLHiYhe6UGHTIrNRep8LhFsEXXh
-        BRnjN7G8uHfVckpaks2ozzo6vxqKH1s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1655981029;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vNwqOOHT5dBpJ8gTjplGaKFyVNzXa06qJPLCNM5DDXo=;
-        b=GxWZ4N/ns5IUTpCDibgXlLWoT3jQaiOFYESVahKja6VAWKAk5VnpMeF15i/kBXTZPuM5Ok
-        p0IVHCwRnOwBFZDg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3422613461;
-        Thu, 23 Jun 2022 10:43:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 9wJVCeVDtGK/TgAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Thu, 23 Jun 2022 10:43:49 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 0949fc98;
-        Thu, 23 Jun 2022 10:44:34 +0000 (UTC)
-From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
-To:     xiubli@redhat.com
-Cc:     jlayton@kernel.org, idryomov@gmail.com, vshankar@redhat.com,
-        pdonnell@redhat.com, ceph-devel@vger.kernel.org
+        bh=V43FwghGJqT/GtmLVt9pCxCOUD0u8LcXiCuZWMPzwwg=;
+        b=DJtR/XkLCUfHB7AzE43MtCTQ1Tf/xlDq4i+9MrryipB/IaZ+mSmTlNL/Hb13Z/5gAVJSZh
+        CoN4103IShuk438Mnt2lSr5bjYjTGtHO1bAqW0yYZe5EjS7cB4F4MikF+6BJQeJmZmygWU
+        KR/YtLcvzqiYez7tL5/4CbLyESkJVLg=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-194-F58pmqjwNQmbmfltPJPH5A-1; Thu, 23 Jun 2022 08:16:02 -0400
+X-MC-Unique: F58pmqjwNQmbmfltPJPH5A-1
+Received: by mail-pg1-f200.google.com with SMTP id q8-20020a632a08000000b00402de053ef9so10526217pgq.3
+        for <ceph-devel@vger.kernel.org>; Thu, 23 Jun 2022 05:16:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=V43FwghGJqT/GtmLVt9pCxCOUD0u8LcXiCuZWMPzwwg=;
+        b=q1F4iKh2JiJMwhEk2RrpMeshDSqBeXbgl9Mr4GhIkKJUcS2gTRtlHceSLVnWWFKTqF
+         PtK5KZ5AafT9e0z/jqgB2hISZE2vk4k03FY6hH3SAswPJ9w4XTaupfXm9LKRqA7Fo6Ug
+         uh0pOqtkVue3FW2zTGri3X2MgL3itAgaJpUyPQpcGdYZiHbU9G6T95nX3nEM93bAzoVu
+         wXzI8b6UMSVJolGlaqBcgreS2N351yrElDk29PL0m/loiaCJfEmouvpbskMNYmjX7rD+
+         h+B9YQJubSLD6YM3NmTCiBnPT3rCNcWEf7Le/lkA1Ti6gHOnebZP3EFCnGxx4dI3NBgk
+         XWBA==
+X-Gm-Message-State: AJIora9Xclp4QHTv0JbV2A3O02MBgvZLSpNYDylKknxpoXHx2KFMzp2U
+        r5n922aixPBuAqk1oFqwT77a8kfivIj/FJXffW4C/ogjatOneWlFjymgO7wAnxd3+uYDw3YFEyz
+        n5/7nFIYmgxtcm/v/XcGpT622DNK/FhCF+o5S8opaFoFmyCFVHTvesF3+APGrtTUlBmZLcIU=
+X-Received: by 2002:a63:2344:0:b0:3fd:fd53:5fd1 with SMTP id u4-20020a632344000000b003fdfd535fd1mr7396003pgm.478.1655986561207;
+        Thu, 23 Jun 2022 05:16:01 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1vOC0tRpIfF3WWOHX/RUGL9hwqpb+m1uWlsc7f+YlBSxdVc097Jh5NpOmsXf7O284r5tfvCMQ==
+X-Received: by 2002:a63:2344:0:b0:3fd:fd53:5fd1 with SMTP id u4-20020a632344000000b003fdfd535fd1mr7395976pgm.478.1655986560903;
+        Thu, 23 Jun 2022 05:16:00 -0700 (PDT)
+Received: from [10.72.12.43] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id z27-20020aa79e5b000000b0052553215444sm1858396pfq.101.2022.06.23.05.15.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Jun 2022 05:16:00 -0700 (PDT)
 Subject: Re: [PATCH] ceph: flush the dirty caps immediatelly when quota is
  approaching
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
+Cc:     jlayton@kernel.org, idryomov@gmail.com, vshankar@redhat.com,
+        pdonnell@redhat.com, ceph-devel@vger.kernel.org
 References: <20220623095238.874126-1-xiubli@redhat.com>
-Date:   Thu, 23 Jun 2022 11:44:34 +0100
-In-Reply-To: <20220623095238.874126-1-xiubli@redhat.com> (xiubli@redhat.com's
-        message of "Thu, 23 Jun 2022 17:52:38 +0800")
-Message-ID: <87pmizk6b1.fsf@brahms.olymp>
+ <87pmizk6b1.fsf@brahms.olymp>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <d06888c5-50d0-9fbb-17bc-e84b9ef50036@redhat.com>
+Date:   Thu, 23 Jun 2022 20:15:54 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <87pmizk6b1.fsf@brahms.olymp>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-xiubli@redhat.com writes:
 
-> From: Xiubo Li <xiubli@redhat.com>
+On 6/23/22 6:44 PM, Luís Henriques wrote:
+> xiubli@redhat.com writes:
 >
-> When the quota is approaching we need to notify it to the MDS as
-> soon as possible, or the client could write to the directory more
-> than expected.
->
-> This will flush the dirty caps without delaying after each write,
-> though this couldn't prevent the real size of a directory exceed
-> the quota but could prevent it as soon as possible.
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> When the quota is approaching we need to notify it to the MDS as
+>> soon as possible, or the client could write to the directory more
+>> than expected.
+>>
+>> This will flush the dirty caps without delaying after each write,
+>> though this couldn't prevent the real size of a directory exceed
+>> the quota but could prevent it as soon as possible.
+> Nice, looks good.  Unfortunately, the real problem can't probably be
+> solved without a complete re-design of the cephfs quotas.  Oh well...
 
-Nice, looks good.  Unfortunately, the real problem can't probably be
-solved without a complete re-design of the cephfs quotas.  Oh well...
+Yeah, correct. Currently this is what we can do.
 
-Reviewed-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
+Thanks Luis!
 
-Cheers,
---=20
-Lu=C3=ADs
-
+> Reviewed-by: Luís Henriques <lhenriques@suse.de>
 >
-> URL: https://tracker.ceph.com/issues/56180
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/caps.c | 5 +++--
->  fs/ceph/file.c | 5 +++--
->  2 files changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index c7163afdc71a..511d1963aa09 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -1979,14 +1979,15 @@ void ceph_check_caps(struct ceph_inode_info *ci, =
-int flags,
->  	}
->=20=20
->  	dout("check_caps %llx.%llx file_want %s used %s dirty %s flushing %s"
-> -	     " issued %s revoking %s retain %s %s%s\n", ceph_vinop(inode),
-> +	     " issued %s revoking %s retain %s %s%s%s\n", ceph_vinop(inode),
->  	     ceph_cap_string(file_wanted),
->  	     ceph_cap_string(used), ceph_cap_string(ci->i_dirty_caps),
->  	     ceph_cap_string(ci->i_flushing_caps),
->  	     ceph_cap_string(issued), ceph_cap_string(revoking),
->  	     ceph_cap_string(retain),
->  	     (flags & CHECK_CAPS_AUTHONLY) ? " AUTHONLY" : "",
-> -	     (flags & CHECK_CAPS_FLUSH) ? " FLUSH" : "");
-> +	     (flags & CHECK_CAPS_FLUSH) ? " FLUSH" : "",
-> +	     (flags & CHECK_CAPS_NOINVAL) ? " NOINVAL" : "");
->=20=20
->  	/*
->  	 * If we no longer need to hold onto old our caps, and we may
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index debc1748ccdf..0eb4a02175ad 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1960,7 +1960,7 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, =
-struct iov_iter *from)
->  		if (dirty)
->  			__mark_inode_dirty(inode, dirty);
->  		if (ceph_quota_is_max_bytes_approaching(inode, iocb->ki_pos))
-> -			ceph_check_caps(ci, 0, NULL);
-> +			ceph_check_caps(ci, CHECK_CAPS_FLUSH, NULL);
->  	}
->=20=20
->  	dout("aio_write %p %llx.%llx %llu~%u  dropping cap refs on %s\n",
-> @@ -2577,7 +2577,8 @@ static ssize_t __ceph_copy_file_range(struct file *=
-src_file, loff_t src_off,
->  		/* Let the MDS know about dst file size change */
->  		if (ceph_inode_set_size(dst_inode, dst_off) ||
->  		    ceph_quota_is_max_bytes_approaching(dst_inode, dst_off))
-> -			ceph_check_caps(dst_ci, CHECK_CAPS_AUTHONLY, NULL);
-> +			ceph_check_caps(dst_ci, CHECK_CAPS_AUTHONLY | CHECK_CAPS_FLUSH,
-> +					NULL);
->  	}
->  	/* Mark Fw dirty */
->  	spin_lock(&dst_ci->i_ceph_lock);
-> --=20
->
-> 2.36.0.rc1
->
+> Cheers,
 
