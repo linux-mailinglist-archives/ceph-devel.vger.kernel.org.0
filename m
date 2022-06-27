@@ -2,46 +2,44 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 98F6C55CCF7
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 Jun 2022 15:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD68355E1D2
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 Jun 2022 15:34:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234304AbiF0LPf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 27 Jun 2022 07:15:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38502 "EHLO
+        id S238464AbiF0Lxj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 27 Jun 2022 07:53:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234024AbiF0LPe (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 27 Jun 2022 07:15:34 -0400
+        with ESMTP id S238931AbiF0Lwu (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 27 Jun 2022 07:52:50 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E97BF64F2;
-        Mon, 27 Jun 2022 04:15:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00206DF25
+        for <ceph-devel@vger.kernel.org>; Mon, 27 Jun 2022 04:46:33 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9B856B810F6;
-        Mon, 27 Jun 2022 11:15:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7E43C3411D;
-        Mon, 27 Jun 2022 11:15:30 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AF69FB80D37
+        for <ceph-devel@vger.kernel.org>; Mon, 27 Jun 2022 11:46:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF781C341C7;
+        Mon, 27 Jun 2022 11:46:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656328531;
-        bh=v0C1Bhc6W2F6JTcpNNosxXWGfS9mKrwIaMiSVXlBkhA=;
+        s=k20201202; t=1656330391;
+        bh=T7PEXQg7nvzt6TNqyCBE0VnAAKl2B3HLOYL89HltXr8=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=OgAx3RYBgM+Y24MuFUogwrPf3ElcAPlNE/CaoFVw0flcvXe6r+wTLIDqSEKHOhRWh
-         DCi9l3rEV93GhWfkMi9M046ZDGnDLdkoT4Yqe29PiDTJROsul8shM+fKVbHASZUB9a
-         xXJZqMY0m05DbBjLLTpHkfbp1/v2upXL4gt8kJ8aPdh1bDs8on6ZzT91Bj9jWBSrMa
-         PNnZdv4NE+n1zN1jjruHbwnPphWRAZbeuKki0MdG9wDGWMgrtAmSvdp1tPqdb7px++
-         QguHJWVsZEQg/wZt3MgqC8BsETs+x9OWFOsjfmEh3yDfpt6hLbTrHnMZ6rJaiv4idt
-         dz3Hvcrig3Ktg==
-Message-ID: <d11ba652ff681a01a51d547d96ee4bfefabb1869.camel@kernel.org>
-Subject: Re: [PATCH v2] fs: change test in inode_insert5 for adding to the
- sb list
+        b=YFRBL3VBIRmjaWidVyChiLkWpkeVr93SbI2jrJbAT9xwKrfC55JJbY7/rtgkpFNJm
+         JmjqwytYgFIkRQqSB90k3Hcy1oufSVtpRKeTOt4+SF+bJdzpheOjnRcWzF0NLHKC8d
+         zJyQO5k0KNMIhS7bhYmHYHMQme6VxLv+nCfkeHnV735yk2XUS6Z0wo1nkoD8FeBEu2
+         DWsDb0xjIU+PtZZiW9Oji5n3xgPjJ7PhO0762zzL/wQZ6yI+vBryeoHS+cB/2VaY0c
+         kzRjycVUeOAg15DdHhAU+l2eosU1dNR7jQOHomnFnPFd1exAtg9dEcH2WJY1jDeGOx
+         i+2Bnre/DkAoA==
+Message-ID: <bed4d3dab38ac23fd22ff9a41c5c8d667c0fbc72.camel@kernel.org>
+Subject: Re: [PATCH 0/2] ceph: add new iov_iter type and use it for reads
 From:   Jeff Layton <jlayton@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com, xiubli@redhat.com,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <dchinner@redhat.com>
-Date:   Mon, 27 Jun 2022 07:15:29 -0400
-In-Reply-To: <20220511165339.85614-1-jlayton@kernel.org>
-References: <20220511165339.85614-1-jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, dhowells@redhat.com,
+        ceph-devel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Date:   Mon, 27 Jun 2022 07:46:29 -0400
+In-Reply-To: <20220609193423.167942-1-jlayton@kernel.org>
+References: <20220609193423.167942-1-jlayton@kernel.org>
 Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.44.2 (3.44.2-1.fc36) 
@@ -56,100 +54,47 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2022-05-11 at 12:53 -0400, Jeff Layton wrote:
-> The inode_insert5 currently looks at I_CREATING to decide whether to
-> insert the inode into the sb list. This test is a bit ambiguous though
-> as I_CREATING state is not directly related to that list.
+On Thu, 2022-06-09 at 15:34 -0400, Jeff Layton wrote:
+> This patchset was inspired by some earlier work that David Howells did
+> to add a similar type.
 >=20
-> This test is also problematic for some upcoming ceph changes to add
-> fscrypt support. We need to be able to allocate an inode using new_inode
-> and insert it into the hash later if we end up using it, and doing that
-> now means that we double add it and corrupt the list.
+> Currently, we take an iov_iter from the netfs layer, turn that into an
+> array of pages, and then pass that to the messenger which eventually
+> turns that back into an iov_iter before handing it back to the socket.
 >=20
-> What we really want to know in this test is whether the inode is already
-> in its superblock list, and then add it if it isn't. Have it test for
-> list_empty instead and ensure that we always initialize the list by
-> doing it in inode_init_once. It's only ever removed from the list with
-> list_del_init, so that should be sufficient.
+> This patchset adds a new ceph_msg_data_type that uses an iov_iter
+> directly instead of requiring an array of pages or bvecs. This allows
+> us to avoid an extra allocation in the buffered read path, and should
+> make it easier to plumb in write helpers later.
 >=20
-> There doesn't seem to be any need to hold the inode_hash_lock for this
-> operation either, so drop that before adding to to the list.
+> For now, this is still just a slow, stupid implementation that hands
+> the socket layer a page at a time like the existing messenger does. It
+> doesn't yet attempt to pass through the iov_iter directly.
 >=20
-> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Dave Chinner <dchinner@redhat.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-> ---
->  fs/inode.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
+> I have some patches that pass the cursor's iov_iter directly to the
+> socket in the receive path, but it requires some infrastructure that's
+> not in mainline yet (iov_iter_scan(), for instance). It should be
+> possible to something similar in the send path as well.
 >=20
-> A small revision to the patch that I sent as part of the ceph+fscrypt
-> series. I didn't see any need to hold the inode_hash_lock when adding
-> the inode to the sb list, so do that outside the lock. I also revised
-> the comment to be more clear.
+> Jeff Layton (2):
+>   libceph: add new iov_iter-based ceph_msg_data_type and
+>     ceph_osd_data_type
+>   ceph: use osd_req_op_extent_osd_iter for netfs reads
 >=20
-> Al, I'm planning to merge this via the ceph tree since I have other
-> patches that depend on it. Let me know if you'd rather take this via
-> your tree instead.
+>  fs/ceph/addr.c                  | 18 +---------
+>  include/linux/ceph/messenger.h  |  5 +++
+>  include/linux/ceph/osd_client.h |  4 +++
+>  net/ceph/messenger.c            | 64 +++++++++++++++++++++++++++++++++
+>  net/ceph/osd_client.c           | 27 ++++++++++++++
+>  5 files changed, 101 insertions(+), 17 deletions(-)
 >=20
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 9d9b422504d1..9d429247a4f0 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -422,6 +422,7 @@ void inode_init_once(struct inode *inode)
->  	INIT_LIST_HEAD(&inode->i_io_list);
->  	INIT_LIST_HEAD(&inode->i_wb_list);
->  	INIT_LIST_HEAD(&inode->i_lru);
-> +	INIT_LIST_HEAD(&inode->i_sb_list);
->  	__address_space_init_once(&inode->i_data);
->  	i_size_ordered_init(inode);
->  }
-> @@ -1021,7 +1022,6 @@ struct inode *new_inode_pseudo(struct super_block *=
-sb)
->  		spin_lock(&inode->i_lock);
->  		inode->i_state =3D 0;
->  		spin_unlock(&inode->i_lock);
-> -		INIT_LIST_HEAD(&inode->i_sb_list);
->  	}
->  	return inode;
->  }
-> @@ -1165,7 +1165,6 @@ struct inode *inode_insert5(struct inode *inode, un=
-signed long hashval,
->  {
->  	struct hlist_head *head =3D inode_hashtable + hash(inode->i_sb, hashval=
-);
->  	struct inode *old;
-> -	bool creating =3D inode->i_state & I_CREATING;
-> =20
->  again:
->  	spin_lock(&inode_hash_lock);
-> @@ -1199,11 +1198,17 @@ struct inode *inode_insert5(struct inode *inode, =
-unsigned long hashval,
->  	inode->i_state |=3D I_NEW;
->  	hlist_add_head_rcu(&inode->i_hash, head);
->  	spin_unlock(&inode->i_lock);
-> -	if (!creating)
-> -		inode_sb_list_add(inode);
->  unlock:
->  	spin_unlock(&inode_hash_lock);
-> =20
-> +	/*
-> +	 * Add it to the sb list if it's not already. If there is an inode,
-> +	 * then it has I_NEW at this point, so it should be safe to test
-> +	 * i_sb_list locklessly.
-> +	 */
-> +	if (inode && list_empty(&inode->i_sb_list))
-> +		inode_sb_list_add(inode);
-> +
->  	return inode;
->  }
->  EXPORT_SYMBOL(inode_insert5);
 
-Hi Al,
+I've had these sitting in testing branch for a bit and they seem to work
+just fine. Unfortunately though, Al mentioned on IRC that he was
+planning to change iov_iter_get_pages to auto-advance the iterator,
+which will require a redesign of the first patch. I'm going to drop this
+series from the testing branch for now.
 
-Could I get your Acked-by or R-b on this patch? I'd like to take this in
-via the ceph tree, and I'd prefer an explicit ack on this if possible.
-
-Thanks!
+Thanks,
 --=20
 Jeff Layton <jlayton@kernel.org>
