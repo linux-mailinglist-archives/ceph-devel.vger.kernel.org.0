@@ -2,63 +2,85 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F3DDA560FAC
+	by mail.lfdr.de (Postfix) with ESMTP id AAEAA560FAB
 	for <lists+ceph-devel@lfdr.de>; Thu, 30 Jun 2022 05:34:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232075AbiF3DdX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 29 Jun 2022 23:33:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35470 "EHLO
+        id S229610AbiF3Dd5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 29 Jun 2022 23:33:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231500AbiF3DdR (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 Jun 2022 23:33:17 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4F01EE30
-        for <ceph-devel@vger.kernel.org>; Wed, 29 Jun 2022 20:33:10 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id l2so16333320pjf.1
-        for <ceph-devel@vger.kernel.org>; Wed, 29 Jun 2022 20:33:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dlQGUhBuQqnv6HlnfmDyi2Qtd0EQFWWwCUNRaJXuW04=;
-        b=MxJwxwA55PzukW0Q2AUw3NVzQfk+pUEs6gxyFqzn9x5xcM6HXNEP4YjTz1JmUFcobH
-         0K+azXf5DUmX7mJ91RLH6+HjHjcbKTXPTdgNpu+tNMFe3qS/oON+NgD6guWumwqgkdej
-         hYX6ezQPwp6+lAGDaloyK4Z6Xll/fTiy71SCwXfWGmcquxwU2E6+SLgo9ivenPLuLHXy
-         XFmtDM+NVZCu6gOXa280aQQ4kmGqNcKrXMXXauq6/k7y1DHVT3N2itVV0NpQBpDRGsmk
-         RZM0Mfx1zSDStO1yVhX4KuuJE241eTruvxlq0ovMqmiPCKd0icOIkxT9wc8lywIHcqnd
-         8zkA==
+        with ESMTP id S230173AbiF3Ddl (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 29 Jun 2022 23:33:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AE1A021E11
+        for <ceph-devel@vger.kernel.org>; Wed, 29 Jun 2022 20:33:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1656559999;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vMk9SJ1N8Td6RMIF91DosH+5aimulwnLJQU2QhtSWzo=;
+        b=dLLwrgzGuVaVge95O9Jl13/yv2OzRJHLwiDbdFnCSTr9THABSAQhsUREw6VNOay9inlBj9
+        x2MXZPPCXtNlNxxKOp2wo/82X8DlrD/CUOshJt2gCVhR3rYKHYEsYgxWuWW6Ov481AgXLF
+        E+I+FvRodMKmwWmdm6GUNaPHLFUQjoc=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-318-BpGoVOjANtuSBDkKSpq1Ig-1; Wed, 29 Jun 2022 23:33:18 -0400
+X-MC-Unique: BpGoVOjANtuSBDkKSpq1Ig-1
+Received: by mail-pg1-f198.google.com with SMTP id h13-20020a63e14d000000b0040df75eaa2eso5489840pgk.21
+        for <ceph-devel@vger.kernel.org>; Wed, 29 Jun 2022 20:33:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dlQGUhBuQqnv6HlnfmDyi2Qtd0EQFWWwCUNRaJXuW04=;
-        b=w2PrjUHGt+PZtkHK/JDhPRr2baTTcnhM/HTifbMYulpXi5/LM2pn+k1sq/evPEUyBc
-         DYfbbK7eQOLOIavW2MpCglysv76WoY6zgAHnSNeH3RKJmRfH74/bd+D4Frg2Tm2ecCHl
-         qSqY+4i2bNv07UFKHw39A5P1uJa44EmFJmtzvurKNsUA1ln5YTKAaW6SZ6DNQD2Gv7OR
-         f5m+aMVZrahrN8zhgrPjtHsJShei6xYivD0gClQogUmvMYnoDHzQ4zBTpXLvoQaeWtFB
-         BaD1YTrK+d/vBX9TdjiG/h9dasRXK2gdbprHFdYNouaRjCSBu39zj3AJvR2Yzlc1LUZn
-         pT5A==
-X-Gm-Message-State: AJIora8W5+j6hQkQ5ZU4/Dn1psydiboLrZxGQg3vpRBsBs4et1DCRGVX
-        gf6+ckxsgHODFmOgiDutLrUJweNFD1JN3oYaBfOJ1hSJnKDc10OJ
-X-Google-Smtp-Source: AGRyM1vjMB1zDO8iwSFioL6kpvo1IpkVztgUyD2ArzYun4AgNhV1w6P9s06c3Ssmtn/pwtYVHMTinBUpmV15uO4ghT0=
-X-Received: by 2002:a17:903:2311:b0:16a:6b9c:2b4d with SMTP id
- d17-20020a170903231100b0016a6b9c2b4dmr12422859plh.100.1656559990157; Wed, 29
- Jun 2022 20:33:10 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220606233142.150457-1-jlayton@kernel.org> <CAAM7YAmguEUbX7XWc9HV0traYT-CgKWdDWV8-OyjwLc2+Tk8EQ@mail.gmail.com>
- <b66bd239bc69f432ae474c207591a67d3990d09f.camel@kernel.org> <CAAM7YAm59fBCboB3iBSazZvs_fnmdcDXcuDourDQBXmrzSqT5w@mail.gmail.com>
-In-Reply-To: <CAAM7YAm59fBCboB3iBSazZvs_fnmdcDXcuDourDQBXmrzSqT5w@mail.gmail.com>
-From:   "Yan, Zheng" <ukernel@gmail.com>
-Date:   Thu, 30 Jun 2022 11:32:58 +0800
-Message-ID: <CAAM7YA=dLYWZj6zBSBhqDosqqFQPxgidLPw6R_EUfkUxzKd8fA@mail.gmail.com>
-Subject: Re: [PATCH] ceph: wait on async create before checking caps for syncfs
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=vMk9SJ1N8Td6RMIF91DosH+5aimulwnLJQU2QhtSWzo=;
+        b=4TF3QmeSzLqfVUN2rcvu7jQTm+EwgQfWdYOMz73NFPw/1dumnPQFQizk6dbiXt6ZRj
+         m2fKrtQ5APbA0FQcIACK5p+R3bPjULz1FjKXbX2YcRrYXjMBK2rZ4zj1BFKBMRo8+7qb
+         TuEI92+si5ORrESxpiySFdkCnwKsB71aIPmF7iLhWPzy7ktYzX3EnIDW805Y2XNgLkd1
+         lgBUibQEH/U0EIikXMZ9ltBEX6MIP2nHHc7sEtZkSi+0JxJM1xzX3/365OV5P7z5wyWN
+         HJE2OG4SwrrbLTAEj70HcWV9CWGzvkzf2OEC+WOMruQB/+kZzs2TpfjrTkGqjGv6L7EU
+         C9uA==
+X-Gm-Message-State: AJIora/QY5QJY1kFFeMRYC4pS4idK8PhStVXb4d8BnZH+MbAv2OFd1Ea
+        kTGeTebjG5P+iKd4dUIdYE+SW/pSI1xo+yVp0Ia3H/9BHjFLv2eHi9vN3HMxne9/2xBP8JmVmlF
+        wfRRzo0HmcADivGFlygCNioDfAcDyO8e6luCKaTD8xan5qm8MGHnvDcF8OdMV8L2ZtihbrXw=
+X-Received: by 2002:a17:90b:1982:b0:1ec:988f:e133 with SMTP id mv2-20020a17090b198200b001ec988fe133mr9646740pjb.211.1656559996884;
+        Wed, 29 Jun 2022 20:33:16 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1uf1hfNs5wa3BF2oTyOKw4vRbuvinupvmpBYmXGcFb0zDkq7FZ9B0hsJ6/9kWnSjwJON0j9LQ==
+X-Received: by 2002:a17:90b:1982:b0:1ec:988f:e133 with SMTP id mv2-20020a17090b198200b001ec988fe133mr9646697pjb.211.1656559996447;
+        Wed, 29 Jun 2022 20:33:16 -0700 (PDT)
+Received: from [10.72.12.186] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id 17-20020a056a00073100b0051b6091c452sm12187363pfm.70.2022.06.29.20.33.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Jun 2022 20:33:15 -0700 (PDT)
+Subject: Re: [PATCH v2 0/2] ceph: switch to 4KB block size if quota size is
+ not aligned to 4MB
+To:     "Yan, Zheng" <ukernel@gmail.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Venky Shankar <vshankar@redhat.com>,
+        Patrick Donnelly <pdonnell@redhat.com>,
+        Luis Henriques <lhenriques@suse.de>,
         ceph-devel <ceph-devel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+References: <20220627020203.173293-1-xiubli@redhat.com>
+ <CAAM7YA=CcNA8HigAG4wAedUN+1dDDB8G7qXiub=+5B7nN5bjFg@mail.gmail.com>
+ <04405a13-5d9e-232a-58fe-ef22783f4881@redhat.com>
+ <CAAM7YAkBiMyYW8uZo8JB9Yn_8N4DH0H7Yr2013Yb4oQ7btss0w@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <63452834-c9f8-0ed6-2f88-81541b11fced@redhat.com>
+Date:   Thu, 30 Jun 2022 11:33:08 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
+MIME-Version: 1.0
+In-Reply-To: <CAAM7YAkBiMyYW8uZo8JB9Yn_8N4DH0H7Yr2013Yb4oQ7btss0w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,78 +88,48 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jun 30, 2022 at 10:33 AM Yan, Zheng <ukernel@gmail.com> wrote:
->
-> On Wed, Jun 29, 2022 at 8:08 PM Jeff Layton <jlayton@kernel.org> wrote:
-> >
-> > Are you suggesting that the MDS ought to hold a cap message for an inode
-> > before its create request is processed? Note that the MDS won't even be
-> > aware that the inode even _exists_ at that point. As far as the MDS
-> > knows, it's just be a delegated inode number to the client. At what
-> > point does the MDS give up on holding such a cap request if the create
-> > request never comes in for some reason?
-> >
-> For an async request, MDS should not process it immediately.  If there
-> is any wait when handling async request, it's mds bug. I suggest
-> tracking down any wait, and fix it.
->
 
-I mean: For an async request, MDS should process it immediately. This
-is important for preserving request ordering.
+On 6/30/22 11:30 AM, Yan, Zheng wrote:
+> On Thu, Jun 30, 2022 at 11:05 AM Xiubo Li <xiubli@redhat.com> wrote:
+>>
+>> On 6/30/22 10:39 AM, Yan, Zheng wrote:
+>>> NACK,  this change will significantly increase mds load. Inaccuracy is
+>>> inherent in current quota design.
+>> Yeah, I was also thinking could we just allow the quota size to be
+>> aligned to 4KB if it < 4MB, or must be aligned to 4MB ?
+>>
+>> Any idea ?
+> make sense
 
->
-> > I don't see the harm in making the client wait until it gets a create
-> > reply before sending a cap message. If we want to revert fbed7045f552
-> > instead, we can do that, but it'll cause a regression until the MDS is
-> > fixed [1]. Regardless, we need to either take this patch or revert that
-> > one.
-> >
-> > I move that we take this patch for now to address the softlockups. Once
-> > the MDS is fixed we could revert this and fbed7045f552 without causing a
-> > regression.
-> >
-> > [1]: https://tracker.ceph.com/issues/54107
-> >
-> >
-> > On Thu, 2022-06-09 at 10:15 +0800, Yan, Zheng wrote:
-> > > The recent series of patches that add "wait on async xxxx" at various
-> > > places do not seem correct. The correct fix should make mds avoid any
-> > > wait when handling async requests.
-> > >
-> > >
-> > > On Wed, Jun 8, 2022 at 12:56 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > >
-> > > > Currently, we'll call ceph_check_caps, but if we're still waiting on the
-> > > > reply, we'll end up spinning around on the same inode in
-> > > > flush_dirty_session_caps. Wait for the async create reply before
-> > > > flushing caps.
-> > > >
-> > > > Fixes: fbed7045f552 (ceph: wait for async create reply before sending any cap messages)
-> > > > URL: https://tracker.ceph.com/issues/55823
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > ---
-> > > >  fs/ceph/caps.c | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > > > I don't know if this will fix the tx queue stalls completely, but I
-> > > > haven't seen one with this patch in place. I think it makes sense on its
-> > > > own, either way.
-> > > >
-> > > > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > > > index 0a48bf829671..5ecfff4b37c9 100644
-> > > > --- a/fs/ceph/caps.c
-> > > > +++ b/fs/ceph/caps.c
-> > > > @@ -4389,6 +4389,7 @@ static void flush_dirty_session_caps(struct ceph_mds_session *s)
-> > > >                 ihold(inode);
-> > > >                 dout("flush_dirty_caps %llx.%llx\n", ceph_vinop(inode));
-> > > >                 spin_unlock(&mdsc->cap_dirty_lock);
-> > > > +               ceph_wait_on_async_create(inode);
-> > > >                 ceph_check_caps(ci, CHECK_CAPS_FLUSH, NULL);
-> > > >                 iput(inode);
-> > > >                 spin_lock(&mdsc->cap_dirty_lock);
-> > > > --
-> > > > 2.36.1
-> > > >
-> >
-> > --
-> > Jeff Layton <jlayton@kernel.org>
+Cool, Thanks Zheng.
+
+I will work on that.
+
+-- Xiubo
+
+
+>> - Xiubo
+>>
+>>
+>>> On Mon, Jun 27, 2022 at 10:06 AM <xiubli@redhat.com> wrote:
+>>>> From: Xiubo Li <xiubli@redhat.com>
+>>>>
+>>>> V2:
+>>>> - Switched to IS_ALIGNED() macro
+>>>> - Added CEPH_4K_BLOCK_SIZE macro
+>>>> - Rename CEPH_BLOCK to CEPH_BLOCK_SIZE
+>>>>
+>>>> Xiubo Li (3):
+>>>>     ceph: make f_bsize always equal to f_frsize
+>>>>     ceph: switch to use CEPH_4K_BLOCK_SHIFT macro
+>>>>     ceph: switch to 4KB block size if quota size is not aligned to 4MB
+>>>>
+>>>>    fs/ceph/quota.c | 32 ++++++++++++++++++++------------
+>>>>    fs/ceph/super.c | 28 ++++++++++++++--------------
+>>>>    fs/ceph/super.h |  5 +++--
+>>>>    3 files changed, 37 insertions(+), 28 deletions(-)
+>>>>
+>>>> --
+>>>> 2.36.0.rc1
+>>>>
+
