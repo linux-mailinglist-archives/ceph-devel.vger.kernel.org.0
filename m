@@ -2,374 +2,120 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F0215628BF
-	for <lists+ceph-devel@lfdr.de>; Fri,  1 Jul 2022 04:10:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B0655628F9
+	for <lists+ceph-devel@lfdr.de>; Fri,  1 Jul 2022 04:30:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230039AbiGACJP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 30 Jun 2022 22:09:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42010 "EHLO
+        id S233202AbiGACaB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 30 Jun 2022 22:30:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbiGACJO (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 Jun 2022 22:09:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BBB502AE15
-        for <ceph-devel@vger.kernel.org>; Thu, 30 Jun 2022 19:09:12 -0700 (PDT)
+        with ESMTP id S232870AbiGACaA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 Jun 2022 22:30:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EDD614D15F
+        for <ceph-devel@vger.kernel.org>; Thu, 30 Jun 2022 19:29:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1656641350;
+        s=mimecast20190719; t=1656642599;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=mc43gNVW++KZFC+W1unw9W+e4kjVsG52oHEwHJnhQNU=;
-        b=A3p5MYRSkSG+ESq2qFiMXA+pqFphU9sOEp/O9GNfusA1LQ//WkDNooBAYL6rD5cza/Xqpm
-        g9N3NAmHWASWj6vAvOEjiJuSNWk0cQ2eDgLxLht/8tyFMFbgXgj07hg9Ko/9s1wseZpmB9
-        cuJPk6HdqC+U8b3f16G9XIMKb7BYS0E=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=5SD8mLQ27QhzHSofSC1yGlV34dZhs/N/McTNXmAjEAk=;
+        b=CNKcrH+cmN6VvARW/fKgY9cinRTzPNQJv2OEeYK4Kg6NdCgd+v3w4NqodDdKvKV9036CUX
+        OgS+Ake2Dbqjb5e9VqMRh1VwE8f7daruPJskBWuh/f1tFQ8qT7PDBU/EBGmGxzCFKW9/Yx
+        gwIrCku7xFEMXH7U+n5Whmhe2leAA6A=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-128-mekLY4NOOp2pOaAa22MswQ-1; Thu, 30 Jun 2022 22:09:09 -0400
-X-MC-Unique: mekLY4NOOp2pOaAa22MswQ-1
-Received: by mail-pg1-f198.google.com with SMTP id a15-20020a65604f000000b00401a9baf7d5so565681pgp.0
-        for <ceph-devel@vger.kernel.org>; Thu, 30 Jun 2022 19:09:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=mc43gNVW++KZFC+W1unw9W+e4kjVsG52oHEwHJnhQNU=;
-        b=ncuiWd4BsPpkdPSmkaxMqnQfoVLe2ScTLO7WUUEEIu/HjxTZWlbv+1oPSA4Z8NsTJT
-         QP+1uHAWnCg36+hikR9dwJy1ePVofhJ6DLvVAjq0zZIXOL2MpoCBJ2XkgUI126yFkwG5
-         wfMZF/YgBOfaN/llmxf1gvVBxkoSgXLYqQJX+uz8Z9ceCSW7TrgrLWCNeiAHUs2qGOdw
-         ZOfXSDAULw4rZJx8pLa0nCZ+F1ur9jPzl4U4dZtg9Wau4dZEJT5Ze9d1KKvcbS9Ibswb
-         h4FO+Nck2Mlpt4xXGPy5wB7fqmCSzyJO4urOsLNnOJBmi4BcQ5q8VDBDOgzLmaBKJBNl
-         Re2Q==
-X-Gm-Message-State: AJIora8cFJQ1W0/uF/UICDr/fECxB+5SaBAHEVzOlJGYVo1jGprwKFAj
-        6KUmn0zWhLFObTzVCmt5rZ/Kgz8tzcu4URA1u1nNljIdMekBY+G+cohoSo8NrrbVULoXY9hpCLP
-        gk/L7LbFDf3ITWA1a3V3nHDrbQdrLD2ymnVZU3VbJ2Cy46vU6zfIMVPbgburooLCqYPG8EkA=
-X-Received: by 2002:a17:90a:d993:b0:1ec:db00:6519 with SMTP id d19-20020a17090ad99300b001ecdb006519mr15679489pjv.106.1656641347591;
-        Thu, 30 Jun 2022 19:09:07 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1t27yFOWsTQSE9dTGVYXywZORc9sDeILETKIZ83UxleP3EBH5lrx+YntAC0uYYuOX6J2xyptw==
-X-Received: by 2002:a17:90a:d993:b0:1ec:db00:6519 with SMTP id d19-20020a17090ad99300b001ecdb006519mr15679448pjv.106.1656641347175;
-        Thu, 30 Jun 2022 19:09:07 -0700 (PDT)
-Received: from [10.72.12.186] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id gz4-20020a17090b0ec400b001ec4f258028sm5207932pjb.55.2022.06.30.19.09.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jun 2022 19:09:06 -0700 (PDT)
-Subject: Re: [PATCH] libceph: clean up ceph_osdc_start_request prototype
-To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com
-Cc:     ceph-devel@vger.kernel.org
-References: <20220630202150.653547-1-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <21be3084-f8f3-120c-be07-086c8deffd3d@redhat.com>
-Date:   Fri, 1 Jul 2022 10:09:01 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+ us-mta-551-MkFbfV--N4-HclIvL8uQIA-1; Thu, 30 Jun 2022 22:29:55 -0400
+X-MC-Unique: MkFbfV--N4-HclIvL8uQIA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0415F29AB3E3;
+        Fri,  1 Jul 2022 02:29:55 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DD79F2026D64;
+        Fri,  1 Jul 2022 02:29:50 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     jlayton@kernel.org, idryomov@gmail.com, dhowells@redhat.com
+Cc:     vshankar@redhat.com, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, willy@infradead.org,
+        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH 0/2] netfs, ceph: fix the crash when unlocking the folio
+Date:   Fri,  1 Jul 2022 10:29:45 +0800
+Message-Id: <20220701022947.10716-1-xiubli@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20220630202150.653547-1-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+From: Xiubo Li <xiubli@redhat.com>
 
-On 7/1/22 4:21 AM, Jeff Layton wrote:
-> This function always returns 0, and ignores the nofail boolean. Drop the
-> nofail argument, make the function void return and fix up the callers.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   drivers/block/rbd.c             |  6 +++---
->   fs/ceph/addr.c                  | 32 ++++++++++++--------------------
->   fs/ceph/file.c                  | 32 +++++++++++++-------------------
->   include/linux/ceph/osd_client.h |  5 ++---
->   net/ceph/osd_client.c           | 15 ++++++---------
->   5 files changed, 36 insertions(+), 54 deletions(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 91e541aa1f64..a8af0329ab77 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -1297,7 +1297,7 @@ static void rbd_osd_submit(struct ceph_osd_request *osd_req)
->   	dout("%s osd_req %p for obj_req %p objno %llu %llu~%llu\n",
->   	     __func__, osd_req, obj_req, obj_req->ex.oe_objno,
->   	     obj_req->ex.oe_off, obj_req->ex.oe_len);
-> -	ceph_osdc_start_request(osd_req->r_osdc, osd_req, false);
-> +	ceph_osdc_start_request(osd_req->r_osdc, osd_req);
->   }
->   
->   /*
-> @@ -2081,7 +2081,7 @@ static int rbd_object_map_update(struct rbd_obj_request *obj_req, u64 snap_id,
->   	if (ret)
->   		return ret;
->   
-> -	ceph_osdc_start_request(osdc, req, false);
-> +	ceph_osdc_start_request(osdc, req);
->   	return 0;
->   }
->   
-> @@ -4768,7 +4768,7 @@ static int rbd_obj_read_sync(struct rbd_device *rbd_dev,
->   	if (ret)
->   		goto out_req;
->   
-> -	ceph_osdc_start_request(osdc, req, false);
-> +	ceph_osdc_start_request(osdc, req);
->   	ret = ceph_osdc_wait_request(osdc, req);
->   	if (ret >= 0)
->   		ceph_copy_from_page_vector(pages, buf, 0, ret);
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index fe6147f20dee..66dc7844fcc6 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -357,9 +357,7 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
->   	req->r_inode = inode;
->   	ihold(inode);
->   
-> -	err = ceph_osdc_start_request(req->r_osdc, req, false);
-> -	if (err)
-> -		iput(inode);
-> +	ceph_osdc_start_request(req->r_osdc, req);
->   out:
->   	ceph_osdc_put_request(req);
->   	if (err)
-> @@ -633,9 +631,8 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
->   	dout("writepage %llu~%llu (%llu bytes)\n", page_off, len, len);
->   
->   	req->r_mtime = inode->i_mtime;
-> -	err = ceph_osdc_start_request(osdc, req, true);
-> -	if (!err)
-> -		err = ceph_osdc_wait_request(osdc, req);
-> +	ceph_osdc_start_request(osdc, req);
-> +	err = ceph_osdc_wait_request(osdc, req);
->   
->   	ceph_update_write_metrics(&fsc->mdsc->metric, req->r_start_latency,
->   				  req->r_end_latency, len, err);
-> @@ -1163,8 +1160,7 @@ static int ceph_writepages_start(struct address_space *mapping,
->   		}
->   
->   		req->r_mtime = inode->i_mtime;
-> -		rc = ceph_osdc_start_request(&fsc->client->osdc, req, true);
-> -		BUG_ON(rc);
-> +		ceph_osdc_start_request(&fsc->client->osdc, req);
->   		req = NULL;
->   
->   		wbc->nr_to_write -= i;
-> @@ -1707,9 +1703,8 @@ int ceph_uninline_data(struct file *file)
->   	}
->   
->   	req->r_mtime = inode->i_mtime;
-> -	err = ceph_osdc_start_request(&fsc->client->osdc, req, false);
-> -	if (!err)
-> -		err = ceph_osdc_wait_request(&fsc->client->osdc, req);
-> +	ceph_osdc_start_request(&fsc->client->osdc, req);
-> +	err = ceph_osdc_wait_request(&fsc->client->osdc, req);
->   	ceph_osdc_put_request(req);
->   	if (err < 0)
->   		goto out_unlock;
-> @@ -1750,9 +1745,8 @@ int ceph_uninline_data(struct file *file)
->   	}
->   
->   	req->r_mtime = inode->i_mtime;
-> -	err = ceph_osdc_start_request(&fsc->client->osdc, req, false);
-> -	if (!err)
-> -		err = ceph_osdc_wait_request(&fsc->client->osdc, req);
-> +	ceph_osdc_start_request(&fsc->client->osdc, req);
-> +	err = ceph_osdc_wait_request(&fsc->client->osdc, req);
->   
->   	ceph_update_write_metrics(&fsc->mdsc->metric, req->r_start_latency,
->   				  req->r_end_latency, len, err);
-> @@ -1923,15 +1917,13 @@ static int __ceph_pool_perm_get(struct ceph_inode_info *ci,
->   
->   	osd_req_op_raw_data_in_pages(rd_req, 0, pages, PAGE_SIZE,
->   				     0, false, true);
-> -	err = ceph_osdc_start_request(&fsc->client->osdc, rd_req, false);
-> +	ceph_osdc_start_request(&fsc->client->osdc, rd_req);
->   
->   	wr_req->r_mtime = ci->netfs.inode.i_mtime;
-> -	err2 = ceph_osdc_start_request(&fsc->client->osdc, wr_req, false);
-> +	ceph_osdc_start_request(&fsc->client->osdc, wr_req);
->   
-> -	if (!err)
-> -		err = ceph_osdc_wait_request(&fsc->client->osdc, rd_req);
-> -	if (!err2)
-> -		err2 = ceph_osdc_wait_request(&fsc->client->osdc, wr_req);
-> +	err = ceph_osdc_wait_request(&fsc->client->osdc, rd_req);
-> +	err2 = ceph_osdc_wait_request(&fsc->client->osdc, wr_req);
->   
->   	if (err >= 0 || err == -ENOENT)
->   		have |= POOL_READ;
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 0eb4a02175ad..296fd1c7ece8 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1008,9 +1008,8 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
->   			}
->   		}
->   
-> -		ret = ceph_osdc_start_request(osdc, req, false);
-> -		if (!ret)
-> -			ret = ceph_osdc_wait_request(osdc, req);
-> +		ceph_osdc_start_request(osdc, req);
-> +		ret = ceph_osdc_wait_request(osdc, req);
->   
->   		ceph_update_read_metrics(&fsc->mdsc->metric,
->   					 req->r_start_latency,
-> @@ -1282,7 +1281,7 @@ static void ceph_aio_retry_work(struct work_struct *work)
->   	req->r_inode = inode;
->   	req->r_priv = aio_req;
->   
-> -	ret = ceph_osdc_start_request(req->r_osdc, req, false);
-> +	ceph_osdc_start_request(req->r_osdc, req);
->   out:
->   	if (ret < 0) {
->   		req->r_result = ret;
-> @@ -1429,9 +1428,8 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
->   			continue;
->   		}
->   
-> -		ret = ceph_osdc_start_request(req->r_osdc, req, false);
-> -		if (!ret)
-> -			ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
-> +		ceph_osdc_start_request(req->r_osdc, req);
-> +		ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
->   
->   		if (write)
->   			ceph_update_write_metrics(metric, req->r_start_latency,
-> @@ -1497,8 +1495,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
->   					       r_private_item);
->   			list_del_init(&req->r_private_item);
->   			if (ret >= 0)
-> -				ret = ceph_osdc_start_request(req->r_osdc,
-> -							      req, false);
-> +				ceph_osdc_start_request(req->r_osdc, req);
->   			if (ret < 0) {
->   				req->r_result = ret;
->   				ceph_aio_complete_req(req);
-> @@ -1611,9 +1608,8 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
->   						false, true);
->   
->   		req->r_mtime = mtime;
-> -		ret = ceph_osdc_start_request(&fsc->client->osdc, req, false);
-> -		if (!ret)
-> -			ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
-> +		ceph_osdc_start_request(&fsc->client->osdc, req);
-> +		ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
->   
->   		ceph_update_write_metrics(&fsc->mdsc->metric, req->r_start_latency,
->   					  req->r_end_latency, len, ret);
-> @@ -2077,12 +2073,10 @@ static int ceph_zero_partial_object(struct inode *inode,
->   	}
->   
->   	req->r_mtime = inode->i_mtime;
-> -	ret = ceph_osdc_start_request(&fsc->client->osdc, req, false);
-> -	if (!ret) {
-> -		ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
-> -		if (ret == -ENOENT)
-> -			ret = 0;
-> -	}
-> +	ceph_osdc_start_request(&fsc->client->osdc, req);
-> +	ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
-> +	if (ret == -ENOENT)
-> +		ret = 0;
->   	ceph_osdc_put_request(req);
->   
->   out:
-> @@ -2384,7 +2378,7 @@ static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off
->   		if (IS_ERR(req))
->   			ret = PTR_ERR(req);
->   		else {
-> -			ceph_osdc_start_request(osdc, req, false);
-> +			ceph_osdc_start_request(osdc, req);
->   			ret = ceph_osdc_wait_request(osdc, req);
->   			ceph_update_copyfrom_metrics(&fsc->mdsc->metric,
->   						     req->r_start_latency,
-> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> index 6ec3cb2ac457..8cfa650def2c 100644
-> --- a/include/linux/ceph/osd_client.h
-> +++ b/include/linux/ceph/osd_client.h
-> @@ -572,9 +572,8 @@ static inline int ceph_alloc_sparse_ext_map(struct ceph_osd_req_op *op)
->   extern void ceph_osdc_get_request(struct ceph_osd_request *req);
->   extern void ceph_osdc_put_request(struct ceph_osd_request *req);
->   
-> -extern int ceph_osdc_start_request(struct ceph_osd_client *osdc,
-> -				   struct ceph_osd_request *req,
-> -				   bool nofail);
-> +void ceph_osdc_start_request(struct ceph_osd_client *osdc,
-> +				struct ceph_osd_request *req);
->   extern void ceph_osdc_cancel_request(struct ceph_osd_request *req);
->   extern int ceph_osdc_wait_request(struct ceph_osd_client *osdc,
->   				  struct ceph_osd_request *req);
-> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> index 75761537c644..fe674c4e943f 100644
-> --- a/net/ceph/osd_client.c
-> +++ b/net/ceph/osd_client.c
-> @@ -4615,15 +4615,12 @@ static void handle_watch_notify(struct ceph_osd_client *osdc,
->   /*
->    * Register request, send initial attempt.
->    */
-> -int ceph_osdc_start_request(struct ceph_osd_client *osdc,
-> -			    struct ceph_osd_request *req,
-> -			    bool nofail)
-> +void ceph_osdc_start_request(struct ceph_osd_client *osdc,
-> +			     struct ceph_osd_request *req)
->   {
->   	down_read(&osdc->lock);
->   	submit_request(req, false);
->   	up_read(&osdc->lock);
-> -
-> -	return 0;
->   }
->   EXPORT_SYMBOL(ceph_osdc_start_request);
->   
-> @@ -4793,7 +4790,7 @@ int ceph_osdc_unwatch(struct ceph_osd_client *osdc,
->   	if (ret)
->   		goto out_put_req;
->   
-> -	ceph_osdc_start_request(osdc, req, false);
-> +	ceph_osdc_start_request(osdc, req);
->   	linger_cancel(lreq);
->   	linger_put(lreq);
->   	ret = wait_request_timeout(req, opts->mount_timeout);
-> @@ -4864,7 +4861,7 @@ int ceph_osdc_notify_ack(struct ceph_osd_client *osdc,
->   	if (ret)
->   		goto out_put_req;
->   
-> -	ceph_osdc_start_request(osdc, req, false);
-> +	ceph_osdc_start_request(osdc, req);
->   	ret = ceph_osdc_wait_request(osdc, req);
->   
->   out_put_req:
-> @@ -5080,7 +5077,7 @@ int ceph_osdc_list_watchers(struct ceph_osd_client *osdc,
->   	if (ret)
->   		goto out_put_req;
->   
-> -	ceph_osdc_start_request(osdc, req, false);
-> +	ceph_osdc_start_request(osdc, req);
->   	ret = ceph_osdc_wait_request(osdc, req);
->   	if (ret >= 0) {
->   		void *p = page_address(pages[0]);
-> @@ -5157,7 +5154,7 @@ int ceph_osdc_call(struct ceph_osd_client *osdc,
->   	if (ret)
->   		goto out_put_req;
->   
-> -	ceph_osdc_start_request(osdc, req, false);
-> +	ceph_osdc_start_request(osdc, req);
->   	ret = ceph_osdc_wait_request(osdc, req);
->   	if (ret >= 0) {
->   		ret = req->r_ops[0].rval;
+kernel: page:00000000c9746ff1 refcount:2 mapcount:0 mapping:00000000dc2785bb index:0x1 pfn:0x141afc
+kernel: memcg:ffff88810f766000
+kernel: aops:ceph_aops [ceph] ino:100000005e7 dentry name:"postgresql-Fri.log" 
+kernel: flags: 0x5ffc000000201c(uptodate|dirty|lru|private|node=0|zone=2|lastcpupid=0x7ff)
+kernel: raw: 005ffc000000201c ffffea000a9eeb48 ffffea00060ade48 ffff888193ed8228
+kernel: raw: 0000000000000001 ffff88810cc96500 00000002ffffffff ffff88810f766000
+kernel: page dumped because: VM_BUG_ON_FOLIO(!folio_test_locked(folio))
+kernel: ------------[ cut here ]------------
+kernel: kernel BUG at mm/filemap.c:1559!
+kernel: invalid opcode: 0000 [#1] PREEMPT SMP PTI
+kernel: CPU: 4 PID: 131697 Comm: postmaster Tainted: G S                5.19.0-rc2-ceph-g822a4c74e05d #1
+kernel: Hardware name: Supermicro SYS-5018R-WR/X10SRW-F, BIOS 2.0 12/17/2015
+kernel: RIP: 0010:folio_unlock+0x26/0x30
+kernel: Code: 00 0f 1f 00 0f 1f 44 00 00 48 8b 07 a8 01 74 0e f0 80 27 fe 78 01 c3 31 f6 e9 d6 fe ff ff 48 c7 c6 c0 81 37 82 e8 aa 64 04 00 <0f> 0b 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 8b 87 b8 01 00 00
+kernel: RSP: 0018:ffffc90004377bc8 EFLAGS: 00010246
+kernel: RAX: 000000000000003f RBX: ffff888193ed8228 RCX: 0000000000000001
+kernel: RDX: 0000000000000000 RSI: ffffffff823a3569 RDI: 00000000ffffffff
+kernel: RBP: ffffffff828a0058 R08: 0000000000000001 R09: 0000000000000001
+kernel: R10: 000000007c6b0fd2 R11: 0000000000000034 R12: 0000000000000001
+kernel: R13: 00000000fffffe00 R14: ffffea000506bf00 R15: ffff888193ed8000
+kernel: FS:  00007f4993626340(0000) GS:ffff88885fd00000(0000) knlGS:0000000000000000
+kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+kernel: CR2: 0000555789ee8000 CR3: 000000017a52a006 CR4: 00000000001706e0
+kernel: Call Trace:
+kernel: <TASK>
+kernel: netfs_write_begin+0x130/0x950 [netfs]
+kernel: ceph_write_begin+0x46/0xd0 [ceph]
+kernel: generic_perform_write+0xef/0x200
+kernel: ? file_update_time+0xd4/0x110
+kernel: ceph_write_iter+0xb01/0xcd0 [ceph]
+kernel: ? lock_is_held_type+0xe3/0x140
+kernel: ? new_sync_write+0x106/0x180
+kernel: new_sync_write+0x106/0x180
+kernel: vfs_write+0x29a/0x3a0
+kernel: ksys_write+0x5c/0xd0
+kernel: do_syscall_64+0x34/0x80
+kernel: entry_SYSCALL_64_after_hwframe+0x46/0xb0
+kernel: RIP: 0033:0x7f49903205c8
+kernel: Code: 89 02 48 c7 c0 ff ff ff ff eb b3 0f 1f 80 00 00 00 00 f3 0f 1e fa 48 8d 05 d5 3f 2a 00 8b 00 85 c0 75 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 41 54 49 89 d4 55
+kernel: RSP: 002b:00007fff104bd178 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+kernel: RAX: ffffffffffffffda RBX: 0000000000000048 RCX: 00007f49903205c8
+kernel: RDX: 0000000000000048 RSI: 000055944d3c1ea0 RDI: 000000000000000b
+kernel: RBP: 000055944d3c1ea0 R08: 000055944d3963d0 R09: 00007fff1055b080
+kernel: R10: 0000000000000000 R11: 0000000000000246 R12: 000055944d3962f0
+kernel: R13: 0000000000000048 R14: 00007f49905bb880 R15: 0000000000000048
+kernel: </TASK>
 
-Looks good.
 
-Will merge to the testing branch and test it.
+Xiubo Li (2):
+  netfs: release the folio lock and put the folio before retrying
+  ceph: do not release the folio lock in kceph
 
-Thanks Jeff!
+ fs/ceph/addr.c           | 6 +++---
+ fs/netfs/buffered_read.c | 5 ++++-
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
--- Xiubo
+-- 
+2.36.0.rc1
 
