@@ -2,52 +2,63 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BB5A566F67
-	for <lists+ceph-devel@lfdr.de>; Tue,  5 Jul 2022 15:38:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9552B566FDB
+	for <lists+ceph-devel@lfdr.de>; Tue,  5 Jul 2022 15:50:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231949AbiGENiG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 5 Jul 2022 09:38:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52284 "EHLO
+        id S231801AbiGENuK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 5 Jul 2022 09:50:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40596 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231830AbiGENhx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 5 Jul 2022 09:37:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94D9E7BD32
-        for <ceph-devel@vger.kernel.org>; Tue,  5 Jul 2022 05:59:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S232908AbiGENtk (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 5 Jul 2022 09:49:40 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9EE2822510
+        for <ceph-devel@vger.kernel.org>; Tue,  5 Jul 2022 06:21:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1657027291;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=IU1hmx/6CablWOPeTIIqi3YqGNsqAV5xUAc3aVqmUGg=;
+        b=Qu/HlBfmNSvagMRc1S0O01gfmVNjvN9M0BT9cDt00NaBJFKPGf0iTESXSDCoDTDo/WpJz0
+        aomkn2q8Qkzi7Yzewl83QQIrwEKYkElvbCfBWxhG629VdD8ld6bAHuwUbMUud/8cbNg9op
+        3rtWkWw/VWHeM0pBhslnEskGUh1nBjs=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-77--JCJQmBOMB2CUtYwGYxzUw-1; Tue, 05 Jul 2022 09:21:26 -0400
+X-MC-Unique: -JCJQmBOMB2CUtYwGYxzUw-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7DAFF6066C
-        for <ceph-devel@vger.kernel.org>; Tue,  5 Jul 2022 12:59:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70E34C341C7;
-        Tue,  5 Jul 2022 12:59:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657025944;
-        bh=kcKOBUp7SMF5hh49VaVQ8WjkcectkQbDg5Gc6hm6AjM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=iQMCCwvfUgiYDKeK77vkIaGcLwJcTlyOTQ4fZ7TVmnzp0F6Xl2o3zY9cj9j50nbqg
-         3WQAE/GohkhXcXl0RzwJK7gLf+kd3tLfGuy538CAJU33A9UKZx5eqBNNm1x5eBV+ix
-         Y+gMHItPZQxrAa61lTqPulVphSu9DAA3/eNJW2MMSv8fz1JKmFbq5j8VsJyrFAvvc9
-         Fa8Iwy6T7XDfcH2Z97OVOwzHfBOiDBJ4sllo6Xr2dyzT480leG4eHcju764XO1mWsJ
-         ch9WdJZO4vQ2gjSff/1wGGhKHLanNSXNDN5UtFAy3J5yF0gQGyJlpe6uIn1C7HtrFb
-         OWUcgkuHq78oQ==
-Message-ID: <a28932b4f81766e9e1fc22f008f527f578af91f3.camel@kernel.org>
-Subject: Re: [PATCH v3 0/2] libceph: add new iov_iter msg_data type and use
- it for reads
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org
-Date:   Tue, 05 Jul 2022 08:59:03 -0400
-In-Reply-To: <YsKBGq99GNpL5jMu@infradead.org>
-References: <20220701103013.12902-1-jlayton@kernel.org>
-         <YsKBGq99GNpL5jMu@infradead.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.2 (3.44.2-1.fc36) 
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0964F811E7A;
+        Tue,  5 Jul 2022 13:21:26 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.37.50])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BCF03416390;
+        Tue,  5 Jul 2022 13:21:24 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <30a4bd0e19626f5fb30f19f0ae70fba2debb361a.camel@kernel.org>
+References: <30a4bd0e19626f5fb30f19f0ae70fba2debb361a.camel@kernel.org> <20220701022947.10716-1-xiubli@redhat.com> <20220701022947.10716-2-xiubli@redhat.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     dhowells@redhat.com, xiubli@redhat.com, idryomov@gmail.com,
+        vshankar@redhat.com, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, willy@infradead.org,
+        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com
+Subject: Re: [PATCH 1/2] netfs: release the folio lock and put the folio before retrying
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2187945.1657027284.1@warthog.procyon.org.uk>
+Date:   Tue, 05 Jul 2022 14:21:24 +0100
+Message-ID: <2187946.1657027284@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
+X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,34 +66,19 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, 2022-07-03 at 22:56 -0700, Christoph Hellwig wrote:
-> On Fri, Jul 01, 2022 at 06:30:11AM -0400, Jeff Layton wrote:
-> > Currently, we take an iov_iter from the netfs layer, turn that into an
-> > array of pages, and then pass that to the messenger which eventually
-> > turns that back into an iov_iter before handing it back to the socket.
-> >=20
-> > This patchset adds a new ceph_msg_data_type that uses an iov_iter
-> > directly instead of requiring an array of pages or bvecs. This allows
-> > us to avoid an extra allocation in the buffered read path, and should
-> > make it easier to plumb in write helpers later.
-> >=20
-> > For now, this is still just a slow, stupid implementation that hands
-> > the socket layer a page at a time like the existing messenger does. It
-> > doesn't yet attempt to pass through the iov_iter directly.
-> >=20
-> > I have some patches that pass the cursor's iov_iter directly to the
-> > socket in the receive path, but it requires some infrastructure that's
-> > not in mainline yet (iov_iter_scan(), for instance). It should be
-> > possible to something similar in the send path as well.
->=20
-> Btw, is there any good reason to not simply replace ceph_msg_data
-> with an iov_iter entirely?
->=20
+Jeff Layton <jlayton@kernel.org> wrote:
 
-Not really, no.
+> I don't know here... I think it might be better to just expect that when
+> this function returns an error that the folio has already been unlocked.
+> Doing it this way will mean that you will lock and unlock the folio a
+> second time for no reason.
 
-What I'd probably do is change the existing osd_req_op_* callers to use
-the new iov_iter msg_data type first, and then once they all were you
-could phase out the use of struct ceph_msg_data altogether.
---=20
-Jeff Layton <jlayton@kernel.org>
+I seem to remember there was some reason you wanted the folio unlocking and
+putting.  I guess you need to drop the ref to flush it.
+
+Would it make sense for ->check_write_begin() to be passed a "struct folio
+**folio" rather than "struct folio *folio" and then the filesystem can clear
+*folio if it disposes of the page?
+
+David
+
