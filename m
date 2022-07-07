@@ -2,47 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A954156A2E5
-	for <lists+ceph-devel@lfdr.de>; Thu,  7 Jul 2022 14:54:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF8F256A361
+	for <lists+ceph-devel@lfdr.de>; Thu,  7 Jul 2022 15:22:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235929AbiGGMxu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 7 Jul 2022 08:53:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46944 "EHLO
+        id S235122AbiGGNV5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 7 Jul 2022 09:21:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235724AbiGGMxZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Jul 2022 08:53:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D71C02F02E
-        for <ceph-devel@vger.kernel.org>; Thu,  7 Jul 2022 05:53:22 -0700 (PDT)
+        with ESMTP id S235376AbiGGNVz (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Jul 2022 09:21:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 274B313CD6
+        for <ceph-devel@vger.kernel.org>; Thu,  7 Jul 2022 06:21:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657198401;
+        s=mimecast20190719; t=1657200113;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=qw238l4/II5ZS2Jgu7adObRZNkiqO5QpfrDEC+afXgc=;
-        b=fFOB5FpGYrx3JdZB+NZteMFDyH5pqeqVbktL5Vq3ojCR8rVMpzV6flgz4SD28QFl1RTDsn
-        BcmeeW4lmnODI4FOlda2JDjoxB18EoE0U/fpcGkSlCjZxoULx5NVJ3bU7wxBPJdG1ZrVoM
-        jSqhVIV+g40LvhcQeiQ86oKv9f+kOf8=
+        bh=OOBRD0wmr2rvfwmljryCiegH8fKKnPBuD2ipRfg+U4U=;
+        b=XAeCO//s60/zgQrzwFg+Sg1CU4LbVqj9lq/JKRAYXMCC6QMs0tJWDyudhnRR9BCnjN4Q2G
+        dlUR0J41BneIyRnPypPVMgXUkn1DDMkREyaLj5C3I2vuQqB2ekNMCMWaLQ/cdim88G6NlW
+        gtcL6AzCYRYSTEnJNo4BLmSZAgplq/k=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-197-MpSypgCmMdKepNO5kg5jzw-1; Thu, 07 Jul 2022 08:53:18 -0400
-X-MC-Unique: MpSypgCmMdKepNO5kg5jzw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+ us-mta-624-37mpEwMIMMyxmIa8w0AU5w-1; Thu, 07 Jul 2022 09:21:48 -0400
+X-MC-Unique: 37mpEwMIMMyxmIa8w0AU5w-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1490A80A0C5;
-        Thu,  7 Jul 2022 12:53:18 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8415E85A582;
+        Thu,  7 Jul 2022 13:21:47 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.37.50])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7CE17404C321;
-        Thu,  7 Jul 2022 12:53:16 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CE4542166B29;
+        Thu,  7 Jul 2022 13:21:45 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
 From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20220707045112.10177-2-xiubli@redhat.com>
-References: <20220707045112.10177-2-xiubli@redhat.com> <20220707045112.10177-1-xiubli@redhat.com>
+In-Reply-To: <20220707045112.10177-1-xiubli@redhat.com>
+References: <20220707045112.10177-1-xiubli@redhat.com>
 To:     xiubli@redhat.com
 Cc:     dhowells@redhat.com, idryomov@gmail.com, jlayton@kernel.org,
         marc.dionne@auristor.com, willy@infradead.org,
@@ -50,16 +51,17 @@ Cc:     dhowells@redhat.com, idryomov@gmail.com, jlayton@kernel.org,
         william.kucharski@oracle.com, linux-afs@lists.infradead.org,
         linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
         linux-cachefs@redhat.com, vshankar@redhat.com
-Subject: Re: [PATCH v3 1/2] netfs: do not unlock and put the folio twice
+Subject: [PATCH v4] netfs: do not unlock and put the folio twice
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2435747.1657198395.1@warthog.procyon.org.uk>
-Date:   Thu, 07 Jul 2022 13:53:15 +0100
-Message-ID: <2435748.1657198395@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-ID: <2520850.1657200105.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 07 Jul 2022 14:21:45 +0100
+Message-ID: <2520851.1657200105@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,21 +69,219 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-xiubli@redhat.com wrote:
+Here's my take on this.  I've made the error: path handle folio =3D=3D NUL=
+L, so
+you don't need to split that error case.  I've also changed
+->check_write_begin() so that it returns 0, not -EAGAIN, if we drop the fo=
+lio;
+the process is retried then if the folio pointer got cleared.
 
-> -error:
-> +error_locked:
->  	folio_unlock(folio);
->  	folio_put(folio);
-> +error_unlocked:
-
-I would do:
-
-	error:
-		if (folio) {
-			folio_unlock(folio);
-			folio_put(folio);
-		}
+As a result, you don't have to discard the page if you want to return an e=
+rror
+and thus don't need the additional afs patch
 
 David
+---
+commit 8489c89f6a186272593ab5e3fffbd47ea21185b7
+Author: Xiubo Li <xiubli@redhat.com>
+Date:   Thu Jul 7 12:51:11 2022 +0800
+
+    netfs: do not unlock and put the folio twice
+    =
+
+    check_write_begin() will unlock and put the folio when return
+    non-zero.  So we should avoid unlocking and putting it twice in
+    netfs layer.
+    =
+
+    Change the way ->check_write_begin() works in the following two ways:
+    =
+
+     (1) Pass it a pointer to the folio pointer, allowing it to unlock and=
+ put
+         the folio prior to doing the stuff it wants to do, provided it cl=
+ears
+         the folio pointer.
+    =
+
+     (2) Change the return values such that 0 with folio pointer set means
+         continue, 0 with folio pointer cleared means re-get and all error
+         codes indicating an error (no special treatment for -EAGAIN).
+    =
+
+    Link: https://tracker.ceph.com/issues/56423
+    Link: https://lore.kernel.org/r/20220707045112.10177-2-xiubli@redhat.c=
+om/
+    Signed-off-by: Xiubo Li <xiubli@redhat.com>
+    Co-developed-by: David Howells <dhowells@redhat.com>
+    Signed-off-by: David Howells <dhowells@redhat.com>
+
+diff --git a/Documentation/filesystems/netfs_library.rst b/Documentation/f=
+ilesystems/netfs_library.rst
+index 4d19b19bcc08..89085e1c22db 100644
+--- a/Documentation/filesystems/netfs_library.rst
++++ b/Documentation/filesystems/netfs_library.rst
+@@ -301,7 +301,7 @@ through which it can issue requests and negotiate::
+ 		void (*issue_read)(struct netfs_io_subrequest *subreq);
+ 		bool (*is_still_valid)(struct netfs_io_request *rreq);
+ 		int (*check_write_begin)(struct file *file, loff_t pos, unsigned len,
+-					 struct folio *folio, void **_fsdata);
++					 struct folio **_folio, void **_fsdata);
+ 		void (*done)(struct netfs_io_request *rreq);
+ 	};
+ =
+
+@@ -381,8 +381,10 @@ The operations are as follows:
+    allocated/grabbed the folio to be modified to allow the filesystem to =
+flush
+    conflicting state before allowing it to be modified.
+ =
+
+-   It should return 0 if everything is now fine, -EAGAIN if the folio sho=
+uld be
+-   regrabbed and any other error code to abort the operation.
++   It may unlock and discard the folio it was given and set the caller's =
+folio
++   pointer to NULL.  It should return 0 if everything is now fine (*_foli=
+o
++   left set) or the op should be retried (*_folio cleared) and any other =
+error
++   code to abort the operation.
+ =
+
+  * ``done``
+ =
+
+diff --git a/fs/afs/file.c b/fs/afs/file.c
+index 42118a4f3383..afacce797fb9 100644
+--- a/fs/afs/file.c
++++ b/fs/afs/file.c
+@@ -375,7 +375,7 @@ static int afs_begin_cache_operation(struct netfs_io_r=
+equest *rreq)
+ }
+ =
+
+ static int afs_check_write_begin(struct file *file, loff_t pos, unsigned =
+len,
+-				 struct folio *folio, void **_fsdata)
++				 struct folio **folio, void **_fsdata)
+ {
+ 	struct afs_vnode *vnode =3D AFS_FS_I(file_inode(file));
+ =
+
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 6dee88815491..ab070a24ca23 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -63,7 +63,7 @@
+ 	 (CONGESTION_ON_THRESH(congestion_kb) >> 2))
+ =
+
+ static int ceph_netfs_check_write_begin(struct file *file, loff_t pos, un=
+signed int len,
+-					struct folio *folio, void **_fsdata);
++					struct folio **folio, void **_fsdata);
+ =
+
+ static inline struct ceph_snap_context *page_snap_context(struct page *pa=
+ge)
+ {
+@@ -1288,18 +1288,19 @@ ceph_find_incompatible(struct page *page)
+ }
+ =
+
+ static int ceph_netfs_check_write_begin(struct file *file, loff_t pos, un=
+signed int len,
+-					struct folio *folio, void **_fsdata)
++					struct folio **folio, void **_fsdata)
+ {
+ 	struct inode *inode =3D file_inode(file);
+ 	struct ceph_inode_info *ci =3D ceph_inode(inode);
+ 	struct ceph_snap_context *snapc;
+ =
+
+-	snapc =3D ceph_find_incompatible(folio_page(folio, 0));
++	snapc =3D ceph_find_incompatible(folio_page(*folio, 0));
+ 	if (snapc) {
+ 		int r;
+ =
+
+-		folio_unlock(folio);
+-		folio_put(folio);
++		folio_unlock(*folio);
++		folio_put(*folio);
++		*folio =3D NULL;
+ 		if (IS_ERR(snapc))
+ 			return PTR_ERR(snapc);
+ =
+
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index 42f892c5712e..69bbf1c25cf4 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -319,8 +319,9 @@ static bool netfs_skip_folio_read(struct folio *folio,=
+ loff_t pos, size_t len,
+  * conflicting writes once the folio is grabbed and locked.  It is passed=
+ a
+  * pointer to the fsdata cookie that gets returned to the VM to be passed=
+ to
+  * write_end.  It is permitted to sleep.  It should return 0 if the reque=
+st
+- * should go ahead; unlock the folio and return -EAGAIN to cause the foli=
+o to
+- * be regot; or return an error.
++ * should go ahead or it may return an error.  It may also unlock and put=
+ the
++ * folio, provided it sets *_folio to NULL, in which case a return of 0 w=
+ill
++ * cause the folio to be re-got and the process to be retried.
+  *
+  * The calling netfs must initialise a netfs context contiguous to the vf=
+s
+  * inode before calling this.
+@@ -348,13 +349,13 @@ int netfs_write_begin(struct netfs_inode *ctx,
+ =
+
+ 	if (ctx->ops->check_write_begin) {
+ 		/* Allow the netfs (eg. ceph) to flush conflicts. */
+-		ret =3D ctx->ops->check_write_begin(file, pos, len, folio, _fsdata);
++		ret =3D ctx->ops->check_write_begin(file, pos, len, &folio, _fsdata);
+ 		if (ret < 0) {
+ 			trace_netfs_failure(NULL, NULL, ret, netfs_fail_check_write_begin);
+-			if (ret =3D=3D -EAGAIN)
+-				goto retry;
+ 			goto error;
+ 		}
++		if (!folio)
++			goto retry;
+ 	}
+ =
+
+ 	if (folio_test_uptodate(folio))
+@@ -416,8 +417,10 @@ int netfs_write_begin(struct netfs_inode *ctx,
+ error_put:
+ 	netfs_put_request(rreq, false, netfs_rreq_trace_put_failed);
+ error:
+-	folio_unlock(folio);
+-	folio_put(folio);
++	if (folio) {
++		folio_unlock(folio);
++		folio_put(folio);
++	}
+ 	_leave(" =3D %d", ret);
+ 	return ret;
+ }
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 1773e5df8e65..6ab5d56dac74 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -214,7 +214,7 @@ struct netfs_request_ops {
+ 	void (*issue_read)(struct netfs_io_subrequest *subreq);
+ 	bool (*is_still_valid)(struct netfs_io_request *rreq);
+ 	int (*check_write_begin)(struct file *file, loff_t pos, unsigned len,
+-				 struct folio *folio, void **_fsdata);
++				 struct folio **_folio, void **_fsdata);
+ 	void (*done)(struct netfs_io_request *rreq);
+ };
+ =
 
