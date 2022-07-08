@@ -2,84 +2,79 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F54B56AFA0
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 Jul 2022 03:07:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DC1A56B079
+	for <lists+ceph-devel@lfdr.de>; Fri,  8 Jul 2022 04:10:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237028AbiGHAe4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 7 Jul 2022 20:34:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43912 "EHLO
+        id S236022AbiGHCKh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 7 Jul 2022 22:10:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236997AbiGHAez (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Jul 2022 20:34:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C357657270
-        for <ceph-devel@vger.kernel.org>; Thu,  7 Jul 2022 17:34:52 -0700 (PDT)
+        with ESMTP id S229882AbiGHCKg (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 7 Jul 2022 22:10:36 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E75F822287
+        for <ceph-devel@vger.kernel.org>; Thu,  7 Jul 2022 19:10:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657240491;
+        s=mimecast20190719; t=1657246233;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=sAdfxmW8RF+AZ9EDvY1OeIPpyhjibGeFRdYERWEBXJ0=;
-        b=Jn39eivsh135ZVyHq9a0+h8KkVtve948+CWsC5a6AomjIJYoVuWy0eH25dYnbIB21gU7U6
-        XRRiHIn89BJKp5jx8WHE9qtnzAQRvctJTvaTkJG8rOkutImunWI0+AMIeFPapxhbLfq/vP
-        4VYtLM9l+sunWG0LoPsEw83cUxjJ1Ds=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=dU9A2avEK606Jj03n4kL2Q5OK9t21ZDX8JhQ48AEgE4=;
+        b=i0gYeQh96LxpCJ+JQdJXfYyw1jMkHFOj+WPMEmS1z4wOraktAgO0h+w8z+ECW2WImImsq1
+        BfPuWBLbA3qZZw9OEPyhanyoZ7WMchibgIs9/NLW2Xkp7ya5lKrdqVua9sizEB3WucPIlP
+        y1BgvMYTBhUct+y9YwoD7nqi5JHh6RE=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-592-Cz0x3r6LONm5z8zCwjZRAw-1; Thu, 07 Jul 2022 20:34:50 -0400
-X-MC-Unique: Cz0x3r6LONm5z8zCwjZRAw-1
-Received: by mail-pl1-f200.google.com with SMTP id z5-20020a170903018500b0016a561649abso9330270plg.12
-        for <ceph-devel@vger.kernel.org>; Thu, 07 Jul 2022 17:34:50 -0700 (PDT)
+ us-mta-297-u1A4z1IvP321mAgtI6yJ9g-1; Thu, 07 Jul 2022 22:10:32 -0400
+X-MC-Unique: u1A4z1IvP321mAgtI6yJ9g-1
+Received: by mail-pl1-f199.google.com with SMTP id i5-20020a170902c94500b0016a644a6008so9324939pla.1
+        for <ceph-devel@vger.kernel.org>; Thu, 07 Jul 2022 19:10:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=sAdfxmW8RF+AZ9EDvY1OeIPpyhjibGeFRdYERWEBXJ0=;
-        b=vfN6a3YKWtloYtmB1xZUspoXeHxPYZDd71sZ4c1k5zsfJ8iWDbAiD6V01B4SvD/5BU
-         An4H9bttVb337r50LtMhKioJwmBPf24GL1R9L3BcHDnBUX8ovAgkyFxrCfyEFq+IJoIG
-         GtVXABm6Xtitbq/HWJ4JBU5GWyKTpw9t+seb7uNxJQ5yNVQ42YauK73kVWtNo+oqCqVs
-         dq9gyxMRWM9nnm7VYYIAtvQep3cjlraz604Qi/1GmYb+DVSEwfp8tw6LD31rtkgP11HH
-         JxSJ8zxcp+Dt/P2MQ/rvSVbbs7T99odYfS6vREJxUxL4S3DiPHb0nfv7JAvDy0EQ4pXS
-         8r7A==
-X-Gm-Message-State: AJIora+ONm4ixsLuUF+IUYCTz4jnaw2etIVjZj+xZ4IfKIuwS7BoeRRA
-        nrQEEFwqvOD5GiycLl/40W29NfMiwCE+7kYFpfC1LKZAmGGwvk7XTySyZJxu97rA3cungIawemc
-        X22XcWDk8eYF3Dcb06J6mvQ==
-X-Received: by 2002:a05:6a00:a8b:b0:4e1:52db:9e5c with SMTP id b11-20020a056a000a8b00b004e152db9e5cmr1000609pfl.38.1657240489535;
-        Thu, 07 Jul 2022 17:34:49 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1uSUVNLziJFu4GfOCBs8dy/vRXb0JGhtZPTokt7fqNMumRCZo7HOzSxp0rdxI9MeBMR5F9NbA==
-X-Received: by 2002:a05:6a00:a8b:b0:4e1:52db:9e5c with SMTP id b11-20020a056a000a8b00b004e152db9e5cmr1000587pfl.38.1657240489335;
-        Thu, 07 Jul 2022 17:34:49 -0700 (PDT)
+        bh=dU9A2avEK606Jj03n4kL2Q5OK9t21ZDX8JhQ48AEgE4=;
+        b=HTljtswnWddbOkcA9DRymadE+rfHrTY/CYtmul1BpXJfTQQElxi9gLzuuszRF/kCYC
+         7sJm3DXB1bRCn5zNnzWVyhqFSDpeUUMGomkJrFpa/hq2HQWDHdN1SH4ImnW/L4d6bnVy
+         E/4G22ajg80XD62vN+b6/VVDUcIDEg1gxidtZdu+WrPVugW9OwmsBKSWYALold+hTxlj
+         IOCHBj2laBRZcDMmwwKHTiAK7q7lK16521i05Yvu0tq+UeDZHydqYbZhslZnQDG0OYBl
+         +bIwsIgLd3E4ZnFQPDxIb5lw227Xb9OwopbsVbcZ9biUUEGpcEVouN8SguN8GHoJEpud
+         v4qg==
+X-Gm-Message-State: AJIora9ByRjaTxv3f0dRg7iiILHN1hAVDQmxWCISTAYKu1vldaxNmqZW
+        WKTZ1NImmut50rsajDDlqmpXwxY7J2QTJNiwFwq36NuepjP3Gbc003azJwcKSQ0mP4pccJYvS1b
+        ajMZv/SqdQYQ6SDwiiD0/AA==
+X-Received: by 2002:a17:902:ea0a:b0:168:d8ce:4a63 with SMTP id s10-20020a170902ea0a00b00168d8ce4a63mr1010421plg.57.1657246230983;
+        Thu, 07 Jul 2022 19:10:30 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1sRrqHMf04Yy/AxvDAOr3pzYJdnpIz5SNscixvcqcWBgR5bFz6YnY1eOtijvJP6uy/Y1BeCvQ==
+X-Received: by 2002:a17:902:ea0a:b0:168:d8ce:4a63 with SMTP id s10-20020a170902ea0a00b00168d8ce4a63mr1010398plg.57.1657246230689;
+        Thu, 07 Jul 2022 19:10:30 -0700 (PDT)
 Received: from [10.72.12.227] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id m22-20020a62a216000000b005289753448fsm6160102pff.123.2022.07.07.17.34.42
+        by smtp.gmail.com with ESMTPSA id c16-20020a056a00009000b0051c1b445094sm27909386pfj.7.2022.07.07.19.10.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 Jul 2022 17:34:48 -0700 (PDT)
-Subject: Re: [PATCH v3 1/2] netfs: do not unlock and put the folio twice
-To:     David Howells <dhowells@redhat.com>
-Cc:     idryomov@gmail.com, jlayton@kernel.org, marc.dionne@auristor.com,
-        willy@infradead.org, keescook@chromium.org,
-        kirill.shutemov@linux.intel.com, william.kucharski@oracle.com,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cachefs@redhat.com,
-        vshankar@redhat.com
-References: <20220707045112.10177-2-xiubli@redhat.com>
- <20220707045112.10177-1-xiubli@redhat.com>
- <2341366.1657197157@warthog.procyon.org.uk>
+        Thu, 07 Jul 2022 19:10:30 -0700 (PDT)
+Subject: Re: [RFC] Convert ceph_page_mkwrite to use a folio
+To:     Jeff Layton <jlayton@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <YsbzAoGAAZtlxsrd@casper.infradead.org>
+ <763ba47fb850282b62c36eca6084c446a0952336.camel@kernel.org>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <7f5467e2-c01a-b327-44f7-97cd34e4e0b1@redhat.com>
-Date:   Fri, 8 Jul 2022 08:34:38 +0800
+Message-ID: <10ae8106-d86c-053d-f8d8-b9a0eca77b01@redhat.com>
+Date:   Fri, 8 Jul 2022 10:10:24 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <2341366.1657197157@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <763ba47fb850282b62c36eca6084c446a0952336.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -87,17 +82,125 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 7/7/22 8:32 PM, David Howells wrote:
-> xiubli@redhat.com wrote:
+On 7/8/22 1:48 AM, Jeff Layton wrote:
+> On Thu, 2022-07-07 at 15:51 +0100, Matthew Wilcox wrote:
+>> There are some latent bugs that I fix here (eg, you can't call
+>> thp_size() on a tail page), but the real question is how Ceph in
+>> particular (and FS in general) want to handle mkwrite in a world
+>> of multi-page folios.
+>>
+>> If we have a multi-page folio which is occupying an entire PMD, then
+>> no question, we have to mark all 2MB (or whatever) as dirty.  But
+>> if it's being mapped with PTEs, either because it's mapped misaligned,
+>> or it's smaller than a PMD, then we have a choice.  We can either
+>> work in 4kB chunks, marking each one dirty (and storing the sub-folio
+>> dirty state in the fs private data) like a write might.  Or we can
+>> just say "Hey, the whole folio is dirty now" and not try to track
+>> dirtiness on a per-page granularity.
+>>
+>> The latter course seems to have been taken, modulo the bugs, but I
+>> don't know if any thought was taken or whether it was done by rote.
+>>
+> Done by rote, I'm pretty sure.
 >
->> URL: https://tracker.ceph.com/issues/56423
-> I think that should be "Link:".
-
-Okay, in ceph tree we are using the "URL:".
-
--- Xiubo
-
+> If each individual page retains its own dirty bit, what does
+> folio_test_dirty return when its pages are only partially dirty? I guess
+> the folio is still dirty even if some of its pages are clean?
 >
-> David
->
+> Ceph can do a vectored write if a folio has disjoint dirty regions that
+> we need to flush. Hashing out an API to handle that with the netfs layer
+> is going to be "interesting" though.
+
+Yeah, sounds reasonable to me.
+
+
+>> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+>> index 6dee88815491..fb346b929f65 100644
+>> --- a/fs/ceph/addr.c
+>> +++ b/fs/ceph/addr.c
+>> @@ -1503,8 +1503,8 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+>>   	struct ceph_inode_info *ci = ceph_inode(inode);
+>>   	struct ceph_file_info *fi = vma->vm_file->private_data;
+>>   	struct ceph_cap_flush *prealloc_cf;
+>> -	struct page *page = vmf->page;
+>> -	loff_t off = page_offset(page);
+>> +	struct folio *folio = page_folio(vmf->page);
+>> +	loff_t pos = folio_pos(folio);
+>>   	loff_t size = i_size_read(inode);
+>>   	size_t len;
+>>   	int want, got, err;
+>> @@ -1521,50 +1521,50 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+>>   	sb_start_pagefault(inode->i_sb);
+>>   	ceph_block_sigs(&oldset);
+>>   
+>> -	if (off + thp_size(page) <= size)
+>> -		len = thp_size(page);
+>> +	if (pos + folio_size(folio) <= size)
+>> +		len = folio_size(folio);
+>>   	else
+>> -		len = offset_in_thp(page, size);
+>> +		len = offset_in_folio(folio, size);
+>>   
+>>   	dout("page_mkwrite %p %llx.%llx %llu~%zd getting caps i_size %llu\n",
+>> -	     inode, ceph_vinop(inode), off, len, size);
+>> +	     inode, ceph_vinop(inode), pos, len, size);
+>>   	if (fi->fmode & CEPH_FILE_MODE_LAZY)
+>>   		want = CEPH_CAP_FILE_BUFFER | CEPH_CAP_FILE_LAZYIO;
+>>   	else
+>>   		want = CEPH_CAP_FILE_BUFFER;
+>>   
+>>   	got = 0;
+>> -	err = ceph_get_caps(vma->vm_file, CEPH_CAP_FILE_WR, want, off + len, &got);
+>> +	err = ceph_get_caps(vma->vm_file, CEPH_CAP_FILE_WR, want, pos + len, &got);
+>>   	if (err < 0)
+>>   		goto out_free;
+>>   
+>>   	dout("page_mkwrite %p %llu~%zd got cap refs on %s\n",
+>> -	     inode, off, len, ceph_cap_string(got));
+>> +	     inode, pos, len, ceph_cap_string(got));
+>>   
+>> -	/* Update time before taking page lock */
+>> +	/* Update time before taking folio lock */
+>>   	file_update_time(vma->vm_file);
+>>   	inode_inc_iversion_raw(inode);
+>>   
+>>   	do {
+>>   		struct ceph_snap_context *snapc;
+>>   
+>> -		lock_page(page);
+>> +		folio_lock(folio);
+>>   
+>> -		if (page_mkwrite_check_truncate(page, inode) < 0) {
+>> -			unlock_page(page);
+>> +		if (folio_mkwrite_check_truncate(folio, inode) < 0) {
+>> +			folio_unlock(folio);
+>>   			ret = VM_FAULT_NOPAGE;
+>>   			break;
+>>   		}
+>>   
+>> -		snapc = ceph_find_incompatible(page);
+>> +		snapc = ceph_find_incompatible(&folio->page);
+>>   		if (!snapc) {
+>> -			/* success.  we'll keep the page locked. */
+>> -			set_page_dirty(page);
+>> +			/* success.  we'll keep the folio locked. */
+>> +			folio_mark_dirty(folio);
+>>   			ret = VM_FAULT_LOCKED;
+>>   			break;
+>>   		}
+>>   
+>> -		unlock_page(page);
+>> +		folio_unlock(folio);
+>>   
+>>   		if (IS_ERR(snapc)) {
+>>   			ret = VM_FAULT_SIGBUS;
+>> @@ -1588,7 +1588,7 @@ static vm_fault_t ceph_page_mkwrite(struct vm_fault *vmf)
+>>   	}
+>>   
+>>   	dout("page_mkwrite %p %llu~%zd dropping cap refs on %s ret %x\n",
+>> -	     inode, off, len, ceph_cap_string(got), ret);
+>> +	     inode, pos, len, ceph_cap_string(got), ret);
+>>   	ceph_put_cap_refs_async(ci, got);
+>>   out_free:
+>>   	ceph_restore_sigs(&oldset);
 
