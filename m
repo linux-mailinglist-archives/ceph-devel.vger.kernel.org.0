@@ -2,80 +2,81 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 74CDF56C50A
-	for <lists+ceph-devel@lfdr.de>; Sat,  9 Jul 2022 02:29:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9573056D3B5
+	for <lists+ceph-devel@lfdr.de>; Mon, 11 Jul 2022 06:19:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229670AbiGIA16 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 8 Jul 2022 20:27:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52556 "EHLO
+        id S229621AbiGKETq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 11 Jul 2022 00:19:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbiGIA15 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 8 Jul 2022 20:27:57 -0400
+        with ESMTP id S229570AbiGKETp (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 11 Jul 2022 00:19:45 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0C83789AAB
-        for <ceph-devel@vger.kernel.org>; Fri,  8 Jul 2022 17:27:55 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A309717A8D
+        for <ceph-devel@vger.kernel.org>; Sun, 10 Jul 2022 21:19:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657326475;
+        s=mimecast20190719; t=1657513183;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=VqagCGGOArSSKttB2fwy8srfsq7eT/Kvr2QKgNbXV6Y=;
-        b=VLI5kirGwzOsggoq8jvw8tVk2JFpFj5rXGMA3zmKTuRhGGqk6TVKPmZJ3TVGz/l2BQWoMz
-        CskFUZzGwk+jm2iVbEBOgCI44pSZvM0dUpgwVseTRJvw/+ZlYZNiJotR9gG+yT6s7rhNbG
-        r2Ug4UoPx36hSCMT4JSA2kW1lVAHykI=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=iYSp6HlI0dDBIV/HDsecc6eKbJCd3YWkca9HdFglgEg=;
+        b=LZM117yxang7gt+VslSpKs3tOfpvseM5MwRBI+HwZ7qPzH2Gd2NeOvQ1yTK9wBXIvghiW7
+        zMDAYsxgbD4uDHSFoyuQVw7Aag9SFVlOEF+4lSda1ekj2Rrb9dKtgoNMmJ5tOTF0sPKZf+
+        T4GXoYjBVZufAJzq196Yp4LqPR0K7fk=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-271-le0DhbGoP3-SGDlAwYSoRQ-1; Fri, 08 Jul 2022 20:27:54 -0400
-X-MC-Unique: le0DhbGoP3-SGDlAwYSoRQ-1
-Received: by mail-pg1-f200.google.com with SMTP id e5-20020a636905000000b004119d180b54so159918pgc.14
-        for <ceph-devel@vger.kernel.org>; Fri, 08 Jul 2022 17:27:53 -0700 (PDT)
+ us-mta-665-OnnuOewFPs62z_11fLN_ow-1; Mon, 11 Jul 2022 00:19:39 -0400
+X-MC-Unique: OnnuOewFPs62z_11fLN_ow-1
+Received: by mail-pj1-f71.google.com with SMTP id l15-20020a17090a660f00b001ef7b1d2289so2858955pjj.9
+        for <ceph-devel@vger.kernel.org>; Sun, 10 Jul 2022 21:19:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=VqagCGGOArSSKttB2fwy8srfsq7eT/Kvr2QKgNbXV6Y=;
-        b=bxFxEmMPJLvufqsljOodCiywnTqwDs2t0zvP4LCXGjn0Qa9ubeFT4rmu5mgWkzoGVf
-         VlRjnzG1EviIVAa7t5aAIY5wiH2UzKKX41XsQVNEibdovz9U8h34e3uUTMfDaBKzHPRn
-         ssENocMX9qctgXl7PRhQ0+lbclrWnc7A11XD8VoxYYcfdx4FwZfiyDF2K7t7LUKnEj9n
-         k2Iw7EiRxjdlt+SzplaKzRZn444VK13qXxm8tQIhnUk6Hsmq0VpiPegQzixONdIiwBWj
-         4sdocZRflK3iF/NpSIDGyJYUrtpBdcp4IV3q5sRLan+vR2zke8NEzcRJx/ggH1GvMPFl
-         lYDA==
-X-Gm-Message-State: AJIora8UPVFZ5stFfryTLu7xYHOqQZQ7IL+Z9Oxw6pYRie2otZu/uheQ
-        CligxeutPybcYRi/Z1whbSm1Q1xoQ9ictY9/3PzpFT21nV1Rvrdet5vVzRNpp7aCsJ/mEhJL5MB
-        GNOccr2gQPp2lPfsmMF1DRA==
-X-Received: by 2002:a63:2c10:0:b0:411:4fd8:9fc8 with SMTP id s16-20020a632c10000000b004114fd89fc8mr5608138pgs.313.1657326471374;
-        Fri, 08 Jul 2022 17:27:51 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1vxRqN/Gl6aAva1cQn2NAPLkn1NgiDNiUrFkyIPxBfDK+V2dPkQ2tzi3aQSAe787G9ZM4cBrA==
-X-Received: by 2002:a63:2c10:0:b0:411:4fd8:9fc8 with SMTP id s16-20020a632c10000000b004114fd89fc8mr5608116pgs.313.1657326471035;
-        Fri, 08 Jul 2022 17:27:51 -0700 (PDT)
-Received: from [10.72.12.227] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id w29-20020aa79a1d000000b0052513b5d078sm184934pfj.31.2022.07.08.17.27.44
+        bh=iYSp6HlI0dDBIV/HDsecc6eKbJCd3YWkca9HdFglgEg=;
+        b=T1jtYRbGUn4Xu51Yv6D3MxfHOfxPpNrC6ck+wBk9gwLMwl8TtodO4Run+UEqZgo4J7
+         NJy5OuNAwMWkQM6PpbpOs9CtMWj1iEu8GqGe4hHHTNhpEoqGnVZrpAOlJ92Iz/PA0/uK
+         zVO8x4dZ/1TkungcUHOJImCVZ6DSEmIxRXZXXiml4kFZbsaKZ0B20YW8A61r1plNQKFy
+         IvWqAH43vSN/FhKJxDvCKWc2RkWy0i08N5hLnicLIN56CVKO2evIdIrz8aO21yH27fOk
+         ykAUPZEmlUt4BmJGdOkDv2yxnVvX4BzgNzlpBs2giHU9eC7MUTHNKR/OBvBb/Gl7LGTF
+         BoJA==
+X-Gm-Message-State: AJIora+hhh64huC7tCi7XGQhwGcJhGzw88GtcaDCX97OgmoSayLCuuHd
+        iCI85kQFmTS/9P0c0vYLYxmjBHhK5LVfngEkoSpm5qwYlINFnoLW8iSgdrgfo15XhsKhgNfwvt0
+        ffmcKVSU+UYzE9YQwYoSong==
+X-Received: by 2002:a63:2c47:0:b0:411:54ab:97b6 with SMTP id s68-20020a632c47000000b0041154ab97b6mr14206431pgs.173.1657513178582;
+        Sun, 10 Jul 2022 21:19:38 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1sdLoGKlY/5zCNt7vw/gv0lyzTZM8Mh6bsyCtyMbXMA0uNpORIFIeDfE5UALrqX7MSFep4+Rw==
+X-Received: by 2002:a63:2c47:0:b0:411:54ab:97b6 with SMTP id s68-20020a632c47000000b0041154ab97b6mr14206416pgs.173.1657513178370;
+        Sun, 10 Jul 2022 21:19:38 -0700 (PDT)
+Received: from [10.72.14.22] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id h7-20020a170902f54700b0016be4d310b2sm3543056plf.80.2022.07.10.21.19.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Jul 2022 17:27:50 -0700 (PDT)
+        Sun, 10 Jul 2022 21:19:37 -0700 (PDT)
 Subject: Re: [PATCH v4] netfs: do not unlock and put the folio twice
-To:     David Howells <dhowells@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>,
+        David Howells <dhowells@redhat.com>
 Cc:     idryomov@gmail.com, jlayton@kernel.org, marc.dionne@auristor.com,
-        willy@infradead.org, keescook@chromium.org,
-        kirill.shutemov@linux.intel.com, william.kucharski@oracle.com,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cachefs@redhat.com,
-        vshankar@redhat.com
+        keescook@chromium.org, kirill.shutemov@linux.intel.com,
+        william.kucharski@oracle.com, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-cachefs@redhat.com, vshankar@redhat.com
 References: <20220707045112.10177-1-xiubli@redhat.com>
  <2520851.1657200105@warthog.procyon.org.uk>
+ <YsbfCcNvjMVcT2yx@casper.infradead.org>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <4597bdc0-b7bf-c30f-ea4a-41599adeed86@redhat.com>
-Date:   Sat, 9 Jul 2022 08:27:40 +0800
+Message-ID: <cf169f43-8ee7-8697-25da-0204d1b4343e@redhat.com>
+Date:   Mon, 11 Jul 2022 12:19:27 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <2520851.1657200105@warthog.procyon.org.uk>
+In-Reply-To: <YsbfCcNvjMVcT2yx@casper.infradead.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
         RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
@@ -86,181 +87,23 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 7/7/22 9:21 PM, David Howells wrote:
-> Here's my take on this.  I've made the error: path handle folio == NULL, so
-> you don't need to split that error case.  I've also changed
-> ->check_write_begin() so that it returns 0, not -EAGAIN, if we drop the folio;
-> the process is retried then if the folio pointer got cleared.
+On 7/7/22 9:26 PM, Matthew Wilcox wrote:
+> On Thu, Jul 07, 2022 at 02:21:45PM +0100, David Howells wrote:
+>> -					 struct folio *folio, void **_fsdata);
+>> +					 struct folio **_folio, void **_fsdata);
+> The usual convention is that _foo means "Don't touch".  This should
+> probably be named "foliop" (ie pointer to a thing that would normally
+> be called folio).
 >
-> As a result, you don't have to discard the page if you want to return an error
-> and thus don't need the additional afs patch
->
-> David
-> ---
-> commit 8489c89f6a186272593ab5e3fffbd47ea21185b7
-> Author: Xiubo Li <xiubli@redhat.com>
-> Date:   Thu Jul 7 12:51:11 2022 +0800
->
->      netfs: do not unlock and put the folio twice
->      
->      check_write_begin() will unlock and put the folio when return
->      non-zero.  So we should avoid unlocking and putting it twice in
->      netfs layer.
->      
->      Change the way ->check_write_begin() works in the following two ways:
->      
->       (1) Pass it a pointer to the folio pointer, allowing it to unlock and put
->           the folio prior to doing the stuff it wants to do, provided it clears
->           the folio pointer.
->      
->       (2) Change the return values such that 0 with folio pointer set means
->           continue, 0 with folio pointer cleared means re-get and all error
->           codes indicating an error (no special treatment for -EAGAIN).
->      
->      Link: https://tracker.ceph.com/issues/56423
->      Link: https://lore.kernel.org/r/20220707045112.10177-2-xiubli@redhat.com/
->      Signed-off-by: Xiubo Li <xiubli@redhat.com>
->      Co-developed-by: David Howells <dhowells@redhat.com>
->      Signed-off-by: David Howells <dhowells@redhat.com>
->
-> diff --git a/Documentation/filesystems/netfs_library.rst b/Documentation/filesystems/netfs_library.rst
-> index 4d19b19bcc08..89085e1c22db 100644
-> --- a/Documentation/filesystems/netfs_library.rst
-> +++ b/Documentation/filesystems/netfs_library.rst
-> @@ -301,7 +301,7 @@ through which it can issue requests and negotiate::
->   		void (*issue_read)(struct netfs_io_subrequest *subreq);
->   		bool (*is_still_valid)(struct netfs_io_request *rreq);
->   		int (*check_write_begin)(struct file *file, loff_t pos, unsigned len,
-> -					 struct folio *folio, void **_fsdata);
-> +					 struct folio **_folio, void **_fsdata);
->   		void (*done)(struct netfs_io_request *rreq);
->   	};
->   
-> @@ -381,8 +381,10 @@ The operations are as follows:
->      allocated/grabbed the folio to be modified to allow the filesystem to flush
->      conflicting state before allowing it to be modified.
->   
-> -   It should return 0 if everything is now fine, -EAGAIN if the folio should be
-> -   regrabbed and any other error code to abort the operation.
-> +   It may unlock and discard the folio it was given and set the caller's folio
-> +   pointer to NULL.  It should return 0 if everything is now fine (*_folio
-> +   left set) or the op should be retried (*_folio cleared) and any other error
-> +   code to abort the operation.
->   
->    * ``done``
->   
-> diff --git a/fs/afs/file.c b/fs/afs/file.c
-> index 42118a4f3383..afacce797fb9 100644
-> --- a/fs/afs/file.c
-> +++ b/fs/afs/file.c
-> @@ -375,7 +375,7 @@ static int afs_begin_cache_operation(struct netfs_io_request *rreq)
->   }
->   
->   static int afs_check_write_begin(struct file *file, loff_t pos, unsigned len,
-> -				 struct folio *folio, void **_fsdata)
-> +				 struct folio **folio, void **_fsdata)
->   {
->   	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
->   
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 6dee88815491..ab070a24ca23 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -63,7 +63,7 @@
->   	 (CONGESTION_ON_THRESH(congestion_kb) >> 2))
->   
->   static int ceph_netfs_check_write_begin(struct file *file, loff_t pos, unsigned int len,
-> -					struct folio *folio, void **_fsdata);
-> +					struct folio **folio, void **_fsdata);
->   
->   static inline struct ceph_snap_context *page_snap_context(struct page *page)
->   {
-> @@ -1288,18 +1288,19 @@ ceph_find_incompatible(struct page *page)
->   }
->   
->   static int ceph_netfs_check_write_begin(struct file *file, loff_t pos, unsigned int len,
-> -					struct folio *folio, void **_fsdata)
-> +					struct folio **folio, void **_fsdata)
->   {
->   	struct inode *inode = file_inode(file);
->   	struct ceph_inode_info *ci = ceph_inode(inode);
->   	struct ceph_snap_context *snapc;
->   
-> -	snapc = ceph_find_incompatible(folio_page(folio, 0));
-> +	snapc = ceph_find_incompatible(folio_page(*folio, 0));
->   	if (snapc) {
->   		int r;
->   
-> -		folio_unlock(folio);
-> -		folio_put(folio);
-> +		folio_unlock(*folio);
-> +		folio_put(*folio);
-> +		*folio = NULL;
->   		if (IS_ERR(snapc))
->   			return PTR_ERR(snapc);
->   
-> diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-> index 42f892c5712e..69bbf1c25cf4 100644
-> --- a/fs/netfs/buffered_read.c
-> +++ b/fs/netfs/buffered_read.c
-> @@ -319,8 +319,9 @@ static bool netfs_skip_folio_read(struct folio *folio, loff_t pos, size_t len,
->    * conflicting writes once the folio is grabbed and locked.  It is passed a
->    * pointer to the fsdata cookie that gets returned to the VM to be passed to
->    * write_end.  It is permitted to sleep.  It should return 0 if the request
-> - * should go ahead; unlock the folio and return -EAGAIN to cause the folio to
-> - * be regot; or return an error.
-> + * should go ahead or it may return an error.  It may also unlock and put the
-> + * folio, provided it sets *_folio to NULL, in which case a return of 0 will
-> + * cause the folio to be re-got and the process to be retried.
->    *
->    * The calling netfs must initialise a netfs context contiguous to the vfs
->    * inode before calling this.
-> @@ -348,13 +349,13 @@ int netfs_write_begin(struct netfs_inode *ctx,
->   
->   	if (ctx->ops->check_write_begin) {
->   		/* Allow the netfs (eg. ceph) to flush conflicts. */
-> -		ret = ctx->ops->check_write_begin(file, pos, len, folio, _fsdata);
-> +		ret = ctx->ops->check_write_begin(file, pos, len, &folio, _fsdata);
->   		if (ret < 0) {
->   			trace_netfs_failure(NULL, NULL, ret, netfs_fail_check_write_begin);
-> -			if (ret == -EAGAIN)
-> -				goto retry;
->   			goto error;
->   		}
-> +		if (!folio)
-> +			goto retry;
->   	}
->   
->   	if (folio_test_uptodate(folio))
-> @@ -416,8 +417,10 @@ int netfs_write_begin(struct netfs_inode *ctx,
->   error_put:
->   	netfs_put_request(rreq, false, netfs_rreq_trace_put_failed);
->   error:
-> -	folio_unlock(folio);
-> -	folio_put(folio);
-> +	if (folio) {
-> +		folio_unlock(folio);
-> +		folio_put(folio);
-> +	}
->   	_leave(" = %d", ret);
->   	return ret;
->   }
-> diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-> index 1773e5df8e65..6ab5d56dac74 100644
-> --- a/include/linux/netfs.h
-> +++ b/include/linux/netfs.h
-> @@ -214,7 +214,7 @@ struct netfs_request_ops {
->   	void (*issue_read)(struct netfs_io_subrequest *subreq);
->   	bool (*is_still_valid)(struct netfs_io_request *rreq);
->   	int (*check_write_begin)(struct file *file, loff_t pos, unsigned len,
-> -				 struct folio *folio, void **_fsdata);
-> +				 struct folio **_folio, void **_fsdata);
->   	void (*done)(struct netfs_io_request *rreq);
->   };
->   
->
-This version looks good to me.
+This looks good to me.
 
-Thanks David!
+I will send out the V5 by fixing this and will merge this patch via the 
+ceph tree as discussed with David in the IRC and will cc the stable at 
+the same time.
+
+Thanks!
+
+-- Xiubo
+
 
 
