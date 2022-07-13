@@ -2,208 +2,138 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDCA0573919
-	for <lists+ceph-devel@lfdr.de>; Wed, 13 Jul 2022 16:43:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D410C573CD0
+	for <lists+ceph-devel@lfdr.de>; Wed, 13 Jul 2022 20:56:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236398AbiGMOnl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 13 Jul 2022 10:43:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47896 "EHLO
+        id S236588AbiGMS4U (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 13 Jul 2022 14:56:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236609AbiGMOnj (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Jul 2022 10:43:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 48FD01B5
-        for <ceph-devel@vger.kernel.org>; Wed, 13 Jul 2022 07:43:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657723411;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=hNgAaLi4Gch6z3OyO3wEIKiEgkzd5xmCKhssX9Q1P+I=;
-        b=d1Kl/LUcqJMDdVe8wrMmEzqWgqpSQqLP+EIbFDndk5NPUUptVBSitfisJMwyO0N+MLWUt3
-        isoB08RGjiScCg2Q17XtHTDpmbRPvyAMjgGU6J3g3XFIrbOJulhFD8KMRDiVe/TUCLODHo
-        RLEOfGBbUBqgmfwrVp7W5xKWT+IsN4E=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-211-lty62NeZPSyD3Ng5ixnq9g-1; Wed, 13 Jul 2022 10:43:30 -0400
-X-MC-Unique: lty62NeZPSyD3Ng5ixnq9g-1
-Received: by mail-pg1-f200.google.com with SMTP id u24-20020a63d358000000b004119798494fso5319174pgi.18
-        for <ceph-devel@vger.kernel.org>; Wed, 13 Jul 2022 07:43:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=hNgAaLi4Gch6z3OyO3wEIKiEgkzd5xmCKhssX9Q1P+I=;
-        b=TngTupszKg7TatqhN8//5tnNLfTEQenOPJHIcQPwtG6vH11lI+72THphPHXSs1b48w
-         iHW6zj0M7YsTfURofEjcHyauHgDPPfhoOS+a+AdtS1MV0LzUnbKlg1v2+w3lahB/OBhm
-         sQY+AicN+sLDmggrhvUvmf0IZiQ8Ho8afMkJGDNjQrFi8rSWlR+UnZ/OM8hgOB9SbCEB
-         XyE6ATrFWzs7G4umLF/OQBxstaom0mggcC2nDDxKDlIUBYRU60ZJMnDVSmWJL4J6lxS8
-         vhQ10CieL2ObdECt7G76bmvzQmfvC3NRkSsSTAp1cRJBpRYAjDYd1wMf9/6A359nKASx
-         h8cw==
-X-Gm-Message-State: AJIora+g7TpC8/jcqOj8mdurrz5O+i1hegui9LZaHMKS9JVnuBQwNVH5
-        Lob9YU41Gv/rI7/qhzhuPbAZe7t3rRaUSotdMgRwshNPmPjF/YoM6E3ePFNBprA9BCPQ0UEhZs2
-        KUvsQ4tLEXc1FEcVtyezSEh1tQhwgcXSgLxADVSzFj+iqa7RXVxLbfXZXhqv4uJMGcqxIgJY=
-X-Received: by 2002:a17:903:2310:b0:16c:1546:19ba with SMTP id d16-20020a170903231000b0016c154619bamr3476158plh.57.1657723407997;
-        Wed, 13 Jul 2022 07:43:27 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1u3RU4p313wzrFwaIfL26jtnlBOnMgEKxIUrjeadJ1otDDhy0ufbBeooLLxKE0pIfNeacfebw==
-X-Received: by 2002:a17:903:2310:b0:16c:1546:19ba with SMTP id d16-20020a170903231000b0016c154619bamr3476129plh.57.1657723407616;
-        Wed, 13 Jul 2022 07:43:27 -0700 (PDT)
-Received: from [10.72.14.22] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id d11-20020a170902cecb00b0016bd5da20casm9006989plg.134.2022.07.13.07.43.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Jul 2022 07:43:27 -0700 (PDT)
-Subject: Re: [ceph-client:testing 1/21] fs/ceph/super.c:1101:46: error:
- 'struct ceph_fs_client' has no member named 'fsc_dummy_enc_policy'
-To:     kernel test robot <lkp@intel.com>, Jeff Layton <jlayton@kernel.org>
-Cc:     kbuild-all@lists.01.org, ceph-devel@vger.kernel.org
-References: <202207132003.QSn2r1BX-lkp@intel.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <14c59411-487c-1702-e09d-3a846ccffced@redhat.com>
-Date:   Wed, 13 Jul 2022 22:43:20 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        with ESMTP id S229772AbiGMS4T (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Jul 2022 14:56:19 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F1A418B20;
+        Wed, 13 Jul 2022 11:56:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3AAB761DB8;
+        Wed, 13 Jul 2022 18:56:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04A53C34114;
+        Wed, 13 Jul 2022 18:56:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1657738577;
+        bh=DIuWNzcmWsNV5L5d7k1v7k7Y+satjQp3+LA8NxaoCG0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=B0v6JqijEJ0TEExOz66ZMsuxX0aYtzY8Sb5bYqrAmDA6BAKnBz2PR4v2KTQ64o+ox
+         zCYZRTfjBKCo7J1mYZxhAlPlWjE9+kjZA7XqFUAyx8iPELVDRcKcbAepPZ8bhahZb3
+         atA+8j+IVQIYIqtPimQwYysCGUkcGZukDxgtDzqOEW/TMu+0aSyIgT3YSgy1yNvcy9
+         Cdp2n5vgfpWM8ZKDQGiOj8WQkIE7gFJiLLScMHCgYc4Uc1VSmBT/wOdxoSjrOZHy/K
+         o+CHga83pOBCuAulGHCmqf4akf5OznfXph8viyRnqkwob/iHEvV6EvLBHtbkBVYGNT
+         JDhYypan2H0og==
+Message-ID: <5edd2424465dc97e15d3e4635c7011e5c789cef1.camel@kernel.org>
+Subject: Re: [PATCH] ceph: fix up test_dummy_encryption handling for new
+ mount API
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org,
+        idryomov@gmail.com
+Cc:     vshankar@redhat.com, linux-kernel@vger.kernel.org,
+        Eric Biggers <ebiggers@kernel.org>
+Date:   Wed, 13 Jul 2022 14:56:15 -0400
+In-Reply-To: <b82c4486-42ea-cdd1-8204-6dcc95836f72@redhat.com>
+References: <20220713085641.50232-1-xiubli@redhat.com>
+         <c280ce5cc43474aa17767530bf280045b128e7af.camel@kernel.org>
+         <b82c4486-42ea-cdd1-8204-6dcc95836f72@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.3 (3.44.3-1.fc36) 
 MIME-Version: 1.0
-In-Reply-To: <202207132003.QSn2r1BX-lkp@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Thanks for this report.
+On Wed, 2022-07-13 at 20:55 +0800, Xiubo Li wrote:
+> Hi Jeff,
+>=20
+> I am rebasing the 'wip-fscrypt' branch to the 'testing', and there is=20
+> one commit conflicts:
+>=20
+> commit 81faddddbef409bcaa1aa3d89e59606cde94dab7
+> Author: Jeff Layton <jlayton@kernel.org>
+> Date:=A0=A0 Wed Dec 1 09:21:39 2021 -0500
+>=20
+>  =A0=A0=A0 ceph: add infrastructure for file encryption and decryption
+>=20
+>  =A0=A0=A0 ...and allow test_dummy_encryption to bypass content encryptio=
+n
+>  =A0=A0=A0 if mounted with test_dummy_encryption=3Dclear.
+>=20
+>  =A0=A0=A0 Reviewed-by: Xiubo Li <xiubli@redhat.com>
+>  =A0=A0=A0 Signed-off-by: Jeff Layton <jlayton@kernel.org>
+>=20
+> And the conflicts are:
+>=20
+> [xiubli@fedora ]$ cat fs/ceph/super.h.rej
+> --- fs/ceph/super.h
+> +++ fs/ceph/super.h
+> @@ -45,6 +45,7 @@
+>  =A0#define CEPH_MOUNT_OPT_NOPAGECACHE=A0=A0=A0=A0 (1<<16) /* bypass page=
+cache=20
+> altogether */
+>  =A0#define CEPH_MOUNT_OPT_SPARSEREAD=A0=A0=A0=A0=A0 (1<<17) /* always do=
+ sparse=20
+> reads */
+>  =A0#define CEPH_MOUNT_OPT_TEST_DUMMY_ENC=A0 (1<<18) /* enable dummy=20
+> encryption (for testing) */
+> +#define CEPH_MOUNT_OPT_DUMMY_ENC_CLEAR (1<<19) /* don't actually=20
+> encrypt content */
+>=20
+>  =A0#define CEPH_MOUNT_OPT_DEFAULT=A0=A0=A0 =A0=A0=A0 =A0=A0=A0 \
+>  =A0=A0=A0=A0 (CEPH_MOUNT_OPT_DCACHE |=A0=A0=A0 =A0=A0=A0 \
+>=20
+> [xiubli@fedora ]$ cat fs/ceph/super.c.rej
+> --- fs/ceph/super.c
+> +++ fs/ceph/super.c
+> @@ -1098,6 +1098,14 @@ static int ceph_set_test_dummy_encryption(struct=
+=20
+> super_block *sb, struct fs_cont
+>  =A0=A0=A0=A0 =A0=A0=A0 =A0=A0=A0 return -EEXIST;
+>  =A0=A0=A0=A0 =A0=A0=A0 }
+>=20
+> +=A0=A0=A0 =A0=A0=A0 /* HACK: allow for cleartext "encryption" in files f=
+or testing */
+> +=A0=A0=A0 =A0=A0=A0 if (fsc->mount_options->test_dummy_encryption &&
+> + !strcmp(fsc->mount_options->test_dummy_encryption, "clear")) {
+> +=A0=A0=A0 =A0=A0=A0 =A0=A0=A0 fsopt->flags |=3D CEPH_MOUNT_OPT_DUMMY_ENC=
+_CLEAR;
+> + kfree(fsc->mount_options->test_dummy_encryption);
+> +=A0=A0=A0 =A0=A0=A0 =A0=A0=A0 fsc->mount_options->test_dummy_encryption =
+=3D NULL;
+> +=A0=A0=A0 =A0=A0=A0 }
+> +
+>  =A0=A0=A0=A0 =A0=A0=A0 err =3D fscrypt_set_test_dummy_encryption(sb,
+> fsc->mount_options->test_dummy_encryption,
+>  =A0=A0=A0=A0 =A0=A0=A0 =A0=A0=A0 =A0=A0=A0 =A0=A0=A0 =A0=A0=A0 =A0=A0=A0=
+ &fsc->dummy_enc_policy);
+>=20
+> And I have pushed the tmp patches to=20
+> https://github.com/lxbsz/ceph-client/commits/lxb-wip-fscrypt3.
+>=20
+> Please take a look is that okay ?
+>=20
+> Thanks
+>=20
+> -- Xiubo
+>=20
+>=20
 
-Fixed it by:
+The result looks good to me. Thanks for fixing this up.
 
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 4ac4a90755a2..0a60821db2c9 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -1086,6 +1086,7 @@ static struct dentry *open_root_dentry(struct 
-ceph_fs_client *fsc,
-         return root;
-  }
-
-+#ifdef CONFIG_FS_ENCRYPTION
-  static int ceph_apply_test_dummy_encryption(struct super_block *sb,
-                                             struct fs_context *fc,
-                                             struct ceph_mount_options 
-*fsopt)
-@@ -1127,6 +1128,14 @@ static int 
-ceph_apply_test_dummy_encryption(struct super_block *sb,
-         warnfc(fc, "test_dummy_encryption mode enabled");
-         return 0;
-  }
-+#else
-+static int ceph_apply_test_dummy_encryption(struct super_block *sb,
-+                                           struct fs_context *fc,
-+                                           struct ceph_mount_options 
-*fsopt)
-+{
-+       return 0;
-+}
-+#endif
-
-  /*
-   * mount: join the ceph cluster, and open root directory.
-
-
-On 7/13/22 9:06 PM, kernel test robot wrote:
-> tree:   https://github.com/ceph/ceph-client.git testing
-> head:   6720fad7ad85215b45fa7899478311d22ba5331a
-> commit: f450dd288f2774012e8a4928c696192ed877a5c2 [1/21] ceph: implement -o test_dummy_encryption mount option
-> config: sparc64-randconfig-r015-20220712 (https://download.01.org/0day-ci/archive/20220713/202207132003.QSn2r1BX-lkp@intel.com/config)
-> compiler: sparc64-linux-gcc (GCC) 11.3.0
-> reproduce (this is a W=1 build):
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # https://github.com/ceph/ceph-client/commit/f450dd288f2774012e8a4928c696192ed877a5c2
->          git remote add ceph-client https://github.com/ceph/ceph-client.git
->          git fetch --no-tags ceph-client testing
->          git checkout f450dd288f2774012e8a4928c696192ed877a5c2
->          # save the config file
->          mkdir build_dir && cp config build_dir/.config
->          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=sparc64 SHELL=/bin/bash fs/ceph/
->
-> If you fix the issue, kindly add following tag where applicable
-> Reported-by: kernel test robot <lkp@intel.com>
->
-> All errors (new ones prefixed by >>):
->
->     fs/ceph/super.c: In function 'ceph_apply_test_dummy_encryption':
->>> fs/ceph/super.c:1101:46: error: 'struct ceph_fs_client' has no member named 'fsc_dummy_enc_policy'
->      1101 |             !fscrypt_is_dummy_policy_set(&fsc->fsc_dummy_enc_policy)) {
->           |                                              ^~
->     fs/ceph/super.c:1103:54: error: 'struct ceph_fs_client' has no member named 'fsc_dummy_enc_policy'
->      1103 |                                                  &fsc->fsc_dummy_enc_policy))
->           |                                                      ^~
->     fs/ceph/super.c:1110:45: error: 'struct ceph_fs_client' has no member named 'fsc_dummy_enc_policy'
->      1110 |         if (fscrypt_is_dummy_policy_set(&fsc->fsc_dummy_enc_policy)) {
->           |                                             ^~
->     fs/ceph/super.c:1112:54: error: 'struct ceph_fs_client' has no member named 'fsc_dummy_enc_policy'
->      1112 |                                                  &fsc->fsc_dummy_enc_policy))
->           |                                                      ^~
->     fs/ceph/super.c:1118:12: error: 'struct ceph_fs_client' has no member named 'fsc_dummy_enc_policy'
->      1118 |         fsc->fsc_dummy_enc_policy = fsopt->dummy_enc_policy;
->           |            ^~
->     fs/ceph/super.c:1121:50: error: 'struct ceph_fs_client' has no member named 'fsc_dummy_enc_policy'
->      1121 |         err = fscrypt_add_test_dummy_key(sb, &fsc->fsc_dummy_enc_policy);
->           |                                                  ^~
->
->
-> vim +1101 fs/ceph/super.c
->
->    1088	
->    1089	static int ceph_apply_test_dummy_encryption(struct super_block *sb,
->    1090						    struct fs_context *fc,
->    1091						    struct ceph_mount_options *fsopt)
->    1092	{
->    1093		struct ceph_fs_client *fsc = sb->s_fs_info;
->    1094		int err;
->    1095	
->    1096		if (!fscrypt_is_dummy_policy_set(&fsopt->dummy_enc_policy))
->    1097			return 0;
->    1098	
->    1099		/* No changing encryption context on remount. */
->    1100		if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE &&
->> 1101		    !fscrypt_is_dummy_policy_set(&fsc->fsc_dummy_enc_policy)) {
->    1102			if (fscrypt_dummy_policies_equal(&fsopt->dummy_enc_policy,
->    1103							 &fsc->fsc_dummy_enc_policy))
->    1104				return 0;
->    1105			errorfc(fc, "Can't set test_dummy_encryption on remount");
->    1106			return -EINVAL;
->    1107		}
->    1108	
->    1109		/* Also make sure fsopt doesn't contain a conflicting value. */
->    1110		if (fscrypt_is_dummy_policy_set(&fsc->fsc_dummy_enc_policy)) {
->    1111			if (fscrypt_dummy_policies_equal(&fsopt->dummy_enc_policy,
->    1112							 &fsc->fsc_dummy_enc_policy))
->    1113				return 0;
->    1114			errorfc(fc, "Conflicting test_dummy_encryption options");
->    1115			return -EINVAL;
->    1116		}
->    1117	
->    1118		fsc->fsc_dummy_enc_policy = fsopt->dummy_enc_policy;
->    1119		memset(&fsopt->dummy_enc_policy, 0, sizeof(fsopt->dummy_enc_policy));
->    1120	
->    1121		err = fscrypt_add_test_dummy_key(sb, &fsc->fsc_dummy_enc_policy);
->    1122		if (err) {
->    1123			errorfc(fc, "Error adding test dummy encryption key, %d", err);
->    1124			return err;
->    1125		}
->    1126	
->    1127		warnfc(fc, "test_dummy_encryption mode enabled");
->    1128		return 0;
->    1129	}
->    1130	
->
-
+--=20
+Jeff Layton <jlayton@kernel.org>
