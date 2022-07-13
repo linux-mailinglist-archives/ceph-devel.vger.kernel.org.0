@@ -2,138 +2,104 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D410C573CD0
-	for <lists+ceph-devel@lfdr.de>; Wed, 13 Jul 2022 20:56:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35695573DEB
+	for <lists+ceph-devel@lfdr.de>; Wed, 13 Jul 2022 22:42:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236588AbiGMS4U (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 13 Jul 2022 14:56:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53708 "EHLO
+        id S237150AbiGMUmd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 13 Jul 2022 16:42:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbiGMS4T (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Jul 2022 14:56:19 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F1A418B20;
-        Wed, 13 Jul 2022 11:56:18 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3AAB761DB8;
-        Wed, 13 Jul 2022 18:56:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04A53C34114;
-        Wed, 13 Jul 2022 18:56:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657738577;
-        bh=DIuWNzcmWsNV5L5d7k1v7k7Y+satjQp3+LA8NxaoCG0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=B0v6JqijEJ0TEExOz66ZMsuxX0aYtzY8Sb5bYqrAmDA6BAKnBz2PR4v2KTQ64o+ox
-         zCYZRTfjBKCo7J1mYZxhAlPlWjE9+kjZA7XqFUAyx8iPELVDRcKcbAepPZ8bhahZb3
-         atA+8j+IVQIYIqtPimQwYysCGUkcGZukDxgtDzqOEW/TMu+0aSyIgT3YSgy1yNvcy9
-         Cdp2n5vgfpWM8ZKDQGiOj8WQkIE7gFJiLLScMHCgYc4Uc1VSmBT/wOdxoSjrOZHy/K
-         o+CHga83pOBCuAulGHCmqf4akf5OznfXph8viyRnqkwob/iHEvV6EvLBHtbkBVYGNT
-         JDhYypan2H0og==
-Message-ID: <5edd2424465dc97e15d3e4635c7011e5c789cef1.camel@kernel.org>
-Subject: Re: [PATCH] ceph: fix up test_dummy_encryption handling for new
- mount API
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org,
-        idryomov@gmail.com
-Cc:     vshankar@redhat.com, linux-kernel@vger.kernel.org,
-        Eric Biggers <ebiggers@kernel.org>
-Date:   Wed, 13 Jul 2022 14:56:15 -0400
-In-Reply-To: <b82c4486-42ea-cdd1-8204-6dcc95836f72@redhat.com>
-References: <20220713085641.50232-1-xiubli@redhat.com>
-         <c280ce5cc43474aa17767530bf280045b128e7af.camel@kernel.org>
-         <b82c4486-42ea-cdd1-8204-6dcc95836f72@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.3 (3.44.3-1.fc36) 
+        with ESMTP id S237132AbiGMUma (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Jul 2022 16:42:30 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC0913122E
+        for <ceph-devel@vger.kernel.org>; Wed, 13 Jul 2022 13:42:29 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id fd6so15606268edb.5
+        for <ceph-devel@vger.kernel.org>; Wed, 13 Jul 2022 13:42:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=h0ZslgqQ94UM3iGDYCZGEx8ZwvbYHY5ZrQARiO/Kpbc=;
+        b=djklwqhRzHhoIXJKwJ2MAdBZ1kfHAMR9TrUfOA6tBhnbYyp8Req/YodjgTib0TxU8G
+         BvzrobXgPwqbrvz/hooEz+z8jzDp+N3bzXfSE1I/NNyJJNVjVo+CqCGYPmpUWjJWc9EO
+         zaYDwJuqPjukgeU6nGBHux76GF39CIrfTZ04Ejvw0XU5OJjZ1Zv+pw5EeOWiiNmsdxqS
+         nZtEGNQfDVxKDReqb5A46s9pAcZzXl8SbNq4u/+BK5SD5IH3lHcqGfANPtVrCkLiX48A
+         m+/sOvni7BXGUCX/W36lkagtrrT1vRM63Ja6SRvqYwoWHM5OSbwtk18yuwRuBx7Tj7B2
+         PJwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=h0ZslgqQ94UM3iGDYCZGEx8ZwvbYHY5ZrQARiO/Kpbc=;
+        b=qkJ5WUMhmyel1i9LCB06960nUWkSfF3qaDpv3DNaZ6yNNdb5yyeRWmBG7GMbWWaLHT
+         S+wV/7Z4gC9SOkL+mjPQctgcv3Oncr4Vo98o9NuoLjeo9dcWzCqOvDHsA9vXp7O9FWPA
+         Kt4pGjNZYYgPySEQwTsYF0PF26PRNnffClbDZ1JmIjUEXb3Vr6T9RzdGlV8WkBlq9Nk1
+         3zHW5is9v8p+zRHLzmXYuwCTSHedwpN3+TZFiiRvKL3gStwCBGlWUgQ2tmYiArPzkrEj
+         vYznogaZrTfd6+4SMrPPv4h2Nml7Ao+qaZF8SZvOftEvUkWi0acjR/7MGftWOJeeBcsF
+         w6DQ==
+X-Gm-Message-State: AJIora+87mr0/hjUIXUEWwfaT81fXEHnF5YF2wJs4Yl3UeCn4WwZ24N3
+        CQ6BJVRcJUC0/X2V3NA22KIT0getzQ14ew2l794=
+X-Google-Smtp-Source: AGRyM1sT86s6WxxMsOSxvE+Zm9ubkhtGvoJnkOWkenKXUPSy4iwdm2Ex1/iZLanwqMWGdptnryK9jDedxiHFPgcu6jg=
+X-Received: by 2002:a05:6402:35d1:b0:43a:cb5b:208b with SMTP id
+ z17-20020a05640235d100b0043acb5b208bmr7478754edc.275.1657744948317; Wed, 13
+ Jul 2022 13:42:28 -0700 (PDT)
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Received: by 2002:a17:906:1c06:b0:72d:5fc7:686 with HTTP; Wed, 13 Jul 2022
+ 13:42:27 -0700 (PDT)
+Reply-To: lilywilliam989@gmail.com
+From:   Lily William <savadogoidrissaboursouma@gmail.com>
+Date:   Wed, 13 Jul 2022 12:42:27 -0800
+Message-ID: <CAA6zzo=8xp31YajAt9vLdr55bjMGsbs6r6Csv9bGO-S3c+t0wA@mail.gmail.com>
+Subject: Hi Dear,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=5.0 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
+        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2a00:1450:4864:20:0:0:0:535 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [savadogoidrissaboursouma[at]gmail.com]
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [lilywilliam989[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  3.2 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2022-07-13 at 20:55 +0800, Xiubo Li wrote:
-> Hi Jeff,
->=20
-> I am rebasing the 'wip-fscrypt' branch to the 'testing', and there is=20
-> one commit conflicts:
->=20
-> commit 81faddddbef409bcaa1aa3d89e59606cde94dab7
-> Author: Jeff Layton <jlayton@kernel.org>
-> Date:=A0=A0 Wed Dec 1 09:21:39 2021 -0500
->=20
->  =A0=A0=A0 ceph: add infrastructure for file encryption and decryption
->=20
->  =A0=A0=A0 ...and allow test_dummy_encryption to bypass content encryptio=
-n
->  =A0=A0=A0 if mounted with test_dummy_encryption=3Dclear.
->=20
->  =A0=A0=A0 Reviewed-by: Xiubo Li <xiubli@redhat.com>
->  =A0=A0=A0 Signed-off-by: Jeff Layton <jlayton@kernel.org>
->=20
-> And the conflicts are:
->=20
-> [xiubli@fedora ]$ cat fs/ceph/super.h.rej
-> --- fs/ceph/super.h
-> +++ fs/ceph/super.h
-> @@ -45,6 +45,7 @@
->  =A0#define CEPH_MOUNT_OPT_NOPAGECACHE=A0=A0=A0=A0 (1<<16) /* bypass page=
-cache=20
-> altogether */
->  =A0#define CEPH_MOUNT_OPT_SPARSEREAD=A0=A0=A0=A0=A0 (1<<17) /* always do=
- sparse=20
-> reads */
->  =A0#define CEPH_MOUNT_OPT_TEST_DUMMY_ENC=A0 (1<<18) /* enable dummy=20
-> encryption (for testing) */
-> +#define CEPH_MOUNT_OPT_DUMMY_ENC_CLEAR (1<<19) /* don't actually=20
-> encrypt content */
->=20
->  =A0#define CEPH_MOUNT_OPT_DEFAULT=A0=A0=A0 =A0=A0=A0 =A0=A0=A0 \
->  =A0=A0=A0=A0 (CEPH_MOUNT_OPT_DCACHE |=A0=A0=A0 =A0=A0=A0 \
->=20
-> [xiubli@fedora ]$ cat fs/ceph/super.c.rej
-> --- fs/ceph/super.c
-> +++ fs/ceph/super.c
-> @@ -1098,6 +1098,14 @@ static int ceph_set_test_dummy_encryption(struct=
-=20
-> super_block *sb, struct fs_cont
->  =A0=A0=A0=A0 =A0=A0=A0 =A0=A0=A0 return -EEXIST;
->  =A0=A0=A0=A0 =A0=A0=A0 }
->=20
-> +=A0=A0=A0 =A0=A0=A0 /* HACK: allow for cleartext "encryption" in files f=
-or testing */
-> +=A0=A0=A0 =A0=A0=A0 if (fsc->mount_options->test_dummy_encryption &&
-> + !strcmp(fsc->mount_options->test_dummy_encryption, "clear")) {
-> +=A0=A0=A0 =A0=A0=A0 =A0=A0=A0 fsopt->flags |=3D CEPH_MOUNT_OPT_DUMMY_ENC=
-_CLEAR;
-> + kfree(fsc->mount_options->test_dummy_encryption);
-> +=A0=A0=A0 =A0=A0=A0 =A0=A0=A0 fsc->mount_options->test_dummy_encryption =
-=3D NULL;
-> +=A0=A0=A0 =A0=A0=A0 }
-> +
->  =A0=A0=A0=A0 =A0=A0=A0 err =3D fscrypt_set_test_dummy_encryption(sb,
-> fsc->mount_options->test_dummy_encryption,
->  =A0=A0=A0=A0 =A0=A0=A0 =A0=A0=A0 =A0=A0=A0 =A0=A0=A0 =A0=A0=A0 =A0=A0=A0=
- &fsc->dummy_enc_policy);
->=20
-> And I have pushed the tmp patches to=20
-> https://github.com/lxbsz/ceph-client/commits/lxb-wip-fscrypt3.
->=20
-> Please take a look is that okay ?
->=20
-> Thanks
->=20
-> -- Xiubo
->=20
->=20
+Hi Dear,
 
-The result looks good to me. Thanks for fixing this up.
+My name is Dr Lily William from the United States.I am a French and
+American nationality (dual) living in the U.S and sometimes in France
+for Work Purpose.
 
---=20
-Jeff Layton <jlayton@kernel.org>
+I hope you consider my friend request. I will share some of my pics
+and more details about myself when I get your response.
+
+Thanks
+
+With love
+Lily
