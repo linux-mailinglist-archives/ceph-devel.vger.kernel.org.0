@@ -2,282 +2,302 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9492857347A
-	for <lists+ceph-devel@lfdr.de>; Wed, 13 Jul 2022 12:42:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E77FA573494
+	for <lists+ceph-devel@lfdr.de>; Wed, 13 Jul 2022 12:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235151AbiGMKmi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 13 Jul 2022 06:42:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35842 "EHLO
+        id S234640AbiGMKtu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 13 Jul 2022 06:49:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230448AbiGMKmh (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Jul 2022 06:42:37 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A45F9FD538;
-        Wed, 13 Jul 2022 03:42:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1F0AAB81D83;
-        Wed, 13 Jul 2022 10:42:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4116DC34114;
-        Wed, 13 Jul 2022 10:42:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1657708953;
-        bh=KBP8Zkt8OsKR5l/DpkcGqVsbbFUbQupeujsVYF7Cf+w=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=lmeTFJMrJ07VP06v9uVDlz9ZCEMLR6q2Fll1kZbm0ossVjURH02UJ35PLSMQsXruy
-         1b0wXpIxNq0Mt3JhrFf0APtCATujxpqWsIiWYmsyWsMaklhP72KYa2A5tKFTEhfY9f
-         5oozuOwxv3xZemuQQbAtdKPYamiTXP99IbGyq4UGCA6zsQ6pRU02tdfPijjqA6aZ4X
-         5FssePgVuUjXkwN3oDGgwEpVH/KuG+uTjBKuRSh+4h1h7y8FYenH7KXNres1SR20Z2
-         9EYyVMRism4qcRsRICPR1fTCUcYAHVIpIhva/XP5DAmglEEZo6J0GYbP9BkMBW7PLy
-         65OdrVkkE4vWQ==
-Message-ID: <c280ce5cc43474aa17767530bf280045b128e7af.camel@kernel.org>
-Subject: Re: [PATCH] ceph: fix up test_dummy_encryption handling for new
- mount API
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com, ceph-devel@vger.kernel.org, idryomov@gmail.com
+        with ESMTP id S234834AbiGMKtq (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Jul 2022 06:49:46 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6ECCBF54CA
+        for <ceph-devel@vger.kernel.org>; Wed, 13 Jul 2022 03:49:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1657709381;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Y4iSRKAh2WOknEOTLoiGqu+KnAPhB6D5WXL9Uh1JDhk=;
+        b=bE5/aaEpEB7eq77G7eC/uluoqIMb2++m1xA5LqWyMUl3VDZskjVa37KwIFvXVTO8QXakEx
+        JhSjN+BFi5QDIOhUXUrrqnTtxKinz6ekVWaZj+juUP/AXPOFe6ob/L88iX/3nJTTs2mMsH
+        uc/MI4CB5v51+ATAyafhc9GB4cVwdX4=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-615-9hZ7utifPBiYBANoCAPrnQ-1; Wed, 13 Jul 2022 06:49:40 -0400
+X-MC-Unique: 9hZ7utifPBiYBANoCAPrnQ-1
+Received: by mail-pf1-f200.google.com with SMTP id e21-20020aa78c55000000b00528c6cca624so3773139pfd.3
+        for <ceph-devel@vger.kernel.org>; Wed, 13 Jul 2022 03:49:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Y4iSRKAh2WOknEOTLoiGqu+KnAPhB6D5WXL9Uh1JDhk=;
+        b=4RW1DDxOS3/Pl9m6GhDR6+cDiw800nfBlL7QnN86CFRN7CT85g/+ifFNrwl3NKL4sS
+         Sf20Ad/QE8/lHVjnHvSfKnUoXPfqO4RaWMfsUNIbfC4iGotIswm5qcWQFNyMEDR2lexB
+         dl0CFaT5pP4rw+BOzzgLqT3q7JB9iYaI3vts5Lvz8O6Cm3DrOS045rbQRC81FRVjwQ+f
+         fVA6+leiw6IUcqyFaTv/bzjwjWNmH1aCKWHTzmX+XvJcspmk20ijl96MWDGHcXytJt9x
+         y3QKpxp+oeuWrYtL6Sp9CkpcGocTkldjSpwKmlX02RjoURlagXhg0+F8QiMlwQbpu8Yf
+         YZ2A==
+X-Gm-Message-State: AJIora+XYdwsnIZiY0q+qHFUBF4ItcPItCuMB5gJVfzCrYKjlwwbWL0p
+        ewwtmC5zWg7kxjHOJA5XVjprtvf6z5gVB3eBxCZ7Fk8mALh9XuWecn9xKnLipY5UuKl9uaTzClv
+        h3u0rFCUc8EoEmTi549LaTQ==
+X-Received: by 2002:a63:6bc4:0:b0:40d:fd98:bb21 with SMTP id g187-20020a636bc4000000b0040dfd98bb21mr2381409pgc.249.1657709379097;
+        Wed, 13 Jul 2022 03:49:39 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1t/pgVPuQnqGTvQ2bM7jVP3fI6VvEpcGmG9Bl/0BXp+cqYoQrmW8ARh1cGFCo0DJkcHhve/JA==
+X-Received: by 2002:a63:6bc4:0:b0:40d:fd98:bb21 with SMTP id g187-20020a636bc4000000b0040dfd98bb21mr2381378pgc.249.1657709378675;
+        Wed, 13 Jul 2022 03:49:38 -0700 (PDT)
+Received: from [10.72.14.22] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id z8-20020a1709027e8800b0016c6e360ff6sm1384882pla.303.2022.07.13.03.49.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 13 Jul 2022 03:49:37 -0700 (PDT)
+Subject: Re: [PATCH] ceph: fix up test_dummy_encryption handling for new mount
+ API
+To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        idryomov@gmail.com
 Cc:     vshankar@redhat.com, linux-kernel@vger.kernel.org,
         Eric Biggers <ebiggers@kernel.org>
-Date:   Wed, 13 Jul 2022 06:42:31 -0400
-In-Reply-To: <20220713085641.50232-1-xiubli@redhat.com>
 References: <20220713085641.50232-1-xiubli@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.3 (3.44.3-1.fc36) 
+ <c280ce5cc43474aa17767530bf280045b128e7af.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <a84ca75d-7909-64c4-d91a-15caae05d704@redhat.com>
+Date:   Wed, 13 Jul 2022 18:49:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <c280ce5cc43474aa17767530bf280045b128e7af.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2022-07-13 at 16:56 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
->=20
-> From Eric the "fscrypt_set_test_dummy_encryption()" will be removed
-> in the next circle. Switch it to new APIs.
->=20
-> Cc: Eric Biggers <ebiggers@kernel.org>
-> Cc: Jeff Layton <jlayton@kernel.org>
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/crypto.c |  4 +--
->  fs/ceph/super.c  | 94 ++++++++++++++++++++++++------------------------
->  fs/ceph/super.h  |  5 ++-
->  3 files changed, 52 insertions(+), 51 deletions(-)
->=20
-> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-> index 7e0c48e12554..5b807f8f4c69 100644
-> --- a/fs/ceph/crypto.c
-> +++ b/fs/ceph/crypto.c
-> @@ -127,7 +127,7 @@ static bool ceph_crypt_empty_dir(struct inode *inode)
-> =20
->  static const union fscrypt_policy *ceph_get_dummy_policy(struct super_bl=
-ock *sb)
->  {
-> -	return ceph_sb_to_client(sb)->dummy_enc_policy.policy;
-> +	return ceph_sb_to_client(sb)->fsc_dummy_enc_policy.policy;
->  }
-> =20
->  static struct fscrypt_operations ceph_fscrypt_ops =3D {
-> @@ -144,7 +144,7 @@ void ceph_fscrypt_set_ops(struct super_block *sb)
-> =20
->  void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc)
->  {
-> -	fscrypt_free_dummy_policy(&fsc->dummy_enc_policy);
-> +	fscrypt_free_dummy_policy(&fsc->fsc_dummy_enc_policy);
->  }
-> =20
->  int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index fa59a804b32c..4ac4a90755a2 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -591,10 +591,16 @@ static int ceph_parse_mount_param(struct fs_context=
- *fc,
->  		break;
->  	case Opt_test_dummy_encryption:
->  #ifdef CONFIG_FS_ENCRYPTION
-> -		kfree(fsopt->test_dummy_encryption);
-> -		fsopt->test_dummy_encryption =3D param->string;
-> -		param->string =3D NULL;
-> -		fsopt->flags |=3D CEPH_MOUNT_OPT_TEST_DUMMY_ENC;
-> +		fscrypt_free_dummy_policy(&fsopt->dummy_enc_policy);
-> +		ret =3D fscrypt_parse_test_dummy_encryption(param,
-> +						&fsopt->dummy_enc_policy);
-> +		if (ret =3D=3D -EINVAL) {
-> +			warnfc(fc, "Value of option \"%s\" is unrecognized",
-> +			       param->key);
-> +		} else if (ret =3D=3D -EEXIST) {
-> +			warnfc(fc, "Conflicting test_dummy_encryption options");
-> +			ret =3D -EINVAL;
-> +		}
->  #else
->  		warnfc(fc,
->  		       "FS encryption not supported: test_dummy_encryption mount optio=
-n ignored");
-> @@ -620,7 +626,7 @@ static void destroy_mount_options(struct ceph_mount_o=
-ptions *args)
->  	kfree(args->server_path);
->  	kfree(args->fscache_uniq);
->  	kfree(args->mon_addr);
-> -	kfree(args->test_dummy_encryption);
-> +	fscrypt_free_dummy_policy(&args->dummy_enc_policy);
->  	kfree(args);
->  }
-> =20
-> @@ -1080,51 +1086,47 @@ static struct dentry *open_root_dentry(struct cep=
-h_fs_client *fsc,
->  	return root;
->  }
-> =20
-> -#ifdef CONFIG_FS_ENCRYPTION
-> -static int ceph_set_test_dummy_encryption(struct super_block *sb, struct=
- fs_context *fc,
-> -						struct ceph_mount_options *fsopt)
-> +static int ceph_apply_test_dummy_encryption(struct super_block *sb,
-> +					    struct fs_context *fc,
-> +					    struct ceph_mount_options *fsopt)
->  {
-> -	/*
-> -	 * No changing encryption context on remount. Note that
-> -	 * fscrypt_set_test_dummy_encryption will validate the version
-> -	 * string passed in (if any).
-> -	 */
-> -	if (fsopt->flags & CEPH_MOUNT_OPT_TEST_DUMMY_ENC) {
-> -		struct ceph_fs_client *fsc =3D sb->s_fs_info;
-> -		int err =3D 0;
-> +	struct ceph_fs_client *fsc =3D sb->s_fs_info;
-> +	int err;
-> =20
-> -		if (fc->purpose =3D=3D FS_CONTEXT_FOR_RECONFIGURE && !fsc->dummy_enc_p=
-olicy.policy) {
-> -			errorfc(fc, "Can't set test_dummy_encryption on remount");
-> -			return -EEXIST;
-> -		}
-> +	if (!fscrypt_is_dummy_policy_set(&fsopt->dummy_enc_policy))
-> +		return 0;
-> =20
-> -		err =3D fscrypt_set_test_dummy_encryption(sb,
-> -							fsc->mount_options->test_dummy_encryption,
-> -							&fsc->dummy_enc_policy);
-> -		if (err) {
-> -			if (err =3D=3D -EEXIST)
-> -				errorfc(fc, "Can't change test_dummy_encryption on remount");
-> -			else if (err =3D=3D -EINVAL)
-> -				errorfc(fc, "Value of option \"%s\" is unrecognized",
-> -					fsc->mount_options->test_dummy_encryption);
-> -			else
-> -				errorfc(fc, "Error processing option \"%s\" [%d]",
-> -					fsc->mount_options->test_dummy_encryption, err);
-> -			return err;
-> -		}
-> -		warnfc(fc, "test_dummy_encryption mode enabled");
-> +	/* No changing encryption context on remount. */
-> +	if (fc->purpose =3D=3D FS_CONTEXT_FOR_RECONFIGURE &&
-> +	    !fscrypt_is_dummy_policy_set(&fsc->fsc_dummy_enc_policy)) {
-> +		if (fscrypt_dummy_policies_equal(&fsopt->dummy_enc_policy,
-> +						 &fsc->fsc_dummy_enc_policy))
-> +			return 0;
-> +		errorfc(fc, "Can't set test_dummy_encryption on remount");
-> +		return -EINVAL;
->  	}
-> +
-> +	/* Also make sure fsopt doesn't contain a conflicting value. */
-> +	if (fscrypt_is_dummy_policy_set(&fsc->fsc_dummy_enc_policy)) {
-> +		if (fscrypt_dummy_policies_equal(&fsopt->dummy_enc_policy,
-> +						 &fsc->fsc_dummy_enc_policy))
-> +			return 0;
-> +		errorfc(fc, "Conflicting test_dummy_encryption options");
-> +		return -EINVAL;
-> +	}
-> +
-> +	fsc->fsc_dummy_enc_policy =3D fsopt->dummy_enc_policy;
-> +	memset(&fsopt->dummy_enc_policy, 0, sizeof(fsopt->dummy_enc_policy));
-> +
-> +	err =3D fscrypt_add_test_dummy_key(sb, &fsc->fsc_dummy_enc_policy);
-> +	if (err) {
-> +		errorfc(fc, "Error adding test dummy encryption key, %d", err);
-> +		return err;
-> +	}
-> +
-> +	warnfc(fc, "test_dummy_encryption mode enabled");
->  	return 0;
->  }
-> -#else
-> -static inline int ceph_set_test_dummy_encryption(struct super_block *sb,=
- struct fs_context *fc,
-> -						struct ceph_mount_options *fsopt)
-> -{
-> -	if (fsopt->flags & CEPH_MOUNT_OPT_TEST_DUMMY_ENC)
-> -		warnfc(fc, "test_dummy_encryption mode ignored");
-> -	return 0;
-> -}
-> -#endif
-> =20
->  /*
->   * mount: join the ceph cluster, and open root directory.
-> @@ -1154,7 +1156,7 @@ static struct dentry *ceph_real_mount(struct ceph_f=
-s_client *fsc,
->  				goto out;
->  		}
-> =20
-> -		err =3D ceph_set_test_dummy_encryption(fsc->sb, fc, fsc->mount_options=
-);
-> +		err =3D ceph_apply_test_dummy_encryption(fsc->sb, fc, fsc->mount_optio=
-ns);
->  		if (err)
->  			goto out;
-> =20
-> @@ -1373,7 +1375,7 @@ static int ceph_reconfigure_fc(struct fs_context *f=
-c)
->  	struct super_block *sb =3D fc->root->d_sb;
->  	struct ceph_fs_client *fsc =3D ceph_sb_to_client(sb);
-> =20
-> -	err =3D ceph_set_test_dummy_encryption(sb, fc, fsopt);
-> +	err =3D ceph_apply_test_dummy_encryption(sb, fc, fsopt);
->  	if (err)
->  		return err;
-> =20
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index bfc8bfcea799..5ea0ac6450dd 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -44,7 +44,6 @@
->  #define CEPH_MOUNT_OPT_ASYNC_DIROPS    (1<<15) /* allow async directory =
-ops */
->  #define CEPH_MOUNT_OPT_NOPAGECACHE     (1<<16) /* bypass pagecache altog=
-ether */
->  #define CEPH_MOUNT_OPT_SPARSEREAD      (1<<17) /* always do sparse reads=
- */
-> -#define CEPH_MOUNT_OPT_TEST_DUMMY_ENC  (1<<18) /* enable dummy encryptio=
-n (for testing) */
-> =20
->  #define CEPH_MOUNT_OPT_DEFAULT			\
->  	(CEPH_MOUNT_OPT_DCACHE |		\
-> @@ -101,7 +100,7 @@ struct ceph_mount_options {
->  	char *server_path;    /* default NULL (means "/") */
->  	char *fscache_uniq;   /* default NULL */
->  	char *mon_addr;
-> -	char *test_dummy_encryption;	/* default NULL */
-> +	struct fscrypt_dummy_policy dummy_enc_policy;
->  };
-> =20
->  #define CEPH_ASYNC_CREATE_CONFLICT_BITS 8
-> @@ -148,7 +147,7 @@ struct ceph_fs_client {
->  	struct fscache_volume *fscache;
->  #endif
->  #ifdef CONFIG_FS_ENCRYPTION
-> -	struct fscrypt_dummy_policy dummy_enc_policy;
-> +	struct fscrypt_dummy_policy fsc_dummy_enc_policy;
->  #endif
->  };
-> =20
 
-LGTM
+On 7/13/22 6:42 PM, Jeff Layton wrote:
+> On Wed, 2022-07-13 at 16:56 +0800, xiubli@redhat.com wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>>  From Eric the "fscrypt_set_test_dummy_encryption()" will be removed
+>> in the next circle. Switch it to new APIs.
+>>
+>> Cc: Eric Biggers <ebiggers@kernel.org>
+>> Cc: Jeff Layton <jlayton@kernel.org>
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/ceph/crypto.c |  4 +--
+>>   fs/ceph/super.c  | 94 ++++++++++++++++++++++++------------------------
+>>   fs/ceph/super.h  |  5 ++-
+>>   3 files changed, 52 insertions(+), 51 deletions(-)
+>>
+>> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+>> index 7e0c48e12554..5b807f8f4c69 100644
+>> --- a/fs/ceph/crypto.c
+>> +++ b/fs/ceph/crypto.c
+>> @@ -127,7 +127,7 @@ static bool ceph_crypt_empty_dir(struct inode *inode)
+>>   
+>>   static const union fscrypt_policy *ceph_get_dummy_policy(struct super_block *sb)
+>>   {
+>> -	return ceph_sb_to_client(sb)->dummy_enc_policy.policy;
+>> +	return ceph_sb_to_client(sb)->fsc_dummy_enc_policy.policy;
+>>   }
+>>   
+>>   static struct fscrypt_operations ceph_fscrypt_ops = {
+>> @@ -144,7 +144,7 @@ void ceph_fscrypt_set_ops(struct super_block *sb)
+>>   
+>>   void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc)
+>>   {
+>> -	fscrypt_free_dummy_policy(&fsc->dummy_enc_policy);
+>> +	fscrypt_free_dummy_policy(&fsc->fsc_dummy_enc_policy);
+>>   }
+>>   
+>>   int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
+>> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+>> index fa59a804b32c..4ac4a90755a2 100644
+>> --- a/fs/ceph/super.c
+>> +++ b/fs/ceph/super.c
+>> @@ -591,10 +591,16 @@ static int ceph_parse_mount_param(struct fs_context *fc,
+>>   		break;
+>>   	case Opt_test_dummy_encryption:
+>>   #ifdef CONFIG_FS_ENCRYPTION
+>> -		kfree(fsopt->test_dummy_encryption);
+>> -		fsopt->test_dummy_encryption = param->string;
+>> -		param->string = NULL;
+>> -		fsopt->flags |= CEPH_MOUNT_OPT_TEST_DUMMY_ENC;
+>> +		fscrypt_free_dummy_policy(&fsopt->dummy_enc_policy);
+>> +		ret = fscrypt_parse_test_dummy_encryption(param,
+>> +						&fsopt->dummy_enc_policy);
+>> +		if (ret == -EINVAL) {
+>> +			warnfc(fc, "Value of option \"%s\" is unrecognized",
+>> +			       param->key);
+>> +		} else if (ret == -EEXIST) {
+>> +			warnfc(fc, "Conflicting test_dummy_encryption options");
+>> +			ret = -EINVAL;
+>> +		}
+>>   #else
+>>   		warnfc(fc,
+>>   		       "FS encryption not supported: test_dummy_encryption mount option ignored");
+>> @@ -620,7 +626,7 @@ static void destroy_mount_options(struct ceph_mount_options *args)
+>>   	kfree(args->server_path);
+>>   	kfree(args->fscache_uniq);
+>>   	kfree(args->mon_addr);
+>> -	kfree(args->test_dummy_encryption);
+>> +	fscrypt_free_dummy_policy(&args->dummy_enc_policy);
+>>   	kfree(args);
+>>   }
+>>   
+>> @@ -1080,51 +1086,47 @@ static struct dentry *open_root_dentry(struct ceph_fs_client *fsc,
+>>   	return root;
+>>   }
+>>   
+>> -#ifdef CONFIG_FS_ENCRYPTION
+>> -static int ceph_set_test_dummy_encryption(struct super_block *sb, struct fs_context *fc,
+>> -						struct ceph_mount_options *fsopt)
+>> +static int ceph_apply_test_dummy_encryption(struct super_block *sb,
+>> +					    struct fs_context *fc,
+>> +					    struct ceph_mount_options *fsopt)
+>>   {
+>> -	/*
+>> -	 * No changing encryption context on remount. Note that
+>> -	 * fscrypt_set_test_dummy_encryption will validate the version
+>> -	 * string passed in (if any).
+>> -	 */
+>> -	if (fsopt->flags & CEPH_MOUNT_OPT_TEST_DUMMY_ENC) {
+>> -		struct ceph_fs_client *fsc = sb->s_fs_info;
+>> -		int err = 0;
+>> +	struct ceph_fs_client *fsc = sb->s_fs_info;
+>> +	int err;
+>>   
+>> -		if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE && !fsc->dummy_enc_policy.policy) {
+>> -			errorfc(fc, "Can't set test_dummy_encryption on remount");
+>> -			return -EEXIST;
+>> -		}
+>> +	if (!fscrypt_is_dummy_policy_set(&fsopt->dummy_enc_policy))
+>> +		return 0;
+>>   
+>> -		err = fscrypt_set_test_dummy_encryption(sb,
+>> -							fsc->mount_options->test_dummy_encryption,
+>> -							&fsc->dummy_enc_policy);
+>> -		if (err) {
+>> -			if (err == -EEXIST)
+>> -				errorfc(fc, "Can't change test_dummy_encryption on remount");
+>> -			else if (err == -EINVAL)
+>> -				errorfc(fc, "Value of option \"%s\" is unrecognized",
+>> -					fsc->mount_options->test_dummy_encryption);
+>> -			else
+>> -				errorfc(fc, "Error processing option \"%s\" [%d]",
+>> -					fsc->mount_options->test_dummy_encryption, err);
+>> -			return err;
+>> -		}
+>> -		warnfc(fc, "test_dummy_encryption mode enabled");
+>> +	/* No changing encryption context on remount. */
+>> +	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE &&
+>> +	    !fscrypt_is_dummy_policy_set(&fsc->fsc_dummy_enc_policy)) {
+>> +		if (fscrypt_dummy_policies_equal(&fsopt->dummy_enc_policy,
+>> +						 &fsc->fsc_dummy_enc_policy))
+>> +			return 0;
+>> +		errorfc(fc, "Can't set test_dummy_encryption on remount");
+>> +		return -EINVAL;
+>>   	}
+>> +
+>> +	/* Also make sure fsopt doesn't contain a conflicting value. */
+>> +	if (fscrypt_is_dummy_policy_set(&fsc->fsc_dummy_enc_policy)) {
+>> +		if (fscrypt_dummy_policies_equal(&fsopt->dummy_enc_policy,
+>> +						 &fsc->fsc_dummy_enc_policy))
+>> +			return 0;
+>> +		errorfc(fc, "Conflicting test_dummy_encryption options");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	fsc->fsc_dummy_enc_policy = fsopt->dummy_enc_policy;
+>> +	memset(&fsopt->dummy_enc_policy, 0, sizeof(fsopt->dummy_enc_policy));
+>> +
+>> +	err = fscrypt_add_test_dummy_key(sb, &fsc->fsc_dummy_enc_policy);
+>> +	if (err) {
+>> +		errorfc(fc, "Error adding test dummy encryption key, %d", err);
+>> +		return err;
+>> +	}
+>> +
+>> +	warnfc(fc, "test_dummy_encryption mode enabled");
+>>   	return 0;
+>>   }
+>> -#else
+>> -static inline int ceph_set_test_dummy_encryption(struct super_block *sb, struct fs_context *fc,
+>> -						struct ceph_mount_options *fsopt)
+>> -{
+>> -	if (fsopt->flags & CEPH_MOUNT_OPT_TEST_DUMMY_ENC)
+>> -		warnfc(fc, "test_dummy_encryption mode ignored");
+>> -	return 0;
+>> -}
+>> -#endif
+>>   
+>>   /*
+>>    * mount: join the ceph cluster, and open root directory.
+>> @@ -1154,7 +1156,7 @@ static struct dentry *ceph_real_mount(struct ceph_fs_client *fsc,
+>>   				goto out;
+>>   		}
+>>   
+>> -		err = ceph_set_test_dummy_encryption(fsc->sb, fc, fsc->mount_options);
+>> +		err = ceph_apply_test_dummy_encryption(fsc->sb, fc, fsc->mount_options);
+>>   		if (err)
+>>   			goto out;
+>>   
+>> @@ -1373,7 +1375,7 @@ static int ceph_reconfigure_fc(struct fs_context *fc)
+>>   	struct super_block *sb = fc->root->d_sb;
+>>   	struct ceph_fs_client *fsc = ceph_sb_to_client(sb);
+>>   
+>> -	err = ceph_set_test_dummy_encryption(sb, fc, fsopt);
+>> +	err = ceph_apply_test_dummy_encryption(sb, fc, fsopt);
+>>   	if (err)
+>>   		return err;
+>>   
+>> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+>> index bfc8bfcea799..5ea0ac6450dd 100644
+>> --- a/fs/ceph/super.h
+>> +++ b/fs/ceph/super.h
+>> @@ -44,7 +44,6 @@
+>>   #define CEPH_MOUNT_OPT_ASYNC_DIROPS    (1<<15) /* allow async directory ops */
+>>   #define CEPH_MOUNT_OPT_NOPAGECACHE     (1<<16) /* bypass pagecache altogether */
+>>   #define CEPH_MOUNT_OPT_SPARSEREAD      (1<<17) /* always do sparse reads */
+>> -#define CEPH_MOUNT_OPT_TEST_DUMMY_ENC  (1<<18) /* enable dummy encryption (for testing) */
+>>   
+>>   #define CEPH_MOUNT_OPT_DEFAULT			\
+>>   	(CEPH_MOUNT_OPT_DCACHE |		\
+>> @@ -101,7 +100,7 @@ struct ceph_mount_options {
+>>   	char *server_path;    /* default NULL (means "/") */
+>>   	char *fscache_uniq;   /* default NULL */
+>>   	char *mon_addr;
+>> -	char *test_dummy_encryption;	/* default NULL */
+>> +	struct fscrypt_dummy_policy dummy_enc_policy;
+>>   };
+>>   
+>>   #define CEPH_ASYNC_CREATE_CONFLICT_BITS 8
+>> @@ -148,7 +147,7 @@ struct ceph_fs_client {
+>>   	struct fscache_volume *fscache;
+>>   #endif
+>>   #ifdef CONFIG_FS_ENCRYPTION
+>> -	struct fscrypt_dummy_policy dummy_enc_policy;
+>> +	struct fscrypt_dummy_policy fsc_dummy_enc_policy;
+>>   #endif
+>>   };
+>>   
+> LGTM
+>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Thanks Jeff.
+
+I will fold this into the previous commit.
+
+-- Xiubo
+
