@@ -2,59 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E77FA573494
-	for <lists+ceph-devel@lfdr.de>; Wed, 13 Jul 2022 12:49:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C0745736B1
+	for <lists+ceph-devel@lfdr.de>; Wed, 13 Jul 2022 14:55:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234640AbiGMKtu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 13 Jul 2022 06:49:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43200 "EHLO
+        id S235068AbiGMMzr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 13 Jul 2022 08:55:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234834AbiGMKtq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Jul 2022 06:49:46 -0400
+        with ESMTP id S231469AbiGMMzr (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Jul 2022 08:55:47 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6ECCBF54CA
-        for <ceph-devel@vger.kernel.org>; Wed, 13 Jul 2022 03:49:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1FE5C7391F
+        for <ceph-devel@vger.kernel.org>; Wed, 13 Jul 2022 05:55:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657709381;
+        s=mimecast20190719; t=1657716945;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Y4iSRKAh2WOknEOTLoiGqu+KnAPhB6D5WXL9Uh1JDhk=;
-        b=bE5/aaEpEB7eq77G7eC/uluoqIMb2++m1xA5LqWyMUl3VDZskjVa37KwIFvXVTO8QXakEx
-        JhSjN+BFi5QDIOhUXUrrqnTtxKinz6ekVWaZj+juUP/AXPOFe6ob/L88iX/3nJTTs2mMsH
-        uc/MI4CB5v51+ATAyafhc9GB4cVwdX4=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=MyhgJNgSJQ9iXfy8wNUB0xJJACQTSSOXqa+XU8lWAOg=;
+        b=GWBaNd5dZY73/OZdF7jjiV+/uccDlnCnQZAMr0J8mPi5e1/Ok8C7voY/+klBfLJHiYUJCj
+        FpkwyOtEdkIsG/fASQUK/bieKvKAJiYMjSyXLEnKZOhDA3dfBn9a6JPDzziygaJa3QK9uS
+        QAm9vYgJvAhARqbp+tpN8mcyD4PXFas=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-615-9hZ7utifPBiYBANoCAPrnQ-1; Wed, 13 Jul 2022 06:49:40 -0400
-X-MC-Unique: 9hZ7utifPBiYBANoCAPrnQ-1
-Received: by mail-pf1-f200.google.com with SMTP id e21-20020aa78c55000000b00528c6cca624so3773139pfd.3
-        for <ceph-devel@vger.kernel.org>; Wed, 13 Jul 2022 03:49:40 -0700 (PDT)
+ us-mta-113-2LHGeaH9PzmS10pMO-WIaA-1; Wed, 13 Jul 2022 08:55:44 -0400
+X-MC-Unique: 2LHGeaH9PzmS10pMO-WIaA-1
+Received: by mail-pf1-f199.google.com with SMTP id 138-20020a621890000000b00527c88db25fso3960901pfy.12
+        for <ceph-devel@vger.kernel.org>; Wed, 13 Jul 2022 05:55:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=Y4iSRKAh2WOknEOTLoiGqu+KnAPhB6D5WXL9Uh1JDhk=;
-        b=4RW1DDxOS3/Pl9m6GhDR6+cDiw800nfBlL7QnN86CFRN7CT85g/+ifFNrwl3NKL4sS
-         Sf20Ad/QE8/lHVjnHvSfKnUoXPfqO4RaWMfsUNIbfC4iGotIswm5qcWQFNyMEDR2lexB
-         dl0CFaT5pP4rw+BOzzgLqT3q7JB9iYaI3vts5Lvz8O6Cm3DrOS045rbQRC81FRVjwQ+f
-         fVA6+leiw6IUcqyFaTv/bzjwjWNmH1aCKWHTzmX+XvJcspmk20ijl96MWDGHcXytJt9x
-         y3QKpxp+oeuWrYtL6Sp9CkpcGocTkldjSpwKmlX02RjoURlagXhg0+F8QiMlwQbpu8Yf
-         YZ2A==
-X-Gm-Message-State: AJIora+XYdwsnIZiY0q+qHFUBF4ItcPItCuMB5gJVfzCrYKjlwwbWL0p
-        ewwtmC5zWg7kxjHOJA5XVjprtvf6z5gVB3eBxCZ7Fk8mALh9XuWecn9xKnLipY5UuKl9uaTzClv
-        h3u0rFCUc8EoEmTi549LaTQ==
-X-Received: by 2002:a63:6bc4:0:b0:40d:fd98:bb21 with SMTP id g187-20020a636bc4000000b0040dfd98bb21mr2381409pgc.249.1657709379097;
-        Wed, 13 Jul 2022 03:49:39 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1t/pgVPuQnqGTvQ2bM7jVP3fI6VvEpcGmG9Bl/0BXp+cqYoQrmW8ARh1cGFCo0DJkcHhve/JA==
-X-Received: by 2002:a63:6bc4:0:b0:40d:fd98:bb21 with SMTP id g187-20020a636bc4000000b0040dfd98bb21mr2381378pgc.249.1657709378675;
-        Wed, 13 Jul 2022 03:49:38 -0700 (PDT)
+        bh=MyhgJNgSJQ9iXfy8wNUB0xJJACQTSSOXqa+XU8lWAOg=;
+        b=D0mXiLeEggi5oHkzXqPbzKfahJfCe/31neWBaqE6dXgEthWn757GqKAIaNZsZo17Y6
+         2UAGz1h/MYsTjlkoe7uVMvTSovkRReIfGIClPYriuTLdSIQgfeit97NF/4oqhsddme2/
+         SWqA4tK7J5AA/vQA2VrOywwlME0suv5uF/fJPdnrzOl3XpuDU4F+KKjnuZyyzeD32Pt3
+         P1wJtjs4jHkugyUh9556ceUsbwuZ09rynpPtYbYIW/iDzrK0f3TrLWclA9hZHnHJOByx
+         5/de3Bdgwe/2QaoiIBdv50WBC07ijuPBRsw6D2c/TGgMt+ZGffr/pt6j6hKh9IsKfGHa
+         XT0g==
+X-Gm-Message-State: AJIora9t7V321EiMYb+5yPKwRR7sPEKG6gyDKzcQTLrSOhlSngi1O72c
+        zWkKL3SlIfoa2ZatAdHdqKO3FQa42L6G+rXf3M5N/QBwU7wWfDPXyQIWk8y49bONP9/ufPARv1G
+        Q3iIHhPKd+9VVPjFj3qlpBA==
+X-Received: by 2002:a17:902:c7cb:b0:16b:dc5d:8959 with SMTP id r11-20020a170902c7cb00b0016bdc5d8959mr3338685pla.87.1657716943068;
+        Wed, 13 Jul 2022 05:55:43 -0700 (PDT)
+X-Google-Smtp-Source: AGRyM1uWvUc9i7wRwERlL9Odg68OfqIXYU2+RVWc2oO13SEY1Jklnwm9ZEuxdBDgfdYyPBp2gLAljQ==
+X-Received: by 2002:a17:902:c7cb:b0:16b:dc5d:8959 with SMTP id r11-20020a170902c7cb00b0016bdc5d8959mr3338657pla.87.1657716942626;
+        Wed, 13 Jul 2022 05:55:42 -0700 (PDT)
 Received: from [10.72.14.22] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id z8-20020a1709027e8800b0016c6e360ff6sm1384882pla.303.2022.07.13.03.49.34
+        by smtp.gmail.com with ESMTPSA id c1-20020a170902b68100b0016bd62bc003sm8760331pls.141.2022.07.13.05.55.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Jul 2022 03:49:37 -0700 (PDT)
+        Wed, 13 Jul 2022 05:55:41 -0700 (PDT)
 Subject: Re: [PATCH] ceph: fix up test_dummy_encryption handling for new mount
  API
 To:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
@@ -64,14 +64,14 @@ Cc:     vshankar@redhat.com, linux-kernel@vger.kernel.org,
 References: <20220713085641.50232-1-xiubli@redhat.com>
  <c280ce5cc43474aa17767530bf280045b128e7af.camel@kernel.org>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <a84ca75d-7909-64c4-d91a-15caae05d704@redhat.com>
-Date:   Wed, 13 Jul 2022 18:49:32 +0800
+Message-ID: <b82c4486-42ea-cdd1-8204-6dcc95836f72@redhat.com>
+Date:   Wed, 13 Jul 2022 20:55:35 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
 In-Reply-To: <c280ce5cc43474aa17767530bf280045b128e7af.camel@kernel.org>
 Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
@@ -82,6 +82,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
+
+Hi Jeff,
+
+I am rebasing the 'wip-fscrypt' branch to the 'testing', and there is 
+one commit conflicts:
+
+commit 81faddddbef409bcaa1aa3d89e59606cde94dab7
+Author: Jeff Layton <jlayton@kernel.org>
+Date:   Wed Dec 1 09:21:39 2021 -0500
+
+     ceph: add infrastructure for file encryption and decryption
+
+     ...and allow test_dummy_encryption to bypass content encryption
+     if mounted with test_dummy_encryption=clear.
+
+     Reviewed-by: Xiubo Li <xiubli@redhat.com>
+     Signed-off-by: Jeff Layton <jlayton@kernel.org>
+
+And the conflicts are:
+
+[xiubli@fedora ]$ cat fs/ceph/super.h.rej
+--- fs/ceph/super.h
++++ fs/ceph/super.h
+@@ -45,6 +45,7 @@
+  #define CEPH_MOUNT_OPT_NOPAGECACHE     (1<<16) /* bypass pagecache 
+altogether */
+  #define CEPH_MOUNT_OPT_SPARSEREAD      (1<<17) /* always do sparse 
+reads */
+  #define CEPH_MOUNT_OPT_TEST_DUMMY_ENC  (1<<18) /* enable dummy 
+encryption (for testing) */
++#define CEPH_MOUNT_OPT_DUMMY_ENC_CLEAR (1<<19) /* don't actually 
+encrypt content */
+
+  #define CEPH_MOUNT_OPT_DEFAULT            \
+      (CEPH_MOUNT_OPT_DCACHE |        \
+
+[xiubli@fedora ]$ cat fs/ceph/super.c.rej
+--- fs/ceph/super.c
++++ fs/ceph/super.c
+@@ -1098,6 +1098,14 @@ static int ceph_set_test_dummy_encryption(struct 
+super_block *sb, struct fs_cont
+              return -EEXIST;
+          }
+
++        /* HACK: allow for cleartext "encryption" in files for testing */
++        if (fsc->mount_options->test_dummy_encryption &&
++ !strcmp(fsc->mount_options->test_dummy_encryption, "clear")) {
++            fsopt->flags |= CEPH_MOUNT_OPT_DUMMY_ENC_CLEAR;
++ kfree(fsc->mount_options->test_dummy_encryption);
++            fsc->mount_options->test_dummy_encryption = NULL;
++        }
++
+          err = fscrypt_set_test_dummy_encryption(sb,
+fsc->mount_options->test_dummy_encryption,
+                              &fsc->dummy_enc_policy);
+
+And I have pushed the tmp patches to 
+https://github.com/lxbsz/ceph-client/commits/lxb-wip-fscrypt3.
+
+Please take a look is that okay ?
+
+Thanks
+
+-- Xiubo
+
 
 
 On 7/13/22 6:42 PM, Jeff Layton wrote:
@@ -294,10 +359,5 @@ On 7/13/22 6:42 PM, Jeff Layton wrote:
 > LGTM
 >
 > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-
-Thanks Jeff.
-
-I will fold this into the previous commit.
-
--- Xiubo
+>
 
