@@ -2,97 +2,57 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 54C7A574710
-	for <lists+ceph-devel@lfdr.de>; Thu, 14 Jul 2022 10:37:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EE1F574DE0
+	for <lists+ceph-devel@lfdr.de>; Thu, 14 Jul 2022 14:40:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237339AbiGNIhI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 14 Jul 2022 04:37:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60542 "EHLO
+        id S239133AbiGNMkO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 14 Jul 2022 08:40:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236199AbiGNIg6 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 14 Jul 2022 04:36:58 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C39C3ED53
-        for <ceph-devel@vger.kernel.org>; Thu, 14 Jul 2022 01:36:52 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id y11so1633979lfs.6
-        for <ceph-devel@vger.kernel.org>; Thu, 14 Jul 2022 01:36:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=H3bGT1ZyGPu3PRQJlJHyQI9TvTjBPuNSyHjFOzNfiP0=;
-        b=XrPG1uZaQRn1UCA0WJJ2pmJQ1csZW3HabgB7E+QXuACfRhko5FjAocWwoGAFMQM+4K
-         maoBv4gTZQXqu9EJzYUg27HWYGn7H4ps8X1YfFKAamIhhLSUESO1F6QG9mJgGHe0KMpr
-         yS6EmWRT7znGhWAi5CHDysnG1OxosqIxRYFf098GB0Xs4T6zMcBwQ+Ijt6ciUPeVVUwm
-         NwEO+Wz1v4Oa+mBtHNRupxuLErGpDho6oqFPRIm2MU+57eHEreDtv9TWX6BBq17KbV3w
-         UCTpqQeOnk576xhvUmMdcgTy5b4PgstjqS11/4Py/0diTc9tD3MngzVuJ3uMtq9Qr/CL
-         qkvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=H3bGT1ZyGPu3PRQJlJHyQI9TvTjBPuNSyHjFOzNfiP0=;
-        b=tdAO+/A0NQLB1Kaij1FwOxU3azkmueT7q1+UB1FDhMS0x/EvFReY43SISfIRDPUG1k
-         vxs2ifihcKGYNsgU5pM7TT2QW6VQ9+latqiXg9JUTCmjfP5hLnoa4P+qJS0H4+d/gzR3
-         Xw8swZW6lNNrUYvYEwsI5IBhe3F37d+Ov4reKwgcpx4qzMxic5jMziM7y+DhhvuHmuVS
-         zdclh0XijtnDzug7Ga85LtXKjpSOwLaxYEpl26zUwILRgbLgrHDgNZB6tqPN2ZuT81gR
-         2/H4sFEE0qgB7LbuuBNijmc1Dm24+4HMN10sSM5ygXnRPQE00TDpg1VG+2BbXN0ubMN3
-         1LdQ==
-X-Gm-Message-State: AJIora9LlnU8U+u8+yZmTXP9xA65eT7blxAPw8zdeQ4fSvuIuNVgyKF3
-        Am2wIMPWv0h6zVpGFrCmNKl148sThbuuGo9/pqE=
-X-Google-Smtp-Source: AGRyM1u3j4Kh8ROf600mZ9n+2mzPHZx1NFVtrSntlSiwIK2NP6HVto6IIpM3hlWxyt39lgmrdSwWdCXGiGrSzCPb6JE=
-X-Received: by 2002:a05:6512:3d27:b0:489:e623:f244 with SMTP id
- d39-20020a0565123d2700b00489e623f244mr4930609lfv.236.1657787809582; Thu, 14
- Jul 2022 01:36:49 -0700 (PDT)
+        with ESMTP id S237757AbiGNMkN (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 14 Jul 2022 08:40:13 -0400
+X-Greylist: delayed 400 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 14 Jul 2022 05:40:11 PDT
+Received: from uedakaya.co.jp (uedakaya.co.jp [161.34.6.253])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1B9B402F1
+        for <ceph-devel@vger.kernel.org>; Thu, 14 Jul 2022 05:40:11 -0700 (PDT)
+Received: (qmail 8530 invoked by SAV 20220713.024 by uid 49900001); 14 Jul 2022 21:33:29 +0900
+To:     ceph-devel@vger.kernel.org
+Subject: =?ISO-2022-JP?B?GyRCIVokKkxkJCQ5ZyRvJDskIiRqJCwkSCQmJDQkNiQkJF4kNyQ/IVsbKEI=?=
+Date:   Thu, 14 Jul 2022 12:33:29 +0000
+From:   =?ISO-2022-JP?B?GyRCPyJFRDJjRCIzdDwwMnE8UhsoQg==?= 
+        <info@uedakaya.co.jp>
+Message-ID: <ed2a660522a5349f1383660ebf0735be@uedakaya.co.jp>
+X-Mailer: PHPMailer 5.2.22 (https://github.com/PHPMailer/PHPMailer)
 MIME-Version: 1.0
-Received: by 2002:a2e:9041:0:0:0:0:0 with HTTP; Thu, 14 Jul 2022 01:36:48
- -0700 (PDT)
-Reply-To: abdwabbomaddahm@gmail.com
-From:   Abdwabbo Maddah <abdwabbomaddah746@gmail.com>
-Date:   Thu, 14 Jul 2022 09:36:48 +0100
-Message-ID: <CAFC-3ifKFkAVLmD=8z4VAKFLX0pV+_h5OJ=Ks62m+0uk+DimKQ@mail.gmail.com>
-Subject: Get back to me... URGENT
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.0 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
+Content-Type: text/plain; charset=ISO-2022-JP
+X-Spam-Status: No, score=2.8 required=5.0 tests=BAYES_50,SHORT_SHORTNER,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
         autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2a00:1450:4864:20:0:0:0:129 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4902]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [abdwabbomaddah746[at]gmail.com]
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [abdwabbomaddah746[at]gmail.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  3.2 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+X-Spam-Level: **
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
--- 
-Dear,
-I had sent you a mail but i don't think you received it that's why am
-writing you again.It is important you get back to me as soon as you
-can.
-Abd-Wabbo Maddah
+お問い合わせありがとうございます。
+下記の内容にて送信いたしました。
+
+■お名前
+? Jean just viewed your profile! Click here: https://letsg0dancing.page.link/go?r8nn ?
+
+■ふりがな
+pj7221
+
+■メールアドレス
+ceph-devel@vger.kernel.org
+
+■御社名
+eo0yzm
+
+■電話番号
+019726871416
+
+■お問い合わせ内容
+ld8vl9
+
