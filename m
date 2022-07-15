@@ -2,575 +2,96 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DD9A5759EF
-	for <lists+ceph-devel@lfdr.de>; Fri, 15 Jul 2022 05:20:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63D3F57655E
+	for <lists+ceph-devel@lfdr.de>; Fri, 15 Jul 2022 18:39:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232893AbiGODUs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 14 Jul 2022 23:20:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43530 "EHLO
+        id S234487AbiGOQjR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 15 Jul 2022 12:39:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229809AbiGODUr (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 14 Jul 2022 23:20:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3C7CA76E99
-        for <ceph-devel@vger.kernel.org>; Thu, 14 Jul 2022 20:20:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1657855243;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RqYYqXivfHO0f0JVP8BTJ8InJ2eafO5OMUs1B319nyE=;
-        b=ZgrwfuNlwwwMWNiBoWurwr0W6CwLiyu9F73hMeN/1QmSdrzCWfOW8guu3uY3p511byR00i
-        njgtv0KhMHQd3z6+iYMbtPz5YXODoUfbTJLlLlwgxxzjvucovrBey2VABn2ffxA87pxq44
-        bPzNK29ADwEVb803wpwd4mnlmf9PYr0=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-544-SMqcxXePM1aoV6hVjc8PGg-1; Thu, 14 Jul 2022 23:20:36 -0400
-X-MC-Unique: SMqcxXePM1aoV6hVjc8PGg-1
-Received: by mail-pg1-f198.google.com with SMTP id x17-20020a631711000000b0041240801d34so2161305pgl.17
-        for <ceph-devel@vger.kernel.org>; Thu, 14 Jul 2022 20:20:36 -0700 (PDT)
+        with ESMTP id S234293AbiGOQjJ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 15 Jul 2022 12:39:09 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 439F6CE03;
+        Fri, 15 Jul 2022 09:39:08 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id k30so6980852edk.8;
+        Fri, 15 Jul 2022 09:39:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XvhJn0S9vThyG29jKQokHXLUcesyw2+MD4EcSS/waNs=;
+        b=VP6d032bLh9GUakmfJFN/99OsICffhB7LIxn0V2jLbf5WK1vT82XPIpJGW0+po4I39
+         y+VD1rCISE0JYfjYStuCfzYvku9iOd+EbMhvW2TI766DvBhbdlW6vcjwfAF05m8obMbp
+         T9v0SiZ2XjTgN0cg7oubmXYchbA83ECyP53M5GrSFod2wsQKvcSO6kePuly7/ySRaf1Y
+         E+7ypRhbUVSSZa/S9gaXqqdC0JwD8kMj3IBk9H3q3rzZQqw4ydcpUMN/oQY16FKI8YKA
+         JrmeBr/lUZa0jUDVwSOAZNLtoZhFREuDJMfCmPVbdfWEmF+BaKpX4aR/NGu+O6vV3jip
+         ykfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=RqYYqXivfHO0f0JVP8BTJ8InJ2eafO5OMUs1B319nyE=;
-        b=sc2oL4fyw1kfqY0epHYAMlKgsZLIysNehZrVgR85pzkKRxBK/8dJERPz1mix2FmKlf
-         BsQT5fLFG44V+JiaNDP7Q7IodpmlIgk6xq/jd0QPhF1+UJ7YwLOl4gldZlrFdxeFm3hf
-         oxZB8Ldm0VjHdc2PIMBWOWkFU17SDj/Hc9T0kfEefOnPHFAYxy8s9Y9L2y7C6QGG0p2H
-         6VLeOr6K0krWlB6I7CA9Yl1RkBy/24Ba9wok55NrAKZDD06VFXT8gqbk4TgJNSCfPN9b
-         WZRYLGDrzsbSXlpJSuzU/gmVekyDCdD3/9OCrYYA+npKX+fZrAqGGKMzDpCRyS6OjiVu
-         bRpA==
-X-Gm-Message-State: AJIora8QiCrxvCTt072xTDxWtjrRzuLSw4wlp7xrPKoEp0QhxsAASWQ2
-        TyfP39PNH/YlJnb+uosWelfd7ypgCRftPaF75XSfJDPzHwcSOAE6/W2xR74zbxg0m4zV7a3RdLS
-        C1QnPsoJHlnhkBiNCBiZMfA==
-X-Received: by 2002:a17:902:e54e:b0:16c:33f7:55f7 with SMTP id n14-20020a170902e54e00b0016c33f755f7mr11549016plf.111.1657855234961;
-        Thu, 14 Jul 2022 20:20:34 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1sNJQEZWUiCU73RVActNcAsa9VV++IhVZHZM+T0YcOYJQCI4IGYXcgPGxGJOYqq6u1omkBd2A==
-X-Received: by 2002:a17:902:e54e:b0:16c:33f7:55f7 with SMTP id n14-20020a170902e54e00b0016c33f755f7mr11548977plf.111.1657855234526;
-        Thu, 14 Jul 2022 20:20:34 -0700 (PDT)
-Received: from [10.72.14.22] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id f27-20020aa7969b000000b005251fff13dfsm2481753pfk.155.2022.07.14.20.20.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Jul 2022 20:20:33 -0700 (PDT)
-Subject: Re: [PATCH 2/3] ceph: only send the metrices supported by the MDS for
- old cephs
-From:   Xiubo Li <xiubli@redhat.com>
-To:     Jeff Layton <jlayton@kernel.org>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        Patrick Donnelly <pdonnell@redhat.com>,
-        Venky Shankar <vshankar@redhat.com>
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
-        Milind Changire <mchangir@redhat.com>
-References: <20220331065241.27370-1-xiubli@redhat.com>
- <20220331065241.27370-3-xiubli@redhat.com>
- <756cb0c834b8cc4005291132066d411f35d88274.camel@kernel.org>
- <a20c3a97-4a4d-70fc-509a-b96d8fe27751@redhat.com>
-Message-ID: <7366fb97-56d4-79da-9f27-446839a7104a@redhat.com>
-Date:   Fri, 15 Jul 2022 11:20:24 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XvhJn0S9vThyG29jKQokHXLUcesyw2+MD4EcSS/waNs=;
+        b=VWnXKyb26E6Geu6e8lKb+4P7zs2GWv95Av2NvyWyj3h86k5rHxScUwGJGNTDgfxbOB
+         TFYYi4MDMUFzFyo92yl+189jGEMU36PcCC4ABccVOPDBnSuX94GiX/rdbTo2Ne29WS/5
+         BO4d0j9qo+dLT+dIlZtM258E6wkhVRFytSUR0WP1Z0st1B72nsfe1BJvZ0HHWWyLs+UC
+         pQpc9ZU5j0dcKd/mPk9BuAsjG8MWUzH7g2eOu1jhaX49wVfvizGQdCAmhenhRPxsrVQw
+         YcHVCNgRz28tdZKpZrysqe76qSAzL30Rc9pn7TV22oW4BWe0v10jfloq135Lq9QWfxIH
+         TEjg==
+X-Gm-Message-State: AJIora8NyWXRGDAA46VNbAeYX4BkRa10Y5O714QnnJSP/n0Z+ZxE4pxK
+        pSOWFOHVc+kXLL/PFiE1TtrjAfZmZMk=
+X-Google-Smtp-Source: AGRyM1vpPD+akTTTBupGIXyQOUMc6Rc3zoPpZqKTi9XIVgT8lPhTPbWAFcPXq4mMNqnAInTnHJ6nJQ==
+X-Received: by 2002:a05:6402:26c3:b0:43a:a846:b2c1 with SMTP id x3-20020a05640226c300b0043aa846b2c1mr20252243edd.133.1657903146842;
+        Fri, 15 Jul 2022 09:39:06 -0700 (PDT)
+Received: from kwango.redhat.com (ip-94-112-17-81.bb.vodafone.cz. [94.112.17.81])
+        by smtp.gmail.com with ESMTPSA id t6-20020aa7d706000000b0043a85d7d15esm3045460edq.12.2022.07.15.09.39.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Jul 2022 09:39:06 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fix for 5.19-rc7
+Date:   Fri, 15 Jul 2022 18:38:45 +0200
+Message-Id: <20220715163845.14481-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <a20c3a97-4a4d-70fc-509a-b96d8fe27751@redhat.com>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-More info.
+Hi Linus,
 
-Check the upstream ceph code:
+The following changes since commit 32346491ddf24599decca06190ebca03ff9de7f8:
 
-The commit c669de12e076bcedf3fe6cfe52377713f06d7ceb introduced the 
-ceph_abort() code when received an unknown metric from clients.
+  Linux 5.19-rc6 (2022-07-10 14:40:51 -0700)
 
-$ git tag --contain c669de12e076bcedf3fe6cfe52377713f06d7ceb
-v16.1.0
-v16.2.0
-v16.2.1
-v16.2.2
-v16.2.3
-v16.2.4
-v16.2.5
-v16.2.6
-v16.2.7
-v16.2.8
-v16.2.9
-v17.0.0
-v17.1.0
-v17.2.0
-v17.2.1
+are available in the Git repository at:
 
-And a following commit b1b44d775df3160d937c068d5e1079e24199ed6b has 
-fixed it:
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.19-rc7
 
-diff --git a/src/include/cephfs/metrics/Types.h 
-b/src/include/cephfs/metrics/Types.h
-index 8def1aa7101..d5589136de2 100644
---- a/src/include/cephfs/metrics/Types.h
-+++ b/src/include/cephfs/metrics/Types.h
-@@ -53,7 +53,7 @@ inline std::ostream &operator<<(std::ostream &os, 
-const ClientMetricType &type)
-      os << "OPENED_INODES";
-      break;
-    default:
--    ceph_abort();
-+    os << "Unknown metric type: " << type;
-    }
+for you to fetch changes up to fac47b43c760ea90e64b895dba60df0327be7775:
 
-    return os;
+  netfs: do not unlock and put the folio twice (2022-07-14 10:10:12 +0200)
 
+----------------------------------------------------------------
+A folio locking fixup that Xiubo and David cooperated on, marked for
+stable.  Most of it is in netfs but I picked it up into ceph tree on
+agreement with David.
 
-$ git tag --contain b1b44d775df3160d937c068d5e1079e24199ed6b
-v17.1.0
-v17.2.0
-v17.2.1
+----------------------------------------------------------------
+Xiubo Li (1):
+      netfs: do not unlock and put the folio twice
 
-For the backported commit for the above patch in Pacific:
-
-$ git tag --contain 48396a2a6effc09768e83e7b2709a0dc42d08199
-v16.2.5
-v16.2.6
-v16.2.7
-v16.2.8
-v16.2.9
-
-That means for all the Pacific version of:
-
-v16.1.0
-v16.2.0
-v16.2.1
-v16.2.2
-v16.2.3
-v16.2.4
-
-We must disable the client metrics in kclient if users are using these 
-version with newer kernels, or if they are using this ceph versions the 
-couldn't see anything about the client metrics even for those they support.
-
-Checked the downstream ceph versions, there are 159 tags gap between the 
-bug and fix.
-
--- Xiubo
-
-
-
-
-
-On 7/13/22 9:25 AM, Xiubo Li wrote:
-> Jeff,
->
-> I think this still makes sense, more detail please see [1], which is 
-> as I worried for the older ceph and when users want to upgrade the 
-> cluster.
->
-> Though this is a MDS side bug and have already been fixed in the MDS, 
-> but if there are existing clusters running before that fix, so when 
-> upgrading the kclient only or if the upgrade the kclient first, they 
-> will complain the same issue in [1].
->
-> [1] https://tracker.ceph.com/issues/56529
->
-> -- Xiubo
->
->
-> On 3/31/22 8:11 PM, Jeff Layton wrote:
->> On Thu, 2022-03-31 at 14:52 +0800, xiubli@redhat.com wrote:
->>> From: Xiubo Li <xiubli@redhat.com>
->>>
->>> For some old ceph versions when receives unknown metrics it will
->>> abort the MDS daemons. This will only send the metrics which are
->>> supported by MDSes.
->>>
->>> Defautly the MDS won't fill the s_metrics in the MClientSession
->>> reply message, so with this patch will only force sending the
->>> metrics to MDS since Quincy version, which is safe to receive
->>> unknown metrics.
->>>
->>> Next we will add one module option to force enable sending the
->>> metrics if users think that is safe.
->>>
->>
->> Is this really a problem we need to work around in the client?
->>
->> This is an MDS bug and the patches to fix that abort are being
->> backported (or already have been). I think we shouldn't do this at all
->> and instead insist that this be fixed in the MDS.
->>
->>> URL: https://tracker.ceph.com/issues/54411
->>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>> ---
->>>   fs/ceph/mds_client.c |  19 +++-
->>>   fs/ceph/mds_client.h |   1 +
->>>   fs/ceph/metric.c     | 206 
->>> ++++++++++++++++++++++++-------------------
->>>   3 files changed, 131 insertions(+), 95 deletions(-)
->>>
->>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
->>> index f476c65fb985..65980ce97620 100644
->>> --- a/fs/ceph/mds_client.c
->>> +++ b/fs/ceph/mds_client.c
->>> @@ -3422,7 +3422,7 @@ static void handle_session(struct 
->>> ceph_mds_session *session,
->>>       void *end = p + msg->front.iov_len;
->>>       struct ceph_mds_session_head *h;
->>>       u32 op;
->>> -    u64 seq, features = 0;
->>> +    u64 seq, features = 0, metrics = 0;
->>>       int wake = 0;
->>>       bool blocklisted = false;
->>>   @@ -3452,11 +3452,21 @@ static void handle_session(struct 
->>> ceph_mds_session *session,
->>>           }
->>>       }
->>>   +    /* version >= 4, metric bits */
->>> +    if (msg_version >= 4) {
->>> +        u32 len;
->>> +        /* struct_v, struct_compat, and len */
->>> +        ceph_decode_skip_n(&p, end, 2 + sizeof(u32), bad);
->>> +        ceph_decode_32_safe(&p, end, len, bad);
->>> +        if (len) {
->>> +            ceph_decode_64_safe(&p, end, metrics, bad);
->>> +            p += len - sizeof(metrics);
->>> +        }
->>> +    }
->>> +
->>> +    /* version >= 5, flags   */
->>>       if (msg_version >= 5) {
->>>           u32 flags;
->>> -        /* version >= 4, struct_v, struct_cv, len, metric_spec */
->>> -            ceph_decode_skip_n(&p, end, 2 + sizeof(u32) * 2, bad);
->>> -        /* version >= 5, flags   */
->>>                   ceph_decode_32_safe(&p, end, flags, bad);
->>>           if (flags & CEPH_SESSION_BLOCKLISTED) {
->>>                   pr_warn("mds%d session blocklisted\n", 
->>> session->s_mds);
->>> @@ -3490,6 +3500,7 @@ static void handle_session(struct 
->>> ceph_mds_session *session,
->>>               pr_info("mds%d reconnect success\n", session->s_mds);
->>>           session->s_state = CEPH_MDS_SESSION_OPEN;
->>>           session->s_features = features;
->>> +        session->s_metrics = metrics;
->>>           renewed_caps(mdsc, session, 0);
->>>           if (test_bit(CEPHFS_FEATURE_METRIC_COLLECT, 
->>> &session->s_features))
->>>               metric_schedule_delayed(&mdsc->metric);
->>> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
->>> index 32107c26f50d..0f2061f5388d 100644
->>> --- a/fs/ceph/mds_client.h
->>> +++ b/fs/ceph/mds_client.h
->>> @@ -188,6 +188,7 @@ struct ceph_mds_session {
->>>       int               s_state;
->>>       unsigned long     s_ttl;      /* time until mds kills us */
->>>       unsigned long      s_features;
->>> +    unsigned long      s_metrics;
->>>       u64               s_seq;      /* incoming msg seq # */
->>>       struct mutex      s_mutex;    /* serialize session messages */
->>>   diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
->>> index c47347d2e84e..f01c1f4e6b89 100644
->>> --- a/fs/ceph/metric.c
->>> +++ b/fs/ceph/metric.c
->>> @@ -31,6 +31,7 @@ static bool ceph_mdsc_send_metrics(struct 
->>> ceph_mds_client *mdsc,
->>>       struct ceph_client_metric *m = &mdsc->metric;
->>>       u64 nr_caps = atomic64_read(&m->total_caps);
->>>       u32 header_len = sizeof(struct ceph_metric_header);
->>> +    bool force = test_bit(CEPHFS_FEATURE_QUINCY, &s->s_features);
->> I don't necessarily have a problem with adding extra CEPHFS_FEATURE_*
->> enum values for different releases, as they're nice for documentation
->> purposes. In the actual client code however, we should ensure that we
->> only test for the _actual_ feature flag, and not the one corresponding
->> to a particular release.
->>
->>
->>>       struct ceph_msg *msg;
->>>       s64 sum;
->>>       s32 items = 0;
->>> @@ -51,117 +52,140 @@ static bool ceph_mdsc_send_metrics(struct 
->>> ceph_mds_client *mdsc,
->>>       head = msg->front.iov_base;
->>>         /* encode the cap metric */
->>> -    cap = (struct ceph_metric_cap *)(head + 1);
->>> -    cap->header.type = cpu_to_le32(CLIENT_METRIC_TYPE_CAP_INFO);
->>> -    cap->header.ver = 1;
->>> -    cap->header.compat = 1;
->>> -    cap->header.data_len = cpu_to_le32(sizeof(*cap) - header_len);
->>> -    cap->hit = cpu_to_le64(percpu_counter_sum(&m->i_caps_hit));
->>> -    cap->mis = cpu_to_le64(percpu_counter_sum(&m->i_caps_mis));
->>> -    cap->total = cpu_to_le64(nr_caps);
->>> -    items++;
->>> +    if (force || test_bit(CLIENT_METRIC_TYPE_CAP_INFO, 
->>> &s->s_metrics)) {
->>> +        cap = (struct ceph_metric_cap *)(head + 1);
->>> +        cap->header.type = cpu_to_le32(CLIENT_METRIC_TYPE_CAP_INFO);
->>> +        cap->header.ver = 1;
->>> +        cap->header.compat = 1;
->>> +        cap->header.data_len = cpu_to_le32(sizeof(*cap) - header_len);
->>> +        cap->hit = cpu_to_le64(percpu_counter_sum(&m->i_caps_hit));
->>> +        cap->mis = cpu_to_le64(percpu_counter_sum(&m->i_caps_mis));
->>> +        cap->total = cpu_to_le64(nr_caps);
->>> +        items++;
->>> +    }
->>>         /* encode the read latency metric */
->>> -    read = (struct ceph_metric_read_latency *)(cap + 1);
->>> -    read->header.type = cpu_to_le32(CLIENT_METRIC_TYPE_READ_LATENCY);
->>> -    read->header.ver = 2;
->>> -    read->header.compat = 1;
->>> -    read->header.data_len = cpu_to_le32(sizeof(*read) - header_len);
->>> -    sum = m->metric[METRIC_READ].latency_sum;
->>> -    ktime_to_ceph_timespec(&read->lat, sum);
->>> -    ktime_to_ceph_timespec(&read->avg, 
->>> m->metric[METRIC_READ].latency_avg);
->>> -    read->sq_sum = cpu_to_le64(m->metric[METRIC_READ].latency_sq_sum);
->>> -    read->count = cpu_to_le64(m->metric[METRIC_READ].total);
->>> -    items++;
->>> +    if (force || test_bit(CLIENT_METRIC_TYPE_READ_LATENCY, 
->>> &s->s_metrics)) {
->>> +        read = (struct ceph_metric_read_latency *)(cap + 1);
->>> +        read->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_READ_LATENCY);
->>> +        read->header.ver = 2;
->>> +        read->header.compat = 1;
->>> +        read->header.data_len = cpu_to_le32(sizeof(*read) - 
->>> header_len);
->>> +        sum = m->metric[METRIC_READ].latency_sum;
->>> +        ktime_to_ceph_timespec(&read->lat, sum);
->>> +        ktime_to_ceph_timespec(&read->avg, 
->>> m->metric[METRIC_READ].latency_avg);
->>> +        read->sq_sum = 
->>> cpu_to_le64(m->metric[METRIC_READ].latency_sq_sum);
->>> +        read->count = cpu_to_le64(m->metric[METRIC_READ].total);
->>> +        items++;
->>> +    }
->>>         /* encode the write latency metric */
->>> -    write = (struct ceph_metric_write_latency *)(read + 1);
->>> -    write->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_WRITE_LATENCY);
->>> -    write->header.ver = 2;
->>> -    write->header.compat = 1;
->>> -    write->header.data_len = cpu_to_le32(sizeof(*write) - header_len);
->>> -    sum = m->metric[METRIC_WRITE].latency_sum;
->>> -    ktime_to_ceph_timespec(&write->lat, sum);
->>> -    ktime_to_ceph_timespec(&write->avg, 
->>> m->metric[METRIC_WRITE].latency_avg);
->>> -    write->sq_sum = 
->>> cpu_to_le64(m->metric[METRIC_WRITE].latency_sq_sum);
->>> -    write->count = cpu_to_le64(m->metric[METRIC_WRITE].total);
->>> -    items++;
->>> +    if (force || test_bit(CLIENT_METRIC_TYPE_WRITE_LATENCY, 
->>> &s->s_metrics)) {
->>> +        write = (struct ceph_metric_write_latency *)(read + 1);
->>> +        write->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_WRITE_LATENCY);
->>> +        write->header.ver = 2;
->>> +        write->header.compat = 1;
->>> +        write->header.data_len = cpu_to_le32(sizeof(*write) - 
->>> header_len);
->>> +        sum = m->metric[METRIC_WRITE].latency_sum;
->>> +        ktime_to_ceph_timespec(&write->lat, sum);
->>> +        ktime_to_ceph_timespec(&write->avg, 
->>> m->metric[METRIC_WRITE].latency_avg);
->>> +        write->sq_sum = 
->>> cpu_to_le64(m->metric[METRIC_WRITE].latency_sq_sum);
->>> +        write->count = cpu_to_le64(m->metric[METRIC_WRITE].total);
->>> +        items++;
->>> +    }
->>>         /* encode the metadata latency metric */
->>> -    meta = (struct ceph_metric_metadata_latency *)(write + 1);
->>> -    meta->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_METADATA_LATENCY);
->>> -    meta->header.ver = 2;
->>> -    meta->header.compat = 1;
->>> -    meta->header.data_len = cpu_to_le32(sizeof(*meta) - header_len);
->>> -    sum = m->metric[METRIC_METADATA].latency_sum;
->>> -    ktime_to_ceph_timespec(&meta->lat, sum);
->>> -    ktime_to_ceph_timespec(&meta->avg, 
->>> m->metric[METRIC_METADATA].latency_avg);
->>> -    meta->sq_sum = 
->>> cpu_to_le64(m->metric[METRIC_METADATA].latency_sq_sum);
->>> -    meta->count = cpu_to_le64(m->metric[METRIC_METADATA].total);
->>> -    items++;
->>> +    if (force || test_bit(CLIENT_METRIC_TYPE_METADATA_LATENCY, 
->>> &s->s_metrics)) {
->>> +        meta = (struct ceph_metric_metadata_latency *)(write + 1);
->>> +        meta->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_METADATA_LATENCY);
->>> +        meta->header.ver = 2;
->>> +        meta->header.compat = 1;
->>> +        meta->header.data_len = cpu_to_le32(sizeof(*meta) - 
->>> header_len);
->>> +        sum = m->metric[METRIC_METADATA].latency_sum;
->>> +        ktime_to_ceph_timespec(&meta->lat, sum);
->>> +        ktime_to_ceph_timespec(&meta->avg, 
->>> m->metric[METRIC_METADATA].latency_avg);
->>> +        meta->sq_sum = 
->>> cpu_to_le64(m->metric[METRIC_METADATA].latency_sq_sum);
->>> +        meta->count = cpu_to_le64(m->metric[METRIC_METADATA].total);
->>> +        items++;
->>> +    }
->>>         /* encode the dentry lease metric */
->>> -    dlease = (struct ceph_metric_dlease *)(meta + 1);
->>> -    dlease->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_DENTRY_LEASE);
->>> -    dlease->header.ver = 1;
->>> -    dlease->header.compat = 1;
->>> -    dlease->header.data_len = cpu_to_le32(sizeof(*dlease) - 
->>> header_len);
->>> -    dlease->hit = cpu_to_le64(percpu_counter_sum(&m->d_lease_hit));
->>> -    dlease->mis = cpu_to_le64(percpu_counter_sum(&m->d_lease_mis));
->>> -    dlease->total = cpu_to_le64(atomic64_read(&m->total_dentries));
->>> -    items++;
->>> +    if (force || test_bit(CLIENT_METRIC_TYPE_DENTRY_LEASE, 
->>> &s->s_metrics)) {
->>> +        dlease = (struct ceph_metric_dlease *)(meta + 1);
->>> +        dlease->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_DENTRY_LEASE);
->>> +        dlease->header.ver = 1;
->>> +        dlease->header.compat = 1;
->>> +        dlease->header.data_len = cpu_to_le32(sizeof(*dlease) - 
->>> header_len);
->>> +        dlease->hit = 
->>> cpu_to_le64(percpu_counter_sum(&m->d_lease_hit));
->>> +        dlease->mis = 
->>> cpu_to_le64(percpu_counter_sum(&m->d_lease_mis));
->>> +        dlease->total = 
->>> cpu_to_le64(atomic64_read(&m->total_dentries));
->>> +        items++;
->>> +    }
->>>         sum = percpu_counter_sum(&m->total_inodes);
->>>         /* encode the opened files metric */
->>> -    files = (struct ceph_opened_files *)(dlease + 1);
->>> -    files->header.type = cpu_to_le32(CLIENT_METRIC_TYPE_OPENED_FILES);
->>> -    files->header.ver = 1;
->>> -    files->header.compat = 1;
->>> -    files->header.data_len = cpu_to_le32(sizeof(*files) - header_len);
->>> -    files->opened_files = 
->>> cpu_to_le64(atomic64_read(&m->opened_files));
->>> -    files->total = cpu_to_le64(sum);
->>> -    items++;
->>> +    if (force || test_bit(CLIENT_METRIC_TYPE_OPENED_FILES, 
->>> &s->s_metrics)) {
->>> +        files = (struct ceph_opened_files *)(dlease + 1);
->>> +        files->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_OPENED_FILES);
->>> +        files->header.ver = 1;
->>> +        files->header.compat = 1;
->>> +        files->header.data_len = cpu_to_le32(sizeof(*files) - 
->>> header_len);
->>> +        files->opened_files = 
->>> cpu_to_le64(atomic64_read(&m->opened_files));
->>> +        files->total = cpu_to_le64(sum);
->>> +        items++;
->>> +    }
->>>         /* encode the pinned icaps metric */
->>> -    icaps = (struct ceph_pinned_icaps *)(files + 1);
->>> -    icaps->header.type = cpu_to_le32(CLIENT_METRIC_TYPE_PINNED_ICAPS);
->>> -    icaps->header.ver = 1;
->>> -    icaps->header.compat = 1;
->>> -    icaps->header.data_len = cpu_to_le32(sizeof(*icaps) - header_len);
->>> -    icaps->pinned_icaps = cpu_to_le64(nr_caps);
->>> -    icaps->total = cpu_to_le64(sum);
->>> -    items++;
->>> +    if (force || test_bit(CLIENT_METRIC_TYPE_PINNED_ICAPS, 
->>> &s->s_metrics)) {
->>> +        icaps = (struct ceph_pinned_icaps *)(files + 1);
->>> +        icaps->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_PINNED_ICAPS);
->>> +        icaps->header.ver = 1;
->>> +        icaps->header.compat = 1;
->>> +        icaps->header.data_len = cpu_to_le32(sizeof(*icaps) - 
->>> header_len);
->>> +        icaps->pinned_icaps = cpu_to_le64(nr_caps);
->>> +        icaps->total = cpu_to_le64(sum);
->>> +        items++;
->>> +    }
->>>         /* encode the opened inodes metric */
->>> -    inodes = (struct ceph_opened_inodes *)(icaps + 1);
->>> -    inodes->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_OPENED_INODES);
->>> -    inodes->header.ver = 1;
->>> -    inodes->header.compat = 1;
->>> -    inodes->header.data_len = cpu_to_le32(sizeof(*inodes) - 
->>> header_len);
->>> -    inodes->opened_inodes = 
->>> cpu_to_le64(percpu_counter_sum(&m->opened_inodes));
->>> -    inodes->total = cpu_to_le64(sum);
->>> -    items++;
->>> +    if (force || test_bit(CLIENT_METRIC_TYPE_OPENED_INODES, 
->>> &s->s_metrics)) {
->>> +        inodes = (struct ceph_opened_inodes *)(icaps + 1);
->>> +        inodes->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_OPENED_INODES);
->>> +        inodes->header.ver = 1;
->>> +        inodes->header.compat = 1;
->>> +        inodes->header.data_len = cpu_to_le32(sizeof(*inodes) - 
->>> header_len);
->>> +        inodes->opened_inodes = 
->>> cpu_to_le64(percpu_counter_sum(&m->opened_inodes));
->>> +        inodes->total = cpu_to_le64(sum);
->>> +        items++;
->>> +    }
->>>         /* encode the read io size metric */
->>> -    rsize = (struct ceph_read_io_size *)(inodes + 1);
->>> -    rsize->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_READ_IO_SIZES);
->>> -    rsize->header.ver = 1;
->>> -    rsize->header.compat = 1;
->>> -    rsize->header.data_len = cpu_to_le32(sizeof(*rsize) - header_len);
->>> -    rsize->total_ops = cpu_to_le64(m->metric[METRIC_READ].total);
->>> -    rsize->total_size = cpu_to_le64(m->metric[METRIC_READ].size_sum);
->>> -    items++;
->>> +    if (force || test_bit(CLIENT_METRIC_TYPE_READ_IO_SIZES, 
->>> &s->s_metrics)) {
->>> +        rsize = (struct ceph_read_io_size *)(inodes + 1);
->>> +        rsize->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_READ_IO_SIZES);
->>> +        rsize->header.ver = 1;
->>> +        rsize->header.compat = 1;
->>> +        rsize->header.data_len = cpu_to_le32(sizeof(*rsize) - 
->>> header_len);
->>> +        rsize->total_ops = cpu_to_le64(m->metric[METRIC_READ].total);
->>> +        rsize->total_size = 
->>> cpu_to_le64(m->metric[METRIC_READ].size_sum);
->>> +        items++;
->>> +    }
->>>         /* encode the write io size metric */
->>> -    wsize = (struct ceph_write_io_size *)(rsize + 1);
->>> -    wsize->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_WRITE_IO_SIZES);
->>> -    wsize->header.ver = 1;
->>> -    wsize->header.compat = 1;
->>> -    wsize->header.data_len = cpu_to_le32(sizeof(*wsize) - header_len);
->>> -    wsize->total_ops = cpu_to_le64(m->metric[METRIC_WRITE].total);
->>> -    wsize->total_size = cpu_to_le64(m->metric[METRIC_WRITE].size_sum);
->>> -    items++;
->>> +    if (force || test_bit(CLIENT_METRIC_TYPE_WRITE_IO_SIZES, 
->>> &s->s_metrics)) {
->>> +        wsize = (struct ceph_write_io_size *)(rsize + 1);
->>> +        wsize->header.type = 
->>> cpu_to_le32(CLIENT_METRIC_TYPE_WRITE_IO_SIZES);
->>> +        wsize->header.ver = 1;
->>> +        wsize->header.compat = 1;
->>> +        wsize->header.data_len = cpu_to_le32(sizeof(*wsize) - 
->>> header_len);
->>> +        wsize->total_ops = cpu_to_le64(m->metric[METRIC_WRITE].total);
->>> +        wsize->total_size = 
->>> cpu_to_le64(m->metric[METRIC_WRITE].size_sum);
->>> +        items++;
->>> +    }
->>> +
->>> +    if (!items)
->>> +        return true;
->>>         put_unaligned_le32(items, &head->num);
->>>       msg->front.iov_len = len;
-
+ Documentation/filesystems/netfs_library.rst |  8 +++++---
+ fs/afs/file.c                               |  2 +-
+ fs/ceph/addr.c                              | 11 ++++++-----
+ fs/netfs/buffered_read.c                    | 17 ++++++++++-------
+ include/linux/netfs.h                       |  2 +-
+ 5 files changed, 23 insertions(+), 17 deletions(-)
