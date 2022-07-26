@@ -2,46 +2,68 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DE6E57F4E5
-	for <lists+ceph-devel@lfdr.de>; Sun, 24 Jul 2022 14:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13698580E54
+	for <lists+ceph-devel@lfdr.de>; Tue, 26 Jul 2022 09:58:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230502AbiGXMUE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 24 Jul 2022 08:20:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38072 "EHLO
+        id S237963AbiGZH5w (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 26 Jul 2022 03:57:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbiGXMUD (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 24 Jul 2022 08:20:03 -0400
-Received: from smtpbg.qq.com (unknown [43.155.67.158])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CCE012ABB;
-        Sun, 24 Jul 2022 05:19:55 -0700 (PDT)
-X-QQ-mid: bizesmtp84t1658665190thxciqmk
-Received: from localhost.localdomain ( [171.223.97.251])
-        by bizesmtp.qq.com (ESMTP) with 
-        id ; Sun, 24 Jul 2022 20:19:48 +0800 (CST)
-X-QQ-SSF: 01000000002000F0U000B00A0000020
-X-QQ-FEAT: cbck7jzG4wbbtuthirBaXPVLfg+gpwTLWy1jH/yCDaAkqZ0ZMegFdCCJ1VCBi
-        fgNoElUAWi2M/T9xWYrilrApykYb6OIsP+uiZc/XWe5fEqYqymPGWbuvjbXG8Ye2D05Z+dK
-        syuVtFwBGcieqUQ3rNQdVnvxWMIbWvNl4ZFMQaVNRYH7sBU76CJb35t27JRBQqa6AymiqHC
-        uw++O1DnTSZ8PSUOPMfPWQnrcXhGGlqnuUevwnLI982SFpl6/kz0y+zDLtpv+oda2Id/2NA
-        64cd0MH4W36sM4UnhR3RiEm3ZTpP/jwV4eErQoS5ydOyVFeZCWaCflcsveptP3pnWLGPIqx
-        2ksE4UYTugAkK4c1z63WucbVlPUUXUby7QNmsyC/9m8QPbYyPsNrpQrSS/9+w==
-X-QQ-GoodBg: 0
-From:   Jason Wang <wangborong@cdjrlc.com>
-To:     edumazet@google.com
-Cc:     idryomov@gmail.com, xiubli@redhat.com, jlayton@kernel.org,
-        davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
-        ceph-devel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jason Wang <wangborong@cdjrlc.com>
-Subject: [PATCH] libceph: Fix comment typo
-Date:   Mon, 25 Jul 2022 04:11:31 +0800
-Message-Id: <20220724201131.3381-1-wangborong@cdjrlc.com>
-X-Mailer: git-send-email 2.35.1
+        with ESMTP id S237839AbiGZH5s (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 26 Jul 2022 03:57:48 -0400
+Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E8552C659;
+        Tue, 26 Jul 2022 00:57:47 -0700 (PDT)
+Received: by mail-ua1-x92b.google.com with SMTP id y12so4317792uad.10;
+        Tue, 26 Jul 2022 00:57:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/Dg6UJcvd66rBSsY0O4X/XZCDYuJxPThGG/8mH4rxkQ=;
+        b=PMM6SQJ7HFwUqcdDCaTU3eg7RdF+Iz2I8gmPHti8FTJGe6d837yQdMo3/B2p3a3on1
+         v0l+u5zo4S3WcHtMBzErp5iyPM93jqMe1g/yNzg5b7WLzkfV640aKw/7Y2b8IYVcDhw/
+         eQ8VgMF0j4b5hTT6xPvuEDh0RZhBWce36kFn4o0r5+Cabo3Rul+YzY3Gy7xs5waf7BOY
+         a/EsdckWK09qr3h1+xvUcGbJPZqmyJQyYrBblhfB4CVtsuLwa7tNokxNoCdmg/ISvJHj
+         Mxu7ZhJlAh0o7FcWfWEdeRf86G26fwaFa2EJZo3LbdQheEkMKkyzpE9ZBUYbPUmJnWJX
+         0law==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/Dg6UJcvd66rBSsY0O4X/XZCDYuJxPThGG/8mH4rxkQ=;
+        b=7iHxUiqqqOioHzDN2UNqhVZqE+kPfLMhsKKg9ZhQmrHDAwj0ijtI4+9t3N1Y2Y4HFH
+         kKPyB3D2Vp1m3YiGb26eHNHCNQIcQ7ZSFY5ZvQMH8n7TrMjWArwRTLsKkf6Ngn10BzBb
+         utRYhMCiiAeNT11iK+gW7OpF+Qy3j72kKnA9GoTCWp7b5dksJ9t+9AHMtw8owERRgpfj
+         lEFiAneZHVp+qdjN0HLVgJeQzF7gQLMJ8o5qTyzZRkE6w8SlUbnGlBDLnT1NcnOFhtCz
+         J62LbhxlzGTIKHVFt+B2pbfOhu343zoboTvueT+padCqQy6gDCrwZiSFYSPSQi6tcsbx
+         dJFg==
+X-Gm-Message-State: AJIora/RPjOfBBwfpUVITv+d0UmUdJkZK2sC7l5SMEOVE+Yk8yl4Wt13
+        /FbfESGSjm6dpCP9D1xGVlHCvvr+mnjHmAs/fNg=
+X-Google-Smtp-Source: AGRyM1sGwxjnpoy6Z5a+80AXE90/uTyqypaSTzvEXBAxSMoC7QnHj7QeQ80IUwoLiT/OheA8xLfIAlIN1Lua4eLwyok=
+X-Received: by 2002:ab0:661a:0:b0:384:d0d7:7383 with SMTP id
+ r26-20020ab0661a000000b00384d0d77383mr448uam.24.1658822266663; Tue, 26 Jul
+ 2022 00:57:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:cdjrlc.com:qybglogicsvr:qybglogicsvr6
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,DATE_IN_FUTURE_06_12,
-        RDNS_NONE,SPF_PASS,T_SPF_HELO_TEMPERROR autolearn=no
+References: <20220724201131.3381-1-wangborong@cdjrlc.com>
+In-Reply-To: <20220724201131.3381-1-wangborong@cdjrlc.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 26 Jul 2022 09:57:18 +0200
+Message-ID: <CAOi1vP_bepwLrWwV3pvigF19_QQp75DejcQsDKDwBtV+svUhbQ@mail.gmail.com>
+Subject: Re: [PATCH] libceph: Fix comment typo
+To:     Jason Wang <wangborong@cdjrlc.com>
+Cc:     Eric Dumazet <edumazet@google.com>, Xiubo Li <xiubli@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Ceph Development <ceph-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -49,26 +71,34 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The double `without' is duplicated in the comment, remove one.
+On Sun, Jul 24, 2022 at 2:20 PM Jason Wang <wangborong@cdjrlc.com> wrote:
+>
+> The double `without' is duplicated in the comment, remove one.
+>
+> Signed-off-by: Jason Wang <wangborong@cdjrlc.com>
+> ---
+>  net/ceph/pagelist.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/ceph/pagelist.c b/net/ceph/pagelist.c
+> index 65e34f78b05d..74622b278d57 100644
+> --- a/net/ceph/pagelist.c
+> +++ b/net/ceph/pagelist.c
+> @@ -96,7 +96,7 @@ int ceph_pagelist_append(struct ceph_pagelist *pl, const void *buf, size_t len)
+>  EXPORT_SYMBOL(ceph_pagelist_append);
+>
+>  /* Allocate enough pages for a pagelist to append the given amount
+> - * of data without without allocating.
+> + * of data without allocating.
+>   * Returns: 0 on success, -ENOMEM on error.
+>   */
+>  int ceph_pagelist_reserve(struct ceph_pagelist *pl, size_t space)
+> --
+> 2.35.1
+>
 
-Signed-off-by: Jason Wang <wangborong@cdjrlc.com>
----
- net/ceph/pagelist.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied.
 
-diff --git a/net/ceph/pagelist.c b/net/ceph/pagelist.c
-index 65e34f78b05d..74622b278d57 100644
---- a/net/ceph/pagelist.c
-+++ b/net/ceph/pagelist.c
-@@ -96,7 +96,7 @@ int ceph_pagelist_append(struct ceph_pagelist *pl, const void *buf, size_t len)
- EXPORT_SYMBOL(ceph_pagelist_append);
- 
- /* Allocate enough pages for a pagelist to append the given amount
-- * of data without without allocating.
-+ * of data without allocating.
-  * Returns: 0 on success, -ENOMEM on error.
-  */
- int ceph_pagelist_reserve(struct ceph_pagelist *pl, size_t space)
--- 
-2.35.1
+Thanks,
 
+                Ilya
