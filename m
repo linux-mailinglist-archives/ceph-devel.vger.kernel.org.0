@@ -2,103 +2,144 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 13698580E54
-	for <lists+ceph-devel@lfdr.de>; Tue, 26 Jul 2022 09:58:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9785A581FB0
+	for <lists+ceph-devel@lfdr.de>; Wed, 27 Jul 2022 08:00:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237963AbiGZH5w (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 26 Jul 2022 03:57:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46336 "EHLO
+        id S229776AbiG0GAQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 27 Jul 2022 02:00:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237839AbiGZH5s (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 26 Jul 2022 03:57:48 -0400
-Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E8552C659;
-        Tue, 26 Jul 2022 00:57:47 -0700 (PDT)
-Received: by mail-ua1-x92b.google.com with SMTP id y12so4317792uad.10;
-        Tue, 26 Jul 2022 00:57:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/Dg6UJcvd66rBSsY0O4X/XZCDYuJxPThGG/8mH4rxkQ=;
-        b=PMM6SQJ7HFwUqcdDCaTU3eg7RdF+Iz2I8gmPHti8FTJGe6d837yQdMo3/B2p3a3on1
-         v0l+u5zo4S3WcHtMBzErp5iyPM93jqMe1g/yNzg5b7WLzkfV640aKw/7Y2b8IYVcDhw/
-         eQ8VgMF0j4b5hTT6xPvuEDh0RZhBWce36kFn4o0r5+Cabo3Rul+YzY3Gy7xs5waf7BOY
-         a/EsdckWK09qr3h1+xvUcGbJPZqmyJQyYrBblhfB4CVtsuLwa7tNokxNoCdmg/ISvJHj
-         Mxu7ZhJlAh0o7FcWfWEdeRf86G26fwaFa2EJZo3LbdQheEkMKkyzpE9ZBUYbPUmJnWJX
-         0law==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/Dg6UJcvd66rBSsY0O4X/XZCDYuJxPThGG/8mH4rxkQ=;
-        b=7iHxUiqqqOioHzDN2UNqhVZqE+kPfLMhsKKg9ZhQmrHDAwj0ijtI4+9t3N1Y2Y4HFH
-         kKPyB3D2Vp1m3YiGb26eHNHCNQIcQ7ZSFY5ZvQMH8n7TrMjWArwRTLsKkf6Ngn10BzBb
-         utRYhMCiiAeNT11iK+gW7OpF+Qy3j72kKnA9GoTCWp7b5dksJ9t+9AHMtw8owERRgpfj
-         lEFiAneZHVp+qdjN0HLVgJeQzF7gQLMJ8o5qTyzZRkE6w8SlUbnGlBDLnT1NcnOFhtCz
-         J62LbhxlzGTIKHVFt+B2pbfOhu343zoboTvueT+padCqQy6gDCrwZiSFYSPSQi6tcsbx
-         dJFg==
-X-Gm-Message-State: AJIora/RPjOfBBwfpUVITv+d0UmUdJkZK2sC7l5SMEOVE+Yk8yl4Wt13
-        /FbfESGSjm6dpCP9D1xGVlHCvvr+mnjHmAs/fNg=
-X-Google-Smtp-Source: AGRyM1sGwxjnpoy6Z5a+80AXE90/uTyqypaSTzvEXBAxSMoC7QnHj7QeQ80IUwoLiT/OheA8xLfIAlIN1Lua4eLwyok=
-X-Received: by 2002:ab0:661a:0:b0:384:d0d7:7383 with SMTP id
- r26-20020ab0661a000000b00384d0d77383mr448uam.24.1658822266663; Tue, 26 Jul
- 2022 00:57:46 -0700 (PDT)
+        with ESMTP id S229647AbiG0GAP (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 27 Jul 2022 02:00:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E7198D93
+        for <ceph-devel@vger.kernel.org>; Tue, 26 Jul 2022 23:00:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1658901612;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=z00Klq0keI1GnkDaDmpavZd69ZV71utER+K2hjuiSBg=;
+        b=aJ/WDZLv56mFsAMnd5OHKHZnSIPeIUqPHvAma5HuY866SFhyd91QntXA8qBqA7eAoioeTg
+        j2YAKGc7yJWHPHn/ss4ywE9WvkQ4t1eyWjqDof+XRFmvAdX3zDLGJ/FXx5IczUOHcMecyE
+        sEaft+6mGw+1nKnk4S4lyGY+tEGySNk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-206-FtCOLP2EM4iL6IywefCxmA-1; Wed, 27 Jul 2022 02:00:09 -0400
+X-MC-Unique: FtCOLP2EM4iL6IywefCxmA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DCE82101A54E
+        for <ceph-devel@vger.kernel.org>; Wed, 27 Jul 2022 06:00:08 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9F99A1121314;
+        Wed, 27 Jul 2022 06:00:07 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     ceph-devel@vger.kernel.org
+Cc:     Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: fall back to use old method to get xattr
+Date:   Wed, 27 Jul 2022 13:56:37 +0800
+Message-Id: <20220727055637.11949-1-xiubli@redhat.com>
 MIME-Version: 1.0
-References: <20220724201131.3381-1-wangborong@cdjrlc.com>
-In-Reply-To: <20220724201131.3381-1-wangborong@cdjrlc.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 26 Jul 2022 09:57:18 +0200
-Message-ID: <CAOi1vP_bepwLrWwV3pvigF19_QQp75DejcQsDKDwBtV+svUhbQ@mail.gmail.com>
-Subject: Re: [PATCH] libceph: Fix comment typo
-To:     Jason Wang <wangborong@cdjrlc.com>
-Cc:     Eric Dumazet <edumazet@google.com>, Xiubo Li <xiubli@redhat.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, Jul 24, 2022 at 2:20 PM Jason Wang <wangborong@cdjrlc.com> wrote:
->
-> The double `without' is duplicated in the comment, remove one.
->
-> Signed-off-by: Jason Wang <wangborong@cdjrlc.com>
-> ---
->  net/ceph/pagelist.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/net/ceph/pagelist.c b/net/ceph/pagelist.c
-> index 65e34f78b05d..74622b278d57 100644
-> --- a/net/ceph/pagelist.c
-> +++ b/net/ceph/pagelist.c
-> @@ -96,7 +96,7 @@ int ceph_pagelist_append(struct ceph_pagelist *pl, const void *buf, size_t len)
->  EXPORT_SYMBOL(ceph_pagelist_append);
->
->  /* Allocate enough pages for a pagelist to append the given amount
-> - * of data without without allocating.
-> + * of data without allocating.
->   * Returns: 0 on success, -ENOMEM on error.
->   */
->  int ceph_pagelist_reserve(struct ceph_pagelist *pl, size_t space)
-> --
-> 2.35.1
->
+From: Xiubo Li <xiubli@redhat.com>
 
-Applied.
+If the peer MDS doesn't support getvxattr op then just fall back to
+use old getattr method to get it. Or for the old MDSs they will crash
+when receive an unknown op.
 
-Thanks,
+URL: https://tracker.ceph.com/issues/56529
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/mds_client.c | 10 ++++++++++
+ fs/ceph/mds_client.h |  4 +++-
+ fs/ceph/xattr.c      |  9 ++++++---
+ 3 files changed, 19 insertions(+), 4 deletions(-)
 
-                Ilya
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 598012ddc401..bfe6d6393eba 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -3255,6 +3255,16 @@ static void __do_request(struct ceph_mds_client *mdsc,
+ 
+ 	dout("do_request mds%d session %p state %s\n", mds, session,
+ 	     ceph_session_state_name(session->s_state));
++
++	/*
++	 * The old ceph will crash the MDSs when see unknown OPs
++	 */
++	if (req->r_op == CEPH_MDS_OP_GETVXATTR &&
++	    !test_bit(CEPHFS_FEATURE_OP_GETVXATTR, &session->s_features)) {
++		err = -EOPNOTSUPP;
++		goto out_session;
++	}
++
+ 	if (session->s_state != CEPH_MDS_SESSION_OPEN &&
+ 	    session->s_state != CEPH_MDS_SESSION_HUNG) {
+ 		/*
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index e15ee2858fef..0e03efab872a 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -31,8 +31,9 @@ enum ceph_feature_type {
+ 	CEPHFS_FEATURE_METRIC_COLLECT,
+ 	CEPHFS_FEATURE_ALTERNATE_NAME,
+ 	CEPHFS_FEATURE_NOTIFY_SESSION_STATE,
++	CEPHFS_FEATURE_OP_GETVXATTR,
+ 
+-	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_NOTIFY_SESSION_STATE,
++	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_OP_GETVXATTR,
+ };
+ 
+ #define CEPHFS_FEATURES_CLIENT_SUPPORTED {	\
+@@ -45,6 +46,7 @@ enum ceph_feature_type {
+ 	CEPHFS_FEATURE_METRIC_COLLECT,		\
+ 	CEPHFS_FEATURE_ALTERNATE_NAME,		\
+ 	CEPHFS_FEATURE_NOTIFY_SESSION_STATE,	\
++	CEPHFS_FEATURE_OP_GETVXATTR,		\
+ }
+ 
+ /*
+diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+index b10d459c2326..8f8db621772a 100644
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -984,9 +984,12 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
+ 		return err;
+ 	} else {
+ 		err = ceph_do_getvxattr(inode, name, value, size);
+-		/* this would happen with a new client and old server combo */
++		/*
++		 * This would happen with a new client and old server combo,
++		 * then fall back to use old method to get it
++		 */
+ 		if (err == -EOPNOTSUPP)
+-			err = -ENODATA;
++			goto handle_non_vxattrs;
+ 		return err;
+ 	}
+ handle_non_vxattrs:
+@@ -996,7 +999,7 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
+ 	dout("getxattr %p name '%s' ver=%lld index_ver=%lld\n", inode, name,
+ 	     ci->i_xattrs.version, ci->i_xattrs.index_version);
+ 
+-	if (ci->i_xattrs.version == 0 ||
++	if (ci->i_xattrs.version == 0 || err == -EOPNOTSUPP ||
+ 	    !((req_mask & CEPH_CAP_XATTR_SHARED) ||
+ 	      __ceph_caps_issued_mask_metric(ci, CEPH_CAP_XATTR_SHARED, 1))) {
+ 		spin_unlock(&ci->i_ceph_lock);
+-- 
+2.36.0.rc1
+
