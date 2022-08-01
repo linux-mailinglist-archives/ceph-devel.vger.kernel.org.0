@@ -2,196 +2,106 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 07249582361
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 Jul 2022 11:41:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94DE7586FC1
+	for <lists+ceph-devel@lfdr.de>; Mon,  1 Aug 2022 19:49:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230479AbiG0Jlr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 27 Jul 2022 05:41:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54152 "EHLO
+        id S233530AbiHARtJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 1 Aug 2022 13:49:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230473AbiG0Jlp (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 27 Jul 2022 05:41:45 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CBEA93FA1D
-        for <ceph-devel@vger.kernel.org>; Wed, 27 Jul 2022 02:41:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1658914904;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vsvynYbqkPPdTRXo4wkF9+QVinJY3aAsTXELJJ2UK3w=;
-        b=RV6Ra0qJ4ty3tXciyfx2O1aNMadUSg8yxe6rwYmuo8Eb4PVi1ZB1UfWrcOBZ7ZFgmAS5Qj
-        lxaoeTw/gbaBAWKKqWqHSWeLoUw5/4JAQXJert4OA1HMhIbo+mKfhKmudwHVPYhaJmBXIj
-        rsdv1RnOm5uFek7FowQ7qBt40v57Iys=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-210-iUDEkrmZN6-4YCuly6_8FA-1; Wed, 27 Jul 2022 05:41:42 -0400
-X-MC-Unique: iUDEkrmZN6-4YCuly6_8FA-1
-Received: by mail-pg1-f198.google.com with SMTP id d66-20020a636845000000b0040a88edd9c1so7664743pgc.13
-        for <ceph-devel@vger.kernel.org>; Wed, 27 Jul 2022 02:41:42 -0700 (PDT)
+        with ESMTP id S233561AbiHARtF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 1 Aug 2022 13:49:05 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84AD72DAAB
+        for <ceph-devel@vger.kernel.org>; Mon,  1 Aug 2022 10:49:03 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id w15so18429656lft.11
+        for <ceph-devel@vger.kernel.org>; Mon, 01 Aug 2022 10:49:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=q9Slei3vdZHf3BWZhWjxjnYHcSiTDd6lLLw5COAJJH4=;
+        b=Ut1jVLi13hHtsyD0TJiuTWgpwaZ+1Ly3xcpVEeD7XTFQU9WZc/Pd5iMXpuI0L2GsMm
+         mZhSSUdMlXWOI30wqacvwgqLq2jZ3Nk4lXhSwAXV7o0u5EoIu4VajxodxyLXRM8iHbdv
+         +uCuNeUUyBkqjJ64p7oU8nbCp+5/gdzTI6ZRKq/FSjl/MOaOrYT2+DIgiIL002zxsFw0
+         29DrL4qHEwdb3MvxefR/2Tgiz/1WUd2QXlfSju+z6rOLc8SwRPcDWU2rjtHODLFqweY2
+         M2mKxsdkp++Q50PxpnC896m1ocyKHx9Q4ZotK1X64S1CoLTpPSa8os16AdeIAjmvtbTs
+         6JiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=vsvynYbqkPPdTRXo4wkF9+QVinJY3aAsTXELJJ2UK3w=;
-        b=wff+VyCqApkqqy4Bcxk5lmrP5ZGyhq70quei3XFq60GUeuHdI9TPLsxlrGjEnbhcrn
-         B5cP3KMLJLGK03I8kM+kpc1NKlZqhJKWlBWTcOGEzy+uqDvZgKE0cUjMU114dMsVS6hg
-         PiHxUPZiZd4kL8l26X4cCutbjeZFy9K7DIZFO9jMqJUdydrb8JOYZwAQnso8SnEuWHgq
-         VUhBiU5++DmQyy2LNRHb4pHbnQGivQA5B8T/AvCeqcY3DADXArJT5WanWWbVt5QsxzXJ
-         7QFDfQO3znK1WzzQHPGtBOF+CkyW7OcI00H/XKZlh6whCSreTij4I1UveDBqlaRhRPGM
-         gM/w==
-X-Gm-Message-State: AJIora/FviAA3Eimiu3HIaWvbIjX8mTiGft0ctOTi3AasXyV6iIh7Uwc
-        BcJN4FFoC8fGtjJkIjuUs18aWm/HCFnec2V92UKYiaLRzbNWUrmHkyBG3nc/OwdOcUoYjSM2KKm
-        TSXpUkOdpJGQGklzDJtyYYPRs9DTNfWD6BuBTC9RqyoegrsrycBKIv8OLcn4BhxOK/sYNpxY=
-X-Received: by 2002:a63:86c2:0:b0:415:eb:d166 with SMTP id x185-20020a6386c2000000b0041500ebd166mr17829027pgd.124.1658914901364;
-        Wed, 27 Jul 2022 02:41:41 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1ufPgpa+QLaBG7DBUHLy2BWSR2s3Q966u2qHwTg/NKMSRxZp8J6sCc+Dt8ZTgZ8EF2L1hndLw==
-X-Received: by 2002:a63:86c2:0:b0:415:eb:d166 with SMTP id x185-20020a6386c2000000b0041500ebd166mr17829001pgd.124.1658914900888;
-        Wed, 27 Jul 2022 02:41:40 -0700 (PDT)
-Received: from [10.72.13.152] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id p16-20020a170902e75000b0016b81679c1fsm13451806plf.216.2022.07.27.02.41.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Jul 2022 02:41:40 -0700 (PDT)
-Subject: Re: [PATCH] ceph: fall back to use old method to get xattr
-To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
-Cc:     ceph-devel@vger.kernel.org
-References: <20220727055637.11949-1-xiubli@redhat.com>
- <YuD/yDOwJaqg7q+X@suse.de>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <e6acea1f-0e80-9628-43a3-a9261248ad06@redhat.com>
-Date:   Wed, 27 Jul 2022 17:41:35 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=q9Slei3vdZHf3BWZhWjxjnYHcSiTDd6lLLw5COAJJH4=;
+        b=Ij7wj2cP6eUCexm2ynUn7XURa6kWOAleVeEsexmV967nkyJNdt3jh72tI9+rik2mHW
+         I2Qsl57Z46fMGsUQay4Hdme55Gypr3imfziPP3CinBjGcaCXxObixOLcKMf0sUbsfdTh
+         ttDUNVPfOaWLp3fJa5S0S8ZLprhaNwHwOpnRaHKNYDM4x7jbTATf1nD4KD/tBXK4n/Pm
+         mvWWvJmqeIi6Jm3bbT8me8NC5zDYFItuuBe2FeYFkkJDkL9szckfdCGNrSfpWKnx1RWz
+         c4hPd4CwQTYjHBZ/oxrr1MBCthtIlBSw6PrlUKT2svSzEpjgxHBGUmgSz4QvmYOe4SDm
+         9CJA==
+X-Gm-Message-State: ACgBeo0jqvZ8Anw2qyrAeNxBXontvBgAVpzNMWPXnZmD8HLZvIsjZOEw
+        9oxHedpEMlQAsPZCSBIn8RrbtM+gdcEEFazzTlM=
+X-Google-Smtp-Source: AGRyM1tz6ydnTdAXHwWjgvcfHfZM4mVzzsU8kbBVt1t5iMqYl2YqGVkCZGtF2jXcGgkce3CaXmrEPZ9GWcPH6UilH6Y=
+X-Received: by 2002:a05:6512:3f1e:b0:48a:75f6:c804 with SMTP id
+ y30-20020a0565123f1e00b0048a75f6c804mr6619495lfa.211.1659376141597; Mon, 01
+ Aug 2022 10:49:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <YuD/yDOwJaqg7q+X@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Received: by 2002:aa6:cb52:0:b0:1fa:aaed:e6d9 with HTTP; Mon, 1 Aug 2022
+ 10:49:00 -0700 (PDT)
+From:   Bright Gawayn <gben68387@gmail.com>
+Date:   Mon, 1 Aug 2022 23:19:00 +0530
+Message-ID: <CAG1+V0w_b8sq1kDBARbgmFbuvzp5ApwiYPr6e3UTtuGQ4KzWtA@mail.gmail.com>
+Subject: Lucrative business proposal very urgent!
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=6.9 required=5.0 tests=ADVANCE_FEE_3_NEW,BAYES_50,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,UNDISC_MONEY autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2a00:1450:4864:20:0:0:0:144 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5252]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [gben68387[at]gmail.com]
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [gben68387[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        *  3.5 ADVANCE_FEE_3_NEW Appears to be advance fee fraud (Nigerian
+        *      419)
+        *  2.5 UNDISC_MONEY Undisclosed recipients + money/fraud signs
+X-Spam-Level: ******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Hello dear My name is Mr Bright Gawayn,  It's my pleasure to contact you today.
 
-On 7/27/22 5:05 PM, Luís Henriques wrote:
-> On Wed, Jul 27, 2022 at 01:56:37PM +0800, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> If the peer MDS doesn't support getvxattr op then just fall back to
->> use old getattr method to get it. Or for the old MDSs they will crash
->> when receive an unknown op.
->>
->> URL: https://tracker.ceph.com/issues/56529
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>   fs/ceph/mds_client.c | 10 ++++++++++
->>   fs/ceph/mds_client.h |  4 +++-
->>   fs/ceph/xattr.c      |  9 ++++++---
->>   3 files changed, 19 insertions(+), 4 deletions(-)
->>
->> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
->> index 598012ddc401..bfe6d6393eba 100644
->> --- a/fs/ceph/mds_client.c
->> +++ b/fs/ceph/mds_client.c
->> @@ -3255,6 +3255,16 @@ static void __do_request(struct ceph_mds_client *mdsc,
->>   
->>   	dout("do_request mds%d session %p state %s\n", mds, session,
->>   	     ceph_session_state_name(session->s_state));
->> +
->> +	/*
->> +	 * The old ceph will crash the MDSs when see unknown OPs
->> +	 */
->> +	if (req->r_op == CEPH_MDS_OP_GETVXATTR &&
->> +	    !test_bit(CEPHFS_FEATURE_OP_GETVXATTR, &session->s_features)) {
->> +		err = -EOPNOTSUPP;
->> +		goto out_session;
->> +	}
->> +
->>   	if (session->s_state != CEPH_MDS_SESSION_OPEN &&
->>   	    session->s_state != CEPH_MDS_SESSION_HUNG) {
->>   		/*
->> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
->> index e15ee2858fef..0e03efab872a 100644
->> --- a/fs/ceph/mds_client.h
->> +++ b/fs/ceph/mds_client.h
->> @@ -31,8 +31,9 @@ enum ceph_feature_type {
->>   	CEPHFS_FEATURE_METRIC_COLLECT,
->>   	CEPHFS_FEATURE_ALTERNATE_NAME,
->>   	CEPHFS_FEATURE_NOTIFY_SESSION_STATE,
->> +	CEPHFS_FEATURE_OP_GETVXATTR,
->>   
->> -	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_NOTIFY_SESSION_STATE,
->> +	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_OP_GETVXATTR,
->>   };
->>   
->>   #define CEPHFS_FEATURES_CLIENT_SUPPORTED {	\
->> @@ -45,6 +46,7 @@ enum ceph_feature_type {
->>   	CEPHFS_FEATURE_METRIC_COLLECT,		\
->>   	CEPHFS_FEATURE_ALTERNATE_NAME,		\
->>   	CEPHFS_FEATURE_NOTIFY_SESSION_STATE,	\
->> +	CEPHFS_FEATURE_OP_GETVXATTR,		\
->>   }
->>   
->>   /*
->> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
->> index b10d459c2326..8f8db621772a 100644
->> --- a/fs/ceph/xattr.c
->> +++ b/fs/ceph/xattr.c
->> @@ -984,9 +984,12 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
->>   		return err;
->>   	} else {
->>   		err = ceph_do_getvxattr(inode, name, value, size);
->> -		/* this would happen with a new client and old server combo */
->> +		/*
->> +		 * This would happen with a new client and old server combo,
->> +		 * then fall back to use old method to get it
->> +		 */
->>   		if (err == -EOPNOTSUPP)
->> -			err = -ENODATA;
->> +			goto handle_non_vxattrs;
->>   		return err;
-> Nit: maybe just do:
->
-> 		if (err != -EOPNOTSUPP)
-> 			return err
->
-> instead of using a 'goto' statement.
+We use a certain raw material in our pharmaceutical firm for the
+manufacture of animal vaccines and many more.
 
-Sounds better.
+My intention is to give you the new contact information of the local
+manufacturer of this raw material in India and every details regarding
+how to supply the material to my company if you're interested, my
+company pays in advance for this material.
 
->>   	}
->>   handle_non_vxattrs:
->> @@ -996,7 +999,7 @@ ssize_t __ceph_getxattr(struct inode *inode, const char *name, void *value,
->>   	dout("getxattr %p name '%s' ver=%lld index_ver=%lld\n", inode, name,
->>   	     ci->i_xattrs.version, ci->i_xattrs.index_version);
->>   
->> -	if (ci->i_xattrs.version == 0 ||
->> +	if (ci->i_xattrs.version == 0 || err == -EOPNOTSUPP ||
-> You'll need to initialise 'err' when declaring it.
+Due to some reasons, which I will explain in my next email, I cannot
+procure this material and supply it to my company myself due to the
+fact that I am a staff in the company.
 
-Yeah, will fix it.
+Please get back to me as soon as possible for full detail if you are interested.
 
-Thanks Luis!
-
--- Xiubo
-
->
-> Cheers,
-> --
-> Luís
->
->>   	    !((req_mask & CEPH_CAP_XATTR_SHARED) ||
->>   	      __ceph_caps_issued_mask_metric(ci, CEPH_CAP_XATTR_SHARED, 1))) {
->>   		spin_unlock(&ci->i_ceph_lock);
->> -- 
->> 2.36.0.rc1
->>
-
+Thanks and regards
+Bright.
