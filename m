@@ -2,41 +2,41 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B55A588AF9
-	for <lists+ceph-devel@lfdr.de>; Wed,  3 Aug 2022 13:15:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5127E588B09
+	for <lists+ceph-devel@lfdr.de>; Wed,  3 Aug 2022 13:20:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234698AbiHCLPu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 3 Aug 2022 07:15:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39916 "EHLO
+        id S235660AbiHCLU1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 3 Aug 2022 07:20:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235850AbiHCLPg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 3 Aug 2022 07:15:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 919289FEC
-        for <ceph-devel@vger.kernel.org>; Wed,  3 Aug 2022 04:15:35 -0700 (PDT)
+        with ESMTP id S235148AbiHCLU0 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 3 Aug 2022 07:20:26 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F55DF11
+        for <ceph-devel@vger.kernel.org>; Wed,  3 Aug 2022 04:20:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 341E2610A4
-        for <ceph-devel@vger.kernel.org>; Wed,  3 Aug 2022 11:15:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DC97C433D7;
-        Wed,  3 Aug 2022 11:15:34 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BD71CB82188
+        for <ceph-devel@vger.kernel.org>; Wed,  3 Aug 2022 11:20:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AD61C433C1;
+        Wed,  3 Aug 2022 11:20:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659525334;
-        bh=d8nV0Zvakmmocirbrv4YQTqbPYhhKIErq1B2RMm/hNk=;
+        s=k20201202; t=1659525622;
+        bh=AT+/ddNoZ1KSXcJ6ywzR+i8yEYwLiVYBM5huG65kMZc=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Z4ARBKHJEbiDvB9hAfCDm4BNm1rx6zqFYZhYlAFRwjHdrH66g/MeFKHnI7thCxXRG
-         peHU3pODh+nxmc3mKJOmW0rrkWUpJ2Wm19PuMDv2bteQJbxD5e4etvabpzmsI7/1ki
-         xYlAhO7817a8eVZDCUQvSbbKYVZddiGjQz5Iy8MvwO6eARJ0lqqH8UpF5vpZUPGqbM
-         iEh0SYR4Ylbuq92oZxJ3JgU+DE+DOwxFQ+3Op7ULnWQM3/98ehCTwJgw0h2k40txqA
-         V37Hw1mnMO9sTsbgIT5iC6kLJpFciaht/a2NgpOG0tttp4uCuVyhBphCvRlFwxYY8/
-         yoUjGTFOmlRhg==
-Message-ID: <95c06864af1704c9752c14e48e80817f363ce450.camel@kernel.org>
+        b=lOKA2/frHIlcqv6I56qPacDRZOlmh5bJRVH8PSZkZS3ZlqJqkCzJgG9B6T19NsIMi
+         rd3fFfX2q6TD3eWyx3EVw2sfk4skDkVv5A2zq9ohiUd57jdQBXwn0/hEHKTok0E4Qs
+         cyI4DnopDPBDYOnvM9gggbQpil22Nk7Iap32RgJzJlAtOTmLmUFJmWQdIRnZP+l97d
+         5AMx4aVJmr+ZcPJrrS5zRvU1YIfLunLxQkRB/a2b0emazEOwTwRbhHblr4YCoUJ0oT
+         Rgc4WU/vZ6eTe3pq1c7bPgOnKuk9NvOBbTAobSporcr75bZL1S/XoaemKRHxa0RoSB
+         j4RGwyTQhCGNQ==
+Message-ID: <6fc6c0a2ab957957813cd23567298c63c83f3a33.camel@kernel.org>
 Subject: Re: [PATCH] libceph: clean up ceph_osdc_start_request prototype
 From:   Jeff Layton <jlayton@kernel.org>
 To:     Ilya Dryomov <idryomov@gmail.com>
 Cc:     xiubli@redhat.com, ceph-devel@vger.kernel.org
-Date:   Wed, 03 Aug 2022 07:15:32 -0400
+Date:   Wed, 03 Aug 2022 07:20:20 -0400
 In-Reply-To: <CAOi1vP_PETHhCm3nUm5B_t0tMJQdmdBxsAmMpbPoGTD1WimMpg@mail.gmail.com>
 References: <20220630202150.653547-1-jlayton@kernel.org>
          <CAOi1vP_PETHhCm3nUm5B_t0tMJQdmdBxsAmMpbPoGTD1WimMpg@mail.gmail.com>
@@ -133,12 +133,28 @@ ubrequest *subreq)
 y
 > want to account for transferred data before the transfer occurs?
 >=20
+> Thanks,
+>=20
+>                 Ilya
 
-No we don't. I think you're correct. What I'm not sure of is why this
-doesn't cause test failures all over the place.
+The incremental "patch to the patch" is here:
 
-In any case, I'll need to respin this. I'll do that and send a v2.
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 14793fabc26e..ec76e77f8d4b 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -337,6 +337,7 @@ static void ceph_netfs_issue_read(struct netfs_io_subre=
+quest *subreq)
+        /* should always give us a page-aligned read */
+        WARN_ON_ONCE(page_off);
+        len =3D err;
++       err =3D 0;
+=20
+        osd_req_op_extent_osd_data_pages(req, 0, pages, len, 0, false, fals=
+e);
+        req->r_callback =3D finish_netfs_read;
 
-Good catch!
+I'll need to rebuild my test environment to make sure this is working as ex=
+pected.
 --=20
 Jeff Layton <jlayton@kernel.org>
