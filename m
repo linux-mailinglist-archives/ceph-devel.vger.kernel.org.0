@@ -2,106 +2,141 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 94DE7586FC1
-	for <lists+ceph-devel@lfdr.de>; Mon,  1 Aug 2022 19:49:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D9295887C5
+	for <lists+ceph-devel@lfdr.de>; Wed,  3 Aug 2022 09:13:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233530AbiHARtJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 1 Aug 2022 13:49:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56294 "EHLO
+        id S234736AbiHCHNP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 3 Aug 2022 03:13:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233561AbiHARtF (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 1 Aug 2022 13:49:05 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84AD72DAAB
-        for <ceph-devel@vger.kernel.org>; Mon,  1 Aug 2022 10:49:03 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id w15so18429656lft.11
-        for <ceph-devel@vger.kernel.org>; Mon, 01 Aug 2022 10:49:03 -0700 (PDT)
+        with ESMTP id S234150AbiHCHNO (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 3 Aug 2022 03:13:14 -0400
+Received: from mail-vs1-xe29.google.com (mail-vs1-xe29.google.com [IPv6:2607:f8b0:4864:20::e29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4B5713E36
+        for <ceph-devel@vger.kernel.org>; Wed,  3 Aug 2022 00:13:13 -0700 (PDT)
+Received: by mail-vs1-xe29.google.com with SMTP id 66so16965856vse.4
+        for <ceph-devel@vger.kernel.org>; Wed, 03 Aug 2022 00:13:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=q9Slei3vdZHf3BWZhWjxjnYHcSiTDd6lLLw5COAJJH4=;
-        b=Ut1jVLi13hHtsyD0TJiuTWgpwaZ+1Ly3xcpVEeD7XTFQU9WZc/Pd5iMXpuI0L2GsMm
-         mZhSSUdMlXWOI30wqacvwgqLq2jZ3Nk4lXhSwAXV7o0u5EoIu4VajxodxyLXRM8iHbdv
-         +uCuNeUUyBkqjJ64p7oU8nbCp+5/gdzTI6ZRKq/FSjl/MOaOrYT2+DIgiIL002zxsFw0
-         29DrL4qHEwdb3MvxefR/2Tgiz/1WUd2QXlfSju+z6rOLc8SwRPcDWU2rjtHODLFqweY2
-         M2mKxsdkp++Q50PxpnC896m1ocyKHx9Q4ZotK1X64S1CoLTpPSa8os16AdeIAjmvtbTs
-         6JiQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q9b79jY/u17GYRFU9G4m0npY134fiHh7X1IiD0DxvRU=;
+        b=glX3OPmzpAb9xAIS3vJ0fPg8xdHVf/DJouN1WE5ehgvpKsk68Hn4+Uir3vEwgT/uuh
+         03G/ZytF4ucSugLOoE9RmYpimTXB2n4FQ8966od8Yp/PI0KNm2vXp8Kwqu9zxuQmuy2t
+         WJs9zeNK5QWrzrnsW8wMOLXJTOx6wJH9yDrpDUBg0K+A63ehCA83Q0rr8vCYLTi/FXkF
+         prTwgO2slN50AhBD2Qil/JgZQuDdDrG1lN42vOns37GToId4EQ7wlpHRPHdeH7FI+DH4
+         sLXJlYFn/tNMT8fjFNEyRQB42PZYov1LUcJ+2lFY7gTQZggfN/0NpP/RdAiMLg/FxQtq
+         w1SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=q9Slei3vdZHf3BWZhWjxjnYHcSiTDd6lLLw5COAJJH4=;
-        b=Ij7wj2cP6eUCexm2ynUn7XURa6kWOAleVeEsexmV967nkyJNdt3jh72tI9+rik2mHW
-         I2Qsl57Z46fMGsUQay4Hdme55Gypr3imfziPP3CinBjGcaCXxObixOLcKMf0sUbsfdTh
-         ttDUNVPfOaWLp3fJa5S0S8ZLprhaNwHwOpnRaHKNYDM4x7jbTATf1nD4KD/tBXK4n/Pm
-         mvWWvJmqeIi6Jm3bbT8me8NC5zDYFItuuBe2FeYFkkJDkL9szckfdCGNrSfpWKnx1RWz
-         c4hPd4CwQTYjHBZ/oxrr1MBCthtIlBSw6PrlUKT2svSzEpjgxHBGUmgSz4QvmYOe4SDm
-         9CJA==
-X-Gm-Message-State: ACgBeo0jqvZ8Anw2qyrAeNxBXontvBgAVpzNMWPXnZmD8HLZvIsjZOEw
-        9oxHedpEMlQAsPZCSBIn8RrbtM+gdcEEFazzTlM=
-X-Google-Smtp-Source: AGRyM1tz6ydnTdAXHwWjgvcfHfZM4mVzzsU8kbBVt1t5iMqYl2YqGVkCZGtF2jXcGgkce3CaXmrEPZ9GWcPH6UilH6Y=
-X-Received: by 2002:a05:6512:3f1e:b0:48a:75f6:c804 with SMTP id
- y30-20020a0565123f1e00b0048a75f6c804mr6619495lfa.211.1659376141597; Mon, 01
- Aug 2022 10:49:01 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q9b79jY/u17GYRFU9G4m0npY134fiHh7X1IiD0DxvRU=;
+        b=ZbMFY2tH1MElwAltVlFD4Fg9jggFISqhoftNduvpjp8neSZqtk5m7Qkwon4O4c39Wm
+         6ALbXPiGqXGewOYbEcUmPeZFg4GUYUaamt41XfSg9xqIUg99eBSu+62ZNaaj7RKWrfg2
+         WQsdJEQURzW1HFVRp+lKR2RqLpfREEzSeQFhPQMJy0hjIA2sk33nHH+sXqqNs+tH/rCH
+         wilbvEgVaL6VvBO7ev55ZSnozUKAgoN/xTL8FDkdVTdSR2/ixrjcOywFYQ7KpJ86tU20
+         MQbNeMWxCrtUyXN3glayjyjleqodJrJ2Yky18pa5otPrFx1zjpgMGa8JC1LkdfARAi2L
+         kOYg==
+X-Gm-Message-State: AJIora9dTbj3A1sqTd6yvRkQzb/v4lD7cykxzcm6Zb4g0NIosQvEunKt
+        V4c1xHH2M5YYsZfsod1ckd4wbzpvVTcVippI1EQ=
+X-Google-Smtp-Source: AGRyM1vkzZonf/Zj7tXptc3bBzaAD9r5AhbzTpxh9x2q6/53xcm77wkWsHSKXYeU6d+hTJJXtBe0a5pFG7aBtJTz5uw=
+X-Received: by 2002:a67:af07:0:b0:358:3951:343e with SMTP id
+ v7-20020a67af07000000b003583951343emr8542385vsl.6.1659510792812; Wed, 03 Aug
+ 2022 00:13:12 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:aa6:cb52:0:b0:1fa:aaed:e6d9 with HTTP; Mon, 1 Aug 2022
- 10:49:00 -0700 (PDT)
-From:   Bright Gawayn <gben68387@gmail.com>
-Date:   Mon, 1 Aug 2022 23:19:00 +0530
-Message-ID: <CAG1+V0w_b8sq1kDBARbgmFbuvzp5ApwiYPr6e3UTtuGQ4KzWtA@mail.gmail.com>
-Subject: Lucrative business proposal very urgent!
-To:     undisclosed-recipients:;
+References: <20220630202150.653547-1-jlayton@kernel.org>
+In-Reply-To: <20220630202150.653547-1-jlayton@kernel.org>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Wed, 3 Aug 2022 09:13:01 +0200
+Message-ID: <CAOi1vP_PETHhCm3nUm5B_t0tMJQdmdBxsAmMpbPoGTD1WimMpg@mail.gmail.com>
+Subject: Re: [PATCH] libceph: clean up ceph_osdc_start_request prototype
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     xiubli@redhat.com, ceph-devel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=6.9 required=5.0 tests=ADVANCE_FEE_3_NEW,BAYES_50,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,UNDISC_MONEY autolearn=no autolearn_force=no
-        version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2a00:1450:4864:20:0:0:0:144 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5252]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [gben68387[at]gmail.com]
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [gben68387[at]gmail.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        *  3.5 ADVANCE_FEE_3_NEW Appears to be advance fee fraud (Nigerian
-        *      419)
-        *  2.5 UNDISC_MONEY Undisclosed recipients + money/fraud signs
-X-Spam-Level: ******
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hello dear My name is Mr Bright Gawayn,  It's my pleasure to contact you today.
+On Thu, Jun 30, 2022 at 10:21 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> This function always returns 0, and ignores the nofail boolean. Drop the
+> nofail argument, make the function void return and fix up the callers.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  drivers/block/rbd.c             |  6 +++---
+>  fs/ceph/addr.c                  | 32 ++++++++++++--------------------
+>  fs/ceph/file.c                  | 32 +++++++++++++-------------------
+>  include/linux/ceph/osd_client.h |  5 ++---
+>  net/ceph/osd_client.c           | 15 ++++++---------
+>  5 files changed, 36 insertions(+), 54 deletions(-)
+>
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index 91e541aa1f64..a8af0329ab77 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -1297,7 +1297,7 @@ static void rbd_osd_submit(struct ceph_osd_request *osd_req)
+>         dout("%s osd_req %p for obj_req %p objno %llu %llu~%llu\n",
+>              __func__, osd_req, obj_req, obj_req->ex.oe_objno,
+>              obj_req->ex.oe_off, obj_req->ex.oe_len);
+> -       ceph_osdc_start_request(osd_req->r_osdc, osd_req, false);
+> +       ceph_osdc_start_request(osd_req->r_osdc, osd_req);
+>  }
+>
+>  /*
+> @@ -2081,7 +2081,7 @@ static int rbd_object_map_update(struct rbd_obj_request *obj_req, u64 snap_id,
+>         if (ret)
+>                 return ret;
+>
+> -       ceph_osdc_start_request(osdc, req, false);
+> +       ceph_osdc_start_request(osdc, req);
+>         return 0;
+>  }
+>
+> @@ -4768,7 +4768,7 @@ static int rbd_obj_read_sync(struct rbd_device *rbd_dev,
+>         if (ret)
+>                 goto out_req;
+>
+> -       ceph_osdc_start_request(osdc, req, false);
+> +       ceph_osdc_start_request(osdc, req);
+>         ret = ceph_osdc_wait_request(osdc, req);
+>         if (ret >= 0)
+>                 ceph_copy_from_page_vector(pages, buf, 0, ret);
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index fe6147f20dee..66dc7844fcc6 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -357,9 +357,7 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
+>         req->r_inode = inode;
+>         ihold(inode);
+>
+> -       err = ceph_osdc_start_request(req->r_osdc, req, false);
+> -       if (err)
+> -               iput(inode);
+> +       ceph_osdc_start_request(req->r_osdc, req);
+>  out:
+>         ceph_osdc_put_request(req);
+>         if (err)
 
-We use a certain raw material in our pharmaceutical firm for the
-manufacture of animal vaccines and many more.
+Hi Jeff,
 
-My intention is to give you the new contact information of the local
-manufacturer of this raw material in India and every details regarding
-how to supply the material to my company if you're interested, my
-company pays in advance for this material.
+I'm confused by this err != 0 check.  Previously err was set to 0
+by ceph_osdc_start_request() and netfs_subreq_terminated() was never
+called after an OSD request submission.  Now it is called, but only if
+len != 0?
 
-Due to some reasons, which I will explain in my next email, I cannot
-procure this material and supply it to my company myself due to the
-fact that I am a staff in the company.
+I see that netfs_subreq_terminated() accepts either the amount of data
+transferred or an error code but it also has some transferred_or_error
+== 0 handling which this check effectively disables.  And do we really
+want to account for transferred data before the transfer occurs?
 
-Please get back to me as soon as possible for full detail if you are interested.
+Thanks,
 
-Thanks and regards
-Bright.
+                Ilya
