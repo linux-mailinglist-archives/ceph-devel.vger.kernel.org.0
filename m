@@ -2,167 +2,107 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D024C588CAE
-	for <lists+ceph-devel@lfdr.de>; Wed,  3 Aug 2022 15:11:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F59A5898F9
+	for <lists+ceph-devel@lfdr.de>; Thu,  4 Aug 2022 10:06:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237673AbiHCNLF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 3 Aug 2022 09:11:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35568 "EHLO
+        id S239384AbiHDIGj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 4 Aug 2022 04:06:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237796AbiHCNLB (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 3 Aug 2022 09:11:01 -0400
-Received: from mail-vk1-xa34.google.com (mail-vk1-xa34.google.com [IPv6:2607:f8b0:4864:20::a34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E10CADEC3
-        for <ceph-devel@vger.kernel.org>; Wed,  3 Aug 2022 06:10:58 -0700 (PDT)
-Received: by mail-vk1-xa34.google.com with SMTP id c22so5402685vko.7
-        for <ceph-devel@vger.kernel.org>; Wed, 03 Aug 2022 06:10:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rZUnDWEywbRdrRnMd0mI1OhSVO1460LBYyLnqOeyTt0=;
-        b=kLGKSGh5W57duPH1G4nM20S0YJpSCUM8MfpitPokqw4wCoO8fEoZrJD/NcdGprxvr0
-         Wxzo/UJZlATZOkygX1itpyxYpiGnxEZ7iJnlhil0DbBqcDBOJUcRc9Kf5d+XVt23yy59
-         dJYqJnJwrW0ZkSmtQ0BKtwejsKAYw7TKSj2mcNFKlTswzkiJ7dwo62vyCVlSb+NcT6ZU
-         zEEC/BI0pWJFcLXJqEDJ5l/Gz+myFI9BW5MXYm5glSEjDYm3yBKaT8ivOrSseA/+dK3H
-         KgJcl1OsRw5Gqxej+tN+a4eWS9P2vFkFu1QPtlc6i9NR8PTuaTHJ+OVO073tSQgCRMrE
-         BZiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rZUnDWEywbRdrRnMd0mI1OhSVO1460LBYyLnqOeyTt0=;
-        b=0SuWr8GyiPxBFxln5tkoXgbPtXjTXOFyCBu8CsGqlKoi/nw0PN5ZjCt596BFP8mKMO
-         NxMvX7jEdYNr/qR94C9RE6LFytUAVM48+RGDmeTwyIP+SHTYpoP/CRDXy2ykogPG+ltb
-         5iNnz3ZY34zUWi6gXxs6aq/xI40w6wy+YR0s35NBN8dlP+BSKEcLn7qInlDs5LY/9nSX
-         ZyMnsCIjvT6WxRJM8kraNNfq3CsUZM8f/IPds+dyzn7eACaUYxS7otM2Ztgjs+wZTWgp
-         U6Kv2Sq6VwFixbwwY9+eUzjiC1sMTwjI6DYZzKgGwTpOjNfAV5ALzwIa4xu/3GCAviJ4
-         SGgQ==
-X-Gm-Message-State: AJIora+bdIb3uHrf9QifGGrCoj3QHq31k/adjc3m4doXXO1vQfFnDgxC
-        8v0P5Pnx960yoqFsIGUVlPwXYkf3SRKU64MAzt8=
-X-Google-Smtp-Source: AGRyM1sUuBaum6bwI7bStnGP5eBe9vYYoQkZsbDWgQjUfEloS6lPXL38x5o+xLoVQT3EDFlIQs8cYri4+eqtkfLa294=
-X-Received: by 2002:a1f:e846:0:b0:376:69f5:89d with SMTP id
- f67-20020a1fe846000000b0037669f5089dmr9569986vkh.20.1659532257939; Wed, 03
- Aug 2022 06:10:57 -0700 (PDT)
+        with ESMTP id S236184AbiHDIGi (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 4 Aug 2022 04:06:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 611F161DA4
+        for <ceph-devel@vger.kernel.org>; Thu,  4 Aug 2022 01:06:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1659600396;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=0W0uAYExuspsrPYM8yaIBF6HBQxml3+RQpZ2HFbwea4=;
+        b=Pd7dt0U31JMszAEMmqVn/ZYzWdma4133/T3roAjyfA87HbRdREiNrbWif+sOGFOrJsK7Ml
+        s6G67ik2kfWt4VgyI86xR/3hlwbVkGbS3ObT9uFwejxGQENHNqqQlKmNj1/ljUpdEzNSvC
+        0bXW3MSjMlXzniW1oq6XVHk8kKN544o=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-22-SIuThlu4NoW-a9aLU5Tbqw-1; Thu, 04 Aug 2022 04:06:32 -0400
+X-MC-Unique: SIuThlu4NoW-a9aLU5Tbqw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BFDB41824622
+        for <ceph-devel@vger.kernel.org>; Thu,  4 Aug 2022 08:06:31 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 80D401121325;
+        Thu,  4 Aug 2022 08:06:30 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     ceph-devel@vger.kernel.org
+Cc:     Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: fail the open_by_handle_at() if the dentry is being unlinked
+Date:   Thu,  4 Aug 2022 16:06:24 +0800
+Message-Id: <20220804080624.14768-1-xiubli@redhat.com>
 MIME-Version: 1.0
-References: <20220630202150.653547-1-jlayton@kernel.org> <CAOi1vP_PETHhCm3nUm5B_t0tMJQdmdBxsAmMpbPoGTD1WimMpg@mail.gmail.com>
- <95c06864af1704c9752c14e48e80817f363ce450.camel@kernel.org>
- <CAOi1vP_XCcQS5_0opDmvqqR7VPHoJVA3mvU3s-MuL9YOiZi=-A@mail.gmail.com> <a3b9b529df542fd323a2e30b1cf8390828e19fc3.camel@kernel.org>
-In-Reply-To: <a3b9b529df542fd323a2e30b1cf8390828e19fc3.camel@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 3 Aug 2022 15:10:46 +0200
-Message-ID: <CAOi1vP9r4+P51PUD3=N6UGwRtSSnuw9w9oEE5anEz5r7PpQwzA@mail.gmail.com>
-Subject: Re: [PATCH] libceph: clean up ceph_osdc_start_request prototype
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     xiubli@redhat.com, ceph-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Aug 3, 2022 at 3:03 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> On Wed, 2022-08-03 at 13:58 +0200, Ilya Dryomov wrote:
-> > On Wed, Aug 3, 2022 at 1:15 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > >
-> > > On Wed, 2022-08-03 at 09:13 +0200, Ilya Dryomov wrote:
-> > > > On Thu, Jun 30, 2022 at 10:21 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > > >
-> > > > > This function always returns 0, and ignores the nofail boolean. Drop the
-> > > > > nofail argument, make the function void return and fix up the callers.
-> > > > >
-> > > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > > > ---
-> > > > >  drivers/block/rbd.c             |  6 +++---
-> > > > >  fs/ceph/addr.c                  | 32 ++++++++++++--------------------
-> > > > >  fs/ceph/file.c                  | 32 +++++++++++++-------------------
-> > > > >  include/linux/ceph/osd_client.h |  5 ++---
-> > > > >  net/ceph/osd_client.c           | 15 ++++++---------
-> > > > >  5 files changed, 36 insertions(+), 54 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> > > > > index 91e541aa1f64..a8af0329ab77 100644
-> > > > > --- a/drivers/block/rbd.c
-> > > > > +++ b/drivers/block/rbd.c
-> > > > > @@ -1297,7 +1297,7 @@ static void rbd_osd_submit(struct ceph_osd_request *osd_req)
-> > > > >         dout("%s osd_req %p for obj_req %p objno %llu %llu~%llu\n",
-> > > > >              __func__, osd_req, obj_req, obj_req->ex.oe_objno,
-> > > > >              obj_req->ex.oe_off, obj_req->ex.oe_len);
-> > > > > -       ceph_osdc_start_request(osd_req->r_osdc, osd_req, false);
-> > > > > +       ceph_osdc_start_request(osd_req->r_osdc, osd_req);
-> > > > >  }
-> > > > >
-> > > > >  /*
-> > > > > @@ -2081,7 +2081,7 @@ static int rbd_object_map_update(struct rbd_obj_request *obj_req, u64 snap_id,
-> > > > >         if (ret)
-> > > > >                 return ret;
-> > > > >
-> > > > > -       ceph_osdc_start_request(osdc, req, false);
-> > > > > +       ceph_osdc_start_request(osdc, req);
-> > > > >         return 0;
-> > > > >  }
-> > > > >
-> > > > > @@ -4768,7 +4768,7 @@ static int rbd_obj_read_sync(struct rbd_device *rbd_dev,
-> > > > >         if (ret)
-> > > > >                 goto out_req;
-> > > > >
-> > > > > -       ceph_osdc_start_request(osdc, req, false);
-> > > > > +       ceph_osdc_start_request(osdc, req);
-> > > > >         ret = ceph_osdc_wait_request(osdc, req);
-> > > > >         if (ret >= 0)
-> > > > >                 ceph_copy_from_page_vector(pages, buf, 0, ret);
-> > > > > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> > > > > index fe6147f20dee..66dc7844fcc6 100644
-> > > > > --- a/fs/ceph/addr.c
-> > > > > +++ b/fs/ceph/addr.c
-> > > > > @@ -357,9 +357,7 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
-> > > > >         req->r_inode = inode;
-> > > > >         ihold(inode);
-> > > > >
-> > > > > -       err = ceph_osdc_start_request(req->r_osdc, req, false);
-> > > > > -       if (err)
-> > > > > -               iput(inode);
-> > > > > +       ceph_osdc_start_request(req->r_osdc, req);
-> > > > >  out:
-> > > > >         ceph_osdc_put_request(req);
-> > > > >         if (err)
-> > > >
-> > > > Hi Jeff,
-> > > >
-> > > > I'm confused by this err != 0 check.  Previously err was set to 0
-> > > > by ceph_osdc_start_request() and netfs_subreq_terminated() was never
-> > > > called after an OSD request submission.  Now it is called, but only if
-> > > > len != 0?
-> > > >
-> > > > I see that netfs_subreq_terminated() accepts either the amount of data
-> > > > transferred or an error code but it also has some transferred_or_error
-> > > > == 0 handling which this check effectively disables.  And do we really
-> > > > want to account for transferred data before the transfer occurs?
-> > > >
-> > >
-> > > No we don't. I think you're correct. What I'm not sure of is why this
-> > > doesn't cause test failures all over the place.
-> >
-> > This is due to "libceph: add new iov_iter-based ceph_msg_data_type and
-> > ceph_osd_data_type" and "ceph: use osd_req_op_extent_osd_iter for netfs
-> > reads" end up fixing it later by removing iov_iter_get_pages_alloc()
-> > call.  I think because these commits were backed out of testing at one
-> > point and re-added later, the order got messed up by accident.
-> >
->
-> Yep, that's the reason. Would you mind folding the one-line fix into the
-> original patch, or would you rather I send a v2?
+From: Xiubo Li <xiubli@redhat.com>
 
-I already did as it seemed obviously correct to me.  I also made
-sure that the fixed up patch would run through fs suite without any
-follow up patches, just in case.
+When unlinking a file the kclient will send a unlink request to MDS
+by holding the dentry reference, and then the MDS will return 2 replies,
+which are unsafe reply and a deferred safe reply.
 
-Thanks for jumping in on this!
+After the unsafe reply received the kernel will return and succeed
+the unlink request to user space apps.
 
-                Ilya
+Only when the safe reply received the dentry's reference will be
+released. Or the dentry will only be unhashed from dcache. But when
+the open_by_handle_at() begins to open the unlinked files it will
+succeed.
+
+URL: https://tracker.ceph.com/issues/56524
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/export.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+index 0ebf2bd93055..7d2ae977b8c9 100644
+--- a/fs/ceph/export.c
++++ b/fs/ceph/export.c
+@@ -182,6 +182,7 @@ struct inode *ceph_lookup_inode(struct super_block *sb, u64 ino)
+ static struct dentry *__fh_to_dentry(struct super_block *sb, u64 ino)
+ {
+ 	struct inode *inode = __lookup_inode(sb, ino);
++	struct dentry *dentry;
+ 	int err;
+ 
+ 	if (IS_ERR(inode))
+@@ -197,7 +198,15 @@ static struct dentry *__fh_to_dentry(struct super_block *sb, u64 ino)
+ 		iput(inode);
+ 		return ERR_PTR(-ESTALE);
+ 	}
+-	return d_obtain_alias(inode);
++
++	/* -ESTALE if the dentry is unhashed, which should being released */
++	dentry = d_obtain_alias(inode);
++	if (d_unhashed(dentry)) {
++		dput(dentry);
++		return ERR_PTR(-ESTALE);
++	}
++
++	return dentry;
+ }
+ 
+ static struct dentry *__snapfh_to_dentry(struct super_block *sb,
+-- 
+2.36.0.rc1
+
