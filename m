@@ -2,107 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 320BE589F5F
-	for <lists+ceph-devel@lfdr.de>; Thu,  4 Aug 2022 18:25:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A45858A57B
+	for <lists+ceph-devel@lfdr.de>; Fri,  5 Aug 2022 06:37:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233114AbiHDQZk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 4 Aug 2022 12:25:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42394 "EHLO
+        id S234673AbiHEEhU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 5 Aug 2022 00:37:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236941AbiHDQZg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 4 Aug 2022 12:25:36 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F8D31FD
-        for <ceph-devel@vger.kernel.org>; Thu,  4 Aug 2022 09:25:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        with ESMTP id S230475AbiHEEhT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 5 Aug 2022 00:37:19 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 294E170E63
+        for <ceph-devel@vger.kernel.org>; Thu,  4 Aug 2022 21:37:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1659674237;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=zifIoJxFy1aP1LpzVxFYcPp5D3KkfJ3+v8CI2n0Rbns=;
+        b=XGAY2Bppvc2ipJUdMvT81QSTkDVaHUAvREGYyXNavt7hToZc8A4FgQgEms9ViH6dj53mdC
+        Ueb0BflPcyLz2rzrtOIaVvZFs6ofjrwBJBMlTAdr2YUasLbkEjgjSAn8w1uw7fmF6oTZcB
+        0HYTS/BOQAZlpkTxE24Gn2O28REJ4hc=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-581-vuxQJbQ1M4CY7phhpsak9w-1; Fri, 05 Aug 2022 00:37:16 -0400
+X-MC-Unique: vuxQJbQ1M4CY7phhpsak9w-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C1AC1614A3
-        for <ceph-devel@vger.kernel.org>; Thu,  4 Aug 2022 16:25:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5CD8C433C1;
-        Thu,  4 Aug 2022 16:25:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1659630335;
-        bh=BtD+Jt9g9KlglP46qjU9/G3kt6WcT6WYhN3V/xI6Cmw=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=TnhA0krda5KehJ8G83Wt20GzipsavsSNJUYrsFooHquOWEl7NpsJUWLeigXM/GrAp
-         A9db0ZAjApCRRNLnRz7S2Vv4z/1SIc1lmO3VuX9vOEIeRwLD/I9Sq2M0tHTL3qOQCh
-         H3MxjDD34M8ED3AXuh3SWKKO4mY4qrFOUW3r1tadvKLBESSwAK6AsAj9mYeyQ6ZinW
-         k8BIXFPQo9saa67TddRlB2PmTQhZUS4MxSXUeXSnNxYSEART2mWyEkck7EwnBIlLbo
-         tKXBoH4D+T3UJ1fNOYh4dR9sVzmiy2gf5OxIZPBtj9DtnEx+HvNMmp8mor+DTfKUnD
-         V1P+PeHzgKhUQ==
-Message-ID: <afbd8615b4bb651c505c933576350a8afa082e41.camel@kernel.org>
-Subject: Re: [PATCH] ceph: fail the open_by_handle_at() if the dentry is
- being unlinked
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com, ceph-devel@vger.kernel.org
-Date:   Thu, 04 Aug 2022 12:25:32 -0400
-In-Reply-To: <20220804080624.14768-1-xiubli@redhat.com>
-References: <20220804080624.14768-1-xiubli@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.3 (3.44.3-1.fc36) 
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B02141C04B4C
+        for <ceph-devel@vger.kernel.org>; Fri,  5 Aug 2022 04:37:15 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 77975C28125;
+        Fri,  5 Aug 2022 04:37:14 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     ceph-devel@vger.kernel.org
+Cc:     Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: wake up the waiters if any new caps comes
+Date:   Fri,  5 Aug 2022 12:37:11 +0800
+Message-Id: <20220805043711.306673-1-xiubli@redhat.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2022-08-04 at 16:06 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
->=20
-> When unlinking a file the kclient will send a unlink request to MDS
-> by holding the dentry reference, and then the MDS will return 2 replies,
-> which are unsafe reply and a deferred safe reply.
->=20
-> After the unsafe reply received the kernel will return and succeed
-> the unlink request to user space apps.
->=20
-> Only when the safe reply received the dentry's reference will be
-> released. Or the dentry will only be unhashed from dcache. But when
-> the open_by_handle_at() begins to open the unlinked files it will
-> succeed.
->=20
-> URL: https://tracker.ceph.com/issues/56524
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/export.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
->=20
-> diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-> index 0ebf2bd93055..7d2ae977b8c9 100644
-> --- a/fs/ceph/export.c
-> +++ b/fs/ceph/export.c
-> @@ -182,6 +182,7 @@ struct inode *ceph_lookup_inode(struct super_block *s=
-b, u64 ino)
->  static struct dentry *__fh_to_dentry(struct super_block *sb, u64 ino)
->  {
->  	struct inode *inode =3D __lookup_inode(sb, ino);
-> +	struct dentry *dentry;
->  	int err;
-> =20
->  	if (IS_ERR(inode))
-> @@ -197,7 +198,15 @@ static struct dentry *__fh_to_dentry(struct super_bl=
-ock *sb, u64 ino)
->  		iput(inode);
->  		return ERR_PTR(-ESTALE);
->  	}
-> -	return d_obtain_alias(inode);
-> +
-> +	/* -ESTALE if the dentry is unhashed, which should being released */
-> +	dentry =3D d_obtain_alias(inode);
-> +	if (d_unhashed(dentry)) {
-> +		dput(dentry);
-> +		return ERR_PTR(-ESTALE);
-> +	}
-> +
-> +	return dentry;
->  }
-> =20
->  static struct dentry *__snapfh_to_dentry(struct super_block *sb,
+From: Xiubo Li <xiubli@redhat.com>
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+When new caps comes we need to wake up the waiters and also when
+revoking the caps, there also could be new caps comes.
+
+https://tracker.ceph.com/issues/54044
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/caps.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 5a4e7e53015a..139d21b8fb49 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -755,6 +755,7 @@ void ceph_add_cap(struct inode *inode,
+ 	cap->issue_seq = seq;
+ 	cap->mseq = mseq;
+ 	cap->cap_gen = gen;
++	wake_up_all(&ci->i_cap_wq);
+ }
+ 
+ /*
+@@ -3601,6 +3602,9 @@ static void handle_cap_grant(struct inode *inode,
+ 			check_caps = 1; /* check auth cap only */
+ 		else
+ 			check_caps = 2; /* check all caps */
++		/* If there is new caps, try to wake up the waiters */
++		if (~cap->issued & newcaps)
++			wake = true;
+ 		cap->issued = newcaps;
+ 		cap->implemented |= newcaps;
+ 	} else if (cap->issued == newcaps) {
+-- 
+2.36.0.rc1
+
