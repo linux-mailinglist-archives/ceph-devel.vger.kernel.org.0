@@ -2,52 +2,56 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3982558C3A1
-	for <lists+ceph-devel@lfdr.de>; Mon,  8 Aug 2022 09:08:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2D4258C63B
+	for <lists+ceph-devel@lfdr.de>; Mon,  8 Aug 2022 12:18:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232822AbiHHHIe (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 8 Aug 2022 03:08:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52932 "EHLO
+        id S242198AbiHHKSW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 8 Aug 2022 06:18:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229684AbiHHHIc (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 Aug 2022 03:08:32 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D1BE9260A
-        for <ceph-devel@vger.kernel.org>; Mon,  8 Aug 2022 00:08:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1659942510;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=zuncU+quZd4o5dPo71MMiTlizwUeWZTy3FRUsMymdCY=;
-        b=iMwaCJQ6LDDJBffqG9qr5NCCWIyJUl8WBFo718xGD2nxjJzMZrNhul6HKs5bN7CJvDxjaX
-        FR+PYnjnK7Kwnt39Hqd/Zah5gxtgL6vUVf60Oe/yYyFvQ5/28erfm/LKxyTxCb8nm8J9zy
-        nPm6ccRONeSt4d94sHozZwazvs16jGI=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-463--1z8jPxDO9yrkmKocyIJ8Q-1; Mon, 08 Aug 2022 03:08:27 -0400
-X-MC-Unique: -1z8jPxDO9yrkmKocyIJ8Q-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S234440AbiHHKSV (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 Aug 2022 06:18:21 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71D2FDF85;
+        Mon,  8 Aug 2022 03:18:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1EAF51884985;
-        Mon,  8 Aug 2022 07:08:27 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DA9AA492C3B;
-        Mon,  8 Aug 2022 07:08:25 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     ceph-devel@vger.kernel.org
-Cc:     lhenriques@suse.de
-Subject: [PATCH v3] ceph: fail the request if the peer MDS doesn't support getvxattr op
-Date:   Mon,  8 Aug 2022 15:08:23 +0800
-Message-Id: <20220808070823.707829-1-xiubli@redhat.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 22EC6B80E38;
+        Mon,  8 Aug 2022 10:18:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0127C43470;
+        Mon,  8 Aug 2022 10:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1659953897;
+        bh=NeqZRYiD9+QFszEb0HDM46ke3bHl/YmdCD/826WagaA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=bayUb3SXYtM1CEKJnQhutAqSXWfGamnU+2f3VI6Lu7xB7XXv8f7UDn0kdPabDRRnH
+         sH2CBxWVzae7kpqcOnMWmok3cVAkIiYwaHOPbtMrEB5AK9NmRqKP4M6V0ZX5t9z0CQ
+         HU/dC+XuBtCdaW+yaO2wCP6HuVq6y8Pby2f5MwEfsVPr85C1cyYQ0tBtBGqKOrjvEU
+         joiWmLrIJNsOly31/qgnmGlLhk/8vgbKji02eOMH7ZFq1D9i/PTWVylQCshOi97owx
+         B1/jHVHhVbdmSgV+VUGzRWQXWkopnzqMl71JkcNdWi45wJ0l0xaJklGNFSiH0jF8BO
+         Bag/xMSkTZcBA==
+Message-ID: <beeaa2b135fc9a1b411a8ad208d70ba5e9708d08.camel@kernel.org>
+Subject: Re: [RFC PATCH 1/4] vfs: report change attribute in statx for
+ IS_I_VERSION inodes
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc:     dhowells@redhat.com, lczerner@redhat.com, bxue@redhat.com,
+        ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org
+Date:   Mon, 08 Aug 2022 06:18:15 -0400
+In-Reply-To: <8a87ee82-fa04-6b99-8716-9acf24446c5a@redhat.com>
+References: <20220805183543.274352-1-jlayton@kernel.org>
+         <20220805183543.274352-2-jlayton@kernel.org>
+         <8a87ee82-fa04-6b99-8716-9acf24446c5a@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.3 (3.44.3-1.fc36) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,92 +59,125 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Mon, 2022-08-08 at 10:09 +0800, Xiubo Li wrote:
+> On 8/6/22 2:35 AM, Jeff Layton wrote:
+> > From: Jeff Layton <jlayton@redhat.com>
+> >=20
+> > Claim one of the spare fields in struct statx to hold a 64-bit change
+> > attribute. When statx requests this attribute, do an
+> > inode_query_iversion and fill the result in the field.
+> >=20
+> > Also update the test-statx.c program to fetch the change attribute as
+> > well.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >   fs/stat.c                 | 7 +++++++
+> >   include/linux/stat.h      | 1 +
+> >   include/uapi/linux/stat.h | 3 ++-
+> >   samples/vfs/test-statx.c  | 4 +++-
+> >   4 files changed, 13 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/fs/stat.c b/fs/stat.c
+> > index 9ced8860e0f3..976e0a59ab23 100644
+> > --- a/fs/stat.c
+> > +++ b/fs/stat.c
+> > @@ -17,6 +17,7 @@
+> >   #include <linux/syscalls.h>
+> >   #include <linux/pagemap.h>
+> >   #include <linux/compat.h>
+> > +#include <linux/iversion.h>
+> >  =20
+> >   #include <linux/uaccess.h>
+> >   #include <asm/unistd.h>
+> > @@ -118,6 +119,11 @@ int vfs_getattr_nosec(const struct path *path, str=
+uct kstat *stat,
+> >   	stat->attributes_mask |=3D (STATX_ATTR_AUTOMOUNT |
+> >   				  STATX_ATTR_DAX);
+> >  =20
+> > +	if ((request_mask & STATX_CHGATTR) && IS_I_VERSION(inode)) {
+> > +		stat->result_mask |=3D STATX_CHGATTR;
+> > +		stat->chgattr =3D inode_query_iversion(inode);
+> > +	}
+> > +
+> >   	mnt_userns =3D mnt_user_ns(path->mnt);
+> >   	if (inode->i_op->getattr)
+> >   		return inode->i_op->getattr(mnt_userns, path, stat,
+> > @@ -611,6 +617,7 @@ cp_statx(const struct kstat *stat, struct statx __u=
+ser *buffer)
+> >   	tmp.stx_dev_major =3D MAJOR(stat->dev);
+> >   	tmp.stx_dev_minor =3D MINOR(stat->dev);
+> >   	tmp.stx_mnt_id =3D stat->mnt_id;
+> > +	tmp.stx_chgattr =3D stat->chgattr;
+> >  =20
+> >   	return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
+> >   }
+> > diff --git a/include/linux/stat.h b/include/linux/stat.h
+> > index 7df06931f25d..4a17887472f6 100644
+> > --- a/include/linux/stat.h
+> > +++ b/include/linux/stat.h
+> > @@ -50,6 +50,7 @@ struct kstat {
+> >   	struct timespec64 btime;			/* File creation time */
+> >   	u64		blocks;
+> >   	u64		mnt_id;
+> > +	u64		chgattr;
+> >   };
+> >  =20
+> >   #endif
+> > diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+> > index 1500a0f58041..b45243a0fbc5 100644
+> > --- a/include/uapi/linux/stat.h
+> > +++ b/include/uapi/linux/stat.h
+> > @@ -124,7 +124,7 @@ struct statx {
+> >   	__u32	stx_dev_minor;
+> >   	/* 0x90 */
+> >   	__u64	stx_mnt_id;
+> > -	__u64	__spare2;
+> > +	__u64	stx_chgattr;	/* Inode change attribute */
+> >   	/* 0xa0 */
+> >   	__u64	__spare3[12];	/* Spare space for future expansion */
+> >   	/* 0x100 */
+> > @@ -152,6 +152,7 @@ struct statx {
+> >   #define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat=
+ struct */
+> >   #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
+> >   #define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
+> > +#define STATX_CHGATTR		0x00002000U	/* Want/git stx_chgattr */
+>=20
+> s/git/get/ ?
+>=20
 
-Just fail the request instead sending the request out, or the peer
-MDS will crash.
+Muscle-memory typo. Fixed in my tree.
 
-URL: https://tracker.ceph.com/issues/56529
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/inode.c      |  1 +
- fs/ceph/mds_client.c | 11 +++++++++++
- fs/ceph/mds_client.h |  6 +++++-
- 3 files changed, 17 insertions(+), 1 deletion(-)
+> >  =20
+> >   #define STATX__RESERVED		0x80000000U	/* Reserved for future struct st=
+atx expansion */
+> >  =20
+> > diff --git a/samples/vfs/test-statx.c b/samples/vfs/test-statx.c
+> > index 49c7a46cee07..767208d2f564 100644
+> > --- a/samples/vfs/test-statx.c
+> > +++ b/samples/vfs/test-statx.c
+> > @@ -109,6 +109,8 @@ static void dump_statx(struct statx *stx)
+> >   		printf(" Inode: %-11llu", (unsigned long long) stx->stx_ino);
+> >   	if (stx->stx_mask & STATX_NLINK)
+> >   		printf(" Links: %-5u", stx->stx_nlink);
+> > +	if (stx->stx_mask & STATX_CHGATTR)
+> > +		printf(" Change Attr: 0x%llx", stx->stx_chgattr);
+> >   	if (stx->stx_mask & STATX_TYPE) {
+> >   		switch (stx->stx_mode & S_IFMT) {
+> >   		case S_IFBLK:
+> > @@ -218,7 +220,7 @@ int main(int argc, char **argv)
+> >   	struct statx stx;
+> >   	int ret, raw =3D 0, atflag =3D AT_SYMLINK_NOFOLLOW;
+> >  =20
+> > -	unsigned int mask =3D STATX_BASIC_STATS | STATX_BTIME;
+> > +	unsigned int mask =3D STATX_BASIC_STATS | STATX_BTIME | STATX_CHGATTR=
+;
+> >  =20
+> >   	for (argv++; *argv; argv++) {
+> >   		if (strcmp(*argv, "-F") =3D=3D 0) {
+>=20
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 79ff197c7cc5..cfa0b550eef2 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -2607,6 +2607,7 @@ int ceph_do_getvxattr(struct inode *inode, const char *name, void *value,
- 		goto out;
- 	}
- 
-+	req->r_feature_needed = CEPHFS_FEATURE_OP_GETVXATTR;
- 	req->r_path2 = kstrdup(name, GFP_NOFS);
- 	if (!req->r_path2) {
- 		err = -ENOMEM;
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 598012ddc401..3e22783109ad 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2501,6 +2501,7 @@ ceph_mdsc_create_request(struct ceph_mds_client *mdsc, int op, int mode)
- 	INIT_LIST_HEAD(&req->r_unsafe_dir_item);
- 	INIT_LIST_HEAD(&req->r_unsafe_target_item);
- 	req->r_fmode = -1;
-+	req->r_feature_needed = -1;
- 	kref_init(&req->r_kref);
- 	RB_CLEAR_NODE(&req->r_node);
- 	INIT_LIST_HEAD(&req->r_wait);
-@@ -3255,6 +3256,16 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 
- 	dout("do_request mds%d session %p state %s\n", mds, session,
- 	     ceph_session_state_name(session->s_state));
-+
-+	/*
-+	 * The old ceph will crash the MDSs when see unknown OPs
-+	 */
-+	if (req->r_feature_needed > 0 &&
-+	    !test_bit(req->r_feature_needed, &session->s_features)) {
-+		err = -ENODATA;
-+		goto out_session;
-+	}
-+
- 	if (session->s_state != CEPH_MDS_SESSION_OPEN &&
- 	    session->s_state != CEPH_MDS_SESSION_HUNG) {
- 		/*
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index e15ee2858fef..728b7d72bf76 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -31,8 +31,9 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_METRIC_COLLECT,
- 	CEPHFS_FEATURE_ALTERNATE_NAME,
- 	CEPHFS_FEATURE_NOTIFY_SESSION_STATE,
-+	CEPHFS_FEATURE_OP_GETVXATTR,
- 
--	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_NOTIFY_SESSION_STATE,
-+	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_OP_GETVXATTR,
- };
- 
- #define CEPHFS_FEATURES_CLIENT_SUPPORTED {	\
-@@ -45,6 +46,7 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_METRIC_COLLECT,		\
- 	CEPHFS_FEATURE_ALTERNATE_NAME,		\
- 	CEPHFS_FEATURE_NOTIFY_SESSION_STATE,	\
-+	CEPHFS_FEATURE_OP_GETVXATTR,		\
- }
- 
- /*
-@@ -352,6 +354,8 @@ struct ceph_mds_request {
- 	long long	  r_dir_ordered_cnt;
- 	int		  r_readdir_cache_idx;
- 
-+	int		  r_feature_needed;
-+
- 	struct ceph_cap_reservation r_caps_reservation;
- };
- 
--- 
-2.36.0.rc1
-
+Thanks,
+--=20
+Jeff Layton <jlayton@kernel.org>
