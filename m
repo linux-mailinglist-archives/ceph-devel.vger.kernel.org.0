@@ -2,81 +2,52 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B178058EA83
-	for <lists+ceph-devel@lfdr.de>; Wed, 10 Aug 2022 12:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91C8558F9CC
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 Aug 2022 11:12:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231269AbiHJKfq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 10 Aug 2022 06:35:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33456 "EHLO
+        id S234913AbiHKJMt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 11 Aug 2022 05:12:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231274AbiHJKfp (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 10 Aug 2022 06:35:45 -0400
+        with ESMTP id S229786AbiHKJMs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 11 Aug 2022 05:12:48 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7772C4C615
-        for <ceph-devel@vger.kernel.org>; Wed, 10 Aug 2022 03:35:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9979712771
+        for <ceph-devel@vger.kernel.org>; Thu, 11 Aug 2022 02:12:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1660127743;
+        s=mimecast20190719; t=1660209166;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/wW5w6mMxFEPRssRyiA0roiXaNoP3QA09rbvWBkLo18=;
-        b=RBTzU2S6qaj7ut3BNESwPtJyKm0n8/wxR1lYfZd1dLPRuOpad9dbICTAbkwqfJXvRiwHxK
-        3eZZkrX0cgEgMCYteqydCD0blyKhNRJl1ME4yh80hq7p7XCCZll00NABB/dEAWkMJnj/ZU
-        0HXbjWseOYqOHGcH14wUtNAwpXaMzy8=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-144-b2jHdc3RObKEoT7r3u3w8A-1; Wed, 10 Aug 2022 06:35:40 -0400
-X-MC-Unique: b2jHdc3RObKEoT7r3u3w8A-1
-Received: by mail-qk1-f200.google.com with SMTP id m17-20020a05620a291100b006b6590830feso12309177qkp.13
-        for <ceph-devel@vger.kernel.org>; Wed, 10 Aug 2022 03:35:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc;
-        bh=/wW5w6mMxFEPRssRyiA0roiXaNoP3QA09rbvWBkLo18=;
-        b=QPjRIpmaBcWNEckhecXLAjBjGL5yF/e4IuwO9YerZyfMT9BnD+YoORFfeeYCwMiaXq
-         IBgYMQwbqyq1fwi42SZkD9k8Sy5TunCA0dxI5j65pORS29BvHreV/VrWbuQ7l8r6nrQA
-         LEB6csYfhUVDp1pCbzpHzT+9gKzz7CSvHpRjSvHs1+gDrXuOsHsvVpM95Ojjv1/+/sf/
-         pBdHA8mQoGsXg0ge/0vEQxo8bAfENvrHCOYlFiR8B/QU4V10U7SmQa23gAAjW/nQklxb
-         HUJDpojgYh1ynzp5LbMfLUcL79yaIRU1yRyaZE3KfF8OsKQ6j/e7WibekYfEdeINmO5m
-         46gA==
-X-Gm-Message-State: ACgBeo2N5eyRCxVLze1Sp8GikCHj3n600A0s4eTVw0tCDZzTRkFv8e/6
-        h7Wfv5pm7/hMSh+h+bFrZUrZiRizfxIvbEOcAvEisPdthTA7bEIZUKIN2zfgrONnao7uGx5VLJn
-        eL2koNBkJc5H2/uISXpt+rQ==
-X-Received: by 2002:ac8:5aca:0:b0:342:f363:dc83 with SMTP id d10-20020ac85aca000000b00342f363dc83mr14891980qtd.276.1660127739965;
-        Wed, 10 Aug 2022 03:35:39 -0700 (PDT)
-X-Google-Smtp-Source: AA6agR672faeSBWjEMIIZTWbRN8z5WtgsBmxV60lXj9OL/+FNIziCZkZnW+g14J0G5IqBz/QmzFDWQ==
-X-Received: by 2002:ac8:5aca:0:b0:342:f363:dc83 with SMTP id d10-20020ac85aca000000b00342f363dc83mr14891967qtd.276.1660127739756;
-        Wed, 10 Aug 2022 03:35:39 -0700 (PDT)
-Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id ci14-20020a05622a260e00b0031ef0081d77sm11753243qtb.79.2022.08.10.03.35.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Aug 2022 03:35:39 -0700 (PDT)
-Message-ID: <a396a94d30132b157860c9e367f9a4354223f7f5.camel@redhat.com>
-Subject: Re: [RFC PATCH 1/4] vfs: report change attribute in statx for
- IS_I_VERSION inodes
-From:   Jeff Layton <jlayton@redhat.com>
-To:     JunChao Sun <sunjunchao2870@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
-        lczerner@redhat.com, bxue@redhat.com, ceph-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
-Date:   Wed, 10 Aug 2022 06:35:38 -0400
-In-Reply-To: <CAHB1Nah5ttUCuUUdPZjb9n_1uDTh_-J_N6JaJiwY+oZj7atJeg@mail.gmail.com>
-References: <20220805183543.274352-1-jlayton@kernel.org>
-         <20220805183543.274352-2-jlayton@kernel.org>
-         <CAHB1Nah5ttUCuUUdPZjb9n_1uDTh_-J_N6JaJiwY+oZj7atJeg@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=uSZOC4oR6MV0AJUoTsXZrPkIoaQqRnwdg0HDIc/gl8Y=;
+        b=aqHrrHYNd2x/POo8dDU63lwwfogW4lN+Ypr+ECZjUEFLzA/4CxqQBITUQDbQw/7l8IopHZ
+        A+7HMrDSt1XuCGAP/G4gdJvU2rfuLOJNl1CoUl5rV99A2mLqNNPDrN3apaQUG2VFpwpdey
+        6uPhx1GHxv3TbkNxs0j73jvU6QfKqIE=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-608-_PORQFkmPgejxFDAJy3lIg-1; Thu, 11 Aug 2022 05:12:45 -0400
+X-MC-Unique: _PORQFkmPgejxFDAJy3lIg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 10C0F1C01B49
+        for <ceph-devel@vger.kernel.org>; Thu, 11 Aug 2022 09:12:45 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CD2B440CF8E7;
+        Thu, 11 Aug 2022 09:12:43 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     ceph-devel@vger.kernel.org
+Cc:     Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: no need to wait for transition RDCACHE|RD -> RD
+Date:   Thu, 11 Aug 2022 17:12:41 +0800
+Message-Id: <20220811091241.12251-1-xiubli@redhat.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
 X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -84,140 +55,53 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2022-08-10 at 11:00 +0800, JunChao Sun wrote:
-> On Sat, Aug 6, 2022 at 2:37 AM Jeff Layton <jlayton@kernel.org> wrote:
-> >=20
-> > From: Jeff Layton <jlayton@redhat.com>
-> >=20
-> > Claim one of the spare fields in struct statx to hold a 64-bit change
-> > >=20
-> > > attribute. When statx requests this attribute, do an
-> > > inode_query_iversion and fill the result in the field.
->=20
-> I guess, is it better to update the corresponding part of the man-pages..=
-.?
+From: Xiubo Li <xiubli@redhat.com>
 
-Yes. If we end up accepting a patch like this, we'll need to update the
-statx(2) manpage. We'll probably also want to add support for it to the
-/bin/stat coreutils command as well.
+For write when trying to get the Fwb caps we need to keep waiting
+on transition from WRBUFFER|WR -> WR to avoid a new WR sync write
+from going before a prior buffered writeback happens.
 
-At this point, I'm trying to put together some xfstests so we can ensure
-that this feature doesn't regress (if we take it).
+Whild for read there is not need to wait on transition from
+RDCACHE|RD -> RD, and we can just exclude the revoking caps and
+force to sync read.
 
-> >=20
-> >=20
-> > Also update the test-statx.c program to fetch the change attribute as
-> > well.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/stat.c                 | 7 +++++++
-> >  include/linux/stat.h      | 1 +
-> >  include/uapi/linux/stat.h | 3 ++-
-> >  samples/vfs/test-statx.c  | 4 +++-
-> >  4 files changed, 13 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/fs/stat.c b/fs/stat.c
-> > index 9ced8860e0f3..976e0a59ab23 100644
-> > --- a/fs/stat.c
-> > +++ b/fs/stat.c
-> > @@ -17,6 +17,7 @@
-> >  #include <linux/syscalls.h>
-> >  #include <linux/pagemap.h>
-> >  #include <linux/compat.h>
-> > +#include <linux/iversion.h>
-> >=20
-> >  #include <linux/uaccess.h>
-> >  #include <asm/unistd.h>
-> > @@ -118,6 +119,11 @@ int vfs_getattr_nosec(const struct path *path, str=
-uct kstat *stat,
-> >         stat->attributes_mask |=3D (STATX_ATTR_AUTOMOUNT |
-> >                                   STATX_ATTR_DAX);
-> >=20
-> > +       if ((request_mask & STATX_CHGATTR) && IS_I_VERSION(inode)) {
-> > +               stat->result_mask |=3D STATX_CHGATTR;
-> > +               stat->chgattr =3D inode_query_iversion(inode);
-> > +       }
-> > +
-> >         mnt_userns =3D mnt_user_ns(path->mnt);
-> >         if (inode->i_op->getattr)
-> >                 return inode->i_op->getattr(mnt_userns, path, stat,
-> > @@ -611,6 +617,7 @@ cp_statx(const struct kstat *stat, struct statx __u=
-ser *buffer)
-> >         tmp.stx_dev_major =3D MAJOR(stat->dev);
-> >         tmp.stx_dev_minor =3D MINOR(stat->dev);
-> >         tmp.stx_mnt_id =3D stat->mnt_id;
-> > +       tmp.stx_chgattr =3D stat->chgattr;
-> >=20
-> >         return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
-> >  }
-> > diff --git a/include/linux/stat.h b/include/linux/stat.h
-> > index 7df06931f25d..4a17887472f6 100644
-> > --- a/include/linux/stat.h
-> > +++ b/include/linux/stat.h
-> > @@ -50,6 +50,7 @@ struct kstat {
-> >         struct timespec64 btime;                        /* File creatio=
-n time */
-> >         u64             blocks;
-> >         u64             mnt_id;
-> > +       u64             chgattr;
-> >  };
-> >=20
-> >  #endif
-> > diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-> > index 1500a0f58041..b45243a0fbc5 100644
-> > --- a/include/uapi/linux/stat.h
-> > +++ b/include/uapi/linux/stat.h
-> > @@ -124,7 +124,7 @@ struct statx {
-> >         __u32   stx_dev_minor;
-> >         /* 0x90 */
-> >         __u64   stx_mnt_id;
-> > -       __u64   __spare2;
-> > +       __u64   stx_chgattr;    /* Inode change attribute */
-> >         /* 0xa0 */
-> >         __u64   __spare3[12];   /* Spare space for future expansion */
-> >         /* 0x100 */
-> > @@ -152,6 +152,7 @@ struct statx {
-> >  #define STATX_BASIC_STATS      0x000007ffU     /* The stuff in the nor=
-mal stat struct */
-> >  #define STATX_BTIME            0x00000800U     /* Want/got stx_btime *=
-/
-> >  #define STATX_MNT_ID           0x00001000U     /* Got stx_mnt_id */
-> > +#define STATX_CHGATTR          0x00002000U     /* Want/git stx_chgattr=
- */
-> >=20
-> >  #define STATX__RESERVED                0x80000000U     /* Reserved for=
- future struct statx expansion */
-> >=20
-> > diff --git a/samples/vfs/test-statx.c b/samples/vfs/test-statx.c
-> > index 49c7a46cee07..767208d2f564 100644
-> > --- a/samples/vfs/test-statx.c
-> > +++ b/samples/vfs/test-statx.c
-> > @@ -109,6 +109,8 @@ static void dump_statx(struct statx *stx)
-> >                 printf(" Inode: %-11llu", (unsigned long long) stx->stx=
-_ino);
-> >         if (stx->stx_mask & STATX_NLINK)
-> >                 printf(" Links: %-5u", stx->stx_nlink);
-> > +       if (stx->stx_mask & STATX_CHGATTR)
-> > +               printf(" Change Attr: 0x%llx", stx->stx_chgattr);
-> >         if (stx->stx_mask & STATX_TYPE) {
-> >                 switch (stx->stx_mode & S_IFMT) {
-> >                 case S_IFBLK:
-> > @@ -218,7 +220,7 @@ int main(int argc, char **argv)
-> >         struct statx stx;
-> >         int ret, raw =3D 0, atflag =3D AT_SYMLINK_NOFOLLOW;
-> >=20
-> > -       unsigned int mask =3D STATX_BASIC_STATS | STATX_BTIME;
-> > +       unsigned int mask =3D STATX_BASIC_STATS | STATX_BTIME | STATX_C=
-HGATTR;
-> >=20
-> >         for (argv++; *argv; argv++) {
-> >                 if (strcmp(*argv, "-F") =3D=3D 0) {
-> > --
-> > 2.37.1
-> >=20
->=20
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/caps.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---=20
-Jeff Layton <jlayton@redhat.com>
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 139d21b8fb49..d5fc9b1be7c3 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -2811,13 +2811,17 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
+ 		 * on transition from wanted -> needed caps.  This is needed
+ 		 * for WRBUFFER|WR -> WR to avoid a new WR sync write from
+ 		 * going before a prior buffered writeback happens.
++		 *
++		 * For RDCACHE|RD -> RD, there is not need to wait and we can
++		 * just exclude the revoking caps and force to sync read.
+ 		 */
+ 		int not = want & ~(have & need);
+ 		int revoking = implemented & ~have;
++		int exclude = revoking & not;
+ 		dout("get_cap_refs %p have %s but not %s (revoking %s)\n",
+ 		     inode, ceph_cap_string(have), ceph_cap_string(not),
+ 		     ceph_cap_string(revoking));
+-		if ((revoking & not) == 0) {
++		if (!exclude || !(exclude & CEPH_CAP_FILE_BUFFER)) {
+ 			if (!snap_rwsem_locked &&
+ 			    !ci->i_head_snapc &&
+ 			    (need & CEPH_CAP_FILE_WR)) {
+@@ -2839,7 +2843,7 @@ static int try_get_cap_refs(struct inode *inode, int need, int want,
+ 				snap_rwsem_locked = true;
+ 			}
+ 			if ((have & want) == want)
+-				*got = need | want;
++				*got = need | (want & ~exclude);
+ 			else
+ 				*got = need;
+ 			ceph_take_cap_refs(ci, *got, true);
+-- 
+2.36.0.rc1
 
