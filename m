@@ -2,112 +2,83 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B832759085B
-	for <lists+ceph-devel@lfdr.de>; Thu, 11 Aug 2022 23:52:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46254590881
+	for <lists+ceph-devel@lfdr.de>; Fri, 12 Aug 2022 00:04:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235793AbiHKVws (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 11 Aug 2022 17:52:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60428 "EHLO
+        id S236331AbiHKWEe (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 11 Aug 2022 18:04:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233763AbiHKVwr (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 11 Aug 2022 17:52:47 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 183CB13F68
-        for <ceph-devel@vger.kernel.org>; Thu, 11 Aug 2022 14:52:46 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id dc19so35692306ejb.12
-        for <ceph-devel@vger.kernel.org>; Thu, 11 Aug 2022 14:52:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc;
-        bh=n7g4q0re2nBdkZsO0VeJ01BMNo+LYiU8Bvh11jMjf/c=;
-        b=QRaKVLiumxczB4AoRVjiQPgVmOxyMyxrWzHEAgfawho9jffJn1dtwxv5L94nY0eOOI
-         a1bHvaYBMVXaVxcIrVNgfEjIrglzAWyDj3apv+PqsEZtti8sg4LMGKiCXnM/mAiatZfe
-         Nnq5ixvjPydGSuJHUehEg9IIl8cnD3EFODU5A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc;
-        bh=n7g4q0re2nBdkZsO0VeJ01BMNo+LYiU8Bvh11jMjf/c=;
-        b=EPKrgDIpseCa89G57j3lbTNoZJJ1kVr/UfmYB8+IwvHe96qqVZ2KpsKukHOHFuVd55
-         SPLpJSepS3yG2XVZaLeetIxNcNSsfXgWPaUSTP/O7mjNw5ok7tbZmOkB8589KVDIS3c2
-         Hq7BoSpu1JlHsd3rzTnMi07vcAyZMig9tYU7R4J/DtJTS4G7Cjfr2pa/L1aUEb9TfuJj
-         4sYnYJQW5G3/vXjOY92tmGU8yR/ynAJeQen9aNcKvBjU+TI6LuYgji4ow4KLEl7B/W/C
-         2lQVROUnXE++0CEHoPxnufO7jsWGr6HqZEHyDoRSlY38K7mL/NHvbp6hD0VoIU7jpq3Y
-         QLvw==
-X-Gm-Message-State: ACgBeo1LuYeeoP0NGEzPTL+PJbl4peiSaLRwjnyXeSkjYzEgxLLmvaXU
-        p+Xe31QHebuCjFwLGVjhXYrr8PqwaQCCk6RJ
-X-Google-Smtp-Source: AA6agR5vXdMipEz/W0Lfk6942iVlbtzZFCUxC/tf9CeQqaBvxIziwIMP0E0iG8E1/BXt5gCMq+/88g==
-X-Received: by 2002:a17:907:2c5b:b0:730:da23:5b58 with SMTP id hf27-20020a1709072c5b00b00730da235b58mr707541ejc.123.1660254764457;
-        Thu, 11 Aug 2022 14:52:44 -0700 (PDT)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com. [209.85.128.50])
-        by smtp.gmail.com with ESMTPSA id gi10-20020a1709070c8a00b0072aadbd48c7sm107947ejc.84.2022.08.11.14.52.43
-        for <ceph-devel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Aug 2022 14:52:44 -0700 (PDT)
-Received: by mail-wm1-f50.google.com with SMTP id v5so10082301wmj.0
-        for <ceph-devel@vger.kernel.org>; Thu, 11 Aug 2022 14:52:43 -0700 (PDT)
-X-Received: by 2002:a1c:2582:0:b0:3a5:1453:ca55 with SMTP id
- l124-20020a1c2582000000b003a51453ca55mr6664785wml.68.1660254762906; Thu, 11
- Aug 2022 14:52:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220811152446.281723-1-idryomov@gmail.com> <CAHk-=wifgq59uru6xDB=nY-1p6aQ-1YB8nVhW7T-N2ctK3m1gw@mail.gmail.com>
- <CAOi1vP9BSi-65of-8D0BA1_DC0eVD_TQcWkhrGJwaXw_skhHFQ@mail.gmail.com>
- <5d0b0367a5e28ec5b1f3b995c7792ff9a5cbcbd4.camel@kernel.org>
- <YvVzHQ5DVaPAvw26@ZenIV> <72a93a2c8910c3615bba7c093c66c18b1a6a2696.camel@kernel.org>
- <YvV2zfT0XbgwHGe/@ZenIV>
-In-Reply-To: <YvV2zfT0XbgwHGe/@ZenIV>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 11 Aug 2022 14:52:26 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgYnAPiGsh7H4BS_E1aMM46PdSGg8YqFhi2SpGw+Ac_PQ@mail.gmail.com>
-Message-ID: <CAHk-=wgYnAPiGsh7H4BS_E1aMM46PdSGg8YqFhi2SpGw+Ac_PQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Ceph updates for 5.20-rc1
-To:     Al Viro <viro@zeniv.linux.org.uk>
+        with ESMTP id S235284AbiHKWEd (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 11 Aug 2022 18:04:33 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E243B94EF3;
+        Thu, 11 Aug 2022 15:04:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=Wq45TFbP2AKILUBXx++bf06XJdFtfjvXV9u0Ru13Lv4=; b=hZeoY/QMps6s+T3DAxj6Mj86EK
+        i74PHci6KNWl9D0ZgPLqENS/3Bp8QnaNbHGtG+Y72pwDAxqxp0rFLe7vgM0pwzngnGlN8vY1Kfew+
+        wdIQujnP2TvdMuUaQ8M5RTB8aolPgp5oTcpz9xxql7c5PKcphUTGSimpVhRb7YmIIUhWn4peQu41B
+        2ml9drJ+JjfC/q1fTk0DBjtJriR16FK6I3ZxQSgsdCXbdWen5wZW/ZArsHmhTZeLhA3GQnVc5addF
+        oAtv+Vha6CcgsEp2dR+/JO1hLde+3rpVJHaOzxjSxZ/hE6LsvObUxGb4QvfvFhPytdvpJuyfUgbbY
+        VWmcEzEQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
+        id 1oMGHz-003ZFe-0R;
+        Thu, 11 Aug 2022 22:04:27 +0000
+Date:   Thu, 11 Aug 2022 23:04:26 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Subject: Re: [GIT PULL] Ceph updates for 5.20-rc1
+Message-ID: <YvV86p5DjBLjjXHo@ZenIV>
+References: <20220811152446.281723-1-idryomov@gmail.com>
+ <CAHk-=wifgq59uru6xDB=nY-1p6aQ-1YB8nVhW7T-N2ctK3m1gw@mail.gmail.com>
+ <CAOi1vP9BSi-65of-8D0BA1_DC0eVD_TQcWkhrGJwaXw_skhHFQ@mail.gmail.com>
+ <5d0b0367a5e28ec5b1f3b995c7792ff9a5cbcbd4.camel@kernel.org>
+ <YvVzHQ5DVaPAvw26@ZenIV>
+ <72a93a2c8910c3615bba7c093c66c18b1a6a2696.camel@kernel.org>
+ <YvV2zfT0XbgwHGe/@ZenIV>
+ <CAHk-=wgYnAPiGsh7H4BS_E1aMM46PdSGg8YqFhi2SpGw+Ac_PQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgYnAPiGsh7H4BS_E1aMM46PdSGg8YqFhi2SpGw+Ac_PQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Aug 11, 2022 at 2:38 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Exporting the functionality?  Sure, no problem.  Uninlining that one...
-> I suspect that it's OK, but I'd like to see profiling data; it's not
-> as if it would be hard to return to having it inlined, obviously.
+On Thu, Aug 11, 2022 at 02:52:26PM -0700, Linus Torvalds wrote:
+> On Thu, Aug 11, 2022 at 2:38 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > Exporting the functionality?  Sure, no problem.  Uninlining that one...
+> > I suspect that it's OK, but I'd like to see profiling data; it's not
+> > as if it would be hard to return to having it inlined, obviously.
+> 
+> The only case where I think it might matter is in __d_lookup(), and
+> it's probably not measurable.
+> 
+> Yes, __d_lookup() does matter, but it only matters once you've fallen
+> out of RCU mode, and at that point the cost of the function call is
+> likely in the noise.
+> 
+> I don't particularly like how it's inside that dentry hash chain loop,
+> but realistically by then we've already done a function call for the
+> dentry lock spinlock, so that loop already has to deal with it.
 
-The only case where I think it might matter is in __d_lookup(), and
-it's probably not measurable.
-
-Yes, __d_lookup() does matter, but it only matters once you've fallen
-out of RCU mode, and at that point the cost of the function call is
-likely in the noise.
-
-I don't particularly like how it's inside that dentry hash chain loop,
-but realistically by then we've already done a function call for the
-dentry lock spinlock, so that loop already has to deal with it.
-
-Again, __d_lookup_rcu() is the place where adding a function call
-would matter more, because that one really does show up on profiles
-regularly.
-
-And it so carefully tries to avoid function calls (but the
-DCACHE_OP_COMPARE case causes problems: at one time a few years ago I
-actually wanted to move the DCACHE_OP_COMPARE *out* of the loop
-entirely, because it's loop invariant and having that unlikely cause
-inside the loop still causes bad things for register allocation).
-
-So I think the uninlining is fine. If I had been really unhappy about
-it I would have undone the pull.
-
-It was more the "I was told there would be cake, but there was no
-cake" that annoyed me.
-
-            Linus
+FWIW, I wonder if we should do
+	if (READ_ONCE(dentry->d_parent) != parent)
+		continue;
+before grabbing ->d_lock (and repeat the check after grabbing it,
+of course).  It's OK from correctness POV - we are OK with false
+negatives from __d_lookup() if concurrent rename happens.  And
+it just might be a sufficiently large performance win...
