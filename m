@@ -2,82 +2,81 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C1F1C59267F
-	for <lists+ceph-devel@lfdr.de>; Sun, 14 Aug 2022 23:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86126592682
+	for <lists+ceph-devel@lfdr.de>; Sun, 14 Aug 2022 23:20:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236593AbiHNVOb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 14 Aug 2022 17:14:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52862 "EHLO
+        id S229627AbiHNVUU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 14 Aug 2022 17:20:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232017AbiHNVO3 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 14 Aug 2022 17:14:29 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB69662D4
-        for <ceph-devel@vger.kernel.org>; Sun, 14 Aug 2022 14:14:28 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id w3so7494716edc.2
-        for <ceph-devel@vger.kernel.org>; Sun, 14 Aug 2022 14:14:28 -0700 (PDT)
+        with ESMTP id S229494AbiHNVUS (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 14 Aug 2022 17:20:18 -0400
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6D03C04
+        for <ceph-devel@vger.kernel.org>; Sun, 14 Aug 2022 14:20:17 -0700 (PDT)
+Received: by mail-lf1-x132.google.com with SMTP id u3so8291263lfk.8
+        for <ceph-devel@vger.kernel.org>; Sun, 14 Aug 2022 14:20:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc;
-        bh=Q3rxfxfhyGA2AUg4ZGZuVw0wPS1+PYg+Nvu3rOct/ZI=;
-        b=ApWQ4x42OQeA+KH06JfSUCYmPkUBMH87sd6c/gBlW/w5OJ84FReYQXibCA3KO4dWHN
-         QReeRlrLBcI8uzwW/cArNEPq7OYpPDalsGzvqlOEb8XQdt8+u7pLG1b+/2rFlL9cBgiR
-         4CmeoFXzhECb6bn1K00PNqRN9M15hjeKshquk=
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=SkQFrjjD+SLMS1KGY+0ZxG8OFTp1L8fZfcWunvGDMHI=;
+        b=sFsepAeLhe3VNoJ+5lZwh6r5C8SM6ty9/yAfJgCTWN3ZFmjtxFgV6E7EwxJA9HvvQO
+         VG4bdKIRutMVPYri5AZ6wzsJMAV3QEbRcLTedpdz5ugXStIJpY3AA5tWJjGjMNpPmH1J
+         XC1KlCcr5GxoZGF6WPUt4ZMrwh01NlGPCLcd9aVVxISlTDhQTqxIoWl2wyFl/4CjURw4
+         uD4XQG7qsBtecGQwBDK0nQxiyA0dvosRivdbq2jr5nIH2cVZylvSqVphXSih1xFi2SU9
+         KGHtja+WuWlATJNeey0K7UXRN10qCqgMZBO0aXMygwmT7ZwmeEJ9kTo20Tv17wA8lwNe
+         QDDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc;
-        bh=Q3rxfxfhyGA2AUg4ZGZuVw0wPS1+PYg+Nvu3rOct/ZI=;
-        b=pXp23o6/keeSQ7gDB8LCz4YemNWBiTN8xk26sxKBxRb8JdZLCPM0D/n4t64vMIPaN8
-         vSE6rMoI5ua6mc+NmjJqEjfsg6h7Zn0Z/uWL3F5jruIIRLRqNxcJCmCiIIf2oriqCYph
-         igBWS8RUZjJmI/4K8ItQsbnX22s8gR6ySDpYrXnt5eqMyTPlf3lnK3arVseQQRajXrm+
-         FkqNzYE+WEskGRNrDGeMQXQgAVNvKIm9WVKP+qcrRDwaoubASuLLrmUM0XRxAgvfS7ie
-         /OTFoNZaOog8Vh7HGsdTAQY41MrA7dK7zb27oXeTIZ5B86wRuNzwVP1b2YWIxPS+pTbO
-         drfg==
-X-Gm-Message-State: ACgBeo1HsE1S9ZsViwjPqmPvYW0GRzzw+7GIisptGdb+qM78dhTD5XSF
-        gy/Wx5FFd3FCPAuLikMNvE2PniP6Yr0MbhaQ
-X-Google-Smtp-Source: AA6agR5YdCC6rPJjhaWyuK3p2vAuHkRCnEWjSIfCfbf9t7BuRdHIEcRkKnVPvkf3xmxwueKBccwHcQ==
-X-Received: by 2002:a05:6402:40ce:b0:43d:f8a0:9c4f with SMTP id z14-20020a05640240ce00b0043df8a09c4fmr12165950edb.95.1660511667094;
-        Sun, 14 Aug 2022 14:14:27 -0700 (PDT)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com. [209.85.221.53])
-        by smtp.gmail.com with ESMTPSA id gt20-20020a170906f21400b0072abb95c9f4sm3277710ejb.193.2022.08.14.14.14.25
-        for <ceph-devel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Aug 2022 14:14:25 -0700 (PDT)
-Received: by mail-wr1-f53.google.com with SMTP id bs25so7095097wrb.2
-        for <ceph-devel@vger.kernel.org>; Sun, 14 Aug 2022 14:14:25 -0700 (PDT)
-X-Received: by 2002:a05:6000:178d:b0:222:c7ad:2d9a with SMTP id
- e13-20020a056000178d00b00222c7ad2d9amr7067605wrg.274.1660511665009; Sun, 14
- Aug 2022 14:14:25 -0700 (PDT)
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=SkQFrjjD+SLMS1KGY+0ZxG8OFTp1L8fZfcWunvGDMHI=;
+        b=Dk1fjdmGiik42RWo0sErygjQKW72vjcjXSCi4yfcDoq+u1DAFb6rxoHmf/lkch8KMW
+         gZLJVPXVyrsOw7Xsk+pu7SLZK8MmVZi5aiTYZV8t2koI6QTqJd7kmzOe7Hd05sKBOjvg
+         EVvblf+ncSeGV2uG7VZfZJPGK1G07J62Ze1TBd12OlR1hH5AXYV0Jp91X05clyrkltgE
+         8AD7NKSoKIqYMxXYr/5UNjWKPGXXqp4mFxOx85HtakZKSO1EAJ9+lDYkMCEQGmjnAP5A
+         tW9EeJYeWgTXXTOe2SCAef7Dbb3TTyFWpvTz+UB3nQETgWrg9D8ec1E6WSXMo77b2jS/
+         cR5w==
+X-Gm-Message-State: ACgBeo0UKd+4a0+lRt0lRMha2w6NI/hMW1yu6sa01aedk0Jmw2T9ow1+
+        y5kjjtL/NLkDS1tpilQ9NJ0/pFaVqr1bl33uqIhXiQ==
+X-Google-Smtp-Source: AA6agR57awhlG1SwOBEitCmgKcFGaqz1ZEfQ+SbIU5ZxxUBt6P1IK9W+x8VBkTQijpI1wOk/tWgxr4KxDlXpwqbhFOY=
+X-Received: by 2002:a05:6512:b01:b0:48b:a065:2a8b with SMTP id
+ w1-20020a0565120b0100b0048ba0652a8bmr4139640lfu.401.1660512015704; Sun, 14
+ Aug 2022 14:20:15 -0700 (PDT)
 MIME-Version: 1.0
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 14 Aug 2022 14:14:08 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh1xHi-WeytuAK1-iSsR0wi=6e4-WgFq6ZPt8Z1mvqoNA@mail.gmail.com>
-Message-ID: <CAHk-=wh1xHi-WeytuAK1-iSsR0wi=6e4-WgFq6ZPt8Z1mvqoNA@mail.gmail.com>
-Subject: Simplify load_unaligned_zeropad() (was Re: [GIT PULL] Ceph updates
- for 5.20-rc1)
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
+References: <CAOi1vP9BSi-65of-8D0BA1_DC0eVD_TQcWkhrGJwaXw_skhHFQ@mail.gmail.com>
+ <5d0b0367a5e28ec5b1f3b995c7792ff9a5cbcbd4.camel@kernel.org>
+ <YvVzHQ5DVaPAvw26@ZenIV> <72a93a2c8910c3615bba7c093c66c18b1a6a2696.camel@kernel.org>
+ <YvV2zfT0XbgwHGe/@ZenIV> <CAHk-=wgYnAPiGsh7H4BS_E1aMM46PdSGg8YqFhi2SpGw+Ac_PQ@mail.gmail.com>
+ <YvV86p5DjBLjjXHo@ZenIV> <CAHk-=wjCa=Xf=pA2Z844WnwEeYgy9OPoB2kWphvg7PVn3ohScw@mail.gmail.com>
+ <CAHk-=wjLLw0xjL+TZs5DUGL8hOpmLMa4B92aDVFxw4HZthLraw@mail.gmail.com>
+ <CAHk-=wjyOB66pofW0mfzDN7SO8zS1EMRZuR-_2aHeO+7kuSrAg@mail.gmail.com>
+ <YvlILbn1ERLgZreh@ZenIV> <CAHk-=wjvKtkqF9AXx8GoA80h_RNUV=Ld8qhi8ZEPmDXC0VUDUA@mail.gmail.com>
+ <CAHk-=wiVyGt0XCFom97ULZyG5Phf7+ifC03sW1i4HUz7xaazng@mail.gmail.com>
+In-Reply-To: <CAHk-=wiVyGt0XCFom97ULZyG5Phf7+ifC03sW1i4HUz7xaazng@mail.gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Sun, 14 Aug 2022 14:20:04 -0700
+Message-ID: <CAKwvOdnL=icZ7j=-i-OY2CaFxgF9eJsNQo=7ARDXUeAraNzhaA@mail.gmail.com>
+Subject: Re: [GIT PULL] Ceph updates for 5.20-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Nathan Chancellor <nathan@kernel.org>,
         Jeff Layton <jlayton@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
+        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
         clang-built-linux <llvm@lists.linux.dev>
-Content-Type: multipart/mixed; boundary="000000000000f109c905e639ff71"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
-
---000000000000f109c905e639ff71
-Content-Type: text/plain; charset="UTF-8"
 
 On Sun, Aug 14, 2022 at 1:29 PM Linus Torvalds
 <torvalds@linux-foundation.org> wrote:
@@ -93,117 +92,12 @@ On Sun, Aug 14, 2022 at 1:29 PM Linus Torvalds
 > enabled - and very very seldom even then - is not something we can
 > really explain to clang.
 
-Hmm.
+Probably if we could express that the do_exception label in
+load_unaligned_zeropad was cold then that might help.
+https://github.com/llvm/llvm-project/issues/46831
 
-The solution to that is actually to move the 'zeropad' part into the
-exception handler.
-
-That makes both gcc and clang generate quite nice code for this all.
-But perhaps equally importantly, it actually simplifies the code
-noticeably:
-
- arch/x86/include/asm/extable_fixup_types.h |  2 ++
- arch/x86/include/asm/word-at-a-time.h      | 50 +++---------------------------
- arch/x86/mm/extable.c                      | 30 ++++++++++++++++++
- 3 files changed, 37 insertions(+), 45 deletions(-)
-
-and that's with 11 of those 37 new lines being a new block comment.
-
-It's mainly because now there's no need to worry about
-CONFIG_CC_HAS_ASM_GOTO_OUTPUT in load_unaligned_zeropad(), because the
-asm becomes a simple "address in, data out" thing.
-
-And to make the fixup code simple and straightforward, I just made
-"load_unaligned_zeropad()" use fixed registers for address and output,
-which doesn't bother the compilers at all, they'll happily adjust
-their register allocation. The code generation ends up much better
-than with the goto and the subtle address games that never trigger
-anyway.
-
-PeterZ - you've touched both the load_unaligned_zeropad() and the
-exception code last, so let's run this past you, but this really does
-seem to not only fix the code generation issue in fs/dcache.s, it just
-looks simpler too. Comments?
-
-             Linus
-
---000000000000f109c905e639ff71
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_l6ttpmer0>
-X-Attachment-Id: f_l6ttpmer0
-
-IGFyY2gveDg2L2luY2x1ZGUvYXNtL2V4dGFibGVfZml4dXBfdHlwZXMuaCB8ICAyICsrCiBhcmNo
-L3g4Ni9pbmNsdWRlL2FzbS93b3JkLWF0LWEtdGltZS5oICAgICAgfCA1MCArKystLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0KIGFyY2gveDg2L21tL2V4dGFibGUuYyAgICAgICAgICAgICAgICAg
-ICAgICB8IDMwICsrKysrKysrKysrKysrKysrKwogMyBmaWxlcyBjaGFuZ2VkLCAzNyBpbnNlcnRp
-b25zKCspLCA0NSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9pbmNsdWRlL2Fz
-bS9leHRhYmxlX2ZpeHVwX3R5cGVzLmggYi9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9leHRhYmxlX2Zp
-eHVwX3R5cGVzLmgKaW5kZXggNTAzNjIyNjI3NDAwLi5iNTNmMTkxOTcxMGIgMTAwNjQ0Ci0tLSBh
-L2FyY2gveDg2L2luY2x1ZGUvYXNtL2V4dGFibGVfZml4dXBfdHlwZXMuaAorKysgYi9hcmNoL3g4
-Ni9pbmNsdWRlL2FzbS9leHRhYmxlX2ZpeHVwX3R5cGVzLmgKQEAgLTY0LDQgKzY0LDYgQEAKICNk
-ZWZpbmUJRVhfVFlQRV9VQ09QWV9MRU40CQkoRVhfVFlQRV9VQ09QWV9MRU4gfCBFWF9EQVRBX0lN
-TSg0KSkKICNkZWZpbmUJRVhfVFlQRV9VQ09QWV9MRU44CQkoRVhfVFlQRV9VQ09QWV9MRU4gfCBF
-WF9EQVRBX0lNTSg4KSkKIAorI2RlZmluZSBFWF9UWVBFX1pFUk9QQUQJCQkyMCAvKiBsb2FkIGF4
-IGZyb20gZHggemVyby1wYWRkZWQgKi8KKwogI2VuZGlmCmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9p
-bmNsdWRlL2FzbS93b3JkLWF0LWEtdGltZS5oIGIvYXJjaC94ODYvaW5jbHVkZS9hc20vd29yZC1h
-dC1hLXRpbWUuaAppbmRleCA4MzM4YjA0MzJiNTAuLjQ4OTNmMWIzMGRkNiAxMDA2NDQKLS0tIGEv
-YXJjaC94ODYvaW5jbHVkZS9hc20vd29yZC1hdC1hLXRpbWUuaAorKysgYi9hcmNoL3g4Ni9pbmNs
-dWRlL2FzbS93b3JkLWF0LWEtdGltZS5oCkBAIC03Nyw1OCArNzcsMTggQEAgc3RhdGljIGlubGlu
-ZSB1bnNpZ25lZCBsb25nIGZpbmRfemVybyh1bnNpZ25lZCBsb25nIG1hc2spCiAgKiBhbmQgdGhl
-IG5leHQgcGFnZSBub3QgYmVpbmcgbWFwcGVkLCB0YWtlIHRoZSBleGNlcHRpb24gYW5kCiAgKiBy
-ZXR1cm4gemVyb2VzIGluIHRoZSBub24tZXhpc3RpbmcgcGFydC4KICAqLwotI2lmZGVmIENPTkZJ
-R19DQ19IQVNfQVNNX0dPVE9fT1VUUFVUCi0KIHN0YXRpYyBpbmxpbmUgdW5zaWduZWQgbG9uZyBs
-b2FkX3VuYWxpZ25lZF96ZXJvcGFkKGNvbnN0IHZvaWQgKmFkZHIpCiB7Ci0JdW5zaWduZWQgbG9u
-ZyBvZmZzZXQsIGRhdGE7CiAJdW5zaWduZWQgbG9uZyByZXQ7CiAKLQlhc21fdm9sYXRpbGVfZ290
-bygKLQkJIjE6CW1vdiAlW21lbV0sICVbcmV0XVxuIgotCi0JCV9BU01fRVhUQUJMRSgxYiwgJWxb
-ZG9fZXhjZXB0aW9uXSkKLQotCQk6IFtyZXRdICI9ciIgKHJldCkKLQkJOiBbbWVtXSAibSIgKCoo
-dW5zaWduZWQgbG9uZyAqKWFkZHIpCi0JCTogOiBkb19leGNlcHRpb24pOwotCi0JcmV0dXJuIHJl
-dDsKLQotZG9fZXhjZXB0aW9uOgotCW9mZnNldCA9ICh1bnNpZ25lZCBsb25nKWFkZHIgJiAoc2l6
-ZW9mKGxvbmcpIC0gMSk7Ci0JYWRkciA9ICh2b2lkICopKCh1bnNpZ25lZCBsb25nKWFkZHIgJiB+
-KHNpemVvZihsb25nKSAtIDEpKTsKLQlkYXRhID0gKih1bnNpZ25lZCBsb25nICopYWRkcjsKLQly
-ZXQgPSBkYXRhID4+IG9mZnNldCAqIDg7Ci0KLQlyZXR1cm4gcmV0OwotfQotCi0jZWxzZSAvKiAh
-Q09ORklHX0NDX0hBU19BU01fR09UT19PVVRQVVQgKi8KLQotc3RhdGljIGlubGluZSB1bnNpZ25l
-ZCBsb25nIGxvYWRfdW5hbGlnbmVkX3plcm9wYWQoY29uc3Qgdm9pZCAqYWRkcikKLXsKLQl1bnNp
-Z25lZCBsb25nIG9mZnNldCwgZGF0YTsKLQl1bnNpZ25lZCBsb25nIHJldCwgZXJyID0gMDsKLQot
-CWFzbSgJIjE6CW1vdiAlW21lbV0sICVbcmV0XVxuIgorCWFzbSB2b2xhdGlsZSgKKwkJIjE6CW1v
-diAoJVthZGRyXSksICVbcmV0XVxuIgogCQkiMjpcbiIKLQotCQlfQVNNX0VYVEFCTEVfRkFVTFQo
-MWIsIDJiKQotCi0JCTogW3JldF0gIj0mciIgKHJldCksICIrYSIgKGVycikKLQkJOiBbbWVtXSAi
-bSIgKCoodW5zaWduZWQgbG9uZyAqKWFkZHIpKTsKLQotCWlmICh1bmxpa2VseShlcnIpKSB7Ci0J
-CW9mZnNldCA9ICh1bnNpZ25lZCBsb25nKWFkZHIgJiAoc2l6ZW9mKGxvbmcpIC0gMSk7Ci0JCWFk
-ZHIgPSAodm9pZCAqKSgodW5zaWduZWQgbG9uZylhZGRyICYgfihzaXplb2YobG9uZykgLSAxKSk7
-Ci0JCWRhdGEgPSAqKHVuc2lnbmVkIGxvbmcgKilhZGRyOwotCQlyZXQgPSBkYXRhID4+IG9mZnNl
-dCAqIDg7Ci0JfQorCQlfQVNNX0VYVEFCTEVfVFlQRSgxYiwgMmIsIEVYX1RZUEVfWkVST1BBRCkK
-KwkJOiBbcmV0XSAiPWEiIChyZXQpCisJCTogW2FkZHJdICJkIiAoYWRkcikpOwogCiAJcmV0dXJu
-IHJldDsKIH0KIAotI2VuZGlmIC8qIENPTkZJR19DQ19IQVNfQVNNX0dPVE9fT1VUUFVUICovCi0K
-ICNlbmRpZiAvKiBfQVNNX1dPUkRfQVRfQV9USU1FX0ggKi8KZGlmZiAtLWdpdCBhL2FyY2gveDg2
-L21tL2V4dGFibGUuYyBiL2FyY2gveDg2L21tL2V4dGFibGUuYwppbmRleCAzMzEzMTBjMjkzNDku
-LjU4Yzc5MDc3YTQ5NiAxMDA2NDQKLS0tIGEvYXJjaC94ODYvbW0vZXh0YWJsZS5jCisrKyBiL2Fy
-Y2gveDg2L21tL2V4dGFibGUuYwpAQCAtNDEsNiArNDEsMzQgQEAgc3RhdGljIGJvb2wgZXhfaGFu
-ZGxlcl9kZWZhdWx0KGNvbnN0IHN0cnVjdCBleGNlcHRpb25fdGFibGVfZW50cnkgKmUsCiAJcmV0
-dXJuIHRydWU7CiB9CiAKKy8qCisgKiBUaGlzIGlzIHRoZSAqdmVyeSogcmFyZSBjYXNlIHdoZXJl
-IHdlIGRvIGEgImxvYWRfdW5hbGlnbmVkX3plcm9wYWQoKSIKKyAqIGFuZCBpdCdzIGEgcGFnZSBj
-cm9zc2VyIGludG8gYSBub24tZXhpc3RlbnQgcGFnZS4KKyAqCisgKiBUaGlzIGhhcHBlbnMgd2hl
-biB3ZSBvcHRpbWlzdGljYWxseSBsb2FkIGEgcGF0aG5hbWUgYSB3b3JkLWF0LWEtdGltZQorICog
-YW5kIHRoZSBuYW1lIGlzIGxlc3MgdGhhbiB0aGUgZnVsbCB3b3JkIGFuZCB0aGUgIG5leHQgcGFn
-ZSBpcyBub3QKKyAqIG1hcHBlZC4gVHlwaWNhbGx5IHRoYXQgb25seSBoYXBwZW5zIGZvciBDT05G
-SUdfREVCVUdfUEFHRUFMTE9DLgorICoKKyAqIE5PVEUhIFRoZSBsb2FkIGlzIGFsd2F5cyBvZiB0
-aGUgZm9ybSAibW92ICglZWR4KSwlZWF4IiB0byBtYWtlIHRoZQorICogZml4dXAgc2ltcGxlLgor
-ICovCitzdGF0aWMgYm9vbCBleF9oYW5kbGVyX3plcm9wYWQoY29uc3Qgc3RydWN0IGV4Y2VwdGlv
-bl90YWJsZV9lbnRyeSAqZSwKKwkJCSAgICAgICBzdHJ1Y3QgcHRfcmVncyAqcmVncywKKwkJCSAg
-ICAgICB1bnNpZ25lZCBsb25nIGZhdWx0X2FkZHIpCit7CisJY29uc3QgdW5zaWduZWQgbG9uZyBt
-YXNrID0gc2l6ZW9mKGxvbmcpIC0gMTsKKwl1bnNpZ25lZCBsb25nIG9mZnNldCwgYWRkcjsKKwor
-CW9mZnNldCA9IHJlZ3MtPmR4ICYgbWFzazsKKwlhZGRyID0gcmVncy0+ZHggJiB+bWFzazsKKwlp
-ZiAoZmF1bHRfYWRkciAhPSBhZGRyICsgc2l6ZW9mKGxvbmcpKQorCQlyZXR1cm4gZmFsc2U7CisK
-KwlyZWdzLT5heCA9ICoodW5zaWduZWQgbG9uZyAqKWFkZHIgPj4gKG9mZnNldCAqIDgpOworCXJl
-Z3MtPmlwID0gZXhfZml4dXBfYWRkcihlKTsKKwlyZXR1cm4gdHJ1ZTsKK30KKwogc3RhdGljIGJv
-b2wgZXhfaGFuZGxlcl9mYXVsdChjb25zdCBzdHJ1Y3QgZXhjZXB0aW9uX3RhYmxlX2VudHJ5ICpm
-aXh1cCwKIAkJCSAgICAgc3RydWN0IHB0X3JlZ3MgKnJlZ3MsIGludCB0cmFwbnIpCiB7CkBAIC0y
-MTcsNiArMjQ1LDggQEAgaW50IGZpeHVwX2V4Y2VwdGlvbihzdHJ1Y3QgcHRfcmVncyAqcmVncywg
-aW50IHRyYXBuciwgdW5zaWduZWQgbG9uZyBlcnJvcl9jb2RlLAogCQlyZXR1cm4gZXhfaGFuZGxl
-cl9zZ3goZSwgcmVncywgdHJhcG5yKTsKIAljYXNlIEVYX1RZUEVfVUNPUFlfTEVOOgogCQlyZXR1
-cm4gZXhfaGFuZGxlcl91Y29weV9sZW4oZSwgcmVncywgdHJhcG5yLCByZWcsIGltbSk7CisJY2Fz
-ZSBFWF9UWVBFX1pFUk9QQUQ6CisJCXJldHVybiBleF9oYW5kbGVyX3plcm9wYWQoZSwgcmVncywg
-ZmF1bHRfYWRkcik7CiAJfQogCUJVRygpOwogfQo=
---000000000000f109c905e639ff71--
+Otherwise, could we put the exceptional case statements in a noinline
+or cold attributed function?
+-- 
+Thanks,
+~Nick Desaulniers
