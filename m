@@ -2,150 +2,154 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 01AA9595FD4
-	for <lists+ceph-devel@lfdr.de>; Tue, 16 Aug 2022 18:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 243425961AC
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Aug 2022 19:58:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236383AbiHPQJA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 16 Aug 2022 12:09:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48862 "EHLO
+        id S236664AbiHPR6J (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 16 Aug 2022 13:58:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55382 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236198AbiHPQIo (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 16 Aug 2022 12:08:44 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8933F7B293;
-        Tue, 16 Aug 2022 09:05:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8D448B818DF;
-        Tue, 16 Aug 2022 16:05:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EEDCC433D7;
-        Tue, 16 Aug 2022 16:05:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1660665950;
-        bh=e3S03XYYIb59wftUp90e9c4/E544yR+7n3TEKoflUtQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ICTYXoPIa40yAetKp+Bw96/taRKf/GDT1/zVBSYCrHZqd5JgBWMd0hxjGwrk2TOow
-         Ax1yV0F+Po6OCDB0cXdHEMrB+iBnX5+iohcYzHSt2Fq4Vnv1uRolJWEbUFGW8pqMzx
-         mvkNODMEkdHRNwcwG+vJX9zBl9NnO7D+UsdG4gn1diQeZucLUpSVQXq17WHAV2r4DW
-         u9Sqx05uf8dWw0858Ec4LXkVAUV4ftb02XADs8nB1CI1sVN9/h5HSO96pvAlg9aEO1
-         Kt7TY6gQGsoEWQso2Jn8yzI04wrH8e749KS8Isj7xXs+BhFhLxxfBcW7KDfrIKabPU
-         NumcVsYY6riZg==
-Message-ID: <d741f144c798c3ef877b9d5e5d0c37d028245915.camel@kernel.org>
-Subject: Re: [PATCH 1/4] vfs: report change attribute in statx for
- IS_I_VERSION inodes
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        viro@zeniv.linux.org.uk, linux-afs@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org,
-        "trond.myklebust" <trond.myklebust@hammerspace.com>
-Date:   Tue, 16 Aug 2022 12:05:48 -0400
-In-Reply-To: <Yvu9HsCgzwpEYhPc@magnolia>
-References: <ef692314ada01fd2117b730ef0afae50102974f5.camel@kernel.org>
-         <20220816134419.xra4krb3jwlm4npk@wittgenstein>
-         <20220816132759.43248-1-jlayton@kernel.org>
-         <20220816132759.43248-2-jlayton@kernel.org>
-         <4066396.1660658141@warthog.procyon.org.uk>
-         <12637.1660662903@warthog.procyon.org.uk>
-         <83d07cc4f7fe2ca9976d3f418e5137f354e933a4.camel@kernel.org>
-         <Yvu9HsCgzwpEYhPc@magnolia>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        with ESMTP id S233523AbiHPR6I (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 16 Aug 2022 13:58:08 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B5572A8
+        for <ceph-devel@vger.kernel.org>; Tue, 16 Aug 2022 10:58:05 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id e13so14459062edj.12
+        for <ceph-devel@vger.kernel.org>; Tue, 16 Aug 2022 10:58:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc;
+        bh=VC/Trrv6J3X4sE7aLeQxuC2Jf1TU8h3dAVmLNNAb/Js=;
+        b=baokk5qq0rlLRQ0xpdsWAYJYwpImRq1O33VCZKgpyUfde7GmI0lSm3zXzVCV3lyMAD
+         4P11NRhDl0HTGv5KvbaqHyJVgYFEv7fzxNzP5DiTj8OajrzVTmGfJX4zttB+r6IjL4l1
+         BdgfkFgN4/Jrel046lgdpxCSDjFqu9TcUfZEg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc;
+        bh=VC/Trrv6J3X4sE7aLeQxuC2Jf1TU8h3dAVmLNNAb/Js=;
+        b=PaPDa2FULO+lC0edia0PTdeJFFiJtDhnrjJM90AMCCoGxDeAIIHwAGHU9dvlryEIoN
+         6dUvtTj0isZUunAmuXW4+9K1qW1Oi37DePVHWKAXD6HMVK5HXXmZ3et12+W9F7BAta0c
+         43I860KMr3cSyUqP6H1YUIAd5WQblQw1kriOwn2gnulyog04YlnDk3yXKk9z6TMxgiVE
+         Kr1aDMNF0ktsy7XjRb7Q+8sok/woZLmek2jxP1L/AZLQCpUVp41tw1s4ztV2OWzZyhH9
+         qzhiENfmQkFeh912YpCLAv2hh7YqXZNZea6n7rK4B5NEs2R1wN1Ua3ArYa5BAFZa8xIJ
+         vUMw==
+X-Gm-Message-State: ACgBeo3HwNyglT1wxLTXBbn99iXOBvq8ca95HMnf1Nh0WtMkU1dPX8mp
+        D6m4R+uBg8BhanfCs9K10VyZuOobTlKW7p+wI7w=
+X-Google-Smtp-Source: AA6agR7HuR8iUPIYqzfiTPtGSRKNWumPHcL9s3J4hrHAGkyu2hSVSIFGUdLRwKSihkP4TLhDzsK6lQ==
+X-Received: by 2002:a05:6402:1a44:b0:441:58fb:8b65 with SMTP id bf4-20020a0564021a4400b0044158fb8b65mr20238683edb.257.1660672683288;
+        Tue, 16 Aug 2022 10:58:03 -0700 (PDT)
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com. [209.85.221.46])
+        by smtp.gmail.com with ESMTPSA id n16-20020aa7c790000000b0043d5c9281a3sm8765263eds.96.2022.08.16.10.58.02
+        for <ceph-devel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Aug 2022 10:58:02 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id p10so13527029wru.8
+        for <ceph-devel@vger.kernel.org>; Tue, 16 Aug 2022 10:58:02 -0700 (PDT)
+X-Received: by 2002:adf:e843:0:b0:225:221f:262 with SMTP id
+ d3-20020adfe843000000b00225221f0262mr272373wrn.193.1660672681718; Tue, 16 Aug
+ 2022 10:58:01 -0700 (PDT)
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <CAHk-=wh1xHi-WeytuAK1-iSsR0wi=6e4-WgFq6ZPt8Z1mvqoNA@mail.gmail.com>
+ <Yvny9L3tw1EolqQ4@worktop.programming.kicks-ass.net> <CAHk-=whnEN3Apb5gRXSZK7BM+MOby9VCZe3sDcW34Zme_wk3uA@mail.gmail.com>
+ <Yvqn8BqE7FdB6Ccd@worktop.programming.kicks-ass.net> <CAHk-=wj6QaNkoNPA0jrW8F_=RNNb1jCsFF2QngNEQb_C=wMDPQ@mail.gmail.com>
+ <YvtPEA/9GV7GthZJ@worktop.programming.kicks-ass.net>
+In-Reply-To: <YvtPEA/9GV7GthZJ@worktop.programming.kicks-ass.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 16 Aug 2022 10:57:45 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjZ0oC0__-kLX51jRwo4XgAQ9xJ=OeT5_=fiLxmDexFZw@mail.gmail.com>
+Message-ID: <CAHk-=wjZ0oC0__-kLX51jRwo4XgAQ9xJ=OeT5_=fiLxmDexFZw@mail.gmail.com>
+Subject: Re: Simplify load_unaligned_zeropad() (was Re: [GIT PULL] Ceph
+ updates for 5.20-rc1)
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        clang-built-linux <llvm@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2022-08-16 at 08:51 -0700, Darrick J. Wong wrote:
-> On Tue, Aug 16, 2022 at 11:32:24AM -0400, Jeff Layton wrote:
-> > On Tue, 2022-08-16 at 16:15 +0100, David Howells wrote:
-> > > Jeff Layton <jlayton@kernel.org> wrote:
-> > >=20
-> > > > I think we'll just have to ensure that before we expose this for an=
-y
-> > > > filesystem that it conforms to some minimum standards. i.e.: it mus=
-t
-> > > > change if there are data or metadata changes to the inode, modulo a=
-time
-> > > > changes due to reads on regular files or readdir on dirs.
-> > > >=20
-> > > > The local filesystems, ceph and NFS should all be fine. I guess tha=
-t
-> > > > just leaves AFS. If it can't guarantee that, then we might want to =
-avoid
-> > > > exposing the counter for it.
-> > >=20
-> > > AFS monotonically increments the counter on data changes; doesn't mak=
-e any
-> > > change for metadata changes (other than the file size).
-> > >=20
-> > > But you can't assume NFS works as per your suggestion as you don't kn=
-ow what's
-> > > backing it (it could be AFS, for example - there's a converter for th=
-at).
-> > >=20
-> >=20
-> > In that case, the NFS server must synthesize a proper change attr. The
-> > NFS spec mandates that it change on most metadata changes.
-> >=20
-> > > Further, for ordinary disk filesystems, two data changes may get elid=
-ed and
-> > > only increment the counter once.
-> > >=20
-> >=20
-> > Not a problem as long as nothing queried the counter in between the
-> > changes.
-> >=20
-> > > And then there's mmap...
-> > >=20
-> >=20
-> > Not sure how that matters here.
-> >=20
-> > > It might be better to reduce the scope of your definition and just sa=
-y that it
-> > > must change if there's a data change and may also be changed if there=
-'s a
-> > > metadata change.
-> > >=20
-> >=20
-> > I'd prefer that we mandate that it change on metadata changes as well.
->=20
-> ...in that case, why not leave the i_version bump in
-> xfs_trans_log_inode?  That will capture all changes to file data,
-> attribues, and metadata. ;)
->=20
->=20
+On Tue, Aug 16, 2022 at 1:02 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> > +#define EX_TYPE_ZEROPAD                      20 /* load ax from dx zero-padded */
+>
+> This comment is now woefully incorrect.
 
-Because that includes changes to the atime due to reads which should be
-specifically omitted. We could still keep that callsite instead, if you
-can see some way to exclude those.
+Yes it is. Will fix.
 
-In practice, we are using a change to i_version to mean that "something
-changed" in the inode, which usually implies a change to the ctime and
-mtime.
+> > +     if (insn_decode(&insn, (void *) regs->ip, len, INSN_MODE_KERN))
+> > +             return false;
+>
+> We have insn_decode_kernel() for exactly this (very) common case.
 
-Trond pointed out that the NFSv4 spec implies that time_access updates
-should be omitted from what we consider to be "metadata" here:
+I did that originally, and then I undid it in disgust, because that
+interface is too simple.
 
-https://mailarchive.ietf.org/arch/msg/nfsv4/yrRBMrVwWWDCrgHPAzq_yAEc7BU/
+In particular, it just uses MAX_INSN_SIZE blindly. Which I didn't want
+to do when I actually had the instruction size.
 
-IMA (which is the only other in-kernel consumer of i_version) also wants
-the same behavior.
+Yes, yes, I also check the decode size after-the-fact, but I didn't
+want the decoder to even look at the invalid bytes.
 
-> > That's what most of the in-kernel users want, and what most of the
-> > existing filesystems provide. If AFS can't give that guarantee then we
-> > can just omit exposing i_version on it.
+This exception case is about the data being at the end of the page, I
+wanted the fixup to be aware of code being at the end of a page too.
 
+(And yeah, I'm not convinced that the decoder is that careful, but at
+that point I feel it's a decoder issue, and not an issue with the code
+I write).
 
---=20
-Jeff Layton <jlayton@kernel.org>
+> > +     if (insn.length != len)
+> > +             return false;
+> > +
+> > +     if (insn.opcode.bytes[0] != 0x8b)
+> > +             return false;
+>
+> I was wondering if we want something like MOV_INSN_OPCODE for 0x8b to
+> enhance readability, otoh it's currently 0x8b all over the place, so
+> whatever. At some point you gotta have the insn tables with you anyway.
+
+Oh, I didn't even notice that we had another case of 0x8b checking.
+But yeah, the MMIO decoding wants to see what kind of access it is.
+
+But it wouldn't be MOV_INSN_OPCODE, it would have to be something like
+MOV_WORD_INSN_MODRM_REG_OPCODE, because that's what people are
+checking for - not just that it's a 'mov', but direction and size too.
+
+And then you'd have to also decide whether you describe those
+#define's using the Intel ordering or the one we actually use in our
+asm. So now the symbolic names are ambiguous anyway, in ways that the
+actual byte value isn't.
+
+So yeah, I suspect it ends up just being an issue of "you have to have
+the opcode tables in front of you anyway".
+
+Because you also need to check that that's the only encoding for "mov"
+(I checked, and yes, it is - there are other 'mov' encodings that move
+directly from memory into %rax, but those are using absolute addresses
+that don't make sense for a "this is an unaligned that might be a page
+crosser")
+
+Side note: now that I look at it, I note that the MMIO decoding
+doesn't handle the absolute address case. It's not really relevant for
+the kernel, but I could *imagine* that it is relevant in user mode,
+and the SEV case actually does have a "decode and emulate user mode
+instruction case".
+
+Not a big issue. If some crazy user even maps IO at a fixed address,
+and then uses a "mov %eax <-> moffset" instruction, the kernel
+emulation will print out an error and refuse to emulate it.
+
+                  Linus
