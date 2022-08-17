@@ -2,61 +2,49 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 85ED7596A8F
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Aug 2022 09:47:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46785596CA7
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Aug 2022 12:19:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233096AbiHQHqM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 17 Aug 2022 03:46:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39284 "EHLO
+        id S233625AbiHQKRu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 17 Aug 2022 06:17:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233329AbiHQHqC (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 17 Aug 2022 03:46:02 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 529957C1F4;
-        Wed, 17 Aug 2022 00:45:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=45RsTvvQpAn/sSf9KQMAsIEwdB3TRL9b7yAQ8edqZtc=; b=rQtLOXCrBQhDRm/70fh1y3S2/5
-        Zvjv3iR9bXRxOX13MCcEc+zLzE1ul+eO189lBhcYzwcTX+W1j/mi2IgUa+iUyMVGaK8aYo36zJjSY
-        NkCmlQy650FpaTgpiFwTVE4INDiafqOmRl68kXZHmAHqlDDBq0ErZdxHYP6lyJAeElBUCv6Vt8FIY
-        bf/z+K5QWA5XTj32dh1I+lB8Kzy9/+y9UNrjbghtVzObo1Si4ugnWoJA85F98bM8STwICsN6Huv2z
-        pdHljpDabBsJ59lxHnBBhfJFWRny5gkRtg3Z4buBCxMiC6dFPr7tF7TLfLLlH38venKpOxQl61ZM/
-        T7NlV8ng==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=worktop.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oODkH-003CgF-VP; Wed, 17 Aug 2022 07:45:46 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4881A98007A; Wed, 17 Aug 2022 09:45:45 +0200 (CEST)
-Date:   Wed, 17 Aug 2022 09:45:45 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        clang-built-linux <llvm@lists.linux.dev>
-Subject: Re: Simplify load_unaligned_zeropad() (was Re: [GIT PULL] Ceph
- updates for 5.20-rc1)
-Message-ID: <YvycqWVs5JbBR1D+@worktop.programming.kicks-ass.net>
-References: <CAHk-=wh1xHi-WeytuAK1-iSsR0wi=6e4-WgFq6ZPt8Z1mvqoNA@mail.gmail.com>
- <Yvny9L3tw1EolqQ4@worktop.programming.kicks-ass.net>
- <CAHk-=whnEN3Apb5gRXSZK7BM+MOby9VCZe3sDcW34Zme_wk3uA@mail.gmail.com>
- <Yvqn8BqE7FdB6Ccd@worktop.programming.kicks-ass.net>
- <CAHk-=wj6QaNkoNPA0jrW8F_=RNNb1jCsFF2QngNEQb_C=wMDPQ@mail.gmail.com>
- <YvtPEA/9GV7GthZJ@worktop.programming.kicks-ass.net>
- <CAHk-=wjZ0oC0__-kLX51jRwo4XgAQ9xJ=OeT5_=fiLxmDexFZw@mail.gmail.com>
+        with ESMTP id S229752AbiHQKRt (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 17 Aug 2022 06:17:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB78958DCE
+        for <ceph-devel@vger.kernel.org>; Wed, 17 Aug 2022 03:17:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 51D96613F7
+        for <ceph-devel@vger.kernel.org>; Wed, 17 Aug 2022 10:17:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54373C43140;
+        Wed, 17 Aug 2022 10:17:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1660731467;
+        bh=9zWm6y14IIEQH79LT1ch5BoqbRiITiPThNnvO5kLHZM=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=HbzKg1lTbQCY4P3pmoHMzZqzvz4t4sIPvTe/iEogdjqLKwplywtVEk1lh6UGQIOKi
+         k6lOrfFAG8z1Si4hey5t85MCAQbqr942oQkFs1AooUeHmpdhi9DiCvZkp1DuMg8MVh
+         +cfkMcmByXEkhpmRs2vLHs/QPhWPXUnLZ243NO1lJgfLNnd0QeOFbdUW0NSeIE9Xxn
+         9iIXfgtA4sQYIb8mZ+b8e1PHFWF8d+0NdpsI/IB8q7P071R0i2Apbbq8myvOjx2XC7
+         2RAB7pUT4RzPQcmWJRjvuC3NzKiA5z/9TRQKRyOYHQtiJtHnz50EC40pt1Yv46GHx/
+         Fx4cgkYT1m6AA==
+Message-ID: <a21d882df74b91738b56d8a289bb55a9dbe2bc34.camel@kernel.org>
+Subject: Re: [PATCH] libceph: advancing variants of iov_iter_get_pages()
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org
+Date:   Wed, 17 Aug 2022 06:17:45 -0400
+In-Reply-To: <20220816024143.519027-1-xiubli@redhat.com>
+References: <20220816024143.519027-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjZ0oC0__-kLX51jRwo4XgAQ9xJ=OeT5_=fiLxmDexFZw@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,35 +52,56 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Aug 16, 2022 at 10:57:45AM -0700, Linus Torvalds wrote:
+On Tue, 2022-08-16 at 10:41 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+>=20
+> The upper layer has changed it to iov_iter_get_pages2(). And this
+> should be folded into the previous commit.
+>=20
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  net/ceph/messenger.c | 17 ++---------------
+>  1 file changed, 2 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+> index 945f6d1a9efa..020474cf137c 100644
+> --- a/net/ceph/messenger.c
+> +++ b/net/ceph/messenger.c
+> @@ -985,25 +985,12 @@ static struct page *ceph_msg_data_iter_next(struct =
+ceph_msg_data_cursor *cursor,
+>  	if (cursor->lastlen)
+>  		iov_iter_revert(&cursor->iov_iter, cursor->lastlen);
+> =20
+> -	len =3D iov_iter_get_pages(&cursor->iov_iter, &page, PAGE_SIZE,
+> -				 1, page_offset);
+> +	len =3D iov_iter_get_pages2(&cursor->iov_iter, &page, PAGE_SIZE,
+> +				  1, page_offset);
+>  	BUG_ON(len < 0);
+> =20
+>  	cursor->lastlen =3D len;
+> =20
+> -	/*
+> -	 * FIXME: Al Viro says that he will soon change iov_iter_get_pages
+> -	 * to auto-advance the iterator. Emulate that here for now.
+> -	 */
+> -	iov_iter_advance(&cursor->iov_iter, len);
+> -
+> -	/*
+> -	 * FIXME: The assumption is that the pages represented by the iov_iter
+> -	 * 	  are pinned, with the references held by the upper-level
+> -	 * 	  callers, or by virtue of being under writeback. Eventually,
+> -	 * 	  we'll get an iov_iter_get_pages variant that doesn't take page
+> -	 * 	  refs. Until then, just put the page ref.
+> -	 */
 
-> > > +     if (insn_decode(&insn, (void *) regs->ip, len, INSN_MODE_KERN))
-> > > +             return false;
-> >
-> > We have insn_decode_kernel() for exactly this (very) common case.
-> 
-> I did that originally, and then I undid it in disgust, because that
-> interface is too simple.
-> 
-> In particular, it just uses MAX_INSN_SIZE blindly. Which I didn't want
-> to do when I actually had the instruction size.
-> 
-> Yes, yes, I also check the decode size after-the-fact, but I didn't
-> want the decoder to even look at the invalid bytes.
-> 
-> This exception case is about the data being at the end of the page, I
-> wanted the fixup to be aware of code being at the end of a page too.
+I think the comment above should not be removed. Eventually Al plans to
+add a version of this that doesn't take page refs, and this patch
+doesn't change that.
 
-I don't want to argue this point too much; but I will anyway :-)
+>  	VM_BUG_ON_PAGE(!PageWriteback(page) && page_count(page) < 2, page);
+>  	put_page(page);
+> =20
 
-IMO if the decoder ends up out of bounds its a decoder bug either way
-around. That is, we *know* there is a full instruction at the given IP
-because we got into this exception path.
+Patch itself looks fine though. Thanks for fixing it up!
 
-( it would be possible to add further constraints on trapnr )
-
-Irrespective of the length constraint given to the decoder, it should
-not decode/access things past this instruction (without being careful
-about it).
-
-Anyway, I'm fine with the patch as you have it.
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
