@@ -2,67 +2,78 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 039D259EF47
-	for <lists+ceph-devel@lfdr.de>; Wed, 24 Aug 2022 00:31:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7015F59FB3A
+	for <lists+ceph-devel@lfdr.de>; Wed, 24 Aug 2022 15:24:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229558AbiHWWb0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 23 Aug 2022 18:31:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53446 "EHLO
+        id S237051AbiHXNYv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 24 Aug 2022 09:24:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234303AbiHWWaO (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 23 Aug 2022 18:30:14 -0400
-Received: from mail-yw1-x1133.google.com (mail-yw1-x1133.google.com [IPv6:2607:f8b0:4864:20::1133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 980748B9B0
-        for <ceph-devel@vger.kernel.org>; Tue, 23 Aug 2022 15:28:56 -0700 (PDT)
-Received: by mail-yw1-x1133.google.com with SMTP id 00721157ae682-333a4a5d495so416020847b3.10
-        for <ceph-devel@vger.kernel.org>; Tue, 23 Aug 2022 15:28:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc;
-        bh=z6Cu6NC49X90bkkDAyJKxFtOn1p21JsraKysxwpjoT0=;
-        b=XuGSnZUP1CeMgpdbZGrx+ugJ2sLkZkbhTPbdRYFdIRc1Wi3g6jtzPA+i+UdQz80hte
-         GX8RrPnIvzIHoLynLnvxScP+qFJkSU8DDoeWvqD7tjrnIEnnq059/j0N3VcuI+RXNhIo
-         fPcl/tg6j9G6pcSwZyzKrlQEtCQTVs2I4/LqVY4PdiH3bjYLPt4bWIVDZv+Smnk+UNMq
-         tbRmy8/fo64IltuDMHW4DOLp7mOBsuTX2cPKie9dEKjJCxg+fQ07qX4AaRB0vAEKPnh+
-         vo1Musr4F1RB/vRnYSqOfrrQqkZKy9dlbewe2ROfTy+lU91f6dO773IOwE9x00vJzows
-         IK4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version
-         :x-gm-message-state:from:to:cc;
-        bh=z6Cu6NC49X90bkkDAyJKxFtOn1p21JsraKysxwpjoT0=;
-        b=iXLo5DQjBvqCMwJ8Om7XRIGzMc3+MceFMuNFbYtUXTjBXt10fv7l9dW6ykONWms32c
-         HHsm6cebMYBBqpCpqYaTQvd3nPl/oiQzAQ7HOE+Y9faeYcVeXTz9NwwC1/5RPW0Fcdtl
-         9Dr2p2GjjCMmOMrbDgPViTZ7Aj+JJfwkS8omIlG/2lUBEczRgt/FL0tEe8UAJFs9eLTk
-         hbIG8t2B1dhX+6IY3mxM94FePb81p7y6Iz2HJxw4uWXEJawF61mZFu6M1AE38Njeu/8Z
-         6IDZWPrIXDR7hP+oH8nYk47IPqs23LBJ0dhLpwnHNvvlmL01qLE8A3eCczceIFqPXbLV
-         UBVA==
-X-Gm-Message-State: ACgBeo0z+iMD9SkwJnJtLvaFWLDTrK9uVa7Xogf1QF056UAafj1cMQ9l
-        n2TGQEdr07S16U9kgEgcjfdi+YBRIhDuw27l5JQ=
-X-Google-Smtp-Source: AA6agR4XR9IwIUIyyhB942id9RXQsERRzolbLc3fezhPtZJGXYJyzyXXTTdjrXohWb7bWOMpOgZMIBLjEReW0m+Da2k=
-X-Received: by 2002:a25:8886:0:b0:695:7f2d:2d68 with SMTP id
- d6-20020a258886000000b006957f2d2d68mr15638160ybl.281.1661293735545; Tue, 23
- Aug 2022 15:28:55 -0700 (PDT)
+        with ESMTP id S237983AbiHXNYt (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 24 Aug 2022 09:24:49 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5157A10BF
+        for <ceph-devel@vger.kernel.org>; Wed, 24 Aug 2022 06:24:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EAE34B8238B
+        for <ceph-devel@vger.kernel.org>; Wed, 24 Aug 2022 13:24:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B854C433D6;
+        Wed, 24 Aug 2022 13:24:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1661347484;
+        bh=PG5lfbg3TOCBmuiyPvFsbkZfQVYqZeycmTlg3ScmjoI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=nOF3C0hmnYChpgh4b0BniSGTSQQ0+oeXRWyLDRwfQLjzgOvat5GGytD/g0zCjRnIp
+         gqkMcKwmDx9dCFZK3aKWOAiCq/Z3lpv/OG6Rh78t3N5uD+BBssKVCU4Ih3eGphjy6K
+         SYxEOpDNEJbKSlIXUH1DHywK1Qf0pLnwA/F2oDLETLRcS99RzWTudd8AKPUkYYJgfe
+         /H3jUv9z6zHHQ/JTopxG9yoeTg6AaWkIKhJv6A+XxadBEr/ngzFSUTGfIHkjtsxt+i
+         v29MaE/NpSnrXW+RzCN/NYTADdaATkfwGhjrcZkdqbUcfoNYisaPEPrdLx73VEXpQB
+         amzKB3hG6zQSw==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org
+Subject: [PATCH] ceph: increment i_version when doing a setattr with caps
+Date:   Wed, 24 Aug 2022 09:24:42 -0400
+Message-Id: <20220824132442.102062-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-Received: by 2002:a05:7010:9295:b0:2ec:cd7b:3015 with HTTP; Tue, 23 Aug 2022
- 15:28:55 -0700 (PDT)
-Reply-To: charleswilliam6568@gmail.com
-From:   charles william <adzapierro@gmail.com>
-Date:   Tue, 23 Aug 2022 16:28:55 -0600
-Message-ID: <CAGwaN2s9hn2xNTPzirKuTgnq2DD3WBM5kSaAqm8EQ0T9dn90Ew@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=4.9 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no autolearn_force=no
-        version=3.4.6
-X-Spam-Level: ****
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Sorry for intruding your privacy
+When the client has enough caps to satisfy a setattr locally without
+having to talk to the server, we currently do the setattr without
+incrementing the change attribute.
+
+Ensure that if the ctime changes locally, then the change attribute
+does too.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index ccc926a7dcb0..65161296d449 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -2192,6 +2192,7 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
+ 		inode_dirty_flags = __ceph_mark_dirty_caps(ci, dirtied,
+ 							   &prealloc_cf);
+ 		inode->i_ctime = attr->ia_ctime;
++		inode_inc_iversion_raw(inode);
+ 	}
+ 
+ 	release &= issued;
+-- 
+2.37.2
+
