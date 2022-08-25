@@ -2,50 +2,45 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 925C95A11C1
-	for <lists+ceph-devel@lfdr.de>; Thu, 25 Aug 2022 15:18:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 940735A1238
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Aug 2022 15:31:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242498AbiHYNST (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 25 Aug 2022 09:18:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37576 "EHLO
+        id S242278AbiHYNbh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 25 Aug 2022 09:31:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235527AbiHYNSG (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 25 Aug 2022 09:18:06 -0400
+        with ESMTP id S237455AbiHYNbh (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 25 Aug 2022 09:31:37 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9E3BAA347
-        for <ceph-devel@vger.kernel.org>; Thu, 25 Aug 2022 06:18:04 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E16724087
+        for <ceph-devel@vger.kernel.org>; Thu, 25 Aug 2022 06:31:35 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 39D6861CDB
-        for <ceph-devel@vger.kernel.org>; Thu, 25 Aug 2022 13:18:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32242C433D6;
-        Thu, 25 Aug 2022 13:18:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id ECEC961CC8
+        for <ceph-devel@vger.kernel.org>; Thu, 25 Aug 2022 13:31:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2BDDC433D6;
+        Thu, 25 Aug 2022 13:31:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661433483;
-        bh=VCtAODmfT0VqLfT1GTzi2eLi6sQSh5XsPQnrrS5rkXk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Hx3luK+klhOjIIoIH5qbQoDPwEwaeSGIp+YXLFEHqqlEIx9hG7kJWRRfsHG9+EsQN
-         lOTg0GDEDaMaZTQcyqgaG8L3D/2fVpk1jH9zUV8iHwz75hPuKLttbyGasdHtUDYVNS
-         nlG8OTUB9RwnOJ6/AXZM2+lUpx2JtPAnstQqKB3Tz9/EOkaK7QzZtlc0bUbAs4HxRD
-         m2iVT0hc+IddzfBhCb20BSZ5nVpsh8PmFPP/fKQLHGCqMUHaYdLO0npjBk2xtoWlWs
-         PMDWMLU+CcjmxzgJ5uSaFLUvn/YHt1x9oLvNDOw2qOnu7VaDFkK+J7jLEgCZO/Wjpx
-         XfqhSJSqUwSxg==
-Message-ID: <c369ad1402ef31e2e543cd20eab2ba48f1e95d6e.camel@kernel.org>
-Subject: Re: [PATCH] ceph: fix error handling in ceph_sync_write
+        s=k20201202; t=1661434294;
+        bh=QC7PgopXjY+hvTbtT7CzHbY4+apjAywl2T0jGBiiOA8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pVvw11u5Jqsx67b/LtUBx7Qwu/JSG4oF0VN3R5y4S5MDZtGdf+HVtoTJtgzjhkh0Z
+         yP+FTxFZI101hhj6YF4ow7TwhjNGs98bIPha6RR09hmeVfExdeEimboLqQO6r4Sd1g
+         E+huqz1OOSGF3mQaMATBgzSLVgNWDj72ZJdGwn75uWNucp0e7nFKSb3pm2NUwj4PNF
+         FtDT/s1VKd0KAsUVnE44Oaws65j5c5CIzLuYUCS0VMI+OdndYTdG80LzIGbxhZ6nQp
+         7eG+QG4cdTv+MBMtSqTofJrGPPMR3MZ9uF9Qwe7ug/m6h+jna3uk1VHNTW6fkK2gVP
+         G/M7JDQIDWgGw==
 From:   Jeff Layton <jlayton@kernel.org>
-To:     =?ISO-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     xiubli@redhat.com, ceph-devel@vger.kernel.org
-Date:   Thu, 25 Aug 2022 09:18:01 -0400
-In-Reply-To: <YwdDrguhbzhqMPgr@suse.de>
-References: <20220824205331.473248-1-jlayton@kernel.org>
-         <CAOi1vP9-kOHNjtSY0uEQP0bWwfn17BbiRbeuAmoCf2X9RrFHBA@mail.gmail.com>
-         <YwdDrguhbzhqMPgr@suse.de>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+To:     xiubli@redhat.com, idryomov@gmail.com
+Cc:     lhenriques@suse.de, ceph-devel@vger.kernel.org
+Subject: [PATCH v15 00/29] ceph: remaining patches for fscrypt support
+Date:   Thu, 25 Aug 2022 09:31:03 -0400
+Message-Id: <20220825133132.153657-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -56,95 +51,76 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2022-08-25 at 10:41 +0100, Lu=EDs Henriques wrote:
-> On Thu, Aug 25, 2022 at 10:32:56AM +0200, Ilya Dryomov wrote:
-> > On Wed, Aug 24, 2022 at 10:53 PM Jeff Layton <jlayton@kernel.org> wrote=
-:
-> > >=20
-> > > ceph_sync_write has assumed that a zero result in req->r_result means
-> > > success. Testing with a recent cluster however shows the OSD returnin=
-g
-> > > a non-zero length written here. I'm not sure whether and when this
-> > > changed, but fix the code to accept either result.
-> > >=20
-> > > Assume a negative result means error, and anything else is a success.=
- If
-> > > we're given a short length, then return a short write.
-> > >=20
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  fs/ceph/file.c | 10 +++++++++-
-> > >  1 file changed, 9 insertions(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > > index 86265713a743..c0b2c8968be9 100644
-> > > --- a/fs/ceph/file.c
-> > > +++ b/fs/ceph/file.c
-> > > @@ -1632,11 +1632,19 @@ ceph_sync_write(struct kiocb *iocb, struct io=
-v_iter *from, loff_t pos,
-> > >                                           req->r_end_latency, len, re=
-t);
-> > >  out:
-> > >                 ceph_osdc_put_request(req);
-> > > -               if (ret !=3D 0) {
-> > > +               if (ret < 0) {
-> > >                         ceph_set_error_write(ci);
-> > >                         break;
-> > >                 }
-> > >=20
-> > > +               /*
-> > > +                * FIXME: it's unclear whether all OSD versions retur=
-n the
-> > > +                * length written on a write. For now, assume that a =
-0 return
-> > > +                * means that everything got written.
-> > > +                */
-> > > +               if (ret && ret < len)
-> > > +                       len =3D ret;
-> > > +
-> > >                 ceph_clear_error_write(ci);
-> > >                 pos +=3D len;
-> > >                 written +=3D len;
-> > > --
-> > > 2.37.2
-> > >=20
-> >=20
-> > Hi Jeff,
-> >=20
-> > AFAIK OSDs aren't allowed to return any kind of length on a write
-> > and there is no such thing as a short write.  This definitely needs
-> > deeper investigation.
-> >=20
-> > What is the cluster version you are testing against?
->=20
-> OK, I'm only seeing 'ret' being set to the write length only when enablin=
-g
-> encryption (i.e. with test_dummy_encryption mount option).  So, maybe the
-> right fix is something like:
->=20
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 16dcade66923..5119d87d61fb 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1889,6 +1889,7 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter=
- *from, loff_t pos,
->  				ceph_release_page_vector(pages, num_pages);
->  				break;
->  			}
-> +			ret =3D 0;
->  		}
-> =20
->  		req =3D ceph_osdc_new_request(osdc, &ci->i_layout,
->=20
+v15: rebase onto current ceph/testing branch
+     add some missing ceph_osdc_wait_request calls
 
-No, actually. I think the original patch I sent is just wrong. There was
-another bug (another missing ceph_osdc_wait_request) in the fscrypt
-stack that was causing r_result to not appear to be zero.
+This patchset represents the remaining patches to add fscrypt support,
+rebased on top of today's "testing" branch.  They're all ceph changes as
+the vfs and fscrypt patches are now merged!
 
-I've fixed this in the ceph-fscrypt branch in my tree and it seems to be
-working. I'll plan do a re-send of the fscrypt patches that are not yet
-in the testing branch today.
+Note that the current ceph-client/wip-fscrypt branch is broken. It's
+still based on v5.19-rc6 and has some missing calls to
+ceph_osdc_wait_request that cause panics. This set fixes that.
 
-Thanks!
---=20
-Jeff Layton <jlayton@kernel.org>
+These are currently in my ceph-fscrypt branch:
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git/log/?h=ceph-fscrypt
+
+It would be good to update the wip-fscrypt branch with this pile.
+
+Jeff Layton (19):
+  libceph: add CEPH_OSD_OP_ASSERT_VER support
+  ceph: size handling for encrypted inodes in cap updates
+  ceph: fscrypt_file field handling in MClientRequest messages
+  ceph: get file size from fscrypt_file when present in inode traces
+  ceph: handle fscrypt fields in cap messages from MDS
+  ceph: update WARN_ON message to pr_warn
+  ceph: add infrastructure for file encryption and decryption
+  libceph: allow ceph_osdc_new_request to accept a multi-op read
+  ceph: disable fallocate for encrypted inodes
+  ceph: disable copy offload on encrypted inodes
+  ceph: don't use special DIO path for encrypted inodes
+  ceph: align data in pages in ceph_sync_write
+  ceph: add read/modify/write to ceph_sync_write
+  ceph: plumb in decryption during sync reads
+  ceph: add fscrypt decryption support to ceph_netfs_issue_op
+  ceph: set i_blkbits to crypto block size for encrypted inodes
+  ceph: add encryption support to writepage
+  ceph: fscrypt support for writepages
+  ceph: report STATX_ATTR_ENCRYPTED on encrypted inodes
+
+Luís Henriques (6):
+  ceph: don't allow changing layout on encrypted files/directories
+  ceph: invalidate pages when doing direct/sync writes
+  ceph: add support for encrypted snapshot names
+  ceph: add support for handling encrypted snapshot names
+  ceph: update documentation regarding snapshot naming limitations
+  ceph: prevent snapshots to be created in encrypted locked directories
+
+Xiubo Li (4):
+  ceph: add __ceph_get_caps helper support
+  ceph: add __ceph_sync_read helper support
+  ceph: add object version support for sync read
+  ceph: add truncate size handling support for fscrypt
+
+ Documentation/filesystems/ceph.rst |  10 +
+ fs/ceph/addr.c                     | 164 ++++++++--
+ fs/ceph/caps.c                     | 143 +++++++--
+ fs/ceph/crypto.c                   | 367 +++++++++++++++++++++--
+ fs/ceph/crypto.h                   | 118 +++++++-
+ fs/ceph/dir.c                      |   8 +
+ fs/ceph/file.c                     | 467 +++++++++++++++++++++++++----
+ fs/ceph/inode.c                    | 282 +++++++++++++++--
+ fs/ceph/ioctl.c                    |   4 +
+ fs/ceph/mds_client.c               |   9 +-
+ fs/ceph/mds_client.h               |   2 +
+ fs/ceph/super.c                    |   6 +
+ fs/ceph/super.h                    |  11 +
+ include/linux/ceph/osd_client.h    |   6 +-
+ include/linux/ceph/rados.h         |   4 +
+ net/ceph/osd_client.c              |  32 +-
+ 16 files changed, 1454 insertions(+), 179 deletions(-)
+
+-- 
+2.37.2
+
