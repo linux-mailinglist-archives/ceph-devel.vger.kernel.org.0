@@ -2,41 +2,41 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A5CB5A1249
-	for <lists+ceph-devel@lfdr.de>; Thu, 25 Aug 2022 15:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3E245A124F
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Aug 2022 15:32:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242708AbiHYNb7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 25 Aug 2022 09:31:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36546 "EHLO
+        id S242770AbiHYNcA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 25 Aug 2022 09:32:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242666AbiHYNbq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 25 Aug 2022 09:31:46 -0400
+        with ESMTP id S242721AbiHYNbr (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 25 Aug 2022 09:31:47 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F4D7B5159
-        for <ceph-devel@vger.kernel.org>; Thu, 25 Aug 2022 06:31:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC6FFB5174
+        for <ceph-devel@vger.kernel.org>; Thu, 25 Aug 2022 06:31:45 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4626C61CFD
-        for <ceph-devel@vger.kernel.org>; Thu, 25 Aug 2022 13:31:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CA86C433C1;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0B7B261D15
+        for <ceph-devel@vger.kernel.org>; Thu, 25 Aug 2022 13:31:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB2E5C433B5;
         Thu, 25 Aug 2022 13:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661434303;
-        bh=vYpcYlUbLf3+ggMDgN/Gh0P7OxwxcZS0IETVoOa0VIY=;
+        s=k20201202; t=1661434304;
+        bh=ApL6RGwkkLRptlqfQV9WN+EukbodlFPBqDdYU54bQKo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t4c7nyHkM7gQCHrrPlXXQRQPThkAL/kzMlZePq5vvMmvIkRe3zf2iVpMJ2xn93U46
-         uv5yhIqqvBKpOkQGy8F7IpPpJC/oIWiuedYZL8DviRVnERIxXGmw2vcBG/NC6aue9T
-         roFzooOC6b4bEcFrIlotPjjM8dQ6tUwWfu3DAhw2adV2U5/aWkL1KwENxn9vvDZL03
-         g1/WLgZ8ASXLIvGVYsg05bMFkcIb1rD2AQjW7AijPj1yvJk7MuYQHOwQ2LSeafCGzT
-         Ma+aJeYyep5NK2/i7Zn4VTSNDDCbyi2ioWyA1ssQssTXI+A48UKKrZXNx8KPO1U/IS
-         FZIna3iCOVVOA==
+        b=soImeGfCIvCZYmEq4D22q7gBnCoLb6bPyu65+KdGMj5FxGjCSceNpVS/397Wk0sse
+         fCCihpwK0vjZMWlD1n+L1ZrXgO48YJsan46nNwS73GJ2995f08I9W3YSh7zf9dt1Ee
+         swCUTM1s74VUO0J4ejZcOlWaUv283Jt/fpMEsJ/AYwDVgX/14YMWh28gPLT45JHfP1
+         qqgl7KKXBmL93fZtXH+ag3Ky4h+P6SKprZhS0LjyAq15jZ/+l4fqHZM60bms8dquwj
+         t2GjIb4olxTTSYViZ2e6WNIfHZ/4aWYx/SM0gkL+9pqBL+1ZXennaiGL4J/VO3qPkY
+         7VEd4C8b2rapA==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     xiubli@redhat.com, idryomov@gmail.com
 Cc:     lhenriques@suse.de, ceph-devel@vger.kernel.org
-Subject: [PATCH v15 13/29] libceph: allow ceph_osdc_new_request to accept a multi-op read
-Date:   Thu, 25 Aug 2022 09:31:16 -0400
-Message-Id: <20220825133132.153657-14-jlayton@kernel.org>
+Subject: [PATCH v15 14/29] ceph: disable fallocate for encrypted inodes
+Date:   Thu, 25 Aug 2022 09:31:17 -0400
+Message-Id: <20220825133132.153657-15-jlayton@kernel.org>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20220825133132.153657-1-jlayton@kernel.org>
 References: <20220825133132.153657-1-jlayton@kernel.org>
@@ -52,61 +52,28 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Currently we have some special-casing for multi-op writes, but in the
-case of a read, we can't really handle it. All of the current multi-op
-callers call it with CEPH_OSD_FLAG_WRITE set.
-
-Have ceph_osdc_new_request check for CEPH_OSD_FLAG_READ and if it's set,
-allocate multiple reply ops instead of multiple request ops. If neither
-flag is set, return -EINVAL.
+...hopefully, just for now.
 
 Reviewed-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- net/ceph/osd_client.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+ fs/ceph/file.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index 0a33987ae8e9..5b26e3a044ac 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -1136,15 +1136,30 @@ struct ceph_osd_request *ceph_osdc_new_request(struct ceph_osd_client *osdc,
- 	if (flags & CEPH_OSD_FLAG_WRITE)
- 		req->r_data_offset = off;
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 31de744b1a5f..64f8f668970f 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -2183,6 +2183,9 @@ static long ceph_fallocate(struct file *file, int mode,
+ 	if (!S_ISREG(inode->i_mode))
+ 		return -EOPNOTSUPP;
  
--	if (num_ops > 1)
-+	if (num_ops > 1) {
-+		int num_req_ops, num_rep_ops;
++	if (IS_ENCRYPTED(inode))
++		return -EOPNOTSUPP;
 +
- 		/*
--		 * This is a special case for ceph_writepages_start(), but it
--		 * also covers ceph_uninline_data().  If more multi-op request
--		 * use cases emerge, we will need a separate helper.
-+		 * If this is a multi-op write request, assume that we'll need
-+		 * request ops. If it's a multi-op read then assume we'll need
-+		 * reply ops. Anything else and call it -EINVAL.
- 		 */
--		r = __ceph_osdc_alloc_messages(req, GFP_NOFS, num_ops, 0);
--	else
-+		if (flags & CEPH_OSD_FLAG_WRITE) {
-+			num_req_ops = num_ops;
-+			num_rep_ops = 0;
-+		} else if (flags & CEPH_OSD_FLAG_READ) {
-+			num_req_ops = 0;
-+			num_rep_ops = num_ops;
-+		} else {
-+			r = -EINVAL;
-+			goto fail;
-+		}
-+
-+		r = __ceph_osdc_alloc_messages(req, GFP_NOFS, num_req_ops,
-+					       num_rep_ops);
-+	} else {
- 		r = ceph_osdc_alloc_messages(req, GFP_NOFS);
-+	}
- 	if (r)
- 		goto fail;
- 
+ 	prealloc_cf = ceph_alloc_cap_flush();
+ 	if (!prealloc_cf)
+ 		return -ENOMEM;
 -- 
 2.37.2
 
