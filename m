@@ -1,76 +1,73 @@
 Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from out1.vger.email (unknown [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA0165A1D8C
-	for <lists+ceph-devel@lfdr.de>; Fri, 26 Aug 2022 02:08:40 +0200 (CEST)
+Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
+	by mail.lfdr.de (Postfix) with ESMTP id D18F75A32D8
+	for <lists+ceph-devel@lfdr.de>; Sat, 27 Aug 2022 02:00:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244428AbiHZAHz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 25 Aug 2022 20:07:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35246 "EHLO
+        id S239360AbiH0AAu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 26 Aug 2022 20:00:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243778AbiHZAHy (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 25 Aug 2022 20:07:54 -0400
+        with ESMTP id S241925AbiH0AAs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 26 Aug 2022 20:00:48 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81DCFC876D
-        for <ceph-devel@vger.kernel.org>; Thu, 25 Aug 2022 17:07:52 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11F817C1B7
+        for <ceph-devel@vger.kernel.org>; Fri, 26 Aug 2022 17:00:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1661472471;
+        s=mimecast20190719; t=1661558445;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=u1YpXpWcn19uhyPos9jDWAgrYEMdTrX2bZf1nVdIh44=;
-        b=McdVbK4DjK1ugvcRNqlBBY+g97GMQtqDWTv21BKJFZauiC1rmcCN4GLOB/j5mTbE1vd9Zt
-        8IF27trC96NgrxsWI31Dnmgyq5wLS7eX2h+VCrNx6gbvYof8zFp4Rff4cYxA2nl+0mjYcS
-        SIpEcQElm2YhYhRVQhY1zKI7IeFlFc4=
+        bh=iDe9fTxG58kEb8/4/8leD8hQCKRCQcaHcJ615O9V8/c=;
+        b=Kt4nNGkqoJdrFha1KNmrDBfbIt512CrYgxNYy01pxo3xOZUkznlo5FXYl8ihUjvA1q3RLO
+        IJral0JPI7m1gD0DGrTTxoQo9mhu1+khC11MlO0LMnn/aVVGjP2OHLhHmU4lyp3bTeh4Zm
+        izsRVpybOYImR9fEkTj2ZRLFtTrS6Zo=
 Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
  [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-385-Nwg1pQKXNvOTQhfnsEtFiQ-1; Thu, 25 Aug 2022 20:07:49 -0400
-X-MC-Unique: Nwg1pQKXNvOTQhfnsEtFiQ-1
-Received: by mail-pj1-f69.google.com with SMTP id r6-20020a17090a2e8600b001fbb51e5cc1so1692972pjd.5
-        for <ceph-devel@vger.kernel.org>; Thu, 25 Aug 2022 17:07:49 -0700 (PDT)
+ us-mta-571-BqpCWq0RPfSn4zbqMO-1Sw-1; Fri, 26 Aug 2022 20:00:43 -0400
+X-MC-Unique: BqpCWq0RPfSn4zbqMO-1Sw-1
+Received: by mail-pj1-f69.google.com with SMTP id f16-20020a17090a4a9000b001f234757bbbso1733831pjh.6
+        for <ceph-devel@vger.kernel.org>; Fri, 26 Aug 2022 17:00:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-language:content-transfer-encoding:in-reply-to:mime-version
          :user-agent:date:message-id:from:references:cc:to:subject
          :x-gm-message-state:from:to:cc;
-        bh=u1YpXpWcn19uhyPos9jDWAgrYEMdTrX2bZf1nVdIh44=;
-        b=XyRFCArFz+i8a3tH65cVwPlAGhYnfd75hBc0gHn1+rYXZRnSelPSeKG5+/Gm0R5FcM
-         FHecmz7SjqaDJlSvLH0WzHkuVcUQdejHEfcx9C2T/xLr53RYsbdhi5NtEgaSDUBIhArf
-         MEkJ2b65fxjrzJSpUF7BLukdgTRUtpRaxbmci2kYodc5X2fXfd+ggRXhFdyJahguxFjo
-         9YWjasPJMVPSnJy5WckUj3XSnXhZpnIjfjJLtro3mFn9UG0eP9WgzkH6kTi7jvsWFAyK
-         Lr0vMi2v1aoyX9iG/Y7lYZhbeQcl/BCY+oUW6Fm0zX0q/kCA+Po6tTRA3QyoVUm/tt/x
-         K1PQ==
-X-Gm-Message-State: ACgBeo0xTTrm7Mb8ZyRSA7fBaVvyOoWRQtqAwOuj8Cn05llcvqY16e5t
-        HBXKgkTQknTJJPAhp4eKLJ9+Nz4OJdaHEEkGc0YwAXvufixonLyor4BRTomrKrUL0OzqZFSZn/1
-        fxOlyrOzvqWbru4t9bW/Wym3xQPtXJDkoQ0WXg1TZ3oElWRWapf3kaK2w0EgT9zUYNoHeEmk=
-X-Received: by 2002:a17:902:caca:b0:173:3a23:e4f7 with SMTP id y10-20020a170902caca00b001733a23e4f7mr1439677pld.113.1661472468017;
-        Thu, 25 Aug 2022 17:07:48 -0700 (PDT)
-X-Google-Smtp-Source: AA6agR5kwsC0xsJMh6a0PInUmClwCdgCL5EcEZ5Aq8+jdEnxeAilalXlsnnvKjVEA9i3UZbg61+pBA==
-X-Received: by 2002:a17:902:caca:b0:173:3a23:e4f7 with SMTP id y10-20020a170902caca00b001733a23e4f7mr1439650pld.113.1661472467647;
-        Thu, 25 Aug 2022 17:07:47 -0700 (PDT)
+        bh=iDe9fTxG58kEb8/4/8leD8hQCKRCQcaHcJ615O9V8/c=;
+        b=Ql7E1gTd3TRLP1+G2FmWGiDrHwZIurD41x3QLByxOsWw3+bL6W/9XBtnnmAZzUC3cd
+         JWGSnBSWDDCcTlvy5ZC8D4zrkOo8adwI9jIVnIeI9Wv3Gx+NQZ7ndDmcCRr7OEHbzJmf
+         tcJAVEmsZ2tSB4DhilVpL4pKGnmGszl5RSiSu8RAYcSzIvdzbWR0KepYXYCJdwYIVmcX
+         WvpQ/fhG5BnNJ55vfMKPj7HI1hC8OFUo7pUgJkO9HE8VtVJtSCnDPr+pK+Xi2jVW78Dd
+         j4gwb05sR0FKfzYLSmjs7r/tQgkkgzrXUmCzK8mLhoz5WOt9Pt8DZFa0BG16zp/Y+Qlw
+         2auw==
+X-Gm-Message-State: ACgBeo3hJ/HjLezXN2/hXCR88/wG24yz+mkF5/YP/CpUhT4b9i51gpX8
+        59E1YaxA7ucf7VC4unMOtXw5hi8iGD3Adklzroup9MbSUqIRJD2xX61GDHPSlBR8/i6uvUu/nC3
+        eVLmKQyJLf6ZLRjQzdoFz5rAJFL4VJbUfPExqaYk2jHSbSdo8SglFwZqbaEVXSui9sZaO4FM=
+X-Received: by 2002:a62:6347:0:b0:531:c5a7:b209 with SMTP id x68-20020a626347000000b00531c5a7b209mr6190015pfb.60.1661558442571;
+        Fri, 26 Aug 2022 17:00:42 -0700 (PDT)
+X-Google-Smtp-Source: AA6agR5lv/Yn4tq2bpDwERlfFqcAKf6cODskOuVvnAy+vW20Nu/wzjAFitgE5qfkAfjhA7VTtU7FkA==
+X-Received: by 2002:a62:6347:0:b0:531:c5a7:b209 with SMTP id x68-20020a626347000000b00531c5a7b209mr6189990pfb.60.1661558442231;
+        Fri, 26 Aug 2022 17:00:42 -0700 (PDT)
 Received: from [10.72.12.34] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id 18-20020a621412000000b0053725e331a1sm227522pfu.82.2022.08.25.17.07.45
+        by smtp.gmail.com with ESMTPSA id a21-20020a170902b59500b001743bf0b51csm2108204pls.96.2022.08.26.17.00.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Aug 2022 17:07:47 -0700 (PDT)
-Subject: Re: [PATCH] ceph: fix error handling in ceph_sync_write
-To:     Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org
-References: <20220824205331.473248-1-jlayton@kernel.org>
- <CAOi1vP9-kOHNjtSY0uEQP0bWwfn17BbiRbeuAmoCf2X9RrFHBA@mail.gmail.com>
- <9a9218cad137d07b81fa8d2c984f840098b3ae29.camel@kernel.org>
- <b40e97ec41a013f796c6df981c55e7458ae205f8.camel@kernel.org>
+        Fri, 26 Aug 2022 17:00:41 -0700 (PDT)
+Subject: Re: [PATCH v15 00/29] ceph: remaining patches for fscrypt support
+To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com
+Cc:     lhenriques@suse.de, ceph-devel@vger.kernel.org
+References: <20220825133132.153657-1-jlayton@kernel.org>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <c307fdd0-0ca0-104e-0068-2c0fb2138698@redhat.com>
-Date:   Fri, 26 Aug 2022 08:07:42 +0800
+Message-ID: <0c704e71-6bcb-e6cd-c98b-974dbc1bf8e3@redhat.com>
+Date:   Sat, 27 Aug 2022 08:00:35 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <b40e97ec41a013f796c6df981c55e7458ae205f8.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20220825133132.153657-1-jlayton@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
@@ -83,73 +80,80 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 8/25/22 9:16 PM, Jeff Layton wrote:
-> On Thu, 2022-08-25 at 06:56 -0400, Jeff Layton wrote:
->> On Thu, 2022-08-25 at 10:32 +0200, Ilya Dryomov wrote:
->>> On Wed, Aug 24, 2022 at 10:53 PM Jeff Layton <jlayton@kernel.org> wrote:
->>>> ceph_sync_write has assumed that a zero result in req->r_result means
->>>> success. Testing with a recent cluster however shows the OSD returning
->>>> a non-zero length written here. I'm not sure whether and when this
->>>> changed, but fix the code to accept either result.
->>>>
->>>> Assume a negative result means error, and anything else is a success. If
->>>> we're given a short length, then return a short write.
->>>>
->>>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
->>>> ---
->>>>   fs/ceph/file.c | 10 +++++++++-
->>>>   1 file changed, 9 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
->>>> index 86265713a743..c0b2c8968be9 100644
->>>> --- a/fs/ceph/file.c
->>>> +++ b/fs/ceph/file.c
->>>> @@ -1632,11 +1632,19 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
->>>>                                            req->r_end_latency, len, ret);
->>>>   out:
->>>>                  ceph_osdc_put_request(req);
->>>> -               if (ret != 0) {
->>>> +               if (ret < 0) {
->>>>                          ceph_set_error_write(ci);
->>>>                          break;
->>>>                  }
->>>>
->>>> +               /*
->>>> +                * FIXME: it's unclear whether all OSD versions return the
->>>> +                * length written on a write. For now, assume that a 0 return
->>>> +                * means that everything got written.
->>>> +                */
->>>> +               if (ret && ret < len)
->>>> +                       len = ret;
->>>> +
->>>>                  ceph_clear_error_write(ci);
->>>>                  pos += len;
->>>>                  written += len;
->>>> --
->>>> 2.37.2
->>>>
->>> Hi Jeff,
->>>
->>> AFAIK OSDs aren't allowed to return any kind of length on a write
->>> and there is no such thing as a short write.  This definitely needs
->>> deeper investigation.
->>>
->>> What is the cluster version you are testing against?
->>>
->> That's what I had thought too but I wasn't sure:
->>
->>      [ceph: root@quad1 /]# ceph --version
->>      ceph version 17.0.0-14400-gf61b38dc (f61b38dc82e94f14e7a0a5f6a5888c0c78fafa6c) quincy (dev)
->>
->> I'll see if I can confirm that this is coming from the OSD and not some
->> other layer as well.
-> My mistake. This bug turns out to be a different bug in the fscrypt
-> stack. We can drop this patch (and I probably should have sent it as an
-> RFC in the first place). Sorry for the noise!
+On 8/25/22 9:31 PM, Jeff Layton wrote:
+> v15: rebase onto current ceph/testing branch
+>       add some missing ceph_osdc_wait_request calls
 >
-Cool, thanks Jeff.
+> This patchset represents the remaining patches to add fscrypt support,
+> rebased on top of today's "testing" branch.  They're all ceph changes as
+> the vfs and fscrypt patches are now merged!
+>
+> Note that the current ceph-client/wip-fscrypt branch is broken. It's
+> still based on v5.19-rc6 and has some missing calls to
+> ceph_osdc_wait_request that cause panics. This set fixes that.
+>
+> These are currently in my ceph-fscrypt branch:
+>
+>     https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git/log/?h=ceph-fscrypt
+>
+> It would be good to update the wip-fscrypt branch with this pile.
+>
+> Jeff Layton (19):
+>    libceph: add CEPH_OSD_OP_ASSERT_VER support
+>    ceph: size handling for encrypted inodes in cap updates
+>    ceph: fscrypt_file field handling in MClientRequest messages
+>    ceph: get file size from fscrypt_file when present in inode traces
+>    ceph: handle fscrypt fields in cap messages from MDS
+>    ceph: update WARN_ON message to pr_warn
+>    ceph: add infrastructure for file encryption and decryption
+>    libceph: allow ceph_osdc_new_request to accept a multi-op read
+>    ceph: disable fallocate for encrypted inodes
+>    ceph: disable copy offload on encrypted inodes
+>    ceph: don't use special DIO path for encrypted inodes
+>    ceph: align data in pages in ceph_sync_write
+>    ceph: add read/modify/write to ceph_sync_write
+>    ceph: plumb in decryption during sync reads
+>    ceph: add fscrypt decryption support to ceph_netfs_issue_op
+>    ceph: set i_blkbits to crypto block size for encrypted inodes
+>    ceph: add encryption support to writepage
+>    ceph: fscrypt support for writepages
+>    ceph: report STATX_ATTR_ENCRYPTED on encrypted inodes
+>
+> Luís Henriques (6):
+>    ceph: don't allow changing layout on encrypted files/directories
+>    ceph: invalidate pages when doing direct/sync writes
+>    ceph: add support for encrypted snapshot names
+>    ceph: add support for handling encrypted snapshot names
+>    ceph: update documentation regarding snapshot naming limitations
+>    ceph: prevent snapshots to be created in encrypted locked directories
+>
+> Xiubo Li (4):
+>    ceph: add __ceph_get_caps helper support
+>    ceph: add __ceph_sync_read helper support
+>    ceph: add object version support for sync read
+>    ceph: add truncate size handling support for fscrypt
+>
+>   Documentation/filesystems/ceph.rst |  10 +
+>   fs/ceph/addr.c                     | 164 ++++++++--
+>   fs/ceph/caps.c                     | 143 +++++++--
+>   fs/ceph/crypto.c                   | 367 +++++++++++++++++++++--
+>   fs/ceph/crypto.h                   | 118 +++++++-
+>   fs/ceph/dir.c                      |   8 +
+>   fs/ceph/file.c                     | 467 +++++++++++++++++++++++++----
+>   fs/ceph/inode.c                    | 282 +++++++++++++++--
+>   fs/ceph/ioctl.c                    |   4 +
+>   fs/ceph/mds_client.c               |   9 +-
+>   fs/ceph/mds_client.h               |   2 +
+>   fs/ceph/super.c                    |   6 +
+>   fs/ceph/super.h                    |  11 +
+>   include/linux/ceph/osd_client.h    |   6 +-
+>   include/linux/ceph/rados.h         |   4 +
+>   net/ceph/osd_client.c              |  32 +-
+>   16 files changed, 1454 insertions(+), 179 deletions(-)
+>
+The xfstests-dev tests passed and have updated the wip-fscrypt branch.
 
-I saw you new update about this, they look good to me and will test them.
+Thanks Jeff!
 
-- Xiubo
+
 
