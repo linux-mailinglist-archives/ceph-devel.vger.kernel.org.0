@@ -2,46 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD4EF5A60B0
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 Aug 2022 12:24:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 510125A618B
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Aug 2022 13:21:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230345AbiH3KXX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 30 Aug 2022 06:23:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59126 "EHLO
+        id S229782AbiH3LVB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 30 Aug 2022 07:21:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230331AbiH3KXC (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 30 Aug 2022 06:23:02 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 044055EDE2
-        for <ceph-devel@vger.kernel.org>; Tue, 30 Aug 2022 03:22:39 -0700 (PDT)
+        with ESMTP id S229550AbiH3LVA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 30 Aug 2022 07:21:00 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78C5B642C7;
+        Tue, 30 Aug 2022 04:20:57 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 74514B819D6
-        for <ceph-devel@vger.kernel.org>; Tue, 30 Aug 2022 10:22:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3BF1C433D6;
-        Tue, 30 Aug 2022 10:22:35 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A4735B816D8;
+        Tue, 30 Aug 2022 11:20:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F55C433C1;
+        Tue, 30 Aug 2022 11:20:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1661854956;
-        bh=BOtsDmZmJiDQ1rtywQmMMYVdhn/U6bJjAVVtVy68mlc=;
+        s=k20201202; t=1661858454;
+        bh=alCF5GpH5u+gpvCxHLRbmwtthtKRe9pS/J4xxwf7TlA=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=WApguN8GgVFNFpmPwX90KjzgiD+rXkzNemC8HZQ3mSLvLNFuDEHLeaoQ4iVpESZiz
-         SaUn8Y2qPnfG9I5GftgM0EAnPGFvxS2BmUM+QuZzatOsm8alD4EsUTZwem0XiexCxM
-         7WkDpCmOsSZIFcxAVoIK8H20tRmfIZvWDkOdsdlsvSlNkVI8TCxlmHcn9nio4Ri8vp
-         iNisN8cXp1EABhrBiaShxTJbWfVC+pfnjEQpvCPV4RA2f3fI06dqrsp0J1JplFvwwZ
-         o5RC7cd9B0hJ6GRzc3b+eF1rdSxuIe7Q+gy86cEYz6GB2eQqvfAoYDo1CDguXS8egx
-         Z5t+zDezaAARg==
-Message-ID: <fb60cefa8b767ad0fa3b542cd881cc4dc6a8c733.camel@kernel.org>
-Subject: Re: [PATCH v2] ceph: fail the open_by_handle_at() if the dentry is
- being unlinked
+        b=a7j+WOMxJ9NMH5hK1XagXQm5MHEZxrPMD+WSnBfFpTC3FVBQxNASK0R5/e3ZgYkTB
+         RFnZLpxr+y1wsO6XVnF48yLtobWjttaRB/tDYfX8vUAvWp9kSRAxOd02h0qQ4myPys
+         FJjFtGXofZyh60kfbMHBtmLl9jzMrURzy5I5ZefnmoLjaQqVr9gLDfMTViAHVrYYHe
+         ixNouIUFv2Va5wVzA2qOdclJmWu66YI/1y0ZIxWWN/2MH7eTacr4XOkqA9hc48vB/Z
+         N+CV8GXDJoVKxdF5RsbVQNIYvtmbeMxu2lHS/WrnRHpxT08PEeYW1j93IQSQ2mSrdG
+         DEQb0qnOPHiiQ==
+Message-ID: <fe13642a39160cc7dd15f9212e1afb69e955c0be.camel@kernel.org>
+Subject: Re: [PATCH v3 4/7] xfs: don't bump the i_version on an atime update
+ in xfs_vn_update_time
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com
-Date:   Tue, 30 Aug 2022 06:22:34 -0400
-In-Reply-To: <68425412-d0c7-6f6f-8982-8c18add75c9e@redhat.com>
-References: <20220829045728.488148-1-xiubli@redhat.com>
-         <7ae458b7a4000ae6c4ee59dc6f0373490c9d7381.camel@kernel.org>
-         <68425412-d0c7-6f6f-8982-8c18add75c9e@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "xiubli@redhat.com" <xiubli@redhat.com>,
+        "neilb@suse.de" <neilb@suse.de>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "dwysocha@redhat.com" <dwysocha@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "tytso@mit.edu" <tytso@mit.edu>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "lczerner@redhat.com" <lczerner@redhat.com>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
+Date:   Tue, 30 Aug 2022 07:20:50 -0400
+In-Reply-To: <20220830000851.GV3600936@dread.disaster.area>
+References: <CAOQ4uxjzE_B_EQktLr8z8gXOhFDNm-_YpUTycfZCdaZNp-i0hQ@mail.gmail.com>
+         <CAOQ4uxge86g=+HPnds-wRXkFHg67G=m9rGK7V_T8yS+2=w9tmg@mail.gmail.com>
+         <35d31d0a5c6c9a20c58f55ef62355ff39a3f18c6.camel@kernel.org>
+         <Ywo8cWRcJUpLFMxJ@magnolia>
+         <079df2134120f847e8237675a8cc227d6354a153.camel@hammerspace.com>
+         <b13812a68310e49cc6fb649c2b1c25287712a8af.camel@kernel.org>
+         <CAOQ4uxgThXDEO3mxR_PtPgcPsF7ueqFUxHO3F3KE9sVqi8sLJQ@mail.gmail.com>
+         <732164ffb95468992035a6f597dc26e3ce39316d.camel@kernel.org>
+         <20220829054848.GR3600936@dread.disaster.area>
+         <8510ff07fdba7dd4c59a14e2f202ff38b83a9ef1.camel@kernel.org>
+         <20220830000851.GV3600936@dread.disaster.area>
 Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
@@ -56,115 +85,152 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2022-08-30 at 10:30 +0800, Xiubo Li wrote:
-> On 8/30/22 2:17 AM, Jeff Layton wrote:
-> > On Mon, 2022-08-29 at 12:57 +0800, xiubli@redhat.com wrote:
-> > > From: Xiubo Li <xiubli@redhat.com>
-> > >=20
-> > > When unlinking a file the kclient will send a unlink request to MDS
-> > > by holding the dentry reference, and then the MDS will return 2 repli=
-es,
-> > > which are unsafe reply and a deferred safe reply.
-> > >=20
-> > > After the unsafe reply received the kernel will return and succeed
-> > > the unlink request to user space apps.
-> > >=20
-> > > Only when the safe reply received the dentry's reference will be
-> > > released. Or the dentry will only be unhashed from dcache. But when
-> > > the open_by_handle_at() begins to open the unlinked files it will
-> > > succeed.
-> > >=20
-> > > URL: https://tracker.ceph.com/issues/56524
-> > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> > > ---
-> > >=20
-> > > V2:
-> > > - If the dentry was released and inode is evicted such as by dropping
-> > >    the caches, it will allocate a new dentry, which is also unhashed.
+On Tue, 2022-08-30 at 10:08 +1000, Dave Chinner wrote:
+> On Mon, Aug 29, 2022 at 06:33:48AM -0400, Jeff Layton wrote:
+> > On Mon, 2022-08-29 at 15:48 +1000, Dave Chinner wrote:
+> > > >=20
+> > > > The race window ought to be relatively small, and this wouldn't res=
+ult
+> > > > in incorrect behavior that you'd notice (other than loss of
+> > > > performance), but it's not ideal. We're doing more on-the-wire read=
+s
+> > > > than are necessary in this case.
+> > > >=20
+> > > > It would be nice to have it not do that. If we end up taking this p=
+atch
+> > > > to make it elide the i_version bumps on atime updates, we may be ab=
+le to
+> > > > set the the NOIVER flag in other cases as well, and avoid some of t=
+hese
+> > > > extra bumps.
 > > >=20
 > > >=20
-> > >   fs/ceph/export.c | 17 ++++++++++++++++-
-> > >   1 file changed, 16 insertions(+), 1 deletion(-)
+> > > <sigh>
 > > >=20
-> > > diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-> > > index 0ebf2bd93055..5edc1d31cd79 100644
-> > > --- a/fs/ceph/export.c
-> > > +++ b/fs/ceph/export.c
-> > > @@ -182,6 +182,7 @@ struct inode *ceph_lookup_inode(struct super_bloc=
-k *sb, u64 ino)
-> > >   static struct dentry *__fh_to_dentry(struct super_block *sb, u64 in=
-o)
-> > >   {
-> > >   	struct inode *inode =3D __lookup_inode(sb, ino);
-> > > +	struct dentry *dentry;
-> > >   	int err;
-> > >  =20
-> > >   	if (IS_ERR(inode))
-> > > @@ -197,7 +198,21 @@ static struct dentry *__fh_to_dentry(struct supe=
-r_block *sb, u64 ino)
-> > >   		iput(inode);
-> > >   		return ERR_PTR(-ESTALE);
-> > >   	}
-> > > -	return d_obtain_alias(inode);
-> > > +
-> > > +	/*
-> > > +	 * -ESTALE if the dentry exists and is unhashed,
-> > > +	 * which should be being released
-> > > +	 */
-> > > +	dentry =3D d_find_any_alias(inode);
-> > > +	if (dentry && unlikely(d_unhashed(dentry))) {
-> > > +		dput(dentry);
-> > > +		return ERR_PTR(-ESTALE);
-> > > +	}
-> > > +
-> > > +	if (!dentry)
-> > > +		dentry =3D d_obtain_alias(inode);
-> > > +
-> > > +	return dentry;
-> > >   }
-> > >  =20
-> > >   static struct dentry *__snapfh_to_dentry(struct super_block *sb,
-> > This looks racy.
+> > > Please don't make me repeat myself for the third time.
+> > >=20
+> > > Once we have decided on a solid, unchanging definition for the
+> > > *statx user API variable*, we'll implement a new on-disk field that
+> > > provides this information.  We will document it in the on-disk
+> > > specification as "this is how di_iversion behaves" so that it is
+> > > clear to everyone parsing the on-disk format or writing their own
+> > > XFS driver how to implement it and when to expect it to
+> > > change.
+> > >=20
+> > > Then we can add a filesystem and inode feature flags that say "inode
+> > > has new iversion" and we use that to populate the kernel iversion
+> > > instead of di_changecount. We keep di_changecount exactly the way it
+> > > is now for the applications and use cases we already have for that
+> > > specific behaviour. If the kernel and/or filesystem don't support
+> > > the new di_iversion field, then we'll use di_changecount as it
+> > > currently exists for the kernel iversion code.
+> > >=20
 > >=20
-> > Suppose we have 2 racing tasks calling __fh_to_dentry for the same
-> > inode. The first one races in and doesn't find anything. d_obtain alias
-> > creates a disconnected dentry and returns it. The next task then finds
-> > it, sees that it's disconnected and gets back -ESTALE.
+> > Aside from NFS and IMA, what applications are dependent on the current
+> > definition and how do they rely on i_version today?
+>=20
+> I've answered this multiple times already: the di_changecount
+> behaviour is defined in the on-disk specification and hence we
+> *cannot change the behaviour* without changing the on-disk format
+> specification.
+>=20
+> Apart from the forensics aspect of the change counter (which nobody
+> but us XFS developers seem to understand just how damn important
+> this is), there are *many* third party applications that parse the
+> XFS on-disk format directly. This:
+>=20
+> https://codesearch.debian.net/search?q=3DXFS_SB_VERSION_DIRV2&literal=3D1
+>=20
+> Shows grub2, libparted, syslinux, partclone and fsarchiver as
+> knowing about XFS on-disk superblock flags that tell them what
+> format the directory structure is in. That alone is enough to
+> indicate they parse on-disk inodes directly, and hence may expect
+> di_changecount to have specific meaning and use it to detect
+> unexpected changes to files/directories they care about.
+>=20
+> If I go looking for XFS_SB_MAGIC, I find things like libblkid,
+> klibc, qemu, Xen, testdisk, gpart, and virtualbox all parse the
+> on-disk superblocks directly from the block device, too. They also
+> rely directly on XFS developers ensuring there are no silent
+> incomaptible changes to the on disk format.
+>=20
+> I also know of many other utilities that people and companies have
+> written that parse the on disk format directly from userspace. The
+> functions these perform include low level storage management tools,
+> copying and managing disk images (e.g. offline configuration for
+> cluster deployments), data recovery tools that scrape all the data
+> out of broken filesystems, etc.
+>=20
+> These applications are reliant on the guarantee we provide that the
+> on-disk format will not silently change and that behaviour/structure
+> can always easily be discovered by feature flags in the superblock
+> and/or inodes.
+>=20
+> IOWs, just because there aren't obvious "traditional" application on
+> top of the kernel filesystem that consumes the in-memory kernel
+> iversion field, it does not mean that the defined behaviour of the
+> on-disk di_changecount field is not used or relied on by other tools
+> that work directly on the on-disk format.
+>=20
+> You might be right that NFS doesn't care about this, but the point
+> remains that NFS does not control the XFS on-disk format, nor does
+> the fact that what NFS wants from the change attribute has changed
+> over time override the fact that maintaining XFS on-disk format
+> compatibility is the responsibility of XFS developers. We're willing
+> to change the on-disk format to support whatever the new definition
+> of the statx change attribute ends up being, and that should be the
+> end of the discussion.
+>=20
+
+Thanks for spelling this out in more detail.
+
+> > > Keep in mind that we've been doing dynamic inode format updates in
+> > > XFS for a couple of decades - users don't even have to be aware that
+> > > they need to perform format upgrades because often they just happen
+> > > whenever an inode is accessed. IOWs, just because we have to change
+> > > the on-disk format to support this new iversion definition, it
+> > > doesn't mean users have to reformat filesystems before the new
+> > > feature can be used.
+> > >=20
+> > > Hence, over time, as distros update kernels, the XFS iversion
+> > > behaviour will change automagically as we update inodes in existing
+> > > filesystems as they are accessed to add and then use the new
+> > > di_iversion field for the VFS change attribute field instead of the
+> > > di_changecount field...
+> > >=20
 > >=20
-> > I think you may need to detect this situation in a different way.
+> > If you want to create a whole new on-disk field for this, then that's
+> > your prerogative, but before you do that, I'd like to better understand
+> > why and how the constraints on this field changed.
+> >=20
+> > The original log message from the commit that added a change counter
+> > (below) stated that you were adding it for network filesystems like NFS=
+.
+> > When did this change and why?
 >=20
-> Yeah, you're right. Locally I have another version of patch, which will=
-=20
-> add one di->flags bit, which is "CEPH_DENTRY_IS_UNLINKING".
+> It never changed. I'll repeat what I've already explained twice
+> before:
 >=20
-> If the file have hard links and there are more than one alias and one of=
-=20
-> them is being unlinked, shouldn't we make sure we will pick a normal one=
-=20
-> here ? If so we should iterate all the alias and filter out the being=20
-> unlinked ones.
+> https://lore.kernel.org/linux-xfs/20220818030048.GE3600936@dread.disaster=
+.area/
+> https://lore.kernel.org/linux-xfs/20220818033731.GF3600936@dread.disaster=
+.area/
 >=20
-
-Possibly. Another option might be to try to catch this in the open
-codepath instead. Test whether the dentry you're trying to open has the
-IS_UNLINKING flag set, and return -ESTALE on open if so.
-
-If the problem goes beyond open though, then that may not be sufficient.
-
-> At the same time I found another issue for the "ceph_fh_to_dentry()".=20
-> That is we never check the inode->i_generation like other filesystems,=
-=20
-> which will make sure the inode we are trying to open is the exactly the=
-=20
-> same one saved in userspace. The inode maybe deleted and created before=
-=20
-> this.
+> tl; dr: NFS requirements were just one of *many* we had at the time
+> for an atomic persistent change counter.
 >=20
-> Thanks
->=20
-> Xiubo
->=20
+> The fact is that NFS users are just going to have to put up with
+> random cache invalidations on XFS for a while longer. Nobody noticed
+> this and/or cared about this enough to raise it as an issue for the
+> past decade, so waiting another few months for upstream XFS to
+> change to a different on-disk format for the NFS/statx change
+> attribute isn't a big deal.
 >=20
 
+Fair enough. I'll plan to drop this patch from the series for now, with
+the expectation that you guys will add a new i_version counter that
+better conforms to what NFS and IMA need.
+
+Thanks,
 --=20
 Jeff Layton <jlayton@kernel.org>
