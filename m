@@ -2,167 +2,141 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AAA8D5A8A20
-	for <lists+ceph-devel@lfdr.de>; Thu,  1 Sep 2022 02:58:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C86CC5A9683
+	for <lists+ceph-devel@lfdr.de>; Thu,  1 Sep 2022 14:17:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231436AbiIAA6Q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 31 Aug 2022 20:58:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55788 "EHLO
+        id S233171AbiIAMRX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 1 Sep 2022 08:17:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229713AbiIAA6P (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 31 Aug 2022 20:58:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE8E2DD746
-        for <ceph-devel@vger.kernel.org>; Wed, 31 Aug 2022 17:58:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1661993893;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0R8SVFiF8na6pYATGRJKoC8Q/wSeCd2n+32o8MhUsqE=;
-        b=HTXVpxWf1zkFK/rfdzGgiTYNSE2TfYjpWjelpQGCcIwqVT6IeOK0ZtvEUuv//AOjcVzX8m
-        Te6iFTqyRxjKTeOj6ge5os0yMeWxrt2UkZqn1RL499MMHK0qSfmMGZZtr1vAUJxoDHY02d
-        +2hxie+9kRsDMyRXoZW6Pw1wkS9i9Iw=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-283-SWdt3h-yPxKBaBN0FMdi3w-1; Wed, 31 Aug 2022 20:58:09 -0400
-X-MC-Unique: SWdt3h-yPxKBaBN0FMdi3w-1
-Received: by mail-pj1-f70.google.com with SMTP id e1-20020a17090a7c4100b001fd7e8c4eb1so423134pjl.1
-        for <ceph-devel@vger.kernel.org>; Wed, 31 Aug 2022 17:58:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date;
-        bh=0R8SVFiF8na6pYATGRJKoC8Q/wSeCd2n+32o8MhUsqE=;
-        b=LtFkbfyW2W6xOr5O6wMsxyMcn8dhgCwdj6jdHtJQbefuTlaujTulpWxZnQQ85+fw6Q
-         yff4CgMZnpktWj/Ens9gPkUyj2mG+0GruhyDuEGNasUJfnnbx/2fgj8/GZkzYAHVX3uG
-         UE7sOtLf+DAMdPXLvaL4hfOkdwINoF8YoUZx0/s1+m8H8btd67N8j48G6P6K65AvGWMs
-         wUhK99S9m6GdyuXah8xFbRW3kwdRqIFzs5+ZX+SKsWK/RYF4k/vQqyvvjbLbhwWjgXZC
-         9DcyYsmEjIh7wCXxACVVyLITGWophnHqoZI9AYY2v5T5lEksXQtUTia2XW7uBGEJi6mc
-         V0tg==
-X-Gm-Message-State: ACgBeo1W10GuWp4poQReZTRH5HfeqMbPtQtOeJexLoVVrhDIQ7lPQLFZ
-        xQzaLcqGdpaAztinokT3s8/6QcEY9g2FJ96zfv/Rfis4yeH6XQ0tu9C0IAo+6f7Ae3T2WU7DHAj
-        AL9qWrEltDtahgW64ZqgmuA==
-X-Received: by 2002:a62:ea14:0:b0:535:c678:8106 with SMTP id t20-20020a62ea14000000b00535c6788106mr29075826pfh.9.1661993888642;
-        Wed, 31 Aug 2022 17:58:08 -0700 (PDT)
-X-Google-Smtp-Source: AA6agR4e6mFTPjmCaFOESXYsjcMrIxu9XpiiPK+pSMB2ypuYBdP9j6Gb9T+hEiHkUm3tOgV/r0GGJw==
-X-Received: by 2002:a62:ea14:0:b0:535:c678:8106 with SMTP id t20-20020a62ea14000000b00535c6788106mr29075807pfh.9.1661993888364;
-        Wed, 31 Aug 2022 17:58:08 -0700 (PDT)
-Received: from [10.72.12.34] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id q9-20020a170902bd8900b0016f035dcd75sm12158042pls.193.2022.08.31.17.58.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Aug 2022 17:58:07 -0700 (PDT)
-Subject: Re: [PATCH v3] ceph: fail the open_by_handle_at() if the dentry is
- being unlinked
-To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
-Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org, idryomov@gmail.com,
-        mchangir@redhat.com
-References: <20220831021617.11058-1-xiubli@redhat.com>
- <Yw9sfh8pqVwu1t5n@suse.de>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <beae4a6e-c905-07aa-7626-39e5e6cc9900@redhat.com>
-Date:   Thu, 1 Sep 2022 08:58:02 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        with ESMTP id S232868AbiIAMRW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 1 Sep 2022 08:17:22 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC006118A63;
+        Thu,  1 Sep 2022 05:17:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3C462B825E4;
+        Thu,  1 Sep 2022 12:17:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8490C433D6;
+        Thu,  1 Sep 2022 12:17:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1662034638;
+        bh=HMRBvtGrMdseHHO8WD6RRw3JemO/uRhitrcEcBh7oNk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JI38jC2mevkX/4GtWpVjQre7XaNbn7VhZ+Rkhr5IpRF7UZvDH5XtH3JLJL8qdirl+
+         Cj7CH8pj40ihyuVu6GQF/Bf3e0VZ6/LxPC2yXycJopLmTWI4Xtxhqk40NqrnQtVg8d
+         zi3zvxmPfRS1JLpJa9fMCqGzXhOvcXClFUvpC2yevjgLyZk2PVOyOkCCp6EQS+9pHE
+         ZDN1pjgpUw+le3WE/VmsnR5pEkX47pYbZMgTwMHBy6KCf3+8pjTkYGbk6lmWCviG7f
+         vbGIubjeVMuSqwdxdutaaV/Il3IrzTukDESCtg5R7nLPG3wi+Qh9yEvTIxxtwAZsy+
+         uF5I3/4+RPJ4A==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
+        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
+        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
+        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
+        bfields@fieldses.org, brauner@kernel.org, linux-man@vger.kernel.org
+Cc:     linux-api@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: [RFC PATCH v2] statx, inode: document the new STATX_INO_VERSION field
+Date:   Thu,  1 Sep 2022 08:17:14 -0400
+Message-Id: <20220901121714.20051-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-In-Reply-To: <Yw9sfh8pqVwu1t5n@suse.de>
-Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+I'm proposing to expose the inode change attribute via statx [1]. Document
+what this value means and what an observer can infer from it changing.
 
-On 8/31/22 10:13 PM, Luís Henriques wrote:
-> On Wed, Aug 31, 2022 at 10:16:17AM +0800, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> When unlinking a file the kclient will send a unlink request to MDS
->> by holding the dentry reference, and then the MDS will return 2 replies,
->> which are unsafe reply and a deferred safe reply.
->>
->> After the unsafe reply received the kernel will return and succeed
->> the unlink request to user space apps.
->>
->> Only when the safe reply received the dentry's reference will be
->> released. Or the dentry will only be unhashed from dcache. But when
->> the open_by_handle_at() begins to open the unlinked files it will
->> succeed.
->>
->> The inode->i_count couldn't be used to check whether the inode is
->> opened or not.
->>
->> URL: https://tracker.ceph.com/issues/56524
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>
->> V3:
->> - The inode->i_count couldn't be correctly indicate that whether the
->>    file is opened or not.
->>
->> V2:
->> - If the dentry was released and inode is evicted such as by dropping
->>    the caches, it will allocate a new dentry, which is also unhashed.
->>
->>   fs/ceph/export.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/ceph/export.c b/fs/ceph/export.c
->> index 0ebf2bd93055..8559990a59a5 100644
->> --- a/fs/ceph/export.c
->> +++ b/fs/ceph/export.c
->> @@ -182,6 +182,7 @@ struct inode *ceph_lookup_inode(struct super_block *sb, u64 ino)
->>   static struct dentry *__fh_to_dentry(struct super_block *sb, u64 ino)
->>   {
->>   	struct inode *inode = __lookup_inode(sb, ino);
->> +	struct ceph_inode_info *ci = ceph_inode(inode);
->>   	int err;
->>   
->>   	if (IS_ERR(inode))
->> @@ -193,7 +194,7 @@ static struct dentry *__fh_to_dentry(struct super_block *sb, u64 ino)
->>   		return ERR_PTR(err);
->>   	}
->>   	/* -ESTALE if inode as been unlinked and no file is open */
->> -	if ((inode->i_nlink == 0) && (atomic_read(&inode->i_count) == 1)) {
->> +	if ((inode->i_nlink == 0) && !__ceph_is_file_opened(ci)) {
->>   		iput(inode);
->>   		return ERR_PTR(-ESTALE);
->>   	}
->> -- 
->> 2.36.0.rc1
->>
-> Thanks, this seems be correct.  I was able to reproduce this locally, and
-> I can confirm this patch fixes it.  (Although I had this fixed this in the
-> past with 878dabb64117 and at that time it looked like it was fixed too.)
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Yeah, this is much harder to reproduce since you last two fixes about 
-this. Locally I need to make a change in the xfstests source code to 
-trigger it easier or I may need half day or more to see it.
+[1]: https://lore.kernel.org/linux-nfs/20220826214703.134870-1-jlayton@kernel.org/T/#t
+---
+ man2/statx.2 | 17 +++++++++++++++++
+ man7/inode.7 | 12 ++++++++++++
+ 2 files changed, 29 insertions(+)
 
-> Feel free to add my:
->
-> Tested-by: Luís Henriques <lhenriques@suse.de>
-> Reviewed-by: Luís Henriques <lhenriques@suse.de>
+v2: revised the definition to be more strict, since that seemed to be
+    consensus on desired behavior. Spurious i_version bumps would now
+    be considered bugs, by this definition.
 
-Thanks Luis and Jeff.
-
-Updated this.
-
--- Xiubo
-
-
-> Cheers,
-> --
-> Luís
->
+diff --git a/man2/statx.2 b/man2/statx.2
+index 0d1b4591f74c..493e4e234809 100644
+--- a/man2/statx.2
++++ b/man2/statx.2
+@@ -62,6 +62,7 @@ struct statx {
+     __u32 stx_dev_major;   /* Major ID */
+     __u32 stx_dev_minor;   /* Minor ID */
+     __u64 stx_mnt_id;      /* Mount ID */
++    __u64 stx_ino_version; /* Inode change attribute */
+ };
+ .EE
+ .in
+@@ -247,6 +248,7 @@ STATX_BTIME	Want stx_btime
+ STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
+ 	It is deprecated and should not be used.
+ STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
++STATX_INO_VERSION	Want stx_ino_version (DRAFT)
+ .TE
+ .in
+ .PP
+@@ -411,6 +413,21 @@ and corresponds to the number in the first field in one of the records in
+ For further information on the above fields, see
+ .BR inode (7).
+ .\"
++.TP
++.I stx_ino_version
++The inode version, also known as the inode change attribute. This
++value must change any time there is an inode status change. Any
++operation that would cause the
++.I stx_ctime
++to change must also cause
++.I stx_ino_version
++to change, even when there is no apparent change to the
++.I stx_ctime
++due to coarse timestamp granularity.
++.IP
++An observer cannot infer anything about the nature or magnitude of the change
++from the value of this field. A change in this value only indicates that
++there has been an explicit change in the inode.
+ .SS File attributes
+ The
+ .I stx_attributes
+diff --git a/man7/inode.7 b/man7/inode.7
+index 9b255a890720..d5e0890a52c0 100644
+--- a/man7/inode.7
++++ b/man7/inode.7
+@@ -184,6 +184,18 @@ Last status change timestamp (ctime)
+ This is the file's last status change timestamp.
+ It is changed by writing or by setting inode information
+ (i.e., owner, group, link count, mode, etc.).
++.TP
++Inode version (i_version)
++(not returned in the \fIstat\fP structure); \fIstatx.stx_ino_version\fP
++.IP
++This is the inode change attribute. Any operation that would result in a change
++to \fIstatx.stx_ctime\fP must result in a change to this value. The value must
++change even in the case where the ctime change is not evident due to coarse
++timestamp granularity.
++.IP
++An observer cannot infer anything from the returned value about the nature or
++magnitude of the change. If the returned value is different from the last time
++it was checked, then something has made an explicit change to the inode.
+ .PP
+ The timestamp fields report time measured with a zero point at the
+ .IR Epoch ,
+-- 
+2.37.2
 
