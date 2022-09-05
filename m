@@ -2,158 +2,78 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B72B5AC02F
-	for <lists+ceph-devel@lfdr.de>; Sat,  3 Sep 2022 19:39:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFE9E5ACB22
+	for <lists+ceph-devel@lfdr.de>; Mon,  5 Sep 2022 08:42:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232022AbiICRim (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 3 Sep 2022 13:38:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50818 "EHLO
+        id S236930AbiIEGgc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 5 Sep 2022 02:36:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232143AbiICRi0 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 3 Sep 2022 13:38:26 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DE9153D2B;
-        Sat,  3 Sep 2022 10:38:25 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id b19so5233073ljf.8;
-        Sat, 03 Sep 2022 10:38:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=xX2O58QMupv9rWIX/wz0TD9J8Ed7HqVnisBNPZl6V04=;
-        b=P/hsH1QKS4072Gai1EmOGCnjPTQWZiiOiE+P26T80mgV0tbTOnkDXKC3nEWi1Xoe/A
-         Hs7LLFSp+fCaJRWZVqv/8C2xzImMvLQoTDYUfx6u9PmIwXRQtB9n4gGmx+GH0S1f7zYT
-         EpKdDfbdqDAHgNmhwbrPGp06lVMfmsEbewBLDb/B+dQfW30xzF8F2l2F/gidKFJKBG6M
-         xlYX6S3WMrWsrSfVCDpCmKqprjSkUDidSKYHiXrhQ6jx9rWQ1os07RE+QbroswHSap0D
-         gOYyJOlFnRdNpKj+sEkb2UqwaGfM6EvoZTNoU3eDmRl2MoAiXkF/RCfX0IxvBDH8/V+n
-         XD8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=xX2O58QMupv9rWIX/wz0TD9J8Ed7HqVnisBNPZl6V04=;
-        b=imTLFN8Eux+H9bfSleRewZH/5DsXR08iBnirAYp8x+S0JfQBmlHrGXNN1Nh3DlOYwp
-         iSeScOiatLAIcV2QQXWsycH5nExk+rxB7Gkx6Ev0k1BvXc21ku/gWYj5FLIY1t5mlZja
-         TSwe0rI583L76zVdWL3yggKQ37/9MuBrEevDRIVGFOno+Jhq5scwA/9LE8kAMCWjgaTj
-         PfK7Bok2vlWQQRKSOAMgPnfhlim5fcJjXBJ3UOt4hNNz76LLd0JTGIQj75rnqGhWgnF+
-         q7lscpM8EwUz1wAj239CIOgDRmwmY13nyjxc4Rx2pG73MR5Tn50WhfRZn4YPo818v1Vy
-         uf3w==
-X-Gm-Message-State: ACgBeo3Cc2Y2VegKEuKQ/9rp0/0ZPZVf1OZ2nGmHq1yGZ41nC/+3e2Gx
-        dLQxqi1fUAL/Rjn/aDiOfT5enZ6HDPLHglijCyY=
-X-Google-Smtp-Source: AA6agR7+UPXECkLr9xecEnlHY9jJP9Sk53/z1csaRMZh+iBcI4PkxC6eajktqUCZxUcf8SInATP1uw7iY4QjQlwWETk=
-X-Received: by 2002:a2e:b8d5:0:b0:25f:e94d:10a2 with SMTP id
- s21-20020a2eb8d5000000b0025fe94d10a2mr13425885ljp.274.1662226704352; Sat, 03
- Sep 2022 10:38:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220901220138.182896-1-vishal.moola@gmail.com> <20220901220138.182896-19-vishal.moola@gmail.com>
-In-Reply-To: <20220901220138.182896-19-vishal.moola@gmail.com>
-From:   Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date:   Sun, 4 Sep 2022 02:38:06 +0900
-Message-ID: <CAKFNMo=YwdFOQNUuwNvYn6u41C8A2M905-nDkEFRejPZ2_svYg@mail.gmail.com>
-Subject: Re: [PATCH 18/23] nilfs2: Convert nilfs_lookup_dirty_data_buffers()
- to use filemap_get_folios_tag()
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S236435AbiIEGgI (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 5 Sep 2022 02:36:08 -0400
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 085EF274;
+        Sun,  4 Sep 2022 23:35:40 -0700 (PDT)
+Received: from linux.localdomain (unknown [113.200.148.30])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxT+C3mBVjZYsRAA--.7569S2;
+        Mon, 05 Sep 2022 14:35:36 +0800 (CST)
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+To:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     ceph-devel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ceph, docs: Remove Sage's git tree
+Date:   Mon,  5 Sep 2022 14:35:35 +0800
+Message-Id: <1662359735-18320-1-git-send-email-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+X-CM-TRANSID: AQAAf8CxT+C3mBVjZYsRAA--.7569S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtFWxXFWkKF4fZw48KryfJFb_yoWfAFbEvr
+        Z7JF4kJFW5AryxGa4kCF45WF47Zw48CF18A3Z5Jry8C343t3yDJFyqqr9FyF45XrWI9r9x
+        AFZxXr9IqF12kjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb7kYjsxI4VWDJwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
+        cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I
+        8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJw
+        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc2xSY4AK67AK6r47MxAIw28I
+        cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
+        IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI
+        42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42
+        IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+        aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU4PrcDUUUU
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Sep 2, 2022 at 7:07 AM Vishal Moola (Oracle) wrote:
->
-> Convert function to use folios throughout. This is in preparation for
-> the removal of find_get_pages_range_tag().
->
-> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-> ---
->  fs/nilfs2/segment.c | 29 ++++++++++++++++-------------
->  1 file changed, 16 insertions(+), 13 deletions(-)
->
-> diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
-> index 0afe0832c754..e95c667bdc8f 100644
-> --- a/fs/nilfs2/segment.c
-> +++ b/fs/nilfs2/segment.c
-> @@ -680,7 +680,7 @@ static size_t nilfs_lookup_dirty_data_buffers(struct inode *inode,
->                                               loff_t start, loff_t end)
->  {
->         struct address_space *mapping = inode->i_mapping;
-> -       struct pagevec pvec;
-> +       struct folio_batch fbatch;
->         pgoff_t index = 0, last = ULONG_MAX;
->         size_t ndirties = 0;
->         int i;
-> @@ -694,23 +694,26 @@ static size_t nilfs_lookup_dirty_data_buffers(struct inode *inode,
->                 index = start >> PAGE_SHIFT;
->                 last = end >> PAGE_SHIFT;
->         }
-> -       pagevec_init(&pvec);
-> +       folio_batch_init(&fbatch);
->   repeat:
->         if (unlikely(index > last) ||
-> -           !pagevec_lookup_range_tag(&pvec, mapping, &index, last,
-> -                               PAGECACHE_TAG_DIRTY))
-> +             !filemap_get_folios_tag(mapping, &index, last,
-> +                     PAGECACHE_TAG_DIRTY, &fbatch))
->                 return ndirties;
->
-> -       for (i = 0; i < pagevec_count(&pvec); i++) {
-> +       for (i = 0; i < folio_batch_count(&fbatch); i++) {
->                 struct buffer_head *bh, *head;
-> -               struct page *page = pvec.pages[i];
-> +               struct folio *folio = fbatch.folios[i];
->
-> -               lock_page(page);
-> -               if (!page_has_buffers(page))
-> -                       create_empty_buffers(page, i_blocksize(inode), 0);
-> -               unlock_page(page);
+Sage's git tree has not been pushed to in years, and it was removed in
+commit 3a5ccecd9af7 ("MAINTAINERS: remove myself as ceph co-maintainer"),
+so it is better to remove it in the documentation too.
 
-> +               head = folio_buffers(folio);
-> +               folio_lock(folio);
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+ Documentation/filesystems/ceph.rst | 1 -
+ 1 file changed, 1 deletion(-)
 
-Could you please swap these two lines to keep the "head" check in the lock?
+diff --git a/Documentation/filesystems/ceph.rst b/Documentation/filesystems/ceph.rst
+index 4942e01..76ce938 100644
+--- a/Documentation/filesystems/ceph.rst
++++ b/Documentation/filesystems/ceph.rst
+@@ -203,7 +203,6 @@ For more information on Ceph, see the home page at
+ 
+ The Linux kernel client source tree is available at
+ 	- https://github.com/ceph/ceph-client.git
+-	- git://git.kernel.org/pub/scm/linux/kernel/git/sage/ceph-client.git
+ 
+ and the source for the full system is at
+ 	https://github.com/ceph/ceph.git
+-- 
+2.1.0
 
-Thanks,
-Ryusuke Konishi
-
-
-> +               if (!head) {
-> +                       create_empty_buffers(&folio->page, i_blocksize(inode), 0);
-> +                       head = folio_buffers(folio);
-> +               }
-> +               folio_unlock(folio);
->
-> -               bh = head = page_buffers(page);
-> +               bh = head;
->                 do {
->                         if (!buffer_dirty(bh) || buffer_async_write(bh))
->                                 continue;
-> @@ -718,13 +721,13 @@ static size_t nilfs_lookup_dirty_data_buffers(struct inode *inode,
->                         list_add_tail(&bh->b_assoc_buffers, listp);
->                         ndirties++;
->                         if (unlikely(ndirties >= nlimit)) {
-> -                               pagevec_release(&pvec);
-> +                               folio_batch_release(&fbatch);
->                                 cond_resched();
->                                 return ndirties;
->                         }
->                 } while (bh = bh->b_this_page, bh != head);
->         }
-> -       pagevec_release(&pvec);
-> +       folio_batch_release(&fbatch);
->         cond_resched();
->         goto repeat;
->  }
-> --
-> 2.36.1
->
