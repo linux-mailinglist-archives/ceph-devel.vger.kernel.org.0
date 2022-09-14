@@ -2,127 +2,126 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4071D5B7DC9
-	for <lists+ceph-devel@lfdr.de>; Wed, 14 Sep 2022 02:09:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FE5E5B7F33
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 Sep 2022 05:10:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbiINAIv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 13 Sep 2022 20:08:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59586 "EHLO
+        id S229565AbiINDJ7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 13 Sep 2022 23:09:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbiINAIu (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 13 Sep 2022 20:08:50 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CA4262A95;
-        Tue, 13 Sep 2022 17:08:49 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 74A4EBCE; Tue, 13 Sep 2022 20:08:48 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 74A4EBCE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1663114128;
-        bh=E9WEzEar/6VJErlxq0icil2vqwzUNkdFMHHx75MNPGk=;
-        h=Date:To:Cc:Subject:References:In-Reply-To:From:From;
-        b=gbzbUdAw9tQbApBKPqCcLDaprymqGt1ZMnsxKY2ZvOplS6yqAodJy/iaWkqufRExJ
-         fCKIdC9SJKsHpIw5KnLOhMQm2UVX/RKMaTclCJzV7X4HnaBhdJ0wbD9HhMcPI07tFG
-         GAxZc03ETKVHcTcXtNtSGu96B8Jx5HwFmjs1fk3Q=
-Date:   Tue, 13 Sep 2022 20:08:48 -0400
-To:     NeilBrown <neilb@suse.de>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        adilger.kernel@dilger.ca, djwong@kernel.org,
-        trondmy@hammerspace.com, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
-        lczerner@redhat.com, brauner@kernel.org, fweimer@redhat.com,
-        linux-man@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-Message-ID: <20220914000848.GB11958@fieldses.org>
-References: <20220908182252.GA18939@fieldses.org>
- <44efe219dbf511492b21a653905448d43d0f3363.camel@kernel.org>
- <20220909154506.GB5674@fieldses.org>
- <125df688dbebaf06478b0911e76e228e910b04b3.camel@kernel.org>
- <20220910145600.GA347@fieldses.org>
- <9eaed9a47d1aef11fee95f0079e302bc776bc7ff.camel@kernel.org>
- <20220913004146.GD3600936@dread.disaster.area>
- <166303374350.30452.17386582960615006566@noble.neil.brown.name>
- <20220913190226.GA11958@fieldses.org>
- <166311116291.20483.960025733349761945@noble.neil.brown.name>
+        with ESMTP id S229554AbiINDJ4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 13 Sep 2022 23:09:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAA0CBCBA
+        for <ceph-devel@vger.kernel.org>; Tue, 13 Sep 2022 20:09:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1663124989;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=jlkrrDo/ZNpO+d3hkCF+Z+vI7kye+PRnDQz9Ou3QCFk=;
+        b=awElBPV2BhgmPiffSCf4KAU6uwjHDvmHG2INgmnlKSmqh7kDzmHfDybRzFhfWw0JFB4aVh
+        vx00w5HX1r2yKmzs1NrKa0/mhgJ/dmhwVP0aYV29XjmBiVLKWoC+IHmq7mHowNpVLAN/YN
+        kTCiPNR1NIHCR6imfMsRPDdPRvi59A4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-259-eAu-TKhQNbuZmXZAOjhghQ-1; Tue, 13 Sep 2022 23:09:46 -0400
+X-MC-Unique: eAu-TKhQNbuZmXZAOjhghQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0B59B804191;
+        Wed, 14 Sep 2022 03:09:46 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 60F591121314;
+        Wed, 14 Sep 2022 03:09:43 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     ceph-devel@vger.kernel.org
+Cc:     jlayton@kernel.org, idryomov@gmail.com, lhenriques@suse.de,
+        mchangir@redhat.com, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v3] ceph: fix incorrectly showing the .snap size for stat
+Date:   Wed, 14 Sep 2022 11:09:40 +0800
+Message-Id: <20220914030940.61357-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <166311116291.20483.960025733349761945@noble.neil.brown.name>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-From:   bfields@fieldses.org (J. Bruce Fields)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Sep 14, 2022 at 09:19:22AM +1000, NeilBrown wrote:
-> On Wed, 14 Sep 2022, J. Bruce Fields wrote:
-> > On Tue, Sep 13, 2022 at 11:49:03AM +1000, NeilBrown wrote:
-> > > Invalidating the client cache on EVERY unmount/mount could impose
-> > > unnecessary cost.  Imagine a client that caches a lot of data (several
-> > > large files) from a server which is expected to fail-over from one
-> > > cluster node to another from time to time.  Adding extra delays to a
-> > > fail-over is not likely to be well received.
-> > > 
-> > > I don't *know* this cost would be unacceptable, and I *would* like to
-> > > leave it to the filesystem to decide how to manage its own i_version
-> > > values.  So maybe XFS can use the LSN for a salt.  If people notice the
-> > > extra cost, they can complain.
-> > 
-> > I'd expect complaints.
-> > 
-> > NFS is actually even worse than this: it allows clients to reacquire
-> > file locks across server restart and unmount/remount, even though
-> > obviously the kernel will do nothing to prevent someone else from
-> > locking (or modifying) the file in between.
-> 
-> I don't understand this comment.  You seem to be implying that changing
-> the i_version during a server restart would stop a client from
-> reclaiming locks.  Is that correct?
+From: Xiubo Li <xiubli@redhat.com>
 
-No, sorry, I'm probably being confusing.
+We should set the 'stat->size' to the real number of snapshots for
+snapdirs.
 
-I was just saying: we've always depended in a lot of ways on the
-assumption that filesystems aren't messed with while nfsd's not running.
-You can produce all sorts of incorrect behavior by violating that
-assumption.  That tools might fool with unmounted filesystems is just
-another such example, and fixing that wouldn't be very high on my list
-of priorities.
+URL: https://tracker.ceph.com/issues/57342
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
 
-??
+V3:
+- reuse ceph_lookup_inode(), Thanks Luis' comment about this.
 
---b.
+ fs/ceph/inode.c | 27 +++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
 
-> I would have thought that the client would largely ignore i_version
-> while it has a lock or open or delegation, as these tend to imply some
-> degree of exclusive access ("open" being least exclusive).
-> 
-> Thanks,
-> NeilBrown
-> 
-> 
-> > 
-> > Administrators are just supposed to know not to allow other applications
-> > access to the filesystem until nfsd's started.  It's always been this
-> > way.
-> > 
-> > You can imagine all sorts of measures to prevent that, and if anyone
-> > wants to work on ways to prevent people from shooting themselves in the
-> > foot here, great.
-> > 
-> > Just taking away the ability to cache or lock across reboots wouldn't
-> > make people happy, though....
-> > 
-> > --b.
-> > 
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 4db4394912e7..84ea0e18089a 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -2713,6 +2713,7 @@ int ceph_getattr(struct user_namespace *mnt_userns, const struct path *path,
+ 		 struct kstat *stat, u32 request_mask, unsigned int flags)
+ {
+ 	struct inode *inode = d_inode(path->dentry);
++	struct super_block *sb = inode->i_sb;
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	u32 valid_mask = STATX_BASIC_STATS;
+ 	int err = 0;
+@@ -2742,16 +2743,34 @@ int ceph_getattr(struct user_namespace *mnt_userns, const struct path *path,
+ 	}
+ 
+ 	if (ceph_snap(inode) == CEPH_NOSNAP)
+-		stat->dev = inode->i_sb->s_dev;
++		stat->dev = sb->s_dev;
+ 	else
+ 		stat->dev = ci->i_snapid_map ? ci->i_snapid_map->dev : 0;
+ 
+ 	if (S_ISDIR(inode->i_mode)) {
+-		if (ceph_test_mount_opt(ceph_sb_to_client(inode->i_sb),
+-					RBYTES))
++		if (ceph_test_mount_opt(ceph_sb_to_client(sb), RBYTES)) {
+ 			stat->size = ci->i_rbytes;
+-		else
++		} else if (ceph_snap(inode) == CEPH_SNAPDIR) {
++			struct ceph_inode_info *pci;
++			struct ceph_snap_realm *realm;
++			struct inode *parent;
++
++			parent = ceph_lookup_inode(sb, ceph_ino(inode));
++			if (!parent)
++				return PTR_ERR(parent);
++
++			pci = ceph_inode(parent);
++			spin_lock(&pci->i_ceph_lock);
++			realm = pci->i_snap_realm;
++			if (realm)
++				stat->size = realm->num_snaps;
++			else
++				stat->size = 0;
++			spin_unlock(&pci->i_ceph_lock);
++			iput(parent);
++		} else {
+ 			stat->size = ci->i_files + ci->i_subdirs;
++		}
+ 		stat->blocks = 0;
+ 		stat->blksize = 65536;
+ 		/*
+-- 
+2.31.1
+
