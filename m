@@ -2,127 +2,150 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A83C5B90BC
-	for <lists+ceph-devel@lfdr.de>; Thu, 15 Sep 2022 01:03:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D67085B92AE
+	for <lists+ceph-devel@lfdr.de>; Thu, 15 Sep 2022 04:31:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbiINXDI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 14 Sep 2022 19:03:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44424 "EHLO
+        id S229832AbiIOCbk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 14 Sep 2022 22:31:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229701AbiINXDH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 14 Sep 2022 19:03:07 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D7FC86C0D;
-        Wed, 14 Sep 2022 16:03:06 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 4809E2254E;
-        Wed, 14 Sep 2022 23:03:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1663196585; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        with ESMTP id S229685AbiIOCbj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 14 Sep 2022 22:31:39 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49D8B901A3
+        for <ceph-devel@vger.kernel.org>; Wed, 14 Sep 2022 19:31:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1663209097;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Der/yD5DoRhA+UaDEdoBo0c+TBGXF1b1eQeHUJoVn24=;
-        b=vUOyhbIqIdhUfwjGMcVp0bFWqzSxjg18Byf0Fw6V5BWUlJXfduvZU8AsGTsDkTCUQVX1DI
-        3ee//m67w0d3/IaK9foaigRlwNhudHM73ukohor5+efg5TY3is7z+cqHRkrfRs95WC7ga4
-        cSOwko1/rNviD4ShdiPw7JiSg1R8Z00=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1663196585;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Der/yD5DoRhA+UaDEdoBo0c+TBGXF1b1eQeHUJoVn24=;
-        b=EUm8SOBHxcTunrnYlf/7AJ8WMe7OgCxbHb23+u0pbKckxSbiSnW5PX762kvLVY0BH2prcl
-        iOFuzg7VO/j6ODDg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4E124134B3;
-        Wed, 14 Sep 2022 23:02:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id ssTxAKFdImMOUgAAMHmgww
-        (envelope-from <neilb@suse.de>); Wed, 14 Sep 2022 23:02:57 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        bh=LLJx39fYO4u/RW6RN4O7d+e5bgwKGnTliRl8UuC17Iw=;
+        b=eOm5g5VfwTelzvQvKwlh5wMF6XQFE56m2h7G9HA5CUO1+qsEmN7BsuQsWuGGkAz9Ka0rvb
+        rzDd2apqMpG++jqr4wTdx9XOw6LmP08bhT5deqDv+35FuwbtsBbKevXVuoiha3dHa1/yPe
+        bAQPI5/oxgJyuo2glM1kkJSfjFdctb8=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-14-RQEHR-sENAKQ0wjEF4W_vw-1; Wed, 14 Sep 2022 22:31:36 -0400
+X-MC-Unique: RQEHR-sENAKQ0wjEF4W_vw-1
+Received: by mail-pl1-f200.google.com with SMTP id d7-20020a170903230700b00177f6dd8472so11534140plh.6
+        for <ceph-devel@vger.kernel.org>; Wed, 14 Sep 2022 19:31:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date;
+        bh=LLJx39fYO4u/RW6RN4O7d+e5bgwKGnTliRl8UuC17Iw=;
+        b=ODy30xL68j9Lb6S7CiKiK46F6iAKdUcXRA4cnVuvdEqAZZmLGeXChnBmFZxjiVSHmj
+         znJpKOqMDgAIT2g8uCDdHwtyDnZS8aYEKjznic30TXGQVqyjIqJQsi/v/HtKLipazkT5
+         u8yRAHJ6f9aUMQ9kNYkjCXRZ7a/SnKrzzjc3swWyFkwUIz2b6otVLaiMmB8ZqNJH1lS+
+         JQlAkdq5tv4Kt9PXxPhRcUlQbkvYaDyG/f/OospPMWE/1DRcacPUNSp5Ipb+8XUHO3vF
+         oluvPqijYR/e2l2irWRA367dZ94UZKi+Vqptw4wdC91w3lTys509nQ9NBclheCeWUmnI
+         tbSA==
+X-Gm-Message-State: ACrzQf1DQMGoFSA03zwncF10cWnobmoIOT/tUbsB542xxcS+obLUgy+/
+        Ko6J0B5p7ejaqi5I8mdyMITveKZJ5zeNnlEx77sD0GvkODM6BWclymdqni9UqDn0UGFT1zGHFGC
+        q6EE6w4zF8oLkwbldXOfQlw==
+X-Received: by 2002:a63:1f02:0:b0:439:8ff9:236e with SMTP id f2-20020a631f02000000b004398ff9236emr670213pgf.63.1663209094508;
+        Wed, 14 Sep 2022 19:31:34 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM73mqSyJMALhlkJsUVgrtOrya7m1ro0M+fzPFU84WVmfnD54cf9+SrAFVWTM+WIMiwXb2wy4w==
+X-Received: by 2002:a63:1f02:0:b0:439:8ff9:236e with SMTP id f2-20020a631f02000000b004398ff9236emr670202pgf.63.1663209094289;
+        Wed, 14 Sep 2022 19:31:34 -0700 (PDT)
+Received: from [10.72.12.203] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id q17-20020a170902f35100b00172b87d9770sm11373860ple.81.2022.09.14.19.31.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Sep 2022 19:31:33 -0700 (PDT)
+Subject: Re: [PATCH v2] ceph: force sending open requests to MDS for root user
+ for root_squash
+To:     ceph-devel@vger.kernel.org
+Cc:     jlayton@kernel.org, idryomov@gmail.com, lhenriques@suse.de,
+        rraja@redhat.com, mchangir@redhat.com
+References: <20220902015535.305294-1-xiubli@redhat.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <9201b074-8521-d591-cea5-b922c4874b11@redhat.com>
+Date:   Thu, 15 Sep 2022 10:31:27 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Jeff Layton" <jlayton@kernel.org>
-Cc:     "Dave Chinner" <david@fromorbit.com>,
-        "Trond Myklebust" <trondmy@hammerspace.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "xiubli@redhat.com" <xiubli@redhat.com>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "tytso@mit.edu" <tytso@mit.edu>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "lczerner@redhat.com" <lczerner@redhat.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-In-reply-to: <166319552167.15759.17894784385240679495@noble.neil.brown.name>
-References: <91e31d20d66d6f47fe12c80c34b1cffdfc202b6a.camel@hammerspace.com>,
- <166268467103.30452.1687952324107257676@noble.neil.brown.name>,
- <166268566751.30452.13562507405746100242@noble.neil.brown.name>,
- <29a6c2e78284e7947ddedf71e5cb9436c9330910.camel@hammerspace.com>,
- <8d638cb3c63b0d2da8679b5288d1622fdb387f83.camel@hammerspace.com>,
- <166270570118.30452.16939807179630112340@noble.neil.brown.name>,
- <33d058be862ccc0ccaf959f2841a7e506e51fd1f.camel@kernel.org>,
- <166285038617.30452.11636397081493278357@noble.neil.brown.name>,
- <2e34a7d4e1a3474d80ee0402ed3bc0f18792443a.camel@kernel.org>,
- <166302538820.30452.7783524836504548113@noble.neil.brown.name>,
- <20220913011518.GE3600936@dread.disaster.area>,
- <b67fe8b26977dc1213deb5ec815a53a26d31fbc0.camel@kernel.org>,
- <166311144203.20483.1888757883086697314@noble.neil.brown.name>,
- <f8a41b55efd1c59bc63950e8c1b734626d970a90.camel@kernel.org>,
- <166319552167.15759.17894784385240679495@noble.neil.brown.name>
-Date:   Thu, 15 Sep 2022 09:02:53 +1000
-Message-id: <166319657348.15759.14602484394176375178@noble.neil.brown.name>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220902015535.305294-1-xiubli@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 15 Sep 2022, NeilBrown wrote:
->=20
-> When the code was written, the inode semaphore (before mutexes) was held
-> over the whole thing, and timestamp resolution was 1 second.  So
-> ordering didn't really matter.  Since then locking has bee reduced and
-> precision increased but no-one saw any need to fix the ordering.  I
-> think that is fine for timestamps.
+Will discard this patch.
 
-Actually it is much more complex than that, though the principle is
-still the same
+We are planing to make the clients to check the mds auth caps before 
+buffering the changes instead of this workaround and will blocklist or 
+forbid old clients to mount if root_squash enabled, because it's hard to 
+fix this bug for the old clients properly.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git/commit/?i=
-d=3D636b38438001a00b25f23e38747a91cb8428af29
+Thanks!
 
-shows i_mtime updates being moved from *after* a call to
-generic_file_write() in each filesystem to *early* in the body of
-generic_file_write().  Probably because that was just a convenient place
-to put it.
+Xiubo
 
-NeilBrown
+
+On 02/09/2022 09:55, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> With the root_squash MDS caps enabled and for a root user it should
+> fail to write the file. But currently the kclient will just skip
+> sending a open request and check_caps() instead even with the root
+> user. This will skip checking the MDS caps in MDS server.
+>
+> We should force sending a open request to MDS for root user if the
+> cephx is enabled.
+>
+> URL: https://tracker.ceph.com/issues/56067
+> URL: https://tracker.ceph.com/issues/57154
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>   fs/ceph/file.c | 17 ++++++++++++-----
+>   1 file changed, 12 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 86265713a743..d51c98412a30 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -360,6 +360,7 @@ int ceph_open(struct inode *inode, struct file *file)
+>   	struct ceph_mds_client *mdsc = fsc->mdsc;
+>   	struct ceph_mds_request *req;
+>   	struct ceph_file_info *fi = file->private_data;
+> +	uid_t uid = from_kuid(&init_user_ns, get_current_cred()->fsuid);
+>   	int err;
+>   	int flags, fmode, wanted;
+>   
+> @@ -393,13 +394,19 @@ int ceph_open(struct inode *inode, struct file *file)
+>   	}
+>   
+>   	/*
+> -	 * No need to block if we have caps on the auth MDS (for
+> -	 * write) or any MDS (for read).  Update wanted set
+> -	 * asynchronously.
+> +	 * If the caller is root user and the Fw caps is required
+> +	 * it will force sending a open request to MDS to let
+> +	 * the MDS do the root_squash MDS caps check.
+> +	 *
+> +	 * Otherwise no need to block if we have caps on the auth
+> +	 * MDS (for write) or any MDS (for read). Update wanted
+> +	 * set asynchronously.
+>   	 */
+>   	spin_lock(&ci->i_ceph_lock);
+> -	if (__ceph_is_any_real_caps(ci) &&
+> -	    (((fmode & CEPH_FILE_MODE_WR) == 0) || ci->i_auth_cap)) {
+> +	if (!((fmode & CEPH_FILE_MODE_WR) && !uid) &&
+> +	    (__ceph_is_any_real_caps(ci) &&
+> +	     (((fmode & CEPH_FILE_MODE_WR) == 0) || ci->i_auth_cap))) {
+> +
+>   		int mds_wanted = __ceph_caps_mds_wanted(ci, true);
+>   		int issued = __ceph_caps_issued(ci, NULL);
+>   
 
