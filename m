@@ -2,198 +2,118 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E9635BC0B4
-	for <lists+ceph-devel@lfdr.de>; Mon, 19 Sep 2022 01:54:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A52E45BC395
+	for <lists+ceph-devel@lfdr.de>; Mon, 19 Sep 2022 09:43:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229722AbiIRXxx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 18 Sep 2022 19:53:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53048 "EHLO
+        id S229618AbiISHn1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 19 Sep 2022 03:43:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbiIRXxw (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 18 Sep 2022 19:53:52 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A6D2D13CD7;
-        Sun, 18 Sep 2022 16:53:50 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-149-49.pa.vic.optusnet.com.au [49.186.149.49])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id B1B9B8A9D52;
-        Mon, 19 Sep 2022 09:53:46 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oa46a-009Oeo-7b; Mon, 19 Sep 2022 09:53:44 +1000
-Date:   Mon, 19 Sep 2022 09:53:44 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Theodore Ts'o <tytso@mit.edu>, NeilBrown <neilb@suse.de>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "xiubli@redhat.com" <xiubli@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "lczerner@redhat.com" <lczerner@redhat.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-Message-ID: <20220918235344.GH3600936@dread.disaster.area>
-References: <577b6d8a7243aeee37eaa4bbb00c90799586bc48.camel@hammerspace.com>
- <1a968b8e87f054e360877c9ab8cdfc4cfdfc8740.camel@kernel.org>
- <0646410b6d2a5d19d3315f339b2928dfa9f2d922.camel@hammerspace.com>
- <34e91540c92ad6980256f6b44115cf993695d5e1.camel@kernel.org>
- <871f9c5153ddfe760854ca31ee36b84655959b83.camel@hammerspace.com>
- <e8922bc821a40f5a3f0a1301583288ed19b6891b.camel@kernel.org>
- <166328063547.15759.12797959071252871549@noble.neil.brown.name>
- <YyQdmLpiAMvl5EkU@mit.edu>
- <7027d1c2923053fe763e9218d10ce8634b56e81d.camel@kernel.org>
- <24005713ad25370d64ab5bd0db0b2e4fcb902c1c.camel@kernel.org>
+        with ESMTP id S229519AbiISHnZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 19 Sep 2022 03:43:25 -0400
+Received: from smtp1.onthe.net.au (smtp1.onthe.net.au [203.22.196.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7442F175BF
+        for <ceph-devel@vger.kernel.org>; Mon, 19 Sep 2022 00:43:24 -0700 (PDT)
+Received: from localhost (smtp2.private.onthe.net.au [10.200.63.13])
+        by smtp1.onthe.net.au (Postfix) with ESMTP id CA2F0612FA;
+        Mon, 19 Sep 2022 17:43:21 +1000 (EST)
+Received: from smtp1.onthe.net.au ([10.200.63.11])
+        by localhost (smtp.onthe.net.au [10.200.63.13]) (amavisd-new, port 10028)
+        with ESMTP id kictQAj5dwVI; Mon, 19 Sep 2022 17:43:21 +1000 (AEST)
+Received: from athena.private.onthe.net.au (chris-gw2-vpn.private.onthe.net.au [10.9.3.2])
+        by smtp1.onthe.net.au (Postfix) with ESMTP id 95E37612EC;
+        Mon, 19 Sep 2022 17:43:21 +1000 (EST)
+Received: by athena.private.onthe.net.au (Postfix, from userid 1026)
+        id 753596803C7; Mon, 19 Sep 2022 17:43:21 +1000 (AEST)
+Date:   Mon, 19 Sep 2022 17:43:21 +1000
+From:   Chris Dunlop <chris@onthe.net.au>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org
+Subject: Re: rbd unmap fails with "Device or resource busy"
+Message-ID: <20220919074321.GA1363634@onthe.net.au>
+References: <20220913012043.GA568834@onthe.net.au>
+ <CAOi1vP9FnHtg29X73EA0gwOpGcOXJmaujZ8p0JHc7qZ95V7QcQ@mail.gmail.com>
+ <20220914034902.GA691415@onthe.net.au>
+ <CAOi1vP8qmpEWVYS6EpYbMqP7PHTOLkzsqbNnN3g8Kzrz+9g_BA@mail.gmail.com>
+ <20220915082920.GA881573@onthe.net.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <24005713ad25370d64ab5bd0db0b2e4fcb902c1c.camel@kernel.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=6327af8e
-        a=XTRC1Ovx3SkpaCW1YxGVGA==:117 a=XTRC1Ovx3SkpaCW1YxGVGA==:17
-        a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=7-415B0cAAAA:8
-        a=OM9ssF-cS7fGoRW40zoA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20220915082920.GA881573@onthe.net.au>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Sep 16, 2022 at 11:11:34AM -0400, Jeff Layton wrote:
-> On Fri, 2022-09-16 at 07:36 -0400, Jeff Layton wrote:
-> > On Fri, 2022-09-16 at 02:54 -0400, Theodore Ts'o wrote:
-> > > On Fri, Sep 16, 2022 at 08:23:55AM +1000, NeilBrown wrote:
-> > > > > > If the answer is that 'all values change', then why store the crash
-> > > > > > counter in the inode at all? Why not just add it as an offset when
-> > > > > > you're generating the user-visible change attribute?
-> > > > > > 
-> > > > > > i.e. statx.change_attr = inode->i_version + (crash counter * offset)
-> > > 
-> > > I had suggested just hashing the crash counter with the file system's
-> > > on-disk i_version number, which is essentially what you are suggested.
-> > > 
-> > > > > Yes, if we plan to ensure that all the change attrs change after a
-> > > > > crash, we can do that.
-> > > > > 
-> > > > > So what would make sense for an offset? Maybe 2**12? One would hope that
-> > > > > there wouldn't be more than 4k increments before one of them made it to
-> > > > > disk. OTOH, maybe that can happen with teeny-tiny writes.
-> > > > 
-> > > > Leave it up the to filesystem to decide.  The VFS and/or NFSD should
-> > > > have not have part in calculating the i_version.  It should be entirely
-> > > > in the filesystem - though support code could be provided if common
-> > > > patterns exist across filesystems.
-> > > 
-> > > Oh, *heck* no.  This parameter is for the NFS implementation to
-> > > decide, because it's NFS's caching algorithms which are at stake here.
-> > > 
-> > > As a the file system maintainer, I had offered to make an on-disk
-> > > "crash counter" which would get updated when the journal had gotten
-> > > replayed, in addition to the on-disk i_version number.  This will be
-> > > available for the Linux implementation of NFSD to use, but that's up
-> > > to *you* to decide how you want to use them.
-> > > 
-> > > I was perfectly happy with hashing the crash counter and the i_version
-> > > because I had assumed that not *that* much stuff was going to be
-> > > cached, and so invalidating all of the caches in the unusual case
-> > > where there was a crash was acceptable.  After all it's a !@#?!@
-> > > cache.  Caches sometimmes get invalidated.  "That is the order of
-> > > things." (as Ramata'Klan once said in "Rocks and Shoals")
-> > > 
-> > > But if people expect that multiple TB's of data is going to be stored;
-> > > that cache invalidation is unacceptable; and that a itsy-weeny chance
-> > > of false negative failures which might cause data corruption might be
-> > > acceptable tradeoff, hey, that's for the system which is providing
-> > > caching semantics to determine.
-> > > 
-> > > PLEASE don't put this tradeoff on the file system authors; I would
-> > > much prefer to leave this tradeoff in the hands of the system which is
-> > > trying to do the caching.
-> > > 
-> > 
-> > Yeah, if we were designing this from scratch, I might agree with leaving
-> > more up to the filesystem, but the existing users all have pretty much
-> > the same needs. I'm going to plan to try to keep most of this in the
-> > common infrastructure defined in iversion.h.
-> > 
-> > Ted, for the ext4 crash counter, what wordsize were you thinking? I
-> > doubt we'll be able to use much more than 32 bits so a larger integer is
-> > probably not worthwhile. There are several holes in struct super_block
-> > (at least on x86_64), so adding this field to the generic structure
-> > needn't grow it.
-> 
-> That said, now that I've taken a swipe at implementing this, I need more
-> information than just the crash counter. We need to multiply the crash
-> counter with a reasonable estimate of the maximum number of individual
-> writes that could occur between an i_version being incremented and that
-> value making it to the backing store.
-> 
-> IOW, given a write that bumps the i_version to X, how many more write
-> calls could race in before X makes it to the platter? I took a SWAG and
-> said 4k in an earlier email, but I don't really have a way to know, and
-> that could vary wildly with different filesystems and storage.
-> 
-> What I'd like to see is this in struct super_block:
-> 
-> 	u32		s_version_offset;
+On Thu, Sep 15, 2022 at 06:29:20PM +1000, Chris Dunlop wrote:
+> On Tue, Sep 13, 2022 at 3:44 AM Chris Dunlop <chris@onthe.net.au> wrote:
+>> What can make a "rbd unmap" fail, assuming the device is not mounted 
+>> and not (obviously) open by any other processes?
+>>
+>> linux-5.15.58
+>> ceph-16.2.9
+>>
+>> I have multiple XFS on rbd filesystems, and often create rbd 
+>> snapshots, map and read-only mount the snapshot, perform some work on 
+>> the fs, then unmount and unmap. The unmap regularly (about 1 in 10 
+>> times) fails like:
+>>
+>> $ sudo rbd unmap /dev/rbd29
+>> rbd: sysfs write failed
+>> rbd: unmap failed: (16) Device or resource busy
+>
+> tl;dr problem solved: there WAS a process holding the rbd device open.
 
-	u64		s_version_salt;
+Sigh. It turns out the problem is NOT solved.
 
-> ...and then individual filesystems can calculate:
-> 
-> 	crash_counter * max_number_of_writes
-> 
-> and put the correct value in there at mount time.
+I've stopped 'pvs' from scanning the rbd devices. This was sufficient to 
+allow my minimal test script to work without unmap failures, but my full 
+production process is still suffering from the unmap failures.
 
-Other filesystems might not have a crash counter but have other
-information that can be substituted, like a mount counter or a
-global change sequence number that is guaranteed to increment from
-one mount to the next. 
+I now have 51 rbd devices which I haven't been able to unmap for the 
+last three days (in contrast to my earlier statement where I said I'd 
+always been able to unmap eventually, generally after 30 minutes or so).  
+That's out of maybe 80-90 mapped rbds over that time.
 
-Further, have you thought about what "max number of writes" might
-be in ten years time? e.g.  what happens if a filesysetm as "max
-number of writes" being greater than 2^32? I mean, we already have
-machines out there running Linux with 64-128TB of physical RAM, so
-it's already practical to hold > 2^32 individual writes to a single
-inode that each bump i_version in memory....
+I've no idea why the unmap failures are so common this time, and why, 
+this time, I haven't been able to unmap them in 3 days.
 
-So when we consider this sort of scale, the "crash counter * max
-writes" scheme largely falls apart because "max writes" is a really
-large number to begin with. We're going to be stuck with whatever
-algorithm is decided on for the foreseeable future, so we must
-recognise that _we've already overrun 32 bit counter schemes_ in
-terms of tracking "i_version changes in memory vs what we have on
-disk".
+I had been trying an unmap of one specific rbd (randomly selected) every 
+second for 3 hours whilst simultaneously, in a tight loop, looking for 
+any other processes that have the device open. The unmaps continued to 
+fail and I haven't caught any other process with the device open.
 
-Hence I really think that we should be leaving the implementation of
-the salt value to the individual filesysetms as different
-filesytsems are aimed at different use cases and so may not
-necessarily have to all care about the same things (like 2^32 bit
-max write overruns).  All the high level VFS code then needs to do
-is add the two together:
+I also tried a back-off strategy by linearly increasing a sleep between 
+unmap attempts.  By the time the sleep was up to 4 hours I have up, with 
+unmaps of that device still failing. Unmap attempts at random times 
+since then on that particular device and all the other of the 51 
+un-unmappable device continue to fail.
 
-	statx.change_attr = inode->i_version + sb->s_version_salt;
+I'm sure I can unmap the devices using '--force' but at this point I'd 
+rather try to work out WHY the unmap is failing: it seems to be pointing 
+to /something/ going wrong, somewhere. Given no user processes can be 
+seen to have the device open, it seems that "something" might be in the 
+kernel somewhere.
 
-Cheers,
+I'm trying to put together a test using a cut down version of the 
+production process to see if I can make the unmap failures happen a 
+little more repeatably.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+I'm open to suggestions as to what I can look at.
+
+E.g. maybe there's some way of using ebpf or similar to look at the 
+'rbd_dev->open_count' in the live kernel?
+
+And/or maybe there's some way, again using ebpf or similar, to record 
+sufficient info (e.g. a stack trace?) from rbd_open() and rbd_release() 
+to try to identify something that's opening the device and not releasing 
+it?
+
+If anyone knows how that could be done that would be great, otherwise 
+it's going to take me a bit of time to try to work out how that might be 
+done.
+
+Chris
