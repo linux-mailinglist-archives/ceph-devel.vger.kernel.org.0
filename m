@@ -2,217 +2,217 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FAB45BF19E
-	for <lists+ceph-devel@lfdr.de>; Wed, 21 Sep 2022 02:01:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC1545BF2FB
+	for <lists+ceph-devel@lfdr.de>; Wed, 21 Sep 2022 03:36:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230492AbiIUAAs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 20 Sep 2022 20:00:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58156 "EHLO
+        id S230499AbiIUBgg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 20 Sep 2022 21:36:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230373AbiIUAAn (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 20 Sep 2022 20:00:43 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0A0F34A137;
-        Tue, 20 Sep 2022 17:00:40 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 7ED8A8A99A0;
-        Wed, 21 Sep 2022 10:00:34 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oanAG-00AByJ-Lc; Wed, 21 Sep 2022 10:00:32 +1000
-Date:   Wed, 21 Sep 2022 10:00:32 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Theodore Ts'o <tytso@mit.edu>, NeilBrown <neilb@suse.de>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "xiubli@redhat.com" <xiubli@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "lczerner@redhat.com" <lczerner@redhat.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-Message-ID: <20220921000032.GR3600936@dread.disaster.area>
-References: <871f9c5153ddfe760854ca31ee36b84655959b83.camel@hammerspace.com>
- <e8922bc821a40f5a3f0a1301583288ed19b6891b.camel@kernel.org>
- <166328063547.15759.12797959071252871549@noble.neil.brown.name>
- <YyQdmLpiAMvl5EkU@mit.edu>
- <7027d1c2923053fe763e9218d10ce8634b56e81d.camel@kernel.org>
- <24005713ad25370d64ab5bd0db0b2e4fcb902c1c.camel@kernel.org>
- <20220918235344.GH3600936@dread.disaster.area>
- <87fb43b117472c0a4c688c37a925ac51738c8826.camel@kernel.org>
- <20220920001645.GN3600936@dread.disaster.area>
- <5832424c328ea427b5c6ecdaa6dd53f3b99c20a0.camel@kernel.org>
+        with ESMTP id S230126AbiIUBge (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 20 Sep 2022 21:36:34 -0400
+Received: from smtp1.onthe.net.au (smtp1.onthe.net.au [203.22.196.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3848F4D279
+        for <ceph-devel@vger.kernel.org>; Tue, 20 Sep 2022 18:36:33 -0700 (PDT)
+Received: from localhost (smtp2.private.onthe.net.au [10.200.63.13])
+        by smtp1.onthe.net.au (Postfix) with ESMTP id 7D6BC613C9;
+        Wed, 21 Sep 2022 11:36:30 +1000 (EST)
+Received: from smtp1.onthe.net.au ([10.200.63.11])
+        by localhost (smtp.onthe.net.au [10.200.63.13]) (amavisd-new, port 10028)
+        with ESMTP id bRV4g2jaioYr; Wed, 21 Sep 2022 11:36:30 +1000 (AEST)
+Received: from athena.private.onthe.net.au (chris-gw2-vpn.private.onthe.net.au [10.9.3.2])
+        by smtp1.onthe.net.au (Postfix) with ESMTP id 1E5906125D;
+        Wed, 21 Sep 2022 11:36:30 +1000 (EST)
+Received: by athena.private.onthe.net.au (Postfix, from userid 1026)
+        id 008476803CA; Wed, 21 Sep 2022 11:36:29 +1000 (AEST)
+Date:   Wed, 21 Sep 2022 11:36:29 +1000
+From:   Chris Dunlop <chris@onthe.net.au>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org
+Subject: Re: rbd unmap fails with "Device or resource busy"
+Message-ID: <20220921013629.GA1583272@onthe.net.au>
+References: <20220913012043.GA568834@onthe.net.au>
+ <CAOi1vP9FnHtg29X73EA0gwOpGcOXJmaujZ8p0JHc7qZ95V7QcQ@mail.gmail.com>
+ <20220914034902.GA691415@onthe.net.au>
+ <CAOi1vP8qmpEWVYS6EpYbMqP7PHTOLkzsqbNnN3g8Kzrz+9g_BA@mail.gmail.com>
+ <20220915082920.GA881573@onthe.net.au>
+ <20220919074321.GA1363634@onthe.net.au>
+ <CAOi1vP-9hNc1A4wQ6WDFsNY=2R03inozfuWJcfaaCk5vZ2mqhg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <5832424c328ea427b5c6ecdaa6dd53f3b99c20a0.camel@kernel.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=OJNEYQWB c=1 sm=1 tr=0 ts=632a5426
-        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
-        a=kj9zAlcOel0A:10 a=xOM3xZuef0cA:10 a=7-415B0cAAAA:8
-        a=4ZEok6cz2qKiNJG-cq0A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <CAOi1vP-9hNc1A4wQ6WDFsNY=2R03inozfuWJcfaaCk5vZ2mqhg@mail.gmail.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Sep 20, 2022 at 06:26:05AM -0400, Jeff Layton wrote:
-> On Tue, 2022-09-20 at 10:16 +1000, Dave Chinner wrote:
-> > IOWs, the NFS server can define it's own on-disk persistent metadata
-> > using xattrs, and you don't need local filesystems to be modified at
-> > all. You can add the crash epoch into the change attr that is sent
-> > to NFS clients without having to change the VFS i_version
-> > implementation at all.
-> > 
-> > This whole problem is solvable entirely within the NFS server code,
-> > and we don't need to change local filesystems at all. NFS can
-> > control the persistence and format of the xattrs it uses, and it
-> > does not need new custom on-disk format changes from every
-> > filesystem to support this new application requirement.
-> > 
-> > At this point, NFS server developers don't need to care what the
-> > underlying filesystem format provides - the xattrs provide the crash
-> > detection and enumeration the NFS server functionality requires.
-> > 
-> 
-> Doesn't the filesystem already detect when it's been mounted after an
-> unclean shutdown?
+Hi Ilya,
 
-Not every filesystem will be able to guarantee unclean shutdown
-detection at the next mount. That's the whole problem - NFS
-developers are asking for something that cannot be provided as
-generic functionality by individual filesystems, so the NFS server
-application is going to have to work around any filesytem that
-cannot provide the information it needs.
+On Mon, Sep 19, 2022 at 12:14:06PM +0200, Ilya Dryomov wrote:
+> On Mon, Sep 19, 2022 at 9:43 AM Chris Dunlop <chris@onthe.net.au> wrote:
+>>> On Tue, Sep 13, 2022 at 3:44 AM Chris Dunlop <chris@onthe.net.au> wrote:
+>>>> What can make a "rbd unmap" fail, assuming the device is not 
+>>>> mounted and not (obviously) open by any other processes?
+>>
+>> E.g. maybe there's some way of using ebpf or similar to look at the 
+>> 'rbd_dev->open_count' in the live kernel?
+>>
+>> And/or maybe there's some way, again using ebpf or similar, to record 
+>> sufficient info (e.g. a stack trace?) from rbd_open() and 
+>> rbd_release() to try to identify something that's opening the device 
+>> and not releasing it?
+>
+> Attaching kprobes to rbd_open() and rbd_release() is probably the 
+> fastest option.  I don't think you even need a stack trace, PID and 
+> comm (process name) should do.  I would start with something like:
+>
+> # bpftrace -e 'kprobe:rbd_open { printf("open pid %d comm %s\n", pid, 
+> comm) } kprobe:rbd_release { printf("release pid %d comm %s\n", pid, 
+> comm) }'
+>
+> Fetching the actual rbd_dev->open_count value is more involved but 
+> also doable.
 
-e.g. ext4 has it journal replayed by the userspace tools prior
-to mount, so when it then gets mounted by the kernel it's seen as a
-clean mount.
+Excellent! Thanks!
 
-If we shut an XFS filesystem down due to a filesystem corruption or
-failed IO to the journal code, the kernel might not be able to
-replay the journal on mount (i.e. it is corrupt).  We then run
-xfs_repair, and that fixes the corruption issue and -cleans the
-log-. When we next mount the filesystem, it results in a _clean
-mount_, and the kernel filesystem code can not signal to NFS that an
-unclean mount occurred and so it should bump it's crash counter.
+tl;dr there's something other than the open_count causing the unmap 
+failures - or something's elevating and decrementing open_count without 
+going through rbd_open and rbd_release. Or perhaps there's some situation 
+whereby bpftrace "misses" recording calls to rbd_open and rbd_release.
 
-IOWs, this whole "filesystems need to tell NFS about crashes"
-propagates all the way through *every filesystem tool chain*, not
-just the kernel mount code. And we most certainly don't control
-every 3rd party application that walks around in the filesystem on
-disk format, and so there are -zero- guarantees that the kernel
-filesystem mount code can give that an unclean shutdown occurred
-prior to the current mount.
+FYI, the production process is:
 
-And then for niche NFS server applications (like transparent
-fail-over between HA NFS servers) there are even more rigid
-constraints on NFS change attributes. And you're asking local
-filesystems to know about these application constraints and bake
-them into their on-disk format again.
+- create snapshot of rbd
+- map
+- mount with ro,norecovery,nouuid (the original live fs is still mounted)
+- export via NFS
+- mount on Windows NFS client
+- process on Windows
+- remove Windows NFS mount
+- unexport from NFS
+- unmount
+- unmap
 
-This whole discussion has come about because we baked certain
-behaviour for NFS into the on-disk format many, many years ago, and
-it's only now that it is considered inadequate for *new* NFS
-application related functionality (e.g. fscache integration and
-cache validity across server side mount cycles).
+(I haven't mentioned the NFS export previously because I thought the 
+issue was replicable without it - but that might simply have been due to 
+the 'pvs' issue which has been resolved.)
 
-We've learnt a valuable lesson from this: don't bake application
-specific persistent metadata requirements into the on-disk format
-because when the application needs to change, it requires every
-filesystem that supports taht application level functionality
-to change their on-disk formats...
+I now have a script that mimics the above production sequence in a loop 
+and left it running all night. Out of 288 iterations it had 13 instances 
+where the unmap was failing for some time (i.e. in all cases it 
+eventually succeeded, unlike the 51 rbd devices I can't seem to unmap at 
+all without using --force). In the failing cases the unmap was retried 
+at 1 second intervals. The shortest time taken to eventually umap was 
+521 seconds, the longest was 793 seconds.
 
-> I'm not sure what good we'll get out of bolting this
-> scheme onto the NFS server, when the filesystem could just as easily
-> give us this info.
+Note, in the below I'm using "successful" for the tests where the first 
+unmap succeeded, and "failed" for the tests where the first unmap 
+failed, although in all cases the unmap eventually succeeded.
 
-The xattr scheme guarantees the correct application behaviour that the NFS
-server requires, all at the NFS application level without requiring
-local filesystems to support the NFS requirements in their on-disk
-format. THe NFS server controls the format and versioning of it's
-on-disk persistent metadata (i.e. the xattrs it uses) and so any
-changes to the application level requirements of that functionality
-are now completely under the control of the application.
+I ended up with a bpftrace script (see below) that logs the timestamp, 
+open or release (O/R), pid, device name, open_count (at entry to the 
+function), and process name.
 
-i.e. the application gets to manage version control, backwards and
-forwards compatibility of it's persistent metadata, etc. What you
-are asking is that every local filesystem takes responsibility for
-managing the long term persistent metadata that only NFS requires.
-It's more complex to do this at the filesystem level, and we have to
-replicate the same work for every filesystem that is going to
-support this on-disk functionality.
+A successful iteration of that process mostly looks like this:
 
-Using xattrs means the functionality is implemented once, it's
-common across all local filesystems, and no exportable filesystem
-needs to know anything about it as it's all self-contained in the
-NFS server code. THe code is smaller, easier to maintain, consistent
-across all systems, easy to test, etc.
+Timestamp     O/R Pid    Device Count Process
+18:21:18.235870 O 3269426 rbd29 0 mapper
+18:21:20.088873 R 3269426 rbd29 1 mapper
+18:21:20.089346 O 3269447 rbd29 0 systemd-udevd
+18:21:20.105281 O 3269457 rbd29 1 blkid
+18:21:31.858621 R 3269457 rbd29 2 blkid
+18:21:31.861762 R 3269447 rbd29 1 systemd-udevd
+18:21:31.882235 O 3269475 rbd29 0 mount
+18:21:38.241808 R 3269475 rbd29 1 mount
+18:21:38.242174 O 3269475 rbd29 0 mount
+18:22:49.646608 O 2364320 rbd29 1 rpc.mountd
+18:22:58.715634 R 2364320 rbd29 2 rpc.mountd
+18:23:55.564512 R 3270060 rbd29 1 umount
 
-It also can be implemented and rolled out *immediately* to all
-existing supported NFS server implementations, without having to
-wait months/years (or never!) for local filesystem on-disk format
-changes to roll out to production systems.
+Or occasionally it looks like this, with "rpc.mountd" disappearing:
 
-Asking individual filesystems to implement application specific
-persistent metadata is a *last resort* and should only be done if
-correctness or performance cannot be obtained in any other way.
+18:35:49.539224 O 3277664 rbd29 0 mapper
+18:35:50.515777 R 3277664 rbd29 1 mapper
+18:35:50.516224 O 3277685 rbd29 0 systemd-udevd
+18:35:50.531978 O 3277694 rbd29 1 blkid
+18:35:57.361799 R 3277694 rbd29 2 blkid
+18:35:57.365263 R 3277685 rbd29 1 systemd-udevd
+18:35:57.384316 O 3277713 rbd29 0 mount
+18:36:01.234337 R 3277713 rbd29 1 mount
+18:36:01.234849 O 3277713 rbd29 0 mount
+18:37:21.304270 R 3289527 rbd29 1 umount
 
-So, yeah, the only sane direction to take here is to use xattrs to
-store this NFS application level information. It's less work for
-everyone, and in the long term it means when the NFS application
-requirements change again, we don't need to modify the on-disk
-format of multiple local filesystems.
+Of the 288 iterations, only 20 didn't include the rpc.mountd lines.
 
-> In any case, the main problem at this point is not so much in detecting
-> when there has been an unclean shutdown, but rather what to do when
-> there is one. We need to to advance the presented change attributes
-> beyond the largest possible one that may have been handed out prior to
-> the crash. 
+An unsuccessful iteration looks like this:
 
-Sure, but you're missing my point: by using xattrs for detection,
-you don't need to involve anything to do with local filesystems at
-all.
+18:37:31.885408 O 3294108 rbd29 0 mapper
+18:37:33.181607 R 3294108 rbd29 1 mapper
+18:37:33.182086 O 3294175 rbd29 0 systemd-udevd
+18:37:33.197982 O 3294691 rbd29 1 blkid
+18:37:42.712870 R 3294691 rbd29 2 blkid
+18:37:42.716296 R 3294175 rbd29 1 systemd-udevd
+18:37:42.738469 O 3298073 rbd29 0 mount
+18:37:49.339012 R 3298073 rbd29 1 mount
+18:37:49.339352 O 3298073 rbd29 0 mount
+18:38:51.390166 O 2364320 rbd29 1 rpc.mountd
+18:39:00.989050 R 2364320 rbd29 2 rpc.mountd
+18:53:56.054685 R 3313923 rbd29 1 init
 
-> How do we determine what that offset should be? Your last email
-> suggested that there really is no limit to the number of i_version bumps
-> that can happen in memory before one of them makes it to disk. What can
-> we do to address that?
+According to my script log, the first unmap attempt was at 18:39:42, 
+i.e. 42 seconds after rpc.mountd released the device. At that point the 
+the open_count was (or should have been?) 1 again allowing the unmap to 
+succeed - but it didn't. The unmap was retried every second until it 
+eventually succeeded at 18:53:56, the same time as the mysterious "init" 
+process ran - but also note there is NO "umount" process in there so I 
+don't know if the name of the process recorded by bfptrace is simply 
+incorrect (but how would that happen??) or what else could be going on.
 
-<shrug>
+All 13 of the failed iterations recorded that weird "init" instead of 
+"umount".
 
-I'm just pointing out problems I see when defining this as behaviour
-for on-disk format purposes. If we define it as part of the on-disk
-format, then we have to be concerned about how it may be used
-outside the scope of just the NFS server application. 
+12 of the 13 failed iterations included rpc.mountd in the trace, but one 
+didn't (i.e. it went direct from mount to init/umount, like the 2nd 
+successful example above), i.e. around the same proportion as the 
+successful iterations.
 
-However, If NFS keeps this metadata and functionaly entirely
-contained at the application level via xattrs, I really don't care
-what algorithm NFS developers decides to use for their crash
-sequencing. It's not my concern at this point, and that's precisely
-why NFS should be using xattrs for this NFS specific functionality.
+So it seems there's something other than the open_count causing the unmap 
+failures - or something's elevating and decrementing open_count without 
+going through rbd_open and rbd_release. Or perhaps there's some situation 
+whereby bpftrace "misses" recording calls to rbd_open and rbd_release.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+
+The bpftrace script looks like this:
+--------------------------------------------------------------------
+//
+// bunches of defines and structure definitions extracted from 
+// drivers/block/rbd.c elided here...
+//
+kprobe:rbd_open {
+   $bdev = (struct block_device *)arg0;
+   $rbd_dev = (struct rbd_device *)($bdev->bd_disk->private_data);
+
+   printf("%s O %d %s %lu %s\n",
+     strftime("%T.%f", nsecs), pid, $rbd_dev->name,
+     $rbd_dev->open_count, comm
+   );
+}
+kprobe:rbd_release {
+   $disk = (struct gendisk *)arg0;
+   $rbd_dev = (struct rbd_device *)($disk->private_data);
+
+   printf("%s R %d %s %lu %s\n",
+     strftime("%T.%f", nsecs), pid, $rbd_dev->name,
+     $rbd_dev->open_count, comm
+   );
+}
+--------------------------------------------------------------------
+
+
+Cheers,
+
+Chris
