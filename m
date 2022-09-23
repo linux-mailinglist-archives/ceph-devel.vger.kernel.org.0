@@ -2,212 +2,407 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B5E1C5E6CE2
-	for <lists+ceph-devel@lfdr.de>; Thu, 22 Sep 2022 22:18:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFD3A5E729B
+	for <lists+ceph-devel@lfdr.de>; Fri, 23 Sep 2022 05:58:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232707AbiIVUSL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 22 Sep 2022 16:18:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40344 "EHLO
+        id S231426AbiIWD6d (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 22 Sep 2022 23:58:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230019AbiIVUSJ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 22 Sep 2022 16:18:09 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54D8B110B0A;
-        Thu, 22 Sep 2022 13:18:08 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 18040B83A79;
-        Thu, 22 Sep 2022 20:18:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE7C0C433D6;
-        Thu, 22 Sep 2022 20:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1663877885;
-        bh=6v4b3j+MIvjHQBr7sFzf0op2Awjf2oGOtqPQJUi0BhE=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=PBDIKFf0+HT/5WE513751U+D9B8X2TiRIo4ChfKxEhlYfkCZqIXfjGWMA5s8HUPj6
-         /WZCJxTUNZDksXVX0QJtUzdxKyinG3iYf+lAl5Fq1KjA/cxCGwfeQ8rXXzqlPm514l
-         AOd4VqbUMSRxXQN9h7mP9Nsy2/C2mz/FOkUJSiRIioYZeYPKtLcILmKl1o9bTPSAwc
-         PB4bOY9tIG2uCbLWlPVNXoM9wSEkYQuTqlvsLqxhCUoC6l6AYyOsQ1svTudGncvkfQ
-         RWtrRqApPGzZ7bF/EOBqG33kqa7APErg8algJT9WxggMwagA39au085YMRZA55+5EU
-         KJoHeHA5e8KNg==
-Message-ID: <1ef261e3ff1fa7fcd0d75ed755931aacb8062de2.camel@kernel.org>
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>, NeilBrown <neilb@suse.de>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "xiubli@redhat.com" <xiubli@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "lczerner@redhat.com" <lczerner@redhat.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Date:   Thu, 22 Sep 2022 16:18:02 -0400
-In-Reply-To: <e04e349170bc227b330556556d0592a53692b5b5.camel@kernel.org>
-References: <166328063547.15759.12797959071252871549@noble.neil.brown.name>
-         <YyQdmLpiAMvl5EkU@mit.edu>
-         <7027d1c2923053fe763e9218d10ce8634b56e81d.camel@kernel.org>
-         <24005713ad25370d64ab5bd0db0b2e4fcb902c1c.camel@kernel.org>
-         <20220918235344.GH3600936@dread.disaster.area>
-         <87fb43b117472c0a4c688c37a925ac51738c8826.camel@kernel.org>
-         <20220920001645.GN3600936@dread.disaster.area>
-         <5832424c328ea427b5c6ecdaa6dd53f3b99c20a0.camel@kernel.org>
-         <20220921000032.GR3600936@dread.disaster.area>
-         <93b6d9f7cf997245bb68409eeb195f9400e55cd0.camel@kernel.org>
-         <20220921214124.GS3600936@dread.disaster.area>
-         <e04e349170bc227b330556556d0592a53692b5b5.camel@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-1.fc36) 
+        with ESMTP id S229892AbiIWD6b (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 22 Sep 2022 23:58:31 -0400
+Received: from smtp1.onthe.net.au (smtp1.onthe.net.au [203.22.196.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B41B911A6B4
+        for <ceph-devel@vger.kernel.org>; Thu, 22 Sep 2022 20:58:29 -0700 (PDT)
+Received: from localhost (smtp2.private.onthe.net.au [10.200.63.13])
+        by smtp1.onthe.net.au (Postfix) with ESMTP id 21A4E6140A;
+        Fri, 23 Sep 2022 13:58:27 +1000 (EST)
+Received: from smtp1.onthe.net.au ([10.200.63.11])
+        by localhost (smtp.onthe.net.au [10.200.63.13]) (amavisd-new, port 10028)
+        with ESMTP id OpLWocTvumrF; Fri, 23 Sep 2022 13:58:26 +1000 (AEST)
+Received: from athena.private.onthe.net.au (chris-gw2-vpn.private.onthe.net.au [10.9.3.2])
+        by smtp1.onthe.net.au (Postfix) with ESMTP id 97CF061395;
+        Fri, 23 Sep 2022 13:58:26 +1000 (EST)
+Received: by athena.private.onthe.net.au (Postfix, from userid 1026)
+        id 7DDDC6803CA; Fri, 23 Sep 2022 13:58:26 +1000 (AEST)
+Date:   Fri, 23 Sep 2022 13:58:26 +1000
+From:   Chris Dunlop <chris@onthe.net.au>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org
+Subject: Re: rbd unmap fails with "Device or resource busy"
+Message-ID: <20220923035826.GA1830185@onthe.net.au>
+References: <20220913012043.GA568834@onthe.net.au>
+ <CAOi1vP9FnHtg29X73EA0gwOpGcOXJmaujZ8p0JHc7qZ95V7QcQ@mail.gmail.com>
+ <20220914034902.GA691415@onthe.net.au>
+ <CAOi1vP8qmpEWVYS6EpYbMqP7PHTOLkzsqbNnN3g8Kzrz+9g_BA@mail.gmail.com>
+ <20220915082920.GA881573@onthe.net.au>
+ <20220919074321.GA1363634@onthe.net.au>
+ <CAOi1vP-9hNc1A4wQ6WDFsNY=2R03inozfuWJcfaaCk5vZ2mqhg@mail.gmail.com>
+ <20220921013629.GA1583272@onthe.net.au>
+ <CAOi1vP__Mj9Qyb=WsUxo7ja5koTS+0eavsnWH=X+DTest4spaQ@mail.gmail.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: multipart/mixed; boundary="n8g4imXOkfNTN/H1"
+Content-Disposition: inline
+In-Reply-To: <CAOi1vP__Mj9Qyb=WsUxo7ja5koTS+0eavsnWH=X+DTest4spaQ@mail.gmail.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2022-09-22 at 06:18 -0400, Jeff Layton wrote:
-> On Thu, 2022-09-22 at 07:41 +1000, Dave Chinner wrote:
-> > On Wed, Sep 21, 2022 at 06:33:28AM -0400, Jeff Layton wrote:
-> > > On Wed, 2022-09-21 at 10:00 +1000, Dave Chinner wrote:
-> > > > > How do we determine what that offset should be? Your last email
-> > > > > suggested that there really is no limit to the number of i_versio=
-n bumps
-> > > > > that can happen in memory before one of them makes it to disk. Wh=
-at can
-> > > > > we do to address that?
-> > > >=20
-> > > > <shrug>
-> > > >=20
-> > > > I'm just pointing out problems I see when defining this as behaviou=
-r
-> > > > for on-disk format purposes. If we define it as part of the on-disk
-> > > > format, then we have to be concerned about how it may be used
-> > > > outside the scope of just the NFS server application.=20
-> > > >=20
-> > > > However, If NFS keeps this metadata and functionaly entirely
-> > > > contained at the application level via xattrs, I really don't care
-> > > > what algorithm NFS developers decides to use for their crash
-> > > > sequencing. It's not my concern at this point, and that's precisely
-> > > > why NFS should be using xattrs for this NFS specific functionality.
-> > > >=20
-> > >=20
-> > > I get it: you'd rather not have to deal with what you see as an NFS
-> > > problem, but I don't get how what you're proposing solves anything. W=
-e
-> > > might be able to use that scheme to detect crashes, but that's only p=
-art
-> > > of the problem (and it's a relatively simple part of the problem to
-> > > solve, really).
-> > >=20
-> > > Maybe you can clarify it for me:
-> > >=20
-> > > Suppose we go with what you're saying and store some information in
-> > > xattrs that allows us to detect crashes in some fashion. The server
-> > > crashes and comes back up and we detect that there was a crash earlie=
-r.
-> > >=20
-> > > What does nfsd need to do now to ensure that it doesn't hand out a
-> > > duplicate change attribute?=20
-> >=20
-> > As I've already stated, the NFS server can hold the persistent NFS
-> > crash counter value in a second xattr that it bumps whenever it
-> > detects a crash and hence we take the local filesystem completely
-> > out of the equation.  How the crash counter is then used by the nfsd
-> > to fold it into the NFS protocol change attribute is a nfsd problem,
-> > not a local filesystem problem.
-> >=20
->=20
-> Ok, assuming you mean put this in an xattr that lives at the root of the
-> export? We only need this for IS_I_VERSION filesystems (btrfs, xfs, and
-> ext4), and they all support xattrs so this scheme should work.
->=20
 
-I had a look at this today and it's not as straightforward as it
-sounds.=A0
+--n8g4imXOkfNTN/H1
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
 
-In particular, there is no guarantee that an export will not cross
-filesystem boundaries. Also, nfsd and mountd are very much "demand
-driven". We might not touch an exported filesystem at all if nothing
-asks for it. Ensuring we can do something to every exported filesystem
-after a crash is more difficult than it sounds.
+Hi Ilya,
 
-So trying to do something with xattrs on the exported filesystems is
-probably not what we want. It's also sort of janky since we do strive to
-leave a "light footprint" on the exported filesystem.
+On Wed, Sep 21, 2022 at 12:40:54PM +0200, Ilya Dryomov wrote:
+> On Wed, Sep 21, 2022 at 3:36 AM Chris Dunlop <chris@onthe.net.au> wrote:
+>> On Tue, Sep 13, 2022 at 3:44 AM Chris Dunlop <chris@onthe.net.au> wrote:
+>>> What can make a "rbd unmap" fail, assuming the device is not
+>>> mounted and not (obviously) open by any other processes?
 
-Maybe we don't need that though. Chuck reminded me that nfsdcltrack
-could be used here instead. We can punt this to userland!
+OK, I'm confident I now understand the cause of this problem. The 
+particular machine where I'm mounting the rbd snapshots is also running 
+some containerised ceph services. The ceph containers are 
+(bind-)mounting the entire host filesystem hierarchy on startup, and if 
+a ceph container happens to start up whilst a rbd device is mounted, the 
+container also has the rbd mounted, preventing the host from unmapping 
+the device even after the host has unmounted it. (More below.)
 
-nfsdcltrack could keep track of a global crash "salt", and feed that to
-nfsd when it starts up. When starting a grace period, it can=A0set a
-RUNNING flag in the db. If it's set when the server starts, we know
-there was a crash and can bump the crash counter. When nfsd is shutting
-down cleanly, it can call sync() and then clear the flag (this may
-require a new cld upcall cmd). We then mix that value into the change
-attribute for IS_I_VERSION inodes.
+This brings up a couple of issues...
 
-That's probably good enough for nfsd, but if we wanted to present this
-to userland via statx, we'd need a different mechanism. For now, I'm
-going to plan to fix this up in nfsd and then we'll see where we are.
+Why is the ceph container getting access to the entire host filesystem 
+in the first place?
 
-> > If you're worried about maximum number of writes outstanding vs
-> > i_version bumps that are held in memory, then *bound the maximum
-> > number of uncommitted i_version changes that the NFS server will
-> > allow to build up in memory*. By moving the crash counter to being a
-> > NFS server only function, the NFS server controls the entire
-> > algorithm and it doesn't have to care about external 3rd party
-> > considerations like local filesystems have to.
-> >=20
->=20
-> Yeah, this is the bigger consideration.
->=20
-> > e.g. The NFS server can track the i_version values when the NFSD
-> > syncs/commits a given inode. The nfsd can sample i_version it when
-> > calls ->commit_metadata or flushed data on the inode, and then when
-> > it peeks at i_version when gathering post-op attrs (or any other
-> > getattr op) it can decide that there is too much in-memory change
-> > (e.g. 10,000 counts since last sync) and sync the inode.
-> >=20
-> > i.e. the NFS server can trivially cap the maximum number of
-> > uncommitted NFS change attr bumps it allows to build up in memory.
-> > At that point, the NFS server has a bound "maximum write count" that
-> > can be used in conjunction with the xattr based crash counter to
-> > determine how the change_attr is bumped by the crash counter.
->=20
-> Well, not "trivially". This is the bit where we have to grow struct
-> inode (or the fs-specific inode), as we'll need to know what the latest
-> on-disk value is for the inode.
->=20
-> I'm leaning toward doing this on the query side. Basically, when nfsd
-> goes to query the i_version, it'll check the delta between the current
-> version and the latest one on disk. If it's bigger than X then we'd just
-> return NFS4ERR_DELAY to the client.
->=20
-> If the delta is >X/2, maybe it can kick off a workqueue job or something
-> that calls write_inode with WB_SYNC_ALL to try to get the thing onto the
-> platter ASAP.
+Even if I mount an rbd device with the "unbindable" mount option, which 
+is specifically supposed to prevent bind mounts to that filesystem, the 
+ceph containers still get the mount - how / why??
 
-Still looking at this bit too. Probably we can just kick off a
-WB_SYNC_NONE filemap_fdatawrite at that point and hope for the best?
---=20
-Jeff Layton <jlayton@kernel.org>
+If the ceph containers really do need access to the entire host 
+filesystem, perhaps it would be better to do a "slave" mount, so if/when 
+the hosts unmounts a filesystem it's also unmounted in the container[s].  
+(Of course this also means any filesystems newly mounted in the host 
+would also appear in the containers - but that happens anyway if the 
+container is newly started).
+
+>> An unsuccessful iteration looks like this:
+>>
+>> 18:37:31.885408 O 3294108 rbd29 0 mapper
+>> 18:37:33.181607 R 3294108 rbd29 1 mapper
+>> 18:37:33.182086 O 3294175 rbd29 0 systemd-udevd
+>> 18:37:33.197982 O 3294691 rbd29 1 blkid
+>> 18:37:42.712870 R 3294691 rbd29 2 blkid
+>> 18:37:42.716296 R 3294175 rbd29 1 systemd-udevd
+>> 18:37:42.738469 O 3298073 rbd29 0 mount
+>> 18:37:49.339012 R 3298073 rbd29 1 mount
+>> 18:37:49.339352 O 3298073 rbd29 0 mount
+>> 18:38:51.390166 O 2364320 rbd29 1 rpc.mountd
+>> 18:39:00.989050 R 2364320 rbd29 2 rpc.mountd
+>> 18:53:56.054685 R 3313923 rbd29 1 init
+>>
+>> According to my script log, the first unmap attempt was at 18:39:42,
+>> i.e. 42 seconds after rpc.mountd released the device. At that point the
+>> the open_count was (or should have been?) 1 again allowing the unmap to
+>> succeed - but it didn't. The unmap was retried every second until it
+>
+> For unmap to go through, open_count must be 0.  rpc.mountd at
+> 18:39:00.989050 just decremented it from 2 to 1, it didn't release
+> the device.
+
+Yes - but my poorly made point was that, per the normal test iteration, 
+some time shortly after rpc.mountd decremented open_count to 1, an 
+"umount" command was run successfully (the test would have aborted if 
+the umount didn't succeed) - but the "umount" didn't show up in the 
+bpftrace output. Immediately after the umount a "rbd unmap" was run, 
+which failed with "busy" - i.e. the open_count was still incremented.
+
+>> eventually succeeded at 18:53:56, the same time as the mysterious 
+>> "init" process ran - but also note there is NO "umount" process in 
+>> there so I don't know if the name of the process recorded by bfptrace 
+>> is simply incorrect (but how would that happen??) or what else could 
+>> be going on.
+
+Using "ps" once the unmap starts failing, then cross checking against 
+the process id recorded for the mysterious "init" in the bpftrace 
+output, reveals the full command line for the "init" is:
+
+/dev/init -- /usr/sbin/ceph-volume inventory --format=json-pretty --filter-for-batch
+
+I.e. it's the 'init' process of a ceph-volume container that eventually 
+releases the open_count.
+
+After doing a lot of learning about ceph and containers (podman in this 
+case) and namespaces etc. etc., the problem is now known...
+
+Ceph containers are started with '-v "/:/rootfs"' which bind mounts the 
+entire host's filesystem hierarchy into the container. Specifically, if 
+the host has mounted filesystems, they're also mounted within the 
+container when it starts up. So, if a ceph container starts up whilst 
+there is a filesystem mounted from an rbd mapped device, the container 
+also has that mount - and it retains the mount even if the filesystem is 
+unmounted in the host. So the rbd device can't be unmapped in the host 
+until the filesystem is released by the container, either via an explicit 
+umount within the container, or a umount from the host targetting the 
+container namespace, or the container exits.
+
+This explains the mysterious 51 rbd devices that I haven't been able to 
+unmap for a week: they're all mounted within long-running ceph containers 
+that happened to start up whilst those 51 devices were all mounted 
+somewhere.  I've now been able to unmap those devices after unmounting the 
+filesystems within those containers using:
+
+umount --namespace "${pid_of_container}" "${fs}"
+
+
+------------------------------------------------------------
+An example demonstrating the problem
+------------------------------------------------------------
+#
+# Mount a snapshot, with "unbindable"
+#
+host# {
+   rbd=pool/name@snap
+   dev=$(rbd device map "${rbd}")
+   declare -p dev
+   mount -oro,norecovery,nouuid,unbindable "${dev}" "/mnt"
+   echo --
+   grep "${dev}" /proc/self/mountinfo
+   echo --
+   ls /mnt
+   echo --
+}
+declare -- dev="/dev/rbd30"
+--
+1463 22 252:480 / /mnt ro unbindable - xfs /dev/rbd30 ro,nouuid,norecovery
+--
+file1 file2 file3
+
+#
+# The mount is still visible if we start a ceph container
+#
+host# cephadm shell
+root@host:/# ls /mnt
+file1 file2 file3
+
+#
+# The device is not unmappable from the host...
+#
+host# umount /mnt
+host# rbd device unmap "${dev}"
+rbd: sysfs write failed
+rbd: unmap failed: (16) Device or resource busy
+
+#
+# ...until we umount the filesystem within the container
+#
+#
+host# lsns -t mnt
+         NS TYPE NPROCS     PID USER             COMMAND
+4026533050 mnt       2 3105356 root             /dev/init -- bash
+host# umount --namespace 3105356 /mnt
+host# rbd device unmap "${dev}"
+   ## success
+------------------------------------------------------------
+
+
+>> The bpftrace script looks like this:
+>
+> It would be good to attach the entire script, just in case someone runs
+> into a similar issue in the future and tries to debug the same way.
+
+Attached.
+
+Cheers,
+
+Chris
+
+--n8g4imXOkfNTN/H1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename="rbd-open-release.bpf"
+
+#!/usr/bin/bpftrace
+/*
+ * log rbd opens and releases
+ *
+ * run like:
+ *
+ * bpftrace -I /lib/modules/$(uname -r)/source/drivers/block -I /lib/modules/$(uname -r)/build this_script
+ *
+ * This assumes you have the appropriate linux source and build
+ * artifacts available on the machine where you're running bpftrace.
+ *
+ * Note:
+ *   https://github.com/iovisor/bpftrace/pull/2315
+ *   BTF for kernel modules
+ *
+ * Once that lands in your local bpftrace you hopefully don't need the linux
+ * source and build stuff, nor the 'extracted' stuff below, and you should be
+ * able to simply run this script like:
+ *
+ * chmod +x ./this_script
+ * ./this_script
+ *   
+ */
+
+////////////////////////////////////////////////////////////
+// extracted from
+//   linux/drivers/block/rbd.c
+//
+#include <linux/ceph/osdmap.h>
+
+#include <linux/kernel.h>
+#include <linux/device.h>
+#include <linux/blk-mq.h>
+
+#include "rbd_types.h"
+
+/*
+ * An RBD device name will be "rbd#", where the "rbd" comes from
+ * RBD_DRV_NAME above, and # is a unique integer identifier.
+ */
+#define DEV_NAME_LEN		32
+
+/*
+ * block device image metadata (in-memory version)
+ */
+struct rbd_image_header {
+	/* These six fields never change for a given rbd image */
+	char *object_prefix;
+	__u8 obj_order;
+	u64 stripe_unit;
+	u64 stripe_count;
+	s64 data_pool_id;
+	u64 features;		/* Might be changeable someday? */
+
+	/* The remaining fields need to be updated occasionally */
+	u64 image_size;
+	struct ceph_snap_context *snapc;
+	char *snap_names;	/* format 1 only */
+	u64 *snap_sizes;	/* format 1 only */
+};
+
+enum rbd_watch_state {
+	RBD_WATCH_STATE_UNREGISTERED,
+	RBD_WATCH_STATE_REGISTERED,
+	RBD_WATCH_STATE_ERROR,
+};
+
+enum rbd_lock_state {
+	RBD_LOCK_STATE_UNLOCKED,
+	RBD_LOCK_STATE_LOCKED,
+	RBD_LOCK_STATE_RELEASING,
+};
+
+/* WatchNotify::ClientId */
+struct rbd_client_id {
+	u64 gid;
+	u64 handle;
+};
+
+struct rbd_mapping {
+	u64                     size;
+};
+
+/*
+ * a single device
+ */
+struct rbd_device {
+	int			dev_id;		/* blkdev unique id */
+
+	int			major;		/* blkdev assigned major */
+	int			minor;
+	struct gendisk		*disk;		/* blkdev's gendisk and rq */
+
+	u32			image_format;	/* Either 1 or 2 */
+	struct rbd_client	*rbd_client;
+
+	char			name[DEV_NAME_LEN]; /* blkdev name, e.g. rbd3 */
+
+	spinlock_t		lock;		/* queue, flags, open_count */
+
+	struct rbd_image_header	header;
+	unsigned long		flags;		/* possibly lock protected */
+	struct rbd_spec		*spec;
+	struct rbd_options	*opts;
+	char			*config_info;	/* add{,_single_major} string */
+
+	struct ceph_object_id	header_oid;
+	struct ceph_object_locator header_oloc;
+
+	struct ceph_file_layout	layout;		/* used for all rbd requests */
+
+	struct mutex		watch_mutex;
+	enum rbd_watch_state	watch_state;
+	struct ceph_osd_linger_request *watch_handle;
+	u64			watch_cookie;
+	struct delayed_work	watch_dwork;
+
+	struct rw_semaphore	lock_rwsem;
+	enum rbd_lock_state	lock_state;
+	char			lock_cookie[32];
+	struct rbd_client_id	owner_cid;
+	struct work_struct	acquired_lock_work;
+	struct work_struct	released_lock_work;
+	struct delayed_work	lock_dwork;
+	struct work_struct	unlock_work;
+	spinlock_t		lock_lists_lock;
+	struct list_head	acquiring_list;
+	struct list_head	running_list;
+	struct completion	acquire_wait;
+	int			acquire_err;
+	struct completion	releasing_wait;
+
+	spinlock_t		object_map_lock;
+	u8			*object_map;
+	u64			object_map_size;	/* in objects */
+	u64			object_map_flags;
+
+	struct workqueue_struct	*task_wq;
+
+	struct rbd_spec		*parent_spec;
+	u64			parent_overlap;
+	atomic_t		parent_ref;
+	struct rbd_device	*parent;
+
+	/* Block layer tags. */
+	struct blk_mq_tag_set	tag_set;
+
+	/* protects updating the header */
+	struct rw_semaphore     header_rwsem;
+
+	struct rbd_mapping	mapping;
+
+	struct list_head	node;
+
+	/* sysfs related */
+	struct device		dev;
+	unsigned long		open_count;	/* protected by lock */
+};
+
+//
+// end of extraction
+////////////////////////////////////////////////////////////
+
+kprobe:rbd_open {
+  $bdev = (struct block_device *)arg0;
+  $rbd_dev = (struct rbd_device *)($bdev->bd_disk->private_data);
+
+  printf("%s O %d %s %lu %s\n",
+    strftime("%T.%f", nsecs), pid, $rbd_dev->name, $rbd_dev->open_count, comm
+  );
+}
+
+kprobe:rbd_release {
+  $disk = (struct gendisk *)arg0;
+  $rbd_dev = (struct rbd_device *)($disk->private_data);
+
+  printf("%s R %d %s %lu %s\n",
+    strftime("%T.%f", nsecs), pid, $rbd_dev->name, $rbd_dev->open_count, comm
+  );
+}
+
+--n8g4imXOkfNTN/H1--
