@@ -2,140 +2,225 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 93E3D5EB4B7
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Sep 2022 00:44:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 609F75EBDDB
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Sep 2022 10:57:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229870AbiIZWoM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 26 Sep 2022 18:44:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35574 "EHLO
+        id S230396AbiI0I5W (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 27 Sep 2022 04:57:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229605AbiIZWoJ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 26 Sep 2022 18:44:09 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A2D9E2E5;
-        Mon, 26 Sep 2022 15:44:08 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id C24DA2199A;
-        Mon, 26 Sep 2022 22:44:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1664232246; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3wqBvT1Pdp5nBIwk7f69QChWKcic6sFvlcDIXYHLhVw=;
-        b=bp3sjpaKgKxakHrVYbA6MiKdHvmDJOaK7Knl9ZekzxVGGvefEZtlBRay9JdXNdvtsI1FeT
-        BFiGJDTn7+nBrNUAcYcwtC/v/cFeQlQAXMryESS37gkkS89krmeCqqd4ZQnBlnku1Qj9nT
-        bHo5wmUgv+yvxmGT2ireKVPFG/FEpiA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1664232246;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3wqBvT1Pdp5nBIwk7f69QChWKcic6sFvlcDIXYHLhVw=;
-        b=KNEYqmH80A7uU4gjB/CKhQ0gmEKPEUyR2v8DIyep3Ttnd3fg3CE5jdzAdX4shiTSaiECHR
-        w+8QIdUkTfKWlFCQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B2E7213486;
-        Mon, 26 Sep 2022 22:43:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id oE9qGi8rMmOyQwAAMHmgww
-        (envelope-from <neilb@suse.de>); Mon, 26 Sep 2022 22:43:59 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Jeff Layton" <jlayton@kernel.org>
-Cc:     "Trond Myklebust" <trondmy@hammerspace.com>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "tytso@mit.edu" <tytso@mit.edu>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "xiubli@redhat.com" <xiubli@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "lczerner@redhat.com" <lczerner@redhat.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Subject: Re: [man-pages RFC PATCH v4] statx, inode: document the new
- STATX_INO_VERSION field
-In-reply-to: <baf852dfb57aaf5a670bc88236f8d62c99668fcc.camel@kernel.org>
-References: <24005713ad25370d64ab5bd0db0b2e4fcb902c1c.camel@kernel.org>,
- <20220918235344.GH3600936@dread.disaster.area>,
- <87fb43b117472c0a4c688c37a925ac51738c8826.camel@kernel.org>,
- <20220920001645.GN3600936@dread.disaster.area>,
- <5832424c328ea427b5c6ecdaa6dd53f3b99c20a0.camel@kernel.org>,
- <20220921000032.GR3600936@dread.disaster.area>,
- <93b6d9f7cf997245bb68409eeb195f9400e55cd0.camel@kernel.org>,
- <20220921214124.GS3600936@dread.disaster.area>,
- <e04e349170bc227b330556556d0592a53692b5b5.camel@kernel.org>,
- <1ef261e3ff1fa7fcd0d75ed755931aacb8062de2.camel@kernel.org>,
- <20220923095653.5c63i2jgv52j3zqp@quack3>,
- <2d41c08e1fd96d55c794c3b4cd43a51a0494bfcf.camel@hammerspace.com>,
- <baf852dfb57aaf5a670bc88236f8d62c99668fcc.camel@kernel.org>
-Date:   Tue, 27 Sep 2022 08:43:56 +1000
-Message-id: <166423223623.17572.7229091435446226718@noble.neil.brown.name>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S230326AbiI0I5U (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Sep 2022 04:57:20 -0400
+Received: from mail.nfschina.com (unknown [124.16.136.209])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 92A4D7A527;
+        Tue, 27 Sep 2022 01:57:18 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id 1FBCE1E80D33;
+        Tue, 27 Sep 2022 16:53:04 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id zSR2IxmD8Duw; Tue, 27 Sep 2022 16:53:01 +0800 (CST)
+Received: from localhost.localdomain (unknown [219.141.250.2])
+        (Authenticated sender: zhoujie@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id 7F7131E80CF9;
+        Tue, 27 Sep 2022 16:53:00 +0800 (CST)
+From:   Zhou jie <zhoujie@nfschina.com>
+To:     jlayton@kernel.org, xiubli@redhat.com, idryomov@gmail.com
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhoujie@nfschina.com
+Subject: [PATCH] fs/ceph:Modify the return value to void
+Date:   Tue, 27 Sep 2022 16:57:02 +0800
+Message-Id: <20220927085702.10026-1-zhoujie@nfschina.com>
+X-Mailer: git-send-email 2.18.2
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 23 Sep 2022, Jeff Layton wrote:
-> 
-> Absolutely. That is the downside of this approach, but the priority here
-> has always been to improve nfsd. If we don't get the ability to present
-> this info via statx, then so be it. Later on, I suppose we can move that
-> handling into the kernel in some fashion if we decide it's worthwhile.
-> 
-> That said, not having this in statx makes it more difficult to test
-> i_version behavior. Maybe we can add a generic ioctl for that in the
-> interim?
+Modify the return value of the integer to void.
 
-I wonder if we are over-thinking this, trying too hard, making "perfect"
-the enemy of "good".
-While we agree that the current implementation of i_version is
-imperfect, it isn't causing major data corruption all around the world.
-I don't think there are even any known bug reports are there?
-So while we do want to fix it as best we can, we don't need to make that
-the first priority.
+Signed-off-by: Zhou jie <zhoujie@nfschina.com>
+---
+ fs/ceph/debugfs.c | 38 +++++++++++++-------------------------
+ 1 file changed, 13 insertions(+), 25 deletions(-)
 
-I think the first priority should be to document how we want it to work,
-which is what this thread is really all about.  The documentation can
-note that some (all) filesystems do not provide perfect semantics across
-unclean restarts, and can list any other anomalies that we are aware of.
-And on that basis we can export the current i_version to user-space via
-statx and start trying to write some test code.
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index bec3c4549c07..e4852a1c4a0a 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -22,14 +22,14 @@
+ #include "mds_client.h"
+ #include "metric.h"
+ 
+-static int mdsmap_show(struct seq_file *s, void *p)
++static void mdsmap_show(struct seq_file *s, void *p)
+ {
+ 	int i;
+ 	struct ceph_fs_client *fsc = s->private;
+ 	struct ceph_mdsmap *mdsmap;
+ 
+ 	if (!fsc->mdsc || !fsc->mdsc->mdsmap)
+-		return 0;
++		return;
+ 	mdsmap = fsc->mdsc->mdsmap;
+ 	seq_printf(s, "epoch %d\n", mdsmap->m_epoch);
+ 	seq_printf(s, "root %d\n", mdsmap->m_root);
+@@ -43,13 +43,12 @@ static int mdsmap_show(struct seq_file *s, void *p)
+ 			       ceph_pr_addr(addr),
+ 			       ceph_mds_state_name(state));
+ 	}
+-	return 0;
+ }
+ 
+ /*
+  * mdsc debugfs
+  */
+-static int mdsc_show(struct seq_file *s, void *p)
++static void mdsc_show(struct seq_file *s, void *p)
+ {
+ 	struct ceph_fs_client *fsc = s->private;
+ 	struct ceph_mds_client *mdsc = fsc->mdsc;
+@@ -124,7 +123,6 @@ static int mdsc_show(struct seq_file *s, void *p)
+ 	}
+ 	mutex_unlock(&mdsc->mutex);
+ 
+-	return 0;
+ }
+ 
+ #define CEPH_LAT_METRIC_SHOW(name, total, avg, min, max, sq) {		\
+@@ -146,7 +144,7 @@ static int mdsc_show(struct seq_file *s, void *p)
+ 		   name, total, avg, _min, max, sum);			\
+ }
+ 
+-static int metrics_file_show(struct seq_file *s, void *p)
++static void metrics_file_show(struct seq_file *s, void *p)
+ {
+ 	struct ceph_fs_client *fsc = s->private;
+ 	struct ceph_client_metric *m = &fsc->mdsc->metric;
+@@ -161,7 +159,6 @@ static int metrics_file_show(struct seq_file *s, void *p)
+ 		   atomic64_read(&m->total_caps));
+ 	seq_printf(s, "%-35s%lld\n", "opened inodes",
+ 		   percpu_counter_sum(&m->opened_inodes));
+-	return 0;
+ }
+ 
+ static const char * const metric_str[] = {
+@@ -170,7 +167,7 @@ static const char * const metric_str[] = {
+ 	"metadata",
+ 	"copyfrom"
+ };
+-static int metrics_latency_show(struct seq_file *s, void *p)
++static void metrics_latency_show(struct seq_file *s, void *p)
+ {
+ 	struct ceph_fs_client *fsc = s->private;
+ 	struct ceph_client_metric *cm = &fsc->mdsc->metric;
+@@ -193,10 +190,9 @@ static int metrics_latency_show(struct seq_file *s, void *p)
+ 		CEPH_LAT_METRIC_SHOW(metric_str[i], total, avg, min, max, sq);
+ 	}
+ 
+-	return 0;
+ }
+ 
+-static int metrics_size_show(struct seq_file *s, void *p)
++static void metrics_size_show(struct seq_file *s, void *p)
+ {
+ 	struct ceph_fs_client *fsc = s->private;
+ 	struct ceph_client_metric *cm = &fsc->mdsc->metric;
+@@ -223,10 +219,9 @@ static int metrics_size_show(struct seq_file *s, void *p)
+ 		CEPH_SZ_METRIC_SHOW(metric_str[i], total, avg, min, max, sum);
+ 	}
+ 
+-	return 0;
+ }
+ 
+-static int metrics_caps_show(struct seq_file *s, void *p)
++static void metrics_caps_show(struct seq_file *s, void *p)
+ {
+ 	struct ceph_fs_client *fsc = s->private;
+ 	struct ceph_client_metric *m = &fsc->mdsc->metric;
+@@ -245,10 +240,9 @@ static int metrics_caps_show(struct seq_file *s, void *p)
+ 		   percpu_counter_sum(&m->i_caps_mis),
+ 		   percpu_counter_sum(&m->i_caps_hit));
+ 
+-	return 0;
+ }
+ 
+-static int caps_show_cb(struct inode *inode, struct ceph_cap *cap, void *p)
++static void caps_show_cb(struct inode *inode, struct ceph_cap *cap, void *p)
+ {
+ 	struct seq_file *s = p;
+ 
+@@ -256,10 +250,9 @@ static int caps_show_cb(struct inode *inode, struct ceph_cap *cap, void *p)
+ 		   cap->session->s_mds,
+ 		   ceph_cap_string(cap->issued),
+ 		   ceph_cap_string(cap->implemented));
+-	return 0;
+ }
+ 
+-static int caps_show(struct seq_file *s, void *p)
++static void caps_show(struct seq_file *s, void *p)
+ {
+ 	struct ceph_fs_client *fsc = s->private;
+ 	struct ceph_mds_client *mdsc = fsc->mdsc;
+@@ -304,10 +297,9 @@ static int caps_show(struct seq_file *s, void *p)
+ 	}
+ 	spin_unlock(&mdsc->caps_list_lock);
+ 
+-	return 0;
+ }
+ 
+-static int mds_sessions_show(struct seq_file *s, void *ptr)
++static void mds_sessions_show(struct seq_file *s, void *ptr)
+ {
+ 	struct ceph_fs_client *fsc = s->private;
+ 	struct ceph_mds_client *mdsc = fsc->mdsc;
+@@ -340,10 +332,9 @@ static int mds_sessions_show(struct seq_file *s, void *ptr)
+ 	}
+ 	mutex_unlock(&mdsc->mutex);
+ 
+-	return 0;
+ }
+ 
+-static int status_show(struct seq_file *s, void *p)
++static void status_show(struct seq_file *s, void *p)
+ {
+ 	struct ceph_fs_client *fsc = s->private;
+ 	struct ceph_entity_inst *inst = &fsc->client->msgr.inst;
+@@ -353,7 +344,6 @@ static int status_show(struct seq_file *s, void *p)
+ 		   ceph_pr_addr(client_addr), le32_to_cpu(client_addr->nonce));
+ 	seq_printf(s, "blocklisted: %s\n", fsc->blocklisted ? "true" : "false");
+ 
+-	return 0;
+ }
+ 
+ DEFINE_SHOW_ATTRIBUTE(mdsmap);
+@@ -370,20 +360,18 @@ DEFINE_SHOW_ATTRIBUTE(metrics_caps);
+ /*
+  * debugfs
+  */
+-static int congestion_kb_set(void *data, u64 val)
++static void congestion_kb_set(void *data, u64 val)
+ {
+ 	struct ceph_fs_client *fsc = (struct ceph_fs_client *)data;
+ 
+ 	fsc->mount_options->congestion_kb = (int)val;
+-	return 0;
+ }
+ 
+-static int congestion_kb_get(void *data, u64 *val)
++static void congestion_kb_get(void *data, u64 *val)
+ {
+ 	struct ceph_fs_client *fsc = (struct ceph_fs_client *)data;
+ 
+ 	*val = (u64)fsc->mount_options->congestion_kb;
+-	return 0;
+ }
+ 
+ DEFINE_SIMPLE_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
+-- 
+2.18.2
 
-We can then look at moving the i_version/ctime update from *before* the
-write to *after* the write, and any other improvements that can be
-achieved easily in common code.  We can then update the man page to say
-"since Linux 6.42, this list of anomalies is no longer present".
-
-Then we can explore some options for handling unclean restart - in a
-context where we can write tests and maybe even demonstrate a concrete
-problem before we start trying to fix it.
-
-NeilBrown
