@@ -2,225 +2,103 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 609F75EBDDB
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Sep 2022 10:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5933B5EC02F
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Sep 2022 12:56:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230396AbiI0I5W (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 27 Sep 2022 04:57:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39946 "EHLO
+        id S231628AbiI0Kz4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 27 Sep 2022 06:55:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230326AbiI0I5U (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Sep 2022 04:57:20 -0400
-Received: from mail.nfschina.com (unknown [124.16.136.209])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 92A4D7A527;
-        Tue, 27 Sep 2022 01:57:18 -0700 (PDT)
-Received: from localhost (unknown [127.0.0.1])
-        by mail.nfschina.com (Postfix) with ESMTP id 1FBCE1E80D33;
-        Tue, 27 Sep 2022 16:53:04 +0800 (CST)
-X-Virus-Scanned: amavisd-new at test.com
-Received: from mail.nfschina.com ([127.0.0.1])
-        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zSR2IxmD8Duw; Tue, 27 Sep 2022 16:53:01 +0800 (CST)
-Received: from localhost.localdomain (unknown [219.141.250.2])
-        (Authenticated sender: zhoujie@nfschina.com)
-        by mail.nfschina.com (Postfix) with ESMTPA id 7F7131E80CF9;
-        Tue, 27 Sep 2022 16:53:00 +0800 (CST)
-From:   Zhou jie <zhoujie@nfschina.com>
-To:     jlayton@kernel.org, xiubli@redhat.com, idryomov@gmail.com
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        zhoujie@nfschina.com
-Subject: [PATCH] fs/ceph:Modify the return value to void
-Date:   Tue, 27 Sep 2022 16:57:02 +0800
-Message-Id: <20220927085702.10026-1-zhoujie@nfschina.com>
-X-Mailer: git-send-email 2.18.2
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S231612AbiI0Kzz (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Sep 2022 06:55:55 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C463818E2F
+        for <ceph-devel@vger.kernel.org>; Tue, 27 Sep 2022 03:55:50 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id f20so12660694edf.6
+        for <ceph-devel@vger.kernel.org>; Tue, 27 Sep 2022 03:55:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=Uei1CC5te+qNPDdpiy4J9GEGK0BnlFEGKUkoi7L2F08=;
+        b=cunI1SN+BdkXdJsHhPHf08gdFekcqNsg73A8q4IF7C4mmJRulg6U2uPp+ANI6xrJIl
+         /vCDP3eHn6LDoAuEnv7M5ljnhXFFSjRqN2Z2+13/L+bwbJtgWkxIyVeHQEPuIA0pvqqe
+         vPzUta2KlwX46t9YOgq43A7/vBNt0vjbOuKUhy6uCSfmj15oJLs6KyvIDpkwJxxnMNME
+         jHWbEN4P6iVbdILoXlEhJzjrM5rOfcc5PAN0MGb9EObXubxAuiGOJPaMzQnitS8qHAnu
+         9dr9NqFnZkPuMYju9A9i5Fj5X+f2gWs9pSzdCEBeztJCM83obs8kUngeSqwhDjMgm/kf
+         YLkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=Uei1CC5te+qNPDdpiy4J9GEGK0BnlFEGKUkoi7L2F08=;
+        b=2SqNWBbU+RJJmoHNdT2lxxGF4uGfMeIdhAEkJW60hPTNvcHrk3Md38WA+uzq5SvzwT
+         rhXRNPxiRzw1lhv9TYtojxzpx6PYiV7z3QTQULNh3UKSIA6mhC3wlSIg4zledaiwe7ya
+         KwAxQ3X6q1Ptz5mt2W+GBJtH7ppbC1GxoN3+k6/NALMePSB7wJ7aV7t9SMKnERO6pua0
+         FiQbOLp9w/9J3/8pGv6x74mpBXKCGoKj8z5SHzz99qFXEbl6KDqTKX8lZFn98+e657Wz
+         A1p/YdJGoeQ/+7BDmfXSvz4RhA5lvHdAbaB3Em9YGne62HDjFchWCoaWf7ey65UKCg+x
+         lblA==
+X-Gm-Message-State: ACrzQf0DU1yiJcM1k+7rDHrq5eugdnJsuPsqRKy5lnis7eHT4xyu6xAP
+        xxE9viyGJnNIXBs5mwqHV4wzIcCKUaHNmLQWAWM=
+X-Google-Smtp-Source: AMsMyM6y7oAYWC3cnZ4S3tReCicopRdEADfH1WYPU/eAqJaQFvStz92CqJbzQJhY5PDvlitwizcjiFUgqqnQarNXlCc=
+X-Received: by 2002:a05:6402:51d1:b0:451:ea13:1583 with SMTP id
+ r17-20020a05640251d100b00451ea131583mr27255014edd.322.1664276149099; Tue, 27
+ Sep 2022 03:55:49 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220913012043.GA568834@onthe.net.au> <CAOi1vP9FnHtg29X73EA0gwOpGcOXJmaujZ8p0JHc7qZ95V7QcQ@mail.gmail.com>
+ <20220914034902.GA691415@onthe.net.au> <CAOi1vP8qmpEWVYS6EpYbMqP7PHTOLkzsqbNnN3g8Kzrz+9g_BA@mail.gmail.com>
+ <20220915082920.GA881573@onthe.net.au> <20220919074321.GA1363634@onthe.net.au>
+ <CAOi1vP-9hNc1A4wQ6WDFsNY=2R03inozfuWJcfaaCk5vZ2mqhg@mail.gmail.com>
+ <20220921013629.GA1583272@onthe.net.au> <CAOi1vP__Mj9Qyb=WsUxo7ja5koTS+0eavsnWH=X+DTest4spaQ@mail.gmail.com>
+ <20220923035826.GA1830185@onthe.net.au> <CANqTTH4dPibtJ_4ayDch5rKVG=ykGAJhWnCyWmG9vvm1zHEg1w@mail.gmail.com>
+In-Reply-To: <CANqTTH4dPibtJ_4ayDch5rKVG=ykGAJhWnCyWmG9vvm1zHEg1w@mail.gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 27 Sep 2022 12:55:37 +0200
+Message-ID: <CAOi1vP9jCHppG7irvLzQgwBSzhrfgc_ak1t2wc=uTOREHVBROA@mail.gmail.com>
+Subject: Re: rbd unmap fails with "Device or resource busy"
+To:     Guillaume Abrioux <gabrioux@redhat.com>
+Cc:     Chris Dunlop <chris@onthe.net.au>, ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Modify the return value of the integer to void.
+On Fri, Sep 23, 2022 at 3:06 PM Guillaume Abrioux <gabrioux@redhat.com> wrote:
+>
+> Hi Chris,
+>
+> On Fri, 23 Sept 2022 at 05:59, Chris Dunlop <chris@onthe.net.au> wrote:
+>>
+>>
+>> If the ceph containers really do need access to the entire host
+>> filesystem, perhaps it would be better to do a "slave" mount,
+>
+>
+> Yes, I think a mount with 'slave' propagation should fix your issue.
+> I plan to do some tests next week and work on a patch.
 
-Signed-off-by: Zhou jie <zhoujie@nfschina.com>
----
- fs/ceph/debugfs.c | 38 +++++++++++++-------------------------
- 1 file changed, 13 insertions(+), 25 deletions(-)
+Hi Guillaume,
 
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index bec3c4549c07..e4852a1c4a0a 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -22,14 +22,14 @@
- #include "mds_client.h"
- #include "metric.h"
- 
--static int mdsmap_show(struct seq_file *s, void *p)
-+static void mdsmap_show(struct seq_file *s, void *p)
- {
- 	int i;
- 	struct ceph_fs_client *fsc = s->private;
- 	struct ceph_mdsmap *mdsmap;
- 
- 	if (!fsc->mdsc || !fsc->mdsc->mdsmap)
--		return 0;
-+		return;
- 	mdsmap = fsc->mdsc->mdsmap;
- 	seq_printf(s, "epoch %d\n", mdsmap->m_epoch);
- 	seq_printf(s, "root %d\n", mdsmap->m_root);
-@@ -43,13 +43,12 @@ static int mdsmap_show(struct seq_file *s, void *p)
- 			       ceph_pr_addr(addr),
- 			       ceph_mds_state_name(state));
- 	}
--	return 0;
- }
- 
- /*
-  * mdsc debugfs
-  */
--static int mdsc_show(struct seq_file *s, void *p)
-+static void mdsc_show(struct seq_file *s, void *p)
- {
- 	struct ceph_fs_client *fsc = s->private;
- 	struct ceph_mds_client *mdsc = fsc->mdsc;
-@@ -124,7 +123,6 @@ static int mdsc_show(struct seq_file *s, void *p)
- 	}
- 	mutex_unlock(&mdsc->mutex);
- 
--	return 0;
- }
- 
- #define CEPH_LAT_METRIC_SHOW(name, total, avg, min, max, sq) {		\
-@@ -146,7 +144,7 @@ static int mdsc_show(struct seq_file *s, void *p)
- 		   name, total, avg, _min, max, sum);			\
- }
- 
--static int metrics_file_show(struct seq_file *s, void *p)
-+static void metrics_file_show(struct seq_file *s, void *p)
- {
- 	struct ceph_fs_client *fsc = s->private;
- 	struct ceph_client_metric *m = &fsc->mdsc->metric;
-@@ -161,7 +159,6 @@ static int metrics_file_show(struct seq_file *s, void *p)
- 		   atomic64_read(&m->total_caps));
- 	seq_printf(s, "%-35s%lld\n", "opened inodes",
- 		   percpu_counter_sum(&m->opened_inodes));
--	return 0;
- }
- 
- static const char * const metric_str[] = {
-@@ -170,7 +167,7 @@ static const char * const metric_str[] = {
- 	"metadata",
- 	"copyfrom"
- };
--static int metrics_latency_show(struct seq_file *s, void *p)
-+static void metrics_latency_show(struct seq_file *s, void *p)
- {
- 	struct ceph_fs_client *fsc = s->private;
- 	struct ceph_client_metric *cm = &fsc->mdsc->metric;
-@@ -193,10 +190,9 @@ static int metrics_latency_show(struct seq_file *s, void *p)
- 		CEPH_LAT_METRIC_SHOW(metric_str[i], total, avg, min, max, sq);
- 	}
- 
--	return 0;
- }
- 
--static int metrics_size_show(struct seq_file *s, void *p)
-+static void metrics_size_show(struct seq_file *s, void *p)
- {
- 	struct ceph_fs_client *fsc = s->private;
- 	struct ceph_client_metric *cm = &fsc->mdsc->metric;
-@@ -223,10 +219,9 @@ static int metrics_size_show(struct seq_file *s, void *p)
- 		CEPH_SZ_METRIC_SHOW(metric_str[i], total, avg, min, max, sum);
- 	}
- 
--	return 0;
- }
- 
--static int metrics_caps_show(struct seq_file *s, void *p)
-+static void metrics_caps_show(struct seq_file *s, void *p)
- {
- 	struct ceph_fs_client *fsc = s->private;
- 	struct ceph_client_metric *m = &fsc->mdsc->metric;
-@@ -245,10 +240,9 @@ static int metrics_caps_show(struct seq_file *s, void *p)
- 		   percpu_counter_sum(&m->i_caps_mis),
- 		   percpu_counter_sum(&m->i_caps_hit));
- 
--	return 0;
- }
- 
--static int caps_show_cb(struct inode *inode, struct ceph_cap *cap, void *p)
-+static void caps_show_cb(struct inode *inode, struct ceph_cap *cap, void *p)
- {
- 	struct seq_file *s = p;
- 
-@@ -256,10 +250,9 @@ static int caps_show_cb(struct inode *inode, struct ceph_cap *cap, void *p)
- 		   cap->session->s_mds,
- 		   ceph_cap_string(cap->issued),
- 		   ceph_cap_string(cap->implemented));
--	return 0;
- }
- 
--static int caps_show(struct seq_file *s, void *p)
-+static void caps_show(struct seq_file *s, void *p)
- {
- 	struct ceph_fs_client *fsc = s->private;
- 	struct ceph_mds_client *mdsc = fsc->mdsc;
-@@ -304,10 +297,9 @@ static int caps_show(struct seq_file *s, void *p)
- 	}
- 	spin_unlock(&mdsc->caps_list_lock);
- 
--	return 0;
- }
- 
--static int mds_sessions_show(struct seq_file *s, void *ptr)
-+static void mds_sessions_show(struct seq_file *s, void *ptr)
- {
- 	struct ceph_fs_client *fsc = s->private;
- 	struct ceph_mds_client *mdsc = fsc->mdsc;
-@@ -340,10 +332,9 @@ static int mds_sessions_show(struct seq_file *s, void *ptr)
- 	}
- 	mutex_unlock(&mdsc->mutex);
- 
--	return 0;
- }
- 
--static int status_show(struct seq_file *s, void *p)
-+static void status_show(struct seq_file *s, void *p)
- {
- 	struct ceph_fs_client *fsc = s->private;
- 	struct ceph_entity_inst *inst = &fsc->client->msgr.inst;
-@@ -353,7 +344,6 @@ static int status_show(struct seq_file *s, void *p)
- 		   ceph_pr_addr(client_addr), le32_to_cpu(client_addr->nonce));
- 	seq_printf(s, "blocklisted: %s\n", fsc->blocklisted ? "true" : "false");
- 
--	return 0;
- }
- 
- DEFINE_SHOW_ATTRIBUTE(mdsmap);
-@@ -370,20 +360,18 @@ DEFINE_SHOW_ATTRIBUTE(metrics_caps);
- /*
-  * debugfs
-  */
--static int congestion_kb_set(void *data, u64 val)
-+static void congestion_kb_set(void *data, u64 val)
- {
- 	struct ceph_fs_client *fsc = (struct ceph_fs_client *)data;
- 
- 	fsc->mount_options->congestion_kb = (int)val;
--	return 0;
- }
- 
--static int congestion_kb_get(void *data, u64 *val)
-+static void congestion_kb_get(void *data, u64 *val)
- {
- 	struct ceph_fs_client *fsc = (struct ceph_fs_client *)data;
- 
- 	*val = (u64)fsc->mount_options->congestion_kb;
--	return 0;
- }
- 
- DEFINE_SIMPLE_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
--- 
-2.18.2
+I wanted to share an observation that there seem to be two cases here:
+actual containers (e.g. an OSD container) and "cephadm shell" which is
+technically also a container but may be regarded by users as a shell
+("window") with some binaries and configuration files injected into it.
 
+For the former, a unidirectional propagation such that when something
+is unmounted on the host it is also unmounted in the container is all
+that is needed.  However, for the latter, a bidirectional propagation
+such that when something is mounted in this shell it is also mounted on
+the host (and therefore in all other windows) seems desirable.
+
+What do you think about going with MS_SLAVE for the former and MS_SHARED
+for the latter?
+
+Thanks,
+
+                Ilya
