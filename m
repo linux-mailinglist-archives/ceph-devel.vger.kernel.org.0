@@ -2,181 +2,116 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BE72E5EDDF6
-	for <lists+ceph-devel@lfdr.de>; Wed, 28 Sep 2022 15:42:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35A135EE335
+	for <lists+ceph-devel@lfdr.de>; Wed, 28 Sep 2022 19:33:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234077AbiI1NmJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 28 Sep 2022 09:42:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60554 "EHLO
+        id S234380AbiI1RdL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 28 Sep 2022 13:33:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55862 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231567AbiI1NmI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 28 Sep 2022 09:42:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 204F16E2F4;
-        Wed, 28 Sep 2022 06:42:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9F8F761EB1;
-        Wed, 28 Sep 2022 13:42:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB686C433D6;
-        Wed, 28 Sep 2022 13:42:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664372524;
-        bh=PDniZhspoAjFGFPMZfaZ8GgB4DLLy5mz44zztNU7B+8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DqtgQ/m//i1BdMXDYXkHNALzJc+Fb2CkxwupnjD5iFoPUOy+RjGzDkBw6u16woact
-         Ek+6D4V044/DHPxZTiHl8kuYrAVeeMg2TUGzyu9mlJpBrkxFJqDxhyeySNUTWPuyDE
-         hkbGAN5/XfCvtPpm39Zv+BugYwMfdEX6eE42uDuYEIIMtghXn56j8tNz+CdNoTpYGY
-         oLA0DJOske77HfN24JeefL9hG37cIs4JMzuBMxszwi1t7W9Jgu94CxlxxpRk9x88qB
-         1bv9fv5W8vrBkEn3A2+rUfg9FkuebF8rP6DNdglXtFDEV9ehvhMRQoF+tvVevKpvLP
-         8XuQDoIktoBXA==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
-        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
-        bfields@fieldses.org, brauner@kernel.org, fweimer@redhat.com,
-        linux-man@vger.kernel.org
-Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: [man-pages RFC PATCH v6] statx, inode: document the new STATX_VERSION field
-Date:   Wed, 28 Sep 2022 09:42:00 -0400
-Message-Id: <20220928134200.28741-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.37.3
+        with ESMTP id S234374AbiI1RdI (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 28 Sep 2022 13:33:08 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C411EEB63
+        for <ceph-devel@vger.kernel.org>; Wed, 28 Sep 2022 10:33:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1664386383;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Rs6UOXWaudUiQjCSABOoIEIbJ9ZcI+twoPbZAzEN+Z8=;
+        b=GtczVa8mVcxNtVv/cNFj/sbI76Te2qvdq39jvTd67SQ2BZg6Jh5bUnovOa1aWViiEiNIzU
+        0TjK8+AVtZLNuj5QtJCKFR0Z9velH4OsGh7k46HjUzeUaW/xcLh2tHc+Rdo/WQpanRvVoq
+        /t1QssFwtSe8Y0WhYjzrzxkp8sc22q0=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-187-v7qVaHyZOLSEPxlwqqwecA-1; Wed, 28 Sep 2022 13:32:57 -0400
+X-MC-Unique: v7qVaHyZOLSEPxlwqqwecA-1
+Received: by mail-wm1-f72.google.com with SMTP id v130-20020a1cac88000000b003b56eabdf04so520862wme.7
+        for <ceph-devel@vger.kernel.org>; Wed, 28 Sep 2022 10:32:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=Rs6UOXWaudUiQjCSABOoIEIbJ9ZcI+twoPbZAzEN+Z8=;
+        b=GVakEqT++0GbPW9bmTSyeEvk1z5+kS2ciGRpwLYodNAPBhvbmL1U3FjBAUCJD+c4xY
+         QhzSF5a91juryjsvmLtkmgpAScZLprJJZRz/iloJLHMjBfXBVChPhnoNXrzN7utKusId
+         el+5gFof9UFNvHHrNR5MztIvXOr3nnskoW7OrBUCwfLbIiwCqZgzkl0HkjHqHKs6XBp2
+         qgvCRmYEP4ltsS+Qj1GLNVmjsEwOwdNHbMrj33Jl4+/b/nOK08CuqibEiGruxwqSG9qp
+         n/Vs8Ozfqj9ussGGuqfFImo/xoHUgp64Yo6YfTSHEXA3nkdpNA4CNkIkNYxmMinOUfd2
+         DfPg==
+X-Gm-Message-State: ACrzQf0FqxZF3IDGAsfvaOnAQo3Eo6WG3NG6dUKPpqBCMVXQzM7lEeRe
+        WgXE4+BXhAMjKEYOUB6n1FsT3D+is9BX3DIQ4MH7/vb352J3Xqv8ct2febNlFKb0A3k7xtmVs6U
+        PxCENwbX/+gnelmhvkc41g4u9/K9SiD1hmwjYOA==
+X-Received: by 2002:a5d:6d0b:0:b0:22a:caa8:8ef8 with SMTP id e11-20020a5d6d0b000000b0022acaa88ef8mr21864813wrq.598.1664386375435;
+        Wed, 28 Sep 2022 10:32:55 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM7HPhHJXu0DHuXln9ZAy3CX5pUTlui9nyy4PXLTlcl8dkddaHyeW6+uIbpVjzEQhplaKHMhSpIS7OpN7S5Rqv4=
+X-Received: by 2002:a5d:6d0b:0:b0:22a:caa8:8ef8 with SMTP id
+ e11-20020a5d6d0b000000b0022acaa88ef8mr21864783wrq.598.1664386374928; Wed, 28
+ Sep 2022 10:32:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <CAA4mOPr-Ejh2gmA6e3vKOpBApw9Uk6AsqC4A-OKMiwD5zUaBWw@mail.gmail.com>
+ <CACw=N5OUWWVOmkNr0TdC9-Z=FzEcsyE12GKoXS-Qk4R=tT4ypw@mail.gmail.com>
+In-Reply-To: <CACw=N5OUWWVOmkNr0TdC9-Z=FzEcsyE12GKoXS-Qk4R=tT4ypw@mail.gmail.com>
+From:   Mike Perez <miperez@redhat.com>
+Date:   Wed, 28 Sep 2022 10:32:28 -0700
+Message-ID: <CAFFUGJdPuYdnt1=SCCS73gQsZqz6a8Ma3pQEWHC3eCDCXs73Hg@mail.gmail.com>
+Subject: Re: Ceph Tech Talk : Making Teuthology a Better Detective
+To:     Vallari Agrawal <val.agl002@gmail.com>
+Cc:     Gaurav Sitlani <sitlanigaurav7@gmail.com>,
+        Ceph Development List <ceph-devel@vger.kernel.org>,
+        ceph-users@lists.ceph.com, dev <dev@ceph.io>,
+        Josh Durgin <jdurgin@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.0 required=5.0 tests=BAYES_20,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,LOTS_OF_MONEY,
+        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-I'm proposing to expose the inode change attribute via statx [1]. Document
-what this value means and what an observer can infer from it changing.
+Thank you, Vallari, for presenting our latest tech talk, and Gaurav for hosting!
 
-NB: this will probably have conflicts with the STATX_DIOALIGN doc
-patches, but we should be able to resolve those before merging anything.
+Here is the recording in case you missed it.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+https://www.youtube.com/watch?v=hPt0WbYtDxA
 
-[1]: https://lore.kernel.org/linux-nfs/20220826214703.134870-1-jlayton@kernel.org/T/#t
----
- man2/statx.2 | 13 +++++++++++++
- man7/inode.7 | 36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 49 insertions(+)
+On Thu, Aug 25, 2022 at 7:02 AM Vallari Agrawal <val.agl002@gmail.com> wrote:
+>
+> Slides for the presentation:
+> https://docs.google.com/presentation/d/1jfVQW6PVQzRl_thqUWU_gzb0suhcF-rkHdfx8SqTB6g/edit?usp=sharing
+>
+> On Wed, 24 Aug 2022 at 18:42, Gaurav Sitlani <sitlanigaurav7@gmail.com> wrote:
+>>
+>> Hi everyone,
+>>
+>> It's a pleasure to announce our next Ceph Tech Talk on Thursday,August 25 at 14:00 UTC by Vallari Agrawal, she's an Intern working on Ceph Outreachy project :
+>>
+>> Her github link : https://github.com/VallariAg
+>> Please join us for the same to learn more about her work.
+>>
+>> To join the meeting on a computer or mobile phone:
+>>
+>> https://bluejeans.com/908675367/browser
+>>
+>> To join via Phone:
+>> 1) Dial:
+>>           +1 408 740 7256
+>>           +1 888 240 2560(US Toll Free)
+>>           +1 408 317 9253(Alternate Number)
+>>           (see all numbers - http://bluejeans.com/numbers)
+>> 2) Enter Conference ID: 908675367
+>>
+>>
+>> Kind regards,
+>> Gaurav Sitlani
 
-v6: incorporate Neil's suggestions
-    clarify how well-behaved filesystems should order things
 
-diff --git a/man2/statx.2 b/man2/statx.2
-index 0d1b4591f74c..ee7005334a2f 100644
---- a/man2/statx.2
-+++ b/man2/statx.2
-@@ -62,6 +62,7 @@ struct statx {
-     __u32 stx_dev_major;   /* Major ID */
-     __u32 stx_dev_minor;   /* Minor ID */
-     __u64 stx_mnt_id;      /* Mount ID */
-+    __u64 stx_version;     /* Inode change attribute */
- };
- .EE
- .in
-@@ -247,6 +248,7 @@ STATX_BTIME	Want stx_btime
- STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
- 	It is deprecated and should not be used.
- STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
-+STATX_VERSION	Want stx_version (DRAFT)
- .TE
- .in
- .PP
-@@ -407,10 +409,16 @@ This is the same number reported by
- .BR name_to_handle_at (2)
- and corresponds to the number in the first field in one of the records in
- .IR /proc/self/mountinfo .
-+.TP
-+.I stx_version
-+The inode version, also known as the inode change attribute. See
-+.BR inode (7)
-+for details.
- .PP
- For further information on the above fields, see
- .BR inode (7).
- .\"
-+.TP
- .SS File attributes
- The
- .I stx_attributes
-@@ -489,6 +497,11 @@ without an explicit
- See
- .BR mmap (2)
- for more information.
-+.TP
-+.BR STATX_ATTR_VERSION_MONOTONIC " (since Linux 6.?)"
-+The stx_version value monotonically increases over time and will never appear
-+to go backward, even in the event of a crash. This can allow an application to
-+make a better determination about ordering when viewing different versions.
- .SH RETURN VALUE
- On success, zero is returned.
- On error, \-1 is returned, and
-diff --git a/man7/inode.7 b/man7/inode.7
-index 9b255a890720..e8adb63b1f6a 100644
---- a/man7/inode.7
-+++ b/man7/inode.7
-@@ -184,6 +184,12 @@ Last status change timestamp (ctime)
- This is the file's last status change timestamp.
- It is changed by writing or by setting inode information
- (i.e., owner, group, link count, mode, etc.).
-+.TP
-+Inode version (version)
-+(not returned in the \fIstat\fP structure); \fIstatx.stx_version\fP
-+.IP
-+This is the inode change counter. See the discussion of
-+\fBthe inode version counter\fP, below.
- .PP
- The timestamp fields report time measured with a zero point at the
- .IR Epoch ,
-@@ -424,6 +430,36 @@ on a directory means that a file
- in that directory can be renamed or deleted only by the owner
- of the file, by the owner of the directory, and by a privileged
- process.
-+.SS The inode version counter
-+.PP
-+The \fIstatx.stx_version\fP field is the inode change counter. Any operation
-+that could result in a change to \fIstatx.stx_ctime\fP must result in an
-+increase to this value. Soon after a change has been made, an stx_version value
-+should appear to be larger than previous readings. This is the case even
-+when a ctime change is not evident due to coarse timestamp granularity.
-+.PP
-+An observer cannot infer anything from amount of increase about the
-+nature or magnitude of the change. In fact, a single increment can reflect
-+multiple discrete changes if the value was not checked while those changes
-+were being processed.
-+.PP
-+Changes to stx_version are not necessarily atomic with the change itself, but
-+well-behaved filesystems should increment stx_version after a change has been
-+made visible to observers rather than before. This is especially important for
-+read-caching algorithms which could be fooled into associating a newer
-+stx_version with an older version of data. Note that this does leave a window
-+of time where a change may be visible, but the old stx_version is still being
-+reported.
-+.PP
-+In the event of a system crash, this value can appear to go backward if it was
-+queried before ever being written to the backing store. Applications that
-+persist stx_version values across a reboot should take care to mitigate this.
-+If the filesystem reports \fISTATX_ATTR_VERSION_MONOTONIC\fP in
-+\fIstatx.stx_attributes\fP, then it is not subject to this problem.
-+.PP
-+The stx_version is a Linux extension and is not supported by all filesystems.
-+The application must verify that the \fISTATX_VERSION\fP bit is set in the
-+returned \fIstatx.stx_mask\fP before relying on this field.
- .SH STANDARDS
- If you need to obtain the definition of the
- .I blkcnt_t
+
 -- 
-2.37.3
+Mike Perez
 
