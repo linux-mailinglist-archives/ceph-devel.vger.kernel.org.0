@@ -2,161 +2,280 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AAD0F5ED1D0
-	for <lists+ceph-devel@lfdr.de>; Wed, 28 Sep 2022 02:22:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE9445EDD5D
+	for <lists+ceph-devel@lfdr.de>; Wed, 28 Sep 2022 15:01:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232773AbiI1AWo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 27 Sep 2022 20:22:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43124 "EHLO
+        id S233494AbiI1NAk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 28 Sep 2022 09:00:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232772AbiI1AWN (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Sep 2022 20:22:13 -0400
-Received: from smtp1.onthe.net.au (smtp1.onthe.net.au [203.22.196.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 894B510D67B
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Sep 2022 17:22:05 -0700 (PDT)
-Received: from localhost (smtp2.private.onthe.net.au [10.200.63.13])
-        by smtp1.onthe.net.au (Postfix) with ESMTP id C8C9B61327;
-        Wed, 28 Sep 2022 10:22:03 +1000 (EST)
-Received: from smtp1.onthe.net.au ([10.200.63.11])
-        by localhost (smtp.onthe.net.au [10.200.63.13]) (amavisd-new, port 10028)
-        with ESMTP id c9FqSwpmudd0; Wed, 28 Sep 2022 10:22:03 +1000 (AEST)
-Received: from athena.private.onthe.net.au (chris-gw2-vpn.private.onthe.net.au [10.9.3.2])
-        by smtp1.onthe.net.au (Postfix) with ESMTP id 60D1C612BC;
-        Wed, 28 Sep 2022 10:22:03 +1000 (EST)
-Received: by athena.private.onthe.net.au (Postfix, from userid 1026)
-        id 04D1F6803CB; Wed, 28 Sep 2022 10:22:02 +1000 (AEST)
-Date:   Wed, 28 Sep 2022 10:22:02 +1000
-From:   Chris Dunlop <chris@onthe.net.au>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Adam King <adking@redhat.com>,
-        Guillaume Abrioux <gabrioux@redhat.com>,
-        ceph-devel@vger.kernel.org
-Subject: Re: rbd unmap fails with "Device or resource busy"
-Message-ID: <20220928002202.GA2357386@onthe.net.au>
+        with ESMTP id S233247AbiI1NAh (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 28 Sep 2022 09:00:37 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3045D5BC1B;
+        Wed, 28 Sep 2022 06:00:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E787AB8205D;
+        Wed, 28 Sep 2022 13:00:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 935D6C433D6;
+        Wed, 28 Sep 2022 13:00:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664370026;
+        bh=6Plk2FQMLoQz2N+IjumMqtplgUTDGnYPF6Nv6GQhRNo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Ay67VgSuT1NiQhXFkbJpXpoaU+VoqWPs93W6Y30xzeDDn2RVfeJxXjiKxNd5g94lX
+         Tyish0mvFiaer03rTB349TKk6SzTkrWvjt2PWVg/5cLXMfzqslMZ+vRYtnLfTzpLUE
+         GXJ63hNNkeUuqs2d2vsIgnnFwpZ3raHliWBhcmmqQJadG6qTK8goxINqhyM4PFoNWm
+         ecYEKiEFD4aa+36ie0VHW2NIn85vlpZHG4qqKHwybO9i5bBBTmYppNRYUgSGJDxx2A
+         jdTyWKuh+tMQaD/uZlRD6EA+oH1Bxj2b4QBSK/7UnhQUa9nuCluBu/ZMixo2BDPHQM
+         rNpHaVWWmTAgg==
+Message-ID: <78d8154b3deddf2e9674323a0066db4270eb5b59.camel@kernel.org>
+Subject: Re: [PATCH] statx, inode: document the new STATX_VERSION field
+From:   Jeff Layton <jlayton@kernel.org>
+To:     NeilBrown <neilb@suse.de>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
+        david@fromorbit.com, trondmy@hammerspace.com,
+        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
+        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
+        bfields@fieldses.org, brauner@kernel.org, fweimer@redhat.com,
+        linux-man@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
+Date:   Wed, 28 Sep 2022 09:00:23 -0400
+In-Reply-To: <166432039241.17572.3454219701145225283@noble.neil.brown.name>
+References: <20220927203550.331261-1-jlayton@kernel.org>
+         <166432039241.17572.3454219701145225283@noble.neil.brown.name>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAOi1vP9jCHppG7irvLzQgwBSzhrfgc_ak1t2wc=uTOREHVBROA@mail.gmail.com>
- <CAOi1vP8Zfix48tM1ifAgQo1xK+HGC1Sh8mh+Bc=a7Bbv1QENxA@mail.gmail.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi all,
+On Wed, 2022-09-28 at 09:13 +1000, NeilBrown wrote:
+> On Wed, 28 Sep 2022, Jeff Layton wrote:
+> > I'm proposing to expose the inode change attribute via statx [1]. Docum=
+ent
+> > what this value means and what an observer can infer from it changing.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> >=20
+> > [1]: https://lore.kernel.org/linux-nfs/d9c065939af2728b1c0768d5ef752699=
+5b634902.camel@kernel.org/T/#t
+> > ---
+> >  man2/statx.2 | 13 +++++++++++++
+> >  man7/inode.7 | 31 +++++++++++++++++++++++++++++++
+> >  2 files changed, 44 insertions(+)
+> >=20
+> > Another RFC posting to hopefully nail down the desired semantics. I
+> > purposefully left out verbiage around atomicity, with the expectation
+> > that we should be able to make the existing filesystems that support
+> > i_version bump the counter after a write instead of before.
+>=20
+> I think we do need documentation about ordering.  Users will depend on
+> the version number not being seen to increase before the change is
+> visible.  They may also depend on the increase being visible when a
+> {f,i,fa}notify event is generated.  Having this explicitly documented
+> gives fs/vfs developers a clear reference, and application developers a
+> clear promise.
+>=20
+> >=20
+> > Also, for v5:
+> > - drop _INO/_ino from the name (it's redunant)
+> > - add STATX_ATTR_VERSION_MONOTONIC
+> >=20
+> > diff --git a/man2/statx.2 b/man2/statx.2
+> > index 0d1b4591f74c..b2fdb5ddf97a 100644
+> > --- a/man2/statx.2
+> > +++ b/man2/statx.2
+> > @@ -62,6 +62,7 @@ struct statx {
+> >      __u32 stx_dev_major;   /* Major ID */
+> >      __u32 stx_dev_minor;   /* Minor ID */
+> >      __u64 stx_mnt_id;      /* Mount ID */
+> > +    __u64 stx_version; /* Inode change attribute */
+> >  };
+> >  .EE
+> >  .in
+> > @@ -247,6 +248,7 @@ STATX_BTIME	Want stx_btime
+> >  STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
+> >  	It is deprecated and should not be used.
+> >  STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
+> > +STATX_VERSION	Want stx_version (DRAFT)
+> >  .TE
+> >  .in
+> >  .PP
+> > @@ -407,10 +409,16 @@ This is the same number reported by
+> >  .BR name_to_handle_at (2)
+> >  and corresponds to the number in the first field in one of the records=
+ in
+> >  .IR /proc/self/mountinfo .
+> > +.TP
+> > +.I stx_version
+> > +The inode version, also known as the inode change attribute. See
+> > +.BR inode (7)
+> > +for details.
+> >  .PP
+> >  For further information on the above fields, see
+> >  .BR inode (7).
+> >  .\"
+> > +.TP
+> >  .SS File attributes
+> >  The
+> >  .I stx_attributes
+> > @@ -489,6 +497,11 @@ without an explicit
+> >  See
+> >  .BR mmap (2)
+> >  for more information.
+> > +.TP
+> > +.BR STATX_ATTR_VERSION_MONOTONIC " (since Linux 6.?)"
+> > +The stx_version value monotonically increases over time and will never=
+ appear
+> > +to go backward, even in the event of a crash. This can allow an applic=
+ation to
+> > +make a better determination about ordering when viewing different vers=
+ions.
+> >  .SH RETURN VALUE
+> >  On success, zero is returned.
+> >  On error, \-1 is returned, and
+> > diff --git a/man7/inode.7 b/man7/inode.7
+> > index 9b255a890720..ec7f80dacaa8 100644
+> > --- a/man7/inode.7
+> > +++ b/man7/inode.7
+> > @@ -184,6 +184,12 @@ Last status change timestamp (ctime)
+> >  This is the file's last status change timestamp.
+> >  It is changed by writing or by setting inode information
+> >  (i.e., owner, group, link count, mode, etc.).
+> > +.TP
+> > +Inode version (version)
+> > +(not returned in the \fIstat\fP structure); \fIstatx.stx_version\fP
+> > +.IP
+> > +This is the inode change counter. See the discussion of
+> > +\fBthe inode version counter\fP, below.
+> >  .PP
+> >  The timestamp fields report time measured with a zero point at the
+> >  .IR Epoch ,
+> > @@ -424,6 +430,31 @@ on a directory means that a file
+> >  in that directory can be renamed or deleted only by the owner
+> >  of the file, by the owner of the directory, and by a privileged
+> >  process.
+> > +.SS The inode version counter
+> > +.PP
+> > +The
+> > +.I statx.stx_version
+> > +field is the inode change counter. Any operation that would result in =
+a
+> > +change to \fIstatx.stx_ctime\fP must result in an increase to this val=
+ue.
+> > +The value must increase even in the case where the ctime change is not
+> > +evident due to coarse timestamp granularity.
+>=20
+> I think "could result" rather than "would result".
+>=20
+> I'm a little uncomfortable with "must result" given that we don't
+> increase the value when the previous value hasn't been seen.
+> We could say "must cause subsequent reads of this counter to be larger
+> than any previous read", but that is somewhat verbose.
+>=20
 
-On Fri, Sep 23, 2022 at 11:47:11AM +0200, Ilya Dryomov wrote:
-> On Fri, Sep 23, 2022 at 5:58 AM Chris Dunlop <chris@onthe.net.au> wrote:
->> On Wed, Sep 21, 2022 at 12:40:54PM +0200, Ilya Dryomov wrote:
->>> On Wed, Sep 21, 2022 at 3:36 AM Chris Dunlop <chris@onthe.net.au> wrote:
->>>> On Tue, Sep 13, 2022 at 3:44 AM Chris Dunlop <chris@onthe.net.au> wrote:
->>>>> What can make a "rbd unmap" fail, assuming the device is not 
->>>>> mounted and not (obviously) open by any other processes?
->>
->> OK, I'm confident I now understand the cause of this problem. The 
->> particular machine where I'm mounting the rbd snapshots is also 
->> running some containerised ceph services. The ceph containers are 
->> (bind-)mounting the entire host filesystem hierarchy on startup, and 
->> if a ceph container happens to start up whilst a rbd device is 
->> mounted, the container also has the rbd mounted, preventing the host 
->> from unmapping the device even after the host has unmounted it. (More 
->> below.)
->>
->> This brings up a couple of issues...
->>
->> Why is the ceph container getting access to the entire host 
->> filesystem in the first place?
->>
->> Even if I mount an rbd device with the "unbindable" mount option, 
->> which is specifically supposed to prevent bind mounts to that 
->> filesystem, the ceph containers still get the mount - how / why??
->>
->> If the ceph containers really do need access to the entire host 
->> filesystem, perhaps it would be better to do a "slave" mount, so 
->> if/when the hosts unmounts a filesystem it's also unmounted in the 
->> container[s].  (Of course this also means any filesystems newly 
->> mounted in the host would also appear in the containers - but that 
->> happens anyway if the container is newly started).
->
-> Thanks for the great analysis!  I think ceph-volume container does it 
-> because of [1].  I'm not sure about "cephadm shell".  There is also
-> node-exporter container that needs access to the host for gathering 
-> metrics.
->
-> [1] https://tracker.ceph.com/issues/52926
+Phrasing this is tricky. We want to start incrementing i_version after a
+write rather than before, but that means there will be a window where a
+read would show the new data but the stx_version hasn't been incremented
+yet. I think I'll just add a separate paragraph spelling that out.
 
-I'm guessing ceph-volume may need to see the host mounts so it can 
-detect a disk is being used. Could this also be done in the host (like 
-issue 52926 says is being done with pv/vg/lv commands), removing the 
-need to have the entire host filesystem hierarchy available in the 
-container?
+> > +.PP
+> > +An observer cannot infer anything from amount of increase about the
+> > +nature or magnitude of the change. If the returned value is different
+> > +from the last time it was checked, then something has made an explicit
+> > +data and/or metadata change to the inode.
+>=20
+> Maybe it would be enough to be more explicit here:
+>  ...  or magnitude of that change.  In fact, a single increment can
+>  reflect multiple discrete changes if the value was not checked during
+>  those changes.
+> ??
+>=20
+> Maybe it is a small point, but these two paragraphs seem to be
+> contradictory.  If a change MUST increase the counter, then surely 6
+> changes MUST increase the counter by at least 6, so you CAN infer
+> something from the magnitude..
+>=20
+>=20
+> I would also prefer using the passive voice rather than the vague
+> "something".
+> ...  then an explicit data and/or metadata change has been made to the
+> inode.
+>=20
 
-Similarly, I would have thought the node-exporter container only needs 
-access to ceph-specific files/directories rather than the whole system.
+Good points. I made those changes.
 
-On Tue, Sep 27, 2022 at 12:55:37PM +0200, Ilya Dryomov wrote:
-> On Fri, Sep 23, 2022 at 3:06 PM Guillaume Abrioux <gabrioux@redhat.com> wrote:
->> On Fri, 23 Sept 2022 at 05:59, Chris Dunlop <chris@onthe.net.au> wrote:
->>> If the ceph containers really do need access to the entire host 
->>> filesystem, perhaps it would be better to do a "slave" mount,
->>
->> Yes, I think a mount with 'slave' propagation should fix your issue.  
->> I plan to do some tests next week and work on a patch.
+> > +.PP
+> > +In the event of a system crash this value can appear to go backward,
+> > +if it were queried before being written to the backing store. If
+> > +the value were then incremented again after restart, then an observer
+>=20
+> I think the "incremented after restart" is irrelevant.  If the value is
+> queried before being written to backing store, and then after a crash
+> the value from backing store is used, the value will appear to go
+> backwards.  This is enough to mean it isn't MONOTONIC.
+>=20
 
-Thanks Guillaume.
+Ok.
 
-> I wanted to share an observation that there seem to be two cases here: 
-> actual containers (e.g. an OSD container) and cephadm shell which is 
-> technically also a container but may be regarded by users as a shell 
-> ("window") with some binaries and configuration files injected into 
-> it.
+> > +could miss noticing a change. Applications that persist stx_version va=
+lues
+> > +across a reboot should take care to mitigate this problem. If the file=
+system
+> > +reports \fISTATX_ATTR_VERSION_MONOTONIC\fP in stx_attributes, then it =
+is not
+> > +subject to this problem.
+>=20
+> I do like the addition of STATX_ATTR_VERSION_MONOTONIC here.
+>=20
 
-For my part I don't see or use a cephadm shell as a normal shell with 
-additional stuff injected. At the very least the host root filesystem 
-location has changed to /rootfs so it's obviously not a standard shell.
+I like communicating this to userland. I wish we had a different way to
+do it than using stx_attributes.
 
-In fact I was quite surprised that the rootfs and all the other mounts 
-unrelated to ceph were available at all. I'm still not convinced it's a 
-good idea.
+According to RFC7862, this has to be a property of the filesystem, not
+of an individual inode. You can't have a mix of monotonic and undefined
+change attrs on a filesystem. Reporting this per-inode makes it seem
+like you can though.
 
-In my conception a cephadm shell is a mini virtual machine specifically 
-for inspecting and managing ceph specific areas *only*.
+This would probably have been better expressed via something like
+fsinfo(). Unfortunately, that didn't make it in, so this is probably the
+next best thing. When we document the internal kernel interfaces, we'll
+want to ensure that filesystems don't try to set this to different
+values on the the same filesystem.
 
-I guess it's really a difference of philosophy. I only use cephadm shell 
-when I'm explicitly needing to so something with ceph, and I drop back 
-out of the cephadm shell (and it's associated privleges!) as soon as I'm 
-done with that specific task. For everything else I'll be in my 
-(non-privileged) host shell. I can imagine (although I must say I'd be 
-surprised), that others may use the cephadm shell as a matter of course, 
-for managing the whole machine? Then again, given issue 52926 quoted 
-above, it sounds like that would be a bad idea if, for instance, the lvm 
-commands should NOT be run the container "in order to avoid lvm metadata 
-corruption" - i.e. it's not safe to assume a cephadm shell is a normal 
-shell.
 
-I would argue the goal should be to remove access to the general host 
-filesystem(s) from the ceph containers altogether where possible.
 
-I'll also admit that, generally, it's probably a bad idea to be doing 
-things unrelated to ceph on a box hosting ceph. But that's the way this 
-particular system has grown and unfortunately it will take quite a bit 
-of time, effort, and expense to change this now.
+> > +.PP
+> > +The stx_version is a Linux extension and is not supported by all files=
+ystems.
+> > +The application must verify that the \fISTATX_VERSION\fP bit is set in=
+ the
+> > +returned \fIstatx.stx_mask\fP before relying on this field.
+> >  .SH STANDARDS
+> >  If you need to obtain the definition of the
+> >  .I blkcnt_t
+> > --=20
+> > 2.37.3
+> >=20
+> >=20
+>=20
+> Thanks,
+> NeilBrown
 
-> For the former, a unidirectional propagation such that when something 
-> is unmounted on the host it is also unmounted in the container is all 
-> that is needed.  However, for the latter, a bidirectional propagation 
-> such that when something is mounted in this shell it is also mounted 
-> on the host (and therefore in all other windows) seems desirable.
->
-> What do you think about going with MS_SLAVE for the former and 
-> MS_SHARED for the latter?
+Thanks for the input, Neil!
 
-Personally I would find it surprising and unexpected (i.e. potentially a 
-source of trouble) for mount changes done in a container (including a 
-"shell" container) to affect the host. But again, that may be that 
-difference of philosophy regarding the cephadm shell mentioned above.
-
-Chris
+I'll send out a v6 patch in a bit with some revisions.
+--=20
+Jeff Layton <jlayton@kernel.org>
