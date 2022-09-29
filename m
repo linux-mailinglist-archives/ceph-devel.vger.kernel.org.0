@@ -2,60 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C0F85EF417
-	for <lists+ceph-devel@lfdr.de>; Thu, 29 Sep 2022 13:14:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A2865EFE2F
+	for <lists+ceph-devel@lfdr.de>; Thu, 29 Sep 2022 21:52:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234470AbiI2LOg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 29 Sep 2022 07:14:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32770 "EHLO
+        id S229611AbiI2Tw1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 29 Sep 2022 15:52:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233495AbiI2LOe (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 29 Sep 2022 07:14:34 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA4E014A785
-        for <ceph-devel@vger.kernel.org>; Thu, 29 Sep 2022 04:14:30 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id u24so1467719edb.11
-        for <ceph-devel@vger.kernel.org>; Thu, 29 Sep 2022 04:14:30 -0700 (PDT)
+        with ESMTP id S229517AbiI2Tw0 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 29 Sep 2022 15:52:26 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C8123C8F6;
+        Thu, 29 Sep 2022 12:52:25 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id u24so3336239edb.11;
+        Thu, 29 Sep 2022 12:52:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date;
-        bh=9sB1xwle4tSaMEyl3OmKEfU6szY9DF9KOM6lHAum0F8=;
-        b=pjnbXK9mId6ijjGkPWFkpyn7UFMUoCWjuay40wAc3NOKsobJDwhfQ14NnG14LA9aPm
-         qa4f43vZPtBdDnKp+6nPeMdh7wE92a5Dd9F/h+TMU+i6r/V5Z/WDetxM3H8Wj22xhu0S
-         QeE0eOe0oyonGuyiJqLFBIXPTJK+FX9ppPCdADS84fYkI6FMEGi6pNvosgZXHYZL7dM5
-         lesEFLH+XLhuFcK1oLMS9RKC3De3ibuWrXl5NbKOxecihd76YPA7uyEro0P5s69K7Bax
-         JvB6uAGyBt4S2GtDo/s72idNzaak9af77XcrnTusduu4DpMq15U7M+G5Lq3tJGpk5uuT
-         JhPw==
+        bh=emc9s70uHNUzyZPgEpvfqwaCXJYyWsYo5CNPx2MSFOQ=;
+        b=QHyWa1mMeYWy9atrnKuccLRFrfB9R37bQHOuKlNfphLvr556kSpo6npqk5ZDfRXDmu
+         2I0cDwPCOOOJ6Mz6mr8zKuJWBo546WecQvMZbh21VPNPXw9kl0npFzvAKL1jAoiYACUc
+         e9ARAL9Uuv53Y9+uoDKte0XONk8JUQfKLgybCWCRYG8M2BLR62V4P7aZOAXxHmMYDcGN
+         365sQuUNJq9bRRZLLogNzrwKne7Op6aNDOWofaT3iKwvkg1dB5PglAGD9USSZDQSJCvL
+         C/298tflxNj/Iu2Eb4qAz7Ttbq90gT21fuyJPlV85InFHC3xUmA42DbGZDXnZGAVaYYS
+         7YeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=9sB1xwle4tSaMEyl3OmKEfU6szY9DF9KOM6lHAum0F8=;
-        b=sTvDL5N7mZmQsrEVUP3jfkKGIfbwM5IPWkqR3p2+anq4cE+UMAj6M0pTJABxRYONlY
-         Sdgk/SdDO83f/Lv/Y0lLrzqm9khGCPsS3J3XhrOEEOqHLf/a6i5fVk1VvhFSqn9oVdK7
-         zh+Q7620JVPgy3sMdL197wuZLnxDRwjyr+XSIcCZ4NtPfd7/Pe/Pr9YdAIPICaIqRmE3
-         juMDpNnIp4ytkwQON6DplH/eigAxuOsPU2R/ACQZdxJOz8oVhYHG94pOG+LrUAXnFGlt
-         dtRhL+MIefZ8eJEiYbdSBqsZ5Lj/VJwJA1zcAKANsbTQWQTNxDqoOL6hRXW0HEEPDdns
-         hrlA==
-X-Gm-Message-State: ACrzQf0UUNfvdDH4etZGIoiykfoYml1jo5YiiuqqY5s2R3tYolWExmGw
-        AmxBAvqcFRpHeMAaUT1/pinXXtYg10ozVO4pvCgb/idC/U0=
-X-Google-Smtp-Source: AMsMyM7Mj1PIirh/BZ+FbhBLUDD/X59b7lUcbuv5wHGUAjMzrrr6FVwsohpWdQM2G3srquTpLC/lnHYm3+n9SR92AJM=
-X-Received: by 2002:aa7:cad5:0:b0:454:88dc:2c22 with SMTP id
- l21-20020aa7cad5000000b0045488dc2c22mr2791769edt.352.1664450069276; Thu, 29
- Sep 2022 04:14:29 -0700 (PDT)
+        bh=emc9s70uHNUzyZPgEpvfqwaCXJYyWsYo5CNPx2MSFOQ=;
+        b=Rvb2WdkjBb4Pad0bst6JocV51UMznDfH3wRC+PIN7j9gRriX58HQVPQkQVbYXWzS/p
+         LUoRmpYilW6WWGmvlPV0V7Jjyk3D3oV86qZFaRyCdPdyHpUiQRN4J325jByfcSxK1D4L
+         hkNPxEDqpxJM2jxQMumAMmUZ3YbpQFNXOMwAn8whKEl9wtsX0dSIneXON1AIwRv34Ptd
+         ILiMNzjQ7R2ucXSl3Pq7MdWDUKlNexTZA6XQWYpDhcVipkhYhCKUGY7H9CDrdc0weBuX
+         f0u35/53ufu281TmYEMs3EwoBGh5DhYSHGfMRRlS6tZBJdk2bUEJ6/AylP5xmyAsZa3k
+         2Lpg==
+X-Gm-Message-State: ACrzQf1BqUaU8UD3WUkUHXRy7JCu6PpsdaEznr2iQaGMYR38xxJVoN+9
+        IVKzdZ4JeleI9onLPEDZPVEu2vkZ4EFAoKVZT2w=
+X-Google-Smtp-Source: AMsMyM6jNucFDbnsJD9zn/owio/7vL+2hrmBdiQs5pIwPSz48lyuEa/jQscRs0puqEdi9ROH6IWBaSkSCbdELiTm5xQ=
+X-Received: by 2002:a05:6402:34d0:b0:458:a4a:6dd0 with SMTP id
+ w16-20020a05640234d000b004580a4a6dd0mr4789329edc.297.1664481143951; Thu, 29
+ Sep 2022 12:52:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAOi1vP9jCHppG7irvLzQgwBSzhrfgc_ak1t2wc=uTOREHVBROA@mail.gmail.com>
- <CAOi1vP8Zfix48tM1ifAgQo1xK+HGC1Sh8mh+Bc=a7Bbv1QENxA@mail.gmail.com> <20220928002202.GA2357386@onthe.net.au>
-In-Reply-To: <20220928002202.GA2357386@onthe.net.au>
+References: <20220927085702.10026-1-zhoujie@nfschina.com> <202209292358.oyaafCLq-lkp@intel.com>
+In-Reply-To: <202209292358.oyaafCLq-lkp@intel.com>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 29 Sep 2022 13:14:17 +0200
-Message-ID: <CAOi1vP8bk3nj=seT=1jGPzPRVti7j+D1dw_O+zqeUQp9M8T=BA@mail.gmail.com>
-Subject: Re: rbd unmap fails with "Device or resource busy"
-To:     Chris Dunlop <chris@onthe.net.au>
-Cc:     Adam King <adking@redhat.com>,
-        Guillaume Abrioux <gabrioux@redhat.com>,
-        ceph-devel@vger.kernel.org
+Date:   Thu, 29 Sep 2022 21:52:12 +0200
+Message-ID: <CAOi1vP_GQ7CwQ1W0wbA_BQxHHgZBTCSSSd_g4_-czoHkKEVp7A@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph:Modify the return value to void
+To:     kernel test robot <lkp@intel.com>
+Cc:     Zhou jie <zhoujie@nfschina.com>, jlayton@kernel.org,
+        xiubli@redhat.com, llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
@@ -67,128 +66,64 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Sep 28, 2022 at 2:22 AM Chris Dunlop <chris@onthe.net.au> wrote:
+On Thu, Sep 29, 2022 at 5:19 PM kernel test robot <lkp@intel.com> wrote:
 >
-> Hi all,
+> Hi Zhou,
 >
-> On Fri, Sep 23, 2022 at 11:47:11AM +0200, Ilya Dryomov wrote:
-> > On Fri, Sep 23, 2022 at 5:58 AM Chris Dunlop <chris@onthe.net.au> wrote:
-> >> On Wed, Sep 21, 2022 at 12:40:54PM +0200, Ilya Dryomov wrote:
-> >>> On Wed, Sep 21, 2022 at 3:36 AM Chris Dunlop <chris@onthe.net.au> wrote:
-> >>>> On Tue, Sep 13, 2022 at 3:44 AM Chris Dunlop <chris@onthe.net.au> wrote:
-> >>>>> What can make a "rbd unmap" fail, assuming the device is not
-> >>>>> mounted and not (obviously) open by any other processes?
-> >>
-> >> OK, I'm confident I now understand the cause of this problem. The
-> >> particular machine where I'm mounting the rbd snapshots is also
-> >> running some containerised ceph services. The ceph containers are
-> >> (bind-)mounting the entire host filesystem hierarchy on startup, and
-> >> if a ceph container happens to start up whilst a rbd device is
-> >> mounted, the container also has the rbd mounted, preventing the host
-> >> from unmapping the device even after the host has unmounted it. (More
-> >> below.)
-> >>
-> >> This brings up a couple of issues...
-> >>
-> >> Why is the ceph container getting access to the entire host
-> >> filesystem in the first place?
-> >>
-> >> Even if I mount an rbd device with the "unbindable" mount option,
-> >> which is specifically supposed to prevent bind mounts to that
-> >> filesystem, the ceph containers still get the mount - how / why??
-> >>
-> >> If the ceph containers really do need access to the entire host
-> >> filesystem, perhaps it would be better to do a "slave" mount, so
-> >> if/when the hosts unmounts a filesystem it's also unmounted in the
-> >> container[s].  (Of course this also means any filesystems newly
-> >> mounted in the host would also appear in the containers - but that
-> >> happens anyway if the container is newly started).
-> >
-> > Thanks for the great analysis!  I think ceph-volume container does it
-> > because of [1].  I'm not sure about "cephadm shell".  There is also
-> > node-exporter container that needs access to the host for gathering
-> > metrics.
-> >
-> > [1] https://tracker.ceph.com/issues/52926
+> Thank you for the patch! Yet something to improve:
 >
-> I'm guessing ceph-volume may need to see the host mounts so it can
-> detect a disk is being used. Could this also be done in the host (like
-> issue 52926 says is being done with pv/vg/lv commands), removing the
-> need to have the entire host filesystem hierarchy available in the
-> container?
+> [auto build test ERROR on ceph-client/for-linus]
+> [also build test ERROR on linus/master v6.0-rc7 next-20220928]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
 >
-> Similarly, I would have thought the node-exporter container only needs
-> access to ceph-specific files/directories rather than the whole system.
+> url:    https://github.com/intel-lab-lkp/linux/commits/Zhou-jie/fs-ceph-Modify-the-return-value-to-void/20220927-165857
+> base:   https://github.com/ceph/ceph-client.git for-linus
+> config: hexagon-randconfig-r041-20220926
+> compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 791a7ae1ba3efd6bca96338e10ffde557ba83920)
+> reproduce (this is a W=1 build):
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # https://github.com/intel-lab-lkp/linux/commit/6c7163052ce6f51c217c650bc5592b7ef50b2280
+>         git remote add linux-review https://github.com/intel-lab-lkp/linux
+>         git fetch --no-tags linux-review Zhou-jie/fs-ceph-Modify-the-return-value-to-void/20220927-165857
+>         git checkout 6c7163052ce6f51c217c650bc5592b7ef50b2280
+>         # save the config file
+>         mkdir build_dir && cp config build_dir/.config
+>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash fs/ceph/
 >
-> On Tue, Sep 27, 2022 at 12:55:37PM +0200, Ilya Dryomov wrote:
-> > On Fri, Sep 23, 2022 at 3:06 PM Guillaume Abrioux <gabrioux@redhat.com> wrote:
-> >> On Fri, 23 Sept 2022 at 05:59, Chris Dunlop <chris@onthe.net.au> wrote:
-> >>> If the ceph containers really do need access to the entire host
-> >>> filesystem, perhaps it would be better to do a "slave" mount,
-> >>
-> >> Yes, I think a mount with 'slave' propagation should fix your issue.
-> >> I plan to do some tests next week and work on a patch.
+> If you fix the issue, kindly add following tag where applicable
+> | Reported-by: kernel test robot <lkp@intel.com>
 >
-> Thanks Guillaume.
+> All errors (new ones prefixed by >>):
 >
-> > I wanted to share an observation that there seem to be two cases here:
-> > actual containers (e.g. an OSD container) and cephadm shell which is
-> > technically also a container but may be regarded by users as a shell
-> > ("window") with some binaries and configuration files injected into
-> > it.
->
-> For my part I don't see or use a cephadm shell as a normal shell with
-> additional stuff injected. At the very least the host root filesystem
-> location has changed to /rootfs so it's obviously not a standard shell.
->
-> In fact I was quite surprised that the rootfs and all the other mounts
-> unrelated to ceph were available at all. I'm still not convinced it's a
-> good idea.
->
-> In my conception a cephadm shell is a mini virtual machine specifically
-> for inspecting and managing ceph specific areas *only*.
->
-> I guess it's really a difference of philosophy. I only use cephadm shell
-> when I'm explicitly needing to so something with ceph, and I drop back
-> out of the cephadm shell (and it's associated privleges!) as soon as I'm
-> done with that specific task. For everything else I'll be in my
-> (non-privileged) host shell. I can imagine (although I must say I'd be
-> surprised), that others may use the cephadm shell as a matter of course,
-> for managing the whole machine? Then again, given issue 52926 quoted
-> above, it sounds like that would be a bad idea if, for instance, the lvm
-> commands should NOT be run the container "in order to avoid lvm metadata
-> corruption" - i.e. it's not safe to assume a cephadm shell is a normal
-> shell.
->
-> I would argue the goal should be to remove access to the general host
-> filesystem(s) from the ceph containers altogether where possible.
->
-> I'll also admit that, generally, it's probably a bad idea to be doing
-> things unrelated to ceph on a box hosting ceph. But that's the way this
-> particular system has grown and unfortunately it will take quite a bit
-> of time, effort, and expense to change this now.
->
-> > For the former, a unidirectional propagation such that when something
-> > is unmounted on the host it is also unmounted in the container is all
-> > that is needed.  However, for the latter, a bidirectional propagation
-> > such that when something is mounted in this shell it is also mounted
-> > on the host (and therefore in all other windows) seems desirable.
-> >
-> > What do you think about going with MS_SLAVE for the former and
-> > MS_SHARED for the latter?
->
-> Personally I would find it surprising and unexpected (i.e. potentially a
-> source of trouble) for mount changes done in a container (including a
-> "shell" container) to affect the host. But again, that may be that
-> difference of philosophy regarding the cephadm shell mentioned above.
+> >> fs/ceph/debugfs.c:281:38: error: incompatible function pointer types passing 'void (struct inode *, struct ceph_cap *, void *)' to parameter of type 'int (*)(struct inode *, struct ceph_cap *, void *)' [-Wincompatible-function-pointer-types]
+>                    ceph_iterate_session_caps(session, caps_show_cb, s);
+>                                                       ^~~~~~~~~~~~
+>    fs/ceph/mds_client.h:540:16: note: passing argument to parameter 'cb' here
+>                                         int (*cb)(struct inode *,
+>                                               ^
+> >> fs/ceph/debugfs.c:349:1: error: incompatible function pointer types passing 'void (struct seq_file *, void *)' to parameter of type 'int (*)(struct seq_file *, void *)' [-Wincompatible-function-pointer-types]
+>    DEFINE_SHOW_ATTRIBUTE(mdsmap);
+>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>    include/linux/seq_file.h:199:27: note: expanded from macro 'DEFINE_SHOW_ATTRIBUTE'
+>            return single_open(file, __name ## _show, inode->i_private);    \
+>                                     ^~~~~~~~~~~~~~~
+>    <scratch space>:79:1: note: expanded from here
+>    mdsmap_show
+>    ^~~~~~~~~~~
+>    include/linux/seq_file.h:166:38: note: passing argument to parameter here
+>    int single_open(struct file *, int (*)(struct seq_file *, void *), void *);
+>                                         ^
+>    fs/ceph/debugfs.c:350:1: error: incompatible function pointer types passing 'void (struct seq_file *, void *)' to parameter of type 'int (*)(struct seq_file *, void *)' [-Wincompatible-function-pointer-types]
 
-Hi Chris,
+Hi Zhou,
 
-Right, I see your point, particularly around /rootfs location making it
-obvious that it's not a standard shell.  I don't have a strong opinion
-here, ultimately the fix is up to Adam and Guillaume (although I would
-definitely prefer a set of targeted mounts over a blanket -v /:/rootfs
-mount, whether slave or not).
+As you can see from the above output, the signatures of these
+functions are dictated by debugfs infrastructure.  Even though
+we happen to return 0 in all cases, changing the return type to
+void is wrong.
 
 Thanks,
 
