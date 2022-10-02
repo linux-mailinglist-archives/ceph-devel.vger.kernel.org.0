@@ -2,62 +2,69 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 61F415F162D
-	for <lists+ceph-devel@lfdr.de>; Sat,  1 Oct 2022 00:32:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD9045F21A6
+	for <lists+ceph-devel@lfdr.de>; Sun,  2 Oct 2022 09:09:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232397AbiI3Wcd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 30 Sep 2022 18:32:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38948 "EHLO
+        id S229517AbiJBHJF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 2 Oct 2022 03:09:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232158AbiI3Wc3 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 30 Sep 2022 18:32:29 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BEE69166489;
-        Fri, 30 Sep 2022 15:32:24 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 078B88AB6CD;
-        Sat,  1 Oct 2022 08:32:19 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oeOYM-00E7kF-Mx; Sat, 01 Oct 2022 08:32:18 +1000
-Date:   Sat, 1 Oct 2022 08:32:18 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Chuck Lever III <chuck.lever@oracle.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Trond Myklebust <trondmy@hammerspace.com>,
-        Neil Brown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "xiubli@redhat.com" <xiubli@redhat.com>,
-        Lukas Czerner <lczerner@redhat.com>, Jan Kara <jack@suse.cz>,
-        Bruce Fields <bfields@fieldses.org>,
-        Christian Brauner <brauner@kernel.org>,
-        "fweimer@redhat.com" <fweimer@redhat.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH v6 6/9] nfsd: use the getattr operation to fetch i_version
-Message-ID: <20220930223218.GL3600936@dread.disaster.area>
-References: <20220930111840.10695-1-jlayton@kernel.org>
- <20220930111840.10695-7-jlayton@kernel.org>
- <D7DAB33E-BB23-45A9-BE2C-DBF9B5D62EF8@oracle.com>
+        with ESMTP id S229540AbiJBHJE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 2 Oct 2022 03:09:04 -0400
+Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2B173F337;
+        Sun,  2 Oct 2022 00:09:03 -0700 (PDT)
+Received: by mail-ua1-x92c.google.com with SMTP id d3so2016558uav.7;
+        Sun, 02 Oct 2022 00:09:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=LXHdxUnEPRav2MpSDEM7tzyEf7YMDJf0LVPzraEFzIk=;
+        b=Qy5cxZways54nm/9MLDMp7+yWjordQLhW4//q/MyefIXCYOy1h5MQByuVKHMix/oyX
+         h7FHj+ttjYM/fAIPn6+T5SEQqWWRSAwc3zlwOOqY2SOcjrgHQOgwsSBB5UwcCy+weIC6
+         Xa+gdIeodO4XtvTSIhF8TkLHdGRQ8F16yUUZcWnEQZBRm4A0ebUaZkW4lwEGpO4j91B2
+         rA0TYnsxr8rXrpTlO5ow2PiQ7a6brhQGV+SIkVbTPHAP++s5g8pfa6EJIjmsOUT1Wjxg
+         mO6BR6Am82qVA+aCQkWVTPoDkfFnokQBR+ZwfwzLo1fIR5O8W0GsZeqllCQHo4vqLVcr
+         QEpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=LXHdxUnEPRav2MpSDEM7tzyEf7YMDJf0LVPzraEFzIk=;
+        b=d1JHtUrTqtYb7qJ3q7MvlBgLjNu47nU+89+P0+VYk+N5KtT5Dqpe+CiqLVzbMzMNLX
+         Kq+ryVQxBZ3zFom7RJcHBh883E7Q9BBMADK7u/X18m5CupjhMePWFhr+D1DriFPu3tyJ
+         07frTdR+TisO8AlU0HZ3t/6LN6GXWq8sI59CY1gQqOkehYk7N/h/4oKJAPp1SWApzk4H
+         JQB8Xeicp5t7uy/Q0sumsBrIyyq7n2J/THdGzFLjgYr9N3fhoKeSNAKFdkCxrySziNEr
+         9xytp8DybuPp6gO6M2SVgFMxlBb2lyOwTEM6xz61qcRkO8gGZrT+5OGL8JpXs2Lkx9kq
+         wJtQ==
+X-Gm-Message-State: ACrzQf1THfFcyAhO//5QSgvz30judBjegzIVkIC/XRUvPZImdRptP54z
+        WUTMUIvhIo3tseuXnXYFbpFEEWzUQxbtRXQY520=
+X-Google-Smtp-Source: AMsMyM4lxq8AMEBGfxhYSFJxHI6bK6WI16yGisB2NddH2eWCjim+p2nhUlJ9NU/wgxtpH+PtkMxn0OySNuUsyVaDhoI=
+X-Received: by 2002:a9f:3562:0:b0:3d0:ad99:b875 with SMTP id
+ o89-20020a9f3562000000b003d0ad99b875mr8123774uao.102.1664694542759; Sun, 02
+ Oct 2022 00:09:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D7DAB33E-BB23-45A9-BE2C-DBF9B5D62EF8@oracle.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=63376e77
-        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
-        a=kj9zAlcOel0A:10 a=Qawa6l4ZSaYA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
-        a=P6V2cQqVOOyE__6v1BQA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
+References: <20220930111840.10695-1-jlayton@kernel.org> <20220930111840.10695-9-jlayton@kernel.org>
+In-Reply-To: <20220930111840.10695-9-jlayton@kernel.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sun, 2 Oct 2022 10:08:51 +0300
+Message-ID: <CAOQ4uxgofERYwN7AfYFWqQMpQH5y3LV+6UuGfjU29gZXNf7-vQ@mail.gmail.com>
+Subject: Re: [PATCH v6 8/9] vfs: update times after copying data in __generic_file_write_iter
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
+        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
+        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
+        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
+        bfields@fieldses.org, brauner@kernel.org, fweimer@redhat.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -65,44 +72,73 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Sep 30, 2022 at 02:34:51PM +0000, Chuck Lever III wrote:
-> 
-> 
-> > On Sep 30, 2022, at 7:18 AM, Jeff Layton <jlayton@kernel.org> wrote:
-> > 
-> > Now that we can call into vfs_getattr to get the i_version field, use
-> > that facility to fetch it instead of doing it in nfsd4_change_attribute.
-> > 
-> > Neil also pointed out recently that IS_I_VERSION directory operations
-> > are always logged,
-> 
-> ^logged^synchronous maybe?
+On Fri, Sep 30, 2022 at 2:30 PM Jeff Layton <jlayton@kernel.org> wrote:
+>
+> The c/mtime and i_version currently get updated before the data is
+> copied (or a DIO write is issued), which is problematic for NFS.
+>
+> READ+GETATTR can race with a write (even a local one) in such a way as
+> to make the client associate the state of the file with the wrong change
+> attribute. That association can persist indefinitely if the file sees no
+> further changes.
+>
+> Move the setting of times to the bottom of the function in
+> __generic_file_write_iter and only update it if something was
+> successfully written.
+>
 
-A pedantic note, but I think necessary because so many people still
-get this wrong when it comes to filesystems and IO: synchronous !=
-persistent.
+This solution is wrong for several reasons:
 
-Ext4 and XFS both use *asynchronous journalling* - they journal
-changes first to memory buffers, and only make those recorded
-changes persistent when they hit internal checkpoint thresholds or
-something external requires persistence to be guaranteed.
+1. There is still file_update_time() in ->page_mkwrite() so you haven't
+    solved the problem completely
+2. The other side of the coin is that post crash state is more likely to end
+    up data changes without mtime/ctime change
 
-->commit_metadata is the operation filesystems provide the NFS
-server to *guarantee persistence*. This allows filesystems to use
-asynchronous journalling for most operations, right up to the point
-the NFS server requires a change to be persistent. "synchronous
-operation" is a side effect of guaranteeing persistence on some
-filesytems and storage media, whereas "synchronous operation"
-does not provide any guarantee of persistence...
+If I read the problem description correctly, then a solution that invalidates
+the NFS cache before AND after the write would be acceptable. Right?
+Would an extra i_version bump after the write solve the race?
 
-IOWs, please talk about persistence guarantees the NFS server
-application requires and implements, not about the operations (or
-the nature of the operations) that may be performed by the
-underlying filesystems to provide that persistence guarantee.
+> If the time update fails, log a warning once, but don't fail the write.
+> All of the existing callers use update_time functions that don't fail,
+> so we should never trip this.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  mm/filemap.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
+>
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 15800334147b..72c0ceb75176 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3812,10 +3812,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>         if (err)
+>                 goto out;
+>
+> -       err = file_update_time(file);
+> -       if (err)
+> -               goto out;
+> -
+>         if (iocb->ki_flags & IOCB_DIRECT) {
+>                 loff_t pos, endbyte;
+>
+> @@ -3868,6 +3864,19 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>                         iocb->ki_pos += written;
+>         }
+>  out:
+> +       if (written > 0) {
+> +               err = file_update_time(file);
+> +               /*
+> +                * There isn't much we can do at this point if updating the
+> +                * times fails after a successful write. The times and i_version
+> +                * should still be updated in the inode, and it should still be
+> +                * marked dirty, so hopefully the next inode update will catch it.
+> +                * Log a warning once so we have a record that something untoward
+> +                * has occurred.
+> +                */
+> +               WARN_ONCE(err, "Failed to update m/ctime after write: %ld\n", err);
 
-Cheers,
+pr_warn_once() please - this is not a programming assertion.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Amir.
