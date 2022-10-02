@@ -2,143 +2,105 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD9045F21A6
-	for <lists+ceph-devel@lfdr.de>; Sun,  2 Oct 2022 09:09:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A2925F21FC
+	for <lists+ceph-devel@lfdr.de>; Sun,  2 Oct 2022 10:17:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229517AbiJBHJF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 2 Oct 2022 03:09:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45906 "EHLO
+        id S229786AbiJBIRo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 2 Oct 2022 04:17:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbiJBHJE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 2 Oct 2022 03:09:04 -0400
-Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2B173F337;
-        Sun,  2 Oct 2022 00:09:03 -0700 (PDT)
-Received: by mail-ua1-x92c.google.com with SMTP id d3so2016558uav.7;
-        Sun, 02 Oct 2022 00:09:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date;
-        bh=LXHdxUnEPRav2MpSDEM7tzyEf7YMDJf0LVPzraEFzIk=;
-        b=Qy5cxZways54nm/9MLDMp7+yWjordQLhW4//q/MyefIXCYOy1h5MQByuVKHMix/oyX
-         h7FHj+ttjYM/fAIPn6+T5SEQqWWRSAwc3zlwOOqY2SOcjrgHQOgwsSBB5UwcCy+weIC6
-         Xa+gdIeodO4XtvTSIhF8TkLHdGRQ8F16yUUZcWnEQZBRm4A0ebUaZkW4lwEGpO4j91B2
-         rA0TYnsxr8rXrpTlO5ow2PiQ7a6brhQGV+SIkVbTPHAP++s5g8pfa6EJIjmsOUT1Wjxg
-         mO6BR6Am82qVA+aCQkWVTPoDkfFnokQBR+ZwfwzLo1fIR5O8W0GsZeqllCQHo4vqLVcr
-         QEpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date;
-        bh=LXHdxUnEPRav2MpSDEM7tzyEf7YMDJf0LVPzraEFzIk=;
-        b=d1JHtUrTqtYb7qJ3q7MvlBgLjNu47nU+89+P0+VYk+N5KtT5Dqpe+CiqLVzbMzMNLX
-         Kq+ryVQxBZ3zFom7RJcHBh883E7Q9BBMADK7u/X18m5CupjhMePWFhr+D1DriFPu3tyJ
-         07frTdR+TisO8AlU0HZ3t/6LN6GXWq8sI59CY1gQqOkehYk7N/h/4oKJAPp1SWApzk4H
-         JQB8Xeicp5t7uy/Q0sumsBrIyyq7n2J/THdGzFLjgYr9N3fhoKeSNAKFdkCxrySziNEr
-         9xytp8DybuPp6gO6M2SVgFMxlBb2lyOwTEM6xz61qcRkO8gGZrT+5OGL8JpXs2Lkx9kq
-         wJtQ==
-X-Gm-Message-State: ACrzQf1THfFcyAhO//5QSgvz30judBjegzIVkIC/XRUvPZImdRptP54z
-        WUTMUIvhIo3tseuXnXYFbpFEEWzUQxbtRXQY520=
-X-Google-Smtp-Source: AMsMyM4lxq8AMEBGfxhYSFJxHI6bK6WI16yGisB2NddH2eWCjim+p2nhUlJ9NU/wgxtpH+PtkMxn0OySNuUsyVaDhoI=
-X-Received: by 2002:a9f:3562:0:b0:3d0:ad99:b875 with SMTP id
- o89-20020a9f3562000000b003d0ad99b875mr8123774uao.102.1664694542759; Sun, 02
- Oct 2022 00:09:02 -0700 (PDT)
+        with ESMTP id S229763AbiJBIRi (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 2 Oct 2022 04:17:38 -0400
+X-Greylist: delayed 70 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 02 Oct 2022 01:17:34 PDT
+Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E5AC3F1E6;
+        Sun,  2 Oct 2022 01:17:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+        s=s201512; t=1664698651;
+        bh=CScWYLEqhDwTIVrXOlh5cMj8TjSjE5p3uKPDNBlDjK8=;
+        h=Date:From:Subject:To:Cc;
+        b=IboCD5lPqZzL5G97Y3fc0KodNKhWK+JUdAD8PKQM9qhWwKk9vxUm2GF1wRaV+gVAJ
+         qVvugQlJIRncCm34WLcidT1l7pY0m/WVWBI48Fxo67XMtnQKV268sDNSgjZrur8j6R
+         pEbkZEjiiHXgL0bLbOORIRcDhjcmBR7qMJwbULkk=
+Received: from [10.30.0.92] ([211.137.109.91])
+        by newxmesmtplogicsvrsza7.qq.com (NewEsmtp) with SMTP
+        id 41185641; Sun, 02 Oct 2022 16:16:17 +0800
+X-QQ-mid: xmsmtpt1664698577tijmy8v5f
+Message-ID: <tencent_BC846D74CA86E95DAC48E65686FEE6359C07@qq.com>
+X-QQ-XMAILINFO: NJ/+omVLhVga5ZIxJMxFEofYJGNhuUPZVurakmoNJkufXejGvti1sPp9chS2Yh
+         3PweHkIrh98XIy1PwibR1SIkZVXkqMe3x3vfz9syxjB9suCoPZS7Zze46/w0eFuP3L4E6iCnlHVB
+         ssG1SsrYEJnmebjqbWz1DkMii6HMqmCUxBuTT/fZvnsP91GJca3vY2KOagH/x/EdBlZGURT4H51+
+         6kGZtRzB1s0yw12ToqHHGuz4DRNsLxKlQmeV0tBnY3+fNM4tVzJAgdsN+s1hX8NJdXPs/7as5Mz8
+         HVrkcyYrqVzpkvFj3AsS/x76LFLUW6bFOUP4ABA1URdk4/0cA5KxbIl5mrl9a0wvD0MX041WmD5i
+         P7jEYmTDfLrmn5sJWGw/uisOZRZs/fLzhAiNeOiEFXq5n9HEHhMsH5Y9oxO3FIUW/BIHCKe8xvwb
+         txnMr01eaJRogxZjeON+DIhsu/A5RZQQUVuEV7L9aaY/zXHnaG7Hkby10CNu2rTMh3wFQ7OK9BCT
+         85tWDgyrEb3NMHfH8c+QpdWII8z/iZuym0vX2jmX7Zy7ESAKSRiye8+NilheADz4OQqriQORHL41
+         n3WP4Db7k9BNSkoE7DsgqSKzcSCuT+MAiiQKNUcDV8SjNKna+PQKdrmYtDUSQrIq0By+WBBa3PHC
+         iXvAWkjiTHVknvxax/Ga19vI4vQBUc+gVz3gQsI4AwBmrOsXizAPpk73+BrP6Dvy8OgimR45GDnQ
+         zsdM2pfH/0SARvAckkjBB1LLXGwwu6ASJYtBq144GwfTlROKhlsmNqyw3ldc+lv1HM+ruQMVrBZi
+         QeO9RczT5CA7KonU5sV/TbkL1KF7Amg6QlRV6l7fGMuu9l10rxUPFZcW6kVe+ICUq7BzNyLtRmjv
+         8tTxOWXmseYbW1G2oUlj/OXx09a+UqbXCNX5c5bEP154t5PxYX5UHV4cA8qzkv+M/ovak0GNmtdz
+         TPMj+yDEmC6nROCC9F4MQrkA5tddpi/JZIvIIf3xWQOuT1zKsLun1YoJTkun3+Wi/NlK7l65Lh5p
+         zgXwjbuQ==
+X-OQ-MSGID: <6c65cfea-1fcf-9d41-b905-12305c6c3458@foxmail.com>
+Date:   Sun, 2 Oct 2022 16:16:17 +0800
 MIME-Version: 1.0
-References: <20220930111840.10695-1-jlayton@kernel.org> <20220930111840.10695-9-jlayton@kernel.org>
-In-Reply-To: <20220930111840.10695-9-jlayton@kernel.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 2 Oct 2022 10:08:51 +0300
-Message-ID: <CAOQ4uxgofERYwN7AfYFWqQMpQH5y3LV+6UuGfjU29gZXNf7-vQ@mail.gmail.com>
-Subject: Re: [PATCH v6 8/9] vfs: update times after copying data in __generic_file_write_iter
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
-        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
-        bfields@fieldses.org, brauner@kernel.org, fweimer@redhat.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.0.3
+From:   Chen Yuanrun <chen-yuanrun@foxmail.com>
+Subject: [PATCH] libceph: queue_con only if the sock is connected
+To:     Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Content-Language: en-US
+Cc:     ceph-devel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chen Yuanrun <chen-yuanrun@foxmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=3.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_MUA_MOZILLA,
+        FREEMAIL_FROM,HELO_DYNAMIC_IPADDR,RCVD_IN_DNSWL_NONE,RDNS_DYNAMIC,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Sep 30, 2022 at 2:30 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> The c/mtime and i_version currently get updated before the data is
-> copied (or a DIO write is issued), which is problematic for NFS.
->
-> READ+GETATTR can race with a write (even a local one) in such a way as
-> to make the client associate the state of the file with the wrong change
-> attribute. That association can persist indefinitely if the file sees no
-> further changes.
->
-> Move the setting of times to the bottom of the function in
-> __generic_file_write_iter and only update it if something was
-> successfully written.
->
+tcp_sendmsg_locked will trigger sk->sk_write_space while the sock
+is still connecting, if con try to write to a connecting sock,
+sk->sk_write_space will be called again, which lead to a endless loop.
 
-This solution is wrong for several reasons:
+This will happen if the public network of the cluster is down, and
+the cpu will be in high usage.
 
-1. There is still file_update_time() in ->page_mkwrite() so you haven't
-    solved the problem completely
-2. The other side of the coin is that post crash state is more likely to end
-    up data changes without mtime/ctime change
+Signed-off-by: Chen Yuanrun <chen-yuanrun@foxmail.com>
+---
+  net/ceph/messenger.c | 3 ++-
+  1 file changed, 2 insertions(+), 1 deletion(-)
 
-If I read the problem description correctly, then a solution that invalidates
-the NFS cache before AND after the write would be acceptable. Right?
-Would an extra i_version bump after the write solve the race?
+diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+index d3bb656308b4..eef5d4dfd1f1 100644
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -367,7 +367,8 @@ static void ceph_sock_write_space(struct sock *sk)
+       * buffer. See net/ipv4/tcp_input.c:tcp_check_space()
+       * and net/core/stream.c:sk_stream_write_space().
+       */
+-    if (ceph_con_flag_test(con, CEPH_CON_F_WRITE_PENDING)) {
++    if (ceph_con_flag_test(con, CEPH_CON_F_WRITE_PENDING) &&
++        atomic_read(&con->sock_state) == CON_SOCK_STATE_CONNECTED) {
+          if (sk_stream_is_writeable(sk)) {
+              dout("%s %p queueing write work\n", __func__, con);
+              clear_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
 
-> If the time update fails, log a warning once, but don't fail the write.
-> All of the existing callers use update_time functions that don't fail,
-> so we should never trip this.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  mm/filemap.c | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
->
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 15800334147b..72c0ceb75176 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3812,10 +3812,6 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->         if (err)
->                 goto out;
->
-> -       err = file_update_time(file);
-> -       if (err)
-> -               goto out;
-> -
->         if (iocb->ki_flags & IOCB_DIRECT) {
->                 loff_t pos, endbyte;
->
-> @@ -3868,6 +3864,19 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
->                         iocb->ki_pos += written;
->         }
->  out:
-> +       if (written > 0) {
-> +               err = file_update_time(file);
-> +               /*
-> +                * There isn't much we can do at this point if updating the
-> +                * times fails after a successful write. The times and i_version
-> +                * should still be updated in the inode, and it should still be
-> +                * marked dirty, so hopefully the next inode update will catch it.
-> +                * Log a warning once so we have a record that something untoward
-> +                * has occurred.
-> +                */
-> +               WARN_ONCE(err, "Failed to update m/ctime after write: %ld\n", err);
+-- 
+2.31.1
 
-pr_warn_once() please - this is not a programming assertion.
 
-Thanks,
-Amir.
+
