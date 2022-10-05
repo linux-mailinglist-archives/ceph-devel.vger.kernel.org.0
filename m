@@ -2,204 +2,192 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3BCA5F4BD9
-	for <lists+ceph-devel@lfdr.de>; Wed,  5 Oct 2022 00:27:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E01AE5F4E1D
+	for <lists+ceph-devel@lfdr.de>; Wed,  5 Oct 2022 05:23:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231124AbiJDW1c (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 4 Oct 2022 18:27:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34706 "EHLO
+        id S229588AbiJEDXV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 4 Oct 2022 23:23:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229643AbiJDW1a (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 4 Oct 2022 18:27:30 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6193C24F16;
-        Tue,  4 Oct 2022 15:27:29 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 0845321905;
-        Tue,  4 Oct 2022 22:27:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1664922448; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7vzITPki9DergJeVn+XOP8XeqEJQp0G0OTrwXmCSGUY=;
-        b=GBmgeralmG280qmuwML4DqNserODcQNyzIAWsmjbLUFRPA2y9Rj6dP3hxFYsttwcjhDljL
-        GUyKwcox5P78LOMWWFfpeM1qj+Ew1gAkmcnn4S9dVbeX8+itMrHtWqSYbXMVvN0APxf8Ju
-        YqSC2wNUrd6iOOQYHu8S33WPfd4N1Dk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1664922448;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7vzITPki9DergJeVn+XOP8XeqEJQp0G0OTrwXmCSGUY=;
-        b=vkUAcjh89hN6EXp3oxhoNf7BpGR04jBmI0o8jkLw5yNE9jcJ20XekNbJPiLQHNh6iwi2/H
-        RbAwfnqrkCjYZgAA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 68B9D139D2;
-        Tue,  4 Oct 2022 22:27:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id jQedCEmzPGNgKwAAMHmgww
-        (envelope-from <neilb@suse.de>); Tue, 04 Oct 2022 22:27:21 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S229530AbiJEDXT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 4 Oct 2022 23:23:19 -0400
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2047.outbound.protection.outlook.com [40.107.92.47])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6AAB719BF;
+        Tue,  4 Oct 2022 20:23:18 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EAnP4nz11d924n5Ea6rkfbTTWZkOcBMR/h7ZkQJ1oHltLxDJaeH/Iez5BS7J79qQ2VcFFwKYgIGmCiYXjOb76HvhXSy2EaAQdXrVxivVboL/NYUst26hybzA8F8XTgXAFdbEcsSJMarnV5z3mvpNv6/2qB++DsmW8q+cjiY5mYdZRhiZtGSYFd3lR+A2iFGBWA/Ij8OWKnFTulTcMU+8KAKsLHdCYRDn4ExerGOo0Cz+trXQUARNz81ypcs8fpGxbeso3FeGPHnm9ypVjlCvgTaHFSZVumbmAN2zpDwlny92lM3GEdkISUQHh9Y61BlOgXREHFsrbzCGQ5y2BJTFOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YrgGetB/TLOjMS3vQknhv/SINTgMiPk7KqpkdclIcUs=;
+ b=Xdz1XM9XgHs5tzhGy60K1VMGf7QyJWaVPAJhDsbnmp5W/XTYb8Bi8f8nb1UQ9e1IMXiPYTTYFi+RlZ3dI4B1Y65Z0QQl37FH3c1C70lf2zoeoThJTzvL5pDhglUPoxYHgg6oC5ZPXVTzZ7fI8eRAMYUPXqTcCbnYF3bAL97S2ILwtM1l2jXOjFCoIw/7vNwUKgtUw5eRwCmMqR8F6tJ6kWA6QAr1QEgGdFMtX9EEuzAUXyUW/5oQ5M9j8wHfEwj0ontzAsr9fQnTHG8LgEDXWpyAJq2jM6WEwKhEfCq2J7ZwlH6dHyJLv/NzzbtfG8MmACbtqAtD5iuTsSetceIsug==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YrgGetB/TLOjMS3vQknhv/SINTgMiPk7KqpkdclIcUs=;
+ b=iW3jsrpo9QXt4SmTdh80KE4thGPDh8fejFIagobwIQSERcoWvLGWdLcnqwJhThlAROWm8mvRxQA47EVCi2eq5eIqa5WE0yHiZwRofiP/64oBAIcTBy9/FMHs0x/UhCYe76qnqD/RIxdsnzqz50SrhQQ5XHpX7WIjLrthz2kNv59+A3mkKtYd3h3MQR4rPdtfo4TK1QbuPLEW/MLJ9voFSb02DML6kB8S+aqt7c7YeYtZ6sH/cLX22f9gL/69KTjRMugSIK3H29HTjUPGFQd45Kix5z6Vce1d/4Amspy1WZOvPhvdO4CpC2PD1IOhhn2ZmJ7Dkg4nMNlIVcZcz5zeig==
+Received: from BN8PR04CA0001.namprd04.prod.outlook.com (2603:10b6:408:70::14)
+ by DM6PR12MB4863.namprd12.prod.outlook.com (2603:10b6:5:1b9::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.24; Wed, 5 Oct
+ 2022 03:23:16 +0000
+Received: from BN8NAM11FT062.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:408:70:cafe::c8) by BN8PR04CA0001.outlook.office365.com
+ (2603:10b6:408:70::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.26 via Frontend
+ Transport; Wed, 5 Oct 2022 03:23:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN8NAM11FT062.mail.protection.outlook.com (10.13.177.34) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5709.10 via Frontend Transport; Wed, 5 Oct 2022 03:23:16 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Tue, 4 Oct 2022
+ 20:23:08 -0700
+Received: from dev.nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Tue, 4 Oct 2022
+ 20:23:05 -0700
+From:   Chaitanya Kulkarni <kch@nvidia.com>
+To:     <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-nvme@lists.infradead.org>, <linux-s390@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>
+CC:     <axboe@kernel.dk>, <efremov@linux.com>, <josef@toxicpanda.com>,
+        <idryomov@gmail.com>, <dongsheng.yang@easystack.cn>,
+        <haris.iqbal@ionos.com>, <jinpu.wang@ionos.com>, <mst@redhat.com>,
+        <jasowang@redhat.com>, <pbonzini@redhat.com>,
+        <stefanha@redhat.com>, <ohad@wizery.com>, <andersson@kernel.org>,
+        <baolin.wang@linux.alibaba.com>, <ulf.hansson@linaro.org>,
+        <richard@nod.at>, <miquel.raynal@bootlin.com>, <vigneshr@ti.com>,
+        <marcan@marcan.st>, <sven@svenpeter.dev>, <alyssa@rosenzweig.io>,
+        <kbusch@kernel.org>, <hch@lst.de>, <sagi@grimberg.me>,
+        <sth@linux.ibm.com>, <hoeppner@linux.ibm.com>, <hca@linux.ibm.com>,
+        <gor@linux.ibm.com>, <agordeev@linux.ibm.com>,
+        <borntraeger@linux.ibm.com>, <svens@linux.ibm.com>,
+        <jejb@linux.ibm.com>, <martin.petersen@oracle.com>, <hare@suse.de>,
+        <kch@nvidia.com>, <bhelgaas@google.com>, <john.garry@huawei.com>,
+        <mcgrof@kernel.org>, <christophe.jaillet@wanadoo.fr>,
+        <vaibhavgupta40@gmail.com>, <wsa+renesas@sang-engineering.com>,
+        <damien.lemoal@opensource.wdc.com>, <johannes.thumshirn@wdc.com>,
+        <bvanassche@acm.org>, <ming.lei@redhat.com>,
+        <shinichiro.kawasaki@wdc.com>, <vincent.fu@samsung.com>,
+        <christoph.boehmwalder@linbit.com>, <joel@jms.id.au>,
+        <vincent.whitchurch@axis.com>, <nbd@other.debian.org>,
+        <ceph-devel@vger.kernel.org>,
+        <virtualization@lists.linux-foundation.org>,
+        <asahi@lists.linux.dev>
+Subject: [RFC PATCH 00/21] block: add and use init tagset helper
+Date:   Tue, 4 Oct 2022 20:22:36 -0700
+Message-ID: <20221005032257.80681-1-kch@nvidia.com>
+X-Mailer: git-send-email 2.29.0
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Jeff Layton" <jlayton@kernel.org>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
-        david@fromorbit.com, trondmy@hammerspace.com,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
-        bfields@fieldses.org, brauner@kernel.org, fweimer@redhat.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 4/9] nfs: report the inode version in getattr if requested
-In-reply-to: <822ce678d47be0767464fc580d04981c24ccd28e.camel@kernel.org>
-References: <20220930111840.10695-1-jlayton@kernel.org>,
- <20220930111840.10695-5-jlayton@kernel.org>,
- <166483977325.14457.7085950126736913468@noble.neil.brown.name>,
- <822ce678d47be0767464fc580d04981c24ccd28e.camel@kernel.org>
-Date:   Wed, 05 Oct 2022 09:27:15 +1100
-Message-id: <166492243554.14457.1530520033894290024@noble.neil.brown.name>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN8NAM11FT062:EE_|DM6PR12MB4863:EE_
+X-MS-Office365-Filtering-Correlation-Id: fce348ec-947a-4641-efb6-08daa680f183
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9FlJpRPPWo/UczTdTCd5SyHamL/pqbpEL/Ib+DcXgEmnGmZ9HEQsxCsQSSaqCQcTZjccDkXjj6u6yhsKWFHSidDTY7fUyBz2KqAnbklpfj1swJc7PjxXCgzNELZVysLo4szooec2ZY8lzfdkSE6HtdY+DtVcTMVjT8/jV+DKt5E6leNDKjVvSwh8EQ+Et7lmmqiT5dBceOsWFEahHF9xDSoPAe8cAus+8SNEDsQM/6NnzlmMJLTqU3TNS2er/HUj3CSYob4ij3EhgCsbqwKE9P/opr4klhGiEvSjB3DqbxFBhoQWFGh3JkLy/bkJIE9ynCNZz144NHMITmR5CHCTeusxffP0uhFo7kUdiQBTkgxqKecyfPQnuhlX/bH6m9Szl15GpW7txUmH/1j62W3KaE9uc5ouAyMtQlwD5YGw+snHXJjYVq7VluiZGSPIx5lNKrFTs9brAjh+oHAqB/n511BLraQb8GC6Uxu2tRGuunDb47VIS8P+D/hbiblfD/8mXucfE4lBfj0SIMlLUoPlKp0fkZ4FwsXtU2X1Gkn+mFFL+PnaG2Bvhazs80UG8ITqBnJHvmm8BR0hiA5I9yOwQqNN/La6BsPmng/IjQ0jXZDQtHd5tXAwu7XpWpAsOHNrnNQejJI1nT3M/dr+3H7VZ902lZCeV4RpYrjbSktdNLt+0q4Qgde1mX3VLGrvRqUzqyMBNIPAnRd4/ehBsgzMWgL1bZOGZzvOa9nJKokVBQEo8fw8n1c1PismK7nqoMDbHtoaNR1b+Woq9GxppbdQ+Uk3j/bTNKU/oQZ46LetuLMSQ2+S8Aek1LfTGwDQtcXmq39TIGsaevKwgzMGZjrTtWGxjjuYVEglp3ZjLIPlBV0=
+X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(346002)(376002)(39860400002)(136003)(396003)(451199015)(46966006)(40470700004)(36840700001)(7696005)(41300700001)(36756003)(6666004)(82740400003)(5660300002)(7366002)(7406005)(7416002)(8936002)(26005)(8676002)(316002)(70206006)(70586007)(4326008)(336012)(40480700001)(83380400001)(47076005)(426003)(82310400005)(16526019)(186003)(1076003)(921005)(356005)(7636003)(40460700003)(2906002)(2616005)(36860700001)(478600001)(110136005)(54906003)(21314003)(2101003)(83996005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Oct 2022 03:23:16.2764
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fce348ec-947a-4641-efb6-08daa680f183
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT062.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4863
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 04 Oct 2022, Jeff Layton wrote:
-> On Tue, 2022-10-04 at 10:29 +1100, NeilBrown wrote:
-> > On Fri, 30 Sep 2022, Jeff Layton wrote:
-> > > Allow NFS to report the i_version in getattr requests. Since the cost to
-> > > fetch it is relatively cheap, do it unconditionally and just set the
-> > > flag if it looks like it's valid. Also, conditionally enable the
-> > > MONOTONIC flag when the server reports its change attr type as such.
-> > >=20
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > >  fs/nfs/inode.c | 10 ++++++++--
-> > >  1 file changed, 8 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-> > > index bea7c005119c..5cb7017e5089 100644
-> > > --- a/fs/nfs/inode.c
-> > > +++ b/fs/nfs/inode.c
-> > > @@ -830,6 +830,8 @@ static u32 nfs_get_valid_attrmask(struct inode *ino=
-de)
-> > >  		reply_mask |=3D STATX_UID | STATX_GID;
-> > >  	if (!(cache_validity & NFS_INO_INVALID_BLOCKS))
-> > >  		reply_mask |=3D STATX_BLOCKS;
-> > > +	if (!(cache_validity & NFS_INO_INVALID_CHANGE))
-> > > +		reply_mask |=3D STATX_VERSION;
-> > >  	return reply_mask;
-> > >  }
-> > > =20
-> > > @@ -848,7 +850,7 @@ int nfs_getattr(struct user_namespace *mnt_userns, =
-const struct path *path,
-> > > =20
-> > >  	request_mask &=3D STATX_TYPE | STATX_MODE | STATX_NLINK | STATX_UID |
-> > >  			STATX_GID | STATX_ATIME | STATX_MTIME | STATX_CTIME |
-> > > -			STATX_INO | STATX_SIZE | STATX_BLOCKS;
-> > > +			STATX_INO | STATX_SIZE | STATX_BLOCKS | STATX_VERSION;
-> > > =20
-> > >  	if ((query_flags & AT_STATX_DONT_SYNC) && !force_sync) {
-> > >  		if (readdirplus_enabled)
-> > > @@ -877,7 +879,7 @@ int nfs_getattr(struct user_namespace *mnt_userns, =
-const struct path *path,
-> > >  	/* Is the user requesting attributes that might need revalidation? */
-> > >  	if (!(request_mask & (STATX_MODE|STATX_NLINK|STATX_ATIME|STATX_CTIME|
-> > >  					STATX_MTIME|STATX_UID|STATX_GID|
-> > > -					STATX_SIZE|STATX_BLOCKS)))
-> > > +					STATX_SIZE|STATX_BLOCKS|STATX_VERSION)))
-> > >  		goto out_no_revalidate;
-> > > =20
-> > >  	/* Check whether the cached attributes are stale */
-> > > @@ -915,6 +917,10 @@ int nfs_getattr(struct user_namespace *mnt_userns,=
- const struct path *path,
-> > > =20
-> > >  	generic_fillattr(&init_user_ns, inode, stat);
-> > >  	stat->ino =3D nfs_compat_user_ino64(NFS_FILEID(inode));
-> > > +	stat->version =3D inode_peek_iversion_raw(inode);
-> >=20
-> > This looks wrong.
-> > 1/ it includes the I_VERSION_QUERIED bit, which should be hidden.
-> > 2/ it doesn't set that bit.
-> >=20
-> > I understand that the bit was already set when the generic code called
-> > inode_query_iversion(), but it might have changed if we needed to
-> > refresh the attrs.
-> >=20
-> > I'm beginning to think I shouldn't have approved the 3/9 patch.  The
-> > stat->version shouldn't be set in vfs_getattr_nosec() - maybe in
-> > generic_fillattr(), but not a lot of point.
-> >=20
->=20
-> NFS (and Ceph),=C2=A0do not set the SB_I_VERSION flag and they don't use the
-> QUERIED bit. These are "server managed" implementations of i_version.
-> The server is responsible for incrementing the value, and we just store
-> the result in the i_version field and present it when needed. That's why
-> the patch for NFS is using the "raw" API.
+Hi,
 
-Ahh - of course.  I got confused because the "raw" api is used by code
-(in iversion.h) that wants to access the QUERIED bit.  Maybe having
-different names would help.  Or maybe me re-familiarising myself with
-the interfaces would help...
+Add and use the helper to initialize the common fields of the tag_set
+such as blk_mq_ops, number of h/w queues, queue depth, command size,
+numa_node, timeout, BLK_MQ_F_XXX flags, driver data. This initialization
+is spread all over the block drivers. This avoids repetation of
+inialization code of the tag set in current block drivers and any future
+ones.
 
-Reviewed-by: NeilBrown <neilb@suse.de>
+P.S. I'm aware of the EXPORT_SYMBOL_GPL() checkpatch warn just to make
+get some feedback to so I can remove the RFC tag.
 
+-ck
 
->=20
-> > > +	stat->attributes_mask |=3D STATX_ATTR_VERSION_MONOTONIC;
-> > > +	if (server->change_attr_type !=3D NFS4_CHANGE_TYPE_IS_UNDEFINED)
-> > > +		stat->attributes |=3D STATX_ATTR_VERSION_MONOTONIC;
-> >=20
-> > So if the server tells us that the change attrs is based on time
-> > metadata, we accept that it will be monotonic (and RFC7862 encourages
-> > this), even though we seem to worry about timestamps going backwards
-> > (which we know that can)...  Interesting.
-> >=20
-> >=20
->=20
-> I followed suit from nfs_inode_attrs_cmp(). It seems to treat any value
-> that isn't UNDEFINED as MONOTONIC, though it does use a less strict
-> comparator for NFS4_CHANGE_TYPE_IS_TIME_METADATA. It may make sense to
-> carve that out as an exception.
->=20
-> This is probably an indicator that we need a more strict definition for
-> STATX_ATTR_VERSION_MONOTONIC.
+Chaitanya Kulkarni (21):
+  block: add and use init tagset helper
+  loop: use lib tagset init helper
+  nbd: use lib tagset init helper
+  rnbd: use lib tagset init helper
+  bsg-lib: use lib tagset init helper
+  rnbd-clt: use lib tagset init helper
+  virtio-blk: use lib tagset init helper
+  scsi: use lib tagset init helper
+  block: use lib tagset init helper
+  amiflop: use lib tagset init helper
+  floppy: use lib tagset init helper
+  mtip32xx: use lib tagset init helper
+  z3ram: use lib tagset init helper
+  scm_blk: use lib tagset init helper
+  ubi: use lib tagset init helper
+  mmc: core: use lib tagset init helper
+  dasd: use lib tagset init helper
+  nvme-core: use lib tagset init helper for I/O q
+  nvme-core: use lib tagset init helper for adminq
+  nvme-apple: use lib tagset init helper
+  nvme-pci: use lib tagset init helper
 
-Maybe.  Or maybe we decide that if the system time goes backwards and
-things break, then you get to keep both halves.
-The pedant in me want to handle that properly.  The pragmatist doesn't
-think it is worth it.
+ block/blk-mq.c                    | 27 ++++++++++++++++++++++-----
+ block/bsg-lib.c                   |  9 +++------
+ drivers/block/amiflop.c           |  8 +++-----
+ drivers/block/floppy.c            |  7 ++-----
+ drivers/block/loop.c              | 12 ++++--------
+ drivers/block/mtip32xx/mtip32xx.c | 13 ++++---------
+ drivers/block/nbd.c               | 11 +++--------
+ drivers/block/null_blk/main.c     | 10 +++-------
+ drivers/block/rbd.c               | 11 +++++------
+ drivers/block/rnbd/rnbd-clt.c     | 25 +++++++++++--------------
+ drivers/block/virtio_blk.c        | 14 +++++---------
+ drivers/block/z2ram.c             |  7 ++-----
+ drivers/mmc/core/queue.c          |  9 +++------
+ drivers/mtd/ubi/block.c           | 11 +++--------
+ drivers/nvme/host/apple.c         | 25 ++++++++-----------------
+ drivers/nvme/host/core.c          | 21 +++++----------------
+ drivers/nvme/host/pci.c           | 25 +++++++------------------
+ drivers/s390/block/dasd_genhd.c   |  9 +++------
+ drivers/s390/block/scm_blk.c      | 10 +++-------
+ drivers/scsi/scsi_lib.c           | 13 +++++--------
+ include/linux/blk-mq.h            |  5 +++++
+ 21 files changed, 109 insertions(+), 173 deletions(-)
 
-Thanks,
-NeilBrown
+-- 
+2.29.0
 
-
->=20
->=20
-> >=20
-> > >  	if (S_ISDIR(inode->i_mode))
-> > >  		stat->blksize =3D NFS_SERVER(inode)->dtsize;
-> > >  out:
-> > > --=20
-> > > 2.37.3
-> > >=20
-> > >=20
->=20
-> --=20
-> Jeff Layton <jlayton@kernel.org>
->=20
