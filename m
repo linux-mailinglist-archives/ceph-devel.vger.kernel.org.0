@@ -2,53 +2,71 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BC6765F7018
-	for <lists+ceph-devel@lfdr.de>; Thu,  6 Oct 2022 23:17:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D7B85F7D51
+	for <lists+ceph-devel@lfdr.de>; Fri,  7 Oct 2022 20:26:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232440AbiJFVRL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 6 Oct 2022 17:17:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45928 "EHLO
+        id S229628AbiJGS0d (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 7 Oct 2022 14:26:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232363AbiJFVRJ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 6 Oct 2022 17:17:09 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 21A00BCBB4;
-        Thu,  6 Oct 2022 14:17:08 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id B26898AC9FD;
-        Fri,  7 Oct 2022 08:17:03 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ogYEn-00GSwS-1i; Fri, 07 Oct 2022 08:17:01 +1100
-Date:   Fri, 7 Oct 2022 08:17:00 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     NeilBrown <neilb@suse.de>
-Cc:     Jeff Layton <jlayton@kernel.org>, tytso@mit.edu,
-        adilger.kernel@dilger.ca, djwong@kernel.org,
-        trondmy@hammerspace.com, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
-        lczerner@redhat.com, jack@suse.cz, bfields@fieldses.org,
-        brauner@kernel.org, fweimer@redhat.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 6/9] nfsd: use the getattr operation to fetch i_version
-Message-ID: <20221006211700.GQ3600936@dread.disaster.area>
-References: <20220930111840.10695-1-jlayton@kernel.org>
- <20220930111840.10695-7-jlayton@kernel.org>
- <166484034920.14457.15225090674729127890@noble.neil.brown.name>
+        with ESMTP id S229482AbiJGS0c (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 7 Oct 2022 14:26:32 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A38AC7050;
+        Fri,  7 Oct 2022 11:26:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=IudIrA3q3WpPWuZzZUKujefONUnAfceTWjlveYaPvio=; b=y3TnHRe5LU2pfTWpYrKhFoSYbh
+        jboFN1RMi5CjIniehZGNTOJpkF2sr617jJ4vb6Ib6lSQpyC0ek2+SlWngTW1ubM41ZOvqG9t87RGe
+        LZXDSjCQvYJpbTl+VRQpi8LkTLFVyXqr+kFALUeMkSNjyvXp3VTfiu6Hin9S6c12kBhwJdLbNbYn4
+        4szHif4ftpjkLWks7RWt2NtkOf4pQQWV+FmMEugetSNijqYdLE8QwTu09Ycl6RznABM1+qPym5ADr
+        Od764RzqJQFgxId6v9nZqSWYrZBx/EX1oe/ZXXPNJJb8O2jtIyGdk61SSE07/zRW76XLArhkeRZ+1
+        ZC4+w/vg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ogs33-00A41Z-Ot; Fri, 07 Oct 2022 18:26:13 +0000
+Date:   Fri, 7 Oct 2022 11:26:13 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Chaitanya Kulkarni <kch@nvidia.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-scsi@vger.kernel.org, axboe@kernel.dk, efremov@linux.com,
+        josef@toxicpanda.com, idryomov@gmail.com,
+        dongsheng.yang@easystack.cn, haris.iqbal@ionos.com,
+        jinpu.wang@ionos.com, mst@redhat.com, jasowang@redhat.com,
+        pbonzini@redhat.com, stefanha@redhat.com, ohad@wizery.com,
+        andersson@kernel.org, baolin.wang@linux.alibaba.com,
+        ulf.hansson@linaro.org, richard@nod.at, miquel.raynal@bootlin.com,
+        vigneshr@ti.com, marcan@marcan.st, sven@svenpeter.dev,
+        alyssa@rosenzweig.io, kbusch@kernel.org, hch@lst.de,
+        sagi@grimberg.me, sth@linux.ibm.com, hoeppner@linux.ibm.com,
+        hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, hare@suse.de, bhelgaas@google.com,
+        john.garry@huawei.com, christophe.jaillet@wanadoo.fr,
+        vaibhavgupta40@gmail.com, wsa+renesas@sang-engineering.com,
+        damien.lemoal@opensource.wdc.com, johannes.thumshirn@wdc.com,
+        bvanassche@acm.org, ming.lei@redhat.com,
+        shinichiro.kawasaki@wdc.com, vincent.fu@samsung.com,
+        christoph.boehmwalder@linbit.com, joel@jms.id.au,
+        vincent.whitchurch@axis.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, asahi@lists.linux.dev
+Subject: Re: [RFC PATCH 00/21] block: add and use init tagset helper
+Message-ID: <Y0BvRaVO0iUVmHgB@bombadil.infradead.org>
+References: <20221005032257.80681-1-kch@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <166484034920.14457.15225090674729127890@noble.neil.brown.name>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=OJNEYQWB c=1 sm=1 tr=0 ts=633f45d2
-        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
-        a=kj9zAlcOel0A:10 a=Qawa6l4ZSaYA:10 a=7-415B0cAAAA:8
-        a=ytSwbLbjndvwotgT2MMA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
+In-Reply-To: <20221005032257.80681-1-kch@nvidia.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,94 +74,24 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Oct 04, 2022 at 10:39:09AM +1100, NeilBrown wrote:
-> On Fri, 30 Sep 2022, Jeff Layton wrote:
-> > Now that we can call into vfs_getattr to get the i_version field, use
-> > that facility to fetch it instead of doing it in nfsd4_change_attribute.
-> > 
-> > Neil also pointed out recently that IS_I_VERSION directory operations
-> > are always logged, and so we only need to mitigate the rollback problem
-> > on regular files. Also, we don't need to factor in the ctime when
-> > reexporting NFS or Ceph.
-> > 
-> > Set the STATX_VERSION (and BTIME) bits in the request when we're dealing
-> > with a v4 request. Then, instead of looking at IS_I_VERSION when
-> > generating the change attr, look at the result mask and only use it if
-> > STATX_VERSION is set. With this change, we can drop the fetch_iversion
-> > export operation as well.
-> > 
-> > Move nfsd4_change_attribute into nfsfh.c, and change it to only factor
-> > in the ctime if it's a regular file and the fs doesn't advertise
-> > STATX_ATTR_VERSION_MONOTONIC.
-....
-> > +
-> > +/*
-> > + * We could use i_version alone as the change attribute.  However, i_version
-> > + * can go backwards on a regular file after an unclean shutdown.  On its own
-> > + * that doesn't necessarily cause a problem, but if i_version goes backwards
-> > + * and then is incremented again it could reuse a value that was previously
-> > + * used before boot, and a client who queried the two values might incorrectly
-> > + * assume nothing changed.
-> > + *
-> > + * By using both ctime and the i_version counter we guarantee that as long as
-> > + * time doesn't go backwards we never reuse an old value. If the filesystem
-> > + * advertises STATX_ATTR_VERSION_MONOTONIC, then this mitigation is not needed.
-> > + *
-> > + * We only need to do this for regular files as well. For directories, we
-> > + * assume that the new change attr is always logged to stable storage in some
-> > + * fashion before the results can be seen.
-> > + */
-> > +u64 nfsd4_change_attribute(struct kstat *stat, struct inode *inode)
-> > +{
-> > +	u64 chattr;
-> > +
-> > +	if (stat->result_mask & STATX_VERSION) {
-> > +		chattr = stat->version;
-> > +
-> > +		if (S_ISREG(inode->i_mode) &&
-> > +		    !(stat->attributes & STATX_ATTR_VERSION_MONOTONIC)) {
+On Tue, Oct 04, 2022 at 08:22:36PM -0700, Chaitanya Kulkarni wrote:
+> Hi,
 > 
-> I would really rather that the fs got to make this decision.
-> If it can guarantee that the i_version is monotonic even over a crash
-> (which is probably can for directory, and might need changes to do for
-> files) then it sets STATX_ATTR_VERSION_MONOTONIC and nfsd trusts it
-> completely.
+> Add and use the helper to initialize the common fields of the tag_set
+> such as blk_mq_ops, number of h/w queues, queue depth, command size,
+> numa_node, timeout, BLK_MQ_F_XXX flags, driver data. This initialization
+> is spread all over the block drivers. This avoids repetation of
+> inialization code of the tag set in current block drivers and any future
+> ones.
+> 
+> P.S. I'm aware of the EXPORT_SYMBOL_GPL() checkpatch warn just to make
+> get some feedback to so I can remove the RFC tag.
+> 
 
-If you want a internal-to-nfsd solution to this monotonic iversion
-problem for file data writes, then all we need to do is take the NFS
-server back to NFSv2 days where all server side data writes writes
-were performed as O_DSYNC writes. The NFSv3 protocol modifications
-for (unstable writes + COMMIT) to allow the NFS server to use
-volatile caching is the source of all the i_version persistent
-guarantees we are talking about here....
+*If* there were commonalities at init and these could be broken up into
+common groups, each having their own set of calls, then we simplify and
+can abstract these. I say this without doing a complete review of the
+removals, but if there really isn't much of commonalities I tend to
+agree with Bart that open coding this is better.
 
-So if the NFS server uses O_DSYNC writes again, by the time the
-WRITE response is sent to the client (which can now use
-NFS_DATA_SYNC instead of NFS_UNSTABLE so the client can mark pages
-clean immediately) both the file data and the inode metadata have
-been persisted.
-
-Further, if the nfsd runs ->commit_metadata after the write has
-completed, the nfsd now has a guarantee that i_version it places in
-the post-ops is both persistent and covers the data change that was
-just made. Problem solved, yes?
-
-Ideally we'd want writethrough IO operation with ->commit_metadata
-then guaranteeing both completed data and metadata changes are
-persistent (XFS already provides this guarantee) for efficiency,
-but the point remains that STATX_ATTR_VERSION_MONOTONIC behaviour
-can already be implemented by the NFS server application regardless
-of when the underlying filesystem bumps i_version for data writes...
-
-Yeah, I know writethrough can result in some workloads being a bit
-slower, but NFS clients are already implemented to hide write
-latency from the applications. Also, NFS servers are being built
-from fast SSDs these days, so this mitigates the worst of the
-latency issues that writethrough IO creates....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+  Luis
