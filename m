@@ -2,152 +2,116 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3778D5FD2CE
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Oct 2022 03:43:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72BAF5FDDDE
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Oct 2022 18:02:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbiJMBnY convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Wed, 12 Oct 2022 21:43:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52382 "EHLO
+        id S229810AbiJMQCG (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 13 Oct 2022 12:02:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbiJMBnV (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 12 Oct 2022 21:43:21 -0400
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7678936DEB;
-        Wed, 12 Oct 2022 18:43:19 -0700 (PDT)
-Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
-        by unirelay02.hostedemail.com (Postfix) with ESMTP id 640C9120237;
-        Thu, 13 Oct 2022 01:37:28 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf20.hostedemail.com (Postfix) with ESMTPA id 56EDD20026;
-        Thu, 13 Oct 2022 01:37:01 +0000 (UTC)
-Message-ID: <3f527ec95a12135eb40f5f2d156a2954feb7fbfe.camel@perches.com>
-Subject: Re: [PATCH v1 3/5] treewide: use get_random_u32() when possible
-From:   Joe Perches <joe@perches.com>
-To:     David Laight <David.Laight@ACULAB.COM>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-sctp@vger.kernel.org" <linux-sctp@vger.kernel.org>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
-        "dev@openvswitch.org" <dev@openvswitch.org>,
-        "rds-devel@oss.oracle.com" <rds-devel@oss.oracle.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "dccp@vger.kernel.org" <dccp@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
-        "lvs-devel@vger.kernel.org" <lvs-devel@vger.kernel.org>,
-        "SHA-cyfmac-dev-list@infineon.com" <SHA-cyfmac-dev-list@infineon.com>,
-        "coreteam@netfilter.org" <coreteam@netfilter.org>,
-        "tipc-discussion@lists.sourceforge.net" 
-        <tipc-discussion@lists.sourceforge.net>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-actions@lists.infradead.org" 
-        <linux-actions@lists.infradead.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-hams@vger.kernel.org" <linux-hams@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "cake@lists.bufferbloat.net" <cake@lists.bufferbloat.net>,
-        "brcm80211-dev-list.pdl@broadcom.com" 
-        <brcm80211-dev-list.pdl@broadcom.com>,
-        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "netfilter-devel@vger.kernel.org" <netfilter-devel@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Date:   Wed, 12 Oct 2022 18:37:11 -0700
-In-Reply-To: <d45bd258e033453b85a137112e7694e1@AcuMS.aculab.com>
-References: <20221005214844.2699-1-Jason@zx2c4.com>
-         <20221005214844.2699-4-Jason@zx2c4.com>
-         <f8ad3ba44d28dec1a5f7626b82c5e9c2aeefa729.camel@perches.com>
-         <d45bd258e033453b85a137112e7694e1@AcuMS.aculab.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
+        with ESMTP id S229763AbiJMQCF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 13 Oct 2022 12:02:05 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBBCD104526;
+        Thu, 13 Oct 2022 09:02:03 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id s30so3298757eds.1;
+        Thu, 13 Oct 2022 09:02:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i0F2oICNNjCBsoL5fs6l6db9fkLD0EJdXecM8PpjA+g=;
+        b=jLWNzxCq8cXHFa+RJftXtWav9bZ8JdZZ5+4qE74RzBc46FPQlJfGhzdoVu9XPHxxTq
+         J/hmttj7Acis0PnBqCGVy73rG1f8kjb5hIRnSIApJcsDLxVcyZgHV7au7ANErMoFGHay
+         6NS0UQSngqCUvhALVMuQX978Ka7PGoy5Me1ItyikvKm1CoZgJKUgKPeK6tTPZUij6KTv
+         SV67XlXaQyBplXdO7kcfVBExhpsnF19eA3nDA+0nJxKj4FjfSl+FHfyHU0DOpvpX/Klj
+         VVJS597FU4WMT7piGywgFBIAcgSfpfvTr/7diTq2gZes1aMYhwqcjkSpn/2eWxhhxob0
+         APvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i0F2oICNNjCBsoL5fs6l6db9fkLD0EJdXecM8PpjA+g=;
+        b=NPM7H5dJ7nHAa93KUAPg3Y4xy7Q8irYYFW7foKsxvMUtrm6GNn1lEvNY4I2kuPW8iD
+         rBBhR/UoXaagIYaRcydsllvSIbjKR5M+7w+YWw48X5LucGHvjgABAO/3j8A9BDjHOpck
+         0Gp26+eKrZGICqsyx4d4UA0wriT7zQ63p+1Y7IynfSLGScrsWRkObXADzxQh/MEp1/mO
+         tZTI8VlqgIZjsxBXLpyTxAIbi2qDfl3ggg/eggpv7P2WcVqWVnsXZ7CmzCFBOly9RB8W
+         hPhglL/1xRO7yB3XBoolDX4W+Ek/u1OEOAzEhpDHHIHtHtle145CMRsBvwkLkWGwi/O7
+         D7qw==
+X-Gm-Message-State: ACrzQf1+zVGXj349vD7y7Znchg69ZUPo+ktVENCrcMHyMBCLsxedQ/H9
+        7qZ7EDqlyY+uXgRzAHSUjBSdXrtTMjDZRg==
+X-Google-Smtp-Source: AMsMyM5G8ivyL2PPCUiu15dZtPg4w+Lv0Wj/Wg/vb+TcACZF0lU9PhfKGQ6GXZqx4YhTEkADneyLJw==
+X-Received: by 2002:aa7:df16:0:b0:45b:f51f:ab73 with SMTP id c22-20020aa7df16000000b0045bf51fab73mr413883edy.366.1665676922271;
+        Thu, 13 Oct 2022 09:02:02 -0700 (PDT)
+Received: from zambezi.redhat.com (ip-94-112-104-28.bb.vodafone.cz. [94.112.104.28])
+        by smtp.gmail.com with ESMTPSA id gc37-20020a1709072b2500b0077d6f628e14sm62107ejc.83.2022.10.13.09.02.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Oct 2022 09:02:01 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph updates for 6.1-rc1
+Date:   Thu, 13 Oct 2022 18:01:53 +0200
+Message-Id: <20221013160153.100941-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_NONE,UNPARSEABLE_RELAY autolearn=no autolearn_force=no
-        version=3.4.6
-X-Stat-Signature: jmxt1u5agdpi9w76hr4tp6uotie3p373
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 56EDD20026
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX18KEIRmyyr9pSEavQqF5X0dTzAEITyiJq4=
-X-HE-Tag: 1665625021-540494
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2022-10-12 at 21:29 +0000, David Laight wrote:
-> From: Joe Perches
-> > Sent: 12 October 2022 20:17
-> > 
-> > On Wed, 2022-10-05 at 23:48 +0200, Jason A. Donenfeld wrote:
-> > > The prandom_u32() function has been a deprecated inline wrapper around
-> > > get_random_u32() for several releases now, and compiles down to the
-> > > exact same code. Replace the deprecated wrapper with a direct call to
-> > > the real function.
-> > []
-> > > diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
-> > []
-> > > @@ -734,7 +734,7 @@ static int send_connect(struct c4iw_ep *ep)
-> > >  				   &ep->com.remote_addr;
-> > >  	int ret;
-> > >  	enum chip_type adapter_type = ep->com.dev->rdev.lldi.adapter_type;
-> > > -	u32 isn = (prandom_u32() & ~7UL) - 1;
-> > > +	u32 isn = (get_random_u32() & ~7UL) - 1;
-> > 
-> > trivia:
-> > 
-> > There are somewhat odd size mismatches here.
-> > 
-> > I had to think a tiny bit if random() returned a value from 0 to 7
-> > and was promoted to a 64 bit value then truncated to 32 bit.
-> > 
-> > Perhaps these would be clearer as ~7U and not ~7UL
-> 
-> That makes no difference - the compiler will generate the same code.
+Hi Linus,
 
-True, more or less.  It's more a question for the reader.
+The following changes since commit 4fe89d07dcc2804c8b562f6c7896a45643d34b2f:
 
-> The real question is WTF is the code doing?
+  Linux 6.0 (2022-10-02 14:09:07 -0700)
 
-True.
+are available in the Git repository at:
 
-> The '& ~7u' clears the bottom 3 bits.
-> The '- 1' then sets the bottom 3 bits and decrements the
-> (random) high bits.
+  https://github.com/ceph/ceph-client.git tags/ceph-for-6.1-rc1
 
-Right.
+for you to fetch changes up to 71cf0c1c4f9f8e42c84ca53a5ca7091e4eea7f6a:
 
-> So is the same as get_random_u32() | 7.
+  ceph: remove Sage's git tree from documentation (2022-10-04 19:18:08 +0200)
 
-True, it's effectively the same as the upper 29 bits are random
-anyway and the bottom 3 bits are always set.
+----------------------------------------------------------------
+A quiet round this time: several assorted filesystem fixes, the most
+noteworthy one being some additional wakeups in cap handling code, and
+a messenger cleanup.
 
-> But I bet the coder had something else in mind.
+----------------------------------------------------------------
+Jeff Layton (2):
+      libceph: drop last_piece flag from ceph_msg_data_cursor
+      ceph: increment i_version when doing a setattr with caps
 
-Likely.
+Kenneth Lee (1):
+      ceph: Use kcalloc for allocating multiple elements
 
-And it was also likely copy/pasted a few times.
+Tiezhu Yang (1):
+      ceph: remove Sage's git tree from documentation
+
+Xiubo Li (5):
+      ceph: wake up the waiters if any new caps comes
+      ceph: fail the request if the peer MDS doesn't support getvxattr op
+      ceph: no need to wait for transition RDCACHE|RD -> RD
+      ceph: fail the open_by_handle_at() if the dentry is being unlinked
+      ceph: fix incorrectly showing the .snap size for stat
+
+ Documentation/filesystems/ceph.rst |  1 -
+ fs/ceph/caps.c                     | 14 ++++++++++---
+ fs/ceph/export.c                   |  3 ++-
+ fs/ceph/inode.c                    | 29 +++++++++++++++++++++++----
+ fs/ceph/mds_client.c               | 11 +++++++++++
+ fs/ceph/mds_client.h               |  6 +++++-
+ include/linux/ceph/messenger.h     |  4 +---
+ net/ceph/messenger.c               | 40 +++++---------------------------------
+ net/ceph/messenger_v1.c            |  6 +++---
+ net/ceph/messenger_v2.c            |  2 +-
+ 10 files changed, 64 insertions(+), 52 deletions(-)
