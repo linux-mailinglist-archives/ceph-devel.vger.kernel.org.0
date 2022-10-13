@@ -2,72 +2,117 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 800435FE12B
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Oct 2022 20:27:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 505D35FE473
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Oct 2022 23:50:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231918AbiJMS1v (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 13 Oct 2022 14:27:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59046 "EHLO
+        id S229944AbiJMVug (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 13 Oct 2022 17:50:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230236AbiJMS11 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 13 Oct 2022 14:27:27 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C4B318813A;
-        Thu, 13 Oct 2022 11:22:55 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7DA16B82069;
-        Thu, 13 Oct 2022 18:00:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 42DD8C43140;
-        Thu, 13 Oct 2022 18:00:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665684022;
-        bh=QxYmwd2P4zpfKKPr5fRbWFo8aNAsnCmNXBqv1y81pSw=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=HUa97AWBEpVNYg94S6zh5Sejxl6a+znT6gwuR6L9JJJLem99Je1l/WqlP5K3YfWrE
-         KSd3YhgpTEQ0hZAQsapEhxrp6vF7zjKGpVn5Vm6Pqw9UD/14I1q9aWBzIVoA04j90M
-         NqLK2LrLVBUWyTNENOHHFzkEZ93wKObH584Epv/WP3aJrhynIfXUFHIm5t7ExfJn5A
-         xMALFm3jxefonFFmhJ2uU+xC3CER4VXYewRVgp5FOTz+5DC9cTyu1kcNnWDBoGXzqx
-         sQfdeo+R0KtfL9miVnZeGxxLDoYpPRMVhN4EON7Y8iGu1KV9ylKhIePZm23fybVBbb
-         /AsAg1Ze5sMWw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2EB83E29F30;
-        Thu, 13 Oct 2022 18:00:22 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph updates for 6.1-rc1
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20221013160153.100941-1-idryomov@gmail.com>
-References: <20221013160153.100941-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20221013160153.100941-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.1-rc1
-X-PR-Tracked-Commit-Id: 71cf0c1c4f9f8e42c84ca53a5ca7091e4eea7f6a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 524d0c68826bc1adf9d1946e540eb4f7b16699a7
-Message-Id: <166568402218.7515.16505627457789583242.pr-tracker-bot@kernel.org>
-Date:   Thu, 13 Oct 2022 18:00:22 +0000
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S229919AbiJMVuF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 13 Oct 2022 17:50:05 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F235175790
+        for <ceph-devel@vger.kernel.org>; Thu, 13 Oct 2022 14:49:25 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id d24so3019065pls.4
+        for <ceph-devel@vger.kernel.org>; Thu, 13 Oct 2022 14:49:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20210112.gappssmtp.com; s=20210112;
+        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:to:cc:subject:date:message-id:reply-to;
+        bh=KQgo2zXP+tJ/+H/TKYBwXrAsCTfldG+gzWEyNxscaqk=;
+        b=RDWNAe37CYCOZe2uxcHMdedExNDFH/SiZvAZCHNCu8SzTaxrwyQ9iup+miR3QnzU35
+         wZHbgDNVxXa0THLnrUwfl6wIfzrr5qMHocQRnPAB1Ag9VWY0mnS/t/uSxl3v93hTnuIx
+         jtKvjCN1qbwX3SqEVtyjgHzA4F6nPc0xPaoie5K+nuaEVBbyUpZDZRFkYvVvm0tzDAg6
+         S1ad6PlV5d5uik7mP3YDlm09URmNHb0mETYHm/VfIEY3WyTrycAwNfyEPpPXcRGtsrsQ
+         zmOWh3aux8330/S2Z4sTdMTgbywajAhxnIl4S7ZuFasNFj+XqgiJocM38yFsMf8xyWNz
+         nTaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
+         :subject:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KQgo2zXP+tJ/+H/TKYBwXrAsCTfldG+gzWEyNxscaqk=;
+        b=DmSfY71XWKLdf/0XUV9YtqlyBGJAcSQoF8qrUAt8m0/xAMovzuDC8sxw5uOzbfFhQF
+         yi07bPCDxoDAQXH9+5Lakv7rZI3Elw0A3aANboP2Njhy5jk9NeN56QypPZTAbIcQjd8l
+         0BarBpJr8em0B3BdcBT+4gABp5qjYELQ11q6a/LY3ETagnu3FwNWsZQNqU2vMBNuLBWe
+         2CxQ5yjLXhMKlFi9gsEL+acoaHMfAjvcuivTaSf4n5f86jWN9dbuV5ewTZLtHs1U8iBy
+         2SYAK7vpRfDX7HjM5NOvpU+lHRaDswEAuK4S+ON/YJo6fKCvWeiUkWqq5jFJ7IVerDMr
+         4Lkw==
+X-Gm-Message-State: ACrzQf3S18VP9Dk21Irnw9z5L8RYJUP0U4UK1DD7ldUfkJXp5CwAuUr8
+        O5VZg7co5CwSLhXLwMM5hJx15Q==
+X-Google-Smtp-Source: AMsMyM5DzIF+WC8Rtc/nrxiKYiQygQ4s4bkeci0ywjssXRYCIl652HaPHHzfnrcd3DPWxlgvTbV+Fw==
+X-Received: by 2002:a17:90a:bd91:b0:20d:2add:96a4 with SMTP id z17-20020a17090abd9100b0020d2add96a4mr13574047pjr.195.1665697758098;
+        Thu, 13 Oct 2022 14:49:18 -0700 (PDT)
+Received: from localhost ([50.221.140.188])
+        by smtp.gmail.com with ESMTPSA id i13-20020a170902c94d00b001754064ac31sm278175pla.280.2022.10.13.14.49.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Oct 2022 14:49:17 -0700 (PDT)
+Subject: [PATCH] MAINTAINERS: git://github -> https://github.com for ceph
+Date:   Thu, 13 Oct 2022 14:46:39 -0700
+Message-Id: <20221013214639.31054-1-palmer@rivosinc.com>
+X-Mailer: git-send-email 2.38.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Cc:        linux-kernel@vger.kernel.org,
+           Palmer Dabbelt <palmer@rivosinc.com>,
+           Conor Dooley <conor.dooley@microchip.com>
+From:   Palmer Dabbelt <palmer@rivosinc.com>
+To:     idryomov@gmail.com, xiubli@redhat.com, ceph-devel@vger.kernel.org
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The pull request you sent on Thu, 13 Oct 2022 18:01:53 +0200:
+Github deprecated the git:// links about a year ago, so let's move to
+the https:// URLs instead.
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-6.1-rc1
+Reported-by: Conor Dooley <conor.dooley@microchip.com>
+Link: https://github.blog/2021-09-01-improving-git-protocol-security-github/
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+---
+I've split these up by github username so folks can take them
+independently, as some of these repos have been renamed at github and
+thus need more than just a sed to fix them.
+---
+ MAINTAINERS | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/524d0c68826bc1adf9d1946e540eb4f7b16699a7
-
-Thank you!
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3699b2256dc2..8da92ff58b9d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4771,7 +4771,7 @@ R:	Jeff Layton <jlayton@kernel.org>
+ L:	ceph-devel@vger.kernel.org
+ S:	Supported
+ W:	http://ceph.com/
+-T:	git git://github.com/ceph/ceph-client.git
++T:	git https://github.com/ceph/ceph-client.git
+ F:	include/linux/ceph/
+ F:	include/linux/crush/
+ F:	net/ceph/
+@@ -4783,7 +4783,7 @@ R:	Jeff Layton <jlayton@kernel.org>
+ L:	ceph-devel@vger.kernel.org
+ S:	Supported
+ W:	http://ceph.com/
+-T:	git git://github.com/ceph/ceph-client.git
++T:	git https://github.com/ceph/ceph-client.git
+ F:	Documentation/filesystems/ceph.rst
+ F:	fs/ceph/
+ 
+@@ -17028,7 +17028,7 @@ R:	Dongsheng Yang <dongsheng.yang@easystack.cn>
+ L:	ceph-devel@vger.kernel.org
+ S:	Supported
+ W:	http://ceph.com/
+-T:	git git://github.com/ceph/ceph-client.git
++T:	git https://github.com/ceph/ceph-client.git
+ F:	Documentation/ABI/testing/sysfs-bus-rbd
+ F:	drivers/block/rbd.c
+ F:	drivers/block/rbd_types.h
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.38.0
+
