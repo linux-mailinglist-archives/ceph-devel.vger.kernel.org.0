@@ -2,80 +2,124 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F2625FEF8D
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Oct 2022 16:01:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C5D25FF954
+	for <lists+ceph-devel@lfdr.de>; Sat, 15 Oct 2022 11:02:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230282AbiJNOBv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 Oct 2022 10:01:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35830 "EHLO
+        id S229661AbiJOJC0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 15 Oct 2022 05:02:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230284AbiJNOBS (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 Oct 2022 10:01:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9B30E8C74
-        for <ceph-devel@vger.kernel.org>; Fri, 14 Oct 2022 07:00:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1665755983;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=k8qQltuyjmygy+O43yanVxeFaxBvrjiQoX3IXlPZtGE=;
-        b=DtDYcrfgVOqZ3hsZHwwjB7vAgk5Ps+T8WPi2LiYhXUt71/eJwNrpWh8fzfclv/Cp7MSCvO
-        F2LMAnKwXgs7lMfEVb0m3InKwXJctLzg6j1h4yYUJ65A/cwm7uIO2/lRYwyzzQcIF11aWK
-        ft356x3eEdF/wfAS42bRwaWXK6FGsno=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-244-0ngC2H1gONipQ71LSLOWqQ-1; Fri, 14 Oct 2022 09:59:38 -0400
-X-MC-Unique: 0ngC2H1gONipQ71LSLOWqQ-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C2DFA3C10687;
-        Fri, 14 Oct 2022 13:59:37 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 456D84030DF;
-        Fri, 14 Oct 2022 13:59:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20220901220138.182896-6-vishal.moola@gmail.com>
-References: <20220901220138.182896-6-vishal.moola@gmail.com> <20220901220138.182896-1-vishal.moola@gmail.com>
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nilfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 05/23] afs: Convert afs_writepages_region() to use filemap_get_folios_tag()
+        with ESMTP id S229512AbiJOJCZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 15 Oct 2022 05:02:25 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 754AB56BB1;
+        Sat, 15 Oct 2022 02:02:24 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id r14so9711736edc.7;
+        Sat, 15 Oct 2022 02:02:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hgn4WdQWLSI7cmvgAKeRgRqj8UF4rbqA4eiKcisVFTU=;
+        b=bPyYkDHWwoQG7pYYU4nU65RS2RV35G/soZ6QcHbqokdYXmGCJ1+OggW9GHMUSHYCUU
+         5rt7zWMMxCa32EG/v959hzGRmDGMqWJMztwbQP1yklwmcfhDQ8q5nxBNezVjZGlSSJ8H
+         yRfOYyWh3x9KxcBSPiNMJDgK1C/k8KtV1AI9b/HjqUfCKDLAeMFRkpH4ktBAKKxIwt+W
+         UKBYvh7q5kkBpoxwMFygbHoPpcrOn2fmaKhSyfYg3qWcBQrYcURJBejOA6vBWngf4ELv
+         ZvUrcflIRIYhKpLnUmCQX4l9Y07QhUI3eOtTjVEB0/ZnQYKCttVP75LVXvOqgKRJmyO1
+         uqCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hgn4WdQWLSI7cmvgAKeRgRqj8UF4rbqA4eiKcisVFTU=;
+        b=ONaNbpZKtQ7anVz85N6TPELPDX8LjqiOWIbyrZ+EBKWxPLS2Mb+xc58QJUGpHEcObq
+         HdCgGfQc9TxtqWYzCZ/z200liJsjr+dExtG6YT7GT5IIHW6UjWBVhCEauCUsY4FepHWT
+         Rp2G6u8NUT6ID/4EsEMixSecrjeFKH5cp2SnCl+w1Gftf8qfs9aAcv7j2gxgZHPzEVuZ
+         YUqFmCPHHCFa42MExzItwx/9E7FBLihJYB+0cFRM9BV6A7gkCwlNAQaA+EjnYcK7+dXG
+         3I2Nu9TTvONLqcl7t8+T2iXRDNsDi8QlvVAI2DnFc4JLuOPVkfTUzhvY17UC/bYNqwND
+         X3dg==
+X-Gm-Message-State: ACrzQf1Pl8g8IXmxR+jxxsK+yJrdYk6q1ABsK4X08HIF7/uNkPZ/xlZl
+        xTvKR1MhkYXdn7oUdj6FfsyI95ljvpt0qlgKCx0=
+X-Google-Smtp-Source: AMsMyM7J8cQIhXmjuXqbiIXrKUMM+TuhLxe1ybbGAjs+Tjiu++y54QCFzZy+o9a1k+ybzNoDI3ZL4PKoOjVGkQdU9FU=
+X-Received: by 2002:a05:6402:f83:b0:458:8c97:29af with SMTP id
+ eh3-20020a0564020f8300b004588c9729afmr1529213edb.210.1665824542949; Sat, 15
+ Oct 2022 02:02:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1569539.1665755974.1@warthog.procyon.org.uk>
-Date:   Fri, 14 Oct 2022 14:59:34 +0100
-Message-ID: <1569540.1665755974@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <20221013214639.31054-1-palmer@rivosinc.com>
+In-Reply-To: <20221013214639.31054-1-palmer@rivosinc.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Sat, 15 Oct 2022 11:02:11 +0200
+Message-ID: <CAOi1vP-dMp4pEMuUxQV4Ro73TNioGi9sagYU6j_AxWOpPbuKwA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: git://github -> https://github.com for ceph
+To:     Palmer Dabbelt <palmer@rivosinc.com>
+Cc:     xiubli@redhat.com, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Vishal Moola (Oracle) <vishal.moola@gmail.com> wrote:
+On Thu, Oct 13, 2022 at 11:49 PM Palmer Dabbelt <palmer@rivosinc.com> wrote:
+>
+> Github deprecated the git:// links about a year ago, so let's move to
+> the https:// URLs instead.
+>
+> Reported-by: Conor Dooley <conor.dooley@microchip.com>
+> Link: https://github.blog/2021-09-01-improving-git-protocol-security-github/
+> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+> ---
+> I've split these up by github username so folks can take them
+> independently, as some of these repos have been renamed at github and
+> thus need more than just a sed to fix them.
+> ---
+>  MAINTAINERS | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3699b2256dc2..8da92ff58b9d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4771,7 +4771,7 @@ R:        Jeff Layton <jlayton@kernel.org>
+>  L:     ceph-devel@vger.kernel.org
+>  S:     Supported
+>  W:     http://ceph.com/
+> -T:     git git://github.com/ceph/ceph-client.git
+> +T:     git https://github.com/ceph/ceph-client.git
+>  F:     include/linux/ceph/
+>  F:     include/linux/crush/
+>  F:     net/ceph/
+> @@ -4783,7 +4783,7 @@ R:        Jeff Layton <jlayton@kernel.org>
+>  L:     ceph-devel@vger.kernel.org
+>  S:     Supported
+>  W:     http://ceph.com/
+> -T:     git git://github.com/ceph/ceph-client.git
+> +T:     git https://github.com/ceph/ceph-client.git
+>  F:     Documentation/filesystems/ceph.rst
+>  F:     fs/ceph/
+>
+> @@ -17028,7 +17028,7 @@ R:      Dongsheng Yang <dongsheng.yang@easystack.cn>
+>  L:     ceph-devel@vger.kernel.org
+>  S:     Supported
+>  W:     http://ceph.com/
+> -T:     git git://github.com/ceph/ceph-client.git
+> +T:     git https://github.com/ceph/ceph-client.git
+>  F:     Documentation/ABI/testing/sysfs-bus-rbd
+>  F:     drivers/block/rbd.c
+>  F:     drivers/block/rbd_types.h
+> --
+> 2.38.0
+>
 
-> Convert to use folios throughout. This function is in preparation to
-> remove find_get_pages_range_tag().
-> 
-> Also modified this function to write the whole batch one at a time,
-> rather than calling for a new set every single write.
-> 
-> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+Applied.
 
-Tested-by: David Howells <dhowells@redhat.com>
+Thanks,
 
+                Ilya
