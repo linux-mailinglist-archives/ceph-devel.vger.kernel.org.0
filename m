@@ -2,216 +2,162 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B79EC600D3C
-	for <lists+ceph-devel@lfdr.de>; Mon, 17 Oct 2022 12:59:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BFA66019A8
+	for <lists+ceph-devel@lfdr.de>; Mon, 17 Oct 2022 22:27:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231339AbiJQK65 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 17 Oct 2022 06:58:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45928 "EHLO
+        id S231199AbiJQU1E (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 17 Oct 2022 16:27:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230496AbiJQK6M (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 17 Oct 2022 06:58:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDFF561D90;
-        Mon, 17 Oct 2022 03:57:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BEABFB80CAD;
-        Mon, 17 Oct 2022 10:57:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81DDCC43144;
-        Mon, 17 Oct 2022 10:57:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666004253;
-        bh=1oukB3rP9Xx+gRVJOYRNIFNTZFkHQH6wKGEOtYxV1lA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZLtIENBTLEh//XZqkkXjggNWvOQ0CZ0QaZWzgsuYdEyU3UP/cx9/TlAQlifA9F36r
-         4nLQqITN8SK330HszRafccpu3ehpNbV9qYYEwfR0oSGtX+1QjyfU/LxMjIFqVNNyeR
-         iYRtAg/ue7BmO835kRO/mISgk/TR+rYT0pw18WRhbtZNMvmjj9ebAKM5Xw2NAReneU
-         +uj6wUVpXiE2Xhxx21KWQDtTpIVnVHG73v8IPF2oB96fMm181Freq+CJQ5lWFNQQnF
-         8dCUSDhAvPPs5ESyFIxgKcxny9G4226aZPHn36wqrCZgZJhG6wiHKUhAk2VCDzmyq6
-         W+NlN4cyC7YdQ==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
-        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
-        bfields@fieldses.org, brauner@kernel.org, fweimer@redhat.com
-Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org, Jeff Layton <jlayton@redhat.com>
-Subject: [RFC PATCH v7 9/9] vfs: expose STATX_VERSION to userland
-Date:   Mon, 17 Oct 2022 06:57:09 -0400
-Message-Id: <20221017105709.10830-10-jlayton@kernel.org>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20221017105709.10830-1-jlayton@kernel.org>
-References: <20221017105709.10830-1-jlayton@kernel.org>
+        with ESMTP id S231311AbiJQU0m (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 17 Oct 2022 16:26:42 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19AA2326CF;
+        Mon, 17 Oct 2022 13:24:56 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id i3so12108430pfc.11;
+        Mon, 17 Oct 2022 13:24:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GDF0HteevzYNLv2uN0Cib6K7paWLvmyKD/8WXFsjE5M=;
+        b=aY4b63NZqQCKvU20ZoDK++qZhACS2e4aeBRsuuopLKG1Ytlt2bf9tD+JujcCPXLwaZ
+         Sc/sT6V3+o3kVy28NBqwCDqZZrw6g9Fs5MQlfvUWn3V1lSG2rAI2su5+aaHC5Bk54jld
+         mValP1FoKNSZ7hECNNOhR50m1PC55zjwk4nMgeoqCE9b0x+D0KWvwxgyobqS9JUMepUM
+         zoylWXqCOD4Erjg4B4JH20iK300YiMzqbUBmkV8B6s3BWy8zw1Q4HVQBjXeu7RvRa4oK
+         JxMpnpHEjCRLimm43OE5MLtZsYG5G/gI4dWGzotWFSr9mYgloWVKNp5Nq+BYtExGElaC
+         bqhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GDF0HteevzYNLv2uN0Cib6K7paWLvmyKD/8WXFsjE5M=;
+        b=qU1O1IPiDKPW1b8XGiKtO4A9gtJg+dGwwWif5f9k9dcjm/Hdj1fGGwuMuUK8qR5vCQ
+         c72nG4h2JxBSx56zM+ZWA4K968M4aptDJLk8/LgnoJ53+ZKsDS4Oal2dGTLpJS18HaoP
+         fU0/hipzrzOQbUkdI9Cm0TutfWfaYLJxTVYhDhhp0bVINThQPhuYX9oWJUh9/Lltdj+b
+         LvYKUo6LwaGJKXZouxK1XrztF8H3FXEQUXVfrnWDqkp6Gpfy4zusNj+h89+yIJyiYZue
+         argBVcqIRVK8w7RgFfO0NZAWGiORGkhMUKi71m/a46OP7ZeU9EvG1OBds619/OrGlzzR
+         JQkA==
+X-Gm-Message-State: ACrzQf2Ok+kLjXkUtyvynqPe4686iL19LdwSts7VnhFFpdvC/gnb9BFt
+        QW+kGtIkMzGWrl7WQLS1vAjhM2nRxrCscA==
+X-Google-Smtp-Source: AMsMyM5ZBQ4ulLEerblhN4dY+KgGrViyV8tdaDAbkTMfDdZ5KC19A4m0FrTCeDWfYdUkGvRrnROusw==
+X-Received: by 2002:a05:6a00:2402:b0:52c:81cf:8df8 with SMTP id z2-20020a056a00240200b0052c81cf8df8mr14608634pfh.60.1666038294629;
+        Mon, 17 Oct 2022 13:24:54 -0700 (PDT)
+Received: from vmfolio.. (c-76-102-73-225.hsd1.ca.comcast.net. [76.102.73.225])
+        by smtp.googlemail.com with ESMTPSA id pj12-20020a17090b4f4c00b00200b12f2bf5sm145037pjb.1.2022.10.17.13.24.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Oct 2022 13:24:54 -0700 (PDT)
+From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
+        "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Subject: [PATCH v3 00/23] Convert to filemap_get_folios_tag()
+Date:   Mon, 17 Oct 2022 13:24:28 -0700
+Message-Id: <20221017202451.4951-1-vishal.moola@gmail.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Jeff Layton <jlayton@redhat.com>
+This patch series replaces find_get_pages_range_tag() with
+filemap_get_folios_tag(). This also allows the removal of multiple
+calls to compound_head() throughout.
+It also makes a good chunk of the straightforward conversions to folios,
+and takes the opportunity to introduce a function that grabs a folio
+from the pagecache.
 
-Claim one of the spare fields in struct statx to hold a 64-bit inode
-version attribute. When userland requests STATX_VERSION, copy the
-value from the kstat struct there, and stop masking off
-STATX_ATTR_VERSION_MONOTONIC.
+F2fs and Ceph have quite alot of work to be done regarding folios, so
+for now those patches only have the changes necessary for the removal of
+find_get_pages_range_tag(), and only support folios of size 1 (which is
+all they use right now anyways).
 
-Update the test-statx sample program to output the change attr and
-MountId.
+I've run xfstests on btrfs, ext4, f2fs, and nilfs2, but more testing may be
+beneficial. The page-writeback and filemap changes implicitly work. Testing
+and review of the other changes (afs, ceph, cifs, gfs2) would be appreciated.
 
-Reviewed-by: NeilBrown <neilb@suse.de>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/stat.c                 | 12 +++---------
- include/linux/stat.h      |  9 ---------
- include/uapi/linux/stat.h |  6 ++++--
- samples/vfs/test-statx.c  |  8 ++++++--
- 4 files changed, 13 insertions(+), 22 deletions(-)
+v3:
+  Rebased onto upstream 6.1
+  Simplified the ceph patch to only necessary changes
+  Changed commit messages throughout to be clearer
+  Got an Acked-by for another nilfs patch
+  Got Tested-by for afs
 
-Posting this as an RFC as we're still trying to sort out what semantics
-we want to present to userland. In particular, this patch leaves the
-problem of crash resilience in to userland applications on filesystems
-that don't report as MONOTONIC.
+v2:
+  Got Acked-By tags for nilfs and btrfs changes
+  Fixed an error arising in f2fs
+  - Reported-by: kernel test robot <lkp@intel.com>
 
-Trond is of the opinion that monotonicity is a hard requirement, and
-that we should not allow filesystems that can't provide that quality to
-report STATX_VERSION at all. His rationale is that one of the main uses
-for this is for backup applications, and for those a counter that could
-go backward is worse than useless.
+Vishal Moola (Oracle) (23):
+  pagemap: Add filemap_grab_folio()
+  filemap: Added filemap_get_folios_tag()
+  filemap: Convert __filemap_fdatawait_range() to use
+    filemap_get_folios_tag()
+  page-writeback: Convert write_cache_pages() to use
+    filemap_get_folios_tag()
+  afs: Convert afs_writepages_region() to use filemap_get_folios_tag()
+  btrfs: Convert btree_write_cache_pages() to use
+    filemap_get_folio_tag()
+  btrfs: Convert extent_write_cache_pages() to use
+    filemap_get_folios_tag()
+  ceph: Convert ceph_writepages_start() to use filemap_get_folios_tag()
+  cifs: Convert wdata_alloc_and_fillpages() to use
+    filemap_get_folios_tag()
+  ext4: Convert mpage_prepare_extent_to_map() to use
+    filemap_get_folios_tag()
+  f2fs: Convert f2fs_fsync_node_pages() to use filemap_get_folios_tag()
+  f2fs: Convert f2fs_flush_inline_data() to use filemap_get_folios_tag()
+  f2fs: Convert f2fs_sync_node_pages() to use filemap_get_folios_tag()
+  f2fs: Convert f2fs_write_cache_pages() to use filemap_get_folios_tag()
+  f2fs: Convert last_fsync_dnode() to use filemap_get_folios_tag()
+  f2fs: Convert f2fs_sync_meta_pages() to use filemap_get_folios_tag()
+  gfs2: Convert gfs2_write_cache_jdata() to use filemap_get_folios_tag()
+  nilfs2: Convert nilfs_lookup_dirty_data_buffers() to use
+    filemap_get_folios_tag()
+  nilfs2: Convert nilfs_lookup_dirty_node_buffers() to use
+    filemap_get_folios_tag()
+  nilfs2: Convert nilfs_btree_lookup_dirty_buffers() to use
+    filemap_get_folios_tag()
+  nilfs2: Convert nilfs_copy_dirty_pages() to use
+    filemap_get_folios_tag()
+  nilfs2: Convert nilfs_clear_dirty_pages() to use
+    filemap_get_folios_tag()
+  filemap: Remove find_get_pages_range_tag()
 
-I don't have strong feelings either way, but if we want that then we
-will not be able to offload the crash counter handling to userland.
+ fs/afs/write.c          | 114 +++++++++++++++++++++-------------------
+ fs/btrfs/extent_io.c    |  57 ++++++++++----------
+ fs/ceph/addr.c          |  58 ++++++++++----------
+ fs/cifs/file.c          |  33 ++++++++++--
+ fs/ext4/inode.c         |  55 ++++++++++---------
+ fs/f2fs/checkpoint.c    |  49 +++++++++--------
+ fs/f2fs/compress.c      |  13 ++---
+ fs/f2fs/data.c          |  69 +++++++++++++-----------
+ fs/f2fs/f2fs.h          |   5 +-
+ fs/f2fs/node.c          |  72 +++++++++++++------------
+ fs/gfs2/aops.c          |  64 ++++++++++++----------
+ fs/nilfs2/btree.c       |  14 ++---
+ fs/nilfs2/page.c        |  59 +++++++++++----------
+ fs/nilfs2/segment.c     |  44 ++++++++--------
+ include/linux/pagemap.h |  32 +++++++----
+ include/linux/pagevec.h |   8 ---
+ mm/filemap.c            |  87 +++++++++++++++---------------
+ mm/page-writeback.c     |  44 ++++++++--------
+ mm/swap.c               |  10 ----
+ 19 files changed, 467 insertions(+), 420 deletions(-)
 
-Thoughts?
-
-diff --git a/fs/stat.c b/fs/stat.c
-index e7f8cd4b24e1..8396c372022f 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -593,11 +593,9 @@ cp_statx(const struct kstat *stat, struct statx __user *buffer)
- 
- 	memset(&tmp, 0, sizeof(tmp));
- 
--	/* STATX_VERSION is kernel-only for now */
--	tmp.stx_mask = stat->result_mask & ~STATX_VERSION;
-+	tmp.stx_mask = stat->result_mask;
- 	tmp.stx_blksize = stat->blksize;
--	/* STATX_ATTR_VERSION_MONOTONIC is kernel-only for now */
--	tmp.stx_attributes = stat->attributes & ~STATX_ATTR_VERSION_MONOTONIC;
-+	tmp.stx_attributes = stat->attributes;
- 	tmp.stx_nlink = stat->nlink;
- 	tmp.stx_uid = from_kuid_munged(current_user_ns(), stat->uid);
- 	tmp.stx_gid = from_kgid_munged(current_user_ns(), stat->gid);
-@@ -621,6 +619,7 @@ cp_statx(const struct kstat *stat, struct statx __user *buffer)
- 	tmp.stx_mnt_id = stat->mnt_id;
- 	tmp.stx_dio_mem_align = stat->dio_mem_align;
- 	tmp.stx_dio_offset_align = stat->dio_offset_align;
-+	tmp.stx_version = stat->version;
- 
- 	return copy_to_user(buffer, &tmp, sizeof(tmp)) ? -EFAULT : 0;
- }
-@@ -636,11 +635,6 @@ int do_statx(int dfd, struct filename *filename, unsigned int flags,
- 	if ((flags & AT_STATX_SYNC_TYPE) == AT_STATX_SYNC_TYPE)
- 		return -EINVAL;
- 
--	/* STATX_VERSION is kernel-only for now. Ignore requests
--	 * from userland.
--	 */
--	mask &= ~STATX_VERSION;
--
- 	error = vfs_statx(dfd, filename, flags, &stat, mask);
- 	if (error)
- 		return error;
-diff --git a/include/linux/stat.h b/include/linux/stat.h
-index 4e9428d86a3a..69c79e4fd1b1 100644
---- a/include/linux/stat.h
-+++ b/include/linux/stat.h
-@@ -54,13 +54,4 @@ struct kstat {
- 	u32		dio_offset_align;
- 	u64		version;
- };
--
--/* These definitions are internal to the kernel for now. Mainly used by nfsd. */
--
--/* mask values */
--#define STATX_VERSION		0x40000000U	/* Want/got stx_change_attr */
--
--/* file attribute values */
--#define STATX_ATTR_VERSION_MONOTONIC	0x8000000000000000ULL /* version monotonically increases */
--
- #endif
-diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
-index 7cab2c65d3d7..4a0a1f27c059 100644
---- a/include/uapi/linux/stat.h
-+++ b/include/uapi/linux/stat.h
-@@ -127,7 +127,8 @@ struct statx {
- 	__u32	stx_dio_mem_align;	/* Memory buffer alignment for direct I/O */
- 	__u32	stx_dio_offset_align;	/* File offset alignment for direct I/O */
- 	/* 0xa0 */
--	__u64	__spare3[12];	/* Spare space for future expansion */
-+	__u64	stx_version; /* Inode change attribute */
-+	__u64	__spare3[11];	/* Spare space for future expansion */
- 	/* 0x100 */
- };
- 
-@@ -154,6 +155,7 @@ struct statx {
- #define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
- #define STATX_MNT_ID		0x00001000U	/* Got stx_mnt_id */
- #define STATX_DIOALIGN		0x00002000U	/* Want/got direct I/O alignment info */
-+#define STATX_VERSION		0x00004000U	/* Want/got stx_version */
- 
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
-@@ -189,6 +191,6 @@ struct statx {
- #define STATX_ATTR_MOUNT_ROOT		0x00002000 /* Root of a mount */
- #define STATX_ATTR_VERITY		0x00100000 /* [I] Verity protected file */
- #define STATX_ATTR_DAX			0x00200000 /* File is currently in DAX state */
--
-+#define STATX_ATTR_VERSION_MONOTONIC	0x00400000 /* stx_version increases w/ every change */
- 
- #endif /* _UAPI_LINUX_STAT_H */
-diff --git a/samples/vfs/test-statx.c b/samples/vfs/test-statx.c
-index 49c7a46cee07..868c9394e038 100644
---- a/samples/vfs/test-statx.c
-+++ b/samples/vfs/test-statx.c
-@@ -107,6 +107,8 @@ static void dump_statx(struct statx *stx)
- 	printf("Device: %-15s", buffer);
- 	if (stx->stx_mask & STATX_INO)
- 		printf(" Inode: %-11llu", (unsigned long long) stx->stx_ino);
-+	if (stx->stx_mask & STATX_MNT_ID)
-+		printf(" MountId: %llx", stx->stx_mnt_id);
- 	if (stx->stx_mask & STATX_NLINK)
- 		printf(" Links: %-5u", stx->stx_nlink);
- 	if (stx->stx_mask & STATX_TYPE) {
-@@ -145,7 +147,9 @@ static void dump_statx(struct statx *stx)
- 	if (stx->stx_mask & STATX_CTIME)
- 		print_time("Change: ", &stx->stx_ctime);
- 	if (stx->stx_mask & STATX_BTIME)
--		print_time(" Birth: ", &stx->stx_btime);
-+		print_time("Birth: ", &stx->stx_btime);
-+	if (stx->stx_mask & STATX_VERSION)
-+		printf("Inode Version: %llu\n", stx->stx_version);
- 
- 	if (stx->stx_attributes_mask) {
- 		unsigned char bits, mbits;
-@@ -218,7 +222,7 @@ int main(int argc, char **argv)
- 	struct statx stx;
- 	int ret, raw = 0, atflag = AT_SYMLINK_NOFOLLOW;
- 
--	unsigned int mask = STATX_BASIC_STATS | STATX_BTIME;
-+	unsigned int mask = STATX_BASIC_STATS | STATX_BTIME | STATX_MNT_ID | STATX_VERSION;
- 
- 	for (argv++; *argv; argv++) {
- 		if (strcmp(*argv, "-F") == 0) {
 -- 
-2.37.3
+2.36.1
 
