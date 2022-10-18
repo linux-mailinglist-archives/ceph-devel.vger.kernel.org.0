@@ -2,47 +2,66 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F8E960351B
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Oct 2022 23:46:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E162D603699
+	for <lists+ceph-devel@lfdr.de>; Wed, 19 Oct 2022 01:19:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbiJRVqH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 18 Oct 2022 17:46:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53004 "EHLO
+        id S229635AbiJRXTt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 18 Oct 2022 19:19:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229841AbiJRVps (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 18 Oct 2022 17:45:48 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 15ED067071;
-        Tue, 18 Oct 2022 14:45:47 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 3E48911021F6;
-        Wed, 19 Oct 2022 08:45:46 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1okuPA-003bsw-Bg; Wed, 19 Oct 2022 08:45:44 +1100
-Date:   Wed, 19 Oct 2022 08:45:44 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 00/23] Convert to filemap_get_folios_tag()
-Message-ID: <20221018214544.GI2703033@dread.disaster.area>
-References: <20220901220138.182896-1-vishal.moola@gmail.com>
+        with ESMTP id S229506AbiJRXTs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 18 Oct 2022 19:19:48 -0400
+Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C27431C92D
+        for <ceph-devel@vger.kernel.org>; Tue, 18 Oct 2022 16:19:45 -0700 (PDT)
+Received: by mail-ua1-x936.google.com with SMTP id i16so6254501uak.1
+        for <ceph-devel@vger.kernel.org>; Tue, 18 Oct 2022 16:19:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0SJhTm58jcZ66VMcJo9uIhg6zvMUfI9wHJDhj7OGHUQ=;
+        b=N+/YxEyb/kVXB7dmLfvirOhcBB0LJMtu1pkedCONTFs7ZlPK7c4tlHTzprMGM+g+K4
+         bqTJ4bT64ELEP5aE6D6qDmVxTncwvifyIC7kqlgpJF07hWnK4D2H5jIGOb4cB03wXN8b
+         oVVs8mzgK5afsa+w6CPJQbqu40OL2I+SUy/iZIQ2MIJGJfaGrS2+hMrxTJ/bYzHIjjT9
+         6T4a/erA4jBBVJrgLGn9CRVPen/7Qs0wbSsZWXS5nk+VU4pGC5ZN9FqItrVwJNfcLiUS
+         RWj9g0cnNYJRimpaKGx+Sb5i8XEg7AbRFUeMsFsh8DaNrx7vwvJIxQ1b9QNwnbWIFlwN
+         pbaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0SJhTm58jcZ66VMcJo9uIhg6zvMUfI9wHJDhj7OGHUQ=;
+        b=rTWKcd+8Vzep3ydk3gCnmHpizDdAGUzctFGiLYQK5UuDDNNRbA2M0E+70HQI+4paHO
+         aBFpbpNfDVkKxuGUTxNG/eCT7xc9KpmZOYbZU1XuVjgJ3UslHaTkODkQht0Vo1eKODG5
+         kAETJngatkBUEQjTeO0y/SsfMPdG4rD1nntc50WA4k366xhTChgyzcHmwkw53+RnCzSo
+         AHXzmyrLlXRmmiej7tJjLCj5tcCDLDjiddr71aufSJMEZ9TVIRmz8S18azbn3edXRz5u
+         IlQvh4dRgNI7fyFny0Guh6nnZ8X6Maq//hmXaZGjATe4TAb5V26xKuOyV1cg4ysijnO9
+         GfIA==
+X-Gm-Message-State: ACrzQf2rBkmvEpGYTqxncFlMBv65H6OlN2dNhpGPZj5xzJV5lOUXutaH
+        OTvwYESpR7Y3lccyeq/T52aNCqYlirZB9QcUW+58Ix0UUHU=
+X-Google-Smtp-Source: AMsMyM7Xay+G8X80kg64m7BH/NW/wO2nZ+0GiGwyz/+Qynra5X7OLqZTLgM6Cz7T84850EENjcCEl6SXq8Fh4j+FW1E=
+X-Received: by 2002:ab0:3b18:0:b0:3d1:f407:1190 with SMTP id
+ n24-20020ab03b18000000b003d1f4071190mr457047uaw.51.1666135184755; Tue, 18 Oct
+ 2022 16:19:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220901220138.182896-1-vishal.moola@gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=634f1e8b
-        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
-        a=kj9zAlcOel0A:10 a=Qawa6l4ZSaYA:10 a=7-415B0cAAAA:8
-        a=A9Ajo3xi_aTsyj5e4eYA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
+References: <CAMym5wsABmduNp=JvwutFioiq24Qtm=fniKDDxqatFhpk_teYQ@mail.gmail.com>
+ <CAJ4mKGYaNi2HNB4o9SPQgNw5ba0OAOWXDHZLM77KOgnht4--_g@mail.gmail.com>
+In-Reply-To: <CAJ4mKGYaNi2HNB4o9SPQgNw5ba0OAOWXDHZLM77KOgnht4--_g@mail.gmail.com>
+From:   Satoru Takeuchi <satoru.takeuchi@gmail.com>
+Date:   Wed, 19 Oct 2022 08:19:33 +0900
+Message-ID: <CAMym5wtoGkJvAYZ9ULirY-apXez4Vu4AXUA-NtX+1+qHivHFVQ@mail.gmail.com>
+Subject: Re: Is downburst still maintained?
+To:     Gregory Farnum <gfarnum@redhat.com>
+Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
+        Kyrylo Shatskyy <kyrylo.shatskyy@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -50,47 +69,39 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Sep 01, 2022 at 03:01:15PM -0700, Vishal Moola (Oracle) wrote:
-> This patch series replaces find_get_pages_range_tag() with
-> filemap_get_folios_tag(). This also allows the removal of multiple
-> calls to compound_head() throughout.
-> It also makes a good chunk of the straightforward conversions to folios,
-> and takes the opportunity to introduce a function that grabs a folio
-> from the pagecache.
-> 
-> F2fs and Ceph have quite alot of work to be done regarding folios, so
-> for now those patches only have the changes necessary for the removal of
-> find_get_pages_range_tag(), and only support folios of size 1 (which is
-> all they use right now anyways).
-> 
-> I've run xfstests on btrfs, ext4, f2fs, and nilfs2, but more testing may be
-> beneficial.
+Hi Gregory,
 
-Well, that answers my question about how filesystems that enable
-multi-page folios were tested: they weren't. 
+2022=E5=B9=B410=E6=9C=8819=E6=97=A5(=E6=B0=B4) 2:19 Gregory Farnum <gfarnum=
+@redhat.com>:
+>
+> On Mon, Oct 17, 2022 at 7:30 PM Satoru Takeuchi
+> <satoru.takeuchi@gmail.com> wrote:
+> >
+> > Hi,
+> >
+> > I've tried to run teuthology in my local environment by following the
+> > official docs.
+> > FIrst I tried to use downburst but I found that it hasn't updated for
+> > a long time.
+> >
+> > https://github.com/ceph/downburst
+> >
+> > Is downburst still maintained? Currently, I prepare my nodes by
+> > Vagrant and would
+> > like to know whether my approach is correct or not.
+> >
+>
+> I think downburst is mostly dead at this point. The upstream lab
+> teuthology instance no longer uses VMs or bursts into the cloud (it
+> deploys using FOG to raw hardware), and I'm not sure if anybody else
+> is keeping the run-on-a-cloud portions alive. :/
+> I see Kyr committed to downburst about a year ago, and most of the
+> vaguely recent work for clouds was from him and Suse, so maybe he
+> knows?
 
-I'd suggest that anyone working on further extending the
-filemap/folio infrastructure really needs to be testing XFS as a
-first priority, and then other filesystems as a secondary concern.
+Thank you for your answer, and I found I posted this message to the wrong l=
+ist.
+I should have sent this to dev@ceph.io or ceph-users@ceph.io.
 
-That's because XFS (via the fs/iomap infrastructure) is one of only
-3 filesystems in the kernel (AFS and tmpfs are the others) that
-interact with the page cache and page cache "pages" solely via folio
-interfaces. As such they are able to support multi-page folios in
-the page cache. All of the tested filesystems still use the fixed
-PAGE_SIZE page interfaces to interact with the page cache, so they
-don't actually exercise interactions with multi-page folios at all.
-
-Hence if you are converting generic infrastructure that looks up
-pages in the page cache to look up folios in the page cache, the
-code that processes the returned folios also needs to be updated and
-validated to ensure that it correctly handles multi-page folios. And
-the only way you can do that fully at this point in time is via
-testing XFS or AFS...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Best,
+Satoru
