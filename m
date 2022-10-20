@@ -2,154 +2,198 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 930F860515F
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 Oct 2022 22:36:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B213960550B
+	for <lists+ceph-devel@lfdr.de>; Thu, 20 Oct 2022 03:32:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231239AbiJSUg4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 19 Oct 2022 16:36:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37102 "EHLO
+        id S231463AbiJTBcT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 19 Oct 2022 21:32:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229840AbiJSUgy (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 19 Oct 2022 16:36:54 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FF0B18BE22;
-        Wed, 19 Oct 2022 13:36:53 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1584AB825E3;
-        Wed, 19 Oct 2022 20:36:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D42C433D6;
-        Wed, 19 Oct 2022 20:36:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666211810;
-        bh=QNWrT4BNA+f3DUSflq7rEklmV7uTmyKRkZdYeFH1rWA=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=imWCyvFmM+m5SFXX1nMp/YvOzsVzar0qgjvdpeIZAlfcEPP76kruPCbbxoOo//q2H
-         sNl7clm1oVEZXJFtuw18oWvDPa6A8Il+ETr3YlpYFidrm7KkvSg5U2anEiqUB09QRc
-         a9wp0KZzk36JV4SZn/QgRGikwvpACJK2Iq4FHrQF2G+Wcf6hl70xAps8Qi455HjbXZ
-         L3lek3pRbyGIYwzbWx8tQuhHbX1iQQQ+Z3qyc2fEgq1gga9tYjISjmuvQtvw+e3Fqb
-         ZIkvU1LMbOYsk38kQq3rKMqAN79/O/U55cQ1OujGhDJvTrdbHz8YoRLPvzjqyKTVVi
-         WN9Mbm4Q0DowQ==
-Message-ID: <3fa8e13be8d75e694e8360a8e9552a92a4c14803.camel@kernel.org>
-Subject: Re: [PATCH v7 0/9] fs: clean up handling of i_version counter
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>, tytso@mit.edu,
-        adilger.kernel@dilger.ca, david@fromorbit.com,
-        trondmy@hammerspace.com, neilb@suse.de, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
-        lczerner@redhat.com, jack@suse.cz, bfields@fieldses.org,
-        fweimer@redhat.com, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Date:   Wed, 19 Oct 2022 16:36:47 -0400
-In-Reply-To: <Y1AbmIYEhUwfFHDx@magnolia>
-References: <20221017105709.10830-1-jlayton@kernel.org>
-         <20221019111315.hpilifogyvf3bixh@wittgenstein>
-         <2b167dd9bda17f1324e9c526d868cc0d995dc660.camel@kernel.org>
-         <Y1AbmIYEhUwfFHDx@magnolia>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
+        with ESMTP id S231366AbiJTBcS (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 19 Oct 2022 21:32:18 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA2EF19DD9F
+        for <ceph-devel@vger.kernel.org>; Wed, 19 Oct 2022 18:31:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1666229381;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rZC6+ToPTVw90Wnz576PIbBOGIevd9F/Dg3iNGIUqzY=;
+        b=VbeXpFlZ1jjMQswe2+ODvlaVqHp64L7qBZS+KVMn8CdQsAO7OPOPjE7FPtO9zqg8GW4vdv
+        z10Mh8XRGW9UQK7TmvKYYoOJypD9kxERFEIEgzct0BpU8/BXuZ73gk3Rr9UDtP2rUy6jzh
+        o2YHmlEZ0OSxAao9l5jsUj/vuRF9N5Y=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-479-o0acD0ytPtuuSBtT8H4xgQ-1; Wed, 19 Oct 2022 21:29:39 -0400
+X-MC-Unique: o0acD0ytPtuuSBtT8H4xgQ-1
+Received: by mail-pl1-f199.google.com with SMTP id l16-20020a170902f69000b001865f863784so790328plg.2
+        for <ceph-devel@vger.kernel.org>; Wed, 19 Oct 2022 18:29:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rZC6+ToPTVw90Wnz576PIbBOGIevd9F/Dg3iNGIUqzY=;
+        b=Dpcjbpo9X3nyoZ6h0kYXx11RhFlXGa7hfut9fOwQUt3pxaw65PrnF/D1JDOOy0WPRB
+         OBxPVvB3IklXB6xfhDNcoFGt497GSnwyqri9Pw3eIWSKjhq15gDZpq0BnEX/1FgAQqSP
+         FqUMKOVpiZXge8fGzRYFxhBrbXdeLfu5dgP71chUic/S9gviONymuoKHyw7MuhAx5nho
+         XvhzkYCt+DqsFfY3JA4YsyJFSNtGrQan6fLrj/U6R+4+q3vVc8NIENnA+/n4B7p5pMkX
+         E3xHsHoTQh84rDRVxapl5Rg1a84t3b3EBvNaCGWN275HvrkD7kQQ/NuN4sPC+pG6d0fW
+         pXZg==
+X-Gm-Message-State: ACrzQf3WngUhlSAN7LrHGyOto+70PTBEZ+dBVZD7Jy6g+OQG9KiwB4QZ
+        XboOT8iPucVbkAl/3pFskSICObGxmIlcYbD/4kidl4f5WVyH56f7Delz4fxuy/7Y8h5VtpoUk4H
+        TeWTWYt15hH3BSDbvdCMl1w==
+X-Received: by 2002:a17:90b:3912:b0:20d:4151:1b65 with SMTP id ob18-20020a17090b391200b0020d41511b65mr49381507pjb.233.1666229378604;
+        Wed, 19 Oct 2022 18:29:38 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM50N30+f9apTD5DfIKQUIhu3CELsyaW6/XmNiGAQqCBy6DMFFkfGh7J/RwGOCfxUOD7q5ynug==
+X-Received: by 2002:a17:90b:3912:b0:20d:4151:1b65 with SMTP id ob18-20020a17090b391200b0020d41511b65mr49381487pjb.233.1666229378246;
+        Wed, 19 Oct 2022 18:29:38 -0700 (PDT)
+Received: from [10.72.12.79] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id s3-20020aa78bc3000000b0056323de479bsm11966507pfd.120.2022.10.19.18.29.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Oct 2022 18:29:37 -0700 (PDT)
+Subject: Re: [PATCH] fs/ceph/super: add mount options "snapdir{mode,uid,gid}"
+To:     Jeff Layton <jlayton@kernel.org>,
+        Max Kellermann <max.kellermann@ionos.com>
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220927120857.639461-1-max.kellermann@ionos.com>
+ <88f8941f-82bf-5152-b49a-56cb2e465abb@redhat.com>
+ <CAKPOu+88FT1SeFDhvnD_NC7aEJBxd=-T99w67mA-s4SXQXjQNw@mail.gmail.com>
+ <75e7f676-8c85-af0a-97b2-43664f60c811@redhat.com>
+ <CAKPOu+-rKOVsZ1T=1X-T-Y5Fe1MW2Fs9ixQh8rgq3S9shi8Thw@mail.gmail.com>
+ <baf42d14-9bc8-93e1-3d75-7248f93afbd2@redhat.com>
+ <cd5ed50a3c760f746a43f8d68fdbc69b01b89b39.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <7e28f7d1-cfd5-642a-dd4e-ab521885187c@redhat.com>
+Date:   Thu, 20 Oct 2022 09:29:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <cd5ed50a3c760f746a43f8d68fdbc69b01b89b39.camel@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2022-10-19 at 08:45 -0700, Darrick J. Wong wrote:
-> On Wed, Oct 19, 2022 at 08:18:15AM -0400, Jeff Layton wrote:
-> > On Wed, 2022-10-19 at 13:13 +0200, Christian Brauner wrote:
-> > > On Mon, Oct 17, 2022 at 06:57:00AM -0400, Jeff Layton wrote:
-> > > > This patchset is intended to clean up the handling of the i_version
-> > > > counter by nfsd. Most of the changes are to internal interfaces.
-> > > >=20
-> > > > This set is not intended to address crash resilience, or the fact t=
-hat
-> > > > the counter is bumped before a change and not after. I intend to ta=
-ckle
-> > > > those in follow-on patchsets.
-> > > >=20
-> > > > My intention is to get this series included into linux-next soon, w=
-ith
-> > > > an eye toward merging most of it during the v6.2 merge window. The =
-last
-> > > > patch in the series is probably not suitable for merge as-is, at le=
-ast
-> > > > until we sort out the semantics we want to present to userland for =
-it.
-> > >=20
-> > > Over the course of the series I struggled a bit - and sorry for losin=
-g
-> > > focus - with what i_version is supposed to represent for userspace. S=
-o I
-> > > would support not exposing it to userspace before that. But that
-> > > shouldn't affect your other changes iiuc.
-> >=20
-> > Thanks Christian,
-> >=20
-> > It has been a real struggle to nail this down, and yeah I too am not
-> > planning to expose this to userland until we have this much better
-> > defined.=A0Patch #9 is just to give you an idea of what this would
-> > ultimately look like. I intend to re-post the first 8 patches with an
-> > eye toward merge in v6.2, once we've settled on the naming. On that
-> > note...
-> >=20
-> > I believe you had mentioned that you didn't like STATX_CHANGE_ATTR for
-> > the name, and suggested STATX_I_VERSION (or something similar), which I
-> > later shortened to STATX_VERSION.
-> >=20
-> > Dave C. objected to STATX_VERSION, as "version" fields in a struct
-> > usually refer to the version of the struct itself rather than the
-> > version of the thing it describes. It also sort of implies a monotonic
-> > counter, and I'm not ready to require that just yet.
-> >=20
-> > What about STATX_CHANGE for the name (with corresponding names for the
-> > field and other flags)? That drops the redundant "_ATTR" postfix, while
-> > being sufficiently vague to allow for alternative implementations in th=
-e
-> > future.
-> >=20
-> > Do you (or anyone else) have other suggestions for a name?
->=20
-> Welllll it's really a u32 whose value doesn't have any intrinsic meaning
-> other than "if (value_now !=3D value_before) flush_cache();" right?
-> I think it really only tracks changes to file data, right?
->=20
 
-It's a u64, but yeah, you're not supposed to assign any intrinsic
-meaning to the value itself.
+On 11/10/2022 18:45, Jeff Layton wrote:
+> On Mon, 2022-10-10 at 10:02 +0800, Xiubo Li wrote:
+>> On 09/10/2022 18:27, Max Kellermann wrote:
+>>> On Sun, Oct 9, 2022 at 10:43 AM Xiubo Li <xiubli@redhat.com> wrote:
+>>>> I mean CEPHFS CLIENT CAPABILITIES [1].
+>>> I know that, but that's suitable for me. This is client-specific, not
+>>> user (uid/gid) specific.
+>>>
+>>> In my use case, a server can run unprivileged user processes which
+>>> should not be able create snapshots for their own home directory, and
+>>> ideally they should not even be able to traverse into the ".snap"
+>>> directory and access the snapshots created of their home directory.
+>>> Other (non-superuser) system processes however should be able to
+>>> manage snapshots. It should be possible to bind-mount snapshots into
+>>> the user's mount namespace.
+>>>
+>>> All of that is possible with my patch, but impossible with your
+>>> suggestion. The client-specific approach is all-or-nothing (unless I
+>>> miss something vital).
+>>>
+>>>> The snapdir name is a different case.
+>>> But this is only about the snapdir. The snapdir does not exist on the
+>>> server, it is synthesized on the client (in the Linux kernel cephfs
+>>> code).
+>> This could be applied to it's parent dir instead as one metadata in mds
+>> side and in client side it will be transfer to snapdir's metadata, just
+>> like what the snapshots.
+>>
+>> But just ignore this approach.
+>>
+>>>> But your current approach will introduce issues when an UID/GID is reused after an user/groud is deleted ?
+>>> The UID I would specify is one which exists on the client, for a
+>>> dedicated system user whose purpose is to manage cephfs snapshots of
+>>> all users. The UID is created when the machine is installed, and is
+>>> never deleted.
+>> This is an ideal use case IMO.
+>>
+>> I googled about reusing the UID/GID issues and found someone has hit a
+>> similar issue in their use case.
+>>
+> This is always a danger and not just with ceph. The solution to that is
+> good sysadmin practices (i.e. don't reuse uid/gid values without
+> sanitizing the filesystems first).
 
-> STATX_CHANGE_COOKIE	(wait, does this cookie augment i_ctime?)
->=20
-> STATX_MOD_COOKIE	(...or just file modifications/i_mtime?)
->=20
-> STATX_MONITOR_COOKIE	(...what are we monitoring??)
->=20
-> STATX_MON_COOKIE
->=20
-> STATX_COOKIE_MON
->=20
-> STATX_COOKIE_MONSTER
->=20
-> There we go. ;)
->=20
-> In seriousness, I'd probably go with one of the first two.  I wouldn't
-> be opposed to the last one, either, but others may disagree. ;)
->=20
-> --D
->=20
->=20
+Yeah, this sounds reasonable.
 
-STATX_CHANGE_COOKIE is probably the best one. I'll plan to go with that
-unless someone has a better idea. Thanks for the suggestions!
+>>>> Maybe the proper approach is the posix acl. Then by default the .snap dir will inherit the permission from its parent and you can change it as you wish. This permission could be spread to all the other clients too ?
+>>> No, that would be impractical and unreliable.
+>>> Impractical because it would require me to walk the whole filesystem
+>>> tree and let the kernel synthesize the snapdir inode for all
+>>> directories and change its ACL;
+>> No, it don't have to. This could work simply as the snaprealm hierarchy
+>> thing in kceph.
+>>
+>> Only the up top directory need to record the ACL and all the descendants
+>> will point and use it if they don't have their own ACLs.
+>>
+>>>    impractical because walking millions
+>>> of directories takes longer than I am willing to wait.
+>>> Unreliable because there would be race problems when another client
+>>> (or even the local client) creates a new directory. Until my local
+>>> "snapdir ACL daemon" learns about the existence of the new directory
+>>> and is able to update its ACL, the user can already have messed with
+>>> it.
+>> For multiple clients case I think the cephfs capabilities [3] could
+>> guarantee the consistency of this. While for the single client case if
+>> before the user could update its ACL just after creating it someone else
+>> has changed it or messed it up, then won't the existing ACLs have the
+>> same issue ?
+>>
+>> [3] https://docs.ceph.com/en/quincy/cephfs/capabilities/
+>>
+>>
+>>> Both of that is not a problem with my patch.
+>>>
+>> Jeff,
+>>
+>> Any idea ?
+>>
+> I tend to agree with Max here. The .snap dir is a client-side fiction,
+> so trying to do something on the MDS to govern its use seems a bit odd.
+> cephx is really about authenticating clients. I know we do things like
+> enforce root squashing on the MDS, but this is a little different.
+>
+> Now, all of that said, snapshot handling is an area where I'm just not
+> that knowledgeable. Feel free to ignore my opinion here as uninformed.
 
-Cheers,
---=20
-Jeff Layton <jlayton@kernel.org>
+I am thinking currently the cephfs have the same issue we discussed 
+here. Because the cephfs is saving the UID/GID number in the CInode 
+metedata. While when there have multiple clients are sharing the same 
+cephfs, so in different client nodes another user could cross access a 
+specified user's files. For example:
+
+In client nodeA:
+
+user1's UID is 123, user2's UID is 321.
+
+In client nodeB:
+
+user1's UID is 321, user2's UID is 123.
+
+And if user1 create a fileA in the client nodeA, then user2 could access 
+it from client nodeB.
+
+Doesn't this also sound more like a client-side fiction ?
+
+- Xiubo
+
+
