@@ -2,28 +2,28 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B213960550B
-	for <lists+ceph-devel@lfdr.de>; Thu, 20 Oct 2022 03:32:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41E0F6055CA
+	for <lists+ceph-devel@lfdr.de>; Thu, 20 Oct 2022 05:10:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231463AbiJTBcT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 19 Oct 2022 21:32:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58782 "EHLO
+        id S229663AbiJTDKM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 19 Oct 2022 23:10:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231366AbiJTBcS (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 19 Oct 2022 21:32:18 -0400
+        with ESMTP id S230250AbiJTDKI (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 19 Oct 2022 23:10:08 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA2EF19DD9F
-        for <ceph-devel@vger.kernel.org>; Wed, 19 Oct 2022 18:31:44 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6955C4E193
+        for <ceph-devel@vger.kernel.org>; Wed, 19 Oct 2022 20:10:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1666229381;
+        s=mimecast20190719; t=1666235403;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
         bh=rZC6+ToPTVw90Wnz576PIbBOGIevd9F/Dg3iNGIUqzY=;
-        b=VbeXpFlZ1jjMQswe2+ODvlaVqHp64L7qBZS+KVMn8CdQsAO7OPOPjE7FPtO9zqg8GW4vdv
-        z10Mh8XRGW9UQK7TmvKYYoOJypD9kxERFEIEgzct0BpU8/BXuZ73gk3Rr9UDtP2rUy6jzh
-        o2YHmlEZ0OSxAao9l5jsUj/vuRF9N5Y=
+        b=Cyrn/uJbQGhq5RIxIVE3A5nOQew04zWR53xWeF9teQoq+boEXF46BQxKhtp5vpt+ItxNs/
+        jODqC9tIqPtcl6UspTDMNuyzIXzSS1SHhdsbITEG3M+owCRG/DHQOzmx/buun2K9ip86WL
+        QkLcifMvEvM5AEmFicpDDYOHIN3vPfg=
 Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
  [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
@@ -80,7 +80,7 @@ Content-Language: en-US
 X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
