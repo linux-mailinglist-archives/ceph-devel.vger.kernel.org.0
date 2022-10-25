@@ -2,97 +2,174 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 00EC560C954
-	for <lists+ceph-devel@lfdr.de>; Tue, 25 Oct 2022 12:04:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6296760CF03
+	for <lists+ceph-devel@lfdr.de>; Tue, 25 Oct 2022 16:30:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232108AbiJYKEI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 25 Oct 2022 06:04:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57608 "EHLO
+        id S230415AbiJYOaw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 25 Oct 2022 10:30:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231514AbiJYKDf (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 25 Oct 2022 06:03:35 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9C94FC6E4
-        for <ceph-devel@vger.kernel.org>; Tue, 25 Oct 2022 02:58:12 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id ud5so7554884ejc.4
-        for <ceph-devel@vger.kernel.org>; Tue, 25 Oct 2022 02:58:12 -0700 (PDT)
+        with ESMTP id S231414AbiJYOav (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 25 Oct 2022 10:30:51 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC179F01A5
+        for <ceph-devel@vger.kernel.org>; Tue, 25 Oct 2022 07:30:47 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id m6so12023616pfb.0
+        for <ceph-devel@vger.kernel.org>; Tue, 25 Oct 2022 07:30:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oKIZ6XLNNrcediyAjLcdXx1DLwHh7OZ4VfOaL18dLfo=;
-        b=C4/K2Gv/LJoyjJkov3KuVi/VlaLlQEOp8OWpxO66frJzThdTchoi3MmoAWQNX0Sf/3
-         p5yo6IFCKapotwuxuM+QdvqOFfBgDaVJ6iw5OsIs5uFyexpXTvmqnqDSDT9vfQUD7Zk0
-         EgwVIZv8phbmIGD6Gi++YygMZvn5OHf2Z3Dv8ysW1BL+VsgrBwgwaE1Kd2nNV/hj7oN4
-         ESQu/suWBZTyfYIP3q9UblpB+v71DcFxKpi7kn2x8+ZAJDKY3bAZfKu4s2My+bYVuy+l
-         RF18z1omwNN4mFknRdpkmSDC3barO69SIyywddsODmxU8jaVtLJZT82TFOwwKCu1e8Lh
-         4tmg==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VpehAOxTrOv12o8hJV+1GFRTnikV+U8rSab3/RnQz9c=;
+        b=QBSl8g/hDVHA7jme5VLAr2A1NbvbE7qINC1fTfYgQzzvB/+Pcr5F5nbQ4k5w+/Dck4
+         JAqAD/mPcX/pg4xBwr0l2Cp08GF3VPQKaIhXTNw04k29jEvdtTpT5B3CfpLz8aaJeNLm
+         uSh5CWEfPlBJ1UB1EbIZunB4IDwsBBewtjIsNgB38ESzXB01DTrqLkLN+bK0vN9L18Jq
+         EuYwWKVSk+7gm7LU2mQBGGTHSQauXqdK/QFgAm5ynnXze0bDkEUsxxwimAAhkBR99bNl
+         nMowbf4dRhDDCg55IeGUy0IdNYc5fYEaBIceG73Wx/1p75oJXdOfTaqtf8qWBEImhfKB
+         zP/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oKIZ6XLNNrcediyAjLcdXx1DLwHh7OZ4VfOaL18dLfo=;
-        b=PgHpL//nAW2BmzdCTGf2rlWlHAJbwLkOjeSbdkDMntoSyfkSXU+JNRVEjwfgLqAdlW
-         BvNpFr68WEn9aeS1S43wdNc+XYbV6YPVKae+8zf+ZpgbVSX2QlK8vSgqi4jNdSMz82aG
-         u1uxa5+8w/yROro0akK2HqbNgmcil4IfruXoR2arsFB2vd/yqqW9i0ASOleJtfzeIPn+
-         hrMz4w/pxPBuXSRWq7pOMfGLZpMskzs+Kp58GV2384t5TuzRzbxUOaSp2PfM5xFQ7st5
-         gDQZ9GYQmiyfi0S1kB/7LGPX50updKRESa45EHg5ztWY/0EVSrzpDFKtWKxa7ZAMMZWm
-         lS9g==
-X-Gm-Message-State: ACrzQf13fJsi6CAgTHTbcM0qSYD1141Bhc6zY8DNoPKnumBHm5bgQ/c7
-        8lzbJAUoyFL+7nMO+HWPKbkQLExt+mLWS9g8Xs0F2w==
-X-Google-Smtp-Source: AMsMyM6Mvrp7DAcqS7eOdbD71753mmAZ5MykIIvTZQOdr2iQrdej82vku+QUBM27HIlzbIUVs0twQZu42JFb5ECZ9PM=
-X-Received: by 2002:a17:906:cc18:b0:78d:ee0f:ce02 with SMTP id
- ml24-20020a170906cc1800b0078dee0fce02mr32019065ejb.323.1666691890969; Tue, 25
- Oct 2022 02:58:10 -0700 (PDT)
+        bh=VpehAOxTrOv12o8hJV+1GFRTnikV+U8rSab3/RnQz9c=;
+        b=RQmwkkNdzwThdAtho6Ot98YRqCt4+gdbidaJp5jlL8nv5W9b29mT3m1rEZvGQhjrzZ
+         cWp3szCx1XZEzW/DCLdJZypJdX33iFPgc+E1SW9lsEHdnFbTIW9IVKF2iAle7a/F7fJi
+         F+IvniFV23M66MtKiqKR+iZSMGx1ylxgSmwRkvo5S5/i7z+pMLivX0OjOy+FpEyIfP2A
+         aCXXTTVn3bDVdZc5cp0QLF/tg2/M+tkeW271u8gciYPkuc4SMWfwVl1jP0rm8LjyDUPE
+         R9BjczckqIe4P+sZ1Qb4VIkrAvcZwelqg03QG9XCb99KZQbkmOruJUEVO/IxPgdrmq0R
+         mlcQ==
+X-Gm-Message-State: ACrzQf1n9XLsuYn9smWouUpxRj0wfeMOIDzheOraczXakrZpExm0mCEW
+        EODUXoDKZX4ZjEhikaNTuBQ=
+X-Google-Smtp-Source: AMsMyM7E+9MQODty82Sgx3LeuKl/wiii0nkEj8pRYY6dQGKgPFbAD5oH+e7DQl5iryHd1ETgdVWzHw==
+X-Received: by 2002:a63:6a03:0:b0:43a:18ce:7473 with SMTP id f3-20020a636a03000000b0043a18ce7473mr34527162pgc.616.1666708247194;
+        Tue, 25 Oct 2022 07:30:47 -0700 (PDT)
+Received: from DESKTOP-H1VBGGK.localdomain ([119.205.75.155])
+        by smtp.gmail.com with ESMTPSA id g13-20020aa796ad000000b0056b8af5d46esm1445575pfk.168.2022.10.25.07.30.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Oct 2022 07:30:46 -0700 (PDT)
+From:   Minjong Kim <make.dirty.code@gmail.com>
+To:     idryomov@gmail.com, xiubli@redhat.com, jlayton@kernel.org,
+        ceph-devel@vger.kernel.org
+Cc:     Minjong Kim <make.dirty.code@gmail.com>
+Subject: [PATCH] libceph: give priority to sockets of MDS clients
+Date:   Tue, 25 Oct 2022 23:27:32 +0900
+Message-Id: <20221025142731.22636-1-make.dirty.code@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20220927120857.639461-1-max.kellermann@ionos.com>
- <88f8941f-82bf-5152-b49a-56cb2e465abb@redhat.com> <CAKPOu+88FT1SeFDhvnD_NC7aEJBxd=-T99w67mA-s4SXQXjQNw@mail.gmail.com>
- <75e7f676-8c85-af0a-97b2-43664f60c811@redhat.com> <CAKPOu+-rKOVsZ1T=1X-T-Y5Fe1MW2Fs9ixQh8rgq3S9shi8Thw@mail.gmail.com>
- <baf42d14-9bc8-93e1-3d75-7248f93afbd2@redhat.com> <cd5ed50a3c760f746a43f8d68fdbc69b01b89b39.camel@kernel.org>
- <7e28f7d1-cfd5-642a-dd4e-ab521885187c@redhat.com> <8ef79208adc82b546cc4c2ba20b5c6ddbc3a2732.camel@kernel.org>
- <7d40fada-f5f8-4357-c559-18421266f5b4@redhat.com> <CAKPOu+_Jk0EHRDjqiNuFv8wL0kLXLLRZpx7AgWDPOWHzJn22xg@mail.gmail.com>
- <db650fa8-8b64-5275-7390-f6b48bfd3a37@redhat.com>
-In-Reply-To: <db650fa8-8b64-5275-7390-f6b48bfd3a37@redhat.com>
-From:   Max Kellermann <max.kellermann@ionos.com>
-Date:   Tue, 25 Oct 2022 11:57:59 +0200
-Message-ID: <CAKPOu+8qd+qybZWOMoaAYzOtTWXEQ=y5q1jJZjOVxE8pwX7CkQ@mail.gmail.com>
-Subject: Re: [PATCH] fs/ceph/super: add mount options "snapdir{mode,uid,gid}"
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com,
-        ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Oct 25, 2022 at 11:10 AM Xiubo Li <xiubli@redhat.com> wrote:
-> $ sudo ./bin/mount.ceph privileged@.a=/ /mnt/privileged/mountpoint
->
-> $ sudo ./bin/mount.ceph global@.a=/ /mnt/global/mountpoint
+MDS requests are buffered or dropped when the client's network is saturated.
+To alleviate this by giving priority to sockets in MDS.
 
-So you have two different mount points where different client
-permissions are used. There are various problems with that
-architecture:
+Signed-off-by: Minjong Kim <make.dirty.code@gmail.com>
+---
+Hello. I am very new to kernel. I would appreciate it if you could
+understand my clumsy process. I'm not sure if I should post this as a
+general question, as a patch, or if I should write a comment like this
+here, but I'll write a few words.
 
-- it complicates administration, because now every mount has to be done twice
-- it complicates applications accessing ceph (and their
-configuration), because there are now 2 mount points
-- it increases resource usage for having twice as many ceph connections
-- it interferes with fscache, doubling fscache's local disk usage,
-reducing fscache's efficiency
-- ownership of the snapdir is still the same as the parent directory,
-and I can't have non-superuser processes to manage snapshots; all
-processes mananging snapshots need to have write permission on the
-parent directory
-- this is still all-or-nothing; I can't forbid users to list (+r) or
-access (+x) snapshots
+I've found that at the point where the client network saturates, requests
+from MDSs drop significantly. To solve this, I added code to the kernel's
+code to tag MDS sockets with IP_TOS.
 
-All those problems don't exist with my patch.
+However, there are some problems caused by my inadequacies.
+
+First, is it okay to use higher-level functions like ip_setsockopt? This
+function works fine, but I haven't seen any other kernel code use it. Do I
+have to change the code like skb->priority manually? I'm mainly working on
+high-level code, so I'm careful about whether I can access these attributes
+directly.
+
+Second, IP_TOS seems to be a deprecated option. It seems to be managed
+through diffserv these days (though it is compatible with IP_TOS), but I
+couldn't find a function to tag dscp directly. In this case, using a
+function like ip_setsockopt(..IP_TOS) seems to be a problem, but I couldn't
+solve it in my own way.
+
+Third, the benchmarks I conducted seem to have many variables depending on
+various computing environments. I think I've done it several times as best
+I can, but this may be variable due to my local environment.
+
+Finally, this doesn't seem to be a perfect way to solve the problem. It
+seems that MDS packets are still buffered when burst. Also, it seems that
+many distributions these days use fq_codel by default, which doesn't
+support diffserv. But tagging IP_TOS doesn't seem to get any worse. (since
+the filesystem's workload is very small). The next version of fq_codel,
+cake, supports it, so there is a possibility that it will be improved.
+
+Thanks for reading this long post. Apart from the shortcomings in my code,
+please forgive me for the shortcomings in the kernel contributing process.
+
+ net/ceph/messenger_v1.c | 14 ++++++++++++++
+ net/ceph/messenger_v2.c | 13 +++++++++++++
+ 2 files changed, 27 insertions(+)
+
+diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
+index 3ddbde87e4d6..bab6ec4af82c 100644
+--- a/net/ceph/messenger_v1.c
++++ b/net/ceph/messenger_v1.c
+@@ -6,6 +6,7 @@
+ #include <linux/net.h>
+ #include <linux/socket.h>
+ #include <net/sock.h>
++#include <net/ip.h>
+ 
+ #include <linux/ceph/ceph_features.h>
+ #include <linux/ceph/decode.h>
+@@ -1423,6 +1424,19 @@ int ceph_con_v1_try_write(struct ceph_connection *con)
+ 			con->error_msg = "connect error";
+ 			goto out;
+ 		}
++
++		if (con->peer_name.type == CEPH_ENTITY_TYPE_MDS) {
++			__u8 tos_mds = 0xb0; // mark as AF32
++
++			ret = ip_setsockopt(con->sock->sk, SOL_IP, IP_TOS,
++			                    KERNEL_SOCKPTR(&tos_mds), 1);
++
++			if (ret) {
++				pr_err("ip_setsockopt failed: %d\n", ret);
++				con->error_msg = "connect error";
++				return ret;
++			}
++		}
+ 	}
+ 
+ more:
+diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+index cc8ff81a50b7..d87430f333c9 100644
+--- a/net/ceph/messenger_v2.c
++++ b/net/ceph/messenger_v2.c
+@@ -3180,6 +3180,19 @@ int ceph_con_v2_try_write(struct ceph_connection *con)
+ 			con->error_msg = "connect error";
+ 			return ret;
+ 		}
++
++		if (con->peer_name.type == CEPH_ENTITY_TYPE_MDS) {
++			__u8 tos_mds = 0xb0; // mark as AF32
++
++			ret = ip_setsockopt(con->sock->sk, SOL_IP, IP_TOS,
++			                    KERNEL_SOCKPTR(&tos_mds), 1);
++
++			if (ret) {
++				pr_err("ip_setsockopt failed: %d\n", ret);
++				con->error_msg = "connect error";
++				return ret;
++			}
++		}
+ 	}
+ 
+ 	if (!iov_iter_count(&con->v2.out_iter)) {
+-- 
+2.25.1
+
