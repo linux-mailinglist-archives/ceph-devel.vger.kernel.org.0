@@ -2,76 +2,75 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C8A460E2D3
-	for <lists+ceph-devel@lfdr.de>; Wed, 26 Oct 2022 16:05:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5A0660E2F1
+	for <lists+ceph-devel@lfdr.de>; Wed, 26 Oct 2022 16:12:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234124AbiJZOFE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 26 Oct 2022 10:05:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37710 "EHLO
+        id S234205AbiJZOMf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 26 Oct 2022 10:12:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234117AbiJZOFB (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 26 Oct 2022 10:05:01 -0400
+        with ESMTP id S234210AbiJZOMb (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 26 Oct 2022 10:12:31 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E15E4AD41
-        for <ceph-devel@vger.kernel.org>; Wed, 26 Oct 2022 07:04:54 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFCC310D6A9
+        for <ceph-devel@vger.kernel.org>; Wed, 26 Oct 2022 07:12:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1666793093;
+        s=mimecast20190719; t=1666793548;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=Z14ZXZUzGKjReZ1Rm3C0eR5qgCTXW0HUh+T1+61zw04=;
-        b=Pni3klrTd8DCXOjkCq9vF8XLiSz8b4+kaXHXYULBXE6B7NDJAr96A3Llvan3RB7bsfltyg
-        eFBDQqRmkVbfG5j53rLoT0/M6rFDZDwBNjLCMeAtaw773Yx9euvPJdvIQZ+BfPXvoNV8em
-        PtkbORUo3zKfmLNcH04vxb3A1tMiKpc=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=5gKSzBMGRs/uWtkQG1q7CTLEsgBVK2NaY8cijVYGGgA=;
+        b=SsdcsQshSUju4lda+utv+7YdEhxq0gt9oSwTL48tXXjpoagJrInYiaZreUHq9s2FyNSqwD
+        cDuBFmOne+QinjyLI1KIWGfQlY9nDRta++AWNNwh68OITjNaUGkgpZYfpLn2MhH6VYkqVe
+        1Aoi9b1mFxPTguginsfTtZKCVLoYbVQ=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-674-JWa8f9BbO4usmneI3DaX1Q-1; Wed, 26 Oct 2022 10:04:52 -0400
-X-MC-Unique: JWa8f9BbO4usmneI3DaX1Q-1
-Received: by mail-pl1-f200.google.com with SMTP id n1-20020a170902f60100b00179c0a5c51fso10145550plg.7
-        for <ceph-devel@vger.kernel.org>; Wed, 26 Oct 2022 07:04:51 -0700 (PDT)
+ us-mta-212-H9eJRUiMOGyyJCAul6cXKg-1; Wed, 26 Oct 2022 10:12:26 -0400
+X-MC-Unique: H9eJRUiMOGyyJCAul6cXKg-1
+Received: by mail-pl1-f197.google.com with SMTP id m11-20020a170902db0b00b00186d72ea4b8so2303005plx.23
+        for <ceph-devel@vger.kernel.org>; Wed, 26 Oct 2022 07:12:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Z14ZXZUzGKjReZ1Rm3C0eR5qgCTXW0HUh+T1+61zw04=;
-        b=KGS6q3Avo8HEPt21G0TRGXDdMktaI3i+42Ax7+SJeY5BumFryK42NCInmeRil6BtmQ
-         qWtWbuEg/YHwye8EmoHbRj0lXqBm80K0ZoMNLLySz970vTcXoBE/aEKrDNvzHaGJBicR
-         Do+l9qu/P2cWWw3uFHmyHrxg4XW2mjUjLXTzx34itq+UGzzjck1NA7xramVBpJbYmTNt
-         eYkk6+l/juE3ybabU0I7pHrAMSNHypRdEYnUWdxubCP0MMEIUaUG/jvJ6Rnt+HT0wupQ
-         pzitIUQ1oj82nA2fZWEAqdgCrWp/xqpg/CYI5ccmN4fi6J35/NpyjtOwUSLLR5YkxEPS
-         bxXA==
-X-Gm-Message-State: ACrzQf14fShXlhtj3FvQRmaqchiIx8JDTXPhjHj7wvH2R5Buk6hr7Tdh
-        2GlFJgiUi054zm6xio/l6UOfrsVIOCrwNcor2Wpix4/82mrn74s0pqIMRxu4W0vBwKVnypO/KFD
-        b3cN4c85L0nS/hN6ZuKAgEw==
-X-Received: by 2002:a63:5b48:0:b0:458:1e98:c862 with SMTP id l8-20020a635b48000000b004581e98c862mr36835964pgm.568.1666793090909;
-        Wed, 26 Oct 2022 07:04:50 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM45M/RvgraTMViFW3UGbjujQk/5HvQTV8sCwa+XIyNFe+kZR7mDAILVMFTri37ekCTWdyHkXA==
-X-Received: by 2002:a63:5b48:0:b0:458:1e98:c862 with SMTP id l8-20020a635b48000000b004581e98c862mr36835940pgm.568.1666793090617;
-        Wed, 26 Oct 2022 07:04:50 -0700 (PDT)
+        bh=5gKSzBMGRs/uWtkQG1q7CTLEsgBVK2NaY8cijVYGGgA=;
+        b=xdl24YAncR9f4OvtWyH/vDyJ9rwyX8/3j+0Uq2cP4+T3bPfPK2DyMeg5fZG/0PzLA6
+         yPIP52mIZDMUSXxNk/PqPgzk1BTq5X3LbGSmVj2V/TDxRGBmFkrgwntQhuBohEmm0JJf
+         OoRsBN5ZFDveV49fqaSbFzmxJppkdVnLT5OJK/j9GjEjwDbzFw+Gr2l3ObpewryAZAhU
+         LJKI1NUCeeWZz96ON0FdusxrSxh67NLgfpECebVjxCAQnnqxOECjdRx739yhvdQ6CPgx
+         k1iA9m1Kt1KvHfdGYLbwAv8ROxf2UQAw8eAFQzuM8SdyXjJn0KsDkTSCTXMuO+LYWFzN
+         smtQ==
+X-Gm-Message-State: ACrzQf3b3UIrgDu7TSbRfw7zBmX4hglPXM+5Ra3EiPNJVYcOQn9XUMfJ
+        eXdbqPXlB4mzmiORKFH7u71XPFJVt6KnKAMAeUqVGG4t422gRAYVn27a4xExm7p89P1NBb00FR8
+        uJNU/FuLe8rjurBF9NXtWFQ==
+X-Received: by 2002:a17:903:32cb:b0:186:deec:cd9f with SMTP id i11-20020a17090332cb00b00186deeccd9fmr2522038plr.82.1666793545109;
+        Wed, 26 Oct 2022 07:12:25 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM4vts4EIwMBrmcHQRDKwEWtkUdrUle9EHgYf9L9DAWDrNkCRpJjiebCyFeiTGY78iIplYU9sA==
+X-Received: by 2002:a17:903:32cb:b0:186:deec:cd9f with SMTP id i11-20020a17090332cb00b00186deeccd9fmr2522017plr.82.1666793544785;
+        Wed, 26 Oct 2022 07:12:24 -0700 (PDT)
 Received: from zlang-mailbox ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id m3-20020a63fd43000000b004393c5a8006sm2872095pgj.75.2022.10.26.07.04.47
+        by smtp.gmail.com with ESMTPSA id r17-20020a63ce51000000b0041a6638b357sm2854822pgi.72.2022.10.26.07.12.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Oct 2022 07:04:49 -0700 (PDT)
-Date:   Wed, 26 Oct 2022 22:04:44 +0800
+        Wed, 26 Oct 2022 07:12:24 -0700 (PDT)
+Date:   Wed, 26 Oct 2022 22:12:18 +0800
 From:   Zorro Lang <zlang@redhat.com>
 To:     xiubli@redhat.com
 Cc:     fstests@vger.kernel.org, david@fromorbit.com, djwong@kernel.org,
         lhenriques@suse.de, ceph-devel@vger.kernel.org, jlayton@kernel.org,
         mchangir@redhat.com
-Subject: Re: [PATCH 1/2] encrypt: rename _scratch_mkfs_encrypted to
- _scratch_check_encrypted
-Message-ID: <20221026140444.6br63mundxivfsnn@zlang-mailbox>
+Subject: Re: [PATCH 2/2] encrypt: add ceph support
+Message-ID: <20221026141218.wg2h3ganvo2dx7hb@zlang-mailbox>
 References: <20221026070418.259351-1-xiubli@redhat.com>
- <20221026070418.259351-2-xiubli@redhat.com>
+ <20221026070418.259351-3-xiubli@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221026070418.259351-2-xiubli@redhat.com>
+In-Reply-To: <20221026070418.259351-3-xiubli@redhat.com>
 X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,111 +78,69 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Oct 26, 2022 at 03:04:17PM +0800, xiubli@redhat.com wrote:
+On Wed, Oct 26, 2022 at 03:04:18PM +0800, xiubli@redhat.com wrote:
 > From: Xiubo Li <xiubli@redhat.com>
 > 
-> For ceph we couldn't check the encryption feature by mkfs, we need
-> to mount it first and then check the 'get_encpolicy' ioctl cmd.
+> For ceph we couldn't use the mkfs to check whether the encryption
+> is support or not, we need to mount it first and then check the
+> 'set_encpolicy', etc.
 > 
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
+>  common/encrypt | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/common/encrypt b/common/encrypt
+> index fd620c41..e837c9de 100644
+> --- a/common/encrypt
+> +++ b/common/encrypt
+> @@ -153,6 +153,23 @@ _scratch_check_encrypted()
+>  		# erase the UBI volume; reformated automatically on next mount
+>  		$UBIUPDATEVOL_PROG ${SCRATCH_DEV} -t
+>  		;;
+> +	ceph)
+> +		# Try to mount the filesystem. We need to check whether the encryption
+> +		# is support or not via the ioctl cmd, such as 'set_encpolicy'.
+> +		if ! _try_scratch_mount &>>$seqres.full; then
+> +			_notrun "kernel is unaware of $FSTYP encryption feature," \
+> +				"or mkfs options are not compatible with encryption"
+> +		fi
+> +
+> +		mkdir $SCRATCH_MNT/tmpdir
+> +		if _set_encpolicy $SCRATCH_MNT/tmpdir 2>&1 >>$seqres.full | \
+> +			grep -Eq 'Inappropriate ioctl for device|Operation not supported'
+> +		then
+> +			_notrun "kernel does not support $FSTYP encryption"
+> +		fi
+> +		rmdir $SCRATCH_MNT/tmpdir
+> +		_scratch_unmount
 
-This patch only does an *incomplete* function rename, without any change
-on that function body, that doesn't make sense, and even will bring in
-regression, due to lots of cases depend on this common function. If you
-really need to change a common function, please "grep" [1] this function
-in xfstests-dev/ to find out and check all places use it at least.
+As I replied in patch 1/2, this function is a mkfs function, if ceph need a
+specific mkfs way, you can do it in this function, or you even can keep it
+empty
 
-The _scratch_mkfs_encrypted is a "mkfs" function, likes _scratch_mkfs. I
-think we shouldn't change its name. If you want to check if encryption
-feature is supported by ceph, I think you might hope to do that in
-_require_* functions, or you even can have a ceph specific function in
-common/ceph. Just not the way you did in this patchset.
+  ceph)
+	;;
+
+Or does a simple cleanup
+
+  ceph)
+	_scratch_cleanup_files
+	...
+	;;
+
+I'm not familar with ceph, that depends on you. But the change in this patch is
+not "mkfs", it's a checking, checking if the current $SCRATCH_MNT supports
+encryption, you should do it in other function which does that checking job, not
+change a mkfs function to be a check function.
 
 Thanks,
 Zorro
 
-[1]
-$ grep -rsn _scratch_mkfs_encrypted .
-./common/encrypt:32:    if ! _scratch_mkfs_encrypted &>>$seqres.full; then
-./common/encrypt:146:_scratch_mkfs_encrypted()
-./common/encrypt:174:# Like _scratch_mkfs_encrypted(), but add -O stable_inodes if applicable for the
-./common/encrypt:186:           _scratch_mkfs_encrypted
-./common/encrypt:926:           _scratch_mkfs_encrypted &>> $seqres.full
-./common/verity:178:_scratch_mkfs_encrypted_verity()
-./common/verity:190:            _notrun "$FSTYP not supported in _scratch_mkfs_encrypted_verity"
-./tests/ext4/024:36:_scratch_mkfs_encrypted &>>$seqres.full
-./tests/generic/395:22:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/396:21:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/580:23:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/581:36:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/595:35:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/613:29:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/621:57:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/429:36:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/397:28:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/398:28:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/421:24:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/440:29:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/419:29:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/435:33:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/593:24:_scratch_mkfs_encrypted &>> $seqres.full
-./tests/generic/576:34:_scratch_mkfs_encrypted_verity &>> $seqres.full
-
-
-
->  common/encrypt | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/common/encrypt b/common/encrypt
-> index 45ce0954..fd620c41 100644
-> --- a/common/encrypt
-> +++ b/common/encrypt
-> @@ -29,7 +29,7 @@ _require_scratch_encryption()
->  	# Make a filesystem on the scratch device with the encryption feature
->  	# enabled.  If this fails then probably the userspace tools (e.g.
->  	# e2fsprogs or f2fs-tools) are too old to understand encryption.
-> -	if ! _scratch_mkfs_encrypted &>>$seqres.full; then
-> +	if ! _scratch_check_encrypted &>>$seqres.full; then
->  		_notrun "$FSTYP userspace tools do not support encryption"
->  	fi
->  
-> @@ -143,7 +143,7 @@ _require_encryption_policy_support()
->  	rm -r $dir
->  }
->  
-> -_scratch_mkfs_encrypted()
-> +_scratch_check_encrypted()
->  {
->  	case $FSTYP in
->  	ext4|f2fs)
-> @@ -171,7 +171,7 @@ _scratch_mkfs_sized_encrypted()
->  	esac
->  }
->  
-> -# Like _scratch_mkfs_encrypted(), but add -O stable_inodes if applicable for the
-> +# Like _scratch_check_encrypted(), but add -O stable_inodes if applicable for the
->  # filesystem type.  This is necessary for using encryption policies that include
->  # the inode number in the IVs, e.g. policies with the IV_INO_LBLK_64 flag set.
->  _scratch_mkfs_stable_inodes_encrypted()
-> @@ -183,7 +183,7 @@ _scratch_mkfs_stable_inodes_encrypted()
->  		fi
->  		;;
+> +		;;
 >  	*)
-> -		_scratch_mkfs_encrypted
-> +		_scratch_check_encrypted
+>  		_notrun "No encryption support for $FSTYP"
 >  		;;
->  	esac
->  }
-> @@ -923,7 +923,7 @@ _verify_ciphertext_for_encryption_policy()
->  			      FSCRYPT_POLICY_FLAG_IV_INO_LBLK_32) )); then
->  		_scratch_mkfs_stable_inodes_encrypted &>> $seqres.full
->  	else
-> -		_scratch_mkfs_encrypted &>> $seqres.full
-> +		_scratch_check_encrypted &>> $seqres.full
->  	fi
->  	_scratch_mount
->  
 > -- 
 > 2.31.1
 > 
