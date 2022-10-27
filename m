@@ -2,108 +2,97 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A824C60F368
-	for <lists+ceph-devel@lfdr.de>; Thu, 27 Oct 2022 11:14:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F78160F389
+	for <lists+ceph-devel@lfdr.de>; Thu, 27 Oct 2022 11:20:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235283AbiJ0JOL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 27 Oct 2022 05:14:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41872 "EHLO
+        id S235430AbiJ0JUa (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 27 Oct 2022 05:20:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235464AbiJ0JN5 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 27 Oct 2022 05:13:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E62BDF85
-        for <ceph-devel@vger.kernel.org>; Thu, 27 Oct 2022 02:12:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1666861948;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=d+rjS0j05vTqI0dJSY//TM0y/4hA85+tG5tCbw0SkVo=;
-        b=hC2EOyReeHwhPx0GowTSdTFzWGBV5F2LrU6y3oeYrg22Sy04zJo/fkopjta8AdvQ6wKlvI
-        s09cLNQvRSIw2jwGP+nlr7YO1nmrBcT3Lhq8pViqUcsxseCMPDSb6vKO7mTCJ8N01Ej3D0
-        uQXdNLIn+kxSHTnKR/2OdlhCuH3oBlg=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-297-XLC6b4tnORCBwLxvcI6-Og-1; Thu, 27 Oct 2022 05:12:25 -0400
-X-MC-Unique: XLC6b4tnORCBwLxvcI6-Og-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A013A86F12C;
-        Thu, 27 Oct 2022 09:12:24 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C24F549BB69;
-        Thu, 27 Oct 2022 09:12:21 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     ceph-devel@vger.kernel.org
-Cc:     lhenriques@suse.de, jlayton@kernel.org, mchangir@redhat.com,
-        idryomov@gmail.com, Xiubo Li <xiubli@redhat.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] ceph: fix NULL pointer dereference for req->r_session
-Date:   Thu, 27 Oct 2022 17:11:54 +0800
-Message-Id: <20221027091155.334178-1-xiubli@redhat.com>
+        with ESMTP id S235298AbiJ0JUW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 27 Oct 2022 05:20:22 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 415582228C;
+        Thu, 27 Oct 2022 02:20:13 -0700 (PDT)
+Received: from dggpemm500022.china.huawei.com (unknown [172.30.72.55])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Myg7816n6zJnDr;
+        Thu, 27 Oct 2022 17:17:24 +0800 (CST)
+Received: from dggpemm500007.china.huawei.com (7.185.36.183) by
+ dggpemm500022.china.huawei.com (7.185.36.162) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Thu, 27 Oct 2022 17:20:11 +0800
+Received: from huawei.com (10.175.103.91) by dggpemm500007.china.huawei.com
+ (7.185.36.183) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Thu, 27 Oct
+ 2022 17:20:11 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <ceph-devel@vger.kernel.org>, <linux-block@vger.kernel.org>
+CC:     <idryomov@gmail.com>, <dongsheng.yang@easystack.cn>,
+        <axboe@kernel.dk>, <yehuda@hq.newdream.net>,
+        <yangyingliang@huawei.com>
+Subject: [PATCH] rbd: fix possible memory leak in rbd_sysfs_init()
+Date:   Thu, 27 Oct 2022 17:19:18 +0800
+Message-ID: <20221027091918.2294132-1-yangyingliang@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.103.91]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500007.china.huawei.com (7.185.36.183)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+If device_register() returns error in rbd_sysfs_init(), name of kobject
+which is allocated in dev_set_name() called in device_add() is leaked.
 
-The request's r_session maybe changed when it was forwarded or
-resent.
+As comment of device_add() says, it should call put_device() to drop
+the reference count that was set in device_initialize() when it fails,
+so the name can be freed in kobject_cleanup().
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
+Fault injection test can trigger this problem:
+
+unreferenced object 0xffff88810173aa78 (size 8):
+  comm "modprobe", pid 247, jiffies 4294714278 (age 31.789s)
+  hex dump (first 8 bytes):
+    72 62 64 00 81 88 ff ff                          rbd.....
+  backtrace:
+    [<00000000f58fae56>] __kmalloc_node_track_caller+0x44/0x1b0
+    [<00000000bdd44fe7>] kstrdup+0x3a/0x70
+    [<00000000f7844d0b>] kstrdup_const+0x63/0x80
+    [<000000001b0a0eeb>] kvasprintf_const+0x10b/0x190
+    [<00000000a47bd894>] kobject_set_name_vargs+0x56/0x150
+    [<00000000d5edbf18>] dev_set_name+0xab/0xe0
+    [<00000000f5153e80>] device_add+0x106/0x1f20
+
+Fixes: dfc5606dc513 ("rbd: replace the rbd sysfs interface")
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
 ---
- fs/ceph/caps.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/block/rbd.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 894adfb4a092..d34ac716d7fe 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -2341,6 +2341,7 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
- 			goto out;
- 		}
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index f9e39301c4af..04453f4a319c 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -7222,8 +7222,10 @@ static int __init rbd_sysfs_init(void)
+ 	int ret;
  
-+		mutex_lock(&mdsc->mutex);
- 		spin_lock(&ci->i_unsafe_lock);
- 		if (req1) {
- 			list_for_each_entry(req, &ci->i_unsafe_dirops,
-@@ -2350,6 +2351,7 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
- 					continue;
- 				if (unlikely(s->s_mds >= max_sessions)) {
- 					spin_unlock(&ci->i_unsafe_lock);
-+					mutex_unlock(&mdsc->mutex);
- 					for (i = 0; i < max_sessions; i++) {
- 						s = sessions[i];
- 						if (s)
-@@ -2372,6 +2374,7 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
- 					continue;
- 				if (unlikely(s->s_mds >= max_sessions)) {
- 					spin_unlock(&ci->i_unsafe_lock);
-+					mutex_unlock(&mdsc->mutex);
- 					for (i = 0; i < max_sessions; i++) {
- 						s = sessions[i];
- 						if (s)
-@@ -2387,6 +2390,7 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
- 			}
- 		}
- 		spin_unlock(&ci->i_unsafe_lock);
-+		mutex_unlock(&mdsc->mutex);
+ 	ret = device_register(&rbd_root_dev);
+-	if (ret < 0)
++	if (ret < 0) {
++		put_device(&rbd_root_dev);
+ 		return ret;
++	}
  
- 		/* the auth MDS */
- 		spin_lock(&ci->i_ceph_lock);
+ 	ret = bus_register(&rbd_bus_type);
+ 	if (ret < 0)
 -- 
-2.31.1
+2.25.1
 
