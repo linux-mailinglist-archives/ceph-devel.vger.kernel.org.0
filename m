@@ -2,77 +2,74 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 30EB16106EA
-	for <lists+ceph-devel@lfdr.de>; Fri, 28 Oct 2022 02:39:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95D04610741
+	for <lists+ceph-devel@lfdr.de>; Fri, 28 Oct 2022 03:29:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235264AbiJ1Ajb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 27 Oct 2022 20:39:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46684 "EHLO
+        id S235662AbiJ1B3u (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 27 Oct 2022 21:29:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233548AbiJ1Aja (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 27 Oct 2022 20:39:30 -0400
+        with ESMTP id S235398AbiJ1B3r (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 27 Oct 2022 21:29:47 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4EEEA3F42
-        for <ceph-devel@vger.kernel.org>; Thu, 27 Oct 2022 17:38:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FF7CA99F9
+        for <ceph-devel@vger.kernel.org>; Thu, 27 Oct 2022 18:28:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1666917520;
+        s=mimecast20190719; t=1666920527;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=4ADIEZawkcx3YtMdsZXuloTuGk1wcgplOQXuegEEig8=;
-        b=PP7coB7twla0V+buo/t58bcIKGDHBBxC7A80QvWK6/UajY2RJWX7alVxkOUKJ1512P+9HP
-        f4nFvj5Ws9xhXwJGtqS4+Kgpzr+Luehw9wcR8OHxn3jUPR0HP03eRQfp/35jgP13cJoVtZ
-        V3drSgWgofRZ62jIyVs+QamCQcgudL8=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=wla9uF0gA118Z36K6veuICKKbGh2thQWauGdmuDklz4=;
+        b=Z39HolheXTCdtQmJH1Td8Ih8LdeQMYDEDKKd/tswMdNt24m6yGlLEiqTnete/ii5ZC7Pa3
+        bcMjyfWRfVFbaeoslPoUecDa99QUB9etegjT23UKJc1unuVDv2STjWXP1xNSYMo/T4qTk7
+        c9IZ24KKy02YyDU8ybaMiPYkptgitQU=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-122-Lo3nNu6yOt-BfU6-DdMypQ-1; Thu, 27 Oct 2022 20:38:39 -0400
-X-MC-Unique: Lo3nNu6yOt-BfU6-DdMypQ-1
-Received: by mail-pl1-f200.google.com with SMTP id m11-20020a170902db0b00b00186d72ea4b8so2188149plx.23
-        for <ceph-devel@vger.kernel.org>; Thu, 27 Oct 2022 17:38:39 -0700 (PDT)
+ us-mta-544-rlPMI5rRPcCqufc__S35GQ-1; Thu, 27 Oct 2022 21:28:44 -0400
+X-MC-Unique: rlPMI5rRPcCqufc__S35GQ-1
+Received: by mail-pj1-f70.google.com with SMTP id x14-20020a17090a2b0e00b002134b1401ddso1813519pjc.8
+        for <ceph-devel@vger.kernel.org>; Thu, 27 Oct 2022 18:28:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-language:content-transfer-encoding:in-reply-to:mime-version
          :user-agent:date:message-id:from:references:cc:to:subject
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ADIEZawkcx3YtMdsZXuloTuGk1wcgplOQXuegEEig8=;
-        b=5dIvF/IGneHwMIncgKwPwUFa6wt4ncIja1K1LrJlvtbjV48rVE8JOSWvVPxdxm1et9
-         vh7w6fx2tOwZCWA0mxZ7QlVfmMlzQ/79jGMM+RbT0TpMTIlIJfinLOHJGu4h+5StuAtt
-         mIBSAXjRXwhZhSxGbQiJqNBVDYpKnsi1sr65trnoDSftiiVCivoMuGGYENRgxnXIOZ6G
-         j4Neziqgln0pmUHH5IvyQwiFexYHg4/CdjSL5xfeCGTvY+xb5ju2y/oVLVsC/rRpW1AT
-         duv12sJSppZEHcCsPgLhfOgCdL6eA0yMNLZAW1CBa8mYwi294WbeuVBSVv9jutjdVMx1
-         UzZQ==
-X-Gm-Message-State: ACrzQf303k6kOrIpDeUATuMYJ0QqJxTLkqPOju0ywnN+XP+xBeLVWTja
-        yUEKlTgMWKoNO9zy83QqWhYjyl554zRPevp6xSt4kHvkUFrJznlPzRq2mX8HhqV1z5HplDJW/Fv
-        TuBM5y5xY/rLOHQlcJTNxjg==
-X-Received: by 2002:a63:4f15:0:b0:455:ede1:d8c9 with SMTP id d21-20020a634f15000000b00455ede1d8c9mr45050179pgb.452.1666917518316;
-        Thu, 27 Oct 2022 17:38:38 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM6BhyVlPedjo8ASk8uEp5ZufY7KRAkPkiHjLX5rcdFmU/X1TnXhsYnio4NbEqA/h0bAcn4S2Q==
-X-Received: by 2002:a63:4f15:0:b0:455:ede1:d8c9 with SMTP id d21-20020a634f15000000b00455ede1d8c9mr45050163pgb.452.1666917518023;
-        Thu, 27 Oct 2022 17:38:38 -0700 (PDT)
+        bh=wla9uF0gA118Z36K6veuICKKbGh2thQWauGdmuDklz4=;
+        b=vRsyxqXYhDTD3tzkeaGsDB3xdXw0H4+SHe4v/lWibpB/Nwu2Q7MqCL5/kQgfzkNnjR
+         cK5+ZwBjjBJwkyrGlav98epOdqp0nvqnQPj7DL2PvZTkfA43Lv9Mb7R5qx04XZ3eM6Bg
+         lGAzWsv0u+9HA6VXEJ9USqnKOj8iGNXRyElaBqckGaYZYHhEUjscZZYsVli0V1gBtk+L
+         ySnzvNMrpAC2BHL/MzZ2ko3JiVeTpJW5UrLgY/6inT4r4W0O5mmRw1D42cnnCQAIcV5a
+         /2aH2/SOzY986WJwXkTm4aEuT1VIa2qHhag5uqVcdxNwjW1iAbuhhXRc4xxJbOOInpVf
+         PVlA==
+X-Gm-Message-State: ACrzQf2ccwZRM1BerH6PAMWpFAi0JmWMk7jQttO0c6qUZLEM1iJwfCsC
+        RYyYQKRY/VWXItdv8kFgdApjuxVhFp/RlH+eb45hFeCiIKHTpnAogDr4g4IvmfvjDyehxRaegVT
+        zrlfKuXa3zFXDO0toEeBQWw==
+X-Received: by 2002:a63:3184:0:b0:46f:714d:96f6 with SMTP id x126-20020a633184000000b0046f714d96f6mr211382pgx.298.1666920523319;
+        Thu, 27 Oct 2022 18:28:43 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM64yR5cKYB75ppDJGHgde46Bvcv+KVzYwGEN3aPYDhKENXwt2ytxb7v1yXtoNq23XOELC+igQ==
+X-Received: by 2002:a63:3184:0:b0:46f:714d:96f6 with SMTP id x126-20020a633184000000b0046f714d96f6mr211363pgx.298.1666920523052;
+        Thu, 27 Oct 2022 18:28:43 -0700 (PDT)
 Received: from [10.72.13.65] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 184-20020a6217c1000000b0056bb0357f5bsm1700931pfx.192.2022.10.27.17.38.33
+        by smtp.gmail.com with ESMTPSA id 1-20020a17090a0e8100b002009db534d1sm1545432pjx.24.2022.10.27.18.28.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 27 Oct 2022 17:38:37 -0700 (PDT)
-Subject: Re: [PATCH v2] encrypt: add ceph support
-To:     Zorro Lang <zlang@redhat.com>
-Cc:     fstests@vger.kernel.org, david@fromorbit.com, djwong@kernel.org,
-        lhenriques@suse.de, ceph-devel@vger.kernel.org, jlayton@kernel.org,
-        mchangir@redhat.com
-References: <20221027030021.296548-1-xiubli@redhat.com>
- <20221027032023.6arvnrkl7fymdjqj@zlang-mailbox>
- <e5c876ce-8f0d-c51e-bb04-78c49ebf79c9@redhat.com>
- <20221027124904.ibx62eqbyyqghdjm@zlang-mailbox>
+        Thu, 27 Oct 2022 18:28:42 -0700 (PDT)
+Subject: Re: [PATCH] ceph: fix mdsmap decode for v >= 17
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221027152811.7603-1-lhenriques@suse.de>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <b2f811ee-b927-d448-1c1a-85af4fc7e42f@redhat.com>
-Date:   Fri, 28 Oct 2022 08:38:29 +0800
+Message-ID: <8b666226-ef41-13ae-c90c-aaa5f499b0a0@redhat.com>
+Date:   Fri, 28 Oct 2022 09:28:37 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <20221027124904.ibx62eqbyyqghdjm@zlang-mailbox>
+In-Reply-To: <20221027152811.7603-1-lhenriques@suse.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
 X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
@@ -85,83 +82,54 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 
-On 27/10/2022 20:49, Zorro Lang wrote:
-> On Thu, Oct 27, 2022 at 05:49:08PM +0800, Xiubo Li wrote:
->> On 27/10/2022 11:20, Zorro Lang wrote:
->>> On Thu, Oct 27, 2022 at 11:00:21AM +0800, xiubli@redhat.com wrote:
->>>> From: Xiubo Li <xiubli@redhat.com>
->>>>
->>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>>> ---
->>>>    common/encrypt | 3 +++
->>>>    1 file changed, 3 insertions(+)
->>>>
->>>> diff --git a/common/encrypt b/common/encrypt
->>>> index 45ce0954..1a77e23b 100644
->>>> --- a/common/encrypt
->>>> +++ b/common/encrypt
->>>> @@ -153,6 +153,9 @@ _scratch_mkfs_encrypted()
->>>>    		# erase the UBI volume; reformated automatically on next mount
->>>>    		$UBIUPDATEVOL_PROG ${SCRATCH_DEV} -t
->>>>    		;;
->>>> +	ceph)
->>>> +		_scratch_cleanup_files
->> Here I just skip ceph and it is enough. Because the
->> _require_scratch_encryption() will do the same thing as I did in my V1's 2/2
->> patch.
-> Great, actually that's what I hope to know. So the ceph encryption testing
-> can be supported naturally by just enabling ceph in _scratch_mkfs_encrypted.
+On 27/10/2022 23:28, Luís Henriques wrote:
+> Commit d93231a6bc8a ("ceph: prevent a client from exceeding the MDS
+> maximum xattr size") was merged before the corresponding MDS-side changes
+> have been merged.  With the introduction of 'bal_rank_mask' in the mdsmap,
+> the decoding of maps with v>=17 is now incorrect.  Fix this by skipping
+> the 'bal_rank_mask' string decoding.
 >
-> And from the testing output you showed in last patch, it looks good on testing
-> ceph encryption. So I think this patch works as expected. I'll merger this
-> patch if no more review points from ceph list. And feel free to improve cases
-> in encrypt group later if someone fails on ceph.
+> Fixes: d93231a6bc8a ("ceph: prevent a client from exceeding the MDS maximum xattr size")
+> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> ---
+> Hi!
+>
+> This inconsistency was introduced by ceph PR #43284; I think that, before
+> picking this patch, we need to get PR #46357 merged to avoid new
+> problems.
+>
+> Cheers,
+> --
+> Luís
+>
+>   fs/ceph/mdsmap.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+> index 3fbabc98e1f7..fe4f1a6c3465 100644
+> --- a/fs/ceph/mdsmap.c
+> +++ b/fs/ceph/mdsmap.c
+> @@ -379,6 +379,8 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end, bool msgr2)
+>   		ceph_decode_skip_8(p, end, bad_ext);
+>   		/* required_client_features */
+>   		ceph_decode_skip_set(p, end, 64, bad_ext);
+> +		/* bal_rank_mask */
+> +		ceph_decode_skip_string(p, end, bad_ext);
+>   		ceph_decode_64_safe(p, end, m->m_max_xattr_size, bad_ext);
+>   	} else {
+>   		/* This forces the usage of the (sync) SETXATTR Op */
+>
+Luis,
 
-Sure. Thanks very much Zorro!
+Because the ceph PR #43284 will break kclient here and your xattr size 
+patch got merged long time ago, we should fix it in ceph. More detail 
+please see my comments in:
+
+https://github.com/ceph/ceph/pull/46357#issuecomment-1294290492
+
+Thanks!
 
 - Xiubo
 
 
-> Thanks,
-> Zorro
->
->> - Xiubo
->>
->>>> +		;;
->>> Any commits about that?
->>>
->>> Sorry I'm not familar with cephfs, is this patch enough to help ceph to test
->>> encrypted ceph? Due to you tried to do some "checking" job last time.
->>>
->>> Can "./check -g encrypt" work on ceph? May you paste this test result to help
->>> to review? And welcome review points from ceph list.
->>>
->>> Thanks,
->>> Zorro
->>>
->>> [1]
->>> $ grep -rsn _scratch_mkfs_encrypted tests/generic/
->>> tests/generic/395:22:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/396:21:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/580:23:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/581:36:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/595:35:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/613:29:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/621:57:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/429:36:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/397:28:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/398:28:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/421:24:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/440:29:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/419:29:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/435:33:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/593:24:_scratch_mkfs_encrypted &>> $seqres.full
->>> tests/generic/576:34:_scratch_mkfs_encrypted_verity &>> $seqres.full
->>>
->>>>    	*)
->>>>    		_notrun "No encryption support for $FSTYP"
->>>>    		;;
->>>> -- 
->>>> 2.31.1
->>>>
 
