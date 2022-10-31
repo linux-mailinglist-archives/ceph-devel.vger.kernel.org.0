@@ -2,144 +2,95 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 11B9D612A9A
-	for <lists+ceph-devel@lfdr.de>; Sun, 30 Oct 2022 13:47:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F2486131CE
+	for <lists+ceph-devel@lfdr.de>; Mon, 31 Oct 2022 09:39:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229729AbiJ3Mi6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 30 Oct 2022 08:38:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35782 "EHLO
+        id S229906AbiJaIjb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 31 Oct 2022 04:39:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbiJ3Mi5 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 30 Oct 2022 08:38:57 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1964BE2B
-        for <ceph-devel@vger.kernel.org>; Sun, 30 Oct 2022 05:38:02 -0700 (PDT)
+        with ESMTP id S229904AbiJaIja (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 31 Oct 2022 04:39:30 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85F15B22
+        for <ceph-devel@vger.kernel.org>; Mon, 31 Oct 2022 01:38:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667133482;
+        s=mimecast20190719; t=1667205509;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=U4B60fz/P8rMNitGf54Tbbilnbc37g2F5GF/ziw5C6k=;
-        b=ZPoQY4mITEG6l+vIGnWdSKeI9qfXvb2Z6Mfi6KSEjXPX5JYk7OW3hw4er7QIfgVg0SQ6Tw
-        faXYUfuboxBT/QU5gNn/UVpGnXa5XNjd5xnm/jgMMhLhxzbyPHQbffAcafk/j5domJGhQV
-        GE6hMaIXByXAvdRn+CncDtEMQSJn5KA=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-486-_mPD4PDWP6a5X70daMBjGA-1; Sun, 30 Oct 2022 08:37:59 -0400
-X-MC-Unique: _mPD4PDWP6a5X70daMBjGA-1
-Received: by mail-pf1-f199.google.com with SMTP id k131-20020a628489000000b0056b3e1a9629so4321526pfd.8
-        for <ceph-devel@vger.kernel.org>; Sun, 30 Oct 2022 05:37:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U4B60fz/P8rMNitGf54Tbbilnbc37g2F5GF/ziw5C6k=;
-        b=ea3vxPPt5OLQolIYpZMMpJbu8Iur3YVNBYO7Kl9gPVK+Lji+ATJHSDg1dnB1iViA9R
-         qXkjr/LASp3TBf4Iv2yWaK8p7899E7/7XctheC1VzzkvpZUIiP8DUO1skdDwrEl1adXX
-         kSHsliYYRb3qpJS6rtNWWibbF8MNuGiSA8wPuzERARsL5uornRhgK4s02DJ+lzNII8rv
-         Fx9ryV+X+ssd2FkzpKmSaXzUGFffEVismEP7bX6K1dtgbBv508fxWjF4s+Oycj7ENXPG
-         uJ7nzHB2TYx+DCCvSQ48Oo+Fc5KCiROC+hFHt9GRFILBnI131kHiw9UK8hFkk9v7EcWp
-         LCFQ==
-X-Gm-Message-State: ACrzQf3x/S99ZSzZhcAnuDRMhU1IBZkOiehbgXMM8rQH6g3p/KZZfCmi
-        JsMbI5aVGsK9w0nco5XjYgcI7b0ml9UT7nrF/TxtYmkgkaq1aQCeb1IlzVRXdrwHSaA+/V7NP4D
-        Z82F1/uOeMlWZFc47OS1cLw==
-X-Received: by 2002:a63:d015:0:b0:46f:b2a4:a34e with SMTP id z21-20020a63d015000000b0046fb2a4a34emr1589591pgf.594.1667133478373;
-        Sun, 30 Oct 2022 05:37:58 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM7wx6dkdTVFo+415zaVL0RwQ+2N45bWZGXiDPkCjdPgoRT47nm++TlMPHls4LYRxt/QVWGdvA==
-X-Received: by 2002:a63:d015:0:b0:46f:b2a4:a34e with SMTP id z21-20020a63d015000000b0046fb2a4a34emr1589569pgf.594.1667133478077;
-        Sun, 30 Oct 2022 05:37:58 -0700 (PDT)
-Received: from [10.72.13.65] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id w3-20020a170902ca0300b00186a8085382sm2675327pld.43.2022.10.30.05.37.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 30 Oct 2022 05:37:57 -0700 (PDT)
-Subject: Re: [PATCH] ceph: fix mdsmap decode for v >= 17
-To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20221027152811.7603-1-lhenriques@suse.de>
- <8b666226-ef41-13ae-c90c-aaa5f499b0a0@redhat.com> <Y1ubPgzSm7YATBRv@suse.de>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <2d9ab5c4-4921-ff19-c027-865ec0f415ca@redhat.com>
-Date:   Sun, 30 Oct 2022 20:37:53 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=1VBKNsYVeF98wLcvmwVUi6nLxNSU4oyPSq1mvCcwKF0=;
+        b=MyFnLV+Jpye8YNnbAMp+y6dN1YEQel5sl2Xu/I+CdU/EYFNhiUz3KDvowyZX1dkIxxAIDy
+        9NQlQXCi6emiv0j4KdIhc4ansvkBm0iOnjDP3PwI06I+VotA9piAPZc/IctmnrnqaRd8wP
+        vERdjYD/TIgfcNT5iMEnpdjbtFGnrsU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-675-Bt9p7-IjMvuNroHaf1NQrw-1; Mon, 31 Oct 2022 04:38:26 -0400
+X-MC-Unique: Bt9p7-IjMvuNroHaf1NQrw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D200F10115EF;
+        Mon, 31 Oct 2022 08:38:25 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 531052166B29;
+        Mon, 31 Oct 2022 08:38:22 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     fstests@vger.kernel.org
+Cc:     zlang@redhat.com, david@fromorbit.com, djwong@kernel.org,
+        lhenriques@suse.de, ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        mchangir@redhat.com, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v3] encrypt: add ceph support
+Date:   Mon, 31 Oct 2022 16:38:19 +0800
+Message-Id: <20221031083819.573521-1-xiubli@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <Y1ubPgzSm7YATBRv@suse.de>
-Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
 X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+From: Xiubo Li <xiubli@redhat.com>
 
-On 28/10/2022 17:05, Luís Henriques wrote:
-> On Fri, Oct 28, 2022 at 09:28:37AM +0800, Xiubo Li wrote:
->> On 27/10/2022 23:28, Luís Henriques wrote:
->>> Commit d93231a6bc8a ("ceph: prevent a client from exceeding the MDS
->>> maximum xattr size") was merged before the corresponding MDS-side changes
->>> have been merged.  With the introduction of 'bal_rank_mask' in the mdsmap,
->>> the decoding of maps with v>=17 is now incorrect.  Fix this by skipping
->>> the 'bal_rank_mask' string decoding.
->>>
->>> Fixes: d93231a6bc8a ("ceph: prevent a client from exceeding the MDS maximum xattr size")
->>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
->>> ---
->>> Hi!
->>>
->>> This inconsistency was introduced by ceph PR #43284; I think that, before
->>> picking this patch, we need to get PR #46357 merged to avoid new
->>> problems.
->>>
->>> Cheers,
->>> --
->>> Luís
->>>
->>>    fs/ceph/mdsmap.c | 2 ++
->>>    1 file changed, 2 insertions(+)
->>>
->>> diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
->>> index 3fbabc98e1f7..fe4f1a6c3465 100644
->>> --- a/fs/ceph/mdsmap.c
->>> +++ b/fs/ceph/mdsmap.c
->>> @@ -379,6 +379,8 @@ struct ceph_mdsmap *ceph_mdsmap_decode(void **p, void *end, bool msgr2)
->>>    		ceph_decode_skip_8(p, end, bad_ext);
->>>    		/* required_client_features */
->>>    		ceph_decode_skip_set(p, end, 64, bad_ext);
->>> +		/* bal_rank_mask */
->>> +		ceph_decode_skip_string(p, end, bad_ext);
->>>    		ceph_decode_64_safe(p, end, m->m_max_xattr_size, bad_ext);
->>>    	} else {
->>>    		/* This forces the usage of the (sync) SETXATTR Op */
->>>
->> Luis,
->>
->> Because the ceph PR #43284 will break kclient here and your xattr size patch
->> got merged long time ago, we should fix it in ceph. More detail please see
->> my comments in:
->>
->> https://github.com/ceph/ceph/pull/46357#issuecomment-1294290492
-> OK, agreed.  I'll update this PR to try to fix it on the MDS side
-> instead.  And let's try to have it merged as soon as possible to prevent
-> further issues.
+This will enable ceph could run the fscrypt test cases, but not all.
+Some of them will be skipped because of not supporting features.
 
-Sounds good!
+Here will just skip ceph in _scratch_mkfs_encrypted() and in
+_require_scratch_encryption() it will try to check "set_encpolicy"
+to make sure whether kernel ceph support the encryption or not.
 
-- Xiubo
+Reviewed-by: Zorro Lang <zlang@redhat.com>
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+
+V3:
+- Add more commit comments.
 
 
-> Cheers,
-> --
-> Luís
->
+ common/encrypt | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/common/encrypt b/common/encrypt
+index 45ce0954..1a77e23b 100644
+--- a/common/encrypt
++++ b/common/encrypt
+@@ -153,6 +153,9 @@ _scratch_mkfs_encrypted()
+ 		# erase the UBI volume; reformated automatically on next mount
+ 		$UBIUPDATEVOL_PROG ${SCRATCH_DEV} -t
+ 		;;
++	ceph)
++		_scratch_cleanup_files
++		;;
+ 	*)
+ 		_notrun "No encryption support for $FSTYP"
+ 		;;
+-- 
+2.31.1
 
