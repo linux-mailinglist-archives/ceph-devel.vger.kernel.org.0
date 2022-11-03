@@ -2,222 +2,215 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 00E0D616808
-	for <lists+ceph-devel@lfdr.de>; Wed,  2 Nov 2022 17:14:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA54F6174D8
+	for <lists+ceph-devel@lfdr.de>; Thu,  3 Nov 2022 04:20:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231650AbiKBQNR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 2 Nov 2022 12:13:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52132 "EHLO
+        id S230305AbiKCDT6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 2 Nov 2022 23:19:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231638AbiKBQMI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Nov 2022 12:12:08 -0400
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A6282D1EB;
-        Wed,  2 Nov 2022 09:11:42 -0700 (PDT)
-Received: by mail-pf1-x42b.google.com with SMTP id v28so16646178pfi.12;
-        Wed, 02 Nov 2022 09:11:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0kIQ32jgESZghl2JsFuRf0mmCK8FvEn1HKHvqp4B/UI=;
-        b=dfQedKuymKKcgaBkhG/S6LPnJ2O+4EvsNOgODJ6HJIVIONp85PHUPikgR1OK0QEXN5
-         yllHZOH3ybASQiMP5BnKEWHTPiCoHka0zDja58Ru610nhX2hFD55wJ8Gd376sGcaf689
-         bZrfvpTt8G5QxybOH/Q6elDPBkfe6Fc3kWWsMNhs/R9vrbLsrZ8uD+rka72YKKWWWGgG
-         dWU5w6rAAJp2LD2+bLNGgBA0LMOcxmf8XyqrkCvTB+U0KRHPVRqOWqltLY33KWJ08EtL
-         x4VuHCxKqbKwgsffO/TRtj8XIVLeukEUR03vIqJL55yVembQK6w940oX9YlEtm9O5Cyv
-         atIA==
+        with ESMTP id S230337AbiKCDTy (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Nov 2022 23:19:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B888213F74
+        for <ceph-devel@vger.kernel.org>; Wed,  2 Nov 2022 20:18:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667445535;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=rbroNESV1PQ7IaQsCKEABPmwn7Oc2TG7Zrit7suqSrg=;
+        b=cRmx4nK1BNsaY2unWNcRo2pp5RzTIgIrRxq8eSSd7BxL0k4brrzA9DR7LJx3vBThw9u3e5
+        8DoIVPsMPf3us0g2LH4ymjqRjc5VVxfL8MZalYNMliwASG5C+fQMBSXmZfN7eUT1n5tiFz
+        KlE6lV4jMlEjXg0hEmnFPs0VGG089Nw=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-230-N-bFWE7nOlONsytxOTsF1w-1; Wed, 02 Nov 2022 23:18:54 -0400
+X-MC-Unique: N-bFWE7nOlONsytxOTsF1w-1
+Received: by mail-pg1-f199.google.com with SMTP id f19-20020a63f113000000b0046fde69a09dso310784pgi.10
+        for <ceph-devel@vger.kernel.org>; Wed, 02 Nov 2022 20:18:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0kIQ32jgESZghl2JsFuRf0mmCK8FvEn1HKHvqp4B/UI=;
-        b=6V02c71ba8T+nKh7BAlS7W2AqHWrezXEd4LxWsbGLZ1bzT0PZeZDx8v7CfllOB/7i9
-         0owbRQcrwU1nZEngObNKxPn6xOKCAy7ZcmmuAp2HzZ5zpKF3OLhtv6qxrjG9cZFCe8Jy
-         E8/yk0SbdkQH1S4RM7ZsDsp3kJrOrIr2Dzqdad1r8DFmGKq60xjeIKki9L8NERBVIDMu
-         Z5XhX07zvyMEKyLqhBemyZxjjjCI1UPZn0VOLGK3fiNpfoNaI5z1tXLZqtzD41bXDKsp
-         EKs2s/qggp/13SsVnmjfaH63qn7omzqrCQ3aVsi4Y2ImQZ+VA0O3Z1BWs8QZs/qSrDqc
-         flxw==
-X-Gm-Message-State: ACrzQf0yZl7dMe7mSsF1f0BlRUhM1iSe1xSNTvNZWINFXf1azRmW53d8
-        rGAo4kGpcWO+egK2FsLHTUUmX4Uz6ewviw==
-X-Google-Smtp-Source: AMsMyM6M+HYXpiH0U+VfyXFrJ89SEz8gDigaYYVWPndroJTYZEBXjmxNBwyGQzQ73aNi+YK3GqHHhQ==
-X-Received: by 2002:a63:5a1b:0:b0:461:9934:6f62 with SMTP id o27-20020a635a1b000000b0046199346f62mr22432948pgb.266.1667405501408;
-        Wed, 02 Nov 2022 09:11:41 -0700 (PDT)
-Received: from fedora.hsd1.ca.comcast.net ([2601:644:8002:1c20::8080])
-        by smtp.googlemail.com with ESMTPSA id ms4-20020a17090b234400b00210c84b8ae5sm1632101pjb.35.2022.11.02.09.11.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Nov 2022 09:11:41 -0700 (PDT)
-From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
-        "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [PATCH v4 23/23] filemap: Remove find_get_pages_range_tag()
-Date:   Wed,  2 Nov 2022 09:10:31 -0700
-Message-Id: <20221102161031.5820-24-vishal.moola@gmail.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221102161031.5820-1-vishal.moola@gmail.com>
-References: <20221102161031.5820-1-vishal.moola@gmail.com>
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rbroNESV1PQ7IaQsCKEABPmwn7Oc2TG7Zrit7suqSrg=;
+        b=qqjSrpZH5fs7zKaDYzTLGPXqAUEafSiI3gsfgZuWP2Il9ff5/4Ajef91oLT2n3T4a8
+         aQ0aX9ia9CCscJJAIJbW+N3M2cSaFkvK1BWRMAdIydkjWgNmsLbiMtMXLoq/gBNbCJPJ
+         K8m/GKSFGhVozwyDlHAss3Sg4sNxZED6LJ/A0DK6vHLRElTl/Tu2bYKJP9Nt7JlyL73H
+         3346V6jS/22jXxQLJMeKzpOqypse+afwih6Ri28ymt17xo+YGX8fKyAaomj+FGmFg25R
+         NkkScVYC39Yw1jK1BN28Lw5qpxdIVUtj4yj0A/PAY90oLv4eSc2FKdxobCl1ivS5rNw/
+         uHPQ==
+X-Gm-Message-State: ACrzQf2DYVrqu+Xub7AtWmzhU8n2SgalsoQ95Mf0M3Ic2olQW6tPIWdf
+        17jPbWkkWDLkICboyTKd+Gp9AJjUgvYsM0nNf4CQMBMRBdMG+RyzsYZ+uOIkhj0T+rJPBu70Dr6
+        pAy/zb6RcY6b88NE9VCxG8A==
+X-Received: by 2002:a17:90a:578c:b0:213:b509:9474 with SMTP id g12-20020a17090a578c00b00213b5099474mr26301437pji.45.1667445533573;
+        Wed, 02 Nov 2022 20:18:53 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM6S03GbdpE+nfumLcVgqIjZIHkemKQ8mMluPstprGpGtqtpDUheObxILn4dKv/oNy4eDsEnLA==
+X-Received: by 2002:a17:90a:578c:b0:213:b509:9474 with SMTP id g12-20020a17090a578c00b00213b5099474mr26301425pji.45.1667445533325;
+        Wed, 02 Nov 2022 20:18:53 -0700 (PDT)
+Received: from [10.72.12.172] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id z9-20020a1709027e8900b00186b5c1a715sm9004081pla.182.2022.11.02.20.18.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 02 Nov 2022 20:18:52 -0700 (PDT)
+Subject: Re: [RFC PATCH] ceph: allow encrypting a directory while not having
+ Ax caps
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20221027112653.12122-1-lhenriques@suse.de>
+ <a992d844-6d75-e134-60e1-acb8c8972ff3@redhat.com> <Y2JZI1QOl3dXBVUb@suse.de>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <8e1eecb7-1b54-2459-efc9-2f410ad0a904@redhat.com>
+Date:   Thu, 3 Nov 2022 11:18:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
+In-Reply-To: <Y2JZI1QOl3dXBVUb@suse.de>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Language: en-US
+X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-All callers to find_get_pages_range_tag(), find_get_pages_tag(),
-pagevec_lookup_range_tag(), and pagevec_lookup_tag() have been removed.
 
-Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
----
- include/linux/pagemap.h | 10 -------
- include/linux/pagevec.h |  8 ------
- mm/filemap.c            | 60 -----------------------------------------
- mm/swap.c               | 10 -------
- 4 files changed, 88 deletions(-)
+On 02/11/2022 19:48, Luís Henriques wrote:
+> On Mon, Oct 31, 2022 at 05:15:51PM +0800, Xiubo Li wrote:
+>> On 27/10/2022 19:26, Luís Henriques wrote:
+>>> If a client doesn't have Fx caps on a directory, it will get errors while
+>>> trying encrypt it:
+>>>
+>>> ceph: handle_cap_grant: cap grant attempt to change fscrypt_auth on non-I_NEW inode (old len 0 new len 48)
+>>> fscrypt (ceph, inode 1099511627812): Error -105 getting encryption context
+>>>
+>>> A simple way to reproduce this is to use two clients:
+>>>
+>>>       client1 # mkdir /mnt/mydir
+>>>
+>>>       client2 # ls /mnt/mydir
+>>>
+>>>       client1 # fscrypt encrypt /mnt/mydir
+>>>       client1 # echo hello > /mnt/mydir/world
+>>>
+>>> This happens because, in __ceph_setattr(), we only initialize
+>>> ci->fscrypt_auth if we have Ax.  If we don't have, we'll need to do that
+>>> later, in handle_cap_grant().
+>>>
+>>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+>>> ---
+>>> Hi!
+>>>
+>>> To be honest, I'm not really sure about the conditions in the 'if': shall
+>>> I bother checking it's really a dir and that it is empty?
+>>>
+>>> Cheers,
+>>> --
+>>> Luís
+>>>
+>>>    fs/ceph/caps.c | 26 +++++++++++++++++++++++---
+>>>    1 file changed, 23 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+>>> index 443fce066d42..e33b5c276cf3 100644
+>>> --- a/fs/ceph/caps.c
+>>> +++ b/fs/ceph/caps.c
+>>> @@ -3511,9 +3511,29 @@ static void handle_cap_grant(struct inode *inode,
+>>>    		     from_kuid(&init_user_ns, inode->i_uid),
+>>>    		     from_kgid(&init_user_ns, inode->i_gid));
+>>>    #if IS_ENABLED(CONFIG_FS_ENCRYPTION)
+>>> -		if (ci->fscrypt_auth_len != extra_info->fscrypt_auth_len ||
+>>> -		    memcmp(ci->fscrypt_auth, extra_info->fscrypt_auth,
+>>> -			   ci->fscrypt_auth_len))
+>>> +		if ((ci->fscrypt_auth_len == 0) &&
+>>> +		    (extra_info->fscrypt_auth_len > 0) &&
+>>> +		    S_ISDIR(inode->i_mode) &&
+>>> +		    (ci->i_rsubdirs + ci->i_rfiles == 1)) {
+>>> +			/*
+>>> +			 * We'll get here when setting up an encrypted directory
+>>> +			 * but we don't have Fx in that directory, i.e. other
+>>> +			 * clients have accessed this directory too.
+>>> +			 */
+>>> +			ci->fscrypt_auth = kmemdup(extra_info->fscrypt_auth,
+>>> +						   extra_info->fscrypt_auth_len,
+>>> +						   GFP_KERNEL);
+>>> +			if (ci->fscrypt_auth) {
+>>> +				inode->i_flags |= S_ENCRYPTED;
+>>> +				ci->fscrypt_auth_len = extra_info->fscrypt_auth_len;
+>>> +			} else {
+>>> +				pr_err("Failed to alloc memory for %llx.%llx fscrypt_auth\n",
+>>> +					ceph_vinop(inode));
+>>> +			}
+>>> +			dout("ino %llx.%llx is now encrypted\n", ceph_vinop(inode));
+>>> +		} else if (ci->fscrypt_auth_len != extra_info->fscrypt_auth_len ||
+>>> +			   memcmp(ci->fscrypt_auth, extra_info->fscrypt_auth,
+>>> +				  ci->fscrypt_auth_len))
+>>>    			pr_warn_ratelimited("%s: cap grant attempt to change fscrypt_auth on non-I_NEW inode (old len %d new len %d)\n",
+>>>    				__func__, ci->fscrypt_auth_len, extra_info->fscrypt_auth_len);
+>>>    #endif
+>> Hi Luis,
+>>
+>> Thanks for your time on this bug.
+>>
+>> IMO we should fix this in ceph_fill_inode():
+>>
+>>   995 #ifdef CONFIG_FS_ENCRYPTION
+>>   996         if (iinfo->fscrypt_auth_len && (inode->i_state & I_NEW)) {
+>>   997                 kfree(ci->fscrypt_auth);
+>>   998                 ci->fscrypt_auth_len = iinfo->fscrypt_auth_len;
+>>   999                 ci->fscrypt_auth = iinfo->fscrypt_auth;
+>> 1000                 iinfo->fscrypt_auth = NULL;
+>> 1001                 iinfo->fscrypt_auth_len = 0;
+>> 1002                 inode_set_flags(inode, S_ENCRYPTED, S_ENCRYPTED);
+>> 1003         }
+>> 1004 #endif
+>>
+>> The setattr will get a reply from MDS including the fscrypt auth info, I
+>> think the kclient just drop it here.
+> I've done some testing and I don't really see this code kfree'ing a valid
+> fscrypt_auth here.  However, I guess it is possible to fix this issue here
+> too, but in a different way, by changing that 'if' condition to:
+>
+> 	if (iinfo->fscrypt_auth_len &&
+> 	    ((inode->i_state & I_NEW) || (ci->fscrypt_auth_len == 0))) {
+> 	...
+> 	}
+>
+> I'm not really sure if this is sane though.  When we loose the 'Ax' caps
+> (another client as accessed the directory we're encrypting), we also seem
+> to loose the I_NEW state.  Using the above code seems to work for the
+> testcase in my patch, but I'm not sure it won't break something else.
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 28275eecb949..c83dfcbc19b3 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -742,16 +742,6 @@ unsigned filemap_get_folios_contig(struct address_space *mapping,
- 		pgoff_t *start, pgoff_t end, struct folio_batch *fbatch);
- unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
- 		pgoff_t end, xa_mark_t tag, struct folio_batch *fbatch);
--unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
--			pgoff_t end, xa_mark_t tag, unsigned int nr_pages,
--			struct page **pages);
--static inline unsigned find_get_pages_tag(struct address_space *mapping,
--			pgoff_t *index, xa_mark_t tag, unsigned int nr_pages,
--			struct page **pages)
--{
--	return find_get_pages_range_tag(mapping, index, (pgoff_t)-1, tag,
--					nr_pages, pages);
--}
- 
- struct page *grab_cache_page_write_begin(struct address_space *mapping,
- 			pgoff_t index);
-diff --git a/include/linux/pagevec.h b/include/linux/pagevec.h
-index 215eb6c3bdc9..a520632297ac 100644
---- a/include/linux/pagevec.h
-+++ b/include/linux/pagevec.h
-@@ -26,14 +26,6 @@ struct pagevec {
- };
- 
- void __pagevec_release(struct pagevec *pvec);
--unsigned pagevec_lookup_range_tag(struct pagevec *pvec,
--		struct address_space *mapping, pgoff_t *index, pgoff_t end,
--		xa_mark_t tag);
--static inline unsigned pagevec_lookup_tag(struct pagevec *pvec,
--		struct address_space *mapping, pgoff_t *index, xa_mark_t tag)
--{
--	return pagevec_lookup_range_tag(pvec, mapping, index, (pgoff_t)-1, tag);
--}
- 
- static inline void pagevec_init(struct pagevec *pvec)
- {
-diff --git a/mm/filemap.c b/mm/filemap.c
-index cc4be51eae5b..8ad45c2e22cd 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2318,66 +2318,6 @@ unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
- }
- EXPORT_SYMBOL(filemap_get_folios_tag);
- 
--/**
-- * find_get_pages_range_tag - Find and return head pages matching @tag.
-- * @mapping:	the address_space to search
-- * @index:	the starting page index
-- * @end:	The final page index (inclusive)
-- * @tag:	the tag index
-- * @nr_pages:	the maximum number of pages
-- * @pages:	where the resulting pages are placed
-- *
-- * Like find_get_pages_range(), except we only return head pages which are
-- * tagged with @tag.  @index is updated to the index immediately after the
-- * last page we return, ready for the next iteration.
-- *
-- * Return: the number of pages which were found.
-- */
--unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
--			pgoff_t end, xa_mark_t tag, unsigned int nr_pages,
--			struct page **pages)
--{
--	XA_STATE(xas, &mapping->i_pages, *index);
--	struct folio *folio;
--	unsigned ret = 0;
--
--	if (unlikely(!nr_pages))
--		return 0;
--
--	rcu_read_lock();
--	while ((folio = find_get_entry(&xas, end, tag))) {
--		/*
--		 * Shadow entries should never be tagged, but this iteration
--		 * is lockless so there is a window for page reclaim to evict
--		 * a page we saw tagged.  Skip over it.
--		 */
--		if (xa_is_value(folio))
--			continue;
--
--		pages[ret] = &folio->page;
--		if (++ret == nr_pages) {
--			*index = folio->index + folio_nr_pages(folio);
--			goto out;
--		}
--	}
--
--	/*
--	 * We come here when we got to @end. We take care to not overflow the
--	 * index @index as it confuses some of the callers. This breaks the
--	 * iteration when there is a page at index -1 but that is already
--	 * broken anyway.
--	 */
--	if (end == (pgoff_t)-1)
--		*index = (pgoff_t)-1;
--	else
--		*index = end + 1;
--out:
--	rcu_read_unlock();
--
--	return ret;
--}
--EXPORT_SYMBOL(find_get_pages_range_tag);
--
- /*
-  * CD/DVDs are error prone. When a medium error occurs, the driver may fail
-  * a _large_ part of the i/o request. Imagine the worst scenario:
-diff --git a/mm/swap.c b/mm/swap.c
-index 955930f41d20..89351b6dd149 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -1098,16 +1098,6 @@ void folio_batch_remove_exceptionals(struct folio_batch *fbatch)
- 	fbatch->nr = j;
- }
- 
--unsigned pagevec_lookup_range_tag(struct pagevec *pvec,
--		struct address_space *mapping, pgoff_t *index, pgoff_t end,
--		xa_mark_t tag)
--{
--	pvec->nr = find_get_pages_range_tag(mapping, index, end, tag,
--					PAGEVEC_SIZE, pvec->pages);
--	return pagevec_count(pvec);
--}
--EXPORT_SYMBOL(pagevec_lookup_range_tag);
--
- /*
-  * Perform any setup for the swap system
-  */
--- 
-2.38.1
+It should be okay IMO.
+
+The I_NEW is for new created directories, such as for mkdir request,etc. 
+But currently the code didn't consider the setattr case.
+
+Please send you patch let's check and discuss there.
+
+Thanks!
+
+- Xiubo
+
+> Cheers,
+> --
+> Luís
+>
+>> If we fix it in handle_cap_grant() I am afraid this bug still exists. What
+>> if there is no any new caps will be issued or revoked recently and then
+>> access to the directory ?
+>>
+>> Thanks
+>>
+>> - Xiubo
+>>
 
