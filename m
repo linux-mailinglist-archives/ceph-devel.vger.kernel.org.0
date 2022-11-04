@@ -2,145 +2,98 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE13618F21
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Nov 2022 04:37:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9EFA6193C9
+	for <lists+ceph-devel@lfdr.de>; Fri,  4 Nov 2022 10:46:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230231AbiKDDhn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 3 Nov 2022 23:37:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37154 "EHLO
+        id S230415AbiKDJqM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 4 Nov 2022 05:46:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbiKDDhQ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 3 Nov 2022 23:37:16 -0400
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C54F460E7
-        for <ceph-devel@vger.kernel.org>; Thu,  3 Nov 2022 20:37:03 -0700 (PDT)
-Received: by mail-pg1-x536.google.com with SMTP id b62so3394751pgc.0
-        for <ceph-devel@vger.kernel.org>; Thu, 03 Nov 2022 20:37:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kCztCif6DGnUVPea69d1j6HBte1tInJ//NGbT2adCtA=;
-        b=uj2thbHtG/d+GBBCufhO7rN+QkuEm7zsR1utnZpf1jQ6jQI6apkQTpUS2wcEmA9aNC
-         VnDMe2rmlwjjtPUJR6RVdf+UJIK/YCtwiDAFrNIV7Nt++fXhl9nREiFkHf0RyMEPfvfO
-         onGWmNN1ovJwkvkYC6fzzHZz7zyvVev9H3OguSEusghpv0YPPtdfeKpV8TCgCnMYqtfc
-         Ksic71C8032fBMagPD7RLDMZgSbzkcCWA6HBFsZEVIK8PskhHmcNukEVkFYsBkmvmeoC
-         g/qCQdT1fcwEOyEG1ZYfH8GugnyK0CKLKk6hzKwIFkwwhNd+ojc6bS3gdGaV6YzySSoe
-         prLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kCztCif6DGnUVPea69d1j6HBte1tInJ//NGbT2adCtA=;
-        b=DYYWsYSlonusd8JM9dFUOySCHg84n61oZLdSEaIfs9as9Ti4g/FctpyS7HOK+iGw3S
-         szMxyv95AQ9qaNms0cAVlEC1NScd+czPMYJqx1sRQKBYPfXDWgTzCMvFkMN6zv2B/g2k
-         ySbK5b+qvCml3Zn/XSNupS4f6UziQiQ4Id6/nb6Wma4gcrHs+eYa1ndReN08gtMyVdeh
-         I/zpa51Eg5VcAQSJZEBN0AGWr7AdGoOPLhOKaeQQvkpGskHYmZjNvEmWUJSwxJdBbwRZ
-         7ABALWNNcHTcBWu4g8I4K/o1keV7SPbCqupZr6fEwg7ba2lMNBItN5VDLbUoWycAh7S4
-         xhEw==
-X-Gm-Message-State: ACrzQf0QlZ38R/mwB9X2U0PH5QDqnSzMnWOPASNCR4fzaz5cbjnejKZB
-        /Xs68VLp2+0Pdtcc3KDd5mUPSw==
-X-Google-Smtp-Source: AMsMyM7NwhgMGw/Ejg/10+QrYuOi1WfTIe60hww1ZNfzsfJwCZnIyT2jB8JwYZIzMahLdSnJ6wzgKQ==
-X-Received: by 2002:a05:6a00:2396:b0:56c:b770:eda6 with SMTP id f22-20020a056a00239600b0056cb770eda6mr33239633pfc.38.1667533023291;
-        Thu, 03 Nov 2022 20:37:03 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au. [49.181.106.210])
-        by smtp.gmail.com with ESMTPSA id x13-20020a170902a38d00b001830ed575c3sm1430190pla.117.2022.11.03.20.37.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Nov 2022 20:37:02 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oqnVr-00A1XB-Bm; Fri, 04 Nov 2022 14:36:59 +1100
-Date:   Fri, 4 Nov 2022 14:36:59 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Vishal Moola <vishal.moola@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
-        linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 04/23] page-writeback: Convert write_cache_pages() to use
- filemap_get_folios_tag()
-Message-ID: <20221104033659.GA2703033@dread.disaster.area>
-References: <20220901220138.182896-1-vishal.moola@gmail.com>
- <20220901220138.182896-5-vishal.moola@gmail.com>
- <20221018210152.GH2703033@dread.disaster.area>
- <Y2RAdUtJrOJmYU4L@fedora>
- <20221104003235.GZ2703033@dread.disaster.area>
- <Y2R8rRr0ZdrlT32m@magnolia>
+        with ESMTP id S230153AbiKDJqK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Nov 2022 05:46:10 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1034B65D8;
+        Fri,  4 Nov 2022 02:46:04 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id BB05C218A8;
+        Fri,  4 Nov 2022 09:46:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1667555162; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9T3oPWTPozZGfEXCs6Cda1f91UWaPZeHRXFFaFekaP0=;
+        b=I6wmwQbaDjeTv3pqNt8Z+6j3dBXdvw7GRjOqQebI5BBcTnn6wV4PQz+8W89nZGR70pCEmW
+        eNft6JauQdLR2NiJ51yDopp0nmVDzM+OhA2/GOaZ6g5jt22P6A6eq8vxCSRMPdYnOAtRD5
+        dFqIwmlWDh+SjPj215x6HX07TT26K/Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1667555162;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9T3oPWTPozZGfEXCs6Cda1f91UWaPZeHRXFFaFekaP0=;
+        b=siJHrYovP5jbdGgd8LD5TTfLg9ZGb9vAo2GPaU+85u1S5yyVUerIuBGZKmN4r3H46P06Mc
+        aEmbdjUS9LiJdkAg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4847D1346F;
+        Fri,  4 Nov 2022 09:46:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id CMOlDlrfZGN1DQAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Fri, 04 Nov 2022 09:46:02 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 81a255f3;
+        Fri, 4 Nov 2022 09:47:03 +0000 (UTC)
+Date:   Fri, 4 Nov 2022 09:47:03 +0000
+From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
+To:     kernel test robot <lkp@intel.com>
+Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ceph: fix memory leak in mount error path when using
+ test_dummy_encryption
+Message-ID: <Y2TflzMdeiXRMoek@suse.de>
+References: <20221103153619.11068-1-lhenriques@suse.de>
+ <202211042241.mPJd6rKy-lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Y2R8rRr0ZdrlT32m@magnolia>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <202211042241.mPJd6rKy-lkp@intel.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Nov 03, 2022 at 07:45:01PM -0700, Darrick J. Wong wrote:
-> On Fri, Nov 04, 2022 at 11:32:35AM +1100, Dave Chinner wrote:
-> > On Thu, Nov 03, 2022 at 03:28:05PM -0700, Vishal Moola wrote:
-> > > On Wed, Oct 19, 2022 at 08:01:52AM +1100, Dave Chinner wrote:
-> > > > On Thu, Sep 01, 2022 at 03:01:19PM -0700, Vishal Moola (Oracle) wrote:
-> > > > > -			BUG_ON(PageWriteback(page));
-> > > > > -			if (!clear_page_dirty_for_io(page))
-> > > > > +			BUG_ON(folio_test_writeback(folio));
-> > > > > +			if (!folio_clear_dirty_for_io(folio))
-> > > > >  				goto continue_unlock;
-> > > > >  
-> > > > >  			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
-> > > > > -			error = (*writepage)(page, wbc, data);
-> > > > > +			error = writepage(&folio->page, wbc, data);
-> > > > 
-> > > > Yet, IIUC, this treats all folios as if they are single page folios.
-> > > > i.e. it passes the head page of a multi-page folio to a callback
-> > > > that will treat it as a single PAGE_SIZE page, because that's all
-> > > > the writepage callbacks are currently expected to be passed...
-> > > > 
-> > > > So won't this break writeback of dirty multipage folios?
-> > > 
-> > > Yes, it appears it would. But it wouldn't because its already 'broken'.
-> > 
-> > It is? Then why isn't XFS broken on existing kernels? Oh, we don't
-> > know because it hasn't been tested?
-> > 
-> > Seriously - if this really is broken, and this patchset further
-> > propagating the brokeness, then somebody needs to explain to me why
-> > this is not corrupting data in XFS.
+On Fri, Nov 04, 2022 at 02:40:25PM +0800, kernel test robot wrote:
+> Hi Luís,
 > 
-> It looks like iomap_do_writepage finds the folio size correctly
+> Thank you for the patch! Yet something to improve:
 > 
-> 	end_pos = folio_pos(folio) + folio_size(folio);
+> [auto build test ERROR on ceph-client/for-linus]
+> [also build test ERROR on linus/master v6.1-rc3 next-20221104]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
 > 
-> and iomap_writpage_map will map out the correct number of blocks
-> 
-> 	unsigned nblocks = i_blocks_per_folio(inode, folio);
-> 
-> 	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
-> 
-> right?
+> url:    https://github.com/intel-lab-lkp/linux/commits/Lu-s-Henriques/ceph-fix-memory-leak-in-mount-error-path-when-using-test_dummy_encryption/20221103-233629
+> base:   https://github.com/ceph/ceph-client.git for-linus
 
-Yup, that's how I read it, too.
-
-But my recent experience with folios involved being repeatedly
-burnt by edge case corruptions due to multipage folios showing up
-when and where I least expected them.
-
-Hence doing a 1:1 conversion of page based code to folio based code
-and just assuming large folios will work without any testing seems
-akin to playing russian roulette with loose cannons that have been
-doused with napalm and then set on fire by an air-dropped barrel
-bomb...
+Well, thank you very much!  Now, how do I tell this bot that this patch
+isn't targeting this branch?
 
 Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--
+Luís
