@@ -2,106 +2,124 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 55064619410
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Nov 2022 11:03:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9323D619549
+	for <lists+ceph-devel@lfdr.de>; Fri,  4 Nov 2022 12:20:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230297AbiKDKDI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 4 Nov 2022 06:03:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37704 "EHLO
+        id S231309AbiKDLUJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 4 Nov 2022 07:20:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbiKDKDG (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Nov 2022 06:03:06 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EC5D1EADF;
-        Fri,  4 Nov 2022 03:03:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1667556185; x=1699092185;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=g+1FU1UbK9Z2VGaBVxEvU818H48PEczmtH1jj6hXGXA=;
-  b=jzwziP6NRmnP5D5GR2iGgO7joKRwRSvktk7N7CMpXpDGOJ+WB8I1yTnj
-   E4U8VPquNI7Jm3n1WUUnTIT2oFcSEJukOCr3GOd1/vcwmZ/hTgeqM9CFI
-   we3Sd5pJfm9ay/6lgGXU2azZTSL5okgodkF6bb9mOc78ahuA66pVJYRlV
-   h6qZ2MFvrbCcdd+t3AGD6iUpZ68XjtmrJ/zlc4zlB/+cVbddwq13tu8ql
-   OXNNIVMcwlfyz6rWmJV6R380H47HYXSrwvgAmOy78HPnmzNaMHrJjs9el
-   i0TE2Tpcms6At0lW3sM9l3hes6qlMOrKUwYuOQYJM7/+wSbJow6GCE7Nh
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10520"; a="293256992"
-X-IronPort-AV: E=Sophos;i="5.96,137,1665471600"; 
-   d="scan'208";a="293256992"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2022 03:03:04 -0700
-X-IronPort-AV: E=McAfee;i="6500,9779,10520"; a="740568617"
-X-IronPort-AV: E=Sophos;i="5.96,137,1665471600"; 
-   d="scan'208";a="740568617"
-Received: from rongch2-mobl.ccr.corp.intel.com (HELO [10.254.215.240]) ([10.254.215.240])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Nov 2022 03:02:58 -0700
-Subject: Re: [PATCH] ceph: fix memory leak in mount error path when using
- test_dummy_encryption
-To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
-        kernel test robot <lkp@intel.com>
-Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        with ESMTP id S230047AbiKDLUI (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Nov 2022 07:20:08 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03A8B63BD;
+        Fri,  4 Nov 2022 04:20:06 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 99D091F8C1;
+        Fri,  4 Nov 2022 11:20:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1667560805; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9ojXglajVUjAmF9vqdAfPpKnKySR+K9SEhcsPHN+wRk=;
+        b=0pTouqEa6+fljMqVW6yC6LIoz90RgZrTRD89+sLZMF2ehO5763QK5tG6pcgz3Dr9CpzbSU
+        LIEiBQVZPOSNfjAz68lQe1xs+mX6bFBtaU3ILuXwoKoeJ7a9bHJPxddUbBP7lKQuG5em89
+        JPXd4ya1PBMOqtoE/4RlgM+XOeQYe30=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1667560805;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9ojXglajVUjAmF9vqdAfPpKnKySR+K9SEhcsPHN+wRk=;
+        b=i0tl0oI5EySNE5VpisLt+v/UNy/TQJ3tnP43vYMeVF7TSAEMci8vdeqYdWZQ5D2jMi7I6D
+        J7lTenphJks8zOBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 167F613216;
+        Fri,  4 Nov 2022 11:20:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id fCV7AmX1ZGOZQQAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Fri, 04 Nov 2022 11:20:05 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 2d89dcc5;
+        Fri, 4 Nov 2022 11:21:05 +0000 (UTC)
+Date:   Fri, 4 Nov 2022 11:21:05 +0000
+From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
+To:     "Chen, Rong A" <rong.a.chen@intel.com>
+Cc:     kernel test robot <lkp@intel.com>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
         Jeff Layton <jlayton@kernel.org>,
         oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ceph: fix memory leak in mount error path when using
+ test_dummy_encryption
+Message-ID: <Y2T1ocj1xirSc2Lf@suse.de>
 References: <20221103153619.11068-1-lhenriques@suse.de>
- <202211042241.mPJd6rKy-lkp@intel.com> <Y2TflzMdeiXRMoek@suse.de>
-From:   "Chen, Rong A" <rong.a.chen@intel.com>
-Message-ID: <fc1fee1f-c6f0-9366-8759-f80b9ba532e7@intel.com>
-Date:   Fri, 4 Nov 2022 18:02:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.12.0
+ <202211042241.mPJd6rKy-lkp@intel.com>
+ <Y2TflzMdeiXRMoek@suse.de>
+ <fc1fee1f-c6f0-9366-8759-f80b9ba532e7@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <Y2TflzMdeiXRMoek@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <fc1fee1f-c6f0-9366-8759-f80b9ba532e7@intel.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-
-
-On 11/4/2022 5:47 PM, LuÃ­s Henriques wrote:
-> On Fri, Nov 04, 2022 at 02:40:25PM +0800, kernel test robot wrote:
->> Hi LuÃ­s,
->>
->> Thank you for the patch! Yet something to improve:
->>
->> [auto build test ERROR on ceph-client/for-linus]
->> [also build test ERROR on linus/master v6.1-rc3 next-20221104]
->> [If your patch is applied to the wrong git tree, kindly drop us a note.
->> And when submitting patch, we suggest to use '--base' as documented in
->> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->>
->> url:    https://github.com/intel-lab-lkp/linux/commits/Lu-s-Henriques/ceph-fix-memory-leak-in-mount-error-path-when-using-test_dummy_encryption/20221103-233629
->> base:   https://github.com/ceph/ceph-client.git for-linus
+On Fri, Nov 04, 2022 at 06:02:55PM +0800, Chen, Rong A wrote:
 > 
-> Well, thank you very much!  Now, how do I tell this bot that this patch
-> isn't targeting this branch?
-
-Hi Luis,
-
-The below message may help:
-
- >> [If your patch is applied to the wrong git tree, kindly drop us a note.
- >> And when submitting patch, we suggest to use '--base' as documented in
- >> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-we also appreciate that if developers can tell us the right branch
-to improve the bot when applied to wrong place.
-
-Best Regards,
-Rong Chen
-
 > 
-> Cheers,
-> --
-> LuÃ­s
+> On 11/4/2022 5:47 PM, Luís Henriques wrote:
+> > On Fri, Nov 04, 2022 at 02:40:25PM +0800, kernel test robot wrote:
+> > > Hi Luís,
+> > > 
+> > > Thank you for the patch! Yet something to improve:
+> > > 
+> > > [auto build test ERROR on ceph-client/for-linus]
+> > > [also build test ERROR on linus/master v6.1-rc3 next-20221104]
+> > > [If your patch is applied to the wrong git tree, kindly drop us a note.
+> > > And when submitting patch, we suggest to use '--base' as documented in
+> > > https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > > 
+> > > url:    https://github.com/intel-lab-lkp/linux/commits/Lu-s-Henriques/ceph-fix-memory-leak-in-mount-error-path-when-using-test_dummy_encryption/20221103-233629
+> > > base:   https://github.com/ceph/ceph-client.git for-linus
+> > 
+> > Well, thank you very much!  Now, how do I tell this bot that this patch
+> > isn't targeting this branch?
 > 
+> Hi Luis,
+> 
+> The below message may help:
+> 
+> >> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> >> And when submitting patch, we suggest to use '--base' as documented in
+> >> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+Ah! Awesome, thank you very much for pointing me at this.  I'll try to
+remember next time to use '--base' when sending patches for a specific
+branch.
+
+> we also appreciate that if developers can tell us the right branch
+> to improve the bot when applied to wrong place.
+
+Yeah, I guess that in general the bot is picking the right branch for
+ceph.  In this case, the patch was for the fscrypt development branch, so
+my mistake for not using '--base'.
+
+Cheers,
+--
+Luís
