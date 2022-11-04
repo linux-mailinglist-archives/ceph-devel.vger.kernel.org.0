@@ -2,124 +2,93 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9323D619549
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Nov 2022 12:20:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E24CD619B8E
+	for <lists+ceph-devel@lfdr.de>; Fri,  4 Nov 2022 16:27:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231309AbiKDLUJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 4 Nov 2022 07:20:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46820 "EHLO
+        id S232402AbiKDP12 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 4 Nov 2022 11:27:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230047AbiKDLUI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Nov 2022 07:20:08 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03A8B63BD;
-        Fri,  4 Nov 2022 04:20:06 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 99D091F8C1;
-        Fri,  4 Nov 2022 11:20:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1667560805; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9ojXglajVUjAmF9vqdAfPpKnKySR+K9SEhcsPHN+wRk=;
-        b=0pTouqEa6+fljMqVW6yC6LIoz90RgZrTRD89+sLZMF2ehO5763QK5tG6pcgz3Dr9CpzbSU
-        LIEiBQVZPOSNfjAz68lQe1xs+mX6bFBtaU3ILuXwoKoeJ7a9bHJPxddUbBP7lKQuG5em89
-        JPXd4ya1PBMOqtoE/4RlgM+XOeQYe30=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1667560805;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9ojXglajVUjAmF9vqdAfPpKnKySR+K9SEhcsPHN+wRk=;
-        b=i0tl0oI5EySNE5VpisLt+v/UNy/TQJ3tnP43vYMeVF7TSAEMci8vdeqYdWZQ5D2jMi7I6D
-        J7lTenphJks8zOBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 167F613216;
-        Fri,  4 Nov 2022 11:20:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id fCV7AmX1ZGOZQQAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Fri, 04 Nov 2022 11:20:05 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 2d89dcc5;
-        Fri, 4 Nov 2022 11:21:05 +0000 (UTC)
-Date:   Fri, 4 Nov 2022 11:21:05 +0000
-From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
-To:     "Chen, Rong A" <rong.a.chen@intel.com>
-Cc:     kernel test robot <lkp@intel.com>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ceph: fix memory leak in mount error path when using
- test_dummy_encryption
-Message-ID: <Y2T1ocj1xirSc2Lf@suse.de>
-References: <20221103153619.11068-1-lhenriques@suse.de>
- <202211042241.mPJd6rKy-lkp@intel.com>
- <Y2TflzMdeiXRMoek@suse.de>
- <fc1fee1f-c6f0-9366-8759-f80b9ba532e7@intel.com>
+        with ESMTP id S232408AbiKDP1P (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Nov 2022 11:27:15 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65E532716E;
+        Fri,  4 Nov 2022 08:27:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=NRigLoVbg9iNMuo2V8dujDupHLGv4656kHqtcy7GZD8=; b=cC/8pOU9guMXpHbLROmQ2jJkPP
+        fLIJJBoVaFImQSaJFL0EWP8TTGFmm1Fq/sTBJJzHOEsig/P1SI1UBIbnctYsc4kfBpEtbkTVb2mcZ
+        Ox1PTbpiMUHAhUcDFiGqO5ffa8RLcaU4htW4J7D1+QIRrp5YcZ701l+dtCKa0/v+wq867Rzs2qjn5
+        m+hDXZshw76/eeJ25GEvs/oa2Dpn7Gb7+4FfiG7RrZMv4cn4ae/Eyjl07Dbl+O73y7VDkBQtEk8h0
+        f9z379l8811dl922VVtAq9pc8KIqwTp7lj2fnWcgj+lzkCFo5nZGbwWtuSpe8hnrjhN+krL6P+YDR
+        WpFHYXzg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oqybA-007SeM-OG; Fri, 04 Nov 2022 15:27:12 +0000
+Date:   Fri, 4 Nov 2022 15:27:12 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 04/23] page-writeback: Convert write_cache_pages() to use
+ filemap_get_folios_tag()
+Message-ID: <Y2UvUOn6hmnqbrA7@casper.infradead.org>
+References: <20220901220138.182896-1-vishal.moola@gmail.com>
+ <20220901220138.182896-5-vishal.moola@gmail.com>
+ <20221018210152.GH2703033@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fc1fee1f-c6f0-9366-8759-f80b9ba532e7@intel.com>
+In-Reply-To: <20221018210152.GH2703033@dread.disaster.area>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Nov 04, 2022 at 06:02:55PM +0800, Chen, Rong A wrote:
+On Wed, Oct 19, 2022 at 08:01:52AM +1100, Dave Chinner wrote:
+> On Thu, Sep 01, 2022 at 03:01:19PM -0700, Vishal Moola (Oracle) wrote:
+> > @@ -2313,17 +2313,18 @@ int write_cache_pages(struct address_space *mapping,
+> >  	while (!done && (index <= end)) {
+> >  		int i;
+> >  
+> > -		nr_pages = pagevec_lookup_range_tag(&pvec, mapping, &index, end,
+> > -				tag);
+> > -		if (nr_pages == 0)
+> > +		nr_folios = filemap_get_folios_tag(mapping, &index, end,
+> > +				tag, &fbatch);
 > 
-> 
-> On 11/4/2022 5:47 PM, Luís Henriques wrote:
-> > On Fri, Nov 04, 2022 at 02:40:25PM +0800, kernel test robot wrote:
-> > > Hi Luís,
-> > > 
-> > > Thank you for the patch! Yet something to improve:
-> > > 
-> > > [auto build test ERROR on ceph-client/for-linus]
-> > > [also build test ERROR on linus/master v6.1-rc3 next-20221104]
-> > > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > > And when submitting patch, we suggest to use '--base' as documented in
-> > > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > > 
-> > > url:    https://github.com/intel-lab-lkp/linux/commits/Lu-s-Henriques/ceph-fix-memory-leak-in-mount-error-path-when-using-test_dummy_encryption/20221103-233629
-> > > base:   https://github.com/ceph/ceph-client.git for-linus
-> > 
-> > Well, thank you very much!  Now, how do I tell this bot that this patch
-> > isn't targeting this branch?
-> 
-> Hi Luis,
-> 
-> The below message may help:
-> 
-> >> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> >> And when submitting patch, we suggest to use '--base' as documented in
-> >> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> This can find and return dirty multi-page folios if the filesystem
+> enables them in the mapping at instantiation time, right?
 
-Ah! Awesome, thank you very much for pointing me at this.  I'll try to
-remember next time to use '--base' when sending patches for a specific
-branch.
+Correct.  Just like before the patch.  pagevec_lookup_range_tag() has
+only ever returned head pages, never tail pages.  This is probably
+because shmem (which was our only fs that supported compound pages)
+never supported writeback, so never looked up pages by tag.
 
-> we also appreciate that if developers can tell us the right branch
-> to improve the bot when applied to wrong place.
+> >  			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
+> > -			error = (*writepage)(page, wbc, data);
+> > +			error = writepage(&folio->page, wbc, data);
+> 
+> Yet, IIUC, this treats all folios as if they are single page folios.
+> i.e. it passes the head page of a multi-page folio to a callback
+> that will treat it as a single PAGE_SIZE page, because that's all
+> the writepage callbacks are currently expected to be passed...
+> 
+> So won't this break writeback of dirty multipage folios?
 
-Yeah, I guess that in general the bot is picking the right branch for
-ceph.  In this case, the patch was for the fscrypt development branch, so
-my mistake for not using '--base'.
+No.  A filesystem only sets the flag to create multipage folios once its
+writeback callback handles multipage folios correctly (amongst many other
+things that have to be fixed and tested).  I haven't written down all
+the things that a filesystem maintainer needs to check at least partly
+because I don't know how representative XFS/iomap are of all filesystems.
 
-Cheers,
---
-Luís
