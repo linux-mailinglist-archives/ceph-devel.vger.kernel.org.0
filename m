@@ -2,210 +2,156 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7494B61F396
-	for <lists+ceph-devel@lfdr.de>; Mon,  7 Nov 2022 13:45:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 72DEF61F5CB
+	for <lists+ceph-devel@lfdr.de>; Mon,  7 Nov 2022 15:24:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232311AbiKGMpd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 7 Nov 2022 07:45:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36102 "EHLO
+        id S232347AbiKGOX4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 7 Nov 2022 09:23:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232329AbiKGMp3 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 7 Nov 2022 07:45:29 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58A5F1B1D9
-        for <ceph-devel@vger.kernel.org>; Mon,  7 Nov 2022 04:44:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667825074;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        with ESMTP id S231630AbiKGOXa (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 7 Nov 2022 09:23:30 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC71921E07;
+        Mon,  7 Nov 2022 06:19:03 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 7EB932256B;
+        Mon,  7 Nov 2022 14:18:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1667830720; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=2hqgA/TRgZw1DzPVWmvs/bi2bDcerUKILSHp4k/Qv2I=;
-        b=L2R7cTGvdJTMdEw4HziMLkFAxviTg0Os6F5twbcu/H/hBqCUqNG9/GhrqlEtQ0D6U5lEQy
-        qdGCI66JXihtiRbnFzzDLekclBaS7vTUWLglpVFNmYeSdxMDgXqMGbTNZPR/SNyijUCF9H
-        r9POiCSxaoFL9PWYY2oo5QFMD5pXICk=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-374-x7dIpnh7M_ayZa0mVlvsPQ-1; Mon, 07 Nov 2022 07:44:33 -0500
-X-MC-Unique: x7dIpnh7M_ayZa0mVlvsPQ-1
-Received: by mail-pj1-f71.google.com with SMTP id m1-20020a17090a5a4100b002138550729dso4538348pji.2
-        for <ceph-devel@vger.kernel.org>; Mon, 07 Nov 2022 04:44:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2hqgA/TRgZw1DzPVWmvs/bi2bDcerUKILSHp4k/Qv2I=;
-        b=kkVIR+siTh/m+/51pFsB/FTBT1WUo8SS2iak02y++SVkpuvthszJZl/dPZstqJNdrQ
-         j5/phAg2kWBAmMzGbfq5IK9YAJptnW6ExhzDOSM3rQa4GFjxgyDalFe/0uA6ZHiw5lXZ
-         +Yg1KpS1K/60Wg0/aiNXmczL0CDET6Xs6c7fdlF4E/ccbMEEhnUZNImfq5P2i36MV6M3
-         XHFh4YX5Us8Hm89egS8K1WGWSGCRwC6pW25nwiLo5GZYpkMfx5Cr+8R3+JpuO9BU8r11
-         ZXsonb+jn0BTCO1eSKeqtmMAe4CN/Qo8cAoI7GLpYZIA7xEVfUpCHJFHuatRcvgBQbkl
-         cy4w==
-X-Gm-Message-State: ACrzQf2JD0GdqYmEKmaWGKRXP7K9ijIZI9kg3w34D3bTqID6lz1NyiHP
-        QBj0FKPym+6TzFcHRraNE5a0UNHEieMpQ9PRO0ukVcJXqtSbmqSawhO7UBoMkiiAcxiXLB5r/3Q
-        KDeAQqpoY+lXoY2JS7a7XaQ==
-X-Received: by 2002:a05:6a00:21cc:b0:56c:ba99:795d with SMTP id t12-20020a056a0021cc00b0056cba99795dmr50314877pfj.84.1667825072139;
-        Mon, 07 Nov 2022 04:44:32 -0800 (PST)
-X-Google-Smtp-Source: AMsMyM6Z8VizXTILvpkDYYRHc1gOLDg0bA5X+HhAJoGWKY3jU2FfCdpEd9AI46CqQAZaCoZ5DX+GxA==
-X-Received: by 2002:a05:6a00:21cc:b0:56c:ba99:795d with SMTP id t12-20020a056a0021cc00b0056cba99795dmr50314862pfj.84.1667825071873;
-        Mon, 07 Nov 2022 04:44:31 -0800 (PST)
-Received: from [10.72.12.88] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id pv7-20020a17090b3c8700b00213c7cf21c0sm4240009pjb.5.2022.11.07.04.44.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Nov 2022 04:44:31 -0800 (PST)
-Subject: Re: [RFC PATCH] fs/lock: increase the filp's reference for
- Posix-style locks
-To:     Jeff Layton <jlayton@kernel.org>, viro@zeniv.linux.org.uk,
-        chuck.lever@oracle.com
-Cc:     axboe@kernel.dk, asml.silence@gmail.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org, ceph-devel@vger.kernel.org,
-        mchangir@redhat.com, idryomov@gmail.com, lhenriques@suse.de,
-        gfarnum@redhat.com
-References: <20221107095232.36828-1-xiubli@redhat.com>
- <2f1fe2fe57f39ab420c7855584ae7b6bb85a7692.camel@kernel.org>
- <c5a2cf05-8e30-1fac-3c48-d4b508ea9009@redhat.com>
- <88511dabbfb0cfad748100f59f2ce4025db29dc0.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <b1333f15-fb3d-5698-1852-47a55546bdb8@redhat.com>
-Date:   Mon, 7 Nov 2022 20:44:24 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        bh=BzbeyYPbtBw8LVTX64f3cWA5jLyoWj4oXaSt5h5zwWc=;
+        b=GGD109BAu6OPXIylnJAjbchYTdSb5/0beisb6lxThAAnNti1QO3qkt8uBlbhKeShdC9tH7
+        tBBw4D3isD77FFDtdYZgHyOVfRnQ18tUbAr57x6C2t5GQrSBMLmLTUBJ46ktaQdgmRHqGF
+        xDybEVAvRirNa2r5s+CWy9F026ezivQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1667830720;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=BzbeyYPbtBw8LVTX64f3cWA5jLyoWj4oXaSt5h5zwWc=;
+        b=PkwPW0+0++nnnZahIa84De2rCz+dKr3Ei4VB7qHOlGk5Ntc8wDcPJHEjAppN+CgQ6t1g7G
+        J6pUUqWuXABz1uAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 18B6F13AC7;
+        Mon,  7 Nov 2022 14:18:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id WHSvAsATaWPbeAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Mon, 07 Nov 2022 14:18:40 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id c4a3af34;
+        Mon, 7 Nov 2022 14:19:41 +0000 (UTC)
+Date:   Mon, 7 Nov 2022 14:19:41 +0000
+From:   =?iso-8859-1?Q?Lu=EDs?= Henriques <lhenriques@suse.de>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ceph: fix memory leak in mount error path when using
+ test_dummy_encryption
+Message-ID: <Y2kT/UJfGeYAd92s@suse.de>
+References: <20221103153619.11068-1-lhenriques@suse.de>
+ <700018a6-aff7-6e7a-98df-2fc8cca39acb@redhat.com>
+ <Y2jcrbZxgmLO/psM@suse.de>
+ <afd5902a-3e79-a6d9-fcd7-abee276c5504@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <88511dabbfb0cfad748100f59f2ce4025db29dc0.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+In-Reply-To: <afd5902a-3e79-a6d9-fcd7-abee276c5504@redhat.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Mon, Nov 07, 2022 at 07:06:40PM +0800, Xiubo Li wrote:
+> 
+> On 07/11/2022 18:23, Luís Henriques wrote:
+> > On Mon, Nov 07, 2022 at 03:47:23PM +0800, Xiubo Li wrote:
+> > > On 03/11/2022 23:36, Luís Henriques wrote:
+> > > > Because ceph_init_fs_context() will never be invoced in case we get a
+> > > > mount error, destroy_mount_options() won't be releasing fscrypt resources
+> > > > with fscrypt_free_dummy_policy().  This will result in a memory leak.  Add
+> > > > an invocation to this function in the mount error path.
+> > > > 
+> > > > Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> > > > ---
+> > > >    fs/ceph/super.c | 1 +
+> > > >    1 file changed, 1 insertion(+)
+> > > > 
+> > > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > > > index 2224d44d21c0..6b9fd04b25cd 100644
+> > > > --- a/fs/ceph/super.c
+> > > > +++ b/fs/ceph/super.c
+> > > > @@ -1362,6 +1362,7 @@ static int ceph_get_tree(struct fs_context *fc)
+> > > >    	ceph_mdsc_close_sessions(fsc->mdsc);
+> > > >    	deactivate_locked_super(sb);
+> > > > +	fscrypt_free_dummy_policy(&fsc->fsc_dummy_enc_policy);
+> > > Hi Luis,
+> > > 
+> > > BTW, any reason the following code won't be triggered ?
+> > > 
+> > > deactivate_locked_super(sb);
+> > > 
+> > >    --> fs->kill_sb(s);
+> > > 
+> > >          --> ceph_kill_sb()
+> > > 
+> > >                --> kill_anon_super()
+> > > 
+> > >                      --> generic_shutdown_super()
+> > > 
+> > >                            --> sop->put_super()
+> > > 
+> > >                                  --> ceph_put_super()
+> > > 
+> > >                                        --> ceph_fscrypt_free_dummy_policy()
+> > > 
+> > >                                             --> fscrypt_free_dummy_policy(
+> > > 
+> > Here's what I'm seeing here:
+> > 
+> >    sys_mount->path_mount->do_new_mount->vfs_get_tree->ceph_get_tree
+> > 
+> > ceph_get_tree() fails due to ceph_real_mount() returning an error.  My
+> > understanding is that that, since fc->root is never set, that code path
+> > will never be triggered.  Does that make sense?
+> 
+> Okay, you are right!
+> 
+> How about fixing it in ceph_real_mount() instead ?
 
-On 07/11/2022 20:29, Jeff Layton wrote:
-> On Mon, 2022-11-07 at 20:03 +0800, Xiubo Li wrote:
->> On 07/11/2022 18:33, Jeff Layton wrote:
->>> On Mon, 2022-11-07 at 17:52 +0800, xiubli@redhat.com wrote:
-[...]
->>>> diff --git a/io_uring/openclose.c b/io_uring/openclose.c
->>>> index 67178e4bb282..5a12cdf7f8d0 100644
->>>> --- a/io_uring/openclose.c
->>>> +++ b/io_uring/openclose.c
->>>> @@ -212,6 +212,7 @@ int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>>    int io_close(struct io_kiocb *req, unsigned int issue_flags)
->>>>    {
->>>>    	struct files_struct *files = current->files;
->>>> +	fl_owner_t owner = file_lock_make_thread_owner(files);
->>>>    	struct io_close *close = io_kiocb_to_cmd(req, struct io_close);
->>>>    	struct fdtable *fdt;
->>>>    	struct file *file;
->>>> @@ -247,7 +248,7 @@ int io_close(struct io_kiocb *req, unsigned int issue_flags)
->>>>    		goto err;
->>>>    
->>>>    	/* No ->flush() or already async, safely close from here */
->>>> -	ret = filp_close(file, current->files);
->>>> +	ret = filp_close(file, owner);
->>>>    err:
->>>>    	if (ret < 0)
->>>>    		req_set_fail(req);
->>> I think this is the wrong approach to fixing this. It also looks like
->>> you could hit a similar problem with OFD locks and this patch wouldn't
->>> address that issue.
->> For the OFD locks they will set the 'file' struct as the owner just as
->> the flock does, it should be okay and I don't think it has this issue if
->> my understanding is correct here.
->>
-> They set the the owner to "file", but they don't hold a reference to it.
-> With OFD locks, the file is what holds references to the lock, not the
-> reverse.
+Sure, I can send a patch for doing that instead.  However, my opinion is
+that it makes more sense to do it, mostly because ceph_get_tree() is
+already doing clean-up work on the error path (ceph_mdsc_close_sessions()
+and deactivate_locked_super()).
 
-Yeah, right. But for both OFD and flock they shouldn't hit this issue, 
-because it when removing all the locks having the same owner, which is 
-the 'file', passed by filp_close(filp), the 'file' reference counter 
-must be larger than 0. Because the filp_close() is still using it.
+But let me know if you really prefer doing in ceph_read_mount() and I'll
+send v2.
 
-This is why using the thread id as the owner is a special case for 
-Posix-style lock.
+> > 
+> > An easy way to reproduce is by running fstest ceph/005 with the
+> > 'test_dummy_encryption' option.  (I'll probably need to send a patch to
+> > disable this test when this option is present.)
+> 
+> Anyway this should be fixed in kceph.
 
->
->>> The real bug seems to be that ceph_fl_release_lock dereferences fl_file,
->>> at a point when it shouldn't rely on that being valid. Most filesystems
->>> stash some info in fl->fl_u if they need to do bookkeeping after
->>> releasing a lock. Perhaps ceph should be doing something similar?
->> This is the 'filp' memory in filp_close(filp, ...):
->>
->> crash> file.f_path.dentry,f_inode 0xffff952d7ab46200
->>     f_path.dentry = 0xffff9521b121cb40
->>     f_inode = 0xffff951f3ea33550,
->>
->> We can see the 'f_inode' is pointing to the correct inode memory.
->>
->>
->>
->> While later in 'ceph_fl_release_lock()':
->>
->> 41 static void ceph_fl_release_lock(struct file_lock *fl)
->> 42 {
->> 43     struct ceph_file_info *fi = fl->fl_file->private_data;
->> 44     struct inode *inode = file_inode(fl->fl_file);
->> 45     struct ceph_inode_info *ci = ceph_inode(inode);
->> 46     atomic_dec(&fi->num_locks);
->> 47     if (atomic_dec_and_test(&ci->i_filelock_ref)) {
->> 48         /* clear error when all locks are released */
->> 49         spin_lock(&ci->i_ceph_lock);
->> 50         ci->i_ceph_flags &= ~CEPH_I_ERROR_FILELOCK;
->> 51         spin_unlock(&ci->i_ceph_lock);
->> 52     }
->> 53 }
->>
-> You only need the inode for most of this. The exception is
-> fi->num_locks, so you may need to test for that in a different way.
->
->> It crashed in Line#47 and the 'fl->fl_file' memory is:
->>
->> crash> file.f_path.dentry,f_inode 0xffff952d4ebd8a00
->>     f_path.dentry = 0x0
->>     f_inode = 0x0,
->>
->> Please NOTE: the 'filp' and 'fl->fl_file' are two different 'file struct'.
->>
-> Yep, I understand the bug. I just don't like the proposed fix. :)
+Yes, agreed.
 
-Yeah, I also think this approach is ugly :-)
-
->> Can we fix this by using 'fl->fl_u' here ?
->>
-> Probably. You could take and hold an inode reference in there, and maybe
-> add a function that looks at whether there are any locks held against a
-> particular file, rather than trying to count locks in ceph_file_info.
-
-Okay, this sounds good.
-
-Let me try this tomorrow.
-
->> I was also thinking I could just call the 'get_file(file)' in
->> ceph_lock() and then in ceph_fl_release_lock() release the reference
->> counter. How about this ?
->>
-> That may work too, though again, I'd be worried about cyclical
-> dependencies, particularly with OFD locks. If the lock holds a reference
-> to the file, then can the file's refcount ever go to zero if the lock is
-> never explicitly released? I think not.
->
-> You may also need to consider flock locks too, since they have similar
-> ownership semantics to OFD locks.
-
-I will send a V2 later.
-
-Thanks Jeff!
-
-- Xiubo
-
-
+Cheers,
+--
+Luís
