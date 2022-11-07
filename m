@@ -2,73 +2,94 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8943D61DA37
-	for <lists+ceph-devel@lfdr.de>; Sat,  5 Nov 2022 13:39:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B434A61EBA1
+	for <lists+ceph-devel@lfdr.de>; Mon,  7 Nov 2022 08:19:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229899AbiKEMja (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 5 Nov 2022 08:39:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39906 "EHLO
+        id S230365AbiKGHT3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 7 Nov 2022 02:19:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229607AbiKEMjM (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 5 Nov 2022 08:39:12 -0400
-Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8CC517E1F
-        for <ceph-devel@vger.kernel.org>; Sat,  5 Nov 2022 05:39:08 -0700 (PDT)
-Received: by mail-pg1-x531.google.com with SMTP id r18so6554218pgr.12
-        for <ceph-devel@vger.kernel.org>; Sat, 05 Nov 2022 05:39:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=c8XA1N0uaxkLO/wKHErNWHaSuu64k5Pjb5u9dmcZrOc=;
-        b=kq8TjKIfMuAddEcVf9rp0MAfAJKYgNJ2cBueguYMfNrrn5Y92RfhwFFtqQvsnJ25Za
-         h8SiEvPnMYeYwSArc6GY5SQq2zL79mDe+hlmdrq1jqhbH32Nym17IyGJ74jGudUVTyjZ
-         ZLa+VsNOq9rTzyLWrUxnZgdCFuXXszm94ql2h5uYD4teS2ObX7Ib8b3enSyx0rZvP7zG
-         5FbHMpk+xlNrX2y2GPhcopcKv7ZR4EpypqjNop73JfuR6545JlmmQxS6l+camVmBR4vB
-         Qcb7Ryy9wzPcpeWZUz6H6C51a26OjytDawXkXf5lh/Pu+41hWQfHFExixc8fiMddJWTE
-         Lgyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c8XA1N0uaxkLO/wKHErNWHaSuu64k5Pjb5u9dmcZrOc=;
-        b=ZvUW+kM7WlLMAhbPGJ/KceANp3PCkYVuOf1b9BMJxER6ZOk0XXHvA7hil5um7NgX55
-         85xJFZGYJNcO78clH5ZzH/wTWalZKxPDog0iSDsGLBjRZIImlVOkTsLQAkVfAGLDwkye
-         zI3GZWXnJ2DqUn8dGHpJ4nHo7Te4Amf6QDJlsKUn4d7TYyPKKVOsBU+Yd22ZdT1/ABK+
-         8PmMyaxfG2hv61hFPBOFnYMOikwCJ5339lCFZ03OrJdfypvfRKhZO/RhRBi+FSUe4X4Q
-         sftHdf+H2hz358WbNUzPBmh3wXVcw1L7E3897qVqZcRxW+tgT5qv2HfY/6iE3YmHbx+d
-         BBpw==
-X-Gm-Message-State: ACrzQf1dySpYkTalf+HNhzz20ucvlxBhN4GjbvbP3imx3q9ef0DNTL+R
-        h4l5XLnqfcKqGxqrxSkaYNI5K9JvLfMi/FDBcv8=
-X-Google-Smtp-Source: AMsMyM5P7QJPc4xabig4w413XzwG+LvLR4ujBQF052MYyp4X4jLct43goqeG6nAke9/cOoRc7kMVFnOPm8Ba6LmlOPE=
-X-Received: by 2002:a05:6a00:1251:b0:56d:b039:1f8 with SMTP id
- u17-20020a056a00125100b0056db03901f8mr23491834pfi.72.1667651947721; Sat, 05
- Nov 2022 05:39:07 -0700 (PDT)
+        with ESMTP id S230095AbiKGHTS (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 7 Nov 2022 02:19:18 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2640D13DFD
+        for <ceph-devel@vger.kernel.org>; Sun,  6 Nov 2022 23:18:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667805489;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=s+w0fO2uJS5g4Y2JV2Wd+lHprC4XyOvlQlEJADBSY5k=;
+        b=W5QJUiDxwi0pAVCzBqHdpvXtnSCdSFb4od1Zv2RMk9LslJo5aPwu4lIGDGDOVluT4oSEKJ
+        uypTIlnEFN1EtZZoxxVe52bPIoPqrjXa4P+7j0S69OOjrLy0YVvPLWy1rNiIKKvg/6UIQV
+        GMIfrqLyaET1fKRuLa2AMZ5fOE1imlQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-552-l0PR7UuJPiSQhVZG7b_u8A-1; Mon, 07 Nov 2022 02:18:06 -0500
+X-MC-Unique: l0PR7UuJPiSQhVZG7b_u8A-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 97503806013;
+        Mon,  7 Nov 2022 07:18:05 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9EE28492B05;
+        Mon,  7 Nov 2022 07:18:02 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     ceph-devel@vger.kernel.org
+Cc:     lhenriques@suse.de, jlayton@kernel.org, mchangir@redhat.com,
+        idryomov@gmail.com, Xiubo Li <xiubli@redhat.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] ceph: avoid putting the realm twice when docoding snaps fails
+Date:   Mon,  7 Nov 2022 15:17:59 +0800
+Message-Id: <20221107071759.32000-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a05:7301:2e91:b0:83:922d:c616 with HTTP; Sat, 5 Nov 2022
- 05:39:07 -0700 (PDT)
-Reply-To: stefanopessia755@hotmail.com
-From:   Stefano Pessina <wamathaibenard@gmail.com>
-Date:   Sat, 5 Nov 2022 15:39:07 +0300
-Message-ID: <CAN7bvZ+AZ+N2xWXWK-6rTbyGw_5yApLbz-J5U42mOWMbcyp4aA@mail.gmail.com>
-Subject: Geldspende
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=4.7 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ****
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
---=20
-Die Summe von 500.000,00 =E2=82=AC wurde Ihnen von STEFANO PESSINA gespende=
-t.
-Bitte kontaktieren Sie uns f=C3=BCr weitere Informationen =C3=BCber
-stefanopessia755@hotmail.com
+From: Xiubo Li <xiubli@redhat.com>
+
+When decoding the snaps fails it maybe leaving the 'first_realm'
+and 'realm' pointing to the same snaprealm memory. And then it'll
+put it twice and could cause random use-after-free, BUG_ON, etc
+issues.
+
+Cc: stable@vger.kernel.org
+URL: https://tracker.ceph.com/issues/57686
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/snap.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index 9bceed2ebda3..baf17df05107 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -849,10 +849,12 @@ int ceph_update_snap_trace(struct ceph_mds_client *mdsc,
+ 	if (realm_to_rebuild && p >= e)
+ 		rebuild_snap_realms(realm_to_rebuild, &dirty_realms);
+ 
+-	if (!first_realm)
++	if (!first_realm) {
+ 		first_realm = realm;
+-	else
++		realm = NULL;
++	} else {
+ 		ceph_put_snap_realm(mdsc, realm);
++	}
+ 
+ 	if (p < e)
+ 		goto more;
+-- 
+2.31.1
+
