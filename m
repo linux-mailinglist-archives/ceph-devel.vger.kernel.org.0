@@ -2,105 +2,99 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 571A96216D8
-	for <lists+ceph-devel@lfdr.de>; Tue,  8 Nov 2022 15:33:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2C636217B5
+	for <lists+ceph-devel@lfdr.de>; Tue,  8 Nov 2022 16:11:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233916AbiKHOdp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 8 Nov 2022 09:33:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40124 "EHLO
+        id S234044AbiKHPLM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 8 Nov 2022 10:11:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233938AbiKHOdZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Nov 2022 09:33:25 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6D22CEB;
-        Tue,  8 Nov 2022 06:33:24 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 359631F8E3;
-        Tue,  8 Nov 2022 14:33:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1667918003; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=bsCWcDyBc5BTfKnK5tb7UxOWSDPa58fCHAcnTLeBXms=;
-        b=y+2nS0vKe7LmELq2vRSmSOEf/AMQtUENZ5rsieWBjEqNWWKUIZgnlhq6h2c3S0QX4n1Mfw
-        CAOSFDuMOKWYaHURp3/q1w1cBob1r5n1jNnhkazpheK4Pdiy1DPJr63XxU4cN3ZrHvYDZ+
-        KgciMrp9LQTL0cdyTC+1SRJMKiGuFiI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1667918003;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=bsCWcDyBc5BTfKnK5tb7UxOWSDPa58fCHAcnTLeBXms=;
-        b=jyLT7Vu1KKl0H4Nq4QzbhAEQEx/lhP1iUiYdPGzAfLNBQkoilo1/c8RYXDq5xs+w//XF/h
-        gNT7ffrXs8GE+gDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C53B313398;
-        Tue,  8 Nov 2022 14:33:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id bPopLbJoamPyMgAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Tue, 08 Nov 2022 14:33:22 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 59105061;
-        Tue, 8 Nov 2022 14:34:23 +0000 (UTC)
-From:   =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
-To:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
-Subject: [PATCH v2] ceph: fix memory leak in mount error path when using test_dummy_encryption
-Date:   Tue,  8 Nov 2022 14:34:21 +0000
-Message-Id: <20221108143421.30993-1-lhenriques@suse.de>
+        with ESMTP id S231576AbiKHPLL (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Nov 2022 10:11:11 -0500
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A5E1193DD;
+        Tue,  8 Nov 2022 07:11:08 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id v17so22948863edc.8;
+        Tue, 08 Nov 2022 07:11:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=b/7jqpcqRF+tk0KLQA9+lO9Hgn5SkzzUvopv4WdvCZs=;
+        b=kJXwZ4JWYMnupS1gDN4Y2xZ1nGhWS0cONIqXWB/7BrS+1y56GmxI5hzpxkH0ehC+Gr
+         FEL3uzE23VDhn0+onsCZ7x48F+9HZP5L9dAEaDJKFC/zKEELeA2GyUyuaCkAfLXkojR0
+         qjsPNwahkN35DolYNTwIbNqAoqDnPyaw4rvh8PxGb3mLwYsq/S34t0oI536Qn3zjpgeD
+         xt/oZYARRjy6t1sUFHV3V6N/EqZ+V8B50/JTP0UiFsvpgiHAYXanQ6W7MOrqxBq4t+5K
+         0kdowApw5cHrvLhTWdTKeGqkSvu4EMSAl16Rd2GE8aqjEKYeY+rnjFkoQ4WWS3MNGPkQ
+         XD+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b/7jqpcqRF+tk0KLQA9+lO9Hgn5SkzzUvopv4WdvCZs=;
+        b=am4XbKjoYM9dbJ2aFy2xLyszDFAE1/9XGsTy1HO7gQE08ZbE4SaU/Z8Jwls33FbF0z
+         HJuMtPRXOX9zKew8wfVtRNLsVZEcNcUn485bWBfkeJwmHd6TfTs2/wRl4FqFPADPM1oQ
+         a4hfbK+0BF0KFbNmTiqCelKWvDHwdNLNfI/YlZ5CIHtWsdKI6rfGVy7LTKAt+3zu5xVa
+         VLQ2/ZWn25fEzMZpFZhw1OXUbr01e3FaFug0ja5K74+DXCs7BxcxJ77rtNTKTPNtL31a
+         u3jchx229BNDohMuTigWokgYN2Awbzq1A7tinK3R7zb2pkYIJypka84Z9ZwHawH4e7mk
+         0nKw==
+X-Gm-Message-State: ANoB5pkm8gNgMl62EUIq/SShtQA1HfKpqtRSz3ps08u0vDVH0cMOR1Dd
+        wBWBtHpoFQoeEpaU5LrFSsmMaeHG69X8r1c5/k8=
+X-Google-Smtp-Source: AA0mqf5wP49/3bJGHS6JgsO+CBuY5F4b+OUnGZxcYIUgGwh4Gi0GIRp8G2ZpkJ8va5gP2m4HKslm0P8AZT2bFokS0vM=
+X-Received: by 2002:a05:6402:1ac7:b0:466:b14b:497c with SMTP id
+ ba7-20020a0564021ac700b00466b14b497cmr2944788edb.210.1667920266839; Tue, 08
+ Nov 2022 07:11:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20221108134633.557928-1-xiubli@redhat.com>
+In-Reply-To: <20221108134633.557928-1-xiubli@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 8 Nov 2022 16:10:54 +0100
+Message-ID: <CAOi1vP-XiSj35RDbc3zkoNvHfwRujAA8_BEFW3C=5fo+rPWfiQ@mail.gmail.com>
+Subject: Re: [PATCH v3] ceph: avoid putting the realm twice when decoding
+ snaps fails
+To:     xiubli@redhat.com
+Cc:     ceph-devel@vger.kernel.org, lhenriques@suse.de, jlayton@kernel.org,
+        mchangir@redhat.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Because ceph_init_fs_context() will never be invoced in case we get a
-mount error, destroy_mount_options() won't be releasing fscrypt resources
-with fscrypt_free_dummy_policy().  This will result in a memory leak.  Add
-an invocation to this function in the mount error path.
+On Tue, Nov 8, 2022 at 2:46 PM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> When decoding the snaps fails it maybe leaving the 'first_realm'
+> and 'realm' pointing to the same snaprealm memory. And then it'll
+> put it twice and could cause random use-after-free, BUG_ON, etc
+> issues.
+>
+> Cc: stable@vger.kernel.org
+> URL: https://tracker.ceph.com/issues/57686
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/snap.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> index 9bceed2ebda3..f5b0fa1ff705 100644
+> --- a/fs/ceph/snap.c
+> +++ b/fs/ceph/snap.c
+> @@ -775,6 +775,7 @@ int ceph_update_snap_trace(struct ceph_mds_client *mdsc,
+>
+>         dout("%s deletion=%d\n", __func__, deletion);
+>  more:
+> +       realm = NULL;
 
-Signed-off-by: Luís Henriques <lhenriques@suse.de>
----
-* Changes since v1:
+Nit: realm doesn't need to be initialized anymore, I would drop that.
 
-As suggested by Xiubo, moved fscrypt free from ceph_get_tree() to
-ceph_real_mount().
+Thanks,
 
-(Also used 'git format-patch' with '--base' so that the bots know what to
-(not) do with this patch.)
-
- fs/ceph/super.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 2224d44d21c0..f10a076f47e5 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -1196,6 +1196,7 @@ static struct dentry *ceph_real_mount(struct ceph_fs_client *fsc,
- 
- out:
- 	mutex_unlock(&fsc->client->mount_mutex);
-+	ceph_fscrypt_free_dummy_policy(fsc);
- 	return ERR_PTR(err);
- }
- 
-
-base-commit: 8b9ee21dfceadd4cc35a87bbe7f0ad547cffa1be
-prerequisite-patch-id: 34ba9e6b37b68668d261ddbda7858ee6f83c82fa
-prerequisite-patch-id: 87f1b323c29ab8d0a6d012d30fdc39bc49179624
-prerequisite-patch-id: c94f448ef026375b10748457a3aa46070aa7046e
+                Ilya
