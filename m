@@ -2,200 +2,97 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 01F8E621417
-	for <lists+ceph-devel@lfdr.de>; Tue,  8 Nov 2022 14:57:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FA0D62167A
+	for <lists+ceph-devel@lfdr.de>; Tue,  8 Nov 2022 15:27:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234828AbiKHN5K (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 8 Nov 2022 08:57:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58252 "EHLO
+        id S234149AbiKHO13 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 8 Nov 2022 09:27:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234821AbiKHN5I (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Nov 2022 08:57:08 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33DC260EB7
-        for <ceph-devel@vger.kernel.org>; Tue,  8 Nov 2022 05:56:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667915767;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=N1e881SNFuFyYUKEFagxkU76rvwaeAvhf+SRkVROSCY=;
-        b=RLyQHYEXgiB6sVAU5arUv/USVMrEl4SVWgNvKpUpwC5cre7o0pO/XhAWJmqDZFD+wemOCu
-        ebGrH6gB91xujRVJhBt8mHACRUbSykeG2q3rsX2VDnZ2hc/z89/+kV5V4OvIjclxbOiDh0
-        J7jHHTTPFhD43JJhs6ayjHs9dOVXCH0=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-651-_MwuvNt7OJWwA232b3jXkQ-1; Tue, 08 Nov 2022 08:56:04 -0500
-X-MC-Unique: _MwuvNt7OJWwA232b3jXkQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A88C4382F643;
-        Tue,  8 Nov 2022 13:56:03 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A746E20290A5;
-        Tue,  8 Nov 2022 13:56:00 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     ceph-devel@vger.kernel.org, idryomov@gmail.com
-Cc:     lhenriques@suse.de, jlayton@kernel.org, mchangir@redhat.com,
-        Xiubo Li <xiubli@redhat.com>, stable@vger.kernel.org
-Subject: [PATCH v3] ceph: fix NULL pointer dereference for req->r_session
-Date:   Tue,  8 Nov 2022 21:55:54 +0800
-Message-Id: <20221108135554.558278-1-xiubli@redhat.com>
+        with ESMTP id S234471AbiKHO0x (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Nov 2022 09:26:53 -0500
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E33A165AF
+        for <ceph-devel@vger.kernel.org>; Tue,  8 Nov 2022 06:25:45 -0800 (PST)
+Received: by mail-pj1-x1033.google.com with SMTP id d59-20020a17090a6f4100b00213202d77e1so18042547pjk.2
+        for <ceph-devel@vger.kernel.org>; Tue, 08 Nov 2022 06:25:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SzBlYeGeT15Xra75w9IZDBjQ7Da3XKSmRdlnDJDYrko=;
+        b=frTjEIHTlXO6v5jJNflbe46il1dUjxah1hmkPCKJYy1/f6aaVZ96YwVNT21c8Mx+VL
+         R0PVu5F+awlay7dv8uEqG3mfQMZaN+xEIbVs3zUJk90rHuBTfTbUKI9ehW1dX10rlbxd
+         mQXXSvWli42inJrLM2g6PhN5xYN7/tmPsk29sFPQYGlAj5/CDrj8p18q2KOhwzU0yn1Z
+         U66f4vHTq4ebadAs2QjhqyxxvIbo8plXAHwfVczpBCyZj8AfWtsEsZzbPdDqwFqP6y9l
+         dnCncy0D5q5jmwTVNrSaXkMoaoWTcIIADYOaYowOD+gdgXtrIbBhvp2gXI2k+n6CIgmW
+         oJxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SzBlYeGeT15Xra75w9IZDBjQ7Da3XKSmRdlnDJDYrko=;
+        b=iM8rGDcljv1YTwH8L/sU8azwId4Kqvt9EKU9n0zNGkOAPu1Li/v5y4clHG6cDhfdB6
+         zd3RynH7pXrNssNdBWMnHrN9oa4o0Mp0Y3w53K0ohyhrGrtfRkdvqBRlC/GnRy0DYZkY
+         6t1HvSth2mxjHtbRlzbo9exrblMiLLCI6EO9LfHuyB7u1To+jLkbCQBt4W3w7RqjHLbE
+         Z2XnbEITF+LyzjN6yXaTstD3tyYE15cNlrvT0hz+umPAstiQjMFEvo220KC41l1YusRm
+         uWe/W9dDYx1ygBIdQ+lUdi7Ht0H7gsC12zATMX/ey+4vEGq8t0QA2lU9R6IDfkv2/mAe
+         N5TA==
+X-Gm-Message-State: ACrzQf2xsa+3LrIuluTK2RZMvvL9lCYaLsMcBtwdN8ZpiCkqXCP33/oS
+        BHfAoShd0DLxEAGsrVbgDIS5La8KpvCWmkZVg88=
+X-Google-Smtp-Source: AMsMyM7i+ouk6KB7gDQcijSLT+5BFPLxz5mMKwdHu69kXLREkeFp6kif+v8n3IHurpTlIb3CZV20pcw+4UqMuGNpObo=
+X-Received: by 2002:a17:902:b581:b0:186:fb90:1151 with SMTP id
+ a1-20020a170902b58100b00186fb901151mr56255957pls.43.1667917544943; Tue, 08
+ Nov 2022 06:25:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Received: by 2002:a05:7300:5388:b0:85:81c6:896c with HTTP; Tue, 8 Nov 2022
+ 06:25:44 -0800 (PST)
+Reply-To: mr.abraham022@gmail.com
+From:   "Mr.Abraham" <davidkekeli11@gmail.com>
+Date:   Tue, 8 Nov 2022 14:25:44 +0000
+Message-ID: <CAPBO+FLJ4NDKP9BsZOPRz6jaWhgZgOACSy5HwxhJ-yxSoaUS2A@mail.gmail.com>
+Subject: Greeting
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=5.0 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_FM_MR_MRS,
+        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4969]
+        * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:1033 listed in]
+        [list.dnswl.org]
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [mr.abraham022[at]gmail.com]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [davidkekeli11[at]gmail.com]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [davidkekeli11[at]gmail.com]
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        *  0.0 T_HK_NAME_FM_MR_MRS No description available.
+        *  2.9 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
-
-The request's r_session maybe changed when it was forwarded or
-resent.
-
-Cc: stable@vger.kernel.org
-URL: https://bugzilla.redhat.com/show_bug.cgi?id=2137955
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/caps.c | 60 ++++++++++++++++----------------------------------
- 1 file changed, 19 insertions(+), 41 deletions(-)
-
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 894adfb4a092..83f9e18e3169 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -2297,8 +2297,10 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
- 	struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_mds_request *req1 = NULL, *req2 = NULL;
-+	struct ceph_mds_session **sessions = NULL;
-+	struct ceph_mds_session *s;
- 	unsigned int max_sessions;
--	int ret, err = 0;
-+	int i, ret, err = 0;
- 
- 	spin_lock(&ci->i_unsafe_lock);
- 	if (S_ISDIR(inode->i_mode) && !list_empty(&ci->i_unsafe_dirops)) {
-@@ -2315,28 +2317,19 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
- 	}
- 	spin_unlock(&ci->i_unsafe_lock);
- 
--	/*
--	 * The mdsc->max_sessions is unlikely to be changed
--	 * mostly, here we will retry it by reallocating the
--	 * sessions array memory to get rid of the mdsc->mutex
--	 * lock.
--	 */
--retry:
--	max_sessions = mdsc->max_sessions;
--
- 	/*
- 	 * Trigger to flush the journal logs in all the relevant MDSes
- 	 * manually, or in the worst case we must wait at most 5 seconds
- 	 * to wait the journal logs to be flushed by the MDSes periodically.
- 	 */
--	if ((req1 || req2) && likely(max_sessions)) {
--		struct ceph_mds_session **sessions = NULL;
--		struct ceph_mds_session *s;
-+	mutex_lock(&mdsc->mutex);
-+	max_sessions = mdsc->max_sessions;
-+	if (req1 || req2) {
- 		struct ceph_mds_request *req;
--		int i;
- 
- 		sessions = kcalloc(max_sessions, sizeof(s), GFP_KERNEL);
- 		if (!sessions) {
-+			mutex_unlock(&mdsc->mutex);
- 			err = -ENOMEM;
- 			goto out;
- 		}
-@@ -2346,18 +2339,8 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
- 			list_for_each_entry(req, &ci->i_unsafe_dirops,
- 					    r_unsafe_dir_item) {
- 				s = req->r_session;
--				if (!s)
-+				if (!s || unlikely(s->s_mds >= max_sessions))
- 					continue;
--				if (unlikely(s->s_mds >= max_sessions)) {
--					spin_unlock(&ci->i_unsafe_lock);
--					for (i = 0; i < max_sessions; i++) {
--						s = sessions[i];
--						if (s)
--							ceph_put_mds_session(s);
--					}
--					kfree(sessions);
--					goto retry;
--				}
- 				if (!sessions[s->s_mds]) {
- 					s = ceph_get_mds_session(s);
- 					sessions[s->s_mds] = s;
-@@ -2368,18 +2351,8 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
- 			list_for_each_entry(req, &ci->i_unsafe_iops,
- 					    r_unsafe_target_item) {
- 				s = req->r_session;
--				if (!s)
-+				if (!s || unlikely(s->s_mds >= max_sessions))
- 					continue;
--				if (unlikely(s->s_mds >= max_sessions)) {
--					spin_unlock(&ci->i_unsafe_lock);
--					for (i = 0; i < max_sessions; i++) {
--						s = sessions[i];
--						if (s)
--							ceph_put_mds_session(s);
--					}
--					kfree(sessions);
--					goto retry;
--				}
- 				if (!sessions[s->s_mds]) {
- 					s = ceph_get_mds_session(s);
- 					sessions[s->s_mds] = s;
-@@ -2391,13 +2364,18 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
- 		/* the auth MDS */
- 		spin_lock(&ci->i_ceph_lock);
- 		if (ci->i_auth_cap) {
--		      s = ci->i_auth_cap->session;
--		      if (!sessions[s->s_mds])
--			      sessions[s->s_mds] = ceph_get_mds_session(s);
-+			s = ci->i_auth_cap->session;
-+			if (likely(s->s_mds < max_sessions)
-+			    && !sessions[s->s_mds]) {
-+				sessions[s->s_mds] = ceph_get_mds_session(s);
-+			}
- 		}
- 		spin_unlock(&ci->i_ceph_lock);
-+	}
-+	mutex_unlock(&mdsc->mutex);
- 
--		/* send flush mdlog request to MDSes */
-+	/* send flush mdlog request to MDSes */
-+	if (sessions) {
- 		for (i = 0; i < max_sessions; i++) {
- 			s = sessions[i];
- 			if (s) {
-@@ -2405,7 +2383,6 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
- 				ceph_put_mds_session(s);
- 			}
- 		}
--		kfree(sessions);
- 	}
- 
- 	dout("%s %p wait on tid %llu %llu\n", __func__,
-@@ -2424,6 +2401,7 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
- 	}
- 
- out:
-+	kfree(sessions);
- 	if (req1)
- 		ceph_mdsc_put_request(req1);
- 	if (req2)
--- 
-2.31.1
-
+My Greeting, Did you receive the letter i sent to you. Please answer me.
+Regard, Mr.Abraham
