@@ -2,206 +2,164 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E39C8622BF8
-	for <lists+ceph-devel@lfdr.de>; Wed,  9 Nov 2022 13:56:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B658622D15
+	for <lists+ceph-devel@lfdr.de>; Wed,  9 Nov 2022 15:02:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229762AbiKIM4g (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 9 Nov 2022 07:56:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40800 "EHLO
+        id S229909AbiKIOCd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 9 Nov 2022 09:02:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229624AbiKIM4b (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 9 Nov 2022 07:56:31 -0500
-Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2823175A9;
-        Wed,  9 Nov 2022 04:56:28 -0800 (PST)
-Received: by mail-ej1-x632.google.com with SMTP id ft34so10055188ejc.12;
-        Wed, 09 Nov 2022 04:56:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GoUB8OXMKKZeCPs9z7zz/Zo0jwCwKnOKqemNAor4VBU=;
-        b=LyMmN+QdCYs1cNvEgWZ2eR5Z0CKHUFZ8YKUhiwDsS3X0j81cGYPDLDBBYdPjYNz/Eb
-         Psg/J5z/goLbOpr1IYhX+lXm3TFCy/UIwamQcBrChIeHWd23PLkz0ZAJ46v6nMWIVwGN
-         uFLQ+fKUNQJpZTAul86Zm5brxEPHMixaVJ8oeC8hhfsSM78hegXns4Hk7AL2QxnXcWzl
-         lb7CPTxkvILlup+oNa+Kp6IB/7+Y1DA+luvwVVbea+KIhnSp/O1thjn4MJpvXzmt4QiB
-         0u4Cqf9Sj+KGKR05Tdi4g2DDiXr0OV98NZ3QESrtreV4g6Kn4vWIhZaFW/mgKyXiCnQs
-         TeoA==
+        with ESMTP id S229611AbiKIOCc (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 9 Nov 2022 09:02:32 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D77D2DA4
+        for <ceph-devel@vger.kernel.org>; Wed,  9 Nov 2022 06:01:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1668002488;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+Vl9+3D8jIkkIQI/8eeviV4h7Hg0ItDX7Hqx/i0QKXk=;
+        b=fFXBYO+SI0rUQhRil+cEzj+UG2tCS9p5fmiF6nfkjOykaqlKUxXJ3CucCpCRMG9ekuLtlf
+        sSawJRcf0DCRU9mmm+MqCSuaRFzP3wfegXiPcJdkEJTcyDuj+ntJlPNkhzYCeLj5qm52EU
+        BZOWbtvqluirJpUls8BrMn/f3LZzKSI=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-595-VzcNirCgNzuckZ6SaU1NkQ-1; Wed, 09 Nov 2022 09:01:26 -0500
+X-MC-Unique: VzcNirCgNzuckZ6SaU1NkQ-1
+Received: by mail-pg1-f198.google.com with SMTP id u63-20020a638542000000b004701a0aa835so8920925pgd.15
+        for <ceph-devel@vger.kernel.org>; Wed, 09 Nov 2022 06:01:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GoUB8OXMKKZeCPs9z7zz/Zo0jwCwKnOKqemNAor4VBU=;
-        b=rinMXSTHFJ9sO/3hXeqgEikAJ6fPWOfZMgYugqHmQoJJc616/6vFbCX+iwU4ayJN43
-         jPetMfuFsuWYTyaPtMiNyC16nkNqIrTIYX2d/QphSqcYfBP1D/J8DeyEGJrQmuoh/QOz
-         zTv2uOgOuTS8joSSJPytqasLAYuF69j4//vxn4tsySN4Nu+n7VEyvBb3JUEc8PQQJ8Dv
-         bHMsgQvfk/wpfr7OfBKFJTl5HhH170tC44WdZL+dBj3V5gsE8WSJfk1OrCW/8m7BVlac
-         fzgEcAkTqxqOWALMl8vBbZDiTiWcHSIhVPLIfxdulxnDO1iAbwtslVIr8L3LW8h9gzsA
-         IvWA==
-X-Gm-Message-State: ACrzQf0b1CQDi38IrxUtj5QJP2Qm8uU9Dh0hsWlGdefYsrNA1oSSd1bw
-        TRRz4cmq34JWCgcn6tqug/XBzYhOzlhtnu3r/KA=
-X-Google-Smtp-Source: AMsMyM68ba+KgL8sWboB6Gos+JbFZLczvZH8LJpOgLwI/mEUx1N1Rf2rWbE1mZEKU5daoSe/3fzFOQLyWkncMH6HQek=
-X-Received: by 2002:a17:906:4fc3:b0:72e:eab4:d9d7 with SMTP id
- i3-20020a1709064fc300b0072eeab4d9d7mr55504159ejw.599.1667998587272; Wed, 09
- Nov 2022 04:56:27 -0800 (PST)
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Vl9+3D8jIkkIQI/8eeviV4h7Hg0ItDX7Hqx/i0QKXk=;
+        b=Y2/HSMTLBdsFZIs+HTuA4hovFHEwGvB6SKKDX/L7Ty3JAIdRkHV7Hpk3Nq0Yh4xMaw
+         MMGqUQ8kBHbnXdY3PHUVUhGQARHjEBYIy9nmPPsR2H+thmRuLgjxP0MbB9nJwxrlHJJJ
+         0JxucK63ki3guIkR0e9bQG/u5qSgSVGHw0nSHQkO+48q8z0l8gUllMYXdlV9h4r/hi1m
+         AXCiqzQTN/Aqp7C2RwszzxLPROum/s/9HCGIeqgWaDX0OiHb0n1ixSaS3O0AcXbA7CR+
+         F8hwbYnoYYsnD20B6sER9nqYgB/2Hs+m5azWnArF47LHtjt924KneDa9Qcemd/39FKuF
+         SmxA==
+X-Gm-Message-State: ACrzQf0oqHEZhPQWUCzrW7hH+Otvw8Lp2aEi6UHIuAVKFYiSeRaXG+1Q
+        RLaVJmhm7mEdSlCTuYpj+ZZHGMO+3AyuTTTCA3nvy4XEl7qKt6geLzTh82y2kiCA5WUPUrNu326
+        PIeuoQy7yNPp+KY87RLqOoQ==
+X-Received: by 2002:a17:902:e811:b0:186:8a61:ea76 with SMTP id u17-20020a170902e81100b001868a61ea76mr61905090plg.10.1668002485339;
+        Wed, 09 Nov 2022 06:01:25 -0800 (PST)
+X-Google-Smtp-Source: AMsMyM4BZ8m3HdU4oR37bcIdyvX5RRjTSYp2lO2296eOedPK4Gaj017xxhb14Kd85YESsbfypbF+dg==
+X-Received: by 2002:a17:902:e811:b0:186:8a61:ea76 with SMTP id u17-20020a170902e81100b001868a61ea76mr61905053plg.10.1668002484869;
+        Wed, 09 Nov 2022 06:01:24 -0800 (PST)
+Received: from [10.72.12.148] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id m7-20020a170902768700b00186b549cdc2sm9111540pll.157.2022.11.09.06.01.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Nov 2022 06:01:24 -0800 (PST)
+Subject: Re: [PATCH v2] ceph: fix memory leak in mount error path when using
+ test_dummy_encryption
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20221108143421.30993-1-lhenriques@suse.de>
+ <215b729e-0af0-45d8-96af-3d3c319581c9@redhat.com> <Y2tz8zQPlTWtfOdw@suse.de>
+ <614e430a-a559-e640-b2f3-020db758c061@redhat.com> <Y2uDCwDf+ZgKcRqu@suse.de>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <dddccd91-9866-adb4-3497-ecfeb936e211@redhat.com>
+Date:   Wed, 9 Nov 2022 22:01:20 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-References: <20221108135554.558278-1-xiubli@redhat.com>
-In-Reply-To: <20221108135554.558278-1-xiubli@redhat.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 9 Nov 2022 13:56:15 +0100
-Message-ID: <CAOi1vP8Fkzq542St9od7G_JnQyS93=BgLLRUE86-E-Zw4MEt3g@mail.gmail.com>
-Subject: Re: [PATCH v3] ceph: fix NULL pointer dereference for req->r_session
-To:     xiubli@redhat.com
-Cc:     ceph-devel@vger.kernel.org, lhenriques@suse.de, jlayton@kernel.org,
-        mchangir@redhat.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <Y2uDCwDf+ZgKcRqu@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Nov 8, 2022 at 2:56 PM <xiubli@redhat.com> wrote:
->
-> From: Xiubo Li <xiubli@redhat.com>
->
-> The request's r_session maybe changed when it was forwarded or
-> resent.
->
-> Cc: stable@vger.kernel.org
-> URL: https://bugzilla.redhat.com/show_bug.cgi?id=2137955
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/caps.c | 60 ++++++++++++++++----------------------------------
->  1 file changed, 19 insertions(+), 41 deletions(-)
->
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index 894adfb4a092..83f9e18e3169 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -2297,8 +2297,10 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
->         struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
->         struct ceph_inode_info *ci = ceph_inode(inode);
->         struct ceph_mds_request *req1 = NULL, *req2 = NULL;
-> +       struct ceph_mds_session **sessions = NULL;
-> +       struct ceph_mds_session *s;
->         unsigned int max_sessions;
-> -       int ret, err = 0;
-> +       int i, ret, err = 0;
->
->         spin_lock(&ci->i_unsafe_lock);
->         if (S_ISDIR(inode->i_mode) && !list_empty(&ci->i_unsafe_dirops)) {
-> @@ -2315,28 +2317,19 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
->         }
->         spin_unlock(&ci->i_unsafe_lock);
->
-> -       /*
-> -        * The mdsc->max_sessions is unlikely to be changed
-> -        * mostly, here we will retry it by reallocating the
-> -        * sessions array memory to get rid of the mdsc->mutex
-> -        * lock.
-> -        */
-> -retry:
-> -       max_sessions = mdsc->max_sessions;
-> -
->         /*
->          * Trigger to flush the journal logs in all the relevant MDSes
->          * manually, or in the worst case we must wait at most 5 seconds
->          * to wait the journal logs to be flushed by the MDSes periodically.
->          */
-> -       if ((req1 || req2) && likely(max_sessions)) {
-> -               struct ceph_mds_session **sessions = NULL;
-> -               struct ceph_mds_session *s;
-> +       mutex_lock(&mdsc->mutex);
-> +       max_sessions = mdsc->max_sessions;
-> +       if (req1 || req2) {
->                 struct ceph_mds_request *req;
-> -               int i;
->
->                 sessions = kcalloc(max_sessions, sizeof(s), GFP_KERNEL);
->                 if (!sessions) {
-> +                       mutex_unlock(&mdsc->mutex);
->                         err = -ENOMEM;
->                         goto out;
->                 }
-> @@ -2346,18 +2339,8 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
->                         list_for_each_entry(req, &ci->i_unsafe_dirops,
->                                             r_unsafe_dir_item) {
->                                 s = req->r_session;
-> -                               if (!s)
-> +                               if (!s || unlikely(s->s_mds >= max_sessions))
->                                         continue;
-> -                               if (unlikely(s->s_mds >= max_sessions)) {
-> -                                       spin_unlock(&ci->i_unsafe_lock);
-> -                                       for (i = 0; i < max_sessions; i++) {
-> -                                               s = sessions[i];
-> -                                               if (s)
-> -                                                       ceph_put_mds_session(s);
-> -                                       }
-> -                                       kfree(sessions);
-> -                                       goto retry;
-> -                               }
->                                 if (!sessions[s->s_mds]) {
->                                         s = ceph_get_mds_session(s);
->                                         sessions[s->s_mds] = s;
-> @@ -2368,18 +2351,8 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
->                         list_for_each_entry(req, &ci->i_unsafe_iops,
->                                             r_unsafe_target_item) {
->                                 s = req->r_session;
-> -                               if (!s)
-> +                               if (!s || unlikely(s->s_mds >= max_sessions))
->                                         continue;
-> -                               if (unlikely(s->s_mds >= max_sessions)) {
-> -                                       spin_unlock(&ci->i_unsafe_lock);
-> -                                       for (i = 0; i < max_sessions; i++) {
-> -                                               s = sessions[i];
-> -                                               if (s)
-> -                                                       ceph_put_mds_session(s);
-> -                                       }
-> -                                       kfree(sessions);
-> -                                       goto retry;
-> -                               }
->                                 if (!sessions[s->s_mds]) {
->                                         s = ceph_get_mds_session(s);
->                                         sessions[s->s_mds] = s;
-> @@ -2391,13 +2364,18 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
->                 /* the auth MDS */
->                 spin_lock(&ci->i_ceph_lock);
->                 if (ci->i_auth_cap) {
-> -                     s = ci->i_auth_cap->session;
-> -                     if (!sessions[s->s_mds])
-> -                             sessions[s->s_mds] = ceph_get_mds_session(s);
-> +                       s = ci->i_auth_cap->session;
-> +                       if (likely(s->s_mds < max_sessions)
-> +                           && !sessions[s->s_mds]) {
 
-Hi Xiubo,
-
-Nit: keep && on the previous line for style consistency.
-
-> +                               sessions[s->s_mds] = ceph_get_mds_session(s);
-> +                       }
->                 }
->                 spin_unlock(&ci->i_ceph_lock);
-> +       }
-> +       mutex_unlock(&mdsc->mutex);
+On 09/11/2022 18:38, Luís Henriques wrote:
+> On Wed, Nov 09, 2022 at 05:57:41PM +0800, Xiubo Li wrote:
+>> Hi Luis,
+>>
+>> Please check https://github.com/ceph/ceph-client/commit/205efda80b6759a741dde209a7158a5bbf044d23#diff-eb62c69f842ed95a7d047262a62946b07eda52f2ea49ae33c39ea13754dfc291.
+> Ugh! That's quite confusing :-)
 >
-> -               /* send flush mdlog request to MDSes */
-> +       /* send flush mdlog request to MDSes */
-> +       if (sessions) {
+> I did a 'git fetch' and looked into commit 205efda80b67 ("ceph: implement
+> -o test_dummy_encryption mount option") instead, and compared it with it's
+> version in the wip-fscrypt branch.  It looks good to me: the only
+> difference I see is my fix (adding the 'ceph_fscrypt_free_dummy_policy'
+> call to 'ceph_real_mount').  Thanks!
 
-Since mdlog is flushed only in "if (req1 || req2)" case, why not keep
-max_sessions loop there and avoid sessions != NULL check?
+I will update the wip-fscrypt branch later.
 
-Then, you could also move mdsc->mutex acquisition and max_sessions
-assignment into "if (req1 || req2)" branch and keep sessions, s and
-i declarations where there are today.
+Thanks!
 
-Thanks,
 
-                Ilya
+> Cheers,
+> --
+> Luís
+>
+>> Currently I only applied it into the 'testing' branch.
+>>
+>> Thanks!
+>>
+>> - Xiubo
+>>
+>>
+>> On 09/11/2022 17:33, Luís Henriques wrote:
+>>> On Wed, Nov 09, 2022 at 11:08:49AM +0800, Xiubo Li wrote:
+>>>> On 08/11/2022 22:34, Luís Henriques wrote:
+>>>>> Because ceph_init_fs_context() will never be invoced in case we get a
+>>>>> mount error, destroy_mount_options() won't be releasing fscrypt resources
+>>>>> with fscrypt_free_dummy_policy().  This will result in a memory leak.  Add
+>>>>> an invocation to this function in the mount error path.
+>>>>>
+>>>>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+>>>>> ---
+>>>>> * Changes since v1:
+>>>>>
+>>>>> As suggested by Xiubo, moved fscrypt free from ceph_get_tree() to
+>>>>> ceph_real_mount().
+>>>>>
+>>>>> (Also used 'git format-patch' with '--base' so that the bots know what to
+>>>>> (not) do with this patch.)
+>>>>>
+>>>>>     fs/ceph/super.c | 1 +
+>>>>>     1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+>>>>> index 2224d44d21c0..f10a076f47e5 100644
+>>>>> --- a/fs/ceph/super.c
+>>>>> +++ b/fs/ceph/super.c
+>>>>> @@ -1196,6 +1196,7 @@ static struct dentry *ceph_real_mount(struct ceph_fs_client *fsc,
+>>>>>     out:
+>>>>>     	mutex_unlock(&fsc->client->mount_mutex);
+>>>>> +	ceph_fscrypt_free_dummy_policy(fsc);
+>>>>>     	return ERR_PTR(err);
+>>>>>     }
+>>>>>
+>>>>> base-commit: 8b9ee21dfceadd4cc35a87bbe7f0ad547cffa1be
+>>>>> prerequisite-patch-id: 34ba9e6b37b68668d261ddbda7858ee6f83c82fa
+>>>>> prerequisite-patch-id: 87f1b323c29ab8d0a6d012d30fdc39bc49179624
+>>>>> prerequisite-patch-id: c94f448ef026375b10748457a3aa46070aa7046e
+>>>>>
+>>>> LGTM.
+>>>>
+>>>> Thanks Luis.
+>>>>
+>>>> Could I fold this into the previous commit ?
+>>> Yes, sure.  I'm fine with that.
+>>>
+>>> Cheers,
+>>> --
+>>> Luís
+>>>
+
