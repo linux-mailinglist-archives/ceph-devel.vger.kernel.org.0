@@ -2,59 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8831662274C
-	for <lists+ceph-devel@lfdr.de>; Wed,  9 Nov 2022 10:41:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5418F6227CE
+	for <lists+ceph-devel@lfdr.de>; Wed,  9 Nov 2022 10:59:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230391AbiKIJlK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 9 Nov 2022 04:41:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44162 "EHLO
+        id S230189AbiKIJ66 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 9 Nov 2022 04:58:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229818AbiKIJlI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 9 Nov 2022 04:41:08 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB11B6547
-        for <ceph-devel@vger.kernel.org>; Wed,  9 Nov 2022 01:40:15 -0800 (PST)
+        with ESMTP id S229626AbiKIJ6w (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 9 Nov 2022 04:58:52 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67C73233A8
+        for <ceph-devel@vger.kernel.org>; Wed,  9 Nov 2022 01:57:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667986814;
+        s=mimecast20190719; t=1667987872;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FARa1HV2KzyDd5klYHusJbaZIKaWoNQyStFBhGdEdEk=;
-        b=KZNtUAqE6lK0AL+EQ1C5F2N9+OB6u1Kz58xnMDAodwM9hWE+cIT2MJgwPjM6gNOMbB7HtG
-        JLT9fmq9cYsjW6RPZauFkEqiDEfRr9kow30sD0IqiaG1ESrlOwxvA0Fs6oyGD8poCUIWrr
-        Hb5TOkwW5ryKXgAIS890IiZip1e0JFo=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=FDMpqou/pq7flrplrADwoL3gK1upqLAy4b6L3fxBqxM=;
+        b=ehEHEDtatx7qIa9xWC67h99ZWbWlkr7Q1oLwCPkiz0AgAClpbprhVvF61OCAaVh3/zGPp6
+        UQhP07tcoBFk/nnc1vmNQ3uMejVEnGQPH/MXH3qdJNsu0g7JupkSbF1vvCp1y23F41y1mz
+        NDoAXUWj9j3pCoUnKHZEtjLYLH/h7uw=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-586-V9ngV7RGPqanyqXYSNC7xg-1; Wed, 09 Nov 2022 04:40:11 -0500
-X-MC-Unique: V9ngV7RGPqanyqXYSNC7xg-1
-Received: by mail-pg1-f200.google.com with SMTP id 186-20020a6301c3000000b0046fa202f720so9373389pgb.20
-        for <ceph-devel@vger.kernel.org>; Wed, 09 Nov 2022 01:40:11 -0800 (PST)
+ us-mta-257-Gl2-7SdoM3KrLsUbUr8e2w-1; Wed, 09 Nov 2022 04:57:51 -0500
+X-MC-Unique: Gl2-7SdoM3KrLsUbUr8e2w-1
+Received: by mail-pl1-f200.google.com with SMTP id d18-20020a170902ced200b001871dab2d59so13217169plg.22
+        for <ceph-devel@vger.kernel.org>; Wed, 09 Nov 2022 01:57:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-language:content-transfer-encoding:in-reply-to:mime-version
          :user-agent:date:message-id:from:references:cc:to:subject
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FARa1HV2KzyDd5klYHusJbaZIKaWoNQyStFBhGdEdEk=;
-        b=f01ln0Ffnr9kdfeCcZhbGhMUzbZ9626U08UrXdCkehy2qrE64ZQgK0eMiaAW8A3Ycw
-         7PIRJ/PX+QG7GefpQcxkaUnKA1XiP6h/CCATTuK/9cX7PcSMAIDMvYet/4fkKDFfCbb2
-         RX50l/SdOVkNZnqWaa0579f9lR9daCaUhOwtdDzG/Rx77NQ78WVgFXzOsYXuq1u2rML/
-         axTEIIVeFpavxsDJlmGkm/3Dvv/0tjxg4Xtye64toiks9qermIlSKHtTVVLivQXwTvFf
-         HBRSVAjbmvyMcpnvy8SfIMZLdL1lVAPnDFCePj+yezny9h3EOG5g7Ed36zCbER/M4Vpp
-         +sow==
-X-Gm-Message-State: ACrzQf3NMj6HEmNwgGsCirEwSjiNVN0tEpmTBdWAga2EEdBFiiG14Spe
-        0KEVo1uX5RXdYlknY8V7ipU9Epzcwp5zep8y2FCpN4gyI1EcMCdCkf5+/p6JF4O7K2jyWVlbu/w
-        CXH0ExiYwgpQWSy6paTdpGw==
-X-Received: by 2002:a05:6a00:179c:b0:56c:db33:9980 with SMTP id s28-20020a056a00179c00b0056cdb339980mr60589031pfg.76.1667986810367;
-        Wed, 09 Nov 2022 01:40:10 -0800 (PST)
-X-Google-Smtp-Source: AMsMyM4CCcxTxJVun9YTMpzxXDu9w5IA2i4NpJ7dc8G/hUk3xEM7acScmuLMNK+6jX8ckWu0QZrpXQ==
-X-Received: by 2002:a05:6a00:179c:b0:56c:db33:9980 with SMTP id s28-20020a056a00179c00b0056cdb339980mr60589010pfg.76.1667986810124;
-        Wed, 09 Nov 2022 01:40:10 -0800 (PST)
+        bh=FDMpqou/pq7flrplrADwoL3gK1upqLAy4b6L3fxBqxM=;
+        b=vEM9+ZBsjzTqPDojL9g/AMExyXQbvhwc+Mqj61aYYaMUjvwkz4tV1gtJMZZrCnHkMr
+         GGi/ionn/DpfYWwVcI8jJrPw2+G3KE5rR/6g/+ZNw076f5vJXe+L0HKksSA6jzGX6ve2
+         fuV6DhBtvEcvxqFp8AFOGbDxTQWd1D4LZq2h6JmbcTmcJK74HK4/g/SjeVVumXrC0tJ4
+         18N2l0hvu9WKCQQMIrrCXvkg9z/TEziasPuWvMEKhK28WThcYWIi4aO1bldJZeYsoHwU
+         DEcsarTNn5Z1oMbcY7S7zXFETZuzSY5cJplhhAkc2kL56nRIxRLra3PQunAMKDakcQBY
+         YvIQ==
+X-Gm-Message-State: ACrzQf0XVV8RTMtlNgQralVqQTqP0uzZ3vhO1x5RSUszN84HR/32feVA
+        7KeD7zNWo1+b8LfXCzNzg7ptiGKS7eq9iwhgNKdoLpnGYQxKIwazGWIjc8yKAYlbinhRAYyrdGK
+        tfhKDQov08bckMZrHGe1Zqw==
+X-Received: by 2002:a17:90a:bf11:b0:211:84c5:42d7 with SMTP id c17-20020a17090abf1100b0021184c542d7mr77174035pjs.122.1667987870035;
+        Wed, 09 Nov 2022 01:57:50 -0800 (PST)
+X-Google-Smtp-Source: AMsMyM6F7rSxTnk1TNm4PMzbEEH6hs03HVKe/bAPHQIOZ8CM5D8D/l93IJ2riWbVWdU2U5LdEV5HFw==
+X-Received: by 2002:a17:90a:bf11:b0:211:84c5:42d7 with SMTP id c17-20020a17090abf1100b0021184c542d7mr77174013pjs.122.1667987869816;
+        Wed, 09 Nov 2022 01:57:49 -0800 (PST)
 Received: from [10.72.12.229] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id i8-20020aa796e8000000b0056281da3bcbsm8076610pfq.149.2022.11.09.01.40.07
+        by smtp.gmail.com with ESMTPSA id k4-20020a170902c40400b001869581f7ecsm8701777plk.116.2022.11.09.01.57.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Nov 2022 01:40:09 -0800 (PST)
+        Wed, 09 Nov 2022 01:57:49 -0800 (PST)
 Subject: Re: [PATCH v2] ceph: fix memory leak in mount error path when using
  test_dummy_encryption
 To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
@@ -64,8 +64,8 @@ Cc:     Ilya Dryomov <idryomov@gmail.com>,
 References: <20221108143421.30993-1-lhenriques@suse.de>
  <215b729e-0af0-45d8-96af-3d3c319581c9@redhat.com> <Y2tz8zQPlTWtfOdw@suse.de>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <444977b8-dbe3-1819-d4dd-b56a0a4aaf4f@redhat.com>
-Date:   Wed, 9 Nov 2022 17:40:01 +0800
+Message-ID: <614e430a-a559-e640-b2f3-020db758c061@redhat.com>
+Date:   Wed, 9 Nov 2022 17:57:41 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
@@ -76,12 +76,23 @@ Content-Language: en-US
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
+
+Hi Luis,
+
+Please check 
+https://github.com/ceph/ceph-client/commit/205efda80b6759a741dde209a7158a5bbf044d23#diff-eb62c69f842ed95a7d047262a62946b07eda52f2ea49ae33c39ea13754dfc291.
+
+Currently I only applied it into the 'testing' branch.
+
+Thanks!
+
+- Xiubo
 
 
 On 09/11/2022 17:33, Luís Henriques wrote:
@@ -127,14 +138,6 @@ On 09/11/2022 17:33, Luís Henriques wrote:
 >>
 >> Could I fold this into the previous commit ?
 > Yes, sure.  I'm fine with that.
-
-Thanks.
-
-I will mentioned this fix in that commit comments.
-
-- Xiubo
-
-
 >
 > Cheers,
 > --
