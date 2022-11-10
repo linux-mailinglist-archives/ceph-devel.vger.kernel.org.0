@@ -2,119 +2,85 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39788623B74
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Nov 2022 06:46:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A204624154
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Nov 2022 12:24:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229835AbiKJFqg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 10 Nov 2022 00:46:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57238 "EHLO
+        id S229770AbiKJLYc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 10 Nov 2022 06:24:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229449AbiKJFqe (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Nov 2022 00:46:34 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A087F13FB5
-        for <ceph-devel@vger.kernel.org>; Wed,  9 Nov 2022 21:45:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668059144;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8k4w4Vnv9fqY6JUFkeKEzkLEw9Y/HJrXWV3TRz87NqA=;
-        b=i8S1sU6K9Zi/IJ/UAW9mYHjNqCg+JGzK94ErSQlv2xMbBcSYzBLN025MXdgQSo3xmOMhQT
-        JfIvicdsCDuvbwaE00YcCUHso2ipGyxfzvGFmXLTICjn9lCGRm+szAS2EuGTUCvK36vu0y
-        ZQfCzgsBI0Xo4wM0x6njTWOrRLBvvZU=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-631-ekFiFxQbP8ei7xp1h7oizg-1; Thu, 10 Nov 2022 00:45:03 -0500
-X-MC-Unique: ekFiFxQbP8ei7xp1h7oizg-1
-Received: by mail-pl1-f199.google.com with SMTP id q6-20020a170902dac600b001873ef77938so670395plx.18
-        for <ceph-devel@vger.kernel.org>; Wed, 09 Nov 2022 21:45:03 -0800 (PST)
+        with ESMTP id S229575AbiKJLYa (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Nov 2022 06:24:30 -0500
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66A5753EDA;
+        Thu, 10 Nov 2022 03:24:30 -0800 (PST)
+Received: by mail-ot1-x336.google.com with SMTP id p8-20020a056830130800b0066bb73cf3bcso919605otq.11;
+        Thu, 10 Nov 2022 03:24:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=M/bfkY3he+z+54lCAwGOvId+BMfqdZ1/lFx/xUS+yX4=;
+        b=Kge9KkGpGIjiOCRlbWdZnt3Tp398py3Z/sQgzSTP/8EhYFNkjV3Ycjr2dgN5crbGfG
+         qNJVu/hxqFSigFzNaXOERuEXwVq9nrwMjBCQjpEw3o5vmER+pQQpWg4l/xJABvJyWF5J
+         dYdu1IvzGWLnh+13kvTR8c/3yfTnBoxQ1U/oQ9f5zwzSpXNFiGxZMkW4sJ0M8EEiKvcz
+         7kbCEklSDPtFfgDOf/EiOdGn4m+sqBi2eFwFy0kB7oohdJFe6txXF9C2U6vWEvo62nEd
+         C1e9gNzW9xVBr3d7ESQqa1fjXoYeYLf0b8WkWI08vaWUs5pq6wY9k+38qD84ICz7wZpu
+         mM7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8k4w4Vnv9fqY6JUFkeKEzkLEw9Y/HJrXWV3TRz87NqA=;
-        b=GRTTX/w5v34Z0eExbZIIUNRYKDFDQN2ZodYInOA3xtvddpIb0NWN5PdNCivDB5Jn0l
-         hYLK7j8V8gxhG5efkbBEVxsG4RoW2hvdhqfebMCPrNNqRf4woKFKPdE2D/2raXTRzpdl
-         l2UufWemeACEzsLRQsQChBHclJNEohfSJAnfDJhOlLXvOYSGslJndy0SyTpRWxXWOkFX
-         yXETIssT55SpZ7s1Vpw4Ss9vqYYOT48yVf6d1lXIFowD3so6iVWf8v14VLVRB8hGBdEO
-         Qv2enLaai5wcIxMCpnkzY2nTJYTbRCNn7DMiFKCmCXueUOVc+M8I7o4l7juWi0JP3M7a
-         8BaQ==
-X-Gm-Message-State: ACrzQf13629kQAaEd/XLrf1av9ArnhzRDWIalEX5q5P2y+NQhMeuE6mH
-        O2Ju+EA/UaAuWjG5S5gYkhAiPF6poGBg8KaP0uTPZKXPzxKhBHW3Sp7VG4b+nUsX7MdzefK0cDt
-        kPivpbp/gP2otOjZpdWGNmw==
-X-Received: by 2002:a17:902:d38d:b0:186:9fc5:6c13 with SMTP id e13-20020a170902d38d00b001869fc56c13mr63823527pld.73.1668059102684;
-        Wed, 09 Nov 2022 21:45:02 -0800 (PST)
-X-Google-Smtp-Source: AMsMyM5Od5hw/v96iirS/f5xvd1IT5T0T2A96tmeZWR8dgNsa6AbLSl0yB/i2/FSqXPQnXI2ZtpnaQ==
-X-Received: by 2002:a17:902:d38d:b0:186:9fc5:6c13 with SMTP id e13-20020a170902d38d00b001869fc56c13mr63823513pld.73.1668059102386;
-        Wed, 09 Nov 2022 21:45:02 -0800 (PST)
-Received: from [10.72.12.148] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id b1-20020a170903228100b00176ba091cd3sm10211389plh.196.2022.11.09.21.44.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Nov 2022 21:45:01 -0800 (PST)
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M/bfkY3he+z+54lCAwGOvId+BMfqdZ1/lFx/xUS+yX4=;
+        b=Q8hGMiLGoHFuNfNQiAbdzu5QX80Yt+ETScOBB3zfrfEKbW43EH+Tor+7fYco2jhY0/
+         BZxxHE17sSIJBaX0ZjKUPTG4Qj3fM7mJW7HsVuht0NQYhJDgRRLaUvrKypE28uAdymBK
+         ePD37cJbt+Qy/Pk6Dh57RUAZ11j3TdotFO3x9xsMNFaCPndSEf/QLQYpWLUjdDWbgugK
+         k9q71Otgzi1ONWhM85GlEXdSv3oDppYXiBPnhHitrez0gHO5oL20+6vZmsdul43bmUA5
+         6g+JvqDmTIznsijeulDu/vmVVkmawUH8CRaJVzqzKOr1veGsOHVA4olO6vLDxKQbsSA3
+         Um8A==
+X-Gm-Message-State: ACrzQf0dWytYRMFVIhu5AxlQgrQE+zTNXfrPkkO6xpoplgTTy8/l+DHi
+        /a96dqHhRNIaY+EolQwcDYYPshPlOSDMBd/34XJ90eyYxdc=
+X-Google-Smtp-Source: AMsMyM71O/HADyhZkimMI2U/ebjnQ8Et8U/VKA8S8mQhz1ae6NXizy2ERgFMlf9PYKVzbYdirUgsnnCFcjqD98EyNP8=
+X-Received: by 2002:a9d:6aca:0:b0:655:e3c3:f66c with SMTP id
+ m10-20020a9d6aca000000b00655e3c3f66cmr1304816otq.344.1668079469730; Thu, 10
+ Nov 2022 03:24:29 -0800 (PST)
+MIME-Version: 1.0
+References: <20221110031311.1629288-1-linmq006@gmail.com> <67a1782c-9b7d-055a-5e62-456294cb4401@redhat.com>
+In-Reply-To: <67a1782c-9b7d-055a-5e62-456294cb4401@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 10 Nov 2022 12:24:16 +0100
+Message-ID: <CAOi1vP8fuke7zYyAi0AEdf+Kav1f5WfEaktcUE_2wMb2-X5deg@mail.gmail.com>
 Subject: Re: [PATCH] ceph: Fix NULL vs IS_ERR checking in ceph_getattr
-To:     Miaoqian Lin <linmq006@gmail.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Miaoqian Lin <linmq006@gmail.com>,
         Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20221110031311.1629288-1-linmq006@gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <67a1782c-9b7d-055a-5e62-456294cb4401@redhat.com>
-Date:   Thu, 10 Nov 2022 13:44:56 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
-MIME-Version: 1.0
-In-Reply-To: <20221110031311.1629288-1-linmq006@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Miaoqian,
-
-Thanks for your patch. This has already been fixed by Dan Carpenter 
-weeks ago and already in the ceph-client's testing branch, please see [1]:
-
-[1] 
-https://github.com/ceph/ceph-client/commit/ffc4d66a34bb5bd76d0a3f83bebf500d96a8e37c
-
-BRs
-
-- Xiubo
-
-On 10/11/2022 11:13, Miaoqian Lin wrote:
-> The ceph_lookup_inode() function return error pointers on error
-> instead of NULL.
-> Use IS_ERR() to check the return value to fix this.
+On Thu, Nov 10, 2022 at 6:45 AM Xiubo Li <xiubli@redhat.com> wrote:
 >
-> Fixes: aa87052dd965 ("ceph: fix incorrectly showing the .snap size for stat")
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> ---
->   fs/ceph/inode.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi Miaoqian,
 >
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 4af5e55abc15..bad9eeb6a1a5 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -2492,7 +2492,7 @@ int ceph_getattr(struct user_namespace *mnt_userns, const struct path *path,
->   			struct inode *parent;
->   
->   			parent = ceph_lookup_inode(sb, ceph_ino(inode));
-> -			if (!parent)
-> +			if (IS_ERR(parent))
->   				return PTR_ERR(parent);
->   
->   			pci = ceph_inode(parent);
+> Thanks for your patch. This has already been fixed by Dan Carpenter
+> weeks ago and already in the ceph-client's testing branch, please see [1]:
+>
+> [1]
+> https://github.com/ceph/ceph-client/commit/ffc4d66a34bb5bd76d0a3f83bebf500d96a8e37c
 
+It's also present in linux-next:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=ffc4d66a34bb5bd76d0a3f83bebf500d96a8e37c
+
+Thanks,
+
+                Ilya
