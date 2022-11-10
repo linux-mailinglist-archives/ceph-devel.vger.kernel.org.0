@@ -2,222 +2,151 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E48386243A6
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Nov 2022 14:54:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 310B46249F5
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Nov 2022 19:52:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229886AbiKJNyA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 10 Nov 2022 08:54:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36784 "EHLO
+        id S230098AbiKJSwF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 10 Nov 2022 13:52:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231270AbiKJNx5 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Nov 2022 08:53:57 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69133178A4
-        for <ceph-devel@vger.kernel.org>; Thu, 10 Nov 2022 05:52:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668088378;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8FWT9TyrBpCw16hoPVklgzSvxya7R9n4dXybApYg9Xs=;
-        b=V/VYjBc+S4HxzQW9LQHvinyeaZP6dGVkOylMd2rT6k7D8y4/4PB7tkdoHPv9WqbVV896k6
-        aKiE72wBwhUrsTKF6yxfBqzF/VGn5IVTkYiOgdg7pO+qpRXbhhnrBVFQyDU/8okuaWb7cx
-        jJnM/vRogEG+y6iaKOdPmHUQ7EGsRBA=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-73-6HtuA9Y-Ocq1HPMlXyPwqw-1; Thu, 10 Nov 2022 08:52:57 -0500
-X-MC-Unique: 6HtuA9Y-Ocq1HPMlXyPwqw-1
-Received: by mail-pf1-f198.google.com with SMTP id k131-20020a628489000000b0056b3e1a9629so1070730pfd.8
-        for <ceph-devel@vger.kernel.org>; Thu, 10 Nov 2022 05:52:57 -0800 (PST)
+        with ESMTP id S229566AbiKJSwE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Nov 2022 13:52:04 -0500
+Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCDC818362;
+        Thu, 10 Nov 2022 10:52:02 -0800 (PST)
+Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-3775545dc24so23851037b3.7;
+        Thu, 10 Nov 2022 10:52:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ahiLR+0HYqx9Hj3q85kkyLXkS2RfP6cywR4r1/bj6Ic=;
+        b=BuLNNyZA6RGJSro1aFTVvKQfJXFXyp5VR6864NrwvkzbzqRoktCJVw6N/Doca5qBcu
+         30j7oqGhfYMC/2wwo+CnxYyRIcfIpMO1i3CANPIDzCZ/35eph3JNnXqbXZVpyVeE6nwC
+         2rgiZ/WGg8qdiA9Wx3EmD01ybzYII1H7SmMVjyiHJ0HXfk4CMj8BCtPoDkfwrzn3wjsG
+         tMQ34M0n3gr3bNTVHM2h6CnhVhIFHKJD1ZCvcWbyUbhDpvhP6XUbvTgwPEhVyNT1WYj4
+         2KOVt0eemsENinf1T7NLvlf2zR8Rak8qZXX3U/QTi6IKzLl/llUNyWZD4jBYY5o/Cbo9
+         gdkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8FWT9TyrBpCw16hoPVklgzSvxya7R9n4dXybApYg9Xs=;
-        b=71Wh1cRekkGDYx28ESjoZ+s8nk4WYzRVrTIgTIgW9pMz8SPrq6Hb2VJG7ckm3FaIGh
-         lkeoyXgEd3ucbjBG1CfLUStzgvsb7mquca3LqIatUIO7SQI1foBN8Cr4JHpSYtWfsLsV
-         pnkvGDg+q9SjuW7UhCKWDO7+m0qbqv0JBQQmqMTOyh5Knc8e05U94Wx5TIQZvT0nsDrM
-         fGSAVapj82hhMjkNzm3o1Sy8pKMHu176D17Fy/2i9m0fO17PFoO8ma1f1VtDt6JCyEgk
-         hWNksAAbStK0YzDKcz8wcDkwvkus80D35mBmReN6DpLiLAheRra3G5ONqfs4kgysO6Nw
-         n1GA==
-X-Gm-Message-State: ACrzQf0pmo6jrN+fHSIljGL3VruKOnUMdwCk9TlPobQBNg/aUIZHse4z
-        Pt8i3/sljyQOlRZzyBDljsmQGgOuKqgbwtPJBMPigERPjjpAm/6/yxQFh63oRh0nYi79nrIcv1H
-        sFnB2R+OwIGG4yEdOrWTCww==
-X-Received: by 2002:a62:6502:0:b0:56c:12c0:aaf1 with SMTP id z2-20020a626502000000b0056c12c0aaf1mr2676179pfb.50.1668088376278;
-        Thu, 10 Nov 2022 05:52:56 -0800 (PST)
-X-Google-Smtp-Source: AMsMyM4M6tvQVkMUDbtPrTjA7NFgPmODC8PpLgiBHLE8BihURFhUw3gCYZ1RYGREBmxjiuKgfPBmDA==
-X-Received: by 2002:a62:6502:0:b0:56c:12c0:aaf1 with SMTP id z2-20020a626502000000b0056c12c0aaf1mr2676171pfb.50.1668088375968;
-        Thu, 10 Nov 2022 05:52:55 -0800 (PST)
-Received: from [10.72.12.148] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id y18-20020a170902b49200b001769206a766sm11152484plr.307.2022.11.10.05.52.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Nov 2022 05:52:55 -0800 (PST)
-Subject: Re: [PATCH v5] ceph: fix NULL pointer dereference for req->r_session
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, lhenriques@suse.de, jlayton@kernel.org,
-        mchangir@redhat.com, stable@vger.kernel.org
-References: <20221110130159.33319-1-xiubli@redhat.com>
- <CAOi1vP-Evz+q7XU2EKNRaqCWOVHm8pm0WVp6No21=q55tDdGag@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <5a9b784c-8c94-c083-a8fb-8548edffebbe@redhat.com>
-Date:   Thu, 10 Nov 2022 21:52:38 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ahiLR+0HYqx9Hj3q85kkyLXkS2RfP6cywR4r1/bj6Ic=;
+        b=UbaJ7IxyJAo/gs3qMYuXXqhRI6APoHvxXj9tDDtMvMzDNkUPI7E3RMj3S8gyqGUnlk
+         pYVSMkY2wpsmQK0v7UvKmmcCHT0xifcg7n3fTSUHpA7EETOeNra+KdPBx4nGZkKo8WDA
+         fs8hoB1awRu8dmhofafzprtsyqcIXsw5LwpOgDRaVjHpDT4Pd0yADH9OePyCVzSDME1z
+         0Y71J5liAF9MtJYZtLZDailvOWBzBVQrYQ6lRpbDzDkrc7BiSU5QwHWVikLiUzFZdPvo
+         qhJj4EOfAHTX7t+G3dAAvpyFsOcIN9oD08mkCxFICJS6IEn9/DPd7H0FM2HMu38QtqnR
+         2QRA==
+X-Gm-Message-State: ACrzQf3R8a2w6DocMwqefmKPyt5Yw0LqSnmlds7dhJPs3kndKch3izf/
+        +murK67EoKV5Z/6OmmKtdVdXmOhazeYBkYTINOHWZCf2SzI=
+X-Google-Smtp-Source: AMsMyM6qbhoDq4EuNlT/sFztZuNh18/AZoQGojI1IWj/9MWKt4lI+zofGQOcHJnd2iNJiiAFP0Po3i1fYNOJTKFQ5/8=
+X-Received: by 2002:a81:63c6:0:b0:349:37f7:73dd with SMTP id
+ x189-20020a8163c6000000b0034937f773ddmr62868232ywb.368.1668106321899; Thu, 10
+ Nov 2022 10:52:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAOi1vP-Evz+q7XU2EKNRaqCWOVHm8pm0WVp6No21=q55tDdGag@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20221017202451.4951-1-vishal.moola@gmail.com> <20221017202451.4951-12-vishal.moola@gmail.com>
+ <CAOzc2pwKoyy4i4zBKhvoKmN8cezUxjDhjYZnK9GLcJniQVPoGA@mail.gmail.com>
+In-Reply-To: <CAOzc2pwKoyy4i4zBKhvoKmN8cezUxjDhjYZnK9GLcJniQVPoGA@mail.gmail.com>
+From:   Vishal Moola <vishal.moola@gmail.com>
+Date:   Thu, 10 Nov 2022 10:51:50 -0800
+Message-ID: <CAOzc2pwuUZRK-qMFBhPEENUid-NBSfa9YyJ_FCcFHgwFf4mOuQ@mail.gmail.com>
+Subject: Re: [PATCH v3 11/23] f2fs: Convert f2fs_fsync_node_pages() to use filemap_get_folios_tag()
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
+        jaegeuk@kernel.org, chao@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-
-On 10/11/2022 21:48, Ilya Dryomov wrote:
-> On Thu, Nov 10, 2022 at 2:02 PM <xiubli@redhat.com> wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> The request's r_session maybe changed when it was forwarded or
->> resent. Both the forwarding and resending cases the requests will
->> be protected by the mdsc->mutex.
->>
->> Cc: stable@vger.kernel.org
->> URL: https://bugzilla.redhat.com/show_bug.cgi?id=2137955
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>
->> Changed in V5:
->> - simplify the code by removing the "unlikely(s->s_mds >= max_sessions)" check.
->>
->> Changed in V4:
->> - move mdsc->mutex acquisition and max_sessions assignment into "if (req1 || req2)" branch
->>
->>
->>
->>   fs/ceph/caps.c | 48 ++++++++++++------------------------------------
->>   1 file changed, 12 insertions(+), 36 deletions(-)
->>
->> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
->> index 894adfb4a092..065e9311b607 100644
->> --- a/fs/ceph/caps.c
->> +++ b/fs/ceph/caps.c
->> @@ -2297,7 +2297,6 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
->>          struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
->>          struct ceph_inode_info *ci = ceph_inode(inode);
->>          struct ceph_mds_request *req1 = NULL, *req2 = NULL;
->> -       unsigned int max_sessions;
->>          int ret, err = 0;
->>
->>          spin_lock(&ci->i_unsafe_lock);
->> @@ -2315,28 +2314,24 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
->>          }
->>          spin_unlock(&ci->i_unsafe_lock);
->>
->> -       /*
->> -        * The mdsc->max_sessions is unlikely to be changed
->> -        * mostly, here we will retry it by reallocating the
->> -        * sessions array memory to get rid of the mdsc->mutex
->> -        * lock.
->> -        */
->> -retry:
->> -       max_sessions = mdsc->max_sessions;
->> -
->>          /*
->>           * Trigger to flush the journal logs in all the relevant MDSes
->>           * manually, or in the worst case we must wait at most 5 seconds
->>           * to wait the journal logs to be flushed by the MDSes periodically.
->>           */
->> -       if ((req1 || req2) && likely(max_sessions)) {
->> -               struct ceph_mds_session **sessions = NULL;
->> -               struct ceph_mds_session *s;
->> +       if (req1 || req2) {
->>                  struct ceph_mds_request *req;
->> +               struct ceph_mds_session **sessions;
->> +               struct ceph_mds_session *s;
->> +               unsigned int max_sessions;
->>                  int i;
->>
->> +               mutex_lock(&mdsc->mutex);
->> +               max_sessions = mdsc->max_sessions;
->> +
->>                  sessions = kcalloc(max_sessions, sizeof(s), GFP_KERNEL);
->>                  if (!sessions) {
->> +                       mutex_unlock(&mdsc->mutex);
->>                          err = -ENOMEM;
->>                          goto out;
->>                  }
->> @@ -2348,16 +2343,6 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
->>                                  s = req->r_session;
->>                                  if (!s)
->>                                          continue;
->> -                               if (unlikely(s->s_mds >= max_sessions)) {
->> -                                       spin_unlock(&ci->i_unsafe_lock);
->> -                                       for (i = 0; i < max_sessions; i++) {
->> -                                               s = sessions[i];
->> -                                               if (s)
->> -                                                       ceph_put_mds_session(s);
->> -                                       }
->> -                                       kfree(sessions);
->> -                                       goto retry;
->> -                               }
->>                                  if (!sessions[s->s_mds]) {
->>                                          s = ceph_get_mds_session(s);
->>                                          sessions[s->s_mds] = s;
->> @@ -2370,16 +2355,6 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
->>                                  s = req->r_session;
->>                                  if (!s)
->>                                          continue;
->> -                               if (unlikely(s->s_mds >= max_sessions)) {
->> -                                       spin_unlock(&ci->i_unsafe_lock);
->> -                                       for (i = 0; i < max_sessions; i++) {
->> -                                               s = sessions[i];
->> -                                               if (s)
->> -                                                       ceph_put_mds_session(s);
->> -                                       }
->> -                                       kfree(sessions);
->> -                                       goto retry;
->> -                               }
->>                                  if (!sessions[s->s_mds]) {
->>                                          s = ceph_get_mds_session(s);
->>                                          sessions[s->s_mds] = s;
->> @@ -2391,11 +2366,12 @@ static int flush_mdlog_and_wait_inode_unsafe_requests(struct inode *inode)
->>                  /* the auth MDS */
->>                  spin_lock(&ci->i_ceph_lock);
->>                  if (ci->i_auth_cap) {
->> -                     s = ci->i_auth_cap->session;
->> -                     if (!sessions[s->s_mds])
->> -                             sessions[s->s_mds] = ceph_get_mds_session(s);
->> +                       s = ci->i_auth_cap->session;
->> +                       if (!sessions[s->s_mds])
->> +                               sessions[s->s_mds] = ceph_get_mds_session(s);
->>                  }
->>                  spin_unlock(&ci->i_ceph_lock);
->> +               mutex_unlock(&mdsc->mutex);
->>
->>                  /* send flush mdlog request to MDSes */
->>                  for (i = 0; i < max_sessions; i++) {
->> --
->> 2.31.1
->>
-> Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
-
-Thanks Ilya!
-
-- Xiubo
-
-
+On Mon, Oct 24, 2022 at 12:31 PM Vishal Moola <vishal.moola@gmail.com> wrote:
 >
-> Thanks,
+> On Mon, Oct 17, 2022 at 1:25 PM Vishal Moola (Oracle)
+> <vishal.moola@gmail.com> wrote:
+> >
+> > Convert function to use a folio_batch instead of pagevec. This is in
+> > preparation for the removal of find_get_pages_range_tag().
+> >
+> > Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> > ---
+> >  fs/f2fs/node.c | 19 ++++++++++---------
+> >  1 file changed, 10 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> > index 983572f23896..e8b72336c096 100644
+> > --- a/fs/f2fs/node.c
+> > +++ b/fs/f2fs/node.c
+> > @@ -1728,12 +1728,12 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+> >                         unsigned int *seq_id)
+> >  {
+> >         pgoff_t index;
+> > -       struct pagevec pvec;
+> > +       struct folio_batch fbatch;
+> >         int ret = 0;
+> >         struct page *last_page = NULL;
+> >         bool marked = false;
+> >         nid_t ino = inode->i_ino;
+> > -       int nr_pages;
+> > +       int nr_folios;
+> >         int nwritten = 0;
+> >
+> >         if (atomic) {
+> > @@ -1742,20 +1742,21 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+> >                         return PTR_ERR_OR_ZERO(last_page);
+> >         }
+> >  retry:
+> > -       pagevec_init(&pvec);
+> > +       folio_batch_init(&fbatch);
+> >         index = 0;
+> >
+> > -       while ((nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
+> > -                               PAGECACHE_TAG_DIRTY))) {
+> > +       while ((nr_folios = filemap_get_folios_tag(NODE_MAPPING(sbi), &index,
+> > +                                       (pgoff_t)-1, PAGECACHE_TAG_DIRTY,
+> > +                                       &fbatch))) {
+> >                 int i;
+> >
+> > -               for (i = 0; i < nr_pages; i++) {
+> > -                       struct page *page = pvec.pages[i];
+> > +               for (i = 0; i < nr_folios; i++) {
+> > +                       struct page *page = &fbatch.folios[i]->page;
+> >                         bool submitted = false;
+> >
+> >                         if (unlikely(f2fs_cp_error(sbi))) {
+> >                                 f2fs_put_page(last_page, 0);
+> > -                               pagevec_release(&pvec);
+> > +                               folio_batch_release(&fbatch);
+> >                                 ret = -EIO;
+> >                                 goto out;
+> >                         }
+> > @@ -1821,7 +1822,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+> >                                 break;
+> >                         }
+> >                 }
+> > -               pagevec_release(&pvec);
+> > +               folio_batch_release(&fbatch);
+> >                 cond_resched();
+> >
+> >                 if (ret || marked)
+> > --
+> > 2.36.1
+> >
 >
->                  Ilya
->
+> Following up on these f2fs patches (11/23, 12/23, 13/23, 14/23, 15/23,
+> 16/23). Does anyone have time to review them this week?
 
+Chao, thank you for taking a look at some of these patches!
+If you have time to look over the remaining patches (14, 15, 16)
+feedback on those would be appreciated as well.
