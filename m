@@ -2,68 +2,55 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 310B46249F5
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Nov 2022 19:52:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC451627586
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Nov 2022 06:21:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230098AbiKJSwF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 10 Nov 2022 13:52:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43370 "EHLO
+        id S235541AbiKNFV0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Nov 2022 00:21:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229566AbiKJSwE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 10 Nov 2022 13:52:04 -0500
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCDC818362;
-        Thu, 10 Nov 2022 10:52:02 -0800 (PST)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-3775545dc24so23851037b3.7;
-        Thu, 10 Nov 2022 10:52:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ahiLR+0HYqx9Hj3q85kkyLXkS2RfP6cywR4r1/bj6Ic=;
-        b=BuLNNyZA6RGJSro1aFTVvKQfJXFXyp5VR6864NrwvkzbzqRoktCJVw6N/Doca5qBcu
-         30j7oqGhfYMC/2wwo+CnxYyRIcfIpMO1i3CANPIDzCZ/35eph3JNnXqbXZVpyVeE6nwC
-         2rgiZ/WGg8qdiA9Wx3EmD01ybzYII1H7SmMVjyiHJ0HXfk4CMj8BCtPoDkfwrzn3wjsG
-         tMQ34M0n3gr3bNTVHM2h6CnhVhIFHKJD1ZCvcWbyUbhDpvhP6XUbvTgwPEhVyNT1WYj4
-         2KOVt0eemsENinf1T7NLvlf2zR8Rak8qZXX3U/QTi6IKzLl/llUNyWZD4jBYY5o/Cbo9
-         gdkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ahiLR+0HYqx9Hj3q85kkyLXkS2RfP6cywR4r1/bj6Ic=;
-        b=UbaJ7IxyJAo/gs3qMYuXXqhRI6APoHvxXj9tDDtMvMzDNkUPI7E3RMj3S8gyqGUnlk
-         pYVSMkY2wpsmQK0v7UvKmmcCHT0xifcg7n3fTSUHpA7EETOeNra+KdPBx4nGZkKo8WDA
-         fs8hoB1awRu8dmhofafzprtsyqcIXsw5LwpOgDRaVjHpDT4Pd0yADH9OePyCVzSDME1z
-         0Y71J5liAF9MtJYZtLZDailvOWBzBVQrYQ6lRpbDzDkrc7BiSU5QwHWVikLiUzFZdPvo
-         qhJj4EOfAHTX7t+G3dAAvpyFsOcIN9oD08mkCxFICJS6IEn9/DPd7H0FM2HMu38QtqnR
-         2QRA==
-X-Gm-Message-State: ACrzQf3R8a2w6DocMwqefmKPyt5Yw0LqSnmlds7dhJPs3kndKch3izf/
-        +murK67EoKV5Z/6OmmKtdVdXmOhazeYBkYTINOHWZCf2SzI=
-X-Google-Smtp-Source: AMsMyM6qbhoDq4EuNlT/sFztZuNh18/AZoQGojI1IWj/9MWKt4lI+zofGQOcHJnd2iNJiiAFP0Po3i1fYNOJTKFQ5/8=
-X-Received: by 2002:a81:63c6:0:b0:349:37f7:73dd with SMTP id
- x189-20020a8163c6000000b0034937f773ddmr62868232ywb.368.1668106321899; Thu, 10
- Nov 2022 10:52:01 -0800 (PST)
+        with ESMTP id S235395AbiKNFVZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Nov 2022 00:21:25 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D0C016589
+        for <ceph-devel@vger.kernel.org>; Sun, 13 Nov 2022 21:19:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1668403176;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=tPCih+fFucBD04N2ze9Ac2gJMHrR+hhC//UJa4VjJH8=;
+        b=MC+kCMEjv5bsibivImjcGJz2K+aN00uBjccgOH2q2/OWIH3onZOa43MtSWgeaNe4AhydPq
+        hCiYHC3Wg0nv8uiefkRxVfTFT96r4eVdpG5zybpxq2pQGKAbTGos124mwedy4Bb4LHv7Vy
+        a7Z0mUB87OsLDMkZ2JANuMMn+L/LnZI=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-553-Uoc03cbuNqyzvNpwhJSkZQ-1; Mon, 14 Nov 2022 00:19:23 -0500
+X-MC-Unique: Uoc03cbuNqyzvNpwhJSkZQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 19443833A0E;
+        Mon, 14 Nov 2022 05:19:23 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 786FC2024CC5;
+        Mon, 14 Nov 2022 05:19:19 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     ceph-devel@vger.kernel.org, jlayton@kernel.org, idryomov@gmail.com,
+        viro@zeniv.linux.org.uk
+Cc:     lhenriques@suse.de, mchangir@redhat.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH 0/2 v2] ceph: fix the use-after-free bug for file_lock
+Date:   Mon, 14 Nov 2022 13:18:59 +0800
+Message-Id: <20221114051901.15371-1-xiubli@redhat.com>
 MIME-Version: 1.0
-References: <20221017202451.4951-1-vishal.moola@gmail.com> <20221017202451.4951-12-vishal.moola@gmail.com>
- <CAOzc2pwKoyy4i4zBKhvoKmN8cezUxjDhjYZnK9GLcJniQVPoGA@mail.gmail.com>
-In-Reply-To: <CAOzc2pwKoyy4i4zBKhvoKmN8cezUxjDhjYZnK9GLcJniQVPoGA@mail.gmail.com>
-From:   Vishal Moola <vishal.moola@gmail.com>
-Date:   Thu, 10 Nov 2022 10:51:50 -0800
-Message-ID: <CAOzc2pwuUZRK-qMFBhPEENUid-NBSfa9YyJ_FCcFHgwFf4mOuQ@mail.gmail.com>
-Subject: Re: [PATCH v3 11/23] f2fs: Convert f2fs_fsync_node_pages() to use filemap_get_folios_tag()
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
-        jaegeuk@kernel.org, chao@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,82 +58,25 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Oct 24, 2022 at 12:31 PM Vishal Moola <vishal.moola@gmail.com> wrote:
->
-> On Mon, Oct 17, 2022 at 1:25 PM Vishal Moola (Oracle)
-> <vishal.moola@gmail.com> wrote:
-> >
-> > Convert function to use a folio_batch instead of pagevec. This is in
-> > preparation for the removal of find_get_pages_range_tag().
-> >
-> > Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-> > ---
-> >  fs/f2fs/node.c | 19 ++++++++++---------
-> >  1 file changed, 10 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> > index 983572f23896..e8b72336c096 100644
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -1728,12 +1728,12 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
-> >                         unsigned int *seq_id)
-> >  {
-> >         pgoff_t index;
-> > -       struct pagevec pvec;
-> > +       struct folio_batch fbatch;
-> >         int ret = 0;
-> >         struct page *last_page = NULL;
-> >         bool marked = false;
-> >         nid_t ino = inode->i_ino;
-> > -       int nr_pages;
-> > +       int nr_folios;
-> >         int nwritten = 0;
-> >
-> >         if (atomic) {
-> > @@ -1742,20 +1742,21 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
-> >                         return PTR_ERR_OR_ZERO(last_page);
-> >         }
-> >  retry:
-> > -       pagevec_init(&pvec);
-> > +       folio_batch_init(&fbatch);
-> >         index = 0;
-> >
-> > -       while ((nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
-> > -                               PAGECACHE_TAG_DIRTY))) {
-> > +       while ((nr_folios = filemap_get_folios_tag(NODE_MAPPING(sbi), &index,
-> > +                                       (pgoff_t)-1, PAGECACHE_TAG_DIRTY,
-> > +                                       &fbatch))) {
-> >                 int i;
-> >
-> > -               for (i = 0; i < nr_pages; i++) {
-> > -                       struct page *page = pvec.pages[i];
-> > +               for (i = 0; i < nr_folios; i++) {
-> > +                       struct page *page = &fbatch.folios[i]->page;
-> >                         bool submitted = false;
-> >
-> >                         if (unlikely(f2fs_cp_error(sbi))) {
-> >                                 f2fs_put_page(last_page, 0);
-> > -                               pagevec_release(&pvec);
-> > +                               folio_batch_release(&fbatch);
-> >                                 ret = -EIO;
-> >                                 goto out;
-> >                         }
-> > @@ -1821,7 +1822,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
-> >                                 break;
-> >                         }
-> >                 }
-> > -               pagevec_release(&pvec);
-> > +               folio_batch_release(&fbatch);
-> >                 cond_resched();
-> >
-> >                 if (ret || marked)
-> > --
-> > 2.36.1
-> >
->
-> Following up on these f2fs patches (11/23, 12/23, 13/23, 14/23, 15/23,
-> 16/23). Does anyone have time to review them this week?
+From: Xiubo Li <xiubli@redhat.com>
 
-Chao, thank you for taking a look at some of these patches!
-If you have time to look over the remaining patches (14, 15, 16)
-feedback on those would be appreciated as well.
+Changed in V2:
+- switch to file_lock.fl_u to fix the race bug
+- and the most code will be in the ceph layer
+
+Xiubo Li (2):
+  ceph: add ceph_lock_info support for file_lock
+  ceph: use a xarray to record all the opened files for each inode
+
+ fs/ceph/file.c                  |  9 +++++++++
+ fs/ceph/inode.c                 |  4 ++++
+ fs/ceph/locks.c                 | 35 +++++++++++++++++++++++++++++----
+ fs/ceph/super.h                 |  4 ++++
+ include/linux/ceph/ceph_fs_fl.h | 26 ++++++++++++++++++++++++
+ include/linux/fs.h              |  2 ++
+ 6 files changed, 76 insertions(+), 4 deletions(-)
+ create mode 100644 include/linux/ceph/ceph_fs_fl.h
+
+-- 
+2.31.1
+
