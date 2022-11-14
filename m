@@ -2,147 +2,68 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F81F628240
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Nov 2022 15:19:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94B2B62848C
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Nov 2022 17:03:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237009AbiKNOTz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Nov 2022 09:19:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59860 "EHLO
+        id S236953AbiKNQDZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Nov 2022 11:03:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236898AbiKNOTx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Nov 2022 09:19:53 -0500
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE4E826132;
-        Mon, 14 Nov 2022 06:19:51 -0800 (PST)
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AEBprwE016399;
-        Mon, 14 Nov 2022 14:19:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2022-7-12;
- bh=Grd1WAXzjoeYhsSt68/iHzuNjOYWQIqyx9Z8qEar9ik=;
- b=dBRv7NDpoRyWK4gYJY4KRrwAptZ9CCJ998YFonnwimJ38vkXo7Q3b3xHzmvErG1fA1rn
- 3wcDKvw1JUvOV7yZwp++5yvVaSLmCwdlEyA6GxL/mOUjZwMeB/FLgfkPTntsjfw4SGXe
- U79kva8Ri24EDUkCMEaDyjQ/3//qJ7yhHpA4Aiypmx67TQsyNH6lGDoIc/CmPkgri/xF
- C16MpUU1SdhxUnFo1oah1qBEf33/IolKqPeVlNJqqySQcJ00S2r9Nls9BFXtb6UlA4M2
- ncSNMSby3P3O553/JM2zACNerToOHEpCVWRhtUuEl7o1ZEovUUPnXdeR2Igwa40XqKjn xg== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ku1t3j1bb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Nov 2022 14:19:46 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 2AEEDtYw015562;
-        Mon, 14 Nov 2022 14:19:46 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2171.outbound.protection.outlook.com [104.47.59.171])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3kt1xa7qy0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Nov 2022 14:19:46 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Hrpq7spY+QQ5e22Z6CccjJIDHOO8hdLwSV/T+vUWKFnlw6Rj3uRHePBWH2pgi8vaZqB5bIBWqhPVPs5nZZVFeHxx3/CPMC+2GgsjgYAxnoFvGRvMUa3htWnLCGX204jTuD/Wzet1+uWBuhX3I3C7+C7iQpB0iTYNwLKmpwV2FTtagUqL7caXRmL0VmocCTOtY0N5+lTxCPeeV4iizd2TEGbsovQEPL4qzuR0aDNdOH2M8rQx8eA8XVy7+HybFEXUSzzcXZ3IzWHQYGejo5OF6nwqac5NUSxadBbbzfV5+elewcoYkSBEl8AFi7k+ltpohKEaYtSxtBOifGUWGTyrUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Grd1WAXzjoeYhsSt68/iHzuNjOYWQIqyx9Z8qEar9ik=;
- b=Lc3pJMAC77+/0uBRs2HyjaZEOrrnSr27/vVLxjYKVM1RqfaBa3KhW4Dx6PRAMYrMC21zgbVC+pA2ObjG8G3mP7kxKbmhOkQ7WwVZ/JmJTf4xhagXJtxIk5izYLDEE9/hsb3qKi0z9tp6GaNvsCxkxCFMOVpy9/+dZMNgCxIWBwmhrYarbfh+4mFoHkzm8eIMyj2mMA2482qcar+4lhd2Ah6Tdus/ac1mtiJeDamCgp65UfeqP9eyeb5BQwJbYr5QqhFLgxssYwJiElvKSg0sdJsrUmxN4OmoGo4yAKw3w46UA+hX/kfnfMEE4rGqf9LmGAu7NkHBP9qstcoLX+NH8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Grd1WAXzjoeYhsSt68/iHzuNjOYWQIqyx9Z8qEar9ik=;
- b=vQD4Zf92XhsuGF+4sID7n9hFhz/YR8w7+RDGRe6upAtYFeZD+IDInas2JKf5eAAQKbHrUs7l78ezgQJl6tU+i82NvJRqC0CmI02MSYWTIgIcVRmNW3c1fGqY5Ba0OnZGyWQRhXI6BhNFvK/sufmnk07vriUK5gPVbO+sIJxcfPY=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by CH0PR10MB5004.namprd10.prod.outlook.com (2603:10b6:610:de::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.17; Mon, 14 Nov
- 2022 14:19:44 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::b500:ee42:3ca6:8a9e]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::b500:ee42:3ca6:8a9e%6]) with mapi id 15.20.5813.017; Mon, 14 Nov 2022
- 14:19:44 +0000
-From:   Chuck Lever III <chuck.lever@oracle.com>
-To:     Jeff Layton <jlayton@kernel.org>
-CC:     "xiubli@redhat.com" <xiubli@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Subject: Re: [RFC PATCH] filelock: new helper: vfs_file_has_locks
-Thread-Topic: [RFC PATCH] filelock: new helper: vfs_file_has_locks
-Thread-Index: AQHY+DKnkOfWSJV6H0q8ZtCbNKS1p64+d+KA
-Date:   Mon, 14 Nov 2022 14:19:44 +0000
-Message-ID: <D5691F8E-98BC-49A1-AF86-1FAB357B8468@oracle.com>
-References: <20221114140747.134928-1-jlayton@kernel.org>
-In-Reply-To: <20221114140747.134928-1-jlayton@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3696.120.41.1.1)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN0PR10MB5128:EE_|CH0PR10MB5004:EE_
-x-ms-office365-filtering-correlation-id: a2131833-28d0-464a-f23b-08dac64b4716
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: az08sJGvTl2biGUWvzR9ZgCCrbNnAjwJfve8qoXQFG64E/zcM3ucj8ecvc1HDhB7audBPIUpUX1mMqoQWTBZoOcY5TKYZKRYHbw9PO1gDvWeFo4lXyuyvuUynDai7+z2yP1teuRTOr6suMuI7Z8iboNRUl89NhmFwR1X5zeauPKAfiWTcYbSfh66ikQWXikw/dALpyf+dswjtOTZnaARl4rFvgmJFqZzTb3NwYXUSmmNdDmDfiQVcL2DFMbmPWfu5NQEG+FQQhKrufBHSfWP9f+j1ab2IzyE8rSOIUb8ex+m75U6ngvCSErEJWwUnY+cvlOPcloMUE0l05Dfj/4nhgd5uGvD22fXtcpRfvajCUUF3r1pIGMMBFOpUAzu75N4+8KdiWWn439pJV3VKw98dINyZiXl4JLoBJuryQhypvyV0OtMM6PgL/NFc+lRILgm903suvDfNHyoL8fzImvM5VN5ZdL/6lWJDcplJoJLve55DPKXIvw6voa1Y+xZRg0X2Bp0cmT8tC/ozC1+205tBNsVkJnnYY61t4A3mUfvJ9uR3n04/NunPF5kAETx7xcJHurJRFCz5C2e8izAMbyYEJbpowRt4oM1iFfdwDTNiWNaMF/VkBSKz/+eGsPxwyDjE2lsjCskNRJWTstVDoCWlyyBoenvXf2KJMAyumDupC+1ehAsw6t1f+JFt7UobxHXqMYNg5aYWIdI16/SR3Hx9ZpHjUiOKfcaGgJFUYSjdn5qgHkmjIhqf7VWK355VUrgL6XgR4GhzC9/SkS0VRpq/e3+R+70ji6gXp2+8NU05qM=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(376002)(346002)(366004)(136003)(396003)(39860400002)(451199015)(41300700001)(478600001)(2616005)(6916009)(4326008)(6486002)(8676002)(66446008)(76116006)(33656002)(64756008)(2906002)(91956017)(66476007)(54906003)(66946007)(66556008)(36756003)(186003)(71200400001)(83380400001)(5660300002)(53546011)(6506007)(86362001)(6512007)(316002)(26005)(38070700005)(8936002)(122000001)(38100700002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?1qpy901SQ5eCkve/0ryoKDtm+2L0F6GJO0VJ8C6IbKMO0IVom56wFHBWl6SO?=
- =?us-ascii?Q?QPoRSCCt/Eej/f/hbhgGkdzg6FCh+GynFkRebsCpvG+1QIhRr2r/GN6FQhNt?=
- =?us-ascii?Q?zsTQkZ/tnE2d6DuSTa8bDkvEA3Q1sq+9TpGrcq25eP+7aFTudoocPM9X7p//?=
- =?us-ascii?Q?wn57BcljaCOJejddoV5VdgAlb91g8rR9ZaiP/D6FbpbsLbe74mDNmJFMY38d?=
- =?us-ascii?Q?K0XPLmgj5D4d1VTA56Ub11qSKWEOvGXKvrNBz8VmpH3c1NOkyeHcHZDaaHpN?=
- =?us-ascii?Q?39MMFnYQchmVlTh6BIp7IZinhV2dHu1ngFqKQBEUujlGk20bt/m37ShN6h6y?=
- =?us-ascii?Q?KwCeEtLggDEzvKGHTbFcVi3UPBCILc3Vw/62z5zc5nrs/NuUuon9TN1c/+tI?=
- =?us-ascii?Q?vkPU9IHbNygs4qnkb1R8CcoQRQzdL7RZaLCg+9qnmp7tGhHfdx+TvkhrwdTN?=
- =?us-ascii?Q?5Hymw3274OwxPdEj1Xg6/jE4i6VDQSdgYRoBG21bthT5yHpHU/pbvknqq8Xy?=
- =?us-ascii?Q?x0WoLXvsQTf8iV9C1hzSYsRRd6/ASmcdyzy6pTXgi2ATrSX7sAQkjIBxuTvr?=
- =?us-ascii?Q?jhMwADYmFgSVNlg0SLmv3iB/q6AxEZ/KN64CM3Ink+8pNhgI1gw7TaQYLdh2?=
- =?us-ascii?Q?8Cuu0Cj55tmBCQKPULIdmjGw7bde3BjaVv5CZMVuQVd4jympuIJimtrMZ9xe?=
- =?us-ascii?Q?l2QgzUi3YsxTC6fBsPEz43mLDhXw0yg5CaPgKnif571KSQ3A5EeVqHC8OGMi?=
- =?us-ascii?Q?mV8PqNJe8+q9IIbC9bWsltQxPmnr7V7PWza2ok8I7iLXuExxifLYxSS4GPOh?=
- =?us-ascii?Q?TkCDMxgrzqS9uiwvbQ+bI5kbJ83ztKYfptFUUUqETn6BHNxtdEW4A+pytYGK?=
- =?us-ascii?Q?Qeww77M1TdmIDb6jq0JZhA9T+4cJXD8v3qlCbtuiGSbQFBROcc+CUznDMPVa?=
- =?us-ascii?Q?J3DfFaK/WazzBV91i9CZ2TRgAbl0upftDKrq9yjlw0BCGBz8JuzHoF1ScLIH?=
- =?us-ascii?Q?sqFnCwsiiCmMOilSt+b12Ktf7xj9hLt3yrNn2gXG4mAr3ZqgSXAJvpN/RcDW?=
- =?us-ascii?Q?uB5pvvs5XOE6atcaRa6O8ZC9uO9dush3FzlwFndFD7SjWQlddcOl3sMdEB1D?=
- =?us-ascii?Q?dwTItCBa1VY+S6ZxbpEqWpY6co9X1/56RGVlUtFVEm9mEagSu31DD2kuukaH?=
- =?us-ascii?Q?f0wDAkiHF8JWpduENgMnAJR2VeJwrqSVwk+BWQLAGzl7gOLSaPc3w03xBfAG?=
- =?us-ascii?Q?ltisJX5UnqHBXnnLQYqR2wwtBtlzUZw72pHBitaCi8m/+fce1Ly97VdJ1E/H?=
- =?us-ascii?Q?sPiWq9A8pcQgpUCBVD6kTTKALMduqsCztWkv/H3n4wBWdfuY0O2N3twih4rN?=
- =?us-ascii?Q?ok6q+Ltrw/FAczm6DdFmHTq0rkT7dmzgSvhAVrFEnURvgc/dW6jh9lnbNRhm?=
- =?us-ascii?Q?hRd/HBWayoEfyJsYjPdrvf+65mqPAv+ous9fxKgXzIIDy6Hdz2ksERCfbA0W?=
- =?us-ascii?Q?EODjZ7MsvGQaV6HI5/RXeGbVepiCCfubGbXRRoHhsTzhPhcw0cipuy3A5Id9?=
- =?us-ascii?Q?Un/olSEleSsSh5JgbSjLmrq+24nAeMtS+u59N43BKP8R7TDw0l7jGEcxFA+L?=
- =?us-ascii?Q?GQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <0E040E157913E64297C0A59D5BACC821@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        with ESMTP id S235591AbiKNQDY (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Nov 2022 11:03:24 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13CE4FCEA
+        for <ceph-devel@vger.kernel.org>; Mon, 14 Nov 2022 08:02:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1668441748;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=P3nkTLNGE0zyZA7iNRXj43qY6De8MwuHFpNo8xiUkSQ=;
+        b=Qy+l/bgq8vjrVIa5N+8zW/aJQJuVXfHYOE26ALyIfSus2xfNA36wBOwKMOdZb2WgKn5dou
+        wypR7Jhg/jpzumNGMO78ZL10FqksdU0j0UBSX7GX3POZUu3q7IuETSRgfpcVjTtVl2W6PT
+        oDkLyrcHioWbDW9xK4WpzbYG1pwljrA=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-663-ZmRuoXOxM_KLJzUdYTPc9A-1; Mon, 14 Nov 2022 11:02:26 -0500
+X-MC-Unique: ZmRuoXOxM_KLJzUdYTPc9A-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 955C52A2AD7B;
+        Mon, 14 Nov 2022 16:02:25 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 632E240D298B;
+        Mon, 14 Nov 2022 16:02:23 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [RFC PATCH v2] mm, netfs,
+ fscache: Stop read optimisation when folio removed from pagecache
+From:   David Howells <dhowells@redhat.com>
+To:     willy@infradead.org, dwysocha@redhat.com
+Cc:     Rohith Surabattula <rohiths.msft@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Ilya Dryomov <idryomov@gmail.com>, linux-cachefs@redhat.com,
+        linux-cifs@vger.kernel.org, linux-afs@lists.infradead.org,
+        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, dhowells@redhat.com,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 14 Nov 2022 16:02:20 +0000
+Message-ID: <166844174069.1124521.10890506360974169994.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/1.5
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: d0H6D2Mpum8k7MXGca97wzL4UMfit5A3fBpI4Lj0wKtMDlwrbK12vaKtLAEcX1a5d0zP8I8fXSH4m4GUyb9NwkymnEThUQrgYhthdifc/z06HKLDZvBjjKtZ0lyq/azHCfGj9N0dF+86Mj22vazY/tM+ADgWkiULcBmdNYKnu8hb87EVl/8htS2AoGVWjSKz+6+Prw43sQPGxJM+ag5JgdgTmrbIBbPYBf4IFX8AWzmDZ/50QRKcYAtkKWoqrE++vGJyn6pv4WbHlP9Y+SvDqaAK0v1dBIBVY6xLdcnxqE30TsTDtclbitdaBvAtP/7drorSK0N+PLZ6YG8tEOVnaoyHmknio0YCL6VBOynsuptlywme3BBhgFuxsvj6Aa2CdYtAwObHPyCfJVBI0t23E/xtpzrMgk98QkgPmqntOSyJ1km1KLCv3tTbL3quBeSX3Cn7gwyxfSFREWWONGKQtyIKMBCC920s/gterZshKBhfFF3R6sNCw/Ym8h+VdjOgeIr4i3ZY+F3gi1cGoDcuu1mdlsPCCkMJtxFHpcmjeEsgcXbD1bvsxfg3y1Zoz7NcLzzfyv/sW8eXc7lb+ckfbnaPemD99VJhBvH7qc/YKRj28PtoABs99K5xOg6/KkytfU6eyZpocHuIhLnHewjjKQjZwXA3g+hxQXpGowVrbm4E9BswhSGxtmMmeF2sHaoBTHdxTYE9yHRhCpNVyUh4qP9gOgeLavciqQjcuPYeohJ7F/pbAfxVfFl8fcN9sItWNE9+ta6RpvWWkqRSGStwKnOGvmJi9EazVV0UX9Dpk0Uo1XU7L32hkM//EKGrrP3HLXho1A+PP5RlS3FSwAfoifa3rTmKBZ3dtjRzg71Gp14=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2131833-28d0-464a-f23b-08dac64b4716
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2022 14:19:44.3722
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: t/nxflOJjnhLsUe2t+aiaERgG3FsgR5Q+ohPVUgCyyC3SqlAPL3b/h47xQ0cYqWOA/kpZDaK2c8LCmmx8GjjdA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5004
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-14_12,2022-11-11_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
- suspectscore=0 malwarescore=0 mlxscore=0 adultscore=0 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211140102
-X-Proofpoint-ORIG-GUID: nHbLmOaWUZ1XXvgMy2EUEjSdwOkwuoY9
-X-Proofpoint-GUID: nHbLmOaWUZ1XXvgMy2EUEjSdwOkwuoY9
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -151,106 +72,392 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Fscache has an optimisation by which reads from the cache are skipped until
+we know that (a) there's data there to be read and (b) that data isn't
+entirely covered by pages resident in the netfs pagecache.  This is done
+with two flags manipulated by fscache_note_page_release():
 
+	if (...
+	    test_bit(FSCACHE_COOKIE_HAVE_DATA, &cookie->flags) &&
+	    test_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags))
+		clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags);
 
-> On Nov 14, 2022, at 9:07 AM, Jeff Layton <jlayton@kernel.org> wrote:
->=20
-> Ceph has a need to know whether a particular file has any locks set on
-> it. It's currently tracking that by a num_locks field in its
-> filp->private_data, but that's problematic as it tries to decrement this
-> field when releasing locks and that can race with the file being torn
-> down.
->=20
-> Add a new vfs_file_has_locks helper that will scan the flock and posix
-> lists, and return true if any of the locks have a fl_file that matches
-> the given one. Ceph can then call this instead of doing its own
-> tracking.
->=20
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+where the NO_DATA_TO_READ flag causes cachefiles_prepare_read() to indicate
+that netfslib should download from the server or clear the page instead.
 
-LGTM.
+The fscache_note_page_release() function is intended to be called from
+->releasepage() - but that only gets called if PG_private or PG_private_2
+is set - and currently the former is at the discretion of the network
+filesystem and the latter is only set whilst a page is being written to the
+cache, so sometimes we miss clearing the optimisation.
 
+Fix this by following Willy's suggestion[1] and adding an address_space
+flag, AS_RELEASE_ALWAYS, that causes filemap_release_folio() to always call
+->release_folio() if it's set, even if PG_private or PG_private_2 aren't
+set.
 
-> ---
-> fs/locks.c         | 36 ++++++++++++++++++++++++++++++++++++
-> include/linux/fs.h |  1 +
-> 2 files changed, 37 insertions(+)
->=20
-> Xiubo,
->=20
-> Here's what I was thinking instead of trying to track this within ceph.
-> Most inodes never have locks set, so in most cases this will be a NULL
-> pointer check.
->=20
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 5876c8ff0edc..c7f903b63a53 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -2672,6 +2672,42 @@ int vfs_cancel_lock(struct file *filp, struct file=
-_lock *fl)
-> }
-> EXPORT_SYMBOL_GPL(vfs_cancel_lock);
->=20
-> +/**
-> + * vfs_file_has_locks - are any locks held that were set on @filp?
-> + * @filp: open file to check for locks
-> + *
-> + * Return true if are any FL_POSIX or FL_FLOCK locks currently held
-> + * on @filp.
-> + */
-> +bool vfs_file_has_locks(struct file *filp)
-> +{
-> +	struct file_lock_context *ctx;
-> +	struct file_lock *fl;
-> +	bool ret =3D false;
-> +
-> +	ctx =3D smp_load_acquire(&locks_inode(filp)->i_flctx);
-> +	if (!ctx)
-> +		return false;
-> +
-> +	spin_lock(&ctx->flc_lock);
-> +	list_for_each_entry(fl, &ctx->flc_posix, fl_list) {
-> +		if (fl->fl_file =3D=3D filp) {
-> +			ret =3D true;
-> +			goto out;
-> +		}
-> +	}
-> +	list_for_each_entry(fl, &ctx->flc_flock, fl_list) {
-> +		if (fl->fl_file =3D=3D filp) {
-> +			ret =3D true;
-> +			break;
-> +		}
-> +	}
-> +out:
-> +	spin_unlock(&ctx->flc_lock);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL(vfs_file_has_locks);
-> +
-> #ifdef CONFIG_PROC_FS
-> #include <linux/proc_fs.h>
-> #include <linux/seq_file.h>
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e654435f1651..e4d0f1fa7f9f 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1170,6 +1170,7 @@ extern int locks_delete_block(struct file_lock *);
-> extern int vfs_test_lock(struct file *, struct file_lock *);
-> extern int vfs_lock_file(struct file *, unsigned int, struct file_lock *,=
- struct file_lock *);
-> extern int vfs_cancel_lock(struct file *filp, struct file_lock *fl);
-> +bool vfs_file_has_locks(struct file *file);
-> extern int locks_lock_inode_wait(struct inode *inode, struct file_lock *f=
-l);
-> extern int __break_lease(struct inode *inode, unsigned int flags, unsigne=
-d int type);
-> extern void lease_get_mtime(struct inode *, struct timespec64 *time);
-> --=20
-> 2.38.1
->=20
+Note that this would require folio_test_private() and page_has_private() to
+become more complicated.  To avoid that, in the places[*] where these are
+used to conditionalise calls to filemap_release_folio() and
+try_to_release_page(), the tests are removed the those functions just
+jumped to unconditionally and the test is performed there.
 
---
-Chuck Lever
+[*] There are some exceptions in vmscan.c where the check guards more than
+just a call to the releaser.  I've added a function, folio_needs_release()
+to wrap all the checks for that.
 
+AS_RELEASE_ALWAYS should be set if a non-NULL cookie is obtained from
+fscache and cleared in ->evict_inode() before truncate_inode_pages_final()
+is called.
+
+Additionally, the FSCACHE_COOKIE_NO_DATA_TO_READ flag needs to be cleared
+and the optimisation cancelled if a cachefiles object already contains data
+when we open it.
+
+Reported-by: Rohith Surabattula <rohiths.msft@gmail.com>
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Steve French <sfrench@samba.org>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
+cc: Dave Wysochanski <dwysocha@redhat.com>
+cc: Dominique Martinet <asmadeus@codewreck.org>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: linux-cachefs@redhat.com
+cc: linux-cifs@vger.kernel.org
+cc: linux-afs@lists.infradead.org
+cc: v9fs-developer@lists.sourceforge.net
+cc: ceph-devel@vger.kernel.org
+cc: linux-nfs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
+Link: https://lore.kernel.org/r/Yk9V/03wgdYi65Lb@casper.infradead.org/ [1]
+Link: https://lore.kernel.org/r/164928630577.457102.8519251179327601178.stgit@warthog.procyon.org.uk/ # v1
+---
+
+ fs/9p/cache.c           |    2 ++
+ fs/9p/vfs_inode.c       |    1 +
+ fs/afs/inode.c          |    1 +
+ fs/afs/internal.h       |    2 ++
+ fs/cachefiles/namei.c   |    2 ++
+ fs/ceph/cache.c         |    2 ++
+ fs/ceph/inode.c         |    1 +
+ fs/cifs/cifsfs.c        |    1 +
+ fs/cifs/fscache.c       |    2 ++
+ fs/splice.c             |    3 +--
+ include/linux/pagemap.h |   16 ++++++++++++++++
+ mm/filemap.c            |    4 ++++
+ mm/huge_memory.c        |    3 +--
+ mm/khugepaged.c         |    3 +--
+ mm/memory-failure.c     |    3 +--
+ mm/migrate.c            |    3 +--
+ mm/truncate.c           |    6 ++----
+ mm/vmscan.c             |   15 +++++++++++----
+ 18 files changed, 52 insertions(+), 18 deletions(-)
+
+diff --git a/fs/9p/cache.c b/fs/9p/cache.c
+index cebba4eaa0b5..12c0ae29f185 100644
+--- a/fs/9p/cache.c
++++ b/fs/9p/cache.c
+@@ -68,6 +68,8 @@ void v9fs_cache_inode_get_cookie(struct inode *inode)
+ 				       &path, sizeof(path),
+ 				       &version, sizeof(version),
+ 				       i_size_read(&v9inode->netfs.inode));
++	if (v9inode->netfs.cache)
++		mapping_set_release_always(inode->i_mapping);
+ 
+ 	p9_debug(P9_DEBUG_FSC, "inode %p get cookie %p\n",
+ 		 inode, v9fs_inode_cookie(v9inode));
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index 4d1a4a8d9277..b553fe3484c1 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -394,6 +394,7 @@ void v9fs_evict_inode(struct inode *inode)
+ 	version = cpu_to_le32(v9inode->qid.version);
+ 	fscache_clear_inode_writeback(v9fs_inode_cookie(v9inode), inode,
+ 				      &version);
++	mapping_clear_release_always(inode->i_mapping);
+ 	clear_inode(inode);
+ 	filemap_fdatawrite(&inode->i_data);
+ 
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 6d3a3dbe4928..7790977780ca 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -805,6 +805,7 @@ void afs_evict_inode(struct inode *inode)
+ 
+ 	afs_set_cache_aux(vnode, &aux);
+ 	fscache_clear_inode_writeback(afs_vnode_cache(vnode), inode, &aux);
++	mapping_clear_release_always(inode->i_mapping);
+ 	clear_inode(inode);
+ 
+ 	while (!list_empty(&vnode->wb_keys)) {
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 723d162078a3..310f4111c648 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -680,6 +680,8 @@ static inline void afs_vnode_set_cache(struct afs_vnode *vnode,
+ {
+ #ifdef CONFIG_AFS_FSCACHE
+ 	vnode->netfs.cache = cookie;
++	if (cookie)
++		mapping_set_release_always(vnode->netfs.inode.i_mapping);
+ #endif
+ }
+ 
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index 03ca8f2f657a..50b2ee163af6 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -584,6 +584,8 @@ static bool cachefiles_open_file(struct cachefiles_object *object,
+ 	if (ret < 0)
+ 		goto check_failed;
+ 
++	clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &object->cookie->flags);
++
+ 	object->file = file;
+ 
+ 	/* Always update the atime on an object we've just looked up (this is
+diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
+index 177d8e8d73fe..de1dee46d3df 100644
+--- a/fs/ceph/cache.c
++++ b/fs/ceph/cache.c
+@@ -36,6 +36,8 @@ void ceph_fscache_register_inode_cookie(struct inode *inode)
+ 				       &ci->i_vino, sizeof(ci->i_vino),
+ 				       &ci->i_version, sizeof(ci->i_version),
+ 				       i_size_read(inode));
++	if (ci->netfs.cache)
++		mapping_set_release_always(inode->i_mapping);
+ }
+ 
+ void ceph_fscache_unregister_inode_cookie(struct ceph_inode_info *ci)
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 4af5e55abc15..2e8481da6583 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -572,6 +572,7 @@ void ceph_evict_inode(struct inode *inode)
+ 	truncate_inode_pages_final(&inode->i_data);
+ 	if (inode->i_state & I_PINNING_FSCACHE_WB)
+ 		ceph_fscache_unuse_cookie(inode, true);
++	mapping_clear_release_always(inode->i_mapping);
+ 	clear_inode(inode);
+ 
+ 	ceph_fscache_unregister_inode_cookie(ci);
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index fe220686bba4..ceb92b536475 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -423,6 +423,7 @@ cifs_free_inode(struct inode *inode)
+ static void
+ cifs_evict_inode(struct inode *inode)
+ {
++	mapping_clear_release_always(inode->i_mapping);
+ 	truncate_inode_pages_final(&inode->i_data);
+ 	if (inode->i_state & I_PINNING_FSCACHE_WB)
+ 		cifs_fscache_unuse_inode_cookie(inode, true);
+diff --git a/fs/cifs/fscache.c b/fs/cifs/fscache.c
+index a1751b956318..d3f484ab1213 100644
+--- a/fs/cifs/fscache.c
++++ b/fs/cifs/fscache.c
+@@ -108,6 +108,8 @@ void cifs_fscache_get_inode_cookie(struct inode *inode)
+ 				       &cifsi->uniqueid, sizeof(cifsi->uniqueid),
+ 				       &cd, sizeof(cd),
+ 				       i_size_read(&cifsi->netfs.inode));
++	if (cifsi->netfs.cache)
++		mapping_set_release_always(inode->i_mapping);
+ }
+ 
+ void cifs_fscache_unuse_inode_cookie(struct inode *inode, bool update)
+diff --git a/fs/splice.c b/fs/splice.c
+index 0878b852b355..563105304ccc 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -65,8 +65,7 @@ static bool page_cache_pipe_buf_try_steal(struct pipe_inode_info *pipe,
+ 		 */
+ 		folio_wait_writeback(folio);
+ 
+-		if (folio_has_private(folio) &&
+-		    !filemap_release_folio(folio, GFP_KERNEL))
++		if (!filemap_release_folio(folio, GFP_KERNEL))
+ 			goto out_unlock;
+ 
+ 		/*
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index bbccb4044222..3db9a6225bc0 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -199,6 +199,7 @@ enum mapping_flags {
+ 	/* writeback related tags are not used */
+ 	AS_NO_WRITEBACK_TAGS = 5,
+ 	AS_LARGE_FOLIO_SUPPORT = 6,
++	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
+ };
+ 
+ /**
+@@ -269,6 +270,21 @@ static inline int mapping_use_writeback_tags(struct address_space *mapping)
+ 	return !test_bit(AS_NO_WRITEBACK_TAGS, &mapping->flags);
+ }
+ 
++static inline bool mapping_release_always(const struct address_space *mapping)
++{
++	return test_bit(AS_RELEASE_ALWAYS, &mapping->flags);
++}
++
++static inline void mapping_set_release_always(struct address_space *mapping)
++{
++	set_bit(AS_RELEASE_ALWAYS, &mapping->flags);
++}
++
++static inline void mapping_clear_release_always(struct address_space *mapping)
++{
++	set_bit(AS_RELEASE_ALWAYS, &mapping->flags);
++}
++
+ static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
+ {
+ 	return mapping->gfp_mask;
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 08341616ae7a..34c5a08ae3f1 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3941,6 +3941,10 @@ bool filemap_release_folio(struct folio *folio, gfp_t gfp)
+ 	struct address_space * const mapping = folio->mapping;
+ 
+ 	BUG_ON(!folio_test_locked(folio));
++	if ((!mapping || !mapping_release_always(mapping))
++	    && !folio_test_private(folio) &&
++	    !folio_test_private_2(folio))
++		return true;
+ 	if (folio_test_writeback(folio))
+ 		return false;
+ 
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 561a42567477..847014ee2f3c 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2680,8 +2680,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+ 		gfp = current_gfp_context(mapping_gfp_mask(mapping) &
+ 							GFP_RECLAIM_MASK);
+ 
+-		if (folio_test_private(folio) &&
+-				!filemap_release_folio(folio, gfp)) {
++		if (!filemap_release_folio(folio, gfp)) {
+ 			ret = -EBUSY;
+ 			goto out;
+ 		}
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 4734315f7940..7e9e0e3e678e 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1883,8 +1883,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 			goto out_unlock;
+ 		}
+ 
+-		if (page_has_private(page) &&
+-		    !try_to_release_page(page, GFP_KERNEL)) {
++		if (!try_to_release_page(page, GFP_KERNEL)) {
+ 			result = SCAN_PAGE_HAS_PRIVATE;
+ 			putback_lru_page(page);
+ 			goto out_unlock;
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 145bb561ddb3..1ca51c986a88 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -831,8 +831,7 @@ static int truncate_error_page(struct page *p, unsigned long pfn,
+ 
+ 		if (err != 0) {
+ 			pr_info("%#lx: Failed to punch page: %d\n", pfn, err);
+-		} else if (page_has_private(p) &&
+-			   !try_to_release_page(p, GFP_NOIO)) {
++		} else if (!try_to_release_page(p, GFP_NOIO)) {
+ 			pr_info("%#lx: failed to release buffers\n", pfn);
+ 		} else {
+ 			ret = MF_RECOVERED;
+diff --git a/mm/migrate.c b/mm/migrate.c
+index dff333593a8a..d721ef340943 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -905,8 +905,7 @@ static int fallback_migrate_folio(struct address_space *mapping,
+ 	 * Buffers may be managed in a filesystem specific way.
+ 	 * We must have no buffers or drop them.
+ 	 */
+-	if (folio_test_private(src) &&
+-	    !filemap_release_folio(src, GFP_KERNEL))
++	if (!filemap_release_folio(src, GFP_KERNEL))
+ 		return mode == MIGRATE_SYNC ? -EAGAIN : -EBUSY;
+ 
+ 	return migrate_folio(mapping, dst, src, mode);
+diff --git a/mm/truncate.c b/mm/truncate.c
+index c0be77e5c008..0d4dd233f518 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -19,7 +19,6 @@
+ #include <linux/highmem.h>
+ #include <linux/pagevec.h>
+ #include <linux/task_io_accounting_ops.h>
+-#include <linux/buffer_head.h>	/* grr. try_to_release_page */
+ #include <linux/shmem_fs.h>
+ #include <linux/rmap.h>
+ #include "internal.h"
+@@ -276,7 +275,7 @@ static long mapping_evict_folio(struct address_space *mapping,
+ 	if (folio_ref_count(folio) >
+ 			folio_nr_pages(folio) + folio_has_private(folio) + 1)
+ 		return 0;
+-	if (folio_has_private(folio) && !filemap_release_folio(folio, 0))
++	if (!filemap_release_folio(folio, 0))
+ 		return 0;
+ 
+ 	return remove_mapping(mapping, folio);
+@@ -581,8 +580,7 @@ static int invalidate_complete_folio2(struct address_space *mapping,
+ 	if (folio->mapping != mapping)
+ 		return 0;
+ 
+-	if (folio_has_private(folio) &&
+-	    !filemap_release_folio(folio, GFP_KERNEL))
++	if (!filemap_release_folio(folio, GFP_KERNEL))
+ 		return 0;
+ 
+ 	spin_lock(&mapping->host->i_lock);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 04d8b88e5216..a2d5ffee5f8f 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -186,6 +186,14 @@ struct scan_control {
+ #define prefetchw_prev_lru_folio(_folio, _base, _field) do { } while (0)
+ #endif
+ 
++static bool folio_needs_release(struct folio *folio)
++{
++	struct address_space *mapping = folio->mapping;
++
++	return folio_has_private(folio) ||
++		(mapping && mapping_release_always(mapping));
++}
++
+ /*
+  * From 0 .. 200.  Higher means more swappy.
+  */
+@@ -1978,7 +1986,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 		 * (refcount == 1) it can be freed.  Otherwise, leave
+ 		 * the folio on the LRU so it is swappable.
+ 		 */
+-		if (folio_has_private(folio)) {
++		if (folio_needs_release(folio)) {
+ 			if (!filemap_release_folio(folio, sc->gfp_mask))
+ 				goto activate_locked;
+ 			if (!mapping && folio_ref_count(folio) == 1) {
+@@ -2592,9 +2600,8 @@ static void shrink_active_list(unsigned long nr_to_scan,
+ 		}
+ 
+ 		if (unlikely(buffer_heads_over_limit)) {
+-			if (folio_test_private(folio) && folio_trylock(folio)) {
+-				if (folio_test_private(folio))
+-					filemap_release_folio(folio, 0);
++			if (folio_needs_release(folio) && folio_trylock(folio)) {
++				filemap_release_folio(folio, 0);
+ 				folio_unlock(folio);
+ 			}
+ 		}
 
 
