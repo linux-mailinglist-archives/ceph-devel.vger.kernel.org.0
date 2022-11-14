@@ -2,250 +2,210 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 669D96280D2
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Nov 2022 14:09:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43349628180
+	for <lists+ceph-devel@lfdr.de>; Mon, 14 Nov 2022 14:39:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237929AbiKNNJp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Nov 2022 08:09:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36126 "EHLO
+        id S236803AbiKNNjb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Nov 2022 08:39:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237913AbiKNNJh (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Nov 2022 08:09:37 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F01ACDF4A
-        for <ceph-devel@vger.kernel.org>; Mon, 14 Nov 2022 05:08:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668431308;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+RATmLDqy4Cb3/OcvezxdmIEs6SpBnhwsQ/KyFcaC8s=;
-        b=HdhsCZomOSU1NuLOBa/DihNNgOy2lziWCXG2PG9TcbEyNo8SPwWTT7cXQq3KdMUgW+mxF0
-        GQjShJAKAYBYCy+nqaEtLBjTtxCRUAsXAHNi+WAcEGjwjJqEwxpoBaC/yRU4Y7ZwI+X7L+
-        DSi9QZlxh806QCqxEi9slLPM2OEbo+w=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-35-QDUxACN7O06giPwIH3vF_w-1; Mon, 14 Nov 2022 08:08:25 -0500
-X-MC-Unique: QDUxACN7O06giPwIH3vF_w-1
-Received: by mail-pj1-f72.google.com with SMTP id v10-20020a17090a7c0a00b00215deac75b4so5778645pjf.3
-        for <ceph-devel@vger.kernel.org>; Mon, 14 Nov 2022 05:08:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+RATmLDqy4Cb3/OcvezxdmIEs6SpBnhwsQ/KyFcaC8s=;
-        b=sDV1WQl5uvaeTVyiaGwJfeumxpIfYf0hdf8EbjJMyj0jzzebhQoQ30kVTPqmHzZ5Og
-         dMsXG7z7j+k5GIs9XorW2j+XS/ih2uYTsJCxfYUOn6yJrIbeSS+ZNlMNZRx0exLhJYC3
-         cXAh1+qn3ovWuyObU52b7fm+lP9VHhPjYHC+Ffv1STQ9xrahoNoUFdhmpCH/xCiO+pa3
-         FiM8xP/qst0dVkgxtGqKp6csxpDQdCthkMK4jX+b+rkZ6+CxKNkYTFNroSfXxYO8Bolu
-         SpD4WQol/NHalyfNLDZ7oEdmwmBrwMtTZ7bzXa3IpaLJizxvOiOb3969L693ZVHaMm3R
-         2g9Q==
-X-Gm-Message-State: ANoB5pm2GJU4Sbtvk2r5Z/Z/2Z/grAVFe8vlNCFL42blFeInlOyxb3EO
-        sxKnhMYexCiAR+r0+qokKLKRItSEDmJaZn+8B7aRQ/uu1jg94fj5V6KNTlQ8xSvoW+vzMC3/82d
-        03ZpR+GLBHOfJp0y+tu/PXQ==
-X-Received: by 2002:a17:903:26c6:b0:178:b4b7:d74d with SMTP id jg6-20020a17090326c600b00178b4b7d74dmr13500420plb.83.1668431303958;
-        Mon, 14 Nov 2022 05:08:23 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf7ob3Ev+cayEQvYpWckntbw+lZQjPtkPLBPRk6Vc4NEjns+KhCv3GjW+SN4cqEFsbDBtq/xsg==
-X-Received: by 2002:a17:903:26c6:b0:178:b4b7:d74d with SMTP id jg6-20020a17090326c600b00178b4b7d74dmr13500391plb.83.1668431303643;
-        Mon, 14 Nov 2022 05:08:23 -0800 (PST)
-Received: from [10.72.12.148] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id m1-20020a17090ade0100b0020dc318a43esm6479211pjv.25.2022.11.14.05.08.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Nov 2022 05:08:23 -0800 (PST)
-Subject: Re: [PATCH 2/2 v2] ceph: use a xarray to record all the opened files
- for each inode
-To:     kernel test robot <lkp@intel.com>, ceph-devel@vger.kernel.org,
-        jlayton@kernel.org, idryomov@gmail.com, viro@zeniv.linux.org.uk
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        lhenriques@suse.de, mchangir@redhat.com,
+        with ESMTP id S235560AbiKNNjb (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Nov 2022 08:39:31 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F12B620BEE;
+        Mon, 14 Nov 2022 05:39:29 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 903FC611A1;
+        Mon, 14 Nov 2022 13:39:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 080DFC433C1;
+        Mon, 14 Nov 2022 13:39:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668433168;
+        bh=cyGUgtr2otkWYH4TggRInQa0UWTOM8gl47QGyy1GPeA=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=DUcibMCxl++eFiZqJXhMFYb29mqFPqHvNRh58OzPhZiV4YRrQTXmxJgJf+FjFaj2y
+         emk6C+Aw2QJR8nnUTvTCN3eoOCs7me8g8itS+fBk0KWrBrqXHPFr1knknFYfopWF/G
+         Jx41eMhe3CVg76x1A5B9Bq6lEaKa5MbymSnC9UVT6P/iUGiIMYlGDgrTLWui+aft1c
+         wvjSmSmXpAzlf7RODX0YQgcKtB5ucJLauLlJ7twUFEoceaBE/9MhmF4r18349gh2lS
+         OJ6UvgJ8FamyRJOFWYoE6aVqJS6XSjIheRrqBMEEaznf5ONVIbymJT71kX3a/Qvj0o
+         1pp8kzGh6onkg==
+Message-ID: <46a1398be032ee6d06aef7df5e336b6ce2ba8f53.camel@kernel.org>
+Subject: Re: [PATCH 2/2 v2] ceph: use a xarray to record all the opened
+ files for each inode
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com, ceph-devel@vger.kernel.org, idryomov@gmail.com,
+        viro@zeniv.linux.org.uk
+Cc:     lhenriques@suse.de, mchangir@redhat.com,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         stable@vger.kernel.org
-References: <20221114051901.15371-3-xiubli@redhat.com>
- <202211141614.dhSgZRvB-lkp@intel.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <a7243d03-da3a-8df5-1c5c-b4540fb1a91a@redhat.com>
-Date:   Mon, 14 Nov 2022 21:08:15 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+Date:   Mon, 14 Nov 2022 08:39:26 -0500
+In-Reply-To: <20221114051901.15371-3-xiubli@redhat.com>
+References: <20221114051901.15371-1-xiubli@redhat.com>
+         <20221114051901.15371-3-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-In-Reply-To: <202211141614.dhSgZRvB-lkp@intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi
+On Mon, 2022-11-14 at 13:19 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+>=20
+> When releasing the file locks the fl->fl_file memory could be
+> already released by another thread in filp_close(), so we couldn't
+> depend on fl->fl_file to get the inode. Just use a xarray to record
+> the opened files for each inode.
+>=20
+> Cc: stable@vger.kernel.org
+> URL: https://tracker.ceph.com/issues/57986
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/file.c  |  9 +++++++++
+>  fs/ceph/inode.c |  4 ++++
+>  fs/ceph/locks.c | 17 ++++++++++++++++-
+>  fs/ceph/super.h |  4 ++++
+>  4 files changed, 33 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 85afcbbb5648..cb4a9c52df27 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -231,6 +231,13 @@ static int ceph_init_file_info(struct inode *inode, =
+struct file *file,
+>  			fi->flags |=3D CEPH_F_SYNC;
+> =20
+>  		file->private_data =3D fi;
+> +
+> +		ret =3D xa_insert(&ci->i_opened_files, (unsigned long)file,
+> +				CEPH_FILP_AVAILABLE, GFP_KERNEL);
+> +		if (ret) {
+> +			kmem_cache_free(ceph_file_cachep, fi);
+> +			return ret;
+> +		}
+>  	}
+> =20
+>  	ceph_get_fmode(ci, fmode, 1);
+> @@ -932,6 +939,8 @@ int ceph_release(struct inode *inode, struct file *fi=
+le)
+>  		dout("release inode %p regular file %p\n", inode, file);
+>  		WARN_ON(!list_empty(&fi->rw_contexts));
+> =20
+> +		xa_erase(&ci->i_opened_files, (unsigned long)file);
+> +
+>  		ceph_fscache_unuse_cookie(inode, file->f_mode & FMODE_WRITE);
+>  		ceph_put_fmode(ci, fi->fmode, 1);
+> =20
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 77b0cd9af370..554450838e44 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -619,6 +619,8 @@ struct inode *ceph_alloc_inode(struct super_block *sb=
+)
+>  	INIT_LIST_HEAD(&ci->i_unsafe_iops);
+>  	spin_lock_init(&ci->i_unsafe_lock);
+> =20
+> +	xa_init(&ci->i_opened_files);
+> +
+>  	ci->i_snap_realm =3D NULL;
+>  	INIT_LIST_HEAD(&ci->i_snap_realm_item);
+>  	INIT_LIST_HEAD(&ci->i_snap_flush_item);
+> @@ -637,6 +639,8 @@ void ceph_free_inode(struct inode *inode)
+>  {
+>  	struct ceph_inode_info *ci =3D ceph_inode(inode);
+> =20
+> +	xa_destroy(&ci->i_opened_files);
+> +
+>  	kfree(ci->i_symlink);
+>  #ifdef CONFIG_FS_ENCRYPTION
+>  	kfree(ci->fscrypt_auth);
+> diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
+> index d8385dd0076e..a176a30badd0 100644
+> --- a/fs/ceph/locks.c
+> +++ b/fs/ceph/locks.c
+> @@ -42,9 +42,10 @@ static void ceph_fl_copy_lock(struct file_lock *dst, s=
+truct file_lock *src)
+> =20
+>  static void ceph_fl_release_lock(struct file_lock *fl)
+>  {
+> -	struct ceph_file_info *fi =3D fl->fl_file->private_data;
+>  	struct inode *inode =3D fl->fl_u.ceph_fl.fl_inode;
+>  	struct ceph_inode_info *ci;
+> +	struct ceph_file_info *fi;
+> +	void *val;
+> =20
+>  	/*
+>  	 * If inode is NULL it should be a request file_lock,
+> @@ -54,6 +55,20 @@ static void ceph_fl_release_lock(struct file_lock *fl)
+>  		return;
+> =20
+>  	ci =3D ceph_inode(inode);
+> +
+> +	/*
+> +	 * For Posix-style locks, it may race between filp_close()s,
+> +	 * and it's possible that the 'file' memory pointed by
+> +	 * 'fl->fl_file' has been released. If so just skip it.
+> +	 */
+> +	rcu_read_lock();
+> +	val =3D xa_load(&ci->i_opened_files, (unsigned long)fl->fl_file);
+> +	if (val =3D=3D CEPH_FILP_AVAILABLE) {
+> +		fi =3D fl->fl_file->private_data;
+> +		atomic_dec(&fi->num_locks);
 
-Thanks for reporting this.
+Don't you need to remove the old atomic_dec from this function if you
+move it here?
 
-I will fix it in the next version.
+> +	}
+> +	rcu_read_unlock();
+> +
+>  	if (atomic_dec_and_test(&ci->i_filelock_ref)) {
+>  		/* clear error when all locks are released */
+>  		spin_lock(&ci->i_ceph_lock);
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 7b75a84ba48d..b3e89192cbec 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -329,6 +329,8 @@ struct ceph_inode_xattrs_info {
+>  	u64 version, index_version;
+>  };
+> =20
+> +#define CEPH_FILP_AVAILABLE         xa_mk_value(1)
+> +
+>  /*
+>   * Ceph inode.
+>   */
+> @@ -434,6 +436,8 @@ struct ceph_inode_info {
+>  	struct list_head i_unsafe_iops;   /* uncommitted mds inode ops */
+>  	spinlock_t i_unsafe_lock;
+> =20
+> +	struct xarray		i_opened_files;
+> +
+>  	union {
+>  		struct ceph_snap_realm *i_snap_realm; /* snap realm (if caps) */
+>  		struct ceph_snapid_map *i_snapid_map; /* snapid -> dev_t */
 
-- Xiubo
+This looks like it'll work, but it's a lot of extra work, having to
+track this extra xarray just on the off chance that one of these fd's
+might have file locks. The num_locks field is only checked in one place
+in ceph_get_caps.
 
-On 14/11/2022 16:54, kernel test robot wrote:
-> Hi,
->
-> I love your patch! Perhaps something to improve:
->
-> [auto build test WARNING on ceph-client/testing]
-> [also build test WARNING on ceph-client/for-linus linus/master v6.1-rc5 next-20221111]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/xiubli-redhat-com/ceph-fix-the-use-after-free-bug-for-file_lock/20221114-132233
-> base:   https://github.com/ceph/ceph-client.git testing
-> patch link:    https://lore.kernel.org/r/20221114051901.15371-3-xiubli%40redhat.com
-> patch subject: [PATCH 2/2 v2] ceph: use a xarray to record all the opened files for each inode
-> config: hexagon-randconfig-r041-20221114
-> compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 463da45892e2d2a262277b91b96f5f8c05dc25d0)
-> reproduce (this is a W=1 build):
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # https://github.com/intel-lab-lkp/linux/commit/232cc8f1dbeddb308946202a7c67ee4d20451ae7
->          git remote add linux-review https://github.com/intel-lab-lkp/linux
->          git fetch --no-tags linux-review xiubli-redhat-com/ceph-fix-the-use-after-free-bug-for-file_lock/20221114-132233
->          git checkout 232cc8f1dbeddb308946202a7c67ee4d20451ae7
->          # save the config file
->          mkdir build_dir && cp config build_dir/.config
->          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash fs/ceph/
->
-> If you fix the issue, kindly add following tag where applicable
-> | Reported-by: kernel test robot <lkp@intel.com>
->
-> All warnings (new ones prefixed by >>):
->
->     In file included from fs/ceph/locks.c:8:
->     In file included from fs/ceph/super.h:8:
->     In file included from include/linux/backing-dev.h:16:
->     In file included from include/linux/writeback.h:13:
->     In file included from include/linux/blk_types.h:10:
->     In file included from include/linux/bvec.h:10:
->     In file included from include/linux/highmem.h:12:
->     In file included from include/linux/hardirq.h:11:
->     In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
->     In file included from include/asm-generic/hardirq.h:17:
->     In file included from include/linux/irq.h:20:
->     In file included from include/linux/io.h:13:
->     In file included from arch/hexagon/include/asm/io.h:334:
->     include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->             val = __raw_readb(PCI_IOBASE + addr);
->                               ~~~~~~~~~~ ^
->     include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->             val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
->                                                             ~~~~~~~~~~ ^
->     include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
->     #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
->                                                       ^
->     In file included from fs/ceph/locks.c:8:
->     In file included from fs/ceph/super.h:8:
->     In file included from include/linux/backing-dev.h:16:
->     In file included from include/linux/writeback.h:13:
->     In file included from include/linux/blk_types.h:10:
->     In file included from include/linux/bvec.h:10:
->     In file included from include/linux/highmem.h:12:
->     In file included from include/linux/hardirq.h:11:
->     In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
->     In file included from include/asm-generic/hardirq.h:17:
->     In file included from include/linux/irq.h:20:
->     In file included from include/linux/io.h:13:
->     In file included from arch/hexagon/include/asm/io.h:334:
->     include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->             val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
->                                                             ~~~~~~~~~~ ^
->     include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
->     #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
->                                                       ^
->     In file included from fs/ceph/locks.c:8:
->     In file included from fs/ceph/super.h:8:
->     In file included from include/linux/backing-dev.h:16:
->     In file included from include/linux/writeback.h:13:
->     In file included from include/linux/blk_types.h:10:
->     In file included from include/linux/bvec.h:10:
->     In file included from include/linux/highmem.h:12:
->     In file included from include/linux/hardirq.h:11:
->     In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
->     In file included from include/asm-generic/hardirq.h:17:
->     In file included from include/linux/irq.h:20:
->     In file included from include/linux/io.h:13:
->     In file included from arch/hexagon/include/asm/io.h:334:
->     include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->             __raw_writeb(value, PCI_IOBASE + addr);
->                                 ~~~~~~~~~~ ^
->     include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->             __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
->                                                           ~~~~~~~~~~ ^
->     include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->             __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
->                                                           ~~~~~~~~~~ ^
->>> fs/ceph/locks.c:66:6: warning: variable 'fi' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
->             if (val == CEPH_FILP_AVAILABLE) {
->                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
->     fs/ceph/locks.c:79:14: note: uninitialized use occurs here
->             atomic_dec(&fi->num_locks);
->                         ^~
->     fs/ceph/locks.c:66:2: note: remove the 'if' if its condition is always true
->             if (val == CEPH_FILP_AVAILABLE) {
->             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->     fs/ceph/locks.c:47:27: note: initialize the variable 'fi' to silence this warning
->             struct ceph_file_info *fi;
->                                      ^
->                                       = NULL
->     7 warnings generated.
->
->
-> vim +66 fs/ceph/locks.c
->
->      42	
->      43	static void ceph_fl_release_lock(struct file_lock *fl)
->      44	{
->      45		struct inode *inode = fl->fl_u.ceph_fl.fl_inode;
->      46		struct ceph_inode_info *ci;
->      47		struct ceph_file_info *fi;
->      48		void *val;
->      49	
->      50		/*
->      51		 * If inode is NULL it should be a request file_lock,
->      52		 * nothing we can do.
->      53		 */
->      54		if (!inode)
->      55			return;
->      56	
->      57		ci = ceph_inode(inode);
->      58	
->      59		/*
->      60		 * For Posix-style locks, it may race between filp_close()s,
->      61		 * and it's possible that the 'file' memory pointed by
->      62		 * 'fl->fl_file' has been released. If so just skip it.
->      63		 */
->      64		rcu_read_lock();
->      65		val = xa_load(&ci->i_opened_files, (unsigned long)fl->fl_file);
->    > 66		if (val == CEPH_FILP_AVAILABLE) {
->      67			fi = fl->fl_file->private_data;
->      68			atomic_dec(&fi->num_locks);
->      69		}
->      70		rcu_read_unlock();
->      71	
->      72		if (atomic_dec_and_test(&ci->i_filelock_ref)) {
->      73			/* clear error when all locks are released */
->      74			spin_lock(&ci->i_ceph_lock);
->      75			ci->i_ceph_flags &= ~CEPH_I_ERROR_FILELOCK;
->      76			spin_unlock(&ci->i_ceph_lock);
->      77		}
->      78		iput(inode);
->      79		atomic_dec(&fi->num_locks);
->      80	}
->      81	
->
+Here's what I'd recommend instead:
 
+Have ceph_get_caps look at the lists in inode->i_flctx and see whether
+any of its locks have an fl_file that matches the @filp argument in that
+function. Most inodes never get any file locks, so in most cases  this
+will turn out to just be a NULL pointer check for i_flctx anyway.
+
+Then you can just remove the num_locks field and call the new helper
+from ceph_get_caps instead. I'll send along a proposed patch for the
+helper in a bit.
+--=20
+Jeff Layton <jlayton@kernel.org>
