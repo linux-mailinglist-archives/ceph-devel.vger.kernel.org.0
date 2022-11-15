@@ -2,164 +2,194 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B20546289A3
-	for <lists+ceph-devel@lfdr.de>; Mon, 14 Nov 2022 20:46:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 263E7628E39
+	for <lists+ceph-devel@lfdr.de>; Tue, 15 Nov 2022 01:22:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237046AbiKNTqo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 14 Nov 2022 14:46:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48294 "EHLO
+        id S237697AbiKOAWs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 14 Nov 2022 19:22:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231757AbiKNTql (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Nov 2022 14:46:41 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44F2418B21;
-        Mon, 14 Nov 2022 11:46:40 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EB0CCB81212;
-        Mon, 14 Nov 2022 19:46:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2333FC433C1;
-        Mon, 14 Nov 2022 19:46:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668455197;
-        bh=PDwQX/Z2EUfB/RVRwN2u27UcRNLUBKMGkiODEqFLrnI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=S3vDKpqp3uvyeHOdYB5vClJflLN+ve+/c4TRByJ1UeyJIKTGSeX11IImNSGh2BlLH
-         eZYiYI38AQuue/ASh/yJoKAsowzpG2plqFgYpR8UrnQBh6VDeKzoAgj6IgGUE3GBJ4
-         ZQRpwJZeK4y7Mcij+kaRMyfSQ6BEuGY9g/D7fUUTkdhZOAs/e7QB9Pd3A1A98thmIV
-         RMPvD4xpp/ItP2CJ2tYCngNVhiv/9jzuxos5HvQiHnPzJ9LnOdNWo9QBGBJfyBraWh
-         kMs39/5UJY9z1bh2gIpTpoPVJ3GFG0OvAhpaZYsZTIWOl1DjVHvWHiKyHAT1TPTyL3
-         MJfS5RZ8M5gWA==
-Message-ID: <30355bc8aa4998cb48b34df958837a8f818ceeb0.camel@kernel.org>
-Subject: Re: [RFC PATCH] filelock: new helper: vfs_file_has_locks
-From:   Jeff Layton <jlayton@kernel.org>
-To:     chuck.lever@oracle.com, xiubli@redhat.com
-Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
-Date:   Mon, 14 Nov 2022 14:46:35 -0500
-In-Reply-To: <20221114140747.134928-1-jlayton@kernel.org>
-References: <20221114140747.134928-1-jlayton@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
-MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S232149AbiKOAWq (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 14 Nov 2022 19:22:46 -0500
+Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D60C1CFF7;
+        Mon, 14 Nov 2022 16:22:44 -0800 (PST)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 00387C01F; Tue, 15 Nov 2022 01:22:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1668471768; bh=LIstCPb4xQT8VC3InWGVD6DG7uFdDJigM2d8zkWyzlg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CmFHY8C6Z9RrnQSYNhcMMnQHIHu+kheEP2L0G4XpsjdXsPsVuneAYMDhYQl2/v1H8
+         i8bseV8XSAmaLwe9R8hXDVQnpAXEg3avqHYSHTHoeKDzhmTmZYx1ywqvuGzUKoQIRl
+         bvVPEQV4Af+uxYgLbUBaUY5nTeTe9W7Ki5kz+wAO+vdg+AraWtCZjs+JyMXdAthn3l
+         kal7xACCnzdq+f/tHPcTwTw733nXRHdzav9kpyP7dz0z6Qf2v9cA3tOxPpO7Xkf08y
+         mGTM4vYOosKAf3I+aCefhS9jDQIWkzvOIKMxY7UFlyPwubz/47x4WNtwhuO7iIsu1T
+         iFoCA0ybafUIw==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id E9DB3C009;
+        Tue, 15 Nov 2022 01:22:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1668471766; bh=LIstCPb4xQT8VC3InWGVD6DG7uFdDJigM2d8zkWyzlg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vCzYdsKheoEw3SbPdq8dVompXvyIFPrTv8JxCFNOG8Sv6HDGCCc8EJ9TZ1mJpAJBP
+         dfuVrLiLq6tLoPjg4vx7OnksEJRCe7+wk8srl2FEfVJUHcjtGwcL/HsmLnl7hxdJJO
+         aAoNMpEDlxjtDi5MM90FWnau+y1nrDpmXPlLGgo+4TqQmnSnJRW9oMhrUC4NSrf2YI
+         kwkv/XQ7cOL1UiwjAM4vHnFOYQEuzfy0wyv+LAwoyoMRSBGmD7j/7m8dWCIq6wXmGd
+         HBU3jACL9WMITVf23xsnCvYbaZt3Cc3GmPhLK9M9qGkjB66Hluj/ez6JPYz8fB704q
+         zmA+Da+v6VOiA==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 675ffca7;
+        Tue, 15 Nov 2022 00:22:33 +0000 (UTC)
+Date:   Tue, 15 Nov 2022 09:22:18 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     willy@infradead.org, dwysocha@redhat.com,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Ilya Dryomov <idryomov@gmail.com>, linux-cachefs@redhat.com,
+        linux-cifs@vger.kernel.org, linux-afs@lists.infradead.org,
+        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] mm, netfs, fscache: Stop read optimisation when
+ folio removed from pagecache
+Message-ID: <Y3Lbul7FZncNVwVZ@codewreck.org>
+References: <166844174069.1124521.10890506360974169994.stgit@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <166844174069.1124521.10890506360974169994.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2022-11-14 at 09:07 -0500, Jeff Layton wrote:
-> Ceph has a need to know whether a particular file has any locks set on
-> it. It's currently tracking that by a num_locks field in its
-> filp->private_data, but that's problematic as it tries to decrement this
-> field when releasing locks and that can race with the file being torn
-> down.
->=20
-> Add a new vfs_file_has_locks helper that will scan the flock and posix
-> lists, and return true if any of the locks have a fl_file that matches
-> the given one. Ceph can then call this instead of doing its own
-> tracking.
->=20
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/locks.c         | 36 ++++++++++++++++++++++++++++++++++++
->  include/linux/fs.h |  1 +
->  2 files changed, 37 insertions(+)
->=20
-> Xiubo,
->=20
-> Here's what I was thinking instead of trying to track this within ceph.
-> Most inodes never have locks set, so in most cases this will be a NULL
-> pointer check.
->=20
->=20
->=20
+David Howells wrote on Mon, Nov 14, 2022 at 04:02:20PM +0000:
+> Fscache has an optimisation by which reads from the cache are skipped until
+> we know that (a) there's data there to be read and (b) that data isn't
+> entirely covered by pages resident in the netfs pagecache.  This is done
+> with two flags manipulated by fscache_note_page_release():
+> 
+> 	if (...
+> 	    test_bit(FSCACHE_COOKIE_HAVE_DATA, &cookie->flags) &&
+> 	    test_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags))
+> 		clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags);
+> 
+> where the NO_DATA_TO_READ flag causes cachefiles_prepare_read() to indicate
+> that netfslib should download from the server or clear the page instead.
+> 
+> The fscache_note_page_release() function is intended to be called from
+> ->releasepage() - but that only gets called if PG_private or PG_private_2
+> is set - and currently the former is at the discretion of the network
+> filesystem and the latter is only set whilst a page is being written to the
+> cache, so sometimes we miss clearing the optimisation.
+> 
+> Fix this by following Willy's suggestion[1] and adding an address_space
+> flag, AS_RELEASE_ALWAYS, that causes filemap_release_folio() to always call
+> ->release_folio() if it's set, even if PG_private or PG_private_2 aren't
+> set.
 
-I went ahead and added a slightly updated version of this this to my
-locks-next branch for now, but...
+Not familiar with the common code so just glanced at it and asked stupid
+questions.
 
-Thinking about this more...I'm not sure this whole concept of what the
-ceph code is trying to do makes sense. Locks only conflict if they have
-different owners, and POSIX locks are owned by the process. Consider
-this scenario (obviously, this is not a problem with OFD locks).
+> diff --git a/fs/9p/cache.c b/fs/9p/cache.c
+> index cebba4eaa0b5..12c0ae29f185 100644
+> --- a/fs/9p/cache.c
+> +++ b/fs/9p/cache.c
+> @@ -68,6 +68,8 @@ void v9fs_cache_inode_get_cookie(struct inode *inode)
+>  				       &path, sizeof(path),
+>  				       &version, sizeof(version),
+>  				       i_size_read(&v9inode->netfs.inode));
+> +	if (v9inode->netfs.cache)
+> +		mapping_set_release_always(inode->i_mapping);
+>  
+>  	p9_debug(P9_DEBUG_FSC, "inode %p get cookie %p\n",
+>  		 inode, v9fs_inode_cookie(v9inode));
+> diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+> index 4d1a4a8d9277..b553fe3484c1 100644
+> --- a/fs/9p/vfs_inode.c
+> +++ b/fs/9p/vfs_inode.c
+> @@ -394,6 +394,7 @@ void v9fs_evict_inode(struct inode *inode)
+>  	version = cpu_to_le32(v9inode->qid.version);
+>  	fscache_clear_inode_writeback(v9fs_inode_cookie(v9inode), inode,
+>  				      &version);
+> +	mapping_clear_release_always(inode->i_mapping);
 
-A process has the same file open via two different fds. It sets lock A
-from offset 0..9 via fd 1. Now, same process sets lock B from 10..19 via
-fd 2. The two locks will be merged, because they don't conflict (because
-it's the same process).
+any harm in setting this if netfs isn't enabled?
+(just asking because you checked in fs/9p/cache.c above)
 
-Against which fd should the merged lock record be counted?
-
-Would it be better to always check for CEPH_I_ERROR_FILELOCK, even when
-the fd hasn't had any locks explicitly set on it?
-
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 5876c8ff0edc..c7f903b63a53 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -2672,6 +2672,42 @@ int vfs_cancel_lock(struct file *filp, struct file=
-_lock *fl)
+>  	clear_inode(inode);
+>  	filemap_fdatawrite(&inode->i_data);
+>  
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index bbccb4044222..3db9a6225bc0 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -199,6 +199,7 @@ enum mapping_flags {
+>  	/* writeback related tags are not used */
+>  	AS_NO_WRITEBACK_TAGS = 5,
+>  	AS_LARGE_FOLIO_SUPPORT = 6,
+> +	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
+>  };
+>  
+>  /**
+> @@ -269,6 +270,21 @@ static inline int mapping_use_writeback_tags(struct address_space *mapping)
+>  	return !test_bit(AS_NO_WRITEBACK_TAGS, &mapping->flags);
 >  }
->  EXPORT_SYMBOL_GPL(vfs_cancel_lock);
-> =20
-> +/**
-> + * vfs_file_has_locks - are any locks held that were set on @filp?
-> + * @filp: open file to check for locks
-> + *
-> + * Return true if are any FL_POSIX or FL_FLOCK locks currently held
-> + * on @filp.
-> + */
-> +bool vfs_file_has_locks(struct file *filp)
+>  
+> +static inline bool mapping_release_always(const struct address_space *mapping)
 > +{
-> +	struct file_lock_context *ctx;
-> +	struct file_lock *fl;
-> +	bool ret =3D false;
-> +
-> +	ctx =3D smp_load_acquire(&locks_inode(filp)->i_flctx);
-> +	if (!ctx)
-> +		return false;
-> +
-> +	spin_lock(&ctx->flc_lock);
-> +	list_for_each_entry(fl, &ctx->flc_posix, fl_list) {
-> +		if (fl->fl_file =3D=3D filp) {
-> +			ret =3D true;
-> +			goto out;
-> +		}
-> +	}
-> +	list_for_each_entry(fl, &ctx->flc_flock, fl_list) {
-> +		if (fl->fl_file =3D=3D filp) {
-> +			ret =3D true;
-> +			break;
-> +		}
-> +	}
-> +out:
-> +	spin_unlock(&ctx->flc_lock);
-> +	return ret;
+> +	return test_bit(AS_RELEASE_ALWAYS, &mapping->flags);
 > +}
-> +EXPORT_SYMBOL(vfs_file_has_locks);
 > +
->  #ifdef CONFIG_PROC_FS
->  #include <linux/proc_fs.h>
->  #include <linux/seq_file.h>
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e654435f1651..e4d0f1fa7f9f 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1170,6 +1170,7 @@ extern int locks_delete_block(struct file_lock *);
->  extern int vfs_test_lock(struct file *, struct file_lock *);
->  extern int vfs_lock_file(struct file *, unsigned int, struct file_lock *=
-, struct file_lock *);
->  extern int vfs_cancel_lock(struct file *filp, struct file_lock *fl);
-> +bool vfs_file_has_locks(struct file *file);
->  extern int locks_lock_inode_wait(struct inode *inode, struct file_lock *=
-fl);
->  extern int __break_lease(struct inode *inode, unsigned int flags, unsign=
-ed int type);
->  extern void lease_get_mtime(struct inode *, struct timespec64 *time);
+> +static inline void mapping_set_release_always(struct address_space *mapping)
+> +{
+> +	set_bit(AS_RELEASE_ALWAYS, &mapping->flags);
+> +}
+> +
+> +static inline void mapping_clear_release_always(struct address_space *mapping)
+> +{
+> +	set_bit(AS_RELEASE_ALWAYS, &mapping->flags);
 
---=20
-Jeff Layton <jlayton@kernel.org>
+clear_bit certainly?
+
+> +}
+> +
+>  static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
+>  {
+>  	return mapping->gfp_mask;
+> diff --git a/mm/truncate.c b/mm/truncate.c
+> index c0be77e5c008..0d4dd233f518 100644
+> --- a/mm/truncate.c
+> +++ b/mm/truncate.c
+> @@ -19,7 +19,6 @@
+>  #include <linux/highmem.h>
+>  #include <linux/pagevec.h>
+>  #include <linux/task_io_accounting_ops.h>
+> -#include <linux/buffer_head.h>	/* grr. try_to_release_page */
+>  #include <linux/shmem_fs.h>
+>  #include <linux/rmap.h>
+>  #include "internal.h"
+> @@ -276,7 +275,7 @@ static long mapping_evict_folio(struct address_space *mapping,
+>  	if (folio_ref_count(folio) >
+>  			folio_nr_pages(folio) + folio_has_private(folio) + 1)
+>  		return 0;
+> -	if (folio_has_private(folio) && !filemap_release_folio(folio, 0))
+> +	if (!filemap_release_folio(folio, 0))
+
+should this (and all others) check for folio_needs_release instead of has_private?
+filemap_release_folio doesn't check as far as I can see, but perhaps
+it's already fast and noop for another reason I didn't see.
+
+>  		return 0;
+>  
+>  	return remove_mapping(mapping, folio);
+
+--
+Dominique
