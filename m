@@ -2,52 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 34E7B62C69B
-	for <lists+ceph-devel@lfdr.de>; Wed, 16 Nov 2022 18:43:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FF9262CF04
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Nov 2022 00:45:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234618AbiKPRny (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 16 Nov 2022 12:43:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56244 "EHLO
+        id S233308AbiKPXpb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 16 Nov 2022 18:45:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229617AbiKPRnw (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 16 Nov 2022 12:43:52 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3BE1205EF;
-        Wed, 16 Nov 2022 09:43:51 -0800 (PST)
+        with ESMTP id S233057AbiKPXpa (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 16 Nov 2022 18:45:30 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93592B9D;
+        Wed, 16 Nov 2022 15:45:29 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A8C93B81E2F;
-        Wed, 16 Nov 2022 17:43:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BD2EC433C1;
-        Wed, 16 Nov 2022 17:43:48 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2575F6204F;
+        Wed, 16 Nov 2022 23:45:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E3BDC433D6;
+        Wed, 16 Nov 2022 23:45:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668620629;
-        bh=2Rr069LAz98mXWOCBRygJOpq9srh9YH+T/Kx1QG1dcI=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=YuC832qSDYiB2R+JDhGGQZFQDZJ4IzVPMcRVI44YJFUcH6ZkChzqKqU/qNP6DKHf4
-         wnj7NdYS6oXel8SucaJKh4mbbZ6CcYSpY6CNbn/dBBkFJPDwG/gq0wNkHFomZhhzRy
-         uxc+FhSTEz2ONm1ASwbyUu4/ul9pGgFFIErESrhOewZfHaDXdudI9EpG/WR2GM6VLe
-         jRofzCFMT/OdbceRmCNL5+H00EO+t5uv8FzxIBhwvdRALidFYhwuv3Va9lVnJgnWaS
-         SY6LnePRO1lqFs+ZGzzDbY9+V2HbZoE6zn+325necCurg1oTIHKa32WLv+/QHfyV4k
-         AbdBjWihX608Q==
-Message-ID: <e51e721d09fb875c52247d71051728a6bfd0ab97.camel@kernel.org>
-Subject: Re: [PATCH 1/7] filelock: add a new locks_inode_context accessor
- function
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
+        s=k20201202; t=1668642328;
+        bh=0jxY8Opa4urpq+ge23FtRh3y/fBz0gl9rB0Qg9ryTIU=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=E6FwRvc2J5rVX6sv5rOmZasqjn7xiWtLetVRiVb0JnuwGkxswpoSFBQ1Kj9t6PJDk
+         V9H9htjCd+3nraYDfWXE/a5vtFZnHay2VVM32Mcv9UZ78AUXadrlQARFsoJ7f87Dh5
+         IcfbKHk/+x8hKHBXDL7VdH6JWx8T8UtbxJ/49pX6r2HKQGv4hagwqYoufzon0OFMgt
+         TdGDqa4qPov8yGx7zssLVcab1cWXLEk/xSj68Q7Xy7Ec0GOyqLRi05eztEFT2LeGNl
+         iWq4pEkTPlmq3z2t2MDqR0psb/8ZzBDauC7PpGWvUbhvv3Q7DwvLjDcefFcTpT0amG
+         8XxMLnfGPk1HA==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-13ae8117023so313825fac.9;
+        Wed, 16 Nov 2022 15:45:28 -0800 (PST)
+X-Gm-Message-State: ANoB5pkDoRrDEwcUULiogHu36hXVx1JTzyMI42n9lOLzSMk+BIb8nOnd
+        0fb1Aj1VRk2sAVDkQSAV88qLRsdiapanJRL3MSU=
+X-Google-Smtp-Source: AA0mqf6VaaqxqHzy52knkr9XjLEbA/7U7ZpZSCqK75OoQ3L1+mR9W8NQVszsFW9ZsirIChQMf6IQeWc6Knbq5RrxpTY=
+X-Received: by 2002:a05:6870:430a:b0:13d:5167:43e3 with SMTP id
+ w10-20020a056870430a00b0013d516743e3mr8629oah.257.1668642327655; Wed, 16 Nov
+ 2022 15:45:27 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a05:6839:1a4e:0:0:0:0 with HTTP; Wed, 16 Nov 2022 15:45:27
+ -0800 (PST)
+In-Reply-To: <20221116151726.129217-5-jlayton@kernel.org>
+References: <20221116151726.129217-1-jlayton@kernel.org> <20221116151726.129217-5-jlayton@kernel.org>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Thu, 17 Nov 2022 08:45:27 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8wGREP_vvhDEpx5FbXqZQwUjwVP1NvcXTB08-JW1uVBg@mail.gmail.com>
+Message-ID: <CAKYAXd8wGREP_vvhDEpx5FbXqZQwUjwVP1NvcXTB08-JW1uVBg@mail.gmail.com>
+Subject: Re: [PATCH 4/7] ksmbd: use locks_inode_context helper
+To:     Jeff Layton <jlayton@kernel.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
         ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        chuck.lever@oracle.com, viro@zeniv.linux.org.uk, hch@lst.de
-Date:   Wed, 16 Nov 2022 12:43:47 -0500
-In-Reply-To: <Y3ULBXgnUvt4amrc@infradead.org>
-References: <20221116151726.129217-1-jlayton@kernel.org>
-         <20221116151726.129217-2-jlayton@kernel.org>
-         <Y3ULBXgnUvt4amrc@infradead.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
-MIME-Version: 1.0
+        chuck.lever@oracle.com, viro@zeniv.linux.org.uk, hch@lst.de,
+        Steve French <sfrench@samba.org>
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -57,26 +64,14 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, 2022-11-16 at 08:08 -0800, Christoph Hellwig wrote:
-> On Wed, Nov 16, 2022 at 10:17:20AM -0500, Jeff Layton wrote:
-> > -	ctx =3D  smp_load_acquire(&inode->i_flctx);
-> > +	ctx =3D  locks_inode_context(inode);
->=20
-> Nit: this might be a good time to drop the weird double space here.
->=20
-> Otherwise looks good:
->=20
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+2022-11-17 0:17 GMT+09:00, Jeff Layton <jlayton@kernel.org>:
+> ksmbd currently doesn't access i_flctx safely. This requires a
+> smp_load_acquire, as the pointer is set via cmpxchg (a release
+> operation).
+>
+> Cc: Namjae Jeon <linkinjeon@kernel.org>
+> Cc: Steve French <sfrench@samba.org>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Acked-by: Namjae Jeon <linkinjeon@kernel.org>
 
-Fixed the nit in my tree.
-
-After sending this, I converted locks_remove_file to use the helper too.
-I also think we probably need to use this helper in
-locks_free_lock_context.
-
-Folded all 3 changes into this patch, and pushed to my linux-next feeder
-branch.
-
-Thanks Christoph!
---=20
-Jeff Layton <jlayton@kernel.org>
+Thanks for your patch!
