@@ -2,203 +2,101 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C24D462E3AC
-	for <lists+ceph-devel@lfdr.de>; Thu, 17 Nov 2022 19:01:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45CD462E6E3
+	for <lists+ceph-devel@lfdr.de>; Thu, 17 Nov 2022 22:26:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240207AbiKQSBv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Nov 2022 13:01:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43908 "EHLO
+        id S240938AbiKQV0U (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 17 Nov 2022 16:26:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239005AbiKQSBq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Nov 2022 13:01:46 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E184F7FC36;
-        Thu, 17 Nov 2022 10:01:44 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 4F3121F8E2;
-        Thu, 17 Nov 2022 18:01:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1668708102; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/+JxpzcfcwJFtmpbUfqLQDQyF+RiIM1YT3S3Jpqg/d4=;
-        b=AmzzsF36XcppJVp01VviVMI/EYGRXtbY8kWOFLbzX5FU/64nCzJg0Ug4nfEM5rBkKARJFc
-        /xs/oPABmyaLRwMHmbrBJckpbrOw1gFRUxqFxgm5fhz1Gy6X+rkA5IgwZBSuJP6QItjk5n
-        hcsMlgKY0IDnchfnwh1btDeho3h2dgs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1668708102;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/+JxpzcfcwJFtmpbUfqLQDQyF+RiIM1YT3S3Jpqg/d4=;
-        b=KAzzWGSo6pgveVs1eykJsU/7Lh9nA/8embvn35gm2rFFxbezxMLlIOicf2IuLpzN6Chgkf
-        BC2WvIWL9k6VkIAg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E10B713A12;
-        Thu, 17 Nov 2022 18:01:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id M9srNAV3dmMFYAAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Thu, 17 Nov 2022 18:01:41 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id c385487c;
-        Thu, 17 Nov 2022 18:02:41 +0000 (UTC)
-From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ceph: make sure directories aren't complete after
- setting crypt context
-References: <20221116153703.27292-1-lhenriques@suse.de>
-        <5de0ae69-5e3d-2ccb-64a3-971db66477f8@redhat.com>
-        <41710b3d-b37f-8c65-d55d-c4137a366efd@redhat.com>
-Date:   Thu, 17 Nov 2022 18:02:41 +0000
-In-Reply-To: <41710b3d-b37f-8c65-d55d-c4137a366efd@redhat.com> (Xiubo Li's
-        message of "Thu, 17 Nov 2022 19:08:02 +0800")
-Message-ID: <87o7t5mpby.fsf@suse.de>
+        with ESMTP id S240440AbiKQVZ1 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Nov 2022 16:25:27 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26189490B1;
+        Thu, 17 Nov 2022 13:25:12 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id z20so2984664edc.13;
+        Thu, 17 Nov 2022 13:25:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oU6+NWXiirNKO91d9UkWcSIMp+tEBOA5tR6DkQ1aDDE=;
+        b=nzBKCbQBrjKuQuHTPy79NcF0/Dfqi78pbRoaklORZhc5GKyofiiz3BFqAwg8Agx3N/
+         d925nZLfa6SU5OGGVn1HOI9iU2PtKJr9+Ifv9d8ipgmqkDUNVFcH1lhG5UHH9LKW5Zy/
+         nKH8NgUKWEF7KxHT97rFbDdRT31nsSk81rO4WJ5wE3zbhbXqMHOz8YZSp624EtB35z29
+         PvwH6/tVTdkiTB00xGqGaLUuKd+Gg4DskqnP+mX/TsRbKnKVjS7MXJdWJ1oZazArYx6O
+         zEKdxNgI0uVuAOJJfAzswYUdJfGhx2teq3luz3CYtEMr+Mi5SOUaPHmvifSeHbkYR1Vv
+         yjuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oU6+NWXiirNKO91d9UkWcSIMp+tEBOA5tR6DkQ1aDDE=;
+        b=T+aH1fzylQkjK+0dPPoTVfOMe62Z97uisWn2QHNIinaz+CV9H7qhUSrjrJ/kGUL6Is
+         10mFImHRKRZ3yc2S8E/iRmeehio8vlu/dFnkuuS9xN9fPxERKMmKijG1QyMYhOnYFCjf
+         2484+i2hsfUafibicPwcWQXxzyR1yLuNsFFg8ciNhEyA0o/MTnOjgtJHl/Jcv/hKm0GP
+         tFxQl+djhTb1gNR7AX+QIUDdC/bO2JdGRoUFN/3jwl6cDklC0XvPkVHb+voAjE/VaO21
+         3HBSAeKu9VJDWx3Tm0l/cYqYVNQTht1dBGUS2fP6ml3wLEnthi2FhyU7MTBb1uJRQHqM
+         hX9g==
+X-Gm-Message-State: ANoB5plc0QR2iyuSVZP7kV3n1M7iNlgV+zTc066EDMmmw0WNloEx+mbS
+        3joLtaPHT4aFFhIlbaaLOf0=
+X-Google-Smtp-Source: AA0mqf5UpDZAPngi7cXAWO8WVzHLKdvbweuIjP2hfb7wzr4+wfOKcKnbO6nlR67kJKELatq0xc9RrA==
+X-Received: by 2002:a05:6402:3644:b0:45f:c7f2:297d with SMTP id em4-20020a056402364400b0045fc7f2297dmr3784522edb.266.1668720310563;
+        Thu, 17 Nov 2022 13:25:10 -0800 (PST)
+Received: from zambezi.local (ip-94-112-104-28.bb.vodafone.cz. [94.112.104.28])
+        by smtp.gmail.com with ESMTPSA id p21-20020a17090664d500b0078d9c2c8250sm840936ejn.84.2022.11.17.13.25.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Nov 2022 13:25:09 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 6.1-rc6
+Date:   Thu, 17 Nov 2022 22:24:43 +0100
+Message-Id: <20221117212443.16138-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Xiubo Li <xiubli@redhat.com> writes:
+Hi Linus,
 
-> On 17/11/2022 16:03, Xiubo Li wrote:
->>
->> On 16/11/2022 23:37, Lu=C3=ADs Henriques wrote:
->>> When setting a directory's crypt context, __ceph_dir_clear_complete() n=
-eeds
->>> to be used otherwise, if it was complete before, any old dentry that's =
-still
->>> around will be valid.
->>>
->>> Signed-off-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
->>> ---
->>> Hi!
->>>
->>> Here's a simple way to trigger the bug this patch is fixing:
->>>
->>> # cd /cephfs
->>> # ls mydir
->>> nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0
->>> # ls mydir/nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0/
->>> Cyuer5xT+kBlEPgtwAqSj0WK2taEljP5vHZ,D8VXCJ8
->>> u+46b2XVCt7Obpz0gznZyNLRj79Q2l4KmkwbKOzdQKw
->>> # fscrypt unlock mydir
->>> # touch /mnt/test/mydir/mysubdir/file
->>> touch: cannot touch '/mnt/test/mydir/mysubdir/file': No such file or
->>> directory
->>>
->>> =C2=A0 fs/ceph/crypto.c | 4 ++++
->>> =C2=A0 1 file changed, 4 insertions(+)
->>>
->>> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
->>> index 35a2ccfe6899..dc1557967032 100644
->>> --- a/fs/ceph/crypto.c
->>> +++ b/fs/ceph/crypto.c
->>> @@ -87,6 +87,10 @@ static int ceph_crypt_get_context(struct inode *inod=
-e,
->>> void *ctx, size_t len)
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ERANGE;
->>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 memcpy(ctx, cfa->cfa_blob, ctxlen=
-);
->>> +
->>> +=C2=A0=C2=A0=C2=A0 /* Directory isn't complete anymore */
->>> +=C2=A0=C2=A0=C2=A0 if (S_ISDIR(inode->i_mode) && __ceph_dir_is_complet=
-e(ci))
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __ceph_dir_clear_complete(c=
-i);
->>
->> Hi Luis,
->>
->> Good catch!
->>
->> BTW, why do this in the ceph_crypt_get_context() ? As my understanding i=
-s that
->> we should mark 'mydir' as incomplete when unlocking it. While as I remem=
-bered
->> the unlock operation will do:
->>
->>
->> Step1: get_encpolicy via 'mydir' as ctx
->> Step2: rm_enckey of ctx from the superblock
->>
-> Sorry, it should be add_enckey.
->>
->> Since I am still running the test cases for the file lock patches, so I =
-didn't
->> catch logs to confirm the above steps yet.
->>
->> If I am right IMO then we should mark the dir as incomplete in the Step2
->> instead, because for non-unlock operations they may also do the Step1.
->>
-> Your patch will work. But probably we should do this just around
-> __fscrypt_prepare_readdir() or fscrypt_prepare_readdir() instead ? We nee=
-d to
-> detect that once the 'inode->i_crypt_info' changed then mark the dir as
-> incomplete.
->
-> For now for the lock operation it will evict the inode, which will help d=
-o this
-> for us already. But for unlock case, we need to handle it by ourself.
+The following changes since commit 094226ad94f471a9f19e8f8e7140a09c2625abaa:
 
-OK, that makes sense and to be honest I thought that there should be
-another place for doing this. Unfortunately, I didn't found it: in the
-test case I have the fscrypt_prepare_readdir() isn't called:
+  Linux 6.1-rc5 (2022-11-13 13:12:55 -0800)
 
-   # cd /cephfs
-   # ls mydir
-   nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0
-   # ls mydir/nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0/
-   Cyuer5xT+kBlEPgtwAqSj0WK2taEljP5vHZ,D8VXCJ8 u+46b2XVCt7Obpz0gznZyNLRj79Q=
-2l4KmkwbKOzdQKw
+are available in the Git repository at:
 
-At this point readdir was executed, of course.  And
-__ceph_dir_set_complete() is also used to indicate that we have the full
-contents.  However, executing the following commands won't result in any
-new readdir():
+  https://github.com/ceph/ceph-client.git tags/ceph-for-6.1-rc6
 
-   # fscrypt unlock mydir
-   # touch /mnt/test/mydir/mysubdir/file
+for you to fetch changes up to 5bd76b8de5b74fa941a6eafee87728a0fe072267:
 
-and since the encryption key is set at the sb level, I couldn't find a way
-to detect changes in inode->i_crypt_info.  ceph_d_revalidate() is invoked
-but at that point I don't thing we have a way to know what is changing.
+  ceph: fix NULL pointer dereference for req->r_session (2022-11-14 10:29:05 +0100)
 
-Any ideas?
+----------------------------------------------------------------
+Three filesystem bug fixes, intended for stable.
 
-Cheers,
---=20
-Lu=C3=ADs
+----------------------------------------------------------------
+Dan Carpenter (1):
+      ceph: fix a NULL vs IS_ERR() check when calling ceph_lookup_inode()
 
->
-> Thanks!
->
-> - Xiubo
->
->
->> Thanks!
->>
->> - Xiubo
->>
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ctxlen;
->>> =C2=A0 }
->>>
->
+Palmer Dabbelt (1):
+      MAINTAINERS: git://github.com -> https://github.com for ceph
 
+Xiubo Li (2):
+      ceph: avoid putting the realm twice when decoding snaps fails
+      ceph: fix NULL pointer dereference for req->r_session
+
+ MAINTAINERS     |  6 +++---
+ fs/ceph/caps.c  | 48 ++++++++++++------------------------------------
+ fs/ceph/inode.c |  2 +-
+ fs/ceph/snap.c  |  3 ++-
+ 4 files changed, 18 insertions(+), 41 deletions(-)
