@@ -2,233 +2,287 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 144EA62ED2D
-	for <lists+ceph-devel@lfdr.de>; Fri, 18 Nov 2022 06:25:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6B0162F366
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Nov 2022 12:11:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240329AbiKRFZ0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 18 Nov 2022 00:25:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51194 "EHLO
+        id S241346AbiKRLLa (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 18 Nov 2022 06:11:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230287AbiKRFZX (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 18 Nov 2022 00:25:23 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C8158BF4
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Nov 2022 21:24:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668749066;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        with ESMTP id S241447AbiKRLLX (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 18 Nov 2022 06:11:23 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 718E58C4A3;
+        Fri, 18 Nov 2022 03:11:21 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id B59FC224B1;
+        Fri, 18 Nov 2022 11:11:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1668769879; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=aAIhV3a/FP0PhSf9vR1ynZP39PzL62iR7XzPvBt4ymc=;
-        b=X9n2Gt2K7gWDQGpK7vPMx7GlI1H9nw6OFh5ca8EdDYquyh4XXbz2XB92x4k6CK1qpvCN/k
-        SLb8r0o0ZgYE/7YJQXz1dq8ArMjHt2DZiLG+NO3VCq5gwBHI1dBmidbqV6rejkygR08RzB
-        9Wn0oNvXZz7jXcZlihwiDC4HN39tJow=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-583-VpDJHOL8MX-KdnxEw2aQ7w-1; Fri, 18 Nov 2022 00:24:24 -0500
-X-MC-Unique: VpDJHOL8MX-KdnxEw2aQ7w-1
-Received: by mail-pg1-f200.google.com with SMTP id x16-20020a63b210000000b0045f5c1e18d0so2533365pge.0
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Nov 2022 21:24:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aAIhV3a/FP0PhSf9vR1ynZP39PzL62iR7XzPvBt4ymc=;
-        b=BKqtdwDfDxIBk6KAwQxdeAt/JGRLElhRSzn9u7gMDtkjGq+4Go0orKKBoEbT+LqqKH
-         xVTWrSRNuaeDW+yVbI9GTC8m1OtzLlApUsGmRHd1aNz/Ecb6vF5Or/yzo+PbbbydAI9I
-         lXkC1ZAciTANgwGIoy6+zC1kUtd5krwWDqiq54vcNTj8OgBcM/1WNA7POtGxR4pkmNiH
-         EBdNPanHID6Vnfc21+vHjeo9V+NtHla+mNFK5ZGYYlUOm2F+Xqsri+1gcLIUNV9q4pWQ
-         RB1tHI7JUwy16zFYzTNmDiz0M4FvtUtOXgi0ITCKbpchlroOZDwic83H/cqjxTP5Mb1S
-         CH4A==
-X-Gm-Message-State: ANoB5pnixTvPFyis2Arf33DI6acdTATkn4S4DG1UF1S336BKG0r3ZFPY
-        hOmTWT49XVh73ESmDz/UXYzScSQfMhzGUujRIyKsorA57+6ezRS+AWvLQg8CzV+ppaNlZbD3SLL
-        taT2Dhvd7imw+A5+HMu9H7w==
-X-Received: by 2002:a17:902:db01:b0:187:3921:2b2d with SMTP id m1-20020a170902db0100b0018739212b2dmr6241898plx.13.1668749063440;
-        Thu, 17 Nov 2022 21:24:23 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf4dGNqsHk8dTiRMA6TS0oVRYyAe8B7JvXNSMBhO5UW647Er7WWR7fJ3ZYkNvIAjg+IwAVgpKw==
-X-Received: by 2002:a17:902:db01:b0:187:3921:2b2d with SMTP id m1-20020a170902db0100b0018739212b2dmr6241885plx.13.1668749063170;
-        Thu, 17 Nov 2022 21:24:23 -0800 (PST)
-Received: from [10.72.12.148] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id y3-20020aa79423000000b0056c058ab000sm2117105pfo.155.2022.11.17.21.24.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Nov 2022 21:24:22 -0800 (PST)
-Subject: Re: [PATCH] ceph: make sure directories aren't complete after setting
- crypt context
-To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
+        bh=CNnq9c7v858Ag4af5yoH9bLSAnL8u3w+0ng2vfK0G5k=;
+        b=eLYy6pZKteKaGSjnm71zGGgqeb57mlaoqdE3wnoJNwDZ9Fa6wL72MNt7njxsW2yO8v+wD7
+        GxOd9HnqT6JM5xW8zfX57b3bbKGj5XewO0bf3XFsiJwmpM7FgRTFwhpr6ynkHIEt/gZBnG
+        5c5hB0GkHtRYKVdOkCa7WmVuBsvEs7w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1668769879;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CNnq9c7v858Ag4af5yoH9bLSAnL8u3w+0ng2vfK0G5k=;
+        b=kmcCfCmhqx+8rV7MzohkKdgDbXFSRhOIDxm+oQdwEYMTy5j1JKJaYyQPbo+ZO8ZBi4GGUu
+        WDyhlbVINI9Yi2Cg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5E6BC13A66;
+        Fri, 18 Nov 2022 11:11:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id MaBJFFdod2NNXQAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Fri, 18 Nov 2022 11:11:19 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id eb6b13ad;
+        Fri, 18 Nov 2022 11:12:20 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     Xiubo Li <xiubli@redhat.com>
 Cc:     Ilya Dryomov <idryomov@gmail.com>,
         Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ceph: make sure directories aren't complete after
+ setting crypt context
 References: <20221116153703.27292-1-lhenriques@suse.de>
- <5de0ae69-5e3d-2ccb-64a3-971db66477f8@redhat.com>
- <41710b3d-b37f-8c65-d55d-c4137a366efd@redhat.com> <87o7t5mpby.fsf@suse.de>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <116d12db-5c24-9a57-79a9-b7a02a0bb4c2@redhat.com>
-Date:   Fri, 18 Nov 2022 13:24:10 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        <5de0ae69-5e3d-2ccb-64a3-971db66477f8@redhat.com>
+        <41710b3d-b37f-8c65-d55d-c4137a366efd@redhat.com>
+        <87o7t5mpby.fsf@suse.de>
+        <116d12db-5c24-9a57-79a9-b7a02a0bb4c2@redhat.com>
+Date:   Fri, 18 Nov 2022 11:12:20 +0000
+In-Reply-To: <116d12db-5c24-9a57-79a9-b7a02a0bb4c2@redhat.com> (Xiubo Li's
+        message of "Fri, 18 Nov 2022 13:24:10 +0800")
+Message-ID: <87k03sms8b.fsf@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <87o7t5mpby.fsf@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Xiubo Li <xiubli@redhat.com> writes:
 
-On 18/11/2022 02:02, Luís Henriques wrote:
-> Xiubo Li <xiubli@redhat.com> writes:
->
->> On 17/11/2022 16:03, Xiubo Li wrote:
->>> On 16/11/2022 23:37, Luís Henriques wrote:
->>>> When setting a directory's crypt context, __ceph_dir_clear_complete() needs
->>>> to be used otherwise, if it was complete before, any old dentry that's still
->>>> around will be valid.
->>>>
->>>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
->>>> ---
->>>> Hi!
->>>>
->>>> Here's a simple way to trigger the bug this patch is fixing:
->>>>
->>>> # cd /cephfs
->>>> # ls mydir
->>>> nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0
->>>> # ls mydir/nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0/
->>>> Cyuer5xT+kBlEPgtwAqSj0WK2taEljP5vHZ,D8VXCJ8
->>>> u+46b2XVCt7Obpz0gznZyNLRj79Q2l4KmkwbKOzdQKw
->>>> # fscrypt unlock mydir
->>>> # touch /mnt/test/mydir/mysubdir/file
->>>> touch: cannot touch '/mnt/test/mydir/mysubdir/file': No such file or
->>>> directory
->>>>
->>>>    fs/ceph/crypto.c | 4 ++++
->>>>    1 file changed, 4 insertions(+)
->>>>
->>>> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
->>>> index 35a2ccfe6899..dc1557967032 100644
->>>> --- a/fs/ceph/crypto.c
->>>> +++ b/fs/ceph/crypto.c
->>>> @@ -87,6 +87,10 @@ static int ceph_crypt_get_context(struct inode *inode,
->>>> void *ctx, size_t len)
->>>>            return -ERANGE;
->>>>          memcpy(ctx, cfa->cfa_blob, ctxlen);
->>>> +
->>>> +    /* Directory isn't complete anymore */
->>>> +    if (S_ISDIR(inode->i_mode) && __ceph_dir_is_complete(ci))
->>>> +        __ceph_dir_clear_complete(ci);
->>> Hi Luis,
->>>
->>> Good catch!
->>>
->>> BTW, why do this in the ceph_crypt_get_context() ? As my understanding is that
->>> we should mark 'mydir' as incomplete when unlocking it. While as I remembered
->>> the unlock operation will do:
->>>
->>>
->>> Step1: get_encpolicy via 'mydir' as ctx
->>> Step2: rm_enckey of ctx from the superblock
->>>
->> Sorry, it should be add_enckey.
->>> Since I am still running the test cases for the file lock patches, so I didn't
->>> catch logs to confirm the above steps yet.
->>>
->>> If I am right IMO then we should mark the dir as incomplete in the Step2
->>> instead, because for non-unlock operations they may also do the Step1.
->>>
->> Your patch will work. But probably we should do this just around
->> __fscrypt_prepare_readdir() or fscrypt_prepare_readdir() instead ? We need to
->> detect that once the 'inode->i_crypt_info' changed then mark the dir as
->> incomplete.
+> On 18/11/2022 02:02, Lu=C3=ADs Henriques wrote:
+>> Xiubo Li <xiubli@redhat.com> writes:
 >>
->> For now for the lock operation it will evict the inode, which will help do this
->> for us already. But for unlock case, we need to handle it by ourself.
-> OK, that makes sense and to be honest I thought that there should be
-> another place for doing this. Unfortunately, I didn't found it: in the
-> test case I have the fscrypt_prepare_readdir() isn't called:
+>>> On 17/11/2022 16:03, Xiubo Li wrote:
+>>>> On 16/11/2022 23:37, Lu=C3=ADs Henriques wrote:
+>>>>> When setting a directory's crypt context, __ceph_dir_clear_complete()=
+ needs
+>>>>> to be used otherwise, if it was complete before, any old dentry that'=
+s still
+>>>>> around will be valid.
+>>>>>
+>>>>> Signed-off-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
+>>>>> ---
+>>>>> Hi!
+>>>>>
+>>>>> Here's a simple way to trigger the bug this patch is fixing:
+>>>>>
+>>>>> # cd /cephfs
+>>>>> # ls mydir
+>>>>> nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0
+>>>>> # ls mydir/nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0/
+>>>>> Cyuer5xT+kBlEPgtwAqSj0WK2taEljP5vHZ,D8VXCJ8
+>>>>> u+46b2XVCt7Obpz0gznZyNLRj79Q2l4KmkwbKOzdQKw
+>>>>> # fscrypt unlock mydir
+>>>>> # touch /mnt/test/mydir/mysubdir/file
+>>>>> touch: cannot touch '/mnt/test/mydir/mysubdir/file': No such file or
+>>>>> directory
+>>>>>
+>>>>>  =C2=A0 fs/ceph/crypto.c | 4 ++++
+>>>>>  =C2=A0 1 file changed, 4 insertions(+)
+>>>>>
+>>>>> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+>>>>> index 35a2ccfe6899..dc1557967032 100644
+>>>>> --- a/fs/ceph/crypto.c
+>>>>> +++ b/fs/ceph/crypto.c
+>>>>> @@ -87,6 +87,10 @@ static int ceph_crypt_get_context(struct inode *in=
+ode,
+>>>>> void *ctx, size_t len)
+>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ERANG=
+E;
+>>>>>  =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 memcpy(ctx, cfa->cfa_blob, ctx=
+len);
+>>>>> +
+>>>>> +=C2=A0=C2=A0=C2=A0 /* Directory isn't complete anymore */
+>>>>> +=C2=A0=C2=A0=C2=A0 if (S_ISDIR(inode->i_mode) && __ceph_dir_is_compl=
+ete(ci))
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __ceph_dir_clear_complete=
+(ci);
+>>>> Hi Luis,
+>>>>
+>>>> Good catch!
+>>>>
+>>>> BTW, why do this in the ceph_crypt_get_context() ? As my understanding=
+ is that
+>>>> we should mark 'mydir' as incomplete when unlocking it. While as I rem=
+embered
+>>>> the unlock operation will do:
+>>>>
+>>>>
+>>>> Step1: get_encpolicy via 'mydir' as ctx
+>>>> Step2: rm_enckey of ctx from the superblock
+>>>>
+>>> Sorry, it should be add_enckey.
+>>>> Since I am still running the test cases for the file lock patches, so =
+I didn't
+>>>> catch logs to confirm the above steps yet.
+>>>>
+>>>> If I am right IMO then we should mark the dir as incomplete in the Ste=
+p2
+>>>> instead, because for non-unlock operations they may also do the Step1.
+>>>>
+>>> Your patch will work. But probably we should do this just around
+>>> __fscrypt_prepare_readdir() or fscrypt_prepare_readdir() instead ? We n=
+eed to
+>>> detect that once the 'inode->i_crypt_info' changed then mark the dir as
+>>> incomplete.
+>>>
+>>> For now for the lock operation it will evict the inode, which will help=
+ do this
+>>> for us already. But for unlock case, we need to handle it by ourself.
+>> OK, that makes sense and to be honest I thought that there should be
+>> another place for doing this. Unfortunately, I didn't found it: in the
+>> test case I have the fscrypt_prepare_readdir() isn't called:
+>>
+>>     # cd /cephfs
+>>     # ls mydir
+>>     nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0
+>>     # ls mydir/nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0/
+>>     Cyuer5xT+kBlEPgtwAqSj0WK2taEljP5vHZ,D8VXCJ8 u+46b2XVCt7Obpz0gznZyNLR=
+j79Q2l4KmkwbKOzdQKw
+>>
+>> At this point readdir was executed, of course.  And
+>> __ceph_dir_set_complete() is also used to indicate that we have the full
+>> contents.  However, executing the following commands won't result in any
+>> new readdir():
+>>
+>>     # fscrypt unlock mydir
+>>     # touch /mnt/test/mydir/mysubdir/file
+>>
+>> and since the encryption key is set at the sb level, I couldn't find a w=
+ay
+>> to detect changes in inode->i_crypt_info.  ceph_d_revalidate() is invoked
+>> but at that point I don't thing we have a way to know what is changing.
+>>
+>> Any ideas?
 >
->     # cd /cephfs
->     # ls mydir
->     nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0
->     # ls mydir/nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0/
->     Cyuer5xT+kBlEPgtwAqSj0WK2taEljP5vHZ,D8VXCJ8 u+46b2XVCt7Obpz0gznZyNLRj79Q2l4KmkwbKOzdQKw
+> # ls mydir/
+> zy94Zt01M90xwYq+nxJsEvea+HYq49mqVgrUBkYrJAU
+> # ls mydir/zy94Zt01M90xwYq+nxJsEvea+HYq49mqVgrUBkYrJAU/
+> 24iNa8ICYc6nZZIkL,4n1sOtp9KiaTGtpq8PCZDQ6LU
+> ivG4rQYzg6YENagbTZaV2kh2sVouEdlkmBZPfgVDl48
 >
-> At this point readdir was executed, of course.  And
-> __ceph_dir_set_complete() is also used to indicate that we have the full
-> contents.  However, executing the following commands won't result in any
-> new readdir():
+> I have added the debug logs in all the places just like:
 >
->     # fscrypt unlock mydir
->     # touch /mnt/test/mydir/mysubdir/file
+> @@ -784,7 +786,9 @@ static struct dentry *ceph_lookup(struct inode *dir, =
+struct
+> dentry *dentry,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 return ERR_PTR(-ENAMETOOLONG);
 >
-> and since the encryption key is set at the sb level, I couldn't find a way
-> to detect changes in inode->i_crypt_info.  ceph_d_revalidate() is invoked
-> but at that point I don't thing we have a way to know what is changing.
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ENCRYPTED(dir)) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 printk("%s fscrypt_has_encryption_k=
+ey(dir): %d =3D=3D=3D=3D=3D=3D\n", __func__,
+> fscrypt_has_encryption_key(dir));
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 err =3D __fscrypt_prepare_readdir(dir);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 printk("%s fscrypt_has_encryption_k=
+ey(dir): %d =3D=3D=3D=3D=3D=3D\n", __func__,
+> fscrypt_has_encryption_key(dir));
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 if (err)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return E=
+RR_PTR(err);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 if (!fscrypt_has_encryption_key(dir)) {
 >
-> Any ideas?
-
-# ls mydir/
-zy94Zt01M90xwYq+nxJsEvea+HYq49mqVgrUBkYrJAU
-# ls mydir/zy94Zt01M90xwYq+nxJsEvea+HYq49mqVgrUBkYrJAU/
-24iNa8ICYc6nZZIkL,4n1sOtp9KiaTGtpq8PCZDQ6LU 
-ivG4rQYzg6YENagbTZaV2kh2sVouEdlkmBZPfgVDl48
-
-I have added the debug logs in all the places just like:
-
-@@ -784,7 +786,9 @@ static struct dentry *ceph_lookup(struct inode *dir, 
-struct dentry *dentry,
-                 return ERR_PTR(-ENAMETOOLONG);
-
-         if (IS_ENCRYPTED(dir)) {
-+       printk("%s fscrypt_has_encryption_key(dir): %d ======\n", 
-__func__, fscrypt_has_encryption_key(dir));
-                 err = __fscrypt_prepare_readdir(dir);
-+       printk("%s fscrypt_has_encryption_key(dir): %d ======\n", 
-__func__, fscrypt_has_encryption_key(dir));
-                 if (err)
-                         return ERR_PTR(err);
-                 if (!fscrypt_has_encryption_key(dir)) {
-
-
-# fscrypt unlock mydir
-Enter custom passphrase for protector "l":
-"mydir" is now unlocked and ready for use.
-
-And after "mydir/" was unlocked and then when doing:
-
-# touch mydir/dir/file2
-
-And when lookup the "dir/" dentry I can see the "mydir/" encryption key 
-changed:
-
-709 <7>[79125.023676] ceph:  __ceph_caps_issued_mask ino 0x10000000004 
-cap 000000004dc11892 issued pAsLsXsFs (mask As)
-710 <7>[79125.023687] ceph:  __touch_cap 000000007071b095 cap 
-000000004dc11892 mds0
-711 <7>[79125.023823] ceph:  lookup 000000007071b095 dentry 
-00000000f97501b2 'dir'
-712 <4>[79125.023838] ceph_lookup fscrypt_has_encryption_key(dir): 0 ======
-713 <4>[79125.024186] ceph_lookup fscrypt_has_encryption_key(dir): 1 ======
-714 <7>[79125.024194] ceph:   dir 000000007071b095 flags are 0x0
-715 <7>[79125.024269] ceph:  do_request on 00000000a93fafef
-
-I am thinking could we just make __fscrypt_prepare_readdir(), which will 
-return 0 when the key is already set or successfully set, to return 1 
-instead of 0 to mark that the key changed ?
-
-Thanks!
-
-- Xiubo
-
 >
-> Cheers,
+> # fscrypt unlock mydir
+> Enter custom passphrase for protector "l":
+> "mydir" is now unlocked and ready for use.
+>
+> And after "mydir/" was unlocked and then when doing:
+>
+> # touch mydir/dir/file2
+>
+> And when lookup the "dir/" dentry I can see the "mydir/" encryption key c=
+hanged:
+>
+> 709 <7>[79125.023676] ceph:=C2=A0 __ceph_caps_issued_mask ino 0x100000000=
+04 cap
+> 000000004dc11892 issued pAsLsXsFs (mask As)
+> 710 <7>[79125.023687] ceph:=C2=A0 __touch_cap 000000007071b095 cap 000000=
+004dc11892
+> mds0
+> 711 <7>[79125.023823] ceph:=C2=A0 lookup 000000007071b095 dentry 00000000=
+f97501b2
+> 'dir'
+> 712 <4>[79125.023838] ceph_lookup fscrypt_has_encryption_key(dir): 0 =3D=
+=3D=3D=3D=3D=3D
+> 713 <4>[79125.024186] ceph_lookup fscrypt_has_encryption_key(dir): 1 =3D=
+=3D=3D=3D=3D=3D
+> 714 <7>[79125.024194] ceph:=C2=A0=C2=A0 dir 000000007071b095 flags are 0x0
+> 715 <7>[79125.024269] ceph:=C2=A0 do_request on 00000000a93fafef
+>
+> I am thinking could we just make __fscrypt_prepare_readdir(), which will =
+return
+> 0 when the key is already set or successfully set, to return 1 instead of=
+ 0 to
+> mark that the key changed ?
 
+OK, I see what you mean.  Thanks.  What about simply detect this change
+here instead of changing __fscrypt_prepare_readdir() semantics?  Because I
+think that would require changes in several other places, including other
+filesystems.
+
+What about something like this?
+
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index edc2bf0aab83..499ec75d2496 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -784,6 +784,8 @@ static struct dentry *ceph_lookup(struct inode *dir, st=
+ruct dentry *dentry,
+ 		return ERR_PTR(-ENAMETOOLONG);
+=20
+ 	if (IS_ENCRYPTED(dir)) {
++		bool had_key =3D fscrypt_has_encryption_key(dir);
++
+ 		err =3D __fscrypt_prepare_readdir(dir);
+ 		if (err)
+ 			return ERR_PTR(err);
+@@ -791,6 +793,8 @@ static struct dentry *ceph_lookup(struct inode *dir, st=
+ruct dentry *dentry,
+ 			spin_lock(&dentry->d_lock);
+ 			dentry->d_flags |=3D DCACHE_NOKEY_NAME;
+ 			spin_unlock(&dentry->d_lock);
++		} else if (!had_key) {
++			__ceph_dir_clear_complete(ceph_inode(dir));
+ 		}
+ 	}
+=20
+Cheers,
+--=20
+Lu=C3=ADs
