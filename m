@@ -2,173 +2,233 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F2EFB62EBAC
-	for <lists+ceph-devel@lfdr.de>; Fri, 18 Nov 2022 03:08:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 144EA62ED2D
+	for <lists+ceph-devel@lfdr.de>; Fri, 18 Nov 2022 06:25:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240792AbiKRCH7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 17 Nov 2022 21:07:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38528 "EHLO
+        id S240329AbiKRFZ0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 18 Nov 2022 00:25:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240892AbiKRCHy (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 17 Nov 2022 21:07:54 -0500
+        with ESMTP id S230287AbiKRFZX (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 18 Nov 2022 00:25:23 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47453898D2
-        for <ceph-devel@vger.kernel.org>; Thu, 17 Nov 2022 18:07:02 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2C8158BF4
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Nov 2022 21:24:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668737221;
+        s=mimecast20190719; t=1668749066;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Nmr3tXYC2BQhdEeIC85P8Dx88dykoP9+tJN2ppJbsMQ=;
-        b=EOrlzgEGggllOnCtO5QfHnUdVgXLWz4oEUJ0gdMjHgzd0oPkFmcLdW1M4SpPimvlEMoGsj
-        zoea6XZWylM5JJlgH/YRj092GyfdUrwmrUBgICaglchRsD0eguNMXmzz6lOwaX5td7zhZ8
-        z0iGxO1E7Y6CIQZiHhS60RjQnxqTrjI=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-509-NN580cw-NYiGpmNXvyLozA-1; Thu, 17 Nov 2022 21:06:58 -0500
-X-MC-Unique: NN580cw-NYiGpmNXvyLozA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DBB8B101A52A;
-        Fri, 18 Nov 2022 02:06:57 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0E23FC158CF;
-        Fri, 18 Nov 2022 02:06:53 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     ceph-devel@vger.kernel.org, jlayton@kernel.org, idryomov@gmail.com
-Cc:     lhenriques@suse.de, mchangir@redhat.com, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>, stable@vger.kernel.org
-Subject: [PATCH 2/2 v3] ceph: add ceph_lock_info support for file_lock
-Date:   Fri, 18 Nov 2022 10:06:42 +0800
-Message-Id: <20221118020642.472484-3-xiubli@redhat.com>
-In-Reply-To: <20221118020642.472484-1-xiubli@redhat.com>
-References: <20221118020642.472484-1-xiubli@redhat.com>
+        bh=aAIhV3a/FP0PhSf9vR1ynZP39PzL62iR7XzPvBt4ymc=;
+        b=X9n2Gt2K7gWDQGpK7vPMx7GlI1H9nw6OFh5ca8EdDYquyh4XXbz2XB92x4k6CK1qpvCN/k
+        SLb8r0o0ZgYE/7YJQXz1dq8ArMjHt2DZiLG+NO3VCq5gwBHI1dBmidbqV6rejkygR08RzB
+        9Wn0oNvXZz7jXcZlihwiDC4HN39tJow=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-583-VpDJHOL8MX-KdnxEw2aQ7w-1; Fri, 18 Nov 2022 00:24:24 -0500
+X-MC-Unique: VpDJHOL8MX-KdnxEw2aQ7w-1
+Received: by mail-pg1-f200.google.com with SMTP id x16-20020a63b210000000b0045f5c1e18d0so2533365pge.0
+        for <ceph-devel@vger.kernel.org>; Thu, 17 Nov 2022 21:24:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aAIhV3a/FP0PhSf9vR1ynZP39PzL62iR7XzPvBt4ymc=;
+        b=BKqtdwDfDxIBk6KAwQxdeAt/JGRLElhRSzn9u7gMDtkjGq+4Go0orKKBoEbT+LqqKH
+         xVTWrSRNuaeDW+yVbI9GTC8m1OtzLlApUsGmRHd1aNz/Ecb6vF5Or/yzo+PbbbydAI9I
+         lXkC1ZAciTANgwGIoy6+zC1kUtd5krwWDqiq54vcNTj8OgBcM/1WNA7POtGxR4pkmNiH
+         EBdNPanHID6Vnfc21+vHjeo9V+NtHla+mNFK5ZGYYlUOm2F+Xqsri+1gcLIUNV9q4pWQ
+         RB1tHI7JUwy16zFYzTNmDiz0M4FvtUtOXgi0ITCKbpchlroOZDwic83H/cqjxTP5Mb1S
+         CH4A==
+X-Gm-Message-State: ANoB5pnixTvPFyis2Arf33DI6acdTATkn4S4DG1UF1S336BKG0r3ZFPY
+        hOmTWT49XVh73ESmDz/UXYzScSQfMhzGUujRIyKsorA57+6ezRS+AWvLQg8CzV+ppaNlZbD3SLL
+        taT2Dhvd7imw+A5+HMu9H7w==
+X-Received: by 2002:a17:902:db01:b0:187:3921:2b2d with SMTP id m1-20020a170902db0100b0018739212b2dmr6241898plx.13.1668749063440;
+        Thu, 17 Nov 2022 21:24:23 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf4dGNqsHk8dTiRMA6TS0oVRYyAe8B7JvXNSMBhO5UW647Er7WWR7fJ3ZYkNvIAjg+IwAVgpKw==
+X-Received: by 2002:a17:902:db01:b0:187:3921:2b2d with SMTP id m1-20020a170902db0100b0018739212b2dmr6241885plx.13.1668749063170;
+        Thu, 17 Nov 2022 21:24:23 -0800 (PST)
+Received: from [10.72.12.148] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id y3-20020aa79423000000b0056c058ab000sm2117105pfo.155.2022.11.17.21.24.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Nov 2022 21:24:22 -0800 (PST)
+Subject: Re: [PATCH] ceph: make sure directories aren't complete after setting
+ crypt context
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20221116153703.27292-1-lhenriques@suse.de>
+ <5de0ae69-5e3d-2ccb-64a3-971db66477f8@redhat.com>
+ <41710b3d-b37f-8c65-d55d-c4137a366efd@redhat.com> <87o7t5mpby.fsf@suse.de>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <116d12db-5c24-9a57-79a9-b7a02a0bb4c2@redhat.com>
+Date:   Fri, 18 Nov 2022 13:24:10 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
+In-Reply-To: <87o7t5mpby.fsf@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+Content-Language: en-US
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
 
-When ceph releasing the file_lock it will try to get the inode pointer
-from the fl->fl_file, which the memory could already be released by
-another thread in filp_close(). Because in VFS layer the fl->fl_file
-doesn't increase the file's reference counter.
+On 18/11/2022 02:02, Luís Henriques wrote:
+> Xiubo Li <xiubli@redhat.com> writes:
+>
+>> On 17/11/2022 16:03, Xiubo Li wrote:
+>>> On 16/11/2022 23:37, Luís Henriques wrote:
+>>>> When setting a directory's crypt context, __ceph_dir_clear_complete() needs
+>>>> to be used otherwise, if it was complete before, any old dentry that's still
+>>>> around will be valid.
+>>>>
+>>>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+>>>> ---
+>>>> Hi!
+>>>>
+>>>> Here's a simple way to trigger the bug this patch is fixing:
+>>>>
+>>>> # cd /cephfs
+>>>> # ls mydir
+>>>> nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0
+>>>> # ls mydir/nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0/
+>>>> Cyuer5xT+kBlEPgtwAqSj0WK2taEljP5vHZ,D8VXCJ8
+>>>> u+46b2XVCt7Obpz0gznZyNLRj79Q2l4KmkwbKOzdQKw
+>>>> # fscrypt unlock mydir
+>>>> # touch /mnt/test/mydir/mysubdir/file
+>>>> touch: cannot touch '/mnt/test/mydir/mysubdir/file': No such file or
+>>>> directory
+>>>>
+>>>>    fs/ceph/crypto.c | 4 ++++
+>>>>    1 file changed, 4 insertions(+)
+>>>>
+>>>> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+>>>> index 35a2ccfe6899..dc1557967032 100644
+>>>> --- a/fs/ceph/crypto.c
+>>>> +++ b/fs/ceph/crypto.c
+>>>> @@ -87,6 +87,10 @@ static int ceph_crypt_get_context(struct inode *inode,
+>>>> void *ctx, size_t len)
+>>>>            return -ERANGE;
+>>>>          memcpy(ctx, cfa->cfa_blob, ctxlen);
+>>>> +
+>>>> +    /* Directory isn't complete anymore */
+>>>> +    if (S_ISDIR(inode->i_mode) && __ceph_dir_is_complete(ci))
+>>>> +        __ceph_dir_clear_complete(ci);
+>>> Hi Luis,
+>>>
+>>> Good catch!
+>>>
+>>> BTW, why do this in the ceph_crypt_get_context() ? As my understanding is that
+>>> we should mark 'mydir' as incomplete when unlocking it. While as I remembered
+>>> the unlock operation will do:
+>>>
+>>>
+>>> Step1: get_encpolicy via 'mydir' as ctx
+>>> Step2: rm_enckey of ctx from the superblock
+>>>
+>> Sorry, it should be add_enckey.
+>>> Since I am still running the test cases for the file lock patches, so I didn't
+>>> catch logs to confirm the above steps yet.
+>>>
+>>> If I am right IMO then we should mark the dir as incomplete in the Step2
+>>> instead, because for non-unlock operations they may also do the Step1.
+>>>
+>> Your patch will work. But probably we should do this just around
+>> __fscrypt_prepare_readdir() or fscrypt_prepare_readdir() instead ? We need to
+>> detect that once the 'inode->i_crypt_info' changed then mark the dir as
+>> incomplete.
+>>
+>> For now for the lock operation it will evict the inode, which will help do this
+>> for us already. But for unlock case, we need to handle it by ourself.
+> OK, that makes sense and to be honest I thought that there should be
+> another place for doing this. Unfortunately, I didn't found it: in the
+> test case I have the fscrypt_prepare_readdir() isn't called:
+>
+>     # cd /cephfs
+>     # ls mydir
+>     nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0
+>     # ls mydir/nKRhofOAVNsAwVLvDw7a0c9ypsjbZfK3n0Npnmni6j0/
+>     Cyuer5xT+kBlEPgtwAqSj0WK2taEljP5vHZ,D8VXCJ8 u+46b2XVCt7Obpz0gznZyNLRj79Q2l4KmkwbKOzdQKw
+>
+> At this point readdir was executed, of course.  And
+> __ceph_dir_set_complete() is also used to indicate that we have the full
+> contents.  However, executing the following commands won't result in any
+> new readdir():
+>
+>     # fscrypt unlock mydir
+>     # touch /mnt/test/mydir/mysubdir/file
+>
+> and since the encryption key is set at the sb level, I couldn't find a way
+> to detect changes in inode->i_crypt_info.  ceph_d_revalidate() is invoked
+> but at that point I don't thing we have a way to know what is changing.
+>
+> Any ideas?
 
-Will switch to use ceph dedicate lock info to track the inode.
+# ls mydir/
+zy94Zt01M90xwYq+nxJsEvea+HYq49mqVgrUBkYrJAU
+# ls mydir/zy94Zt01M90xwYq+nxJsEvea+HYq49mqVgrUBkYrJAU/
+24iNa8ICYc6nZZIkL,4n1sOtp9KiaTGtpq8PCZDQ6LU 
+ivG4rQYzg6YENagbTZaV2kh2sVouEdlkmBZPfgVDl48
 
-And in ceph_fl_release_lock() we should skip all the operations if
-the fl->fl_u.ceph_fl.fl_inode is not set, which should come from
-the request file_lock. And we will set fl->fl_u.ceph_fl.fl_inode when
-inserting it to the inode lock list, which is when copying the lock.
+I have added the debug logs in all the places just like:
 
-Cc: stable@vger.kernel.org
-Cc: Jeff Layton <jlayton@kernel.org>
-URL: https://tracker.ceph.com/issues/57986
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/locks.c                 | 20 ++++++++++++++++++--
- include/linux/ceph/ceph_fs_fl.h | 17 +++++++++++++++++
- include/linux/fs.h              |  2 ++
- 3 files changed, 37 insertions(+), 2 deletions(-)
- create mode 100644 include/linux/ceph/ceph_fs_fl.h
+@@ -784,7 +786,9 @@ static struct dentry *ceph_lookup(struct inode *dir, 
+struct dentry *dentry,
+                 return ERR_PTR(-ENAMETOOLONG);
 
-diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
-index b191426bf880..621f38f10a88 100644
---- a/fs/ceph/locks.c
-+++ b/fs/ceph/locks.c
-@@ -34,18 +34,34 @@ static void ceph_fl_copy_lock(struct file_lock *dst, struct file_lock *src)
- {
- 	struct inode *inode = file_inode(dst->fl_file);
- 	atomic_inc(&ceph_inode(inode)->i_filelock_ref);
-+	dst->fl_u.ceph_fl.fl_inode = igrab(inode);
- }
- 
-+/*
-+ * Do not use the 'fl->fl_file' in release function, which
-+ * is possibly already released by another thread.
-+ */
- static void ceph_fl_release_lock(struct file_lock *fl)
- {
--	struct inode *inode = file_inode(fl->fl_file);
--	struct ceph_inode_info *ci = ceph_inode(inode);
-+	struct inode *inode = fl->fl_u.ceph_fl.fl_inode;
-+	struct ceph_inode_info *ci;
-+
-+	/*
-+	 * If inode is NULL it should be a request file_lock,
-+	 * nothing we can do.
-+	 */
-+	if (!inode)
-+		return;
-+
-+	ci = ceph_inode(inode);
- 	if (atomic_dec_and_test(&ci->i_filelock_ref)) {
- 		/* clear error when all locks are released */
- 		spin_lock(&ci->i_ceph_lock);
- 		ci->i_ceph_flags &= ~CEPH_I_ERROR_FILELOCK;
- 		spin_unlock(&ci->i_ceph_lock);
- 	}
-+	fl->fl_u.ceph_fl.fl_inode = NULL;
-+	iput(inode);
- }
- 
- static const struct file_lock_operations ceph_fl_lock_ops = {
-diff --git a/include/linux/ceph/ceph_fs_fl.h b/include/linux/ceph/ceph_fs_fl.h
-new file mode 100644
-index 000000000000..ad1cf96329f9
---- /dev/null
-+++ b/include/linux/ceph/ceph_fs_fl.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * ceph_fs_fl.h - Ceph lock info
-+ *
-+ * LGPL2
-+ */
-+
-+#ifndef CEPH_FS_FL_H
-+#define CEPH_FS_FL_H
-+
-+#include <linux/fs.h>
-+
-+struct ceph_lock_info {
-+	struct inode *fl_inode;
-+};
-+
-+#endif
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index d6cb42b7e91c..2b03d5e375d7 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1066,6 +1066,7 @@ bool opens_in_grace(struct net *);
- 
- /* that will die - we need it for nfs_lock_info */
- #include <linux/nfs_fs_i.h>
-+#include <linux/ceph/ceph_fs_fl.h>
- 
- /*
-  * struct file_lock represents a generic "file lock". It's used to represent
-@@ -1119,6 +1120,7 @@ struct file_lock {
- 			int state;		/* state of grant or error if -ve */
- 			unsigned int	debug_id;
- 		} afs;
-+		struct ceph_lock_info	ceph_fl;
- 	} fl_u;
- } __randomize_layout;
- 
--- 
-2.31.1
+         if (IS_ENCRYPTED(dir)) {
++       printk("%s fscrypt_has_encryption_key(dir): %d ======\n", 
+__func__, fscrypt_has_encryption_key(dir));
+                 err = __fscrypt_prepare_readdir(dir);
++       printk("%s fscrypt_has_encryption_key(dir): %d ======\n", 
+__func__, fscrypt_has_encryption_key(dir));
+                 if (err)
+                         return ERR_PTR(err);
+                 if (!fscrypt_has_encryption_key(dir)) {
+
+
+# fscrypt unlock mydir
+Enter custom passphrase for protector "l":
+"mydir" is now unlocked and ready for use.
+
+And after "mydir/" was unlocked and then when doing:
+
+# touch mydir/dir/file2
+
+And when lookup the "dir/" dentry I can see the "mydir/" encryption key 
+changed:
+
+709 <7>[79125.023676] ceph:  __ceph_caps_issued_mask ino 0x10000000004 
+cap 000000004dc11892 issued pAsLsXsFs (mask As)
+710 <7>[79125.023687] ceph:  __touch_cap 000000007071b095 cap 
+000000004dc11892 mds0
+711 <7>[79125.023823] ceph:  lookup 000000007071b095 dentry 
+00000000f97501b2 'dir'
+712 <4>[79125.023838] ceph_lookup fscrypt_has_encryption_key(dir): 0 ======
+713 <4>[79125.024186] ceph_lookup fscrypt_has_encryption_key(dir): 1 ======
+714 <7>[79125.024194] ceph:   dir 000000007071b095 flags are 0x0
+715 <7>[79125.024269] ceph:  do_request on 00000000a93fafef
+
+I am thinking could we just make __fscrypt_prepare_readdir(), which will 
+return 0 when the key is already set or successfully set, to return 1 
+instead of 0 to mark that the key changed ?
+
+Thanks!
+
+- Xiubo
+
+>
+> Cheers,
 
