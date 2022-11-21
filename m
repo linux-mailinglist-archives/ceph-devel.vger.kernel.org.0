@@ -2,52 +2,52 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BEE1F632EFB
-	for <lists+ceph-devel@lfdr.de>; Mon, 21 Nov 2022 22:41:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C894632F2D
+	for <lists+ceph-devel@lfdr.de>; Mon, 21 Nov 2022 22:44:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231802AbiKUVlW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 21 Nov 2022 16:41:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58808 "EHLO
+        id S231679AbiKUVoP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 21 Nov 2022 16:44:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231721AbiKUVlS (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 21 Nov 2022 16:41:18 -0500
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F5AFD32A0
-        for <ceph-devel@vger.kernel.org>; Mon, 21 Nov 2022 13:41:01 -0800 (PST)
-Received: by mail-io1-xd30.google.com with SMTP id 11so9668196iou.0
-        for <ceph-devel@vger.kernel.org>; Mon, 21 Nov 2022 13:41:01 -0800 (PST)
+        with ESMTP id S231767AbiKUVnt (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 21 Nov 2022 16:43:49 -0500
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F205183AC
+        for <ceph-devel@vger.kernel.org>; Mon, 21 Nov 2022 13:43:33 -0800 (PST)
+Received: by mail-io1-xd36.google.com with SMTP id q21so9634415iod.4
+        for <ceph-devel@vger.kernel.org>; Mon, 21 Nov 2022 13:43:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linuxfoundation.org; s=google;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=0+xfYS/683CuEX8Moz7DN5D+iq5a+HRddPc04OAxt08=;
-        b=Tmrax2HtLx9acijQh4ktOiCFNspYBm9czQO9vC+hgh16yhXiq5RyvSKc/8X48Yn6bo
-         htTajxPPiW0Lsmr5jl6ZJh1+6V/m5ChitgOSpS6KBQ7ll5X5P1skZcbsej2h/DApNnIq
-         u0xC1JtTdPPMF5q+wPkS1LuhqaXUemqkmRceA=
+        bh=ImVe+g+b+10JJjRyFbVg3VQDLgN59Ue/Abv7vaFmseQ=;
+        b=OHO4FjaPJmimqdrzS/OkstIvhocxCz1emkoHfOdBnFW624ABdZXIGpUr2qg1Kuoid7
+         jQ3zRS/xznKzGtwvpkBw8YcBHanbAjUGKtSMJ92a5WUJdkI77H4tBot4cVhu32vyccdd
+         iMTMhCXmKhazzg9UmrMMNr5aOJxLl31QLMnEw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0+xfYS/683CuEX8Moz7DN5D+iq5a+HRddPc04OAxt08=;
-        b=KS3i2gQtd7MoIssDzSxAMgjjvqx7GixMzZXbD+fbWqJUigiOeve8etOe3GEP9O59AI
-         7MgbMMa8LUjMlJ3WnAaNBcFW9ktIcrI65D7OnYNdcxR6y+F45soLZ9z43MGynidA88SL
-         W6kPL/TZHeP2N34lLf4nO+pQYsXOcKQbB3KbIr/raBdJvrGKTNJY4KdeKrWplTvWHVre
-         H6Ol4NSFb9RwItBD94E1Ke792ZTZ7htWwMJOoqgxfG2hix5KGvqz3dQ4fvgp26BSs5RY
-         Su+CH8uWFoLhMIyfbTuNXAbve63/73lXFol43uvHGZ5qcqzsnTbHikzql/jXXMX49B8u
-         3dCg==
-X-Gm-Message-State: ANoB5pmr825agpq5c8WGgZ4IFljbTYUo2dlPWE0hE11soJ6oYNpGvCMc
-        GL8hmYzOKZ/W+GqEiziOGxNM+w==
-X-Google-Smtp-Source: AA0mqf4lOq6werVuvT/Ru0/037+ZZBKwQ9dV2Uvyt9oiXBE03aeSGMACS9M8fMwvTL7wgcvnDkeJPA==
-X-Received: by 2002:a05:6638:3786:b0:363:b82d:d510 with SMTP id w6-20020a056638378600b00363b82dd510mr9070708jal.112.1669066860689;
-        Mon, 21 Nov 2022 13:41:00 -0800 (PST)
+        bh=ImVe+g+b+10JJjRyFbVg3VQDLgN59Ue/Abv7vaFmseQ=;
+        b=Kcp2N4WxuW74dq8i9IhReK8GrQLxRdZQazmiIZ02ct7scVb5poQtaJrCFMql56AxQh
+         BovWbSIuQXPVO9TT3gxpPm8auLwOwkD+KDxYj4RRcNh4HQXEGLsZ5PhfnKFE4EnsTBkr
+         1J1/P0pn1mmNedOJ63LxMk4hRYvMzJqknVMGrjkgNRhVXBYu0HiXtdacsj6WgeBw7Wi2
+         aN13U6RlIXDtcdQBHQM52fhyQPfidUXOxMExLeSF6kZwY/p8D7/jGOjSNp4XNlAEhqLN
+         Nxlm9lINI13GSFjnmR4fpKo7wy3cqHhfDa++4W52obcm5NIqnLpVsUOWTeiPvZqedhvs
+         4piA==
+X-Gm-Message-State: ANoB5pkoeOrd9st60LdyJUqG1swRRqDaPmKr7x0aVM2uyxNThs51/mW9
+        uw0dlmxrP+FIBJLxqNWbtdKSvw==
+X-Google-Smtp-Source: AA0mqf7f7poc1w7ewSMxS1++ciq574fA83Q7zTNUSYFoHm3cWPyzQwbrRSPhTjg/tqVe+6wU++ijsA==
+X-Received: by 2002:a5d:9c0d:0:b0:6de:e346:27d4 with SMTP id 13-20020a5d9c0d000000b006dee34627d4mr639526ioe.138.1669067012402;
+        Mon, 21 Nov 2022 13:43:32 -0800 (PST)
 Received: from [192.168.1.128] ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id w11-20020a056638024b00b0037609ad8485sm4704611jaq.69.2022.11.21.13.40.57
+        by smtp.gmail.com with ESMTPSA id p5-20020a92c105000000b00302a7165d9bsm3672008ile.53.2022.11.21.13.43.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Nov 2022 13:40:59 -0800 (PST)
-Message-ID: <4585e331-03ad-959f-e715-29af15f63712@linuxfoundation.org>
-Date:   Mon, 21 Nov 2022 14:40:56 -0700
+        Mon, 21 Nov 2022 13:43:31 -0800 (PST)
+Message-ID: <26d98c8f-372b-b9c8-c29f-096cddaff149@linuxfoundation.org>
+Date:   Mon, 21 Nov 2022 14:43:29 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
@@ -103,8 +103,9 @@ References: <c2ec184226acd21a191ccc1aa46a1d7e43ca7104.1669036433.git.bcodding@re
  <cover.1669036433.git.bcodding@redhat.com>
  <382872.1669039019@warthog.procyon.org.uk>
  <51B5418D-34FB-4E87-B87A-6C3FCDF8B21C@redhat.com>
+ <4585e331-03ad-959f-e715-29af15f63712@linuxfoundation.org>
 From:   Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <51B5418D-34FB-4E87-B87A-6C3FCDF8B21C@redhat.com>
+In-Reply-To: <4585e331-03ad-959f-e715-29af15f63712@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -117,26 +118,32 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 11/21/22 07:34, Benjamin Coddington wrote:
-> On 21 Nov 2022, at 8:56, David Howells wrote:
-> 
->> Benjamin Coddington <bcodding@redhat.com> wrote:
+On 11/21/22 14:40, Shuah Khan wrote:
+> On 11/21/22 07:34, Benjamin Coddington wrote:
+>> On 21 Nov 2022, at 8:56, David Howells wrote:
 >>
->>> Since moving to memalloc_nofs_save/restore, SUNRPC has stopped setting the
->>> GFP_NOIO flag on sk_allocation which the networking system uses to decide
->>> when it is safe to use current->task_frag.
+>>> Benjamin Coddington <bcodding@redhat.com> wrote:
+>>>
+>>>> Since moving to memalloc_nofs_save/restore, SUNRPC has stopped setting the
+>>>> GFP_NOIO flag on sk_allocation which the networking system uses to decide
+>>>> when it is safe to use current->task_frag.
+>>>
+>>> Um, what's task_frag?
 >>
->> Um, what's task_frag?
+>> Its a per-task page_frag used to coalesce small writes for networking -- see:
+>>
+>> 5640f7685831 net: use a per task frag allocator
+>>
+>> Ben
+>>
+>>
 > 
-> Its a per-task page_frag used to coalesce small writes for networking -- see:
-> 
-> 5640f7685831 net: use a per task frag allocator
-> 
-> Ben
-> 
+> I am not seeing this in the mainline. Where can find this commit?
 > 
 
-I am not seeing this in the mainline. Where can find this commit?
+Okay. I see this commit in the mainline. However, I don't see the
+sk_use_task_frag in mainline.
 
 thanks,
 -- Shuah
+
