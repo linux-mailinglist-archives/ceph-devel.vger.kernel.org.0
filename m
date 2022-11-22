@@ -2,117 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 89B53633265
-	for <lists+ceph-devel@lfdr.de>; Tue, 22 Nov 2022 02:52:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC79763342B
+	for <lists+ceph-devel@lfdr.de>; Tue, 22 Nov 2022 04:45:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232375AbiKVBvq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 21 Nov 2022 20:51:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52654 "EHLO
+        id S232268AbiKVDpq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 21 Nov 2022 22:45:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231661AbiKVBvo (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 21 Nov 2022 20:51:44 -0500
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 123FCE123B;
-        Mon, 21 Nov 2022 17:51:41 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0VVPgoyJ_1669081895;
-Received: from 30.222.0.245(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0VVPgoyJ_1669081895)
-          by smtp.aliyun-inc.com;
-          Tue, 22 Nov 2022 09:51:37 +0800
-Message-ID: <0c6a44ff-409e-99b2-eaa9-fd6e87a9e104@linux.alibaba.com>
-Date:   Tue, 22 Nov 2022 09:51:35 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.4.2
-Subject: Re: [PATCH] filelock: move file locking definitions to separate
- header file
-Content-Language: en-US
-To:     Jeff Layton <jlayton@kernel.org>, Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>
-Cc:     hch@lst.de, linux-kernel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
+        with ESMTP id S232251AbiKVDpp (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 21 Nov 2022 22:45:45 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A71529371;
+        Mon, 21 Nov 2022 19:45:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=uiFDQ6s5XgAcT9HYz21ROzPo6ZCyN/YsiViP9JuL2Vc=; b=NJJwrm6IpzOJ+nUmhrd1OXfoCk
+        G7FtSuALDx10w2NwiIqoKiG9ykgmyUGgqgtM+aJpa2oS2fQRQ+RCGSFLUVL1nV3H67iQsoM+ZXI+P
+        75G75qOGTBUz2j3XL00qgcUTJotjzi0OfiKIf+ALXzMf3ZoQMf3KRnGWl+fsNnIUD5GBw7fYM0qpK
+        68xmJhc99PpF71YEvdwSpdkfVDQQinCYdj6BfJplncqBsPQyicO+REFgABedNNQo6QpK9GD/KJOMG
+        I2YH4RdEbuSk9AKSGChXb1wwhkouk4nfTA4WUiJD8aJEXUyng2vGvKiEnZPT7EPwwj7AX43JZiVeT
+        eCgYCCfg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oxKCp-005u2i-VP; Tue, 22 Nov 2022 03:44:20 +0000
+Date:   Tue, 22 Nov 2022 03:44:19 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        Christine Caulfield <ccaulfie@redhat.com>,
+        David Teigland <teigland@redhat.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        "Darrick J. Wong" <djwong@kernel.org>, hch@lst.de,
+        linux-kernel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
         linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
         samba-technical@lists.samba.org, cluster-devel@redhat.com,
         linux-nfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
         devel@lists.orangefs.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] filelock: move file locking definitions to separate
+ header file
+Message-ID: <Y3xFkyZykWp5/Rvq@casper.infradead.org>
 References: <20221120210004.381842-1-jlayton@kernel.org>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20221120210004.381842-1-jlayton@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-        USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no version=3.4.6
+ <6627384e-5514-048f-308e-57414d0c5b31@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6627384e-5514-048f-308e-57414d0c5b31@redhat.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi,
-
-On 11/21/22 4:59 AM, Jeff Layton wrote:
-> The file locking definitions have lived in fs.h since the dawn of time,
-> but they are only used by a small subset of the source files that
-> include it.
+On Mon, Nov 21, 2022 at 09:26:16AM +0800, Xiubo Li wrote:
+[1300+ lines snipped]
+> LGTM.
 > 
-> Move the file locking definitions to a new header file, and add the
-> appropriate #include directives to the source files that need them. By
-> doing this we trim down fs.h a bit and limit the amount of rebuilding
-> that has to be done when we make changes to the file locking APIs.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/9p/vfs_file.c          |   1 +
->  fs/afs/internal.h         |   1 +
->  fs/attr.c                 |   1 +
->  fs/ceph/locks.c           |   1 +
->  fs/cifs/cifsfs.c          |   1 +
->  fs/cifs/cifsglob.h        |   1 +
->  fs/cifs/cifssmb.c         |   1 +
->  fs/cifs/file.c            |   1 +
->  fs/cifs/smb2file.c        |   1 +
->  fs/dlm/plock.c            |   1 +
->  fs/fcntl.c                |   1 +
->  fs/file_table.c           |   1 +
->  fs/fuse/file.c            |   1 +
->  fs/gfs2/file.c            |   1 +
->  fs/inode.c                |   1 +
->  fs/ksmbd/smb2pdu.c        |   1 +
->  fs/ksmbd/vfs.c            |   1 +
->  fs/ksmbd/vfs_cache.c      |   1 +
->  fs/lockd/clntproc.c       |   1 +
->  fs/lockd/netns.h          |   1 +
->  fs/locks.c                |   1 +
->  fs/namei.c                |   1 +
->  fs/nfs/nfs4_fs.h          |   1 +
->  fs/nfs_common/grace.c     |   1 +
->  fs/nfsd/netns.h           |   1 +
->  fs/ocfs2/locks.c          |   1 +
->  fs/ocfs2/stack_user.c     |   1 +
+> Reviewed-by: Xiubo Li <xiubli@redhat.com>
 
-Seems it misses the related changes in:
-fs/ocfs2/stackglue.c
-
-Thanks,
-Joseph
-
->  fs/open.c                 |   1 +
->  fs/orangefs/file.c        |   1 +
->  fs/proc/fd.c              |   1 +
->  fs/utimes.c               |   1 +
->  fs/xattr.c                |   1 +
->  fs/xfs/xfs_buf.h          |   1 +
->  fs/xfs/xfs_file.c         |   1 +
->  fs/xfs/xfs_inode.c        |   1 +
->  include/linux/filelock.h  | 428 ++++++++++++++++++++++++++++++++++++++
->  include/linux/fs.h        | 421 -------------------------------------
->  include/linux/lockd/xdr.h |   1 +
->  38 files changed, 464 insertions(+), 421 deletions(-)
->  create mode 100644 include/linux/filelock.h
-> 
-> Unless anyone has objections, I'll plan to merge this in via the file
-> locking tree for v6.3. I'd appreciate Acked-bys or Reviewed-bys from
-> maintainers, however.
-> 
+You really don't need to quote the whole thing.  Please be more
+considerate.
