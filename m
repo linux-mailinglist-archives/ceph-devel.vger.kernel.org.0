@@ -2,163 +2,173 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EEF06632FDF
-	for <lists+ceph-devel@lfdr.de>; Mon, 21 Nov 2022 23:32:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B61D16331C0
+	for <lists+ceph-devel@lfdr.de>; Tue, 22 Nov 2022 02:03:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231823AbiKUWcI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 21 Nov 2022 17:32:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41336 "EHLO
+        id S231772AbiKVBDV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 21 Nov 2022 20:03:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbiKUWcH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 21 Nov 2022 17:32:07 -0500
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DF91D9BAC
-        for <ceph-devel@vger.kernel.org>; Mon, 21 Nov 2022 14:32:06 -0800 (PST)
-Received: by mail-io1-xd36.google.com with SMTP id n188so9708029iof.8
-        for <ceph-devel@vger.kernel.org>; Mon, 21 Nov 2022 14:32:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C14m+5yBrv+u7QhAN78BFentZAFfnah8l0PUC4om7m8=;
-        b=Hffgzad5MotJq5EstTpwFVQ55zJ2m4sb3dYfhAhqq6QB33wEMcRLHmm2P2eeaxcyl7
-         AuWzz1/l9u/1PZyxMCWxsiA0Q6e5fRCsSvqJb8QkirXxS7f+WkWGHtcgrG5qSrXeSLS7
-         dJYa3L0ToHNG/CDOCknNOKSmu/izuTLa+EFwY=
+        with ESMTP id S229817AbiKVBDU (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 21 Nov 2022 20:03:20 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AE60A2894
+        for <ceph-devel@vger.kernel.org>; Mon, 21 Nov 2022 17:02:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669078943;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TCliI++SK2VwVV/mu+efqGEn8wYMsS23lZMFREzOpN0=;
+        b=BSwQtWjKyOJegHRiB1FVNg5+j4jxWlYhN0lq4FfqA4MewWDycq8hMSH1ofI/V3gkrsp1fi
+        w+HPEvv9TXxKTs5PBbYz0Zon5Qef9k4Vwm/F0m3ZmOSHYQ7mRb/CnG9S9inbFx/HneBIZ9
+        tcTld50RHYYiWBBD5ZlustumT3+zoeI=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-543-03VhipPwPwivj_I8bcVQHw-1; Mon, 21 Nov 2022 20:02:21 -0500
+X-MC-Unique: 03VhipPwPwivj_I8bcVQHw-1
+Received: by mail-pj1-f72.google.com with SMTP id my9-20020a17090b4c8900b002130d29fd7cso12933997pjb.7
+        for <ceph-devel@vger.kernel.org>; Mon, 21 Nov 2022 17:02:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C14m+5yBrv+u7QhAN78BFentZAFfnah8l0PUC4om7m8=;
-        b=eedH48sjzCyMErEX43biZwUkp0NW4kvug4mYBmkZi9pViLchER7aGoUqBB1YSPe/3L
-         YBnyC+MacG2LpORtU/9ezu0x5+Vo6MInCL0+YbBmZHtJHoIyFN5WJl44ncN59U9/tqXi
-         W32nnqO8jiPrX4oj7+ksjWPcgIlxAepHeSxA+S3KatDVjICjs+/bJEtU4BLSaRKSqBBR
-         lcePQtZVYiSxb7wdYJFhlxziv0LRblhDPdrdFwpnx+g6q6fWn/CIlYNd2yeBj+PxyfrT
-         F7wlLfefKklaGttre1ly79Z0SLhTyK9DOBM8ojdZZLwSTRV6sZet4CUXQe8njiK6B/HQ
-         SndQ==
-X-Gm-Message-State: ANoB5pmYyLrwhhpNbKxqypfU81nWS93paF1LT+nPe3dk4pMhbhBtP9ql
-        1CRF/Dis2PDQn0GhrleCWIKMcA==
-X-Google-Smtp-Source: AA0mqf7LzJaZLZ7BN/ieedWyHJVfNYy1D/3fvJQ9uHDra09xLMDQnM+TgsskrmQ988UMBIXzYDc/Wg==
-X-Received: by 2002:a02:cba6:0:b0:375:a360:a130 with SMTP id v6-20020a02cba6000000b00375a360a130mr9477313jap.307.1669069925449;
-        Mon, 21 Nov 2022 14:32:05 -0800 (PST)
-Received: from [192.168.1.128] ([38.15.45.1])
-        by smtp.gmail.com with ESMTPSA id f15-20020a056638112f00b0037502ffac71sm4612316jar.18.2022.11.21.14.32.02
+        bh=TCliI++SK2VwVV/mu+efqGEn8wYMsS23lZMFREzOpN0=;
+        b=yACbBYKIZdbW1theszk0Ui99yVIZ35+S48SJh9Hl0UfODR781u5MztoPSwB3rImtFr
+         7W3r7E1f6GkgNxK3uGTMQV+J0Oeqs7GX1YntCAndGezjkQ55lyKXUsgmUofxwBBfoLZR
+         W9kwwVAnmVoa5lrKwoBaBTeOT/IJRWSr3kk40Np/zEOSzixF8TXC7QHJqyPxHDzgkilB
+         qbY4/kvJQiKNhthiksUZ8CyaYO3bya0kxzWtLCXTgj3OkjU75yNIrj048CO6Y9NYOrOF
+         llwokaxzdVD2oKzPAl0OPoH4O3IbvK90YIyDKFEcbcr2n+bAO8LaHy5TnXG7twF6H+TK
+         HEQg==
+X-Gm-Message-State: ANoB5pnZYi6DMC7/9F8/y/e8Dd6L/BRNo/BeB7Sj1nFzRTLLAb+Z4Dwa
+        8UcUYOYkJd7BIWs9TRJPuO5PlOTGS7WpoZa3HLxLW4Q3kHDQ2fDl6wtid1un5ogn2Pu/a9IBSn8
+        tgKez5XFblTajFB7nCKnA+w==
+X-Received: by 2002:a17:902:aa44:b0:189:fdf:a3d9 with SMTP id c4-20020a170902aa4400b001890fdfa3d9mr12342221plr.9.1669078940787;
+        Mon, 21 Nov 2022 17:02:20 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf5O6IFyyfSw7LoXbfb4uwV76C9iA2jeH6mN+OGq5TnncolVxXSYhHP5kr4vQZ22bw1Qb6nxaQ==
+X-Received: by 2002:a17:902:aa44:b0:189:fdf:a3d9 with SMTP id c4-20020a170902aa4400b001890fdfa3d9mr12342192plr.9.1669078940509;
+        Mon, 21 Nov 2022 17:02:20 -0800 (PST)
+Received: from [10.72.12.200] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id om10-20020a17090b3a8a00b001fde655225fsm521612pjb.2.2022.11.21.17.02.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Nov 2022 14:32:04 -0800 (PST)
-Message-ID: <96114bec-1df7-0dcb-ec99-4f907587658d@linuxfoundation.org>
-Date:   Mon, 21 Nov 2022 15:32:02 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v1 2/3] Treewide: Stop corrupting socket's task_frag
-Content-Language: en-US
-To:     Benjamin Coddington <bcodding@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>, Jens Axboe <axboe@kernel.dk>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
-        Mike Christie <michael.christie@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Steve French <sfrench@samba.org>,
-        Christine Caulfield <ccaulfie@redhat.com>,
-        David Teigland <teigland@redhat.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
+        Mon, 21 Nov 2022 17:02:19 -0800 (PST)
+Subject: Re: [PATCH v2] ceph: make sure directories aren't complete after
+ setting crypt context
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
         Ilya Dryomov <idryomov@gmail.com>,
-        Xiubo Li <xiubli@redhat.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>, drbd-dev@lists.linbit.com,
-        linux-block@vger.kernel.org, nbd@other.debian.org,
-        linux-nvme@lists.infradead.org, open-iscsi@googlegroups.com,
-        linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, v9fs-developer@lists.sourceforge.net,
-        ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <c2ec184226acd21a191ccc1aa46a1d7e43ca7104.1669036433.git.bcodding@redhat.com>
- <cover.1669036433.git.bcodding@redhat.com>
- <382872.1669039019@warthog.procyon.org.uk>
- <51B5418D-34FB-4E87-B87A-6C3FCDF8B21C@redhat.com>
- <4585e331-03ad-959f-e715-29af15f63712@linuxfoundation.org>
- <26d98c8f-372b-b9c8-c29f-096cddaff149@linuxfoundation.org>
- <A860595D-5BAB-461B-B449-8975C0424311@redhat.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <A860595D-5BAB-461B-B449-8975C0424311@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Jeff Layton <jlayton@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221121180004.8038-1-lhenriques@suse.de>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <fbce8a0b-340b-0d82-ffbc-1245e30876f9@redhat.com>
+Date:   Tue, 22 Nov 2022 09:02:15 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
+MIME-Version: 1.0
+In-Reply-To: <20221121180004.8038-1-lhenriques@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 11/21/22 15:01, Benjamin Coddington wrote:
-> On 21 Nov 2022, at 16:43, Shuah Khan wrote:
-> 
->> On 11/21/22 14:40, Shuah Khan wrote:
->>> On 11/21/22 07:34, Benjamin Coddington wrote:
->>>> On 21 Nov 2022, at 8:56, David Howells wrote:
->>>>
->>>>> Benjamin Coddington <bcodding@redhat.com> wrote:
->>>>>
->>>>>> Since moving to memalloc_nofs_save/restore, SUNRPC has stopped setting the
->>>>>> GFP_NOIO flag on sk_allocation which the networking system uses to decide
->>>>>> when it is safe to use current->task_frag.
->>>>>
->>>>> Um, what's task_frag?
->>>>
->>>> Its a per-task page_frag used to coalesce small writes for networking -- see:
->>>>
->>>> 5640f7685831 net: use a per task frag allocator
->>>>
->>>> Ben
->>>>
->>>>
->>>
->>> I am not seeing this in the mainline. Where can find this commit?
->>>
->>
->> Okay. I see this commit in the mainline. However, I don't see the
->> sk_use_task_frag in mainline.
-> 
-> sk_use_task_frag is in patch 1/3 in this posting.
-> 
-> https://lore.kernel.org/netdev/26d98c8f-372b-b9c8-c29f-096cddaff149@linuxfoundation.org/T/#m3271959c4cf8dcff1c0c6ba023b2b3821d9e7e99
-> 
 
-Aha. I don't have 1/3 in my Inbox - I think it would make
-sense to cc people on the first patch so we can understand
-the premise for the change.
+On 22/11/2022 02:00, Luís Henriques wrote:
+> When setting a directory's crypt context, __ceph_dir_clear_complete() needs
+> to be used otherwise, if it was complete before, any old dentry that's still
+> around will be valid.
+>
+> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+> ---
+> Hi Xiubo!
+>
+> I've added the __fscrypt_prepare_readdir() wrapper as you suggested, but I
+> had to change it slightly because we also need to handle the error cases.
+>
+> Changes since v1:
+> - Moved the __ceph_dir_clear_complete() call from ceph_crypt_get_context()
+>    to ceph_lookup().
+> - Added an __fscrypt_prepare_readdir() wrapper to check key status changes
+>
+>   fs/ceph/dir.c | 31 ++++++++++++++++++++++++++++---
+>   1 file changed, 28 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index edc2bf0aab83..2cac7e3ab352 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -763,6 +763,27 @@ static bool is_root_ceph_dentry(struct inode *inode, struct dentry *dentry)
+>   		strncmp(dentry->d_name.name, ".ceph", 5) == 0;
+>   }
+>   
+> +/*
+> + * Simple wrapper around __fscrypt_prepare_readdir() that will return:
+> + *
+> + * - '1' if directory was locked and key is now loaded (i.e. dir is unlocked),
+> + * - '0' if directory is still locked, or
+> + * - an error (< 0) if __fscrypt_prepare_readdir() fails.
+> + */
+> +static int ceph_fscrypt_prepare_readdir(struct inode *dir)
+> +{
+> +	bool had_key = fscrypt_has_encryption_key(dir);
+> +	int err;
+> +
+> +	err = __fscrypt_prepare_readdir(dir);
+> +	if (err)
+> +		return err;
+> +	/* is directory now unlocked? */
+> +	if (!had_key && fscrypt_has_encryption_key(dir))
+> +		return 1;
+> +	return 0;
+> +}
+> +
+>   /*
+>    * Look up a single dir entry.  If there is a lookup intent, inform
+>    * the MDS so that it gets our 'caps wanted' value in a single op.
+> @@ -784,10 +805,14 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
+>   		return ERR_PTR(-ENAMETOOLONG);
+>   
+>   	if (IS_ENCRYPTED(dir)) {
+> -		err = __fscrypt_prepare_readdir(dir);
+> -		if (err)
+> +		err = ceph_fscrypt_prepare_readdir(dir);
+> +		if (err < 0)
+>   			return ERR_PTR(err);
+> -		if (!fscrypt_has_encryption_key(dir)) {
+> +		if (err) {
+> +			/* directory just got unlocked */
+> +			__ceph_dir_clear_complete(ceph_inode(dir));
 
-thanks,
--- Shuah
-  
+Luis,
+
+Could we just move this into ceph_fscrypt_prepare_readdir() ? IMO we 
+should always clear the complete flag always whenever the key is first 
+loaded.
+
+> +		} else {
+> +			/* no encryption key */
+
+I think you also need to fix all the other places, which are calling the 
+__fscrypt_prepare_readdir() or fscrypt_prepare_readdir() in ceph. 
+Because we don't know the ceph_lookup() will always be the first caller 
+to trigger __fscrypt_prepare_readdir() for a dir.
+
+Thanks!
+
+- Xiubo
+
+>   			spin_lock(&dentry->d_lock);
+>   			dentry->d_flags |= DCACHE_NOKEY_NAME;
+>   			spin_unlock(&dentry->d_lock);
+>
 
