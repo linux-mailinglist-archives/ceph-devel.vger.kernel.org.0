@@ -2,156 +2,83 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 153C063723C
-	for <lists+ceph-devel@lfdr.de>; Thu, 24 Nov 2022 07:06:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD37C6380EE
+	for <lists+ceph-devel@lfdr.de>; Thu, 24 Nov 2022 23:39:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229520AbiKXGGg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 24 Nov 2022 01:06:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48262 "EHLO
+        id S229497AbiKXWjL convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+ceph-devel@lfdr.de>); Thu, 24 Nov 2022 17:39:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbiKXGGc (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Nov 2022 01:06:32 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01DC762C2
-        for <ceph-devel@vger.kernel.org>; Wed, 23 Nov 2022 22:05:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669269935;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ychXybStwuiwH+16Z3KvFyXKihd+CKffz1NArMrRPUc=;
-        b=Iaifx3EJWmbs9xwFVwAspaHx9V3V3vLPxU8H7E6Mwst7YBeuqYHkz+ozExz9G11i40kukN
-        6B1e73PkVVnzxniCbhgLPYhli08hRa7Cc2Cv03RLhnnuB8u42ErEvHQMqwAzFaFEOQa3IE
-        l0+Womj8uMays9NfEdM9timbGYP1Psc=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-547-GPbb6DILO6msvXy-QSew2g-1; Thu, 24 Nov 2022 01:05:33 -0500
-X-MC-Unique: GPbb6DILO6msvXy-QSew2g-1
-Received: by mail-pf1-f199.google.com with SMTP id v16-20020a62a510000000b005745a58c197so610507pfm.23
-        for <ceph-devel@vger.kernel.org>; Wed, 23 Nov 2022 22:05:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ychXybStwuiwH+16Z3KvFyXKihd+CKffz1NArMrRPUc=;
-        b=5smIFF3PYUOBrTOCqWSxW0qD9j5n94LvsiNsx3Txjt0ld2b5uGd2JynC5WvQ7IDfB0
-         hoZbOIGj98a8vf5GMnQn94DlVN74GBaofUPgR3tOd0kybehuDXB5ouwdtFT07oLdaEtG
-         jXGqGRvSiuBk9sWZVi/WlKlWR2DCiRaVdAmCrB7ZJGjG+XN8y4hiVipFT5URbicT/KjG
-         fNWRrcDlqJRlxuJH9Cdu4DUByUf5KIzPSagaRnpByIpZX3xlVG2wPC1l0gtTYMoHsfGl
-         8aF3X/Sgb0ppSRxkt2XAhCvhFPw9LNz5uXiQ58hE4LtLp6NitYXoeXv/G/gxsXIigOb4
-         zkDg==
-X-Gm-Message-State: ANoB5pkwNhPSwFX/hi1C6NaI/QV+rb+JUW5ayC/LaMc6GI9AijRQyfoK
-        ngTuQuf8pYOY/FQQ3asR485zf6XyAWr1XaDMrIiiMROM3wn0pvYICrcEamOHPBbLDa+8ny9nQW6
-        3eLI2sxA4TwtA95yCGvvGSw==
-X-Received: by 2002:a17:90b:24f:b0:218:96da:b09a with SMTP id fz15-20020a17090b024f00b0021896dab09amr18790401pjb.118.1669269932052;
-        Wed, 23 Nov 2022 22:05:32 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf6mExkEEIZbXLvMKSw/fR/Qp6rTtuXStnr/YYjeP9fnuG06v+y4gcj/MT1aNcPKBukmgEjvnw==
-X-Received: by 2002:a17:90b:24f:b0:218:96da:b09a with SMTP id fz15-20020a17090b024f00b0021896dab09amr18790380pjb.118.1669269931786;
-        Wed, 23 Nov 2022 22:05:31 -0800 (PST)
-Received: from [10.72.12.138] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id p16-20020a1709027ed000b0018685aaf41dsm296836plb.18.2022.11.23.22.05.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Nov 2022 22:05:31 -0800 (PST)
-Subject: Re: [PATCH] filelock: new helper: vfs_inode_has_locks
-To:     Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc:     ceph-devel@vger.kernel.org, chuck.lever@oracle.com,
-        Christoph Hellwig <hch@infradead.org>
-References: <20221116112658.8793-1-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <18904f74-8d73-752e-bfdc-c18483493b9a@redhat.com>
-Date:   Thu, 24 Nov 2022 14:05:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        with ESMTP id S229452AbiKXWjK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Nov 2022 17:39:10 -0500
+Received: from correos.bolipuertos.gob.ve.bolipuertos.gob.ve (correo.bolipuertos.gob.ve [190.202.28.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D70C95C755
+        for <ceph-devel@vger.kernel.org>; Thu, 24 Nov 2022 14:39:09 -0800 (PST)
+Received: from correo.bolipuertos.gob.ve ([10.50.23.160])
+        by correos.bolipuertos.gob.ve.bolipuertos.gob.ve  with ESMTP id 2ANDuNPR030754-2ANDuNPT030754
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 23 Nov 2022 09:56:23 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by correo.bolipuertos.gob.ve (Postfix) with ESMTP id 9C925AC0FF8;
+        Wed, 23 Nov 2022 09:56:23 -0400 (-04)
+Received: from correo.bolipuertos.gob.ve ([127.0.0.1])
+        by localhost (correo.bolipuertos.gob.ve [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Xabini2BBbzT; Wed, 23 Nov 2022 09:56:23 -0400 (-04)
+Received: from localhost (localhost [127.0.0.1])
+        by correo.bolipuertos.gob.ve (Postfix) with ESMTP id 5F145AC1A3F;
+        Wed, 23 Nov 2022 09:56:23 -0400 (-04)
+X-Virus-Scanned: amavisd-new at bolipuertos.gob.ve
+Received: from correo.bolipuertos.gob.ve ([127.0.0.1])
+        by localhost (correo.bolipuertos.gob.ve [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id i5sd_EGsoUr2; Wed, 23 Nov 2022 09:56:23 -0400 (-04)
+Received: from [103.125.190.179] (unknown [103.125.190.179])
+        by correo.bolipuertos.gob.ve (Postfix) with ESMTPSA id 01001AC0FF8;
+        Wed, 23 Nov 2022 09:56:16 -0400 (-04)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-In-Reply-To: <20221116112658.8793-1-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: Strategic plan on(ROI)
+To:     Recipients <cindy@cgracephoto.com>
+From:   "Mr.IgorS. Lvovich" <cindy@cgracephoto.com>
+Date:   Wed, 23 Nov 2022 05:56:10 -0800
+Reply-To: richad.tang@yahoo.com.hk
+Message-Id: <20221123135617.01001AC0FF8@correo.bolipuertos.gob.ve>
+X-FE-Last-Public-Client-IP: 103.125.190.179
+X-FE-Policy-ID: 1:1:2:SYSTEM
+X-Spam-Status: Yes, score=5.3 required=5.0 tests=BAYES_50,
+        FREEMAIL_FORGED_REPLYTO,HK_NAME_MR_MRS,KHOP_HELO_FCRDNS,
+        RCVD_IN_MSPIKE_H2,RCVD_IN_SBL,RCVD_IN_VALIDITY_RPBL,SPF_FAIL,
+        SPF_HELO_NONE,TO_EQ_FM_DOM_SPF_FAIL,TO_EQ_FM_SPF_FAIL autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Report: *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.1 RCVD_IN_SBL RBL: Received via a relay in Spamhaus SBL
+        *      [103.125.190.179 listed in zen.spamhaus.org]
+        *  1.3 RCVD_IN_VALIDITY_RPBL RBL: Relay in Validity RPBL,
+        *      https://senderscore.org/blocklistlookup/
+        *      [190.202.28.106 listed in bl.score.senderscore.com]
+        * -0.0 RCVD_IN_MSPIKE_H2 RBL: Average reputation (+2)
+        *      [190.202.28.106 listed in wl.mailspike.net]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.0 SPF_FAIL SPF: sender does not match SPF record (fail)
+        *      [SPF failed: Please see http://www.openspf.org/Why?s=mfrom;id=cindy%40cgracephoto.com;ip=190.202.28.106;r=lindbergh.monkeyblade.net]
+        *  1.0 HK_NAME_MR_MRS No description available.
+        *  2.1 FREEMAIL_FORGED_REPLYTO Freemail in Reply-To, but not From
+        *  0.0 TO_EQ_FM_DOM_SPF_FAIL To domain == From domain and external SPF
+        *       failed
+        *  0.0 TO_EQ_FM_SPF_FAIL To == From and external SPF failed
+        *  0.0 KHOP_HELO_FCRDNS Relay HELO differs from its IP's reverse DNS
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff,
+Hello
+I will like to use the liberty of this medium to inform you as a consultant,that my principal is interested in investing his bond/funds as a silent business partner in your company.Taking into proper
+consideration the Return on Investment(ROI) based on a ten (10) year strategic plan.
+I shall give you details when you reply.
 
-I have tested this and it worked very well for ceph.
-
-Tested-by: Xiubo Li <xiubli@redhat.com>
-
-Thanks!
-
-- Xiubo
-
-On 16/11/2022 19:26, Jeff Layton wrote:
-> Ceph has a need to know whether a particular inode has any locks set on
-> it. It's currently tracking that by a num_locks field in its
-> filp->private_data, but that's problematic as it tries to decrement this
-> field when releasing locks and that can race with the file being torn
-> down.
->
-> Add a new vfs_inode_has_locks helper that just returns whether any locks
-> are currently held on the inode.
->
-> Cc: Xiubo Li <xiubli@redhat.com>
-> Reviewed-by: Christoph Hellwig <hch@infradead.org>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/locks.c         | 23 +++++++++++++++++++++++
->   include/linux/fs.h |  1 +
->   2 files changed, 24 insertions(+)
->
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 5876c8ff0edc..9ccf89b6c95d 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -2672,6 +2672,29 @@ int vfs_cancel_lock(struct file *filp, struct file_lock *fl)
->   }
->   EXPORT_SYMBOL_GPL(vfs_cancel_lock);
->   
-> +/**
-> + * vfs_inode_has_locks - are any file locks held on @inode?
-> + * @inode: inode to check for locks
-> + *
-> + * Return true if there are any FL_POSIX or FL_FLOCK locks currently
-> + * set on @inode.
-> + */
-> +bool vfs_inode_has_locks(struct inode *inode)
-> +{
-> +	struct file_lock_context *ctx;
-> +	bool ret;
-> +
-> +	ctx = smp_load_acquire(&inode->i_flctx);
-> +	if (!ctx)
-> +		return false;
-> +
-> +	spin_lock(&ctx->flc_lock);
-> +	ret = !list_empty(&ctx->flc_posix) || !list_empty(&ctx->flc_flock);
-> +	spin_unlock(&ctx->flc_lock);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(vfs_inode_has_locks);
-> +
->   #ifdef CONFIG_PROC_FS
->   #include <linux/proc_fs.h>
->   #include <linux/seq_file.h>
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e654435f1651..d6cb42b7e91c 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1170,6 +1170,7 @@ extern int locks_delete_block(struct file_lock *);
->   extern int vfs_test_lock(struct file *, struct file_lock *);
->   extern int vfs_lock_file(struct file *, unsigned int, struct file_lock *, struct file_lock *);
->   extern int vfs_cancel_lock(struct file *filp, struct file_lock *fl);
-> +bool vfs_inode_has_locks(struct inode *inode);
->   extern int locks_lock_inode_wait(struct inode *inode, struct file_lock *fl);
->   extern int __break_lease(struct inode *inode, unsigned int flags, unsigned int type);
->   extern void lease_get_mtime(struct inode *, struct timespec64 *time);
-
+Regards,
