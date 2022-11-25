@@ -2,83 +2,111 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD37C6380EE
-	for <lists+ceph-devel@lfdr.de>; Thu, 24 Nov 2022 23:39:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A1756382BC
+	for <lists+ceph-devel@lfdr.de>; Fri, 25 Nov 2022 04:35:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229497AbiKXWjL convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+ceph-devel@lfdr.de>); Thu, 24 Nov 2022 17:39:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47244 "EHLO
+        id S229604AbiKYDf1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 24 Nov 2022 22:35:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbiKXWjK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Nov 2022 17:39:10 -0500
-Received: from correos.bolipuertos.gob.ve.bolipuertos.gob.ve (correo.bolipuertos.gob.ve [190.202.28.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D70C95C755
-        for <ceph-devel@vger.kernel.org>; Thu, 24 Nov 2022 14:39:09 -0800 (PST)
-Received: from correo.bolipuertos.gob.ve ([10.50.23.160])
-        by correos.bolipuertos.gob.ve.bolipuertos.gob.ve  with ESMTP id 2ANDuNPR030754-2ANDuNPT030754
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 23 Nov 2022 09:56:23 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by correo.bolipuertos.gob.ve (Postfix) with ESMTP id 9C925AC0FF8;
-        Wed, 23 Nov 2022 09:56:23 -0400 (-04)
-Received: from correo.bolipuertos.gob.ve ([127.0.0.1])
-        by localhost (correo.bolipuertos.gob.ve [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Xabini2BBbzT; Wed, 23 Nov 2022 09:56:23 -0400 (-04)
-Received: from localhost (localhost [127.0.0.1])
-        by correo.bolipuertos.gob.ve (Postfix) with ESMTP id 5F145AC1A3F;
-        Wed, 23 Nov 2022 09:56:23 -0400 (-04)
-X-Virus-Scanned: amavisd-new at bolipuertos.gob.ve
-Received: from correo.bolipuertos.gob.ve ([127.0.0.1])
-        by localhost (correo.bolipuertos.gob.ve [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id i5sd_EGsoUr2; Wed, 23 Nov 2022 09:56:23 -0400 (-04)
-Received: from [103.125.190.179] (unknown [103.125.190.179])
-        by correo.bolipuertos.gob.ve (Postfix) with ESMTPSA id 01001AC0FF8;
-        Wed, 23 Nov 2022 09:56:16 -0400 (-04)
-Content-Type: text/plain; charset="iso-8859-1"
+        with ESMTP id S229453AbiKYDf0 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Nov 2022 22:35:26 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B753C2982C;
+        Thu, 24 Nov 2022 19:35:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=f8/x32fER3aRdejEpsCx+wOLDBv/ItD+V8F3NbSrtbc=; b=r01ynWszvCOW0gRReJc0mPmaeT
+        4udkpjpGBia+sXIkLIOXBsuaTlBVVkhuppKmpDdjkBhDkp9t+rxXxKEZfC7Fah0vLuWEsX16J14kQ
+        iTDi+/xmZDYDDpRiJO3Ln80mvbANCN9dZ1YHac6GOcrRJjA/aE2lJaIL/tDDVCfEUylL4CZlZXZZX
+        nbCeFUeaVpnHpD9IQVhtUafE52qEQizDsH/bqXEg2ls1U9f8Vd+QBwZpM706f8WpTgGDI09nTdvx6
+        baGfSswMUU47TynqNM8QZmdIAaIBUdKFdNBuvYwagQEw9nbEwfjDKkq/hBZ4WObbqHj0I0Imkq+By
+        1qK4U+Ig==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1oyPTi-006a41-0t;
+        Fri, 25 Nov 2022 03:34:14 +0000
+Date:   Fri, 25 Nov 2022 03:34:14 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        Christine Caulfield <ccaulfie@redhat.com>,
+        David Teigland <teigland@redhat.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        "Darrick J. Wong" <djwong@kernel.org>, hch@lst.de,
+        linux-kernel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        devel@lists.orangefs.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] filelock: move file locking definitions to separate
+ header file
+Message-ID: <Y4A3tmISFIR7ERfE@ZenIV>
+References: <20221120210004.381842-1-jlayton@kernel.org>
+ <Y3xHQwM3UiD/SK0K@casper.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Strategic plan on(ROI)
-To:     Recipients <cindy@cgracephoto.com>
-From:   "Mr.IgorS. Lvovich" <cindy@cgracephoto.com>
-Date:   Wed, 23 Nov 2022 05:56:10 -0800
-Reply-To: richad.tang@yahoo.com.hk
-Message-Id: <20221123135617.01001AC0FF8@correo.bolipuertos.gob.ve>
-X-FE-Last-Public-Client-IP: 103.125.190.179
-X-FE-Policy-ID: 1:1:2:SYSTEM
-X-Spam-Status: Yes, score=5.3 required=5.0 tests=BAYES_50,
-        FREEMAIL_FORGED_REPLYTO,HK_NAME_MR_MRS,KHOP_HELO_FCRDNS,
-        RCVD_IN_MSPIKE_H2,RCVD_IN_SBL,RCVD_IN_VALIDITY_RPBL,SPF_FAIL,
-        SPF_HELO_NONE,TO_EQ_FM_DOM_SPF_FAIL,TO_EQ_FM_SPF_FAIL autolearn=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y3xHQwM3UiD/SK0K@casper.infradead.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
-X-Spam-Report: *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.1 RCVD_IN_SBL RBL: Received via a relay in Spamhaus SBL
-        *      [103.125.190.179 listed in zen.spamhaus.org]
-        *  1.3 RCVD_IN_VALIDITY_RPBL RBL: Relay in Validity RPBL,
-        *      https://senderscore.org/blocklistlookup/
-        *      [190.202.28.106 listed in bl.score.senderscore.com]
-        * -0.0 RCVD_IN_MSPIKE_H2 RBL: Average reputation (+2)
-        *      [190.202.28.106 listed in wl.mailspike.net]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.0 SPF_FAIL SPF: sender does not match SPF record (fail)
-        *      [SPF failed: Please see http://www.openspf.org/Why?s=mfrom;id=cindy%40cgracephoto.com;ip=190.202.28.106;r=lindbergh.monkeyblade.net]
-        *  1.0 HK_NAME_MR_MRS No description available.
-        *  2.1 FREEMAIL_FORGED_REPLYTO Freemail in Reply-To, but not From
-        *  0.0 TO_EQ_FM_DOM_SPF_FAIL To domain == From domain and external SPF
-        *       failed
-        *  0.0 TO_EQ_FM_SPF_FAIL To == From and external SPF failed
-        *  0.0 KHOP_HELO_FCRDNS Relay HELO differs from its IP's reverse DNS
-X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hello
-I will like to use the liberty of this medium to inform you as a consultant,that my principal is interested in investing his bond/funds as a silent business partner in your company.Taking into proper
-consideration the Return on Investment(ROI) based on a ten (10) year strategic plan.
-I shall give you details when you reply.
+On Tue, Nov 22, 2022 at 03:51:31AM +0000, Matthew Wilcox wrote:
+> On Sun, Nov 20, 2022 at 03:59:57PM -0500, Jeff Layton wrote:
+> > Move the file locking definitions to a new header file, and add the
+> > appropriate #include directives to the source files that need them. By
+> > doing this we trim down fs.h a bit and limit the amount of rebuilding
+> > that has to be done when we make changes to the file locking APIs.
+> 
+> I'm in favour of this in general, but I think there's a few implicit
+> includes.  Can you create a test.c that only #include
+> <linnux/filelock.h> and see if there's anything missing?
+> 
+> > +	wait_queue_head_t fl_wait;
+> > +	struct file *fl_file;
+> 
+> These two seem undefined at this point.
+> 
+> > +	struct fasync_struct *	fl_fasync; /* for lease break notifications */
+> 
+> Likewise.
 
-Regards,
+#include <linux/wait.h>
+
+struct file;
+struct fasync_struct;
+
+
