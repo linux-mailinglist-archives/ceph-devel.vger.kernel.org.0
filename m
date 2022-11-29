@@ -2,69 +2,154 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 938A963C900
-	for <lists+ceph-devel@lfdr.de>; Tue, 29 Nov 2022 21:11:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ACEB63CB1E
+	for <lists+ceph-devel@lfdr.de>; Tue, 29 Nov 2022 23:38:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237247AbiK2UL4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 29 Nov 2022 15:11:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51608 "EHLO
+        id S236896AbiK2Wim (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 29 Nov 2022 17:38:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237240AbiK2ULw (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 29 Nov 2022 15:11:52 -0500
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A5115E9C7
-        for <ceph-devel@vger.kernel.org>; Tue, 29 Nov 2022 12:11:51 -0800 (PST)
-Received: by mail-ej1-x62c.google.com with SMTP id ml11so11614040ejb.6
-        for <ceph-devel@vger.kernel.org>; Tue, 29 Nov 2022 12:11:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SzBlYeGeT15Xra75w9IZDBjQ7Da3XKSmRdlnDJDYrko=;
-        b=legvGcKgmwLAMK4y4XOe/MwITozgdgtfyHeG3Kd+G99qcMNEQ2mbsZFO8njO+4iBKo
-         puZe+5IR5hZuWNIE/QPaZpXAxcfz+4ifTezGwBi83xffaBF6FrpiCfindu1rplLnwxec
-         UTSk3iVPPWTfcs5G1+0IlnyP5HnFyF4sdf7rhpW6bERbUZMv22yuIf99gZBfuf3v5jHg
-         V1fuI9CUwj+3+n1XRLD3Ss/wvKC9NyXwzKFm1jBmbqtNCqC3SpCsdl6/kFiZRUneryLz
-         13nfMdGti3nXpXcOORLWaOraD9rtlXXdA+98wpxJ+kM3T9EA7rxK3tDE+FFm1NcTv9l+
-         miQQ==
+        with ESMTP id S236711AbiK2Wij (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 29 Nov 2022 17:38:39 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1326012771
+        for <ceph-devel@vger.kernel.org>; Tue, 29 Nov 2022 14:37:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669761464;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nn5S5p+3X2iJPOWnTWOqifTtu6vA9YRlhoSe/H1ILk8=;
+        b=Rg/vOuWfmo1qABhoBJIm5DuaHbR0oSZk1aHLaLNwc0Oz2iE2UGW/vNMzDh803vUQa9NL3W
+        jSx70y0kwi2BxSY6IN1T6YLIDCpCGkskM/jCjhO2lJKZ4H0f51qPa4eTu+lCb/+ZHzSjGm
+        YsyzRWk3IN28z17c9CT8zds6BqkNOKM=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-9-YQ9ycnLxNrSE-YbBHpurJg-1; Tue, 29 Nov 2022 17:37:35 -0500
+X-MC-Unique: YQ9ycnLxNrSE-YbBHpurJg-1
+Received: by mail-pj1-f69.google.com with SMTP id l2-20020a17090add8200b00218daa1a812so9911907pjv.3
+        for <ceph-devel@vger.kernel.org>; Tue, 29 Nov 2022 14:37:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SzBlYeGeT15Xra75w9IZDBjQ7Da3XKSmRdlnDJDYrko=;
-        b=k950zxlZt2idl4tdy5EE8XVpbtMHfiIF+fapv2/JcX/R+zLUPU44aSAYx0U85ij/ma
-         227ndS/NCJS1bZ7joQ4hrw+SOZJYgV9sPHKTw20lge0OoxuEG3EVk6QGCgwd0lsXafvL
-         IvXBjrbT82RdU1NTTRU257f+n+m8Sm/vCHnQd2Hy07FeMvMRW18+LlPJaN5llAO7dVBW
-         secksFzcw70K4IpES37M1MchOTn8U8awTdrkSAq5bfsmy2CON19Jkx3DpbIF3vu21Y3Q
-         zIjbmqJopw+srb+9NvJULe91ePFVOxKg/C3qvNaeBTSSVoJc/lyo59YKM4/1g9ZrYV5V
-         Tj/A==
-X-Gm-Message-State: ANoB5pnjE9bqF28uN3WGPw6VxUvNrFDzqHKrFqOp4o6mH8FhHXnQE9NG
-        PGImPHnFPjhN/VDzEA2oynipsGiU08Hd5ZJTGEs=
-X-Google-Smtp-Source: AA0mqf6n4eQhncAoUDm40s1F04NIWUFeOghviULUaNZk+okN/FBUf/6ix35VhVwVMgAbdOOpj27nrcrT11y8WhgFCo4=
-X-Received: by 2002:a17:906:3a09:b0:78d:6655:d12e with SMTP id
- z9-20020a1709063a0900b0078d6655d12emr34556543eje.260.1669752709273; Tue, 29
- Nov 2022 12:11:49 -0800 (PST)
+        bh=nn5S5p+3X2iJPOWnTWOqifTtu6vA9YRlhoSe/H1ILk8=;
+        b=HHQTDm2ZQTuBtHNHsu7kJvT7C1YaPyvblU/nWAYoFK86qGgJQhmYqn9thm1Ydp2SJT
+         CI6cqEXUpmhDDykQqjsuQhNR6EObBy+rQJy9H2YzeNIc6Au8Uxziu4lB1siKMmd2ch35
+         g/DyLSPlkjywNvLfaYf0fgZ8ptWeO361ytBABsilzExBQeyA9uIytOcVJg7IxEiSTy9D
+         2z+HMe4xMdTJBwQhRjs/LGpbWpgzH+EGjFo2JcQV+qYtS/uAtzlpBOARJAR/nCaenVkL
+         HVwvPtzvUSv5b1R+EVSuAuGN2HeNWpWXMRpdw2MGu4Lf0/b2cCEpAuAdJDXNnu2lWEPT
+         dZdg==
+X-Gm-Message-State: ANoB5plbKziUj4g7PPxlXw5LgN3ZxVzUZHum2X1b4dnAoYAP8YGhtwhK
+        TNxfWPbEOtrftqzBqxdfYTVJGZZDzNt5RTMFQ0tZrq9yFcZ6rgazlDij38/mxDWpz6IhkmpmLB5
+        K7CMAZIMt2jD9em8HswAVZw==
+X-Received: by 2002:a17:902:8b89:b0:186:9c43:5969 with SMTP id ay9-20020a1709028b8900b001869c435969mr50706376plb.32.1669761454371;
+        Tue, 29 Nov 2022 14:37:34 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf6UgvM3kKHX8zA0TDXg2cT1SfeYPj1CCQNC2IU+eO5niMvjHNPCf+uu6vVJdRWK6trsR5ZxzQ==
+X-Received: by 2002:a17:902:8b89:b0:186:9c43:5969 with SMTP id ay9-20020a1709028b8900b001869c435969mr50706354plb.32.1669761454083;
+        Tue, 29 Nov 2022 14:37:34 -0800 (PST)
+Received: from [10.72.12.126] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id d12-20020a17090a2a4c00b0021952b5e9bcsm1739923pjg.53.2022.11.29.14.37.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Nov 2022 14:37:33 -0800 (PST)
+Subject: Re: [PATCH v4] ceph: mark directory as non-complete complete after
+ loading key
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Venky Shankar <vshankar@redhat.com>,
+        Gregory Farnum <gfarnum@redhat.com>,
+        =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20221129103949.19737-1-lhenriques@suse.de>
+ <4914a195-edc0-747b-6598-9ac9868593a1@redhat.com>
+ <CAOi1vP8raoFP2dsc6RY1fONCsHh5FYv2xifFY7pHXZWX=-vePw@mail.gmail.com>
+ <20e0674a-4e51-a352-9ce2-d939cd4f3725@redhat.com>
+ <CAOi1vP_H8jE4ZU4a4srhQev3odECgZD1LyxA8dv+Fk-bVDvoyQ@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <fcbba3e5-9187-c174-a783-ddf08925b3da@redhat.com>
+Date:   Wed, 30 Nov 2022 06:37:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Received: by 2002:a17:907:8747:b0:7ae:e68c:886c with HTTP; Tue, 29 Nov 2022
- 12:11:47 -0800 (PST)
-Reply-To: mr.abraham022@gmail.com
-From:   "Mr.Abraham" <joykekeli3@gmail.com>
-Date:   Tue, 29 Nov 2022 20:11:47 +0000
-Message-ID: <CAKaeHTfQvAVuxhh9eS3K9RA6NdSD6Pk+w=fa1WJqh-H+jdHVaQ@mail.gmail.com>
-Subject: hi
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=4.9 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_FM_MR_MRS,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ****
+In-Reply-To: <CAOi1vP_H8jE4ZU4a4srhQev3odECgZD1LyxA8dv+Fk-bVDvoyQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-My Greeting, Did you receive the letter i sent to you. Please answer me.
-Regard, Mr.Abraham
+
+On 29/11/2022 23:21, Ilya Dryomov wrote:
+> On Tue, Nov 29, 2022 at 3:50 PM Xiubo Li <xiubli@redhat.com> wrote:
+>>
+>> On 29/11/2022 22:32, Ilya Dryomov wrote:
+>>> On Tue, Nov 29, 2022 at 3:15 PM Xiubo Li <xiubli@redhat.com> wrote:
+>>>> On 29/11/2022 18:39, Luís Henriques wrote:
+>>>>> When setting a directory's crypt context, ceph_dir_clear_complete() needs to
+>>>>> be called otherwise if it was complete before, any existing (old) dentry will
+>>>>> still be valid.
+>>>>>
+>>>>> This patch adds a wrapper around __fscrypt_prepare_readdir() which will
+>>>>> ensure a directory is marked as non-complete if key status changes.
+>>>>>
+>>>>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+>>>>> ---
+>>>>> Hi Xiubo,
+>>>>>
+>>>>> Here's a rebase of this patch.  I did some testing but since this branch
+>>>>> doesn't really have full fscrypt support, I couldn't even reproduce the
+>>>>> bug.  So, my testing was limited.
+>>>> I'm planing not to update the wip-fscrypt branch any more, except the IO
+>>>> path related fixes, which may introduce potential bugs each time as before.
+>>>>
+>>>> Since the qa tests PR has finished and the tests have passed, so we are
+>>>> planing to merge the first none IO part, around 27 patches. And then
+>>>> pull the reset patches from wip-fscrypt branch.
+>>> I'm not sure if merging metadata and I/O path patches separately
+>>> makes sense.  What would a user do with just filename encryption?
+>> Hi Ilya,
+>>
+>> I think the IO ones should be followed soon.
+>>
+>> Currently the filename ones have been well testes. And the contents will
+>> be by passed for now.
+>>
+>> Since this is just for Dev Preview feature IMO it should be okay (?)
+> I don't think there is such a thing as a Dev Preview feature when it
+> comes to the mainline kernel, particularly in the area of filesystems
+> and storage.  It should be ready for users at least to some extent.  So
+> my question stands: what would a user do with just filename encryption?
+
+Before why split these patches was that, the content patches will change 
+a lot and this may will stay in the testing branch for months. This will 
+make it hard to test and rebase the non-encrypt patches based on encrypt 
+ones when trying to pick and merge them.
+
+The filename ones are simple and won't have the issue.
+
+No worry, I can try to pick the content patches from wip-fscrypt branch 
+soon. But before that please help check the existing non-encypt patches 
+in the testing branch are okay and won't do big change later, which will 
+always make me to rebase the content patches again and again and may 
+involve many changes and potential bugs.
+
+Thanks!
+
+- Xiubo
+
+
+> Thanks,
+>
+>                  Ilya
+>
+
