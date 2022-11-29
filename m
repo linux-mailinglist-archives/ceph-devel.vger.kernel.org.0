@@ -2,70 +2,98 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BA4963C396
-	for <lists+ceph-devel@lfdr.de>; Tue, 29 Nov 2022 16:22:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C71063C5B2
+	for <lists+ceph-devel@lfdr.de>; Tue, 29 Nov 2022 17:54:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235027AbiK2PW3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 29 Nov 2022 10:22:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45730 "EHLO
+        id S236448AbiK2QyQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 29 Nov 2022 11:54:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235277AbiK2PWH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 29 Nov 2022 10:22:07 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3487860361;
-        Tue, 29 Nov 2022 07:21:35 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id n21so34581233ejb.9;
-        Tue, 29 Nov 2022 07:21:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T7wvGwt+dN4+DiJ9hB5IVdY0Pgs4QchSkXpHI/89Yd0=;
-        b=IVjz/V1qBfSOBqjJcu415bL9eRKElmmO5iFTelSWJGfBZQN5TD4eW05JZs8taoEzqU
-         OFztI0xC6mBgdvjsCe4Cozop50o2Y5p2FoaxzUuXgPqM26b702PMWdKAMtY7CtGQdvfH
-         SsZx4i8NmCCyJTPG6LqSzPkiENzLhQtNSJ/y4qKTWWppt+M52pJ8pNCAjEZRBnUynVqB
-         Kec68C2xYOxbD4jcJXI4lasm1RCJ172nKHCmkg0AAfS6ayQoeUt2ajMm6Fc4CSR/wBF4
-         p8+JeKym+Eg9aE57SRVtlh1NfWPEy18xuMxQnOfFUeYJEhdd4gVSNOgx3W1qBOVP0D0e
-         24uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T7wvGwt+dN4+DiJ9hB5IVdY0Pgs4QchSkXpHI/89Yd0=;
-        b=l8DwAHKORTvx3uqh5qQ4GnCuAeQWA4PTWUurz9gFvXJ8lI2hazJnZvaxGai7pfRf7k
-         ckGmDZKxZv34j5gzcqD3Ko+tYEGSplAF8aATfqqwFFlJxbfH+hc4UU6rmXE+tM5Lw8P3
-         NzddWmMmO8ljiI8zWycPnT1LSjIyLN7qoKP0P5fcqHh3iutdKK9sgLjH/5wsq02S2Wyk
-         KBOm85Sp/HTfyBiOUrqAXjKyTQH32o3eX0edo0gJA51p3eLYBxDq8T/d63tLDfe7sozM
-         drWupfa+hexrExAwhUCKgTYYTnFRxu91PvKM5d+vbW03e6/CYUyBV8pAQ82lgY9746bA
-         Cwcg==
-X-Gm-Message-State: ANoB5pkBsxk3aO5+OZbSVN/qT50Ri9UXT4fl85Y97VcjbQe89UHG81+H
-        Fz/ZqF1zwTNgr14x7qo0Y03yLPYdHU/xIHSDVes=
-X-Google-Smtp-Source: AA0mqf7GNqjuM8Q259t5BZy7S13FS1YCYF5vMIbD7X8+VHEKT2xacF/PK/Rm/pnig9ikulU/2SVS6voPseL2dcFeAbs=
-X-Received: by 2002:a17:906:2345:b0:7ad:adfe:1ceb with SMTP id
- m5-20020a170906234500b007adadfe1cebmr40371839eja.89.1669735293478; Tue, 29
- Nov 2022 07:21:33 -0800 (PST)
+        with ESMTP id S236445AbiK2Qx4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 29 Nov 2022 11:53:56 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A6D73BA6
+        for <ceph-devel@vger.kernel.org>; Tue, 29 Nov 2022 08:48:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669740480;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=e0muEHBDbnLFxSz/8uKrynkgUxzkHQQXyf0Q/GGNCDo=;
+        b=PdLSH/C+BpPDtfUIHgqkj0E8cNeZUwoj1CT9+VFwTiIUuq9gkjqBiiyM8Um6/6YuI5NYXQ
+        5QB6kauLYXBNvach6wXw4Yx3LbZXkaMwGLYjxXZzZ3J2sQNUd0oMFk/iUy6BZ0q4umuQmg
+        9D29gaYVRhQV6GdiBr9eMuG+pGw/JnI=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-97-NLEV3qqHMjm2VIHjZofz1g-1; Tue, 29 Nov 2022 11:47:58 -0500
+X-MC-Unique: NLEV3qqHMjm2VIHjZofz1g-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EA346101E155;
+        Tue, 29 Nov 2022 16:47:53 +0000 (UTC)
+Received: from [10.22.16.202] (unknown [10.22.16.202])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 417A52166B2D;
+        Tue, 29 Nov 2022 16:47:51 +0000 (UTC)
+From:   Benjamin Coddington <bcodding@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        =?utf-8?q?Christoph_B=C3=B6hmwalder?= 
+        <christoph.boehmwalder@linbit.com>, Jens Axboe <axboe@kernel.dk>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+        Mike Christie <michael.christie@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Valentina Manea <valentina.manea.m@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Steve French <sfrench@samba.org>,
+        Christine Caulfield <ccaulfie@redhat.com>,
+        David Teigland <teigland@redhat.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Xiubo Li <xiubli@redhat.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>, drbd-dev@lists.linbit.com,
+        linux-block@vger.kernel.org, nbd@other.debian.org,
+        linux-nvme@lists.infradead.org, open-iscsi@googlegroups.com,
+        linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, cluster-devel@redhat.com,
+        ocfs2-devel@oss.oracle.com, v9fs-developer@lists.sourceforge.net,
+        ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v1 2/3] Treewide: Stop corrupting socket's task_frag
+Date:   Tue, 29 Nov 2022 11:47:47 -0500
+Message-ID: <794DBAB0-EDAF-4DA2-A837-C1F99916BC8E@redhat.com>
+In-Reply-To: <20221129140242.GA15747@lst.de>
+References: <cover.1669036433.git.bcodding@redhat.com>
+ <c2ec184226acd21a191ccc1aa46a1d7e43ca7104.1669036433.git.bcodding@redhat.com>
+ <20221129140242.GA15747@lst.de>
 MIME-Version: 1.0
-References: <20221129103949.19737-1-lhenriques@suse.de> <4914a195-edc0-747b-6598-9ac9868593a1@redhat.com>
- <CAOi1vP8raoFP2dsc6RY1fONCsHh5FYv2xifFY7pHXZWX=-vePw@mail.gmail.com> <20e0674a-4e51-a352-9ce2-d939cd4f3725@redhat.com>
-In-Reply-To: <20e0674a-4e51-a352-9ce2-d939cd4f3725@redhat.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 29 Nov 2022 16:21:21 +0100
-Message-ID: <CAOi1vP_H8jE4ZU4a4srhQev3odECgZD1LyxA8dv+Fk-bVDvoyQ@mail.gmail.com>
-Subject: Re: [PATCH v4] ceph: mark directory as non-complete complete after
- loading key
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Venky Shankar <vshankar@redhat.com>,
-        Gregory Farnum <gfarnum@redhat.com>,
-        =?UTF-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,58 +101,19 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Nov 29, 2022 at 3:50 PM Xiubo Li <xiubli@redhat.com> wrote:
->
->
-> On 29/11/2022 22:32, Ilya Dryomov wrote:
-> > On Tue, Nov 29, 2022 at 3:15 PM Xiubo Li <xiubli@redhat.com> wrote:
-> >>
-> >> On 29/11/2022 18:39, Lu=C3=ADs Henriques wrote:
-> >>> When setting a directory's crypt context, ceph_dir_clear_complete() n=
-eeds to
-> >>> be called otherwise if it was complete before, any existing (old) den=
-try will
-> >>> still be valid.
-> >>>
-> >>> This patch adds a wrapper around __fscrypt_prepare_readdir() which wi=
-ll
-> >>> ensure a directory is marked as non-complete if key status changes.
-> >>>
-> >>> Signed-off-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
-> >>> ---
-> >>> Hi Xiubo,
-> >>>
-> >>> Here's a rebase of this patch.  I did some testing but since this bra=
-nch
-> >>> doesn't really have full fscrypt support, I couldn't even reproduce t=
-he
-> >>> bug.  So, my testing was limited.
-> >> I'm planing not to update the wip-fscrypt branch any more, except the =
-IO
-> >> path related fixes, which may introduce potential bugs each time as be=
-fore.
-> >>
-> >> Since the qa tests PR has finished and the tests have passed, so we ar=
-e
-> >> planing to merge the first none IO part, around 27 patches. And then
-> >> pull the reset patches from wip-fscrypt branch.
-> > I'm not sure if merging metadata and I/O path patches separately
-> > makes sense.  What would a user do with just filename encryption?
->
-> Hi Ilya,
->
-> I think the IO ones should be followed soon.
->
-> Currently the filename ones have been well testes. And the contents will
-> be by passed for now.
->
-> Since this is just for Dev Preview feature IMO it should be okay (?)
+On 29 Nov 2022, at 9:02, Christoph Hellwig wrote:
 
-I don't think there is such a thing as a Dev Preview feature when it
-comes to the mainline kernel, particularly in the area of filesystems
-and storage.  It should be ready for users at least to some extent.  So
-my question stands: what would a user do with just filename encryption?
+> Hmm.  Having to set a flag to not accidentally corrupt per-task
+> state seems a bit fragile.  Wouldn't it make sense to find a way to opt
+> into the feature only for sockets created from the syscall layer?
 
-Thanks,
+It's totally fragile, and that's why it's currently broken in production.
+The fragile ship sailed when networking decided to depend on users setting
+the socket's GFP_ flags correctly to avoid corruption.
 
-                Ilya
+Meantime, this problem needs fixing in a way that makes everyone happy.
+This fix doesn't make it less fragile, but it may (hopefully) address the
+previous criticisms enough that something gets done to fix it.
+
+Ben
+
