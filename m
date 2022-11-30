@@ -2,146 +2,173 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD78263D53A
-	for <lists+ceph-devel@lfdr.de>; Wed, 30 Nov 2022 13:08:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A506B63D642
+	for <lists+ceph-devel@lfdr.de>; Wed, 30 Nov 2022 14:04:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233224AbiK3MIs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 30 Nov 2022 07:08:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56280 "EHLO
+        id S235312AbiK3NEo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 30 Nov 2022 08:04:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233603AbiK3MIj (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Nov 2022 07:08:39 -0500
+        with ESMTP id S235266AbiK3NEn (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Nov 2022 08:04:43 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C98765C3
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Nov 2022 04:07:39 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C5445F85D
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Nov 2022 05:03:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669810058;
+        s=mimecast20190719; t=1669813389;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=jnVdlteFV26Z76cEF4gxE55CdPW4P3QACX8nQF2ZXTo=;
-        b=W/dSB4qs5hwMfYN4TjxxFnqFD4auu9K07/woj4RDIZunyWcd9qT2g9XoFZvOSjAqfTe4Ga
-        sPDuA5GKhAnz1PJtE0E805fwucXHtgi6wF0TyYucotzcJnBT4lkI2YNflsI6f5EEvixFEq
-        5X6WL3hpHvkVlHRo2bXgnkAdSZ4Yo+A=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=g2+Y+FVxr8rMK88htgWTuTuScnJMXGjZ6V1dViw2hbU=;
+        b=PdozjhH7hCVSsmfdJZxEU6p0iJp/f2EaXlB+IIGYcy0eqlZkTh0jxnK0MLlVBUZT8VcOlu
+        q4vRIuZs9Z5vSsuIBxQhmTsaQ4KJtS59DFoo7A7a8SvsygOsSgv7uZaA4iVpU7Dp3pBDOz
+        LSaqVQ9fyeEDwup0Xqg9UOdpM0cqmJM=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-118-uzigLyPQPniYlysTl2sgbw-1; Wed, 30 Nov 2022 07:07:37 -0500
-X-MC-Unique: uzigLyPQPniYlysTl2sgbw-1
-Received: by mail-wr1-f70.google.com with SMTP id e19-20020adfa453000000b0024209415034so2739903wra.18
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Nov 2022 04:07:37 -0800 (PST)
+ us-mta-474-RbIE1IT-PA6g7fyBB0q13Q-1; Wed, 30 Nov 2022 08:03:06 -0500
+X-MC-Unique: RbIE1IT-PA6g7fyBB0q13Q-1
+Received: by mail-pj1-f72.google.com with SMTP id x6-20020a17090a46c600b002190cdd7bcdso1948675pjg.6
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Nov 2022 05:03:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jnVdlteFV26Z76cEF4gxE55CdPW4P3QACX8nQF2ZXTo=;
-        b=hASKqFk8DyFdSf9ARWwaxnyIhSXoM1RLwIMI79TpVUFhJWxFkv07aGUwuoBPMjaflG
-         9DfQQHUbeexZcA5RFnsHKgtlYXDev+WoYZjvhklfSzLulzQRjkB5dr6TFQKGgBE7Y2O/
-         r/e17qigY6TAolaT7W5KxBpNA08bryYhxmukhZNBICYNuGN0kdjfoUlUeXVrn1bW/XsL
-         VOCRePqmq0OfuyGRJZVzyrGIFB64BDLaTi9t2Vlsd1OnhzCXlQgV9In2eE3mR78wWary
-         M7MzJ1Ygq7lGqlf4Z2dZ6cmYUAdacd5eoIttEv/ueJpgWAtowUMEB8a3l6PnabC9LCUG
-         FVbQ==
-X-Gm-Message-State: ANoB5pmZaIaJXN6xl6F5mzkO899pCMqzoT0HkUaJlsxUuz7w60PfoUx9
-        sKs59KEGorTQyAR4B0JFMP0jtHLk5y0quIFsqEt+NekjEI3ZhPXxSFlqdVxrpavueuogfGxvCET
-        o4yqkZmAxflhVRgGX6t+KTg==
-X-Received: by 2002:a05:600c:3c8e:b0:3d0:69f4:d3d0 with SMTP id bg14-20020a05600c3c8e00b003d069f4d3d0mr4598127wmb.93.1669810056205;
-        Wed, 30 Nov 2022 04:07:36 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf4PpVsPubG71ps8rgagttNzK50w8zECDxzJfF2enqQnAPQgsvcgKe3HBaErdsIeSxrgevrHjQ==
-X-Received: by 2002:a05:600c:3c8e:b0:3d0:69f4:d3d0 with SMTP id bg14-20020a05600c3c8e00b003d069f4d3d0mr4598054wmb.93.1669810055886;
-        Wed, 30 Nov 2022 04:07:35 -0800 (PST)
-Received: from pc-4.home (2a01cb058918ce00dd1a5a4f9908f2d5.ipv6.abo.wanadoo.fr. [2a01:cb05:8918:ce00:dd1a:5a4f:9908:f2d5])
-        by smtp.gmail.com with ESMTPSA id j3-20020adfd203000000b002366c3eefccsm1368822wrh.109.2022.11.30.04.07.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Nov 2022 04:07:35 -0800 (PST)
-Date:   Wed, 30 Nov 2022 13:07:32 +0100
-From:   Guillaume Nault <gnault@redhat.com>
-To:     Benjamin Coddington <bcodding@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Christoph =?iso-8859-1?Q?B=F6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>, Jens Axboe <axboe@kernel.dk>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
-        Mike Christie <michael.christie@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Valentina Manea <valentina.manea.m@gmail.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Steve French <sfrench@samba.org>,
-        Christine Caulfield <ccaulfie@redhat.com>,
-        David Teigland <teigland@redhat.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Xiubo Li <xiubli@redhat.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>, drbd-dev@lists.linbit.com,
-        linux-block@vger.kernel.org, nbd@other.debian.org,
-        linux-nvme@lists.infradead.org, open-iscsi@googlegroups.com,
-        linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, cluster-devel@redhat.com,
-        ocfs2-devel@oss.oracle.com, v9fs-developer@lists.sourceforge.net,
-        ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v1 2/3] Treewide: Stop corrupting socket's task_frag
-Message-ID: <20221130120732.GB29316@pc-4.home>
-References: <cover.1669036433.git.bcodding@redhat.com>
- <c2ec184226acd21a191ccc1aa46a1d7e43ca7104.1669036433.git.bcodding@redhat.com>
- <20221129140242.GA15747@lst.de>
- <794DBAB0-EDAF-4DA2-A837-C1F99916BC8E@redhat.com>
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g2+Y+FVxr8rMK88htgWTuTuScnJMXGjZ6V1dViw2hbU=;
+        b=QDPoibaW2ecga0j0LK7G6s2Nul/z6JeGnDJXaAHwYcJB3db3V1ZkiDtM8sHGwdakrg
+         DpqIGTsZUKZbEKJWYDAo8JiYrAf3Q8wCbNOj8zzYucKIM3XLuaYee4JVZfw1TqwGJtIL
+         sVcFe8ScX9S8YrLjdv/kOcD5YG4rw9+v4yj2OGWrtctLMcQk49qu5x80DMUz+fTSlLEq
+         9sm1Qei9sgpACvDYGZqKYqhGntS041E6qmLrlNirVN4KdkPS9GTtYUjIaSapbUud0koR
+         AUqRMw3U3p29X/nl/dN2LqFKOTy4YPjEpVZQUQNawsCko2OsIQoWC2x0vRvkLocVagOG
+         jezQ==
+X-Gm-Message-State: ANoB5plxMBjMl6tLMzS/sdrB/IXESixsGfN2SFxRJzd+lIqYYhqpin5d
+        Lo1g+GO4bTdZem0zIq13PXYDOUVs5q9QbOBiyjKD+bVx+J4knrIgp+75PEA6ngWhcr+s87/xcOx
+        bAnbDsf1BwgQteqNJYuWlkQ==
+X-Received: by 2002:a63:9dce:0:b0:478:936:3427 with SMTP id i197-20020a639dce000000b0047809363427mr17226501pgd.432.1669813385151;
+        Wed, 30 Nov 2022 05:03:05 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf7MLRftRnCqNFGkYSzWH4NeisI8sJdP6rxBCj2MhohyXEq9HOJbw6kTnbkFGYp4Xn/ayg/4Zg==
+X-Received: by 2002:a63:9dce:0:b0:478:936:3427 with SMTP id i197-20020a639dce000000b0047809363427mr17226472pgd.432.1669813384849;
+        Wed, 30 Nov 2022 05:03:04 -0800 (PST)
+Received: from [10.72.12.171] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id z7-20020a17090a398700b0021912989f81sm3054876pjb.51.2022.11.30.05.03.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Nov 2022 05:03:04 -0800 (PST)
+Subject: Re: [PATCH v4] ceph: mark directory as non-complete complete after
+ loading key
+To:     Jeff Layton <jlayton@kernel.org>,
+        Gregory Farnum <gfarnum@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     Venky Shankar <vshankar@redhat.com>,
+        =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221129103949.19737-1-lhenriques@suse.de>
+ <4914a195-edc0-747b-6598-9ac9868593a1@redhat.com>
+ <CAOi1vP8raoFP2dsc6RY1fONCsHh5FYv2xifFY7pHXZWX=-vePw@mail.gmail.com>
+ <20e0674a-4e51-a352-9ce2-d939cd4f3725@redhat.com>
+ <CAOi1vP_H8jE4ZU4a4srhQev3odECgZD1LyxA8dv+Fk-bVDvoyQ@mail.gmail.com>
+ <CAJ4mKGb=_CWTh5rrAFiib66-S6WeT=ajjkN_pOAac4d8uC9fDQ@mail.gmail.com>
+ <4b7ccbee-1135-09a7-9255-2f84e8907614@redhat.com>
+ <1401f070248db62f0b41092db4bb3550861063af.camel@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <b74b486a-1159-1b89-74c9-263bacb75452@redhat.com>
+Date:   Wed, 30 Nov 2022 21:02:59 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <794DBAB0-EDAF-4DA2-A837-C1F99916BC8E@redhat.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+In-Reply-To: <1401f070248db62f0b41092db4bb3550861063af.camel@kernel.org>
+Content-Type: text/plain; charset=iso-8859-15; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Nov 29, 2022 at 11:47:47AM -0500, Benjamin Coddington wrote:
-> On 29 Nov 2022, at 9:02, Christoph Hellwig wrote:
-> 
-> > Hmm.  Having to set a flag to not accidentally corrupt per-task
-> > state seems a bit fragile.  Wouldn't it make sense to find a way to opt
-> > into the feature only for sockets created from the syscall layer?
-> 
-> It's totally fragile, and that's why it's currently broken in production.
-> The fragile ship sailed when networking decided to depend on users setting
-> the socket's GFP_ flags correctly to avoid corruption.
-> 
-> Meantime, this problem needs fixing in a way that makes everyone happy.
-> This fix doesn't make it less fragile, but it may (hopefully) address the
-> previous criticisms enough that something gets done to fix it.
 
-Also, let's remember that while we're discussing how the kernel sould
-work in an ideal world, the reality is that production NFS systems
-crash randomly upon memory reclaim since commit a1231fda7e94 ("SUNRPC:
-Set memalloc_nofs_save() on all rpciod/xprtiod jobs"). Fixing that is
-just a matter of re-introducing GFP_NOFS on SUNRPC sockets (which has
-been proposed several times already). Then we'll have plenty of time
-to argue about how networking should use the per-task page_frag and
-how to remove GFP_NOFS in the long term.
+On 30/11/2022 18:11, Jeff Layton wrote:
+> On Wed, 2022-11-30 at 16:25 +0800, Xiubo Li wrote:
+>> On 30/11/2022 14:54, Gregory Farnum wrote:
+>>> On Tue, Nov 29, 2022 at 7:21 AM Ilya Dryomov <idryomov@gmail.com> wrote:
+>>>> On Tue, Nov 29, 2022 at 3:50 PM Xiubo Li <xiubli@redhat.com> wrote:
+>>>>> On 29/11/2022 22:32, Ilya Dryomov wrote:
+>>>>>> On Tue, Nov 29, 2022 at 3:15 PM Xiubo Li <xiubli@redhat.com> wrote:
+>>>>>>> On 29/11/2022 18:39, Luís Henriques wrote:
+>>>>>>>> When setting a directory's crypt context, ceph_dir_clear_complete() needs to
+>>>>>>>> be called otherwise if it was complete before, any existing (old) dentry will
+>>>>>>>> still be valid.
+>>>>>>>>
+>>>>>>>> This patch adds a wrapper around __fscrypt_prepare_readdir() which will
+>>>>>>>> ensure a directory is marked as non-complete if key status changes.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
+>>>>>>>> ---
+>>>>>>>> Hi Xiubo,
+>>>>>>>>
+>>>>>>>> Here's a rebase of this patch.  I did some testing but since this branch
+>>>>>>>> doesn't really have full fscrypt support, I couldn't even reproduce the
+>>>>>>>> bug.  So, my testing was limited.
+>>>>>>> I'm planing not to update the wip-fscrypt branch any more, except the IO
+>>>>>>> path related fixes, which may introduce potential bugs each time as before.
+>>>>>>>
+>>>>>>> Since the qa tests PR has finished and the tests have passed, so we are
+>>>>>>> planing to merge the first none IO part, around 27 patches. And then
+>>>>>>> pull the reset patches from wip-fscrypt branch.
+>>>>>> I'm not sure if merging metadata and I/O path patches separately
+>>>>>> makes sense.  What would a user do with just filename encryption?
+>>>>> Hi Ilya,
+>>>>>
+>>>>> I think the IO ones should be followed soon.
+>>>>>
+>>>>> Currently the filename ones have been well testes. And the contents will
+>>>>> be by passed for now.
+>>>>>
+>>>>> Since this is just for Dev Preview feature IMO it should be okay (?)
+>>>> I don't think there is such a thing as a Dev Preview feature when it
+>>>> comes to the mainline kernel, particularly in the area of filesystems
+>>>> and storage.  It should be ready for users at least to some extent.  So
+>>>> my question stands: what would a user do with just filename encryption?
+>>> I think how this merges is up to you guys and the kernel practices.
+>>> Merging only the filename encryption is definitely of *limited*
+>>> utility, but I don't think it's totally pointless -- the data versus
+>>> metadata paths are different and you are protecting against somewhat
+>>> different vulnerabilities and threat models with them. For instance,
+>>> MDS logs dump filenames, but OSD logs do not dump object data. There's
+>>> some obvious utility there even if you basically trust your provider,
+>>> or run your own cluster but want to be more secure about sending logs
+>>> via ceph-post-file.
+>> Hi Greg,
+>>
+>> Sounds reasonable to me.
+>>
+>> I will leave this to Ilya.
+>>
+>> Thanks!
+> For the record, the only reason I proposed merging them in multiple sets
+> was that it is a large set of changes and I was leery of regressions. I
+> don't see a lot of value in enabling just filename encryption without
+> the content piece.
+>
+> I'd be fine with merging it all en-masse, though it's a bit more to wade
+> through if we end up having to bisect to track down a bug.
+>   
+
+Hi Jeff,
+
+After Ilya reviewing the testing's non-encrypt patches to make sure I 
+won't do the rebase again and again for a large number of patches, I 
+will begin to pick the contents patches from wip-fscrypt branch.
+
+And then run the qa test again.
+
+Thanks all :-)
+
+- Xiubo
+
 
