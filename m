@@ -2,159 +2,165 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 400E663D0A4
-	for <lists+ceph-devel@lfdr.de>; Wed, 30 Nov 2022 09:30:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C13C63D2CC
+	for <lists+ceph-devel@lfdr.de>; Wed, 30 Nov 2022 11:08:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235109AbiK3Iaa (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 30 Nov 2022 03:30:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37472 "EHLO
+        id S235465AbiK3KIP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 30 Nov 2022 05:08:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234586AbiK3IaF (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Nov 2022 03:30:05 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62EAA76143
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Nov 2022 00:25:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669796727;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=cLhw+4YCDLU54mdWJRFJtop//lKH4CfPzwb9WT359CY=;
-        b=ZInIOHv01wg/+CnRmt0iHmu0827EtwYELhiWg4+ssKcXe39fRinMhFSkzwET1nUAmPIvet
-        NdmdzR95YXmIOuqSNc4ieJa3cdO2JxjcpImjUTv9S+bjpX8MNvLNvEaoY0HGMwGjbaFTea
-        UVkFprKABUA8bX9D4XRmDNcQXXSI/YA=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-205-DiwbN4sDMcuvylFVnTDgjw-1; Wed, 30 Nov 2022 03:25:26 -0500
-X-MC-Unique: DiwbN4sDMcuvylFVnTDgjw-1
-Received: by mail-pg1-f197.google.com with SMTP id e37-20020a635025000000b00476bfca5d31so11525155pgb.21
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Nov 2022 00:25:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cLhw+4YCDLU54mdWJRFJtop//lKH4CfPzwb9WT359CY=;
-        b=e25G0aiRF3SSG5CBV+UW87QcfCVV5fMFETi6LJZx6I+KDqjRaQXezSuAWrDCD64hFq
-         FKpshH7VSAcN2dz0t0jGzt6i0q5Oo2u/+lxinRCobX159kIbVkaNEjHTGkan+nWUrWso
-         moYFPa/Ucoe9AtKLGrprzTMR2f71ZAfxaPjmLLF5zgrom3Er/O7vkrht22eSwA89AfWy
-         2gM7oHf63OJiAub1bcJqF7fOlweeBMyVc7e2OpF2GMQnRWjDnFkWZwZFYYfxHRu4MX87
-         nsvUqjsJ/V4859Tom1e6JgosEJV0JkN9tlwti1VPU+1zukTteyVByA2R8r6PFJa3HmNf
-         kr+A==
-X-Gm-Message-State: ANoB5pm159EKP1STFGq5mkJKMxMjOy947RN+plDkkuJGXaFtpeQxEz7V
-        6ltFQsETXHFQ4zArbu7pMHd2Q/pkBxCOn8lXcxGEcXUFthi6NUWa2cjfIgM7veU5Rf5kbb6Ljse
-        YnknwxgfXfjz5EmXpJU3AJA==
-X-Received: by 2002:a63:f003:0:b0:45f:bf86:c917 with SMTP id k3-20020a63f003000000b0045fbf86c917mr53684622pgh.201.1669796724966;
-        Wed, 30 Nov 2022 00:25:24 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf5l6HxGuRdUgFze8Xav0NBiW2FtnsKMFNGxrQXmyLUy40JkncqzspqWNEwMQWjmDlzniGmdCQ==
-X-Received: by 2002:a63:f003:0:b0:45f:bf86:c917 with SMTP id k3-20020a63f003000000b0045fbf86c917mr53684612pgh.201.1669796724713;
-        Wed, 30 Nov 2022 00:25:24 -0800 (PST)
-Received: from [10.72.13.22] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id c10-20020a056a00008a00b0057255b82bd1sm790295pfj.217.2022.11.30.00.25.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Nov 2022 00:25:24 -0800 (PST)
-Subject: Re: [PATCH v4] ceph: mark directory as non-complete complete after
- loading key
-To:     Gregory Farnum <gfarnum@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     Venky Shankar <vshankar@redhat.com>,
-        =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20221129103949.19737-1-lhenriques@suse.de>
- <4914a195-edc0-747b-6598-9ac9868593a1@redhat.com>
- <CAOi1vP8raoFP2dsc6RY1fONCsHh5FYv2xifFY7pHXZWX=-vePw@mail.gmail.com>
- <20e0674a-4e51-a352-9ce2-d939cd4f3725@redhat.com>
- <CAOi1vP_H8jE4ZU4a4srhQev3odECgZD1LyxA8dv+Fk-bVDvoyQ@mail.gmail.com>
- <CAJ4mKGb=_CWTh5rrAFiib66-S6WeT=ajjkN_pOAac4d8uC9fDQ@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <4b7ccbee-1135-09a7-9255-2f84e8907614@redhat.com>
-Date:   Wed, 30 Nov 2022 16:25:19 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        with ESMTP id S235467AbiK3KIL (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Nov 2022 05:08:11 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2D1F2E69C
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Nov 2022 02:08:09 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7E803B81AA4
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Nov 2022 10:08:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABC5AC433D6;
+        Wed, 30 Nov 2022 10:08:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669802887;
+        bh=QmffNLfb4svYBgfWB9kQFFA1DNMYL1EBfFIhGDyKjM4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=t9wuBBAgCDTV2x3WmwDZF/prlgf3qOkOTFULS4qyK7bLqtTe2blUtvGLf+fQWbaF4
+         WV5lGhFJWUeDCtEEQVYzFhB7oTgrwMPRP/pMaf6EPv7R4eAVskjqOn57MLKI6cSzyp
+         lkvjEdhmmApyD1yVafkGkCIg8zNDioGnXLSxuxkoICSOMV2wZcq0XbH4lcz48OfAhQ
+         CB7V8HnEtgzVnoxJAK8U2v7pFGJnvzmd8zAYfB74n9IRY+HPd6byGe5z46WK7vsntZ
+         xzrOaA1VnRdNI+DEbJiF6WgQ4jYw0gsA5MQ7r6Dp20fY4kOAcl0crGimPwssKiJw5Q
+         E+6FQ5XCXzsNw==
+Message-ID: <4c83e1e6adfcef00c0640b43c3cdfb98d7b599d8.camel@kernel.org>
+Subject: Re: [ceph-client:testing 2/4] fs/ceph/caps.c:2967:21: error:
+ implicit declaration of function 'vfs_inode_has_locks'
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, kernel test robot <lkp@intel.com>
+Cc:     oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org
+Date:   Wed, 30 Nov 2022 05:08:05 -0500
+In-Reply-To: <87c8b139-37a3-1d65-5e79-fabe9c69bf34@redhat.com>
+References: <202211301452.QQa0D5Kd-lkp@intel.com>
+         <87c8b139-37a3-1d65-5e79-fabe9c69bf34@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.1 (3.46.1-1.fc37) 
 MIME-Version: 1.0
-In-Reply-To: <CAJ4mKGb=_CWTh5rrAFiib66-S6WeT=ajjkN_pOAac4d8uC9fDQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Wed, 2022-11-30 at 14:58 +0800, Xiubo Li wrote:
+> Hi Jeff,
+>=20
+> Could you fix this in your vfs_inode_has_locks patch ?
+>=20
+> We should add one dummy inline func in :
+>=20
+> #else /* !CONFIG_FILE_LOCKING */
+>=20
+> #endif
+>=20
+> Currently I just added your filelock patch as one [DO NOT MERGE] in ceph=
+=20
+> tree for testing.
+>=20
+> Thanks!
+>=20
+> - Xiubo
 
-On 30/11/2022 14:54, Gregory Farnum wrote:
-> On Tue, Nov 29, 2022 at 7:21 AM Ilya Dryomov <idryomov@gmail.com> wrote:
->> On Tue, Nov 29, 2022 at 3:50 PM Xiubo Li <xiubli@redhat.com> wrote:
->>>
->>> On 29/11/2022 22:32, Ilya Dryomov wrote:
->>>> On Tue, Nov 29, 2022 at 3:15 PM Xiubo Li <xiubli@redhat.com> wrote:
->>>>> On 29/11/2022 18:39, Luís Henriques wrote:
->>>>>> When setting a directory's crypt context, ceph_dir_clear_complete() needs to
->>>>>> be called otherwise if it was complete before, any existing (old) dentry will
->>>>>> still be valid.
->>>>>>
->>>>>> This patch adds a wrapper around __fscrypt_prepare_readdir() which will
->>>>>> ensure a directory is marked as non-complete if key status changes.
->>>>>>
->>>>>> Signed-off-by: Luís Henriques <lhenriques@suse.de>
->>>>>> ---
->>>>>> Hi Xiubo,
->>>>>>
->>>>>> Here's a rebase of this patch.  I did some testing but since this branch
->>>>>> doesn't really have full fscrypt support, I couldn't even reproduce the
->>>>>> bug.  So, my testing was limited.
->>>>> I'm planing not to update the wip-fscrypt branch any more, except the IO
->>>>> path related fixes, which may introduce potential bugs each time as before.
->>>>>
->>>>> Since the qa tests PR has finished and the tests have passed, so we are
->>>>> planing to merge the first none IO part, around 27 patches. And then
->>>>> pull the reset patches from wip-fscrypt branch.
->>>> I'm not sure if merging metadata and I/O path patches separately
->>>> makes sense.  What would a user do with just filename encryption?
->>> Hi Ilya,
->>>
->>> I think the IO ones should be followed soon.
->>>
->>> Currently the filename ones have been well testes. And the contents will
->>> be by passed for now.
->>>
->>> Since this is just for Dev Preview feature IMO it should be okay (?)
->> I don't think there is such a thing as a Dev Preview feature when it
->> comes to the mainline kernel, particularly in the area of filesystems
->> and storage.  It should be ready for users at least to some extent.  So
->> my question stands: what would a user do with just filename encryption?
-> I think how this merges is up to you guys and the kernel practices.
-> Merging only the filename encryption is definitely of *limited*
-> utility, but I don't think it's totally pointless -- the data versus
-> metadata paths are different and you are protecting against somewhat
-> different vulnerabilities and threat models with them. For instance,
-> MDS logs dump filenames, but OSD logs do not dump object data. There's
-> some obvious utility there even if you basically trust your provider,
-> or run your own cluster but want to be more secure about sending logs
-> via ceph-post-file.
+Yes, good catch. Revised patch follows:
 
-Hi Greg,
+----------------8<----------------
 
-Sounds reasonable to me.
+[PATCH] filelock: new helper: vfs_inode_has_locks
 
-I will leave this to Ilya.
+Ceph has a need to know whether a particular inode has any locks set on
+it. It's currently tracking that by a num_locks field in its
+filp->private_data, but that's problematic as it tries to decrement this
+field when releasing locks and that can race with the file being torn
+down.
 
-Thanks!
+Add a new vfs_inode_has_locks helper that just returns whether any locks
+are currently held on the inode.
 
-- Xiubo
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/locks.c         | 23 +++++++++++++++++++++++
+ include/linux/fs.h |  6 ++++++
+ 2 files changed, 29 insertions(+)
 
-> -Greg
->
->> Thanks,
->>
->>                  Ilya
->>
+diff --git a/fs/locks.c b/fs/locks.c
+index 5876c8ff0edc..9ccf89b6c95d 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -2672,6 +2672,29 @@ int vfs_cancel_lock(struct file *filp, struct file_l=
+ock *fl)
+ }
+ EXPORT_SYMBOL_GPL(vfs_cancel_lock);
+=20
++/**
++ * vfs_inode_has_locks - are any file locks held on @inode?
++ * @inode: inode to check for locks
++ *
++ * Return true if there are any FL_POSIX or FL_FLOCK locks currently
++ * set on @inode.
++ */
++bool vfs_inode_has_locks(struct inode *inode)
++{
++	struct file_lock_context *ctx;
++	bool ret;
++
++	ctx =3D smp_load_acquire(&inode->i_flctx);
++	if (!ctx)
++		return false;
++
++	spin_lock(&ctx->flc_lock);
++	ret =3D !list_empty(&ctx->flc_posix) || !list_empty(&ctx->flc_flock);
++	spin_unlock(&ctx->flc_lock);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(vfs_inode_has_locks);
++
+ #ifdef CONFIG_PROC_FS
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e654435f1651..6165c6245347 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1170,6 +1170,7 @@ extern int locks_delete_block(struct file_lock *);
+ extern int vfs_test_lock(struct file *, struct file_lock *);
+ extern int vfs_lock_file(struct file *, unsigned int, struct file_lock *, =
+struct file_lock *);
+ extern int vfs_cancel_lock(struct file *filp, struct file_lock *fl);
++bool vfs_inode_has_locks(struct inode *inode);
+ extern int locks_lock_inode_wait(struct inode *inode, struct file_lock *fl=
+);
+ extern int __break_lease(struct inode *inode, unsigned int flags, unsigned=
+ int type);
+ extern void lease_get_mtime(struct inode *, struct timespec64 *time);
+@@ -1284,6 +1285,11 @@ static inline int vfs_cancel_lock(struct file *filp,=
+ struct file_lock *fl)
+ 	return 0;
+ }
+=20
++static inline bool vfs_inode_has_locks(struct inode *inode)
++{
++	return false;
++}
++
+ static inline int locks_lock_inode_wait(struct inode *inode, struct file_l=
+ock *fl)
+ {
+ 	return -ENOLCK;
+--=20
+2.38.1
+
 
