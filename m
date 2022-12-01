@@ -2,198 +2,131 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D2FC363E6AE
-	for <lists+ceph-devel@lfdr.de>; Thu,  1 Dec 2022 01:47:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFAD463EA0F
+	for <lists+ceph-devel@lfdr.de>; Thu,  1 Dec 2022 07:59:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229936AbiLAAqz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 30 Nov 2022 19:46:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33926 "EHLO
+        id S229449AbiLAG7G (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 1 Dec 2022 01:59:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229924AbiLAAqx (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Nov 2022 19:46:53 -0500
+        with ESMTP id S229788AbiLAG7D (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 1 Dec 2022 01:59:03 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C9755BD55
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Nov 2022 16:45:59 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C506940479
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Nov 2022 22:58:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669855558;
+        s=mimecast20190719; t=1669877888;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DfCT0rkce5sdvNSn+yVaq4U2qO0x5zIv4qHcFumYoS8=;
-        b=ixIFibVRS+PRKdMKhEnWODPN04E2k9pc7/N6E6Wn5FFaKPTUANX6zSyNAPClB9v+KMmWKK
-        Vv26Tv12e7rIPEU7brS7OxWY5YuO/HEa6PUNNwdi+EFXX7oelGJAHm0W9ESlJoOB4ey8lQ
-        0yuex09hoGxuu4UR6tBtDHhXuPV+V0M=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-577-tH4IhiWbO2-UOfnM3mZ0VQ-1; Wed, 30 Nov 2022 19:45:56 -0500
-X-MC-Unique: tH4IhiWbO2-UOfnM3mZ0VQ-1
-Received: by mail-pf1-f200.google.com with SMTP id d3-20020a056a0010c300b005728633819aso387336pfu.8
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Nov 2022 16:45:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DfCT0rkce5sdvNSn+yVaq4U2qO0x5zIv4qHcFumYoS8=;
-        b=42GCj/QkEz+9m5pR9dEsKnFZJE6QYWXQBAxdfw/+pZ4PmyaWbHxAbn/G3v21pIW0LD
-         7Ko/N78A4vC785s5E/JRidDSadgByeFEFPO17LzIsHtlU0nj4/wfKfGch9WnfnZAzXP9
-         CPTEXB20JVJhynOVF6kfIxHzJvgFl/HCPUUUwPMT7B3QjGeKIUrRG8nP7/aI01xf6bvo
-         0Rn9CG1LIyQrAkrTm1ebctkr2xSsOKdDO+RoFZXUc51jn2fezJ2PbeyGiSEf+HzLMNhn
-         /7qKFRzjAYIYoks62BNl3C8qs9XCwZOlSdqA4eTrzbchd1Q0lc+b5PQO4Hccezfa7X8Q
-         B8Hg==
-X-Gm-Message-State: ANoB5pl1jfjwRxzwgX/HIsSe38GedGSGve5czJXfpYQtwZjjckuUusXE
-        szySf078dFzEHdFDDjx/H98D1UjFSK1NVS+9SkNdxFFE+h1LVEpEV+2ij7g2DEjwePfxkrYx6Qw
-        ORvYJAEbnJvPEL+B1f35r9Q==
-X-Received: by 2002:a17:90a:2806:b0:219:5079:7aa3 with SMTP id e6-20020a17090a280600b0021950797aa3mr10912164pjd.183.1669855555724;
-        Wed, 30 Nov 2022 16:45:55 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf45AQabUslejQOausJQPN/b+XSXAA9JO0vdE63yuDx2wJ6UjGb4XkuYsw159TpdVrqQsU97wA==
-X-Received: by 2002:a17:90a:2806:b0:219:5079:7aa3 with SMTP id e6-20020a17090a280600b0021950797aa3mr10912138pjd.183.1669855555402;
-        Wed, 30 Nov 2022 16:45:55 -0800 (PST)
-Received: from [10.72.12.171] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id f10-20020aa79d8a000000b0056e5bce5b7asm1938563pfq.201.2022.11.30.16.45.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Nov 2022 16:45:54 -0800 (PST)
-Subject: Re: [ceph-client:testing 1/4] include/linux/fs.h:1342:20: error:
- static declaration of 'vfs_inode_has_locks' follows non-static declaration
-To:     Jeff Layton <jlayton@kernel.org>, kernel test robot <lkp@intel.com>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        ceph-devel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
-References: <202212010417.wCjpGlKY-lkp@intel.com>
- <5843a4f790d1f87c3e33ef8554f8493404856257.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <62207ac1-937a-d3d6-6471-2c9a6e1eee53@redhat.com>
-Date:   Thu, 1 Dec 2022 08:45:48 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=vQSeo5WRJUG0Y0WkiQ/AFBMQlfNS5mfy/wwYdfC0c2o=;
+        b=VIF8mjau7RhJY0Q9SodIZkG7BY7SvgiRPkSzgKBeeKRqodZhS601gZKfazzjFCizcRR6SS
+        uMYfxqdgT96+wkHvX9MzdFboSCdVBwX4CIcpzq+fvdnejqkQWn+kwz1D7+0XVjN7ufezsC
+        ssVdEvnINsydUZzH8GR8JE7BnX+hrAU=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-435-tk6vhfkeNtqGRPrDHrX08w-1; Thu, 01 Dec 2022 01:58:06 -0500
+X-MC-Unique: tk6vhfkeNtqGRPrDHrX08w-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2F2E13C01D90;
+        Thu,  1 Dec 2022 06:58:06 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 96F412028CE4;
+        Thu,  1 Dec 2022 06:58:03 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
+Cc:     jlayton@kernel.org, khiremat@redhat.com,
+        linux-fscrypt@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: make sure all the files successfully put before unmounting
+Date:   Thu,  1 Dec 2022 14:58:00 +0800
+Message-Id: <20221201065800.18149-1-xiubli@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <5843a4f790d1f87c3e33ef8554f8493404856257.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+From: Xiubo Li <xiubli@redhat.com>
 
-On 01/12/2022 08:10, Jeff Layton wrote:
-> On Thu, 2022-12-01 at 04:08 +0800, kernel test robot wrote:
->> tree:   https://github.com/ceph/ceph-client.git testing
->> head:   6a6f71f4a4a945600943c2ce926f7b4174f75c0d
->> commit: 8c552db6d9d144857f755a156b10de0b848a9de8 [1/4] [DO NOT MERGE] filelock: new helper: vfs_inode_has_locks
->> config: hexagon-randconfig-r041-20221128
->> compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 6e4cea55f0d1104408b26ac574566a0e4de48036)
->> reproduce (this is a W=1 build):
->>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>          chmod +x ~/bin/make.cross
->>          # https://github.com/ceph/ceph-client/commit/8c552db6d9d144857f755a156b10de0b848a9de8
->>          git remote add ceph-client https://github.com/ceph/ceph-client.git
->>          git fetch --no-tags ceph-client testing
->>          git checkout 8c552db6d9d144857f755a156b10de0b848a9de8
->>          # save the config file
->>          mkdir build_dir && cp config build_dir/.config
->>          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon prepare
->>
->> If you fix the issue, kindly add following tag where applicable
->>> Reported-by: kernel test robot <lkp@intel.com>
->> All errors (new ones prefixed by >>):
->>
->>     In file included from arch/hexagon/kernel/asm-offsets.c:12:
->>     In file included from include/linux/compat.h:17:
->>>> include/linux/fs.h:1342:20: error: static declaration of 'vfs_inode_has_locks' follows non-static declaration
->>     static inline bool vfs_inode_has_locks(struct inode *inode)
->>                        ^
->>     include/linux/fs.h:1173:6: note: previous declaration is here
->>     bool vfs_inode_has_locks(struct inode *inode);
->>          ^
-> I'm really confused here.
->
-> The non-static declaration is inside an #ifdef CONFIG_FILE_LOCKING
-> block, and the static inline definition is in the #else block just
-> after. How is it possible for them to conflict? Is the preprocessor
-> borked or something?
->
-> FWIW, I was able to build kernels on x86_64 with CONFIG_FILE_LOCKING
-> both enabled and disabled. I'm not seeing the same problem there.
+When close a file it will be deferred to call the fput(), which
+will hold the inode's i_count. And when unmounting the mountpoint
+the evict_inodes() may skip evicting some inodes.
 
-I think it's my fault.
+If encrypt is enabled the kernel generate a warning when removing
+the encrypt keys when the skipped inodes still hold the keyring:
 
-I just pick the new section to patch to the current commit. I do it 
-again by using the whole patch.
+WARNING: CPU: 4 PID: 168846 at fs/crypto/keyring.c:242 fscrypt_destroy_keyring+0x7e/0xd0
+CPU: 4 PID: 168846 Comm: umount Tainted: G S  6.1.0-rc5-ceph-g72ead199864c #1
+Hardware name: Supermicro SYS-5018R-WR/X10SRW-F, BIOS 2.0 12/17/2015
+RIP: 0010:fscrypt_destroy_keyring+0x7e/0xd0
+RSP: 0018:ffffc9000b277e28 EFLAGS: 00010202
+RAX: 0000000000000002 RBX: ffff88810d52ac00 RCX: ffff88810b56aa00
+RDX: 0000000080000000 RSI: ffffffff822f3a09 RDI: ffff888108f59000
+RBP: ffff8881d394fb88 R08: 0000000000000028 R09: 0000000000000000
+R10: 0000000000000001 R11: 11ff4fe6834fcd91 R12: ffff8881d394fc40
+R13: ffff888108f59000 R14: ffff8881d394f800 R15: 0000000000000000
+FS:  00007fd83f6f1080(0000) GS:ffff88885fd00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f918d417000 CR3: 000000017f89a005 CR4: 00000000003706e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+<TASK>
+generic_shutdown_super+0x47/0x120
+kill_anon_super+0x14/0x30
+ceph_kill_sb+0x36/0x90 [ceph]
+deactivate_locked_super+0x29/0x60
+cleanup_mnt+0xb8/0x140
+task_work_run+0x67/0xb0
+exit_to_user_mode_prepare+0x23d/0x240
+syscall_exit_to_user_mode+0x25/0x60
+do_syscall_64+0x40/0x80
+entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fd83dc39e9b
 
-- Xiubo
+URL: https://tracker.ceph.com/issues/58126
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/super.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
->>     In file included from arch/hexagon/kernel/asm-offsets.c:15:
->>     In file included from include/linux/interrupt.h:11:
->>     In file included from include/linux/hardirq.h:11:
->>     In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
->>     In file included from include/asm-generic/hardirq.h:17:
->>     In file included from include/linux/irq.h:20:
->>     In file included from include/linux/io.h:13:
->>     In file included from arch/hexagon/include/asm/io.h:334:
->>     include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->>             val = __raw_readb(PCI_IOBASE + addr);
->>                               ~~~~~~~~~~ ^
->>     include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->>             val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
->>                                                             ~~~~~~~~~~ ^
->>     include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
->>     #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
->>                                                       ^
->>     In file included from arch/hexagon/kernel/asm-offsets.c:15:
->>     In file included from include/linux/interrupt.h:11:
->>     In file included from include/linux/hardirq.h:11:
->>     In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
->>     In file included from include/asm-generic/hardirq.h:17:
->>     In file included from include/linux/irq.h:20:
->>     In file included from include/linux/io.h:13:
->>     In file included from arch/hexagon/include/asm/io.h:334:
->>     include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->>             val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
->>                                                             ~~~~~~~~~~ ^
->>     include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
->>     #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
->>                                                       ^
->>     In file included from arch/hexagon/kernel/asm-offsets.c:15:
->>     In file included from include/linux/interrupt.h:11:
->>     In file included from include/linux/hardirq.h:11:
->>     In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
->>     In file included from include/asm-generic/hardirq.h:17:
->>     In file included from include/linux/irq.h:20:
->>     In file included from include/linux/io.h:13:
->>     In file included from arch/hexagon/include/asm/io.h:334:
->>     include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->>             __raw_writeb(value, PCI_IOBASE + addr);
->>                                 ~~~~~~~~~~ ^
->>     include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->>             __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
->>                                                           ~~~~~~~~~~ ^
->>     include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->>             __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
->>                                                           ~~~~~~~~~~ ^
->>     6 warnings and 1 error generated.
->>     make[2]: *** [scripts/Makefile.build:118: arch/hexagon/kernel/asm-offsets.s] Error 1
->>     make[2]: Target 'prepare' not remade because of errors.
->>     make[1]: *** [Makefile:1270: prepare0] Error 2
->>     make[1]: Target 'prepare' not remade because of errors.
->>     make: *** [Makefile:231: __sub-make] Error 2
->>     make: Target 'prepare' not remade because of errors.
->>
->>
->> vim +/vfs_inode_has_locks +1342 include/linux/fs.h
->>
->>    1341	
->>> 1342	static inline bool vfs_inode_has_locks(struct inode *inode)
->>    1343	{
->>    1344		return false;
->>    1345	}
->>    1346	
->>
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 3db6f95768a3..1f46db92e81f 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -9,6 +9,7 @@
+ #include <linux/in6.h>
+ #include <linux/module.h>
+ #include <linux/mount.h>
++#include <linux/file.h>
+ #include <linux/fs_context.h>
+ #include <linux/fs_parser.h>
+ #include <linux/sched.h>
+@@ -1477,6 +1478,14 @@ static void ceph_kill_sb(struct super_block *s)
+ 	ceph_mdsc_pre_umount(fsc->mdsc);
+ 	flush_fs_workqueues(fsc);
+ 
++	/*
++	 * If the encrypt is enabled we need to make sure the delayed
++	 * fput to finish, which will make sure all the inodes will
++	 * be evicted before removing the encrypt keys.
++	 */
++	if (s->s_master_keys)
++		flush_delayed_fput();
++
+ 	kill_anon_super(s);
+ 
+ 	fsc->client->extra_mon_dispatch = NULL;
+-- 
+2.31.1
 
