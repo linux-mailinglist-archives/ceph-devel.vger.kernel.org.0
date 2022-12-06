@@ -2,50 +2,50 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 33CE6644333
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Dec 2022 13:32:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A15606443CD
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Dec 2022 14:01:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233889AbiLFMcg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 6 Dec 2022 07:32:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45392 "EHLO
+        id S233619AbiLFNBK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 6 Dec 2022 08:01:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233826AbiLFMc3 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Dec 2022 07:32:29 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C54BFCB
-        for <ceph-devel@vger.kernel.org>; Tue,  6 Dec 2022 04:31:39 -0800 (PST)
+        with ESMTP id S235129AbiLFNAt (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Dec 2022 08:00:49 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0783C388E
+        for <ceph-devel@vger.kernel.org>; Tue,  6 Dec 2022 04:59:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670329898;
+        s=mimecast20190719; t=1670331574;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding;
-        bh=0R7NsQ2iiDGUy9tUoJFHYb24O0OlX231bmVxBzCU1so=;
-        b=BlsagUXOLsXfU4PCrxxPhmF8hUx+w6w94R/klkYOodI52SHt0W3f++5lDoiL29/UnQBp2/
-        EM3je8IB+TMCvXevXUCB4XqrZElDqcs531ZoQDz9dWPusMhEvzZ1TpIiDLjH+fz8UfplDo
-        omihnwtHrEwYk0Y1qmqA4e5WaAnTiMw=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=WdqOFemVg5NFXnWMMR+1RHiNbyRUf3DGZaR3iQbCoVo=;
+        b=JNa5Bq4wYX6pJjKZtuG5CGVolivtjbK3Y+ZG/jEWuFbNkL44zQMi/keuPWnHRACfiradSS
+        iunkvOXFOhVPbvXzPF0PBWXeZFNHQxVK0iuciT7TfLrbunH9YdDpt15n60BNPaD03s6Trn
+        ipx2c+4j4AgVMFVM5xFP950Bc2IRteA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-290-YliWdMdMNW2ptjA2nPxElg-1; Tue, 06 Dec 2022 07:31:35 -0500
-X-MC-Unique: YliWdMdMNW2ptjA2nPxElg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+ us-mta-397-ZEethPFvMNGC7CRHTAcUhQ-1; Tue, 06 Dec 2022 07:59:31 -0500
+X-MC-Unique: ZEethPFvMNGC7CRHTAcUhQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CAD83380390B;
-        Tue,  6 Dec 2022 12:31:34 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BEFAD8339C1;
+        Tue,  6 Dec 2022 12:59:30 +0000 (UTC)
 Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4532A40C2064;
-        Tue,  6 Dec 2022 12:31:31 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DDB0B40C6EC3;
+        Tue,  6 Dec 2022 12:59:27 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-Cc:     jlayton@kernel.org, mchangir@redhat.com, atomlin@redhat.com,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v2] ceph: blocklist the kclient when receiving corrupted snap trace
-Date:   Tue,  6 Dec 2022 20:31:17 +0800
-Message-Id: <20221206123117.34015-1-xiubli@redhat.com>
+Cc:     jlayton@kernel.org, mchangir@redhat.com, atomlin@atomlin.com,
+        Xiubo Li <xiubli@redhat.com>, stable@vger.kernel.org
+Subject: [PATCH v3] ceph: blocklist the kclient when receiving corrupted snap trace
+Date:   Tue,  6 Dec 2022 20:59:15 +0800
+Message-Id: <20221206125915.37404-1-xiubli@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
@@ -65,13 +65,18 @@ which may corrupt the snapshot contents.
 Just try to blocklist this client and If fails we need to crash the
 client instead of leaving it writeable to OSDs.
 
+Cc: stable@vger.kernel.org
 URL: https://tracker.ceph.com/issues/57686
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
 
+Thanks Aaron's feedback.
+
+V3:
+- Fixed ERROR: spaces required around that ':' (ctx:VxW)
+
 V2:
 - Switched to WARN() to taint the Linux kernel.
-
 
  fs/ceph/mds_client.c |  3 ++-
  fs/ceph/mds_client.h |  1 +
@@ -105,7 +110,7 @@ index 728b7d72bf76..8e8f0447c0ad 100644
  	atomic64_t		quotarealms_count; /* # realms with quota */
  	/*
 diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-index c1c452afa84d..8d835590bad6 100644
+index c1c452afa84d..023852b7c527 100644
 --- a/fs/ceph/snap.c
 +++ b/fs/ceph/snap.c
 @@ -767,8 +767,10 @@ int ceph_update_snap_trace(struct ceph_mds_client *mdsc,
@@ -144,7 +149,7 @@ index c1c452afa84d..8d835590bad6 100644
 +	}
 +	WARN(1, "%s %s was blocklisted, do remount to continue%s",
 +	     __func__, ceph_pr_addr(&client->msgr.inst.addr),
-+	     err == -EIO ? " after corrupted snaptrace fixed": "");
++	     err == -EIO ? " after corrupted snaptrace fixed" : "");
 +
  	return err;
  }
