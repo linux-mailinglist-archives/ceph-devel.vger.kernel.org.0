@@ -2,150 +2,150 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6955464443B
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Dec 2022 14:12:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F451645082
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Dec 2022 01:41:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233548AbiLFNMj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 6 Dec 2022 08:12:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46002 "EHLO
+        id S229768AbiLGAl0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 6 Dec 2022 19:41:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235438AbiLFNMU (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Dec 2022 08:12:20 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F6942C0;
-        Tue,  6 Dec 2022 05:11:55 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id EE348B81974;
-        Tue,  6 Dec 2022 13:11:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B76B1C433C1;
-        Tue,  6 Dec 2022 13:11:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670332312;
-        bh=VVHMOEJUAAOA/RtsQv7QMpPJdj1/u6S3jZMKl5TJ8GI=;
-        h=Subject:From:To:Cc:Date:From;
-        b=F5UWSOaEDoHnHXcU43B6TM2774yeZtYXZDnrTEFERzcizLauw+q4z7w0sFjdCwgEM
-         huAj5OJJFPWgQSasfmi4uSSS0OEX+Y/vxsmi7RfTQRerMNS7IXQxgC9+IHe2N0OqIZ
-         bykRXwyVOVqRyoc2ZEZQLSZORUpf+x/W73Tp2mH5y4C+h+qTI4v1cI/UEl5NH7CyA3
-         KziTvZKgDn8+FDKW1SwLaWiaZj2iBzMLqBurHa2fwOVe++oPEQ7ja2MDh/VmYHn9OY
-         l/sKhKiPELag18Tz4hheNehfCMFkjfrdaMTT5UjiZ1sVXJx2riaWScvR+0WdK7fEH+
-         a3gv6qN6lIAkQ==
-Message-ID: <d3ba2c7f26958242c0a31b8f966e7c3d251a9e0f.camel@kernel.org>
-Subject: [GIT PULL] file locking changes for v6.2-rc1
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-cifs <linux-cifs@vger.kernel.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        linux-nfs <linux-nfs@vger.kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Tue, 06 Dec 2022 08:11:43 -0500
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-U/x8SEMmkxi22ZtjFzj9"
-User-Agent: Evolution 3.46.1 (3.46.1-1.fc37) 
+        with ESMTP id S229788AbiLGAlT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Dec 2022 19:41:19 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33805F61
+        for <ceph-devel@vger.kernel.org>; Tue,  6 Dec 2022 16:40:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1670373623;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=PsNujvX/Fn/RGbSU/hjSMEvFUx/g85wLbN26rijJ3vg=;
+        b=btC94m0abxrIda5NkghJFmV7PqAKZ+Zu2ZTrSJaRUPVMxtxE7zYTD3x434y1ZCJo8HyKqM
+        5zZlmoJLgdY5Ysdo45ZdRdx2Tx8vRJL4KRPorfQZ8eHB3KyzNIaCBaFyXKvlczNW0YJD95
+        x7joSuWBBsPu2VBarI3e6pvAkJFAOnc=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-563-Rw68tQzONFm7dlNNmeb2tQ-1; Tue, 06 Dec 2022 19:40:22 -0500
+X-MC-Unique: Rw68tQzONFm7dlNNmeb2tQ-1
+Received: by mail-pl1-f198.google.com with SMTP id c12-20020a170902d48c00b00189e5443387so4597190plg.15
+        for <ceph-devel@vger.kernel.org>; Tue, 06 Dec 2022 16:40:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PsNujvX/Fn/RGbSU/hjSMEvFUx/g85wLbN26rijJ3vg=;
+        b=mJnXQQPHH6PjxPGe7p/lBu5GIOBpRpn5m1BU2B7gSKQjLmvlLOZWrp1QH7jWjLQHN+
+         VvJGxCHvqlxjNalH29txwprJZ0yk2GA8oklWuU03jOCm/Bz7b8VK7xNmrpB0Cwz4bGly
+         5q4+FKkEwi4uCf7yPRyAlGqky4Pb01kINZJnURuQrz/IOTYcgYK42x9mwR/XtCxNzPsa
+         dReGrJMxBkbiGMIxWVgCeNliDGNomhccObOaOKWcs857dY4Cu1+Bl02BJl+oTDfPxchy
+         1AoNrmGy2H6yqhqhG1riWCfoNxweQYWEoSo+0hXYV6Xvgy/ezar4fODNpOu8jKWHe2fv
+         WuJA==
+X-Gm-Message-State: ANoB5pm/RpgyCSKL4jXhbMiFnQzygPBTB3/6OF0Vg8gy0u73HUG++Zwg
+        btAx1spBGU7TX2xqVG5285LKtFrG4ejN8RE4lv1TDsLcmAIo5BtNqeRVYFDZxXLfuNMIcFNb3zw
+        WuU7DSPk07vXAUboyfGAxO/a8SPsZ+PDEPZUwlQ4ZoT1P5xICgzrxARE/58aH2oLVJebvkoM=
+X-Received: by 2002:a17:90b:3c91:b0:219:da8f:c6f0 with SMTP id pv17-20020a17090b3c9100b00219da8fc6f0mr11723540pjb.1.1670373620835;
+        Tue, 06 Dec 2022 16:40:20 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf7yUd5W2add/mwtbcIS9CcXmW8qGtNWG9jes+aOQbClbGrssboKS1jYedUfuPNCBGJ2beFjHA==
+X-Received: by 2002:a17:90b:3c91:b0:219:da8f:c6f0 with SMTP id pv17-20020a17090b3c9100b00219da8fc6f0mr11723502pjb.1.1670373620161;
+        Tue, 06 Dec 2022 16:40:20 -0800 (PST)
+Received: from [10.72.12.244] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id k1-20020a170902c40100b001895b2c4cf6sm13228920plk.297.2022.12.06.16.40.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Dec 2022 16:40:19 -0800 (PST)
+Subject: Re: [ceph-client:testing 5/6] fs/ceph/super.c:1486:9: error: no
+ member named 's_master_keys' in 'struct super_block'
+To:     kernel test robot <lkp@intel.com>
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        ceph-devel@vger.kernel.org
+References: <202212070634.i0I0ZtVz-lkp@intel.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <49a4125b-0885-bb00-8d84-ec8329ec7be1@redhat.com>
+Date:   Wed, 7 Dec 2022 08:40:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <202212070634.i0I0ZtVz-lkp@intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Thanks for reporting this.
 
---=-U/x8SEMmkxi22ZtjFzj9
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
+It's just a test patch in the testing branch. And I will fix it.
 
-The following changes since commit 094226ad94f471a9f19e8f8e7140a09c2625abaa=
-:
+- Xiubo
 
-  Linux 6.1-rc5 (2022-11-13 13:12:55 -0800)
+On 07/12/2022 07:01, kernel test robot wrote:
+> tree:   https://github.com/ceph/ceph-client.git testing
+> head:   6950ae50f0998ef6846eab505c452c6bf02070e3
+> commit: c90f64b588ffb49a67bbf10c0580cf9051ced56a [5/6] [DO NOT MERGE] ceph: make sure all the files successfully put before unmounting
+> config: powerpc-randconfig-r016-20221206
+> compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 6e4cea55f0d1104408b26ac574566a0e4de48036)
+> reproduce (this is a W=1 build):
+>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>          chmod +x ~/bin/make.cross
+>          # install powerpc cross compiling tool for clang build
+>          # apt-get install binutils-powerpc-linux-gnu
+>          # https://github.com/ceph/ceph-client/commit/c90f64b588ffb49a67bbf10c0580cf9051ced56a
+>          git remote add ceph-client https://github.com/ceph/ceph-client.git
+>          git fetch --no-tags ceph-client testing
+>          git checkout c90f64b588ffb49a67bbf10c0580cf9051ced56a
+>          # save the config file
+>          mkdir build_dir && cp config build_dir/.config
+>          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=powerpc SHELL=/bin/bash fs/ceph/ mm/
+>
+> If you fix the issue, kindly add following tag where applicable
+> | Reported-by: kernel test robot <lkp@intel.com>
+>
+> All errors (new ones prefixed by >>):
+>
+>>> fs/ceph/super.c:1486:9: error: no member named 's_master_keys' in 'struct super_block'
+>             if (s->s_master_keys)
+>                 ~  ^
+>     1 error generated.
+>
+>
+> vim +1486 fs/ceph/super.c
+>
+>    1471	
+>    1472	static void ceph_kill_sb(struct super_block *s)
+>    1473	{
+>    1474		struct ceph_fs_client *fsc = ceph_sb_to_client(s);
+>    1475	
+>    1476		dout("kill_sb %p\n", s);
+>    1477	
+>    1478		ceph_mdsc_pre_umount(fsc->mdsc);
+>    1479		flush_fs_workqueues(fsc);
+>    1480	
+>    1481		/*
+>    1482		 * If the encrypt is enabled we need to make sure the delayed
+>    1483		 * fput to finish, which will make sure all the inodes will
+>    1484		 * be evicted before removing the encrypt keys.
+>    1485		 */
+>> 1486		if (s->s_master_keys)
+>    1487			flush_delayed_fput();
+>    1488	
+>    1489		kill_anon_super(s);
+>    1490	
+>    1491		fsc->client->extra_mon_dispatch = NULL;
+>    1492		ceph_fs_debugfs_cleanup(fsc);
+>    1493	
+>    1494		ceph_fscache_unregister_fs(fsc);
+>    1495	
+>    1496		destroy_fs_client(fsc);
+>    1497	}
+>    1498	
+>
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git tags/lock=
-s-v6.2
-
-for you to fetch changes up to f2f2494c8aa3cc317572c4674ef256005ebc092b:
-
-  Add process name and pid to locks warning (2022-11-30 05:08:10 -0500)
-
-----------------------------------------------------------------
-The main change here is to add the new locks_inode_context helper, and
-convert all of the places that dereference inode->i_flctx directly to
-use that instead.
-
-There a new helper to indicate whether any locks are held on an inode.
-This is mostly for Ceph but may be usable elsewhere too.
-
-Andi Kleen requested that we print the PID when the LOCK_MAND warning
-fires, to help track down applications trying to use it.
-
-Finally, we added some new warnings to some of the file locking
-functions that fire when the ->fl_file and filp arguments differ. This
-helped us find some long-standing bugs in lockd. Patches for those are
-in Chuck Lever's tree and should be in his v6.2 PR. After that patch,
-people using NFSv2/v3 locking may see some warnings fire until those go
-in.
-
-Happy Holidays!
-----------------------------------------------------------------
-Andi Kleen (1):
-      Add process name and pid to locks warning
-
-Jeff Layton (9):
-      filelock: WARN_ON_ONCE when ->fl_file and filp don't match
-      filelock: new helper: vfs_inode_has_locks
-      filelock: add a new locks_inode_context accessor function
-      ceph: use locks_inode_context helper
-      cifs: use locks_inode_context helper
-      ksmbd: use locks_inode_context helper
-      lockd: use locks_inode_context helper
-      nfs: use locks_inode_context helper
-      nfsd: use locks_inode_context helper
-
- fs/ceph/locks.c     |  4 ++--
- fs/cifs/file.c      |  2 +-
- fs/ksmbd/vfs.c      |  2 +-
- fs/lockd/svcsubs.c  |  4 ++--
- fs/locks.c          | 50 ++++++++++++++++++++++++++++++++++++++-----------=
--
- fs/nfs/delegation.c |  2 +-
- fs/nfs/nfs4state.c  |  2 +-
- fs/nfs/pagelist.c   |  2 +-
- fs/nfs/write.c      |  4 ++--
- fs/nfsd/nfs4state.c |  6 +++---
- include/linux/fs.h  | 20 ++++++++++++++++++++
- 11 files changed, 72 insertions(+), 26 deletions(-)
-
---=20
-Jeff Layton <jlayton@kernel.org>
-
---=-U/x8SEMmkxi22ZtjFzj9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQJHBAABCAAxFiEES8DXskRxsqGE6vXTAA5oQRlWghUFAmOPP48THGpsYXl0b25A
-a2VybmVsLm9yZwAKCRAADmhBGVaCFfJND/4p6X6SWmAXSzBgZ7EOT/dnC66PllS1
-KO50o2DfeiIapxkvqzOo49YyGovbFMcdQqWNXcBJ3TdSZ2v18FRcrnp47UU/MnPU
-pz3bgdqDteDwsEEQPPSSpgFZr4CpokiwoFiHARKz0DdbJFRefN7CcL99whaNDioR
-VS6w0bysdNxesED9asHOl8MzzmKvbiOQV7/SHLOjIrxm+FwrSFkkC4ReO3UMZp72
-HxK80v4IF1Aarw2rd/+8jUsEiwWHRpWkYS1mxT6pIUqJrwFkBue6kkoUlmd5GaUl
-fqsQE8EQcuQHACHPd07MiH/VLgnNyOpY9KbHZoLf1JFDEWuXapVrIlg9iNuR/oT4
-wLJbC5U5HaOJlG5mcnOsg6KFc3+6Gf9BGuD8SPKhlGroHTPlb78+Xh8jPAdeOwn+
-nsEO9njtMdt7uR1AAJIyv8SvrC/ZuPc0kR3rQ3CVkG4yIBrnjsgul5MkBVjsImwF
-jYT7oQwDokTFGryROOt9nzW6O2bmcwin1NfUCA80iVaIm0JXW8IXii5/RT5vxmei
-4bNqNkQLrHU48OBtW3yz5YG/g9lZme71f+M8QUzRfSkGk1lTcDDMtjIZAK6OphpJ
-baITwvncNSkq7zmf03SpaN+l1GYK9A20BVdA1gu59qmanF/Fy532qbrotFEpLbJY
-yNqzj5LP4OrxJQ==
-=1wv0
------END PGP SIGNATURE-----
-
---=-U/x8SEMmkxi22ZtjFzj9--
