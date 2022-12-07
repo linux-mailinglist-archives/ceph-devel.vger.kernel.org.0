@@ -2,256 +2,220 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 881A9645AF6
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Dec 2022 14:32:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14665645C5B
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Dec 2022 15:21:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229923AbiLGNcC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 7 Dec 2022 08:32:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33834 "EHLO
+        id S230315AbiLGOU6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 7 Dec 2022 09:20:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229988AbiLGNbz (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Dec 2022 08:31:55 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CE7D5915F
-        for <ceph-devel@vger.kernel.org>; Wed,  7 Dec 2022 05:31:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670419859;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FS4nP8Dvl5Abr4Pj8BMVXPrPrR55oEEMgJ40HwYEeb4=;
-        b=AtbiwTZUtaGntJUaodLzmWLKjSaXDjXXG0RdoKjK4hUWnhwsCT65CsSIF1QzgAV7NU1GGv
-        7SFo7RNbALqy21QC0UkAG87dF/XpU4cOaJyNJwl7taEQdspnTiQ1Smkeczb+hXvwQ+zBAF
-        NwP2uSDPM7wH7oWyk4dU2hXikGTeprE=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-630-fB73hA1zMiO7SKVwL_z-Sw-1; Wed, 07 Dec 2022 08:30:58 -0500
-X-MC-Unique: fB73hA1zMiO7SKVwL_z-Sw-1
-Received: by mail-pj1-f69.google.com with SMTP id oj5-20020a17090b4d8500b00219e1abad17so1420734pjb.1
-        for <ceph-devel@vger.kernel.org>; Wed, 07 Dec 2022 05:30:58 -0800 (PST)
+        with ESMTP id S230408AbiLGOUe (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Dec 2022 09:20:34 -0500
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D22F25FBBB;
+        Wed,  7 Dec 2022 06:20:21 -0800 (PST)
+Received: by mail-ed1-x533.google.com with SMTP id e13so25062141edj.7;
+        Wed, 07 Dec 2022 06:20:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=L/zOay+3Fb/ANlUQ0vmlLf8XMa57liQStI/Efuezn08=;
+        b=DINDuKzzcjHJyZB/HqfYmUUBUUNF1+2hI38WG2hmGqJfSVDyaOKtOHFWhH6KW9AFkQ
+         gjWJSuBKC5I83nnoKOvk0hdFbk14tP6vM0/pbmI5PVjK/3vaEBD07rt4SIqsWz65wn4n
+         8RXOoUpAqJBgf/lIMTyVBIsVcUSb0ziWmBCuRDn95E4XDH1j26tkYUn57dIbFL9u/J//
+         BnkCOLjiARQStSwMDtxZnTL2t+evhuokfe6Pri1tQ8fGurvcG8qfvkc2FMFhiV8Mhg2W
+         4b9ul8pvjj7QA6+u0U2PolNNvbxgE60TXjvohKyaeIgr7VSmcEA4m04outu5aoJyEB6D
+         Sfgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:references:cc:to:from:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FS4nP8Dvl5Abr4Pj8BMVXPrPrR55oEEMgJ40HwYEeb4=;
-        b=WMLzugNcul+Q98FBStbbwFx0lGGoTUZeFmQm5MzaSQ6iPYmYvhmTZlOn5izUUsa4nS
-         P1Pob1sml6fXdcZJ+ElueoFZl0gea8Ne934E4qyOsNIRYFd8T+zyHli2AhZ2CnFLaGOc
-         BOMgy4dC4TS0QuNpxNeO2rl1w5E/o5NUOC7vK0ErGg8GMzMXhiqJPnZIEhD7hKRF1+IF
-         WhP8URSs2HSUpCYDNyer6AKM/2T6FavEgFaiG2o9a5MhM8BK4UxogwALFwZ4rm5R74t5
-         QRUt7nwp1Tp8wSvHSArVm7g3DDqFecbB0FZViWzXDrdRHHAZFcEXTO8SvoUbh/c+uyEI
-         dJ0w==
-X-Gm-Message-State: ANoB5pn2q/GF5GAwNCYUeuQuqZ4jEIpq7SZRYkbR2oEVGtm4RvkVxit/
-        E8TjUpOzEuELxGFjx+tzk1L34/5KJOfF+k2Z1v0NtCi0H6WVovZq3MwqmaS1a8KKGTYDhNvRreP
-        daAnObD7bRyrd1Ae8e3BE5Q==
-X-Received: by 2002:a17:902:a514:b0:189:97c3:6382 with SMTP id s20-20020a170902a51400b0018997c36382mr43079412plq.168.1670419857587;
-        Wed, 07 Dec 2022 05:30:57 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf7JZSzIpR16yfAiGGCWy8EDHhpFN83uo/E5MVKkzglqHQjlqbbrxUuZYcFBz0h9Axrb4LBY0g==
-X-Received: by 2002:a17:902:a514:b0:189:97c3:6382 with SMTP id s20-20020a170902a51400b0018997c36382mr43079391plq.168.1670419857284;
-        Wed, 07 Dec 2022 05:30:57 -0800 (PST)
-Received: from [10.72.12.134] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id a5-20020a170902710500b0018930dbc560sm14443062pll.96.2022.12.07.05.30.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Dec 2022 05:30:56 -0800 (PST)
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L/zOay+3Fb/ANlUQ0vmlLf8XMa57liQStI/Efuezn08=;
+        b=2ofdgm2G9agS8TFzdDnFjAxX0hxLQq8JmYaGImNgkXZZ4GK4AF9vdCvNgTbe45ut/6
+         sbd9oTtCtaenVxS6NhXWlzpTragOR7/A+0smHQQuM1ABXwXNQzRrIkR/iRJtCMFa5KA3
+         kpTTv24Gg4XnakR3C0fvraUhjUV7bu5BmyyitzA+UTtzmawmlAAfr3E30LruUHNbQy/H
+         T8ZVNIoZUFRrvJDBeRZA8RuOQJY3q9lYTAoquoKX+925Uco06YQRpAmjgIYQyVHaEgP7
+         hGSyX3ctfRk5Vo+cLLs2oG/dJWFxP6HAviPXHjdArjzfwxfu/DkvX4nyGu4xjk0MDuUi
+         MSjw==
+X-Gm-Message-State: ANoB5pm+gnMGWr+yxUTWSFQ4KAYkJ44aa2jnHomfFOVWbSiyWxLL7+C/
+        tfi0pAU5HbBg9Wiogz7JvXpNJoOOWnwbEmHcZFg=
+X-Google-Smtp-Source: AA0mqf50bkvOBEQCmLYcKRJ9JUU/sjDeaMRg2yd/ioYNuQe8H7WHGe03PNDXaKNGZoNznsgDhAGgqjHDeJ4z1UsCyvA=
+X-Received: by 2002:aa7:d44d:0:b0:46d:7d3c:30cc with SMTP id
+ q13-20020aa7d44d000000b0046d7d3c30ccmr1043443edr.322.1670422820200; Wed, 07
+ Dec 2022 06:20:20 -0800 (PST)
+MIME-Version: 1.0
+References: <20221206125915.37404-1-xiubli@redhat.com> <CAOi1vP8hkXZ7w9D5LnMViyjqVCmsKo3H2dg1QpzgHCPuNfvACQ@mail.gmail.com>
+ <baa681e9-4472-bcfb-601f-132dc6658888@redhat.com> <ac1e95e6-f8fa-e243-97bd-a280b8e0fa66@redhat.com>
+In-Reply-To: <ac1e95e6-f8fa-e243-97bd-a280b8e0fa66@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Wed, 7 Dec 2022 15:20:08 +0100
+Message-ID: <CAOi1vP_=2wOSYmrzfdm3k__dVONjXspjV15gbZ+Yq247xmpnXQ@mail.gmail.com>
 Subject: Re: [PATCH v3] ceph: blocklist the kclient when receiving corrupted
  snap trace
-From:   Xiubo Li <xiubli@redhat.com>
-To:     Ilya Dryomov <idryomov@gmail.com>
+To:     Xiubo Li <xiubli@redhat.com>
 Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
         mchangir@redhat.com, atomlin@atomlin.com, stable@vger.kernel.org
-References: <20221206125915.37404-1-xiubli@redhat.com>
- <CAOi1vP8hkXZ7w9D5LnMViyjqVCmsKo3H2dg1QpzgHCPuNfvACQ@mail.gmail.com>
- <baa681e9-4472-bcfb-601f-132dc6658888@redhat.com>
-Message-ID: <ac1e95e6-f8fa-e243-97bd-a280b8e0fa66@redhat.com>
-Date:   Wed, 7 Dec 2022 21:30:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
-MIME-Version: 1.0
-In-Reply-To: <baa681e9-4472-bcfb-601f-132dc6658888@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Wed, Dec 7, 2022 at 2:31 PM Xiubo Li <xiubli@redhat.com> wrote:
+>
+>
+> On 07/12/2022 21:19, Xiubo Li wrote:
+> >
+> > On 07/12/2022 18:59, Ilya Dryomov wrote:
+> >> On Tue, Dec 6, 2022 at 1:59 PM <xiubli@redhat.com> wrote:
+> >>> From: Xiubo Li <xiubli@redhat.com>
+> >>>
+> >>> When received corrupted snap trace we don't know what exactly has
+> >>> happened in MDS side. And we shouldn't continue writing to OSD,
+> >>> which may corrupt the snapshot contents.
+> >>>
+> >>> Just try to blocklist this client and If fails we need to crash the
+> >>> client instead of leaving it writeable to OSDs.
+> >>>
+> >>> Cc: stable@vger.kernel.org
+> >>> URL: https://tracker.ceph.com/issues/57686
+> >>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> >>> ---
+> >>>
+> >>> Thanks Aaron's feedback.
+> >>>
+> >>> V3:
+> >>> - Fixed ERROR: spaces required around that ':' (ctx:VxW)
+> >>>
+> >>> V2:
+> >>> - Switched to WARN() to taint the Linux kernel.
+> >>>
+> >>>   fs/ceph/mds_client.c |  3 ++-
+> >>>   fs/ceph/mds_client.h |  1 +
+> >>>   fs/ceph/snap.c       | 25 +++++++++++++++++++++++++
+> >>>   3 files changed, 28 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> >>> index cbbaf334b6b8..59094944af28 100644
+> >>> --- a/fs/ceph/mds_client.c
+> >>> +++ b/fs/ceph/mds_client.c
+> >>> @@ -5648,7 +5648,8 @@ static void mds_peer_reset(struct
+> >>> ceph_connection *con)
+> >>>          struct ceph_mds_client *mdsc = s->s_mdsc;
+> >>>
+> >>>          pr_warn("mds%d closed our session\n", s->s_mds);
+> >>> -       send_mds_reconnect(mdsc, s);
+> >>> +       if (!mdsc->no_reconnect)
+> >>> +               send_mds_reconnect(mdsc, s);
+> >>>   }
+> >>>
+> >>>   static void mds_dispatch(struct ceph_connection *con, struct
+> >>> ceph_msg *msg)
+> >>> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> >>> index 728b7d72bf76..8e8f0447c0ad 100644
+> >>> --- a/fs/ceph/mds_client.h
+> >>> +++ b/fs/ceph/mds_client.h
+> >>> @@ -413,6 +413,7 @@ struct ceph_mds_client {
+> >>>          atomic_t                num_sessions;
+> >>>          int                     max_sessions;  /* len of sessions
+> >>> array */
+> >>>          int                     stopping;      /* true if shutting
+> >>> down */
+> >>> +       int                     no_reconnect;  /* true if snap trace
+> >>> is corrupted */
+> >>>
+> >>>          atomic64_t              quotarealms_count; /* # realms with
+> >>> quota */
+> >>>          /*
+> >>> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> >>> index c1c452afa84d..023852b7c527 100644
+> >>> --- a/fs/ceph/snap.c
+> >>> +++ b/fs/ceph/snap.c
+> >>> @@ -767,8 +767,10 @@ int ceph_update_snap_trace(struct
+> >>> ceph_mds_client *mdsc,
+> >>>          struct ceph_snap_realm *realm;
+> >>>          struct ceph_snap_realm *first_realm = NULL;
+> >>>          struct ceph_snap_realm *realm_to_rebuild = NULL;
+> >>> +       struct ceph_client *client = mdsc->fsc->client;
+> >>>          int rebuild_snapcs;
+> >>>          int err = -ENOMEM;
+> >>> +       int ret;
+> >>>          LIST_HEAD(dirty_realms);
+> >>>
+> >>>          lockdep_assert_held_write(&mdsc->snap_rwsem);
+> >>> @@ -885,6 +887,29 @@ int ceph_update_snap_trace(struct
+> >>> ceph_mds_client *mdsc,
+> >>>          if (first_realm)
+> >>>                  ceph_put_snap_realm(mdsc, first_realm);
+> >>>          pr_err("%s error %d\n", __func__, err);
+> >>> +
+> >>> +       /*
+> >>> +        * When receiving a corrupted snap trace we don't know what
+> >>> +        * exactly has happened in MDS side. And we shouldn't continue
+> >>> +        * writing to OSD, which may corrupt the snapshot contents.
+> >>> +        *
+> >>> +        * Just try to blocklist this kclient and if it fails we need
+> >>> +        * to crash the kclient instead of leaving it writeable.
+> >> Hi Xiubo,
+> >>
+> >> I'm not sure I understand this "let's blocklist ourselves" concept.
+> >> If the kernel client shouldn't continue writing to OSDs in this case,
+> >> why not just stop issuing writes -- perhaps initiating some equivalent
+> >> of a read-only remount like many local filesystems would do on I/O
+> >> errors (e.g. errors=remount-ro mode)?
+> >
+> > The following patch seems working. Let me do more test to make sure
+> > there is not further crash.
+> >
+> > diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> > index c1c452afa84d..cd487f8a4cb5 100644
+> > --- a/fs/ceph/snap.c
+> > +++ b/fs/ceph/snap.c
+> > @@ -767,6 +767,7 @@ int ceph_update_snap_trace(struct ceph_mds_client
+> > *mdsc,
+> >         struct ceph_snap_realm *realm;
+> >         struct ceph_snap_realm *first_realm = NULL;
+> >         struct ceph_snap_realm *realm_to_rebuild = NULL;
+> > +       struct super_block *sb = mdsc->fsc->sb;
+> >         int rebuild_snapcs;
+> >         int err = -ENOMEM;
+> >         LIST_HEAD(dirty_realms);
+> > @@ -885,6 +886,9 @@ int ceph_update_snap_trace(struct ceph_mds_client
+> > *mdsc,
+> >         if (first_realm)
+> >                 ceph_put_snap_realm(mdsc, first_realm);
+> >         pr_err("%s error %d\n", __func__, err);
+> > +       pr_err("Remounting filesystem read-only\n");
+> > +       sb->s_flags |= SB_RDONLY;
+> > +
+> >         return err;
+> >  }
+> >
+> >
+> For readonly approach is also my first thought it should be, but I was
+> just not very sure whether it would be the best approach.
+>
+> Because by evicting the kclient we could prevent the buffer to be wrote
+> to OSDs. But the readonly one seems won't ?
 
-On 07/12/2022 21:19, Xiubo Li wrote:
->
-> On 07/12/2022 18:59, Ilya Dryomov wrote:
->> On Tue, Dec 6, 2022 at 1:59 PM <xiubli@redhat.com> wrote:
->>> From: Xiubo Li <xiubli@redhat.com>
->>>
->>> When received corrupted snap trace we don't know what exactly has
->>> happened in MDS side. And we shouldn't continue writing to OSD,
->>> which may corrupt the snapshot contents.
->>>
->>> Just try to blocklist this client and If fails we need to crash the
->>> client instead of leaving it writeable to OSDs.
->>>
->>> Cc: stable@vger.kernel.org
->>> URL: https://tracker.ceph.com/issues/57686
->>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>> ---
->>>
->>> Thanks Aaron's feedback.
->>>
->>> V3:
->>> - Fixed ERROR: spaces required around that ':' (ctx:VxW)
->>>
->>> V2:
->>> - Switched to WARN() to taint the Linux kernel.
->>>
->>>   fs/ceph/mds_client.c |  3 ++-
->>>   fs/ceph/mds_client.h |  1 +
->>>   fs/ceph/snap.c       | 25 +++++++++++++++++++++++++
->>>   3 files changed, 28 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
->>> index cbbaf334b6b8..59094944af28 100644
->>> --- a/fs/ceph/mds_client.c
->>> +++ b/fs/ceph/mds_client.c
->>> @@ -5648,7 +5648,8 @@ static void mds_peer_reset(struct 
->>> ceph_connection *con)
->>>          struct ceph_mds_client *mdsc = s->s_mdsc;
->>>
->>>          pr_warn("mds%d closed our session\n", s->s_mds);
->>> -       send_mds_reconnect(mdsc, s);
->>> +       if (!mdsc->no_reconnect)
->>> +               send_mds_reconnect(mdsc, s);
->>>   }
->>>
->>>   static void mds_dispatch(struct ceph_connection *con, struct 
->>> ceph_msg *msg)
->>> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
->>> index 728b7d72bf76..8e8f0447c0ad 100644
->>> --- a/fs/ceph/mds_client.h
->>> +++ b/fs/ceph/mds_client.h
->>> @@ -413,6 +413,7 @@ struct ceph_mds_client {
->>>          atomic_t                num_sessions;
->>>          int                     max_sessions;  /* len of sessions 
->>> array */
->>>          int                     stopping;      /* true if shutting 
->>> down */
->>> +       int                     no_reconnect;  /* true if snap trace 
->>> is corrupted */
->>>
->>>          atomic64_t              quotarealms_count; /* # realms with 
->>> quota */
->>>          /*
->>> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
->>> index c1c452afa84d..023852b7c527 100644
->>> --- a/fs/ceph/snap.c
->>> +++ b/fs/ceph/snap.c
->>> @@ -767,8 +767,10 @@ int ceph_update_snap_trace(struct 
->>> ceph_mds_client *mdsc,
->>>          struct ceph_snap_realm *realm;
->>>          struct ceph_snap_realm *first_realm = NULL;
->>>          struct ceph_snap_realm *realm_to_rebuild = NULL;
->>> +       struct ceph_client *client = mdsc->fsc->client;
->>>          int rebuild_snapcs;
->>>          int err = -ENOMEM;
->>> +       int ret;
->>>          LIST_HEAD(dirty_realms);
->>>
->>>          lockdep_assert_held_write(&mdsc->snap_rwsem);
->>> @@ -885,6 +887,29 @@ int ceph_update_snap_trace(struct 
->>> ceph_mds_client *mdsc,
->>>          if (first_realm)
->>>                  ceph_put_snap_realm(mdsc, first_realm);
->>>          pr_err("%s error %d\n", __func__, err);
->>> +
->>> +       /*
->>> +        * When receiving a corrupted snap trace we don't know what
->>> +        * exactly has happened in MDS side. And we shouldn't continue
->>> +        * writing to OSD, which may corrupt the snapshot contents.
->>> +        *
->>> +        * Just try to blocklist this kclient and if it fails we need
->>> +        * to crash the kclient instead of leaving it writeable.
->> Hi Xiubo,
->>
->> I'm not sure I understand this "let's blocklist ourselves" concept.
->> If the kernel client shouldn't continue writing to OSDs in this case,
->> why not just stop issuing writes -- perhaps initiating some equivalent
->> of a read-only remount like many local filesystems would do on I/O
->> errors (e.g. errors=remount-ro mode)?
->
-> The following patch seems working. Let me do more test to make sure 
-> there is not further crash.
->
-> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-> index c1c452afa84d..cd487f8a4cb5 100644
-> --- a/fs/ceph/snap.c
-> +++ b/fs/ceph/snap.c
-> @@ -767,6 +767,7 @@ int ceph_update_snap_trace(struct ceph_mds_client 
-> *mdsc,
->         struct ceph_snap_realm *realm;
->         struct ceph_snap_realm *first_realm = NULL;
->         struct ceph_snap_realm *realm_to_rebuild = NULL;
-> +       struct super_block *sb = mdsc->fsc->sb;
->         int rebuild_snapcs;
->         int err = -ENOMEM;
->         LIST_HEAD(dirty_realms);
-> @@ -885,6 +886,9 @@ int ceph_update_snap_trace(struct ceph_mds_client 
-> *mdsc,
->         if (first_realm)
->                 ceph_put_snap_realm(mdsc, first_realm);
->         pr_err("%s error %d\n", __func__, err);
-> +       pr_err("Remounting filesystem read-only\n");
-> +       sb->s_flags |= SB_RDONLY;
-> +
->         return err;
->  }
->
->
-For readonly approach is also my first thought it should be, but I was 
-just not very sure whether it would be the best approach.
+The read-only setting is more for the VFS and the user.  Technically,
+the kernel client could just stop issuing writes (i.e. OSD requests
+containing a write op) and not set SB_RDONLY.  That should cover any
+buffered data as well.
 
-Because by evicting the kclient we could prevent the buffer to be wrote 
-to OSDs. But the readonly one seems won't ?
+By employing self-blocklisting, you are shifting the responsibility
+of rejecting OSD requests to the OSDs.  I'm saying that not issuing
+OSD requests from a potentially busted client in the first place is
+probably a better idea.  At the very least you wouldn't need to BUG
+on ceph_monc_blocklist_add() errors.
 
-- Xiubo
+Thanks,
 
->
->
->>
->> Or, perhaps, all in-memory snap contexts could somehow be invalidated
->> in this case, making writes fail naturally -- on the client side,
->> without actually being sent to OSDs just to be nixed by the blocklist
->> hammer.
->>
->> But further, what makes a failure to decode a snap trace special?
->> AFAIK we don't do anything close to this for any other decoding
->> failure.  Wouldn't "when received corrupted XYZ we don't know what
->> exactly has happened in MDS side" argument apply to pretty much all
->> decoding failures?
->>
->>> +        *
->>> +        * Then this kclient must be remounted to continue after the
->>> +        * corrupted metadata fixed in the MDS side.
->>> +        */
->>> +       mdsc->no_reconnect = 1;
->>> +       ret = ceph_monc_blocklist_add(&client->monc, 
->>> &client->msgr.inst.addr);
->>> +       if (ret) {
->>> +               pr_err("%s blocklist of %s failed: %d", __func__,
->>> + ceph_pr_addr(&client->msgr.inst.addr), ret);
->>> +               BUG();
->> ... and this is a rough equivalent of errors=panic mode.
->>
->> Is there a corresponding userspace client PR that can be referenced?
->> This needs additional background and justification IMO.
->>
->> Thanks,
->>
->>                  Ilya
->>
-
+                Ilya
