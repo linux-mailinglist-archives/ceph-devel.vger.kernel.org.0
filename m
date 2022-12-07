@@ -2,150 +2,189 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F451645082
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Dec 2022 01:41:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E75264586E
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Dec 2022 12:00:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229768AbiLGAl0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 6 Dec 2022 19:41:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47672 "EHLO
+        id S229958AbiLGLAY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 7 Dec 2022 06:00:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229788AbiLGAlT (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Dec 2022 19:41:19 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33805F61
-        for <ceph-devel@vger.kernel.org>; Tue,  6 Dec 2022 16:40:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670373623;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=PsNujvX/Fn/RGbSU/hjSMEvFUx/g85wLbN26rijJ3vg=;
-        b=btC94m0abxrIda5NkghJFmV7PqAKZ+Zu2ZTrSJaRUPVMxtxE7zYTD3x434y1ZCJo8HyKqM
-        5zZlmoJLgdY5Ysdo45ZdRdx2Tx8vRJL4KRPorfQZ8eHB3KyzNIaCBaFyXKvlczNW0YJD95
-        x7joSuWBBsPu2VBarI3e6pvAkJFAOnc=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-563-Rw68tQzONFm7dlNNmeb2tQ-1; Tue, 06 Dec 2022 19:40:22 -0500
-X-MC-Unique: Rw68tQzONFm7dlNNmeb2tQ-1
-Received: by mail-pl1-f198.google.com with SMTP id c12-20020a170902d48c00b00189e5443387so4597190plg.15
-        for <ceph-devel@vger.kernel.org>; Tue, 06 Dec 2022 16:40:22 -0800 (PST)
+        with ESMTP id S229957AbiLGK7y (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Dec 2022 05:59:54 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF02026110;
+        Wed,  7 Dec 2022 02:59:42 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id fc4so12996619ejc.12;
+        Wed, 07 Dec 2022 02:59:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YpIqHrgvxTLKNNK8z3Ar4IvFrm3QLjxZp/LOYj8IOoc=;
+        b=KSNFaDV1vgRRim2gV0rHtxasBC0chH1qPAHlD4wuZ+w0VePySVosYbaptSu9DRfg6R
+         dhUUOp9ZfgPUi4PJmGDiXPRGymLPc7ZlejWluSDqRNXldnn2IIm7AVO33nPX3CtfH7wF
+         r8SFW96g5a1/ChSP488pdCAO5l9jeBgmSSX6z31I8n3iCxFsbTOw0v9ff3DPQfyKbBaj
+         kpZ24TELyJ1AROJZvdAenBo6gO4Q1s4G641GrZsyneaQP619A1UvClhDc9Ww+m9acwN6
+         FgX6ZXQk78O3Q/13Ow15zN9GAo4YnqwlEgICloYqB9sgr+6wJ83ua85b9bV23BuchxF6
+         LXmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PsNujvX/Fn/RGbSU/hjSMEvFUx/g85wLbN26rijJ3vg=;
-        b=mJnXQQPHH6PjxPGe7p/lBu5GIOBpRpn5m1BU2B7gSKQjLmvlLOZWrp1QH7jWjLQHN+
-         VvJGxCHvqlxjNalH29txwprJZ0yk2GA8oklWuU03jOCm/Bz7b8VK7xNmrpB0Cwz4bGly
-         5q4+FKkEwi4uCf7yPRyAlGqky4Pb01kINZJnURuQrz/IOTYcgYK42x9mwR/XtCxNzPsa
-         dReGrJMxBkbiGMIxWVgCeNliDGNomhccObOaOKWcs857dY4Cu1+Bl02BJl+oTDfPxchy
-         1AoNrmGy2H6yqhqhG1riWCfoNxweQYWEoSo+0hXYV6Xvgy/ezar4fODNpOu8jKWHe2fv
-         WuJA==
-X-Gm-Message-State: ANoB5pm/RpgyCSKL4jXhbMiFnQzygPBTB3/6OF0Vg8gy0u73HUG++Zwg
-        btAx1spBGU7TX2xqVG5285LKtFrG4ejN8RE4lv1TDsLcmAIo5BtNqeRVYFDZxXLfuNMIcFNb3zw
-        WuU7DSPk07vXAUboyfGAxO/a8SPsZ+PDEPZUwlQ4ZoT1P5xICgzrxARE/58aH2oLVJebvkoM=
-X-Received: by 2002:a17:90b:3c91:b0:219:da8f:c6f0 with SMTP id pv17-20020a17090b3c9100b00219da8fc6f0mr11723540pjb.1.1670373620835;
-        Tue, 06 Dec 2022 16:40:20 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf7yUd5W2add/mwtbcIS9CcXmW8qGtNWG9jes+aOQbClbGrssboKS1jYedUfuPNCBGJ2beFjHA==
-X-Received: by 2002:a17:90b:3c91:b0:219:da8f:c6f0 with SMTP id pv17-20020a17090b3c9100b00219da8fc6f0mr11723502pjb.1.1670373620161;
-        Tue, 06 Dec 2022 16:40:20 -0800 (PST)
-Received: from [10.72.12.244] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id k1-20020a170902c40100b001895b2c4cf6sm13228920plk.297.2022.12.06.16.40.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Dec 2022 16:40:19 -0800 (PST)
-Subject: Re: [ceph-client:testing 5/6] fs/ceph/super.c:1486:9: error: no
- member named 's_master_keys' in 'struct super_block'
-To:     kernel test robot <lkp@intel.com>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        ceph-devel@vger.kernel.org
-References: <202212070634.i0I0ZtVz-lkp@intel.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <49a4125b-0885-bb00-8d84-ec8329ec7be1@redhat.com>
-Date:   Wed, 7 Dec 2022 08:40:12 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YpIqHrgvxTLKNNK8z3Ar4IvFrm3QLjxZp/LOYj8IOoc=;
+        b=WDGJFxkgV24UKyFL4d3xfzxW/gMM1b+xSFaUWgkN/n1f0f5TekEI+yb5gJybX3Otgf
+         v2PJ8HTPJEYM5PfJOVUI8pRUgIETGTJlqlF3QyEnjHHWf99Y4JLgB9kFVHufnaoeSRIs
+         a+riRWYMfImflEaRGBXasfT1BiltSk6+6WUdLmwrKkx/xJQPcNCCo+Tm6kydu5yrw/sX
+         jr9NlJlj4DxlNybJGkt+eQBr1+YE9rqdNXkfvNN0ONlKsbGwinxMfN+4/zIsiI/CtCY3
+         TC+dLj1ofetfMZV81XF+eLPYxXxM1ZF3gpW7l4mJz9fd6wjpiNe0Z7nWYaQ/A9JlDW4o
+         ad+g==
+X-Gm-Message-State: ANoB5pm3qrEil5smk5OZHmyeE+S+36FwptTchJJukHoBKWmA/eI0w50+
+        zgzPgDxTNKd3/N2sleD7m0uYyxRPub41h3aNcK4=
+X-Google-Smtp-Source: AA0mqf6aF3yZMYYwmZD4gObv9ldYDfAeF7BalEpxLadXLyDuKJtKCpmtoOhYzl25RSmfHwwRzLX0ctABZfXazPYs+Y4=
+X-Received: by 2002:a17:906:3b42:b0:7c0:c220:a341 with SMTP id
+ h2-20020a1709063b4200b007c0c220a341mr18026577ejf.569.1670410781367; Wed, 07
+ Dec 2022 02:59:41 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <202212070634.i0I0ZtVz-lkp@intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20221206125915.37404-1-xiubli@redhat.com>
+In-Reply-To: <20221206125915.37404-1-xiubli@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Wed, 7 Dec 2022 11:59:29 +0100
+Message-ID: <CAOi1vP8hkXZ7w9D5LnMViyjqVCmsKo3H2dg1QpzgHCPuNfvACQ@mail.gmail.com>
+Subject: Re: [PATCH v3] ceph: blocklist the kclient when receiving corrupted
+ snap trace
+To:     xiubli@redhat.com
+Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        mchangir@redhat.com, atomlin@atomlin.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Thanks for reporting this.
+On Tue, Dec 6, 2022 at 1:59 PM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> When received corrupted snap trace we don't know what exactly has
+> happened in MDS side. And we shouldn't continue writing to OSD,
+> which may corrupt the snapshot contents.
+>
+> Just try to blocklist this client and If fails we need to crash the
+> client instead of leaving it writeable to OSDs.
+>
+> Cc: stable@vger.kernel.org
+> URL: https://tracker.ceph.com/issues/57686
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>
+> Thanks Aaron's feedback.
+>
+> V3:
+> - Fixed ERROR: spaces required around that ':' (ctx:VxW)
+>
+> V2:
+> - Switched to WARN() to taint the Linux kernel.
+>
+>  fs/ceph/mds_client.c |  3 ++-
+>  fs/ceph/mds_client.h |  1 +
+>  fs/ceph/snap.c       | 25 +++++++++++++++++++++++++
+>  3 files changed, 28 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index cbbaf334b6b8..59094944af28 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -5648,7 +5648,8 @@ static void mds_peer_reset(struct ceph_connection *con)
+>         struct ceph_mds_client *mdsc = s->s_mdsc;
+>
+>         pr_warn("mds%d closed our session\n", s->s_mds);
+> -       send_mds_reconnect(mdsc, s);
+> +       if (!mdsc->no_reconnect)
+> +               send_mds_reconnect(mdsc, s);
+>  }
+>
+>  static void mds_dispatch(struct ceph_connection *con, struct ceph_msg *msg)
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 728b7d72bf76..8e8f0447c0ad 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -413,6 +413,7 @@ struct ceph_mds_client {
+>         atomic_t                num_sessions;
+>         int                     max_sessions;  /* len of sessions array */
+>         int                     stopping;      /* true if shutting down */
+> +       int                     no_reconnect;  /* true if snap trace is corrupted */
+>
+>         atomic64_t              quotarealms_count; /* # realms with quota */
+>         /*
+> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> index c1c452afa84d..023852b7c527 100644
+> --- a/fs/ceph/snap.c
+> +++ b/fs/ceph/snap.c
+> @@ -767,8 +767,10 @@ int ceph_update_snap_trace(struct ceph_mds_client *mdsc,
+>         struct ceph_snap_realm *realm;
+>         struct ceph_snap_realm *first_realm = NULL;
+>         struct ceph_snap_realm *realm_to_rebuild = NULL;
+> +       struct ceph_client *client = mdsc->fsc->client;
+>         int rebuild_snapcs;
+>         int err = -ENOMEM;
+> +       int ret;
+>         LIST_HEAD(dirty_realms);
+>
+>         lockdep_assert_held_write(&mdsc->snap_rwsem);
+> @@ -885,6 +887,29 @@ int ceph_update_snap_trace(struct ceph_mds_client *mdsc,
+>         if (first_realm)
+>                 ceph_put_snap_realm(mdsc, first_realm);
+>         pr_err("%s error %d\n", __func__, err);
+> +
+> +       /*
+> +        * When receiving a corrupted snap trace we don't know what
+> +        * exactly has happened in MDS side. And we shouldn't continue
+> +        * writing to OSD, which may corrupt the snapshot contents.
+> +        *
+> +        * Just try to blocklist this kclient and if it fails we need
+> +        * to crash the kclient instead of leaving it writeable.
 
-It's just a test patch in the testing branch. And I will fix it.
+Hi Xiubo,
 
-- Xiubo
+I'm not sure I understand this "let's blocklist ourselves" concept.
+If the kernel client shouldn't continue writing to OSDs in this case,
+why not just stop issuing writes -- perhaps initiating some equivalent
+of a read-only remount like many local filesystems would do on I/O
+errors (e.g. errors=remount-ro mode)?
 
-On 07/12/2022 07:01, kernel test robot wrote:
-> tree:   https://github.com/ceph/ceph-client.git testing
-> head:   6950ae50f0998ef6846eab505c452c6bf02070e3
-> commit: c90f64b588ffb49a67bbf10c0580cf9051ced56a [5/6] [DO NOT MERGE] ceph: make sure all the files successfully put before unmounting
-> config: powerpc-randconfig-r016-20221206
-> compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 6e4cea55f0d1104408b26ac574566a0e4de48036)
-> reproduce (this is a W=1 build):
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # install powerpc cross compiling tool for clang build
->          # apt-get install binutils-powerpc-linux-gnu
->          # https://github.com/ceph/ceph-client/commit/c90f64b588ffb49a67bbf10c0580cf9051ced56a
->          git remote add ceph-client https://github.com/ceph/ceph-client.git
->          git fetch --no-tags ceph-client testing
->          git checkout c90f64b588ffb49a67bbf10c0580cf9051ced56a
->          # save the config file
->          mkdir build_dir && cp config build_dir/.config
->          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=powerpc SHELL=/bin/bash fs/ceph/ mm/
->
-> If you fix the issue, kindly add following tag where applicable
-> | Reported-by: kernel test robot <lkp@intel.com>
->
-> All errors (new ones prefixed by >>):
->
->>> fs/ceph/super.c:1486:9: error: no member named 's_master_keys' in 'struct super_block'
->             if (s->s_master_keys)
->                 ~  ^
->     1 error generated.
->
->
-> vim +1486 fs/ceph/super.c
->
->    1471	
->    1472	static void ceph_kill_sb(struct super_block *s)
->    1473	{
->    1474		struct ceph_fs_client *fsc = ceph_sb_to_client(s);
->    1475	
->    1476		dout("kill_sb %p\n", s);
->    1477	
->    1478		ceph_mdsc_pre_umount(fsc->mdsc);
->    1479		flush_fs_workqueues(fsc);
->    1480	
->    1481		/*
->    1482		 * If the encrypt is enabled we need to make sure the delayed
->    1483		 * fput to finish, which will make sure all the inodes will
->    1484		 * be evicted before removing the encrypt keys.
->    1485		 */
->> 1486		if (s->s_master_keys)
->    1487			flush_delayed_fput();
->    1488	
->    1489		kill_anon_super(s);
->    1490	
->    1491		fsc->client->extra_mon_dispatch = NULL;
->    1492		ceph_fs_debugfs_cleanup(fsc);
->    1493	
->    1494		ceph_fscache_unregister_fs(fsc);
->    1495	
->    1496		destroy_fs_client(fsc);
->    1497	}
->    1498	
->
+Or, perhaps, all in-memory snap contexts could somehow be invalidated
+in this case, making writes fail naturally -- on the client side,
+without actually being sent to OSDs just to be nixed by the blocklist
+hammer.
 
+But further, what makes a failure to decode a snap trace special?
+AFAIK we don't do anything close to this for any other decoding
+failure.  Wouldn't "when received corrupted XYZ we don't know what
+exactly has happened in MDS side" argument apply to pretty much all
+decoding failures?
+
+> +        *
+> +        * Then this kclient must be remounted to continue after the
+> +        * corrupted metadata fixed in the MDS side.
+> +        */
+> +       mdsc->no_reconnect = 1;
+> +       ret = ceph_monc_blocklist_add(&client->monc, &client->msgr.inst.addr);
+> +       if (ret) {
+> +               pr_err("%s blocklist of %s failed: %d", __func__,
+> +                      ceph_pr_addr(&client->msgr.inst.addr), ret);
+> +               BUG();
+
+... and this is a rough equivalent of errors=panic mode.
+
+Is there a corresponding userspace client PR that can be referenced?
+This needs additional background and justification IMO.
+
+Thanks,
+
+                Ilya
