@@ -2,182 +2,78 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CE3DD6495AE
-	for <lists+ceph-devel@lfdr.de>; Sun, 11 Dec 2022 19:30:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DB1D64A5F6
+	for <lists+ceph-devel@lfdr.de>; Mon, 12 Dec 2022 18:34:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229624AbiLKS2M (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 11 Dec 2022 13:28:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46742 "EHLO
+        id S232989AbiLLRd7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 12 Dec 2022 12:33:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiLKS2K (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 11 Dec 2022 13:28:10 -0500
-Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B8C8A1B9
-        for <ceph-devel@vger.kernel.org>; Sun, 11 Dec 2022 10:28:09 -0800 (PST)
-Received: by mail-qt1-x830.google.com with SMTP id a16so7383804qtw.10
-        for <ceph-devel@vger.kernel.org>; Sun, 11 Dec 2022 10:28:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VcIjNZvmXhwLlIH4qzTb3os7YT1CTCX89zz+g7s11S8=;
-        b=MGBmNEXQ9KDFHMWkhfA16f3WXE9+n6bQWGbQ/WBcrwvvD7XGUxNJ4lULAQ4bF52hyX
-         I45Gmp4HDqpBwWuXX3l+4nvpELR0hLZgp15u/sM1JcfxMioNWKmTXOmZ3q/OnbB9HyzY
-         NTeZGgpA0T0hHbjbfhGwL2uIoepMHlEZ6wf+E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VcIjNZvmXhwLlIH4qzTb3os7YT1CTCX89zz+g7s11S8=;
-        b=P/tbNzikqjzwjZ94EvMas49TkC6vUe6VMKvFF5NByIvgCH4H/FqU2/DfbAH4bHKLIs
-         VWJ34DxXkimeG/7gsgJcuUuDKPfKgozw9X0hye+WZTOQqZl3vnK0dXu7lGr7+kyWGkUq
-         WnOxPQGnpHEad+24EP+u4NJhc0ez2mv9+kNODCEcDH8VQk/a3xEVrk2Xj5cE8HpfOrkL
-         WznTgkQcbWEIyYErvPUjAljPeK6KWlA8lYfxDYeaLG8VtBwa9Rxz4OQnz9x2O94C/5g0
-         rT6MkPo7Z+ajkArU/N/sl/bc+xpoWtaIPHqtaeM+rPusUYkga9CA5UNz+6xjAVfeMNno
-         1skg==
-X-Gm-Message-State: ANoB5pm/1XC9K9oE7XcdzurcTYiLiS8d1rC5sXmex9T6D0Odamm373Lt
-        ofIkotddDn8LGaXyryMaT6BUu/AjieNo4Uq1
-X-Google-Smtp-Source: AA0mqf7WJ75mgkYORrAMGaWzLON1Jdw7VJPZOuMR1H06iOP+keyb0o5gK9bZLafJk1aYjzxC72j91A==
-X-Received: by 2002:a05:622a:1e15:b0:3a8:61f:8f55 with SMTP id br21-20020a05622a1e1500b003a8061f8f55mr12997498qtb.50.1670783287860;
-        Sun, 11 Dec 2022 10:28:07 -0800 (PST)
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com. [209.85.219.52])
-        by smtp.gmail.com with ESMTPSA id c3-20020ac81103000000b003a50ef44a77sm4561017qtj.28.2022.12.11.10.28.05
-        for <ceph-devel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Dec 2022 10:28:07 -0800 (PST)
-Received: by mail-qv1-f52.google.com with SMTP id u10so6851053qvp.4
-        for <ceph-devel@vger.kernel.org>; Sun, 11 Dec 2022 10:28:05 -0800 (PST)
-X-Received: by 2002:ad4:4101:0:b0:4b1:856b:4277 with SMTP id
- i1-20020ad44101000000b004b1856b4277mr70224982qvp.129.1670783284766; Sun, 11
- Dec 2022 10:28:04 -0800 (PST)
-MIME-Version: 1.0
-References: <202212112131.994277de-oliver.sang@intel.com>
-In-Reply-To: <202212112131.994277de-oliver.sang@intel.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 11 Dec 2022 10:27:48 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wipgS=05hJdztC8sJj01wpxMKQ67tV53UyFa2WtZ93o5A@mail.gmail.com>
-Message-ID: <CAHk-=wipgS=05hJdztC8sJj01wpxMKQ67tV53UyFa2WtZ93o5A@mail.gmail.com>
-Subject: Re: [ammarfaizi2-block:dhowells/linux-fs/fscache-fixes] [mm, netfs,
- fscache] 6919cda8e0: canonical_address#:#[##]
-To:     kernel test robot <oliver.sang@intel.com>
-Cc:     David Howells <dhowells@redhat.com>, oe-lkp@lists.linux.dev,
-        lkp@intel.com, Rohith Surabattula <rohiths.msft@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Steve French <sfrench@samba.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        "GNU/Weeb Mailing List" <gwml@vger.gnuweeb.org>,
-        v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, linux-cachefs@redhat.com,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+        with ESMTP id S233006AbiLLRdh (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 12 Dec 2022 12:33:37 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A4B814088;
+        Mon, 12 Dec 2022 09:33:21 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7514661198;
+        Mon, 12 Dec 2022 17:33:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id D7F87C433D2;
+        Mon, 12 Dec 2022 17:33:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670866399;
+        bh=dgbOreq2+9ogIExFZGD4+OIZzBTjfO+LyrrdHLkAyYE=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=ta87ayO91/p5HoB/Yt5vNqwqsjvLxFznHs5u3Xm7gmO0MggQuQ6B9vEOzB6kfo/5X
+         RahnZjnVXZwmuZAdyrZyV4MkBm5mKMdrkwVM0BxauLUmnW7XW5MfXZnZoDJQOArPGX
+         oSyMrQuqB/AgWPANyw8EPLfTndrqLl9xgWSIF0DkjSVLQYzhZCl2GgW3aIsE8cd5Ga
+         NA4BR2i10PjXxCnH8EekjfRoYhhOEynuEALKosQ794a48e0H0PgDP039m9s+jLVuhH
+         iaAk5p7AFnnLjB35G/yRTmr8hUSR2q98BJMchAoXgTR7+HaLyUrxGdtqyQlrrcPS9U
+         8CG7fs7ANQuuQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C0684C00445;
+        Mon, 12 Dec 2022 17:33:19 +0000 (UTC)
+Subject: Re: [GIT PULL] file locking changes for v6.2-rc1
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <d3ba2c7f26958242c0a31b8f966e7c3d251a9e0f.camel@kernel.org>
+References: <d3ba2c7f26958242c0a31b8f966e7c3d251a9e0f.camel@kernel.org>
+X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <d3ba2c7f26958242c0a31b8f966e7c3d251a9e0f.camel@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git tags/locks-v6.2
+X-PR-Tracked-Commit-Id: f2f2494c8aa3cc317572c4674ef256005ebc092b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 73fa58dca80293320f5cfeb06f5b2daeb8d97bd5
+Message-Id: <167086639978.22610.6556749360002379813.pr-tracker-bot@kernel.org>
+Date:   Mon, 12 Dec 2022 17:33:19 +0000
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-cifs <linux-cifs@vger.kernel.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The disassembly isn't great, because the test robot doesn't try to
-find where the instructions start, but before that
+The pull request you sent on Tue, 06 Dec 2022 08:11:43 -0500:
 
->    4:   48 8b 57 18             mov    0x18(%rdi),%rdx
+> git://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git tags/locks-v6.2
 
-instruction we also had a
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/73fa58dca80293320f5cfeb06f5b2daeb8d97bd5
 
-      mov    (%rdi),%rax
+Thank you!
 
-and it looks like this is the very top of 'filemap_release_folio()',
-so '%rdi' contains the folio pointer coming into this.
-
-End result:
-
-On Sun, Dec 11, 2022 at 6:27 AM kernel test robot <oliver.sang@intel.com> wrote:
->
->    4:   48 8b 57 18             mov    0x18(%rdi),%rdx
->    8:   83 e0 01                and    $0x1,%eax
->    b:   74 59                   je     0x66
-
-The
-
-    and    $0x1,%eax
-    je     0x66
-
-above is the test for
-
-    BUG_ON(!folio_test_locked(folio));
-
-where it's jumping out to the 'ud2' in case the lock bit (bit #0) isn't set.
-
-Then we have this:
-
->    d:   48 f7 07 00 60 00 00    testq  $0x6000,(%rdi)
->   14:   74 22                   je     0x38
-
-Which is testing PG_private | PG_private2, and jumping out (which we
-also don't do) if neither is set.
-
-And then we have:
-
->   16:   48 8b 07                mov    (%rdi),%rax
->   19:   f6 c4 80                test   $0x80,%ah
->   1c:   75 32                   jne    0x50
-
-Which is checking for PG_writeback.
-
-So then we get to
-
-    if (mapping && mapping->a_ops->release_folio)
-            return mapping->a_ops->release_folio(folio, gfp);
-
-which is this:
-
->   1e:   48 85 d2                test   %rdx,%rdx
->   21:   74 34                   je     0x57
-
-This %rdx value is the early load from the top of the function, it's
-checking 'mapping' for NULL.
-
-It's not NULL, but it's some odd value according to the oops report:
-
-  RDX: ffff889f03987f71
-
-which doesn't look like it's valid (well, it's a valid kernel pointer,
-but it's not aligned like a 'mapping' pointer should be.
-
-So now when we're going to load 'a_ops' from there, we load another
-garbage value:
-
->   23:   48 8b 82 90 00 00 00    mov    0x90(%rdx),%rax
-
-and we now have RAX: b000000000000000
-
-and then the 'a_ops->release_folio' access will trap:
-
->   2a:*  48 8b 40 48             mov    0x48(%rax),%rax          <-- trapping instruction
->   2e:   48 85 c0                test   %rax,%rax
->   31:   74 24                   je     0x57
-
-The above is the "load a_ops->release_folio and test it for NULL", but
-the load took a page fault because RAX was garbage.
-
-But RAX was garbage because we already had a bogus "mapping" pointer earlier.
-
-Now, why 'mapping' was bogus, I don't know. Maybe that page wasn't a
-page cache page at all? The mapping field is in a union and can
-contain other things.
-
-So I have no explanation for the oops, but I thought I'd just post the
-decoding of the instruction stream in case that helps somebody else to
-figure it out.
-
-                 Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
