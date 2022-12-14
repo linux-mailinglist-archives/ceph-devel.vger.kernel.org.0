@@ -2,47 +2,50 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2025E64CAD9
-	for <lists+ceph-devel@lfdr.de>; Wed, 14 Dec 2022 14:14:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00C5464CADC
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 Dec 2022 14:14:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238581AbiLNNOK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 14 Dec 2022 08:14:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40126 "EHLO
+        id S238172AbiLNNOR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 14 Dec 2022 08:14:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238573AbiLNNOC (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 14 Dec 2022 08:14:02 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94AC210A3
-        for <ceph-devel@vger.kernel.org>; Wed, 14 Dec 2022 05:13:17 -0800 (PST)
+        with ESMTP id S238526AbiLNNOM (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 14 Dec 2022 08:14:12 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CB74F12
+        for <ceph-devel@vger.kernel.org>; Wed, 14 Dec 2022 05:13:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1671023596;
+        s=mimecast20190719; t=1671023600;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=QOwGv901pllqFOEV2tGHpEbQ3tIqDfx5elblceAuPEI=;
-        b=IZi0mC58EeJ19liaaqjrW079j1gX4cauIOCURHmY3RyJCcAOqwFbR7MBz5vL7rL76Uawz0
-        dLF1Nq+aZGOcF+DXZa73ZyGUaaFSQgSUqYpKJGQ5k7UDQZiFX7Gwlmtv1l07YdPm4oUP/k
-        VipmXhlm+dVC941fL1HWceu1eO4wUAg=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=tnY3LmLlLBt6rd5j5rYEchSWLdK3pgj1yadT46BPLZ8=;
+        b=gqQp8iE6cOG3uoUIa9hbwweIvny030u5IP8JY2pGOczMiR1PNEos2plyb9+lfG9eT7OPO2
+        nEsdP2gmSjZ9pxTcv8ttMcFAHf9DsebvwltJSOEQuspOF9EeHWmKtnRGXGedZT6r6UilEN
+        LOcdamJOSSeDohWqjdp+60PVQ3HdGDQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-66-pK6vCix4PM6k8ogrM7f2dA-1; Wed, 14 Dec 2022 08:13:13 -0500
-X-MC-Unique: pK6vCix4PM6k8ogrM7f2dA-1
+ us-mta-21-RhmTpw8wNYKHBimoz7jN-Q-1; Wed, 14 Dec 2022 08:13:17 -0500
+X-MC-Unique: RhmTpw8wNYKHBimoz7jN-Q-1
 Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 40D141C0513D;
-        Wed, 14 Dec 2022 13:13:13 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B4F3B100F904;
+        Wed, 14 Dec 2022 13:13:16 +0000 (UTC)
 Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AEC95400F5A;
-        Wed, 14 Dec 2022 13:13:10 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D902749BB6A;
+        Wed, 14 Dec 2022 13:13:13 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
 Cc:     jlayton@kernel.org, mchangir@redhat.com, vshankar@redhat.com,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v4 0/2]  ceph: blocklist the kclient when receiving corrupted snap trace
-Date:   Wed, 14 Dec 2022 21:13:05 +0800
-Message-Id: <20221214131307.42618-1-xiubli@redhat.com>
+        Xiubo Li <xiubli@redhat.com>, stable@vger.kernel.org
+Subject: [PATCH v4 1/2] ceph: move mount state enum to fs/ceph/super.h
+Date:   Wed, 14 Dec 2022 21:13:06 +0800
+Message-Id: <20221214131307.42618-2-xiubli@redhat.com>
+In-Reply-To: <20221214131307.42618-1-xiubli@redhat.com>
+References: <20221214131307.42618-1-xiubli@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
@@ -58,28 +61,59 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Xiubo Li <xiubli@redhat.com>
 
-V4:
-- block all the IO/metadata requests before evicting the client.
+These flags are only used in ceph filesystem in fs/ceph, so just
+move it to the place it should be.
 
-V3:
-- Fixed ERROR: spaces required around that ':' (ctx:VxW)
-
-V2:
-- Switched to WARN() to taint the Linux kernel.
-
-Xiubo Li (2):
-  ceph: move mount state enum to fs/ceph/super.h
-  ceph: blocklist the kclient when receiving corrupted snap trace
-
- fs/ceph/addr.c               | 22 +++++++++++++++++++--
- fs/ceph/caps.c               | 17 ++++++++++++++---
- fs/ceph/file.c               |  9 +++++++++
- fs/ceph/mds_client.c         | 28 ++++++++++++++++++++++++---
- fs/ceph/snap.c               | 37 ++++++++++++++++++++++++++++++++++--
- fs/ceph/super.h              | 11 +++++++++++
+Cc: stable@vger.kernel.org
+URL: https://tracker.ceph.com/issues/57686
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/super.h              | 10 ++++++++++
  include/linux/ceph/libceph.h | 10 ----------
- 7 files changed, 114 insertions(+), 20 deletions(-)
+ 2 files changed, 10 insertions(+), 10 deletions(-)
 
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index e7662ff6f149..0d5cb0983831 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -103,6 +103,16 @@ struct ceph_mount_options {
+ 	struct fscrypt_dummy_policy dummy_enc_policy;
+ };
+ 
++/* mount state */
++enum {
++	CEPH_MOUNT_MOUNTING,
++	CEPH_MOUNT_MOUNTED,
++	CEPH_MOUNT_UNMOUNTING,
++	CEPH_MOUNT_UNMOUNTED,
++	CEPH_MOUNT_SHUTDOWN,
++	CEPH_MOUNT_RECOVER,
++};
++
+ #define CEPH_ASYNC_CREATE_CONFLICT_BITS 8
+ 
+ struct ceph_fs_client {
+diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
+index 00af2c98da75..4497d0a6772c 100644
+--- a/include/linux/ceph/libceph.h
++++ b/include/linux/ceph/libceph.h
+@@ -99,16 +99,6 @@ struct ceph_options {
+ 
+ #define CEPH_AUTH_NAME_DEFAULT   "guest"
+ 
+-/* mount state */
+-enum {
+-	CEPH_MOUNT_MOUNTING,
+-	CEPH_MOUNT_MOUNTED,
+-	CEPH_MOUNT_UNMOUNTING,
+-	CEPH_MOUNT_UNMOUNTED,
+-	CEPH_MOUNT_SHUTDOWN,
+-	CEPH_MOUNT_RECOVER,
+-};
+-
+ static inline unsigned long ceph_timeout_jiffies(unsigned long timeout)
+ {
+ 	return timeout ?: MAX_SCHEDULE_TIMEOUT;
 -- 
 2.31.1
 
