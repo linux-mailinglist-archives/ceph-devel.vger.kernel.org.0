@@ -2,144 +2,185 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 75CC164DDDA
-	for <lists+ceph-devel@lfdr.de>; Thu, 15 Dec 2022 16:33:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B5F864E524
+	for <lists+ceph-devel@lfdr.de>; Fri, 16 Dec 2022 01:24:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230123AbiLOPdO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 15 Dec 2022 10:33:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55664 "EHLO
+        id S229495AbiLPAYh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 15 Dec 2022 19:24:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229737AbiLOPdM (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 15 Dec 2022 10:33:12 -0500
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9A24167DE
-        for <ceph-devel@vger.kernel.org>; Thu, 15 Dec 2022 07:33:11 -0800 (PST)
-Received: by mail-ej1-x635.google.com with SMTP id bj12so53048579ejb.13
-        for <ceph-devel@vger.kernel.org>; Thu, 15 Dec 2022 07:33:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qwOz3nqs/LShCL+qayPl25Lxv1/+rQcudUkFbWqIIGs=;
-        b=Mk7gP8Cv/h5bRlwbA4eAjO71JgJGuPXzPLOA+A8l9aTq1mMikfOhocETYTLD2FQ/eF
-         2l8cHHMUEa84gNze5BUxfGWIYOf6zel33lokjr0j1eYwChccb/XyoZ+gvdSKJGXuC8qV
-         MwNPHJnibDzb2WR6fSZD5HDZtqXSFflOcjqgStpEwFU1F7blD94vW59ljyXxhn2KLX7W
-         A2x3H+4ebjJkRTPZGCBqJbety8OaYf31xzCbAP+TcUbXvGqBml9BwNBnh77J3eV2SboI
-         71qr6H9I8ocytHR5/T82V27Vbi9VaEhx2anDc+bCpL8P8ktZkx4pX5SY0mkbGXVUre4i
-         dR4Q==
+        with ESMTP id S229668AbiLPAYf (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 15 Dec 2022 19:24:35 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 094EF4D5E8
+        for <ceph-devel@vger.kernel.org>; Thu, 15 Dec 2022 16:23:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1671150226;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VnaI0wTW9bargd+4gjX5OMF1abHB+qSIpPhlMGiP5og=;
+        b=Gq20/LSWRXVd1ZHqmNtF6bl3rcp3FRj34tSAsRnScI05OhphLX7EwaS8APiSmFnmyNfD3C
+        47KXgFQiKCDO4WP7rY2klmaAeEY0YKKnXR5gQC2WvOa64SYKA5tmcxPCaWe7vfIYQYFhw9
+        CGsrbTFU+iERLAzp0XnM5p1IhsdHS4E=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-443-XXPjmPOcOD6rRkET3Q_zlQ-1; Thu, 15 Dec 2022 19:23:45 -0500
+X-MC-Unique: XXPjmPOcOD6rRkET3Q_zlQ-1
+Received: by mail-pj1-f72.google.com with SMTP id b16-20020a17090a10d000b00221653b4526so405012pje.2
+        for <ceph-devel@vger.kernel.org>; Thu, 15 Dec 2022 16:23:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qwOz3nqs/LShCL+qayPl25Lxv1/+rQcudUkFbWqIIGs=;
-        b=cwLCG4kZWy8/hG+f2guRI5VKc0y0ePOUsb7D+oTNeEiXUVZxQOBVU5eY5YEsOLxzXT
-         azV36Eh4fp8GRf0S2WnlvP6uLuSaQMiobml1OkA2+0TD2Y5HgMrMt1Uq92DRe7MWy90+
-         m/IcEMOfcJUARaROsWV1+f1KTpsGun9dPVYJDDqgjPEukWcpAYsEIJ0RqxGyk01YFfGH
-         DCGo/qYOBSwJtKF8Bt3dR/F937ci9czSfagQZzhk4T2BYjLJS+P5OWQcpTbjnWMpRDvj
-         VQGNmfIuDOYK/catmSX+7H/EZ/gnnl6v53BrHKTlicsALW+N+8aEU3ZFxj0WL9bOyejO
-         MUPQ==
-X-Gm-Message-State: ANoB5plJlqHIr8RaJrkeEYoxnZRDgKcEy2kS45IrfgXn/MUkmSy1HZEv
-        r6FQqpDKU97xxP3cZmKGSN6LtJN5vtDp2Cvndko+Z6AC6c0=
-X-Google-Smtp-Source: AA0mqf5FJdxTtvTjhTl2IkV4GLqADK8e8kE3ty1fmoXBYzJyWQxv48CErZo53jxBIoEzVyELlk7e0fJZLRMAS94uBTk=
-X-Received: by 2002:a17:906:240f:b0:7c0:f7b0:fbbb with SMTP id
- z15-20020a170906240f00b007c0f7b0fbbbmr16474814eja.266.1671118390209; Thu, 15
- Dec 2022 07:33:10 -0800 (PST)
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VnaI0wTW9bargd+4gjX5OMF1abHB+qSIpPhlMGiP5og=;
+        b=oSOf4Kv50ABO+B/yxr9o176f0ZCrKW1EZ2nAoNJkhY9pB+eJIUVuze2X5oSTGJDxAC
+         xEwurihCgzSEEqgf9u9BcsWwzAHiQxRxku+85sedmMHdF/WoXOijzA8jJe0lqXRG5Me2
+         ZKAfTfPBRa6gkWAGo6qvGChjdCXNY9pk6f0BRufx01QzweNpoUovT5dO+S+iFO43nsQw
+         ZgFhEe7TAkmpurhUTfPaE0VofLnKm0uCyImKEknK2qwTYKF1QuYQhimZOJVoUwJ6qRcW
+         X47RMBdWBZL9CRn9rt5gb3H5GlCNARoG+045pqdA18ens7qtT6iyCDzz/OSr/bFVqE0l
+         B6Mw==
+X-Gm-Message-State: ANoB5pmH859097EcNmeYClOQVhLNnRlMnxn2ZlDTWvxAicJrGpLAkPBr
+        Y3a8d0GddTcB0YpWh2bHRl5NCaVa0LZ43Or4uOjoYZ86Q+Za0CHDsX/UfmIeJmgDv3CBX7HGvtG
+        GrwYSVa7bC2kvt8Cd9o8zTQ==
+X-Received: by 2002:a17:902:ee4c:b0:18e:e03b:f1bd with SMTP id 12-20020a170902ee4c00b0018ee03bf1bdmr27777572plo.53.1671150224301;
+        Thu, 15 Dec 2022 16:23:44 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf7ztAjxpWMwQtbasXI8MJKS9eR4mQC0niiuAa1LWsFUgnhV4B7xqHvp+EH9bXKz03eXPYlxgQ==
+X-Received: by 2002:a17:902:ee4c:b0:18e:e03b:f1bd with SMTP id 12-20020a170902ee4c00b0018ee03bf1bdmr27777549plo.53.1671150224058;
+        Thu, 15 Dec 2022 16:23:44 -0800 (PST)
+Received: from [10.72.12.85] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id jf14-20020a170903268e00b00189a50d2a3esm203624plb.241.2022.12.15.16.23.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Dec 2022 16:23:43 -0800 (PST)
+Subject: Re: [PATCH v5 1/2] ceph: switch to vfs_inode_has_locks() to fix file
+ lock bug
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     jlayton@kernel.org, ceph-devel@vger.kernel.org,
+        mchangir@redhat.com, lhenriques@suse.de, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20221214033512.659913-1-xiubli@redhat.com>
+ <20221214033512.659913-2-xiubli@redhat.com>
+ <CAOi1vP9Je-DnqUdYcBi_zSDUgj30aYrTeGq1MSwS66E7ptaTSg@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <4e570f80-4e2e-c567-55a3-a17063278502@redhat.com>
+Date:   Fri, 16 Dec 2022 08:23:39 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-References: <fc2786c0caa7454486ba318a334c97a3@mpinat.mpg.de>
-In-Reply-To: <fc2786c0caa7454486ba318a334c97a3@mpinat.mpg.de>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 15 Dec 2022 16:32:58 +0100
-Message-ID: <CAOi1vP-J_Qu28q4KFOZVXmX1uBNBfOsMZGFuYCEkny+AAoWesQ@mail.gmail.com>
-Subject: Re: PROBLEM: CephFS write performance drops by 90%
-To:     "Roose, Marco" <marco.roose@mpinat.mpg.de>
-Cc:     Ceph Development <ceph-devel@vger.kernel.org>,
-        Xiubo Li <xiubli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <CAOi1vP9Je-DnqUdYcBi_zSDUgj30aYrTeGq1MSwS66E7ptaTSg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Dec 15, 2022 at 3:22 PM Roose, Marco <marco.roose@mpinat.mpg.de> wr=
-ote:
+
+On 15/12/2022 21:20, Ilya Dryomov wrote:
+> On Wed, Dec 14, 2022 at 4:35 AM <xiubli@redhat.com> wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> For the POSIX locks they are using the same owner, which is the
+>> thread id. And multiple POSIX locks could be merged into single one,
+>> so when checking whether the 'file' has locks may fail.
+>>
+>> For a file where some openers use locking and others don't is a
+>> really odd usage pattern though. Locks are like stoplights -- they
+>> only work if everyone pays attention to them.
+>>
+>> Just switch ceph_get_caps() to check whether any locks are set on
+>> the inode. If there are POSIX/OFD/FLOCK locks on the file at the
+>> time, we should set CHECK_FILELOCK, regardless of what fd was used
+>> to set the lock.
+>>
+>> Cc: stable@vger.kernel.org
+>> Cc: Jeff Layton <jlayton@kernel.org>
+>> Fixes: ff5d913dfc71 ("ceph: return -EIO if read/write against filp that lost file locks")
+>> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/ceph/caps.c  | 2 +-
+>>   fs/ceph/locks.c | 4 ----
+>>   fs/ceph/super.h | 1 -
+>>   3 files changed, 1 insertion(+), 6 deletions(-)
+>>
+>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+>> index 065e9311b607..948136f81fc8 100644
+>> --- a/fs/ceph/caps.c
+>> +++ b/fs/ceph/caps.c
+>> @@ -2964,7 +2964,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+>>
+>>          while (true) {
+>>                  flags &= CEPH_FILE_MODE_MASK;
+>> -               if (atomic_read(&fi->num_locks))
+>> +               if (vfs_inode_has_locks(inode))
+>>                          flags |= CHECK_FILELOCK;
+>>                  _got = 0;
+>>                  ret = try_get_cap_refs(inode, need, want, endoff,
+>> diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
+>> index 3e2843e86e27..b191426bf880 100644
+>> --- a/fs/ceph/locks.c
+>> +++ b/fs/ceph/locks.c
+>> @@ -32,18 +32,14 @@ void __init ceph_flock_init(void)
+>>
+>>   static void ceph_fl_copy_lock(struct file_lock *dst, struct file_lock *src)
+>>   {
+>> -       struct ceph_file_info *fi = dst->fl_file->private_data;
+>>          struct inode *inode = file_inode(dst->fl_file);
+>>          atomic_inc(&ceph_inode(inode)->i_filelock_ref);
+>> -       atomic_inc(&fi->num_locks);
+>>   }
+>>
+>>   static void ceph_fl_release_lock(struct file_lock *fl)
+>>   {
+>> -       struct ceph_file_info *fi = fl->fl_file->private_data;
+>>          struct inode *inode = file_inode(fl->fl_file);
+>>          struct ceph_inode_info *ci = ceph_inode(inode);
+>> -       atomic_dec(&fi->num_locks);
+>>          if (atomic_dec_and_test(&ci->i_filelock_ref)) {
+>>                  /* clear error when all locks are released */
+>>                  spin_lock(&ci->i_ceph_lock);
+>> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+>> index 14454f464029..e7662ff6f149 100644
+>> --- a/fs/ceph/super.h
+>> +++ b/fs/ceph/super.h
+>> @@ -804,7 +804,6 @@ struct ceph_file_info {
+>>          struct list_head rw_contexts;
+>>
+>>          u32 filp_gen;
+>> -       atomic_t num_locks;
+>>   };
+>>
+>>   struct ceph_dir_file_info {
+>> --
+>> 2.31.1
+>>
+> Hi Xiubo,
 >
-> Dear Ilya,
-> I'm using Ubuntu and a CephFS mount. I had a more than 90% write performa=
-nce decrease after changing the kernels main version ( <10MB/s vs. 100-140 =
-MB/s). The problem seems to exist in Kernel major versions starting at v5.4=
-. Ubuntu mainline version v5.4.25 is fine, v5.4.45 (which is next available=
-) is "bad".
+> You marked this for stable but there is an obvious dependency on
+> vfs_inode_has_locks() that just got merged for 6.2-rc1.  Are you
+> intending to take it into stable kernels as well?
 
-Hi Marco,
+Hi Ilya,
 
-What is the workload?
+Yes. I can do the backport of these 3 patches myself later.
 
+Thanks
+
+- Xiubo
+
+> Thanks,
 >
-> After a git bisect with the "original" 5.4 kernels I get the following re=
-sult:
-
-Can you describe how you performed bisection?  Can you share the
-reproducer you used for bisection?
-
+>                  Ilya
 >
-> ed24820d1b0cbe8154c04189a44e363230ed647e is the first bad commit
-> commit ed24820d1b0cbe8154c04189a44e363230ed647e
-> Author: Ilya Dryomov <idryomov@gmail.com>
-> Date:   Mon Mar 9 12:03:14 2020 +0100
->
->     ceph: check POOL_FLAG_FULL/NEARFULL in addition to OSDMAP_FULL/NEARFU=
-LL
->
->     commit 7614209736fbc4927584d4387faade4f31444fce upstream.
->
->     CEPH_OSDMAP_FULL/NEARFULL aren't set since mimic, so we need to consu=
-lt
->     per-pool flags as well.  Unfortunately the backwards compatibility he=
-re
->     is lacking:
->
->     - the change that deprecated OSDMAP_FULL/NEARFULL went into mimic, bu=
-t
->       was guarded by require_osd_release >=3D RELEASE_LUMINOUS
->     - it was subsequently backported to luminous in v12.2.2, but that mak=
-es
->       no difference to clients that only check OSDMAP_FULL/NEARFULL becau=
-se
->       require_osd_release is not client-facing -- it is for OSDs
->
->     Since all kernels are affected, the best we can do here is just start
->     checking both map flags and pool flags and send that to stable.
->
->     These checks are best effort, so take osdc->lock and look up pool fla=
-gs
->     just once.  Remove the FIXME, since filesystem quotas are checked abo=
-ve
->     and RADOS quotas are reflected in POOL_FLAG_FULL: when the pool reach=
-es
->     its quota, both POOL_FLAG_FULL and POOL_FLAG_FULL_QUOTA are set.
 
-The only suspicious thing I see in this commit is osdc->lock semaphore
-which is taken for read for a short period of time in ceph_write_iter().
-It's possible that that started interfering with other code paths that
-take that semaphore for write and read-write lock fairness algorithm is
-biting...
-
-Can you confirm the result by manually checking out the previous commit
-and verifying that it's "good"?
-
-    commit 44960e1c39d807cd0023dc7036ee37f105617ebe
-    RDMA/mad: Do not crash if the rdma device does not have a umad interfac=
-e
-        (commit 5bdfa854013ce4193de0d097931fd841382c76a7 upstream)
-
-Thanks,
-
-                Ilya
