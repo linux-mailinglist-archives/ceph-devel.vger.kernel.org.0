@@ -2,53 +2,50 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 529FE652CAC
-	for <lists+ceph-devel@lfdr.de>; Wed, 21 Dec 2022 07:03:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB74A652E92
+	for <lists+ceph-devel@lfdr.de>; Wed, 21 Dec 2022 10:31:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234485AbiLUGDv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 21 Dec 2022 01:03:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59794 "EHLO
+        id S232174AbiLUJb2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 21 Dec 2022 04:31:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234472AbiLUGDt (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 21 Dec 2022 01:03:49 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5FFA20F7C
-        for <ceph-devel@vger.kernel.org>; Tue, 20 Dec 2022 22:02:26 -0800 (PST)
+        with ESMTP id S231614AbiLUJb1 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 21 Dec 2022 04:31:27 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8482AE82
+        for <ceph-devel@vger.kernel.org>; Wed, 21 Dec 2022 01:30:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1671602546;
+        s=mimecast20190719; t=1671615044;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=bso7QZ2PIuUmXR7PcS6dx61PlkJXCeFo/atkd5Gb6m0=;
-        b=R2KdawP3n2igztQIjcSy0ULK6rvRZV8Y/I3OPgsYxhAtqpmlWLTISVWKHIXXZ3pflIkUkj
-        w6g/UX4WiNvyVn1Oyr+THJaf/cxZhRgd6djxduQHCwzhN5fvrMRdt9hdPqnKIVpbnPyPvf
-        QoRX2XqMKVSLfiQB/END9/V4sev2sSU=
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Zqhrg1RnxM1wYr09Yf1gC5swRXkriwdKmEmMal6ZVdI=;
+        b=WeakOZvIzlOv7NSo56zu+P1TT2zimXoubTE/06zLVYfe0HJ8dcnvnBz5MBEFq3Ytuj5S0a
+        0wG70K+vpsMMJsf/4ybQy73hRh4iWKi76De5BZkMm6RXfx4bfCBXpD2I/hS+kIunA02Lw7
+        F6VlhXbN4wtCeUUXHQmFP14OugM6Lok=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-445-ERErV-gNPQeqult8CuvQwg-1; Wed, 21 Dec 2022 01:02:22 -0500
-X-MC-Unique: ERErV-gNPQeqult8CuvQwg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+ us-mta-16-Qq2aVy58OnGhCn4rhcJXEA-1; Wed, 21 Dec 2022 04:30:41 -0500
+X-MC-Unique: Qq2aVy58OnGhCn4rhcJXEA-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 07AAD80234E;
-        Wed, 21 Dec 2022 06:02:22 +0000 (UTC)
-Received: from fedora.redhat.com (ovpn-13-96.pek2.redhat.com [10.72.13.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D9C132026D4B;
-        Wed, 21 Dec 2022 06:02:17 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9FD8E10113C1;
+        Wed, 21 Dec 2022 09:30:40 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C0F37492B02;
+        Wed, 21 Dec 2022 09:30:37 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-Cc:     jlayton@kernel.org, mchangir@redhat.com, vshankar@redhat.com,
-        Xiubo Li <xiubli@redhat.com>, stable@vger.kernel.org
-Subject: [PATCH v5 2/2] ceph: blocklist the kclient when receiving corrupted snap trace
-Date:   Wed, 21 Dec 2022 14:02:06 +0800
-Message-Id: <20221221060206.1859329-3-xiubli@redhat.com>
-In-Reply-To: <20221221060206.1859329-1-xiubli@redhat.com>
-References: <20221221060206.1859329-1-xiubli@redhat.com>
+Cc:     jlayton@kernel.org, mchangir@redhat.com, lhenriques@suse.de,
+        vshankar@redhat.com, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v2] ceph: drop the messages from MDS when unmouting
+Date:   Wed, 21 Dec 2022 17:30:31 +0800
+Message-Id: <20221221093031.132792-1-xiubli@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
@@ -61,360 +58,175 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Xiubo Li <xiubli@redhat.com>
 
-When received corrupted snap trace we don't know what exactly has
-happened in MDS side. And we shouldn't continue IOs and metadatas
-access to MDS, which may corrupt or get incorrect contents.
+When unmounting it will just wait for the inflight requests to be
+finished, but just before the sessions are closed the kclient still
+could receive the caps/snaps/lease/quota msgs from MDS. All these
+msgs need to hold some inodes, which will cause ceph_kill_sb() failing
+to evict the inodes in time.
 
-This patch will just block all the further IO/MDS requests
-immediately and then evict the kclient itself.
+If encrypt is enabled the kernel generate a warning when removing
+the encrypt keys when the skipped inodes still hold the keyring:
 
-The reason why we still need to evict the kclient just after
-blocking all the further IOs is that the MDS could revoke the caps
-faster.
+WARNING: CPU: 4 PID: 168846 at fs/crypto/keyring.c:242 fscrypt_destroy_keyring+0x7e/0xd0
+CPU: 4 PID: 168846 Comm: umount Tainted: G S  6.1.0-rc5-ceph-g72ead199864c #1
+Hardware name: Supermicro SYS-5018R-WR/X10SRW-F, BIOS 2.0 12/17/2015
+RIP: 0010:fscrypt_destroy_keyring+0x7e/0xd0
+RSP: 0018:ffffc9000b277e28 EFLAGS: 00010202
+RAX: 0000000000000002 RBX: ffff88810d52ac00 RCX: ffff88810b56aa00
+RDX: 0000000080000000 RSI: ffffffff822f3a09 RDI: ffff888108f59000
+RBP: ffff8881d394fb88 R08: 0000000000000028 R09: 0000000000000000
+R10: 0000000000000001 R11: 11ff4fe6834fcd91 R12: ffff8881d394fc40
+R13: ffff888108f59000 R14: ffff8881d394f800 R15: 0000000000000000
+FS:  00007fd83f6f1080(0000) GS:ffff88885fd00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f918d417000 CR3: 000000017f89a005 CR4: 00000000003706e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+<TASK>
+generic_shutdown_super+0x47/0x120
+kill_anon_super+0x14/0x30
+ceph_kill_sb+0x36/0x90 [ceph]
+deactivate_locked_super+0x29/0x60
+cleanup_mnt+0xb8/0x140
+task_work_run+0x67/0xb0
+exit_to_user_mode_prepare+0x23d/0x240
+syscall_exit_to_user_mode+0x25/0x60
+do_syscall_64+0x40/0x80
+entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fd83dc39e9b
 
-Cc: stable@vger.kernel.org
-URL: https://tracker.ceph.com/issues/57686
+URL: https://tracker.ceph.com/issues/58126
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/ceph/addr.c       | 22 ++++++++++++++++++++--
- fs/ceph/caps.c       | 17 ++++++++++++++---
- fs/ceph/file.c       |  9 +++++++++
- fs/ceph/mds_client.c | 28 +++++++++++++++++++++++++---
- fs/ceph/snap.c       | 37 +++++++++++++++++++++++++++++++++++--
- fs/ceph/super.h      |  1 +
- 6 files changed, 104 insertions(+), 10 deletions(-)
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index da2fb2c97531..092f8d40abdc 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -305,13 +305,18 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
- 	struct inode *inode = rreq->inode;
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
--	struct ceph_osd_request *req;
-+	struct ceph_osd_request *req = NULL;
- 	struct ceph_vino vino = ceph_vino(inode);
- 	struct iov_iter iter;
- 	int err = 0;
- 	u64 len = subreq->len;
- 	bool sparse = ceph_test_mount_opt(fsc, SPARSEREAD);
- 
-+	if (READ_ONCE(fsc->mount_state) == CEPH_MOUNT_FENCE_IO) {
-+		err = -EIO;
-+		goto out;
-+	}
-+
- 	if (ceph_has_inline_data(ci) && ceph_netfs_issue_op_inline(subreq))
- 		return;
- 
-@@ -559,6 +564,9 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
- 
- 	dout("writepage %p idx %lu\n", page, page->index);
- 
-+	if (READ_ONCE(fsc->mount_state) == CEPH_MOUNT_FENCE_IO)
-+		return -EIO;
-+
- 	/* verify this is a writeable snap context */
- 	snapc = page_snap_context(page);
- 	if (!snapc) {
-@@ -797,6 +805,11 @@ static int ceph_writepages_start(struct address_space *mapping,
- 	bool done = false;
- 	bool caching = ceph_is_cache_enabled(inode);
- 
-+	if (READ_ONCE(fsc->mount_state) == CEPH_MOUNT_FENCE_IO) {
-+		mapping_set_error(mapping, -EIO);
-+		return -EIO;
-+	}
-+
- 	if (wbc->sync_mode == WB_SYNC_NONE &&
- 	    fsc->write_congested)
- 		return 0;
-@@ -1639,7 +1652,7 @@ int ceph_uninline_data(struct file *file)
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
- 	struct ceph_osd_request *req = NULL;
--	struct ceph_cap_flush *prealloc_cf;
-+	struct ceph_cap_flush *prealloc_cf = NULL;
- 	struct folio *folio = NULL;
- 	u64 inline_version = CEPH_INLINE_NONE;
- 	struct page *pages[1];
-@@ -1653,6 +1666,11 @@ int ceph_uninline_data(struct file *file)
- 	dout("uninline_data %p %llx.%llx inline_version %llu\n",
- 	     inode, ceph_vinop(inode), inline_version);
- 
-+	if (READ_ONCE(fsc->mount_state) == CEPH_MOUNT_FENCE_IO) {
-+		err = -EIO;
-+		goto out;
-+	}
-+
- 	if (inline_version == CEPH_INLINE_NONE)
- 		return 0;
- 
+V2:
+- Fix it in ceph layer.
+
+
+ fs/ceph/caps.c       |  3 +++
+ fs/ceph/mds_client.c |  5 ++++-
+ fs/ceph/mds_client.h |  7 ++++++-
+ fs/ceph/quota.c      |  3 +++
+ fs/ceph/snap.c       |  3 +++
+ fs/ceph/super.c      | 14 ++++++++++++++
+ 6 files changed, 33 insertions(+), 2 deletions(-)
+
 diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 948136f81fc8..5230ab64fff0 100644
+index 15d9e0f0d65a..e8a53aeb2a8c 100644
 --- a/fs/ceph/caps.c
 +++ b/fs/ceph/caps.c
-@@ -4134,6 +4134,7 @@ void ceph_handle_caps(struct ceph_mds_session *session,
- 	void *p, *end;
- 	struct cap_extra_info extra_info = {};
- 	bool queue_trunc;
-+	bool close_sessions = false;
+@@ -4222,6 +4222,9 @@ void ceph_handle_caps(struct ceph_mds_session *session,
  
  	dout("handle_caps from mds%d\n", session->s_mds);
  
-@@ -4275,9 +4276,13 @@ void ceph_handle_caps(struct ceph_mds_session *session,
- 		realm = NULL;
- 		if (snaptrace_len) {
- 			down_write(&mdsc->snap_rwsem);
--			ceph_update_snap_trace(mdsc, snaptrace,
--					       snaptrace + snaptrace_len,
--					       false, &realm);
-+			if (ceph_update_snap_trace(mdsc, snaptrace,
-+						   snaptrace + snaptrace_len,
-+						   false, &realm)) {
-+				up_write(&mdsc->snap_rwsem);
-+				close_sessions = true;
-+				goto done;
-+			}
- 			downgrade_write(&mdsc->snap_rwsem);
- 		} else {
- 			down_read(&mdsc->snap_rwsem);
-@@ -4341,6 +4346,11 @@ void ceph_handle_caps(struct ceph_mds_session *session,
- 	iput(inode);
- out:
- 	ceph_put_string(extra_info.pool_ns);
++	if (mdsc->stopping >= CEPH_MDSC_STOPPING_FLUSHED)
++		return;
 +
-+	/* Defer closing the sessions after s_mutex lock being released */
-+	if (close_sessions)
-+		ceph_mdsc_close_sessions(mdsc);
-+
- 	return;
- 
- flush_cap_releases:
-@@ -4350,6 +4360,7 @@ void ceph_handle_caps(struct ceph_mds_session *session,
- 	 * cap).
- 	 */
- 	ceph_flush_cap_releases(mdsc, session);
-+
- 	goto done;
- 
- bad:
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 85afcbbb5648..76a5633b3f35 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -976,6 +976,9 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
- 	dout("sync_read on file %p %llu~%u %s\n", file, off, (unsigned)len,
- 	     (file->f_flags & O_DIRECT) ? "O_DIRECT" : "");
- 
-+	if (READ_ONCE(fsc->mount_state) == CEPH_MOUNT_FENCE_IO)
-+		return -EIO;
-+
- 	if (!len)
- 		return 0;
- 	/*
-@@ -1342,6 +1345,9 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
- 	bool should_dirty = !write && user_backed_iter(iter);
- 	bool sparse = ceph_test_mount_opt(fsc, SPARSEREAD);
- 
-+	if (READ_ONCE(fsc->mount_state) == CEPH_MOUNT_FENCE_IO)
-+		return -EIO;
-+
- 	if (write && ceph_snap(file_inode(file)) != CEPH_NOSNAP)
- 		return -EROFS;
- 
-@@ -2078,6 +2084,9 @@ static int ceph_zero_partial_object(struct inode *inode,
- 	loff_t zero = 0;
- 	int op;
- 
-+	if (READ_ONCE(fsc->mount_state) == CEPH_MOUNT_FENCE_IO)
-+		return -EIO;
-+
- 	if (!length) {
- 		op = offset ? CEPH_OSD_OP_DELETE : CEPH_OSD_OP_TRUNCATE;
- 		length = &zero;
+ 	/* decode */
+ 	end = msg->front.iov_base + msg->front.iov_len;
+ 	if (msg->front.iov_len < sizeof(*h))
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index cbbaf334b6b8..b60812707fce 100644
+index d41ab68f0130..1ad85af49b45 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -957,6 +957,9 @@ static struct ceph_mds_session *register_session(struct ceph_mds_client *mdsc,
- {
- 	struct ceph_mds_session *s;
+@@ -4869,6 +4869,9 @@ static void handle_lease(struct ceph_mds_client *mdsc,
  
-+	if (READ_ONCE(mdsc->fsc->mount_state) == CEPH_MOUNT_FENCE_IO)
-+		return ERR_PTR(-EIO);
+ 	dout("handle_lease from mds%d\n", mds);
+ 
++	if (mdsc->stopping >= CEPH_MDSC_STOPPING_FLUSHED)
++		return;
 +
- 	if (mds >= mdsc->mdsmap->possible_max_rank)
- 		return ERR_PTR(-EINVAL);
- 
-@@ -1632,6 +1635,9 @@ static int __open_session(struct ceph_mds_client *mdsc,
- 	int mstate;
- 	int mds = session->s_mds;
- 
-+	if (READ_ONCE(mdsc->fsc->mount_state) == CEPH_MOUNT_FENCE_IO)
-+		return -EIO;
-+
- 	/* wait for mds to go active? */
- 	mstate = ceph_mdsmap_get_state(mdsc->mdsmap, mds);
- 	dout("open_session to mds%d (%s)\n", mds,
-@@ -3205,6 +3211,11 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 		err = -ETIMEDOUT;
- 		goto finish;
- 	}
-+	if (READ_ONCE(mdsc->fsc->mount_state) == CEPH_MOUNT_FENCE_IO) {
-+		dout("do_request metadata corrupted\n");
-+		err = -EIO;
-+		goto finish;
-+	}
- 	if (READ_ONCE(mdsc->fsc->mount_state) == CEPH_MOUNT_SHUTDOWN) {
- 		dout("do_request forced umount\n");
- 		err = -EIO;
-@@ -3584,6 +3595,7 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
- 	u64 tid;
- 	int err, result;
- 	int mds = session->s_mds;
-+	bool close_sessions = false;
- 
- 	if (msg->front.iov_len < sizeof(*head)) {
- 		pr_err("mdsc_handle_reply got corrupt (short) reply\n");
-@@ -3698,10 +3710,15 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
- 	realm = NULL;
- 	if (rinfo->snapblob_len) {
- 		down_write(&mdsc->snap_rwsem);
--		ceph_update_snap_trace(mdsc, rinfo->snapblob,
-+		err = ceph_update_snap_trace(mdsc, rinfo->snapblob,
- 				rinfo->snapblob + rinfo->snapblob_len,
- 				le32_to_cpu(head->op) == CEPH_MDS_OP_RMSNAP,
- 				&realm);
-+		if (err) {
-+			up_write(&mdsc->snap_rwsem);
-+			close_sessions = true;
-+			goto out_err;
-+		}
- 		downgrade_write(&mdsc->snap_rwsem);
- 	} else {
- 		down_read(&mdsc->snap_rwsem);
-@@ -3759,6 +3776,10 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
- 				     req->r_end_latency, err);
- out:
- 	ceph_mdsc_put_request(req);
-+
-+	/* Defer closing the sessions after s_mutex lock being released */
-+	if (close_sessions)
-+		ceph_mdsc_close_sessions(mdsc);
- 	return;
- }
- 
-@@ -5358,7 +5379,7 @@ static bool done_closing_sessions(struct ceph_mds_client *mdsc, int skipped)
- }
- 
- /*
-- * called after sb is ro.
-+ * called after sb is ro or when metadata corrupted.
-  */
- void ceph_mdsc_close_sessions(struct ceph_mds_client *mdsc)
- {
-@@ -5648,7 +5669,8 @@ static void mds_peer_reset(struct ceph_connection *con)
- 	struct ceph_mds_client *mdsc = s->s_mdsc;
- 
- 	pr_warn("mds%d closed our session\n", s->s_mds);
--	send_mds_reconnect(mdsc, s);
-+	if (READ_ONCE(mdsc->fsc->mount_state) != CEPH_MOUNT_FENCE_IO)
-+		send_mds_reconnect(mdsc, s);
- }
- 
- static void mds_dispatch(struct ceph_connection *con, struct ceph_msg *msg)
-diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-index c1c452afa84d..a73943e51a77 100644
---- a/fs/ceph/snap.c
-+++ b/fs/ceph/snap.c
-@@ -767,8 +767,10 @@ int ceph_update_snap_trace(struct ceph_mds_client *mdsc,
- 	struct ceph_snap_realm *realm;
- 	struct ceph_snap_realm *first_realm = NULL;
- 	struct ceph_snap_realm *realm_to_rebuild = NULL;
-+	struct ceph_client *client = mdsc->fsc->client;
- 	int rebuild_snapcs;
- 	int err = -ENOMEM;
-+	int ret;
- 	LIST_HEAD(dirty_realms);
- 
- 	lockdep_assert_held_write(&mdsc->snap_rwsem);
-@@ -885,6 +887,27 @@ int ceph_update_snap_trace(struct ceph_mds_client *mdsc,
- 	if (first_realm)
- 		ceph_put_snap_realm(mdsc, first_realm);
- 	pr_err("%s error %d\n", __func__, err);
-+
-+	/*
-+	 * When receiving a corrupted snap trace we don't know what
-+	 * exactly has happened in MDS side. And we shouldn't continue
-+	 * writing to OSD, which may corrupt the snapshot contents.
-+	 *
-+	 * Just try to blocklist this kclient and then this kclient
-+	 * must be remounted to continue after the corrupted metadata
-+	 * fixed in the MDS side.
-+	 */
-+	mdsc->fsc->mount_state = CEPH_MOUNT_FENCE_IO;
-+	ret = ceph_monc_blocklist_add(&client->monc, &client->msgr.inst.addr);
-+	if (ret)
-+		pr_err("%s blocklist of %s failed: %d", __func__,
-+		       ceph_pr_addr(&client->msgr.inst.addr), ret);
-+
-+	WARN(1, "%s:%s%s do remount to continue%s",
-+	     __func__, ret ? "" : ceph_pr_addr(&client->msgr.inst.addr),
-+	     ret ? "" : " was blocklisted,",
-+	     err == -EIO ? " after corrupted snaptrace fixed" : "");
-+
- 	return err;
- }
- 
-@@ -985,6 +1008,7 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
- 	__le64 *split_inos = NULL, *split_realms = NULL;
- 	int i;
- 	int locked_rwsem = 0;
-+	bool close_sessions = false;
- 
  	/* decode */
- 	if (msg->front.iov_len < sizeof(*h))
-@@ -1093,8 +1117,12 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
- 	 * update using the provided snap trace. if we are deleting a
- 	 * snap, we can avoid queueing cap_snaps.
- 	 */
--	ceph_update_snap_trace(mdsc, p, e,
--			       op == CEPH_SNAP_OP_DESTROY, NULL);
-+	if (ceph_update_snap_trace(mdsc, p, e,
-+				   op == CEPH_SNAP_OP_DESTROY,
-+				   NULL)) {
-+		close_sessions = true;
-+		goto bad;
-+	}
+ 	if (msg->front.iov_len < sizeof(*h) + sizeof(u32))
+ 		goto bad;
+@@ -5262,7 +5265,7 @@ void send_flush_mdlog(struct ceph_mds_session *s)
+ void ceph_mdsc_pre_umount(struct ceph_mds_client *mdsc)
+ {
+ 	dout("pre_umount\n");
+-	mdsc->stopping = 1;
++	mdsc->stopping = CEPH_MDSC_STOPPING_BEGAIN;
  
- 	if (op == CEPH_SNAP_OP_SPLIT)
- 		/* we took a reference when we created the realm, above */
-@@ -1113,6 +1141,11 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
- out:
- 	if (locked_rwsem)
- 		up_write(&mdsc->snap_rwsem);
-+
-+	/* Defer closing the sessions after s_mutex lock being released */
-+	if (close_sessions)
-+		ceph_mdsc_close_sessions(mdsc);
-+
- 	return;
- }
- 
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 0d5cb0983831..f59fd4b4755b 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -111,6 +111,7 @@ enum {
- 	CEPH_MOUNT_UNMOUNTED,
- 	CEPH_MOUNT_SHUTDOWN,
- 	CEPH_MOUNT_RECOVER,
-+	CEPH_MOUNT_FENCE_IO,
+ 	ceph_mdsc_iterate_sessions(mdsc, send_flush_mdlog, true);
+ 	ceph_mdsc_iterate_sessions(mdsc, lock_unlock_session, false);
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index 81a1f9a4ac3b..56f9d8077068 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -398,6 +398,11 @@ struct cap_wait {
+ 	int			want;
  };
  
- #define CEPH_ASYNC_CREATE_CONFLICT_BITS 8
++enum {
++	CEPH_MDSC_STOPPING_BEGAIN = 1,
++	CEPH_MDSC_STOPPING_FLUSHED = 2,
++};
++
+ /*
+  * mds client state
+  */
+@@ -414,7 +419,7 @@ struct ceph_mds_client {
+ 	struct ceph_mds_session **sessions;    /* NULL for mds if no session */
+ 	atomic_t		num_sessions;
+ 	int                     max_sessions;  /* len of sessions array */
+-	int                     stopping;      /* true if shutting down */
++	int                     stopping;      /* the stage of shutting down */
+ 
+ 	atomic64_t		quotarealms_count; /* # realms with quota */
+ 	/*
+diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
+index 64592adfe48f..f5819fc31d28 100644
+--- a/fs/ceph/quota.c
++++ b/fs/ceph/quota.c
+@@ -47,6 +47,9 @@ void ceph_handle_quota(struct ceph_mds_client *mdsc,
+ 	struct inode *inode;
+ 	struct ceph_inode_info *ci;
+ 
++	if (mdsc->stopping >= CEPH_MDSC_STOPPING_FLUSHED)
++		return;
++
+ 	if (msg->front.iov_len < sizeof(*h)) {
+ 		pr_err("%s corrupt message mds%d len %d\n", __func__,
+ 		       session->s_mds, (int)msg->front.iov_len);
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index a73943e51a77..eeabdd0211d8 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -1010,6 +1010,9 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+ 	int locked_rwsem = 0;
+ 	bool close_sessions = false;
+ 
++	if (mdsc->stopping >= CEPH_MDSC_STOPPING_FLUSHED)
++		return;
++
+ 	/* decode */
+ 	if (msg->front.iov_len < sizeof(*h))
+ 		goto bad;
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index f10a076f47e5..012b35be41a9 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -1483,6 +1483,20 @@ static void ceph_kill_sb(struct super_block *s)
+ 	ceph_mdsc_pre_umount(fsc->mdsc);
+ 	flush_fs_workqueues(fsc);
+ 
++	/*
++	 * Though the kill_anon_super() will finally trigger the
++	 * sync_filesystem() anyway, we still need to do it here and
++	 * then bump the stage of shutdown. This will drop any further
++	 * message, which makes no sense any more, from MDSs.
++	 *
++	 * Without this when evicting the inodes it may fail in the
++	 * kill_anon_super(), which will trigger a warning when
++	 * destroying the fscrypt keyring and then possibly trigger
++	 * a further crash in ceph module when iput() the inodes.
++	 */
++	sync_filesystem(s);
++	fsc->mdsc->stopping = CEPH_MDSC_STOPPING_FLUSHED;
++
+ 	kill_anon_super(s);
+ 
+ 	fsc->client->extra_mon_dispatch = NULL;
 -- 
 2.31.1
 
