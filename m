@@ -2,79 +2,69 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4591265439A
-	for <lists+ceph-devel@lfdr.de>; Thu, 22 Dec 2022 16:04:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0B6C654449
+	for <lists+ceph-devel@lfdr.de>; Thu, 22 Dec 2022 16:27:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235860AbiLVPEf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 22 Dec 2022 10:04:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50528 "EHLO
+        id S229630AbiLVP05 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 22 Dec 2022 10:26:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235865AbiLVPEP (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 22 Dec 2022 10:04:15 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1155327DD0
-        for <ceph-devel@vger.kernel.org>; Thu, 22 Dec 2022 07:02:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1671721357;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=75w1pfVKB1Ro0XqkbXmr8eWxoXfk22o+qXL/5b9cucw=;
-        b=RJyES0TDThBSqRZCVOF7bAIcfhChVykin+8LFDG/nSg7QFfCJzqgJHixS4F+544kpos2VV
-        VSfc4WoaIEqdTWwtO0Lv4vjmD39IcEjTAxUdr8i8P+dhHXDNQ3rDvxRujpUIwa6wMagsBF
-        7tPauQkMawlelG/lF/uWqAB0I7T0ouc=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-290-HaKXfIxlMWuof_yakpjAKg-1; Thu, 22 Dec 2022 10:02:34 -0500
-X-MC-Unique: HaKXfIxlMWuof_yakpjAKg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A1C872803D7E;
-        Thu, 22 Dec 2022 15:02:32 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4BBDC2166B29;
-        Thu, 22 Dec 2022 15:02:30 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v5 3/3] mm: Make filemap_release_folio() better inform
- shrink_folio_list()
-From:   David Howells <dhowells@redhat.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Steve French <sfrench@samba.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Ilya Dryomov <idryomov@gmail.com>, linux-cachefs@redhat.com,
-        linux-cifs@vger.kernel.org, linux-afs@lists.infradead.org,
-        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, linux-erofs@lists.ozlabs.org,
-        linux-ext4@lists.ozlabs.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 22 Dec 2022 15:02:29 +0000
-Message-ID: <167172134962.2334525.570622889806603086.stgit@warthog.procyon.org.uk>
-In-Reply-To: <167172131368.2334525.8569808925687731937.stgit@warthog.procyon.org.uk>
-References: <167172131368.2334525.8569808925687731937.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/1.5
+        with ESMTP id S235908AbiLVP0f (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 22 Dec 2022 10:26:35 -0500
+Received: from mail-io1-xd2e.google.com (mail-io1-xd2e.google.com [IPv6:2607:f8b0:4864:20::d2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C484C30565
+        for <ceph-devel@vger.kernel.org>; Thu, 22 Dec 2022 07:25:52 -0800 (PST)
+Received: by mail-io1-xd2e.google.com with SMTP id 3so1119027iou.12
+        for <ceph-devel@vger.kernel.org>; Thu, 22 Dec 2022 07:25:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9raFcpnVlE2XUgV1j13OXzhOI6LW5gn6LlHeF9plu4E=;
+        b=Nz0QEn/o7mSqcJJ/IB4hxcEZ1qic6w04DYHaScMnH1+8tuUF12OBleEsGAxpPmf3xm
+         Kt4fqLX+aqKGDiBeFGOP3dGxsGpnkWe6rUhLGJru08ubca2C4H9K7GzCrDHPan+mI0sp
+         dwsJIu0pV4gWuNJ9W0VtpXhmLQ7wlHy3dM+5AI5RLboOpNZ3KKIhquOAA3AJd7yaBnTw
+         ALQO5yKmWl/CN4WHedD0RyA6VQyf7WK/iz/K0BCOO6eR/xUC7ePi5VbqzjQ6g3vUiK1N
+         Fg5K+WdYRPV0AjwqcJO35Ns4FurNWDLTQTQx3PfniPA7qB61gC28823rWgYR7jNd2RkD
+         v6hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9raFcpnVlE2XUgV1j13OXzhOI6LW5gn6LlHeF9plu4E=;
+        b=VWgf94FEAx+rndRZ+UtRNrMdmDubA5yBtPOZwuTNOtwJVPLArgTx3jmHKWIDcgl7hC
+         nc7+h7207FfUBFeRc4TcMrD2OfDvSIlsAjJq6JOzJjv4uLlgAEM99LsuAn28H/fEOSrw
+         rjSTlBPXNFxCtXBp7mC7nwaHYu3Emwvy/YpNcb5EyGJX/dNUfOuYj1GN9TQnNa1y3ciy
+         6aaRK955nWTpDZGOURcC68CP0l2u6DOhx04nPCE2KA+V+bthswbjZxjc7lfk0q4vy6ZN
+         U1sPIRcHdmA6uI//XkYBnVUBkm4q+l74O4LCxvz651aq4kDkWK6Kbj1Vk7Yoza0pEiO+
+         X3ww==
+X-Gm-Message-State: AFqh2koQh9b/lQK3uI2Tt5n+AnRAAT15Mq4kTUpITF9bV6LQLtufcfqv
+        02RSCfPlnvSy9UsLxUUK80gdwcrsoPur5kLmJ+E=
+X-Google-Smtp-Source: AMrXdXsEvpSW0qghKufims0bJmho3BEEaRsNXi0wFgEpzwDFxCuFh00mAZLfTqonZWaB7PmU0FTaDLKY6xlEmit8QF8=
+X-Received: by 2002:a05:6638:40a3:b0:395:ce15:59bc with SMTP id
+ m35-20020a05663840a300b00395ce1559bcmr478468jam.71.1671722752216; Thu, 22 Dec
+ 2022 07:25:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+References: <fc2786c0caa7454486ba318a334c97a3@mpinat.mpg.de>
+ <CAOi1vP-J_Qu28q4KFOZVXmX1uBNBfOsMZGFuYCEkny+AAoWesQ@mail.gmail.com>
+ <4c039a76-b638-98b7-1104-e81857df8bcd@redhat.com> <9b714315c8934da38449eb2ce5b85cfc@mpinat.mpg.de>
+ <70e8a12c-d94e-7784-c842-cbdd87ff438e@redhat.com> <62582bb6b2124f1a9dd111f29049b25b@mpinat.mpg.de>
+ <a6091b92-c216-e525-0bc7-5515225f6dc8@molgen.mpg.de> <a212e2465caf4c7da3aa1fe0e094831f@mpinat.mpg.de>
+ <CAOi1vP-g2no3i91SshzcWb8XY6aup4h_GcO6Le=caM8-XmXGnQ@mail.gmail.com> <f3e2a67f41bb49bc8e131ce2f0bf5816@mpinat.mpg.de>
+In-Reply-To: <f3e2a67f41bb49bc8e131ce2f0bf5816@mpinat.mpg.de>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 22 Dec 2022 16:25:39 +0100
+Message-ID: <CAOi1vP8G2UgBXvNVv4hjaMcAsjSDC-KBeRpXYhsdTaYcnF0c2Q@mail.gmail.com>
+Subject: Re: PROBLEM: CephFS write performance drops by 90%
+To:     "Roose, Marco" <marco.roose@mpinat.mpg.de>
+Cc:     "Menzel, Paul" <pmenzel@molgen.mpg.de>,
+        Xiubo Li <xiubli@redhat.com>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,159 +72,49 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Make filemap_release_folio() return one of three values:
+On Thu, Dec 22, 2022 at 3:41 PM Roose, Marco <marco.roose@mpinat.mpg.de> wrote:
+>
+> Hi Ilya,
+> thanks for providing the revert. Using that commit all is fine:
+>
+> ~# uname -a
+> Linux S1020-CephTest 6.1.0+ #1 SMP PREEMPT_DYNAMIC Thu Dec 22 14:30:22 CET
+> 2022 x86_64 x86_64 x86_64 GNU/Linux
+>
+> ~# rsync -ah --progress /root/test-file_1000MB /mnt/ceph/test-file_1000MB
+> sending incremental file list
+> test-file_1000MB
+>           1.00G 100%   90.53MB/s    0:00:10 (xfr#1, to-chk=0/1)
+>
+> I attach some ceph reports taking before, during and after an rsync on a bad
+> kernel (5.6.0) for debugging.
 
- (0) FILEMAP_CANT_RELEASE_FOLIO
+I see two CephFS data pools and one of them is nearfull:
 
-     Couldn't release the folio's private data, so the folio can't itself
-     be released.
+    "pool": 10,
+    "pool_name": "cephfs_data",
+    "create_time": "2020-11-22T08:19:53.701636+0100",
+    "flags": 1,
+    "flags_names": "hashpspool",
 
- (1) FILEMAP_RELEASED_FOLIO
+    "pool": 11,
+    "pool_name": "cephfs_data_ec",
+    "create_time": "2020-11-22T08:22:01.779715+0100",
+    "flags": 2053,
+    "flags_names": "hashpspool,ec_overwrites,nearfull",
 
-     The private data on the folio was released and the folio can be
-     released.
+How is this CephFS filesystem is configured?  If you end up writing to
+cephfs_data_ec pool there, the slowness is expected.  nearfull makes
+the client revert to synchronous writes so that it can properly return
+ENOSPC error when nearfull develops into full.  That is the whole point
+of the commit that you landed upon when bisecting so of course
+reverting it helps:
 
- (2) FILEMAP_FOLIO_HAD_NO_PRIVATE
+-   if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
++   if ((map_flags & CEPH_OSDMAP_NEARFULL) ||
++       (pool_flags & CEPH_POOL_FLAG_NEARFULL))
+            iocb->ki_flags |= IOCB_DSYNC;
 
-     There was no private data on the folio and the folio can be released.
+Thanks,
 
-The first must be zero so that existing tests of !filemap_release_folio()
-continue to work as expected; similarly the other two must both be non-zero
-so that existing tests of filemap_release_folio() continue to work as
-expected.
-
-Using this, make shrink_folio_list() choose which of three cases to follow
-based on the return from filemap_release_folio() rather than testing the
-folio's private bit itself.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Steve French <sfrench@samba.org>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: Dave Wysochanski <dwysocha@redhat.com>
-cc: Dominique Martinet <asmadeus@codewreck.org>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: linux-cachefs@redhat.com
-cc: linux-cifs@vger.kernel.org
-cc: linux-afs@lists.infradead.org
-cc: v9fs-developer@lists.sourceforge.net
-cc: ceph-devel@vger.kernel.org
-cc: linux-nfs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-mm@kvack.org
-
-Link: https://lore.kernel.org/r/1459152.1669208550@warthog.procyon.org.uk/ # v3
-Link: https://lore.kernel.org/r/166924373637.1772793.2622483388224911574.stgit@warthog.procyon.org.uk/ # v4
----
-
- include/linux/pagemap.h |    7 ++++++-
- mm/filemap.c            |   20 ++++++++++++++------
- mm/vmscan.c             |   29 +++++++++++++++--------------
- 3 files changed, 35 insertions(+), 21 deletions(-)
-
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index a0d433e0addd..cd00fb3b524b 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -1121,7 +1121,12 @@ void __filemap_remove_folio(struct folio *folio, void *shadow);
- void replace_page_cache_folio(struct folio *old, struct folio *new);
- void delete_from_page_cache_batch(struct address_space *mapping,
- 				  struct folio_batch *fbatch);
--bool filemap_release_folio(struct folio *folio, gfp_t gfp);
-+enum filemap_released_folio {
-+	FILEMAP_CANT_RELEASE_FOLIO	= 0, /* (This must be 0) Release failed */
-+	FILEMAP_RELEASED_FOLIO		= 1, /* Folio's private data released */
-+	FILEMAP_FOLIO_HAD_NO_PRIVATE	= 2, /* Folio had no private data */
-+};
-+enum filemap_released_folio filemap_release_folio(struct folio *folio, gfp_t gfp);
- loff_t mapping_seek_hole_data(struct address_space *, loff_t start, loff_t end,
- 		int whence);
- 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 344146c170b0..217ca847773a 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3953,20 +3953,28 @@ EXPORT_SYMBOL(generic_file_write_iter);
-  * this page (__GFP_IO), and whether the call may block
-  * (__GFP_RECLAIM & __GFP_FS).
-  *
-- * Return: %true if the release was successful, otherwise %false.
-+ * Return: %FILEMAP_RELEASED_FOLIO if the release was successful,
-+ * %FILEMAP_CANT_RELEASE_FOLIO if the private data couldn't be released and
-+ * %FILEMAP_FOLIO_HAD_NO_PRIVATE if there was no private data.
-  */
--bool filemap_release_folio(struct folio *folio, gfp_t gfp)
-+enum filemap_released_folio filemap_release_folio(struct folio *folio,
-+						  gfp_t gfp)
- {
- 	struct address_space * const mapping = folio->mapping;
-+	bool released;
- 
- 	BUG_ON(!folio_test_locked(folio));
- 	if (!folio_needs_release(folio))
--		return true;
-+		return FILEMAP_FOLIO_HAD_NO_PRIVATE;
- 	if (folio_test_writeback(folio))
--		return false;
-+		return FILEMAP_CANT_RELEASE_FOLIO;
- 
- 	if (mapping && mapping->a_ops->release_folio)
--		return mapping->a_ops->release_folio(folio, gfp);
--	return try_to_free_buffers(folio);
-+		released = mapping->a_ops->release_folio(folio, gfp);
-+	else
-+		released = try_to_free_buffers(folio);
-+
-+	return released ?
-+		FILEMAP_RELEASED_FOLIO : FILEMAP_CANT_RELEASE_FOLIO;
- }
- EXPORT_SYMBOL(filemap_release_folio);
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index bded71961143..b1e5ca348223 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1996,25 +1996,26 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 		 * (refcount == 1) it can be freed.  Otherwise, leave
- 		 * the folio on the LRU so it is swappable.
- 		 */
--		if (folio_needs_release(folio)) {
--			if (!filemap_release_folio(folio, sc->gfp_mask))
--				goto activate_locked;
-+		switch (filemap_release_folio(folio, sc->gfp_mask)) {
-+		case FILEMAP_CANT_RELEASE_FOLIO:
-+			goto activate_locked;
-+		case FILEMAP_RELEASED_FOLIO:
- 			if (!mapping && folio_ref_count(folio) == 1) {
- 				folio_unlock(folio);
- 				if (folio_put_testzero(folio))
- 					goto free_it;
--				else {
--					/*
--					 * rare race with speculative reference.
--					 * the speculative reference will free
--					 * this folio shortly, so we may
--					 * increment nr_reclaimed here (and
--					 * leave it off the LRU).
--					 */
--					nr_reclaimed += nr_pages;
--					continue;
--				}
-+				/*
-+				 * rare race with speculative reference.  the
-+				 * speculative reference will free this folio
-+				 * shortly, so we may increment nr_reclaimed
-+				 * here (and leave it off the LRU).
-+				 */
-+				nr_reclaimed += nr_pages;
-+				continue;
- 			}
-+			break;
-+		case FILEMAP_FOLIO_HAD_NO_PRIVATE:
-+			break;
- 		}
- 
- 		if (folio_test_anon(folio) && !folio_test_swapbacked(folio)) {
-
-
+                Ilya
