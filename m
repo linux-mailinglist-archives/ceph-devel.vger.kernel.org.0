@@ -2,213 +2,177 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AAF20655025
-	for <lists+ceph-devel@lfdr.de>; Fri, 23 Dec 2022 13:06:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A37FF6550F4
+	for <lists+ceph-devel@lfdr.de>; Fri, 23 Dec 2022 14:23:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236388AbiLWMGJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 23 Dec 2022 07:06:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34202 "EHLO
+        id S236227AbiLWNXO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 23 Dec 2022 08:23:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231423AbiLWME0 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 23 Dec 2022 07:04:26 -0500
-Received: from amailer.gwdg.de (amailer.gwdg.de [134.76.10.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C032F46673
-        for <ceph-devel@vger.kernel.org>; Fri, 23 Dec 2022 04:02:28 -0800 (PST)
-Received: from excmbx-14.um.gwdg.de ([134.76.9.225] helo=email.gwdg.de)
-        by mailer.gwdg.de with esmtp (GWDG Mailer)
-        (envelope-from <marco.roose@mpinat.mpg.de>)
-        id 1p8gks-0005Cz-Us; Fri, 23 Dec 2022 13:02:26 +0100
-Received: from EXCMBX-13.um.gwdg.de (134.76.9.222) by excmbx-14.um.gwdg.de
- (134.76.9.225) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P521) id 15.1.2507.16; Fri, 23
- Dec 2022 13:02:26 +0100
-Received: from EXCMBX-13.um.gwdg.de ([134.76.9.222]) by EXCMBX-13.um.gwdg.de
- ([134.76.9.222]) with mapi id 15.01.2507.016; Fri, 23 Dec 2022 13:02:26 +0100
-From:   "Roose, Marco" <marco.roose@mpinat.mpg.de>
-To:     "Menzel, Paul" <pmenzel@molgen.mpg.de>,
-        Ilya Dryomov <idryomov@gmail.com>
-CC:     Xiubo Li <xiubli@redhat.com>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Subject: RE: PROBLEM: CephFS write performance drops by 90% [solved]
-Thread-Topic: PROBLEM: CephFS write performance drops by 90% [solved]
-Thread-Index: AdkWxd/auQbWjjXJQcWEuDAUxdVBsw==
-Date:   Fri, 23 Dec 2022 12:02:26 +0000
-Message-ID: <23f46ca6dd1f45a78beede92fc91d588@mpinat.mpg.de>
-Accept-Language: en-US, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.250.9.205]
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature";
-        micalg=SHA1; boundary="----=_NextPart_000_000E_01D916CE.CDC90E40"
+        with ESMTP id S236231AbiLWNWy (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 23 Dec 2022 08:22:54 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E649140804
+        for <ceph-devel@vger.kernel.org>; Fri, 23 Dec 2022 05:22:52 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id ud5so12051376ejc.4
+        for <ceph-devel@vger.kernel.org>; Fri, 23 Dec 2022 05:22:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CmLmxvY2a5wo/mUUl1+JDl+VpR85lJREslvQRjVvYPI=;
+        b=FUyzXZq6IscLjJYGmHP7um3usw1ox/fQfnlq3Vm4EEgOPpcbYCVftLguUAOcIrH2qa
+         59BJIMLkGOQS8v5pAS3AogZIBrVCBqewykThcomhgwcmomfuUlH2RqtIW9xQQ8NC1I8n
+         QXu2pg+kJnFlr1kEJttSr+kY2vZ8jfTnsmUVEdbgjAkhFebXoQqFZpaZlr/EFQ06zWOP
+         3TyxCGFYE/wnZ7RQZjb6quSe+aULh84IEcNV5By+fXW/HxSnr7nqfzfNz12G8/lEu+FB
+         yREPi4RK4C+k582oqMGeZettrNClFPbOkvZjiCCZHgGg55PA52oOZSCWZnxk8OQMK2R1
+         nQkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CmLmxvY2a5wo/mUUl1+JDl+VpR85lJREslvQRjVvYPI=;
+        b=BZNu+Y4Q95OxjRsrSD0QFSlQWG5gciLqXat689KUQIgHGA6b4olfVgQ4b+T8PyHYH/
+         lQMQax0jg84+UmaZxPHgpvOQczuq3847siOBXppyfs79xkA7/4ZnQjpXKNfpTM1SKy8M
+         Tqb9bzadI76Ewpd5+i9u7jkSRWwODobPyWagXxCOsdBU/DO0sNje0SYYyw137pCarWOH
+         jy71b6d9G3+O11NX8zeGIVBWicaCrMhZJGMj5IYGbYhypWd0cryXwajA2ESOpmn62tRE
+         P4bELn5o1hY2tIoD2O1GCVebnsk57Ize5vRCns0HHFFacC/zR32mkt2ivHdXz6ND0D/H
+         TJwg==
+X-Gm-Message-State: AFqh2kpl1gqvSecS5sv5ccIucMUMkXA2Z1wvDsCx3BZahr9rOn0XqE7C
+        0HbAf/LORRg7Oeygb7jx9733CX39PUXcqlPrMLI=
+X-Google-Smtp-Source: AMrXdXvVvdWq4da3eQlzKoV9dM2NEZ724J6MPOO6JcHuaCdn59zh5NEwNzjU1QD3d5NA8II963PrSS6RGu2lTsEXOWg=
+X-Received: by 2002:a17:906:708f:b0:7c4:e857:e0b8 with SMTP id
+ b15-20020a170906708f00b007c4e857e0b8mr685848ejk.603.1671801771231; Fri, 23
+ Dec 2022 05:22:51 -0800 (PST)
 MIME-Version: 1.0
-X-Virus-Scanned: (clean) by clamav
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <fc2786c0caa7454486ba318a334c97a3@mpinat.mpg.de>
+ <CAOi1vP-J_Qu28q4KFOZVXmX1uBNBfOsMZGFuYCEkny+AAoWesQ@mail.gmail.com>
+ <4c039a76-b638-98b7-1104-e81857df8bcd@redhat.com> <9b714315c8934da38449eb2ce5b85cfc@mpinat.mpg.de>
+ <70e8a12c-d94e-7784-c842-cbdd87ff438e@redhat.com> <62582bb6b2124f1a9dd111f29049b25b@mpinat.mpg.de>
+ <a6091b92-c216-e525-0bc7-5515225f6dc8@molgen.mpg.de> <a212e2465caf4c7da3aa1fe0e094831f@mpinat.mpg.de>
+ <CAOi1vP-g2no3i91SshzcWb8XY6aup4h_GcO6Le=caM8-XmXGnQ@mail.gmail.com>
+ <f3e2a67f41bb49bc8e131ce2f0bf5816@mpinat.mpg.de> <CAOi1vP8G2UgBXvNVv4hjaMcAsjSDC-KBeRpXYhsdTaYcnF0c2Q@mail.gmail.com>
+ <ef6bb3f4-528b-17e9-4f4c-8b5bcb5936f2@molgen.mpg.de>
+In-Reply-To: <ef6bb3f4-528b-17e9-4f4c-8b5bcb5936f2@molgen.mpg.de>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Fri, 23 Dec 2022 14:22:39 +0100
+Message-ID: <CAOi1vP_K2YBX9+JffMUHCuXsynGfTqJYh+FRUsYY4UrePrK9fQ@mail.gmail.com>
+Subject: Re: PROBLEM: CephFS write performance drops by 90%
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+Cc:     Marco Roose <marco.roose@mpinat.mpg.de>,
+        Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-------=_NextPart_000_000E_01D916CE.CDC90E40
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+On Fri, Dec 23, 2022 at 9:06 AM Paul Menzel <pmenzel@molgen.mpg.de> wrote:
+>
+> Dear Ilya,
+>
+>
+> Am 22.12.22 um 16:25 schrieb Ilya Dryomov:
+> > On Thu, Dec 22, 2022 at 3:41 PM Roose, Marco <marco.roose@mpinat.mpg.de=
+> wrote:
+>
+> >> thanks for providing the revert. Using that commit all is fine:
+> >>
+> >> ~# uname -a
+> >> Linux S1020-CephTest 6.1.0+ #1 SMP PREEMPT_DYNAMIC Thu Dec 22 14:30:22=
+ CET
+> >> 2022 x86_64 x86_64 x86_64 GNU/Linux
+> >>
+> >> ~# rsync -ah --progress /root/test-file_1000MB /mnt/ceph/test-file_100=
+0MB
+> >> sending incremental file list
+> >> test-file_1000MB
+> >>            1.00G 100%   90.53MB/s    0:00:10 (xfr#1, to-chk=3D0/1)
+> >>
+> >> I attach some ceph reports taking before, during and after an rsync on=
+ a bad
+> >> kernel (5.6.0) for debugging.
+> >
+> > I see two CephFS data pools and one of them is nearfull:
+> >
+> >      "pool": 10,
+> >      "pool_name": "cephfs_data",
+> >      "create_time": "2020-11-22T08:19:53.701636+0100",
+> >      "flags": 1,
+> >      "flags_names": "hashpspool",
+> >
+> >      "pool": 11,
+> >      "pool_name": "cephfs_data_ec",
+> >      "create_time": "2020-11-22T08:22:01.779715+0100",
+> >      "flags": 2053,
+> >      "flags_names": "hashpspool,ec_overwrites,nearfull",
+> >
+> > How is this CephFS filesystem is configured?  If you end up writing to
+> > cephfs_data_ec pool there, the slowness is expected.  nearfull makes
+> > the client revert to synchronous writes so that it can properly return
+> > ENOSPC error when nearfull develops into full.  That is the whole point
+> > of the commit that you landed upon when bisecting so of course
+> > reverting it helps:
+> >
+> > -   if (ceph_osdmap_flag(&fsc->client->osdc, CEPH_OSDMAP_NEARFULL))
+> > +   if ((map_flags & CEPH_OSDMAP_NEARFULL) ||
+> > +       (pool_flags & CEPH_POOL_FLAG_NEARFULL))
+> >              iocb->ki_flags |=3D IOCB_DSYNC;
+>
+> Well, that effect is not documented in the commit message, and for the
+> user it=E2=80=99s a regression, that the existing (for the user working)
+> configuration performs worse after updating the Linux kernel. That
+> violates Linux=E2=80=99 no-regression policy, and at least needs to be be=
+tter
+> documented and explained.
 
-Hi Ilya,
+Hi Paul,
 
-[[MRoo]] Problem solved. The provider configured the NEARFUL away and =
-everything runs smooth now.
+This isn't a regression -- CephFS has always behaved this way.  In
+fact, these states (nearfull and full) used to be global meaning that
+filling up some random pool, completely unrelated to CephFS, still
+lead to synchronous behavior!
 
->Well, that effect is not documented in the commit message, and for the =
-user it=E2=80=99s a regression, that the existing (for the user working) =
-configuration performs worse after updating the Linux kernel. That =
-violates Linux=E2=80=99 no-regression policy, and at least needs to be =
-better documented and explained.
+This was fixed in the Mimic release.  These states became per-pool
+and the global CEPH_OSDMAP_NEARFULL and CEPH_OSDMAP_FULL flags were
+deprecated.  The referenced commit just caught the kernel client up
+with that OSD-side change -- which is a definite improvement.
 
-[[MRoo]] ... additional a little logging about the problem on the client =
-side could be very helpful in such cases.=20
+Unfortunately this catch up was almost two years late (Mimic went out
+in 2018).  The users shouldn't have noticed: our expectation was that
+the global flags would continue to be set for older clients to ensure
+that such clients could revert to synchronous writes as before.
+However, as noted in the commit message, the deprecation change turned
+out to be backwards incompatible by mistake and the net effect was that
+the global flags just stopped being set.  As a result, for a Mimic (or
+later) cluster + any kernel client combination, synchronous behavior
+just vanished and _this_ was a regression.  After a while Yanhu noticed
+and reported it.
 
-Kind regards,
+So the commit in question actually fixes a regression, not introduces
+one.  You just happened to ran into a case of a nearfull pool with
+a newer cluster and an older kernel client.  Had global -> per-pool
+flags change in Mimic been backwards compatible as intended, you would
+have encountered a performance drop immediately after cephfs_data_ec
+pool had exceeded nearfull watermark.
 
-Marco
+The reason for the synchronous behavior is that, thanks to an advanced
+caps system [1], CephFS clients can buffer pretty large amounts of data
+as well as carry out many metadata operations locally.  If the pool is
+nearing capacity, determining whether there is enough space left for
+all that data is tricky.  Switching to performing writes synchronously
+allows the client to generate ENOSPC error in a timely manner.
 
-------=_NextPart_000_000E_01D916CE.CDC90E40
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
+[1] https://www.youtube.com/watch?v=3DVgNI5RQJGp0
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIYeDCCBDIw
-ggMaoAMCAQICAQEwDQYJKoZIhvcNAQEFBQAwezELMAkGA1UEBhMCR0IxGzAZBgNVBAgMEkdyZWF0
-ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBwwHU2FsZm9yZDEaMBgGA1UECgwRQ29tb2RvIENBIExpbWl0
-ZWQxITAfBgNVBAMMGEFBQSBDZXJ0aWZpY2F0ZSBTZXJ2aWNlczAeFw0wNDAxMDEwMDAwMDBaFw0y
-ODEyMzEyMzU5NTlaMHsxCzAJBgNVBAYTAkdCMRswGQYDVQQIDBJHcmVhdGVyIE1hbmNoZXN0ZXIx
-EDAOBgNVBAcMB1NhbGZvcmQxGjAYBgNVBAoMEUNvbW9kbyBDQSBMaW1pdGVkMSEwHwYDVQQDDBhB
-QUEgQ2VydGlmaWNhdGUgU2VydmljZXMwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+
-QJ30buHqdoccTUVEjr5GyIMGncEq/hgfjuQC+vOrXVCKFjELmgbQxXAizUktVGPMtm5oRgtT6stM
-JMC8ck7q8RWu9FSaEgrDerIzYOLaiVXzIljz3tzP74OGooyUT59o8piQRoQnx3a/48w1LIteB2Rl
-gsBIsKiR+WGfdiBQqJHHZrXreGIDVvCKGhPqMaMeoJn9OPb2JzJYbwf1a7j7FCuvt6rM1mNfc4za
-BZmoOKjLF3g2UazpnvR4Oo3PD9lC4pgMqy+fDgHe75+ZSfEt36x0TRuYtUfF5SnR+ZAYx2KcvoPH
-Jns+iiXHwN2d5jVoECCdj9je0sOEnA1e6C/JAgMBAAGjgcAwgb0wHQYDVR0OBBYEFKARCiM+lvEH
-7OKvKe+CpX/QMKS0MA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MHsGA1UdHwR0MHIw
-OKA2oDSGMmh0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0FBQUNlcnRpZmljYXRlU2VydmljZXMuY3Js
-MDagNKAyhjBodHRwOi8vY3JsLmNvbW9kby5uZXQvQUFBQ2VydGlmaWNhdGVTZXJ2aWNlcy5jcmww
-DQYJKoZIhvcNAQEFBQADggEBAAhW/ALwm+j/pPrWe8ZEgM5PxMX2AFjMpra8FEloBHbo5u5d7AIP
-YNaNUBhPJk4B4+awpe6/vHRUQb/9/BK4x09a9IlgBX9gtwVK8/bxwr/EuXSGti19a8zS80bdL8bg
-asPDNAMsfZbdWsIOpwqZwQWLqwwv81w6z2w3VQmH3lNAbFjv/LarZW4E9hvcPOBaFcae2fFZSDAh
-ZQNs7Okhc+ybA6HgN62gFRiP+roCzqcsqRATLNTlCCarIpdg+JBedNSimlO98qlo4KJuwtdssaMP
-nr/raOdW8q7y4ys4OgmBtWuF174t7T8at7Jj4vViLILUagBBUPE5g5+V6TaWmG4wggWBMIIEaaAD
-AgECAhA5ckQ6+SK3UdfTbBDdMTWVMA0GCSqGSIb3DQEBDAUAMHsxCzAJBgNVBAYTAkdCMRswGQYD
-VQQIDBJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcMB1NhbGZvcmQxGjAYBgNVBAoMEUNvbW9k
-byBDQSBMaW1pdGVkMSEwHwYDVQQDDBhBQUEgQ2VydGlmaWNhdGUgU2VydmljZXMwHhcNMTkwMzEy
-MDAwMDAwWhcNMjgxMjMxMjM1OTU5WjCBiDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJz
-ZXkxFDASBgNVBAcTC0plcnNleSBDaXR5MR4wHAYDVQQKExVUaGUgVVNFUlRSVVNUIE5ldHdvcmsx
-LjAsBgNVBAMTJVVTRVJUcnVzdCBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwggIiMA0GCSqG
-SIb3DQEBAQUAA4ICDwAwggIKAoICAQCAEmUXNg7D2wiz0KxXDXbtzSfTTK1Qg2HiqiBNCS1kCdzO
-iZ/MPans9s/B3PHTsdZ7NygRK0faOca8Ohm0X6a9fZ2jY0K2dvKpOyuR+OJv0OwWIJAJPuLodMkY
-tJHUYmTbf6MG8YgYapAiPLz+E/CHFHv25B+O1ORRxhFnRghRy4YUVD+8M/5+bJz/Fp0YvVGONaan
-ZshyZ9shZrHUm3gDwFA66Mzw3LyeTP6vBZY1H1dat//O+T23LLb2VN3I5xI6Ta5MirdcmrS3ID3K
-fyI0rn47aGYBROcBTkZTmzNg95S+UzeQc0PzMsNT79uq/nROacdrjGCT3sTHDN/hMq7MkztReJVn
-i+49Vv4M0GkPGw/zJSZrM233bkf6c0Plfg6lZrEpfDKEY1WJxA3Bk1QwGROs0303p+tdOmw1XNtB
-1xLaqUkL39iAigmTYo61Zs8liM2EuLE/pDkP2QKe6xJMlXzzawWpXhaDzLhn4ugTncxbgtNMs+1b
-/97lc6wjOy0AvzVVdAlJ2ElYGn+SNuZRkg7zJn0cTRe8yexDJtC/QV9AqURE9JnnV4eeUB9XVKg+
-/XRjL7FQZQnmWEIuQxpMtPAlR1n6BB6T1CZGSlCBst6+eLf8ZxXhyVeEHg9j1uliutZfVS7qXMYo
-CAQlObgOK6nyTJccBz8NUvXt7y+CDwIDAQABo4HyMIHvMB8GA1UdIwQYMBaAFKARCiM+lvEH7OKv
-Ke+CpX/QMKS0MB0GA1UdDgQWBBRTeb9aqitKz1SA4dibwJ3ysgNmyzAOBgNVHQ8BAf8EBAMCAYYw
-DwYDVR0TAQH/BAUwAwEB/zARBgNVHSAECjAIMAYGBFUdIAAwQwYDVR0fBDwwOjA4oDagNIYyaHR0
-cDovL2NybC5jb21vZG9jYS5jb20vQUFBQ2VydGlmaWNhdGVTZXJ2aWNlcy5jcmwwNAYIKwYBBQUH
-AQEEKDAmMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20wDQYJKoZIhvcNAQEM
-BQADggEBABiHUdx0IT2ciuAntzPQLszs8ObLXhHeIm+bdY6ecv7k1v6qH5yWLe8DSn6u9I1vcjxD
-O8A/67jfXKqpxq7y/Njuo3tD9oY2fBTgzfT3P/7euLSK8JGW/v1DZH79zNIBoX19+BkZyUIrE79Y
-i7qkomYEdoiRTgyJFM6iTckys7roFBq8cfFb8EELmAAKIgMQ5Qyx+c2SNxntO/HkOrb5RRMmda+7
-qu8/e3c70sQCkT0ZANMXXDnbP3sYDUXNk4WWL13fWRZPP1G91UUYP+1KjugGYXQjFrUNUHMnREd/
-EF2JKmuFMRTE6KlqTIC8anjPuH+OdnKZDJ3+15EIFqGjX5UwggbmMIIEzqADAgECAhAxAnDUNb6b
-JJr4VtDh4oVJMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQGEwJVUzETMBEGA1UECBMKTmV3IEpl
-cnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoTFVRoZSBVU0VSVFJVU1QgTmV0d29y
-azEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTAeFw0yMDAy
-MTgwMDAwMDBaFw0zMzA1MDEyMzU5NTlaMEYxCzAJBgNVBAYTAk5MMRkwFwYDVQQKExBHRUFOVCBW
-ZXJlbmlnaW5nMRwwGgYDVQQDExNHRUFOVCBQZXJzb25hbCBDQSA0MIICIjANBgkqhkiG9w0BAQEF
-AAOCAg8AMIICCgKCAgEAs0riIl4nW+kEWxQENTIgFK600jFAxs1QwB6hRMqvnkphfy2Q3mKbM2ot
-pELKlgE8/3AQPYBo7p7yeORuPMnAuA+oMGRb2wbeSaLcZbpwXgfCvnKxmq97/kQkOFX706F9O7/h
-0yehHhDjUdyMyT0zMs4AMBDRrAFn/b2vR3j0BSYgoQs16oSqadM3p+d0vvH/YrRMtOhkvGpLuzL8
-m+LTAQWvQJ92NwCyKiHspoP4mLPJvVpEpDMnpDbRUQdftSpZzVKTNORvPrGPRLnJ0EEVCHR82LL6
-oz915WkrgeCY9ImuulBn4uVsd9ZpubCgM/EXvVBlViKqusChSsZEn7juIsGIiDyaIhhLsd3amm8B
-S3bgK6AxdSMROND6hiHT182Lmf8C+gRHxQG9McvG35uUvRu8v7bPZiJRaT7ZC2f50P4lTlnbLvWp
-Xv5yv7hheO8bMXltiyLweLB+VNvg+GnfL6TW3Aq1yF1yrZAZzR4MbpjTWdEdSLKvz8+0wCwscQ81
-nbDOwDt9vyZ+0eJXbRkWZiqScnwAg5/B1NUD4TrYlrI4n6zFp2pyYUOiuzP+as/AZnz63GvjFK69
-WODR2W/TK4D7VikEMhg18vhuRf4hxnWZOy0vhfDR/g3aJbdsGac+diahjEwzyB+UKJOCyzvecG8b
-Z/u/U8PsEMZg07iIPi8CAwEAAaOCAYswggGHMB8GA1UdIwQYMBaAFFN5v1qqK0rPVIDh2JvAnfKy
-A2bLMB0GA1UdDgQWBBRpAKHHIVj44MUbILAK3adRvxPZ5DAOBgNVHQ8BAf8EBAMCAYYwEgYDVR0T
-AQH/BAgwBgEB/wIBADAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwOAYDVR0gBDEwLzAt
-BgRVHSAAMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFAGA1UdHwRJMEcw
-RaBDoEGGP2h0dHA6Ly9jcmwudXNlcnRydXN0LmNvbS9VU0VSVHJ1c3RSU0FDZXJ0aWZpY2F0aW9u
-QXV0aG9yaXR5LmNybDB2BggrBgEFBQcBAQRqMGgwPwYIKwYBBQUHMAKGM2h0dHA6Ly9jcnQudXNl
-cnRydXN0LmNvbS9VU0VSVHJ1c3RSU0FBZGRUcnVzdENBLmNydDAlBggrBgEFBQcwAYYZaHR0cDov
-L29jc3AudXNlcnRydXN0LmNvbTANBgkqhkiG9w0BAQwFAAOCAgEACgVOew2PHxM5AP1v7GLGw+3t
-F6rjAcx43D9Hl110Q+BABABglkrPkES/VyMZsfuds8fcDGvGE3o5UfjSno4sij0xdKut8zMazv8/
-4VMKPCA3EUS0tDUoL01ugDdqwlyXuYizeXyH2ICAQfXMtS+raz7mf741CZvO50OxMUMxqljeRfVP
-DJQJNHOYi2pxuxgjKDYx4hdZ9G2o+oLlHhu5+anMDkE8g0tffjRKn8I1D1BmrDdWR/IdbBOj6870
-abYvqys1qYlPotv5N5dm+XxQ8vlrvY7+kfQaAYeO3rP1DM8BGdpEqyFVa+I0rpJPhaZkeWW7cImD
-QFerHW9bKzBrCC815a3WrEhNpxh72ZJZNs1HYJ+29NTB6uu4NJjaMxpk+g2puNSm4b9uVjBbPO9V
-6sFSG+IBqE9ckX/1XjzJtY8Grqoo4SiRb6zcHhp3mxj3oqWi8SKNohAOKnUc7RIP6ss1hqIFyv0x
-XZor4N9tnzD0Fo0JDIURjDPEgo5WTdti/MdGTmKFQNqxyZuT9uSI2Xvhz8p+4pCYkiZqpahZlHqM
-Fxdw9XRZQgrP+cgtOkWEaiNkRBbvtvLdp7MCL2OsQhQEdEbUvDM9slzZXdI7NjJokVBq3O4pls3V
-D2z3L/bHVBe0rBERjyM2C/HSIh84rfmAqBgklzIOqXhd+4RzadUwggfPMIIFt6ADAgECAhEA5gmD
-NATGbXJklUJJUze1YzANBgkqhkiG9w0BAQwFADBGMQswCQYDVQQGEwJOTDEZMBcGA1UEChMQR0VB
-TlQgVmVyZW5pZ2luZzEcMBoGA1UEAxMTR0VBTlQgUGVyc29uYWwgQ0EgNDAeFw0yMTEyMTQwMDAw
-MDBaFw0yNDEyMTMyMzU5NTlaMIIBHjEOMAwGA1UEERMFODA1MzkxSDBGBgNVBAsMP01heC1QbGFu
-Y2stSW5zdGl0dXQgZsO8ciBNdWx0aWRpc3ppcGxpbsOkcmUgTmF0dXJ3aXNzZW5zY2hhZnRlbjFH
-MEUGA1UEChM+TWF4LVBsYW5jay1HZXNlbGxzY2hhZnQgenVyIEZvZXJkZXJ1bmcgZGVyIFdpc3Nl
-bnNjaGFmdGVuIGUuVi4xGzAZBgNVBAkMEkhvZmdhcnRlbnN0cmHDn2UgODEPMA0GA1UECBMGQmF5
-ZXJuMQswCQYDVQQGEwJERTEUMBIGA1UEAxMLTWFyY28gUm9vc2UxKDAmBgkqhkiG9w0BCQEWGW1h
-cmNvLnJvb3NlQG1waW5hdC5tcGcuZGUwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDA
-HnbMvVBAokl5ekT4w+xrim4v+jwmoJGIEVg2KSkkYXz2Bo8G/lFrSaBkVD8gv1t+NGGfnvrC0fmL
-zcusfXIwkbpo1iPGhxACvF6lZfcckd7KfTrccfxjaodiVK0Is9tUhN9I6lpH6Wib1+gRvzAjOSlT
-rdSf6Ftqa1Ve/IS7jyWCKWz+iLsasPzG+NqNA6FCVPsKXXHmvPu9SRCi2w5vn7PzpZM1co94xfUH
-rySgwH77GifaeKe1QrLoH4G7KRCD41v4KV7e4s4MbtLZUuS0DlRUPuq/p58qmid0l9FJf9B6Rk6D
-1eCSl/8szGnochqll3cRb071+O1ISx+SObNZrNsiVkeVLVUc3cXMc9zp25qmA5NyKAw4ivoea7qp
-Q+2kN+ZIcgF3b3sr6gWSGO1PTfgqblyIRczYEE+0RDtxxI8EzFysk65wzx0ZnIjaZ+RJpQT2PIfz
-Oh4i2C+CJa7q+4JFrCnOIMsOjyEL8W0vRoD3AVHMd7ZKxnXs5Lri4fxla5wBOa4QMT4ltPUNeT8F
-eOLxd6+GQZhM06bWd9kkPIm8amJu/876xwQqV3m5LDz1EiqjrwdWRsXwkxbeF5n5dPe5S7E8bL0u
-C5H7rldUQNjC2JiSMVPWxOyv6CocYAfrR1PPs5KzJEqvQf51eCZpf9/CFdzdWA/YgStmv+e4BQID
-AQABo4IB3DCCAdgwHwYDVR0jBBgwFoAUaQChxyFY+ODFGyCwCt2nUb8T2eQwHQYDVR0OBBYEFDeE
-IMPOe/ODIhHpkS6i5xFEmA4tMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQW
-MBQGCCsGAQUFBwMEBggrBgEFBQcDAjA/BgNVHSAEODA2MDQGCysGAQQBsjEBAgJPMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMEIGA1UdHwQ7MDkwN6A1oDOGMWh0dHA6Ly9H
-RUFOVC5jcmwuc2VjdGlnby5jb20vR0VBTlRQZXJzb25hbENBNC5jcmwweAYIKwYBBQUHAQEEbDBq
-MD0GCCsGAQUFBzAChjFodHRwOi8vR0VBTlQuY3J0LnNlY3RpZ28uY29tL0dFQU5UUGVyc29uYWxD
-QTQuY3J0MCkGCCsGAQUFBzABhh1odHRwOi8vR0VBTlQub2NzcC5zZWN0aWdvLmNvbTBaBgNVHREE
-UzBRgRltYXJjby5yb29zZUBtcGluYXQubXBnLmRlgRltYXJjby5yb29zZUBtcGlicGMubXBnLmRl
-gRltYXJjby5yb29zZUBtcGluYXQubXBnLmRlMA0GCSqGSIb3DQEBDAUAA4ICAQCxXPrgPp9llNx5
-dFqR9icnFaFX35Sx7lQxUj/fkxT9bcVhueZJQ+hIErrSQJFHwfrlUAhbKzBKaVSIahaB2XmqOnLo
-Gz8APUsp3Gj7W7ImYnmZOqVR/CG8thXrXdxbDK0/SVIAia/gOZwrGz2iMlSxjNlGNpGOLDBwB2NE
-2QBwm+aqdZ9a0woRjBl+fggq+/SBI7XrAVWA5Ld7oQ+RM/LkLhgxdb5S22OhSiGKUQBERhS1KIyC
-zQ044NieQ9L1FPxLGqL85WEixpbp4pdaOJODAqaHLeAIiJI0+81KHVpe9EK6400v3HerukO+OaM6
-qswSuKZbrCr1z+kQvK9IVltEiE2STY6KD5BNpE/VB1mLSATHEA9Vb0sCpG+OxCNZ50KhJX7f5sEj
-nPoNkK3PQMguk5rn68Sw2J30QPXFM/8v5sCW6X3KRbwE0Jvu354d7YRmFKGBg1QAiyVj6zwUWM4v
-HJQjF9Ud2iQ23ldYeYVvafzj8x7X0leXhHS0kT9gLD0UY3VOsP9uRjxxgA/jNzq+ywv8npLzxW5s
-J2AQaEZauTy1uLY20CmkeUx8HtisaanVRrtOLNCuWudDZhc18y5R1UJ8ReZwu3VFhIowaKTgkSd9
-JjWftvp/zU7/GnNnNpCrQZ+lwwqIlTusWGSUvH9aurzXrP6IvBur22F70GavbTGCBFMwggRPAgEB
-MFswRjELMAkGA1UEBhMCTkwxGTAXBgNVBAoTEEdFQU5UIFZlcmVuaWdpbmcxHDAaBgNVBAMTE0dF
-QU5UIFBlcnNvbmFsIENBIDQCEQDmCYM0BMZtcmSVQklTN7VjMAkGBSsOAwIaBQCgggHNMBgGCSqG
-SIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIyMTIyMzEyMDIyNVowIwYJKoZI
-hvcNAQkEMRYEFLtGy244Q9xe8ctVaWcyrR7WjY6wMGoGCSsGAQQBgjcQBDFdMFswRjELMAkGA1UE
-BhMCTkwxGTAXBgNVBAoTEEdFQU5UIFZlcmVuaWdpbmcxHDAaBgNVBAMTE0dFQU5UIFBlcnNvbmFs
-IENBIDQCEQDmCYM0BMZtcmSVQklTN7VjMGwGCyqGSIb3DQEJEAILMV2gWzBGMQswCQYDVQQGEwJO
-TDEZMBcGA1UEChMQR0VBTlQgVmVyZW5pZ2luZzEcMBoGA1UEAxMTR0VBTlQgUGVyc29uYWwgQ0Eg
-NAIRAOYJgzQExm1yZJVCSVM3tWMwgZMGCSqGSIb3DQEJDzGBhTCBgjALBglghkgBZQMEASowCwYJ
-YIZIAWUDBAEWMAoGCCqGSIb3DQMHMAsGCWCGSAFlAwQBAjAOBggqhkiG9w0DAgICAIAwDQYIKoZI
-hvcNAwICAUAwBwYFKw4DAhowCwYJYIZIAWUDBAIDMAsGCWCGSAFlAwQCAjALBglghkgBZQMEAgEw
-DQYJKoZIhvcNAQEBBQAEggIAvLV9ig6AjLWl/vjtp1WQgmd5HepQ+EA2SnpE0cvxe/i4iZGjqBG+
-MQPM1bHAWOCMg8ppGHzYv/Rt6vu4YQH8R7htbdb76K8wZHJseG/6+JH7A9+pU/m5e79bN99ix/1N
-UNHXTsuEjNYZHCmlQ7hBJZM6ta7za5rt2nXqThC5iCQJb6VbApyVH4S3cnIyWDYdwD90YCRWni7F
-vzrny5O1wlvpcVVb+QRoQSZ1XjBr0Bt/ZvUcJT3BezKWe9J48ZkSWDXAgC0zY/CTPwRtfbXxeyCb
-37+Cjq6NOsezurFBbvIzHLlp/fwe3dlUEmXhLR99Tl25BmcW7MCrbLTqWUItbxFF7S02k5w3DuXM
-iQisd/T65Ew1M9wueIIKODfSBP/MTHURHdROzQMDN9C5dnziLS190RmIB6xX53/JHTecxw4CExkn
-DDjJVUhE4iSiXyQ6gb/8+e9Hui95k5gwnchfClx6UU4SuAbjN7Fnn/hcQsG+kGLtsULkbga8BsL1
-JukZSeXZXVJAV+/5d8AZtCvclgw5eFJN7in8kCJYcskGM1mOr0WCy6uMs/kFodZfTR+uYJQHmZ38
-0HpOsl+JgjjFjrkRG4VAoh/41NNQejI/zHX1U66r0kDFB6PvAyZ0L0BXrX23AlygjLhv2M4wriM/
-IBi7L7p3OQm7aIunfn19zIMAAAAAAAA=
+Hope this explanation helps!
 
-------=_NextPart_000_000E_01D916CE.CDC90E40--
+                Ilya
