@@ -2,184 +2,83 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DCA2D659510
-	for <lists+ceph-devel@lfdr.de>; Fri, 30 Dec 2022 06:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BEFD65AD99
+	for <lists+ceph-devel@lfdr.de>; Mon,  2 Jan 2023 08:11:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229490AbiL3FpK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 30 Dec 2022 00:45:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54828 "EHLO
+        id S229494AbjABHLT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 2 Jan 2023 02:11:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbiL3FpI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 30 Dec 2022 00:45:08 -0500
+        with ESMTP id S229447AbjABHLR (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 2 Jan 2023 02:11:17 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D53FE18394
-        for <ceph-devel@vger.kernel.org>; Thu, 29 Dec 2022 21:44:21 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E686F10F7
+        for <ceph-devel@vger.kernel.org>; Sun,  1 Jan 2023 23:10:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1672379060;
+        s=mimecast20190719; t=1672643429;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=5QANIqQaUJhASIgbMI+XkO113Zld6lw9QYz8izkwtzE=;
-        b=IvKRvcyR/CvJ4WOmjLFDHesLGJ9n1KlxqfBpnts0Y+QqOs61iJPPc53smrwGGZ/pSpVbeR
-        zr/BLKBW35TGVprEktPJIam7wlUzg2oJTESffwH3BUv9I8kBp513OxPDcx/oeW/2npSNOb
-        fBp7IxBFO1xSN5BGxwtXpepMaeJ2RDk=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-672-PJHFhIhzOsCCCMpNMMMScg-1; Fri, 30 Dec 2022 00:44:18 -0500
-X-MC-Unique: PJHFhIhzOsCCCMpNMMMScg-1
-Received: by mail-pj1-f72.google.com with SMTP id k2-20020a17090a514200b002198214abdcso8329474pjm.8
-        for <ceph-devel@vger.kernel.org>; Thu, 29 Dec 2022 21:44:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5QANIqQaUJhASIgbMI+XkO113Zld6lw9QYz8izkwtzE=;
-        b=LeIuDiNQ7SWo/EKuRzaLuS4UCzA0QC7E5Yk6wmGpIPAEJrn/LorUlnVdExJc9/dFlv
-         oeTJpwivKoyaFR35cOAZQgrngUZfkgqoHCTD1Qoid3yKSfwlDwiDuUe58ft71ZrYWCBw
-         TgBwUR1NqObv6Q2wa1bdCmFWzrI9daZnPxPvsFSbNDhmZt54i3WPamEX0eKd+66NY7nu
-         KtjdLsvxLZXImwRUYuPCZP1NmyYgRGslWvh0mQMMiI6N/UM3B1Jwr5r/Ft1nFC5OqpfX
-         5D0goevFh+g7efNg1oMcx/E2Z7Xc16VHYTOxeGieUKkVG/tP/4u7uPhSK1RXkfiWy3P5
-         J5SA==
-X-Gm-Message-State: AFqh2kqRHltKUQHfm7WP71tl3T6HZQX1Za/JmW8uyhFFv+vEezcgyocT
-        5b0zIgadw6ysU77fDmOUh69KSUcCp5byFvV43SPtMaUmzGISswCe34OfJESWwfv30RIndXJWATl
-        aLYdbLt3+DDMHGZbGyfVFIw==
-X-Received: by 2002:a05:6300:8184:b0:b0:3e0f:508d with SMTP id bt4-20020a056300818400b000b03e0f508dmr37649278pzc.55.1672379057774;
-        Thu, 29 Dec 2022 21:44:17 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXvvlWizGl4YUhQNCQyx8rZjX2VrRmSTpp2qe9uPP+8+Ash7c5zJHBBIm0VC/od4MTv5cT+C2g==
-X-Received: by 2002:a05:6300:8184:b0:b0:3e0f:508d with SMTP id bt4-20020a056300818400b000b03e0f508dmr37649269pzc.55.1672379057488;
-        Thu, 29 Dec 2022 21:44:17 -0800 (PST)
-Received: from [10.72.13.122] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id k10-20020a634b4a000000b00478b2d5d148sm11857847pgl.5.2022.12.29.21.44.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Dec 2022 21:44:17 -0800 (PST)
-Subject: Re: [PATCH] ceph: make sure all the files successfully put before
- unmounting
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
-        khiremat@redhat.com, linux-fscrypt@vger.kernel.org
-References: <20221201065800.18149-1-xiubli@redhat.com>
- <Y4j+Ccqzi6JxWchv@sol.localdomain> <Y4kYN8FPeq6NDe5i@gmail.com>
- <b30e579d-6919-d35b-aaa5-b71129a32810@redhat.com>
- <Y4l8vDmKIpypc8I3@sol.localdomain>
- <c0925b4f-ef5f-31fc-1bd0-05fa097b6b34@redhat.com>
- <Y64oe9c9U1+Y98yt@sol.localdomain>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <8443166a-7182-7777-a489-14b5dab20bd5@redhat.com>
-Date:   Fri, 30 Dec 2022 13:44:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=+fYEj+jP4J5JrYmWfFoIs4oOdA28qx7XWxrFfLZJ9q4=;
+        b=f4CgwjzFigYXtqHLrD7KTrcqcMB6eKns3d7OWWLbrD3n+AIB17F+jzSLL8sCPQeCqbTxGX
+        BAhEqbVV3ygHCzmtlzd5+lSUaVeJU4y6GTMQsb052xe7K3tqRVBldO5RgRnH5p9y4bJvS/
+        DiBcDXNrN3DYRLkqLW6ABQFtP5Uw6mY=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-272-D2z5DyVhN7W0h7U7QT8E1g-1; Mon, 02 Jan 2023 02:10:26 -0500
+X-MC-Unique: D2z5DyVhN7W0h7U7QT8E1g-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 104731C068C1;
+        Mon,  2 Jan 2023 07:10:26 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6B9FB2026D4B;
+        Mon,  2 Jan 2023 07:10:23 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
+Cc:     jlayton@kernel.org, mchangir@redhat.com, vshankar@redhat.com,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: dump the msg when receiving a corrupt snap trace
+Date:   Mon,  2 Jan 2023 15:10:01 +0800
+Message-Id: <20230102071001.590386-1-xiubli@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <Y64oe9c9U1+Y98yt@sol.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Eric,
+From: Xiubo Li <xiubli@redhat.com>
 
-Happy New Year!
+It's strange that we can see this when mounting, so we need to know
+how the corrupted msg looks like.
 
-Yeah, it's a ceph side bug and I have sent a patch to fix it [1].
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/mds_client.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-When unmounting and just before closing the sessions the cephfs server 
-still could send cap message to kceph and it will hold the inodes. So 
-the unmount will skip them.
-
-IMO it still makes sense to improve the vfs code because I hit a crash 
-after this happening but just one time.
-
-[1] 
-https://patchwork.kernel.org/project/ceph-devel/patch/20221221093031.132792-1-xiubli@redhat.com/
-
-Thanks
-
-- Xiubo
-
-
-On 30/12/2022 07:53, Eric Biggers wrote:
-> Hi Xiubo,
->
-> On Fri, Dec 02, 2022 at 03:04:58PM +0800, Xiubo Li wrote:
->> On 02/12/2022 12:19, Eric Biggers wrote:
->>> On Fri, Dec 02, 2022 at 09:49:49AM +0800, Xiubo Li wrote:
->>>> On 02/12/2022 05:10, Eric Biggers wrote:
->>>>> On Thu, Dec 01, 2022 at 11:18:33AM -0800, Eric Biggers wrote:
->>>>>> On Thu, Dec 01, 2022 at 02:58:00PM +0800, xiubli@redhat.com wrote:
->>>>>>> From: Xiubo Li <xiubli@redhat.com>
->>>>>>>
->>>>>>> When close a file it will be deferred to call the fput(), which
->>>>>>> will hold the inode's i_count. And when unmounting the mountpoint
->>>>>>> the evict_inodes() may skip evicting some inodes.
->>>>>>>
->>>>>>> If encrypt is enabled the kernel generate a warning when removing
->>>>>>> the encrypt keys when the skipped inodes still hold the keyring:
->>>>>> This does not make sense.  Unmounting is only possible once all the files on the
->>>>>> filesystem have been closed.
->>>>>>
->>>>> Specifically, __fput() puts the reference to the dentry (and thus the inode)
->>>>> *before* it puts the reference to the mount.  And an unmount cannot be done
->>>>> while the mount still has references.  So there should not be any issue here.
->>>> Eric,
->>>>
->>>> When I unmounting I can see the following logs, which I added a debug log in
->>>> the evcit_inodes():
->>>>
->>>> diff --git a/fs/inode.c b/fs/inode.c
->>>> index b608528efd3a..f6e69b778d9c 100644
->>>> --- a/fs/inode.c
->>>> +++ b/fs/inode.c
->>>> @@ -716,8 +716,11 @@ void evict_inodes(struct super_block *sb)
->>>>    again:
->>>>           spin_lock(&sb->s_inode_list_lock);
->>>>           list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
->>>> -               if (atomic_read(&inode->i_count))
->>>> +               if (atomic_read(&inode->i_count)) {
->>>> +                       printk("evict_inodes inode %p, i_count = %d, was
->>>> skipped!\n",
->>>> +                              inode, atomic_read(&inode->i_count));
->>>>                           continue;
->>>> +               }
->>>>
->>>>                   spin_lock(&inode->i_lock);
->>>>                   if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE)) {
->>>>
->>>> The logs:
->>>>
->>>> <4>[   95.977395] evict_inodes inode 00000000f90aab7b, i_count = 1, was
->>>> skipped!
->>>>
->>>> Any reason could cause this ? Since the inode couldn't be evicted in time
->>>> and then when removing the master keys it will print this warning.
->>>>
->>> It is expected for evict_inodes() to see some inodes with nonzero refcount, but
->>> they should only be filesystem internal inodes.  For example, with ext4 this
->>> happens with the journal inode.
->>>
->>> However, filesystem internal inodes cannot be encrypted, so they are irrelevant
->>> here.
->>>
->>> I'd guess that CephFS has a bug where it is leaking a reference to a user inode
->>> somewhere.
->> I also added some debug logs to tracker all the inodes in ceph, and all the
->> requests has been finished.
->>
->> I will debug it more to see whether it's leaking a reference here.
->>
->> Thanks Eric.
->>
-> Any progress on tracking this down?
->
-> - Eric
->
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 1ad85af49b45..43a9a17ed9eb 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -3724,6 +3724,8 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
+ 		if (err) {
+ 			up_write(&mdsc->snap_rwsem);
+ 			close_sessions = true;
++			if (err == -EIO)
++				ceph_msg_dump(msg);
+ 			goto out_err;
+ 		}
+ 		downgrade_write(&mdsc->snap_rwsem);
+-- 
+2.31.1
 
