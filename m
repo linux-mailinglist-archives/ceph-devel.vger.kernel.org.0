@@ -2,63 +2,72 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5059165BCC2
-	for <lists+ceph-devel@lfdr.de>; Tue,  3 Jan 2023 10:06:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D24B965CE04
+	for <lists+ceph-devel@lfdr.de>; Wed,  4 Jan 2023 09:06:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237133AbjACJFs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 3 Jan 2023 04:05:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37888 "EHLO
+        id S233785AbjADIGH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 4 Jan 2023 03:06:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237234AbjACJFa (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 3 Jan 2023 04:05:30 -0500
-X-Greylist: delayed 461 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 03 Jan 2023 01:05:28 PST
-Received: from mail.landruffle.pl (mail.landruffle.pl [217.61.97.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1CA0DFC4
-        for <ceph-devel@vger.kernel.org>; Tue,  3 Jan 2023 01:05:28 -0800 (PST)
-Received: by mail.landruffle.pl (Postfix, from userid 1001)
-        id 7CF078484A; Tue,  3 Jan 2023 08:56:13 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=landruffle.pl;
-        s=mail; t=1672736181;
-        bh=w09dBsCwk4ofNwR3wR3IGm3JJemrD5uAJJHAYB2M7XI=;
-        h=Date:From:To:Subject:From;
-        b=f54dyfYIWXvHfZJ/oo/gBdFFkaLcLaUy/MDkkaelugXnH4Wr+0kkcWfVFGkBRyuhM
-         2mW4ykC7IRN5h8kY3TPssJ64DledU3dBH32S9IfWVtH5nFNKG3se0RqGxfrtJh32eH
-         FlMZ0Xhij2BtrHhZG5knGQXcPMZRVCgNHQmC5SOpeqfW62TyGmZhS77O6SXNQPT977
-         xMa5W4aNpv3Fwxyc0T2ybpauVMfqKPAoaphV+wJuActJd4N1wpebOxkyORpiTyH8kZ
-         XHBpcsfZZdZgzTM/x/xDw83qpOpyEn+ntBeq+IMWBbilF/RjHLHA9W62pVwD4W6IDC
-         yB0N5mzkz8DQg==
-Received: by mail.landruffle.pl for <ceph-devel@vger.kernel.org>; Tue,  3 Jan 2023 08:56:08 GMT
-Message-ID: <20230103074502-0.1.z.1if6.0.99gib36xy3@landruffle.pl>
-Date:   Tue,  3 Jan 2023 08:56:08 GMT
-From:   =?UTF-8?Q? "Marcin_Seku=C5=82a" ?= <marcin.sekula@landruffle.pl>
-To:     <ceph-devel@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.landruffle.pl
+        with ESMTP id S233067AbjADIGG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 Jan 2023 03:06:06 -0500
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06FF4B7C8
+        for <ceph-devel@vger.kernel.org>; Wed,  4 Jan 2023 00:06:05 -0800 (PST)
+Received: by mail-ed1-x542.google.com with SMTP id i15so47582875edf.2
+        for <ceph-devel@vger.kernel.org>; Wed, 04 Jan 2023 00:06:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AgsU3TKYj1ea+xyRd1YeQ6QbaDveXYDp3sPPYkvfdzA=;
+        b=PGGZz/errlCrdY54pcd746i5wphxwqlHHQZTpmvHbkziVFDwBH3p1fjq1HPo7m6oGa
+         Ip77e2Xqiv0Ce3/H6xiz1BRH15s82Ta6jriYBpIePjN+ACyPoIBeOI5bBI+LWCw7zS6L
+         UvzPzZiR1hx0g09BqfZloDE657RqDb7VduajESitX5XabBC+DMc7NlSXKF5OLz7CvvIU
+         HG+L3FK/vmxxqVqXry9oWiivZtvtvE5Dy8nbJtpCVMrCE4Gwbj82M67ueOIa29fnqn+9
+         cbZhj8AaPfgB9GMg8it6S2l+OJqDdtPATjmWe9ZNdx9hw7lpVziuzEcorJiSIrfskwsL
+         7omQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AgsU3TKYj1ea+xyRd1YeQ6QbaDveXYDp3sPPYkvfdzA=;
+        b=Ry664kVnvDMCDS0vEigq5hLLpzP1kLayVrPv1IPI7RH3P90JNSw12F7VqwqLo1UX1K
+         jtLYzJ0m6aCHkpeyG2rcGPCyF5MnyUHtmwSfx9DuqdyN3SE6f9MIvg3PElMPh6ACOvf0
+         jk9NX5NSckpgZhX7r+F82wSVY6wJnbMfJwUxjYAmWxLfE2dVL0kQDXq/l+Kzwm6EagQ6
+         0C5B4mLQrduzZdr5N6BmrhSGAGplbbxmHcBLe1AR9aFi4ucx6I1yMoWWXxMhJ1DLnql7
+         PuZC6xaJxygRxrlXIBTOsH86joJZl+Pcg4FuyTjJ89uCBmotGSExlt92i9YC/ulrJNL/
+         lSjg==
+X-Gm-Message-State: AFqh2kqe6gyCgWPN6tSbvE96qfOzqbsK7z1iZ9W1e3TCBJqUqzmL+ljq
+        GPIwbM9ljphp7if43FnnmDNeFb0L/FXVf1Dkbw==
+X-Google-Smtp-Source: AMrXdXtr5L5Dcm7ltz+fyueRNf/R3RAJ6jzLPh33R/YUjK8u9bl6NwAMAhyD4rdn+79XOoBfOV94dutFme8n3Zc0o2g=
+X-Received: by 2002:a05:6402:1394:b0:48a:eac7:2b9f with SMTP id
+ b20-20020a056402139400b0048aeac72b9fmr1553016edv.91.1672819563408; Wed, 04
+ Jan 2023 00:06:03 -0800 (PST)
 MIME-Version: 1.0
+Received: by 2002:a05:7208:8297:b0:5e:de3b:d9a6 with HTTP; Wed, 4 Jan 2023
+ 00:06:02 -0800 (PST)
+Reply-To: Gregdenzell9@gmail.com
+From:   Greg Denzell <denzellgreg392@gmail.com>
+Date:   Wed, 4 Jan 2023 08:06:02 +0000
+Message-ID: <CALb=U3mbQW1W02JBjSMyzhOGtQ6dzWrdSpLaxzrDem0=9b3KNg@mail.gmail.com>
+Subject: Happy new year,
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-0.2 required=5.0 tests=BAYES_20,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=4.8 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,UNDISC_FREEM autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dzie=C5=84 dobry,
-
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
-
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
-
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
+Happy new year,
 
 
-Pozdrawiam
-Marcin Seku=C5=82a
+This will remind you again that I have not yet received your reply to
+my last message to you.
