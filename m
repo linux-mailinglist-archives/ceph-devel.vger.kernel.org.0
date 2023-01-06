@@ -2,51 +2,54 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C8430660755
-	for <lists+ceph-devel@lfdr.de>; Fri,  6 Jan 2023 20:46:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09D696608B5
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Jan 2023 22:19:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233358AbjAFTpi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 6 Jan 2023 14:45:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37108 "EHLO
+        id S236441AbjAFVTK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 6 Jan 2023 16:19:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235841AbjAFTpO (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 6 Jan 2023 14:45:14 -0500
+        with ESMTP id S236414AbjAFVTG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 6 Jan 2023 16:19:06 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 361CE81C1B;
-        Fri,  6 Jan 2023 11:45:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEF9781C2E;
+        Fri,  6 Jan 2023 13:19:01 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C18B561F35;
-        Fri,  6 Jan 2023 19:45:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D61DC433F0;
-        Fri,  6 Jan 2023 19:45:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CF6CD61F6F;
+        Fri,  6 Jan 2023 21:19:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3A9D2C433D2;
+        Fri,  6 Jan 2023 21:19:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673034310;
-        bh=t0QJHS7GzsG7gBvvc1iRFnu9kKXmKbMthB+oLe/zMrU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ClubDpXF/Vrt9mJSv/Ng0sby1fhChk0b4adVRKYL+dSg27G2D42WT90pQ0K9CaKWD
-         6phQju/a5jjJfNFxNt5xPqB4Lq2BnJZ2OqW5Wxal8t/23vn6iwsqmRI6znewtj+AJv
-         A1mdxD7nM31PQAT7eX/MukbOucerLccq8T0NH+yTLMRaG+1xSa0J3HF3WcuBci7C5V
-         e2B3B95K42UuxU1yUPdkpI5BjgZtSzAyTlIULrcYN1tPGVQzA7B4q+zKItBTQLNDUK
-         885Mw+JMhoEf08DwlguDGtF97yUFvab1yV9PhnURgtKzGMd/yIdixJAsmnajsYnvgX
-         cCQrLvS713LkQ==
-From:   SeongJae Park <sj@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     SeongJae Park <sj@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, linux-mm@kvack.org,
+        s=k20201202; t=1673039941;
+        bh=kn1xQpFOvJgTtvRrReh5RG/lm5cqnIQ1CYjDWKrE4fU=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=ZqBFgb4NDHeUJVRS+T3bJ89JWKByYl5IOqH4WhVQmQQf3HpKBHkqQjUHdrLWtdMY+
+         I4jNIaeq8328pfSZrcg2+bMwjjCdiLVbvkydns57Djd6E5l83TE0jMU7Y19JBsXMAA
+         kS7XJiklWuwlLwOCUMrR4OJsXa7mg9wBCwk7RqKIXnQWIdvsj8cnoBvdZrV6y2VmDc
+         TQuJN1/25e3TNtQ4OT4HrIs7h+6Oa3hFRsKWmATVpQ+AqP22R0cjPqS0ndB8xf4bLh
+         JTIf0qRG/pbI3fih02JRGX92Vz5itw35wzSjAP0+Y/jm13lLBcKSQiPAPe15qEIQzR
+         +zVR3tA7nVdpA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2906DE5724D;
+        Fri,  6 Jan 2023 21:19:01 +0000 (UTC)
+Subject: Re: [GIT PULL] Ceph fixes for 6.2-rc3
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20230106182951.92281-1-idryomov@gmail.com>
+References: <20230106182951.92281-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20230106182951.92281-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.2-rc3
+X-PR-Tracked-Commit-Id: 8e1858710d9a71d88acd922f2e95d1eddb90eea0
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5c1a712f71286b8435d48e3be5f8faf39a4cc837
+Message-Id: <167303994116.10294.13009373419913022685.pr-tracker-bot@kernel.org>
+Date:   Fri, 06 Jan 2023 21:19:01 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] add folio_headpage() macro
-Date:   Fri,  6 Jan 2023 19:45:07 +0000
-Message-Id: <20230106194507.152468-1-sj@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <Y7h0xNGlj0qzFlua@casper.infradead.org>
-References: 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -56,26 +59,15 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 6 Jan 2023 19:21:40 +0000 Matthew Wilcox <willy@infradead.org> wrote:
+The pull request you sent on Fri,  6 Jan 2023 19:29:51 +0100:
 
-> On Fri, Jan 06, 2023 at 05:40:25PM +0000, SeongJae Park wrote:
-> > The standard idiom for getting head page of a given folio is
-> > '&folio->page'.  It is efficient and safe even if the folio is NULL,
-> > because the offset of page field in folio is zero.  However, it makes
-> > the code not that easy to understand at the first glance, especially the
-> > NULL safety.  Also, sometimes people forget the idiom and use
-> > 'folio_page(folio, 0)' instead.  To make it easier to read and remember,
-> > add a new macro function called 'folio_headpage()' with the NULL case
-> > explanation.  Then, replace the 'folio_page(folio, 0)' calls with
-> > 'folio_headpage(folio)'.
-> 
-> No.  Everywhere that uses &folio->page is a place that needs to be fixed.
-> It shouldn't have a nice convenience macro.  It should make you mildly
-> uncomfortable.
+> https://github.com/ceph/ceph-client.git tags/ceph-for-6.2-rc3
 
-It's true that it's just a mild uncomfortableness.  I will respect your opinion
-here.  Thanks for the input.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5c1a712f71286b8435d48e3be5f8faf39a4cc837
 
+Thank you!
 
-Thanks,
-SJ
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
