@@ -2,252 +2,81 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A1DB65FC57
-	for <lists+ceph-devel@lfdr.de>; Fri,  6 Jan 2023 08:58:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 477E86605CB
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Jan 2023 18:40:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232046AbjAFH6Y (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 6 Jan 2023 02:58:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34852 "EHLO
+        id S232849AbjAFRkd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 6 Jan 2023 12:40:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbjAFH6U (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 6 Jan 2023 02:58:20 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB05978177
-        for <ceph-devel@vger.kernel.org>; Thu,  5 Jan 2023 23:57:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1672991854;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xmb3IcLHCLsi/xOiQHUkWYlXfS8doiaC8cJwdmVUFK4=;
-        b=SLVzg7+qVCkSPwpEXCMyFeNPY9fsRC3J6m6t9JyyNaGFIjjHxovBVrdPL/kwwpyv/tLyr+
-        uAEuds0xSUup0UDOyInIosfoE5Z2o/gfG+Wqj40CVNLzVuwrG63GucOn2dCZ3OWAJ+VClz
-        dumlyhgYGDzQ/s+rMBR1O1MSWa7geiY=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-649-QwbvBOFWOfyPyZgAFvP5aw-1; Fri, 06 Jan 2023 02:57:32 -0500
-X-MC-Unique: QwbvBOFWOfyPyZgAFvP5aw-1
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-4bdeb1bbeafso10873737b3.4
-        for <ceph-devel@vger.kernel.org>; Thu, 05 Jan 2023 23:57:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xmb3IcLHCLsi/xOiQHUkWYlXfS8doiaC8cJwdmVUFK4=;
-        b=m7xHG0sc6DIr9MSwAnb9VGpnV7Qk5ZjK6d7rppjEN/wRyEypD2GpVx7ues+3zgHWT6
-         FtYOQfV+QSf+JA3Pon3po4ga6gc8sMYyKfzin47vMQevKZAy9zetNK/ffcx8nORZhncz
-         gl/y2w5ppqHp/1QJwpKFMJOFdLkWHCO9/y8e5vwbsNgr21GBJ71bO/7hmXyQVQZB4EAh
-         8bXNDd8neUbQ/tNvmV4iGDTzgwCzxHBW9pEM4kppNvxDM1rsT2vqHIivhVlCsBdWIgvt
-         sIKG3o/HDDpYzPlKUlPs5cI9fGPvyyvjFP1BYb6jpmv/q1vZwKExt5cdlUPAmQDJP8DS
-         spLQ==
-X-Gm-Message-State: AFqh2krWLD5M10uiv1862PIXPRww591mxWnFMgCxUcwXvzNbQyN9uKZV
-        7pghKzz63yEkSrIuWIny6v6WyTj5ewEplIW9RlbylEmJ+UVG27H0r2CvJL65juJcYlt535D5h6w
-        wf/3MaUlKINKyWmmCB2MwrG6rCZzSoCImaPevVw==
-X-Received: by 2002:a05:690c:87:b0:46f:36b1:a27 with SMTP id be7-20020a05690c008700b0046f36b10a27mr4200656ywb.147.1672991851846;
-        Thu, 05 Jan 2023 23:57:31 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXuC/bbIcMr4bQ8ok16zXLqM2NrU98mA2WJd0uc+HAfHs8BnKxPTLzGpg1jIsSESD/q9eqv3v1Jyw7xgl7+RWvk=
-X-Received: by 2002:a05:690c:87:b0:46f:36b1:a27 with SMTP id
- be7-20020a05690c008700b0046f36b10a27mr4200651ywb.147.1672991851590; Thu, 05
- Jan 2023 23:57:31 -0800 (PST)
+        with ESMTP id S230497AbjAFRkc (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 6 Jan 2023 12:40:32 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9ABD7D9DC;
+        Fri,  6 Jan 2023 09:40:31 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4CA4F616F5;
+        Fri,  6 Jan 2023 17:40:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC3CC433EF;
+        Fri,  6 Jan 2023 17:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673026830;
+        bh=RPl7e2yBo83c5bpefsyB/x5AStixSmvwCt6OqN8mVRA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=NXZXYzIz+4ecrSUefmPBaOBbALJel/O/I56Yx+vNVLtvvGtgf94GV1QFNHD6OR3I6
+         i0GyyTkuKlVocoLBOqq50sdu/aj0RGLCZQQGq0eeDZOgBS1WJbFl7nB+/Alqr6eRfC
+         uvUP/EUfkOQjMyV2e31sJWCdpo13LLjLtdfx//WtynQZE6FL68aYh45dJwALkyPfqj
+         B9vGPTfQVeZUQMdGN8tiOq2V5qDa3+AeBncTri0dCoSdXqRp9Tmyhp9/xGMkWGvohs
+         gQlzaWNk2/L8YwsNRRwssuwjPlp5u8iFDA/rLIvSqqbbIFZSLKTLYdUBFs/ixfvZSt
+         d9h5NGQ00D4xg==
+From:   SeongJae Park <sj@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     SeongJae Park <sj@kernel.org>, willy@infradead.org,
+        Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, linux-mm@kvack.org,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] add folio_headpage() macro
+Date:   Fri,  6 Jan 2023 17:40:25 +0000
+Message-Id: <20230106174028.151384-1-sj@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20230104211448.4804-1-vishal.moola@gmail.com> <20230104211448.4804-18-vishal.moola@gmail.com>
-In-Reply-To: <20230104211448.4804-18-vishal.moola@gmail.com>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Fri, 6 Jan 2023 08:57:20 +0100
-Message-ID: <CAHc6FU55EfV0qvtpPUWAvHm72kPd7Rzb8=-GX0oFgfJonXt7Pg@mail.gmail.com>
-Subject: Re: [Cluster-devel] [PATCH v5 17/23] gfs2: Convert
- gfs2_write_cache_jdata() to use filemap_get_folios_tag()
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-mm@kvack.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jan 4, 2023 at 10:15 PM Vishal Moola (Oracle)
-<vishal.moola@gmail.com> wrote:
-> Converted function to use folios throughout. This is in preparation for
-> the removal of find_get_pgaes_range_tag(). This change removes 8 calls
-> to compound_head().
->
-> Also had to modify and rename gfs2_write_jdata_pagevec() to take in
-> and utilize folio_batch rather than pagevec and use folios rather
-> than pages. gfs2_write_jdata_batch() now supports large folios.
->
-> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-> ---
->  fs/gfs2/aops.c | 64 +++++++++++++++++++++++++++-----------------------
->  1 file changed, 35 insertions(+), 29 deletions(-)
->
-> diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-> index e782b4f1d104..0a47068f9acc 100644
-> --- a/fs/gfs2/aops.c
-> +++ b/fs/gfs2/aops.c
-> @@ -195,67 +195,71 @@ static int gfs2_writepages(struct address_space *mapping,
->  }
->
->  /**
-> - * gfs2_write_jdata_pagevec - Write back a pagevec's worth of pages
-> + * gfs2_write_jdata_batch - Write back a folio batch's worth of folios
->   * @mapping: The mapping
->   * @wbc: The writeback control
-> - * @pvec: The vector of pages
-> - * @nr_pages: The number of pages to write
-> + * @fbatch: The batch of folios
->   * @done_index: Page index
->   *
->   * Returns: non-zero if loop should terminate, zero otherwise
->   */
->
-> -static int gfs2_write_jdata_pagevec(struct address_space *mapping,
-> +static int gfs2_write_jdata_batch(struct address_space *mapping,
->                                     struct writeback_control *wbc,
-> -                                   struct pagevec *pvec,
-> -                                   int nr_pages,
-> +                                   struct folio_batch *fbatch,
->                                     pgoff_t *done_index)
->  {
->         struct inode *inode = mapping->host;
->         struct gfs2_sbd *sdp = GFS2_SB(inode);
-> -       unsigned nrblocks = nr_pages * (PAGE_SIZE >> inode->i_blkbits);
-> +       unsigned nrblocks;
->         int i;
->         int ret;
-> +       int nr_pages = 0;
-> +       int nr_folios = folio_batch_count(fbatch);
-> +
-> +       for (i = 0; i < nr_folios; i++)
-> +               nr_pages += folio_nr_pages(fbatch->folios[i]);
-> +       nrblocks = nr_pages * (PAGE_SIZE >> inode->i_blkbits);
->
->         ret = gfs2_trans_begin(sdp, nrblocks, nrblocks);
->         if (ret < 0)
->                 return ret;
->
-> -       for(i = 0; i < nr_pages; i++) {
-> -               struct page *page = pvec->pages[i];
-> +       for (i = 0; i < nr_folios; i++) {
-> +               struct folio *folio = fbatch->folios[i];
->
-> -               *done_index = page->index;
-> +               *done_index = folio->index;
->
-> -               lock_page(page);
-> +               folio_lock(folio);
->
-> -               if (unlikely(page->mapping != mapping)) {
-> +               if (unlikely(folio->mapping != mapping)) {
->  continue_unlock:
-> -                       unlock_page(page);
-> +                       folio_unlock(folio);
->                         continue;
->                 }
->
-> -               if (!PageDirty(page)) {
-> +               if (!folio_test_dirty(folio)) {
->                         /* someone wrote it for us */
->                         goto continue_unlock;
->                 }
->
-> -               if (PageWriteback(page)) {
-> +               if (folio_test_writeback(folio)) {
->                         if (wbc->sync_mode != WB_SYNC_NONE)
-> -                               wait_on_page_writeback(page);
-> +                               folio_wait_writeback(folio);
->                         else
->                                 goto continue_unlock;
->                 }
->
-> -               BUG_ON(PageWriteback(page));
-> -               if (!clear_page_dirty_for_io(page))
-> +               BUG_ON(folio_test_writeback(folio));
-> +               if (!folio_clear_dirty_for_io(folio))
->                         goto continue_unlock;
->
->                 trace_wbc_writepage(wbc, inode_to_bdi(inode));
->
-> -               ret = __gfs2_jdata_writepage(page, wbc);
-> +               ret = __gfs2_jdata_writepage(&folio->page, wbc);
->                 if (unlikely(ret)) {
->                         if (ret == AOP_WRITEPAGE_ACTIVATE) {
-> -                               unlock_page(page);
-> +                               folio_unlock(folio);
->                                 ret = 0;
->                         } else {
->
-> @@ -268,7 +272,8 @@ static int gfs2_write_jdata_pagevec(struct address_space *mapping,
->                                  * not be suitable for data integrity
->                                  * writeout).
->                                  */
-> -                               *done_index = page->index + 1;
-> +                               *done_index = folio->index +
-> +                                       folio_nr_pages(folio);
->                                 ret = 1;
->                                 break;
->                         }
-> @@ -305,8 +310,8 @@ static int gfs2_write_cache_jdata(struct address_space *mapping,
->  {
->         int ret = 0;
->         int done = 0;
-> -       struct pagevec pvec;
-> -       int nr_pages;
-> +       struct folio_batch fbatch;
-> +       int nr_folios;
->         pgoff_t writeback_index;
->         pgoff_t index;
->         pgoff_t end;
-> @@ -315,7 +320,7 @@ static int gfs2_write_cache_jdata(struct address_space *mapping,
->         int range_whole = 0;
->         xa_mark_t tag;
->
-> -       pagevec_init(&pvec);
-> +       folio_batch_init(&fbatch);
->         if (wbc->range_cyclic) {
->                 writeback_index = mapping->writeback_index; /* prev offset */
->                 index = writeback_index;
-> @@ -341,17 +346,18 @@ static int gfs2_write_cache_jdata(struct address_space *mapping,
->                 tag_pages_for_writeback(mapping, index, end);
->         done_index = index;
->         while (!done && (index <= end)) {
-> -               nr_pages = pagevec_lookup_range_tag(&pvec, mapping, &index, end,
-> -                               tag);
-> -               if (nr_pages == 0)
-> +               nr_folios = filemap_get_folios_tag(mapping, &index, end,
-> +                               tag, &fbatch);
-> +               if (nr_folios == 0)
->                         break;
->
-> -               ret = gfs2_write_jdata_pagevec(mapping, wbc, &pvec, nr_pages, &done_index);
-> +               ret = gfs2_write_jdata_batch(mapping, wbc, &fbatch,
-> +                               &done_index);
->                 if (ret)
->                         done = 1;
->                 if (ret > 0)
->                         ret = 0;
-> -               pagevec_release(&pvec);
-> +               folio_batch_release(&fbatch);
->                 cond_resched();
->         }
->
-> --
-> 2.38.1
->
+The standard idiom for getting head page of a given folio is
+'&folio->page'.  It is efficient and safe even if the folio is NULL,
+because the offset of page field in folio is zero.  However, it makes
+the code not that easy to understand at the first glance, especially the
+NULL safety.  Also, sometimes people forget the idiom and use
+'folio_page(folio, 0)' instead.  To make it easier to read and remember,
+add a new macro function called 'folio_headpage()' with the NULL case
+explanation.  Then, replace the 'folio_page(folio, 0)' calls with
+'folio_headpage(folio)'.
 
-Reviewed-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-Thanks,
-Andreas
+SeongJae Park (3):
+  include/linux/page-flags: add folio_headpage()
+  mm: use folio_headpage() instead of folio_page()
+  fs/ceph/addr: use folio_headpage() instead of folio_page()
+
+ fs/ceph/addr.c             | 2 +-
+ include/linux/page-flags.h | 8 ++++++++
+ mm/shmem.c                 | 4 ++--
+ mm/slab.c                  | 6 +++---
+ mm/slab_common.c           | 4 ++--
+ mm/slub.c                  | 4 ++--
+ 6 files changed, 18 insertions(+), 10 deletions(-)
+
+-- 
+2.25.1
 
