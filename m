@@ -2,81 +2,95 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A36096605CD
-	for <lists+ceph-devel@lfdr.de>; Fri,  6 Jan 2023 18:41:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B43366065F
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Jan 2023 19:30:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235486AbjAFRky (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 6 Jan 2023 12:40:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36460 "EHLO
+        id S235830AbjAFSaC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 6 Jan 2023 13:30:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235742AbjAFRkt (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 6 Jan 2023 12:40:49 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC4907DE2F;
-        Fri,  6 Jan 2023 09:40:45 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CA83F616F5;
-        Fri,  6 Jan 2023 17:40:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F76BC433F1;
-        Fri,  6 Jan 2023 17:40:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673026844;
-        bh=YZZNY9dRwSGWCR6rI1dKx/9bpURDl+Gj2lOCqnQv91U=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z6cyH5ZRauWxvfPORXoj+wOKxhm88QKwFJtkWNBMkZG3gI46FE91EyPqpwZKjrILS
-         RgdcJG33HPg9cJHPy5eKKnjHWSKUFivP4YcQ4jZh5OFHyNvVMBPDYXP+JeOBde+1m2
-         Fhm7tKt4vQzjz1SEA8qQC32e+xF1RT1RngZPn80xzlR9cVkGZfdBKGoetCf2G6DF2i
-         LXTwHWSLFbVDXuWTGf9J0WhubYpgHsqgVMo/4LH4Y+sGSrMCLFnwVW+dP2y6pS+joo
-         EUjIaeme/J9pRRgLp3DDGE/0ygpmlNaOd6dGmBO34HShJ9efDfVSf2OiapQSu3LKmX
-         jKdEAcoM+lVqA==
-From:   SeongJae Park <sj@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     willy@infradead.org, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        SeongJae Park <sj@kernel.org>
-Subject: [PATCH 3/3] fs/ceph/addr: use folio_headpage() instead of folio_page()
-Date:   Fri,  6 Jan 2023 17:40:28 +0000
-Message-Id: <20230106174028.151384-4-sj@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20230106174028.151384-1-sj@kernel.org>
-References: <20230106174028.151384-1-sj@kernel.org>
+        with ESMTP id S231367AbjAFSaA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 6 Jan 2023 13:30:00 -0500
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 853F47CBC8;
+        Fri,  6 Jan 2023 10:29:59 -0800 (PST)
+Received: by mail-ed1-x52d.google.com with SMTP id i15so3394970edf.2;
+        Fri, 06 Jan 2023 10:29:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wopE+x9a0him1Mw4JPXWlOM8415jwSkKsRI4QcOIgfQ=;
+        b=Pmo7CeOBYh1Ra/LnMUptEEVDz/j7tKutnHWptp0q1YOT7kCi2RKEHgyD7Cp252X2cv
+         c9np2fE5ZvU1gfXXmrIhw1dO4QUscfiYBeoghTUFh5/g+bunph+F3ZobWNtckVDRMxQZ
+         BjPl7oxIdc89b0o8Av1BMjROn0pNTrS2jQTonzjMVJotf5rPqaFIZDS3gMy3FoyeLOcd
+         MkzJNJWydrKKINGZeg9ycDUvumfnrKaTeuU5mjvo4ETPME/OpWk2loNvzlcXPgL6qSCL
+         hjt148/sTyOrcOdNHpCwHDBXIwpG5eCtXenrfMe5Jr+5WShcynbQMBIcFCMq1HBfOZCa
+         NLaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wopE+x9a0him1Mw4JPXWlOM8415jwSkKsRI4QcOIgfQ=;
+        b=MLKmpV9ohzaq99S2KAD+EB7/S6GdaQaTKymHbWpDuj0MKv5JAvz13YJuf24dZIfdht
+         h2wr5To2M+7xCuvUujTM5uF4d1SObmo2Z+ZYClNT3Zyt53nyvSuWLTj36mturoxzgGY/
+         0yrhvy7KORERKMjQFJsbL7jvkZxacNQw7fy0+97tLVOP67pLRPfG2tizoq2ex4GLJ8iA
+         YZvmH1Tdq95//VEgIUsbtOnaddH2biqQpRyqZjbwA65TrwVeii56dOskCUvqisHETium
+         nLTutHMbTE4lLTgw0rVWVY2l7iNhQ1EQzTfiSMNFuwDkkeexwtGnOQmsJX0FRqfxvi9l
+         fD3Q==
+X-Gm-Message-State: AFqh2koF32FR8Sx6Vwkujd4D0jSJm4OgFYP1jLjp8/P+V5wTGBlal/+q
+        5OlWARMqYdgUEM13nqEtrdk=
+X-Google-Smtp-Source: AMrXdXu8Q9C9SS5nyVJOG72LSUdDWJmA0k94T5O5KeLOjVVD7mN1MNO5lncbECfZsVBYcjX11MjnzQ==
+X-Received: by 2002:aa7:c69a:0:b0:46d:e3f8:4ed4 with SMTP id n26-20020aa7c69a000000b0046de3f84ed4mr49018857edq.21.1673029798032;
+        Fri, 06 Jan 2023 10:29:58 -0800 (PST)
+Received: from zambezi.redhat.com (ip-94-112-104-28.bb.vodafone.cz. [94.112.104.28])
+        by smtp.gmail.com with ESMTPSA id g22-20020a170906539600b0080b3299ebddsm641612ejo.13.2023.01.06.10.29.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jan 2023 10:29:57 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 6.2-rc3
+Date:   Fri,  6 Jan 2023 19:29:51 +0100
+Message-Id: <20230106182951.92281-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Using 'folio_page(folio, 0)' for getting the head page of a folios is
-not the standard idiom and inefficient.  Replace the call in fs/ceph/ to
-'folio_headpage()'.
+Hi Linus,
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- fs/ceph/addr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The following changes since commit 88603b6dc419445847923fcb7fe5080067a30f98:
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 8c74871e37c9..b76e94152b21 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1290,7 +1290,7 @@ static int ceph_netfs_check_write_begin(struct file *file, loff_t pos, unsigned
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_snap_context *snapc;
- 
--	snapc = ceph_find_incompatible(folio_page(*foliop, 0));
-+	snapc = ceph_find_incompatible(folio_headpage(*foliop));
- 	if (snapc) {
- 		int r;
- 
--- 
-2.25.1
+  Linux 6.2-rc2 (2023-01-01 13:53:16 -0800)
 
+are available in the Git repository at:
+
+  https://github.com/ceph/ceph-client.git tags/ceph-for-6.2-rc3
+
+for you to fetch changes up to 8e1858710d9a71d88acd922f2e95d1eddb90eea0:
+
+  ceph: avoid use-after-free in ceph_fl_release_lock() (2023-01-02 12:27:25 +0100)
+
+----------------------------------------------------------------
+Two file locking fixes from Xiubo.
+
+----------------------------------------------------------------
+Xiubo Li (2):
+      ceph: switch to vfs_inode_has_locks() to fix file lock bug
+      ceph: avoid use-after-free in ceph_fl_release_lock()
+
+ fs/ceph/caps.c     |  2 +-
+ fs/ceph/locks.c    | 24 ++++++++++++++++++------
+ fs/ceph/super.h    |  1 -
+ include/linux/fs.h |  3 +++
+ 4 files changed, 22 insertions(+), 8 deletions(-)
