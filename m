@@ -2,70 +2,64 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A83D6626EC
-	for <lists+ceph-devel@lfdr.de>; Mon,  9 Jan 2023 14:25:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5379E664C79
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Jan 2023 20:30:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233381AbjAINZY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 9 Jan 2023 08:25:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37672 "EHLO
+        id S230342AbjAJTab (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 10 Jan 2023 14:30:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230411AbjAINZV (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 9 Jan 2023 08:25:21 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4ED4619C05
-        for <ceph-devel@vger.kernel.org>; Mon,  9 Jan 2023 05:24:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673270667;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=40c+dQmBRW71LPNrSVxxISW1gT3h9IjizUeGJ2UmokA=;
-        b=XnLL2oxU9K23ZAJppq9SLe3kjfQkV+/xhVqbGIuRyFC74ln1W4iVt4qZ2RhYZzfZR/G9e2
-        q8/pV6jEn7y8zpwzicWqgwxy4NZQO7lADSqphevoepRJA1RJsAvq9K2q6Lo152hRvcIqk2
-        75eMY07vF1riqfgNLQo5Qy/K8fes6mI=
-Received: from mail-oa1-f72.google.com (mail-oa1-f72.google.com
- [209.85.160.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-30-Izd49HXCNfCV2aX3QKHBYw-1; Mon, 09 Jan 2023 08:24:26 -0500
-X-MC-Unique: Izd49HXCNfCV2aX3QKHBYw-1
-Received: by mail-oa1-f72.google.com with SMTP id 586e51a60fabf-14c90f25682so2077489fac.10
-        for <ceph-devel@vger.kernel.org>; Mon, 09 Jan 2023 05:24:26 -0800 (PST)
+        with ESMTP id S229681AbjAJTaM (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 10 Jan 2023 14:30:12 -0500
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63EA1BC9E;
+        Tue, 10 Jan 2023 11:30:11 -0800 (PST)
+Received: by mail-ed1-x535.google.com with SMTP id v10so17902583edi.8;
+        Tue, 10 Jan 2023 11:30:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UuGmxfdzm1A1d6Dwr6ciAxKjzfvLse6cfekUFUgweC0=;
+        b=fs+2PPNz2Cf7IXSqRehP3+iobIGU6HVot/7AmGyHN1qfG6+FLFAsUNK3gzxiN9JezI
+         ceFKEhgGD7sxYC4b7tWIoXgeQE29qiGugftAtGtaYwqE2XzbjCboN14fEpp4H5b5/YiE
+         Js3Q+61s2sVfBdId1icUPslfA+niKaePOJxzo2VryX3RH9fCaCCCkDPObz7Y7wFQOhT+
+         y6W+afRTUWlakBYq9C5YJrTn8BdXGAOBVW+AqdFsUVlwF+BrEI1LLToAOJy7a+UFVnNI
+         Kqz3xsxH9EwjOql13ACE9M+m19kasPprVpO5JDDsCl8oCz3P/oPbxnwl0NlvGCdRts2q
+         eX4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=40c+dQmBRW71LPNrSVxxISW1gT3h9IjizUeGJ2UmokA=;
-        b=sBhQKbaDisjGC253SZqt7/qbxgtoDJBWV+s238/9+q0Q2giHnMFIfVTs3JiiDrtLKG
-         6vnMSaSroqR17zS2hVCmyhcfOr9DXfkpuKIwlLRgqTMuSHraGbNVVc77JEva3a8PxlJG
-         LZAmYVv8/3RylprRWuZ7MbNw7Bjkta7eN5fk+Q8ZbJEgTWjy8a3M+b0GdUJyFb3L1Eso
-         3LrsIolzzWB91EJUcRR5FbVRb2hc3E7rYX9yNA69xnrDKFyUBCSg6GfA5ClSqf96LyXT
-         EVTyLPpRl8BWYT0zaiUuDAXWbUeoq/BGYJeQ46Sc3BWNob39TccUsjgCdjSKYAyj4MD+
-         z6Wg==
-X-Gm-Message-State: AFqh2koiIqBWu0RVynWzAcmXXDDMsurvfwIkTVBO0+jFigcp2EWqy3fY
-        I6RdI4f4QTbuOW4OtckXfmhhMtQH3lR7cdkKobx/r5DmkMXO8GlKWIPqs2/nqo0wI1lTQTc1bFj
-        DaRb3ylNB92QSxrBjJVRxyLiFSqUxXhsa8tVEIQ==
-X-Received: by 2002:a05:6870:799b:b0:144:9973:4ec7 with SMTP id he27-20020a056870799b00b0014499734ec7mr3805042oab.156.1673270664676;
-        Mon, 09 Jan 2023 05:24:24 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXugio6+nOM4it54w1S6Ts3ZwXb3MnZzQWuj2YpUSeDhvuAdPUFZqYTmt7bzSuC4lUHyb+hsQbpGINE476Ix/fk=
-X-Received: by 2002:a05:6870:799b:b0:144:9973:4ec7 with SMTP id
- he27-20020a056870799b00b0014499734ec7mr3805039oab.156.1673270664317; Mon, 09
- Jan 2023 05:24:24 -0800 (PST)
+        bh=UuGmxfdzm1A1d6Dwr6ciAxKjzfvLse6cfekUFUgweC0=;
+        b=MqvFGdNJUR5t3xF3QuhCU7mQTRz02zps6Pa1iiZvkjDzoVztaFaBHiZqhKS8Ci2e7U
+         9g5Yqnmf8FJze02eTnP8Q4YFYi8vJ56xnrkELNyho1cDd+86W292Gp7ZD/dcMPMQpypH
+         h0FXcy0ybeRpiA7ytNai05jvmo9Ll6xWC7yoijZkvFhc6YnJODu4Aa+eihIVdBdUYUkJ
+         zjJG4OpvH2xSDAfYeQTMpTJcXr1N+PAfJh8cTxUnVpkcGLglTMXEPLnYyhwUXaYQz9Gn
+         xSFzL3IOmyS5ecW4RuA7tq4JEf/DSL/nY5j/Kv97tJmzdevrY9HWS3TjtG8o2JmW63BC
+         yerw==
+X-Gm-Message-State: AFqh2kpbDRZe8gaFicsMHocs1YsNQci7pYKiO5IeJzF3sW0c+ajiQiWv
+        OHTaA9bjscWHvy4u9QBTeu+6iV/4GBS3mAXYQ8o=
+X-Google-Smtp-Source: AMrXdXspk8g0yXmUPip/35eaX4bemquh0vpQ8V2qVlkceMGCjMpygf8a3snWCy7GITpr6qWVd0g/mTI0oHfoIAsadIc=
+X-Received: by 2002:aa7:df8d:0:b0:47f:a863:956c with SMTP id
+ b13-20020aa7df8d000000b0047fa863956cmr7549433edy.100.1673379009783; Tue, 10
+ Jan 2023 11:30:09 -0800 (PST)
 MIME-Version: 1.0
 References: <20221221060206.1859329-1-xiubli@redhat.com> <20221221060206.1859329-3-xiubli@redhat.com>
 In-Reply-To: <20221221060206.1859329-3-xiubli@redhat.com>
-From:   Venky Shankar <vshankar@redhat.com>
-Date:   Mon, 9 Jan 2023 18:53:47 +0530
-Message-ID: <CACPzV1kfgKPdJRGrZi=AkNqbUrfNUJ3sx8u46qFD=JG-T+D2bA@mail.gmail.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 10 Jan 2023 20:29:58 +0100
+Message-ID: <CAOi1vP8BPzG8KNDg+r=93eCGaQNVrzAL66K9v3paZ1zy9JEfPQ@mail.gmail.com>
 Subject: Re: [PATCH v5 2/2] ceph: blocklist the kclient when receiving
  corrupted snap trace
 To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
-        mchangir@redhat.com, stable@vger.kernel.org
+Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        mchangir@redhat.com, vshankar@redhat.com, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,7 +67,7 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Dec 21, 2022 at 11:32 AM <xiubli@redhat.com> wrote:
+On Wed, Dec 21, 2022 at 7:02 AM <xiubli@redhat.com> wrote:
 >
 > From: Xiubo Li <xiubli@redhat.com>
 >
@@ -123,6 +117,13 @@ On Wed, Dec 21, 2022 at 11:32 AM <xiubli@redhat.com> wrote:
 > +
 >         if (ceph_has_inline_data(ci) && ceph_netfs_issue_op_inline(subreq))
 >                 return;
+
+Hi Xiubo,
+
+Not related, but I noticed this while looking at this patch.  There
+seems to be a double free on req in case ceph_alloc_sparse_ext_map()
+fails.
+
 >
 > @@ -559,6 +564,9 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
 >
@@ -141,6 +142,15 @@ On Wed, Dec 21, 2022 at 11:32 AM <xiubli@redhat.com> wrote:
 > +       if (READ_ONCE(fsc->mount_state) == CEPH_MOUNT_FENCE_IO) {
 > +               mapping_set_error(mapping, -EIO);
 > +               return -EIO;
+
+There is a check below which is triggered and handled almost the same
+way: ceph_inode_is_shutdown(inode).  The new check is likely redundant
+here and also raises a bigger question: what is the semantic difference
+between the new CEPH_MOUNT_FENCE_IO and the existing CEPH_MOUNT_SHUTDOWN
+state when it comes to OSD requests?  Given that CEPH_MOUNT_SHUTDOWN
+already kills writes in ceph_writepages_start() and some other places,
+why is another bunch of mount_state checks in addr.c and file.c needed?
+
 > +       }
 > +
 >         if (wbc->sync_mode == WB_SYNC_NONE &&
@@ -371,15 +381,28 @@ On Wed, Dec 21, 2022 at 11:32 AM <xiubli@redhat.com> wrote:
 > +        * fixed in the MDS side.
 > +        */
 > +       mdsc->fsc->mount_state = CEPH_MOUNT_FENCE_IO;
+
+Should this be done through WRITE_ONCE?
+
 > +       ret = ceph_monc_blocklist_add(&client->monc, &client->msgr.inst.addr);
 > +       if (ret)
 > +               pr_err("%s blocklist of %s failed: %d", __func__,
 > +                      ceph_pr_addr(&client->msgr.inst.addr), ret);
 > +
 > +       WARN(1, "%s:%s%s do remount to continue%s",
+
+A space is missing here: "%s: %s%s".
+
 > +            __func__, ret ? "" : ceph_pr_addr(&client->msgr.inst.addr),
 > +            ret ? "" : " was blocklisted,",
 > +            err == -EIO ? " after corrupted snaptrace fixed" : "");
+
+"after corrupted snaptrace is fixed"
+
+Thanks,
+
+                Ilya
+
 > +
 >         return err;
 >  }
@@ -434,12 +457,3 @@ On Wed, Dec 21, 2022 at 11:32 AM <xiubli@redhat.com> wrote:
 > --
 > 2.31.1
 >
-
-Reviewed-by: Venky Shankar <vshankar@redhat.com>
-
-(This change was also run through fs suite in teuthology)
-
--- 
-Cheers,
-Venky
-
