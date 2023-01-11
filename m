@@ -2,125 +2,110 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA730665A1F
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Jan 2023 12:31:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB08D665B41
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Jan 2023 13:22:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232027AbjAKLai (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 11 Jan 2023 06:30:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57934 "EHLO
+        id S231696AbjAKMWe (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 11 Jan 2023 07:22:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229913AbjAKLad (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 Jan 2023 06:30:33 -0500
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [IPv6:2001:4d48:ad52:32c8:5054:ff:fe00:142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE8F29585;
-        Wed, 11 Jan 2023 03:30:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/B/lUwSLDdy4TKNacqRrqVdQIO2bhHf2Dz5b7u6s8PE=; b=bcql4AlYVAJfMUZcdgk78k/Yny
-        q4YxTySo08vOzZJbXrcUsvwxHEdzxgb+Ii1pvB23J18DFaDaSxWwBDTwyZecKpMjpzQSj9cSdzwmB
-        E7FeOscjYnn+NHlMhzBHTcQyUCHILWDwxB3r/wjmCpMi1dOhxzWkdzfdVZaVaLtHEn2WfhcBSiMoJ
-        xaR4xsr0iH8jHbII4QbOQBd/z6Ffk95rwXeSJqAugvrLrUzd2S6So2J6l2wpGNMPAo+GmrZbGZYy2
-        3br39DqBSOcN8JgFwxhPiVl/2Ubg9nDcfM/BSKfMobkmQa8ifVIF5567jY8IZeuTcc+4AkuGErYD7
-        D1ThFcXw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36052)
-        by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1pFZIf-00054b-0L; Wed, 11 Jan 2023 11:29:44 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1pFZIV-0001D1-VB; Wed, 11 Jan 2023 11:29:35 +0000
-Date:   Wed, 11 Jan 2023 11:29:35 +0000
-From:   "Russell King (Oracle)" <linux@armlinux.org.uk>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Christine Caulfield <ccaulfie@redhat.com>,
-        David Teigland <teigland@redhat.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Steve French <stfrench@microsoft.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        devel@lists.orangefs.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2] filelock: move file locking definitions to separate
- header file
-Message-ID: <Y76dnx07NGAS2jqG@shell.armlinux.org.uk>
-References: <20230105211937.1572384-1-jlayton@kernel.org>
+        with ESMTP id S229509AbjAKMWb (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 Jan 2023 07:22:31 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE7206376
+        for <ceph-devel@vger.kernel.org>; Wed, 11 Jan 2023 04:22:30 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id ss4so29092856ejb.11
+        for <ceph-devel@vger.kernel.org>; Wed, 11 Jan 2023 04:22:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vHs+xfBpw8G50AmdRjkElwih5ZsuoIcNMu6T4tZ/+Kw=;
+        b=kaPDQKawJt1RS0z2C6FBqKEhpqKnZdpAQL/qwHTkFKa6W7szA+o1fgyVXeaqrKv1Km
+         feXaHlmm/576gXwt2pn01gYlHGL4gKvumGNYY7bXh+9LzFwTTY+RQbHvTU6zowKcf35F
+         MHAW3bxblvdd+VmpgkBE9r16GY4bDrR7BvWbuRXdMQqrSNCfU81m+x7tZvBfYGlUFId2
+         YYvL75vkJTofNko0vhOTz3BqJcu2lRFmH1xnZVEfIR+3DhMxi3vwvHjU004C6k/WJGap
+         52sYZVaXhkqorgifKmEfQ4JWB0QJqzLvsafuGLoIBFr6RjyFk2wFSxL8Foild2PzC/QW
+         oRuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vHs+xfBpw8G50AmdRjkElwih5ZsuoIcNMu6T4tZ/+Kw=;
+        b=zBI0VJ0zE7T83rDkmfLWfMxEpGUmZXQ1IbgA0hadbOUNUfsT4ipXYRGv8rkMzVFqoi
+         ISud6JMm6UxNyuAhlwysVUtmT6YOMpOJQmZhVAKa3b3grMqn1+vkQkhaiSkeOzHRNHAU
+         4gpbxcZfphVBpLNZ8vAI+ewKXXXGWUGdYrqaHqcnMb87rX08FD8crIYJ9PO5MNBPVk2G
+         vFKVBnsSlsVqrC4O5irJBxa3oti8Q0W6f32Uwug6xMg5gHxpG7mf+MNW3Qhvio9TIZ+Q
+         1VKceV9ORmWozYPaeH8Z9GL3xSYOOGcU6CLsFHa+qMAQcKGT5wFJhE0GWdA0eW3NKW8/
+         q3/w==
+X-Gm-Message-State: AFqh2kqWJc5gkjfL1pWXyFOuwwNu0txHYEO6y7CDo02TENTLPOZlxxJ/
+        wSNKTr4iA1da7zjqZmVZPQy9467M8XGlcV4A5OA=
+X-Google-Smtp-Source: AMrXdXvK26RFSvptfJj9tAIrl/S2s5ZYWqCv7nzfYmqweU2XoOxft5HEJpSHWOf9YTppa+PgeS/JPv/tH6uE7q6xnk4=
+X-Received: by 2002:a17:906:708f:b0:7c4:e857:e0b8 with SMTP id
+ b15-20020a170906708f00b007c4e857e0b8mr5187783ejk.603.1673439749471; Wed, 11
+ Jan 2023 04:22:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230105211937.1572384-1-jlayton@kernel.org>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20230111011403.570964-1-xiubli@redhat.com>
+In-Reply-To: <20230111011403.570964-1-xiubli@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Wed, 11 Jan 2023 13:22:17 +0100
+Message-ID: <CAOi1vP-Q48xUJNAn37DF2Ud+tVFamxdZuQgJ9VDNH_GmX+pwyw@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix double free for req when failing to allocate
+ sparse ext map
+To:     xiubli@redhat.com
+Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        mchangir@redhat.com, vshankar@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jan 05, 2023 at 04:19:29PM -0500, Jeff Layton wrote:
-> The file locking definitions have lived in fs.h since the dawn of time,
-> but they are only used by a small subset of the source files that
-> include it.
-> 
-> Move the file locking definitions to a new header file, and add the
-> appropriate #include directives to the source files that need them. By
-> doing this we trim down fs.h a bit and limit the amount of rebuilding
-> that has to be done when we make changes to the file locking APIs.
-> 
-> Reviewed-by: Xiubo Li <xiubli@redhat.com>
-> Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: David Howells <dhowells@redhat.com>
-> Acked-by: Chuck Lever <chuck.lever@oracle.com>
-> Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-> Acked-by: Steve French <stfrench@microsoft.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+On Wed, Jan 11, 2023 at 2:14 AM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> Introduced by commit d1f436736924 ("ceph: add new mount option to enable
+> sparse reads") and will fold this into the above commit since it's
+> still in the testing branch.
+>
+> Reported-by: Ilya Dryomov <idryomov@gmail.com>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  arch/arm/kernel/sys_oabi-compat.c |   1 +
+>  fs/ceph/addr.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 17758cb607ec..3561c95d7e23 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -351,10 +351,8 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
+>
+>         if (sparse) {
+>                 err = ceph_alloc_sparse_ext_map(&req->r_ops[0]);
+> -               if (err) {
+> -                       ceph_osdc_put_request(req);
+> +               if (err)
+>                         goto out;
+> -               }
+>         }
+>
+>         dout("%s: pos=%llu orig_len=%zu len=%llu\n", __func__, subreq->start, subreq->len, len);
+> --
+> 2.39.0
+>
 
-For arm:
+Hi Xiubo,
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Looks good, let's fold this into that commit since it's still testing
+branch material.
 
-Thanks.
+Thanks,
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 40Mbps down 10Mbps up. Decent connectivity at last!
+                Ilya
