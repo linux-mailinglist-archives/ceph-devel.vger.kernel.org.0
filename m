@@ -2,343 +2,433 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E06AA666AA5
-	for <lists+ceph-devel@lfdr.de>; Thu, 12 Jan 2023 06:06:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 344F4666D4A
+	for <lists+ceph-devel@lfdr.de>; Thu, 12 Jan 2023 10:01:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229973AbjALFGq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 12 Jan 2023 00:06:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44188 "EHLO
+        id S239815AbjALJBr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 12 Jan 2023 04:01:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236784AbjALFGn (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 12 Jan 2023 00:06:43 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6AB6E06
-        for <ceph-devel@vger.kernel.org>; Wed, 11 Jan 2023 21:05:55 -0800 (PST)
+        with ESMTP id S239924AbjALJAx (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 12 Jan 2023 04:00:53 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25640B48A
+        for <ceph-devel@vger.kernel.org>; Thu, 12 Jan 2023 00:56:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673499954;
+        s=mimecast20190719; t=1673513780;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=uGLbMrbJVQKlT8+rnJOYP46WDNWv5Q4Iw/k8Wmz3d88=;
-        b=inEAPLfkVuoCiCS+qasmjLpUE3tHr6GsUM4E5WAZvV+/VrLNfMN5GCzvrAlA3Nd8lozYml
-        QX7xmDc3haAsVmPsXZ6kPTFgo/oVQmLbE4Qle0JpwuYqoUHs+6uDpFVaNY9vM2lBzvrOBI
-        OBcP/uH8JeFEUzitAe0E7Dgehy5KaHI=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-368-FutthWKJMImm2h2SxjD82Q-1; Thu, 12 Jan 2023 00:05:52 -0500
-X-MC-Unique: FutthWKJMImm2h2SxjD82Q-1
-Received: by mail-pl1-f197.google.com with SMTP id f8-20020a170902ce8800b00190c6518e21so11923098plg.1
-        for <ceph-devel@vger.kernel.org>; Wed, 11 Jan 2023 21:05:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uGLbMrbJVQKlT8+rnJOYP46WDNWv5Q4Iw/k8Wmz3d88=;
-        b=m2kxXvPWDRRD4xiRCaPLLMrb1tV7MNasl5H5z2gKgHscW4l1q2gIlEGuq6sp3ry966
-         Lo6LAdrPqzjowkZpXpKLecGlc6iZxwb1YgvCFNE4SW6u017zPRSkbeXautJMrYT9PoCM
-         QTVO74FvHhdB86VSs7Mj2Lg+k/sZI4SJ4/CRnIGTGREkmDmGIjpsqeQxaxKjvAOLqUvi
-         UuNMn+UffQHnXL0Ce7P+KaNhl+ENzSqMHmV2mPwfTvoKFQj7iLVT2MPZW9j5owVKc4P7
-         gH3ekkDdg5gUkOA9z7p7ojH+If+9aIDkAy/LrlHBe5ulz+mN7w3uIBDpJN6Hcn2XIoUU
-         jH5w==
-X-Gm-Message-State: AFqh2kq+USExLPmA+dK8xM00lV97LqfFUlKM4hPAPL0jsiywu7o2lB51
-        VtDTUWLuxqa7GrW26AAqrIj9yL+NOTrAfEbm5+wLJyIn4A/exELRJXXBJWEFsRO9/iGL995N9bm
-        57jLwgxuwWfbOW+GglnszwQ==
-X-Received: by 2002:a62:f20f:0:b0:566:900d:5ae8 with SMTP id m15-20020a62f20f000000b00566900d5ae8mr64776310pfh.24.1673499951256;
-        Wed, 11 Jan 2023 21:05:51 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXvPAN2f3AwYhsLWNNeoNRWtREtFOjfY7xTiYYYU+D52Bfw/a2o5RNDXGQz8AUgvfxoXYu0VSQ==
-X-Received: by 2002:a62:f20f:0:b0:566:900d:5ae8 with SMTP id m15-20020a62f20f000000b00566900d5ae8mr64776289pfh.24.1673499950842;
-        Wed, 11 Jan 2023 21:05:50 -0800 (PST)
-Received: from [10.72.12.200] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id w1-20020a627b01000000b0058217bbc6f5sm10829653pfc.215.2023.01.11.21.05.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 11 Jan 2023 21:05:50 -0800 (PST)
-Message-ID: <9b20611c-c5e1-ae48-393c-93b1489dc3cf@redhat.com>
-Date:   Thu, 12 Jan 2023 13:05:44 +0800
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=IPSnN9zzLNKups+02tY1bKrx/CQ90JiqNF9jYzA6mpQ=;
+        b=g9OSjQ8WpWA7+z4iR1gIhrneePCyRU7Ydr7u3LM5An1WG7JXFnDLBU0+uGchCy+/2FFBBh
+        mbHdG7MHF2RqNXOKfBkA5ajORXAmIw8GJkdD51rMYLDTBhVsfwuh32EZMjfD1QPfl1Hii9
+        PvP5hOG0yAZ4UTIELQFL/TlBRTk00UE=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-91-F8BS23_iP5yc7mbM7IMSRQ-1; Thu, 12 Jan 2023 03:56:15 -0500
+X-MC-Unique: F8BS23_iP5yc7mbM7IMSRQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A264F3C16E8B;
+        Thu, 12 Jan 2023 08:56:14 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 62E1D2026D76;
+        Thu, 12 Jan 2023 08:56:11 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
+Cc:     jlayton@kernel.org, mchangir@redhat.com, vshankar@redhat.com,
+        Xiubo Li <xiubli@redhat.com>, stable@vger.kernel.org
+Subject: [PATCH v6] ceph: blocklist the kclient when receiving corrupted snap trace
+Date:   Thu, 12 Jan 2023 16:56:02 +0800
+Message-Id: <20230112085602.14583-1-xiubli@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [ceph-client:testing 17/77] fs/ceph/mds_client.c:218
- parse_reply_info_in() warn: missing unwind goto?
-Content-Language: en-US
-To:     Dan Carpenter <error27@gmail.com>, oe-kbuild@lists.linux.dev,
-        Jeff Layton <jlayton@kernel.org>
-Cc:     lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-        ceph-devel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
-References: <202301120708.Xouvfbeb-lkp@intel.com>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <202301120708.Xouvfbeb-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Thanks Dan,
+From: Xiubo Li <xiubli@redhat.com>
 
-On 12/01/2023 12:37, Dan Carpenter wrote:
-> tree:   https://github.com/ceph/ceph-client.git testing
-> head:   dd9ed6e7fed7f133e63ecadd3ea5b1140221df0b
-> commit: d77b55b952a06f69cec796b9f675165d8aa6275d [17/77] ceph: fscrypt_auth handling for ceph
-> config: parisc-randconfig-m031-20230110
-> compiler: hppa-linux-gcc (GCC) 12.1.0
->
-> If you fix the issue, kindly add following tag where applicable
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <error27@gmail.com>
->
-> New smatch warnings:
-> fs/ceph/mds_client.c:218 parse_reply_info_in() warn: missing unwind goto?
->
-> vim +218 fs/ceph/mds_client.c
->
-> 2f2dc053404feb Sage Weil        2009-10-06  100  static int parse_reply_info_in(void **p, void *end,
-> 14303d20f3ae3e Sage Weil        2010-12-14  101  			       struct ceph_mds_reply_info_in *info,
-> 12b4629a9fb80f Ilya Dryomov     2013-12-24  102  			       u64 features)
-> 2f2dc053404feb Sage Weil        2009-10-06  103  {
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  104  	int err = 0;
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  105  	u8 struct_v = 0;
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  106
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  107  	if (features == (u64)-1) {
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  108  		u32 struct_len;
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  109  		u8 struct_compat;
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  110  		ceph_decode_8_safe(p, end, struct_v, bad);
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  111  		ceph_decode_8_safe(p, end, struct_compat, bad);
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  112  		/* struct_v is expected to be >= 1. we only understand
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  113  		 * encoding with struct_compat == 1. */
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  114  		if (!struct_v || struct_compat != 1)
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  115  			goto bad;
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  116  		ceph_decode_32_safe(p, end, struct_len, bad);
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  117  		ceph_decode_need(p, end, struct_len, bad);
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  118  		end = *p + struct_len;
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  119  	}
-> 2f2dc053404feb Sage Weil        2009-10-06  120
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  121  	ceph_decode_need(p, end, sizeof(struct ceph_mds_reply_inode), bad);
-> 2f2dc053404feb Sage Weil        2009-10-06  122  	info->in = *p;
-> 2f2dc053404feb Sage Weil        2009-10-06  123  	*p += sizeof(struct ceph_mds_reply_inode) +
-> 2f2dc053404feb Sage Weil        2009-10-06  124  		sizeof(*info->in->fragtree.splits) *
-> 2f2dc053404feb Sage Weil        2009-10-06  125  		le32_to_cpu(info->in->fragtree.nsplits);
-> 2f2dc053404feb Sage Weil        2009-10-06  126
-> 2f2dc053404feb Sage Weil        2009-10-06  127  	ceph_decode_32_safe(p, end, info->symlink_len, bad);
-> 2f2dc053404feb Sage Weil        2009-10-06  128  	ceph_decode_need(p, end, info->symlink_len, bad);
-> 2f2dc053404feb Sage Weil        2009-10-06  129  	info->symlink = *p;
-> 2f2dc053404feb Sage Weil        2009-10-06  130  	*p += info->symlink_len;
-> 2f2dc053404feb Sage Weil        2009-10-06  131
-> 14303d20f3ae3e Sage Weil        2010-12-14  132  	ceph_decode_copy_safe(p, end, &info->dir_layout,
-> 14303d20f3ae3e Sage Weil        2010-12-14  133  			      sizeof(info->dir_layout), bad);
-> 2f2dc053404feb Sage Weil        2009-10-06  134  	ceph_decode_32_safe(p, end, info->xattr_len, bad);
-> 2f2dc053404feb Sage Weil        2009-10-06  135  	ceph_decode_need(p, end, info->xattr_len, bad);
-> 2f2dc053404feb Sage Weil        2009-10-06  136  	info->xattr_data = *p;
-> 2f2dc053404feb Sage Weil        2009-10-06  137  	*p += info->xattr_len;
-> fb01d1f8b0343f Yan, Zheng       2014-11-14  138
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  139  	if (features == (u64)-1) {
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  140  		/* inline data */
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  141  		ceph_decode_64_safe(p, end, info->inline_version, bad);
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  142  		ceph_decode_32_safe(p, end, info->inline_len, bad);
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  143  		ceph_decode_need(p, end, info->inline_len, bad);
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  144  		info->inline_data = *p;
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  145  		*p += info->inline_len;
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  146  		/* quota */
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  147  		err = parse_reply_info_quota(p, end, info);
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  148  		if (err < 0)
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  149  			goto out_bad;
->                                                                          ^^^^^^^^^^^^
->
->
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  150  		/* pool namespace */
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  151  		ceph_decode_32_safe(p, end, info->pool_ns_len, bad);
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  152  		if (info->pool_ns_len > 0) {
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  153  			ceph_decode_need(p, end, info->pool_ns_len, bad);
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  154  			info->pool_ns_data = *p;
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  155  			*p += info->pool_ns_len;
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  156  		}
-> 245ce991cca55e Jeff Layton      2019-05-29  157
-> 245ce991cca55e Jeff Layton      2019-05-29  158  		/* btime */
-> 245ce991cca55e Jeff Layton      2019-05-29  159  		ceph_decode_need(p, end, sizeof(info->btime), bad);
-> 245ce991cca55e Jeff Layton      2019-05-29  160  		ceph_decode_copy(p, &info->btime, sizeof(info->btime));
-> 245ce991cca55e Jeff Layton      2019-05-29  161
-> 245ce991cca55e Jeff Layton      2019-05-29  162  		/* change attribute */
-> a35ead314e0b92 Jeff Layton      2019-06-06  163  		ceph_decode_64_safe(p, end, info->change_attr, bad);
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  164
-> 08796873a5183b Yan, Zheng       2019-01-09  165  		/* dir pin */
-> 08796873a5183b Yan, Zheng       2019-01-09  166  		if (struct_v >= 2) {
-> 08796873a5183b Yan, Zheng       2019-01-09  167  			ceph_decode_32_safe(p, end, info->dir_pin, bad);
-> 08796873a5183b Yan, Zheng       2019-01-09  168  		} else {
-> 08796873a5183b Yan, Zheng       2019-01-09  169  			info->dir_pin = -ENODATA;
-> 08796873a5183b Yan, Zheng       2019-01-09  170  		}
-> 08796873a5183b Yan, Zheng       2019-01-09  171
-> 193e7b37628e97 David Disseldorp 2019-04-18  172  		/* snapshot birth time, remains zero for v<=2 */
-> 193e7b37628e97 David Disseldorp 2019-04-18  173  		if (struct_v >= 3) {
-> 193e7b37628e97 David Disseldorp 2019-04-18  174  			ceph_decode_need(p, end, sizeof(info->snap_btime), bad);
-> 193e7b37628e97 David Disseldorp 2019-04-18  175  			ceph_decode_copy(p, &info->snap_btime,
-> 193e7b37628e97 David Disseldorp 2019-04-18  176  					 sizeof(info->snap_btime));
-> 193e7b37628e97 David Disseldorp 2019-04-18  177  		} else {
-> 193e7b37628e97 David Disseldorp 2019-04-18  178  			memset(&info->snap_btime, 0, sizeof(info->snap_btime));
-> 193e7b37628e97 David Disseldorp 2019-04-18  179  		}
-> 193e7b37628e97 David Disseldorp 2019-04-18  180
-> e7f72952508ac4 Yanhu Cao        2020-08-28  181  		/* snapshot count, remains zero for v<=3 */
-> e7f72952508ac4 Yanhu Cao        2020-08-28  182  		if (struct_v >= 4) {
-> e7f72952508ac4 Yanhu Cao        2020-08-28  183  			ceph_decode_64_safe(p, end, info->rsnaps, bad);
-> e7f72952508ac4 Yanhu Cao        2020-08-28  184  		} else {
-> e7f72952508ac4 Yanhu Cao        2020-08-28  185  			info->rsnaps = 0;
-> e7f72952508ac4 Yanhu Cao        2020-08-28  186  		}
-> e7f72952508ac4 Yanhu Cao        2020-08-28  187
-> d77b55b952a06f Jeff Layton      2020-07-27  188  		if (struct_v >= 5) {
-> d77b55b952a06f Jeff Layton      2020-07-27  189  			u32 alen;
-> d77b55b952a06f Jeff Layton      2020-07-27  190
-> d77b55b952a06f Jeff Layton      2020-07-27  191  			ceph_decode_32_safe(p, end, alen, bad);
-> d77b55b952a06f Jeff Layton      2020-07-27  192
-> d77b55b952a06f Jeff Layton      2020-07-27  193  			while (alen--) {
-> d77b55b952a06f Jeff Layton      2020-07-27  194  				u32 len;
-> d77b55b952a06f Jeff Layton      2020-07-27  195
-> d77b55b952a06f Jeff Layton      2020-07-27  196  				/* key */
-> d77b55b952a06f Jeff Layton      2020-07-27  197  				ceph_decode_32_safe(p, end, len, bad);
-> d77b55b952a06f Jeff Layton      2020-07-27  198  				ceph_decode_skip_n(p, end, len, bad);
-> d77b55b952a06f Jeff Layton      2020-07-27  199  				/* value */
-> d77b55b952a06f Jeff Layton      2020-07-27  200  				ceph_decode_32_safe(p, end, len, bad);
-> d77b55b952a06f Jeff Layton      2020-07-27  201  				ceph_decode_skip_n(p, end, len, bad);
-> d77b55b952a06f Jeff Layton      2020-07-27  202  			}
-> d77b55b952a06f Jeff Layton      2020-07-27  203  		}
-> d77b55b952a06f Jeff Layton      2020-07-27  204
-> d77b55b952a06f Jeff Layton      2020-07-27  205  		/* fscrypt flag -- ignore */
-> d77b55b952a06f Jeff Layton      2020-07-27  206  		if (struct_v >= 6)
-> d77b55b952a06f Jeff Layton      2020-07-27  207  			ceph_decode_skip_8(p, end, bad);
-> d77b55b952a06f Jeff Layton      2020-07-27  208
-> d77b55b952a06f Jeff Layton      2020-07-27  209  		info->fscrypt_auth = NULL;
-> d77b55b952a06f Jeff Layton      2020-07-27  210  		info->fscrypt_auth_len = 0;
-> d77b55b952a06f Jeff Layton      2020-07-27  211  		info->fscrypt_file = NULL;
-> d77b55b952a06f Jeff Layton      2020-07-27  212  		info->fscrypt_file_len = 0;
-> d77b55b952a06f Jeff Layton      2020-07-27  213  		if (struct_v >= 7) {
-> d77b55b952a06f Jeff Layton      2020-07-27  214  			ceph_decode_32_safe(p, end, info->fscrypt_auth_len, bad);
-> d77b55b952a06f Jeff Layton      2020-07-27  215  			if (info->fscrypt_auth_len) {
-> d77b55b952a06f Jeff Layton      2020-07-27  216  				info->fscrypt_auth = kmalloc(info->fscrypt_auth_len, GFP_KERNEL);
-> d77b55b952a06f Jeff Layton      2020-07-27  217  				if (!info->fscrypt_auth)
-> d77b55b952a06f Jeff Layton      2020-07-27 @218  					return -ENOMEM;
->
-> When I scroll down, it turns out that the error labels in this function
-> are just Pointless Do Nothing Gotos.  Smatch tries to ignore this, but
-> the bad: label sets the error code so Smatch marks it as a Do Something
-> label.
->
-> Ideally everything would be converted to direct returns...
+When received corrupted snap trace we don't know what exactly has
+happened in MDS side. And we shouldn't continue IOs and metadatas
+access to MDS, which may corrupt or get incorrect contents.
 
-The following patch should fix it:
+This patch will just block all the further IO/MDS requests
+immediately and then evict the kclient itself.
 
+The reason why we still need to evict the kclient just after
+blocking all the further IOs is that the MDS could revoke the caps
+faster.
+
+Cc: stable@vger.kernel.org
+URL: https://tracker.ceph.com/issues/57686
+Reviewed-by: Venky Shankar <vshankar@redhat.com>
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+
+V6:
+- switch to ceph_inode_is_shutdown() to check the mount state
+- fix two debug logs
+- use the WRITE_ONCE to set the FENCE_IO state
+
+V5:
+- s/CEPH_MOUNT_CORRUPTED/CEPH_MOUNT_FENCE_IO/g
+
+V4:
+- block all the IO/metadata requests before evicting the client.
+
+V3:
+- Fixed ERROR: spaces required around that ':' (ctx:VxW)
+
+V2:
+- Switched to WARN() to taint the Linux kernel.
+
+
+
+ fs/ceph/addr.c       | 17 +++++++++++++++--
+ fs/ceph/caps.c       | 17 ++++++++++++++---
+ fs/ceph/file.c       |  9 +++++++++
+ fs/ceph/mds_client.c | 28 +++++++++++++++++++++++++---
+ fs/ceph/snap.c       | 38 ++++++++++++++++++++++++++++++++++++--
+ fs/ceph/super.h      |  1 +
+ 6 files changed, 100 insertions(+), 10 deletions(-)
+
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 6fb329a70ac1..13d1c24d2f53 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -305,13 +305,18 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
+ 	struct inode *inode = rreq->inode;
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+-	struct ceph_osd_request *req;
++	struct ceph_osd_request *req = NULL;
+ 	struct ceph_vino vino = ceph_vino(inode);
+ 	struct iov_iter iter;
+ 	int err = 0;
+ 	u64 len = subreq->len;
+ 	bool sparse = ceph_test_mount_opt(fsc, SPARSEREAD);
+ 
++	if (ceph_inode_is_shutdown(inode)) {
++		err = -EIO;
++		goto out;
++	}
++
+ 	if (ceph_has_inline_data(ci) && ceph_netfs_issue_op_inline(subreq))
+ 		return;
+ 
+@@ -557,6 +562,9 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+ 
+ 	dout("writepage %p idx %lu\n", page, page->index);
+ 
++	if (ceph_inode_is_shutdown(inode))
++		return -EIO;
++
+ 	/* verify this is a writeable snap context */
+ 	snapc = page_snap_context(page);
+ 	if (!snapc) {
+@@ -1637,7 +1645,7 @@ int ceph_uninline_data(struct file *file)
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+ 	struct ceph_osd_request *req = NULL;
+-	struct ceph_cap_flush *prealloc_cf;
++	struct ceph_cap_flush *prealloc_cf = NULL;
+ 	struct folio *folio = NULL;
+ 	u64 inline_version = CEPH_INLINE_NONE;
+ 	struct page *pages[1];
+@@ -1651,6 +1659,11 @@ int ceph_uninline_data(struct file *file)
+ 	dout("uninline_data %p %llx.%llx inline_version %llu\n",
+ 	     inode, ceph_vinop(inode), inline_version);
+ 
++	if (ceph_inode_is_shutdown(inode)) {
++		err = -EIO;
++		goto out;
++	}
++
+ 	if (inline_version == CEPH_INLINE_NONE)
+ 		return 0;
+ 
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 948136f81fc8..5230ab64fff0 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -4134,6 +4134,7 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ 	void *p, *end;
+ 	struct cap_extra_info extra_info = {};
+ 	bool queue_trunc;
++	bool close_sessions = false;
+ 
+ 	dout("handle_caps from mds%d\n", session->s_mds);
+ 
+@@ -4275,9 +4276,13 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ 		realm = NULL;
+ 		if (snaptrace_len) {
+ 			down_write(&mdsc->snap_rwsem);
+-			ceph_update_snap_trace(mdsc, snaptrace,
+-					       snaptrace + snaptrace_len,
+-					       false, &realm);
++			if (ceph_update_snap_trace(mdsc, snaptrace,
++						   snaptrace + snaptrace_len,
++						   false, &realm)) {
++				up_write(&mdsc->snap_rwsem);
++				close_sessions = true;
++				goto done;
++			}
+ 			downgrade_write(&mdsc->snap_rwsem);
+ 		} else {
+ 			down_read(&mdsc->snap_rwsem);
+@@ -4341,6 +4346,11 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ 	iput(inode);
+ out:
+ 	ceph_put_string(extra_info.pool_ns);
++
++	/* Defer closing the sessions after s_mutex lock being released */
++	if (close_sessions)
++		ceph_mdsc_close_sessions(mdsc);
++
+ 	return;
+ 
+ flush_cap_releases:
+@@ -4350,6 +4360,7 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ 	 * cap).
+ 	 */
+ 	ceph_flush_cap_releases(mdsc, session);
++
+ 	goto done;
+ 
+ bad:
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 59c89c436185..1ba3c07e242b 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -976,6 +976,9 @@ static ssize_t ceph_sync_read(struct kiocb *iocb, struct iov_iter *to,
+ 	dout("sync_read on file %p %llu~%u %s\n", file, off, (unsigned)len,
+ 	     (file->f_flags & O_DIRECT) ? "O_DIRECT" : "");
+ 
++	if (ceph_inode_is_shutdown(inode))
++		return -EIO;
++
+ 	if (!len)
+ 		return 0;
+ 	/*
+@@ -1342,6 +1345,9 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
+ 	bool should_dirty = !write && user_backed_iter(iter);
+ 	bool sparse = ceph_test_mount_opt(fsc, SPARSEREAD);
+ 
++	if (ceph_inode_is_shutdown(inode))
++		return -EIO;
++
+ 	if (write && ceph_snap(file_inode(file)) != CEPH_NOSNAP)
+ 		return -EROFS;
+ 
+@@ -2078,6 +2084,9 @@ static int ceph_zero_partial_object(struct inode *inode,
+ 	loff_t zero = 0;
+ 	int op;
+ 
++	if (ceph_inode_is_shutdown(inode))
++		return -EIO;
++
+ 	if (!length) {
+ 		op = offset ? CEPH_OSD_OP_DELETE : CEPH_OSD_OP_TRUNCATE;
+ 		length = &zero;
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 43a9a17ed9eb..726519b637db 100644
+index cbbaf334b6b8..b60812707fce 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -215,16 +215,20 @@ static int parse_reply_info_in(void **p, void *end,
-                         ceph_decode_32_safe(p, end, 
-info->fscrypt_auth_len, bad);
-                         if (info->fscrypt_auth_len) {
-                                 info->fscrypt_auth = 
-kmalloc(info->fscrypt_auth_len, GFP_KERNEL);
--                               if (!info->fscrypt_auth)
--                                       return -ENOMEM;
-+                               if (!info->fscrypt_auth) {
-+                                       err = -ENOMEM;
-+                                       goto out_bad;
-+                               }
-                                 ceph_decode_copy_safe(p, end, 
-info->fscrypt_auth,
-info->fscrypt_auth_len, bad);
-                         }
-                         ceph_decode_32_safe(p, end, 
-info->fscrypt_file_len, bad);
-                         if (info->fscrypt_file_len) {
-                                 info->fscrypt_file = 
-kmalloc(info->fscrypt_file_len, GFP_KERNEL);
--                               if (!info->fscrypt_file)
--                                       return -ENOMEM;
-+                               if (!info->fscrypt_file) {
-+                                       err = -ENOMEM;
-+                                       goto out_bad;
-+                               }
-                                 ceph_decode_copy_safe(p, end, 
-info->fscrypt_file,
-info->fscrypt_file_len, bad);
-                         }
-
-Thanks
-
-- Xiubo
-
-
->
-> d77b55b952a06f Jeff Layton      2020-07-27  219  				ceph_decode_copy_safe(p, end, info->fscrypt_auth,
-> d77b55b952a06f Jeff Layton      2020-07-27  220  						      info->fscrypt_auth_len, bad);
-> d77b55b952a06f Jeff Layton      2020-07-27  221  			}
-> d77b55b952a06f Jeff Layton      2020-07-27  222  			ceph_decode_32_safe(p, end, info->fscrypt_file_len, bad);
-> d77b55b952a06f Jeff Layton      2020-07-27  223  			if (info->fscrypt_file_len) {
-> d77b55b952a06f Jeff Layton      2020-07-27  224  				info->fscrypt_file = kmalloc(info->fscrypt_file_len, GFP_KERNEL);
-> d77b55b952a06f Jeff Layton      2020-07-27  225  				if (!info->fscrypt_file)
-> d77b55b952a06f Jeff Layton      2020-07-27  226  					return -ENOMEM;
-> d77b55b952a06f Jeff Layton      2020-07-27  227  				ceph_decode_copy_safe(p, end, info->fscrypt_file,
-> d77b55b952a06f Jeff Layton      2020-07-27  228  						      info->fscrypt_file_len, bad);
-> d77b55b952a06f Jeff Layton      2020-07-27  229  			}
-> d77b55b952a06f Jeff Layton      2020-07-27  230  		}
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  231  		*p = end;
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  232  	} else {
-> d77b55b952a06f Jeff Layton      2020-07-27  233  		/* legacy (unversioned) struct */
-> fb01d1f8b0343f Yan, Zheng       2014-11-14  234  		if (features & CEPH_FEATURE_MDS_INLINE_DATA) {
-> fb01d1f8b0343f Yan, Zheng       2014-11-14  235  			ceph_decode_64_safe(p, end, info->inline_version, bad);
-> fb01d1f8b0343f Yan, Zheng       2014-11-14  236  			ceph_decode_32_safe(p, end, info->inline_len, bad);
-> fb01d1f8b0343f Yan, Zheng       2014-11-14  237  			ceph_decode_need(p, end, info->inline_len, bad);
-> fb01d1f8b0343f Yan, Zheng       2014-11-14  238  			info->inline_data = *p;
-> fb01d1f8b0343f Yan, Zheng       2014-11-14  239  			*p += info->inline_len;
-> fb01d1f8b0343f Yan, Zheng       2014-11-14  240  		} else
-> fb01d1f8b0343f Yan, Zheng       2014-11-14  241  			info->inline_version = CEPH_INLINE_NONE;
-> fb01d1f8b0343f Yan, Zheng       2014-11-14  242
-> fb18a57568c2b8 Luis Henriques   2018-01-05  243  		if (features & CEPH_FEATURE_MDS_QUOTA) {
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  244  			err = parse_reply_info_quota(p, end, info);
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  245  			if (err < 0)
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  246  				goto out_bad;
-> fb18a57568c2b8 Luis Henriques   2018-01-05  247  		} else {
-> fb18a57568c2b8 Luis Henriques   2018-01-05  248  			info->max_bytes = 0;
-> fb18a57568c2b8 Luis Henriques   2018-01-05  249  			info->max_files = 0;
-> fb18a57568c2b8 Luis Henriques   2018-01-05  250  		}
-> fb18a57568c2b8 Luis Henriques   2018-01-05  251
-> 779fe0fb8e1883 Yan, Zheng       2016-03-07  252  		info->pool_ns_len = 0;
-> 779fe0fb8e1883 Yan, Zheng       2016-03-07  253  		info->pool_ns_data = NULL;
-> 5ea5c5e0a7f70b Yan, Zheng       2016-02-14  254  		if (features & CEPH_FEATURE_FS_FILE_LAYOUT_V2) {
-> 5ea5c5e0a7f70b Yan, Zheng       2016-02-14  255  			ceph_decode_32_safe(p, end, info->pool_ns_len, bad);
-> 779fe0fb8e1883 Yan, Zheng       2016-03-07  256  			if (info->pool_ns_len > 0) {
-> 5ea5c5e0a7f70b Yan, Zheng       2016-02-14  257  				ceph_decode_need(p, end, info->pool_ns_len, bad);
-> 779fe0fb8e1883 Yan, Zheng       2016-03-07  258  				info->pool_ns_data = *p;
-> 5ea5c5e0a7f70b Yan, Zheng       2016-02-14  259  				*p += info->pool_ns_len;
-> 779fe0fb8e1883 Yan, Zheng       2016-03-07  260  			}
-> 5ea5c5e0a7f70b Yan, Zheng       2016-02-14  261  		}
-> 08796873a5183b Yan, Zheng       2019-01-09  262
-> 245ce991cca55e Jeff Layton      2019-05-29  263  		if (features & CEPH_FEATURE_FS_BTIME) {
-> 245ce991cca55e Jeff Layton      2019-05-29  264  			ceph_decode_need(p, end, sizeof(info->btime), bad);
-> 245ce991cca55e Jeff Layton      2019-05-29  265  			ceph_decode_copy(p, &info->btime, sizeof(info->btime));
-> a35ead314e0b92 Jeff Layton      2019-06-06  266  			ceph_decode_64_safe(p, end, info->change_attr, bad);
-> 245ce991cca55e Jeff Layton      2019-05-29  267  		}
-> 245ce991cca55e Jeff Layton      2019-05-29  268
-> 08796873a5183b Yan, Zheng       2019-01-09  269  		info->dir_pin = -ENODATA;
-> e7f72952508ac4 Yanhu Cao        2020-08-28  270  		/* info->snap_btime and info->rsnaps remain zero */
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  271  	}
-> 2f2dc053404feb Sage Weil        2009-10-06  272  	return 0;
-> 2f2dc053404feb Sage Weil        2009-10-06  273  bad:
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  274  	err = -EIO;
-> b37fe1f923fb4b Yan, Zheng       2019-01-09  275  out_bad:
-> 2f2dc053404feb Sage Weil        2009-10-06  276  	return err;
-> 2f2dc053404feb Sage Weil        2009-10-06  277  }
->
+@@ -957,6 +957,9 @@ static struct ceph_mds_session *register_session(struct ceph_mds_client *mdsc,
+ {
+ 	struct ceph_mds_session *s;
+ 
++	if (READ_ONCE(mdsc->fsc->mount_state) == CEPH_MOUNT_FENCE_IO)
++		return ERR_PTR(-EIO);
++
+ 	if (mds >= mdsc->mdsmap->possible_max_rank)
+ 		return ERR_PTR(-EINVAL);
+ 
+@@ -1632,6 +1635,9 @@ static int __open_session(struct ceph_mds_client *mdsc,
+ 	int mstate;
+ 	int mds = session->s_mds;
+ 
++	if (READ_ONCE(mdsc->fsc->mount_state) == CEPH_MOUNT_FENCE_IO)
++		return -EIO;
++
+ 	/* wait for mds to go active? */
+ 	mstate = ceph_mdsmap_get_state(mdsc->mdsmap, mds);
+ 	dout("open_session to mds%d (%s)\n", mds,
+@@ -3205,6 +3211,11 @@ static void __do_request(struct ceph_mds_client *mdsc,
+ 		err = -ETIMEDOUT;
+ 		goto finish;
+ 	}
++	if (READ_ONCE(mdsc->fsc->mount_state) == CEPH_MOUNT_FENCE_IO) {
++		dout("do_request metadata corrupted\n");
++		err = -EIO;
++		goto finish;
++	}
+ 	if (READ_ONCE(mdsc->fsc->mount_state) == CEPH_MOUNT_SHUTDOWN) {
+ 		dout("do_request forced umount\n");
+ 		err = -EIO;
+@@ -3584,6 +3595,7 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
+ 	u64 tid;
+ 	int err, result;
+ 	int mds = session->s_mds;
++	bool close_sessions = false;
+ 
+ 	if (msg->front.iov_len < sizeof(*head)) {
+ 		pr_err("mdsc_handle_reply got corrupt (short) reply\n");
+@@ -3698,10 +3710,15 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
+ 	realm = NULL;
+ 	if (rinfo->snapblob_len) {
+ 		down_write(&mdsc->snap_rwsem);
+-		ceph_update_snap_trace(mdsc, rinfo->snapblob,
++		err = ceph_update_snap_trace(mdsc, rinfo->snapblob,
+ 				rinfo->snapblob + rinfo->snapblob_len,
+ 				le32_to_cpu(head->op) == CEPH_MDS_OP_RMSNAP,
+ 				&realm);
++		if (err) {
++			up_write(&mdsc->snap_rwsem);
++			close_sessions = true;
++			goto out_err;
++		}
+ 		downgrade_write(&mdsc->snap_rwsem);
+ 	} else {
+ 		down_read(&mdsc->snap_rwsem);
+@@ -3759,6 +3776,10 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
+ 				     req->r_end_latency, err);
+ out:
+ 	ceph_mdsc_put_request(req);
++
++	/* Defer closing the sessions after s_mutex lock being released */
++	if (close_sessions)
++		ceph_mdsc_close_sessions(mdsc);
+ 	return;
+ }
+ 
+@@ -5358,7 +5379,7 @@ static bool done_closing_sessions(struct ceph_mds_client *mdsc, int skipped)
+ }
+ 
+ /*
+- * called after sb is ro.
++ * called after sb is ro or when metadata corrupted.
+  */
+ void ceph_mdsc_close_sessions(struct ceph_mds_client *mdsc)
+ {
+@@ -5648,7 +5669,8 @@ static void mds_peer_reset(struct ceph_connection *con)
+ 	struct ceph_mds_client *mdsc = s->s_mdsc;
+ 
+ 	pr_warn("mds%d closed our session\n", s->s_mds);
+-	send_mds_reconnect(mdsc, s);
++	if (READ_ONCE(mdsc->fsc->mount_state) != CEPH_MOUNT_FENCE_IO)
++		send_mds_reconnect(mdsc, s);
+ }
+ 
+ static void mds_dispatch(struct ceph_connection *con, struct ceph_msg *msg)
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index c1c452afa84d..3d417ec8da0c 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/ceph/ceph_debug.h>
+ 
++#include <linux/fs.h>
+ #include <linux/sort.h>
+ #include <linux/slab.h>
+ #include <linux/iversion.h>
+@@ -767,8 +768,10 @@ int ceph_update_snap_trace(struct ceph_mds_client *mdsc,
+ 	struct ceph_snap_realm *realm;
+ 	struct ceph_snap_realm *first_realm = NULL;
+ 	struct ceph_snap_realm *realm_to_rebuild = NULL;
++	struct ceph_client *client = mdsc->fsc->client;
+ 	int rebuild_snapcs;
+ 	int err = -ENOMEM;
++	int ret;
+ 	LIST_HEAD(dirty_realms);
+ 
+ 	lockdep_assert_held_write(&mdsc->snap_rwsem);
+@@ -885,6 +888,27 @@ int ceph_update_snap_trace(struct ceph_mds_client *mdsc,
+ 	if (first_realm)
+ 		ceph_put_snap_realm(mdsc, first_realm);
+ 	pr_err("%s error %d\n", __func__, err);
++
++	/*
++	 * When receiving a corrupted snap trace we don't know what
++	 * exactly has happened in MDS side. And we shouldn't continue
++	 * writing to OSD, which may corrupt the snapshot contents.
++	 *
++	 * Just try to blocklist this kclient and then this kclient
++	 * must be remounted to continue after the corrupted metadata
++	 * fixed in the MDS side.
++	 */
++	WRITE_ONCE(mdsc->fsc->mount_state, CEPH_MOUNT_FENCE_IO);
++	ret = ceph_monc_blocklist_add(&client->monc, &client->msgr.inst.addr);
++	if (ret)
++		pr_err("%s blocklist of %s failed: %d", __func__,
++		       ceph_pr_addr(&client->msgr.inst.addr), ret);
++
++	WARN(1, "%s: %s%s do remount to continue%s",
++	     __func__, ret ? "" : ceph_pr_addr(&client->msgr.inst.addr),
++	     ret ? "" : " was blocklisted,",
++	     err == -EIO ? " after corrupted snaptrace is fixed" : "");
++
+ 	return err;
+ }
+ 
+@@ -985,6 +1009,7 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+ 	__le64 *split_inos = NULL, *split_realms = NULL;
+ 	int i;
+ 	int locked_rwsem = 0;
++	bool close_sessions = false;
+ 
+ 	/* decode */
+ 	if (msg->front.iov_len < sizeof(*h))
+@@ -1093,8 +1118,12 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+ 	 * update using the provided snap trace. if we are deleting a
+ 	 * snap, we can avoid queueing cap_snaps.
+ 	 */
+-	ceph_update_snap_trace(mdsc, p, e,
+-			       op == CEPH_SNAP_OP_DESTROY, NULL);
++	if (ceph_update_snap_trace(mdsc, p, e,
++				   op == CEPH_SNAP_OP_DESTROY,
++				   NULL)) {
++		close_sessions = true;
++		goto bad;
++	}
+ 
+ 	if (op == CEPH_SNAP_OP_SPLIT)
+ 		/* we took a reference when we created the realm, above */
+@@ -1113,6 +1142,11 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+ out:
+ 	if (locked_rwsem)
+ 		up_write(&mdsc->snap_rwsem);
++
++	/* Defer closing the sessions after s_mutex lock being released */
++	if (close_sessions)
++		ceph_mdsc_close_sessions(mdsc);
++
+ 	return;
+ }
+ 
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index ec1edfae20a0..22086f78732f 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -111,6 +111,7 @@ enum {
+ 	CEPH_MOUNT_UNMOUNTED,
+ 	CEPH_MOUNT_SHUTDOWN,
+ 	CEPH_MOUNT_RECOVER,
++	CEPH_MOUNT_FENCE_IO,
+ };
+ 
+ #define CEPH_ASYNC_CREATE_CONFLICT_BITS 8
 -- 
-Best Regards,
-
-Xiubo Li (李秀波)
-
-Email: xiubli@redhat.com/xiubli@ibm.com
-Slack: @Xiubo Li
+2.31.1
 
