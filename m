@@ -2,188 +2,523 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D289167CA70
-	for <lists+ceph-devel@lfdr.de>; Thu, 26 Jan 2023 13:02:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFE5E67CB9F
+	for <lists+ceph-devel@lfdr.de>; Thu, 26 Jan 2023 14:04:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237172AbjAZMCi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 26 Jan 2023 07:02:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60286 "EHLO
+        id S234095AbjAZNEs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 26 Jan 2023 08:04:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233130AbjAZMCh (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 26 Jan 2023 07:02:37 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF2FA62263;
-        Thu, 26 Jan 2023 04:02:35 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 75DEF617AD;
-        Thu, 26 Jan 2023 12:02:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8E8FC433EF;
-        Thu, 26 Jan 2023 12:02:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674734554;
-        bh=83fTWvpaEiAzVDaeYFz2GUb2OOww4EG+o2MOVi11zGU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=lnaSaz9xP7pd9evixsmXaWhTU8ZegXDyqUAlmc8ci4N4ldJSkHKUm/LDiv76C+wI/
-         VAZcsfEFGwsZ7vEiZl7uaRPzO4iAwPwrHIZbX/B7SQmFvkXiIJHI2aFoAgPKXhYVOV
-         vbNYMAKf938rfJ8pPRRdumhaz4o+o8XZXZSRdgSokJWNywdMWrSlJLCRLlbyTT9MiJ
-         MR4EaTs+0pGmTGeZniK12fbJ9Pdob1oQpmaAtdAsEskRxnKSAxlng8HJjseWLnEsGY
-         gfh2g5MSiUQvE/W+va/0RqGUOImd7/r/EVeGwOSNHaNTcJFAUmBSiNg++yhOB+WonH
-         uT5l6ovxjVpeA==
-Message-ID: <5f27d8b64ad64905ada344e299cf00e55b8ac895.camel@kernel.org>
-Subject: Re: [PATCH v8 RESEND 2/8] fs: clarify when the i_version counter
- must be updated
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
-        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, bfields@fieldses.org,
-        brauner@kernel.org, fweimer@redhat.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org, Colin Walters <walters@verbum.org>
-Date:   Thu, 26 Jan 2023 07:02:31 -0500
-In-Reply-To: <20230126113642.eenghs2wvfrlnlak@quack3>
-References: <20230124193025.185781-1-jlayton@kernel.org>
-         <20230124193025.185781-3-jlayton@kernel.org>
-         <20230125160625.zenzybjgie224jf6@quack3>
-         <3c5cf7c7f9e206a3d7c4253de52015dda97ef41e.camel@kernel.org>
-         <20230126113642.eenghs2wvfrlnlak@quack3>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.3 (3.46.3-1.fc37) 
+        with ESMTP id S233903AbjAZNEr (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 26 Jan 2023 08:04:47 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E24D85B96
+        for <ceph-devel@vger.kernel.org>; Thu, 26 Jan 2023 05:03:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674738235;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=oafCzeqrYCCS4WoZirXj7TLTP27/vEnI8/oGJT2P0aw=;
+        b=a3GAd13d1TXqWP9exQWlSOvLjDZ3ax6nF5LNM4c/e+MTEkjV9KKhS7yEdOw9qOJxqmD5yS
+        2RS6mR03qASiwAyoLDQErggYIM0U5hq094QCwP8S+5fLeW0HbzMWyS1h36dtCIfAkvVZjQ
+        +jdlYGZ4RejRFGUStSgC6hT0SC+4RL8=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-649-GlnFQHtqPamoMTd_wN2vpw-1; Thu, 26 Jan 2023 08:03:53 -0500
+X-MC-Unique: GlnFQHtqPamoMTd_wN2vpw-1
+Received: by mail-pj1-f72.google.com with SMTP id n93-20020a17090a2ce600b0022beeabcf6cso2686672pjd.0
+        for <ceph-devel@vger.kernel.org>; Thu, 26 Jan 2023 05:03:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oafCzeqrYCCS4WoZirXj7TLTP27/vEnI8/oGJT2P0aw=;
+        b=P0RmLsycrpVfS72QEeksQL64qaIA8XobRXUOc205imYpubeny5vpmQ2Yyj17qVN1pt
+         AOYWnzm1Ydi0zb1kJzhrZyZn5OIGZ76jkiQSe7RI9RORCTFNDWG9SIGU7avIg1e8xdej
+         xVrWitPgDct/dzP5yNI4yOsWMKHlvTsPZ2ixfiniAvrTOSZv2Ae1ltI5gfSS4qhoSLbt
+         j5Vy4c4oEig3mCs/z+FAoVABLn8xwSXHfYWR4Z462tabKVYXu5zAoN/lNpiF6uoZ5Yx8
+         TpEvMQNSbbaAeHrYXSX0yxjrgHr2dEAwInkE03/UvnKFSWrfoYxwYU5RktDw6MUhhW4H
+         PIEw==
+X-Gm-Message-State: AFqh2kqDycyGmToVpo8gMC2AIsLYfiP5BBfvmcp8oVleha92OkpmUT2D
+        yvL80Jwkjs+03Qu7qRtCzGPj3izK4LLiu1GRP56dkKSh3pRio2dKUJra6znIYkl9ojdi1KML2f8
+        gAlTN3e1CY2Q7cUU32WnbOg==
+X-Received: by 2002:a17:902:f68a:b0:194:dbd4:2a1e with SMTP id l10-20020a170902f68a00b00194dbd42a1emr31617069plg.1.1674738232313;
+        Thu, 26 Jan 2023 05:03:52 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXuE6eJYitGIB0PjZW6GzG0uVwYpycradXIx15SZChRB0RbDEYwo/uBEEjc4af/BaI7GJ4fgNQ==
+X-Received: by 2002:a17:902:f68a:b0:194:dbd4:2a1e with SMTP id l10-20020a170902f68a00b00194dbd42a1emr31617031plg.1.1674738231799;
+        Thu, 26 Jan 2023 05:03:51 -0800 (PST)
+Received: from [10.72.13.156] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id w1-20020a170902c78100b00194955b7898sm927687pla.237.2023.01.26.05.03.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 26 Jan 2023 05:03:51 -0800 (PST)
+Message-ID: <85021e1d-6668-47cf-e1b6-6cde8d0fe46d@redhat.com>
+Date:   Thu, 26 Jan 2023 21:03:44 +0800
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v2] ceph: drop the messages from MDS when unmouting
+Content-Language: en-US
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        mchangir@redhat.com, vshankar@redhat.com
+References: <20221221093031.132792-1-xiubli@redhat.com>
+ <Y8lvXRmHKGdORhs5@suse.de> <Y8pus+5ZciJa/apW@suse.de>
+ <cfd149ba-69cb-6514-db03-5cbd113bf5dc@redhat.com> <Y85eRQlbwt4Z4xko@suse.de>
+ <e11c7958-62c6-d960-77db-e4fae33543e0@redhat.com> <Y8/P0kg4VtC6UtD9@suse.de>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <Y8/P0kg4VtC6UtD9@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, 2023-01-26 at 12:36 +0100, Jan Kara wrote:
-> On Thu 26-01-23 05:54:16, Jeff Layton wrote:
-> > On Wed, 2023-01-25 at 17:06 +0100, Jan Kara wrote:
-> > > On Tue 24-01-23 14:30:19, Jeff Layton wrote:
-> > > > The i_version field in the kernel has had different semantics over
-> > > > the decades, but NFSv4 has certain expectations. Update the comment=
-s
-> > > > in iversion.h to describe when the i_version must change.
-> > > >=20
-> > > > Cc: Colin Walters <walters@verbum.org>
-> > > > Cc: NeilBrown <neilb@suse.de>
-> > > > Cc: Trond Myklebust <trondmy@hammerspace.com>
-> > > > Cc: Dave Chinner <david@fromorbit.com>
-> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > >=20
-> > > Looks good to me. But one note below:
-> > >=20
-> > > > diff --git a/include/linux/iversion.h b/include/linux/iversion.h
-> > > > index 6755d8b4f20b..fced8115a5f4 100644
-> > > > --- a/include/linux/iversion.h
-> > > > +++ b/include/linux/iversion.h
-> > > > @@ -9,8 +9,25 @@
-> > > >   * ---------------------------
-> > > >   * The change attribute (i_version) is mandated by NFSv4 and is mo=
-stly for
-> > > >   * knfsd, but is also used for other purposes (e.g. IMA). The i_ve=
-rsion must
-> > > > - * appear different to observers if there was a change to the inod=
-e's data or
-> > > > - * metadata since it was last queried.
-> > > > + * appear larger to observers if there was an explicit change to t=
-he inode's
-> > > > + * data or metadata since it was last queried.
-> > > > + *
-> > > > + * An explicit change is one that would ordinarily result in a cha=
-nge to the
-> > > > + * inode status change time (aka ctime). i_version must appear to =
-change, even
-> > > > + * if the ctime does not (since the whole point is to avoid missin=
-g updates due
-> > > > + * to timestamp granularity). If POSIX or other relevant spec mand=
-ates that the
-> > > > + * ctime must change due to an operation, then the i_version count=
-er must be
-> > > > + * incremented as well.
-> > > > + *
-> > > > + * Making the i_version update completely atomic with the operatio=
-n itself would
-> > > > + * be prohibitively expensive. Traditionally the kernel has update=
-d the times on
-> > > > + * directories after an operation that changes its contents. For r=
-egular files,
-> > > > + * the ctime is usually updated before the data is copied into the=
- cache for a
-> > > > + * write. This means that there is a window of time when an observ=
-er can
-> > > > + * associate a new timestamp with old file contents. Since the pur=
-pose of the
-> > > > + * i_version is to allow for better cache coherency, the i_version=
- must always
-> > > > + * be updated after the results of the operation are visible. Upda=
-ting it before
-> > > > + * and after a change is also permitted.
-> > >=20
-> > > This sounds good but it is not the case for any of the current filesy=
-stems, is
-> > > it? Perhaps the documentation should mention this so that people are =
-not
-> > > confused?
-> >=20
-> > Correct. Currently, all filesystems change the times and version before
-> > a write instead of after. I'm hoping that situation will change soon
-> > though, as I've been working on a patchset to fix this for tmpfs, ext4
-> > and btrfs.
->=20
-> That is good but we'll see how long it takes to get merged. AFAIR it is n=
-ot
-> a complete nobrainer ;)
->=20
-> > If you still want to see something for this though, what would you
-> > suggest for verbiage?
->=20
-> Sure:
->=20
-> ... the i_version must a be updated after the results of the operation ar=
-e
-> visible (note that none of the filesystems currently do this, it is a wor=
-k
-> in progress to fix this).
->=20
-> And once your patches are merged, you can also delete this note :).
->=20
-> 								Honza
 
-Sounds good, I folded something similar to that into the patch and
-pushed it into the branch I'm feeding into linux-next.=A0I won't bother
-re-posting for just that though:
+On 24/01/2023 20:32, Luís Henriques wrote:
+> On Tue, Jan 24, 2023 at 06:26:46PM +0800, Xiubo Li wrote:
+>> On 23/01/2023 18:15, Luís Henriques wrote:
+>>> On Sun, Jan 22, 2023 at 09:57:46PM +0800, Xiubo Li wrote:
+>>>> Hi Luis,
+>>>>
+>>>> On 20/01/2023 18:36, Luís Henriques wrote:
+>>>>> On Thu, Jan 19, 2023 at 04:27:09PM +0000, Luís Henriques wrote:
+>>>>>> On Wed, Dec 21, 2022 at 05:30:31PM +0800, xiubli@redhat.com wrote:
+>>>>>>> From: Xiubo Li <xiubli@redhat.com>
+>>>>>>>
+>>>>>>> When unmounting it will just wait for the inflight requests to be
+>>>>>>> finished, but just before the sessions are closed the kclient still
+>>>>>>> could receive the caps/snaps/lease/quota msgs from MDS. All these
+>>>>>>> msgs need to hold some inodes, which will cause ceph_kill_sb() failing
+>>>>>>> to evict the inodes in time.
+>>>>>>>
+>>>>>>> If encrypt is enabled the kernel generate a warning when removing
+>>>>>>> the encrypt keys when the skipped inodes still hold the keyring:
+>>>>>> Finally (sorry for the delay!) I managed to look into the 6.1 rebase.  It
+>>>>>> does look good, but I started hitting the WARNING added by patch:
+>>>>>>
+>>>>>>      [DO NOT MERGE] ceph: make sure all the files successfully put before unmounting
+>>>>>>
+>>>>>> This patch seems to be working but I'm not sure we really need the extra
+>>>>> OK, looks like I jumped the gun here: I still see the warning with your
+>>>>> patch.
+>>>>>
+>>>>> I've done a quick hack and the patch below sees fix it.  But again, it
+>>>>> will impact performance.  I'll see if I can figure out something else.
+>>>>>
+>>>>> Cheers,
+>>>>> --
+>>>>> Luís
+>>>>>
+>>>>> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>>>>> index 2cd134ad02a9..bdb4efa0f9f7 100644
+>>>>> --- a/fs/ceph/file.c
+>>>>> +++ b/fs/ceph/file.c
+>>>>> @@ -2988,6 +2988,21 @@ static ssize_t ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>>>>>     	return ret;
+>>>>>     }
+>>>>> +static int ceph_flush(struct file *file, fl_owner_t id)
+>>>>> +{
+>>>>> +	struct inode *inode = file_inode(file);
+>>>>> +	int ret;
+>>>>> +
+>>>>> +	if ((file->f_mode & FMODE_WRITE) == 0)
+>>>>> +		return 0;
+>>>>> +
+>>>>> +	ret = filemap_write_and_wait(inode->i_mapping);
+>>>>> +	if (ret)
+>>>>> +		ret = filemap_check_wb_err(file->f_mapping, 0);
+>>>>> +
+>>>>> +	return ret;
+>>>>> +}
+>>>>> +
+>>>>>     const struct file_operations ceph_file_fops = {
+>>>>>     	.open = ceph_open,
+>>>>>     	.release = ceph_release,
+>>>>> @@ -3005,4 +3020,5 @@ const struct file_operations ceph_file_fops = {
+>>>>>     	.compat_ioctl = compat_ptr_ioctl,
+>>>>>     	.fallocate	= ceph_fallocate,
+>>>>>     	.copy_file_range = ceph_copy_file_range,
+>>>>> +	.flush = ceph_flush,
+>>>>>     };
+>>>>>
+>>>> This will only fix the second crash case in
+>>>> https://tracker.ceph.com/issues/58126#note-6, but not the case in
+>>>> https://tracker.ceph.com/issues/58126#note-5.
+>>>>
+>>>> This issue could be triggered with "test_dummy_encryption" and with
+>>>> xfstests-dev's generic/124. You can have a try.
+>>> OK, thanks.  I'll give it a try.  BTW, my local reproducer was
+>>> generic/132, not generic/124.  I'll let you know if I find something.
+>> Hi Luis,
+>>
+>> I added some logs and found that when doing the aio_write, it will split to
+>> many aio requests and when the last req finished it will call the
+>> "writepages_finish()", which will iput() the inode and release the last
+>> refcount of the inode.
+>>
+>> But it seems the complete_all() is called without the req->r_callback() is
+>> totally finished:
+>>
+>> <4>[500400.268200] writepages_finish 0000000060940222 rc 0
+>> <4>[500400.268476] writepages_finish 0000000060940222 rc 0 <===== the last
+>> osd req->r_callback()
+>> <4>[500400.268515] sync_fs (blocking)  <===== unmounting begin
+>> <4>[500400.268526] sync_fs (blocking) done
+>> <4>[500400.268530] kill_sb after sync_filesystem 00000000a01a1cf4   <=== the
+>> sync_filesystem() will be called, I just added it in ceph code but the VFS
+>> will call it again in "kill_anon_super()"
+>> <4>[500400.268539] ceph_evict_inode:682, dec inode 0000000044f12aa7
+>> <4>[500400.268626] sync_fs (blocking)
+>> <4>[500400.268631] sync_fs (blocking) done
+>> <4>[500400.268634] evict_inodes inode 0000000060940222, i_count = 1, was
+>> skipped!    <=== skipped
+>> <4>[500400.268642] fscrypt_destroy_keyring: mk 00000000baf04977
+>> mk_active_refs = 2
+>> <4>[500400.268651] ceph_evict_inode:682, dec inode 0000000060940222   <====
+>> evict the inode in the req->r_callback()
+>>
+>> Locally my VM is not working and I couldn't run the test for now. Could you
+>> help test the following patch ?
+> So, running generic/132 in my test environment with your patch applied to
+> the 'testing' branch I still see the WARNING (pasted the backtrace
+> bellow).  I'll try help to dig a bit more on this issue in the next few
+> days.
+>
+> Cheers,
+> --
+> Luís
+>
+>
+> [  102.713299] ceph: test_dummy_encryption mode enabled
+> [  121.807203] evict_inodes inode 000000000d85998d, i_count = 1, was skipped!
+> [  121.809055] fscrypt_destroy_keyring: mk_active_refs = 2
+> [  121.810439] ------------[ cut here ]------------
+> [  121.811937] WARNING: CPU: 1 PID: 2671 at fs/crypto/keyring.c:244 fscrypt_destroy_keyring+0x109/0x110
+> [  121.814243] CPU: 1 PID: 2671 Comm: umount Not tainted 6.2.0-rc2+ #23
+> [  121.815810] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239552-rebuilt.opensuse.org 04/01/2014
+> [  121.818588] RIP: 0010:fscrypt_destroy_keyring+0x109/0x110
+> [  121.819925] Code: 00 00 48 83 c4 10 5b 5d 41 5c 41 5d 41 5e 41 5f c3 41 8b 77 38 48 c7 c7 18 40 c0 81 e8 e2 b2 51 00 41 8b 47 38 83 f8 01 74 9e <0f> 0b eb 9a 0f 1f 00 0f0
+> [  121.824469] RSP: 0018:ffffc900039f3e20 EFLAGS: 00010202
+> [  121.825908] RAX: 0000000000000002 RBX: 0000000000000000 RCX: 0000000000000001
+> [  121.827660] RDX: 0000000000000000 RSI: ffff88842fc9b180 RDI: 00000000ffffffff
+> [  121.829425] RBP: ffff888102a99000 R08: 0000000000000000 R09: c0000000ffffefff
+> [  121.831188] R10: ffffc90000093e00 R11: ffffc900039f3cd8 R12: 0000000000000000
+> [  121.833408] R13: ffff888102a9a948 R14: ffffffff823a66b0 R15: ffff8881048f6c00
+> [  121.835186] FS:  00007f2442206840(0000) GS:ffff88842fc80000(0000) knlGS:0000000000000000
+> [  121.838205] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  121.840386] CR2: 00007f0a289daf70 CR3: 000000011446a000 CR4: 00000000000006a0
+> [  121.842190] Call Trace:
+> [  121.843125]  <TASK>
+> [  121.843945]  generic_shutdown_super+0x42/0x130
+> [  121.845656]  kill_anon_super+0xe/0x30
+> [  121.847081]  ceph_kill_sb+0x3d/0xa0
+> [  121.848418]  deactivate_locked_super+0x34/0x60
+> [  121.850166]  cleanup_mnt+0xb8/0x150
+> [  121.851498]  task_work_run+0x61/0x90
+> [  121.852863]  exit_to_user_mode_prepare+0x147/0x170
+> [  121.854741]  syscall_exit_to_user_mode+0x20/0x40
+> [  121.856489]  do_syscall_64+0x48/0x80
+> [  121.857887]  entry_SYSCALL_64_after_hwframe+0x46/0xb0
+> [  121.859659] RIP: 0033:0x7f2442444a67
+> [  121.860922] Code: 24 0d 00 f7 d8 64 89 01 48 83 c8 ff c3 66 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 018
+> [  121.866942] RSP: 002b:00007ffc56533fc8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+> [  121.869305] RAX: 0000000000000000 RBX: 00007f2442579264 RCX: 00007f2442444a67
+> [  121.871400] RDX: ffffffffffffff78 RSI: 0000000000000000 RDI: 00005612dcd02b10
+> [  121.873512] RBP: 00005612dccfd960 R08: 0000000000000000 R09: 00007f2442517be0
+> [  121.875492] R10: 00005612dcd03ea0 R11: 0000000000000246 R12: 0000000000000000
+> [  121.877448] R13: 00005612dcd02b10 R14: 00005612dccfda70 R15: 00005612dccfdb90
+> [  121.879418]  </TASK>
+> [  121.880039] ---[ end trace 0000000000000000 ]---
+>
+Okay.
 
-diff --git a/include/linux/iversion.h b/include/linux/iversion.h
-index fced8115a5f4..f174ff1b59ee 100644
---- a/include/linux/iversion.h
-+++ b/include/linux/iversion.h
-@@ -27,7 +27,8 @@
-  * associate a new timestamp with old file contents. Since the purpose of =
-the
-  * i_version is to allow for better cache coherency, the i_version must al=
-ways
-  * be updated after the results of the operation are visible. Updating it =
-before
-- * and after a change is also permitted.
-+ * and after a change is also permitted. (Note that no filesystems current=
-ly do
-+ * this. Fixing that is a work-in-progress).
-  *
-  * Observers see the i_version as a 64-bit number that never decreases. If=
- it
-  * remains the same since it was last checked, then nothing has changed in=
- the
+I found the sync_filesystem() will wait for the last the osd request, 
+but the sequence of deleting the osd req from osdc and calling 
+req->r_callback seems incorrect.
 
-Thanks!
---=20
-Jeff Layton <jlayton@kernel.org>
+The following patch should fix it:
+
+
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index 78b622178a3d..a3b4c5cabb80 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -2532,12 +2532,12 @@ static void finish_request(struct 
+ceph_osd_request *req)
+         ceph_msg_revoke_incoming(req->r_reply);
+  }
+
+-static void __complete_request(struct ceph_osd_request *req)
++static void __complete_request(struct ceph_osd_request *req, bool callback)
+  {
+         dout("%s req %p tid %llu cb %ps result %d\n", __func__, req,
+              req->r_tid, req->r_callback, req->r_result);
+
+-       if (req->r_callback)
++       if (callback && req->r_callback)
+                 req->r_callback(req);
+         complete_all(&req->r_completion);
+         ceph_osdc_put_request(req);
+@@ -2548,7 +2548,7 @@ static void complete_request_workfn(struct 
+work_struct *work)
+         struct ceph_osd_request *req =
+             container_of(work, struct ceph_osd_request, r_complete_work);
+
+-       __complete_request(req);
++       __complete_request(req, true);
+  }
+
+  /*
+@@ -3873,11 +3873,13 @@ static void handle_reply(struct ceph_osd *osd, 
+struct ceph_msg *msg)
+         WARN_ON(!(m.flags & CEPH_OSD_FLAG_ONDISK));
+         req->r_version = m.user_version;
+         req->r_result = m.result ?: data_len;
++       if (req->r_callback)
++               req->r_callback(req);
+         finish_request(req);
+         mutex_unlock(&osd->lock);
+         up_read(&osdc->lock);
+
+-       __complete_request(req);
++       __complete_request(req, false);
+         return;
+
+  fail_request:
+
+Thanks
+
+- Xiubo
+
+
+>> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+>> index 78b622178a3d..5cdaba0d3003 100644
+>> --- a/net/ceph/osd_client.c
+>> +++ b/net/ceph/osd_client.c
+>> @@ -2539,6 +2539,7 @@ static void __complete_request(struct ceph_osd_request
+>> *req)
+>>
+>>          if (req->r_callback)
+>>                  req->r_callback(req);
+>> +       barrier();
+>>          complete_all(&req->r_completion);
+>>          ceph_osdc_put_request(req);
+>>   }
+>>
+>> Thanks
+>>
+>> - Xiubo
+>>
+>>
+>>>> Locally I am still reading the code to check why "sync_filesystem(s);"
+>>>> couldn't do the same with "ceph_flush" as above.
+>>>>
+>>>> I am still on holiday these days and I will test this after my back.
+>>> Sure, no problem.  Enjoy your break!
+>>>
+>>> Cheers,
+>>> --
+>>> Luís
+>>>
+>>>> Thanks
+>>>>
+>>>>
+>>>>>> 'stopping' state.  Looking at the code, we've flushed all the workqueues
+>>>>>> and done all the waits, so I *think* the sync_filesystem() call should be
+>>>>>> enough.
+>>>>>>
+>>>>>> The other alternative I see would be to add a ->flush() to ceph_file_fops,
+>>>>>> where we'd do a filemap_write_and_wait().  But that would probably have a
+>>>>>> negative performance impact -- my understand is that it basically means
+>>>>>> we'll have sync file closes.
+>>>>>>
+>>>>>> Cheers,
+>>>>>> --
+>>>>>> Luís
+>>>>>>
+>>>>>>> WARNING: CPU: 4 PID: 168846 at fs/crypto/keyring.c:242 fscrypt_destroy_keyring+0x7e/0xd0
+>>>>>>> CPU: 4 PID: 168846 Comm: umount Tainted: G S  6.1.0-rc5-ceph-g72ead199864c #1
+>>>>>>> Hardware name: Supermicro SYS-5018R-WR/X10SRW-F, BIOS 2.0 12/17/2015
+>>>>>>> RIP: 0010:fscrypt_destroy_keyring+0x7e/0xd0
+>>>>>>> RSP: 0018:ffffc9000b277e28 EFLAGS: 00010202
+>>>>>>> RAX: 0000000000000002 RBX: ffff88810d52ac00 RCX: ffff88810b56aa00
+>>>>>>> RDX: 0000000080000000 RSI: ffffffff822f3a09 RDI: ffff888108f59000
+>>>>>>> RBP: ffff8881d394fb88 R08: 0000000000000028 R09: 0000000000000000
+>>>>>>> R10: 0000000000000001 R11: 11ff4fe6834fcd91 R12: ffff8881d394fc40
+>>>>>>> R13: ffff888108f59000 R14: ffff8881d394f800 R15: 0000000000000000
+>>>>>>> FS:  00007fd83f6f1080(0000) GS:ffff88885fd00000(0000) knlGS:0000000000000000
+>>>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>>> CR2: 00007f918d417000 CR3: 000000017f89a005 CR4: 00000000003706e0
+>>>>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>>>>> Call Trace:
+>>>>>>> <TASK>
+>>>>>>> generic_shutdown_super+0x47/0x120
+>>>>>>> kill_anon_super+0x14/0x30
+>>>>>>> ceph_kill_sb+0x36/0x90 [ceph]
+>>>>>>> deactivate_locked_super+0x29/0x60
+>>>>>>> cleanup_mnt+0xb8/0x140
+>>>>>>> task_work_run+0x67/0xb0
+>>>>>>> exit_to_user_mode_prepare+0x23d/0x240
+>>>>>>> syscall_exit_to_user_mode+0x25/0x60
+>>>>>>> do_syscall_64+0x40/0x80
+>>>>>>> entry_SYSCALL_64_after_hwframe+0x63/0xcd
+>>>>>>> RIP: 0033:0x7fd83dc39e9b
+>>>>>>>
+>>>>>>> URL: https://tracker.ceph.com/issues/58126
+>>>>>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>>>>>>> ---
+>>>>>>>
+>>>>>>> V2:
+>>>>>>> - Fix it in ceph layer.
+>>>>>>>
+>>>>>>>
+>>>>>>>     fs/ceph/caps.c       |  3 +++
+>>>>>>>     fs/ceph/mds_client.c |  5 ++++-
+>>>>>>>     fs/ceph/mds_client.h |  7 ++++++-
+>>>>>>>     fs/ceph/quota.c      |  3 +++
+>>>>>>>     fs/ceph/snap.c       |  3 +++
+>>>>>>>     fs/ceph/super.c      | 14 ++++++++++++++
+>>>>>>>     6 files changed, 33 insertions(+), 2 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+>>>>>>> index 15d9e0f0d65a..e8a53aeb2a8c 100644
+>>>>>>> --- a/fs/ceph/caps.c
+>>>>>>> +++ b/fs/ceph/caps.c
+>>>>>>> @@ -4222,6 +4222,9 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+>>>>>>>     	dout("handle_caps from mds%d\n", session->s_mds);
+>>>>>>> +	if (mdsc->stopping >= CEPH_MDSC_STOPPING_FLUSHED)
+>>>>>>> +		return;
+>>>>>>> +
+>>>>>>>     	/* decode */
+>>>>>>>     	end = msg->front.iov_base + msg->front.iov_len;
+>>>>>>>     	if (msg->front.iov_len < sizeof(*h))
+>>>>>>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+>>>>>>> index d41ab68f0130..1ad85af49b45 100644
+>>>>>>> --- a/fs/ceph/mds_client.c
+>>>>>>> +++ b/fs/ceph/mds_client.c
+>>>>>>> @@ -4869,6 +4869,9 @@ static void handle_lease(struct ceph_mds_client *mdsc,
+>>>>>>>     	dout("handle_lease from mds%d\n", mds);
+>>>>>>> +	if (mdsc->stopping >= CEPH_MDSC_STOPPING_FLUSHED)
+>>>>>>> +		return;
+>>>>>>> +
+>>>>>>>     	/* decode */
+>>>>>>>     	if (msg->front.iov_len < sizeof(*h) + sizeof(u32))
+>>>>>>>     		goto bad;
+>>>>>>> @@ -5262,7 +5265,7 @@ void send_flush_mdlog(struct ceph_mds_session *s)
+>>>>>>>     void ceph_mdsc_pre_umount(struct ceph_mds_client *mdsc)
+>>>>>>>     {
+>>>>>>>     	dout("pre_umount\n");
+>>>>>>> -	mdsc->stopping = 1;
+>>>>>>> +	mdsc->stopping = CEPH_MDSC_STOPPING_BEGAIN;
+>>>>>>>     	ceph_mdsc_iterate_sessions(mdsc, send_flush_mdlog, true);
+>>>>>>>     	ceph_mdsc_iterate_sessions(mdsc, lock_unlock_session, false);
+>>>>>>> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+>>>>>>> index 81a1f9a4ac3b..56f9d8077068 100644
+>>>>>>> --- a/fs/ceph/mds_client.h
+>>>>>>> +++ b/fs/ceph/mds_client.h
+>>>>>>> @@ -398,6 +398,11 @@ struct cap_wait {
+>>>>>>>     	int			want;
+>>>>>>>     };
+>>>>>>> +enum {
+>>>>>>> +	CEPH_MDSC_STOPPING_BEGAIN = 1,
+>>>>>>> +	CEPH_MDSC_STOPPING_FLUSHED = 2,
+>>>>>>> +};
+>>>>>>> +
+>>>>>>>     /*
+>>>>>>>      * mds client state
+>>>>>>>      */
+>>>>>>> @@ -414,7 +419,7 @@ struct ceph_mds_client {
+>>>>>>>     	struct ceph_mds_session **sessions;    /* NULL for mds if no session */
+>>>>>>>     	atomic_t		num_sessions;
+>>>>>>>     	int                     max_sessions;  /* len of sessions array */
+>>>>>>> -	int                     stopping;      /* true if shutting down */
+>>>>>>> +	int                     stopping;      /* the stage of shutting down */
+>>>>>>>     	atomic64_t		quotarealms_count; /* # realms with quota */
+>>>>>>>     	/*
+>>>>>>> diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
+>>>>>>> index 64592adfe48f..f5819fc31d28 100644
+>>>>>>> --- a/fs/ceph/quota.c
+>>>>>>> +++ b/fs/ceph/quota.c
+>>>>>>> @@ -47,6 +47,9 @@ void ceph_handle_quota(struct ceph_mds_client *mdsc,
+>>>>>>>     	struct inode *inode;
+>>>>>>>     	struct ceph_inode_info *ci;
+>>>>>>> +	if (mdsc->stopping >= CEPH_MDSC_STOPPING_FLUSHED)
+>>>>>>> +		return;
+>>>>>>> +
+>>>>>>>     	if (msg->front.iov_len < sizeof(*h)) {
+>>>>>>>     		pr_err("%s corrupt message mds%d len %d\n", __func__,
+>>>>>>>     		       session->s_mds, (int)msg->front.iov_len);
+>>>>>>> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+>>>>>>> index a73943e51a77..eeabdd0211d8 100644
+>>>>>>> --- a/fs/ceph/snap.c
+>>>>>>> +++ b/fs/ceph/snap.c
+>>>>>>> @@ -1010,6 +1010,9 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+>>>>>>>     	int locked_rwsem = 0;
+>>>>>>>     	bool close_sessions = false;
+>>>>>>> +	if (mdsc->stopping >= CEPH_MDSC_STOPPING_FLUSHED)
+>>>>>>> +		return;
+>>>>>>> +
+>>>>>>>     	/* decode */
+>>>>>>>     	if (msg->front.iov_len < sizeof(*h))
+>>>>>>>     		goto bad;
+>>>>>>> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+>>>>>>> index f10a076f47e5..012b35be41a9 100644
+>>>>>>> --- a/fs/ceph/super.c
+>>>>>>> +++ b/fs/ceph/super.c
+>>>>>>> @@ -1483,6 +1483,20 @@ static void ceph_kill_sb(struct super_block *s)
+>>>>>>>     	ceph_mdsc_pre_umount(fsc->mdsc);
+>>>>>>>     	flush_fs_workqueues(fsc);
+>>>>>>> +	/*
+>>>>>>> +	 * Though the kill_anon_super() will finally trigger the
+>>>>>>> +	 * sync_filesystem() anyway, we still need to do it here and
+>>>>>>> +	 * then bump the stage of shutdown. This will drop any further
+>>>>>>> +	 * message, which makes no sense any more, from MDSs.
+>>>>>>> +	 *
+>>>>>>> +	 * Without this when evicting the inodes it may fail in the
+>>>>>>> +	 * kill_anon_super(), which will trigger a warning when
+>>>>>>> +	 * destroying the fscrypt keyring and then possibly trigger
+>>>>>>> +	 * a further crash in ceph module when iput() the inodes.
+>>>>>>> +	 */
+>>>>>>> +	sync_filesystem(s);
+>>>>>>> +	fsc->mdsc->stopping = CEPH_MDSC_STOPPING_FLUSHED;
+>>>>>>> +
+>>>>>>>     	kill_anon_super(s);
+>>>>>>>     	fsc->client->extra_mon_dispatch = NULL;
+>>>>>>> -- 
+>>>>>>> 2.31.1
+>>>>>>>
+>>>> -- 
+>>>> Best Regards,
+>>>>
+>>>> Xiubo Li (李秀波)
+>>>>
+>>>> Email: xiubli@redhat.com/xiubli@ibm.com
+>>>> Slack: @Xiubo Li
+>>>>
+>> -- 
+>> Best Regards,
+>>
+>> Xiubo Li (李秀波)
+>>
+>> Email: xiubli@redhat.com/xiubli@ibm.com
+>> Slack: @Xiubo Li
+>>
+-- 
+Best Regards,
+
+Xiubo Li (李秀波)
+
+Email: xiubli@redhat.com/xiubli@ibm.com
+Slack: @Xiubo Li
+
