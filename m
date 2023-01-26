@@ -2,92 +2,62 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E9E6967D45F
-	for <lists+ceph-devel@lfdr.de>; Thu, 26 Jan 2023 19:39:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 685F167D7F2
+	for <lists+ceph-devel@lfdr.de>; Thu, 26 Jan 2023 22:53:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232160AbjAZSjJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 26 Jan 2023 13:39:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57362 "EHLO
+        id S231915AbjAZVxf (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 26 Jan 2023 16:53:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232002AbjAZSjH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 26 Jan 2023 13:39:07 -0500
-X-Greylist: delayed 1444 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 26 Jan 2023 10:38:56 PST
-Received: from qproxy6-pub.mail.unifiedlayer.com (qproxy6-pub.mail.unifiedlayer.com [69.89.23.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69C2C3EFC6
-        for <ceph-devel@vger.kernel.org>; Thu, 26 Jan 2023 10:38:56 -0800 (PST)
-Received: from progateway7-pub.mail.pro1.eigbox.com (unknown [67.222.38.55])
-        by qproxy6.mail.unifiedlayer.com (Postfix) with ESMTP id DE4338028E5C
-        for <ceph-devel@vger.kernel.org>; Thu, 26 Jan 2023 18:14:46 +0000 (UTC)
-Received: from cmgw14.mail.unifiedlayer.com (unknown [10.0.90.129])
-        by progateway7.mail.pro1.eigbox.com (Postfix) with ESMTP id 957C410048181
-        for <ceph-devel@vger.kernel.org>; Thu, 26 Jan 2023 18:14:28 +0000 (UTC)
-Received: from host2059.hostmonster.com ([67.20.112.233])
-        by cmsmtp with ESMTP
-        id L6lYp0EZKiJ4bL6lYp3avg; Thu, 26 Jan 2023 18:14:28 +0000
-X-Authority-Reason: nr=8
-X-Authority-Analysis: v=2.4 cv=NNEQR22g c=1 sm=1 tr=0 ts=63d2c304
- a=5v2YoY0vS1lTYyFvyOB9ag==:117 a=5v2YoY0vS1lTYyFvyOB9ag==:17
- a=dLZJa+xiwSxG16/P+YVxDGlgEgI=:19 a=IkcTkHD0fZMA:10:nop_charset_1
- a=RvmDmJFTN0MA:10:nop_rcvd_month_year
- a=Xvffn61C-bAA:10:endurance_base64_authed_username_1 a=20KFwNOVAAAA:8
- a=l_JCGrN5Psr9EYzUQRwA:9 a=QEXdDO2ut3YA:10:nop_charset_2
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=petasan.org
-        ; s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=2taIIDZ54+p5Urd7tTXVVlacmxUtcfo/PbhCQ37QOV8=; b=Vi48BslfJsK+i29O6Z5Qi3QX+7
-        /D0TvArUqX3mgZoxB7RxlqD3BIOSE3bRzL3OdRVaEUq/4MXkjiRIGibOHZhZn5PpHxSXsUtN2PqKh
-        m5w6wv6bLhsq9cjPsi0Q3eL9LEKryKPX1bMinGWN/n+3UxTRWIIysHUUAFJeXZyLIYRZnjhNIpfa3
-        qUGwcRgeYVnOPRqk+Q4UxW8rAZJNZo0yPmhjHCC6QB4HCqZOj8cAS4AQImG7F06xEtvJXdHl87ZMs
-        zqIWBlKYrMLMRalZwnEkphUehuWmXXAlA4XfSxJHAxgF71Yacd7WntxHqJLgqKxihFPp4AzY93sf8
-        wJj5Jf3Q==;
-Received: from [196.132.103.133] (port=18303 helo=[10.0.2.15])
-        by host2059.hostmonster.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.95)
-        (envelope-from <mmokhtar@petasan.org>)
-        id 1pL6lX-000DnM-CU;
-        Thu, 26 Jan 2023 11:14:27 -0700
-Message-ID: <b7021070-0d40-362c-51ab-666922c153a6@petasan.org>
-Date:   Thu, 26 Jan 2023 20:14:22 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: rbd kernel block driver memory usage
-Content-Language: en-US
-To:     Stefan Hajnoczi <stefanha@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        with ESMTP id S230515AbjAZVxe (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 26 Jan 2023 16:53:34 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD7187167B
+        for <ceph-devel@vger.kernel.org>; Thu, 26 Jan 2023 13:52:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674769925;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=S85UsRzvZQYkTBKSceyocQTqqLH5TMTs40zJAWm4tFI=;
+        b=dnBPeN6h8AMfocT5kko4NOlY5XHfaPtdF1Wacgjiqah1D2iUjdTZSzSt32kkyzkAUkQf3r
+        W2KEM4VWRvfe8LiuTGZbtEEQzT5z7uXKWB5kOMMii9mv+H3YXc8dInYCTNHbZSEKyfuKT4
+        6avKSEidQCWNmNGeAQm+iT2Qk4zpHDw=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-112-wV0OtDMPOH-CAD-JtIFcRw-1; Thu, 26 Jan 2023 16:52:00 -0500
+X-MC-Unique: wV0OtDMPOH-CAD-JtIFcRw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3E5DA29AA382;
+        Thu, 26 Jan 2023 21:52:00 +0000 (UTC)
+Received: from localhost (unknown [10.39.192.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6CEB251E5;
+        Thu, 26 Jan 2023 21:51:59 +0000 (UTC)
+Date:   Thu, 26 Jan 2023 16:51:57 -0500
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Maged Mokhtar <mmokhtar@petasan.org>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>,
         ceph-devel@vger.kernel.org, vromanso@redhat.com, kwolf@redhat.com,
         mimehta@redhat.com, acardace@redhat.com
+Subject: Re: rbd kernel block driver memory usage
+Message-ID: <Y9L1/fK6M0Co4q9a@fedora>
 References: <Y9FffDxl2sa9762M@fedora>
  <CAOi1vP8+nQMsGPK-SW-FG4C2HAgp76dEHeTEwQ2xxi2oJLH1aA@mail.gmail.com>
  <Y9KP7EX9+Ub/StL/@fedora>
-From:   Maged Mokhtar <mmokhtar@petasan.org>
-In-Reply-To: <Y9KP7EX9+Ub/StL/@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - host2059.hostmonster.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - petasan.org
-X-BWhitelist: no
-X-Source-IP: 196.132.103.133
-X-Source-L: No
-X-Exim-ID: 1pL6lX-000DnM-CU
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([10.0.2.15]) [196.132.103.133]:18303
-X-Source-Auth: mmokhtar@petasan.org
-X-Email-Count: 5
-X-Source-Cap: cGV0YXNhbm87cGV0YXNhbm87aG9zdDIwNTkuaG9zdG1vbnN0ZXIuY29t
-X-Local-Domain: yes
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=ham
+ <b7021070-0d40-362c-51ab-666922c153a6@petasan.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="iM7RHbsrI9xOGHBl"
+Content-Disposition: inline
+In-Reply-To: <b7021070-0d40-362c-51ab-666922c153a6@petasan.org>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -95,61 +65,44 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-in case of object map which the driver loads, takes 2 bits per 4 MB of 
-image size. 16 TB image requires 1 MB of memory.
 
->> I was trying to get a sense ofwhether to look deeper into the rbd driver in a OOM kill scenario.
+--iM7RHbsrI9xOGHBl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If you are looking into OOM, maybe look into lowering queue_depth which you can specify when you map the image. Technically it belongs to the block layer queue rather than the rbd driver itself, If you write 4MB block size and your queue_depth is 1000, you need 4GB memory for inflight data for that single image, if you have many images it could add up.
+On Thu, Jan 26, 2023 at 08:14:22PM +0200, Maged Mokhtar wrote:
+> in case of object map which the driver loads, takes 2 bits per 4 MB of im=
+age
+> size. 16 TB image requires 1 MB of memory.
+>=20
+> > > I was trying to get a sense ofwhether to look deeper into the rbd dri=
+ver in a OOM kill scenario.
+>=20
+> If you are looking into OOM, maybe look into lowering queue_depth which y=
+ou can specify when you map the image. Technically it belongs to the block =
+layer queue rather than the rbd driver itself, If you write 4MB block size =
+and your queue_depth is 1000, you need 4GB memory for inflight data for tha=
+t single image, if you have many images it could add up.
 
-/maged
+Thanks!
 
+Stefan
 
-On 26/01/2023 16:36, Stefan Hajnoczi wrote:
-> On Thu, Jan 26, 2023 at 02:48:27PM +0100, Ilya Dryomov wrote:
->> On Wed, Jan 25, 2023 at 5:57 PM Stefan Hajnoczi <stefanha@redhat.com> wrote:
->>> Hi,
->>> What sort of memory usage is expected under heavy I/O to an rbd block
->>> device with O_DIRECT?
->>>
->>> For example:
->>> - Page cache: none (O_DIRECT)
->>> - Socket snd/rcv buffers: yes
->> Hi Stefan,
->>
->> There is a socket open to each OSD (object storage daemon).  A Ceph
->> cluster may have tens, hundreds or even thousands of OSDs (although the
->> latter is rare -- usually folks end up with several smaller clusters
->> instead a single large cluster).  Under heavy random I/O and given
->> a big enough RBD image, it's reasonable to assume that most if not all
->> OSDs would be involved and therefore their sessions would be active.
->>
->> A thing to note is that, by default, OSD sessions are shared between
->> RBD devices.  So as long as all RBD images that are mapped on a node
->> belong to the same cluster, the same set of sockets would be used.
->>
->> Idle OSD sockets get closed after 60 seconds of inactivity.
->>
->>
->>> - Internal rbd buffers?
->>>
->>> I am trying to understand how similar Linux rbd block devices behave
->>> compared to local block device memory consumption (like NVMe PCI).
->> RBD doesn't do any internal buffering.  Data is read from/written to
->> the wire directly to/from BIO pages.  The only exception to that is the
->> "secure" mode -- built-in encryption for Ceph on-the-wire protocol.  In
->> that case the data is buffered, partly because RBD obviously can't mess
->> with plaintext data in the BIO and partly because the Linux kernel
->> crypto API isn't flexible enough.
->>
->> There is some memory overhead associated with each I/O (OSD request
->> metadata encoding, mostly).  It's surely larger than in the NVMe PCI
->> case.  I don't have the exact number but it should be less than 4K per
->> I/O in almost all cases.  This memory is coming out of private SLAB
->> caches and could be reclaimable had we set SLAB_RECLAIM_ACCOUNT on
->> them.
-> Thanks, this information is very useful. I was trying to get a sense of
-> whether to look deeper into the rbd driver in a OOM kill scenario.
->
-> Stefan
+--iM7RHbsrI9xOGHBl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmPS9f0ACgkQnKSrs4Gr
+c8ivDwgAsbrnMzZapLKuvxV/IRG9GzERWB4v5myxCoMRZPH7wDgFWEqTQ+t6wxue
+qp1ScG3wFZLNLS9AdVpuPLZ3RAsnKq1tpIPfZ1v3hux8gp7XHvZrBuqtQuNCWlu3
+EchbuHrmDvLOU/SkIvA8aEXy4TiVw4wsCKGtXrI1lxLk74NGOGI7lHKSuLYAWCFr
+3IYnXCzFC2N0mJYhivzjSJccWA2gPLUkgA/iUETBYk79GCx2+kUGiAWYic9E+lqb
+nlzC7RlMDl6t5OHFsJBzS9ynx6jYyfAfeIUFrwUr4xI4VGZbS8/pOoMp1W+y/vLh
+D1UMBsWHfFO4L/T+iV4BSlqGRrII6A==
+=ZePB
+-----END PGP SIGNATURE-----
+
+--iM7RHbsrI9xOGHBl--
 
