@@ -2,106 +2,102 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D0DB867E0E7
-	for <lists+ceph-devel@lfdr.de>; Fri, 27 Jan 2023 10:58:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F070267E109
+	for <lists+ceph-devel@lfdr.de>; Fri, 27 Jan 2023 11:06:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232494AbjA0J6j (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 27 Jan 2023 04:58:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40478 "EHLO
+        id S233350AbjA0KGb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 27 Jan 2023 05:06:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231743AbjA0J6i (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 27 Jan 2023 04:58:38 -0500
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9869317164
-        for <ceph-devel@vger.kernel.org>; Fri, 27 Jan 2023 01:58:36 -0800 (PST)
-Received: by mail-ej1-x636.google.com with SMTP id ss4so12183215ejb.11
-        for <ceph-devel@vger.kernel.org>; Fri, 27 Jan 2023 01:58:36 -0800 (PST)
+        with ESMTP id S233169AbjA0KG3 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 27 Jan 2023 05:06:29 -0500
+Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6018F37559
+        for <ceph-devel@vger.kernel.org>; Fri, 27 Jan 2023 02:06:28 -0800 (PST)
+Received: by mail-wm1-x332.google.com with SMTP id m5-20020a05600c4f4500b003db03b2559eso3043023wmq.5
+        for <ceph-devel@vger.kernel.org>; Fri, 27 Jan 2023 02:06:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RVsv7QM65qEPfC30bJ6w0yGcKIfSr6MbIpBcVS/8cy0=;
-        b=mnxA0g8yyhTKMf9QvWt6z06xVM1Wf1tuZ1DOHzTyJQC9e2Ne0GqGnbaSyTygJ98k0w
-         ATK7p76IDWH42lng7mmIxcCGgTP63uT03pNa0wEM45i2prQIJ8M0TxF7E4X0cNzE72eF
-         yC8j9WC92Lan7OZ4bbkQOlnjppbE+NJw31aM4Jnu9lpw9h7DYiwIQebWSfatjGw9ml0m
-         q/l01Y6vKbTB24rEXfEaHFYAoC8nuJoofcd0B5MF6hyuOjQNxYRR3EGV7Ly4UihfytEw
-         dgi1wxsvLcOxbKK54iil8QrYDqZAdfNwyI0twkYfKQSz31UABwfBVV8fYOshKnlKqayl
-         7wug==
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/rL+TycpMQLfB5P4Zn9xgGfUWg8yPCNTwrE46ZNldMM=;
+        b=FJsJcmUgZqIoB36gsOSTmmdia5eFozJZiIVsgbCjNZ0byT0XdzUc8qiXU89etQWM7h
+         CekbH2anXWT/I4oBrGoMcF2szQiBe+xijlGrK9XlR586xzN/Bwd9Sy28+oxcyk0lpcJ8
+         ro2683TF/M89VDeDdQd7AJ9CBqs9ko6yRoj6rni2bINtknDDsH+OLiLQfg1CbytwibJF
+         +7dJNfbjtaaaq70uev4tsS8TkB5fTVO3h6LhnzMt0jUerMy/fzPbYYEPaR0pS+4cUs8X
+         IxnxU3RfOkiWhthv7l9COTkls4IR39o2aVZRwZxFoix6VYgHAAvYrgzDEzaGLp0ylW/A
+         kJEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RVsv7QM65qEPfC30bJ6w0yGcKIfSr6MbIpBcVS/8cy0=;
-        b=vWjmkyu5EsL5bJcn/fLDTqnYX/QtM1+jd4pICXvKkNyCKAZwQyH/F/Ic+nVX612+Ue
-         zDKgFjGPCX7KASd7reXKI0uPe3UVYjiKt1KjVxLg7Ytx+sqJntv2hay6eQ/LLPSyaAOY
-         szKmM/L+nAoLBbHydghk7wzuiMyFLzKYbbzMIprnSDOltKxxeDJA2s47RNql4jbEbC6k
-         I4P7h+DeUTY8u1VNLp5URMm3Em7OX0axHVs2JuYyiHwWzSNiaR89ybtlXlq3OnW+tGlA
-         jizfAkkB73P37/rOQ8VCO+j+IWiY7vnKLcVNLWX11NKb7HemVuBu/K4bTScI0KtTFVPo
-         D1AQ==
-X-Gm-Message-State: AFqh2kprCf3x6Y2xdPhuTQGiRMf3utbedAcGS9Zf5Z/2XkL2xd0Vbevm
-        paKShzxU5hMeUva3tZDOP01BNPc1suQQNsUg5THfynhb5yk=
-X-Google-Smtp-Source: AMrXdXuRBNAbX7TV9mdeE0hHO9eoIYBQf8lHRXByErBZLjNhoFfpp8S620IgNQT1NfJkB/SKo/RAH7hMh2N3F+5Hvco=
-X-Received: by 2002:a17:906:7754:b0:86f:2cc2:7028 with SMTP id
- o20-20020a170906775400b0086f2cc27028mr4889917ejn.133.1674813515246; Fri, 27
- Jan 2023 01:58:35 -0800 (PST)
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/rL+TycpMQLfB5P4Zn9xgGfUWg8yPCNTwrE46ZNldMM=;
+        b=1H2LsbIxO9TcCnwEfObpbSQkBATBTSpKYuIQTU1Y/2KMzn/dj/Oe03Dk8iCLt2NuA3
+         H4QCT+TCE0nLi0E3KDmTETsr5SDxLv9gr6wfFmik24UK9ujj662BaheWEnlFY4+NzKm3
+         dt6GLexDH++rmAGEcCXueHy3VzA1DvO8AcNZrNMIuZOCoPsdp08rYExWxHiCK2h7TDNl
+         OyIUeIr2s1gUq+U9XY8ZL43FpQVIbOAo3eaDo1vk0UKP38aJf8ZKSdi0pNyQHycUtdhX
+         GoE4ZgLAKjR8M4/IBRNbNTDrL5GobRg4mzz6QgzZZ2Ihj4z7kTAtA8gHvva2B5hg8OPQ
+         9Jew==
+X-Gm-Message-State: AFqh2kqSfzZ8nLT2vKluxmCFZc8tEwRWvPuK1gs+a4qBmKzgQfdSS52U
+        h29KMKKmhWEVrQwwRRdnKYQBAw8wS/UTLjL8Bxg=
+X-Google-Smtp-Source: AMrXdXsXy1JUQSj4V70VL6fPUjuK9uz28/czzwT7a7ohGZdI5g+VRlhhFFctWBhh8Pv3nV7VjHAAhcuWARlVvCjFODA=
+X-Received: by 2002:a05:600c:538e:b0:3d2:3e2a:d377 with SMTP id
+ hg14-20020a05600c538e00b003d23e2ad377mr2808683wmb.118.1674813986377; Fri, 27
+ Jan 2023 02:06:26 -0800 (PST)
 MIME-Version: 1.0
-References: <Y9FffDxl2sa9762M@fedora> <CAOi1vP8+nQMsGPK-SW-FG4C2HAgp76dEHeTEwQ2xxi2oJLH1aA@mail.gmail.com>
- <Y9KP7EX9+Ub/StL/@fedora> <BFF8E7E5-9500-47FB-8700-C87CEDBA3AE5@dreamsnake.net>
-In-Reply-To: <BFF8E7E5-9500-47FB-8700-C87CEDBA3AE5@dreamsnake.net>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Fri, 27 Jan 2023 10:58:22 +0100
-Message-ID: <CAOi1vP_b6PQn3wBv6RY5vLmyeAJqy3dh50pqbdaVtf98qwvcVA@mail.gmail.com>
-Subject: Re: rbd kernel block driver memory usage
-To:     "Anthony D'Atri" <aad@dreamsnake.net>
-Cc:     ceph-devel@vger.kernel.org
+Received: by 2002:a05:6020:c602:b0:255:a993:ab07 with HTTP; Fri, 27 Jan 2023
+ 02:06:25 -0800 (PST)
+Reply-To: dravasmith27@gmail.com
+From:   Dr Ava Smith <harikunda7@gmail.com>
+Date:   Fri, 27 Jan 2023 02:06:25 -0800
+Message-ID: <CALNCe2Q8zV23kOaoE1P_1aS_NqV-WT4d66yzKhrgbiTzegWGYg@mail.gmail.com>
+Subject: GREETINGS FROM DR AVA SMITH
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: Yes, score=5.4 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,SUBJ_ALL_CAPS,UNDISC_FREEM
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2a00:1450:4864:20:0:0:0:332 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.5 SUBJ_ALL_CAPS Subject is all capitals
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [harikunda7[at]gmail.com]
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [dravasmith27[at]gmail.com]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [harikunda7[at]gmail.com]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        *  2.8 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jan 26, 2023 at 5:08 PM Anthony D'Atri <aad@dreamsnake.net> wrote:
->
-> >>
-> >> There is a socket open to each OSD (object storage daemon).
->
-> I=E2=80=99ve always understood that there were *two* to each OSD, was I m=
-isinformed?
-
-Hi Anthony,
-
-It looks like you were misinformed -- there is just one client -> OSD
-socket.
-
->
-> >>  A Ceph cluster may have tens, hundreds or even thousands of OSDs (alt=
-hough the
-> >> latter is rare -- usually folks end up with several smaller clusters
-> >> instead a single large cluster).
->
-> =E2=80=A6 though if a client has multiple RBD volumes attached, it may be=
- talking to more than one cluster.  I=E2=80=99ve seen a client exhaust the =
-file descriptor limit on a hypervisor doing this after a cluster expansion.
->
-> >> A thing to note is that, by default, OSD sessions are shared between
-> >> RBD devices.  So as long as all RBD images that are mapped on a node
-> >> belong to the same cluster, the same set of sockets would be used.
->
-> Before =E2=80=A6 Luminous was it? AIUI they weren=E2=80=99t pooled, so ol=
-der releases may have higher consumption.
-
-No, this behavior goes back to when RBD was introduced in 2010.  It has
-always been enabled by default so nothing changed in this regard around
-Luminous.
-
-Thanks,
-
-                Ilya
+-- 
+Hello Dear,
+how are you today?hope you are fine
+My name is Dr Ava Smith ,Am an English and French nationalities.
+I will give you pictures and more details about me as soon as i hear from you
+Thanks
+Ava
