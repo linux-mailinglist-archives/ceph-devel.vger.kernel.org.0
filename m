@@ -2,48 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EBA36807AD
-	for <lists+ceph-devel@lfdr.de>; Mon, 30 Jan 2023 09:43:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7D9B6807AF
+	for <lists+ceph-devel@lfdr.de>; Mon, 30 Jan 2023 09:43:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236002AbjA3Inn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 30 Jan 2023 03:43:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58014 "EHLO
+        id S236046AbjA3Inp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 30 Jan 2023 03:43:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229728AbjA3Inm (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 30 Jan 2023 03:43:42 -0500
+        with ESMTP id S235959AbjA3Inn (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 30 Jan 2023 03:43:43 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E5B7868B
-        for <ceph-devel@vger.kernel.org>; Mon, 30 Jan 2023 00:42:57 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1446B742
+        for <ceph-devel@vger.kernel.org>; Mon, 30 Jan 2023 00:43:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1675068176;
+        s=mimecast20190719; t=1675068180;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7xmmmZIvExNK+mf4h+0PoIqx3ZCItJavRQgySFI+NHw=;
-        b=erDkk1UJx7RU/UzripDPKSFecZHwY7ezPrapBzOiSSlt1ClcUirKKZFhx8h0LKU+Cma4JL
-        j/HaNCmPlg2IrkaaIw3qBbf7qAeMNsjezzrdj0f//eEYnt4+Ihv/U31HNxGyoAaMaoeybs
-        bPQUUdBsR0m5DTlrh50qirkXIrCNK20=
+        bh=d4l8I2AZ4/5Dm5H1b7Jn3wtSW/r+cmd0Nx+YLRbo3bw=;
+        b=Pl1bTdhYD4N6MEj8y3W123x1OE0viYN0BKn/sv44btKqkqcmlJ1t6mVN31/ZxFDkQnbBqN
+        +zcU9Vk1P5tP+yJWd6LgAYv7Oq3W4chZ6nq2XnmvAGyYtpnX5C35JL9zXb08QgTrtsBU4g
+        wtC/TsZZmcwUDyB084nuYZmysCLCBiY=
 Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
  [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-567-QqsDAJ5TMnmWxx8V6dM5Sw-1; Mon, 30 Jan 2023 03:42:55 -0500
-X-MC-Unique: QqsDAJ5TMnmWxx8V6dM5Sw-1
+ us-mta-613-Hau_TOoOMOOHadL5kSHkGA-1; Mon, 30 Jan 2023 03:42:58 -0500
+X-MC-Unique: Hau_TOoOMOOHadL5kSHkGA-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D895D3806118;
-        Mon, 30 Jan 2023 08:42:54 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2EA943C0F421;
+        Mon, 30 Jan 2023 08:42:58 +0000 (UTC)
 Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2CFCB401531A;
-        Mon, 30 Jan 2023 08:42:51 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 76971400EAD6;
+        Mon, 30 Jan 2023 08:42:55 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
 Cc:     jlayton@kernel.org, mchangir@redhat.com, vshankar@redhat.com,
         lhenriques@suse.de, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v3 1/2] libceph: defer removing the req from osdc just after req->r_callback
-Date:   Mon, 30 Jan 2023 16:41:45 +0800
-Message-Id: <20230130084147.122440-2-xiubli@redhat.com>
+Subject: [PATCH v3 2/2] ceph: drop the messages from MDS when unmounting
+Date:   Mon, 30 Jan 2023 16:41:46 +0800
+Message-Id: <20230130084147.122440-3-xiubli@redhat.com>
 In-Reply-To: <20230130084147.122440-1-xiubli@redhat.com>
 References: <20230130084147.122440-1-xiubli@redhat.com>
 MIME-Version: 1.0
@@ -61,16 +61,16 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Xiubo Li <xiubli@redhat.com>
 
-The sync_filesystem() will flush all the dirty buffer and submit the
-osd reqs to the osdc and then is blocked to wait for all the reqs to
-finish. But the when the reqs' replies come, the reqs will be removed
-from osdc just before the req->r_callback()s are called. Which means
-the sync_filesystem() will be woke up by leaving the req->r_callback()s
-are still running.
+When unmounting and all the dirty buffer will be flushed and after
+the last osd request is finished the last reference of the i_count
+will be released. Then it will flush the dirty cap/snap to MDSs,
+and the unmounting won't wait the possible acks, which will ihode
+the inodes when updating the metadata locally but makes no sense
+any more, of this. This will make the evict_inodes() to skip these
+inodes.
 
-This will be buggy when the waiter require the req->r_callback()s to
-release some resources before continuing. So we need to make sure the
-req->r_callback()s are called before removing the reqs from the osdc.
+If encrypt is enabled the kernel generate a warning when removing
+the encrypt keys when the skipped inodes still hold the keyring:
 
 WARNING: CPU: 4 PID: 168846 at fs/crypto/keyring.c:242 fscrypt_destroy_keyring+0x7e/0xd0
 CPU: 4 PID: 168846 Comm: umount Tainted: G S  6.1.0-rc5-ceph-g72ead199864c #1
@@ -101,94 +101,256 @@ do_syscall_64+0x40/0x80
 entry_SYSCALL_64_after_hwframe+0x63/0xcd
 RIP: 0033:0x7fd83dc39e9b
 
+Later the kernel will crash when iput() the inodes and dereferencing
+the "sb->s_master_keys", which has been released by the
+generic_shutdown_super().
+
 URL: https://tracker.ceph.com/issues/58126
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- net/ceph/osd_client.c | 43 +++++++++++++++++++++++++++++++++++--------
- 1 file changed, 35 insertions(+), 8 deletions(-)
+ fs/ceph/caps.c       |  5 +++++
+ fs/ceph/mds_client.c | 12 +++++++++-
+ fs/ceph/mds_client.h | 11 +++++++++-
+ fs/ceph/quota.c      |  4 ++++
+ fs/ceph/snap.c       |  6 +++++
+ fs/ceph/super.c      | 52 ++++++++++++++++++++++++++++++++++++++++++++
+ fs/ceph/super.h      |  2 ++
+ 7 files changed, 90 insertions(+), 2 deletions(-)
 
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index 78b622178a3d..db3d93d3e692 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -2507,7 +2507,7 @@ static void submit_request(struct ceph_osd_request *req, bool wrlocked)
- 	__submit_request(req, wrlocked);
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 15d9e0f0d65a..ee38d2abeaed 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -4222,6 +4222,9 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ 
+ 	dout("handle_caps from mds%d\n", session->s_mds);
+ 
++	if (!ceph_inc_stopping_blocker(mdsc))
++		return;
++
+ 	/* decode */
+ 	end = msg->front.iov_base + msg->front.iov_len;
+ 	if (msg->front.iov_len < sizeof(*h))
+@@ -4435,6 +4438,8 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ done_unlocked:
+ 	iput(inode);
+ out:
++	ceph_dec_stopping_blocker(mdsc);
++
+ 	ceph_put_string(extra_info.pool_ns);
+ 
+ 	/* Defer closing the sessions after s_mutex lock being released */
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 1df2059a0333..71a8941c9cc5 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -4871,6 +4871,9 @@ static void handle_lease(struct ceph_mds_client *mdsc,
+ 
+ 	dout("handle_lease from mds%d\n", mds);
+ 
++	if (!ceph_inc_stopping_blocker(mdsc))
++		return;
++
+ 	/* decode */
+ 	if (msg->front.iov_len < sizeof(*h) + sizeof(u32))
+ 		goto bad;
+@@ -4952,9 +4955,13 @@ static void handle_lease(struct ceph_mds_client *mdsc,
+ out:
+ 	mutex_unlock(&session->s_mutex);
+ 	iput(inode);
++
++	ceph_dec_stopping_blocker(mdsc);
+ 	return;
+ 
+ bad:
++	ceph_dec_stopping_blocker(mdsc);
++
+ 	pr_err("corrupt lease message\n");
+ 	ceph_msg_dump(msg);
  }
+@@ -5150,6 +5157,9 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
+ 	}
  
--static void finish_request(struct ceph_osd_request *req)
-+static void __finish_request(struct ceph_osd_request *req)
+ 	init_completion(&mdsc->safe_umount_waiters);
++	spin_lock_init(&mdsc->stopping_lock);
++	atomic_set(&mdsc->stopping_blockers, 0);
++	init_completion(&mdsc->stopping_waiter);
+ 	init_waitqueue_head(&mdsc->session_close_wq);
+ 	INIT_LIST_HEAD(&mdsc->waiting_for_map);
+ 	mdsc->quotarealms_inodes = RB_ROOT;
+@@ -5264,7 +5274,7 @@ void send_flush_mdlog(struct ceph_mds_session *s)
+ void ceph_mdsc_pre_umount(struct ceph_mds_client *mdsc)
  {
- 	struct ceph_osd_client *osdc = req->r_osdc;
+ 	dout("pre_umount\n");
+-	mdsc->stopping = 1;
++	mdsc->stopping = CEPH_MDSC_STOPPING_BEGAIN;
  
-@@ -2516,12 +2516,6 @@ static void finish_request(struct ceph_osd_request *req)
+ 	ceph_mdsc_iterate_sessions(mdsc, send_flush_mdlog, true);
+ 	ceph_mdsc_iterate_sessions(mdsc, lock_unlock_session, false);
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index 81a1f9a4ac3b..5bf32701c84c 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -398,6 +398,11 @@ struct cap_wait {
+ 	int			want;
+ };
  
- 	req->r_end_latency = ktime_get();
++enum {
++	CEPH_MDSC_STOPPING_BEGAIN = 1,
++	CEPH_MDSC_STOPPING_FLUSHED = 2,
++};
++
+ /*
+  * mds client state
+  */
+@@ -414,7 +419,11 @@ struct ceph_mds_client {
+ 	struct ceph_mds_session **sessions;    /* NULL for mds if no session */
+ 	atomic_t		num_sessions;
+ 	int                     max_sessions;  /* len of sessions array */
+-	int                     stopping;      /* true if shutting down */
++
++	spinlock_t              stopping_lock;  /* protect snap_empty */
++	int                     stopping;      /* the stage of shutting down */
++	atomic_t                stopping_blockers;
++	struct completion	stopping_waiter;
  
--	if (req->r_osd) {
--		ceph_init_sparse_read(&req->r_osd->o_sparse_read);
--		unlink_request(req->r_osd, req);
--	}
--	atomic_dec(&osdc->num_requests);
--
+ 	atomic64_t		quotarealms_count; /* # realms with quota */
  	/*
- 	 * If an OSD has failed or returned and a request has been sent
- 	 * twice, it's possible to get a reply and end up here while the
-@@ -2532,13 +2526,46 @@ static void finish_request(struct ceph_osd_request *req)
- 	ceph_msg_revoke_incoming(req->r_reply);
+diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
+index 64592adfe48f..3309ae071739 100644
+--- a/fs/ceph/quota.c
++++ b/fs/ceph/quota.c
+@@ -47,6 +47,9 @@ void ceph_handle_quota(struct ceph_mds_client *mdsc,
+ 	struct inode *inode;
+ 	struct ceph_inode_info *ci;
+ 
++	if (!ceph_inc_stopping_blocker(mdsc))
++		return;
++
+ 	if (msg->front.iov_len < sizeof(*h)) {
+ 		pr_err("%s corrupt message mds%d len %d\n", __func__,
+ 		       session->s_mds, (int)msg->front.iov_len);
+@@ -78,6 +81,7 @@ void ceph_handle_quota(struct ceph_mds_client *mdsc,
+ 	spin_unlock(&ci->i_ceph_lock);
+ 
+ 	iput(inode);
++	ceph_dec_stopping_blocker(mdsc);
  }
  
-+static void __remove_request(struct ceph_osd_request *req)
+ static struct ceph_quotarealm_inode *
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index 3d417ec8da0c..d4c6bd12e07d 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -1011,6 +1011,9 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+ 	int locked_rwsem = 0;
+ 	bool close_sessions = false;
+ 
++	if (!ceph_inc_stopping_blocker(mdsc))
++		return;
++
+ 	/* decode */
+ 	if (msg->front.iov_len < sizeof(*h))
+ 		goto bad;
+@@ -1134,12 +1137,15 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+ 	up_write(&mdsc->snap_rwsem);
+ 
+ 	flush_snaps(mdsc);
++	ceph_dec_stopping_blocker(mdsc);
+ 	return;
+ 
+ bad:
+ 	pr_err("%s corrupt snap message from mds%d\n", __func__, mds);
+ 	ceph_msg_dump(msg);
+ out:
++	ceph_dec_stopping_blocker(mdsc);
++
+ 	if (locked_rwsem)
+ 		up_write(&mdsc->snap_rwsem);
+ 
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index f10a076f47e5..fa111c2a3732 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -1474,15 +1474,67 @@ static int ceph_init_fs_context(struct fs_context *fc)
+ 	return -ENOMEM;
+ }
+ 
++/*
++ * Return true if mdsc successfully increase blocker counter,
++ * or false if the mdsc is in stopping and flushed state.
++ */
++bool ceph_inc_stopping_blocker(struct ceph_mds_client *mdsc)
 +{
-+	struct ceph_osd_client *osdc = req->r_osdc;
-+
-+	dout("%s req %p tid %llu\n", __func__, req, req->r_tid);
-+
-+	if (req->r_osd) {
-+		ceph_init_sparse_read(&req->r_osd->o_sparse_read);
-+		unlink_request(req->r_osd, req);
++	spin_lock(&mdsc->stopping_lock);
++	if (mdsc->stopping >= CEPH_MDSC_STOPPING_FLUSHED) {
++		spin_unlock(&mdsc->stopping_lock);
++		return false;
 +	}
-+	atomic_dec(&osdc->num_requests);
++	atomic_inc(&mdsc->stopping_blockers);
++	spin_unlock(&mdsc->stopping_lock);
++	return true;
 +}
 +
-+static void finish_request(struct ceph_osd_request *req)
++void ceph_dec_stopping_blocker(struct ceph_mds_client *mdsc)
 +{
-+	__finish_request(req);
-+	__remove_request(req);
++	spin_lock(&mdsc->stopping_lock);
++	if (!atomic_dec_return(&mdsc->stopping_blockers) &&
++	    mdsc->stopping >= CEPH_MDSC_STOPPING_FLUSHED)
++		complete_all(&mdsc->stopping_waiter);
++	spin_unlock(&mdsc->stopping_lock);
 +}
 +
- static void __complete_request(struct ceph_osd_request *req)
+ static void ceph_kill_sb(struct super_block *s)
  {
-+	struct ceph_osd_client *osdc = req->r_osdc;
-+	struct ceph_osd *osd = req->r_osd;
-+
- 	dout("%s req %p tid %llu cb %ps result %d\n", __func__, req,
- 	     req->r_tid, req->r_callback, req->r_result);
+ 	struct ceph_fs_client *fsc = ceph_sb_to_client(s);
++	bool wait;
  
- 	if (req->r_callback)
- 		req->r_callback(req);
+ 	dout("kill_sb %p\n", s);
+ 
+ 	ceph_mdsc_pre_umount(fsc->mdsc);
+ 	flush_fs_workqueues(fsc);
+ 
++	/*
++	 * Though the kill_anon_super() will finally trigger the
++	 * sync_filesystem() anyway, we still need to do it here and
++	 * then bump the stage of shutdown. This will allow us to
++	 * drop any further message, which will increase the inodes'
++	 * i_count reference counters but makes no sense any more,
++	 * from MDSs.
++	 *
++	 * Without this when evicting the inodes it may fail in the
++	 * kill_anon_super(), which will trigger a warning when
++	 * destroying the fscrypt keyring and then possibly trigger
++	 * a further crash in ceph module when the iput() tries to
++	 * evict the inodes later.
++	 */
++	sync_filesystem(s);
 +
-+	down_read(&osdc->lock);
-+	if (osd) {
-+		mutex_lock(&osd->lock);
-+		__remove_request(req);
-+		mutex_unlock(&osd->lock);
-+	} else {
-+		atomic_dec(&osdc->num_requests);
++	spin_lock(&fsc->mdsc->stopping_lock);
++	fsc->mdsc->stopping = CEPH_MDSC_STOPPING_FLUSHED;
++	wait = !!atomic_read(&fsc->mdsc->stopping_blockers);
++	spin_unlock(&fsc->mdsc->stopping_lock);
++
++	while (wait || atomic_read(&fsc->mdsc->stopping_blockers)) {
++		wait = false;
++		wait_for_completion(&fsc->mdsc->stopping_waiter);
 +	}
-+	up_read(&osdc->lock);
 +
- 	complete_all(&req->r_completion);
- 	ceph_osdc_put_request(req);
- }
-@@ -3873,7 +3900,7 @@ static void handle_reply(struct ceph_osd *osd, struct ceph_msg *msg)
- 	WARN_ON(!(m.flags & CEPH_OSD_FLAG_ONDISK));
- 	req->r_version = m.user_version;
- 	req->r_result = m.result ?: data_len;
--	finish_request(req);
-+	__finish_request(req);
- 	mutex_unlock(&osd->lock);
- 	up_read(&osdc->lock);
+ 	kill_anon_super(s);
  
+ 	fsc->client->extra_mon_dispatch = NULL;
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index b2ef221474af..edd71b0a6bb4 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -1399,4 +1399,6 @@ extern bool ceph_quota_update_statfs(struct ceph_fs_client *fsc,
+ 				     struct kstatfs *buf);
+ extern void ceph_cleanup_quotarealms_inodes(struct ceph_mds_client *mdsc);
+ 
++bool ceph_inc_stopping_blocker(struct ceph_mds_client *mdsc);
++void ceph_dec_stopping_blocker(struct ceph_mds_client *mdsc);
+ #endif /* _FS_CEPH_SUPER_H */
 -- 
 2.31.1
 
