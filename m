@@ -2,169 +2,102 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E0B1D68A024
-	for <lists+ceph-devel@lfdr.de>; Fri,  3 Feb 2023 18:18:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DBE668A164
+	for <lists+ceph-devel@lfdr.de>; Fri,  3 Feb 2023 19:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232959AbjBCRSQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 3 Feb 2023 12:18:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60732 "EHLO
+        id S233007AbjBCSPI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 3 Feb 2023 13:15:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233034AbjBCRSO (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 3 Feb 2023 12:18:14 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7696823316
-        for <ceph-devel@vger.kernel.org>; Fri,  3 Feb 2023 09:18:12 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id o13so5676585pjg.2
-        for <ceph-devel@vger.kernel.org>; Fri, 03 Feb 2023 09:18:12 -0800 (PST)
+        with ESMTP id S232813AbjBCSPH (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 3 Feb 2023 13:15:07 -0500
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A362393ADA;
+        Fri,  3 Feb 2023 10:14:54 -0800 (PST)
+Received: by mail-wm1-x32b.google.com with SMTP id q8so4505497wmo.5;
+        Fri, 03 Feb 2023 10:14:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K70GwBbxm76u0ZHh9QualBnSNVhMmwCaA4xLAgTOsU4=;
-        b=R00Jv7r0nGI0Ztnp5TNHhM+FfJ5zmFRR/yKaJPFf48QgjKh7tXSwGMmQnOoqu8Xid4
-         wge7CmaLgfoEKprgizb7/sm8rwZ8EQ9OCoyJKMGvTA4kiktJCR4NV/cva7qvSGWATdmE
-         /2uT8roACaKsn4YLwQl6hQkgbKX7IYcNLKQL5KVRHggoW1I8XImpl9s6MfEiMUSpHo9Y
-         S5fkZix1iQi2f9FmnThOmhtEMaBrJr9ePfucBJOf0enZnaK+aBn2RScZgWLk6sLYtLKJ
-         6yN94xDkDiQ62CShnA6PepLuiQAIJ+UkyAdk860JzMBR19PnaXvBFKHmerQBvkix95On
-         9+yQ==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KJaZb5nxRdIAYZJXog7RT2LAiPazCIDi6rFA+K/IMHU=;
+        b=WkWF1xJX0LbyTnZcglAxkECaVBwysEb4ZA29mQ1hmhOBgGoQxU5oygVqpa7SzcIIas
+         mNZJ7/ewqqKeVV4HyTYlvNoTyTT6WF+IWFWcsY7NIC6qifISUjR06JAVoIzKTYQcZwq7
+         /pjID3hNEOEYqWJlidpASY2MZxfFpIG5X+3Mh3YzLjdfIh8DY6Bb27Hp1eX7L/rDK8J+
+         AAzVqZgUoRti2f5Z98W0gBPTRyh/puke3K7ZZCBrBOlVh9EEinoCAXN2DMzqGGUnPB6K
+         oCkKN/NLM3L4OILzrSZrxIB6Jr60B4r8AIhiUA7IYICUUyzRty0FBoT8Qn6UrlIsz4wQ
+         fUOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K70GwBbxm76u0ZHh9QualBnSNVhMmwCaA4xLAgTOsU4=;
-        b=oktFN1voeKACvoQftMz+OXkebMRLHcadVSGHx9Dap+bF70v+wcXzWtWIFTVv33MCGm
-         IIoVYhBWhYt+zF8dQ+ZlQx4TawCLzTVXyWEW3TZP6PJGqoFTEVNW6zZx9jiHSowa6BUD
-         fzRO3zQbmZEnu/C/fIbP4KipcTjRZDb3WBqkIaEtFBdlqV5a1DLDCziMelEpLlkiMxlw
-         lnzijtBLhBrvUWSVMJ/hKiIDuUqbZR8gNrUJxUnkxVpkZ/XAxfESHjtmlINmth44Ivr0
-         +SwVT+OPegHhVF9l6ek3x2bpqY1nkS6NfS3rjNOBs6/jQtjwpum9FiRqCH0IS/fdXGkD
-         Ck7A==
-X-Gm-Message-State: AO0yUKVpiNKSgrFuzYtcAFw4q9yUxjYCKWOnwJsy3btR0zXzFDWrfCrQ
-        5zC6D6jlVPvx59odpaaRuV4acw==
-X-Google-Smtp-Source: AK7set/8QyEeOBS5HCdwVVv3pX8pLqYaYDC09KN7ZX0YiSUh3tCWtH5sa+Lu+Eay2bGB3phfSCaeYw==
-X-Received: by 2002:a17:90a:3c83:b0:22b:afef:9228 with SMTP id g3-20020a17090a3c8300b0022bafef9228mr8980675pjc.4.1675444691816;
-        Fri, 03 Feb 2023 09:18:11 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id s1-20020a17090a6e4100b0021900ba8eeesm5189271pjm.2.2023.02.03.09.18.09
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KJaZb5nxRdIAYZJXog7RT2LAiPazCIDi6rFA+K/IMHU=;
+        b=xS4bPsobtJ3gQG4bYo+xeTJbQ5Vh3EiTJy2tdzg+utHaFhHihdnLZvcoArAtZyKvtm
+         aoPopp8tD+dTRTYEDe+JbN5CI5abJlK0GupxIORMAgeTCyi0x7mO7tnBm8ykkirvrCVY
+         qKUkkq5pGWji7PI80mJ6XoW6n0bDXWAHi23Fc1oob3vILH6w3D6WEDgW5V1eT51DKgv4
+         ifbwaMNsJOyvdj+zKiSCPz/uvjohC8btA4Xx+6y1s0pkdtKtpmLEXw4jtr8bpzBFbmCP
+         srxaIEMDPYKgF9zUy39x9dF1UIXPJvCzPDvvu1sbWzViXe2hg7cDwsbfe5h9Lekc2lKO
+         swOA==
+X-Gm-Message-State: AO0yUKUgkSE+tfIWBENoJ7gCIvpBn46IAJtA06D4RNR9raN6dvJEHsjq
+        vlgVsB4/K/q4jRPXRuw3Xoe1mDOC8jvP8A==
+X-Google-Smtp-Source: AK7set/YwXHbxCOm5eeeNleYZEdTH9c6TH6d3zxAuS8wiSB9Gw1dJUH4aEnWUuFfug0rBJ/Es0po6w==
+X-Received: by 2002:a05:600c:2e06:b0:3dc:51f6:8f58 with SMTP id o6-20020a05600c2e0600b003dc51f68f58mr10931423wmf.6.1675448093089;
+        Fri, 03 Feb 2023 10:14:53 -0800 (PST)
+Received: from zambezi.local (ip-94-112-104-28.bb.vodafone.cz. [94.112.104.28])
+        by smtp.gmail.com with ESMTPSA id p17-20020a05600c205100b003dd1bd0b915sm5446445wmg.22.2023.02.03.10.14.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Feb 2023 09:18:11 -0800 (PST)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Keith Busch <kbusch@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Xiubo Li <xiubli@redhat.com>, Steve French <sfrench@samba.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, kvm@vger.kernel.org,
-        netdev@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        devel@lists.orangefs.org, io-uring@vger.kernel.org,
-        linux-mm@kvack.org
-In-Reply-To: <20230203150634.3199647-1-hch@lst.de>
-References: <20230203150634.3199647-1-hch@lst.de>
-Subject: Re: add bvec initialization helpers v2
-Message-Id: <167544468926.66559.8388961280734694655.b4-ty@kernel.dk>
-Date:   Fri, 03 Feb 2023 10:18:09 -0700
+        Fri, 03 Feb 2023 10:14:52 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fix for 6.2-rc7
+Date:   Fri,  3 Feb 2023 19:13:13 +0100
+Message-Id: <20230203181313.452449-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.12.0
-X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Hi Linus,
 
-On Fri, 03 Feb 2023 16:06:11 +0100, Christoph Hellwig wrote:
-> this series adds the helpers to initalize a bvec.  These remove open coding of
-> bvec internals and help with experimenting with other representations like
-> a phys_addr_t instead of page + offset.
-> 
-> Changes since v1:
->  - fix a typo
->  - simplify the code in ceph's __iter_get_bvecs a little bit further
->  - fix two subject prefixes
-> 
-> [...]
+The following changes since commit 6d796c50f84ca79f1722bb131799e5a5710c4700:
 
-Applied, thanks!
+  Linux 6.2-rc6 (2023-01-29 13:59:43 -0800)
 
-[01/23] block: factor out a bvec_set_page helper
-        commit: d58cdfae6a22e5079656c487aad669597a0635c8
-[02/23] block: add a bvec_set_folio helper
-        commit: 26db5ee158510108c819aa7be6eb8c75accf85d7
-[03/23] block: add a bvec_set_virt helper
-        commit: 666e6550cb74e3a7206b5699409c9f31e123887e
-[04/23] sd: factor out a sd_set_special_bvec helper
-        commit: f1e117cbb01a38f764db2f292174b93eab7c2db2
-[05/23] target: use bvec_set_page to initialize bvecs
-        commit: 3c7ebe952fefb646c56b60f1c3e3388f3b938cc7
-[06/23] nvmet: use bvec_set_page to initialize bvecs
-        commit: fc41c97a3a7b08131e6998bc7692f95729f9d359
-[07/23] nvme: use bvec_set_virt to initialize special_vec
-        commit: 4bee16daf13225d6b109bb95d613fd691b04a757
-[08/23] rbd: use bvec_set_page to initialize the copy up bvec
-        commit: 7df2af0bb4912cf360045d065f88fe4ed2f702ca
-[09/23] virtio_blk: use bvec_set_virt to initialize special_vec
-        commit: b831f3a1031664ae2443bab63d35c416ed30c91d
-[10/23] zram: use bvec_set_page to initialize bvecs
-        commit: 13ae4db0c05107814db4e774856aa83e72e8bf04
-[11/23] afs: use bvec_set_folio to initialize a bvec
-        commit: a8173be1863e57393edb5c158860ec43a1f21ed7
-[12/23] ceph: use bvec_set_page to initialize a bvec
-        commit: 5c6542b6612f635eaa001c54af22018f1e996418
-[13/23] cifs: use bvec_set_page to initialize bvecs
-        commit: 220ae4a5c2ba10333b3b01fbf3dea0d759e77a76
-[14/23] coredump: use bvec_set_page to initialize a bvec
-        commit: cd598003206839ed1354902805b52c3a4f6ead2e
-[15/23] nfs: use bvec_set_page to initialize bvecs
-        commit: 8bb7cd842c44b299586bfed6aadde8863c48b415
-[16/23] orangefs: use bvec_set_{page,folio} to initialize bvecs
-        commit: 8ead80b2c5f8c59d6ca18cd7fb582a3ffc7ea5b7
-[17/23] splice: use bvec_set_page to initialize a bvec
-        commit: 664e40789abaad892737a696102052dae199a029
-[18/23] io_uring: use bvec_set_page to initialize a bvec
-        commit: cc342a21930f0e3862c5fd0871cd5a65c5b59e27
-[19/23] swap: use bvec_set_page to initialize bvecs
-        commit: 8976fa6d79d70502181fa16b5e023645c0f44ec4
-[20/23] rxrpc: use bvec_set_page to initialize a bvec
-        commit: efde918ac66958c568926120841e7692b1e9bd9d
-[21/23] sunrpc: use bvec_set_page to initialize bvecs
-        commit: 9088151f1bfe670ae9e28b77095f974196bb2343
-[22/23] vringh: use bvec_set_page to initialize a bvec
-        commit: 58dfe14073846e416d5b3595314a4f37e1a89c50
-[23/23] libceph: use bvec_set_page to initialize bvecs
-        commit: 1eb9cd15004fa91b6d1911af9fbaff299d8e9e45
+are available in the Git repository at:
 
-Best regards,
--- 
-Jens Axboe
+  https://github.com/ceph/ceph-client.git tags/ceph-for-6.2-rc7
 
+for you to fetch changes up to a68e564adcaa69b0930809fb64d9d5f7d9c32ba9:
 
+  ceph: blocklist the kclient when receiving corrupted snap trace (2023-02-02 13:58:15 +0100)
 
+----------------------------------------------------------------
+A safeguard to prevent the kernel client from further damaging the
+filesystem after running into a case of an invalid snap trace.  The
+root cause of this metadata corruption is still being investigated but
+it appears to be stemming from the MDS.  As such, this is the best we
+can do for now.
+
+----------------------------------------------------------------
+Xiubo Li (2):
+      ceph: move mount state enum to super.h
+      ceph: blocklist the kclient when receiving corrupted snap trace
+
+ fs/ceph/addr.c               | 17 +++++++++++++++--
+ fs/ceph/caps.c               | 16 +++++++++++++---
+ fs/ceph/file.c               |  3 +++
+ fs/ceph/mds_client.c         | 30 +++++++++++++++++++++++++++---
+ fs/ceph/snap.c               | 36 ++++++++++++++++++++++++++++++++++--
+ fs/ceph/super.h              | 11 +++++++++++
+ include/linux/ceph/libceph.h | 10 ----------
+ 7 files changed, 103 insertions(+), 20 deletions(-)
