@@ -2,125 +2,92 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C677C690856
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Feb 2023 13:11:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5470369232C
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 Feb 2023 17:21:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229646AbjBIMLq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 Feb 2023 07:11:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49692 "EHLO
+        id S232721AbjBJQVY (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 10 Feb 2023 11:21:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229798AbjBIMLS (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Feb 2023 07:11:18 -0500
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50E4161B4;
-        Thu,  9 Feb 2023 04:09:29 -0800 (PST)
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Thu, 9 Feb
- 2023 15:09:26 +0300
-Received: from KANASHIN1.fintech.ru (10.0.253.125) by Ex16-01.fintech.ru
- (10.0.10.18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Thu, 9 Feb 2023
- 15:09:25 +0300
-From:   Natalia Petrova <n.petrova@fintech.ru>
-To:     Ilya Dryomov <idryomov@gmail.com>
-CC:     Natalia Petrova <n.petrova@fintech.ru>,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        Jens Axboe <axboe@kernel.dk>, <ceph-devel@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lvc-project@linuxtesting.org>,
-        "Alexey Khoroshilov" <khoroshilov@ispras.ru>,
-        Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-Subject: [PATCH v2] rbd: fix freeing memory of 'rbd_dev->opts', 'rbd_dev->spec', 'rbd_dev->rbd_client'
-Date:   Thu, 9 Feb 2023 15:09:23 +0300
-Message-ID: <20230209120923.331111-1-n.petrova@fintech.ru>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <06f51bab-42e1-975a-ad4f-6815c2063adb@redhat.com>
-References: 
+        with ESMTP id S231882AbjBJQVX (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 10 Feb 2023 11:21:23 -0500
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E45EA7284;
+        Fri, 10 Feb 2023 08:21:22 -0800 (PST)
+Received: by mail-wm1-x330.google.com with SMTP id az4-20020a05600c600400b003dff767a1f1so4456808wmb.2;
+        Fri, 10 Feb 2023 08:21:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nt8Gh4/OONJu6PpXJeU0AbL49OiKDt7nnRYsckchfN0=;
+        b=QrGz91cJj7opg88MsdPrKWB+iQxzHrgJYIUn/ZbG0qWZxAWA5PGDmdJToQl5HTBXsv
+         OWKQptZ8fffhwxl1oPrIOx1VL1ZXhuBGDYHku9eUXO/j0EOAZd5hH9NkxK+d8BLSNudc
+         GGQy2OfqAFF/Iw/oihCudX2U/pzfDroW00EbKAEjNjQ8jrf9EXmsSgUeE08sd67dltEl
+         PEwqCsZJ5s0v5bx0MQFLw4l1UR59s3zwcyEWaiG35Pie0LGDiM3a4OVJxb2O2astx+vp
+         uwZIUsGXDqGbDTyzEe10r4xDmJG9B80nZsVz2nynrl/6+hqvHKlhGkbIIgOImkuY9tY/
+         RBCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nt8Gh4/OONJu6PpXJeU0AbL49OiKDt7nnRYsckchfN0=;
+        b=v1EfK8fr2MNFKZpdZzXgAmgH/VFzUHgHdjvaoPtZNAQ1ruBwDayKUCcIWGYVgH+V2C
+         OsfD77iNnNeVbaFNgBqa68cTSiJvmY+98T1Cd1aqAU08T26ilEwxJ05Jaf/75SE5EVPp
+         XQiFIZQOF0UTigwK8x9i5ltrLl5Jmsf8VO24SRFEFxvEx9nVbafpLmoRMlyKobtKX4D4
+         LxjEwyBzrOuLnE4HDGcAcKoLuFl7JERgnv+g9fAqyE6xrFGDHOI7lOJnphHzq3N7LD+q
+         TilN2+Fgn3RfSGSdMPQWVpmppCyo4pz/rmE6OmX1S9e5oM4AyEflLFl3wZPDSJgPEKWt
+         KJ1A==
+X-Gm-Message-State: AO0yUKXUVpvEag9AnbbgTElck2FNSUdPfJLqgdn3gvHCXQqV5Dk5psGc
+        nSNUsiv33avTR0u8M40MzhETKBLyp8U=
+X-Google-Smtp-Source: AK7set9vKeb8b8PsM2fowagD0M4M9mIigwCOtgIQrevOWk1YhsweGHC52Ic/fCxHdlwBxJYCvhH6ZA==
+X-Received: by 2002:a05:600c:1656:b0:3e0:fda8:7e26 with SMTP id o22-20020a05600c165600b003e0fda87e26mr9654204wmn.33.1676046081464;
+        Fri, 10 Feb 2023 08:21:21 -0800 (PST)
+Received: from zambezi.local (ip-94-112-104-28.bb.vodafone.cz. [94.112.104.28])
+        by smtp.gmail.com with ESMTPSA id l4-20020a7bc444000000b003d9fba3c7a4sm7995040wmi.16.2023.02.10.08.21.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Feb 2023 08:21:20 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fix for 6.2-rc8
+Date:   Fri, 10 Feb 2023 17:21:12 +0100
+Message-Id: <20230210162112.534456-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.0.253.125]
-X-ClientProxiedBy: Ex16-01.fintech.ru (10.0.10.18) To Ex16-01.fintech.ru
- (10.0.10.18)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-If the rbd_dev_create() fails after assignment 'opts' to 'rbd_dev->opts',
-double free of 'rbd_options' happens:
-one is in rbd_dev_free() and another one is in do_rbd_add().
+Hi Linus,
 
-If the rbd_dev_create() fails, for 'spec' it will be freed in
-rbd_dev_create()->rbd_spec_put() first and then in do_rbd_add()
-it will call rbd_spec_put() again. The same for 'rbd_client'.
-Unlike 'rbd_dev->opts', 'rbd_dev->spec' and 'rbd_dev->rbd_client'
-are ref-counted, that's why the ref-count underflow warning
-should be generated in rbd_spec_put() and rbd_put_client()
-to handle the return values of kref_put().
+The following changes since commit 4ec5183ec48656cec489c49f989c508b68b518e3:
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+  Linux 6.2-rc7 (2023-02-05 13:13:28 -0800)
 
-Fixes: 1643dfa4c2c8 ("rbd: introduce a per-device ordered workqueue")
-Signed-off-by: Natalia Petrova <n.petrova@fintech.ru>
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
----
-v2: Remarks on the processing of 'rbd_dev->spec' and 'rbd_dev->rbd_client' 
-by Ilya Dryomov <idryomov@gmail.com> and Xiubo Li <xiubli@redhat.com> 
-were taken into account.
- drivers/block/rbd.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+are available in the Git repository at:
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 04453f4a319c..f3f253febe0f 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -889,8 +889,10 @@ static void rbd_client_release(struct kref *kref)
-  */
- static void rbd_put_client(struct rbd_client *rbdc)
- {
--	if (rbdc)
--		kref_put(&rbdc->kref, rbd_client_release);
-+	if (rbdc) {
-+		if (!kref_put(&rbdc->kref, rbd_client_release))
-+			pr_warn("The reference count underflow\n");
-+	}
- }
- 
- /*
-@@ -5225,8 +5227,10 @@ static struct rbd_spec *rbd_spec_get(struct rbd_spec *spec)
- static void rbd_spec_free(struct kref *kref);
- static void rbd_spec_put(struct rbd_spec *spec)
- {
--	if (spec)
--		kref_put(&spec->kref, rbd_spec_free);
-+	if (spec) {
-+		if (!kref_put(&spec->kref, rbd_spec_free))
-+			pr_warn("The reference count underflow\n");
-+	}
- }
- 
- static struct rbd_spec *rbd_spec_alloc(void)
-@@ -5357,7 +5361,6 @@ static struct rbd_device *rbd_dev_create(struct rbd_client *rbdc,
- 	if (!rbd_dev)
- 		return NULL;
- 
--	rbd_dev->opts = opts;
- 
- 	/* get an id and fill in device name */
- 	rbd_dev->dev_id = ida_simple_get(&rbd_dev_id_ida, 0,
-@@ -5372,6 +5375,7 @@ static struct rbd_device *rbd_dev_create(struct rbd_client *rbdc,
- 	if (!rbd_dev->task_wq)
- 		goto fail_dev_id;
- 
-+	rbd_dev->opts = opts;
- 	/* we have a ref from do_rbd_add() */
- 	__module_get(THIS_MODULE);
- 
--- 
-2.34.1
+  https://github.com/ceph/ceph-client.git tags/ceph-for-6.2-rc8
 
+for you to fetch changes up to e7d84c6a1296d059389f7342d9b4b7defb518d3a:
+
+  ceph: flush cap releases when the session is flushed (2023-02-07 16:55:14 +0100)
+
+----------------------------------------------------------------
+A fix for a pretty embarrassing omission in the session flush handler
+from Xiubo, marked for stable.
+
+----------------------------------------------------------------
+Xiubo Li (1):
+      ceph: flush cap releases when the session is flushed
+
+ fs/ceph/mds_client.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
