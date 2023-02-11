@@ -2,72 +2,173 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 411126924DA
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 Feb 2023 18:53:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9D3A692FCB
+	for <lists+ceph-devel@lfdr.de>; Sat, 11 Feb 2023 10:41:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231970AbjBJRxN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 10 Feb 2023 12:53:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55554 "EHLO
+        id S229863AbjBKJlF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 11 Feb 2023 04:41:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232871AbjBJRwz (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 10 Feb 2023 12:52:55 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96AC073967;
-        Fri, 10 Feb 2023 09:52:54 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 372D3B82599;
-        Fri, 10 Feb 2023 17:52:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id F088CC433EF;
-        Fri, 10 Feb 2023 17:52:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1676051572;
-        bh=aejXX2XP1RnJc4D3YEkcpf4KlWn7gAJWavb6bPxEj+s=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=C26i7GNbajjnankqlO+Mdir1fv/4mwszeGqOtm0MbXnesJyHx77sthhaLgnRVKO9P
-         mDf4kggzzF+1DKX+qqEa4oCnyFOEbagWd+KscQP78+DhMzE/XmXwQAXZXZPrau+kNF
-         1mjhvtgTuL5QG7YByh1aZi+HkM4T3BH1/OPwQNVl25Hks3/g8YVIE50mCMvYYTKS/t
-         L9W20WwiRCJwLVDbmaWyx2papGgNt1ROVFQ2IcYVt61XxTi3EjFjstnWXLAQiTnYQH
-         ZJFjlQLLaGYEcSdM7+8vT8/kUdPA/PnpBG6YMFUC2g8rr95KiHt/+2Vru74SSseCG0
-         X/3hnl7NFxLRw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DDFEFE55EFD;
-        Fri, 10 Feb 2023 17:52:51 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph fix for 6.2-rc8
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20230210162112.534456-1-idryomov@gmail.com>
-References: <20230210162112.534456-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20230210162112.534456-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.2-rc8
-X-PR-Tracked-Commit-Id: e7d84c6a1296d059389f7342d9b4b7defb518d3a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3647d2d70640ff85be60793fa4b204bdae26ca44
-Message-Id: <167605157190.13061.2206193348034712340.pr-tracker-bot@kernel.org>
-Date:   Fri, 10 Feb 2023 17:52:51 +0000
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S229477AbjBKJlE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 11 Feb 2023 04:41:04 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 799453C29D;
+        Sat, 11 Feb 2023 01:41:03 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id sa10so21319386ejc.9;
+        Sat, 11 Feb 2023 01:41:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PKTTB4KrCAiL8SRqB2lSSGDnA1+HoHmmXJxC0p1EX7w=;
+        b=n8shbWQqvG5ZrwU7/06sMCBiVo+lHWO2xDR2rSNdC5TUWcTDu8JVVL3+jAYNL0h2oF
+         dHDftU1DzWK75WDjq1INxacyNDYK0Q/iDQdcP4uvGVWN3tW6ARxtvCql/MW+MsrA3NpY
+         C6rBX/bGjAl4tvi0Bhri6EhDob/XEI3wooouNTEm/4+8N8fFj7QgNT05RKDZNbal34Go
+         7T8JWXXlbikvuyCW2EN6iQi9cIsQYoOUfq4EgarUHco5jG0Eqfl2DmxfMVNLxgJmpt9n
+         Gi5Ew4Z/2/tAosrbLjGItjvz3OIrHwmIoZcutnRcEg7K0OD8KT/E3fH/epyHsbcPOUTH
+         W+2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PKTTB4KrCAiL8SRqB2lSSGDnA1+HoHmmXJxC0p1EX7w=;
+        b=Xjyv+4XtyO7GaJMEhB0zgTOxBqXsF4A11YJYpPZl4Ewm0yny8c4m8twgvmu6mIfwMK
+         o0HcnkjADB6RknRZP1DVTq0xuQ13rjHFGfuz1rrlbC50CUyPiZZsb9Jgc94XCK/wAO4N
+         R7OXKzLkZmjfG2HAfVfv6BlV2xsG6Gel4e+h+KVTnnE8MudBQgi+HNuLscQAi/CKtS/2
+         pdMkaJh0U26zKbLFr3N2YJ70tTdD/ilLlk7UYKUy7x3bn76zWUgYbeNGjSxVkzgJWcm8
+         E91KKVm0ixsufoek+7iqrbsvNIDWEAJe0JXLk6WC6wSvDKcHjGUIstqGUZVaGyz+pon2
+         AU5w==
+X-Gm-Message-State: AO0yUKX4pZPQ7mPQNclPfFVjUgzX7FCjV8PcxNXkn44SS9INYnzD+P36
+        hi3tdtLboxRi0sZ2K0hY6qgtc345GPRzvGBfKTucEnHsiqs=
+X-Google-Smtp-Source: AK7set86j/BnrX9H2DMZ1YIqefpYkzcgEtuGz0ePMJhYcApjmjxiU6GJLRZcJYPTlsHhKm/FMBWKAnGW8e0DQsc/CKU=
+X-Received: by 2002:a17:907:20b3:b0:87b:d79f:9953 with SMTP id
+ pw19-20020a17090720b300b0087bd79f9953mr2041563ejb.11.1676108461930; Sat, 11
+ Feb 2023 01:41:01 -0800 (PST)
+MIME-Version: 1.0
+References: <06f51bab-42e1-975a-ad4f-6815c2063adb@redhat.com> <20230209120923.331111-1-n.petrova@fintech.ru>
+In-Reply-To: <20230209120923.331111-1-n.petrova@fintech.ru>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Sat, 11 Feb 2023 10:40:50 +0100
+Message-ID: <CAOi1vP9Wuzsx81O+yu_w5P-W=GHdXNv-LfL1dD6O0NxkdedCMw@mail.gmail.com>
+Subject: Re: [PATCH v2] rbd: fix freeing memory of 'rbd_dev->opts',
+ 'rbd_dev->spec', 'rbd_dev->rbd_client'
+To:     Natalia Petrova <n.petrova@fintech.ru>
+Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Jens Axboe <axboe@kernel.dk>, ceph-devel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lvc-project@linuxtesting.org,
+        Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The pull request you sent on Fri, 10 Feb 2023 17:21:12 +0100:
+On Thu, Feb 9, 2023 at 1:09 PM Natalia Petrova <n.petrova@fintech.ru> wrote:
+>
+> If the rbd_dev_create() fails after assignment 'opts' to 'rbd_dev->opts',
+> double free of 'rbd_options' happens:
+> one is in rbd_dev_free() and another one is in do_rbd_add().
+>
+> If the rbd_dev_create() fails, for 'spec' it will be freed in
+> rbd_dev_create()->rbd_spec_put() first and then in do_rbd_add()
+> it will call rbd_spec_put() again. The same for 'rbd_client'.
+> Unlike 'rbd_dev->opts', 'rbd_dev->spec' and 'rbd_dev->rbd_client'
+> are ref-counted, that's why the ref-count underflow warning
+> should be generated in rbd_spec_put() and rbd_put_client()
+> to handle the return values of kref_put().
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-6.2-rc8
+Hi Natalia,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3647d2d70640ff85be60793fa4b204bdae26ca44
+I think you misinterpreted Xiubo.  The underflow warning would be
+printed by kref_put() (if one is lucky and the freed memory doesn't get
+immediately reallocated and overwritten in which case straight memory
+corruption would occur).  There is no need to attempt to print another
+warning here.
 
-Thank you!
+The problem is potential use-after-free on struct rbd_spec and struct
+rbd_client (which is what the warning is for).  This use-after-free is
+very similar in nature to what the tool that you are using found for
+struct rbd_options (the same bug on the same error path) except that
+reference counting is involved: instead of kfree() being called
+directly, it's called indirectly from rbd_spec_free() and
+rbd_client_release() through rbd_spec_put() and rbd_put_client()
+respectively.  Both of these structs have a refcount of 1 here which
+means that the first rbd_spec_free() or rbd_client_release() call is
+equivalent to kfree() and, when either of them is called again from
+do_rbd_add(), use-after-free would occur.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Hope this helps,
+
+                Ilya
+
+>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>
+> Fixes: 1643dfa4c2c8 ("rbd: introduce a per-device ordered workqueue")
+> Signed-off-by: Natalia Petrova <n.petrova@fintech.ru>
+> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+> ---
+> v2: Remarks on the processing of 'rbd_dev->spec' and 'rbd_dev->rbd_client'
+> by Ilya Dryomov <idryomov@gmail.com> and Xiubo Li <xiubli@redhat.com>
+> were taken into account.
+>  drivers/block/rbd.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index 04453f4a319c..f3f253febe0f 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -889,8 +889,10 @@ static void rbd_client_release(struct kref *kref)
+>   */
+>  static void rbd_put_client(struct rbd_client *rbdc)
+>  {
+> -       if (rbdc)
+> -               kref_put(&rbdc->kref, rbd_client_release);
+> +       if (rbdc) {
+> +               if (!kref_put(&rbdc->kref, rbd_client_release))
+> +                       pr_warn("The reference count underflow\n");
+> +       }
+>  }
+>
+>  /*
+> @@ -5225,8 +5227,10 @@ static struct rbd_spec *rbd_spec_get(struct rbd_spec *spec)
+>  static void rbd_spec_free(struct kref *kref);
+>  static void rbd_spec_put(struct rbd_spec *spec)
+>  {
+> -       if (spec)
+> -               kref_put(&spec->kref, rbd_spec_free);
+> +       if (spec) {
+> +               if (!kref_put(&spec->kref, rbd_spec_free))
+> +                       pr_warn("The reference count underflow\n");
+> +       }
+>  }
+>
+>  static struct rbd_spec *rbd_spec_alloc(void)
+> @@ -5357,7 +5361,6 @@ static struct rbd_device *rbd_dev_create(struct rbd_client *rbdc,
+>         if (!rbd_dev)
+>                 return NULL;
+>
+> -       rbd_dev->opts = opts;
+>
+>         /* get an id and fill in device name */
+>         rbd_dev->dev_id = ida_simple_get(&rbd_dev_id_ida, 0,
+> @@ -5372,6 +5375,7 @@ static struct rbd_device *rbd_dev_create(struct rbd_client *rbdc,
+>         if (!rbd_dev->task_wq)
+>                 goto fail_dev_id;
+>
+> +       rbd_dev->opts = opts;
+>         /* we have a ref from do_rbd_add() */
+>         __module_get(THIS_MODULE);
+>
+> --
+> 2.34.1
+>
