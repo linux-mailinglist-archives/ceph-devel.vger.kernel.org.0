@@ -2,188 +2,67 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 81E9B6946DA
-	for <lists+ceph-devel@lfdr.de>; Mon, 13 Feb 2023 14:23:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 91AFA697893
+	for <lists+ceph-devel@lfdr.de>; Wed, 15 Feb 2023 10:04:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229596AbjBMNWd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 13 Feb 2023 08:22:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58478 "EHLO
+        id S233035AbjBOJEP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 15 Feb 2023 04:04:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230235AbjBMNWU (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 13 Feb 2023 08:22:20 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 953E11ABD2
-        for <ceph-devel@vger.kernel.org>; Mon, 13 Feb 2023 05:21:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1676294490;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=65vM63lCBcwwtvqyvQJB4Hp4/XOpXjbqPy1l0v1Y41c=;
-        b=DNwGfqPl0vUUQc1Jdj5Kywoxx+QXPRFi8jgSxPwPPQ2UPzu2X4xk0j09RAsnVFV15ZAY3F
-        yBZZrbUqma0E+1K7HtYJzGQtZaku6WoGSkpXK01bGmQQgHQmmBLImTTr6/JU8vE4Sr5ypo
-        nL9GxcXGpKP9dC8CYORq2F9fhuts7SY=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-80-j_7L8tOfOPqyTLdk2sOLNA-1; Mon, 13 Feb 2023 08:21:29 -0500
-X-MC-Unique: j_7L8tOfOPqyTLdk2sOLNA-1
-Received: by mail-pl1-f200.google.com with SMTP id j12-20020a170902da8c00b0019a8df175b2so3175856plx.23
-        for <ceph-devel@vger.kernel.org>; Mon, 13 Feb 2023 05:21:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=65vM63lCBcwwtvqyvQJB4Hp4/XOpXjbqPy1l0v1Y41c=;
-        b=q7pXwBbMgx8hFmpEalLuBrtNiw+82IpEXYS/0t7q2nrQRL2u0xPXSAcjpsSCPPHlhP
-         R5718qZ8s7v/gODnxtMKaQPXOZm9oyoivZYxG8PAzwczS77d3GFlLiDTi7hcOB5OD5B1
-         Ugpp7VDgdnAegvCdN5foTNmXzx4zhoA8oohoEk4qABk4X/7vmhvZB5nGkcVmZSecPsXg
-         /iNi09cRbZ3N3BOjKC+IDdVMjDaV0Vgcl963tVqSSTPsRpt38mP7YTywBmkJTp5d1ID5
-         lm2xH6Wgfox1M7UPtc2/ZmDrYighl70bBIeOMrDMPsmhf1uid+cO3wIDtCr2WrOJF9nH
-         mEmg==
-X-Gm-Message-State: AO0yUKXt05yoCqEOYB1Kfca49HPcH2LfUvrdLgc5b7mLx1GbFvvmOMGj
-        alZUeGN4LKiv7S9jXCTBaJV5SEl8nuupe/HjbTlUQllCbXQz9TudDLMHTp1Ko25BDMufcFWNlSk
-        mRt24JLE+4UyKaTmTRl39gg==
-X-Received: by 2002:a17:902:ce83:b0:193:38ce:7bb8 with SMTP id f3-20020a170902ce8300b0019338ce7bb8mr29574663plg.37.1676294487855;
-        Mon, 13 Feb 2023 05:21:27 -0800 (PST)
-X-Google-Smtp-Source: AK7set+CORiANb5b65jMqxT74Ajb8vATVgklpmnL7Uqt/65WgENCsfuvSm2KUNr++8mlcl2HRrt9eA==
-X-Received: by 2002:a17:902:ce83:b0:193:38ce:7bb8 with SMTP id f3-20020a170902ce8300b0019338ce7bb8mr29574643plg.37.1676294487584;
-        Mon, 13 Feb 2023 05:21:27 -0800 (PST)
-Received: from [10.72.13.220] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id jg2-20020a17090326c200b001946a3f4d9csm5511466plb.38.2023.02.13.05.21.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Feb 2023 05:21:27 -0800 (PST)
-Message-ID: <9741848e-4fa6-9c70-8189-4b8614389501@redhat.com>
-Date:   Mon, 13 Feb 2023 21:21:20 +0800
+        with ESMTP id S229970AbjBOJEO (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 15 Feb 2023 04:04:14 -0500
+X-Greylist: delayed 535 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 15 Feb 2023 01:04:13 PST
+Received: from mail.paretdee.com (mail.paretdee.com [141.95.17.174])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F633298F9
+        for <ceph-devel@vger.kernel.org>; Wed, 15 Feb 2023 01:04:13 -0800 (PST)
+Received: by mail.paretdee.com (Postfix, from userid 1002)
+        id 67524A236D; Wed, 15 Feb 2023 08:55:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=paretdee.com; s=mail;
+        t=1676451317; bh=81y7GKW1qfpmZraEf77YtkUdBRVrEXx1Dfams4657E8=;
+        h=Date:From:To:Subject:From;
+        b=fa3R77f6+sDDpU6bFB/cjr3FWudJmmrY5AOow7LDmaiwHy3rNyuOLVCyJ8mSB70kD
+         /9/Npq9p78Elx2VTMFI9F2cji6qYVV0OIjDIAWuBdEDkpswblMmWp917k5pcGJKXgJ
+         6kfFLyNFsdfMHNOpXCbiw/KaWSGDpLsvZ6IgtpZsRv4aIAkBCjzMvoFv9w/qaQOqbX
+         RigL6aBeIq5Ugp+dn9dA277RXSpKt/mfA0lq4+O9Cn41wCDxYdcwjZc3MW0fDtssaK
+         EGkniWzVJOzvkPPry8iqDfTH5e0CapqChX0NZ0CeoEJuM1VE8XTOtXzMdEmZcJ3AIs
+         t6kbGIlGWBETQ==
+Received: by mail.paretdee.com for <ceph-devel@vger.kernel.org>; Wed, 15 Feb 2023 08:55:17 GMT
+Message-ID: <20230215074500-0.1.4v.a9tu.0.aqfhxe2008@paretdee.com>
+Date:   Wed, 15 Feb 2023 08:55:17 GMT
+From:   "Zbynek Spacek" <zbynek.spacek@paretdee.com>
+To:     <ceph-devel@vger.kernel.org>
+Subject: Silicone rubber - vulcanization
+X-Mailer: mail.paretdee.com
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH] ceph: update the time stamps and try to drop the
- suid/sgid
-Content-Language: en-US
-To:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com,
-        Ceph Development <ceph-devel@vger.kernel.org>
-Cc:     vshankar@redhat.com, mchangir@redhat.com, stable@vger.kernel.org
-References: <20230213111038.15021-1-xiubli@redhat.com>
- <732e55f69d06c4e0de3c5c7eee10f254253391f6.camel@kernel.org>
- <0700f314-63fa-9324-94d2-5815daca2734@redhat.com>
- <3225027aae8a868ae8b57441c28047710c5356e4.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <3225027aae8a868ae8b57441c28047710c5356e4.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FROM_FMBLA_NEWDOM28,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Good morning,
 
-On 13/02/2023 21:09, Jeff Layton wrote:
-> On Mon, 2023-02-13 at 20:59 +0800, Xiubo Li wrote:
->> On 13/02/2023 20:37, Jeff Layton wrote:
->>> On Mon, 2023-02-13 at 19:10 +0800, xiubli@redhat.com wrote:
->>>> From: Xiubo Li <xiubli@redhat.com>
->>>>
->>>> The fallocate will try to clear the suid/sgid if a unprevileged user
->>>> changed the file.
->>>>
->>>> There is no Posix item requires that we should clear the suid/sgid
->>>> in fallocate code path but this is the default behaviour for most of
->>>> the filesystems and the VFS layer. And also the same for the write
->>>> code path, which have already support it.
->>>>
->>> Huh, you're right. It really doesn't say anything about the timestamps
->>> or setuid bits:
->>>
->>>       https://pubs.opengroup.org/onlinepubs/9699919799/functions/posix_fallocate.html
->>>
->>>
->>> That's arguably a bug in the spec. It really does need to do those
->>> things.
->> Yeah.
->>
-> Actually, posix_fallocate doesn't do hole punching. It just ensures that
-> blocks are reserved to back future writes. Given that that's not
-> something "observable" and won't change the contents of the file, then
-> there really is no need to change the times and clear set{u,g}id bits
-> there.
->
-> Linux' fallocate is different. It's a GNU API not covered by POSIX, and
-> can result in an observable change to the contents of the file. There,
-> we _must_ clear the setuid/setgid bits and update timestamps, at least
-> in the cases where the content can change.
->
-Okay, get it.
+a few months ago, we were contacted by a company from your industry, wher=
+e too high costs were generated by the purchase of silicone rubbers and s=
+ilicone mixtures with specific properties.
 
-Thank you Jeff for detailed explaining about this.
+We offered them a wide range of HTV silicone rubbers with technical prope=
+rties and liquid silicone rubber (LSR), as well as dyes and stabilizers. =
+Competitive conditions made it possible to flexibly adjust to their needs=
+ and type of production.
 
-- Xiubo
+Now the purchase and delivery of rubber runs smoothly, the client has gai=
+ned a significant increase in savings in relation to the planned budget a=
+t the level of several percent per year.
+
+Would you like to check what solutions we can provide you?
 
 
->> Also the kernel fuse code and libfuse also need to be improved to make
->> ceph-fuse work.
->>
->> Thanks Jeff.
->>
->> - Xiubo
->>
->>>> And also we need to update the time stamps since the fallocate will
->>>> change the file contents.
->>>>
->>>> Cc: stable@vger.kernel.org
->>>> URL: https://tracker.ceph.com/issues/58054
->>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>>> ---
->>>>    fs/ceph/file.c | 8 ++++++++
->>>>    1 file changed, 8 insertions(+)
->>>>
->>>> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
->>>> index 903de296f0d3..dee3b445f415 100644
->>>> --- a/fs/ceph/file.c
->>>> +++ b/fs/ceph/file.c
->>>> @@ -2502,6 +2502,9 @@ static long ceph_fallocate(struct file *file, int mode,
->>>>    	loff_t endoff = 0;
->>>>    	loff_t size;
->>>>    
->>>> +	dout("%s %p %llx.%llx mode %x, offset %llu length %llu\n", __func__,
->>>> +	     inode, ceph_vinop(inode), mode, offset, length);
->>>> +
->>>>    	if (mode != (FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
->>>>    		return -EOPNOTSUPP;
->>>>    
->>>> @@ -2539,6 +2542,10 @@ static long ceph_fallocate(struct file *file, int mode,
->>>>    	if (ret < 0)
->>>>    		goto unlock;
->>>>    
->>>> +	ret = file_modified(file);
->>>> +	if (ret)
->>>> +		goto put_caps;
->>>> +
->>>>    	filemap_invalidate_lock(inode->i_mapping);
->>>>    	ceph_fscache_invalidate(inode, false);
->>>>    	ceph_zero_pagecache_range(inode, offset, length);
->>>> @@ -2554,6 +2561,7 @@ static long ceph_fallocate(struct file *file, int mode,
->>>>    	}
->>>>    	filemap_invalidate_unlock(inode->i_mapping);
->>>>    
->>>> +put_caps:
->>>>    	ceph_put_cap_refs(ci, got);
->>>>    unlock:
->>>>    	inode_unlock(inode);
->>> Reviewed-by: Jeff Layton <jlayton@kernel.org>
->>>
--- 
-Best Regards,
-
-Xiubo Li (李秀波)
-
-Email: xiubli@redhat.com/xiubli@ibm.com
-Slack: @Xiubo Li
-
+Best regards
+Zbynek Spacek
