@@ -2,182 +2,156 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BFBCE69FFCD
-	for <lists+ceph-devel@lfdr.de>; Thu, 23 Feb 2023 00:59:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BB996A33C6
+	for <lists+ceph-devel@lfdr.de>; Sun, 26 Feb 2023 20:52:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232664AbjBVX7B (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 22 Feb 2023 18:59:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32864 "EHLO
+        id S229643AbjBZTwh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 26 Feb 2023 14:52:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229795AbjBVX67 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 22 Feb 2023 18:58:59 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76568FF38
-        for <ceph-devel@vger.kernel.org>; Wed, 22 Feb 2023 15:58:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1677110293;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=dXV8Ai9JbcuZGMK5QaH8UsVqX+xW1BVGo9JkWTVbj98=;
-        b=gOHsadBqzWVq30bMCfRSV35PYxfcghM68PqUJ7GoXY5LHNrurqCerts5R+59swOd/4e3BT
-        UWAR0IrTvJ0NCrnLINjH0Pj5yEnm3L+ZlSp3V9K74+n8cHLtFLjTiQKEjcWYqOiUQV9ehj
-        TJxVw27jBbtHdglEwDe8LqsD1TgghX8=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-482-QHCoanTsOpqxuItR9BeBLA-1; Wed, 22 Feb 2023 18:58:12 -0500
-X-MC-Unique: QHCoanTsOpqxuItR9BeBLA-1
-Received: by mail-pl1-f199.google.com with SMTP id j20-20020a170902759400b0019ace17fa33so4563759pll.7
-        for <ceph-devel@vger.kernel.org>; Wed, 22 Feb 2023 15:58:12 -0800 (PST)
+        with ESMTP id S229379AbjBZTwg (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 26 Feb 2023 14:52:36 -0500
+Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E75CB14E8D
+        for <ceph-devel@vger.kernel.org>; Sun, 26 Feb 2023 11:52:34 -0800 (PST)
+Received: by mail-wr1-x42c.google.com with SMTP id bt28so4163473wrb.8
+        for <ceph-devel@vger.kernel.org>; Sun, 26 Feb 2023 11:52:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+mhgiuohrDIxuOX3p/LswwS5sIKFu54QPK8z4IsMbWs=;
+        b=YejGuIbFquYM2OFlWq0zVG0UaFc+hueGy06/7v2zZ0diUKNHB5K6yWe1p5NJXo0ZBy
+         L1ALubAkofb0gYWYG7G+zBAjIbPiei3wQbCoC/tGNxundvIQPMSNzqzU46ov3XGy499K
+         BA5dTlmfV7YHojFqYrM0pNJSYM7kPfNYirAjuiCVKguRs1qpPYfezvU35Zp4vbn54hNX
+         8zJWC8uWH67kVHszCYiEW88umZ0cDP2tFEeeOg/1r3K9S3ZpjXYkMwX+u+PYm4cQg9vC
+         mbhmO5CXBgSKhTIjaVfS/FJ43e9TtSqNb99XMGyfY1cwdwCnP9bXO918flDyhGOYrrjL
+         OR5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dXV8Ai9JbcuZGMK5QaH8UsVqX+xW1BVGo9JkWTVbj98=;
-        b=EiH8iGLy+l5MkoGHR1VL0ArmF/lfkSCkN85E3+6bYiViJSttCMR4XiA2AyV/EM/Uwo
-         CCISqWqMEkWy5sKEKIC4ZrL9CbH5WOyvI25LDS1d0ElbpgOXFpbcxAn8IaqjDpTsildQ
-         ty0NEKHcNnFPFD68rTjkJJzlRF9Yff8oCX5GnVhZQ+Ozt5fI2J233FoTPZ1OFRusjHUo
-         xsieRfXrEkWnVrg+OaRCrZjE+zupj7GdZg2t6KgwNofXTH0diryRUCqxI1tMyIVmQ1QK
-         6mx4AapwiqaP8em0nRRCbWyGDk9Cc0lIT5fdhLPfjVMthIEgaSng5hTiIhs3Dn6KZoKI
-         ewuA==
-X-Gm-Message-State: AO0yUKXrUpcKI2tMWBbQIm4CH0LpapaiPp/vEMCHSBPPht1unV1mlL0r
-        o3YwgjLPiz7R7Cp0i4blDUz+ZmUT7EPHCCRmNdWMEwgR08z5tkztWZDAGGMicFFKIqrSChrPIz6
-        uPIxPKogHDP48iStv+thJhUPH4DbQcw==
-X-Received: by 2002:a17:90b:1988:b0:229:4dcd:ff61 with SMTP id mv8-20020a17090b198800b002294dcdff61mr11778848pjb.28.1677110290704;
-        Wed, 22 Feb 2023 15:58:10 -0800 (PST)
-X-Google-Smtp-Source: AK7set8RfTAtj8z6vzJ4vIFeaKXrlhekJ1syCglrFj0SuMP2NlkemLkwmKN8Rst524azC/Cqv2zbjA==
-X-Received: by 2002:a17:90b:1988:b0:229:4dcd:ff61 with SMTP id mv8-20020a17090b198800b002294dcdff61mr11778837pjb.28.1677110290353;
-        Wed, 22 Feb 2023 15:58:10 -0800 (PST)
-Received: from [10.72.12.152] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id x7-20020a17090a294700b00234899c65e7sm5459666pjf.28.2023.02.22.15.58.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Feb 2023 15:58:09 -0800 (PST)
-Message-ID: <718381b5-c36b-2398-6e22-43a6143957ae@redhat.com>
-Date:   Thu, 23 Feb 2023 07:58:06 +0800
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+mhgiuohrDIxuOX3p/LswwS5sIKFu54QPK8z4IsMbWs=;
+        b=jXiOrLVbJtLtSG0sbme9IbhGWmplZXvt1TwOQRDt/54YzK3OxBmhTxJBMKG8ePoCgf
+         U8TrMwTAyvs/WRKoTuUKsvC0k3hxqLlvna0sed87ud4qUNCwwSIg0K1fsGu0Qb2rW9VL
+         GUqz00Wn7BIrdeEVhrjwiYCYaHQ6TtKjG4ul8YupVPgt4+pYvYUPoSufSsxSN+f4kE9l
+         UhRMRyzYDqJ0W0Nbug7Nr7EpBnigS493FdThAF1Lnzlly6iayAoKtxJ6cTMCegSLJ90R
+         nMRVUaQiPTadZJVjYj/ThC3IzxM+DNdac/IFI5o7KpJTRlMgL5EwMY+DZpEMCqf2wSTC
+         nktg==
+X-Gm-Message-State: AO0yUKXP/sXriSc0P7dq+FCO5xsZb0/enbZM+p43iK6kFFE1oHwIV2CH
+        GXZ3iC0fWg2+jN4h6GLHDY6iNa0RTxY=
+X-Google-Smtp-Source: AK7set/ii5/cOrnVBdgSPLIIYxuydLXn/tLJBZviC/a5bOZbvvwSEkNGFexmLhNFrmPXMx5UUYrRpA==
+X-Received: by 2002:adf:ce0b:0:b0:2c6:e827:21c1 with SMTP id p11-20020adfce0b000000b002c6e82721c1mr17025816wrn.50.1677441153311;
+        Sun, 26 Feb 2023 11:52:33 -0800 (PST)
+Received: from zambezi.local (ip-94-112-104-28.bb.vodafone.cz. [94.112.104.28])
+        by smtp.gmail.com with ESMTPSA id x14-20020adfec0e000000b002c54536c662sm5071170wrn.34.2023.02.26.11.52.32
+        for <ceph-devel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Feb 2023 11:52:32 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     ceph-devel@vger.kernel.org
+Subject: [PATCH] rbd: avoid use-after-free in do_rbd_add() when rbd_dev_create() fails
+Date:   Sun, 26 Feb 2023 20:52:27 +0100
+Message-Id: <20230226195227.185393-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.39.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH] generic/020: fix really long attr test failure for ceph
-Content-Language: en-US
-To:     Zorro Lang <zlang@redhat.com>
-Cc:     fstests@vger.kernel.org, ceph-devel@vger.kernel.org,
-        "Darrick J. Wong" <djwong@kernel.org>
-References: <20230217124558.555027-1-xiubli@redhat.com>
- <Y++0t8qxK8et8fTg@magnolia> <20230218060436.534bnbs5znio5pd7@zlang-mailbox>
- <Y/UZ2mwahyPzYSMj@magnolia> <20230222141526.hgrewr3ezkohukk4@zlang-mailbox>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20230222141526.hgrewr3ezkohukk4@zlang-mailbox>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+If getting an ID or setting up a work queue in rbd_dev_create() fails,
+use-after-free on rbd_dev->rbd_client, rbd_dev->spec and rbd_dev->opts
+is triggered in do_rbd_add().  The root cause is that the ownership of
+these structures is transfered to rbd_dev prematurely and they all end
+up getting freed when rbd_dev_create() calls rbd_dev_free() prior to
+returning to do_rbd_add().
 
-On 22/02/2023 22:15, Zorro Lang wrote:
-> On Tue, Feb 21, 2023 at 11:22:02AM -0800, Darrick J. Wong wrote:
->> On Sat, Feb 18, 2023 at 02:04:36PM +0800, Zorro Lang wrote:
->>> On Fri, Feb 17, 2023 at 09:09:11AM -0800, Darrick J. Wong wrote:
->>>> On Fri, Feb 17, 2023 at 08:45:58PM +0800, xiubli@redhat.com wrote:
->>>>> From: Xiubo Li <xiubli@redhat.com>
->>>>>
->>>>> If the CONFIG_CEPH_FS_SECURITY_LABEL is enabled the kernel ceph
->>>>> itself will set the security.selinux extended attribute to MDS.
->>>>> And it will also eat some space of the total size.
->>>>>
->>>>> Fixes: https://tracker.ceph.com/issues/58742
->>>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>>>> ---
->>>>>   tests/generic/020 | 6 ++++--
->>>>>   1 file changed, 4 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/tests/generic/020 b/tests/generic/020
->>>>> index be5cecad..594535b5 100755
->>>>> --- a/tests/generic/020
->>>>> +++ b/tests/generic/020
->>>>> @@ -150,9 +150,11 @@ _attr_get_maxval_size()
->>>>>   		# it imposes a maximum size for the full set of xattrs
->>>>>   		# names+values, which by default is 64K.  Compute the maximum
->>>>>   		# taking into account the already existing attributes
->>>>> -		max_attrval_size=$(getfattr --dump -e hex $filename 2>/dev/null | \
->>>>> +		size=$(getfattr --dump -e hex $filename 2>/dev/null | \
->>>>>   			awk -F "=0x" '/^user/ {len += length($1) + length($2) / 2} END {print len}')
->>>>> -		max_attrval_size=$((65536 - $max_attrval_size - $max_attrval_namelen))
->>>>> +		selinux_size=$(getfattr -n 'security.selinux' --dump -e hex $filename 2>/dev/null | \
->>>>> +			awk -F "=0x" '/^security/ {len += length($1) + length($2) / 2} END {print len}')
->>>>> +		max_attrval_size=$((65536 - $size - $selinux_size - $max_attrval_namelen))
-> The max_attrval_size isn't a local variable, due to we need it to be global.
-> But the "size" and "selinux_size" look like not global variable, so better
-> to be *local*.
->
->>>> If this is a ceph bug, then why is the change being applied to the
->>>> section for FSTYP=ext* ?  Why not create a case statement for ceph?
->>> Hi Darrick,
->>>
->>> Looks like this change is in ceph section [1], did you hit any errors when
->>> you merge it?
->> ahahaa, diff tried to merge that hunk into _attr_get_max and not
->> _attr_get_maxval_size, and I didn't notice.  Question withdrawn
->> with apologies. :/
-> Never mind. If there's not objection from you or ceph list, I'll merge this
-> patch after it changes as above :)
+Found by Linux Verification Center (linuxtesting.org) with SVACE, an
+incomplete patch submitted by Natalia Petrova <n.petrova@fintech.ru>.
 
-Sure. Thanks Zorro.
+Cc: stable@vger.kernel.org
+Fixes: 1643dfa4c2c8 ("rbd: introduce a per-device ordered workqueue")
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+---
+ drivers/block/rbd.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
-- Xiubo
-
-
-> Thanks,
-> Zorro
->
->> --D
->>
->>> Thanks,
->>> Zorro
->>>
->>> [1]
->>> _attr_get_maxval_size()
->>> {
->>>          local max_attrval_namelen="$1"
->>>          local filename="$2"
->>>
->>>          # Set max attr value size in bytes based on fs type
->>>          case "$FSTYP" in
->>>          ...
->>>          ...
->>>          ceph)
->>>                  # CephFS does not have a maximum value for attributes.  Instead,
->>>                  # it imposes a maximum size for the full set of xattrs
->>>                  # names+values, which by default is 64K.  Compute the maximum
->>>                  # taking into account the already existing attributes
->>> ====>           max_attrval_size=$(getfattr --dump -e hex $filename 2>/dev/null | \
->>>                          awk -F "=0x" '/^user/ {len += length($1) + length($2) / 2} END {print len}')
->>> ====>           max_attrval_size=$((65536 - $max_attrval_size - $max_attrval_namelen))
->>>
->>>
->>>
->>>> --D
->>>>
->>>>>   		;;
->>>>>   	*)
->>>>>   		# Assume max ~1 block of attrs
->>>>> -- 
->>>>> 2.31.1
->>>>>
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 04453f4a319c..60aed196a2e5 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -5292,8 +5292,7 @@ static void rbd_dev_release(struct device *dev)
+ 		module_put(THIS_MODULE);
+ }
+ 
+-static struct rbd_device *__rbd_dev_create(struct rbd_client *rbdc,
+-					   struct rbd_spec *spec)
++static struct rbd_device *__rbd_dev_create(struct rbd_spec *spec)
+ {
+ 	struct rbd_device *rbd_dev;
+ 
+@@ -5338,9 +5337,6 @@ static struct rbd_device *__rbd_dev_create(struct rbd_client *rbdc,
+ 	rbd_dev->dev.parent = &rbd_root_dev;
+ 	device_initialize(&rbd_dev->dev);
+ 
+-	rbd_dev->rbd_client = rbdc;
+-	rbd_dev->spec = spec;
+-
+ 	return rbd_dev;
+ }
+ 
+@@ -5353,12 +5349,10 @@ static struct rbd_device *rbd_dev_create(struct rbd_client *rbdc,
+ {
+ 	struct rbd_device *rbd_dev;
+ 
+-	rbd_dev = __rbd_dev_create(rbdc, spec);
++	rbd_dev = __rbd_dev_create(spec);
+ 	if (!rbd_dev)
+ 		return NULL;
+ 
+-	rbd_dev->opts = opts;
+-
+ 	/* get an id and fill in device name */
+ 	rbd_dev->dev_id = ida_simple_get(&rbd_dev_id_ida, 0,
+ 					 minor_to_rbd_dev_id(1 << MINORBITS),
+@@ -5375,6 +5369,10 @@ static struct rbd_device *rbd_dev_create(struct rbd_client *rbdc,
+ 	/* we have a ref from do_rbd_add() */
+ 	__module_get(THIS_MODULE);
+ 
++	rbd_dev->rbd_client = rbdc;
++	rbd_dev->spec = spec;
++	rbd_dev->opts = opts;
++
+ 	dout("%s rbd_dev %p dev_id %d\n", __func__, rbd_dev, rbd_dev->dev_id);
+ 	return rbd_dev;
+ 
+@@ -6736,7 +6734,7 @@ static int rbd_dev_probe_parent(struct rbd_device *rbd_dev, int depth)
+ 		goto out_err;
+ 	}
+ 
+-	parent = __rbd_dev_create(rbd_dev->rbd_client, rbd_dev->parent_spec);
++	parent = __rbd_dev_create(rbd_dev->parent_spec);
+ 	if (!parent) {
+ 		ret = -ENOMEM;
+ 		goto out_err;
+@@ -6746,8 +6744,8 @@ static int rbd_dev_probe_parent(struct rbd_device *rbd_dev, int depth)
+ 	 * Images related by parent/child relationships always share
+ 	 * rbd_client and spec/parent_spec, so bump their refcounts.
+ 	 */
+-	__rbd_get_client(rbd_dev->rbd_client);
+-	rbd_spec_get(rbd_dev->parent_spec);
++	parent->rbd_client = __rbd_get_client(rbd_dev->rbd_client);
++	parent->spec = rbd_spec_get(rbd_dev->parent_spec);
+ 
+ 	__set_bit(RBD_DEV_FLAG_READONLY, &parent->flags);
+ 
 -- 
-Best Regards,
-
-Xiubo Li (李秀波)
-
-Email: xiubli@redhat.com/xiubli@ibm.com
-Slack: @Xiubo Li
+2.39.1
 
