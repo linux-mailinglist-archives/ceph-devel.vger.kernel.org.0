@@ -2,48 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 386FF6A3998
-	for <lists+ceph-devel@lfdr.de>; Mon, 27 Feb 2023 04:31:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 921CD6A3999
+	for <lists+ceph-devel@lfdr.de>; Mon, 27 Feb 2023 04:31:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230163AbjB0Dba (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 26 Feb 2023 22:31:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37410 "EHLO
+        id S230180AbjB0Dbc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 26 Feb 2023 22:31:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230079AbjB0Db2 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 26 Feb 2023 22:31:28 -0500
+        with ESMTP id S230186AbjB0Dba (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 26 Feb 2023 22:31:30 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E2871CAE7
-        for <ceph-devel@vger.kernel.org>; Sun, 26 Feb 2023 19:30:30 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97A641C7C9
+        for <ceph-devel@vger.kernel.org>; Sun, 26 Feb 2023 19:30:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1677468599;
+        s=mimecast20190719; t=1677468600;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=kBzvCEnP9wxCptLfZWyiIPKKst+VHzLkImpIzvWfiRo=;
-        b=iMxLliieMDr0sXENE63BttaRKHx6uWHpRtGp4uk4jjCsY1VglN2k4ee3VCdwZEnR/g+QX9
-        9BPgqRzfzCV2GwP/q+e8q6FPs+aV2BjioAgHenD9xItt92hAal4nJfHniP3jUdlao6ADDa
-        ktzU5zTLrGdJgtR+qtRmzfcCSxkZLsQ=
+        bh=2VcOcwyDD5PjoqsL9fywuU7zU2eX7wGnCRa52a25TPo=;
+        b=ToAyFti6SITXBNauKpjTsuz//siUejVjOd50bjCBbNaYnWX6J+mTWR6E0Ut4j12gGYyDVz
+        XMLWaZRt1kvRozMt0qT7MKbWhUJH1PBg1NNWW8r/l6rtzC5XUQjCyKPuPaGxJ2Cwm/RsNG
+        pYVBaeucC1y3TIjLIbdmhYDkue9bEBQ=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-294-mHee_tE5OD2MF-cMrcacgw-1; Sun, 26 Feb 2023 22:29:56 -0500
-X-MC-Unique: mHee_tE5OD2MF-cMrcacgw-1
+ us-mta-622-qGtWugGyMI6oV5pEyf5Nmw-1; Sun, 26 Feb 2023 22:29:59 -0500
+X-MC-Unique: qGtWugGyMI6oV5pEyf5Nmw-1
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9BE9D101A52E;
-        Mon, 27 Feb 2023 03:29:55 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0A61485CBE0;
+        Mon, 27 Feb 2023 03:29:59 +0000 (UTC)
 Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CE5591731B;
-        Mon, 27 Feb 2023 03:29:52 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3CCF31731B;
+        Mon, 27 Feb 2023 03:29:55 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
 Cc:     jlayton@kernel.org, lhenriques@suse.de, vshankar@redhat.com,
         mchangir@redhat.com, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v16 27/68] ceph: fix base64 encoded name's length check in ceph_fname_to_usr()
-Date:   Mon, 27 Feb 2023 11:27:32 +0800
-Message-Id: <20230227032813.337906-28-xiubli@redhat.com>
+Subject: [PATCH v16 28/68] ceph: add fscrypt support to ceph_fill_trace
+Date:   Mon, 27 Feb 2023 11:27:33 +0800
+Message-Id: <20230227032813.337906-29-xiubli@redhat.com>
 In-Reply-To: <20230227032813.337906-1-xiubli@redhat.com>
 References: <20230227032813.337906-1-xiubli@redhat.com>
 MIME-Version: 1.0
@@ -59,35 +59,84 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+From: Jeff Layton <jlayton@kernel.org>
 
-The fname->name is based64_encoded names and the max long shouldn't
-exceed the NAME_MAX.
+When we get a dentry in a trace, decrypt the name so we can properly
+instantiate the dentry.
 
-The FSCRYPT_BASE64URL_CHARS(NAME_MAX) will be 255 * 4 / 3.
-
-[ xiubli: s/FSCRYPT_BASE64URL_CHARS/CEPH_BASE64_CHARS/ reported by
-  kernel test robot <lkp@intel.com> ]
-
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/crypto.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ceph/inode.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index 03f4b9e73884..2222f4968f74 100644
---- a/fs/ceph/crypto.c
-+++ b/fs/ceph/crypto.c
-@@ -264,7 +264,7 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
- 	}
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index fdf3ac62928e..16ec25ac7797 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1405,8 +1405,15 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 		if (dir && req->r_op == CEPH_MDS_OP_LOOKUPNAME &&
+ 		    test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags) &&
+ 		    !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
++			bool is_nokey = false;
+ 			struct qstr dname;
+ 			struct dentry *dn, *parent;
++			struct fscrypt_str oname = FSTR_INIT(NULL, 0);
++			struct ceph_fname fname = { .dir	= dir,
++						    .name	= rinfo->dname,
++						    .ctext	= rinfo->altname,
++						    .name_len	= rinfo->dname_len,
++						    .ctext_len	= rinfo->altname_len };
  
- 	/* Sanity check that the resulting name will fit in the buffer */
--	if (fname->name_len > CEPH_BASE64_CHARS(NAME_MAX))
-+	if (fname->name_len > NAME_MAX || fname->ctext_len > NAME_MAX)
- 		return -EIO;
+ 			BUG_ON(!rinfo->head->is_target);
+ 			BUG_ON(req->r_dentry);
+@@ -1414,8 +1421,20 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 			parent = d_find_any_alias(dir);
+ 			BUG_ON(!parent);
  
- 	ret = __fscrypt_prepare_readdir(fname->dir);
+-			dname.name = rinfo->dname;
+-			dname.len = rinfo->dname_len;
++			err = ceph_fname_alloc_buffer(dir, &oname);
++			if (err < 0) {
++				dput(parent);
++				goto done;
++			}
++
++			err = ceph_fname_to_usr(&fname, NULL, &oname, &is_nokey);
++			if (err < 0) {
++				dput(parent);
++				ceph_fname_free_buffer(dir, &oname);
++				goto done;
++			}
++			dname.name = oname.name;
++			dname.len = oname.len;
+ 			dname.hash = full_name_hash(parent, dname.name, dname.len);
+ 			tvino.ino = le64_to_cpu(rinfo->targeti.in->ino);
+ 			tvino.snap = le64_to_cpu(rinfo->targeti.in->snapid);
+@@ -1430,9 +1449,15 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 				     dname.len, dname.name, dn);
+ 				if (!dn) {
+ 					dput(parent);
++					ceph_fname_free_buffer(dir, &oname);
+ 					err = -ENOMEM;
+ 					goto done;
+ 				}
++				if (is_nokey) {
++					spin_lock(&dn->d_lock);
++					dn->d_flags |= DCACHE_NOKEY_NAME;
++					spin_unlock(&dn->d_lock);
++				}
+ 				err = 0;
+ 			} else if (d_really_is_positive(dn) &&
+ 				   (ceph_ino(d_inode(dn)) != tvino.ino ||
+@@ -1444,6 +1469,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 				dput(dn);
+ 				goto retry_lookup;
+ 			}
++			ceph_fname_free_buffer(dir, &oname);
+ 
+ 			req->r_dentry = dn;
+ 			dput(parent);
 -- 
 2.31.1
 
