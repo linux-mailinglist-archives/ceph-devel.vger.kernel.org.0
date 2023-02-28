@@ -2,104 +2,129 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A17E6A46CF
-	for <lists+ceph-devel@lfdr.de>; Mon, 27 Feb 2023 17:15:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 474CB6A5076
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 Feb 2023 02:02:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbjB0QPC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 27 Feb 2023 11:15:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58932 "EHLO
+        id S229743AbjB1BCT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 27 Feb 2023 20:02:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230097AbjB0QPA (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 27 Feb 2023 11:15:00 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F4F71CF60
-        for <ceph-devel@vger.kernel.org>; Mon, 27 Feb 2023 08:14:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1677514457;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=N2XcQO9zBwNgY0UbCQHG/R6/WyIMUta34CRwnHspZKs=;
-        b=N8Sa6okyXX/dwEhGc5/TENQGvh/okSNwuz+X+D9vHKPcetkUF9rCd0mf/iKiAse/V778VE
-        oQq72v3NmBCUVrx1FtTxE58ur9gyW/K/jFnNh+V7HXxvQ3O9iVdNS/m939FTnmjKe8keZq
-        2qkq5p87TbUZpcvBlXxG59JSaUQFFJE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-436-Lv7xNEOnOtCFmxNszDCDlA-1; Mon, 27 Feb 2023 11:14:14 -0500
-X-MC-Unique: Lv7xNEOnOtCFmxNszDCDlA-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S229719AbjB1BCK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 27 Feb 2023 20:02:10 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF5ED29E2A;
+        Mon, 27 Feb 2023 17:01:57 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B18AC8828C4;
-        Mon, 27 Feb 2023 16:14:13 +0000 (UTC)
-Received: from redhat.com (unknown [10.22.33.100])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 567BA492B12;
-        Mon, 27 Feb 2023 16:14:13 +0000 (UTC)
-Date:   Mon, 27 Feb 2023 10:14:11 -0600
-From:   Bill O'Donnell <billodo@redhat.com>
-To:     xiubli@redhat.com
-Cc:     fstests@vger.kernel.org, david@fromorbit.com, djwong@kernel.org,
-        ceph-devel@vger.kernel.org, vshankar@redhat.com, zlang@redhat.com
-Subject: Re: [PATCH v2] generic/020: fix really long attr test failure for
- ceph
-Message-ID: <Y/zW074aOKP3PLBh@redhat.com>
-References: <20230227041358.350309-1-xiubli@redhat.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7587CB80DD4;
+        Tue, 28 Feb 2023 01:01:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2A490C4339B;
+        Tue, 28 Feb 2023 01:01:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677546115;
+        bh=0MyrhP8zxv6k33rgc7qfdjiKkOYxKugd6Y5yIm+G+iw=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=TrpxKXLHDJRZmtxPellg2R2e0LwhTmG2M11tD4m4F8F5sKa+ry/nGM6/NDBChHoSD
+         j+YaN0hFzU38PKpe17cqCZbGiwewOAiZERVYOj+LVc+zb+jt+6wDtD4bw9ZY6ZPna5
+         065r5y/ntPdrttGXnI3ygAbmSEG2s9nsuyYdZPPvc3oEf0eJPU9GIxZ27JxeQH239M
+         eIP+6uHS95fWDDm7rwjzBKHQryPRBHRS4JkIq4xsHici3XYcI9wSHemkzlMeag11Ao
+         CyNrHEzQkd0ZOa/GCfBP9ibpQQKBD4VlH0bx1VPvcM/70InEGg8VvhrbOZQC5RFlmL
+         wAFn4/77eBcag==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id ED819C41676;
+        Tue, 28 Feb 2023 01:01:54 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230227041358.350309-1-xiubli@redhat.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH v5 00/23] Convert to filemap_get_folios_tag()
+From:   patchwork-bot+f2fs@kernel.org
+Message-Id: <167754611496.27916.17463541946406622753.git-patchwork-notify@kernel.org>
+Date:   Tue, 28 Feb 2023 01:01:54 +0000
+References: <20230104211448.4804-1-vishal.moola@gmail.com>
+In-Reply-To: <20230104211448.4804-1-vishal.moola@gmail.com>
+To:     Vishal Moola (Oracle) <vishal.moola@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Feb 27, 2023 at 12:13:58PM +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> If the CONFIG_CEPH_FS_SECURITY_LABEL is enabled the kernel ceph
-> itself will set the security.selinux extended attribute to MDS.
-> And it will also eat some space of the total size.
-> 
-> Fixes: https://tracker.ceph.com/issues/58742
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
+Hello:
 
-LGTM
-Reviewed-by Bill O'Donnell <bodonnel@redhat.com>
+This series was applied to jaegeuk/f2fs.git (dev)
+by Andrew Morton <akpm@linux-foundation.org>:
 
+On Wed,  4 Jan 2023 13:14:25 -0800 you wrote:
+> This patch series replaces find_get_pages_range_tag() with
+> filemap_get_folios_tag(). This also allows the removal of multiple
+> calls to compound_head() throughout.
+> It also makes a good chunk of the straightforward conversions to folios,
+> and takes the opportunity to introduce a function that grabs a folio
+> from the pagecache.
 > 
-> V2:
-> - make the 'size' and the 'selinux_size' to be local
-> 
->  tests/generic/020 | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tests/generic/020 b/tests/generic/020
-> index be5cecad..538a24c6 100755
-> --- a/tests/generic/020
-> +++ b/tests/generic/020
-> @@ -150,9 +150,11 @@ _attr_get_maxval_size()
->  		# it imposes a maximum size for the full set of xattrs
->  		# names+values, which by default is 64K.  Compute the maximum
->  		# taking into account the already existing attributes
-> -		max_attrval_size=$(getfattr --dump -e hex $filename 2>/dev/null | \
-> +		local size=$(getfattr --dump -e hex $filename 2>/dev/null | \
->  			awk -F "=0x" '/^user/ {len += length($1) + length($2) / 2} END {print len}')
-> -		max_attrval_size=$((65536 - $max_attrval_size - $max_attrval_namelen))
-> +		local selinux_size=$(getfattr -n 'security.selinux' --dump -e hex $filename 2>/dev/null | \
-> +			awk -F "=0x" '/^security/ {len += length($1) + length($2) / 2} END {print len}')
-> +		max_attrval_size=$((65536 - $size - $selinux_size - $max_attrval_namelen))
->  		;;
->  	*)
->  		# Assume max ~1 block of attrs
-> -- 
-> 2.31.1
-> 
+> [...]
+
+Here is the summary with links:
+  - [f2fs-dev,v5,01/23] pagemap: Add filemap_grab_folio()
+    https://git.kernel.org/jaegeuk/f2fs/c/ee7a5906ff08
+  - [f2fs-dev,v5,02/23] filemap: Added filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/247f9e1feef4
+  - [f2fs-dev,v5,03/23] filemap: Convert __filemap_fdatawait_range() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/6817ef514e1a
+  - [f2fs-dev,v5,04/23] page-writeback: Convert write_cache_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/0fff435f060c
+  - [f2fs-dev,v5,05/23] afs: Convert afs_writepages_region() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/acc8d8588cb7
+  - [f2fs-dev,v5,06/23] btrfs: Convert btree_write_cache_pages() to use filemap_get_folio_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/51c5cd3bafe5
+  - [f2fs-dev,v5,07/23] btrfs: Convert extent_write_cache_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/9f50fd2e92e3
+  - [f2fs-dev,v5,08/23] ceph: Convert ceph_writepages_start() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/590a2b5f0a9b
+  - [f2fs-dev,v5,09/23] cifs: Convert wdata_alloc_and_fillpages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/4cda80f3a7a5
+  - [f2fs-dev,v5,10/23] ext4: Convert mpage_prepare_extent_to_map() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/50ead2537441
+  - [f2fs-dev,v5,11/23] f2fs: Convert f2fs_fsync_node_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/e6e46e1eb7ce
+  - [f2fs-dev,v5,12/23] f2fs: Convert f2fs_flush_inline_data() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/a40a4ad1186a
+  - [f2fs-dev,v5,13/23] f2fs: Convert f2fs_sync_node_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/7525486affa5
+  - [f2fs-dev,v5,14/23] f2fs: Convert f2fs_write_cache_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/1cd98ee747cf
+  - [f2fs-dev,v5,15/23] f2fs: Convert last_fsync_dnode() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/4f4a4f0febe6
+  - [f2fs-dev,v5,16/23] f2fs: Convert f2fs_sync_meta_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/580e7a492608
+  - [f2fs-dev,v5,17/23] gfs2: Convert gfs2_write_cache_jdata() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/87ed37e66dfd
+  - [f2fs-dev,v5,18/23] nilfs2: Convert nilfs_lookup_dirty_data_buffers() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/5ee4b25cb730
+  - [f2fs-dev,v5,19/23] nilfs2: Convert nilfs_lookup_dirty_node_buffers() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/a24586583169
+  - [f2fs-dev,v5,20/23] nilfs2: Convert nilfs_btree_lookup_dirty_buffers() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/41f3f3b5373e
+  - [f2fs-dev,v5,21/23] nilfs2: Convert nilfs_copy_dirty_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/d4a16d31334e
+  - [f2fs-dev,v5,22/23] nilfs2: Convert nilfs_clear_dirty_pages() to use filemap_get_folios_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/243c5ea4f783
+  - [f2fs-dev,v5,23/23] filemap: Remove find_get_pages_range_tag()
+    https://git.kernel.org/jaegeuk/f2fs/c/c5792d938411
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
