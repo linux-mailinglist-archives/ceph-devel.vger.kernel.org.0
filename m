@@ -2,114 +2,112 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 68BD26A6BEB
-	for <lists+ceph-devel@lfdr.de>; Wed,  1 Mar 2023 12:54:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DE5B6A705A
+	for <lists+ceph-devel@lfdr.de>; Wed,  1 Mar 2023 16:56:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229574AbjCALyg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 1 Mar 2023 06:54:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33608 "EHLO
+        id S229724AbjCAP4C (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 1 Mar 2023 10:56:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbjCALyg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Mar 2023 06:54:36 -0500
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9E1F2A15A;
-        Wed,  1 Mar 2023 03:54:34 -0800 (PST)
-Received: by mail-ed1-x52c.google.com with SMTP id o15so50186872edr.13;
-        Wed, 01 Mar 2023 03:54:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1677671673;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r9eBe8+7YQ/M59DcxO/TsvFOMgr/dp8saDDEAiBUiNg=;
-        b=evG5WpgYwbyzE139g1XTYu1BdI29WDCu5qpt2vbeBH/cmGwF9r3yslLIsVQGKO+ocA
-         kTo+NXvQNwmnFyD1zOvdIncqaB0UWmQ+ggOqjxYeB2dzkLdsBuxS1d2d1/g5rH4mm9nW
-         f7gHqV24RXteYFBYuTEtzh0TdgVVN6DGBsh1Ga4f0gKU1xfi32NbBS+TehcX858olelD
-         MPuV11zVMlZtG7bj83IQCtNvuNOsk8NZglYEfdJW3xJeY9swplKY8BzO1Ss+ERvztzyR
-         5fHM26/rkcB8bdVOVQUZ5YarY2oveWLI8l2DvGb3MoOATgDHHCcXWF9wi2x/7XpzyhNv
-         H1ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677671673;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r9eBe8+7YQ/M59DcxO/TsvFOMgr/dp8saDDEAiBUiNg=;
-        b=zpfVgiVUJYPS6hWegx6vW6VqraT+DpBtIlPfpPpVBGzkLZPkULzxIvkSFxn0ZyKR55
-         UN5RF7NFKHdw+ei0/H0uHwS7j4EHX5QEIdauoi/IMK2ZGYAxu1cho1jvr54lJRoY339A
-         fHPva1hxO+mZ3htmXFvsCDhUGVATh3KgapwAFWir0BvsXX47L53KVrxQpjfTBaNXssvM
-         1oX9w0cK78pR1VD2mFM239DL/ovt5cUhFoDutMwpU8y6HWV0GxwHpPPT7TgzpKAL/bCw
-         LFg6L85tafsG4q5iFgVGcrHIt6AuQtyetk7JqiwNQHla1mSYrgUlpiHRzW+g8b7WVxv2
-         kj1w==
-X-Gm-Message-State: AO0yUKVLP5lQxZ45IRAfJG/zAiYPLmrG/7nHMvyzg9ZYEhZXGOlkOYb9
-        9SF5TwVRgRKQtcm3uGkbtu/QWCO9nORHVGrmVyw=
-X-Google-Smtp-Source: AK7set+zTjr941YrtuGjFKeE2KE1CqziQ0n2HhGGhs0dQ/WMezUBXXe8OBNCwfrYWDKR4GamdkNljZ40n8dSFFd/k9U=
-X-Received: by 2002:a50:d494:0:b0:4ac:b442:5a4b with SMTP id
- s20-20020a50d494000000b004acb4425a4bmr3534195edi.0.1677671673211; Wed, 01 Mar
- 2023 03:54:33 -0800 (PST)
-MIME-Version: 1.0
-References: <20230301011918.64629-1-xiubli@redhat.com>
-In-Reply-To: <20230301011918.64629-1-xiubli@redhat.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 1 Mar 2023 12:54:20 +0100
-Message-ID: <CAOi1vP8i6EY-m-bGDNp5QhmHDepvgCAQ1FTnySVg7Bb=6h5uqw@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: do not print the whole xattr value if it's too long
+        with ESMTP id S229564AbjCAP4B (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 1 Mar 2023 10:56:01 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61C65367F7;
+        Wed,  1 Mar 2023 07:56:00 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0CCE7B80EF8;
+        Wed,  1 Mar 2023 15:55:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8EA7C433EF;
+        Wed,  1 Mar 2023 15:55:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1677686157;
+        bh=HuN89FfjJGekQahoi0mfxn91ZSpPlUJstnL0bfpUvS8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qlXGgo+Y6ybI6ieH4zprnuuAFkzCHnU4tHrn/+XrokeudRQfIVJrWsOjoJiueYZ45
+         vCsi9KAktJPx/Pm6B7FxLUbwU9vZgOXK+rTrdvGepeDX0mXOTYx3jcYNAsQM47/reh
+         VKJSR+mvMUgBfxfVxbPmIhLoSnaBAkfpUnnAuH7hxwJJizpP1MnvPID2pvW5nH0gjb
+         5F7i7YtX01HX+nNFae6oX9puUP0QZHuDe6k6Jv13yEtihp2BmQyB7oS+T7+Nuz4gSG
+         oKHNZtk+WGSTlyypxsteOjxTQj4sXh/NgvnF3vHTzx9O9yAc7e0IsCdFg/cs1vGMko
+         7MvuVc7TlDzew==
+Date:   Wed, 1 Mar 2023 07:55:57 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     xiubli@redhat.com
-Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org, lhenriques@suse.de,
-        vshankar@redhat.com, mchangir@redhat.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Cc:     fstests@vger.kernel.org, david@fromorbit.com,
+        ceph-devel@vger.kernel.org, vshankar@redhat.com, zlang@redhat.com
+Subject: Re: [PATCH] generic/{075,112}: fix printing the incorrect return
+ value of fsx
+Message-ID: <Y/91jWK16jYSO0Tz@magnolia>
+References: <20230301030620.137153-1-xiubli@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230301030620.137153-1-xiubli@redhat.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Mar 1, 2023 at 2:19=E2=80=AFAM <xiubli@redhat.com> wrote:
->
+On Wed, Mar 01, 2023 at 11:06:20AM +0800, xiubli@redhat.com wrote:
 > From: Xiubo Li <xiubli@redhat.com>
->
-> If the xattr's value size is long enough the kernel will warn and
-> then will fail the xfstests test case.
->
-> Just print part of the value string if it's too long.
->
-> Cc: stable@vger.kernel.org
-> URL: https://tracker.ceph.com/issues/58404
-
-Hi Xiubo,
-
-Does this really need to go to stable kernels?  None of the douts are
-printed by default.
-
+> 
+> We need to save the result of the 'fsx' temporarily.
+> 
+> Fixes: https://tracker.ceph.com/issues/58834
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->
-> V2:
-> - switch to use min() from Jeff's comment
-> - s/XATTR_MAX_VAL/MAX_XATTR_VAL/g
->
->
->  fs/ceph/xattr.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-> index b10d459c2326..887a65279fcf 100644
-> --- a/fs/ceph/xattr.c
-> +++ b/fs/ceph/xattr.c
-> @@ -561,6 +561,7 @@ static struct ceph_vxattr *ceph_match_vxattr(struct i=
-node *inode,
->         return NULL;
->  }
->
-> +#define MAX_XATTR_VAL 256
+>  tests/generic/075 | 6 ++++--
+>  tests/generic/112 | 6 ++++--
+>  2 files changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tests/generic/075 b/tests/generic/075
+> index 03a394a6..bc3a11c7 100755
+> --- a/tests/generic/075
+> +++ b/tests/generic/075
+> @@ -53,9 +53,11 @@ _do_test()
+>  
+>      # This cd and use of -P gets full debug on "$RESULT_DIR" (not TEST_DEV)
+>      cd $out
+> -    if ! $here/ltp/fsx $_param -P "$RESULT_DIR" $seq.$_n $FSX_AVOID &>/dev/null
+> +    $here/ltp/fsx $_param -P "$RESULT_DIR" $seq.$_n $FSX_AVOID &>/dev/null
+> +    local res=$?
+> +    if [ $res -ne 0 ]
+>      then
+> -	echo "    fsx ($_param) failed, $? - compare $seqres.$_n.{good,bad,fsxlog}"
+> +	echo "    fsx ($_param) failed, $res - compare $seqres.$_n.{good,bad,fsxlog}"
 
-Perhaps MAX_XATTR_VAL_PRINT_LEN?  Also, I'd add a blank like after the
-define -- it's used by more than one function.
+Heh, oops.
 
-Thanks,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-                Ilya
+--D
+
+>  	mv $out/$seq.$_n $seqres.$_n.full
+>  	od -xAx $seqres.$_n.full > $seqres.$_n.bad
+>  	od -xAx "$RESULT_DIR"/$seq.$_n.fsxgood > $seqres.$_n.good
+> diff --git a/tests/generic/112 b/tests/generic/112
+> index 971d0467..0e08cbf9 100755
+> --- a/tests/generic/112
+> +++ b/tests/generic/112
+> @@ -53,9 +53,11 @@ _do_test()
+>  
+>      # This cd and use of -P gets full debug on "$RESULT_DIR" (not TEST_DEV)
+>      cd $out
+> -    if ! $here/ltp/fsx $_param -P "$RESULT_DIR" $FSX_AVOID $seq.$_n &>/dev/null
+> +    $here/ltp/fsx $_param -P "$RESULT_DIR" $FSX_AVOID $seq.$_n &>/dev/null
+> +    local res=$?
+> +    if [ $res -ne 0 ]
+>      then
+> -	echo "    fsx ($_param) returned $? - see $seq.$_n.full"
+> +	echo "    fsx ($_param) returned $res - see $seq.$_n.full"
+>  	mv "$RESULT_DIR"/$seq.$_n.fsxlog $seqres.$_n.full
+>  	status=1
+>  	exit
+> -- 
+> 2.31.1
+> 
