@@ -2,159 +2,162 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 921D56A833C
-	for <lists+ceph-devel@lfdr.de>; Thu,  2 Mar 2023 14:07:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E155E6A8577
+	for <lists+ceph-devel@lfdr.de>; Thu,  2 Mar 2023 16:39:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229845AbjCBNHX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 2 Mar 2023 08:07:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40102 "EHLO
+        id S229778AbjCBPjg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 2 Mar 2023 10:39:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229642AbjCBNHW (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 2 Mar 2023 08:07:22 -0500
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABCFD3251E
-        for <ceph-devel@vger.kernel.org>; Thu,  2 Mar 2023 05:07:10 -0800 (PST)
-Received: by mail-ed1-x52f.google.com with SMTP id f13so67315431edz.6
-        for <ceph-devel@vger.kernel.org>; Thu, 02 Mar 2023 05:07:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1677762429;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=W8jKwCX/ceD2lfLDQ/Jr6zujwOsAn91spsgYEW7AGCg=;
-        b=Un8P68sDgNULbDppani3GM3C8MmI6xcIfnij8M8YBQAxvuXcISMITPUWWHWjfP+h5H
-         Wnvw1Y7zUBhL/Hk4zIDW5p+ceoGX/NgygLRlPsmpp7wrlkzmQ4aBDjEKCK4ObHnxmq/G
-         ZptXxjMgrZB8N9Rg+y/qf6RmJRNP62OFN1kgErkOmEpitXHY0gE+3xwHO+N5xDTUxJCJ
-         nFv1fn9+rjoiLfnkm/ObdbUB9VBbmLPVYEHDN/QEYLgrtlcz6RaSE+qGR6hyiSL4JCZl
-         rJTrHZTGcesn7kAhpY28+ll5rsPkMcI31tH9ABecg+JQSEH2VMeIFZn+ldS9vdt6if6V
-         1CFQ==
+        with ESMTP id S229565AbjCBPje (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 2 Mar 2023 10:39:34 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0784319686
+        for <ceph-devel@vger.kernel.org>; Thu,  2 Mar 2023 07:38:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1677771525;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=e4uwHdbnK9v7ba4aqvEqtG1jfeJ5xegqZGztujgU68U=;
+        b=E9OCagp+U5JT1G/OCspStkOuZ//yMfk+OxMBYnpQdyEgX5E0qi02OV74jyI7hNLYTIbqTc
+        S1Y0iR3fjhQy+rlKlAnyx4dFe/j06C3xEaV1bklehDmCTevtyRfbJXrM/4ElNjOPpuS6Fa
+        i4HpxsdAppzUZKC8/AO8LUXD46m1vOQ=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-128-zGjt99rGMGmT6zA6NYFtuQ-1; Thu, 02 Mar 2023 10:38:43 -0500
+X-MC-Unique: zGjt99rGMGmT6zA6NYFtuQ-1
+Received: by mail-pj1-f71.google.com with SMTP id q9-20020a17090a9f4900b00237d026fc55so1642251pjv.3
+        for <ceph-devel@vger.kernel.org>; Thu, 02 Mar 2023 07:38:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677762429;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W8jKwCX/ceD2lfLDQ/Jr6zujwOsAn91spsgYEW7AGCg=;
-        b=Ful/W1SxwTQBOLe+E0L0zm6phhOkwnnSd2kUXBk84fX3I5dhrHRvuq+JInxfy6tor4
-         WvnUWR68FmTxpm9ZzoKlpKEzyrB0wVLwGLUg19OksoYSX2RO8pfDyiop19VYOT+lCSyo
-         pZ+9haSwlgiVGmNIGkVbIM4no3fA0Zv0uWNaD3D+iFb2XE1ohqcswIOcNFfsu+nnpNE1
-         MNjKbXxU+IqELTynQmKmJTB/oXyAF7C0NyG85bMkRz9xpdLyruDipgC5nWm3hzu5aOMt
-         8OUDe7Q1+VVVyO89BdTnx6dav2OKPCldI2DnIGD1LzUeHwkLBKCCpvy8s/DjuyzMFDwL
-         S3pg==
-X-Gm-Message-State: AO0yUKU1e2wOFKf/zdreePwIQCXlLjax1mK4e42wE8sEusOdKcfZbhou
-        Mf+G+QSUbPf4NnKgEqAt4FXySA==
-X-Google-Smtp-Source: AK7set+oXDy4KSwSCxsdJcV40svXT8MbjKeNJlOEqd6UH4B1Qj0EhnpqTZGxkZmDnv0/dRcCC/mkqQ==
-X-Received: by 2002:a05:6402:1602:b0:4c2:96d0:c0cb with SMTP id f2-20020a056402160200b004c296d0c0cbmr395452edv.23.1677762429156;
-        Thu, 02 Mar 2023 05:07:09 -0800 (PST)
-Received: from heron.intern.cm-ag (p200300dc6f390200529a4cfffe3dd983.dip0.t-ipconnect.de. [2003:dc:6f39:200:529a:4cff:fe3d:d983])
-        by smtp.gmail.com with ESMTPSA id b8-20020a509f08000000b004c041723816sm703848edf.89.2023.03.02.05.07.08
+        d=1e100.net; s=20210112; t=1677771523;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e4uwHdbnK9v7ba4aqvEqtG1jfeJ5xegqZGztujgU68U=;
+        b=w07eNqVQuM5KjiZ3Qp1csFVRPOxVGNJSq2oOKJ9MoiclLREyH/wsf9lQJpcIxcUVe0
+         HS9rSgLrnfgiaCuRQGt+lHwYzpxDmIB6iyZEWtY8e5CbeR9boa2sh0VIF1JNn4naOKmf
+         hSQahkhFMvomRkX//wkEq2DIARM5hf3Ik6qWO5YRF/KHMi7O9rBwSLb1m4MKU9OlYr9O
+         ox7s70Ff7WWjGem8Zc42I32fhJnULV0F1M+ExUwKjU3gGzojYm7UKr6ScPfKsspdUR7l
+         hSaKKx4RD3JFHsLdqENIWIjsc2cz0l0jExrL53x+N+9oftRTSfxotAh6VXXqejBWTp35
+         lNeA==
+X-Gm-Message-State: AO0yUKViGWq2dHACzHPP8Gwc7m/4eC6FK8JLY9ojaY1fUUPFbOD+EISk
+        uJYMi1RFk6PMZ9p/Wxd5m2SLol0D3ce84il/Tmx8Iglfm4rsSVKMUequ7ttHElpIM/IuKIc5Q82
+        M7qd1Z0XirxYWkWx3kOVZ6w==
+X-Received: by 2002:a17:903:2288:b0:19c:d452:b282 with SMTP id b8-20020a170903228800b0019cd452b282mr12322124plh.12.1677771522678;
+        Thu, 02 Mar 2023 07:38:42 -0800 (PST)
+X-Google-Smtp-Source: AK7set+krnQGaY0WGnJqb3tDCJGMjl+bg1/MR4tSPfkN/LorV8TIVojZi6uELXC0e6CwbEL8swRiJA==
+X-Received: by 2002:a17:903:2288:b0:19c:d452:b282 with SMTP id b8-20020a170903228800b0019cd452b282mr12322104plh.12.1677771522269;
+        Thu, 02 Mar 2023 07:38:42 -0800 (PST)
+Received: from zlang-mailbox ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id e9-20020a170902d38900b0019337bf957dsm10466908pld.296.2023.03.02.07.38.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Mar 2023 05:07:08 -0800 (PST)
-From:   Max Kellermann <max.kellermann@ionos.com>
-To:     xiubli@redhat.com, idryomov@gmail.com, jlayton@kernel.org,
-        ceph-devel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Max Kellermann <max.kellermann@ionos.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] fs/ceph/mds_client: ignore responses for waiting requests
-Date:   Thu,  2 Mar 2023 14:06:50 +0100
-Message-Id: <20230302130650.2209938-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.39.2
+        Thu, 02 Mar 2023 07:38:41 -0800 (PST)
+Date:   Thu, 2 Mar 2023 23:38:37 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     xiubli@redhat.com
+Cc:     fstests@vger.kernel.org, david@fromorbit.com, djwong@kernel.org,
+        ceph-devel@vger.kernel.org, vshankar@redhat.com
+Subject: Re: [PATCH] generic/{075,112}: fix printing the incorrect return
+ value of fsx
+Message-ID: <20230302153837.w23cw5gbedmudwuk@zlang-mailbox>
+References: <20230301030620.137153-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230301030620.137153-1-xiubli@redhat.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-If a request is put on the waiting list, its submission is postponed
-until the session becomes ready (e.g. via `mdsc->waiting_for_map` or
-`session->s_waiting`).  If a `CEPH_MSG_CLIENT_REPLY` happens to be
-received before `CEPH_MSG_MDS_MAP`, the request gets freed, and then
-this assertion fails:
+On Wed, Mar 01, 2023 at 11:06:20AM +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> We need to save the result of the 'fsx' temporarily.
+> 
+> Fixes: https://tracker.ceph.com/issues/58834
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
 
- WARN_ON_ONCE(!list_empty(&req->r_wait));
+Hmm... how did you generate this patch? Did you change something before you
+send this patch out? I can't merge it simply, always got below errors [1] [2].
+May you help to generate this patch again purely?
 
-This occurred on a server after the Ceph MDS connection failed, and a
-corrupt reply packet was received for a waiting request:
+(Of course you can keep the RVB of Darrick)
 
- libceph: mds1 (1)10.0.0.10:6801 socket error on write
- libceph: mds1 (1)10.0.0.10:6801 session reset
- ceph: mds1 closed our session
- ceph: mds1 reconnect start
- ceph: mds1 reconnect success
- ceph: problem parsing mds trace -5
- ceph: mds parse_reply err -5
- ceph: mdsc_handle_reply got corrupt reply mds1(tid:5530222)
- [...]
- ------------[ cut here ]------------
- WARNING: CPU: 9 PID: 229180 at fs/ceph/mds_client.c:966 ceph_mdsc_release_request+0x17a/0x180
- Modules linked in:
- CPU: 9 PID: 229180 Comm: kworker/9:3 Not tainted 6.1.8-cm4all1 #45
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
- Workqueue: ceph-msgr ceph_con_workfn
- RIP: 0010:ceph_mdsc_release_request+0x17a/0x180
- Code: 39 d8 75 26 5b 48 89 ee 48 8b 3d f9 2d 04 02 5d e9 fb 01 c9 ff e8 56 85 ab ff eb 9c 48 8b 7f 58 e8 db 4d ff ff e9 a4 fe ff ff <0f> 0b eb d6 66 90 0f 1f 44 00 00 41 54 48 8d 86 b8 03 00 00 55 4c
- RSP: 0018:ffffa6f2c0e2bd20 EFLAGS: 00010287
- RAX: ffff8f58b93687f8 RBX: ffff8f592f6374a8 RCX: 0000000000000aed
- RDX: 0000000000000ac0 RSI: 0000000000000000 RDI: 0000000000000000
- RBP: ffff8f592f637148 R08: 0000000000000001 R09: ffffffffa901de00
- R10: 0000000000000001 R11: ffffd630ad09dfc8 R12: ffff8f58b9368000
- R13: ffff8f5806b33800 R14: ffff8f58894f6780 R15: 000000000054626e
- FS:  0000000000000000(0000) GS:ffff8f630f040000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 00007ffc2926df68 CR3: 0000000218dce002 CR4: 00000000001706e0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- Call Trace:
-  <TASK>
-  mds_dispatch+0xec5/0x1460
-  ? inet_recvmsg+0x4d/0xf0
-  ceph_con_process_message+0x6b/0x80
-  ceph_con_v1_try_read+0xb92/0x1400
-  ceph_con_workfn+0x383/0x4e0
-  process_one_work+0x1da/0x370
-  ? process_one_work+0x370/0x370
-  worker_thread+0x4d/0x3c0
-  ? process_one_work+0x370/0x370
-  kthread+0xbb/0xe0
-  ? kthread_complete_and_exit+0x20/0x20
-  ret_from_fork+0x22/0x30
-  </TASK>
- ---[ end trace 0000000000000000 ]---
- ceph: mds1 caps renewed
+Thanks,
+Zorro
 
-If we know that a request has not yet been submitted, we should ignore
-all responses for it, just like we ignore responses for unknown TIDs.
+[1]
+$ git am ./20230301_xiubli_generic_075_112_fix_printing_the_incorrect_return_value_of_fsx.mbx
+Applying: generic/{075,112}: fix printing the incorrect return value of fsx
+error: patch failed: tests/generic/075:53
+error: tests/generic/075: patch does not apply
+Patch failed at 0001 generic/{075,112}: fix printing the incorrect return value of fsx
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
+When you have resolved this problem, run "git am --continue".
+If you prefer to skip this patch, run "git am --skip" instead.
+To restore the original branch and stop patching, run "git am --abort".
 
-To: ceph-devel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- fs/ceph/mds_client.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+[2]
+$ git am -3 ./20230301_xiubli_generic_075_112_fix_printing_the_incorrect_return_value_of_fsx.mbx
+Applying: generic/{075,112}: fix printing the incorrect return value of fsx
+error: sha1 information is lacking or useless (tests/generic/075).
+error: could not build fake ancestor
+Patch failed at 0001 generic/{075,112}: fix printing the incorrect return value of fsx
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
+When you have resolved this problem, run "git am --continue".
+If you prefer to skip this patch, run "git am --skip" instead.
+To restore the original branch and stop patching, run "git am --abort".
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 27a245d959c0..fa74fdb2cbfb 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -3275,6 +3275,13 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
- 	}
- 	dout("handle_reply %p\n", req);
- 
-+	/* waiting, not yet submitted? */
-+	if (!list_empty(&req->r_wait)) {
-+		pr_err("mdsc_handle_reply on waiting request tid %llu\n", tid);
-+		mutex_unlock(&mdsc->mutex);
-+		goto out;
-+	}
-+
- 	/* correct session? */
- 	if (req->r_session != session) {
- 		pr_err("mdsc_handle_reply got %llu on session mds%d"
--- 
-2.39.2
+>  tests/generic/075 | 6 ++++--
+>  tests/generic/112 | 6 ++++--
+>  2 files changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tests/generic/075 b/tests/generic/075
+> index 03a394a6..bc3a11c7 100755
+> --- a/tests/generic/075
+> +++ b/tests/generic/075
+> @@ -53,9 +53,11 @@ _do_test()
+>  
+>      # This cd and use of -P gets full debug on "$RESULT_DIR" (not TEST_DEV)
+>      cd $out
+> -    if ! $here/ltp/fsx $_param -P "$RESULT_DIR" $seq.$_n $FSX_AVOID &>/dev/null
+> +    $here/ltp/fsx $_param -P "$RESULT_DIR" $seq.$_n $FSX_AVOID &>/dev/null
+> +    local res=$?
+> +    if [ $res -ne 0 ]
+>      then
+> -	echo "    fsx ($_param) failed, $? - compare $seqres.$_n.{good,bad,fsxlog}"
+> +	echo "    fsx ($_param) failed, $res - compare $seqres.$_n.{good,bad,fsxlog}"
+>  	mv $out/$seq.$_n $seqres.$_n.full
+>  	od -xAx $seqres.$_n.full > $seqres.$_n.bad
+>  	od -xAx "$RESULT_DIR"/$seq.$_n.fsxgood > $seqres.$_n.good
+> diff --git a/tests/generic/112 b/tests/generic/112
+> index 971d0467..0e08cbf9 100755
+> --- a/tests/generic/112
+> +++ b/tests/generic/112
+> @@ -53,9 +53,11 @@ _do_test()
+>  
+>      # This cd and use of -P gets full debug on "$RESULT_DIR" (not TEST_DEV)
+>      cd $out
+> -    if ! $here/ltp/fsx $_param -P "$RESULT_DIR" $FSX_AVOID $seq.$_n &>/dev/null
+> +    $here/ltp/fsx $_param -P "$RESULT_DIR" $FSX_AVOID $seq.$_n &>/dev/null
+> +    local res=$?
+> +    if [ $res -ne 0 ]
+>      then
+> -	echo "    fsx ($_param) returned $? - see $seq.$_n.full"
+> +	echo "    fsx ($_param) returned $res - see $seq.$_n.full"
+>  	mv "$RESULT_DIR"/$seq.$_n.fsxlog $seqres.$_n.full
+>  	status=1
+>  	exit
+> -- 
+> 2.31.1
+> 
 
