@@ -2,74 +2,65 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E155E6A8577
-	for <lists+ceph-devel@lfdr.de>; Thu,  2 Mar 2023 16:39:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 771FE6A8656
+	for <lists+ceph-devel@lfdr.de>; Thu,  2 Mar 2023 17:27:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229778AbjCBPjg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 2 Mar 2023 10:39:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41046 "EHLO
+        id S229920AbjCBQZR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 2 Mar 2023 11:25:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229565AbjCBPje (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 2 Mar 2023 10:39:34 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0784319686
-        for <ceph-devel@vger.kernel.org>; Thu,  2 Mar 2023 07:38:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1677771525;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=e4uwHdbnK9v7ba4aqvEqtG1jfeJ5xegqZGztujgU68U=;
-        b=E9OCagp+U5JT1G/OCspStkOuZ//yMfk+OxMBYnpQdyEgX5E0qi02OV74jyI7hNLYTIbqTc
-        S1Y0iR3fjhQy+rlKlAnyx4dFe/j06C3xEaV1bklehDmCTevtyRfbJXrM/4ElNjOPpuS6Fa
-        i4HpxsdAppzUZKC8/AO8LUXD46m1vOQ=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-128-zGjt99rGMGmT6zA6NYFtuQ-1; Thu, 02 Mar 2023 10:38:43 -0500
-X-MC-Unique: zGjt99rGMGmT6zA6NYFtuQ-1
-Received: by mail-pj1-f71.google.com with SMTP id q9-20020a17090a9f4900b00237d026fc55so1642251pjv.3
-        for <ceph-devel@vger.kernel.org>; Thu, 02 Mar 2023 07:38:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1677771523;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        with ESMTP id S229907AbjCBQZP (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 2 Mar 2023 11:25:15 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A61B036FCC
+        for <ceph-devel@vger.kernel.org>; Thu,  2 Mar 2023 08:25:09 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id f13so69821160edz.6
+        for <ceph-devel@vger.kernel.org>; Thu, 02 Mar 2023 08:25:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1677774308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=e4uwHdbnK9v7ba4aqvEqtG1jfeJ5xegqZGztujgU68U=;
-        b=w07eNqVQuM5KjiZ3Qp1csFVRPOxVGNJSq2oOKJ9MoiclLREyH/wsf9lQJpcIxcUVe0
-         HS9rSgLrnfgiaCuRQGt+lHwYzpxDmIB6iyZEWtY8e5CbeR9boa2sh0VIF1JNn4naOKmf
-         hSQahkhFMvomRkX//wkEq2DIARM5hf3Ik6qWO5YRF/KHMi7O9rBwSLb1m4MKU9OlYr9O
-         ox7s70Ff7WWjGem8Zc42I32fhJnULV0F1M+ExUwKjU3gGzojYm7UKr6ScPfKsspdUR7l
-         hSaKKx4RD3JFHsLdqENIWIjsc2cz0l0jExrL53x+N+9oftRTSfxotAh6VXXqejBWTp35
-         lNeA==
-X-Gm-Message-State: AO0yUKViGWq2dHACzHPP8Gwc7m/4eC6FK8JLY9ojaY1fUUPFbOD+EISk
-        uJYMi1RFk6PMZ9p/Wxd5m2SLol0D3ce84il/Tmx8Iglfm4rsSVKMUequ7ttHElpIM/IuKIc5Q82
-        M7qd1Z0XirxYWkWx3kOVZ6w==
-X-Received: by 2002:a17:903:2288:b0:19c:d452:b282 with SMTP id b8-20020a170903228800b0019cd452b282mr12322124plh.12.1677771522678;
-        Thu, 02 Mar 2023 07:38:42 -0800 (PST)
-X-Google-Smtp-Source: AK7set+krnQGaY0WGnJqb3tDCJGMjl+bg1/MR4tSPfkN/LorV8TIVojZi6uELXC0e6CwbEL8swRiJA==
-X-Received: by 2002:a17:903:2288:b0:19c:d452:b282 with SMTP id b8-20020a170903228800b0019cd452b282mr12322104plh.12.1677771522269;
-        Thu, 02 Mar 2023 07:38:42 -0800 (PST)
-Received: from zlang-mailbox ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id e9-20020a170902d38900b0019337bf957dsm10466908pld.296.2023.03.02.07.38.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Mar 2023 07:38:41 -0800 (PST)
-Date:   Thu, 2 Mar 2023 23:38:37 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     xiubli@redhat.com
-Cc:     fstests@vger.kernel.org, david@fromorbit.com, djwong@kernel.org,
-        ceph-devel@vger.kernel.org, vshankar@redhat.com
-Subject: Re: [PATCH] generic/{075,112}: fix printing the incorrect return
- value of fsx
-Message-ID: <20230302153837.w23cw5gbedmudwuk@zlang-mailbox>
-References: <20230301030620.137153-1-xiubli@redhat.com>
+        bh=yhKIiAmcPhBUSJ5jM/F296GdMRwM+xGlmyeLC0miw18=;
+        b=GyySJcfPSO6aApyZdu+FGjSYfFYQnvuHkXSXPPwxZxEIRWtmVEjVyEd4zcoCbQcWmB
+         IJs0Q2D2XRw1LCXpWsny9318e5XAbGCqE3+WLnl9i9yFW8vwX00mSzaT3kIO3xdATfqR
+         +qIo3b++vYXaOm2HlPRk3LA5LkkZHqeuNBrr4b2JK0b/4LLYezU/1wE1efICAyY/mpp4
+         rIaTHA3IDS4qBy/1Fa6BSr3CagmSyIAxPOqG81YE8bA/JOuwJic6K6CuQw9d4SPP7f1U
+         U/sRCO+YYYzJjD+AssoevNDQlvFjZehGAz5W3RNFZtbFMEOgzmANSrpSkVye0B/yQEj7
+         kVuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677774308;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yhKIiAmcPhBUSJ5jM/F296GdMRwM+xGlmyeLC0miw18=;
+        b=YckmY4nIRtDRn8Xu+q6z2NLJeriYtsNaFb9RiCgsRljdX914sPQl4T2RkHfiU0t8IY
+         +I06JTnW8ciSwbJ5i5z6+T2/a/IZStnL3q0FAkb589NQ7fmTbU4mY/+a7577SI1yWTAG
+         s3Tk0Esb6oVq141+vYep4/kBLvpzCEUl444n12lovBxt/L6smX4QqAgv1gOqPRwP/V8p
+         i35fG3zuDAFWPP6idwbVF1pXWLFk32cqmqHfKTmCjL6jgUoSM/DNjOsBY/rxhJrneRX8
+         MgAercn/RIH1BTPTKBfVlM/QgPfMzSivjPk0dk5YlqPyAAVxXkikhlb/Sk+8jfV07Ncr
+         28gw==
+X-Gm-Message-State: AO0yUKXWsf98X4/ytuxgq1IY6oYt1rmAMLgOKWNNkk0ITSwmeZmsSSNA
+        1tb8wadjwHHN7Aot8M/x6E092rXDky2WQO49v9I=
+X-Google-Smtp-Source: AK7set/Dm5kPRC2kX8F7QUgWcqGZ4UwmAkCLxjT42HI4Nh1BNCRzopGXyv7FKBKv56VrbseB+8+DvZHOA6Xq0oe6QJU=
+X-Received: by 2002:a17:906:d1c9:b0:878:b86b:de15 with SMTP id
+ bs9-20020a170906d1c900b00878b86bde15mr5415185ejb.11.1677774308018; Thu, 02
+ Mar 2023 08:25:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230301030620.137153-1-xiubli@redhat.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+References: <20230302122559.501627-1-xiubli@redhat.com>
+In-Reply-To: <20230302122559.501627-1-xiubli@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 2 Mar 2023 17:24:56 +0100
+Message-ID: <CAOi1vP_V=ajo6XDNTTRXAmm2S1HP2MLWWJyOZWXJbquNmgyjmw@mail.gmail.com>
+Subject: Re: [PATCH v4] ceph: do not print the whole xattr value if it's too long
+To:     xiubli@redhat.com
+Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org, lhenriques@suse.de,
+        vshankar@redhat.com, mchangir@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,87 +68,98 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Mar 01, 2023 at 11:06:20AM +0800, xiubli@redhat.com wrote:
+On Thu, Mar 2, 2023 at 1:26=E2=80=AFPM <xiubli@redhat.com> wrote:
+>
 > From: Xiubo Li <xiubli@redhat.com>
-> 
-> We need to save the result of the 'fsx' temporarily.
-> 
-> Fixes: https://tracker.ceph.com/issues/58834
+>
+> If the xattr's value size is long enough the kernel will warn and
+> then will fail the xfstests test case.
+>
+> Just print part of the value string if it's too long.
+>
+> At the same time fix the function name issue in the debug logs.
+>
+> URL: https://tracker.ceph.com/issues/58404
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
+>
+> V4:
+> - fix the function name issue in the debug logs
+> - make the logs to be more compact.
+>
+>  fs/ceph/xattr.c | 20 +++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
+>
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index b10d459c2326..5ab4aed2eecc 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -561,6 +561,8 @@ static struct ceph_vxattr *ceph_match_vxattr(struct i=
+node *inode,
+>         return NULL;
+>  }
+>
+> +#define MAX_XATTR_VAL_PRINT_LEN 256
+> +
+>  static int __set_xattr(struct ceph_inode_info *ci,
+>                            const char *name, int name_len,
+>                            const char *val, int val_len,
+> @@ -623,7 +625,7 @@ static int __set_xattr(struct ceph_inode_info *ci,
+>                 xattr->should_free_name =3D update_xattr;
+>
+>                 ci->i_xattrs.count++;
+> -               dout("__set_xattr count=3D%d\n", ci->i_xattrs.count);
+> +               dout("%s count=3D%d\n", __func__, ci->i_xattrs.count);
+>         } else {
+>                 kfree(*newxattr);
+>                 *newxattr =3D NULL;
+> @@ -651,11 +653,13 @@ static int __set_xattr(struct ceph_inode_info *ci,
+>         if (new) {
+>                 rb_link_node(&xattr->node, parent, p);
+>                 rb_insert_color(&xattr->node, &ci->i_xattrs.index);
+> -               dout("__set_xattr_val p=3D%p\n", p);
+> +               dout("%s p=3D%p\n", __func__, p);
+>         }
+>
+> -       dout("__set_xattr_val added %llx.%llx xattr %p %.*s=3D%.*s\n",
+> -            ceph_vinop(&ci->netfs.inode), xattr, name_len, name, val_len=
+, val);
+> +       dout("%s added %llx.%llx xattr %p %.*s=3D%.*s%s\n", __func__,
+> +            ceph_vinop(&ci->netfs.inode), xattr, name_len, name,
+> +            min(val_len, MAX_XATTR_VAL_PRINT_LEN), val,
+> +            val_len > MAX_XATTR_VAL_PRINT_LEN ? "..." : "");
+>
+>         return 0;
+>  }
+> @@ -681,13 +685,15 @@ static struct ceph_inode_xattr *__get_xattr(struct =
+ceph_inode_info *ci,
+>                 else if (c > 0)
+>                         p =3D &(*p)->rb_right;
+>                 else {
+> -                       dout("__get_xattr %s: found %.*s\n", name,
+> -                            xattr->val_len, xattr->val);
+> +                       int len =3D min(xattr->val_len, MAX_XATTR_VAL_PRI=
+NT_LEN);
+> +
+> +                       dout("%s %s: found %.*s%s\n", __func__, name, len=
+,
+> +                            xattr->val, xattr->val_len > len ? "..." : "=
+");
+>                         return xattr;
+>                 }
+>         }
+>
+> -       dout("__get_xattr %s: not found\n", name);
+> +       dout("%s %s: not found\n", __func__, name);
+>
+>         return NULL;
+>  }
+> --
+> 2.31.1
+>
 
-Hmm... how did you generate this patch? Did you change something before you
-send this patch out? I can't merge it simply, always got below errors [1] [2].
-May you help to generate this patch again purely?
-
-(Of course you can keep the RVB of Darrick)
+Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
 
 Thanks,
-Zorro
 
-[1]
-$ git am ./20230301_xiubli_generic_075_112_fix_printing_the_incorrect_return_value_of_fsx.mbx
-Applying: generic/{075,112}: fix printing the incorrect return value of fsx
-error: patch failed: tests/generic/075:53
-error: tests/generic/075: patch does not apply
-Patch failed at 0001 generic/{075,112}: fix printing the incorrect return value of fsx
-hint: Use 'git am --show-current-patch=diff' to see the failed patch
-When you have resolved this problem, run "git am --continue".
-If you prefer to skip this patch, run "git am --skip" instead.
-To restore the original branch and stop patching, run "git am --abort".
-
-[2]
-$ git am -3 ./20230301_xiubli_generic_075_112_fix_printing_the_incorrect_return_value_of_fsx.mbx
-Applying: generic/{075,112}: fix printing the incorrect return value of fsx
-error: sha1 information is lacking or useless (tests/generic/075).
-error: could not build fake ancestor
-Patch failed at 0001 generic/{075,112}: fix printing the incorrect return value of fsx
-hint: Use 'git am --show-current-patch=diff' to see the failed patch
-When you have resolved this problem, run "git am --continue".
-If you prefer to skip this patch, run "git am --skip" instead.
-To restore the original branch and stop patching, run "git am --abort".
-
->  tests/generic/075 | 6 ++++--
->  tests/generic/112 | 6 ++++--
->  2 files changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tests/generic/075 b/tests/generic/075
-> index 03a394a6..bc3a11c7 100755
-> --- a/tests/generic/075
-> +++ b/tests/generic/075
-> @@ -53,9 +53,11 @@ _do_test()
->  
->      # This cd and use of -P gets full debug on "$RESULT_DIR" (not TEST_DEV)
->      cd $out
-> -    if ! $here/ltp/fsx $_param -P "$RESULT_DIR" $seq.$_n $FSX_AVOID &>/dev/null
-> +    $here/ltp/fsx $_param -P "$RESULT_DIR" $seq.$_n $FSX_AVOID &>/dev/null
-> +    local res=$?
-> +    if [ $res -ne 0 ]
->      then
-> -	echo "    fsx ($_param) failed, $? - compare $seqres.$_n.{good,bad,fsxlog}"
-> +	echo "    fsx ($_param) failed, $res - compare $seqres.$_n.{good,bad,fsxlog}"
->  	mv $out/$seq.$_n $seqres.$_n.full
->  	od -xAx $seqres.$_n.full > $seqres.$_n.bad
->  	od -xAx "$RESULT_DIR"/$seq.$_n.fsxgood > $seqres.$_n.good
-> diff --git a/tests/generic/112 b/tests/generic/112
-> index 971d0467..0e08cbf9 100755
-> --- a/tests/generic/112
-> +++ b/tests/generic/112
-> @@ -53,9 +53,11 @@ _do_test()
->  
->      # This cd and use of -P gets full debug on "$RESULT_DIR" (not TEST_DEV)
->      cd $out
-> -    if ! $here/ltp/fsx $_param -P "$RESULT_DIR" $FSX_AVOID $seq.$_n &>/dev/null
-> +    $here/ltp/fsx $_param -P "$RESULT_DIR" $FSX_AVOID $seq.$_n &>/dev/null
-> +    local res=$?
-> +    if [ $res -ne 0 ]
->      then
-> -	echo "    fsx ($_param) returned $? - see $seq.$_n.full"
-> +	echo "    fsx ($_param) returned $res - see $seq.$_n.full"
->  	mv "$RESULT_DIR"/$seq.$_n.fsxlog $seqres.$_n.full
->  	status=1
->  	exit
-> -- 
-> 2.31.1
-> 
-
+                Ilya
