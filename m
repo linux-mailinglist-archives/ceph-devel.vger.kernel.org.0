@@ -2,138 +2,159 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F64F6A821C
-	for <lists+ceph-devel@lfdr.de>; Thu,  2 Mar 2023 13:26:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 921D56A833C
+	for <lists+ceph-devel@lfdr.de>; Thu,  2 Mar 2023 14:07:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229462AbjCBM0y (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 2 Mar 2023 07:26:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51604 "EHLO
+        id S229845AbjCBNHX (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 2 Mar 2023 08:07:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjCBM0x (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 2 Mar 2023 07:26:53 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89CF4460A2
-        for <ceph-devel@vger.kernel.org>; Thu,  2 Mar 2023 04:26:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1677759969;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=NdWrTGUE0dYYL5qoUB64us4PLNh0UpOzxT5ebA7srjI=;
-        b=d1GLDcefzl1t8N9zBJJATQENXGkj9MUTpvfYCmy/TpekSaik1ADF7h1CP2Zp+dro66l2AU
-        vBrRA01uO1M08Q8nDS0oKAPEcXTk+kP/2ukmTZvLjH7RDDrirmnljXVzF5DTCPJ0otel0X
-        8iAOkHVx2QnWNfIsdaOe/a+r9m3uxC8=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-358-6hLRDCfmOyiI1nZUX9LC9w-1; Thu, 02 Mar 2023 07:26:08 -0500
-X-MC-Unique: 6hLRDCfmOyiI1nZUX9LC9w-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C47A3811E9C;
-        Thu,  2 Mar 2023 12:26:07 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 04CAB1121315;
-        Thu,  2 Mar 2023 12:26:04 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-Cc:     jlayton@kernel.org, lhenriques@suse.de, vshankar@redhat.com,
-        mchangir@redhat.com, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v4] ceph: do not print the whole xattr value if it's too long
-Date:   Thu,  2 Mar 2023 20:25:59 +0800
-Message-Id: <20230302122559.501627-1-xiubli@redhat.com>
+        with ESMTP id S229642AbjCBNHW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 2 Mar 2023 08:07:22 -0500
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABCFD3251E
+        for <ceph-devel@vger.kernel.org>; Thu,  2 Mar 2023 05:07:10 -0800 (PST)
+Received: by mail-ed1-x52f.google.com with SMTP id f13so67315431edz.6
+        for <ceph-devel@vger.kernel.org>; Thu, 02 Mar 2023 05:07:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1677762429;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W8jKwCX/ceD2lfLDQ/Jr6zujwOsAn91spsgYEW7AGCg=;
+        b=Un8P68sDgNULbDppani3GM3C8MmI6xcIfnij8M8YBQAxvuXcISMITPUWWHWjfP+h5H
+         Wnvw1Y7zUBhL/Hk4zIDW5p+ceoGX/NgygLRlPsmpp7wrlkzmQ4aBDjEKCK4ObHnxmq/G
+         ZptXxjMgrZB8N9Rg+y/qf6RmJRNP62OFN1kgErkOmEpitXHY0gE+3xwHO+N5xDTUxJCJ
+         nFv1fn9+rjoiLfnkm/ObdbUB9VBbmLPVYEHDN/QEYLgrtlcz6RaSE+qGR6hyiSL4JCZl
+         rJTrHZTGcesn7kAhpY28+ll5rsPkMcI31tH9ABecg+JQSEH2VMeIFZn+ldS9vdt6if6V
+         1CFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1677762429;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W8jKwCX/ceD2lfLDQ/Jr6zujwOsAn91spsgYEW7AGCg=;
+        b=Ful/W1SxwTQBOLe+E0L0zm6phhOkwnnSd2kUXBk84fX3I5dhrHRvuq+JInxfy6tor4
+         WvnUWR68FmTxpm9ZzoKlpKEzyrB0wVLwGLUg19OksoYSX2RO8pfDyiop19VYOT+lCSyo
+         pZ+9haSwlgiVGmNIGkVbIM4no3fA0Zv0uWNaD3D+iFb2XE1ohqcswIOcNFfsu+nnpNE1
+         MNjKbXxU+IqELTynQmKmJTB/oXyAF7C0NyG85bMkRz9xpdLyruDipgC5nWm3hzu5aOMt
+         8OUDe7Q1+VVVyO89BdTnx6dav2OKPCldI2DnIGD1LzUeHwkLBKCCpvy8s/DjuyzMFDwL
+         S3pg==
+X-Gm-Message-State: AO0yUKU1e2wOFKf/zdreePwIQCXlLjax1mK4e42wE8sEusOdKcfZbhou
+        Mf+G+QSUbPf4NnKgEqAt4FXySA==
+X-Google-Smtp-Source: AK7set+oXDy4KSwSCxsdJcV40svXT8MbjKeNJlOEqd6UH4B1Qj0EhnpqTZGxkZmDnv0/dRcCC/mkqQ==
+X-Received: by 2002:a05:6402:1602:b0:4c2:96d0:c0cb with SMTP id f2-20020a056402160200b004c296d0c0cbmr395452edv.23.1677762429156;
+        Thu, 02 Mar 2023 05:07:09 -0800 (PST)
+Received: from heron.intern.cm-ag (p200300dc6f390200529a4cfffe3dd983.dip0.t-ipconnect.de. [2003:dc:6f39:200:529a:4cff:fe3d:d983])
+        by smtp.gmail.com with ESMTPSA id b8-20020a509f08000000b004c041723816sm703848edf.89.2023.03.02.05.07.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Mar 2023 05:07:08 -0800 (PST)
+From:   Max Kellermann <max.kellermann@ionos.com>
+To:     xiubli@redhat.com, idryomov@gmail.com, jlayton@kernel.org,
+        ceph-devel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Max Kellermann <max.kellermann@ionos.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] fs/ceph/mds_client: ignore responses for waiting requests
+Date:   Thu,  2 Mar 2023 14:06:50 +0100
+Message-Id: <20230302130650.2209938-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+If a request is put on the waiting list, its submission is postponed
+until the session becomes ready (e.g. via `mdsc->waiting_for_map` or
+`session->s_waiting`).  If a `CEPH_MSG_CLIENT_REPLY` happens to be
+received before `CEPH_MSG_MDS_MAP`, the request gets freed, and then
+this assertion fails:
 
-If the xattr's value size is long enough the kernel will warn and
-then will fail the xfstests test case.
+ WARN_ON_ONCE(!list_empty(&req->r_wait));
 
-Just print part of the value string if it's too long.
+This occurred on a server after the Ceph MDS connection failed, and a
+corrupt reply packet was received for a waiting request:
 
-At the same time fix the function name issue in the debug logs.
+ libceph: mds1 (1)10.0.0.10:6801 socket error on write
+ libceph: mds1 (1)10.0.0.10:6801 session reset
+ ceph: mds1 closed our session
+ ceph: mds1 reconnect start
+ ceph: mds1 reconnect success
+ ceph: problem parsing mds trace -5
+ ceph: mds parse_reply err -5
+ ceph: mdsc_handle_reply got corrupt reply mds1(tid:5530222)
+ [...]
+ ------------[ cut here ]------------
+ WARNING: CPU: 9 PID: 229180 at fs/ceph/mds_client.c:966 ceph_mdsc_release_request+0x17a/0x180
+ Modules linked in:
+ CPU: 9 PID: 229180 Comm: kworker/9:3 Not tainted 6.1.8-cm4all1 #45
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
+ Workqueue: ceph-msgr ceph_con_workfn
+ RIP: 0010:ceph_mdsc_release_request+0x17a/0x180
+ Code: 39 d8 75 26 5b 48 89 ee 48 8b 3d f9 2d 04 02 5d e9 fb 01 c9 ff e8 56 85 ab ff eb 9c 48 8b 7f 58 e8 db 4d ff ff e9 a4 fe ff ff <0f> 0b eb d6 66 90 0f 1f 44 00 00 41 54 48 8d 86 b8 03 00 00 55 4c
+ RSP: 0018:ffffa6f2c0e2bd20 EFLAGS: 00010287
+ RAX: ffff8f58b93687f8 RBX: ffff8f592f6374a8 RCX: 0000000000000aed
+ RDX: 0000000000000ac0 RSI: 0000000000000000 RDI: 0000000000000000
+ RBP: ffff8f592f637148 R08: 0000000000000001 R09: ffffffffa901de00
+ R10: 0000000000000001 R11: ffffd630ad09dfc8 R12: ffff8f58b9368000
+ R13: ffff8f5806b33800 R14: ffff8f58894f6780 R15: 000000000054626e
+ FS:  0000000000000000(0000) GS:ffff8f630f040000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 00007ffc2926df68 CR3: 0000000218dce002 CR4: 00000000001706e0
+ DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+ DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ Call Trace:
+  <TASK>
+  mds_dispatch+0xec5/0x1460
+  ? inet_recvmsg+0x4d/0xf0
+  ceph_con_process_message+0x6b/0x80
+  ceph_con_v1_try_read+0xb92/0x1400
+  ceph_con_workfn+0x383/0x4e0
+  process_one_work+0x1da/0x370
+  ? process_one_work+0x370/0x370
+  worker_thread+0x4d/0x3c0
+  ? process_one_work+0x370/0x370
+  kthread+0xbb/0xe0
+  ? kthread_complete_and_exit+0x20/0x20
+  ret_from_fork+0x22/0x30
+  </TASK>
+ ---[ end trace 0000000000000000 ]---
+ ceph: mds1 caps renewed
 
-URL: https://tracker.ceph.com/issues/58404
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
+If we know that a request has not yet been submitted, we should ignore
+all responses for it, just like we ignore responses for unknown TIDs.
+
+To: ceph-devel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 ---
+ fs/ceph/mds_client.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-V4:
-- fix the function name issue in the debug logs
-- make the logs to be more compact.
-
- fs/ceph/xattr.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
-
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index b10d459c2326..5ab4aed2eecc 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -561,6 +561,8 @@ static struct ceph_vxattr *ceph_match_vxattr(struct inode *inode,
- 	return NULL;
- }
- 
-+#define MAX_XATTR_VAL_PRINT_LEN 256
-+
- static int __set_xattr(struct ceph_inode_info *ci,
- 			   const char *name, int name_len,
- 			   const char *val, int val_len,
-@@ -623,7 +625,7 @@ static int __set_xattr(struct ceph_inode_info *ci,
- 		xattr->should_free_name = update_xattr;
- 
- 		ci->i_xattrs.count++;
--		dout("__set_xattr count=%d\n", ci->i_xattrs.count);
-+		dout("%s count=%d\n", __func__, ci->i_xattrs.count);
- 	} else {
- 		kfree(*newxattr);
- 		*newxattr = NULL;
-@@ -651,11 +653,13 @@ static int __set_xattr(struct ceph_inode_info *ci,
- 	if (new) {
- 		rb_link_node(&xattr->node, parent, p);
- 		rb_insert_color(&xattr->node, &ci->i_xattrs.index);
--		dout("__set_xattr_val p=%p\n", p);
-+		dout("%s p=%p\n", __func__, p);
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 27a245d959c0..fa74fdb2cbfb 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -3275,6 +3275,13 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
  	}
+ 	dout("handle_reply %p\n", req);
  
--	dout("__set_xattr_val added %llx.%llx xattr %p %.*s=%.*s\n",
--	     ceph_vinop(&ci->netfs.inode), xattr, name_len, name, val_len, val);
-+	dout("%s added %llx.%llx xattr %p %.*s=%.*s%s\n", __func__,
-+	     ceph_vinop(&ci->netfs.inode), xattr, name_len, name,
-+	     min(val_len, MAX_XATTR_VAL_PRINT_LEN), val,
-+	     val_len > MAX_XATTR_VAL_PRINT_LEN ? "..." : "");
- 
- 	return 0;
- }
-@@ -681,13 +685,15 @@ static struct ceph_inode_xattr *__get_xattr(struct ceph_inode_info *ci,
- 		else if (c > 0)
- 			p = &(*p)->rb_right;
- 		else {
--			dout("__get_xattr %s: found %.*s\n", name,
--			     xattr->val_len, xattr->val);
-+			int len = min(xattr->val_len, MAX_XATTR_VAL_PRINT_LEN);
++	/* waiting, not yet submitted? */
++	if (!list_empty(&req->r_wait)) {
++		pr_err("mdsc_handle_reply on waiting request tid %llu\n", tid);
++		mutex_unlock(&mdsc->mutex);
++		goto out;
++	}
 +
-+			dout("%s %s: found %.*s%s\n", __func__, name, len,
-+			     xattr->val, xattr->val_len > len ? "..." : "");
- 			return xattr;
- 		}
- 	}
- 
--	dout("__get_xattr %s: not found\n", name);
-+	dout("%s %s: not found\n", __func__, name);
- 
- 	return NULL;
- }
+ 	/* correct session? */
+ 	if (req->r_session != session) {
+ 		pr_err("mdsc_handle_reply got %llu on session mds%d"
 -- 
-2.31.1
+2.39.2
 
