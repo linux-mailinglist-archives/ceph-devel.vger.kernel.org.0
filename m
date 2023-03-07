@@ -2,183 +2,159 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B315E6AD8C4
-	for <lists+ceph-devel@lfdr.de>; Tue,  7 Mar 2023 09:09:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0452E6AF3B8
+	for <lists+ceph-devel@lfdr.de>; Tue,  7 Mar 2023 20:08:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230049AbjCGIJC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 7 Mar 2023 03:09:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39078 "EHLO
+        id S233715AbjCGTId (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 7 Mar 2023 14:08:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229960AbjCGIIs (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Mar 2023 03:08:48 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F17989F16
-        for <ceph-devel@vger.kernel.org>; Tue,  7 Mar 2023 00:07:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678176448;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=/kwxEy9aVtTXMKLFhcO5Fkmd7yonjVa7wqIeVyn4NZk=;
-        b=aFPLXx7QV45bIFbP6T+cjOLrWtrGlvuiyhQdt1wxk1snOaxaZplwW9n8UZfCgSq5H2Mhyg
-        0LwNhY1gYX7PWSaqIhbNsy5QpKHqayS7Qs41RLR5mOEFJ/f96tI8JUivf6+kXgVCfZJ8gp
-        dDQIFQc7jI42o7WiaQbIjbmL5OJFM+o=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-467-kK63j-H9MeurbGIVsguPDw-1; Tue, 07 Mar 2023 03:07:25 -0500
-X-MC-Unique: kK63j-H9MeurbGIVsguPDw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S233562AbjCGTID (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 7 Mar 2023 14:08:03 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C261FC168
+        for <ceph-devel@vger.kernel.org>; Tue,  7 Mar 2023 10:53:10 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CF985887405;
-        Tue,  7 Mar 2023 08:07:24 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 10E9618EC6;
-        Tue,  7 Mar 2023 08:07:21 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-Cc:     jlayton@kernel.org, lhenriques@suse.de, vshankar@redhat.com,
-        mchangir@redhat.com, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: fix updating the i_truncate_pagecache_size for fscrypt
-Date:   Tue,  7 Mar 2023 16:07:14 +0800
-Message-Id: <20230307080714.122306-1-xiubli@redhat.com>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 582D61FD6B;
+        Tue,  7 Mar 2023 18:53:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1678215186; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Q6mhFhgHQ2SJbVfsaKBDON40GLdbUzFm+uLfOf5KPuk=;
+        b=Gw9NvDZeJ8Pqje/357MdKLGSwIerTFD4vRqQJZxJMYzDttrX04a92uM9PlgRCRol1TkhkO
+        d3CpcWgVcYK0UViROJkSmDTqUvjPj9vqHUaUX82o9kdnGiiHoammrUlNbdeTSh1+8WKN57
+        gtJOZkAo1ORhvnZn/qXVHLBDt7fh0NI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1678215186;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Q6mhFhgHQ2SJbVfsaKBDON40GLdbUzFm+uLfOf5KPuk=;
+        b=VdQbOq5ggNnU/vziqxt2XACZF3GiMGgGFqcZ5G6xS8/eGLO0GhXqAufUtDVEYaJ43cHz/w
+        0MeZW4POoiHN6TAQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E8B9213440;
+        Tue,  7 Mar 2023 18:53:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id StiwNRGIB2S3GQAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Tue, 07 Mar 2023 18:53:05 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id b166b2dd;
+        Tue, 7 Mar 2023 18:53:05 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        vshankar@redhat.com, mchangir@redhat.com
+Subject: Re: [PATCH v16 25/68] ceph: make d_revalidate call fscrypt
+ revalidator for encrypted dentries
+References: <20230227032813.337906-1-xiubli@redhat.com>
+        <20230227032813.337906-26-xiubli@redhat.com>
+Date:   Tue, 07 Mar 2023 18:53:05 +0000
+In-Reply-To: <20230227032813.337906-26-xiubli@redhat.com> (xiubli@redhat.com's
+        message of "Mon, 27 Feb 2023 11:27:30 +0800")
+Message-ID: <87o7p48kby.fsf@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+xiubli@redhat.com writes:
 
-When fscrypt is enabled we will align the truncate size up to the
-CEPH_FSCRYPT_BLOCK_SIZE always, so if we truncate the size in the
-same block more than once, the latter ones will be skipped being
-invalidated from the page caches.
+> From: Jeff Layton <jlayton@kernel.org>
+>
+> If we have a dentry which represents a no-key name, then we need to test
+> whether the parent directory's encryption key has since been added.  Do
+> that before we test anything else about the dentry.
+>
+> Reviewed-by: Xiubo Li <xiubli@redhat.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/ceph/dir.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index d3c2853bb0f1..5ead9f59e693 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -1770,6 +1770,10 @@ static int ceph_d_revalidate(struct dentry *dentry=
+, unsigned int flags)
+>  	struct inode *dir, *inode;
+>  	struct ceph_mds_client *mdsc;
+>=20=20
+> +	valid =3D fscrypt_d_revalidate(dentry, flags);
+> +	if (valid <=3D 0)
+> +		return valid;
+> +
 
-This will force invalidating the page caches by using the smaller
-size than the real file size.
+This patch has confused me in the past, and today I found myself
+scratching my head again looking at it.
 
-At the same time add more debug log and fix the debug log for
-truncate code.
+So, I've started seeing generic/123 test failing when running it with
+test_dummy_encryption.  I was almost sure that this test used to run fine
+before, but I couldn't find any evidence (somehow I lost my old testing
+logs...).
 
-URL: https://tracker.ceph.com/issues/58834
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
+Anyway, the test is quite simple:
 
-This is for fscrypt feature and based on the testing branch.
+1. Creates a directory with write permissions for root only
+2. Writes into a file in that directory
+3. Uses 'su' to try to modify that file as a different user, and
+   gets -EPERM
+
+All these steps run fine, and the test should pass.  *However*, in the
+test cleanup function, a simple 'rm -rf <dir>' will fail with -ENOTEMPTY.
+'strace' shows that calling unlinkat() to remove the file got a '-ENOENT'
+and then -ENOTEMPTY for the directory.
+
+Some digging allowed me to figure out that running commands with 'su' will
+drop caches (I see 'su (874): drop_caches: 2' in the log).  And this is
+how I ended up looking at this patch.  fscrypt_d_revalidate() will return
+'0' if the parent directory does has a key (fscrypt_has_encryption_key()).
+Can we really say here that the dentry is *not* valid in that case?  Or
+should that '<=3D 0' be a '< 0'?
+
+(But again, this patch has confused me before...)
+
+Cheers,
+--=20
+Lu=C3=ADs
 
 
- fs/ceph/caps.c  |  4 ++--
- fs/ceph/inode.c | 35 ++++++++++++++++++++++++-----------
- 2 files changed, 26 insertions(+), 13 deletions(-)
-
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 4a17ee6942ac..07b29b72ac39 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -3928,8 +3928,8 @@ static bool handle_cap_trunc(struct inode *inode,
- 	if (IS_ENCRYPTED(inode) && size)
- 		size = extra_info->fscrypt_file_size;
- 
--	dout("handle_cap_trunc inode %p mds%d seq %d to %lld seq %d\n",
--	     inode, mds, seq, truncate_size, truncate_seq);
-+	dout("%s inode %p mds%d seq %d to %lld truncate seq %d\n",
-+	     __func__, inode, mds, seq, truncate_size, truncate_seq);
- 	queue_trunc = ceph_fill_file_size(inode, issued,
- 					  truncate_seq, truncate_size,
- 					  size, 0);
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index b9a3ff7ecbcb..dfa69bc346bf 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -765,7 +765,7 @@ int ceph_fill_file_size(struct inode *inode, int issued,
- 			ceph_fscache_update(inode);
- 		ci->i_reported_size = size;
- 		if (truncate_seq != ci->i_truncate_seq) {
--			dout("truncate_seq %u -> %u\n",
-+			dout("%s truncate_seq %u -> %u\n", __func__,
- 			     ci->i_truncate_seq, truncate_seq);
- 			ci->i_truncate_seq = truncate_seq;
- 
-@@ -799,15 +799,26 @@ int ceph_fill_file_size(struct inode *inode, int issued,
- 			}
- 		}
- 	}
--	if (ceph_seq_cmp(truncate_seq, ci->i_truncate_seq) >= 0 &&
--	    ci->i_truncate_size != truncate_size) {
--		dout("truncate_size %lld -> %llu\n", ci->i_truncate_size,
--		     truncate_size);
-+
-+	/*
-+	 * It's possible that the new sizes of the two consecutive
-+	 * size truncations will be in the same fscrypt last block,
-+	 * and we need to truncate the corresponding page caches
-+	 * anyway.
-+	 */
-+	if (ceph_seq_cmp(truncate_seq, ci->i_truncate_seq) >= 0) {
-+		dout("%s truncate_size %lld -> %llu, encrypted %d\n", __func__,
-+		     ci->i_truncate_size, truncate_size, !!IS_ENCRYPTED(inode));
-+
- 		ci->i_truncate_size = truncate_size;
--		if (IS_ENCRYPTED(inode))
-+
-+		if (IS_ENCRYPTED(inode)) {
-+			dout("%s truncate_pagecache_size %lld -> %llu\n",
-+			     __func__, ci->i_truncate_pagecache_size, size);
- 			ci->i_truncate_pagecache_size = size;
--		else
-+		} else {
- 			ci->i_truncate_pagecache_size = truncate_size;
-+		}
- 	}
- 	return queue_trunc;
- }
-@@ -2162,7 +2173,7 @@ void __ceph_do_pending_vmtruncate(struct inode *inode)
- retry:
- 	spin_lock(&ci->i_ceph_lock);
- 	if (ci->i_truncate_pending == 0) {
--		dout("__do_pending_vmtruncate %p none pending\n", inode);
-+		dout("%s %p none pending\n", __func__, inode);
- 		spin_unlock(&ci->i_ceph_lock);
- 		mutex_unlock(&ci->i_truncate_mutex);
- 		return;
-@@ -2174,8 +2185,7 @@ void __ceph_do_pending_vmtruncate(struct inode *inode)
- 	 */
- 	if (ci->i_wrbuffer_ref_head < ci->i_wrbuffer_ref) {
- 		spin_unlock(&ci->i_ceph_lock);
--		dout("__do_pending_vmtruncate %p flushing snaps first\n",
--		     inode);
-+		dout("%s %p flushing snaps first\n", __func__, inode);
- 		filemap_write_and_wait_range(&inode->i_data, 0,
- 					     inode->i_sb->s_maxbytes);
- 		goto retry;
-@@ -2186,7 +2196,7 @@ void __ceph_do_pending_vmtruncate(struct inode *inode)
- 
- 	to = ci->i_truncate_pagecache_size;
- 	wrbuffer_refs = ci->i_wrbuffer_ref;
--	dout("__do_pending_vmtruncate %p (%d) to %lld\n", inode,
-+	dout("%s %p (%d) to %lld\n", __func__, inode,
- 	     ci->i_truncate_pending, to);
- 	spin_unlock(&ci->i_ceph_lock);
- 
-@@ -2373,6 +2383,9 @@ static int fill_fscrypt_truncate(struct inode *inode,
- 		header.data_len = cpu_to_le32(8 + 8 + 4 + CEPH_FSCRYPT_BLOCK_SIZE);
- 		header.file_offset = cpu_to_le64(orig_pos);
- 
-+		dout("%s encrypt block boff/bsize %d/%lu\n", __func__,
-+		     boff, CEPH_FSCRYPT_BLOCK_SIZE);
-+
- 		/* truncate and zero out the extra contents for the last block */
- 		memset(iov.iov_base + boff, 0, PAGE_SIZE - boff);
- 
--- 
-2.31.1
-
+>=20
+>  	if (flags & LOOKUP_RCU) {
+>  		parent =3D READ_ONCE(dentry->d_parent);
+>  		dir =3D d_inode_rcu(parent);
+> @@ -1782,8 +1786,8 @@ static int ceph_d_revalidate(struct dentry *dentry,=
+ unsigned int flags)
+>  		inode =3D d_inode(dentry);
+>  	}
+>=20=20
+> -	dout("d_revalidate %p '%pd' inode %p offset 0x%llx\n", dentry,
+> -	     dentry, inode, ceph_dentry(dentry)->offset);
+> +	dout("d_revalidate %p '%pd' inode %p offset 0x%llx nokey %d\n", dentry,
+> +	     dentry, inode, ceph_dentry(dentry)->offset, !!(dentry->d_flags & D=
+CACHE_NOKEY_NAME));
+>=20=20
+>  	mdsc =3D ceph_sb_to_client(dir->i_sb)->mdsc;
+>=20=20
+> --=20
+>
+> 2.31.1
+>
