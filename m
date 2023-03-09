@@ -2,99 +2,123 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14FE46B23A7
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Mar 2023 13:07:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0B496B23F6
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 Mar 2023 13:19:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230006AbjCIMHm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 9 Mar 2023 07:07:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42078 "EHLO
+        id S230159AbjCIMTS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 9 Mar 2023 07:19:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229878AbjCIMHk (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Mar 2023 07:07:40 -0500
-Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CC5FE7EF0
-        for <ceph-devel@vger.kernel.org>; Thu,  9 Mar 2023 04:07:38 -0800 (PST)
-Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-53d277c1834so30604497b3.10
-        for <ceph-devel@vger.kernel.org>; Thu, 09 Mar 2023 04:07:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1678363658;
-        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/rL+TycpMQLfB5P4Zn9xgGfUWg8yPCNTwrE46ZNldMM=;
-        b=d7nhE3NIkslXm34vnWVbf303x/Z9NUElwuWVVxQKRwAhx/cJYsuaiFACTzxj7CFiZM
-         9dKLhLZF7a6jqvyc57Kk1boqmtsv137Fa+MgtjTiToxYNHqHEyg7y48vngkzkKHfdz6t
-         qqFEvYzln7yQCRTeqDQEpkOyEc+J75B9UGX/kvFugseRiUWy+1BMwBAcOsISGDvtYfLi
-         M5fmXLQR73egdnuqcARNpE8bpWem5r1t+GRAVemvZxE/CGFNAnPBcFMfJ/I/e01gEvWY
-         +luXDZi7fOZKf3sF+0kalWwLM5oihW95HfjuqEvyykAfIZA7eRUD3XtyRNi5RuMiWf0Z
-         3qZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1678363658;
-        h=to:subject:message-id:date:from:reply-to:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/rL+TycpMQLfB5P4Zn9xgGfUWg8yPCNTwrE46ZNldMM=;
-        b=JykCLMlW32rLCrGP0VtPAiyvk5iYWWSO9SeL90GGi3lbnwc1Cu9jC2qnwy1H1a4eU0
-         OCX5Q1Ts7Nn0C5regWsZz6EK7nozayFFx8akW8fTUBL5INc95jZ3L1muAtdrAqU4Vsy/
-         01cBrw66EkWW0VdFtpE8++jmD/T/Bk9hhQ2KDwJskQk5u/r5qxtZlTqoqREGi4uPuJha
-         dDdp3JyDwPfO/qAT00uSIj4rk8grOKIor10vQMaGJwb+w0e0KsWdvLdagPlLrc4KI0+R
-         cQ/E4h/oKne3K1na5cZflOKsYhcHE7jwwqvgIeetnYMxXaf8xMVG9ekEBEFmOL7a8Gh7
-         GEXQ==
-X-Gm-Message-State: AO0yUKXZTikf5YQLUnpRYtSt+orLLaZLvsvtL0mzkQO6LBWVJmvp8e4k
-        0hv3BXzR+irRtdpP1aEWrnsDAdObCwucLQrJPu8=
-X-Google-Smtp-Source: AK7set/WrO1GByJYjA1fC9z16/rPQoAe1MvXZIER0NOyKbsh9dFt5CEH7nIIE7VNkcsE/b5kkFU1wtUmM4grIk/LBhU=
-X-Received: by 2002:a81:a9c8:0:b0:533:9c5b:7278 with SMTP id
- g191-20020a81a9c8000000b005339c5b7278mr13602529ywh.0.1678363657574; Thu, 09
- Mar 2023 04:07:37 -0800 (PST)
+        with ESMTP id S229722AbjCIMTR (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 9 Mar 2023 07:19:17 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5268D1C7FC;
+        Thu,  9 Mar 2023 04:19:16 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id EB262219B9;
+        Thu,  9 Mar 2023 12:19:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1678364354; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=YtlE06MK38v4wUEGCfv9Lya1P+SBRtcUPdCKrIFmkWY=;
+        b=QwhEfbgNYoa66mBXwPIK8+kmgDqlUpWJkv6ic6Gy6A7Rq9mKxoPQHH0y4k/0UxBPIHIQD0
+        t6jTVm0xwkpiQBSBAt4Nf4r9NC3dflMXxqe8ns4QsiAPFD/5PQwL9Rvvds/MVfplCxK6ih
+        ihqL+OtK1toFylXVi5L7C8629S9aKvs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1678364354;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=YtlE06MK38v4wUEGCfv9Lya1P+SBRtcUPdCKrIFmkWY=;
+        b=WIhze/eSN4I/rAvLyoYJrZuLC+wJtkXKfuRQSukyV+HhYD79jz9HhL9NvBqZqMXS717V9b
+        UJHzZ04V1VSwo2Bw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4D12913A10;
+        Thu,  9 Mar 2023 12:19:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id V2WpD8LOCWSqbAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Thu, 09 Mar 2023 12:19:14 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id a07c9311;
+        Thu, 9 Mar 2023 12:19:13 +0000 (UTC)
+From:   =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
+To:     Eric Biggers <ebiggers@kernel.org>, Xiubo Li <xiubli@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        linux-fscrypt@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
+Subject: [RFC PATCH 0/2] ceph: fscrypt: fix atomic open bug for encrypted directories
+Date:   Thu,  9 Mar 2023 12:19:08 +0000
+Message-Id: <20230309121910.18939-1-lhenriques@suse.de>
 MIME-Version: 1.0
-Received: by 2002:a05:7010:dd09:b0:321:de0b:83e4 with HTTP; Thu, 9 Mar 2023
- 04:07:36 -0800 (PST)
-Reply-To: dravasmith27@gmail.com
-From:   Dr Ava Smith <gracebanneth@gmail.com>
-Date:   Thu, 9 Mar 2023 04:07:36 -0800
-Message-ID: <CABo=7A0--T-OTtJweEeHcT52Uc4M307=z52sGw8ts6Bm9hj0Vw@mail.gmail.com>
-Subject: GREETINGS FROM DR AVA SMITH
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.2 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        SUBJ_ALL_CAPS,UNDISC_FREEM autolearn=no autolearn_force=no
-        version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:1134 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5004]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.5 SUBJ_ALL_CAPS Subject is all capitals
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [gracebanneth[at]gmail.com]
-        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
-        *      digit
-        *      [dravasmith27[at]gmail.com]
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        *  2.9 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
--- 
-Hello Dear,
-how are you today?hope you are fine
-My name is Dr Ava Smith ,Am an English and French nationalities.
-I will give you pictures and more details about me as soon as i hear from you
-Thanks
-Ava
+Hi!
+
+I started seeing fstest generic/123 failing in ceph fscrypt, when running it
+with 'test_dummy_encryption'.  This test is quite simple:
+
+1. Creates a directory with write permissions for root only
+2. Writes into a file in that directory
+3. Uses 'su' to try to modify that file as a different user, and
+   gets -EPERM
+
+All the test steps succeed, but the test fails to cleanup: 'rm -rf <dir>'
+will fail with -ENOTEMPTY.  'strace' shows that calling unlinkat() to remove
+the file got a -ENOENT and then -ENOTEMPTY for the directory.
+
+This is because 'su' does a drop_caches ('su (874): drop_caches: 2' in
+dmesg), and ceph's atomic open will do:
+
+	if (IS_ENCRYPTED(dir)) {
+		set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
+		if (!fscrypt_has_encryption_key(dir)) {
+			spin_lock(&dentry->d_lock);
+			dentry->d_flags |= DCACHE_NOKEY_NAME;
+			spin_unlock(&dentry->d_lock);
+		}
+	}
+
+Although 'dir' has the encryption key available, fscrypt_has_encryption_key()
+will return 'false' because fscrypt info isn't yet set after the cache
+cleanup.
+
+The first patch will add a new helper for the atomic_open that will force
+the fscrypt info to be loaded into an inode that has been evicted recently
+but for which the key is still available.
+
+The second patch switches ceph atomic_open to use the new fscrypt helper.
+
+Cheers,
+--
+Luís Henriques
+
+Luís Henriques (2):
+  fscrypt: new helper function - __fscrypt_prepare_atomic_open()
+  ceph: switch atomic open to use new fscrypt helper
+
+ fs/ceph/file.c          |  8 +++-----
+ fs/crypto/hooks.c       | 14 ++++++++++++++
+ include/linux/fscrypt.h |  6 ++++++
+ 3 files changed, 23 insertions(+), 5 deletions(-)
+
