@@ -2,73 +2,72 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ED606B8EB4
-	for <lists+ceph-devel@lfdr.de>; Tue, 14 Mar 2023 10:28:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31A0F6B8F83
+	for <lists+ceph-devel@lfdr.de>; Tue, 14 Mar 2023 11:16:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230013AbjCNJ1r (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 14 Mar 2023 05:27:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45114 "EHLO
+        id S230303AbjCNKQb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 14 Mar 2023 06:16:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229977AbjCNJ1q (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 14 Mar 2023 05:27:46 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B07499C3C;
-        Tue, 14 Mar 2023 02:27:45 -0700 (PDT)
+        with ESMTP id S230312AbjCNKQX (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 14 Mar 2023 06:16:23 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 637A21910A;
+        Tue, 14 Mar 2023 03:15:31 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id B49C821D35;
-        Tue, 14 Mar 2023 09:27:43 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 6ED071F893;
+        Tue, 14 Mar 2023 10:15:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1678786063; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1678788912; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=90V7Jm+NR0G7HuZEurEP4+aqZskrhU8Z7L5jRsbGqQU=;
-        b=lVSGYpcxT6hSnqoyIHlydXh87Ypl0E4bQD6Wxv+f2eHl7A926/vArSDuSq0Eo7aXf4Fcn1
-        6uv3qA+aniJBkHkf2l9Ti1yPKeBpML9ufsAs6Km2MLPspXW26fwA1ztwZTHjY4OGekbuov
-        5AoZ1V03+Js04kc0//zLHy+KfRaRL38=
+        bh=QJ2tWgbaj1kPFs+SKfFXIBRjqWuylcoIvykgClDHkKQ=;
+        b=f5Wl30HJz9caS+i7Rjnuo7Hd9cZ1zlkdrJ7zDkJpYyiME1trwCYWd9JYuqpH1v2nJR12Ae
+        QJSz0UxXGR16Rn4CDNS7W3WEtF8EmHgifRZcfVReWYMu46Jk8IOlkjkGRmxgOsc459ezIX
+        qPipelgnOp5K2YFBkjRZ6inTpUjTDZw=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1678786063;
+        s=susede2_ed25519; t=1678788912;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=90V7Jm+NR0G7HuZEurEP4+aqZskrhU8Z7L5jRsbGqQU=;
-        b=6PSvqnZLwlYmjEPnDQDDxtjFEQJcjnUOqArS5Xbzih85hqw1uP3bqTvS6MOQXU5r3quKfe
-        IGvCsYnG+6sp1PBA==
+        bh=QJ2tWgbaj1kPFs+SKfFXIBRjqWuylcoIvykgClDHkKQ=;
+        b=CvUAsxSmG5Q5PNoxXxAzchHHgNQuijdyx5Sbm61RUDsaEfIFl8Rml++1HJeZ+x66FFrEP9
+        dbwsObbSJdBUBbCQ==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2A91F13A1B;
-        Tue, 14 Mar 2023 09:27:43 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D5F5F13A26;
+        Tue, 14 Mar 2023 10:15:11 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id YZo3Bw8+EGT5aAAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Tue, 14 Mar 2023 09:27:43 +0000
+        id OP8GMS9JEGRDBwAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Tue, 14 Mar 2023 10:15:11 +0000
 Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id e50d13ca;
-        Tue, 14 Mar 2023 09:27:42 +0000 (UTC)
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 48a9b60e;
+        Tue, 14 Mar 2023 10:15:11 +0000 (UTC)
 From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
         "Theodore Y. Ts'o" <tytso@mit.edu>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
         linux-fscrypt@vger.kernel.org, ceph-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ceph: switch atomic open to use new fscrypt helper
+Subject: Re: [PATCH 1/2] fscrypt: new helper function -
+ fscrypt_prepare_atomic_open()
 References: <20230313123310.13040-1-lhenriques@suse.de>
-        <20230313123310.13040-3-lhenriques@suse.de>
-        <ZA9nPXNpBX0U5joC@sol.localdomain> <87cz5cv6h2.fsf@suse.de>
-        <8aa61954-b6c4-d9b5-bb81-c03ca3631e3b@redhat.com>
-Date:   Tue, 14 Mar 2023 09:27:42 +0000
-In-Reply-To: <8aa61954-b6c4-d9b5-bb81-c03ca3631e3b@redhat.com> (Xiubo Li's
-        message of "Tue, 14 Mar 2023 08:38:49 +0800")
-Message-ID: <874jqnvg1d.fsf@suse.de>
+        <20230313123310.13040-2-lhenriques@suse.de>
+        <ZA9mwPUg7H/fq0L8@sol.localdomain>
+Date:   Tue, 14 Mar 2023 10:15:11 +0000
+In-Reply-To: <ZA9mwPUg7H/fq0L8@sol.localdomain> (Eric Biggers's message of
+        "Mon, 13 Mar 2023 11:09:04 -0700")
+Message-ID: <87zg8ftz9s.fsf@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
@@ -81,94 +80,73 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Xiubo Li <xiubli@redhat.com> writes:
+Eric Biggers <ebiggers@kernel.org> writes:
 
-> On 14/03/2023 02:42, Lu=C3=ADs Henriques wrote:
->> Eric Biggers <ebiggers@kernel.org> writes:
->>
->>> On Mon, Mar 13, 2023 at 12:33:10PM +0000, Lu=C3=ADs Henriques wrote:
->>>> Switch ceph atomic open to use fscrypt_prepare_atomic_open().  This fi=
-xes
->>>> a bug where a dentry is incorrectly set with DCACHE_NOKEY_NAME when 'd=
-ir'
->>>> has been evicted but the key is still available (for example, where th=
-ere's
->>>> a drop_caches).
->>>>
->>>> Signed-off-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
->>>> ---
->>>>   fs/ceph/file.c | 8 +++-----
->>>>   1 file changed, 3 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
->>>> index dee3b445f415..5ad57cc4c13b 100644
->>>> --- a/fs/ceph/file.c
->>>> +++ b/fs/ceph/file.c
->>>> @@ -795,11 +795,9 @@ int ceph_atomic_open(struct inode *dir, struct de=
-ntry *dentry,
->>>>   	ihold(dir);
->>>>   	if (IS_ENCRYPTED(dir)) {
->>>>   		set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
->>>> -		if (!fscrypt_has_encryption_key(dir)) {
->>>> -			spin_lock(&dentry->d_lock);
->>>> -			dentry->d_flags |=3D DCACHE_NOKEY_NAME;
->>>> -			spin_unlock(&dentry->d_lock);
->>>> -		}
->>>> +		err =3D fscrypt_prepare_atomic_open(dir, dentry);
->>>> +		if (err)
->>>> +			goto out_req;
->>> Note that this patch does not apply to upstream or even to linux-next.
->> True, I should have mentioned that in the cover-letter.  This patch shou=
-ld
->> be applied against the 'testing' branch in https://github.com/ceph/ceph-=
-client,
->> which is where the ceph fscrypt currently lives.
->>
->>> I'd be glad to take patch 1 through the fscrypt tree for 6.4.  But I'm =
-wondering
->>> what the current plans are for getting ceph's fscrypt support upstream?
->> As far as I know, the current plan is to try to merge the ceph code duri=
-ng
->> the next merge window for 6.4 (but Xiubo and Ilya may correct me if I'm
->> wrong).  Also, regarding who picks which patch, I'm fine with you picking
->> the first one.  But I'll let the ceph maintainers say what they think,
->> because it may be easier for them to keep both patches together due to t=
-he
->> testing infrastructure being used.
->>
->> Anyway, I'll send out a new rev tomorrow taking your comments into
->> account.  Thanks, Eric!
+> On Mon, Mar 13, 2023 at 12:33:09PM +0000, Lu=C3=ADs Henriques wrote:
+>> + * The regular open path will use fscrypt_file_open for that, but in the
+>> + * atomic open a different approach is required.
 >
-> Eric, Luis,
->
-> It will be fine if Eric could merge patch 1 into the fscrypt tree. Then I=
- will
-> merge the patch 1 into the ceph-client's testing by tagging as [DO NOT ME=
-RGE] to
-> run our tests.
+> This should actually be fscrypt_prepare_lookup, not fscrypt_file_open, ri=
+ght?
 
-Awesome, so Eric can pick the first patch.  Thanks.
+Ups, I missed this comment.
+
+I was comparing the regular open() with the atomic_open() paths.  I think
+I really mean fscrypt_file_open() because that's where the encryption info
+is (or may be) set by calling fscrypt_require_key().  atomic_open needs
+something similar, but combined with a lookup.
+
+Maybe I can rephrase it to:
+
+  The reason for getting the encryption info before checking if the
+  directory has the encryption key is because the key may be available but
+  the encryption info isn't yet set (maybe due to a drop_caches).  The
+  regular open path will call fscrypt_file_open which uses function
+  fscrypt_require_key for setting the encryption info if needed.  The
+  atomic open needs to do something similar.
 
 Cheers,
 --=20
 Lu=C3=ADs
 
-> And locally we are still running the test, and there have several fixes f=
-ollowed
-> and need more time to review.
+>> +int fscrypt_prepare_atomic_open(struct inode *dir, struct dentry *dentr=
+y)
+>> +{
+>> +	int err;
+>> +
+>> +	if (!IS_ENCRYPTED(dir))
+>> +		return 0;
+>> +
+>> +	err =3D fscrypt_get_encryption_info(dir, true);
+>> +	if (!err && !fscrypt_has_encryption_key(dir)) {
+>> +		spin_lock(&dentry->d_lock);
+>> +		dentry->d_flags |=3D DCACHE_NOKEY_NAME;
+>> +		spin_unlock(&dentry->d_lock);
+>> +	}
+>> +
+>> +	return err;
+>> +}
+>> +EXPORT_SYMBOL_GPL(fscrypt_prepare_atomic_open);
+> [...]
+>> +static inline int fscrypt_prepare_atomic_open(struct inode *dir,
+>> +					      struct dentry *dentry)
+>> +{
+>> +	return -EOPNOTSUPP;
+>> +}
 >
-> Thanks
+> This has different behavior on unencrypted directories depending on wheth=
+er
+> CONFIG_FS_ENCRYPTION is enabled or not.  That's bad.
 >
-> - Xiubo
+> In patch 2, the caller you are introducing has already checked IS_ENCRYPT=
+ED().
 >
->> Cheers,
+> Also, your kerneldoc comment for fscrypt_prepare_atomic_open() says it is=
+ for
+> *encrypted* directories.
 >
-> --=20
-> Best Regards,
+> So IMO, just remove the IS_ENCRYPTED() check from the CONFIG_FS_ENCRYPTION
+> version of fscrypt_prepare_atomic_open().
 >
-> Xiubo Li (=E6=9D=8E=E7=A7=80=E6=B3=A2)
->
-> Email: xiubli@redhat.com/xiubli@ibm.com
-> Slack: @Xiubo Li
->
+> - Eric
 
