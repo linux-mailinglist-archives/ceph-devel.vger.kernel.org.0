@@ -2,209 +2,146 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B07F6BD3C6
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Mar 2023 16:30:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52D4F6BD7EB
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Mar 2023 19:14:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231706AbjCPPaq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 16 Mar 2023 11:30:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33396 "EHLO
+        id S230430AbjCPSOW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 16 Mar 2023 14:14:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231774AbjCPPaN (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 Mar 2023 11:30:13 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 549DDE1921
-        for <ceph-devel@vger.kernel.org>; Thu, 16 Mar 2023 08:27:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1678980454;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=14pAi6JHwU3C53h/ZQrPmmNB396J3kzB8Cmz3sg/vjY=;
-        b=JlVVeyDTgzY+uCB7W/UPoS9dZqWrTtu+15wS8LmL9ejZiHJXo68zvzXLHe94DKGxHumfH4
-        0/kJAcqQ0v8gLK3VHD1Mx3bNyZLosU52kYQOSFTKLW6ozlXmf5c0qZvxDHBeGMWJNtXwmJ
-        x7l4k4qqTeKrIn4dX/ilZEp6yaMYu/w=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-319-pD9jpABAOzyxINJMnpA1QQ-1; Thu, 16 Mar 2023 11:27:27 -0400
-X-MC-Unique: pD9jpABAOzyxINJMnpA1QQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S229621AbjCPSOV (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 16 Mar 2023 14:14:21 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52D8D3C29;
+        Thu, 16 Mar 2023 11:14:20 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 72108185A790;
-        Thu, 16 Mar 2023 15:27:26 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5A34D2027040;
-        Thu, 16 Mar 2023 15:27:24 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        by smtp-out1.suse.de (Postfix) with ESMTPS id B984021A3B;
+        Thu, 16 Mar 2023 18:14:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1678990458; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=wPYxUl/V0E0fQjPzR03hgTUP8YMge8ZIO2XP7gX1C3s=;
+        b=S6Cs9pO/cWfbFKvIjeuhYXDHc+oVPLHQVLSFtRwJGAXesXJBfftVsm6nHeA/uCRhuTPQK4
+        Kgx1W9qnKxmufPDz1+3LpF4AAg2CS0nuO6OnFcDAEJbkpcWlMVThVPg0+b1yoLkJHk5wTr
+        5i5hUQigWt43VgmNVR+dYg+zTKYkGXQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1678990458;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=wPYxUl/V0E0fQjPzR03hgTUP8YMge8ZIO2XP7gX1C3s=;
+        b=ylKYUdoHK6tYD29ZZc7kL6KnlL1I54rv2q+e0f/LpOy42rFxpHgCT5eR7QAjXMZ+Ax61sL
+        ovSqcNwIHtqn/TBw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1D18C133E0;
+        Thu, 16 Mar 2023 18:14:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id SSvEA3pcE2RtXAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Thu, 16 Mar 2023 18:14:18 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 36427925;
+        Thu, 16 Mar 2023 18:14:14 +0000 (UTC)
+From:   =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
+To:     Eric Biggers <ebiggers@kernel.org>, Xiubo Li <xiubli@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Ilya Dryomov <idryomov@gmail.com>,
-        Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
-Subject: [RFC PATCH 24/28] ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage()
-Date:   Thu, 16 Mar 2023 15:26:14 +0000
-Message-Id: <20230316152618.711970-25-dhowells@redhat.com>
-In-Reply-To: <20230316152618.711970-1-dhowells@redhat.com>
-References: <20230316152618.711970-1-dhowells@redhat.com>
+        linux-fscrypt@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Lu=C3=ADs=20Henriques?= <lhenriques@suse.de>
+Subject: [PATCH v3 0/3] ceph: fscrypt: fix atomic open bug for encrypted directories
+Date:   Thu, 16 Mar 2023 18:14:10 +0000
+Message-Id: <20230316181413.26916-1-lhenriques@suse.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Use sendmsg() and MSG_SPLICE_PAGES rather than sendpage in ceph when
-transmitting data.  For the moment, this can only transmit one page at a
-time because of the architecture of net/ceph/, but if
-write_partial_message_data() can be given a bvec[] at a time by the
-iteration code, this would allow pages to be sent in a batch.
+Hi!
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: Xiubo Li <xiubli@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: ceph-devel@vger.kernel.org
-cc: netdev@vger.kernel.org
----
- net/ceph/messenger_v2.c | 89 +++++++++--------------------------------
- 1 file changed, 18 insertions(+), 71 deletions(-)
+I started seeing fstest generic/123 failing in ceph fscrypt, when running it
+with 'test_dummy_encryption'.  This test is quite simple:
 
-diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-index 301a991dc6a6..1637a0c21126 100644
---- a/net/ceph/messenger_v2.c
-+++ b/net/ceph/messenger_v2.c
-@@ -117,91 +117,38 @@ static int ceph_tcp_recv(struct ceph_connection *con)
- 	return ret;
- }
- 
--static int do_sendmsg(struct socket *sock, struct iov_iter *it)
--{
--	struct msghdr msg = { .msg_flags = CEPH_MSG_FLAGS };
--	int ret;
--
--	msg.msg_iter = *it;
--	while (iov_iter_count(it)) {
--		ret = sock_sendmsg(sock, &msg);
--		if (ret <= 0) {
--			if (ret == -EAGAIN)
--				ret = 0;
--			return ret;
--		}
--
--		iov_iter_advance(it, ret);
--	}
--
--	WARN_ON(msg_data_left(&msg));
--	return 1;
--}
--
--static int do_try_sendpage(struct socket *sock, struct iov_iter *it)
--{
--	struct msghdr msg = { .msg_flags = CEPH_MSG_FLAGS };
--	struct bio_vec bv;
--	int ret;
--
--	if (WARN_ON(!iov_iter_is_bvec(it)))
--		return -EINVAL;
--
--	while (iov_iter_count(it)) {
--		/* iov_iter_iovec() for ITER_BVEC */
--		bvec_set_page(&bv, it->bvec->bv_page,
--			      min(iov_iter_count(it),
--				  it->bvec->bv_len - it->iov_offset),
--			      it->bvec->bv_offset + it->iov_offset);
--
--		/*
--		 * sendpage cannot properly handle pages with
--		 * page_count == 0, we need to fall back to sendmsg if
--		 * that's the case.
--		 *
--		 * Same goes for slab pages: skb_can_coalesce() allows
--		 * coalescing neighboring slab objects into a single frag
--		 * which triggers one of hardened usercopy checks.
--		 */
--		if (sendpage_ok(bv.bv_page)) {
--			ret = sock->ops->sendpage(sock, bv.bv_page,
--						  bv.bv_offset, bv.bv_len,
--						  CEPH_MSG_FLAGS);
--		} else {
--			iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bv, 1, bv.bv_len);
--			ret = sock_sendmsg(sock, &msg);
--		}
--		if (ret <= 0) {
--			if (ret == -EAGAIN)
--				ret = 0;
--			return ret;
--		}
--
--		iov_iter_advance(it, ret);
--	}
--
--	return 1;
--}
--
- /*
-  * Write as much as possible.  The socket is expected to be corked,
-  * so we don't bother with MSG_MORE/MSG_SENDPAGE_NOTLAST here.
-  *
-  * Return:
-- *   1 - done, nothing (else) to write
-+ *  >0 - done, nothing (else) to write
-  *   0 - socket is full, need to wait
-  *  <0 - error
-  */
- static int ceph_tcp_send(struct ceph_connection *con)
- {
-+	struct msghdr msg = {
-+		.msg_iter	= con->v2.out_iter,
-+		.msg_flags	= CEPH_MSG_FLAGS,
-+	};
- 	int ret;
- 
-+	if (WARN_ON(!iov_iter_is_bvec(&con->v2.out_iter)))
-+		return -EINVAL;
-+
-+	if (con->v2.out_iter_sendpage)
-+		msg.msg_flags |= MSG_SPLICE_PAGES;
-+
- 	dout("%s con %p have %zu try_sendpage %d\n", __func__, con,
- 	     iov_iter_count(&con->v2.out_iter), con->v2.out_iter_sendpage);
--	if (con->v2.out_iter_sendpage)
--		ret = do_try_sendpage(con->sock, &con->v2.out_iter);
--	else
--		ret = do_sendmsg(con->sock, &con->v2.out_iter);
-+
-+	ret = sock_sendmsg(con->sock, &msg);
-+	if (ret > 0)
-+		iov_iter_advance(&con->v2.out_iter, ret);
-+	else if (ret == -EAGAIN)
-+		ret = 0;
-+
- 	dout("%s con %p ret %d left %zu\n", __func__, con, ret,
- 	     iov_iter_count(&con->v2.out_iter));
- 	return ret;
+1. Creates a directory with write permissions for root only
+2. Writes into a file in that directory
+3. Uses 'su' to try to modify that file as a different user, and
+   gets -EPERM
+
+All the test steps succeed, but the test fails to cleanup: 'rm -rf <dir>'
+will fail with -ENOTEMPTY.  'strace' shows that calling unlinkat() to remove
+the file got a -ENOENT and then -ENOTEMPTY for the directory.
+
+This is because 'su' does a drop_caches ('su (874): drop_caches: 2' in
+dmesg), and ceph's atomic open will do:
+
+	if (IS_ENCRYPTED(dir)) {
+		set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
+		if (!fscrypt_has_encryption_key(dir)) {
+			spin_lock(&dentry->d_lock);
+			dentry->d_flags |= DCACHE_NOKEY_NAME;
+			spin_unlock(&dentry->d_lock);
+		}
+	}
+
+Although 'dir' has the encryption key available, fscrypt_has_encryption_key()
+will return 'false' because fscrypt info isn't yet set after the cache
+cleanup.
+
+The first patch will add a new helper for the atomic_open that will force
+the fscrypt info to be loaded into an inode that has been evicted recently
+but for which the key is still available.
+
+The second patch switches ceph atomic_open to use the new fscrypt helper.
+
+Cheers,
+--
+Luís
+
+Changes since v2:
+- Make helper more generic and to be used both in lookup and atomic open
+  operations
+- Modify ceph_lookup (patch 0002) and ceph_atomic_open (patch 0003) to use
+  the new helper
+
+Changes since v1:
+- Dropped IS_ENCRYPTED() from helper function because kerneldoc says
+  already that it applies to encrypted directories and, most importantly,
+  because it would introduce a different behaviour for
+  CONFIG_FS_ENCRYPTION and !CONFIG_FS_ENCRYPTION.
+- Rephrased helper kerneldoc
+
+Changes since initial RFC (after Eric's review):
+- Added kerneldoc comments to the new fscrypt helper
+- Dropped '__' from helper name (now fscrypt_prepare_atomic_open())
+- Added IS_ENCRYPTED() check in helper
+- DCACHE_NOKEY_NAME is not set if fscrypt_get_encryption_info() returns an
+  error
+- Fixed helper for !CONFIG_FS_ENCRYPTION (now defined 'static inline')
+
+Luís Henriques (3):
+  fscrypt: new helper function - fscrypt_prepare_lookup_partial()
+  ceph: switch ceph_open() to use new fscrypt helper
+  ceph: switch ceph_open_atomic() to use the new fscrypt helper
+
+ fs/ceph/dir.c           | 13 +++++++------
+ fs/ceph/file.c          |  8 +++-----
+ fs/crypto/hooks.c       | 37 +++++++++++++++++++++++++++++++++++++
+ include/linux/fscrypt.h |  7 +++++++
+ 4 files changed, 54 insertions(+), 11 deletions(-)
 
