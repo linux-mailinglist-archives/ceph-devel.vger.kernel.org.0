@@ -2,173 +2,223 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B7986C2E52
-	for <lists+ceph-devel@lfdr.de>; Tue, 21 Mar 2023 10:59:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC2C26C314F
+	for <lists+ceph-devel@lfdr.de>; Tue, 21 Mar 2023 13:14:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229887AbjCUJ7D (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 21 Mar 2023 05:59:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41096 "EHLO
+        id S231185AbjCUMOB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 21 Mar 2023 08:14:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbjCUJ7B (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 21 Mar 2023 05:59:01 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA86E76BE
-        for <ceph-devel@vger.kernel.org>; Tue, 21 Mar 2023 02:58:59 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id ek18so57338895edb.6
-        for <ceph-devel@vger.kernel.org>; Tue, 21 Mar 2023 02:58:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679392738;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pKBF0p6guvCmwnToXhd4OYDdRDdzh6OgcvQvxbvE+pE=;
-        b=EssSDkVxCEAiGv5UGOgq2FXRX5mORJvDvjbLhRZKixCrMrk+E4Ayn4rTBUKNzBpds6
-         UP/+qjiov4zDNOqvq6FhN/UrcGLbG52TiL3y4Xv1ug3Lpa3snA+Dkylv+/3EW0VeLx/B
-         TyE9uOV1JFkvUFw5ezhn9FGTTFbeHtQELvat1jocal2E1inCkZixH9AcqIahVYwWmy4e
-         Uv86EIAAoBTP1/BXPmXJX4rr1NSJE6nXCsFPt8qKCxXVtHnn7s8y6c5Xia+OdMXn59zD
-         3KTCZdjVF/EbbcjzwXQPYI+ZPOEJmAh1fBDU1ryOoWQxT/2p8FaRdeBlrHhGlKH7cSut
-         YvEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679392738;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pKBF0p6guvCmwnToXhd4OYDdRDdzh6OgcvQvxbvE+pE=;
-        b=UoatFN92ong+SFJWSRq7CkjEDQk1THrj18KQQOqE+QBwuCr9VM9fy46WEuZMKRWAqI
-         DmT09acQokQbOZ55sn9MHhQYoagIq1E7+tiUyBAgkCvOAE25/AhvgzQLKkt1szJKx2gZ
-         j6XfpqfKEFc/Ca6kksFB/ceepOWx+ca/O9rF4TI/GPlfbaRrEZSyg+omBFSaYqq7fAI2
-         mrktATEqDjDv8sC7j6UR4TbqMjUGl/LgrM3rQ1NkrzkiayFOoxFomSzU5IVJCdl0j5qb
-         C6Ie0rubDAJ5qziXtDZxxCDvYiJWzxceK3cuC5eTm12f52wZB59pmY/b3xvcVneAdpsp
-         Fulw==
-X-Gm-Message-State: AO0yUKXla4Tlut1EgZIpMpMxgkyZ9aJqagLfmjpLE78WM2MNDxqgtztv
-        CEfCAKj8rMrgKoCHNr0T4wsAZQSLZcwpzMyWBd4=
-X-Google-Smtp-Source: AK7set/ippFy/83YmzP2FZ+nw7dlI8lmyDdzjHCrK+ylNGhjJy9ZAoXOAtWE6qFbpMzYDH165NAhAsuL17AR0Xc5BlU=
-X-Received: by 2002:a17:907:207b:b0:939:a51a:dc30 with SMTP id
- qp27-20020a170907207b00b00939a51adc30mr981955ejb.2.1679392738083; Tue, 21 Mar
- 2023 02:58:58 -0700 (PDT)
+        with ESMTP id S229934AbjCUMOA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 21 Mar 2023 08:14:00 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 822FF5592;
+        Tue, 21 Mar 2023 05:13:59 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 2F46F1FFA8;
+        Tue, 21 Mar 2023 12:13:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1679400838; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6lqhh3x0dmFCypkdpURPj2W+m106HV2LQcy5G8mRAK0=;
+        b=PZ8Idz6ywkPiqiQGG+J23CZQtRAvF8uy3vAshw3loEv3tjn75V1J89faFH+9KxtyV9wFA/
+        UaeW1poI9Wv9VOFYg6ZezMcUQcAJTgGkFOX77zwUBmmuSWW6K/ePRcY8z4jcV/htfD4AfW
+        V2jAhDbPDuK8VkxDfmam+9in5j176Bg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1679400838;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=6lqhh3x0dmFCypkdpURPj2W+m106HV2LQcy5G8mRAK0=;
+        b=Kt2x2mwa1a9RzgKQFjlgWk5S2czUJZhD6SUyfc9WXJc5FTIiEIHLjO8i8EgN/WfN7FrOI+
+        Bbvg1G3XNuQvAfCQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9B58813440;
+        Tue, 21 Mar 2023 12:13:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id AtIKI4WfGWR3MQAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Tue, 21 Mar 2023 12:13:57 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 8fadaac7;
+        Tue, 21 Mar 2023 12:13:56 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-fscrypt@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] ceph: fscrypt: fix atomic open bug for encrypted
+ directories
+References: <20230316181413.26916-1-lhenriques@suse.de>
+        <568da52f-18a6-5f96-cd51-5b07dedefb2d@redhat.com>
+        <CAOi1vP9QsbSUq9JNRcpQpV3XWM2Eurhk+6AkDDNmks5PLTx3YQ@mail.gmail.com>
+        <0b51da52-bb38-2094-b9b2-bc3858066be5@redhat.com>
+        <20230320221609.GA21979@sol.localdomain>
+Date:   Tue, 21 Mar 2023 12:13:56 +0000
+In-Reply-To: <20230320221609.GA21979@sol.localdomain> (Eric Biggers's message
+        of "Mon, 20 Mar 2023 15:16:09 -0700")
+Message-ID: <87v8iugv3v.fsf@suse.de>
 MIME-Version: 1.0
-References: <202303211100.ExmaGnB0-lkp@intel.com>
-In-Reply-To: <202303211100.ExmaGnB0-lkp@intel.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 21 Mar 2023 10:58:46 +0100
-Message-ID: <CAOi1vP8GEOaSkcB5LhMo6i4k245T5=eyPweBgP3G=-Us_sjdGw@mail.gmail.com>
-Subject: Re: [ceph-client:testing 19/80] fs/ceph/super.c:1122:15: error:
- implicit declaration of function 'fscrypt_add_test_dummy_key'
-To:     kernel test robot <lkp@intel.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, oe-kbuild-all@lists.linux.dev,
-        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Mar 21, 2023 at 5:00=E2=80=AFAM kernel test robot <lkp@intel.com> w=
+Eric Biggers <ebiggers@kernel.org> writes:
+
+> On Mon, Mar 20, 2023 at 08:47:18PM +0800, Xiubo Li wrote:
+>>=20
+>> On 20/03/2023 19:20, Ilya Dryomov wrote:
+>> > On Mon, Mar 20, 2023 at 2:07=E2=80=AFAM Xiubo Li <xiubli@redhat.com> w=
 rote:
+>> > >=20
+>> > > On 17/03/2023 02:14, Lu=C3=ADs Henriques wrote:
+>> > > > Hi!
+>> > > >=20
+>> > > > I started seeing fstest generic/123 failing in ceph fscrypt, when =
+running it
+>> > > > with 'test_dummy_encryption'.  This test is quite simple:
+>> > > >=20
+>> > > > 1. Creates a directory with write permissions for root only
+>> > > > 2. Writes into a file in that directory
+>> > > > 3. Uses 'su' to try to modify that file as a different user, and
+>> > > >      gets -EPERM
+>> > > >=20
+>> > > > All the test steps succeed, but the test fails to cleanup: 'rm -rf=
+ <dir>'
+>> > > > will fail with -ENOTEMPTY.  'strace' shows that calling unlinkat()=
+ to remove
+>> > > > the file got a -ENOENT and then -ENOTEMPTY for the directory.
+>> > > >=20
+>> > > > This is because 'su' does a drop_caches ('su (874): drop_caches: 2=
+' in
+>> > > > dmesg), and ceph's atomic open will do:
+>> > > >=20
+>> > > >        if (IS_ENCRYPTED(dir)) {
+>> > > >                set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
+>> > > >                if (!fscrypt_has_encryption_key(dir)) {
+>> > > >                        spin_lock(&dentry->d_lock);
+>> > > >                        dentry->d_flags |=3D DCACHE_NOKEY_NAME;
+>> > > >                        spin_unlock(&dentry->d_lock);
+>> > > >                }
+>> > > >        }
+>> > > >=20
+>> > > > Although 'dir' has the encryption key available, fscrypt_has_encry=
+ption_key()
+>> > > > will return 'false' because fscrypt info isn't yet set after the c=
+ache
+>> > > > cleanup.
+>> > > >=20
+>> > > > The first patch will add a new helper for the atomic_open that wil=
+l force
+>> > > > the fscrypt info to be loaded into an inode that has been evicted =
+recently
+>> > > > but for which the key is still available.
+>> > > >=20
+>> > > > The second patch switches ceph atomic_open to use the new fscrypt =
+helper.
+>> > > >=20
+>> > > > Cheers,
+>> > > > --
+>> > > > Lu=C3=ADs
+>> > > >=20
+>> > > > Changes since v2:
+>> > > > - Make helper more generic and to be used both in lookup and atomi=
+c open
+>> > > >     operations
+>> > > > - Modify ceph_lookup (patch 0002) and ceph_atomic_open (patch 0003=
+) to use
+>> > > >     the new helper
+>> > > >=20
+>> > > > Changes since v1:
+>> > > > - Dropped IS_ENCRYPTED() from helper function because kerneldoc sa=
+ys
+>> > > >     already that it applies to encrypted directories and, most imp=
+ortantly,
+>> > > >     because it would introduce a different behaviour for
+>> > > >     CONFIG_FS_ENCRYPTION and !CONFIG_FS_ENCRYPTION.
+>> > > > - Rephrased helper kerneldoc
+>> > > >=20
+>> > > > Changes since initial RFC (after Eric's review):
+>> > > > - Added kerneldoc comments to the new fscrypt helper
+>> > > > - Dropped '__' from helper name (now fscrypt_prepare_atomic_open())
+>> > > > - Added IS_ENCRYPTED() check in helper
+>> > > > - DCACHE_NOKEY_NAME is not set if fscrypt_get_encryption_info() re=
+turns an
+>> > > >     error
+>> > > > - Fixed helper for !CONFIG_FS_ENCRYPTION (now defined 'static inli=
+ne')
+>> > > This series looks good to me.
+>> > >=20
+>> > > And I have run the test locally and worked well.
+>> > >=20
+>> > >=20
+>> > > > Lu=C3=ADs Henriques (3):
+>> > > >     fscrypt: new helper function - fscrypt_prepare_lookup_partial()
+>> > > Eric,
+>> > >=20
+>> > > If possible I we can pick this together to ceph repo and need your a=
+ck
+>> > > about this. Or you can pick it to the crypto repo then please feel f=
+ree
+>> > > to add:
+>> > >=20
+>> > > Tested-by: Xiubo Li <xiubli@redhat.com> and Reviewed-by: Xiubo Li
+>> > > <xiubli@redhat.com>
+>> > I would prefer the fscrypt helper to go through the fscrypt tree.
+>>=20
+>> Sure. This also LGTM.
+>>=20
+>> Thanks
+>>=20
 >
-> tree:   https://github.com/ceph/ceph-client.git testing
-> head:   bc74c6176640bed8ff55211d4211658413f5c19c
-> commit: 72326544b6f873e44659da920b51572bdf76b143 [19/80] ceph: implement =
--o test_dummy_encryption mount option
-> config: nios2-allmodconfig (https://download.01.org/0day-ci/archive/20230=
-321/202303211100.ExmaGnB0-lkp@intel.com/config)
-> compiler: nios2-linux-gcc (GCC) 12.1.0
-> reproduce (this is a W=3D1 build):
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbi=
-n/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # https://github.com/ceph/ceph-client/commit/72326544b6f873e44659=
-da920b51572bdf76b143
->         git remote add ceph-client https://github.com/ceph/ceph-client.gi=
-t
->         git fetch --no-tags ceph-client testing
->         git checkout 72326544b6f873e44659da920b51572bdf76b143
->         # save the config file
->         mkdir build_dir && cp config build_dir/.config
->         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dgcc-12.1.0 make.cro=
-ss W=3D1 O=3Dbuild_dir ARCH=3Dnios2 olddefconfig
->         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dgcc-12.1.0 make.cro=
-ss W=3D1 O=3Dbuild_dir ARCH=3Dnios2 SHELL=3D/bin/bash fs/ceph/
+> I've applied it to
+> https://git.kernel.org/pub/scm/fs/fscrypt/linux.git/log/?h=3Dfor-next
 >
-> If you fix the issue, kindly add following tag where applicable
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Link: https://lore.kernel.org/oe-kbuild-all/202303211100.ExmaGnB0-lkp@i=
-ntel.com/
->
-> All errors (new ones prefixed by >>):
->
->    fs/ceph/super.c: In function 'ceph_apply_test_dummy_encryption':
-> >> fs/ceph/super.c:1122:15: error: implicit declaration of function 'fscr=
-ypt_add_test_dummy_key' [-Werror=3Dimplicit-function-declaration]
->     1122 |         err =3D fscrypt_add_test_dummy_key(sb, &fsc->fsc_dummy=
-_enc_policy);
->          |               ^~~~~~~~~~~~~~~~~~~~~~~~~~
->    cc1: some warnings being treated as errors
->
->
-> vim +/fscrypt_add_test_dummy_key +1122 fs/ceph/super.c
->
->   1088
->   1089  #ifdef CONFIG_FS_ENCRYPTION
->   1090  static int ceph_apply_test_dummy_encryption(struct super_block *s=
-b,
->   1091                                              struct fs_context *fc=
-,
->   1092                                              struct ceph_mount_opt=
-ions *fsopt)
->   1093  {
->   1094          struct ceph_fs_client *fsc =3D sb->s_fs_info;
->   1095          int err;
->   1096
->   1097          if (!fscrypt_is_dummy_policy_set(&fsopt->dummy_enc_policy=
-))
->   1098                  return 0;
->   1099
->   1100          /* No changing encryption context on remount. */
->   1101          if (fc->purpose =3D=3D FS_CONTEXT_FOR_RECONFIGURE &&
->   1102              !fscrypt_is_dummy_policy_set(&fsc->fsc_dummy_enc_poli=
-cy)) {
->   1103                  if (fscrypt_dummy_policies_equal(&fsopt->dummy_en=
-c_policy,
->   1104                                                   &fsc->fsc_dummy_=
-enc_policy))
->   1105                          return 0;
->   1106                  errorfc(fc, "Can't set test_dummy_encryption on r=
-emount");
->   1107                  return -EINVAL;
->   1108          }
->   1109
->   1110          /* Also make sure fsopt doesn't contain a conflicting val=
-ue. */
->   1111          if (fscrypt_is_dummy_policy_set(&fsc->fsc_dummy_enc_polic=
-y)) {
->   1112                  if (fscrypt_dummy_policies_equal(&fsopt->dummy_en=
-c_policy,
->   1113                                                   &fsc->fsc_dummy_=
-enc_policy))
->   1114                          return 0;
->   1115                  errorfc(fc, "Conflicting test_dummy_encryption op=
-tions");
->   1116                  return -EINVAL;
->   1117          }
->   1118
->   1119          fsc->fsc_dummy_enc_policy =3D fsopt->dummy_enc_policy;
->   1120          memset(&fsopt->dummy_enc_policy, 0, sizeof(fsopt->dummy_e=
-nc_policy));
->   1121
-> > 1122          err =3D fscrypt_add_test_dummy_key(sb, &fsc->fsc_dummy_en=
-c_policy);
+> But I ended up reworking the comment a bit and moving the function to be =
+just
+> below __fscrypt_prepare_lookup().  So I sent out v4 that matches what I a=
+pplied.
 
-Sorry, I missed that commit 097d7c1fcb8d ("fscrypt: clean up
-fscrypt_add_test_dummy_key()") unexported this function when rebasing
-because CONFIG_FS_ENCRYPTION wasn't on in that directory.
+Awesome, thanks a lot, Eric.
 
-Thanks,
+> BTW, I'm wondering if anyone has had any thoughts about the race conditio=
+n I
+> described at https://lore.kernel.org/r/ZBC1P4Gn6eAKD61+@sol.localdomain/.=
+  In
+> particular, I'm wondering whether this helper function will need to be ch=
+anged
+> or not.  Maybe not, because ceph could look at DCACHE_NOKEY_NAME to deter=
+mine
+> whether the name should be treated as a no-key name or not, instead of ch=
+ecking
+> fscrypt_has_encryption_key() again (as I think it is doing currently)?
 
-                Ilya
+I started looking into that but, to be honest, I haven't yet reached any
+conclusion.  It looks like the ceph code that handles filenames *may* have
+this race too (I'm looking at ceph_fill_trace()) but I'm still not 100%
+sure.  In any case, I think that an eventual fix for this race (if it does
+indeed exist!) will likely be restricted to the ceph code and won't touch
+the generic fscrypt code.  But I'm still looking...
+
+Cheers,
+--=20
+Lu=C3=ADs
