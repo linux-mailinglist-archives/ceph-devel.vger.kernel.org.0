@@ -2,48 +2,50 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 57E326C6015
-	for <lists+ceph-devel@lfdr.de>; Thu, 23 Mar 2023 07:57:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E88D86C6017
+	for <lists+ceph-devel@lfdr.de>; Thu, 23 Mar 2023 07:57:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230228AbjCWG5C (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 23 Mar 2023 02:57:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57946 "EHLO
+        id S230258AbjCWG5G (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 23 Mar 2023 02:57:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230195AbjCWG5B (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 23 Mar 2023 02:57:01 -0400
+        with ESMTP id S230245AbjCWG5D (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 23 Mar 2023 02:57:03 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E27E2D15C
-        for <ceph-devel@vger.kernel.org>; Wed, 22 Mar 2023 23:56:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D58952D162
+        for <ceph-devel@vger.kernel.org>; Wed, 22 Mar 2023 23:56:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679554572;
+        s=mimecast20190719; t=1679554576;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=gDrUVdCXVKmyM9kgJh1IH9mSiGUAtZc+i+CpFndiDW0=;
-        b=OmeOxOfLPbHW/kJqY0GXd8A/2WNAvRkSq/+SelpMr2gBtvrfpmiNP7T/4zBIFGeOtu/Rjc
-        AN9BwQnsJISJiGCKe5Dy/DFqNONWK7oG0mjWMzwXWJgzmkcVKZ2zl23gM43fz/8usxkdMc
-        9jbFCDcai1mPCfskq9jjrdjmeUnAJK0=
+        bh=Q8ZpcKnNEwiTc0SeBz/lGWkevQhDgzTjZTdRUeiFtrY=;
+        b=CtUxEF6xgrbnkVE6ZJBEL0OIRkmRcemwsW18u+jzqu5zTqcrqLDiFpsmRQWBRmECeS5o/p
+        UL21fiyUiIZeFMK1+S6A2AyThvAxocFEL+4ynz2mmMjnM3cSwY2xbQAkn8Q65QuWTIYsee
+        XJkDASnISe4HvtHoFTZ9OFL3BFTX5l0=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-88-kPoUPUI0O9K7qUCPprp3kQ-1; Thu, 23 Mar 2023 02:56:10 -0400
-X-MC-Unique: kPoUPUI0O9K7qUCPprp3kQ-1
+ us-mta-304-Ft_j9sSsN2ui8wFRE4_49Q-1; Thu, 23 Mar 2023 02:56:14 -0400
+X-MC-Unique: Ft_j9sSsN2ui8wFRE4_49Q-1
 Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 40F7E85A588;
-        Thu, 23 Mar 2023 06:56:10 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5D7BC8028AD;
+        Thu, 23 Mar 2023 06:56:14 +0000 (UTC)
 Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DCCE7492B01;
-        Thu, 23 Mar 2023 06:56:06 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D6ACF492B01;
+        Thu, 23 Mar 2023 06:56:10 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
 Cc:     jlayton@kernel.org, vshankar@redhat.com, mchangir@redhat.com,
-        lhenriques@suse.de, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v17 09/71] ceph: make ceph_msdc_build_path use ref-walk
-Date:   Thu, 23 Mar 2023 14:54:23 +0800
-Message-Id: <20230323065525.201322-10-xiubli@redhat.com>
+        lhenriques@suse.de, Al Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v17 10/71] libceph: add new iov_iter-based ceph_msg_data_type and ceph_osd_data_type
+Date:   Thu, 23 Mar 2023 14:54:24 +0800
+Message-Id: <20230323065525.201322-11-xiubli@redhat.com>
 In-Reply-To: <20230323065525.201322-1-xiubli@redhat.com>
 References: <20230323065525.201322-1-xiubli@redhat.com>
 MIME-Version: 1.0
@@ -61,95 +63,280 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Jeff Layton <jlayton@kernel.org>
 
-Encryption potentially requires allocation, at which point we'll need to
-be in a non-atomic context. Convert ceph_msdc_build_path to take dentry
-spinlocks and references instead of using rcu_read_lock to walk the
-path.
+Add an iov_iter to the unions in ceph_msg_data and ceph_msg_data_cursor.
+Instead of requiring a list of pages or bvecs, we can just use an
+iov_iter directly, and avoid extra allocations.
 
-This is slightly less efficient, and we may want to eventually allow
-using RCU when the leaf dentry isn't encrypted.
+We assume that the pages represented by the iter are pinned such that
+they shouldn't incur page faults, which is the case for the iov_iters
+created by netfs.
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+While working on this, Al Viro informed me that he was going to change
+iov_iter_get_pages to auto-advance the iterator as that pattern is more
+or less required for ITER_PIPE anyway. We emulate that here for now by
+advancing in the _next op and tracking that amount in the "lastlen"
+field.
+
+In the event that _next is called twice without an intervening
+_advance, we revert the iov_iter by the remaining lastlen before
+calling iov_iter_get_pages.
+
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: David Howells <dhowells@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/ceph/mds_client.c | 35 +++++++++++++++++++----------------
- 1 file changed, 19 insertions(+), 16 deletions(-)
+ include/linux/ceph/messenger.h  |  8 ++++
+ include/linux/ceph/osd_client.h |  4 ++
+ net/ceph/messenger.c            | 78 +++++++++++++++++++++++++++++++++
+ net/ceph/osd_client.c           | 27 ++++++++++++
+ 4 files changed, 117 insertions(+)
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index dcb25724b693..0aa2c97a0460 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2400,7 +2400,8 @@ static inline  u64 __get_oldest_tid(struct ceph_mds_client *mdsc)
- char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
- 			   int stop_on_nosnap)
+diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenger.h
+index 9fd7255172ad..2eaaabbe98cb 100644
+--- a/include/linux/ceph/messenger.h
++++ b/include/linux/ceph/messenger.h
+@@ -123,6 +123,7 @@ enum ceph_msg_data_type {
+ 	CEPH_MSG_DATA_BIO,	/* data source/destination is a bio list */
+ #endif /* CONFIG_BLOCK */
+ 	CEPH_MSG_DATA_BVECS,	/* data source/destination is a bio_vec array */
++	CEPH_MSG_DATA_ITER,	/* data source/destination is an iov_iter */
+ };
+ 
+ #ifdef CONFIG_BLOCK
+@@ -224,6 +225,7 @@ struct ceph_msg_data {
+ 			bool		own_pages;
+ 		};
+ 		struct ceph_pagelist	*pagelist;
++		struct iov_iter		iter;
+ 	};
+ };
+ 
+@@ -248,6 +250,10 @@ struct ceph_msg_data_cursor {
+ 			struct page	*page;		/* page from list */
+ 			size_t		offset;		/* bytes from list */
+ 		};
++		struct {
++			struct iov_iter		iov_iter;
++			unsigned int		lastlen;
++		};
+ 	};
+ };
+ 
+@@ -605,6 +611,8 @@ void ceph_msg_data_add_bio(struct ceph_msg *msg, struct ceph_bio_iter *bio_pos,
+ #endif /* CONFIG_BLOCK */
+ void ceph_msg_data_add_bvecs(struct ceph_msg *msg,
+ 			     struct ceph_bvec_iter *bvec_pos);
++void ceph_msg_data_add_iter(struct ceph_msg *msg,
++			    struct iov_iter *iter);
+ 
+ struct ceph_msg *ceph_msg_new2(int type, int front_len, int max_data_items,
+ 			       gfp_t flags, bool can_fail);
+diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
+index 460881c93f9a..680b4a70f6d4 100644
+--- a/include/linux/ceph/osd_client.h
++++ b/include/linux/ceph/osd_client.h
+@@ -108,6 +108,7 @@ enum ceph_osd_data_type {
+ 	CEPH_OSD_DATA_TYPE_BIO,
+ #endif /* CONFIG_BLOCK */
+ 	CEPH_OSD_DATA_TYPE_BVECS,
++	CEPH_OSD_DATA_TYPE_ITER,
+ };
+ 
+ struct ceph_osd_data {
+@@ -131,6 +132,7 @@ struct ceph_osd_data {
+ 			struct ceph_bvec_iter	bvec_pos;
+ 			u32			num_bvecs;
+ 		};
++		struct iov_iter		iter;
+ 	};
+ };
+ 
+@@ -501,6 +503,8 @@ void osd_req_op_extent_osd_data_bvecs(struct ceph_osd_request *osd_req,
+ void osd_req_op_extent_osd_data_bvec_pos(struct ceph_osd_request *osd_req,
+ 					 unsigned int which,
+ 					 struct ceph_bvec_iter *bvec_pos);
++void osd_req_op_extent_osd_iter(struct ceph_osd_request *osd_req,
++				unsigned int which, struct iov_iter *iter);
+ 
+ extern void osd_req_op_cls_request_data_pagelist(struct ceph_osd_request *,
+ 					unsigned int which,
+diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+index 3bc3c72a6d4f..9dce65fac0bd 100644
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -969,6 +969,63 @@ static bool ceph_msg_data_pagelist_advance(struct ceph_msg_data_cursor *cursor,
+ 	return true;
+ }
+ 
++static void ceph_msg_data_iter_cursor_init(struct ceph_msg_data_cursor *cursor,
++					size_t length)
++{
++	struct ceph_msg_data *data = cursor->data;
++
++	cursor->iov_iter = data->iter;
++	cursor->lastlen = 0;
++	iov_iter_truncate(&cursor->iov_iter, length);
++	cursor->resid = iov_iter_count(&cursor->iov_iter);
++}
++
++static struct page *ceph_msg_data_iter_next(struct ceph_msg_data_cursor *cursor,
++						size_t *page_offset,
++						size_t *length)
++{
++	struct page *page;
++	ssize_t len;
++
++	if (cursor->lastlen)
++		iov_iter_revert(&cursor->iov_iter, cursor->lastlen);
++
++	len = iov_iter_get_pages2(&cursor->iov_iter, &page, PAGE_SIZE,
++				  1, page_offset);
++	BUG_ON(len < 0);
++
++	cursor->lastlen = len;
++
++	/*
++	 * FIXME: The assumption is that the pages represented by the iov_iter
++	 *	  are pinned, with the references held by the upper-level
++	 *	  callers, or by virtue of being under writeback. Eventually,
++	 *	  we'll get an iov_iter_get_pages2 variant that doesn't take page
++	 *	  refs. Until then, just put the page ref.
++	 */
++	VM_BUG_ON_PAGE(!PageWriteback(page) && page_count(page) < 2, page);
++	put_page(page);
++
++	*length = min_t(size_t, len, cursor->resid);
++	return page;
++}
++
++static bool ceph_msg_data_iter_advance(struct ceph_msg_data_cursor *cursor,
++					size_t bytes)
++{
++	BUG_ON(bytes > cursor->resid);
++	cursor->resid -= bytes;
++
++	if (bytes < cursor->lastlen) {
++		cursor->lastlen -= bytes;
++	} else {
++		iov_iter_advance(&cursor->iov_iter, bytes - cursor->lastlen);
++		cursor->lastlen = 0;
++	}
++
++	return cursor->resid;
++}
++
+ /*
+  * Message data is handled (sent or received) in pieces, where each
+  * piece resides on a single page.  The network layer might not
+@@ -996,6 +1053,9 @@ static void __ceph_msg_data_cursor_init(struct ceph_msg_data_cursor *cursor)
+ 	case CEPH_MSG_DATA_BVECS:
+ 		ceph_msg_data_bvecs_cursor_init(cursor, length);
+ 		break;
++	case CEPH_MSG_DATA_ITER:
++		ceph_msg_data_iter_cursor_init(cursor, length);
++		break;
+ 	case CEPH_MSG_DATA_NONE:
+ 	default:
+ 		/* BUG(); */
+@@ -1043,6 +1103,9 @@ struct page *ceph_msg_data_next(struct ceph_msg_data_cursor *cursor,
+ 	case CEPH_MSG_DATA_BVECS:
+ 		page = ceph_msg_data_bvecs_next(cursor, page_offset, length);
+ 		break;
++	case CEPH_MSG_DATA_ITER:
++		page = ceph_msg_data_iter_next(cursor, page_offset, length);
++		break;
+ 	case CEPH_MSG_DATA_NONE:
+ 	default:
+ 		page = NULL;
+@@ -1081,6 +1144,9 @@ void ceph_msg_data_advance(struct ceph_msg_data_cursor *cursor, size_t bytes)
+ 	case CEPH_MSG_DATA_BVECS:
+ 		new_piece = ceph_msg_data_bvecs_advance(cursor, bytes);
+ 		break;
++	case CEPH_MSG_DATA_ITER:
++		new_piece = ceph_msg_data_iter_advance(cursor, bytes);
++		break;
+ 	case CEPH_MSG_DATA_NONE:
+ 	default:
+ 		BUG();
+@@ -1879,6 +1945,18 @@ void ceph_msg_data_add_bvecs(struct ceph_msg *msg,
+ }
+ EXPORT_SYMBOL(ceph_msg_data_add_bvecs);
+ 
++void ceph_msg_data_add_iter(struct ceph_msg *msg,
++			    struct iov_iter *iter)
++{
++	struct ceph_msg_data *data;
++
++	data = ceph_msg_data_add(msg);
++	data->type = CEPH_MSG_DATA_ITER;
++	data->iter = *iter;
++
++	msg->data_length += iov_iter_count(&data->iter);
++}
++
+ /*
+  * construct a new message with given type, size
+  * the new msg has a ref count of 1.
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index 8534ca9c39b9..9138abc07f45 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -171,6 +171,13 @@ static void ceph_osd_data_bvecs_init(struct ceph_osd_data *osd_data,
+ 	osd_data->num_bvecs = num_bvecs;
+ }
+ 
++static void ceph_osd_iter_init(struct ceph_osd_data *osd_data,
++			       struct iov_iter *iter)
++{
++	osd_data->type = CEPH_OSD_DATA_TYPE_ITER;
++	osd_data->iter = *iter;
++}
++
+ static struct ceph_osd_data *
+ osd_req_op_raw_data_in(struct ceph_osd_request *osd_req, unsigned int which)
  {
--	struct dentry *temp;
-+	struct dentry *cur;
-+	struct inode *inode;
- 	char *path;
- 	int pos;
- 	unsigned seq;
-@@ -2417,34 +2418,35 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
- 	path[pos] = '\0';
+@@ -264,6 +271,22 @@ void osd_req_op_extent_osd_data_bvec_pos(struct ceph_osd_request *osd_req,
+ }
+ EXPORT_SYMBOL(osd_req_op_extent_osd_data_bvec_pos);
  
- 	seq = read_seqbegin(&rename_lock);
--	rcu_read_lock();
--	temp = dentry;
-+	cur = dget(dentry);
- 	for (;;) {
--		struct inode *inode;
-+		struct dentry *temp;
- 
--		spin_lock(&temp->d_lock);
--		inode = d_inode(temp);
-+		spin_lock(&cur->d_lock);
-+		inode = d_inode(cur);
- 		if (inode && ceph_snap(inode) == CEPH_SNAPDIR) {
- 			dout("build_path path+%d: %p SNAPDIR\n",
--			     pos, temp);
--		} else if (stop_on_nosnap && inode && dentry != temp &&
-+			     pos, cur);
-+		} else if (stop_on_nosnap && inode && dentry != cur &&
- 			   ceph_snap(inode) == CEPH_NOSNAP) {
--			spin_unlock(&temp->d_lock);
-+			spin_unlock(&cur->d_lock);
- 			pos++; /* get rid of any prepended '/' */
- 			break;
- 		} else {
--			pos -= temp->d_name.len;
-+			pos -= cur->d_name.len;
- 			if (pos < 0) {
--				spin_unlock(&temp->d_lock);
-+				spin_unlock(&cur->d_lock);
- 				break;
- 			}
--			memcpy(path + pos, temp->d_name.name, temp->d_name.len);
-+			memcpy(path + pos, cur->d_name.name, cur->d_name.len);
- 		}
-+		temp = cur;
- 		spin_unlock(&temp->d_lock);
--		temp = READ_ONCE(temp->d_parent);
-+		cur = dget_parent(temp);
-+		dput(temp);
- 
- 		/* Are we at the root? */
--		if (IS_ROOT(temp))
-+		if (IS_ROOT(cur))
- 			break;
- 
- 		/* Are we out of buffer? */
-@@ -2453,8 +2455,9 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
- 
- 		path[pos] = '/';
++/**
++ * osd_req_op_extent_osd_iter - Set up an operation with an iterator buffer
++ * @osd_req: The request to set up
++ * @which: Index of the operation in which to set the iter
++ * @iter: The buffer iterator
++ */
++void osd_req_op_extent_osd_iter(struct ceph_osd_request *osd_req,
++				unsigned int which, struct iov_iter *iter)
++{
++	struct ceph_osd_data *osd_data;
++
++	osd_data = osd_req_op_data(osd_req, which, extent, osd_data);
++	ceph_osd_iter_init(osd_data, iter);
++}
++EXPORT_SYMBOL(osd_req_op_extent_osd_iter);
++
+ static void osd_req_op_cls_request_info_pagelist(
+ 			struct ceph_osd_request *osd_req,
+ 			unsigned int which, struct ceph_pagelist *pagelist)
+@@ -346,6 +369,8 @@ static u64 ceph_osd_data_length(struct ceph_osd_data *osd_data)
+ #endif /* CONFIG_BLOCK */
+ 	case CEPH_OSD_DATA_TYPE_BVECS:
+ 		return osd_data->bvec_pos.iter.bi_size;
++	case CEPH_OSD_DATA_TYPE_ITER:
++		return iov_iter_count(&osd_data->iter);
+ 	default:
+ 		WARN(true, "unrecognized data type %d\n", (int)osd_data->type);
+ 		return 0;
+@@ -954,6 +979,8 @@ static void ceph_osdc_msg_data_add(struct ceph_msg *msg,
+ #endif
+ 	} else if (osd_data->type == CEPH_OSD_DATA_TYPE_BVECS) {
+ 		ceph_msg_data_add_bvecs(msg, &osd_data->bvec_pos);
++	} else if (osd_data->type == CEPH_OSD_DATA_TYPE_ITER) {
++		ceph_msg_data_add_iter(msg, &osd_data->iter);
+ 	} else {
+ 		BUG_ON(osd_data->type != CEPH_OSD_DATA_TYPE_NONE);
  	}
--	base = ceph_ino(d_inode(temp));
--	rcu_read_unlock();
-+	inode = d_inode(cur);
-+	base = inode ? ceph_ino(inode) : 0;
-+	dput(cur);
- 
- 	if (read_seqretry(&rename_lock, seq))
- 		goto retry;
 -- 
 2.31.1
 
