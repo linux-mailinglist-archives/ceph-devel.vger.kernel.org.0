@@ -2,48 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF2726C6040
-	for <lists+ceph-devel@lfdr.de>; Thu, 23 Mar 2023 07:59:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7FD36C603C
+	for <lists+ceph-devel@lfdr.de>; Thu, 23 Mar 2023 07:59:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230478AbjCWG7y (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 23 Mar 2023 02:59:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36036 "EHLO
+        id S230400AbjCWG7q (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 23 Mar 2023 02:59:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230415AbjCWG7r (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 23 Mar 2023 02:59:47 -0400
+        with ESMTP id S230370AbjCWG7p (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 23 Mar 2023 02:59:45 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 338473AAE
-        for <ceph-devel@vger.kernel.org>; Wed, 22 Mar 2023 23:58:48 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C966B61BC
+        for <ceph-devel@vger.kernel.org>; Wed, 22 Mar 2023 23:58:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679554708;
+        s=mimecast20190719; t=1679554714;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Yn+p7Gr650n5AOjY0LuqUbQbqPmm+Znqhax1KNatBvU=;
-        b=UZffjNcrxwSX1cnlKgIu/cJX84SyrbTxZN5PstUY6GCWyTz9WrrNLKJPw/0M1BFM6If/83
-        QOr/GImEYvCg0u37xtYlOt0iGtAXaFVjWpAfP/X3Y/WSopjxW9RC353QAcZpYrzRjHxe4y
-        8mmCBIyGDEovozklR2Oh97IyPOsxKd0=
+        bh=jUXsIe5fg80a6x0w8uHD/XW3lOdtqF+t73us7ua4s6E=;
+        b=Un7EMi96lykGlewoNqufPWDWLYUOLbySk+ByyL0QjCAPIl+PmvDFnUVaB9NwT3LzrBAwr9
+        dgcOePLYP2x3/AiOyQ1WorQXXFV9QrIRQT4kCVoMdwPE4XocKslTn54TLh5bwYQiZKVX/+
+        Di4IbyqiXFA73SlcNiaVDdf3vhQeuZc=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-639-fWgdqit7PNGtIe3kwcnYeg-1; Thu, 23 Mar 2023 02:58:25 -0400
-X-MC-Unique: fWgdqit7PNGtIe3kwcnYeg-1
+ us-mta-213-A6YvDkwBPiydhwiGkbOV3w-1; Thu, 23 Mar 2023 02:58:28 -0400
+X-MC-Unique: A6YvDkwBPiydhwiGkbOV3w-1
 Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AEDEC858F09;
-        Thu, 23 Mar 2023 06:58:24 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 235A3101A54F;
+        Thu, 23 Mar 2023 06:58:28 +0000 (UTC)
 Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E2A43492B01;
-        Thu, 23 Mar 2023 06:58:21 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4FDA9492B01;
+        Thu, 23 Mar 2023 06:58:25 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
 Cc:     jlayton@kernel.org, vshankar@redhat.com, mchangir@redhat.com,
         lhenriques@suse.de, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v17 48/71] ceph: add infrastructure for file encryption and decryption
-Date:   Thu, 23 Mar 2023 14:55:02 +0800
-Message-Id: <20230323065525.201322-49-xiubli@redhat.com>
+Subject: [PATCH v17 49/71] ceph: add truncate size handling support for fscrypt
+Date:   Thu, 23 Mar 2023 14:55:03 +0800
+Message-Id: <20230323065525.201322-50-xiubli@redhat.com>
 In-Reply-To: <20230323065525.201322-1-xiubli@redhat.com>
 References: <20230323065525.201322-1-xiubli@redhat.com>
 MIME-Version: 1.0
@@ -59,330 +59,365 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Jeff Layton <jlayton@kernel.org>
+From: Xiubo Li <xiubli@redhat.com>
 
-...and allow test_dummy_encryption to bypass content encryption
-if mounted with test_dummy_encryption=clear.
+This will transfer the encrypted last block contents to the MDS
+along with the truncate request only when the new size is smaller
+and not aligned to the fscrypt BLOCK size. When the last block is
+located in the file hole, the truncate request will only contain
+the header.
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+The MDS could fail to do the truncate if there has another client
+or process has already updated the RADOS object which contains
+the last block, and will return -EAGAIN, then the kclient needs
+to retry it. The RMW will take around 50ms, and will let it retry
+20 times for now.
+
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/crypto.c | 177 +++++++++++++++++++++++++++++++++++++++++++++++
- fs/ceph/crypto.h |  71 +++++++++++++++++++
- fs/ceph/super.c  |   6 ++
- fs/ceph/super.h  |   1 +
- 4 files changed, 255 insertions(+)
+ fs/ceph/crypto.h |  21 +++++
+ fs/ceph/inode.c  | 198 +++++++++++++++++++++++++++++++++++++++++++++--
+ fs/ceph/super.h  |   5 ++
+ 3 files changed, 217 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index fe47fbdaead9..35e292045e9d 100644
---- a/fs/ceph/crypto.c
-+++ b/fs/ceph/crypto.c
-@@ -9,6 +9,7 @@
- #include <linux/ceph/ceph_debug.h>
- #include <linux/xattr.h>
- #include <linux/fscrypt.h>
-+#include <linux/ceph/striper.h>
- 
- #include "super.h"
- #include "mds_client.h"
-@@ -354,3 +355,179 @@ int ceph_fscrypt_prepare_readdir(struct inode *dir)
- 	}
- 	return 0;
- }
-+
-+int ceph_fscrypt_decrypt_block_inplace(const struct inode *inode,
-+				  struct page *page, unsigned int len,
-+				  unsigned int offs, u64 lblk_num)
-+{
-+	struct ceph_mount_options *opt = ceph_inode_to_client(inode)->mount_options;
-+
-+	if (opt->flags & CEPH_MOUNT_OPT_DUMMY_ENC_CLEAR)
-+		return 0;
-+
-+	dout("%s: len %u offs %u blk %llu\n", __func__, len, offs, lblk_num);
-+	return fscrypt_decrypt_block_inplace(inode, page, len, offs, lblk_num);
-+}
-+
-+int ceph_fscrypt_encrypt_block_inplace(const struct inode *inode,
-+				  struct page *page, unsigned int len,
-+				  unsigned int offs, u64 lblk_num, gfp_t gfp_flags)
-+{
-+	struct ceph_mount_options *opt = ceph_inode_to_client(inode)->mount_options;
-+
-+	if (opt->flags & CEPH_MOUNT_OPT_DUMMY_ENC_CLEAR)
-+		return 0;
-+
-+	dout("%s: len %u offs %u blk %llu\n", __func__, len, offs, lblk_num);
-+	return fscrypt_encrypt_block_inplace(inode, page, len, offs, lblk_num, gfp_flags);
-+}
-+
-+/**
-+ * ceph_fscrypt_decrypt_pages - decrypt an array of pages
-+ * @inode: pointer to inode associated with these pages
-+ * @page: pointer to page array
-+ * @off: offset into the file that the read data starts
-+ * @len: max length to decrypt
-+ *
-+ * Decrypt an array of fscrypt'ed pages and return the amount of
-+ * data decrypted. Any data in the page prior to the start of the
-+ * first complete block in the read is ignored. Any incomplete
-+ * crypto blocks at the end of the array are ignored (and should
-+ * probably be zeroed by the caller).
-+ *
-+ * Returns the length of the decrypted data or a negative errno.
-+ */
-+int ceph_fscrypt_decrypt_pages(struct inode *inode, struct page **page, u64 off, int len)
-+{
-+	int i, num_blocks;
-+	u64 baseblk = off >> CEPH_FSCRYPT_BLOCK_SHIFT;
-+	int ret = 0;
-+
-+	/*
-+	 * We can't deal with partial blocks on an encrypted file, so mask off
-+	 * the last bit.
-+	 */
-+	num_blocks = ceph_fscrypt_blocks(off, len & CEPH_FSCRYPT_BLOCK_MASK);
-+
-+	/* Decrypt each block */
-+	for (i = 0; i < num_blocks; ++i) {
-+		int blkoff = i << CEPH_FSCRYPT_BLOCK_SHIFT;
-+		int pgidx = blkoff >> PAGE_SHIFT;
-+		unsigned int pgoffs = offset_in_page(blkoff);
-+		int fret;
-+
-+		fret = ceph_fscrypt_decrypt_block_inplace(inode, page[pgidx],
-+				CEPH_FSCRYPT_BLOCK_SIZE, pgoffs,
-+				baseblk + i);
-+		if (fret < 0) {
-+			if (ret == 0)
-+				ret = fret;
-+			break;
-+		}
-+		ret += CEPH_FSCRYPT_BLOCK_SIZE;
-+	}
-+	return ret;
-+}
-+
-+/**
-+ * ceph_fscrypt_decrypt_extents: decrypt received extents in given buffer
-+ * @inode: inode associated with pages being decrypted
-+ * @page: pointer to page array
-+ * @off: offset into the file that the data in page[0] starts
-+ * @map: pointer to extent array
-+ * @ext_cnt: length of extent array
-+ *
-+ * Given an extent map and a page array, decrypt the received data in-place,
-+ * skipping holes. Returns the offset into buffer of end of last decrypted
-+ * block.
-+ */
-+int ceph_fscrypt_decrypt_extents(struct inode *inode, struct page **page, u64 off,
-+				 struct ceph_sparse_extent *map, u32 ext_cnt)
-+{
-+	int i, ret = 0;
-+	struct ceph_inode_info *ci = ceph_inode(inode);
-+	u64 objno, objoff;
-+	u32 xlen;
-+
-+	/* Nothing to do for empty array */
-+	if (ext_cnt == 0) {
-+		dout("%s: empty array, ret 0\n", __func__);
-+		return 0;
-+	}
-+
-+	ceph_calc_file_object_mapping(&ci->i_layout, off, map[0].len,
-+				      &objno, &objoff, &xlen);
-+
-+	for (i = 0; i < ext_cnt; ++i) {
-+		struct ceph_sparse_extent *ext = &map[i];
-+		int pgsoff = ext->off - objoff;
-+		int pgidx = pgsoff >> PAGE_SHIFT;
-+		int fret;
-+
-+		if ((ext->off | ext->len) & ~CEPH_FSCRYPT_BLOCK_MASK) {
-+			pr_warn("%s: bad encrypted sparse extent idx %d off %llx len %llx\n",
-+				__func__, i, ext->off, ext->len);
-+			return -EIO;
-+		}
-+		fret = ceph_fscrypt_decrypt_pages(inode, &page[pgidx],
-+						 off + pgsoff, ext->len);
-+		dout("%s: [%d] 0x%llx~0x%llx fret %d\n", __func__, i,
-+				ext->off, ext->len, fret);
-+		if (fret < 0) {
-+			if (ret == 0)
-+				ret = fret;
-+			break;
-+		}
-+		ret = pgsoff + fret;
-+	}
-+	dout("%s: ret %d\n", __func__, ret);
-+	return ret;
-+}
-+
-+/**
-+ * ceph_fscrypt_encrypt_pages - encrypt an array of pages
-+ * @inode: pointer to inode associated with these pages
-+ * @page: pointer to page array
-+ * @off: offset into the file that the data starts
-+ * @len: max length to encrypt
-+ * @gfp: gfp flags to use for allocation
-+ *
-+ * Decrypt an array of cleartext pages and return the amount of
-+ * data encrypted. Any data in the page prior to the start of the
-+ * first complete block in the read is ignored. Any incomplete
-+ * crypto blocks at the end of the array are ignored.
-+ *
-+ * Returns the length of the encrypted data or a negative errno.
-+ */
-+int ceph_fscrypt_encrypt_pages(struct inode *inode, struct page **page, u64 off,
-+				int len, gfp_t gfp)
-+{
-+	int i, num_blocks;
-+	u64 baseblk = off >> CEPH_FSCRYPT_BLOCK_SHIFT;
-+	int ret = 0;
-+
-+	/*
-+	 * We can't deal with partial blocks on an encrypted file, so mask off
-+	 * the last bit.
-+	 */
-+	num_blocks = ceph_fscrypt_blocks(off, len & CEPH_FSCRYPT_BLOCK_MASK);
-+
-+	/* Encrypt each block */
-+	for (i = 0; i < num_blocks; ++i) {
-+		int blkoff = i << CEPH_FSCRYPT_BLOCK_SHIFT;
-+		int pgidx = blkoff >> PAGE_SHIFT;
-+		unsigned int pgoffs = offset_in_page(blkoff);
-+		int fret;
-+
-+		fret = ceph_fscrypt_encrypt_block_inplace(inode, page[pgidx],
-+				CEPH_FSCRYPT_BLOCK_SIZE, pgoffs,
-+				baseblk + i, gfp);
-+		if (fret < 0) {
-+			if (ret == 0)
-+				ret = fret;
-+			break;
-+		}
-+		ret += CEPH_FSCRYPT_BLOCK_SIZE;
-+	}
-+	return ret;
-+}
 diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
-index 80acb23d0bb4..887f191cc423 100644
+index 887f191cc423..db6b399645ba 100644
 --- a/fs/ceph/crypto.h
 +++ b/fs/ceph/crypto.h
-@@ -100,6 +100,40 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
- 			struct fscrypt_str *oname, bool *is_nokey);
- int ceph_fscrypt_prepare_readdir(struct inode *dir);
+@@ -26,6 +26,27 @@ struct ceph_fname {
+ 	bool		no_copy;
+ };
  
-+static inline unsigned int ceph_fscrypt_blocks(u64 off, u64 len)
-+{
-+	/* crypto blocks cannot span more than one page */
-+	BUILD_BUG_ON(CEPH_FSCRYPT_BLOCK_SHIFT > PAGE_SHIFT);
-+
-+	return ((off+len+CEPH_FSCRYPT_BLOCK_SIZE-1) >> CEPH_FSCRYPT_BLOCK_SHIFT) -
-+		(off >> CEPH_FSCRYPT_BLOCK_SHIFT);
-+}
-+
 +/*
-+ * If we have an encrypted inode then we must adjust the offset and
-+ * range of the on-the-wire read to cover an entire encryption block.
-+ * The copy will be done using the original offset and length, after
-+ * we've decrypted the result.
++ * Header for the crypted file when truncating the size, this
++ * will be sent to MDS, and the MDS will update the encrypted
++ * last block and then truncate the size.
 + */
-+static inline void ceph_fscrypt_adjust_off_and_len(struct inode *inode, u64 *off, u64 *len)
-+{
-+	if (IS_ENCRYPTED(inode)) {
-+		*len = ceph_fscrypt_blocks(*off, *len) * CEPH_FSCRYPT_BLOCK_SIZE;
-+		*off &= CEPH_FSCRYPT_BLOCK_MASK;
-+	}
-+}
++struct ceph_fscrypt_truncate_size_header {
++	__u8  ver;
++	__u8  compat;
 +
-+int ceph_fscrypt_decrypt_block_inplace(const struct inode *inode,
-+				  struct page *page, unsigned int len,
-+				  unsigned int offs, u64 lblk_num);
-+int ceph_fscrypt_encrypt_block_inplace(const struct inode *inode,
-+				  struct page *page, unsigned int len,
-+				  unsigned int offs, u64 lblk_num, gfp_t gfp_flags);
-+int ceph_fscrypt_decrypt_pages(struct inode *inode, struct page **page, u64 off, int len);
-+int ceph_fscrypt_decrypt_extents(struct inode *inode, struct page **page, u64 off,
-+				 struct ceph_sparse_extent *map, u32 ext_cnt);
-+int ceph_fscrypt_encrypt_pages(struct inode *inode, struct page **page, u64 off,
-+				int len, gfp_t gfp);
- #else /* CONFIG_FS_ENCRYPTION */
++	/*
++	 * It will be sizeof(assert_ver + file_offset + block_size)
++	 * if the last block is empty when it's located in a file
++	 * hole. Or the data_len will plus CEPH_FSCRYPT_BLOCK_SIZE.
++	 */
++	__le32 data_len;
++
++	__le64 change_attr;
++	__le64 file_offset;
++	__le32 block_size;
++} __packed;
++
+ struct ceph_fscrypt_auth {
+ 	__le32	cfa_version;
+ 	__le32	cfa_blob_len;
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index db54cc44a82f..50664f7b18e3 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -595,6 +595,7 @@ struct inode *ceph_alloc_inode(struct super_block *sb)
+ 	ci->i_truncate_seq = 0;
+ 	ci->i_truncate_size = 0;
+ 	ci->i_truncate_pending = 0;
++	ci->i_truncate_pagecache_size = 0;
  
- static inline void ceph_fscrypt_set_ops(struct super_block *sb)
-@@ -157,6 +191,43 @@ static inline int ceph_fscrypt_prepare_readdir(struct inode *dir)
- {
- 	return 0;
+ 	ci->i_max_size = 0;
+ 	ci->i_reported_size = 0;
+@@ -766,6 +767,10 @@ int ceph_fill_file_size(struct inode *inode, int issued,
+ 		dout("truncate_size %lld -> %llu\n", ci->i_truncate_size,
+ 		     truncate_size);
+ 		ci->i_truncate_size = truncate_size;
++		if (IS_ENCRYPTED(inode))
++			ci->i_truncate_pagecache_size = size;
++		else
++			ci->i_truncate_pagecache_size = truncate_size;
+ 	}
+ 	return queue_trunc;
  }
-+
-+static inline void ceph_fscrypt_adjust_off_and_len(struct inode *inode, u64 *off, u64 *len)
-+{
-+}
-+
-+static inline int ceph_fscrypt_decrypt_block_inplace(const struct inode *inode,
-+					  struct page *page, unsigned int len,
-+					  unsigned int offs, u64 lblk_num)
-+{
-+	return 0;
-+}
-+
-+static inline int ceph_fscrypt_encrypt_block_inplace(const struct inode *inode,
-+				  struct page *page, unsigned int len,
-+				  unsigned int offs, u64 lblk_num, gfp_t gfp_flags)
-+{
-+	return 0;
-+}
-+
-+static inline int ceph_fscrypt_decrypt_pages(struct inode *inode, struct page **page,
-+					     u64 off, int len)
-+{
-+	return 0;
-+}
-+
-+static inline int ceph_fscrypt_decrypt_extents(struct inode *inode, struct page **page,
-+					u64 off, struct ceph_sparse_extent *map,
-+					u32 ext_cnt)
-+{
-+	return 0;
-+}
-+
-+static inline int ceph_fscrypt_encrypt_pages(struct inode *inode, struct page **page,
-+					     u64 off, int len, gfp_t gfp)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_FS_ENCRYPTION */
+@@ -2140,7 +2145,7 @@ void __ceph_do_pending_vmtruncate(struct inode *inode)
+ 	/* there should be no reader or writer */
+ 	WARN_ON_ONCE(ci->i_rd_ref || ci->i_wr_ref);
  
- #endif
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index b9dd2fa36d8b..4b0a070d5c6d 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -591,6 +591,12 @@ static int ceph_parse_mount_param(struct fs_context *fc,
- 		break;
- 	case Opt_test_dummy_encryption:
- #ifdef CONFIG_FS_ENCRYPTION
-+		/* HACK: allow for cleartext "encryption" in files for testing */
-+		if (param->string && !strcmp(param->string, "clear")) {
-+			fsopt->flags |= CEPH_MOUNT_OPT_DUMMY_ENC_CLEAR;
-+			kfree(param->string);
-+			param->string = NULL;
+-	to = ci->i_truncate_size;
++	to = ci->i_truncate_pagecache_size;
+ 	wrbuffer_refs = ci->i_wrbuffer_ref;
+ 	dout("__do_pending_vmtruncate %p (%d) to %lld\n", inode,
+ 	     ci->i_truncate_pending, to);
+@@ -2150,7 +2155,7 @@ void __ceph_do_pending_vmtruncate(struct inode *inode)
+ 	truncate_pagecache(inode, to);
+ 
+ 	spin_lock(&ci->i_ceph_lock);
+-	if (to == ci->i_truncate_size) {
++	if (to == ci->i_truncate_pagecache_size) {
+ 		ci->i_truncate_pending = 0;
+ 		finish = 1;
+ 	}
+@@ -2231,6 +2236,142 @@ static const struct inode_operations ceph_encrypted_symlink_iops = {
+ 	.listxattr = ceph_listxattr,
+ };
+ 
++/*
++ * Transfer the encrypted last block to the MDS and the MDS
++ * will help update it when truncating a smaller size.
++ *
++ * We don't support a PAGE_SIZE that is smaller than the
++ * CEPH_FSCRYPT_BLOCK_SIZE.
++ */
++static int fill_fscrypt_truncate(struct inode *inode,
++				 struct ceph_mds_request *req,
++				 struct iattr *attr)
++{
++	struct ceph_inode_info *ci = ceph_inode(inode);
++	int boff = attr->ia_size % CEPH_FSCRYPT_BLOCK_SIZE;
++	loff_t pos, orig_pos = round_down(attr->ia_size, CEPH_FSCRYPT_BLOCK_SIZE);
++	u64 block = orig_pos >> CEPH_FSCRYPT_BLOCK_SHIFT;
++	struct ceph_pagelist *pagelist = NULL;
++	struct kvec iov = {0};
++	struct iov_iter iter;
++	struct page *page = NULL;
++	struct ceph_fscrypt_truncate_size_header header;
++	int retry_op = 0;
++	int len = CEPH_FSCRYPT_BLOCK_SIZE;
++	loff_t i_size = i_size_read(inode);
++	int got, ret, issued;
++	u64 objver;
++
++	ret = __ceph_get_caps(inode, NULL, CEPH_CAP_FILE_RD, 0, -1, &got);
++	if (ret < 0)
++		return ret;
++
++	issued = __ceph_caps_issued(ci, NULL);
++
++	dout("%s size %lld -> %lld got cap refs on %s, issued %s\n", __func__,
++	     i_size, attr->ia_size, ceph_cap_string(got),
++	     ceph_cap_string(issued));
++
++	/* Try to writeback the dirty pagecaches */
++	if (issued & (CEPH_CAP_FILE_BUFFER)) {
++		loff_t lend = orig_pos + CEPH_FSCRYPT_BLOCK_SHIFT - 1;
++		ret = filemap_write_and_wait_range(inode->i_mapping,
++						   orig_pos, lend);
++		if (ret < 0)
++			goto out;
++	}
++
++	page = __page_cache_alloc(GFP_KERNEL);
++	if (page == NULL) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	pagelist = ceph_pagelist_alloc(GFP_KERNEL);
++	if (!pagelist) {
++		ret = -ENOMEM;
++		goto out;
++	}
++
++	iov.iov_base = kmap_local_page(page);
++	iov.iov_len = len;
++	iov_iter_kvec(&iter, READ, &iov, 1, len);
++
++	pos = orig_pos;
++	ret = __ceph_sync_read(inode, &pos, &iter, &retry_op, &objver);
++	if (ret < 0)
++		goto out;
++
++	/* Insert the header first */
++	header.ver = 1;
++	header.compat = 1;
++	header.change_attr = cpu_to_le64(inode_peek_iversion_raw(inode));
++
++	/*
++	 * Always set the block_size to CEPH_FSCRYPT_BLOCK_SIZE,
++	 * because in MDS it may need this to do the truncate.
++	 */
++	header.block_size = cpu_to_le32(CEPH_FSCRYPT_BLOCK_SIZE);
++
++	/*
++	 * If we hit a hole here, we should just skip filling
++	 * the fscrypt for the request, because once the fscrypt
++	 * is enabled, the file will be split into many blocks
++	 * with the size of CEPH_FSCRYPT_BLOCK_SIZE, if there
++	 * has a hole, the hole size should be multiple of block
++	 * size.
++	 *
++	 * If the Rados object doesn't exist, it will be set to 0.
++	 */
++	if (!objver) {
++		dout("%s hit hole, ppos %lld < size %lld\n", __func__,
++		     pos, i_size);
++
++		header.data_len = cpu_to_le32(8 + 8 + 4);
++		header.file_offset = 0;
++		ret = 0;
++	} else {
++		header.data_len = cpu_to_le32(8 + 8 + 4 + CEPH_FSCRYPT_BLOCK_SIZE);
++		header.file_offset = cpu_to_le64(orig_pos);
++
++		/* truncate and zero out the extra contents for the last block */
++		memset(iov.iov_base + boff, 0, PAGE_SIZE - boff);
++
++		/* encrypt the last block */
++		ret = ceph_fscrypt_encrypt_block_inplace(inode, page,
++						    CEPH_FSCRYPT_BLOCK_SIZE,
++						    0, block,
++						    GFP_KERNEL);
++		if (ret)
++			goto out;
++	}
++
++	/* Insert the header */
++	ret = ceph_pagelist_append(pagelist, &header, sizeof(header));
++	if (ret)
++		goto out;
++
++	if (header.block_size) {
++		/* Append the last block contents to pagelist */
++		ret = ceph_pagelist_append(pagelist, iov.iov_base,
++					   CEPH_FSCRYPT_BLOCK_SIZE);
++		if (ret)
++			goto out;
++	}
++	req->r_pagelist = pagelist;
++out:
++	dout("%s %p size dropping cap refs on %s\n", __func__,
++	     inode, ceph_cap_string(got));
++	ceph_put_cap_refs(ci, got);
++	if (iov.iov_base)
++		kunmap_local(iov.iov_base);
++	if (page)
++		__free_pages(page, 0);
++	if (ret && pagelist)
++		ceph_pagelist_release(pagelist);
++	return ret;
++}
++
+ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *cia)
+ {
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+@@ -2238,13 +2379,17 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
+ 	struct ceph_mds_request *req;
+ 	struct ceph_mds_client *mdsc = ceph_sb_to_client(inode->i_sb)->mdsc;
+ 	struct ceph_cap_flush *prealloc_cf;
++	loff_t isize = i_size_read(inode);
+ 	int issued;
+ 	int release = 0, dirtied = 0;
+ 	int mask = 0;
+ 	int err = 0;
+ 	int inode_dirty_flags = 0;
+ 	bool lock_snap_rwsem = false;
++	bool fill_fscrypt;
++	int truncate_retry = 20; /* The RMW will take around 50ms */
+ 
++retry:
+ 	prealloc_cf = ceph_alloc_cap_flush();
+ 	if (!prealloc_cf)
+ 		return -ENOMEM;
+@@ -2256,6 +2401,7 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
+ 		return PTR_ERR(req);
+ 	}
+ 
++	fill_fscrypt = false;
+ 	spin_lock(&ci->i_ceph_lock);
+ 	issued = __ceph_caps_issued(ci, NULL);
+ 
+@@ -2377,10 +2523,27 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
+ 		}
+ 	}
+ 	if (ia_valid & ATTR_SIZE) {
+-		loff_t isize = i_size_read(inode);
+-
+ 		dout("setattr %p size %lld -> %lld\n", inode, isize, attr->ia_size);
+-		if ((issued & CEPH_CAP_FILE_EXCL) && attr->ia_size >= isize) {
++		/*
++		 * Only when the new size is smaller and not aligned to
++		 * CEPH_FSCRYPT_BLOCK_SIZE will the RMW is needed.
++		 */
++		if (IS_ENCRYPTED(inode) && attr->ia_size < isize &&
++		    (attr->ia_size % CEPH_FSCRYPT_BLOCK_SIZE)) {
++			mask |= CEPH_SETATTR_SIZE;
++			release |= CEPH_CAP_FILE_SHARED | CEPH_CAP_FILE_EXCL |
++				   CEPH_CAP_FILE_RD | CEPH_CAP_FILE_WR;
++			set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
++			mask |= CEPH_SETATTR_FSCRYPT_FILE;
++			req->r_args.setattr.size =
++				cpu_to_le64(round_up(attr->ia_size,
++						     CEPH_FSCRYPT_BLOCK_SIZE));
++			req->r_args.setattr.old_size =
++				cpu_to_le64(round_up(isize,
++						     CEPH_FSCRYPT_BLOCK_SIZE));
++			req->r_fscrypt_file = attr->ia_size;
++			fill_fscrypt = true;
++		} else if ((issued & CEPH_CAP_FILE_EXCL) && attr->ia_size >= isize) {
+ 			if (attr->ia_size > isize) {
+ 				i_size_write(inode, attr->ia_size);
+ 				inode->i_blocks = calc_inode_blocks(attr->ia_size);
+@@ -2403,7 +2566,6 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
+ 					cpu_to_le64(round_up(isize,
+ 							     CEPH_FSCRYPT_BLOCK_SIZE));
+ 				req->r_fscrypt_file = attr->ia_size;
+-				/* FIXME: client must zero out any partial blocks! */
+ 			} else {
+ 				req->r_args.setattr.size = cpu_to_le64(attr->ia_size);
+ 				req->r_args.setattr.old_size = cpu_to_le64(isize);
+@@ -2470,8 +2632,10 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
+ 
+ 	release &= issued;
+ 	spin_unlock(&ci->i_ceph_lock);
+-	if (lock_snap_rwsem)
++	if (lock_snap_rwsem) {
+ 		up_read(&mdsc->snap_rwsem);
++		lock_snap_rwsem = false;
++	}
+ 
+ 	if (inode_dirty_flags)
+ 		__mark_inode_dirty(inode, inode_dirty_flags);
+@@ -2483,7 +2647,27 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
+ 		req->r_args.setattr.mask = cpu_to_le32(mask);
+ 		req->r_num_caps = 1;
+ 		req->r_stamp = attr->ia_ctime;
++		if (fill_fscrypt) {
++			err = fill_fscrypt_truncate(inode, req, attr);
++			if (err)
++				goto out;
 +		}
- 		fscrypt_free_dummy_policy(&fsopt->dummy_enc_policy);
- 		ret = fscrypt_parse_test_dummy_encryption(param,
- 						&fsopt->dummy_enc_policy);
++
++		/*
++		 * The truncate request will return -EAGAIN when the
++		 * last block has been updated just before the MDS
++		 * successfully gets the xlock for the FILE lock. To
++		 * avoid corrupting the file contents we need to retry
++		 * it.
++		 */
+ 		err = ceph_mdsc_do_request(mdsc, NULL, req);
++		if (err == -EAGAIN && truncate_retry--) {
++			dout("setattr %p result=%d (%s locally, %d remote), retry it!\n",
++			     inode, err, ceph_cap_string(dirtied), mask);
++			ceph_mdsc_put_request(req);
++			ceph_free_cap_flush(prealloc_cf);
++			goto retry;
++		}
+ 	}
+ out:
+ 	dout("setattr %p result=%d (%s locally, %d remote)\n", inode, err,
 diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index f4659b2a4731..e23bfd9191b3 100644
+index e23bfd9191b3..a785e5cb9b40 100644
 --- a/fs/ceph/super.h
 +++ b/fs/ceph/super.h
-@@ -44,6 +44,7 @@
- #define CEPH_MOUNT_OPT_ASYNC_DIROPS    (1<<15) /* allow async directory ops */
- #define CEPH_MOUNT_OPT_NOPAGECACHE     (1<<16) /* bypass pagecache altogether */
- #define CEPH_MOUNT_OPT_SPARSEREAD      (1<<17) /* always do sparse reads */
-+#define CEPH_MOUNT_OPT_DUMMY_ENC_CLEAR (1<<18) /* don't actually encrypt content */
+@@ -427,6 +427,11 @@ struct ceph_inode_info {
+ 	u32 i_truncate_seq;        /* last truncate to smaller size */
+ 	u64 i_truncate_size;       /*  and the size we last truncated down to */
+ 	int i_truncate_pending;    /*  still need to call vmtruncate */
++	/*
++	 * For none fscrypt case it equals to i_truncate_size or it will
++	 * equals to fscrypt_file_size
++	 */
++	u64 i_truncate_pagecache_size;
  
- #define CEPH_MOUNT_OPT_DEFAULT			\
- 	(CEPH_MOUNT_OPT_DCACHE |		\
+ 	u64 i_max_size;            /* max file size authorized by mds */
+ 	u64 i_reported_size; /* (max_)size reported to or requested of mds */
 -- 
 2.31.1
 
