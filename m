@@ -2,93 +2,122 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FB696C6062
-	for <lists+ceph-devel@lfdr.de>; Thu, 23 Mar 2023 08:06:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 722506C65E1
+	for <lists+ceph-devel@lfdr.de>; Thu, 23 Mar 2023 11:57:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229507AbjCWHGs (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 23 Mar 2023 03:06:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51394 "EHLO
+        id S230390AbjCWK5S (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 23 Mar 2023 06:57:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230259AbjCWHGr (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 23 Mar 2023 03:06:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6481468B
-        for <ceph-devel@vger.kernel.org>; Thu, 23 Mar 2023 00:06:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1679555160;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Aoa9bBobasN4cSsojzzHDJ6o/Wood/8FdKJPDLY7TUo=;
-        b=HM5xUXchKq4lAaDf9EM13Gp38o/x3mFmjWh9Z6QtJOaXuSVBPRFF7F5kAVJY1P2vs+vm3t
-        tv/eB6r+mB7x36IEDJdxQMsBV7IM8EAG7MoTWsv3l9Aeqp+04qqRjF7w7KE0D0K07Z4zHX
-        C2z5l5iDEDIh4UpIiQhbI+spSKpxQew=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-672-VYgYc6D8O6O_MSgQSZAT3A-1; Thu, 23 Mar 2023 02:59:24 -0400
-X-MC-Unique: VYgYc6D8O6O_MSgQSZAT3A-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 12711101A54F;
-        Thu, 23 Mar 2023 06:59:24 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 454C0492B01;
-        Thu, 23 Mar 2023 06:59:20 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-Cc:     jlayton@kernel.org, vshankar@redhat.com, mchangir@redhat.com,
-        lhenriques@suse.de, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v17 65/71] ceph: prevent snapshots to be created in encrypted locked directories
-Date:   Thu, 23 Mar 2023 14:55:19 +0800
-Message-Id: <20230323065525.201322-66-xiubli@redhat.com>
-In-Reply-To: <20230323065525.201322-1-xiubli@redhat.com>
-References: <20230323065525.201322-1-xiubli@redhat.com>
+        with ESMTP id S231269AbjCWK45 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 23 Mar 2023 06:56:57 -0400
+Received: from mail-yb1-xb44.google.com (mail-yb1-xb44.google.com [IPv6:2607:f8b0:4864:20::b44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5531EFA5
+        for <ceph-devel@vger.kernel.org>; Thu, 23 Mar 2023 03:56:31 -0700 (PDT)
+Received: by mail-yb1-xb44.google.com with SMTP id b18so5188144ybp.1
+        for <ceph-devel@vger.kernel.org>; Thu, 23 Mar 2023 03:56:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112; t=1679568991;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BYcZPqH3I6SUi+3HZiGlz7bBbKQQVG9vXsJL8zyyX8g=;
+        b=hGKGhrwUhF6Zr58bWw28qEqhFbGEsuGX03A+ZEtGRkcE9kRcpOye6f49Xmu5s3bHyw
+         mgDnCLlVPL5elRFxau0g/qpfHnf2fqWdkw1Ne4JJxaPFw3On3RWpPoBbD0v4JprzDFR4
+         Kz06I4B7l+6BMxKQeptg53xHWGLSGYxQ6/cM4RJ9D6D8TEyy3VIkvTECJuDf4p0+e171
+         I00dCQH3+tZDrOTrYus9JqbFpwj8QwgxZegkxlw66n5/ho5bRRBlI2fyfb0qHVnY+0S4
+         +DSPaR6S/oPz/31pb+rk6rBJjEbYiB/eMCLmPaRI60zfeqDe9v9/4GnttnifD4NIuwCC
+         zcXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112; t=1679568991;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BYcZPqH3I6SUi+3HZiGlz7bBbKQQVG9vXsJL8zyyX8g=;
+        b=rvuyRzHLf3g9DJLGx7L77PVd3a65V7MsT55adPxfeV/Bj2Yr+LIVzXlIfef3EaR/TU
+         68oNJOFCL2idmBCehBQZ3dtaCAkAOGykjLKiS9KI1VPsn3BcPjGTprjuCz5sPr4GbpSB
+         g80PNCrdfedbGRQ8tnqf3HNgNlgh16Hme8THcDlSeOY3RZ6r7fG1wrfQps2SwxOuNYRK
+         18xWUvBsfc3JEwPTgzc1yH1abCAYO+2LsueUFFtH5vpOVDZiCIdmXbyjusfsmgwg5Fx8
+         HG+5z/hzvrSIjEK8OYNlcSUqevuMm/h0H7rG+/ooA+YCyQ+0K3j5OzMp4JF8S0+t4gIs
+         hikA==
+X-Gm-Message-State: AAQBX9eC5ksyPtqSJ/23P31B5IDxZzCmXMG6Lc2tCgmHdsRdbw4s3vew
+        jRokAvqkAjumIT3w61urvFDRyDswhFwXwpxSBFg=
+X-Google-Smtp-Source: AKy350aalZ/8IQu2SPaqfPLEjMhYKpbdFcYf/RJwBvX/Mp7DE7PbQ7BjumNzD6O6kDRpLJsvIT6sJucdTRX4lFDUww8=
+X-Received: by 2002:a05:6902:1105:b0:b2f:bdc9:2cdc with SMTP id
+ o5-20020a056902110500b00b2fbdc92cdcmr1922153ybu.7.1679568990662; Thu, 23 Mar
+ 2023 03:56:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Received: by 2002:a05:7000:c421:b0:47c:b23e:c6d4 with HTTP; Thu, 23 Mar 2023
+ 03:56:30 -0700 (PDT)
+Reply-To: annamalgorzata587@gmail.com
+From:   "Leszczynska Anna Malgorzata." <revfatherwilliamdick@gmail.com>
+Date:   Thu, 23 Mar 2023 03:56:30 -0700
+Message-ID: <CAMKwiRXAt2ALo4Tfh5JEh33NZn58r8+49QqesFPhP2P5c=mtyw@mail.gmail.com>
+Subject: Mrs. Leszczynska Anna Malgorzata.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=6.8 required=5.0 tests=ADVANCE_FEE_5_NEW,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
+        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        UNDISC_FREEM,UNDISC_MONEY autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:b44 listed in]
+        [list.dnswl.org]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [revfatherwilliamdick[at]gmail.com]
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [annamalgorzata587[at]gmail.com]
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        *  2.9 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+        *  0.8 ADVANCE_FEE_5_NEW Appears to be advance fee fraud (Nigerian
+        *      419)
+        *  2.0 UNDISC_MONEY Undisclosed recipients + money/fraud signs
+X-Spam-Level: ******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Luís Henriques <lhenriques@suse.de>
-
-With snapshot names encryption we can not allow snapshots to be created in
-locked directories because the names wouldn't be encrypted.  This patch
-forces the directory to be unlocked to allow a snapshot to be created.
-
-Signed-off-by: Luís Henriques <lhenriques@suse.de>
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/dir.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 98a9b1592ba6..fe48a5d26c1d 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1084,6 +1084,11 @@ static int ceph_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- 		err = -EDQUOT;
- 		goto out;
- 	}
-+	if ((op == CEPH_MDS_OP_MKSNAP) && IS_ENCRYPTED(dir) &&
-+	    !fscrypt_has_encryption_key(dir)) {
-+		err = -ENOKEY;
-+		goto out;
-+	}
- 
- 
- 	req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
 -- 
-2.31.1
+I am Mrs. Leszczynska Anna Malgorzatafrom Germany . Presently admitted
+ in one of the hospitals here in Ivory Coast.
 
+I and my late husband do not have any child that is why I am donating
+this money to you having known my condition that I will join my late
+husband soonest.
+
+I wish to donate towards education and the less privileged I ask for
+your assistance. I am suffering from colon cancer I have some few
+weeks to live according to my doctor.
+
+The money should be used for this purpose.
+Motherless babies
+Children orphaned by aids.
+Destitute children
+Widows and Widowers.
+Children who cannot afford education.
+
+My husband stressed the importance of education and the less
+privileged I feel that this is what he would have wanted me to do with
+the money that he left for charity.
+
+These services bring so much joy to the kids. Together we are
+transforming lives and building brighter futures - but without you, it
+just would not be possible.
+I am using translation to communicate with you in case there is any
+mistake in my writing please correct me.
+Sincerely,
+
+Mrs. Leszczynska Anna Malgorzata.
