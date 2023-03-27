@@ -2,122 +2,409 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 722506C65E1
-	for <lists+ceph-devel@lfdr.de>; Thu, 23 Mar 2023 11:57:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 232086C99DF
+	for <lists+ceph-devel@lfdr.de>; Mon, 27 Mar 2023 05:06:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230390AbjCWK5S (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 23 Mar 2023 06:57:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40562 "EHLO
+        id S231667AbjC0DGK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 26 Mar 2023 23:06:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231269AbjCWK45 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 23 Mar 2023 06:56:57 -0400
-Received: from mail-yb1-xb44.google.com (mail-yb1-xb44.google.com [IPv6:2607:f8b0:4864:20::b44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5531EFA5
-        for <ceph-devel@vger.kernel.org>; Thu, 23 Mar 2023 03:56:31 -0700 (PDT)
-Received: by mail-yb1-xb44.google.com with SMTP id b18so5188144ybp.1
-        for <ceph-devel@vger.kernel.org>; Thu, 23 Mar 2023 03:56:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112; t=1679568991;
-        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BYcZPqH3I6SUi+3HZiGlz7bBbKQQVG9vXsJL8zyyX8g=;
-        b=hGKGhrwUhF6Zr58bWw28qEqhFbGEsuGX03A+ZEtGRkcE9kRcpOye6f49Xmu5s3bHyw
-         mgDnCLlVPL5elRFxau0g/qpfHnf2fqWdkw1Ne4JJxaPFw3On3RWpPoBbD0v4JprzDFR4
-         Kz06I4B7l+6BMxKQeptg53xHWGLSGYxQ6/cM4RJ9D6D8TEyy3VIkvTECJuDf4p0+e171
-         I00dCQH3+tZDrOTrYus9JqbFpwj8QwgxZegkxlw66n5/ho5bRRBlI2fyfb0qHVnY+0S4
-         +DSPaR6S/oPz/31pb+rk6rBJjEbYiB/eMCLmPaRI60zfeqDe9v9/4GnttnifD4NIuwCC
-         zcXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1679568991;
-        h=to:subject:message-id:date:from:reply-to:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BYcZPqH3I6SUi+3HZiGlz7bBbKQQVG9vXsJL8zyyX8g=;
-        b=rvuyRzHLf3g9DJLGx7L77PVd3a65V7MsT55adPxfeV/Bj2Yr+LIVzXlIfef3EaR/TU
-         68oNJOFCL2idmBCehBQZ3dtaCAkAOGykjLKiS9KI1VPsn3BcPjGTprjuCz5sPr4GbpSB
-         g80PNCrdfedbGRQ8tnqf3HNgNlgh16Hme8THcDlSeOY3RZ6r7fG1wrfQps2SwxOuNYRK
-         18xWUvBsfc3JEwPTgzc1yH1abCAYO+2LsueUFFtH5vpOVDZiCIdmXbyjusfsmgwg5Fx8
-         HG+5z/hzvrSIjEK8OYNlcSUqevuMm/h0H7rG+/ooA+YCyQ+0K3j5OzMp4JF8S0+t4gIs
-         hikA==
-X-Gm-Message-State: AAQBX9eC5ksyPtqSJ/23P31B5IDxZzCmXMG6Lc2tCgmHdsRdbw4s3vew
-        jRokAvqkAjumIT3w61urvFDRyDswhFwXwpxSBFg=
-X-Google-Smtp-Source: AKy350aalZ/8IQu2SPaqfPLEjMhYKpbdFcYf/RJwBvX/Mp7DE7PbQ7BjumNzD6O6kDRpLJsvIT6sJucdTRX4lFDUww8=
-X-Received: by 2002:a05:6902:1105:b0:b2f:bdc9:2cdc with SMTP id
- o5-20020a056902110500b00b2fbdc92cdcmr1922153ybu.7.1679568990662; Thu, 23 Mar
- 2023 03:56:30 -0700 (PDT)
+        with ESMTP id S230351AbjC0DGG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 26 Mar 2023 23:06:06 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96B1F46B2
+        for <ceph-devel@vger.kernel.org>; Sun, 26 Mar 2023 20:05:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1679886317;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=G6zpjahx8YGTo2YJxeBOwmviOY97u48OPIjOjckbyBU=;
+        b=fbFCMDdAKotwZVozwg4A3ANQ9jzZxW9n1/a3sXONx4//2ZMr03KyzTUTAAZq8o5On0E7fo
+        mDuMNJKso9bF+pb3OPthUHW/VAqcJ6wiGF6n0UQEWVyClrQvstsBVCVhGOA96XR814pfF1
+        jNggHG5WlbIxBMxoF552yOjDWZNOaVs=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-304-WxgwxVyoM9qKXiaED2yF3w-1; Sun, 26 Mar 2023 23:05:15 -0400
+X-MC-Unique: WxgwxVyoM9qKXiaED2yF3w-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 86A8B185A790;
+        Mon, 27 Mar 2023 03:05:15 +0000 (UTC)
+Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EF29E202701E;
+        Mon, 27 Mar 2023 03:05:11 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
+Cc:     jlayton@kernel.org, vshankar@redhat.com, mchangir@redhat.com,
+        lhenriques@suse.de, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v4] ceph: drop the messages from MDS when unmounting
+Date:   Mon, 27 Mar 2023 11:05:08 +0800
+Message-Id: <20230327030508.310588-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a05:7000:c421:b0:47c:b23e:c6d4 with HTTP; Thu, 23 Mar 2023
- 03:56:30 -0700 (PDT)
-Reply-To: annamalgorzata587@gmail.com
-From:   "Leszczynska Anna Malgorzata." <revfatherwilliamdick@gmail.com>
-Date:   Thu, 23 Mar 2023 03:56:30 -0700
-Message-ID: <CAMKwiRXAt2ALo4Tfh5JEh33NZn58r8+49QqesFPhP2P5c=mtyw@mail.gmail.com>
-Subject: Mrs. Leszczynska Anna Malgorzata.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=6.8 required=5.0 tests=ADVANCE_FEE_5_NEW,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        UNDISC_FREEM,UNDISC_MONEY autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:b44 listed in]
-        [list.dnswl.org]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [revfatherwilliamdick[at]gmail.com]
-        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
-        *      digit
-        *      [annamalgorzata587[at]gmail.com]
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        *  2.9 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-        *  0.8 ADVANCE_FEE_5_NEW Appears to be advance fee fraud (Nigerian
-        *      419)
-        *  2.0 UNDISC_MONEY Undisclosed recipients + money/fraud signs
-X-Spam-Level: ******
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+From: Xiubo Li <xiubli@redhat.com>
+
+When unmounting and all the dirty buffer will be flushed and after
+the last osd request is finished the last reference of the i_count
+will be released. Then it will flush the dirty cap/snap to MDSs,
+and the unmounting won't wait the possible acks, which will ihode
+the inodes when updating the metadata locally but makes no sense
+any more, of this. This will make the evict_inodes() to skip these
+inodes.
+
+If encrypt is enabled the kernel generate a warning when removing
+the encrypt keys when the skipped inodes still hold the keyring:
+
+WARNING: CPU: 4 PID: 168846 at fs/crypto/keyring.c:242 fscrypt_destroy_keyring+0x7e/0xd0
+CPU: 4 PID: 168846 Comm: umount Tainted: G S  6.1.0-rc5-ceph-g72ead199864c #1
+Hardware name: Supermicro SYS-5018R-WR/X10SRW-F, BIOS 2.0 12/17/2015
+RIP: 0010:fscrypt_destroy_keyring+0x7e/0xd0
+RSP: 0018:ffffc9000b277e28 EFLAGS: 00010202
+RAX: 0000000000000002 RBX: ffff88810d52ac00 RCX: ffff88810b56aa00
+RDX: 0000000080000000 RSI: ffffffff822f3a09 RDI: ffff888108f59000
+RBP: ffff8881d394fb88 R08: 0000000000000028 R09: 0000000000000000
+R10: 0000000000000001 R11: 11ff4fe6834fcd91 R12: ffff8881d394fc40
+R13: ffff888108f59000 R14: ffff8881d394f800 R15: 0000000000000000
+FS:  00007fd83f6f1080(0000) GS:ffff88885fd00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f918d417000 CR3: 000000017f89a005 CR4: 00000000003706e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+<TASK>
+generic_shutdown_super+0x47/0x120
+kill_anon_super+0x14/0x30
+ceph_kill_sb+0x36/0x90 [ceph]
+deactivate_locked_super+0x29/0x60
+cleanup_mnt+0xb8/0x140
+task_work_run+0x67/0xb0
+exit_to_user_mode_prepare+0x23d/0x240
+syscall_exit_to_user_mode+0x25/0x60
+do_syscall_64+0x40/0x80
+entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fd83dc39e9b
+
+Later the kernel will crash when iput() the inodes and dereferencing
+the "sb->s_master_keys", which has been released by the
+generic_shutdown_super().
+
+URL: https://tracker.ceph.com/issues/58126
+URL: https://tracker.ceph.com/issues/59162
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+
+Only updated the 2/2 patch since series V3:
+
+Changed in V4:
+- Always resend the session close requests to MDS when receives
+  new messages just before dropping them.
+- Even receives a corrupted message we should increase the s_seq
+  and resend the session close requests.
+
+
+ fs/ceph/caps.c       |  6 ++++-
+ fs/ceph/mds_client.c | 14 ++++++++---
+ fs/ceph/mds_client.h | 11 ++++++++-
+ fs/ceph/quota.c      |  9 ++++---
+ fs/ceph/snap.c       | 10 ++++----
+ fs/ceph/super.c      | 57 ++++++++++++++++++++++++++++++++++++++++++++
+ fs/ceph/super.h      |  3 +++
+ 7 files changed, 96 insertions(+), 14 deletions(-)
+
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 6379c0070492..e1bb6d9c16f8 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -4222,6 +4222,9 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ 
+ 	dout("handle_caps from mds%d\n", session->s_mds);
+ 
++	if (!ceph_inc_stopping_blocker(mdsc, session))
++		return;
++
+ 	/* decode */
+ 	end = msg->front.iov_base + msg->front.iov_len;
+ 	if (msg->front.iov_len < sizeof(*h))
+@@ -4323,7 +4326,6 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ 	     vino.snap, inode);
+ 
+ 	mutex_lock(&session->s_mutex);
+-	inc_session_sequence(session);
+ 	dout(" mds%d seq %lld cap seq %u\n", session->s_mds, session->s_seq,
+ 	     (unsigned)seq);
+ 
+@@ -4435,6 +4437,8 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ done_unlocked:
+ 	iput(inode);
+ out:
++	ceph_dec_stopping_blocker(mdsc);
++
+ 	ceph_put_string(extra_info.pool_ns);
+ 
+ 	/* Defer closing the sessions after s_mutex lock being released */
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 85d639f75ea1..21ca41e5f68b 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -4877,6 +4877,9 @@ static void handle_lease(struct ceph_mds_client *mdsc,
+ 
+ 	dout("handle_lease from mds%d\n", mds);
+ 
++	if (!ceph_inc_stopping_blocker(mdsc, session))
++		return;
++
+ 	/* decode */
+ 	if (msg->front.iov_len < sizeof(*h) + sizeof(u32))
+ 		goto bad;
+@@ -4895,8 +4898,6 @@ static void handle_lease(struct ceph_mds_client *mdsc,
+ 	     dname.len, dname.name);
+ 
+ 	mutex_lock(&session->s_mutex);
+-	inc_session_sequence(session);
+-
+ 	if (!inode) {
+ 		dout("handle_lease no inode %llx\n", vino.ino);
+ 		goto release;
+@@ -4958,9 +4959,13 @@ static void handle_lease(struct ceph_mds_client *mdsc,
+ out:
+ 	mutex_unlock(&session->s_mutex);
+ 	iput(inode);
++
++	ceph_dec_stopping_blocker(mdsc);
+ 	return;
+ 
+ bad:
++	ceph_dec_stopping_blocker(mdsc);
++
+ 	pr_err("corrupt lease message\n");
+ 	ceph_msg_dump(msg);
+ }
+@@ -5156,6 +5161,9 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
+ 	}
+ 
+ 	init_completion(&mdsc->safe_umount_waiters);
++	spin_lock_init(&mdsc->stopping_lock);
++	atomic_set(&mdsc->stopping_blockers, 0);
++	init_completion(&mdsc->stopping_waiter);
+ 	init_waitqueue_head(&mdsc->session_close_wq);
+ 	INIT_LIST_HEAD(&mdsc->waiting_for_map);
+ 	mdsc->quotarealms_inodes = RB_ROOT;
+@@ -5270,7 +5278,7 @@ void send_flush_mdlog(struct ceph_mds_session *s)
+ void ceph_mdsc_pre_umount(struct ceph_mds_client *mdsc)
+ {
+ 	dout("pre_umount\n");
+-	mdsc->stopping = 1;
++	mdsc->stopping = CEPH_MDSC_STOPPING_BEGAIN;
+ 
+ 	ceph_mdsc_iterate_sessions(mdsc, send_flush_mdlog, true);
+ 	ceph_mdsc_iterate_sessions(mdsc, lock_unlock_session, false);
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index 81a1f9a4ac3b..5bf32701c84c 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -398,6 +398,11 @@ struct cap_wait {
+ 	int			want;
+ };
+ 
++enum {
++	CEPH_MDSC_STOPPING_BEGAIN = 1,
++	CEPH_MDSC_STOPPING_FLUSHED = 2,
++};
++
+ /*
+  * mds client state
+  */
+@@ -414,7 +419,11 @@ struct ceph_mds_client {
+ 	struct ceph_mds_session **sessions;    /* NULL for mds if no session */
+ 	atomic_t		num_sessions;
+ 	int                     max_sessions;  /* len of sessions array */
+-	int                     stopping;      /* true if shutting down */
++
++	spinlock_t              stopping_lock;  /* protect snap_empty */
++	int                     stopping;      /* the stage of shutting down */
++	atomic_t                stopping_blockers;
++	struct completion	stopping_waiter;
+ 
+ 	atomic64_t		quotarealms_count; /* # realms with quota */
+ 	/*
+diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
+index 64592adfe48f..37b062783717 100644
+--- a/fs/ceph/quota.c
++++ b/fs/ceph/quota.c
+@@ -47,6 +47,9 @@ void ceph_handle_quota(struct ceph_mds_client *mdsc,
+ 	struct inode *inode;
+ 	struct ceph_inode_info *ci;
+ 
++	if (!ceph_inc_stopping_blocker(mdsc, session))
++		return;
++
+ 	if (msg->front.iov_len < sizeof(*h)) {
+ 		pr_err("%s corrupt message mds%d len %d\n", __func__,
+ 		       session->s_mds, (int)msg->front.iov_len);
+@@ -54,11 +57,6 @@ void ceph_handle_quota(struct ceph_mds_client *mdsc,
+ 		return;
+ 	}
+ 
+-	/* increment msg sequence number */
+-	mutex_lock(&session->s_mutex);
+-	inc_session_sequence(session);
+-	mutex_unlock(&session->s_mutex);
+-
+ 	/* lookup inode */
+ 	vino.ino = le64_to_cpu(h->ino);
+ 	vino.snap = CEPH_NOSNAP;
+@@ -78,6 +76,7 @@ void ceph_handle_quota(struct ceph_mds_client *mdsc,
+ 	spin_unlock(&ci->i_ceph_lock);
+ 
+ 	iput(inode);
++	ceph_dec_stopping_blocker(mdsc);
+ }
+ 
+ static struct ceph_quotarealm_inode *
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index aa8e0657fc03..23b31600ee3c 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -1011,6 +1011,9 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+ 	int locked_rwsem = 0;
+ 	bool close_sessions = false;
+ 
++	if (!ceph_inc_stopping_blocker(mdsc, session))
++		return;
++
+ 	/* decode */
+ 	if (msg->front.iov_len < sizeof(*h))
+ 		goto bad;
+@@ -1026,10 +1029,6 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+ 	dout("%s from mds%d op %s split %llx tracelen %d\n", __func__,
+ 	     mds, ceph_snap_op_name(op), split, trace_len);
+ 
+-	mutex_lock(&session->s_mutex);
+-	inc_session_sequence(session);
+-	mutex_unlock(&session->s_mutex);
+-
+ 	down_write(&mdsc->snap_rwsem);
+ 	locked_rwsem = 1;
+ 
+@@ -1134,12 +1133,15 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+ 	up_write(&mdsc->snap_rwsem);
+ 
+ 	flush_snaps(mdsc);
++	ceph_dec_stopping_blocker(mdsc);
+ 	return;
+ 
+ bad:
+ 	pr_err("%s corrupt snap message from mds%d\n", __func__, mds);
+ 	ceph_msg_dump(msg);
+ out:
++	ceph_dec_stopping_blocker(mdsc);
++
+ 	if (locked_rwsem)
+ 		up_write(&mdsc->snap_rwsem);
+ 
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 4b0a070d5c6d..f5ddd4abc0ab 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -1467,15 +1467,72 @@ static int ceph_init_fs_context(struct fs_context *fc)
+ 	return -ENOMEM;
+ }
+ 
++/*
++ * Return true if mdsc successfully increase blocker counter,
++ * or false if the mdsc is in stopping and flushed state.
++ */
++bool ceph_inc_stopping_blocker(struct ceph_mds_client *mdsc,
++			       struct ceph_mds_session *session)
++{
++	mutex_lock(&session->s_mutex);
++	inc_session_sequence(session);
++	mutex_unlock(&session->s_mutex);
++
++	spin_lock(&mdsc->stopping_lock);
++	if (mdsc->stopping >= CEPH_MDSC_STOPPING_FLUSHED) {
++		spin_unlock(&mdsc->stopping_lock);
++		return false;
++	}
++	atomic_inc(&mdsc->stopping_blockers);
++	spin_unlock(&mdsc->stopping_lock);
++	return true;
++}
++
++void ceph_dec_stopping_blocker(struct ceph_mds_client *mdsc)
++{
++	spin_lock(&mdsc->stopping_lock);
++	if (!atomic_dec_return(&mdsc->stopping_blockers) &&
++	    mdsc->stopping >= CEPH_MDSC_STOPPING_FLUSHED)
++		complete_all(&mdsc->stopping_waiter);
++	spin_unlock(&mdsc->stopping_lock);
++}
++
+ static void ceph_kill_sb(struct super_block *s)
+ {
+ 	struct ceph_fs_client *fsc = ceph_sb_to_client(s);
++	bool wait;
+ 
+ 	dout("kill_sb %p\n", s);
+ 
+ 	ceph_mdsc_pre_umount(fsc->mdsc);
+ 	flush_fs_workqueues(fsc);
+ 
++	/*
++	 * Though the kill_anon_super() will finally trigger the
++	 * sync_filesystem() anyway, we still need to do it here and
++	 * then bump the stage of shutdown. This will allow us to
++	 * drop any further message, which will increase the inodes'
++	 * i_count reference counters but makes no sense any more,
++	 * from MDSs.
++	 *
++	 * Without this when evicting the inodes it may fail in the
++	 * kill_anon_super(), which will trigger a warning when
++	 * destroying the fscrypt keyring and then possibly trigger
++	 * a further crash in ceph module when the iput() tries to
++	 * evict the inodes later.
++	 */
++	sync_filesystem(s);
++
++	spin_lock(&fsc->mdsc->stopping_lock);
++	fsc->mdsc->stopping = CEPH_MDSC_STOPPING_FLUSHED;
++	wait = !!atomic_read(&fsc->mdsc->stopping_blockers);
++	spin_unlock(&fsc->mdsc->stopping_lock);
++
++	while (wait || atomic_read(&fsc->mdsc->stopping_blockers)) {
++		wait = false;
++		wait_for_completion(&fsc->mdsc->stopping_waiter);
++	}
++
+ 	kill_anon_super(s);
+ 
+ 	fsc->client->extra_mon_dispatch = NULL;
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index a785e5cb9b40..8a9afa81a76f 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -1398,4 +1398,7 @@ extern bool ceph_quota_update_statfs(struct ceph_fs_client *fsc,
+ 				     struct kstatfs *buf);
+ extern void ceph_cleanup_quotarealms_inodes(struct ceph_mds_client *mdsc);
+ 
++bool ceph_inc_stopping_blocker(struct ceph_mds_client *mdsc,
++			       struct ceph_mds_session *session);
++void ceph_dec_stopping_blocker(struct ceph_mds_client *mdsc);
+ #endif /* _FS_CEPH_SUPER_H */
 -- 
-I am Mrs. Leszczynska Anna Malgorzatafrom Germany . Presently admitted
- in one of the hospitals here in Ivory Coast.
+2.31.1
 
-I and my late husband do not have any child that is why I am donating
-this money to you having known my condition that I will join my late
-husband soonest.
-
-I wish to donate towards education and the less privileged I ask for
-your assistance. I am suffering from colon cancer I have some few
-weeks to live according to my doctor.
-
-The money should be used for this purpose.
-Motherless babies
-Children orphaned by aids.
-Destitute children
-Widows and Widowers.
-Children who cannot afford education.
-
-My husband stressed the importance of education and the less
-privileged I feel that this is what he would have wanted me to do with
-the money that he left for charity.
-
-These services bring so much joy to the kids. Together we are
-transforming lives and building brighter futures - but without you, it
-just would not be possible.
-I am using translation to communicate with you in case there is any
-mistake in my writing please correct me.
-Sincerely,
-
-Mrs. Leszczynska Anna Malgorzata.
