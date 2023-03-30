@@ -2,87 +2,66 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD03A6CFBE6
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 Mar 2023 08:49:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 897C46CFE04
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 Mar 2023 10:19:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230296AbjC3GtW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 30 Mar 2023 02:49:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39264 "EHLO
+        id S229632AbjC3ITB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 30 Mar 2023 04:19:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230288AbjC3GtS (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 Mar 2023 02:49:18 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59FE240C9
-        for <ceph-devel@vger.kernel.org>; Wed, 29 Mar 2023 23:48:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680158910;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DALHbgeFEf+za91SMnDqIHwqs2Pkttr/jtZwkTUdNi4=;
-        b=JiiXzCpi6rVVNIrodSWlB4xabesLQHrw/NSaMNaPl5EivWP8QBriGs2vyjtkdqRgy3kyds
-        5GxQ4ZO7krEqA3ix4aVjK981yAN0TSQ1utsIlRsusNuPv0YStkTWAgoJS8PyuojKlLgAOL
-        z7ST7ifovnYXuWwbMkh/qUH0eEBaLqc=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-605-tJaJ6MZVMQmBqT7ETyJKHQ-1; Thu, 30 Mar 2023 02:48:26 -0400
-X-MC-Unique: tJaJ6MZVMQmBqT7ETyJKHQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 43EC83C0ED71;
-        Thu, 30 Mar 2023 06:48:25 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E0F2B14171BB;
-        Thu, 30 Mar 2023 06:48:22 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <7f7947d6-2a03-688b-dc5e-3887553f0106@redhat.com>
-References: <7f7947d6-2a03-688b-dc5e-3887553f0106@redhat.com> <20230329141354.516864-1-dhowells@redhat.com> <20230329141354.516864-38-dhowells@redhat.com>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Chuck Lever III <chuck.lever@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 37/48] ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage()
+        with ESMTP id S229655AbjC3IS7 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 30 Mar 2023 04:18:59 -0400
+X-Greylist: delayed 367 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 30 Mar 2023 01:18:57 PDT
+Received: from mail.carlsgood.pl (mail.carlsgood.pl [217.61.97.209])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E94225259
+        for <ceph-devel@vger.kernel.org>; Thu, 30 Mar 2023 01:18:57 -0700 (PDT)
+Received: by mail.carlsgood.pl (Postfix, from userid 1001)
+        id E2CA384543; Thu, 30 Mar 2023 09:12:56 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=carlsgood.pl; s=mail;
+        t=1680163977; bh=Fw485gVIlzv5XFfqc8jWlbDEj8HGTLN9zV71861FTMg=;
+        h=Date:From:To:Subject:From;
+        b=Dw+UXhgba6blNeYLauVYZugTlBP/eNTF63diezZ0zvU4uGLuEZEQTObwp2P5y07nC
+         DtIDm/QOakLPM2f0iCZD++qvaHzRlhOibYvi527i4/AVByyZsF60gjQcOhUdVO253O
+         tF/5oFYytRoLPfo6WNZnxY76pU7MkUTCKiJOkJWV+t8UOVsB0ec8BYb9Xh0hUMUXIZ
+         Ad4twHA9DlMdhic43e3AvzuorpROi1nUcioKZu2cyNp9iH6VWbPL5sOoPCH2SkfZTg
+         U7McxuC50wyXW1IJfYycNetEh7MY6QhkxzvP4HcwlTFXNW6FzjWOpnq75i7QP/S+jD
+         a8vzHSqBPCV5Q==
+Received: by mail.carlsgood.pl for <ceph-devel@vger.kernel.org>; Thu, 30 Mar 2023 08:10:52 GMT
+Message-ID: <20230330084542-0.1.4r.arj6.0.t8199kng70@carlsgood.pl>
+Date:   Thu, 30 Mar 2023 08:10:52 GMT
+From:   "Kamil Bargielewicz" <kamil.bargielewicz@carlsgood.pl>
+To:     <ceph-devel@vger.kernel.org>
+Subject: =?UTF-8?Q?Wy=C5=BCsze_dofinansowanie?=
+X-Mailer: mail.carlsgood.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <709551.1680158901.1@warthog.procyon.org.uk>
-Date:   Thu, 30 Mar 2023 07:48:21 +0100
-Message-ID: <709552.1680158901@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Xiubo Li <xiubli@redhat.com> wrote:
+Dzie=C5=84 dobry,
 
-> BTW, will this two patch depend on the others in this patch series ?
+w ramach nowej edycji Programu M=C3=B3j Pr=C4=85d mog=C4=85 uzyska=C4=87 =
+Pa=C5=84stwo 6000 z=C5=82 dofinansowania na fotowoltaik=C4=99 i 16 000 z=C5=
+=82 na magazyn energii.
 
-Yes.  You'll need patches that affect TCP at least so that TCP supports
-MSG_SPLICE_PAGES, so 04-08 and perhaps 09.  It's also on top of the patches
-that remove ITER_PIPE on my iov-extract branch, but I don't think that should
-affect you.
+Pr=C3=B3cz wy=C5=BCszego dofinansowania, mog=C4=85 liczy=C4=87 Pa=C5=84st=
+wo na ni=C5=BCsze ceny pr=C4=85du oraz mo=C5=BCliwo=C5=9B=C4=87 odliczeni=
+a koszt=C3=B3w zwi=C4=85zanych z instalacj=C4=85 paneli w ramach rocznego=
+ zeznania PIT (tzw. ulga termomodernizacyjna).
 
-David
+Jako firma specjalizuj=C4=85ca si=C4=99 w monta=C5=BCu i serwisie paneli =
+s=C5=82onecznych mamy 100% skuteczno=C5=9B=C4=87 w pozyskiwaniu dotacji.=20
+=20
+Chcieliby Pa=C5=84stwo wst=C4=99pnie porozmawia=C4=87 o mo=C5=BCliwo=C5=9B=
+ciach?
 
+
+Pozdrawiam
+Kamil Bargielewicz
