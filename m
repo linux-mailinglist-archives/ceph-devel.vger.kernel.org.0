@@ -2,72 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B5776D2120
-	for <lists+ceph-devel@lfdr.de>; Fri, 31 Mar 2023 15:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BE316D2567
+	for <lists+ceph-devel@lfdr.de>; Fri, 31 Mar 2023 18:25:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232719AbjCaNGK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 31 Mar 2023 09:06:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41252 "EHLO
+        id S230385AbjCaQZW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 31 Mar 2023 12:25:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232709AbjCaNGJ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 31 Mar 2023 09:06:09 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 181E5AF18
-        for <ceph-devel@vger.kernel.org>; Fri, 31 Mar 2023 06:05:21 -0700 (PDT)
+        with ESMTP id S232740AbjCaQYl (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 31 Mar 2023 12:24:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 582F423688
+        for <ceph-devel@vger.kernel.org>; Fri, 31 Mar 2023 09:18:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680267920;
+        s=mimecast20190719; t=1680279453;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=hgW8cTlK+PJOT8RKw+ZUtnYCCPaowJ5bRdHT0sOdQqU=;
-        b=GKAcC+rzVs1W5lZ8eR44P9KPI686kEUBsrNi4GXoHT7Aopd+thSYit76fQCkFJdRjpPR6W
-        wwkOldCmk1kz2zfJF25QFsJSPyvSrs8kWlrbJh1609u9ATxQ+hjKEM0W+czda0PGsfkwxa
-        al89+n5fFwfOKpPkLkY1CbYTQ9u7OJk=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-628-8d9GxHVuNhW5u_AoRoARmA-1; Fri, 31 Mar 2023 09:05:18 -0400
-X-MC-Unique: 8d9GxHVuNhW5u_AoRoARmA-1
-Received: by mail-pl1-f198.google.com with SMTP id a9-20020a170902b58900b0019e2eafafddso12860287pls.7
-        for <ceph-devel@vger.kernel.org>; Fri, 31 Mar 2023 06:05:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680267918;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hgW8cTlK+PJOT8RKw+ZUtnYCCPaowJ5bRdHT0sOdQqU=;
-        b=1vx7feWiBQ7kyIIqTPBaVGbSvrO+ZcE0LAo8t/jsQlSRSV7ssJVZoPisL3B+6BTB6F
-         hsMDW1H9EqzY/gCYhWxTNTGz9V3VaPFtA7RAQWUjx83S6GZx+QrmGD1YH3P4WxwG2YwP
-         rB2cZdpEfim8eXwUm9sgUfGRR2nj1jn7c2d+vyVZg4CVpjk+z0LJD9mo3PSVs7QFfBPJ
-         zDwyhNmx0W/uxi1TvIteqJsIC3R7+ap70kIWLUQf4IhbU5r0eZ8P0OGb8TuGJx1136tf
-         xEV1VR9VL7tgxj0NRzjPQL2WS9kcMVkdG8u/Yj713aNcLOEs2L261uaRX1rd6Zt+Eh+z
-         KY4w==
-X-Gm-Message-State: AAQBX9fIMUgyk2EIUZ2bvHNk48kUQ09bSUbvLHObsuzSK4/F/lfVk510
-        A8KB3LtCcAdnE9Hmz+BMoX+juTonP5Y31fvBvKlkucz10n26zRp2pBxwnYurRwvSADwHyoVsATF
-        jsRdNUHGbtsiEXV6CpDPOew==
-X-Received: by 2002:a17:90b:4a50:b0:240:59e8:6dad with SMTP id lb16-20020a17090b4a5000b0024059e86dadmr25379903pjb.25.1680267917837;
-        Fri, 31 Mar 2023 06:05:17 -0700 (PDT)
-X-Google-Smtp-Source: AKy350Y9PfdWxol+rufcZcwbvwQ1DYEPsLuXLElCIM70TdWdw8rbW3NRn8loQ1UIz8coXa9Ci2UCbA==
-X-Received: by 2002:a17:90b:4a50:b0:240:59e8:6dad with SMTP id lb16-20020a17090b4a5000b0024059e86dadmr25379876pjb.25.1680267917496;
-        Fri, 31 Mar 2023 06:05:17 -0700 (PDT)
-Received: from [10.72.12.135] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id d4-20020a17090ac24400b002407750c3c3sm1409435pjx.37.2023.03.31.06.05.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Mar 2023 06:05:17 -0700 (PDT)
-Message-ID: <94f0894d-f72c-daa3-10e2-e83e0e15a759@redhat.com>
-Date:   Fri, 31 Mar 2023 09:05:01 -0400
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [RFC PATCH v2 37/48] ceph: Use sendmsg(MSG_SPLICE_PAGES) rather
- than sendpage()
-To:     David Howells <dhowells@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
+        bh=mcxOsbWhFQyukCMWrPOKlIpXJGoD9GGTGJfL3NnBqs4=;
+        b=LIRligj2uzcsLHAlCCLH1ufNvdKj27JR1Bs7GGWrEcwI58u8Enqt5lvVV4rXzsEUux4756
+        sreodFTmK1Sq/etAV6n7iXL4Vm8JWk/7TPTMdh6c7Qhgr6R4f3AByxiy/V9cd5jYv72eku
+        tdWlKny2d5K6PyVsB0h7AE72FsV5CI4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-519-amCcfeoRO16U4csq6Trr-w-1; Fri, 31 Mar 2023 12:11:11 -0400
+X-MC-Unique: amCcfeoRO16U4csq6Trr-w-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BE84088904E;
+        Fri, 31 Mar 2023 16:11:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 97DD02166B33;
+        Fri, 31 Mar 2023 16:11:06 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc:     David Howells <dhowells@redhat.com>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>,
         Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
@@ -76,18 +52,18 @@ Cc:     Matthew Wilcox <willy@infradead.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-References: <7f7947d6-2a03-688b-dc5e-3887553f0106@redhat.com>
- <20230329141354.516864-1-dhowells@redhat.com>
- <20230329141354.516864-38-dhowells@redhat.com>
- <709552.1680158901@warthog.procyon.org.uk>
-Content-Language: en-US
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <709552.1680158901@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Ilya Dryomov <idryomov@gmail.com>,
+        Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
+Subject: [PATCH v3 39/55] ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage
+Date:   Fri, 31 Mar 2023 17:08:58 +0100
+Message-Id: <20230331160914.1608208-40-dhowells@redhat.com>
+In-Reply-To: <20230331160914.1608208-1-dhowells@redhat.com>
+References: <20230331160914.1608208-1-dhowells@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
 X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -96,21 +72,130 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Use sendmsg() and MSG_SPLICE_PAGES rather than sendpage in ceph when
+transmitting data.  For the moment, this can only transmit one page at a
+time because of the architecture of net/ceph/, but if
+write_partial_message_data() can be given a bvec[] at a time by the
+iteration code, this would allow pages to be sent in a batch.
 
-On 3/30/23 02:48, David Howells wrote:
-> Xiubo Li <xiubli@redhat.com> wrote:
->
->> BTW, will this two patch depend on the others in this patch series ?
-> Yes.  You'll need patches that affect TCP at least so that TCP supports
-> MSG_SPLICE_PAGES, so 04-08 and perhaps 09.  It's also on top of the patches
-> that remove ITER_PIPE on my iov-extract branch, but I don't think that should
-> affect you.
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Xiubo Li <xiubli@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: "David S. Miller" <davem@davemloft.net>
+cc: Eric Dumazet <edumazet@google.com>
+cc: Jakub Kicinski <kuba@kernel.org>
+cc: Paolo Abeni <pabeni@redhat.com>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: ceph-devel@vger.kernel.org
+cc: netdev@vger.kernel.org
+---
+ net/ceph/messenger_v1.c | 58 ++++++++++++++---------------------------
+ 1 file changed, 19 insertions(+), 39 deletions(-)
 
-Okay, I will check that.
-
-Thanks.
-
-
-> David
->
+diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
+index d664cb1593a7..b2d801a49122 100644
+--- a/net/ceph/messenger_v1.c
++++ b/net/ceph/messenger_v1.c
+@@ -74,37 +74,6 @@ static int ceph_tcp_sendmsg(struct socket *sock, struct kvec *iov,
+ 	return r;
+ }
+ 
+-/*
+- * @more: either or both of MSG_MORE and MSG_SENDPAGE_NOTLAST
+- */
+-static int ceph_tcp_sendpage(struct socket *sock, struct page *page,
+-			     int offset, size_t size, int more)
+-{
+-	ssize_t (*sendpage)(struct socket *sock, struct page *page,
+-			    int offset, size_t size, int flags);
+-	int flags = MSG_DONTWAIT | MSG_NOSIGNAL | more;
+-	int ret;
+-
+-	/*
+-	 * sendpage cannot properly handle pages with page_count == 0,
+-	 * we need to fall back to sendmsg if that's the case.
+-	 *
+-	 * Same goes for slab pages: skb_can_coalesce() allows
+-	 * coalescing neighboring slab objects into a single frag which
+-	 * triggers one of hardened usercopy checks.
+-	 */
+-	if (sendpage_ok(page))
+-		sendpage = sock->ops->sendpage;
+-	else
+-		sendpage = sock_no_sendpage;
+-
+-	ret = sendpage(sock, page, offset, size, flags);
+-	if (ret == -EAGAIN)
+-		ret = 0;
+-
+-	return ret;
+-}
+-
+ static void con_out_kvec_reset(struct ceph_connection *con)
+ {
+ 	BUG_ON(con->v1.out_skip);
+@@ -464,7 +433,6 @@ static int write_partial_message_data(struct ceph_connection *con)
+ 	struct ceph_msg *msg = con->out_msg;
+ 	struct ceph_msg_data_cursor *cursor = &msg->cursor;
+ 	bool do_datacrc = !ceph_test_opt(from_msgr(con->msgr), NOCRC);
+-	int more = MSG_MORE | MSG_SENDPAGE_NOTLAST;
+ 	u32 crc;
+ 
+ 	dout("%s %p msg %p\n", __func__, con, msg);
+@@ -482,6 +450,10 @@ static int write_partial_message_data(struct ceph_connection *con)
+ 	 */
+ 	crc = do_datacrc ? le32_to_cpu(msg->footer.data_crc) : 0;
+ 	while (cursor->total_resid) {
++		struct bio_vec bvec;
++		struct msghdr msghdr = {
++			.msg_flags = MSG_SPLICE_PAGES | MSG_SENDPAGE_NOTLAST,
++		};
+ 		struct page *page;
+ 		size_t page_offset;
+ 		size_t length;
+@@ -494,9 +466,12 @@ static int write_partial_message_data(struct ceph_connection *con)
+ 
+ 		page = ceph_msg_data_next(cursor, &page_offset, &length);
+ 		if (length == cursor->total_resid)
+-			more = MSG_MORE;
+-		ret = ceph_tcp_sendpage(con->sock, page, page_offset, length,
+-					more);
++			msghdr.msg_flags |= MSG_MORE;
++
++		bvec_set_page(&bvec, page, length, page_offset);
++		iov_iter_bvec(&msghdr.msg_iter, ITER_SOURCE, &bvec, 1, length);
++
++		ret = sock_sendmsg(con->sock, &msghdr);
+ 		if (ret <= 0) {
+ 			if (do_datacrc)
+ 				msg->footer.data_crc = cpu_to_le32(crc);
+@@ -526,7 +501,10 @@ static int write_partial_message_data(struct ceph_connection *con)
+  */
+ static int write_partial_skip(struct ceph_connection *con)
+ {
+-	int more = MSG_MORE | MSG_SENDPAGE_NOTLAST;
++	struct bio_vec bvec;
++	struct msghdr msghdr = {
++		.msg_flags = MSG_SPLICE_PAGES | MSG_SENDPAGE_NOTLAST | MSG_MORE,
++	};
+ 	int ret;
+ 
+ 	dout("%s %p %d left\n", __func__, con, con->v1.out_skip);
+@@ -534,9 +512,11 @@ static int write_partial_skip(struct ceph_connection *con)
+ 		size_t size = min(con->v1.out_skip, (int)PAGE_SIZE);
+ 
+ 		if (size == con->v1.out_skip)
+-			more = MSG_MORE;
+-		ret = ceph_tcp_sendpage(con->sock, ceph_zero_page, 0, size,
+-					more);
++			msghdr.msg_flags &= ~MSG_SENDPAGE_NOTLAST;
++		bvec_set_page(&bvec, ZERO_PAGE(0), size, 0);
++		iov_iter_bvec(&msghdr.msg_iter, ITER_SOURCE, &bvec, 1, size);
++
++		ret = sock_sendmsg(con->sock, &msghdr);
+ 		if (ret <= 0)
+ 			goto out;
+ 		con->v1.out_skip -= ret;
 
