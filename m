@@ -2,83 +2,96 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E1996D3EF0
-	for <lists+ceph-devel@lfdr.de>; Mon,  3 Apr 2023 10:28:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A76956D3F0C
+	for <lists+ceph-devel@lfdr.de>; Mon,  3 Apr 2023 10:34:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231614AbjDCI2P (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 3 Apr 2023 04:28:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48530 "EHLO
+        id S231149AbjDCIeA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 3 Apr 2023 04:34:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231555AbjDCI2O (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 Apr 2023 04:28:14 -0400
-X-Greylist: delayed 818 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 03 Apr 2023 01:28:13 PDT
-Received: from mail.arnisdale.pl (mail.arnisdale.pl [151.80.133.87])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C33E946A5
-        for <ceph-devel@vger.kernel.org>; Mon,  3 Apr 2023 01:28:13 -0700 (PDT)
-Received: by mail.arnisdale.pl (Postfix, from userid 1002)
-        id BE3A425532; Mon,  3 Apr 2023 08:07:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=arnisdale.pl; s=mail;
-        t=1680509310; bh=6DhEsVYOGxxfetVY3oiVeew+7Cm34ArcvgDq2WQYIRw=;
-        h=Date:From:To:Subject:From;
-        b=sntb7poHF0anzbM0S1tuCNfMC/rR4H+uX6dM+mRIQDbdyDQl9Ono89ik1FeYSmJNN
-         treVUMBnMZivDBCnAn4Ho/UFu387XxnyRKOLbC5YC6gTU/CNL6vbHtW5TgSsEHN2IR
-         hwNN6/zSRbslehkX4VGcK5EtjjUZHCChM2SXM3S2RYCl8AYqmeFjp+GrYLQbXFNqDe
-         rnibhxyiHVAcQpt40F16JR+Om/B/LG8OJJD3T1D9dXgkob//VB34gKN78qbjULDNCd
-         7MH/jmJOQ7prQG68qBwLmWbSsFKDf8ZQuXVncFKm4CdlqLOfKL+q2BpKsnpt8JjQxl
-         KkYOGnhY9IKvg==
-Received: by mail.arnisdale.pl for <ceph-devel@vger.kernel.org>; Mon,  3 Apr 2023 08:05:59 GMT
-Message-ID: <20230403064500-0.1.3p.18vks.0.7wcmq5fsds@arnisdale.pl>
-Date:   Mon,  3 Apr 2023 08:05:59 GMT
-From:   "Maciej Telka" <maciej.telka@arnisdale.pl>
-To:     <ceph-devel@vger.kernel.org>
-Subject: =?UTF-8?Q?Nawi=C4=85zanie_wsp=C3=B3=C5=82pracy?=
-X-Mailer: mail.arnisdale.pl
+        with ESMTP id S229509AbjDCId6 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 Apr 2023 04:33:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76FC26199
+        for <ceph-devel@vger.kernel.org>; Mon,  3 Apr 2023 01:32:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1680510773;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5zbzGcbELHVtwSCvsaP+lW1lqaSUpO9wHVrHr3uaj9U=;
+        b=CkIMlB9ty2PWunnY/RXyQSYnd4U4t4KhvO8HjQv99fKuU2MzeWvNdDMNx7Z+nGXX5gMi5P
+        xsC5yJTpp6SG5ug+85BSNTHs9BtKPRMfZ2/gP9KxEgpMxFj+bDyoW+ekwuyT/PTfO/jM/j
+        FfMQ43uhyMvduevg8OdseVAX6E8S7GU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-596-p01qS212NfOfPLBPAGiKpA-1; Mon, 03 Apr 2023 04:32:50 -0400
+X-MC-Unique: p01qS212NfOfPLBPAGiKpA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9CB0A1818E50;
+        Mon,  3 Apr 2023 08:32:49 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 58A43C15BA0;
+        Mon,  3 Apr 2023 08:32:47 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <c99f1f3d-25ac-6f5c-b5f1-26f7bfa513e8@redhat.com>
+References: <c99f1f3d-25ac-6f5c-b5f1-26f7bfa513e8@redhat.com> <7f7947d6-2a03-688b-dc5e-3887553f0106@redhat.com> <20230329141354.516864-1-dhowells@redhat.com> <20230329141354.516864-38-dhowells@redhat.com> <709552.1680158901@warthog.procyon.org.uk>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Chuck Lever III <chuck.lever@oracle.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 37/48] ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage()
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: Yes, score=7.2 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
-        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_SBL_CSS,RCVD_IN_VALIDITY_RPBL,
-        SPF_HELO_NONE,SPF_PASS,URIBL_CSS_A,URIBL_DBL_SPAM autolearn=no
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1814784.1680510766.1@warthog.procyon.org.uk>
+Date:   Mon, 03 Apr 2023 09:32:46 +0100
+Message-ID: <1814785.1680510766@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
-X-Spam-Report: *  2.5 URIBL_DBL_SPAM Contains a spam URL listed in the Spamhaus DBL
-        *      blocklist
-        *      [URIs: arnisdale.pl]
-        *  3.6 RCVD_IN_SBL_CSS RBL: Received via a relay in Spamhaus SBL-CSS
-        *      [151.80.133.87 listed in zen.spamhaus.org]
-        *  0.1 URIBL_CSS_A Contains URL's A record listed in the Spamhaus CSS
-        *      blocklist
-        *      [URIs: arnisdale.pl]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  1.3 RCVD_IN_VALIDITY_RPBL RBL: Relay in Validity RPBL,
-        *      https://senderscore.org/blocklistlookup/
-        *      [151.80.133.87 listed in bl.score.senderscore.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-X-Spam-Level: *******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Xiubo Li <xiubli@redhat.com> wrote:
 
-Czy jest mo=C5=BCliwo=C5=9B=C4=87 nawi=C4=85zania wsp=C3=B3=C5=82pracy z =
-Pa=C5=84stwem?
+> On 3/30/23 14:48, David Howells wrote:
+> > Xiubo Li <xiubli@redhat.com> wrote:
+> >
+> >> BTW, will this two patch depend on the others in this patch series ?
+> > Yes.  You'll need patches that affect TCP at least so that TCP supports
+> > MSG_SPLICE_PAGES, so 04-08 and perhaps 09.  It's also on top of the
+> > patches that remove ITER_PIPE on my iov-extract branch, but I don't think
+> > that should affect you.
+> 
+> Why I asked this is because I only could see these two ceph relevant patches
+> currently.
 
-Z ch=C4=99ci=C4=85 porozmawiam z osob=C4=85 zajmuj=C4=85c=C4=85 si=C4=99 =
-dzia=C5=82aniami zwi=C4=85zanymi ze sprzeda=C5=BC=C4=85.
+Depends on how you defined 'relevant', I guess.  Only two patches modify ceph
+directly, but there's a dependency: to make those work, TCP needs altering
+also.
 
-Pomagamy skutecznie pozyskiwa=C4=87 nowych klient=C3=B3w.
+David
 
-Zapraszam do kontaktu.
-
-
-Pozdrawiam serdecznie
-Maciej Telka
