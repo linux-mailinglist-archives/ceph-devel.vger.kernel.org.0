@@ -2,136 +2,89 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8905B6D75E0
-	for <lists+ceph-devel@lfdr.de>; Wed,  5 Apr 2023 09:49:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A6A86DA0B2
+	for <lists+ceph-devel@lfdr.de>; Thu,  6 Apr 2023 21:09:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237153AbjDEHtr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 5 Apr 2023 03:49:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33180 "EHLO
+        id S240065AbjDFTJI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 6 Apr 2023 15:09:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237087AbjDEHtp (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 5 Apr 2023 03:49:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B8E446AE;
-        Wed,  5 Apr 2023 00:49:40 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3663A63960;
-        Wed,  5 Apr 2023 07:49:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 895D0C433D2;
-        Wed,  5 Apr 2023 07:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1680680979;
-        bh=Weq5xIt7NaRy390+BxKr0DPL+Sx0J9wKSXtMC/5JUh0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=l5Flc0M5e8GB39z9f8BFJ5ebxS8y3KvMmKQItlraREhf8AkpnxMWHlz+JXp8p7uI1
-         Kljlt0scTB58bQpEmq4GK+eEA+W3BOPA5cN1xWCrA68FuXwrY3GmcIErMd7I6tygyc
-         V9JzsMXQMyO0n9SdIkQE39mGNJMhI4Juz/LKaq5zFFseVa5v/r1CJgL8buDMvRme/M
-         V60YaWT3OGRM2C3c4p9BXErpUiMxTPWmcEsEkzEZBNsBmiLmJeuYqKxc6IXyHEJcg/
-         oPvvLtbmc/+Gs5xXnYjOU/toIg6/1FGapaFmAgQB8BCmWBhC4ZrbJ8UgmFtFOJlHgF
-         qh4BFYcRworMg==
-Date:   Wed, 5 Apr 2023 09:49:27 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Zorro Lang <zlang@kernel.org>
-Cc:     fstests@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, linux-unionfs@vger.kernel.org,
-        jack@suse.com, linux-xfs@vger.kernel.org, fdmanana@suse.com,
-        ebiggers@google.com, amir73il@gmail.com, djwong@kernel.org,
-        anand.jain@oracle.com
-Subject: Re: [PATCH 3/5] fstests/MAINTAINERS: add supported mailing list
-Message-ID: <20230405-bazillus-nanotechnologie-a8cf619d8454@brauner>
-References: <20230404171411.699655-1-zlang@kernel.org>
- <20230404171411.699655-4-zlang@kernel.org>
+        with ESMTP id S240106AbjDFTJH (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 6 Apr 2023 15:09:07 -0400
+X-Greylist: delayed 105324 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 06 Apr 2023 12:09:05 PDT
+Received: from mail.dufert24.com (mail.dufert24.com [38.242.205.183])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 675294C17
+        for <ceph-devel@vger.kernel.org>; Thu,  6 Apr 2023 12:09:05 -0700 (PDT)
+Received: by mail.dufert24.com (Postfix, from userid 1001)
+        id 1BA05419C5; Wed,  5 Apr 2023 10:05:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dufert24.com; s=mail;
+        t=1680681938; bh=ny+p4XIhL27PiFULKVw7iLEmU7ZwucMvITzNrmwTaWI=;
+        h=Date:From:To:Subject:From;
+        b=EzXP5cGqPbIBi4o8nRQAilOH/uy72owMTUJyxccf5UGPTy3XATLs2HeNLL6iAaYGJ
+         /drdytLdHt9EiSmgCpD+kcvBkUZuUdyspQW37+7WnJ1FhKLHQhenXlUGum6IB5xG7S
+         5BQHU2AEQpky09W46Ld55Ksq3uhyUHCFgbju4O+ukD+LFRmNY8am0lCfZJH9xFWs47
+         7AOw2BfEYPY54p8DGCUGtRDHtec4++yVm664wIu4ryQiihjKGKB2/++/jvEAaioHLq
+         dxGKrk6HeA/dMLxOzdP89G4eUGxeEoB4xECtpH4D3b8mBGpwDKU4Ek5wap2DRDnehv
+         YMPE/521qCluw==
+Received: by mail.dufert24.com for <ceph-devel@vger.kernel.org>; Wed,  5 Apr 2023 08:05:26 GMT
+Message-ID: <20230405084500-0.1.30.91nt.0.q19b5775c9@dufert24.com>
+Date:   Wed,  5 Apr 2023 08:05:26 GMT
+From:   "Nikolaus Mazal" <nikolaus.mazal@dufert24.com>
+To:     <ceph-devel@vger.kernel.org>
+Subject: =?UTF-8?Q?Dropshipping_-_spolupr=C3=A1ce?=
+X-Mailer: mail.dufert24.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20230404171411.699655-4-zlang@kernel.org>
-X-Spam-Status: No, score=-5.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: Yes, score=7.7 required=5.0 tests=DKIM_SIGNED,DKIM_VALID,
+        DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS,
+        URIBL_BLACK,URIBL_CSS_A,URIBL_DBL_SPAM autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Report: *  2.5 URIBL_DBL_SPAM Contains a spam URL listed in the Spamhaus DBL
+        *      blocklist
+        *      [URIs: dufert24.com]
+        *  3.6 RCVD_IN_SBL_CSS RBL: Received via a relay in Spamhaus SBL-CSS
+        *      [38.242.205.183 listed in zen.spamhaus.org]
+        *  0.1 URIBL_CSS_A Contains URL's A record listed in the Spamhaus CSS
+        *      blocklist
+        *      [URIs: dufert24.com]
+        *  1.7 URIBL_BLACK Contains an URL listed in the URIBL blacklist
+        *      [URIs: dufert24.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+X-Spam-Level: *******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Apr 05, 2023 at 01:14:09AM +0800, Zorro Lang wrote:
-> The fstests supports different kind of fs testing, better to cc
-> specific fs mailing list for specific fs testing, to get better
-> reviewing points. So record these mailing lists and files related
-> with them in MAINTAINERS file.
-> 
-> Signed-off-by: Zorro Lang <zlang@kernel.org>
-> ---
-> 
-> If someone mailing list doesn't want to be in cc list of related fstests
-> patch, please reply this email, I'll remove that line.
-> 
-> Or if I missed someone mailing list, please feel free to tell me.
-> 
-> Thanks,
-> Zorro
-> 
->  MAINTAINERS | 77 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 77 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 09b1a5a3..620368cb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -107,6 +107,83 @@ Maintainers List
->  	  should send patch to fstests@ at least. Other relevant mailing list
->  	  or reviewer or co-maintainer can be in cc list.
->  
-> +BTRFS
-> +L:	linux-btrfs@vger.kernel.org
-> +S:	Supported
-> +F:	tests/btrfs/
-> +F:	common/btrfs
-> +
-> +CEPH
-> +L:	ceph-devel@vger.kernel.org
-> +S:	Supported
-> +F:	tests/ceph/
-> +F:	common/ceph
-> +
-> +CIFS
-> +L:	linux-cifs@vger.kernel.org
-> +S:	Supported
-> +F:	tests/cifs
-> +
-> +EXT4
-> +L:	linux-ext4@vger.kernel.org
-> +S:	Supported
-> +F:	tests/ext4/
-> +F:	common/ext4
-> +
-> +F2FS
-> +L:	linux-f2fs-devel@lists.sourceforge.net
-> +S:	Supported
-> +F:	tests/f2fs/
-> +F:	common/f2fs
-> +
-> +FSVERITY
-> +L:	fsverity@lists.linux.dev
-> +S:	Supported
-> +F:	common/verity
-> +
-> +FSCRYPT
-> +L:      linux-fscrypt@vger.kernel.org
-> +S:	Supported
-> +F:	common/encrypt
-> +
-> +FS-IDMAPPED
-> +L:	linux-fsdevel@vger.kernel.org
-> +S:	Supported
-> +F:	src/vfs/
+Dobr=C3=A9 r=C3=A1no,
 
-Same suggestion as earlier, make that section VFS as it covers generic
-functionality,
+Zastupuji spole=C4=8Dnost vyr=C3=A1b=C4=9Bj=C3=ADc=C3=AD =C5=BEaluzie a z=
+=C3=A1v=C4=9Bsy, kter=C3=A1 ji=C5=BE l=C3=A9ta komplexn=C4=9B podporuje o=
+dv=C4=9Btv=C3=AD e-commerce a poskytuje v=C3=BDrobc=C5=AFm, dodavatel=C5=AF=
+m, design=C3=A9r=C5=AFm a prodejc=C5=AFm inovativn=C3=AD prodejn=C3=AD n=C3=
+=A1stroje v syst=C3=A9mu dropshipping.
 
-Acked-by: Christian Brauner <brauner@kernel.org>
+Ji=C5=BE t=C3=A9m=C4=9B=C5=99 20 let poskytujeme na=C5=A1im z=C3=A1kazn=C3=
+=ADk=C5=AFm vysoce kvalitn=C3=AD produkty, realizujeme B2B prodej.
+
+D=C3=ADky spolupr=C3=A1ci s n=C3=A1mi m=C3=A1te =C5=A1anci rozv=C3=ADjet =
+sv=C3=A9 podnik=C3=A1n=C3=AD, zvy=C5=A1ovat tr=C5=BEby bez nutnosti m=C3=AD=
+t sklad a nakupovat zbo=C5=BE=C3=AD na sklad.
+
+Chcete-li se sezn=C3=A1mit s na=C5=A1=C3=ADm sortimentem a ov=C4=9B=C5=99=
+it si rozmanitost a kvalitu na=C5=A1ich v=C3=BDrobk=C5=AF - zvu v=C3=A1s =
+ke spolupr=C3=A1ci.
+
+
+Pozdravy
+Nikolaus Mazal
