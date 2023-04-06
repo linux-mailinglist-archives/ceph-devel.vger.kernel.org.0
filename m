@@ -2,80 +2,83 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CF766D7EA2
-	for <lists+ceph-devel@lfdr.de>; Wed,  5 Apr 2023 16:06:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A9276D8BD7
+	for <lists+ceph-devel@lfdr.de>; Thu,  6 Apr 2023 02:26:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238520AbjDEOGz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 5 Apr 2023 10:06:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44062 "EHLO
+        id S232985AbjDFA00 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 5 Apr 2023 20:26:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238512AbjDEOGi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 5 Apr 2023 10:06:38 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 618446A4E
-        for <ceph-devel@vger.kernel.org>; Wed,  5 Apr 2023 07:03:06 -0700 (PDT)
+        with ESMTP id S234444AbjDFA0Y (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 5 Apr 2023 20:26:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8AA67DA7
+        for <ceph-devel@vger.kernel.org>; Wed,  5 Apr 2023 17:25:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1680703334;
+        s=mimecast20190719; t=1680740736;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=net1/YQpLyeedtAUAtKmhMoSFz+7An5MzKe0V2cpLas=;
-        b=ckchfDaswZqr2jOOzGRRkrtwF+7vq5SpjseThpUHpCtEqlUdGdLKFYFTteNTBoAIasLjlJ
-        VqjtF00gB5nJoG3leYh+iDHQlyvgWc9tBhGoebVYSh/SodYplfZ/rgih5QZUWfngIBB2Gg
-        IUVCMWOoosqg++nz1/JjEld4EJTmU9c=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=YnG+nCyPWB8ZL9Ap6fLZh9ezCdT+TIIsCMEMmA9isDc=;
+        b=EXmP3vYYRWRmJJRhXqggrPi1F1uu+Px2PPChOJibgm3Iy2xeiePk+WOfQZu1yO6rZwQzHn
+        TyRjQExsPrN0h7D8yQeWJU3VFabn5gyBuaXgqilAfs35cEtZOss7WZKqBMtgxes7zO/an/
+        AzW/iwAdPfxBRjZHMURGqnb3Qf8tBNE=
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-315-3IdXOF3lMpa65JFT0m8YJA-1; Wed, 05 Apr 2023 10:02:12 -0400
-X-MC-Unique: 3IdXOF3lMpa65JFT0m8YJA-1
-Received: by mail-pj1-f71.google.com with SMTP id q99-20020a17090a1b6c00b0023f0c6c6b3dso9630009pjq.1
-        for <ceph-devel@vger.kernel.org>; Wed, 05 Apr 2023 07:02:11 -0700 (PDT)
+ us-mta-352-FDI-h3KCP4C0glcGG1-cCQ-1; Wed, 05 Apr 2023 20:25:35 -0400
+X-MC-Unique: FDI-h3KCP4C0glcGG1-cCQ-1
+Received: by mail-pf1-f200.google.com with SMTP id x68-20020a628647000000b0062624c52117so16854965pfd.14
+        for <ceph-devel@vger.kernel.org>; Wed, 05 Apr 2023 17:25:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112; t=1680703331;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=net1/YQpLyeedtAUAtKmhMoSFz+7An5MzKe0V2cpLas=;
-        b=r+aCzgQdoky2ynLRKAtbpnopgL3Go5VTvMZJaWF7u5aF8CGaZoLzWliH3DKAAYtOyk
-         GMbgyrIkFvsXq60wBrQzT0KRz4AvECJrloUrmU12DB104n9B7FMxoVad7oaaLxlz+WbJ
-         ppjU4RC3boaN0BVPJdmstGnX8UqPk35yJApFL6qs5DIOXb/sZca2rJ+KNFJhVBFuJ2uh
-         bfvKoljnw1S+ZGEelgFohVVQLSH+td1khq+GAtOEHn/IMW8eBhRJVpIghIC3pOLOlEbA
-         WrzwTMxY36ZA+tjur6X0K0yJ3Wg/admhz20HspLX7/R82zCnU16rY/GXX1PdbgyOKQKj
-         wp8w==
-X-Gm-Message-State: AAQBX9fe3CI5W3HTUoYfbiGhMIdYezpdD2lbEYugc1OSmUggJpDojJsS
-        qEPt9kXf7BZbYA9iMcFmM2q+2gjNBF5mfYfdc+bvCJXpKBQi+/MUn6yrG6lR0Mzuj90orQ0fdEv
-        +Q2N2rhGkE0qwRrnDkZsucw==
-X-Received: by 2002:a17:903:283:b0:1a1:cd69:d301 with SMTP id j3-20020a170903028300b001a1cd69d301mr6292239plr.68.1680703330933;
-        Wed, 05 Apr 2023 07:02:10 -0700 (PDT)
-X-Google-Smtp-Source: AKy350Z3hrO2tDczikPPadND/siCWP3StMDF6ZwRfuQDU1LtW+SuQXatmasFWBRAsAV4qHbVdUEpFA==
-X-Received: by 2002:a17:903:283:b0:1a1:cd69:d301 with SMTP id j3-20020a170903028300b001a1cd69d301mr6292202plr.68.1680703330583;
-        Wed, 05 Apr 2023 07:02:10 -0700 (PDT)
-Received: from zlang-mailbox ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id b24-20020a630c18000000b005023496e339sm9037285pgl.63.2023.04.05.07.02.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Apr 2023 07:02:10 -0700 (PDT)
-Date:   Wed, 5 Apr 2023 22:02:02 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org,
-        brauner@kernel.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, djwong@kernel.org, amir73il@gmail.com,
-        linux-unionfs@vger.kernel.org, anand.jain@oracle.com,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        fdmanana@suse.com, jack@suse.com, linux-fsdevel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-btrfs@vger.kernel.org
+        d=1e100.net; s=20210112; t=1680740734;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YnG+nCyPWB8ZL9Ap6fLZh9ezCdT+TIIsCMEMmA9isDc=;
+        b=BfkPa0Jsx/aGeNUj/ak3pC4iuD1B/2UHBc0ziB/9B2vTVOwnbTvCCkN7DKNUfcw2JX
+         X1KcIRaNI91H/DCDn93iBD51PIuXJ3qtIkyGlC8jmhxfpoBStaMfwroV61wjLiAMtrGJ
+         jcIT7HTVN1j6cuf3NX4glRNe1c7WYQVGYiHyFQUEl/bgcOdjfA7BhTKIEQE7yNmIydWC
+         /RjlXGCWCL4hu5qw+CS7HLAJoTJppsWVjFe8FXCsIpvtOuZ9RqDFa05vCMdnTlwpw7EP
+         tVE+zz+Y6OPg687xVwCadgIcm2y1k8jt45jAuL7XMLcE4YSSqblcQJyVLc/Vao2NFUAE
+         Kmuw==
+X-Gm-Message-State: AAQBX9cq8K3dJZNizCsp0ZFa/yCViBSqvp6bJIprRvO4fAQuZJLKtsSR
+        L47jhir7FPcxgtxNHUwJI4cvUCvp0W76r+59xXkawmI2zfRqjXo5V1cb55xMtKXo5rtQDgvbg+X
+        n7uofRHyJ7r4rrYpgpEd6Tpn9+9ZZyNJI
+X-Received: by 2002:a17:90b:17c7:b0:23f:7d05:8765 with SMTP id me7-20020a17090b17c700b0023f7d058765mr8769199pjb.10.1680740734089;
+        Wed, 05 Apr 2023 17:25:34 -0700 (PDT)
+X-Google-Smtp-Source: AKy350YchunmOlWsqR1uqhyleFq+e6uT40JJEkEYVgwX9vsqmDYfOCSrK9/Althx8xc8uY/FzfvVaQ==
+X-Received: by 2002:a17:90b:17c7:b0:23f:7d05:8765 with SMTP id me7-20020a17090b17c700b0023f7d058765mr8769184pjb.10.1680740733840;
+        Wed, 05 Apr 2023 17:25:33 -0700 (PDT)
+Received: from [10.72.13.97] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id ce21-20020a17090aff1500b0023d386e4806sm1864484pjb.57.2023.04.05.17.25.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Apr 2023 17:25:33 -0700 (PDT)
+Message-ID: <7c2bfeb5-3c93-1fc9-cc1e-e7350b406ea1@redhat.com>
+Date:   Thu, 6 Apr 2023 08:25:24 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.1
 Subject: Re: [PATCH 3/5] fstests/MAINTAINERS: add supported mailing list
-Message-ID: <20230405140202.bdp3lzgross2cjbt@zlang-mailbox>
+Content-Language: en-US
+To:     Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org
+Cc:     linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, linux-unionfs@vger.kernel.org,
+        jack@suse.com, linux-xfs@vger.kernel.org, fdmanana@suse.com,
+        ebiggers@google.com, brauner@kernel.org, amir73il@gmail.com,
+        djwong@kernel.org, anand.jain@oracle.com
 References: <20230404171411.699655-1-zlang@kernel.org>
  <20230404171411.699655-4-zlang@kernel.org>
- <20230404221653.GC1893@sol.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230404221653.GC1893@sol.localdomain>
-X-Spam-Status: No, score=-0.2 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20230404171411.699655-4-zlang@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.6 required=5.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -84,41 +87,53 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Apr 04, 2023 at 03:16:53PM -0700, Eric Biggers wrote:
-> Hi Zorro,
-> 
-> On Wed, Apr 05, 2023 at 01:14:09AM +0800, Zorro Lang wrote:
-> > +FSVERITY
-> > +L:	fsverity@lists.linux.dev
-> > +S:	Supported
-> > +F:	common/verity
-> > +
-> > +FSCRYPT
-> > +L:      linux-fscrypt@vger.kernel.org
-> > +S:	Supported
-> > +F:	common/encrypt
-> 
-> Most of the encrypt and verity tests are in tests/generic/ and are in the
-> 'encrypt' or 'verity' test groups.
-> 
-> These file patterns only pick up the common files, not the actual tests.
-> 
-> Have you considered adding a way to specify maintainers for a test group?
-> Something like:
-> 
->     G:      encrypt
-> 
-> and
-> 
->     G:      verity
 
-Good idea! Let's check if this patchset is acceptable by most of you,
-then I'll think about how to add this feature later.
+On 4/5/23 01:14, Zorro Lang wrote:
+> The fstests supports different kind of fs testing, better to cc
+> specific fs mailing list for specific fs testing, to get better
+> reviewing points. So record these mailing lists and files related
+> with them in MAINTAINERS file.
+>
+> Signed-off-by: Zorro Lang <zlang@kernel.org>
+> ---
+>
+> If someone mailing list doesn't want to be in cc list of related fstests
+> patch, please reply this email, I'll remove that line.
+>
+> Or if I missed someone mailing list, please feel free to tell me.
+>
+> Thanks,
+> Zorro
+>
+>   MAINTAINERS | 77 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 77 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 09b1a5a3..620368cb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -107,6 +107,83 @@ Maintainers List
+>   	  should send patch to fstests@ at least. Other relevant mailing list
+>   	  or reviewer or co-maintainer can be in cc list.
+>   
+> +BTRFS
+> +L:	linux-btrfs@vger.kernel.org
+> +S:	Supported
+> +F:	tests/btrfs/
+> +F:	common/btrfs
+> +
+> +CEPH
+> +L:	ceph-devel@vger.kernel.org
+> +S:	Supported
+> +F:	tests/ceph/
+> +F:	common/ceph
+> +
+
+LGTM and feel free to add:
+
+Acked-by: Xiubo Li <xiubli@redhat.com>
 
 Thanks,
-Zorro
 
-> 
-> - Eric
-> 
+- Xiubo
 
