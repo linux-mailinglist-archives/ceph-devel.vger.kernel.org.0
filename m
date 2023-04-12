@@ -2,48 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C0BE96DF2D7
-	for <lists+ceph-devel@lfdr.de>; Wed, 12 Apr 2023 13:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 839436DF328
+	for <lists+ceph-devel@lfdr.de>; Wed, 12 Apr 2023 13:25:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229700AbjDLLO6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 12 Apr 2023 07:14:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38086 "EHLO
+        id S229981AbjDLLZM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 12 Apr 2023 07:25:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51144 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229940AbjDLLO4 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 12 Apr 2023 07:14:56 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B00E7B7
-        for <ceph-devel@vger.kernel.org>; Wed, 12 Apr 2023 04:13:48 -0700 (PDT)
+        with ESMTP id S230212AbjDLLYu (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 12 Apr 2023 07:24:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D53702D40
+        for <ceph-devel@vger.kernel.org>; Wed, 12 Apr 2023 04:23:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681297969;
+        s=mimecast20190719; t=1681298589;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=0kYCJF9DGGtp4ZqNQo6CgNdWCJ4wx95TuHBVUhFXafg=;
-        b=XChlid5gBfRmOt60ugqhmXPePckEJh2Q4pNAZiHcUzN2VjyWpwi5E+HmdBNP8FK5ZV7SYE
-        N/yscKAeljl2Gqu5oZp6n14jAY9eDbsML9arZ8P668lRlLE608sqL2v269F8twP3Cg4cxX
-        7rNnelAkoogYr9FxhqDdMZqbYFyY/fI=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=1tiYX6foTTZEZeqEoQcul8NnL0v2KKrEg9JON5Oi+Ao=;
+        b=W1L1GGAyIiKmllfnWfl6gwbiZr/0wxCKb2l5s8MHQLaHSeXNTEcAm7pef9FVi6gzkArpyb
+        hvRka7soY0aSfvVwn+qjUmN/UzL8KMLtAKaDSt1uYOp6N311wsMzih933B1JQsMBbWXj+V
+        fmcviq3lkkV1ijAs4pUg2BHpAZ4Nnak=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-625-VQpY8KJ-NnyGs6LP-l8Olw-1; Wed, 12 Apr 2023 07:12:46 -0400
-X-MC-Unique: VQpY8KJ-NnyGs6LP-l8Olw-1
+ us-mta-191-tiemV38pOOusksPHfDQIcQ-1; Wed, 12 Apr 2023 07:12:50 -0400
+X-MC-Unique: tiemV38pOOusksPHfDQIcQ-1
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7774A811E7C;
-        Wed, 12 Apr 2023 11:12:45 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0FD2B1C08796;
+        Wed, 12 Apr 2023 11:12:50 +0000 (UTC)
 Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-131.pek2.redhat.com [10.72.12.131])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C7B13C15BB8;
-        Wed, 12 Apr 2023 11:12:40 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 44601C15BB8;
+        Wed, 12 Apr 2023 11:12:45 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
 Cc:     jlayton@kernel.org, vshankar@redhat.com, mchangir@redhat.com,
         lhenriques@suse.de, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v18 36/71] ceph: allow encrypting a directory while not having Ax caps
-Date:   Wed, 12 Apr 2023 19:08:55 +0800
-Message-Id: <20230412110930.176835-37-xiubli@redhat.com>
+Subject: [PATCH v18 37/71] ceph: mark directory as non-complete after loading key
+Date:   Wed, 12 Apr 2023 19:08:56 +0800
+Message-Id: <20230412110930.176835-38-xiubli@redhat.com>
 In-Reply-To: <20230412110930.176835-1-xiubli@redhat.com>
 References: <20230412110930.176835-1-xiubli@redhat.com>
 MIME-Version: 1.0
@@ -62,49 +62,150 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Luís Henriques <lhenriques@suse.de>
 
-If a client doesn't have Fx caps on a directory, it will get errors while
-trying encrypt it:
+When setting a directory's crypt context, ceph_dir_clear_complete() needs to
+be called otherwise if it was complete before, any existing (old) dentry will
+still be valid.
 
-ceph: handle_cap_grant: cap grant attempt to change fscrypt_auth on non-I_NEW inode (old len 0 new len 48)
-fscrypt (ceph, inode 1099511627812): Error -105 getting encryption context
+This patch adds a wrapper around __fscrypt_prepare_readdir() which will
+ensure a directory is marked as non-complete if key status changes.
 
-A simple way to reproduce this is to use two clients:
-
-    client1 # mkdir /mnt/mydir
-
-    client2 # ls /mnt/mydir
-
-    client1 # fscrypt encrypt /mnt/mydir
-    client1 # echo hello > /mnt/mydir/world
-
-This happens because, in __ceph_setattr(), we only initialize
-ci->fscrypt_auth if we have Ax and ceph_fill_inode() won't use the
-fscrypt_auth received if the inode state isn't I_NEW.  Fix it by allowing
-ceph_fill_inode() to also set ci->fscrypt_auth if the inode doesn't have
-it set already.
+[ xiubli: revise the commit title as Milind pointed out ]
 
 Tested-by: Luís Henriques <lhenriques@suse.de>
 Tested-by: Venky Shankar <vshankar@redhat.com>
 Signed-off-by: Luís Henriques <lhenriques@suse.de>
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/ceph/inode.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/ceph/crypto.c     | 35 +++++++++++++++++++++++++++++++++--
+ fs/ceph/crypto.h     |  6 ++++++
+ fs/ceph/dir.c        |  8 ++++----
+ fs/ceph/mds_client.c |  6 +++---
+ 4 files changed, 46 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 282c8af0a49c..e88335e05b74 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -981,7 +981,8 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
- 	__ceph_update_quota(ci, iinfo->max_bytes, iinfo->max_files);
+diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+index 5b807f8f4c69..fe47fbdaead9 100644
+--- a/fs/ceph/crypto.c
++++ b/fs/ceph/crypto.c
+@@ -277,8 +277,8 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
+ 	if (fname->name_len > NAME_MAX || fname->ctext_len > NAME_MAX)
+ 		return -EIO;
  
- #ifdef CONFIG_FS_ENCRYPTION
--	if (iinfo->fscrypt_auth_len && (inode->i_state & I_NEW)) {
-+	if (iinfo->fscrypt_auth_len &&
-+	    ((inode->i_state & I_NEW) || (ci->fscrypt_auth_len == 0))) {
- 		kfree(ci->fscrypt_auth);
- 		ci->fscrypt_auth_len = iinfo->fscrypt_auth_len;
- 		ci->fscrypt_auth = iinfo->fscrypt_auth;
+-	ret = __fscrypt_prepare_readdir(fname->dir);
+-	if (ret)
++	ret = ceph_fscrypt_prepare_readdir(fname->dir);
++	if (ret < 0)
+ 		return ret;
+ 
+ 	/*
+@@ -323,3 +323,34 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
+ 	fscrypt_fname_free_buffer(&_tname);
+ 	return ret;
+ }
++
++/**
++ * ceph_fscrypt_prepare_readdir - simple __fscrypt_prepare_readdir() wrapper
++ * @dir: directory inode for readdir prep
++ *
++ * Simple wrapper around __fscrypt_prepare_readdir() that will mark directory as
++ * non-complete if this call results in having the directory unlocked.
++ *
++ * Returns:
++ *     1 - if directory was locked and key is now loaded (i.e. dir is unlocked)
++ *     0 - if directory is still locked
++ *   < 0 - if __fscrypt_prepare_readdir() fails
++ */
++int ceph_fscrypt_prepare_readdir(struct inode *dir)
++{
++	bool had_key = fscrypt_has_encryption_key(dir);
++	int err;
++
++	if (!IS_ENCRYPTED(dir))
++		return 0;
++
++	err = __fscrypt_prepare_readdir(dir);
++	if (err)
++		return err;
++	if (!had_key && fscrypt_has_encryption_key(dir)) {
++		/* directory just got unlocked, mark it as not complete */
++		ceph_dir_clear_complete(dir);
++		return 1;
++	}
++	return 0;
++}
+diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
+index 05db33f1a421..f8d5f33f708a 100644
+--- a/fs/ceph/crypto.h
++++ b/fs/ceph/crypto.h
+@@ -94,6 +94,7 @@ static inline void ceph_fname_free_buffer(struct inode *parent, struct fscrypt_s
+ 
+ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
+ 			struct fscrypt_str *oname, bool *is_nokey);
++int ceph_fscrypt_prepare_readdir(struct inode *dir);
+ 
+ #else /* CONFIG_FS_ENCRYPTION */
+ 
+@@ -147,6 +148,11 @@ static inline int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscry
+ 	oname->len = fname->name_len;
+ 	return 0;
+ }
++
++static inline int ceph_fscrypt_prepare_readdir(struct inode *dir)
++{
++	return 0;
++}
+ #endif /* CONFIG_FS_ENCRYPTION */
+ 
+ #endif
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index adf44d99d120..4746e53bdf51 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -343,8 +343,8 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+ 		ctx->pos = 2;
+ 	}
+ 
+-	err = fscrypt_prepare_readdir(inode);
+-	if (err)
++	err = ceph_fscrypt_prepare_readdir(inode);
++	if (err < 0)
+ 		return err;
+ 
+ 	spin_lock(&ci->i_ceph_lock);
+@@ -784,8 +784,8 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
+ 		return ERR_PTR(-ENAMETOOLONG);
+ 
+ 	if (IS_ENCRYPTED(dir)) {
+-		err = __fscrypt_prepare_readdir(dir);
+-		if (err)
++		err = ceph_fscrypt_prepare_readdir(dir);
++		if (err < 0)
+ 			return ERR_PTR(err);
+ 		if (!fscrypt_has_encryption_key(dir)) {
+ 			spin_lock(&dentry->d_lock);
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index cc5342a7f40e..d1dcd6cfaeba 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2557,8 +2557,8 @@ static u8 *get_fscrypt_altname(const struct ceph_mds_request *req, u32 *plen)
+ 	if (!IS_ENCRYPTED(dir))
+ 		goto success;
+ 
+-	ret = __fscrypt_prepare_readdir(dir);
+-	if (ret)
++	ret = ceph_fscrypt_prepare_readdir(dir);
++	if (ret < 0)
+ 		return ERR_PTR(ret);
+ 
+ 	/* No key? Just ignore it. */
+@@ -2674,7 +2674,7 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase, int for
+ 			spin_unlock(&cur->d_lock);
+ 			parent = dget_parent(cur);
+ 
+-			ret = __fscrypt_prepare_readdir(d_inode(parent));
++			ret = ceph_fscrypt_prepare_readdir(d_inode(parent));
+ 			if (ret < 0) {
+ 				dput(parent);
+ 				dput(cur);
 -- 
 2.39.2
 
