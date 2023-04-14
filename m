@@ -2,62 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 110766E08E6
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Apr 2023 10:28:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE7776E1A67
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Apr 2023 04:42:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229610AbjDMI16 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 13 Apr 2023 04:27:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34150 "EHLO
+        id S229577AbjDNCm0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 13 Apr 2023 22:42:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229548AbjDMI16 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 13 Apr 2023 04:27:58 -0400
-X-Greylist: delayed 471 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 13 Apr 2023 01:27:54 PDT
-Received: from mail.duneaton.pl (mail.duneaton.pl [51.195.200.134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D14EC98
-        for <ceph-devel@vger.kernel.org>; Thu, 13 Apr 2023 01:27:54 -0700 (PDT)
-Received: by mail.duneaton.pl (Postfix, from userid 1002)
-        id 2ED5F24A8C; Thu, 13 Apr 2023 08:16:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=duneaton.pl; s=mail;
-        t=1681373839; bh=w09dBsCwk4ofNwR3wR3IGm3JJemrD5uAJJHAYB2M7XI=;
-        h=Date:From:To:Subject:From;
-        b=icAQQjbzFCrLn9rqGEnx73X+qcwwen3uY8pgg+r4k1eAMYmHTdLnaEJxDmQGnuLb7
-         /PBHskZ14FxfoK7nVt9c6XzsgYxlVO+zCHOYSVXPh5Kg5c7AXtaLE5blY29bVdDdEw
-         IJ+zj1EZGHSFWBIPD9zZSRSDbxYf8cFIpwma2asaXk8ji5Rv9Es8zv0l3KSK80dvBB
-         t3tjpzmwCoM64GoOjR+iV2fXKnRnfkjMfib+/CVFSKNmc6Im7J1JMJOQKyiv+iUQ2a
-         jGVWGAPFRymxUmlkL/7mJRFs3UDRyHsRv9wJIfuIXsZeGQrpQ9trO6oTQGFBD7OC7z
-         iq6e6d5BjIWmQ==
-Received: by mail.duneaton.pl for <ceph-devel@vger.kernel.org>; Thu, 13 Apr 2023 08:16:06 GMT
-Message-ID: <20230413064500-0.1.62.xz5h.0.3z92r7nom4@duneaton.pl>
-Date:   Thu, 13 Apr 2023 08:16:06 GMT
-From:   =?UTF-8?Q? "Marcin_Seku=C5=82a" ?= <marcin.sekula@duneaton.pl>
-To:     <ceph-devel@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.duneaton.pl
+        with ESMTP id S229457AbjDNCmZ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 13 Apr 2023 22:42:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BE3E12E
+        for <ceph-devel@vger.kernel.org>; Thu, 13 Apr 2023 19:41:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1681440100;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=y6ditWs4JzErEXvsdo9zUGkxKuaELZkB/oSNNnzgxms=;
+        b=EzbD97nfQ5q/2T4iemTpZ+wen2CzZQQhgNxesLmmU0jLpr8DMDAkZJ5Aq008Z69YqIZni4
+        fpS3n2ugaUYwv4N10rtzqywsyh9pcSV32+JnbN/GyG9ZnAm2oKqezFg3N4bP0Ih4xkAYsb
+        Nx2NJGpVm6BKsECRvdND16RfPo4+oKI=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-82-J54qgVVEMhq3l1xXlTX4iw-1; Thu, 13 Apr 2023 22:41:36 -0400
+X-MC-Unique: J54qgVVEMhq3l1xXlTX4iw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8ABF78996E3;
+        Fri, 14 Apr 2023 02:41:36 +0000 (UTC)
+Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-157.pek2.redhat.com [10.72.12.157])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 88438405DBB6;
+        Fri, 14 Apr 2023 02:41:30 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
+Cc:     jlayton@kernel.org, vshankar@redhat.com, mchangir@redhat.com,
+        Xiubo Li <xiubli@redhat.com>, stable@vger.kernel.org
+Subject: [PATCH] ceph: do not touch cap when trimming the caps
+Date:   Fri, 14 Apr 2023 10:41:23 +0800
+Message-Id: <20230414024123.263120-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dzie=C5=84 dobry,
+From: Xiubo Li <xiubli@redhat.com>
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+When trimming the caps it maybe queued to release in the next loop,
+and just after the 'session->s_cap_lock' lock is released the
+'session->s_cap_iterator' will be set to NULL and the cap also has
+been removed from 'session->s_caps' list, then the '__touch_cap()'
+could continue and add the cap back to the 'session->s_caps' list.
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+That means this cap could be iterated twice to call 'trim_caps_cb()'
+and the second time will trigger use-after-free bug.
 
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
+Cc: stable@vger.kernel.org
+URL: https://bugzilla.redhat.com/show_bug.cgi?id=2186264
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/caps.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index cf29e395af23..186c9818ab0d 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -846,7 +846,7 @@ static void __touch_cap(struct ceph_cap *cap)
+ 	struct ceph_mds_session *s = cap->session;
+ 
+ 	spin_lock(&s->s_cap_lock);
+-	if (!s->s_cap_iterator) {
++	if (!s->s_cap_iterator && !list_empty(&cap->session_caps) && !cap->queue_release) {
+ 		dout("__touch_cap %p cap %p mds%d\n", &cap->ci->netfs.inode, cap,
+ 		     s->s_mds);
+ 		list_move_tail(&cap->session_caps, &s->s_caps);
+-- 
+2.39.1
 
-Pozdrawiam
-Marcin Seku=C5=82a
