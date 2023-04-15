@@ -2,121 +2,107 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F2F056E1B0F
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Apr 2023 06:29:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C31156E333E
+	for <lists+ceph-devel@lfdr.de>; Sat, 15 Apr 2023 21:06:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229618AbjDNE3W (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 Apr 2023 00:29:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56636 "EHLO
+        id S229796AbjDOTGO (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 15 Apr 2023 15:06:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229540AbjDNE3U (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 Apr 2023 00:29:20 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F8844B2
-        for <ceph-devel@vger.kernel.org>; Thu, 13 Apr 2023 21:28:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681446512;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nupoZ/NBqH5ZbvoXope7ANgV6bto6D/JxRLpEXNNT/E=;
-        b=Sz8VQ4H012EklriQyYA5FdUHUHvQRvQXYGJJE3/IBrV704hjhumuB82z+LWX22BziDLLWQ
-        F7JugfKHIulDHrpv05SgJOcrYM2d9vDpTBDP+BrQpy1d0sjQI5GPJ1xpNKuRjkWAkQQXEX
-        TJE6GWvIqgPSTVueHOERq6A6RQpz76o=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-223-fhpXLT6VPFq9R_bLehAG6Q-1; Fri, 14 Apr 2023 00:28:31 -0400
-X-MC-Unique: fhpXLT6VPFq9R_bLehAG6Q-1
-Received: by mail-pg1-f198.google.com with SMTP id k191-20020a6384c8000000b0051b6cf91f74so432481pgd.2
-        for <ceph-devel@vger.kernel.org>; Thu, 13 Apr 2023 21:28:30 -0700 (PDT)
+        with ESMTP id S229853AbjDOTGL (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 15 Apr 2023 15:06:11 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5491E35AF
+        for <ceph-devel@vger.kernel.org>; Sat, 15 Apr 2023 12:06:09 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id k15so4416540ljq.4
+        for <ceph-devel@vger.kernel.org>; Sat, 15 Apr 2023 12:06:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1681585567; x=1684177567;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=aYAe4DL6BBolNtAJv/zYI4HfX4uQZVgW355DYethIwg=;
+        b=ZO9jqRsz2Jf7ClhdUkxEsuDvIPdfbTLYusVFDerqZVIbdWDTrY0NPNy3q4AG2VzEWH
+         gtnmOmok6gaL55Ii3jSUKoh+OrXXsv43IE5SpvGpX/Bhrn2fvOFVXTQZbTIyCbkBRB+y
+         SAFDwSJGR52xvwHI75hQfkMYWyijW90jPM5f5h+1irWW/B4O5xN3Ev6p2DUS+zN4iulI
+         zgNtjq7AbqjZk6XEPQY5p0pLwMdus5duWmPQ5y37I55t8Zvepuy7EtEt25XpydiziRNL
+         SMvkwQo9V64Omb4aO9vINhTafqg9y1dkLp/EOpCtTBfWDUCpKzKYgQvrteWBBgfGqJ/G
+         WikQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681446510; x=1684038510;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nupoZ/NBqH5ZbvoXope7ANgV6bto6D/JxRLpEXNNT/E=;
-        b=MarOxKZ3qBrHFWO66QfgUFoWgkdlx2tJ4VxidGy/fxN/WDofNnpus0PVyTGgADVC6A
-         9/1XDUrsJg8tj///z8Dqpto1NxwhIp4+iAb1e/bcNK1vvfYifbT5uYOWMQMGHuUnSMdm
-         ww0nI7UcCV1Rd+XG+zZpWTBgyls1tcSlM/7N2pO7IDdJD5nxsBuJbflosGLajMVx7MK+
-         Vksokph4xEP+aBEJYIVMCF+H+P9FQVGWjRRdlu2hJ8hfkyQ3c8GVaVM6gbfnhnY6jKI7
-         oxUbdV+OQiAW8NABbLLbmjgLAZ2BlxCRbdN26rm10VfyLMsGru5oeerYLl0XPAkZtyM0
-         5tLQ==
-X-Gm-Message-State: AAQBX9dEXogXOApO/huzq075XonegtF1unjuW8ouiY/BUrj/YQffYevK
-        LNnbEeC9ZYLT/VDrOq9USCeT6ivOo9fBrWXb/hOpp0pTA4l0Xe16ZXfnyBFe1VlMe9a1zda/tqo
-        htyRM3eIlyIFVnsCoGq0RpA==
-X-Received: by 2002:a17:90a:4598:b0:247:471:143b with SMTP id v24-20020a17090a459800b002470471143bmr4015600pjg.26.1681446510156;
-        Thu, 13 Apr 2023 21:28:30 -0700 (PDT)
-X-Google-Smtp-Source: AKy350bdpV+1o2F1sLfVCVTgt5LjrBPEPywyWBSeporUhxdEiBKvEAB6qhYC8dfDOKcsaQ84ctwU7w==
-X-Received: by 2002:a17:90a:4598:b0:247:471:143b with SMTP id v24-20020a17090a459800b002470471143bmr4015590pjg.26.1681446509881;
-        Thu, 13 Apr 2023 21:28:29 -0700 (PDT)
-Received: from [10.72.12.157] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id r10-20020a63d90a000000b0051b72ef978fsm183355pgg.20.2023.04.13.21.28.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Apr 2023 21:28:29 -0700 (PDT)
-Message-ID: <9cfedcd7-f7f8-60b2-e362-872b29e387de@redhat.com>
-Date:   Fri, 14 Apr 2023 12:28:23 +0800
+        d=1e100.net; s=20221208; t=1681585567; x=1684177567;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aYAe4DL6BBolNtAJv/zYI4HfX4uQZVgW355DYethIwg=;
+        b=KGuDlEZ93wy1JO1ISy+FAW9wxNlQTDR+FH2SbYbkFf/yHWyqJXTR/+Hcx+/woTxocB
+         wbaLDE0kf8aMQy7VCGVqveFOGvH79W8edVzQINe0xYiOH/hAeNd8QvrAawEdCCTKJa6F
+         6uzot491K2rooUfYwTbjuwW8tf+yV1tli+wlwBpxaNVNsCONJVgQfWxrDZr42ahkzrWq
+         d9z5glFzXLGIKL9CVjF1lx4ZMsQck3MDRIjiIkrOclWhVR+PxuP7o8/Qq0J2/U8yrAL2
+         +ESyOcG73mwsp8HoXAN1U6JDkzG79AbNgJunORSNQsd1Ki2x5vZDWfrUdD0UWmETMdpw
+         t0Vg==
+X-Gm-Message-State: AAQBX9fUsZNu9Qt2179vA/zuOtxgrnbh6iXMpxdqmBRDva2VGxY5iQuX
+        1Q+4wSRR2pmb+P4nPuPlzffH/AVw0Cus/3pC2+Q=
+X-Google-Smtp-Source: AKy350b0UvWfge+Z5NGOcoSWSNynwRqbsvgJsMMH8PpAhy/qqJcochS2s4KGwztSI9ruZqHy5f8S9CWinvEO0nZl1as=
+X-Received: by 2002:a2e:9d55:0:b0:2a7:6dd3:ccdb with SMTP id
+ y21-20020a2e9d55000000b002a76dd3ccdbmr3015245ljj.0.1681585567371; Sat, 15 Apr
+ 2023 12:06:07 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [PATCH] ceph: do not touch cap when trimming the caps
-Content-Language: en-US
-To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-Cc:     jlayton@kernel.org, vshankar@redhat.com, mchangir@redhat.com,
-        stable@vger.kernel.org
-References: <20230414024123.263120-1-xiubli@redhat.com>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20230414024123.263120-1-xiubli@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:a2e:9850:0:b0:2a8:b675:9bbd with HTTP; Sat, 15 Apr 2023
+ 12:06:06 -0700 (PDT)
+From:   "Aim Express Securities Inc." <aim.expresssecurities@gmail.com>
+Date:   Sat, 15 Apr 2023 12:06:06 -0700
+Message-ID: <CADw8qP097E_rOKBhELFHN9aGNrZsfB7D2iRL+gvgiut-yP6mrw@mail.gmail.com>
+Subject: Good Business Proposal.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=4.0 required=5.0 tests=ADVANCE_FEE_5_NEW_MONEY,
+        BAYES_00,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_FROM,LOTS_OF_MONEY,MONEY_FRAUD_8,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_MONEY_PERCENT,UNDISC_MONEY autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+STRICTLY CONFIDENTIAL
 
-On 4/14/23 10:41, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
->
-> When trimming the caps it maybe queued to release in the next loop,
-> and just after the 'session->s_cap_lock' lock is released the
-> 'session->s_cap_iterator' will be set to NULL and the cap also has
-> been removed from 'session->s_caps' list, then the '__touch_cap()'
-> could continue and add the cap back to the 'session->s_caps' list.
->
-> That means this cap could be iterated twice to call 'trim_caps_cb()'
-> and the second time will trigger use-after-free bug.
->
-> Cc: stable@vger.kernel.org
-> URL: https://bugzilla.redhat.com/show_bug.cgi?id=2186264
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->   fs/ceph/caps.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index cf29e395af23..186c9818ab0d 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -846,7 +846,7 @@ static void __touch_cap(struct ceph_cap *cap)
->   	struct ceph_mds_session *s = cap->session;
->   
->   	spin_lock(&s->s_cap_lock);
-> -	if (!s->s_cap_iterator) {
-> +	if (!s->s_cap_iterator && !list_empty(&cap->session_caps) && !cap->queue_release) {
+TRANSFER OF US$35,500.000.00
 
-Comment it myself.
+We are making this contact with you after satisfactory information
+gathered from the Nigerian Chamber of Commerce. Based on this, we are
+convinced that you will provide us with a solution to effect
+remittance of the sum of $35,500.000.00 resulting from over costing of
+job/services done for the Nigerian National Petroleum Corporation
+(NNPC), by foreign companies.
 
-The s_cap_iterator will always be true during trimming the caps. So this 
-check here is incorrect.
+We are top officials of NNPC. We evaluate and secure approvals for
+payment of contracts executed for NNPC. We have tactfully raised
+values to a foreign company for onward disbursement among ourselves
+the Director of Accounts/Finance and Director of Audit. This
+transaction is 100% safe. We are seeking your assistance and
+permission to remit this amount into your account.
 
->   		dout("__touch_cap %p cap %p mds%d\n", &cap->ci->netfs.inode, cap,
->   		     s->s_mds);
->   		list_move_tail(&cap->session_caps, &s->s_caps);
+We have agreed to give you 25% of the total value, while our share
+will be70%. The remaining 5% will be used as refund by both sides to
+off set the cost that must be incurred in the areas of public
+relations, engaging of legal practitioner as attorney, taxation and
+other incidentals in the course of securing the legitimate release of
+the fund into your account.
 
+Please indicate your acceptance to carry out this transaction urgently
+on receipt of this letter. I shall in turn inform you of the
+modalities for a formal application to secure the necessary approvals
+for the immediate legitimate release of this fund into your account.
+
+Please understand that this transaction must be held in absolute
+privacy and confidentiality.Please respond if you are
+
+interested through my alternative address:
+
+
+Thanks for your co-operations.
+
+
+Yours faithfully,
+Mr.Lambert Gwazo
