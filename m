@@ -2,54 +2,69 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D4836E3E48
-	for <lists+ceph-devel@lfdr.de>; Mon, 17 Apr 2023 05:36:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7DEA6E3E6C
+	for <lists+ceph-devel@lfdr.de>; Mon, 17 Apr 2023 06:19:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230394AbjDQDgk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 16 Apr 2023 23:36:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52898 "EHLO
+        id S229757AbjDQESx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 17 Apr 2023 00:18:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230296AbjDQDgR (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 16 Apr 2023 23:36:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AECE4C21
-        for <ceph-devel@vger.kernel.org>; Sun, 16 Apr 2023 20:33:32 -0700 (PDT)
+        with ESMTP id S229640AbjDQESr (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 17 Apr 2023 00:18:47 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F22A42716
+        for <ceph-devel@vger.kernel.org>; Sun, 16 Apr 2023 21:18:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681702405;
+        s=mimecast20190719; t=1681705079;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=yu7gf8xWcAldAFS01M0YAQCprE2DqFfADWe3S2lo3P0=;
-        b=ULxR+McPay5UuVIoXNkjJeq2qegwOA0Yz/87P31ZyksPvCMLPVwTiAQDfba84jiuLjtal+
-        m3VsPDHVAfW4HVtA+OHSR6IqBBl6mua/lSVfC6hRM4CGrqIfn8P/7TibpgyePqH0qLMp4b
-        wlx2TZY+vZi6w6ALxJBAVeAIb0GxYfY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-536-5AOGCXkMPJKTiLMmbgT0tg-1; Sun, 16 Apr 2023 23:33:14 -0400
-X-MC-Unique: 5AOGCXkMPJKTiLMmbgT0tg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A6FE2857FB3;
-        Mon, 17 Apr 2023 03:33:13 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-181.pek2.redhat.com [10.72.12.181])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EB3C8202717C;
-        Mon, 17 Apr 2023 03:33:09 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-Cc:     jlayton@kernel.org, vshankar@redhat.com, lhenriques@suse.de,
-        mchangir@redhat.com, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v19 70/70] ceph: switch ceph_open_atomic() to use the new fscrypt helper
-Date:   Mon, 17 Apr 2023 11:26:54 +0800
-Message-Id: <20230417032654.32352-71-xiubli@redhat.com>
-In-Reply-To: <20230417032654.32352-1-xiubli@redhat.com>
-References: <20230417032654.32352-1-xiubli@redhat.com>
+        bh=gTKZwDH0IFVf7f2p+Aqnass2h7qOP94Q4Xm+kge/09I=;
+        b=QtWthj5emDTj2WBYNqCdZYiczfdmzCWuQ7joig5vOB0i+hlMbjTXEcZpHVMeeNA0hDaeMD
+        HQzQfR/M8I1vUvbkUPpk/fZmyd6P2VHKE3uw0+Ian+sTiDaNxdPFRw1hmnpA+4FTRZaDFf
+        r5g8qB23dSL7bgxWqerwUIUnDWq2TGo=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-171-mZXQcTXdOi2ND2e8LxNExQ-1; Mon, 17 Apr 2023 00:17:58 -0400
+X-MC-Unique: mZXQcTXdOi2ND2e8LxNExQ-1
+Received: by mail-pl1-f200.google.com with SMTP id m20-20020a170902c45400b001a641823abdso10315699plm.18
+        for <ceph-devel@vger.kernel.org>; Sun, 16 Apr 2023 21:17:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1681705077; x=1684297077;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gTKZwDH0IFVf7f2p+Aqnass2h7qOP94Q4Xm+kge/09I=;
+        b=YvInLKYIkfO6blnsaDF/l/OjjR0hqQxj3HbX/N1GqAAyHuX4aJQY364idVYPLgT/lf
+         7smL2w6OVZikMilp3b74h42hUhkk/v+mV2COQR3+Xnf9UE71OaQwMGsn8XXhgU1KU5yB
+         1hZBuu1rDH7QljonBgIRQed4gl74yKsuOzijJrWJBbd7vERZoxmcJXMmIlDxmZKg7OgW
+         VdPJYN1YVioy2dBzrFcaDC3j5PJ3x/ASTmbtupHSOWU4+48HYYCkfJtXzBdI3c2wWS05
+         UbhEXzROwr4L8k0QkjyhHroyksMtCSC5nkm3k4xCuxKuWms/BaFJZLqh/X6u7yhsE+eZ
+         69/A==
+X-Gm-Message-State: AAQBX9eHdZgdgCcXE/tgXGV0BimB3vM7f+8gCT/uP7t7QZKKUb/BTq7m
+        EGjYm1kXg4l4ETG9+yLAz+i7uhGcPr+2viX8mMl4NvAY3JTBib+YpcQ2ShIZRR18HkJ73jHyrlq
+        XNoFkNTF0v4HBTrCwPdoODQ==
+X-Received: by 2002:a17:902:d508:b0:1a6:8548:e0ac with SMTP id b8-20020a170902d50800b001a68548e0acmr10761457plg.34.1681705077152;
+        Sun, 16 Apr 2023 21:17:57 -0700 (PDT)
+X-Google-Smtp-Source: AKy350ZbKjyLtyvNF+IoVxnJ78aDG00iKDfpupyVF+feaHzci55dnAf9h4gXD1Bb9MojQnYAr2r5sg==
+X-Received: by 2002:a17:902:d508:b0:1a6:8548:e0ac with SMTP id b8-20020a170902d50800b001a68548e0acmr10761445plg.34.1681705076791;
+        Sun, 16 Apr 2023 21:17:56 -0700 (PDT)
+Received: from zlang-mailbox ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id m7-20020a1709026bc700b0019a5aa7eab0sm6582990plt.54.2023.04.16.21.17.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Apr 2023 21:17:56 -0700 (PDT)
+Date:   Mon, 17 Apr 2023 12:17:52 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     xiubli@redhat.com
+Cc:     fstests@vger.kernel.org, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH] common/rc: skip ceph when atime is required
+Message-ID: <20230417041752.lryihlt7atnljfzo@zlang-mailbox>
+References: <20230417024134.30560-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230417024134.30560-1-xiubli@redhat.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
@@ -60,41 +75,42 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Luís Henriques <lhenriques@suse.de>
+On Mon, Apr 17, 2023 at 10:41:34AM +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> Ceph won't maintain the atime, so just skip the tests when the atime
+> is required.
+> 
+> URL: https://tracker.ceph.com/issues/53844
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  common/rc | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/common/rc b/common/rc
+> index 90749343..3238842e 100644
+> --- a/common/rc
+> +++ b/common/rc
+> @@ -3999,6 +3999,9 @@ _require_atime()
+>  	nfs|cifs|virtiofs)
+>  		_notrun "atime related mount options have no effect on $FSTYP"
+>  		;;
+> +	ceph)
+> +                _notrun "atime not maintained by $FSTYP"
 
-Switch ceph_atomic_open() to use new fscrypt helper function
-fscrypt_prepare_lookup_partial().  This fixes a bug in the atomic open
-operation where a dentry is incorrectly set with DCACHE_NOKEY_NAME when
-'dir' has been evicted but the key is still available (for example, where
-there's a drop_caches).
+Make sense to me. I'll change this line a bit when I merge it, to keep the line
+aligned (with above).
 
-Tested-by: Luís Henriques <lhenriques@suse.de>
-Tested-by: Venky Shankar <vshankar@redhat.com>
-Signed-off-by: Luís Henriques <lhenriques@suse.de>
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/file.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+Reviewed-by: Zorro Lang <zlang@redhat.com>
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 317087ea017e..9e74ed673f93 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -791,11 +791,9 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 	ihold(dir);
- 	if (IS_ENCRYPTED(dir)) {
- 		set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
--		if (!fscrypt_has_encryption_key(dir)) {
--			spin_lock(&dentry->d_lock);
--			dentry->d_flags |= DCACHE_NOKEY_NAME;
--			spin_unlock(&dentry->d_lock);
--		}
-+		err = fscrypt_prepare_lookup_partial(dir, dentry);
-+		if (err < 0)
-+			goto out_req;
- 	}
- 
- 	if (flags & O_CREAT) {
--- 
-2.39.1
+Thanks,
+Zorro
+
+> +		;;
+>  	esac
+>  
+>  }
+> -- 
+> 2.39.1
+> 
 
