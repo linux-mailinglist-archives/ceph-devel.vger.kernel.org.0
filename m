@@ -2,48 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1086A6E3E3B
-	for <lists+ceph-devel@lfdr.de>; Mon, 17 Apr 2023 05:35:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B3076E3E3C
+	for <lists+ceph-devel@lfdr.de>; Mon, 17 Apr 2023 05:35:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230284AbjDQDfT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 16 Apr 2023 23:35:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47762 "EHLO
+        id S230339AbjDQDfb (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 16 Apr 2023 23:35:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230347AbjDQDez (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 16 Apr 2023 23:34:55 -0400
+        with ESMTP id S230414AbjDQDfE (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 16 Apr 2023 23:35:04 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4642A55A1
-        for <ceph-devel@vger.kernel.org>; Sun, 16 Apr 2023 20:32:17 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 833F3CA
+        for <ceph-devel@vger.kernel.org>; Sun, 16 Apr 2023 20:32:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681702334;
+        s=mimecast20190719; t=1681702341;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=0r6X3VfacWQMyXof3gXHCJiAq+eVDB7w3YWa2FdX2zo=;
-        b=S5ZkXEXWpTGV6EkIetE2UyrSLcbrcXCGUmt1zFOvk9iV1eWdT5a5rCjb8AUq3nRS4aLbgb
-        SGXUh9xRcPXZ9MQRy5Fw+SBmL2zTXu8VnHpWNVMPETA3NA5EPtHYcfGQuRo1NqSQmCdC9G
-        lEBfFwS6jwYlOmSUPoJ0XTjC/LM4N+k=
+        bh=zcrotDnzvZWOzxuz76BdJi6rSlZjDMCflVAptkCopyk=;
+        b=burgzvrkBqeQbN9nNmsCpcpoGjP94O2QqFP0qL6QYrp0zWOz84HP+h3TGQK8TScYdGqxts
+        H6QbpUsXMqB8dYBKuyGIJ6EUM8YVkisE7qUaT6qSyvY0tkUIWf2p8RRkxyF37wNlRgfTjn
+        gjPQpWROjOnl8f47N81V6a5Dzu7C75k=
 Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
  [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-336-uX3yIAPhN_WFnzZ8uqYe_w-1; Sun, 16 Apr 2023 23:32:11 -0400
-X-MC-Unique: uX3yIAPhN_WFnzZ8uqYe_w-1
+ us-mta-226-VvVIM_85Mj2k2Es5c5LOUA-1; Sun, 16 Apr 2023 23:32:15 -0400
+X-MC-Unique: VvVIM_85Mj2k2Es5c5LOUA-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E56781C09504;
-        Mon, 17 Apr 2023 03:32:10 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 709A03C10145;
+        Mon, 17 Apr 2023 03:32:15 +0000 (UTC)
 Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-181.pek2.redhat.com [10.72.12.181])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D4A9C2027144;
-        Mon, 17 Apr 2023 03:32:06 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AD51B2027044;
+        Mon, 17 Apr 2023 03:32:11 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
 Cc:     jlayton@kernel.org, vshankar@redhat.com, lhenriques@suse.de,
         mchangir@redhat.com, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v19 58/70] ceph: set i_blkbits to crypto block size for encrypted inodes
-Date:   Mon, 17 Apr 2023 11:26:42 +0800
-Message-Id: <20230417032654.32352-59-xiubli@redhat.com>
+Subject: [PATCH v19 59/70] ceph: add encryption support to writepage
+Date:   Mon, 17 Apr 2023 11:26:43 +0800
+Message-Id: <20230417032654.32352-60-xiubli@redhat.com>
 In-Reply-To: <20230417032654.32352-1-xiubli@redhat.com>
 References: <20230417032654.32352-1-xiubli@redhat.com>
 MIME-Version: 1.0
@@ -62,8 +62,9 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Jeff Layton <jlayton@kernel.org>
 
-Some of the underlying infrastructure for fscrypt relies on i_blkbits
-being aligned to the crypto blocksize.
+Allow writepage to issue encrypted writes. Extend out the requested size
+and offset to cover complete blocks, and then encrypt and write them to
+the OSDs.
 
 Tested-by: Luís Henriques <lhenriques@suse.de>
 Tested-by: Venky Shankar <vshankar@redhat.com>
@@ -71,43 +72,93 @@ Reviewed-by: Luís Henriques <lhenriques@suse.de>
 Reviewed-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/inode.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ fs/ceph/addr.c | 37 +++++++++++++++++++++++++++++--------
+ 1 file changed, 29 insertions(+), 8 deletions(-)
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 50664f7b18e3..bf05110f8532 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -976,13 +976,6 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
- 	issued |= __ceph_caps_dirty(ci);
- 	new_issued = ~issued & info_caps;
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index f8d94ff4f19d..b47de8891efc 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -601,10 +601,12 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+ 	loff_t page_off = page_offset(page);
+ 	int err;
+ 	loff_t len = thp_size(page);
++	loff_t wlen;
+ 	struct ceph_writeback_ctl ceph_wbc;
+ 	struct ceph_osd_client *osdc = &fsc->client->osdc;
+ 	struct ceph_osd_request *req;
+ 	bool caching = ceph_is_cache_enabled(inode);
++	struct page *bounce_page = NULL;
  
--	/* directories have fl_stripe_unit set to zero */
--	if (le32_to_cpu(info->layout.fl_stripe_unit))
--		inode->i_blkbits =
--			fls(le32_to_cpu(info->layout.fl_stripe_unit)) - 1;
--	else
--		inode->i_blkbits = CEPH_BLOCK_SHIFT;
--
- 	__ceph_update_quota(ci, iinfo->max_bytes, iinfo->max_files);
+ 	dout("writepage %p idx %lu\n", page, page->index);
  
- #ifdef CONFIG_FS_ENCRYPTION
-@@ -1009,6 +1002,15 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
- 		ceph_decode_timespec64(&ci->i_snap_btime, &iinfo->snap_btime);
+@@ -640,31 +642,50 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+ 	if (ceph_wbc.i_size < page_off + len)
+ 		len = ceph_wbc.i_size - page_off;
+ 
++	wlen = IS_ENCRYPTED(inode) ? round_up(len, CEPH_FSCRYPT_BLOCK_SIZE) : len;
+ 	dout("writepage %p page %p index %lu on %llu~%llu snapc %p seq %lld\n",
+-	     inode, page, page->index, page_off, len, snapc, snapc->seq);
++	     inode, page, page->index, page_off, wlen, snapc, snapc->seq);
+ 
+ 	if (atomic_long_inc_return(&fsc->writeback_count) >
+ 	    CONGESTION_ON_THRESH(fsc->mount_options->congestion_kb))
+ 		fsc->write_congested = true;
+ 
+-	req = ceph_osdc_new_request(osdc, &ci->i_layout, ceph_vino(inode), page_off, &len, 0, 1,
+-				    CEPH_OSD_OP_WRITE, CEPH_OSD_FLAG_WRITE, snapc,
+-				    ceph_wbc.truncate_seq, ceph_wbc.truncate_size,
+-				    true);
++	req = ceph_osdc_new_request(osdc, &ci->i_layout, ceph_vino(inode),
++				    page_off, &wlen, 0, 1, CEPH_OSD_OP_WRITE,
++				    CEPH_OSD_FLAG_WRITE, snapc,
++				    ceph_wbc.truncate_seq,
++				    ceph_wbc.truncate_size, true);
+ 	if (IS_ERR(req)) {
+ 		redirty_page_for_writepage(wbc, page);
+ 		return PTR_ERR(req);
  	}
  
-+	/* directories have fl_stripe_unit set to zero */
-+	if (IS_ENCRYPTED(inode))
-+		inode->i_blkbits = CEPH_FSCRYPT_BLOCK_SHIFT;
-+	else if (le32_to_cpu(info->layout.fl_stripe_unit))
-+		inode->i_blkbits =
-+			fls(le32_to_cpu(info->layout.fl_stripe_unit)) - 1;
-+	else
-+		inode->i_blkbits = CEPH_BLOCK_SHIFT;
++	if (wlen < len)
++		len = wlen;
 +
- 	if ((new_version || (new_issued & CEPH_CAP_LINK_SHARED)) &&
- 	    (issued & CEPH_CAP_LINK_EXCL) == 0)
- 		set_nlink(inode, le32_to_cpu(info->nlink));
+ 	set_page_writeback(page);
+ 	if (caching)
+ 		ceph_set_page_fscache(page);
+ 	ceph_fscache_write_to_cache(inode, page_off, len, caching);
+ 
++	if (IS_ENCRYPTED(inode)) {
++		bounce_page = fscrypt_encrypt_pagecache_blocks(page, CEPH_FSCRYPT_BLOCK_SIZE,
++								0, GFP_NOFS);
++		if (IS_ERR(bounce_page)) {
++			redirty_page_for_writepage(wbc, page);
++			end_page_writeback(page);
++			ceph_osdc_put_request(req);
++			return PTR_ERR(bounce_page);
++		}
++	}
++
+ 	/* it may be a short write due to an object boundary */
+ 	WARN_ON_ONCE(len > thp_size(page));
+-	osd_req_op_extent_osd_data_pages(req, 0, &page, len, 0, false, false);
+-	dout("writepage %llu~%llu (%llu bytes)\n", page_off, len, len);
++	osd_req_op_extent_osd_data_pages(req, 0,
++			bounce_page ? &bounce_page : &page, wlen, 0,
++			false, false);
++	dout("writepage %llu~%llu (%llu bytes, %sencrypted)\n",
++	     page_off, len, wlen, IS_ENCRYPTED(inode) ? "" : "not ");
+ 
+ 	req->r_mtime = inode->i_mtime;
+ 	ceph_osdc_start_request(osdc, req);
+@@ -672,7 +693,7 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+ 
+ 	ceph_update_write_metrics(&fsc->mdsc->metric, req->r_start_latency,
+ 				  req->r_end_latency, len, err);
+-
++	fscrypt_free_bounce_page(bounce_page);
+ 	ceph_osdc_put_request(req);
+ 	if (err == 0)
+ 		err = len;
 -- 
 2.39.1
 
