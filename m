@@ -2,61 +2,61 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BEA16E5600
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Apr 2023 02:47:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BF5B6E5604
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Apr 2023 02:49:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229740AbjDRArL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 17 Apr 2023 20:47:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57464 "EHLO
+        id S229745AbjDRAt5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 17 Apr 2023 20:49:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbjDRArK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 17 Apr 2023 20:47:10 -0400
+        with ESMTP id S229517AbjDRAt5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 17 Apr 2023 20:49:57 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55E56449F
-        for <ceph-devel@vger.kernel.org>; Mon, 17 Apr 2023 17:46:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 046CA170B
+        for <ceph-devel@vger.kernel.org>; Mon, 17 Apr 2023 17:49:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681778782;
+        s=mimecast20190719; t=1681778948;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=1kBRdIQDf0Ic5mOgqQ8hzcLXk0N2+ZyD5LwxT1KPnvE=;
-        b=LT6w/jQTWxsGUgO2xja+249p9gxK7UdZ9cYuWRFDECvhYQ/UavcZek5Zt6XWESkKXVXZxX
-        fB+DrvUGoChcxtCuhj0j1IsGYdSIVGpHmX4HamCJF+NL08QSv52UDuJX5JOmpNzcGexu1c
-        DncusCzm2LBmTuVAqxm4R0j2w1KCppU=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=diHA9YEvT+NtFZqSJc3EzoJvY5r/rokVVFb6FgdV/D8=;
+        b=Dqy45OUKKMYlseLIfKAW6TrGR1bl3Ro+lfYb3MLCKHPdUrHcTXooKYTOu/A0qvA7nrCXBS
+        2eUcoKu/y+dPq+hOtCNkvPF6enRPVe5dRogT3lSdhotx6Uwl0IoaW0JVW7bR+QkUhAaQqk
+        eArAIX1en3KxfWHZMfRxo7wNGgU2DPA=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-67-xKp0aeYYMHebzWlZYVQi9A-1; Mon, 17 Apr 2023 20:46:20 -0400
-X-MC-Unique: xKp0aeYYMHebzWlZYVQi9A-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-63b86fc03fcso657485b3a.1
-        for <ceph-devel@vger.kernel.org>; Mon, 17 Apr 2023 17:46:20 -0700 (PDT)
+ us-mta-325-6Y54DJjsO--PZr_EVQvmsg-1; Mon, 17 Apr 2023 20:49:07 -0400
+X-MC-Unique: 6Y54DJjsO--PZr_EVQvmsg-1
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-517a659f877so857179a12.1
+        for <ceph-devel@vger.kernel.org>; Mon, 17 Apr 2023 17:49:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681778779; x=1684370779;
+        d=1e100.net; s=20221208; t=1681778946; x=1684370946;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1kBRdIQDf0Ic5mOgqQ8hzcLXk0N2+ZyD5LwxT1KPnvE=;
-        b=AJLpic8hx87opNCMN0NA7gzDdQn0P/xxOK0pVTzRyVMS5oRexw0IH0PkA60SmN1kKB
-         4tx4ee+qr3TolJ+KqVzC1KftkYTYj/dYoA5JSXvHjqIKOwbMjATHuezshQP7ZRdQAqgs
-         WeO6rT8Ds07oTEfoZ8PMKN0h68nopOg2JE4iWVuweVq0SG5JQYwI6gNgwjMGWDZOZ5Bm
-         4XyZkSEvQho3GheRjnyc/eFXvdV2Cwg9G/AbJnL+85qc+YgWOQBwXFOezWiBKn7lHN3/
-         M+4rVxuBY1jtedgBRrtQnolnsA88QhGigmZyNRZjORl7ZiycdVPvLG3lVZK0x18jOoIg
-         SUIQ==
-X-Gm-Message-State: AAQBX9daD/l5jdSV3l5tKH1//vk4oP8yZkoQVE5kw0xDTw+KBtS0ZPUk
-        G3V8VIdfF0yCan3AUTp2sTdrjHTV7yl0cJBAxCPL2VWOItqHKzQS2IrAVVgCEOXpi8gGf0NEzPl
-        rcUIFphSnoztK9/R/jed8/A==
-X-Received: by 2002:a05:6a00:2401:b0:626:2ce1:263c with SMTP id z1-20020a056a00240100b006262ce1263cmr22032197pfh.5.1681778779641;
-        Mon, 17 Apr 2023 17:46:19 -0700 (PDT)
-X-Google-Smtp-Source: AKy350agGn681cW74wCuJ3U3D7M89+HLHpHmPzb5KJTnDdtWP2UelPdmkLMI+M0zlxt+SfGo0uF5Vw==
-X-Received: by 2002:a05:6a00:2401:b0:626:2ce1:263c with SMTP id z1-20020a056a00240100b006262ce1263cmr22032174pfh.5.1681778779296;
-        Mon, 17 Apr 2023 17:46:19 -0700 (PDT)
-Received: from [10.72.12.132] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id e2-20020aa78c42000000b0063b7af71b61sm4727567pfd.212.2023.04.17.17.46.15
+        bh=diHA9YEvT+NtFZqSJc3EzoJvY5r/rokVVFb6FgdV/D8=;
+        b=MiTwFKFj1hP+eEEDlZEUHnaAVbA+29f4QexELkb1q+A+KkREasBxoKGG77wUNhvcuq
+         d0O56hss1jc1vNQII2To9lYsUrbXZKVWiRrOJ6KUn0XZvU9EY22O0DEtVD5ThYF0mP3t
+         8vLH9UmAJvfYq3WYfAHDtyf29fgd6Uhndj/modlDyunMuA6XfEayQ7q2mnc4gIY2jfyo
+         ryTQYGFmgE+TrudHJefHud8DN4EkCI5FmwzgO2N97Ne/RPHWYRA6d9uZhKabWPB5Zpfq
+         IJgHxA8FIJVq0juRFINTBCki0wFsx8/bCFPYoHWZnB38z8YeISnnwBThEOzQ/CJuxNCl
+         zyDA==
+X-Gm-Message-State: AAQBX9fShFHeEXnOK1Jdgj2K19TQxFTTEVj9bgcm59nkjIYJ5AzFdWSx
+        POVamI8YMhj1v0T3JHy5aNXpGcNHMJwLatWmORsCK8tDMpAOp8rHclMerwdmXpqykLv+n/dtLaP
+        7dAuE9b92ZtYq3Ciyx0INKA==
+X-Received: by 2002:a17:902:d2c8:b0:1a6:99a6:3547 with SMTP id n8-20020a170902d2c800b001a699a63547mr497946plc.16.1681778945727;
+        Mon, 17 Apr 2023 17:49:05 -0700 (PDT)
+X-Google-Smtp-Source: AKy350ZLidcrwgnD2ORGMZGJWazQqjpg3DYP/CbEZrByES+GDg/JznlImm1eUC0hmsfLrR31HxZ8jg==
+X-Received: by 2002:a17:902:d2c8:b0:1a6:99a6:3547 with SMTP id n8-20020a170902d2c800b001a699a63547mr497925plc.16.1681778945405;
+        Mon, 17 Apr 2023 17:49:05 -0700 (PDT)
+Received: from [10.72.12.132] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id b2-20020a170902ed0200b001a6370bb33csm8294890pld.41.2023.04.17.17.49.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Apr 2023 17:46:18 -0700 (PDT)
-Message-ID: <25c0ca08-20a5-05b1-666a-f95252be6834@redhat.com>
-Date:   Tue, 18 Apr 2023 08:46:12 +0800
+        Mon, 17 Apr 2023 17:49:04 -0700 (PDT)
+Message-ID: <8cce2585-4cd8-9e33-35c7-8cec8f2ebac8@redhat.com>
+Date:   Tue, 18 Apr 2023 08:48:59 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.9.1
@@ -75,7 +75,7 @@ Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -103,7 +103,10 @@ On 4/17/23 23:55, Luís Henriques wrote:
 > above URL requires a account to access it.  So I guess it should be
 > dropped or replaced by another one from the tracker...?
 
-Make sense.
+There already one old tracker to follow this 
+https://tracker.ceph.com/issues/43272.
+
+- Xiubo
 
 
 > Also, just skimming through the patch, there are at least 2 obvious issues
@@ -204,11 +207,7 @@ Make sense.
 >> -	iputs = ceph_purge_inode_cap(inode, cap, &invalidate);
 > This will leave iputs uninitialized if the statement below returns NULL.
 > Which will cause issues later in the function.
-
-Yeah, correct. It seems some configuration are not enabled when 
-compiling the code locally, it doesn't complain about this.
-
-
+>
 >> +	cap = rb_entry(ci_node, struct ceph_cap, ci_node);
 >> +	if (cap) {
 >> +		dout(" removing cap %p, ci is %p, inode is %p\n",
@@ -237,14 +236,6 @@ compiling the code locally, it doesn't complain about this.
 >>   		if (cap->cap_gen < atomic_read(&cap->session->s_cap_gen)) {
 > Since we're replacing the 'cap' argument by the 'ci_node', the
 > above statement will have garbage in 'cap'.
-
-Yeah, should check the cap first.
-
-Thanks
-
-- Xiubo
-
-
 >
 > Cheers,
 
