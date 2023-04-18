@@ -2,259 +2,296 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CE946E560E
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Apr 2023 02:53:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC5716E5727
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Apr 2023 03:52:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229546AbjDRAxd (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 17 Apr 2023 20:53:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59422 "EHLO
+        id S229977AbjDRBvy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 17 Apr 2023 21:51:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229477AbjDRAxd (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 17 Apr 2023 20:53:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4585819A4
-        for <ceph-devel@vger.kernel.org>; Mon, 17 Apr 2023 17:52:52 -0700 (PDT)
+        with ESMTP id S229619AbjDRBvw (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 17 Apr 2023 21:51:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 893D29D
+        for <ceph-devel@vger.kernel.org>; Mon, 17 Apr 2023 18:50:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1681779171;
+        s=mimecast20190719; t=1681782541;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vxNMMYZBFaGylaCyhmPo/cDBuISFxEFhh8rFLgcN6xQ=;
-        b=h3sOfGGVjMYnvxkkl3BkADo9A/PpdfnTtnxVZOgHfveq7ir02u/nj7URYjeWUz6uZ4aGcc
-        VMdFrYC88j5ezN2eArVqo5pIAbGtEhpVkzTp+obZsIecq7flGjhVm/O77TKQu5F6p+Z8Fe
-        9iYUBHW2+2hO7ku3oCBuvkM9u4Bggvg=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-41-IyR4HXQtMEGwCpTAfv7P9Q-1; Mon, 17 Apr 2023 20:52:50 -0400
-X-MC-Unique: IyR4HXQtMEGwCpTAfv7P9Q-1
-Received: by mail-pl1-f200.google.com with SMTP id a13-20020a170902eccd00b001a6be3722b7so2914894plh.6
-        for <ceph-devel@vger.kernel.org>; Mon, 17 Apr 2023 17:52:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1681779168; x=1684371168;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vxNMMYZBFaGylaCyhmPo/cDBuISFxEFhh8rFLgcN6xQ=;
-        b=YhzOjx4vX8UT+SQtNkmn7BSOBU3+BodteMWFKkR3P+CsATX7j/40eptySswamTMCEI
-         QJwjRlQcT3Jh+ZLUA+kzu2COlbskLAJ4M1WZsGU9J6SKxqdZsVyx9lOf46b5Y4foLmge
-         Cv27pvHxnFhIPtlOcpVsGmrW0MeqcO8NPkSxbrvFe+8MBPc9TKeU96ojRtoJGzrwsxRg
-         Dem7rEwVM2fN5zImMGf2lg3rqlfA6qE0+saQ2gdjeckecT+y7ohYEf8nzMhL3TGMCDPD
-         PszNVCkGGD4b444Ju0ez9fCYaa+s5oj2N4jxaEzL9i4d4xRtkhRoSdnUTRgng1gZqlDK
-         r8qQ==
-X-Gm-Message-State: AAQBX9dO1nNyNMRt7tMS1pGFCftB+qmzdgQk8Y8ol7F4JfNwxr9PHA1d
-        1M+GcKgv+CCj6jOrYlcppV1esn3q5vkvt1Foqlo5mNhVhiRdk3o6IMw66LkCU3ID9AYTuhWPBt/
-        ODVZrpu1fIhmQwvFMGx/uzoj0E2Qpdjoj1ns=
-X-Received: by 2002:a05:6a20:be25:b0:d9:6650:ef14 with SMTP id ge37-20020a056a20be2500b000d96650ef14mr15952097pzb.31.1681779168033;
-        Mon, 17 Apr 2023 17:52:48 -0700 (PDT)
-X-Google-Smtp-Source: AKy350ap8k33HMoluyvRPZLnf8raP2nYht2Qx0IjN+y1Awiiqz0Ps0Yi/7Rdx59GAsjf309cZtGfcQ==
-X-Received: by 2002:a05:6a20:be25:b0:d9:6650:ef14 with SMTP id ge37-20020a056a20be2500b000d96650ef14mr15952085pzb.31.1681779167655;
-        Mon, 17 Apr 2023 17:52:47 -0700 (PDT)
-Received: from [10.72.12.132] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id w30-20020a63161e000000b00517f165d0a6sm7601420pgl.4.2023.04.17.17.52.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Apr 2023 17:52:47 -0700 (PDT)
-Message-ID: <e3bc12ad-4e38-9206-bc75-e394bb2e600c@redhat.com>
-Date:   Tue, 18 Apr 2023 08:52:42 +0800
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=4LFBpAHGjdt2b49vrsAIre8SSb7GjhV0DL8pOhuthkg=;
+        b=e34B/iJewQ2rLveHrybKzSdyNzf6sxhOVLGA5BWrqvfgVqvPZDTTTmTMV891+zZq2s6poq
+        QoeoQC6HmttZvCedH/cnev43x3VgFkjdv+iG94FU8BLm13LWWhJEQtF9STUv6Tj7NgdSxF
+        EAI1RrhXlqk2LY//ljiafnKfj9G6a8E=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-653-wPRU50GANVSj7uynk0y7EA-1; Mon, 17 Apr 2023 21:45:21 -0400
+X-MC-Unique: wPRU50GANVSj7uynk0y7EA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BACC587B2A0;
+        Tue, 18 Apr 2023 01:45:20 +0000 (UTC)
+Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-132.pek2.redhat.com [10.72.12.132])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C714214171B8;
+        Tue, 18 Apr 2023 01:45:14 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
+Cc:     jlayton@kernel.org, vshankar@redhat.com, lhenriques@suse.de,
+        mchangir@redhat.com, Xiubo Li <xiubli@redhat.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v3] ceph: fix potential use-after-free bug when trimming caps
+Date:   Tue, 18 Apr 2023 09:45:06 +0800
+Message-Id: <20230418014506.95428-1-xiubli@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.1
-Subject: Re: [ceph-client:testing 77/77] fs/ceph/mds_client.c:1866:6: warning:
- variable 'iputs' is used uninitialized whenever 'if' condition is false
-Content-Language: en-US
-To:     kernel test robot <lkp@intel.com>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        ceph-devel@vger.kernel.org
-References: <202304172343.2ToBO5ag-lkp@intel.com>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <202304172343.2ToBO5ag-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+From: Xiubo Li <xiubli@redhat.com>
 
-On 4/17/23 23:49, kernel test robot wrote:
-> tree:   https://github.com/ceph/ceph-client.git testing
-> head:   3fef7c3fd10c5f078e0f6ec8c683f2d1e14eb05d
-> commit: 3fef7c3fd10c5f078e0f6ec8c683f2d1e14eb05d [77/77] ceph: fix potential use-after-free bug when trimming caps
-> config: x86_64-randconfig-a011-20230417 (https://download.01.org/0day-ci/archive/20230417/202304172343.2ToBO5ag-lkp@intel.com/config)
-> compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-> reproduce (this is a W=1 build):
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # https://github.com/ceph/ceph-client/commit/3fef7c3fd10c5f078e0f6ec8c683f2d1e14eb05d
->          git remote add ceph-client https://github.com/ceph/ceph-client.git
->          git fetch --no-tags ceph-client testing
->          git checkout 3fef7c3fd10c5f078e0f6ec8c683f2d1e14eb05d
->          # save the config file
->          mkdir build_dir && cp config build_dir/.config
->          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
->          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash fs/ceph/
->
-> If you fix the issue, kindly add following tag where applicable
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Link: https://lore.kernel.org/oe-kbuild-all/202304172343.2ToBO5ag-lkp@intel.com/
->
-> All warnings (new ones prefixed by >>):
->
->>> fs/ceph/mds_client.c:1866:6: warning: variable 'iputs' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
->             if (cap) {
->                 ^~~
->     fs/ceph/mds_client.c:1877:9: note: uninitialized use occurs here
->             while (iputs--)
->                    ^~~~~
->     fs/ceph/mds_client.c:1866:2: note: remove the 'if' if its condition is always true
->             if (cap) {
->             ^~~~~~~~~
->     fs/ceph/mds_client.c:1862:11: note: initialize the variable 'iputs' to silence this warning
->             int iputs;
->                      ^
->                       = 0
->>> fs/ceph/mds_client.c:1957:7: warning: variable 'cap' is uninitialized when used here [-Wuninitialized]
->                     if (cap->cap_gen < atomic_read(&cap->session->s_cap_gen)) {
->                         ^~~
->     fs/ceph/mds_client.c:1949:22: note: initialize the variable 'cap' to silence this warning
->             struct ceph_cap *cap;
->                                 ^
->                                  = NULL
->     2 warnings generated.
->
->
-> vim +1866 fs/ceph/mds_client.c
+When trimming the caps and just after the 'session->s_cap_lock' is
+released in ceph_iterate_session_caps() the cap maybe removed by
+another thread, and when using the stale cap memory in the callbacks
+it will trigger use-after-free crash.
 
-Thanks for reporting this.
+We need to check the existence of the cap just after the 'ci->i_ceph_lock'
+being acquired. And do nothing if it's already removed.
 
-As Luis mentioned in another thread, I will fix this in the testing branch.
+Cc: stable@vger.kernel.org
+URL: https://bugzilla.redhat.com/show_bug.cgi?id=2186264
+URL: https://tracker.ceph.com/issues/43272
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
 
-- Xiubo
+V3:
+- Fixed 3 issues, which reported by Luis and kernel test robot <lkp@intel.com>
 
+ fs/ceph/debugfs.c    |  7 ++++-
+ fs/ceph/mds_client.c | 68 +++++++++++++++++++++++++++++---------------
+ fs/ceph/mds_client.h |  2 +-
+ 3 files changed, 52 insertions(+), 25 deletions(-)
 
->
->    1855	
->    1856	static int remove_session_caps_cb(struct inode *inode, struct rb_node *ci_node,
->    1857					  void *arg)
->    1858	{
->    1859		struct ceph_inode_info *ci = ceph_inode(inode);
->    1860		bool invalidate = false;
->    1861		struct ceph_cap *cap;
->    1862		int iputs;
->    1863	
->    1864		spin_lock(&ci->i_ceph_lock);
->    1865		cap = rb_entry(ci_node, struct ceph_cap, ci_node);
->> 1866		if (cap) {
->    1867			dout(" removing cap %p, ci is %p, inode is %p\n",
->    1868			     cap, ci, &ci->netfs.inode);
->    1869	
->    1870			iputs = ceph_purge_inode_cap(inode, cap, &invalidate);
->    1871		}
->    1872		spin_unlock(&ci->i_ceph_lock);
->    1873	
->    1874		wake_up_all(&ci->i_cap_wq);
->    1875		if (invalidate)
->    1876			ceph_queue_invalidate(inode);
->    1877		while (iputs--)
->    1878			iput(inode);
->    1879		return 0;
->    1880	}
->    1881	
->    1882	/*
->    1883	 * caller must hold session s_mutex
->    1884	 */
->    1885	static void remove_session_caps(struct ceph_mds_session *session)
->    1886	{
->    1887		struct ceph_fs_client *fsc = session->s_mdsc->fsc;
->    1888		struct super_block *sb = fsc->sb;
->    1889		LIST_HEAD(dispose);
->    1890	
->    1891		dout("remove_session_caps on %p\n", session);
->    1892		ceph_iterate_session_caps(session, remove_session_caps_cb, fsc);
->    1893	
->    1894		wake_up_all(&fsc->mdsc->cap_flushing_wq);
->    1895	
->    1896		spin_lock(&session->s_cap_lock);
->    1897		if (session->s_nr_caps > 0) {
->    1898			struct inode *inode;
->    1899			struct ceph_cap *cap, *prev = NULL;
->    1900			struct ceph_vino vino;
->    1901			/*
->    1902			 * iterate_session_caps() skips inodes that are being
->    1903			 * deleted, we need to wait until deletions are complete.
->    1904			 * __wait_on_freeing_inode() is designed for the job,
->    1905			 * but it is not exported, so use lookup inode function
->    1906			 * to access it.
->    1907			 */
->    1908			while (!list_empty(&session->s_caps)) {
->    1909				cap = list_entry(session->s_caps.next,
->    1910						 struct ceph_cap, session_caps);
->    1911				if (cap == prev)
->    1912					break;
->    1913				prev = cap;
->    1914				vino = cap->ci->i_vino;
->    1915				spin_unlock(&session->s_cap_lock);
->    1916	
->    1917				inode = ceph_find_inode(sb, vino);
->    1918				iput(inode);
->    1919	
->    1920				spin_lock(&session->s_cap_lock);
->    1921			}
->    1922		}
->    1923	
->    1924		// drop cap expires and unlock s_cap_lock
->    1925		detach_cap_releases(session, &dispose);
->    1926	
->    1927		BUG_ON(session->s_nr_caps > 0);
->    1928		BUG_ON(!list_empty(&session->s_cap_flushing));
->    1929		spin_unlock(&session->s_cap_lock);
->    1930		dispose_cap_releases(session->s_mdsc, &dispose);
->    1931	}
->    1932	
->    1933	enum {
->    1934		RECONNECT,
->    1935		RENEWCAPS,
->    1936		FORCE_RO,
->    1937	};
->    1938	
->    1939	/*
->    1940	 * wake up any threads waiting on this session's caps.  if the cap is
->    1941	 * old (didn't get renewed on the client reconnect), remove it now.
->    1942	 *
->    1943	 * caller must hold s_mutex.
->    1944	 */
->    1945	static int wake_up_session_cb(struct inode *inode, struct rb_node *ci_node, void *arg)
->    1946	{
->    1947		struct ceph_inode_info *ci = ceph_inode(inode);
->    1948		unsigned long ev = (unsigned long)arg;
->    1949		struct ceph_cap *cap;
->    1950	
->    1951		if (ev == RECONNECT) {
->    1952			spin_lock(&ci->i_ceph_lock);
->    1953			ci->i_wanted_max_size = 0;
->    1954			ci->i_requested_max_size = 0;
->    1955			spin_unlock(&ci->i_ceph_lock);
->    1956		} else if (ev == RENEWCAPS) {
->> 1957			if (cap->cap_gen < atomic_read(&cap->session->s_cap_gen)) {
->    1958				/* mds did not re-issue stale cap */
->    1959				spin_lock(&ci->i_ceph_lock);
->    1960				cap = rb_entry(ci_node, struct ceph_cap, ci_node);
->    1961				if (cap)
->    1962					cap->issued = cap->implemented = CEPH_CAP_PIN;
->    1963				spin_unlock(&ci->i_ceph_lock);
->    1964			}
->    1965		} else if (ev == FORCE_RO) {
->    1966		}
->    1967		wake_up_all(&ci->i_cap_wq);
->    1968		return 0;
->    1969	}
->    1970	
->
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index bec3c4549c07..5c0f07df5b02 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -248,14 +248,19 @@ static int metrics_caps_show(struct seq_file *s, void *p)
+ 	return 0;
+ }
+ 
+-static int caps_show_cb(struct inode *inode, struct ceph_cap *cap, void *p)
++static int caps_show_cb(struct inode *inode, struct rb_node *ci_node, void *p)
+ {
++	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct seq_file *s = p;
++	struct ceph_cap *cap;
+ 
++	spin_lock(&ci->i_ceph_lock);
++	cap = rb_entry(ci_node, struct ceph_cap, ci_node);
+ 	seq_printf(s, "0x%-17llx%-3d%-17s%-17s\n", ceph_ino(inode),
+ 		   cap->session->s_mds,
+ 		   ceph_cap_string(cap->issued),
+ 		   ceph_cap_string(cap->implemented));
++	spin_unlock(&ci->i_ceph_lock);
+ 	return 0;
+ }
+ 
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 294af79c25c9..fb777add2257 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -1786,7 +1786,7 @@ static void cleanup_session_requests(struct ceph_mds_client *mdsc,
+  * Caller must hold session s_mutex.
+  */
+ int ceph_iterate_session_caps(struct ceph_mds_session *session,
+-			      int (*cb)(struct inode *, struct ceph_cap *,
++			      int (*cb)(struct inode *, struct rb_node *ci_node,
+ 					void *), void *arg)
+ {
+ 	struct list_head *p;
+@@ -1799,6 +1799,8 @@ int ceph_iterate_session_caps(struct ceph_mds_session *session,
+ 	spin_lock(&session->s_cap_lock);
+ 	p = session->s_caps.next;
+ 	while (p != &session->s_caps) {
++		struct rb_node *ci_node;
++
+ 		cap = list_entry(p, struct ceph_cap, session_caps);
+ 		inode = igrab(&cap->ci->netfs.inode);
+ 		if (!inode) {
+@@ -1806,6 +1808,7 @@ int ceph_iterate_session_caps(struct ceph_mds_session *session,
+ 			continue;
+ 		}
+ 		session->s_cap_iterator = cap;
++		ci_node = &cap->ci_node;
+ 		spin_unlock(&session->s_cap_lock);
+ 
+ 		if (last_inode) {
+@@ -1817,7 +1820,7 @@ int ceph_iterate_session_caps(struct ceph_mds_session *session,
+ 			old_cap = NULL;
+ 		}
+ 
+-		ret = cb(inode, cap, arg);
++		ret = cb(inode, ci_node, arg);
+ 		last_inode = inode;
+ 
+ 		spin_lock(&session->s_cap_lock);
+@@ -1850,20 +1853,26 @@ int ceph_iterate_session_caps(struct ceph_mds_session *session,
+ 	return ret;
+ }
+ 
+-static int remove_session_caps_cb(struct inode *inode, struct ceph_cap *cap,
++static int remove_session_caps_cb(struct inode *inode, struct rb_node *ci_node,
+ 				  void *arg)
+ {
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	bool invalidate = false;
+-	int iputs;
++	struct ceph_cap *cap;
++	int iputs = 0;
+ 
+-	dout("removing cap %p, ci is %p, inode is %p\n",
+-	     cap, ci, &ci->netfs.inode);
+ 	spin_lock(&ci->i_ceph_lock);
+-	iputs = ceph_purge_inode_cap(inode, cap, &invalidate);
++	cap = rb_entry(ci_node, struct ceph_cap, ci_node);
++	if (cap) {
++		dout(" removing cap %p, ci is %p, inode is %p\n",
++		     cap, ci, &ci->netfs.inode);
++
++		iputs = ceph_purge_inode_cap(inode, cap, &invalidate);
++	}
+ 	spin_unlock(&ci->i_ceph_lock);
+ 
+-	wake_up_all(&ci->i_cap_wq);
++	if (cap)
++		wake_up_all(&ci->i_cap_wq);
+ 	if (invalidate)
+ 		ceph_queue_invalidate(inode);
+ 	while (iputs--)
+@@ -1934,8 +1943,7 @@ enum {
+  *
+  * caller must hold s_mutex.
+  */
+-static int wake_up_session_cb(struct inode *inode, struct ceph_cap *cap,
+-			      void *arg)
++static int wake_up_session_cb(struct inode *inode, struct rb_node *ci_node, void *arg)
+ {
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	unsigned long ev = (unsigned long)arg;
+@@ -1946,12 +1954,14 @@ static int wake_up_session_cb(struct inode *inode, struct ceph_cap *cap,
+ 		ci->i_requested_max_size = 0;
+ 		spin_unlock(&ci->i_ceph_lock);
+ 	} else if (ev == RENEWCAPS) {
+-		if (cap->cap_gen < atomic_read(&cap->session->s_cap_gen)) {
+-			/* mds did not re-issue stale cap */
+-			spin_lock(&ci->i_ceph_lock);
++		struct ceph_cap *cap;
++
++		spin_lock(&ci->i_ceph_lock);
++		cap = rb_entry(ci_node, struct ceph_cap, ci_node);
++		/* mds did not re-issue stale cap */
++		if (cap && cap->cap_gen < atomic_read(&cap->session->s_cap_gen))
+ 			cap->issued = cap->implemented = CEPH_CAP_PIN;
+-			spin_unlock(&ci->i_ceph_lock);
+-		}
++		spin_unlock(&ci->i_ceph_lock);
+ 	} else if (ev == FORCE_RO) {
+ 	}
+ 	wake_up_all(&ci->i_cap_wq);
+@@ -2113,16 +2123,22 @@ static bool drop_negative_children(struct dentry *dentry)
+  * Yes, this is a bit sloppy.  Our only real goal here is to respond to
+  * memory pressure from the MDS, though, so it needn't be perfect.
+  */
+-static int trim_caps_cb(struct inode *inode, struct ceph_cap *cap, void *arg)
++static int trim_caps_cb(struct inode *inode, struct rb_node *ci_node, void *arg)
+ {
+ 	int *remaining = arg;
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	int used, wanted, oissued, mine;
++	struct ceph_cap *cap;
+ 
+ 	if (*remaining <= 0)
+ 		return -1;
+ 
+ 	spin_lock(&ci->i_ceph_lock);
++	cap = rb_entry(ci_node, struct ceph_cap, ci_node);
++	if (!cap) {
++		spin_unlock(&ci->i_ceph_lock);
++		return 0;
++	}
+ 	mine = cap->issued | cap->implemented;
+ 	used = __ceph_caps_used(ci);
+ 	wanted = __ceph_caps_file_wanted(ci);
+@@ -4265,26 +4281,23 @@ static struct dentry* d_find_primary(struct inode *inode)
+ /*
+  * Encode information about a cap for a reconnect with the MDS.
+  */
+-static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
++static int reconnect_caps_cb(struct inode *inode, struct rb_node *ci_node,
+ 			  void *arg)
+ {
+ 	union {
+ 		struct ceph_mds_cap_reconnect v2;
+ 		struct ceph_mds_cap_reconnect_v1 v1;
+ 	} rec;
+-	struct ceph_inode_info *ci = cap->ci;
++	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_reconnect_state *recon_state = arg;
+ 	struct ceph_pagelist *pagelist = recon_state->pagelist;
+ 	struct dentry *dentry;
++	struct ceph_cap *cap;
+ 	char *path;
+-	int pathlen = 0, err;
++	int pathlen = 0, err = 0;
+ 	u64 pathbase;
+ 	u64 snap_follows;
+ 
+-	dout(" adding %p ino %llx.%llx cap %p %lld %s\n",
+-	     inode, ceph_vinop(inode), cap, cap->cap_id,
+-	     ceph_cap_string(cap->issued));
+-
+ 	dentry = d_find_primary(inode);
+ 	if (dentry) {
+ 		/* set pathbase to parent dir when msg_version >= 2 */
+@@ -4301,6 +4314,15 @@ static int reconnect_caps_cb(struct inode *inode, struct ceph_cap *cap,
+ 	}
+ 
+ 	spin_lock(&ci->i_ceph_lock);
++	cap = rb_entry(ci_node, struct ceph_cap, ci_node);
++	if (!cap) {
++		spin_unlock(&ci->i_ceph_lock);
++		goto out_err;
++	}
++	dout(" adding %p ino %llx.%llx cap %p %lld %s\n",
++	     inode, ceph_vinop(inode), cap, cap->cap_id,
++	     ceph_cap_string(cap->issued));
++
+ 	cap->seq = 0;        /* reset cap seq */
+ 	cap->issue_seq = 0;  /* and issue_seq */
+ 	cap->mseq = 0;       /* and migrate_seq */
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index 0f70ca3cdb21..001b69d04307 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -569,7 +569,7 @@ extern void ceph_queue_cap_reclaim_work(struct ceph_mds_client *mdsc);
+ extern void ceph_reclaim_caps_nr(struct ceph_mds_client *mdsc, int nr);
+ extern int ceph_iterate_session_caps(struct ceph_mds_session *session,
+ 				     int (*cb)(struct inode *,
+-					       struct ceph_cap *, void *),
++					       struct rb_node *ci_node, void *),
+ 				     void *arg);
+ extern void ceph_mdsc_pre_umount(struct ceph_mds_client *mdsc);
+ 
+-- 
+2.39.2
 
