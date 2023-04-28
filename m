@@ -2,69 +2,128 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D10A6F13EE
-	for <lists+ceph-devel@lfdr.de>; Fri, 28 Apr 2023 11:13:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 693726F1669
+	for <lists+ceph-devel@lfdr.de>; Fri, 28 Apr 2023 13:10:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229763AbjD1JNw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 28 Apr 2023 05:13:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46004 "EHLO
+        id S1345747AbjD1LKx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 28 Apr 2023 07:10:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229803AbjD1JNp (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 28 Apr 2023 05:13:45 -0400
-X-Greylist: delayed 438 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 28 Apr 2023 02:13:38 PDT
-Received: from mail.dulnaincarron.pl (mail.dulnaincarron.pl [217.61.105.119])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8C2440E0
-        for <ceph-devel@vger.kernel.org>; Fri, 28 Apr 2023 02:13:38 -0700 (PDT)
-Received: by mail.dulnaincarron.pl (Postfix, from userid 1002)
-        id F413187398; Fri, 28 Apr 2023 11:05:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dulnaincarron.pl;
-        s=mail; t=1682672778;
-        bh=Fw485gVIlzv5XFfqc8jWlbDEj8HGTLN9zV71861FTMg=;
-        h=Date:From:To:Subject:From;
-        b=Up8Azg3Qq8hTgk62rqzu9ZWdZZLVP94xiR/lzisqyP9Z11cHENtFKhE1PlAJ+BAM5
-         IAX70qppygp8pfhvqMssBGLF3JdFVR7+0Ht8BuTfh11cOZRxWbVb9j/m+uTgdKB6Jq
-         PpRUUUEM3h0HhGNeF63tOyO80Yay9BAHMf8ApkQ09zC4Ry0AxGqkTzqxZwH74OLmdh
-         kBN3A+4NGtkSTh7n4GqlxS6fbytdxPfBtStcM6mqfAoi1gzUULEFJZ8X5ShIgChieN
-         NthA3VT2JE5ebswM3eB2HpsGO0f10FfNYO2GcG2LdgyqwuAIoHmTloAL2JPP6PWeWd
-         qdreQm05RiIZw==
-Received: by mail.dulnaincarron.pl for <ceph-devel@vger.kernel.org>; Fri, 28 Apr 2023 09:05:10 GMT
-Message-ID: <20230428105508-0.1.b.20e0.0.4g6msy0oyy@dulnaincarron.pl>
-Date:   Fri, 28 Apr 2023 09:05:10 GMT
-From:   "Kamil Bargielewicz" <kamil.bargielewicz@dulnaincarron.pl>
-To:     <ceph-devel@vger.kernel.org>
-Subject: =?UTF-8?Q?Wy=C5=BCsze_dofinansowanie?=
-X-Mailer: mail.dulnaincarron.pl
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+        with ESMTP id S1345700AbjD1LKw (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 28 Apr 2023 07:10:52 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C75D44B6;
+        Fri, 28 Apr 2023 04:10:49 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B9305642E2;
+        Fri, 28 Apr 2023 11:10:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C2E4C433A8;
+        Fri, 28 Apr 2023 11:10:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1682680248;
+        bh=MgfPMfiKjI0tNegcTrXd2ZOXVx68i9D4rnYhMXY2OtQ=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=niadc1KLJ5jjSy0V0s6jR4CaWAsX8tkW40W47LEu5MIozrpJDPc6i0Bk3UfrXFU7M
+         PMBJLMGq1KJJKyhZchZOrcVhuZKTLZSLRgMjj5Rlfd2JkLGde8S/KyqJ3n20J+0T1M
+         RyTdZoiWogIYYfh2reQi5ZTGhPUGFbWph2Pvz33D/HbBQf9KeL2Q4GaO2VKoVjOWqI
+         W8LqGxtaYWQA0yAwNReSVWBbQq54BbeV8m//2LoLXfchQleIz2SQUwpwDrXmMhvYOw
+         vbJH81jhp/7aZF4V9Xzuui2E1GGxemmZPm47ROf0IBHloCDg1lgbCk/i00fAFiC7Ka
+         f5tYb9qf+C6/Q==
+Message-ID: <3328747ef568361bd3bd5f053ec9a2c27e7f9c48.camel@kernel.org>
+Subject: Re: [PATCH] ceph: Reorder fields in 'struct ceph_snapid_map'
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        ceph-devel@vger.kernel.org
+Date:   Fri, 28 Apr 2023 07:10:46 -0400
+In-Reply-To: <f6b869ea-979c-efda-d454-8dc688d1986b@redhat.com>
+References: <559c9a70419846e0cfc319505d3d5fffd45b3358.1682618727.git.christophe.jaillet@wanadoo.fr>
+         <f6b869ea-979c-efda-d454-8dc688d1986b@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_SBL_CSS,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED,URIBL_CSS_A,URIBL_DBL_SPAM
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ***
+User-Agent: Evolution 3.48.1 (3.48.1-1.fc38) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dzie=C5=84 dobry,
+On Fri, 2023-04-28 at 08:53 +0800, Xiubo Li wrote:
+> On 4/28/23 02:05, Christophe JAILLET wrote:
+> > Group some variables based on their sizes to reduce holes.
+> > On x86_64, this shrinks the size of 'struct ceph_snapid_map' from 72 to=
+ 64
+> > bytes.
+> >=20
+> > When such a structure is allocated, because of the way memory allocatio=
+n
+> > works, when 72 bytes were requested, 96 bytes were allocated.
+> >=20
+> > So, on x86_64, this change saves 32 bytes per allocation and has the
+> > structure fit in a single cacheline.
+> >=20
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> > Using pahole
+> >=20
+> > Before:
+> > =3D=3D=3D=3D=3D=3D
+> > struct ceph_snapid_map {
+> > 	struct rb_node             node __attribute__((__aligned__(8))); /*   =
+  0    24 */
+> > 	struct list_head           lru;                  /*    24    16 */
+> > 	atomic_t                   ref;                  /*    40     4 */
+> >=20
+> > 	/* XXX 4 bytes hole, try to pack */
+> >=20
+> > 	u64                        snap;                 /*    48     8 */
+> > 	dev_t                      dev;                  /*    56     4 */
+> >=20
+> > 	/* XXX 4 bytes hole, try to pack */
+> >=20
+> > 	/* --- cacheline 1 boundary (64 bytes) --- */
+> > 	long unsigned int          last_used;            /*    64     8 */
+> >=20
+> > 	/* size: 72, cachelines: 2, members: 6 */
+> > 	/* sum members: 64, holes: 2, sum holes: 8 */
+> > 	/* forced alignments: 1 */
+> > 	/* last cacheline: 8 bytes */
+> > } __attribute__((__aligned__(8)));
+> > ---
+> >   fs/ceph/mds_client.h | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> > index 0598faa50e2e..2328dbda5ab6 100644
+> > --- a/fs/ceph/mds_client.h
+> > +++ b/fs/ceph/mds_client.h
+> > @@ -355,8 +355,8 @@ struct ceph_snapid_map {
+> >   	struct rb_node node;
+> >   	struct list_head lru;
+> >   	atomic_t ref;
+> > -	u64 snap;
+> >   	dev_t dev;
+> > +	u64 snap;
+> >   	unsigned long last_used;
+> >   };
+> >  =20
+>=20
+> This looks good to me. Thanks.
+>=20
+> Will apply it to the testing branch.
+>=20
+> - Xiubo
+>=20
+>=20
+>=20
 
-w ramach nowej edycji Programu M=C3=B3j Pr=C4=85d mog=C4=85 uzyska=C4=87 =
-Pa=C5=84stwo 6000 z=C5=82 dofinansowania na fotowoltaik=C4=99 i 16 000 z=C5=
-=82 na magazyn energii.
-
-Pr=C3=B3cz wy=C5=BCszego dofinansowania, mog=C4=85 liczy=C4=87 Pa=C5=84st=
-wo na ni=C5=BCsze ceny pr=C4=85du oraz mo=C5=BCliwo=C5=9B=C4=87 odliczeni=
-a koszt=C3=B3w zwi=C4=85zanych z instalacj=C4=85 paneli w ramach rocznego=
- zeznania PIT (tzw. ulga termomodernizacyjna).
-
-Jako firma specjalizuj=C4=85ca si=C4=99 w monta=C5=BCu i serwisie paneli =
-s=C5=82onecznych mamy 100% skuteczno=C5=9B=C4=87 w pozyskiwaniu dotacji.=20
-=20
-Chcieliby Pa=C5=84stwo wst=C4=99pnie porozmawia=C4=87 o mo=C5=BCliwo=C5=9B=
-ciach?
-
-
-Pozdrawiam
-Kamil Bargielewicz
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
