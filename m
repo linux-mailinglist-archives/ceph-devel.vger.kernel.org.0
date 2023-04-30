@@ -2,127 +2,112 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B8D186F2889
-	for <lists+ceph-devel@lfdr.de>; Sun, 30 Apr 2023 13:01:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A036A6F2893
+	for <lists+ceph-devel@lfdr.de>; Sun, 30 Apr 2023 13:27:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230231AbjD3LBB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 30 Apr 2023 07:01:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36964 "EHLO
+        id S229570AbjD3L1t (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 30 Apr 2023 07:27:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbjD3LA7 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 30 Apr 2023 07:00:59 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26B6C269E
-        for <ceph-devel@vger.kernel.org>; Sun, 30 Apr 2023 04:00:57 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-94eff00bcdaso306616966b.1
-        for <ceph-devel@vger.kernel.org>; Sun, 30 Apr 2023 04:00:57 -0700 (PDT)
+        with ESMTP id S229461AbjD3L1s (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 30 Apr 2023 07:27:48 -0400
+Received: from mail-il1-x130.google.com (mail-il1-x130.google.com [IPv6:2607:f8b0:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED601199B
+        for <ceph-devel@vger.kernel.org>; Sun, 30 Apr 2023 04:27:47 -0700 (PDT)
+Received: by mail-il1-x130.google.com with SMTP id e9e14a558f8ab-3294fd17f1cso3704875ab.1
+        for <ceph-devel@vger.kernel.org>; Sun, 30 Apr 2023 04:27:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1682852455; x=1685444455;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=38dUtOiHpRM77jIIzXGr7jnOgvZlKKDjYlwVOT82Ug8=;
-        b=RJYtfE0sTucEDa+r7oxniapBUR7CuyiDUlh9m70kPcsiRQI+Z8Yl+j7WKutCGhRsIV
-         TtNUjNoOMsJnqPXmE/71oT9yArVTp6383trTKeV5hYFK+iXsicvBKzRx8qGsO2naQ9Yh
-         NEvyAPqYvHVkREfBOqq0XE/9nJHtHjVYDxtiUUn7yFiu4klqni5vah2EobeQcJKh+18x
-         sKwmMx4dzz/FbWmZtfBuwEH8LzbjPr2jvW+IPu1J7ua7pgiLdcwvBcQtNZisD7R6wfM+
-         agISNGM7zLu18lxJYG3OP44BA9wTolTUWDdp3EK+Gu8+7Kqh4fzmObmMdYxAJVyLBPgp
-         sL4A==
+        d=gmail.com; s=20221208; t=1682854067; x=1685446067;
+        h=content-transfer-encoding:to:subject:message-id:date:from:sender
+         :reply-to:mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qs6YQuKaR+Jj8cYfLUlwzIsnjJiio9siuMvBa7Y9KQA=;
+        b=rd/WEgfvUPlCKTiRdsjhB2KEkP0DMe+LuWS0oHHO24QFeYBhIsbBcEcYnkSToND1bW
+         99fsUm+ofoiCKfvxn8flhZ2yQj9fYFQZecG6K/cqMuBIAnHmWFvvgq0HEgW+2pHE0/dY
+         433je5ERY1XYqC5UJbFtjhHTH+HLTzheGnVVYgVoDQS2i/sYsaG+drxhnhyYuPMwBQ/s
+         R0OJL1SM2oZtRAa2tsF6VNIIw6Go2F8f9j8Ib/T/O1UTcT73YBqehsdA1AvwKI1YLBop
+         JyyVVlpTeQhlmvKgx25xWD2iROB7qQVCgkO8m7jehai8Ka4w77LRAAKo7K9n0SJ1+Nrh
+         UrFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1682852455; x=1685444455;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=38dUtOiHpRM77jIIzXGr7jnOgvZlKKDjYlwVOT82Ug8=;
-        b=AoyzbKKNiZy7vlokIDvVKGFAOqC6ZHmFuUEHHcanskNimdFtlAN/QJyU7hA7aF7RkI
-         HCap4t433jUT/pksk2N8mbvPgWD2qpbv9hhG3W2KSZFlh9OXociSE+V8U6GR5uFPQTgQ
-         w40idIta6szj4gUWJwhhRFS7o9jP+MhI4KHiU5tkCIUPQsoVAR4IllPpB+Ii//G7NBIa
-         mdwtVzpGj+UHgp33ow9AXXGmrcWUQO4ImG73jPfX2/vlcozKMUT3mGjUFT70Ru3St34i
-         VOOgBXmpz4R9apsuatPVKyr32LP3SdcVdVl6UKsLK005iEFhmY5bvjAyozf/aQqxQi67
-         TD0g==
-X-Gm-Message-State: AC+VfDz2Mo9yELABSJO853k46gbtJ509kg6RNwNjLGM8n2Adzs1MVHCD
-        Q+adFXkOqWzNUv9lVlXKCZOAWi+enbmQ8sJ6j+c=
-X-Google-Smtp-Source: ACHHUZ5FjxS9ANceuJr2X9/ywZLl5HWROzN1g15YoALnpjG8hsXwg8WQF/c73NRrGGCfRZrK3sZAyurAJGapOW9zMZo=
-X-Received: by 2002:a17:907:2ce4:b0:94e:1764:b0b5 with SMTP id
- hz4-20020a1709072ce400b0094e1764b0b5mr11285484ejc.69.1682852455422; Sun, 30
- Apr 2023 04:00:55 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1682854067; x=1685446067;
+        h=content-transfer-encoding:to:subject:message-id:date:from:sender
+         :reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qs6YQuKaR+Jj8cYfLUlwzIsnjJiio9siuMvBa7Y9KQA=;
+        b=TRhk0CxMn9AUKaR/mkUaEn3ZpNgHcL063cnqFDPIuS66KCfD1d5ChnCeNUQyCg60FG
+         vSYXnED1dsF/ZOR96p3YxK4V+hGD316h+h5mxaI8il5s1jJ/NgD+rxqMTlqPZSmlkcyU
+         GUqmRd/5KJ8YmGXjD8+LIIsVNRg5CPd5nrwLV7OFVQYa8DUT+U2uwcIYlhN7z3AQ2d3M
+         jjNYc/p+ec1BeRGyWXPPVvOthOKNNKDy54Zj7Mrf+1x76kK4LbCNkrKrWdQ6cnPRgzak
+         juKgVAB+DeLGBNdZ7cEk3rDDyWKDhn3uAs0y8mK3Ee6QSIRxLfkbLFj3IZ/64I3r7ioc
+         xliw==
+X-Gm-Message-State: AC+VfDy2gHnWk3Oy5xTA5NtdJmmoGesYfpYbDFoPdyb407AiWOouummW
+        tyvnRgwI0QJALNScKt+XdiOP35SejEVqFiadkcs=
+X-Google-Smtp-Source: ACHHUZ6692/KnjHcPXrybopLvVKBRftRNMS2Oq/YCv++jUjcQxP8/3PJJLCUddwaH+K4ofiqAI8e2oc+8CdJZHPqKZA=
+X-Received: by 2002:a5d:97d1:0:b0:760:6412:f5c2 with SMTP id
+ k17-20020a5d97d1000000b007606412f5c2mr6342003ios.3.1682854067164; Sun, 30 Apr
+ 2023 04:27:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230323070105.201578-1-xiubli@redhat.com>
-In-Reply-To: <20230323070105.201578-1-xiubli@redhat.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Sun, 30 Apr 2023 13:00:43 +0200
-Message-ID: <CAOi1vP_cX3U-Xs72-fXDrxT+e_hEkUi6xtZc_3Cm7ko1ZT_BLQ@mail.gmail.com>
-Subject: Re: [PATCH] ceph: fix blindly expanding the readahead windows
-To:     xiubli@redhat.com
-Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
-        vshankar@redhat.com, mchangir@redhat.com, lhenriques@suse.de
+Reply-To: salkavar2@gmail.com
+Sender: adilegrah59@gmail.com
+Received: by 2002:ac0:dd8d:0:b0:2b4:99e4:6f8f with HTTP; Sun, 30 Apr 2023
+ 04:27:46 -0700 (PDT)
+From:   "Mr.Sal kavar" <salkavar2@gmail.com>
+Date:   Sun, 30 Apr 2023 04:27:46 -0700
+X-Google-Sender-Auth: DWWXmwEAE2aVtZ1o61hrUcaDc8w
+Message-ID: <CAEP0BsXukzTRGpUYBwaQi8TFRgtykF8to151xcpvT9XhaEp+dA@mail.gmail.com>
+Subject: Yours Faithful,
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: base64
+X-Spam-Status: Yes, score=6.5 required=5.0 tests=BAYES_05,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO_END_DIGIT,HK_NAME_FM_MR_MRS,
+        LOTS_OF_MONEY,MONEY_FREEMAIL_REPTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNDISC_MONEY autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:130 listed in]
+        [list.dnswl.org]
+        * -0.5 BAYES_05 BODY: Bayes spam probability is 1 to 5%
+        *      [score: 0.0160]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [adilegrah59[at]gmail.com]
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [salkavar2[at]gmail.com]
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [adilegrah59[at]gmail.com]
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        *  1.5 HK_NAME_FM_MR_MRS No description available.
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  0.0 LOTS_OF_MONEY Huge... sums of money
+        *  2.1 MONEY_FREEMAIL_REPTO Lots of money from someone using free
+        *      email?
+        *  3.1 UNDISC_MONEY Undisclosed recipients + money/fraud signs
+X-Spam-Level: ******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Mar 23, 2023 at 8:01=E2=80=AFAM <xiubli@redhat.com> wrote:
->
-> From: Xiubo Li <xiubli@redhat.com>
->
-> Blindly expanding the readahead windows will cause unneccessary
-> pagecache thrashing and also will introdue the network workload.
-> We should disable expanding the windows if the readahead is disabled
-> and also shouldn't expand the windows too much.
->
-> Expanding forward firstly instead of expanding backward for possible
-> sequential reads.
->
-> URL: https://www.spinics.net/lists/ceph-users/msg76183.html
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/addr.c | 23 +++++++++++++++++------
->  1 file changed, 17 insertions(+), 6 deletions(-)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index ca4dc6450887..01d997f6c66c 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -188,16 +188,27 @@ static void ceph_netfs_expand_readahead(struct netf=
-s_io_request *rreq)
->         struct inode *inode =3D rreq->inode;
->         struct ceph_inode_info *ci =3D ceph_inode(inode);
->         struct ceph_file_layout *lo =3D &ci->i_layout;
-> +       unsigned long max_pages =3D inode->i_sb->s_bdi->ra_pages;
-> +       unsigned long max_len =3D max_pages << PAGE_SHIFT;
-> +       unsigned long len;
->         u32 blockoff;
->         u64 blockno;
->
-> -       /* Expand the start downward */
-> -       blockno =3D div_u64_rem(rreq->start, lo->stripe_unit, &blockoff);
-> -       rreq->start =3D blockno * lo->stripe_unit;
-> -       rreq->len +=3D blockoff;
-> +       /* Readahead is disabled */
-> +       if (!max_pages)
-> +               return;
-> +
-> +       /* Expand the length forward by rounding up it to the next block =
-*/
-> +       len =3D roundup(rreq->len, lo->stripe_unit);
-> +       if (len <=3D max_len)
-> +               rreq->len =3D len;
-
-Hi Xiubo,
-
-This change makes it possible for the request to be expanded into the
-next block (i.e. it's not rounded _up_ to the next block as the comment
-says) because rreq->len is no longer guaranteed to be based off of the
-start of the block here.  Previously that was ensured by the preceding
-downward expansion.
-
-Thanks,
-
-                Ilya
+ScKgYXNzdW1lwqB5b3XCoGFuZMKgeW91csKgZmFtaWx5wqBhcmXCoGluwqBnb29kwqBoZWFsdGgu
+DQoNClN1bcKgb2bCoChGaWZ0ZWVuwqBNaWxsaW9uwqBGaXZlwqBIdW5kcmVkwqBUaG91c2FuZMKg
+RG9sbGFycynCoHdoZW7CoHRoZQ0KYWNjb3VudMKgaG9sZGVywqBzdWRkZW5secKgcGFzc2VkwqBv
+bizCoGhlwqBsZWZ0wqBub8KgYmVuZWZpY2lhcnnCoHdob8Kgd291bGTCoGJlDQplbnRpdGxlZMKg
+dG/CoHRoZcKgcmVjZWlwdMKgb2bCoHRoaXPCoGZ1bmQuwqBGb3LCoHRoaXPCoHJlYXNvbizCoEnC
+oGhhdmXCoGZvdW5kwqBpdA0KZXhwZWRpZW50wqB0b8KgdHJhbnNmZXLCoHRoaXPCoGZ1bmTCoHRv
+wqBhwqB0cnVzdHdvcnRoecKgaW5kaXZpZHVhbMKgd2l0aA0KY2FwYWNpdHnCoHRvwqBhY3TCoGFz
+wqBmb3JlaWduwqBidXNpbmVzc8KgcGFydG5lci4NCg0KWW91wqB3aWxswqB0YWtlwqA0NSXCoDEw
+JcKgd2lsbMKgYmXCoHNoYXJlZMKgdG/CoENoYXJpdHnCoGluwqBib3RowqBjb3VudHJpZXPCoGFu
+ZA0KNDUlwqB3aWxswqBiZcKgZm9ywqBtZS4NCg0KDQpNci5TYWzCoEthdmFyLg0K
