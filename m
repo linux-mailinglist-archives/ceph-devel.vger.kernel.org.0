@@ -2,162 +2,156 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 887536F9AC2
-	for <lists+ceph-devel@lfdr.de>; Sun,  7 May 2023 19:56:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC5676FA00B
+	for <lists+ceph-devel@lfdr.de>; Mon,  8 May 2023 08:43:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230450AbjEGR4I (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 7 May 2023 13:56:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36918 "EHLO
+        id S232234AbjEHGm7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 8 May 2023 02:42:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231589AbjEGR4G (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 7 May 2023 13:56:06 -0400
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01olkn2031.outbound.protection.outlook.com [40.92.98.31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A74392D50
-        for <ceph-devel@vger.kernel.org>; Sun,  7 May 2023 10:56:04 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hbqHueXb9DH/3kplGHCn0zS8Sren8SdC6m60olKWAEtgvsRvSDRNIA9o7Z/yVNYzK0PoKzSqDTmtOCDRSOFon/m0G401l38miULmxl8sBSENiC9Rk4OAxwVuHFfo7OeeiZuyPvrCvi9Ksef1YN5CRr9z2wgqShos2Y835KYGrroos4wYYuYQIRz2/BdyDBWwcvzvbEt89GQjEE4tB3dldyOHBx5JtttXQGgipXpwGwsZUNyZM0yPsU7czN7+sdei31aYkoKfVzaJJdC0MGi9q2ys50ufvYd22hm1glZq8IAT2DR/SSjdrft2ZIn70AXfTpWK4ooRqNiz46Z7I2hdjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SRDtaGdt2/6sK6FxdX5m8CKiWIGMeoS8voZ9oV98+4Y=;
- b=cLSeqEXfuz8u9gSGtLFQnKAs6jdFj25pbSpFd+BTBYTUoup7hW56tmfcDUhgIZBxsm8odZw5dyovyuAw0RhPkntLj37RQ9lmhe67KJrsIyKOK/l2fNeHS7NTqbpkcQrGkJYahrg+vnH7ccmatas3skxtzembG9OEygVqSOgVr/txJkiYjthSBt3auJnCB2+mydQ7JTZ5p6pQKUBxHM0LkOhlwEOEXVRgi83hl+PQneF0jJbBQlMcROtPmbHk1xR8P1YNceOlAq6l1XbobngPtkpBufWANTDKFFnboJHy5pN4jPE2tQ0ky+Wb57hS9D80VKqjwEpgluzdpL0c6LViHQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SRDtaGdt2/6sK6FxdX5m8CKiWIGMeoS8voZ9oV98+4Y=;
- b=kFlQIJEJt/z7bHl7gRG6ZLWumetPZw2mZPqv539TGKLsaEGR/6aAfFV583GBvvBFcVacsIjQf05JgZdyIR6HmnjfR+6Y+4f3yIssx6gxZ+ISvjGz6RtxDyMfh0XCpGOOnWejMPJ9j3gaR5ZsfVB37uW5wk4cVtJ+hQOWQ8DSEtsoVvLGY7PmYcLp90TyRSo/GvgNK1zbtxP4ix8mtzylTUqnHJPkHlQtJZXIaoDbTpvSsMyZWYJSb+NEMlnhQqYOUTaXdhjno8SEEfXOhlg7kXw1j/xNwQoe1mvvj6kkJ2ldRituODCCJgF32hINkEMzEx7NEWvCQ75xIw3k8mccsQ==
-Received: from TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:152::14)
- by OS3P286MB2567.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:1fa::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.32; Sun, 7 May
- 2023 17:56:01 +0000
-Received: from TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM
- ([fe80::d9fd:1e8f:2bf4:e44]) by TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM
- ([fe80::d9fd:1e8f:2bf4:e44%6]) with mapi id 15.20.6363.032; Sun, 7 May 2023
- 17:56:01 +0000
-From:   Hu Weiwen <huww98@outlook.com>
-To:     ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     Venky Shankar <vshankar@redhat.com>,
-        Hu Weiwen <sehuww@mail.scut.edu.cn>
-Subject: [PATCH 3/3] libceph: reject mismatching name and fsid
-Date:   Mon,  8 May 2023 01:55:03 +0800
-Message-ID: <TYCP286MB2066D19A68A9176E289BB4FDC0709@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <TYCP286MB20661F87B0C796738BDC5FBEC0709@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
-References: <TYCP286MB20661F87B0C796738BDC5FBEC0709@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN:  [jSPRQhFXM6Ozvf5IyVDEVUjzzzOs80bP]
-X-ClientProxiedBy: BY5PR16CA0033.namprd16.prod.outlook.com
- (2603:10b6:a03:1a0::46) To TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:152::14)
-X-Microsoft-Original-Message-ID: <20230507175503.2271-3-huww98@outlook.com>
+        with ESMTP id S231791AbjEHGm6 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 May 2023 02:42:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1857E659C
+        for <ceph-devel@vger.kernel.org>; Sun,  7 May 2023 23:42:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1683528132;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VRyFQsEkPeLlxmqVt8CqtoqYAZHX/at91wsz5Kw1Qbw=;
+        b=JeHg7HSOl8OmGpiGQYE0VyvUw821qAea4G4W3BRGiYeEp+mpectfy4EBLvqjP94TqCrVVL
+        r2vy/A+72OIDLrvCN38by9abbAl8uIIbKb3EOkv59fTPZ8zS91z790yDkQHc7Bcr4tSs0p
+        6NZ2nuHqIeDrHdfDWWXGVzpfXaXIt0Q=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-133-R4YralwbNpWUoPKRhvWknA-1; Mon, 08 May 2023 02:42:10 -0400
+X-MC-Unique: R4YralwbNpWUoPKRhvWknA-1
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1ab0527b01bso22163345ad.1
+        for <ceph-devel@vger.kernel.org>; Sun, 07 May 2023 23:42:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683528129; x=1686120129;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VRyFQsEkPeLlxmqVt8CqtoqYAZHX/at91wsz5Kw1Qbw=;
+        b=dpgixZfrCZ6o8V+huYo8ZSpIZ0QZf/cUfOm8+/Aw7x1F6h+7lbqEEJ3a6VDrS+kz6R
+         tOz83Enva7X96+ocjf+0aK7kxJmzcO1vDFkyQcaC9YUY3yidKsVtLxNsCY5WJeriFd8y
+         64AeC+8varBdCiZVaoMQtIYoRy0oFUS3/HZyecljBaS1qe5CdeIbItmjJeASD5RwwvAI
+         Vru8Kwck2EcIWhB4jHQ5j1fgvdifhjRH4XLws5F0NJ7MTgYYYIqBkVNHhZHaKzMzg1e3
+         oHKzr8O0wCZRaS8wV0xgVlDQcxwiQ73S/lJg/GaqJVRq6XxufkOoeqx/FZi3G5ctAG4/
+         S2Cw==
+X-Gm-Message-State: AC+VfDwa2ojUTfh5ygWYF1iv7A4/ryFxpqQb1tzzkI04ZmWvc02x1kNU
+        Fl70GvSI0hpBweyx/J6lZRyvXPTpf7nw8NeMdQJHcWePYjztJ27C3i+o5qyONXs1cJwfoivRIQp
+        NNmam/bi4ZEkpbcEqffOqDA==
+X-Received: by 2002:a17:902:e5cf:b0:1ac:807b:deb1 with SMTP id u15-20020a170902e5cf00b001ac807bdeb1mr1419228plf.38.1683528129516;
+        Sun, 07 May 2023 23:42:09 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6oSMPnN2VE4J9p6apamL4yHby8sYGeKTCJ5pQbjKXMsEMye+AJy7QFKULvdj96K6eZ2OowMA==
+X-Received: by 2002:a17:902:e5cf:b0:1ac:807b:deb1 with SMTP id u15-20020a170902e5cf00b001ac807bdeb1mr1419221plf.38.1683528129167;
+        Sun, 07 May 2023 23:42:09 -0700 (PDT)
+Received: from [10.72.12.156] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id a13-20020a170902eccd00b00186a2274382sm6334137plh.76.2023.05.07.23.42.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 May 2023 23:42:08 -0700 (PDT)
+Message-ID: <f93d0525-d533-e7b1-0433-20c6433e5fc8@redhat.com>
+Date:   Mon, 8 May 2023 14:42:05 +0800
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCP286MB2066:EE_|OS3P286MB2567:EE_
-X-MS-Office365-Filtering-Correlation-Id: 783528b9-459d-45d4-d749-08db4f24519c
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: E/natYHQCywiIz5yIxly+7xYgoSicy6tWELAZ2z99YgRcprDtiGyhoFxjnYT8HmiWAT7IQxkPMrA9RIKpYTZuG+hvZLwQdjdelppw05H5K+/rMWAbnAaL4JGeVfaL5xRqembs5UzG9u14u+JlJUg8QCJCsw65GHwQiTkEtb9j+HEAPtgyRQEVrnxgXa3OLLkiS4Q03NRQwoc56YFfzYk/ODGztcM6tdX++Flz8BJ/SIXt1xP3Sx2Bm2qZ6fzh1ErDurF4rTqSp0t9ERIEY4GHgv4paPGW2Cue8cos11D997WT3zlDanXncnV/lxZp67gQUBvDJmmYk5l9rw6VzE6hsBtszvDozNDoqL6BZKdrtj3I5CL6a6dqa+pdtGLTPP6uuVAb/D7vp6g0Ng8lfpm9m2Ci58m3GTGiP4uWrURNisostPzvslnYCr7TPbJ+xN3LNXssBPLHdeIztAWla+KH2utTmWiubpoRQT7hqeecg7I4p87w2B5oFOUozbPF1q6aAwlQHC4boKF3ak6boN47nu/HUzPSbHJnj9Z6NGsAjD8+DDc04RFpUJEok8EH/Mg
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?N1bbq2cJm8TJ0QcUTnXaU22Exp3KWMjFy8rqSHGHgvaTdbGS7xgFPRZKOUJj?=
- =?us-ascii?Q?Bdl7KJp6lYf/xLfSBVX2Yw3hPSG8dkeph5Yk6/7QjOo7uASK4tvYWQv/m4iQ?=
- =?us-ascii?Q?x/ltwcZNH2nf5SepxP5u3BnslaPaH+xj+3QvxrL1CWvGgbgRxfYCC9d3FkGp?=
- =?us-ascii?Q?i544/S9L29dyXtKIL2V6Wcm/THxcT8F++YrnaKbzjPLBjvMb26raMzxIv7fK?=
- =?us-ascii?Q?x7YAuRpE8gba4JQUNAz4p8hdhNaSGEIqrj5DXCN4hbXtlkgVjHYReYMrJ1SJ?=
- =?us-ascii?Q?1q8GD4WajQmIGiJ20ETZ05pFb/7tC0kEkn6QCWIfkEDmRHAyTy8lNyOi0Y4s?=
- =?us-ascii?Q?HZBNQE7nRGzYyT3Mp83rnxKN/dogniPb+ws4W7ttbOSl7vyrFvh08nJpX+Uj?=
- =?us-ascii?Q?xlQDZmLV4X5u8PvfBc7gWisLoUBMUH+jJxllv9qSP3MScC3eGpGIiUXAUUJp?=
- =?us-ascii?Q?0bPs/6r6sCkJ/k9XWf6DRB59vZV0c+B74h2vN8o8xxS2yHKTP2L7qrgYmJsw?=
- =?us-ascii?Q?NM/8agetI+JswzsUCINUrthv9mwgo0EMR9wFhnZFSUCIg/ghYJq5SazYc2Ad?=
- =?us-ascii?Q?vpq1rDuo27dd6pA7EbhvUDUB3XEQYDMNdQSDZLBupmR5XrzwCh5I+2NUw5v/?=
- =?us-ascii?Q?bsAaj541LxZ7NtbV4wmExFJFrYxfKVmWkvKK/dA9sUP5Obv4PFSkdK0S6wfv?=
- =?us-ascii?Q?X1trogcv9pb7jTXZRFhL8r44n+Bt0Qi202LIuM6Z5D1rGD2OwQgzirSc5y1L?=
- =?us-ascii?Q?ufoUDwLufijzegFHoZdzxdF/NEb+dWpj8wrE5W7wcF8EgMAOMVy8LLwFuOgr?=
- =?us-ascii?Q?JUtEBmDYRNfrD7FO7FiquopK6YZPmGNuiRRBtUPyLA+fKGTnQtXpgZi2ONJc?=
- =?us-ascii?Q?pAoEs9b949DnRBFzDUZznCVyKodRtVHo7FmJsJxFCW8eBvfaMZu2trt/4l+j?=
- =?us-ascii?Q?Cxrz5F3s7bl3BIuKN7TYDLmxMZDIUWyqwGYlTOcV80CMPr2a61ZxMsjWeBIp?=
- =?us-ascii?Q?7IBnqJ5d+KzB8AVw2S90c+mFDV5GPp86vhClPBQEsPBHMEFVITcVjIjI4mjy?=
- =?us-ascii?Q?PjzZauMUDqLnyeCZxfpk8MOQs3y7UzyfdA+JTMBja/sEUO/+6kLtnaYDkOIX?=
- =?us-ascii?Q?KQjtefmGvpoltqEQeEIaLZBDXqUpjlMiv/shN9ko+tTKMGlkIK0MscWYimW0?=
- =?us-ascii?Q?T6pT4ox+v4amrBUkVuhAhix434l+wo+GKgbprQ=3D=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 783528b9-459d-45d4-d749-08db4f24519c
-X-MS-Exchange-CrossTenant-AuthSource: TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2023 17:56:01.6165
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3P286MB2567
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [bug report] ceph: fix potential use-after-free bug when trimming
+ caps
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>
+Cc:     ceph-devel@vger.kernel.org
+References: <9e074e4b-9519-42e2-819a-7089564d6158@kili.mountain>
+ <937dc7c7-1907-5511-d691-7f531e72bd8f@redhat.com>
+ <43a81ea0-c24f-4a27-a313-0da1abd41004@kili.mountain>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <43a81ea0-c24f-4a27-a313-0da1abd41004@kili.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Hu Weiwen <sehuww@mail.scut.edu.cn>
 
-These are present in the device spec of cephfs. So they should be
-treated as immutable.  Also reject `mount()' calls where options and
-device spec are inconsistent.
+On 5/6/23 15:13, Dan Carpenter wrote:
+> On Sat, May 06, 2023 at 09:32:30AM +0800, Xiubo Li wrote:
+>> Hi Dan,
+>>
+>> On 5/5/23 17:21, Dan Carpenter wrote:
+>>> Hello Xiubo Li,
+>>>
+>>> The patch aaf67de78807: "ceph: fix potential use-after-free bug when
+>>> trimming caps" from Apr 19, 2023, leads to the following Smatch
+>>> static checker warning:
+>>>
+>>> 	fs/ceph/mds_client.c:3968 reconnect_caps_cb()
+>>> 	warn: missing error code here? '__get_cap_for_mds()' failed. 'err' = '0'
+>>>
+>>> fs/ceph/mds_client.c
+>>>       3933 static int reconnect_caps_cb(struct inode *inode, int mds, void *arg)
+>>>       3934 {
+>>>       3935         union {
+>>>       3936                 struct ceph_mds_cap_reconnect v2;
+>>>       3937                 struct ceph_mds_cap_reconnect_v1 v1;
+>>>       3938         } rec;
+>>>       3939         struct ceph_inode_info *ci = ceph_inode(inode);
+>>>       3940         struct ceph_reconnect_state *recon_state = arg;
+>>>       3941         struct ceph_pagelist *pagelist = recon_state->pagelist;
+>>>       3942         struct dentry *dentry;
+>>>       3943         struct ceph_cap *cap;
+>>>       3944         char *path;
+>>>       3945         int pathlen = 0, err = 0;
+>>>       3946         u64 pathbase;
+>>>       3947         u64 snap_follows;
+>>>       3948
+>>>       3949         dentry = d_find_primary(inode);
+>>>       3950         if (dentry) {
+>>>       3951                 /* set pathbase to parent dir when msg_version >= 2 */
+>>>       3952                 path = ceph_mdsc_build_path(dentry, &pathlen, &pathbase,
+>>>       3953                                             recon_state->msg_version >= 2);
+>>>       3954                 dput(dentry);
+>>>       3955                 if (IS_ERR(path)) {
+>>>       3956                         err = PTR_ERR(path);
+>>>       3957                         goto out_err;
+>>>       3958                 }
+>>>       3959         } else {
+>>>       3960                 path = NULL;
+>>>       3961                 pathbase = 0;
+>>>       3962         }
+>>>       3963
+>>>       3964         spin_lock(&ci->i_ceph_lock);
+>>>       3965         cap = __get_cap_for_mds(ci, mds);
+>>>       3966         if (!cap) {
+>>>       3967                 spin_unlock(&ci->i_ceph_lock);
+>>> --> 3968                 goto out_err;
+>>>
+>>> Set an error code?
+>> This was intended, the 'err' was initialized as '0' in line 3945.
+>>
+>> It's no harm to skip this _cb() for current cap, so just succeeds it.
+>>
+> Smatch considers it intentional of the "ret = 0;" assignment is within
+> 4 or 5 (I forget) lines of the goto.  Otherwise adding a comment would
+> help reviewers.
 
-Signed-off-by: Hu Weiwen <sehuww@mail.scut.edu.cn>
----
- net/ceph/ceph_common.c | 26 +++++++++++++++++++++-----
- 1 file changed, 21 insertions(+), 5 deletions(-)
+Yeah, I will revise this to dismiss the warning.
 
-diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-index 4c6441536d55..c59c5ccc23a8 100644
---- a/net/ceph/ceph_common.c
-+++ b/net/ceph/ceph_common.c
-@@ -440,17 +440,33 @@ int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
- 		break;
- 
- 	case Opt_fsid:
--		err = ceph_parse_fsid(param->string, &opt->fsid);
-+	{
-+		struct ceph_fsid fsid;
-+
-+		err = ceph_parse_fsid(param->string, &fsid);
- 		if (err) {
- 			error_plog(&log, "Failed to parse fsid: %d", err);
- 			return err;
- 		}
--		opt->flags |= CEPH_OPT_FSID;
-+
-+		if (!(opt->flags & CEPH_OPT_FSID)) {
-+			opt->fsid = fsid;
-+			opt->flags |= CEPH_OPT_FSID;
-+		} else if (ceph_fsid_compare(&opt->fsid, &fsid)) {
-+			error_plog(&log, "fsid already set to %pU",
-+				   &opt->fsid);
-+			return -EINVAL;
-+		}
- 		break;
-+	}
- 	case Opt_name:
--		kfree(opt->name);
--		opt->name = param->string;
--		param->string = NULL;
-+		if (!opt->name) {
-+			opt->name = param->string;
-+			param->string = NULL;
-+		} else if (strcmp(opt->name, param->string)) {
-+			error_plog(&log, "name already set to %s", opt->name);
-+			return -EINVAL;
-+		}
- 		break;
- 	case Opt_secret:
- 		ceph_crypto_key_destroy(opt->key);
--- 
-2.25.1
+Thanks
+
+- Xiubo
+
+
+> regards,
+> dan carpenter
+>
 
