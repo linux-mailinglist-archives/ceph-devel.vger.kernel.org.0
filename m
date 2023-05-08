@@ -2,96 +2,89 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD1AF6FA03C
-	for <lists+ceph-devel@lfdr.de>; Mon,  8 May 2023 08:55:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98A0E6FA0DD
+	for <lists+ceph-devel@lfdr.de>; Mon,  8 May 2023 09:20:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232997AbjEHGyz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 8 May 2023 02:54:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36998 "EHLO
+        id S233095AbjEHHUM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 8 May 2023 03:20:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232632AbjEHGyu (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 May 2023 02:54:50 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6B27A5F2
-        for <ceph-devel@vger.kernel.org>; Sun,  7 May 2023 23:54:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1683528840;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=gMb0AoRmaPvYQLl9yiY9LbV8VSQy18FpswPbUKOd9Kk=;
-        b=XApf/MSgt94sKWYye8kcjgs5AkQscDpfgMEUZdbsrg97ef6bD8wCwMpxQClbFuuGrT+HKz
-        UldpCy7MtOU5DBWrri/7eApqNA8qXgpKMeOToJZYdGRsF6fANptLxEWdYewgwUcVIOmwjJ
-        2qZ6ILw3zprIyB4aGbDWQfX+63WFIh4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-620-kfqL9DrRMDuTqI-xhjtpig-1; Mon, 08 May 2023 02:53:57 -0400
-X-MC-Unique: kfqL9DrRMDuTqI-xhjtpig-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3FDA8811E7C;
-        Mon,  8 May 2023 06:53:57 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-156.pek2.redhat.com [10.72.12.156])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C1DB8492B00;
-        Mon,  8 May 2023 06:53:53 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-Cc:     jlayton@kernel.org, Xiubo Li <xiubli@redhat.com>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH] ceph: fix the Smatch static checker warning in reconnect_caps_cb()
-Date:   Mon,  8 May 2023 14:53:35 +0800
-Message-Id: <20230508065335.114409-1-xiubli@redhat.com>
+        with ESMTP id S233143AbjEHHUK (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 8 May 2023 03:20:10 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BC62420C
+        for <ceph-devel@vger.kernel.org>; Mon,  8 May 2023 00:20:09 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id 5b1f17b1804b1-3f41d087b24so10120425e9.1
+        for <ceph-devel@vger.kernel.org>; Mon, 08 May 2023 00:20:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1683530407; x=1686122407;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=c4qm2kkFPXz3iMSaYWzsWVc+tB/w60qM5yghYXF0h/0=;
+        b=nsF9aVsijncPE+t+hLMawCqEjVXfmoX/hewa8CUd63NcXN39Y4rdtD8x2/WbkXCIQ2
+         l7folrWOcmK1QpB3JhT+5XlalATtvfJEAmdV07BX7wmRsHRP81zk86Fy7pOlzr+nONp7
+         fMpYG8AfLNmVaR1Y00f17Q/HSAPF4GwMawfWBJLqewbiX/6rgeUBeuUMzVtI4i83/OQb
+         dVqKYfTR45mS/kQut1gLdRnUb2h+AT+j7oVFrY71aT7nhIh42+xYu4sYFqblWKze8JEV
+         LiMvDX2/uCKuZCmk4WkWf8Plqcygtxqa6AA1wR650N3KWsxLF6gdozLfzVoFaHjQ8cUR
+         o37g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683530407; x=1686122407;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c4qm2kkFPXz3iMSaYWzsWVc+tB/w60qM5yghYXF0h/0=;
+        b=lmKIRJnHmc+niaODtO56iHFymWxGjmni4a8jC6T6bzd8Pn6eUwcS3jmoGCwQcotw9u
+         RA/NM03G4NLXGy8JkuysyVNtISXYoABOLCtyLtNwawg/lL/qRs+rEAzWWUtmmAEQTVEu
+         A1nsPaRgJduCDiWDzrv5RmkG1GJE0MBYawTjmY9u081udukKhBw1rgb+BN7OrsU6u01x
+         TK6PC4YCiJ596vuHPGFBvBUS0kEjFh++apgFmk5tRFBe96zFgs/LTjwVafZvnCJxzCa8
+         wco+Fm65t2v3g9wTr1/KIwJC1+L+l7CZL+tXNvKZA//h7ruN5W7VMkad4jawejlACv0n
+         C9MQ==
+X-Gm-Message-State: AC+VfDwBGR/P1AZTjgRXmAh/t9agAcMn/DIvbuLjkjrQvv//zIXjOVyA
+        dlK0Xe5FgrQ8nJx1DUoF8nE4fQ==
+X-Google-Smtp-Source: ACHHUZ7WTBlORjwkJt26PTeAlkR7lXtaXVNu3cHYCYU3i3qcQh5kXX6930OWBGXYthJwDm/hOStRvA==
+X-Received: by 2002:adf:f291:0:b0:306:3bf0:f1ec with SMTP id k17-20020adff291000000b003063bf0f1ecmr6922529wro.7.1683530407529;
+        Mon, 08 May 2023 00:20:07 -0700 (PDT)
+Received: from localhost ([102.36.222.112])
+        by smtp.gmail.com with ESMTPSA id f16-20020a5d4dd0000000b003062ad45243sm10363523wru.14.2023.05.08.00.20.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 May 2023 00:20:05 -0700 (PDT)
+Date:   Mon, 8 May 2023 10:20:02 +0300
+From:   Dan Carpenter <dan.carpenter@linaro.org>
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] ceph: fix the Smatch static checker warning in
+ reconnect_caps_cb()
+Message-ID: <83208f55-7c60-48a1-bbe2-5973e1f46a09@kili.mountain>
+References: <20230508065335.114409-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230508065335.114409-1-xiubli@redhat.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Mon, May 08, 2023 at 02:53:35PM +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> Smatch static checker warning:
+> 
+>   fs/ceph/mds_client.c:3968 reconnect_caps_cb()
+>   warn: missing error code here? '__get_cap_for_mds()' failed. 'err' = '0'
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: aaf67de78807 ("ceph: fix potential use-after-free bug when trimming caps")
 
-Smatch static checker warning:
+Of course, thanks for the patch. But this is not really a bug fix since
+it doesn't change runtime at all.  And definitely no need to CC stable.
 
-  fs/ceph/mds_client.c:3968 reconnect_caps_cb()
-  warn: missing error code here? '__get_cap_for_mds()' failed. 'err' = '0'
-
-Cc: stable@vger.kernel.org
-Fixes: aaf67de78807 ("ceph: fix potential use-after-free bug when trimming caps")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/mds_client.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 36521bd4b78b..d6467fe7e5fa 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -4296,7 +4296,7 @@ static int reconnect_caps_cb(struct inode *inode, int mds, void *arg)
- 	struct dentry *dentry;
- 	struct ceph_cap *cap;
- 	char *path;
--	int pathlen = 0, err = 0;
-+	int pathlen = 0, err;
- 	u64 pathbase;
- 	u64 snap_follows;
- 
-@@ -4319,6 +4319,7 @@ static int reconnect_caps_cb(struct inode *inode, int mds, void *arg)
- 	cap = __get_cap_for_mds(ci, mds);
- 	if (!cap) {
- 		spin_unlock(&ci->i_ceph_lock);
-+		err = 0;
- 		goto out_err;
- 	}
- 	dout(" adding %p ino %llx.%llx cap %p %lld %s\n",
--- 
-2.40.0
+regards,
+dan carpenter
 
