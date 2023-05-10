@@ -2,200 +2,156 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2435B6FDB35
-	for <lists+ceph-devel@lfdr.de>; Wed, 10 May 2023 12:01:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B562E6FDBE1
+	for <lists+ceph-devel@lfdr.de>; Wed, 10 May 2023 12:45:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235883AbjEJKBW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 10 May 2023 06:01:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57716 "EHLO
+        id S236542AbjEJKpv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 10 May 2023 06:45:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230205AbjEJKBU (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 10 May 2023 06:01:20 -0400
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01olkn2106.outbound.protection.outlook.com [40.92.98.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4AD14203;
-        Wed, 10 May 2023 03:01:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RElQMFI4V4DvijN+UUO8oGQle6d9BuX7TMu0LUjCEnkiqTD8iF1m3f7RGVjeW/hETrvrOKqnVKyos+HrVwOSgxZvQJDQlqk8AlMt53R4vbhMrsmW907m6NUSl3ytnvroh3BsgzaIOkEoz7/e1kKtgPlq0HTFbqBoVtnH14I0mkuppcFhiSTKsv4dWylgzMc1Ph3bl1e2xNH+McJxMtzcKbwGvkFeEkMuEIAbqgBAP+Z/2xuB2cHePE0IVCQQ6mI5mf8c6pcm/CNPKsci+P0DxhATbmDvN6Sng4V/AiRBNeDuylohqcZu5cUo42CNecTdGPM2Cyv1I13rnaiUkNw89w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Pl1yQcvov1eUB7acamziCo/fgSAdOKq314GCjTM81/0=;
- b=Gp1/PUJv4KTTRrd5oOgfLHJ7r9fcoWlratXagBD/3oTIFuqL1cEHyVU6WbslHfsyzyFyMXkQi3nLn28gTvnmPilqrbgMjqMUdbLzTGnQtLm2QaEB11GbWerkF3bfXZT7ZACBoq5yIIY1q5IlkG37R8P9x88HGP29LI33UuM14QH1mxuksSJhUadLCD1nWWLgc20Ot3gJ0Hq10gMW4ahhJQia6wqRaf8pTAU0zwO7Z8Nnx9uVkSXLE+YKPGIaM1gowaJB01+tByKQmW5/jfUS0Y7cSUTzwMwKzxc31SFIx4GPEYUgL36o3OOk8/daNF4jjz69atujx5kTAwUzF4+VyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Pl1yQcvov1eUB7acamziCo/fgSAdOKq314GCjTM81/0=;
- b=GX+PFXhJNuyg4fKojO9q302vuoM+nBCaW1MUkK5hq7H6Wc3boJK+7kIpfXvAMEXQO0wSOjsGFs3ESmfz2d8Dt+HtC5I7fltvdC0eWzPbSZ9BUCzkEuRApLXJcinqFfSKEWN0mPvhvldL0ZzBoSFkB/T7DpSfmy+o8hFm6r4m2bVvHKu3zD15Wy8xYUtCAEmE8ZHifQI/EDZrhEJwkQHCi55rfj+0t5sdGRjRhECV5Zykh3MpMgaqdit0grlUPjeLDArOMrXHN52szIpKkg1IanpU8XWcZiPG67CaBnEr539ooFX4Xymuw8n00Bytr1WT/Uf10J9fAaT51D8rr+XT6A==
-Received: from TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:152::14)
- by TYWP286MB2153.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:176::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6363.33; Wed, 10 May
- 2023 10:01:15 +0000
-Received: from TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM
- ([fe80::d9fd:1e8f:2bf4:e44]) by TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM
- ([fe80::d9fd:1e8f:2bf4:e44%6]) with mapi id 15.20.6363.033; Wed, 10 May 2023
- 10:01:15 +0000
-Date:   Wed, 10 May 2023 18:01:05 +0800
-From:   =?utf-8?B?6IOh546u5paH?= <huww98@outlook.com>
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
-        vshankar@redhat.com, stable@vger.kernel.org,
-        Hu Weiwen <sehuww@mail.scut.edu.cn>
-Subject: Re: [PATCH v4] ceph: fix blindly expanding the readahead windows
-Message-ID: <TYCP286MB2066E72A82760E96D328A420C0779@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
-References: <20230509005703.155321-1-xiubli@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230509005703.155321-1-xiubli@redhat.com>
-X-TMN:  [Itfjt5MfWPDgin1nqX8iXnrv/Zznccxq]
-X-ClientProxiedBy: SJ0PR03CA0203.namprd03.prod.outlook.com
- (2603:10b6:a03:2ef::28) To TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:152::14)
-X-Microsoft-Original-Message-ID: <ZFtrYbApiUm525Z8@outlook.com>
+        with ESMTP id S236707AbjEJKpS (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 10 May 2023 06:45:18 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD3CF7D93
+        for <ceph-devel@vger.kernel.org>; Wed, 10 May 2023 03:44:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1683715470;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xDDVqBpm+gKlv4g7hoVUXAiRvqnPVmg7Iyfp3eI/gzI=;
+        b=AsdRbC+gATiddzeeKQrrFa8fq2AsRupMESpsAQvQE45gWi130ie2LqYoOPpEukve0aJzSU
+        bzM9JJL0MJ+C8nB20bJAP7MJLbp0IHb8PfFF0bR5BkvX8t3KxqHZKC4OKD7rPfRZ1EAU4e
+        WV8qiixiwvlNLwQwCw5t8qVypDctS3M=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-99-_bHY9s9rM22T_QZDuZG-Ig-1; Wed, 10 May 2023 06:44:29 -0400
+X-MC-Unique: _bHY9s9rM22T_QZDuZG-Ig-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-24e015fcf81so4060602a91.3
+        for <ceph-devel@vger.kernel.org>; Wed, 10 May 2023 03:44:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1683715468; x=1686307468;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xDDVqBpm+gKlv4g7hoVUXAiRvqnPVmg7Iyfp3eI/gzI=;
+        b=CTpZl0k7pCDrtM7mWQ/0WEJeX5djC6JlY0g3nwCofgXQQzkWCEmhxrSs1XtdF+vOZG
+         C/DkqJGTHXw3rOWFOB9F6EsXKWFjMfa6T/U1KUL9nzGGBo6RhP9ZsRS2LKLXEWmQtStd
+         5eCQc3OsprgztRfTE6hjyRutoyQeQALGVFdp3uCBXCq0kUqHWZ1PiOTW5p2dFWRfl+YE
+         qpGj/6CxrHAXd7CnWCziqGu4Nff3Xn/Z8Qg9PbZrQw2p1L/JTl8Mlkke/mtMIFgaUpmw
+         RaoPcbo7vw8FRnIY4yva9eAoIyAiEhFK1w+i8fCExDU57wmN3R3j8WSFnt4ixPdBrxv4
+         E6SA==
+X-Gm-Message-State: AC+VfDw5FBeFOli2CWNpqTnQV64mQi8yLAXfci8r941XtFQwPlAsd+IQ
+        aPeDEGq6W+fzGTU8HJCfEVPH/qKP8O8cOtgYHV/oARMf/mVscjZgQQlyY/XgO9Xtx906JvsW8r6
+        O1rSiAzQYxJbh8Ad1g2vvng==
+X-Received: by 2002:a17:90b:198c:b0:244:9385:807f with SMTP id mv12-20020a17090b198c00b002449385807fmr16517410pjb.44.1683715468560;
+        Wed, 10 May 2023 03:44:28 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ7gWONIci3s8j5j7B12WKMRSkcn+04+6KbMaQgM8jsKodB13D93yv4PInb4Gr5y5GsoZ37z4g==
+X-Received: by 2002:a17:90b:198c:b0:244:9385:807f with SMTP id mv12-20020a17090b198c00b002449385807fmr16517393pjb.44.1683715468221;
+        Wed, 10 May 2023 03:44:28 -0700 (PDT)
+Received: from [10.72.12.156] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id jx12-20020a17090b46cc00b0024e0141353dsm13278970pjb.28.2023.05.10.03.44.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 May 2023 03:44:27 -0700 (PDT)
+Message-ID: <e235d9ce-2436-f82f-5392-3a380d38eb35@redhat.com>
+Date:   Wed, 10 May 2023 18:44:22 +0800
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCP286MB2066:EE_|TYWP286MB2153:EE_
-X-MS-Office365-Filtering-Correlation-Id: aa38f2f3-4bd0-4fb3-352d-08db513d7d9b
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: G3TRrf5JK4GiSMX5XZoSVFEehK2wa2h1Z4BX4+IJOICYc3dj+EWMLkdcGKljPF1uFCdg06igWiwMT/5d910ufINbkeB9wtDMq7Mt/Swup8xArEx2N6C7tO9Mmprli7lh124M4y2kznZStf7J//ttwnSeOiG1ftk66Og1cX85/oT+jhFVAu4Zx9Meqgq4rDqxcJ7LGLzBvL4W3Tdd8AMBePaj09zNT5Io3AHf1nBP2IADuxKEI5b+kzMBW29w8Ug3Mej78y1UxblGMnktqAPsAodZM7uRoCpNmmK94cRsqEGgwytiUT0WL4GQMDe5Pm3ch5INFcv1qqMdUoHsVsQpB+IwvXJLSN8bR9ocO5NIxtiITTdJtuZRyek5agMv3V8B6yzizAEESXvFMsZNz6IW8aF1mNvzkufO5ck9M0zIeERBKzgjCApeYwMyqKesfCqPjoFgo1M6jm6Hpu7oNUu91AGA6pXHrpqeBU5Ydz1n4MIavYDhqEh3M8s95sV3SmckU2U1DKHdxKea+QH1U5TLTZ8oAnys/9fRQWro6vR5nxGjHM7AhqgoywoV7c6TXG9PT6QT3qVIdBTz6feMGACczCvJ8rEj9qbc0/TYHKLf4Q8=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?nejwOdusc7vSsKptXPv87/CQzHBedW1gsCd3R5mGrUn7akqXBF094GAwGkGH?=
- =?us-ascii?Q?5P3Xu0VU/jSMlBLvzRbyLZ6mbk+lmPPrX8XrtPa9iiWXXddgDEIGqKh7IXhx?=
- =?us-ascii?Q?qd1M90oSKOx0BrlXHHeizJ23awhE26tk/aUvychaI2B4wP26N9pG1SMcuiMi?=
- =?us-ascii?Q?pKGLtD2QNyf5Qc0nAEcPvuAizueHWbwfH3f+RG5KT4XnO4er3YPmKe/4cnJP?=
- =?us-ascii?Q?ZcHohJWdqWIQCOgE+RVFgpm0NPd3TckBpViN6Rs3dt/LOj7OREIP9bvO/pRY?=
- =?us-ascii?Q?NerHqNDzeJoCM1BZLRxc3svkUvgwWVOx9UFjyI1OqbpgXbDGIM40GFFfZo/x?=
- =?us-ascii?Q?LD9aZ6LC/G5TAWkvUHQo+plh8bkGYws7AHRxhM58WvS1xicwoxKPK7opNOYF?=
- =?us-ascii?Q?Zuhv8oGQQVMr1F7FoXrYpwP8ktBug0GUS0hgLXNFmvmY6uP6AuBSvKcM6FNT?=
- =?us-ascii?Q?dTdu/rXSO9bPd8cKjhuupu8fOTr4U/Hy9nvedH/EEyw2wQXB5beC5Hj2/6TZ?=
- =?us-ascii?Q?wklpl4J9RzgwuNs+5eiagJv/yEpOaNT1cu40aJeZPNOFX3GBntOzMtCqlAdi?=
- =?us-ascii?Q?sVvQq16bs0lSQb9ythYO2fVppKW5W4jINfAInlLwzucI2iq3Csp49vfzSaaJ?=
- =?us-ascii?Q?sbUTu9WxGXDOEnVZFBw/7oGPdoynxRuu2BbkqI2LCcJxuQqOw8n/4ns0Ma/Q?=
- =?us-ascii?Q?5gCbqHXeXC3Vln/bWTPwKU9tTRSX7U/4RhtnZDphQjxQoODBnKj5ae6H2sst?=
- =?us-ascii?Q?S2mVbxD6PL8udtcSwSwioe4Cy6ot03hZ9V1kI06TdWJ5ZkghmrSK03fu9KbF?=
- =?us-ascii?Q?hlGv0ZQnynlu37Pg15k0C2KSN7/yEOBDkkU4gMg+SRv44RaH9nsD5KR43PRD?=
- =?us-ascii?Q?9tEzRhWuT5e2BYViqIV49xtBSiirwxZ8yV4R3nwcxO/qp52n06A+ydf8qX5P?=
- =?us-ascii?Q?25Emy4chE61cxNzNd2WS54RoCmv398X9RqRkyLwX7c/qC823UeGI15hGLRNt?=
- =?us-ascii?Q?iTdVW6JEG9ObH7pCP73NysJ1vO0eIufNz+i7FCrSNsMWFkDaxwyzdq/gi6bN?=
- =?us-ascii?Q?S8bTb+SBhgdfSvSIyv5QsZZdVmWFFkwIIMBTFutsbeOYr0bZRw6+UlJpmZG7?=
- =?us-ascii?Q?UMBG3SpUFy+cBO9xRm+ImFcdjPLUt3c8SkzzLlO03GrnzZtL4xpDx+VPFKXi?=
- =?us-ascii?Q?AQWRjttp4Mpbtg9BcvqsSISoTt8G5mUPdTZIYQ=3D=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa38f2f3-4bd0-4fb3-352d-08db513d7d9b
-X-MS-Exchange-CrossTenant-AuthSource: TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2023 10:01:15.3509
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWP286MB2153
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 3/3] libceph: reject mismatching name and fsid
+Content-Language: en-US
+To:     =?UTF-8?B?6IOh546u5paH?= <huww98@outlook.com>
+Cc:     ceph-devel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Venky Shankar <vshankar@redhat.com>,
+        Hu Weiwen <sehuww@mail.scut.edu.cn>
+References: <TYCP286MB20661F87B0C796738BDC5FBEC0709@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
+ <TYCP286MB2066D19A68A9176E289BB4FDC0709@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
+ <00479efd-529e-0b98-7f45-3d6c97f0e281@redhat.com>
+ <TYCP286MB2066015566DE132BA5B3CF06C0779@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <TYCP286MB2066015566DE132BA5B3CF06C0779@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, May 09, 2023 at 08:57:03AM +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> Blindly expanding the readahead windows will cause unneccessary
-> pagecache thrashing and also will introdue the network workload.
-                                    ^^^^^^^^
-                                    introduce
 
-> We should disable expanding the windows if the readahead is disabled
-> and also shouldn't expand the windows too much.
-> 
-> Expanding forward firstly instead of expanding backward for possible
-> sequential reads.
-> 
-> Bound `rreq->len` to the actual file size to restore the previous page
-> cache usage.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 49870056005c ("ceph: convert ceph_readpages to ceph_readahead")
-> URL: https://lore.kernel.org/ceph-devel/20230504082510.247-1-sehuww@mail.scut.edu.cn
-> URL: https://www.spinics.net/lists/ceph-users/msg76183.html
-> Cc: Hu Weiwen <sehuww@mail.scut.edu.cn>
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
-> 
-> V4:
-> - two small cleanup from Ilya's comments. Thanks
-> 
-> 
->  fs/ceph/addr.c | 28 +++++++++++++++++++++-------
->  1 file changed, 21 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index ca4dc6450887..683ba9fbd590 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -188,16 +188,30 @@ static void ceph_netfs_expand_readahead(struct netfs_io_request *rreq)
->  	struct inode *inode = rreq->inode;
->  	struct ceph_inode_info *ci = ceph_inode(inode);
->  	struct ceph_file_layout *lo = &ci->i_layout;
-> +	unsigned long max_pages = inode->i_sb->s_bdi->ra_pages;
+On 5/10/23 16:44, 胡玮文 wrote:
+> On Wed, May 10, 2023 at 03:02:09PM +0800, Xiubo Li wrote:
+>> On 5/8/23 01:55, Hu Weiwen wrote:
+>>> From: Hu Weiwen <sehuww@mail.scut.edu.cn>
+>>>
+>>> These are present in the device spec of cephfs. So they should be
+>>> treated as immutable.  Also reject `mount()' calls where options and
+>>> device spec are inconsistent.
+>>>
+>>> Signed-off-by: Hu Weiwen <sehuww@mail.scut.edu.cn>
+>>> ---
+>>>    net/ceph/ceph_common.c | 26 +++++++++++++++++++++-----
+>>>    1 file changed, 21 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+>>> index 4c6441536d55..c59c5ccc23a8 100644
+>>> --- a/net/ceph/ceph_common.c
+>>> +++ b/net/ceph/ceph_common.c
+>>> @@ -440,17 +440,33 @@ int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
+>>>    		break;
+>>>    	case Opt_fsid:
+>>> -		err = ceph_parse_fsid(param->string, &opt->fsid);
+>>> +	{
+>> BTW, do we need the '{}' here ?
+> I want to declare 'fsid' variable closer to its usage.  But a declaration
+> cannot follow a case label:
+>    
+>    error: a label can only be part of a statement and a declaration is not a statement
+>
+> searching for 'case \w+:\n\s+\{' in the source tree reveals about 1400
+> such usage.  Should be pretty common.
 
-I think it is better to use `ractl->ra->ra_pages' instead of
-`inode->i_sb->s_bdi->ra_pages'.  So that we can consider per-request ra
-size config, e.g., posix_fadvise(POSIX_FADV_SEQUENTIAL) will double the
-ra_pages.
+Did you see this when compiling ? So odd I jsut remove them and it 
+worked for me.
 
-But `ractl' is not passed to this function.  Can we just add this
-argument?  ceph seems to be the only implementation of expand_readahead,
-so it should be easy.  Or since this patch will be backported, maybe we
-should keep it simple, and write another patch for this?
 
-> +	unsigned long max_len = max_pages << PAGE_SHIFT;
-> +	loff_t end = rreq->start + rreq->len, new_end;
->  	u32 blockoff;
-> -	u64 blockno;
->  
-> -	/* Expand the start downward */
-> -	blockno = div_u64_rem(rreq->start, lo->stripe_unit, &blockoff);
-> -	rreq->start = blockno * lo->stripe_unit;
-> -	rreq->len += blockoff;
-> +	/* Readahead is disabled */
-> +	if (!max_pages)
-> +		return;
+>>> +		struct ceph_fsid fsid;
+>>> +
+>>> +		err = ceph_parse_fsid(param->string, &fsid);
+>>>    		if (err) {
+>>>    			error_plog(&log, "Failed to parse fsid: %d", err);
+>>>    			return err;
+>>>    		}
+>>> -		opt->flags |= CEPH_OPT_FSID;
+>>> +
+>>> +		if (!(opt->flags & CEPH_OPT_FSID)) {
+>>> +			opt->fsid = fsid;
+>>> +			opt->flags |= CEPH_OPT_FSID;
+>>> +		} else if (ceph_fsid_compare(&opt->fsid, &fsid)) {
+>>> +			error_plog(&log, "fsid already set to %pU",
+>>> +				   &opt->fsid);
+>>> +			return -EINVAL;
+>>> +		}
+>>>    		break;
+>>> +	}
+>>>    	case Opt_name:
+>>> -		kfree(opt->name);
+>>> -		opt->name = param->string;
+>>> -		param->string = NULL;
+>>> +		if (!opt->name) {
+>>> +			opt->name = param->string;
+>>> +			param->string = NULL;
+>>> +		} else if (strcmp(opt->name, param->string)) {
+>>> +			error_plog(&log, "name already set to %s", opt->name);
+>>> +			return -EINVAL;
+>>> +		}
+>>>    		break;
+>>>    	case Opt_secret:
+>>>    		ceph_crypto_key_destroy(opt->key);
 
-If we have access to ractl here, we can also skip expanding on
-`ractl->file->f_mode & FMODE_RANDOM', which is set by
-`posix_fadvise(POSIX_FADV_RANDOM)'.
-
->  
-> -	/* Now, round up the length to the next block */
-> -	rreq->len = roundup(rreq->len, lo->stripe_unit);
-> +	/*
-> +	 * Try to expand the length forward by rounding  up it to the next
-                                                       ^^ an extra space
-
-> +	 * block, but do not exceed the file size, unless the original
-> +	 * request already exceeds it.
-> +	 */
-> +	new_end = min(round_up(end, lo->stripe_unit), rreq->i_size);
-> +	if (new_end > end && new_end <= rreq->start + max_len)
-> +		rreq->len = new_end - rreq->start;
-> +
-> +	/* Try to expand the start downward */
-> +	div_u64_rem(rreq->start, lo->stripe_unit, &blockoff);
-> +	if (rreq->len + blockoff <= max_len) {
-> +		rreq->start -= blockoff;
-> +		rreq->len += blockoff;
-> +	}
->  }
->  
->  static bool ceph_netfs_clamp_length(struct netfs_io_subrequest *subreq)
-> -- 
-> 2.40.0
-> 
