@@ -2,73 +2,73 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 27E456FDE9B
-	for <lists+ceph-devel@lfdr.de>; Wed, 10 May 2023 15:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 112E26FE9FF
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 May 2023 05:05:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237140AbjEJNbm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 10 May 2023 09:31:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39194 "EHLO
+        id S236082AbjEKDFF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 10 May 2023 23:05:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236982AbjEJNbk (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 10 May 2023 09:31:40 -0400
-Received: from mail-vs1-xe36.google.com (mail-vs1-xe36.google.com [IPv6:2607:f8b0:4864:20::e36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 053D144A8
-        for <ceph-devel@vger.kernel.org>; Wed, 10 May 2023 06:31:40 -0700 (PDT)
-Received: by mail-vs1-xe36.google.com with SMTP id ada2fe7eead31-42c38a6daf3so4828399137.3
-        for <ceph-devel@vger.kernel.org>; Wed, 10 May 2023 06:31:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1683725499; x=1686317499;
-        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OUNfFPXRbwy3GrkhoYJ9XNs1tL5HOfwzelho1mqOHSk=;
-        b=R16g9MhrsGzP9n9SIj/ONbXB0m57OaYCQ3ouj4ghzDfS80nEWNqip02nHSN7iPcGkB
-         0dMn9Sf1ppyF8ZHOtpJzmIjbzJB9L1W+nd7N+SALFSUWjRwasdOUw/Gt2Taqrx9Tq7Cs
-         /H9HyVIZjG6wYcI8YI0dJ+3yr3fJd7RrvqZn9I1cK1ASQbjOMX9H7vzjwgo2VrE0ZlkK
-         JXZr9JhPRwoUIb0Xx4+mbkgSLJQV1BamzIJDoogDeqRynyWlOCR64c4WmLChLNuzrFgR
-         5uCpa9poTPtIwR/hlzWabSr4BjZ7vLcR0A8hRDwS1RalQ/8XeQniOiI9YPq6WdI7Fei/
-         +9JA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1683725499; x=1686317499;
-        h=to:subject:message-id:date:from:reply-to:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OUNfFPXRbwy3GrkhoYJ9XNs1tL5HOfwzelho1mqOHSk=;
-        b=Pj8P+y4ccKXS4lhKzHvi2BDc+AghjrthmzkE+pNM4iLCc0YWY0hFOWSBNg7s52bEVt
-         xh3Nrtue3N2xltlacLVQGeVl1RLw5ThOUaCFmZNOHdCQCO7bnyyTMvyRn5/fIq+hzl7n
-         cRzYiB6tMAHwPu/TYX+uJcMPDygXJYqXTkgO0q6xDUiTtcodP+QtNCeQ3Td0oZAX88lW
-         No1Y0sM9DIy+s22cR4SIrJPDTfndSlWzztBRIjTsrAaq8Dknz2S+eWmkPEFTWX4FsHCm
-         TxX1nHsNTqj9Pby4WnMFgDxRa4OrWilUqaqc24ALB8hk2ALjKlzVYOdhbWxdaGICNUYh
-         TUGw==
-X-Gm-Message-State: AC+VfDz+JcJAKA/2r3HsFH58ClqW8oRChBD1Q5uFYXb4IPwSnJd/WCu4
-        YCwZ5EH/Gzk4dzDEpQdPrGbW8+FnGVP/fMICZ3U=
-X-Google-Smtp-Source: ACHHUZ59TUvINFgO8pp3gPw01MDLDbFcnX3pyo/jQb6Xy0KZ8AT4hmbje98J5B1rkJj05cdV8bKvyUQv8NgtSglORaU=
-X-Received: by 2002:a67:fc81:0:b0:434:763c:c42 with SMTP id
- x1-20020a67fc81000000b00434763c0c42mr5991634vsp.15.1683725499045; Wed, 10 May
- 2023 06:31:39 -0700 (PDT)
+        with ESMTP id S236088AbjEKDEt (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 10 May 2023 23:04:49 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F0A1FCE
+        for <ceph-devel@vger.kernel.org>; Wed, 10 May 2023 20:04:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1683774239;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=JptARYMI5KEc5sVLe3d6cz9hnL7OemyHmGZsPCauSKk=;
+        b=bbKWYy2ZBVvs1j66rLhN/uS3rsjpZmqJbmfhbhnNSGEiqixP8ysPzXPB7Cat9mEKAkPo55
+        BwLj8E7QWbBozo0WeCdigtDTtSyvaH4wI3ex6PqgEwsQOdbGZFu5o7qzCgHScf/EnaTAfL
+        v4TP/Kro0JYDZDmsL+miOosArqby9Ow=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-428-huOn_8DTOWmEPFydZ8UuFQ-1; Wed, 10 May 2023 23:03:54 -0400
+X-MC-Unique: huOn_8DTOWmEPFydZ8UuFQ-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A19B929DD984;
+        Thu, 11 May 2023 03:03:53 +0000 (UTC)
+Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-156.pek2.redhat.com [10.72.12.156])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EDBCA492C13;
+        Thu, 11 May 2023 03:03:49 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
+Cc:     jlayton@kernel.org, vshankar@redhat.com, sehuww@mail.scut.edu.cn,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v5 0/2] ceph: fix blindly expanding the readahead windows
+Date:   Thu, 11 May 2023 11:03:33 +0800
+Message-Id: <20230511030335.337094-1-xiubli@redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a59:caa8:0:b0:3b6:4c85:fa09 with HTTP; Wed, 10 May 2023
- 06:31:38 -0700 (PDT)
-Reply-To: contact.ninacoulibaly@inbox.eu
-From:   nina coulibaly <ninacoulibaly13.info@gmail.com>
-Date:   Wed, 10 May 2023 06:31:38 -0700
-Message-ID: <CACTFrC0WrZ6Y_x3k0r6f3P=9Phti6wvsAmOiB=-kNpEQUNne9w@mail.gmail.com>
-Subject: from nina coulibaly
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=2.6 required=5.0 tests=BAYES_50,DEAR_SOMETHING,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: **
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dear sir,
+From: Xiubo Li <xiubli@redhat.com>
 
-Please grant me permission to share a very crucial discussion with
-you. I am looking forward to hearing from you at your earliest
-convenience.
+V5:
+- Fixed the file ra_pages issue about the posix_fadvise
 
-Mrs. Nina Coulibaly
+Xiubo Li (2):
+  ceph: add a dedicated private data for netfs rreq
+  ceph: fix blindly expanding the readahead windows
+
+ fs/ceph/addr.c  | 83 ++++++++++++++++++++++++++++++++++++++-----------
+ fs/ceph/super.h | 13 ++++++++
+ 2 files changed, 78 insertions(+), 18 deletions(-)
+
+-- 
+2.40.0
+
