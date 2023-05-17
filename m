@@ -2,78 +2,54 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 725F5705C0E
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 May 2023 02:41:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 468D7705F3B
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 May 2023 07:25:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229764AbjEQAlV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 16 May 2023 20:41:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54386 "EHLO
+        id S232260AbjEQFZD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 17 May 2023 01:25:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbjEQAlT (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 16 May 2023 20:41:19 -0400
+        with ESMTP id S231744AbjEQFZA (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 17 May 2023 01:25:00 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB54D9E
-        for <ceph-devel@vger.kernel.org>; Tue, 16 May 2023 17:40:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D75840ED
+        for <ceph-devel@vger.kernel.org>; Tue, 16 May 2023 22:24:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684284031;
+        s=mimecast20190719; t=1684301060;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Q6e+XP0wt3t9p2rv2rjuk4UQmMTynuIWCH/JljqNeoQ=;
-        b=HHDR1m6TedPFqVOD9RJFk5POjlkhD1s/K5tiLXj2Gq6Yn+QUi2UOGX1gXicVqzhohth5Dt
-        dGZ1eaT06LdNBzIyXlMtM7NZkGWZK2tnpgq7ZtRMN5vt3kdi/G5G0Tx7aCbJpyGq5wWNqU
-        j49nz+RUnMGDrzMwitZSpDN+lnSjH5s=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-671-wyaCpaG7MoCCzOzGMLs4Dg-1; Tue, 16 May 2023 20:40:29 -0400
-X-MC-Unique: wyaCpaG7MoCCzOzGMLs4Dg-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-64386573ba8so73128b3a.3
-        for <ceph-devel@vger.kernel.org>; Tue, 16 May 2023 17:40:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684284028; x=1686876028;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q6e+XP0wt3t9p2rv2rjuk4UQmMTynuIWCH/JljqNeoQ=;
-        b=CmwDPYArk0ykmC4ojvGIO/rbgLZ3/8bgt45bDOnP/frYIrC5lM5OlEHyX3KtJG4/QL
-         3KU+rLzg4TD6rpDf21xrgFYUMWXEKbHfnbVpcuLtL6BBfcdpQGhZ4cc6CYdql6yq5GdX
-         dMoIR6rc7e1yp1xc13RJT7uwJ7vbQnkGXL+yfPWstlip2qV6aeO1FSBkAbHMt0b9w/si
-         r3e3C+yfo1uK2ikJxDHwP7quH9Ig6BH2+7Lr3M4c4iM9ZNnDqUbJbKV4jIR0AaXRB1y1
-         uL0DORwIfkM9yKAnecFRO/+PbsUc+d+HE2qAGAB3cRAGVjc0ga+0bfbAKA8PcIdcaCcF
-         LAaw==
-X-Gm-Message-State: AC+VfDxgBvmNjoLBmSHogMvoySSVU+vxE/bUKt0V44T2Wu6//5IhgRhi
-        UqhmwPd77fX8L3xrSAdopQtKkffa0RDKBC1SxdIclJFT8JFnu1bentCrnmGsir35v2Cp7jnT36J
-        0vKP9rRSHIijylJKmKXTFxA==
-X-Received: by 2002:a05:6a20:a12b:b0:101:5037:7542 with SMTP id q43-20020a056a20a12b00b0010150377542mr33645410pzk.10.1684284028102;
-        Tue, 16 May 2023 17:40:28 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5p6PllfNsVJYOFKkVMkOAvvWBBQEIPni5j+20gcvr55ibGS++zE5X/DQt+TTFO6zTel/AS7g==
-X-Received: by 2002:a05:6a20:a12b:b0:101:5037:7542 with SMTP id q43-20020a056a20a12b00b0010150377542mr33645394pzk.10.1684284027780;
-        Tue, 16 May 2023 17:40:27 -0700 (PDT)
-Received: from [10.72.12.110] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id k11-20020a63d10b000000b0051b71e8f633sm14019411pgg.92.2023.05.16.17.40.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 May 2023 17:40:27 -0700 (PDT)
-Message-ID: <5b6700c6-f0ba-4b4f-caaa-564960399399@redhat.com>
-Date:   Wed, 17 May 2023 08:40:22 +0800
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=jw9brB41FDXz2jgQEbr8oqsvxh/JrmUeFZGSqLXLrYE=;
+        b=WqjPdDY2111/0QXw4Ebbo9iszSIq3966N9wEikWKIp4340OVvsJ2uIAHQrnB9KkINqNrJ/
+        TxETHQKj/zBsvHc3HgrrlJBG5tpLh6gppnrcTNZCG/FvkNpKUYOGaLu9ghSt6pZmGzw8jc
+        w7pvDYqNRrxWFNd7ETHDguSvtG9UfwA=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-625-YYpC63RgMhCNkxUfHHUVFQ-1; Wed, 17 May 2023 01:24:19 -0400
+X-MC-Unique: YYpC63RgMhCNkxUfHHUVFQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7E25B2A59544;
+        Wed, 17 May 2023 05:24:18 +0000 (UTC)
+Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-110.pek2.redhat.com [10.72.12.110])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CF80E14171C0;
+        Wed, 17 May 2023 05:24:13 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
+Cc:     jlayton@kernel.org, vshankar@redhat.com,
+        Xiubo Li <xiubli@redhat.com>, stable@vger.kernel.org,
+        Frank Schilder <frans@dtu.dk>
+Subject: [PATCH] ceph: force updating the msg pointer in non-split case
+Date:   Wed, 17 May 2023 13:24:04 +0800
+Message-Id: <20230517052404.99904-1-xiubli@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 0/3] ceph: account for name and fsid in new device spec
-Content-Language: en-US
-To:     Hu Weiwen <huww98@outlook.com>, ceph-devel@vger.kernel.org,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     Venky Shankar <vshankar@redhat.com>,
-        Hu Weiwen <sehuww@mail.scut.edu.cn>
-References: <TYCP286MB20661F87B0C796738BDC5FBEC0709@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <TYCP286MB20661F87B0C796738BDC5FBEC0709@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,27 +57,35 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+From: Xiubo Li <xiubli@redhat.com>
 
-On 5/8/23 01:53, Hu Weiwen wrote:
-> From: Hu Weiwen <sehuww@mail.scut.edu.cn>
->
-> We have name and fsid in the new device spec format, but kernel just
-> discard them.  Instead of relying on the mount.ceph helper, we should do
-> this directly in kernel to ensure the options and device spec are
-> consistent.  And also avoid any confusion.
->
-> Hu Weiwen (3):
->    ceph: refactor mds_namespace comparing
->    ceph: save name and fsid in mount source
->    libceph: reject mismatching name and fsid
->
->   fs/ceph/super.c        | 51 +++++++++++++++++++++++++-----------------
->   net/ceph/ceph_common.c | 26 ++++++++++++++++-----
->   2 files changed, 52 insertions(+), 25 deletions(-)
->
-Will apply this patch series to the testing branch and run the test.
+When the MClientSnap reqeust's op is not CEPH_SNAP_OP_SPLIT the
+request may still contain a list of 'split_realms', and we need
+to skip it anyway. Or it will be parsed as a corrupt snaptrace.
 
-Thanks Weiwen
+Cc: stable@vger.kernel.org
+Cc: Frank Schilder <frans@dtu.dk>
+Reported-by: Frank Schilder <frans@dtu.dk>
+URL: https://tracker.ceph.com/issues/61200
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/snap.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-- Xiubo
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index 0e59e95a96d9..d95dfe16b624 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -1114,6 +1114,9 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+ 				continue;
+ 			adjust_snap_realm_parent(mdsc, child, realm->ino);
+ 		}
++	} else {
++		p += sizeof(u64) * num_split_inos;
++		p += sizeof(u64) * num_split_realms;
+ 	}
+ 
+ 	/*
+-- 
+2.40.1
 
