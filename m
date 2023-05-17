@@ -2,61 +2,61 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 477017069C1
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 May 2023 15:24:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B17EB7069FC
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 May 2023 15:35:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231564AbjEQNY1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 17 May 2023 09:24:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35214 "EHLO
+        id S231969AbjEQNfA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 17 May 2023 09:35:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232046AbjEQNYC (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 17 May 2023 09:24:02 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1145A1FC2
-        for <ceph-devel@vger.kernel.org>; Wed, 17 May 2023 06:23:17 -0700 (PDT)
+        with ESMTP id S232008AbjEQNeu (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 17 May 2023 09:34:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E75979033
+        for <ceph-devel@vger.kernel.org>; Wed, 17 May 2023 06:33:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684329797;
+        s=mimecast20190719; t=1684330421;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=R84mdR5Ybe8j5TDFyLE8jRpFf5CWTx9pF4UrNhUID5w=;
-        b=Oly31mr6kMPXzcjRaGYoBeMBZCWGrKLxJA/cg8/YmJrd2Pwxb9T80W0hwhnqf8ATC5lMsP
-        9P2bve2q9thzNAUoORq2bXnAK0TEi25uJUbBu8L3BC+1QCRT/4xUnxRHCD6NhWTK6wpm4f
-        kARvQF5WwG4Pafdg3PZjz4sM73RytL0=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=TrGoKrrtcHzhXcko4pUQ70VqzVmgKR5M67k0Ep1qRLw=;
+        b=b+lTLOW1W+Y8gc7WOZpCFVJKFPl0FKJyQe3i9hZ4zhe22UVAKMhiXZgMSjiTuMiGL/4azE
+        Tj5LSu3HyncUvJnyqyMg+y4EWD1GQpxD5OYJjPeZnAOiB5tB4HxN/YI/crSJ7hWNrV0E8m
+        MklxLjCdHbIvh0M3ZPfkmYM63JepQVI=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-70-QSY4ePW3NRefpiDSj1yaZw-1; Wed, 17 May 2023 09:23:15 -0400
-X-MC-Unique: QSY4ePW3NRefpiDSj1yaZw-1
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-534107e73cfso494420a12.1
-        for <ceph-devel@vger.kernel.org>; Wed, 17 May 2023 06:23:15 -0700 (PDT)
+ us-mta-663-p7wcKD-PNtuHzvmKcvz-SQ-1; Wed, 17 May 2023 09:33:40 -0400
+X-MC-Unique: p7wcKD-PNtuHzvmKcvz-SQ-1
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1ae40139967so9761025ad.3
+        for <ceph-devel@vger.kernel.org>; Wed, 17 May 2023 06:33:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684329795; x=1686921795;
+        d=1e100.net; s=20221208; t=1684330419; x=1686922419;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R84mdR5Ybe8j5TDFyLE8jRpFf5CWTx9pF4UrNhUID5w=;
-        b=fAjdjhVtc8/5vWJDsNGySCsWFaFzvugNQATufty0GpheK89i2ibcTJDAYnoH+fn0NH
-         2VVTtIvrmtWbbRa+2+PNU2t3cWUKhDmcp6S5N33raZnrbb0iD1tGQa2YXdyQc2s8Qixg
-         2t0ZZ/OYMWsuVHn2RA1l3DTtscKs91ZQR1+7xmrCf5RKzL6WtOmyR286coPM9OLiB9jI
-         QvjwbPt0EMW+YPZ5S8MyQsW0z265d8zbFe/BIrmoORgC2506OTEe0Pwh7d3f5jsCfeRf
-         IRHdY7cPBz/1afr9pnrxauYAc6W/8MLjs8CLIKcs8+5rUcVHmojZgWCuyKdUzocJj/KG
-         yKVA==
-X-Gm-Message-State: AC+VfDyUtJrqAc6eB5JQlCPeAV/WTz9Dh8V8vKeICThq6WYWQHAH2vaB
-        zgM3GWghRADKZMDA+tAquvFZpVAXMWcK6Bw3djiw0oGORsS5DyGFziNcqZ5m6RgQ1qJmr+EE7F6
-        Z5mjOr7j6umVkEKD4mV5ilQ==
-X-Received: by 2002:a05:6a20:2588:b0:109:12d0:db23 with SMTP id k8-20020a056a20258800b0010912d0db23mr1462579pzd.1.1684329794784;
-        Wed, 17 May 2023 06:23:14 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ4LsE/lROXS0ziLWI8hfDwEKFXnewkhgmmjB/5GQh4sealsEmwZ9VIhcJBWcOmEex+rZ8buWQ==
-X-Received: by 2002:a05:6a20:2588:b0:109:12d0:db23 with SMTP id k8-20020a056a20258800b0010912d0db23mr1462556pzd.1.1684329794457;
-        Wed, 17 May 2023 06:23:14 -0700 (PDT)
-Received: from [10.72.12.110] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id 12-20020a63124c000000b00502ecb91940sm15215345pgs.55.2023.05.17.06.23.11
+        bh=TrGoKrrtcHzhXcko4pUQ70VqzVmgKR5M67k0Ep1qRLw=;
+        b=KepYj1KrF+5FhDc8eQ00HWBk32wpvdO6ijgfR2ibSxB3GhBu//rkiwTwe7TjJvM/ap
+         8i5OMIpIhUbhDTmjrZbPjcP/nJ3LjICWsztxN59HDOQPgahKDQi6p5GC4a2040nb72H+
+         1TmaoERJMKsHN6U1CdxdGUx+T7fX8OBHwJqTuShp2Bly0T0r97mxGlKPC8ANoWp8Aoa2
+         LzikbJ31vEXNcHaOIkha5RS60YFBwvvqSeP74zl2Z9TNuUXBuE88YJ9T5zMp+X2xFGT5
+         Yzb3iB7Sb9YQbBLyPUo8oVupEkSXR+0JsJiRXlPRFWoObkoTji6613he/zi9fzralIBT
+         0VRg==
+X-Gm-Message-State: AC+VfDyC+5w8A4fmJawQS70lA/IWjsAelz6WD3A4gx56IWCYRVeNy56u
+        1Op9yuqY+ICJ5CMNj/D+sqM60JKU8JjRVVY5R34zhInpX1PCoIg/rNuGDc5f8sj5YH0FBTEkk4E
+        /ndrO7M2sH8Byubnt8+sy3Q==
+X-Received: by 2002:a17:902:e5c1:b0:1ab:1bb0:126d with SMTP id u1-20020a170902e5c100b001ab1bb0126dmr55928078plf.23.1684330418770;
+        Wed, 17 May 2023 06:33:38 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ4raW/uKS3w1mkj6Tmlg/64ohiKJW7/4XCt0AkbGQ4RT0OjHQd45jReS/cBcyPtQ7xQP2FRMg==
+X-Received: by 2002:a17:902:e5c1:b0:1ab:1bb0:126d with SMTP id u1-20020a170902e5c100b001ab1bb0126dmr55928050plf.23.1684330418438;
+        Wed, 17 May 2023 06:33:38 -0700 (PDT)
+Received: from [10.72.12.110] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id s3-20020a170902988300b001ac7c725c1asm15709020plp.6.2023.05.17.06.33.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 May 2023 06:23:14 -0700 (PDT)
-Message-ID: <59141327-4a60-8907-3bd6-7ea4739fd17c@redhat.com>
-Date:   Wed, 17 May 2023 21:23:07 +0800
+        Wed, 17 May 2023 06:33:38 -0700 (PDT)
+Message-ID: <5391b06a-2bb6-05f2-dd7c-c96f259ba443@redhat.com>
+Date:   Wed, 17 May 2023 21:33:31 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
@@ -78,9 +78,8 @@ Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -171,13 +170,21 @@ On 5/17/23 21:11, Ilya Dryomov wrote:
 > - people who are running unsupported Ceph releases (i.e. aren't
 >    updating) are unlikely to be diligently updating their kernel clients
 
-Yeah. While IMO usually upgrading the kernel will be safer and easier 
-than upgrading the whole ceph cluster, and upgrading the ceph cluster 
-may cause the fs metadatas corruption issue, which we have hit many time 
-from CUs and ceph-user mail list.
+Just searched the ceph tracker and I found another 3 trackers have the 
+same issue:
 
-Will leave it to you for this. If that still doesn't make sense I will 
-drop this patch.
+https://tracker.ceph.com/issues/57817
+https://tracker.ceph.com/issues/57703
+https://tracker.ceph.com/issues/57686
+
+So plusing this time and the previous CU case:
+
+https://www.spinics.net/lists/ceph-users/msg77106.html
+
+I have seen at least 5 times.
+
+All this are reproduced when doing MDS failover, and this is the root 
+cause in MDS side.
 
 Thanks
 
