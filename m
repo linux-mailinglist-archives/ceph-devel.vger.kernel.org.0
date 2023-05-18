@@ -2,53 +2,61 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 28CDE707799
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 May 2023 03:49:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16D95707ADE
+	for <lists+ceph-devel@lfdr.de>; Thu, 18 May 2023 09:29:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229587AbjERBtm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 17 May 2023 21:49:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42820 "EHLO
+        id S229868AbjERH3t (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 18 May 2023 03:29:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjERBtl (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 17 May 2023 21:49:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D0230C1
-        for <ceph-devel@vger.kernel.org>; Wed, 17 May 2023 18:48:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684374536;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=7mNItRunzXktZzmomOwmCwa87E9KiZDSCQNWYrpAb80=;
-        b=KF3MKRgKISf1Mwh6poyvCvexVYoAPfk5tko2QoHM33zivJgNgeAzWsPU1vQc6JtyYg64rh
-        lAzUbOOsIagIZR+JL+IJ3hKV9XVpjHntxTFjKTcsjBAMXDb3qfq8+ZqC0RRQcm3Qh9tFHi
-        iIZJC1D0R8/6OjjSx4gEMFv5v+T+qLE=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-590-9BrxVHWjOdudt_oScXUJ2g-1; Wed, 17 May 2023 21:48:53 -0400
-X-MC-Unique: 9BrxVHWjOdudt_oScXUJ2g-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AFEBA381458E;
-        Thu, 18 May 2023 01:48:52 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-110.pek2.redhat.com [10.72.12.110])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7E28163F8E;
-        Thu, 18 May 2023 01:48:49 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-Cc:     jlayton@kernel.org, vshankar@redhat.com,
-        Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: try to dump the msgs when decoding fails
-Date:   Thu, 18 May 2023 09:48:42 +0800
-Message-Id: <20230518014842.148580-1-xiubli@redhat.com>
+        with ESMTP id S230169AbjERH3e (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 18 May 2023 03:29:34 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 371674486
+        for <ceph-devel@vger.kernel.org>; Thu, 18 May 2023 00:28:57 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id d2e1a72fcca58-643557840e4so1869666b3a.2
+        for <ceph-devel@vger.kernel.org>; Thu, 18 May 2023 00:28:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684394925; x=1686986925;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oDVdWICwavrWQ8UAVYhe8ynFXsBBW1vVQ7W08zgiq24=;
+        b=F3FDvHLry+67ch7rgRt9RrTaHLyQL+GDY+bwWXtJFqlcMyGU3f8RYLoxp2/EZfZRB+
+         tUFyJSIqKPaiLYRROp3+wHvXctWyUPsJ8uMBdPT6tRW830fhK3TAN5kqXG5vhOfcv4Dt
+         mVQeu9f1Ud/6k8Ai6bYFHnaSG9fbjfruIivWVdKHh+COMEMuwj7biiIsmUgBtwhw7xu9
+         2mNV5taHm9SwGLJOPj1NUsldh/wHah5Dr7KfGIyh3spFiGtEK7mWhV+zT69tMWfmswYA
+         X8Ez3x+RG6cGdPM/myrmtdKzqqhmEqtFk2G8bFFhzRQqlGp5YkIONhoJ2ZOU12+btTcn
+         XAow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684394925; x=1686986925;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oDVdWICwavrWQ8UAVYhe8ynFXsBBW1vVQ7W08zgiq24=;
+        b=MyS3QxI6N6q0QvvzjG2v9iumhw7Rv7cleZPsyVDSv2Spe88N6+5HKSaSAQmY3M5rP4
+         i6pyYyigAb+GEwpYVSD8CvSnd50wDdO6qdCE1mrKUYv0F+lsB7YlPFFmBZySAN7n9UXG
+         yMErkW/FR4P37ZiYTFXzGuT8gSFTcO+womVDN0WHfbnhOqAa/8PQAQpYSjKA6WAlCOlP
+         iGsQCEwgxOjCpJtt8+MJV+mTXV3sMo/OCsXDCuieNzxcA3w6sZ42DlGTItdkl31SIkR/
+         DZJKkVm9RnK92yg2Z97/znK19ve2I9vrKYDKoL3z8KjQ6fda2iTfiUX/3x3avvueyx9Z
+         9ibw==
+X-Gm-Message-State: AC+VfDymbAcXNKSRoLyqpVcAzpu94/GQXlYHICs32Mm7ujMI41gSePIR
+        3dsbI1uGyIea/RXLQ2ceN7pulSFbSaGSXF1m918=
+X-Google-Smtp-Source: ACHHUZ6freRWOs227ZVzHMEMoL2jvROsTWiV/x1jxHB0eIC7WPVEwC//YCk8U8FT20WRFr3biELbShAmT9RPDRDzNSI=
+X-Received: by 2002:a17:902:e5ce:b0:1ae:5f7e:c117 with SMTP id
+ u14-20020a170902e5ce00b001ae5f7ec117mr2004947plf.60.1684394925333; Thu, 18
+ May 2023 00:28:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+Received: by 2002:a05:6a10:e108:b0:470:f443:15ec with HTTP; Thu, 18 May 2023
+ 00:28:44 -0700 (PDT)
+Reply-To: contact.ninacoulibaly@inbox.eu
+From:   nina coulibaly <ninacoulibaly30.info@gmail.com>
+Date:   Thu, 18 May 2023 00:28:44 -0700
+Message-ID: <CAFb7D3dM+oxnE6SbNfvtRU+Y0hm6-dFzOeWdxnCfTbyrh68jVA@mail.gmail.com>
+Subject: from nina coulibaly
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,52 +64,13 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+Dear,
 
-When the msgs are corrupted we need to dump them and then it will
-be easier to dig what has happened and where the issue is.
+I am interested to invest with you in your country with total trust
+and i hope you will give me total support, sincerity and commitment.
+Please get back to me as soon as possible so that i can give you my
+proposed details of funding and others.
 
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/mds_client.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Best Regards.
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index d6467fe7e5fa..0dd44747f5b4 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -783,6 +783,7 @@ static int parse_reply_info(struct ceph_mds_session *s, struct ceph_msg *msg,
- 	err = -EIO;
- out_bad:
- 	pr_err("mds parse_reply err %d\n", err);
-+	ceph_msg_dump(msg);
- 	return err;
- }
- 
-@@ -3892,6 +3893,7 @@ static void handle_forward(struct ceph_mds_client *mdsc,
- 
- bad:
- 	pr_err("mdsc_handle_forward decode error err=%d\n", err);
-+	ceph_msg_dump(msg);
- }
- 
- static int __decode_session_metadata(void **p, void *end,
-@@ -5620,6 +5622,7 @@ void ceph_mdsc_handle_fsmap(struct ceph_mds_client *mdsc, struct ceph_msg *msg)
- bad:
- 	pr_err("error decoding fsmap %d. Shutting down mount.\n", err);
- 	ceph_umount_begin(mdsc->fsc->sb);
-+	ceph_msg_dump(msg);
- err_out:
- 	mutex_lock(&mdsc->mutex);
- 	mdsc->mdsmap_err = err;
-@@ -5688,6 +5691,7 @@ void ceph_mdsc_handle_mdsmap(struct ceph_mds_client *mdsc, struct ceph_msg *msg)
- bad:
- 	pr_err("error decoding mdsmap %d. Shutting down mount.\n", err);
- 	ceph_umount_begin(mdsc->fsc->sb);
-+	ceph_msg_dump(msg);
- 	return;
- }
- 
--- 
-2.40.1
-
+Mrs Nina Coulibaly
