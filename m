@@ -2,71 +2,72 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 700E1707764
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 May 2023 03:24:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AD05707768
+	for <lists+ceph-devel@lfdr.de>; Thu, 18 May 2023 03:25:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229674AbjERBYW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 17 May 2023 21:24:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33744 "EHLO
+        id S229645AbjERBZP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 17 May 2023 21:25:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229645AbjERBYV (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 17 May 2023 21:24:21 -0400
+        with ESMTP id S229666AbjERBZO (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 17 May 2023 21:25:14 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB94492
-        for <ceph-devel@vger.kernel.org>; Wed, 17 May 2023 18:23:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7FA34488
+        for <ceph-devel@vger.kernel.org>; Wed, 17 May 2023 18:24:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684373012;
+        s=mimecast20190719; t=1684373066;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=FlEfVPMTnJSqwCUOuMXKMM9sJFrXm37BO5CY5YUKY5M=;
-        b=d4E5zEfs0Sr96IyVsq/J97fYI5IBjvCQEyRJkZygWkWKhylNZ+YbSeqIRZ0J/trtcaPiG6
-        I6ayI32ueT6S6AuwuPMNDBA+xfHvGzlDTa4CaXelp7ArogpIeC5jXD2HYE/YpWwNB/YtCg
-        dPm9PB1FDX+3ox2vjpgkkOMJ6+bq2ec=
+        bh=N30WZ/QjDm649/MsmsRhEAJVLgFMmg+chQY+VOfJ3A0=;
+        b=D4aK0YaKF/nv7R+c4ndreq0wWmxnH3xNoxQaUZL2Fi2JSNblrJUkO/ZdMbQ7IrLGgud/EB
+        j+zKLTo8PGRdwPJLcPQZLqW6UcOWJctMfl6oVeKK038fkM3czMUc2hLyF7psZ8HzuxgPd/
+        E/bz+QOIdG9QKSnirgspPX8VD1xFwSw=
 Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
  [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-99-0jPG0bfSMOyfT0Vt7-v50w-1; Wed, 17 May 2023 21:23:30 -0400
-X-MC-Unique: 0jPG0bfSMOyfT0Vt7-v50w-1
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1ae437c2b32so9526655ad.2
-        for <ceph-devel@vger.kernel.org>; Wed, 17 May 2023 18:23:30 -0700 (PDT)
+ us-mta-79-SOXpAVwSOkCYB4nvI3rASA-1; Wed, 17 May 2023 21:24:25 -0400
+X-MC-Unique: SOXpAVwSOkCYB4nvI3rASA-1
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1ae5a30a9c4so3755435ad.1
+        for <ceph-devel@vger.kernel.org>; Wed, 17 May 2023 18:24:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684373010; x=1686965010;
+        d=1e100.net; s=20221208; t=1684373064; x=1686965064;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FlEfVPMTnJSqwCUOuMXKMM9sJFrXm37BO5CY5YUKY5M=;
-        b=dwl1UbqyittQ9/jCBqAJx5TjiMq+ems5NqhNXTVv3K2Oaie3CiLHqkd5K48x2D9laV
-         f1Zo6ZDm9cTX2B7d2AWLI3X9Kx/UC0w5HIaLTxpgP5veGtWj3O+xF4/HTYUL7B/pOoWO
-         uoMyGA0p8l9eZ2N2gVGdYeJxulojx30TjAZhbQuiIdoAbWTXf7pZgcTZTK/szX8A1pnV
-         nmNhlEUk+r2cxVX5KhN1wZR1xtDEGfbfUSxNSfsr8dqy+uqPGij8b2+auWICXMHB70Pi
-         sQjiAoRL25JE8uta0ANcLQyuK/TjUHSUgKPX4HnC6kTQNsRx0ygl8kkTd2YA9gqVTyl3
-         btyQ==
-X-Gm-Message-State: AC+VfDyMIOLH7EIqduc+9MMnnQnxjfSO+QoAf6RrBFUnob/56/LQxaJ0
-        ct4xAvWDpZYB/oHNw27QVHd4ZaRYIUZbGnyjVokvJyKLrj0+Z+Nrka1fDyFdryrRnbsq6XWdYVI
-        YWYiDu9C+XH1GPO3rwz3MIA==
-X-Received: by 2002:a17:903:1205:b0:1ab:224b:d1fc with SMTP id l5-20020a170903120500b001ab224bd1fcmr756754plh.41.1684373009729;
-        Wed, 17 May 2023 18:23:29 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ44/QsCUtx50aLkHEpGFsu6dSamDeGXxMs8eyuqabqVq0JJAf/TMpAEpY3E+p/THCrvCCVZEA==
-X-Received: by 2002:a17:903:1205:b0:1ab:224b:d1fc with SMTP id l5-20020a170903120500b001ab224bd1fcmr756737plh.41.1684373009401;
-        Wed, 17 May 2023 18:23:29 -0700 (PDT)
+        bh=N30WZ/QjDm649/MsmsRhEAJVLgFMmg+chQY+VOfJ3A0=;
+        b=ST7aEOt2+ORLKkujOQa4OGPcX8ULB2qIke6mhd674TkdPyzs++2tWcM7Sk1E11Kaon
+         X8xgFcywBz3lQMulDQk5UrBwYc8GSdTIe9SHy5kpAJVizHXf0mEWXWCsT8kNJa03YGYp
+         wGHB6QegKJSUJ6nT39jpUz7som7zYO3fzZjQ4Get7z4ulB20F4vTP6IW5apTKeZfYkkm
+         f1pO8xhw4f4keIUrzj7tC8pMCBzxaS83n2lAFCuQiJL99CWBx1i3sHQDiiXMar4GTNY6
+         CyDikcx5zDQMpfgBvYX6dBeHH0BfNGyIw/Eye4F6pEb0MIO6b79a17W/q/O3orqFS1fs
+         B0Nw==
+X-Gm-Message-State: AC+VfDyiTJ8RAVRw/Mm1XhiUDfYesPUZ9ZGK1LP4PS/zBGcDdUv0PCO4
+        ppZOiwC9mdVLOZpuFBB92DF6yTLWzAk8o/da8rj6jPRwxGyfhp+67cG+8Xn+tK1Y8MOij4hvtCk
+        vXkSIQ+sLDWFoyw5vExQnXQ==
+X-Received: by 2002:a17:902:ec82:b0:1ad:b5ed:e951 with SMTP id x2-20020a170902ec8200b001adb5ede951mr489472plg.13.1684373064408;
+        Wed, 17 May 2023 18:24:24 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6XNNFkE+xmskfWabpsCD3gXDM+Lzwdi4SRadHHRsykTK3wrEbOx3zYKECKnw7Vz1msPWq/cQ==
+X-Received: by 2002:a17:902:ec82:b0:1ad:b5ed:e951 with SMTP id x2-20020a170902ec8200b001adb5ede951mr489460plg.13.1684373064025;
+        Wed, 17 May 2023 18:24:24 -0700 (PDT)
 Received: from [10.72.12.110] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id u8-20020a170902e5c800b001ac84f87b1dsm20958plf.155.2023.05.17.18.23.25
+        by smtp.gmail.com with ESMTPSA id v10-20020a170902b7ca00b001a9581d3ef5sm33327plz.97.2023.05.17.18.24.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 May 2023 18:23:29 -0700 (PDT)
-Message-ID: <30f2da87-91ec-6a01-e0ec-1556df0ca952@redhat.com>
-Date:   Thu, 18 May 2023 09:23:22 +0800
+        Wed, 17 May 2023 18:24:23 -0700 (PDT)
+Message-ID: <d08f0c14-a4ee-5416-cd59-2032d8ad4020@redhat.com>
+Date:   Thu, 18 May 2023 09:24:18 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.10.0
 Subject: Re: [PATCH] ceph: force updating the msg pointer in non-split case
 Content-Language: en-US
-To:     Gregory Farnum <gfarnum@redhat.com>,
+To:     Frank Schilder <frans@dtu.dk>, Gregory Farnum <gfarnum@redhat.com>,
         Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
-        vshankar@redhat.com, stable@vger.kernel.org,
-        Frank Schilder <frans@dtu.dk>
+Cc:     "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "vshankar@redhat.com" <vshankar@redhat.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
 References: <20230517052404.99904-1-xiubli@redhat.com>
  <CAOi1vP8e6NrrrV5TLYS-DpkjQN6LhfqkptR5_ue94HcHJV_2ag@mail.gmail.com>
  <b121586f-d628-a8e3-5802-298c1431f0e5@redhat.com>
@@ -75,8 +76,9 @@ References: <20230517052404.99904-1-xiubli@redhat.com>
  <CAOi1vP90QTPTtTmjRrskX4WEJKcPs52phS0C383eZxHmG4q5zQ@mail.gmail.com>
  <CAJ4mKGZUvrVHsEX-==kD9x_ArSL5FD_k0PDmYT4e6mo_80Ah_g@mail.gmail.com>
  <CAJ4mKGZ8YRyWYry5F8yAGDhpv3X_LkQHj+f9ONXKsrbWSjDVsQ@mail.gmail.com>
+ <DB9P192MB1850391D744321AC8948F013D67E9@DB9P192MB1850.EURP192.PROD.OUTLOOK.COM>
 From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <CAJ4mKGZ8YRyWYry5F8yAGDhpv3X_LkQHj+f9ONXKsrbWSjDVsQ@mail.gmail.com>
+In-Reply-To: <DB9P192MB1850391D744321AC8948F013D67E9@DB9P192MB1850.EURP192.PROD.OUTLOOK.COM>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -89,132 +91,34 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Thanks Frank for your feedback.
 
-On 5/17/23 23:04, Gregory Farnum wrote:
-> Just to be clear, I'd like the details here so we can see if there are
-> ways to prevent similar issues in the future, which I haven't heard
-> anybody talk about. :)
-
-We have hit a similar issue with Venky in 
-https://github.com/ceph/ceph/pull/48382. This PR just added two extra 
-members and the old kclient couldn't recognize them and also just 
-incorrectly parsed them as a new snaptrace.
-
-Venky has fixed it by checking the peer client's feature bit before 
-sending the msgs.
-
-Thanks
-
-- Xiubo
-
-> On Wed, May 17, 2023 at 8:03 AM Gregory Farnum <gfarnum@redhat.com> wrote:
->> On Wed, May 17, 2023 at 7:27 AM Ilya Dryomov <idryomov@gmail.com> wrote:
->>> On Wed, May 17, 2023 at 3:59 PM Gregory Farnum <gfarnum@redhat.com> wrote:
->>>> On Wed, May 17, 2023 at 4:33 AM Ilya Dryomov <idryomov@gmail.com> wrote:
->>>>> On Wed, May 17, 2023 at 1:04 PM Xiubo Li <xiubli@redhat.com> wrote:
->>>>>>
->>>>>> On 5/17/23 18:31, Ilya Dryomov wrote:
->>>>>>> On Wed, May 17, 2023 at 7:24 AM <xiubli@redhat.com> wrote:
->>>>>>>> From: Xiubo Li <xiubli@redhat.com>
->>>>>>>>
->>>>>>>> When the MClientSnap reqeust's op is not CEPH_SNAP_OP_SPLIT the
->>>>>>>> request may still contain a list of 'split_realms', and we need
->>>>>>>> to skip it anyway. Or it will be parsed as a corrupt snaptrace.
->>>>>>>>
->>>>>>>> Cc: stable@vger.kernel.org
->>>>>>>> Cc: Frank Schilder <frans@dtu.dk>
->>>>>>>> Reported-by: Frank Schilder <frans@dtu.dk>
->>>>>>>> URL: https://tracker.ceph.com/issues/61200
->>>>>>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>>>>>>> ---
->>>>>>>>    fs/ceph/snap.c | 3 +++
->>>>>>>>    1 file changed, 3 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
->>>>>>>> index 0e59e95a96d9..d95dfe16b624 100644
->>>>>>>> --- a/fs/ceph/snap.c
->>>>>>>> +++ b/fs/ceph/snap.c
->>>>>>>> @@ -1114,6 +1114,9 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
->>>>>>>>                                   continue;
->>>>>>>>                           adjust_snap_realm_parent(mdsc, child, realm->ino);
->>>>>>>>                   }
->>>>>>>> +       } else {
->>>>>>>> +               p += sizeof(u64) * num_split_inos;
->>>>>>>> +               p += sizeof(u64) * num_split_realms;
->>>>>>>>           }
->>>>>>>>
->>>>>>>>           /*
->>>>>>>> --
->>>>>>>> 2.40.1
->>>>>>>>
->>>>>>> Hi Xiubo,
->>>>>>>
->>>>>>> This code appears to be very old -- it goes back to the initial commit
->>>>>>> 963b61eb041e ("ceph: snapshot management") in 2009.  Do you have an
->>>>>>> explanation for why this popped up only now?
->>>>>> As I remembered we hit this before in one cu BZ last year, but I
->>>>>> couldn't remember exactly which one.  But I am not sure whether @Jeff
->>>>>> saw this before I joint ceph team.
->>>>>>
->>>>>>
->>>>>>> Has MDS always been including split_inos and split_realms arrays in
->>>>>>> !CEPH_SNAP_OP_SPLIT case or is this a recent change?  If it's a recent
->>>>>>> change, I'd argue that this needs to be addressed on the MDS side.
->>>>>> While in MDS side for the _UPDATE op it won't send the 'split_realm'
->>>>>> list just before the commit in 2017:
->>>>>>
->>>>>> commit 93e7267757508520dfc22cff1ab20558bd4a44d4
->>>>>> Author: Yan, Zheng <zyan@redhat.com>
->>>>>> Date:   Fri Jul 21 21:40:46 2017 +0800
->>>>>>
->>>>>>       mds: send snap related messages centrally during mds recovery
->>>>>>
->>>>>>       sending CEPH_SNAP_OP_SPLIT and CEPH_SNAP_OP_UPDATE messages to
->>>>>>       clients centrally in MDCache::open_snaprealms()
->>>>>>
->>>>>>       Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
->>>>>>
->>>>>> Before this commit it will only send the 'split_realm' list for the
->>>>>> _SPLIT op.
->>>>> It sounds like we have the culprit.  This should be treated as
->>>>> a regression and fixed on the MDS side.  I don't see a justification
->>>>> for putting useless data on the wire.
->>>> I don't really understand this viewpoint. We can treat it as an MDS
->>>> regression if we want, but it's a six-year-old patch so this is in
->>>> nearly every version of server code anybody's running. Why wouldn't we
->>>> fix it on both sides?
->>> Well, if I didn't speak up chances are we wouldn't have identified the
->>> regression in the MDS at all.  People seem to have this perception that
->>> the client is somehow "easier" to fix, assume that the server is always
->>> doing the right thing and default to patching the client.  I'm just
->>> trying to push back on that.
->>>
->>> In this particular case, after understanding the scope of the issue
->>> _and_ getting a committal for the MDS side fix, I approved taking the
->>> kernel client patch in an earlier reply.
->>>
->>>> On Wed, May 17, 2023 at 4:07 AM Xiubo Li <xiubli@redhat.com> wrote:
->>>>> And if the split_realm number equals to sizeof(ceph_mds_snap_realm) +
->>>>> extra snap buffer size by coincidence, the above 'corrupted' snaptrace
->>>>> will be parsed by kclient too and kclient won't give any warning, but it
->>>>> will corrupted the snaprealm and capsnap info in kclient.
->>>> I'm a bit confused about this patch, but I also don't follow the
->>>> kernel client code much so please forgive my ignorance. The change
->>>> you've made is still only invoked inside of the CEPH_SNAP_OP_SPLIT
->>>> case, so clearly the kclient *mostly* does the right thing when these
->>> No, it's invoked outside: it introduces a "op != CEPH_SNAP_OP_SPLIT"
->>> branch.
->> Oh I mis-parsed the braces/spacing there.
->>
->> I'm still not getting how the precise size is causing the problem —
->> obviously this isn't an unheard-of category of issue, but the fact
->> that it works until the count matches a magic number is odd. Is that
->> ceph_decode_need macro being called from ceph_update_snap_trace just
->> skipping over the split data somehow? *puzzled*
->> -Greg
->>
->>> Thanks,
->>>
->>>                  Ilya
->>>
+On 5/17/23 23:39, Frank Schilder wrote:
+> Hi all,
+>
+> joining in here as the one who is hit pretty badly and also not being able to upgrade ceph any time soon to a version receiving patches.
+>
+> For these two reasons alone I strongly favour fixing both sides.
+>
+> Extra reading, feel free to skip.
+>
+> Additional reasons for fixing both sides are (1) to have more error tolerant code - if one side breaks/regresses the other side still knows what to do and can report back while moving on without a fatal crash and (2) to help users of old clusters who are affected without noticing yet. Every now and then one should afford to be nice.
+>
+> I personally think that (1) is generally good practice, explicitly handling seemingly unexpected cases increases overall robustness (its a bit like raiding up code to catch code rot) and will highlight otherwise unnoticed issues early in testing. It is not the first time our installation was hit by an unnecessarily missing catch-all clause that triggered an assert or follow-up crash for no real reason.
+>
+> The main reason we actually discovered this is that under certain rare circumstances it makes a server with a kclient mount freeze. There is some kind of follow-up condition that is triggered only under heavy load and almost certainly only at a time when a snapshot is taken. Hence, it is very well possible that many if not all users have these invalid snaptrace message on their system, but nothing else happens so they don't report anything.
+>
+> The hallmark in our case is a hanging client caps recall that eventually leads to a spontaneous restart of the affected MDS and then we end up with either a frozen server or a stale file handle at the ceph mount point. Others might not encounter these conditions simultaneously on their system as often as we do.
+>
+> Apart from that, its not even sure that this is the core issue causing all the trouble on our system. Having the kclient fixed would allow us to verify that we don't have yet another problem that should be looked at before considering a ceph upgrade - extra reason no. 3.
+>
+> I hope this was a useful point of view from someone suffering from the condition.
+>
+> Best regards and thanks for your efforts addressing this!
+> =================
+> Frank Schilder
+> AIT Risø Campus
+> Bygning 109, rum S14
+>
+>
 
