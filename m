@@ -2,180 +2,74 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1645D7090B6
-	for <lists+ceph-devel@lfdr.de>; Fri, 19 May 2023 09:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A84777091C1
+	for <lists+ceph-devel@lfdr.de>; Fri, 19 May 2023 10:36:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231260AbjESHn1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 19 May 2023 03:43:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58956 "EHLO
+        id S229622AbjESIgo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 19 May 2023 04:36:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231295AbjESHmy (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 19 May 2023 03:42:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D08B71981
-        for <ceph-devel@vger.kernel.org>; Fri, 19 May 2023 00:41:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684482110;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ul54+Rfc7Xx/QmGKIvy0/Dk3iAPI5N6ujIbh8BdRPD4=;
-        b=gqc46iWqQazmNXmgYd9FO25xp0Ge/bFkxoHl1ncEZdXtV0fi8DBki0bDzxXeRBu4KGT5W4
-        mtpj+GWReseOFUCvfBWPF9RMikItoyRG0SEku/X0j7uDgdXRRPN2W7vgV+3udsPQMQfwSA
-        34IwZwGgb3OkQSpXaAkIntVOPAIrYUk=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-542-yZVFR8FJO82q_4bbCE1uzg-1; Fri, 19 May 2023 03:41:46 -0400
-X-MC-Unique: yZVFR8FJO82q_4bbCE1uzg-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B75B6185A78E;
-        Fri, 19 May 2023 07:41:45 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5D4D04F2DDE;
-        Fri, 19 May 2023 07:41:43 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Christoph Hellwig <hch@lst.de>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-Subject: [PATCH v20 13/32] ceph: Provide a splice-read stub
-Date:   Fri, 19 May 2023 08:40:28 +0100
-Message-Id: <20230519074047.1739879-14-dhowells@redhat.com>
-In-Reply-To: <20230519074047.1739879-1-dhowells@redhat.com>
-References: <20230519074047.1739879-1-dhowells@redhat.com>
+        with ESMTP id S230057AbjESIgn (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 19 May 2023 04:36:43 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CDEBE56
+        for <ceph-devel@vger.kernel.org>; Fri, 19 May 2023 01:36:42 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id 4fb4d7f45d1cf-510d8b0169fso3789755a12.1
+        for <ceph-devel@vger.kernel.org>; Fri, 19 May 2023 01:36:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1684485400; x=1687077400;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zYlqmqzmZQIzuckqyml+D+cUQfB/LAmhyfGQVjeCZAE=;
+        b=WkyYt7QM2A4XJdCG1fcX2AjCUzAb1DD8FmnSnqTeShMOLoTZQuN1iy7bgNhNLPke1o
+         BSh5FfNZrVCaoFWuud/HiNQBBcSKRsODQQL8qJuYka0c7FgQmJtp+5LjLRn0Obkt0NSr
+         1CtHT8SEp20BTc1CiBKpRaRO8MHPiP+XD4VJqHp3AHyiFsBeRxT3L1jm3SvTP6DVO7l6
+         SanKMC5isEGNaq90GQNvswNptDMpsO+OARifz1qQFzYO7iSnMKJNk8pxKke64qQQVSAA
+         tOawGo+bccw9ge59Ru4Y2kwu5w5Qkx7HVuVuEwLjWhxrNwUg94WrR8IBekG3XrzYLpPy
+         4sNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1684485400; x=1687077400;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zYlqmqzmZQIzuckqyml+D+cUQfB/LAmhyfGQVjeCZAE=;
+        b=SJQzQ8KfNHFGBKRX4cJudrAmpuiiZzeVh3oxfx2rQ6rd4OSe9L4ytV8H4QE0/iNaaf
+         ei9DOIa0+JWG1t/n/mA7GQuSMTzedVXl225525BIqkVyiiAmSH1V3ARL3uz2YhZXGQ9X
+         8iAcx1sh+qjsaUl/+SX4pzECRrbldSj2pT6RyzIaM/wNI+WKg2DYhl4dPT6r0gkmnvFB
+         3PUj87dURsGc+9nXGnqAtCnbC0nHdoYgG1h8NuZwNZ8mR4XwGpLs5q6Hoq1fPgVwMvhq
+         UwVreNUIGexIlPj405/l7jaGCxvVq1IVFUyuH/OkC8IKPmZYulFyRv6NGIDFDJDK/b/x
+         hr4Q==
+X-Gm-Message-State: AC+VfDyFE9T8cYBl4DG2oD1/UrCfBWmkweiJa1TA3liVjB9nErlXyTws
+        BPwIiNvFOXz7pyErKKvoQnAM2NEAqn6YjHrRprI=
+X-Google-Smtp-Source: ACHHUZ7uw52qpsxeUuXpvmmOKEC55lFEyS5Wy/0ygSEE6oBP4SVDYJHAcZWt263W/q2nC9Zo07/aXs2YHCU8RFZty2Y=
+X-Received: by 2002:aa7:cccc:0:b0:50b:c0ce:d55 with SMTP id
+ y12-20020aa7cccc000000b0050bc0ce0d55mr990207edt.3.1684485400435; Fri, 19 May
+ 2023 01:36:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Received: by 2002:a05:7208:4054:b0:69:6979:70f7 with HTTP; Fri, 19 May 2023
+ 01:36:40 -0700 (PDT)
+Reply-To: ninacoulibaly03@hotmail.com
+From:   nina coulibaly <ninacoulibaly79.info@gmail.com>
+Date:   Fri, 19 May 2023 01:36:40 -0700
+Message-ID: <CAA+U+NKR8Zbm7D=cjXQDLtv+A=42nkArQwEEQ9mT9pYQUxffDQ@mail.gmail.com>
+Subject: from nina coulibaly
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=4.5 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
+        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Provide a splice_read stub for Ceph.  This does the inode shutdown check
-before proceeding and jumps to direct_splice_read() if O_DIRECT is set, the
-file has inline data or is a synchronous file.
+Dear,
 
-We try and get FILE_RD and either FILE_CACHE and/or FILE_LAZYIO caps and
-hold them across filemap_splice_read().  If we fail to get FILE_CACHE or
-FILE_LAZYIO capabilities, we use direct_splice_read() instead.
+Please grant me permission to share a very crucial discussion with
+you. I am looking forward to hearing from you at your earliest
+convenience.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Christoph Hellwig <hch@lst.de>
-cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Xiubo Li <xiubli@redhat.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: ceph-devel@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-block@vger.kernel.org
-cc: linux-mm@kvack.org
----
- fs/ceph/file.c | 66 +++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 65 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index f4d8bf7dec88..382dd5901748 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1745,6 +1745,70 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	return ret;
- }
- 
-+/*
-+ * Wrap filemap_splice_read with checks for cap bits on the inode.
-+ * Atomically grab references, so that those bits are not released
-+ * back to the MDS mid-read.
-+ */
-+static ssize_t ceph_splice_read(struct file *in, loff_t *ppos,
-+				struct pipe_inode_info *pipe,
-+				size_t len, unsigned int flags)
-+{
-+	struct ceph_file_info *fi = in->private_data;
-+	struct inode *inode = file_inode(in);
-+	struct ceph_inode_info *ci = ceph_inode(inode);
-+	ssize_t ret;
-+	int want = 0, got = 0;
-+	CEPH_DEFINE_RW_CONTEXT(rw_ctx, 0);
-+
-+	dout("splice_read %p %llx.%llx %llu~%zu trying to get caps on %p\n",
-+	     inode, ceph_vinop(inode), *ppos, len, inode);
-+
-+	if (ceph_inode_is_shutdown(inode))
-+		return -ESTALE;
-+
-+	if ((in->f_flags & O_DIRECT) ||
-+	    ceph_has_inline_data(ci) ||
-+	    (fi->flags & CEPH_F_SYNC))
-+		return direct_splice_read(in, ppos, pipe, len, flags);
-+
-+	ceph_start_io_read(inode);
-+
-+	want = CEPH_CAP_FILE_CACHE;
-+	if (fi->fmode & CEPH_FILE_MODE_LAZY)
-+		want |= CEPH_CAP_FILE_LAZYIO;
-+
-+	ret = ceph_get_caps(in, CEPH_CAP_FILE_RD, want, -1, &got);
-+	if (ret < 0) {
-+		ceph_end_io_read(inode);
-+		return ret;
-+	}
-+
-+	if ((got & (CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO)) == 0) {
-+		dout("splice_read/sync %p %llx.%llx %llu~%zu got cap refs on %s\n",
-+		     inode, ceph_vinop(inode), *ppos, len,
-+		     ceph_cap_string(got));
-+
-+		ceph_end_io_read(inode);
-+		return direct_splice_read(in, ppos, pipe, len, flags);
-+	}
-+
-+	dout("splice_read %p %llx.%llx %llu~%zu got cap refs on %s\n",
-+	     inode, ceph_vinop(inode), *ppos, len, ceph_cap_string(got));
-+
-+	rw_ctx.caps = got;
-+	ceph_add_rw_context(fi, &rw_ctx);
-+	ret = filemap_splice_read(in, ppos, pipe, len, flags);
-+	ceph_del_rw_context(fi, &rw_ctx);
-+
-+	dout("splice_read %p %llx.%llx dropping cap refs on %s = %zd\n",
-+	     inode, ceph_vinop(inode), ceph_cap_string(got), ret);
-+	ceph_put_cap_refs(ci, got);
-+
-+	ceph_end_io_read(inode);
-+	return ret;
-+}
-+
- /*
-  * Take cap references to avoid releasing caps to MDS mid-write.
-  *
-@@ -2593,7 +2657,7 @@ const struct file_operations ceph_file_fops = {
- 	.lock = ceph_lock,
- 	.setlease = simple_nosetlease,
- 	.flock = ceph_flock,
--	.splice_read = generic_file_splice_read,
-+	.splice_read = ceph_splice_read,
- 	.splice_write = iter_file_splice_write,
- 	.unlocked_ioctl = ceph_ioctl,
- 	.compat_ioctl = compat_ptr_ioctl,
-
+Mrs. Nina Coulibaly
