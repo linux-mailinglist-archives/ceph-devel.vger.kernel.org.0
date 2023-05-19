@@ -2,99 +2,91 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BE7D7092FF
-	for <lists+ceph-devel@lfdr.de>; Fri, 19 May 2023 11:25:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB6D770936D
+	for <lists+ceph-devel@lfdr.de>; Fri, 19 May 2023 11:37:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231422AbjESJZr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 19 May 2023 05:25:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34446 "EHLO
+        id S231761AbjESJhN (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 19 May 2023 05:37:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231265AbjESJZo (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 19 May 2023 05:25:44 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D93DA192
-        for <ceph-devel@vger.kernel.org>; Fri, 19 May 2023 02:24:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684488298;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=pfV01EUVDAMlcQXaMvsw0JKN2NbqBChEQxXiVek1+Jc=;
-        b=PSULC68+XBwQYqlyCyro1bTWfQTUr+fpajUJkAhQLu4ZWSDuDZ4SZdHuTa+JMj2SZI4man
-        F1s2eux3tW05x0ewopv9MMkKixXhw6ZI2poqsTdMkcV7bO79GIGyqjpV8GhSzR89a1gSGE
-        U70Xx2XOr7dYL9tBrrwUTjgN3pSiVhg=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-619-10XT3QEBNXKSe4Iyf6x2aw-1; Fri, 19 May 2023 05:24:52 -0400
-X-MC-Unique: 10XT3QEBNXKSe4Iyf6x2aw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0901F185A791;
-        Fri, 19 May 2023 09:24:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 027F540D1B60;
-        Fri, 19 May 2023 09:24:48 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <c1fd63b9-42ea-fa83-ecb1-9af715e37ffa@redhat.com>
-References: <c1fd63b9-42ea-fa83-ecb1-9af715e37ffa@redhat.com> <20230519074047.1739879-1-dhowells@redhat.com> <20230519074047.1739879-14-dhowells@redhat.com>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     dhowells@redhat.com, Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
+        with ESMTP id S231694AbjESJg6 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 19 May 2023 05:36:58 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDFDA1985;
+        Fri, 19 May 2023 02:36:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=b3wyyoN4jHO/Zsak1kxh+5wE+B9r8QbYeNrqiPeGC/c=; b=4xTOmJL4SZkwf23SC5mh6Q9d6w
+        8QH+KDswZ+2G1P8ZxhVXqL1acWhwalcFL5gjcp3rESRLiy81SrWQdPrUu152ypZAPtBDcl6X36MA4
+        vAst5eyD9qhG/KfmnSBIFG+NF9yhRKBBRmZNaI8vIy17R3fThdmR69/MqckQ4qgUCNeZGKzTMMcVz
+        2TqWKRcmurv0ffpUIKtLL9SAnCsvVJYqK3Vxy9oIZEp1JM7CCl6kyRl1OEtwAtY0TDaY3+gbGMQ56
+        XaESPbY0EvWVD3HutDMlMkv/S0olqmVZSZKfI3fMnDixVDyZ4fUPizXA+cgLmqQiMzDCVIdTZlqTA
+        VDm5obdg==;
+Received: from [2001:4bb8:188:3dd5:e8d0:68bb:e5be:210a] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1pzwWC-00FjZy-2X;
+        Fri, 19 May 2023 09:35:25 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Christoph Hellwig <hch@lst.de>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH v20 13/32] ceph: Provide a splice-read stub
+        "Theodore Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <chao@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net (open list:F2FS FILE SYSTEM),
+        cluster-devel@redhat.com, linux-xfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org
+Subject: cleanup the filemap / direct I/O interaction
+Date:   Fri, 19 May 2023 11:35:08 +0200
+Message-Id: <20230519093521.133226-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1743655.1684488288.1@warthog.procyon.org.uk>
-Date:   Fri, 19 May 2023 10:24:48 +0100
-Message-ID: <1743656.1684488288@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Xiubo Li <xiubli@redhat.com> wrote:
+Hi all,
 
-> > +	ret = ceph_get_caps(in, CEPH_CAP_FILE_RD, want, -1, &got);
-> > +	if (ret < 0) {
-> > +		ceph_end_io_read(inode);
-> > +		return ret;
-> > +	}
-> > +
-> > +	if ((got & (CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO)) == 0) {
-> > +		dout("splice_read/sync %p %llx.%llx %llu~%zu got cap refs on %s\n",
-> > +		     inode, ceph_vinop(inode), *ppos, len,
-> > +		     ceph_cap_string(got));
-> > +
-> > +		ceph_end_io_read(inode);
-> > +		return direct_splice_read(in, ppos, pipe, len, flags);
-> 
-> Shouldn't we release cap ref before returning here ?
+this series cleans up some of the generic write helper calling
+conventions and the page cache writeback / invalidation for
+direct I/O.  This is a spinoff from the no-bufferhead kernel
+project, for while we'll want to an use iomap based buffered
+write path in the block layer.
 
-Ummm...  Even if we got no caps?
-
-David
-
+diffstat:
+ block/fops.c            |   18 ----
+ fs/ceph/file.c          |    6 -
+ fs/direct-io.c          |   10 --
+ fs/ext4/file.c          |   12 ---
+ fs/f2fs/file.c          |    3 
+ fs/fuse/file.c          |   47 ++----------
+ fs/gfs2/file.c          |    7 -
+ fs/iomap/buffered-io.c  |   12 ++-
+ fs/iomap/direct-io.c    |   88 ++++++++--------------
+ fs/libfs.c              |   36 +++++++++
+ fs/nfs/file.c           |    6 -
+ fs/xfs/xfs_file.c       |    7 -
+ fs/zonefs/file.c        |    4 -
+ include/linux/fs.h      |    7 -
+ include/linux/pagemap.h |    4 +
+ mm/filemap.c            |  184 +++++++++++++++++++++---------------------------
+ 16 files changed, 190 insertions(+), 261 deletions(-)
