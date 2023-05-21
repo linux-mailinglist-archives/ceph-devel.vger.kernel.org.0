@@ -2,185 +2,106 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14D5370A3BC
-	for <lists+ceph-devel@lfdr.de>; Sat, 20 May 2023 02:04:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AB8D70B213
+	for <lists+ceph-devel@lfdr.de>; Mon, 22 May 2023 01:41:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231690AbjETADo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 19 May 2023 20:03:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51494 "EHLO
+        id S229762AbjEUXlH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 21 May 2023 19:41:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230515AbjETADd (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 19 May 2023 20:03:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB13AE47
-        for <ceph-devel@vger.kernel.org>; Fri, 19 May 2023 17:01:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684540910;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Cum1S+7gn4EZ2bOhEKX0VsfuPYHKWsPejiTdFi4FGTE=;
-        b=XXwp6s99ARRTNY170wej4Sk4gq7j7nFpp8k4lWUseLmRfH8MAEBDfqiEhHU0Q9ABUWmlyo
-        /Eko/nytmDUCTwODQdbb5apyerSiufWCYNnlpuSPpMbud138j5mHn/dboj86j1UFXmGavn
-        eA1xjT2VUx8E1Jtw7gYV0Bsoi+K+3H0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-665-z6HIEepYPKSALy6n0W2a0g-1; Fri, 19 May 2023 20:01:45 -0400
-X-MC-Unique: z6HIEepYPKSALy6n0W2a0g-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S229481AbjEUXlG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 21 May 2023 19:41:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0E4CB4;
+        Sun, 21 May 2023 16:41:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5A1BE8032F5;
-        Sat, 20 May 2023 00:01:44 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.221])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 077812166B25;
-        Sat, 20 May 2023 00:01:41 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Hillf Danton <hdanton@sina.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Christoph Hellwig <hch@lst.de>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-Subject: [PATCH v21 16/30] ceph: Provide a splice-read stub
-Date:   Sat, 20 May 2023 01:00:35 +0100
-Message-Id: <20230520000049.2226926-17-dhowells@redhat.com>
-In-Reply-To: <20230520000049.2226926-1-dhowells@redhat.com>
-References: <20230520000049.2226926-1-dhowells@redhat.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4DEBE60FAC;
+        Sun, 21 May 2023 23:41:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF259C433EF;
+        Sun, 21 May 2023 23:41:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1684712463;
+        bh=tA12yQU00KKUJDHmMiS/p1BMYZTe42VhuQxJI9hnBGs=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=bbR+hubYRLAGzg/uGQW+S+uObtEMdvAC9Prq09XRey518FIX9V+FA9yn08nrOyJNo
+         phX9SlbCCQp1tqYPJmwQQ7TYpLWkj6b+H3zMuc1Z7VQuG4Eo9Q/x02u3s+NMYDXZK7
+         y6g4/CCC39Anez1oZFdvYg1ooCDtAlwpyilfm6Q6NNXW5yqA5BSTe0P3z5r+pwBHUD
+         0on5F0vG1ouPX4IHgXYeHIp4iq7izeicWegN4YNYFIeZ8chatU4lAHZIfFgH6cpWn+
+         WUW1P4+xbujvaU0L10MBQr77eKeg564VpiezTN64057zhcRO/0ww07EJx3udJ/fiyx
+         NLclOBUpvfnRw==
+Message-ID: <3efbf8c7-b3ad-fbca-f37e-a7b2fd78320d@kernel.org>
+Date:   Mon, 22 May 2023 08:40:59 +0900
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH 01/13] iomap: update ki_pos a little later in
+ iomap_dio_complete
+To:     Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
+        cluster-devel@redhat.com, linux-xfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-mm@kvack.org
+References: <20230519093521.133226-1-hch@lst.de>
+ <20230519093521.133226-2-hch@lst.de>
+Content-Language: en-US
+From:   Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20230519093521.133226-2-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Provide a splice_read stub for Ceph.  This does the inode shutdown check
-before proceeding and jumps to copy_splice_read() if the file has inline
-data or is a synchronous file.
+On 5/19/23 18:35, Christoph Hellwig wrote:
+> Move the ki_pos update down a bit to prepare for a better common
+> helper that invalidates pages based of an iocb.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-We try and get FILE_RD and either FILE_CACHE and/or FILE_LAZYIO caps and
-hold them across filemap_splice_read().  If we fail to get FILE_CACHE or
-FILE_LAZYIO capabilities, we use copy_splice_read() instead.
+Looks OK to me.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Christoph Hellwig <hch@lst.de>
-cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Xiubo Li <xiubli@redhat.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: ceph-devel@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-block@vger.kernel.org
-cc: linux-mm@kvack.org
----
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-Notes:
-    ver #21)
-     - Need to drop the caps ref.
-     - O_DIRECT is handled by the caller.
+> +		if (dio->flags & IOMAP_DIO_NEED_SYNC)
+> +			ret = generic_write_sync(iocb, ret);
+> +		if (ret > 0)
+> +			ret += dio->done_before;
+> +	}
+>  	trace_iomap_dio_complete(iocb, dio->error, ret);
+>  	kfree(dio);
+> -
 
- fs/ceph/file.c | 65 +++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 64 insertions(+), 1 deletion(-)
+white line change. Personally, I like a blank line before returns to make them
+stand out :)
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index f4d8bf7dec88..4285f6cb5d3b 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1745,6 +1745,69 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	return ret;
- }
- 
-+/*
-+ * Wrap filemap_splice_read with checks for cap bits on the inode.
-+ * Atomically grab references, so that those bits are not released
-+ * back to the MDS mid-read.
-+ */
-+static ssize_t ceph_splice_read(struct file *in, loff_t *ppos,
-+				struct pipe_inode_info *pipe,
-+				size_t len, unsigned int flags)
-+{
-+	struct ceph_file_info *fi = in->private_data;
-+	struct inode *inode = file_inode(in);
-+	struct ceph_inode_info *ci = ceph_inode(inode);
-+	ssize_t ret;
-+	int want = 0, got = 0;
-+	CEPH_DEFINE_RW_CONTEXT(rw_ctx, 0);
-+
-+	dout("splice_read %p %llx.%llx %llu~%zu trying to get caps on %p\n",
-+	     inode, ceph_vinop(inode), *ppos, len, inode);
-+
-+	if (ceph_inode_is_shutdown(inode))
-+		return -ESTALE;
-+
-+	if (ceph_has_inline_data(ci) ||
-+	    (fi->flags & CEPH_F_SYNC))
-+		return copy_splice_read(in, ppos, pipe, len, flags);
-+
-+	ceph_start_io_read(inode);
-+
-+	want = CEPH_CAP_FILE_CACHE;
-+	if (fi->fmode & CEPH_FILE_MODE_LAZY)
-+		want |= CEPH_CAP_FILE_LAZYIO;
-+
-+	ret = ceph_get_caps(in, CEPH_CAP_FILE_RD, want, -1, &got);
-+	if (ret < 0)
-+		goto out_end;
-+
-+	if ((got & (CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO)) == 0) {
-+		dout("splice_read/sync %p %llx.%llx %llu~%zu got cap refs on %s\n",
-+		     inode, ceph_vinop(inode), *ppos, len,
-+		     ceph_cap_string(got));
-+
-+		ceph_put_cap_refs(ci, got);
-+		ceph_end_io_read(inode);
-+		return copy_splice_read(in, ppos, pipe, len, flags);
-+	}
-+
-+	dout("splice_read %p %llx.%llx %llu~%zu got cap refs on %s\n",
-+	     inode, ceph_vinop(inode), *ppos, len, ceph_cap_string(got));
-+
-+	rw_ctx.caps = got;
-+	ceph_add_rw_context(fi, &rw_ctx);
-+	ret = filemap_splice_read(in, ppos, pipe, len, flags);
-+	ceph_del_rw_context(fi, &rw_ctx);
-+
-+	dout("splice_read %p %llx.%llx dropping cap refs on %s = %zd\n",
-+	     inode, ceph_vinop(inode), ceph_cap_string(got), ret);
-+
-+	ceph_put_cap_refs(ci, got);
-+out_end:
-+	ceph_end_io_read(inode);
-+	return ret;
-+}
-+
- /*
-  * Take cap references to avoid releasing caps to MDS mid-write.
-  *
-@@ -2593,7 +2656,7 @@ const struct file_operations ceph_file_fops = {
- 	.lock = ceph_lock,
- 	.setlease = simple_nosetlease,
- 	.flock = ceph_flock,
--	.splice_read = generic_file_splice_read,
-+	.splice_read = ceph_splice_read,
- 	.splice_write = iter_file_splice_write,
- 	.unlocked_ioctl = ceph_ioctl,
- 	.compat_ioctl = compat_ptr_ioctl,
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_dio_complete);
+
+-- 
+Damien Le Moal
+Western Digital Research
 
