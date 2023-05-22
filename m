@@ -2,219 +2,185 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F0D970B32B
-	for <lists+ceph-devel@lfdr.de>; Mon, 22 May 2023 04:23:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EEF170C054
+	for <lists+ceph-devel@lfdr.de>; Mon, 22 May 2023 15:54:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231386AbjEVCXm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 21 May 2023 22:23:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58854 "EHLO
+        id S234106AbjEVNyM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 22 May 2023 09:54:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229953AbjEVCXk (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 21 May 2023 22:23:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB1D6A2
-        for <ceph-devel@vger.kernel.org>; Sun, 21 May 2023 19:22:54 -0700 (PDT)
+        with ESMTP id S233878AbjEVNwu (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 22 May 2023 09:52:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9F29F4
+        for <ceph-devel@vger.kernel.org>; Mon, 22 May 2023 06:51:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1684722174;
+        s=mimecast20190719; t=1684763494;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=6gCnSvHg5O9ml4/OuYzbyOxwskor4dFbbIHvczRVaEk=;
-        b=RobspGm3+bSGNagOU7fC7pFLucpKSzZAnFz7yRVjVRFbdYz+fu/xH6EnpDkcv5TiOtF7KC
-        7lOHk0a4i21LnzBFfuVoH8pSvG3MihCn0DE478+I+GNGDVIOCFhleUU6JEwLKj49IVcpYP
-        05cX7dEXR0sRnndr/aaQQLcMDjw8kQQ=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-472-V7RgVkpoPT-3rnpYwG8E8Q-1; Sun, 21 May 2023 22:22:52 -0400
-X-MC-Unique: V7RgVkpoPT-3rnpYwG8E8Q-1
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-534107e73cfso2941810a12.1
-        for <ceph-devel@vger.kernel.org>; Sun, 21 May 2023 19:22:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684722171; x=1687314171;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6gCnSvHg5O9ml4/OuYzbyOxwskor4dFbbIHvczRVaEk=;
-        b=dko2qRLuyaaEOrKkR4/aHgBRJsJmxDz7L81MSdAyzVbTuWy5ezjxaJNljsw5wC+zbS
-         /BJaCOvaxUPdL7+R93kXbxKI3+b5DDncg1qxHtMDx+nNoXctRtI1DNpXvfhSQbfEhLMe
-         2YXxxRgHlnJIrsDpIdvhJwD2lct4Um9Uxu8ApHvEax5qKOaF7qWj0hatYAMSN5hO70Fn
-         4j6kWkA7DBxTccc1GK/kX/WTDh7f+OJJhDpQV31C0qLr9DdSOuKUt5gHHspRIctKXrie
-         hEzula1T9nrMvMW82N6CJ72X45ym2UfoI/Kcuox5VicvCNtEwkIECXmC6F27qbtkEByl
-         T6oA==
-X-Gm-Message-State: AC+VfDxwz3pY8w7tv1zIYmYxFyO9SspzHWPfCw9kvnNRGHH2K7r+8Nqk
-        pMdesFNXh+aiVj5IFS406LZzGFfrmlYhi7J5ys5nqqOBge1kR75ZgbX2XyHqrrWRvq9iqhO7EgC
-        dVVtcb6d0URyNa3WApIB6Gg==
-X-Received: by 2002:a05:6a20:428a:b0:10b:e54f:1c00 with SMTP id o10-20020a056a20428a00b0010be54f1c00mr597201pzj.57.1684722171611;
-        Sun, 21 May 2023 19:22:51 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6YIe9VLQS6yzKMQ0WkmEEqdfd17sZ9Y4FgV9G2cXXtS6sfNqDs6Fii9g74G57D4O2vtAJBpQ==
-X-Received: by 2002:a05:6a20:428a:b0:10b:e54f:1c00 with SMTP id o10-20020a056a20428a00b0010be54f1c00mr597169pzj.57.1684722171305;
-        Sun, 21 May 2023 19:22:51 -0700 (PDT)
-Received: from [10.72.12.68] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d22-20020a631d16000000b0050be8e0b94csm3281962pgd.90.2023.05.21.19.22.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 May 2023 19:22:50 -0700 (PDT)
-Message-ID: <25ae2aff-daab-eaa3-19dd-aa5e56c9b6f1@redhat.com>
-Date:   Mon, 22 May 2023 10:22:39 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH 03/13] filemap: assign current->backing_dev_info in
- generic_perform_write
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Jens Axboe <axboe@kernel.dk>, Ilya Dryomov <idryomov@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        bh=z3sOA+Wd5tRsdYNhOEn4oLwEz6sO/UZ9O0VL/asQvAk=;
+        b=OUUNaMKwQmA8qg8mjTmFPm5OWEIiIaGZOOoVq+D/9d0KqaOnZ5o/KPpOtDpkrG5p9dYJqN
+        yUvDqSQShmzOLKBu7jikKXBrxLwdD0luMXMG2chYjmxLkml/Qo3z1nwSjPUGUHpfp6LMq7
+        0EZ1247IH1eP1VmfU2O3sTcbDAYzQNk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-589-15acLePuPo-nRv91oSUclQ-1; Mon, 22 May 2023 09:51:28 -0400
+X-MC-Unique: 15acLePuPo-nRv91oSUclQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CC505185A78E;
+        Mon, 22 May 2023 13:51:27 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.39.192.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 03D3540CFD45;
+        Mon, 22 May 2023 13:51:24 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Hillf Danton <hdanton@sina.com>,
         Christian Brauner <brauner@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        "open list:F2FS FILE SYSTEM" <linux-f2fs-devel@lists.sourceforge.net>,
-        cluster-devel@redhat.com, linux-xfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-mm@kvack.org
-References: <20230519093521.133226-1-hch@lst.de>
- <20230519093521.133226-4-hch@lst.de>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20230519093521.133226-4-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Xiubo Li <xiubli@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
+Subject: [PATCH v22 16/31] ceph: Provide a splice-read wrapper
+Date:   Mon, 22 May 2023 14:50:03 +0100
+Message-Id: <20230522135018.2742245-17-dhowells@redhat.com>
+In-Reply-To: <20230522135018.2742245-1-dhowells@redhat.com>
+References: <20230522135018.2742245-1-dhowells@redhat.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Provide a splice_read wrapper for Ceph.  This does the inode shutdown check
+before proceeding and jumps to copy_splice_read() if the file has inline
+data or is a synchronous file.
 
-On 5/19/23 17:35, Christoph Hellwig wrote:
-> Move the assignment to current->backing_dev_info from the callers into
-> generic_perform_write to reduce boiler plate code and reduce the scope
-> to just around the page dirtying loop.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   fs/ceph/file.c | 4 ----
->   fs/ext4/file.c | 3 ---
->   fs/f2fs/file.c | 2 --
->   fs/nfs/file.c  | 5 +----
->   mm/filemap.c   | 2 ++
->   5 files changed, 3 insertions(+), 13 deletions(-)
->
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index feeb9882ef635a..767f4dfe7def64 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1791,9 +1791,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
->   	else
->   		ceph_start_io_write(inode);
->   
-> -	/* We can write back this queue in page reclaim */
-> -	current->backing_dev_info = inode_to_bdi(inode);
-> -
->   	if (iocb->ki_flags & IOCB_APPEND) {
->   		err = ceph_do_getattr(inode, CEPH_STAT_CAP_SIZE, false);
->   		if (err < 0)
-> @@ -1938,7 +1935,6 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
->   		ceph_end_io_write(inode);
->   out_unlocked:
->   	ceph_free_cap_flush(prealloc_cf);
-> -	current->backing_dev_info = NULL;
->   	return written ? written : err;
->   }
->   
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 50824831d31def..3cb83a3e2e4a2a 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -29,7 +29,6 @@
->   #include <linux/pagevec.h>
->   #include <linux/uio.h>
->   #include <linux/mman.h>
-> -#include <linux/backing-dev.h>
->   #include "ext4.h"
->   #include "ext4_jbd2.h"
->   #include "xattr.h"
-> @@ -285,9 +284,7 @@ static ssize_t ext4_buffered_write_iter(struct kiocb *iocb,
->   	if (ret <= 0)
->   		goto out;
->   
-> -	current->backing_dev_info = inode_to_bdi(inode);
->   	ret = generic_perform_write(iocb, from);
-> -	current->backing_dev_info = NULL;
->   
->   out:
->   	inode_unlock(inode);
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 9e3855e43a7a63..7134fe8bd008cb 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -4517,9 +4517,7 @@ static ssize_t f2fs_buffered_write_iter(struct kiocb *iocb,
->   	if (iocb->ki_flags & IOCB_NOWAIT)
->   		return -EOPNOTSUPP;
->   
-> -	current->backing_dev_info = inode_to_bdi(inode);
->   	ret = generic_perform_write(iocb, from);
-> -	current->backing_dev_info = NULL;
->   
->   	if (ret > 0) {
->   		f2fs_update_iostat(F2FS_I_SB(inode), inode,
-> diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-> index 3cc87ae8473356..e8bb4c48a3210a 100644
-> --- a/fs/nfs/file.c
-> +++ b/fs/nfs/file.c
-> @@ -648,11 +648,8 @@ ssize_t nfs_file_write(struct kiocb *iocb, struct iov_iter *from)
->   	since = filemap_sample_wb_err(file->f_mapping);
->   	nfs_start_io_write(inode);
->   	result = generic_write_checks(iocb, from);
-> -	if (result > 0) {
-> -		current->backing_dev_info = inode_to_bdi(inode);
-> +	if (result > 0)
->   		result = generic_perform_write(iocb, from);
-> -		current->backing_dev_info = NULL;
-> -	}
->   	nfs_end_io_write(inode);
->   	if (result <= 0)
->   		goto out;
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 4d0ec2fa1c7070..bf693ad1da1ece 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3892,6 +3892,7 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
->   	long status = 0;
->   	ssize_t written = 0;
->   
-> +	current->backing_dev_info = inode_to_bdi(mapping->host);
->   	do {
->   		struct page *page;
->   		unsigned long offset;	/* Offset into pagecache page */
-> @@ -3956,6 +3957,7 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
->   
->   		balance_dirty_pages_ratelimited(mapping);
->   	} while (iov_iter_count(i));
-> +	current->backing_dev_info = NULL;
->   
->   	if (!written)
->   		return status;
+We try and get FILE_RD and either FILE_CACHE and/or FILE_LAZYIO caps and
+hold them across filemap_splice_read().  If we fail to get FILE_CACHE or
+FILE_LAZYIO capabilities, we use copy_splice_read() instead.
 
-LGTM.
-
+Signed-off-by: David Howells <dhowells@redhat.com>
 Reviewed-by: Xiubo Li <xiubli@redhat.com>
+cc: Christoph Hellwig <hch@lst.de>
+cc: Al Viro <viro@zeniv.linux.org.uk>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: ceph-devel@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-block@vger.kernel.org
+cc: linux-mm@kvack.org
+---
 
-Thanks
+Notes:
+    ver #21)
+     - Need to drop the caps ref.
+     - O_DIRECT is handled by the caller.
 
-- Xiubo
+ fs/ceph/file.c | 65 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 64 insertions(+), 1 deletion(-)
 
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index f4d8bf7dec88..4285f6cb5d3b 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1745,6 +1745,69 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	return ret;
+ }
+ 
++/*
++ * Wrap filemap_splice_read with checks for cap bits on the inode.
++ * Atomically grab references, so that those bits are not released
++ * back to the MDS mid-read.
++ */
++static ssize_t ceph_splice_read(struct file *in, loff_t *ppos,
++				struct pipe_inode_info *pipe,
++				size_t len, unsigned int flags)
++{
++	struct ceph_file_info *fi = in->private_data;
++	struct inode *inode = file_inode(in);
++	struct ceph_inode_info *ci = ceph_inode(inode);
++	ssize_t ret;
++	int want = 0, got = 0;
++	CEPH_DEFINE_RW_CONTEXT(rw_ctx, 0);
++
++	dout("splice_read %p %llx.%llx %llu~%zu trying to get caps on %p\n",
++	     inode, ceph_vinop(inode), *ppos, len, inode);
++
++	if (ceph_inode_is_shutdown(inode))
++		return -ESTALE;
++
++	if (ceph_has_inline_data(ci) ||
++	    (fi->flags & CEPH_F_SYNC))
++		return copy_splice_read(in, ppos, pipe, len, flags);
++
++	ceph_start_io_read(inode);
++
++	want = CEPH_CAP_FILE_CACHE;
++	if (fi->fmode & CEPH_FILE_MODE_LAZY)
++		want |= CEPH_CAP_FILE_LAZYIO;
++
++	ret = ceph_get_caps(in, CEPH_CAP_FILE_RD, want, -1, &got);
++	if (ret < 0)
++		goto out_end;
++
++	if ((got & (CEPH_CAP_FILE_CACHE | CEPH_CAP_FILE_LAZYIO)) == 0) {
++		dout("splice_read/sync %p %llx.%llx %llu~%zu got cap refs on %s\n",
++		     inode, ceph_vinop(inode), *ppos, len,
++		     ceph_cap_string(got));
++
++		ceph_put_cap_refs(ci, got);
++		ceph_end_io_read(inode);
++		return copy_splice_read(in, ppos, pipe, len, flags);
++	}
++
++	dout("splice_read %p %llx.%llx %llu~%zu got cap refs on %s\n",
++	     inode, ceph_vinop(inode), *ppos, len, ceph_cap_string(got));
++
++	rw_ctx.caps = got;
++	ceph_add_rw_context(fi, &rw_ctx);
++	ret = filemap_splice_read(in, ppos, pipe, len, flags);
++	ceph_del_rw_context(fi, &rw_ctx);
++
++	dout("splice_read %p %llx.%llx dropping cap refs on %s = %zd\n",
++	     inode, ceph_vinop(inode), ceph_cap_string(got), ret);
++
++	ceph_put_cap_refs(ci, got);
++out_end:
++	ceph_end_io_read(inode);
++	return ret;
++}
++
+ /*
+  * Take cap references to avoid releasing caps to MDS mid-write.
+  *
+@@ -2593,7 +2656,7 @@ const struct file_operations ceph_file_fops = {
+ 	.lock = ceph_lock,
+ 	.setlease = simple_nosetlease,
+ 	.flock = ceph_flock,
+-	.splice_read = generic_file_splice_read,
++	.splice_read = ceph_splice_read,
+ 	.splice_write = iter_file_splice_write,
+ 	.unlocked_ioctl = ceph_ioctl,
+ 	.compat_ioctl = compat_ptr_ioctl,
 
