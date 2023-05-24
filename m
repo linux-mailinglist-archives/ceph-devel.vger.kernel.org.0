@@ -2,116 +2,235 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6959070FA79
-	for <lists+ceph-devel@lfdr.de>; Wed, 24 May 2023 17:37:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6BC070FBCC
+	for <lists+ceph-devel@lfdr.de>; Wed, 24 May 2023 18:39:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237323AbjEXPhR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 24 May 2023 11:37:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34842 "EHLO
+        id S234020AbjEXQjz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 24 May 2023 12:39:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237199AbjEXPge (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 24 May 2023 11:36:34 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E033C10EB
-        for <ceph-devel@vger.kernel.org>; Wed, 24 May 2023 08:35:14 -0700 (PDT)
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BBAAE42267
-        for <ceph-devel@vger.kernel.org>; Wed, 24 May 2023 15:34:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1684942462;
-        bh=MmBaaHI8VpALzyIfbDDcm88Bn4QWndtQOfQJ2qpYUhg=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=t8Y7bPxuj5p0Dqm3r2khDAY4TO10Uhs6uLwzpMXCJLWnQsXob+3l7PP8RUt5Ln8Z8
-         IYTy6zV8cUPJRdr/qzNYV4BJvwnhgGHxcB4EvCyVoOcUHYr8OpvUoB3Ov3aF+kz1+c
-         yzAccG7xpyLbsqDe0rQZ7K+VjkmdAzkrJDpjoFRaF7Orbms/EnqvI/lO5IYfaANyBr
-         uJxUJ4t5P1PQ9ZxuAoLPGTF/neiF5O1KbwPP39Bm95Jr5tRoHO9y8mCiC+j6xeJTzM
-         lJUlC78TEvTx7RNtGRE9gtEGwnzbr2iVr2KOaC9T1a5/vU+L6FxRUqj3pIvYWnXpCC
-         lLKe9+OedQP4w==
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-96fd3757c1dso121088266b.1
-        for <ceph-devel@vger.kernel.org>; Wed, 24 May 2023 08:34:22 -0700 (PDT)
+        with ESMTP id S233779AbjEXQjs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 24 May 2023 12:39:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02891E7
+        for <ceph-devel@vger.kernel.org>; Wed, 24 May 2023 09:39:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1684946340;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=hIRDFYHmrI2ea9PgJ9cG2BzagPncv2WifE6ykqY/z1c=;
+        b=JYylOJb+NzvsPb3go+eofLvRUsLwcMr6QMlGTwp3VirHN/L/4sKl9a9qYhnmC/cR4+GW3d
+        WgZ+rzV2h5FhAmPtIqtdJOvefiLDq8bJMcp/9FetIiZ55k+xnl16pB8pwk1zJnzq32Gafw
+        R3IUsKP3/2ZQEZff8cdkFFfF9WrdBBE=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-282-OpWzFxT2NLKBpdOUMcVJ5g-1; Wed, 24 May 2023 12:38:58 -0400
+X-MC-Unique: OpWzFxT2NLKBpdOUMcVJ5g-1
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-521262a6680so470720a12.1
+        for <ceph-devel@vger.kernel.org>; Wed, 24 May 2023 09:38:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1684942462; x=1687534462;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20221208; t=1684946338; x=1687538338;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MmBaaHI8VpALzyIfbDDcm88Bn4QWndtQOfQJ2qpYUhg=;
-        b=HrYL3JEOCKgM6+UOV8Wxh0hYXSQtyi4nYxKH4mIWaQA/H4m76K8pMwmqU5GQGlq0Kf
-         +Je432pzGhOKTtOdGxM3pjBxDONcRq29Yg/bNfF+BqfItVfGbppKFPHmXhymgmd340BK
-         EZlkasBsw9GCTT8rot45Rn6A6xwa65XjIFiBkQjJjefH+0PDuppMh2/XESuQ4ai5zLTJ
-         t4hUF5h4NNccFsTSN0B6NSMw/eN41nvyGXbhw+CU4RCrysmDEFYWfWsPdOu5WVjvPCuw
-         2flqXs8wRIQRYT7fR3OJW19fLDaPceBQw+d2NMgjf/tERPjcM5QLfcpoiEujc6I0gUVe
-         4TCg==
-X-Gm-Message-State: AC+VfDzacK2eF1MlRifRV5GmlAx2zQrd8laYy6pbzPj27xvWTZqf9wM8
-        LrH7ngXb59QLZrCfehkTXw2Y47DgoiDH72KK/7FLmtopS3TyPvvdv5DhplFi6h2dQP4Y5g501Ec
-        6FuViHdvMFnkzUJ20Sz9Al4txPzNHVRwdPD+M1JU=
-X-Received: by 2002:a17:907:2d90:b0:96f:a935:8998 with SMTP id gt16-20020a1709072d9000b0096fa9358998mr15705805ejc.39.1684942462502;
-        Wed, 24 May 2023 08:34:22 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ44n45ezB0KardR5KNvgVnID6UZeZRJn1zaN+1xQ4m7BE5LFwiKYKe0ULefNGmTnlmYv5+ifQ==
-X-Received: by 2002:a17:907:2d90:b0:96f:a935:8998 with SMTP id gt16-20020a1709072d9000b0096fa9358998mr15705780ejc.39.1684942462292;
-        Wed, 24 May 2023 08:34:22 -0700 (PDT)
-Received: from amikhalitsyn.local (dslb-088-074-206-207.088.074.pools.vodafone-ip.de. [88.74.206.207])
-        by smtp.gmail.com with ESMTPSA id p26-20020a17090664da00b0096f7105b3a6sm5986979ejn.189.2023.05.24.08.34.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 May 2023 08:34:21 -0700 (PDT)
-From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-To:     xiubli@redhat.com
-Cc:     brauner@kernel.org, stgraber@ubuntu.com,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
-        Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 13/13] ceph: allow idmapped mounts
-Date:   Wed, 24 May 2023 17:33:15 +0200
-Message-Id: <20230524153316.476973-14-aleksandr.mikhalitsyn@canonical.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230524153316.476973-1-aleksandr.mikhalitsyn@canonical.com>
-References: <20230524153316.476973-1-aleksandr.mikhalitsyn@canonical.com>
+        bh=hIRDFYHmrI2ea9PgJ9cG2BzagPncv2WifE6ykqY/z1c=;
+        b=ScdODox192OnpW5+E2bWt3JB9jzXLqncqorZS4fYVbGWTMnZec2rot9s1ieBRAUL1K
+         HvD64uoIJ3SknXoFr2eSTA6ntYlFLmK+QUmbBwMLd+TL++3DwKILcBfkph3y+HUZbtCq
+         obFbqQGQBViySCS0VCn0d6ZVShszL+Y9KTX4uF5gM7i3RKXEG5z2OE1jSW3x7knL6pGW
+         EC+EsNUwYmHqqHas9CM1arMPmY384RtwtE0AWRf+ID4DcWk+C8wHIQFk+1r9iGC5LVIj
+         kGGUwSroLXCPspLcQMpsye3Qh+tasTyVSoju95wmDddDewRuKf/Ivw4CZZQO6s28/gfn
+         y3Hg==
+X-Gm-Message-State: AC+VfDxyWfBhB5bwhwMJbYPpjI4KytbCScndqKxwzTtZk3WuH5XMGrhw
+        KLra56wiUjN5gmOS3LNI2XJOfgHMDm7yBxlhC++jW/zCQzSp3q9fcWnpHNlAnM3I6sK8+CwImDJ
+        4UHgAaQ4Em/72Yu8fu/XEJiR2QWpfulfRdoGuyQ==
+X-Received: by 2002:a17:903:428a:b0:1ac:4a41:d38d with SMTP id ju10-20020a170903428a00b001ac4a41d38dmr15831016plb.51.1684946337865;
+        Wed, 24 May 2023 09:38:57 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ7QhwNbEG7dVnvKUcvcrF5VXTCpluYFQoMIGO7odXS8eF4N7acYVvSWWvlkVR9tfx1GsK6DpUi0zEDdnwhFY7c=
+X-Received: by 2002:a17:903:428a:b0:1ac:4a41:d38d with SMTP id
+ ju10-20020a170903428a00b001ac4a41d38dmr15830993plb.51.1684946337555; Wed, 24
+ May 2023 09:38:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20230216150701.3654894-1-dhowells@redhat.com> <CALF+zO=w2Gyz6JtzEoFgTVjH67-_CuTaK7e+2yoHEwXZ8bPx_A@mail.gmail.com>
+In-Reply-To: <CALF+zO=w2Gyz6JtzEoFgTVjH67-_CuTaK7e+2yoHEwXZ8bPx_A@mail.gmail.com>
+From:   David Wysochanski <dwysocha@redhat.com>
+Date:   Wed, 24 May 2023 12:38:21 -0400
+Message-ID: <CALF+zO=Y8dMsJ79RYp1e7n9B5_0=segpqW9_tetBqPhFiQcZxA@mail.gmail.com>
+Subject: Re: [Linux-cachefs] [PATCH v6 0/2] mm, netfs, fscache: Stop read
+ optimisation when folio removed from pagecache
+To:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+On Tue, May 16, 2023 at 3:29=E2=80=AFPM David Wysochanski <dwysocha@redhat.=
+com> wrote:
+>
+> On Thu, Feb 16, 2023 at 10:07=E2=80=AFAM David Howells <dhowells@redhat.c=
+om> wrote:
+> >
+> > Hi Willy,
+> >
+> > Is this okay by you?  You said you wanted to look at the remaining uses=
+ of
+> > page_has_private(), of which there are then three after these patches, =
+not
+> > counting folio_has_private():
+> >
+> >         arch/s390/kernel/uv.c:          if (page_has_private(page))
+> >         mm/khugepaged.c:                    1 + page_mapcount(page) + p=
+age_has_private(page)) {
+> >         mm/migrate_device.c:            extra +=3D 1 + page_has_private=
+(page);
+> >
+> > --
+> > I've split the folio_has_private()/filemap_release_folio() call pair
+> > merging into its own patch, separate from the actual bugfix and pulled =
+out
+> > the folio_needs_release() function into mm/internal.h and made
+> > filemap_release_folio() use it.  I've also got rid of the bit clearance=
+s
+> > from the network filesystem evict_inode functions as they doesn't seem =
+to
+> > be necessary.
+> >
+> > Note that the last vestiges of try_to_release_page() got swept away, so=
+ I
+> > rebased and dealt with that.  One comment remained, which is removed by=
+ the
+> > first patch.
+> >
+> > David
+> >
+> > Changes:
+> > =3D=3D=3D=3D=3D=3D=3D=3D
+> > ver #6)
+> >  - Drop the third patch which removes a duplicate check in vmscan().
+> >
+> > ver #5)
+> >  - Rebased on linus/master.  try_to_release_page() has now been entirel=
+y
+> >    replaced by filemap_release_folio(), barring one comment.
+> >  - Cleaned up some pairs in ext4.
+> >
+> > ver #4)
+> >  - Split has_private/release call pairs into own patch.
+> >  - Moved folio_needs_release() to mm/internal.h and removed open-coded
+> >    version from filemap_release_folio().
+> >  - Don't need to clear AS_RELEASE_ALWAYS in ->evict_inode().
+> >  - Added experimental patch to reduce shrink_folio_list().
+> >
+> > ver #3)
+> >  - Fixed mapping_clear_release_always() to use clear_bit() not set_bit(=
+).
+> >  - Moved a '&&' to the correct line.
+> >
+> > ver #2)
+> >  - Rewrote entirely according to Willy's suggestion[1].
+> >
+> > Link: https://lore.kernel.org/r/Yk9V/03wgdYi65Lb@casper.infradead.org/ =
+[1]
+> > Link: https://lore.kernel.org/r/164928630577.457102.8519251179327601178=
+.stgit@warthog.procyon.org.uk/ # v1
+> > Link: https://lore.kernel.org/r/166844174069.1124521.108905063609741699=
+94.stgit@warthog.procyon.org.uk/ # v2
+> > Link: https://lore.kernel.org/r/166869495238.3720468.487815140908514676=
+4.stgit@warthog.procyon.org.uk/ # v3
+> > Link: https://lore.kernel.org/r/1459152.1669208550@warthog.procyon.org.=
+uk/ # v3 also
+> > Link: https://lore.kernel.org/r/166924370539.1772793.137306983607718213=
+17.stgit@warthog.procyon.org.uk/ # v4
+> > Link: https://lore.kernel.org/r/167172131368.2334525.856980892568773193=
+7.stgit@warthog.procyon.org.uk/ # v5
+> > ---
+> > %(shortlog)s
+> > %(diffstat)s
+> >
+> > David Howells (2):
+> >   mm: Merge folio_has_private()/filemap_release_folio() call pairs
+> >   mm, netfs, fscache: Stop read optimisation when folio removed from
+> >     pagecache
+> >
+> >  fs/9p/cache.c           |  2 ++
+> >  fs/afs/internal.h       |  2 ++
+> >  fs/cachefiles/namei.c   |  2 ++
+> >  fs/ceph/cache.c         |  2 ++
+> >  fs/cifs/fscache.c       |  2 ++
+> >  fs/ext4/move_extent.c   | 12 ++++--------
+> >  fs/splice.c             |  3 +--
+> >  include/linux/pagemap.h | 16 ++++++++++++++++
+> >  mm/filemap.c            |  2 ++
+> >  mm/huge_memory.c        |  3 +--
+> >  mm/internal.h           | 11 +++++++++++
+> >  mm/khugepaged.c         |  3 +--
+> >  mm/memory-failure.c     |  8 +++-----
+> >  mm/migrate.c            |  3 +--
+> >  mm/truncate.c           |  6 ++----
+> >  mm/vmscan.c             |  8 ++++----
+> >  16 files changed, 56 insertions(+), 29 deletions(-)
+> >
+> > --
+> > Linux-cachefs mailing list
+> > Linux-cachefs@redhat.com
+> > https://listman.redhat.com/mailman/listinfo/linux-cachefs
+> >
+>
+> Willy, and David,
+>
+> Can this series move forward?
+> This just got mentioned again [1] after Chris tested the NFS netfs
+> patches that were merged in 6.4-rc1
+>
+> [1] https://lore.kernel.org/linux-nfs/CAAmbk-f_U8CPcTQM866L572uUHdK4p5iWK=
+nUQs4r8fkW=3D6RW9g@mail.gmail.com/
 
-Now that we converted cephfs internally to account for idmapped mounts
-allow the creation of idmapped mounts on by setting the FS_ALLOW_IDMAP
-flag.
+Sorry about the timing on the original email as I forgot it lined up
+with LSF/MM.
 
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: Ilya Dryomov <idryomov@gmail.com>
-Cc: ceph-devel@vger.kernel.org
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
----
- fs/ceph/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+FYI, I tested with 6.4-rc1 plus these two patches, then I added the NFS
+hunk needed (see below).  All my tests pass now[1], and it makes sense
+from all the ftraces I've seen on test runs that fail (cachefiles_prep_read
+trace event would show "DOWN no-data" even after data was written
+previously).
 
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 3fc48b43cab0..4f6e6d57f3f1 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -1389,7 +1389,7 @@ static struct file_system_type ceph_fs_type = {
- 	.name		= "ceph",
- 	.init_fs_context = ceph_init_fs_context,
- 	.kill_sb	= ceph_kill_sb,
--	.fs_flags	= FS_RENAME_DOES_D_MOVE,
-+	.fs_flags	= FS_RENAME_DOES_D_MOVE | FS_ALLOW_IDMAP,
- };
- MODULE_ALIAS_FS("ceph");
- 
--- 
-2.34.1
+This small NFS hunk needs added to patch #2 in this series:
+
+diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
+index 8c35d88a84b1..d4a20748b14f 100644
+--- a/fs/nfs/fscache.c
++++ b/fs/nfs/fscache.c
+@@ -180,6 +180,10 @@ void nfs_fscache_init_inode(struct inode *inode)
+                                               &auxdata,      /* aux_data *=
+/
+                                               sizeof(auxdata),
+                                               i_size_read(inode));
++
++       if (netfs_inode(inode)->cache)
++               mapping_set_release_always(inode->i_mapping);
++
+ }
+
+ /*
+
+[1] https://lore.kernel.org/linux-nfs/CALF+zOn_qX4tcT2ucq4jD3G-1ERqZkL6Cw7h=
+x75OnQF0ivqSeA@mail.gmail.com/
 
