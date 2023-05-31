@@ -2,83 +2,107 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 56930715679
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 May 2023 09:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85D8C7177BA
+	for <lists+ceph-devel@lfdr.de>; Wed, 31 May 2023 09:20:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230026AbjE3HT1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 30 May 2023 03:19:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49920 "EHLO
+        id S234581AbjEaHUZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 31 May 2023 03:20:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230490AbjE3HTK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 30 May 2023 03:19:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E857188
-        for <ceph-devel@vger.kernel.org>; Tue, 30 May 2023 00:17:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685431014;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=4DzuXWdn5q+2H/HkXTGSP4YifSU43L78+nfm+Plm8nw=;
-        b=TQLcF/uaQ+n/PsyDCRhR2Kt1kIv4oKuqA224cGL89FZsnAsNW7kPeOc6L1COFtG/idg4LK
-        GhwEQWDZwJeMLNM9BAXpo6Ncwor+strrXv3kAnO9l5Sul7Ta1pEH8gtmt6LYbiBVlltTKy
-        HwGsEoW6S570TB7oas+OOpxKsiTBEg0=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-516-InVDwGGWPJWEQtJlN3gLZA-1; Tue, 30 May 2023 03:16:51 -0400
-X-MC-Unique: InVDwGGWPJWEQtJlN3gLZA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9DCF73C0CEEA;
-        Tue, 30 May 2023 07:16:50 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-188.pek2.redhat.com [10.72.12.188])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D4A6A40C6CCC;
-        Tue, 30 May 2023 07:16:30 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     fstests@vger.kernel.org
-Cc:     zlang@redhat.com, david@fromorbit.com, djwong@kernel.org,
-        ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] generic/020: add ceph-fuse support
-Date:   Tue, 30 May 2023 15:15:52 +0800
-Message-Id: <20230530071552.766424-1-xiubli@redhat.com>
+        with ESMTP id S231922AbjEaHUX (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 31 May 2023 03:20:23 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C773113;
+        Wed, 31 May 2023 00:20:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=rTj30peRJt6m0YoKqBvWmseSjfUD4Z/EcECC7rWKQqY=; b=JaFUYzfMSOPN52M4KwZuEYVRlQ
+        qspmaDHSt+0PBCreJirznNvvorsKcGA4AAgC+3TxCg0mACC0ydyG3dGfhBbJezE3Y0ZtpJF2OgF3Q
+        gI2Vu/s5xp9CSycLSHwae8Q9sygUD16H7zP0U7SzIc0nuXifVHJlgqKhPE1D1OZAs4j4K/mSD0zZQ
+        IxZJ/z5goKiYfqqD8xLRft7sAoyVj8Y3IQgNP4sLkeSTLlYF9q28/9Oo4E03HX575EHeKdOJkHV/9
+        CkyvBQVfQ2OSot0w5Ra4gLl4vsn5TR3UKEAHq6LmBg2GbOKuXJMyE4VqGbDT/CR4c75Sz8C9Y+7i2
+        MzqkkGpg==;
+Received: from [2001:4bb8:182:6d06:f5c3:53d7:b5aa:b6a7] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1q4G7t-00GPh2-1k;
+        Wed, 31 May 2023 07:20:09 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <chao@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: cleanup the filemap / direct I/O interaction v3
+Date:   Wed, 31 May 2023 09:19:58 +0200
+Message-Id: <20230531072006.476386-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+Hi all,
 
-For ceph fuse client the fs type will be "ceph-fuse".
+this series cleans up some of the generic write helper calling
+conventions and the page cache writeback / invalidation for
+direct I/O.  This is a spinoff from the no-bufferhead kernel
+project, for which we'll want to an use iomap based buffered
+write path in the block layer.
 
-Fixes: https://tracker.ceph.com/issues/61496
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- tests/generic/020 | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v2:
+ - stick to the existing behavior of returning a short write
+   if the buffer fallback write or sync fails
+ - bring back "fuse: use direct_write_fallback" which accidentally
+   got lost in v2
 
-diff --git a/tests/generic/020 b/tests/generic/020
-index e00365a9..da258aa5 100755
---- a/tests/generic/020
-+++ b/tests/generic/020
-@@ -56,7 +56,7 @@ _attr_get_max()
- {
- 	# set maximum total attr space based on fs type
- 	case "$FSTYP" in
--	xfs|udf|pvfs2|9p|ceph|fuse|nfs)
-+	xfs|udf|pvfs2|9p|ceph|fuse|nfs|ceph-fuse)
- 		max_attrs=1000
- 		;;
- 	ext2|ext3|ext4)
--- 
-2.40.1
+Changes since v1:
+ - remove current->backing_dev_info entirely
+ - fix the pos/end calculation in direct_write_fallback
+ - rename kiocb_invalidate_post_write to
+   kiocb_invalidate_post_direct_write
+ - typo fixes
 
+diffstat:
+ block/fops.c            |   18 +-----
+ fs/btrfs/file.c         |    6 --
+ fs/ceph/file.c          |    6 --
+ fs/direct-io.c          |   10 ---
+ fs/ext4/file.c          |   11 +---
+ fs/f2fs/file.c          |    3 -
+ fs/fuse/file.c          |    4 -
+ fs/gfs2/file.c          |    6 --
+ fs/iomap/buffered-io.c  |    9 ++-
+ fs/iomap/direct-io.c    |   88 ++++++++++++---------------------
+ fs/nfs/file.c           |    6 --
+ fs/ntfs/file.c          |    2 
+ fs/ntfs3/file.c         |    3 -
+ fs/xfs/xfs_file.c       |    6 --
+ fs/zonefs/file.c        |    4 -
+ include/linux/fs.h      |    5 -
+ include/linux/pagemap.h |    4 +
+ include/linux/sched.h   |    3 -
+ mm/filemap.c            |  126 ++++++++++++++++++++++++++----------------------
+ 19 files changed, 125 insertions(+), 195 deletions(-)
