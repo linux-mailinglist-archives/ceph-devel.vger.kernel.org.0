@@ -2,108 +2,112 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BC307197B5
-	for <lists+ceph-devel@lfdr.de>; Thu,  1 Jun 2023 11:52:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33A4D71A164
+	for <lists+ceph-devel@lfdr.de>; Thu,  1 Jun 2023 17:01:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233040AbjFAJwK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 1 Jun 2023 05:52:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35272 "EHLO
+        id S234791AbjFAPAR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 1 Jun 2023 11:00:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233049AbjFAJwH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 1 Jun 2023 05:52:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAC0E134
-        for <ceph-devel@vger.kernel.org>; Thu,  1 Jun 2023 02:51:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685613076;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OzIlMFRG7JVgyYici9Bt6+3TtN9Mm4P63XnmoTugrLk=;
-        b=PLGpcG6NlKaAuWCLAM9Bi7uIqw0BYhKOHobG1aplzXo1TA6jsCvh9mbckiW/Kv3DefSvp1
-        UNQ4t+G8/6Uq/hpD6alg5XStApTcAw1IB59T2t4s0W7QqAWc6yZzGEzCCShWgLcOHOkoYP
-        ojJGJv6FMQ8IEGxvuYobwvceg779wQI=
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
- [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-556-JgUvvGOkOHuxlfmNeGj4Fg-1; Thu, 01 Jun 2023 05:51:14 -0400
-X-MC-Unique: JgUvvGOkOHuxlfmNeGj4Fg-1
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-33b4cbdd21aso5394215ab.2
-        for <ceph-devel@vger.kernel.org>; Thu, 01 Jun 2023 02:51:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685613074; x=1688205074;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OzIlMFRG7JVgyYici9Bt6+3TtN9Mm4P63XnmoTugrLk=;
-        b=OIsHLvTLh1dct9el6pyocw398WMRG+x5bxYCkTKZS5SnfHe2YyrrUcrG+NKvTW9vcc
-         wVJCSiU2jUsUiwPyCnSMzVPpP4MtqzKLLAvMoewiKnzPyyimpnvZhB2UT52eeS8oKbSf
-         qrIvOQ8Ev8NVeJTuxt1erjdZJ5ORg1ucR/+lzqA6HpZbn23XDv4oE/xueNptXN44B8yq
-         Uzl3oNJHYsphafItG/kDP36MPf32NKLxJ9Iw3FUeOrpm+4qPYStlfHkiVARjy18nHRb+
-         QloiZrbIYpYLtdfx6e+HdQ7HBjW9hyhJ8X8rCpM2F2RRAqbAAq7NNO8JvASTRiYAVNOc
-         jWLA==
-X-Gm-Message-State: AC+VfDxn7kAkolkE9pO9WgbXInOnB9PpBk/l2/vcmE+DSP948i5xcZ1A
-        mqa9/mLdJbOvDg2OguEcDaIeIxarBI/gOvxlzkDHcA26pJd2Neo34XlUBmWAnPS7biSmwXS84Gh
-        OARh+AAucUSyfule8vRJkAw==
-X-Received: by 2002:a92:c708:0:b0:33b:abaf:d493 with SMTP id a8-20020a92c708000000b0033babafd493mr5590429ilp.16.1685613073958;
-        Thu, 01 Jun 2023 02:51:13 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ7qPXazSRAYRxqRw6piwj80oKyUTmO7apVm4+a2/Fd4B4wcVr99CGP2dt0Y2TsYe7FsVLE+DQ==
-X-Received: by 2002:a92:c708:0:b0:33b:abaf:d493 with SMTP id a8-20020a92c708000000b0033babafd493mr5590423ilp.16.1685613073692;
-        Thu, 01 Jun 2023 02:51:13 -0700 (PDT)
-Received: from zlang-mailbox ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id l7-20020a656807000000b0051416609fb7sm2521765pgt.61.2023.06.01.02.51.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Jun 2023 02:51:12 -0700 (PDT)
-Date:   Thu, 1 Jun 2023 17:51:09 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     xiubli@redhat.com
-Cc:     fstests@vger.kernel.org, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH] common/rc: skip ceph-fuse when atime is required
-Message-ID: <20230601095109.bzdb2nithqngngwd@zlang-mailbox>
-References: <20230601025207.857009-1-xiubli@redhat.com>
+        with ESMTP id S234771AbjFAO7u (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 1 Jun 2023 10:59:50 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B40010E3;
+        Thu,  1 Jun 2023 07:59:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=XbbWN9vPp1Xk6I5ta8jq/xbBcX0bF+DntmFOOCcIAP8=; b=TPdEsrmYwQDcbibO2u6xuPEn+F
+        cVqnIFAGztBdzvqIg4dgzXeaGWODyzx/nMQJGSLcpbm/FYzckDj7ONjDiFbguAGwm1Edz1ErTv5Xq
+        dmUfwy6z9Mm278yt2cBQIO3TEjO41LezfuQ+hI0Uoq85CDA65HTJ8oUZMRDVOGbhUFQaPasrNKcZ9
+        Eu32hX3WLCij9TzhijOx9RcgOZEJx4LRtJG3IzRBzVMPWMTYkmpqf58tHPY2g6rZs7Ffjk2zLEgkE
+        xFLBvv0gVJvkzvSmP7yzapeyAfNI1nHgBrDGo52sGrhFJUoFO1j2LLleoHnmhrG4pQCdtQgXyXQuu
+        kGAxXLCQ==;
+Received: from [2001:4bb8:182:6d06:eacb:c751:971:73eb] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+        id 1q4jla-003w1Z-1c;
+        Thu, 01 Jun 2023 14:59:06 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <chao@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: cleanup the filemap / direct I/O interaction v4
+Date:   Thu,  1 Jun 2023 16:58:52 +0200
+Message-Id: <20230601145904.1385409-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230601025207.857009-1-xiubli@redhat.com>
-X-Spam-Status: No, score=-2.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jun 01, 2023 at 10:52:07AM +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> Ceph won't maintain the atime, so just skip the tests when the atime
-> is required.
-> 
-> Fixes: https://tracker.ceph.com/issues/61551
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
+Hi all,
 
-Reviewed-by: Zorro Lang <zlang@redhat.com>
+this series cleans up some of the generic write helper calling
+conventions and the page cache writeback / invalidation for
+direct I/O.  This is a spinoff from the no-bufferhead kernel
+project, for which we'll want to an use iomap based buffered
+write path in the block layer.
 
->  common/rc | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/common/rc b/common/rc
-> index 37074371..f3b92741 100644
-> --- a/common/rc
-> +++ b/common/rc
-> @@ -4089,7 +4089,7 @@ _require_atime()
->  	nfs|afs|cifs|virtiofs)
->  		_notrun "atime related mount options have no effect on $FSTYP"
->  		;;
-> -	ceph)
-> +	ceph|ceph-fuse)
->  		_notrun "atime not maintained by $FSTYP"
->  		;;
->  	esac
-> -- 
-> 2.40.1
-> 
+Changes since v3:
+ - fix a generic_sync_file that got lost in fuse
+ - fix fuse to call fuse_perform_write and not generic_perform_write
 
+Changes since v2:
+ - stick to the existing behavior of returning a short write
+   if the buffer fallback write or sync fails
+ - bring back "fuse: use direct_write_fallback" which accidentally
+   got lost in v2
+
+Changes since v1:
+ - remove current->backing_dev_info entirely
+ - fix the pos/end calculation in direct_write_fallback
+ - rename kiocb_invalidate_post_write to
+   kiocb_invalidate_post_direct_write
+ - typo fixes
+
+diffstat:
+ block/fops.c            |   18 ----
+ fs/btrfs/file.c         |    6 -
+ fs/ceph/file.c          |    6 -
+ fs/direct-io.c          |   10 --
+ fs/ext4/file.c          |   11 --
+ fs/f2fs/file.c          |    3 
+ fs/fuse/file.c          |   45 ++---------
+ fs/gfs2/file.c          |    6 -
+ fs/iomap/buffered-io.c  |    9 +-
+ fs/iomap/direct-io.c    |   88 ++++++++-------------
+ fs/libfs.c              |   41 ++++++++++
+ fs/nfs/file.c           |    6 -
+ fs/ntfs/file.c          |    2 
+ fs/ntfs3/file.c         |    3 
+ fs/xfs/xfs_file.c       |    6 -
+ fs/zonefs/file.c        |    4 
+ include/linux/fs.h      |    7 -
+ include/linux/pagemap.h |    4 
+ include/linux/sched.h   |    3 
+ mm/filemap.c            |  194 +++++++++++++++++++++---------------------------
+ 20 files changed, 194 insertions(+), 278 deletions(-)
