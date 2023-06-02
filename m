@@ -2,82 +2,78 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DCD0371F81E
-	for <lists+ceph-devel@lfdr.de>; Fri,  2 Jun 2023 03:45:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C89371FE62
+	for <lists+ceph-devel@lfdr.de>; Fri,  2 Jun 2023 11:55:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233780AbjFBBop (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 1 Jun 2023 21:44:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35246 "EHLO
+        id S234789AbjFBJzu (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 2 Jun 2023 05:55:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233644AbjFBBok (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 1 Jun 2023 21:44:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C813E97
-        for <ceph-devel@vger.kernel.org>; Thu,  1 Jun 2023 18:43:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685670231;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Qm3YBUUay/A3pBxQ63hdSOGk63jXLzGv+Yj/C0QgPBo=;
-        b=D2CPQsi6vTAhUQ3N44hhw6vxnJZsLzj+KPyoLUsqZbKSTMwPKKvpIwGKMkt7bi9wz0rfwR
-        Iyre9fhgzbq0H1G0OuYmekyFoXG7vilXSglIDdkGzDSKsB6AZcP3WqF0M79n9cVMGBppFT
-        QHLLMSL7BKxjdWow7DJCPFDNd9wfBos=
-Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com
- [209.85.210.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-553-sPfCwuBhMYGopnaY3uxksg-1; Thu, 01 Jun 2023 21:43:50 -0400
-X-MC-Unique: sPfCwuBhMYGopnaY3uxksg-1
-Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-6af7cc44ddfso1656711a34.0
-        for <ceph-devel@vger.kernel.org>; Thu, 01 Jun 2023 18:43:50 -0700 (PDT)
+        with ESMTP id S234304AbjFBJzt (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 2 Jun 2023 05:55:49 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26C80132
+        for <ceph-devel@vger.kernel.org>; Fri,  2 Jun 2023 02:55:48 -0700 (PDT)
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com [209.85.128.199])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 977D33F234
+        for <ceph-devel@vger.kernel.org>; Fri,  2 Jun 2023 09:55:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1685699745;
+        bh=QspZhkhWQdQD4gUpwkhMOqtT5VUHoWWx+XNQWeKyt9w=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=KOSr1/OJnvLrqBe2Q7dz7yusG49kznQGHJMtgu06eiuQBp5u1WVo4X+OoECvl0ocv
+         v7DFYvMk3N1Ig3PNny2CnZNi9j0lTTf79I/7ngXE0mQI2L7qui2Gx8JGmc5c3d0Hps
+         eG+8SYjZskjnDrAYQbRxukRC3TS7R8hD2SzJQ1X5lXz8eyFdM3WRZqlQ5CS10oWVBp
+         /nLJMw1zBjvLGIJcPFSus3th36GwrDSbkQfyhk72XyJ+kaCnG0zmaINrydUBxCqYBE
+         7CSmEpVy2YnlyuVlO5UggvqQ30e5O/4filBEUwHCkSjagwUpvCcRWh5Rj61sJlPJSi
+         gpj3yDL95hFUg==
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-568ab5c813eso28785717b3.2
+        for <ceph-devel@vger.kernel.org>; Fri, 02 Jun 2023 02:55:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685670230; x=1688262230;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qm3YBUUay/A3pBxQ63hdSOGk63jXLzGv+Yj/C0QgPBo=;
-        b=V9BZgPOlYTXMXOPbZP0RN+c1Vp9+QEKKKnPLkV+CtHoVi1mt3JJ7W3Krerd9SKmH+T
-         Bw4emE52BqeW496jqDFqBsPBBABTvpOZMJ0RsOc+ENVfv3oJcbCHPqaGFNF8DWYs+cUX
-         FeEf/iwwqFSYyaOkdFRkb/Q+yPIWe0rAAv4/cZgb1EZ/TegNUeuZkPSHxzWzWXpYRR2y
-         tnh2XIKOoFfb3mA+dc+b4tbEztckL1J9GJeg+RVOTIkapFZg7y/EXsom9MSWf946ga2x
-         dKPf6qD70NEfqD5DTpzZ4PuJiDOSUb/mBfcPLSOMnfb4y3kgCrdhR+NvB+/qKQ3/TJlL
-         nLAg==
-X-Gm-Message-State: AC+VfDzrk3sSsB4Rx56CtHJ4zgLsaq1MRKCjLC9axhSZvTocscd+Nog/
-        cIjrMVhL5mq5L/xnINI8bQrXH4FqSpHbtgrzJKCOXH6GuVFDJm54e7PXOgINQVxUR5ukAD6yvKv
-        vEu3DFCJ/tMpFvg6nKhmaCA==
-X-Received: by 2002:a05:6830:1144:b0:6ab:1b58:f408 with SMTP id x4-20020a056830114400b006ab1b58f408mr1165854otq.19.1685670229963;
-        Thu, 01 Jun 2023 18:43:49 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6dXe+qWoYjYqWymPBlKMBkzayyp1ngY7RaWquL6mNcLpLBSiviFYZu9RyuAqcMvnhIoxOw2A==
-X-Received: by 2002:a05:6830:1144:b0:6ab:1b58:f408 with SMTP id x4-20020a056830114400b006ab1b58f408mr1165844otq.19.1685670229730;
-        Thu, 01 Jun 2023 18:43:49 -0700 (PDT)
-Received: from [10.72.12.188] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id u6-20020a634706000000b0053b8a4f9465sm103388pga.45.2023.06.01.18.43.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Jun 2023 18:43:49 -0700 (PDT)
-Message-ID: <539de53d-729b-118e-1f2f-6dd2f6dccb71@redhat.com>
-Date:   Fri, 2 Jun 2023 09:43:36 +0800
+        d=1e100.net; s=20221208; t=1685699744; x=1688291744;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QspZhkhWQdQD4gUpwkhMOqtT5VUHoWWx+XNQWeKyt9w=;
+        b=BkyMwiwDEotGKeftNhVQcI1r4KheZi+3aaNsXwUe6py7TeO5WxlWI+8xsqrqNvPhO+
+         AgKpQOlUcsvustp06Ojv1pqBBmoIm0pLRRjLJVnPwgGn2joLO50iOt5i5UdycYJjSEqr
+         X4l+tZL9nzLUwUfWbL5dLCPTiAjE6s8enYVVKWBrkEedKU7O8HDW99bjyMYsA56LAaRb
+         IlK2kz4TXO9T4te34MYqVVwLi18pOp48KzRH9G+vUjTRXOhGxaNZGnOks+qa4UabwtTC
+         W9m8x6xXg+GiNAGbdl41JqIidaLbh/Pp1GbnuVSi4Y+7bWuoBd1z9CupMoWOZd+k/wWN
+         iRdA==
+X-Gm-Message-State: AC+VfDxNaZ8Emq3gsQjaMhhc2k2NdoIId0e4cJwlL6ihjKZ+M7tSZY8v
+        mJMsDI8u8EJHO28IudjDt6xKZ6UH+vzZ6GLEFdIEw6CdMG06MZ8Z0urZ+2NqTOUiXq3jzgjduxh
+        wmZS9ToANxtJnxMkpwJtGXYCMA5q1zMjAbaRZ2Jvf+zdCndUSYvwDfvY=
+X-Received: by 2002:a25:e7c6:0:b0:bad:1131:97bc with SMTP id e189-20020a25e7c6000000b00bad113197bcmr2366571ybh.41.1685699744722;
+        Fri, 02 Jun 2023 02:55:44 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ7xqfL1hiKe4JZ/3nKmZFmT86k0j0WRUaU81ssaYFKnGfEyCwmCVtufdRzhBHmNUG0gg9Jp58iN+OC4DNkHnaQ=
+X-Received: by 2002:a25:e7c6:0:b0:bad:1131:97bc with SMTP id
+ e189-20020a25e7c6000000b00bad113197bcmr2366559ybh.41.1685699744492; Fri, 02
+ Jun 2023 02:55:44 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v2 08/13] ceph: allow idmapped getattr inode op
-Content-Language: en-US
-To:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc:     brauner@kernel.org, stgraber@ubuntu.com,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
 References: <20230524153316.476973-1-aleksandr.mikhalitsyn@canonical.com>
- <20230524153316.476973-9-aleksandr.mikhalitsyn@canonical.com>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20230524153316.476973-9-aleksandr.mikhalitsyn@canonical.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+ <20230524153316.476973-2-aleksandr.mikhalitsyn@canonical.com> <64672c51-498a-2a0c-4d4e-caca145fa744@redhat.com>
+In-Reply-To: <64672c51-498a-2a0c-4d4e-caca145fa744@redhat.com>
+From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date:   Fri, 2 Jun 2023 11:55:33 +0200
+Message-ID: <CAEivzxepeiBa+uwRKuddCZaxvzqLEj9ZDp4byr0jZkUA94CxSw@mail.gmail.com>
+Subject: Re: [PATCH v2 01/13] fs: export mnt_idmap_get/mnt_idmap_put
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     brauner@kernel.org, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Seth Forshee <sforshee@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
         autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,49 +81,68 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-
-On 5/24/23 23:33, Alexander Mikhalitsyn wrote:
-> From: Christian Brauner <christian.brauner@ubuntu.com>
+On Fri, Jun 2, 2023 at 3:17=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
 >
-> Enable ceph_getattr() to handle idmapped mounts. This is just a matter
-> of passing down the mount's idmapping.
 >
-> Cc: Jeff Layton <jlayton@kernel.org>
-> Cc: Ilya Dryomov <idryomov@gmail.com>
-> Cc: ceph-devel@vger.kernel.org
-> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-> ---
->   fs/ceph/inode.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> On 5/24/23 23:33, Alexander Mikhalitsyn wrote:
+> > These helpers are required to support idmapped mounts in the Cephfs.
+> >
+> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
+om>
+> > ---
+> >   fs/mnt_idmapping.c            | 2 ++
+> >   include/linux/mnt_idmapping.h | 3 +++
+> >   2 files changed, 5 insertions(+)
+> >
+> > diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
+> > index 4905665c47d0..5a579e809bcf 100644
+> > --- a/fs/mnt_idmapping.c
+> > +++ b/fs/mnt_idmapping.c
+> > @@ -256,6 +256,7 @@ struct mnt_idmap *mnt_idmap_get(struct mnt_idmap *i=
+dmap)
+> >
+> >       return idmap;
+> >   }
+> > +EXPORT_SYMBOL(mnt_idmap_get);
+> >
+> >   /**
+> >    * mnt_idmap_put - put a reference to an idmapping
+> > @@ -271,3 +272,4 @@ void mnt_idmap_put(struct mnt_idmap *idmap)
+> >               kfree(idmap);
+> >       }
+> >   }
+> > +EXPORT_SYMBOL(mnt_idmap_put);
+> > diff --git a/include/linux/mnt_idmapping.h b/include/linux/mnt_idmappin=
+g.h
+> > index 057c89867aa2..b8da2db4ecd2 100644
+> > --- a/include/linux/mnt_idmapping.h
+> > +++ b/include/linux/mnt_idmapping.h
+> > @@ -115,6 +115,9 @@ static inline bool vfsgid_eq_kgid(vfsgid_t vfsgid, =
+kgid_t kgid)
+> >
+> >   int vfsgid_in_group_p(vfsgid_t vfsgid);
+> >
+> > +struct mnt_idmap *mnt_idmap_get(struct mnt_idmap *idmap);
+> > +void mnt_idmap_put(struct mnt_idmap *idmap);
+> > +
+> >   vfsuid_t make_vfsuid(struct mnt_idmap *idmap,
+> >                    struct user_namespace *fs_userns, kuid_t kuid);
+> >
 >
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 8e5f41d45283..2e988612ed6c 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -2465,7 +2465,7 @@ int ceph_getattr(struct mnt_idmap *idmap, const struct path *path,
->   			return err;
->   	}
->   
-> -	generic_fillattr(&nop_mnt_idmap, inode, stat);
-> +	generic_fillattr(idmap, inode, stat);
->   	stat->ino = ceph_present_inode(inode);
->   
->   	/*
+> Hi Alexander,
 
-As mentioned in my comment in "[PATCH v2 10/13] ceph: allow idmapped 
-setattr inode op". The getattr requests may fail too in the MDS when 
-doing the client auth checking.
+Hi, Xiubo!
 
-So for all the requests we should always get the correct UID/GID instead 
-of only for the creating requests, then we can make sure that the idmap 
-is only a feature in client side and then in cephfs MDS side it will 
-always get a consistent UID/GID no matter what idmappings the clients 
-are using.
+>
+> This needs the "fs/mnt_idmapping.c" maintainer's ack.
 
-Right ?
+Sure, I hope that Christian will take a look.
 
-Thanks
+Thanks,
+Alex
 
-- Xiubo
-
+>
+> Thanks
+>
+> - Xiubo
+>
