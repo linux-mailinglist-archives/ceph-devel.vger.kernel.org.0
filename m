@@ -2,59 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A54F272314F
-	for <lists+ceph-devel@lfdr.de>; Mon,  5 Jun 2023 22:27:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DC86723150
+	for <lists+ceph-devel@lfdr.de>; Mon,  5 Jun 2023 22:27:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232412AbjFEU1a (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 5 Jun 2023 16:27:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51058 "EHLO
+        id S232354AbjFEU1b (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 5 Jun 2023 16:27:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232133AbjFEU11 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 5 Jun 2023 16:27:27 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B99DEC
-        for <ceph-devel@vger.kernel.org>; Mon,  5 Jun 2023 13:27:26 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id a640c23a62f3a-9741a0fd134so875855466b.0
-        for <ceph-devel@vger.kernel.org>; Mon, 05 Jun 2023 13:27:26 -0700 (PDT)
+        with ESMTP id S232296AbjFEU12 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 5 Jun 2023 16:27:28 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8336998
+        for <ceph-devel@vger.kernel.org>; Mon,  5 Jun 2023 13:27:27 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-5149e65c218so8009987a12.2
+        for <ceph-devel@vger.kernel.org>; Mon, 05 Jun 2023 13:27:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685996845; x=1688588845;
+        d=gmail.com; s=20221208; t=1685996846; x=1688588846;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rTXKmlUfaxsweCr9txnhSwKRBLs4KBaD4wqyu/rzXwA=;
-        b=E1we858Hhh8gQG8m+/zb1bAdNY8ZSoOLEd5tNO7RJDwOQEGm+wmykVbZ1TxMaL6jLx
-         Xu+LYVo+N3PLspECnzPTbIb+qYwbxxhQCL1u4JpKyfvz6uTAcKxzIUYIhs/CLBjhwhms
-         4mY7mp+eeeCQOe72xN3qOrpFdmnCJD6J0KA8pUcjx/gqF0UTU6bsHYlAc7Y89xSeD7Bb
-         yahbNfuPY5wo192HwcVZXcCG8VRYcLITbe04RAzg6CHJQOlmSrdFd//tCYDfEd8pCg1z
-         CLxKrGeWWBLVWB2O10LbM88d7sR88vTUj/zNVoWhHGwXSJlYLYkFINwTfw/CKeKvgpwG
-         Eorg==
+        bh=7KybI+WtMi3tnB4KN37yItIiLRMfDM1+PQqPRpK6aeE=;
+        b=dSzJjtik3WzwEJG0yhz/Oo3ufqeICd+XlbjNeXAsFLYj9B1jgjYGIS2KYRfUw24W5u
+         ekxhzYsjJaQAjpTJ+ib2DM7PLMhCIRDfoJsZIpNEb83o1E6Lyjhb9FG0UB4rUDnn7Lsq
+         ZQ784mKlU9jjinxHoJ14kx0e/yM1Q55YVSkLZGqQskujaXcTp1RndBnxPpiWzsVpaSC/
+         N4yH1mVbRLRjyUGhllgrWRys3NPqj5L5Ie9avtPCO3FDshxzOkD/xD/Wf8u/reMdJcQi
+         uAHmMMRmb7ZFKQGpMQ9dYx9pl3Q/jdYMu//56/C6nYXzew8lUZwfGTPiWr9NR5gx5cpn
+         1kVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685996845; x=1688588845;
+        d=1e100.net; s=20221208; t=1685996846; x=1688588846;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rTXKmlUfaxsweCr9txnhSwKRBLs4KBaD4wqyu/rzXwA=;
-        b=NbZbdGVjzmfCLS4jDb1Ruha1a0MXKvbZMsAmPMCb75pfWfRPA+nYRC/KPXBJnh00kH
-         O2aL/+dKbsSKx6UuhjMrBhbLCpG1ITtPrsIANZ6WUI0M5DWV02F440/MrhAGQCG6T1UM
-         Ce2k9hebTUopvSBwAUEcUT9RKXle66q7N6zrM3i+9oMjwxyXDGSzIdWRj+L9hQzX1LEn
-         tUcD/Ob2N6WDLOe4/lzLtv6oS/qtQ5RJzSrKjyUTo14nMrrX8yHxHDK0tbfULjLq9puZ
-         dXa2IHB+fqlCplpvCe7+R82tCMX3MQ8lNaoN3kROBkYCZnCSzAfBc8E8a9pt62k7WVnI
-         Kd6w==
-X-Gm-Message-State: AC+VfDwByglnsMOc0a6Ku2wMq9GbX8K7Pbk2j9KuA9EsfxOxkDf2F/Af
-        oNbame9HtLk+imA3MQKKDw25p/u1vmg=
-X-Google-Smtp-Source: ACHHUZ6fQ1I3kuPRuFBRqM5W25cToIrTZ1n2neJC1lIt3vSEAWYE47RHuSl89BzUUTgxwUr8dFUyww==
-X-Received: by 2002:a17:906:730c:b0:96a:f09b:373e with SMTP id di12-20020a170906730c00b0096af09b373emr23663ejc.15.1685996844870;
-        Mon, 05 Jun 2023 13:27:24 -0700 (PDT)
+        bh=7KybI+WtMi3tnB4KN37yItIiLRMfDM1+PQqPRpK6aeE=;
+        b=JL8rO5WEb4zsAUwozvmN/+7cw4zsPa1Rw2PPoHFIXimMIRq9BfQTyVxzN4H/5Emmvy
+         U1i2lLPN9Wimko4zgctLOwxqdhtP26WivNS0ap6vb46/+rFJAARLRYds7QH8lleFKd7J
+         AKfepm97xBMpZE0NqFas+XC0j7uUir+mW6ZMku3mikWj+SZkfw7o1OI18kpDAqWQ6PGc
+         7EG9jCbEybRWQIfHkcQQZVii/jPEOxxdv5anIqnMi8KObnpor9cvVmLOlCFEw1NDeYvA
+         mS9xFm7WxpIa/34c99KnrshbxYP5+I6GPx7KVgq5oDeJLeEN26CdjZL+/GkIfCFFDOR+
+         JSZA==
+X-Gm-Message-State: AC+VfDyEQWExm1248g6XOZqb1xjCpiM1ZzqSUKUTI/HucOOtRmhSC5Ng
+        isj5+WI7AyJeciOL97DlQerDhcNudYM=
+X-Google-Smtp-Source: ACHHUZ5deTMQ7o6Rno7gTEOGYMEPZWev50qcf4zySbF8oJC9NaW1TeEHeylS7QHdLJ10wZueD1bUIA==
+X-Received: by 2002:a17:907:d29:b0:974:31:ed74 with SMTP id gn41-20020a1709070d2900b009740031ed74mr7975522ejc.65.1685996845782;
+        Mon, 05 Jun 2023 13:27:25 -0700 (PDT)
 Received: from zambezi.redhat.com (ip-94-112-104-28.bb.vodafone.cz. [94.112.104.28])
         by smtp.gmail.com with ESMTPSA id i15-20020a170906a28f00b00968242f8c37sm4619808ejz.50.2023.06.05.13.27.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Jun 2023 13:27:24 -0700 (PDT)
+        Mon, 05 Jun 2023 13:27:25 -0700 (PDT)
 From:   Ilya Dryomov <idryomov@gmail.com>
 To:     ceph-devel@vger.kernel.org
 Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: [PATCH 1/2] rbd: move RBD_OBJ_FLAG_COPYUP_ENABLED flag setting
-Date:   Mon,  5 Jun 2023 22:27:14 +0200
-Message-Id: <20230605202715.968962-2-idryomov@gmail.com>
+Subject: [PATCH 2/2] rbd: get snapshot context after exclusive lock is ensured to be held
+Date:   Mon,  5 Jun 2023 22:27:15 +0200
+Message-Id: <20230605202715.968962-3-idryomov@gmail.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20230605202715.968962-1-idryomov@gmail.com>
 References: <20230605202715.968962-1-idryomov@gmail.com>
@@ -70,82 +70,116 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Move RBD_OBJ_FLAG_COPYUP_ENABLED flag setting into the object request
-state machine to allow for the snapshot context to be captured in the
-image request state machine rather than in rbd_queue_workfn().
+Move capturing the snapshot context into the image request state
+machine, after exclusive lock is ensured to be held for the duration of
+dealing with the image request.  This is needed to ensure correctness
+of fast-diff states (OBJECT_EXISTS vs OBJECT_EXISTS_CLEAN) and object
+deltas computed based off of them.  Otherwise the object map that is
+forked for the snapshot isn't guaranteed to accurately reflect the
+contents of the snapshot when the snapshot is taken under I/O.  This
+breaks differential backup and snapshot-based mirroring use cases with
+fast-diff enabled: since some object deltas may be incomplete, the
+destination image may get corrupted.
 
 Cc: stable@vger.kernel.org
+Link: https://tracker.ceph.com/issues/61472
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 ---
- drivers/block/rbd.c | 32 +++++++++++++++++++++-----------
- 1 file changed, 21 insertions(+), 11 deletions(-)
+ drivers/block/rbd.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 84ad3b17956f..6c847db6ee2c 100644
+index 6c847db6ee2c..632751ddb287 100644
 --- a/drivers/block/rbd.c
 +++ b/drivers/block/rbd.c
-@@ -1334,14 +1334,28 @@ static bool rbd_obj_is_tail(struct rbd_obj_request *obj_req)
- /*
-  * Must be called after rbd_obj_calc_img_extents().
+@@ -1336,6 +1336,8 @@ static bool rbd_obj_is_tail(struct rbd_obj_request *obj_req)
   */
--static bool rbd_obj_copyup_enabled(struct rbd_obj_request *obj_req)
-+static void rbd_obj_set_copyup_enabled(struct rbd_obj_request *obj_req)
+ static void rbd_obj_set_copyup_enabled(struct rbd_obj_request *obj_req)
  {
--	if (!obj_req->num_img_extents ||
--	    (rbd_obj_is_entire(obj_req) &&
--	     !obj_req->img_request->snapc->num_snaps))
--		return false;
-+	if (obj_req->img_request->op_type == OBJ_OP_DISCARD) {
-+		dout("%s %p objno %llu discard\n", __func__, obj_req,
-+		     obj_req->ex.oe_objno);
-+		return;
-+	}
- 
--	return true;
-+	if (!obj_req->num_img_extents) {
-+		dout("%s %p objno %llu not overlapping\n", __func__, obj_req,
-+		     obj_req->ex.oe_objno);
-+		return;
-+	}
++	rbd_assert(obj_req->img_request->snapc);
 +
-+	if (rbd_obj_is_entire(obj_req) &&
-+	    !obj_req->img_request->snapc->num_snaps) {
-+		dout("%s %p objno %llu entire\n", __func__, obj_req,
-+		     obj_req->ex.oe_objno);
-+		return;
-+	}
-+
-+	obj_req->flags |= RBD_OBJ_FLAG_COPYUP_ENABLED;
+ 	if (obj_req->img_request->op_type == OBJ_OP_DISCARD) {
+ 		dout("%s %p objno %llu discard\n", __func__, obj_req,
+ 		     obj_req->ex.oe_objno);
+@@ -1456,6 +1458,7 @@ __rbd_obj_add_osd_request(struct rbd_obj_request *obj_req,
+ static struct ceph_osd_request *
+ rbd_obj_add_osd_request(struct rbd_obj_request *obj_req, int num_ops)
+ {
++	rbd_assert(obj_req->img_request->snapc);
+ 	return __rbd_obj_add_osd_request(obj_req, obj_req->img_request->snapc,
+ 					 num_ops);
+ }
+@@ -1592,15 +1595,18 @@ static void rbd_img_request_init(struct rbd_img_request *img_request,
+ 	mutex_init(&img_request->state_mutex);
  }
  
- static u64 rbd_obj_img_extents_bytes(struct rbd_obj_request *obj_req)
-@@ -2233,9 +2247,6 @@ static int rbd_obj_init_write(struct rbd_obj_request *obj_req)
- 	if (ret)
- 		return ret;
++/*
++ * Only snap_id is captured here, for reads.  For writes, snapshot
++ * context is captured in rbd_img_object_requests() after exclusive
++ * lock is ensured to be held.
++ */
+ static void rbd_img_capture_header(struct rbd_img_request *img_req)
+ {
+ 	struct rbd_device *rbd_dev = img_req->rbd_dev;
  
--	if (rbd_obj_copyup_enabled(obj_req))
--		obj_req->flags |= RBD_OBJ_FLAG_COPYUP_ENABLED;
--
- 	obj_req->write_state = RBD_OBJ_WRITE_START;
- 	return 0;
- }
-@@ -2341,8 +2352,6 @@ static int rbd_obj_init_zeroout(struct rbd_obj_request *obj_req)
- 	if (ret)
- 		return ret;
+ 	lockdep_assert_held(&rbd_dev->header_rwsem);
  
--	if (rbd_obj_copyup_enabled(obj_req))
--		obj_req->flags |= RBD_OBJ_FLAG_COPYUP_ENABLED;
- 	if (!obj_req->num_img_extents) {
- 		obj_req->flags |= RBD_OBJ_FLAG_NOOP_FOR_NONEXISTENT;
- 		if (rbd_obj_is_entire(obj_req))
-@@ -3286,6 +3295,7 @@ static bool rbd_obj_advance_write(struct rbd_obj_request *obj_req, int *result)
- 	case RBD_OBJ_WRITE_START:
- 		rbd_assert(!*result);
+-	if (rbd_img_is_write(img_req))
+-		img_req->snapc = ceph_get_snap_context(rbd_dev->header.snapc);
+-	else
++	if (!rbd_img_is_write(img_req))
+ 		img_req->snap_id = rbd_dev->spec->snap_id;
  
-+		rbd_obj_set_copyup_enabled(obj_req);
- 		if (rbd_obj_write_is_noop(obj_req))
+ 	if (rbd_dev_parent_get(rbd_dev))
+@@ -3482,9 +3488,19 @@ static int rbd_img_exclusive_lock(struct rbd_img_request *img_req)
+ 
+ static void rbd_img_object_requests(struct rbd_img_request *img_req)
+ {
++	struct rbd_device *rbd_dev = img_req->rbd_dev;
+ 	struct rbd_obj_request *obj_req;
+ 
+ 	rbd_assert(!img_req->pending.result && !img_req->pending.num_pending);
++	rbd_assert(!need_exclusive_lock(img_req) ||
++		   __rbd_is_lock_owner(rbd_dev));
++
++	if (rbd_img_is_write(img_req)) {
++		rbd_assert(!img_req->snapc);
++		down_read(&rbd_dev->header_rwsem);
++		img_req->snapc = ceph_get_snap_context(rbd_dev->header.snapc);
++		up_read(&rbd_dev->header_rwsem);
++	}
+ 
+ 	for_each_obj_request(img_req, obj_req) {
+ 		int result = 0;
+@@ -3502,7 +3518,6 @@ static void rbd_img_object_requests(struct rbd_img_request *img_req)
+ 
+ static bool rbd_img_advance(struct rbd_img_request *img_req, int *result)
+ {
+-	struct rbd_device *rbd_dev = img_req->rbd_dev;
+ 	int ret;
+ 
+ again:
+@@ -3523,9 +3538,6 @@ static bool rbd_img_advance(struct rbd_img_request *img_req, int *result)
+ 		if (*result)
  			return true;
  
+-		rbd_assert(!need_exclusive_lock(img_req) ||
+-			   __rbd_is_lock_owner(rbd_dev));
+-
+ 		rbd_img_object_requests(img_req);
+ 		if (!img_req->pending.num_pending) {
+ 			*result = img_req->pending.result;
+@@ -3987,6 +3999,10 @@ static int rbd_post_acquire_action(struct rbd_device *rbd_dev)
+ {
+ 	int ret;
+ 
++	ret = rbd_dev_refresh(rbd_dev);
++	if (ret)
++		return ret;
++
+ 	if (rbd_dev->header.features & RBD_FEATURE_OBJECT_MAP) {
+ 		ret = rbd_object_map_open(rbd_dev);
+ 		if (ret)
 -- 
 2.39.2
 
