@@ -2,98 +2,98 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BC0F721E31
-	for <lists+ceph-devel@lfdr.de>; Mon,  5 Jun 2023 08:36:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D979721E9B
+	for <lists+ceph-devel@lfdr.de>; Mon,  5 Jun 2023 08:56:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229863AbjFEGgU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 5 Jun 2023 02:36:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50732 "EHLO
+        id S229610AbjFEG44 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 5 Jun 2023 02:56:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbjFEGgS (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 5 Jun 2023 02:36:18 -0400
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01olkn2019.outbound.protection.outlook.com [40.92.99.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99165F3;
-        Sun,  4 Jun 2023 23:36:12 -0700 (PDT)
+        with ESMTP id S229484AbjFEG4y (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 5 Jun 2023 02:56:54 -0400
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01olkn2084.outbound.protection.outlook.com [40.92.98.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDD11AD;
+        Sun,  4 Jun 2023 23:56:52 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jvpExuaZ/sY7+K02oTvoLrXaCefzlxgqspKg4Jf3DtNxBZPpkePagBI/xhaO+8DN/Q1zLqSCDWuPaXp2c7NQc0umQA1hpMX2I9dGQNrLODUVlYgniDdCfrPVxy+NUVcNvISHYK6rxgyabZfjmMjEtF960HT+T7xoEdd/i+5nMwQOemlCYJ42jLEX3fxMyNQXQRdNqI7zh4Q/Z/WDESkrokoHdYFuW/kYq6zlKySBA7DyS8a1KgNjDF6JCleQL7+dfjeVTSoJPYko4zREZfBvYIIjRUbmSfAYb7dQn/NC1EwKxrwWYcBqnqmz2Wa3yGSgdgk6emNvhEu1Nl58X9KeFA==
+ b=jWMnYYiX+MymdyExNphg4dyF0NkMd/B7q44YuJ5mFfLOXHGZrvk5s147FT9DS8aGCFkmZ72C29oSUK/nDN3t+pmuPtpyHEnyFZnJUDgYF7Gj833NnyBzKUy08175ckqUA5RtldmmYoJAK85q97E6HTbWXUYHGI7dAkgOkmxguoSSe1bvswjWlNRLmRY4ydf29ij1I8GXegOQQ+Pu4vd/xBspvA4sRGhncg20XTNNsAJcFszP4B7v+N4Pb1kj7CEACzxB2OSrRbHF06bk39j7fHAL3fW+UuxsCI5URR6drIMwD3V1tVUt3t2Vy7zbRYn15EAsN4cNGUAPK7wQsfiBQA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zIwnN3TdV4ujUe0pFlf5VFqCTF+CjscwA+KyZkFizNs=;
- b=cRBaB8VUpmiVUj7kRmogHBSvXI2PQhnE55pCIrnHItYoxPUYcpSmfTFumfDceVVe3ihGQIcTZHi9eQR7/Si1JrIO4EaA5oI8Fjox+ughALhio1XSlk1jDG1WGVKW7zR/r9wQWgDNi3qzT8mFuQCM9gniImTRU1eTWB2VeIYyO7e+9ZnhoBidsNpZbUROTgSROKv+5vTpS75kNEPWdYcZ0pRaXCcnYZYPcHg0bsVFJUre5jpwi7JY4DyZZrXMFNtp/0hK/vK5r0D7gnre6gRhEi2QgqW8pmdYaPDC5JYa3ko4h2yW1qaSWy/Rt09HKZaka2xLWwfZtJjHaQjEbwonaA==
+ bh=7/ThjDF1I5nExQfL09ymnXGnKaqPCeidK35m9SPNq2E=;
+ b=kjCFaSLr231hzbdwhYM6dDz25CyI8X7fO66llls6A0exa7U3rH8ayL/u3mOqHhiEhnSxAELCgo4UI2OflLIQftd3EpE9MsJ2KuJduo49luat2vTmVNY+bqo/cjuuN0bOVjXBz5+D8JXjD3H2FQM07D/XzUn4VJz1apXzp5PASQDXqBWRDSq1jLQsE5qh+FFw6cK9UDJaQsh0wlsyoGYZYTjpRyW1m3GRgy/yKIUf7dUAf7tfNgL26fTFV6bay4bvrvVwRqeHMgMS2h6VPLoHEeE8G26/g9zNc3W7sLENKY84cLNPb0AVjgvyUwVlAyTCd5DqPOkdjsPlXCr2Wu/EAw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zIwnN3TdV4ujUe0pFlf5VFqCTF+CjscwA+KyZkFizNs=;
- b=osOs6/j3VyeCcrs7uALUHHjhfrBZzwM1FvIk0nt3Z08MRMcKolnLFgxJcp9AC3BnaOeNPGyX9ocZWWYIy5D9ZQdlohOpI1M+GuO4iMosmk04D++eEoxGC1Wmb85UTAfZvwxYwMxfc5mcKkZAD2HgqoFiCNozOqq1zgmO582Rl8fmfpQ96VNvbXu90Zesx3BD7bdn0vcUAx0X5LvR3ribMDnJGojxfudMeprKgsqeFiswCLicI4X6T+Vjf8AbnBu4gioxALrLsy7wJCbAsDyJYbuBxmNCCWAbzmLXX/p8C+OhBL2wfOyriHeS23J/S1xNFqi+n6ehLkhhIhrDTz8d6A==
+ bh=7/ThjDF1I5nExQfL09ymnXGnKaqPCeidK35m9SPNq2E=;
+ b=nmu9Gmi1YLkuRK5IbsnT6l+1LHp8rbrjMTrCpVKKWsmgONStVepBq7CbiCvcVwGCmk4CpgDNJcQlIjaP+z37KtP4FO5ocxqOoxDK6bz+IGii1gsa7v/cU3EtvelHAstIvFyH9ylU+//rL+Y2LKzuzZRIkVbUv1Edr7KggoE5ubJVI/cnMujtCpneuywqt1VAsw3Z/1U3p9c8DQFg6CVZAf7cRGrKZ8yirBavronv8uC+77LYierI+NP8Dgcv2SDi7WlhI3E1ual0EfMGjAUYePbOj8INT+0J3z7eOvuY+2YmNp/N0aXF5ZWjT9lUFs9/uWBUBcWHP5hshJn7ysxYbA==
 Received: from TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:152::14)
- by OSZP286MB1966.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:185::13) with
+ by TYCP286MB2163.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:15d::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6455.32; Mon, 5 Jun
- 2023 06:36:09 +0000
+ 2023 06:56:49 +0000
 Received: from TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM
  ([fe80::b827:b97c:ae8b:6c97]) by TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM
  ([fe80::b827:b97c:ae8b:6c97%6]) with mapi id 15.20.6455.030; Mon, 5 Jun 2023
- 06:36:09 +0000
-Date:   Mon, 5 Jun 2023 14:35:58 +0800
+ 06:56:49 +0000
+Date:   Mon, 5 Jun 2023 14:56:38 +0800
 From:   =?utf-8?B?6IOh546u5paH?= <huww98@outlook.com>
 To:     xiubli@redhat.com
 Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
         vshankar@redhat.com, sehuww@mail.scut.edu.cn,
         stable@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] ceph: add a dedicated private data for netfs rreq
-Message-ID: <TYCP286MB2066E12AB6A3B92B0A4C2C50C04DA@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
+Subject: Re: [PATCH v6 2/2] ceph: fix blindly expanding the readahead windows
+Message-ID: <TYCP286MB206692566DDEE50F7AD00A49C04DA@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
 References: <20230515012044.98096-1-xiubli@redhat.com>
- <20230515012044.98096-2-xiubli@redhat.com>
+ <20230515012044.98096-3-xiubli@redhat.com>
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230515012044.98096-2-xiubli@redhat.com>
-X-TMN:  [tuiPQ6+5faC8BOE5KUz4gpf4EosiH+qx]
-X-ClientProxiedBy: BY5PR17CA0064.namprd17.prod.outlook.com
- (2603:10b6:a03:167::41) To TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM
+In-Reply-To: <20230515012044.98096-3-xiubli@redhat.com>
+X-TMN:  [/lT/LNCLlxJSLHvsBWt1zz+xwYY9a68K]
+X-ClientProxiedBy: BYAPR11CA0079.namprd11.prod.outlook.com
+ (2603:10b6:a03:f4::20) To TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM
  (2603:1096:400:152::14)
-X-Microsoft-Original-Message-ID: <ZH2CTqTvTV/pNuWJ@outlook.com>
+X-Microsoft-Original-Message-ID: <ZH2HJkQaqJs4ANzr@outlook.com>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCP286MB2066:EE_|OSZP286MB1966:EE_
-X-MS-Office365-Filtering-Correlation-Id: c374f289-b4e6-4509-2e88-08db658f2520
+X-MS-TrafficTypeDiagnostic: TYCP286MB2066:EE_|TYCP286MB2163:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ed68614-e86d-42ce-4eb8-08db65920882
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: H4RXUeLmGMEHPZ904W2Q71UElOwJRyg0xB6cGhbrkCSmqLlrpQCDT8a+l8DaHxfUMQu4TvwAaDrek9lCtNnG4l7SRNs2ztxjsMf63ZOfiil/9Qbd6VAA8sTkF+pnPihexRm7VNgSF+iQUegcqyRNmOaNtYW3J28KXOtn2Vr1wak756TuKF65qdtwy4NNWQB221THL2k7x4qLquRZg2GEaPek49OofcpZCWLc7DbyqY2ARjBmQClSqzsN2Ntl5JzdHO4xYNC5eo4FCRFETHVF7e75DiCLZCtmanKpmhbW4TuMdLzW2TEYgeaffP2IQ0qau8VI3IDIkDTMMBELO2P235d/XdoGHFkwCDnSWFbETTNpHFq+o43BVVYR4tSMZuxPg2SxSIEsMvFVHbs0HM2uoiOzloIvBoS753PV2joVhY3UsLJLwP7lbBF0/5lG1QUZgOTnJDKRSwXw0l9xF4A5a2q9GiB0wQgmk376xMXWeYCJpFCLb3MN412/yPGPDSTVXh7JTBZMF2S0KMtYmJ4FGdNYDuIWm2nknetXCCiPLBPyH/s5blACkCNxRCXW++Ni74j35YyyoTygrWqWAaCmxFL9xZXsA0lkCvYLg0tWJFc=
+X-Microsoft-Antispam-Message-Info: YcafnBb4NquNOzlggKZwtY2P+lQbqKOnUusjGjynd+TMVXloMaKKFlBuMaR1JSESW78jZ+CHHLiXwLxCew5XqOVY24G7fSHiOAniiZGjLRUspYXZTEAignsZ7QTmM+U0zlBiZtObti5+BbeoDKvdfmdqRcuF2GnbMNIgCuq2FADUaA2ny7tZyEZes1TucARoLYfZ4akCLdwG1WW+IsRk2uxFcUABcKMuXI11jsQjASrVZ/XxPUXg+fJNz/yaQF886Lwiu9S1O/Z1SKmX3/PsQCI4aIeqAuxnkeoAeI8KUTm2On4eMthjCdtUsvC77QcBJZt3xdpStakDHzypr+N0EFujkTqdTR2iMk31yvXOGTI8kEvRoUS3wEiB0Xwi/v1EL/XvgV+ZnKKX+EPXSPDJdR8kwWw30V/NwR8+uN9T5E56LWZ6krOEa+EkOKvj96SlIl7V2giWVLQYY02wTrhQW/ToZdb69nAfV6mql9rrCVDtyCIVnYc8+amYn6qucjWA4ByOnCkiofywQTzCvEvP9Q81D/cL9yUlGHLyALBzKtrQfXGQVdkjko+MQNjxwTKZKhtwKK04BOfobLLSpF1lrcOVePSGGcdF5PMq4TM7rSg=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?anXJtjlhCN74TWhAg4u/49IAl0bh9mFOCNdqNIa/wZzzcw5OMNZlzKL2bA+h?=
- =?us-ascii?Q?+4wjitzqtExg7guHuDOgCHFRVNIKK0Xaxwz8RMa/wfQbesKRPD1Ll3fXUrAZ?=
- =?us-ascii?Q?XV1uue1RkpxZ/sStVRGUr8lE26eKVJA6+vgtaobZqmqziFpWzPoY2izfj+9T?=
- =?us-ascii?Q?GB0K2GdpNNQqfdqdoyZML6WQga25zkdXj2iNDg/KcURgBxTpAeKNxJsHfxks?=
- =?us-ascii?Q?ljaBmR0HMkLIBfvNl6/G+NicCZHIHl2W71LRgec/c0fM7jUCbOlw86U1EuEW?=
- =?us-ascii?Q?eF0X3Wxmqcozxo8wCrrgU82dSd7gd7KgUxISm1CWD3347C8ulP5ONeB54Ve5?=
- =?us-ascii?Q?4vvkc2y2sSDBeKIewFhd0kSDXhn5hljnf/DzXS8C/YhvCqDrkKKV/6YrCkOK?=
- =?us-ascii?Q?MCWWqldBR+fsDS9ZTun6v8gDsPeUnjDPREXgrfahcsCXOMZGdM7587MIvmu2?=
- =?us-ascii?Q?jw1kraLYOrxpqZY7n7u/Xl+0f4nPo0LhSGPWDmMtEhdf+dAWrauj7SRDmoiw?=
- =?us-ascii?Q?H3br6eleE7lzVyhNTRrK7pn9zf9ehKdFm9lnvO0afq8XQMGwNRr9VRY+Wx+C?=
- =?us-ascii?Q?CYJGmmgYP/t9BiMAPtbkHOKXDx+aPR9eymlA7yEl/E0MmhfxO1IXm3P1fwDI?=
- =?us-ascii?Q?WPvJ8VjHMu8G0iPu9HMOhT+UUEU3dBKbVTVJG8tPp1QPmjYXt1V+aCRqiY98?=
- =?us-ascii?Q?g5+bIsO4rTGMCOD0vs07qJoonVVkVioo7z8kOMcUMCqAuMEaOVPGNoA8dHHU?=
- =?us-ascii?Q?VMCyZAUYKXQp5SkzrnDf41+CkQj24kSltWxPIHouQVSX01rfuASNGGETl746?=
- =?us-ascii?Q?FBZu+yR9a3TQDZv+UGxtkgCunNmXCve/9hDb8kDfSxen8jZ8XGrwCHPr4ZM6?=
- =?us-ascii?Q?Y9N20qtianCLR+EDsGrTj8zhynMAUuGFEDfKM3OHH8PsumcmJ3PNkU/9QIAg?=
- =?us-ascii?Q?lq+DcHTefeVmUq0TV79apmSU5Zem8F7LsJ8ggyvPGEbIYopw5wzwtknPEmGl?=
- =?us-ascii?Q?GhcZbyJNNq04I1IZ6e6pYxJijEERoovqU+KtO7mqnzDpFPynNzSA12Uft1OK?=
- =?us-ascii?Q?DLD6COVBmmRmy17y9zcDE4+NXAZKTLkXmyIdThnQYzKPiABWuUPEBDF1+uN0?=
- =?us-ascii?Q?KQ3Y6IttbJr3dVlHxX+uqrBqLMThZEVPwbgEv4nw5KeUU8SptwOgwaGjuTPv?=
- =?us-ascii?Q?KTfMr7UpXEUTlrYkvZiZHeGXKABMiojUAZinmg=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?zLSZqRWP6np5nPe2aXcot7skIW5Lxqp79b3wroAbdKe9gXF0qRB+3YtPXhuw?=
+ =?us-ascii?Q?UDC51JH62H2MrDJ8D1lASrpP4FPdhY3kt87TTizpXvsBXHaF9miUxQTDI6GT?=
+ =?us-ascii?Q?LJX07UQvFXKAVCwlOFA9YFrPyfcU0Gn9juQByJYm5xINFitxxuLVXRRcISJQ?=
+ =?us-ascii?Q?gf8jHVVzrP8mvXuRiHSjHKYax9xysW3jj6+MnEpirhwfiLXzuhTvXusrJgs/?=
+ =?us-ascii?Q?wtj5CuJCdm2q+Vl6eS9gcZIsX3w0y9SQhh5jaMs9glw2f9H/JQAIQfdLhTOZ?=
+ =?us-ascii?Q?8GKy+sFAvruvXTTSWZbztmVtgYrg4AfUXt7a0D5a/fCoPgQ/uWeNw/hUWAVe?=
+ =?us-ascii?Q?ZNhZo7fwp1wbh3AqkKjOhbFqw+Fyb1H5zRLh+z1EiX6Yv+/8FXhJRpcIv3L6?=
+ =?us-ascii?Q?l/QUHqs9VS/xZOQS605qeAkCBx84u4L6CtJ6mR+/YKG+kuJm8onnDst+JqMD?=
+ =?us-ascii?Q?cyM7gnIxK+VQ/zMMj1qRzvRmoSMQyZElEi1LkP3vFxKZDZ15+TnD3yaXQEv/?=
+ =?us-ascii?Q?rvr0dEtUOhmLTHaTG6NztD8FQVlR4uONy0uYwLBNvBurSzwnY18wLQA9Hocq?=
+ =?us-ascii?Q?gR6O6V6oqb9DmPKpPrLr/TcgHPyKZ0JGCgx4zZk7AjWDzQ/OZHEgPNi+/GYp?=
+ =?us-ascii?Q?99imMLCWPLZSu4oD9odIWxbF4TKKwknEFCZTdeWamxf/HdepOw4FOTyBx28O?=
+ =?us-ascii?Q?KQP4bhes/XMIuosO4bQa0h6IUNF5vXxVsXV5LcUz0nnu7+wyvTo3Wt8E31u8?=
+ =?us-ascii?Q?VL1K68P1YJhRVBAhJ3/r67HHFJwG9ChSjSJ21p8ipBiBotNhGR5jRE+9xIxv?=
+ =?us-ascii?Q?tEu/fa+gSRZUWmDRqXGOM+KmOfdhLm5w8LIL53jyX9M658eb1LhTy4LUw7qX?=
+ =?us-ascii?Q?RaNjKcRIT3WsKpcdwPhqXR7zFeN+fWMjhor4WmewSopALPo0Zej54BiD4U/5?=
+ =?us-ascii?Q?LqK70AUb35QLPpLXnGRxjhlTJ/HMjhzxV5shRjxvq1lXwhx/FOHCJ3po/JO1?=
+ =?us-ascii?Q?2FZKvue9UeQ7GCG9Ub2gfaLwguzW24P9BkwuAYlJmiHrsKR1wO2vdK+wS3/F?=
+ =?us-ascii?Q?yR+1z/k44U734aYvnRS97BbTiOk2VDnzg7NLsFA4LnjQfNLaURY2p2vTJpsg?=
+ =?us-ascii?Q?9L8XRj+lPDPZrMPMJMk0g8DfaTVoWuNhpvy9g92L/7cI+qDswNS81O8ZI4eD?=
+ =?us-ascii?Q?Oh9pQHgOAbEQy2wP943CWZ8/yL+wVXoVbAyxYA=3D=3D?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c374f289-b4e6-4509-2e88-08db658f2520
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ed68614-e86d-42ce-4eb8-08db65920882
 X-MS-Exchange-CrossTenant-AuthSource: TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2023 06:36:08.9727
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jun 2023 06:56:49.2874
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZP286MB1966
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCP286MB2163
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
         FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_PASS,SPF_PASS,
@@ -104,11 +104,24 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, May 15, 2023 at 09:20:43AM +0800, xiubli@redhat.com wrote:
+On Mon, May 15, 2023 at 09:20:44AM +0800, xiubli@redhat.com wrote:
 > From: Xiubo Li <xiubli@redhat.com>
 > 
-> We need to save the 'f_ra.ra_pages' to expand the readahead window
-> later.
+> Blindly expanding the readahead windows will cause unneccessary
+> pagecache thrashing and also will introdue the network workload.
+
+s/introdue/introduce/
+
+> We should disable expanding the windows if the readahead is disabled
+> and also shouldn't expand the windows too much.
+> 
+> Expanding forward firstly instead of expanding backward for possible
+> sequential reads.
+> 
+> Bound `rreq->len` to the actual file size to restore the previous page
+> cache usage.
+> 
+> The posix_fadvise may change the maximum size of a file readahead.
 > 
 > Cc: stable@vger.kernel.org
 > Fixes: 49870056005c ("ceph: convert ceph_readpages to ceph_readahead")
@@ -117,122 +130,89 @@ On Mon, May 15, 2023 at 09:20:43AM +0800, xiubli@redhat.com wrote:
 > Cc: Hu Weiwen <sehuww@mail.scut.edu.cn>
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  fs/ceph/addr.c  | 45 ++++++++++++++++++++++++++++++++++-----------
->  fs/ceph/super.h | 13 +++++++++++++
->  2 files changed, 47 insertions(+), 11 deletions(-)
+>  fs/ceph/addr.c | 40 +++++++++++++++++++++++++++++++++-------
+>  1 file changed, 33 insertions(+), 7 deletions(-)
 > 
 > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 3b20873733af..93fff1a7373f 100644
+> index 93fff1a7373f..4b29777c01d7 100644
 > --- a/fs/ceph/addr.c
 > +++ b/fs/ceph/addr.c
-> @@ -404,18 +404,28 @@ static int ceph_init_request(struct netfs_io_request *rreq, struct file *file)
->  {
+> @@ -188,16 +188,42 @@ static void ceph_netfs_expand_readahead(struct netfs_io_request *rreq)
 >  	struct inode *inode = rreq->inode;
->  	int got = 0, want = CEPH_CAP_FILE_CACHE;
-> +	struct ceph_netfs_request_data *priv;
->  	int ret = 0;
->  
->  	if (rreq->origin != NETFS_READAHEAD)
->  		return 0;
->  
-> +	priv = kzalloc(sizeof(*priv), GFP_NOFS);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
->  	if (file) {
->  		struct ceph_rw_context *rw_ctx;
->  		struct ceph_file_info *fi = file->private_data;
->  
-> +		priv->file_ra_pages = file->f_ra.ra_pages;
-> +		priv->file_ra_disabled = file->f_mode & FMODE_RANDOM;
-> +
->  		rw_ctx = ceph_find_rw_context(fi);
-> -		if (rw_ctx)
-> +		if (rw_ctx) {
-> +			rreq->netfs_priv = priv;
->  			return 0;
-> +		}
->  	}
->  
->  	/*
-> @@ -425,27 +435,40 @@ static int ceph_init_request(struct netfs_io_request *rreq, struct file *file)
->  	ret = ceph_try_get_caps(inode, CEPH_CAP_FILE_RD, want, true, &got);
->  	if (ret < 0) {
->  		dout("start_read %p, error getting cap\n", inode);
-> -		return ret;
-> +		goto out;
->  	}
->  
->  	if (!(got & want)) {
->  		dout("start_read %p, no cache cap\n", inode);
-> -		return -EACCES;
-> +		ret = -EACCES;
-> +		goto out;
-> +	}
-> +	if (ret == 0) {
-> +		ret = -EACCES;
-> +		goto out;
->  	}
-> -	if (ret == 0)
-> -		return -EACCES;
->  
-> -	rreq->netfs_priv = (void *)(uintptr_t)got;
-> -	return 0;
-> +	priv->caps = got;
-> +	rreq->netfs_priv = priv;
-> +
-> +out:
-> +	if (ret < 0)
-> +		kfree(priv);
-> +
-> +	return ret;
->  }
->  
->  static void ceph_netfs_free_request(struct netfs_io_request *rreq)
->  {
-> -	struct ceph_inode_info *ci = ceph_inode(rreq->inode);
-> -	int got = (uintptr_t)rreq->netfs_priv;
+>  	struct ceph_inode_info *ci = ceph_inode(inode);
+>  	struct ceph_file_layout *lo = &ci->i_layout;
+> +	unsigned long max_pages = inode->i_sb->s_bdi->ra_pages;
+> +	loff_t end = rreq->start + rreq->len, new_end;
 > +	struct ceph_netfs_request_data *priv = rreq->netfs_priv;
+> +	unsigned long max_len;
+>  	u32 blockoff;
+> -	u64 blockno;
+>  
+> -	/* Expand the start downward */
+> -	blockno = div_u64_rem(rreq->start, lo->stripe_unit, &blockoff);
+> -	rreq->start = blockno * lo->stripe_unit;
+> -	rreq->len += blockoff;
+> +	if (priv) {
+> +		/* Readahead is disabled by posix_fadvise POSIX_FADV_RANDOM */
+> +		if (priv->file_ra_disabled)
+> +			max_pages = 0;
+> +		else
+> +			max_pages = priv->file_ra_pages;
 > +
-> +	if (!priv)
+> +	}
+> +
+> +	/* Readahead is disabled */
+> +	if (!max_pages)
 > +		return;
 >  
-> -	if (got)
-> -		ceph_put_cap_refs(ci, got);
-> +	if (priv->caps)
-> +		ceph_put_cap_refs(ceph_inode(rreq->inode), priv->caps);
-> +	kfree(priv);
-> +	rreq->netfs_priv = NULL;
->  }
->  
->  const struct netfs_request_ops ceph_netfs_ops = {
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index a226d36b3ecb..3a24b7974d46 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -470,6 +470,19 @@ struct ceph_inode_info {
->  #endif
->  };
->  
-> +struct ceph_netfs_request_data {
-> +	int caps;
+> -	/* Now, round up the length to the next block */
+> -	rreq->len = roundup(rreq->len, lo->stripe_unit);
+> +	max_len = max_pages << PAGE_SHIFT;
 > +
 > +	/*
-> +	 * Maximum size of a file readahead request.
-> +	 * The fadvise could update the bdi's default ra_pages.
+> +	 * Try to expand the length forward by rounding  up it to the next
+
+An extra space between "rounding  up".
+
+Apart from above two typo, LGTM.
+
+Reviewed-by: Hu Weiwen <sehuww@mail.scut.edu.cn>
+
+I also tested this patch with our workload. Reading the first 16k images
+from ImageNet dataset (1.69GiB) takes about 1.8Gi page cache (as
+reported by `free -h'). This is expected.
+
+For the fadvise use-case, I use `fio' to do the test:
+$ fio --name=rand --size=32M --fadvise_hint=1 --ioengine=libaio --iodepth=128 --rw=randread --bs=4k --filesize=2G
+
+after the test, page cache increased by about 35Mi, which is expected.
+So if appropriate:
+
+Tested-by: Hu Weiwen <sehuww@mail.scut.edu.cn>
+
+However, also note random reading to a large file without fadvise still
+suffers from degradation. e.g., this test:
+$ fio --name=rand --size=32M --fadvise_hint=0 --ioengine=libaio --iodepth=128 --rw=randread --bs=4k --filesize=2G
+
+will load nearly every page of the 2Gi test file into page cache,
+although I only need 32Mi of them.
+
+> +	 * block, but do not exceed the file size, unless the original
+> +	 * request already exceeds it.
 > +	 */
-> +	unsigned int file_ra_pages;
+> +	new_end = min(round_up(end, lo->stripe_unit), rreq->i_size);
+> +	if (new_end > end && new_end <= rreq->start + max_len)
+> +		rreq->len = new_end - rreq->start;
 > +
-> +	/* Set it if fadvise disables file readahead entirely */
-> +	bool file_ra_disabled;
-> +};
-> +
->  static inline struct ceph_inode_info *
->  ceph_inode(const struct inode *inode)
->  {
+> +	/* Try to expand the start downward */
+> +	div_u64_rem(rreq->start, lo->stripe_unit, &blockoff);
+> +	if (rreq->len + blockoff <= max_len) {
+> +		rreq->start -= blockoff;
+> +		rreq->len += blockoff;
+> +	}
+>  }
+>  
+>  static bool ceph_netfs_clamp_length(struct netfs_io_subrequest *subreq)
 > -- 
 > 2.40.1
 > 
-LGTM.
-
-Reviewed-by: Hu Weiwen <sehuww@mail.scut.edu.cn>
