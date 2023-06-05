@@ -2,54 +2,72 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD5B0721F73
-	for <lists+ceph-devel@lfdr.de>; Mon,  5 Jun 2023 09:24:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6EBF72241C
+	for <lists+ceph-devel@lfdr.de>; Mon,  5 Jun 2023 13:04:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230222AbjFEHY0 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 5 Jun 2023 03:24:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52330 "EHLO
+        id S231642AbjFELEz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 5 Jun 2023 07:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230183AbjFEHYZ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 5 Jun 2023 03:24:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7BBCBD
-        for <ceph-devel@vger.kernel.org>; Mon,  5 Jun 2023 00:23:39 -0700 (PDT)
+        with ESMTP id S231849AbjFELEs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 5 Jun 2023 07:04:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC73AFD
+        for <ceph-devel@vger.kernel.org>; Mon,  5 Jun 2023 04:03:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1685949819;
+        s=mimecast20190719; t=1685963038;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=SnBMSPHKP+boD1bWckV80nXuHthCrAcDK5QjkEir6bM=;
-        b=hpa7v0tZrE/W+S8N+UHYH1zuiyzbdri91lG7tgRE38N1iXwgzazEvx+p/WsTkV2n0IyynH
-        w6trLN4NRtoH+nQnN6psnc1JUdumYPVGM4gBlskHZ3+KEVze2fr9quz39tIA67YPw0YxVh
-        skOTwrbvWSt8bA+GUfJOUSfjgJ/pFoc=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-306-HYDeVOyAPSCFQj7zkuWOGA-1; Mon, 05 Jun 2023 03:23:36 -0400
-X-MC-Unique: HYDeVOyAPSCFQj7zkuWOGA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 886B6185A78F;
-        Mon,  5 Jun 2023 07:23:35 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-216.pek2.redhat.com [10.72.12.216])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A8CC51121314;
-        Mon,  5 Jun 2023 07:23:31 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-Cc:     jlayton@kernel.org, vshankar@redhat.com, mchangir@redhat.com,
-        sehuww@mail.scut.edu.cn, Xiubo Li <xiubli@redhat.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v7 2/2] ceph: fix blindly expanding the readahead windows
-Date:   Mon,  5 Jun 2023 15:21:09 +0800
-Message-Id: <20230605072109.1027246-3-xiubli@redhat.com>
-In-Reply-To: <20230605072109.1027246-1-xiubli@redhat.com>
-References: <20230605072109.1027246-1-xiubli@redhat.com>
+        bh=QFMPWdHxcFyANacOUVvpSmI9+s3KvKrZDwu68VOBYDA=;
+        b=U0hD6vSf8tnRQo5xZzQKTQHQSCMm+pzM2Ki86df+tBAVcdxI51LtE28VwTfpi8lpRN8eUn
+        vM9zvF4sPeNcgqZXqOse0ikq2/V1zoH8dNso6SSDkdAMyACyCW2Ftb8TYVkR7qS/+vW6yi
+        COe2akgk1GxyKBsFn0cjBfkNxmW7G0o=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-573-PI90pI9_OTeHjdFVbWs3UQ-1; Mon, 05 Jun 2023 07:03:57 -0400
+X-MC-Unique: PI90pI9_OTeHjdFVbWs3UQ-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-95847b4b4e7so378080766b.3
+        for <ceph-devel@vger.kernel.org>; Mon, 05 Jun 2023 04:03:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1685963036; x=1688555036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QFMPWdHxcFyANacOUVvpSmI9+s3KvKrZDwu68VOBYDA=;
+        b=U/XONwKbGk9z8DkcrwNKm46WVezFlots1V4ePwY8gELFXrmlJlpPp2qErIMwu0utE2
+         8kQfkjJtWNd8WOAJuv5yfx+rOw/M46n/hC0LnK9UbROUqPFo6Lc4DJ8ynFDvAqUQ7cCt
+         SCN43C6SU/l+SQyziEO38rlsFLG7m8wRErnvKTe4/Qvdf22wxfXFWeNToAWRXtsNsAZD
+         WRL8fJFdT5saN5/waChAdJUXLNAM3sjmnRt07Y5Gizd8rnLrLUurvSIMllhZDfWo6tjx
+         jrN0jyrx4Y2C53Isqj+dQotcVXRtTlOFYfSQDf/EubSGLqRbTug4oCBEsoSK3WX0U0x+
+         hTbQ==
+X-Gm-Message-State: AC+VfDwWQxkpeHbh/x2V4QFC+eUsxuB8V3oLt//rhQ0Qxjk8rN3GtCF1
+        S9B8rn70jwcgv4y6yK9JTUF3lF+0RqB/d/wpyCXTC+Qe/lbNn38hQqgeRSUSmbjfC23lhbMfuBA
+        mnblAMZWixJrWWOSHb9VdLdi3RtIQ99vkFUxxWw==
+X-Received: by 2002:a17:907:971b:b0:962:9ffa:be02 with SMTP id jg27-20020a170907971b00b009629ffabe02mr6705422ejc.36.1685963036684;
+        Mon, 05 Jun 2023 04:03:56 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6gXIcJ9b4Xdt0/+AvpnZjUKN8Fh8r7nPJTRmbHC/s0eMVDUGR1Em3E9otairkX7JDmr6RWu/CeHMtPI/6z6LE=
+X-Received: by 2002:a17:907:971b:b0:962:9ffa:be02 with SMTP id
+ jg27-20020a170907971b00b009629ffabe02mr6705415ejc.36.1685963036454; Mon, 05
+ Jun 2023 04:03:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+References: <TYCP286MB20661F87B0C796738BDC5FBEC0709@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
+ <TYCP286MB2066C89FCBD9FB30AFDF2D70C0709@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
+ <ce388c9d-97f1-57fb-4ed2-745596e1bd5f@redhat.com> <ed6d4ae8-98af-4cca-9c2d-4d172b622988@redhat.com>
+In-Reply-To: <ed6d4ae8-98af-4cca-9c2d-4d172b622988@redhat.com>
+From:   Milind Changire <mchangir@redhat.com>
+Date:   Mon, 5 Jun 2023 16:33:20 +0530
+Message-ID: <CAED=hWCTdXpFryceK4CSWMT0CShveME8LsrHENnyXtajeVnb6Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ceph: refactor mds_namespace comparing
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Hu Weiwen <huww98@outlook.com>, ceph-devel@vger.kernel.org,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Venky Shankar <vshankar@redhat.com>,
+        Hu Weiwen <sehuww@mail.scut.edu.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -60,87 +78,102 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+Looks good to me.
 
-Blindly expanding the readahead windows will cause unneccessary
-pagecache thrashing and also will introduce the network workload.
-We should disable expanding the windows if the readahead is disabled
-and also shouldn't expand the windows too much.
+Reviewed-by: Milind Changire <mchangir@redhat.com>
 
-Expanding forward firstly instead of expanding backward for possible
-sequential reads.
 
-Bound `rreq->len` to the actual file size to restore the previous page
-cache usage.
+On Tue, May 9, 2023 at 7:14=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
+>
+>
+> On 5/9/23 09:04, Xiubo Li wrote:
+> >
+> > On 5/8/23 01:55, Hu Weiwen wrote:
+> >> From: Hu Weiwen <sehuww@mail.scut.edu.cn>
+> >>
+> >> Same logic, slightly less code.  Make the following changes easier.
+> >>
+> >> Signed-off-by: Hu Weiwen <sehuww@mail.scut.edu.cn>
+> >> ---
+> >>   fs/ceph/super.c | 34 ++++++++++++++--------------------
+> >>   1 file changed, 14 insertions(+), 20 deletions(-)
+> >>
+> >> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> >> index 3fc48b43cab0..4e1f4031e888 100644
+> >> --- a/fs/ceph/super.c
+> >> +++ b/fs/ceph/super.c
+> >> @@ -235,18 +235,10 @@ static void canonicalize_path(char *path)
+> >>       path[j] =3D '\0';
+> >>   }
+> >>   -/*
+> >> - * Check if the mds namespace in ceph_mount_options matches
+> >> - * the passed in namespace string. First time match (when
+> >> - * ->mds_namespace is NULL) is treated specially, since
+> >> - * ->mds_namespace needs to be initialized by the caller.
+> >> - */
+> >> -static int namespace_equals(struct ceph_mount_options *fsopt,
+> >> -                const char *namespace, size_t len)
+> >> +/* check if s1 (null terminated) equals to s2 (with length len2) */
+> >> +static int strstrn_equals(const char *s1, const char *s2, size_t len2=
+)
+> >>   {
+> >> -    return !(fsopt->mds_namespace &&
+> >> -         (strlen(fsopt->mds_namespace) !=3D len ||
+> >> -          strncmp(fsopt->mds_namespace, namespace, len)));
+> >> +    return !strncmp(s1, s2, len2) && strlen(s1) =3D=3D len2;
+> >>   }
+> >
+> > Could this helper be defined as inline explicitly ?
+> >
+> Please ignore this, I misreaded and it's not in the header file.
+>
+>
+> >>     static int ceph_parse_old_source(const char *dev_name, const char
+> >> *dev_name_end,
+> >> @@ -297,12 +289,13 @@ static int ceph_parse_new_source(const char
+> >> *dev_name, const char *dev_name_end,
+> >>       ++fs_name_start; /* start of file system name */
+> >>       len =3D dev_name_end - fs_name_start;
+> >>   -    if (!namespace_equals(fsopt, fs_name_start, len))
+> >> +    if (!fsopt->mds_namespace) {
+> >> +        fsopt->mds_namespace =3D kstrndup(fs_name_start, len,
+> >> GFP_KERNEL);
+> >> +        if (!fsopt->mds_namespace)
+> >> +            return -ENOMEM;
+> >> +    } else if (!strstrn_equals(fsopt->mds_namespace, fs_name_start,
+> >> len)) {
+> >>           return invalfc(fc, "Mismatching mds_namespace");
+> >> -    kfree(fsopt->mds_namespace);
+> >> -    fsopt->mds_namespace =3D kstrndup(fs_name_start, len, GFP_KERNEL)=
+;
+> >> -    if (!fsopt->mds_namespace)
+> >> -        return -ENOMEM;
+> >> +    }
+> >>       dout("file system (mds namespace) '%s'\n", fsopt->mds_namespace)=
+;
+> >>         fsopt->new_dev_syntax =3D true;
+> >> @@ -417,11 +410,12 @@ static int ceph_parse_mount_param(struct
+> >> fs_context *fc,
+> >>           param->string =3D NULL;
+> >>           break;
+> >>       case Opt_mds_namespace:
+> >> -        if (!namespace_equals(fsopt, param->string,
+> >> strlen(param->string)))
+> >> +        if (!fsopt->mds_namespace) {
+> >> +            fsopt->mds_namespace =3D param->string;
+> >> +            param->string =3D NULL;
+> >> +        } else if (strcmp(fsopt->mds_namespace, param->string)) {
+> >>               return invalfc(fc, "Mismatching mds_namespace");
+> >> -        kfree(fsopt->mds_namespace);
+> >> -        fsopt->mds_namespace =3D param->string;
+> >> -        param->string =3D NULL;
+> >> +        }
+> >>           break;
+> >>       case Opt_recover_session:
+> >>           mode =3D result.uint_32;
+>
 
-The posix_fadvise may change the maximum size of a file readahead.
 
-Cc: stable@vger.kernel.org
-Fixes: 49870056005c ("ceph: convert ceph_readpages to ceph_readahead")
-URL: https://lore.kernel.org/ceph-devel/20230504082510.247-1-sehuww@mail.scut.edu.cn
-URL: https://www.spinics.net/lists/ceph-users/msg76183.html
-Cc: Hu Weiwen <sehuww@mail.scut.edu.cn>
-Reviewed-by: Hu Weiwen <sehuww@mail.scut.edu.cn>
-Tested-by: Hu Weiwen <sehuww@mail.scut.edu.cn>
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/addr.c | 40 +++++++++++++++++++++++++++++++++-------
- 1 file changed, 33 insertions(+), 7 deletions(-)
-
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 93fff1a7373f..0c4fb3d23078 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -188,16 +188,42 @@ static void ceph_netfs_expand_readahead(struct netfs_io_request *rreq)
- 	struct inode *inode = rreq->inode;
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	struct ceph_file_layout *lo = &ci->i_layout;
-+	unsigned long max_pages = inode->i_sb->s_bdi->ra_pages;
-+	loff_t end = rreq->start + rreq->len, new_end;
-+	struct ceph_netfs_request_data *priv = rreq->netfs_priv;
-+	unsigned long max_len;
- 	u32 blockoff;
--	u64 blockno;
- 
--	/* Expand the start downward */
--	blockno = div_u64_rem(rreq->start, lo->stripe_unit, &blockoff);
--	rreq->start = blockno * lo->stripe_unit;
--	rreq->len += blockoff;
-+	if (priv) {
-+		/* Readahead is disabled by posix_fadvise POSIX_FADV_RANDOM */
-+		if (priv->file_ra_disabled)
-+			max_pages = 0;
-+		else
-+			max_pages = priv->file_ra_pages;
-+
-+	}
-+
-+	/* Readahead is disabled */
-+	if (!max_pages)
-+		return;
- 
--	/* Now, round up the length to the next block */
--	rreq->len = roundup(rreq->len, lo->stripe_unit);
-+	max_len = max_pages << PAGE_SHIFT;
-+
-+	/*
-+	 * Try to expand the length forward by rounding up it to the next
-+	 * block, but do not exceed the file size, unless the original
-+	 * request already exceeds it.
-+	 */
-+	new_end = min(round_up(end, lo->stripe_unit), rreq->i_size);
-+	if (new_end > end && new_end <= rreq->start + max_len)
-+		rreq->len = new_end - rreq->start;
-+
-+	/* Try to expand the start downward */
-+	div_u64_rem(rreq->start, lo->stripe_unit, &blockoff);
-+	if (rreq->len + blockoff <= max_len) {
-+		rreq->start -= blockoff;
-+		rreq->len += blockoff;
-+	}
- }
- 
- static bool ceph_netfs_clamp_length(struct netfs_io_subrequest *subreq)
--- 
-2.40.1
+--=20
+Milind
 
