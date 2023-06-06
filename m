@@ -2,65 +2,79 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CE15A723F43
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Jun 2023 12:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AF26724220
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Jun 2023 14:30:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230482AbjFFKVt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 6 Jun 2023 06:21:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46142 "EHLO
+        id S235936AbjFFMae (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 6 Jun 2023 08:30:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235646AbjFFKVq (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Jun 2023 06:21:46 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAC9910C0;
-        Tue,  6 Jun 2023 03:21:43 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-51491b87565so8961692a12.1;
-        Tue, 06 Jun 2023 03:21:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686046902; x=1688638902;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F7UEfI/Erv3W3ZEVRFTc3W31/8PLdp7v7zZBSbWxNB8=;
-        b=Nv9VzI6O7823qTU4xRZwhzgpyo40+TBRlMebFRz1nEh15ZMtDYmxOfhYDO/+Vl9PbG
-         WzuSH16ADLBSSeve0QvFmNSPlZbRfUtT/CHzI9E/2XC3R8WsZT1Qqis/sLyeu7ttfZ+n
-         bkWSUs7a6C0eeZ6Liq+aC4frWfkYqJqhkEXAxIy7bWPXMXdb4qCsLJiS8sZTV85FVWdR
-         OO8hcCy+o7bppfMxjM1x02c7bSutEdwfJd4nXcvoywF5Vzc9WX3VbqstTfCMr2S7ZptO
-         nh8oHPeDjDkMBVRMIbpjIp6AxS/r+AQXttb3k8eVmkUOhR8Y0pp1tUEEC0HgoFmSIKTd
-         q0tQ==
+        with ESMTP id S235566AbjFFMad (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Jun 2023 08:30:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0A6A10CA
+        for <ceph-devel@vger.kernel.org>; Tue,  6 Jun 2023 05:29:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686054589;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=CWyEio4K6bsbH2qJPjww7bqURttchoLvxs9PA3ubxgY=;
+        b=RRXlQhTa5yxskvefServ/m8Oen+5+ZiWTwJRUWF2brDBxwz5CiBY/hPxviorg3LBsZkYRx
+        oN32wh4Vt2dPUIo1fPvsAJtMhc+HG3DQwTQ2DZjgFsu+tHubAHa8GKID2IbJlDmBn18bgy
+        J7ARHKt/8PJ6nk+FoXzc76ooX+roPPw=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-581-cercwoSRPzKhJQO9IucT-A-1; Tue, 06 Jun 2023 08:29:48 -0400
+X-MC-Unique: cercwoSRPzKhJQO9IucT-A-1
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-53fa457686eso3919887a12.0
+        for <ceph-devel@vger.kernel.org>; Tue, 06 Jun 2023 05:29:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686046902; x=1688638902;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F7UEfI/Erv3W3ZEVRFTc3W31/8PLdp7v7zZBSbWxNB8=;
-        b=aO7UV+xdoLTeB0/5ry5GBWMgprsE7uZvchFRJqK2Dy8sOriyWpwDqqtRoj8AZB7lcs
-         870HCaHAd9FKDvOmkgTQNy+89rVVg06j+fLN2kzTFncv32F+WXohEXnrybN3y+RM1yd0
-         9/XOpqm/PsN12vyf0GHzdhjLUQtaomBlnnUXn1iUdGCDZdp7QobncaH33J4b9Vu0I3gk
-         fxlZaXvFTvHCamEftk6ErB87ugQOICb+wTGyUf1VgK68G0+M9V0II3GDkQoy/PBnK38F
-         3rxk+JNUuIBJw4cLLQAOM3UTccTe2obe8uJfH+Nr2O4gb9ZH3ECUBZmk6IyvI7fLoydP
-         xFgg==
-X-Gm-Message-State: AC+VfDzQoSxyv8ut2MmKyKkM9p3e8WpfOCiXZl4aW0+97SyA6nl1EZAU
-        ubhnv7fLs1V8yIaQGwYnAlJGqicppfVYN2+UnchzNpj5NxY=
-X-Google-Smtp-Source: ACHHUZ64XbyFj2SSOfcdcCGfXUCrX1bGSSOiWao9j94cuOutA01pXHNl5cGbPvsqcLhfVWWPCJlSm3PBcv/YcwNDpIg=
-X-Received: by 2002:a17:907:6d1d:b0:94b:4a4:2836 with SMTP id
- sa29-20020a1709076d1d00b0094b04a42836mr1737959ejc.69.1686046901878; Tue, 06
- Jun 2023 03:21:41 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686054588; x=1688646588;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CWyEio4K6bsbH2qJPjww7bqURttchoLvxs9PA3ubxgY=;
+        b=Sq7qlIuD0ZayKAHV0gvYRzxpdA7+3sZoph3N60dOqsEstiG+l4RwOE6rqijOgJS/8L
+         K3nyMLItcNix3XI7NIbYl4/aRH8PmUFcs6W5eXScRDpHKE362td0hkTHono9QuJFXXxV
+         3edW84bW3OfJsJkBaqlWABXqmb8fpQcSh2mc5IeOBdKLuOrsUXKH+9ApJLN7s3Az+EmC
+         7eoyTx/e029qQONUcuz8ktjU+irGFI4erNU75MqRqX1iDJ/fku0pjTE4QtKLDUFHqb+S
+         ioc4pktTka5eQGtWobjFCBm3kO3hXlYyv8jy/g2dm5pKgdz+waa5V8ndAwl/1Pkm3x34
+         rd+g==
+X-Gm-Message-State: AC+VfDy0+qH1lUIS/AYUK5iOiquHCIpKXB+mpqb8AaxpvpFq6DGcvynS
+        kLp/6TBbwnDJxGKMMDiFCFO8N+x1srcafduXjjLpUawJOqDOuymtvgFp0YQHhsXV7lQ94feWlCt
+        N7TVuS3wo/hvhTnVvPJHL4Q==
+X-Received: by 2002:a17:903:11d0:b0:1b0:4a2:5928 with SMTP id q16-20020a17090311d000b001b004a25928mr12758476plh.8.1686054587868;
+        Tue, 06 Jun 2023 05:29:47 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6Yshgisfbro3BNAzGCz2Uj7YpVW57BTE406hG/m4CdieFs9uaGm+QGpiQXSQkjCx7mtdmYrA==
+X-Received: by 2002:a17:903:11d0:b0:1b0:4a2:5928 with SMTP id q16-20020a17090311d000b001b004a25928mr12758465plh.8.1686054587608;
+        Tue, 06 Jun 2023 05:29:47 -0700 (PDT)
+Received: from [10.72.12.128] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id f7-20020a170902860700b001acad86ebc5sm8430931plo.33.2023.06.06.05.29.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Jun 2023 05:29:47 -0700 (PDT)
+Message-ID: <7ab9007b-763b-aacf-2297-62f1989e2efd@redhat.com>
+Date:   Tue, 6 Jun 2023 20:29:40 +0800
 MIME-Version: 1.0
-References: <20230606005253.1055933-1-xiubli@redhat.com>
-In-Reply-To: <20230606005253.1055933-1-xiubli@redhat.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 6 Jun 2023 12:21:29 +0200
-Message-ID: <CAOi1vP_Xr6iMgjo7RKtc4-oZdF_FX7_U3Wx4Y=REdpa4Gj7Oig@mail.gmail.com>
-Subject: Re: [PATCH v3] ceph: fix use-after-free bug for inodes when flushing capsnaps
-To:     xiubli@redhat.com
-Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
-        vshankar@redhat.com, mchangir@redhat.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
+Subject: Re: [PATCH v2 0/2] ceph: fix fscrypt_destroy_keyring use-after-free
+ bug
+Content-Language: en-US
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        vshankar@redhat.com, mchangir@redhat.com
+References: <20230606033212.1068823-1-xiubli@redhat.com>
+ <87pm689asx.fsf@suse.de>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <87pm689asx.fsf@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,91 +82,25 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jun 6, 2023 at 2:55=E2=80=AFAM <xiubli@redhat.com> wrote:
->
-> From: Xiubo Li <xiubli@redhat.com>
->
-> There is a race between capsnaps flush and removing the inode from
-> 'mdsc->snap_flush_list' list:
->
->    =3D=3D Thread A =3D=3D                     =3D=3D Thread B =3D=3D
-> ceph_queue_cap_snap()
->  -> allocate 'capsnapA'
->  ->ihold('&ci->vfs_inode')
->  ->add 'capsnapA' to 'ci->i_cap_snaps'
->  ->add 'ci' to 'mdsc->snap_flush_list'
->     ...
->    =3D=3D Thread C =3D=3D
-> ceph_flush_snaps()
->  ->__ceph_flush_snaps()
->   ->__send_flush_snap()
->                                 handle_cap_flushsnap_ack()
->                                  ->iput('&ci->vfs_inode')
->                                    this also will release 'ci'
->                                     ...
->                                       =3D=3D Thread D =3D=3D
->                                 ceph_handle_snap()
->                                  ->flush_snaps()
->                                   ->iterate 'mdsc->snap_flush_list'
->                                    ->get the stale 'ci'
->  ->remove 'ci' from                ->ihold(&ci->vfs_inode) this
->    'mdsc->snap_flush_list'           will WARNING
->
-> To fix this we will increase the inode's i_count ref when adding 'ci'
-> to the 'mdsc->snap_flush_list' list.
->
-> Cc: stable@vger.kernel.org
-> URL: https://bugzilla.redhat.com/show_bug.cgi?id=3D2209299
-> Reviewed-by: Milind Changire <mchangir@redhat.com>
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->
-> V3:
-> - Fix two minor typo in commit comments.
->
->
->
->  fs/ceph/caps.c | 6 ++++++
->  fs/ceph/snap.c | 4 +++-
->  2 files changed, 9 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index feabf4cc0c4f..7c2cb813aba4 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -1684,6 +1684,7 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
->         struct inode *inode =3D &ci->netfs.inode;
->         struct ceph_mds_client *mdsc =3D ceph_inode_to_client(inode)->mds=
-c;
->         struct ceph_mds_session *session =3D NULL;
-> +       int put =3D 0;
 
-Hi Xiubo,
-
-Nit: renaming this variable to need_put and making it a bool would
-communicate the intent better.
-
->         int mds;
+On 6/6/23 17:53, Luís Henriques wrote:
+> xiubli@redhat.com writes:
 >
->         dout("ceph_flush_snaps %p\n", inode);
-> @@ -1728,8 +1729,13 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
->                 ceph_put_mds_session(session);
->         /* we flushed them all; remove this inode from the queue */
->         spin_lock(&mdsc->snap_flush_lock);
-> +       if (!list_empty(&ci->i_snap_flush_item))
-> +               put++;
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> V2:
+>> - Improve the code by switching to wait_for_completion_killable_timeout()
+>>    when umounting, at the same add one umount_timeout option.
+> Instead of adding yet another (undocumented!) mount option, why not re-use
+> the already existent 'mount_timeout' instead?  It's already defined and
+> kept in 'struct ceph_options', and the default value is defined with the
+> same value you're using, in CEPH_MOUNT_TIMEOUT_DEFAULT.
 
-What are the cases when ci is expected to not be on snap_flush_list
-list (and therefore there is no corresponding reference to put)?
+This is for mount purpose. Is that okay to use the in umount case ?
 
-The reason I'm asking is that ceph_flush_snaps() is called from two
-other places directly (i.e. without iterating snap_flush_list list) and
-then __ceph_flush_snaps() is called from two yet other places.  The
-problem that we are presented with here is that __ceph_flush_snaps()
-effectively consumes a reference on ci.  Is ci protected from being
-freed by handle_cap_flushsnap_ack() very soon after __send_flush_snap()
-returns in all these other places?
+Thanks
 
-Thanks,
+- Xiubo
 
-                Ilya
+> Cheers,
+
