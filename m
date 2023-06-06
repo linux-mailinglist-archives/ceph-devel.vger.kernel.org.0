@@ -2,184 +2,245 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DC86723150
-	for <lists+ceph-devel@lfdr.de>; Mon,  5 Jun 2023 22:27:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACC8A7233E9
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Jun 2023 02:04:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232354AbjFEU1b (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 5 Jun 2023 16:27:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51066 "EHLO
+        id S232916AbjFFAES (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 5 Jun 2023 20:04:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232296AbjFEU12 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 5 Jun 2023 16:27:28 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8336998
-        for <ceph-devel@vger.kernel.org>; Mon,  5 Jun 2023 13:27:27 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id 4fb4d7f45d1cf-5149e65c218so8009987a12.2
-        for <ceph-devel@vger.kernel.org>; Mon, 05 Jun 2023 13:27:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1685996846; x=1688588846;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7KybI+WtMi3tnB4KN37yItIiLRMfDM1+PQqPRpK6aeE=;
-        b=dSzJjtik3WzwEJG0yhz/Oo3ufqeICd+XlbjNeXAsFLYj9B1jgjYGIS2KYRfUw24W5u
-         ekxhzYsjJaQAjpTJ+ib2DM7PLMhCIRDfoJsZIpNEb83o1E6Lyjhb9FG0UB4rUDnn7Lsq
-         ZQ784mKlU9jjinxHoJ14kx0e/yM1Q55YVSkLZGqQskujaXcTp1RndBnxPpiWzsVpaSC/
-         N4yH1mVbRLRjyUGhllgrWRys3NPqj5L5Ie9avtPCO3FDshxzOkD/xD/Wf8u/reMdJcQi
-         uAHmMMRmb7ZFKQGpMQ9dYx9pl3Q/jdYMu//56/C6nYXzew8lUZwfGTPiWr9NR5gx5cpn
-         1kVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1685996846; x=1688588846;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7KybI+WtMi3tnB4KN37yItIiLRMfDM1+PQqPRpK6aeE=;
-        b=JL8rO5WEb4zsAUwozvmN/+7cw4zsPa1Rw2PPoHFIXimMIRq9BfQTyVxzN4H/5Emmvy
-         U1i2lLPN9Wimko4zgctLOwxqdhtP26WivNS0ap6vb46/+rFJAARLRYds7QH8lleFKd7J
-         AKfepm97xBMpZE0NqFas+XC0j7uUir+mW6ZMku3mikWj+SZkfw7o1OI18kpDAqWQ6PGc
-         7EG9jCbEybRWQIfHkcQQZVii/jPEOxxdv5anIqnMi8KObnpor9cvVmLOlCFEw1NDeYvA
-         mS9xFm7WxpIa/34c99KnrshbxYP5+I6GPx7KVgq5oDeJLeEN26CdjZL+/GkIfCFFDOR+
-         JSZA==
-X-Gm-Message-State: AC+VfDyEQWExm1248g6XOZqb1xjCpiM1ZzqSUKUTI/HucOOtRmhSC5Ng
-        isj5+WI7AyJeciOL97DlQerDhcNudYM=
-X-Google-Smtp-Source: ACHHUZ5deTMQ7o6Rno7gTEOGYMEPZWev50qcf4zySbF8oJC9NaW1TeEHeylS7QHdLJ10wZueD1bUIA==
-X-Received: by 2002:a17:907:d29:b0:974:31:ed74 with SMTP id gn41-20020a1709070d2900b009740031ed74mr7975522ejc.65.1685996845782;
-        Mon, 05 Jun 2023 13:27:25 -0700 (PDT)
-Received: from zambezi.redhat.com (ip-94-112-104-28.bb.vodafone.cz. [94.112.104.28])
-        by smtp.gmail.com with ESMTPSA id i15-20020a170906a28f00b00968242f8c37sm4619808ejz.50.2023.06.05.13.27.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Jun 2023 13:27:25 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     ceph-devel@vger.kernel.org
-Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: [PATCH 2/2] rbd: get snapshot context after exclusive lock is ensured to be held
-Date:   Mon,  5 Jun 2023 22:27:15 +0200
-Message-Id: <20230605202715.968962-3-idryomov@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20230605202715.968962-1-idryomov@gmail.com>
-References: <20230605202715.968962-1-idryomov@gmail.com>
+        with ESMTP id S230376AbjFFAER (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 5 Jun 2023 20:04:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32B69F9;
+        Mon,  5 Jun 2023 17:04:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BA1BC62915;
+        Tue,  6 Jun 2023 00:04:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1C3C433D2;
+        Tue,  6 Jun 2023 00:04:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686009855;
+        bh=xPqDBnA9crfcda+QJHDEogmu65T/ezefUhM18Debbm0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ddPmBSXSMvlY9x94xIIznZYGaNuipQq3VI72KC0oXDBKaGeDQjKtRJmfrsGmehWvO
+         +dPcgrPTfGtR6It+kcXJltBdEm6/kbNCqegUMdcjJLpThWScaZHuyrI92e+KxL5eSE
+         6UYfqRlb93ixurnxyFXwOAH/gstR61UDyavP5IbH3jiHC6gYnE66jfhBxNASdfvKoO
+         3g91Y67k3IwVIP5kIbGlNmjoUpg38PKL0tJCWBDOdkxq0zpo0hU4ztLFtuUy69XDvZ
+         pgOw60wCPj40tpC46Ad5a91ebl7gCGcJ/iJcwmK8v80Pnvc61AL6XuQN4t+34IdDjQ
+         mC0Xvp8bW0hvA==
+Date:   Mon, 5 Jun 2023 17:04:14 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>,
+        Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, Miklos Szeredi <mszeredi@redhat.com>
+Subject: Re: [PATCH 09/12] fs: factor out a direct_write_fallback helper
+Message-ID: <20230606000414.GJ1325469@frogsfrogsfrogs>
+References: <20230601145904.1385409-1-hch@lst.de>
+ <20230601145904.1385409-10-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230601145904.1385409-10-hch@lst.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Move capturing the snapshot context into the image request state
-machine, after exclusive lock is ensured to be held for the duration of
-dealing with the image request.  This is needed to ensure correctness
-of fast-diff states (OBJECT_EXISTS vs OBJECT_EXISTS_CLEAN) and object
-deltas computed based off of them.  Otherwise the object map that is
-forked for the snapshot isn't guaranteed to accurately reflect the
-contents of the snapshot when the snapshot is taken under I/O.  This
-breaks differential backup and snapshot-based mirroring use cases with
-fast-diff enabled: since some object deltas may be incomplete, the
-destination image may get corrupted.
+On Thu, Jun 01, 2023 at 04:59:01PM +0200, Christoph Hellwig wrote:
+> Add a helper dealing with handling the syncing of a buffered write fallback
+> for direct I/O.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+> Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
 
-Cc: stable@vger.kernel.org
-Link: https://tracker.ceph.com/issues/61472
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
----
- drivers/block/rbd.c | 30 +++++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 7 deletions(-)
+Looks good to me; whose tree do you want this to go through?
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 6c847db6ee2c..632751ddb287 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -1336,6 +1336,8 @@ static bool rbd_obj_is_tail(struct rbd_obj_request *obj_req)
-  */
- static void rbd_obj_set_copyup_enabled(struct rbd_obj_request *obj_req)
- {
-+	rbd_assert(obj_req->img_request->snapc);
-+
- 	if (obj_req->img_request->op_type == OBJ_OP_DISCARD) {
- 		dout("%s %p objno %llu discard\n", __func__, obj_req,
- 		     obj_req->ex.oe_objno);
-@@ -1456,6 +1458,7 @@ __rbd_obj_add_osd_request(struct rbd_obj_request *obj_req,
- static struct ceph_osd_request *
- rbd_obj_add_osd_request(struct rbd_obj_request *obj_req, int num_ops)
- {
-+	rbd_assert(obj_req->img_request->snapc);
- 	return __rbd_obj_add_osd_request(obj_req, obj_req->img_request->snapc,
- 					 num_ops);
- }
-@@ -1592,15 +1595,18 @@ static void rbd_img_request_init(struct rbd_img_request *img_request,
- 	mutex_init(&img_request->state_mutex);
- }
- 
-+/*
-+ * Only snap_id is captured here, for reads.  For writes, snapshot
-+ * context is captured in rbd_img_object_requests() after exclusive
-+ * lock is ensured to be held.
-+ */
- static void rbd_img_capture_header(struct rbd_img_request *img_req)
- {
- 	struct rbd_device *rbd_dev = img_req->rbd_dev;
- 
- 	lockdep_assert_held(&rbd_dev->header_rwsem);
- 
--	if (rbd_img_is_write(img_req))
--		img_req->snapc = ceph_get_snap_context(rbd_dev->header.snapc);
--	else
-+	if (!rbd_img_is_write(img_req))
- 		img_req->snap_id = rbd_dev->spec->snap_id;
- 
- 	if (rbd_dev_parent_get(rbd_dev))
-@@ -3482,9 +3488,19 @@ static int rbd_img_exclusive_lock(struct rbd_img_request *img_req)
- 
- static void rbd_img_object_requests(struct rbd_img_request *img_req)
- {
-+	struct rbd_device *rbd_dev = img_req->rbd_dev;
- 	struct rbd_obj_request *obj_req;
- 
- 	rbd_assert(!img_req->pending.result && !img_req->pending.num_pending);
-+	rbd_assert(!need_exclusive_lock(img_req) ||
-+		   __rbd_is_lock_owner(rbd_dev));
-+
-+	if (rbd_img_is_write(img_req)) {
-+		rbd_assert(!img_req->snapc);
-+		down_read(&rbd_dev->header_rwsem);
-+		img_req->snapc = ceph_get_snap_context(rbd_dev->header.snapc);
-+		up_read(&rbd_dev->header_rwsem);
-+	}
- 
- 	for_each_obj_request(img_req, obj_req) {
- 		int result = 0;
-@@ -3502,7 +3518,6 @@ static void rbd_img_object_requests(struct rbd_img_request *img_req)
- 
- static bool rbd_img_advance(struct rbd_img_request *img_req, int *result)
- {
--	struct rbd_device *rbd_dev = img_req->rbd_dev;
- 	int ret;
- 
- again:
-@@ -3523,9 +3538,6 @@ static bool rbd_img_advance(struct rbd_img_request *img_req, int *result)
- 		if (*result)
- 			return true;
- 
--		rbd_assert(!need_exclusive_lock(img_req) ||
--			   __rbd_is_lock_owner(rbd_dev));
--
- 		rbd_img_object_requests(img_req);
- 		if (!img_req->pending.num_pending) {
- 			*result = img_req->pending.result;
-@@ -3987,6 +3999,10 @@ static int rbd_post_acquire_action(struct rbd_device *rbd_dev)
- {
- 	int ret;
- 
-+	ret = rbd_dev_refresh(rbd_dev);
-+	if (ret)
-+		return ret;
-+
- 	if (rbd_dev->header.features & RBD_FEATURE_OBJECT_MAP) {
- 		ret = rbd_object_map_open(rbd_dev);
- 		if (ret)
--- 
-2.39.2
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
+--D
+
+> ---
+>  fs/libfs.c         | 41 ++++++++++++++++++++++++++++
+>  include/linux/fs.h |  2 ++
+>  mm/filemap.c       | 66 +++++++++++-----------------------------------
+>  3 files changed, 58 insertions(+), 51 deletions(-)
+> 
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index 89cf614a327158..5b851315eeed03 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -1613,3 +1613,44 @@ u64 inode_query_iversion(struct inode *inode)
+>  	return cur >> I_VERSION_QUERIED_SHIFT;
+>  }
+>  EXPORT_SYMBOL(inode_query_iversion);
+> +
+> +ssize_t direct_write_fallback(struct kiocb *iocb, struct iov_iter *iter,
+> +		ssize_t direct_written, ssize_t buffered_written)
+> +{
+> +	struct address_space *mapping = iocb->ki_filp->f_mapping;
+> +	loff_t pos = iocb->ki_pos - buffered_written;
+> +	loff_t end = iocb->ki_pos - 1;
+> +	int err;
+> +
+> +	/*
+> +	 * If the buffered write fallback returned an error, we want to return
+> +	 * the number of bytes which were written by direct I/O, or the error
+> +	 * code if that was zero.
+> +	 *
+> +	 * Note that this differs from normal direct-io semantics, which will
+> +	 * return -EFOO even if some bytes were written.
+> +	 */
+> +	if (unlikely(buffered_written < 0)) {
+> +		if (direct_written)
+> +			return direct_written;
+> +		return buffered_written;
+> +	}
+> +
+> +	/*
+> +	 * We need to ensure that the page cache pages are written to disk and
+> +	 * invalidated to preserve the expected O_DIRECT semantics.
+> +	 */
+> +	err = filemap_write_and_wait_range(mapping, pos, end);
+> +	if (err < 0) {
+> +		/*
+> +		 * We don't know how much we wrote, so just return the number of
+> +		 * bytes which were direct-written
+> +		 */
+> +		if (direct_written)
+> +			return direct_written;
+> +		return err;
+> +	}
+> +	invalidate_mapping_pages(mapping, pos >> PAGE_SHIFT, end >> PAGE_SHIFT);
+> +	return direct_written + buffered_written;
+> +}
+> +EXPORT_SYMBOL_GPL(direct_write_fallback);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 91021b4e1f6f48..6af25137543824 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2738,6 +2738,8 @@ extern ssize_t __generic_file_write_iter(struct kiocb *, struct iov_iter *);
+>  extern ssize_t generic_file_write_iter(struct kiocb *, struct iov_iter *);
+>  extern ssize_t generic_file_direct_write(struct kiocb *, struct iov_iter *);
+>  ssize_t generic_perform_write(struct kiocb *, struct iov_iter *);
+> +ssize_t direct_write_fallback(struct kiocb *iocb, struct iov_iter *iter,
+> +		ssize_t direct_written, ssize_t buffered_written);
+>  
+>  ssize_t vfs_iter_read(struct file *file, struct iov_iter *iter, loff_t *ppos,
+>  		rwf_t flags);
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index ddb6f8aa86d6ca..137508da5525b6 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -4006,23 +4006,19 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  {
+>  	struct file *file = iocb->ki_filp;
+>  	struct address_space *mapping = file->f_mapping;
+> -	struct inode 	*inode = mapping->host;
+> -	ssize_t		written = 0;
+> -	ssize_t		err;
+> -	ssize_t		status;
+> +	struct inode *inode = mapping->host;
+> +	ssize_t ret;
+>  
+> -	err = file_remove_privs(file);
+> -	if (err)
+> -		goto out;
+> +	ret = file_remove_privs(file);
+> +	if (ret)
+> +		return ret;
+>  
+> -	err = file_update_time(file);
+> -	if (err)
+> -		goto out;
+> +	ret = file_update_time(file);
+> +	if (ret)
+> +		return ret;
+>  
+>  	if (iocb->ki_flags & IOCB_DIRECT) {
+> -		loff_t pos, endbyte;
+> -
+> -		written = generic_file_direct_write(iocb, from);
+> +		ret = generic_file_direct_write(iocb, from);
+>  		/*
+>  		 * If the write stopped short of completing, fall back to
+>  		 * buffered writes.  Some filesystems do this for writes to
+> @@ -4030,45 +4026,13 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  		 * not succeed (even if it did, DAX does not handle dirty
+>  		 * page-cache pages correctly).
+>  		 */
+> -		if (written < 0 || !iov_iter_count(from) || IS_DAX(inode))
+> -			goto out;
+> -
+> -		pos = iocb->ki_pos;
+> -		status = generic_perform_write(iocb, from);
+> -		/*
+> -		 * If generic_perform_write() returned a synchronous error
+> -		 * then we want to return the number of bytes which were
+> -		 * direct-written, or the error code if that was zero.  Note
+> -		 * that this differs from normal direct-io semantics, which
+> -		 * will return -EFOO even if some bytes were written.
+> -		 */
+> -		if (unlikely(status < 0)) {
+> -			err = status;
+> -			goto out;
+> -		}
+> -		/*
+> -		 * We need to ensure that the page cache pages are written to
+> -		 * disk and invalidated to preserve the expected O_DIRECT
+> -		 * semantics.
+> -		 */
+> -		endbyte = pos + status - 1;
+> -		err = filemap_write_and_wait_range(mapping, pos, endbyte);
+> -		if (err == 0) {
+> -			written += status;
+> -			invalidate_mapping_pages(mapping,
+> -						 pos >> PAGE_SHIFT,
+> -						 endbyte >> PAGE_SHIFT);
+> -		} else {
+> -			/*
+> -			 * We don't know how much we wrote, so just return
+> -			 * the number of bytes which were direct-written
+> -			 */
+> -		}
+> -	} else {
+> -		written = generic_perform_write(iocb, from);
+> +		if (ret < 0 || !iov_iter_count(from) || IS_DAX(inode))
+> +			return ret;
+> +		return direct_write_fallback(iocb, from, ret,
+> +				generic_perform_write(iocb, from));
+>  	}
+> -out:
+> -	return written ? written : err;
+> +
+> +	return generic_perform_write(iocb, from);
+>  }
+>  EXPORT_SYMBOL(__generic_file_write_iter);
+>  
+> -- 
+> 2.39.2
+> 
