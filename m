@@ -2,163 +2,115 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D3A6723C81
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Jun 2023 11:06:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7783723C97
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Jun 2023 11:10:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231355AbjFFJGA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 6 Jun 2023 05:06:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51210 "EHLO
+        id S231149AbjFFJKH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 6 Jun 2023 05:10:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231940AbjFFJFy (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Jun 2023 05:05:54 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2C2AF7
-        for <ceph-devel@vger.kernel.org>; Tue,  6 Jun 2023 02:05:52 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 978DB21995;
-        Tue,  6 Jun 2023 09:05:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1686042351; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        with ESMTP id S235596AbjFFJKD (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Jun 2023 05:10:03 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEA8F10F
+        for <ceph-devel@vger.kernel.org>; Tue,  6 Jun 2023 02:09:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686042560;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=tIEQZMIVinWiqv6OSt2nM3rA8bgQXWNd685sDLdl9mI=;
-        b=xurlk5QlKX8JaDND9h2VYyfWv5r0OLPOLa+jYuXD2TSeV/o0Ef4udf8cxN4Y+1btsDtS2F
-        N9kczxGVUz6qI3NrRCi5j3DccCRrwSHFr5VpeCfibVuZUBQjUS9WJBNth+5p8pLWWqbrgu
-        A5RH+oyjM0qSj/X8RpBiMSeKllEqdps=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1686042351;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=tIEQZMIVinWiqv6OSt2nM3rA8bgQXWNd685sDLdl9mI=;
-        b=qV4squlZ2Ce4713HHY8XNuOsizrhS5+6K0G99QifDIg1vEig2swF6akpvLSsXN7oT6SUBc
-        DCzkvi8WtdfMpvCg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 25A7013776;
-        Tue,  6 Jun 2023 09:05:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id /n8zBu/2fmSNRgAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Tue, 06 Jun 2023 09:05:51 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 6b358356;
-        Tue, 6 Jun 2023 09:05:50 +0000 (UTC)
-From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Milind Changire <mchangir@redhat.com>, idryomov@gmail.com,
-        ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com
+        bh=xT3FtTuXOZh2gFlg/QjL1h9tCu+HpRgCYjn4r1n82g4=;
+        b=f60w3/NRAAMKp1EIwJ1MWQNm4Bd6jpqbIhXD81t8nMSdMQc7Kkw8zK7MJj3wdmWDagnWmM
+        5AcgzyjGST3WecOQLn4PS1YbsN3BeKfRe+HQwADOpuS7XhqjBMd8RvTT150J+9rl+RUILr
+        uS3zLAeOdItGCD8vhR8Sj/1oB8ql5dY=
+Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
+ [209.85.219.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-593-PI_YkY69MY6wnaaK81Qs_A-1; Tue, 06 Jun 2023 05:09:19 -0400
+X-MC-Unique: PI_YkY69MY6wnaaK81Qs_A-1
+Received: by mail-yb1-f198.google.com with SMTP id 3f1490d57ef6-bb2202e0108so7252639276.1
+        for <ceph-devel@vger.kernel.org>; Tue, 06 Jun 2023 02:09:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686042559; x=1688634559;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xT3FtTuXOZh2gFlg/QjL1h9tCu+HpRgCYjn4r1n82g4=;
+        b=Tc/lr1UyTAGwxVTM92VUVpIOTKqInIHLAldnVSEgHc7HzeCSFi3OzIqk84cCSL8pG1
+         MTjr8qw/yBJlaFgQKhrpys0GiY6IBXjZSTtY04caLxp9KgIjCwmBldjDyd/lOAi1aBFf
+         hsf8lSoi/i4irn92eHisnrydHZyHJ8NA+x0ySGIaqb9qCmW1UGigg1w4kgDtyK6HrRFj
+         3n7QyN8E7WckgrE2oOsr2vT9GlGvoClEdKqIXchjTErluD6xCKH6NiAQFIphyy5fik6f
+         zd0wMP4tnxLvdwTJaz3NuRYmrZumkWKNZSk3oFjw1SazKT1wEvItntcY7eJse41U3ZWA
+         6Lmg==
+X-Gm-Message-State: AC+VfDzhBbeo0RqIRILtmsT3Ctoi+08Ya5ZrLUT/KIv4iHAQ5MzOeuha
+        c5BvXe1t4IzJeSefBFSTmB0n97JPb+5dyRFSr2FQc6gtjwOKJSWg0qDeReKZAs8eGCiyhdhk/s7
+        L3yyT7a+fGYI1COd79Ppu9w==
+X-Received: by 2002:a25:84c9:0:b0:ba9:6b90:e551 with SMTP id x9-20020a2584c9000000b00ba96b90e551mr1640719ybm.50.1686042559081;
+        Tue, 06 Jun 2023 02:09:19 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5pfFB2amUhPaBDRt6y4glRHK804SEOvOD9hcMEEgfwXx1CDIsu6o9c1qgs8bSz8AoDRF64yw==
+X-Received: by 2002:a25:84c9:0:b0:ba9:6b90:e551 with SMTP id x9-20020a2584c9000000b00ba96b90e551mr1640699ybm.50.1686042558807;
+        Tue, 06 Jun 2023 02:09:18 -0700 (PDT)
+Received: from [10.72.12.128] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id c16-20020a6566d0000000b00543e9e17207sm962067pgw.30.2023.06.06.02.09.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 Jun 2023 02:09:18 -0700 (PDT)
+Message-ID: <c429d60f-9219-5ccf-84d4-97083c6e4019@redhat.com>
+Date:   Tue, 6 Jun 2023 17:09:11 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.10.0
 Subject: Re: [PATCH v19 69/70] ceph: switch ceph_open() to use new fscrypt
  helper
+Content-Language: en-US
+To:     =?UTF-8?Q?Lu=c3=ads_Henriques?= <lhenriques@suse.de>
+Cc:     Milind Changire <mchangir@redhat.com>, idryomov@gmail.com,
+        ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com
 References: <20230417032654.32352-1-xiubli@redhat.com>
-        <20230417032654.32352-70-xiubli@redhat.com>
-        <CAED=hWACph6FJwKfE-qBr9hL5NGmr9iSoKSHPsOjVxWE=4+6GQ@mail.gmail.com>
-        <0d27c653-7b32-c9d2-764f-08fb82f1ca51@redhat.com>
-Date:   Tue, 06 Jun 2023 10:05:50 +0100
-In-Reply-To: <0d27c653-7b32-c9d2-764f-08fb82f1ca51@redhat.com> (Xiubo Li's
-        message of "Tue, 6 Jun 2023 16:37:43 +0800")
-Message-ID: <87zg5d7yfl.fsf@suse.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+ <20230417032654.32352-70-xiubli@redhat.com>
+ <CAED=hWACph6FJwKfE-qBr9hL5NGmr9iSoKSHPsOjVxWE=4+6GQ@mail.gmail.com>
+ <0d27c653-7b32-c9d2-764f-08fb82f1ca51@redhat.com> <87zg5d7yfl.fsf@suse.de>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <87zg5d7yfl.fsf@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Xiubo Li <xiubli@redhat.com> writes:
 
-> On 6/6/23 14:25, Milind Changire wrote:
->> nit:
->> the commit title refers to ceph_open() but the code changes are
->> pertaining to ceph_lookup()
+On 6/6/23 17:05, Luís Henriques wrote:
+> Xiubo Li <xiubli@redhat.com> writes:
 >
-> Good catch.
->
-> I couldn't remember why we didn't fix this before as I remembered I have =
-found
-> this.
-
-Yeah, it's really odd we didn't catch this before.  I had to go look at
-old email: this helper was initially used in ceph_atomic_open() only, but
-then in v3 it was made more generic so that it could also be used in
-ceph_lookup().
-
-Xiubo, do you want me to send out a new version of this patch, or are you
-OK simply updating the subject, using 'ceph_lookup' instead of
-'ceph_open'?
-
-Cheers,
---=20
-Lu=C3=ADs
-
-
-> Thanks
->
-> - Xiubo
->
->
->> Otherwise it looks good to me.
+>> On 6/6/23 14:25, Milind Changire wrote:
+>>> nit:
+>>> the commit title refers to ceph_open() but the code changes are
+>>> pertaining to ceph_lookup()
+>> Good catch.
 >>
->> Reviewed-by: Milind Changire <mchangir@redhat.com>
->>
->> On Mon, Apr 17, 2023 at 9:03=E2=80=AFAM <xiubli@redhat.com> wrote:
->>> From: Lu=C3=ADs Henriques <lhenriques@suse.de>
->>>
->>> Instead of setting the no-key dentry in ceph_lookup(), use the new
->>> fscrypt_prepare_lookup_partial() helper.  We still need to mark the
->>> directory as incomplete if the directory was just unlocked.
->>>
->>> Tested-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
->>> Tested-by: Venky Shankar <vshankar@redhat.com>
->>> Signed-off-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
->>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>> ---
->>>   fs/ceph/dir.c | 13 +++++++------
->>>   1 file changed, 7 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
->>> index fe48a5d26c1d..c28de23e12a1 100644
->>> --- a/fs/ceph/dir.c
->>> +++ b/fs/ceph/dir.c
->>> @@ -784,14 +784,15 @@ static struct dentry *ceph_lookup(struct inode *d=
-ir, struct dentry *dentry,
->>>                  return ERR_PTR(-ENAMETOOLONG);
->>>
->>>          if (IS_ENCRYPTED(dir)) {
->>> -               err =3D ceph_fscrypt_prepare_readdir(dir);
->>> +               bool had_key =3D fscrypt_has_encryption_key(dir);
->>> +
->>> +               err =3D fscrypt_prepare_lookup_partial(dir, dentry);
->>>                  if (err < 0)
->>>                          return ERR_PTR(err);
->>> -               if (!fscrypt_has_encryption_key(dir)) {
->>> -                       spin_lock(&dentry->d_lock);
->>> -                       dentry->d_flags |=3D DCACHE_NOKEY_NAME;
->>> -                       spin_unlock(&dentry->d_lock);
->>> -               }
->>> +
->>> +               /* mark directory as incomplete if it has been unlocked=
- */
->>> +               if (!had_key && fscrypt_has_encryption_key(dir))
->>> +                       ceph_dir_clear_complete(dir);
->>>          }
->>>
->>>          /* can we conclude ENOENT locally? */
->>> --
->>> 2.39.1
->>>
->>
+>> I couldn't remember why we didn't fix this before as I remembered I have found
+>> this.
+> Yeah, it's really odd we didn't catch this before.  I had to go look at
+> old email: this helper was initially used in ceph_atomic_open() only, but
+> then in v3 it was made more generic so that it could also be used in
+> ceph_lookup().
 >
+> Xiubo, do you want me to send out a new version of this patch, or are you
+> OK simply updating the subject, using 'ceph_lookup' instead of
+> 'ceph_open'?
+
+No worry, I have fixed this in the 'testing' branch and I will send out 
+the v20 for this whole series later.
+
+Thank
+
+- Xiubo
+
+> Cheers,
+
