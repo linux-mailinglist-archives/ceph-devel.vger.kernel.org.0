@@ -2,216 +2,261 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 56521724474
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Jun 2023 15:31:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0999724B13
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Jun 2023 20:19:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237229AbjFFNa7 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 6 Jun 2023 09:30:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54132 "EHLO
+        id S237895AbjFFSTU (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 6 Jun 2023 14:19:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231431AbjFFNa6 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Jun 2023 09:30:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA163E6A
-        for <ceph-devel@vger.kernel.org>; Tue,  6 Jun 2023 06:30:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686058210;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kc05BFqLyCU2e2CV0ONH8N6xaZCCq9xxm2JAMN543CY=;
-        b=EZJWo8UaD4oqEKNCuBl2q5eHri50xxR62brqrDDK1e6CLJtmtskDy6xldp2YAEfB0uf7PU
-        orPsINMT9rD7tV3xxOEsrYqnLm6bkeLy0U8JKFR6Jen0JzKe0SAMVgZwtHntJ4w9mB4pRO
-        4QFhQnsO9hqMi1Up6BG9P4Fs/wIjGmc=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-557-Ij-nETaRPhqJuCQ4rm6LXg-1; Tue, 06 Jun 2023 09:30:10 -0400
-X-MC-Unique: Ij-nETaRPhqJuCQ4rm6LXg-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2566e9b14a4so5587665a91.2
-        for <ceph-devel@vger.kernel.org>; Tue, 06 Jun 2023 06:30:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686058208; x=1688650208;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kc05BFqLyCU2e2CV0ONH8N6xaZCCq9xxm2JAMN543CY=;
-        b=Z6XIVr5x1XL43oE9T6rvTTvPpV1TPAwJLBbO82g6P3bKJ3Wb+vDsbSFElkNWFuJRlc
-         2BMSE/2eUJSdnXeeaGk4WxoPXzDwOx+4A9BRLlifAg+rbh2weJjMCLwmjpiIG92uWB0U
-         R1Fld+qcfnjIBSONW/QZwod3qQYNW4kIcFDVJJFC2Ez7ZqWd6foyO7YYHQE4vD9v+HEZ
-         Yujc3/kHIWq+EkXUYK37o8/80RjR57D+vKzMdB76/M7t2b+oW1DBjYE+Ag3pdAl1EF8O
-         2B/cDlo7ZUfiwwYr0bpXVwiSQ/CZM2JufXU28ewxGgEsoolBKWO+yEfH9Cj41u1xjeDA
-         lSIg==
-X-Gm-Message-State: AC+VfDxMzCgbPpsn33IPUyDvNgBVEj5bSdr3b4XW1lmQXMgtyaeBTSdA
-        iLzGUdcdhx+zAhQj29guFpX6gYIe5JdPrUxta5A/2WY8leadfovpwEzmBz3X8yCb7/HU8rxnw1T
-        nBBPXQOpLMVqZJDlFwtx2ozjtL+jbxYO+
-X-Received: by 2002:a17:90a:199d:b0:259:3e17:7e15 with SMTP id 29-20020a17090a199d00b002593e177e15mr2035913pji.7.1686058207722;
-        Tue, 06 Jun 2023 06:30:07 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ7J7ul/koMOF7Miwqh/LGXLelFn7h/dMC5InMnz9fKy06a2cKhGn7iJWHuXOTIxipyVUaylFg==
-X-Received: by 2002:a17:90a:199d:b0:259:3e17:7e15 with SMTP id 29-20020a17090a199d00b002593e177e15mr2035895pji.7.1686058207369;
-        Tue, 06 Jun 2023 06:30:07 -0700 (PDT)
-Received: from [10.72.12.128] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id h16-20020a17090ac39000b0024752ff8061sm7726359pjt.12.2023.06.06.06.30.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Jun 2023 06:30:07 -0700 (PDT)
-Message-ID: <b0ec84e4-1999-8284-dc90-307831f1e04b@redhat.com>
-Date:   Tue, 6 Jun 2023 21:29:59 +0800
+        with ESMTP id S237800AbjFFSTS (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Jun 2023 14:19:18 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B1D21702;
+        Tue,  6 Jun 2023 11:19:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=SzEzfD8o9MmMZbtTJMh/O3FVpegfomMJ8VE5KDe97bU=; b=CEhhzhsm3xgw7fNAWhMuqkGg1T
+        w5cHgMaODp27e+j24Yg/Kef06hUoOHuswZ8as3MqXUTn0CHbZsTzEhlxDsT2SeacGu585XeVxNdeh
+        7rrPrNvkf7tlJdum2sWdk2OME6Vg2JtA8xeh08i40GFZJUYjls+19V7hrZ/onGmCYHar4swC8aqv4
+        Lrdf71hRtEBCkwQa1FpAIyKKnKpHWhNaRgPGaWMxXuBQy+qfqYJQXRw1iZwvSuqBsRST0ZHzoFK0L
+        MffVAUK6PGOrHA8rgpmwGc1jrjTKIsD+xzB6wWKqXWfeSXWsVtFvES4CWTJ0GVz+nVwjWfrtCqZXg
+        eHMqIAvg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1q6bGy-00DP19-Az; Tue, 06 Jun 2023 18:19:12 +0000
+Date:   Tue, 6 Jun 2023 19:19:12 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] ceph: Convert ceph_writepages_start() to use folios a
+ little more
+Message-ID: <ZH94oBBFct9b9g3z@casper.infradead.org>
+References: <20230605165418.2909336-1-willy@infradead.org>
+ <4ca56a21-c5aa-6407-0cc1-db68762630ce@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-Subject: Re: [PATCH v3] ceph: fix use-after-free bug for inodes when flushing
- capsnaps
-Content-Language: en-US
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
-        vshankar@redhat.com, mchangir@redhat.com, stable@vger.kernel.org
-References: <20230606005253.1055933-1-xiubli@redhat.com>
- <CAOi1vP_Xr6iMgjo7RKtc4-oZdF_FX7_U3Wx4Y=REdpa4Gj7Oig@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <CAOi1vP_Xr6iMgjo7RKtc4-oZdF_FX7_U3Wx4Y=REdpa4Gj7Oig@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ca56a21-c5aa-6407-0cc1-db68762630ce@redhat.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Tue, Jun 06, 2023 at 01:37:46PM +0800, Xiubo Li wrote:
+> This Looks good to me.
+> 
+> BTW, could you rebase this to the 'testing' branch ? This will introduce a
 
-On 6/6/23 18:21, Ilya Dryomov wrote:
-> On Tue, Jun 6, 2023 at 2:55 AM <xiubli@redhat.com> wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> There is a race between capsnaps flush and removing the inode from
->> 'mdsc->snap_flush_list' list:
->>
->>     == Thread A ==                     == Thread B ==
->> ceph_queue_cap_snap()
->>   -> allocate 'capsnapA'
->>   ->ihold('&ci->vfs_inode')
->>   ->add 'capsnapA' to 'ci->i_cap_snaps'
->>   ->add 'ci' to 'mdsc->snap_flush_list'
->>      ...
->>     == Thread C ==
->> ceph_flush_snaps()
->>   ->__ceph_flush_snaps()
->>    ->__send_flush_snap()
->>                                  handle_cap_flushsnap_ack()
->>                                   ->iput('&ci->vfs_inode')
->>                                     this also will release 'ci'
->>                                      ...
->>                                        == Thread D ==
->>                                  ceph_handle_snap()
->>                                   ->flush_snaps()
->>                                    ->iterate 'mdsc->snap_flush_list'
->>                                     ->get the stale 'ci'
->>   ->remove 'ci' from                ->ihold(&ci->vfs_inode) this
->>     'mdsc->snap_flush_list'           will WARNING
->>
->> To fix this we will increase the inode's i_count ref when adding 'ci'
->> to the 'mdsc->snap_flush_list' list.
->>
->> Cc: stable@vger.kernel.org
->> URL: https://bugzilla.redhat.com/show_bug.cgi?id=2209299
->> Reviewed-by: Milind Changire <mchangir@redhat.com>
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>
->> V3:
->> - Fix two minor typo in commit comments.
->>
->>
->>
->>   fs/ceph/caps.c | 6 ++++++
->>   fs/ceph/snap.c | 4 +++-
->>   2 files changed, 9 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
->> index feabf4cc0c4f..7c2cb813aba4 100644
->> --- a/fs/ceph/caps.c
->> +++ b/fs/ceph/caps.c
->> @@ -1684,6 +1684,7 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
->>          struct inode *inode = &ci->netfs.inode;
->>          struct ceph_mds_client *mdsc = ceph_inode_to_client(inode)->mdsc;
->>          struct ceph_mds_session *session = NULL;
->> +       int put = 0;
-> Hi Xiubo,
->
-> Nit: renaming this variable to need_put and making it a bool would
-> communicate the intent better.
+Umm, which testing branch is that?  It applies cleanly to next-20230606
+which is generally where I work, since it's a bit unreasonable for me
+to keep track of every filesystem development tree.
 
-Hi Ilya
-
-Sure, will update it.
-
->>          int mds;
->>
->>          dout("ceph_flush_snaps %p\n", inode);
->> @@ -1728,8 +1729,13 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
->>                  ceph_put_mds_session(session);
->>          /* we flushed them all; remove this inode from the queue */
->>          spin_lock(&mdsc->snap_flush_lock);
->> +       if (!list_empty(&ci->i_snap_flush_item))
->> +               put++;
-> What are the cases when ci is expected to not be on snap_flush_list
-> list (and therefore there is no corresponding reference to put)?
->
-> The reason I'm asking is that ceph_flush_snaps() is called from two
-> other places directly (i.e. without iterating snap_flush_list list) and
-> then __ceph_flush_snaps() is called from two yet other places.  The
-> problem that we are presented with here is that __ceph_flush_snaps()
-> effectively consumes a reference on ci.  Is ci protected from being
-> freed by handle_cap_flushsnap_ack() very soon after __send_flush_snap()
-> returns in all these other places?
-
-There are 4 places will call the 'ceph_flush_snaps()':
-
-Cscope tag: ceph_flush_snaps
-    #   line  filename / context / line
-    1   3221  fs/ceph/caps.c <<__ceph_put_cap_refs>>
-              ceph_flush_snaps(ci, NULL);
-    2   3336  fs/ceph/caps.c <<ceph_put_wrbuffer_cap_refs>>
-              ceph_flush_snaps(ci, NULL);
-    3   2243  fs/ceph/inode.c <<ceph_inode_work>>
-              ceph_flush_snaps(ci, NULL);
-    4    941  fs/ceph/snap.c <<flush_snaps>>
-              ceph_flush_snaps(ci, &session);
-Type number and <Enter> (q or empty cancels):
-
-For #1 it will add the 'ci' to the 'mdsc->snap_flush_list' list by 
-calling '__ceph_finish_cap_snap()' and then call the 
-'ceph_flush_snaps()' directly or defer call it in the queue work in #3.
-
-The #3 is the reason why we need the 'mdsc->snap_flush_list' list.
-
-For #2 it won't add the 'ci' to the list because it will always call the 
-'ceph_flush_snaps()' directly.
-
-For #4 it will call 'ceph_flush_snaps()' by iterating the 
-'mdsc->snap_flush_list' list just before the #3 being triggered.
-
-The problem only exists in case of #1 --> #4, which will make the stale 
-'ci' to be held in the 'mdsc->snap_flush_list' list after 'capsnap' and 
-'ci' being freed. All the other cases are okay because the 'ci' will be 
-protected by increasing the ref when allocating the 'capsnap' and will 
-decrease the ref in 'handle_cap_flushsnap_ack()' when freeing the 'capsnap'.
-
-Note: the '__ceph_flush_snaps()' won't increase the ref. The 
-'handle_cap_flushsnap_ack()' will just try to decrease the ref and only 
-in case the ref reaches to '0' will the 'ci' be freed.
-
-
-Thanks
-
-- Xiubo
-
-> Thanks,
->
->                  Ilya
->
-
+> lots of conflicts with the fscrypt patches, I'd prefer this could be applied
+> and merged after them since the fscrypt patches have been well tested.
+> 
+> Ilya, is that okay ?
+> 
+> Thanks
+> 
+> - Xiubo
+> 
+> On 6/6/23 00:54, Matthew Wilcox (Oracle) wrote:
+> > After we iterate through the locked folios using filemap_get_folios_tag(),
+> > we currently convert back to a page (and then in some circumstaces back
+> > to a folio again!).  Just use a folio throughout and avoid various hidden
+> > calls to compound_head().  Ceph still uses a page array to interact with
+> > the OSD which should be cleaned up in a subsequent patch.
+> > 
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > ---
+> >   fs/ceph/addr.c | 79 +++++++++++++++++++++++++-------------------------
+> >   1 file changed, 39 insertions(+), 40 deletions(-)
+> > 
+> > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> > index 6bb251a4d613..e2d92a8a53ca 100644
+> > --- a/fs/ceph/addr.c
+> > +++ b/fs/ceph/addr.c
+> > @@ -888,7 +888,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+> >   		int num_ops = 0, op_idx;
+> >   		unsigned i, nr_folios, max_pages, locked_pages = 0;
+> >   		struct page **pages = NULL, **data_pages;
+> > -		struct page *page;
+> > +		struct folio *folio;
+> >   		pgoff_t strip_unit_end = 0;
+> >   		u64 offset = 0, len = 0;
+> >   		bool from_pool = false;
+> > @@ -902,22 +902,22 @@ static int ceph_writepages_start(struct address_space *mapping,
+> >   		if (!nr_folios && !locked_pages)
+> >   			break;
+> >   		for (i = 0; i < nr_folios && locked_pages < max_pages; i++) {
+> > -			page = &fbatch.folios[i]->page;
+> > -			dout("? %p idx %lu\n", page, page->index);
+> > +			folio = fbatch.folios[i];
+> > +			dout("? %p idx %lu\n", folio, folio->index);
+> >   			if (locked_pages == 0)
+> > -				lock_page(page);  /* first page */
+> > -			else if (!trylock_page(page))
+> > +				folio_lock(folio);  /* first folio */
+> > +			else if (!folio_trylock(folio))
+> >   				break;
+> >   			/* only dirty pages, or our accounting breaks */
+> > -			if (unlikely(!PageDirty(page)) ||
+> > -			    unlikely(page->mapping != mapping)) {
+> > -				dout("!dirty or !mapping %p\n", page);
+> > -				unlock_page(page);
+> > +			if (unlikely(!folio_test_dirty(folio)) ||
+> > +			    unlikely(folio->mapping != mapping)) {
+> > +				dout("!dirty or !mapping %p\n", folio);
+> > +				folio_unlock(folio);
+> >   				continue;
+> >   			}
+> >   			/* only if matching snap context */
+> > -			pgsnapc = page_snap_context(page);
+> > +			pgsnapc = page_snap_context(&folio->page);
+> >   			if (pgsnapc != snapc) {
+> >   				dout("page snapc %p %lld != oldest %p %lld\n",
+> >   				     pgsnapc, pgsnapc->seq, snapc, snapc->seq);
+> > @@ -925,12 +925,10 @@ static int ceph_writepages_start(struct address_space *mapping,
+> >   				    !ceph_wbc.head_snapc &&
+> >   				    wbc->sync_mode != WB_SYNC_NONE)
+> >   					should_loop = true;
+> > -				unlock_page(page);
+> > +				folio_unlock(folio);
+> >   				continue;
+> >   			}
+> > -			if (page_offset(page) >= ceph_wbc.i_size) {
+> > -				struct folio *folio = page_folio(page);
+> > -
+> > +			if (folio_pos(folio) >= ceph_wbc.i_size) {
+> >   				dout("folio at %lu beyond eof %llu\n",
+> >   				     folio->index, ceph_wbc.i_size);
+> >   				if ((ceph_wbc.size_stable ||
+> > @@ -941,31 +939,32 @@ static int ceph_writepages_start(struct address_space *mapping,
+> >   				folio_unlock(folio);
+> >   				continue;
+> >   			}
+> > -			if (strip_unit_end && (page->index > strip_unit_end)) {
+> > -				dout("end of strip unit %p\n", page);
+> > -				unlock_page(page);
+> > +			if (strip_unit_end && (folio->index > strip_unit_end)) {
+> > +				dout("end of strip unit %p\n", folio);
+> > +				folio_unlock(folio);
+> >   				break;
+> >   			}
+> > -			if (PageWriteback(page) || PageFsCache(page)) {
+> > +			if (folio_test_writeback(folio) ||
+> > +			    folio_test_fscache(folio)) {
+> >   				if (wbc->sync_mode == WB_SYNC_NONE) {
+> > -					dout("%p under writeback\n", page);
+> > -					unlock_page(page);
+> > +					dout("%p under writeback\n", folio);
+> > +					folio_unlock(folio);
+> >   					continue;
+> >   				}
+> > -				dout("waiting on writeback %p\n", page);
+> > -				wait_on_page_writeback(page);
+> > -				wait_on_page_fscache(page);
+> > +				dout("waiting on writeback %p\n", folio);
+> > +				folio_wait_writeback(folio);
+> > +				folio_wait_fscache(folio);
+> >   			}
+> > -			if (!clear_page_dirty_for_io(page)) {
+> > -				dout("%p !clear_page_dirty_for_io\n", page);
+> > -				unlock_page(page);
+> > +			if (!folio_clear_dirty_for_io(folio)) {
+> > +				dout("%p !folio_clear_dirty_for_io\n", folio);
+> > +				folio_unlock(folio);
+> >   				continue;
+> >   			}
+> >   			/*
+> >   			 * We have something to write.  If this is
+> > -			 * the first locked page this time through,
+> > +			 * the first locked folio this time through,
+> >   			 * calculate max possinle write size and
+> >   			 * allocate a page array
+> >   			 */
+> > @@ -975,7 +974,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+> >   				u32 xlen;
+> >   				/* prepare async write request */
+> > -				offset = (u64)page_offset(page);
+> > +				offset = folio_pos(folio);
+> >   				ceph_calc_file_object_mapping(&ci->i_layout,
+> >   							      offset, wsize,
+> >   							      &objnum, &objoff,
+> > @@ -983,7 +982,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+> >   				len = xlen;
+> >   				num_ops = 1;
+> > -				strip_unit_end = page->index +
+> > +				strip_unit_end = folio->index +
+> >   					((len - 1) >> PAGE_SHIFT);
+> >   				BUG_ON(pages);
+> > @@ -998,33 +997,33 @@ static int ceph_writepages_start(struct address_space *mapping,
+> >   				}
+> >   				len = 0;
+> > -			} else if (page->index !=
+> > +			} else if (folio->index !=
+> >   				   (offset + len) >> PAGE_SHIFT) {
+> >   				if (num_ops >= (from_pool ?  CEPH_OSD_SLAB_OPS :
+> >   							     CEPH_OSD_MAX_OPS)) {
+> > -					redirty_page_for_writepage(wbc, page);
+> > -					unlock_page(page);
+> > +					folio_redirty_for_writepage(wbc, folio);
+> > +					folio_unlock(folio);
+> >   					break;
+> >   				}
+> >   				num_ops++;
+> > -				offset = (u64)page_offset(page);
+> > +				offset = (u64)folio_pos(folio);
+> >   				len = 0;
+> >   			}
+> >   			/* note position of first page in fbatch */
+> > -			dout("%p will write page %p idx %lu\n",
+> > -			     inode, page, page->index);
+> > +			dout("%p will write folio %p idx %lu\n",
+> > +			     inode, folio, folio->index);
+> >   			if (atomic_long_inc_return(&fsc->writeback_count) >
+> >   			    CONGESTION_ON_THRESH(
+> >   				    fsc->mount_options->congestion_kb))
+> >   				fsc->write_congested = true;
+> > -			pages[locked_pages++] = page;
+> > +			pages[locked_pages++] = &folio->page;
+> >   			fbatch.folios[i] = NULL;
+> > -			len += thp_size(page);
+> > +			len += folio_size(folio);
+> >   		}
+> >   		/* did we get anything? */
+> > @@ -1073,7 +1072,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+> >   			BUG_ON(IS_ERR(req));
+> >   		}
+> >   		BUG_ON(len < page_offset(pages[locked_pages - 1]) +
+> > -			     thp_size(page) - offset);
+> > +			     folio_size(folio) - offset);
+> >   		req->r_callback = writepages_finish;
+> >   		req->r_inode = inode;
+> > @@ -1115,7 +1114,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+> >   			set_page_writeback(pages[i]);
+> >   			if (caching)
+> >   				ceph_set_page_fscache(pages[i]);
+> > -			len += thp_size(page);
+> > +			len += folio_size(folio);
+> >   		}
+> >   		ceph_fscache_write_to_cache(inode, offset, len, caching);
+> > @@ -1125,7 +1124,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+> >   			/* writepages_finish() clears writeback pages
+> >   			 * according to the data length, so make sure
+> >   			 * data length covers all locked pages */
+> > -			u64 min_len = len + 1 - thp_size(page);
+> > +			u64 min_len = len + 1 - folio_size(folio);
+> >   			len = get_writepages_data_length(inode, pages[i - 1],
+> >   							 offset);
+> >   			len = max(len, min_len);
+> 
