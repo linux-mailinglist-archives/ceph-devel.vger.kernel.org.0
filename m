@@ -2,147 +2,62 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 26C08725243
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Jun 2023 04:57:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFCAB7255C7
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Jun 2023 09:35:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240826AbjFGC5v (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 6 Jun 2023 22:57:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54046 "EHLO
+        id S237707AbjFGHfv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 7 Jun 2023 03:35:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240816AbjFGC5t (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 6 Jun 2023 22:57:49 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86C1D1990
-        for <ceph-devel@vger.kernel.org>; Tue,  6 Jun 2023 19:57:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686106623;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=W6ifqNbzhiVB+sXugcXPHJCtGlHwF8tB9EcH3C1JuZg=;
-        b=iJlY2u2D9cb/BDQ30coAxG7ulVdthmGiWDOfu4QWxxxdsIKdBYup++WflcTTZGGN27xbJn
-        q5xeO0PrsGVHmxprnjfhEpk9as4WSU64kar+PFZ5bvzR30rRh1auKmMxzpVnBodvq70Q+Q
-        3ZVYlySJC2jUzcQlNmJ3zOubQuDzERg=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-646-SlQ0TdLaPmGRKIE9Zpj5Ng-1; Tue, 06 Jun 2023 22:57:00 -0400
-X-MC-Unique: SlQ0TdLaPmGRKIE9Zpj5Ng-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B5BF2101A53A;
-        Wed,  7 Jun 2023 02:56:59 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-128.pek2.redhat.com [10.72.12.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5709340D1B68;
-        Wed,  7 Jun 2023 02:56:55 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-Cc:     jlayton@kernel.org, vshankar@redhat.com, mchangir@redhat.com,
-        Xiubo Li <xiubli@redhat.com>, stable@vger.kernel.org
-Subject: [PATCH v4] ceph: fix use-after-free bug for inodes when flushing capsnaps
-Date:   Wed,  7 Jun 2023 10:54:34 +0800
-Message-Id: <20230607025434.1119867-1-xiubli@redhat.com>
+        with ESMTP id S239610AbjFGHfc (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Jun 2023 03:35:32 -0400
+Received: from mail.duneaton.pl (mail.duneaton.pl [51.195.200.134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 536E12D50
+        for <ceph-devel@vger.kernel.org>; Wed,  7 Jun 2023 00:32:26 -0700 (PDT)
+Received: by mail.duneaton.pl (Postfix, from userid 1002)
+        id A5D3A2264A; Wed,  7 Jun 2023 07:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=duneaton.pl; s=mail;
+        t=1686123051; bh=w09dBsCwk4ofNwR3wR3IGm3JJemrD5uAJJHAYB2M7XI=;
+        h=Date:From:To:Subject:From;
+        b=H8wqdC4bKpkKZ1agu8Xsv18dvtrYdNsm77E2Qe/Q464APFTFt6IpUgudrDVjnpcTS
+         pypgA6hrK9Cxc985MBLzJnsOdDOkTtFXGaYZ1ELdOcFJtfltCzhCogb3sIKGEkheck
+         CnRQdApgtD5DchhRokI/Bwr0SQ56Ee0ylX2nbPWgklyWKcuUiVQVTVPyWy3NO027/g
+         kj36RHo5it53hNO/zJoGQq/lLY9kZtlSvOPHtw+I43vpyxTNg0/G0HlMikPO+uR0vy
+         +FMdTpATx5jZdFKw0acmC5bX1XDTnPuax+6dAfv1wEQTWb6oZKWRcf+NXdHQe6FM3Q
+         oSWZBu32Esjow==
+Received: by mail.duneaton.pl for <ceph-devel@vger.kernel.org>; Wed,  7 Jun 2023 07:30:46 GMT
+Message-ID: <20230607064501-0.1.76.1ea5h.0.3yfljpx95k@duneaton.pl>
+Date:   Wed,  7 Jun 2023 07:30:46 GMT
+From:   =?UTF-8?Q? "Marcin_Seku=C5=82a" ?= <marcin.sekula@duneaton.pl>
+To:     <ceph-devel@vger.kernel.org>
+Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
+X-Mailer: mail.duneaton.pl
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_MSPIKE_BL,
+        RCVD_IN_MSPIKE_L3,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+Dzie=C5=84 dobry,
 
-There is a race between capsnaps flush and removing the inode from
-'mdsc->snap_flush_list' list:
+zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
+=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
+o dalszych rozm=C3=B3w.=20
 
-   == Thread A ==                     == Thread B ==
-ceph_queue_cap_snap()
- -> allocate 'capsnapA'
- ->ihold('&ci->vfs_inode')
- ->add 'capsnapA' to 'ci->i_cap_snaps'
- ->add 'ci' to 'mdsc->snap_flush_list'
-    ...
-   == Thread C ==
-ceph_flush_snaps()
- ->__ceph_flush_snaps()
-  ->__send_flush_snap()
-                                handle_cap_flushsnap_ack()
-                                 ->iput('&ci->vfs_inode')
-                                   this also will release 'ci'
-                                    ...
-				      == Thread D ==
-                                ceph_handle_snap()
-                                 ->flush_snaps()
-                                  ->iterate 'mdsc->snap_flush_list'
-                                   ->get the stale 'ci'
- ->remove 'ci' from                ->ihold(&ci->vfs_inode) this
-   'mdsc->snap_flush_list'           will WARNING
+Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
+=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
+=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
+strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
 
-To fix this we will increase the inode's i_count ref when adding 'ci'
-to the 'mdsc->snap_flush_list' list.
-
-Cc: stable@vger.kernel.org
-URL: https://bugzilla.redhat.com/show_bug.cgi?id=2209299
-Reviewed-by: Milind Changire <mchangir@redhat.com>
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
-
-V4:
-- s/put/need_put/
+Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
 
 
- fs/ceph/caps.c | 6 ++++++
- fs/ceph/snap.c | 4 +++-
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 8c1fc64b290c..bb78d0fbfa62 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -1684,6 +1684,7 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
- 	struct inode *inode = &ci->netfs.inode;
- 	struct ceph_mds_client *mdsc = ceph_inode_to_client(inode)->mdsc;
- 	struct ceph_mds_session *session = NULL;
-+	int need_put = 0;
- 	int mds;
- 
- 	dout("ceph_flush_snaps %p\n", inode);
-@@ -1728,8 +1729,13 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
- 		ceph_put_mds_session(session);
- 	/* we flushed them all; remove this inode from the queue */
- 	spin_lock(&mdsc->snap_flush_lock);
-+	if (!list_empty(&ci->i_snap_flush_item))
-+		need_put++;
- 	list_del_init(&ci->i_snap_flush_item);
- 	spin_unlock(&mdsc->snap_flush_lock);
-+
-+	if (need_put)
-+		iput(inode);
- }
- 
- /*
-diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-index 7943981914cf..e03b020d87d7 100644
---- a/fs/ceph/snap.c
-+++ b/fs/ceph/snap.c
-@@ -697,8 +697,10 @@ int __ceph_finish_cap_snap(struct ceph_inode_info *ci,
- 	     capsnap->size);
- 
- 	spin_lock(&mdsc->snap_flush_lock);
--	if (list_empty(&ci->i_snap_flush_item))
-+	if (list_empty(&ci->i_snap_flush_item)) {
-+		ihold(inode);
- 		list_add_tail(&ci->i_snap_flush_item, &mdsc->snap_flush_list);
-+	}
- 	spin_unlock(&mdsc->snap_flush_lock);
- 	return 1;  /* caller may want to ceph_flush_snaps */
- }
--- 
-2.40.1
-
+Pozdrawiam
+Marcin Seku=C5=82a
