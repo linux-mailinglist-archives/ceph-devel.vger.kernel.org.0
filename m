@@ -2,61 +2,61 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B6B672643B
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Jun 2023 17:22:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53EA372643D
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Jun 2023 17:22:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241402AbjFGPWq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 7 Jun 2023 11:22:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33784 "EHLO
+        id S241342AbjFGPWx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 7 Jun 2023 11:22:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241419AbjFGPWD (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Jun 2023 11:22:03 -0400
+        with ESMTP id S241335AbjFGPWV (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Jun 2023 11:22:21 -0400
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C79C026AD
-        for <ceph-devel@vger.kernel.org>; Wed,  7 Jun 2023 08:21:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7068626B1
+        for <ceph-devel@vger.kernel.org>; Wed,  7 Jun 2023 08:21:45 -0700 (PDT)
 Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5DE003F19A
-        for <ceph-devel@vger.kernel.org>; Wed,  7 Jun 2023 15:21:41 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id DD0ED3F203
+        for <ceph-devel@vger.kernel.org>; Wed,  7 Jun 2023 15:21:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1686151301;
-        bh=aP80D7IJtF5T0WH6ImgNwtx1y7/GP3UA0si/dTzxF1Q=;
+        s=20210705; t=1686151303;
+        bh=/It8VSgZDTEKktJxHTMOOJHpvqL0RXNtakCJDr6cWYA=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
          MIME-Version;
-        b=mRi3m18Q76CrGvI81VPbZaBnwTFBqw3xeNS+sziZs+jRKr4zbJ/dNH9XmkaXAMMRw
-         9LjNuNMSbx5DqsqGjx+scbr3Vu/YHYwKCCMua5R4vGIZcYxTaaWuuMpDkBeRVTnUYn
-         ZtjwnLY4PTDl9j2GaC4HcHekM3KMJD7iB3x5x8/q/eZs0UjvpW4iSp4l/CxJZvtz3c
-         FPRYgYzr5ikCpaaVs1sPksb4+LvGaRJV95tHOvd3DwrHJ1XSupltQd78AUI8Imvq3D
-         26CcemUj6SzYj5jS6P2qs2hRIF9Rmz+Qf6rwJ1B3jJwnP1SLgcak3iTz8hlp78CNg/
-         olkJe8tt0w8Qg==
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-514a4c3ff90so1047238a12.2
-        for <ceph-devel@vger.kernel.org>; Wed, 07 Jun 2023 08:21:41 -0700 (PDT)
+        b=dFjetVHDMVLaNbrnBpHs0i9uLy+QQMkC4H4gxGEjyoqRwEmlAjKfuZCQEYZ2/Td/M
+         Zr1xq73g6GdxV9jn3YPDzxPOtUGEA92MlUHNXTXuuvJUzdlrwMFZMC/qSW6zsAArlC
+         /+KAdPfa5/L9ZRh/XSd4aDPedQM+nwPq7jUyiqjceQCzzVWufxZCjDqDqlY9CRCnpy
+         4dLGp1TNJzEb3YiJbIB9tskAzJmajFVAin+wfv/DtdHKG6lXFwCtYb7iHluZuHoi0u
+         AmKECDsV6KB7xjmeViS8msF9pnTb/6clgXhN/2OHJHKsvWCPSyniF5cJo/JLp2a5xo
+         JaCEv3/VkWE1w==
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-513f337d478so832523a12.3
+        for <ceph-devel@vger.kernel.org>; Wed, 07 Jun 2023 08:21:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686151301; x=1688743301;
+        d=1e100.net; s=20221208; t=1686151303; x=1688743303;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aP80D7IJtF5T0WH6ImgNwtx1y7/GP3UA0si/dTzxF1Q=;
-        b=VXaIuhF+AIczqYYkPerj0hxAYJe0LB2B849XrLUQo3SoqrSa6DF91lBqBom4V/2+lz
-         YpQ6W7YvBw92lEioPCuSn+HLBGcnUH6HlIedZ4Wwae6rtUHwyblcyitet8Wdo4q8NOrq
-         FxahVzrr0XtzIbk2ACohda7CrxvjWcV72+8nfeiPHctlr9dPlocU6MuWTnHgad+g3FZo
-         McmNXaDpVENmOEIGSMgYtXwNblRZ0+LAU+H3a1jpi84RPo8W9OnLeJIfGXZ4wJyrGo9e
-         O0vJh+xDYLVRPayUeb9dEIzPggOQSDpWg3RFc5+AzakHZj6TbLY5vWVFys5ZKgrbUlea
-         WkIA==
-X-Gm-Message-State: AC+VfDxN4voPNxktY6UaJ92KTi2bOYqexFxH1dwyS/ZbtHyoxFxJsG77
-        Ft7j8tRto1F3KodoGyZjw52m43Q7OIIkx9sf9z5Yo7R8zO40u0aQPBEbAv1T4f6eELoY/8lEh2i
-        38/KWaQnTeFgMfovJNaORGZ28DgGCz9U33MS35uA=
-X-Received: by 2002:a05:6402:1207:b0:514:9c7c:8a30 with SMTP id c7-20020a056402120700b005149c7c8a30mr4752011edw.30.1686151301141;
-        Wed, 07 Jun 2023 08:21:41 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5C/ocYU2yAPeNH8/65GFlsb1gg0GKVtLLnbC2OVeYGiRDh0YawOOodw8SZ7Vyn3ao+X9HziA==
-X-Received: by 2002:a05:6402:1207:b0:514:9c7c:8a30 with SMTP id c7-20020a056402120700b005149c7c8a30mr4751993edw.30.1686151300822;
-        Wed, 07 Jun 2023 08:21:40 -0700 (PDT)
+        bh=/It8VSgZDTEKktJxHTMOOJHpvqL0RXNtakCJDr6cWYA=;
+        b=Ow8+vpnEpK5hGDY7RAfUBJ2PkhXAwNXonpihwL0+Bt3GQgaQzxOC0TjduUuCDRafxZ
+         a10IyPDM4LUXHs/lXsjKET005IsNjxZvpWCnY/hyoMvVZmaJJ3UnKJHBYtCcteqgNExX
+         a2hS/T+UFAfio2vdB6LSYMpwKlcEi+SH2m7RCgXvy0DnBhJQd1G6fV6BVAfEOoUqDwad
+         K8iPFJLepDgcxdhHDdovEq9a7Xb+1W+r7L7oyrEEthFNDtN73Lzh0Z7BMP+TgXCm3u/Q
+         dG32UbggNOSz7zweFy/eAdl1j41vs0MD5FgLi32ChHOYfvRJHLC5AV6129nzceAL+tYh
+         dvFg==
+X-Gm-Message-State: AC+VfDxIRzUxMtcRc5P3W0uyjqOJrom8Oyja1J3wPs4ZhgrBovY+xexf
+        lYLsCHV19wRcSL+UHhYr4Hr/9Fq2RePQZDQEE+NkTrPLKdJtF+bQh7wZdw9Um/aVc3h2QOgQ37O
+        X7H3+ZNHn1IMvDEdixmVd6tpS5nAvTPfDfaaVqk8=
+X-Received: by 2002:aa7:d6d1:0:b0:514:9b64:e16b with SMTP id x17-20020aa7d6d1000000b005149b64e16bmr4291083edr.35.1686151303273;
+        Wed, 07 Jun 2023 08:21:43 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ549H6QwL6/dPEtGgtxmi5qPiQgs+YkY6irYHiRo8gsOZQw2QXXW6qBLDYK5KPmgsOY3/heBg==
+X-Received: by 2002:aa7:d6d1:0:b0:514:9b64:e16b with SMTP id x17-20020aa7d6d1000000b005149b64e16bmr4291070edr.35.1686151303150;
+        Wed, 07 Jun 2023 08:21:43 -0700 (PDT)
 Received: from amikhalitsyn.local (dslb-002-205-064-187.002.205.pools.vodafone-ip.de. [2.205.64.187])
-        by smtp.gmail.com with ESMTPSA id w17-20020a056402129100b005147503a238sm6263441edv.17.2023.06.07.08.21.39
+        by smtp.gmail.com with ESMTPSA id w17-20020a056402129100b005147503a238sm6263441edv.17.2023.06.07.08.21.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Jun 2023 08:21:40 -0700 (PDT)
+        Wed, 07 Jun 2023 08:21:42 -0700 (PDT)
 From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To:     xiubli@redhat.com
 Cc:     brauner@kernel.org, stgraber@ubuntu.com,
@@ -66,9 +66,9 @@ Cc:     brauner@kernel.org, stgraber@ubuntu.com,
         Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
         Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 11/14] ceph: allow idmapped setattr inode op
-Date:   Wed,  7 Jun 2023 17:20:35 +0200
-Message-Id: <20230607152038.469739-12-aleksandr.mikhalitsyn@canonical.com>
+Subject: [PATCH v3 12/14] ceph/acl: allow idmapped set_acl inode op
+Date:   Wed,  7 Jun 2023 17:20:36 +0200
+Message-Id: <20230607152038.469739-13-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230607152038.469739-1-aleksandr.mikhalitsyn@canonical.com>
 References: <20230607152038.469739-1-aleksandr.mikhalitsyn@canonical.com>
@@ -86,7 +86,7 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Christian Brauner <christian.brauner@ubuntu.com>
 
-Enable __ceph_setattr() to handle idmapped mounts. This is just a matter
+Enable ceph_set_acl() to handle idmapped mounts. This is just a matter
 of passing down the mount's idmapping.
 
 Cc: Xiubo Li <xiubli@redhat.com>
@@ -94,88 +94,24 @@ Cc: Jeff Layton <jlayton@kernel.org>
 Cc: Ilya Dryomov <idryomov@gmail.com>
 Cc: ceph-devel@vger.kernel.org
 Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-[ adapted to b27c82e12965 ("attr: port attribute changes to new types") ]
 Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 ---
-v3:
-	- reworked as Christian suggested here:
-	https://lore.kernel.org/lkml/20230602-vorzeichen-praktikum-f17931692301@brauner/
----
- fs/ceph/inode.c | 29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+ fs/ceph/acl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index bcd9b506ec3b..09c78a67738b 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -2051,17 +2051,27 @@ int __ceph_setattr(struct mnt_idmap *idmap, struct inode *inode,
- 
- 	dout("setattr %p issued %s\n", inode, ceph_cap_string(issued));
- 
-+	/*
-+	 * The attr->ia_{g,u}id members contain the target {g,u}id we're
-+	 * sending over the wire. The mount idmapping only matters when we
-+	 * create new filesystem objects based on the caller's mapped
-+	 * fs{g,u}id.
-+	 */
-+	req->r_mnt_idmap = &nop_mnt_idmap;
- 	if (ia_valid & ATTR_UID) {
- 		dout("setattr %p uid %d -> %d\n", inode,
- 		     from_kuid(&init_user_ns, inode->i_uid),
- 		     from_kuid(&init_user_ns, attr->ia_uid));
- 		if (issued & CEPH_CAP_AUTH_EXCL) {
--			inode->i_uid = attr->ia_uid;
-+			inode->i_uid = from_vfsuid(idmap, i_user_ns(inode),
-+						   attr->ia_vfsuid);
- 			dirtied |= CEPH_CAP_AUTH_EXCL;
- 		} else if ((issued & CEPH_CAP_AUTH_SHARED) == 0 ||
--			   !uid_eq(attr->ia_uid, inode->i_uid)) {
-+			   !uid_eq(from_vfsuid(idmap, i_user_ns(inode), attr->ia_vfsuid),
-+				   inode->i_uid)) {
-+			kuid_t fsuid = from_vfsuid(idmap, i_user_ns(inode), attr->ia_vfsuid);
- 			req->r_args.setattr.uid = cpu_to_le32(
--				from_kuid(&init_user_ns, attr->ia_uid));
-+				from_kuid(&init_user_ns, fsuid));
- 			mask |= CEPH_SETATTR_UID;
- 			release |= CEPH_CAP_AUTH_SHARED;
- 		}
-@@ -2071,12 +2081,15 @@ int __ceph_setattr(struct mnt_idmap *idmap, struct inode *inode,
- 		     from_kgid(&init_user_ns, inode->i_gid),
- 		     from_kgid(&init_user_ns, attr->ia_gid));
- 		if (issued & CEPH_CAP_AUTH_EXCL) {
--			inode->i_gid = attr->ia_gid;
-+			inode->i_gid = from_vfsgid(idmap, i_user_ns(inode),
-+						   attr->ia_vfsgid);
- 			dirtied |= CEPH_CAP_AUTH_EXCL;
- 		} else if ((issued & CEPH_CAP_AUTH_SHARED) == 0 ||
--			   !gid_eq(attr->ia_gid, inode->i_gid)) {
-+			   !gid_eq(from_vfsgid(idmap, i_user_ns(inode), attr->ia_vfsgid),
-+				   inode->i_gid)) {
-+			kgid_t fsgid = from_vfsgid(idmap, i_user_ns(inode), attr->ia_vfsgid);
- 			req->r_args.setattr.gid = cpu_to_le32(
--				from_kgid(&init_user_ns, attr->ia_gid));
-+				from_kgid(&init_user_ns, fsgid));
- 			mask |= CEPH_SETATTR_GID;
- 			release |= CEPH_CAP_AUTH_SHARED;
- 		}
-@@ -2241,7 +2254,7 @@ int ceph_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	if (ceph_inode_is_shutdown(inode))
- 		return -ESTALE;
- 
--	err = setattr_prepare(&nop_mnt_idmap, dentry, attr);
-+	err = setattr_prepare(idmap, dentry, attr);
- 	if (err != 0)
- 		return err;
- 
-@@ -2256,7 +2269,7 @@ int ceph_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	err = __ceph_setattr(idmap, inode, attr);
- 
- 	if (err >= 0 && (attr->ia_valid & ATTR_MODE))
--		err = posix_acl_chmod(&nop_mnt_idmap, dentry, attr->ia_mode);
-+		err = posix_acl_chmod(idmap, dentry, attr->ia_mode);
- 
- 	return err;
- }
+diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
+index 51ffef848429..d0ca5a0060d8 100644
+--- a/fs/ceph/acl.c
++++ b/fs/ceph/acl.c
+@@ -105,7 +105,7 @@ int ceph_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	case ACL_TYPE_ACCESS:
+ 		name = XATTR_NAME_POSIX_ACL_ACCESS;
+ 		if (acl) {
+-			ret = posix_acl_update_mode(&nop_mnt_idmap, inode,
++			ret = posix_acl_update_mode(idmap, inode,
+ 						    &new_mode, &acl);
+ 			if (ret)
+ 				goto out;
 -- 
 2.34.1
 
