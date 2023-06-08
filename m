@@ -2,193 +2,184 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B139C727503
-	for <lists+ceph-devel@lfdr.de>; Thu,  8 Jun 2023 04:33:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6424727538
+	for <lists+ceph-devel@lfdr.de>; Thu,  8 Jun 2023 04:50:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233329AbjFHCd2 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 7 Jun 2023 22:33:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43308 "EHLO
+        id S233659AbjFHCu6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 7 Jun 2023 22:50:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233248AbjFHCd1 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Jun 2023 22:33:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B6112115
-        for <ceph-devel@vger.kernel.org>; Wed,  7 Jun 2023 19:32:40 -0700 (PDT)
+        with ESMTP id S231698AbjFHCu4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Jun 2023 22:50:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C13C126A2
+        for <ceph-devel@vger.kernel.org>; Wed,  7 Jun 2023 19:50:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686191559;
+        s=mimecast20190719; t=1686192610;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=SMG9TsF5R2i5zpVWwta3zOho1E/TKX/+nxaj29Wo2QI=;
-        b=ZSsSMcUjTEWl2XKeJyzwz2yuukXdFKnwovR9jjLzy1MRRI2HKltqdxbx2ajbyZotPZaRTx
-        YpfJhRbB1IQkkZ9d0m5wnMUcJz3GXw/XDBYpqpeeMZfiCN3C/9VCXNuKAqhNxTHUA98WLc
-        8hZxQsGsjAuCzvRzzPOfCrBvHfQBmdo=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-572-lu8IEl94PlaExUE2OQam5g-1; Wed, 07 Jun 2023 22:32:35 -0400
-X-MC-Unique: lu8IEl94PlaExUE2OQam5g-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AF2B529ABA02;
-        Thu,  8 Jun 2023 02:32:34 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-13-135.pek2.redhat.com [10.72.13.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 69EA5400E6C5;
-        Thu,  8 Jun 2023 02:32:31 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-Cc:     jlayton@kernel.org, vshankar@redhat.com, lhenriques@suse.de,
-        mchangir@redhat.com, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v3 2/2] ceph: just wait the osd requests' callbacks to finish when unmounting
-Date:   Thu,  8 Jun 2023 10:29:59 +0800
-Message-Id: <20230608022959.45134-3-xiubli@redhat.com>
-In-Reply-To: <20230608022959.45134-1-xiubli@redhat.com>
-References: <20230608022959.45134-1-xiubli@redhat.com>
+        bh=tuec0jKorjW3abx5vC9xzgC+qO8AVpXPFGA3JYTZHxw=;
+        b=iDSoOENgjYrDCraA/+zw8DOrJB2GN5Hz2OPqI05DOSP2m86gUTKUvZPSiZlcsVeM59bl/I
+        95KjDA6UuqEpswO7RdspJ38SVrpxZl5WhOlDlaql6VNFZHFntdYS4W3ONc+ApXyXoViedy
+        PypwgnSroIlssUCRj5zclNczLyZwOXk=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-499-EDKuLAzxOnqJSfdKKngl_A-1; Wed, 07 Jun 2023 22:50:09 -0400
+X-MC-Unique: EDKuLAzxOnqJSfdKKngl_A-1
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1b02cd4b829so1529385ad.1
+        for <ceph-devel@vger.kernel.org>; Wed, 07 Jun 2023 19:50:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686192608; x=1688784608;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tuec0jKorjW3abx5vC9xzgC+qO8AVpXPFGA3JYTZHxw=;
+        b=k/Pe0nQM9bZ62vRxV20U8dwCC23eYzf+oUk2ROuXQoOgGtfBRe8OC7oU4gtUBtcFLR
+         DQx4Use8iTnj/sG8291ywVK8HyJmf6e8d+/mvXJ1+0C3yRE56PYNRMWMh406+tpS5ExK
+         wqiyQXro4qzbE30PQN8U5xz5yDsTZu2PNsNnZSmRhXSxo08SsdxdtjaqyyVJH6F8EQkr
+         yni3qFHbozYEgJQ7od/rG5HOpaNHT3sF+t0CSkQLzkGCWTq+V23ZuCuuy938prp1zRU+
+         njT3+S9XZA8fe9RJhFPhZViLZ7ME3JGtZvJ+Mx0gKKzUmdyG/gHFMdLXQAF70T2TVmjZ
+         Hsug==
+X-Gm-Message-State: AC+VfDwkAIGsp6mIX1uTmbGurYc0fRZYLbPY4lSo31bAh9MhuqAHquli
+        WFdsD7GednwIO0ZQ/kefhVSg/Hq+oJK7XIM+wAJywysqQVPaRLcSRfs6MzNuBdBoLSmUKalR2lV
+        0JrvrlbRJ9RP/adEAUl1bWw==
+X-Received: by 2002:a17:903:230a:b0:1ad:d542:6e14 with SMTP id d10-20020a170903230a00b001add5426e14mr973625plh.12.1686192608197;
+        Wed, 07 Jun 2023 19:50:08 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6itOIvrnnLnEWMdjTRy3f3rHNskO67Z99VSuETtLabd21ScJatQO03ScLrZTuzsiiYoqJWcg==
+X-Received: by 2002:a17:903:230a:b0:1ad:d542:6e14 with SMTP id d10-20020a170903230a00b001add5426e14mr973606plh.12.1686192607910;
+        Wed, 07 Jun 2023 19:50:07 -0700 (PDT)
+Received: from [10.72.13.135] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id x15-20020a170902ec8f00b001b176ba9f17sm195739plg.149.2023.06.07.19.50.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jun 2023 19:50:07 -0700 (PDT)
+Message-ID: <f1e81edf-595b-3f7c-3f00-2c96718fbb69@redhat.com>
+Date:   Thu, 8 Jun 2023 10:49:55 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v4 11/14] ceph: allow idmapped setattr inode op
+Content-Language: en-US
+To:     Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc:     brauner@kernel.org, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230607180958.645115-1-aleksandr.mikhalitsyn@canonical.com>
+ <20230607180958.645115-12-aleksandr.mikhalitsyn@canonical.com>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20230607180958.645115-12-aleksandr.mikhalitsyn@canonical.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
 
-The sync_filesystem() will flush all the dirty buffer and submit the
-osd reqs to the osdc and then is blocked to wait for all the reqs to
-finish. But the when the reqs' replies come, the reqs will be removed
-from osdc just before the req->r_callback()s are called. Which means
-the sync_filesystem() will be woke up by leaving the req->r_callback()s
-are still running.
+On 6/8/23 02:09, Alexander Mikhalitsyn wrote:
+> From: Christian Brauner <christian.brauner@ubuntu.com>
+>
+> Enable __ceph_setattr() to handle idmapped mounts. This is just a matter
+> of passing down the mount's idmapping.
+>
+> Cc: Xiubo Li <xiubli@redhat.com>
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Cc: Ilya Dryomov <idryomov@gmail.com>
+> Cc: ceph-devel@vger.kernel.org
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> [ adapted to b27c82e12965 ("attr: port attribute changes to new types") ]
+> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> ---
+> v4:
+> 	- introduced fsuid/fsgid local variables
+> v3:
+> 	- reworked as Christian suggested here:
+> 	https://lore.kernel.org/lkml/20230602-vorzeichen-praktikum-f17931692301@brauner/
+> ---
+>   fs/ceph/inode.c | 20 ++++++++++++--------
+>   1 file changed, 12 insertions(+), 8 deletions(-)
+>
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index bcd9b506ec3b..ca438d1353b2 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -2052,31 +2052,35 @@ int __ceph_setattr(struct mnt_idmap *idmap, struct inode *inode,
+>   	dout("setattr %p issued %s\n", inode, ceph_cap_string(issued));
+>   
+>   	if (ia_valid & ATTR_UID) {
+> +		kuid_t fsuid = from_vfsuid(idmap, i_user_ns(inode), attr->ia_vfsuid);
+> +
+>   		dout("setattr %p uid %d -> %d\n", inode,
+>   		     from_kuid(&init_user_ns, inode->i_uid),
+>   		     from_kuid(&init_user_ns, attr->ia_uid));
+>   		if (issued & CEPH_CAP_AUTH_EXCL) {
+> -			inode->i_uid = attr->ia_uid;
+> +			inode->i_uid = fsuid;
+>   			dirtied |= CEPH_CAP_AUTH_EXCL;
+>   		} else if ((issued & CEPH_CAP_AUTH_SHARED) == 0 ||
+> -			   !uid_eq(attr->ia_uid, inode->i_uid)) {
+> +			   !uid_eq(fsuid, inode->i_uid)) {
+>   			req->r_args.setattr.uid = cpu_to_le32(
+> -				from_kuid(&init_user_ns, attr->ia_uid));
+> +				from_kuid(&init_user_ns, fsuid));
+>   			mask |= CEPH_SETATTR_UID;
+>   			release |= CEPH_CAP_AUTH_SHARED;
+>   		}
+>   	}
+>   	if (ia_valid & ATTR_GID) {
+> +		kgid_t fsgid = from_vfsgid(idmap, i_user_ns(inode), attr->ia_vfsgid);
+> +
+>   		dout("setattr %p gid %d -> %d\n", inode,
+>   		     from_kgid(&init_user_ns, inode->i_gid),
+>   		     from_kgid(&init_user_ns, attr->ia_gid));
+>   		if (issued & CEPH_CAP_AUTH_EXCL) {
+> -			inode->i_gid = attr->ia_gid;
+> +			inode->i_gid = fsgid;
+>   			dirtied |= CEPH_CAP_AUTH_EXCL;
+>   		} else if ((issued & CEPH_CAP_AUTH_SHARED) == 0 ||
+> -			   !gid_eq(attr->ia_gid, inode->i_gid)) {
+> +			   !gid_eq(fsgid, inode->i_gid)) {
+>   			req->r_args.setattr.gid = cpu_to_le32(
+> -				from_kgid(&init_user_ns, attr->ia_gid));
+> +				from_kgid(&init_user_ns, fsgid));
+>   			mask |= CEPH_SETATTR_GID;
+>   			release |= CEPH_CAP_AUTH_SHARED;
+>   		}
+> @@ -2241,7 +2245,7 @@ int ceph_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>   	if (ceph_inode_is_shutdown(inode))
+>   		return -ESTALE;
+>   
+> -	err = setattr_prepare(&nop_mnt_idmap, dentry, attr);
+> +	err = setattr_prepare(idmap, dentry, attr);
+>   	if (err != 0)
+>   		return err;
+>   
+> @@ -2256,7 +2260,7 @@ int ceph_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>   	err = __ceph_setattr(idmap, inode, attr);
+>   
+>   	if (err >= 0 && (attr->ia_valid & ATTR_MODE))
+> -		err = posix_acl_chmod(&nop_mnt_idmap, dentry, attr->ia_mode);
+> +		err = posix_acl_chmod(idmap, dentry, attr->ia_mode);
+>   
+>   	return err;
+>   }
 
-This will be buggy when the waiter require the req->r_callback()s to
-release some resources before continuing. So we need to make sure the
-req->r_callback()s are called before removing the reqs from the osdc.
+You should also do 'req->r_mnt_idmap = idmap;' for sync setattr request.
 
-WARNING: CPU: 4 PID: 168846 at fs/crypto/keyring.c:242 fscrypt_destroy_keyring+0x7e/0xd0
-CPU: 4 PID: 168846 Comm: umount Tainted: G S  6.1.0-rc5-ceph-g72ead199864c #1
-Hardware name: Supermicro SYS-5018R-WR/X10SRW-F, BIOS 2.0 12/17/2015
-RIP: 0010:fscrypt_destroy_keyring+0x7e/0xd0
-RSP: 0018:ffffc9000b277e28 EFLAGS: 00010202
-RAX: 0000000000000002 RBX: ffff88810d52ac00 RCX: ffff88810b56aa00
-RDX: 0000000080000000 RSI: ffffffff822f3a09 RDI: ffff888108f59000
-RBP: ffff8881d394fb88 R08: 0000000000000028 R09: 0000000000000000
-R10: 0000000000000001 R11: 11ff4fe6834fcd91 R12: ffff8881d394fc40
-R13: ffff888108f59000 R14: ffff8881d394f800 R15: 0000000000000000
-FS:  00007fd83f6f1080(0000) GS:ffff88885fd00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f918d417000 CR3: 000000017f89a005 CR4: 00000000003706e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-<TASK>
-generic_shutdown_super+0x47/0x120
-kill_anon_super+0x14/0x30
-ceph_kill_sb+0x36/0x90 [ceph]
-deactivate_locked_super+0x29/0x60
-cleanup_mnt+0xb8/0x140
-task_work_run+0x67/0xb0
-exit_to_user_mode_prepare+0x23d/0x240
-syscall_exit_to_user_mode+0x25/0x60
-do_syscall_64+0x40/0x80
-entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fd83dc39e9b
+the setattr will just cache the change locally in client side if the 'x' 
+caps are issued and returns directly or will set a sync setattr reqeust.
 
-We need to increase the blocker counter to make sure all the osd
-requests' callbacks have been finished just before calling the
-kill_anon_super() when unmounting.
+Thanks
 
-URL: https://tracker.ceph.com/issues/58126
-Reviewed-by: Milind Changire <mchangir@redhat.com>
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/addr.c  | 10 ++++++++++
- fs/ceph/super.c | 11 +++++++++++
- fs/ceph/super.h |  2 ++
- 3 files changed, 23 insertions(+)
-
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index ca4dc6450887..d88e310d411a 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -258,6 +258,7 @@ static void finish_netfs_read(struct ceph_osd_request *req)
- 	}
- 	netfs_subreq_terminated(subreq, err, false);
- 	iput(req->r_inode);
-+	ceph_dec_osd_stopping_blocker(fsc->mdsc);
- }
- 
- static bool ceph_netfs_issue_op_inline(struct netfs_io_subrequest *subreq)
-@@ -385,6 +386,10 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
- 	} else {
- 		osd_req_op_extent_osd_iter(req, 0, &iter);
- 	}
-+	if (!ceph_inc_osd_stopping_blocker(fsc->mdsc)) {
-+		err = -EIO;
-+		goto out;
-+	}
- 	req->r_callback = finish_netfs_read;
- 	req->r_priv = subreq;
- 	req->r_inode = inode;
-@@ -857,6 +862,7 @@ static void writepages_finish(struct ceph_osd_request *req)
- 	else
- 		kfree(osd_data->pages);
- 	ceph_osdc_put_request(req);
-+	ceph_dec_osd_stopping_blocker(fsc->mdsc);
- }
- 
- /*
-@@ -1165,6 +1171,10 @@ static int ceph_writepages_start(struct address_space *mapping,
- 		BUG_ON(len < ceph_fscrypt_page_offset(pages[locked_pages - 1]) +
- 			     thp_size(pages[locked_pages - 1]) - offset);
- 
-+		if (!ceph_inc_osd_stopping_blocker(fsc->mdsc)) {
-+			rc = -EIO;
-+			goto release_folios;
-+		}
- 		req->r_callback = writepages_finish;
- 		req->r_inode = inode;
- 
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 48da49e21466..730140edb6f9 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -1502,6 +1502,17 @@ void ceph_dec_mds_stopping_blocker(struct ceph_mds_client *mdsc)
- 	__dec_stopping_blocker(mdsc);
- }
- 
-+/* For data IO requests */
-+bool ceph_inc_osd_stopping_blocker(struct ceph_mds_client *mdsc)
-+{
-+	return __inc_stopping_blocker(mdsc);
-+}
-+
-+void ceph_dec_osd_stopping_blocker(struct ceph_mds_client *mdsc)
-+{
-+	__dec_stopping_blocker(mdsc);
-+}
-+
- static void ceph_kill_sb(struct super_block *s)
- {
- 	struct ceph_fs_client *fsc = ceph_sb_to_client(s);
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 789b47c4e2b3..37e022cfe330 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1402,4 +1402,6 @@ extern void ceph_cleanup_quotarealms_inodes(struct ceph_mds_client *mdsc);
- bool ceph_inc_mds_stopping_blocker(struct ceph_mds_client *mdsc,
- 			       struct ceph_mds_session *session);
- void ceph_dec_mds_stopping_blocker(struct ceph_mds_client *mdsc);
-+bool ceph_inc_osd_stopping_blocker(struct ceph_mds_client *mdsc);
-+void ceph_dec_osd_stopping_blocker(struct ceph_mds_client *mdsc);
- #endif /* _FS_CEPH_SUPER_H */
--- 
-2.40.1
+- Xiubo
 
