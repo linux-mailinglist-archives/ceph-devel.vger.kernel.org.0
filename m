@@ -2,333 +2,140 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BB307278A6
-	for <lists+ceph-devel@lfdr.de>; Thu,  8 Jun 2023 09:22:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76300727C7E
+	for <lists+ceph-devel@lfdr.de>; Thu,  8 Jun 2023 12:13:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235167AbjFHHWA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 8 Jun 2023 03:22:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56884 "EHLO
+        id S233048AbjFHKNQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 8 Jun 2023 06:13:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235359AbjFHHVl (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 8 Jun 2023 03:21:41 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D49772D56
-        for <ceph-devel@vger.kernel.org>; Thu,  8 Jun 2023 00:21:14 -0700 (PDT)
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com [209.85.128.198])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 86C673F14A
-        for <ceph-devel@vger.kernel.org>; Thu,  8 Jun 2023 07:21:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1686208869;
-        bh=ZsNRIyP+X7XOHybtDnn1u0u6wdb6BoZre2xC4a+Lfzc=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=J64qou7sI4dYNm7WOG8SzcrbN47b3LXQ8Pps9rK70L4w86OgSaKqJVrt+lZWQtZQS
-         NVuNe7hq/eWW72Kp8DWF4PPy+84iRHL+cz6il4pxRX00HmU85wptGfUTjgWWVu97cV
-         CoanG7XoWR2WDg5TjDxm9Gou40F+LuP3kC4o8V+RyTkHAM6bAxNs0cyuZIHWsYtWJf
-         v1oVexNKuHcic5+XBt4bN7Ef1behHYg+HWrFVrmZXj9M5h9Cu7cE+WSeP6XoBeqnDg
-         v8M5mUh5FbEjCmO1iNQIQQarPBEOOAXhBxwxM1bYoemT7cXlkqsTDKsr2YnbQfrMU5
-         Pqj9ALQXMsooA==
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-5659c7dad06so5051047b3.0
-        for <ceph-devel@vger.kernel.org>; Thu, 08 Jun 2023 00:21:09 -0700 (PDT)
+        with ESMTP id S231359AbjFHKNP (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 8 Jun 2023 06:13:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20E4D1FE9
+        for <ceph-devel@vger.kernel.org>; Thu,  8 Jun 2023 03:12:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686219146;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=lXFdHkMjdbj3kxc2vl0mbq5q5IxmvWUVHYaQUe9zUGA=;
+        b=H8cHrxhZuqv6zKrt8zkBAqQO1K8s/T10E52AUF6jx8kanNNEbUSEI96RX4D1jyDgeL07sb
+        oqUwk2FTRvBmBwSPWBfFKxZp232zLtXvEymPoFewCL0O86gao0hYyTEt73OA7MG1jwfY5s
+        0TdKLXL4KTSPzF5tAkNz0D3eqNubIVc=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-622-jfwN3noSOpyAwvLW6f34cA-1; Thu, 08 Jun 2023 06:12:25 -0400
+X-MC-Unique: jfwN3noSOpyAwvLW6f34cA-1
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-53f6f7d1881so310228a12.3
+        for <ceph-devel@vger.kernel.org>; Thu, 08 Jun 2023 03:12:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686208868; x=1688800868;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZsNRIyP+X7XOHybtDnn1u0u6wdb6BoZre2xC4a+Lfzc=;
-        b=mIqGkh973dmkj/wloOqTLfAUCPH8yf9qEuTJpuYm2CrRdKc5hbNirKR9rINUuJUsu2
-         tONkufcvRVkQ+KIlqjfx1RHDTEPEnY8FgIJgpEdOSMTJmZuI8gRi0wYG7K/YeleMlgwd
-         ASlNiOb6M+WTDeQeexpK+ymBFaCjiMjmKPeNXmADHHCIgkHCUkSoJztdR5A3qJeTTdac
-         lUZcJxG/jeQo1jq7LX6gEP1J0Fh/Dhw3RnmUr7Nml4nzoWsGvhkQqlZajl1XT+PtvubI
-         Nlp0/hXhzVAT94e+P07NME9QXRxzXd5VPdwqPmiKJ+L2k8R2rSzd9RduSfGR/FvWqz7j
-         99hw==
-X-Gm-Message-State: AC+VfDy1d0MXO9QZmzsxVRAW1qmsH+fhqOrnbKz5GKYGSdk0bfh5AEvV
-        RZm0cmquwcyNKdmYjrrASC4Bn0KoOdZtKvU4Gus/u9PMTH8nXS1quxxa2NxHOppa7NFCXoMJU0w
-        z6HNirhm6Ly7vtPOuycuHtV5cQ0VKM9RQw+N3bQleyg0qZvXmagUh5zs=
-X-Received: by 2002:a0d:ca89:0:b0:565:beb0:75b4 with SMTP id m131-20020a0dca89000000b00565beb075b4mr8683766ywd.49.1686208868285;
-        Thu, 08 Jun 2023 00:21:08 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ7X2flYyQdAEDNe82m+exDFIM0FQhBAqb+nyjjoepRZiJyrTEM1CairZrf0ohrMfiXcDXJEqvo+y7+2o3p1YDA=
-X-Received: by 2002:a0d:ca89:0:b0:565:beb0:75b4 with SMTP id
- m131-20020a0dca89000000b00565beb075b4mr8683747ywd.49.1686208867965; Thu, 08
- Jun 2023 00:21:07 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686219144; x=1688811144;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lXFdHkMjdbj3kxc2vl0mbq5q5IxmvWUVHYaQUe9zUGA=;
+        b=f/LqgcBx0dX2uBgamrNBT2TgFWb415paiXM8edBfZPbqrsSdhA6PTK51dEttvBAdyA
+         yMXTkIBx6le3ARsJIpmWN8Rsb/h8bAgQvhRSNnbVhoKSEXoNdA3PHBJS0mP/eu1yE/2j
+         Z7SNeik4zA1dscJ3D9Ip5tJCe9U+8rz4PvxGvR5NzGv0zMYt4sr6bCnT5tYl4ucPjUCX
+         LxvS/awjhHKBKnY+DzJRmUf8kLI41gI60es+8henIaeATjMM6Dmgkk/RwT8ljz5idB1j
+         otsrMwZ60fQiexKKbC+XNj3osU2Z6O/+X5JuBZBwy7Wc0xozhoyxaZvkcwrqNDvw7Hy1
+         m/FQ==
+X-Gm-Message-State: AC+VfDwmcG4A5Cx7UJ0ATZ7+7f+87dirISKvL3mM+/vsVu9nmO9jfp0v
+        Y3HZUxA2UTAWtvvGtWPxOVQqLR2Sx5DcJPfqafss3FZj4PigQY6GzamwEufXfFjMT/vmcan5njS
+        Ek7nFT4uvhAIpNt0ktqZ5aw==
+X-Received: by 2002:a05:6a20:43aa:b0:10c:ff51:99bb with SMTP id i42-20020a056a2043aa00b0010cff5199bbmr6172888pzl.20.1686219144291;
+        Thu, 08 Jun 2023 03:12:24 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ4U69jgtuG1/MPYTW+NyNGq72BvGC9LQ5+PqJw4mqlQhYrMtU4w7h1yFT0lTLCaifozZP5/rg==
+X-Received: by 2002:a05:6a20:43aa:b0:10c:ff51:99bb with SMTP id i42-20020a056a2043aa00b0010cff5199bbmr6172873pzl.20.1686219143979;
+        Thu, 08 Jun 2023 03:12:23 -0700 (PDT)
+Received: from [10.72.13.135] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id l13-20020a65680d000000b0053474697607sm878436pgt.4.2023.06.08.03.12.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 Jun 2023 03:12:23 -0700 (PDT)
+Message-ID: <c4738f92-6b6c-b680-f480-949dfa413e73@redhat.com>
+Date:   Thu, 8 Jun 2023 18:12:13 +0800
 MIME-Version: 1.0
-References: <20230607180958.645115-1-aleksandr.mikhalitsyn@canonical.com> <8b22fc1e-595a-b729-dd21-2714f22a28a7@redhat.com>
-In-Reply-To: <8b22fc1e-595a-b729-dd21-2714f22a28a7@redhat.com>
-From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date:   Thu, 8 Jun 2023 09:20:56 +0200
-Message-ID: <CAEivzxfkinMgLWNc7u=bMw7HFkjZjDTJKtNNZhF7fZB=VuNTeQ@mail.gmail.com>
-Subject: Re: [PATCH v4 00/14] ceph: support idmapped mounts
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     brauner@kernel.org, stgraber@ubuntu.com,
-        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v4] ceph: fix use-after-free bug for inodes when flushing
+ capsnaps
+Content-Language: en-US
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        vshankar@redhat.com, mchangir@redhat.com, stable@vger.kernel.org
+References: <20230607025434.1119867-1-xiubli@redhat.com>
+ <CAOi1vP9KjpfNkonSEWSm6+HJwykm6ThHchK9E=MR1zSOjr_v+Q@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <CAOi1vP9KjpfNkonSEWSm6+HJwykm6ThHchK9E=MR1zSOjr_v+Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jun 8, 2023 at 5:01=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
+
+On 6/8/23 15:07, Ilya Dryomov wrote:
+> On Wed, Jun 7, 2023 at 4:57 AM <xiubli@redhat.com> wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> There is a race between capsnaps flush and removing the inode from
+>> 'mdsc->snap_flush_list' list:
+>>
+>>     == Thread A ==                     == Thread B ==
+>> ceph_queue_cap_snap()
+>>   -> allocate 'capsnapA'
+>>   ->ihold('&ci->vfs_inode')
+>>   ->add 'capsnapA' to 'ci->i_cap_snaps'
+>>   ->add 'ci' to 'mdsc->snap_flush_list'
+>>      ...
+>>     == Thread C ==
+>> ceph_flush_snaps()
+>>   ->__ceph_flush_snaps()
+>>    ->__send_flush_snap()
+>>                                  handle_cap_flushsnap_ack()
+>>                                   ->iput('&ci->vfs_inode')
+>>                                     this also will release 'ci'
+>>                                      ...
+>>                                        == Thread D ==
+>>                                  ceph_handle_snap()
+>>                                   ->flush_snaps()
+>>                                    ->iterate 'mdsc->snap_flush_list'
+>>                                     ->get the stale 'ci'
+>>   ->remove 'ci' from                ->ihold(&ci->vfs_inode) this
+>>     'mdsc->snap_flush_list'           will WARNING
+>>
+>> To fix this we will increase the inode's i_count ref when adding 'ci'
+>> to the 'mdsc->snap_flush_list' list.
+>>
+>> Cc: stable@vger.kernel.org
+>> URL: https://bugzilla.redhat.com/show_bug.cgi?id=2209299
+>> Reviewed-by: Milind Changire <mchangir@redhat.com>
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>
+>> V4:
+>> - s/put/need_put/
+> Hi Xiubo,
 >
-> Hi Alexander,
+> The other part of the suggestion was to make it a bool.  I made the
+> adjustment and queued up this patch for 6.4-rc6.
 
-Dear Xiubo,
+Sure, thanks Ilya.
 
+- Xiubo
+
+
+> Thanks,
 >
-> As I mentioned in V2 thread
-> https://www.spinics.net/lists/kernel/msg4810994.html, we should use the
-> 'idmap' for all the requests below, because MDS will do the
-> 'check_access()' for all the requests by using the caller uid/gid,
-> please see
-> https://github.com/ceph/ceph/blob/main/src/mds/Server.cc#L3294-L3310.
->
->
-> Cscope tag: ceph_mdsc_do_request
->     #   line  filename / context / line
->     1    321  fs/ceph/addr.c <<ceph_netfs_issue_op_inline>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->     2    443  fs/ceph/dir.c <<ceph_readdir>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->     3    838  fs/ceph/dir.c <<ceph_lookup>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->     4    933  fs/ceph/dir.c <<ceph_mknod>>
->               err =3D ceph_mdsc_do_request(mdsc, dir, req);
->     5   1045  fs/ceph/dir.c <<ceph_symlink>>
->               err =3D ceph_mdsc_do_request(mdsc, dir, req);
->     6   1120  fs/ceph/dir.c <<ceph_mkdir>>
->               err =3D ceph_mdsc_do_request(mdsc, dir, req);
->     7   1180  fs/ceph/dir.c <<ceph_link>>
->               err =3D ceph_mdsc_do_request(mdsc, dir, req);
->     8   1365  fs/ceph/dir.c <<ceph_unlink>>
->               err =3D ceph_mdsc_do_request(mdsc, dir, req);
->     9   1431  fs/ceph/dir.c <<ceph_rename>>
->               err =3D ceph_mdsc_do_request(mdsc, old_dir, req);
->    10   1927  fs/ceph/dir.c <<ceph_d_revalidate>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->    11    154  fs/ceph/export.c <<__lookup_inode>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->    12    262  fs/ceph/export.c <<__snapfh_to_dentry>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->    13    347  fs/ceph/export.c <<__get_parent>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->    14    490  fs/ceph/export.c <<__get_snap_name>>
->               err =3D ceph_mdsc_do_request(fsc->mdsc, NULL, req);
->    15    561  fs/ceph/export.c <<ceph_get_name>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->    16    339  fs/ceph/file.c <<ceph_renew_caps>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->    17    434  fs/ceph/file.c <<ceph_open>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->    18    855  fs/ceph/file.c <<ceph_atomic_open>>
->               err =3D ceph_mdsc_do_request(mdsc, (flags & O_CREAT) ? dir =
-:
-> NULL, req);
->    19   2715  fs/ceph/inode.c <<__ceph_setattr>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->    20   2839  fs/ceph/inode.c <<__ceph_do_getattr>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->    21   2883  fs/ceph/inode.c <<ceph_do_getvxattr>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->    22    126  fs/ceph/ioctl.c <<ceph_ioctl_set_layout>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->    23    171  fs/ceph/ioctl.c <<ceph_ioctl_set_layout_policy>>
->               err =3D ceph_mdsc_do_request(mdsc, inode, req);
->    24    216  fs/ceph/locks.c <<ceph_lock_wait_for_completion>>
->               err =3D ceph_mdsc_do_request(mdsc, inode, intr_req);
->    25   1091  fs/ceph/super.c <<open_root_dentry>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
->    26   1151  fs/ceph/xattr.c <<ceph_sync_setxattr>>
->               err =3D ceph_mdsc_do_request(mdsc, NULL, req);
-
-Sure, I remember about this point and as far as I mentioned earlier
-https://lore.kernel.org/all/20230519134420.2d04e5f70aad15679ab566fc@canonic=
-al.com/
-It is a discussional thing, because not all the inode_operations
-allows us to get a mount idmapping.
-
-For instance,
-lookup, get_link, get_inode_acl, readlink, link, unlink, rmdir,
-listxattr, fiemap, update_time, fileattr_get
-inode_operations are not provided with an idmapping.
-
-atomic_open also lacks the mnt_idmap argument, but we have a struct
-file so we can get an idmapping through it.
-
-As far as I can see from the code:
-https://raw.githubusercontent.com/ceph/ceph/main/src/mds/Server.cc
-We have Server::check_access calls for all inode_operations, including
-the lookup.
-
-It means that with the current VFS we are not able to support MDS
-UID/GID-based path restriction with idmapped mounts.
-But we can return to it later if someone really wants it.
-
-If I understand your idea right, you want me to set req->r_mnt_idmap
-to an actual idmapping everywhere, where it is possible,
-and ignore inode_operations where we have no idmapping passed?
-
-Christian's approach was more conservative here, his idea was to pass
-an idmapping only to the operations that are creating
-some nodes on the filesystem, but pass a "nop_mnt_idmap" to everyone else.
-
-So, I'll try to set up MDS UID/GID-based path restriction on my local
-environment and reproduce the issue with it,
-but as I mentioned earlier we can't support it right now anyway. But
-as we already have an idmappings supported for most
-of existing filesystems, having it supported for cephfs would be great
-(even with this limitation about MDS UID/GID-based path restriction),
-because we already have a real world use cases for cephfs idmapped
-mounts and this particular patchset is used by LXD/LXC for more that a
-year.
-We can extend this later, if someone really wants to use this
-combination and once we extend the VFS layer.
-
->
->
-> And also could you squash the similar commit into one ?
-
-Sure, you mean commits that do `req->r_mnt_idmap =3D
-mnt_idmap_get(idmap)`? Will do.
-
-Big thanks for the fast reaction/review on this series, Xiubo!
-
+>                  Ilya
 >
 
-Kind regards,
-Alex
-
->
-> Thanks
->
-> - Xiubo
->
->
-> On 6/8/23 02:09, Alexander Mikhalitsyn wrote:
-> > Dear friends,
-> >
-> > This patchset was originally developed by Christian Brauner but I'll co=
-ntinue
-> > to push it forward. Christian allowed me to do that :)
-> >
-> > This feature is already actively used/tested with LXD/LXC project.
-> >
-> > Git tree (based on https://github.com/ceph/ceph-client.git master):
-> > https://github.com/mihalicyn/linux/tree/fs.idmapped.ceph
-> >
-> > In the version 3 I've changed only two commits:
-> > - fs: export mnt_idmap_get/mnt_idmap_put
-> > - ceph: allow idmapped setattr inode op
-> > and added a new one:
-> > - ceph: pass idmap to __ceph_setattr
-> >
-> > In the version 4 I've reworked the ("ceph: stash idmapping in mdsc requ=
-est")
-> > commit. Now we take idmap refcounter just in place where req->r_mnt_idm=
-ap
-> > is filled. It's more safer approach and prevents possible refcounter un=
-derflow
-> > on error paths where __register_request wasn't called but ceph_mdsc_rel=
-ease_request is
-> > called.
-> >
-> > I can confirm that this version passes xfstests.
-> >
-> > Links to previous versions:
-> > v1: https://lore.kernel.org/all/20220104140414.155198-1-brauner@kernel.=
-org/
-> > v2: https://lore.kernel.org/lkml/20230524153316.476973-1-aleksandr.mikh=
-alitsyn@canonical.com/
-> > v3: https://lore.kernel.org/lkml/20230607152038.469739-1-aleksandr.mikh=
-alitsyn@canonical.com/#t
-> >
-> > Kind regards,
-> > Alex
-> >
-> > Original description from Christian:
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > This patch series enables cephfs to support idmapped mounts, i.e. the
-> > ability to alter ownership information on a per-mount basis.
-> >
-> > Container managers such as LXD support sharaing data via cephfs between
-> > the host and unprivileged containers and between unprivileged container=
-s.
-> > They may all use different idmappings. Idmapped mounts can be used to
-> > create mounts with the idmapping used for the container (or a different
-> > one specific to the use-case).
-> >
-> > There are in fact more use-cases such as remapping ownership for
-> > mountpoints on the host itself to grant or restrict access to different
-> > users or to make it possible to enforce that programs running as root
-> > will write with a non-zero {g,u}id to disk.
-> >
-> > The patch series is simple overall and few changes are needed to cephfs=
-.
-> > There is one cephfs specific issue that I would like to discuss and
-> > solve which I explain in detail in:
-> >
-> > [PATCH 02/12] ceph: handle idmapped mounts in create_request_message()
-> >
-> > It has to do with how to handle mds serves which have id-based access
-> > restrictions configured. I would ask you to please take a look at the
-> > explanation in the aforementioned patch.
-> >
-> > The patch series passes the vfs and idmapped mount testsuite as part of
-> > xfstests. To run it you will need a config like:
-> >
-> > [ceph]
-> > export FSTYP=3Dceph
-> > export TEST_DIR=3D/mnt/test
-> > export TEST_DEV=3D10.103.182.10:6789:/
-> > export TEST_FS_MOUNT_OPTS=3D"-o name=3Dadmin,secret=3D$password
-> >
-> > and then simply call
-> >
-> > sudo ./check -g idmapped
-> >
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > Alexander Mikhalitsyn (2):
-> >    fs: export mnt_idmap_get/mnt_idmap_put
-> >    ceph: pass idmap to __ceph_setattr
-> >
-> > Christian Brauner (12):
-> >    ceph: stash idmapping in mdsc request
-> >    ceph: handle idmapped mounts in create_request_message()
-> >    ceph: allow idmapped mknod inode op
-> >    ceph: allow idmapped symlink inode op
-> >    ceph: allow idmapped mkdir inode op
-> >    ceph: allow idmapped rename inode op
-> >    ceph: allow idmapped getattr inode op
-> >    ceph: allow idmapped permission inode op
-> >    ceph: allow idmapped setattr inode op
-> >    ceph/acl: allow idmapped set_acl inode op
-> >    ceph/file: allow idmapped atomic_open inode op
-> >    ceph: allow idmapped mounts
-> >
-> >   fs/ceph/acl.c                 |  6 +++---
-> >   fs/ceph/dir.c                 |  4 ++++
-> >   fs/ceph/file.c                | 10 ++++++++--
-> >   fs/ceph/inode.c               | 29 +++++++++++++++++------------
-> >   fs/ceph/mds_client.c          | 27 +++++++++++++++++++++++----
-> >   fs/ceph/mds_client.h          |  1 +
-> >   fs/ceph/super.c               |  2 +-
-> >   fs/ceph/super.h               |  3 ++-
-> >   fs/mnt_idmapping.c            |  2 ++
-> >   include/linux/mnt_idmapping.h |  3 +++
-> >   10 files changed, 64 insertions(+), 23 deletions(-)
-> >
->
