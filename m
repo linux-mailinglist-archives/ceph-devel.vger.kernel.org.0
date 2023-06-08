@@ -2,173 +2,268 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7526E727267
-	for <lists+ceph-devel@lfdr.de>; Thu,  8 Jun 2023 00:56:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3FBD7274BC
+	for <lists+ceph-devel@lfdr.de>; Thu,  8 Jun 2023 04:08:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229532AbjFGW4X (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 7 Jun 2023 18:56:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54608 "EHLO
+        id S232283AbjFHCIW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 7 Jun 2023 22:08:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbjFGW4L (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Jun 2023 18:56:11 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DEF3270E
-        for <ceph-devel@vger.kernel.org>; Wed,  7 Jun 2023 15:55:54 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id 4fb4d7f45d1cf-510d6b939bfso2581493a12.0
-        for <ceph-devel@vger.kernel.org>; Wed, 07 Jun 2023 15:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686178553; x=1688770553;
-        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lwmqmz3SLTAm/5XHn54kA2Qkz1KiGdBlOiEDAaxIk1A=;
-        b=d8ALJgWgHzWLVbYqm5Xun40Trrtx9u26PJxgDpuM+opU1kagifpoMF3E49HbI3GY2V
-         wVrEz/8VMNXOa34mGDXKD+N7lGOv2QGCP2gi2Pc2YR15Cm6aBUEYMKdxMAaBdTZps5JD
-         wHIIcg7iFPDm6hq2Anc8eetPMFV7Dmp3k3ChvztUfrQawEncim7LlPLb1dcX0GFSQa2Z
-         MpCDoaZndeCwrh4lYpSlY+MIxLpkoT0dvzpzNzmwq8ANq48/S89YAmvR6lG4ID6DJkmg
-         UQBMvZ4NUlogSfe/ccOin4LQnm3S/JQ2MwxZLa7FvZbQYk7vl4nSPeVW9A3WoEossLXw
-         Xp4g==
+        with ESMTP id S231476AbjFHCIV (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 7 Jun 2023 22:08:21 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F26E626A3
+        for <ceph-devel@vger.kernel.org>; Wed,  7 Jun 2023 19:07:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686190054;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=cGbxdnE4kF02ZAat0YucTxFSuVc3j8XkEalI37UwAYo=;
+        b=Budvlc3Leg2s+y4h3gFYYJZQ1MXN/O34pBL7Wxd8QPGXAafjaDt+BYJl1EyBFnUzaJKrzz
+        tUKWTLWbIN7gbn6zOwecC/XZyViuIAKc7dpEbNNHxNslMBiXZdb61N+JGGOBVdwQ2OjkE7
+        U/1cVw5YHccXAv24/6E/sgAykpizadE=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-118-1194w7mvMaitN6gCdAZEAg-1; Wed, 07 Jun 2023 22:07:32 -0400
+X-MC-Unique: 1194w7mvMaitN6gCdAZEAg-1
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-6540e7d7db6so14768b3a.1
+        for <ceph-devel@vger.kernel.org>; Wed, 07 Jun 2023 19:07:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686178553; x=1688770553;
-        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lwmqmz3SLTAm/5XHn54kA2Qkz1KiGdBlOiEDAaxIk1A=;
-        b=Kttpx6wTGGkQh9WrPVUyKYVh2Z0vwDw4Ds45V+AwM90IqJWkZhiRb4DWzlXkcOW6rE
-         rwHksVvih3xFOg5Okl6wxnE3k4jRpnJuQiXwJOHHjdgkc6QLVPEaRmOehvr5XACttltV
-         buBSImF3HEhJVSKh9krpdYBrsq1AQ8N3+KR317Ad0h4vCXpuJARaKZVrenUTbrCVcco+
-         upEJLxebwMZbQgCG1E5U5+p4sBrOlEbPX+1dD3p3H+0RetxJ2c013SYQ+KQQnZJOY5vH
-         28ZNvxjLJjWE7Wvso17LlaAow/nOTVvubr65/k37Bs0AFQRF6rJjyTqVwB4nf0IqhZmu
-         jKOA==
-X-Gm-Message-State: AC+VfDxnh7qCQpHoilrtV23pQbL5kZ3g+5v819RWXyMzBcDfDdnzSIlI
-        B2VNCoj4PcR7Wkwn4Rah43nUivWjf0YDTCOlh3Q=
-X-Google-Smtp-Source: ACHHUZ5lc5uNG0II8N/7owu97MNYayebO2FU5BOHITGRdvZTCXANx0Yi1fv5Th/dfzvi0zTuZAaSCLE67mXxoPl8ud4=
-X-Received: by 2002:a17:907:8a08:b0:973:ad8f:ef9b with SMTP id
- sc8-20020a1709078a0800b00973ad8fef9bmr8009971ejc.5.1686178552696; Wed, 07 Jun
- 2023 15:55:52 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686190052; x=1688782052;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cGbxdnE4kF02ZAat0YucTxFSuVc3j8XkEalI37UwAYo=;
+        b=YqJz2z2na4AADgQcr2d6rywHi/bS21wXE+wVXso+30Ru3Q9LzUtmK+AQbftRmwHqkW
+         HZI7y+ecZxj/9RNa9wQXsA/wguoCY0WkYCjboH7MoOOuEw4o4Y3AnTTbxkQc0k9vv8EO
+         5Ek6OJP5Ik0W/pHr/3nJcLKpb4ksr3IlAW6m3V3OUhUi6NzFfJ++2lOV6mAuYiODMAjj
+         axScXGr/WZ2JQ/mJdlqpGkYCwZu+RR9aD3X9961HfSG4a2kCFr5YcmhLxtcfRHqS89MW
+         bwf5XzurVKELKjXQ/09y3qY+a/+xRtI2CBr2V877vfq+C7r0etbr216qdTnu9UyxqzrI
+         yAiQ==
+X-Gm-Message-State: AC+VfDy5AJstLKwiUscLyWR6ZLnzWCyg8p0b5zvQ8NSzM6grV1/Cd7on
+        ENF+8FzLZlV+Hj/6O9eRhnxWhkV9NhM1ikUQHTfmIbKwZIE22qGu8Y267OfkXSQLunYzLOTtATl
+        rbnPx2ssEcNS2VZjN6AJFPTMRwS7idPIN
+X-Received: by 2002:a05:6a20:144e:b0:10c:49e:6c67 with SMTP id a14-20020a056a20144e00b0010c049e6c67mr3099493pzi.33.1686190051725;
+        Wed, 07 Jun 2023 19:07:31 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ7fCH/GCxnQ8Lw+Duf/tDRO1hR1DptB/ZSHIQ+Oca/DShTY6Spm+XO5HzqrSpMBoDMDzPNvWA==
+X-Received: by 2002:a05:6a20:144e:b0:10c:49e:6c67 with SMTP id a14-20020a056a20144e00b0010c049e6c67mr3099482pzi.33.1686190051331;
+        Wed, 07 Jun 2023 19:07:31 -0700 (PDT)
+Received: from [10.72.13.135] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id jc22-20020a17090325d600b001a6f7744a27sm167810plb.87.2023.06.07.19.07.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 Jun 2023 19:07:31 -0700 (PDT)
+Message-ID: <eaa3e03d-2c12-9095-0533-cb5b19f0ef4d@redhat.com>
+Date:   Thu, 8 Jun 2023 10:07:20 +0800
 MIME-Version: 1.0
-Received: by 2002:a54:2409:0:b0:217:72a9:f646 with HTTP; Wed, 7 Jun 2023
- 15:55:52 -0700 (PDT)
-Reply-To: unitednationcompensationcoordinatortreasury@hotmail.com
-From:   "UNITED NATION DEPUTY SECRETARY-GENERAL (U.N)" 
-        <successikolo@gmail.com>
-Date:   Wed, 7 Jun 2023 15:55:52 -0700
-Message-ID: <CADFNGJ8EwbrtVXBod+yuxOPvcNStu1uNZVywED0Ra-jpG92ATw@mail.gmail.com>
-Subject: CONTACT DHL OFFICE IMMEDIATELY FOR YOUR ATM MASTER CARD 1.5 MILLION,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: Yes, score=6.6 required=5.0 tests=ADVANCE_FEE_3_NEW_FRM_MNY,
-        BAYES_50,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FILL_THIS_FORM,FORM_FRAUD_5,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        LOTS_OF_MONEY,MONEY_FORM,MONEY_FRAUD_5,MONEY_FREEMAIL_REPTO,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,SUBJ_ALL_CAPS,
-        T_FILL_THIS_FORM_LOAN,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM,UNDISC_MONEY
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2a00:1450:4864:20:0:0:0:535 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [successikolo[at]gmail.com]
-        *  0.5 SUBJ_ALL_CAPS Subject is all capitals
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  0.0 LOTS_OF_MONEY Huge... sums of money
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  2.7 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  0.2 MONEY_FREEMAIL_REPTO Lots of money from someone using free
-        *      email?
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-        *  0.0 FILL_THIS_FORM Fill in a form with personal information
-        *  0.0 T_FILL_THIS_FORM_LOAN Answer loan question(s)
-        *  0.0 MONEY_FORM Lots of money if you fill out a form
-        *  1.3 UNDISC_MONEY Undisclosed recipients + money/fraud signs
-        *  0.0 ADVANCE_FEE_3_NEW_FRM_MNY Advance Fee fraud form and lots of
-        *      money
-        *  0.2 MONEY_FRAUD_5 Lots of money and many fraud phrases
-        *  0.0 FORM_FRAUD_5 Fill a form and many fraud phrases
-X-Spam-Level: ******
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v3] ceph: fix use-after-free bug for inodes when flushing
+ capsnaps
+Content-Language: en-US
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        vshankar@redhat.com, mchangir@redhat.com, stable@vger.kernel.org
+References: <20230606005253.1055933-1-xiubli@redhat.com>
+ <CAOi1vP_Xr6iMgjo7RKtc4-oZdF_FX7_U3Wx4Y=REdpa4Gj7Oig@mail.gmail.com>
+ <b0ec84e4-1999-8284-dc90-307831f1e04b@redhat.com>
+ <CAOi1vP_ma6pQ35FpG6wEYBhwxRXYB73vP-B1Jziji7zDodDpGQ@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <CAOi1vP_ma6pQ35FpG6wEYBhwxRXYB73vP-B1Jziji7zDodDpGQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-UNITED NATION DEPUTY SECRETARY-GENERAL.
 
-This is to official inform you that we have been having meetings for
-the past three (3) weeks which ended two days ago with MR. JIM YONG
-KIM the world bank president and other seven continent presidents on
-the congress we treated on solution to scam victim problems.
+On 6/7/23 16:03, Ilya Dryomov wrote:
+> On Tue, Jun 6, 2023 at 3:30 PM Xiubo Li <xiubli@redhat.com> wrote:
+>>
+>> On 6/6/23 18:21, Ilya Dryomov wrote:
+>>> On Tue, Jun 6, 2023 at 2:55 AM <xiubli@redhat.com> wrote:
+>>>> From: Xiubo Li <xiubli@redhat.com>
+>>>>
+>>>> There is a race between capsnaps flush and removing the inode from
+>>>> 'mdsc->snap_flush_list' list:
+>>>>
+>>>>      == Thread A ==                     == Thread B ==
+>>>> ceph_queue_cap_snap()
+>>>>    -> allocate 'capsnapA'
+>>>>    ->ihold('&ci->vfs_inode')
+>>>>    ->add 'capsnapA' to 'ci->i_cap_snaps'
+>>>>    ->add 'ci' to 'mdsc->snap_flush_list'
+>>>>       ...
+>>>>      == Thread C ==
+>>>> ceph_flush_snaps()
+>>>>    ->__ceph_flush_snaps()
+>>>>     ->__send_flush_snap()
+>>>>                                   handle_cap_flushsnap_ack()
+>>>>                                    ->iput('&ci->vfs_inode')
+>>>>                                      this also will release 'ci'
+>>>>                                       ...
+>>>>                                         == Thread D ==
+>>>>                                   ceph_handle_snap()
+>>>>                                    ->flush_snaps()
+>>>>                                     ->iterate 'mdsc->snap_flush_list'
+>>>>                                      ->get the stale 'ci'
+>>>>    ->remove 'ci' from                ->ihold(&ci->vfs_inode) this
+>>>>      'mdsc->snap_flush_list'           will WARNING
+>>>>
+>>>> To fix this we will increase the inode's i_count ref when adding 'ci'
+>>>> to the 'mdsc->snap_flush_list' list.
+>>>>
+>>>> Cc: stable@vger.kernel.org
+>>>> URL: https://bugzilla.redhat.com/show_bug.cgi?id=2209299
+>>>> Reviewed-by: Milind Changire <mchangir@redhat.com>
+>>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>>>> ---
+>>>>
+>>>> V3:
+>>>> - Fix two minor typo in commit comments.
+>>>>
+>>>>
+>>>>
+>>>>    fs/ceph/caps.c | 6 ++++++
+>>>>    fs/ceph/snap.c | 4 +++-
+>>>>    2 files changed, 9 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+>>>> index feabf4cc0c4f..7c2cb813aba4 100644
+>>>> --- a/fs/ceph/caps.c
+>>>> +++ b/fs/ceph/caps.c
+>>>> @@ -1684,6 +1684,7 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
+>>>>           struct inode *inode = &ci->netfs.inode;
+>>>>           struct ceph_mds_client *mdsc = ceph_inode_to_client(inode)->mdsc;
+>>>>           struct ceph_mds_session *session = NULL;
+>>>> +       int put = 0;
+>>> Hi Xiubo,
+>>>
+>>> Nit: renaming this variable to need_put and making it a bool would
+>>> communicate the intent better.
+>> Hi Ilya
+>>
+>> Sure, will update it.
+>>
+>>>>           int mds;
+>>>>
+>>>>           dout("ceph_flush_snaps %p\n", inode);
+>>>> @@ -1728,8 +1729,13 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
+>>>>                   ceph_put_mds_session(session);
+>>>>           /* we flushed them all; remove this inode from the queue */
+>>>>           spin_lock(&mdsc->snap_flush_lock);
+>>>> +       if (!list_empty(&ci->i_snap_flush_item))
+>>>> +               put++;
+>>> What are the cases when ci is expected to not be on snap_flush_list
+>>> list (and therefore there is no corresponding reference to put)?
+>>>
+>>> The reason I'm asking is that ceph_flush_snaps() is called from two
+>>> other places directly (i.e. without iterating snap_flush_list list) and
+>>> then __ceph_flush_snaps() is called from two yet other places.  The
+>>> problem that we are presented with here is that __ceph_flush_snaps()
+>>> effectively consumes a reference on ci.  Is ci protected from being
+>>> freed by handle_cap_flushsnap_ack() very soon after __send_flush_snap()
+>>> returns in all these other places?
+>> There are 4 places will call the 'ceph_flush_snaps()':
+>>
+>> Cscope tag: ceph_flush_snaps
+>>      #   line  filename / context / line
+>>      1   3221  fs/ceph/caps.c <<__ceph_put_cap_refs>>
+>>                ceph_flush_snaps(ci, NULL);
+>>      2   3336  fs/ceph/caps.c <<ceph_put_wrbuffer_cap_refs>>
+>>                ceph_flush_snaps(ci, NULL);
+>>      3   2243  fs/ceph/inode.c <<ceph_inode_work>>
+>>                ceph_flush_snaps(ci, NULL);
+>>      4    941  fs/ceph/snap.c <<flush_snaps>>
+>>                ceph_flush_snaps(ci, &session);
+>> Type number and <Enter> (q or empty cancels):
+>>
+>> For #1 it will add the 'ci' to the 'mdsc->snap_flush_list' list by
+>> calling '__ceph_finish_cap_snap()' and then call the
+>> 'ceph_flush_snaps()' directly or defer call it in the queue work in #3.
+>>
+>> The #3 is the reason why we need the 'mdsc->snap_flush_list' list.
+>>
+>> For #2 it won't add the 'ci' to the list because it will always call the
+>> 'ceph_flush_snaps()' directly.
+>>
+>> For #4 it will call 'ceph_flush_snaps()' by iterating the
+>> 'mdsc->snap_flush_list' list just before the #3 being triggered.
+>>
+>> The problem only exists in case of #1 --> #4, which will make the stale
+>> 'ci' to be held in the 'mdsc->snap_flush_list' list after 'capsnap' and
+>> 'ci' being freed. All the other cases are okay because the 'ci' will be
+>> protected by increasing the ref when allocating the 'capsnap' and will
+>> decrease the ref in 'handle_cap_flushsnap_ack()' when freeing the 'capsnap'.
+>>
+>> Note: the '__ceph_flush_snaps()' won't increase the ref. The
+>> 'handle_cap_flushsnap_ack()' will just try to decrease the ref and only
+>> in case the ref reaches to '0' will the 'ci' be freed.
+> So my question is: are all __ceph_flush_snaps() callers guaranteed to
+> hold an extra (i.e. one that is not tied to capsnap) reference on ci so
+> that when handle_cap_flushsnap_ack() drops one that is tied to capsnap
+> the reference count doesn't reach 0?  It sounds like you are confident
+> that there is no issue with ceph_flush_snaps() callers, but it would be
+> nice if you could confirm the same for bare __ceph_flush_snaps() call
+> sites in caps.c.
 
- Note: we have decided to contact you following the reports we
-received from anti-fraud international monitoring group your
-name/email has been submitted to us therefore the united nations have
-agreed to compensate you with the sum of (USD$ 1.5 Million) this
-compensation is also including international business that failed you
-in the past due to government problems etc.
+Yeah, checked the code again carefully.  I am sure that when calling the 
+'__ceph_flush_snaps()' it has already well handled the reference too.
 
- We have arranged your payment through our ATM Master Card and
-deposited it in DHL Office to deliver it to you which is the latest
-instruction from the World Bank president MR. JIM YONG KIM, For your
-information=E2=80=99s, the delivery charges already paid by U.N treasury, t=
-he
-only money you will send to DHL office south Korea is
-($500). for security keeping fee, U.N coordinator already paid for
-others charges fees for delivery except the security keeping fee, the
-director of DHL refused to collect the security keeping fee from U.N
-coordinator, the Director of DHL office said that they don=E2=80=99t know
-exactly time you will contact them to reconfirm your details to avoid
-counting demur-rage that is why they refused collecting the ($500) .
-for security keeping fee.
+Once the 'capsnap' is in 'ci->i_cap_snaps' list the inode's reference 
+must have already been increased, please see 'ceph_queue_cap_snap()', 
+which will allocate and insert 'capsnap' to this list.
 
- Therefore be advice to contact DHL Office agent south Korea. Rev:John
-Lee Tae-seok
-who is in position to deliver your ATM
-Master Card to your location address, contact DHL Office immediately
-with the bellow email & phone number as listed below.
+Except the 'mdsc->snap_flush_list' list, the 'capsnap' will be added to 
+three other lists, which are 'ci->i_cap_snaps', 'mdsc->cap_flush_list' 
+and 'ci->i_cap_flush_list'.
 
- Contact name: John Lee Tae-seok
 
- Email:( dhlgeneralheadquartersrepublic@gmail.com )
+  744 INIT_LIST_HEAD(&capsnap->cap_flush.i_list);      --> 
+ci->i_cap_flush_list
+  745 INIT_LIST_HEAD(&capsnap->cap_flush.g_list);    --> 
+mdsc->cap_flush_list
+  746 INIT_LIST_HEAD(&capsnap->ci_item);                   --> 
+ci->i_cap_snaps
 
- Do not hesitate to Contact Rev: John Lee Tae-seok, as soon as you
 
- read this message. Email:( dhlgeneralheadquartersrepublic@gmail.com )
+But 'capsnap' will be removed from them all just before freeing the 
+'capsnap' and iput(inode), more detail please see:
 
- Make sure you reconfirmed DHL Office your details ASAP as stated
-below to avoid wrong delivery.
 
- Your full name..........
+   handle_cap_flushsnap_ack()
+       -->  ceph_remove_capsnap()
+             --> __ceph_remove_capsnap()
+                  --> list_del_init(&capsnap->ci_item); // remove from 
+'ci->i_cap_snaps' list
+                  --> __detach_cap_flush_from_ci()         // remove 
+from 'ci->i_cap_flush_list' list
+                 --> __detach_cap_flush_from_mdsc()} // remove from 
+'mdsc->cap_flush_list'
+       --> ceph_put_cap_snap(capsnap)
+       --> iput(inode)
 
- Home address:.........
 
- Your country...........
+The 'mdsc->cap_flush_list' list will be proected by 
+'mdsc->cap_dirty_lock', so do not have any issue here.
 
- Your city..............
+So I am sure that just before 'capsnap' being freed the 'ci' won't 
+released in the above case.
 
- Telephone......
+Thanks
 
- Occupation:.......
+- Xiubo
 
- Age:=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6=E2=80=A6..
+> Thanks,
+>
+>                  Ilya
+>
 
- Let us know as soon as possible you receive your ATM MasterCard
-for proper verification.
-
- Regards,
-
- Mrs Vivian kakadu.
-
- DEPUTY SECRETARY-GENERAL (U.N)
