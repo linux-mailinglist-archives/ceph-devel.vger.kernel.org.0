@@ -2,176 +2,210 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7E8372D714
-	for <lists+ceph-devel@lfdr.de>; Tue, 13 Jun 2023 03:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D11172D90F
+	for <lists+ceph-devel@lfdr.de>; Tue, 13 Jun 2023 07:27:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238553AbjFMBoJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 12 Jun 2023 21:44:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58768 "EHLO
+        id S233789AbjFMF1e (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 13 Jun 2023 01:27:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238478AbjFMBoH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 12 Jun 2023 21:44:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42C1BEC
-        for <ceph-devel@vger.kernel.org>; Mon, 12 Jun 2023 18:43:18 -0700 (PDT)
+        with ESMTP id S232995AbjFMF1c (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 13 Jun 2023 01:27:32 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE72710D7
+        for <ceph-devel@vger.kernel.org>; Mon, 12 Jun 2023 22:26:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686620597;
+        s=mimecast20190719; t=1686634003;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=aO3YIuRj1v9NRDAnjivXdeLDCfNfrRHlbKdCGoRnb1g=;
-        b=NO7LuVbelAxddmSWwYtO+hbT9DvHaG2hJIXPJ3pF69B8W6aaTtlF6eGURspVtbYT6uD2DP
-        du7jVa9q419Swjf92sK12Jzd43P1YQ8KDxt6RS5uAqHV2AUghTqF79GXYQJrQq/dJ0ddn1
-        jB2kGlvUT9+GfFHEHXyYPij6+TIthKk=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-108-zUvVP4FDO8u3qw-Auc2lDA-1; Mon, 12 Jun 2023 21:43:16 -0400
-X-MC-Unique: zUvVP4FDO8u3qw-Auc2lDA-1
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1b3c7e6ea5bso10305035ad.2
-        for <ceph-devel@vger.kernel.org>; Mon, 12 Jun 2023 18:43:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686620595; x=1689212595;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aO3YIuRj1v9NRDAnjivXdeLDCfNfrRHlbKdCGoRnb1g=;
-        b=D6A9z40bj2zqCXkqKF9Tch+CmvhKdDOGayaALDh3DQkp+DPJj9WUxhM6qIx4fPJZge
-         3uvqHX2LGCx8jDWgwFyYKYLo4nDJe+VkpnW6rCQXBwpoF/iF3V1sUX2YLsBQGtf9yvI2
-         wnSYTyNf3VwlstuehHUUSbxmWF8am+Eh+gg3dsQgkLocVMSdEClyTHE066h+haCcisaW
-         XypKq/wT3AnEsgzBErE53gk43Rycdr7kA02nfpO5D6K/1v7VPAuHTAApW8NhpoMG2cmB
-         pOJKrdICEQNSgbS9R61SoBhCz72c2cJzpq8EGQv3fvnxguZkKps31a92fyJxT3GmV4nx
-         ntIA==
-X-Gm-Message-State: AC+VfDyULh+Ai9MS0iXFFABRlXAadIuYkXIruYGnWPDoMuW9BeWiipZN
-        M4OK1gI3OKpC6Rqdlzcgb9Y6Gq1ilwfKhwRHFH5bMkNyMk581odyIWRdsvdSd/eYbejbF4YRlPu
-        UGi3cEeDtgrEoKIk+QkbQL8xZ6sWmsjz6
-X-Received: by 2002:a17:902:9343:b0:1b3:e3a4:1512 with SMTP id g3-20020a170902934300b001b3e3a41512mr1331483plp.10.1686620594907;
-        Mon, 12 Jun 2023 18:43:14 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ4UqLaeJy8Dx4xPm8hKZz+Zddi8ZLB53ENnzz9yoPHTsJ5i0KKo8CQQ0pO75DTJjcpw527Yww==
-X-Received: by 2002:a17:902:9343:b0:1b3:e3a4:1512 with SMTP id g3-20020a170902934300b001b3e3a41512mr1331473plp.10.1686620594604;
-        Mon, 12 Jun 2023 18:43:14 -0700 (PDT)
-Received: from [10.72.12.125] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id t14-20020a1709028c8e00b001aaed55aff3sm8810948plo.137.2023.06.12.18.43.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Jun 2023 18:43:14 -0700 (PDT)
-Message-ID: <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com>
-Date:   Tue, 13 Jun 2023 09:43:07 +0800
+         content-transfer-encoding:content-transfer-encoding;
+        bh=f0jJxLP8QQgBDC0BWJtGOEAolhGWO003s9tqB5yggnY=;
+        b=XpJZI/0EEsCz1su1l+KxP8MazLogBaVyD0qX31h58WN1VYLr9f1mO6BsY8/JteAAF3314W
+        f7K6J6VNhxhmATt8xo+uj/JGpsE3H4auB22luvjPSrZmGiS+dpbDku1p+GBdFpkN6j0P69
+        VsUiHG2IdXTQdvimEFqaWmp1JFamuJQ=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-445-NlwPiUcUPiGmPAfqikxPAw-1; Tue, 13 Jun 2023 01:26:39 -0400
+X-MC-Unique: NlwPiUcUPiGmPAfqikxPAw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BB6963814943;
+        Tue, 13 Jun 2023 05:26:38 +0000 (UTC)
+Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-155.pek2.redhat.com [10.72.12.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 592061121314;
+        Tue, 13 Jun 2023 05:26:35 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
+Cc:     jlayton@kernel.org, vshankar@redhat.com, mchangir@redhat.com,
+        lhenriques@suse.de, Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v20 00/71] ceph+fscrypt: full support
+Date:   Tue, 13 Jun 2023 13:23:13 +0800
+Message-Id: <20230613052424.254540-1-xiubli@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
-Content-Language: en-US
-To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Gregory Farnum <gfarnum@redhat.com>
-Cc:     stgraber@ubuntu.com, linux-fsdevel@vger.kernel.org,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
- <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com>
- <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
- <20230609-alufolie-gezaubert-f18ef17cda12@brauner>
- <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-
-On 6/9/23 18:12, Aleksandr Mikhalitsyn wrote:
-> On Fri, Jun 9, 2023 at 12:00 PM Christian Brauner <brauner@kernel.org> wrote:
->> On Fri, Jun 09, 2023 at 10:59:19AM +0200, Aleksandr Mikhalitsyn wrote:
->>> On Fri, Jun 9, 2023 at 3:57 AM Xiubo Li <xiubli@redhat.com> wrote:
->>>>
->>>> On 6/8/23 23:42, Alexander Mikhalitsyn wrote:
->>>>> Dear friends,
->>>>>
->>>>> This patchset was originally developed by Christian Brauner but I'll continue
->>>>> to push it forward. Christian allowed me to do that :)
->>>>>
->>>>> This feature is already actively used/tested with LXD/LXC project.
->>>>>
->>>>> Git tree (based on https://github.com/ceph/ceph-client.git master):
->>> Hi Xiubo!
->>>
->>>> Could you rebase these patches to 'testing' branch ?
->>> Will do in -v6.
->>>
->>>> And you still have missed several places, for example the following cases:
->>>>
->>>>
->>>>      1    269  fs/ceph/addr.c <<ceph_netfs_issue_op_inline>>
->>>>                req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETATTR,
->>>> mode);
->>> +
->>>
->>>>      2    389  fs/ceph/dir.c <<ceph_readdir>>
->>>>                req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
->>> +
->>>
->>>>      3    789  fs/ceph/dir.c <<ceph_lookup>>
->>>>                req = ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS);
->>> We don't have an idmapping passed to lookup from the VFS layer. As I
->>> mentioned before, it's just impossible now.
->> ->lookup() doesn't deal with idmappings and really can't otherwise you
->> risk ending up with inode aliasing which is really not something you
->> want. IOW, you can't fill in inode->i_{g,u}id based on a mount's
->> idmapping as inode->i_{g,u}id absolutely needs to be a filesystem wide
->> value. So better not even risk exposing the idmapping in there at all.
-> Thanks for adding, Christian!
->
-> I agree, every time when we use an idmapping we need to be careful with
-> what we map. AFAIU, inode->i_{g,u}id should be based on the filesystem
-> idmapping (not mount),
-> but in this case, Xiubo want's current_fs{u,g}id to be mapped
-> according to an idmapping.
-> Anyway, it's impossible at now and IMHO, until we don't have any
-> practical use case where
-> UID/GID-based path restriction is used in combination with idmapped
-> mounts it's not worth to
-> make such big changes in the VFS layer.
->
-> May be I'm not right, but it seems like UID/GID-based path restriction
-> is not a widespread
-> feature and I can hardly imagine it to be used with the container
-> workloads (for instance),
-> because it will require to always keep in sync MDS permissions
-> configuration with the
-> possible UID/GID ranges on the client. It looks like a nightmare for sysadmin.
-> It is useful when cephfs is used as an external storage on the host, but if you
-> share cephfs with a few containers with different user namespaces idmapping...
-
-Hmm, while this will break the MDS permission check in cephfs then in 
-lookup case. If we really couldn't support it we should make it to 
-escape the check anyway or some OPs may fail and won't work as expected.
-
-@Greg
-
-For the lookup requests the idmapping couldn't get the mapped UID/GID 
-just like all the other requests, which is needed by the MDS permission 
-check. Is that okay to make it disable the check for this case ? I am 
-afraid this will break the MDS permssions logic.
-
-Any idea ?
-
-Thanks
-
-- Xiubo
+From: Xiubo Li <xiubli@redhat.com>
 
 
-> Kind regards,
-> Alex
->
+This patch series is based on Jeff Layton's previous great work and effort
+on this and all the patches have been in the testing branch and well tested:
+
+The qa teuthology tests results:
+https://pulpito.ceph.com/xiubli-2023-06-09_03:59:14-fs:fscrypt-wip-lxb-fscrypt-20230607-0901-distro-default-smithi/
+
+
+Since v15 we have added the ceph qa teuthology test cases for this [1][2],
+which will test both the file name and contents encryption features and at
+the same time they will also test the IO benchmarks.
+
+To support the fscrypt we also have some other work in ceph [3][4][5][6][7][8][9]:
+
+[1] https://github.com/ceph/ceph/pull/48628
+[2] https://github.com/ceph/ceph/pull/49934
+[3] https://github.com/ceph/ceph/pull/43588
+[4] https://github.com/ceph/ceph/pull/37297
+[5] https://github.com/ceph/ceph/pull/45192
+[6] https://github.com/ceph/ceph/pull/45312
+[7] https://github.com/ceph/ceph/pull/40828
+[8] https://github.com/ceph/ceph/pull/45224
+[9] https://github.com/ceph/ceph/pull/45073
+
+The [9] is still undering testing and will soon be merged after that. All
+the others had been merged.
+
+
+The main changes since v19:
+
+- s/ceph_open/ceph_lookup/ for [PATCH v20 70/71].
+- Updated the patches to fix use-after-free bug for fscrypt_destroy_keyring,
+  the link https://patchwork.kernel.org/project/ceph-devel/list/?series=755131.
+  These new changes have been  
+
+
+
+Jeff Layton (47):
+  libceph: add spinlock around osd->o_requests
+  libceph: define struct ceph_sparse_extent and add some helpers
+  libceph: add sparse read support to msgr2 crc state machine
+  libceph: add sparse read support to OSD client
+  libceph: support sparse reads on msgr2 secure codepath
+  libceph: add sparse read support to msgr1
+  ceph: add new mount option to enable sparse reads
+  ceph: preallocate inode for ops that may create one
+  ceph: make ceph_msdc_build_path use ref-walk
+  libceph: add new iov_iter-based ceph_msg_data_type and
+    ceph_osd_data_type
+  ceph: use osd_req_op_extent_osd_iter for netfs reads
+  ceph: fscrypt_auth handling for ceph
+  ceph: ensure that we accept a new context from MDS for new inodes
+  ceph: add support for fscrypt_auth/fscrypt_file to cap messages
+  ceph: implement -o test_dummy_encryption mount option
+  ceph: decode alternate_name in lease info
+  ceph: add fscrypt ioctls
+  ceph: add encrypted fname handling to ceph_mdsc_build_path
+  ceph: send altname in MClientRequest
+  ceph: encode encrypted name in dentry release
+  ceph: properly set DCACHE_NOKEY_NAME flag in lookup
+  ceph: set DCACHE_NOKEY_NAME in atomic open
+  ceph: make d_revalidate call fscrypt revalidator for encrypted
+    dentries
+  ceph: add helpers for converting names for userland presentation
+  ceph: add fscrypt support to ceph_fill_trace
+  ceph: create symlinks with encrypted and base64-encoded targets
+  ceph: make ceph_get_name decrypt filenames
+  ceph: add a new ceph.fscrypt.auth vxattr
+  ceph: add some fscrypt guardrails
+  libceph: add CEPH_OSD_OP_ASSERT_VER support
+  ceph: size handling for encrypted inodes in cap updates
+  ceph: fscrypt_file field handling in MClientRequest messages
+  ceph: handle fscrypt fields in cap messages from MDS
+  ceph: update WARN_ON message to pr_warn
+  ceph: add infrastructure for file encryption and decryption
+  libceph: allow ceph_osdc_new_request to accept a multi-op read
+  ceph: disable fallocate for encrypted inodes
+  ceph: disable copy offload on encrypted inodes
+  ceph: don't use special DIO path for encrypted inodes
+  ceph: align data in pages in ceph_sync_write
+  ceph: add read/modify/write to ceph_sync_write
+  ceph: plumb in decryption during sync reads
+  ceph: add fscrypt decryption support to ceph_netfs_issue_op
+  ceph: set i_blkbits to crypto block size for encrypted inodes
+  ceph: add encryption support to writepage
+  ceph: fscrypt support for writepages
+  ceph: report STATX_ATTR_ENCRYPTED on encrypted inodes
+
+Luís Henriques (11):
+  ceph: add base64 endcoding routines for encrypted names
+  ceph: allow encrypting a directory while not having Ax caps
+  ceph: mark directory as non-complete after loading key
+  ceph: don't allow changing layout on encrypted files/directories
+  ceph: invalidate pages when doing direct/sync writes
+  ceph: add support for encrypted snapshot names
+  ceph: add support for handling encrypted snapshot names
+  ceph: update documentation regarding snapshot naming limitations
+  ceph: prevent snapshots to be created in encrypted locked directories
+  ceph: switch ceph_lookup() to use new fscrypt helper
+  ceph: switch ceph_open_atomic() to use the new fscrypt helper
+
+Xiubo Li (13):
+  ceph: make the ioctl cmd more readable in debug log
+  ceph: fix base64 encoded name's length check in ceph_fname_to_usr()
+  ceph: pass the request to parse_reply_info_readdir()
+  ceph: add ceph_encode_encrypted_dname() helper
+  ceph: add support to readdir for encrypted filenames
+  ceph: get file size from fscrypt_file when present in inode traces
+  ceph: add __ceph_get_caps helper support
+  ceph: add __ceph_sync_read helper support
+  ceph: add object version support for sync read
+  ceph: add truncate size handling support for fscrypt
+  ceph: drop the messages from MDS when unmounting
+  ceph: just wait the osd requests' callbacks to finish when unmounting
+  ceph: fix updating the i_truncate_pagecache_size for fscrypt
+
+ Documentation/filesystems/ceph.rst |  10 +
+ fs/ceph/Makefile                   |   1 +
+ fs/ceph/acl.c                      |   4 +-
+ fs/ceph/addr.c                     | 192 +++++++--
+ fs/ceph/caps.c                     | 227 ++++++++--
+ fs/ceph/crypto.c                   | 659 +++++++++++++++++++++++++++++
+ fs/ceph/crypto.h                   | 270 ++++++++++++
+ fs/ceph/dir.c                      | 188 ++++++--
+ fs/ceph/export.c                   |  44 +-
+ fs/ceph/file.c                     | 593 ++++++++++++++++++++++----
+ fs/ceph/inode.c                    | 613 ++++++++++++++++++++++++---
+ fs/ceph/ioctl.c                    | 126 +++++-
+ fs/ceph/mds_client.c               | 479 +++++++++++++++++----
+ fs/ceph/mds_client.h               |  29 +-
+ fs/ceph/quota.c                    |  14 +-
+ fs/ceph/snap.c                     |  10 +-
+ fs/ceph/super.c                    | 191 ++++++++-
+ fs/ceph/super.h                    |  46 +-
+ fs/ceph/xattr.c                    |  29 ++
+ include/linux/ceph/ceph_fs.h       |  21 +-
+ include/linux/ceph/messenger.h     |  40 ++
+ include/linux/ceph/osd_client.h    |  93 +++-
+ include/linux/ceph/rados.h         |   4 +
+ net/ceph/messenger.c               |  79 ++++
+ net/ceph/messenger_v1.c            |  98 ++++-
+ net/ceph/messenger_v2.c            | 286 ++++++++++++-
+ net/ceph/osd_client.c              | 332 ++++++++++++++-
+ 27 files changed, 4261 insertions(+), 417 deletions(-)
+ create mode 100644 fs/ceph/crypto.c
+ create mode 100644 fs/ceph/crypto.h
+
+-- 
+2.40.1
 
