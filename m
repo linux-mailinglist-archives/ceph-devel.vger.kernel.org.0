@@ -2,48 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DB4B172D948
-	for <lists+ceph-devel@lfdr.de>; Tue, 13 Jun 2023 07:33:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18B7572D947
+	for <lists+ceph-devel@lfdr.de>; Tue, 13 Jun 2023 07:33:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240265AbjFMFds (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 13 Jun 2023 01:33:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39234 "EHLO
+        id S240243AbjFMFdo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 13 Jun 2023 01:33:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234080AbjFMFdB (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 13 Jun 2023 01:33:01 -0400
+        with ESMTP id S240239AbjFMFc5 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 13 Jun 2023 01:32:57 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0D5930D0
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E12EA30D6
         for <ceph-devel@vger.kernel.org>; Mon, 12 Jun 2023 22:30:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686634230;
+        s=mimecast20190719; t=1686634231;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Yw+iT7tSOVTCTqTjepbzgSjOUyqwJCq0KwcCf3vgsKg=;
-        b=GKkAqqVmGxwq8mp1pZLsXA2iFSpWahgToDQmrlIed94ryGFamX7q57Hh6TeQvD1UAwa9/O
-        NAcUpD/Z9U/3Y6gM2Lw2sQdfD9EwCjfqeSSHP0iZ7Djx4Nq5rLWEpTLATW0J4xRRVJmPBM
-        qzjSdqVufPD/A0Nd7xn3q4z0yAvbrOY=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=851fdttRuJmk1R1CrphAfuxJeKM7NicsvmRFozTthtk=;
+        b=B/tJHfQ0ETtI6OLedrrOkUkyejmiMpC4U+aqZevbnvc9YK5lpIFh7f3J/060jKX+fW6C+X
+        VtCYvOBKdh6CSO6owYYt+rPcnlGTQfdkvho21+MvB1hC4mUSkx8M86Qe421zggo61KlAE7
+        ovlIiGovDEK4pAuATNpA/NgsMtHh3Do=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-191-CAlr1Cx2MkGBOaZQpNbUJw-1; Tue, 13 Jun 2023 01:30:25 -0400
-X-MC-Unique: CAlr1Cx2MkGBOaZQpNbUJw-1
+ us-mta-401-t3Q0iwZcOtGMlmRO9lMM4A-1; Tue, 13 Jun 2023 01:30:29 -0400
+X-MC-Unique: t3Q0iwZcOtGMlmRO9lMM4A-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B24231C07599;
-        Tue, 13 Jun 2023 05:30:24 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F21A8858EEB;
+        Tue, 13 Jun 2023 05:30:28 +0000 (UTC)
 Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-155.pek2.redhat.com [10.72.12.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3BC551121314;
-        Tue, 13 Jun 2023 05:30:20 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7383B1121314;
+        Tue, 13 Jun 2023 05:30:25 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
 Cc:     jlayton@kernel.org, vshankar@redhat.com, mchangir@redhat.com,
         lhenriques@suse.de, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v20 51/71] ceph: disable fallocate for encrypted inodes
-Date:   Tue, 13 Jun 2023 13:24:04 +0800
-Message-Id: <20230613052424.254540-52-xiubli@redhat.com>
+Subject: [PATCH v20 52/71] ceph: disable copy offload on encrypted inodes
+Date:   Tue, 13 Jun 2023 13:24:05 +0800
+Message-Id: <20230613052424.254540-53-xiubli@redhat.com>
 In-Reply-To: <20230613052424.254540-1-xiubli@redhat.com>
 References: <20230613052424.254540-1-xiubli@redhat.com>
 MIME-Version: 1.0
@@ -62,7 +62,9 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Jeff Layton <jlayton@kernel.org>
 
-...hopefully, just for now.
+If we have an encrypted inode, then the client will need to re-encrypt
+the contents of the new object. Disable copy offload to or from
+encrypted inodes.
 
 Tested-by: Luís Henriques <lhenriques@suse.de>
 Tested-by: Venky Shankar <vshankar@redhat.com>
@@ -70,23 +72,24 @@ Reviewed-by: Luís Henriques <lhenriques@suse.de>
 Reviewed-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/file.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/ceph/file.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index df321933153a..e3d07f4049df 100644
+index e3d07f4049df..f621f733898e 100644
 --- a/fs/ceph/file.c
 +++ b/fs/ceph/file.c
-@@ -2195,6 +2195,9 @@ static long ceph_fallocate(struct file *file, int mode,
- 	if (!S_ISREG(inode->i_mode))
+@@ -2519,6 +2519,10 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
  		return -EOPNOTSUPP;
+ 	}
  
-+	if (IS_ENCRYPTED(inode))
++	/* Every encrypted inode gets its own key, so we can't offload them */
++	if (IS_ENCRYPTED(src_inode) || IS_ENCRYPTED(dst_inode))
 +		return -EOPNOTSUPP;
 +
- 	prealloc_cf = ceph_alloc_cap_flush();
- 	if (!prealloc_cf)
- 		return -ENOMEM;
+ 	if (len < src_ci->i_layout.object_size)
+ 		return -EOPNOTSUPP; /* no remote copy will be done */
+ 
 -- 
 2.40.1
 
