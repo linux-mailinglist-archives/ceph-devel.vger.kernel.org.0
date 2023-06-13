@@ -2,48 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BFD872D924
-	for <lists+ceph-devel@lfdr.de>; Tue, 13 Jun 2023 07:29:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6E4872D925
+	for <lists+ceph-devel@lfdr.de>; Tue, 13 Jun 2023 07:29:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237312AbjFMF3y (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 13 Jun 2023 01:29:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39890 "EHLO
+        id S240042AbjFMF35 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 13 Jun 2023 01:29:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240155AbjFMF3V (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 13 Jun 2023 01:29:21 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D81C19C
-        for <ceph-devel@vger.kernel.org>; Mon, 12 Jun 2023 22:28:06 -0700 (PDT)
+        with ESMTP id S233159AbjFMF3X (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 13 Jun 2023 01:29:23 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF9819B5
+        for <ceph-devel@vger.kernel.org>; Mon, 12 Jun 2023 22:28:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686634086;
+        s=mimecast20190719; t=1686634091;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fyaaPgYGwAJb95hHTyeWVNR81aQLNtkgKza5n1NsFcs=;
-        b=d3RBcipWoVrgi3YUfgEfU3lGZwqKp6Bnff6v2/DHLw2+cfF3dUxVykJ8k/ec2yLnIKhsMF
-        usthzUtaxVohtvB94kPhZeh9kaOo5+zpVnyxXDV0KJOHvo9jbyvmD2S7Q9sSVWjcFs1VaG
-        WXhKIA+T2sx44WFvWpMKTdRrILkmSz8=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=A+C+tW+u7dZ8bKdSpu9DQN30t5w33aYynoq23jKcuPQ=;
+        b=YhpJHTD7iumxRNBE3vS6r25qd8E0CGTuslVf3XqS76jzPajPdzXM3GFoFmrCram5yjAs3X
+        GaABzXJ485m5Ftggw8qLusJB3CcJWWcM5eBdwEzbHvv3IrYM82DlldbZqg1sU6JzZ05L9A
+        q4vshhZZrIFdW2qaB2ptreecVJS0jhA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-137-wDUguIJ0M7Co_3ZsDa4_3Q-1; Tue, 13 Jun 2023 01:28:03 -0400
-X-MC-Unique: wDUguIJ0M7Co_3ZsDa4_3Q-1
+ us-mta-320-Fr4E0TiAOwaihB7YkKMUXA-1; Tue, 13 Jun 2023 01:28:07 -0400
+X-MC-Unique: Fr4E0TiAOwaihB7YkKMUXA-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 559991C02D24;
-        Tue, 13 Jun 2023 05:28:03 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 63B50185A797;
+        Tue, 13 Jun 2023 05:28:07 +0000 (UTC)
 Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-155.pek2.redhat.com [10.72.12.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 30A951121314;
-        Tue, 13 Jun 2023 05:27:59 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0F4CC1121315;
+        Tue, 13 Jun 2023 05:28:03 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
 Cc:     jlayton@kernel.org, vshankar@redhat.com, mchangir@redhat.com,
         lhenriques@suse.de, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v20 19/71] ceph: add base64 endcoding routines for encrypted names
-Date:   Tue, 13 Jun 2023 13:23:32 +0800
-Message-Id: <20230613052424.254540-20-xiubli@redhat.com>
+Subject: [PATCH v20 20/71] ceph: add encrypted fname handling to ceph_mdsc_build_path
+Date:   Tue, 13 Jun 2023 13:23:33 +0800
+Message-Id: <20230613052424.254540-21-xiubli@redhat.com>
 In-Reply-To: <20230613052424.254540-1-xiubli@redhat.com>
 References: <20230613052424.254540-1-xiubli@redhat.com>
 MIME-Version: 1.0
@@ -52,150 +52,266 @@ Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Luís Henriques <lhenriques@suse.de>
+From: Jeff Layton <jlayton@kernel.org>
 
-The base64url encoding used by fscrypt includes the '_' character, which
-may cause problems in snapshot names (if the name starts with '_').
-Thus, use the base64 encoding defined for IMAP mailbox names (RFC 3501),
-which uses '+' and ',' instead of '-' and '_'.
+Allow ceph_mdsc_build_path to encrypt and base64 encode the filename
+when the parent is encrypted and we're sending the path to the MDS.
+
+In most cases, we just encrypt the filenames and base64 encode them,
+but when the name is longer than CEPH_NOHASH_NAME_MAX, we use a similar
+scheme to fscrypt proper, and hash the remaning bits with sha256.
+
+When doing this, we then send along the full crypttext of the name in
+the new alternate_name field of the MClientRequest. The MDS can then
+send that along in readdir responses and traces.
 
 Tested-by: Luís Henriques <lhenriques@suse.de>
 Tested-by: Venky Shankar <vshankar@redhat.com>
-Signed-off-by: Luís Henriques <lhenriques@suse.de>
+Reviewed-by: Luís Henriques <lhenriques@suse.de>
 Reviewed-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/crypto.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++++
- fs/ceph/crypto.h | 32 ++++++++++++++++++++++++++
- 2 files changed, 92 insertions(+)
+ fs/ceph/crypto.c     | 47 ++++++++++++++++++++++++++
+ fs/ceph/crypto.h     |  8 +++++
+ fs/ceph/mds_client.c | 80 ++++++++++++++++++++++++++++++++++----------
+ 3 files changed, 117 insertions(+), 18 deletions(-)
 
 diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index fd3192917e8d..947ac98119aa 100644
+index 947ac98119aa..e54ea4c3e478 100644
 --- a/fs/ceph/crypto.c
 +++ b/fs/ceph/crypto.c
-@@ -1,4 +1,11 @@
- // SPDX-License-Identifier: GPL-2.0
-+/*
-+ * The base64 encode/decode code was copied from fscrypt:
-+ * Copyright (C) 2015, Google, Inc.
-+ * Copyright (C) 2015, Motorola Mobility
-+ * Written by Uday Savagaonkar, 2014.
-+ * Modified by Jaegeuk Kim, 2015.
-+ */
- #include <linux/ceph/ceph_debug.h>
- #include <linux/xattr.h>
+@@ -187,3 +187,50 @@ void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req, struct ceph_acl_se
+ {
+ 	swap(req->r_fscrypt_auth, as->fscrypt_auth);
+ }
++
++int ceph_encode_encrypted_fname(const struct inode *parent, struct dentry *dentry, char *buf)
++{
++	u32 len;
++	int elen;
++	int ret;
++	u8 *cryptbuf;
++
++	WARN_ON_ONCE(!fscrypt_has_encryption_key(parent));
++
++	/*
++	 * Convert cleartext d_name to ciphertext. If result is longer than
++	 * CEPH_NOHASH_NAME_MAX, sha256 the remaining bytes
++	 *
++	 * See: fscrypt_setup_filename
++	 */
++	if (!fscrypt_fname_encrypted_size(parent, dentry->d_name.len, NAME_MAX, &len))
++		return -ENAMETOOLONG;
++
++	/* Allocate a buffer appropriate to hold the result */
++	cryptbuf = kmalloc(len > CEPH_NOHASH_NAME_MAX ? NAME_MAX : len, GFP_KERNEL);
++	if (!cryptbuf)
++		return -ENOMEM;
++
++	ret = fscrypt_fname_encrypt(parent, &dentry->d_name, cryptbuf, len);
++	if (ret) {
++		kfree(cryptbuf);
++		return ret;
++	}
++
++	/* hash the end if the name is long enough */
++	if (len > CEPH_NOHASH_NAME_MAX) {
++		u8 hash[SHA256_DIGEST_SIZE];
++		u8 *extra = cryptbuf + CEPH_NOHASH_NAME_MAX;
++
++		/* hash the extra bytes and overwrite crypttext beyond that point with it */
++		sha256(extra, len - CEPH_NOHASH_NAME_MAX, hash);
++		memcpy(extra, hash, SHA256_DIGEST_SIZE);
++		len = CEPH_NOHASH_NAME_MAX + SHA256_DIGEST_SIZE;
++	}
++
++	/* base64 encode the encrypted name */
++	elen = ceph_base64_encode(cryptbuf, len, buf);
++	kfree(cryptbuf);
++	dout("base64-encoded ciphertext name = %.*s\n", elen, buf);
++	return elen;
++}
+diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
+index f5d38d8a1995..8abf10604722 100644
+--- a/fs/ceph/crypto.h
++++ b/fs/ceph/crypto.h
+@@ -6,6 +6,7 @@
+ #ifndef _CEPH_CRYPTO_H
+ #define _CEPH_CRYPTO_H
+ 
++#include <crypto/sha2.h>
  #include <linux/fscrypt.h>
-@@ -7,6 +14,59 @@
+ 
+ struct ceph_fs_client;
+@@ -66,6 +67,7 @@ void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc);
+ int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
+ 				 struct ceph_acl_sec_ctx *as);
+ void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req, struct ceph_acl_sec_ctx *as);
++int ceph_encode_encrypted_fname(const struct inode *parent, struct dentry *dentry, char *buf);
+ 
+ #else /* CONFIG_FS_ENCRYPTION */
+ 
+@@ -89,6 +91,12 @@ static inline void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req,
+ 						struct ceph_acl_sec_ctx *as_ctx)
+ {
+ }
++
++static inline int ceph_encode_encrypted_fname(const struct inode *parent,
++						struct dentry *dentry, char *buf)
++{
++	return -EOPNOTSUPP;
++}
+ #endif /* CONFIG_FS_ENCRYPTION */
+ 
+ #endif
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 84ca9ae8fa6a..294ef090bac7 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -14,6 +14,7 @@
+ #include <linux/bitmap.h>
+ 
+ #include "super.h"
++#include "crypto.h"
  #include "mds_client.h"
  #include "crypto.h"
  
-+/*
-+ * The base64url encoding used by fscrypt includes the '_' character, which may
-+ * cause problems in snapshot names (which can not starts with '_').  Thus, we
-+ * used the base64 encoding defined for IMAP mailbox names (RFC 3501) instead,
-+ * which replaces '-' and '_' by '+' and ','.
-+ */
-+static const char base64_table[65] =
-+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
-+
-+int ceph_base64_encode(const u8 *src, int srclen, char *dst)
-+{
-+	u32 ac = 0;
-+	int bits = 0;
-+	int i;
-+	char *cp = dst;
-+
-+	for (i = 0; i < srclen; i++) {
-+		ac = (ac << 8) | src[i];
-+		bits += 8;
-+		do {
-+			bits -= 6;
-+			*cp++ = base64_table[(ac >> bits) & 0x3f];
-+		} while (bits >= 6);
-+	}
-+	if (bits)
-+		*cp++ = base64_table[(ac << (6 - bits)) & 0x3f];
-+	return cp - dst;
-+}
-+
-+int ceph_base64_decode(const char *src, int srclen, u8 *dst)
-+{
-+	u32 ac = 0;
-+	int bits = 0;
-+	int i;
-+	u8 *bp = dst;
-+
-+	for (i = 0; i < srclen; i++) {
-+		const char *p = strchr(base64_table, src[i]);
-+
-+		if (p == NULL || src[i] == 0)
-+			return -1;
-+		ac = (ac << 6) | (p - base64_table);
-+		bits += 6;
-+		if (bits >= 8) {
-+			bits -= 8;
-+			*bp++ = (u8)(ac >> bits);
-+		}
-+	}
-+	if (ac & ((1 << bits) - 1))
-+		return -1;
-+	return bp - dst;
-+}
-+
- static int ceph_crypt_get_context(struct inode *inode, void *ctx, size_t len)
- {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
-diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
-index cb00fe42d5b7..f5d38d8a1995 100644
---- a/fs/ceph/crypto.h
-+++ b/fs/ceph/crypto.h
-@@ -27,6 +27,38 @@ static inline u32 ceph_fscrypt_auth_len(struct ceph_fscrypt_auth *fa)
+@@ -2484,18 +2485,27 @@ static inline  u64 __get_oldest_tid(struct ceph_mds_client *mdsc)
+ 	return mdsc->oldest_tid;
  }
  
- #ifdef CONFIG_FS_ENCRYPTION
-+/*
-+ * We want to encrypt filenames when creating them, but the encrypted
-+ * versions of those names may have illegal characters in them. To mitigate
-+ * that, we base64 encode them, but that gives us a result that can exceed
-+ * NAME_MAX.
+-/*
+- * Build a dentry's path.  Allocate on heap; caller must kfree.  Based
+- * on build_path_from_dentry in fs/cifs/dir.c.
++/**
++ * ceph_mdsc_build_path - build a path string to a given dentry
++ * @dentry: dentry to which path should be built
++ * @plen: returned length of string
++ * @pbase: returned base inode number
++ * @for_wire: is this path going to be sent to the MDS?
 + *
-+ * Follow a similar scheme to fscrypt itself, and cap the filename to a
-+ * smaller size. If the ciphertext name is longer than the value below, then
-+ * sha256 hash the remaining bytes.
++ * Build a string that represents the path to the dentry. This is mostly called
++ * for two different purposes:
+  *
+- * If @stop_on_nosnap, generate path relative to the first non-snapped
+- * inode.
++ * 1) we need to build a path string to send to the MDS (for_wire == true)
++ * 2) we need a path string for local presentation (e.g. debugfs) (for_wire == false)
 + *
-+ * For the fscrypt_nokey_name struct the dirhash[2] member is useless in ceph
-+ * so the corresponding struct will be:
-+ *
-+ * struct fscrypt_ceph_nokey_name {
-+ *	u8 bytes[157];
-+ *	u8 sha256[SHA256_DIGEST_SIZE];
-+ * }; // 180 bytes => 240 bytes base64-encoded, which is <= NAME_MAX (255)
-+ *
-+ * (240 bytes is the maximum size allowed for snapshot names to take into
-+ *  account the format: '_<SNAPSHOT-NAME>_<INODE-NUMBER>'.)
-+ *
-+ * Note that for long names that end up having their tail portion hashed, we
-+ * must also store the full encrypted name (in the dentry's alternate_name
-+ * field).
-+ */
-+#define CEPH_NOHASH_NAME_MAX (180 - SHA256_DIGEST_SIZE)
-+
-+#define CEPH_BASE64_CHARS(nbytes) DIV_ROUND_UP((nbytes) * 4, 3)
-+
-+int ceph_base64_encode(const u8 *src, int srclen, char *dst);
-+int ceph_base64_decode(const char *src, int srclen, u8 *dst);
-+
- void ceph_fscrypt_set_ops(struct super_block *sb);
++ * The path is built in reverse, starting with the dentry. Walk back up toward
++ * the root, building the path until the first non-snapped inode is reached (for_wire)
++ * or the root inode is reached (!for_wire).
+  *
+  * Encode hidden .snap dirs as a double /, i.e.
+  *   foo/.snap/bar -> foo//bar
+  */
+-char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
+-			   int stop_on_nosnap)
++char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase, int for_wire)
+ {
+ 	struct dentry *cur;
+ 	struct inode *inode;
+@@ -2517,30 +2527,65 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
+ 	seq = read_seqbegin(&rename_lock);
+ 	cur = dget(dentry);
+ 	for (;;) {
+-		struct dentry *temp;
++		struct dentry *parent;
  
- void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc);
+ 		spin_lock(&cur->d_lock);
+ 		inode = d_inode(cur);
+ 		if (inode && ceph_snap(inode) == CEPH_SNAPDIR) {
+ 			dout("build_path path+%d: %p SNAPDIR\n",
+ 			     pos, cur);
+-		} else if (stop_on_nosnap && inode && dentry != cur &&
+-			   ceph_snap(inode) == CEPH_NOSNAP) {
++			spin_unlock(&cur->d_lock);
++			parent = dget_parent(cur);
++		} else if (for_wire && inode && dentry != cur && ceph_snap(inode) == CEPH_NOSNAP) {
+ 			spin_unlock(&cur->d_lock);
+ 			pos++; /* get rid of any prepended '/' */
+ 			break;
+-		} else {
++		} else if (!for_wire || !IS_ENCRYPTED(d_inode(cur->d_parent))) {
+ 			pos -= cur->d_name.len;
+ 			if (pos < 0) {
+ 				spin_unlock(&cur->d_lock);
+ 				break;
+ 			}
+ 			memcpy(path + pos, cur->d_name.name, cur->d_name.len);
++			spin_unlock(&cur->d_lock);
++			parent = dget_parent(cur);
++		} else {
++			int len, ret;
++			char buf[NAME_MAX];
++
++			/*
++			 * Proactively copy name into buf, in case we need to present
++			 * it as-is.
++			 */
++			memcpy(buf, cur->d_name.name, cur->d_name.len);
++			len = cur->d_name.len;
++			spin_unlock(&cur->d_lock);
++			parent = dget_parent(cur);
++
++			ret = __fscrypt_prepare_readdir(d_inode(parent));
++			if (ret < 0) {
++				dput(parent);
++				dput(cur);
++				return ERR_PTR(ret);
++			}
++
++			if (fscrypt_has_encryption_key(d_inode(parent))) {
++				len = ceph_encode_encrypted_fname(d_inode(parent), cur, buf);
++				if (len < 0) {
++					dput(parent);
++					dput(cur);
++					return ERR_PTR(len);
++				}
++			}
++			pos -= len;
++			if (pos < 0) {
++				dput(parent);
++				break;
++			}
++			memcpy(path + pos, buf, len);
+ 		}
+-		temp = cur;
+-		spin_unlock(&temp->d_lock);
+-		cur = dget_parent(temp);
+-		dput(temp);
++		dput(cur);
++		cur = parent;
+ 
+ 		/* Are we at the root? */
+ 		if (IS_ROOT(cur))
+@@ -2564,8 +2609,7 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
+ 		 * A rename didn't occur, but somehow we didn't end up where
+ 		 * we thought we would. Throw a warning and try again.
+ 		 */
+-		pr_warn("build_path did not end path lookup where "
+-			"expected, pos is %d\n", pos);
++		pr_warn("build_path did not end path lookup where expected (pos = %d)\n", pos);
+ 		goto retry;
+ 	}
+ 
+@@ -2585,7 +2629,7 @@ static int build_dentry_path(struct dentry *dentry, struct inode *dir,
+ 	rcu_read_lock();
+ 	if (!dir)
+ 		dir = d_inode_rcu(dentry->d_parent);
+-	if (dir && parent_locked && ceph_snap(dir) == CEPH_NOSNAP) {
++	if (dir && parent_locked && ceph_snap(dir) == CEPH_NOSNAP && !IS_ENCRYPTED(dir)) {
+ 		*pino = ceph_ino(dir);
+ 		rcu_read_unlock();
+ 		*ppath = dentry->d_name.name;
 -- 
 2.40.1
 
