@@ -2,253 +2,205 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A57E72E87A
-	for <lists+ceph-devel@lfdr.de>; Tue, 13 Jun 2023 18:27:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF07F72EE45
+	for <lists+ceph-devel@lfdr.de>; Tue, 13 Jun 2023 23:50:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236092AbjFMQ1h (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 13 Jun 2023 12:27:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54130 "EHLO
+        id S234300AbjFMVuq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 13 Jun 2023 17:50:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233048AbjFMQ1g (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 13 Jun 2023 12:27:36 -0400
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28789E4
-        for <ceph-devel@vger.kernel.org>; Tue, 13 Jun 2023 09:27:35 -0700 (PDT)
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com [209.85.219.197])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B9DB83F26D
-        for <ceph-devel@vger.kernel.org>; Tue, 13 Jun 2023 16:27:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1686673652;
-        bh=ValhE6UfwquXmpyVBBbxsSIHDSpMkwILF2ZvydAjNCo=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=Mv+QtKMfdN2J2sq830gLu0Wau+SFK5O9Q7TEJPfJs6iG/8rmCYBaatHuJ6zYpaOoF
-         Wv9R9/SNRPt2mbLDZOzyfaCi8ZCBHosJJZOCfGayMqrw+j8omoVq6hDMmsWq7NwQLD
-         bhYgYy4+js28X39S6xX6E95I4MoK8wYLYHA3lvEkWW/xp5+OFck8WCEo7j3uwqaPFZ
-         bK4TtjcgcFiyldgLjgsp33mY5UDWpJ6VJbq3RjPVbu14HmffmQoFNQbuIIs9TzReiF
-         RadPGU42GV71J0NYdF3uj3bhGjpi2DPvSW5i4/x6qhzfgIS7+HAfEBSEpotQ1OjGl5
-         sD5duTbNlJc9w==
-Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-ba88ec544ddso8256764276.1
-        for <ceph-devel@vger.kernel.org>; Tue, 13 Jun 2023 09:27:32 -0700 (PDT)
+        with ESMTP id S231866AbjFMVup (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 13 Jun 2023 17:50:45 -0400
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF1331BC7
+        for <ceph-devel@vger.kernel.org>; Tue, 13 Jun 2023 14:50:43 -0700 (PDT)
+Received: by mail-ed1-x52a.google.com with SMTP id 4fb4d7f45d1cf-51878dca79fso1748485a12.1
+        for <ceph-devel@vger.kernel.org>; Tue, 13 Jun 2023 14:50:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686693042; x=1689285042;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u5i7JCFGQun0/12ejakcS8GlLVaxXCCYoVZwbm7luZ4=;
+        b=q0z12KmxHYF0RXuB9+SSheJHIR1gbPdFkzAv0NQd3s+4K7vBO5B+DdCRTqwUxugpEu
+         Y2gH2m7j3xYCtdTie446PMgs4oRqX7deiAXT1wUoZe1TYgcSsgTNJupCB4gx6wiH+AFG
+         3c7GOby4U4Hmu2qz2YPK9Bdi0qzKGMdGtKPstjSGl+uk1mH5J7KTo1bYREMKfflPAuPg
+         mWeqSSE2UO6dnRypuxGbeYUGqTCeglzaBRGbI28hc603ciiuRwf0+6V7f4bYUr24tLDz
+         92iqPJNVL9rA0JAKFxteDBbHSWni5vJ614fIpseTkQxs2eHxdin1rbuoKxBTgp+63vPc
+         nzzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686673650; x=1689265650;
+        d=1e100.net; s=20221208; t=1686693042; x=1689285042;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ValhE6UfwquXmpyVBBbxsSIHDSpMkwILF2ZvydAjNCo=;
-        b=idHU/zh2rF6ZR4/nBD302IDGYvd4XzJrwtk16MiEmTBGPSKpKSg/E2QpM+y7b0hmRK
-         Dt6kxjMBNV5b6mq8g48uYjvzDmxmztqxeVwEn+5YhMtxXIA91V8orpXcw/FiOPZ7Lhjc
-         jaSLOBlfaAZp3pncVzlcRid/7rf5+21tH0ac5r0hGSDK5T6+66aUIxtrXEXJqi7eMxVl
-         qVU/7wIPUnZwT9c4cswT/EFrunOUPp3Oh8fXaBgVZcfbd4tTdWIeUK0RxHLLopul10PF
-         W/QYYjI75zZNMinFL1DqfNJWRlLc2bP5UK1BZ+AWc5xoZHWgmU+7kwctnF5jmRCupOjS
-         tWeA==
-X-Gm-Message-State: AC+VfDwgCbubU7T2SIdvajf18uMI7tgbWq4R2VI8XYssO7H3uop+rguv
-        bhIIynXU82ZqEo4LLQdHzS2y5IwrbS92chuk8RODtvUqCGr3rrKuQbzU3oPUEy/S9g5DxA6ZtEv
-        PMW7NvLTWYH0gm7CGmL7bqUkAOynt+iYF2hciUdATRsoKOvUs4jCDIJM=
-X-Received: by 2002:a25:4605:0:b0:bc6:6083:8f42 with SMTP id t5-20020a254605000000b00bc660838f42mr1564364yba.21.1686673649892;
-        Tue, 13 Jun 2023 09:27:29 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5JlLRjmXwi2pYsePj7YxcsfdOk4CxL8axkWWI3zvYCCITZ+u0R3LM2ErXc9+TNwZ73jINAQkimPaDpZvWgJb8=
-X-Received: by 2002:a25:4605:0:b0:bc6:6083:8f42 with SMTP id
- t5-20020a254605000000b00bc660838f42mr1564353yba.21.1686673649608; Tue, 13 Jun
- 2023 09:27:29 -0700 (PDT)
+        bh=u5i7JCFGQun0/12ejakcS8GlLVaxXCCYoVZwbm7luZ4=;
+        b=VBTMiuXdnsfMgMuzXPszi6j3pLofgXjCQFq5yTCFOfD8xw2MtZkaLRwRrh4wFd08iC
+         5O30S9i0Ih1fDZD4fg0EudClhfj6d/1MgT+Xfo9IldCE9vSKTZwRr0/ERuzdzwUWVr+L
+         qhb46UbyL61XloCb/pr9mhpuD74ZD45nO1/serzwaw+8Q0P9+2D+aHFnhUrDQe1BLs5g
+         pMqx60WY4uKbfXN4BShAMTfH7bPBN7UJaTK9NZyTy85zI/Nw1qfr/QMvfTOu7TTxzRDu
+         KKt5modbBIXDlGxp8XMQwiQYyorlpNxz6tMgp+fRAC4NiX6SvedMU8vZN7gn0rV0m1mq
+         /Zqg==
+X-Gm-Message-State: AC+VfDw0Ng9fzncinUjCFhxB3J2uo3putv1r4tpEm0g8ULhe8UFeWq7j
+        lG0ekP9V5Bu51lQTvGkm3Mz/0O8DvT52n2iafN7KicE7qrg=
+X-Google-Smtp-Source: ACHHUZ7ykS+NV65IIP/yw+Tc6fuLYbTQUGj1tl4BXnKu6FT6nqdq0jPzrjPslSlAKa8kqy2ClxBDBaSKkdJEGtg7Z5I=
+X-Received: by 2002:a17:907:6d9e:b0:97e:a917:e6a5 with SMTP id
+ sb30-20020a1709076d9e00b0097ea917e6a5mr11193124ejc.19.1686693042063; Tue, 13
+ Jun 2023 14:50:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
- <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com> <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
- <20230609-alufolie-gezaubert-f18ef17cda12@brauner> <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
- <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com> <CAJ4mKGby71qfb3gd696XH3AazeR0Qc_VGYupMznRH3Piky+VGA@mail.gmail.com>
-In-Reply-To: <CAJ4mKGby71qfb3gd696XH3AazeR0Qc_VGYupMznRH3Piky+VGA@mail.gmail.com>
-From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date:   Tue, 13 Jun 2023 18:27:18 +0200
-Message-ID: <CAEivzxfdYagVp+nA1RXdtWa0XAM82TScLWSfYr6ZH5zAOGVcVQ@mail.gmail.com>
-Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
-To:     Gregory Farnum <gfarnum@redhat.com>
-Cc:     Xiubo Li <xiubli@redhat.com>,
-        Christian Brauner <brauner@kernel.org>, stgraber@ubuntu.com,
-        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+References: <20230612114359.220895-1-xiubli@redhat.com> <20230612114359.220895-7-xiubli@redhat.com>
+ <CAOi1vP-ffbAqdRWi5pNButrdmxJzzRyNZOTTixhEtaSSUTC4qA@mail.gmail.com> <de1a2706-5e9a-678f-4c9a-1f1856fb7b4e@redhat.com>
+In-Reply-To: <de1a2706-5e9a-678f-4c9a-1f1856fb7b4e@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 13 Jun 2023 23:50:30 +0200
+Message-ID: <CAOi1vP-xoNH7+oo1Rv8i5RGcyhrR8VEM2OBs9hDf-sxTgYhaeQ@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] ceph: print the client global_id in all the debug logs
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        vshankar@redhat.com, khiremat@redhat.com, mchangir@redhat.com,
+        pdonnell@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jun 13, 2023 at 4:54=E2=80=AFPM Gregory Farnum <gfarnum@redhat.com>=
- wrote:
+On Tue, Jun 13, 2023 at 11:51=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote=
+:
 >
-> On Mon, Jun 12, 2023 at 6:43=E2=80=AFPM Xiubo Li <xiubli@redhat.com> wrot=
-e:
-> >
-> >
-> > On 6/9/23 18:12, Aleksandr Mikhalitsyn wrote:
-> > > On Fri, Jun 9, 2023 at 12:00=E2=80=AFPM Christian Brauner <brauner@ke=
-rnel.org> wrote:
-> > >> On Fri, Jun 09, 2023 at 10:59:19AM +0200, Aleksandr Mikhalitsyn wrot=
-e:
-> > >>> On Fri, Jun 9, 2023 at 3:57=E2=80=AFAM Xiubo Li <xiubli@redhat.com>=
- wrote:
-> > >>>>
-> > >>>> On 6/8/23 23:42, Alexander Mikhalitsyn wrote:
-> > >>>>> Dear friends,
-> > >>>>>
-> > >>>>> This patchset was originally developed by Christian Brauner but I=
-'ll continue
-> > >>>>> to push it forward. Christian allowed me to do that :)
-> > >>>>>
-> > >>>>> This feature is already actively used/tested with LXD/LXC project=
-.
-> > >>>>>
-> > >>>>> Git tree (based on https://github.com/ceph/ceph-client.git master=
-):
-> > >>> Hi Xiubo!
-> > >>>
-> > >>>> Could you rebase these patches to 'testing' branch ?
-> > >>> Will do in -v6.
-> > >>>
-> > >>>> And you still have missed several places, for example the followin=
-g cases:
-> > >>>>
-> > >>>>
-> > >>>>      1    269  fs/ceph/addr.c <<ceph_netfs_issue_op_inline>>
-> > >>>>                req =3D ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_=
-GETATTR,
-> > >>>> mode);
-> > >>> +
-> > >>>
-> > >>>>      2    389  fs/ceph/dir.c <<ceph_readdir>>
-> > >>>>                req =3D ceph_mdsc_create_request(mdsc, op, USE_AUTH=
-_MDS);
-> > >>> +
-> > >>>
-> > >>>>      3    789  fs/ceph/dir.c <<ceph_lookup>>
-> > >>>>                req =3D ceph_mdsc_create_request(mdsc, op, USE_ANY_=
-MDS);
-> > >>> We don't have an idmapping passed to lookup from the VFS layer. As =
-I
-> > >>> mentioned before, it's just impossible now.
-> > >> ->lookup() doesn't deal with idmappings and really can't otherwise y=
-ou
-> > >> risk ending up with inode aliasing which is really not something you
-> > >> want. IOW, you can't fill in inode->i_{g,u}id based on a mount's
-> > >> idmapping as inode->i_{g,u}id absolutely needs to be a filesystem wi=
-de
-> > >> value. So better not even risk exposing the idmapping in there at al=
-l.
-> > > Thanks for adding, Christian!
-> > >
-> > > I agree, every time when we use an idmapping we need to be careful wi=
-th
-> > > what we map. AFAIU, inode->i_{g,u}id should be based on the filesyste=
-m
-> > > idmapping (not mount),
-> > > but in this case, Xiubo want's current_fs{u,g}id to be mapped
-> > > according to an idmapping.
-> > > Anyway, it's impossible at now and IMHO, until we don't have any
-> > > practical use case where
-> > > UID/GID-based path restriction is used in combination with idmapped
-> > > mounts it's not worth to
-> > > make such big changes in the VFS layer.
-> > >
-> > > May be I'm not right, but it seems like UID/GID-based path restrictio=
-n
-> > > is not a widespread
-> > > feature and I can hardly imagine it to be used with the container
-> > > workloads (for instance),
-> > > because it will require to always keep in sync MDS permissions
-> > > configuration with the
-> > > possible UID/GID ranges on the client. It looks like a nightmare for =
-sysadmin.
-> > > It is useful when cephfs is used as an external storage on the host, =
-but if you
-> > > share cephfs with a few containers with different user namespaces idm=
-apping...
-> >
-> > Hmm, while this will break the MDS permission check in cephfs then in
-> > lookup case. If we really couldn't support it we should make it to
-> > escape the check anyway or some OPs may fail and won't work as expected=
-.
-
-Dear Gregory,
-
-Thanks for the fast reply!
-
 >
-> I don't pretend to know the details of the VFS (or even our linux
-> client implementation), but I'm confused that this is apparently so
-> hard. It looks to me like we currently always fill in the "caller_uid"
-> with "from_kuid(&init_user_ns, req->r_cred->fsuid))". Is this actually
-> valid to begin with? If it is, why can't the uid mapping be applied on
-> that?
-
-Applying an idmapping is not hard, it's as simple as replacing
-from_kuid(&init_user_ns, req->r_cred->fsuid)
-to
-from_vfsuid(req->r_mnt_idmap, &init_user_ns, VFSUIDT_INIT(req->r_cred->fsui=
-d))
-
-but the problem is that we don't have req->r_mnt_idmap for all the requests=
-.
-For instance, we don't have idmap arguments (that come from the VFS
-layer) for ->lookup
-operation and many others. There are some reasons for that (Christian
-has covered some of them).
-So, it's not about my laziness to implement that. It's a real pain ;-)
-
+> On 6/13/23 17:07, Ilya Dryomov wrote:
+> > On Mon, Jun 12, 2023 at 1:46=E2=80=AFPM <xiubli@redhat.com> wrote:
+> >> From: Xiubo Li <xiubli@redhat.com>
+> >>
+> >> Multiple cephfs mounts on a host is increasingly common so disambiguat=
+ing
+> >> messages like this is necessary and will make it easier to debug
+> >> issues.
+> >>
+> >> URL: https://tracker.ceph.com/issues/61590
+> >> Cc: Patrick Donnelly <pdonnell@redhat.com>
+> >> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> >> ---
+> >>   fs/ceph/acl.c        |   6 +-
+> >>   fs/ceph/addr.c       | 300 ++++++++++--------
+> >>   fs/ceph/caps.c       | 709 ++++++++++++++++++++++++-----------------=
+--
+> >>   fs/ceph/crypto.c     |  45 ++-
+> >>   fs/ceph/debugfs.c    |   4 +-
+> >>   fs/ceph/dir.c        | 222 +++++++++-----
+> >>   fs/ceph/export.c     |  39 ++-
+> >>   fs/ceph/file.c       | 268 +++++++++-------
+> >>   fs/ceph/inode.c      | 528 ++++++++++++++++++--------------
+> >>   fs/ceph/ioctl.c      |  10 +-
+> >>   fs/ceph/locks.c      |  62 ++--
+> >>   fs/ceph/mds_client.c | 616 +++++++++++++++++++++----------------
+> >>   fs/ceph/mdsmap.c     |  25 +-
+> >>   fs/ceph/metric.c     |   5 +-
+> >>   fs/ceph/quota.c      |  31 +-
+> >>   fs/ceph/snap.c       | 186 +++++++-----
+> >>   fs/ceph/super.c      |  64 ++--
+> >>   fs/ceph/xattr.c      |  97 +++---
+> >>   18 files changed, 1887 insertions(+), 1330 deletions(-)
+> >>
+> >> diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
+> >> index 8a56f979c7cb..970acd07908d 100644
+> >> --- a/fs/ceph/acl.c
+> >> +++ b/fs/ceph/acl.c
+> >> @@ -15,6 +15,7 @@
+> >>   #include <linux/slab.h>
+> >>
+> >>   #include "super.h"
+> >> +#include "mds_client.h"
+> >>
+> >>   static inline void ceph_set_cached_acl(struct inode *inode,
+> >>                                          int type, struct posix_acl *a=
+cl)
+> >> @@ -31,6 +32,7 @@ static inline void ceph_set_cached_acl(struct inode =
+*inode,
+> >>
+> >>   struct posix_acl *ceph_get_acl(struct inode *inode, int type, bool r=
+cu)
+> >>   {
+> >> +       struct ceph_client *cl =3D ceph_inode_to_client(inode);
+> >>          int size;
+> >>          unsigned int retry_cnt =3D 0;
+> >>          const char *name;
+> >> @@ -72,8 +74,8 @@ struct posix_acl *ceph_get_acl(struct inode *inode, =
+int type, bool rcu)
+> >>          } else if (size =3D=3D -ENODATA || size =3D=3D 0) {
+> >>                  acl =3D NULL;
+> >>          } else {
+> >> -               pr_err_ratelimited("get acl %llx.%llx failed, err=3D%d=
+\n",
+> >> -                                  ceph_vinop(inode), size);
+> >> +               pr_err_ratelimited_client(cl, "%s %llx.%llx failed, er=
+r=3D%d\n",
+> >> +                                         __func__, ceph_vinop(inode),=
+ size);
+> >>                  acl =3D ERR_PTR(-EIO);
+> >>          }
+> >>
+> >> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> >> index e62318b3e13d..c772639dc0cb 100644
+> >> --- a/fs/ceph/addr.c
+> >> +++ b/fs/ceph/addr.c
+> >> @@ -79,18 +79,18 @@ static inline struct ceph_snap_context *page_snap_=
+context(struct page *page)
+> >>    */
+> >>   static bool ceph_dirty_folio(struct address_space *mapping, struct f=
+olio *folio)
+> >>   {
+> >> -       struct inode *inode;
+> >> +       struct inode *inode =3D mapping->host;
+> >> +       struct ceph_client *cl =3D ceph_inode_to_client(inode);
+> >>          struct ceph_inode_info *ci;
+> >>          struct ceph_snap_context *snapc;
+> >>
+> >>          if (folio_test_dirty(folio)) {
+> >> -               dout("%p dirty_folio %p idx %lu -- already dirty\n",
+> >> -                    mapping->host, folio, folio->index);
+> >> +               dout_client(cl, "%s %llx.%llx %p idx %lu -- already di=
+rty\n",
+> >> +                           __func__, ceph_vinop(inode), folio, folio-=
+>index);
+> > While having context information attached to each dout is nice, it
+> > certainly comes at a price of a lot of churn and automated backport
+> > disruption.
 >
-> As both the client and the server share authority over the inode's
-> state (including things like mode bits and owners), and need to do
-> permission checking, being able to tell the server the relevant actor
-> is inherently necessary. We also let admins restrict keys to
-> particular UID/GID combinations as they wish, and it's not the most
-> popular feature but it does get deployed. I would really expect a user
-> of UID mapping to be one of the *most* likely to employ such a
-> facility...maybe not with containers, but certainly end-user homedirs
-> and shared spaces.
+> Yeah, certainly this will break automated backporting. But this should
+> be okay, I can generate the backport patches for each stable release for
+> this patch series, so after this it will make the automated backporting
+> work.
 >
-> Disabling the MDS auth checks is really not an option. I guess we
-> could require any user employing idmapping to not be uid-restricted,
-> and set the anonymous UID (does that work, Xiubo, or was it the broken
-> one? In which case we'd have to default to root?). But that seems a
-> bit janky to me.
+> >   I wonder how much value doing this for douts as opposed
+> > to just pr_* messages actually brings?
+>
+> I think the 'dout()' was introduced by printing more context info, which
+> includes module/function names and line#, when the
+> CONFIG_CEPH_LIB_PRETTYDEBUG is enabled.
 
-That's an interesting point about anonymous UID, but at the same time,
-We use these caller's fs UID/GID values as an owner's UID/GID for
-newly created inodes.
-It means that we can't use anonymous UID everywhere in this case
-otherwise all new files/directories
-will be owned by an anonymous user.
-
-> -Greg
-
-Kind regards,
-Alex
+dout() is just a wrapper around pr_debug().  It doesn't have anything
+to do with CONFIG_CEPH_LIB_PRETTYDEBUG per se which adds file names and
+line numbers.  IIRC dout() by itself just adds a space at the front to
+make debugging spew stand out.
 
 >
-> > @Greg
-> >
-> > For the lookup requests the idmapping couldn't get the mapped UID/GID
-> > just like all the other requests, which is needed by the MDS permission
-> > check. Is that okay to make it disable the check for this case ? I am
-> > afraid this will break the MDS permssions logic.
-> >
-> > Any idea ?
-> >
-> > Thanks
-> >
-> > - Xiubo
-> >
-> >
-> > > Kind regards,
-> > > Alex
-> > >
-> >
->
+> Maybe we can remove CONFIG_CEPH_LIB_PRETTYDEBUG now, since the pr_* will
+> print the module name and also the caller for dout() and pr_* will print
+> the function name mostly ?
+
+To the best of my knowledge, CONFIG_CEPH_LIB_PRETTYDEBUG has always
+been disabled by default and it's not enabled by any distribution in
+their kernels.  I don't think anyone out there would miss it, but then
+it's not hurting either -- it's less than 20 lines of code with all
+ifdef-ery included.
+
+Thanks,
+
+                Ilya
