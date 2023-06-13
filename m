@@ -2,48 +2,48 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D3F6272D932
-	for <lists+ceph-devel@lfdr.de>; Tue, 13 Jun 2023 07:30:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9D4272D933
+	for <lists+ceph-devel@lfdr.de>; Tue, 13 Jun 2023 07:31:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240063AbjFMFa6 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 13 Jun 2023 01:30:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40160 "EHLO
+        id S240046AbjFMFbA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 13 Jun 2023 01:31:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240096AbjFMFae (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 13 Jun 2023 01:30:34 -0400
+        with ESMTP id S240114AbjFMFai (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 13 Jun 2023 01:30:38 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5217B1B3
-        for <ceph-devel@vger.kernel.org>; Mon, 12 Jun 2023 22:29:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B16D1981
+        for <ceph-devel@vger.kernel.org>; Mon, 12 Jun 2023 22:29:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1686634146;
+        s=mimecast20190719; t=1686634151;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=dI8SDWBwyW1SjNeVpf8rtPpS400vFuYtZWZAvH1vlWg=;
-        b=cnHhq8ihvdenfg6tx+IGsqRKWXXHLTaoOp2exvygk1+V4o4J5nO1WBfq0HbzNmdlbZmlxS
-        zDoTr1l+57QAWO8Fo2FwZOq7ijmoAZaGPDLMe7Kygbc2DIwHD4eGo7QxibJCr1soNALlGb
-        N12U5Kf6eRbNq4B+7coUgxDdV75vvQo=
+        bh=JnRrRl4KP9/7lYnSK8JVZ1GDHT74Vcw0i502WiAS0Co=;
+        b=iXRLZDLu8JkX8KoHk9CoLm4uoy0u9qNYO0pdbMLy5Ug8PeonyEZDdZpaVLPPjTaiBQdLS/
+        9T3LxHGZgOJGt4jR5+M/orFT/T75GOrq9ZA6LUKFOvf9Xg+yMhKpAfGz2SXBKYDrRa149G
+        L9EALDfwY9XiNF4QKDZxCwJ00t/NUCU=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-374-LRKaE0_OMESK7XHpIsMqrQ-1; Tue, 13 Jun 2023 01:29:03 -0400
-X-MC-Unique: LRKaE0_OMESK7XHpIsMqrQ-1
+ us-mta-340-n8qSjBfOPvOR8bxgzNqHVA-1; Tue, 13 Jun 2023 01:29:08 -0400
+X-MC-Unique: n8qSjBfOPvOR8bxgzNqHVA-1
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DDCCA85A5BA;
-        Tue, 13 Jun 2023 05:29:02 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AFEB8801224;
+        Tue, 13 Jun 2023 05:29:07 +0000 (UTC)
 Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-155.pek2.redhat.com [10.72.12.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4C3BB1121314;
-        Tue, 13 Jun 2023 05:28:58 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8EB7A1121314;
+        Tue, 13 Jun 2023 05:29:03 +0000 (UTC)
 From:   xiubli@redhat.com
 To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
 Cc:     jlayton@kernel.org, vshankar@redhat.com, mchangir@redhat.com,
         lhenriques@suse.de, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v20 33/71] ceph: make ceph_get_name decrypt filenames
-Date:   Tue, 13 Jun 2023 13:23:46 +0800
-Message-Id: <20230613052424.254540-34-xiubli@redhat.com>
+Subject: [PATCH v20 34/71] ceph: add a new ceph.fscrypt.auth vxattr
+Date:   Tue, 13 Jun 2023 13:23:47 +0800
+Message-Id: <20230613052424.254540-35-xiubli@redhat.com>
 In-Reply-To: <20230613052424.254540-1-xiubli@redhat.com>
 References: <20230613052424.254540-1-xiubli@redhat.com>
 MIME-Version: 1.0
@@ -62,9 +62,8 @@ X-Mailing-List: ceph-devel@vger.kernel.org
 
 From: Jeff Layton <jlayton@kernel.org>
 
-When we do a lookupino to the MDS, we get a filename in the trace.
-ceph_get_name uses that name directly, so we must properly decrypt
-it before copying it to the name buffer.
+Give the client a way to get at the xattr from userland, mostly for
+future debugging purposes.
 
 Tested-by: Luís Henriques <lhenriques@suse.de>
 Tested-by: Venky Shankar <vshankar@redhat.com>
@@ -72,91 +71,53 @@ Reviewed-by: Luís Henriques <lhenriques@suse.de>
 Reviewed-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/export.c | 44 ++++++++++++++++++++++++++++++++------------
- 1 file changed, 32 insertions(+), 12 deletions(-)
+ fs/ceph/xattr.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-index f780e4e0d062..8559990a59a5 100644
---- a/fs/ceph/export.c
-+++ b/fs/ceph/export.c
-@@ -7,6 +7,7 @@
- 
- #include "super.h"
- #include "mds_client.h"
-+#include "crypto.h"
- 
- /*
-  * Basic fh
-@@ -535,7 +536,9 @@ static int ceph_get_name(struct dentry *parent, char *name,
- {
- 	struct ceph_mds_client *mdsc;
- 	struct ceph_mds_request *req;
-+	struct inode *dir = d_inode(parent);
- 	struct inode *inode = d_inode(child);
-+	struct ceph_mds_reply_info_parsed *rinfo;
- 	int err;
- 
- 	if (ceph_snap(inode) != CEPH_NOSNAP)
-@@ -547,30 +550,47 @@ static int ceph_get_name(struct dentry *parent, char *name,
- 	if (IS_ERR(req))
- 		return PTR_ERR(req);
- 
--	inode_lock(d_inode(parent));
--
-+	inode_lock(dir);
- 	req->r_inode = inode;
- 	ihold(inode);
- 	req->r_ino2 = ceph_vino(d_inode(parent));
--	req->r_parent = d_inode(parent);
--	ihold(req->r_parent);
-+	req->r_parent = dir;
-+	ihold(dir);
- 	set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
- 	req->r_num_caps = 2;
- 	err = ceph_mdsc_do_request(mdsc, NULL, req);
-+	inode_unlock(dir);
- 
--	inode_unlock(d_inode(parent));
-+	if (err)
-+		goto out;
- 
--	if (!err) {
--		struct ceph_mds_reply_info_parsed *rinfo = &req->r_reply_info;
-+	rinfo = &req->r_reply_info;
-+	if (!IS_ENCRYPTED(dir)) {
- 		memcpy(name, rinfo->dname, rinfo->dname_len);
- 		name[rinfo->dname_len] = 0;
--		dout("get_name %p ino %llx.%llx name %s\n",
--		     child, ceph_vinop(inode), name);
- 	} else {
--		dout("get_name %p ino %llx.%llx err %d\n",
--		     child, ceph_vinop(inode), err);
--	}
-+		struct fscrypt_str oname = FSTR_INIT(NULL, 0);
-+		struct ceph_fname fname = { .dir	= dir,
-+					    .name	= rinfo->dname,
-+					    .ctext	= rinfo->altname,
-+					    .name_len	= rinfo->dname_len,
-+					    .ctext_len	= rinfo->altname_len };
-+
-+		err = ceph_fname_alloc_buffer(dir, &oname);
-+		if (err < 0)
-+			goto out;
- 
-+		err = ceph_fname_to_usr(&fname, NULL, &oname, NULL);
-+		if (!err) {
-+			memcpy(name, oname.name, oname.len);
-+			name[oname.len] = 0;
-+		}
-+		ceph_fname_free_buffer(dir, &oname);
-+	}
-+out:
-+	dout("get_name %p ino %llx.%llx err %d %s%s\n",
-+		     child, ceph_vinop(inode), err,
-+		     err ? "" : "name ", err ? "" : name);
- 	ceph_mdsc_put_request(req);
- 	return err;
+diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+index ddc9090a1465..76680e5c2f82 100644
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -352,6 +352,23 @@ static ssize_t ceph_vxattrcb_auth_mds(struct ceph_inode_info *ci,
+ 	return ret;
  }
+ 
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
++static bool ceph_vxattrcb_fscrypt_auth_exists(struct ceph_inode_info *ci)
++{
++	return ci->fscrypt_auth_len;
++}
++
++static ssize_t ceph_vxattrcb_fscrypt_auth(struct ceph_inode_info *ci, char *val, size_t size)
++{
++	if (size) {
++		if (size < ci->fscrypt_auth_len)
++			return -ERANGE;
++		memcpy(val, ci->fscrypt_auth, ci->fscrypt_auth_len);
++	}
++	return ci->fscrypt_auth_len;
++}
++#endif /* CONFIG_FS_ENCRYPTION */
++
+ #define CEPH_XATTR_NAME(_type, _name)	XATTR_CEPH_PREFIX #_type "." #_name
+ #define CEPH_XATTR_NAME2(_type, _name, _name2)	\
+ 	XATTR_CEPH_PREFIX #_type "." #_name "." #_name2
+@@ -500,6 +517,15 @@ static struct ceph_vxattr ceph_common_vxattrs[] = {
+ 		.exists_cb = NULL,
+ 		.flags = VXATTR_FLAG_READONLY,
+ 	},
++#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
++	{
++		.name = "ceph.fscrypt.auth",
++		.name_size = sizeof("ceph.fscrypt.auth"),
++		.getxattr_cb = ceph_vxattrcb_fscrypt_auth,
++		.exists_cb = ceph_vxattrcb_fscrypt_auth_exists,
++		.flags = VXATTR_FLAG_READONLY,
++	},
++#endif /* CONFIG_FS_ENCRYPTION */
+ 	{ .name = NULL, 0 }	/* Required table terminator */
+ };
+ 
 -- 
 2.40.1
 
