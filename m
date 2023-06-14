@@ -2,538 +2,144 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 65D1672F23F
-	for <lists+ceph-devel@lfdr.de>; Wed, 14 Jun 2023 03:56:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A59B072F7A9
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 Jun 2023 10:21:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237376AbjFNB4s (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 13 Jun 2023 21:56:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51360 "EHLO
+        id S243352AbjFNIV1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 14 Jun 2023 04:21:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233325AbjFNB4q (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 13 Jun 2023 21:56:46 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEE1EE79
-        for <ceph-devel@vger.kernel.org>; Tue, 13 Jun 2023 18:56:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1686707804; x=1718243804;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ui9ddGZaZ16rXJs4SNBEJtIw7GW2FS8IJhjAvMoqqdM=;
-  b=czrBEd1Nmn32EIDo/6eIQYbU85N8DwHo2NsEQcs5k0mvvN6xpejNQj0L
-   Z6F+anD3DkJLF8RLybRsbYQYFCKemASVLX5qHC291k0WeivwVYX5PU9Mc
-   0PghqMmPNO0R9HFGRfZjwEmEOB2pGZzTSn+VDGzC9YxY04muG8+F0MCya
-   g+XO82ZLXheBLHt48vD065gyITsLYZgs9J9BxAkRKRnUQl7Ak9UCWfr82
-   tBzjqmvt59ZVnlukh9ZywpX3wks77QJfxhNm7I24V9ZMsQJIoD0EyA3uf
-   B+X/SBzWf7bpXBdssTa/cMUo0mQ4+dx+ekb3kx2r3j+pSF5wBSep1znE9
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10740"; a="348156699"
-X-IronPort-AV: E=Sophos;i="6.00,241,1681196400"; 
-   d="scan'208";a="348156699"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2023 18:56:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10740"; a="706026158"
-X-IronPort-AV: E=Sophos;i="6.00,241,1681196400"; 
-   d="scan'208";a="706026158"
-Received: from lkp-server01.sh.intel.com (HELO 211f47bdb1cb) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 13 Jun 2023 18:56:42 -0700
-Received: from kbuild by 211f47bdb1cb with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1q9FkX-00024i-0y;
-        Wed, 14 Jun 2023 01:56:41 +0000
-Date:   Wed, 14 Jun 2023 09:56:31 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        ceph-devel@vger.kernel.org, Patrick Donnelly <pdonnell@redhat.com>
-Subject: [ceph-client:testing 21/21] fs/ceph/xattr.c:61:22: warning: unused
- variable 'cl'
-Message-ID: <202306140913.VwDYFVjP-lkp@intel.com>
+        with ESMTP id S243288AbjFNIV0 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 14 Jun 2023 04:21:26 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59ADB198D
+        for <ceph-devel@vger.kernel.org>; Wed, 14 Jun 2023 01:21:25 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-977e0fbd742so57827166b.2
+        for <ceph-devel@vger.kernel.org>; Wed, 14 Jun 2023 01:21:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1686730884; x=1689322884;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7dlMvdm7TMOCPC5i0PnenMN5fYf0W7nC/40VDMmExkw=;
+        b=my1O4SKh2wDCZ6Z7XDa/oIlmmw8+gZbLPWB2Wg61A90gC6llY0HHsZm3Uzjm5/ftSs
+         aXDjk5jeWK9Zq6YxAQSO0qebpU6yC28xC/OcDI15x6vXFG131w+EYgiTMH9eK0w3ROyO
+         j8GR1jAxyl7q0LupRcRwJnUmQOWzxrCMza1G8w0n0w4q2gOylgi8AAS2QjFgb5nAUMPK
+         FcNO3A69T6pIyrLIO06tQ9dttQt18gPwJtrpPGvKpOij9jlsApaVmKfSphyCukC8Z/91
+         4ulzLs655mCwRJd6orSJErGK62Kae25EBcIEU/RpdlXpTUP6ERSDCBqzuhk7sZLHyI7H
+         ikSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1686730884; x=1689322884;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7dlMvdm7TMOCPC5i0PnenMN5fYf0W7nC/40VDMmExkw=;
+        b=gNIlgW7VTpJXLshj1vodsfqarBf028SRENmJXLrRzn+nh3o17UmdWQ47GH7YaZIis+
+         +LvZ+tVIHoZItXAnTIMuPzquTLABnzhC2hMyyqL/LMmsr9KOKcq6lK0catvKpfuL7rXj
+         WOP4BGdjIW0zpX0x2ooUulNZrfg8PvBDsJa+LbpmSaeKH+lxHHD5/CdOtAOJaNAAShGN
+         dT8af9MtPKaOgafEVhQHltbB3ySkudMmi2IaevteK8BRWMcjqa+MkFxHfCzzsUZSXR0h
+         DnNrjf1bcGf5dFshNSqOf4Q7QZ5CBOeD19UCRkr98aPNph/MtELVQ2NxL1tVCFDamlzK
+         AX9Q==
+X-Gm-Message-State: AC+VfDx5nr+Y6G3tOIcBrDqP+dFjnd+6i/54ZroaT5NnIlceh+AG8/ta
+        qa9XTeAunKjqNTWR9M4LzBN2/lx/qLpwMvo34/A=
+X-Google-Smtp-Source: ACHHUZ49LAjRkaNUr/LMZzdwufZnyQpsyG4YsYq41ocWiod6KwO6DTxSDgSKsWiJs//E9jl7TDh2UXTvYgLTACepIOA=
+X-Received: by 2002:a17:906:fe03:b0:974:1eb9:f750 with SMTP id
+ wy3-20020a170906fe0300b009741eb9f750mr13173365ejb.36.1686730883439; Wed, 14
+ Jun 2023 01:21:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20230614013025.291314-1-xiubli@redhat.com> <20230614013025.291314-2-xiubli@redhat.com>
+In-Reply-To: <20230614013025.291314-2-xiubli@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Wed, 14 Jun 2023 10:21:11 +0200
+Message-ID: <CAOi1vP-zgScbF0uoshqtgMToCZ8bkSaa6B2FYs0qvVrEKMDKaA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/6] ceph: add the *_client debug macros support
+To:     xiubli@redhat.com
+Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        vshankar@redhat.com, mchangir@redhat.com, khiremat@redhat.com,
+        pdonnell@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-tree:   https://github.com/ceph/ceph-client.git testing
-head:   a87fa198004c3239486394be301efa333b2ee366
-commit: a87fa198004c3239486394be301efa333b2ee366 [21/21] ceph: print the client global_id in all the debug logs
-config: x86_64-randconfig-a002-20230612 (https://download.01.org/0day-ci/archive/20230614/202306140913.VwDYFVjP-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project.git 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build):
-        mkdir -p ~/bin
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/ceph/ceph-client/commit/a87fa198004c3239486394be301efa333b2ee366
-        git remote add ceph-client https://github.com/ceph/ceph-client.git
-        git fetch --no-tags ceph-client testing
-        git checkout a87fa198004c3239486394be301efa333b2ee366
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang ~/bin/make.cross W=1 O=build_dir ARCH=x86_64 olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang ~/bin/make.cross W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash fs/ceph/
+On Wed, Jun 14, 2023 at 3:33=E2=80=AFAM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> This will help print the fsid and client's global_id in debug logs,
+> and also print the function names.
+>
+> URL: https://tracker.ceph.com/issues/61590
+> Cc: Patrick Donnelly <pdonnell@redhat.com>
+> Reviewed-by: Patrick Donnelly <pdonnell@redhat.com>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  include/linux/ceph/ceph_debug.h | 44 ++++++++++++++++++++++++++++++++-
+>  1 file changed, 43 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/linux/ceph/ceph_debug.h b/include/linux/ceph/ceph_de=
+bug.h
+> index d5a5da838caf..26b9212bf359 100644
+> --- a/include/linux/ceph/ceph_debug.h
+> +++ b/include/linux/ceph/ceph_debug.h
+> @@ -19,12 +19,22 @@
+>         pr_debug("%.*s %12.12s:%-4d : " fmt,                            \
+>                  8 - (int)sizeof(KBUILD_MODNAME), "    ",               \
+>                  kbasename(__FILE__), __LINE__, ##__VA_ARGS__)
+> +#  define dout_client(client, fmt, ...)                                 =
+       \
+> +       pr_debug("%.*s %12.12s:%-4d : [%pU %lld] " fmt,                 \
+> +                8 - (int)sizeof(KBUILD_MODNAME), "    ",               \
+> +                kbasename(__FILE__), __LINE__,                         \
+> +                &client->fsid, client->monc.auth->global_id,           \
+> +                ##__VA_ARGS__)
+>  # else
+>  /* faux printk call just to see any compiler warnings. */
+>  #  define dout(fmt, ...)       do {                            \
+>                 if (0)                                          \
+>                         printk(KERN_DEBUG fmt, ##__VA_ARGS__);  \
+>         } while (0)
+> +#  define dout_client(client, fmt, ...)        do {                    \
+> +               if (0)                                          \
+> +                       printk(KERN_DEBUG fmt, ##__VA_ARGS__);  \
+> +       } while (0)
+>  # endif
+>
+>  #else
+> @@ -33,7 +43,39 @@
+>   * or, just wrap pr_debug
+>   */
+>  # define dout(fmt, ...)        pr_debug(" " fmt, ##__VA_ARGS__)
+> -
+> +# define dout_client(client, fmt, ...)                                 \
+> +       pr_debug("[%pU %lld] %s: " fmt, &client->fsid,                  \
+> +                client->monc.auth->global_id, __func__,                \
+> +                ##__VA_ARGS__)
+>  #endif
+>
+> +# define pr_notice_client(client, fmt, ...)                            \
+> +       pr_notice("[%pU %lld] %s: " fmt, &client->fsid,                 \
+> +                 client->monc.auth->global_id, __func__,               \
+> +                 ##__VA_ARGS__)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202306140913.VwDYFVjP-lkp@intel.com/
+Hi Xiubo,
 
-All warnings (new ones prefixed by >>):
+We definitely don't want the framework to include function names in
+user-facing messages (i.e. in pr_* messages).  In the example that
+spawned this series ("ceph: mds3 session blocklisted"), it's really
+irrelevant to the user which function happens to detect blocklisting.
 
->> fs/ceph/xattr.c:61:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = fsc->client;
-                               ^
-   fs/ceph/xattr.c:573:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(&ci->netfs.inode);
-                               ^
-   fs/ceph/xattr.c:672:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(&ci->netfs.inode);
-                               ^
-   fs/ceph/xattr.c:741:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(&ci->netfs.inode);
-                               ^
-   fs/ceph/xattr.c:766:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(&ci->netfs.inode);
-                               ^
-   fs/ceph/xattr.c:796:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/xattr.c:884:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(&ci->netfs.inode);
-                               ^
-   fs/ceph/xattr.c:912:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/xattr.c:1070:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/xattr.c:1114:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   10 warnings generated.
---
->> fs/ceph/locks.c:80:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/locks.c:163:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/locks.c:253:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/locks.c:321:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/locks.c:383:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/locks.c:410:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/locks.c:448:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   7 warnings generated.
---
->> fs/ceph/caps.c:312:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/caps.c:334:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/caps.c:390:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/caps.c:574:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:650:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:782:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = cap->session->s_mdsc->fsc->client;
-                               ^
-   fs/ceph/caps.c:807:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:863:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = s->s_mdsc->fsc->client;
-                               ^
-   fs/ceph/caps.c:885:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:975:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:1129:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = session->s_mdsc->fsc->client;
-                               ^
-   fs/ceph/caps.c:1400:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:1722:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:1913:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:1962:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:2011:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:2354:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:2471:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:2524:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:2749:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:2802:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:2958:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:3175:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:3212:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:3328:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:3413:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:3475:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:3788:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/caps.c:3900:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/caps.c:3946:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/caps.c:3998:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/caps.c:4571:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/caps.c:4616:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/caps.c:4760:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
->> fs/ceph/caps.c:4853:22: warning: variable 'cl' set but not used [-Wunused-but-set-variable]
-           struct ceph_client *cl;
-                               ^
-   fs/ceph/caps.c:4905:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   36 warnings generated.
---
->> fs/ceph/export.c:39:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/export.c:90:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/export.c:211:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
->> fs/ceph/export.c:304:25: warning: unused variable 'fsc' [-Wunused-variable]
-           struct ceph_fs_client *fsc = ceph_sb_to_fs_client(sb);
-                                  ^
-   fs/ceph/export.c:371:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/export.c:423:25: warning: unused variable 'fsc' [-Wunused-variable]
-           struct ceph_fs_client *fsc = ceph_sb_to_fs_client(sb);
-                                  ^
-   6 warnings generated.
---
->> fs/ceph/super.c:122:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = fsc->client;
-                               ^
-   fs/ceph/super.c:1060:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = fsc->client;
-                               ^
-   fs/ceph/super.c:1152:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = fsc->client;
-                               ^
-   fs/ceph/super.c:1207:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = fsc->client;
-                               ^
-   fs/ceph/super.c:1244:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = fsc->client;
-                               ^
-   5 warnings generated.
---
->> fs/ceph/addr.c:83:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/addr.c:141:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/addr.c:169:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/addr.c:249:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = fsc->client;
-                               ^
-   fs/ceph/addr.c:353:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = fsc->client;
-                               ^
-   fs/ceph/addr.c:443:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/addr.c:574:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/addr.c:671:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = fsc->client;
-                               ^
-   fs/ceph/addr.c:1459:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/addr.c:1564:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/addr.c:1629:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/addr.c:1720:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/addr.c:1825:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/addr.c:1872:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = fsc->client;
-                               ^
-   fs/ceph/addr.c:2028:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = fsc->client;
-                               ^
-   fs/ceph/addr.c:2202:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   16 warnings generated.
---
->> fs/ceph/snap.c:154:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/snap.c:193:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/snap.c:296:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/snap.c:379:10: warning: result of comparison of constant 2305843009213693948 with expression of type 'u32' (aka 'unsigned int') is always false [-Wtautological-constant-out-of-range-compare]
-           if (num > (SIZE_MAX - sizeof(*snapc)) / sizeof(u64))
-               ~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   fs/ceph/snap.c:441:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/snap.c:538:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/snap.c:675:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/snap.c:952:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/snap.c:1202:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/snap.c:1301:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   10 warnings generated.
---
->> fs/ceph/mds_client.c:965:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:1289:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:1701:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:1718:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:1748:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = session->s_mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:1811:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = session->s_mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:1879:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/mds_client.c:1993:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = session->s_mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:2042:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:2099:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = session->s_mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:2161:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:2244:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:2265:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:2445:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:2483:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:2855:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:3274:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:3482:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:3504:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:3528:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:3578:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:3635:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:3656:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = req->r_mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:4195:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = req->r_mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:4208:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = req->r_mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:4374:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = ceph_inode_to_client(inode);
-                               ^
-   fs/ceph/mds_client.c:4563:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:5095:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = session->s_mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:5351:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:5430:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:5494:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   fs/ceph/mds_client.c:5539:22: warning: unused variable 'cl' [-Wunused-variable]
-           struct ceph_client *cl = mdsc->fsc->client;
-                               ^
-   32 warnings generated.
-..
+It's a bit less clear-cut for dout() messages, but honestly I don't
+think it's needed there either.  I know that we include it manually in
+many places but most of the time it's actually redundant.
 
+Thanks,
 
-vim +/cl +61 fs/ceph/xattr.c
-
-    56	
-    57	static ssize_t ceph_vxattrcb_layout(struct ceph_inode_info *ci, char *val,
-    58					    size_t size)
-    59	{
-    60		struct ceph_fs_client *fsc = ceph_sb_to_fs_client(ci->netfs.inode.i_sb);
-  > 61		struct ceph_client *cl = fsc->client;
-    62		struct ceph_osd_client *osdc = &fsc->client->osdc;
-    63		struct ceph_string *pool_ns;
-    64		s64 pool = ci->i_layout.pool_id;
-    65		const char *pool_name;
-    66		const char *ns_field = " pool_namespace=";
-    67		char buf[128];
-    68		size_t len, total_len = 0;
-    69		ssize_t ret;
-    70	
-    71		pool_ns = ceph_try_get_string(ci->i_layout.pool_ns);
-    72	
-    73		dout_client(cl, "%s %p\n", __func__, &ci->netfs.inode);
-    74		down_read(&osdc->lock);
-    75		pool_name = ceph_pg_pool_name_by_id(osdc->osdmap, pool);
-    76		if (pool_name) {
-    77			len = snprintf(buf, sizeof(buf),
-    78			"stripe_unit=%u stripe_count=%u object_size=%u pool=",
-    79			ci->i_layout.stripe_unit, ci->i_layout.stripe_count,
-    80		        ci->i_layout.object_size);
-    81			total_len = len + strlen(pool_name);
-    82		} else {
-    83			len = snprintf(buf, sizeof(buf),
-    84			"stripe_unit=%u stripe_count=%u object_size=%u pool=%lld",
-    85			ci->i_layout.stripe_unit, ci->i_layout.stripe_count,
-    86			ci->i_layout.object_size, pool);
-    87			total_len = len;
-    88		}
-    89	
-    90		if (pool_ns)
-    91			total_len += strlen(ns_field) + pool_ns->len;
-    92	
-    93		ret = total_len;
-    94		if (size >= total_len) {
-    95			memcpy(val, buf, len);
-    96			ret = len;
-    97			if (pool_name) {
-    98				len = strlen(pool_name);
-    99				memcpy(val + ret, pool_name, len);
-   100				ret += len;
-   101			}
-   102			if (pool_ns) {
-   103				len = strlen(ns_field);
-   104				memcpy(val + ret, ns_field, len);
-   105				ret += len;
-   106				memcpy(val + ret, pool_ns->str, pool_ns->len);
-   107				ret += pool_ns->len;
-   108			}
-   109		}
-   110		up_read(&osdc->lock);
-   111		ceph_put_string(pool_ns);
-   112		return ret;
-   113	}
-   114	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+                Ilya
