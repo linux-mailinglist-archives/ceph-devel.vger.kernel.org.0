@@ -2,144 +2,161 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A59B072F7A9
-	for <lists+ceph-devel@lfdr.de>; Wed, 14 Jun 2023 10:21:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4177172F9B3
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 Jun 2023 11:46:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243352AbjFNIV1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 14 Jun 2023 04:21:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51344 "EHLO
+        id S244239AbjFNJqg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 14 Jun 2023 05:46:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243288AbjFNIV0 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 14 Jun 2023 04:21:26 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59ADB198D
-        for <ceph-devel@vger.kernel.org>; Wed, 14 Jun 2023 01:21:25 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-977e0fbd742so57827166b.2
-        for <ceph-devel@vger.kernel.org>; Wed, 14 Jun 2023 01:21:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1686730884; x=1689322884;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7dlMvdm7TMOCPC5i0PnenMN5fYf0W7nC/40VDMmExkw=;
-        b=my1O4SKh2wDCZ6Z7XDa/oIlmmw8+gZbLPWB2Wg61A90gC6llY0HHsZm3Uzjm5/ftSs
-         aXDjk5jeWK9Zq6YxAQSO0qebpU6yC28xC/OcDI15x6vXFG131w+EYgiTMH9eK0w3ROyO
-         j8GR1jAxyl7q0LupRcRwJnUmQOWzxrCMza1G8w0n0w4q2gOylgi8AAS2QjFgb5nAUMPK
-         FcNO3A69T6pIyrLIO06tQ9dttQt18gPwJtrpPGvKpOij9jlsApaVmKfSphyCukC8Z/91
-         4ulzLs655mCwRJd6orSJErGK62Kae25EBcIEU/RpdlXpTUP6ERSDCBqzuhk7sZLHyI7H
-         ikSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686730884; x=1689322884;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7dlMvdm7TMOCPC5i0PnenMN5fYf0W7nC/40VDMmExkw=;
-        b=gNIlgW7VTpJXLshj1vodsfqarBf028SRENmJXLrRzn+nh3o17UmdWQ47GH7YaZIis+
-         +LvZ+tVIHoZItXAnTIMuPzquTLABnzhC2hMyyqL/LMmsr9KOKcq6lK0catvKpfuL7rXj
-         WOP4BGdjIW0zpX0x2ooUulNZrfg8PvBDsJa+LbpmSaeKH+lxHHD5/CdOtAOJaNAAShGN
-         dT8af9MtPKaOgafEVhQHltbB3ySkudMmi2IaevteK8BRWMcjqa+MkFxHfCzzsUZSXR0h
-         DnNrjf1bcGf5dFshNSqOf4Q7QZ5CBOeD19UCRkr98aPNph/MtELVQ2NxL1tVCFDamlzK
-         AX9Q==
-X-Gm-Message-State: AC+VfDx5nr+Y6G3tOIcBrDqP+dFjnd+6i/54ZroaT5NnIlceh+AG8/ta
-        qa9XTeAunKjqNTWR9M4LzBN2/lx/qLpwMvo34/A=
-X-Google-Smtp-Source: ACHHUZ49LAjRkaNUr/LMZzdwufZnyQpsyG4YsYq41ocWiod6KwO6DTxSDgSKsWiJs//E9jl7TDh2UXTvYgLTACepIOA=
-X-Received: by 2002:a17:906:fe03:b0:974:1eb9:f750 with SMTP id
- wy3-20020a170906fe0300b009741eb9f750mr13173365ejb.36.1686730883439; Wed, 14
- Jun 2023 01:21:23 -0700 (PDT)
+        with ESMTP id S244234AbjFNJqQ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 14 Jun 2023 05:46:16 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFB6B269E;
+        Wed, 14 Jun 2023 02:45:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 183C263A37;
+        Wed, 14 Jun 2023 09:45:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BF80C433C0;
+        Wed, 14 Jun 2023 09:45:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1686735950;
+        bh=bOUTEmQRNYc2XRJruJB03nYq61euHP/sjkiGBDp0jWY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YagmxNqX4bkrWOB9BBQcotdoXxdLP0fEnyz9wXn8Sl7+EjU/LxuJDdp9uBB38g0YT
+         mRxpCUyx9P6EIwxoACtoqJiSwoWqfAbU7UdZVVcdTSLc7F1aPshmkHgjI4E+Eus30y
+         KepqggXk0js7bVCTE8quhjgSx70PCFTnpgQoTJU0SzXjUfKtWdByl13UOcfXTdTsKN
+         3N1RD4YgTpBGTPj1vFue4yhScbXUY8z4yta5NFW094UZGmvAO96SvWQp1e+iQx9E7J
+         aq9N5Z8k/eB5IE529DjlRUXFOVzfT3c+Ch0i+yrrhxr+i8q8T4XLKpTPuNWhenChf0
+         moyzO6KNMk/zA==
+Date:   Wed, 14 Jun 2023 11:45:45 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc:     Xiubo Li <xiubli@redhat.com>, Gregory Farnum <gfarnum@redhat.com>,
+        stgraber@ubuntu.com, linux-fsdevel@vger.kernel.org,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
+Message-ID: <20230614-westseite-urlaub-7a5afcf0577a@brauner>
+References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
+ <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com>
+ <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
+ <20230609-alufolie-gezaubert-f18ef17cda12@brauner>
+ <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
+ <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com>
+ <CAEivzxeZ6fDgYMnjk21qXYz13tHqZa8rP-cZ2jdxkY0eX+dOjw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20230614013025.291314-1-xiubli@redhat.com> <20230614013025.291314-2-xiubli@redhat.com>
-In-Reply-To: <20230614013025.291314-2-xiubli@redhat.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 14 Jun 2023 10:21:11 +0200
-Message-ID: <CAOi1vP-zgScbF0uoshqtgMToCZ8bkSaa6B2FYs0qvVrEKMDKaA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/6] ceph: add the *_client debug macros support
-To:     xiubli@redhat.com
-Cc:     ceph-devel@vger.kernel.org, jlayton@kernel.org,
-        vshankar@redhat.com, mchangir@redhat.com, khiremat@redhat.com,
-        pdonnell@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEivzxeZ6fDgYMnjk21qXYz13tHqZa8rP-cZ2jdxkY0eX+dOjw@mail.gmail.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jun 14, 2023 at 3:33=E2=80=AFAM <xiubli@redhat.com> wrote:
->
-> From: Xiubo Li <xiubli@redhat.com>
->
-> This will help print the fsid and client's global_id in debug logs,
-> and also print the function names.
->
-> URL: https://tracker.ceph.com/issues/61590
-> Cc: Patrick Donnelly <pdonnell@redhat.com>
-> Reviewed-by: Patrick Donnelly <pdonnell@redhat.com>
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  include/linux/ceph/ceph_debug.h | 44 ++++++++++++++++++++++++++++++++-
->  1 file changed, 43 insertions(+), 1 deletion(-)
->
-> diff --git a/include/linux/ceph/ceph_debug.h b/include/linux/ceph/ceph_de=
-bug.h
-> index d5a5da838caf..26b9212bf359 100644
-> --- a/include/linux/ceph/ceph_debug.h
-> +++ b/include/linux/ceph/ceph_debug.h
-> @@ -19,12 +19,22 @@
->         pr_debug("%.*s %12.12s:%-4d : " fmt,                            \
->                  8 - (int)sizeof(KBUILD_MODNAME), "    ",               \
->                  kbasename(__FILE__), __LINE__, ##__VA_ARGS__)
-> +#  define dout_client(client, fmt, ...)                                 =
-       \
-> +       pr_debug("%.*s %12.12s:%-4d : [%pU %lld] " fmt,                 \
-> +                8 - (int)sizeof(KBUILD_MODNAME), "    ",               \
-> +                kbasename(__FILE__), __LINE__,                         \
-> +                &client->fsid, client->monc.auth->global_id,           \
-> +                ##__VA_ARGS__)
->  # else
->  /* faux printk call just to see any compiler warnings. */
->  #  define dout(fmt, ...)       do {                            \
->                 if (0)                                          \
->                         printk(KERN_DEBUG fmt, ##__VA_ARGS__);  \
->         } while (0)
-> +#  define dout_client(client, fmt, ...)        do {                    \
-> +               if (0)                                          \
-> +                       printk(KERN_DEBUG fmt, ##__VA_ARGS__);  \
-> +       } while (0)
->  # endif
->
->  #else
-> @@ -33,7 +43,39 @@
->   * or, just wrap pr_debug
->   */
->  # define dout(fmt, ...)        pr_debug(" " fmt, ##__VA_ARGS__)
-> -
-> +# define dout_client(client, fmt, ...)                                 \
-> +       pr_debug("[%pU %lld] %s: " fmt, &client->fsid,                  \
-> +                client->monc.auth->global_id, __func__,                \
-> +                ##__VA_ARGS__)
->  #endif
->
-> +# define pr_notice_client(client, fmt, ...)                            \
-> +       pr_notice("[%pU %lld] %s: " fmt, &client->fsid,                 \
-> +                 client->monc.auth->global_id, __func__,               \
-> +                 ##__VA_ARGS__)
+On Tue, Jun 13, 2023 at 02:46:02PM +0200, Aleksandr Mikhalitsyn wrote:
+> On Tue, Jun 13, 2023 at 3:43 AM Xiubo Li <xiubli@redhat.com> wrote:
+> >
+> >
+> > On 6/9/23 18:12, Aleksandr Mikhalitsyn wrote:
+> > > On Fri, Jun 9, 2023 at 12:00 PM Christian Brauner <brauner@kernel.org> wrote:
+> > >> On Fri, Jun 09, 2023 at 10:59:19AM +0200, Aleksandr Mikhalitsyn wrote:
+> > >>> On Fri, Jun 9, 2023 at 3:57 AM Xiubo Li <xiubli@redhat.com> wrote:
+> > >>>>
+> > >>>> On 6/8/23 23:42, Alexander Mikhalitsyn wrote:
+> > >>>>> Dear friends,
+> > >>>>>
+> > >>>>> This patchset was originally developed by Christian Brauner but I'll continue
+> > >>>>> to push it forward. Christian allowed me to do that :)
+> > >>>>>
+> > >>>>> This feature is already actively used/tested with LXD/LXC project.
+> > >>>>>
+> > >>>>> Git tree (based on https://github.com/ceph/ceph-client.git master):
+> > >>> Hi Xiubo!
+> > >>>
+> > >>>> Could you rebase these patches to 'testing' branch ?
+> > >>> Will do in -v6.
+> > >>>
+> > >>>> And you still have missed several places, for example the following cases:
+> > >>>>
+> > >>>>
+> > >>>>      1    269  fs/ceph/addr.c <<ceph_netfs_issue_op_inline>>
+> > >>>>                req = ceph_mdsc_create_request(mdsc, CEPH_MDS_OP_GETATTR,
+> > >>>> mode);
+> > >>> +
+> > >>>
+> > >>>>      2    389  fs/ceph/dir.c <<ceph_readdir>>
+> > >>>>                req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+> > >>> +
+> > >>>
+> > >>>>      3    789  fs/ceph/dir.c <<ceph_lookup>>
+> > >>>>                req = ceph_mdsc_create_request(mdsc, op, USE_ANY_MDS);
+> > >>> We don't have an idmapping passed to lookup from the VFS layer. As I
+> > >>> mentioned before, it's just impossible now.
+> > >> ->lookup() doesn't deal with idmappings and really can't otherwise you
+> > >> risk ending up with inode aliasing which is really not something you
+> > >> want. IOW, you can't fill in inode->i_{g,u}id based on a mount's
+> > >> idmapping as inode->i_{g,u}id absolutely needs to be a filesystem wide
+> > >> value. So better not even risk exposing the idmapping in there at all.
+> > > Thanks for adding, Christian!
+> > >
+> > > I agree, every time when we use an idmapping we need to be careful with
+> > > what we map. AFAIU, inode->i_{g,u}id should be based on the filesystem
+> > > idmapping (not mount),
+> > > but in this case, Xiubo want's current_fs{u,g}id to be mapped
+> > > according to an idmapping.
+> > > Anyway, it's impossible at now and IMHO, until we don't have any
+> > > practical use case where
+> > > UID/GID-based path restriction is used in combination with idmapped
+> > > mounts it's not worth to
+> > > make such big changes in the VFS layer.
+> > >
+> > > May be I'm not right, but it seems like UID/GID-based path restriction
+> > > is not a widespread
+> > > feature and I can hardly imagine it to be used with the container
+> > > workloads (for instance),
+> > > because it will require to always keep in sync MDS permissions
+> > > configuration with the
+> > > possible UID/GID ranges on the client. It looks like a nightmare for sysadmin.
+> > > It is useful when cephfs is used as an external storage on the host, but if you
+> > > share cephfs with a few containers with different user namespaces idmapping...
+> >
+> > Hmm, while this will break the MDS permission check in cephfs then in
+> > lookup case. If we really couldn't support it we should make it to
+> > escape the check anyway or some OPs may fail and won't work as expected.
+> 
+> Hi Xiubo!
+> 
+> Disabling UID/GID checks on the MDS side looks reasonable. IMHO the
+> most important checks are:
+> - open
+> - mknod/mkdir/symlink/rename
+> and for these checks we already have an idmapping.
+> 
+> Also, I want to add that it's a little bit unusual when permission
+> checks are done against the caller UID/GID.
 
-Hi Xiubo,
+The server side permission checking based on the sender's fs{g,u}id is
+rather esoteric imho. So I would just disable it for idmapped mounts.
 
-We definitely don't want the framework to include function names in
-user-facing messages (i.e. in pr_* messages).  In the example that
-spawned this series ("ceph: mds3 session blocklisted"), it's really
-irrelevant to the user which function happens to detect blocklisting.
+> Usually, if we have opened a file descriptor and, for instance, passed
+> this file descriptor through a unix socket then
+> file descriptor holder will be able to use it in accordance with the
+> flags (O_RDONLY, O_RDWR, ...).
+> We also have ->f_cred on the struct file that contains credentials of
+> the file opener and permission checks are usually done
+> based on this. But in cephfs we are always using syscall caller's
+> credentials. It makes cephfs file descriptor "not transferable"
+> in terms of permission checks.
 
-It's a bit less clear-cut for dout() messages, but honestly I don't
-think it's needed there either.  I know that we include it manually in
-many places but most of the time it's actually redundant.
-
-Thanks,
-
-                Ilya
+Yeah, that's another good point.
