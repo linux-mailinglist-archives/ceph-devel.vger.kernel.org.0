@@ -2,394 +2,124 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8113373161B
-	for <lists+ceph-devel@lfdr.de>; Thu, 15 Jun 2023 13:06:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 543B37318FD
+	for <lists+ceph-devel@lfdr.de>; Thu, 15 Jun 2023 14:30:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343524AbjFOLGR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 15 Jun 2023 07:06:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36274 "EHLO
+        id S240457AbjFOMaC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 15 Jun 2023 08:30:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245753AbjFOLGO (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 15 Jun 2023 07:06:14 -0400
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C5502711
-        for <ceph-devel@vger.kernel.org>; Thu, 15 Jun 2023 04:05:58 -0700 (PDT)
-Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com [209.85.219.197])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 9F9743F18A
-        for <ceph-devel@vger.kernel.org>; Thu, 15 Jun 2023 11:05:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1686827154;
-        bh=le5ix0oWkCmmncv7Osb3PzaMEcGLN5V4XxCvx2oeVZs=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=sIDYYbI4wCPpUu5xMPXcY2XNM2w8uPbRgJS4/kMMWzEtdYQnxRPniujz4YqSL+kqJ
-         o/RVOqsO4gzjPVo90IR53HMm5AaEr/zkFM2VdkF9ml6noCsi7T8j/vXXfgJobRMRbZ
-         tG0ouXdUmj5FYmEs77ariZpmb/9xIBDLi2+HYoa6k8Ovl43kt75aU+CRabswmgRfzf
-         oZtl+qUNYfh6MbrXYaFpo+jQmXPs4MO4zu9dpgmlcvxivYuULfzptxU1pna611+mo7
-         4X4+c6BS/fLgfLGIRqCHUcZk49QlbdRkNqqySYJYn68t0kP1PJ3H1gi61Ky0hZdIT1
-         uhoQpu/h0idFQ==
-Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-bd5f9d084c9so2230036276.3
-        for <ceph-devel@vger.kernel.org>; Thu, 15 Jun 2023 04:05:54 -0700 (PDT)
+        with ESMTP id S239458AbjFOM37 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 15 Jun 2023 08:29:59 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC788129
+        for <ceph-devel@vger.kernel.org>; Thu, 15 Jun 2023 05:29:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1686832151;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=miKGhTsa1C617Jf+rAPO8YcjvbVy2XjmmKexewlCMig=;
+        b=JZ19k4HHyj9aynwJW7ILq9EPCnZqEXMdkyA8+9e2MnpzAwu2LkM5FzIkOf1pUa9mpDx06j
+        ryML0CXasWRnNuUoOW45g5BYl1AS3GrhXJJsq2i/6umc9uPMjtTsrF2hq8xiROsW4QNzpj
+        zcQA9W1K9pg58PzpzFOCngwjkIq17Gg=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-607-hFHDiW0mPSifponFbjlZJQ-1; Thu, 15 Jun 2023 08:29:10 -0400
+X-MC-Unique: hFHDiW0mPSifponFbjlZJQ-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1b3e18add74so20465495ad.1
+        for <ceph-devel@vger.kernel.org>; Thu, 15 Jun 2023 05:29:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1686827153; x=1689419153;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=le5ix0oWkCmmncv7Osb3PzaMEcGLN5V4XxCvx2oeVZs=;
-        b=DDVzqP+7nnvJIlKrsIEQcSUMw5GFCEIOoz63hgZEqqlBNEZGmovg+yJ1mxWvQRP+Ap
-         baR/sImvzprbc2c82SjsfKiH0um5HZPaLiSREPeLbaOmT0NF3b3PbStQJxroo2jZm2NL
-         QnI9pq+V7hn9i5q6vgp2PqV1zKftDmi9EAuRycEYtI+DohCUMC545UdB+3wptXCxxUfm
-         YuBBSjNIxO8SpSmt9gknMasUoVvid/7uV8P+joGda7hpoKdwcy+JLapCIyUmPvUSKqWT
-         ievoySs+o7kvFOUZGEW1kVw7sYO3IPUO5iU3dPY2uCdEWkA2j79jYkKplUiuKa6BTbuv
-         q8ow==
-X-Gm-Message-State: AC+VfDzuEy+v50J9uxSc3UxNx3wFGEL/adC6Lsh5Eq79MD7GqldaxPK6
-        y436QZoBUO9KHX3vP0ir1LmrMo0D0oYADzuzS6ztd2PkCb+c6y6kGzENjae0ZVKqQeJuNjDb3X2
-        puTrghkDRs/yfqiNCHk8epCNru2/9uMJGIxT1B0VUiJ7u0h9X+ov3Oao=
-X-Received: by 2002:a25:d452:0:b0:bce:f2a5:55e1 with SMTP id m79-20020a25d452000000b00bcef2a555e1mr4452133ybf.21.1686827153349;
-        Thu, 15 Jun 2023 04:05:53 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5fPt/T+E7tcC3PS7un+kU0q84qOgeINbwUkIuUxP4LSOcT2ZppEoiGpyXa7Bl/edVzBR0di8LpxD57Itz/LbI=
-X-Received: by 2002:a25:d452:0:b0:bce:f2a5:55e1 with SMTP id
- m79-20020a25d452000000b00bcef2a555e1mr4452116ybf.21.1686827152997; Thu, 15
- Jun 2023 04:05:52 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1686832149; x=1689424149;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=miKGhTsa1C617Jf+rAPO8YcjvbVy2XjmmKexewlCMig=;
+        b=IZg4c7YkAGkZYpvA3WpzMmV2VbHJLjGG8RNo4gyjsJ8v3pu0EOUYoiamRiAPMWFIIi
+         +Rpj69shwc7QYokHfLqyI6mdyXJU4ox3qSf1lJU97bXIYQCvPP/gDsCxeaGQh3mH3eko
+         XtHfLR+88MMkaSeO4jg2SQ4J4H5XyH7gaBUD7gjXJc+1I7+H5udSfhiI0xY73F945adT
+         5ob9xUwqCU8hEQoqR/Ity6WEBOYu/gd7lxcC5B3FV+lSbq4c1ZI6+INupjLfGx0Js452
+         0nc6aUL06ppZmXajXF1nwVCBPyaUuqCo2J0Z1fqbZ2mVEoRO9ZfDV4Ix5czL/KtopAyd
+         zaTQ==
+X-Gm-Message-State: AC+VfDwveYmWqYb8HrZPcETjVHTAYTLlH/VKaG1iCPQopunpJfktZOig
+        BYy3IECF0ZPVjQXOLDeInvVyoNGyooXy86cznk1peWaCLUXAWQSZhfD6oE5xFMzt4fT09/fQOky
+        ldz3PcIT+5y3YKJO17IyfMQ==
+X-Received: by 2002:a17:902:ecc9:b0:1b0:fe9:e57e with SMTP id a9-20020a170902ecc900b001b00fe9e57emr16332664plh.0.1686832149261;
+        Thu, 15 Jun 2023 05:29:09 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ47UwUMIaeKjeei4hpwO38mx1dbD0wAapGYqH6wtjkzhQTmhZv/MA3mxt0UYN8TaPs+w9oB1A==
+X-Received: by 2002:a17:902:ecc9:b0:1b0:fe9:e57e with SMTP id a9-20020a170902ecc900b001b00fe9e57emr16332648plh.0.1686832149003;
+        Thu, 15 Jun 2023 05:29:09 -0700 (PDT)
+Received: from [10.72.12.155] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id w5-20020a1709029a8500b001ab0a30c895sm13953037plp.202.2023.06.15.05.29.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Jun 2023 05:29:08 -0700 (PDT)
+Message-ID: <bb20aebe-e598-9212-1533-c777ea89948a@redhat.com>
+Date:   Thu, 15 Jun 2023 20:29:01 +0800
 MIME-Version: 1.0
-References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
- <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com> <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
- <20230609-alufolie-gezaubert-f18ef17cda12@brauner> <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
- <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com> <CAJ4mKGby71qfb3gd696XH3AazeR0Qc_VGYupMznRH3Piky+VGA@mail.gmail.com>
- <977d8133-a55f-0667-dc12-aa6fd7d8c3e4@redhat.com> <CAEivzxcr99sERxZX17rZ5jW9YSzAWYvAjOOhBH+FqRoso2=yng@mail.gmail.com>
- <626175e2-ee91-0f1a-9e5d-e506aea366fa@redhat.com>
-In-Reply-To: <626175e2-ee91-0f1a-9e5d-e506aea366fa@redhat.com>
-From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date:   Thu, 15 Jun 2023 13:05:41 +0200
-Message-ID: <CAEivzxeZStRL+yxfQXFJokzirN3chgh73-8E2PwKyLQ+W-PcJQ@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
 Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
-To:     Xiubo Li <xiubli@redhat.com>
+Content-Language: en-US
+From:   Xiubo Li <xiubli@redhat.com>
+To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 Cc:     Gregory Farnum <gfarnum@redhat.com>,
         Christian Brauner <brauner@kernel.org>, stgraber@ubuntu.com,
         linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
         Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
+ <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com>
+ <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
+ <20230609-alufolie-gezaubert-f18ef17cda12@brauner>
+ <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
+ <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com>
+ <CAJ4mKGby71qfb3gd696XH3AazeR0Qc_VGYupMznRH3Piky+VGA@mail.gmail.com>
+ <977d8133-a55f-0667-dc12-aa6fd7d8c3e4@redhat.com>
+ <CAEivzxcr99sERxZX17rZ5jW9YSzAWYvAjOOhBH+FqRoso2=yng@mail.gmail.com>
+ <626175e2-ee91-0f1a-9e5d-e506aea366fa@redhat.com>
+In-Reply-To: <626175e2-ee91-0f1a-9e5d-e506aea366fa@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jun 15, 2023 at 7:08=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
->
->
-> On 6/14/23 20:34, Aleksandr Mikhalitsyn wrote:
-> > On Wed, Jun 14, 2023 at 3:53=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wr=
-ote:
-> > >
-> > >
-> > > On 6/13/23 22:53, Gregory Farnum wrote:
-> > > > On Mon, Jun 12, 2023 at 6:43=E2=80=AFPM Xiubo Li <xiubli@redhat.com=
-> wrote:
-> > > >>
-> > > >> On 6/9/23 18:12, Aleksandr Mikhalitsyn wrote:
-> > > >>> On Fri, Jun 9, 2023 at 12:00=E2=80=AFPM Christian Brauner
-> > <brauner@kernel.org> wrote:
-> > > >>>> On Fri, Jun 09, 2023 at 10:59:19AM +0200, Aleksandr Mikhalitsyn
-> > wrote:
-> > > >>>>> On Fri, Jun 9, 2023 at 3:57=E2=80=AFAM Xiubo Li <xiubli@redhat.=
-com> wrote:
-> > > >>>>>> On 6/8/23 23:42, Alexander Mikhalitsyn wrote:
-> > > >>>>>>> Dear friends,
-> > > >>>>>>>
-> > > >>>>>>> This patchset was originally developed by Christian Brauner
-> > but I'll continue
-> > > >>>>>>> to push it forward. Christian allowed me to do that :)
-> > > >>>>>>>
-> > > >>>>>>> This feature is already actively used/tested with LXD/LXC
-> > project.
-> > > >>>>>>>
-> > > >>>>>>> Git tree (based on https://github.com/ceph/ceph-client.git
-> > master):
-> > > >>>>> Hi Xiubo!
-> > > >>>>>
-> > > >>>>>> Could you rebase these patches to 'testing' branch ?
-> > > >>>>> Will do in -v6.
-> > > >>>>>
-> > > >>>>>> And you still have missed several places, for example the
-> > following cases:
-> > > >>>>>>
-> > > >>>>>>
-> > > >>>>>>       1    269  fs/ceph/addr.c <<ceph_netfs_issue_op_inline>>
-> > > >>>>>>                 req =3D ceph_mdsc_create_request(mdsc,
-> > CEPH_MDS_OP_GETATTR,
-> > > >>>>>> mode);
-> > > >>>>> +
-> > > >>>>>
-> > > >>>>>>       2    389  fs/ceph/dir.c <<ceph_readdir>>
-> > > >>>>>>                 req =3D ceph_mdsc_create_request(mdsc, op,
-> > USE_AUTH_MDS);
-> > > >>>>> +
-> > > >>>>>
-> > > >>>>>>       3    789  fs/ceph/dir.c <<ceph_lookup>>
-> > > >>>>>>                 req =3D ceph_mdsc_create_request(mdsc, op,
-> > USE_ANY_MDS);
-> > > >>>>> We don't have an idmapping passed to lookup from the VFS
-> > layer. As I
-> > > >>>>> mentioned before, it's just impossible now.
-> > > >>>> ->lookup() doesn't deal with idmappings and really can't
-> > otherwise you
-> > > >>>> risk ending up with inode aliasing which is really not
-> > something you
-> > > >>>> want. IOW, you can't fill in inode->i_{g,u}id based on a mount's
-> > > >>>> idmapping as inode->i_{g,u}id absolutely needs to be a
-> > filesystem wide
-> > > >>>> value. So better not even risk exposing the idmapping in there
-> > at all.
-> > > >>> Thanks for adding, Christian!
-> > > >>>
-> > > >>> I agree, every time when we use an idmapping we need to be
-> > careful with
-> > > >>> what we map. AFAIU, inode->i_{g,u}id should be based on the
-> > filesystem
-> > > >>> idmapping (not mount),
-> > > >>> but in this case, Xiubo want's current_fs{u,g}id to be mapped
-> > > >>> according to an idmapping.
-> > > >>> Anyway, it's impossible at now and IMHO, until we don't have any
-> > > >>> practical use case where
-> > > >>> UID/GID-based path restriction is used in combination with idmapp=
-ed
-> > > >>> mounts it's not worth to
-> > > >>> make such big changes in the VFS layer.
-> > > >>>
-> > > >>> May be I'm not right, but it seems like UID/GID-based path
-> > restriction
-> > > >>> is not a widespread
-> > > >>> feature and I can hardly imagine it to be used with the container
-> > > >>> workloads (for instance),
-> > > >>> because it will require to always keep in sync MDS permissions
-> > > >>> configuration with the
-> > > >>> possible UID/GID ranges on the client. It looks like a nightmare
-> > for sysadmin.
-> > > >>> It is useful when cephfs is used as an external storage on the
-> > host, but if you
-> > > >>> share cephfs with a few containers with different user
-> > namespaces idmapping...
-> > > >> Hmm, while this will break the MDS permission check in cephfs then=
- in
-> > > >> lookup case. If we really couldn't support it we should make it to
-> > > >> escape the check anyway or some OPs may fail and won't work as
-> > expected.
-> > > > I don't pretend to know the details of the VFS (or even our linux
-> > > > client implementation), but I'm confused that this is apparently so
-> > > > hard. It looks to me like we currently always fill in the "caller_u=
-id"
-> > > > with "from_kuid(&init_user_ns, req->r_cred->fsuid))". Is this actua=
-lly
-> > > > valid to begin with? If it is, why can't the uid mapping be applied=
- on
-> > > > that?
-> > > >
-> > > > As both the client and the server share authority over the inode's
-> > > > state (including things like mode bits and owners), and need to do
-> > > > permission checking, being able to tell the server the relevant act=
-or
-> > > > is inherently necessary. We also let admins restrict keys to
-> > > > particular UID/GID combinations as they wish, and it's not the most
-> > > > popular feature but it does get deployed. I would really expect a u=
-ser
-> > > > of UID mapping to be one of the *most* likely to employ such a
-> > > > facility...maybe not with containers, but certainly end-user homedi=
-rs
-> > > > and shared spaces.
-> > > >
-> > > > Disabling the MDS auth checks is really not an option. I guess we
-> > > > could require any user employing idmapping to not be uid-restricted=
-,
-> > > > and set the anonymous UID (does that work, Xiubo, or was it the bro=
-ken
-> > > > one? In which case we'd have to default to root?). But that seems a
-> > > > bit janky to me.
-> > >
-> > > Yeah, this also seems risky.
-> > >
-> > > Instead disabling the MDS auth checks there is another option, which =
-is
-> > > we can prevent  the kclient to be mounted or the idmapping to be
-> > > applied. But this still have issues, such as what if admins set the M=
-DS
-> > > auth caps after idmap applied to the kclients ?
-> >
-> > Hi Xiubo,
-> >
-> > I thought about this too and came to the same conclusion, that UID/GID
-> > based
-> > restriction can be applied dynamically, so detecting it on mount-time
-> > helps not so much.
-> >
-> For this you please raise one PR to ceph first to support this, and in
-> the PR we can discuss more for the MDS auth caps. And after the PR
-> getting merged then in this patch series you need to check the
-> corresponding option or flag to determine whether could the idmap
-> mounting succeed.
+[...]
 
-I'm sorry but I don't understand what we want to support here. Do we want t=
-o
-add some new ceph request that allows to check if UID/GID-based
-permissions are applied for
-a particular ceph client user?
+ > > >
+ > > > I thought about this too and came to the same conclusion, that 
+UID/GID
+ > > > based
+ > > > restriction can be applied dynamically, so detecting it on mount-time
+ > > > helps not so much.
+ > > >
+ > > For this you please raise one PR to ceph first to support this, and in
+ > > the PR we can discuss more for the MDS auth caps. And after the PR
+ > > getting merged then in this patch series you need to check the
+ > > corresponding option or flag to determine whether could the idmap
+ > > mounting succeed.
+ >
+ > I'm sorry but I don't understand what we want to support here. Do we 
+want to
+ > add some new ceph request that allows to check if UID/GID-based
+ > permissions are applied for
+ > a particular ceph client user?
 
-Thanks,
-Alex
+IMO we should prevent users to set UID/GID-based MDS auth caps from ceph 
+side. And users should know what has happened.
 
->
-> Thanks
->
-> - Xiubo
->
->
-> > >
-> > > IMO there have 2 options: the best way is to fix this in VFS if
-> > > possible. Else to add one option to disable the corresponding MDS aut=
-h
-> > > caps in ceph if users want to support the idmap feature.
-> >
-> > Dear colleagues,
-> > Dear Xiubo,
-> >
-> > Let me try to summarize the previous discussions about cephfs idmapped
-> > mount support.
-> >
-> > This discussion about the need of caller's UID/GID mapping is started
-> > from the first
-> > version of this patchset in this [1] thread. Let'me quote Christian her=
-e:
-> > > Since the idmapping is a property of the mount and not a property of =
-the
-> > > caller the caller's fs{g,u}id aren't mapped. What is mapped are the
-> > > inode's i{g,u}id when accessed from a particular mount.
-> > >
-> > > The fs{g,u}id are only ever mapped when a new filesystem object is
-> > > created. So if I have an idmapped mount that makes it so that files
-> > > owned by 1000 on-disk appear to be owned by uid 0 then a user with ui=
-d 0
-> > > creating a new file will create files with uid 1000 on-disk when goin=
-g
-> > > through that mount. For cephfs that'd be the uid we would be sending
-> > > with creation requests as I've currently written it.
-> >
-> > This is a key part of this discussion. Idmapped mounts is not a way to
-> > proxify
-> > caller's UID/GID, but idmapped mounts are designed to perform UID/GID
-> > mapping
-> > of inode's owner's UID/GID. Yes, these concepts look really-really
-> > close and from
-> > the first glance it looks like it's just an equivalent thing. But they
-> > are not.
-> >
-> > From my understanding, if someone wants to verify caller UID/GID then
-> > he should
-> > take an unmapped UID/GID and verify it. It's not important if the
-> > caller does something
-> > through an idmapped mount or not, from_kuid(&init_user_ns,
-> > req->r_cred->fsuid))
-> > literally "UID of the caller in a root user namespace". But cephfs
-> > mount can be used
-> > from any user namespace (yes, cephfs can't be mounted in user
-> > namespaces, but it
-> > can be inherited during CLONE_NEWNS, or used as a detached mount with
-> > open_tree/move_mount).
-> > What I want to say by providing this example is that even now, without
-> > idmapped mounts
-> > we have kinda close problem, that UID/GID based restriction will be
-> > based on the host's (!),
-> > root user namespace, UID/GID-s even if the caller sits inside the user
-> > namespace. And we don't care,
-> > right? Why it's a problem with an idmapped mounts? If someone wants to
-> > control caller's UID/GID
-> > on the MDS side he just needs to take hosts UID/GIDs and use them in
-> > permission rules. That's it.
-> >
-> > Next point is that technically idmapped mounts don't break anything,
-> > if someone starts using
-> > idmapped mounts with UID/GID-based restrictions he will get -EACCESS.
-> > Why is this a problem?
-> > A user will check configuration, read the clarification in the
-> > documentation about idmapped mounts
-> > in cephfs and find a warning that these are not fully compatible
-> > things right now.
-> >
-> > IMHO, there is only one real problem (which makes UID/GID-based
-> > restrictions is not fully compatible with
-> > an idmapped mounts). Is that we have to map caller's UID/GID according
-> > to a mount idmapping when we
-> > creating a new inode (mknod, mkdir, symlink, open(O_CREAT)). But it's
-> > only because the caller's UID/GIDs are
-> > used as the owner's UID/GID for newly created inode. Ideally, we need
-> > to have two fields in ceph request,
-> > one for a caller's UID/GID and another one for inode owner UID/GID.
-> > But this requires cephfs protocol modification
-> > (yes, it's a bit painful. But global VFS changes are painful too!). As
-> > Christian pointed this is a reason why
-> > he went this way in the first patchset version.
-> >
-> > Maybe I'm not right, but both options to properly fix that VFS API
-> > changes or cephfs protocol modification
-> > are too expensive until we don't have a real requestors with a good
-> > use case for idmapped mounts + UID/GID
-> > based permissions. We already have a real and good use case for
-> > idmapped mounts in Cephfs for LXD/LXC.
-> > IMHO, it's better to move this thing forward step by step, because VFS
-> > API/cephfs protocol changes will
-> > take a really big amount of time and it's not obvious that it's worth
-> > it, moreover it's not even clear that VFS API
-> > change is the right way to deal with this problem. It seems to me that
-> > Cephfs protocol change seems like a
-> > more proper way here. At the same time I fully understand that you are
-> > not happy about this option.
-> >
-> > Just to conclude, we don't have any kind of cephfs degradation here,
-> > all users without idmapping will not be affected,
-> > all users who start using mount idmappings with cephfs will be aware
-> > of this limitation.
-> >
-> > [1]
-> > https://lore.kernel.org/all/20220105141023.vrrbfhti5apdvkz7@wittgenstei=
-n/
-> >
-> > Kind regards,
-> > Alex
-> >
-> > >
-> > > Thanks
-> > >
-> > > - Xiubo
-> > >
-> > > > -Greg
-> > > >
-> > > >> @Greg
-> > > >>
-> > > >> For the lookup requests the idmapping couldn't get the mapped UID/=
-GID
-> > > >> just like all the other requests, which is needed by the MDS
-> > permission
-> > > >> check. Is that okay to make it disable the check for this case ? I=
- am
-> > > >> afraid this will break the MDS permssions logic.
-> > > >>
-> > > >> Any idea ?
-> > > >>
-> > > >> Thanks
-> > > >>
-> > > >> - Xiubo
-> > > >>
-> > > >>
-> > > >>> Kind regards,
-> > > >>> Alex
-> > > >>>
-> > >
->
+Once users want to support the idmap mounts they should know that the 
+MDS auth caps won't work anymore.
+
+Thanks
+
+- Xiubo
+
