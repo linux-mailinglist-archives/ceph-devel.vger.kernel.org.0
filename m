@@ -2,209 +2,146 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BDE27340B8
-	for <lists+ceph-devel@lfdr.de>; Sat, 17 Jun 2023 14:14:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 81E9B734937
+	for <lists+ceph-devel@lfdr.de>; Mon, 19 Jun 2023 01:08:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237483AbjFQMOD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 17 Jun 2023 08:14:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46434 "EHLO
+        id S229496AbjFRXIo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 18 Jun 2023 19:08:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235893AbjFQMN6 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 17 Jun 2023 08:13:58 -0400
+        with ESMTP id S229456AbjFRXIn (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 18 Jun 2023 19:08:43 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF6E0213E
-        for <ceph-devel@vger.kernel.org>; Sat, 17 Jun 2023 05:12:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBD08121
+        for <ceph-devel@vger.kernel.org>; Sun, 18 Jun 2023 16:07:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687003951;
+        s=mimecast20190719; t=1687129675;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=fSQZQ6YboxRaXsiohOL5R9kf0uRRv2lhrE9A+pyCn4U=;
-        b=QA3jvoQoddh1iU9NqwaE4mTEwqwTaDeqif3UxSqnuu9af1VTpISpLUHugvbFJmJQ220Uae
-        MKKdLiD7xdzC1923q6UZ1np2O6hYZjItrfOImrKYrX+zf7nM/ekY8on/GATR8sXqjiDcIQ
-        fowRh596UgXPHgR/wXRZjH4yYeGQ4cI=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-443-e8hi11tzOTydYlQ2AkFMIA-1; Sat, 17 Jun 2023 08:12:30 -0400
-X-MC-Unique: e8hi11tzOTydYlQ2AkFMIA-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4F45D2A59540;
-        Sat, 17 Jun 2023 12:12:29 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.51])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5FE79492C1B;
-        Sat, 17 Jun 2023 12:12:27 +0000 (UTC)
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-        ceph-devel@vger.kernel.org
-Subject: [PATCH net-next v2 07/17] ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage()
-Date:   Sat, 17 Jun 2023 13:11:36 +0100
-Message-ID: <20230617121146.716077-8-dhowells@redhat.com>
-In-Reply-To: <20230617121146.716077-1-dhowells@redhat.com>
-References: <20230617121146.716077-1-dhowells@redhat.com>
+        bh=2EkauvTfpm3+c/4KjTxzG70d29Eikoe7e7wc++cyCVU=;
+        b=dnWpmhxfAkbsxmb1bcIfXCAJhbbVAJ2Ll/aXtxze1hNzDsaeKHNbKf5KPowzoSul0vKSW9
+        LqADCm27UgloretfFgLLq1Rxqy8AMVxLbOrjNbIc7I6RTtIu17xDAGJPr3zVVI1/W+jqVl
+        KWtG8Qo+tR1zaxDfsarCRwFw97KFiXE=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-413-3rCIC30vPYm6UDk7zSnRVw-1; Sun, 18 Jun 2023 19:07:54 -0400
+X-MC-Unique: 3rCIC30vPYm6UDk7zSnRVw-1
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1b52fd9bf64so14093415ad.1
+        for <ceph-devel@vger.kernel.org>; Sun, 18 Jun 2023 16:07:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687129673; x=1689721673;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2EkauvTfpm3+c/4KjTxzG70d29Eikoe7e7wc++cyCVU=;
+        b=bk5OtA8wdjdo0nFx2zPHoksYXKb2wwL/Rkb/URhq7Rwkmim3b3Dq4mLnDPCdSXdn0b
+         WjDcZSWALQvFqc9jJcyMT1DtYUeiqSwKLGOfxp+l8zVTRmzTe6MJL6iIEnEYgtF+yAko
+         9R0spv6LXmybQkruokqM5hme2GQt8J5V/eoIld+nHsgA1e/weft94jVHztqyFXLwBMqR
+         MTTUa8A5AQDdESuKzpjJxQZo5pF03/nRVhJUhU8BccBQHAnNRsLtqn8y6GJGChlBtFQk
+         UDhOOUlFwjSY5XIWXkei0XfNImudtDOLh4vibZqlH8l5ON4EF+EcbVQs1SsnZlkbopG8
+         BdNg==
+X-Gm-Message-State: AC+VfDyoDub8uYYYkZaBAS+5htoIWh9flJBmbmJgzM/7303y/goWUAXM
+        TAXF8T677iHfLlaoM5A9/ZRMhHl7nfWh4XKFpAJrELyanWq6mjjLmUeLuTnxfYAFOpE8egiRz1e
+        VPbS/jYpSUT610X3KrRGfQQ==
+X-Received: by 2002:a17:902:da89:b0:1b5:1b0f:521b with SMTP id j9-20020a170902da8900b001b51b0f521bmr12985403plx.6.1687129673342;
+        Sun, 18 Jun 2023 16:07:53 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5UlkBPlsHtNd8N5CBsvRoHZI7+TeXBsqqCE15kWrbR2N/YCtgfk1VjaVCdZxfpl9bDu1uK0g==
+X-Received: by 2002:a17:902:da89:b0:1b5:1b0f:521b with SMTP id j9-20020a170902da8900b001b51b0f521bmr12985387plx.6.1687129672929;
+        Sun, 18 Jun 2023 16:07:52 -0700 (PDT)
+Received: from [10.72.12.38] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id bi2-20020a170902bf0200b001ac7f583f72sm19117167plb.209.2023.06.18.16.07.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 Jun 2023 16:07:52 -0700 (PDT)
+Message-ID: <534750e0-d4d5-4e2f-2d5a-25cfc908e5b0@redhat.com>
+Date:   Mon, 19 Jun 2023 07:07:48 +0800
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v2] ceph: only send metrics when the MDS rank is ready
+To:     Venky Shankar <vshankar@redhat.com>
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        mchangir@redhat.com
+References: <20230606005732.1056361-1-xiubli@redhat.com>
+ <CACPzV1miqfsoAHbjqnw=1wo5CKEcQR0G-J1Zi0ia2Ara=3x-ZA@mail.gmail.com>
+Content-Language: en-US
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <CACPzV1miqfsoAHbjqnw=1wo5CKEcQR0G-J1Zi0ia2Ara=3x-ZA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Use sendmsg() and MSG_SPLICE_PAGES rather than sendpage in ceph when
-transmitting data.  For the moment, this can only transmit one page at a
-time because of the architecture of net/ceph/, but if
-write_partial_message_data() can be given a bvec[] at a time by the
-iteration code, this would allow pages to be sent in a batch.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: Xiubo Li <xiubli@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: "David S. Miller" <davem@davemloft.net>
-cc: Eric Dumazet <edumazet@google.com>
-cc: Jakub Kicinski <kuba@kernel.org>
-cc: Paolo Abeni <pabeni@redhat.com>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: ceph-devel@vger.kernel.org
-cc: netdev@vger.kernel.org
----
- net/ceph/messenger_v2.c | 91 +++++++++--------------------------------
- 1 file changed, 19 insertions(+), 72 deletions(-)
+On 6/16/23 12:40, Venky Shankar wrote:
+> Hi Xiubo,
+>
+> On Tue, Jun 6, 2023 at 6:30 AM <xiubli@redhat.com> wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> When the MDS rank is in clientreplay state, the metrics requests
+>> will be discarded directly. Also, when there are a lot of known
+>> client requests to recover from, the metrics requests will slow
+>> down the MDS rank from getting to the active state sooner.
+>>
+>> With this patch, we will send the metrics requests only when the
+>> MDS rank is in active state.
+> Although the changes look fine. I have a question though - the metrics
+> are sent by the client each second (on tick()) - how many clients were
+> connected for the MDS to experience further slowness due to metric
+> update messages?
 
-diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-index 301a991dc6a6..87ac97073e75 100644
---- a/net/ceph/messenger_v2.c
-+++ b/net/ceph/messenger_v2.c
-@@ -117,91 +117,38 @@ static int ceph_tcp_recv(struct ceph_connection *con)
- 	return ret;
- }
- 
--static int do_sendmsg(struct socket *sock, struct iov_iter *it)
--{
--	struct msghdr msg = { .msg_flags = CEPH_MSG_FLAGS };
--	int ret;
--
--	msg.msg_iter = *it;
--	while (iov_iter_count(it)) {
--		ret = sock_sendmsg(sock, &msg);
--		if (ret <= 0) {
--			if (ret == -EAGAIN)
--				ret = 0;
--			return ret;
--		}
--
--		iov_iter_advance(it, ret);
--	}
--
--	WARN_ON(msg_data_left(&msg));
--	return 1;
--}
--
--static int do_try_sendpage(struct socket *sock, struct iov_iter *it)
--{
--	struct msghdr msg = { .msg_flags = CEPH_MSG_FLAGS };
--	struct bio_vec bv;
--	int ret;
--
--	if (WARN_ON(!iov_iter_is_bvec(it)))
--		return -EINVAL;
--
--	while (iov_iter_count(it)) {
--		/* iov_iter_iovec() for ITER_BVEC */
--		bvec_set_page(&bv, it->bvec->bv_page,
--			      min(iov_iter_count(it),
--				  it->bvec->bv_len - it->iov_offset),
--			      it->bvec->bv_offset + it->iov_offset);
--
--		/*
--		 * sendpage cannot properly handle pages with
--		 * page_count == 0, we need to fall back to sendmsg if
--		 * that's the case.
--		 *
--		 * Same goes for slab pages: skb_can_coalesce() allows
--		 * coalescing neighboring slab objects into a single frag
--		 * which triggers one of hardened usercopy checks.
--		 */
--		if (sendpage_ok(bv.bv_page)) {
--			ret = sock->ops->sendpage(sock, bv.bv_page,
--						  bv.bv_offset, bv.bv_len,
--						  CEPH_MSG_FLAGS);
--		} else {
--			iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bv, 1, bv.bv_len);
--			ret = sock_sendmsg(sock, &msg);
--		}
--		if (ret <= 0) {
--			if (ret == -EAGAIN)
--				ret = 0;
--			return ret;
--		}
--
--		iov_iter_advance(it, ret);
--	}
--
--	return 1;
--}
--
- /*
-  * Write as much as possible.  The socket is expected to be corked,
-- * so we don't bother with MSG_MORE/MSG_SENDPAGE_NOTLAST here.
-+ * so we don't bother with MSG_MORE here.
-  *
-  * Return:
-- *   1 - done, nothing (else) to write
-+ *  >0 - done, nothing (else) to write
-  *   0 - socket is full, need to wait
-  *  <0 - error
-  */
- static int ceph_tcp_send(struct ceph_connection *con)
- {
-+	struct msghdr msg = {
-+		.msg_iter	= con->v2.out_iter,
-+		.msg_flags	= CEPH_MSG_FLAGS,
-+	};
- 	int ret;
- 
-+	if (WARN_ON(!iov_iter_is_bvec(&con->v2.out_iter)))
-+		return -EINVAL;
-+
-+	if (con->v2.out_iter_sendpage)
-+		msg.msg_flags |= MSG_SPLICE_PAGES;
-+
- 	dout("%s con %p have %zu try_sendpage %d\n", __func__, con,
- 	     iov_iter_count(&con->v2.out_iter), con->v2.out_iter_sendpage);
--	if (con->v2.out_iter_sendpage)
--		ret = do_try_sendpage(con->sock, &con->v2.out_iter);
--	else
--		ret = do_sendmsg(con->sock, &con->v2.out_iter);
-+
-+	ret = sock_sendmsg(con->sock, &msg);
-+	if (ret > 0)
-+		iov_iter_advance(&con->v2.out_iter, ret);
-+	else if (ret == -EAGAIN)
-+		ret = 0;
-+
- 	dout("%s con %p ret %d left %zu\n", __func__, con, ret,
- 	     iov_iter_count(&con->v2.out_iter));
- 	return ret;
+As I remembered there were 1761 clients. The MDS will just queue the 
+metric messages and then trigger to print one debug log message , which 
+could slow down the MDS, to buffer and file(?) for each when handling them.
+
+Thanks
+
+- Xiubo
+
+>
+>> URL: https://tracker.ceph.com/issues/61524
+>> Reviewed-by: Milind Changire <mchangir@redhat.com>
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>
+>> V2:
+>> - rephrase the commit comment from Milind's comments.
+>>
+>>
+>>   fs/ceph/metric.c | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/fs/ceph/metric.c b/fs/ceph/metric.c
+>> index c47347d2e84e..cce78d769f55 100644
+>> --- a/fs/ceph/metric.c
+>> +++ b/fs/ceph/metric.c
+>> @@ -36,6 +36,14 @@ static bool ceph_mdsc_send_metrics(struct ceph_mds_client *mdsc,
+>>          s32 items = 0;
+>>          s32 len;
+>>
+>> +       /* Do not send the metrics until the MDS rank is ready */
+>> +       mutex_lock(&mdsc->mutex);
+>> +       if (ceph_mdsmap_get_state(mdsc->mdsmap, s->s_mds) != CEPH_MDS_STATE_ACTIVE) {
+>> +               mutex_unlock(&mdsc->mutex);
+>> +               return false;
+>> +       }
+>> +       mutex_unlock(&mdsc->mutex);
+>> +
+>>          len = sizeof(*head) + sizeof(*cap) + sizeof(*read) + sizeof(*write)
+>>                + sizeof(*meta) + sizeof(*dlease) + sizeof(*files)
+>>                + sizeof(*icaps) + sizeof(*inodes) + sizeof(*rsize)
+>> --
+>> 2.40.1
+>>
+>
 
