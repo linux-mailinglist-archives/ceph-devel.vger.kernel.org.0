@@ -2,40 +2,50 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5727373BD4E
-	for <lists+ceph-devel@lfdr.de>; Fri, 23 Jun 2023 19:00:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE18673BF09
+	for <lists+ceph-devel@lfdr.de>; Fri, 23 Jun 2023 21:44:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231756AbjFWRAo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 23 Jun 2023 13:00:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34372 "EHLO
+        id S231209AbjFWTof (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 23 Jun 2023 15:44:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231610AbjFWRAn (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 23 Jun 2023 13:00:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DA7A91;
-        Fri, 23 Jun 2023 10:00:42 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        with ESMTP id S229446AbjFWToe (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 23 Jun 2023 15:44:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E22226AD
+        for <ceph-devel@vger.kernel.org>; Fri, 23 Jun 2023 12:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687549432;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=BybjfG9PIBiqP0H/EMXr01t+EtZxTWT+jQSFanPQg3I=;
+        b=dSs7HTRGolD7WxVTw+2facPBdmdK9Z4obL6MXtEmsU1feLq2PiIuyiqut1KxlLKtRLGPkt
+        iLuILQ1qBTVTwtud8F99eyToVwG6rkKO1vTEMAj7n6dkPUodO4F3WUbPeSuIJJ26ZKK1F2
+        MVWbmAYnt+wlzt8WHUj9Rb+7pGjuJdI=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-124-QaxqV_GGPc-UL_KKq1DTLg-1; Fri, 23 Jun 2023 15:43:46 -0400
+X-MC-Unique: QaxqV_GGPc-UL_KKq1DTLg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 34DE061A8A;
-        Fri, 23 Jun 2023 17:00:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 033ECC433C9;
-        Fri, 23 Jun 2023 17:00:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1687539641;
-        bh=8NvdvMOZhkf3ZWHCAYhr6IS/S3CpGzOG5wCKstBXM/A=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=h6/0i8b5U6xV3rDgMIBxRMocLpmNGFZY618h9D1Yg3zKzltu1gljLOo2TTiI43Cvp
-         N8emwr4aIVkqWlvGoDzPntH7XpThaon1gAVIyfSyQYW+hQnAzM2vBCTiuF+u/vBo7R
-         /wZFoJixy4+SS9Ns7Whew+fmlegNGLtSprWupskJDm9BDDW71ijdzXhCUJ/cOh0BuN
-         pAxFt8CgIOBjSdeUegTBRdu6N2sA/iF4ahxUmwJ6BR8s7SQAAgTXBWJxYx2Lr/4j7D
-         8qpPHfWStK1yOUwrtYFucxtWK+BNf3L4N4UydRvXKXSFbiQoQg8TOnI8t637yOZcAu
-         Wwf40LbpxIDDg==
-Date:   Fri, 23 Jun 2023 10:00:40 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     netdev@vger.kernel.org,
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9BDBF835262;
+        Fri, 23 Jun 2023 19:43:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CF0B4207B2BC;
+        Fri, 23 Jun 2023 19:43:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20230623100040.4ebbeeb2@kernel.org>
+References: <20230623100040.4ebbeeb2@kernel.org> <20230623114425.2150536-1-dhowells@redhat.com> <20230623114425.2150536-4-dhowells@redhat.com>
+To:     Jakub Kicinski <kuba@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>
+Cc:     dhowells@redhat.com, netdev@vger.kernel.org,
         Alexander Duyck <alexander.duyck@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
@@ -44,48 +54,38 @@ Cc:     netdev@vger.kernel.org,
         David Ahern <dsahern@kernel.org>,
         Matthew Wilcox <willy@infradead.org>,
         Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+        linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
         ceph-devel@vger.kernel.org
-Subject: Re: [PATCH net-next v4 03/15] ceph: Use sendmsg(MSG_SPLICE_PAGES)
- rather than sendpage
-Message-ID: <20230623100040.4ebbeeb2@kernel.org>
-In-Reply-To: <20230623114425.2150536-4-dhowells@redhat.com>
-References: <20230623114425.2150536-1-dhowells@redhat.com>
-        <20230623114425.2150536-4-dhowells@redhat.com>
+Subject: Re: [PATCH net-next v4 03/15] ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2611114.1687549406.1@warthog.procyon.org.uk>
+Date:   Fri, 23 Jun 2023 20:43:26 +0100
+Message-ID: <2611115.1687549406@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 23 Jun 2023 12:44:13 +0100 David Howells wrote:
-> @@ -494,9 +466,12 @@ static int write_partial_message_data(struct ceph_connection *con)
->  
->  		page = ceph_msg_data_next(cursor, &page_offset, &length);
->  		if (length == cursor->total_resid)
-> -			more = MSG_MORE;
-> -		ret = ceph_tcp_sendpage(con->sock, page, page_offset, length,
-> -					more);
-> +			msghdr.msg_flags |= MSG_MORE;
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-Should the condition also be flipped here, like you did below?
-(can be a follow up if so)
+> >  		if (length == cursor->total_resid)
+> > -			more = MSG_MORE;
+> > -		ret = ceph_tcp_sendpage(con->sock, page, page_offset, length,
+> > -					more);
+> > +			msghdr.msg_flags |= MSG_MORE;
+> 
+> Should the condition also be flipped here, like you did below?
+> (can be a follow up if so)
 
-> @@ -534,9 +512,11 @@ static int write_partial_skip(struct ceph_connection *con)
->  		size_t size = min(con->v1.out_skip, (int)PAGE_SIZE);
->  
->  		if (size == con->v1.out_skip)
-> -			more = MSG_MORE;
-> -		ret = ceph_tcp_sendpage(con->sock, ceph_zero_page, 0, size,
-> -					more);
-> +			msghdr.msg_flags &= ~MSG_MORE;
-> +		bvec_set_page(&bvec, ZERO_PAGE(0), size, 0);
-> +		iov_iter_bvec(&msghdr.msg_iter, ITER_SOURCE, &bvec, 1, size);
+Yeah - the "==" in the if-statement needs flipping to "!=".  I can send a
+follow-up patch for it or respin if you prefer.
+
+David
+
