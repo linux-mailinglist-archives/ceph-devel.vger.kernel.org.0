@@ -2,74 +2,65 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B8FBD73ECB9
-	for <lists+ceph-devel@lfdr.de>; Mon, 26 Jun 2023 23:16:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50A4E73ECCB
+	for <lists+ceph-devel@lfdr.de>; Mon, 26 Jun 2023 23:23:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230061AbjFZVP4 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 26 Jun 2023 17:15:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56048 "EHLO
+        id S230200AbjFZVXC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 26 Jun 2023 17:23:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229454AbjFZVPz (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 26 Jun 2023 17:15:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 427D3E71
-        for <ceph-devel@vger.kernel.org>; Mon, 26 Jun 2023 14:15:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687814112;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=phZhUFy820bdckUny8npt4P9PZBQ+KMukLBIP/xsC+s=;
-        b=QEqG6bDen0A/m2J9WLin23Fklbqwf+lOyVBs0DrjjE5FD+1nuWM56lvBGl4iu9k+DmUNfR
-        zO4UZ0if+zGej6DNmdkp/nNi1Ar4KEgukoy9rf+PnThjVS9516MiAo40qi8J8ZFGL3iaSP
-        FkLaqVEKHJpQ7WF0mwCt7vOVSbupeL4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-235-cIdWQumrOyiAgAevxvWBiA-1; Mon, 26 Jun 2023 17:15:07 -0400
-X-MC-Unique: cIdWQumrOyiAgAevxvWBiA-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S229788AbjFZVXB (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 26 Jun 2023 17:23:01 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52084BD;
+        Mon, 26 Jun 2023 14:22:59 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D97EF104458B;
-        Mon, 26 Jun 2023 21:14:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E402F492B01;
-        Mon, 26 Jun 2023 21:14:41 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     Jakub Kicinski <kuba@kernel.org>
-cc:     dhowells@redhat.com, Ilya Dryomov <idryomov@gmail.com>,
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C6E8D60EB2;
+        Mon, 26 Jun 2023 21:22:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8ECAC433C8;
+        Mon, 26 Jun 2023 21:22:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687814578;
+        bh=m5tAbNXuwzu/wTbTJhZUflS9MvTlLgnUmPd2W8oqPUI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=d49M38lPe12UNxthVPgEwPskrnE7j0e7lFnrZqCgvgUIcPWXRGJjlTxOHSMLp4PBU
+         j36UQSceNqPOYJtYYXZrg3vJo4LFaP7gJuBdHAi1yU2Eydtr+tr3Pi9+gw7N2/tF5w
+         zzi3IugQnNheyRplFzh6DQ+Agyj8lkootV/Z3nCjmLaSyjmXCQFss7VDnVrRFLI2u8
+         mzjRDgpxaaBtSmN5bZ8B8tBN5cHkhgt0Tj+JQ+jbWRlCAV75N04UCOAVblSRZCOsg3
+         CEu3Y3GPVCA+Yg5MLuM/fSBQOA0Rkw+R1WZ0nQ5wxrLWyiDArslc+1p67yVj9V9zOD
+         AFF5C8KvghIBw==
+Date:   Mon, 26 Jun 2023 14:22:57 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Paolo Abeni <pabeni@redhat.com>, ceph-devel@vger.kernel.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Is ->sendmsg() allowed to change the msghdr struct it is given?
+Subject: Re: Is ->sendmsg() allowed to change the msghdr struct it is given?
+Message-ID: <20230626142257.6e14a801@kernel.org>
+In-Reply-To: <3112097.1687814081@warthog.procyon.org.uk>
+References: <3112097.1687814081@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3112096.1687814081.1@warthog.procyon.org.uk>
-Date:   Mon, 26 Jun 2023 22:14:41 +0100
-Message-ID: <3112097.1687814081@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Jakub,
+On Mon, 26 Jun 2023 22:14:41 +0100 David Howells wrote:
+> Do you know if ->sendmsg() might alter the msghdr struct it is passed as an
+> argument? Certainly it can alter msg_iter, but can it also modify,
+> say, msg_flags?
 
-Do you know if ->sendmsg() might alter the msghdr struct it is passed as an
-argument?  Certainly it can alter msg_iter, but can it also modify, say,
-msg_flags?
-
-Thanks,
-David
-
+I'm not aware of a precedent either way.
+Eric or Paolo would know better than me, tho.
