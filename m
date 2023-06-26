@@ -2,49 +2,61 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 92EFA73E359
-	for <lists+ceph-devel@lfdr.de>; Mon, 26 Jun 2023 17:31:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1A5C73E3A8
+	for <lists+ceph-devel@lfdr.de>; Mon, 26 Jun 2023 17:41:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229649AbjFZPbm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 26 Jun 2023 11:31:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48760 "EHLO
+        id S230126AbjFZPl5 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 26 Jun 2023 11:41:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbjFZPbl (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 26 Jun 2023 11:31:41 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1758218E
-        for <ceph-devel@vger.kernel.org>; Mon, 26 Jun 2023 08:30:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687793448;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7uLYHxA1BeyjC2zeH9Gn+m3MAcFP9PjLf/sWdMqlqe8=;
-        b=RQUtjMXaX6iSjfEhzePEndWFaePPNwk6vgQsX1CUpIV9XMxnfDbZvJ8YsLAKZon1YVhgRu
-        pPU23ffsreL8wPDBy7U9eip/ha8oG23/qWlmd/2suc0DSanM79Daa9Q5S1ZRuscazUqVvA
-        4oJEzxaLnZn85NgksaW9+p6HWyU3BxM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-250-PqDpqqq7PE2LP5FGnG2VSA-1; Mon, 26 Jun 2023 11:30:42 -0400
-X-MC-Unique: PqDpqqq7PE2LP5FGnG2VSA-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 228B51044597;
-        Mon, 26 Jun 2023 15:30:25 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 222FE492B01;
-        Mon, 26 Jun 2023 15:30:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAOi1vP_Bn918j24S94MuGyn+Gxk212btw7yWeDrRcW1U8pc_BA@mail.gmail.com>
-References: <CAOi1vP_Bn918j24S94MuGyn+Gxk212btw7yWeDrRcW1U8pc_BA@mail.gmail.com> <20230623225513.2732256-1-dhowells@redhat.com> <20230623225513.2732256-5-dhowells@redhat.com>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     dhowells@redhat.com, netdev@vger.kernel.org,
+        with ESMTP id S231343AbjFZPlz (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 26 Jun 2023 11:41:55 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F861BDF;
+        Mon, 26 Jun 2023 08:41:24 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id 38308e7fff4ca-2b6a1fe5845so16784251fa.3;
+        Mon, 26 Jun 2023 08:41:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687794075; x=1690386075;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pfYjtj1R9OBqs+dVmgnQu3/n0GQzqWIXlWSAYyCQgfE=;
+        b=ZC4tdxELBaEzsmkyrCDXSO4zrWdOHRW66r1aH4EZlhpnkAAIXHH6JHFNZgMHV97kLH
+         WOuPG/Z/LMu4Jx40e2mXYXuNlsp8pGN7Mr9cjtCijXBsWURhkgTn1yMVbUCXv+mAsvTj
+         EDc3zwgKi0AfwDX8md+tia3QCxgpDyVEQ39x/fixcn/aqfps8qdjVfFPbBy7fpqpx87m
+         tFfrzz+Gomg3ypUedSrjtmiK3UCI5V2/KEs+Udwqmgj9lHEV33Qbs5PxXO5iP3ETt8vn
+         4ns2G4yK0bQpMAkRLSgB/LKumhHwl80LtXN9zFUf3Nxj5ZY3O+Bp5C1NWf1RYm7HaWVr
+         6KTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687794075; x=1690386075;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pfYjtj1R9OBqs+dVmgnQu3/n0GQzqWIXlWSAYyCQgfE=;
+        b=WfaW+MVgVsLlpdFC+L2vafK+Wz7OG6FKqVB/dWeO8SsVuHWbZl7s+3m8mvqXrFakJv
+         5hUy9/E6wRrCH/DISJPqbixhlHJZhWeMbLA7aqyazIjhW7+hiYBYz3duq7jow0X7WC5x
+         tRX0G/kKvB8NAcKnqlPeh6w9FnVYYRRRIy2y6N/Z195ymN0CADYQEj64t0kZ2R0q/mI9
+         RgvrCHp2PO3CVGT5ihkAXvLDHTp0wgRFmwM2/JZJtm3y6N50dahsKhXdxcG5Ds+Jf1Sp
+         SWC6vSUhztwwk+E4Z2/4FpoEwMFoSn4IFp+3vj6f8lbjcU8P+uDOplNYbRWaO/ifbDAm
+         9YwA==
+X-Gm-Message-State: AC+VfDwcSMHc8XAdunc1aJZQ19J0Akm1ZDKPqr8JxrYH/itG3W+xKbxL
+        xm7I2nIQ4/aKYDF/oq6p/LhfJ6rP/KmMpA0JI28=
+X-Google-Smtp-Source: ACHHUZ7VE+8iZfotd1r+SiAoEv3NvBloeBmppqXFsMvjW04FYaybsoeMhBTGyEWcgQXFE0Lrufy5XWjXJ5HBl9IL5ik=
+X-Received: by 2002:a05:651c:207:b0:2b4:7d01:f174 with SMTP id
+ y7-20020a05651c020700b002b47d01f174mr15122288ljn.13.1687794075146; Mon, 26
+ Jun 2023 08:41:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20230623225513.2732256-1-dhowells@redhat.com> <20230623225513.2732256-4-dhowells@redhat.com>
+ <CAOi1vP9vjLfk3W+AJFeexC93jqPaPUn2dD_4NrzxwoZTbYfOnw@mail.gmail.com> <3068221.1687788027@warthog.procyon.org.uk>
+In-Reply-To: <3068221.1687788027@warthog.procyon.org.uk>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Mon, 26 Jun 2023 17:41:03 +0200
+Message-ID: <CAOi1vP8AyL=nsqDw-QKjPsC8wMsEnq+hSh29PobADYLm-L9ZNg@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 03/16] ceph: Use sendmsg(MSG_SPLICE_PAGES)
+ rather than sendpage
+To:     David Howells <dhowells@redhat.com>
+Cc:     netdev@vger.kernel.org,
         Alexander Duyck <alexander.duyck@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
@@ -56,59 +68,50 @@ Cc:     dhowells@redhat.com, netdev@vger.kernel.org,
         Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
         Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 04/16] ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage()
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3070988.1687793422.1@warthog.procyon.org.uk>
-Date:   Mon, 26 Jun 2023 16:30:22 +0100
-Message-ID: <3070989.1687793422@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Ilya Dryomov <idryomov@gmail.com> wrote:
+On Mon, Jun 26, 2023 at 4:00=E2=80=AFPM David Howells <dhowells@redhat.com>=
+ wrote:
+>
+> Ilya Dryomov <idryomov@gmail.com> wrote:
+>
+> > Same here...  I would suggest that you keep ceph_tcp_sendpage() functio=
+n
+> > and make only minimal modifications to avoid regressions.
+>
+> This is now committed to net-next.
 
-> write_partial_message_data() is net/ceph/messenger_v1.c specific, so it
-> doesn't apply here.  I would suggest squashing the two net/ceph patches
-> into one since even the titles are the same.
+This needs to be dropped from linux-next because both this and
+especially the other (net/ceph/messenger_v2.c) patch introduce
+regressions.
 
-I would, but they're now applied to net-next, so we need to patch that.
+> I can bring ceph_tcp_sendpage() back into
+> existence or fix it in place for now if you have a preference.
 
-> >   * Write as much as possible.  The socket is expected to be corked,
-> > - * so we don't bother with MSG_MORE/MSG_SENDPAGE_NOTLAST here.
-> > + * so we don't bother with MSG_MORE here.
-> >   *
-> >   * Return:
-> > - *   1 - done, nothing (else) to write
-> > + *  >0 - done, nothing (else) to write
-> 
-> It would be nice to avoid making tweaks like this to the outer
-> interface as part of switching to a new internal API.
+I already mentioned that I would prefer if ceph_tcp_sendpage() was
+brought back into existence.
 
-Ok.  I'll change that and wrap the sendmsg in a loop.  Though, as I asked in
-an earlier reply, why is MSG_DONTWAIT used here?
+>
+> Note that I'm working on patches to rework the libceph transmission path =
+so
+> that it isn't dealing with transmitting a single page at a time, but it's=
+ not
+> ready yet.
 
-> > +       if (WARN_ON(!iov_iter_is_bvec(&con->v2.out_iter)))
-> > +               return -EINVAL;
-> 
-> Previously, this WARN_ON + error applied only to the "try sendpage"
-> path.  There is a ton of kvec usage in net/ceph/messenger_v2.c, so I'm
-> pretty sure that placing it here breaks everything.
+That is a worthwhile improvement now that sock_sendmsg() can take
+advantage of multiple pages!  It would be pretty invasive though so
+I think ceph_tcp_sendpage() is better to remain in place until then.
 
-This should have been removed as MSG_SPLICE_PAGES now accepts KVEC and XARRAY
-iterators also.
+Thanks,
 
-Btw, is it feasible to use con->v2.out_iter_sendpage to apply MSG_SPLICE_PAGES
-to the iterator to be transmitted as a whole?  It seems to be set depending on
-iterator type.
-
-David
-
+                Ilya
