@@ -2,256 +2,220 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14F5D73D0F0
-	for <lists+ceph-devel@lfdr.de>; Sun, 25 Jun 2023 14:35:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42CB573D571
+	for <lists+ceph-devel@lfdr.de>; Mon, 26 Jun 2023 02:57:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232071AbjFYMfC (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sun, 25 Jun 2023 08:35:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56724 "EHLO
+        id S230092AbjFZA5u (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 25 Jun 2023 20:57:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231747AbjFYMfB (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sun, 25 Jun 2023 08:35:01 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52D31E7;
-        Sun, 25 Jun 2023 05:35:00 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-98e39784a85so87724966b.1;
-        Sun, 25 Jun 2023 05:35:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687696499; x=1690288499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mnTM6AH2QXF2gOF8mDFwaIyALk1zi2atW6weIU7EpDk=;
-        b=qFIX6t2djOPZ3NFLEEsWh6kVaD6cm1PqqOZB43uvYQtB5FCIFt1MLynosh38SZn6a+
-         nhuZmKYbdzDSJk4+eyBR5rHzn6xJFUofmi9IVSoYk/vGPIi3N0OpCm39foIfQaadO1CP
-         z6ypR6oH5OE7LXfQHJTlnyQSiR1DU4LSWA3qobpWXR0NmKzvFBrQiWwLgwRAP9lrxDg7
-         b9gVil1hvTLGYONUJovI7F+s+FIRB6bh/Ba78lhpdd5/sAuly6PbxuKn4gWAH+BBT1uG
-         J93qqgCZ9J9x5tZmdcPi2cmRE6/WlD11lJgi5ei9dYsk9ZG3WHqurlZ31eEwc2WX8PTW
-         V9FA==
+        with ESMTP id S230079AbjFZA5p (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 25 Jun 2023 20:57:45 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26EA312A
+        for <ceph-devel@vger.kernel.org>; Sun, 25 Jun 2023 17:56:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687741016;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=L+GNj4TY3QwgXdJ5hTL9eDQCES/7GGtcAIghkSXdKKs=;
+        b=GRMGRzZ2hsgeGdj73XmcuC+NY+geMWXtHTLelJ8N9GBFN+fsivsnksi8Tsl5RUUKRv9B2Y
+        LjjbpHe7Rfje7A1Xap0m8vFQOu4pA2fOd7vk7JA4Z8sR8EF7K6MM+nqHCUlx5uVFcNHdpl
+        odNb6iHsT3MFVZTaZPnhZImQWeY/TEI=
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
+ [209.85.167.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-657-CdtqCnzcOGKLuyrWydfptQ-1; Sun, 25 Jun 2023 20:56:55 -0400
+X-MC-Unique: CdtqCnzcOGKLuyrWydfptQ-1
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-39ce91ab7ccso2771986b6e.3
+        for <ceph-devel@vger.kernel.org>; Sun, 25 Jun 2023 17:56:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687696499; x=1690288499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mnTM6AH2QXF2gOF8mDFwaIyALk1zi2atW6weIU7EpDk=;
-        b=ArZOLco//BjVUZdlIlLcWW3SQ0MZCDcxirVfSa6pwGugpqPL+ImDmyswWeLpTxb2ux
-         7kQqnC9YkAVo2SjdvSzakg6vtD+RpKfBmxWcRtXhHlzQyqoTznvM/MwOt+/6xFVxZPTM
-         8DiLJ2n126+CUVGT2FmGII4NJqK4PU8+FphR5qOo6K67heh00Xqy6xYZbN8wqW64ByDA
-         FCVaiu22YyPNEyKVNjq69lGMLUNL8GnRqtlSvlCNdQm+DcHJc39CIOOjuifblwU0HALC
-         98AyD9PtQxIxeFoFqHymbR/qbi6s8v3N5/y7VdifHDVgmzNi7GhPa+uimybOhdxQWbtv
-         NWvg==
-X-Gm-Message-State: AC+VfDzOgSJJiLrflHzd+JnnlrU1hDgdHtt53RK7syNSAmDKzm+ZvMm/
-        ArHvkHmZnREidatK8dBzCUaJAy/3VEl6SRzHzBk=
-X-Google-Smtp-Source: ACHHUZ4Nd6vLIj3xJTixgektcZuykdsnE4als2ZZkaqjSlSc82/AQVEifoR+5LZ+d971Eya9AkiGpbVc22+tDb1da6M=
-X-Received: by 2002:a17:907:1ca8:b0:973:84b0:b077 with SMTP id
- nb40-20020a1709071ca800b0097384b0b077mr25773762ejc.33.1687696498611; Sun, 25
- Jun 2023 05:34:58 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1687741014; x=1690333014;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L+GNj4TY3QwgXdJ5hTL9eDQCES/7GGtcAIghkSXdKKs=;
+        b=fokTfNOT0ckXWPy8zaGOhZ4bTet49wbXRpGw9xBygRgXX36XPUqU1E+xtOlWVu0cce
+         zvqexKgfoAHnorV0m5FsEHspGUDDEodbFC0j9jKCnmGu+7ryRXvZTsHs11pUSrKM1kCZ
+         VZ7nZuVpDNGzUDRivPaIaaMxocPwpsjrCQginGG5Z6Eeum4+kmhFqo8UFR8sJhX9cIS0
+         yc8hHG/FL6UX52ERRhLW7mnf8ikU9yq6TU9BhUkdhHf1m+ATfcRJBgEBKampiaFpiq3R
+         ZdRVA1fS4J8VJPm2gdJkGSL56mgg6tPgXRUF2W4ayGrSS9DGkHB+NDPQQFW4bB+IxXBd
+         I5AQ==
+X-Gm-Message-State: AC+VfDx+e/Or+hl4ZaIKQj1H3zxc+osXHCIsyczvjDuxLh1Qqd9/uQ/l
+        iWmGRFrZBT8pcrr9L+92+1fzt/J2VPaTxV3EmgBwf7IrhVkDfVaZIq0Q2UnWTmfo1XpoIntWRNX
+        cjY8hzpTIzmDCuXtoYZzB05FEqCMlVPYT
+X-Received: by 2002:a05:6808:2225:b0:39e:e0f0:55ed with SMTP id bd37-20020a056808222500b0039ee0f055edmr24476164oib.53.1687741014405;
+        Sun, 25 Jun 2023 17:56:54 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ4XDniU9mbkgJ37UJtuTdyxmQIbAWI8IOgZqvx0Xti7VIZL2IM75RJA5T57izCX7z8untYfCA==
+X-Received: by 2002:a05:6808:2225:b0:39e:e0f0:55ed with SMTP id bd37-20020a056808222500b0039ee0f055edmr24476144oib.53.1687741014173;
+        Sun, 25 Jun 2023 17:56:54 -0700 (PDT)
+Received: from [10.72.13.91] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id t4-20020a1709028c8400b001b3c7e5ed8csm2927536plo.74.2023.06.25.17.56.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Jun 2023 17:56:53 -0700 (PDT)
+Message-ID: <244c7527-2708-6a27-537b-a32cf9d37129@redhat.com>
+Date:   Mon, 26 Jun 2023 08:56:48 +0800
 MIME-Version: 1.0
-References: <20230623225513.2732256-1-dhowells@redhat.com> <20230623225513.2732256-5-dhowells@redhat.com>
-In-Reply-To: <20230623225513.2732256-5-dhowells@redhat.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Sun, 25 Jun 2023 14:34:46 +0200
-Message-ID: <CAOi1vP_Bn918j24S94MuGyn+Gxk212btw7yWeDrRcW1U8pc_BA@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 04/16] ceph: Use sendmsg(MSG_SPLICE_PAGES)
- rather than sendpage()
-To:     David Howells <dhowells@redhat.com>
-Cc:     netdev@vger.kernel.org,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        David Ahern <dsahern@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 17/79] ceph: switch to new ctime accessors
+Content-Language: en-US
+To:     Jeff Layton <jlayton@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230621144507.55591-1-jlayton@kernel.org>
+ <20230621144735.55953-1-jlayton@kernel.org>
+ <20230621144735.55953-16-jlayton@kernel.org>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20230621144735.55953-16-jlayton@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sat, Jun 24, 2023 at 12:55=E2=80=AFAM David Howells <dhowells@redhat.com=
-> wrote:
+
+On 6/21/23 22:45, Jeff Layton wrote:
+> In later patches, we're going to change how the ctime.tv_nsec field is
+> utilized. Switch to using accessor functions instead of raw accesses of
+> inode->i_ctime.
 >
-> Use sendmsg() and MSG_SPLICE_PAGES rather than sendpage in ceph when
-> transmitting data.  For the moment, this can only transmit one page at a
-> time because of the architecture of net/ceph/, but if
-> write_partial_message_data() can be given a bvec[] at a time by the
-
-Hi David,
-
-write_partial_message_data() is net/ceph/messenger_v1.c specific, so it
-doesn't apply here.  I would suggest squashing the two net/ceph patches
-into one since even the titles are the same.
-
-Also, we tend to use "libceph: " prefix for net/ceph changes.
-
-> iteration code, this would allow pages to be sent in a batch.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Ilya Dryomov <idryomov@gmail.com>
-> cc: Xiubo Li <xiubli@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: "David S. Miller" <davem@davemloft.net>
-> cc: Eric Dumazet <edumazet@google.com>
-> cc: Jakub Kicinski <kuba@kernel.org>
-> cc: Paolo Abeni <pabeni@redhat.com>
-> cc: Jens Axboe <axboe@kernel.dk>
-> cc: Matthew Wilcox <willy@infradead.org>
-> cc: ceph-devel@vger.kernel.org
-> cc: netdev@vger.kernel.org
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  net/ceph/messenger_v2.c | 91 +++++++++--------------------------------
->  1 file changed, 19 insertions(+), 72 deletions(-)
+>   fs/ceph/acl.c   |  2 +-
+>   fs/ceph/caps.c  |  2 +-
+>   fs/ceph/inode.c | 17 ++++++++++-------
+>   fs/ceph/snap.c  |  2 +-
+>   fs/ceph/xattr.c |  2 +-
+>   5 files changed, 14 insertions(+), 11 deletions(-)
 >
-> diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-> index 301a991dc6a6..87ac97073e75 100644
-> --- a/net/ceph/messenger_v2.c
-> +++ b/net/ceph/messenger_v2.c
-> @@ -117,91 +117,38 @@ static int ceph_tcp_recv(struct ceph_connection *co=
-n)
->         return ret;
->  }
->
-> -static int do_sendmsg(struct socket *sock, struct iov_iter *it)
-> -{
-> -       struct msghdr msg =3D { .msg_flags =3D CEPH_MSG_FLAGS };
-> -       int ret;
-> -
-> -       msg.msg_iter =3D *it;
-> -       while (iov_iter_count(it)) {
-> -               ret =3D sock_sendmsg(sock, &msg);
-> -               if (ret <=3D 0) {
-> -                       if (ret =3D=3D -EAGAIN)
-> -                               ret =3D 0;
-> -                       return ret;
-> -               }
-> -
-> -               iov_iter_advance(it, ret);
-> -       }
-> -
-> -       WARN_ON(msg_data_left(&msg));
-> -       return 1;
-> -}
-> -
-> -static int do_try_sendpage(struct socket *sock, struct iov_iter *it)
-> -{
-> -       struct msghdr msg =3D { .msg_flags =3D CEPH_MSG_FLAGS };
-> -       struct bio_vec bv;
-> -       int ret;
-> -
-> -       if (WARN_ON(!iov_iter_is_bvec(it)))
-> -               return -EINVAL;
-> -
-> -       while (iov_iter_count(it)) {
-> -               /* iov_iter_iovec() for ITER_BVEC */
-> -               bvec_set_page(&bv, it->bvec->bv_page,
-> -                             min(iov_iter_count(it),
-> -                                 it->bvec->bv_len - it->iov_offset),
-> -                             it->bvec->bv_offset + it->iov_offset);
-> -
-> -               /*
-> -                * sendpage cannot properly handle pages with
-> -                * page_count =3D=3D 0, we need to fall back to sendmsg i=
-f
-> -                * that's the case.
-> -                *
-> -                * Same goes for slab pages: skb_can_coalesce() allows
-> -                * coalescing neighboring slab objects into a single frag
-> -                * which triggers one of hardened usercopy checks.
-> -                */
-> -               if (sendpage_ok(bv.bv_page)) {
-> -                       ret =3D sock->ops->sendpage(sock, bv.bv_page,
-> -                                                 bv.bv_offset, bv.bv_len=
-,
-> -                                                 CEPH_MSG_FLAGS);
-> -               } else {
-> -                       iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bv, 1,=
- bv.bv_len);
-> -                       ret =3D sock_sendmsg(sock, &msg);
-> -               }
-> -               if (ret <=3D 0) {
-> -                       if (ret =3D=3D -EAGAIN)
-> -                               ret =3D 0;
-> -                       return ret;
-> -               }
-> -
-> -               iov_iter_advance(it, ret);
-> -       }
-> -
-> -       return 1;
-> -}
-> -
->  /*
->   * Write as much as possible.  The socket is expected to be corked,
-> - * so we don't bother with MSG_MORE/MSG_SENDPAGE_NOTLAST here.
-> + * so we don't bother with MSG_MORE here.
->   *
->   * Return:
-> - *   1 - done, nothing (else) to write
-> + *  >0 - done, nothing (else) to write
-
-It would be nice to avoid making tweaks like this to the outer
-interface as part of switching to a new internal API.
-
->   *   0 - socket is full, need to wait
->   *  <0 - error
->   */
->  static int ceph_tcp_send(struct ceph_connection *con)
->  {
-> +       struct msghdr msg =3D {
-> +               .msg_iter       =3D con->v2.out_iter,
-> +               .msg_flags      =3D CEPH_MSG_FLAGS,
-> +       };
->         int ret;
->
-> +       if (WARN_ON(!iov_iter_is_bvec(&con->v2.out_iter)))
-> +               return -EINVAL;
-
-Previously, this WARN_ON + error applied only to the "try sendpage"
-path.  There is a ton of kvec usage in net/ceph/messenger_v2.c, so I'm
-pretty sure that placing it here breaks everything.
-
+> diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
+> index 6945a938d396..a3de2b9c3a68 100644
+> --- a/fs/ceph/acl.c
+> +++ b/fs/ceph/acl.c
+> @@ -93,7 +93,7 @@ int ceph_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+>   	char *value = NULL;
+>   	struct iattr newattrs;
+>   	struct inode *inode = d_inode(dentry);
+> -	struct timespec64 old_ctime = inode->i_ctime;
+> +	struct timespec64 old_ctime = inode_ctime_peek(inode);
+>   	umode_t new_mode = inode->i_mode, old_mode = inode->i_mode;
+>   
+>   	if (ceph_snap(inode) != CEPH_NOSNAP) {
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 2321e5ddb664..c144a07e334e 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -1400,7 +1400,7 @@ static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
+>   
+>   	arg->mtime = inode->i_mtime;
+>   	arg->atime = inode->i_atime;
+> -	arg->ctime = inode->i_ctime;
+> +	arg->ctime = inode_ctime_peek(inode);
+>   	arg->btime = ci->i_btime;
+>   	arg->change_attr = inode_peek_iversion_raw(inode);
+>   
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 8e5f41d45283..f0b3b11d695e 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -100,7 +100,7 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+>   	inode->i_uid = parent->i_uid;
+>   	inode->i_gid = parent->i_gid;
+>   	inode->i_mtime = parent->i_mtime;
+> -	inode->i_ctime = parent->i_ctime;
+> +	inode_ctime_set(inode, inode_ctime_peek(parent));
+>   	inode->i_atime = parent->i_atime;
+>   	ci->i_rbytes = 0;
+>   	ci->i_btime = ceph_inode(parent)->i_btime;
+> @@ -695,12 +695,14 @@ void ceph_fill_file_time(struct inode *inode, int issued,
+>   		      CEPH_CAP_FILE_BUFFER|
+>   		      CEPH_CAP_AUTH_EXCL|
+>   		      CEPH_CAP_XATTR_EXCL)) {
+> +		struct timespec64 ictime = inode_ctime_peek(inode);
 > +
-> +       if (con->v2.out_iter_sendpage)
-> +               msg.msg_flags |=3D MSG_SPLICE_PAGES;
-> +
->         dout("%s con %p have %zu try_sendpage %d\n", __func__, con,
->              iov_iter_count(&con->v2.out_iter), con->v2.out_iter_sendpage=
-);
-> -       if (con->v2.out_iter_sendpage)
-> -               ret =3D do_try_sendpage(con->sock, &con->v2.out_iter);
-> -       else
-> -               ret =3D do_sendmsg(con->sock, &con->v2.out_iter);
-> +
-> +       ret =3D sock_sendmsg(con->sock, &msg);
-> +       if (ret > 0)
-> +               iov_iter_advance(&con->v2.out_iter, ret);
-> +       else if (ret =3D=3D -EAGAIN)
-> +               ret =3D 0;
+>   		if (ci->i_version == 0 ||
+> -		    timespec64_compare(ctime, &inode->i_ctime) > 0) {
+> +		    timespec64_compare(ctime, &ictime) > 0) {
+>   			dout("ctime %lld.%09ld -> %lld.%09ld inc w/ cap\n",
+> -			     inode->i_ctime.tv_sec, inode->i_ctime.tv_nsec,
+> +			     ictime.tv_sec, ictime.tv_nsec,
+>   			     ctime->tv_sec, ctime->tv_nsec);
+> -			inode->i_ctime = *ctime;
+> +			inode_ctime_set(inode, *ctime);
+>   		}
+>   		if (ci->i_version == 0 ||
+>   		    ceph_seq_cmp(time_warp_seq, ci->i_time_warp_seq) > 0) {
+> @@ -738,7 +740,7 @@ void ceph_fill_file_time(struct inode *inode, int issued,
+>   	} else {
+>   		/* we have no write|excl caps; whatever the MDS says is true */
+>   		if (ceph_seq_cmp(time_warp_seq, ci->i_time_warp_seq) >= 0) {
+> -			inode->i_ctime = *ctime;
+> +			inode_ctime_set(inode, *ctime);
+>   			inode->i_mtime = *mtime;
+>   			inode->i_atime = *atime;
+>   			ci->i_time_warp_seq = time_warp_seq;
+> @@ -2166,7 +2168,8 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
+>   		bool only = (ia_valid & (ATTR_SIZE|ATTR_MTIME|ATTR_ATIME|
+>   					 ATTR_MODE|ATTR_UID|ATTR_GID)) == 0;
+>   		dout("setattr %p ctime %lld.%ld -> %lld.%ld (%s)\n", inode,
+> -		     inode->i_ctime.tv_sec, inode->i_ctime.tv_nsec,
+> +		     inode_ctime_peek(inode).tv_sec,
+> +		     inode_ctime_peek(inode).tv_nsec,
+>   		     attr->ia_ctime.tv_sec, attr->ia_ctime.tv_nsec,
+>   		     only ? "ctime only" : "ignored");
+>   		if (only) {
+> @@ -2191,7 +2194,7 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
+>   	if (dirtied) {
+>   		inode_dirty_flags = __ceph_mark_dirty_caps(ci, dirtied,
+>   							   &prealloc_cf);
+> -		inode->i_ctime = attr->ia_ctime;
+> +		inode_ctime_set(inode, attr->ia_ctime);
+>   		inode_inc_iversion_raw(inode);
+>   	}
+>   
+> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> index 2e73ba62bd7a..f02df070fa84 100644
+> --- a/fs/ceph/snap.c
+> +++ b/fs/ceph/snap.c
+> @@ -660,7 +660,7 @@ int __ceph_finish_cap_snap(struct ceph_inode_info *ci,
+>   	capsnap->size = i_size_read(inode);
+>   	capsnap->mtime = inode->i_mtime;
+>   	capsnap->atime = inode->i_atime;
+> -	capsnap->ctime = inode->i_ctime;
+> +	capsnap->ctime = inode_ctime_peek(inode);
+>   	capsnap->btime = ci->i_btime;
+>   	capsnap->change_attr = inode_peek_iversion_raw(inode);
+>   	capsnap->time_warp_seq = ci->i_time_warp_seq;
+> diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+> index 806183959c47..8e217f7f58bd 100644
+> --- a/fs/ceph/xattr.c
+> +++ b/fs/ceph/xattr.c
+> @@ -1238,7 +1238,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
+>   		dirty = __ceph_mark_dirty_caps(ci, CEPH_CAP_XATTR_EXCL,
+>   					       &prealloc_cf);
+>   		ci->i_xattrs.dirty = true;
+> -		inode->i_ctime = current_time(inode);
+> +		inode_ctime_set_current(inode);
+>   	}
+>   
+>   	spin_unlock(&ci->i_ceph_lock);
 
-Hrm, is sock_sendmsg() now guaranteed to exhaust the iterator (i.e.
-a "short write" is no longer possible)?  Unless that is the case, this
-is not an equivalent transformation.
+Just back from PTO.
 
-This is actually the reason for
+LGTM.
 
->   * Return:
->   *   1 - done, nothing (else) to write
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
 
-specification which you also tweaked.  It doesn't make sense for
-ceph_tcp_send() to return the number of bytes sent because the caller
-expects everything to be sent when a positive number is returned.
 
-Thanks,
-
-                Ilya
