@@ -2,64 +2,63 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CF9B73FD03
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 15:42:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D07D73FD09
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 15:43:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229851AbjF0NmJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 27 Jun 2023 09:42:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40928 "EHLO
+        id S230144AbjF0Nnj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 27 Jun 2023 09:43:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbjF0NmI (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 09:42:08 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B5AD2962
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 06:41:27 -0700 (PDT)
+        with ESMTP id S230140AbjF0Nni (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 09:43:38 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1F01211B
+        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 06:42:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687873286;
+        s=mimecast20190719; t=1687873373;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=lmDKzToSsEaeKbdPQlWOC+TnDvuELQh9yzClzLHfw1E=;
-        b=Ad2cG1fW9eku4WU7QlWHd6rXVpCjtnrk8RzuQ5bq75Vt4CwI1eODd+xonETIcfk1YrTLTG
-        4zgFInlzfAUm9V/p2oOikChyEGay/vCA6+e/dWsO38V/Wz4nZE/G1kh2ilVyugypWgDyNm
-        A1OaOrpoqr1LwZVoj7td4KxzBpSUEeQ=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=Rm8eNxi9U5TQT5l3JCNmEbe34/5VjWHVvsVeuJmv90Q=;
+        b=C8kZsaKaV0kGkHDyJN9RSQ+gTYPRSTpDirlfpKcbtZDbRQGYhzq2raiUhN0eSpNFtXu+v4
+        03R45+holMRwzSjzVaMkgIBhz9FLg7YSbHQnRnEB8BeUQGlf03h3ejR15L1ELSBo8fKbz9
+        VDd7/kwqr+xPFBOw+KQaO7JO9CugBIQ=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-261-R5pbdvpaNF6j84NDzgG8mQ-1; Tue, 27 Jun 2023 09:41:25 -0400
-X-MC-Unique: R5pbdvpaNF6j84NDzgG8mQ-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-94a341efd9aso270920266b.0
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 06:41:25 -0700 (PDT)
+ us-mta-504--ByX99NaND6Ed-ItR3xChw-1; Tue, 27 Jun 2023 09:42:52 -0400
+X-MC-Unique: -ByX99NaND6Ed-ItR3xChw-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-9715654aba1so520317366b.0
+        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 06:42:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687873284; x=1690465284;
+        d=1e100.net; s=20221208; t=1687873371; x=1690465371;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lmDKzToSsEaeKbdPQlWOC+TnDvuELQh9yzClzLHfw1E=;
-        b=gYUqgcXjdZmiyXWdF1TCv8XR2BrXkzQiOT2S55z8JwOPJLAl60TurPIESTvCMytFh5
-         EMMZIBD8wI85AkPGF0NBk4zWpNV099RvzOwsBZzVYQzcWCgVA1qnRx/ajJDmBxESym4A
-         YpYOFfEeeC/05g7tJhU3+Wx+Z/aP78WGjVcekHFkEBQ6EeP7qKGsl42Xr9HOz/y/lvPt
-         3rGsRBR6e0TbqSfvi4ehPIyhiW/Kk+FtA7bo0bDEG5vgVN1WfEvbqgn2o8jppR8tiFFk
-         kPzXYVwi0oEQribmLqUBnQPV2z1gDm+VISsM+RCQCUe6thu6BKGl4meRo88WqUqBXE2a
-         rYsA==
-X-Gm-Message-State: AC+VfDztC7nE83XljGSvdkTLXCc3U/dW18i4P/T+I/pNBlVWw59S8Y0q
-        j+FGDEkcFybWUG7vLppw6uNAfBT125k6zoOWG2gUDwfrKtsUNcM87PTWZxgzEV4hEMc2RkmdnN3
-        v46iJP4QvrD6BbiZF972XcpnASbu1NZlCBFPqiN+X2fh5qQ==
-X-Received: by 2002:a17:906:51d9:b0:98d:7818:e51b with SMTP id v25-20020a17090651d900b0098d7818e51bmr12159416ejk.27.1687873283989;
-        Tue, 27 Jun 2023 06:41:23 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ6hXOQlOuL0lmKvoV4ZYh6ghUIS3oK9AveVFgn0Pr5HaEaSXPv6Ciw+IRx1Hitngytj+PCKyc5DgkafJ9rbEYo=
-X-Received: by 2002:a17:906:51d9:b0:98d:7818:e51b with SMTP id
- v25-20020a17090651d900b0098d7818e51bmr12159402ejk.27.1687873283711; Tue, 27
- Jun 2023 06:41:23 -0700 (PDT)
+        bh=Rm8eNxi9U5TQT5l3JCNmEbe34/5VjWHVvsVeuJmv90Q=;
+        b=aRBUEGud3CZFOPocr4To0l+vnYicmLualjjWwFbqmz2qgsKfQ1WD7piBujlbZzkUPt
+         SeTTz/OkhttowRM+YXrMkMfl/r+vqfVHT9jqB9DqZGF1jLS/XYBIS6CU5HCUwVQItUCT
+         0NtPXBn/eb6yI0R/vzY6NJ6s0zWBpUFB+TMwGcNolMY+q9sb7/SJT8Jz4BY1LNhMScYI
+         YLOOctU6Za6aaWnwCMwZ4Kq1LA0e+bhcYT5EyyQAZFVo/VcNn6RqYhKyLA3Oh0fjMz0Q
+         WiB81lHhsn9muhKIXyilJgswwOZfIHX2fyBVMiSHpYZ81Qc4kZOLzDuF8wWfu2ldqye9
+         qWRw==
+X-Gm-Message-State: AC+VfDyGrvNKbe3bD/+wQpr+JzglFhnmXeIVl1qLQCf7Q387SGLsS8YH
+        /RraGXnPREY8atOCTtzxbfmmpwGMfd76IoqFqfA3mV+kvs0T7+TLHNKcNJazdOg4MHlHHL7UmfP
+        dYaj/TMSY8ssTAlB9veFc87tfkv4OyD2EbzBR3A==
+X-Received: by 2002:a17:907:6e18:b0:98f:450e:fc20 with SMTP id sd24-20020a1709076e1800b0098f450efc20mr6399605ejc.17.1687873371598;
+        Tue, 27 Jun 2023 06:42:51 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ7TujCrDk13a7rny2KScteZ+GMisRjXSMXh1ANdbMfdEjxe2hUa75VA3ivzcUzxUfMqKF4ZWSJHfzntbxwwVbg=
+X-Received: by 2002:a17:907:6e18:b0:98f:450e:fc20 with SMTP id
+ sd24-20020a1709076e1800b0098f450efc20mr6399589ejc.17.1687873371360; Tue, 27
+ Jun 2023 06:42:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230606033850.1069497-1-xiubli@redhat.com>
-In-Reply-To: <20230606033850.1069497-1-xiubli@redhat.com>
+References: <20230618231011.9077-1-xiubli@redhat.com>
+In-Reply-To: <20230618231011.9077-1-xiubli@redhat.com>
 From:   Milind Changire <mchangir@redhat.com>
-Date:   Tue, 27 Jun 2023 19:10:47 +0530
-Message-ID: <CAED=hWDXoM45sp4OqBDH-7cOFJzBDRt0v9T5k8EYYHtEYKJGfg@mail.gmail.com>
-Subject: Re: [PATCH] ceph: voluntarily drop Xx caps for requests those touch
- parent mtime
+Date:   Tue, 27 Jun 2023 19:12:15 +0530
+Message-ID: <CAED=hWBqyq2Bi01X+=MXuncxq4MrPyUHrPthgnbYne5gRqCzLg@mail.gmail.com>
+Subject: Re: [PATCH] ceph: issue a cap release immediately if no cap exists
 To:     xiubli@redhat.com
 Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
         vshankar@redhat.com
@@ -80,119 +79,114 @@ Looks good to me.
 
 Reviewed-by: Milind Changire <mchangir@redhat.com>
 
-On Tue, Jun 6, 2023 at 9:11=E2=80=AFAM <xiubli@redhat.com> wrote:
+On Mon, Jun 19, 2023 at 4:42=E2=80=AFAM <xiubli@redhat.com> wrote:
 >
 > From: Xiubo Li <xiubli@redhat.com>
 >
-> For write requests the parent's mtime will be updated correspondingly.
-> And if the 'Xx' caps is issued and when releasing other caps together
-> with the write requests the MDS Locker will try to eval the xattr lock,
-> which need to change the locker state excl --> sync and need to do Xx
-> caps revocation.
+> In case:
 >
-> Just voluntarily dropping CEPH_CAP_XATTR_EXCL caps to avoid a cap
-> revoke message, which could cause the mtime will be overwrote by stale
-> one.
+>            mds                             client
+>                                 - Releases cap and put Inode
+>   - Increase cap->seq and sends
+>     revokes req to the client
+>   - Receives release req and    - Receives & drops the revoke req
+>     skip removing the cap and
+>     then eval the CInode and
+>     issue or revoke caps again.
+>                                 - Receives & drops the caps update
+>                                   or revoke req
+>   - Health warning for client
+>     isn't responding to
+>     mclientcaps(revoke)
 >
-> URL: https://tracker.ceph.com/issues/61584
+> All the IMPORT/REVOKE/GRANT cap ops will increase the session seq
+> in MDS side and then the client need to issue a cap release to
+> unblock MDS to remove the corresponding cap to unblock possible
+> waiters.
+>
+> URL: https://tracker.ceph.com/issues/61332
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  fs/ceph/dir.c  | 14 +++++++-------
->  fs/ceph/file.c |  2 +-
->  2 files changed, 8 insertions(+), 8 deletions(-)
+>  fs/ceph/caps.c | 40 +++++++++++++++++++++++++++++-----------
+>  1 file changed, 29 insertions(+), 11 deletions(-)
 >
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index 09bbd0ffbf4f..1b46f2b998c3 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -925,7 +925,7 @@ static int ceph_mknod(struct mnt_idmap *idmap, struct=
- inode *dir,
->         set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
->         req->r_args.mknod.mode =3D cpu_to_le32(mode);
->         req->r_args.mknod.rdev =3D cpu_to_le32(rdev);
-> -       req->r_dentry_drop =3D CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
-> +       req->r_dentry_drop =3D CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL =
-| CEPH_CAP_XATTR_EXCL;
->         req->r_dentry_unless =3D CEPH_CAP_FILE_EXCL;
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 5498bc36c1e7..59ab5d905ac4 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -4232,6 +4232,7 @@ void ceph_handle_caps(struct ceph_mds_session *sess=
+ion,
+>         struct cap_extra_info extra_info =3D {};
+>         bool queue_trunc;
+>         bool close_sessions =3D false;
+> +       bool do_cap_release =3D false;
 >
->         ceph_as_ctx_to_req(req, &as_ctx);
-> @@ -1037,7 +1037,7 @@ static int ceph_symlink(struct mnt_idmap *idmap, st=
-ruct inode *dir,
->         set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
->         req->r_dentry =3D dget(dentry);
->         req->r_num_caps =3D 2;
-> -       req->r_dentry_drop =3D CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
-> +       req->r_dentry_drop =3D CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL =
-| CEPH_CAP_XATTR_EXCL;
->         req->r_dentry_unless =3D CEPH_CAP_FILE_EXCL;
+>         dout("handle_caps from mds%d\n", session->s_mds);
 >
->         ceph_as_ctx_to_req(req, &as_ctx);
-> @@ -1112,7 +1112,7 @@ static int ceph_mkdir(struct mnt_idmap *idmap, stru=
-ct inode *dir,
->         ihold(dir);
->         set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
->         req->r_args.mkdir.mode =3D cpu_to_le32(mode);
-> -       req->r_dentry_drop =3D CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL;
-> +       req->r_dentry_drop =3D CEPH_CAP_FILE_SHARED | CEPH_CAP_AUTH_EXCL =
-| CEPH_CAP_XATTR_EXCL;
->         req->r_dentry_unless =3D CEPH_CAP_FILE_EXCL;
+> @@ -4349,17 +4350,14 @@ void ceph_handle_caps(struct ceph_mds_session *se=
+ssion,
+>                 else
+>                         dout(" i don't have ino %llx\n", vino.ino);
 >
->         ceph_as_ctx_to_req(req, &as_ctx);
-> @@ -1173,7 +1173,7 @@ static int ceph_link(struct dentry *old_dentry, str=
-uct inode *dir,
->         req->r_parent =3D dir;
->         ihold(dir);
->         set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
-> -       req->r_dentry_drop =3D CEPH_CAP_FILE_SHARED;
-> +       req->r_dentry_drop =3D CEPH_CAP_FILE_SHARED | CEPH_CAP_XATTR_EXCL=
-;
->         req->r_dentry_unless =3D CEPH_CAP_FILE_EXCL;
->         /* release LINK_SHARED on source inode (mds will lock it) */
->         req->r_old_inode_drop =3D CEPH_CAP_LINK_SHARED | CEPH_CAP_LINK_EX=
-CL;
-> @@ -1312,7 +1312,7 @@ static int ceph_unlink(struct inode *dir, struct de=
-ntry *dentry)
->         req->r_num_caps =3D 2;
->         req->r_parent =3D dir;
->         ihold(dir);
-> -       req->r_dentry_drop =3D CEPH_CAP_FILE_SHARED;
-> +       req->r_dentry_drop =3D CEPH_CAP_FILE_SHARED | CEPH_CAP_XATTR_EXCL=
-;
->         req->r_dentry_unless =3D CEPH_CAP_FILE_EXCL;
->         req->r_inode_drop =3D ceph_drop_caps_for_unlink(inode);
+> -               if (op =3D=3D CEPH_CAP_OP_IMPORT) {
+> -                       cap =3D ceph_get_cap(mdsc, NULL);
+> -                       cap->cap_ino =3D vino.ino;
+> -                       cap->queue_release =3D 1;
+> -                       cap->cap_id =3D le64_to_cpu(h->cap_id);
+> -                       cap->mseq =3D mseq;
+> -                       cap->seq =3D seq;
+> -                       cap->issue_seq =3D seq;
+> -                       spin_lock(&session->s_cap_lock);
+> -                       __ceph_queue_cap_release(session, cap);
+> -                       spin_unlock(&session->s_cap_lock);
+> +               switch (op) {
+> +               case CEPH_CAP_OP_IMPORT:
+> +               case CEPH_CAP_OP_REVOKE:
+> +               case CEPH_CAP_OP_GRANT:
+> +                       do_cap_release =3D true;
+> +                       break;
+> +               default:
+> +                       break;
+>                 }
+>                 goto flush_cap_releases;
+>         }
+> @@ -4413,6 +4411,14 @@ void ceph_handle_caps(struct ceph_mds_session *ses=
+sion,
+>                         pr_info("%s: no cap on %p ino %llx:%llx from mds%=
+d for flush_ack!\n",
+>                                 __func__, inode, ceph_ino(inode),
+>                                 ceph_snap(inode), session->s_mds);
+> +               switch (op) {
+> +               case CEPH_CAP_OP_REVOKE:
+> +               case CEPH_CAP_OP_GRANT:
+> +                       do_cap_release =3D true;
+> +                       break;
+> +               default:
+> +                       break;
+> +               }
+>                 goto flush_cap_releases;
+>         }
 >
-> @@ -1418,9 +1418,9 @@ static int ceph_rename(struct mnt_idmap *idmap, str=
-uct inode *old_dir,
->         req->r_parent =3D new_dir;
->         ihold(new_dir);
->         set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
-> -       req->r_old_dentry_drop =3D CEPH_CAP_FILE_SHARED;
-> +       req->r_old_dentry_drop =3D CEPH_CAP_FILE_SHARED | CEPH_CAP_XATTR_=
-EXCL;
->         req->r_old_dentry_unless =3D CEPH_CAP_FILE_EXCL;
-> -       req->r_dentry_drop =3D CEPH_CAP_FILE_SHARED;
-> +       req->r_dentry_drop =3D CEPH_CAP_FILE_SHARED | CEPH_CAP_XATTR_EXCL=
-;
->         req->r_dentry_unless =3D CEPH_CAP_FILE_EXCL;
->         /* release LINK_RDCACHE on source inode (mds will lock it) */
->         req->r_old_inode_drop =3D CEPH_CAP_LINK_SHARED | CEPH_CAP_LINK_EX=
-CL;
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 9e74ed673f93..e878a462c7c3 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -799,7 +799,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry=
- *dentry,
->         if (flags & O_CREAT) {
->                 struct ceph_file_layout lo;
+> @@ -4467,6 +4473,18 @@ void ceph_handle_caps(struct ceph_mds_session *ses=
+sion,
+>          * along for the mds (who clearly thinks we still have this
+>          * cap).
+>          */
+> +       if (do_cap_release) {
+> +               cap =3D ceph_get_cap(mdsc, NULL);
+> +               cap->cap_ino =3D vino.ino;
+> +               cap->queue_release =3D 1;
+> +               cap->cap_id =3D le64_to_cpu(h->cap_id);
+> +               cap->mseq =3D mseq;
+> +               cap->seq =3D seq;
+> +               cap->issue_seq =3D seq;
+> +               spin_lock(&session->s_cap_lock);
+> +               __ceph_queue_cap_release(session, cap);
+> +               spin_unlock(&session->s_cap_lock);
+> +       }
+>         ceph_flush_cap_releases(mdsc, session);
+>         goto done;
 >
-> -               req->r_dentry_drop =3D CEPH_CAP_FILE_SHARED | CEPH_CAP_AU=
-TH_EXCL;
-> +               req->r_dentry_drop =3D CEPH_CAP_FILE_SHARED | CEPH_CAP_AU=
-TH_EXCL | CEPH_CAP_XATTR_EXCL;
->                 req->r_dentry_unless =3D CEPH_CAP_FILE_EXCL;
->
->                 ceph_as_ctx_to_req(req, &as_ctx);
 > --
 > 2.40.1
 >
