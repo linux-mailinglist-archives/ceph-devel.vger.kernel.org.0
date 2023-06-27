@@ -2,151 +2,105 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14CF573FB55
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 13:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEEE373FC2C
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 14:52:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231260AbjF0LsJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 27 Jun 2023 07:48:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53370 "EHLO
+        id S230024AbjF0MwI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 27 Jun 2023 08:52:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229957AbjF0LsH (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 07:48:07 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA305F4
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 04:48:06 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id a640c23a62f3a-9924ac01f98so6929766b.1
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 04:48:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687866485; x=1690458485;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sWRBSaZODTZw5qaPcpl1M+d5NMb5GB2VjcmpUBLZkH4=;
-        b=cqzekp82B9t/tv94nOZZRlyPm2+sKRPIUl9uM9SnMZtqlNUNkiXn6/QOYZA3xwAFKq
-         ekw8dJy+VEXW8CSJ8DwXsDftLUr5JnFcVBu404Ihfw8ovsA+lGDvQa7Yn7c2P5hGw6j9
-         s9Dgp+ThWHVKyD4YkEwMeVMPRJKj0Cjb50RDVdW+oHH0KPgowEyFsbY8iLz+RxkTzRNv
-         IO4q4cnu9gmqqSoVQWMoohUbHAUdHO9AvcJQnHT8nF6pS0NQ/OpJNvYkg3PMoF0vxpRo
-         7u5wKUTQN1NlcHYWdZcQ2V+aNpvmvwk7Rp7B2YxA8v+R+5+sYQueHvfLYthK9lS1p7ul
-         71tQ==
+        with ESMTP id S229732AbjF0MwG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 08:52:06 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BADA270C
+        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 05:51:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687870278;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=1VBXBjZTvnK2Wk6THBLyuE1SAvZbYMw379uCbCug7dM=;
+        b=TpPr5lGidziCB/nNmaF5zJz+E0XYt9kq6fzvJMWkwWV5db+gqGf53BR1b8MR9BoFleRvTv
+        aIGFoRM9Waq2kJVCvp66VIncBNlP47L5UDkh25XqxqcdVeMRgeV7exe3C+UjKmei9/sGVY
+        +NXMPiOs1lGDu51E/CUuG10zl7vgqEw=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-528-HjmQ7XnzOKmpJ8pbfY54rQ-1; Tue, 27 Jun 2023 08:51:16 -0400
+X-MC-Unique: HjmQ7XnzOKmpJ8pbfY54rQ-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-635df023844so4004856d6.1
+        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 05:51:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687866485; x=1690458485;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sWRBSaZODTZw5qaPcpl1M+d5NMb5GB2VjcmpUBLZkH4=;
-        b=F1dPPer/rvuOLCgR+BYzcq00n2HksYJ2tnu/TjQeqSTmG9skw5EpSSwqnnNpvd6O61
-         YWtOzyyp5D/kHi2KTr8zK7DIlwjxMt6REss5FdkClbGHwsvquQt5beFlNkH5k/x1dPN0
-         gkHmaZCHu3dWFckDvFG/aiNcdjDN8++cRAYsPGdbNW4tGch49BkTIPiRBEYG+PQE4WN0
-         BqLbjbAzw0dX/Ja4MwHkwPW2jg7//Y/yafrf6u9qeR+fuwdU7BxVb/6Uku+ZSV/4fobf
-         T19N2dMES5blN2kdo80vXjiXl2bwF6sTb3ovbGY2QV7NO1NQ7OnHWqQ92f8/ZCmnA87N
-         wW9A==
-X-Gm-Message-State: AC+VfDzYDpwulO3fwNnyNWMGPesP58xvm0+ELW45iSTdPlvTsBFT5R2t
-        apk8MXAsK0XAfxPKu552hM4ZVbCSCdoX5yMLkXCGvVNiWGQ=
-X-Google-Smtp-Source: ACHHUZ7D5ZAqw/5B6lz6B+C0njSwztawsXo8E4kdcbfU5ydnDxjF0aI4K6lk5wNXCFnz+Gtu0BPPibESBDFMCXYu8ZQ=
-X-Received: by 2002:a17:906:6a07:b0:989:ca:a0a2 with SMTP id
- qw7-20020a1709066a0700b0098900caa0a2mr21773255ejc.69.1687866485055; Tue, 27
- Jun 2023 04:48:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <TYCP286MB20661F87B0C796738BDC5FBEC0709@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
- <TYCP286MB2066D19A68A9176E289BB4FDC0709@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
-In-Reply-To: <TYCP286MB2066D19A68A9176E289BB4FDC0709@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 27 Jun 2023 13:47:53 +0200
-Message-ID: <CAOi1vP_zuTMh2jE9uc89EfTroxkY1YBfOPCMBreKNtDMXa2nRQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] libceph: reject mismatching name and fsid
-To:     Hu Weiwen <huww98@outlook.com>
-Cc:     ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
-        Venky Shankar <vshankar@redhat.com>,
-        Hu Weiwen <sehuww@mail.scut.edu.cn>
+        d=1e100.net; s=20221208; t=1687870276; x=1690462276;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1VBXBjZTvnK2Wk6THBLyuE1SAvZbYMw379uCbCug7dM=;
+        b=Eq7zE1Ed7WzIV04npx4cs6sICZFsUrdGehBElzDoihktttD+uBQF4G/D6QE/2CEoVE
+         KVRobg/tajLgnKMHQPoF0R3kVNT9fFw8tGvYwR/dd/i/cxb5T6xFLzTGRBtli1JQqBX0
+         qxQpqccmCZvExkm2l/7MMrSkk9CsxlUTZwQG+YZ1TKX3H1u4qi4ndgZx/oaDzMpR5vR1
+         JBpRxQbQpkCsQamrVeAwV0FafBVNCdFGR6K64eiHotWAlDhcmTzS6SX8hM8oajyDKpGC
+         YoXNfpwZv37Fbxsp4s+cLTlHOLkAZkVq2C2meHp2PjGEKnp8CS08eS8QiPlxGdf7BaMv
+         OQeg==
+X-Gm-Message-State: AC+VfDzHLKeWCwCm5Vz2K2GzeFcusA0rPwR01YsFxuA1Ja/rOPLAXj11
+        CLf/Q27r1IoYd9h4XE0ae7Q9opCCOpX6Hg4PdtLYxmPlYjUGgL/I4I1qBN+m41rWNb7fr31AIsc
+        1YqXO+WQV04VLPI65EvZixw==
+X-Received: by 2002:ad4:4eec:0:b0:635:ec47:bfa4 with SMTP id dv12-20020ad44eec000000b00635ec47bfa4mr2878240qvb.4.1687870276524;
+        Tue, 27 Jun 2023 05:51:16 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ4gTWjIfL+wjZmdsUf7JwLTLQZrg6rwPJR/TQXtOCe/Cf6jCLoU+HW/e0eIxubgQP4k7rQzpg==
+X-Received: by 2002:ad4:4eec:0:b0:635:ec47:bfa4 with SMTP id dv12-20020ad44eec000000b00635ec47bfa4mr2878221qvb.4.1687870276281;
+        Tue, 27 Jun 2023 05:51:16 -0700 (PDT)
+Received: from gerbillo.redhat.com (146-241-239-6.dyn.eolo.it. [146.241.239.6])
+        by smtp.gmail.com with ESMTPSA id mz14-20020a0562142d0e00b006300e92ea02sm4478170qvb.121.2023.06.27.05.51.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Jun 2023 05:51:15 -0700 (PDT)
+Message-ID: <b0a0cb0fac4ebdc23f01d183a9de10731dc90093.camel@redhat.com>
+Subject: Re: Is ->sendmsg() allowed to change the msghdr struct it is given?
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Jakub Kicinski <kuba@kernel.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, ceph-devel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 27 Jun 2023 14:51:12 +0200
+In-Reply-To: <20230626142257.6e14a801@kernel.org>
+References: <3112097.1687814081@warthog.procyon.org.uk>
+         <20230626142257.6e14a801@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Sun, May 7, 2023 at 7:56=E2=80=AFPM Hu Weiwen <huww98@outlook.com> wrote=
-:
->
-> From: Hu Weiwen <sehuww@mail.scut.edu.cn>
->
-> These are present in the device spec of cephfs. So they should be
-> treated as immutable.  Also reject `mount()' calls where options and
-> device spec are inconsistent.
->
-> Signed-off-by: Hu Weiwen <sehuww@mail.scut.edu.cn>
-> ---
->  net/ceph/ceph_common.c | 26 +++++++++++++++++++++-----
->  1 file changed, 21 insertions(+), 5 deletions(-)
->
-> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-> index 4c6441536d55..c59c5ccc23a8 100644
-> --- a/net/ceph/ceph_common.c
-> +++ b/net/ceph/ceph_common.c
-> @@ -440,17 +440,33 @@ int ceph_parse_param(struct fs_parameter *param, st=
-ruct ceph_options *opt,
->                 break;
->
->         case Opt_fsid:
-> -               err =3D ceph_parse_fsid(param->string, &opt->fsid);
-> +       {
-> +               struct ceph_fsid fsid;
-> +
-> +               err =3D ceph_parse_fsid(param->string, &fsid);
->                 if (err) {
->                         error_plog(&log, "Failed to parse fsid: %d", err)=
-;
->                         return err;
->                 }
-> -               opt->flags |=3D CEPH_OPT_FSID;
-> +
-> +               if (!(opt->flags & CEPH_OPT_FSID)) {
-> +                       opt->fsid =3D fsid;
-> +                       opt->flags |=3D CEPH_OPT_FSID;
-> +               } else if (ceph_fsid_compare(&opt->fsid, &fsid)) {
-> +                       error_plog(&log, "fsid already set to %pU",
-> +                                  &opt->fsid);
-> +                       return -EINVAL;
-> +               }
->                 break;
-> +       }
->         case Opt_name:
-> -               kfree(opt->name);
-> -               opt->name =3D param->string;
-> -               param->string =3D NULL;
-> +               if (!opt->name) {
-> +                       opt->name =3D param->string;
-> +                       param->string =3D NULL;
-> +               } else if (strcmp(opt->name, param->string)) {
-> +                       error_plog(&log, "name already set to %s", opt->n=
-ame);
-> +                       return -EINVAL;
-> +               }
->                 break;
->         case Opt_secret:
->                 ceph_crypto_key_destroy(opt->key);
-> --
-> 2.25.1
->
+On Mon, 2023-06-26 at 14:22 -0700, Jakub Kicinski wrote:
+> On Mon, 26 Jun 2023 22:14:41 +0100 David Howells wrote:
+> > Do you know if ->sendmsg() might alter the msghdr struct it is passed a=
+s an
+> > argument? Certainly it can alter msg_iter, but can it also modify,
+> > say, msg_flags?
+>=20
+> I'm not aware of a precedent either way.
+> Eric or Paolo would know better than me, tho.
 
-Hi Hu,
+udp_sendmsg() can set the MSG_TRUNC bit in msg->msg_flags, so I guess
+that kind of actions are sort of allowed. Still, AFAICS, the kernel
+based msghdr is not copied back to the user-space, so such change
+should be almost a no-op in practice.
 
-I'm not following the reason for singling out "fsid" and "name" in
-ceph_parse_param() in net/ceph.  All options are overridable in the
-sense that the last setting wins on purpose, this is a long-standing
-behavior.  Allowing "key" or "secret" to be overridden while rejecting
-the corresponding override for "name" is weird.
+@David: which would be the end goal for such action?
 
-If there is a desire to treat "fsid" and "name" specially in CephFS
-because they are coming from the device spec and aren't considered to
-be mount options in the usual sense, I would suggest enforcing this
-behavior in fs/ceph (and only when the device spec syntax is used).
+Cheers,
 
-Thanks,
+Paolo
 
-                Ilya
