@@ -2,58 +2,39 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8977E74005C
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 18:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C8FB7400B7
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 18:18:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232158AbjF0QIm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 27 Jun 2023 12:08:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36534 "EHLO
+        id S231316AbjF0QSh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 27 Jun 2023 12:18:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232137AbjF0QIh (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 12:08:37 -0400
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3223930FF;
-        Tue, 27 Jun 2023 09:08:34 -0700 (PDT)
-Received: by mail-ej1-x62a.google.com with SMTP id a640c23a62f3a-98df69cacd1so303552666b.1;
-        Tue, 27 Jun 2023 09:08:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687882111; x=1690474111;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tpd3lAFkgPOZAmtsEdYx4agOG1zhm3c7wmN24nFCRP8=;
-        b=q06GNPWOebOMOVK5HxSGaEx7LPlAXSxIc/Aq8MQqa1KOppEIqGqtMhwG4NpjZkOm9S
-         AFyR5QRFV5Y4HWjtBCFBNLrJk5S4Lc7K8YZNHrIZdxMmDQA/+lLQ3p8y9UgKzJsIf86A
-         6mgRi6asDKOmW/iWnEEaxh6aCjW2wpoxwylPIFbl3o9t7f68PKixGMqc9eY+4A0mQYyK
-         /NKPB7mafWWAJMN3H/YcHBf8569Pxbdxn2kFSPB9d/Zx+IZTpfRyXx13QuiKS/N9+aK/
-         qXilL+LWm4uaO9ESacaaI9YCZeZXSWrdMC3YtgW+4T2fSzrERUBgn1BaSIhHBSbx3TEd
-         2oEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687882111; x=1690474111;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tpd3lAFkgPOZAmtsEdYx4agOG1zhm3c7wmN24nFCRP8=;
-        b=Tf7oe1AACsmCnbfhu/0NRKfe6T+07LH+TWtI1Hb1ZRkMsgt+MAFDH5ONX6kWM5fY+f
-         QwurXlBnM9tPohvOiiaXrKdvERvCb8vDjE2y2H5sHN/ng2qcAi98AcIOmGMuIxjGxj89
-         iLKZLFVRR0khDgi22tdH/G3E7kv3f9Zp/nSPHRAhaZKXh7lXNqPlT6Si14noQfTyA5NC
-         Kzm1OwE1WUdHSYqjVv9qCiFp92YIMo1zqcf7mVQa6Y49505FDISnBlq7cYVlsNIgHn3A
-         aoet7zhHTYBF+r3W+Zh7Cb9QhI9BNdAcTi5ifaG5a2CqVROkQdMRU3cs7vheCZJ7usEG
-         6hbQ==
-X-Gm-Message-State: AC+VfDxcAb1/TNIsDbRQ6eLPf/7KGaWqQEce6bu+tutM3BcK0zYiqevB
-        tjnYIR/nYocPLLpLTVOkUIi950noMnh5UfQJt1bJ7DX8Zd9ySQ==
-X-Google-Smtp-Source: ACHHUZ5eFupuDSzxk+XYCDYxcusnVKqMDv7K7KW/OxsPLBOsMdd40uQa4uFTdLNO9TafVR9bMvBKw7UkvrKS5CDSshk=
-X-Received: by 2002:a17:907:803:b0:982:cfe2:32fe with SMTP id
- wv3-20020a170907080300b00982cfe232femr28075108ejb.63.1687882111373; Tue, 27
- Jun 2023 09:08:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <3199652.1687873788@warthog.procyon.org.uk> <20230627085928.6569353e@kernel.org>
-In-Reply-To: <20230627085928.6569353e@kernel.org>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 27 Jun 2023 18:08:19 +0200
-Message-ID: <CAOi1vP-ogmcKE3brjEsm+zLvcXJa_5tGjv_XMsrnZuZUhXonhQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v3] libceph: Partially revert changes to support MSG_SPLICE_PAGES
-To:     Jakub Kicinski <kuba@kernel.org>
+        with ESMTP id S231338AbjF0QS3 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 12:18:29 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD0282D6D;
+        Tue, 27 Jun 2023 09:18:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6FFB660FFB;
+        Tue, 27 Jun 2023 16:18:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E6EEC433C0;
+        Tue, 27 Jun 2023 16:18:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687882707;
+        bh=XppdZpUuGPfDiV8/12odDlU2ubSnA32BV8wWtFnFFqE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=t57IfEl6+hTqjabvXA+7xzNJ5Ob89MhZc6R+CWuDOGQEcHoTc9pEc9+gNZaYkmgYP
+         P5EKcXLxr8vCzPkGLpSNmqscVfIXyi03ZUK8U+bi01/lewGKSxT5OZzKJKbozInkGs
+         UrlzdzA3dNHXTTTURoFGfxZyQ3xKel4PK8I29Eu4Dd8rySARubVrofsII3dgnIxHjj
+         r+6oHR+RIrOiMbsr0UmMyPibo4iKZrXU9v9j8y6lwyzOK4WYrUu3cBuQpwTWxbWpiT
+         876y9awkKG6cx4PYLqDt9ftXs/BUq0ikeij/JRBthkcy0JgAp9E7bAr41rK30oVuzG
+         htleCZFQ89Vtg==
+Date:   Tue, 27 Jun 2023 09:18:26 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Ilya Dryomov <idryomov@gmail.com>
 Cc:     David Howells <dhowells@redhat.com>, netdev@vger.kernel.org,
         Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
         "David S. Miller" <davem@davemloft.net>,
@@ -61,75 +42,31 @@ Cc:     David Howells <dhowells@redhat.com>, netdev@vger.kernel.org,
         Paolo Abeni <pabeni@redhat.com>, Jens Axboe <axboe@kernel.dk>,
         Matthew Wilcox <willy@infradead.org>,
         ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Subject: Re: [PATCH net-next v3] libceph: Partially revert changes to
+ support MSG_SPLICE_PAGES
+Message-ID: <20230627091826.29d397f4@kernel.org>
+In-Reply-To: <CAOi1vP-ogmcKE3brjEsm+zLvcXJa_5tGjv_XMsrnZuZUhXonhQ@mail.gmail.com>
+References: <3199652.1687873788@warthog.procyon.org.uk>
+        <20230627085928.6569353e@kernel.org>
+        <CAOi1vP-ogmcKE3brjEsm+zLvcXJa_5tGjv_XMsrnZuZUhXonhQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 5:59=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Tue, 27 Jun 2023 14:49:48 +0100 David Howells wrote:
-> > Fix the mishandling of MSG_DONTWAIT and also reinstates the per-page
-> > checking of the source pages (which might have come from a DIO write by
-> > userspace) by partially reverting the changes to support MSG_SPLICE_PAG=
-ES
-> > and doing things a little differently.  In messenger_v1:
-> >
-> >  (1) The ceph_tcp_sendpage() is resurrected and the callers reverted to=
- use
-> >      that.
-> >
-> >  (2) The callers now pass MSG_MORE unconditionally.  Previously, they w=
-ere
-> >      passing in MSG_MORE|MSG_SENDPAGE_NOTLAST and then degrading that t=
-o
-> >      just MSG_MORE on the last call to ->sendpage().
-> >
-> >  (3) Make ceph_tcp_sendpage() a wrapper around sendmsg() rather than
-> >      sendpage(), setting MSG_SPLICE_PAGES if sendpage_ok() returns true=
- on
-> >      the page.
-> >
-> > In messenger_v2:
-> >
-> >  (4) Bring back do_try_sendpage() and make the callers use that.
-> >
-> >  (5) Make do_try_sendpage() use sendmsg() for both cases and set
-> >      MSG_SPLICE_PAGES if sendpage_ok() is set.
-> >
-> > Fixes: 40a8c17aa770 ("ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than s=
-endpage")
-> > Fixes: fa094ccae1e7 ("ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than s=
-endpage()")
-> > Reported-by: Ilya Dryomov <idryomov@gmail.com>
->
-> Ilya, would you be okay if we sent the 6.5 PR without this and then
-> we can either follow up with a PR in a few days or you can take this
-> via your tree?
->
-> Or you could review it now, that'd also work :)
->
-> In hindsight we should have pushed harder to make the FS changes as
-> small as possible for sendpage removal, so that they can go in via
-> the appropriate tree with an appropriate level of scrutiny for 6.6,
-> lesson learned :(
+On Tue, 27 Jun 2023 18:08:19 +0200 Ilya Dryomov wrote:
+> This patch looks good to me.  I have been meaning to actually test
+> it, but, if time is of the essence, I'm OK with it being merged via
+> the networking tree now.
+> 
+> Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
 
-Hi Jakub,
-
-This patch looks good to me.  I have been meaning to actually test
-it, but, if time is of the essence, I'm OK with it being merged via
-the networking tree now.
-
-Reviewed-by: Ilya Dryomov <idryomov@gmail.com>
-
-Thanks,
-
-                Ilya
+Thank you!!
