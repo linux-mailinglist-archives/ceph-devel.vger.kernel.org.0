@@ -2,161 +2,185 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 030B173FC79
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 15:10:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BE9573FCD3
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 15:26:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230338AbjF0NKP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 27 Jun 2023 09:10:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54978 "EHLO
+        id S230203AbjF0N0V (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 27 Jun 2023 09:26:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230299AbjF0NKL (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 09:10:11 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 383652720
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 06:09:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687871368;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=waR2ddNVaa0bZ59PsKuTu38VAo3ER9tvWWrmghdj6V4=;
-        b=aKlT0Jmu5J0NUO50K2jrsFo4jkhjnGgX2nZ40maIkMtfU6vqN+tUJDnyetwbxfaVdmsQck
-        r0ltsf+oo3+49LinzBx1UkbLgKY/EBf65ADva2w+88Baiz6RgtqeKGJ1ym7NUSOQQ3xSMv
-        KdgYmY+Z9BetKrJuMgxR0jeCa5dVQNU=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-84-QLS9g6EqP-WwxVUbWDdDfQ-1; Tue, 27 Jun 2023 09:09:23 -0400
-X-MC-Unique: QLS9g6EqP-WwxVUbWDdDfQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A4EAC2814245;
-        Tue, 27 Jun 2023 13:09:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A9E6440C6F5A;
-        Tue, 27 Jun 2023 13:09:21 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <b0a0cb0fac4ebdc23f01d183a9de10731dc90093.camel@redhat.com>
-References: <b0a0cb0fac4ebdc23f01d183a9de10731dc90093.camel@redhat.com> <3112097.1687814081@warthog.procyon.org.uk> <20230626142257.6e14a801@kernel.org>
-To:     Paolo Abeni <pabeni@redhat.com>
-Cc:     dhowells@redhat.com, Jakub Kicinski <kuba@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, ceph-devel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Is ->sendmsg() allowed to change the msghdr struct it is given?
+        with ESMTP id S230106AbjF0N0O (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 09:26:14 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F4BF19B9;
+        Tue, 27 Jun 2023 06:26:13 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-98d34f1e54fso459783866b.2;
+        Tue, 27 Jun 2023 06:26:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1687872371; x=1690464371;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6S4/hBpcq9fn95F7UiT7442wCV5lG3nYUQpBdlngERU=;
+        b=KYSl1w1kl4+4Xk4M0X+cBmSe7SNSiDMpJjfK/d3Wdr1aDd+ov8pWpf5OiM/i7Uthx9
+         HkDXee1eLt39RJfuphrRIqeTcdXpPapxP+UQuX9q5FvkXqPOAQO8QX3kVjBLDp4OFfVZ
+         rA0jz34nhYP/3bnOmcxXNj7W8qBn3WehbBzKf0aTwhZE4nNI5gRZxe0L5cXzc6l2CcdD
+         Rk4GXd+WQBIIJd212Oaw9WDFy5B9Binpw71db2O2ML5sLD79sw2sr/xVQgWksCFLTVAX
+         zsaTj6TB7ygJxtfPG6JsB274Q4lst6bj95x7QZbDQBrldxR5oGuMLPLANL+HnKln9vTG
+         ffLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1687872371; x=1690464371;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6S4/hBpcq9fn95F7UiT7442wCV5lG3nYUQpBdlngERU=;
+        b=lB/1jPSHikZBvh02fGJ0fPn6r5xoWt69JcZysZZGeQd2sI0+30N9lff522qSJFxrIC
+         bLwXKwiyBYImGArvJt+R6yY3mWkscwMHkXcVzgk96Euhn4iFnn7eHsDFULDGGcmg15f9
+         PP5arUJVwfvkpPKQx7tg+MuWK6R7GewsHGMdV8pEgDDTYqN/r6zbgTp6zNvFVkNYuZDJ
+         G4EsA0w5FfxcKul4XaHEhsl8zD0WuBthQ0KwhKHRKoA6VhtVPQhw/YF//H5fMC1isBUn
+         NaIqX+vhtcmrLojpbwSEOLkH79Vag8HqlHAOOKLOa6NDTgt8IBgUi4PB074dEo9/Waxm
+         zBvQ==
+X-Gm-Message-State: AC+VfDwIQQMf9WlMDY8VbbPahsJsPpXlDbFNETlaX3yEq44d6mTs1l3f
+        swriqleEUgO8MKmWso0jd8Pv2Iqek+1UkzEq15U=
+X-Google-Smtp-Source: ACHHUZ6ACvph/qn6yTFkB7J8H1FalScmv4hLG9cKnYhZl9WOH6W6I76t0jnICUK4i/K9deZ8V7nHfH+Gr71ZCzv64UE=
+X-Received: by 2002:a17:907:a01:b0:974:56aa:6dce with SMTP id
+ bb1-20020a1709070a0100b0097456aa6dcemr23792032ejc.46.1687872371406; Tue, 27
+ Jun 2023 06:26:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3132609.1687871361.1@warthog.procyon.org.uk>
-Date:   Tue, 27 Jun 2023 14:09:21 +0100
-Message-ID: <3132610.1687871361@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <3111635.1687813501@warthog.procyon.org.uk>
+In-Reply-To: <3111635.1687813501@warthog.procyon.org.uk>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Tue, 27 Jun 2023 15:25:59 +0200
+Message-ID: <CAOi1vP9y7-nMye8u82+O-FxoAPecbecasfY0=yH3TvQYYyCEtA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] libceph: Partially revert changes to support MSG_SPLICE_PAGES
+To:     David Howells <dhowells@redhat.com>
+Cc:     netdev@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Paolo Abeni <pabeni@redhat.com> wrote:
+On Mon, Jun 26, 2023 at 11:05=E2=80=AFPM David Howells <dhowells@redhat.com=
+> wrote:
+>
+> Fix the mishandling of MSG_DONTWAIT and also reinstates the per-page
+> checking of the source pages (which might have come from a DIO write by
+> userspace) by partially reverting the changes to support MSG_SPLICE_PAGES
+> and doing things a little differently.  In messenger_v1:
+>
+>  (1) The ceph_tcp_sendpage() is resurrected and the callers reverted to u=
+se
+>      that.
+>
+>  (2) The callers now pass MSG_MORE unconditionally.  Previously, they wer=
+e
+>      passing in MSG_MORE|MSG_SENDPAGE_NOTLAST and then degrading that to
+>      just MSG_MORE on the last call to ->sendpage().
+>
+>  (3) Make ceph_tcp_sendpage() a wrapper around sendmsg() rather than
+>      sendpage(), setting MSG_SPLICE_PAGES if sendpage_ok() returns true o=
+n
+>      the page.
+>
+> In messenger_v2:
+>
+>  (4) Bring back do_try_sendpage() and make the callers use that.
+>
+>  (5) Make do_try_sendpage() use sendmsg() for both cases and set
+>      MSG_SPLICE_PAGES if sendpage_ok() is set.
+>
+> Fixes: 40a8c17aa770 ("ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than sen=
+dpage")
+> Fixes: fa094ccae1e7 ("ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than sen=
+dpage()")
+> Reported-by: Ilya Dryomov <idryomov@gmail.com>
+> Link: https://lore.kernel.org/r/CAOi1vP9vjLfk3W+AJFeexC93jqPaPUn2dD_4Nrzx=
+woZTbYfOnw@mail.gmail.com/
+> Link: https://lore.kernel.org/r/CAOi1vP_Bn918j24S94MuGyn+Gxk212btw7yWeDrR=
+cW1U8pc_BA@mail.gmail.com/
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Ilya Dryomov <idryomov@gmail.com>
+> cc: Xiubo Li <xiubli@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: "David S. Miller" <davem@davemloft.net>
+> cc: Eric Dumazet <edumazet@google.com>
+> cc: Jakub Kicinski <kuba@kernel.org>
+> cc: Paolo Abeni <pabeni@redhat.com>
+> cc: Jens Axboe <axboe@kernel.dk>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: ceph-devel@vger.kernel.org
+> cc: netdev@vger.kernel.org
+> Link: https://lore.kernel.org/r/3101881.1687801973@warthog.procyon.org.uk=
+/ # v1
+> ---
+> Notes:
+>     ver #2)
+>      - Removed mention of MSG_SENDPAGE_NOTLAST in comments.
+>      - Changed some refs to sendpage to MSG_SPLICE_PAGES in comments.
+>      - Init msg_iter in ceph_tcp_sendpage().
+>      - Move setting of MSG_SPLICE_PAGES in do_try_sendpage() next to comm=
+ent
+>        and adjust how it is cleared.
+>
+>  net/ceph/messenger_v1.c |   58 ++++++++++++++++++++-----------
+>  net/ceph/messenger_v2.c |   88 ++++++++++++++++++++++++++++++++++++++---=
+-------
+>  2 files changed, 107 insertions(+), 39 deletions(-)
+>
+> diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
+> index 814579f27f04..51a6f28aa798 100644
+> --- a/net/ceph/messenger_v1.c
+> +++ b/net/ceph/messenger_v1.c
+> @@ -74,6 +74,39 @@ static int ceph_tcp_sendmsg(struct socket *sock, struc=
+t kvec *iov,
+>         return r;
+>  }
+>
+> +/*
+> + * @more: MSG_MORE or 0.
+> + */
+> +static int ceph_tcp_sendpage(struct socket *sock, struct page *page,
+> +                            int offset, size_t size, int more)
+> +{
+> +       struct msghdr msg =3D {
+> +               .msg_flags =3D MSG_DONTWAIT | MSG_NOSIGNAL | more,
+> +       };
+> +       struct bio_vec bvec;
+> +       int ret;
+> +
+> +       /*
+> +        * MSG_SPLICE_PAGES cannot properly handle pages with page_count =
+=3D=3D 0,
+> +        * we need to fall back to sendmsg if that's the case.
+> +        *
+> +        * Same goes for slab pages: skb_can_coalesce() allows
+> +        * coalescing neighboring slab objects into a single frag which
+> +        * triggers one of hardened usercopy checks.
+> +        */
+> +       if (sendpage_ok(page))
+> +               msg.msg_flags |=3D MSG_SPLICE_PAGES;
+> +
+> +       bvec_set_page(&bvec, page, size, offset);
+> +       iov_iter_bvec(&msg.msg_iter, ITER_DEST, &bvec, 1, size);
 
-> udp_sendmsg() can set the MSG_TRUNC bit in msg->msg_flags, so I guess
-> that kind of actions are sort of allowed. Still, AFAICS, the kernel
-> based msghdr is not copied back to the user-space, so such change
-> should be almost a no-op in practice.
-> 
-> @David: which would be the end goal for such action?
+Hi David,
 
-Various places in the kernel use sock_sendmsg() - and I've added a bunch more
-with the MSG_SPLICE_PAGES patches.  For some of the things I've added, there's
-a loop which used to call ->sendpage() and now calls sock_sendmsg().  In most
-of those places, msghdr will get reset each time round the loop - but not in
-all cases.
+Shouldn't this be ITER_SOURCE?
 
-Of particular immediate interest is net/ceph/messenger_v2.c.  If you go to:
+Thanks,
 
-	https://lore.kernel.org/r/3111635.1687813501@warthog.procyon.org.uk/
-
-and look at the resultant code:
-
-	static int do_sendmsg(struct socket *sock, struct iov_iter *it)
-	{
-		struct msghdr msg = { .msg_flags = CEPH_MSG_FLAGS };
-		int ret;
-
-		msg.msg_iter = *it;
-		while (iov_iter_count(it)) {
-			ret = sock_sendmsg(sock, &msg);
-			if (ret <= 0) {
-				if (ret == -EAGAIN)
-					ret = 0;
-				return ret;
-			}
-
-			iov_iter_advance(it, ret);
-		}
-
-		WARN_ON(msg_data_left(&msg));
-		return 1;
-	}
-
-for example.  It could/would malfunction if sendmsg() is allowed to modify
-msghdr - or if it doesn't update msg_iter.  Likewise:
-
-	static int do_try_sendpage(struct socket *sock, struct iov_iter *it)
-	{
-		struct msghdr msg = { .msg_flags = CEPH_MSG_FLAGS };
-		struct bio_vec bv;
-		int ret;
-
-		if (WARN_ON(!iov_iter_is_bvec(it)))
-			return -EINVAL;
-
-		while (iov_iter_count(it)) {
-			/* iov_iter_iovec() for ITER_BVEC */
-			bvec_set_page(&bv, it->bvec->bv_page,
-				      min(iov_iter_count(it),
-					  it->bvec->bv_len - it->iov_offset),
-				      it->bvec->bv_offset + it->iov_offset);
-
-			/*
-			 * MSG_SPLICE_PAGES cannot properly handle pages with
-			 * page_count == 0, we need to fall back to sendmsg if
-			 * that's the case.
-			 *
-			 * Same goes for slab pages: skb_can_coalesce() allows
-			 * coalescing neighboring slab objects into a single frag
-			 * which triggers one of hardened usercopy checks.
-			 */
-			if (sendpage_ok(bv.bv_page))
-				msg.msg_flags |= MSG_SPLICE_PAGES;
-			else
-				msg.msg_flags &= ~MSG_SPLICE_PAGES;
-
-			iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bv, 1, bv.bv_len);
-			ret = sock_sendmsg(sock, &msg);
-			if (ret <= 0) {
-				if (ret == -EAGAIN)
-					ret = 0;
-				return ret;
-			}
-
-			iov_iter_advance(it, ret);
-		}
-
-		return 1;
-	}
-
-could be similarly affected if ->sendmsg() mucks about with msg_flags.
-
-David
-
+                Ilya
