@@ -2,86 +2,114 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FCB073FC30
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 14:52:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0BD973FC49
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 14:56:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229992AbjF0Mwm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 27 Jun 2023 08:52:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49446 "EHLO
+        id S230383AbjF0M4d (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 27 Jun 2023 08:56:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230085AbjF0Mwk (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 08:52:40 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFD5A2728
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 05:52:28 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a640c23a62f3a-988883b0d8fso622391866b.1
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 05:52:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687870347; x=1690462347;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uiXCCrt0jei7X1IVN7MvmQ4VQLoKZ0zzSomNoR0MwKU=;
-        b=WcMrbJ5t+fF3Ai1F6+2jqBlePJFNruvLXsYlSpRaFLMBGaIJhQC2jsTHsACFO0DXN3
-         Sr5pezMH51Z/bmdSuXlqNtg3ixMkfsVmRNZsyVptkP5rpL1rXF9ihTM8p/9wzdKDvNAa
-         hmvuGFPyQ+3W0c5X0GFOOQAvRbOEH9IjhyDKC8GGocWVPBurTX/uIE9CfmvuYxk9VZ6l
-         L913twNC8cEaiIjibTzjMwUHyNcoyWTbBZYtzXZ07AkFsp8vgRo0Fm2VLOplntLYukAO
-         qI1oHha8/nCfgCTBJjtewmoH2imacuPHTuI7e0soxtxv5Q5mCnS4oBJRwioYcHWzLh9u
-         XkQg==
+        with ESMTP id S230372AbjF0M4c (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 08:56:32 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 652232943
+        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 05:55:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687870528;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=jRl7aKap1SeKgVZS63rqtI75g0CI3hogPpCfcoBBCMs=;
+        b=TFpHYt68XTuVGjp11sKwtwsaxUPxzrJhwiBDHxfwH7I3RzQP6DMvdB+Mo6uFWPJApOJIRP
+        00zlU+/6oCk4+UlMxXTvj+bluowCBLaYA6fKAmsSKeLPOSPj2RktXibjW2rBfX8/C3o9mb
+        F734yiiHF2vsgo48BK1W/2mOdSz/BFQ=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-80-Q83joPRlPAeCynucpw5Gtg-1; Tue, 27 Jun 2023 08:55:24 -0400
+X-MC-Unique: Q83joPRlPAeCynucpw5Gtg-1
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-76716078e78so3605385a.1
+        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 05:55:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687870347; x=1690462347;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uiXCCrt0jei7X1IVN7MvmQ4VQLoKZ0zzSomNoR0MwKU=;
-        b=hceUDUy+iSNAEaonagTw/HItAK/4h/Z4QmpaU7X6o0+v3AZNjBndE22D9qHWYNwmYp
-         uK4ePKanXEzYmoVYhXWn6QxVE7b8uRGA4WoXULmWI3biF4nc0l1nMCrHgHZkX8qhi2MH
-         s8KcF42XRh2l5MehD7rWz7e+WeaHcodwZXWgYP59zH6+EaYBMMb11DooGVr0AtF2leT8
-         P93TiL7n0kddbV4Upb92DDMGZe9U2dJBowLHSHwCbpsKEQANJeOI13CM4pr/9gKDbcNq
-         he6u5h3qPeZKpiKOhWfyE7Tuyl2oE7ddNrL5ivhoRt2ELU2VtoLhEihV082W4nWJwK0o
-         FJ8Q==
-X-Gm-Message-State: AC+VfDzG0vGmwfGZcOmlo0zTI3RG6ONuXdy1DTJYTbwLveaylMldhEG6
-        oDAwRGVXCakX+M90ys1VYGC5pDbGVFTE0MR8qiA=
-X-Google-Smtp-Source: ACHHUZ5yRL52+ulQ4AahhlvF+OMiPadF5+i/LteIEsqf8JyDo8ssef8KRW8rPirZr5414F08Qk/0dQJrIO4Tu3F1Kh0=
-X-Received: by 2002:a17:907:160c:b0:991:e849:e13b with SMTP id
- hb12-20020a170907160c00b00991e849e13bmr3826077ejc.10.1687870347309; Tue, 27
- Jun 2023 05:52:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <3130627.1687863588@warthog.procyon.org.uk>
-In-Reply-To: <3130627.1687863588@warthog.procyon.org.uk>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 27 Jun 2023 14:52:15 +0200
-Message-ID: <CAOi1vP-EsPU59-LGZGf55fqGCZ3zuXDK+8VyK=d-MtEnarQ8dw@mail.gmail.com>
-Subject: Re: Ceph patches for the merge window?
-To:     David Howells <dhowells@redhat.com>
-Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-        ceph-devel@vger.kernel.org
+        d=1e100.net; s=20221208; t=1687870524; x=1690462524;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jRl7aKap1SeKgVZS63rqtI75g0CI3hogPpCfcoBBCMs=;
+        b=KLeFZqTJWMuATBiMYQWSCjVW4pw6VuF+2/VXNO9pNF9Ltv4mYRr/bMZxDIfH2U/+Ne
+         KR3hdozT9CTCa9ePRAyLxZ5YDOLyYWeSWgzd+jfoZwDIW7jicwtnS2NNWjsssheZUNZ+
+         a791x0H6dopolX9uF4CfSEfiROfpKtgv2nx7c55HGyLOQAx8bKjFAAtFhOnP4sGbyYS9
+         LOLvaYJuR0b8hEKXNL2wU/sK1zrbSQKYCfX8ARi3/KmJ7BIXOlStnOSgW+MtD4cB4QWv
+         XiOMCzZU68/WRZO8pE7AOWqq6IcXvFo/td51eNaGnRxXkbGIpvNAT+NR0QwfDrzwvx7r
+         IkqQ==
+X-Gm-Message-State: AC+VfDxJctPoGILg7Mvxn2tVd09aWwLIZr9zXXy8XvJwzfdSFxJpbprL
+        BSW86XMKcyAE7d8a+yrWCaRDC9HiWnFMqBY8D6YIUuvtSkU6m06rwtBtqvn0y1DWudqASiGRHh3
+        YbTeYOR80jfrTBkF3io68pg==
+X-Received: by 2002:a05:620a:190e:b0:765:3b58:99ab with SMTP id bj14-20020a05620a190e00b007653b5899abmr2670208qkb.4.1687870523898;
+        Tue, 27 Jun 2023 05:55:23 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ5MVSVOTOJGm6y6OkidtOFcnyLv70o/VU/KFN2yDxpJyfTZKFyUUry0ejHmhywBuZIZSQ+qRw==
+X-Received: by 2002:a05:620a:190e:b0:765:3b58:99ab with SMTP id bj14-20020a05620a190e00b007653b5899abmr2670184qkb.4.1687870523654;
+        Tue, 27 Jun 2023 05:55:23 -0700 (PDT)
+Received: from gerbillo.redhat.com (146-241-239-6.dyn.eolo.it. [146.241.239.6])
+        by smtp.gmail.com with ESMTPSA id j7-20020a05620a146700b00765516bd9f2sm3912923qkl.33.2023.06.27.05.54.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Jun 2023 05:54:07 -0700 (PDT)
+Message-ID: <1f4271105ac5be66e5130d487464680fc65bacc8.camel@redhat.com>
+Subject: Re: Is ->sendmsg() allowed to change the msghdr struct it is given?
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Jakub Kicinski <kuba@kernel.org>,
+        David Howells <dhowells@redhat.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, ceph-devel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 27 Jun 2023 14:54:02 +0200
+In-Reply-To: <b0a0cb0fac4ebdc23f01d183a9de10731dc90093.camel@redhat.com>
+References: <3112097.1687814081@warthog.procyon.org.uk>
+         <20230626142257.6e14a801@kernel.org>
+         <b0a0cb0fac4ebdc23f01d183a9de10731dc90093.camel@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 12:59=E2=80=AFPM David Howells <dhowells@redhat.com=
-> wrote:
->
-> Hi Ilya,
->
-> Is there a branch somewhere that are the ceph patches for this merge wind=
-ow?
+On Tue, 2023-06-27 at 14:51 +0200, Paolo Abeni wrote:
+> On Mon, 2023-06-26 at 14:22 -0700, Jakub Kicinski wrote:
+> > On Mon, 26 Jun 2023 22:14:41 +0100 David Howells wrote:
+> > > Do you know if ->sendmsg() might alter the msghdr struct it is passed=
+ as an
+> > > argument? Certainly it can alter msg_iter, but can it also modify,
+> > > say, msg_flags?
+> >=20
+> > I'm not aware of a precedent either way.
+> > Eric or Paolo would know better than me, tho.
+>=20
+> udp_sendmsg() can set the MSG_TRUNC bit in msg->msg_flags, so I guess
+> that kind of actions are sort of allowed.
 
-Hi David,
+Sorry, ENOCOFFEE here. It's actually udp_recvmsg() updating msg-
+>msg_flags.
 
-Not quite yet but ceph-client/master [1] should be very close now.
+>  Still, AFAICS, the kernel
+> based msghdr is not copied back to the user-space, so such change
+> should be almost a no-op in practice.
 
-[1] https://github.com/ceph/ceph-client/commits/master
+This part should be correct.
 
-Thanks,
+> @David: which would be the end goal for such action?
 
-                Ilya
+Sorry for the noisy reply,
+
+Paolo
+
