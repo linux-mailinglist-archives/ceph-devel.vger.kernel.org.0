@@ -2,77 +2,60 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F0BD973FC49
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 14:56:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 030B173FC79
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 15:10:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230383AbjF0M4d (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 27 Jun 2023 08:56:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51078 "EHLO
+        id S230338AbjF0NKP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 27 Jun 2023 09:10:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230372AbjF0M4c (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 08:56:32 -0400
+        with ESMTP id S230299AbjF0NKL (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 09:10:11 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 652232943
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 05:55:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 383652720
+        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 06:09:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687870528;
+        s=mimecast20190719; t=1687871368;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=jRl7aKap1SeKgVZS63rqtI75g0CI3hogPpCfcoBBCMs=;
-        b=TFpHYt68XTuVGjp11sKwtwsaxUPxzrJhwiBDHxfwH7I3RzQP6DMvdB+Mo6uFWPJApOJIRP
-        00zlU+/6oCk4+UlMxXTvj+bluowCBLaYA6fKAmsSKeLPOSPj2RktXibjW2rBfX8/C3o9mb
-        F734yiiHF2vsgo48BK1W/2mOdSz/BFQ=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-80-Q83joPRlPAeCynucpw5Gtg-1; Tue, 27 Jun 2023 08:55:24 -0400
-X-MC-Unique: Q83joPRlPAeCynucpw5Gtg-1
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-76716078e78so3605385a.1
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 05:55:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687870524; x=1690462524;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jRl7aKap1SeKgVZS63rqtI75g0CI3hogPpCfcoBBCMs=;
-        b=KLeFZqTJWMuATBiMYQWSCjVW4pw6VuF+2/VXNO9pNF9Ltv4mYRr/bMZxDIfH2U/+Ne
-         KR3hdozT9CTCa9ePRAyLxZ5YDOLyYWeSWgzd+jfoZwDIW7jicwtnS2NNWjsssheZUNZ+
-         a791x0H6dopolX9uF4CfSEfiROfpKtgv2nx7c55HGyLOQAx8bKjFAAtFhOnP4sGbyYS9
-         LOLvaYJuR0b8hEKXNL2wU/sK1zrbSQKYCfX8ARi3/KmJ7BIXOlStnOSgW+MtD4cB4QWv
-         XiOMCzZU68/WRZO8pE7AOWqq6IcXvFo/td51eNaGnRxXkbGIpvNAT+NR0QwfDrzwvx7r
-         IkqQ==
-X-Gm-Message-State: AC+VfDxJctPoGILg7Mvxn2tVd09aWwLIZr9zXXy8XvJwzfdSFxJpbprL
-        BSW86XMKcyAE7d8a+yrWCaRDC9HiWnFMqBY8D6YIUuvtSkU6m06rwtBtqvn0y1DWudqASiGRHh3
-        YbTeYOR80jfrTBkF3io68pg==
-X-Received: by 2002:a05:620a:190e:b0:765:3b58:99ab with SMTP id bj14-20020a05620a190e00b007653b5899abmr2670208qkb.4.1687870523898;
-        Tue, 27 Jun 2023 05:55:23 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ5MVSVOTOJGm6y6OkidtOFcnyLv70o/VU/KFN2yDxpJyfTZKFyUUry0ejHmhywBuZIZSQ+qRw==
-X-Received: by 2002:a05:620a:190e:b0:765:3b58:99ab with SMTP id bj14-20020a05620a190e00b007653b5899abmr2670184qkb.4.1687870523654;
-        Tue, 27 Jun 2023 05:55:23 -0700 (PDT)
-Received: from gerbillo.redhat.com (146-241-239-6.dyn.eolo.it. [146.241.239.6])
-        by smtp.gmail.com with ESMTPSA id j7-20020a05620a146700b00765516bd9f2sm3912923qkl.33.2023.06.27.05.54.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Jun 2023 05:54:07 -0700 (PDT)
-Message-ID: <1f4271105ac5be66e5130d487464680fc65bacc8.camel@redhat.com>
-Subject: Re: Is ->sendmsg() allowed to change the msghdr struct it is given?
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     Jakub Kicinski <kuba@kernel.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        bh=waR2ddNVaa0bZ59PsKuTu38VAo3ER9tvWWrmghdj6V4=;
+        b=aKlT0Jmu5J0NUO50K2jrsFo4jkhjnGgX2nZ40maIkMtfU6vqN+tUJDnyetwbxfaVdmsQck
+        r0ltsf+oo3+49LinzBx1UkbLgKY/EBf65ADva2w+88Baiz6RgtqeKGJ1ym7NUSOQQ3xSMv
+        KdgYmY+Z9BetKrJuMgxR0jeCa5dVQNU=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-84-QLS9g6EqP-WwxVUbWDdDfQ-1; Tue, 27 Jun 2023 09:09:23 -0400
+X-MC-Unique: QLS9g6EqP-WwxVUbWDdDfQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A4EAC2814245;
+        Tue, 27 Jun 2023 13:09:22 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A9E6440C6F5A;
+        Tue, 27 Jun 2023 13:09:21 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <b0a0cb0fac4ebdc23f01d183a9de10731dc90093.camel@redhat.com>
+References: <b0a0cb0fac4ebdc23f01d183a9de10731dc90093.camel@redhat.com> <3112097.1687814081@warthog.procyon.org.uk> <20230626142257.6e14a801@kernel.org>
+To:     Paolo Abeni <pabeni@redhat.com>
+Cc:     dhowells@redhat.com, Jakub Kicinski <kuba@kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>, ceph-devel@vger.kernel.org,
         netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 27 Jun 2023 14:54:02 +0200
-In-Reply-To: <b0a0cb0fac4ebdc23f01d183a9de10731dc90093.camel@redhat.com>
-References: <3112097.1687814081@warthog.procyon.org.uk>
-         <20230626142257.6e14a801@kernel.org>
-         <b0a0cb0fac4ebdc23f01d183a9de10731dc90093.camel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4 (3.46.4-1.fc37) 
+Subject: Re: Is ->sendmsg() allowed to change the msghdr struct it is given?
 MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3132609.1687871361.1@warthog.procyon.org.uk>
+Date:   Tue, 27 Jun 2023 14:09:21 +0100
+Message-ID: <3132610.1687871361@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
@@ -84,32 +67,96 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 2023-06-27 at 14:51 +0200, Paolo Abeni wrote:
-> On Mon, 2023-06-26 at 14:22 -0700, Jakub Kicinski wrote:
-> > On Mon, 26 Jun 2023 22:14:41 +0100 David Howells wrote:
-> > > Do you know if ->sendmsg() might alter the msghdr struct it is passed=
- as an
-> > > argument? Certainly it can alter msg_iter, but can it also modify,
-> > > say, msg_flags?
-> >=20
-> > I'm not aware of a precedent either way.
-> > Eric or Paolo would know better than me, tho.
->=20
+Paolo Abeni <pabeni@redhat.com> wrote:
+
 > udp_sendmsg() can set the MSG_TRUNC bit in msg->msg_flags, so I guess
-> that kind of actions are sort of allowed.
-
-Sorry, ENOCOFFEE here. It's actually udp_recvmsg() updating msg-
->msg_flags.
-
->  Still, AFAICS, the kernel
+> that kind of actions are sort of allowed. Still, AFAICS, the kernel
 > based msghdr is not copied back to the user-space, so such change
 > should be almost a no-op in practice.
-
-This part should be correct.
-
+> 
 > @David: which would be the end goal for such action?
 
-Sorry for the noisy reply,
+Various places in the kernel use sock_sendmsg() - and I've added a bunch more
+with the MSG_SPLICE_PAGES patches.  For some of the things I've added, there's
+a loop which used to call ->sendpage() and now calls sock_sendmsg().  In most
+of those places, msghdr will get reset each time round the loop - but not in
+all cases.
 
-Paolo
+Of particular immediate interest is net/ceph/messenger_v2.c.  If you go to:
+
+	https://lore.kernel.org/r/3111635.1687813501@warthog.procyon.org.uk/
+
+and look at the resultant code:
+
+	static int do_sendmsg(struct socket *sock, struct iov_iter *it)
+	{
+		struct msghdr msg = { .msg_flags = CEPH_MSG_FLAGS };
+		int ret;
+
+		msg.msg_iter = *it;
+		while (iov_iter_count(it)) {
+			ret = sock_sendmsg(sock, &msg);
+			if (ret <= 0) {
+				if (ret == -EAGAIN)
+					ret = 0;
+				return ret;
+			}
+
+			iov_iter_advance(it, ret);
+		}
+
+		WARN_ON(msg_data_left(&msg));
+		return 1;
+	}
+
+for example.  It could/would malfunction if sendmsg() is allowed to modify
+msghdr - or if it doesn't update msg_iter.  Likewise:
+
+	static int do_try_sendpage(struct socket *sock, struct iov_iter *it)
+	{
+		struct msghdr msg = { .msg_flags = CEPH_MSG_FLAGS };
+		struct bio_vec bv;
+		int ret;
+
+		if (WARN_ON(!iov_iter_is_bvec(it)))
+			return -EINVAL;
+
+		while (iov_iter_count(it)) {
+			/* iov_iter_iovec() for ITER_BVEC */
+			bvec_set_page(&bv, it->bvec->bv_page,
+				      min(iov_iter_count(it),
+					  it->bvec->bv_len - it->iov_offset),
+				      it->bvec->bv_offset + it->iov_offset);
+
+			/*
+			 * MSG_SPLICE_PAGES cannot properly handle pages with
+			 * page_count == 0, we need to fall back to sendmsg if
+			 * that's the case.
+			 *
+			 * Same goes for slab pages: skb_can_coalesce() allows
+			 * coalescing neighboring slab objects into a single frag
+			 * which triggers one of hardened usercopy checks.
+			 */
+			if (sendpage_ok(bv.bv_page))
+				msg.msg_flags |= MSG_SPLICE_PAGES;
+			else
+				msg.msg_flags &= ~MSG_SPLICE_PAGES;
+
+			iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bv, 1, bv.bv_len);
+			ret = sock_sendmsg(sock, &msg);
+			if (ret <= 0) {
+				if (ret == -EAGAIN)
+					ret = 0;
+				return ret;
+			}
+
+			iov_iter_advance(it, ret);
+		}
+
+		return 1;
+	}
+
+could be similarly affected if ->sendmsg() mucks about with msg_flags.
+
+David
 
