@@ -2,143 +2,150 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C261A740190
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 18:44:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76D2F7406F6
+	for <lists+ceph-devel@lfdr.de>; Wed, 28 Jun 2023 01:48:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231938AbjF0Qo3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 27 Jun 2023 12:44:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32776 "EHLO
+        id S229814AbjF0Xs3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 27 Jun 2023 19:48:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230145AbjF0Qo2 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 12:44:28 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC12AB4
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 09:44:27 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id a640c23a62f3a-9920b4d8a89so131595366b.3
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 09:44:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1687884266; x=1690476266;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Klq/f3S4N8sJDpb7NkrVzTgErechuk35oCDp1VbUhtU=;
-        b=Un61z1Us4xDOmCtOT4ui9qV/4IA8rJZckJPZ7mchiuUMAJLa+ajtcQrg5NcWq6b/oq
-         bNMV2q+hj+2PPbq/ueP19H50rawlYQkTLSXG8Kkn9N5MFsOh+J6EGR4H/GjvfAS1qFnh
-         ezqbVyLFwOL4AA9W8/Xbs2Iu9a3Ms69M5iRV7+6PmAUvQwTeB20XnN/29LE+l45zR6Ea
-         WsnzJiS4B/xedSfP5jQ1xlsN4bDAgxN+5OD/l2HQyQ5pEmn2H4IV7kYD8f6AWrv8KeKh
-         Sfl80pvITfEXK3H+buOS3TlGDE2tU/mQvD/w5L41y3RSJ+sg+GtQ1wabyVK3RQt6j+WS
-         UnPw==
+        with ESMTP id S229497AbjF0Xs3 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 19:48:29 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F019C1BF6
+        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 16:47:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1687909661;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=p5tWvEnlmXukdOzBaVvF5tNsi5RYXX4F3T1gzeDRE1U=;
+        b=hLPxX2CVsYuAbQUUe4Ely1HG12sSWt21vFPa54hsZGAEzxoQizMvMN153Jmy8M1S7DFu1Z
+        dyF+kSuIeKudWb4ixBYRHpqNrn7UwlIKjJJzEZnsRU2bmxl/OMRA7PgNqbG1G1lnYvKoDc
+        jnNNs1sllOAKotajYBjInIFy+vHIxsQ=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-206-h6eAgQCAMauqiPsd74CRRw-1; Tue, 27 Jun 2023 19:47:39 -0400
+X-MC-Unique: h6eAgQCAMauqiPsd74CRRw-1
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1b80c1966d4so1964405ad.1
+        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 16:47:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1687884266; x=1690476266;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Klq/f3S4N8sJDpb7NkrVzTgErechuk35oCDp1VbUhtU=;
-        b=WGdSqCcoeBS0AfkQOl9FQbIjjAk4k4aZVc7D3/l7lry3+VgpPOwHEwW6OtqypUlaT0
-         ADS45TveVaTTSkbwk0RNBQX5EXb/3a+/U09m1VLhJOQEQDxb4BAnTSODWyOBBNgB3F2l
-         e+hDW0WzHiRo7k2yiUmmzjnZbuqbCOx8K2ZF1JsUfXLRdi2BXJoi1IT70WL/uETufBoN
-         /CjF7or5RP/3H5Dm6cYHklfDZOhMpSAQ4DDs2xc885tSMZF/BMZgf7iFM55+K0bqzp8J
-         BV0qAkcu3g/KUC25MBCmUNZT793gtrUm2Rk0Y/xm6D4+d+Nw/Ws9y9Zgo3ve5AQJwl4C
-         i+uQ==
-X-Gm-Message-State: AC+VfDzBNy8l7kql8r9QrIQ6cpTH8ZqOi07mqE4KusepIpCl3Jg3bxUm
-        OUmWk8zwBwuP891tfqjF1mhhBcw9uDuBurPP7oXuzbyLpNA=
-X-Google-Smtp-Source: ACHHUZ7SKYlPbflAXMpaFnlC7awS6VurTv9PqAwubZmEwrgz3Dia7jBJGttO9UFYbnfj9KN26s7QISLOfnBOjtXgvP8=
-X-Received: by 2002:a17:906:ee82:b0:988:f307:aea3 with SMTP id
- wt2-20020a170906ee8200b00988f307aea3mr19918923ejb.9.1687884266029; Tue, 27
- Jun 2023 09:44:26 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1687909659; x=1690501659;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p5tWvEnlmXukdOzBaVvF5tNsi5RYXX4F3T1gzeDRE1U=;
+        b=dqIQaFCq3MAwWjlfEHkOy4njn5lQFFPnCWFWBxTg9aqn4QiHZL30sEeV69uMDZHB5v
+         mzA96c7A+Z4+xvFkmX61dVH6bRRWjldeCF7yAuju06GBblbb0VeX6WwiZ/hzLRHVKg8P
+         0upnVur1P7QbLq3hAdQ1KwPOihKGky3Jr5kRyb6xraSltGNQno5g10CMxSecg8KqThzQ
+         EmRSvOouJroK6s9gMURu1o/Elp/TXqN+CHrflwfXUtveU/LhuPDKAE6R8a1seNjy4dId
+         4eew32GMiGmQt46hf9dRsoBfAp+B19fmT5DyQC9KDK/jWYx58/lV76gUlKbc+p5PWF1v
+         NwBw==
+X-Gm-Message-State: AC+VfDxsFaKnWnJn4CfmTabeNJEqDtInh0TosTCikVpDBCd2smJB1l7l
+        ZqY22711n24FXMalsVe1+4Oly1RiJ+064XMgzZP8PeuZ5bLINIPCbE/cZYb8S+AKu96S2TAUxBG
+        yLZs7fgdYD/sq3VRcVCT4Xw==
+X-Received: by 2002:a17:903:2343:b0:1b5:674d:2aa5 with SMTP id c3-20020a170903234300b001b5674d2aa5mr14923081plh.13.1687909658914;
+        Tue, 27 Jun 2023 16:47:38 -0700 (PDT)
+X-Google-Smtp-Source: ACHHUZ6CqylpYf1D1YvxjOr/FiwXzRr1Zjo1GdpTzMi1IjHCXr5turKAdMTmed7U8sU3JLvLExrSTw==
+X-Received: by 2002:a17:903:2343:b0:1b5:674d:2aa5 with SMTP id c3-20020a170903234300b001b5674d2aa5mr14923071plh.13.1687909658568;
+        Tue, 27 Jun 2023 16:47:38 -0700 (PDT)
+Received: from [10.72.13.91] ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id o11-20020a170902bccb00b001a0448731c2sm6473755pls.47.2023.06.27.16.47.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Jun 2023 16:47:38 -0700 (PDT)
+Message-ID: <b4f3c2d2-14e6-f400-bb8d-0a6287b56084@redhat.com>
+Date:   Wed, 28 Jun 2023 07:47:33 +0800
 MIME-Version: 1.0
-References: <3130627.1687863588@warthog.procyon.org.uk> <3200800.1687876037@warthog.procyon.org.uk>
-In-Reply-To: <3200800.1687876037@warthog.procyon.org.uk>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Tue, 27 Jun 2023 18:44:14 +0200
-Message-ID: <CAOi1vP--tS_t4rR=BTQoFMUa9sfuTueBBFrV20XJz-Dcyk0R5A@mail.gmail.com>
-Subject: Re: Ceph patches for the merge window?
-To:     David Howells <dhowells@redhat.com>
-Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-        ceph-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] ceph: don't let check_caps skip sending responses for
+ revoke msgs
+Content-Language: en-US
+To:     Milind Changire <mchangir@redhat.com>
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        vshankar@redhat.com, stable@vger.kernel.org,
+        Patrick Donnelly <pdonnell@redhat.com>
+References: <20230627070101.170876-1-xiubli@redhat.com>
+ <CAED=hWCAMVX-Y8GDCU7VOSEgB_aBZxZWqdjdVsF6_jAzdAfyMA@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <CAED=hWCAMVX-Y8GDCU7VOSEgB_aBZxZWqdjdVsF6_jAzdAfyMA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, Jun 27, 2023 at 4:28=E2=80=AFPM David Howells <dhowells@redhat.com>=
- wrote:
->
-> Looking at "ceph: add a dedicated private data for netfs rreq" you might =
-find
-> the attached patch useful.  It's in my list of netfs patches to push once=
- I
-> get away from splice.
->
-> David
-> ---
-> netfs: Allow the netfs to make the io (sub)request alloc larger
->
-> Allow the network filesystem to specify extra space to be allocated on th=
-e
-> end of the io (sub)request.  This allows cifs, for example, to use this
-> space rather than allocating its own cifs_readdata struct.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> ---
->  fs/netfs/objects.c    |    7 +++++--
->  include/linux/netfs.h |    2 ++
->  2 files changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-> index e41f9fc9bdd2..2f1865ff7cce 100644
-> --- a/fs/netfs/objects.c
-> +++ b/fs/netfs/objects.c
-> @@ -22,7 +22,8 @@ struct netfs_io_request *netfs_alloc_request(struct add=
-ress_space *mapping,
->         struct netfs_io_request *rreq;
->         int ret;
->
-> -       rreq =3D kzalloc(sizeof(struct netfs_io_request), GFP_KERNEL);
-> +       rreq =3D kzalloc(ctx->ops->io_request_size ?: sizeof(struct netfs=
-_io_request),
-> +                      GFP_KERNEL);
->         if (!rreq)
->                 return ERR_PTR(-ENOMEM);
->
-> @@ -116,7 +117,9 @@ struct netfs_io_subrequest *netfs_alloc_subrequest(st=
-ruct netfs_io_request *rreq
->  {
->         struct netfs_io_subrequest *subreq;
->
-> -       subreq =3D kzalloc(sizeof(struct netfs_io_subrequest), GFP_KERNEL=
-);
-> +       subreq =3D kzalloc(rreq->netfs_ops->io_subrequest_size ?:
-> +                        sizeof(struct netfs_io_subrequest),
-> +                        GFP_KERNEL);
->         if (subreq) {
->                 INIT_LIST_HEAD(&subreq->rreq_link);
->                 refcount_set(&subreq->ref, 2);
-> diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-> index b76a1548d311..442b88e39945 100644
-> --- a/include/linux/netfs.h
-> +++ b/include/linux/netfs.h
-> @@ -214,6 +214,8 @@ struct netfs_io_request {
->   * Operations the network filesystem can/must provide to the helpers.
->   */
->  struct netfs_request_ops {
-> +       unsigned int    io_request_size;        /* Alloc size for netfs_i=
-o_request struct */
-> +       unsigned int    io_subrequest_size;     /* Alloc size for netfs_i=
-o_subrequest struct */
 
-Yup, definitely a case for a future improvement to get rid of an extra
-allocation.  I would suggest adding helpers for casting to and from the
-private area for both netfs_io_request and netfs_io_subrequest to the
-framework, see blk_mq_rq_to/from_pdu() for an example.
+On 6/27/23 21:57, Milind Changire wrote:
+> On Tue, Jun 27, 2023 at 12:33 PM <xiubli@redhat.com> wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> If just before the revoke request, which will increase the 'seq', is
+>> sent out the clients released the corresponding caps and sent out
+>> the cap update request to MDS with old 'seq', the mds will miss
+>> checking the seqs and calculating the caps.
+>>
+>> We should always send an ack for revoke requests.
+> I think the commit message needs to be rephrased for better
+> understanding to something like:
+>
+> If a client sends out a cap update request with the old 'seq' just
+> before a pending cap revoke request, then the MDS might miscalculate
+> the 'seqs' and caps. It's therefore always a good idea to ack the cap
+> revoke request with the bumped up 'seq'.
+>
+> Xiubo, please let me know if this sounds okay to you.
+>
+Milind,
 
-Thanks,
+Yeah, this looks much better.
 
-                Ilya
+I will update it.
+
+Thanks
+
+- Xiubo
+
+
+>> Cc: stable@vger.kernel.org
+>> Cc: Patrick Donnelly <pdonnell@redhat.com>
+>> URL: https://tracker.ceph.com/issues/61782
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/ceph/caps.c | 9 +++++++++
+>>   1 file changed, 9 insertions(+)
+>>
+>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+>> index 1052885025b3..eee2fbca3430 100644
+>> --- a/fs/ceph/caps.c
+>> +++ b/fs/ceph/caps.c
+>> @@ -3737,6 +3737,15 @@ static void handle_cap_grant(struct inode *inode,
+>>          }
+>>          BUG_ON(cap->issued & ~cap->implemented);
+>>
+>> +       /* don't let check_caps skip sending a response to MDS for revoke msgs */
+>> +       if (le32_to_cpu(grant->op) == CEPH_CAP_OP_REVOKE) {
+>> +               cap->mds_wanted = 0;
+>> +               if (cap == ci->i_auth_cap)
+>> +                       check_caps = 1; /* check auth cap only */
+>> +               else
+>> +                       check_caps = 2; /* check all caps */
+>> +       }
+>> +
+>>          if (extra_info->inline_version > 0 &&
+>>              extra_info->inline_version >= ci->i_inline_version) {
+>>                  ci->i_inline_version = extra_info->inline_version;
+>> --
+>> 2.40.1
+>>
+>
+
