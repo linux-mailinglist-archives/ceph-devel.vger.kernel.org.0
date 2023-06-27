@@ -2,135 +2,99 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 91D8073FDD0
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 16:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BDDE740035
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Jun 2023 17:59:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbjF0O24 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 27 Jun 2023 10:28:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34520 "EHLO
+        id S231601AbjF0P7c (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 27 Jun 2023 11:59:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbjF0O2z (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 10:28:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51BCF270F
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Jun 2023 07:28:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1687876089;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zkGubF2ccHkJq637dAhIZHtxynTnOsrnVgHA5seQSss=;
-        b=IYXZpke1crTG9qGtVHX6PgHyt5mgme/eoHWIRzvH2Gw7zBUNYeWjgA9nT4D/V2ts+ItHfm
-        hFHH9dkBwVwAUfJFjzQfuarGscJM4zSE+/AXF1P3wFwt9PkAQcoAJTBiYQQT8EDbRdikeh
-        DbTxcyMCDh7xt9uHv2aA+bkx+16bPY8=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-626-16srD_o8OPKtHixlcGyp0w-1; Tue, 27 Jun 2023 10:28:06 -0400
-X-MC-Unique: 16srD_o8OPKtHixlcGyp0w-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S230384AbjF0P7b (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 27 Jun 2023 11:59:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72BB72D68;
+        Tue, 27 Jun 2023 08:59:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2EA2B29DD9BF;
-        Tue, 27 Jun 2023 14:27:18 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 93526207B348;
-        Tue, 27 Jun 2023 14:27:17 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <3130627.1687863588@warthog.procyon.org.uk>
-References: <3130627.1687863588@warthog.procyon.org.uk>
-Cc:     dhowells@redhat.com, Ilya Dryomov <idryomov@gmail.com>,
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 016EA611D3;
+        Tue, 27 Jun 2023 15:59:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04E10C433C9;
+        Tue, 27 Jun 2023 15:59:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1687881569;
+        bh=AA3u7kz1pu0vMNPeSL/vGc5ARaKVq+llu1ZjNTFOZYY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=AEjG+n/bSqn/UH82G8HIczhWixak5ScxThjfmMOSom1fAGV4FP1vd9ebK46Wuz2jr
+         6ywXrGKYTf08EabwSo2e/C10RS6x2Im/4ZwHxfXtkFWKT0tBsFToh1WaFTerJU+c1V
+         Jo08l+xxO6Gg6MEHS3rgX0YABVC3s0laavLbYzjXidie28j32/MqcCdEIFmwzUdgk8
+         wDplROUqNRcYqxhIWuUa/pzhrTtO9pIYu1XAAcW/WBweTo30W2aL2Ztx7kdgFzTCGF
+         8YFpNCSQM8GzHBgJvTTXZATWEaz6VHZDvPXCT8/lC06ZFeNhmHW5CX4clk6CjLBysA
+         Y4h11ieYXXwVg==
+Date:   Tue, 27 Jun 2023 08:59:28 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>, netdev@vger.kernel.org,
         Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-        ceph-devel@vger.kernel.org
-Subject: Re: Ceph patches for the merge window?
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Paolo Abeni <pabeni@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3] libceph: Partially revert changes to
+ support MSG_SPLICE_PAGES
+Message-ID: <20230627085928.6569353e@kernel.org>
+In-Reply-To: <3199652.1687873788@warthog.procyon.org.uk>
+References: <3199652.1687873788@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3200799.1687876037.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 27 Jun 2023 15:27:17 +0100
-Message-ID: <3200800.1687876037@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,MISSING_HEADERS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Looking at "ceph: add a dedicated private data for netfs rreq" you might f=
-ind
-the attached patch useful.  It's in my list of netfs patches to push once =
-I
-get away from splice.
+On Tue, 27 Jun 2023 14:49:48 +0100 David Howells wrote:
+> Fix the mishandling of MSG_DONTWAIT and also reinstates the per-page
+> checking of the source pages (which might have come from a DIO write by
+> userspace) by partially reverting the changes to support MSG_SPLICE_PAGES
+> and doing things a little differently.  In messenger_v1:
+> 
+>  (1) The ceph_tcp_sendpage() is resurrected and the callers reverted to use
+>      that.
+> 
+>  (2) The callers now pass MSG_MORE unconditionally.  Previously, they were
+>      passing in MSG_MORE|MSG_SENDPAGE_NOTLAST and then degrading that to
+>      just MSG_MORE on the last call to ->sendpage().
+> 
+>  (3) Make ceph_tcp_sendpage() a wrapper around sendmsg() rather than
+>      sendpage(), setting MSG_SPLICE_PAGES if sendpage_ok() returns true on
+>      the page.
+> 
+> In messenger_v2:
+> 
+>  (4) Bring back do_try_sendpage() and make the callers use that.
+> 
+>  (5) Make do_try_sendpage() use sendmsg() for both cases and set
+>      MSG_SPLICE_PAGES if sendpage_ok() is set.
+> 
+> Fixes: 40a8c17aa770 ("ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage")
+> Fixes: fa094ccae1e7 ("ceph: Use sendmsg(MSG_SPLICE_PAGES) rather than sendpage()")
+> Reported-by: Ilya Dryomov <idryomov@gmail.com>
 
-David
----
-netfs: Allow the netfs to make the io (sub)request alloc larger
+Ilya, would you be okay if we sent the 6.5 PR without this and then
+we can either follow up with a PR in a few days or you can take this
+via your tree?
 
-Allow the network filesystem to specify extra space to be allocated on the
-end of the io (sub)request.  This allows cifs, for example, to use this
-space rather than allocating its own cifs_readdata struct.
+Or you could review it now, that'd also work :)
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
- fs/netfs/objects.c    |    7 +++++--
- include/linux/netfs.h |    2 ++
- 2 files changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index e41f9fc9bdd2..2f1865ff7cce 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -22,7 +22,8 @@ struct netfs_io_request *netfs_alloc_request(struct addr=
-ess_space *mapping,
- 	struct netfs_io_request *rreq;
- 	int ret;
- =
-
--	rreq =3D kzalloc(sizeof(struct netfs_io_request), GFP_KERNEL);
-+	rreq =3D kzalloc(ctx->ops->io_request_size ?: sizeof(struct netfs_io_req=
-uest),
-+		       GFP_KERNEL);
- 	if (!rreq)
- 		return ERR_PTR(-ENOMEM);
- =
-
-@@ -116,7 +117,9 @@ struct netfs_io_subrequest *netfs_alloc_subrequest(str=
-uct netfs_io_request *rreq
- {
- 	struct netfs_io_subrequest *subreq;
- =
-
--	subreq =3D kzalloc(sizeof(struct netfs_io_subrequest), GFP_KERNEL);
-+	subreq =3D kzalloc(rreq->netfs_ops->io_subrequest_size ?:
-+			 sizeof(struct netfs_io_subrequest),
-+			 GFP_KERNEL);
- 	if (subreq) {
- 		INIT_LIST_HEAD(&subreq->rreq_link);
- 		refcount_set(&subreq->ref, 2);
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index b76a1548d311..442b88e39945 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -214,6 +214,8 @@ struct netfs_io_request {
-  * Operations the network filesystem can/must provide to the helpers.
-  */
- struct netfs_request_ops {
-+	unsigned int	io_request_size;	/* Alloc size for netfs_io_request struct =
-*/
-+	unsigned int	io_subrequest_size;	/* Alloc size for netfs_io_subrequest s=
-truct */
- 	int (*init_request)(struct netfs_io_request *rreq, struct file *file);
- 	void (*free_request)(struct netfs_io_request *rreq);
- 	int (*begin_cache_operation)(struct netfs_io_request *rreq);
-
+In hindsight we should have pushed harder to make the FS changes as
+small as possible for sendpage removal, so that they can go in via 
+the appropriate tree with an appropriate level of scrutiny for 6.6,
+lesson learned :(
