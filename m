@@ -2,105 +2,182 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B0C97426A5
-	for <lists+ceph-devel@lfdr.de>; Thu, 29 Jun 2023 14:39:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43DD374331C
+	for <lists+ceph-devel@lfdr.de>; Fri, 30 Jun 2023 05:21:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231594AbjF2Mje (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 29 Jun 2023 08:39:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60234 "EHLO
+        id S231625AbjF3DV1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 29 Jun 2023 23:21:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231743AbjF2Mjc (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 29 Jun 2023 08:39:32 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BD322961
-        for <ceph-devel@vger.kernel.org>; Thu, 29 Jun 2023 05:38:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688042322;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FnP9oilsoMoB7AtYJwwEtIEMgEo4MsQIn87hskKdYFs=;
-        b=PCCOZX82WvYASXwOfY3AZu6nV+p1r6hbk0rERMuJmmZ9QlDlevBw9vhGDMv6geUY/xlKvB
-        f1CwV/MkMv4yC5YnsCfxPQNt7uRCFh5s1A7VWYfVId0chQceoL+W9tAhjcn28xX59hkzZM
-        2XrlqHgAdIEmVXyFlS21Cw4b4lbxp6g=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-185-Gs-6PL9fPGyWej5J-30J7A-1; Thu, 29 Jun 2023 08:38:41 -0400
-X-MC-Unique: Gs-6PL9fPGyWej5J-30J7A-1
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6351121aa10so8026916d6.0
-        for <ceph-devel@vger.kernel.org>; Thu, 29 Jun 2023 05:38:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688042321; x=1690634321;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FnP9oilsoMoB7AtYJwwEtIEMgEo4MsQIn87hskKdYFs=;
-        b=aC3WKr+DhcJZcF5uBHpUct/UBjyCiHM8PHae/52T5Ktd6VAOWVHo4ePs3BMxPdar5V
-         GwfBCq1/hxWYcL/9if3o3Fzx3vyoUcxuWle3uDFLGmYmvWOV/WmU/bsKo+Yc84l0hqiZ
-         gTjvGXOQZeDRKnq35vWePTjKqMdf/iSOrMarNDy+TBtX5jDnhKiq/zxTYD1jBLAEWPwT
-         oRcdOPAUxx1JuhtQOzQQgI5mdrbrIZSojNnfKEliIRoTsyBA+W0GhDnB9nLRTZHor/4X
-         UjLuCfpKe28lYlL7cIWIiesEoMiKS0wD0dfZLdwuRbwJ+ApO00ZDqgwU1x+gfB0dEQ5V
-         li9A==
-X-Gm-Message-State: AC+VfDy4tt9G7H1Ev/4uh/ivkOpdsDTVSdBL0mKA0X8Upb2LBdrZpnXN
-        ZJJoJNFtsUTx9ziGfFVvGkuXD8cnTgg2oets+W/q1d10tsRXKaK82aL8G9Ukb0sSKxFYeq/gYij
-        cTfzCyLg//dGwuMwMEo46whqYGE4CdUeKFFNcpQ==
-X-Received: by 2002:a05:6214:19c2:b0:635:c247:312a with SMTP id j2-20020a05621419c200b00635c247312amr15913304qvc.53.1688042320842;
-        Thu, 29 Jun 2023 05:38:40 -0700 (PDT)
-X-Google-Smtp-Source: ACHHUZ7X6buVB0t1jTXCbD+JKRvPyhTugtLrrs5s1SZjYZaMo0ypvnQYZ9ps6BqargUT3AJwbTCZLlDQHHhL2FDjg28=
-X-Received: by 2002:a05:6214:19c2:b0:635:c247:312a with SMTP id
- j2-20020a05621419c200b00635c247312amr15913291qvc.53.1688042320626; Thu, 29
- Jun 2023 05:38:40 -0700 (PDT)
+        with ESMTP id S232036AbjF3DVL (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 29 Jun 2023 23:21:11 -0400
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 626423A91;
+        Thu, 29 Jun 2023 20:21:07 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=22;SR=0;TI=SMTPD_---0VmGYo1U_1688095261;
+Received: from 30.13.161.45(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VmGYo1U_1688095261)
+          by smtp.aliyun-inc.com;
+          Fri, 30 Jun 2023 11:21:02 +0800
+Message-ID: <bc37b040-701d-3b5a-5cf2-370c320affbb@linux.alibaba.com>
+Date:   Fri, 30 Jun 2023 11:20:59 +0800
 MIME-Version: 1.0
-References: <20230629023118.267295-1-xiubli@redhat.com>
-In-Reply-To: <20230629023118.267295-1-xiubli@redhat.com>
-From:   Patrick Donnelly <pdonnell@redhat.com>
-Date:   Thu, 29 Jun 2023 08:38:13 -0400
-Message-ID: <CA+2bHPZLVSPRfRD6yis6MZR9tRv-mqkRZ2aY8jjAMgvju-5rQA@mail.gmail.com>
-Subject: Re: [PATCH v3] ceph: don't let check_caps skip sending responses for
- revoke msgs
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
-        vshankar@redhat.com, mchangir@redhat.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.12.0
+Subject: Re: [Linux-cachefs] [PATCH v7 2/2] mm, netfs, fscache: Stop read
+ optimisation when folio removed from pagecache
+Content-Language: en-US
+To:     Xiubo Li <xiubli@redhat.com>, David Howells <dhowells@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Shyam Prasad N <nspmangalore@gmail.com>,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-mm@kvack.org, Rohith Surabattula <rohiths.msft@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-afs@lists.infradead.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Steve French <sfrench@samba.org>, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        Ilya Dryomov <idryomov@gmail.com>, linux-ext4@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, ceph-devel@vger.kernel.org
+References: <20230628104852.3391651-1-dhowells@redhat.com>
+ <20230628104852.3391651-3-dhowells@redhat.com>
+ <41e1c831-29de-8494-d925-6e2eb379567f@redhat.com>
+From:   Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <41e1c831-29de-8494-d925-6e2eb379567f@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jun 28, 2023 at 10:36=E2=80=AFPM <xiubli@redhat.com> wrote:
->
-> From: Xiubo Li <xiubli@redhat.com>
->
-> If a client sends out a cap update dropping caps with the prior 'seq'
-> just before an incoming cap revoke request, then the client may drop
-> the revoke because it believes it's already released the requested
-> capabilities.
->
-> This causes the MDS to wait indefinitely for the client to respond
-> to the revoke. It's therefore always a good idea to ack the cap
-> revoke request with the bumped up 'seq'.
->
-> Cc: stable@vger.kernel.org
-> Link: https://tracker.ceph.com/issues/61782
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> Reviewed-by: Milind Changire <mchangir@redhat.com>
-> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 
-Reviewed-by: Patrick Donnelly <pdonnell@redhat.com>
 
---=20
-Patrick Donnelly, Ph.D.
-He / Him / His
-Red Hat Partner Engineer
-IBM, Inc.
-GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+On 6/29/23 8:39 AM, Xiubo Li wrote:
+> 
+> On 6/28/23 18:48, David Howells wrote:
+>> Fscache has an optimisation by which reads from the cache are skipped
+>> until
+>> we know that (a) there's data there to be read and (b) that data isn't
+>> entirely covered by pages resident in the netfs pagecache.  This is done
+>> with two flags manipulated by fscache_note_page_release():
+>>
+>>     if (...
+>>         test_bit(FSCACHE_COOKIE_HAVE_DATA, &cookie->flags) &&
+>>         test_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags))
+>>         clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags);
+>>
+>> where the NO_DATA_TO_READ flag causes cachefiles_prepare_read() to
+>> indicate
+>> that netfslib should download from the server or clear the page instead.
+>>
+>> The fscache_note_page_release() function is intended to be called from
+>> ->releasepage() - but that only gets called if PG_private or PG_private_2
+>> is set - and currently the former is at the discretion of the network
+>> filesystem and the latter is only set whilst a page is being written
+>> to the
+>> cache, so sometimes we miss clearing the optimisation.
+>>
+>> Fix this by following Willy's suggestion[1] and adding an address_space
+>> flag, AS_RELEASE_ALWAYS, that causes filemap_release_folio() to always
+>> call
+>> ->release_folio() if it's set, even if PG_private or PG_private_2 aren't
+>> set.
+>>
+>> Note that this would require folio_test_private() and
+>> page_has_private() to
+>> become more complicated.  To avoid that, in the places[*] where these are
+>> used to conditionalise calls to filemap_release_folio() and
+>> try_to_release_page(), the tests are removed the those functions just
+>> jumped to unconditionally and the test is performed there.
+>>
+>> [*] There are some exceptions in vmscan.c where the check guards more
+>> than
+>> just a call to the releaser.  I've added a function,
+>> folio_needs_release()
+>> to wrap all the checks for that.
+>>
+>> AS_RELEASE_ALWAYS should be set if a non-NULL cookie is obtained from
+>> fscache and cleared in ->evict_inode() before
+>> truncate_inode_pages_final()
+>> is called.
+>>
+>> Additionally, the FSCACHE_COOKIE_NO_DATA_TO_READ flag needs to be cleared
+>> and the optimisation cancelled if a cachefiles object already contains
+>> data
+>> when we open it.
+>>
+>> Fixes: 1f67e6d0b188 ("fscache: Provide a function to note the release
+>> of a page")
+>> Fixes: 047487c947e8 ("cachefiles: Implement the I/O routines")
+>> Reported-by: Rohith Surabattula <rohiths.msft@gmail.com>
+>> Suggested-by: Matthew Wilcox <willy@infradead.org>
+>> Signed-off-by: David Howells <dhowells@redhat.com>
+>> cc: Matthew Wilcox <willy@infradead.org>
+>> cc: Linus Torvalds <torvalds@linux-foundation.org>
+>> cc: Steve French <sfrench@samba.org>
+>> cc: Shyam Prasad N <nspmangalore@gmail.com>
+>> cc: Rohith Surabattula <rohiths.msft@gmail.com>
+>> cc: Dave Wysochanski <dwysocha@redhat.com>
+>> cc: Dominique Martinet <asmadeus@codewreck.org>
+>> cc: Ilya Dryomov <idryomov@gmail.com>
+>> cc: linux-cachefs@redhat.com
+>> cc: linux-cifs@vger.kernel.org
+>> cc: linux-afs@lists.infradead.org
+>> cc: v9fs-developer@lists.sourceforge.net
+>> cc: ceph-devel@vger.kernel.org
+>> cc: linux-nfs@vger.kernel.org
+>> cc: linux-fsdevel@vger.kernel.org
+>> cc: linux-mm@kvack.org
+>> ---
+>>
+>> Notes:
+>>      ver #7)
+>>       - Make NFS set AS_RELEASE_ALWAYS.
+>>           ver #4)
+>>       - Split out merging of
+>> folio_has_private()/filemap_release_folio() call
+>>         pairs into a preceding patch.
+>>       - Don't need to clear AS_RELEASE_ALWAYS in ->evict_inode().
+>>           ver #3)
+>>       - Fixed mapping_clear_release_always() to use clear_bit() not
+>> set_bit().
+>>       - Moved a '&&' to the correct line.
+>>           ver #2)
+>>       - Rewrote entirely according to Willy's suggestion[1].
+>>
+>>   fs/9p/cache.c           |  2 ++
+>>   fs/afs/internal.h       |  2 ++
+>>   fs/cachefiles/namei.c   |  2 ++
+>>   fs/ceph/cache.c         |  2 ++
+>>   fs/nfs/fscache.c        |  3 +++
+>>   fs/smb/client/fscache.c |  2 ++
+>>   include/linux/pagemap.h | 16 ++++++++++++++++
+>>   mm/internal.h           |  5 ++++-
+>>   8 files changed, 33 insertions(+), 1 deletion(-)
+> 
+> Just one question. Shouldn't do this in 'fs/erofs/fscache.c' too ?
+> 
 
+Currently the read optimization is not used in fscache ondemand mode
+(used by erofs), though it may not be intended...
+
+cachefiles_ondemand_copen
+  if (size)
+    clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags);
+
+The read optimization is disabled as long as the backing file size is
+not 0 (which is the most case).  And thus currently erofs doesn't need
+to clear FSCACHE_COOKIE_NO_DATA_TO_READ in .release_folio().
+
+-- 
+Thanks,
+Jingbo
