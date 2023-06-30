@@ -2,101 +2,107 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E8ECF74339F
-	for <lists+ceph-devel@lfdr.de>; Fri, 30 Jun 2023 06:33:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8CD77433B6
+	for <lists+ceph-devel@lfdr.de>; Fri, 30 Jun 2023 06:44:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230474AbjF3Edi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 30 Jun 2023 00:33:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55530 "EHLO
+        id S229812AbjF3Eoj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 30 Jun 2023 00:44:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230333AbjF3Edg (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 30 Jun 2023 00:33:36 -0400
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01olkn2035.outbound.protection.outlook.com [40.92.98.35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD55F1991
-        for <ceph-devel@vger.kernel.org>; Thu, 29 Jun 2023 21:33:35 -0700 (PDT)
+        with ESMTP id S229522AbjF3Eoi (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 30 Jun 2023 00:44:38 -0400
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01olkn2046.outbound.protection.outlook.com [40.92.98.46])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAA702116
+        for <ceph-devel@vger.kernel.org>; Thu, 29 Jun 2023 21:44:36 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LqvBnJqs87wm8LzrY2mCwZqQYST0RrGaZtfT5GRaE+VVh6PV1o9i4vKi3RP0I2v6LJER5cuRiLUi+GG5rrtO6BD4l+U14TsURVTdJpIn2CZ7sOhr686YkpDHECdLVYQ1DOGw+1bgkrarVlqdIIgQfoJ8V+Bwqh0hWO7SmgUTYJ3X+0gaOSkihd3RAqpFlbWwUZa4swlX3/3PXXUn7+Nzvb5uXiCsIvWfJGo85lLY9F70U9KHx1ZVfPGU79zHzjmHZdJUEk3k984fPmgb20KTJdrpNuQHqEJQhMywXDW+Sb3TMUhAjA1xv+KYDs4PXGzvwPNeMQmESZSGqTapyCy2FA==
+ b=fHw+VkmLihhtzoRmT3uTBL4y4bWhkjBK2hqKacD+ihwhJYxO5Yg27fCPXdQMZCR99Xi4H8SG81rsiXZzvBcMLSX3TX4JozDU7bQbGEzlOgn1BOvcXBhD5Ls+8KJWtvBYhLyydaTpXQrFNCdEC/40/8rh8xzAQcV1oadQyQ1InQGEVC6TrNGOqoAzJAR/TZsATULgUx5uBeejV08HAnLp5g03GL54PA+VgQZwym3L1jbIDETqAze97bHfri9GX/QCXXtKDpJxYUdCuj8yczJZdWG5BPJC2Y4z4D2hO8kb/MTSs93bKukyPC/M3Dj6KZn3zYCBz3mFgYEV0g55OJtyzw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1HRK8LULbCKN8V/de2Xj8SA8CDQeJt/EX5pIMo6RCGs=;
- b=e9IHgTPercFEhKxPrFBMoFXYh9liw6oqWMVGI2DotDrB2nQv/bGfuxHBwYnl6YWWBjPZWplVccAUCU3F03tPCeVnoMs+Xelplvf03kg3xqvhbB4I3A7VhCv3tD9OsZOldPbYayRzjZJx5LymN1J4m9AOOQnVdCpJHcDly+cnLuviZsxZAMQb6n8dSnMkZ9II11fTaeSu3X8LxxjdvST2kuxtXncWHKOfl8OhBzHkPS7KNFBUgDQq3Z0HP4IRyLJOAl4O7Fz3lN7mIr6fOEYHb44wCYvyTQSpUbobNmuLBhAf2oDj/EDaAb4fviENCRur8JkKOEvj7j15Vu+HU2NFNw==
+ bh=aIXBsLBp57D5SooHz5v9IftuX4KxdMx2KZdSGzWAdag=;
+ b=bMDxnjnzyzMlq5PkwrYEX+zxlUilBouyIm+rg6ePFgQmoLM1z7KhcqprqUjmWaA39zoSANl8Y/Mlcf9PWqhfCYIL/ON8vHmVxofoktQEV/cD3ZWQlxeYawI2oNzHOKKLlPeNWKXxwWZzaEDXiqL8iLyxvdXncAV1HWFTd2JZ4nKfok8x8OFwhvM7AWd/JIFRciEdWDQRFFU15z1hf/xSveMEdFjxRsWLZjita0EhfhvX9pFlxdP6zxoMUd6GfErDfIy8XhMk+yZkTlSLvm6C7839VchqnFhSTrdRrbZNt1L/ydoIUWbr0pfrj2vOO7fIT6dpkKA5ApdcVBwtVzN4dg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1HRK8LULbCKN8V/de2Xj8SA8CDQeJt/EX5pIMo6RCGs=;
- b=avjr7/GUznJWxpDiei8TFG3l2lyeVm42y5fTZGYHulmVNM1pm2gxCkOXT/Hl5M2v6GHYpjAHiGaG32FE0jvpaKSF9Z2xv3rS9O3j2t11L9pwIme2dGP8ghXLvCYoK/tvIRoU/Mn95u9tvYXRTVJ4NHJb9NUtdmltBHaqCnueFoNn+inlA9+5auYBcXYij1FjmwNc9ZOfN9YWvevCBv41Mh5jao5krtmSEn7iKYtJJ1EzsW/dvVLfVHCiYH2LTBIhBjR3z81n130bBnrOleoStbolAmQauPvMSN9xt9v2sMxW3g9sPSR4SsaTTKX3qSUSFpfGJECl6nkFZLG1hTLImQ==
+ bh=aIXBsLBp57D5SooHz5v9IftuX4KxdMx2KZdSGzWAdag=;
+ b=kQhHd0DZJtyBfIaQCyFqRfDyHgjvCfkYyo4hGWZjsX1JWkZM/Oe0qptsS/5taaGhMwWVXFuMHtx24eK1TDAlgxsFu+dkfgpM7nH/PFxnUA4XkM5LmvgPMYZvjEvIEIkcbTKnZodETw9rpQywKVqri+jCPv8YerZFVwK0tj2cTRoCpWWtTvr/QLD7lx+fsh9TLrBIunCKMPj/+anDYjFxjLvy2cmyloD1zirv7WVkgxkg3OdBf1nyv53uESJukhiIh14KX+hjRt2AUBWUgnRavikzpKpfRgA7RANozbB4addsYTJMcLuaxC6mHp18kKkQsiS1EQU1vInmzre/byvTHw==
 Received: from OSZP286MB2061.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:180::6)
- by TYVP286MB3104.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:2ac::5) with
+ by TYCP286MB3283.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:2cf::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6521.26; Fri, 30 Jun
- 2023 04:33:32 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6544.19; Fri, 30 Jun
+ 2023 04:44:33 +0000
 Received: from OSZP286MB2061.JPNP286.PROD.OUTLOOK.COM
  ([fe80::3bed:4407:7f3d:7387]) by OSZP286MB2061.JPNP286.PROD.OUTLOOK.COM
  ([fe80::3bed:4407:7f3d:7387%7]) with mapi id 15.20.6521.026; Fri, 30 Jun 2023
- 04:33:32 +0000
-From:   Hu Weiwen <huww98@outlook.com>
-To:     ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Cc:     Venky Shankar <vshankar@redhat.com>,
-        Milind Changire <mchangir@redhat.com>,
-        Hu Weiwen <huww98@outlook.com>
-Subject: [PATCH v2 4/4] ceph: allow mds_namespace to appear multiple times
-Date:   Fri, 30 Jun 2023 12:31:18 +0800
-Message-ID: <OSZP286MB2061102C184A68C0CED86D83C02AA@OSZP286MB2061.JPNP286.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.37.0.windows.1
-In-Reply-To: <OSZP286MB2061AF068B5B9462B1A8E461C02AA@OSZP286MB2061.JPNP286.PROD.OUTLOOK.COM>
-References: <OSZP286MB2061AF068B5B9462B1A8E461C02AA@OSZP286MB2061.JPNP286.PROD.OUTLOOK.COM>
+ 04:44:33 +0000
+Date:   Fri, 30 Jun 2023 12:44:29 +0800
+From:   =?utf-8?B?6IOh546u5paH?= <huww98@outlook.com>
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
+        Venky Shankar <vshankar@redhat.com>,
+        Hu Weiwen <sehuww@mail.scut.edu.cn>
+Subject: Re: [PATCH 3/3] libceph: reject mismatching name and fsid
+Message-ID: <OSZP286MB2061223922A5ACB181D34336C02AA@OSZP286MB2061.JPNP286.PROD.OUTLOOK.COM>
+References: <TYCP286MB20661F87B0C796738BDC5FBEC0709@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
+ <TYCP286MB2066D19A68A9176E289BB4FDC0709@TYCP286MB2066.JPNP286.PROD.OUTLOOK.COM>
+ <CAOi1vP_zuTMh2jE9uc89EfTroxkY1YBfOPCMBreKNtDMXa2nRQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN:  [pAfvguyz4MJYm0DSq8WImqrJ6zbZmkXeIeJAozzvYCOexI5TA3Uoq4M5FZIufYeY]
-X-ClientProxiedBy: TYCP286CA0018.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:263::9) To OSZP286MB2061.JPNP286.PROD.OUTLOOK.COM
+In-Reply-To: <CAOi1vP_zuTMh2jE9uc89EfTroxkY1YBfOPCMBreKNtDMXa2nRQ@mail.gmail.com>
+X-TMN:  [ZExteFWFkLYYM/D4NdIBtAFvxJojOg6Kpaxnnzg/f6Q=]
+X-ClientProxiedBy: TYAPR01CA0085.jpnprd01.prod.outlook.com
+ (2603:1096:404:2c::25) To OSZP286MB2061.JPNP286.PROD.OUTLOOK.COM
  (2603:1096:604:180::6)
-X-Microsoft-Original-Message-ID: <20230630043117.808-4-huww98@outlook.com>
+X-Microsoft-Original-Message-ID: <ZJ5dreps2ypD2JsG@outlook.com>
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: OSZP286MB2061:EE_|TYVP286MB3104:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8f9900f0-dfd8-4df2-bd30-08db7923290c
-X-MS-Exchange-SLBlob-MailProps: AZnQBsB9XmriMkceEMr8g80clrkPP2EpJyaAv0Smh8r89MNBty/8vPmbTk5mjjiDhN+SoyBvco/lB0n1Nwe5GEY71HqsSsFCIClObVNkxpCpY6ffwPBT9ugdwAa/RekY1/Fyh3HwX+XS0tEQlKDDOUfUe4XWzDvpT0JUhLCe6pjoZAdUtj27kmhOyiiNBvXV1W7I0R2poF8mdAjZTE5PynAYRK8TbWxTUPF0s8cSonlMVOZOGmtT593ZWA45PIQV0ykTHw/k3xafihmoticL0i3qPFpC9JOAA6yd75NS3yOPj+ZvQwWYqX70F1PobwKewvCTAzCWPiHhXr23BhA+JVl16+Vqly6nFj4txGh03YtzC+vHmtMbtPUwyrKm7U18VrrKimIL40LLq1hYK7JSpOxdslwlYiPBn73Zt/EoE2RpGsTFr/hDL+WGCOhSdnYiPtqvXlkM7LQKdRAstpy+3nl7UhcSbEyGo/oEaBS2DMut/ZyXyDnXCyB6IPkjZYnW6dkOekUQsxSrP9zioFp98OGpbRmtFLDWBi5QpSg7Ib8rzYY84e+Wclh171NEt2hQPUxJ74YMuazLQ/ENyhEwFCeh3XJE/lR0AEkCTj+0aJHincRYYHz3beBgBHt+QRTS6EvJFsgbXsndaShIGj7QwVwxIr7tF5K43R59PS1SIVZEluYvN3KXRJTXARYqqlGNGb/3gmwKd8MaElougzCrcXDQzW6quOYtXKhQcIguzco+K/Myj/rjKckfVI0YLHJj45Fkhz1Ibno=
+X-MS-TrafficTypeDiagnostic: OSZP286MB2061:EE_|TYCP286MB3283:EE_
+X-MS-Office365-Filtering-Correlation-Id: 576b1147-ba50-4703-7eb4-08db7924b2ed
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: hqCFXEz/eyvWDnI9aDFx9BO6yspaoJn6IIMMrNf1F4RPdeU5nfxN08G2a0+/YyyUe9vLRBtmRdHEbi/Kgo60VjvExX2hU+GsG+er+V1BAMT6hJT4zDjXntSK9Npn3h8t3/1KGL9E7NmgEJ4CJoOQrWcMcA9K2V1gAa/++c+mpiPBhq99j9L89xRsy82ouI43DTsewl7t5SIKQtTUVvuRZ0a9JyN5bDx4IHzfEBqXQZUPH2TBkNARLOjrCMi7hgEP8U4Z4CKn7NcpkSS7434+X9iUwl/OsqeEgoGYweq0SxhfDsoJGKoIp5PxLbLciSkl91/igMAu19CKM16fKVNsj6HP4lkZCUozpDHyF9Ku4DUME4s2+KKLN+cQ+znn0XrpuAcWXczqJTOGgaSkPxHVwMh9vMxlMUh+CvF0jsearwTVby9HahAT/uD1zUbscXiTUQKZ3801I7a1Bp2mQmrwupYVe9TqCq5SebDmv2W6WR/Hwx5/t/ztJEkfyEtnFhV6niVPr5JoTneex1F7G2HacCWbvnWOpEma6eUwGunz7+oOTV81dWIw5mJuLjViWL8V1mVeN5NdMJmug73OJ8Vx9VFm/ka5s1HhIKEwhpIa1T5faEQVHeiXWpeAzizr8rqu
+X-Microsoft-Antispam-Message-Info: 3gYHtzLXpYEGB/J0XY1zQOLvkNY7RPEgPBZhoqIe57ygbTu67Lei0Va7GywLyPOK58noKEHJ6KLLeB/XbeSVh5e/E8Go56GwSLZtvTjED0Nfdajs1N8CoH6l2pJxh/kFo6bTIoUmV7Z5Bkka8rPmEA3cKu2427uHd/ZwmySmYn29bGzrH5d+PUokr5edb6SIltsAtPcjWWhlQ68uFW+1Zis9/lHfONAmuVU9G5UEUZTFJCx/aRyCqU6yqcs5vRukQinbUKMre/F06evnBxamB2CLq9W5qHg05LHkVwtSvSTtbJnbU5xawqvYRGpXgPC8tsp/aO152zEugHm+jjM708e7Y0B4mYUqNpxz7Ipfs00/MkAImCB5S0kiEbHUM4G4Teu81nhaYHGknV8TplTJaBgMNP8aqgV+Dj4LKrQUepJtygadY2pmskDL9t/fky2aK8DBiH9lY1H0L5cUp4S9jWTUC/SfJdvBZ3da9weA4FMraObuvaTL98J2WJJwob73zyTysoXl3TqE0MmDt9MM/+WpyEPxSMf09M3aih/23HSwQfK2G0PvYfHCjOmDTOvg
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?aBvtyzL626AbC4QbFjMnhuWEbm4AXd6x/co/MhJyIVgcPBD+V+O+Ugwia4h9?=
- =?us-ascii?Q?GkJuqlWraIRLdx97f15/+4p4v1Yb4+OKsFYFuZVThX5mgfmruqx+S8gtFk0a?=
- =?us-ascii?Q?YhXsVvi+KvuvFF0nBeP00K3cWl2Otd6nkI4XiV5tc10E1qq+6QaLUC6jjH1e?=
- =?us-ascii?Q?nvrsVlyMDAVn7CnvjFW/mL4rRy6KENL1TmWDQpYuUO6uBPK07PqmIwTf3FDB?=
- =?us-ascii?Q?2e/+SQYOjj/JtRFZ++77zsIB3YYjqpg+YZqu5tiHz8ruPD+lxweecKSMAlV5?=
- =?us-ascii?Q?x1tvGxG38qSSrXuylsVt4H/p/CfRbSdfwr3vF1vQt55FsAYlRQ4RyX/RV6ue?=
- =?us-ascii?Q?DCAJ9vsdpj9m04O+1wno2GORuefJ1EBeenQWMb/ieVCE1NvF4Mgzucs7o2sP?=
- =?us-ascii?Q?DYaFX7pPyVNePPcAEVMjdwuaC/rV0nJscaS3uv7JPVPz5UuuobnDbse+P8e5?=
- =?us-ascii?Q?9InCI/9PFvsQix4mtZvMSAQLv3A95uUh0WZoClO1z+A4qgcfMNbPGuN3el5Y?=
- =?us-ascii?Q?QWQjztwDVeqpHIlwCzIdoGXZrekvVPHgzBbUEM7iIRqiZHFKbrq6mVGJ6qEV?=
- =?us-ascii?Q?np61HSmpLmdncE1cgZ5byJ/6HbjnY3k/H8tqWVA5fC410GyPvvS48t1Ky6G+?=
- =?us-ascii?Q?o5SOKPqemcFb8hOZCUwOgSh69ysY5kedcbioHXakhnfNEuB8+6HZXLNWJ5GA?=
- =?us-ascii?Q?LxX51KfqVFpX88Z/cUJYDRV0uyxqJJdQWTY4M6oTrB4w0vDF6pbcbaT6lcse?=
- =?us-ascii?Q?zNl9bdQzqj++BU4h7IKVTK+JRbSCs/NEVUGUa1vDkfgmcEHk0qHuB913hXaj?=
- =?us-ascii?Q?08vQW1hynjgmFKHDEOqze6JYna0JL9jVYGM8qFIRIcgb2Wkb+Qd5gz+Zg6vM?=
- =?us-ascii?Q?HMT55kLmawursu+Vukytt3BnfwhIWjiVoZNp22eeZDzDClgLVx+PRlA+eqdO?=
- =?us-ascii?Q?jg66ahf6rK+D5Ei/0HU0T0TpPnDMN39NLb7nSthguSqh0BWbRfMGgLnxl637?=
- =?us-ascii?Q?ntu/lPCCtEhf+Sp6xVVX22M7KAJy+Rz9rdsJ4+JhqFbv01jjPap0t4M8z/e3?=
- =?us-ascii?Q?IRhfS49r9BCw4cxHkxknhjI+0Q/RLcU56TMjpkQ0pU4Ig8gmcS32b4QSud9S?=
- =?us-ascii?Q?tR9kcze/tw7vzjJ3HkA37Rsct3E+kGrJXEtP/yvfc4HhVanR+5KxlmNi57sK?=
- =?us-ascii?Q?vZLmFBhT09JDk/N6OZ6VQaZ/r/m/JXqDMPVjqZ8e7XOt27wRRazmG7zL7YNR?=
- =?us-ascii?Q?1T8CGE1UPk9+C7VI9kJBm3mYzrRsHaKi9E5cN4CMZw=3D=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MDkzK09hYlF2RmRodHJpQU16cGVYLzB5VU44THJRL2xEMlZVVFJkd01XS25F?=
+ =?utf-8?B?c1hIYTFGd3Vjc2k0Y1JycE9xMC9iaEZFZWo2elNFVUFkaW90RVR6a3NQYmFF?=
+ =?utf-8?B?ZWF2OG5SY01Oa0VuSjZITEg1UkF6RUFJemlKbjdCUk0zSlNNYjZRbis0emsw?=
+ =?utf-8?B?ZkVBNHJtS3h4TVlPNE5XbFNqZnBOMEZzcElzWGFoZHE3ZnRIaTNmZkFmL292?=
+ =?utf-8?B?aUhzM3NVQ0FFMG4vbHp3dE9uTXhKcHY2b1FDajZzN2pjbzV6Q0xBWVFKRGk0?=
+ =?utf-8?B?aFVKYkw0czl1OGFjcnQzYzhSeXc1RVVTN2drWHoxWUdzYkxmMHp4UTFiWXhr?=
+ =?utf-8?B?VmIwWGdPaWJrZ29JampnLzViN1pXMlFaTVpsQ2NYOExEek5wU2VVNGY0VzRy?=
+ =?utf-8?B?TmpBT2ZOZkNYQktUU3ZPREk2em9LN2MyUXdweXNVWWhZeUI4YnN6b3JFWk9R?=
+ =?utf-8?B?R3R1RjVDWk9uSi8vL3dxSnFUZGZPbjVnL3ZZVUJEWkNFWXZlRENmdXlZVlRO?=
+ =?utf-8?B?WWFUTEpPVGlYMmJHb21PS0ExZGJ5REhEU1pUNmE5enZWZWJRVldDQkUzbFA1?=
+ =?utf-8?B?Zmp2LzZESUxDZ1luV3VmYVNXUEZ4ZTNXUldUL3cvUkcwMUlkREVFa3pEWFlL?=
+ =?utf-8?B?SkZ3NTJFd0RZeE8yN1dMcW1ydTdUMmsxUkU1emN3V0NVK3JVb1lXU3FVckNz?=
+ =?utf-8?B?MDBnSGpGT2loSDZkNStZQlBpSWZEb0xyK0lxTjJRTVdPM3BZem9UV3dYNUY0?=
+ =?utf-8?B?aUdVSHlMTTRKYXBRcVRiQnRFdXNDbWxuNUduK1FBTDU4L1NyZS9TSzNvMmpT?=
+ =?utf-8?B?V1hrSml3N1I3ditvcWpKTTRrdGVBSHhPVXhhYkNWbUtwZHUwUHY2L21STjcv?=
+ =?utf-8?B?enhqN2d1ZDdFbDRTK040T2syUTFaZi9rRUFublFDV3phYlF2bE54RDE5MzMz?=
+ =?utf-8?B?Y1pCbGlRak1HNnNISTFZNGxZdGdRNnUvUUp2cEFqY09Ra1c2TUtNVk1uR00x?=
+ =?utf-8?B?bHJlcjMrd1I1QkNjSnl5TlQwNkREUW9VMGlUdHpMckdHZnY2US9TT1RLUGNP?=
+ =?utf-8?B?aHhSWngxNTZqWEc1c2pHRk1idFpNcVJUaGNTSGxRYmdQaEpMaUtMWndnTmpG?=
+ =?utf-8?B?RGxnblFQejk2V09EeHhWaUJQZ3Evai9mOXhYSTVjUWpzYzlEOFk3NDBqSWFI?=
+ =?utf-8?B?Wng3enRxVlY1d0M3RStxM2pIVzN5VzZ6bnkyS3NyaXZUWTlpMWYwT2lsT1ox?=
+ =?utf-8?B?UEJEZnBoVmJPM0swZ3JRS0FDNnd5R1ZKM0tRajFlRFFhL24xN1MvWXpTK3U4?=
+ =?utf-8?B?Z0ZDVlM0QVZqSmlKMElYK2s4RGdmSzFoVXQyVkRKOGVTUE1HYXdVdHU5UWdv?=
+ =?utf-8?B?QkRRTHFyRGxSeFVBNS9icHpNOXlTS1lycG1lY041VXk1NWg0MWU0Q1RaeTZL?=
+ =?utf-8?B?OFBNc0hlWlNFbE11ZkFiYjlNVkhzaUhaR3JWandsMWQ4NUdPV0k2UzUxakEr?=
+ =?utf-8?B?L01URzQxWEFpLy93cUpjQytvN21CZmhGYk5PSy9Ucngybmp1OXpwbUZ6TzZE?=
+ =?utf-8?B?VlVHU202SWx0Y3ZvbWFreThPQ2JjUFpWenlmeExzaXg1MC9EaEFIT2hPR3ZD?=
+ =?utf-8?B?bUhHQzZJV1gzN3JpRUFHaUFOU0FYOUE9PQ==?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f9900f0-dfd8-4df2-bd30-08db7923290c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 576b1147-ba50-4703-7eb4-08db7924b2ed
 X-MS-Exchange-CrossTenant-AuthSource: OSZP286MB2061.JPNP286.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2023 04:33:32.8653
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2023 04:44:33.5756
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
 X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYVP286MB3104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCP286MB3283
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
         FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
@@ -108,34 +114,85 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-To be consistent with other options.  It will still be rejected if its
-final value is inconsistent with mount source.
+On Tue, Jun 27, 2023 at 01:47:53PM +0200, Ilya Dryomov wrote:
+> On Sun, May 7, 2023 at 7:56 PM Hu Weiwen <huww98@outlook.com> wrote:
+> >
+> > From: Hu Weiwen <sehuww@mail.scut.edu.cn>
+> >
+> > These are present in the device spec of cephfs. So they should be
+> > treated as immutable.  Also reject `mount()' calls where options and
+> > device spec are inconsistent.
+> >
+> > Signed-off-by: Hu Weiwen <sehuww@mail.scut.edu.cn>
+> > ---
+> >  net/ceph/ceph_common.c | 26 +++++++++++++++++++++-----
+> >  1 file changed, 21 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> > index 4c6441536d55..c59c5ccc23a8 100644
+> > --- a/net/ceph/ceph_common.c
+> > +++ b/net/ceph/ceph_common.c
+> > @@ -440,17 +440,33 @@ int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
+> >                 break;
+> >
+> >         case Opt_fsid:
+> > -               err = ceph_parse_fsid(param->string, &opt->fsid);
+> > +       {
+> > +               struct ceph_fsid fsid;
+> > +
+> > +               err = ceph_parse_fsid(param->string, &fsid);
+> >                 if (err) {
+> >                         error_plog(&log, "Failed to parse fsid: %d", err);
+> >                         return err;
+> >                 }
+> > -               opt->flags |= CEPH_OPT_FSID;
+> > +
+> > +               if (!(opt->flags & CEPH_OPT_FSID)) {
+> > +                       opt->fsid = fsid;
+> > +                       opt->flags |= CEPH_OPT_FSID;
+> > +               } else if (ceph_fsid_compare(&opt->fsid, &fsid)) {
+> > +                       error_plog(&log, "fsid already set to %pU",
+> > +                                  &opt->fsid);
+> > +                       return -EINVAL;
+> > +               }
+> >                 break;
+> > +       }
+> >         case Opt_name:
+> > -               kfree(opt->name);
+> > -               opt->name = param->string;
+> > -               param->string = NULL;
+> > +               if (!opt->name) {
+> > +                       opt->name = param->string;
+> > +                       param->string = NULL;
+> > +               } else if (strcmp(opt->name, param->string)) {
+> > +                       error_plog(&log, "name already set to %s", opt->name);
+> > +                       return -EINVAL;
+> > +               }
+> >                 break;
+> >         case Opt_secret:
+> >                 ceph_crypto_key_destroy(opt->key);
+> > --
+> > 2.25.1
+> >
+> 
+> Hi Hu,
+> 
+> I'm not following the reason for singling out "fsid" and "name" in
+> ceph_parse_param() in net/ceph.  All options are overridable in the
+> sense that the last setting wins on purpose, this is a long-standing
+> behavior.  Allowing "key" or "secret" to be overridden while rejecting
+> the corresponding override for "name" is weird.
+> 
+> If there is a desire to treat "fsid" and "name" specially in CephFS
+> because they are coming from the device spec and aren't considered to
+> be mount options in the usual sense, I would suggest enforcing this
+> behavior in fs/ceph (and only when the device spec syntax is used).
+> 
+> Thanks,
+> 
+>                 Ilya
+Hi Ilya,
 
-Signed-off-by: Hu Weiwen <huww98@outlook.com>
----
- fs/ceph/super.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+I agree. Thank you for your advise. Please see my patch v2.
 
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index e66867efd811..96aba62fdcba 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -423,12 +423,9 @@ static int ceph_parse_mount_param(struct fs_context *fc,
- 		param->string = NULL;
- 		break;
- 	case Opt_mds_namespace:
--		if (!fsopt->mds_namespace) {
--			fsopt->mds_namespace = param->string;
--			param->string = NULL;
--		} else if (strcmp(fsopt->mds_namespace, param->string)) {
--			return invalfc(fc, "Mismatching mds_namespace");
--		}
-+		kfree(fsopt->mds_namespace);
-+		fsopt->mds_namespace = param->string;
-+		param->string = NULL;
- 		break;
- 	case Opt_recover_session:
- 		mode = result.uint_32;
--- 
-2.25.1
-
+Hu Weiwen
