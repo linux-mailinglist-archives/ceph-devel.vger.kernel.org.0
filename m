@@ -2,245 +2,225 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4781E7444A2
-	for <lists+ceph-devel@lfdr.de>; Sat,  1 Jul 2023 00:16:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE5307466C6
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Jul 2023 03:09:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232558AbjF3WQQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 30 Jun 2023 18:16:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49770 "EHLO
+        id S231196AbjGDBJy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 3 Jul 2023 21:09:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232351AbjF3WQJ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 30 Jun 2023 18:16:09 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B79FE3C34;
-        Fri, 30 Jun 2023 15:16:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=lAGAJ28n1AlcMoZYeCm9uRz7rvcCocSlQtZJp9kS4hM=; b=MDK5OMbWDIQ7k5BUsVfTTCeUKK
-        ykHg2ksytfiKty5DqeoojsJgI19pnpO3bU4G0Nu4GjG2hEs2ZxnYXR7D6/oVlp5Pe2D5JneqmFcdb
-        aqUSSmtLLmtBD1hqWecPq0g6kKIyzG4SS3mQ1IFdkZFT8q1yIbLznGNVCRFkmuvgVZewrQL+j94VD
-        WaM6JFD5ZLKSStA4y0A2mjB/5tQW5fCKp810bYosB6+mCMAVZBJndIY7cGkKy5/JBuK2Tl+F43Ugr
-        599NI5n1vZXoqkj6Re0aIa5xI5fj+j2Mg09LQQtRQAZLHqXoNHWcWfm/2CAipcBnuw9FG3zZ4Gpbp
-        XVBvS0Ww==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1qFMM7-004egi-0d;
-        Fri, 30 Jun 2023 22:12:43 +0000
-Date:   Fri, 30 Jun 2023 15:12:43 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Jeremy Kerr <jk@ozlabs.org>, Arnd Bergmann <arnd@arndb.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Carlos Llamas <cmllamas@google.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Brad Warrum <bwarrum@linux.ibm.com>,
-        Ritu Agarwal <rituagar@linux.ibm.com>,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Sterba <dsterba@suse.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Ian Kent <raven@themaw.net>,
-        Luis de Bethencourt <luisbg@kernel.org>,
-        Salah Triki <salah.triki@gmail.com>,
-        "Tigran A. Aivazian" <aivazian.tigran@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Joel Becker <jlbec@evilplan.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Tyler Hicks <code@tyhicks.com>,
-        Ard Biesheuvel <ardb@kernel.org>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <muchun.song@linux.dev>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Dave Kleikamp <shaggy@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Bob Copeland <me@bobcopeland.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-        Anders Larsen <al@alarsen.net>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Evgeniy Dushistov <dushistov@mail.ru>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Damien Le Moal <dlemoal@kernel.org>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Song Liu <song@kernel.org>, Yonghong Song <yhs@fb.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Juergen Gross <jgross@suse.com>,
-        Ruihan Li <lrh2000@pku.edu.cn>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Udipto Goswami <quic_ugoswami@quicinc.com>,
-        Linyu Yuan <quic_linyyuan@quicinc.com>,
-        John Keeping <john@keeping.me.uk>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        Dan Carpenter <error27@gmail.com>,
-        Yuta Hayama <hayama@lineo.co.jp>,
-        Jozef Martiniak <jomajm@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Sandeep Dhavale <dhavale@google.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        ZhangPeng <zhangpeng362@huawei.com>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Aditya Garg <gargaditya08@live.com>,
-        Erez Zadok <ezk@cs.stonybrook.edu>,
-        Yifei Liu <yifeliu@cs.stonybrook.edu>,
-        Yu Zhe <yuzhe@nfschina.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Oleg Kanatov <okanatov@gmail.com>,
-        "Dr. David Alan Gilbert" <linux@treblig.org>,
-        Jiangshan Yi <yijiangshan@kylinos.cn>,
-        xu xin <cgel.zte@gmail.com>, Stefan Roesch <shr@devkernel.io>,
-        Zhihao Cheng <chengzhihao1@huawei.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Minghao Chi <chi.minghao@zte.com.cn>,
-        Seth Forshee <sforshee@digitalocean.com>,
-        Zeng Jingxiang <linuszeng@tencent.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Zhang Yi <yi.zhang@huawei.com>, Tom Rix <trix@redhat.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Chen Zhongjin <chenzhongjin@huawei.com>,
-        Zhengchao Shao <shaozhengchao@huawei.com>,
-        Rik van Riel <riel@surriel.com>,
-        Jingyu Wang <jingyuwang_vip@163.com>,
-        Hangyu Hua <hbh25y@gmail.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-usb@vger.kernel.org,
-        v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, autofs@vger.kernel.org,
-        linux-mm@kvack.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, codalist@coda.cs.cmu.edu,
-        ecryptfs@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-um@lists.infradead.org, linux-mtd@lists.infradead.org,
-        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com,
-        linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
-        linux-unionfs@vger.kernel.org, linux-hardening@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org,
-        linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Subject: Re: [PATCH 01/79] fs: add ctime accessors infrastructure
-Message-ID: <ZJ9TW9MQmlqmbRU/@bombadil.infradead.org>
-References: <20230621144507.55591-1-jlayton@kernel.org>
- <20230621144507.55591-2-jlayton@kernel.org>
+        with ESMTP id S229622AbjGDBJs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 Jul 2023 21:09:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16958184
+        for <ceph-devel@vger.kernel.org>; Mon,  3 Jul 2023 18:09:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1688432942;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=WXCms+65LqYKrmZBhhf/y9w2Ow+x0tGEGBk7yYwG+Bc=;
+        b=BP+vM54At6m7wRiZPLnwC0uiL/y65a94Al32Injz7Py6Nskx6l0DAJBljefga3CJh8NoAK
+        KleDb8CGnXnXHf5xkEXfFLyFaq2cDdnYqcWBN0OzunaZLmOjEzoXEeWEpYXOKuNbXTQa39
+        /C/csR/E1hGxptpbKi9zWLcFp8xRanE=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-22-j-kypVRgMt2r3qb61K1FKw-1; Mon, 03 Jul 2023 21:09:01 -0400
+X-MC-Unique: j-kypVRgMt2r3qb61K1FKw-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1b80c19b3e2so51683795ad.1
+        for <ceph-devel@vger.kernel.org>; Mon, 03 Jul 2023 18:09:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688432940; x=1691024940;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WXCms+65LqYKrmZBhhf/y9w2Ow+x0tGEGBk7yYwG+Bc=;
+        b=kyzssga92VO7R9bLECjRFcKAvKZYs/iIaOjIwOjLlUncr55SYguUjveH3ebup4++zU
+         BDr13RobqT+i0/Q6KNAGH2KCuMSOjeO9xLxHSC2mlvHR+raw8grNc7U/EHq1vZCM6R6K
+         SLCxKD/azsGAuK/jizOWJ9aBhygwacg+hA8K9kkbak3OvzynDgHrQbQpTos6iTHkm6yn
+         fn7KKbOQNHbrti9qzNy3SFP9R7REOKA6Q90YvxCtfGIGQUWEW7iOQ9gKRyWeuRL6JLl/
+         uHMsozDPq0QfS4F5Wr0cp5h+An4Aj35rho6oK1sjT4bsWFyd+RiChRfJDFO5aNukdqyU
+         zYhg==
+X-Gm-Message-State: ABy/qLb8SY5B0pzUwltiuZedL7tCw0YWWo5qK7tt5ZHg36Luq/dko5Gw
+        f4UZav7wROt7jXUd0h5Gy9qe+Taxy1s53nN2hMHkQBgt3dfybpevNdLDZq5FQRFFzr25Rg0tHWD
+        KS1sje7FqrP1GyppkoV3FyQ==
+X-Received: by 2002:a17:902:ab81:b0:1b8:21f:bcc2 with SMTP id f1-20020a170902ab8100b001b8021fbcc2mr8285840plr.34.1688432940154;
+        Mon, 03 Jul 2023 18:09:00 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlF8J/qamT+QxSmLqt2/HMj0wZqnpxCzoME3hFQuIzuCGLQWUFGxKr2LCAZv7luGDotwZXtVWQ==
+X-Received: by 2002:a17:902:ab81:b0:1b8:21f:bcc2 with SMTP id f1-20020a170902ab8100b001b8021fbcc2mr8285835plr.34.1688432939786;
+        Mon, 03 Jul 2023 18:08:59 -0700 (PDT)
+Received: from [10.72.12.93] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id w1-20020a170902d70100b001b523714ed5sm15873685ply.252.2023.07.03.18.08.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jul 2023 18:08:59 -0700 (PDT)
+Message-ID: <0a42c5d0-0479-e60e-ac84-be3b915c62d9@redhat.com>
+Date:   Tue, 4 Jul 2023 09:08:46 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230621144507.55591-2-jlayton@kernel.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+From:   Xiubo Li <xiubli@redhat.com>
+Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
+To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc:     Gregory Farnum <gfarnum@redhat.com>,
+        Christian Brauner <brauner@kernel.org>, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
+ <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com>
+ <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
+ <20230609-alufolie-gezaubert-f18ef17cda12@brauner>
+ <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
+ <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com>
+ <CAJ4mKGby71qfb3gd696XH3AazeR0Qc_VGYupMznRH3Piky+VGA@mail.gmail.com>
+ <977d8133-a55f-0667-dc12-aa6fd7d8c3e4@redhat.com>
+ <CAEivzxcr99sERxZX17rZ5jW9YSzAWYvAjOOhBH+FqRoso2=yng@mail.gmail.com>
+ <626175e2-ee91-0f1a-9e5d-e506aea366fa@redhat.com>
+ <64241ff0-9af3-6817-478f-c24a0b9de9b3@redhat.com>
+ <CAEivzxeF51ZEKhQ-0M35nooZ7_cZgk1-q75-YbkeWpZ9RuHG4A@mail.gmail.com>
+ <4c4f73d8-8238-6ab8-ae50-d83c1441ac05@redhat.com>
+ <CAEivzxeQGkemxVwJ148b_+OmntUAWkdL==yMiTMN+GPyaLkFPg@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAEivzxeQGkemxVwJ148b_+OmntUAWkdL==yMiTMN+GPyaLkFPg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Jun 21, 2023 at 10:45:06AM -0400, Jeff Layton wrote:
-> struct timespec64 has unused bits in the tv_nsec field that can be used
-> for other purposes. In future patches, we're going to change how the
-> inode->i_ctime is accessed in certain inodes in order to make use of
-> them. In order to do that safely though, we'll need to eradicate raw
-> accesses of the inode->i_ctime field from the kernel.
-> 
-> Add new accessor functions for the ctime that we can use to replace them.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Sorry, not sure, why my last reply wasn't sent out.
 
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Do it again.
 
-  Luis
+
+On 6/26/23 19:23, Aleksandr Mikhalitsyn wrote:
+> On Mon, Jun 26, 2023 at 4:12 AM Xiubo Li<xiubli@redhat.com>  wrote:
+>> On 6/24/23 15:11, Aleksandr Mikhalitsyn wrote:
+>>> On Sat, Jun 24, 2023 at 3:37 AM Xiubo Li<xiubli@redhat.com>  wrote:
+>>>> [...]
+>>>>
+>>>>    > > >
+>>>>    > > > I thought about this too and came to the same conclusion, that
+>>>> UID/GID
+>>>>    > > > based
+>>>>    > > > restriction can be applied dynamically, so detecting it on mount-time
+>>>>    > > > helps not so much.
+>>>>    > > >
+>>>>    > > For this you please raise one PR to ceph first to support this, and in
+>>>>    > > the PR we can discuss more for the MDS auth caps. And after the PR
+>>>>    > > getting merged then in this patch series you need to check the
+>>>>    > > corresponding option or flag to determine whether could the idmap
+>>>>    > > mounting succeed.
+>>>>    >
+>>>>    > I'm sorry but I don't understand what we want to support here. Do we
+>>>> want to
+>>>>    > add some new ceph request that allows to check if UID/GID-based
+>>>>    > permissions are applied for
+>>>>    > a particular ceph client user?
+>>>>
+>>>> IMO we should prevent user to set UID/GID-based permisions caps from
+>>>> ceph side.
+>>>>
+>>>> As I know currently there is no way to prevent users to set MDS auth
+>>>> caps, IMO in ceph side at least we need one flag or option to disable
+>>>> this once users want this fs cluster sever for idmap mounts use case.
+>>> How this should be visible from the user side? We introducing a new
+>>> kernel client mount option,
+>>> like "nomdscaps", then pass flag to the MDS and MDS should check that
+>>> MDS auth permissions
+>>> are not applied (on the mount time) and prevent them from being
+>>> applied later while session is active. Like that?
+>>>
+>>> At the same time I'm thinking about protocol extension that adds 2
+>>> additional fields for UID/GID. This will allow to correctly
+>>> handle everything. I wanted to avoid any changes to the protocol or
+>>> server-side things. But if we want to change MDS side,
+>>> maybe it's better then to go this way?
+> Hi Xiubo,
+>
+>> There is another way:
+>>
+>> For each client it will have a dedicated client auth caps, something like:
+>>
+>> client.foo
+>>     key: *key*
+>>     caps: [mds] allow r, allow rw path=/bar
+>>     caps: [mon] allow r
+>>     caps: [osd] allow rw tag cephfs data=cephfs_a
+> Do we have any infrastructure to get this caps list on the client side
+> right now?
+> (I've taken a quick look through the code and can't find anything
+> related to this.)
+
+I am afraid there is no.
+
+But just after the following ceph PR gets merged it will be easy to do this:
+
+https://github.com/ceph/ceph/pull/48027
+
+This is still under testing.
+
+>> When mounting this client with idmap enabled, then we can just check the
+>> above [mds] caps, if there has any UID/GID based permissions set, then
+>> fail the mounting.
+> understood
+>
+>> That means this kind client couldn't be mounted with idmap enabled.
+>>
+>> Also we need to make sure that once there is a mount with idmap enabled,
+>> the corresponding client caps couldn't be append the UID/GID based
+>> permissions. This need a patch in ceph anyway IMO.
+> So, yeah we will need to effectively block cephx permission changes if
+> there is a client mounted with
+> an active idmapped mount. Sounds as something that require massive
+> changes on the server side.
+
+Maybe no need much, it should be simple IMO. But I am not 100% sure.
+
+> At the same time this will just block users from using idmapped mounts
+> along with UID/GID restrictions.
+>
+> If you want me to change server-side anyways, isn't it better just to
+> extend cephfs protocol to properly
+> handle UID/GIDs with idmapped mounts? (It was originally proposed by Christian.)
+> What we need to do here is to add a separate UID/GID fields for ceph
+> requests those are creating a new inodes
+> (like mknod, symlink, etc).
+
+BTW, could you explain it more ? How could this resolve the issue we are 
+discussing here ?
+
+Thanks
+
+- Xiubo
+
+
+>
+> Kind regards,
+> Alex
+>
+>> Thanks
+>>
+>> - Xiubo
+>>
+>>
+>>
+>>
+>>
+>>> Thanks,
+>>> Alex
+>>>
+>>>> Thanks
+>>>>
+>>>> - Xiubo
+>>>>
+
