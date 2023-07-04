@@ -2,66 +2,66 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE5307466C6
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Jul 2023 03:09:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 719797466CF
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Jul 2023 03:11:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231196AbjGDBJy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 3 Jul 2023 21:09:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44032 "EHLO
+        id S231129AbjGDBLc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 3 Jul 2023 21:11:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229622AbjGDBJs (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 Jul 2023 21:09:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16958184
-        for <ceph-devel@vger.kernel.org>; Mon,  3 Jul 2023 18:09:02 -0700 (PDT)
+        with ESMTP id S230391AbjGDBL1 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 3 Jul 2023 21:11:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19CC610C6
+        for <ceph-devel@vger.kernel.org>; Mon,  3 Jul 2023 18:10:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1688432942;
+        s=mimecast20190719; t=1688433032;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=WXCms+65LqYKrmZBhhf/y9w2Ow+x0tGEGBk7yYwG+Bc=;
-        b=BP+vM54At6m7wRiZPLnwC0uiL/y65a94Al32Injz7Py6Nskx6l0DAJBljefga3CJh8NoAK
-        KleDb8CGnXnXHf5xkEXfFLyFaq2cDdnYqcWBN0OzunaZLmOjEzoXEeWEpYXOKuNbXTQa39
-        /C/csR/E1hGxptpbKi9zWLcFp8xRanE=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=tHvy2cSjRNLBspkBnwHleNI4FVF/3lOoEAeskedvTOg=;
+        b=Wo0ndSWrd24Qs2Nvemgrxu/06Wcd9ChrcC6mARjxT+CWdaGqgplEssGz8t8zE3QzBWLZkS
+        UVcRYBkIo9+Bb/y/EE87WoZVKOrGahwn6Z6GndUlt1P+loATY8SIXik1aHbKwu1D5r9jIG
+        fxv5q2EbeolrZ8Sqj/mQuctgXyRhP/k=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-22-j-kypVRgMt2r3qb61K1FKw-1; Mon, 03 Jul 2023 21:09:01 -0400
-X-MC-Unique: j-kypVRgMt2r3qb61K1FKw-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1b80c19b3e2so51683795ad.1
-        for <ceph-devel@vger.kernel.org>; Mon, 03 Jul 2023 18:09:00 -0700 (PDT)
+ us-mta-397-5HJKHVYJNVWDw4Xnxpm-LA-1; Mon, 03 Jul 2023 21:10:31 -0400
+X-MC-Unique: 5HJKHVYJNVWDw4Xnxpm-LA-1
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-1b81fc6c729so50650285ad.3
+        for <ceph-devel@vger.kernel.org>; Mon, 03 Jul 2023 18:10:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1688432940; x=1691024940;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20221208; t=1688433030; x=1691025030;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WXCms+65LqYKrmZBhhf/y9w2Ow+x0tGEGBk7yYwG+Bc=;
-        b=kyzssga92VO7R9bLECjRFcKAvKZYs/iIaOjIwOjLlUncr55SYguUjveH3ebup4++zU
-         BDr13RobqT+i0/Q6KNAGH2KCuMSOjeO9xLxHSC2mlvHR+raw8grNc7U/EHq1vZCM6R6K
-         SLCxKD/azsGAuK/jizOWJ9aBhygwacg+hA8K9kkbak3OvzynDgHrQbQpTos6iTHkm6yn
-         fn7KKbOQNHbrti9qzNy3SFP9R7REOKA6Q90YvxCtfGIGQUWEW7iOQ9gKRyWeuRL6JLl/
-         uHMsozDPq0QfS4F5Wr0cp5h+An4Aj35rho6oK1sjT4bsWFyd+RiChRfJDFO5aNukdqyU
-         zYhg==
-X-Gm-Message-State: ABy/qLb8SY5B0pzUwltiuZedL7tCw0YWWo5qK7tt5ZHg36Luq/dko5Gw
-        f4UZav7wROt7jXUd0h5Gy9qe+Taxy1s53nN2hMHkQBgt3dfybpevNdLDZq5FQRFFzr25Rg0tHWD
-        KS1sje7FqrP1GyppkoV3FyQ==
-X-Received: by 2002:a17:902:ab81:b0:1b8:21f:bcc2 with SMTP id f1-20020a170902ab8100b001b8021fbcc2mr8285840plr.34.1688432940154;
-        Mon, 03 Jul 2023 18:09:00 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlF8J/qamT+QxSmLqt2/HMj0wZqnpxCzoME3hFQuIzuCGLQWUFGxKr2LCAZv7luGDotwZXtVWQ==
-X-Received: by 2002:a17:902:ab81:b0:1b8:21f:bcc2 with SMTP id f1-20020a170902ab8100b001b8021fbcc2mr8285835plr.34.1688432939786;
-        Mon, 03 Jul 2023 18:08:59 -0700 (PDT)
+        bh=tHvy2cSjRNLBspkBnwHleNI4FVF/3lOoEAeskedvTOg=;
+        b=fOpGm2EV685LraxozvFHntl7H+XT0pleJLesQwU986mFIv4VqIPiPvgNinvPFz9Oi8
+         ypEiJFtq7yD6DH443XUf/97hvLycdDXW4GrXK6eJLQnxlTZ1rxP6FK9QS30D0OEqZjS0
+         g4/oZoNyEa626HjZ5Lr5xNqzSv7DSfQmAKSPvVD2laF3Y/ucC1otY3Alsy7ri6aT9qxT
+         CYABYLZGqRzSMx9ITRybk15b8fdvu0RNo7Db6XCQgQccq9ke4VLJOukISCVk8A6AqNbg
+         stFzM+/LmO56YZNm3Ni96zPd8Lj7Smcnf5awr6XTXl+yO6NugJPmRs5p+V8aVIjn/VXe
+         hzCQ==
+X-Gm-Message-State: ABy/qLaDcTxqSzg6lJpqupYrKdaei8qLTEZ9TTiT/HKiYRXVwJa13w2n
+        umlWCd8Y9ynikZu7Y6Mni0J11m73gJpLwP7QFgWvIVfdLyzQeq8xP5l8FM7BkwrA+0hsSDmYFUT
+        Sy5IBr3zRcEBQkN/rP8jPfTiObu+sDTVeobE=
+X-Received: by 2002:a17:902:e80c:b0:1b4:5697:d9a8 with SMTP id u12-20020a170902e80c00b001b45697d9a8mr11428304plg.24.1688433029775;
+        Mon, 03 Jul 2023 18:10:29 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlEkUcs+Igdu1cGCcdWMRT4RWhJygrdqtCuKld769XYQogZn8ImhvI35kbP5T5WjvG7mZV0IdQ==
+X-Received: by 2002:a17:902:e80c:b0:1b4:5697:d9a8 with SMTP id u12-20020a170902e80c00b001b45697d9a8mr11428293plg.24.1688433029436;
+        Mon, 03 Jul 2023 18:10:29 -0700 (PDT)
 Received: from [10.72.12.93] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id w1-20020a170902d70100b001b523714ed5sm15873685ply.252.2023.07.03.18.08.55
+        by smtp.gmail.com with ESMTPSA id s18-20020a170902a51200b001b7fb1a8200sm14137286plq.258.2023.07.03.18.10.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Jul 2023 18:08:59 -0700 (PDT)
-Message-ID: <0a42c5d0-0479-e60e-ac84-be3b915c62d9@redhat.com>
-Date:   Tue, 4 Jul 2023 09:08:46 +0800
+        Mon, 03 Jul 2023 18:10:29 -0700 (PDT)
+Message-ID: <f885fddd-d511-0e31-cafe-b766144e6207@redhat.com>
+Date:   Tue, 4 Jul 2023 09:10:22 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.11.0
-From:   Xiubo Li <xiubli@redhat.com>
 Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
+Content-Language: en-US
 To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 Cc:     Gregory Farnum <gfarnum@redhat.com>,
         Christian Brauner <brauner@kernel.org>, stgraber@ubuntu.com,
@@ -82,14 +82,15 @@ References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
  <CAEivzxeF51ZEKhQ-0M35nooZ7_cZgk1-q75-YbkeWpZ9RuHG4A@mail.gmail.com>
  <4c4f73d8-8238-6ab8-ae50-d83c1441ac05@redhat.com>
  <CAEivzxeQGkemxVwJ148b_+OmntUAWkdL==yMiTMN+GPyaLkFPg@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CAEivzxeQGkemxVwJ148b_+OmntUAWkdL==yMiTMN+GPyaLkFPg@mail.gmail.com>
+ <CAEivzxeBNOeufOraU27Y+qVApVjAoLhzwPnw0HSkqSt6P3MV9w@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <CAEivzxeBNOeufOraU27Y+qVApVjAoLhzwPnw0HSkqSt6P3MV9w@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -97,130 +98,118 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Sorry, not sure, why my last reply wasn't sent out.
 
-Do it again.
-
-
-On 6/26/23 19:23, Aleksandr Mikhalitsyn wrote:
-> On Mon, Jun 26, 2023 at 4:12 AM Xiubo Li<xiubli@redhat.com>  wrote:
->> On 6/24/23 15:11, Aleksandr Mikhalitsyn wrote:
->>> On Sat, Jun 24, 2023 at 3:37 AM Xiubo Li<xiubli@redhat.com>  wrote:
->>>> [...]
->>>>
->>>>    > > >
->>>>    > > > I thought about this too and came to the same conclusion, that
->>>> UID/GID
->>>>    > > > based
->>>>    > > > restriction can be applied dynamically, so detecting it on mount-time
->>>>    > > > helps not so much.
->>>>    > > >
->>>>    > > For this you please raise one PR to ceph first to support this, and in
->>>>    > > the PR we can discuss more for the MDS auth caps. And after the PR
->>>>    > > getting merged then in this patch series you need to check the
->>>>    > > corresponding option or flag to determine whether could the idmap
->>>>    > > mounting succeed.
->>>>    >
->>>>    > I'm sorry but I don't understand what we want to support here. Do we
->>>> want to
->>>>    > add some new ceph request that allows to check if UID/GID-based
->>>>    > permissions are applied for
->>>>    > a particular ceph client user?
->>>>
->>>> IMO we should prevent user to set UID/GID-based permisions caps from
->>>> ceph side.
->>>>
->>>> As I know currently there is no way to prevent users to set MDS auth
->>>> caps, IMO in ceph side at least we need one flag or option to disable
->>>> this once users want this fs cluster sever for idmap mounts use case.
->>> How this should be visible from the user side? We introducing a new
->>> kernel client mount option,
->>> like "nomdscaps", then pass flag to the MDS and MDS should check that
->>> MDS auth permissions
->>> are not applied (on the mount time) and prevent them from being
->>> applied later while session is active. Like that?
+On 6/26/23 19:49, Aleksandr Mikhalitsyn wrote:
+> On Mon, Jun 26, 2023 at 1:23 PM Aleksandr Mikhalitsyn
+> <aleksandr.mikhalitsyn@canonical.com> wrote:
+>> On Mon, Jun 26, 2023 at 4:12 AM Xiubo Li <xiubli@redhat.com> wrote:
 >>>
->>> At the same time I'm thinking about protocol extension that adds 2
->>> additional fields for UID/GID. This will allow to correctly
->>> handle everything. I wanted to avoid any changes to the protocol or
->>> server-side things. But if we want to change MDS side,
->>> maybe it's better then to go this way?
-> Hi Xiubo,
->
->> There is another way:
+>>> On 6/24/23 15:11, Aleksandr Mikhalitsyn wrote:
+>>>> On Sat, Jun 24, 2023 at 3:37 AM Xiubo Li <xiubli@redhat.com> wrote:
+>>>>> [...]
+>>>>>
+>>>>>    > > >
+>>>>>    > > > I thought about this too and came to the same conclusion, that
+>>>>> UID/GID
+>>>>>    > > > based
+>>>>>    > > > restriction can be applied dynamically, so detecting it on mount-time
+>>>>>    > > > helps not so much.
+>>>>>    > > >
+>>>>>    > > For this you please raise one PR to ceph first to support this, and in
+>>>>>    > > the PR we can discuss more for the MDS auth caps. And after the PR
+>>>>>    > > getting merged then in this patch series you need to check the
+>>>>>    > > corresponding option or flag to determine whether could the idmap
+>>>>>    > > mounting succeed.
+>>>>>    >
+>>>>>    > I'm sorry but I don't understand what we want to support here. Do we
+>>>>> want to
+>>>>>    > add some new ceph request that allows to check if UID/GID-based
+>>>>>    > permissions are applied for
+>>>>>    > a particular ceph client user?
+>>>>>
+>>>>> IMO we should prevent user to set UID/GID-based permisions caps from
+>>>>> ceph side.
+>>>>>
+>>>>> As I know currently there is no way to prevent users to set MDS auth
+>>>>> caps, IMO in ceph side at least we need one flag or option to disable
+>>>>> this once users want this fs cluster sever for idmap mounts use case.
+>>>> How this should be visible from the user side? We introducing a new
+>>>> kernel client mount option,
+>>>> like "nomdscaps", then pass flag to the MDS and MDS should check that
+>>>> MDS auth permissions
+>>>> are not applied (on the mount time) and prevent them from being
+>>>> applied later while session is active. Like that?
+>>>>
+>>>> At the same time I'm thinking about protocol extension that adds 2
+>>>> additional fields for UID/GID. This will allow to correctly
+>>>> handle everything. I wanted to avoid any changes to the protocol or
+>>>> server-side things. But if we want to change MDS side,
+>>>> maybe it's better then to go this way?
+>> Hi Xiubo,
 >>
->> For each client it will have a dedicated client auth caps, something like:
->>
->> client.foo
->>     key: *key*
->>     caps: [mds] allow r, allow rw path=/bar
->>     caps: [mon] allow r
->>     caps: [osd] allow rw tag cephfs data=cephfs_a
-> Do we have any infrastructure to get this caps list on the client side
-> right now?
-> (I've taken a quick look through the code and can't find anything
-> related to this.)
+>>> There is another way:
+>>>
+>>> For each client it will have a dedicated client auth caps, something like:
+>>>
+>>> client.foo
+>>>     key: *key*
+>>>     caps: [mds] allow r, allow rw path=/bar
+>>>     caps: [mon] allow r
+>>>     caps: [osd] allow rw tag cephfs data=cephfs_a
+>> Do we have any infrastructure to get this caps list on the client side
+>> right now?
+>> (I've taken a quick look through the code and can't find anything
+>> related to this.)
+> I've found your PR that looks related https://github.com/ceph/ceph/pull/48027
 
-I am afraid there is no.
-
-But just after the following ceph PR gets merged it will be easy to do this:
-
-https://github.com/ceph/ceph/pull/48027
-
-This is still under testing.
-
->> When mounting this client with idmap enabled, then we can just check the
->> above [mds] caps, if there has any UID/GID based permissions set, then
->> fail the mounting.
-> understood
->
->> That means this kind client couldn't be mounted with idmap enabled.
->>
->> Also we need to make sure that once there is a mount with idmap enabled,
->> the corresponding client caps couldn't be append the UID/GID based
->> permissions. This need a patch in ceph anyway IMO.
-> So, yeah we will need to effectively block cephx permission changes if
-> there is a client mounted with
-> an active idmapped mount. Sounds as something that require massive
-> changes on the server side.
-
-Maybe no need much, it should be simple IMO. But I am not 100% sure.
-
-> At the same time this will just block users from using idmapped mounts
-> along with UID/GID restrictions.
->
-> If you want me to change server-side anyways, isn't it better just to
-> extend cephfs protocol to properly
-> handle UID/GIDs with idmapped mounts? (It was originally proposed by Christian.)
-> What we need to do here is to add a separate UID/GID fields for ceph
-> requests those are creating a new inodes
-> (like mknod, symlink, etc).
-
-BTW, could you explain it more ? How could this resolve the issue we are 
-discussing here ?
+Yeah, after this we need to do some extra work in kclient and then it 
+will be easy to check the caps I think.
 
 Thanks
 
 - Xiubo
 
-
->
-> Kind regards,
-> Alex
->
->> Thanks
+>>> When mounting this client with idmap enabled, then we can just check the
+>>> above [mds] caps, if there has any UID/GID based permissions set, then
+>>> fail the mounting.
+>> understood
 >>
->> - Xiubo
->>
->>
->>
->>
->>
->>> Thanks,
->>> Alex
+>>> That means this kind client couldn't be mounted with idmap enabled.
 >>>
->>>> Thanks
+>>> Also we need to make sure that once there is a mount with idmap enabled,
+>>> the corresponding client caps couldn't be append the UID/GID based
+>>> permissions. This need a patch in ceph anyway IMO.
+>> So, yeah we will need to effectively block cephx permission changes if
+>> there is a client mounted with
+>> an active idmapped mount. Sounds as something that require massive
+>> changes on the server side.
+>>
+>> At the same time this will just block users from using idmapped mounts
+>> along with UID/GID restrictions.
+>>
+>> If you want me to change server-side anyways, isn't it better just to
+>> extend cephfs protocol to properly
+>> handle UID/GIDs with idmapped mounts? (It was originally proposed by Christian.)
+>> What we need to do here is to add a separate UID/GID fields for ceph
+>> requests those are creating a new inodes
+>> (like mknod, symlink, etc).
+>>
+>> Kind regards,
+>> Alex
+>>
+>>> Thanks
+>>>
+>>> - Xiubo
+>>>
+>>>
+>>>
+>>>
+>>>
+>>>> Thanks,
+>>>> Alex
 >>>>
->>>> - Xiubo
->>>>
+>>>>> Thanks
+>>>>>
+>>>>> - Xiubo
+>>>>>
 
