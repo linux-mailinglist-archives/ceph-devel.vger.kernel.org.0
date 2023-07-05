@@ -2,53 +2,138 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 69AF1748D08
-	for <lists+ceph-devel@lfdr.de>; Wed,  5 Jul 2023 21:06:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C98A274905D
+	for <lists+ceph-devel@lfdr.de>; Wed,  5 Jul 2023 23:58:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233717AbjGETGE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 5 Jul 2023 15:06:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43200 "EHLO
+        id S232516AbjGEV6N (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 5 Jul 2023 17:58:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233423AbjGETF0 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 5 Jul 2023 15:05:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B97A526AB;
-        Wed,  5 Jul 2023 12:03:57 -0700 (PDT)
+        with ESMTP id S232760AbjGEV6H (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 5 Jul 2023 17:58:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AEE0199E;
+        Wed,  5 Jul 2023 14:58:06 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 54F0161705;
-        Wed,  5 Jul 2023 19:03:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07038C433C7;
-        Wed,  5 Jul 2023 19:03:55 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F327161778;
+        Wed,  5 Jul 2023 21:58:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBE02C433C7;
+        Wed,  5 Jul 2023 21:57:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688583836;
-        bh=agaQfFLs97B/2laDvZLTXaipIE9mmbV688h50qblTPI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DbAiKeFwgLo61vRFNDyy+Zg2tk4IEJSRgdihuWLOcuSYFYDLHRWkc3bFDWt2pv+6p
-         YYlkIHYAwU7f3QBhErbQ09dAHiCR/lrKLDRn2zFvLgAir7wREK3FzSp2Cy5nbr6wBX
-         Bkqv2A7eixzvZyQhIC/ywkVCTP3o3xcmdGmy/SXDsANqZdBTVosQyTLibPeQvT0nH2
-         9lIoK6yQ+XKQVKNZFq93MI+ZCmEoNc7zpdEPf4199iQEq5v2ZcpH35i4ReN7JYS7jn
-         XFrziUiZH8LCk2pjVadEMShdoXf/dphspLeh8uuEkGUoy3eltkz6K85WcGeoL81wZN
-         VAh6z9WNkzWXQ==
+        s=k20201202; t=1688594285;
+        bh=JlErKO6ytzrETfJF10RJ07fFyXoxaUt5+ApLH28Eksk=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=ox9UCUOCrMoArAN2UWINeG7QvaXvn/rW6VX3bNg/iJYSvDmftw/A4NpK1NYTdX1NF
+         gVgMoqKe4Wy+YcaUy/Dyaq00MJKT04z3nDqfKuQM4SFZsRbASIDWrt/F1bfZ/Sk9IA
+         IlCUdLT6kxy2jL8SF3nViHjnNHXzs55XV4F3VEYsgVxzqxUcCiE9JSR2Z8IfDFpjTE
+         aAs5GOvVMsx8Eye0YwI4OGGuVtit0IDRpyx+/wLT78cg1mMMLjGSPd8pWmdQxt1+Az
+         UpvwRSPwHQIIqvl4d9BIKKNlv96fZDtb/zFnJIHpMrXV8Xk+YsvNrTXbO+lqW0MMpc
+         fXzU6mvU9YhKA==
+Message-ID: <a4e6cfec345487fc9ac8ab814a817c79a61b123a.camel@kernel.org>
+Subject: Re: [PATCH v2 00/89] fs: new accessors for inode->i_ctime
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>,
-        Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org
-Subject: [PATCH v2 30/92] ceph: convert to ctime accessor functions
-Date:   Wed,  5 Jul 2023 15:00:55 -0400
-Message-ID: <20230705190309.579783-28-jlayton@kernel.org>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230705190309.579783-1-jlayton@kernel.org>
-References: <20230705185755.579053-1-jlayton@kernel.org>
- <20230705190309.579783-1-jlayton@kernel.org>
+To:     jk@ozlabs.org, arnd@arndb.de, mpe@ellerman.id.au,
+        npiggin@gmail.com, christophe.leroy@csgroup.eu, hca@linux.ibm.com,
+        gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+        maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
+        cmllamas@google.com, surenb@google.com,
+        dennis.dalessandro@cornelisnetworks.com, jgg@ziepe.ca,
+        leon@kernel.org, bwarrum@linux.ibm.com, rituagar@linux.ibm.com,
+        ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
+        linux_oss@crudebyte.com, dsterba@suse.com, dhowells@redhat.com,
+        marc.dionne@auristor.com, viro@zeniv.linux.org.uk,
+        raven@themaw.net, luisbg@kernel.org, salah.triki@gmail.com,
+        aivazian.tigran@gmail.com, ebiederm@xmission.com,
+        keescook@chromium.org, clm@fb.com, josef@toxicpanda.com,
+        xiubli@redhat.com, idryomov@gmail.com, jaharkes@cs.cmu.edu,
+        coda@cs.cmu.edu, jlbec@evilplan.org, hch@lst.de, nico@fluxnic.net,
+        rafael@kernel.org, code@tyhicks.com, ardb@kernel.org,
+        xiang@kernel.org, chao@kernel.org, huyue2@coolpad.com,
+        jefflexu@linux.alibaba.com, linkinjeon@kernel.org,
+        sj1557.seo@samsung.com, jack@suse.com, tytso@mit.edu,
+        adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        hirofumi@mail.parknet.co.jp, miklos@szeredi.hu,
+        rpeterso@redhat.com, agruenba@redhat.com, richard@nod.at,
+        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
+        mikulas@artax.karlin.mff.cuni.cz, mike.kravetz@oracle.com,
+        muchun.song@linux.dev, dwmw2@infradead.org, shaggy@kernel.org,
+        tj@kernel.org, trond.myklebust@hammerspace.com, anna@kernel.org,
+        chuck.lever@oracle.com, neilb@suse.de, kolga@netapp.com,
+        Dai.Ngo@oracle.com, tom@talpey.com, konishi.ryusuke@gmail.com,
+        anton@tuxera.com, almaz.alexandrovich@paragon-software.com,
+        mark@fasheh.com, joseph.qi@linux.alibaba.com, me@bobcopeland.com,
+        hubcap@omnibond.com, martin@omnibond.com, amir73il@gmail.com,
+        mcgrof@kernel.org, yzaikin@google.com, tony.luck@intel.com,
+        gpiccoli@igalia.com, al@alarsen.net, sfrench@samba.org,
+        pc@manguebit.com, lsahlber@redhat.com, sprasad@microsoft.com,
+        senozhatsky@chromium.org, phillip@squashfs.org.uk,
+        rostedt@goodmis.org, mhiramat@kernel.org, dushistov@mail.ru,
+        hdegoede@redhat.com, djwong@kernel.org, dlemoal@kernel.org,
+        naohiro.aota@wdc.com, jth@kernel.org, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+        song@kernel.org, yhs@fb.com, john.fastabend@gmail.com,
+        kpsingh@kernel.org, sdf@google.com, haoluo@google.com,
+        jolsa@kernel.org, hughd@google.com, akpm@linux-foundation.org,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, john.johansen@canonical.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        jgross@suse.com, stern@rowland.harvard.edu, lrh2000@pku.edu.cn,
+        sebastian.reichel@collabora.com, wsa+renesas@sang-engineering.com,
+        quic_ugoswami@quicinc.com, quic_linyyuan@quicinc.com,
+        john@keeping.me.uk, error27@gmail.com, quic_uaggarwa@quicinc.com,
+        hayama@lineo.co.jp, jomajm@gmail.com, axboe@kernel.dk,
+        dhavale@google.com, dchinner@redhat.com, hannes@cmpxchg.org,
+        zhangpeng362@huawei.com, slava@dubeyko.com, gargaditya08@live.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, yifeliu@cs.stonybrook.edu,
+        madkar@cs.stonybrook.edu, ezk@cs.stonybrook.edu,
+        yuzhe@nfschina.com, willy@infradead.org, okanatov@gmail.com,
+        jeffxu@chromium.org, linux@treblig.org, mirimmad17@gmail.com,
+        yijiangshan@kylinos.cn, yang.yang29@zte.com.cn,
+        xu.xin16@zte.com.cn, chengzhihao1@huawei.com, shr@devkernel.io,
+        Liam.Howlett@Oracle.com, adobriyan@gmail.com,
+        chi.minghao@zte.com.cn, roberto.sassu@huawei.com,
+        linuszeng@tencent.com, bvanassche@acm.org, zohar@linux.ibm.com,
+        yi.zhang@huawei.com, trix@redhat.com, fmdefrancesco@gmail.com,
+        ebiggers@google.com, princekumarmaurya06@gmail.com,
+        chenzhongjin@huawei.com, riel@surriel.com,
+        shaozhengchao@huawei.com, jingyuwang_vip@163.com,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-usb@vger.kernel.org, v9fs@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+        autofs@vger.kernel.org, linux-mm@kvack.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, linux-um@lists.infradead.org,
+        linux-mtd@lists.infradead.org,
+        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
+        linux-unionfs@vger.kernel.org, linux-hardening@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org,
+        linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        bpf@vger.kernel.org, netdev@vger.kernel.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org
+Date:   Wed, 05 Jul 2023 17:57:46 -0400
+In-Reply-To: <20230705185812.579118-1-jlayton@kernel.org>
+References: <20230705185812.579118-1-jlayton@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -57,137 +142,50 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-In later patches, we're going to change how the inode's ctime field is
-used. Switch to using accessor functions instead of raw accesses of
-inode->i_ctime.
+On Wed, 2023-07-05 at 14:58 -0400, Jeff Layton wrote:
+> v2:
+> - prepend patches to add missing ctime updates
+> - add simple_rename_timestamp helper function
+> - rename ctime accessor functions as inode_get_ctime/inode_set_ctime_*
+> - drop individual inode_ctime_set_{sec,nsec} helpers
+>=20
+> I've been working on a patchset to change how the inode->i_ctime is
+> accessed in order to give us conditional, high-res timestamps for the
+> ctime and mtime. struct timespec64 has unused bits in it that we can use
+> to implement this. In order to do that however, we need to wrap all
+> accesses of inode->i_ctime to ensure that bits used as flags are
+> appropriately handled.
+>=20
+> The patchset starts with reposts of some missing ctime updates that I
+> spotted in the tree. It then adds a new helper function for updating the
+> timestamp after a successful rename, and new ctime accessor
+> infrastructure.
+>=20
+> The bulk of the patchset is individual conversions of different
+> subsysteme to use the new infrastructure. Finally, the patchset renames
+> the i_ctime field to __i_ctime to help ensure that I didn't miss
+> anything.
+>=20
+> This should apply cleanly to linux-next as of this morning.
+>=20
+> Most of this conversion was done via 5 different coccinelle scripts, run
+> in succession, with a large swath of by-hand conversions to clean up the
+> remainder.
+>=20
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/ceph/acl.c   |  2 +-
- fs/ceph/caps.c  |  2 +-
- fs/ceph/inode.c | 17 ++++++++++-------
- fs/ceph/snap.c  |  2 +-
- fs/ceph/xattr.c |  2 +-
- 5 files changed, 14 insertions(+), 11 deletions(-)
+A couple of other things I should note:
 
-diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
-index 6945a938d396..c91b293267d7 100644
---- a/fs/ceph/acl.c
-+++ b/fs/ceph/acl.c
-@@ -93,7 +93,7 @@ int ceph_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 	char *value = NULL;
- 	struct iattr newattrs;
- 	struct inode *inode = d_inode(dentry);
--	struct timespec64 old_ctime = inode->i_ctime;
-+	struct timespec64 old_ctime = inode_get_ctime(inode);
- 	umode_t new_mode = inode->i_mode, old_mode = inode->i_mode;
- 
- 	if (ceph_snap(inode) != CEPH_NOSNAP) {
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index e2bb0d0072da..09cd6d334604 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -1400,7 +1400,7 @@ static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
- 
- 	arg->mtime = inode->i_mtime;
- 	arg->atime = inode->i_atime;
--	arg->ctime = inode->i_ctime;
-+	arg->ctime = inode_get_ctime(inode);
- 	arg->btime = ci->i_btime;
- 	arg->change_attr = inode_peek_iversion_raw(inode);
- 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 8e5f41d45283..bcdb1a0beccf 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -100,7 +100,7 @@ struct inode *ceph_get_snapdir(struct inode *parent)
- 	inode->i_uid = parent->i_uid;
- 	inode->i_gid = parent->i_gid;
- 	inode->i_mtime = parent->i_mtime;
--	inode->i_ctime = parent->i_ctime;
-+	inode_set_ctime_to_ts(inode, inode_get_ctime(parent));
- 	inode->i_atime = parent->i_atime;
- 	ci->i_rbytes = 0;
- 	ci->i_btime = ceph_inode(parent)->i_btime;
-@@ -688,6 +688,7 @@ void ceph_fill_file_time(struct inode *inode, int issued,
- 			 struct timespec64 *mtime, struct timespec64 *atime)
- {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
-+	struct timespec64 ictime = inode_get_ctime(inode);
- 	int warn = 0;
- 
- 	if (issued & (CEPH_CAP_FILE_EXCL|
-@@ -696,11 +697,12 @@ void ceph_fill_file_time(struct inode *inode, int issued,
- 		      CEPH_CAP_AUTH_EXCL|
- 		      CEPH_CAP_XATTR_EXCL)) {
- 		if (ci->i_version == 0 ||
--		    timespec64_compare(ctime, &inode->i_ctime) > 0) {
-+		    timespec64_compare(ctime, &ictime) > 0) {
- 			dout("ctime %lld.%09ld -> %lld.%09ld inc w/ cap\n",
--			     inode->i_ctime.tv_sec, inode->i_ctime.tv_nsec,
-+			     inode_get_ctime(inode).tv_sec,
-+			     inode_get_ctime(inode).tv_nsec,
- 			     ctime->tv_sec, ctime->tv_nsec);
--			inode->i_ctime = *ctime;
-+			inode_set_ctime_to_ts(inode, *ctime);
- 		}
- 		if (ci->i_version == 0 ||
- 		    ceph_seq_cmp(time_warp_seq, ci->i_time_warp_seq) > 0) {
-@@ -738,7 +740,7 @@ void ceph_fill_file_time(struct inode *inode, int issued,
- 	} else {
- 		/* we have no write|excl caps; whatever the MDS says is true */
- 		if (ceph_seq_cmp(time_warp_seq, ci->i_time_warp_seq) >= 0) {
--			inode->i_ctime = *ctime;
-+			inode_set_ctime_to_ts(inode, *ctime);
- 			inode->i_mtime = *mtime;
- 			inode->i_atime = *atime;
- 			ci->i_time_warp_seq = time_warp_seq;
-@@ -2166,7 +2168,8 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
- 		bool only = (ia_valid & (ATTR_SIZE|ATTR_MTIME|ATTR_ATIME|
- 					 ATTR_MODE|ATTR_UID|ATTR_GID)) == 0;
- 		dout("setattr %p ctime %lld.%ld -> %lld.%ld (%s)\n", inode,
--		     inode->i_ctime.tv_sec, inode->i_ctime.tv_nsec,
-+		     inode_get_ctime(inode).tv_sec,
-+		     inode_get_ctime(inode).tv_nsec,
- 		     attr->ia_ctime.tv_sec, attr->ia_ctime.tv_nsec,
- 		     only ? "ctime only" : "ignored");
- 		if (only) {
-@@ -2191,7 +2194,7 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr)
- 	if (dirtied) {
- 		inode_dirty_flags = __ceph_mark_dirty_caps(ci, dirtied,
- 							   &prealloc_cf);
--		inode->i_ctime = attr->ia_ctime;
-+		inode_set_ctime_to_ts(inode, attr->ia_ctime);
- 		inode_inc_iversion_raw(inode);
- 	}
- 
-diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-index 343d738448dc..c9920ade15f5 100644
---- a/fs/ceph/snap.c
-+++ b/fs/ceph/snap.c
-@@ -660,7 +660,7 @@ int __ceph_finish_cap_snap(struct ceph_inode_info *ci,
- 	capsnap->size = i_size_read(inode);
- 	capsnap->mtime = inode->i_mtime;
- 	capsnap->atime = inode->i_atime;
--	capsnap->ctime = inode->i_ctime;
-+	capsnap->ctime = inode_get_ctime(inode);
- 	capsnap->btime = ci->i_btime;
- 	capsnap->change_attr = inode_peek_iversion_raw(inode);
- 	capsnap->time_warp_seq = ci->i_time_warp_seq;
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index 806183959c47..1cbd84cc82a8 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -1238,7 +1238,7 @@ int __ceph_setxattr(struct inode *inode, const char *name,
- 		dirty = __ceph_mark_dirty_caps(ci, CEPH_CAP_XATTR_EXCL,
- 					       &prealloc_cf);
- 		ci->i_xattrs.dirty = true;
--		inode->i_ctime = current_time(inode);
-+		inode_set_ctime_current(inode);
- 	}
- 
- 	spin_unlock(&ci->i_ceph_lock);
--- 
-2.41.0
+If you sent me an Acked-by or Reviewed-by in the previous set, then I
+tried to keep it on the patch here, since the respun patches are mostly
+just renaming stuff from v1. Let me know if I've missed any.
 
+I've also pushed the pile to my tree as this tag:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/jlayton/linux.git/tag/?=
+h=3Dctime.20230705
+
+In case that's easier to work with.
+
+Cheers,
+--=20
+Jeff Layton <jlayton@kernel.org>
