@@ -2,74 +2,77 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DBC974B97C
-	for <lists+ceph-devel@lfdr.de>; Sat,  8 Jul 2023 00:27:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7113D74C11E
+	for <lists+ceph-devel@lfdr.de>; Sun,  9 Jul 2023 07:41:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232617AbjGGW1A (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 7 Jul 2023 18:27:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52908 "EHLO
+        id S231351AbjGIFlM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 9 Jul 2023 01:41:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231972AbjGGW06 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 7 Jul 2023 18:26:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B40BE213D;
-        Fri,  7 Jul 2023 15:26:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3614061A17;
-        Fri,  7 Jul 2023 22:26:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 98C79C433C8;
-        Fri,  7 Jul 2023 22:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688768815;
-        bh=XNuU257g7/eY+3nrxY6lelx95ViXarOL3czOsm6+DMA=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=QmxmCihZDu6lfLMA0avTtk2GVxxhGXfcKKjXS1i7FxG/UgQdnq+XiKgohlHSzthV6
-         b4Cfz0iA8jY5lTgJdReX4Q9EACnXISS/2/LXM/3VcMEAZk6kecnGCTaJDwlcmwMMYX
-         2osMKWhxiVXkz/JVLBSYI0qycQHcNN6Zg5+nZz7MNVn726G0oRyegaCjeCKApxWjmh
-         o/sTOiV4izJCmME/605uzdCIYqloNrJFIBZx9rIqzmfWn9QYsHf0U3L3gR6R2nmLre
-         KJirvCXqLZeZSxjzYqMW2ay9tnyf/90eANrs7kHkJdUDm4LQ+KNmm9LRiUzZbeRMI9
-         UtqZ8JhWasBSw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 847A6C4167B;
-        Fri,  7 Jul 2023 22:26:55 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph fixes for 6.5-rc1
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20230707161658.372600-1-idryomov@gmail.com>
-References: <20230707161658.372600-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20230707161658.372600-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.5-rc1
-X-PR-Tracked-Commit-Id: 257e6172ab36ebbe295a6c9ee9a9dd0fe54c1dc2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 3290badd1bb8c9ea91db5c0b2e1a635178119856
-Message-Id: <168876881552.27307.16810972206187815653.pr-tracker-bot@kernel.org>
-Date:   Fri, 07 Jul 2023 22:26:55 +0000
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        with ESMTP id S231318AbjGIFlL (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 9 Jul 2023 01:41:11 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4455512A
+        for <ceph-devel@vger.kernel.org>; Sat,  8 Jul 2023 22:41:10 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id 41be03b00d2f7-55bc29a909dso1678720a12.3
+        for <ceph-devel@vger.kernel.org>; Sat, 08 Jul 2023 22:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1688881270; x=1691473270;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oDVdWICwavrWQ8UAVYhe8ynFXsBBW1vVQ7W08zgiq24=;
+        b=BuKr1Z9sgUU2+LVB72ELX+MIdaiMzXd2QGmDT06thF9awYVKdUv1/VtZDQUTWc1Hp/
+         wMCm6hrTlsiJxrE3XrFjg8yos1Fush3kN1GWK++BWtsxkDKeOcgbjSCMouKiLkBpz8nC
+         sOcC7IsYltEvDW2oJfuF73dqZUkfV+95s2+09HEGHZrOlpoK9GicnLtQK15uUszL9p0O
+         xSKQzWK8LmnmGDghVz4btXxwQ4U7X/7j1Uz+x83bRSSK+gUvuZj1I3i/2RsQcChZrBhp
+         /smUyifbMzFAZz8YxFUg82yUcjCsw8AEeuEcBoJQrffKOs3BEv5pZ2u4T8p+sYmjjOBW
+         h9+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1688881270; x=1691473270;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oDVdWICwavrWQ8UAVYhe8ynFXsBBW1vVQ7W08zgiq24=;
+        b=OB55sDAINYwzw1O62bmihx/6nD+ZL8gRqXhfproh/RfjuWOSKkpK3tWY8atK+UIby7
+         40IZBRNGur2sZ2JK1wNh3Tbf/4Sm6UlptVwShaHT9P38tHUdIjJT1eL+RuZWYYeYHEb2
+         iQg8UD/YgHewiKQNSGujAU7iamdsE7q9uw0+IUajxh8WhiUI+6xcILFAf1JOugEcayQz
+         usJ40WBAZLe8eGYEmBYYulCac6RPlxAjYijkLT5XNsHzMyb2NLqhoQAz3qo6tCHmtCMU
+         A4qSy5IJ5iz3Xrb3CONPwX+QH4PwApVRdK6Dqwc6uSsG1kCSTX9DC5okZbK5+0LF8cMt
+         CCzQ==
+X-Gm-Message-State: ABy/qLblO+A4UoTSvD47SeW93CGD4z6RSzApVaryCQfOJvJCo1kXoRn4
+        0IS5OtSt55M1BCd22ablsK7BPLsiIr5h+kITG9Y=
+X-Google-Smtp-Source: APBJJlEpVoesQ83We3N4njXiVkNH+jjVpvimIE4OS4zjXm8KCouuEt/9NGV8pFuOSakBtCK0KoWvgVuzMeoMQdggNMw=
+X-Received: by 2002:a17:90a:6582:b0:262:ece1:5fd0 with SMTP id
+ k2-20020a17090a658200b00262ece15fd0mr7218552pjj.12.1688881269599; Sat, 08 Jul
+ 2023 22:41:09 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a05:6a10:cd06:b0:470:f443:15ec with HTTP; Sat, 8 Jul 2023
+ 22:41:09 -0700 (PDT)
+Reply-To: ninacoulibaly03@hotmail.com
+From:   nina coulibaly <ninacoulibaly30.info@gmail.com>
+Date:   Sun, 9 Jul 2023 05:41:09 +0000
+Message-ID: <CAFb7D3dotHKXffGPW6HCzW+91wR3X-5uU-4Ht9VM+oY=ZfdqQw@mail.gmail.com>
+Subject: from nina coulibaly
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=4.5 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
+        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-The pull request you sent on Fri,  7 Jul 2023 18:16:58 +0200:
+Dear,
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-6.5-rc1
+I am interested to invest with you in your country with total trust
+and i hope you will give me total support, sincerity and commitment.
+Please get back to me as soon as possible so that i can give you my
+proposed details of funding and others.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/3290badd1bb8c9ea91db5c0b2e1a635178119856
+Best Regards.
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Mrs Nina Coulibaly
