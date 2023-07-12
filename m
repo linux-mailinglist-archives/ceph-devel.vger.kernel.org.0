@@ -2,209 +2,162 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FB6974D7B1
-	for <lists+ceph-devel@lfdr.de>; Mon, 10 Jul 2023 15:33:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85EBD75078F
+	for <lists+ceph-devel@lfdr.de>; Wed, 12 Jul 2023 14:07:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232287AbjGJNdK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 10 Jul 2023 09:33:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43150 "EHLO
+        id S230196AbjGLMHr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 12 Jul 2023 08:07:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232944AbjGJNdF (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 10 Jul 2023 09:33:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B68019F;
-        Mon, 10 Jul 2023 06:32:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5933560FE9;
-        Mon, 10 Jul 2023 13:32:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7E3BC433C9;
-        Mon, 10 Jul 2023 13:32:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1688995962;
-        bh=ypo6EEC/a10vTp0LME1omXwBE1UiKK/mReyAl6l5UHQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=J7Z7W1QfjLNRfgVQcSdKnYFRxtD+3fk+fVeHY9xuci1TKV61DCMVSYVvDG9kwuCBX
-         g+QpzC0XDkSjeL9nV9+lGdPbp68Q96EXBiPlDNXBynN9HrAz4Y+E89ZYAnFm4gMFob
-         SGwQAd+JWX6wsLqjr9V4UXCKsBkrO6/s1MT1FJcjDjR0RhV1HnH8M/padgIYfYI3iT
-         50AKfuQ1Ba3eH+A3TeCdkft2SWR53hIVATzxttJnSld1dtaOLY6XNcMPkiIrdtp3w+
-         UMgZy7XJf81pa8iQgs3v7vGfymFo80jGgmK2T6kIjmEHcqRaAvCUmLi8QnIHmVmDpT
-         pZFJemBst7t+w==
-Message-ID: <c4eaff9389fe63ec4e29404ec0d1181b74935426.camel@kernel.org>
-Subject: Re: [PATCH v2 00/89] fs: new accessors for inode->i_ctime
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     jk@ozlabs.org, arnd@arndb.de, mpe@ellerman.id.au,
-        npiggin@gmail.com, christophe.leroy@csgroup.eu, hca@linux.ibm.com,
-        gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-        maco@android.com, joel@joelfernandes.org, cmllamas@google.com,
-        surenb@google.com, dennis.dalessandro@cornelisnetworks.com,
-        jgg@ziepe.ca, leon@kernel.org, bwarrum@linux.ibm.com,
-        rituagar@linux.ibm.com, ericvh@kernel.org, lucho@ionkov.net,
-        asmadeus@codewreck.org, linux_oss@crudebyte.com, dsterba@suse.com,
-        dhowells@redhat.com, marc.dionne@auristor.com,
-        viro@zeniv.linux.org.uk, raven@themaw.net, luisbg@kernel.org,
-        salah.triki@gmail.com, aivazian.tigran@gmail.com,
-        ebiederm@xmission.com, keescook@chromium.org, clm@fb.com,
-        josef@toxicpanda.com, xiubli@redhat.com, idryomov@gmail.com,
-        jaharkes@cs.cmu.edu, coda@cs.cmu.edu, jlbec@evilplan.org,
-        hch@lst.de, nico@fluxnic.net, rafael@kernel.org, code@tyhicks.com,
-        ardb@kernel.org, xiang@kernel.org, chao@kernel.org,
-        huyue2@coolpad.com, jefflexu@linux.alibaba.com,
-        linkinjeon@kernel.org, sj1557.seo@samsung.com, jack@suse.com,
-        tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
-        hirofumi@mail.parknet.co.jp, miklos@szeredi.hu,
-        rpeterso@redhat.com, agruenba@redhat.com, richard@nod.at,
-        anton.ivanov@cambridgegreys.com, johannes@sipsolutions.net,
-        mikulas@artax.karlin.mff.cuni.cz, mike.kravetz@oracle.com,
-        muchun.song@linux.dev, dwmw2@infradead.org, shaggy@kernel.org,
-        tj@kernel.org, trond.myklebust@hammerspace.com, anna@kernel.org,
-        chuck.lever@oracle.com, neilb@suse.de, kolga@netapp.com,
-        Dai.Ngo@oracle.com, tom@talpey.com, konishi.ryusuke@gmail.com,
-        anton@tuxera.com, almaz.alexandrovich@paragon-software.com,
-        mark@fasheh.com, joseph.qi@linux.alibaba.com, me@bobcopeland.com,
-        hubcap@omnibond.com, martin@omnibond.com, amir73il@gmail.com,
-        mcgrof@kernel.org, yzaikin@google.com, tony.luck@intel.com,
-        gpiccoli@igalia.com, al@alarsen.net, sfrench@samba.org,
-        pc@manguebit.com, lsahlber@redhat.com, sprasad@microsoft.com,
-        senozhatsky@chromium.org, phillip@squashfs.org.uk,
-        rostedt@goodmis.org, mhiramat@kernel.org, dushistov@mail.ru,
-        hdegoede@redhat.com, djwong@kernel.org, dlemoal@kernel.org,
-        naohiro.aota@wdc.com, jth@kernel.org, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
-        song@kernel.org, yhs@fb.com, john.fastabend@gmail.com,
-        kpsingh@kernel.org, sdf@google.com, haoluo@google.com,
-        jolsa@kernel.org, hughd@google.com, akpm@linux-foundation.org,
-        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-        pabeni@redhat.com, john.johansen@canonical.com,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        jgross@suse.com, stern@rowland.harvard.edu, lrh2000@pku.edu.cn,
-        sebastian.reichel@collabora.com, wsa+renesas@sang-engineering.com,
-        quic_ugoswami@quicinc.com, quic_linyyuan@quicinc.com,
-        john@keeping.me.uk, error27@gmail.com, quic_uaggarwa@quicinc.com,
-        hayama@lineo.co.jp, jomajm@gmail.com, axboe@kernel.dk,
-        dhavale@google.com, dchinner@redhat.com, hannes@cmpxchg.org,
-        zhangpeng362@huawei.com, slava@dubeyko.com, gargaditya08@live.com,
-        penguin-kernel@I-love.SAKURA.ne.jp, yifeliu@cs.stonybrook.edu,
-        madkar@cs.stonybrook.edu, ezk@cs.stonybrook.edu,
-        yuzhe@nfschina.com, willy@infradead.org, okanatov@gmail.com,
-        jeffxu@chromium.org, linux@treblig.org, mirimmad17@gmail.com,
-        yijiangshan@kylinos.cn, yang.yang29@zte.com.cn,
-        xu.xin16@zte.com.cn, chengzhihao1@huawei.com, shr@devkernel.io,
-        Liam.Howlett@Oracle.com, adobriyan@gmail.com,
-        chi.minghao@zte.com.cn, roberto.sassu@huawei.com,
-        linuszeng@tencent.com, bvanassche@acm.org, zohar@linux.ibm.com,
-        yi.zhang@huawei.com, trix@redhat.com, fmdefrancesco@gmail.com,
-        ebiggers@google.com, princekumarmaurya06@gmail.com,
-        chenzhongjin@huawei.com, riel@surriel.com,
-        shaozhengchao@huawei.com, jingyuwang_vip@163.com,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-usb@vger.kernel.org, v9fs@lists.linux.dev,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        autofs@vger.kernel.org, linux-mm@kvack.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-um@lists.infradead.org,
-        linux-mtd@lists.infradead.org,
-        jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-        linux-nilfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-        linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
-        linux-unionfs@vger.kernel.org, linux-hardening@vger.kernel.org,
-        reiserfs-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org,
-        linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        bpf@vger.kernel.org, netdev@vger.kernel.org,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org
-Date:   Mon, 10 Jul 2023 09:32:23 -0400
-In-Reply-To: <20230710-zudem-entkam-bb508cbd8c78@brauner>
-References: <20230705185812.579118-1-jlayton@kernel.org>
-         <5e40891f6423feb5b68f025e31f26e9a50ae9390.camel@kernel.org>
-         <20230710-zudem-entkam-bb508cbd8c78@brauner>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        with ESMTP id S232448AbjGLMHl (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 12 Jul 2023 08:07:41 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8975C1FE1
+        for <ceph-devel@vger.kernel.org>; Wed, 12 Jul 2023 05:07:27 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id a640c23a62f3a-992acf67388so793345666b.1
+        for <ceph-devel@vger.kernel.org>; Wed, 12 Jul 2023 05:07:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1689163646; x=1691755646;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=muW0MSMXAWU0NEgym29rcsHLpBa8BTkJu8VSzYzZ+PM=;
+        b=sIiUccyYHQfF43bUraBRcyz0kbduUeX4Ba1lAq6lASuBj+m/fBr6MTdN5ITDXoG9F+
+         C6i9yNHo4H3ogob/G85pD0P5Z01iNfg3qGvyka6U+ONbcvMw53X7A/v4O9z0zSIcXt6F
+         NcwWot2tUnGOt742xPbmRd0WQBavs2HWqZH/hVD4bBhYaMk96YWqnJjrA5RtqMenexUZ
+         EMzIVnIjGuVw3EznSRBUr72CZJoBYGwpk7ASu6rZadrvOc+5Pv5iLUO5qP93bmAs2Heg
+         Ff+YCGDsfaWERvyxAumQgjNHOrzbjCmx4RU0QFkJCW296zcfBING+hWQzEfqdmXRHFNC
+         dK0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689163646; x=1691755646;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=muW0MSMXAWU0NEgym29rcsHLpBa8BTkJu8VSzYzZ+PM=;
+        b=X8Rrbd9jCYNmkqxn7G6EyKtP3yzHnJylVJsEyBcfBXAwwR7sZfUS3nUSKm335VoQbS
+         14SePL0NBffiHB3mHaUw4nvYjcv9qrQlmde2A+J23NB8CCWi520AvPz6u0kxGG9l+NRI
+         lhe9ESqUsm936q7IyftsuVrzpOGXIpRT33BOi0HVm3SWdy0DDHI3JjKwZIhz1NAgGJ7v
+         NX7N3vwlMaKlaVmOl2GoG1RFmtj4LPlLPFarCoEbPMVlAGzrcGX8WbwAmmo+JYtFMOd7
+         t0bbHddQ3tLgYToM1e6R/d3717eaYPZ3Bvb3OLVsnTlNBwEnN5WcNPGY+//YFAiuNlBH
+         i/Kw==
+X-Gm-Message-State: ABy/qLbeoHnGTTeF0KyF4eg2bl8dYnGGbpaNFJGOqeTqMXWetr8ACffP
+        v9AfgXWl4+FBa+Jm18zXYP8aS3gqgik=
+X-Google-Smtp-Source: APBJJlGqZAWAWsGLjOh89ukU9m9juEu2m/f6ygvfqWIzujn6nMq6udITDgNQ5EHeMYDahdtymuYn9w==
+X-Received: by 2002:a17:906:19:b0:982:82aa:86b1 with SMTP id 25-20020a170906001900b0098282aa86b1mr17815980eja.43.1689163645549;
+        Wed, 12 Jul 2023 05:07:25 -0700 (PDT)
+Received: from zambezi.local (ip-94-112-104-28.bb.vodafone.cz. [94.112.104.28])
+        by smtp.gmail.com with ESMTPSA id gg21-20020a170906e29500b0099207b3bc49sm2473063ejb.30.2023.07.12.05.07.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jul 2023 05:07:24 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     ceph-devel@vger.kernel.org
+Cc:     Thelford Williams <thelford@google.com>
+Subject: [PATCH] libceph: harden msgr2.1 frame segment length checks
+Date:   Wed, 12 Jul 2023 14:07:15 +0200
+Message-ID: <20230712120718.28904-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, 2023-07-10 at 14:35 +0200, Christian Brauner wrote:
-> On Fri, Jul 07, 2023 at 08:42:31AM -0400, Jeff Layton wrote:
-> > On Wed, 2023-07-05 at 14:58 -0400, Jeff Layton wrote:
-> > > v2:
-> > > - prepend patches to add missing ctime updates
-> > > - add simple_rename_timestamp helper function
-> > > - rename ctime accessor functions as inode_get_ctime/inode_set_ctime_=
-*
-> > > - drop individual inode_ctime_set_{sec,nsec} helpers
-> > >=20
-> >=20
-> > After review by Jan and others, and Jan's ext4 rework, the diff on top
-> > of the series I posted a couple of days ago is below. I don't really
-> > want to spam everyone with another ~100 patch v3 series, but I can if
-> > you think that's best.
-> >=20
-> > Christian, what would you like me to do here?
->=20
-> I picked up the series from the list and folded the fixups you posted
-> here into the respective fs conversion patches. I hope that helps you
-> avoid a resend. You should have received a separate "thank you" mail for
-> all of this.
->=20
-> To each patch that I folded one of the fixlets from below into I added a
-> git note that records a link to your mail here and the respective patch
-> hunk from this mail that I folded into the patch. git.kernel.org will
-> show notes by default. For example,
-> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=3Dv=
-fs.ctime&id=3D8b0e3c2e99004609a16ba145bcbdfdddb78e220e
-> should show you the note I added. You can also fetch them via
-> git fetch $remote refs/notes/*:refs/notes/*
-> (You probably know that ofc but jic.) if you're interested.
->=20
-> Based on v6.5-rc1 as of today.
->=20
+ceph_frame_desc::fd_lens is an int array.  decode_preamble() thus
+effectively casts u32 -> int but the checks for segment lengths are
+written as if on unsigned values.  While reading in HELLO or one of the
+AUTH frames (before authentication is completed), arithmetic in
+head_onwire_len() can get duped by negative ctrl_len and produce
+head_len which is less than CEPH_PREAMBLE_LEN but still positive.
+This would lead to a buffer overrun in prepare_read_control() as the
+preamble gets copied to the newly allocated buffer of size head_len.
 
-Many thanks!!! I'll get to work rebasing the multigrain timestamp series
-on top of that.
+Cc: stable@vger.kernel.org
+Fixes: cd1a677cad99 ("libceph, ceph: implement msgr2.1 protocol (crc and secure modes)")
+Reported-by: Thelford Williams <thelford@google.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+---
+ net/ceph/messenger_v2.c | 41 ++++++++++++++++++++++++++---------------
+ 1 file changed, 26 insertions(+), 15 deletions(-)
 
-> Btw, both b4 and patchwork somehow treat the series in weird was.
-> IOW, based on the message id of the cover letter I was able to pull most
-> messages except for:
->=20
-> [07/92] fs: add ctime accessors infrastructure
-> [08/92] fs: new helper: simple_rename_timestamp
-> [92/92] fs: rename i_ctime field to __i_ctime
->=20
-> which I pulled in separately. Not sure what the cause of=A0
->=20
-> this is.
+diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+index 1a888b86a494..1df1d29dee92 100644
+--- a/net/ceph/messenger_v2.c
++++ b/net/ceph/messenger_v2.c
+@@ -390,6 +390,8 @@ static int head_onwire_len(int ctrl_len, bool secure)
+ 	int head_len;
+ 	int rem_len;
+ 
++	BUG_ON(ctrl_len < 0 || ctrl_len > CEPH_MSG_MAX_CONTROL_LEN);
++
+ 	if (secure) {
+ 		head_len = CEPH_PREAMBLE_SECURE_LEN;
+ 		if (ctrl_len > CEPH_PREAMBLE_INLINE_LEN) {
+@@ -408,6 +410,10 @@ static int head_onwire_len(int ctrl_len, bool secure)
+ static int __tail_onwire_len(int front_len, int middle_len, int data_len,
+ 			     bool secure)
+ {
++	BUG_ON(front_len < 0 || front_len > CEPH_MSG_MAX_FRONT_LEN ||
++	       middle_len < 0 || middle_len > CEPH_MSG_MAX_MIDDLE_LEN ||
++	       data_len < 0 || data_len > CEPH_MSG_MAX_DATA_LEN);
++
+ 	if (!front_len && !middle_len && !data_len)
+ 		return 0;
+ 
+@@ -520,29 +526,34 @@ static int decode_preamble(void *p, struct ceph_frame_desc *desc)
+ 		desc->fd_aligns[i] = ceph_decode_16(&p);
+ 	}
+ 
+-	/*
+-	 * This would fire for FRAME_TAG_WAIT (it has one empty
+-	 * segment), but we should never get it as client.
+-	 */
+-	if (!desc->fd_lens[desc->fd_seg_cnt - 1]) {
+-		pr_err("last segment empty\n");
++	if (desc->fd_lens[0] < 0 ||
++	    desc->fd_lens[0] > CEPH_MSG_MAX_CONTROL_LEN) {
++		pr_err("bad control segment length %d\n", desc->fd_lens[0]);
+ 		return -EINVAL;
+ 	}
+-
+-	if (desc->fd_lens[0] > CEPH_MSG_MAX_CONTROL_LEN) {
+-		pr_err("control segment too big %d\n", desc->fd_lens[0]);
++	if (desc->fd_lens[1] < 0 ||
++	    desc->fd_lens[1] > CEPH_MSG_MAX_FRONT_LEN) {
++		pr_err("bad front segment length %d\n", desc->fd_lens[1]);
+ 		return -EINVAL;
+ 	}
+-	if (desc->fd_lens[1] > CEPH_MSG_MAX_FRONT_LEN) {
+-		pr_err("front segment too big %d\n", desc->fd_lens[1]);
++	if (desc->fd_lens[2] < 0 ||
++	    desc->fd_lens[2] > CEPH_MSG_MAX_MIDDLE_LEN) {
++		pr_err("bad middle segment length %d\n", desc->fd_lens[2]);
+ 		return -EINVAL;
+ 	}
+-	if (desc->fd_lens[2] > CEPH_MSG_MAX_MIDDLE_LEN) {
+-		pr_err("middle segment too big %d\n", desc->fd_lens[2]);
++	if (desc->fd_lens[3] < 0 ||
++	    desc->fd_lens[3] > CEPH_MSG_MAX_DATA_LEN) {
++		pr_err("bad data segment length %d\n", desc->fd_lens[3]);
+ 		return -EINVAL;
+ 	}
+-	if (desc->fd_lens[3] > CEPH_MSG_MAX_DATA_LEN) {
+-		pr_err("data segment too big %d\n", desc->fd_lens[3]);
++
++	/*
++	 * This would fire for FRAME_TAG_WAIT (it has one empty
++	 * segment), but we should never get it as client.
++	 */
++	if (!desc->fd_lens[desc->fd_seg_cnt - 1]) {
++		pr_err("last segment empty, segment count %d\n",
++		       desc->fd_seg_cnt);
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.41.0
 
-Good to know.
-
-I ended up doing the send in two phases: one for the cover letter and
-infrastructure patches that went to everyone, and one for the per-
-subsystem patches that went do individual maintainers and lists.
-
-I suspect that screwed up the message IDs somehow. Hopefully I won't
-need to do a posting like that again soon, but I'll pay closer attention
-to the message id handling next time.
-
-Thanks again!
---=20
-Jeff Layton <jlayton@kernel.org>
