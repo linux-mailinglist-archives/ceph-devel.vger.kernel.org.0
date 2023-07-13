@@ -2,180 +2,233 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F0015751E85
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Jul 2023 12:11:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 430AE752D55
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jul 2023 01:01:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233226AbjGMKLZ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 13 Jul 2023 06:11:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49632 "EHLO
+        id S233788AbjGMXBM (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 13 Jul 2023 19:01:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233425AbjGMKLR (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 13 Jul 2023 06:11:17 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 856572D7F
-        for <ceph-devel@vger.kernel.org>; Thu, 13 Jul 2023 03:09:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689242961;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3bbYBk0/rm4RGGepS4311ZyX9Js4o8XcciMo1V38iWk=;
-        b=GsJ2rE8QfeeTNEo5RPwv/Xx51VwY9MaMfAuf7qlXZdX+55v0Mvp4HZQD1M1JP5dNWrS9/l
-        L3yEv/fZMZEX6dIgnKAG1o+PE+TsMgHLljXD7OvP431f5B5RColYWuvdtwpjLkjjqSUw2e
-        etQOiBbJjEwNSyU7tkVcwM4BWVvPVO0=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-45-dISfHu1hOUej_Vk9dmmH2w-1; Thu, 13 Jul 2023 06:09:20 -0400
-X-MC-Unique: dISfHu1hOUej_Vk9dmmH2w-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-66eba523cd9so250621b3a.2
-        for <ceph-devel@vger.kernel.org>; Thu, 13 Jul 2023 03:09:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689242959; x=1691834959;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3bbYBk0/rm4RGGepS4311ZyX9Js4o8XcciMo1V38iWk=;
-        b=VX+umzMUDUgebsTcGkB8c1oeHSMNuCCcp5fJVObaZEdbV5uNF8VxGz42vESzYoLmtF
-         vtwKi4S8Am6eo3vkUk97tndGS2McrnbgETFFhbh+ua8YafK9PoloGATs9NknixTMlQqs
-         G9LNtbB+XyjFyK4w4YqXbCbzZlFERYKyN0yxgCO7QJTZCLlOVeln1t1Z0OhOc27PEumz
-         sQ1dcEu2yBStWQp8vT2y4+Fcf1KmFfAMEdXV1jyqkijRxCg04ZAii2rOTReXIncLKh5R
-         OZVt5r2g28JAPw3l1smOdIS52qRevEGn1bDQfHkt4Hfgwuj5+MfFRIzwXOUoxcOHxsmf
-         shmA==
-X-Gm-Message-State: ABy/qLYFNxMyQNDAjxjqbeIuPVSgvEOeRWLUuLbFuRKrA+6tUyqyQb9Q
-        U+Ml8o2IAICBTi98rzb4s+QTYutA3AZ1kVHXJ8Wr7MMCI8yXVKZMKLg8aQ8hRAYmLO87RhPjJIB
-        zHqG+ay5S0rBjNVBiTdUHdw==
-X-Received: by 2002:a05:6a00:139d:b0:673:8dfb:af32 with SMTP id t29-20020a056a00139d00b006738dfbaf32mr715278pfg.26.1689242959161;
-        Thu, 13 Jul 2023 03:09:19 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlE+OXXOz+BtTaO+SpFRnkdtm27Y/sEehqvPkLpE6y+GxAVBCG/UOfDcHd1yl4FQLXViaMDymA==
-X-Received: by 2002:a05:6a00:139d:b0:673:8dfb:af32 with SMTP id t29-20020a056a00139d00b006738dfbaf32mr715266pfg.26.1689242958886;
-        Thu, 13 Jul 2023 03:09:18 -0700 (PDT)
-Received: from [10.72.12.161] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id e9-20020aa78c49000000b00666e2dac482sm5075528pfd.124.2023.07.13.03.09.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Jul 2023 03:09:18 -0700 (PDT)
-Message-ID: <9e5a8941-0b29-c018-babf-a45742bea03f@redhat.com>
-Date:   Thu, 13 Jul 2023 18:09:14 +0800
+        with ESMTP id S232353AbjGMXBL (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 13 Jul 2023 19:01:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 904D02127;
+        Thu, 13 Jul 2023 16:01:10 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 05B9961B79;
+        Thu, 13 Jul 2023 23:01:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61080C433C8;
+        Thu, 13 Jul 2023 23:01:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689289269;
+        bh=BvE/6xVatY3gzbwR0vDrqr3MzJ01oINoYu0cSNelaB8=;
+        h=From:Subject:Date:To:Cc:From;
+        b=j9LDsK+FDIrm6x6MxYyXms5zVTjaW1P6LxjzfQKg1pbSvAHLTtuNDrEBEAvQz7a59
+         IEj5BzbSPgpyeqfAqbd+Re3r0d6jbIHKhpnRq3qprdKRfzdD9X103cXf3qX6JZft6A
+         8K/RH8+CdgTcLHSepEL1YlNk2ZQmp4oagzqZSvVyVEd/d4TvlnBEIAX/8mUMo/DIpV
+         2h3UVlHoa/Q76fgIu2dVBLs3sOHMs2qunAcM77C5kvmuuB2TAhiX7+yoiPjn4EbiL6
+         oufcrYQQLmAklyR8BnHSjocZBlFXqdC5grfG/sCfx8gif0JU3ybUeAnX6i/lTGUMEc
+         tKVmtuCgMrfHw==
+From:   Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v5 0/8] fs: implement multigrain timestamps
+Date:   Thu, 13 Jul 2023 19:00:49 -0400
+Message-Id: <20230713-mgctime-v5-0-9eb795d2ae37@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] libceph: harden msgr2.1 frame segment length checks
-Content-Language: en-US
-To:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-Cc:     Thelford Williams <thelford@google.com>
-References: <20230712120718.28904-1-idryomov@gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20230712120718.28904-1-idryomov@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-B4-Tracking: v=1; b=H4sIACGCsGQC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyTHUUlJIzE
+ vPSU3UzU4B8JSMDI2MDc0Nj3dz05JLM3FTdNKNEy7RkYyMTS0MLJaDqgqLUtMwKsEnRsbW1AO6
+ XW1JZAAAA
+To:     Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Richard Weinberger <richard@nod.at>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>, v9fs@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4474; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=BvE/6xVatY3gzbwR0vDrqr3MzJ01oINoYu0cSNelaB8=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBksIIu4PKEKGnoDdi+GMLN5ufs2UB8ZsDTn9Oqp
+ SYtweP3skyJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZLCCLgAKCRAADmhBGVaC
+ FXJhEADW493xZyCYf/hlVo1POCOZGol0XDpJIN1EQK3h+61XPis26awGDTcXczc9yZK/JvZV7oC
+ VtVStL44kvzeqn7kh1AH/EuLmeazbYMEFTdl5PiizH53xrWmidL26fTjpjn01gvjb9Y5gGXTvuI
+ h0JLInpNr5Hn509RQU2T5/D8WBKVnLWeHB/itiDWCZ1CG8iFNWfgbgC/bpdW2+H0eIDHvr6bUcJ
+ m0mfxwAUL6lA/b/G8kmsdj0YEEWf2bOLzdxZcQPh/MEfkRuKwWqy9d5mFLJlJ5GiheG9qiqOwOA
+ wLz9M0J4e32Di/q+QL/HpihUZOB0jrZB+bRhKxqWD04cFRtTTwE15w/xGAgjvPLe2l+sNzEUxoq
+ nIscPnAScgiRW3Bzq6PUd7ljrtLvvU6Vcgd0HqFcyfn9APLCjnLCckVW7S0ofkRL7oksLIoSGDJ
+ qo/IpJl4X/Mu1LBY//fFZp6QVhp54iwAR+D7VJ3z7wtZSktaXJ9f1o0qcT1Bo254702FlLGvbxf
+ Bkj6FZDMZrSXrx81pjrLvUB8jCQQ13oz7O3kmOzVX4pLmnO9PRLcQLj14velupamDvwexZgudyW
+ jiqR3IwVXCTiN2WgmssqUyuQi+GQ1LKePEwVpDx8izF0VnbQshX6OqMvuRzVcDG29pzQBTc0dy+
+ lAVc/7Mp3vHZu0g==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+The VFS always uses coarse-grained timestamps when updating the
+ctime and mtime after a change. This has the benefit of allowing
+filesystems to optimize away a lot metadata updates, down to around 1
+per jiffy, even when a file is under heavy writes.
 
-On 7/12/23 20:07, Ilya Dryomov wrote:
-> ceph_frame_desc::fd_lens is an int array.  decode_preamble() thus
-> effectively casts u32 -> int but the checks for segment lengths are
-> written as if on unsigned values.  While reading in HELLO or one of the
-> AUTH frames (before authentication is completed), arithmetic in
-> head_onwire_len() can get duped by negative ctrl_len and produce
-> head_len which is less than CEPH_PREAMBLE_LEN but still positive.
-> This would lead to a buffer overrun in prepare_read_control() as the
-> preamble gets copied to the newly allocated buffer of size head_len.
->
-> Cc: stable@vger.kernel.org
-> Fixes: cd1a677cad99 ("libceph, ceph: implement msgr2.1 protocol (crc and secure modes)")
-> Reported-by: Thelford Williams <thelford@google.com>
-> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-> ---
->   net/ceph/messenger_v2.c | 41 ++++++++++++++++++++++++++---------------
->   1 file changed, 26 insertions(+), 15 deletions(-)
->
-> diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-> index 1a888b86a494..1df1d29dee92 100644
-> --- a/net/ceph/messenger_v2.c
-> +++ b/net/ceph/messenger_v2.c
-> @@ -390,6 +390,8 @@ static int head_onwire_len(int ctrl_len, bool secure)
->   	int head_len;
->   	int rem_len;
->   
-> +	BUG_ON(ctrl_len < 0 || ctrl_len > CEPH_MSG_MAX_CONTROL_LEN);
-> +
->   	if (secure) {
->   		head_len = CEPH_PREAMBLE_SECURE_LEN;
->   		if (ctrl_len > CEPH_PREAMBLE_INLINE_LEN) {
-> @@ -408,6 +410,10 @@ static int head_onwire_len(int ctrl_len, bool secure)
->   static int __tail_onwire_len(int front_len, int middle_len, int data_len,
->   			     bool secure)
->   {
-> +	BUG_ON(front_len < 0 || front_len > CEPH_MSG_MAX_FRONT_LEN ||
-> +	       middle_len < 0 || middle_len > CEPH_MSG_MAX_MIDDLE_LEN ||
-> +	       data_len < 0 || data_len > CEPH_MSG_MAX_DATA_LEN);
-> +
->   	if (!front_len && !middle_len && !data_len)
->   		return 0;
->   
-> @@ -520,29 +526,34 @@ static int decode_preamble(void *p, struct ceph_frame_desc *desc)
->   		desc->fd_aligns[i] = ceph_decode_16(&p);
->   	}
->   
-> -	/*
-> -	 * This would fire for FRAME_TAG_WAIT (it has one empty
-> -	 * segment), but we should never get it as client.
-> -	 */
-> -	if (!desc->fd_lens[desc->fd_seg_cnt - 1]) {
-> -		pr_err("last segment empty\n");
-> +	if (desc->fd_lens[0] < 0 ||
-> +	    desc->fd_lens[0] > CEPH_MSG_MAX_CONTROL_LEN) {
-> +		pr_err("bad control segment length %d\n", desc->fd_lens[0]);
->   		return -EINVAL;
->   	}
-> -
-> -	if (desc->fd_lens[0] > CEPH_MSG_MAX_CONTROL_LEN) {
-> -		pr_err("control segment too big %d\n", desc->fd_lens[0]);
-> +	if (desc->fd_lens[1] < 0 ||
-> +	    desc->fd_lens[1] > CEPH_MSG_MAX_FRONT_LEN) {
-> +		pr_err("bad front segment length %d\n", desc->fd_lens[1]);
->   		return -EINVAL;
->   	}
-> -	if (desc->fd_lens[1] > CEPH_MSG_MAX_FRONT_LEN) {
-> -		pr_err("front segment too big %d\n", desc->fd_lens[1]);
-> +	if (desc->fd_lens[2] < 0 ||
-> +	    desc->fd_lens[2] > CEPH_MSG_MAX_MIDDLE_LEN) {
-> +		pr_err("bad middle segment length %d\n", desc->fd_lens[2]);
->   		return -EINVAL;
->   	}
-> -	if (desc->fd_lens[2] > CEPH_MSG_MAX_MIDDLE_LEN) {
-> -		pr_err("middle segment too big %d\n", desc->fd_lens[2]);
-> +	if (desc->fd_lens[3] < 0 ||
-> +	    desc->fd_lens[3] > CEPH_MSG_MAX_DATA_LEN) {
-> +		pr_err("bad data segment length %d\n", desc->fd_lens[3]);
->   		return -EINVAL;
->   	}
-> -	if (desc->fd_lens[3] > CEPH_MSG_MAX_DATA_LEN) {
-> -		pr_err("data segment too big %d\n", desc->fd_lens[3]);
-> +
-> +	/*
-> +	 * This would fire for FRAME_TAG_WAIT (it has one empty
-> +	 * segment), but we should never get it as client.
-> +	 */
-> +	if (!desc->fd_lens[desc->fd_seg_cnt - 1]) {
-> +		pr_err("last segment empty, segment count %d\n",
-> +		       desc->fd_seg_cnt);
->   		return -EINVAL;
->   	}
->   
+Unfortunately, this coarseness has always been an issue when we're
+exporting via NFSv3, which relies on timestamps to validate caches. A
+lot of changes can happen in a jiffy, so timestamps aren't sufficient to
+help the client decide to invalidate the cache.
 
-LGTM.
+Even with NFSv4, a lot of exported filesystems don't properly support a
+change attribute and are subject to the same problems with timestamp
+granularity. Other applications have similar issues with timestamps (e.g
+backup applications).
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+If we were to always use fine-grained timestamps, that would improve the
+situation, but that becomes rather expensive, as the underlying
+filesystem would have to log a lot more metadata updates.
 
+What we need is a way to only use fine-grained timestamps when they are
+being actively queried. The idea is to use an unused bit in the ctime's
+tv_nsec field to mark when the mtime or ctime has been queried via
+getattr. Once that has been marked, the next m/ctime update will use a
+fine-grained timestamp.
+
+This patch series is based on top of Christian's vfs.all branch, which
+has the recent conversion to the new ctime accessors. It should apply
+cleanly on top of linux-next.
+
+While the patchset does work, I'm mostly looking for feedback on the
+core infrastructure API. Does this look reasonable? Am I missing any
+races?
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+base-commit: cf22d118b89a09a0160586412160d89098f7c4c7
+---
+Jeff Layton (8):
+      fs: pass the request_mask to generic_fillattr
+      fs: add infrastructure for multigrain timestamps
+      tmpfs: bump the mtime/ctime/iversion when page becomes writeable
+      tmpfs: add support for multigrain timestamps
+      xfs: XFS_ICHGTIME_CREATE is unused
+      xfs: switch to multigrain timestamps
+      ext4: switch to multigrain timestamps
+      btrfs: convert to multigrain timestamps
+
+ fs/9p/vfs_inode.c               |  4 +-
+ fs/9p/vfs_inode_dotl.c          |  4 +-
+ fs/afs/inode.c                  |  2 +-
+ fs/btrfs/file.c                 | 24 ++--------
+ fs/btrfs/inode.c                |  2 +-
+ fs/btrfs/super.c                |  5 ++-
+ fs/ceph/inode.c                 |  2 +-
+ fs/coda/inode.c                 |  3 +-
+ fs/ecryptfs/inode.c             |  5 ++-
+ fs/erofs/inode.c                |  2 +-
+ fs/exfat/file.c                 |  2 +-
+ fs/ext2/inode.c                 |  2 +-
+ fs/ext4/inode.c                 |  2 +-
+ fs/ext4/super.c                 |  2 +-
+ fs/f2fs/file.c                  |  2 +-
+ fs/fat/file.c                   |  2 +-
+ fs/fuse/dir.c                   |  2 +-
+ fs/gfs2/inode.c                 |  2 +-
+ fs/hfsplus/inode.c              |  2 +-
+ fs/inode.c                      | 98 +++++++++++++++++++++++++++++------------
+ fs/kernfs/inode.c               |  2 +-
+ fs/libfs.c                      |  4 +-
+ fs/minix/inode.c                |  2 +-
+ fs/nfs/inode.c                  |  2 +-
+ fs/nfs/namespace.c              |  3 +-
+ fs/ntfs3/file.c                 |  2 +-
+ fs/ocfs2/file.c                 |  2 +-
+ fs/orangefs/inode.c             |  2 +-
+ fs/proc/base.c                  |  4 +-
+ fs/proc/fd.c                    |  2 +-
+ fs/proc/generic.c               |  2 +-
+ fs/proc/proc_net.c              |  2 +-
+ fs/proc/proc_sysctl.c           |  2 +-
+ fs/proc/root.c                  |  3 +-
+ fs/smb/client/inode.c           |  2 +-
+ fs/smb/server/smb2pdu.c         | 22 ++++-----
+ fs/smb/server/vfs.c             |  3 +-
+ fs/stat.c                       | 59 ++++++++++++++++++++-----
+ fs/sysv/itree.c                 |  3 +-
+ fs/ubifs/dir.c                  |  2 +-
+ fs/udf/symlink.c                |  2 +-
+ fs/vboxsf/utils.c               |  2 +-
+ fs/xfs/libxfs/xfs_shared.h      |  2 -
+ fs/xfs/libxfs/xfs_trans_inode.c |  8 ++--
+ fs/xfs/xfs_iops.c               |  4 +-
+ fs/xfs/xfs_super.c              |  2 +-
+ include/linux/fs.h              | 47 ++++++++++++++++++--
+ mm/shmem.c                      | 16 ++++++-
+ 48 files changed, 248 insertions(+), 129 deletions(-)
+---
+base-commit: cf22d118b89a09a0160586412160d89098f7c4c7
+change-id: 20230713-mgctime-f2a9fc324918
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
