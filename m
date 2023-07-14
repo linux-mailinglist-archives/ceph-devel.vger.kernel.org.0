@@ -2,92 +2,74 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8318E753E98
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jul 2023 17:16:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E7ED75425E
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jul 2023 20:12:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236042AbjGNPQn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 14 Jul 2023 11:16:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45508 "EHLO
+        id S236627AbjGNSMp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 Jul 2023 14:12:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235872AbjGNPQm (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 Jul 2023 11:16:42 -0400
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69D552D43;
-        Fri, 14 Jul 2023 08:16:41 -0700 (PDT)
-Received: by mail-wr1-x42c.google.com with SMTP id ffacd0b85a97d-314172bac25so2134298f8f.3;
-        Fri, 14 Jul 2023 08:16:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1689347800; x=1691939800;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=02O0pKuXfrVTJZa3UAhgaDlxYfuP+KHC2VebuqxgPlk=;
-        b=AKf8ll+oHQglE5FvBsDTP5P2sfOnQrZU4KTSe02P+DsU4oLOeB8mR4sLlH+/Hh5lDY
-         TWoqx0/KE9cVCMHGiINt4KV5WgkWyruO0CQ4p2rvcjkl9mx8HtkFOOcBXaK5Jv2igjqH
-         VsS55c4/0KdSbRbq/zVqKjlUMY+chN8HlvJKRcLVdkW8O+9Od131ib3d4a+H66d22hl6
-         tNkXRH2Z5FJwryeALcv1rtX5nZ36jYHXIjXu8akuwHOIQ8k1BviU4K/8CZS0JHfzCR/7
-         HWgmFhy7MuN+xAerjqfKNAG5OuYD89uKCb23Y3MAPmcnqT2U/rgi6OiRc++3xycrnlve
-         ZpJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689347800; x=1691939800;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=02O0pKuXfrVTJZa3UAhgaDlxYfuP+KHC2VebuqxgPlk=;
-        b=R9alCmA06S/vA16UU6IcK24s/LoywQi+ZdCKCRDaX45pwyIkgVdxg/JEa8+UPlRNPc
-         F4AhKzwVi3tmCo+1mQYqP3b3JyZRnGGirFbglXaIDSWUvMnlMNinhrfU+KXH7ZMSku7k
-         nUW706EfAhkUCSDpNgdObZ9I3k6lmTgS56FAEkWTcnCUcSLFh328efWdhzJkb4Ds+Q3r
-         foBlJewNW+hEHWHC7QfNpNIwSbcw7eES+dRKkQb1wbQ0ijkVw+s4LwFGP4kK3j5k0J//
-         YLLCxmDTx76FqGe7hIz4Q7L0oJeg07rzhzJ7VRClLnjKfBGNLHgIlC9NarHz1ISXKiyd
-         eomQ==
-X-Gm-Message-State: ABy/qLaIs7FF+51r+Ixx09KihsRO6Lzatrrx4WGBZDdYrdn7Zm37J7Ew
-        EUy12c8avHH7ooIW8EefK22osvdmvCY=
-X-Google-Smtp-Source: APBJJlEIjmdgCDyZsZ9yyMxpzDJFKfMwl7Xlg0BiCo4BzrG/uHwZFMPyV+RSM3ljlf9LghJuwoAxfQ==
-X-Received: by 2002:a05:6000:1084:b0:313:e971:53af with SMTP id y4-20020a056000108400b00313e97153afmr4527897wrw.32.1689347799535;
-        Fri, 14 Jul 2023 08:16:39 -0700 (PDT)
-Received: from zambezi.local (ip-94-112-104-28.bb.vodafone.cz. [94.112.104.28])
-        by smtp.gmail.com with ESMTPSA id d9-20020adff2c9000000b00313e4d02be8sm11118922wrp.55.2023.07.14.08.16.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jul 2023 08:16:38 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fix for 6.5-rc2
-Date:   Fri, 14 Jul 2023 17:16:21 +0200
-Message-ID: <20230714151629.69199-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.41.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S236346AbjGNSMo (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 Jul 2023 14:12:44 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D54723A8D;
+        Fri, 14 Jul 2023 11:12:21 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 155E261DF1;
+        Fri, 14 Jul 2023 18:11:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7A089C433C7;
+        Fri, 14 Jul 2023 18:11:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1689358278;
+        bh=0QcofHl5/TLm05Jn/aQNIQzk2G3ZrPIlfqQ1yCTG4Is=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=TqpiOp90J4zfNSWxtmtiJvrJqxfrNP8XdOmlQ/2hx5RlR8LrMr+YphJ131nfnK5Yt
+         Ws3tMgdKQlKDqPUxyxeiMs3TlMyDO1jImmz+UJsUTSjSwDITzMwWmfqngCt2f+pGJ6
+         sQOX5hNUbHlPkTRmwFG9YVfvyfrTmEv9k3Ol4sq2FYhyTIx50+L0fR6wroUSUH36Ms
+         UMYoupIfKXHi+7a+5fPPzqzvlH32RcdxbQqpVhUQ98cki7HeeEFyQuKFniGoSKs2ln
+         J7Z/k6irS2rePd0c9wBuynfJ7OEtETWuzuY4et19AVDd+GdkGNqS6YUlUq3NMO10Lk
+         YtOvhCGHO+I1g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 66C7BE1B4D6;
+        Fri, 14 Jul 2023 18:11:18 +0000 (UTC)
+Subject: Re: [GIT PULL] Ceph fix for 6.5-rc2
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20230714151629.69199-1-idryomov@gmail.com>
+References: <20230714151629.69199-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20230714151629.69199-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.5-rc2
+X-PR-Tracked-Commit-Id: a282a2f10539dce2aa619e71e1817570d557fc97
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ddbd91617f6d0b2fd8d509c45348a56125df07b1
+Message-Id: <168935827841.1072.8726094197521277973.pr-tracker-bot@kernel.org>
+Date:   Fri, 14 Jul 2023 18:11:18 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Fri, 14 Jul 2023 17:16:21 +0200:
 
-The following changes since commit 06c2afb862f9da8dc5efa4b6076a0e48c3fbaaa5:
+> https://github.com/ceph/ceph-client.git tags/ceph-for-6.5-rc2
 
-  Linux 6.5-rc1 (2023-07-09 13:53:13 -0700)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ddbd91617f6d0b2fd8d509c45348a56125df07b1
 
-are available in the Git repository at:
+Thank you!
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-6.5-rc2
-
-for you to fetch changes up to a282a2f10539dce2aa619e71e1817570d557fc97:
-
-  libceph: harden msgr2.1 frame segment length checks (2023-07-13 13:18:57 +0200)
-
-----------------------------------------------------------------
-A fix to prevent a potential buffer overrun in the messenger, marked
-for stable.
-
-----------------------------------------------------------------
-Ilya Dryomov (1):
-      libceph: harden msgr2.1 frame segment length checks
-
- net/ceph/messenger_v2.c | 41 ++++++++++++++++++++++++++---------------
- 1 file changed, 26 insertions(+), 15 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
