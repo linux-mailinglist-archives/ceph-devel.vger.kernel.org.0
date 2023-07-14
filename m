@@ -2,212 +2,265 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C28E2752DB4
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jul 2023 01:03:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 16129753B5D
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jul 2023 14:57:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234661AbjGMXDk (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 13 Jul 2023 19:03:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46090 "EHLO
+        id S235738AbjGNM5c (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 14 Jul 2023 08:57:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234676AbjGMXCe (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 13 Jul 2023 19:02:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 365C430E9;
-        Thu, 13 Jul 2023 16:02:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        with ESMTP id S235521AbjGNM5b (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 14 Jul 2023 08:57:31 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 765A92D41
+        for <ceph-devel@vger.kernel.org>; Fri, 14 Jul 2023 05:57:29 -0700 (PDT)
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B5F0761B86;
-        Thu, 13 Jul 2023 23:01:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F2C8C433BD;
-        Thu, 13 Jul 2023 23:01:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1689289319;
-        bh=t187d4hlj7Hd2B853hoiIPlXJE4vBx7O1lkOZGTYDW8=;
-        h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=BS7k3xvm0kV8VQrl/+Nc8umWhgO+pb9JT0LHiIqUglobFvawLeTwqlzQHpVKTDZvB
-         uzCvx/VSEkD7rBjIYWrgFJPCVeqzpiWP8yPt0omTj30LLcay2tknCTfGbRYu6T8MHO
-         XUKoIaSo5n/Bd8IGVTxHqLGvMrjMe0fw+PscScTZ4jWUdNZ+2byzzdy+o175llL7m5
-         o50SLzukRXrSYzl6VaWT8ZrHwmm4KFENLB31WgFlIK5T2Pi03WKPiptSSMpQZPxFLm
-         ct6V/7uDGKKjKZCyDiQclhCznfyT/lEVKO0vqyqaIX9NPJI1Mx1EUf0gKBJYoL63GW
-         31d2FfqFHu4Cw==
-From:   Jeff Layton <jlayton@kernel.org>
-Date:   Thu, 13 Jul 2023 19:00:57 -0400
-Subject: [PATCH v5 8/8] btrfs: convert to multigrain timestamps
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id AAB053F202
+        for <ceph-devel@vger.kernel.org>; Fri, 14 Jul 2023 12:57:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1689339446;
+        bh=RSNMrN8AQW1Yc/EsKcZ66WYJ77F+6TK2l6SGq5ZZEnU=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=IucuCnjHxH1elRBOVtFiKiYQ+OspScQBp5IOdhKzbWVKg+FqqBjjYQ9q74QSs1XL1
+         oYz80ed7q8Ds4KuUFOtpIZH6mGKN+5aKHeZg3yiWazTGM0heC/rBVlEP5/cz4/BTyl
+         17PTFbweS8K/C41FPTJu5UUYaUfru1bg0HC4isHqHZqKvhtg9xe99ez0Gx2v2oAAPp
+         Mk5REv4SZ2MAfkjm9z0QuuRi/DuFCWJPTnZJg7RwrlQYHvEb/mbVVTLJVoiFBgMrEd
+         i2BFC0A/kZizNUoxiW60QYvw0CU9FH3QoOe6bjGCBT7QQ6EiV5Aozcg+Pih2bhvV8I
+         Q2OADuZSE1HFg==
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3a1e58db5caso3331464b6e.0
+        for <ceph-devel@vger.kernel.org>; Fri, 14 Jul 2023 05:57:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689339444; x=1691931444;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RSNMrN8AQW1Yc/EsKcZ66WYJ77F+6TK2l6SGq5ZZEnU=;
+        b=Jcj/csrZB8iwb2I8TMTa0mPq+w7p2Rxiv8JVPHqDoEC/2fbePK1JE8M+ZVAa31T61M
+         WyvJcEaUvOjuuXeF8XruVnPoaG4BpeSROmYBfxoEevJ6U33FBFgc6wEmURAfAFANSBab
+         br7xwH3JmrABka3sQRei0Ldysb0Dst2qH/JS35jDl87oz6R5QbGj6/Y0PrODoeQWvvGW
+         icdNYALru1GtdEDKXOGOQbnTPuYGRQcRwgUxX8IT6KkWHmd8o7jc/P7uKgILLuw2Z9oW
+         wYpQ90V7JR6nMXUrjilvt1zdkQl5wyvkV5DtDyDNoDk10zSP9y94X+PHpWlWWA4wSq88
+         /CEg==
+X-Gm-Message-State: ABy/qLZKnkrjyR+9UVjQ/GIpeYeSuOs0bmLTE6dTtruaY/FP/5TiqETh
+        7AZYP0ZmqF3hrin/8VL8wuIVGTYFOBFRyzXrAS58ei617jED7fdt7PANaAVodBjVUzaHVwKwUn3
+        O2vub6qfhn+XrUOoz3Di9LLwAFKFg2GqC4Zq7izhR36JNr656csWgZS8=
+X-Received: by 2002:a05:6358:e481:b0:135:57d0:d171 with SMTP id by1-20020a056358e48100b0013557d0d171mr4745224rwb.15.1689339444175;
+        Fri, 14 Jul 2023 05:57:24 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlGPtv0QxF9hTo+qfW5UkQrEjCSG4SzGhFUlJTWtPlKt4q9ZrTRzsrd4mlj1Q/nMZBZI4/R7gT/cQTczMo9jkRM=
+X-Received: by 2002:a05:6358:e481:b0:135:57d0:d171 with SMTP id
+ by1-20020a056358e48100b0013557d0d171mr4745208rwb.15.1689339443819; Fri, 14
+ Jul 2023 05:57:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20230713-mgctime-v5-8-9eb795d2ae37@kernel.org>
-References: <20230713-mgctime-v5-0-9eb795d2ae37@kernel.org>
-In-Reply-To: <20230713-mgctime-v5-0-9eb795d2ae37@kernel.org>
-To:     Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Richard Weinberger <richard@nod.at>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Dave Chinner <david@fromorbit.com>, v9fs@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
-        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
-        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2706; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=t187d4hlj7Hd2B853hoiIPlXJE4vBx7O1lkOZGTYDW8=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBksIIv0d3fY46+2hyVZzGgFlf73uVo9uOX8lOx6
- K4UVJ9Da6yJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZLCCLwAKCRAADmhBGVaC
- FbztD/4uZXXSyTwCnSezUKeydXdyB1DOo4czPXF+iJ085mANTre9b4XbUvuEDf9bQijKjYvAiIF
- T6aBATLxstNxy4RGAHDXtSLWG232Ink6G1PNMhMC9R96FpJsuPjmMk8NUBog9j/mjyhM2PlaAMX
- tX5JL88Tb2gI1FbBxP6pQJCDRkYxbfydZ/FGNzZuAcvlJMt3BH7bGga81LPIjr5UOfLB+GnI8oe
- i5BFOw+r7A+Xu+KDGowTNXor3TGmR763yaM7A/mcig5Jp20jEJIXDGO1tVgSdAP0LebIstIif+9
- kiMe/3MWPnPs0eVd+mEtYR53HfccdkA9ShOKV+Jx7qg5v2TSojDh7bRQBVb22NQZGRPBlgv2560
- X83w+MU7yhsMU1MCxv2Whg6ooLLErWX5Zp68rM1FJYdQ/3YbvfDj6sg+4Aa3PF5ifwLM33BLCLr
- pXwEOeLySTL3OWSfSzMqbNqkSShHhPhxZs+ZtZsqAM1fTRTO3svFqI7T/IFjBt7NKwvQJKyhtIJ
- syGts3Gf66X08k1+2iwyGMuP2FA8o0TGMTCwUBXZtxQhhH4KlMpwsdFurHxhcT/j4CtVbSAH4Uc
- fB3KEuG+QiBPD89OSHahxCRhPa+vWgmHHVnmaRK/PJC6un6LOOBM1as6ikNxs/Lc9yixCPrHMNq
- /XZRVwDe3wtNV8A==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
+ <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com> <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
+ <20230609-alufolie-gezaubert-f18ef17cda12@brauner> <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
+ <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com> <CAJ4mKGby71qfb3gd696XH3AazeR0Qc_VGYupMznRH3Piky+VGA@mail.gmail.com>
+ <977d8133-a55f-0667-dc12-aa6fd7d8c3e4@redhat.com> <CAEivzxcr99sERxZX17rZ5jW9YSzAWYvAjOOhBH+FqRoso2=yng@mail.gmail.com>
+ <626175e2-ee91-0f1a-9e5d-e506aea366fa@redhat.com> <64241ff0-9af3-6817-478f-c24a0b9de9b3@redhat.com>
+ <CAEivzxeF51ZEKhQ-0M35nooZ7_cZgk1-q75-YbkeWpZ9RuHG4A@mail.gmail.com>
+ <4c4f73d8-8238-6ab8-ae50-d83c1441ac05@redhat.com> <CAEivzxeQGkemxVwJ148b_+OmntUAWkdL==yMiTMN+GPyaLkFPg@mail.gmail.com>
+ <0a42c5d0-0479-e60e-ac84-be3b915c62d9@redhat.com>
+In-Reply-To: <0a42c5d0-0479-e60e-ac84-be3b915c62d9@redhat.com>
+From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date:   Fri, 14 Jul 2023 14:57:12 +0200
+Message-ID: <CAEivzxcskn8WxcOo0PDHMascFRdYTD0Lr5Uo4fj3deBjDviOXA@mail.gmail.com>
+Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Gregory Farnum <gfarnum@redhat.com>,
+        Christian Brauner <brauner@kernel.org>, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Enable multigrain timestamps, which should ensure that there is an
-apparent change to the timestamp whenever it has been written after
-being actively observed via getattr.
+On Tue, Jul 4, 2023 at 3:09=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
+>
+> Sorry, not sure, why my last reply wasn't sent out.
+>
+> Do it again.
+>
+>
+> On 6/26/23 19:23, Aleksandr Mikhalitsyn wrote:
+> > On Mon, Jun 26, 2023 at 4:12=E2=80=AFAM Xiubo Li<xiubli@redhat.com>  wr=
+ote:
+> >> On 6/24/23 15:11, Aleksandr Mikhalitsyn wrote:
+> >>> On Sat, Jun 24, 2023 at 3:37=E2=80=AFAM Xiubo Li<xiubli@redhat.com>  =
+wrote:
+> >>>> [...]
+> >>>>
+> >>>>    > > >
+> >>>>    > > > I thought about this too and came to the same conclusion, t=
+hat
+> >>>> UID/GID
+> >>>>    > > > based
+> >>>>    > > > restriction can be applied dynamically, so detecting it on =
+mount-time
+> >>>>    > > > helps not so much.
+> >>>>    > > >
+> >>>>    > > For this you please raise one PR to ceph first to support thi=
+s, and in
+> >>>>    > > the PR we can discuss more for the MDS auth caps. And after t=
+he PR
+> >>>>    > > getting merged then in this patch series you need to check th=
+e
+> >>>>    > > corresponding option or flag to determine whether could the i=
+dmap
+> >>>>    > > mounting succeed.
+> >>>>    >
+> >>>>    > I'm sorry but I don't understand what we want to support here. =
+Do we
+> >>>> want to
+> >>>>    > add some new ceph request that allows to check if UID/GID-based
+> >>>>    > permissions are applied for
+> >>>>    > a particular ceph client user?
+> >>>>
+> >>>> IMO we should prevent user to set UID/GID-based permisions caps from
+> >>>> ceph side.
+> >>>>
+> >>>> As I know currently there is no way to prevent users to set MDS auth
+> >>>> caps, IMO in ceph side at least we need one flag or option to disabl=
+e
+> >>>> this once users want this fs cluster sever for idmap mounts use case=
+.
+> >>> How this should be visible from the user side? We introducing a new
+> >>> kernel client mount option,
+> >>> like "nomdscaps", then pass flag to the MDS and MDS should check that
+> >>> MDS auth permissions
+> >>> are not applied (on the mount time) and prevent them from being
+> >>> applied later while session is active. Like that?
+> >>>
+> >>> At the same time I'm thinking about protocol extension that adds 2
+> >>> additional fields for UID/GID. This will allow to correctly
+> >>> handle everything. I wanted to avoid any changes to the protocol or
+> >>> server-side things. But if we want to change MDS side,
+> >>> maybe it's better then to go this way?
+> > Hi Xiubo,
+> >
+> >> There is another way:
+> >>
+> >> For each client it will have a dedicated client auth caps, something l=
+ike:
+> >>
+> >> client.foo
+> >>     key: *key*
+> >>     caps: [mds] allow r, allow rw path=3D/bar
+> >>     caps: [mon] allow r
+> >>     caps: [osd] allow rw tag cephfs data=3Dcephfs_a
+> > Do we have any infrastructure to get this caps list on the client side
+> > right now?
+> > (I've taken a quick look through the code and can't find anything
+> > related to this.)
+>
+> I am afraid there is no.
+>
+> But just after the following ceph PR gets merged it will be easy to do th=
+is:
+>
+> https://github.com/ceph/ceph/pull/48027
+>
+> This is still under testing.
+>
+> >> When mounting this client with idmap enabled, then we can just check t=
+he
+> >> above [mds] caps, if there has any UID/GID based permissions set, then
+> >> fail the mounting.
+> > understood
+> >
+> >> That means this kind client couldn't be mounted with idmap enabled.
+> >>
+> >> Also we need to make sure that once there is a mount with idmap enable=
+d,
+> >> the corresponding client caps couldn't be append the UID/GID based
+> >> permissions. This need a patch in ceph anyway IMO.
+> > So, yeah we will need to effectively block cephx permission changes if
+> > there is a client mounted with
+> > an active idmapped mount. Sounds as something that require massive
+> > changes on the server side.
+>
+> Maybe no need much, it should be simple IMO. But I am not 100% sure.
+>
+> > At the same time this will just block users from using idmapped mounts
+> > along with UID/GID restrictions.
+> >
+> > If you want me to change server-side anyways, isn't it better just to
+> > extend cephfs protocol to properly
+> > handle UID/GIDs with idmapped mounts? (It was originally proposed by Ch=
+ristian.)
+> > What we need to do here is to add a separate UID/GID fields for ceph
+> > requests those are creating a new inodes
+> > (like mknod, symlink, etc).
 
-Beyond enabling the FS_MGTIME flag, this patch eliminates
-update_time_for_write, which goes to great pains to avoid in-memory
-stores. Just have it overwrite the timestamps unconditionally.
+Dear Xiubo,
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/btrfs/file.c  | 24 ++++--------------------
- fs/btrfs/super.c |  5 +++--
- 2 files changed, 7 insertions(+), 22 deletions(-)
+I'm sorry for delay with reply, I've missed this message accidentally.
 
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index d7a9ece7a40b..b9e75c9f95ac 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1106,25 +1106,6 @@ void btrfs_check_nocow_unlock(struct btrfs_inode *inode)
- 	btrfs_drew_write_unlock(&inode->root->snapshot_lock);
- }
- 
--static void update_time_for_write(struct inode *inode)
--{
--	struct timespec64 now, ctime;
--
--	if (IS_NOCMTIME(inode))
--		return;
--
--	now = current_time(inode);
--	if (!timespec64_equal(&inode->i_mtime, &now))
--		inode->i_mtime = now;
--
--	ctime = inode_get_ctime(inode);
--	if (!timespec64_equal(&ctime, &now))
--		inode_set_ctime_to_ts(inode, now);
--
--	if (IS_I_VERSION(inode))
--		inode_inc_iversion(inode);
--}
--
- static int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from,
- 			     size_t count)
- {
-@@ -1156,7 +1137,10 @@ static int btrfs_write_check(struct kiocb *iocb, struct iov_iter *from,
- 	 * need to start yet another transaction to update the inode as we will
- 	 * update the inode when we finish writing whatever data we write.
- 	 */
--	update_time_for_write(inode);
-+	if (!IS_NOCMTIME(inode)) {
-+		inode->i_mtime = inode_set_ctime_current(inode);
-+		inode_inc_iversion(inode);
-+	}
- 
- 	start_pos = round_down(pos, fs_info->sectorsize);
- 	oldsize = i_size_read(inode);
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index f1dd172d8d5b..8eda51b095c9 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -2144,7 +2144,7 @@ static struct file_system_type btrfs_fs_type = {
- 	.name		= "btrfs",
- 	.mount		= btrfs_mount,
- 	.kill_sb	= btrfs_kill_super,
--	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA,
-+	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA | FS_MGTIME,
- };
- 
- static struct file_system_type btrfs_root_fs_type = {
-@@ -2152,7 +2152,8 @@ static struct file_system_type btrfs_root_fs_type = {
- 	.name		= "btrfs",
- 	.mount		= btrfs_mount_root,
- 	.kill_sb	= btrfs_kill_super,
--	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA | FS_ALLOW_IDMAP,
-+	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA |
-+			  FS_ALLOW_IDMAP | FS_MGTIME,
- };
- 
- MODULE_ALIAS_FS("btrfs");
+>
+> BTW, could you explain it more ? How could this resolve the issue we are
+> discussing here ?
 
--- 
-2.41.0
+This was briefly mentioned here
+https://lore.kernel.org/all/20220105141023.vrrbfhti5apdvkz7@wittgenstein/#t
+by Christian. Let me describe it in detail.
 
+In the current approach we apply mount idmapping to
+head->caller_{uid,gid} fields
+to make mkdir/mknod/symlink operations set a proper inode owner
+uid/gid in according with an idmapping.
+
+This makes a problem with path-based UID/GID restriction mechanism,
+because it uses head->caller_{uid,gid} fields
+to check if UID/GID is permitted or not.
+
+So, the problem is that we have one field in ceph request for two
+different needs - to control permissions and to set inode owner.
+Christian pointed that the most saner way is to modify ceph protocol
+and add a separate field to store inode owner UID/GID,
+and only this fields should be idmapped, but head->caller_{uid,gid}
+will be untouched.
+
+With this approach, we will not affect UID/GID-based permission rules
+with an idmapped mounts at all.
+
+Kind regards,
+Alex
+
+>
+> Thanks
+>
+> - Xiubo
+>
+>
+> >
+> > Kind regards,
+> > Alex
+> >
+> >> Thanks
+> >>
+> >> - Xiubo
+> >>
+> >>
+> >>
+> >>
+> >>
+> >>> Thanks,
+> >>> Alex
+> >>>
+> >>>> Thanks
+> >>>>
+> >>>> - Xiubo
+> >>>>
+>
