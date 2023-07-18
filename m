@@ -2,266 +2,268 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BF185756306
-	for <lists+ceph-devel@lfdr.de>; Mon, 17 Jul 2023 14:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EC9A757176
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Jul 2023 03:45:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229965AbjGQMp1 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 17 Jul 2023 08:45:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57866 "EHLO
+        id S230523AbjGRBpn (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 17 Jul 2023 21:45:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230291AbjGQMpX (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 17 Jul 2023 08:45:23 -0400
+        with ESMTP id S230293AbjGRBpm (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 17 Jul 2023 21:45:42 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03E9CDA
-        for <ceph-devel@vger.kernel.org>; Mon, 17 Jul 2023 05:44:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F13A61AC
+        for <ceph-devel@vger.kernel.org>; Mon, 17 Jul 2023 18:44:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1689597870;
+        s=mimecast20190719; t=1689644699;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=cPBr5P6RMAc5J6eRrRxygG6j4FumvyTiuWHqCKdLMWY=;
-        b=Cx3lbYq0hln1VTntFeZqghJc8dBzNeQCi3q3hcCDGyGHB2pYxYjG6CCqk6GmHlLiMD/7vu
-        rztmuDgFFv2J91qDyGdzLGlOpoO9ekFnseHBcteiKDRhTKxasCOVvy5w9cdeey9fQF0cCk
-        +/z4dCaD6LgjuDg8AWCrtSurJwvy6Aw=
+        bh=IhD0+ZBVPYFnTWd85wDpKQlkImyuWRSCaCnKLkybDrg=;
+        b=E/kYxDnJ0O2a/Y5cWy5I+37JheC5qovA4AF/XvWJbctAYXTDw0ulzU4NvuDFTYqzwD/E+l
+        QsvxdXbX9dDg0eXAbkP9lCuDdrXuhXH1YT0dj+XsPtPST6jX7HWpEXXANgVgdFjb8Me2kD
+        qp2cujKyxAPR5QqFhcdQCvgz69RPO1k=
 Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
  [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-149-_uxSIFV-Ps6K_ZadcI_C2A-1; Mon, 17 Jul 2023 08:44:29 -0400
-X-MC-Unique: _uxSIFV-Ps6K_ZadcI_C2A-1
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-55c04f5827eso1888377a12.1
-        for <ceph-devel@vger.kernel.org>; Mon, 17 Jul 2023 05:44:28 -0700 (PDT)
+ us-mta-581-Mx2HqRSsM5-3xtTGMSiqGQ-1; Mon, 17 Jul 2023 21:44:57 -0400
+X-MC-Unique: Mx2HqRSsM5-3xtTGMSiqGQ-1
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-560009b42dbso774121a12.2
+        for <ceph-devel@vger.kernel.org>; Mon, 17 Jul 2023 18:44:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1689597867; x=1692189867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cPBr5P6RMAc5J6eRrRxygG6j4FumvyTiuWHqCKdLMWY=;
-        b=XIlB/3YsueXS+ojLjO6WAA6a0woMjGG9rc/dXPu7i39vHuaWI4nkWQKhEo+oB3675H
-         wG7Kf28UQESXem9Poq8Qa4eIATGKpvoQkEpK8R1xL6uDI5rUFxXC1gZJKbF6ogY5UQng
-         i/AGji1P4gbZTpz/3nJ/+Im7ZLbaK5fSWCPwlFC7KrBK223HwE2vQPEE/mZ4IbDBeCz8
-         +zStiwc4r0ZwDIjJzRZVwEH5+mPFmQ6xAKqxx0dI2uYiMfMWutEjH0HoJUBIxXFymc9x
-         BdWmMhURKHNVdawk59CD1ALe0ndy1H89pXn/dScrFTutoXZYUettHmvOZhBz61emMxbL
-         lN8g==
-X-Gm-Message-State: ABy/qLbwRlCHuKCRtYR8f9M5PT/JPQ4GraLw6qCBIktPmBXJepmuoXD0
-        +IzKPuPcc+YcI5vsZkyMhBJbV3qgMcArh6iWy6DwaTCKdemavC+oOSEI/ZudwN4dheuXCuy1Htn
-        bl+yRwB5OqCfPqsQrvM8720/C+Nxx3TNHwK71tA==
-X-Received: by 2002:a17:90a:5902:b0:263:ea6a:1049 with SMTP id k2-20020a17090a590200b00263ea6a1049mr10021666pji.2.1689597867203;
-        Mon, 17 Jul 2023 05:44:27 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlHasnKG+SNiDONa+CP1OSdvJTohPXX69WzDE7nIpw5fYJbI1G9ilrC2Cj9qoIe3xkPsQOURqnSvBH8qP+XIJY0=
-X-Received: by 2002:a17:90a:5902:b0:263:ea6a:1049 with SMTP id
- k2-20020a17090a590200b00263ea6a1049mr10021649pji.2.1689597866936; Mon, 17 Jul
- 2023 05:44:26 -0700 (PDT)
+        d=1e100.net; s=20221208; t=1689644697; x=1692236697;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IhD0+ZBVPYFnTWd85wDpKQlkImyuWRSCaCnKLkybDrg=;
+        b=G6xIUv3i/Xxhbjr5shRCLw20lGh+9bg9ZkWsFGQ8SFYM+aYot6c3MS1ayTNfAuOFmm
+         jTvFQsSNRyYo+PnJRJ0/AIX/idQ5HPLfHXa5c3fZDK1KmfYW6FjGeJaL3y2vn7NgbeTa
+         qWBsPdTnU1HhFC/zt6tKI7i2tfz9sZnW3RZNvx0C+nwmrT1sC5re7FQ55L6h661rU66P
+         wf08n7d06NrTRFzLojBORk9RtZKb2Ut1/RSznzBpyrgvrWDwaxYn42FkC8ilZkHwIcr1
+         J1AX8bqLH4u8uiZKoLB9z4dvBwhh9pgm7SSgs2+W5NbBNSxulSC6SJ25z3PQP+gJBj+B
+         /a0g==
+X-Gm-Message-State: ABy/qLaFO5qvVsNfKlJgp001+nF8Mif5Z9FR2UV1niW1ugYmrpytKT+u
+        Q8VIIBcs7l7YusP6IDGCjS3ZpQReZ9Hue1YCCLpmiBRhN5skPVgOQn7/O2h+cg7atvI/zqKLZnh
+        T873gJnWgAjeYecrWVP6yYQ==
+X-Received: by 2002:a05:6a20:5498:b0:133:6c35:99c1 with SMTP id i24-20020a056a20549800b001336c3599c1mr14562860pzk.16.1689644696852;
+        Mon, 17 Jul 2023 18:44:56 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlGxAju5T1UCwQF5/cupW+zXgFeNUcZ+pCUS/8FwaxHZi+FOWZyjLBc5TWNGr2M+mKKpCLUi4Q==
+X-Received: by 2002:a05:6a20:5498:b0:133:6c35:99c1 with SMTP id i24-20020a056a20549800b001336c3599c1mr14562854pzk.16.1689644696521;
+        Mon, 17 Jul 2023 18:44:56 -0700 (PDT)
+Received: from [10.72.12.44] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id jl2-20020a170903134200b001b51b3e84cesm506236plb.166.2023.07.17.18.44.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jul 2023 18:44:56 -0700 (PDT)
+Message-ID: <8121882a-0823-3a60-e108-0ff7bae5c0c9@redhat.com>
+Date:   Tue, 18 Jul 2023 09:44:49 +0800
 MIME-Version: 1.0
-References: <20230628104852.3391651-3-dhowells@redhat.com> <202307171548.7ab20146-oliver.sang@intel.com>
-In-Reply-To: <202307171548.7ab20146-oliver.sang@intel.com>
-From:   David Wysochanski <dwysocha@redhat.com>
-Date:   Mon, 17 Jul 2023 08:43:50 -0400
-Message-ID: <CALF+zOm5RuFSkd=KNxh+-vF+2SNsgP7s-WVrwHxVxxLrS6NtxQ@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] mm, netfs, fscache: Stop read optimisation when
- folio removed from pagecache
-To:     kernel test robot <oliver.sang@intel.com>
-Cc:     David Howells <dhowells@redhat.com>, oe-lkp@lists.linux.dev,
-        lkp@intel.com, Rohith Surabattula <rohiths.msft@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Steve French <sfrench@samba.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Ilya Dryomov <idryomov@gmail.com>, v9fs@lists.linux.dev,
-        linux-afs@lists.infradead.org, linux-cachefs@redhat.com,
-        ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        v9fs-developer@lists.sourceforge.net, linux-erofs@lists.ozlabs.org,
-        linux-ext4@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
+To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc:     Gregory Farnum <gfarnum@redhat.com>,
+        Christian Brauner <brauner@kernel.org>, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
+ <f3864ed6-8c97-8a7a-f268-dab29eb2fb21@redhat.com>
+ <CAEivzxcRsHveuW3nrPnSBK6_2-eT4XPvza3kN2oogvnbVXBKvQ@mail.gmail.com>
+ <20230609-alufolie-gezaubert-f18ef17cda12@brauner>
+ <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
+ <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com>
+ <CAJ4mKGby71qfb3gd696XH3AazeR0Qc_VGYupMznRH3Piky+VGA@mail.gmail.com>
+ <977d8133-a55f-0667-dc12-aa6fd7d8c3e4@redhat.com>
+ <CAEivzxcr99sERxZX17rZ5jW9YSzAWYvAjOOhBH+FqRoso2=yng@mail.gmail.com>
+ <626175e2-ee91-0f1a-9e5d-e506aea366fa@redhat.com>
+ <64241ff0-9af3-6817-478f-c24a0b9de9b3@redhat.com>
+ <CAEivzxeF51ZEKhQ-0M35nooZ7_cZgk1-q75-YbkeWpZ9RuHG4A@mail.gmail.com>
+ <4c4f73d8-8238-6ab8-ae50-d83c1441ac05@redhat.com>
+ <CAEivzxeQGkemxVwJ148b_+OmntUAWkdL==yMiTMN+GPyaLkFPg@mail.gmail.com>
+ <0a42c5d0-0479-e60e-ac84-be3b915c62d9@redhat.com>
+ <CAEivzxcskn8WxcOo0PDHMascFRdYTD0Lr5Uo4fj3deBjDviOXA@mail.gmail.com>
+Content-Language: en-US
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <CAEivzxcskn8WxcOo0PDHMascFRdYTD0Lr5Uo4fj3deBjDviOXA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
         RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Mon, Jul 17, 2023 at 3:35=E2=80=AFAM kernel test robot <oliver.sang@inte=
-l.com> wrote:
->
->
->
-> Hello,
->
-> kernel test robot noticed "canonical_address#:#[##]" on:
->
-> commit: 830503440449014dcf0e4b0b6d905a1b0b2c92ad ("[PATCH v7 2/2] mm, net=
-fs, fscache: Stop read optimisation when folio removed from pagecache")
-> url: https://github.com/intel-lab-lkp/linux/commits/David-Howells/mm-Merg=
-e-folio_has_private-filemap_release_folio-call-pairs/20230628-185100
-> base: https://git.kernel.org/cgit/linux/kernel/git/akpm/mm.git mm-everyth=
-ing
-> patch link: https://lore.kernel.org/all/20230628104852.3391651-3-dhowells=
-@redhat.com/
-> patch subject: [PATCH v7 2/2] mm, netfs, fscache: Stop read optimisation =
-when folio removed from pagecache
->
-> in testcase: vm-scalability
-> version: vm-scalability-x86_64-1.0-0_20220518
-> with following parameters:
->
->         runtime: 300
->         thp_enabled: always
->         thp_defrag: always
->         nr_task: 32
->         nr_ssd: 1
->         priority: 1
->         test: swap-w-rand
->         cpufreq_governor: performance
->
-> test-description: The motivation behind this suite is to exercise functio=
-ns and regions of the mm/ of the Linux kernel which are of interest to us.
-> test-url: https://git.kernel.org/cgit/linux/kernel/git/wfg/vm-scalability=
-.git/
->
->
-> compiler: gcc-12
-> test machine: 128 threads 2 sockets Intel(R) Xeon(R) Platinum 8358 CPU @ =
-2.60GHz (Ice Lake) with 128G memory
->
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
->
->
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202307171548.7ab20146-oliver.san=
-g@intel.com
->
 
-This has already been fixed with
-https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git/commit/?h=3Dmm-=
-everything&id=3Daf18573471db5c5c9b96ec95208c340ae7c00e64
+On 7/14/23 20:57, Aleksandr Mikhalitsyn wrote:
+> On Tue, Jul 4, 2023 at 3:09 AM Xiubo Li <xiubli@redhat.com> wrote:
+>> Sorry, not sure, why my last reply wasn't sent out.
+>>
+>> Do it again.
+>>
+>>
+>> On 6/26/23 19:23, Aleksandr Mikhalitsyn wrote:
+>>> On Mon, Jun 26, 2023 at 4:12 AM Xiubo Li<xiubli@redhat.com>  wrote:
+>>>> On 6/24/23 15:11, Aleksandr Mikhalitsyn wrote:
+>>>>> On Sat, Jun 24, 2023 at 3:37 AM Xiubo Li<xiubli@redhat.com>  wrote:
+>>>>>> [...]
+>>>>>>
+>>>>>>     > > >
+>>>>>>     > > > I thought about this too and came to the same conclusion, that
+>>>>>> UID/GID
+>>>>>>     > > > based
+>>>>>>     > > > restriction can be applied dynamically, so detecting it on mount-time
+>>>>>>     > > > helps not so much.
+>>>>>>     > > >
+>>>>>>     > > For this you please raise one PR to ceph first to support this, and in
+>>>>>>     > > the PR we can discuss more for the MDS auth caps. And after the PR
+>>>>>>     > > getting merged then in this patch series you need to check the
+>>>>>>     > > corresponding option or flag to determine whether could the idmap
+>>>>>>     > > mounting succeed.
+>>>>>>     >
+>>>>>>     > I'm sorry but I don't understand what we want to support here. Do we
+>>>>>> want to
+>>>>>>     > add some new ceph request that allows to check if UID/GID-based
+>>>>>>     > permissions are applied for
+>>>>>>     > a particular ceph client user?
+>>>>>>
+>>>>>> IMO we should prevent user to set UID/GID-based permisions caps from
+>>>>>> ceph side.
+>>>>>>
+>>>>>> As I know currently there is no way to prevent users to set MDS auth
+>>>>>> caps, IMO in ceph side at least we need one flag or option to disable
+>>>>>> this once users want this fs cluster sever for idmap mounts use case.
+>>>>> How this should be visible from the user side? We introducing a new
+>>>>> kernel client mount option,
+>>>>> like "nomdscaps", then pass flag to the MDS and MDS should check that
+>>>>> MDS auth permissions
+>>>>> are not applied (on the mount time) and prevent them from being
+>>>>> applied later while session is active. Like that?
+>>>>>
+>>>>> At the same time I'm thinking about protocol extension that adds 2
+>>>>> additional fields for UID/GID. This will allow to correctly
+>>>>> handle everything. I wanted to avoid any changes to the protocol or
+>>>>> server-side things. But if we want to change MDS side,
+>>>>> maybe it's better then to go this way?
+>>> Hi Xiubo,
+>>>
+>>>> There is another way:
+>>>>
+>>>> For each client it will have a dedicated client auth caps, something like:
+>>>>
+>>>> client.foo
+>>>>      key: *key*
+>>>>      caps: [mds] allow r, allow rw path=/bar
+>>>>      caps: [mon] allow r
+>>>>      caps: [osd] allow rw tag cephfs data=cephfs_a
+>>> Do we have any infrastructure to get this caps list on the client side
+>>> right now?
+>>> (I've taken a quick look through the code and can't find anything
+>>> related to this.)
+>> I am afraid there is no.
+>>
+>> But just after the following ceph PR gets merged it will be easy to do this:
+>>
+>> https://github.com/ceph/ceph/pull/48027
+>>
+>> This is still under testing.
+>>
+>>>> When mounting this client with idmap enabled, then we can just check the
+>>>> above [mds] caps, if there has any UID/GID based permissions set, then
+>>>> fail the mounting.
+>>> understood
+>>>
+>>>> That means this kind client couldn't be mounted with idmap enabled.
+>>>>
+>>>> Also we need to make sure that once there is a mount with idmap enabled,
+>>>> the corresponding client caps couldn't be append the UID/GID based
+>>>> permissions. This need a patch in ceph anyway IMO.
+>>> So, yeah we will need to effectively block cephx permission changes if
+>>> there is a client mounted with
+>>> an active idmapped mount. Sounds as something that require massive
+>>> changes on the server side.
+>> Maybe no need much, it should be simple IMO. But I am not 100% sure.
+>>
+>>> At the same time this will just block users from using idmapped mounts
+>>> along with UID/GID restrictions.
+>>>
+>>> If you want me to change server-side anyways, isn't it better just to
+>>> extend cephfs protocol to properly
+>>> handle UID/GIDs with idmapped mounts? (It was originally proposed by Christian.)
+>>> What we need to do here is to add a separate UID/GID fields for ceph
+>>> requests those are creating a new inodes
+>>> (like mknod, symlink, etc).
+> Dear Xiubo,
+>
+> I'm sorry for delay with reply, I've missed this message accidentally.
+>
+>> BTW, could you explain it more ? How could this resolve the issue we are
+>> discussing here ?
+> This was briefly mentioned here
+> https://lore.kernel.org/all/20220105141023.vrrbfhti5apdvkz7@wittgenstein/#t
+> by Christian. Let me describe it in detail.
+>
+> In the current approach we apply mount idmapping to
+> head->caller_{uid,gid} fields
+> to make mkdir/mknod/symlink operations set a proper inode owner
+> uid/gid in according with an idmapping.
+
+Sorry for late.
+
+I still couldn't get how this could resolve the lookup case.
+
+For a lookup request the caller_{uid, gid} still will be the mapped 
+{uid, gid}, right ? And also the same for other non-create requests. If 
+so this will be incorrect for the cephx perm checks IMO.
+
+Thanks
+
+- Xiubo
 
 
+> This makes a problem with path-based UID/GID restriction mechanism,
+> because it uses head->caller_{uid,gid} fields
+> to check if UID/GID is permitted or not.
 >
-> [   45.898720][ T1453]
-> [   45.907480][ T1453] 2023-07-16 00:36:07  ./case-swap-w-rand
-> [   45.907481][ T1453]
-> [   45.917873][ T1453] 2023-07-16 00:36:07  ./usemem --runtime 300 -n 32 =
---random 8048142432
-> [   45.917876][ T1453]
-> [   47.348632][  T973] general protection fault, probably for non-canonic=
-al address 0xf8ff1100207778e6: 0000 [#1] SMP NOPTI
-> [   47.359787][  T973] CPU: 123 PID: 973 Comm: kswapd1 Tainted: G S      =
-           6.4.0-rc4-00533-g830503440449 #3
-> [   47.370301][  T973] Hardware name: Intel Corporation M50CYP2SB1U/M50CY=
-P2SB1U, BIOS SE5C620.86B.01.01.0003.2104260124 04/26/2021
-> [ 47.382201][ T973] RIP: 0010:filemap_release_folio (kbuild/src/x86_64/mm=
-/filemap.c:4063 (discriminator 1))
-> [ 47.388172][ T973] Code: 00 48 8b 07 48 8b 57 18 83 e0 01 74 4f 48 f7 07=
- 00 60 00 00 74 22 48 8b 07 f6 c4 80 75 32 48 85 d2 74 34 48 8b 82 90 00 00=
- 00 <48> 8b 40 48 48 85 c0 74 24 ff e0 cc 66 90 48 85 d2 74 15 48 8b 8a
-> All code
-> =3D=3D=3D=3D=3D=3D=3D=3D
->    0:   00 48 8b                add    %cl,-0x75(%rax)
->    3:   07                      (bad)
->    4:   48 8b 57 18             mov    0x18(%rdi),%rdx
->    8:   83 e0 01                and    $0x1,%eax
->    b:   74 4f                   je     0x5c
->    d:   48 f7 07 00 60 00 00    testq  $0x6000,(%rdi)
->   14:   74 22                   je     0x38
->   16:   48 8b 07                mov    (%rdi),%rax
->   19:   f6 c4 80                test   $0x80,%ah
->   1c:   75 32                   jne    0x50
->   1e:   48 85 d2                test   %rdx,%rdx
->   21:   74 34                   je     0x57
->   23:   48 8b 82 90 00 00 00    mov    0x90(%rdx),%rax
->   2a:*  48 8b 40 48             mov    0x48(%rax),%rax          <-- trapp=
-ing instruction
->   2e:   48 85 c0                test   %rax,%rax
->   31:   74 24                   je     0x57
->   33:   ff e0                   jmpq   *%rax
->   35:   cc                      int3
->   36:   66 90                   xchg   %ax,%ax
->   38:   48 85 d2                test   %rdx,%rdx
->   3b:   74 15                   je     0x52
->   3d:   48                      rex.W
->   3e:   8b                      .byte 0x8b
->   3f:   8a                      .byte 0x8a
+> So, the problem is that we have one field in ceph request for two
+> different needs - to control permissions and to set inode owner.
+> Christian pointed that the most saner way is to modify ceph protocol
+> and add a separate field to store inode owner UID/GID,
+> and only this fields should be idmapped, but head->caller_{uid,gid}
+> will be untouched.
 >
-> Code starting with the faulting instruction
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->    0:   48 8b 40 48             mov    0x48(%rax),%rax
->    4:   48 85 c0                test   %rax,%rax
->    7:   74 24                   je     0x2d
->    9:   ff e0                   jmpq   *%rax
->    b:   cc                      int3
->    c:   66 90                   xchg   %ax,%ax
->    e:   48 85 d2                test   %rdx,%rdx
->   11:   74 15                   je     0x28
->   13:   48                      rex.W
->   14:   8b                      .byte 0x8b
->   15:   8a                      .byte 0x8a
-> [   47.408103][  T973] RSP: 0018:ffa00000094f7b28 EFLAGS: 00010246
-> [   47.414266][  T973] RAX: f8ff11002077789e RBX: ffa00000094f7c08 RCX: 9=
-8ff110020777898
-> [   47.422337][  T973] RDX: ff11002077788f71 RSI: 0000000000000cc0 RDI: f=
-fd4000042870d00
-> [   47.430417][  T973] RBP: ffa00000094f7b98 R08: ff110001ba106300 R09: 0=
-000000000000028
-> [   47.438497][  T973] R10: ff110010846bd080 R11: ff1100207ffd4000 R12: f=
-fd4000042870d00
-> [   47.446575][  T973] R13: ffa00000094f7e10 R14: ffa00000094f7c1c R15: f=
-fd4000042870d08
-> [   47.454658][  T973] FS:  0000000000000000(0000) GS:ff110020046c0000(00=
-00) knlGS:0000000000000000
-> [   47.463703][  T973] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   47.470406][  T973] CR2: 00007fddcaf308f8 CR3: 00000001e1a82003 CR4: 0=
-000000000771ee0
-> [   47.478496][  T973] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0=
-000000000000000
-> [   47.486594][  T973] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0=
-000000000000400
-> [   47.494696][  T973] PKRU: 55555554
-> [   47.498372][  T973] Call Trace:
-> [   47.501795][  T973]  <TASK>
-> [ 47.504870][ T973] ? die_addr (kbuild/src/x86_64/arch/x86/kernel/dumpsta=
-ck.c:421 kbuild/src/x86_64/arch/x86/kernel/dumpstack.c:460)
-> [ 47.509153][ T973] ? exc_general_protection (kbuild/src/x86_64/arch/x86/=
-kernel/traps.c:783 kbuild/src/x86_64/arch/x86/kernel/traps.c:728)
-> [ 47.514826][ T973] ? asm_exc_general_protection (kbuild/src/x86_64/arch/=
-x86/include/asm/idtentry.h:564)
-> [ 47.520679][ T973] ? filemap_release_folio (kbuild/src/x86_64/mm/filemap=
-.c:4063 (discriminator 1))
+> With this approach, we will not affect UID/GID-based permission rules
+> with an idmapped mounts at all.
 >
+> Kind regards,
+> Alex
 >
-> To reproduce:
->
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         sudo bin/lkp install job.yaml           # job file is attached in=
- this email
->         bin/lkp split-job --compatible job.yaml # generate the yaml file =
-for lkp run
->         sudo bin/lkp run generated-yaml-file
->
->         # if come across any failure that blocks the test,
->         # please remove ~/.lkp and /lkp dir to run from a clean state.
->
->
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
->
->
+>> Thanks
+>>
+>> - Xiubo
+>>
+>>
+>>> Kind regards,
+>>> Alex
+>>>
+>>>> Thanks
+>>>>
+>>>> - Xiubo
+>>>>
+>>>>
+>>>>
+>>>>
+>>>>
+>>>>> Thanks,
+>>>>> Alex
+>>>>>
+>>>>>> Thanks
+>>>>>>
+>>>>>> - Xiubo
+>>>>>>
 
