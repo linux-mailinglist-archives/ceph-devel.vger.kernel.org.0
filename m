@@ -2,123 +2,179 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7129075AE1F
-	for <lists+ceph-devel@lfdr.de>; Thu, 20 Jul 2023 14:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE3FC75BCBD
+	for <lists+ceph-devel@lfdr.de>; Fri, 21 Jul 2023 05:20:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231644AbjGTMQv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 20 Jul 2023 08:16:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36548 "EHLO
+        id S229625AbjGUDUx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 20 Jul 2023 23:20:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbjGTMQt (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 20 Jul 2023 08:16:49 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73FBB1BC6;
-        Thu, 20 Jul 2023 05:16:46 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 311FA22BEC;
-        Thu, 20 Jul 2023 12:16:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1689855405; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        with ESMTP id S229531AbjGUDUw (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 20 Jul 2023 23:20:52 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D70B273A
+        for <ceph-devel@vger.kernel.org>; Thu, 20 Jul 2023 20:20:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1689909604;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=qJeevWCTbOxeUOBTAxfygV2zVKl4pRNiVV/Sn4Vc5g8=;
-        b=Y7xfme4rPrCF5hEC5pbUvdrHOtse6c2XE5dQH4ofisst0BxXhq5fzSvvvudIq0qb1fgAZ3
-        nvIjKrBX9SBniQArDMHq3Eo1F5gHSAGQmoz/tE4t4qxq6hUdsPyEUo9DVqT6M2kkkhHlFw
-        wusKJBAY7+a0/4rdZ8XEmsB7vqMiu20=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1689855405;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qJeevWCTbOxeUOBTAxfygV2zVKl4pRNiVV/Sn4Vc5g8=;
-        b=FfN5Vi6mxKPEw3x2oCzsXOategHapN8ngq0O/mlx3Dt3iIlpkGc1UcEnhLUPz5UTPIunq7
-        Q/g7Z3f9m59q7UAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 17569138EC;
-        Thu, 20 Jul 2023 12:16:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id V/cVBa0luWQKJgAAMHmgww
-        (envelope-from <hare@suse.de>); Thu, 20 Jul 2023 12:16:45 +0000
-Message-ID: <2fda17af-ed88-2332-27a1-61496f943e91@suse.de>
-Date:   Thu, 20 Jul 2023 14:16:44 +0200
+        bh=FYC8NzIvQBfwMzCN4Y1JOBLQ6XrEE/2B7fUpOXrUmEI=;
+        b=cTA0pfuhc5aSjQadX2d+qMiQ+7AelzsaOzEE5jkEuUw97FO86KmH5LyoDsSHiMV5LtIAKZ
+        t/SdEpxik3QkZ0/T6cnipyYUHY/j9t3U/hJEOW27wgK59dn7OjsYXFflfAp6o0Q1xKkfQp
+        ZFHedZ5Q/4xD69dMHxqwwdp0DWpAqXk=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-501-3gga3mvFNK2OtlwtjjVF9w-1; Thu, 20 Jul 2023 23:20:02 -0400
+X-MC-Unique: 3gga3mvFNK2OtlwtjjVF9w-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-978a991c3f5so109519066b.0
+        for <ceph-devel@vger.kernel.org>; Thu, 20 Jul 2023 20:20:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689909601; x=1690514401;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FYC8NzIvQBfwMzCN4Y1JOBLQ6XrEE/2B7fUpOXrUmEI=;
+        b=NHuTR/cbC/vplZGZ+q8bMCN5E6+ARburZydkGQS0gaKlibCefmBLo3qVCjB5SLrKfP
+         YkF55GkmMfu06JXLnmTBS3RHUKJG09ABOo4gWkPk+irBU3wHxUCm/aLXB9YkNzdCX3GJ
+         +gJuh2V+VExf3yVMuqjUArxLFbMubAspBV4glDjBVyh+7foaWIO1jCwB3iG3Fnws/8KI
+         lDH1QoDao9qyO1LuphjsF05RDdyFFQmpU5IGZNIjD4RTumcG0F9gi9tsCbwswz5j7h+P
+         hoCnGcDT7AX59o9TgyMhb8difE27Aca2Ts6TpNDs7LSUUJ7prRIctDGUH99p6FbAr9Y9
+         Nlew==
+X-Gm-Message-State: ABy/qLZRa1qnn/r8kthcCFZULUfMUyD08/RBMAqPtFKUb+5lSswiIH9R
+        P+mu9Satq55RhjQNWwhDcY0nJWw9UaUtbajN5nNOVcayglj0zD1IVj6Ve8vjC4NdATfNcMWLXjT
+        CiN/O8/Qg82RlfZa9O9SfzajGcnUhzxGUI/5iMXE/mSoV5o7K
+X-Received: by 2002:a17:907:2cd0:b0:997:e7d9:50f7 with SMTP id hg16-20020a1709072cd000b00997e7d950f7mr524599ejc.66.1689909601020;
+        Thu, 20 Jul 2023 20:20:01 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlGxZ/7dmQ0ACW+P/oCGilRh3gbPCGWZCS1cQlobNnvAlXPulCfJCA6v70a4Rl8/p73DNoW7OzSpxKuezbFoMUo=
+X-Received: by 2002:a17:907:2cd0:b0:997:e7d9:50f7 with SMTP id
+ hg16-20020a1709072cd000b00997e7d950f7mr524588ejc.66.1689909600689; Thu, 20
+ Jul 2023 20:20:00 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: [PATCH 16/17] block: use iomap for writes to block devices
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20230424054926.26927-1-hch@lst.de>
- <20230424054926.26927-17-hch@lst.de>
- <b96b397e-2f5e-7910-3bb3-7405d0e293a7@suse.de>
- <20230720120650.GA13266@lst.de>
-From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20230720120650.GA13266@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20230629033533.270535-1-xiubli@redhat.com>
+In-Reply-To: <20230629033533.270535-1-xiubli@redhat.com>
+From:   Milind Changire <mchangir@redhat.com>
+Date:   Fri, 21 Jul 2023 08:49:24 +0530
+Message-ID: <CAED=hWCkMMjina5q1VhygNnkHD+nqLfeNKVp8Oof623K6iEwbw@mail.gmail.com>
+Subject: Re: [PATCH] ceph: defer stopping the mdsc delayed_work
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        vshankar@redhat.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On 7/20/23 14:06, Christoph Hellwig wrote:
-> On Fri, May 19, 2023 at 04:22:01PM +0200, Hannes Reinecke wrote:
->> I'm hitting this during booting:
->> [    5.016324]  <TASK>
->> [    5.030256]  iomap_iter+0x11a/0x350
->> [    5.030264]  iomap_readahead+0x1eb/0x2c0
->> [    5.030272]  read_pages+0x5d/0x220
->> [    5.030279]  page_cache_ra_unbounded+0x131/0x180
->> [    5.030284]  filemap_get_pages+0xff/0x5a0
->> [    5.030292]  filemap_read+0xca/0x320
->> [    5.030296]  ? aa_file_perm+0x126/0x500
->> [    5.040216]  ? touch_atime+0xc8/0x150
->> [    5.040224]  blkdev_read_iter+0xb0/0x150
->> [    5.040228]  vfs_read+0x226/0x2d0
->> [    5.040234]  ksys_read+0xa5/0xe0
->> [    5.040238]  do_syscall_64+0x5b/0x80
->>
->> Maybe we should consider this patch:
-> 
-> As willy said this should be taken care of by the i_size check.
-> Did you run with just this patch set or some of the large block
-> size experiments on top which might change the variables?
-> 
-> I'll repost the series today without any chances in the area, and
-> if you can reproduce it with just that series we need to root
-> cause it, so please send your kernel and VM config along for the
-> next report.
+Looks good to me.
 
-I _think_ it's been resolve now; I've rewritten my patchset (and the 
-patches where it's based upon) several times now, so it might be a stale 
-issue now.
+nit: typo for perioudically in commit message
 
-Eagerly awaiting your patchset.
+Reviewed-by: Milind Changire <mchangir@redhat.com>
 
-Cheers,
 
-Hannes
+On Thu, Jun 29, 2023 at 9:07=E2=80=AFAM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> Flushing the dirty buffer may take a long time if the Rados is
+> overloaded or if there is network issue. So we should ping the
+> MDSs perioudically to keep alive, else the MDS will blocklist
+> the kclient.
+>
+> Cc: stable@vger.kernel.org
+> Cc: Venky Shankar <vshankar@redhat.com>
+> URL: https://tracker.ceph.com/issues/61843
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/mds_client.c | 2 +-
+>  fs/ceph/mds_client.h | 3 ++-
+>  fs/ceph/super.c      | 7 ++++---
+>  3 files changed, 7 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 65230ebefd51..70987b3c198a 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -5192,7 +5192,7 @@ static void delayed_work(struct work_struct *work)
+>
+>         doutc(mdsc->fsc->client, "mdsc delayed_work\n");
+>
+> -       if (mdsc->stopping)
+> +       if (mdsc->stopping >=3D CEPH_MDSC_STOPPING_FLUSHED)
+>                 return;
+>
+>         mutex_lock(&mdsc->mutex);
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 5d02c8c582fd..befbd384428e 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -400,7 +400,8 @@ struct cap_wait {
+>
+>  enum {
+>         CEPH_MDSC_STOPPING_BEGIN =3D 1,
+> -       CEPH_MDSC_STOPPING_FLUSHED =3D 2,
+> +       CEPH_MDSC_STOPPING_FLUSHING =3D 2,
+> +       CEPH_MDSC_STOPPING_FLUSHED =3D 3,
+>  };
+>
+>  /*
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index 8e1e517a45db..fb694ba72955 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -1488,7 +1488,7 @@ static int ceph_init_fs_context(struct fs_context *=
+fc)
+>  static bool __inc_stopping_blocker(struct ceph_mds_client *mdsc)
+>  {
+>         spin_lock(&mdsc->stopping_lock);
+> -       if (mdsc->stopping >=3D CEPH_MDSC_STOPPING_FLUSHED) {
+> +       if (mdsc->stopping >=3D CEPH_MDSC_STOPPING_FLUSHING) {
+>                 spin_unlock(&mdsc->stopping_lock);
+>                 return false;
+>         }
+> @@ -1501,7 +1501,7 @@ static void __dec_stopping_blocker(struct ceph_mds_=
+client *mdsc)
+>  {
+>         spin_lock(&mdsc->stopping_lock);
+>         if (!atomic_dec_return(&mdsc->stopping_blockers) &&
+> -           mdsc->stopping >=3D CEPH_MDSC_STOPPING_FLUSHED)
+> +           mdsc->stopping >=3D CEPH_MDSC_STOPPING_FLUSHING)
+>                 complete_all(&mdsc->stopping_waiter);
+>         spin_unlock(&mdsc->stopping_lock);
+>  }
+> @@ -1562,7 +1562,7 @@ static void ceph_kill_sb(struct super_block *s)
+>         sync_filesystem(s);
+>
+>         spin_lock(&mdsc->stopping_lock);
+> -       mdsc->stopping =3D CEPH_MDSC_STOPPING_FLUSHED;
+> +       mdsc->stopping =3D CEPH_MDSC_STOPPING_FLUSHING;
+>         wait =3D !!atomic_read(&mdsc->stopping_blockers);
+>         spin_unlock(&mdsc->stopping_lock);
+>
+> @@ -1576,6 +1576,7 @@ static void ceph_kill_sb(struct super_block *s)
+>                         pr_warn_client(cl, "umount was killed, %ld\n", ti=
+meleft);
+>         }
+>
+> +       mdsc->stopping =3D CEPH_MDSC_STOPPING_FLUSHED;
+>         kill_anon_super(s);
+>
+>         fsc->client->extra_mon_dispatch =3D NULL;
+> --
+> 2.40.1
+>
+
+
+--=20
+Milind
 
