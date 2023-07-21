@@ -2,64 +2,273 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1339E75C115
-	for <lists+ceph-devel@lfdr.de>; Fri, 21 Jul 2023 10:16:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 093C475CC40
+	for <lists+ceph-devel@lfdr.de>; Fri, 21 Jul 2023 17:44:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231447AbjGUIQA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 21 Jul 2023 04:16:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59166 "EHLO
+        id S232173AbjGUPoI (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 21 Jul 2023 11:44:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229744AbjGUIP7 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 21 Jul 2023 04:15:59 -0400
-X-Greylist: delayed 567 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 21 Jul 2023 01:15:58 PDT
-Received: from mail.citycodes.pl (mail.citycodes.pl [158.255.215.195])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 755262708
-        for <ceph-devel@vger.kernel.org>; Fri, 21 Jul 2023 01:15:58 -0700 (PDT)
-Received: by mail.citycodes.pl (Postfix, from userid 1001)
-        id 8D2AB1F19C; Fri, 21 Jul 2023 10:05:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=citycodes.pl; s=mail;
-        t=1689926762; bh=mMhfBvhM53FtUQl1P3lyeSY5aDBQYiR8qQBy6YFQHi0=;
-        h=Date:From:To:Subject:From;
-        b=dcB3BNJLekdwk2QFolt+BfoJLNj2ENoV/7/pcR035biu9/uYNkZp8tKF3gXI4qZjX
-         M/CVcdhG19SgLlR13Wc7XjPj4EHI80+5g79zZzYS6I161IVOKrG0xh0hsXSjmZPEFp
-         X+6+FtmbYQZiVSpeIMFHtOTfLhwAJaSXmBFW3HouxlxdVz9/apApkZuc6gU03MYRnk
-         oHlS9esA/guWzo6mpO1ANqn+vAhiYiIoGq7eYGEzqR8b6JNtEIlJ0Bg4lnGKex0RWF
-         WYKuWrbNwd9enp32rOoCwvFgzAFlg7V465b91KJxg3WuaqZ/hzADYkZmRBioN2Z9Zt
-         9u9oGE9SfWbYg==
-Received: by mail.citycodes.pl for <ceph-devel@vger.kernel.org>; Fri, 21 Jul 2023 08:05:54 GMT
-Message-ID: <20230721084500-0.1.6e.ck1v.0.ablqiq2hgl@citycodes.pl>
-Date:   Fri, 21 Jul 2023 08:05:54 GMT
-From:   "Kamil Lasek" <kamil.lasek@citycodes.pl>
-To:     <ceph-devel@vger.kernel.org>
-Subject: =?UTF-8?Q?Rozszerzenie_Programu_M=C3=B3j_Pr=C4=85d_5.0?=
-X-Mailer: mail.citycodes.pl
+        with ESMTP id S231286AbjGUPoH (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 21 Jul 2023 11:44:07 -0400
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E08E42D50
+        for <ceph-devel@vger.kernel.org>; Fri, 21 Jul 2023 08:44:00 -0700 (PDT)
+Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com [209.85.219.198])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id E669F3FA78
+        for <ceph-devel@vger.kernel.org>; Fri, 21 Jul 2023 15:43:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1689954238;
+        bh=1s5oYUJ8OXtji5eAB+Ru06SCFp+i+BjXOikzlarYyx8=;
+        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+         To:Cc:Content-Type;
+        b=mJSFsPTTHCvIMC6d/VV5NnRhXxwMV4l3NdniQe0gcEnTd6rPGq3G2OcG8IB20gEZT
+         YJa6VByQZ7iQYWcsxt9tjm3Tb2rH6ncByUopEXdo9p+HCqytjnyhqfKevJvS3IzBlh
+         mBlSRK4UGrgShzZo+yFg1/1rC3AqeAmveMqKMD/Sa/ExrdVK896Dj+g95z/YrFuaYI
+         yYDMpnHO70xLdkv+TmtaecbPd5mCQvTR9SH+WaPawMIoVABpwnaJqrhdq8q0B6b9B4
+         mU901965zvYpv7KmWDtf3ZJcLolmTd6lZYb7TqADThnQMgSEee01k9VjdsoFPu3e4K
+         TsiVSOjeKjLow==
+Received: by mail-yb1-f198.google.com with SMTP id 3f1490d57ef6-c6db61f7f64so1982758276.0
+        for <ceph-devel@vger.kernel.org>; Fri, 21 Jul 2023 08:43:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1689954237; x=1690559037;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1s5oYUJ8OXtji5eAB+Ru06SCFp+i+BjXOikzlarYyx8=;
+        b=BhxakS3l7VZXAUBrXQtxtBM4885FBNLaX3qeUz3amqQGycZ8txbbBI7JF9EG+u/+el
+         auT5kIIg3zheIrf+wRsSqchvOTFue8/aQGRGZYiAE2ZntrT2lkKld29h2AJqPefq1Jnb
+         22bdU2vf/Z/2ALKZ6GjCaNHeOTazXcQpyyDl9gFfwSlZIc/kfa4aJ4LzY62d1LBzzDZP
+         rrlmg45vjzp4aaA3CIXkDiuq0as1EVfdo140PVP6luC3MT5CfIBsEd3eVoBWeDZ6NLn9
+         AdQdM7tK9pSTxlghqtUEZnW6Gm8Ff1VH0ESdQ/88VLzbmKYfAbp3gtfh3btH5MwbYi5k
+         8goQ==
+X-Gm-Message-State: ABy/qLboZ+wCoNV6n1+zGPdjFkLQ6g9d+8S81BduaOqxjpG/r//DDmqc
+        lSXSV7Nr1yCijze2K8+8CZr3DHjCs0vWUJeW1uoa6/sSYlt7RtCm+VkjfxzYd2CdFNk6i8JxVoH
+        ZKEqNudi7G9qIDICoAOXaI1eIhneSmFwebEc7LWwwatvOKCGYeq6Smu4=
+X-Received: by 2002:a25:c85:0:b0:d05:7af:9893 with SMTP id 127-20020a250c85000000b00d0507af9893mr861944ybm.18.1689954237145;
+        Fri, 21 Jul 2023 08:43:57 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlFAr3BYL57bhLDZG9B3Na0oOEK6CJ34vDEGmUkKeDsMOxWFm8qYNAWscLNj9y0yHxqjplNCYfV3UtfkxwYAPMs=
+X-Received: by 2002:a25:c85:0:b0:d05:7af:9893 with SMTP id 127-20020a250c85000000b00d0507af9893mr861925ybm.18.1689954236837;
+ Fri, 21 Jul 2023 08:43:56 -0700 (PDT)
 MIME-Version: 1.0
+References: <20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com>
+ <CAEivzxc_LW6mTKjk46WivrisnnmVQs0UnRrh6p0KxhqyXrErBQ@mail.gmail.com>
+ <ac1c6817-9838-fcf3-edc8-224ff85691e0@redhat.com> <CAJ4mKGby71qfb3gd696XH3AazeR0Qc_VGYupMznRH3Piky+VGA@mail.gmail.com>
+ <977d8133-a55f-0667-dc12-aa6fd7d8c3e4@redhat.com> <CAEivzxcr99sERxZX17rZ5jW9YSzAWYvAjOOhBH+FqRoso2=yng@mail.gmail.com>
+ <626175e2-ee91-0f1a-9e5d-e506aea366fa@redhat.com> <64241ff0-9af3-6817-478f-c24a0b9de9b3@redhat.com>
+ <CAEivzxeF51ZEKhQ-0M35nooZ7_cZgk1-q75-YbkeWpZ9RuHG4A@mail.gmail.com>
+ <4c4f73d8-8238-6ab8-ae50-d83c1441ac05@redhat.com> <CAEivzxeQGkemxVwJ148b_+OmntUAWkdL==yMiTMN+GPyaLkFPg@mail.gmail.com>
+ <0a42c5d0-0479-e60e-ac84-be3b915c62d9@redhat.com> <CAEivzxcskn8WxcOo0PDHMascFRdYTD0Lr5Uo4fj3deBjDviOXA@mail.gmail.com>
+ <8121882a-0823-3a60-e108-0ff7bae5c0c9@redhat.com> <CAEivzxcaJQvYyutAL8xapvoer06c97uVSVC729pUE=4_z4m_CA@mail.gmail.com>
+ <CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuibrhA3RKM=ZOYLg@mail.gmail.com> <3af4f092-8de7-d217-cd2d-d39dfc625edd@redhat.com>
+In-Reply-To: <3af4f092-8de7-d217-cd2d-d39dfc625edd@redhat.com>
+From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Date:   Fri, 21 Jul 2023 17:43:45 +0200
+Message-ID: <CAEivzxcM2=nwtTJ7ZUwubk0m4Fr+otuqzJhp+bRAYLMXuEYZgg@mail.gmail.com>
+Subject: Re: [PATCH v5 00/14] ceph: support idmapped mounts
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Gregory Farnum <gfarnum@redhat.com>,
+        Christian Brauner <brauner@kernel.org>, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=3.2 required=5.0 tests=BAYES_20,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED,URIBL_CSS_A autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ***
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Szanowni Pa=C5=84stwo!
+On Thu, Jul 20, 2023 at 8:36=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
+>
+>
+> On 7/19/23 19:57, Aleksandr Mikhalitsyn wrote:
+> > On Tue, Jul 18, 2023 at 4:49=E2=80=AFPM Aleksandr Mikhalitsyn
+> > <aleksandr.mikhalitsyn@canonical.com> wrote:
+> >> On Tue, Jul 18, 2023 at 3:45=E2=80=AFAM Xiubo Li <xiubli@redhat.com> w=
+rote:
+> [...]
+> >> No, the idea is to stop mapping a caller_{uid, gid}. And to add a new
+> >> fields like
+> >> inode_owner_{uid, gid} which will be idmapped (this field will be spec=
+ific only
+> >> for those operations that create a new inode).
+> > I've decided to write some summary of different approaches and
+> > elaborate tricky places.
+> >
+> > Current implementation.
+> >
+> > We have head->caller_{uid,gid} fields mapped in according
+> > to the mount's idmapping. But as we don't have information about
+> > mount's idmapping in all call stacks (like ->lookup case), we
+> > are not able to map it always and they are left untouched in these case=
+s.
+> >
+> > This tends to an inconsistency between different inode_operations,
+> > for example ->lookup (don't have an access to an idmapping) and
+> > ->mkdir (have an idmapping as an argument).
+> >
+> > This inconsistency is absolutely harmless if the user does not
+> > use UID/GID-based restrictions. Because in this use case head->caller_{=
+uid,gid}
+> > fields used *only* to set inode owner UID/GID during the inode_operatio=
+ns
+> > which create inodes.
+> >
+> > Conclusion 1. head->caller_{uid,gid} fields have two meanings
+> > - UID/GID-based permission checks
+> > - inode owner information
+> >
+> > Solution 0. Ignore the issue with UID/GID-based restrictions and idmapp=
+ed mounts
+> > until we are not blamed by users ;-)
+> >
+> > As far as I can see you are not happy about this way. :-)
+> >
+> > Solution 1. Let's add mount's idmapping argument to all inode_operation=
+s
+> > and always map head->caller_{uid,gid} fields.
+> >
+> > Not a best idea, because:
+> > - big modification of VFS layer
+> > - ideologically incorrect, for instance ->lookup should not care
+> > and know *anything* about mount's idmapping, because ->lookup works
+> > not on the mount level (it's not important who and through which mount
+> > triggered the ->lookup). Imagine that you've dentry cache filled and ca=
+ll
+> > open(...) in this case ->lookup can be uncalled. But if the user was no=
+t lucky
+> > enough to have cache filled then open(..) will trigger the lookup and
+> > then ->lookup results will be dependent on the mount's idmapping. It
+> > seems incorrect
+> > and unobvious consequence of introducing such a parameter to ->lookup o=
+peration.
+> > To summarize, ->lookup is about filling dentry cache and dentry cache
+> > is superblock-level
+> > thing, not mount-level.
+> >
+> > Solution 2. Add some kind of extra checks to ceph-client and ceph
+> > server to detect that
+> > mount idmappings used with UID/GID-based restrictions and restrict such=
+ mounts.
+> >
+> > Seems not ideal to me too. Because it's not a fix, it's a limitation
+> > and this limitation is
+> > not cheap from the implementation perspective (we need heavy changes
+> > in ceph server side and
+> > client side too). Btw, currently VFS API is also not ready for that,
+> > because we can't
+> > decide if idmapped mounts are allowed or not in runtime. It's a static
+> > thing that should be declared
+> > with FS_ALLOW_IDMAP flag in (struct file_system_type)->fs_flags. Not a
+> > big deal, but...
+> >
+> > Solution 3. Add a new UID/GID fields to ceph request structure in
+> > addition to head->caller_{uid,gid}
+> > to store information about inode owners (only for inode_operations
+> > which create inodes).
+> >
+> > How does it solves the problem?
+> > With these new fields we can leave head->caller_{uid,gid} untouched
+> > with an idmapped mounts code.
+> > It means that UID/GID-based restrictions will continue to work as inten=
+ded.
+> >
+> > At the same time, new fields (let say "inode_owner_{uid,gid}") will be
+> > mapped in accordance with
+> > a mount's idmapping.
+> >
+> > This solution seems ideal, because it is philosophically correct, it
+> > makes cephfs idmapped mounts to work
+> > in the same manner and way as idmapped mounts work for any other
+> > filesystem like ext4.
+>
+> Okay, this approach sounds more reasonable to me. But you need to do
+> some extra work to make it to be compatible between {old,new} kernels
+> and  {old,new} cephs.
+>
+> So then the caller uid/gid will always be the user uid/gid issuing the
+> requests as now.
 
-W ramach nowej edycji programu M=C3=B3j Pr=C4=85d mog=C4=85 otrzyma=C4=87=
- Pa=C5=84stwo dofinansowanie na zakup i monta=C5=BC fotowoltaiki i/lub ma=
-gazynu energii. Maksymalna kwota dofinansowania wynosi 58 tys. z=C5=82.=20
+Dear Xiubo,
 
-Jako firma wyspecjalizowana w tym zakresie zajmiemy si=C4=99 Pa=C5=84stwa=
- wnioskiem o dofinansowanie oraz instalacj=C4=85 i serwisem dopasowanych =
-do Pa=C5=84stwa budynku paneli s=C5=82onecznych.
+I've posted a PR https://github.com/ceph/ceph/pull/52575
 
-B=C4=99d=C4=99 wdzi=C4=99czny za informacj=C4=99 czy s=C4=85 Pa=C5=84stwo=
- zainteresowani.
+Kind regards,
+Alex
 
-
-Pozdrawiam,
-Kamil Lasek
+>
+> Thanks
+>
+> - Xiubo
+>
+>
+> > But yes, this requires cephfs protocol changes...
+> >
+> > I personally still believe that the "Solution 0" approach is optimal
+> > and we can go with "Solution 3" way
+> > as the next iteration.
+> >
+> > Kind regards,
+> > Alex
+> >
+> >> And also the same for other non-create requests. If
+> >>> so this will be incorrect for the cephx perm checks IMO.
+> >> Thanks,
+> >> Alex
+> >>
+> >>> Thanks
+> >>>
+> >>> - Xiubo
+> >>>
+> >>>
+> >>>> This makes a problem with path-based UID/GID restriction mechanism,
+> >>>> because it uses head->caller_{uid,gid} fields
+> >>>> to check if UID/GID is permitted or not.
+> >>>>
+> >>>> So, the problem is that we have one field in ceph request for two
+> >>>> different needs - to control permissions and to set inode owner.
+> >>>> Christian pointed that the most saner way is to modify ceph protocol
+> >>>> and add a separate field to store inode owner UID/GID,
+> >>>> and only this fields should be idmapped, but head->caller_{uid,gid}
+> >>>> will be untouched.
+> >>>>
+> >>>> With this approach, we will not affect UID/GID-based permission rule=
+s
+> >>>> with an idmapped mounts at all.
+> >>>>
+> >>>> Kind regards,
+> >>>> Alex
+> >>>>
+> >>>>> Thanks
+> >>>>>
+> >>>>> - Xiubo
+> >>>>>
+> >>>>>
+> >>>>>> Kind regards,
+> >>>>>> Alex
+> >>>>>>
+> >>>>>>> Thanks
+> >>>>>>>
+> >>>>>>> - Xiubo
+> >>>>>>>
+> >>>>>>>
+> >>>>>>>
+> >>>>>>>
+> >>>>>>>
+> >>>>>>>> Thanks,
+> >>>>>>>> Alex
+> >>>>>>>>
+> >>>>>>>>> Thanks
+> >>>>>>>>>
+> >>>>>>>>> - Xiubo
+> >>>>>>>>>
+>
