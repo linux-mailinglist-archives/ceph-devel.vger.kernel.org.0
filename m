@@ -2,457 +2,244 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB86776112B
-	for <lists+ceph-devel@lfdr.de>; Tue, 25 Jul 2023 12:47:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04EA3761C65
+	for <lists+ceph-devel@lfdr.de>; Tue, 25 Jul 2023 16:58:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231292AbjGYKrl (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 25 Jul 2023 06:47:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56864 "EHLO
+        id S231532AbjGYO6y (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 25 Jul 2023 10:58:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbjGYKrk (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 25 Jul 2023 06:47:40 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DE0010CC
-        for <ceph-devel@vger.kernel.org>; Tue, 25 Jul 2023 03:46:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690282013;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=yd4iDHCT61WH0+4EtDFZiHFUStZsQOeous+0413Marg=;
-        b=KGvEAqSd8KTJI4sX39xaHacR/dhmH0pngoJIoKCzTUn5fzu7fPVXEpzQ7E41QJLeBfYYto
-        iLa8DtRpNPsO4QwYesjOcAgqrvsFXRp9WuUbAJMa/Lb4BVXGawFDB6jbqB6gNtqZxTxo3v
-        CIBocgO5vB3TOhSe0pcQCt8F00RcL/A=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-458-MQY-E7HEN-eKS5wrTRX0MA-1; Tue, 25 Jul 2023 06:46:50 -0400
-X-MC-Unique: MQY-E7HEN-eKS5wrTRX0MA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        with ESMTP id S231470AbjGYO6x (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 25 Jul 2023 10:58:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24B6119A0;
+        Tue, 25 Jul 2023 07:58:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BB7B4104458F;
-        Tue, 25 Jul 2023 10:46:49 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (ovpn-12-127.pek2.redhat.com [10.72.12.127])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EB1834094DC0;
-        Tue, 25 Jul 2023 10:46:44 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     idryomov@gmail.com, ceph-devel@vger.kernel.org
-Cc:     jlayton@kernel.org, vshankar@redhat.com, mchangir@redhat.com,
-        aleksandr.mikhalitsyn@canonical.com, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: make num_fwd and num_retry to __u32
-Date:   Tue, 25 Jul 2023 18:44:38 +0800
-Message-Id: <20230725104438.386461-1-xiubli@redhat.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7D5686178D;
+        Tue, 25 Jul 2023 14:58:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C1AFC433C7;
+        Tue, 25 Jul 2023 14:58:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1690297130;
+        bh=kJmXJEYOHolov3dHsrtrgrStBu4dP1/spGmtmesqCM4=;
+        h=From:Subject:Date:To:Cc:From;
+        b=tew70jtU4OJWY1VbyooHq/A2VejA7/kDYVzXCKKk0H55cxVTHNA5fhMx/XsjUHQdE
+         k5N+TCbrt7BP6IVsZV/kGZrQ02GB42Vzuf0A/KFgIUnPd4ROGpWY2ZHkqKjdfticNu
+         OMaM7K65I6mQEbZGCqcmN0tUAgZUl/rzmSoYBUrwJChy9IKciiWQK4nWbSqxwsObTI
+         WPQKI9eXf8A84+Mo2pDjNDrS2sLAG7LjBgXOQD6AC8ZVS0weRNDBcGZHDJasTY4XM+
+         XZNGcH/BVwcKp56pkarr6oFqhSjNamDWitCJbkz8MEmn3MzaR1dixLan1haVIWlNtj
+         Ymp6wr5QNgrPg==
+From:   Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v6 0/7] fs: implement multigrain timestamps
+Date:   Tue, 25 Jul 2023 10:58:13 -0400
+Message-Id: <20230725-mgctime-v6-0-a794c2b7abca@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAbjv2QC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyzHQUlJIzE
+ vPSU3UzU4B8JSMDI2MDc0Nj3dz05JLM3FTdNKNEy7RkYyMTS0MLJaDqgqLUtMwKsEnRsbW1AIV
+ mFAhZAAAA
+To:     Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Richard Weinberger <richard@nod.at>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Anthony Iliopoulos <ailiop@suse.com>, v9fs@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4902; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=kJmXJEYOHolov3dHsrtrgrStBu4dP1/spGmtmesqCM4=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBkv+Mj+zS9rris6Kf5SxMrXR2Y/k9AOCJ9z8KPq
+ j3S+WlmJceJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZL/jIwAKCRAADmhBGVaC
+ FZ/jD/0evq59eIdKfJ48vhkQ834Ov7dXXLAsoPLIBwuMPbqc7pSVOjxB5ATFSwfM9htZKolZ+oY
+ lIU2tVkrgEvzBSvtptGWRr2sarmS792/ET3Q94ZYyI3yGrHeRSXFOCIw1j7WwH2CAixPP7tV3iI
+ CEyu3vkzTFYYrJrAjpZayoN4FMelRFKm9TkDeBNDMR2dHxzPYji2KfnLM8E0QyicvhzMp748ezo
+ gSFE9vYIQeyfCsc0tsb3+xvNeyfrgwWW0Xt+iWheDXhWb2JezV0qwPzhrTI2o0lUu3y5Ak6moUv
+ mxg4LjTEyDiFJS1gFG359AOMdd1Fqe+/hBI/KRZw1FJgHJNrojM6CcefRT/9ld8QucjdHCaei+j
+ wdbwbxqSPCnXE7EyPm6OfdKrz1QY8quS0w28VGDMEoqvWsdi5KDYgaliGZ4xMdeR24lwCGeO1sO
+ CcTk+9XkDMSViFJpiCvlZ1wqjbcy+7bpDotGULl660l29vxwtUOL4OzsFLorGw8J6AVtpr1WcSZ
+ qiHQFHKm0p8TmStpgYdlGpNtZsiMWV5W5ebzMwtMfdk+ItSXAkX5AccmgWA8SF2Lu6i9FkiaOJK
+ 8np/ZINHFrUnnqcT0RhtcBRNRofFbPWW2FPTzqKgpU9tTsrmpbASbI+M+rPlDhulz5q2G6Ka/vp
+ WLXgwe/aGNDuUZQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+The VFS always uses coarse-grained timestamps when updating the
+ctime and mtime after a change. This has the benefit of allowing
+filesystems to optimize away a lot metadata updates, down to around 1
+per jiffy, even when a file is under heavy writes.
 
-The num_fwd in MClientRequestForward is int32_t, while the num_fwd
-in ceph_mds_request_head is __u8. This is buggy when the num_fwd
-is larger than 256 it will always be truncate to 0 again. But the
-client couldn't recoginize this.
+Unfortunately, this coarseness has always been an issue when we're
+exporting via NFSv3, which relies on timestamps to validate caches. A
+lot of changes can happen in a jiffy, so timestamps aren't sufficient to
+help the client decide to invalidate the cache.
 
-This will make them to __u32 instead. Because the old cephs will
-directly copy the raw memories when decoding the reqeust's head,
-so we need to make sure this kclient will be compatible with old
-cephs. For newer cephs they will decode the requests depending
-the version, which will be much simpler and easier to extend new
-members.
+Even with NFSv4, a lot of exported filesystems don't properly support a
+change attribute and are subject to the same problems with timestamp
+granularity. Other applications have similar issues with timestamps (e.g
+backup applications).
 
-URL: https://tracker.ceph.com/issues/62145
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
+If we were to always use fine-grained timestamps, that would improve the
+situation, but that becomes rather expensive, as the underlying
+filesystem would have to log a lot more metadata updates.
+
+What we need is a way to only use fine-grained timestamps when they are
+being actively queried. The idea is to use an unused bit in the ctime's
+tv_nsec field to mark when the mtime or ctime has been queried via
+getattr. Once that has been marked, the next m/ctime update will use a
+fine-grained timestamp.
+
+This patch series is based on top of Christian's vfs.all branch, which
+has the recent conversion to the new ctime accessors. It should apply
+cleanly on top of linux-next.
+
+The first two patches should probably go in via the vfs tree. Should the
+fs-specific patches go in that way as well, or should they go via
+maintainer trees? Either should be fine.
+
+The first two patches should probably go in via Christian's vfs tree.
+The rest could go via maintainer trees or the vfs tree.
+
+For now, I'd like to get these into linux-next. Christian, would you be
+willing to pick these up for now? Alternately, I can feed them there via
+the iversion branch that Stephen is already pulling in from my tree.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+base-commit: cf22d118b89a09a0160586412160d89098f7c4c7
 ---
- fs/ceph/mds_client.c         | 191 ++++++++++++++++++-----------------
- fs/ceph/mds_client.h         |   4 +-
- include/linux/ceph/ceph_fs.h |  23 ++++-
- 3 files changed, 124 insertions(+), 94 deletions(-)
+Changes in v6:
+- drop the patch that removed XFS_ICHGTIME_CHG
+- change WARN_ON_ONCE to ASSERT in xfs conversion patch
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 70987b3c198a..191bae3a4ee6 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2897,6 +2897,18 @@ static void encode_mclientrequest_tail(void **p, const struct ceph_mds_request *
- 	}
- }
- 
-+static struct ceph_mds_request_head_legacy *
-+find_legacy_request_head(void *p, u64 features)
-+{
-+	bool legacy = !(features & CEPH_FEATURE_FS_BTIME);
-+	struct ceph_mds_request_head_old *ohead;
-+
-+	if (legacy)
-+		return (struct ceph_mds_request_head_legacy *)p;
-+	ohead = (struct ceph_mds_request_head_old *)p;
-+	return (struct ceph_mds_request_head_legacy *)&ohead->oldest_client_tid;
-+}
-+
- /*
-  * called under mdsc->mutex
-  */
-@@ -2907,7 +2919,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
- 	int mds = session->s_mds;
- 	struct ceph_mds_client *mdsc = session->s_mdsc;
- 	struct ceph_msg *msg;
--	struct ceph_mds_request_head_old *head;
-+	struct ceph_mds_request_head_legacy *lhead;
- 	const char *path1 = NULL;
- 	const char *path2 = NULL;
- 	u64 ino1 = 0, ino2 = 0;
-@@ -2919,6 +2931,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
- 	void *p, *end;
- 	int ret;
- 	bool legacy = !(session->s_con.peer_features & CEPH_FEATURE_FS_BTIME);
-+	bool old_version = !test_bit(CEPHFS_FEATURE_32BITS_RETRY_FWD, &session->s_features);
- 
- 	ret = set_request_path_attr(mdsc, req->r_inode, req->r_dentry,
- 			      req->r_parent, req->r_path1, req->r_ino1.ino,
-@@ -2950,7 +2963,19 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
- 		goto out_free2;
- 	}
- 
--	len = legacy ? sizeof(*head) : sizeof(struct ceph_mds_request_head);
-+	/*
-+	 * For old cephs without supporting the 32bit retry/fwd feature
-+	 * it will copy the raw memories directly when decoding the
-+	 * requests. While new cephs will decode the head depending the
-+	 * version member, so we need to make sure it will be compatible
-+	 * with them both.
-+	 */
-+	if (legacy)
-+		len = sizeof(struct ceph_mds_request_head_legacy);
-+	else if (old_version)
-+		len = sizeof(struct ceph_mds_request_head_old);
-+	else
-+		len = sizeof(struct ceph_mds_request_head);
- 
- 	/* filepaths */
- 	len += 2 * (1 + sizeof(u32) + sizeof(u64));
-@@ -2995,33 +3020,40 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
- 
- 	msg->hdr.tid = cpu_to_le64(req->r_tid);
- 
-+	lhead = find_legacy_request_head(msg->front.iov_base,
-+					 session->s_con.peer_features);
-+
- 	/*
--	 * The old ceph_mds_request_head didn't contain a version field, and
-+	 * The ceph_mds_request_head_legacy didn't contain a version field, and
- 	 * one was added when we moved the message version from 3->4.
- 	 */
- 	if (legacy) {
- 		msg->hdr.version = cpu_to_le16(3);
--		head = msg->front.iov_base;
--		p = msg->front.iov_base + sizeof(*head);
-+		p = msg->front.iov_base + sizeof(*lhead);
-+	} else if (old_version) {
-+		struct ceph_mds_request_head_old *ohead = msg->front.iov_base;
-+
-+		msg->hdr.version = cpu_to_le16(4);
-+		ohead->version = cpu_to_le16(CEPH_MDS_REQUEST_HEAD_VERSION);
-+		p = msg->front.iov_base + sizeof(*ohead);
- 	} else {
--		struct ceph_mds_request_head *new_head = msg->front.iov_base;
-+		struct ceph_mds_request_head *nhead = msg->front.iov_base;
- 
- 		msg->hdr.version = cpu_to_le16(6);
--		new_head->version = cpu_to_le16(CEPH_MDS_REQUEST_HEAD_VERSION);
--		head = (struct ceph_mds_request_head_old *)&new_head->oldest_client_tid;
--		p = msg->front.iov_base + sizeof(*new_head);
-+		nhead->version = cpu_to_le16(CEPH_MDS_REQUEST_HEAD_VERSION);
-+		p = msg->front.iov_base + sizeof(*nhead);
- 	}
- 
- 	end = msg->front.iov_base + msg->front.iov_len;
- 
--	head->mdsmap_epoch = cpu_to_le32(mdsc->mdsmap->m_epoch);
--	head->op = cpu_to_le32(req->r_op);
--	head->caller_uid = cpu_to_le32(from_kuid(&init_user_ns,
--						 req->r_cred->fsuid));
--	head->caller_gid = cpu_to_le32(from_kgid(&init_user_ns,
--						 req->r_cred->fsgid));
--	head->ino = cpu_to_le64(req->r_deleg_ino);
--	head->args = req->r_args;
-+	lhead->mdsmap_epoch = cpu_to_le32(mdsc->mdsmap->m_epoch);
-+	lhead->op = cpu_to_le32(req->r_op);
-+	lhead->caller_uid = cpu_to_le32(from_kuid(&init_user_ns,
-+						  req->r_cred->fsuid));
-+	lhead->caller_gid = cpu_to_le32(from_kgid(&init_user_ns,
-+						  req->r_cred->fsgid));
-+	lhead->ino = cpu_to_le64(req->r_deleg_ino);
-+	lhead->args = req->r_args;
- 
- 	ceph_encode_filepath(&p, end, ino1, path1);
- 	ceph_encode_filepath(&p, end, ino2, path2);
-@@ -3063,7 +3095,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
- 		p = msg->front.iov_base + req->r_request_release_offset;
- 	}
- 
--	head->num_releases = cpu_to_le16(releases);
-+	lhead->num_releases = cpu_to_le16(releases);
- 
- 	encode_mclientrequest_tail(&p, req);
- 
-@@ -3114,18 +3146,6 @@ static void complete_request(struct ceph_mds_client *mdsc,
- 	complete_all(&req->r_completion);
- }
- 
--static struct ceph_mds_request_head_old *
--find_old_request_head(void *p, u64 features)
--{
--	bool legacy = !(features & CEPH_FEATURE_FS_BTIME);
--	struct ceph_mds_request_head *new_head;
--
--	if (legacy)
--		return (struct ceph_mds_request_head_old *)p;
--	new_head = (struct ceph_mds_request_head *)p;
--	return (struct ceph_mds_request_head_old *)&new_head->oldest_client_tid;
--}
--
- /*
-  * called under mdsc->mutex
-  */
-@@ -3136,30 +3156,26 @@ static int __prepare_send_request(struct ceph_mds_session *session,
- 	int mds = session->s_mds;
- 	struct ceph_mds_client *mdsc = session->s_mdsc;
- 	struct ceph_client *cl = mdsc->fsc->client;
--	struct ceph_mds_request_head_old *rhead;
-+	struct ceph_mds_request_head_legacy *lhead;
-+	struct ceph_mds_request_head *nhead;
- 	struct ceph_msg *msg;
--	int flags = 0, max_retry;
-+	int flags = 0, old_max_retry;
-+	bool old_version = !test_bit(CEPHFS_FEATURE_32BITS_RETRY_FWD, &session->s_features);
- 
--	/*
--	 * The type of 'r_attempts' in kernel 'ceph_mds_request'
--	 * is 'int', while in 'ceph_mds_request_head' the type of
--	 * 'num_retry' is '__u8'. So in case the request retries
--	 *  exceeding 256 times, the MDS will receive a incorrect
--	 *  retry seq.
--	 *
--	 * In this case it's ususally a bug in MDS and continue
--	 * retrying the request makes no sense.
--	 *
--	 * In future this could be fixed in ceph code, so avoid
--	 * using the hardcode here.
-+	/* Avoid inifinite retrying after overflow. The client will
-+	 * increase the retry count and if the MDS is old version,
-+	 * so we limit to retry at most 256 times.
- 	 */
--	max_retry = sizeof_field(struct ceph_mds_request_head, num_retry);
--	max_retry = 1 << (max_retry * BITS_PER_BYTE);
--	if (req->r_attempts >= max_retry) {
--		pr_warn_ratelimited_client(cl, "request tid %llu seq overflow\n",
--					   req->r_tid);
--		return -EMULTIHOP;
--	}
-+       if (req->r_attempts) {
-+               old_max_retry = sizeof_field(struct ceph_mds_request_head_old, num_retry);
-+               old_max_retry = 1 << (old_max_retry * BITS_PER_BYTE);
-+               if ((old_version && req->r_attempts >= old_max_retry) ||
-+                   ((uint32_t)req->r_attempts >= U32_MAX)) {
-+                       pr_warn_ratelimited_client(cl, "%s request tid %llu seq overflow\n",
-+						  __func__, req->r_tid);
-+                       return -EMULTIHOP;
-+               }
-+        }
- 
- 	req->r_attempts++;
- 	if (req->r_inode) {
-@@ -3184,20 +3200,24 @@ static int __prepare_send_request(struct ceph_mds_session *session,
- 		 * d_move mangles the src name.
- 		 */
- 		msg = req->r_request;
--		rhead = find_old_request_head(msg->front.iov_base,
--					      session->s_con.peer_features);
-+		lhead = find_legacy_request_head(msg->front.iov_base,
-+						 session->s_con.peer_features);
- 
--		flags = le32_to_cpu(rhead->flags);
-+		flags = le32_to_cpu(lhead->flags);
- 		flags |= CEPH_MDS_FLAG_REPLAY;
--		rhead->flags = cpu_to_le32(flags);
-+		lhead->flags = cpu_to_le32(flags);
- 
- 		if (req->r_target_inode)
--			rhead->ino = cpu_to_le64(ceph_ino(req->r_target_inode));
-+			lhead->ino = cpu_to_le64(ceph_ino(req->r_target_inode));
- 
--		rhead->num_retry = req->r_attempts - 1;
-+		lhead->num_retry = req->r_attempts - 1;
-+		if (!old_version) {
-+			nhead = (struct ceph_mds_request_head*)msg->front.iov_base;
-+			nhead->ext_num_retry = cpu_to_le32(req->r_attempts - 1);
-+		}
- 
- 		/* remove cap/dentry releases from message */
--		rhead->num_releases = 0;
-+		lhead->num_releases = 0;
- 
- 		p = msg->front.iov_base + req->r_request_release_offset;
- 		encode_mclientrequest_tail(&p, req);
-@@ -3218,18 +3238,23 @@ static int __prepare_send_request(struct ceph_mds_session *session,
- 	}
- 	req->r_request = msg;
- 
--	rhead = find_old_request_head(msg->front.iov_base,
--				      session->s_con.peer_features);
--	rhead->oldest_client_tid = cpu_to_le64(__get_oldest_tid(mdsc));
-+	lhead = find_legacy_request_head(msg->front.iov_base,
-+					 session->s_con.peer_features);
-+	lhead->oldest_client_tid = cpu_to_le64(__get_oldest_tid(mdsc));
- 	if (test_bit(CEPH_MDS_R_GOT_UNSAFE, &req->r_req_flags))
- 		flags |= CEPH_MDS_FLAG_REPLAY;
- 	if (test_bit(CEPH_MDS_R_ASYNC, &req->r_req_flags))
- 		flags |= CEPH_MDS_FLAG_ASYNC;
- 	if (req->r_parent)
- 		flags |= CEPH_MDS_FLAG_WANT_DENTRY;
--	rhead->flags = cpu_to_le32(flags);
--	rhead->num_fwd = req->r_num_fwd;
--	rhead->num_retry = req->r_attempts - 1;
-+	lhead->flags = cpu_to_le32(flags);
-+	lhead->num_fwd = req->r_num_fwd;
-+	lhead->num_retry = req->r_attempts - 1;
-+	if (!old_version) {
-+		nhead = (struct ceph_mds_request_head*)msg->front.iov_base;
-+		nhead->ext_num_fwd = cpu_to_le32(req->r_num_fwd);
-+		nhead->ext_num_retry = cpu_to_le32(req->r_attempts - 1);
-+	}
- 
- 	doutc(cl, " r_parent = %p\n", req->r_parent);
- 	return 0;
-@@ -3893,34 +3918,20 @@ static void handle_forward(struct ceph_mds_client *mdsc,
- 	if (test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
- 		doutc(cl, "forward tid %llu aborted, unregistering\n", tid);
- 		__unregister_request(mdsc, req);
--	} else if (fwd_seq <= req->r_num_fwd) {
--		/*
--		 * The type of 'num_fwd' in ceph 'MClientRequestForward'
--		 * is 'int32_t', while in 'ceph_mds_request_head' the
--		 * type is '__u8'. So in case the request bounces between
--		 * MDSes exceeding 256 times, the client will get stuck.
--		 *
--		 * In this case it's ususally a bug in MDS and continue
--		 * bouncing the request makes no sense.
-+	} else if (fwd_seq <= req->r_num_fwd || (uint32_t)fwd_seq >= U32_MAX) {
-+		/* Avoid inifinite retrying after overflow.
- 		 *
--		 * In future this could be fixed in ceph code, so avoid
--		 * using the hardcode here.
-+		 * The MDS will increase the fwd count and in client side
-+		 * if the num_fwd is less than the one saved in request
-+		 * that means the MDS is an old version and overflowed of
-+		 * 8 bits.
- 		 */
--		int max = sizeof_field(struct ceph_mds_request_head, num_fwd);
--		max = 1 << (max * BITS_PER_BYTE);
--		if (req->r_num_fwd >= max) {
--			mutex_lock(&req->r_fill_mutex);
--			req->r_err = -EMULTIHOP;
--			set_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags);
--			mutex_unlock(&req->r_fill_mutex);
--			aborted = true;
--			pr_warn_ratelimited_client(cl,
--					"forward tid %llu seq overflow\n",
--					tid);
--		} else {
--			doutc(cl, "forward tid %llu to mds%d - old seq %d <= %d\n",
--			      tid, next_mds, req->r_num_fwd, fwd_seq);
--		}
-+		mutex_lock(&req->r_fill_mutex);
-+		req->r_err = -EMULTIHOP;
-+		set_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags);
-+		mutex_unlock(&req->r_fill_mutex);
-+		aborted = true;
-+		pr_warn_ratelimited_client(cl, "forward tid %llu seq overflow\n", tid);
- 	} else {
- 		/* resend. forward race not possible; mds would drop */
- 		doutc(cl, "forward tid %llu to mds%d (we resend)\n", tid, next_mds);
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index befbd384428e..717a7399bacb 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -32,8 +32,9 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_ALTERNATE_NAME,
- 	CEPHFS_FEATURE_NOTIFY_SESSION_STATE,
- 	CEPHFS_FEATURE_OP_GETVXATTR,
-+	CEPHFS_FEATURE_32BITS_RETRY_FWD,
- 
--	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_OP_GETVXATTR,
-+	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_32BITS_RETRY_FWD,
- };
- 
- #define CEPHFS_FEATURES_CLIENT_SUPPORTED {	\
-@@ -47,6 +48,7 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_ALTERNATE_NAME,		\
- 	CEPHFS_FEATURE_NOTIFY_SESSION_STATE,	\
- 	CEPHFS_FEATURE_OP_GETVXATTR,		\
-+	CEPHFS_FEATURE_32BITS_RETRY_FWD,	\
- }
- 
- /*
-diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-index 45f8ce61e103..f3b3593254b9 100644
---- a/include/linux/ceph/ceph_fs.h
-+++ b/include/linux/ceph/ceph_fs.h
-@@ -484,7 +484,7 @@ union ceph_mds_request_args_ext {
- #define CEPH_MDS_FLAG_WANT_DENTRY	2 /* want dentry in reply */
- #define CEPH_MDS_FLAG_ASYNC		4 /* request is asynchronous */
- 
--struct ceph_mds_request_head_old {
-+struct ceph_mds_request_head_legacy {
- 	__le64 oldest_client_tid;
- 	__le32 mdsmap_epoch;           /* on client */
- 	__le32 flags;                  /* CEPH_MDS_FLAG_* */
-@@ -497,9 +497,9 @@ struct ceph_mds_request_head_old {
- 	union ceph_mds_request_args args;
- } __attribute__ ((packed));
- 
--#define CEPH_MDS_REQUEST_HEAD_VERSION  1
-+#define CEPH_MDS_REQUEST_HEAD_VERSION  2
- 
--struct ceph_mds_request_head {
-+struct ceph_mds_request_head_old {
- 	__le16 version;                /* struct version */
- 	__le64 oldest_client_tid;
- 	__le32 mdsmap_epoch;           /* on client */
-@@ -513,6 +513,23 @@ struct ceph_mds_request_head {
- 	union ceph_mds_request_args_ext args;
- } __attribute__ ((packed));
- 
-+struct ceph_mds_request_head {
-+	__le16 version;                /* struct version */
-+	__le64 oldest_client_tid;
-+	__le32 mdsmap_epoch;           /* on client */
-+	__le32 flags;                  /* CEPH_MDS_FLAG_* */
-+	__u8 num_retry, num_fwd;       /* legacy count retry and fwd attempts */
-+	__le16 num_releases;           /* # include cap/lease release records */
-+	__le32 op;                     /* mds op code */
-+	__le32 caller_uid, caller_gid;
-+	__le64 ino;                    /* use this ino for openc, mkdir, mknod,
-+					  etc. (if replaying) */
-+	union ceph_mds_request_args_ext args;
-+
-+	__le32 ext_num_retry;          /* new count retry attempts */
-+	__le32 ext_num_fwd;            /* new count fwd attempts */
-+} __attribute__ ((packed));
-+
- /* cap/lease release record */
- struct ceph_mds_request_release {
- 	__le64 ino, cap_id;            /* ino and unique cap id */
+---
+Jeff Layton (7):
+      fs: pass the request_mask to generic_fillattr
+      fs: add infrastructure for multigrain timestamps
+      tmpfs: bump the mtime/ctime/iversion when page becomes writeable
+      tmpfs: add support for multigrain timestamps
+      xfs: switch to multigrain timestamps
+      ext4: switch to multigrain timestamps
+      btrfs: convert to multigrain timestamps
+
+ fs/9p/vfs_inode.c               |  4 +-
+ fs/9p/vfs_inode_dotl.c          |  4 +-
+ fs/afs/inode.c                  |  2 +-
+ fs/btrfs/file.c                 | 24 ++--------
+ fs/btrfs/inode.c                |  2 +-
+ fs/btrfs/super.c                |  5 ++-
+ fs/ceph/inode.c                 |  2 +-
+ fs/coda/inode.c                 |  3 +-
+ fs/ecryptfs/inode.c             |  5 ++-
+ fs/erofs/inode.c                |  2 +-
+ fs/exfat/file.c                 |  2 +-
+ fs/ext2/inode.c                 |  2 +-
+ fs/ext4/inode.c                 |  2 +-
+ fs/ext4/super.c                 |  2 +-
+ fs/f2fs/file.c                  |  2 +-
+ fs/fat/file.c                   |  2 +-
+ fs/fuse/dir.c                   |  2 +-
+ fs/gfs2/inode.c                 |  2 +-
+ fs/hfsplus/inode.c              |  2 +-
+ fs/inode.c                      | 98 +++++++++++++++++++++++++++++------------
+ fs/kernfs/inode.c               |  2 +-
+ fs/libfs.c                      |  4 +-
+ fs/minix/inode.c                |  2 +-
+ fs/nfs/inode.c                  |  2 +-
+ fs/nfs/namespace.c              |  3 +-
+ fs/ntfs3/file.c                 |  2 +-
+ fs/ocfs2/file.c                 |  2 +-
+ fs/orangefs/inode.c             |  2 +-
+ fs/proc/base.c                  |  4 +-
+ fs/proc/fd.c                    |  2 +-
+ fs/proc/generic.c               |  2 +-
+ fs/proc/proc_net.c              |  2 +-
+ fs/proc/proc_sysctl.c           |  2 +-
+ fs/proc/root.c                  |  3 +-
+ fs/smb/client/inode.c           |  2 +-
+ fs/smb/server/smb2pdu.c         | 22 ++++-----
+ fs/smb/server/vfs.c             |  3 +-
+ fs/stat.c                       | 59 ++++++++++++++++++++-----
+ fs/sysv/itree.c                 |  3 +-
+ fs/ubifs/dir.c                  |  2 +-
+ fs/udf/symlink.c                |  2 +-
+ fs/vboxsf/utils.c               |  2 +-
+ fs/xfs/libxfs/xfs_trans_inode.c |  6 +--
+ fs/xfs/xfs_iops.c               |  4 +-
+ fs/xfs/xfs_super.c              |  2 +-
+ include/linux/fs.h              | 47 ++++++++++++++++++--
+ mm/shmem.c                      | 16 ++++++-
+ 47 files changed, 248 insertions(+), 125 deletions(-)
+---
+base-commit: 810b5fff7917119ea82ff96e312e2d4350d6b681
+change-id: 20230713-mgctime-f2a9fc324918
+
+Best regards,
 -- 
-2.40.1
+Jeff Layton <jlayton@kernel.org>
 
