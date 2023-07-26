@@ -2,164 +2,201 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CFF9776246B
-	for <lists+ceph-devel@lfdr.de>; Tue, 25 Jul 2023 23:29:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93E9976283F
+	for <lists+ceph-devel@lfdr.de>; Wed, 26 Jul 2023 03:39:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229835AbjGYV3T (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 25 Jul 2023 17:29:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59634 "EHLO
+        id S230141AbjGZBjo (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 25 Jul 2023 21:39:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229678AbjGYV3Q (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 25 Jul 2023 17:29:16 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FA441FEC
-        for <ceph-devel@vger.kernel.org>; Tue, 25 Jul 2023 14:29:14 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id 4fb4d7f45d1cf-51e619bcbf9so7955220a12.3
-        for <ceph-devel@vger.kernel.org>; Tue, 25 Jul 2023 14:29:13 -0700 (PDT)
+        with ESMTP id S230155AbjGZBjm (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 25 Jul 2023 21:39:42 -0400
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 078F226B6
+        for <ceph-devel@vger.kernel.org>; Tue, 25 Jul 2023 18:39:39 -0700 (PDT)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-5700b15c12fso73114867b3.1
+        for <ceph-devel@vger.kernel.org>; Tue, 25 Jul 2023 18:39:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1690320552; x=1690925352;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sKxfLmNS2Yxgb7gGh2D3p1/z7+JKv9s8t2rHAKNWc8Q=;
-        b=bhwGvz1WLMG5sohk0I+SkHhlJ4vWvDb6I83cbGQV0V+XOu0yb0c6ChDyDxBo1jwjuj
-         rsNX6F1WXTnl24Oa0mOtcl0mIcChQ3bl+RqroyxF4k5RLxWwpL/H9mYtUI2MRVDUGJOu
-         89QlkW5NMPertqiZIZG2PPO5ESe+yD+A7+uyHeIaRpzvic6cj2PtVj+ArOriU2w/9bqo
-         Dx3U5kFRezX/uFAScLjBStvi484BRRKR6cIdVScjLZwQYaSJaRCzplIvziWaLNymz7E2
-         1eOD8H+TRzm8I0NHNO4CB5rg4dQRWgHRMRgONyqVwIUVB95vjFFUuo/M42cq2aJrXLj2
-         MO+g==
+        d=google.com; s=20221208; t=1690335578; x=1690940378;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=g4+spZWgq0eS9irqfihzysgfAABYfYXXmt6SNBBeIWA=;
+        b=MZxYT2MdZ0Omg+tGFjNofeHkNy3Qahh2PBaeRGC1CPgAvaobe+CbfQzviGlH2bRGld
+         yZXqVlc4rdM7Hn/0uDpIIp7PtuXFyXV1rOEzEcPsa6KfHQ8WsO8NrD1ggf9GGi+atd7F
+         nKDBxVEOzhZviRxzmHMsde7z3UqWCZoSc0lNm1akA/R8EHPW9npAKef3Z/pjfCjWQWBN
+         xmycegOze/hxSYYenv2HpylIbUfqF9JiHr0gy59wVHZoy8dXEq78uEH7BvhlWGHxnNVM
+         Pm/pG6h4Z3mK+EEHLb2xoyIraXRTQQ+dd3MgzFr8XAVX1x101W0eH3RmqvYAcZ2a0tMf
+         tMBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690320552; x=1690925352;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sKxfLmNS2Yxgb7gGh2D3p1/z7+JKv9s8t2rHAKNWc8Q=;
-        b=bbC3DFolxPSd5S4XwvTeRf6VM9Fte5dnRmr7C9DpW+861M3/eAgwQZASXHM8g/CqFl
-         5pt+JwoQh91SnCcju2WGBFIImmEQQLdlAHlqnVUwp50HPYUrQ1E5BAdRThZXXKMK3fff
-         WBDg5v9ZP0aZnNhr8iypa9Rxd01y5MpjPAhGLmfAoVVmAetsSq29420YID6tSMBTXvuO
-         Gf2dRfqjKzeQJq0EeuH72IPbLmszmPZQ9GKckcMdPXzFWKkD1LB0Ds+3hU9xDXw9BOnI
-         uD1wc6yEjXPgb3BPv9s5DD6fQgjwFFXqgnK0IElyyG5VfyTN5H84RwnoroDClKl1qKTq
-         s30Q==
-X-Gm-Message-State: ABy/qLZORFYnACPmLsH48dXZQ0eTZl+8EyEEyxBSObQgT9f4McWZjVAL
-        FSNMrFOUiYSWL5Lc9f00Z2nAkdWc2Io=
-X-Google-Smtp-Source: APBJJlETMdX3tzwtZbawnDwcihX3tr09CwKKOnyIGFprax86Y41qz6nnKtwYF8lDZnfIqX4xcXtgBw==
-X-Received: by 2002:aa7:d055:0:b0:51a:2c81:72ee with SMTP id n21-20020aa7d055000000b0051a2c8172eemr102666edo.20.1690320552537;
-        Tue, 25 Jul 2023 14:29:12 -0700 (PDT)
-Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
-        by smtp.gmail.com with ESMTPSA id f23-20020a05640214d700b005224ec27dd7sm1200778edx.66.2023.07.25.14.29.11
+        d=1e100.net; s=20221208; t=1690335578; x=1690940378;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g4+spZWgq0eS9irqfihzysgfAABYfYXXmt6SNBBeIWA=;
+        b=dq77uAV9RZHfRVWdtZXjQY5tWlLZ58kkdiYrMY3LUnnLj33ktnl88tazQK/oJNdsOa
+         z8UjifvS7Od9P7oL8qMjpv80wOhi8Dze1b7605Am4X1nSknF7wjxQNQN3RKXalGzS37p
+         SGs5K55fk/neNdjisEv3VHw1qrbcvFgEAKO57FosobPPjJ3zTQ8DOQYOTAq+Jc7nq3Wk
+         kPnCROrN1PYWuIdCwnmfmaXM/J1RnimpyLeFO2bK96nbTPzLNGGO92S27zjMZRvAXtjo
+         QOKCfa/MZtKm2i4YTcWYJABd+Fm0nqujmynoXstRls7VRaMESnhEOZ6b82UHowYrPg78
+         Bw6A==
+X-Gm-Message-State: ABy/qLZSBG9gi0TM1tsoVyMaKaWRFuWLDb9WMlmCbHY/ki51oDdGchz3
+        9EaldhB81E1YrNMI9rWwUuoJgA==
+X-Google-Smtp-Source: APBJJlHxqCs0/k9opPHZr1oFjC/IjLn2NWFjtEyuaFY5bDdVyDOg3sTAz2vkUnxY9z5liUX1UEynKA==
+X-Received: by 2002:a81:46c3:0:b0:56d:2189:d87a with SMTP id t186-20020a8146c3000000b0056d2189d87amr821699ywa.15.1690335578030;
+        Tue, 25 Jul 2023 18:39:38 -0700 (PDT)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id s10-20020a5b044a000000b00c654cc439fesm3165326ybp.52.2023.07.25.18.39.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jul 2023 14:29:12 -0700 (PDT)
-From:   Ilya Dryomov <idryomov@gmail.com>
-To:     ceph-devel@vger.kernel.org
-Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>
-Subject: [PATCH v2 3/3] rbd: retrieve and check lock owner twice before blocklisting
-Date:   Tue, 25 Jul 2023 23:28:46 +0200
-Message-ID: <20230725212847.137672-4-idryomov@gmail.com>
-X-Mailer: git-send-email 2.41.0
-In-Reply-To: <20230725212847.137672-1-idryomov@gmail.com>
-References: <20230725212847.137672-1-idryomov@gmail.com>
+        Tue, 25 Jul 2023 18:39:37 -0700 (PDT)
+Date:   Tue, 25 Jul 2023 18:39:25 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.attlocal.net
+To:     Jeff Layton <jlayton@kernel.org>
+cc:     Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Richard Weinberger <richard@nod.at>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Anthony Iliopoulos <ailiop@suse.com>, v9fs@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
+        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
+        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v6 3/7] tmpfs: bump the mtime/ctime/iversion when page
+ becomes writeable
+In-Reply-To: <20230725-mgctime-v6-3-a794c2b7abca@kernel.org>
+Message-ID: <42c5bbe-a7a4-3546-e898-3f33bd71b062@google.com>
+References: <20230725-mgctime-v6-0-a794c2b7abca@kernel.org> <20230725-mgctime-v6-3-a794c2b7abca@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-An attempt to acquire exclusive lock can race with the current lock
-owner closing the image:
+On Tue, 25 Jul 2023, Jeff Layton wrote:
 
-1. lock is held by client123, rbd_lock() returns -EBUSY
-2. get_lock_owner_info() returns client123 instance details
-3. client123 closes the image, lock is released
-4. find_watcher() returns 0 as there is no matching watcher anymore
-5. client123 instance gets erroneously blocklisted
+> Most filesystems that use the pagecache will update the mtime, ctime,
+> and change attribute when a page becomes writeable. Add a page_mkwrite
+> operation for tmpfs and just use it to bump the mtime, ctime and change
+> attribute.
+> 
+> This fixes xfstest generic/080 on tmpfs.
 
-Particularly impacted is mirror snapshot scheduler in snapshot-based
-mirroring since it happens to open and close images a lot (images are
-opened only for as long as it takes to take the next mirror snapshot,
-the same client instance is used for all images).
+Huh.  I didn't notice when this one crept into the multigrain series.
 
-To reduce the potential for erroneous blocklisting, retrieve the lock
-owner again after find_watcher() returns 0.  If it's still there, make
-sure it matches the previously detected lock owner.
+I'm inclined to NAK this patch: at the very least, it does not belong
+in the series, but should be discussed separately.
 
-Cc: stable@vger.kernel.org # ba6b7b6db4df: rbd: make get_lock_owner_info() return a single locker or NULL
-Cc: stable@vger.kernel.org # c476a060136a: rbd: harden get_lock_owner_info() a bit
-Cc: stable@vger.kernel.org
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
----
- drivers/block/rbd.c | 25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
+Yes, tmpfs does not and never has used page_mkwrite, and gains some
+performance advantage from that.  Nobody has ever asked for this
+change before, or not that I recall.
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 94629e826369..24afcc93ac01 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3849,6 +3849,15 @@ static void wake_lock_waiters(struct rbd_device *rbd_dev, int result)
- 	list_splice_tail_init(&rbd_dev->acquiring_list, &rbd_dev->running_list);
- }
- 
-+static bool locker_equal(const struct ceph_locker *lhs,
-+			 const struct ceph_locker *rhs)
-+{
-+	return lhs->id.name.type == rhs->id.name.type &&
-+	       lhs->id.name.num == rhs->id.name.num &&
-+	       !strcmp(lhs->id.cookie, rhs->id.cookie) &&
-+	       ceph_addr_equal_no_type(&lhs->info.addr, &rhs->info.addr);
-+}
-+
- static void free_locker(struct ceph_locker *locker)
- {
- 	if (locker)
-@@ -3969,11 +3978,11 @@ static int find_watcher(struct rbd_device *rbd_dev,
- static int rbd_try_lock(struct rbd_device *rbd_dev)
- {
- 	struct ceph_client *client = rbd_dev->rbd_client->client;
--	struct ceph_locker *locker;
-+	struct ceph_locker *locker, *refreshed_locker;
- 	int ret;
- 
- 	for (;;) {
--		locker = NULL;
-+		locker = refreshed_locker = NULL;
- 
- 		ret = rbd_lock(rbd_dev);
- 		if (ret != -EBUSY)
-@@ -3993,6 +4002,16 @@ static int rbd_try_lock(struct rbd_device *rbd_dev)
- 		if (ret)
- 			goto out; /* request lock or error */
- 
-+		refreshed_locker = get_lock_owner_info(rbd_dev);
-+		if (IS_ERR(refreshed_locker)) {
-+			ret = PTR_ERR(refreshed_locker);
-+			refreshed_locker = NULL;
-+			goto out;
-+		}
-+		if (!refreshed_locker ||
-+		    !locker_equal(locker, refreshed_locker))
-+			goto again;
-+
- 		rbd_warn(rbd_dev, "breaking header lock owned by %s%llu",
- 			 ENTITY_NAME(locker->id.name));
- 
-@@ -4014,10 +4033,12 @@ static int rbd_try_lock(struct rbd_device *rbd_dev)
- 		}
- 
- again:
-+		free_locker(refreshed_locker);
- 		free_locker(locker);
- 	}
- 
- out:
-+	free_locker(refreshed_locker);
- 	free_locker(locker);
- 	return ret;
- }
--- 
-2.41.0
+Please drop it from the series: and if you feel strongly, or know
+strong reasons why tmpfs suddenly needs to use page_mkwrite now,
+please argue them separately.  To pass generic/080 is not enough.
 
+Thanks,
+Hugh
+
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  mm/shmem.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index b154af49d2df..654d9a585820 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -2169,6 +2169,16 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+>  	return ret;
+>  }
+>  
+> +static vm_fault_t shmem_page_mkwrite(struct vm_fault *vmf)
+> +{
+> +	struct vm_area_struct *vma = vmf->vma;
+> +	struct inode *inode = file_inode(vma->vm_file);
+> +
+> +	file_update_time(vma->vm_file);
+> +	inode_inc_iversion(inode);
+> +	return 0;
+> +}
+> +
+>  unsigned long shmem_get_unmapped_area(struct file *file,
+>  				      unsigned long uaddr, unsigned long len,
+>  				      unsigned long pgoff, unsigned long flags)
+> @@ -4210,6 +4220,7 @@ static const struct super_operations shmem_ops = {
+>  
+>  static const struct vm_operations_struct shmem_vm_ops = {
+>  	.fault		= shmem_fault,
+> +	.page_mkwrite	= shmem_page_mkwrite,
+>  	.map_pages	= filemap_map_pages,
+>  #ifdef CONFIG_NUMA
+>  	.set_policy     = shmem_set_policy,
+> @@ -4219,6 +4230,7 @@ static const struct vm_operations_struct shmem_vm_ops = {
+>  
+>  static const struct vm_operations_struct shmem_anon_vm_ops = {
+>  	.fault		= shmem_fault,
+> +	.page_mkwrite	= shmem_page_mkwrite,
+>  	.map_pages	= filemap_map_pages,
+>  #ifdef CONFIG_NUMA
+>  	.set_policy     = shmem_set_policy,
+> 
+> -- 
+> 2.41.0
