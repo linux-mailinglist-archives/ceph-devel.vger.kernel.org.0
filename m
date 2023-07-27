@@ -2,291 +2,244 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 096847656A2
-	for <lists+ceph-devel@lfdr.de>; Thu, 27 Jul 2023 17:01:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52B757656FE
+	for <lists+ceph-devel@lfdr.de>; Thu, 27 Jul 2023 17:08:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233427AbjG0PBE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 27 Jul 2023 11:01:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46310 "EHLO
+        id S234450AbjG0PId (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 27 Jul 2023 11:08:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233785AbjG0PBB (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 27 Jul 2023 11:01:01 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C994B3A94
-        for <ceph-devel@vger.kernel.org>; Thu, 27 Jul 2023 08:00:43 -0700 (PDT)
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com [209.85.219.199])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id BEA933F078
-        for <ceph-devel@vger.kernel.org>; Thu, 27 Jul 2023 15:00:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1690470040;
-        bh=1D6+NiWp32kZlSL9CJ9SErawj5XjZfPW8+mnuATgg30=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=JJsqds6XUGS+lezigkW50nIOlGDRAAU5StRDRSaIIjST6WcsUAsdb2Holkp3g09pu
-         6yF47/eF11KV5srdu5dQik+vnyTX9bOt+UBBnEWEJ/obTE09viRROTEuzQo70zWCIi
-         xnMfIvyrW7jhdqFeygCRKXx/qaenVPiEvV5UAIJ29fkmKeS0GCKHv7xT3nCGt8swc5
-         HDLeF/RyvSi9TWXy3b6YKWceZcJ+5aBLkCslkZPMDvAVZ/FgogE1V1XBmzYRtgNxyJ
-         CnJ6zW9X8NO0mZ4ek4qW7QiYr9ucc+aYosnkq/9jeI/4tB5OEbrxeg9MigLpmV1+k6
-         0fAdzrkjVDErQ==
-Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-d1bcb99b518so959296276.2
-        for <ceph-devel@vger.kernel.org>; Thu, 27 Jul 2023 08:00:40 -0700 (PDT)
+        with ESMTP id S234438AbjG0PI0 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 27 Jul 2023 11:08:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E94B30DF
+        for <ceph-devel@vger.kernel.org>; Thu, 27 Jul 2023 08:07:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1690470438;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=vT3GQwWHb+7Fghu8zEAv9YcXPTgwqNP0DyDA+UbcF80=;
+        b=VFijREPucc99e433YUOmgMNgvPoF3swwnaC7z1T/9P9bca7a8ohcu5e8BeCZBE0VmDoSf2
+        ks0SAGHxigASHv2hpFxIjJYOdd2e5toQOOlINNNg5A2JMJ0BaRug6Kf6rLPxMyUGfPf/9W
+        w8aIlJj3bhXcmjy7Y/Z6oyj2s4oyxj4=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-272-Sb914WnwPpOeCJm8X-gStg-1; Thu, 27 Jul 2023 11:07:17 -0400
+X-MC-Unique: Sb914WnwPpOeCJm8X-gStg-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-94a355cf318so60348266b.2
+        for <ceph-devel@vger.kernel.org>; Thu, 27 Jul 2023 08:07:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690470040; x=1691074840;
+        d=1e100.net; s=20221208; t=1690470436; x=1691075236;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1D6+NiWp32kZlSL9CJ9SErawj5XjZfPW8+mnuATgg30=;
-        b=k1OFTFe70/IMl32RRIdcN8TFdUnkT99BJ+vf2mAuLIyOs11Dlr46a7L+UHXfGmZjpg
-         zB5ITGgM5jIO0WrFIzBjKO8Ped7a0T7sGdatUDdixu5atRiHtNWKoBRpv3KNOioIHx99
-         Aa1XGUxUdsZFmaZ1cHNqMQau41zOMGCDRyVV1KOKYFdzD81iQIzp9IW22CkZGhXaoozo
-         yLN/Z+iJoC6eA9GodNVXQEA1u8OjgLutBHsBgDtUsDNPan7RxoEWqM06ydXVpIgP28Ww
-         iHpt5HA0c/fmn5hbUjjgUEiI/2M6SO9OPoX8v3p/DQoEQnqALbQf69i46/+GZKH8uXeo
-         33xg==
-X-Gm-Message-State: ABy/qLZHCLdvxjMqGMXau3Nkeb5D/gk2UmmDDKicYoe3OE3mc1gs/zqk
-        kpLv9B+CmM3e9eGXk5+oSKX92xBGss6Wo+h3ht5CyO8eZJzkR4uJhwyLowtQ5/GdgLvyx8rcWGw
-        HPaSHucfD4zMUTJ0rNnyhjIHsOe/tHCbSkA9H2j1ma90xMUP/igrdrwM=
-X-Received: by 2002:a25:b10d:0:b0:cfe:9981:2af3 with SMTP id g13-20020a25b10d000000b00cfe99812af3mr4953893ybj.20.1690470039792;
-        Thu, 27 Jul 2023 08:00:39 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlEjtw/DRbycdcrtGPh+fqiSHho1Sea+pOgjGTC4Hr4uhOUkRE/+MHuVkQ7t0vbVjUyRVTnskbfTgzo9k4Sgr44=
-X-Received: by 2002:a25:b10d:0:b0:cfe:9981:2af3 with SMTP id
- g13-20020a25b10d000000b00cfe99812af3mr4953870ybj.20.1690470039531; Thu, 27
- Jul 2023 08:00:39 -0700 (PDT)
+        bh=vT3GQwWHb+7Fghu8zEAv9YcXPTgwqNP0DyDA+UbcF80=;
+        b=K1LQtaXQqH8A9wL5u72GG2NvQwehYGkCaDNwYQ/1WRpJ0TFa+eNgemSO8no8mDe9ZN
+         3Ebt8F/8sjd2KAcocXkZxeTGqCa6rbpzNHWLQORd2Gz0gXZ5o9jMI6IsNBIsDSp1lQBf
+         aDFdxFYS4yBKJaEaZkb0fZhViJ4t4vJURebAZeTTBJcYRE7dVGDQFSs2TOWwNGy+eiBy
+         DlOpg3o13xLyF0+JfqGfUI39S4GK4v4h5Xcdb04U/gosJVhojR6mlfaD9piDWapP1Xjl
+         JX4pRVqPxyb/dIiPiFIejJyLe5pn6Wc4Re9dW0ypSOEQyBxf20d5VlsP02dKv4uq6W3x
+         LRGA==
+X-Gm-Message-State: ABy/qLa+VpImV8Va56tiyPeT8/kCjm6N/UNpb+p7FS9elfh3oKSsAXtQ
+        6CXMFdlbrkYgbObT0dlRvbWCG50YvHEiGRYLHec2O8jtjFbXf7qS6mQnWT+B0YYpiIpIEFFzf13
+        L7p+rDQVoUhEsqGWNN1of7VSL9OXO0NUE+tl3AQ==
+X-Received: by 2002:a17:907:762e:b0:99b:c2b2:e498 with SMTP id jy14-20020a170907762e00b0099bc2b2e498mr1954030ejc.52.1690470436049;
+        Thu, 27 Jul 2023 08:07:16 -0700 (PDT)
+X-Google-Smtp-Source: APBJJlETpKURNmPphsHPvfZHSuqMehvP3HMIBJMKKJArafX+y9nD8NBP9TrrLVzcUx9Z/JGv56k3LO3Bv3AbFCHbnpo=
+X-Received: by 2002:a17:907:762e:b0:99b:c2b2:e498 with SMTP id
+ jy14-20020a170907762e00b0099bc2b2e498mr1954017ejc.52.1690470435770; Thu, 27
+ Jul 2023 08:07:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230726141026.307690-1-aleksandr.mikhalitsyn@canonical.com>
- <20230726141026.307690-4-aleksandr.mikhalitsyn@canonical.com>
- <6ea8bf93-b456-bda4-b39d-a43328987ac9@redhat.com> <CAEivzxeQubvas2yPFYRRXr3BP7pp1HNM3b7C-PQQWy-0FpFKuQ@mail.gmail.com>
- <20230727-bedeuten-endkampf-22c87edd132b@brauner> <CAEivzxcx31k3M1jWhhDrx6jxYtw=VOd84N-cMNWc+BZjq6QuFQ@mail.gmail.com>
- <CA+enf=sFC-hiziuXoeDWnb7MoErc+b1PAncOjbM2rNyB4fzfwA@mail.gmail.com>
-In-Reply-To: <CA+enf=sFC-hiziuXoeDWnb7MoErc+b1PAncOjbM2rNyB4fzfwA@mail.gmail.com>
-From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date:   Thu, 27 Jul 2023 17:00:28 +0200
-Message-ID: <CAEivzxdrVWB_jj58bU7kbNBD6kGhDJu_WZSocy4q=-RZEr-wfw@mail.gmail.com>
-Subject: Re: [PATCH v7 03/11] ceph: handle idmapped mounts in create_request_message()
-To:     =?UTF-8?Q?St=C3=A9phane_Graber?= <stgraber@ubuntu.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Xiubo Li <xiubli@redhat.com>, linux-fsdevel@vger.kernel.org,
-        Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+References: <20230613052424.254540-1-xiubli@redhat.com>
+In-Reply-To: <20230613052424.254540-1-xiubli@redhat.com>
+From:   Venky Shankar <vshankar@redhat.com>
+Date:   Thu, 27 Jul 2023 20:36:39 +0530
+Message-ID: <CACPzV1mXAEtmsSvbS6PDnkSDDoBX1VycKzZ67hgAjRUv1rwJOg@mail.gmail.com>
+Subject: Re: [PATCH v20 00/71] ceph+fscrypt: full support
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        mchangir@redhat.com, lhenriques@suse.de
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Jul 27, 2023 at 4:46=E2=80=AFPM St=C3=A9phane Graber <stgraber@ubun=
-tu.com> wrote:
+On Tue, Jun 13, 2023 at 10:56=E2=80=AFAM <xiubli@redhat.com> wrote:
 >
-> On Thu, Jul 27, 2023 at 5:48=E2=80=AFAM Aleksandr Mikhalitsyn
-> <aleksandr.mikhalitsyn@canonical.com> wrote:
-> >
-> > On Thu, Jul 27, 2023 at 11:01=E2=80=AFAM Christian Brauner <brauner@ker=
-nel.org> wrote:
-> > >
-> > > On Thu, Jul 27, 2023 at 08:36:40AM +0200, Aleksandr Mikhalitsyn wrote=
-:
-> > > > On Thu, Jul 27, 2023 at 7:30=E2=80=AFAM Xiubo Li <xiubli@redhat.com=
-> wrote:
-> > > > >
-> > > > >
-> > > > > On 7/26/23 22:10, Alexander Mikhalitsyn wrote:
-> > > > > > Inode operations that create a new filesystem object such as ->=
-mknod,
-> > > > > > ->create, ->mkdir() and others don't take a {g,u}id argument ex=
-plicitly.
-> > > > > > Instead the caller's fs{g,u}id is used for the {g,u}id of the n=
-ew
-> > > > > > filesystem object.
-> > > > > >
-> > > > > > In order to ensure that the correct {g,u}id is used map the cal=
-ler's
-> > > > > > fs{g,u}id for creation requests. This doesn't require complex c=
-hanges.
-> > > > > > It suffices to pass in the relevant idmapping recorded in the r=
-equest
-> > > > > > message. If this request message was triggered from an inode op=
-eration
-> > > > > > that creates filesystem objects it will have passed down the re=
-levant
-> > > > > > idmaping. If this is a request message that was triggered from =
-an inode
-> > > > > > operation that doens't need to take idmappings into account the=
- initial
-> > > > > > idmapping is passed down which is an identity mapping.
-> > > > > >
-> > > > > > This change uses a new cephfs protocol extension CEPHFS_FEATURE=
-_HAS_OWNER_UIDGID
-> > > > > > which adds two new fields (owner_{u,g}id) to the request head s=
-tructure.
-> > > > > > So, we need to ensure that MDS supports it otherwise we need to=
- fail
-> > > > > > any IO that comes through an idmapped mount because we can't pr=
-ocess it
-> > > > > > in a proper way. MDS server without such an extension will use =
-caller_{u,g}id
-> > > > > > fields to set a new inode owner UID/GID which is incorrect beca=
-use caller_{u,g}id
-> > > > > > values are unmapped. At the same time we can't map these fields=
- with an
-> > > > > > idmapping as it can break UID/GID-based permission checks logic=
- on the
-> > > > > > MDS side. This problem was described with a lot of details at [=
-1], [2].
-> > > > > >
-> > > > > > [1] https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+=
-EThfzuibrhA3RKM=3DZOYLg@mail.gmail.com/
-> > > > > > [2] https://lore.kernel.org/all/20220104140414.155198-3-brauner=
-@kernel.org/
-> > > > > >
-> > > > > > Cc: Xiubo Li <xiubli@redhat.com>
-> > > > > > Cc: Jeff Layton <jlayton@kernel.org>
-> > > > > > Cc: Ilya Dryomov <idryomov@gmail.com>
-> > > > > > Cc: ceph-devel@vger.kernel.org
-> > > > > > Co-Developed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@c=
-anonical.com>
-> > > > > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > > > > > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@can=
-onical.com>
-> > > > > > ---
-> > > > > > v7:
-> > > > > >       - reworked to use two new fields for owner UID/GID (https=
-://github.com/ceph/ceph/pull/52575)
-> > > > > > ---
-> > > > > >   fs/ceph/mds_client.c         | 20 ++++++++++++++++++++
-> > > > > >   fs/ceph/mds_client.h         |  5 ++++-
-> > > > > >   include/linux/ceph/ceph_fs.h |  4 +++-
-> > > > > >   3 files changed, 27 insertions(+), 2 deletions(-)
-> > > > > >
-> > > > > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > > > > > index c641ab046e98..ac095a95f3d0 100644
-> > > > > > --- a/fs/ceph/mds_client.c
-> > > > > > +++ b/fs/ceph/mds_client.c
-> > > > > > @@ -2923,6 +2923,7 @@ static struct ceph_msg *create_request_me=
-ssage(struct ceph_mds_session *session,
-> > > > > >   {
-> > > > > >       int mds =3D session->s_mds;
-> > > > > >       struct ceph_mds_client *mdsc =3D session->s_mdsc;
-> > > > > > +     struct ceph_client *cl =3D mdsc->fsc->client;
-> > > > > >       struct ceph_msg *msg;
-> > > > > >       struct ceph_mds_request_head_legacy *lhead;
-> > > > > >       const char *path1 =3D NULL;
-> > > > > > @@ -3028,6 +3029,16 @@ static struct ceph_msg *create_request_m=
-essage(struct ceph_mds_session *session,
-> > > > > >       lhead =3D find_legacy_request_head(msg->front.iov_base,
-> > > > > >                                        session->s_con.peer_feat=
-ures);
-> > > > > >
-> > > > > > +     if ((req->r_mnt_idmap !=3D &nop_mnt_idmap) &&
-> > > > > > +         !test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->=
-s_features)) {
-> > > > > > +             pr_err_ratelimited_client(cl,
-> > > > > > +                     "idmapped mount is used and CEPHFS_FEATUR=
-E_HAS_OWNER_UIDGID"
-> > > > > > +                     " is not supported by MDS. Fail request w=
-ith -EIO.\n");
-> > > > > > +
-> > > > > > +             ret =3D -EIO;
-> > > > > > +             goto out_err;
-> > > > > > +     }
-> > > > > > +
-> > > > >
-> > > > > I think this couldn't fail the mounting operation, right ?
-> > > >
-> > > > This won't fail mounting. First of all an idmapped mount is always =
-an
-> > > > additional mount, you always
-> > > > start from doing "normal" mount and only after that you can use thi=
-s
-> > > > mount to create an idmapped one.
-> > > > ( example: https://github.com/brauner/mount-idmapped/tree/master )
-> > > >
-> > > > >
-> > > > > IMO we should fail the mounting from the beginning.
-> > > >
-> > > > Unfortunately, we can't fail mount from the beginning. Procedure of
-> > > > the idmapped mounts
-> > > > creation is handled not on the filesystem level, but on the VFS lev=
-el
-> > >
-> > > Correct. It's a generic vfsmount feature.
-> > >
-> > > > (source: https://github.com/torvalds/linux/blob/0a8db05b571ad5b8d5c=
-8774a004c0424260a90bd/fs/namespace.c#L4277
-> > > > )
-> > > >
-> > > > Kernel perform all required checks as:
-> > > > - filesystem type has declared to support idmappings
-> > > > (fs_type->fs_flags & FS_ALLOW_IDMAP)
-> > > > - user who creates idmapped mount should be CAP_SYS_ADMIN in a user
-> > > > namespace that owns superblock of the filesystem
-> > > > (for cephfs it's always init_user_ns =3D> user should be root on th=
-e host)
-> > > >
-> > > > So I would like to go this way because of the reasons mentioned abo=
-ve:
-> > > > - root user is someone who understands what he does.
-> > > > - idmapped mounts are never "first" mounts. They are always created
-> > > > after "normal" mount.
-> > > > - effectively this check makes "normal" mount to work normally and
-> > > > fail only requests that comes through an idmapped mounts
-> > > > with reasonable error message. Obviously, all read operations will
-> > > > work perfectly well only the operations that create new inodes will
-> > > > fail.
-> > > > Btw, we already have an analogical semantic on the VFS level for us=
-ers
-> > > > who have no UID/GID mapping to the host. Filesystem requests for
-> > > > such users will fail with -EOVERFLOW. Here we have something close.
-> > >
-> > > Refusing requests coming from an idmapped mount if the server misses
-> > > appropriate features is good enough as a first step imho. And yes, we=
- do
-> > > have similar logic on the vfs level for unmapped uid/gid.
-> >
-> > Thanks, Christian!
-> >
-> > I wanted to add that alternative here is to modify caller_{u,g}id
-> > fields as it was done in the first approach,
-> > it will break the UID/GID-based permissions model for old MDS versions
-> > (we can put printk_once to inform user about this),
-> > but at the same time it will allow us to support idmapped mounts in
-> > all cases. This support will be not fully ideal for old MDS
-> >  and perfectly well for new MDS versions.
-> >
-> > Alternatively, we can introduce cephfs mount option like
-> > "idmap_with_old_mds" and if it's enabled then we set caller_{u,g}id
-> > for MDS without CEPHFS_FEATURE_HAS_OWNER_UIDGID, if it's disabled
-> > (default) we fail requests with -EIO. For
-> > new MDS everything goes in the right way.
-> >
-> > Kind regards,
-> > Alex
+> From: Xiubo Li <xiubli@redhat.com>
 >
-> Hey there,
 >
-> A very strong +1 on there needing to be some way to make this work
-> with older Ceph releases.
-> Ceph Reef isn't out yet and we're in July 2023, so I'd really like not
-> having to wait until Ceph Squid in mid 2024 to be able to make use of
-> this!
+> This patch series is based on Jeff Layton's previous great work and effor=
+t
+> on this and all the patches have been in the testing branch and well test=
+ed:
 >
-> Some kind of mount option, module option or the like would all be fine fo=
-r this.
+> The qa teuthology tests results:
+> https://pulpito.ceph.com/xiubli-2023-06-09_03:59:14-fs:fscrypt-wip-lxb-fs=
+crypt-20230607-0901-distro-default-smithi/
+>
+>
+> Since v15 we have added the ceph qa teuthology test cases for this [1][2]=
+,
+> which will test both the file name and contents encryption features and a=
+t
+> the same time they will also test the IO benchmarks.
+>
+> To support the fscrypt we also have some other work in ceph [3][4][5][6][=
+7][8][9]:
+>
+> [1] https://github.com/ceph/ceph/pull/48628
+> [2] https://github.com/ceph/ceph/pull/49934
+> [3] https://github.com/ceph/ceph/pull/43588
+> [4] https://github.com/ceph/ceph/pull/37297
+> [5] https://github.com/ceph/ceph/pull/45192
+> [6] https://github.com/ceph/ceph/pull/45312
+> [7] https://github.com/ceph/ceph/pull/40828
+> [8] https://github.com/ceph/ceph/pull/45224
+> [9] https://github.com/ceph/ceph/pull/45073
+>
+> The [9] is still undering testing and will soon be merged after that. All
+> the others had been merged.
+>
+>
+> The main changes since v19:
+>
+> - s/ceph_open/ceph_lookup/ for [PATCH v20 70/71].
+> - Updated the patches to fix use-after-free bug for fscrypt_destroy_keyri=
+ng,
+>   the link https://patchwork.kernel.org/project/ceph-devel/list/?series=
+=3D755131.
+>   These new changes have been
+>
+>
+>
+> Jeff Layton (47):
+>   libceph: add spinlock around osd->o_requests
+>   libceph: define struct ceph_sparse_extent and add some helpers
+>   libceph: add sparse read support to msgr2 crc state machine
+>   libceph: add sparse read support to OSD client
+>   libceph: support sparse reads on msgr2 secure codepath
+>   libceph: add sparse read support to msgr1
+>   ceph: add new mount option to enable sparse reads
+>   ceph: preallocate inode for ops that may create one
+>   ceph: make ceph_msdc_build_path use ref-walk
+>   libceph: add new iov_iter-based ceph_msg_data_type and
+>     ceph_osd_data_type
+>   ceph: use osd_req_op_extent_osd_iter for netfs reads
+>   ceph: fscrypt_auth handling for ceph
+>   ceph: ensure that we accept a new context from MDS for new inodes
+>   ceph: add support for fscrypt_auth/fscrypt_file to cap messages
+>   ceph: implement -o test_dummy_encryption mount option
+>   ceph: decode alternate_name in lease info
+>   ceph: add fscrypt ioctls
+>   ceph: add encrypted fname handling to ceph_mdsc_build_path
+>   ceph: send altname in MClientRequest
+>   ceph: encode encrypted name in dentry release
+>   ceph: properly set DCACHE_NOKEY_NAME flag in lookup
+>   ceph: set DCACHE_NOKEY_NAME in atomic open
+>   ceph: make d_revalidate call fscrypt revalidator for encrypted
+>     dentries
+>   ceph: add helpers for converting names for userland presentation
+>   ceph: add fscrypt support to ceph_fill_trace
+>   ceph: create symlinks with encrypted and base64-encoded targets
+>   ceph: make ceph_get_name decrypt filenames
+>   ceph: add a new ceph.fscrypt.auth vxattr
+>   ceph: add some fscrypt guardrails
+>   libceph: add CEPH_OSD_OP_ASSERT_VER support
+>   ceph: size handling for encrypted inodes in cap updates
+>   ceph: fscrypt_file field handling in MClientRequest messages
+>   ceph: handle fscrypt fields in cap messages from MDS
+>   ceph: update WARN_ON message to pr_warn
+>   ceph: add infrastructure for file encryption and decryption
+>   libceph: allow ceph_osdc_new_request to accept a multi-op read
+>   ceph: disable fallocate for encrypted inodes
+>   ceph: disable copy offload on encrypted inodes
+>   ceph: don't use special DIO path for encrypted inodes
+>   ceph: align data in pages in ceph_sync_write
+>   ceph: add read/modify/write to ceph_sync_write
+>   ceph: plumb in decryption during sync reads
+>   ceph: add fscrypt decryption support to ceph_netfs_issue_op
+>   ceph: set i_blkbits to crypto block size for encrypted inodes
+>   ceph: add encryption support to writepage
+>   ceph: fscrypt support for writepages
+>   ceph: report STATX_ATTR_ENCRYPTED on encrypted inodes
+>
+> Lu=C3=ADs Henriques (11):
+>   ceph: add base64 endcoding routines for encrypted names
+>   ceph: allow encrypting a directory while not having Ax caps
+>   ceph: mark directory as non-complete after loading key
+>   ceph: don't allow changing layout on encrypted files/directories
+>   ceph: invalidate pages when doing direct/sync writes
+>   ceph: add support for encrypted snapshot names
+>   ceph: add support for handling encrypted snapshot names
+>   ceph: update documentation regarding snapshot naming limitations
+>   ceph: prevent snapshots to be created in encrypted locked directories
+>   ceph: switch ceph_lookup() to use new fscrypt helper
+>   ceph: switch ceph_open_atomic() to use the new fscrypt helper
+>
+> Xiubo Li (13):
+>   ceph: make the ioctl cmd more readable in debug log
+>   ceph: fix base64 encoded name's length check in ceph_fname_to_usr()
+>   ceph: pass the request to parse_reply_info_readdir()
+>   ceph: add ceph_encode_encrypted_dname() helper
+>   ceph: add support to readdir for encrypted filenames
+>   ceph: get file size from fscrypt_file when present in inode traces
+>   ceph: add __ceph_get_caps helper support
+>   ceph: add __ceph_sync_read helper support
+>   ceph: add object version support for sync read
+>   ceph: add truncate size handling support for fscrypt
+>   ceph: drop the messages from MDS when unmounting
+>   ceph: just wait the osd requests' callbacks to finish when unmounting
+>   ceph: fix updating the i_truncate_pagecache_size for fscrypt
+>
+>  Documentation/filesystems/ceph.rst |  10 +
+>  fs/ceph/Makefile                   |   1 +
+>  fs/ceph/acl.c                      |   4 +-
+>  fs/ceph/addr.c                     | 192 +++++++--
+>  fs/ceph/caps.c                     | 227 ++++++++--
+>  fs/ceph/crypto.c                   | 659 +++++++++++++++++++++++++++++
+>  fs/ceph/crypto.h                   | 270 ++++++++++++
+>  fs/ceph/dir.c                      | 188 ++++++--
+>  fs/ceph/export.c                   |  44 +-
+>  fs/ceph/file.c                     | 593 ++++++++++++++++++++++----
+>  fs/ceph/inode.c                    | 613 ++++++++++++++++++++++++---
+>  fs/ceph/ioctl.c                    | 126 +++++-
+>  fs/ceph/mds_client.c               | 479 +++++++++++++++++----
+>  fs/ceph/mds_client.h               |  29 +-
+>  fs/ceph/quota.c                    |  14 +-
+>  fs/ceph/snap.c                     |  10 +-
+>  fs/ceph/super.c                    | 191 ++++++++-
+>  fs/ceph/super.h                    |  46 +-
+>  fs/ceph/xattr.c                    |  29 ++
+>  include/linux/ceph/ceph_fs.h       |  21 +-
+>  include/linux/ceph/messenger.h     |  40 ++
+>  include/linux/ceph/osd_client.h    |  93 +++-
+>  include/linux/ceph/rados.h         |   4 +
+>  net/ceph/messenger.c               |  79 ++++
+>  net/ceph/messenger_v1.c            |  98 ++++-
+>  net/ceph/messenger_v2.c            | 286 ++++++++++++-
+>  net/ceph/osd_client.c              | 332 ++++++++++++++-
+>  27 files changed, 4261 insertions(+), 417 deletions(-)
+>  create mode 100644 fs/ceph/crypto.c
+>  create mode 100644 fs/ceph/crypto.h
+>
+> --
+> 2.40.1
+>
 
-I really like this way. I can implement it really quickly. Let's just
-agree on this :)
-It looks like an ideal solution for everyone.
+Tested-by: Venky Shankar <vshankar@redhat.com>
 
-Kind regards,
-Alex
+--=20
+Cheers,
+Venky
 
->
-> St=C3=A9phane
