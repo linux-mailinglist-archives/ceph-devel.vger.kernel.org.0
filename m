@@ -2,163 +2,101 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A19F766B3E
-	for <lists+ceph-devel@lfdr.de>; Fri, 28 Jul 2023 13:01:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E39887671DC
+	for <lists+ceph-devel@lfdr.de>; Fri, 28 Jul 2023 18:34:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236148AbjG1LBS (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 28 Jul 2023 07:01:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51484 "EHLO
+        id S232142AbjG1QeH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 28 Jul 2023 12:34:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236129AbjG1LBK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 28 Jul 2023 07:01:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82F8D3C30;
-        Fri, 28 Jul 2023 04:01:05 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 690D4620DC;
-        Fri, 28 Jul 2023 11:01:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71689C433C8;
-        Fri, 28 Jul 2023 11:00:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1690542063;
-        bh=OHILmmeiUht8a/iNB32Wqo6p3CZSNTmmXf/wqdU8eyM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lUHncmkLN11wgaMD1KR1Gy5if09x5xh0KGyx50ZGUuC2fBx+ijTW2wECE/sOye+rG
-         qDHl4LIc5ruyg2PAO1VZI95ZW/5j7Q0Vo/saVvtDVwvUJlMtgeQjFVYzjalCOIixt6
-         gEQ+u8asPVZluAxs1HoSNgHXPJA0QhMWBw4NywwMFrjIj9j61U5pX9yO+iEoVUAfbu
-         mdakOz70WJL7rxDzg7P00Ji6kHPu+xHi68+/TquTtcuasIukOIAL/+DVn48WGku6nx
-         2ORenDwB3jD7HGc7jH1b/evq7YZ9RS2gsMH8Qjv3EgEZjMk8pxaawj3uGeQKo/zCuQ
-         +lMRyzmoHCobQ==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Anthony Iliopoulos <ailiop@suse.com>, v9fs@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-nfs@vger.kernel.org,
-        ntfs3@lists.linux.dev, ocfs2-devel@lists.linux.dev,
-        devel@lists.orangefs.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mtd@lists.infradead.org,
-        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Richard Weinberger <richard@nod.at>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Subject: Re: (subset) [PATCH v6 0/7] fs: implement multigrain timestamps
-Date:   Fri, 28 Jul 2023 13:00:37 +0200
-Message-Id: <20230728-unrecht-ersichtlich-cfa7d0c703d1@brauner>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20230725-mgctime-v6-0-a794c2b7abca@kernel.org>
-References: <20230725-mgctime-v6-0-a794c2b7abca@kernel.org>
+        with ESMTP id S229845AbjG1QeG (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 28 Jul 2023 12:34:06 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CD863C35;
+        Fri, 28 Jul 2023 09:34:05 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id 5b1f17b1804b1-3fd190065a8so25692525e9.3;
+        Fri, 28 Jul 2023 09:34:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1690562044; x=1691166844;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WT48dgkldoDe9AzLyWANAP5X6Ur3eOt79TKT0p646Vk=;
+        b=PL7k9y3SFFBii4fOawRir/gNsBhgbmvRm1vXGV82Iv3o+8onTo+KviHDLgN9ePrPtc
+         BCP/28c8Ns8g2K32B32sQk4KWPcO14CFDFIt3mRSEM968IMz2Cf1Oao0FuLWHk608Y5S
+         WVgp8DiUJ8084mJfE66rHtcB5d4EnJFXB+zIHFlEsxjCTXl9VQjUnLuZjOeAib/2bo6t
+         U0pmoG5xA5aLOvArdDS2acjKJRd6dmKPsaPRz5IfdEkUTZqVJBXzPWn1zjv4BBfWCiCQ
+         Z0/K6YUch95zkp1xPzuXuJSBi5MfJXUFglnyNFpnahbri3/hKzTgS4QcGabmhd7mSOoC
+         Fa2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1690562044; x=1691166844;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WT48dgkldoDe9AzLyWANAP5X6Ur3eOt79TKT0p646Vk=;
+        b=dFPU39p7c9J8l81FDoc+ZasYqVV2cj8JVAY3Rf9E1ZmNH/8uIv+qGbSC9jGd0Y6uOs
+         oq5qvHyIKM9whlLl7KZFXdL+n26e6iZzzKFUg7B6V9sQ6uo+ncL3OLjlgvF8UGDpRNfe
+         iRGM8ajr0NTq1ChgzNEFqHqhmn8y0grd1oiEOQVQNTQM/C22m2fGTBgEgNCnukfYLF6f
+         /hJbsKUR7j7CscDCORF8WPGIaQK2NaDwKFMxLSJRHzkDIzM73ApeqhIqD6T4Y4S4b/Bu
+         stIFizClEeiiTW5/FExWVt9GphwfHj55CgGuEuq2rmw1T9ERtmNUgSAASVdzWBCyEM/Z
+         N0iQ==
+X-Gm-Message-State: ABy/qLY39TAjvRNKCBaFarohVlubgPw3KuHwDAZ0qEvggnhsNGkd+TwB
+        TW2hBNmg/2pOcnpwnEi4eORnzVJbF+4=
+X-Google-Smtp-Source: APBJJlG76OulxNjUSTZC57LQsWop4la3xga6beCk2Lcd+WxGXQ7miBnEIJPq6t/f5FxFAyIx/b6cVg==
+X-Received: by 2002:a05:600c:285:b0:3fa:97ad:2b9f with SMTP id 5-20020a05600c028500b003fa97ad2b9fmr2317986wmk.16.1690562043714;
+        Fri, 28 Jul 2023 09:34:03 -0700 (PDT)
+Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
+        by smtp.gmail.com with ESMTPSA id z24-20020a7bc7d8000000b003fbc681c8d1sm7388179wmk.36.2023.07.28.09.34.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jul 2023 09:34:02 -0700 (PDT)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 6.5-rc4
+Date:   Fri, 28 Jul 2023 18:33:46 +0200
+Message-ID: <20230728163347.176178-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.41.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1874; i=brauner@kernel.org; h=from:subject:message-id; bh=4DjYiXolHUh8qQu1N+OzbWT4vtvmgyT4c+N7Ht8XGtY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQcnsy9IaFu+ZP9z1N8rj/+PH2Pm5FLY6hTmXAw+6xpv069 EIk93lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARMyFGhh2xp3MqP+WJ6kre7E0z/m vxVuf2tOrqbz/KOXZnbdld4czI8C9ly15G/weVYRsOZM6bEHF4077Al0vcwkM2vDFrTz89nQsA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Tue, 25 Jul 2023 10:58:13 -0400, Jeff Layton wrote:
-> The VFS always uses coarse-grained timestamps when updating the
-> ctime and mtime after a change. This has the benefit of allowing
-> filesystems to optimize away a lot metadata updates, down to around 1
-> per jiffy, even when a file is under heavy writes.
-> 
-> Unfortunately, this coarseness has always been an issue when we're
-> exporting via NFSv3, which relies on timestamps to validate caches. A
-> lot of changes can happen in a jiffy, so timestamps aren't sufficient to
-> help the client decide to invalidate the cache.
-> 
-> [...]
+Hi Linus,
 
-Survives xfstests (tmpfs, ext4, overlayfs) and the fs portions of LTP.
-Let's keep our eyes open for any potential issues. Past suspects has
-been IMA interacting with overlayfs. We'll see. Picked everything minus
-the tmpfs-writepage patch that was contentious.
+The following changes since commit 6eaae198076080886b9e7d57f4ae06fa782f90ef:
 
----
+  Linux 6.5-rc3 (2023-07-23 15:24:10 -0700)
 
-Applied to the vfs.ctime branch of the vfs/vfs.git tree.
-Patches in the vfs.ctime branch should appear in linux-next soon.
+are available in the Git repository at:
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+  https://github.com/ceph/ceph-client.git tags/ceph-for-6.5-rc4
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+for you to fetch changes up to 588159009d5b7a09c3e5904cffddbe4a4e170301:
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+  rbd: retrieve and check lock owner twice before blocklisting (2023-07-26 15:08:21 +0200)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.ctime
+----------------------------------------------------------------
+A patch to reduce the potential for erroneous RBD exclusive lock
+blocklisting (fencing) with a couple of prerequisites and a fixup to
+prevent metrics from being sent to the MDS even just once after that
+has been disabled by the user.  All marked for stable.
 
-[1/7] fs: pass the request_mask to generic_fillattr
-      https://git.kernel.org/vfs/vfs/c/0a6ab6dc6958
-[2/7] fs: add infrastructure for multigrain timestamps
-      https://git.kernel.org/vfs/vfs/c/d242b98ac3e9
-[4/7] tmpfs: add support for multigrain timestamps
-      https://git.kernel.org/vfs/vfs/c/1f31c58cf032
-[5/7] xfs: switch to multigrain timestamps
-      https://git.kernel.org/vfs/vfs/c/859dd91017dd
-[6/7] ext4: switch to multigrain timestamps
-      https://git.kernel.org/vfs/vfs/c/093af249eab4
-[7/7] btrfs: convert to multigrain timestamps
-      https://git.kernel.org/vfs/vfs/c/b90a04d1c30c
+----------------------------------------------------------------
+Ilya Dryomov (3):
+      rbd: make get_lock_owner_info() return a single locker or NULL
+      rbd: harden get_lock_owner_info() a bit
+      rbd: retrieve and check lock owner twice before blocklisting
+
+Xiubo Li (1):
+      ceph: never send metrics if disable_send_metrics is set
+
+ drivers/block/rbd.c  | 124 +++++++++++++++++++++++++++++++++++----------------
+ fs/ceph/metric.c     |   2 +-
+ net/ceph/messenger.c |   1 +
+ 3 files changed, 88 insertions(+), 39 deletions(-)
