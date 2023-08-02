@@ -2,76 +2,44 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D392276C176
-	for <lists+ceph-devel@lfdr.de>; Wed,  2 Aug 2023 02:22:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 347D176C577
+	for <lists+ceph-devel@lfdr.de>; Wed,  2 Aug 2023 08:44:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231309AbjHBAW3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 1 Aug 2023 20:22:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47052 "EHLO
+        id S230138AbjHBGoW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 2 Aug 2023 02:44:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230159AbjHBAW1 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 1 Aug 2023 20:22:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A54A82113
-        for <ceph-devel@vger.kernel.org>; Tue,  1 Aug 2023 17:21:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1690935701;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=iW8hBZZUgV3cs9gj+IYGks8l1nDjtjLJXBUbMFxFngc=;
-        b=iswv/B2leoGyxh3gAgWyEMfAC2y3L8B3JAD7pDK5V1U1ZiB0leFxPhrqGMnsaf61TGpQqf
-        FOrLMgaa2UPzyS3G7cZSlkYHZYRAODJhNEj1R2dFV9hwHKGsp6eL1R3cOEz0fRz442ZqkM
-        F/liYIT9J3ducINpldEetLyMJ1FU9Dg=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-561-pm6cCNheMRiw-TB307egPw-1; Tue, 01 Aug 2023 20:21:40 -0400
-X-MC-Unique: pm6cCNheMRiw-TB307egPw-1
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-686db1e037fso4542442b3a.3
-        for <ceph-devel@vger.kernel.org>; Tue, 01 Aug 2023 17:21:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1690935699; x=1691540499;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iW8hBZZUgV3cs9gj+IYGks8l1nDjtjLJXBUbMFxFngc=;
-        b=KNX8hMfMDspdV4dsYACUnKzMF1EO2WqJi5N7DW7sWMCP9d2rNWQUosCFWHFfnjYd5F
-         ryEOQai6BZEV4yah/QUfAUXGx/7tZZ8LZpIcOvErFdsFqtGUllgUyjXZQBy9Nc56ebK2
-         HrKtyjRC8IjIRriqCV/fL7CWAqVdF0c80ikwKecw63V+odfr+OMq2UrB4E//JivAiunc
-         jcazhaLbclg1B1nUNUvDYhs7zS3BBjHycCnQh9gToL1+2kjfdMiC/mkQfPzHZNaGiBP9
-         0eefy39RxmhYgE5GfPvB1r9Q8Qx148ltj2W3QIY3VSxSFhLeTo/tawQjRRMHGP9GWfIo
-         /2sQ==
-X-Gm-Message-State: ABy/qLah8DI3hhOhstYRCnLmOUt8rG5YJKmbs6vl9ZxNPvCZMzrfNkU8
-        s4LCAYD9lMKAss/vW8krKgdJ++j81Ia+bYOmbSYmT319eeUx24N2CUG4C2H3RjYg4b37e1sKc9q
-        hu+8ro7Il84Np/dw06x2nvgPzt58YIqV9cTE=
-X-Received: by 2002:a05:6a00:8c9:b0:668:74e9:8efb with SMTP id s9-20020a056a0008c900b0066874e98efbmr16107322pfu.8.1690935699498;
-        Tue, 01 Aug 2023 17:21:39 -0700 (PDT)
-X-Google-Smtp-Source: APBJJlHpg49oeXjBxHkw5/bRc9tnlkAZVe/58yxApl5Fqn7761Go1GmwzHSou5WHfDnqqwJZTcPXiw==
-X-Received: by 2002:a05:6a00:8c9:b0:668:74e9:8efb with SMTP id s9-20020a056a0008c900b0066874e98efbmr16107311pfu.8.1690935699230;
-        Tue, 01 Aug 2023 17:21:39 -0700 (PDT)
-Received: from [10.72.112.81] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id q23-20020a62e117000000b00682b2fbd20fsm9870635pfh.31.2023.08.01.17.21.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 01 Aug 2023 17:21:38 -0700 (PDT)
-Message-ID: <e5b081da-bb6d-0fb3-29c5-beb8b479b16d@redhat.com>
-Date:   Wed, 2 Aug 2023 08:21:34 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH] libceph: fix potential hang in ceph_osdc_notify()
-Content-Language: en-US
+        with ESMTP id S231990AbjHBGoS (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 2 Aug 2023 02:44:18 -0400
+X-Greylist: delayed 479 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 01 Aug 2023 23:44:07 PDT
+Received: from mail-m2835.qiye.163.com (mail-m2835.qiye.163.com [103.74.28.35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93A762D69
+        for <ceph-devel@vger.kernel.org>; Tue,  1 Aug 2023 23:44:06 -0700 (PDT)
+Received: from [192.168.122.37] (unknown [218.94.118.90])
+        by mail-m2835.qiye.163.com (Hmail) with ESMTPA id 11EA88A0063;
+        Wed,  2 Aug 2023 14:36:04 +0800 (CST)
+Subject: Re: [PATCH] rbd: prevent busy loop when requesting exclusive lock
 To:     Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-Cc:     Dongsheng Yang <dongsheng.yang@easystack.cn>
-References: <20230801222529.674721-1-idryomov@gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20230801222529.674721-1-idryomov@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+References: <20230801222238.674641-1-idryomov@gmail.com>
+From:   Dongsheng Yang <dongsheng.yang@easystack.cn>
+Message-ID: <99bdb9ff-be19-6f3c-6b6f-0423f3d12796@easystack.cn>
+Date:   Wed, 2 Aug 2023 14:35:37 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
+MIME-Version: 1.0
+In-Reply-To: <20230801222238.674641-1-idryomov@gmail.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+        tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVkZT08dVklDGU9DS0lMHRlISFUZERMWGhIXJBQOD1
+        lXWRgSC1lBWUlKQ1VCT1VKSkNVQktZV1kWGg8SFR0UWUFZT0tIVUpNT0lMTlVKS0tVSkJLS1kG
+X-HM-Tid: 0a89b4f5f0ae841dkuqw11ea88a0063
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mww6Qyo4IzEyNTM1MjwcCRNO
+        EkkaCjNVSlVKTUJLQk5DSk1PTU9CVTMWGhIXVR8UFRwIEx4VHFUCGhUcOx4aCAIIDxoYEFUYFUVZ
+        V1kSC1lBWUlKQ1VCT1VKSkNVQktZV1kIAVlBSUJKSzcG
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -80,68 +48,45 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-LGTM.
+Hi Ilya
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
-
-On 8/2/23 06:25, Ilya Dryomov wrote:
-> If the cluster becomes unavailable, ceph_osdc_notify() may hang even
-> with osd_request_timeout option set because linger_notify_finish_wait()
-> waits for MWatchNotify NOTIFY_COMPLETE message with no associated OSD
-> request in flight -- it's completely asynchronous.
->
-> Introduce an additional timeout, derived from the specified notify
-> timeout.  While at it, switch both waits to killable which is more
-> correct.
->
+在 2023/8/2 星期三 上午 6:22, Ilya Dryomov 写道:
+> Due to rbd_try_acquire_lock() effectively swallowing all but
+> EBLOCKLISTED error from rbd_try_lock() ("request lock anyway") and
+> rbd_request_lock() returning ETIMEDOUT error not only for an actual
+> notify timeout but also when the lock owner doesn't respond, a busy
+> loop inside of rbd_acquire_lock() between rbd_try_acquire_lock() and
+> rbd_request_lock() is possible.
+> 
+> Requesting the lock on EBUSY error (returned by get_lock_owner_info()
+> if an incompatible lock or invalid lock owner is detected) makes very
+> little sense.  The same goes for ETIMEDOUT error (might pop up pretty
+> much anywhere if osd_request_timeout option is set) and many others.
+> 
+> Just fail I/O requests on rbd_dev->acquiring_list immediately on any
+> error from rbd_try_lock().
+> 
+> Cc: stable@vger.kernel.org # 588159009d5b: rbd: retrieve and check lock owner twice before blocklisting
 > Cc: stable@vger.kernel.org
 > Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 > ---
->   net/ceph/osd_client.c | 20 ++++++++++++++------
->   1 file changed, 14 insertions(+), 6 deletions(-)
->
-> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> index 11c04e7d928e..658a6f2320cf 100644
-> --- a/net/ceph/osd_client.c
-> +++ b/net/ceph/osd_client.c
-> @@ -3334,17 +3334,24 @@ static int linger_reg_commit_wait(struct ceph_osd_linger_request *lreq)
->   	int ret;
+>   drivers/block/rbd.c | 28 +++++++++++++++-------------
+>   1 file changed, 15 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index 24afcc93ac01..2328cc05be36 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -3675,7 +3675,7 @@ static int rbd_lock(struct rbd_device *rbd_dev)
+>   	ret = ceph_cls_lock(osdc, &rbd_dev->header_oid, &rbd_dev->header_oloc,
+>   			    RBD_LOCK_NAME, CEPH_CLS_LOCK_EXCLUSIVE, cookie,
+>   			    RBD_LOCK_TAG, "", 0);
+> -	if (ret)
+> +	if (ret && ret != -EEXIST)
+>   		return ret;
 >   
->   	dout("%s lreq %p linger_id %llu\n", __func__, lreq, lreq->linger_id);
-> -	ret = wait_for_completion_interruptible(&lreq->reg_commit_wait);
-> +	ret = wait_for_completion_killable(&lreq->reg_commit_wait);
->   	return ret ?: lreq->reg_commit_error;
->   }
->   
-> -static int linger_notify_finish_wait(struct ceph_osd_linger_request *lreq)
-> +static int linger_notify_finish_wait(struct ceph_osd_linger_request *lreq,
-> +				     unsigned long timeout)
->   {
-> -	int ret;
-> +	long left;
->   
->   	dout("%s lreq %p linger_id %llu\n", __func__, lreq, lreq->linger_id);
-> -	ret = wait_for_completion_interruptible(&lreq->notify_finish_wait);
-> -	return ret ?: lreq->notify_finish_error;
-> +	left = wait_for_completion_killable_timeout(&lreq->notify_finish_wait,
-> +						ceph_timeout_jiffies(timeout));
-> +	if (left <= 0)
-> +		left = left ?: -ETIMEDOUT;
-> +	else
-> +		left = lreq->notify_finish_error; /* completed */
-> +
-> +	return left;
->   }
->   
->   /*
-> @@ -4896,7 +4903,8 @@ int ceph_osdc_notify(struct ceph_osd_client *osdc,
->   	linger_submit(lreq);
->   	ret = linger_reg_commit_wait(lreq);
->   	if (!ret)
-> -		ret = linger_notify_finish_wait(lreq);
-> +		ret = linger_notify_finish_wait(lreq,
-> +				 msecs_to_jiffies(2 * timeout * MSEC_PER_SEC));
->   	else
->   		dout("lreq %p failed to initiate notify %d\n", lreq, ret);
->   
+>   	__rbd_lock(rbd_dev, cookie);
+
+If we got -EEXIST here, we will call __rbd_lock() and return 0. -EEXIST 
+means lock is held by myself, is that necessary to call __rbd_lock()?
 
