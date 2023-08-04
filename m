@@ -2,391 +2,223 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 75C8A76FB3F
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Aug 2023 09:34:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F42C76FC71
+	for <lists+ceph-devel@lfdr.de>; Fri,  4 Aug 2023 10:49:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234347AbjHDHel (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 4 Aug 2023 03:34:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33994 "EHLO
+        id S229772AbjHDItx (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 4 Aug 2023 04:49:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234063AbjHDHeR (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Aug 2023 03:34:17 -0400
+        with ESMTP id S229719AbjHDItd (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 4 Aug 2023 04:49:33 -0400
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5142349E9
-        for <ceph-devel@vger.kernel.org>; Fri,  4 Aug 2023 00:33:33 -0700 (PDT)
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com [209.85.128.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5E1649C9
+        for <ceph-devel@vger.kernel.org>; Fri,  4 Aug 2023 01:49:30 -0700 (PDT)
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id BBF2C3F18E
-        for <ceph-devel@vger.kernel.org>; Fri,  4 Aug 2023 07:33:28 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 2FE3B417B9
+        for <ceph-devel@vger.kernel.org>; Fri,  4 Aug 2023 08:49:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1691134408;
-        bh=gwuj23GJBzvBifaG/E4f8sNsXONGG/E39wjck5tc0FQ=;
-        h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-         To:Cc:Content-Type;
-        b=oashK7q4HOqQlhlEwflLRKlA6912PuMe4S0SkNHIRu3rhO1J7ySVjO98HQQGixu5F
-         KpTW2X4zagXKc/xFpMrw77qJeIzBywIQBfhTHYuI8NuK+iyV+PSz8dKuqSQNR9Hwrj
-         6P9I2Unk8pE0thngTgicKYy5gbdJdxUi0yGi1UCkDiI0T3/k16n4NqSSXgsLt5GFEI
-         +/YIFPdsWqDkN96h4Huwol75cJ292GoA4dOOHN/m+18TaPWDGnQ1K1OGifzh544tnU
-         Z1FdhZnj1ODKeEiCXHFzAtOP11priA5o549n/LpQ4uRkTaltPYSQa3DojRao88jl7y
-         GYvz9qsSCiadw==
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-586a5cd0ea9so5735697b3.2
-        for <ceph-devel@vger.kernel.org>; Fri, 04 Aug 2023 00:33:28 -0700 (PDT)
+        s=20210705; t=1691138969;
+        bh=METYU9DUhdz7w9tfxjdR9SRB9971VLPfiTChHLgb/Js=;
+        h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type;
+        b=K1Jmf0T/S0YufDiHPgcfG5wjPpeCjieztFuLOBOAnh0WE9SZPTZ715iubH1wRS7HE
+         /holIwe73krPu85WpjTVQF/IETziDN/BGxAOV20Ykhc12Qt4ClxnxVyLPrr8/7doWQ
+         jKeZJMPtJd9hbySMb5WY1X1n6VeiXkR8YXVaMZa7QnzbA7cPBupKh8zJryLLhU6ggv
+         VntfASu196nGDZJHwkNNatc2bUWNJR+DooU4VL3PyB5pfQSjMHiEoEBYLj5QJYVuOO
+         DUayejxDKuhsILEGe1ytbVsuVTb74PzHLWjk5cVHsF4RYq5rpbfoxrM7CVk2VJuQeg
+         dXlI5avFYUh2g==
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-99c0fb2d4b0so133772966b.0
+        for <ceph-devel@vger.kernel.org>; Fri, 04 Aug 2023 01:49:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691134407; x=1691739207;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gwuj23GJBzvBifaG/E4f8sNsXONGG/E39wjck5tc0FQ=;
-        b=QgzMvF0otJo6j5B3HUCwHeCwrvsM0kJxOqxHEw13GPewUVFSdawuRf3b0NE0/JkVS/
-         oG+HGupDZ/o0YrdR0ZDaghHt2ZkDYSOB4uBcwuuwyUPDuTsiX08zJRsuiawpIdl7AlF1
-         U1neAOgxtronhFeR8Sqf99PaGdgWqUmbjUQYn3Re/uiof7FcYDNEdCXwhMbbkQdR5nyE
-         XPhXuyHV97jaG+u5lzCfqoOOPpA4YOa4+m1+9bPK65pSgoUNxscAEF2lrk3T46GN/h1y
-         bdhCrak38Hv+Cfyjf0qf/gqhT8QKHNG4exwkBP+npVUlCfrrtSR8pIYsfRsYHnTj8IZg
-         ovkw==
-X-Gm-Message-State: AOJu0Yz/IOgdBwMXPqB7D7vQaIRkjTKBiuwLGzai+gMe2BNX9hciq2j+
-        r4+L7cxAmC/MocUeO+rkn2Bjo9hNWFWXoFc7qmaOWGYWKtqSlmBG59ImkViBjl0LAGaS9HAYHTq
-        GejBtqk4PgQS+Igx2zj/ayBBO4/sMIoRlgaDtcbxjTYL9psLh48lnSLw=
-X-Received: by 2002:a25:d0b:0:b0:d0e:c8fb:986a with SMTP id 11-20020a250d0b000000b00d0ec8fb986amr771993ybn.42.1691134407347;
-        Fri, 04 Aug 2023 00:33:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHglgXgIUbkDMGOCwW4KKWi4n3t+cay2r38lAx8MlDA8al/9GfgBhD/xTu5RpCzHbi3RASipcxkL2ltICYuTbE=
-X-Received: by 2002:a25:d0b:0:b0:d0e:c8fb:986a with SMTP id
- 11-20020a250d0b000000b00d0ec8fb986amr771983ybn.42.1691134407031; Fri, 04 Aug
- 2023 00:33:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230803135955.230449-1-aleksandr.mikhalitsyn@canonical.com>
- <20230803135955.230449-4-aleksandr.mikhalitsyn@canonical.com>
- <71018b94-45a0-3404-d3d0-d9f808a72a00@redhat.com> <41ba61bf-3a45-cb20-1e4c-38dbd65bafa6@redhat.com>
- <CAEivzxcmurnArPRuLWXDjA2+qdicz4rnxA8ESTQprHJM1kKEnA@mail.gmail.com> <CAEivzxeFeWt-VFOrNqTV5x38r1zwmfcEh_ScqriDHC8bL7s0dw@mail.gmail.com>
-In-Reply-To: <CAEivzxeFeWt-VFOrNqTV5x38r1zwmfcEh_ScqriDHC8bL7s0dw@mail.gmail.com>
-From:   Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Date:   Fri, 4 Aug 2023 09:33:16 +0200
-Message-ID: <CAEivzxcCe9j13L-0m4pww_dXXdAQ9evRdMorpncJD9d+MW0Osw@mail.gmail.com>
-Subject: Re: [PATCH v8 03/12] ceph: handle idmapped mounts in create_request_message()
-To:     Xiubo Li <xiubli@redhat.com>
+        d=1e100.net; s=20221208; t=1691138967; x=1691743767;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=METYU9DUhdz7w9tfxjdR9SRB9971VLPfiTChHLgb/Js=;
+        b=gbKlK6uFV9wA/sK1FrYq/5fEnaczkEBuNiORdlSjHkDTYUlmAjj1oz4/zB30k0rNX0
+         xX28H58wyMIZUe7pAMOnP1jty6ZsQ4GZrr7x45UqH77d/adqm+XZ4oZ8PUo6ueQQGiQI
+         O5ubvJLsj9IvCnOTh/SQbPTWFDVeCwjN5RnvBGBGvJa3Xp8WOD7ncpoKrvgxKYlevb9T
+         aQWKuM5Qs4FPx6gbO/XreeG44iMZOHHMQbEaurGE+OQLGEo/yYlZ8dQy2nHSM9mJh56H
+         aqEOLXF+Z10MiQ6l3HJTLzCZmMZtFVLb2KRbHxloBCIKlRLjyhNKON1pfTBtmk9yxdui
+         CQUw==
+X-Gm-Message-State: AOJu0YzETF5ipSXYSFpaZPPmwOTDiB/zHld0sz+t89aH4itqsPUeMzmw
+        4sFRh9aJeXUZUZ4Uql5ccYEOBky6xfZ8TevSTIOk9EH2jD/dZH/1exxRlVsGYEQLHEOCIMRv9Dd
+        aBUYcbWSqLqEmhitiv54ahDeU3u7Xs7ECtgIpmKM=
+X-Received: by 2002:a17:906:7696:b0:99c:56d1:7c71 with SMTP id o22-20020a170906769600b0099c56d17c71mr1039330ejm.26.1691138967526;
+        Fri, 04 Aug 2023 01:49:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGE8vAQJrrJBhmmk+58RSJCJps5iblu6CrLIkTLzO8cGlTpmaIm/bRCdAr3Cr7AMoInLRQtJw==
+X-Received: by 2002:a17:906:7696:b0:99c:56d1:7c71 with SMTP id o22-20020a170906769600b0099c56d17c71mr1039318ejm.26.1691138967138;
+        Fri, 04 Aug 2023 01:49:27 -0700 (PDT)
+Received: from amikhalitsyn.local (dslb-088-066-182-192.088.066.pools.vodafone-ip.de. [88.66.182.192])
+        by smtp.gmail.com with ESMTPSA id k25-20020a17090646d900b00992e94bcfabsm979279ejs.167.2023.08.04.01.49.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Aug 2023 01:49:26 -0700 (PDT)
+From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To:     xiubli@redhat.com
 Cc:     brauner@kernel.org, stgraber@ubuntu.com,
-        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: [PATCH v9 00/12] ceph: support idmapped mounts
+Date:   Fri,  4 Aug 2023 10:48:46 +0200
+Message-Id: <20230804084858.126104-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Aug 4, 2023 at 8:43=E2=80=AFAM Aleksandr Mikhalitsyn
-<aleksandr.mikhalitsyn@canonical.com> wrote:
->
-> On Fri, Aug 4, 2023 at 8:35=E2=80=AFAM Aleksandr Mikhalitsyn
-> <aleksandr.mikhalitsyn@canonical.com> wrote:
-> >
-> > On Fri, Aug 4, 2023 at 5:24=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wro=
-te:
-> > >
-> > >
-> > > On 8/4/23 10:26, Xiubo Li wrote:
-> > > >
-> > > > On 8/3/23 21:59, Alexander Mikhalitsyn wrote:
-> > > >> From: Christian Brauner <brauner@kernel.org>
-> > > >>
-> > > >> Inode operations that create a new filesystem object such as ->mkn=
-od,
-> > > >> ->create, ->mkdir() and others don't take a {g,u}id argument expli=
-citly.
-> > > >> Instead the caller's fs{g,u}id is used for the {g,u}id of the new
-> > > >> filesystem object.
-> > > >>
-> > > >> In order to ensure that the correct {g,u}id is used map the caller=
-'s
-> > > >> fs{g,u}id for creation requests. This doesn't require complex chan=
-ges.
-> > > >> It suffices to pass in the relevant idmapping recorded in the requ=
-est
-> > > >> message. If this request message was triggered from an inode opera=
-tion
-> > > >> that creates filesystem objects it will have passed down the relev=
-ant
-> > > >> idmaping. If this is a request message that was triggered from an =
-inode
-> > > >> operation that doens't need to take idmappings into account the in=
-itial
-> > > >> idmapping is passed down which is an identity mapping.
-> > > >>
-> > > >> This change uses a new cephfs protocol extension
-> > > >> CEPHFS_FEATURE_HAS_OWNER_UIDGID
-> > > >> which adds two new fields (owner_{u,g}id) to the request head stru=
-cture.
-> > > >> So, we need to ensure that MDS supports it otherwise we need to fa=
-il
-> > > >> any IO that comes through an idmapped mount because we can't proce=
-ss it
-> > > >> in a proper way. MDS server without such an extension will use
-> > > >> caller_{u,g}id
-> > > >> fields to set a new inode owner UID/GID which is incorrect because
-> > > >> caller_{u,g}id
-> > > >> values are unmapped. At the same time we can't map these fields wi=
-th an
-> > > >> idmapping as it can break UID/GID-based permission checks logic on=
- the
-> > > >> MDS side. This problem was described with a lot of details at [1],=
- [2].
-> > > >>
-> > > >> [1]
-> > > >> https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzui=
-brhA3RKM=3DZOYLg@mail.gmail.com/
-> > > >> [2]
-> > > >> https://lore.kernel.org/all/20220104140414.155198-3-brauner@kernel=
-.org/
-> > > >>
-> > > >> https://github.com/ceph/ceph/pull/52575
-> > > >> https://tracker.ceph.com/issues/62217
-> > > >>
-> > > >> Cc: Xiubo Li <xiubli@redhat.com>
-> > > >> Cc: Jeff Layton <jlayton@kernel.org>
-> > > >> Cc: Ilya Dryomov <idryomov@gmail.com>
-> > > >> Cc: ceph-devel@vger.kernel.org
-> > > >> Co-Developed-by: Alexander Mikhalitsyn
-> > > >> <aleksandr.mikhalitsyn@canonical.com>
-> > > >> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > >> Signed-off-by: Alexander Mikhalitsyn
-> > > >> <aleksandr.mikhalitsyn@canonical.com>
-> > > >> ---
-> > > >> v7:
-> > > >>     - reworked to use two new fields for owner UID/GID
-> > > >> (https://github.com/ceph/ceph/pull/52575)
-> > > >> v8:
-> > > >>     - properly handled case when old MDS used with new kernel clie=
-nt
-> > > >> ---
-> > > >>   fs/ceph/mds_client.c         | 46 ++++++++++++++++++++++++++++++=
-+++---
-> > > >>   fs/ceph/mds_client.h         |  5 +++-
-> > > >>   include/linux/ceph/ceph_fs.h |  4 +++-
-> > > >>   3 files changed, 50 insertions(+), 5 deletions(-)
-> > > >>
-> > > >> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > > >> index 8829f55103da..7d3106d3b726 100644
-> > > >> --- a/fs/ceph/mds_client.c
-> > > >> +++ b/fs/ceph/mds_client.c
-> > > >> @@ -2902,6 +2902,17 @@ static void encode_mclientrequest_tail(void
-> > > >> **p, const struct ceph_mds_request *
-> > > >>       }
-> > > >>   }
-> > > >>   +static inline u16 mds_supported_head_version(struct
-> > > >> ceph_mds_session *session)
-> > > >> +{
-> > > >> +    if (!test_bit(CEPHFS_FEATURE_32BITS_RETRY_FWD,
-> > > >> &session->s_features))
-> > > >> +        return 1;
-> > > >> +
-> > > >> +    if (!test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID,
-> > > >> &session->s_features))
-> > > >> +        return 2;
-> > > >> +
-> > > >> +    return CEPH_MDS_REQUEST_HEAD_VERSION;
-> > > >> +}
-> > > >> +
-> > > >>   static struct ceph_mds_request_head_legacy *
-> > > >>   find_legacy_request_head(void *p, u64 features)
-> > > >>   {
-> > > >> @@ -2923,6 +2934,7 @@ static struct ceph_msg
-> > > >> *create_request_message(struct ceph_mds_session *session,
-> > > >>   {
-> > > >>       int mds =3D session->s_mds;
-> > > >>       struct ceph_mds_client *mdsc =3D session->s_mdsc;
-> > > >> +    struct ceph_client *cl =3D mdsc->fsc->client;
-> > > >>       struct ceph_msg *msg;
-> > > >>       struct ceph_mds_request_head_legacy *lhead;
-> > > >>       const char *path1 =3D NULL;
-> > > >> @@ -2936,7 +2948,7 @@ static struct ceph_msg
-> > > >> *create_request_message(struct ceph_mds_session *session,
-> > > >>       void *p, *end;
-> > > >>       int ret;
-> > > >>       bool legacy =3D !(session->s_con.peer_features &
-> > > >> CEPH_FEATURE_FS_BTIME);
-> > > >> -    bool old_version =3D !test_bit(CEPHFS_FEATURE_32BITS_RETRY_FW=
-D,
-> > > >> &session->s_features);
-> > > >> +    u16 request_head_version =3D mds_supported_head_version(sessi=
-on);
-> > > >>         ret =3D set_request_path_attr(mdsc, req->r_inode, req->r_d=
-entry,
-> > > >>                     req->r_parent, req->r_path1, req->r_ino1.ino,
-> > > >> @@ -2977,8 +2989,10 @@ static struct ceph_msg
-> > > >> *create_request_message(struct ceph_mds_session *session,
-> > > >>        */
-> > > >>       if (legacy)
-> > > >>           len =3D sizeof(struct ceph_mds_request_head_legacy);
-> > > >> -    else if (old_version)
-> > > >> +    else if (request_head_version =3D=3D 1)
-> > > >>           len =3D sizeof(struct ceph_mds_request_head_old);
-> > > >> +    else if (request_head_version =3D=3D 2)
-> > > >> +        len =3D offsetofend(struct ceph_mds_request_head, ext_num=
-_fwd);
-> > > >>       else
-> > > >>           len =3D sizeof(struct ceph_mds_request_head);
-> > > >
-> > > > This is not what we suppose to. If we do this again and again when
-> > > > adding new members it will make the code very complicated to mainta=
-in.
-> > > >
-> > > > Once the CEPHFS_FEATURE_32BITS_RETRY_FWD has been supported the cep=
-h
-> > > > should correctly decode it and if CEPHFS_FEATURE_HAS_OWNER_UIDGID i=
-s
-> > > > not supported the decoder should skip it directly.
-> > > >
-> > > > Is the MDS side buggy ? Why you last version didn't work ?
-> > > >
-> > >
-> > > I think the ceph side is buggy. Possibly we should add one new `lengt=
-h`
-> > > member in struct `struct ceph_mds_request_head` and just skip the ext=
-ra
-> > > bytes when decoding it.
-> >
-> > Hm, I think I found something suspicious. In cephfs code we have many
-> > places that
-> > call the DECODE_FINISH macro, but in our decoder we don't have it.
-> >
-> > From documentation it follows that DECODE_FINISH purpose is precisely
-> > about this problem.
-> >
-> > What do you think?
->
-> Upd: this thing also changes on-wire format and adds field to store lengt=
-h.
-> But this will be a massive and incompatible protocol change. I don't thin=
-k that
-> we want to do this in the scope of this task.
+Dear friends,
 
-https://github.com/ceph/ceph/pull/52575#issuecomment-1665141641
+This patchset was originally developed by Christian Brauner but I'll continue
+to push it forward. Christian allowed me to do that :)
 
->
-> >
-> > >
-> > > Could you fix it together with your ceph PR ?
-> > >
-> > > Thanks
-> > >
-> > > - Xiubo
-> > >
-> > >
-> > > > Thanks
-> > > >
-> > > > - Xiubo
-> > > >
-> > > >> @@ -3028,6 +3042,16 @@ static struct ceph_msg
-> > > >> *create_request_message(struct ceph_mds_session *session,
-> > > >>       lhead =3D find_legacy_request_head(msg->front.iov_base,
-> > > >>                        session->s_con.peer_features);
-> > > >>   +    if ((req->r_mnt_idmap !=3D &nop_mnt_idmap) &&
-> > > >> +        !test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID,
-> > > >> &session->s_features)) {
-> > > >> +        pr_err_ratelimited_client(cl,
-> > > >> +            "idmapped mount is used and
-> > > >> CEPHFS_FEATURE_HAS_OWNER_UIDGID"
-> > > >> +            " is not supported by MDS. Fail request with -EIO.\n"=
-);
-> > > >> +
-> > > >> +        ret =3D -EIO;
-> > > >> +        goto out_err;
-> > > >> +    }
-> > > >> +
-> > > >>       /*
-> > > >>        * The ceph_mds_request_head_legacy didn't contain a version
-> > > >> field, and
-> > > >>        * one was added when we moved the message version from 3->4=
-.
-> > > >> @@ -3035,17 +3059,33 @@ static struct ceph_msg
-> > > >> *create_request_message(struct ceph_mds_session *session,
-> > > >>       if (legacy) {
-> > > >>           msg->hdr.version =3D cpu_to_le16(3);
-> > > >>           p =3D msg->front.iov_base + sizeof(*lhead);
-> > > >> -    } else if (old_version) {
-> > > >> +    } else if (request_head_version =3D=3D 1) {
-> > > >>           struct ceph_mds_request_head_old *ohead =3D msg->front.i=
-ov_base;
-> > > >>             msg->hdr.version =3D cpu_to_le16(4);
-> > > >>           ohead->version =3D cpu_to_le16(1);
-> > > >>           p =3D msg->front.iov_base + sizeof(*ohead);
-> > > >> +    } else if (request_head_version =3D=3D 2) {
-> > > >> +        struct ceph_mds_request_head *nhead =3D msg->front.iov_ba=
-se;
-> > > >> +
-> > > >> +        msg->hdr.version =3D cpu_to_le16(6);
-> > > >> +        nhead->version =3D cpu_to_le16(2);
-> > > >> +
-> > > >> +        p =3D msg->front.iov_base + offsetofend(struct
-> > > >> ceph_mds_request_head, ext_num_fwd);
-> > > >>       } else {
-> > > >>           struct ceph_mds_request_head *nhead =3D msg->front.iov_b=
-ase;
-> > > >> +        kuid_t owner_fsuid;
-> > > >> +        kgid_t owner_fsgid;
-> > > >>             msg->hdr.version =3D cpu_to_le16(6);
-> > > >>           nhead->version =3D cpu_to_le16(CEPH_MDS_REQUEST_HEAD_VER=
-SION);
-> > > >> +
-> > > >> +        owner_fsuid =3D from_vfsuid(req->r_mnt_idmap, &init_user_=
-ns,
-> > > >> +                      VFSUIDT_INIT(req->r_cred->fsuid));
-> > > >> +        owner_fsgid =3D from_vfsgid(req->r_mnt_idmap, &init_user_=
-ns,
-> > > >> +                      VFSGIDT_INIT(req->r_cred->fsgid));
-> > > >> +        nhead->owner_uid =3D cpu_to_le32(from_kuid(&init_user_ns,
-> > > >> owner_fsuid));
-> > > >> +        nhead->owner_gid =3D cpu_to_le32(from_kgid(&init_user_ns,
-> > > >> owner_fsgid));
-> > > >>           p =3D msg->front.iov_base + sizeof(*nhead);
-> > > >>       }
-> > > >>   diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> > > >> index e3bbf3ba8ee8..8f683e8203bd 100644
-> > > >> --- a/fs/ceph/mds_client.h
-> > > >> +++ b/fs/ceph/mds_client.h
-> > > >> @@ -33,8 +33,10 @@ enum ceph_feature_type {
-> > > >>       CEPHFS_FEATURE_NOTIFY_SESSION_STATE,
-> > > >>       CEPHFS_FEATURE_OP_GETVXATTR,
-> > > >>       CEPHFS_FEATURE_32BITS_RETRY_FWD,
-> > > >> +    CEPHFS_FEATURE_NEW_SNAPREALM_INFO,
-> > > >> +    CEPHFS_FEATURE_HAS_OWNER_UIDGID,
-> > > >>   -    CEPHFS_FEATURE_MAX =3D CEPHFS_FEATURE_32BITS_RETRY_FWD,
-> > > >> +    CEPHFS_FEATURE_MAX =3D CEPHFS_FEATURE_HAS_OWNER_UIDGID,
-> > > >>   };
-> > > >>     #define CEPHFS_FEATURES_CLIENT_SUPPORTED {    \
-> > > >> @@ -49,6 +51,7 @@ enum ceph_feature_type {
-> > > >>       CEPHFS_FEATURE_NOTIFY_SESSION_STATE,    \
-> > > >>       CEPHFS_FEATURE_OP_GETVXATTR,        \
-> > > >>       CEPHFS_FEATURE_32BITS_RETRY_FWD,    \
-> > > >> +    CEPHFS_FEATURE_HAS_OWNER_UIDGID,    \
-> > > >>   }
-> > > >>     /*
-> > > >> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/cep=
-h_fs.h
-> > > >> index 5f2301ee88bc..6eb83a51341c 100644
-> > > >> --- a/include/linux/ceph/ceph_fs.h
-> > > >> +++ b/include/linux/ceph/ceph_fs.h
-> > > >> @@ -499,7 +499,7 @@ struct ceph_mds_request_head_legacy {
-> > > >>       union ceph_mds_request_args args;
-> > > >>   } __attribute__ ((packed));
-> > > >>   -#define CEPH_MDS_REQUEST_HEAD_VERSION  2
-> > > >> +#define CEPH_MDS_REQUEST_HEAD_VERSION  3
-> > > >>     struct ceph_mds_request_head_old {
-> > > >>       __le16 version;                /* struct version */
-> > > >> @@ -530,6 +530,8 @@ struct ceph_mds_request_head {
-> > > >>         __le32 ext_num_retry;          /* new count retry attempts=
- */
-> > > >>       __le32 ext_num_fwd;            /* new count fwd attempts */
-> > > >> +
-> > > >> +    __le32 owner_uid, owner_gid;   /* used for OPs which create
-> > > >> inodes */
-> > > >>   } __attribute__ ((packed));
-> > > >>     /* cap/lease release record */
-> > >
+This feature is already actively used/tested with LXD/LXC project.
+
+Git tree (based on https://github.com/ceph/ceph-client.git testing):
+v9: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v9
+current: https://github.com/mihalicyn/linux/tree/fs.idmapped.ceph
+
+In the version 3 I've changed only two commits:
+- fs: export mnt_idmap_get/mnt_idmap_put
+- ceph: allow idmapped setattr inode op
+and added a new one:
+- ceph: pass idmap to __ceph_setattr
+
+In the version 4 I've reworked the ("ceph: stash idmapping in mdsc request")
+commit. Now we take idmap refcounter just in place where req->r_mnt_idmap
+is filled. It's more safer approach and prevents possible refcounter underflow
+on error paths where __register_request wasn't called but ceph_mdsc_release_request is
+called.
+
+Changelog for version 5:
+- a few commits were squashed into one (as suggested by Xiubo Li)
+- started passing an idmapping everywhere (if possible), so a caller
+UID/GID-s will be mapped almost everywhere (as suggested by Xiubo Li)
+
+Changelog for version 6:
+- rebased on top of testing branch
+- passed an idmapping in a few places (readdir, ceph_netfs_issue_op_inline)
+
+Changelog for version 7:
+- rebased on top of testing branch
+- this thing now requires a new cephfs protocol extension CEPHFS_FEATURE_HAS_OWNER_UIDGID
+https://github.com/ceph/ceph/pull/52575
+
+Changelog for version 8:
+- rebased on top of testing branch
+- added enable_unsafe_idmap module parameter to make idmapped mounts
+work with old MDS server versions
+- properly handled case when old MDS used with new kernel client
+
+Changelog for version 9:
+- added "struct_len" field in struct ceph_mds_request_head as requested by Xiubo Li
+
+I can confirm that this version passes xfstests and
+tested with old MDS (without CEPHFS_FEATURE_HAS_OWNER_UIDGID)
+and with recent MDS version.
+
+Links to previous versions:
+v1: https://lore.kernel.org/all/20220104140414.155198-1-brauner@kernel.org/
+v2: https://lore.kernel.org/lkml/20230524153316.476973-1-aleksandr.mikhalitsyn@canonical.com/
+tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v2
+v3: https://lore.kernel.org/lkml/20230607152038.469739-1-aleksandr.mikhalitsyn@canonical.com/#t
+v4: https://lore.kernel.org/lkml/20230607180958.645115-1-aleksandr.mikhalitsyn@canonical.com/#t
+tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v4
+v5: https://lore.kernel.org/lkml/20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com/#t
+tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v5
+v6: https://lore.kernel.org/lkml/20230609093125.252186-1-aleksandr.mikhalitsyn@canonical.com/
+tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v6
+v7: https://lore.kernel.org/all/20230726141026.307690-1-aleksandr.mikhalitsyn@canonical.com/
+tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v7
+v8: https://lore.kernel.org/all/20230803135955.230449-1-aleksandr.mikhalitsyn@canonical.com/
+tree: -
+
+Kind regards,
+Alex
+
+Original description from Christian:
+========================================================================
+This patch series enables cephfs to support idmapped mounts, i.e. the
+ability to alter ownership information on a per-mount basis.
+
+Container managers such as LXD support sharaing data via cephfs between
+the host and unprivileged containers and between unprivileged containers.
+They may all use different idmappings. Idmapped mounts can be used to
+create mounts with the idmapping used for the container (or a different
+one specific to the use-case).
+
+There are in fact more use-cases such as remapping ownership for
+mountpoints on the host itself to grant or restrict access to different
+users or to make it possible to enforce that programs running as root
+will write with a non-zero {g,u}id to disk.
+
+The patch series is simple overall and few changes are needed to cephfs.
+There is one cephfs specific issue that I would like to discuss and
+solve which I explain in detail in:
+
+[PATCH 02/12] ceph: handle idmapped mounts in create_request_message()
+
+It has to do with how to handle mds serves which have id-based access
+restrictions configured. I would ask you to please take a look at the
+explanation in the aforementioned patch.
+
+The patch series passes the vfs and idmapped mount testsuite as part of
+xfstests. To run it you will need a config like:
+
+[ceph]
+export FSTYP=ceph
+export TEST_DIR=/mnt/test
+export TEST_DEV=10.103.182.10:6789:/
+export TEST_FS_MOUNT_OPTS="-o name=admin,secret=$password
+
+and then simply call
+
+sudo ./check -g idmapped
+
+========================================================================
+
+Alexander Mikhalitsyn (3):
+  fs: export mnt_idmap_get/mnt_idmap_put
+  ceph: add enable_unsafe_idmap module parameter
+  ceph: pass idmap to __ceph_setattr
+
+Christian Brauner (9):
+  ceph: stash idmapping in mdsc request
+  ceph: handle idmapped mounts in create_request_message()
+  ceph: pass an idmapping to mknod/symlink/mkdir
+  ceph: allow idmapped getattr inode op
+  ceph: allow idmapped permission inode op
+  ceph: allow idmapped setattr inode op
+  ceph/acl: allow idmapped set_acl inode op
+  ceph/file: allow idmapped atomic_open inode op
+  ceph: allow idmapped mounts
+
+ fs/ceph/acl.c                 |  6 +--
+ fs/ceph/crypto.c              |  2 +-
+ fs/ceph/dir.c                 |  3 ++
+ fs/ceph/file.c                | 10 ++++-
+ fs/ceph/inode.c               | 29 +++++++++------
+ fs/ceph/mds_client.c          | 70 ++++++++++++++++++++++++++++++++---
+ fs/ceph/mds_client.h          |  8 +++-
+ fs/ceph/super.c               |  7 +++-
+ fs/ceph/super.h               |  3 +-
+ fs/mnt_idmapping.c            |  2 +
+ include/linux/ceph/ceph_fs.h  |  5 ++-
+ include/linux/mnt_idmapping.h |  3 ++
+ 12 files changed, 121 insertions(+), 27 deletions(-)
+
+-- 
+2.34.1
+
