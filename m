@@ -2,61 +2,61 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A8C3B7725A8
-	for <lists+ceph-devel@lfdr.de>; Mon,  7 Aug 2023 15:28:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08A167725AD
+	for <lists+ceph-devel@lfdr.de>; Mon,  7 Aug 2023 15:29:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233968AbjHGN25 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 7 Aug 2023 09:28:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43290 "EHLO
+        id S234178AbjHGN3W (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 7 Aug 2023 09:29:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43756 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233995AbjHGN2x (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 7 Aug 2023 09:28:53 -0400
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 969FA199B
-        for <ceph-devel@vger.kernel.org>; Mon,  7 Aug 2023 06:28:28 -0700 (PDT)
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
+        with ESMTP id S233848AbjHGN3M (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 7 Aug 2023 09:29:12 -0400
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B70371BF2
+        for <ceph-devel@vger.kernel.org>; Mon,  7 Aug 2023 06:28:48 -0700 (PDT)
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 49E7F44279
-        for <ceph-devel@vger.kernel.org>; Mon,  7 Aug 2023 13:28:08 +0000 (UTC)
+        by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 36A8D413C3
+        for <ceph-devel@vger.kernel.org>; Mon,  7 Aug 2023 13:28:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-        s=20210705; t=1691414888;
-        bh=CtBJRc4HIc+srecN6BR4LVumWEoikJhCfq0jTrx0/xU=;
+        s=20210705; t=1691414891;
+        bh=9n6Y3+R2z8MxgQphIes473oPxL5sL8PFIQL+RUTLs6I=;
         h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-         MIME-Version;
-        b=W6Kd+PuooTohbbUm+R3cZkXtBhewoL8EaFWpeGphkKMGEPR/ThsVO3g7cMUrtOhib
-         JB7HD1LaqJj9OlJcmx0v6kN3mZ2LlGmz2HqbqzxWcsSx4OzpWjBuJkjtykDZmzx6kG
-         SOdWQ0aZGHXxq8WuprmJjHrGExga2pTs3XgRqdtYKeXqCjESan4nUKwRXYnDqVE9nI
-         +5l9aBCBkMoDNcrKJtRytDVKOnRCdDB/f+bLqh0zCf1gTCyrwZN6g3w0cdPsDpjaSB
-         v3BrvPem33nOzdjQZ3UlCk/2zMZaBvOnBl9TJrkRxAraFW6EmFKI2tHlOtJAd4tiJP
-         xg3ese3zJZmsQ==
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-98e40d91fdfso344105366b.3
-        for <ceph-devel@vger.kernel.org>; Mon, 07 Aug 2023 06:28:08 -0700 (PDT)
+         MIME-Version:Content-Type;
+        b=m4qhKaTImBND8WcuT2ePvUE9SDmU/9xC+DMM6b6agp1PfWK+4M5QX6tqAei19opL8
+         4YZ6E3TlUoP5M3BKJApBR/7cXAaKtk34tK1cszvtvfunqnZI/w00K0jXWrf2b+Ne3+
+         PQJWKgap38TAqnN8tul3jHX5lSTgCJjjX0TP7mqYxYt/0BwTA3Z+RSqyjg1RMXmes3
+         MEnQFx8B9laGDzxT++6cLlqK3npATjXC9uRHZGsuXkw5r52xyKRCb2aHlVfpnvTMQB
+         +4i+5qRFUmgv7yArprYEAxfbUIvm3gt+kEGBLSmdG4CIlFYp/vrSfUE0E6U36052d0
+         KhSHm+5vx6b5Q==
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-94a34d3e5ebso300367466b.3
+        for <ceph-devel@vger.kernel.org>; Mon, 07 Aug 2023 06:28:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691414888; x=1692019688;
+        d=1e100.net; s=20221208; t=1691414891; x=1692019691;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CtBJRc4HIc+srecN6BR4LVumWEoikJhCfq0jTrx0/xU=;
-        b=Z9cXdXxPUS3dHCQhWxNNq6jHtxU/RlDuf9zPniZ1H6ep2VK+eQwlmZwXTqY3grD2GO
-         TUIIwyTsCEtZyrOJrXdkPzU01bOS5CoSgkDcUtfX/FcL3ldFbxAXDx9+AC+qkeqQvUp5
-         kuBYLKwFD5LOBfV6HutYjsKizyFmiQSuJkUJI9VKSUgRZT0qKEFaEwYpularxY5U/0YG
-         jLpMaXlOYVFxpqOB0/FTnoziF0Q65cuq0KfTTHjSyJuEGVwPLEbHSoI3z7CoytNU2b77
-         mQpxmNrOIVNcFR7zHRgHAYV26/NjG60ZI0Xn9Eq5YQFai74dF+3bJISpmE73rKAA/MFO
-         bPZg==
-X-Gm-Message-State: AOJu0YwWAREOzGP/hG5cVNszFFl2Sm1cg0a18JZPaOoITJrVBAWSy/s/
-        DipiNGkbDEjOULxvGb4G7icYZ3hkMRDstUYQ7jAmdoM4lslXnTZs8Ev+E5/+onK8RifbKnLmMmT
-        AXk6aUygiZckZ93xPoqPUFHx8dnQDbnURsXrKS2E=
-X-Received: by 2002:a17:906:209c:b0:99b:d599:5086 with SMTP id 28-20020a170906209c00b0099bd5995086mr9623735ejq.75.1691414887905;
-        Mon, 07 Aug 2023 06:28:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGyP5yIIrtiTVTtjzAf4BH44AU/ig6VCb8VPJwFX70tY7iKrYzWW3+k82ej/+HuCN4g9kHkJQ==
-X-Received: by 2002:a17:906:209c:b0:99b:d599:5086 with SMTP id 28-20020a170906209c00b0099bd5995086mr9623729ejq.75.1691414887721;
-        Mon, 07 Aug 2023 06:28:07 -0700 (PDT)
+        bh=9n6Y3+R2z8MxgQphIes473oPxL5sL8PFIQL+RUTLs6I=;
+        b=i1RdDjJkPfTQ49o2yie7/4KnVUbhbpMrrxUNcajCgoeVcNUPyuoW9xfLskFT+KCII7
+         2qCcAB9dB7RsII2caf4OZzBOiuXLitN+uXYxAU8Hxn2Y7qLyDzyblZwteB8x42ZMb6DQ
+         BZfFCRSTSEMvunr1ScbVcNIejm/mNbMttrByJTM2DJEv+x3CfD/rZ3hHcYuAuvmKxjCp
+         heuhc5oX98R2DAsm/DuR+u8S/dKtG005CGr1+8pkCbcKnKGzwTAAQJY/oezW/nYVWRJF
+         1VYwn84NbDiP69Ht3s2HNdu8efZiWKxNTQmapmroJob41l3PaoqkudM7JwuIdFzI33Wj
+         J9LQ==
+X-Gm-Message-State: AOJu0Yy29g92xKr5+AoMFE5A8n/iS/9CLOHtubVVBmgJiXhpHpJiovY5
+        +Fh+p+14vFkRwrbUEnuRsZNixN3gvO9VLSdyjAbGKLtyj5sLT0RxsVriJ7E8hgu9TbAIAuK2Hg5
+        5mPxjCqhCjCoCOCrxWxeogYd/9Zdqm5F75WiFckQ=
+X-Received: by 2002:a17:907:2c44:b0:99c:825:6076 with SMTP id hf4-20020a1709072c4400b0099c08256076mr6544993ejc.35.1691414890933;
+        Mon, 07 Aug 2023 06:28:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEBU4i6R38ul+frqeZevZOxWpLNRxj0oiRwvcU1y4whm1La4MwJf9y9wAgsB1yXAlivGYfFGw==
+X-Received: by 2002:a17:907:2c44:b0:99c:825:6076 with SMTP id hf4-20020a1709072c4400b0099c08256076mr6544975ejc.35.1691414890543;
+        Mon, 07 Aug 2023 06:28:10 -0700 (PDT)
 Received: from amikhalitsyn.local (dslb-088-066-182-192.088.066.pools.vodafone-ip.de. [88.66.182.192])
-        by smtp.gmail.com with ESMTPSA id lg12-20020a170906f88c00b00992ca779f42sm5175257ejb.97.2023.08.07.06.28.06
+        by smtp.gmail.com with ESMTPSA id lg12-20020a170906f88c00b00992ca779f42sm5175257ejb.97.2023.08.07.06.28.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Aug 2023 06:28:07 -0700 (PDT)
+        Mon, 07 Aug 2023 06:28:10 -0700 (PDT)
 From:   Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 To:     xiubli@redhat.com
 Cc:     brauner@kernel.org, stgraber@ubuntu.com,
@@ -64,13 +64,14 @@ Cc:     brauner@kernel.org, stgraber@ubuntu.com,
         Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
         Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v10 03/12] ceph: handle idmapped mounts in create_request_message()
-Date:   Mon,  7 Aug 2023 15:26:17 +0200
-Message-Id: <20230807132626.182101-4-aleksandr.mikhalitsyn@canonical.com>
+Subject: [PATCH v10 04/12] ceph: add enable_unsafe_idmap module parameter
+Date:   Mon,  7 Aug 2023 15:26:18 +0200
+Message-Id: <20230807132626.182101-5-aleksandr.mikhalitsyn@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20230807132626.182101-1-aleksandr.mikhalitsyn@canonical.com>
 References: <20230807132626.182101-1-aleksandr.mikhalitsyn@canonical.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
@@ -82,231 +83,115 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-From: Christian Brauner <brauner@kernel.org>
+This parameter is used to decide if we allow
+to perform IO on idmapped mount in case when MDS lacks
+support of CEPHFS_FEATURE_HAS_OWNER_UIDGID feature.
 
-Inode operations that create a new filesystem object such as ->mknod,
-->create, ->mkdir() and others don't take a {g,u}id argument explicitly.
-Instead the caller's fs{g,u}id is used for the {g,u}id of the new
-filesystem object.
+In this case we can't properly handle MDS permission
+checks and if UID/GID-based restrictions are enabled
+on the MDS side then IO requests which go through an
+idmapped mount may fail with -EACCESS/-EPERM.
+Fortunately, for most of users it's not a case and
+everything should work fine. But we put work "unsafe"
+in the module parameter name to warn users about
+possible problems with this feature and encourage
+update of cephfs MDS.
 
-In order to ensure that the correct {g,u}id is used map the caller's
-fs{g,u}id for creation requests. This doesn't require complex changes.
-It suffices to pass in the relevant idmapping recorded in the request
-message. If this request message was triggered from an inode operation
-that creates filesystem objects it will have passed down the relevant
-idmaping. If this is a request message that was triggered from an inode
-operation that doens't need to take idmappings into account the initial
-idmapping is passed down which is an identity mapping.
-
-This change uses a new cephfs protocol extension CEPHFS_FEATURE_HAS_OWNER_UIDGID
-which adds two new fields (owner_{u,g}id) to the request head structure.
-So, we need to ensure that MDS supports it otherwise we need to fail
-any IO that comes through an idmapped mount because we can't process it
-in a proper way. MDS server without such an extension will use caller_{u,g}id
-fields to set a new inode owner UID/GID which is incorrect because caller_{u,g}id
-values are unmapped. At the same time we can't map these fields with an
-idmapping as it can break UID/GID-based permission checks logic on the
-MDS side. This problem was described with a lot of details at [1], [2].
-
-[1] https://lore.kernel.org/lkml/CAEivzxfw1fHO2TFA4dx3u23ZKK6Q+EThfzuibrhA3RKM=ZOYLg@mail.gmail.com/
-[2] https://lore.kernel.org/all/20220104140414.155198-3-brauner@kernel.org/
-
-Link: https://github.com/ceph/ceph/pull/52575
-Link: https://tracker.ceph.com/issues/62217
 Cc: Xiubo Li <xiubli@redhat.com>
 Cc: Jeff Layton <jlayton@kernel.org>
 Cc: Ilya Dryomov <idryomov@gmail.com>
 Cc: ceph-devel@vger.kernel.org
-Co-Developed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+Suggested-by: Stéphane Graber <stgraber@ubuntu.com>
 Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 Acked-by: Christian Brauner <brauner@kernel.org>
 ---
-v7:
-	- reworked to use two new fields for owner UID/GID (https://github.com/ceph/ceph/pull/52575)
-v8:
-	- properly handled case when old MDS used with new kernel client
-v10:
-	- fill struct_len field properly (use cpu_to_le32)
-	- add extra checks IS_CEPH_MDS_OP_NEWINODE(..) as requested by Xiubo to match
-	  userspace client behavior
----
- fs/ceph/mds_client.c         | 55 ++++++++++++++++++++++++++++++++++--
- fs/ceph/mds_client.h         |  5 +++-
- include/linux/ceph/ceph_fs.h | 10 ++++++-
- 3 files changed, 65 insertions(+), 5 deletions(-)
+ fs/ceph/mds_client.c | 28 +++++++++++++++++++++-------
+ fs/ceph/mds_client.h |  2 ++
+ fs/ceph/super.c      |  5 +++++
+ 3 files changed, 28 insertions(+), 7 deletions(-)
 
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 8829f55103da..5114de5ea65e 100644
+index 5114de5ea65e..90c4b0689cd6 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -2902,6 +2902,17 @@ static void encode_mclientrequest_tail(void **p, const struct ceph_mds_request *
- 	}
- }
- 
-+static inline u16 mds_supported_head_version(struct ceph_mds_session *session)
-+{
-+	if (!test_bit(CEPHFS_FEATURE_32BITS_RETRY_FWD, &session->s_features))
-+		return 1;
-+
-+	if (!test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->s_features))
-+		return 2;
-+
-+	return CEPH_MDS_REQUEST_HEAD_VERSION;
-+}
-+
- static struct ceph_mds_request_head_legacy *
- find_legacy_request_head(void *p, u64 features)
- {
-@@ -2923,6 +2934,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
- {
- 	int mds = session->s_mds;
- 	struct ceph_mds_client *mdsc = session->s_mdsc;
-+	struct ceph_client *cl = mdsc->fsc->client;
- 	struct ceph_msg *msg;
- 	struct ceph_mds_request_head_legacy *lhead;
- 	const char *path1 = NULL;
-@@ -2936,7 +2948,7 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
- 	void *p, *end;
+@@ -2949,6 +2949,8 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
  	int ret;
  	bool legacy = !(session->s_con.peer_features & CEPH_FEATURE_FS_BTIME);
--	bool old_version = !test_bit(CEPHFS_FEATURE_32BITS_RETRY_FWD, &session->s_features);
-+	u16 request_head_version = mds_supported_head_version(session);
+ 	u16 request_head_version = mds_supported_head_version(session);
++	kuid_t caller_fsuid = req->r_cred->fsuid;
++	kgid_t caller_fsgid = req->r_cred->fsgid;
  
  	ret = set_request_path_attr(mdsc, req->r_inode, req->r_dentry,
  			      req->r_parent, req->r_path1, req->r_ino1.ino,
-@@ -2977,8 +2989,10 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
- 	 */
- 	if (legacy)
- 		len = sizeof(struct ceph_mds_request_head_legacy);
--	else if (old_version)
-+	else if (request_head_version == 1)
- 		len = sizeof(struct ceph_mds_request_head_old);
-+	else if (request_head_version == 2)
-+		len = offsetofend(struct ceph_mds_request_head, ext_num_fwd);
- 	else
- 		len = sizeof(struct ceph_mds_request_head);
+@@ -3046,12 +3048,24 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+ 	    !test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->s_features)) {
+ 		WARN_ON_ONCE(!IS_CEPH_MDS_OP_NEWINODE(req->r_op));
  
-@@ -3028,6 +3042,18 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
- 	lhead = find_legacy_request_head(msg->front.iov_base,
- 					 session->s_con.peer_features);
+-		pr_err_ratelimited_client(cl,
+-			"idmapped mount is used and CEPHFS_FEATURE_HAS_OWNER_UIDGID"
+-			" is not supported by MDS. Fail request with -EIO.\n");
++		if (enable_unsafe_idmap) {
++			pr_warn_once_client(cl,
++				"idmapped mount is used and CEPHFS_FEATURE_HAS_OWNER_UIDGID"
++				" is not supported by MDS. UID/GID-based restrictions may"
++				" not work properly.\n");
  
-+	if ((req->r_mnt_idmap != &nop_mnt_idmap) &&
-+	    !test_bit(CEPHFS_FEATURE_HAS_OWNER_UIDGID, &session->s_features)) {
-+		WARN_ON_ONCE(!IS_CEPH_MDS_OP_NEWINODE(req->r_op));
-+
-+		pr_err_ratelimited_client(cl,
-+			"idmapped mount is used and CEPHFS_FEATURE_HAS_OWNER_UIDGID"
-+			" is not supported by MDS. Fail request with -EIO.\n");
-+
-+		ret = -EIO;
-+		goto out_err;
-+	}
-+
- 	/*
- 	 * The ceph_mds_request_head_legacy didn't contain a version field, and
- 	 * one was added when we moved the message version from 3->4.
-@@ -3035,17 +3061,40 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
- 	if (legacy) {
- 		msg->hdr.version = cpu_to_le16(3);
- 		p = msg->front.iov_base + sizeof(*lhead);
--	} else if (old_version) {
-+	} else if (request_head_version == 1) {
- 		struct ceph_mds_request_head_old *ohead = msg->front.iov_base;
- 
- 		msg->hdr.version = cpu_to_le16(4);
- 		ohead->version = cpu_to_le16(1);
- 		p = msg->front.iov_base + sizeof(*ohead);
-+	} else if (request_head_version == 2) {
-+		struct ceph_mds_request_head *nhead = msg->front.iov_base;
-+
-+		msg->hdr.version = cpu_to_le16(6);
-+		nhead->version = cpu_to_le16(2);
-+
-+		p = msg->front.iov_base + offsetofend(struct ceph_mds_request_head, ext_num_fwd);
- 	} else {
- 		struct ceph_mds_request_head *nhead = msg->front.iov_base;
-+		kuid_t owner_fsuid;
-+		kgid_t owner_fsgid;
- 
- 		msg->hdr.version = cpu_to_le16(6);
- 		nhead->version = cpu_to_le16(CEPH_MDS_REQUEST_HEAD_VERSION);
-+		nhead->struct_len = cpu_to_le32(sizeof(struct ceph_mds_request_head));
-+
-+		if (IS_CEPH_MDS_OP_NEWINODE(req->r_op)) {
-+			owner_fsuid = from_vfsuid(req->r_mnt_idmap, &init_user_ns,
-+						VFSUIDT_INIT(req->r_cred->fsuid));
-+			owner_fsgid = from_vfsgid(req->r_mnt_idmap, &init_user_ns,
-+						VFSGIDT_INIT(req->r_cred->fsgid));
-+			nhead->owner_uid = cpu_to_le32(from_kuid(&init_user_ns, owner_fsuid));
-+			nhead->owner_gid = cpu_to_le32(from_kgid(&init_user_ns, owner_fsgid));
+-		ret = -EIO;
+-		goto out_err;
++			caller_fsuid = from_vfsuid(req->r_mnt_idmap, &init_user_ns,
++						   VFSUIDT_INIT(req->r_cred->fsuid));
++			caller_fsgid = from_vfsgid(req->r_mnt_idmap, &init_user_ns,
++						   VFSGIDT_INIT(req->r_cred->fsgid));
 +		} else {
-+			nhead->owner_uid = cpu_to_le32(-1);
-+			nhead->owner_gid = cpu_to_le32(-1);
-+		}
++			pr_err_ratelimited_client(cl,
++				"idmapped mount is used and CEPHFS_FEATURE_HAS_OWNER_UIDGID"
++				" is not supported by MDS. Fail request with -EIO.\n");
 +
- 		p = msg->front.iov_base + sizeof(*nhead);
++			ret = -EIO;
++			goto out_err;
++		}
  	}
  
+ 	/*
+@@ -3103,9 +3117,9 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
+ 	lhead->mdsmap_epoch = cpu_to_le32(mdsc->mdsmap->m_epoch);
+ 	lhead->op = cpu_to_le32(req->r_op);
+ 	lhead->caller_uid = cpu_to_le32(from_kuid(&init_user_ns,
+-						  req->r_cred->fsuid));
++						  caller_fsuid));
+ 	lhead->caller_gid = cpu_to_le32(from_kgid(&init_user_ns,
+-						  req->r_cred->fsgid));
++						  caller_fsgid));
+ 	lhead->ino = cpu_to_le64(req->r_deleg_ino);
+ 	lhead->args = req->r_args;
+ 
 diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index e3bbf3ba8ee8..8f683e8203bd 100644
+index 8f683e8203bd..0945ae4cf3c5 100644
 --- a/fs/ceph/mds_client.h
 +++ b/fs/ceph/mds_client.h
-@@ -33,8 +33,10 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_NOTIFY_SESSION_STATE,
- 	CEPHFS_FEATURE_OP_GETVXATTR,
- 	CEPHFS_FEATURE_32BITS_RETRY_FWD,
-+	CEPHFS_FEATURE_NEW_SNAPREALM_INFO,
-+	CEPHFS_FEATURE_HAS_OWNER_UIDGID,
- 
--	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_32BITS_RETRY_FWD,
-+	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_HAS_OWNER_UIDGID,
- };
- 
- #define CEPHFS_FEATURES_CLIENT_SUPPORTED {	\
-@@ -49,6 +51,7 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_NOTIFY_SESSION_STATE,	\
- 	CEPHFS_FEATURE_OP_GETVXATTR,		\
- 	CEPHFS_FEATURE_32BITS_RETRY_FWD,	\
-+	CEPHFS_FEATURE_HAS_OWNER_UIDGID,	\
- }
- 
- /*
-diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-index 5f2301ee88bc..d0ead0b6354c 100644
---- a/include/linux/ceph/ceph_fs.h
-+++ b/include/linux/ceph/ceph_fs.h
-@@ -357,6 +357,11 @@ enum {
- 	CEPH_MDS_OP_RENAMESNAP = 0x01403,
- };
- 
-+#define IS_CEPH_MDS_OP_NEWINODE(op) (op == CEPH_MDS_OP_CREATE     || \
-+				     op == CEPH_MDS_OP_MKNOD      || \
-+				     op == CEPH_MDS_OP_MKDIR      || \
-+				     op == CEPH_MDS_OP_SYMLINK)
+@@ -619,4 +619,6 @@ static inline int ceph_wait_on_async_create(struct inode *inode)
+ extern int ceph_wait_on_conflict_unlink(struct dentry *dentry);
+ extern u64 ceph_get_deleg_ino(struct ceph_mds_session *session);
+ extern int ceph_restore_deleg_ino(struct ceph_mds_session *session, u64 ino);
 +
- extern const char *ceph_mds_op_name(int op);
++extern bool enable_unsafe_idmap;
+ #endif
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 49fd17fbba9f..18bfdfd48cef 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -1680,6 +1680,11 @@ static const struct kernel_param_ops param_ops_mount_syntax = {
+ module_param_cb(mount_syntax_v1, &param_ops_mount_syntax, &mount_support, 0444);
+ module_param_cb(mount_syntax_v2, &param_ops_mount_syntax, &mount_support, 0444);
  
- #define CEPH_SETATTR_MODE              (1 << 0)
-@@ -499,7 +504,7 @@ struct ceph_mds_request_head_legacy {
- 	union ceph_mds_request_args args;
- } __attribute__ ((packed));
- 
--#define CEPH_MDS_REQUEST_HEAD_VERSION  2
-+#define CEPH_MDS_REQUEST_HEAD_VERSION  3
- 
- struct ceph_mds_request_head_old {
- 	__le16 version;                /* struct version */
-@@ -530,6 +535,9 @@ struct ceph_mds_request_head {
- 
- 	__le32 ext_num_retry;          /* new count retry attempts */
- 	__le32 ext_num_fwd;            /* new count fwd attempts */
++bool enable_unsafe_idmap = false;
++module_param(enable_unsafe_idmap, bool, 0644);
++MODULE_PARM_DESC(enable_unsafe_idmap,
++		 "Allow to use idmapped mounts with MDS without CEPHFS_FEATURE_HAS_OWNER_UIDGID");
 +
-+	__le32 struct_len;             /* to store size of struct ceph_mds_request_head */
-+	__le32 owner_uid, owner_gid;   /* used for OPs which create inodes */
- } __attribute__ ((packed));
+ module_init(init_ceph);
+ module_exit(exit_ceph);
  
- /* cap/lease release record */
 -- 
 2.34.1
 
