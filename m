@@ -2,82 +2,127 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AC62773EFC
-	for <lists+ceph-devel@lfdr.de>; Tue,  8 Aug 2023 18:40:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEEB67741F1
+	for <lists+ceph-devel@lfdr.de>; Tue,  8 Aug 2023 19:31:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232449AbjHHQkQ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Tue, 8 Aug 2023 12:40:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56346 "EHLO
+        id S234570AbjHHRbD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 8 Aug 2023 13:31:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232317AbjHHQjW (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Aug 2023 12:39:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 050903A4CB
-        for <ceph-devel@vger.kernel.org>; Tue,  8 Aug 2023 08:54:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1691510001;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        with ESMTP id S234574AbjHHRaX (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 8 Aug 2023 13:30:23 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44D95217B9;
+        Tue,  8 Aug 2023 09:13:11 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id A7B1922468;
+        Tue,  8 Aug 2023 09:05:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1691485527; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=I61UNjTLAG95oq9qtMKUyrUKZXpIaEksaYyC4k2Zul0=;
-        b=JAIOVhEE9j0ytcNa+Gx5idvnXK727zmgmMANh59mVPo4wsnCXrcxcRudmCMC1yIzBlJjir
-        oX56oAVgNZfKViFYyIf8+8XhzNHKDQBpxx6PG5IEc3bBLW9fLPJPzIZpa/qnGrgt4Cv23a
-        lYpfI5POqY1W+fJrUt/dFRbVm9wtomo=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-632-rUcdgOJBM32c8KjkIyUDAA-1; Tue, 08 Aug 2023 03:51:07 -0400
-X-MC-Unique: rUcdgOJBM32c8KjkIyUDAA-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-268099fd4f5so3409364a91.1
-        for <ceph-devel@vger.kernel.org>; Tue, 08 Aug 2023 00:51:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1691481066; x=1692085866;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I61UNjTLAG95oq9qtMKUyrUKZXpIaEksaYyC4k2Zul0=;
-        b=gijKKZ2vhBpzl6hwXwdGnBXBk7wcT+8dg85v1/v/m0htJhzAmZ+gZr7O8/KYnfZtB7
-         +Yl4OuwxtxKrdF/MiS35xiAFdPVVrUwPV0HWljvnLoS6TJpwAQp1E+YOl/IJnLFQp/7c
-         dbH0SDCyh2rg1HrnOsPoq/5qeLuoqgJaGmC6Ah68DOKfuU+NRzjKaXmk9MiRYlcH5LMA
-         nSkKSnQtPlvHBRM/ghOWQMeJkQO4mvdeXUDyasQxgMUrENZhhAqqaH4VTvDEmQ+jE1dI
-         7gzXRSxMVH9/w0rcUAZ0PgtPq7+bQOrK/Dgl5gIMn50pvu3/YZFUstawUmnXFdDp7QV3
-         pbbg==
-X-Gm-Message-State: AOJu0YxvhUiLXKyrD2nM+qWSc39rwrbz1bw5tfXAPGZ1eOycFHd1LDx3
-        npWaLcUqDaoAm1sJ8a4vFbAky5jqvs+Lq0QIxDRf5AqgcvLfZOyMkKwRFKLQQUbuN+TFsNXgG7T
-        XLvYn0Hin35g60lNriSfqDw==
-X-Received: by 2002:a17:90a:1f06:b0:262:e49b:12d0 with SMTP id u6-20020a17090a1f0600b00262e49b12d0mr7464991pja.48.1691481066322;
-        Tue, 08 Aug 2023 00:51:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHTrnPTN25dJ5Xvq4lyfSvE+5LAMnJSWzkQdpqVJ6TSUnn1I/3RUmRCjFP3/Qd+tphTyy7tWw==
-X-Received: by 2002:a17:90a:1f06:b0:262:e49b:12d0 with SMTP id u6-20020a17090a1f0600b00262e49b12d0mr7464986pja.48.1691481065875;
-        Tue, 08 Aug 2023 00:51:05 -0700 (PDT)
-Received: from [10.72.12.166] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id js22-20020a17090b149600b00262e485156esm9877439pjb.57.2023.08.08.00.51.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Aug 2023 00:51:05 -0700 (PDT)
-Message-ID: <72db4603-e350-ac24-5819-d2519ce809b6@redhat.com>
-Date:   Tue, 8 Aug 2023 15:50:59 +0800
+        bh=wcZ0MvDWAvHGz+Tvz5BQspV1+Y90atrQ/21gTPDSJ5A=;
+        b=ltvgN98jUPLfVGzwkX2IMCxL1+gt7mU2eMGWerKExKXl9rFxELcQOOu6LDPvkVgELBTWMM
+        RPR+CvNDbp+v8nhbcYMs5NsoZ+s9OQ/UvQVEgQ88doFw/btLczZrQg2i1eZV1+ZBjvbv6d
+        v//UiKTWiNGL8LuYIfEW5snVicPsNCw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1691485527;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wcZ0MvDWAvHGz+Tvz5BQspV1+Y90atrQ/21gTPDSJ5A=;
+        b=NtHl8v8fs0QRleiCInWaMqHlp3B+YiNNeUD28RUprosc+RMkGA1oFQ5OJqyi3S1c2mho42
+        UGYfjYfTqGY9zJAQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 903E5139E9;
+        Tue,  8 Aug 2023 09:05:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id RgEgI1cF0mRWDgAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 08 Aug 2023 09:05:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 215FCA0769; Tue,  8 Aug 2023 11:05:27 +0200 (CEST)
+Date:   Tue, 8 Aug 2023 11:05:27 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Eric Van Hensbergen <ericvh@kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
+        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        Steve French <sfrench@samba.org>,
+        Paulo Alcantara <pc@manguebit.com>,
+        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Richard Weinberger <richard@nod.at>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, ntfs3@lists.linux.dev,
+        ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-mtd@lists.infradead.org, linux-mm@kvack.org,
+        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v7 01/13] fs: remove silly warning from current_time
+Message-ID: <20230808090527.nvn6vd5wdw4o5b2m@quack3>
+References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
+ <20230807-mgctime-v7-1-d1dec143a704@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v10 00/12] ceph: support idmapped mounts
-To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-Cc:     brauner@kernel.org, stgraber@ubuntu.com,
-        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230807132626.182101-1-aleksandr.mikhalitsyn@canonical.com>
- <bcda164b-e4b7-1c16-2714-13e3c6514b47@redhat.com>
- <CAEivzxfsj82q2x3C2U6yemB9qRrLnW+fLAAE=e7Tq-LDDfH0-g@mail.gmail.com>
-Content-Language: en-US
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <CAEivzxfsj82q2x3C2U6yemB9qRrLnW+fLAAE=e7Tq-LDDfH0-g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230807-mgctime-v7-1-d1dec143a704@kernel.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,184 +130,42 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+On Mon 07-08-23 15:38:32, Jeff Layton wrote:
+> An inode with no superblock? Unpossible!
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-On 8/8/23 14:30, Aleksandr Mikhalitsyn wrote:
-> On Tue, Aug 8, 2023 at 2:45 AM Xiubo Li <xiubli@redhat.com> wrote:
->> LGTM.
->>
->> Reviewed-by: Xiubo Li <xiubli@redhat.com>
->>
->> I will queue this to the 'testing' branch and then we will run ceph qa
->> tests.
-> Thanks, Xiubo!
->
-> JFYI: commit ordering in
-> https://github.com/ceph/ceph-client/commits/testing looks a little bit
-> weird
-> probably something got wrong during patch application to the tree.
+Looks good. Feel free to add:
 
-I will check it.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Thanks
+								Honza
 
-- Xiubo
-
-
-> Kind regards,
-> Alex
->
->> Thanks Alex.
->>
->> - Xiubo
->>
->> On 8/7/23 21:26, Alexander Mikhalitsyn wrote:
->>> Dear friends,
->>>
->>> This patchset was originally developed by Christian Brauner but I'll continue
->>> to push it forward. Christian allowed me to do that :)
->>>
->>> This feature is already actively used/tested with LXD/LXC project.
->>>
->>> Git tree (based on https://github.com/ceph/ceph-client.git testing):
->>> v10: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v10
->>> current: https://github.com/mihalicyn/linux/tree/fs.idmapped.ceph
->>>
->>> In the version 3 I've changed only two commits:
->>> - fs: export mnt_idmap_get/mnt_idmap_put
->>> - ceph: allow idmapped setattr inode op
->>> and added a new one:
->>> - ceph: pass idmap to __ceph_setattr
->>>
->>> In the version 4 I've reworked the ("ceph: stash idmapping in mdsc request")
->>> commit. Now we take idmap refcounter just in place where req->r_mnt_idmap
->>> is filled. It's more safer approach and prevents possible refcounter underflow
->>> on error paths where __register_request wasn't called but ceph_mdsc_release_request is
->>> called.
->>>
->>> Changelog for version 5:
->>> - a few commits were squashed into one (as suggested by Xiubo Li)
->>> - started passing an idmapping everywhere (if possible), so a caller
->>> UID/GID-s will be mapped almost everywhere (as suggested by Xiubo Li)
->>>
->>> Changelog for version 6:
->>> - rebased on top of testing branch
->>> - passed an idmapping in a few places (readdir, ceph_netfs_issue_op_inline)
->>>
->>> Changelog for version 7:
->>> - rebased on top of testing branch
->>> - this thing now requires a new cephfs protocol extension CEPHFS_FEATURE_HAS_OWNER_UIDGID
->>> https://github.com/ceph/ceph/pull/52575
->>>
->>> Changelog for version 8:
->>> - rebased on top of testing branch
->>> - added enable_unsafe_idmap module parameter to make idmapped mounts
->>> work with old MDS server versions
->>> - properly handled case when old MDS used with new kernel client
->>>
->>> Changelog for version 9:
->>> - added "struct_len" field in struct ceph_mds_request_head as requested by Xiubo Li
->>>
->>> Changelog for version 10:
->>> - fill struct_len field properly (use cpu_to_le32)
->>> - add extra checks IS_CEPH_MDS_OP_NEWINODE(..) as requested by Xiubo to match
->>>     userspace client behavior
->>> - do not set req->r_mnt_idmap for MKSNAP operation
->>> - atomic_open: set req->r_mnt_idmap only for CEPH_MDS_OP_CREATE as userspace client does
->>>
->>> I can confirm that this version passes xfstests and
->>> tested with old MDS (without CEPHFS_FEATURE_HAS_OWNER_UIDGID)
->>> and with recent MDS version.
->>>
->>> Links to previous versions:
->>> v1: https://lore.kernel.org/all/20220104140414.155198-1-brauner@kernel.org/
->>> v2: https://lore.kernel.org/lkml/20230524153316.476973-1-aleksandr.mikhalitsyn@canonical.com/
->>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v2
->>> v3: https://lore.kernel.org/lkml/20230607152038.469739-1-aleksandr.mikhalitsyn@canonical.com/#t
->>> v4: https://lore.kernel.org/lkml/20230607180958.645115-1-aleksandr.mikhalitsyn@canonical.com/#t
->>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v4
->>> v5: https://lore.kernel.org/lkml/20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com/#t
->>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v5
->>> v6: https://lore.kernel.org/lkml/20230609093125.252186-1-aleksandr.mikhalitsyn@canonical.com/
->>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v6
->>> v7: https://lore.kernel.org/all/20230726141026.307690-1-aleksandr.mikhalitsyn@canonical.com/
->>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v7
->>> v8: https://lore.kernel.org/all/20230803135955.230449-1-aleksandr.mikhalitsyn@canonical.com/
->>> tree: -
->>> v9: https://lore.kernel.org/all/20230804084858.126104-1-aleksandr.mikhalitsyn@canonical.com/
->>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v9
->>>
->>> Kind regards,
->>> Alex
->>>
->>> Original description from Christian:
->>> ========================================================================
->>> This patch series enables cephfs to support idmapped mounts, i.e. the
->>> ability to alter ownership information on a per-mount basis.
->>>
->>> Container managers such as LXD support sharaing data via cephfs between
->>> the host and unprivileged containers and between unprivileged containers.
->>> They may all use different idmappings. Idmapped mounts can be used to
->>> create mounts with the idmapping used for the container (or a different
->>> one specific to the use-case).
->>>
->>> There are in fact more use-cases such as remapping ownership for
->>> mountpoints on the host itself to grant or restrict access to different
->>> users or to make it possible to enforce that programs running as root
->>> will write with a non-zero {g,u}id to disk.
->>>
->>> The patch series is simple overall and few changes are needed to cephfs.
->>> There is one cephfs specific issue that I would like to discuss and
->>> solve which I explain in detail in:
->>>
->>> [PATCH 02/12] ceph: handle idmapped mounts in create_request_message()
->>>
->>> It has to do with how to handle mds serves which have id-based access
->>> restrictions configured. I would ask you to please take a look at the
->>> explanation in the aforementioned patch.
->>>
->>> The patch series passes the vfs and idmapped mount testsuite as part of
->>> xfstests. To run it you will need a config like:
->>>
->>> [ceph]
->>> export FSTYP=ceph
->>> export TEST_DIR=/mnt/test
->>> export TEST_DEV=10.103.182.10:6789:/
->>> export TEST_FS_MOUNT_OPTS="-o name=admin,secret=$password
->>>
->>> and then simply call
->>>
->>> sudo ./check -g idmapped
->>>
->>> ========================================================================
->>>
->>> Alexander Mikhalitsyn (3):
->>>     fs: export mnt_idmap_get/mnt_idmap_put
->>>     ceph: add enable_unsafe_idmap module parameter
->>>     ceph: pass idmap to __ceph_setattr
->>>
->>> Christian Brauner (9):
->>>     ceph: stash idmapping in mdsc request
->>>     ceph: handle idmapped mounts in create_request_message()
->>>     ceph: pass an idmapping to mknod/symlink/mkdir
->>>     ceph: allow idmapped getattr inode op
->>>     ceph: allow idmapped permission inode op
->>>     ceph: allow idmapped setattr inode op
->>>     ceph/acl: allow idmapped set_acl inode op
->>>     ceph/file: allow idmapped atomic_open inode op
->>>     ceph: allow idmapped mounts
->>>
->>>    fs/ceph/acl.c                 |  6 +--
->>>    fs/ceph/crypto.c              |  2 +-
->>>    fs/ceph/dir.c                 |  4 ++
->>>    fs/ceph/file.c                | 11 ++++-
->>>    fs/ceph/inode.c               | 29 +++++++------
->>>    fs/ceph/mds_client.c          | 78 ++++++++++++++++++++++++++++++++---
->>>    fs/ceph/mds_client.h          |  8 +++-
->>>    fs/ceph/super.c               |  7 +++-
->>>    fs/ceph/super.h               |  3 +-
->>>    fs/mnt_idmapping.c            |  2 +
->>>    include/linux/ceph/ceph_fs.h  | 10 ++++-
->>>    include/linux/mnt_idmapping.h |  3 ++
->>>    12 files changed, 136 insertions(+), 27 deletions(-)
->>>
-
+> ---
+>  fs/inode.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index d4ab92233062..3fc251bfaf73 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -2495,12 +2495,6 @@ struct timespec64 current_time(struct inode *inode)
+>  	struct timespec64 now;
+>  
+>  	ktime_get_coarse_real_ts64(&now);
+> -
+> -	if (unlikely(!inode->i_sb)) {
+> -		WARN(1, "current_time() called with uninitialized super_block in the inode");
+> -		return now;
+> -	}
+> -
+>  	return timestamp_truncate(now, inode);
+>  }
+>  EXPORT_SYMBOL(current_time);
+> 
+> -- 
+> 2.41.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
