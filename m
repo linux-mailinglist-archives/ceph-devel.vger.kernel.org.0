@@ -2,119 +2,55 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 05927776C4B
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Aug 2023 00:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BBA477A84B
+	for <lists+ceph-devel@lfdr.de>; Sun, 13 Aug 2023 18:00:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233069AbjHIWiJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 9 Aug 2023 18:38:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36410 "EHLO
+        id S231742AbjHMQAm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sun, 13 Aug 2023 12:00:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232937AbjHIWiE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 9 Aug 2023 18:38:04 -0400
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 51AA5138;
-        Wed,  9 Aug 2023 15:38:00 -0700 (PDT)
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 3CD87205DB98;
-        Thu, 10 Aug 2023 07:38:00 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id 379Mbwf6230731
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Thu, 10 Aug 2023 07:38:00 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.17.2/8.17.2/Debian-1) with ESMTPS id 379MbwGI248785
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Thu, 10 Aug 2023 07:37:58 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.17.2/8.17.2/Submit) id 379MbqTh248778;
-        Thu, 10 Aug 2023 07:37:52 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Frank Sorenson <sorenson@redhat.com>, Jan Kara <jack@suse.cz>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>,
-        Yue Hu <huyue2@gl0jj8bn.sched.sma.tdnsstic1.cn>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Richard Weinberger <richard@nod.at>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@telemann.coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-mtd@lists.infradead.org, linux-mm@kvack.org,
-        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 05/13] fat: make fat_update_time get its own timestamp
-In-Reply-To: <e4cee2590f5cb9a13a8d4445e550e155d551670d.camel@kernel.org> (Jeff
-        Layton's message of "Wed, 09 Aug 2023 18:07:29 -0400")
-References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
-        <20230807-mgctime-v7-5-d1dec143a704@kernel.org>
-        <87msz08vc7.fsf@mail.parknet.co.jp>
-        <52bead1d6a33fec89944b96e2ec20d1ea8747a9a.camel@kernel.org>
-        <878rak8hia.fsf@mail.parknet.co.jp>
-        <20230809150041.452w7gucjmvjnvbg@quack3>
-        <87v8do6y8q.fsf@mail.parknet.co.jp>
-        <2cb998ff14ace352a9dd553e82cfa0aa92ec09ce.camel@kernel.org>
-        <87leek6rh1.fsf@mail.parknet.co.jp>
-        <ccffe6ca3397c8374352b002fe01d55b09d84ef4.camel@kernel.org>
-        <87h6p86p9z.fsf@mail.parknet.co.jp>
-        <edf8e8ca3b38e56f30e0d24ac7293f848ffee371.camel@kernel.org>
-        <87a5v06kij.fsf@mail.parknet.co.jp>
-        <e4cee2590f5cb9a13a8d4445e550e155d551670d.camel@kernel.org>
-Date:   Thu, 10 Aug 2023 07:37:52 +0900
-Message-ID: <87zg2z3kqn.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        with ESMTP id S231310AbjHMQAh (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sun, 13 Aug 2023 12:00:37 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 295581FCF;
+        Sun, 13 Aug 2023 09:00:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CA72F63361;
+        Sun, 13 Aug 2023 15:52:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 176ABC433CC;
+        Sun, 13 Aug 2023 15:52:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1691941956;
+        bh=KgWKIBgLhOfCYAPVqpK0lpnnwFaJ1aaWjfZj4TZt6co=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iSoWFuO+rL3mjFwDxFh9lVY9016BU2KrN6me7plGfS3ii2uDEQVb//iGj4uoDVrWE
+         uYgbMZ9bFcOS3++VnO/p5wxoz6oOqxpwa+hI2EtgeSWXOT35RS2iL3h40EZN7xHStI
+         z/6vSRWPw7NyNE8vYKdR1KO7TdttUaeAeifzDHEshZo0YUaopg1kAE/JOPZ4n3872B
+         o6jqIoLGYyGXrQN8KpjMZwj4Ytr8QPc/N5vJgHflXCK8dKD/YDo51Oawi9P7//SNA4
+         j64vfxkSf1nSYsHZxGPdeQ90LEuwps7rSx6L/Uwf10GjUly1gJ6kxespsA9D5gojv9
+         M6Omy3k/G+VFQ==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Sasha Levin <sashal@kernel.org>, axboe@kernel.dk,
+        ceph-devel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.4 47/54] rbd: make get_lock_owner_info() return a single locker or NULL
+Date:   Sun, 13 Aug 2023 11:49:26 -0400
+Message-Id: <20230813154934.1067569-47-sashal@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20230813154934.1067569-1-sashal@kernel.org>
+References: <20230813154934.1067569-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.4.10
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -122,58 +58,179 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> writes:
+From: Ilya Dryomov <idryomov@gmail.com>
 
-> If you do that then the i_version counter would never be incremented.
-> But...I think I see what you're getting at.
->
-> Most filesystems that support the i_version counter have an on-disk
-> field for it. FAT obviously has no such thing. I suspect the i_version
-> bits in fat_update_time were added by mistake. FAT doesn't set
-> SB_I_VERSION so there's no need to do anything to the i_version field at
-> all.
->
-> Also, given that the mtime and ctime are always kept in sync on FAT,
-> we're probably fine to have it look something like this:
+[ Upstream commit f38cb9d9c2045dad16eead4a2e1aedfddd94603b ]
 
-Yes.
+Make the "num_lockers can be only 0 or 1" assumption explicit and
+simplify the API by getting rid of output parameters in preparation
+for calling get_lock_owner_info() twice before blocklisting.
 
-IIRC, when I wrote, I decided to make it keep similar with generic
-function, instead of heavily customize for FAT (for maintenance
-reason). It is why. There would be other places with same reason.
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Reviewed-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/block/rbd.c | 84 +++++++++++++++++++++++++++------------------
+ 1 file changed, 51 insertions(+), 33 deletions(-)
 
-E.g. LAZYTIME check is same reason too. (current FAT doesn't support it)
-
-So I personally I would prefer to leave it. But if you want to remove
-it, it would be ok too.
-
-Thanks.
-
-> --------------------8<------------------
-> int fat_update_time(struct inode *inode, int flags) 
-> { 
->         int dirty_flags = 0;
->
->         if (inode->i_ino == MSDOS_ROOT_INO) 
->                 return 0;
->
->         fat_truncate_time(inode, NULL, flags);
->         if (inode->i_sb->s_flags & SB_LAZYTIME)
->                 dirty_flags |= I_DIRTY_TIME;
->         else
->                 dirty_flags |= I_DIRTY_SYNC;
->
->         __mark_inode_dirty(inode, dirty_flags);
->         return 0;
-> } 
-> --------------------8<------------------
->
-> ...and we should probably do that in a separate patch in advance of the
-> update_time rework, since it's really a different change.
->
-> If you're in agreement, then I'll plan to respin the series with this
-> fixed and resend.
->
-> Thanks for being patient!
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 632751ddb2870..7c37c047dbea2 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -3849,10 +3849,17 @@ static void wake_lock_waiters(struct rbd_device *rbd_dev, int result)
+ 	list_splice_tail_init(&rbd_dev->acquiring_list, &rbd_dev->running_list);
+ }
+ 
+-static int get_lock_owner_info(struct rbd_device *rbd_dev,
+-			       struct ceph_locker **lockers, u32 *num_lockers)
++static void free_locker(struct ceph_locker *locker)
++{
++	if (locker)
++		ceph_free_lockers(locker, 1);
++}
++
++static struct ceph_locker *get_lock_owner_info(struct rbd_device *rbd_dev)
+ {
+ 	struct ceph_osd_client *osdc = &rbd_dev->rbd_client->client->osdc;
++	struct ceph_locker *lockers;
++	u32 num_lockers;
+ 	u8 lock_type;
+ 	char *lock_tag;
+ 	int ret;
+@@ -3861,39 +3868,45 @@ static int get_lock_owner_info(struct rbd_device *rbd_dev,
+ 
+ 	ret = ceph_cls_lock_info(osdc, &rbd_dev->header_oid,
+ 				 &rbd_dev->header_oloc, RBD_LOCK_NAME,
+-				 &lock_type, &lock_tag, lockers, num_lockers);
+-	if (ret)
+-		return ret;
++				 &lock_type, &lock_tag, &lockers, &num_lockers);
++	if (ret) {
++		rbd_warn(rbd_dev, "failed to retrieve lockers: %d", ret);
++		return ERR_PTR(ret);
++	}
+ 
+-	if (*num_lockers == 0) {
++	if (num_lockers == 0) {
+ 		dout("%s rbd_dev %p no lockers detected\n", __func__, rbd_dev);
++		lockers = NULL;
+ 		goto out;
+ 	}
+ 
+ 	if (strcmp(lock_tag, RBD_LOCK_TAG)) {
+ 		rbd_warn(rbd_dev, "locked by external mechanism, tag %s",
+ 			 lock_tag);
+-		ret = -EBUSY;
+-		goto out;
++		goto err_busy;
+ 	}
+ 
+ 	if (lock_type == CEPH_CLS_LOCK_SHARED) {
+ 		rbd_warn(rbd_dev, "shared lock type detected");
+-		ret = -EBUSY;
+-		goto out;
++		goto err_busy;
+ 	}
+ 
+-	if (strncmp((*lockers)[0].id.cookie, RBD_LOCK_COOKIE_PREFIX,
++	WARN_ON(num_lockers != 1);
++	if (strncmp(lockers[0].id.cookie, RBD_LOCK_COOKIE_PREFIX,
+ 		    strlen(RBD_LOCK_COOKIE_PREFIX))) {
+ 		rbd_warn(rbd_dev, "locked by external mechanism, cookie %s",
+-			 (*lockers)[0].id.cookie);
+-		ret = -EBUSY;
+-		goto out;
++			 lockers[0].id.cookie);
++		goto err_busy;
+ 	}
+ 
+ out:
+ 	kfree(lock_tag);
+-	return ret;
++	return lockers;
++
++err_busy:
++	kfree(lock_tag);
++	ceph_free_lockers(lockers, num_lockers);
++	return ERR_PTR(-EBUSY);
+ }
+ 
+ static int find_watcher(struct rbd_device *rbd_dev,
+@@ -3947,51 +3960,56 @@ static int find_watcher(struct rbd_device *rbd_dev,
+ static int rbd_try_lock(struct rbd_device *rbd_dev)
+ {
+ 	struct ceph_client *client = rbd_dev->rbd_client->client;
+-	struct ceph_locker *lockers;
+-	u32 num_lockers;
++	struct ceph_locker *locker;
+ 	int ret;
+ 
+ 	for (;;) {
++		locker = NULL;
++
+ 		ret = rbd_lock(rbd_dev);
+ 		if (ret != -EBUSY)
+-			return ret;
++			goto out;
+ 
+ 		/* determine if the current lock holder is still alive */
+-		ret = get_lock_owner_info(rbd_dev, &lockers, &num_lockers);
+-		if (ret)
+-			return ret;
+-
+-		if (num_lockers == 0)
++		locker = get_lock_owner_info(rbd_dev);
++		if (IS_ERR(locker)) {
++			ret = PTR_ERR(locker);
++			locker = NULL;
++			goto out;
++		}
++		if (!locker)
+ 			goto again;
+ 
+-		ret = find_watcher(rbd_dev, lockers);
++		ret = find_watcher(rbd_dev, locker);
+ 		if (ret)
+ 			goto out; /* request lock or error */
+ 
+ 		rbd_warn(rbd_dev, "breaking header lock owned by %s%llu",
+-			 ENTITY_NAME(lockers[0].id.name));
++			 ENTITY_NAME(locker->id.name));
+ 
+ 		ret = ceph_monc_blocklist_add(&client->monc,
+-					      &lockers[0].info.addr);
++					      &locker->info.addr);
+ 		if (ret) {
+-			rbd_warn(rbd_dev, "blocklist of %s%llu failed: %d",
+-				 ENTITY_NAME(lockers[0].id.name), ret);
++			rbd_warn(rbd_dev, "failed to blocklist %s%llu: %d",
++				 ENTITY_NAME(locker->id.name), ret);
+ 			goto out;
+ 		}
+ 
+ 		ret = ceph_cls_break_lock(&client->osdc, &rbd_dev->header_oid,
+ 					  &rbd_dev->header_oloc, RBD_LOCK_NAME,
+-					  lockers[0].id.cookie,
+-					  &lockers[0].id.name);
+-		if (ret && ret != -ENOENT)
++					  locker->id.cookie, &locker->id.name);
++		if (ret && ret != -ENOENT) {
++			rbd_warn(rbd_dev, "failed to break header lock: %d",
++				 ret);
+ 			goto out;
++		}
+ 
+ again:
+-		ceph_free_lockers(lockers, num_lockers);
++		free_locker(locker);
+ 	}
+ 
+ out:
+-	ceph_free_lockers(lockers, num_lockers);
++	free_locker(locker);
+ 	return ret;
+ }
+ 
 -- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+2.40.1
+
