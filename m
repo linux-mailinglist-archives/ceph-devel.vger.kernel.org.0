@@ -2,76 +2,104 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3324786A8B
-	for <lists+ceph-devel@lfdr.de>; Thu, 24 Aug 2023 10:47:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B88E786BE0
+	for <lists+ceph-devel@lfdr.de>; Thu, 24 Aug 2023 11:30:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230452AbjHXIqq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 24 Aug 2023 04:46:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55850 "EHLO
+        id S238176AbjHXJ3x (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 24 Aug 2023 05:29:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240665AbjHXIqL (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Aug 2023 04:46:11 -0400
-Received: from 167-179-156-38.a7b39c.syd.nbn.aussiebb.net (167-179-156-38.a7b39c.syd.nbn.aussiebb.net [167.179.156.38])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BC631BF8;
-        Thu, 24 Aug 2023 01:45:50 -0700 (PDT)
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-        by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
-        id 1qZ5xc-007Hxa-Bb; Thu, 24 Aug 2023 16:45:01 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 24 Aug 2023 16:45:01 +0800
-Date:   Thu, 24 Aug 2023 16:45:01 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Theodore Y.Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-fscrypt@vger.kernel.org, Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-        linux-bluetooth@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
-        Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-        ceph-devel@vger.kernel.org,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        Matthieu Baerts <matthieu.baerts@tessares.net>,
-        Mat Martineau <martineau@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Neil Brown <neilb@suse.de>, linux-nfs@vger.kernel.org,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        "Jason A.Donenfeld" <Jason@zx2c4.com>,
-        Ayush Sawal <ayush.sawal@chelsio.com>
-Subject: Re: [PATCH 6/12] wifi: mac80211: Do not include crypto/algapi.h
-Message-ID: <ZOcYjQ1JasrF+L4N@gondor.apana.org.au>
-References: <ZOXf3JTIqhRLbn5j@gondor.apana.org.au>
- <E1qYlA0-006vFr-Ts@formenos.hmeau.com>
- <d776152a79c9604f4f0743fe8d4ab16efd517926.camel@sipsolutions.net>
- <ZObmLqztZ4vMFKnI@gondor.apana.org.au>
- <dbbd230e26245274d5a05c64c553c42574f15d4b.camel@sipsolutions.net>
+        with ESMTP id S239433AbjHXJ30 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Aug 2023 05:29:26 -0400
+Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D986E67;
+        Thu, 24 Aug 2023 02:29:24 -0700 (PDT)
+Received: by mail-ot1-x32d.google.com with SMTP id 46e09a7af769-6bdacc5ed66so388962a34.1;
+        Thu, 24 Aug 2023 02:29:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20221208; t=1692869363; x=1693474163;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C9Np9rhswG2lM4RqG/GxnXvjeyufDHIsif5l5dirrcU=;
+        b=bzA5bZbuG0eVWNSETkRUVSGKT46EyGzeQoh3VxOcq3DzmoNQvLmI50nQzLed1Pyygx
+         s61k9+ai74EzDlr0rzeanT7yQa2rVcQmBNbynzxCpUlS8wgShO6onemNMpHWdUoGxjur
+         /Z6aruaTqmty4AbxUKZ5b0yLeMmjNQmyZwkWjOZ+Ig3t2m8MDg9mdSDtkh7iW4mh6l8X
+         A67qA0r/mdDwoT6h/xDZRONKdcOu4ttujZaxANrik0bZvtw1Ef+E5/OgTHmcFGRm0jGP
+         ardUvrj2YA9MeX8s4MsuOcG+8Uvql6DMtrwHdrvcIUwCLKgmgrn+TqK58MLjr5/yN+qz
+         o8Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20221208; t=1692869363; x=1693474163;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C9Np9rhswG2lM4RqG/GxnXvjeyufDHIsif5l5dirrcU=;
+        b=MWLmO7vz9sX+VuEbedWbnZNI5Wbe1/8ZR5DNtcCzoBGH3v0XtEdsj/P0XJjoFDx/6H
+         Ohly9OxneP0ML9aLNqsF7cAqFuryV2Yi4qsHMhroLvVzLpfld0fdY6ABhFGxwZJFKrpw
+         Rdce4ogoqB9uNU1Zxi+8l5cK/HjcSZz9E4X5E9ZcCu6soTQ7BlDYK+iVwVZ/RDwgU8fh
+         ZiQv5AS8JdeafY/zB4OqRPdQvGIaYPAJxkUYS5O9P/gUWtPAyE+W0+tGiCa1MvIBXM8D
+         jIMM5tW/sc01Z63+C9TnUFToxXUdxI+4uOGZAHzw8ZhpQBJqRLDrATsCYr/yaSvTUb/F
+         D+zA==
+X-Gm-Message-State: AOJu0YwexEZZag1e81jF7dlYDOvfvJoVvk0U8f+XTtOcZ1RV35b7iM6B
+        wi/JzQUnE8xDwnz8BGePCh7eYl2gcAcBE07SDls=
+X-Google-Smtp-Source: AGHT+IELv86tPFEe0IZ3ozVag+2XtvaXb7rAtjPqBF8LBFMJ1uQQVIR068dF7DARv8J2DyEo/KCw861I7DEjvdnSV4M=
+X-Received: by 2002:a9d:71d2:0:b0:6bd:9e1c:93a6 with SMTP id
+ z18-20020a9d71d2000000b006bd9e1c93a6mr999534otj.0.1692869362757; Thu, 24 Aug
+ 2023 02:29:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dbbd230e26245274d5a05c64c553c42574f15d4b.camel@sipsolutions.net>
-X-Spam-Status: No, score=2.7 required=5.0 tests=BAYES_00,HELO_DYNAMIC_IPADDR2,
-        PDS_RDNS_DYNAMIC_FP,RCVD_IN_DNSWL_BLOCKED,RDNS_DYNAMIC,SPF_HELO_NONE,
-        SPF_PASS,TVD_RCVD_IP autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: **
+References: <20230824075448.76548-1-jiapeng.chong@linux.alibaba.com> <260a285f-4dec-5443-401b-eaeeb58b58d9@redhat.com>
+In-Reply-To: <260a285f-4dec-5443-401b-eaeeb58b58d9@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 24 Aug 2023 11:29:10 +0200
+Message-ID: <CAOi1vP-7eC9WALP=fiQ_VPv8D0aPAMJS45WYwxRWSKaTB3Cv7Q@mail.gmail.com>
+Subject: Re: [PATCH] ceph: Remove duplicate include
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+        jlayton@kernel.org, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Aug 24, 2023 at 08:59:08AM +0200, Johannes Berg wrote:
+On Thu, Aug 24, 2023 at 10:18=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote=
+:
 >
-> I was kind of waiting to see - but now that others have applied some
-> patches to their tree I've done the same.
+>
+> On 8/24/23 15:54, Jiapeng Chong wrote:
+> > ./fs/ceph/mds_client.c: crypto.h is included more than once.
+> >
+> > Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> > Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D6211
+> > Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> > ---
+> >   fs/ceph/mds_client.c | 1 -
+> >   1 file changed, 1 deletion(-)
+> >
+> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > index 7cfa0e3aedb4..9a3b617270c3 100644
+> > --- a/fs/ceph/mds_client.c
+> > +++ b/fs/ceph/mds_client.c
+> > @@ -16,7 +16,6 @@
+> >   #include "super.h"
+> >   #include "crypto.h"
+> >   #include "mds_client.h"
+> > -#include "crypto.h"
+> >
+> >   #include <linux/ceph/ceph_features.h>
+> >   #include <linux/ceph/messenger.h>
+>
+> Reviewed-by: Xiubo Li <xiubli@redhat.com>
 
-Noted.  Thanks!
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+I folded the fix into "ceph: encode encrypted name in
+ceph_mdsc_build_path and dentry release" commit.  Thanks for
+the report!
+
+                Ilya
