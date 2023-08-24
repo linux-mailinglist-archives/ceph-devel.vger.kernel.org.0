@@ -2,104 +2,94 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B88E786BE0
-	for <lists+ceph-devel@lfdr.de>; Thu, 24 Aug 2023 11:30:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FAB1786C7B
+	for <lists+ceph-devel@lfdr.de>; Thu, 24 Aug 2023 12:00:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238176AbjHXJ3x (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 24 Aug 2023 05:29:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47038 "EHLO
+        id S240386AbjHXJ7w (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 24 Aug 2023 05:59:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239433AbjHXJ30 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Aug 2023 05:29:26 -0400
-Received: from mail-ot1-x32d.google.com (mail-ot1-x32d.google.com [IPv6:2607:f8b0:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D986E67;
-        Thu, 24 Aug 2023 02:29:24 -0700 (PDT)
-Received: by mail-ot1-x32d.google.com with SMTP id 46e09a7af769-6bdacc5ed66so388962a34.1;
-        Thu, 24 Aug 2023 02:29:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1692869363; x=1693474163;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C9Np9rhswG2lM4RqG/GxnXvjeyufDHIsif5l5dirrcU=;
-        b=bzA5bZbuG0eVWNSETkRUVSGKT46EyGzeQoh3VxOcq3DzmoNQvLmI50nQzLed1Pyygx
-         s61k9+ai74EzDlr0rzeanT7yQa2rVcQmBNbynzxCpUlS8wgShO6onemNMpHWdUoGxjur
-         /Z6aruaTqmty4AbxUKZ5b0yLeMmjNQmyZwkWjOZ+Ig3t2m8MDg9mdSDtkh7iW4mh6l8X
-         A67qA0r/mdDwoT6h/xDZRONKdcOu4ttujZaxANrik0bZvtw1Ef+E5/OgTHmcFGRm0jGP
-         ardUvrj2YA9MeX8s4MsuOcG+8Uvql6DMtrwHdrvcIUwCLKgmgrn+TqK58MLjr5/yN+qz
-         o8Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1692869363; x=1693474163;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C9Np9rhswG2lM4RqG/GxnXvjeyufDHIsif5l5dirrcU=;
-        b=MWLmO7vz9sX+VuEbedWbnZNI5Wbe1/8ZR5DNtcCzoBGH3v0XtEdsj/P0XJjoFDx/6H
-         Ohly9OxneP0ML9aLNqsF7cAqFuryV2Yi4qsHMhroLvVzLpfld0fdY6ABhFGxwZJFKrpw
-         Rdce4ogoqB9uNU1Zxi+8l5cK/HjcSZz9E4X5E9ZcCu6soTQ7BlDYK+iVwVZ/RDwgU8fh
-         ZiQv5AS8JdeafY/zB4OqRPdQvGIaYPAJxkUYS5O9P/gUWtPAyE+W0+tGiCa1MvIBXM8D
-         jIMM5tW/sc01Z63+C9TnUFToxXUdxI+4uOGZAHzw8ZhpQBJqRLDrATsCYr/yaSvTUb/F
-         D+zA==
-X-Gm-Message-State: AOJu0YwexEZZag1e81jF7dlYDOvfvJoVvk0U8f+XTtOcZ1RV35b7iM6B
-        wi/JzQUnE8xDwnz8BGePCh7eYl2gcAcBE07SDls=
-X-Google-Smtp-Source: AGHT+IELv86tPFEe0IZ3ozVag+2XtvaXb7rAtjPqBF8LBFMJ1uQQVIR068dF7DARv8J2DyEo/KCw861I7DEjvdnSV4M=
-X-Received: by 2002:a9d:71d2:0:b0:6bd:9e1c:93a6 with SMTP id
- z18-20020a9d71d2000000b006bd9e1c93a6mr999534otj.0.1692869362757; Thu, 24 Aug
- 2023 02:29:22 -0700 (PDT)
+        with ESMTP id S240796AbjHXJ7Y (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 24 Aug 2023 05:59:24 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E49D8198E
+        for <ceph-devel@vger.kernel.org>; Thu, 24 Aug 2023 02:58:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1692871113;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=0MEY1Vb3oskcmUZahePIrqq7M7VvRNVNxGxyyZRttnA=;
+        b=b0+t+puMwuRPH6soh9sa1H2TDFkPVKM17Tli0z/SZ62CJG0lJONA97zPMm58Tuwm9lxgrw
+        hvnKnUL7+McjdMQhpSUwzjUPxkyvt6bPGxmNZOm8F1FwT2OFIMls7phouuvdkqcUmbH4C0
+        y1i1e9YBNL921v9yR6sYMci3p2u4uRc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-18-XOWE00PBO_OkjUL_wIvX7A-1; Thu, 24 Aug 2023 05:58:31 -0400
+X-MC-Unique: XOWE00PBO_OkjUL_wIvX7A-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 477E58D40A2;
+        Thu, 24 Aug 2023 09:58:31 +0000 (UTC)
+Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (unknown [10.72.112.84])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C7A5492C13;
+        Thu, 24 Aug 2023 09:58:19 +0000 (UTC)
+From:   xiubli@redhat.com
+To:     ceph-devel@vger.kernel.org
+Cc:     pdonnell@redhat.com, idryomov@gmail.com, jlayton@kernel.org,
+        vshankar@redhat.com, mchangir@redhat.com,
+        Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: skip reconnecting if MDS is not ready
+Date:   Thu, 24 Aug 2023 17:55:51 +0800
+Message-ID: <20230824095551.134118-1-xiubli@redhat.com>
 MIME-Version: 1.0
-References: <20230824075448.76548-1-jiapeng.chong@linux.alibaba.com> <260a285f-4dec-5443-401b-eaeeb58b58d9@redhat.com>
-In-Reply-To: <260a285f-4dec-5443-401b-eaeeb58b58d9@redhat.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Thu, 24 Aug 2023 11:29:10 +0200
-Message-ID: <CAOi1vP-7eC9WALP=fiQ_VPv8D0aPAMJS45WYwxRWSKaTB3Cv7Q@mail.gmail.com>
-Subject: Re: [PATCH] ceph: Remove duplicate include
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        jlayton@kernel.org, ceph-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu, Aug 24, 2023 at 10:18=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote=
-:
->
->
-> On 8/24/23 15:54, Jiapeng Chong wrote:
-> > ./fs/ceph/mds_client.c: crypto.h is included more than once.
-> >
-> > Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> > Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D6211
-> > Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> > ---
-> >   fs/ceph/mds_client.c | 1 -
-> >   1 file changed, 1 deletion(-)
-> >
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index 7cfa0e3aedb4..9a3b617270c3 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -16,7 +16,6 @@
-> >   #include "super.h"
-> >   #include "crypto.h"
-> >   #include "mds_client.h"
-> > -#include "crypto.h"
-> >
-> >   #include <linux/ceph/ceph_features.h>
-> >   #include <linux/ceph/messenger.h>
->
-> Reviewed-by: Xiubo Li <xiubli@redhat.com>
+From: Xiubo Li <xiubli@redhat.com>
 
-I folded the fix into "ceph: encode encrypted name in
-ceph_mdsc_build_path and dentry release" commit.  Thanks for
-the report!
+When MDS closed the session the kclient will send to reconnect to
+it immediately, but if the MDS just restarted and still not ready
+yet, such as still in the up:replay state and the sessionmap journal
+logs hasn't be replayed, the MDS will close the session.
 
-                Ilya
+And then the kclient could remove the session and later when the
+mdsmap is in RECONNECT phrase it will skip reconnecting. But the
+will wait until timeout and then evicts the kclient.
+
+Just skip sending the reconnection request until the MDS is ready.
+
+URL: https://tracker.ceph.com/issues/62489
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/mds_client.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 9aae39289b43..a9ef93411679 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -5809,7 +5809,8 @@ static void mds_peer_reset(struct ceph_connection *con)
+ 
+ 	pr_warn_client(mdsc->fsc->client, "mds%d closed our session\n",
+ 		       s->s_mds);
+-	if (READ_ONCE(mdsc->fsc->mount_state) != CEPH_MOUNT_FENCE_IO)
++	if (READ_ONCE(mdsc->fsc->mount_state) != CEPH_MOUNT_FENCE_IO &&
++	    ceph_mdsmap_get_state(mdsc->mdsmap, s->s_mds) >= CEPH_MDS_STATE_RECONNECT)
+ 		send_mds_reconnect(mdsc, s);
+ }
+ 
+-- 
+2.39.1
+
