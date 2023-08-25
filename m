@@ -2,174 +2,104 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E5AFE788F9B
-	for <lists+ceph-devel@lfdr.de>; Fri, 25 Aug 2023 22:13:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 573EB78903D
+	for <lists+ceph-devel@lfdr.de>; Fri, 25 Aug 2023 23:15:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230432AbjHYUNP (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 25 Aug 2023 16:13:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37662 "EHLO
+        id S231362AbjHYVO3 (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 25 Aug 2023 17:14:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230212AbjHYUMn (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 25 Aug 2023 16:12:43 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A10E268F;
-        Fri, 25 Aug 2023 13:12:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=ELagD2aOgt6ixf7oF8s2S5SoqYM3wQ/LmYSEHizmfB0=; b=ildkXC1FRkJc6vIhDXN9KIrscJ
-        5QEhVMgHXKcWTBFya93q4bDdZpA20cs/zgohZqN60FToc44tDTjhVtUe6AvnwoByGOyhVXXotqeFp
-        lx8T3L7lsfuiWqLFh1iEzNQaiwczyDS+F4akGUn7f9BjAdjNUhlpThh9euQ26B8vz+Csqd8Cv5pk8
-        q3O7n7q/4/vPp44BuWi2jx/hp6hr7Hz0jR1Rh42NyD2QEfVWOEg5Qrm7RiybY9jPrrC9GE7ReT7lh
-        mXrz9w8i7EainOVqqqAIvVwP0ESMT97OlP9+zpfShjjIcuFxqQw5HTi6JMJFOH4sYC3dhXQa+5o8s
-        KcOyqhwQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qZdAW-001SaZ-IU; Fri, 25 Aug 2023 20:12:32 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 15/15] netfs: Remove unused functions
-Date:   Fri, 25 Aug 2023 21:12:25 +0100
-Message-Id: <20230825201225.348148-16-willy@infradead.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20230825201225.348148-1-willy@infradead.org>
-References: <20230825201225.348148-1-willy@infradead.org>
+        with ESMTP id S229610AbjHYVN6 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 25 Aug 2023 17:13:58 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F4AD211E;
+        Fri, 25 Aug 2023 14:13:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0D28A62FFA;
+        Fri, 25 Aug 2023 21:13:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B0ECC433C7;
+        Fri, 25 Aug 2023 21:13:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1692998035;
+        bh=uiXkyRVOSV4tA0Dr9xfhgTNwejV2oZiBsqM/hZn5yPg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UgSWvtl49FkDkaRYO3r0z4VzYK/yDU2hQmm5FUy/saN2DaYbzz5vuhxj+oTpq/YEz
+         6iPySb9lNptNeguxiheMPfLw58USp34CyI6yLgGfRUu28v0iNMZb16krVHW1DR7eer
+         X7/UJR9hvVw1WO8f9x3khDGmYa5/plHR8kM491NKMqEuNO4Pw9iZDNRrB6DqgVa63r
+         +IjWV8he6N0kCyEWrQbC5VfgXNT058QGjrBf2pO6OG6y8NaLAaMZTNAT4pmMeyQyKD
+         eh10XcSY2us9pZi/URLX1z5VvUzlXT9gvz7Jlc/CvSoA1f7ssDARtN21vNHvUsEQko
+         AuIIYRR5eP06A==
+Date:   Fri, 25 Aug 2023 14:13:52 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-fscrypt@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        linux-mtd@lists.infradead.org,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        linux-bluetooth@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+        ceph-devel@vger.kernel.org,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-wireless@vger.kernel.org,
+        Matthieu Baerts <matthieu.baerts@tessares.net>,
+        Mat Martineau <martineau@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Neil Brown <neilb@suse.de>, linux-nfs@vger.kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Ayush Sawal <ayush.sawal@chelsio.com>
+Subject: Re: [PATCH 1/12] fscrypt: Do not include crypto/algapi.h
+Message-ID: <20230825211352.GB1366@sol.localdomain>
+References: <ZOXf3JTIqhRLbn5j@gondor.apana.org.au>
+ <E1qYl9q-006vDd-FJ@formenos.hmeau.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <E1qYl9q-006vDd-FJ@formenos.hmeau.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-set_page_fscache(), wait_on_page_fscache() and
-wait_on_page_fscache_killable() have no more users.  Remove them and
-update the documentation to describe their folio equivalents.
+On Wed, Aug 23, 2023 at 06:32:15PM +0800, Herbert Xu wrote:
+> The header file crypto/algapi.h is for internal use only.  Use the
+> header file crypto/utils.h instead.
+> 
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> ---
+> 
+>  fs/crypto/keysetup_v1.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/crypto/keysetup_v1.c b/fs/crypto/keysetup_v1.c
+> index 75dabd9b27f9..d698ecb9ad44 100644
+> --- a/fs/crypto/keysetup_v1.c
+> +++ b/fs/crypto/keysetup_v1.c
+> @@ -20,8 +20,8 @@
+>   *    managed alongside the master keys in the filesystem-level keyring)
+>   */
+>  
+> -#include <crypto/algapi.h>
+>  #include <crypto/skcipher.h>
+> +#include <crypto/utils.h>
+>  #include <keys/user-type.h>
+>  #include <linux/hashtable.h>
+>  #include <linux/scatterlist.h>
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- .../filesystems/caching/netfs-api.rst         | 30 +++++++++----------
- include/linux/netfs.h                         | 15 ----------
- 2 files changed, 15 insertions(+), 30 deletions(-)
+Acked-by: Eric Biggers <ebiggers@google.com>
 
-diff --git a/Documentation/filesystems/caching/netfs-api.rst b/Documentation/filesystems/caching/netfs-api.rst
-index 665b27f1556e..6285c1433ac5 100644
---- a/Documentation/filesystems/caching/netfs-api.rst
-+++ b/Documentation/filesystems/caching/netfs-api.rst
-@@ -374,7 +374,7 @@ Caching of Local Modifications
- ==============================
- 
- If a network filesystem has locally modified data that it wants to write to the
--cache, it needs to mark the pages to indicate that a write is in progress, and
-+cache, it needs to mark the folios to indicate that a write is in progress, and
- if the mark is already present, it needs to wait for it to be removed first
- (presumably due to an already in-progress operation).  This prevents multiple
- competing DIO writes to the same storage in the cache.
-@@ -384,14 +384,14 @@ like::
- 
- 	bool caching = fscache_cookie_enabled(cookie);
- 
--If caching is to be attempted, pages should be waited for and then marked using
-+If caching is to be attempted, folios should be waited for and then marked using
- the following functions provided by the netfs helper library::
- 
--	void set_page_fscache(struct page *page);
--	void wait_on_page_fscache(struct page *page);
--	int wait_on_page_fscache_killable(struct page *page);
-+	void folio_start_fscache(struct folio *folio);
-+	void folio_wait_fscache(struct folio *folio);
-+	int folio_wait_fscache_killable(struct folio *folio);
- 
--Once all the pages in the span are marked, the netfs can ask fscache to
-+Once all the folios in the span are marked, the netfs can ask fscache to
- schedule a write of that region::
- 
- 	void fscache_write_to_cache(struct fscache_cookie *cookie,
-@@ -408,7 +408,7 @@ by calling::
- 				     loff_t start, size_t len,
- 				     bool caching)
- 
--In these functions, a pointer to the mapping to which the source pages are
-+In these functions, a pointer to the mapping to which the source folios are
- attached is passed in and start and len indicate the size of the region that's
- going to be written (it doesn't have to align to page boundaries necessarily,
- but it does have to align to DIO boundaries on the backing filesystem).  The
-@@ -421,29 +421,29 @@ and term_func indicates an optional completion function, to which
- term_func_priv will be passed, along with the error or amount written.
- 
- Note that the write function will always run asynchronously and will unmark all
--the pages upon completion before calling term_func.
-+the folios upon completion before calling term_func.
- 
- 
--Page Release and Invalidation
--=============================
-+Folio Release and Invalidation
-+===================================
- 
- Fscache keeps track of whether we have any data in the cache yet for a cache
- object we've just created.  It knows it doesn't have to do any reading until it
--has done a write and then the page it wrote from has been released by the VM,
-+has done a write and then the folio it wrote from has been released by the VM,
- after which it *has* to look in the cache.
- 
--To inform fscache that a page might now be in the cache, the following function
-+To inform fscache that a folio might now be in the cache, the following function
- should be called from the ``release_folio`` address space op::
- 
- 	void fscache_note_page_release(struct fscache_cookie *cookie);
- 
- if the page has been released (ie. release_folio returned true).
- 
--Page release and page invalidation should also wait for any mark left on the
-+Folio release and folio invalidation should also wait for any mark left on the
- page to say that a DIO write is underway from that page::
- 
--	void wait_on_page_fscache(struct page *page);
--	int wait_on_page_fscache_killable(struct page *page);
-+	void folio_wait_fscache(struct folio *folio);
-+	int folio_wait_fscache_killable(struct folio *folio);
- 
- 
- API Function Reference
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index b11a84f6c32b..5e43e7010ff5 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -89,26 +89,11 @@ static inline int folio_wait_fscache_killable(struct folio *folio)
- 	return folio_wait_private_2_killable(folio);
- }
- 
--static inline void set_page_fscache(struct page *page)
--{
--	folio_start_fscache(page_folio(page));
--}
--
- static inline void end_page_fscache(struct page *page)
- {
- 	folio_end_private_2(page_folio(page));
- }
- 
--static inline void wait_on_page_fscache(struct page *page)
--{
--	folio_wait_private_2(page_folio(page));
--}
--
--static inline int wait_on_page_fscache_killable(struct page *page)
--{
--	return folio_wait_private_2_killable(page_folio(page));
--}
--
- enum netfs_io_source {
- 	NETFS_FILL_WITH_ZEROES,
- 	NETFS_DOWNLOAD_FROM_SERVER,
--- 
-2.40.1
-
+- Eric
