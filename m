@@ -2,62 +2,59 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BA3978A8CD
-	for <lists+ceph-devel@lfdr.de>; Mon, 28 Aug 2023 11:21:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 676D278A8DE
+	for <lists+ceph-devel@lfdr.de>; Mon, 28 Aug 2023 11:24:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230070AbjH1JVL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 28 Aug 2023 05:21:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47114 "EHLO
+        id S230143AbjH1JYT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 28 Aug 2023 05:24:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230210AbjH1JUf (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 28 Aug 2023 05:20:35 -0400
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDB77132
-        for <ceph-devel@vger.kernel.org>; Mon, 28 Aug 2023 02:20:26 -0700 (PDT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1b88decb2a9so43651405ad.0
-        for <ceph-devel@vger.kernel.org>; Mon, 28 Aug 2023 02:20:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693214426; x=1693819226;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4NjVq1Z/oMa2sXmtYIkTscVFUho6LoOShE43iizaRVs=;
-        b=kraLKQ+ZydbqsPjGe1kzc68NNswJ/OWCwPeDeSSqtFZjWdcO/j5JYNY2epmV9yHqHc
-         ylAtZI/sT0bRzcC3GluQ3CkEGh31x9XOv09DqsxbDuyg9odPmZC99OH9kwNsMbR7P7Sm
-         wIolrRy04NNonnCRCfCgh/uTzT0KLQDoJTaZw6H3uGqul+jnHwyFJFn84CK6vVNbKJ1/
-         9Yjv/TfujReA4k3uGqsELBEJTBvZPPEex6kVfq10/HHyKkv6jH8AVCdhGiRK/FlwQBQk
-         aPMfL4eSMpd5NGgZRnQPEY6IvIAkkjcuxSejG6YfMnDVEmakB58iyeCyIcFpb5GAsFiA
-         nC0g==
-X-Gm-Message-State: AOJu0Yz8OWmXsGQtPMAhS+sNL3vOW3aoFNDcECw2MFkM6vmytikKHtQH
-        TwbxtbNUb4R262Nqwjl91Wl8RsBJl2i+gNODOkce1J83JWmJ
-X-Google-Smtp-Source: AGHT+IFwKeCBWgC1DX1LPBdk1QA9ny0nkU+5FxOLBCGi9TyKmLytzDKG906xwutAxEps8RwhnOht6aretJL+sMA6FaE8OnNW97B9
-MIME-Version: 1.0
-X-Received: by 2002:a17:902:cec4:b0:1bb:ad19:6b77 with SMTP id
- d4-20020a170902cec400b001bbad196b77mr9087222plg.2.1693214426325; Mon, 28 Aug
- 2023 02:20:26 -0700 (PDT)
-Date:   Mon, 28 Aug 2023 02:20:26 -0700
-In-Reply-To: <20230828-storch-einbehalten-96130664f1f1@brauner>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000068eb580603f834d3@google.com>
-Subject: Re: [syzbot] [ceph?] [fs?] KASAN: slab-use-after-free Read in ceph_compare_super
-From:   syzbot <syzbot+2b8cbfa6e34e51b6aa50@syzkaller.appspotmail.com>
-To:     brauner@kernel.org
-Cc:     brauner@kernel.org, ceph-devel@vger.kernel.org, idryomov@gmail.com,
-        jack@suse.cz, jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
+        with ESMTP id S230084AbjH1JXs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 28 Aug 2023 05:23:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B533EA;
+        Mon, 28 Aug 2023 02:23:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BA58063568;
+        Mon, 28 Aug 2023 09:22:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 192FAC433C8;
+        Mon, 28 Aug 2023 09:22:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693214579;
+        bh=4JTtntQJ/NbwBTWKqklvrhhuPSQIyVYP0+tYzQL0wBM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BOBj5CxYwPxHKRDWtSDAjAoIXY2r7sxEOZe61qdUvgDAzLldfvGa4ltVTWw68J6/h
+         JZaVpV9vYdwBZ2aIOa8C1ALSvJzcniGYpcvAWOQFvj1lJK1UrXfxuZ76RO+Q3NrdnL
+         TJFv03wcy+TNz1f58oWvSVB6TDf6nCmOxkx0YmkNHmDrtlbkKZbKq4AoNNzpVHnb1+
+         N4yM8bkkcRObyp2z65EwqYt+KbhNNojkluTJigt95DlzE1I+AQLA7CYGKM7HpUEOHH
+         NK9rmuNqlu0N9PN7f1/WJ0VbrQHXLtwKLN6HoGQEQYX1MlMOZvXeJKrHBBb2qi0MGZ
+         ioP95QpgY/WsA==
+Date:   Mon, 28 Aug 2023 11:22:54 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     syzbot <syzbot+2b8cbfa6e34e51b6aa50@syzkaller.appspotmail.com>
+Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com, jack@suse.cz,
+        jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
         xiubli@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Subject: Re: [syzbot] [ceph?] [fs?] KASAN: slab-use-after-free Read in
+ ceph_compare_super
+Message-ID: <20230828-verglast-wegschauen-efcd4408496e@brauner>
+References: <000000000000cb1dec0603d13898@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <000000000000cb1dec0603d13898@google.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-> #syz dup: [syzbot] [fuse?] KASAN: slab-use-after-free Read in fuse_test_super
-
-can't find the dup bug
-
+#syz dup: KASAN: slab-use-after-free Read in fuse_test_super
