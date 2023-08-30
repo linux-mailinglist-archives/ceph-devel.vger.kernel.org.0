@@ -2,41 +2,44 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E72C978DC28
-	for <lists+ceph-devel@lfdr.de>; Wed, 30 Aug 2023 20:47:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F352D78DC34
+	for <lists+ceph-devel@lfdr.de>; Wed, 30 Aug 2023 20:48:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235118AbjH3Sns (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 30 Aug 2023 14:43:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40148 "EHLO
+        id S242693AbjH3SoA (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 30 Aug 2023 14:44:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242281AbjH3Htk (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Aug 2023 03:49:40 -0400
-Received: from mail.duneaton.pl (mail.duneaton.pl [51.195.200.134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BBAE12D
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Aug 2023 00:49:36 -0700 (PDT)
-Received: by mail.duneaton.pl (Postfix, from userid 1002)
-        id 9821624A8C; Wed, 30 Aug 2023 07:46:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=duneaton.pl; s=mail;
-        t=1693381652; bh=w09dBsCwk4ofNwR3wR3IGm3JJemrD5uAJJHAYB2M7XI=;
-        h=Date:From:To:Subject:From;
-        b=gmWaR0TWwYXq8/AesaLCKNKWBrgasdtkqSeVx4NRBRwuqLELOc1JTKvtQYbBbPAgC
-         u+NxdUrmj79XixS7mD123vqeQg2HGRGUgB5wQwsPFeHL79o6X1qpWHmkAV776mXpgs
-         al25onveJNM5CCNBGxqbTUPI+CntVfi7m5s0J87mlcju61ZavLrlHfNPOaD0RdmHyn
-         Ay9L4P/ZDenEZxa1ZhiJwpyxtyuVFn8oh3DDkU9hL8L8PjwRhmtA3fr0qAnU8ToidK
-         8ZYsVNE0lbuHWAgFuET6028WSYYJxxt62rZq4edBHh0b/GUrMXa8lm206PEKcDDmLh
-         52rvAgO72eU2A==
-Received: by mail.duneaton.pl for <ceph-devel@vger.kernel.org>; Wed, 30 Aug 2023 07:45:41 GMT
-Message-ID: <20230830064500-0.1.8z.28vdz.0.38dppnqhpo@duneaton.pl>
-Date:   Wed, 30 Aug 2023 07:45:41 GMT
-From:   =?UTF-8?Q? "Marcin_Seku=C5=82a" ?= <marcin.sekula@duneaton.pl>
-To:     <ceph-devel@vger.kernel.org>
-Subject: =?UTF-8?Q?S=C5=82owa_kluczowe_do_wypozycjonowania?=
-X-Mailer: mail.duneaton.pl
+        with ESMTP id S242527AbjH3I7j (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Aug 2023 04:59:39 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 024DCCC9;
+        Wed, 30 Aug 2023 01:59:36 -0700 (PDT)
+Received: from kwepemi500008.china.huawei.com (unknown [172.30.72.55])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4RbJ841cywzVkFF;
+        Wed, 30 Aug 2023 16:57:08 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
+ (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.31; Wed, 30 Aug
+ 2023 16:59:34 +0800
+From:   Jinjie Ruan <ruanjinjie@huawei.com>
+To:     <linux-block@vger.kernel.org>, <ceph-devel@vger.kernel.org>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Dongsheng Yang <dongsheng.yang@easystack.cn>,
+        Jens Axboe <axboe@kernel.dk>
+CC:     <ruanjinjie@huawei.com>
+Subject: [PATCH -next] rbd: Use list_for_each_entry() helper
+Date:   Wed, 30 Aug 2023 16:59:29 +0800
+Message-ID: <20230830085929.527853-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.90.53.73]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemi500008.china.huawei.com (7.221.188.139)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -44,19 +47,37 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dzie=C5=84 dobry,
+Convert list_for_each() to list_for_each_entry() so that the tmp
+list_head pointer and list_entry() call are no longer needed, which
+can reduce a few lines of code. No functional changed.
 
-zapozna=C5=82em si=C4=99 z Pa=C5=84stwa ofert=C4=85 i z przyjemno=C5=9Bci=
-=C4=85 przyznaj=C4=99, =C5=BCe przyci=C4=85ga uwag=C4=99 i zach=C4=99ca d=
-o dalszych rozm=C3=B3w.=20
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/block/rbd.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Pomy=C5=9Bla=C5=82em, =C5=BCe mo=C5=BCe m=C3=B3g=C5=82bym mie=C4=87 sw=C3=
-=B3j wk=C5=82ad w Pa=C5=84stwa rozw=C3=B3j i pom=C3=B3c dotrze=C4=87 z t=C4=
-=85 ofert=C4=85 do wi=C4=99kszego grona odbiorc=C3=B3w. Pozycjonuj=C4=99 =
-strony www, dzi=C4=99ki czemu generuj=C4=85 =C5=9Bwietny ruch w sieci.
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index 2328cc05be36..3de11f077144 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -7199,7 +7199,6 @@ static void rbd_dev_remove_parent(struct rbd_device *rbd_dev)
+ static ssize_t do_rbd_remove(const char *buf, size_t count)
+ {
+ 	struct rbd_device *rbd_dev = NULL;
+-	struct list_head *tmp;
+ 	int dev_id;
+ 	char opt_buf[6];
+ 	bool force = false;
+@@ -7226,8 +7225,7 @@ static ssize_t do_rbd_remove(const char *buf, size_t count)
+ 
+ 	ret = -ENOENT;
+ 	spin_lock(&rbd_dev_list_lock);
+-	list_for_each(tmp, &rbd_dev_list) {
+-		rbd_dev = list_entry(tmp, struct rbd_device, node);
++	list_for_each_entry(rbd_dev, &rbd_dev_list, node) {
+ 		if (rbd_dev->dev_id == dev_id) {
+ 			ret = 0;
+ 			break;
+-- 
+2.34.1
 
-Mo=C5=BCemy porozmawia=C4=87 w najbli=C5=BCszym czasie?
-
-
-Pozdrawiam
-Marcin Seku=C5=82a
