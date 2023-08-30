@@ -2,61 +2,63 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 98E4A78DC2C
-	for <lists+ceph-devel@lfdr.de>; Wed, 30 Aug 2023 20:47:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 90F8D78DC2F
+	for <lists+ceph-devel@lfdr.de>; Wed, 30 Aug 2023 20:48:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239036AbjH3Snw (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 30 Aug 2023 14:43:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47978 "EHLO
+        id S240057AbjH3Snz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 30 Aug 2023 14:43:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243205AbjH3KU2 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Aug 2023 06:20:28 -0400
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEED61B3;
-        Wed, 30 Aug 2023 03:20:24 -0700 (PDT)
-Received: by mail-ot1-x334.google.com with SMTP id 46e09a7af769-6bd045336c6so3982962a34.2;
-        Wed, 30 Aug 2023 03:20:24 -0700 (PDT)
+        with ESMTP id S243332AbjH3Ko7 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Aug 2023 06:44:59 -0400
+Received: from mail-oo1-xc30.google.com (mail-oo1-xc30.google.com [IPv6:2607:f8b0:4864:20::c30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58A071BB;
+        Wed, 30 Aug 2023 03:44:56 -0700 (PDT)
+Received: by mail-oo1-xc30.google.com with SMTP id 006d021491bc7-5735282d713so2915195eaf.2;
+        Wed, 30 Aug 2023 03:44:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20221208; t=1693390824; x=1693995624; darn=vger.kernel.org;
+        d=gmail.com; s=20221208; t=1693392295; x=1693997095; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=F51SfreO0jWbIY43S7+9QFdz1WAt6ScuHJAkz6g7Suo=;
-        b=LZNqhMUqlNSiYwAmmSGWblaM6/8uCK+rE6rSytHXwztbpfD9kTPSrDlTw4xsSR6hVk
-         WI57DeQkbWJ4bR6SOdD2a7GhLkLYt9SNnSHfKc3Yip+YIWU053F/a9UmJZOWVqNm59Ia
-         B15zRsMA7Avi2xLLIurYBltGwYXxgLWF0up6hRxDU9fqwtd45uNGpFyKrwmgYO2NsQIM
-         HP0H2CeBF21KKiM+djuXCNxoYkOim2zGYTGxpHnaD0hDyNodmVrr2KVA05XQUdXGyshC
-         rT8ezOv/nUItvoraDlS+cEK97CokPumVhscEp+dtadU+ppVIfswlJsGp1/IRZIUtJvC8
-         p8VQ==
+        bh=uDg1gJ54LhcHGraF0W90P36J7iWVIjIASj7u9px6qZ0=;
+        b=jowOUlmksXh6WJMDBM5SUMOEg3JeZwxrs8MOgWbnYq8oIXcDxqFSZ3yuaNCYj005VC
+         eMuSUPbdOXjT39lJn2irSfFWsCx1VYW2EXC1cWZnM6SJntnWaBYMFiRXwKh4JvzjQwS+
+         sidXy4W1/N1CbahK4saZN975Rum8LXaYm3AwfYwETHh17cK4uqqEpvbFzlzWxTn3JtES
+         EP+wikRZOYXIy5AX8TdzW8aMmroQbW2YrIxwKgqU2YCPn6yqVQGSi5iggxzTpQ+VkmQk
+         XtGeSIKapbo9QkENzHrdXTcCBFF73TC/5fC4/tnMz7xhLTYtQAD1M2xehWmrhGZxcQOT
+         pghg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693390824; x=1693995624;
+        d=1e100.net; s=20221208; t=1693392295; x=1693997095;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F51SfreO0jWbIY43S7+9QFdz1WAt6ScuHJAkz6g7Suo=;
-        b=h1FH6ASFwFF4Rz3gpwc9+GnMK1JT+BFwKKyOMvcgQKDlrotzSlOfmJimBPHFJhbBi1
-         E3LCP96wylV8UnVpR/86JxnnDFZJ8aj0sy57gjCwc2t/po6ZmBDTPz5h1Oz9sCBwxBUz
-         WGEMVg2/+dhBG42AyiN9osLVkrytx5OhLPJQOA68nCtwpq+frMXwSVEZiGgY480PAZou
-         X0JGHzgM+rq3NV+rnesk+Mw0RADEUOWbyC5q3XmgSBIVTxbea1nlJr01JVoRcdlSch5d
-         X1mHphevqT+oV+vFNce70smtTBUErozYTXZSLIwvECzNUaN/jIA042I5Vgv5uIRQNVYa
-         gkaA==
-X-Gm-Message-State: AOJu0YwBuVvFznRmeCn4hUjNDDW6g1al3ktXvp7aS9WpF0eqkhuL+euE
-        TuXeskfgqZyRr/ROTriii6DbywAEET07K9FXKquvjmlytBc=
-X-Google-Smtp-Source: AGHT+IEZmTz1Epp/lp6jTqZhUbFio8EtJ3Ayua/+HEmyHeBgl9z5Z89TB/tCMkqXbVT3i8j0GGo440Y7DG733z+BmqA=
-X-Received: by 2002:a05:6870:c18d:b0:1ad:5317:1f7d with SMTP id
- h13-20020a056870c18d00b001ad53171f7dmr1955877oad.39.1693390824174; Wed, 30
- Aug 2023 03:20:24 -0700 (PDT)
+        bh=uDg1gJ54LhcHGraF0W90P36J7iWVIjIASj7u9px6qZ0=;
+        b=Fgno/+213BF72oUXGwhr1X07yMIJCYReVJTbDVcKizB10uqURozJy5WgyVbPcYZ8a3
+         R8OK1rfnN5fKcNfd/iDk7pM8SVmfnaJ4G9993bfAFcefQTZntj0GUK3/IWmDzoszIweP
+         PyjTk3EmCyO3Chb36rX6O0ydUZ+rFThRtXJocj2KlrbwiGwdZXOhb4VjkXD3oEGKKbvw
+         7NOgtOTJ8KPz+gNLjWbu8i/qe9JcdQwte+VWCwrDT4psCdahi7qAU96UQn933Me+6a3x
+         myYtoxWu33/DzOzTIERe3sprgQAEYwviDum0RYEw6K4AwNHTilE6j0ORmnEgKiqbRA/o
+         Fcyg==
+X-Gm-Message-State: AOJu0YwYX6yrb0UUF6+6zEAr7Q6MwLS4AtWrKMSvlWbgSo4frkIJaUCe
+        651mWd7MiIdiyBkn3ye9SJemNezNUa+7ICjZFrHYWexhzpk=
+X-Google-Smtp-Source: AGHT+IF95KpxWvZiq1byVjvKpPp7KVB4uGJagT9Ba6+51ZVenyWr+nBiHv9bHLBzZ7hUjhBvu1uBZOvdzeVVNsfCYpk=
+X-Received: by 2002:a4a:3954:0:b0:573:3fe0:cdd6 with SMTP id
+ x20-20020a4a3954000000b005733fe0cdd6mr1411313oog.6.1693392295590; Wed, 30 Aug
+ 2023 03:44:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20230830085929.527853-1-ruanjinjie@huawei.com>
-In-Reply-To: <20230830085929.527853-1-ruanjinjie@huawei.com>
+References: <20230825201225.348148-1-willy@infradead.org> <20230825201225.348148-10-willy@infradead.org>
+ <ZOlq5HmcdYGPwH2i@casper.infradead.org> <2f1e16e5-1034-b064-7a92-e89f08fd2ac1@redhat.com>
+ <668b6e07047bdc97dfa1d522606ec2b28420bdce.camel@kernel.org> <ZO3y9ZixzE4c5oHU@casper.infradead.org>
+In-Reply-To: <ZO3y9ZixzE4c5oHU@casper.infradead.org>
 From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Wed, 30 Aug 2023 12:20:11 +0200
-Message-ID: <CAOi1vP-N2ech4FOALrPfW5t3sOCLAqfGKaCvygJzDZWx26_rtQ@mail.gmail.com>
-Subject: Re: [PATCH -next] rbd: Use list_for_each_entry() helper
-To:     Jinjie Ruan <ruanjinjie@huawei.com>
-Cc:     linux-block@vger.kernel.org, ceph-devel@vger.kernel.org,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        Jens Axboe <axboe@kernel.dk>
+Date:   Wed, 30 Aug 2023 12:44:43 +0200
+Message-ID: <CAOi1vP-jc+GqUKgewEaVRC8TuDjKzh4PeKmWyDf3qxSAWC4dTw@mail.gmail.com>
+Subject: Re: [PATCH 09/15] ceph: Use a folio in ceph_filemap_fault()
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jeff Layton <jlayton@kernel.org>, Xiubo Li <xiubli@redhat.com>,
+        ceph-devel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -69,47 +71,38 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Aug 30, 2023 at 10:59=E2=80=AFAM Jinjie Ruan <ruanjinjie@huawei.com=
+On Tue, Aug 29, 2023 at 3:30=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
 > wrote:
 >
-> Convert list_for_each() to list_for_each_entry() so that the tmp
-> list_head pointer and list_entry() call are no longer needed, which
-> can reduce a few lines of code. No functional changed.
+> On Tue, Aug 29, 2023 at 07:55:01AM -0400, Jeff Layton wrote:
+> > On Mon, 2023-08-28 at 09:19 +0800, Xiubo Li wrote:
+> > > Next time please rebase to the latest ceph-client latest upstream
+> > > 'testing' branch, we need to test this series by using the qa
+> > > teuthology, which is running based on the 'testing' branch.
+> >
+> > People working on wide-scale changes to the kernel really shouldn't hav=
+e
+> > to go hunting down random branches to base their changes on. That's the
+> > purpose of linux-next.
 >
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  drivers/block/rbd.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+> Yes.  As I said last time this came up
+> https://lore.kernel.org/linux-fsdevel/ZH94oBBFct9b9g3z@casper.infradead.o=
+rg/
 >
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 2328cc05be36..3de11f077144 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -7199,7 +7199,6 @@ static void rbd_dev_remove_parent(struct rbd_device=
- *rbd_dev)
->  static ssize_t do_rbd_remove(const char *buf, size_t count)
->  {
->         struct rbd_device *rbd_dev =3D NULL;
-> -       struct list_head *tmp;
->         int dev_id;
->         char opt_buf[6];
->         bool force =3D false;
-> @@ -7226,8 +7225,7 @@ static ssize_t do_rbd_remove(const char *buf, size_=
-t count)
->
->         ret =3D -ENOENT;
->         spin_lock(&rbd_dev_list_lock);
-> -       list_for_each(tmp, &rbd_dev_list) {
-> -               rbd_dev =3D list_entry(tmp, struct rbd_device, node);
-> +       list_for_each_entry(rbd_dev, &rbd_dev_list, node) {
->                 if (rbd_dev->dev_id =3D=3D dev_id) {
->                         ret =3D 0;
->                         break;
-> --
-> 2.34.1
->
+> it's not reasonable for me to track down every filesystem's private
+> git tree.  I'm happy to re-do these patches against linux-next in a
+> week or two, but I'm not going to start working against your ceph tree.
+> I'm not a Ceph developer, I'm a Linux developer.  I work against Linus'
+> tree or Stephen's tree.
 
-Applied.
+Agreed.  Definitely not reasonable, it's the CephFS team's job to sort
+out conflicts when applying patches to the testing branch.
+
+The problem is that the testing branch is also carrying a bunch of "DO
+NOT MERGE" fail-fast and/or debugging patches that aren't suitable for
+linux-next.  The corollary of that is that we end up testing something
+slightly different in our CI.  Xiubo, please review that list and let's
+try to get it down to a bare minimum.
 
 Thanks,
 
