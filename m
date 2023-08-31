@@ -2,84 +2,71 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 46AE278E52D
-	for <lists+ceph-devel@lfdr.de>; Thu, 31 Aug 2023 05:53:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 275F678E6AE
+	for <lists+ceph-devel@lfdr.de>; Thu, 31 Aug 2023 08:39:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244682AbjHaDxh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 30 Aug 2023 23:53:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50152 "EHLO
+        id S1344254AbjHaGjy (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 31 Aug 2023 02:39:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241778AbjHaDxe (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 30 Aug 2023 23:53:34 -0400
+        with ESMTP id S237316AbjHaGjx (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 31 Aug 2023 02:39:53 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 365C4CD6
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Aug 2023 20:52:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9926B4
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Aug 2023 23:39:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693453972;
+        s=mimecast20190719; t=1693463950;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=k4G2J3yaU4Ahm/CeQvnEPj3w1MykmpIHM4D6dSpmIRg=;
-        b=Ls+uQYUyVteeuufh1OYlwx4Xdt83phkeQxcee8iVVwhCEqnRUrGYFnDB1rRhdQucP40j4Y
-        +btxZxrO4xk8LrRKuT5FlizO+2etJCuzZgflWJMg9ofzqOO6Stjtu8va3wtoxEt9GjhHWT
-        tPoO/0BJkvpwkA1NvIrk+Mrs3ezjuGI=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=/ICRe6/bsyw9M3kO5mLHAOE3Pfy5C8Br81YD3+2b+MM=;
+        b=QxqZk3H5vS0mn0MpyJ4QU9974wH4UrrVOlVBi5aI6DibE3TlN3AIKAz8mqkuPt5U5rRl3o
+        hB6HnPxvCzpMpfF/WyM1kLFDtKOjx2BAQnK68L1FsdCvge9YN62IvYrtHqOWDdgGbuchSx
+        bOamOSsyn+gzWMtj8otsYchlOKBjll4=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-490-bTYI_ksgNNO2yGzlufg5bw-1; Wed, 30 Aug 2023 23:52:50 -0400
-X-MC-Unique: bTYI_ksgNNO2yGzlufg5bw-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-26ecc4795a4so390514a91.0
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Aug 2023 20:52:50 -0700 (PDT)
+ us-mta-330-re_eD494P_2xR-dxEHyuVw-1; Thu, 31 Aug 2023 02:34:49 -0400
+X-MC-Unique: re_eD494P_2xR-dxEHyuVw-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-99cc32f2ec5so29057766b.1
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Aug 2023 23:34:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693453970; x=1694058770;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k4G2J3yaU4Ahm/CeQvnEPj3w1MykmpIHM4D6dSpmIRg=;
-        b=PrphkRGBbNoghbY/btA8XB2FlquSQ/D8UQHDeU2k3hdPc1XdERDYyPSrVviTFseW5k
-         o/Pvrce3P6wheOfP6ambH8qRKnj3f44XdKcah23mPl7uzj1d8rpqQ32nrVmoiTWREZsL
-         ILgUNoEESvuet2D0jtwDqmkIwVAjYZD+qlhjZlvcaKT/BRlkGKRCCiFKiAgmjHKz7wVm
-         8wpJ8fryjY7FjlU4ZDvLw+hg9mLuPssM17o/btcyfITIunm9nkYO25id7wFDG0BDKebR
-         wq+XebZRWuEmYPXt4q2WAFFzI7V06bq6BHRgC/7dXUJaOR60n12IKiVe8DNmjDNm5Nd2
-         46/w==
-X-Gm-Message-State: AOJu0Yx6n+jC8Z/li7nJvyLYNm6amSLiiOs0ntaXAOSgRpSO1eupEEGe
-        tyii7SdGXKkxgMjekDo9IhEZl/r31c4ZNXc0lUa0EL3fbsSSljfFJj3FywhELsBJgGZeIHItatD
-        TverjRVmX/TOn62v5k9Uzug==
-X-Received: by 2002:a17:90a:12c7:b0:26b:3625:d1a2 with SMTP id b7-20020a17090a12c700b0026b3625d1a2mr3734685pjg.41.1693453969821;
-        Wed, 30 Aug 2023 20:52:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFQGVy7U4gKVOlStGzV7J8dRoxJwOU6HweEgcUyaYfMNQjS0ve6u6QKzeNdwnuDB8SKWAf5/A==
-X-Received: by 2002:a17:90a:12c7:b0:26b:3625:d1a2 with SMTP id b7-20020a17090a12c700b0026b3625d1a2mr3734676pjg.41.1693453969494;
-        Wed, 30 Aug 2023 20:52:49 -0700 (PDT)
-Received: from [10.72.112.230] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id s7-20020a17090a5d0700b0026b12768e46sm333883pji.42.2023.08.30.20.52.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Aug 2023 20:52:49 -0700 (PDT)
-Message-ID: <b0f42122-8384-4892-7498-e110a0ce4475@redhat.com>
-Date:   Thu, 31 Aug 2023 11:52:45 +0800
+        d=1e100.net; s=20221208; t=1693463686; x=1694068486;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/ICRe6/bsyw9M3kO5mLHAOE3Pfy5C8Br81YD3+2b+MM=;
+        b=KfXQFUpseeiICBKisIifyQWjJr7R5lv0+75bxsy50BcRUIpsQvo9Qq2LISD5g/h3N4
+         rK9vQDc8vz+YVx7kEJEhmD8rInYl0ZNB0+IezeuivxeoQbR4qA1Qn+GqetBrmxefoE5y
+         MODachTMcNeT46mz+pii9fmlMHB05Yp26kt4Yfs1p1gN0YwOUyezHkSN1WBYWt70VO5P
+         tPXbutjXblh1d8es5zQ9FYplKfvDR+BLoIgacJidUlFJ4JwnlbjNYKJqrahpM+jV2bIb
+         xWlq4vZh2Rt6lfc5tp6y7IQBRyXpWlWPr6C/YlWMOOzBFXmKmFx7mEMsYoVg2KiTL3mJ
+         +EWQ==
+X-Gm-Message-State: AOJu0Yy2EKKrSD8ibBGiQ1NouLJX8rQpR2lxl0r0rwh+7P6MLF9t71KA
+        t74w9kbCqj4op6MUHj2dQ112dJoLj9RqxXceuk/43HUCq6hz8GpXYqO4B11lqjBYky/Ee/bqtw8
+        ioLOL+AzXulmkCs7GDY0Zn0zhchQHd+mHp8lrmA==
+X-Received: by 2002:a17:907:778e:b0:9a1:b705:75d1 with SMTP id ky14-20020a170907778e00b009a1b70575d1mr3284846ejc.51.1693463685834;
+        Wed, 30 Aug 2023 23:34:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEfDoyW2TohZqlY1NMMDuggGKhY2w5PU3Dcnw4popvN5reR2e45iGhLk0AinxDAEsvkvPQlC4y/nD6//l//rcw=
+X-Received: by 2002:a17:907:778e:b0:9a1:b705:75d1 with SMTP id
+ ky14-20020a170907778e00b009a1b70575d1mr3284830ejc.51.1693463685522; Wed, 30
+ Aug 2023 23:34:45 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 09/15] ceph: Use a folio in ceph_filemap_fault()
-Content-Language: en-US
-To:     Ilya Dryomov <idryomov@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org
-References: <20230825201225.348148-1-willy@infradead.org>
- <20230825201225.348148-10-willy@infradead.org>
- <ZOlq5HmcdYGPwH2i@casper.infradead.org>
- <2f1e16e5-1034-b064-7a92-e89f08fd2ac1@redhat.com>
- <668b6e07047bdc97dfa1d522606ec2b28420bdce.camel@kernel.org>
- <ZO3y9ZixzE4c5oHU@casper.infradead.org>
- <CAOi1vP-jc+GqUKgewEaVRC8TuDjKzh4PeKmWyDf3qxSAWC4dTw@mail.gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <CAOi1vP-jc+GqUKgewEaVRC8TuDjKzh4PeKmWyDf3qxSAWC4dTw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+References: <20230725044024.365152-1-xiubli@redhat.com>
+In-Reply-To: <20230725044024.365152-1-xiubli@redhat.com>
+From:   Milind Changire <mchangir@redhat.com>
+Date:   Thu, 31 Aug 2023 12:04:09 +0530
+Message-ID: <CAED=hWDj916J_djfB1eX0tJX=5ubp8WiOuVtJdfZ==Ce3yWmjQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: make the members in struct ceph_mds_request_args_ext
+ an union
+To:     xiubli@redhat.com
+Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
+        vshankar@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
         SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -88,41 +75,77 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
+Approved. Looks good to me.
 
-On 8/30/23 18:44, Ilya Dryomov wrote:
-> On Tue, Aug 29, 2023 at 3:30 PM Matthew Wilcox <willy@infradead.org> wrote:
->> On Tue, Aug 29, 2023 at 07:55:01AM -0400, Jeff Layton wrote:
->>> On Mon, 2023-08-28 at 09:19 +0800, Xiubo Li wrote:
->>>> Next time please rebase to the latest ceph-client latest upstream
->>>> 'testing' branch, we need to test this series by using the qa
->>>> teuthology, which is running based on the 'testing' branch.
->>> People working on wide-scale changes to the kernel really shouldn't have
->>> to go hunting down random branches to base their changes on. That's the
->>> purpose of linux-next.
->> Yes.  As I said last time this came up
->> https://lore.kernel.org/linux-fsdevel/ZH94oBBFct9b9g3z@casper.infradead.org/
->>
->> it's not reasonable for me to track down every filesystem's private
->> git tree.  I'm happy to re-do these patches against linux-next in a
->> week or two, but I'm not going to start working against your ceph tree.
->> I'm not a Ceph developer, I'm a Linux developer.  I work against Linus'
->> tree or Stephen's tree.
-> Agreed.  Definitely not reasonable, it's the CephFS team's job to sort
-> out conflicts when applying patches to the testing branch.
+Reviewed-by: Milind Changire <mchangir@redhat,com>
+
+On Tue, Jul 25, 2023 at 10:13=E2=80=AFAM <xiubli@redhat.com> wrote:
 >
-> The problem is that the testing branch is also carrying a bunch of "DO
-> NOT MERGE" fail-fast and/or debugging patches that aren't suitable for
-> linux-next.  The corollary of that is that we end up testing something
-> slightly different in our CI.  Xiubo, please review that list and let's
-> try to get it down to a bare minimum.
-
-Sure. Thanks!
-
-- Xiubo
-
-
-> Thanks,
+> From: Xiubo Li <xiubli@redhat.com>
 >
->                  Ilya
+> In ceph mainline it will allow to set the btime in the setattr request
+> and just add a 'btime' member in the union 'ceph_mds_request_args' and
+> then bump up the header version to 4. That means the total size of union
+> 'ceph_mds_request_args' will increase sizeof(struct ceph_timespec) bytes,
+> but in kclient it will increase the sizeof(setattr_ext) bytes for each
+> request.
 >
+> Since the MDS will always depend on the header's vesion and front_len
+> members to decode the 'ceph_mds_request_head' struct, at the same time
+> kclient hasn't supported the 'btime' feature yet in setattr request,
+> so it's safe to do this change here.
+>
+> This will save 48 bytes memories for each request.
+>
+> Fixes: 4f1ddb1ea874 ("ceph: implement updated ceph_mds_request_head struc=
+ture")
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  include/linux/ceph/ceph_fs.h | 24 +++++++++++++-----------
+>  1 file changed, 13 insertions(+), 11 deletions(-)
+>
+> diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+> index ce6064b3e28f..04f769368605 100644
+> --- a/include/linux/ceph/ceph_fs.h
+> +++ b/include/linux/ceph/ceph_fs.h
+> @@ -462,17 +462,19 @@ union ceph_mds_request_args {
+>  } __attribute__ ((packed));
+>
+>  union ceph_mds_request_args_ext {
+> -       union ceph_mds_request_args old;
+> -       struct {
+> -               __le32 mode;
+> -               __le32 uid;
+> -               __le32 gid;
+> -               struct ceph_timespec mtime;
+> -               struct ceph_timespec atime;
+> -               __le64 size, old_size;       /* old_size needed by trunca=
+te */
+> -               __le32 mask;                 /* CEPH_SETATTR_* */
+> -               struct ceph_timespec btime;
+> -       } __attribute__ ((packed)) setattr_ext;
+> +       union {
+> +               union ceph_mds_request_args old;
+> +               struct {
+> +                       __le32 mode;
+> +                       __le32 uid;
+> +                       __le32 gid;
+> +                       struct ceph_timespec mtime;
+> +                       struct ceph_timespec atime;
+> +                       __le64 size, old_size;       /* old_size needed b=
+y truncate */
+> +                       __le32 mask;                 /* CEPH_SETATTR_* */
+> +                       struct ceph_timespec btime;
+> +               } __attribute__ ((packed)) setattr_ext;
+> +       };
+>  };
+>
+>  #define CEPH_MDS_FLAG_REPLAY           1 /* this is a replayed op */
+> --
+> 2.40.1
+>
+
+
+--=20
+Milind
 
