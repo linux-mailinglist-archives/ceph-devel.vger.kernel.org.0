@@ -2,104 +2,76 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1628278F7C2
-	for <lists+ceph-devel@lfdr.de>; Fri,  1 Sep 2023 07:00:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2BE678FEA0
+	for <lists+ceph-devel@lfdr.de>; Fri,  1 Sep 2023 15:51:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245536AbjIAFAE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 1 Sep 2023 01:00:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50762 "EHLO
+        id S1344568AbjIANvh (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 1 Sep 2023 09:51:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233598AbjIAFAD (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 1 Sep 2023 01:00:03 -0400
-Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23081E7E
-        for <ceph-devel@vger.kernel.org>; Thu, 31 Aug 2023 21:59:59 -0700 (PDT)
-Received: from [192.168.1.18] ([86.243.2.178])
-        by smtp.orange.fr with ESMTPA
-        id bwGBqGDKD7HAObwGBqnc61; Fri, 01 Sep 2023 06:59:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-        s=t20230301; t=1693544397;
-        bh=tv6B7Fos2siGTtUU4mG/KuNAe/GWDCgVkJ/VsTHCG7M=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=HmBpTMjKbHox0amol/pxmlk8yX8lwqZPFvDcxNt9aA1ulkmt4fsL788UCbxgxwa5r
-         UbVitixu7ZMfs8WwkFY+Som0NqzBU3DNdthWNkGG7M6ZUxzePYV3n/qOZ/D3ccNYop
-         YUJhUbhM4zz2A97BmZhQQ1KDatoiETeIDYTlAsv8nApTBvJAPmr3TFf2P65mHQGUC0
-         wu0bQL2Cll1o9luByjPLxvFTpM47CstgJCZwkHKlTTyDMbcDh+leV731TIbjEmiRTk
-         TAW5msQdQWjxTy5jsiuwY4Lh9/jZHNNCrln95KbpB9YatqY0Si78bKUwIZCO3+L1GB
-         iAOpuhfmjoSrw==
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 01 Sep 2023 06:59:57 +0200
-X-ME-IP: 86.243.2.178
-Message-ID: <58b1e635-f31a-8c76-b704-a707bd11d460@wanadoo.fr>
-Date:   Fri, 1 Sep 2023 06:59:54 +0200
+        with ESMTP id S1347787AbjIANvg (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 1 Sep 2023 09:51:36 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 719B2CFE;
+        Fri,  1 Sep 2023 06:51:33 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1CAEAB82531;
+        Fri,  1 Sep 2023 13:51:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24954C433C8;
+        Fri,  1 Sep 2023 13:51:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693576290;
+        bh=NTVw38G2qVPXTuwzrQPq23tuQlyTYtv68+FUj+uvdNE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Q9YeRsK/BowHDpvqPZbhrU0KFCnAQatb8h99a2O7J6GWv1A0iI8M5+T2HC6RFvFxM
+         iZC8RqPp9OTJ4bks15RGbLrwu4Z0xKCFOBk0YEE2FeyhARi7GBXVERfGpmLOj2HcH+
+         Mom8hcjzYQkWlZdoFPbPDL7y2DbGFKbyH22G3B8sWspGUY1cBDi9jkFnVWbS/6+/Gi
+         XJB2L3dLUgUGG9VjQsK9GxVQRdG9uBZB0o/RCKcTXrtuOZCAVOSgliG+DXYaQqbvjU
+         MBR+TP7/ni7jb1J7ptHwbh7DM4ySpITwgPhaw1CRAn5F+uhnVVdEVxpnWGs/sMC/rp
+         B7FSNEKTWlUBQ==
+Date:   Fri, 1 Sep 2023 15:51:15 +0200
+From:   Simon Horman <horms@kernel.org>
+To:     Li kunyu <kunyu@nfschina.com>
+Cc:     idryomov@gmail.com, xiubli@redhat.com, jlayton@kernel.org,
+        davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+        pabeni@redhat.com, ceph-devel@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ceph/ceph_common: =?utf-8?Q?Re?=
+ =?utf-8?B?bW92ZSB1bm5lY2Vzc2FyeSDigJgw4oCZ?= values from ret
+Message-ID: <20230901135115.GF140739@kernel.org>
+References: <20230902185022.3347-1-kunyu@nfschina.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: =?UTF-8?Q?Re=3a_=5bPATCH=5d_ceph/decode=3a_Remove_unnecessary_?=
- =?UTF-8?B?4oCYMOKAmSB2YWx1ZXMgZnJvbSByZXQ=?=
-To:     Li kunyu <kunyu@nfschina.com>, idryomov@gmail.com,
-        xiubli@redhat.com, jlayton@kernel.org, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc:     ceph-devel@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20230902201112.4401-1-kunyu__5722.10796396888$1693539625$gmane$org@nfschina.com>
-Content-Language: fr, en-GB
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20230902201112.4401-1-kunyu__5722.10796396888$1693539625$gmane$org@nfschina.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230902185022.3347-1-kunyu@nfschina.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Le 01/09/2023 à 05:40, Li kunyu a écrit :
-> ret is assigned first, so it does not need to initialize the
-> assignment.
-> Bad is not used and can be removed.
+On Sun, Sep 03, 2023 at 02:50:22AM +0800, Li kunyu wrote:
+> ret is assigned first, so it does not need to initialize the assignment.
 > 
 > Signed-off-by: Li kunyu <kunyu@nfschina.com>
-> ---
->   net/ceph/decode.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/net/ceph/decode.c b/net/ceph/decode.c
-> index bc109a1a4616..9f5f095d8235 100644
-> --- a/net/ceph/decode.c
-> +++ b/net/ceph/decode.c
-> @@ -50,7 +50,7 @@ static int
->   ceph_decode_entity_addr_legacy(void **p, void *end,
->   			       struct ceph_entity_addr *addr)
->   {
-> -	int ret = -EINVAL;
-> +	int ret = 0;
->   
->   	/* Skip rest of type field */
->   	ceph_decode_skip_n(p, end, 3, bad);
-> @@ -66,8 +66,7 @@ ceph_decode_entity_addr_legacy(void **p, void *end,
->   			      sizeof(addr->in_addr), bad);
->   	addr->in_addr.ss_family =
->   			be16_to_cpu((__force __be16)addr->in_addr.ss_family);
-> -	ret = 0;
-> -bad:
-> +
->   	return ret;
->   }
->   
 
-This patch is wrong.
-Look how the ceph_decode_skip_n() macro, for example, is expended.
-You'll see that 'bad' is needed.
+## Form letter - net-next-closed
 
-I think that your patch was not compile tested.
+The merge window for v6.6 has begun and therefore net-next is closed
+for new drivers, features, code refactoring and optimizations.
+We are currently accepting bug fixes only.
 
-Please do not send patch that are not at least compile tested. Even when 
-it looks obvious.
+Please repost when net-next reopens after Sept 11th.
 
-CJ
+RFC patches sent for review only are obviously welcome at any time.
+
+See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
+--
+pw-bot: defer
