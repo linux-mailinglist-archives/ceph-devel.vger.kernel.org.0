@@ -2,159 +2,140 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BC0777914C5
-	for <lists+ceph-devel@lfdr.de>; Mon,  4 Sep 2023 11:32:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D34D3791C97
+	for <lists+ceph-devel@lfdr.de>; Mon,  4 Sep 2023 20:11:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243230AbjIDJcE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 4 Sep 2023 05:32:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58942 "EHLO
+        id S1353452AbjIDSLV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 4 Sep 2023 14:11:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234330AbjIDJcD (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 4 Sep 2023 05:32:03 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 899C2BF
-        for <ceph-devel@vger.kernel.org>; Mon,  4 Sep 2023 02:31:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1693819872;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=K9l0wQqfFwDeF7ukgyScKmgqMBi0X3TKAJGfHAct9xQ=;
-        b=hedWmTAbyVMgdgR+OP6dkKUsFbe4XvXnwBL6RJYvmR7/OsOwVRNlQc5GnMOF2qP2LQYh/D
-        5i0kAxIRjWUQEoh+xG8KyonyuUOv5n/86h+v4oCwPsYmJRWfYOflyfUfBmyBcsu66aqFHR
-        fxP/Xi73vcFD9EyJ3IEWEtSSZH8iiZ8=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-329-6wLC-flJPOKET6WknEIKOQ-1; Mon, 04 Sep 2023 05:31:11 -0400
-X-MC-Unique: 6wLC-flJPOKET6WknEIKOQ-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-993831c639aso89648866b.2
-        for <ceph-devel@vger.kernel.org>; Mon, 04 Sep 2023 02:31:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20221208; t=1693819870; x=1694424670;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K9l0wQqfFwDeF7ukgyScKmgqMBi0X3TKAJGfHAct9xQ=;
-        b=hogcGKl0zwNrQJ/yrzKpTZOMv10pSpL+8QPv4OYFRoJM7b80At7hZFFy31YpMB3sWE
-         h9SN7JWJdjdPPC8jlA5puxn59j2fbQyCg9Yq4Uml4fNFgOFLV0q8uWLZJUAyJOLWlzox
-         9eu4f6e+32KSyDr6XIRMxehmGRytMEJdcA0WiqyKlZHAWyJaOkOSpZxYh8nBLWMxmjuX
-         H2IKcfuSdfeye2TsHYiKHRpOmOnBp/g3MLs40CmgUXlSca7X+0x0ylNXB6266pQG/IOT
-         8JbbFJNSKp5QURCcnPdJSRX4P32DsNsVoD/ejZXT12ISvjnjtelqH4fLNGnFdatwGU6y
-         Nogw==
-X-Gm-Message-State: AOJu0YwpLz0AMWe/fdjN+XXKo02wCMgYqunEV8SKLZedd6JWDHO9AON9
-        ERoxKZ2aVmkSFFrRJN9C3KiB+PCR+YaqbO2na2RD0+V4Rw+Wuwx2zVCzYhZxeCiqq492XBa57Wr
-        pm9Rp0yOSbLmNT2S1rhBU+knHEtnQAZEzO9sPdA==
-X-Received: by 2002:a17:907:77d1:b0:9a2:1e14:86bd with SMTP id kz17-20020a17090777d100b009a21e1486bdmr6811010ejc.65.1693819870425;
-        Mon, 04 Sep 2023 02:31:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEgW6CLiRpm7u1bqDAuoe2bQvq8GaEUacnB2NxVXR/OOeK9DRP2TRpk0Reazvm/Mp0ETdA+YQgSG7xnb36fhRw=
-X-Received: by 2002:a17:907:77d1:b0:9a2:1e14:86bd with SMTP id
- kz17-20020a17090777d100b009a21e1486bdmr6810999ejc.65.1693819870210; Mon, 04
- Sep 2023 02:31:10 -0700 (PDT)
+        with ESMTP id S1353426AbjIDSLQ (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 4 Sep 2023 14:11:16 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86573197;
+        Mon,  4 Sep 2023 11:11:12 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 9A8C7CE0E24;
+        Mon,  4 Sep 2023 18:11:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C9A2DC433C8;
+        Mon,  4 Sep 2023 18:11:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1693851068;
+        bh=KWuluqFF5yFV+lOCkFnoct0phRXw96Jca/CuZaTU2kY=;
+        h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+        b=K3gkbkhJRwgpsacHeBsq0A7kucjUSGo8OzMP1ouPw/XPyf9sD5QK/Sf142+usc7ZE
+         C827H7oMTO9xQURopm4EWqGoFioLBjSEY4gmbRDnvHI4L+ywXrxJRVy5ldQmRaAtfj
+         1pffFi8IArgTV4dPuYUPdlhMXVuT7Hb/6kEuD4lj+4NJdrul8tjUb9OXjEUjpGn+jT
+         2ndFdt5oPLx5wHtLQ20DiaB9Xl09djxp9OA/4zW9QgSOHR3JDKxABg9kMIgFr5Ox62
+         wqlEdaiOf1aM8ubxkjKV3yvjnRyA83mc2npN6NfYoiPdtaZLbxGvWm4TgDkfWkglX8
+         L2qkw/qB1Voxg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A2BE4C04E26;
+        Mon,  4 Sep 2023 18:11:08 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20230619071438.7000-1-xiubli@redhat.com> <20230619071438.7000-6-xiubli@redhat.com>
-In-Reply-To: <20230619071438.7000-6-xiubli@redhat.com>
-From:   Milind Changire <mchangir@redhat.com>
-Date:   Mon, 4 Sep 2023 15:00:33 +0530
-Message-ID: <CAED=hWDwcQ_vv=_5WOT2_T66eU9Yk49PouYywkoAQe5064L4Tw@mail.gmail.com>
-Subject: Re: [PATCH v4 5/6] ceph: add ceph_inode_to_client() helper support
-To:     xiubli@redhat.com
-Cc:     idryomov@gmail.com, ceph-devel@vger.kernel.org, jlayton@kernel.org,
-        vshankar@redhat.com, Patrick Donnelly <pdonnell@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH v7 00/13] fs: implement multigrain timestamps
+From:   patchwork-bot+f2fs@kernel.org
+Message-Id: <169385106866.19669.14483196627780303129.git-patchwork-notify@kernel.org>
+Date:   Mon, 04 Sep 2023 18:11:08 +0000
+References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
+In-Reply-To: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     viro@zeniv.linux.org.uk, brauner@kernel.org, ericvh@kernel.org,
+        lucho@ionkov.net, asmadeus@codewreck.org, linux_oss@crudebyte.com,
+        dhowells@redhat.com, marc.dionne@auristor.com, clm@fb.com,
+        josef@toxicpanda.com, dsterba@suse.com, xiubli@redhat.com,
+        idryomov@gmail.com, jaharkes@cs.cmu.edu, coda@cs.cmu.edu,
+        code@tyhicks.com, xiang@kernel.org, chao@kernel.org,
+        huyue2@coolpad.com, jefflexu@linux.alibaba.com,
+        linkinjeon@kernel.org, sj1557.seo@samsung.com, jack@suse.com,
+        tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        hirofumi@mail.parknet.co.jp, miklos@szeredi.hu,
+        rpeterso@redhat.com, agruenba@redhat.com,
+        gregkh@linuxfoundation.org, tj@kernel.org,
+        trond.myklebust@hammerspace.com, anna@kernel.org,
+        almaz.alexandrovich@paragon-software.com, mark@fasheh.com,
+        jlbec@evilplan.org, joseph.qi@linux.alibaba.com,
+        hubcap@omnibond.com, martin@omnibond.com, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com, sfrench@samba.org,
+        pc@manguebit.com, ronniesahlberg@gmail.com, sprasad@microsoft.com,
+        tom@talpey.com, senozhatsky@chromium.org, richard@nod.at,
+        hdegoede@redhat.com, hughd@google.com, akpm@linux-foundation.org,
+        amir73il@gmail.com, djwong@kernel.org, bcodding@redhat.com,
+        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-mtd@lists.infradead.org, linux-afs@lists.infradead.org,
+        linux-cifs@vger.kernel.org, codalist@coda.cs.cmu.edu,
+        cluster-devel@redhat.com, linux-ext4@vger.kernel.org,
+        devel@lists.orangefs.org, ecryptfs@vger.kernel.org,
+        ocfs2-devel@lists.linux.dev, ceph-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, v9fs@lists.linux.dev,
+        samba-technical@lists.samba.org, linux-unionfs@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, ntfs3@lists.linux.dev,
+        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Looks good to me.
+Hello:
 
-Tested-by: Milind Changire <mchangir@redhat.com>
-Tested-by: Venky Shankar <vshankar@redhat.com>
-Reviewed-by: Milind Changire <mchangir@redhat.com>
-Reviewed-by: Venky Shankar <vshankar@redhat.com>
+This series was applied to jaegeuk/f2fs.git (dev)
+by Christian Brauner <brauner@kernel.org>:
 
-On Mon, Jun 19, 2023 at 12:47=E2=80=AFPM <xiubli@redhat.com> wrote:
->
-> From: Xiubo Li <xiubli@redhat.com>
->
-> This will covert the inode to ceph_client.
->
-> URL: https://tracker.ceph.com/issues/61590
-> Cc: Patrick Donnelly <pdonnell@redhat.com>
-> Reviewed-by: Patrick Donnelly <pdonnell@redhat.com>
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/snap.c  | 8 +++++---
->  fs/ceph/super.h | 6 ++++++
->  2 files changed, 11 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-> index 09939ec0d1ee..9dde4b5f513d 100644
-> --- a/fs/ceph/snap.c
-> +++ b/fs/ceph/snap.c
-> @@ -329,7 +329,8 @@ static int cmpu64_rev(const void *a, const void *b)
->  /*
->   * build the snap context for a given realm.
->   */
-> -static int build_snap_context(struct ceph_snap_realm *realm,
-> +static int build_snap_context(struct ceph_mds_client *mdsc,
-> +                             struct ceph_snap_realm *realm,
->                               struct list_head *realm_queue,
->                               struct list_head *dirty_realms)
->  {
-> @@ -425,7 +426,8 @@ static int build_snap_context(struct ceph_snap_realm =
-*realm,
->  /*
->   * rebuild snap context for the given realm and all of its children.
->   */
-> -static void rebuild_snap_realms(struct ceph_snap_realm *realm,
-> +static void rebuild_snap_realms(struct ceph_mds_client *mdsc,
-> +                               struct ceph_snap_realm *realm,
->                                 struct list_head *dirty_realms)
->  {
->         LIST_HEAD(realm_queue);
-> @@ -858,7 +860,7 @@ int ceph_update_snap_trace(struct ceph_mds_client *md=
-sc,
->
->         /* rebuild_snapcs when we reach the _end_ (root) of the trace */
->         if (realm_to_rebuild && p >=3D e)
-> -               rebuild_snap_realms(realm_to_rebuild, &dirty_realms);
-> +               rebuild_snap_realms(mdsc, realm_to_rebuild, &dirty_realms=
-);
->
->         if (!first_realm)
->                 first_realm =3D realm;
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 9655ea46e6ca..4e78de1be23e 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -507,6 +507,12 @@ ceph_sb_to_mdsc(const struct super_block *sb)
->         return (struct ceph_mds_client *)ceph_sb_to_fs_client(sb)->mdsc;
->  }
->
-> +static inline struct ceph_client *
-> +ceph_inode_to_client(const struct inode *inode)
-> +{
-> +       return (struct ceph_client *)ceph_inode_to_fs_client(inode)->clie=
-nt;
-> +}
-> +
->  static inline struct ceph_vino
->  ceph_vino(const struct inode *inode)
->  {
-> --
-> 2.40.1
->
+On Mon, 07 Aug 2023 15:38:31 -0400 you wrote:
+> The VFS always uses coarse-grained timestamps when updating the
+> ctime and mtime after a change. This has the benefit of allowing
+> filesystems to optimize away a lot metadata updates, down to around 1
+> per jiffy, even when a file is under heavy writes.
+> 
+> Unfortunately, this coarseness has always been an issue when we're
+> exporting via NFSv3, which relies on timestamps to validate caches. A
+> lot of changes can happen in a jiffy, so timestamps aren't sufficient to
+> help the client decide to invalidate the cache.
+> 
+> [...]
 
+Here is the summary with links:
+  - [f2fs-dev,v7,01/13] fs: remove silly warning from current_time
+    https://git.kernel.org/jaegeuk/f2fs/c/b3030e4f2344
+  - [f2fs-dev,v7,02/13] fs: pass the request_mask to generic_fillattr
+    https://git.kernel.org/jaegeuk/f2fs/c/0d72b92883c6
+  - [f2fs-dev,v7,03/13] fs: drop the timespec64 arg from generic_update_time
+    https://git.kernel.org/jaegeuk/f2fs/c/541d4c798a59
+  - [f2fs-dev,v7,04/13] btrfs: have it use inode_update_timestamps
+    https://git.kernel.org/jaegeuk/f2fs/c/bb7cc0a62e47
+  - [f2fs-dev,v7,05/13] fat: make fat_update_time get its own timestamp
+    (no matching commit)
+  - [f2fs-dev,v7,06/13] ubifs: have ubifs_update_time use inode_update_timestamps
+    (no matching commit)
+  - [f2fs-dev,v7,07/13] xfs: have xfs_vn_update_time gets its own timestamp
+    (no matching commit)
+  - [f2fs-dev,v7,08/13] fs: drop the timespec64 argument from update_time
+    (no matching commit)
+  - [f2fs-dev,v7,09/13] fs: add infrastructure for multigrain timestamps
+    https://git.kernel.org/jaegeuk/f2fs/c/ffb6cf19e063
+  - [f2fs-dev,v7,10/13] tmpfs: add support for multigrain timestamps
+    https://git.kernel.org/jaegeuk/f2fs/c/d48c33972916
+  - [f2fs-dev,v7,11/13] xfs: switch to multigrain timestamps
+    (no matching commit)
+  - [f2fs-dev,v7,12/13] ext4: switch to multigrain timestamps
+    https://git.kernel.org/jaegeuk/f2fs/c/0269b585868e
+  - [f2fs-dev,v7,13/13] btrfs: convert to multigrain timestamps
+    https://git.kernel.org/jaegeuk/f2fs/c/50e9ceef1d4f
 
---=20
-Milind
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
