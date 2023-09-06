@@ -2,79 +2,67 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2132D7941D2
-	for <lists+ceph-devel@lfdr.de>; Wed,  6 Sep 2023 19:06:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6037794481
+	for <lists+ceph-devel@lfdr.de>; Wed,  6 Sep 2023 22:28:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242420AbjIFRGp (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 6 Sep 2023 13:06:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51252 "EHLO
+        id S244425AbjIFU2f (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 6 Sep 2023 16:28:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233048AbjIFRGo (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 6 Sep 2023 13:06:44 -0400
-X-Greylist: delayed 490 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 06 Sep 2023 10:06:39 PDT
-Received: from mxex2.tik.uni-stuttgart.de (mxex2.tik.uni-stuttgart.de [129.69.192.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5926313E
-        for <ceph-devel@vger.kernel.org>; Wed,  6 Sep 2023 10:06:39 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by mxex2.tik.uni-stuttgart.de (Postfix) with ESMTP id 7AE8760EC7;
-        Wed,  6 Sep 2023 18:58:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=uni-stuttgart.de;
-         h=content-transfer-encoding:content-type:content-type
-        :in-reply-to:content-language:references:subject:subject:from
-        :from:user-agent:mime-version:date:date:message-id; s=dkim; i=
-        @sec.uni-stuttgart.de; t=1694019501; x=1695758302; bh=lO6JYrZ/c/
-        sjHeqUK84E63kpIlgSGGQjcTi6e9bezAY=; b=jM3qJr7VJKgnyYa+65w09qvpV4
-        XaqcD+mFJzYNx/eMbGJRJwvjD4aYgB/bY1yoJ/R2WksA6B1w7/uDKFlDT6L0HLNY
-        29kS/9c2Tyt8cdmo9XlCMAdppt/UG5P3SaMtD5CimD0Re1QORPEJIiIA2hFCjWDa
-        9SdmSBxnB06yJhGwRwcgTceOErEu+h+iMQlkx4semTgKM/Ii9Q7f7kriKCxvwzHL
-        szQ76YJZztrluS4FhEJPoSMHCsBE/j+W/a4s/ghwkxxZEM0Psoz5wd07fUc1gWm3
-        MC3HPYiSQjYcsYE1Fk+RKSS4FFlvEJITQc/u+/UDnOLsZi5MLeRSnVQtI5NQ==
-X-Virus-Scanned: USTUTT mailrelay AV services at mxex2.tik.uni-stuttgart.de
-Received: from mxex2.tik.uni-stuttgart.de ([127.0.0.1])
- by localhost (mxex2.tik.uni-stuttgart.de [127.0.0.1]) (amavis, port 10031)
- with ESMTP id C3_ER3oX8KOD; Wed,  6 Sep 2023 18:58:21 +0200 (CEST)
-Received: from authenticated client
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mxex2.tik.uni-stuttgart.de (Postfix) with ESMTPSA
-Message-ID: <e60ea973-d323-1d4d-c03b-0ee4779735c4@sec.uni-stuttgart.de>
-Date:   Wed, 6 Sep 2023 18:58:20 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.14.0
-From:   Sebastian Hasler <sebastian.hasler@sec.uni-stuttgart.de>
-Subject: Re: [PATCH] ceph: fail the open_by_handle_at() if the dentry is being
- unlinked
-To:     xiubli@redhat.com
-Cc:     ceph-devel@vger.kernel.org
-References: <20220804080624.14768-1-xiubli@redhat.com>
-Content-Language: en-US
-In-Reply-To: <20220804080624.14768-1-xiubli@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE,UNPARSEABLE_RELAY autolearn=ham
-        autolearn_force=no version=3.4.6
+        with ESMTP id S244416AbjIFU2e (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 6 Sep 2023 16:28:34 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1286019A4;
+        Wed,  6 Sep 2023 13:28:31 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AE4EBC433C8;
+        Wed,  6 Sep 2023 20:28:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694032110;
+        bh=IgiAoxtKQz2xxU7qn0OyC1D8zaG7GjYwxLGuCMTgUUg=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=RFf47k8L68EPypyJqcHpI03yKMUi099zB7QtDSmGWaoTIrzQnmEg6p61MFjbWHLiS
+         VtSqrm4y1nsYInnHYLn8eMIC6T3LjQXj10fwIr28Av2r3rIC4U0GTy/RN3c02dfd0u
+         sXHKNx66837U8tBPtEoIXzDQpogTfOUdP9JyW6nnxyh0iEVctVbdb8ceN/7SkSk3+i
+         NoHdjfMIbj0GMcLScJoXoGlvvg3o99cfmh2s10NP0Och4AbJBQiVoRitIK0knRABDl
+         UW6prlioj6lC40zKahT3/Bdze4JFvZk41otRoGe6VVrvfi95h4azpA/UDvcbt+Nq1Y
+         9bYDTQjVvaH9Q==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9B7CEC04D3F;
+        Wed,  6 Sep 2023 20:28:30 +0000 (UTC)
+Subject: Re: [GIT PULL] Ceph updates for 6.6-rc1
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20230906162538.1234699-1-idryomov@gmail.com>
+References: <20230906162538.1234699-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20230906162538.1234699-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.6-rc1
+X-PR-Tracked-Commit-Id: ce0d5bd3a6c176f9a3bf867624a07119dd4d0878
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 7ba2090ca64ea1aa435744884124387db1fac70f
+Message-Id: <169403211062.32268.7336522343049661277.pr-tracker-bot@kernel.org>
+Date:   Wed, 06 Sep 2023 20:28:30 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-While reviewing the implementation of __fh_to_dentry (in the CephFS 
-client), I noticed a possible race condition.
+The pull request you sent on Wed,  6 Sep 2023 18:24:56 +0200:
 
-Linux has a syscall linkat(2) which allows, given an open file 
-descriptor, to create a link for the file. So an inode that is unlinked 
-can become linked.
+> https://github.com/ceph/ceph-client.git tags/ceph-for-6.6-rc1
 
-Now the problem: The line ((inode->i_nlink == 0) && 
-!__ceph_is_file_opened(ci)) performs two checks. If, in between those 
-checks, the file goes from the unlinked and open state to the linked and 
-closed state, then we return -ESTALE even though the inode is linked. I 
-don't think this is the intended behavior. I guess this (going from 
-unlinked and open to linked and closed) can happen when a concurrent 
-process calls linkat() and then close().
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/7ba2090ca64ea1aa435744884124387db1fac70f
 
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
