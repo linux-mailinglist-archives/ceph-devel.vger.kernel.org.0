@@ -2,104 +2,121 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF7FC7983D4
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 Sep 2023 10:15:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BF3879843D
+	for <lists+ceph-devel@lfdr.de>; Fri,  8 Sep 2023 10:39:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231828AbjIHIPz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 8 Sep 2023 04:15:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42834 "EHLO
+        id S235166AbjIHIji (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 8 Sep 2023 04:39:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230272AbjIHIPz (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 8 Sep 2023 04:15:55 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 123E01BD3;
-        Fri,  8 Sep 2023 01:15:51 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id D265168B05; Fri,  8 Sep 2023 10:15:44 +0200 (CEST)
-Date:   Fri, 8 Sep 2023 10:15:44 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
-        David Howells <dhowells@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Lei Huang <lei.huang@linux.intel.com>, miklos@szeredi.hu,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
+        with ESMTP id S229844AbjIHIjh (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 8 Sep 2023 04:39:37 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85761173B;
+        Fri,  8 Sep 2023 01:39:32 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 37501218E7;
+        Fri,  8 Sep 2023 08:39:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1694162371; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fbx31EkjZzotYqty93GvSD1Lhn8zAYWbew9Y/e9+J/k=;
+        b=qdXyVB+GeZ7xjyEM+8B3z7v/B90Rjshipn9BTq6nq1UUwYXlLJmNGaDKURjIeKAoJLbN+i
+        VJVAvWSSWPb5TA4HaTgyixstotOJXmkf4J5/AWMxH+NXG/2NxPktfLxuP43j9/Jw6TZjHO
+        lt4IbeDeMkaGR3/b5PM+7anprx44UOc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1694162371;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fbx31EkjZzotYqty93GvSD1Lhn8zAYWbew9Y/e9+J/k=;
+        b=OVZArmbicxnYm09FYLfar8yuMGQNs+4+hIn3vfD/D1mB51k1nQaJmp8gUFh7UvPM6qLg/Y
+        nw5MdFdYyVWNjMDQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A850D131FD;
+        Fri,  8 Sep 2023 08:39:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Jy2wJcLd+mTgNwAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Fri, 08 Sep 2023 08:39:30 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id eba3de06;
+        Fri, 8 Sep 2023 08:39:29 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
         Jeff Layton <jlayton@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        Boris Pismenny <borisp@nvidia.com>, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-mm@kvack.org, v9fs@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: getting rid of the last memory modifitions through
- gup(FOLL_GET)
-Message-ID: <20230908081544.GB8240@lst.de>
-References: <20230905141604.GA27370@lst.de> <0240468f-3cc5-157b-9b10-f0cd7979daf0@redhat.com>
+        Milind Changire <mchangir@redhat.com>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH] ceph: remove unnecessary check for NULL in
+ parse_longname()
+In-Reply-To: <3493bd1b-4982-e851-a2bc-c806889af01e@redhat.com> (Xiubo Li's
+        message of "Fri, 8 Sep 2023 08:14:19 +0800")
+References: <20230907133928.11126-1-lhenriques@suse.de>
+        <3493bd1b-4982-e851-a2bc-c806889af01e@redhat.com>
+Date:   Fri, 08 Sep 2023 09:39:29 +0100
+Message-ID: <877cp1m532.fsf@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0240468f-3cc5-157b-9b10-f0cd7979daf0@redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Sep 06, 2023 at 11:42:33AM +0200, David Hildenbrand wrote:
->> and iov_iter_get_pages_alloc2.  We have three file system direct I/O
->> users of those left: ceph, fuse and nfs.  Lei Huang has sent patches
->> to convert fuse to iov_iter_extract_pages which I'd love to see merged,
->> and we'd need equivalent work for ceph and nfs.
+Xiubo Li <xiubli@redhat.com> writes:
+
+> On 9/7/23 21:39, Lu=C3=ADs Henriques wrote:
+>> Function ceph_get_inode() never returns NULL; instead it returns an
+>> ERR_PTR() if something fails.  Thus, the check for NULL in
+>> parse_longname() useless and can be dropped.
 >>
->> The non-file system uses are in the vmsplice code, which only reads
+>> Fixes: dd66df0053ef ("ceph: add support for encrypted snapshot names")
+>> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+>> Signed-off-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
+>> ---
+>>   fs/ceph/crypto.c | 2 --
+>>   1 file changed, 2 deletions(-)
+>>
+>> diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
+>> index e4d5cd56a80b..7d0b9b5ccfc6 100644
+>> --- a/fs/ceph/crypto.c
+>> +++ b/fs/ceph/crypto.c
+>> @@ -249,8 +249,6 @@ static struct inode *parse_longname(const struct ino=
+de *parent,
+>>   	if (!dir) {
+>>   		/* This can happen if we're not mounting cephfs on the root */
+>>   		dir =3D ceph_get_inode(parent->i_sb, vino, NULL);
+>> -		if (!dir)
+>> -			dir =3D ERR_PTR(-ENOENT);
+>>   	}
+>>   	if (IS_ERR(dir))
+>>   		dout("Can't find inode %s (%s)\n", inode_number, name);
+>>
+> Luis,
 >
-> vmsplice really has to be fixed to specify FOLL_PIN|FOLL_LONGTERM for good; 
-> I recall that David Howells had patches for that at one point. (at least to 
-> use FOLL_PIN)
+> How about moving the error check into the=C2=A0 'if (!dir) {}' ? Because =
+from
+> 'ceph_find_inode()' the return value shouldn't be true here. This err che=
+ck
+> should for 'ceph_get_inode()' only.
 
-Hmm, unless I'm misreading the code vmsplace is only using
-iov_iter_get_pages2 for reading from the user address space anyway.
-Or am I missing something?
+Yeah, you're right.  Thanks, Xiubo.  I'll send out v2 shortly.
 
->> After that we might have to do an audit of the raw get_user_pages APIs,
->> but there probably aren't many that modify file backed memory.
->
-> ptrace should apply that ends up doing a FOLL_GET|FOLL_WRITE.
-
-Yes, if that ends up on file backed shared mappings we also need a pin.
-
-> Further, KVM ends up using FOLL_GET|FOLL_WRITE to populate the second-level 
-> page tables for VMs, and uses MMU notifiers to synchronize the second-level 
-> page tables with process page table changes. So once a PTE goes from 
-> writable -> r/o in the process page table, the second level page tables for 
-> the VM will get updated. Such MMU users are quite different from ordinary 
-> GUP users.
-
-Can KVM page tables use file backed shared mappings?
-
-> Converting ptrace might not be desired/required as well (the reference is 
-> dropped immediately after the read/write access).
-
-But the pin is needed to make sure the file system can account for
-dirtying the pages.  Something we fundamentally can't do with get.
-
-> The end goal as discussed a couple of times would be the to limit FOLL_GET 
-> in general only to a couple of users that can be audited and keep using it 
-> for a good reason. Arbitrary drivers that perform DMA should stop using it 
-> (and ideally be prevented from using it) and switch to FOLL_PIN.
-
-Agreed, that's where I'd like to get to.  Preferably with the non-pin
-API not even beeing epxorted to modules.
+Cheers,
+--=20
+Lu=C3=ADs
