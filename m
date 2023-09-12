@@ -2,57 +2,57 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ADDF179BB0A
-	for <lists+ceph-devel@lfdr.de>; Tue, 12 Sep 2023 02:12:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56F8479C8BF
+	for <lists+ceph-devel@lfdr.de>; Tue, 12 Sep 2023 09:56:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238672AbjIKWJJ (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 11 Sep 2023 18:09:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56358 "EHLO
+        id S230514AbjILH4X (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Tue, 12 Sep 2023 03:56:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237620AbjIKNBb (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 11 Sep 2023 09:01:31 -0400
-Received: from sanan-e.com (unknown [218.107.219.99])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5E2C7CC;
-        Mon, 11 Sep 2023 06:01:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sanan-e.com; s=dkim; h=Received:Content-Type:MIME-Version:
-        Content-Transfer-Encoding:Content-Description:Subject:To:From:
-        Date:Reply-To:Message-Id; bh=JlB5+d9LM8owbqGfrdZXyhb3r+ZFKQaAdOH
-        ATpJsLVA=; b=a17fpS473FQnn4axBxBmoqjQSlIHu+8a1yOF1RX0cDikrBt1hnC
-        Vm32Bp26DzMLVACewy+2bZs33ohbZdF7ZfgTWObTtK5nKHG8+1h6sn5hF7O3T64J
-        LkRJprXTUo7BzvTWhIPp3c/xlTgyx8dADA/rhvl3p+wQobKEsMt5dkvY=
-Received: from [156.96.56.92] (unknown [128.14.67.204])
-        by MailDR (Coremail) with SMTP id AQAAfwCHMgc5A_9kRtObAA--.2315S207;
-        Mon, 11 Sep 2023 20:35:07 +0800 (CST)
-Content-Type: text/plain; charset="iso-8859-1"
+        with ESMTP id S231967AbjILH4V (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Tue, 12 Sep 2023 03:56:21 -0400
+X-Greylist: delayed 578 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 12 Sep 2023 00:56:15 PDT
+Received: from mail.svorkabrattegg.com (mail.svorkabrattegg.com [51.38.115.213])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD9EFE78
+        for <ceph-devel@vger.kernel.org>; Tue, 12 Sep 2023 00:56:15 -0700 (PDT)
+Received: by mail.svorkabrattegg.com (Postfix, from userid 1002)
+        id D937DA3B29; Tue, 12 Sep 2023 07:45:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=svorkabrattegg.com;
+        s=mail; t=1694504766;
+        bh=/k89xfPLk1d0qR/RHuj9ICbI68AhaQrvzSmPJgcc5mA=;
+        h=Date:From:To:Subject:From;
+        b=Xndncli9M+1bJjnkQGJh/1elbAWOZRjhh/DV7LZas+R6RKhy2m85q0Z8FlBUBkmMO
+         PG0PyggBnImeAgPlCKTsR6BsggqcqDySTifbGI2VHKQ0cv64qFwxfKfHDxPeaO2VbE
+         sBHT3fdfG0uMrAi0TfPU05rGffp2l/TVUoAVob0r3bynypeRt0EBtuOkw5T9qbQS6h
+         laTFDuR7cPqq19ZzuKN97qDSVwQtFmBzJtxZlyTXmBUJL2Job6UA8kALOVqeg4jp6t
+         oaToWbjyYHN/0RtIzPohKYvM8/Q3Ssz8KC/918mINqUQYxo7NaiEkULpHl6pm390Kp
+         QtQCB6R40XSMg==
+Received: by mail.svorkabrattegg.com for <ceph-devel@vger.kernel.org>; Tue, 12 Sep 2023 07:45:44 GMT
+Message-ID: <20230912064500-0.1.d0.syoi.0.8x1146jrkd@svorkabrattegg.com>
+Date:   Tue, 12 Sep 2023 07:45:44 GMT
+From:   "Hubert Kowalczyk" <hubert.kowalczyk@svorkabrattegg.com>
+To:     <ceph-devel@vger.kernel.org>
+Subject: =?UTF-8?Q?Prosz=C4=99_o_kontakt?=
+X-Mailer: mail.svorkabrattegg.com
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Help
-To:     Recipients <olena@sanan-e.com>
-From:   olena@sanan-e.com
-Date:   Mon, 11 Sep 2023 05:34:52 -0700
-Reply-To: olenasheve73@gmail.com
-X-CM-TRANSID: AQAAfwCHMgc5A_9kRtObAA--.2315S207
-Message-Id: <64FF0F97.47AB38.70031@sanan-e.com>
-Authentication-Results: MailDR; spf=neutral smtp.mail=olena@sanan-e.co
-        m;
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRUUUUUUUUU
-        =
-X-Spam-Status: No, score=4.7 required=5.0 tests=BAYES_50,DKIM_INVALID,
-        DKIM_SIGNED,FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_MSPIKE_BL,RCVD_IN_MSPIKE_L4,RCVD_IN_VALIDITY_RPBL,
-        SPF_HELO_PASS,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ****
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-        lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hi,
-I am a Ukrainian, I have funds for investment, can you please help me reloc=
-ate and invest in your country?
-Thank you as i possibly wait to hear from you, Olena.
+Dzie=C5=84 dobry,
 
+Czy jest mo=C5=BCliwo=C5=9B=C4=87 nawi=C4=85zania wsp=C3=B3=C5=82pracy z =
+Pa=C5=84stwem?
+
+Z ch=C4=99ci=C4=85 porozmawiam z osob=C4=85 zajmuj=C4=85c=C4=85 si=C4=99 =
+dzia=C5=82aniami zwi=C4=85zanymi ze sprzeda=C5=BC=C4=85.
+
+Pomagamy skutecznie pozyskiwa=C4=87 nowych klient=C3=B3w.
+
+Zapraszam do kontaktu.
+
+
+Z pozdrowieniami
+Hubert Kowalczyk
