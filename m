@@ -2,28 +2,37 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A59579E593
-	for <lists+ceph-devel@lfdr.de>; Wed, 13 Sep 2023 13:00:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72E1979EE50
+	for <lists+ceph-devel@lfdr.de>; Wed, 13 Sep 2023 18:33:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239871AbjIMLAW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 13 Sep 2023 07:00:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41192 "EHLO
+        id S229980AbjIMQdW (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 13 Sep 2023 12:33:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239798AbjIMLAU (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Sep 2023 07:00:20 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A84F19AF;
-        Wed, 13 Sep 2023 04:00:16 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id C3BB268AA6; Wed, 13 Sep 2023 13:00:10 +0200 (CEST)
-Date:   Wed, 13 Sep 2023 13:00:10 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>,
+        with ESMTP id S229472AbjIMQdW (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Sep 2023 12:33:22 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 425B019A7;
+        Wed, 13 Sep 2023 09:33:18 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6C43C433C8;
+        Wed, 13 Sep 2023 16:33:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1694622797;
+        bh=/BE0SzPSHWJUDQnPrCfnTnaEO0Ee7ixrpqIiDWWi4pg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JEIWOoDeYw0Lf9hWj/zCyZ4x/rGCa/NQnygF+m0lMZeczRYWp/+IE53tvWyCKZsG+
+         up2zc8mQP9OdLjIt3ieHpSW+DbqQjZbKoxHgYka+ox5B/duraDYwWYC2flCW6yQuBT
+         cv0SrfJZcsbNKoo8+UUGobBcO+5vSh//zaB0oCO1AkX/JNOxsSLnUA74YuG8d2qy//
+         xSekU6sH/2OHlD59lMaI3d2pMSviFkxZRQRw7TX7MfD7+om+CEtOj6/4xJ6+C+s9aW
+         E5R98PPdfp9ZT0xmFjYnC4VDDVH+LzbtHDEh8winSlhdDUVsFOEtHvfQKUUr5vKlnV
+         kky/flcyBX0+w==
+Date:   Wed, 13 Sep 2023 18:33:10 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Matthew Wilcox <willy@infradead.org>,
         Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>,
         Ilya Dryomov <idryomov@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
         Theodore Ts'o <tytso@mit.edu>,
         Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
@@ -39,18 +48,25 @@ Cc:     Christoph Hellwig <hch@lst.de>,
         linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-mm@kvack.org, Hannes Reinecke <hare@suse.de>
 Subject: Re: [PATCH 03/12] filemap: update ki_pos in generic_perform_write
-Message-ID: <20230913110010.GA31292@lst.de>
-References: <20230601145904.1385409-1-hch@lst.de> <20230601145904.1385409-4-hch@lst.de> <20230827194122.GA325446@ZenIV> <20230827214518.GU3390869@ZenIV>
+Message-ID: <20230913-aufgreifen-fehlleiten-204b36f3069d@brauner>
+References: <20230601145904.1385409-1-hch@lst.de>
+ <20230601145904.1385409-4-hch@lst.de>
+ <20230827194122.GA325446@ZenIV>
+ <20230827214518.GU3390869@ZenIV>
+ <20230913110010.GA31292@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20230827214518.GU3390869@ZenIV>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20230913110010.GA31292@lst.de>
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-> direct_write_fallback(): on error revert the ->ki_pos update from buffered write
+On Wed, Sep 13, 2023 at 01:00:10PM +0200, Christoph Hellwig wrote:
+> > direct_write_fallback(): on error revert the ->ki_pos update from buffered write
+> 
+> Al, Christian: can you send this fix on top Linus?
 
-Al, Christian: can you send this fix on top Linus?
-
+Wasn't aware of this, sorry. I've picked it up and placed it with
+another set of small fixes I already have.
+I'm happy to have Al take it ofc.
