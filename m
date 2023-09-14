@@ -2,30 +2,30 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB4579F693
-	for <lists+ceph-devel@lfdr.de>; Thu, 14 Sep 2023 03:55:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B53AD79F6A7
+	for <lists+ceph-devel@lfdr.de>; Thu, 14 Sep 2023 03:55:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233608AbjINBzK (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 13 Sep 2023 21:55:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49694 "EHLO
+        id S233974AbjINBzz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 13 Sep 2023 21:55:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233591AbjINBzJ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Sep 2023 21:55:09 -0400
+        with ESMTP id S233747AbjINBzj (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 13 Sep 2023 21:55:39 -0400
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA8B11BCB;
-        Wed, 13 Sep 2023 18:55:05 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98A7AC433CA;
-        Thu, 14 Sep 2023 01:55:04 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A28A12134;
+        Wed, 13 Sep 2023 18:55:29 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 357C9C433C9;
+        Thu, 14 Sep 2023 01:55:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1694656505;
-        bh=LezNPFGAK/y+EDXzVgadFeemqrl+IUwRWAnyhs9Hge4=;
+        s=k20201202; t=1694656529;
+        bh=gPsbVbbOLjqHxClnjm6T+44OngN2s1m3k6gdCmcyv+0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cotcmnEASJEL8LmX8fxkLO3tNyojHTbBmpz+Of2r1OA4e7eD7Ga5FzXnFviAkrrYQ
-         xba3t91ZdOHIhi/xNEDEGhTKfh2GdYK1F0lOun7awEWf9b6y2uFp1qz8jcqzg81WCh
-         i9wBA9HaAjKGBmGpr9cA86EvODyTYvTHBoRuL0erH74v06voqLycdnI40q6rqCf+WF
-         E3Uh4g+M7zsIlPbSEUD6Q3UOpq5SAONS+/NNMgjjKIjDNIcFHLIeeCn5/wdYlnQPIu
-         A040v0f/W3ouV0aEUWeH61jFW0DqcaeJGyCwTFU32pVSWE5DZCbBCELxO01VS0AO9m
-         cSkQ8GytFOfew==
+        b=r/pBrUwr2UHhM+2yD5r0w8QZG7MVHdIvwPF3VpnmoijVzIoREKJe75blTbj/f2AcR
+         KqLl9orQ7cAdbWjQKAJCbMCUidqdqf9LGRJcS76MPx/8JXO8v51oefIegdWdigQNoU
+         LC78WZr2nyTKlLh1FPFs8WWcY6R74SqTIzNpLVkxCCjQQwReiE42+RFo7Q9QLKMe5R
+         gSSm8PnKhqd2+2kpiAAZ5NwVMSGoPpcNk+3hpeIFU5YuVxxhIt5395AQYag9G11ryE
+         i/79c4GUhxSfqxCMoSaSvjYx4GopIcdzlKSZDzQhahbBH2z0cEenE0w/XxwLsphcsD
+         Hegra7foWe7Vw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Xiubo Li <xiubli@redhat.com>,
@@ -33,17 +33,17 @@ Cc:     Xiubo Li <xiubli@redhat.com>,
         Milind Changire <mchangir@redhat.com>,
         Ilya Dryomov <idryomov@gmail.com>,
         Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.5 2/7] ceph: drop messages from MDS when unmounting
-Date:   Wed, 13 Sep 2023 21:54:46 -0400
-Message-Id: <20230914015459.51740-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 2/6] ceph: drop messages from MDS when unmounting
+Date:   Wed, 13 Sep 2023 21:55:12 -0400
+Message-Id: <20230914015523.51894-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20230914015459.51740-1-sashal@kernel.org>
-References: <20230914015459.51740-1-sashal@kernel.org>
+In-Reply-To: <20230914015523.51894-1-sashal@kernel.org>
+References: <20230914015523.51894-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.5.3
+X-stable-base: Linux 6.1.53
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
@@ -114,10 +114,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  7 files changed, 109 insertions(+), 22 deletions(-)
 
 diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index e2bb0d0072da5..c268bd07e7ddd 100644
+index 4a9ad5ff726d4..36052a3626830 100644
 --- a/fs/ceph/caps.c
 +++ b/fs/ceph/caps.c
-@@ -4105,6 +4105,9 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+@@ -4100,6 +4100,9 @@ void ceph_handle_caps(struct ceph_mds_session *session,
  
  	dout("handle_caps from mds%d\n", session->s_mds);
  
@@ -127,7 +127,7 @@ index e2bb0d0072da5..c268bd07e7ddd 100644
  	/* decode */
  	end = msg->front.iov_base + msg->front.iov_len;
  	if (msg->front.iov_len < sizeof(*h))
-@@ -4201,7 +4204,6 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+@@ -4196,7 +4199,6 @@ void ceph_handle_caps(struct ceph_mds_session *session,
  	     vino.snap, inode);
  
  	mutex_lock(&session->s_mutex);
@@ -135,7 +135,7 @@ index e2bb0d0072da5..c268bd07e7ddd 100644
  	dout(" mds%d seq %lld cap seq %u\n", session->s_mds, session->s_seq,
  	     (unsigned)seq);
  
-@@ -4309,6 +4311,8 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+@@ -4299,6 +4301,8 @@ void ceph_handle_caps(struct ceph_mds_session *session,
  done_unlocked:
  	iput(inode);
  out:
@@ -145,10 +145,10 @@ index e2bb0d0072da5..c268bd07e7ddd 100644
  
  	/* Defer closing the sessions after s_mutex lock being released */
 diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 5fb367b1d4b06..4b0ba067e9c93 100644
+index 5399a9ea5b4f1..f6a7fd47efd7a 100644
 --- a/fs/ceph/mds_client.c
 +++ b/fs/ceph/mds_client.c
-@@ -4550,6 +4550,9 @@ static void handle_lease(struct ceph_mds_client *mdsc,
+@@ -4546,6 +4546,9 @@ static void handle_lease(struct ceph_mds_client *mdsc,
  
  	dout("handle_lease from mds%d\n", mds);
  
@@ -158,7 +158,7 @@ index 5fb367b1d4b06..4b0ba067e9c93 100644
  	/* decode */
  	if (msg->front.iov_len < sizeof(*h) + sizeof(u32))
  		goto bad;
-@@ -4568,8 +4571,6 @@ static void handle_lease(struct ceph_mds_client *mdsc,
+@@ -4564,8 +4567,6 @@ static void handle_lease(struct ceph_mds_client *mdsc,
  	     dname.len, dname.name);
  
  	mutex_lock(&session->s_mutex);
@@ -167,7 +167,7 @@ index 5fb367b1d4b06..4b0ba067e9c93 100644
  	if (!inode) {
  		dout("handle_lease no inode %llx\n", vino.ino);
  		goto release;
-@@ -4631,9 +4632,13 @@ static void handle_lease(struct ceph_mds_client *mdsc,
+@@ -4627,9 +4628,13 @@ static void handle_lease(struct ceph_mds_client *mdsc,
  out:
  	mutex_unlock(&session->s_mutex);
  	iput(inode);
@@ -181,7 +181,7 @@ index 5fb367b1d4b06..4b0ba067e9c93 100644
  	pr_err("corrupt lease message\n");
  	ceph_msg_dump(msg);
  }
-@@ -4829,6 +4834,9 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
+@@ -4825,6 +4830,9 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
  	}
  
  	init_completion(&mdsc->safe_umount_waiters);
@@ -192,7 +192,7 @@ index 5fb367b1d4b06..4b0ba067e9c93 100644
  	INIT_LIST_HEAD(&mdsc->waiting_for_map);
  	mdsc->quotarealms_inodes = RB_ROOT;
 diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 86d2965e68a1f..cff7392809032 100644
+index 9a80658f41679..0913959ccfa64 100644
 --- a/fs/ceph/mds_client.h
 +++ b/fs/ceph/mds_client.h
 @@ -381,8 +381,9 @@ struct cap_wait {
@@ -265,10 +265,10 @@ index 64592adfe48fb..f7fcf7f08ec64 100644
  
  static struct ceph_quotarealm_inode *
 diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-index 343d738448dcd..7ddc6bad77ef3 100644
+index 2e73ba62bd7aa..82f7592e1747b 100644
 --- a/fs/ceph/snap.c
 +++ b/fs/ceph/snap.c
-@@ -1015,6 +1015,9 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+@@ -1012,6 +1012,9 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
  	int locked_rwsem = 0;
  	bool close_sessions = false;
  
@@ -278,7 +278,7 @@ index 343d738448dcd..7ddc6bad77ef3 100644
  	/* decode */
  	if (msg->front.iov_len < sizeof(*h))
  		goto bad;
-@@ -1030,10 +1033,6 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+@@ -1027,10 +1030,6 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
  	dout("%s from mds%d op %s split %llx tracelen %d\n", __func__,
  	     mds, ceph_snap_op_name(op), split, trace_len);
  
@@ -289,7 +289,7 @@ index 343d738448dcd..7ddc6bad77ef3 100644
  	down_write(&mdsc->snap_rwsem);
  	locked_rwsem = 1;
  
-@@ -1151,6 +1150,7 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+@@ -1148,6 +1147,7 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
  	up_write(&mdsc->snap_rwsem);
  
  	flush_snaps(mdsc);
@@ -297,7 +297,7 @@ index 343d738448dcd..7ddc6bad77ef3 100644
  	return;
  
  bad:
-@@ -1160,6 +1160,8 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+@@ -1157,6 +1157,8 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
  	if (locked_rwsem)
  		up_write(&mdsc->snap_rwsem);
  
@@ -407,10 +407,10 @@ index a5f52013314d6..281b493fdac8e 100644
  
  	fsc->client->extra_mon_dispatch = NULL;
 diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 3bfddf34d488b..e6c1edf9e12b0 100644
+index 562f42f4a77d7..7ca74f5f70be5 100644
 --- a/fs/ceph/super.h
 +++ b/fs/ceph/super.h
-@@ -1375,4 +1375,7 @@ extern bool ceph_quota_update_statfs(struct ceph_fs_client *fsc,
+@@ -1374,4 +1374,7 @@ extern bool ceph_quota_update_statfs(struct ceph_fs_client *fsc,
  				     struct kstatfs *buf);
  extern void ceph_cleanup_quotarealms_inodes(struct ceph_mds_client *mdsc);
  
