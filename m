@@ -2,120 +2,169 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 943177A27ED
-	for <lists+ceph-devel@lfdr.de>; Fri, 15 Sep 2023 22:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E3A17A28AC
+	for <lists+ceph-devel@lfdr.de>; Fri, 15 Sep 2023 22:52:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237158AbjIOURT (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 15 Sep 2023 16:17:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41762 "EHLO
+        id S237574AbjIOUvc (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 15 Sep 2023 16:51:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237329AbjIOUQu (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 15 Sep 2023 16:16:50 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F07330FB
-        for <ceph-devel@vger.kernel.org>; Fri, 15 Sep 2023 13:15:19 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id d2e1a72fcca58-68fb2e9ebcdso2120680b3a.2
-        for <ceph-devel@vger.kernel.org>; Fri, 15 Sep 2023 13:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1694808919; x=1695413719; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4w8pbHszfCpVRKvLNW5+32KFz2EZUD5ueTN7U1w8HFo=;
-        b=FmbvkYu6ddu7F8+G0qKxVJtXzvvyKCz/QtF8GtkDdOX4HFpslz29FPPy+heyqNtbLm
-         zygfbCgGs53K8yYIGIx42vzDrvEX1OSTstulkUceWp4x1/cMmel3eQaZPQkQE8v3pdi0
-         jldbwSHeNsDy/K1trR1dI1tDNvBnVwSjpA8Xs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1694808919; x=1695413719;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4w8pbHszfCpVRKvLNW5+32KFz2EZUD5ueTN7U1w8HFo=;
-        b=umGcEBPGul1p7f1XbdnxyttGdaUzGiYpzu890ed7FCqF/WAm6vhdRNumjPrGXYh04r
-         +n1ehhtqx2FEw9lSWxJGxd7hhmeDOOmPeGi1IUezpNYtWBlolJ66vo57wf1BMCchM5tf
-         WUulwfvK1Ux+5ZlyTfxsTnKBIX4aR66cv1PkNN3SORFO4G6FQYEbSsqVIsemNljLTLFO
-         HIncDfU04a1dCRSpQzOIWVu9ynkfLH/St4HZyzDiANEZRNCPtB62btAc2UKsaMHXnnQe
-         DWcw48tosdzRyrl+bSBzr1hcX00RUZZKmvYGrWmH3Y4B2+TvdIXmI4OprX/huC3Uxq/e
-         FCkQ==
-X-Gm-Message-State: AOJu0YzGCtaNZKLN1tDPSS9NZvtOGeY1E42IvmoNGe8OUV2HwtKagwdP
-        w3PSlWE5lvlYaGf1pWCeRZtaow==
-X-Google-Smtp-Source: AGHT+IHfuqeJ9ZAn3MunxwHrKU8GKe2P/Qfi2HE+t5E4znmmL9cdXh/Hh8gnRQA+06Ej6GKlNU+m9w==
-X-Received: by 2002:a05:6a00:1949:b0:68e:417c:ed5c with SMTP id s9-20020a056a00194900b0068e417ced5cmr2901197pfk.32.1694808919258;
-        Fri, 15 Sep 2023 13:15:19 -0700 (PDT)
-Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id z15-20020aa785cf000000b0069029a3196dsm3320094pfn.184.2023.09.15.13.15.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Sep 2023 13:15:18 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     Kees Cook <keescook@chromium.org>, Xiubo Li <xiubli@redhat.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        Nathan Chancellor <nathan@kernel.org>,
+        with ESMTP id S237787AbjIOUvT (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 15 Sep 2023 16:51:19 -0400
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A20F244A0
+        for <ceph-devel@vger.kernel.org>; Fri, 15 Sep 2023 13:50:27 -0700 (PDT)
+Received: from eig-obgw-6003a.ext.cloudfilter.net ([10.0.30.151])
+        by cmsmtp with ESMTP
+        id hFjkqMNjiEoVshFljqHz21; Fri, 15 Sep 2023 20:50:27 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with ESMTPS
+        id hFliq6JbWlWQAhFljqzWVF; Fri, 15 Sep 2023 20:50:27 +0000
+X-Authority-Analysis: v=2.4 cv=INMRtyjG c=1 sm=1 tr=0 ts=6504c393
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=WzbPXH4gqzPVN0x6HrNMNA==:17
+ a=OWjo9vPv0XrRhIrVQ50Ab3nP57M=:19 a=dLZJa+xiwSxG16/P+YVxDGlgEgI=:19
+ a=IkcTkHD0fZMA:10 a=zNV7Rl7Rt7sA:10 a=wYkD_t78qR0A:10 a=NEAV23lmAAAA:8
+ a=pGLkceISAAAA:8 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8 a=J1Y8HTJGAAAA:8
+ a=1XWaLZrsAAAA:8 a=cm27Pg_UAAAA:8 a=6UV5UrL1aO4bJEFlmkAA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=y1Q9-5lHfBjTkpIzbSAN:22 a=xmb-EsYY8bH0VWELuYED:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=t1igbisZY4JCWWgBASjQDcN1v+RkxDKKqSatW1+S9XM=; b=sKPpkHuMAovyz+fDocXbW2MFAa
+        ywDePibb21uafX2s669sT+OE2D58ARk4umNIBaQAtiV/Qm0rKtU/I1Z8Ix7s7treFlOFVzDmN/3W/
+        p9YbuFyfcNYHAkt++bR2FUpVoI7mnwORg+F92gB3RzU6JpVBAqRrQh1LLj2ycUDSbZQT0XbFwik4T
+        CO3kaQcZEiIfRC3LxVT4khAA1YS4XZExZo5nt85QERzvr84DWcgQbikuyZtdPq2f5SVG/CeiUYyO5
+        D8c3YJE6PLSZ+Le1B2+Tqm1nAw0QiLokMLIfM2IN6w3vMY6bcmCNUM3ZiANJZP/gXCssZxRDE29iL
+        XMGWUxIQ==;
+Received: from 187-162-21-192.static.axtel.net ([187.162.21.192]:38950 helo=[192.168.15.8])
+        by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.96)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1qhFlh-002fk4-1a;
+        Fri, 15 Sep 2023 15:50:25 -0500
+Message-ID: <8e9b414f-52bb-bf47-873b-4bc537e62da6@embeddedor.com>
+Date:   Fri, 15 Sep 2023 14:51:20 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] ceph: Annotate struct ceph_monmap with __counted_by
+Content-Language: en-US
+To:     Kees Cook <keescook@chromium.org>,
+        Ilya Dryomov <idryomov@gmail.com>
+Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, ceph-devel@vger.kernel.org,
+        netdev@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>,
         Nick Desaulniers <ndesaulniers@google.com>,
         Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
         llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-Subject: [PATCH] ceph: Annotate struct ceph_osd_request with __counted_by
-Date:   Fri, 15 Sep 2023 13:15:17 -0700
-Message-Id: <20230915201517.never.373-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1212; i=keescook@chromium.org;
- h=from:subject:message-id; bh=AmH8bN4F2ziXz0Z5YnlEPY0FFmz4WBV4Hrt1uqyDRes=;
- b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBlBLtVT5VsBXPgep3O4AyayotxNhxeQbO4Z6caq
- 4bgXJt2IN2JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZQS7VQAKCRCJcvTf3G3A
- JvG8D/kBmR4/73WcqLcQcfZ5AAGQQBpqE9J7q/mjZ+UbsQV2m9A0SBCDX97Li8f/0Rla/QjMJgW
- y1kNPx8A5IGfqso+ErmEX/jvCkSP/PfjbTUrZlmNHUHNkiSrUJCzxNLmxaY6zOXydzU/lh8hmek
- u3A7Exe2D6NgGiFDY55GwrNFgFTdS1HxnyURJ4cQJDQHH7boXlfeO4YVl+nOMBL2nlrF3lphm1I
- Zl49zmIoznpwf6gbDjLul0AeIVrgHmeZo8VM1mdX3ow3M6JcX4J8T6UhhLK64mrQBXcfhEHYbbf
- VNK7Me1ZOj3g24mq6ik1bWOGfFPlzXKJNObFtlssYMHbH6fSTax10K0lQeIrrg9WOQTZZT8WIxx
- yiW7XSqoGv4ddDLzNl44ISWOsfpny0i9nRi0daL0pay2CYh9ahAAsnJ1DfegWJ/7TmWtDDciVtj
- i9N+up7jzsKNv67ubYZWQb62DWKMy+dfuH5T3jYJ2dD3+jZTh+bCJEVqJVVsWvm89uQjJmgqQOJ
- gBMiML59Ky/UIbQ2mRak98NeiXIHVxrlbtduo4ihoM+jbZLFK2CFgmwzi3KXyvaNTt7L6h5iJ6Y
- ghMet33KklOxTWy0tvwEGn0e9b8jiPQzWC4fWwKO4u3cQ0QTCnuOx7AYPqxubNnWz6eos8IF8AG
- ECH0vz6 +J8OtTTQ==
-X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <20230915201510.never.365-kees@kernel.org>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20230915201510.never.365-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 187.162.21.192
+X-Source-L: No
+X-Exim-ID: 1qhFlh-002fk4-1a
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 187-162-21-192.static.axtel.net ([192.168.15.8]) [187.162.21.192]:38950
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 471
+X-Org:  HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfOfL5krMrxzF/p6uWFAg5EG2RxbaM9JLUDpi8V1mohpUjkx4YcEoliJeckNHxqB9FDNWbHmoB+FpPo1KV3DKzOP+gJhths9D+V8AkPxJLF5RATNEBVOn
+ Ahr+/r/as9zzOo01I9JU8rEzwxhCyPeB65mH9rZ5wG4nC1uqLCtRAiYFNQsOSAz4mmDXg8QMySSCPbO1u5MF7P9Ibb+Y48vTob9qNqq6O4NZ4sa/q6iggzBn
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Prepare for the coming implementation by GCC and Clang of the __counted_by
-attribute. Flexible array members annotated with __counted_by can have
-their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
-(for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
-functions).
 
-As found with Coccinelle[1], add __counted_by for struct ceph_osd_request.
 
-[1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
+On 9/15/23 14:15, Kees Cook wrote:
+> Prepare for the coming implementation by GCC and Clang of the __counted_by
+> attribute. Flexible array members annotated with __counted_by can have
+> their accesses bounds-checked at run-time checking via CONFIG_UBSAN_BOUNDS
+> (for array indexing) and CONFIG_FORTIFY_SOURCE (for strcpy/memcpy-family
+> functions).
+> 
+> As found with Coccinelle[1], add __counted_by for struct ceph_monmap.
+> Additionally, since the element count member must be set before accessing
+> the annotated flexible array member, move its initialization earlier.
+> 
+> [1] https://github.com/kees/kernel-tools/blob/trunk/coccinelle/examples/counted_by.cocci
+> 
+> Cc: Ilya Dryomov <idryomov@gmail.com>
+> Cc: Xiubo Li <xiubli@redhat.com>
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: ceph-devel@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Cc: Ilya Dryomov <idryomov@gmail.com>
-Cc: Xiubo Li <xiubli@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: ceph-devel@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- include/linux/ceph/osd_client.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-index bf9823956758..b8610e9d2471 100644
---- a/include/linux/ceph/osd_client.h
-+++ b/include/linux/ceph/osd_client.h
-@@ -278,7 +278,7 @@ struct ceph_osd_request {
- 	int r_attempts;
- 	u32 r_map_dne_bound;
- 
--	struct ceph_osd_req_op r_ops[];
-+	struct ceph_osd_req_op r_ops[] __counted_by(r_num_ops);
- };
- 
- struct ceph_request_redirect {
+Thanks
 -- 
-2.34.1
+Gustavo
 
+> ---
+>   include/linux/ceph/mon_client.h | 2 +-
+>   net/ceph/mon_client.c           | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/ceph/mon_client.h b/include/linux/ceph/mon_client.h
+> index b658961156a0..7a9a40163c0f 100644
+> --- a/include/linux/ceph/mon_client.h
+> +++ b/include/linux/ceph/mon_client.h
+> @@ -19,7 +19,7 @@ struct ceph_monmap {
+>   	struct ceph_fsid fsid;
+>   	u32 epoch;
+>   	u32 num_mon;
+> -	struct ceph_entity_inst mon_inst[];
+> +	struct ceph_entity_inst mon_inst[] __counted_by(num_mon);
+>   };
+>   
+>   struct ceph_mon_client;
+> diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+> index faabad6603db..f263f7e91a21 100644
+> --- a/net/ceph/mon_client.c
+> +++ b/net/ceph/mon_client.c
+> @@ -1136,6 +1136,7 @@ static int build_initial_monmap(struct ceph_mon_client *monc)
+>   			       GFP_KERNEL);
+>   	if (!monc->monmap)
+>   		return -ENOMEM;
+> +	monc->monmap->num_mon = num_mon;
+>   
+>   	for (i = 0; i < num_mon; i++) {
+>   		struct ceph_entity_inst *inst = &monc->monmap->mon_inst[i];
+> @@ -1147,7 +1148,6 @@ static int build_initial_monmap(struct ceph_mon_client *monc)
+>   		inst->name.type = CEPH_ENTITY_TYPE_MON;
+>   		inst->name.num = cpu_to_le64(i);
+>   	}
+> -	monc->monmap->num_mon = num_mon;
+>   	return 0;
+>   }
+>   
