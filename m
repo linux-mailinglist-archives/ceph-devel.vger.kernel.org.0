@@ -2,137 +2,81 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EBEA37A88BC
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 Sep 2023 17:45:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6DE47A903F
+	for <lists+ceph-devel@lfdr.de>; Thu, 21 Sep 2023 02:52:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236627AbjITPpg (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 20 Sep 2023 11:45:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55044 "EHLO
+        id S229716AbjIUAwm (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 20 Sep 2023 20:52:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234533AbjITPpf (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 20 Sep 2023 11:45:35 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 224E7A3;
-        Wed, 20 Sep 2023 08:45:29 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id BF6E422037;
-        Wed, 20 Sep 2023 15:45:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1695224727; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        with ESMTP id S229621AbjIUAwl (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 20 Sep 2023 20:52:41 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA56ADD
+        for <ceph-devel@vger.kernel.org>; Wed, 20 Sep 2023 17:51:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1695257508;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=Gw0GfkzEv5qjhmPaYmrLrmVLcBgiouetaUVK1NJf9SE=;
-        b=gDmHlI6XIITA9cWR7273bMWfTaFm79ZWCKV9DUbgwsMsYlQtttv7ABQywrVa7BRoFxk5Vs
-        fY8Ytovd+JgcWaHYYF/cazBOkeQAnuEbAgfy+zWX2EEn3UHUxNv8SLgNC/S16/CAgBAqvG
-        jDzYA0P8qRNq8WfC9VqpMNAjW8ajDQM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1695224727;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Gw0GfkzEv5qjhmPaYmrLrmVLcBgiouetaUVK1NJf9SE=;
-        b=486eKcFxONt6Xlrpd7pWWA685BmUhAvAAZoUWjfk3k5wgXtMAG8bbabr8rPv7UJw6UUY7B
-        IV+4KbXuBo0SdmBw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AA9FC13A64;
-        Wed, 20 Sep 2023 15:45:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id sEc2KZcTC2VITwAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 20 Sep 2023 15:45:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 33A59A077D; Wed, 20 Sep 2023 17:45:27 +0200 (CEST)
-Date:   Wed, 20 Sep 2023 17:45:27 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
-        Bruno Haible <bruno@clisp.org>,
-        Xi Ruoyao <xry111@linuxfromscratch.org>, bug-gnulib@gnu.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Van Hensbergen <ericvh@kernel.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        Tyler Hicks <code@tyhicks.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>, Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bo b Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Steve French <sfrench@samba.org>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Richard Weinberger <richard@nod.at>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Amir Goldstein <l@gmail.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@lists.linux.dev, devel@lists.orangefs.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-mtd@lists.infradead.org, linux-mm@kvack.org,
-        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 12/13] ext4: switch to multigrain timestamps
-Message-ID: <20230920154527.pkwot4nu2nzrnamd@quack3>
-References: <20230807-mgctime-v7-0-d1dec143a704@kernel.org>
- <20230919110457.7fnmzo4nqsi43yqq@quack3>
- <1f29102c09c60661758c5376018eac43f774c462.camel@kernel.org>
- <4511209.uG2h0Jr0uP@nimes>
- <08b5c6fd3b08b87fa564bb562d89381dd4e05b6a.camel@kernel.org>
- <20230920-leerung-krokodil-52ec6cb44707@brauner>
- <20230920101731.ym6pahcvkl57guto@quack3>
- <317d84b1b909b6c6519a2406fcb302ce22dafa41.camel@kernel.org>
- <20230920124823.ghl6crb5sh4x2pmt@quack3>
- <ca82af4d6a72d7f83223c0ddd74fd9f7bcfa96b1.camel@kernel.org>
+        bh=TFI5WmIh4My0R+y7lKbpmUV46PPypYnH5zMhfJ0bQVY=;
+        b=MoUIaWd3HkS/6H2v3g2U6xksOHXcDd5gMV2liXhQfTaNBsgOi9Vl/K9b1iCOLiMqRYYY6U
+        KSq4bXUtV1gIpjeZL78GnVIsrH/qKP+75CLX63xhBYzM4ULDZV15NpuapzljOuHD968Blw
+        Ir6P5U+cgXApf+sJO6Du5sW+XZO0fTE=
+Received: from mail-oa1-f70.google.com (mail-oa1-f70.google.com
+ [209.85.160.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-88-lIsh646JNI-BLPgSRp0PNw-1; Wed, 20 Sep 2023 20:51:47 -0400
+X-MC-Unique: lIsh646JNI-BLPgSRp0PNw-1
+Received: by mail-oa1-f70.google.com with SMTP id 586e51a60fabf-1bf2e81ce17so616665fac.0
+        for <ceph-devel@vger.kernel.org>; Wed, 20 Sep 2023 17:51:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1695257507; x=1695862307;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TFI5WmIh4My0R+y7lKbpmUV46PPypYnH5zMhfJ0bQVY=;
+        b=XNggquJYlryXs+h5nuntrC58J2dnBolrxDJsdLpNmsTuHhISkWrXmhYsns/7uXSmNd
+         G1dd6EtqtB2ioDn9H7RNYhRX8UKC8EZ2I3yG1biA7Ite4lDB5NVuHddz3XlG/C5xw3xA
+         mwClsBwZuugTbE+foYxkGyeZpSJyb58iwvQoDYN2acWCRvfP4rEoE94HH5KanB2z059x
+         NNCVtkBABADwrr339rjE4qN2acRrFRYZ71xUaAHom3sfIfpU56GTuEQQm9ScgTZwgNaY
+         MVEkCCPAlWWGrnZI3R1C5LBKxFwvWQsmqXh9MiqgS3lTWqaEfZcNYlfrZF9HVXQ/FBDD
+         yJ9w==
+X-Gm-Message-State: AOJu0Yy+imRgJIrUsW2FGZ9vhW43k8ojfCJR4zQXgiFj1uR8eeXd7IaF
+        KPxKc9MCoV5qci0Ogwtnhg4ySOe8L/ylpOhDvI9F361ISLebkjnhWMegmArw7xcdQ3zJu46g9NZ
+        33kcF3bU5p5ORMgiGbJgHQg==
+X-Received: by 2002:a05:6870:5622:b0:1be:f23f:99b with SMTP id m34-20020a056870562200b001bef23f099bmr4401516oao.42.1695257507064;
+        Wed, 20 Sep 2023 17:51:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH7X444xzNTr4txbg0xM0A5uyV0tfIQjl2wXSUHMAGPu5TLRpN4bMw26THHBcBC+GsfKNwKjA==
+X-Received: by 2002:a05:6870:5622:b0:1be:f23f:99b with SMTP id m34-20020a056870562200b001bef23f099bmr4401508oao.42.1695257506782;
+        Wed, 20 Sep 2023 17:51:46 -0700 (PDT)
+Received: from [10.72.113.125] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id bi17-20020a056a00311100b00682bec0b680sm127170pfb.89.2023.09.20.17.51.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 20 Sep 2023 17:51:46 -0700 (PDT)
+Message-ID: <2ed5afa7-7ca7-87d2-ea84-5e80485bae97@redhat.com>
+Date:   Thu, 21 Sep 2023 08:51:41 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ca82af4d6a72d7f83223c0ddd74fd9f7bcfa96b1.camel@kernel.org>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] fs: apply umask if POSIX ACL support is disabled
+Content-Language: en-US
+To:     Max Kellermann <max.kellermann@ionos.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>,
+        Dave Kleikamp <shaggy@kernel.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net
+References: <20230919081900.1096840-1-max.kellermann@ionos.com>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20230919081900.1096840-1-max.kellermann@ionos.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -140,99 +84,73 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed 20-09-23 10:12:03, Jeff Layton wrote:
-> On Wed, 2023-09-20 at 14:48 +0200, Jan Kara wrote:
-> > On Wed 20-09-23 06:35:18, Jeff Layton wrote:
-> > > On Wed, 2023-09-20 at 12:17 +0200, Jan Kara wrote:
-> > > > If I were a sysadmin, I'd rather opt for something like
-> > > > finegrained timestamps + lazytime (if I needed the finegrained timestamps
-> > > > functionality). That should avoid the IO overhead of finegrained timestamps
-> > > > as well and I'd know I can have problems with timestamps only after a
-> > > > system crash.
-> > > 
-> > > > I've just got another idea how we could solve the problem: Couldn't we
-> > > > always just report coarsegrained timestamp to userspace and provide access
-> > > > to finegrained value only to NFS which should know what it's doing?
-> > > > 
-> > > 
-> > > I think that'd be hard. First of all, where would we store the second
-> > > timestamp? We can't just truncate the fine-grained ones to come up with
-> > > a coarse-grained one. It might also be confusing having nfsd and local
-> > > filesystems present different attributes.
-> > 
-> > So what I had in mind (and I definitely miss all the NFS intricacies so the
-> > idea may be bogus) was that inode->i_ctime would be maintained exactly as
-> > is now. There will be new (kernel internal at least for now) STATX flag
-> > STATX_MULTIGRAIN_TS. fill_mg_cmtime() will return timestamp truncated to
-> > sb->s_time_gran unless STATX_MULTIGRAIN_TS is set. Hence unless you set
-> > STATX_MULTIGRAIN_TS, there is no difference in the returned timestamps
-> > compared to the state before multigrain timestamps were introduced. With
-> > STATX_MULTIGRAIN_TS we return full precision timestamp as stored in the
-> > inode. Then NFS in fh_fill_pre_attrs() and fh_fill_post_attrs() needs to
-> > make sure STATX_MULTIGRAIN_TS is set when calling vfs_getattr() to get
-> > multigrain time.
-> 
-> > I agree nfsd may now be presenting slightly different timestamps than user
-> > is able to see with stat(2) directly on the filesystem. But is that a
-> > problem? Essentially it is a similar solution as the mgtime mount option
-> > but now sysadmin doesn't have to decide on filesystem mount how to report
-> > timestamps but the stat caller knowingly opts into possibly inconsistent
-> > (among files) but high precision timestamps. And in the particular NFS
-> > usecase where stat is called all the time anyway, timestamps will likely
-> > even be consistent among files.
-> > 
-> 
-> I like this idea...
-> 
-> Would we also need to raise sb->s_time_gran to something corresponding
-> to HZ on these filesystems?
 
-I was actually confused a bit about how timestamp_truncate() works. The
-jiffie granularity is just direct consequence of current_time() using
-ktime_get_coarse_real_ts64() and not of timestamp_truncate().
-sb->s_time_gran seems to be more about the on-disk format so it doesn't
-seem like a great idea to touch it. So probably we can just truncate
-timestamps in generic_fillattr() to HZ granularity unconditionally.
+On 9/19/23 16:18, Max Kellermann wrote:
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> ---
+>   fs/ceph/super.h           | 1 +
+>   fs/ext2/acl.h             | 1 +
+>   fs/jfs/jfs_acl.h          | 1 +
+>   include/linux/posix_acl.h | 1 +
+>   4 files changed, 4 insertions(+)
+>
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 51c7f2b14f6f..e7e2f264acf4 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -1194,6 +1194,7 @@ static inline void ceph_forget_all_cached_acls(struct inode *inode)
+>   static inline int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
+>   				     struct ceph_acl_sec_ctx *as_ctx)
+>   {
+> +	*mode &= ~current_umask();
+>   	return 0;
+>   }
 
-> If we truncate the timestamps at a granularity corresponding to HZ before
-> presenting them via statx and the like then that should work around the
-> problem with programs that compare timestamps between inodes.
+This LGTM.
 
-Exactly.
+Shouldn't we also do this in 'ceph_pre_init_acls()' when we couldn't get 
+'acl' from 'posix_acl_create()' ?
 
-> With NFSv4, when a filesystem doesn't report a STATX_CHANGE_COOKIE, nfsd
-> will fake one up using the ctime. It's fine for that to use a full fine-
-> grained timestamp since we don't expect to be able to compare that value
-> with one of a different inode.
+Thanks!
 
-Yes.
+- Xiubo
 
-> I think we'd want nfsd to present the mtime/ctime values as truncated,
-> just like we would with a local fs. We could hit the same problem of an
-> earlier-looking timestamp with NFS if we try to present the actual fine-
-> grained values to the clients. IOW, I'm convinced that we need to avoid
-> this behavior in most situations.
 
-I wasn't sure if there's a way to do this within NFS - i.e., if the value
-communicated via NFSv3 protocol (I know v4 has a special change cookie
-field for it) that gets used for detecting need to revalidate file contents
-isn't the one presented to client's userspace as ctime. If there's a way to
-do this then great, I'm all for presenting truncated timestamps even for
-NFS.
+>   static inline void ceph_init_inode_acls(struct inode *inode,
+> diff --git a/fs/ext2/acl.h b/fs/ext2/acl.h
+> index 4a8443a2b8ec..694af789c614 100644
+> --- a/fs/ext2/acl.h
+> +++ b/fs/ext2/acl.h
+> @@ -67,6 +67,7 @@ extern int ext2_init_acl (struct inode *, struct inode *);
+>   
+>   static inline int ext2_init_acl (struct inode *inode, struct inode *dir)
+>   {
+> +	inode->i_mode &= ~current_umask();
+>   	return 0;
+>   }
+>   #endif
+> diff --git a/fs/jfs/jfs_acl.h b/fs/jfs/jfs_acl.h
+> index f892e54d0fcd..10791e97a46f 100644
+> --- a/fs/jfs/jfs_acl.h
+> +++ b/fs/jfs/jfs_acl.h
+> @@ -17,6 +17,7 @@ int jfs_init_acl(tid_t, struct inode *, struct inode *);
+>   static inline int jfs_init_acl(tid_t tid, struct inode *inode,
+>   			       struct inode *dir)
+>   {
+> +	inode->i_mode &= ~current_umask();
+>   	return 0;
+>   }
+>   
+> diff --git a/include/linux/posix_acl.h b/include/linux/posix_acl.h
+> index 0e65b3d634d9..54bc9b1061ca 100644
+> --- a/include/linux/posix_acl.h
+> +++ b/include/linux/posix_acl.h
+> @@ -128,6 +128,7 @@ static inline void cache_no_acl(struct inode *inode)
+>   static inline int posix_acl_create(struct inode *inode, umode_t *mode,
+>   		struct posix_acl **default_acl, struct posix_acl **acl)
+>   {
+> +	*mode &= ~current_umask();
+>   	*default_acl = *acl = NULL;
+>   	return 0;
+>   }
 
-> If we do this, then we technically don't need the mount option either.
-
-Yes, that was my hope.
-
-> We could still add it though, and have it govern whether fill_mg_cmtime
-> truncates the timestamps before storing them in the kstat.
-
-Well, if we decide these timestamps are useful for userspace as well, I'd
-rather make that a userspace visible STATX flag than a mount option. So
-applications aware of the pitfalls can get high precision timestamps
-without possibly breaking unaware applications.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
