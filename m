@@ -2,61 +2,64 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E3BC7AA8F7
-	for <lists+ceph-devel@lfdr.de>; Fri, 22 Sep 2023 08:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5808A7AA900
+	for <lists+ceph-devel@lfdr.de>; Fri, 22 Sep 2023 08:27:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231370AbjIVG0Z (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 22 Sep 2023 02:26:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56338 "EHLO
+        id S231497AbjIVG0c (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 22 Sep 2023 02:26:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231532AbjIVG0U (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 22 Sep 2023 02:26:20 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AE4C1BB
-        for <ceph-devel@vger.kernel.org>; Thu, 21 Sep 2023 23:26:09 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id a640c23a62f3a-9ad8bf9bfabso214550466b.3
-        for <ceph-devel@vger.kernel.org>; Thu, 21 Sep 2023 23:26:09 -0700 (PDT)
+        with ESMTP id S231356AbjIVG0V (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 22 Sep 2023 02:26:21 -0400
+Received: from mail-ed1-x536.google.com (mail-ed1-x536.google.com [IPv6:2a00:1450:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6C27194
+        for <ceph-devel@vger.kernel.org>; Thu, 21 Sep 2023 23:26:12 -0700 (PDT)
+Received: by mail-ed1-x536.google.com with SMTP id 4fb4d7f45d1cf-530fa34ab80so6784833a12.0
+        for <ceph-devel@vger.kernel.org>; Thu, 21 Sep 2023 23:26:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1695363967; x=1695968767; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hc1EfM4Ltnso0WZLWYNawQf+V2mMDzvf7BDBSh0CjLs=;
-        b=Xi3hU7u3ESXKPnQypKv7hQWrvchrgwjc24rjyV9hebdbC3qHo2ymQU/g2fiYKVttl5
-         dcXnxAEenT0ykxocx7998TSKHSfvqPlaLoLyJUsSm9vMVQXzUYYos1foB26VSQvsE10p
-         f5vZKgpakp9najw2bSztkQ8jU6gWMjL0uhTMdZAY3dlqPRW94ZLa2SBuKsfTx1gK++ZH
-         i0o5r1YHr8jmSdg04xVSvWhPCjzDGXD4y8hODAnWb/WqV5WWeFK1YcKIAC0YlhN2esWz
-         3Iv/TSRbuMHer79kkzCu9IEydQOMJgK3LOY6C71SOFrfe5zWuVm30DGAnqloK8/ULkQQ
-         iIRA==
+        d=ionos.com; s=google; t=1695363971; x=1695968771; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YaYc93wNxc7ZPBHYCHRxs28Q0KfViuylEe4BwwlB5Eg=;
+        b=GRR13ilbskS5+BhKvpk3FnXgyZrlJRbLSTasFdq/jqneRS0TJomdlDqCr2Plxf0HeK
+         1dwCIH7eWAV6BNGO2nilsT18Qoy0w9imaAXENvhitw8yrosAONVqvJos1A6SGRVwwFer
+         95x8fbt+T9XJtPGMhLUJwzixJcfqm2ukZsagG2azpJxclJH348ovC3+rHyjtC7P8cf81
+         xO50LzMjoOpkoGquLjzLDveN39cvCc4VsJzK7ePi78DjRcmap6hhDU/8CnrkosuPh7js
+         ZMpEPhzKhkpdBIKIu8UIymWhQfruqIJnNX7OHQ8lVgqBxtY28fftn4Y/7YTU4wotncnp
+         13WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695363967; x=1695968767;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Hc1EfM4Ltnso0WZLWYNawQf+V2mMDzvf7BDBSh0CjLs=;
-        b=DlqAbUUif/nr5pERIn2+tqjVfJZwQA1qRsy+CUr4SVSXznfi+uKdBK/PODmqR6ziEX
-         Lath6jlex5KMGigyV4QoHw71yn0Bccwped9vAzab1dAfBR8SCBLXjp1tOpuydU4SSeW3
-         /IZ7TYiDuN+Wzon0+R14aUj2y2zDb0pnzSt1DeXfG0KBVFsEcEofRRfeXziCHZYgSop3
-         nwhBWOg+0LxQXY0PUja/Q+NbueBy+pOTf3NeC5TubBnhAWxkAYrfIU5sUm///vjIuQbA
-         mTA+/66/ngocVl+D9x734uGkmHVoUyPCj2FJIee3E9/q2aIbEdGBJX3C0VEVi0F0v7Vr
-         4y6w==
-X-Gm-Message-State: AOJu0YxXwDksFp3bqCBHWcNwSb1K1dZLBCp4MkzUpi5yl4DK7OpcynZZ
-        mxchfpc8w4mYzqwDQMmQf32VeA==
-X-Google-Smtp-Source: AGHT+IHshGX6wjH7dpeUCyrvBXH7IlLquPjC5dKAorG5dmp9neFw6do3Ta3KBKMZjb0B6XijMUahKw==
-X-Received: by 2002:a17:906:2096:b0:9ae:1de:f4fb with SMTP id 22-20020a170906209600b009ae01def4fbmr6180280ejq.46.1695363967557;
-        Thu, 21 Sep 2023 23:26:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1695363971; x=1695968771;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YaYc93wNxc7ZPBHYCHRxs28Q0KfViuylEe4BwwlB5Eg=;
+        b=BuELWrzuxyIdOGby/RALraF+EbsCYPWls+YQmAzQmy4XlPdMQSqrroNW75KPCLx3gl
+         fN8HZtAM+kmQ+yDlOvUkyhs4HkkZSbo7bOyXNJCnIL6fko3AuJEeIAlHU/1XlphznpKp
+         wKe+Xnque7IUXb6hqunLDNdLdSZn3QzLPUQKcNpm53pnt39JpMKcjLtnknwefa5My5re
+         40LMNzoEXn/2kswMmaGlCGrcChiXcieH0YKCwNYXoeZhY/BGrvYoW1VkcIb08inLUU7m
+         uU+LmnLksuF24K9Wjry6vB6ZdWNdkyNeGrlQ3e/DnCSzR7OlqYDmKVS/1sRYCV3eMpjI
+         p/5w==
+X-Gm-Message-State: AOJu0YzAFS3mFOfhqMgSq2jcSSs41kQ1o8XjjgjwoXcrqet567U7A2M9
+        drfEkStiUi6W4jMhIEVcOVTatQ==
+X-Google-Smtp-Source: AGHT+IH/ZRAtCX4gvnW+Ifx1FSie3lGsh+hZ6gwBPATtidaGzO/PZFYW02eV/1/BVLEp9VjCl0mSkQ==
+X-Received: by 2002:a17:907:868f:b0:9a5:962c:cb6c with SMTP id qa15-20020a170907868f00b009a5962ccb6cmr2699610ejc.31.1695363971200;
+        Thu, 21 Sep 2023 23:26:11 -0700 (PDT)
 Received: from heron.intern.cm-ag (p200300dc6f209c00529a4cfffe3dd983.dip0.t-ipconnect.de. [2003:dc:6f20:9c00:529a:4cff:fe3d:d983])
-        by smtp.gmail.com with ESMTPSA id gy6-20020a170906f24600b00992afee724bsm2195519ejb.76.2023.09.21.23.26.06
+        by smtp.gmail.com with ESMTPSA id gy6-20020a170906f24600b00992afee724bsm2195519ejb.76.2023.09.21.23.26.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Sep 2023 23:26:07 -0700 (PDT)
+        Thu, 21 Sep 2023 23:26:10 -0700 (PDT)
 From:   Max Kellermann <max.kellermann@ionos.com>
 To:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
         Jeff Layton <jlayton@kernel.org>
 Cc:     Max Kellermann <max.kellermann@ionos.com>,
         ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] fs/ceph/debugfs: make all files world-readable
-Date:   Fri, 22 Sep 2023 08:25:57 +0200
-Message-Id: <20230922062558.1739642-1-max.kellermann@ionos.com>
+Subject: [PATCH 2/2] fs/ceph/debugfs: expose raw metric counters
+Date:   Fri, 22 Sep 2023 08:25:58 +0200
+Message-Id: <20230922062558.1739642-2-max.kellermann@ionos.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20230922062558.1739642-1-max.kellermann@ionos.com>
+References: <20230922062558.1739642-1-max.kellermann@ionos.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -69,81 +72,72 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-I'd like to be able to run metrics collector processes without special
-privileges
+To enable userspace to calculate the current latency, not just the
+average latency since the filesystem was mounted.
 
-In the kernel, there is a mix of debugfs files being world-readable
-and not world-readable is; with a naive "git grep", I found 723
-world-readable debugfs_create_file() calls and 582 calls which were
-only accessible to privileged processe.
+We have been running this patch for a while on our servers and our
+Prometheus exporter collects these statistics:
 
-From the code, I cannot derive a consistent policy for that, but the
-ceph statistics seem harmless (and useful) enough.
+ https://github.com/CM4all/Prometheus-Exporters/
+ https://github.com/CM4all/Prometheus-Exporters/blob/master/src/KernelExporter.cxx
 
 Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 ---
- fs/ceph/debugfs.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ fs/ceph/debugfs.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
 diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index 3904333fa6c3..2abee7e18144 100644
+index 2abee7e18144..d13a1ab8822a 100644
 --- a/fs/ceph/debugfs.c
 +++ b/fs/ceph/debugfs.c
-@@ -429,31 +429,31 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
- 				       name);
+@@ -170,6 +170,30 @@ static const char * const metric_str[] = {
+ 	"metadata",
+ 	"copyfrom"
+ };
++
++static int metrics_counters_show(struct seq_file *s, void *p)
++{
++	struct ceph_fs_client *fsc = s->private;
++	struct ceph_client_metric *cm = &fsc->mdsc->metric;
++	u64 count, size_bytes, wait_ns;
++
++	seq_printf(s, "item count size_bytes wait_ns\n");
++
++	for (unsigned i = 0; i < METRIC_MAX; i++) {
++		struct ceph_metric *m = &cm->metric[i];
++		spin_lock(&m->lock);
++		count = m->total;
++		size_bytes = m->size_sum;
++		wait_ns = ktime_to_ns(m->latency_sum);
++		spin_unlock(&m->lock);
++
++		seq_printf(s, "%s %llu %llu %llu\n",
++			   metric_str[i], count, size_bytes, wait_ns);
++	}
++
++	return 0;
++}
++
+ static int metrics_latency_show(struct seq_file *s, void *p)
+ {
+ 	struct ceph_fs_client *fsc = s->private;
+@@ -368,6 +392,7 @@ DEFINE_SHOW_ATTRIBUTE(caps);
+ DEFINE_SHOW_ATTRIBUTE(mds_sessions);
+ DEFINE_SHOW_ATTRIBUTE(status);
+ DEFINE_SHOW_ATTRIBUTE(metrics_file);
++DEFINE_SHOW_ATTRIBUTE(metrics_counters);
+ DEFINE_SHOW_ATTRIBUTE(metrics_latency);
+ DEFINE_SHOW_ATTRIBUTE(metrics_size);
+ DEFINE_SHOW_ATTRIBUTE(metrics_caps);
+@@ -463,6 +488,8 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
  
- 	fsc->debugfs_mdsmap = debugfs_create_file("mdsmap",
--					0400,
-+					0444,
- 					fsc->client->debugfs_dir,
- 					fsc,
- 					&mdsmap_fops);
- 
- 	fsc->debugfs_mds_sessions = debugfs_create_file("mds_sessions",
--					0400,
-+					0444,
- 					fsc->client->debugfs_dir,
- 					fsc,
- 					&mds_sessions_fops);
- 
- 	fsc->debugfs_mdsc = debugfs_create_file("mdsc",
--						0400,
-+						0444,
- 						fsc->client->debugfs_dir,
- 						fsc,
- 						&mdsc_fops);
- 
- 	fsc->debugfs_caps = debugfs_create_file("caps",
--						0400,
-+						0444,
- 						fsc->client->debugfs_dir,
- 						fsc,
- 						&caps_fops);
- 
- 	fsc->debugfs_status = debugfs_create_file("status",
--						  0400,
-+						  0444,
- 						  fsc->client->debugfs_dir,
- 						  fsc,
- 						  &status_fops);
-@@ -461,13 +461,13 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
- 	fsc->debugfs_metrics_dir = debugfs_create_dir("metrics",
- 						      fsc->client->debugfs_dir);
- 
--	debugfs_create_file("file", 0400, fsc->debugfs_metrics_dir, fsc,
-+	debugfs_create_file("file", 0444, fsc->debugfs_metrics_dir, fsc,
+ 	debugfs_create_file("file", 0444, fsc->debugfs_metrics_dir, fsc,
  			    &metrics_file_fops);
--	debugfs_create_file("latency", 0400, fsc->debugfs_metrics_dir, fsc,
-+	debugfs_create_file("latency", 0444, fsc->debugfs_metrics_dir, fsc,
++	debugfs_create_file("counters", 0444, fsc->debugfs_metrics_dir, fsc,
++			    &metrics_counters_fops);
+ 	debugfs_create_file("latency", 0444, fsc->debugfs_metrics_dir, fsc,
  			    &metrics_latency_fops);
--	debugfs_create_file("size", 0400, fsc->debugfs_metrics_dir, fsc,
-+	debugfs_create_file("size", 0444, fsc->debugfs_metrics_dir, fsc,
- 			    &metrics_size_fops);
--	debugfs_create_file("caps", 0400, fsc->debugfs_metrics_dir, fsc,
-+	debugfs_create_file("caps", 0444, fsc->debugfs_metrics_dir, fsc,
- 			    &metrics_caps_fops);
- }
- 
+ 	debugfs_create_file("size", 0444, fsc->debugfs_metrics_dir, fsc,
 -- 
 2.39.2
 
