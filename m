@@ -2,90 +2,79 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E42197AD63D
-	for <lists+ceph-devel@lfdr.de>; Mon, 25 Sep 2023 12:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 950987AD6FB
+	for <lists+ceph-devel@lfdr.de>; Mon, 25 Sep 2023 13:29:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232453AbjIYKmL (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 25 Sep 2023 06:42:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58258 "EHLO
+        id S229688AbjIYL3w (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 25 Sep 2023 07:29:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231278AbjIYKmK (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 25 Sep 2023 06:42:10 -0400
-Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC43AA3;
-        Mon, 25 Sep 2023 03:42:03 -0700 (PDT)
-Received: by mail-ot1-x329.google.com with SMTP id 46e09a7af769-6c496719a9aso3168760a34.0;
-        Mon, 25 Sep 2023 03:42:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1695638523; x=1696243323; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BCYYXo6QUFwHENfz0rJ0lvEQqMwZMCKqE5h3IXB6SP4=;
-        b=GQMxrc4uaqUAdD4IFXQzz4bl/EcVU3G0L+Vd4EAdO3bbYt2po0LLV2L80SOh0gQ2EB
-         NyKHAEg9SouH5LNQOS57rfE1eRi4h0KIXZ46hiVXJ0KjpVFVvdDGK0TTE4ccYNrD64T1
-         NaAMGN0GNlMbDE8FetPQhyYaC9Ivqy9lx2Uz3bMEuUimkeukcfnz4OQwBjdVGRZNAfcp
-         HNiY4qMwKjBoXQrUR4dpMTyNlyUcLH3BgA3gXRcHgYyxnGYgy34df/4dFCzzVD8/9yOo
-         zK86jKreAy9M8eacJ1jtInYUD8RRgjeN4oyHZbGF0cUavif4TEeUtcB+JAhqhvNydIVa
-         gP3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695638523; x=1696243323;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BCYYXo6QUFwHENfz0rJ0lvEQqMwZMCKqE5h3IXB6SP4=;
-        b=DhEc1JOcMmRGlqztkpwnlGLPARzhKUVbg1U31fLhXH8w5Fv9njn1Opoarifr1x4TFj
-         HtHZVHto9SOFXLwV5nVERZWVx+D5e3tjPsPbvca57orINcbjcqW00tc2uN/cHawoiW3m
-         GEqVjizfTUKH62/4mqd1OmCRN8U44BhkwkwrfT/ON96mH2RCYMACWnhPyzZK1W+IcdJ3
-         ZjItthH22lvlCrnc0PbxNIDN8sRmgWUyyma91sSHpBA2jMOk9t8CHgPyIYEEqsTaGu4K
-         3IUWhjp79XSJ4RLzFZS3skrmCqK9cjVcP2Fh9/TNk6K9CJFrzIN90LuB5L489jpcZvH8
-         hMkA==
-X-Gm-Message-State: AOJu0YyoSiT1ErKCDLZNclYemkaK4/A4v5xkhLy80jjVwEr6f4O4oZPa
-        Xd0EnGwOGXbAwldLm+9TLe5PByZMAGLNezI3URw=
-X-Google-Smtp-Source: AGHT+IHRj6B4gV6c9UrNFtjuTnDus2mT2FyyKn58IUZeKZXJH1hrC5+sjE4iyYt+aE7mj3ooEtN5n8Hajc099CwwSM0=
-X-Received: by 2002:a05:6830:438e:b0:6bd:335e:1eda with SMTP id
- s14-20020a056830438e00b006bd335e1edamr5653596otv.11.1695638523271; Mon, 25
- Sep 2023 03:42:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20230922062558.1739642-1-max.kellermann@ionos.com>
-In-Reply-To: <20230922062558.1739642-1-max.kellermann@ionos.com>
-From:   Ilya Dryomov <idryomov@gmail.com>
-Date:   Mon, 25 Sep 2023 12:41:51 +0200
-Message-ID: <CAOi1vP80WvQhuXgzhvzupQP=4K2ckgu_WpUCtUSy5M+QdDycqw@mail.gmail.com>
+        with ESMTP id S229595AbjIYL3w (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 25 Sep 2023 07:29:52 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF22AC6;
+        Mon, 25 Sep 2023 04:29:45 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4144C433C7;
+        Mon, 25 Sep 2023 11:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695641385;
+        bh=2MbEYpOL+kd6uNyBjo39tKu41KpsEJTkTcuCbFCeUq0=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=OJ/NxX7VJvEsz87o5ht+Ojr5ufUFRCLMBwIy+Zn13UfOrKeKaPB+aVXcYi21Y0lvy
+         bXo3e6n8bLYckQRqGdCFepp+fLSC7444BSdphs37MNFAIqLQ7hY2qwF7e7OWtFOdtZ
+         mwi4r8UvKqaZTdl+xVogqFYZT+agL/hQN4dmUcMMrvrzTqs5E+Uis1L9IiryKn6Ma/
+         Kr5u3K3Tny8npDHJlyhyBKEOSCjs2iamv9mTMK3QXoXOhx6y4zIj0eJbDFKkmTGC/Y
+         aaODfwRzkNwxRUxAl64k2XHJKp4aFI0bh/jRjCEnPkDrqY20hordyTKTvDdwXX9ZEP
+         oAA5aO0qEN8CQ==
+Message-ID: <fd19d9585b29952fcd727c1a6c47289f66ab96b7.camel@kernel.org>
 Subject: Re: [PATCH 1/2] fs/ceph/debugfs: make all files world-readable
-To:     Max Kellermann <max.kellermann@ionos.com>
-Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
-        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Ilya Dryomov <idryomov@gmail.com>,
+        Max Kellermann <max.kellermann@ionos.com>
+Cc:     Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lorenzo Bianconi <lorenzo@kernel.org>
+Date:   Mon, 25 Sep 2023 07:29:43 -0400
+In-Reply-To: <CAOi1vP80WvQhuXgzhvzupQP=4K2ckgu_WpUCtUSy5M+QdDycqw@mail.gmail.com>
+References: <20230922062558.1739642-1-max.kellermann@ionos.com>
+         <CAOi1vP80WvQhuXgzhvzupQP=4K2ckgu_WpUCtUSy5M+QdDycqw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+MIME-Version: 1.0
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Sep 22, 2023 at 8:26=E2=80=AFAM Max Kellermann <max.kellermann@iono=
-s.com> wrote:
->
-> I'd like to be able to run metrics collector processes without special
-> privileges
+On Mon, 2023-09-25 at 12:41 +0200, Ilya Dryomov wrote:
+> On Fri, Sep 22, 2023 at 8:26=E2=80=AFAM Max Kellermann <max.kellermann@io=
+nos.com> wrote:
+> >=20
+> > I'd like to be able to run metrics collector processes without special
+> > privileges
+>=20
+> Hi Max,
+>=20
+> A word of caution about building metrics collectors based on debugfs
+> output: there are no stability guarantees.  While the format won't be
+> changed just for the sake of change of course, expect zero effort to
+> preserve backwards compatibility.
+>=20
+> The latency metrics in particular are sent to the MDS in binary form
+> and are intended to be consumed through commands like "ceph fs top".
+> debugfs stuff is there just for an occasional sneak peek (apart from
+> actual debugging).
+>=20
 
-Hi Max,
+FWIW, I wish we had gone with netlink for this functionality instead of
+a seqfile. Lorenzo has been working with netlink for some similar
+functionality with nfsd[1], and it's much nicer for this sort of thing.
 
-A word of caution about building metrics collectors based on debugfs
-output: there are no stability guarantees.  While the format won't be
-changed just for the sake of change of course, expect zero effort to
-preserve backwards compatibility.
+[1]: https://lore.kernel.org/linux-nfs/ZQTM6l7NrsVHFoR5@lore-desk/T/#t
 
-The latency metrics in particular are sent to the MDS in binary form
-and are intended to be consumed through commands like "ceph fs top".
-debugfs stuff is there just for an occasional sneak peek (apart from
-actual debugging).
-
-Thanks,
-
-                Ilya
+--=20
+Jeff Layton <jlayton@kernel.org>
