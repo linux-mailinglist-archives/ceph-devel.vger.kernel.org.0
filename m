@@ -2,133 +2,305 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 85FB47B17F6
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Sep 2023 11:59:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 185BC7B19C3
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Sep 2023 13:05:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230420AbjI1J7H (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 28 Sep 2023 05:59:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54596 "EHLO
+        id S232302AbjI1LFi (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 28 Sep 2023 07:05:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230119AbjI1J7F (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 28 Sep 2023 05:59:05 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CF8195
-        for <ceph-devel@vger.kernel.org>; Thu, 28 Sep 2023 02:58:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1695895092;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=E3P5lzYqknlqp9XQ0Q5vHYT4lpq4MfVBbEwOgSILB4A=;
-        b=MtFYY+JawleRnaYbbpImUSK4nsDz6UcaPmzomod7jP5G1ip3mOU7W5M9EdBGEVZITH7mSB
-        XczUy+of5obpgVL+OQ9SSA+0xcA1+/7fPok9pESjv571I/9PLxMfuludKUlE4kXyDiaUGx
-        Lp2u9Rl1eTju61MyWe6IZfHyTOgAH2E=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-377-0-QEoLfNMzyK8wLaRKb_yA-1; Thu, 28 Sep 2023 05:58:10 -0400
-X-MC-Unique: 0-QEoLfNMzyK8wLaRKb_yA-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-99bebfada8cso1087056166b.1
-        for <ceph-devel@vger.kernel.org>; Thu, 28 Sep 2023 02:58:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1695895089; x=1696499889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E3P5lzYqknlqp9XQ0Q5vHYT4lpq4MfVBbEwOgSILB4A=;
-        b=TEFYsxqmNqEez1drgGjx1hCkl8Y0dnRm1ert4AB/mkxpJ3xxBt6lZ9RMKoyy+lJScM
-         upfuY0SFKNXYqjbFujaoK75E7pMxJT6sk13NrrRmWhxmChOKzNRRjHJTyNTqOgyuxDmN
-         QluCwOZK5OjP+iv2tmtwx1VPmMZ8gcYA/Ufa1boJTNqRhpXSFpwK39Rq5V2es4NIGPJq
-         7fU/U9ZRT1+tlsCSY8gWKFLfNbdv0wF50ucx6ith8xevqfBXH6a7YtxVw0ivuWNyTx36
-         6xUUzr1m7tAgSc9ABlna9TJ7/WHX+vCJF75fTun0FX+FfvW1P6zke8svvSYTaZaBgteo
-         91NQ==
-X-Gm-Message-State: AOJu0Yyr4+xVp35ANLMdSbRRKf1LrSYRIlDUpPQLJFnX/kyYEy7D2BP1
-        Nkoc2lwkHnJ/SyjQbC1SEmpVY1WFAmMHcI7wrQ9ZLxR7MYIDtazhyrT5kfKJKbN0ictguL65Jdp
-        ACBehCJPgheFRc4jYOL4qWHasm3UC9kMjnMMngw==
-X-Received: by 2002:a17:907:c205:b0:9ad:7d5c:52f5 with SMTP id ti5-20020a170907c20500b009ad7d5c52f5mr812088ejc.75.1695895089215;
-        Thu, 28 Sep 2023 02:58:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFrQPwphiqtHS/oYMaQXbql7FP87mgScDvlTGdQg67hH/Ker2oPKx/452KYf0B5sMuP35cIark9FBwoaBG+hCo=
-X-Received: by 2002:a17:907:c205:b0:9ad:7d5c:52f5 with SMTP id
- ti5-20020a170907c20500b009ad7d5c52f5mr812076ejc.75.1695895088888; Thu, 28 Sep
- 2023 02:58:08 -0700 (PDT)
+        with ESMTP id S231984AbjI1LEl (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 28 Sep 2023 07:04:41 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 682E81AB;
+        Thu, 28 Sep 2023 04:04:39 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B68B1C433CC;
+        Thu, 28 Sep 2023 11:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1695899079;
+        bh=f+KhDIHOxIa1n1MMHNaiM6YmAE7E9DXw6UiXfKfhTa4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YNrUSYYU8jNgpS5scvoKJxnSx6tH8i6Jupyb+gbEF7HUcxycLMAq+G0EZ/up7Eo3g
+         E3GVhL6duynF+8d1epGM2k4duLdAmpn8IBpBaNs0gYNihfNMo4CATW8g/ISkcj75dQ
+         FwZEgEKsPq94vI1sE/pN0XbvDziCcIS9dCVIiqX2tjCWF3691sx10xeoXTxzepiYg/
+         RbnAFGfD7sne+NILTxyRkfIhk8RwCf+vDapaOGQL7P+uUvUw9FZ9mTZZDJrcX6ucww
+         sEmE/DcL0bqbnDsXOKwqOLgtF9lyiDcT/Ntqmm5n3wW5Lb0KeXS2LtkRqE7bG2Uqtk
+         PStQcL3CU7QNg==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     ceph-devel@vger.kernel.org
+Subject: [PATCH 23/87] fs/ceph: convert to new inode {a,m}time accessors
+Date:   Thu, 28 Sep 2023 07:02:32 -0400
+Message-ID: <20230928110413.33032-22-jlayton@kernel.org>
+X-Mailer: git-send-email 2.41.0
+In-Reply-To: <20230928110413.33032-1-jlayton@kernel.org>
+References: <20230928110300.32891-1-jlayton@kernel.org>
+ <20230928110413.33032-1-jlayton@kernel.org>
 MIME-Version: 1.0
-References: <20230927013009.151922-1-xiubli@redhat.com>
-In-Reply-To: <20230927013009.151922-1-xiubli@redhat.com>
-From:   Venky Shankar <vshankar@redhat.com>
-Date:   Thu, 28 Sep 2023 15:27:32 +0530
-Message-ID: <CACPzV1nvrxFmjEgAwtVvoPYneWjj7dksJT9wJS4GYtQ3=LCEpw@mail.gmail.com>
-Subject: Re: [PATCH] Revert "ceph: enable async dirops by default"
-To:     xiubli@redhat.com
-Cc:     ceph-devel@vger.kernel.org, idryomov@gmail.com, jlayton@kernel.org,
-        mchangir@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Wed, Sep 27, 2023 at 7:02=E2=80=AFAM <xiubli@redhat.com> wrote:
->
-> From: Xiubo Li <xiubli@redhat.com>
->
-> This reverts commit f7a67b463fb83a4b9b11ceaa8ec4950b8fb7f902.
->
-> The async dirop is buggy and introduce several bugs in MDS side
-> and not stable yet. Let's disable it for now and enable it later
-> when it's ready.
->
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/super.c | 4 ++--
->  fs/ceph/super.h | 3 +--
->  2 files changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index 5ec102f6b1ac..2bf6ccc9887b 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -742,8 +742,8 @@ static int ceph_show_options(struct seq_file *m, stru=
-ct dentry *root)
->         if (fsopt->flags & CEPH_MOUNT_OPT_CLEANRECOVER)
->                 seq_show_option(m, "recover_session", "clean");
->
-> -       if (!(fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS))
-> -               seq_puts(m, ",wsync");
-> +       if (fsopt->flags & CEPH_MOUNT_OPT_ASYNC_DIROPS)
-> +               seq_puts(m, ",nowsync");
->         if (fsopt->flags & CEPH_MOUNT_OPT_NOPAGECACHE)
->                 seq_puts(m, ",nopagecache");
->         if (fsopt->flags & CEPH_MOUNT_OPT_SPARSEREAD)
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 7f4b62182a5d..a5476892896c 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -47,8 +47,7 @@
->
->  #define CEPH_MOUNT_OPT_DEFAULT                 \
->         (CEPH_MOUNT_OPT_DCACHE |                \
-> -        CEPH_MOUNT_OPT_NOCOPYFROM |            \
-> -        CEPH_MOUNT_OPT_ASYNC_DIROPS)
-> +        CEPH_MOUNT_OPT_NOCOPYFROM)
->
->  #define ceph_set_mount_opt(fsc, opt) \
->         (fsc)->mount_options->flags |=3D CEPH_MOUNT_OPT_##opt
-> --
-> 2.41.0
->
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/ceph/addr.c       | 10 ++++----
+ fs/ceph/caps.c       |  4 +--
+ fs/ceph/file.c       |  2 +-
+ fs/ceph/inode.c      | 60 ++++++++++++++++++++++++--------------------
+ fs/ceph/mds_client.c |  8 ++++--
+ fs/ceph/snap.c       |  4 +--
+ 6 files changed, 49 insertions(+), 39 deletions(-)
 
-LGTM.
-
-Requires an explanation on the issue and its impact - let's add that in.
-
---=20
-Cheers,
-Venky
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index f4863078f7fe..936b9e0b351d 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -750,7 +750,7 @@ static int writepage_nounlock(struct page *page, struct writeback_control *wbc)
+ 	dout("writepage %llu~%llu (%llu bytes, %sencrypted)\n",
+ 	     page_off, len, wlen, IS_ENCRYPTED(inode) ? "" : "not ");
+ 
+-	req->r_mtime = inode->i_mtime;
++	req->r_mtime = inode_get_mtime(inode);
+ 	ceph_osdc_start_request(osdc, req);
+ 	err = ceph_osdc_wait_request(osdc, req);
+ 
+@@ -1327,7 +1327,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 			pages = NULL;
+ 		}
+ 
+-		req->r_mtime = inode->i_mtime;
++		req->r_mtime = inode_get_mtime(inode);
+ 		ceph_osdc_start_request(&fsc->client->osdc, req);
+ 		req = NULL;
+ 
+@@ -1875,7 +1875,7 @@ int ceph_uninline_data(struct file *file)
+ 		goto out_unlock;
+ 	}
+ 
+-	req->r_mtime = inode->i_mtime;
++	req->r_mtime = inode_get_mtime(inode);
+ 	ceph_osdc_start_request(&fsc->client->osdc, req);
+ 	err = ceph_osdc_wait_request(&fsc->client->osdc, req);
+ 	ceph_osdc_put_request(req);
+@@ -1917,7 +1917,7 @@ int ceph_uninline_data(struct file *file)
+ 			goto out_put_req;
+ 	}
+ 
+-	req->r_mtime = inode->i_mtime;
++	req->r_mtime = inode_get_mtime(inode);
+ 	ceph_osdc_start_request(&fsc->client->osdc, req);
+ 	err = ceph_osdc_wait_request(&fsc->client->osdc, req);
+ 
+@@ -2092,7 +2092,7 @@ static int __ceph_pool_perm_get(struct ceph_inode_info *ci,
+ 				     0, false, true);
+ 	ceph_osdc_start_request(&fsc->client->osdc, rd_req);
+ 
+-	wr_req->r_mtime = ci->netfs.inode.i_mtime;
++	wr_req->r_mtime = inode_get_mtime(&ci->netfs.inode);
+ 	ceph_osdc_start_request(&fsc->client->osdc, wr_req);
+ 
+ 	err = ceph_osdc_wait_request(&fsc->client->osdc, rd_req);
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 14215ec646f7..a104669fcf4c 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -1421,8 +1421,8 @@ static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
+ 		arg->old_xattr_buf = NULL;
+ 	}
+ 
+-	arg->mtime = inode->i_mtime;
+-	arg->atime = inode->i_atime;
++	arg->mtime = inode_get_mtime(inode);
++	arg->atime = inode_get_atime(inode);
+ 	arg->ctime = inode_get_ctime(inode);
+ 	arg->btime = ci->i_btime;
+ 	arg->change_attr = inode_peek_iversion_raw(inode);
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index b1da02f5dbe3..b96d4e74ae99 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -2489,7 +2489,7 @@ static int ceph_zero_partial_object(struct inode *inode,
+ 		goto out;
+ 	}
+ 
+-	req->r_mtime = inode->i_mtime;
++	req->r_mtime = inode_get_mtime(inode);
+ 	ceph_osdc_start_request(&fsc->client->osdc, req);
+ 	ret = ceph_osdc_wait_request(&fsc->client->osdc, req);
+ 	if (ret == -ENOENT)
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 800ab7920513..6a51db29ed57 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -185,9 +185,9 @@ struct inode *ceph_get_snapdir(struct inode *parent)
+ 	inode->i_mode = parent->i_mode;
+ 	inode->i_uid = parent->i_uid;
+ 	inode->i_gid = parent->i_gid;
+-	inode->i_mtime = parent->i_mtime;
++	inode_set_mtime_to_ts(inode, inode_get_mtime(parent));
+ 	inode_set_ctime_to_ts(inode, inode_get_ctime(parent));
+-	inode->i_atime = parent->i_atime;
++	inode_set_atime_to_ts(inode, inode_get_atime(parent));
+ 	ci->i_rbytes = 0;
+ 	ci->i_btime = ceph_inode(parent)->i_btime;
+ 
+@@ -837,28 +837,31 @@ void ceph_fill_file_time(struct inode *inode, int issued,
+ 			/* the MDS did a utimes() */
+ 			dout("mtime %lld.%09ld -> %lld.%09ld "
+ 			     "tw %d -> %d\n",
+-			     inode->i_mtime.tv_sec, inode->i_mtime.tv_nsec,
++			     inode_get_mtime(inode).tv_sec,
++			     inode_get_mtime(inode).tv_nsec,
+ 			     mtime->tv_sec, mtime->tv_nsec,
+ 			     ci->i_time_warp_seq, (int)time_warp_seq);
+ 
+-			inode->i_mtime = *mtime;
+-			inode->i_atime = *atime;
++			inode_set_mtime_to_ts(inode, *mtime);
++			inode_set_atime_to_ts(inode, *atime);
+ 			ci->i_time_warp_seq = time_warp_seq;
+ 		} else if (time_warp_seq == ci->i_time_warp_seq) {
++			struct timespec64	ts;
++
+ 			/* nobody did utimes(); take the max */
+-			if (timespec64_compare(mtime, &inode->i_mtime) > 0) {
++			ts = inode_get_mtime(inode);
++			if (timespec64_compare(mtime, &ts) > 0) {
+ 				dout("mtime %lld.%09ld -> %lld.%09ld inc\n",
+-				     inode->i_mtime.tv_sec,
+-				     inode->i_mtime.tv_nsec,
++				     ts.tv_sec, ts.tv_nsec,
+ 				     mtime->tv_sec, mtime->tv_nsec);
+-				inode->i_mtime = *mtime;
++				inode_set_mtime_to_ts(inode, *mtime);
+ 			}
+-			if (timespec64_compare(atime, &inode->i_atime) > 0) {
++			ts = inode_get_atime(inode);
++			if (timespec64_compare(atime, &ts) > 0) {
+ 				dout("atime %lld.%09ld -> %lld.%09ld inc\n",
+-				     inode->i_atime.tv_sec,
+-				     inode->i_atime.tv_nsec,
++				     ts.tv_sec, ts.tv_nsec,
+ 				     atime->tv_sec, atime->tv_nsec);
+-				inode->i_atime = *atime;
++				inode_set_atime_to_ts(inode, *atime);
+ 			}
+ 		} else if (issued & CEPH_CAP_FILE_EXCL) {
+ 			/* we did a utimes(); ignore mds values */
+@@ -869,8 +872,8 @@ void ceph_fill_file_time(struct inode *inode, int issued,
+ 		/* we have no write|excl caps; whatever the MDS says is true */
+ 		if (ceph_seq_cmp(time_warp_seq, ci->i_time_warp_seq) >= 0) {
+ 			inode_set_ctime_to_ts(inode, *ctime);
+-			inode->i_mtime = *mtime;
+-			inode->i_atime = *atime;
++			inode_set_mtime_to_ts(inode, *mtime);
++			inode_set_atime_to_ts(inode, *atime);
+ 			ci->i_time_warp_seq = time_warp_seq;
+ 		} else {
+ 			warn = 1;
+@@ -2553,20 +2556,22 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr,
+ 	}
+ 
+ 	if (ia_valid & ATTR_ATIME) {
++		struct timespec64 atime = inode_get_atime(inode);
++
+ 		dout("setattr %p atime %lld.%ld -> %lld.%ld\n", inode,
+-		     inode->i_atime.tv_sec, inode->i_atime.tv_nsec,
++		     atime.tv_sec, atime.tv_nsec,
+ 		     attr->ia_atime.tv_sec, attr->ia_atime.tv_nsec);
+ 		if (issued & CEPH_CAP_FILE_EXCL) {
+ 			ci->i_time_warp_seq++;
+-			inode->i_atime = attr->ia_atime;
++			inode_set_atime_to_ts(inode, attr->ia_atime);
+ 			dirtied |= CEPH_CAP_FILE_EXCL;
+ 		} else if ((issued & CEPH_CAP_FILE_WR) &&
+-			   timespec64_compare(&inode->i_atime,
+-					    &attr->ia_atime) < 0) {
+-			inode->i_atime = attr->ia_atime;
++			   timespec64_compare(&atime,
++					      &attr->ia_atime) < 0) {
++			inode_set_atime_to_ts(inode, attr->ia_atime);
+ 			dirtied |= CEPH_CAP_FILE_WR;
+ 		} else if ((issued & CEPH_CAP_FILE_SHARED) == 0 ||
+-			   !timespec64_equal(&inode->i_atime, &attr->ia_atime)) {
++			   !timespec64_equal(&atime, &attr->ia_atime)) {
+ 			ceph_encode_timespec64(&req->r_args.setattr.atime,
+ 					       &attr->ia_atime);
+ 			mask |= CEPH_SETATTR_ATIME;
+@@ -2626,20 +2631,21 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr,
+ 		}
+ 	}
+ 	if (ia_valid & ATTR_MTIME) {
++		struct timespec64 mtime = inode_get_mtime(inode);
++
+ 		dout("setattr %p mtime %lld.%ld -> %lld.%ld\n", inode,
+-		     inode->i_mtime.tv_sec, inode->i_mtime.tv_nsec,
++		     mtime.tv_sec, mtime.tv_nsec,
+ 		     attr->ia_mtime.tv_sec, attr->ia_mtime.tv_nsec);
+ 		if (issued & CEPH_CAP_FILE_EXCL) {
+ 			ci->i_time_warp_seq++;
+-			inode->i_mtime = attr->ia_mtime;
++			inode_set_mtime_to_ts(inode, attr->ia_mtime);
+ 			dirtied |= CEPH_CAP_FILE_EXCL;
+ 		} else if ((issued & CEPH_CAP_FILE_WR) &&
+-			   timespec64_compare(&inode->i_mtime,
+-					    &attr->ia_mtime) < 0) {
+-			inode->i_mtime = attr->ia_mtime;
++			   timespec64_compare(&mtime, &attr->ia_mtime) < 0) {
++			inode_set_mtime_to_ts(inode, attr->ia_mtime);
+ 			dirtied |= CEPH_CAP_FILE_WR;
+ 		} else if ((issued & CEPH_CAP_FILE_SHARED) == 0 ||
+-			   !timespec64_equal(&inode->i_mtime, &attr->ia_mtime)) {
++			   !timespec64_equal(&mtime, &attr->ia_mtime)) {
+ 			ceph_encode_timespec64(&req->r_args.setattr.mtime,
+ 					       &attr->ia_mtime);
+ 			mask |= CEPH_SETATTR_MTIME;
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 615db141b6c4..e4cfa3b02187 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -4353,12 +4353,16 @@ static int reconnect_caps_cb(struct inode *inode, int mds, void *arg)
+ 		rec.v2.flock_len = (__force __le32)
+ 			((ci->i_ceph_flags & CEPH_I_ERROR_FILELOCK) ? 0 : 1);
+ 	} else {
++		struct timespec64 ts;
++
+ 		rec.v1.cap_id = cpu_to_le64(cap->cap_id);
+ 		rec.v1.wanted = cpu_to_le32(__ceph_caps_wanted(ci));
+ 		rec.v1.issued = cpu_to_le32(cap->issued);
+ 		rec.v1.size = cpu_to_le64(i_size_read(inode));
+-		ceph_encode_timespec64(&rec.v1.mtime, &inode->i_mtime);
+-		ceph_encode_timespec64(&rec.v1.atime, &inode->i_atime);
++		ts = inode_get_mtime(inode);
++		ceph_encode_timespec64(&rec.v1.mtime, &ts);
++		ts = inode_get_atime(inode);
++		ceph_encode_timespec64(&rec.v1.atime, &ts);
+ 		rec.v1.snaprealm = cpu_to_le64(ci->i_snap_realm->ino);
+ 		rec.v1.pathbase = cpu_to_le64(pathbase);
+ 	}
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index 813f21add992..6732e1ea97d9 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -658,8 +658,8 @@ int __ceph_finish_cap_snap(struct ceph_inode_info *ci,
+ 
+ 	BUG_ON(capsnap->writing);
+ 	capsnap->size = i_size_read(inode);
+-	capsnap->mtime = inode->i_mtime;
+-	capsnap->atime = inode->i_atime;
++	capsnap->mtime = inode_get_mtime(inode);
++	capsnap->atime = inode_get_atime(inode);
+ 	capsnap->ctime = inode_get_ctime(inode);
+ 	capsnap->btime = ci->i_btime;
+ 	capsnap->change_attr = inode_peek_iversion_raw(inode);
+-- 
+2.41.0
 
