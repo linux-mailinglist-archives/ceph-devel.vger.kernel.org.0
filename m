@@ -2,106 +2,86 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 041977B98C2
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Oct 2023 01:40:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1A5F7BA2AC
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Oct 2023 17:45:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236818AbjJDXkE (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 4 Oct 2023 19:40:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49586 "EHLO
+        id S233133AbjJEPpV (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 5 Oct 2023 11:45:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233418AbjJDXkD (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 4 Oct 2023 19:40:03 -0400
-Received: from mail-ot1-x34a.google.com (mail-ot1-x34a.google.com [IPv6:2607:f8b0:4864:20::34a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7AFCCE
-        for <ceph-devel@vger.kernel.org>; Wed,  4 Oct 2023 16:39:59 -0700 (PDT)
-Received: by mail-ot1-x34a.google.com with SMTP id 46e09a7af769-6c49eec318aso520140a34.2
-        for <ceph-devel@vger.kernel.org>; Wed, 04 Oct 2023 16:39:59 -0700 (PDT)
+        with ESMTP id S233160AbjJEPo4 (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 5 Oct 2023 11:44:56 -0400
+Received: from mail-oa1-x48.google.com (mail-oa1-x48.google.com [IPv6:2001:4860:4864:20::48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BDA4EA
+        for <ceph-devel@vger.kernel.org>; Thu,  5 Oct 2023 07:31:07 -0700 (PDT)
+Received: by mail-oa1-x48.google.com with SMTP id 586e51a60fabf-1dcdffddde7so1420149fac.0
+        for <ceph-devel@vger.kernel.org>; Thu, 05 Oct 2023 07:31:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1696462799; x=1697067599; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+        d=gmail.com; s=20230601; t=1696516266; x=1697121066; darn=vger.kernel.org;
+        h=to:from:subject:date:message-id:mime-version:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=AmDqm4rQtpNyDmMaNDTRTb/F7GEAJTZGgDpU+ccwZEQ=;
-        b=RHg4HTjO5w4Gl/H8wwDwzUXwAmpkSvYnjPMKBIDTvgMxmbGjXUGVnd65DWevq5KzTf
-         ivV9ym1u1d+vWeBmnO+xj0S2ydp37OosUU++7NLR3fld/YKec/mAd/scf0rKGLv9sWCw
-         St4MfIO0nff1uSSoZL/i7jKFH60d7QHnKFVt4h8tdaCys/INOR1TJmZ1GxZ9moXVegFT
-         KYKE49MVUyDcYAtnNXtgS4v9RHtOMLaLOF4VFNkijPcGYhDjFODuHBwpKmjSEYgBqvns
-         N6cCwvQ8zqEjFahEI8KbqRsWG1VTfXDlWNh1LvbN4BKQHH2yRX4vtdOsrhrSY2VyGlAL
-         MKwQ==
+        bh=r78orqn0mclCwquTfLvqBbt3i/cIuzkxAisQtEHTMAM=;
+        b=JjGNsJ6rIegRrdn9wgF7VPVFQW3obe7Gw94U/FHjqd8c6JxRy/XWH5ZlXL+bTCJQMt
+         JZvJK3kyjgbM/NuZ5+fWblR3ujo5tXZljGx5kUkwW9hrhGiiFa3Q1OjvtwAg9j4ev1O/
+         Ds1ghESMblMiKL+I9J0FeEPhGoFKcYWXbyY5auUxx9T+GB/AFe8gqDJB87RBZxKQvhaZ
+         lVEx1hzE3bz8UbFL8OK12nISyZXGL6JgTQex4Nc/FD0UVh7UyKIdqnxeA9u6bbMVBgjd
+         3rnMsTr3h586lnJPOGavrTRCHDSc3nFc3W4AAwusMJAY1g0BC/8u97Lb8pqkJ814SwyP
+         jckw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696462799; x=1697067599;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=1e100.net; s=20230601; t=1696516266; x=1697121066;
+        h=to:from:subject:date:message-id:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=AmDqm4rQtpNyDmMaNDTRTb/F7GEAJTZGgDpU+ccwZEQ=;
-        b=nlyX0X5g93l2VfcDC794JWooN2isqxbBHES//WgGI7PLt4DyR7J+H+4Wz/pp55DMHe
-         aum7qDGuJW5ZWhsMxH3IAboBRg4U0ziTdJEtnMgysNilOshbTkFz5YeZCDVzGOjPhK2m
-         10vCbZYc05ri0KmCdF45jZobcNE6Ie5zD1IuMlQ60MbnaVqGVZcBnVA09eOz9hZrQEjv
-         51XKZykc9fDvgX8EtkxZpvyyL5gKDCjsd6k52TtQGjkdXO/QV2EWeUtzflysPBHLSb6r
-         27wfrSK4ZrN/JHIkIHab1ZtJ7gVxG5q5a1X9tNypIQpDQ0WabvVWk1hGWn6kZ577nBK8
-         8uXg==
-X-Gm-Message-State: AOJu0YxPGX9wLl31XsN5kloqCYDwQooQIot4c1YVRkoQzUc4q02N45y9
-        KkgcVuNFm9gsK9Z5mHrKmL81uEse7GQRE3cuJDRXjUbKkBYJf+YzY/DLhMCVJPNuN8RXeddrwFU
-        2mqbBlwBV33kzJn6Y+WQzeQvUOrD8TZKuR4DjXC8lQ6tP6EgrS4nmEx3zaC4o+4t9
-X-Google-Smtp-Source: AGHT+IH2IvELyaJYyWZbLcyvTFHh6ueK+8/Jiphpfq9ynf5I9ByGcCwPPVxbitIMTbduVDPsRXRRHt/GUQ==
-X-Received: from jrife.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:9f])
- (user=jrife job=sendgmr) by 2002:a9d:7ace:0:b0:6c6:42ca:ed46 with SMTP id
- m14-20020a9d7ace000000b006c642caed46mr983846otn.0.1696462799212; Wed, 04 Oct
- 2023 16:39:59 -0700 (PDT)
-Date:   Wed,  4 Oct 2023 18:38:27 -0500
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.42.0.582.g8ccd20d70d-goog
-Message-ID: <20231004233827.1274148-1-jrife@google.com>
-Subject: [PATCH] ceph: use kernel_connect()
-From:   Jordan Rife <jrife@google.com>
+        bh=r78orqn0mclCwquTfLvqBbt3i/cIuzkxAisQtEHTMAM=;
+        b=YjXKJKSXZTKiTOX3gz5rBEaSIUpDudiw7mIfJtLGafFeebNi1IWPAY9sbnMYS8gSJV
+         le6aK+AtdXyrn5uRAKRvrA+XaU6wmv84kPpy9y4kS4b5mMESxiMrOXZPqSZ8pWdmpM0c
+         LomGigE35fwvj7gX8QKSAED01tAaYGNRztZC1Q1hb8mwR+7LlbNCUZF9pzRmxiLNbLX4
+         fEJHYaeOJZrrEad+WvWOpbcxgrsS+aMiSvgRM1BZN5wJ4HAxYmhP4MGl1/8+6HlGYWEz
+         RFZ1p4hWy8q07wFWiER5CRwnoL2nnsb2IeB6zaTdxz4DWWpAguN7xRateUkDLioIlFG4
+         cP8Q==
+X-Gm-Message-State: AOJu0YxS9u7Bld3IEWaviTl6AMRdlb0Rp3sNUylPe6kgya+LFtArpNLz
+        S57IQh1Z+dGEfg2S33ebPNolkoSCP7o6
+X-Google-Smtp-Source: AGHT+IHf6Uuf1jB9jNtoMR/FzyZJXeZ1rHFlut40rBaVP7pCg59aTHX69vOkmQb6jTZ8zPxU51Q9XYPwmA==
+MIME-Version: 1.0
+X-Received: by 2002:a05:6870:5b0e:b0:1d6:5eee:ce8a with SMTP id
+ ds14-20020a0568705b0e00b001d65eeece8amr1943137oab.4.1696516266526; Thu, 05
+ Oct 2023 07:31:06 -0700 (PDT)
+Message-ID: <autogen-java-5b4de35c-3d1a-4226-a096-096a1751211d@google.com>
+Date:   Thu, 05 Oct 2023 14:31:06 +0000
+Subject: Garment Manufacturing & Export House
+From:   hartirysdar@gmail.com
 To:     ceph-devel@vger.kernel.org
-Cc:     idryomov@gmail.com, xiubli@redhat.com, jlayton@kernel.org,
-        Jordan Rife <jrife@google.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-Spam-Status: No, score=0.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Direct calls to ops->connect() can overwrite the address parameter when
-used in conjunction with BPF SOCK_ADDR hooks. Recent changes to
-kernel_connect() ensure that callers are insulated from such side
-effects. This patch wraps the direct call to ops->connect() with
-kernel_connect() to prevent unexpected changes to the address passed to
-ceph_tcp_connect().
+Hi,
+I hope all is well. My name is Hartiry. I am working in a Silk Style Pvt.  
+Ltd. A garment manufacturing and export house.
+Our organization is strategically based in Noida, India, an Export-oriented  
+Industrial centre with all requisite facilities.
 
-This change was originally part of a larger patch targeting the net tree
-addressing all instances of unprotected calls to ops->connect()
-throughout the kernel, but this change was split up into several patches
-targeting various trees.
+We deliver high quality product at highly competitive price. Because of our  
+quality, timely delivery and competitive price, we are able to meet the  
+increasing demands of our valued clients.
 
-Link: https://lore.kernel.org/netdev/20230821100007.559638-1-jrife@google.com/
-Link: https://lore.kernel.org/netdev/9944248dba1bce861375fcce9de663934d933ba9.camel@redhat.com/
-Fixes: d74bad4e74ee ("bpf: Hooks for sys_connect")
-Cc: stable@vger.kernel.org
-Signed-off-by: Jordan Rife <jrife@google.com>
----
- net/ceph/messenger.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-index 10a41cd9c5235..3c8b78d9c4d1c 100644
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -459,8 +459,8 @@ int ceph_tcp_connect(struct ceph_connection *con)
- 	set_sock_callbacks(sock, con);
- 
- 	con_sock_state_connecting(con);
--	ret = sock->ops->connect(sock, (struct sockaddr *)&ss, sizeof(ss),
--				 O_NONBLOCK);
-+	ret = kernel_connect(sock, (struct sockaddr *)&ss, sizeof(ss),
-+			     O_NONBLOCK);
- 	if (ret == -EINPROGRESS) {
- 		dout("connect %s EINPROGRESS sk_state = %u\n",
- 		     ceph_pr_addr(&con->peer_addr),
--- 
-2.42.0.582.g8ccd20d70d-goog
+We would be happy to explore the business opportunities with you, if you  
+are looking for any manufacturing and export house.
+
+I will be happy to share company profile and previous work portfolio.
+
+Looking forward hearing from you.
+
+
+Cheers!
+Hartiry
+Sr. Business Development executive
+Silk Style Pvt. Ltd
 
