@@ -2,100 +2,127 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 28A577BC63A
-	for <lists+ceph-devel@lfdr.de>; Sat,  7 Oct 2023 10:52:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C5B37BCA9E
+	for <lists+ceph-devel@lfdr.de>; Sun,  8 Oct 2023 02:22:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234167AbjJGIws (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Sat, 7 Oct 2023 04:52:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39972 "EHLO
+        id S1344256AbjJHAWt (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Sat, 7 Oct 2023 20:22:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234147AbjJGIwr (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Sat, 7 Oct 2023 04:52:47 -0400
-Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62204B9
-        for <ceph-devel@vger.kernel.org>; Sat,  7 Oct 2023 01:52:45 -0700 (PDT)
-Received: by mail-wm1-x334.google.com with SMTP id 5b1f17b1804b1-40684f53ef3so28087495e9.3
-        for <ceph-devel@vger.kernel.org>; Sat, 07 Oct 2023 01:52:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1696668764; x=1697273564; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gGpDf0VBcZvqRh2SwXKj5dQfQYejycf85txd4Kvut3o=;
-        b=xuSXo9G5DSZpMlw47oIUe2I9R9MFHeXox+irZG/vZRSbKVdHPzrktODt5ZdhvFxu2U
-         5TVSsUO4UyH5ufmrG1MZeLuMegHDPNMVwOUMdxe37ra2xwngbZxdl1vd0DR6a40dnkYZ
-         WrHaTidNuxzzOH3EIXLCUkJs8SadOdXr3MudOTtl1NTq0SFjXpdTsY6nsvKH2H+i/w5w
-         sF0gLSciXkwRyTl58iQSL+lzki1QPjJYA2i+a3Qm//RqTAlZS0zzbPdpFvQE96gV9fas
-         v91YRNH4yK3X79zAH0VTz30OXiAy/oeh5ikOPBvAQ76rwQnhUMfExC13bZjh/SBXvecP
-         U9Jw==
+        with ESMTP id S1344227AbjJHAWs (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Sat, 7 Oct 2023 20:22:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3499FBC
+        for <ceph-devel@vger.kernel.org>; Sat,  7 Oct 2023 17:22:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1696724519;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DbSfTUAEYDCU58vDmK84BW1S9S18QBjaTWpuTWyjJJ4=;
+        b=KjHTUNi1Aq2/DkqiPBbBUQAiQVekPWC3yheLF/l/mf5+VOCg5AyjZpFZADw+LmtcpeMFzE
+        1+xSlTKy4G9+VAW9G+8+F9eJq9y2HzZuBIhPOkrQ1lz0T5MiqPz84ybpcNv4LUzi9kyQGK
+        5m0pKO0VsZ1SL0tQJ5pxMfMFrD0Vqk4=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-98-QWwPr5DKOhm5HVmlJluqqA-1; Sat, 07 Oct 2023 20:21:52 -0400
+X-MC-Unique: QWwPr5DKOhm5HVmlJluqqA-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1c625d701b9so29987025ad.0
+        for <ceph-devel@vger.kernel.org>; Sat, 07 Oct 2023 17:21:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1696668764; x=1697273564;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1696724511; x=1697329311;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gGpDf0VBcZvqRh2SwXKj5dQfQYejycf85txd4Kvut3o=;
-        b=CKRsBH71/DTqBcD9h9tyX8etsgzQwkJsp936ZwxuZZSNX5yvbr4r1v7lCWm95AC7RH
-         sQ/hQH8amfodICMNkW8ao+N6IxJuWLg/FM+FmKLOkSeMcrx3qEiYBEx7R2MpnMgLcs2W
-         9p4QF390T+o4nOpxqD2MxzBFm5itXGxaQpNfx/KQKgnpNjB2kvKM/t3+5I8uI+R+JEbT
-         0A878D451viVDOBEvz+6Lw0/7dGIBRYORjv/VNmOoGCAwHxeXqRabVHdeSb90wzSX4+p
-         CGrI4+dix5fyN4upOBaEIIPToYzTN8hem3+tgyrIrCoXmYnVWts6rbZ8ZK71nfR7g9HL
-         6HkA==
-X-Gm-Message-State: AOJu0YwTZC96VOu83rJbaV+13yKYfeQAhHVl0OkDOqWEZn+y4O2KcDHf
-        5rGECXHrp7PxTJoTJZeheqfLZw==
-X-Google-Smtp-Source: AGHT+IGBXBfIz+KaAEbZZXWVYvfiGUuZBp9LlIFw0Wy1HxE4t7QAeJXKMNjPETFa527p/A1pIaKTVw==
-X-Received: by 2002:a1c:6a16:0:b0:406:44fe:7621 with SMTP id f22-20020a1c6a16000000b0040644fe7621mr9147876wmc.25.1696668763412;
-        Sat, 07 Oct 2023 01:52:43 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id s13-20020adfeccd000000b003198a9d758dsm3660149wro.78.2023.10.07.01.52.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Oct 2023 01:52:42 -0700 (PDT)
-Date:   Sat, 7 Oct 2023 11:52:39 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     Luis Henriques <lhenriques@suse.com>
-Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        bh=DbSfTUAEYDCU58vDmK84BW1S9S18QBjaTWpuTWyjJJ4=;
+        b=sOCcF1WGXXk/AR2QI4VN2NZShjC4Iua/vFcCf3z5Wezx9qXhd+XPRZ+rmec/iehTTP
+         0L7VLa6YOu+twg70IYE4FNKlVTRrdt4sZk6PxgO3traITSfmY9ZGmvj+5tiWlamVw0Tf
+         ZkJ+LScxNluygNjjuLcF54wVPt/R078lSe+CIUuAZ+f4qCoGMjXnUJsFXy1A4/t4FHNU
+         x/sgf/iIskZe94Zr7HNgdAvegZORCkBtKqFfekxqe2fbYBW1QPz2yI3bRyHDNQH6J573
+         Iw4iojFkXbxKaq/3iQxokbXMz5r5q/ZzsHv3104sw0B+v9jHSBYhfYlDBCm/AfgIXtU/
+         7zeg==
+X-Gm-Message-State: AOJu0YyzJEKGzB3ESBLkrE5Bl/RXax1PvCcozvc3SBEIjPHhkIyDikHy
+        Ya/zwt6bpgiOLFdYIrk6aXrPyyUvmbqikA/Pg8s6Dv9cPvE7V8utGZxxyYF7z0SUrJLg8vlEfQJ
+        /sNFVF6bMebUtDPcIogoOVN4a0JrSiw==
+X-Received: by 2002:a17:902:bf0c:b0:1bc:3944:9391 with SMTP id bi12-20020a170902bf0c00b001bc39449391mr9818207plb.25.1696724511698;
+        Sat, 07 Oct 2023 17:21:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFNGTmBIqGaiEfqliWefpMvSkpkJYgmXVVhgSkUzxFdxhaevcRlDDFL5Hy5rLo6WWtkAs2Kpg==
+X-Received: by 2002:a17:902:bf0c:b0:1bc:3944:9391 with SMTP id bi12-20020a170902bf0c00b001bc39449391mr9818201plb.25.1696724511363;
+        Sat, 07 Oct 2023 17:21:51 -0700 (PDT)
+Received: from [10.72.112.95] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id jf2-20020a170903268200b001c736370245sm6502391plb.54.2023.10.07.17.21.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 Oct 2023 17:21:50 -0700 (PDT)
+Message-ID: <a86080f4-3a40-8ae2-9bc5-9859298b7cbb@redhat.com>
+Date:   Sun, 8 Oct 2023 08:21:45 +0800
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] ceph: fix type promotion bug on 32bit systems
+Content-Language: en-US
+To:     Dan Carpenter <dan.carpenter@linaro.org>,
+        Luis Henriques <lhenriques@suse.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
         Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
         kernel-janitors@vger.kernel.org
-Subject: [PATCH] ceph: fix type promotion bug on 32bit systems
-Message-ID: <5e0418d3-a31b-4231-80bf-99adca6bcbe5@moroto.mountain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <5e0418d3-a31b-4231-80bf-99adca6bcbe5@moroto.mountain>
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <5e0418d3-a31b-4231-80bf-99adca6bcbe5@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_BLOCKED,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-In this code "ret" is type long and "src_objlen" is unsigned int.  The
-problem is that on 32bit systems, when we do the comparison signed longs
-are type promoted to unsigned int.  So negative error codes from
-do_splice_direct() are treated as success instead of failure.
 
-Fixes: 1b0c3b9f91f0 ("ceph: re-org copy_file_range and fix some error paths")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-32bit is so weird and ancient.  It's strange to think that unsigned int
-has more positive bits than signed long.
+On 10/7/23 16:52, Dan Carpenter wrote:
+> In this code "ret" is type long and "src_objlen" is unsigned int.  The
+> problem is that on 32bit systems, when we do the comparison signed longs
+> are type promoted to unsigned int.  So negative error codes from
+> do_splice_direct() are treated as success instead of failure.
+>
+> Fixes: 1b0c3b9f91f0 ("ceph: re-org copy_file_range and fix some error paths")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> 32bit is so weird and ancient.  It's strange to think that unsigned int
+> has more positive bits than signed long.
+>
+>   fs/ceph/file.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index b1da02f5dbe3..b5f8038065d7 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -2969,7 +2969,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
+>   		ret = do_splice_direct(src_file, &src_off, dst_file,
+>   				       &dst_off, src_objlen, flags);
+>   		/* Abort on short copies or on error */
+> -		if (ret < src_objlen) {
+> +		if (ret < (long)src_objlen) {
+>   			dout("Failed partial copy (%zd)\n", ret);
+>   			goto out;
+>   		}
 
- fs/ceph/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Good catch and makes sense to me.
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index b1da02f5dbe3..b5f8038065d7 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -2969,7 +2969,7 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 		ret = do_splice_direct(src_file, &src_off, dst_file,
- 				       &dst_off, src_objlen, flags);
- 		/* Abort on short copies or on error */
--		if (ret < src_objlen) {
-+		if (ret < (long)src_objlen) {
- 			dout("Failed partial copy (%zd)\n", ret);
- 			goto out;
- 		}
--- 
-2.39.2
+I also ran a test in 64bit system, the output is the same too:
+
+int x = -1
+unsigned int y = 2
+x > y
+
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
+
+Thanks
+
+- Xiubo
 
