@@ -2,124 +2,168 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE3387BE06A
-	for <lists+ceph-devel@lfdr.de>; Mon,  9 Oct 2023 15:39:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F32087BE340
+	for <lists+ceph-devel@lfdr.de>; Mon,  9 Oct 2023 16:43:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377332AbjJINjv (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 9 Oct 2023 09:39:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53996 "EHLO
+        id S233805AbjJIOns (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Mon, 9 Oct 2023 10:43:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376990AbjJINjt (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 9 Oct 2023 09:39:49 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99BBECA;
-        Mon,  9 Oct 2023 06:39:45 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 375001F390;
-        Mon,  9 Oct 2023 13:39:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1696858784; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rhhdrKYTtCPVKmKC9S4vTagGuNFEkueMHImZJv8X2YM=;
-        b=Bt2zpHEqyPysxVZ5M3oLzODYBREFlRdKXZCNTkUo5nVnjolyHlKTSqsHc0wLt16UCUCoGV
-        o5FSHr52+c41Zqh0WgU4xpr57lKbxluxV9MsWLeduU3KW8/IGZ+vIixQmZoqb9duTpD/Yg
-        ln7PX4IFxS3p2paY1+N7RW4CAH7mVCc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1696858784;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rhhdrKYTtCPVKmKC9S4vTagGuNFEkueMHImZJv8X2YM=;
-        b=GTPpcXs5FZVOBc6rMbaoAuxBJfWVKABL547gd9V7aCeCaeAzRhzXPGiNrLxWRqqimAkxCc
-        9haxXwyqCBAkXlCA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BF5BD13586;
-        Mon,  9 Oct 2023 13:39:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id BYk7K58CJGUFcQAAMHmgww
-        (envelope-from <lhenriques@suse.de>); Mon, 09 Oct 2023 13:39:43 +0000
-Received: from localhost (brahms.olymp [local])
-        by brahms.olymp (OpenSMTPD) with ESMTPA id 651cf113;
-        Mon, 9 Oct 2023 13:39:38 +0000 (UTC)
-From:   Luis Henriques <lhenriques@suse.de>
-To:     Dan Carpenter <dan.carpenter@linaro.org>
-Cc:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ceph: fix type promotion bug on 32bit systems
-In-Reply-To: <5e0418d3-a31b-4231-80bf-99adca6bcbe5@moroto.mountain> (Dan
-        Carpenter's message of "Sat, 7 Oct 2023 11:52:39 +0300")
-References: <5e0418d3-a31b-4231-80bf-99adca6bcbe5@moroto.mountain>
-Date:   Mon, 09 Oct 2023 14:39:38 +0100
-Message-ID: <87sf6jrk2t.fsf@suse.de>
+        with ESMTP id S230345AbjJIOnr (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Mon, 9 Oct 2023 10:43:47 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0484FA3
+        for <ceph-devel@vger.kernel.org>; Mon,  9 Oct 2023 07:43:46 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-40684f53d11so46501505e9.1
+        for <ceph-devel@vger.kernel.org>; Mon, 09 Oct 2023 07:43:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1696862624; x=1697467424; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fp8oeCHkXnZ8PoMfDAewrEbM2hzEMNE0S/oIdHJqQHU=;
+        b=KbxDPeGE97rYRx2p2uojWNblc2edIjGQvh6H+zrw1U1rxHuEof+uIBTSkR12YdxAiB
+         X9SomFgE7mFfxZGPcceWMBF3bq7JRYKUZtKtUMzYN8ERVgjDROBIFbzXxFWT65x32yfT
+         JW6wzh7ZXdGWp8HpVbpf/a1W/TxfP4khssEggkONfPMiWB84061fdO/VmGBYaCWlVJDf
+         DP7X0phi+dkLUbsQxeHtmjh5Fn0VS1CqXs924qC4iBkfhk+oAO5r+etf9HmZrHOWg7u4
+         Hpv0o385C3vti9wN39OkgV/M1I2qJ97shKuSlnSmWhXoQDP6daoFw2NO7zebnrccvXgn
+         xnsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1696862624; x=1697467424;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fp8oeCHkXnZ8PoMfDAewrEbM2hzEMNE0S/oIdHJqQHU=;
+        b=wigVNhEEbtGYbS2lltJ1ktw77DBTxd6mq2PpXC2eEeA/xRp40YWEUk5tL450yO3Mf6
+         57O/yTtHH196kd8ZJy/RJPCclxTGDSONfC6dFH16bQuw1ReHmfPC/OlmggLItwETO+of
+         mBkudtKt7rKX65+ITx4EBisY4R3MbS60AuSz6n4UK5AN7pGt3mH34knvm+EdSnxX1LHY
+         FgXTRgMD4vqEoneZafuX8aBYYMzJ8H7s0wNGvImvU7JLSuswjlQsHWz0rnWhyiq+ZeP7
+         BVkiYlILZ5HRCz81kvB6soIgKrdGoOKCU3kwl/Bkc5LayprItv3IFef7gcvXdoRYa0jM
+         PJXw==
+X-Gm-Message-State: AOJu0YxLjMV0gO3YBZQqEblFqnTRLHFHPo7TB3Qx2VhVYjSee6Z0icRT
+        8erwrSyReyX5I4PEK3/J0TkLyA==
+X-Google-Smtp-Source: AGHT+IFB1VcFZ4y7Snikt2+wlwEWsrBD1X8xjvYbCePNHvXgt5pS497npCfYbvtTbkx9mmpnSiyiPw==
+X-Received: by 2002:a7b:c419:0:b0:402:f5c4:2e5a with SMTP id k25-20020a7bc419000000b00402f5c42e5amr13938953wmi.37.1696862624328;
+        Mon, 09 Oct 2023 07:43:44 -0700 (PDT)
+Received: from heron.intern.cm-ag (p200300dc6f49a600529a4cfffe3dd983.dip0.t-ipconnect.de. [2003:dc:6f49:a600:529a:4cff:fe3d:d983])
+        by smtp.gmail.com with ESMTPSA id n26-20020a05600c3b9a00b004068def185asm11433113wms.28.2023.10.09.07.43.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Oct 2023 07:43:44 -0700 (PDT)
+From:   Max Kellermann <max.kellermann@ionos.com>
+To:     Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>,
+        Dave Kleikamp <shaggy@kernel.org>
+Cc:     Max Kellermann <max.kellermann@ionos.com>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, jfs-discussion@lists.sourceforge.net
+Subject: [PATCH v2] fs/{posix_acl,ext2,jfs,ceph}: apply umask if ACL support is disabled
+Date:   Mon,  9 Oct 2023 16:43:39 +0200
+Message-Id: <20231009144340.418904-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <69dda7be-d7c8-401f-89f3-7a5ca5550e2f@oracle.com>
+References: <69dda7be-d7c8-401f-89f3-7a5ca5550e2f@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Dan Carpenter <dan.carpenter@linaro.org> writes:
+One important implementation detail of the posix_acl_create() function
+is that it applies the umask to the "mode" parameter.  If
+CONFIG_FS_POSIX_ACL is disabled, this detail is missing and the umask
+may not get applied.
 
-> In this code "ret" is type long and "src_objlen" is unsigned int.  The
-> problem is that on 32bit systems, when we do the comparison signed longs
-> are type promoted to unsigned int.  So negative error codes from
-> do_splice_direct() are treated as success instead of failure.
->
-> Fixes: 1b0c3b9f91f0 ("ceph: re-org copy_file_range and fix some error pat=
-hs")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> 32bit is so weird and ancient.  It's strange to think that unsigned int
-> has more positive bits than signed long.
+This patch adds the missing code to posix_acl_create() and to three
+filesystems that omit the posix_acl_create() call if their individual
+ACL support is disabled (CONFIG_EXT2_FS_POSIX_ACL,
+CONFIG_JFS_POSIX_ACL, CONFIG_CEPH_FS_POSIX_ACL).  If
+posix_acl_create() never gets called, the umask needs to be applied
+anyway.
 
-Yikes! Thanks for catching this, Dan.  Really tricky.  I guess you used
-some static analysis tool (smatch?) to highlight this issue for you,
-right?
+This bug used to be exploitable easily with O_TMPFILE (see
+https://bugzilla.kernel.org/show_bug.cgi?id=203625) but that part was
+fixed by commit ac6800e279a2 ("fs: Add missing umask strip in
+vfs_tmpfile") last year.  The bug may not be reachable by userspace
+anymore, but since it is apparently still necessary to apply the umask
+again in posix_acl_create(), there is no reason to assume it's not
+necessary with ACL support is disabled.
 
-Anyway, feel free to add my
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/ceph/super.h           | 6 ++++++
+ fs/ext2/acl.h             | 6 ++++++
+ fs/jfs/jfs_acl.h          | 6 ++++++
+ include/linux/posix_acl.h | 1 +
+ 4 files changed, 19 insertions(+)
 
-Reviewed-by: Luis Henriques <lhenriques@suse.de>
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index 51c7f2b14f6f..58349639bd57 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -1194,6 +1194,12 @@ static inline void ceph_forget_all_cached_acls(struct inode *inode)
+ static inline int ceph_pre_init_acls(struct inode *dir, umode_t *mode,
+ 				     struct ceph_acl_sec_ctx *as_ctx)
+ {
++	/* usually, the umask is applied by posix_acl_create(), but if
++	 * ACL support is disabled at compile time, we need to do it
++	 * here, because posix_acl_create() will never be called
++	 */
++	*mode &= ~current_umask();
++
+ 	return 0;
+ }
+ static inline void ceph_init_inode_acls(struct inode *inode,
+diff --git a/fs/ext2/acl.h b/fs/ext2/acl.h
+index 4a8443a2b8ec..0ecaa9c20c0c 100644
+--- a/fs/ext2/acl.h
++++ b/fs/ext2/acl.h
+@@ -67,6 +67,12 @@ extern int ext2_init_acl (struct inode *, struct inode *);
+ 
+ static inline int ext2_init_acl (struct inode *inode, struct inode *dir)
+ {
++	/* usually, the umask is applied by posix_acl_create(), but if
++	 * ACL support is disabled at compile time, we need to do it
++	 * here, because posix_acl_create() will never be called
++	 */
++	inode->i_mode &= ~current_umask();
++
+ 	return 0;
+ }
+ #endif
+diff --git a/fs/jfs/jfs_acl.h b/fs/jfs/jfs_acl.h
+index f892e54d0fcd..64a05e663a45 100644
+--- a/fs/jfs/jfs_acl.h
++++ b/fs/jfs/jfs_acl.h
+@@ -17,6 +17,12 @@ int jfs_init_acl(tid_t, struct inode *, struct inode *);
+ static inline int jfs_init_acl(tid_t tid, struct inode *inode,
+ 			       struct inode *dir)
+ {
++	/* usually, the umask is applied by posix_acl_create(), but if
++	 * ACL support is disabled at compile time, we need to do it
++	 * here, because posix_acl_create() will never be called
++	 */
++	inode->i_mode &= ~current_umask();
++
+ 	return 0;
+ }
+ 
+diff --git a/include/linux/posix_acl.h b/include/linux/posix_acl.h
+index 0e65b3d634d9..54bc9b1061ca 100644
+--- a/include/linux/posix_acl.h
++++ b/include/linux/posix_acl.h
+@@ -128,6 +128,7 @@ static inline void cache_no_acl(struct inode *inode)
+ static inline int posix_acl_create(struct inode *inode, umode_t *mode,
+ 		struct posix_acl **default_acl, struct posix_acl **acl)
+ {
++	*mode &= ~current_umask();
+ 	*default_acl = *acl = NULL;
+ 	return 0;
+ }
+-- 
+2.39.2
 
-Cheers,
---=20
-Lu=C3=ADs
-
-
->
-> fs/ceph/file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index b1da02f5dbe3..b5f8038065d7 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -2969,7 +2969,7 @@ static ssize_t __ceph_copy_file_range(struct file *=
-src_file, loff_t src_off,
->  		ret =3D do_splice_direct(src_file, &src_off, dst_file,
->  				       &dst_off, src_objlen, flags);
->  		/* Abort on short copies or on error */
-> -		if (ret < src_objlen) {
-> +		if (ret < (long)src_objlen) {
->  			dout("Failed partial copy (%zd)\n", ret);
->  			goto out;
->  		}
-> --=20
->
-> 2.39.2
->
