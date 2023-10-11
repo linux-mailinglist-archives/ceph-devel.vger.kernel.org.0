@@ -2,64 +2,80 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D86B7C4F65
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Oct 2023 11:50:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9639A7C4F8A
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Oct 2023 12:05:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231389AbjJKJuq (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 11 Oct 2023 05:50:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50642 "EHLO
+        id S231438AbjJKKFr (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Wed, 11 Oct 2023 06:05:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231411AbjJKJul (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 Oct 2023 05:50:41 -0400
-Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7918C4
-        for <ceph-devel@vger.kernel.org>; Wed, 11 Oct 2023 02:50:39 -0700 (PDT)
-Received: by mail-wm1-x329.google.com with SMTP id 5b1f17b1804b1-406618d0992so63883525e9.0
-        for <ceph-devel@vger.kernel.org>; Wed, 11 Oct 2023 02:50:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1697017838; x=1697622638; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tmQO9vCbLRBEKuzIIdziPoF50PIw+y6A20pY+tXcXbg=;
-        b=DCYW3DbbQDJEZMiPuzl0YEZuiA/1ZLHP3R5zsWPdr538qyDDHO+0FeK7GTdPFwssPP
-         hX2XdvdHhRuq/t2Hu+ezHvOr80nf2exxtsJNK85/wUjg2nUZ9ReOQ4ypVeZeng4Tq0KA
-         5IS05aEr2pqPbKV0skst+T2ByZ+OZwzqodStRMCUR2gMWJpV7zHBCmfGASrSlQ9JcYw/
-         4BFYsb5s0Hgqv7vBsq1zG71GMJvkEmy1yesffKSAYi08Rsln9kVPbW+on+CI4f+n/l4/
-         /e6qd7gMhqNZuLI5/CuCzpH8huzeLjyFjkXxXaQboZTkb+muuLW2I4TDCP+YXMbretnr
-         C9HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1697017838; x=1697622638;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tmQO9vCbLRBEKuzIIdziPoF50PIw+y6A20pY+tXcXbg=;
-        b=R8XdU99bPrOeRIHL9gujgKCVSwIa8MMJi0lmdHaB8QHGwCHmY4hfZTUolxyT3iEcfd
-         Li2l3vzLkxwHN9WEnCwhSk62kqEaz/WlqDF9AX1SpkCtnxdRrtsWzsyawCRfs+qq5Tiz
-         WReqHtUet4d92z+uci9jisEPg4O3Eo3In85k6RKHLk5JCHyL+CFHr3pkjTQXOWfcHLq0
-         1yB0GSfzw9r+ABu4M9TLGgj0XNECG36PWsvXUodiNv7lsSvIfh54nCCsKz9nt47H0Mup
-         ri4GUT9p+vIRaBdeA+iRc0n/BCVTDIJxrokCMAERFDfQ0qE1+llvOFlnd+oi+gAta5pv
-         0VuQ==
-X-Gm-Message-State: AOJu0YxDMrb9PRF3QCIeCOwlxbaPAD8k+Rv7brjG2LTnUa6cigZqk1Jn
-        js8IQv3NXs56QTULI55WBPn6roYdjyB5lGJifpw=
-X-Google-Smtp-Source: AGHT+IFtJcZRG8RK5IH36aStvdAJuy/cYhxIT6HuX6MfTEcSpWKQ0kUhgfQTR/F9ZZnxUVXwlAREwg==
-X-Received: by 2002:a7b:c40a:0:b0:406:61c6:30b8 with SMTP id k10-20020a7bc40a000000b0040661c630b8mr17763877wmi.22.1697017838258;
-        Wed, 11 Oct 2023 02:50:38 -0700 (PDT)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id p15-20020a7bcc8f000000b003fee6e170f9sm16379462wma.45.2023.10.11.02.50.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Oct 2023 02:50:37 -0700 (PDT)
-Date:   Wed, 11 Oct 2023 12:50:34 +0300
-From:   Dan Carpenter <dan.carpenter@linaro.org>
-To:     jlayton@kernel.org
-Cc:     ceph-devel@vger.kernel.org
-Subject: [bug report] libceph: add new iov_iter-based ceph_msg_data_type and
- ceph_osd_data_type
-Message-ID: <c5a75561-b6c7-4217-9e70-4b3212fd05f8@moroto.mountain>
+        with ESMTP id S231215AbjJKKFq (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Wed, 11 Oct 2023 06:05:46 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8E3F92;
+        Wed, 11 Oct 2023 03:05:43 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 85F1321846;
+        Wed, 11 Oct 2023 10:05:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1697018742; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KvCiUYneHj84xzWqOcZeY7+I2IayaqBntzgcE8QwB8U=;
+        b=p+rqvMXbLI2hW8Qv6uv8BDydqVQ6n1DhuxcIr7zf93KJ3qtr7qHmHxKGrFvgZBDBPP84B5
+        r4UCpL6t6rDLNacSKImf9aipwXnJgMUxbxhmHmYMynGz9SFfBZIITIQj3dAp7xdTOMMuAQ
+        d9Dfpxw988QJ7gqWFGFOEsmS+3Wv8wg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1697018742;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=KvCiUYneHj84xzWqOcZeY7+I2IayaqBntzgcE8QwB8U=;
+        b=wNU592+Vcr8OXaOweD0TnSahKEDozcrRqkR02RSKK+eClIhMnSLaCUIFFxLAv35dZJR8Ti
+        y+TbLbHtNl+GLwAg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 6B8BD138EF;
+        Wed, 11 Oct 2023 10:05:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Xbg9GnZzJmWCVgAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 11 Oct 2023 10:05:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id CF275A05BC; Wed, 11 Oct 2023 12:05:41 +0200 (CEST)
+Date:   Wed, 11 Oct 2023 12:05:41 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Max Kellermann <max.kellermann@ionos.com>
+Cc:     Jan Kara <jack@suse.cz>, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.com>,
+        Dave Kleikamp <shaggy@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net,
+        Christian Brauner <brauner@kernel.org>, fdevel@quack3,
+        Yang Xu <xuyang2018.jy@fujitsu.com>
+Subject: Re: [PATCH v2] fs/{posix_acl,ext2,jfs,ceph}: apply umask if ACL
+ support is disabled
+Message-ID: <20231011100541.sfn3prgtmp7hk2oj@quack3>
+References: <69dda7be-d7c8-401f-89f3-7a5ca5550e2f@oracle.com>
+ <20231009144340.418904-1-max.kellermann@ionos.com>
+ <20231010131125.3uyfkqbcetfcqsve@quack3>
+ <CAKPOu+-nC2bQTZYL0XTzJL6Tx4Pi1gLfNWCjU2Qz1f_5CbJc1w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKPOu+-nC2bQTZYL0XTzJL6Tx4Pi1gLfNWCjU2Qz1f_5CbJc1w@mail.gmail.com>
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_SOFTFAIL,URIBL_BLOCKED autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,49 +83,43 @@ Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-Hello Jeff Layton,
+On Tue 10-10-23 15:17:17, Max Kellermann wrote:
+> On Tue, Oct 10, 2023 at 3:11 PM Jan Kara <jack@suse.cz> wrote:
+> > Thanks for the updated changelog! But as I'm looking into VFS code isn't
+> > this already handled by mode_strip_umask() / vfs_prepare_mode() in
+> > fs/namei.c? Because posix_acl_create() doesn't do anything to 'mode' for
+> > !IS_POSIXACL() filesystems either. So at least ext2 (where I've checked
+> > the mount option handling) does seem to have umask properly applied in all
+> > the cases. But I might be missing something...
+> 
+> I'm not sure either. I was hoping the VFS experts could tell something
+> about how this API is supposed to be used and whose responsibility it
+> is to apply the umask. There used to be some confusion in the code, to
+> the point it was missing completely for O_TMPFILE. I'm still somewhat
+> confused. Maybe this is a chance to clear this confusion up and then
+> document it?
 
-To be honest, I'm not sure why I am only seeing this now.  These
-warnings are hard to analyse because they involve such a long call tree.
-Anyway, hopefully it's not too complicated for you since you know the
-code.
+So I've checked some more and the kernel doc comments before
+mode_strip_umask() and vfs_prepare_mode() make it pretty obvious - all
+paths creating new inodes must be calling vfs_prepare_mode(). As a result
+mode_strip_umask() which handles umask stripping for filesystems not
+supporting posix ACLs. For filesystems that do support ACLs,
+posix_acl_create() must be call and that handles umask stripping. So your
+fix should not be needed. CCed some relevant people for confirmation.
 
-The patch dee0c5f83460: "libceph: add new iov_iter-based
-ceph_msg_data_type and ceph_osd_data_type" from Jul 1, 2022
-(linux-next), leads to the following Smatch static checker warning:
+> I wish there was one central place to apply the umask, and not spread
+> it around two (or more?) different code locations, depending on
+> whether there's an ACL. For my taste, that sort of policy is too error
+> prone for something as sensitive as umasks. After we already had the
+> O_TMPFILE vulnerability (which was only fixed last year, three
+> years(!) after I reported it).
 
-	lib/iov_iter.c:905 want_pages_array()
-	warn: sleeping in atomic context
+I agree having umask stripping in two places is not great but it's
+difficult to avoid with how posix ACLs are implemented and intertwined in
+various filesystem implementations. At least the current design made it
+quite a bit harder to forget to strip the umask.
 
-lib/iov_iter.c
-    896 static int want_pages_array(struct page ***res, size_t size,
-    897                             size_t start, unsigned int maxpages)
-    898 {
-    899         unsigned int count = DIV_ROUND_UP(size + start, PAGE_SIZE);
-    900 
-    901         if (count > maxpages)
-    902                 count = maxpages;
-    903         WARN_ON(!count);        // caller should've prevented that
-    904         if (!*res) {
---> 905                 *res = kvmalloc_array(count, sizeof(struct page *), GFP_KERNEL);
-    906                 if (!*res)
-    907                         return 0;
-    908         }
-    909         return count;
-    910 }
-
-
-prep_next_sparse_read() <- disables preempt
--> advance_cursor()
-   -> ceph_msg_data_next()
-      -> ceph_msg_data_iter_next()
-         -> iov_iter_get_pages2()
-            -> __iov_iter_get_pages_alloc()
-               -> want_pages_array()
-
-The prep_next_sparse_read() functions hold the spin_lock(&o->o_requests_lock);
-lock so it can't sleep.  But iov_iter_get_pages2() seems like a sleeping
-operation.
-
-regards,
-dan carpenter
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
