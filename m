@@ -2,58 +2,39 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 66A237C69DD
-	for <lists+ceph-devel@lfdr.de>; Thu, 12 Oct 2023 11:42:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D4D67C704C
+	for <lists+ceph-devel@lfdr.de>; Thu, 12 Oct 2023 16:30:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235570AbjJLJmB (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Thu, 12 Oct 2023 05:42:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37776 "EHLO
+        id S1346745AbjJLOaH (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 12 Oct 2023 10:30:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235558AbjJLJl6 (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Thu, 12 Oct 2023 05:41:58 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97AF591;
-        Thu, 12 Oct 2023 02:41:53 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 425331F74B;
-        Thu, 12 Oct 2023 09:41:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1697103712; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vj1bsy2Gunm8i8C/E8CXqhB/cI+iZsazxKAsUR5zHAo=;
-        b=RtaNrwwdPmko1+Z5dMfMo8fk4BAdxuUKHQGrcfRW9XK5UBNcXt1ObAbPvfF9kaG3TKWbDW
-        f1FU+5Qcf8DdK/mNL6l7iqkysgBtWdCK9a1dRycBmB08cDZdh9hvciWiX5zKIJEKtL/HIs
-        fIxTNojv114ZA/OGxOzTa5LVQVqXgHA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1697103712;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vj1bsy2Gunm8i8C/E8CXqhB/cI+iZsazxKAsUR5zHAo=;
-        b=8pEMSLQev2iW1GvcBoTUB1M+BNVeiceidtnBFKAQKqpAJYDTHIvoK8ab6eJL9WrqXDkg37
-        bvB/aPwT9sr5enDg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2FE4B139ED;
-        Thu, 12 Oct 2023 09:41:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id iVCSC2C/J2ULdQAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 12 Oct 2023 09:41:52 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id B14F8A06B0; Thu, 12 Oct 2023 11:41:51 +0200 (CEST)
-Date:   Thu, 12 Oct 2023 11:41:51 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        with ESMTP id S1347274AbjJLOaF (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 12 Oct 2023 10:30:05 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5A5FD3
+        for <ceph-devel@vger.kernel.org>; Thu, 12 Oct 2023 07:29:58 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-111-200.bstnma.fios.verizon.net [173.48.111.200])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 39CETIWq012545
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 12 Oct 2023 10:29:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1697120962; bh=Fmcr5RwuJwayVhUbngXLq3LrYuBYwHACNuwCZH5c+28=;
+        h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+        b=W081j5tW+M3CusLvAKm2TNgPiad4Xmuv60pn0cMLFB5AjiGc2JttGCMCA8KlhNMHs
+         5C3mCxqhrtR3ekKhhrFTa5qaG9CfpP5HcM0G4rq6Gl4pq5y3M6bUR5tEf+pJaboBZt
+         qWn7L6TFYnvU7ekPCViU9Zt/keviwUbXxICidUBi3Rb/Qn/aprQmoDzfYMaWVRh7UQ
+         PJDpC0wVBpFM+lxuvMUnfUoexvBEBGwXf4UWADRqQVePUiVW8bQ78sfaFC1Okx50/5
+         70AuQDIZz+2Cx7LWvQwUuEuV4LXzBHztnowIu6BW5vFGriao3e79YYlcOaNfKO1dKh
+         G/9xFBApDA+rQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 6BF5215C0255; Thu, 12 Oct 2023 10:29:18 -0400 (EDT)
+Date:   Thu, 12 Oct 2023 10:29:18 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Christian Brauner <brauner@kernel.org>,
         Max Kellermann <max.kellermann@ionos.com>,
         Xiubo Li <xiubli@redhat.com>,
         Ilya Dryomov <idryomov@gmail.com>,
@@ -65,7 +46,7 @@ Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
         linux-fsdevel@vger.kernel.org
 Subject: Re: [PATCH v2] fs/{posix_acl,ext2,jfs,ceph}: apply umask if ACL
  support is disabled
-Message-ID: <20231012094151.qrha5b2him43mom5@quack3>
+Message-ID: <20231012142918.GB255452@mit.edu>
 References: <CAKPOu+-nC2bQTZYL0XTzJL6Tx4Pi1gLfNWCjU2Qz1f_5CbJc1w@mail.gmail.com>
  <20231011100541.sfn3prgtmp7hk2oj@quack3>
  <CAKPOu+_xdFALt9sgdd5w66Ab6KTqiy8+Z0Yd3Ss4+92jh8nCwg@mail.gmail.com>
@@ -74,150 +55,78 @@ References: <CAKPOu+-nC2bQTZYL0XTzJL6Tx4Pi1gLfNWCjU2Qz1f_5CbJc1w@mail.gmail.com>
  <CAKPOu+_0yjg=PrwAR8jKok8WskjdDEJOBtu3uKR_4Qtp8b7H1Q@mail.gmail.com>
  <20231011135922.4bij3ittlg4ujkd7@quack3>
  <20231011-braumeister-anrufen-62127dc64de0@brauner>
- <20231011162904.3dxkids7zzspcolp@quack3>
- <20231012-klebt-wahljahr-a29e40a2ea2a@brauner>
+ <20231011170042.GA267994@mit.edu>
+ <20231011172606.mztqyvclq6hq2qa2@quack3>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20231012-klebt-wahljahr-a29e40a2ea2a@brauner>
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+In-Reply-To: <20231011172606.mztqyvclq6hq2qa2@quack3>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no autolearn_force=no
-        version=3.4.6
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Thu 12-10-23 11:22:29, Christian Brauner wrote:
-> On Wed, Oct 11, 2023 at 06:29:04PM +0200, Jan Kara wrote:
-> > On Wed 11-10-23 17:27:37, Christian Brauner wrote:
-> > > On Wed, Oct 11, 2023 at 03:59:22PM +0200, Jan Kara wrote:
-> > > > On Wed 11-10-23 14:27:49, Max Kellermann wrote:
-> > > > > On Wed, Oct 11, 2023 at 2:18 PM Max Kellermann <max.kellermann@ionos.com> wrote:
-> > > > > > But without the other filesystems. I'll resend it with just the
-> > > > > > posix_acl.h hunk.
-> > > > > 
-> > > > > Thinking again, I don't think this is the proper solution. This may
-> > > > > server as a workaround so those broken filesystems don't suffer from
-> > > > > this bug, but it's not proper.
-> > > > > 
-> > > > > posix_acl_create() is only supposed to appy the umask if the inode
-> > > > > supports ACLs; if not, the VFS is supposed to do it. But if the
-> > > > > filesystem pretends to have ACL support but the kernel does not, it's
-> > > > > really a filesystem bug. Hacking the umask code into
-> > > > > posix_acl_create() for that inconsistent case doesn't sound right.
-> > > > > 
-> > > > > A better workaround would be this patch:
-> > > > > https://patchwork.kernel.org/project/linux-nfs/patch/151603744662.29035.4910161264124875658.stgit@rabbit.intern.cm-ag/
-> > > > > I submitted it more than 5 years ago, it got one positive review, but
-> > > > > was never merged.
-> > > > > 
-> > > > > This patch enables the VFS's umask code even if the filesystem
-> > > > > prerents to support ACLs. This still doesn't fix the filesystem bug,
-> > > > > but makes VFS's behavior consistent.
-> > > > 
-> > > > OK, that solution works for me as well. I agree it seems a tad bit cleaner.
-> > > > Christian, which one would you prefer?
-> > > 
-> > > So it always bugged me that POSIX ACLs push umask stripping down into
-> > > the individual filesystems but it's hard to get rid of this. And we
-> > > tried to improve the situation during the POSIX ACL rework by
-> > > introducing vfs_prepare_umask().
-> > > 
-> > > Aside from that, the problem had been that filesystems like nfs v4
-> > > intentionally raised SB_POSIXACL to prevent umask stripping in the VFS.
-> > > IOW, for them SB_POSIXACL was equivalent to "don't apply any umask".
-> > 
-> > Ah, what a hack...
-> > 
-> > > And afaict nfs v4 has it's own thing going on how and where umasks are
-> > > applied. However, since we now have the following commit in vfs.misc:
-> > > 
-> > > commit f61b9bb3f8386a5e59b49bf1310f5b34f47bcef9
-> > > Author:     Jeff Layton <jlayton@kernel.org>
-> > > AuthorDate: Mon Sep 11 20:25:50 2023 -0400
-> > > Commit:     Christian Brauner <brauner@kernel.org>
-> > > CommitDate: Thu Sep 21 15:37:47 2023 +0200
-> > > 
-> > >     fs: add a new SB_I_NOUMASK flag
-> > > 
-> > >     SB_POSIXACL must be set when a filesystem supports POSIX ACLs, but NFSv4
-> > >     also sets this flag to prevent the VFS from applying the umask on
-> > >     newly-created files. NFSv4 doesn't support POSIX ACLs however, which
-> > >     causes confusion when other subsystems try to test for them.
-> > > 
-> > >     Add a new SB_I_NOUMASK flag that allows filesystems to opt-in to umask
-> > >     stripping without advertising support for POSIX ACLs. Set the new flag
-> > >     on NFSv4 instead of SB_POSIXACL.
-> > > 
-> > >     Also, move mode_strip_umask to namei.h and convert init_mknod and
-> > >     init_mkdir to use it.
-> > > 
-> > >     Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > >     Message-Id: <20230911-acl-fix-v3-1-b25315333f6c@kernel.org>
-> > >     Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > 
-> > > I think it's possible to pick up the first patch linked above:
-> > >    
-> > > fix umask on NFS with CONFIG_FS_POSIX_ACL=n doesn't lead to any
-> > > 
-> > > and see whether we see any regressions from this.
-> > > 
-> > > The second patch I can't easily judge that should go through nfs if at
-> > > all.
-> > > 
-> > > So proposal/question: should we take the first patch into vfs.misc?
-> > 
-> > Sounds good to me. I have checked whether some other filesystem does not
-> > try to play similar games as NFS and it appears not although overlayfs does
-> > seem to play some games with umasks.
+On Wed, Oct 11, 2023 at 07:26:06PM +0200, Jan Kara wrote:
+> I don't think this is accurate. posix_acl_create() needs unmasked 'mode'
+> because instead of using current_umask() for masking it wants to use
+> whatever is stored in the ACLs as an umask.
 > 
-> I think that overlayfs sets SB_POSIXACL unconditionally to ensure that
-> the upper filesystem can decide where the umask needs to be stripped. If
-> the upper filesystem doesn't have SB_POSIXACL then the umask will be
-> stripped directly in e.g., vfs_create(), and vfs_tmpfile(). If it does
-> then it will be done in the upper filesystems.
-> 
-> So with the patch I linked above that we have in vfs.misc we should be
-> able to  change overlayfs to behave similar to NFS:
+> So I still think we need to keep umask handling in both posix_acl_create()
+> and vfs_prepare_mode(). But filesystem's only obligation would be to call
+> posix_acl_create() if the inode is IS_POSIXACL. No more caring about when
+> to apply umask and when not based on config or mount options.
 
-Yep, I was thinking that this might be what overlayfs wants. But I know
-far to few about overlayfs to be sure ;) That's why I've CCed Amir in my
-previous email...
+Ah, right, thanks for the clarification.  I *think* the following
+patch in the ext4 dev branch (not yet in Linus's tree, but it should
+be in linux-next) should be harmless, though, right?  And once we get
+the changes in vfs_prepare_mode() we can revert in ext4 --- or do
+folks I think I should just drop it from the ext4 dev branch now?
 
-								Honza
+Thanks,
 
-> 
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index 9f43f0d303ad..361189b676b0 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -1489,8 +1489,16 @@ int ovl_fill_super(struct super_block *sb, struct fs_context *fc)
->         sb->s_xattr = ofs->config.userxattr ? ovl_user_xattr_handlers :
->                 ovl_trusted_xattr_handlers;
->         sb->s_fs_info = ofs;
-> +#ifdef CONFIG_FS_POSIX_ACL
->         sb->s_flags |= SB_POSIXACL;
-> +#endif
->         sb->s_iflags |= SB_I_SKIP_SYNC | SB_I_IMA_UNVERIFIABLE_SIGNATURE;
-> +       /*
-> +        * Ensure that umask handling is done by the filesystems used
-> +        * for the the upper layer instead of overlayfs as that would
-> +        * lead to unexpected results.
-> +        */
-> +       sb->s_iflags |= SB_I_NOUMASK;
-> 
->         err = -ENOMEM;
->         root_dentry = ovl_get_root(sb, ctx->upper.dentry, oe);
-> 
-> Which means that umask handling will be done by the upper filesystems
-> just as is done right now and overlayfs can stop advertising SB_POSIXACL
-> support on a kernel that doesn't have support for it compiled in.
-> 
-> How does that sound?
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+						- Ted
+
+commit 484fd6c1de13b336806a967908a927cc0356e312
+Author: Max Kellermann <max.kellermann@ionos.com>
+Date:   Tue Sep 19 10:18:23 2023 +0200
+
+    ext4: apply umask if ACL support is disabled
+    
+    The function ext4_init_acl() calls posix_acl_create() which is
+    responsible for applying the umask.  But without
+    CONFIG_EXT4_FS_POSIX_ACL, ext4_init_acl() is an empty inline function,
+    and nobody applies the umask.
+    
+    This fixes a bug which causes the umask to be ignored with O_TMPFILE
+    on ext4:
+    
+     https://github.com/MusicPlayerDaemon/MPD/issues/558
+     https://bugs.gentoo.org/show_bug.cgi?id=686142#c3
+     https://bugzilla.kernel.org/show_bug.cgi?id=203625
+    
+    Reviewed-by: "J. Bruce Fields" <bfields@redhat.com>
+    Cc: stable@vger.kernel.org
+    Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+    Link: https://lore.kernel.org/r/20230919081824.1096619-1-max.kellermann@ionos.com
+    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+
+diff --git a/fs/ext4/acl.h b/fs/ext4/acl.h
+index 0c5a79c3b5d4..ef4c19e5f570 100644
+--- a/fs/ext4/acl.h
++++ b/fs/ext4/acl.h
+@@ -68,6 +68,11 @@ extern int ext4_init_acl(handle_t *, struct inode *, struct inode *);
+ static inline int
+ ext4_init_acl(handle_t *handle, struct inode *inode, struct inode *dir)
+ {
++	/* usually, the umask is applied by posix_acl_create(), but if
++	   ext4 ACL support is disabled at compile time, we need to do
++	   it here, because posix_acl_create() will never be called */
++	inode->i_mode &= ~current_umask();
++
+ 	return 0;
+ }
+ #endif  /* CONFIG_EXT4_FS_POSIX_ACL */
