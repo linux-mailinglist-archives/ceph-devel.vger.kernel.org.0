@@ -2,28 +2,28 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 20ACD7C7E3A
-	for <lists+ceph-devel@lfdr.de>; Fri, 13 Oct 2023 08:55:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EAA27C7E53
+	for <lists+ceph-devel@lfdr.de>; Fri, 13 Oct 2023 09:05:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229884AbjJMGzj (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 13 Oct 2023 02:55:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35704 "EHLO
+        id S229811AbjJMHFD (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 13 Oct 2023 03:05:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229869AbjJMGzi (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 13 Oct 2023 02:55:38 -0400
+        with ESMTP id S229692AbjJMHFB (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 13 Oct 2023 03:05:01 -0400
 Received: from jari.cn (unknown [218.92.28.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 61A13F1;
-        Thu, 12 Oct 2023 23:55:35 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6DDDD91;
+        Fri, 13 Oct 2023 00:05:00 -0700 (PDT)
 Received: from wangkailong$jari.cn ( [182.148.14.172] ) by
- ajax-webmail-localhost.localdomain (Coremail) ; Fri, 13 Oct 2023 14:53:53
+ ajax-webmail-localhost.localdomain (Coremail) ; Fri, 13 Oct 2023 15:03:18
  +0800 (GMT+08:00)
 X-Originating-IP: [182.148.14.172]
-Date:   Fri, 13 Oct 2023 14:53:53 +0800 (GMT+08:00)
+Date:   Fri, 13 Oct 2023 15:03:18 +0800 (GMT+08:00)
 X-CM-HeaderCharset: UTF-8
 From:   "KaiLong Wang" <wangkailong@jari.cn>
 To:     xiubli@redhat.com, idryomov@gmail.com, jlayton@kernel.org
 Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ceph: Clean up errors in mdsmap.c
+Subject: [PATCH] ceph: Clean up errors in locks.c
 X-Priority: 3
 X-Mailer: Coremail Webmail Server Version 2023.1-cmXT6 build
  20230419(ff23bf83) Copyright (c) 2002-2023 www.mailtech.cn
@@ -31,10 +31,10 @@ X-Mailer: Coremail Webmail Server Version 2023.1-cmXT6 build
 Content-Transfer-Encoding: base64
 Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-Message-ID: <5722ebe7.95d.18b27d0200e.Coremail.wangkailong@jari.cn>
+Message-ID: <5bea2493.963.18b27d8bfb6.Coremail.wangkailong@jari.cn>
 X-Coremail-Locale: zh_CN
-X-CM-TRANSID: AQAAfwDXaD6B6ShlYt7BAA--.631W
-X-CM-SenderInfo: 5zdqwypdlo00nj6mt2flof0/1tbiAQABB2UlHDMAlgARsv
+X-CM-TRANSID: AQAAfwC3VUC26yhlit7BAA--.671W
+X-CM-SenderInfo: 5zdqwypdlo00nj6mt2flof0/1tbiAQABB2UlHDMAlgAXsp
 X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
         CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
         daVFxhVjvjDU=
@@ -49,20 +49,15 @@ List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
 Rml4IHRoZSBmb2xsb3dpbmcgZXJyb3JzIHJlcG9ydGVkIGJ5IGNoZWNrcGF0Y2g6CgpFUlJPUjog
-ImZvbyogYmFyIiBzaG91bGQgYmUgImZvbyAqYmFyIgpFUlJPUjogc3BhY2VzIHJlcXVpcmVkIGFy
-b3VuZCB0aGF0ICc9JyAoY3R4OlZ4VykKClNpZ25lZC1vZmYtYnk6IEthaUxvbmcgV2FuZyA8d2Fu
-Z2thaWxvbmdAamFyaS5jbj4KLS0tCiBmcy9jZXBoL21kc21hcC5jIHwgNCArKy0tCiAxIGZpbGUg
-Y2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2Zz
-L2NlcGgvbWRzbWFwLmMgYi9mcy9jZXBoL21kc21hcC5jCmluZGV4IDdkYWMyMWVlNmNlNy4uYmI1
-OTZlMDBmZDljIDEwMDY0NAotLS0gYS9mcy9jZXBoL21kc21hcC5jCisrKyBiL2ZzL2NlcGgvbWRz
-bWFwLmMKQEAgLTgyLDcgKzgyLDcgQEAgaW50IGNlcGhfbWRzbWFwX2dldF9yYW5kb21fbWRzKHN0
-cnVjdCBjZXBoX21kc21hcCAqbSkKIAl9IHdoaWxlICgwKQogCiAKLXN0YXRpYyBpbnQgX19kZWNv
-ZGVfYW5kX2Ryb3BfY29tcGF0X3NldCh2b2lkICoqcCwgdm9pZCogZW5kKQorc3RhdGljIGludCBf
-X2RlY29kZV9hbmRfZHJvcF9jb21wYXRfc2V0KHZvaWQgKipwLCB2b2lkICplbmQpCiB7CiAJaW50
-IGk7CiAJLyogY29tcGF0LCByb19jb21wYXQsIGluY29tcGF0Ki8KQEAgLTE4Niw3ICsxODYsNyBA
-QCBzdHJ1Y3QgY2VwaF9tZHNtYXAgKmNlcGhfbWRzbWFwX2RlY29kZSh2b2lkICoqcCwgdm9pZCAq
-ZW5kLCBib29sIG1zZ3IyKQogCiAJCWNlcGhfZGVjb2RlX25lZWQocCwgZW5kLCBzaXplb2YodTY0
-KSArIDEsIGJhZCk7CiAJCWdsb2JhbF9pZCA9IGNlcGhfZGVjb2RlXzY0KHApOwotCQlpbmZvX3Y9
-IGNlcGhfZGVjb2RlXzgocCk7CisJCWluZm9fdiA9IGNlcGhfZGVjb2RlXzgocCk7CiAJCWlmIChp
-bmZvX3YgPj0gNCkgewogCQkJdTMyIGluZm9fbGVuOwogCQkJY2VwaF9kZWNvZGVfbmVlZChwLCBl
-bmQsIDEgKyBzaXplb2YodTMyKSwgYmFkKTsKLS0gCjIuMTcuMQo=
+bmVlZCBjb25zaXN0ZW50IHNwYWNpbmcgYXJvdW5kICctJyAoY3R4Old4VikKClNpZ25lZC1vZmYt
+Ynk6IEthaUxvbmcgV2FuZyA8d2FuZ2thaWxvbmdAamFyaS5jbj4KLS0tCiBmcy9jZXBoL2xvY2tz
+LmMgfCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkK
+CmRpZmYgLS1naXQgYS9mcy9jZXBoL2xvY2tzLmMgYi9mcy9jZXBoL2xvY2tzLmMKaW5kZXggY2I1
+MWM3ZTljOGUyLi5mOTU2ZjYxM2RkOTMgMTAwNjQ0Ci0tLSBhL2ZzL2NlcGgvbG9ja3MuYworKysg
+Yi9mcy9jZXBoL2xvY2tzLmMKQEAgLTE0MSw3ICsxNDEsNyBAQCBzdGF0aWMgaW50IGNlcGhfbG9j
+a19tZXNzYWdlKHU4IGxvY2tfdHlwZSwgdTE2IG9wZXJhdGlvbiwgc3RydWN0IGlub2RlICppbm9k
+ZSwKIAkJbGVuZ3RoID0gbGU2NF90b19jcHUocmVxLT5yX3JlcGx5X2luZm8uZmlsZWxvY2tfcmVw
+bHktPnN0YXJ0KSArCiAJCQkJCQkgbGU2NF90b19jcHUocmVxLT5yX3JlcGx5X2luZm8uZmlsZWxv
+Y2tfcmVwbHktPmxlbmd0aCk7CiAJCWlmIChsZW5ndGggPj0gMSkKLQkJCWZsLT5mbF9lbmQgPSBs
+ZW5ndGggLTE7CisJCQlmbC0+ZmxfZW5kID0gbGVuZ3RoIC0gMTsKIAkJZWxzZQogCQkJZmwtPmZs
+X2VuZCA9IDA7CiAKLS0gCjIuMTcuMQo=
