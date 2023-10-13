@@ -2,83 +2,68 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 601277C8C4B
-	for <lists+ceph-devel@lfdr.de>; Fri, 13 Oct 2023 19:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54E3F7C8D7A
+	for <lists+ceph-devel@lfdr.de>; Fri, 13 Oct 2023 21:06:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231224AbjJMR2X (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Fri, 13 Oct 2023 13:28:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39476 "EHLO
+        id S231725AbjJMTGz (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Fri, 13 Oct 2023 15:06:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229697AbjJMR2W (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Fri, 13 Oct 2023 13:28:22 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AC10A9;
-        Fri, 13 Oct 2023 10:28:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Imrv7hD55Mkc+SEoB4XVFrWjYvya+wwXsMRtGt0H5rA=; b=LfICwqNBIzNu3ioIqF7lzF8PE1
-        DNNDcUO+WN6s+RP2OMkJT/qU5k3RBo3ANrYkhAsydqGKT4ioL2RtakBCc/WjI9nTOwQif69iGoPrM
-        LIItLhrydjykR5FjKmttU+4/HwxH3uPMKcW4OygWjeOzbFRQPkvG/O43/t6okeN2/i09crXEZFKzi
-        k8D4OvY2OQU2yIehhAKYO9ouGdyvJ4MFCcMfiy3X2M3RigM5HJi6BJl951Sd53Ypx8tChN8KFZLHk
-        lxrVWGWMbWdDCC0v6yBYd6sAPv/6oLJTbIGWhm8cJL7F7vnRHhJQBHkL0w7AwREstcKxvFjdi2A5A
-        So6VZ8xg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1qrLwx-006d2F-Oz; Fri, 13 Oct 2023 17:27:47 +0000
-Date:   Fri, 13 Oct 2023 18:27:47 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Steve French <smfrench@gmail.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Christian Brauner <christian@brauner.io>,
-        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-cachefs@redhat.com
-Subject: Re: [RFC PATCH 12/53] netfs: Provide tools to create a buffer in an
- xarray
-Message-ID: <ZSl+Ezh3Av3LLyEf@casper.infradead.org>
-References: <20231013160423.2218093-1-dhowells@redhat.com>
- <20231013160423.2218093-13-dhowells@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231013160423.2218093-13-dhowells@redhat.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_BLOCKED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        with ESMTP id S231680AbjJMTGy (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Fri, 13 Oct 2023 15:06:54 -0400
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B6E595;
+        Fri, 13 Oct 2023 12:06:52 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 43930C433C7;
+        Fri, 13 Oct 2023 19:06:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1697224012;
+        bh=x6bY2c+afWhsrTOWxLvHn69OCkXKmxSZU5qbCu8jqVI=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=SLVGZSI1e3BA8pPyDW6XWIIhlM6ezjhCJGoU+rADATm/g3XEkyYSVZRmOLwbzLkW4
+         3nCkL6yucjCgSf02UksEaVaztxnef6mOuTObisL1zoJEG3jSMzSCfJJzzJuqUJIAV+
+         T0AcoDrfPD7ruWp/+gUIhk8k71DPxUI+n+3HpvwLQRtvzs4svMgApCQc24qWCoaVrb
+         aBJqoiNwBhVGmzUwWEW8e5YJqA3hy26vSjSa1Ly5WWsY2XQgEtEv39unJJc7WP7N5x
+         gsNopwG3wlXg67+99oVpXXN/GWZJVNtw/2iT6LPowuJD3VDOaa5AgaZgUqWt2j23ae
+         5Zkuh2QHCDwog==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2DF80C73FEA;
+        Fri, 13 Oct 2023 19:06:52 +0000 (UTC)
+Subject: Re: [GIT PULL] Ceph fixes for 6.6-rc6
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20231013153544.463041-1-idryomov@gmail.com>
+References: <20231013153544.463041-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20231013153544.463041-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.6-rc6
+X-PR-Tracked-Commit-Id: 07bb00ef00ace88dd6f695fadbba76565756e55c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a1ef447deed5f5add172cd83efa48c46cb2b1a0d
+Message-Id: <169722401218.18973.5440216269263110.pr-tracker-bot@kernel.org>
+Date:   Fri, 13 Oct 2023 19:06:52 +0000
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        RCVD_IN_DNSWL_BLOCKED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, Oct 13, 2023 at 05:03:41PM +0100, David Howells wrote:
-> +int netfs_xa_store_and_mark(struct xarray *xa, unsigned long index,
-> +			    struct folio *folio, bool put_mark,
-> +			    bool pagecache_mark, gfp_t gfp_mask);
+The pull request you sent on Fri, 13 Oct 2023 17:35:42 +0200:
 
-Linus has been unhappy recently with functions that take two bools.
-When you're reading the caller, you see:
+> https://github.com/ceph/ceph-client.git tags/ceph-for-6.6-rc6
 
-	netfs_xa_store_and_mark(xa, index, true, false, GFP_FOO);
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a1ef447deed5f5add172cd83efa48c46cb2b1a0d
 
-and you don't know instantly what true and false mean.  He prefers
+Thank you!
 
-#define NETFS_FLAG_PUT		(1 << 0)
-#define NETFS_FLAG_PAGECACHE	(1 << 1)
-
-and then the caller looks like:
-
-	netfs_xa_store_and_mark(xa, index, NETFS_FLAG_PUT, GFP_FOO);
-
-and you know exactly what it's doing.
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
