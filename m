@@ -2,298 +2,273 @@ Return-Path: <ceph-devel-owner@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 00BBC7CE0A4
-	for <lists+ceph-devel@lfdr.de>; Wed, 18 Oct 2023 17:03:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88B097CEF3A
+	for <lists+ceph-devel@lfdr.de>; Thu, 19 Oct 2023 07:44:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235242AbjJRPDR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Wed, 18 Oct 2023 11:03:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59124 "EHLO
+        id S232665AbjJSFoR (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
+        Thu, 19 Oct 2023 01:44:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231901AbjJRPDQ (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Wed, 18 Oct 2023 11:03:16 -0400
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7D76F7;
-        Wed, 18 Oct 2023 08:03:13 -0700 (PDT)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF3E9C433C8;
-        Wed, 18 Oct 2023 15:03:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1697641393;
-        bh=L6D+qpbBdCzUDrl/li04wVioUZCLruBmB/YXF1xf4Bs=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Gn2cvizOXkUy01k71YGxTE7X4z6vLqaoJLFafo+1V2D8V7Wv88ZBfmZ6d50ZFxvKj
-         r0STRxGjErKUq13H3Iv7mn7AvIVCLxpKl0n0AqJx/zBkuo7ZkXLhcheBVnAbwngAJy
-         S2skRkZqL4VlJYnoY86FUfOK7xrHRmF0ZzWNiFTOC5AyErC5YFeuU702fAYEtK/kQ0
-         aIQ4dUnbHPpyCEC4k4S/zZbe8fb2opZ517pamFcrGwYG5OKsJ8cUyxGf+7h0XtSe7s
-         mTD2R7Bi85VJqLSadyBjO5Aq+0cQCsfNSkx/qUgSy3TUsIJ33tfm5uq6iku67rtVOB
-         05ypzoiMkKRgg==
-Message-ID: <9d2fc137b4295058ac3f88f1cca7a54bc67f01fd.camel@kernel.org>
-Subject: Re: [RFC PATCH 12/53] netfs: Provide tools to create a buffer in an
- xarray
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>,
-        Steve French <smfrench@gmail.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Paulo Alcantara <pc@manguebit.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Christian Brauner <christian@brauner.io>,
-        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-cachefs@redhat.com
-Date:   Wed, 18 Oct 2023 11:03:10 -0400
-In-Reply-To: <20231013160423.2218093-13-dhowells@redhat.com>
-References: <20231013160423.2218093-1-dhowells@redhat.com>
-         <20231013160423.2218093-13-dhowells@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+        with ESMTP id S232678AbjJSFno (ORCPT
+        <rfc822;ceph-devel@vger.kernel.org>); Thu, 19 Oct 2023 01:43:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A46D0D7E
+        for <ceph-devel@vger.kernel.org>; Wed, 18 Oct 2023 22:42:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1697694138;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=G8zlbwxHt/Z5FNamSi38lGFeu7P9bZdQbePaDRiKQHM=;
+        b=ZkscqJ7dKMgULFyHjwteA5277zmIyUJD7KM5L9zYVF1pYg6FN1cTKYx3BulxBzDQ0HEhSW
+        lbmyrleXTCCnd4o9xMT13ctEdFwil9wB14Z67caSDh0IGtqtVlZz8nNLx0ESPcSZQzBXqJ
+        5VCV5iHOt+WJ/8bOOVOp6/AurT4Ok8I=
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
+ [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-689-YB5DygeGOWKAwM52KbXYMQ-1; Thu, 19 Oct 2023 01:42:01 -0400
+X-MC-Unique: YB5DygeGOWKAwM52KbXYMQ-1
+Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-d9a581346c4so10369424276.0
+        for <ceph-devel@vger.kernel.org>; Wed, 18 Oct 2023 22:42:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1697694121; x=1698298921;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G8zlbwxHt/Z5FNamSi38lGFeu7P9bZdQbePaDRiKQHM=;
+        b=sYNFZ2VXLgU3gk+0eYyGfDPuW+trziyP6tmkmmmBLJdnlKXhXQmfU5EFChlbjYCvt4
+         EanUicFP6KEYZLYbz514AKeZCY/5WfGDn8zXy875ixMyTvbRzk5TPiNwVITBXZLgh4o7
+         Rxe70fbK4CQ1T7PTXL/SmKMYN+wHB4nTk5aVAx7CWVceicR2xIMG3QaQH2DGXXWq4g8c
+         sUkPxCytl6PpQLqbRfE1CO4km6SWQbDhB1alLzaeECXu66p/QVAFBQ0D0GxgPMlg9FUM
+         Cz2E97K0cwI8a6bfGxREQIBZPOuEg9cJ3YogK5BgrQh3xL6StSPu/lKN0sDCX1cfhd4G
+         MIFQ==
+X-Gm-Message-State: AOJu0Yzztk3uYolxzUO4YMJDYudOc7wIjVPwA9RsMsCvNNUTJws1so7v
+        G1Ih7PwFgzt7ZaY3QHFTHsDfUoWWNGz1//VZgoZ69TeJYQl7Dx+bg4w9CLMA1hREHyPfdXppKB5
+        ADcpD6k9G8Ah9iG9/xfUNhg==
+X-Received: by 2002:a25:ada4:0:b0:d9a:4da4:b793 with SMTP id z36-20020a25ada4000000b00d9a4da4b793mr1564611ybi.62.1697694121144;
+        Wed, 18 Oct 2023 22:42:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGCNQVHtH5NQePLf/mryPHNotjCD6ykcxpSyVnw+PbqaUg1QNJxPMsBktrXdoWdFZJ4nLLCQQ==
+X-Received: by 2002:a25:ada4:0:b0:d9a:4da4:b793 with SMTP id z36-20020a25ada4000000b00d9a4da4b793mr1564597ybi.62.1697694120763;
+        Wed, 18 Oct 2023 22:42:00 -0700 (PDT)
+Received: from [10.72.112.127] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id q22-20020a62ae16000000b00688c733fe92sm4250661pff.215.2023.10.18.22.41.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 18 Oct 2023 22:42:00 -0700 (PDT)
+Message-ID: <772a6282-d690-b299-6cf4-c96dd20792fa@redhat.com>
+Date:   Thu, 19 Oct 2023 13:41:54 +0800
 MIME-Version: 1.0
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v10 00/12] ceph: support idmapped mounts
+To:     Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc:     brauner@kernel.org, stgraber@ubuntu.com,
+        linux-fsdevel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20230807132626.182101-1-aleksandr.mikhalitsyn@canonical.com>
+ <bcda164b-e4b7-1c16-2714-13e3c6514b47@redhat.com>
+ <CAEivzxf-W1-q=BkG1UndFcX_AbzH-HtHX7p6j4iAwVbKnPn+sQ@mail.gmail.com>
+Content-Language: en-US
+From:   Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <CAEivzxf-W1-q=BkG1UndFcX_AbzH-HtHX7p6j4iAwVbKnPn+sQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
 
-On Fri, 2023-10-13 at 17:03 +0100, David Howells wrote:
-> Provide tools to create a buffer in an xarray, with a function to add
-> new folios with a mark.  This will be used to create bounce buffer and ca=
-n be
-> used more easily to create a list of folios the span of which would requi=
-re
-> more than a page's worth of bio_vec structs.
->=20
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-cachefs@redhat.com
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-mm@kvack.org
-> ---
->  fs/netfs/internal.h   |  16 +++++
->  fs/netfs/misc.c       | 140 ++++++++++++++++++++++++++++++++++++++++++
->  include/linux/netfs.h |   4 ++
->  3 files changed, 160 insertions(+)
->=20
-> diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
-> index 1f067aa96c50..00e01278316f 100644
-> --- a/fs/netfs/internal.h
-> +++ b/fs/netfs/internal.h
-> @@ -52,6 +52,22 @@ static inline void netfs_proc_add_rreq(struct netfs_io=
-_request *rreq) {}
->  static inline void netfs_proc_del_rreq(struct netfs_io_request *rreq) {}
->  #endif
-> =20
-> +/*
-> + * misc.c
-> + */
-> +int netfs_xa_store_and_mark(struct xarray *xa, unsigned long index,
-> +			    struct folio *folio, bool put_mark,
-> +			    bool pagecache_mark, gfp_t gfp_mask);
-> +int netfs_add_folios_to_buffer(struct xarray *buffer,
-> +			       struct address_space *mapping,
-> +			       pgoff_t index, pgoff_t to, gfp_t gfp_mask);
-> +int netfs_set_up_buffer(struct xarray *buffer,
-> +			struct address_space *mapping,
-> +			struct readahead_control *ractl,
-> +			struct folio *keep,
-> +			pgoff_t have_index, unsigned int have_folios);
-> +void netfs_clear_buffer(struct xarray *buffer);
-> +
->  /*
->   * objects.c
->   */
-> diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-> index c3baf2b247d9..c70f856f3129 100644
-> --- a/fs/netfs/misc.c
-> +++ b/fs/netfs/misc.c
-> @@ -8,6 +8,146 @@
->  #include <linux/swap.h>
->  #include "internal.h"
-> =20
-> +/*
-> + * Attach a folio to the buffer and maybe set marks on it to say that we=
- need
-> + * to put the folio later and twiddle the pagecache flags.
-> + */
-> +int netfs_xa_store_and_mark(struct xarray *xa, unsigned long index,
-> +			    struct folio *folio, bool put_mark,
-> +			    bool pagecache_mark, gfp_t gfp_mask)
-> +{
-> +	XA_STATE_ORDER(xas, xa, index, folio_order(folio));
-> +
-> +retry:
-> +	xas_lock(&xas);
-> +	for (;;) {
-> +		xas_store(&xas, folio);
-> +		if (!xas_error(&xas))
-> +			break;
-> +		xas_unlock(&xas);
-> +		if (!xas_nomem(&xas, gfp_mask))
-> +			return xas_error(&xas);
-> +		goto retry;
-> +	}
-> +
-> +	if (put_mark)
-> +		xas_set_mark(&xas, NETFS_BUF_PUT_MARK);
-> +	if (pagecache_mark)
-> +		xas_set_mark(&xas, NETFS_BUF_PAGECACHE_MARK);
-> +	xas_unlock(&xas);
-> +	return xas_error(&xas);
-> +}
-> +
-> +/*
-> + * Create the specified range of folios in the buffer attached to the re=
-ad
-> + * request.  The folios are marked with NETFS_BUF_PUT_MARK so that we kn=
-ow that
-> + * these need freeing later.
-> + */
 
-Some kerneldoc comments on these new helpers would be nice. I assume
-that "index" and "to" are "start" and "end" for this, but it'd be nice
-to make that explicit.
+On 10/17/23 17:20, Aleksandr Mikhalitsyn wrote:
+> On Tue, Aug 8, 2023 at 2:45 AM Xiubo Li <xiubli@redhat.com> wrote:
+>> LGTM.
+>>
+>> Reviewed-by: Xiubo Li <xiubli@redhat.com>
+>>
+>> I will queue this to the 'testing' branch and then we will run ceph qa
+>> tests.
+>>
+>> Thanks Alex.
+>>
+>> - Xiubo
+> Hi Xiubo,
+>
+> will this series be landed to 6.6?
+>
+> Userspace part was backported and merged to the Ceph Quincy release
+> (https://github.com/ceph/ceph/pull/53139)
+> And waiting to be tested and merged to the Ceph reef and pacific releases.
+> But the kernel part is still in the testing branch.
+
+This changes have been in the 'testing' branch for more than two mounts 
+and well test, till now we haven't seen any issue.
+
+IMO it should be ready.
+
+Ilya ?
+
+Thanks
+
+- Xiubo
 
 
-> +int netfs_add_folios_to_buffer(struct xarray *buffer,
-> +			       struct address_space *mapping,
-> +			       pgoff_t index, pgoff_t to, gfp_t gfp_mask)
-> +{
-> +	struct folio *folio;
-> +	int ret;
-> +
-> +	if (to + 1 =3D=3D index) /* Page range is inclusive */
-> +		return 0;
-> +
-> +	do {
-> +		/* TODO: Figure out what order folio can be allocated here */
-> +		folio =3D filemap_alloc_folio(readahead_gfp_mask(mapping), 0);
-> +		if (!folio)
-> +			return -ENOMEM;
-> +		folio->index =3D index;
-> +		ret =3D netfs_xa_store_and_mark(buffer, index, folio,
-> +					      true, false, gfp_mask);
-> +		if (ret < 0) {
-> +			folio_put(folio);
-> +			return ret;
-> +		}
-> +
-> +		index +=3D folio_nr_pages(folio);
-> +	} while (index <=3D to && index !=3D 0);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Set up a buffer into which to data will be read or decrypted/decompre=
-ssed.
-> + * The folios to be read into are attached to this buffer and the gaps f=
-illed
-> + * in to form a continuous region.
-> + */
-> +int netfs_set_up_buffer(struct xarray *buffer,
-> +			struct address_space *mapping,
-> +			struct readahead_control *ractl,
-> +			struct folio *keep,
-> +			pgoff_t have_index, unsigned int have_folios)
-> +{
-> +	struct folio *folio;
-> +	gfp_t gfp_mask =3D readahead_gfp_mask(mapping);
-> +	unsigned int want_folios =3D have_folios;
-> +	pgoff_t want_index =3D have_index;
-> +	int ret;
-> +
-> +	ret =3D netfs_add_folios_to_buffer(buffer, mapping, want_index,
-> +					 have_index - 1, gfp_mask);
-> +	if (ret < 0)
-> +		return ret;
-> +	have_folios +=3D have_index - want_index;
-> +
-> +	ret =3D netfs_add_folios_to_buffer(buffer, mapping,
-> +					 have_index + have_folios,
-> +					 want_index + want_folios - 1,
-> +					 gfp_mask);
+> Kind regards,
+> Alex
+>
+>> On 8/7/23 21:26, Alexander Mikhalitsyn wrote:
+>>> Dear friends,
+>>>
+>>> This patchset was originally developed by Christian Brauner but I'll continue
+>>> to push it forward. Christian allowed me to do that :)
+>>>
+>>> This feature is already actively used/tested with LXD/LXC project.
+>>>
+>>> Git tree (based on https://github.com/ceph/ceph-client.git testing):
+>>> v10: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v10
+>>> current: https://github.com/mihalicyn/linux/tree/fs.idmapped.ceph
+>>>
+>>> In the version 3 I've changed only two commits:
+>>> - fs: export mnt_idmap_get/mnt_idmap_put
+>>> - ceph: allow idmapped setattr inode op
+>>> and added a new one:
+>>> - ceph: pass idmap to __ceph_setattr
+>>>
+>>> In the version 4 I've reworked the ("ceph: stash idmapping in mdsc request")
+>>> commit. Now we take idmap refcounter just in place where req->r_mnt_idmap
+>>> is filled. It's more safer approach and prevents possible refcounter underflow
+>>> on error paths where __register_request wasn't called but ceph_mdsc_release_request is
+>>> called.
+>>>
+>>> Changelog for version 5:
+>>> - a few commits were squashed into one (as suggested by Xiubo Li)
+>>> - started passing an idmapping everywhere (if possible), so a caller
+>>> UID/GID-s will be mapped almost everywhere (as suggested by Xiubo Li)
+>>>
+>>> Changelog for version 6:
+>>> - rebased on top of testing branch
+>>> - passed an idmapping in a few places (readdir, ceph_netfs_issue_op_inline)
+>>>
+>>> Changelog for version 7:
+>>> - rebased on top of testing branch
+>>> - this thing now requires a new cephfs protocol extension CEPHFS_FEATURE_HAS_OWNER_UIDGID
+>>> https://github.com/ceph/ceph/pull/52575
+>>>
+>>> Changelog for version 8:
+>>> - rebased on top of testing branch
+>>> - added enable_unsafe_idmap module parameter to make idmapped mounts
+>>> work with old MDS server versions
+>>> - properly handled case when old MDS used with new kernel client
+>>>
+>>> Changelog for version 9:
+>>> - added "struct_len" field in struct ceph_mds_request_head as requested by Xiubo Li
+>>>
+>>> Changelog for version 10:
+>>> - fill struct_len field properly (use cpu_to_le32)
+>>> - add extra checks IS_CEPH_MDS_OP_NEWINODE(..) as requested by Xiubo to match
+>>>     userspace client behavior
+>>> - do not set req->r_mnt_idmap for MKSNAP operation
+>>> - atomic_open: set req->r_mnt_idmap only for CEPH_MDS_OP_CREATE as userspace client does
+>>>
+>>> I can confirm that this version passes xfstests and
+>>> tested with old MDS (without CEPHFS_FEATURE_HAS_OWNER_UIDGID)
+>>> and with recent MDS version.
+>>>
+>>> Links to previous versions:
+>>> v1: https://lore.kernel.org/all/20220104140414.155198-1-brauner@kernel.org/
+>>> v2: https://lore.kernel.org/lkml/20230524153316.476973-1-aleksandr.mikhalitsyn@canonical.com/
+>>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v2
+>>> v3: https://lore.kernel.org/lkml/20230607152038.469739-1-aleksandr.mikhalitsyn@canonical.com/#t
+>>> v4: https://lore.kernel.org/lkml/20230607180958.645115-1-aleksandr.mikhalitsyn@canonical.com/#t
+>>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v4
+>>> v5: https://lore.kernel.org/lkml/20230608154256.562906-1-aleksandr.mikhalitsyn@canonical.com/#t
+>>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v5
+>>> v6: https://lore.kernel.org/lkml/20230609093125.252186-1-aleksandr.mikhalitsyn@canonical.com/
+>>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v6
+>>> v7: https://lore.kernel.org/all/20230726141026.307690-1-aleksandr.mikhalitsyn@canonical.com/
+>>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v7
+>>> v8: https://lore.kernel.org/all/20230803135955.230449-1-aleksandr.mikhalitsyn@canonical.com/
+>>> tree: -
+>>> v9: https://lore.kernel.org/all/20230804084858.126104-1-aleksandr.mikhalitsyn@canonical.com/
+>>> tree: https://github.com/mihalicyn/linux/commits/fs.idmapped.ceph.v9
+>>>
+>>> Kind regards,
+>>> Alex
+>>>
+>>> Original description from Christian:
+>>> ========================================================================
+>>> This patch series enables cephfs to support idmapped mounts, i.e. the
+>>> ability to alter ownership information on a per-mount basis.
+>>>
+>>> Container managers such as LXD support sharaing data via cephfs between
+>>> the host and unprivileged containers and between unprivileged containers.
+>>> They may all use different idmappings. Idmapped mounts can be used to
+>>> create mounts with the idmapping used for the container (or a different
+>>> one specific to the use-case).
+>>>
+>>> There are in fact more use-cases such as remapping ownership for
+>>> mountpoints on the host itself to grant or restrict access to different
+>>> users or to make it possible to enforce that programs running as root
+>>> will write with a non-zero {g,u}id to disk.
+>>>
+>>> The patch series is simple overall and few changes are needed to cephfs.
+>>> There is one cephfs specific issue that I would like to discuss and
+>>> solve which I explain in detail in:
+>>>
+>>> [PATCH 02/12] ceph: handle idmapped mounts in create_request_message()
+>>>
+>>> It has to do with how to handle mds serves which have id-based access
+>>> restrictions configured. I would ask you to please take a look at the
+>>> explanation in the aforementioned patch.
+>>>
+>>> The patch series passes the vfs and idmapped mount testsuite as part of
+>>> xfstests. To run it you will need a config like:
+>>>
+>>> [ceph]
+>>> export FSTYP=ceph
+>>> export TEST_DIR=/mnt/test
+>>> export TEST_DEV=10.103.182.10:6789:/
+>>> export TEST_FS_MOUNT_OPTS="-o name=admin,secret=$password
+>>>
+>>> and then simply call
+>>>
+>>> sudo ./check -g idmapped
+>>>
+>>> ========================================================================
+>>>
+>>> Alexander Mikhalitsyn (3):
+>>>     fs: export mnt_idmap_get/mnt_idmap_put
+>>>     ceph: add enable_unsafe_idmap module parameter
+>>>     ceph: pass idmap to __ceph_setattr
+>>>
+>>> Christian Brauner (9):
+>>>     ceph: stash idmapping in mdsc request
+>>>     ceph: handle idmapped mounts in create_request_message()
+>>>     ceph: pass an idmapping to mknod/symlink/mkdir
+>>>     ceph: allow idmapped getattr inode op
+>>>     ceph: allow idmapped permission inode op
+>>>     ceph: allow idmapped setattr inode op
+>>>     ceph/acl: allow idmapped set_acl inode op
+>>>     ceph/file: allow idmapped atomic_open inode op
+>>>     ceph: allow idmapped mounts
+>>>
+>>>    fs/ceph/acl.c                 |  6 +--
+>>>    fs/ceph/crypto.c              |  2 +-
+>>>    fs/ceph/dir.c                 |  4 ++
+>>>    fs/ceph/file.c                | 11 ++++-
+>>>    fs/ceph/inode.c               | 29 +++++++------
+>>>    fs/ceph/mds_client.c          | 78 ++++++++++++++++++++++++++++++++---
+>>>    fs/ceph/mds_client.h          |  8 +++-
+>>>    fs/ceph/super.c               |  7 +++-
+>>>    fs/ceph/super.h               |  3 +-
+>>>    fs/mnt_idmapping.c            |  2 +
+>>>    include/linux/ceph/ceph_fs.h  | 10 ++++-
+>>>    include/linux/mnt_idmapping.h |  3 ++
+>>>    12 files changed, 136 insertions(+), 27 deletions(-)
+>>>
 
-I don't get it. Why are you calling netfs_add_folios_to_buffer twice
-here? Why not just make one call? Either way, a comment here explaining
-that would also be nice.
-
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Transfer the folios proposed by the VM into the buffer and take refs
-> +	 * on them.  The locks will be dropped in netfs_rreq_unlock().
-> +	 */
-> +	if (ractl) {
-> +		while ((folio =3D readahead_folio(ractl))) {
-> +			folio_get(folio);
-> +			if (folio =3D=3D keep)
-> +				folio_get(folio);
-> +			ret =3D netfs_xa_store_and_mark(buffer, folio->index, folio,
-> +						      true, true, gfp_mask);
-> +			if (ret < 0) {
-> +				if (folio !=3D keep)
-> +					folio_unlock(folio);
-> +				folio_put(folio);
-> +				return ret;
-> +			}
-> +		}
-> +	} else {
-> +		folio_get(keep);
-> +		ret =3D netfs_xa_store_and_mark(buffer, keep->index, keep,
-> +					      true, true, gfp_mask);
-> +		if (ret < 0) {
-> +			folio_put(keep);
-> +			return ret;
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Clear an xarray buffer, putting a ref on the folios that have
-> + * NETFS_BUF_PUT_MARK set.
-> + */
-> +void netfs_clear_buffer(struct xarray *buffer)
-> +{
-> +	struct folio *folio;
-> +	XA_STATE(xas, buffer, 0);
-> +
-> +	rcu_read_lock();
-> +	xas_for_each_marked(&xas, folio, ULONG_MAX, NETFS_BUF_PUT_MARK) {
-> +		folio_put(folio);
-> +	}
-> +	rcu_read_unlock();
-> +	xa_destroy(buffer);
-> +}
-> +
->  /**
->   * netfs_invalidate_folio - Invalidate or partially invalidate a folio
->   * @folio: Folio proposed for release
-> diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-> index 66479a61ad00..e8d702ac6968 100644
-> --- a/include/linux/netfs.h
-> +++ b/include/linux/netfs.h
-> @@ -109,6 +109,10 @@ static inline int wait_on_page_fscache_killable(stru=
-ct page *page)
->  	return folio_wait_private_2_killable(page_folio(page));
->  }
-> =20
-> +/* Marks used on xarray-based buffers */
-> +#define NETFS_BUF_PUT_MARK	XA_MARK_0	/* - Page needs putting  */
-> +#define NETFS_BUF_PAGECACHE_MARK XA_MARK_1	/* - Page needs wb/dirty flag=
- wrangling */
-> +
->  enum netfs_io_source {
->  	NETFS_FILL_WITH_ZEROES,
->  	NETFS_DOWNLOAD_FROM_SERVER,
->=20
-
---=20
-Jeff Layton <jlayton@kernel.org>
