@@ -1,56 +1,62 @@
-Return-Path: <ceph-devel-owner@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A79BC7D3A93
-	for <lists+ceph-devel@lfdr.de>; Mon, 23 Oct 2023 17:21:06 +0200 (CEST)
-Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229753AbjJWPVF (ORCPT <rfc822;lists+ceph-devel@lfdr.de>);
-        Mon, 23 Oct 2023 11:21:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55524 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229498AbjJWPVE (ORCPT
-        <rfc822;ceph-devel@vger.kernel.org>); Mon, 23 Oct 2023 11:21:04 -0400
-X-Greylist: delayed 18032 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 23 Oct 2023 08:21:01 PDT
-Received: from mta.kafila.in (unknown [103.127.158.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 41021DD
-        for <ceph-devel@vger.kernel.org>; Mon, 23 Oct 2023 08:21:01 -0700 (PDT)
-Received: from mta.kafila.in (localhost.localdomain [127.0.0.1])
-        by mta.kafila.in (Proxmox) with ESMTP id A45D230E87B;
-        Mon, 23 Oct 2023 14:29:33 +0530 (IST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kafila.in; h=cc
-        :content-description:content-transfer-encoding:content-type
-        :content-type:date:from:from:message-id:mime-version:reply-to
-        :reply-to:subject:subject:to:to; s=default; bh=VmM2eLH3pix0zM/7w
-        3zv5lJHpesjEaNKKf5eTp5M9bI=; b=Xkj8NiPFcMtKeShkdHjNVFYLZQdfZWsXA
-        KbmQo6wQ/gd7PcwIj11MDOheVQw2FQXn4WFYw08l17b+wXasVa88bi8xmSR5pgX1
-        VPeq4a0ApiD6ToloF2Rr7FpPJ5h8uwTSdFAZUtCeA65L3t+ig+XSe+cTWWW+gS1C
-        56+xykzshTyM78ud7R/Nu5bRL0Cwf723kzAk9henaHKjc/6Whe5jxChglZOBu5UD
-        NuIjrj2d1Kk8x5ZNXQXgRTWfGd4GmOYXeNHUtEsxLtGd2/VfzRvTA+wNp5QzNtBC
-        1ft5jczuUbs9NJe2U83LTAuR2MAxKVLkRqxEWJszW11VB3RiOASvQ==
-X-Virus-Scanned: amavisd-new at mail.kafila.in
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Description: Mail message body
-Subject: Kontakt-E-Mail: alfagroupfridman@hotmail.com
-To:     Recipients <testmail@kafila.in>
-From:   testmail@kafila.in
-Date:   Mon, 23 Oct 2023 09:50:54 +0100
-Reply-To: alfagroupfridman@outlook.com
-Message-Id: <20231023085207.5A8BD10CD51@mail.kafila.in>
-X-Spam-Status: No, score=4.1 required=5.0 tests=BAYES_50,DKIM_INVALID,
-        DKIM_SIGNED,FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO,
-        RCVD_IN_DNSWL_BLOCKED,RDNS_LOCALHOST,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ****
-X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
-        lindbergh.monkeyblade.net
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5947D3CC6
+	for <lists+ceph-devel@lfdr.de>; Mon, 23 Oct 2023 18:41:56 +0200 (CEST)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24D4FB20F39
+	for <lists+ceph-devel@lfdr.de>; Mon, 23 Oct 2023 16:41:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165FC1A5BC;
+	Mon, 23 Oct 2023 16:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YeXRNUIw"
+X-Original-To: ceph-devel@vger.kernel.org
+Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BE633C8;
+	Mon, 23 Oct 2023 16:41:44 +0000 (UTC)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0849F8E;
+	Mon, 23 Oct 2023 09:41:43 -0700 (PDT)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 837E6C433C7;
+	Mon, 23 Oct 2023 16:41:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1698079302;
+	bh=O3zoGBXVfb5WJW2MwxE5HShF9ljYkHcSyGRQbT2KEb8=;
+	h=Date:From:To:Subject:From;
+	b=YeXRNUIwm2ukIK/Xp2TQdb80JGAHUnPY71Q09TJnOej2KrxYIlxF/metEvCCdxuLJ
+	 pHOw7zuNTfL0+BG+q2MSYIpj1zEwKm2bZIJv8CkBPVa5dlEx1hfo2as+qRXHNBLFWm
+	 dRV0p/wqdLb0+g+ELazTpdSOZdj+Z/JYCL+JKRlI=
+Date: Mon, 23 Oct 2023 12:41:41 -0400
+From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To: audit@vger.kernel.org, autofs@vger.kernel.org, 
+	backports@vger.kernel.org, ceph-devel@vger.kernel.org, cgroups@vger.kernel.org, 
+	dash@vger.kernel.org
+Subject: This list is being migrated to new vger infra (no action required)
+Message-ID: <20231023-obscurity-bottom-1dc09c@meerkat>
 Precedence: bulk
-List-ID: <ceph-devel.vger.kernel.org>
 X-Mailing-List: ceph-devel@vger.kernel.org
+List-Id: <ceph-devel.vger.kernel.org>
+List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Die Summe von 2.500.000,00 =E2=82=AC wurde Ihnen von Mikhail Fridman gespen=
-det. F=C3=BCr weitere Informationen wenden Sie sich bitte an Alfagroupfridm=
-an@outlook.com
+Hello:
+
+This list is being migrated to the new vger infrastructure. This should be a
+fully transparent process and you don't need to change anything about how you
+participate with the list or how you receive mail.
+
+There will be a brief delay with archives on lore.kernel.org. I will follow up
+once the archive migration has been completed.
+
+Best regards,
+Konstantin
 
