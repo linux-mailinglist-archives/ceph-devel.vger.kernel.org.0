@@ -1,82 +1,81 @@
-Return-Path: <ceph-devel+bounces-11-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-12-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F19D7D7AD4
-	for <lists+ceph-devel@lfdr.de>; Thu, 26 Oct 2023 04:21:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 468427D9A29
+	for <lists+ceph-devel@lfdr.de>; Fri, 27 Oct 2023 15:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E5201F2311C
-	for <lists+ceph-devel@lfdr.de>; Thu, 26 Oct 2023 02:21:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00D0E2824C7
+	for <lists+ceph-devel@lfdr.de>; Fri, 27 Oct 2023 13:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0958F5C;
-	Thu, 26 Oct 2023 02:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8562030D;
+	Fri, 27 Oct 2023 13:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ovwv1aiu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S63DQxA8"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5278C11;
-	Thu, 26 Oct 2023 02:21:18 +0000 (UTC)
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAFC718B;
-	Wed, 25 Oct 2023 19:21:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=oXOuDkadsHdiYyK7tGohGzYZ8myugwNQ18xV61iZdGQ=; b=Ovwv1aiuReE2N/V/h/pLeUuNPC
-	S6BCKdeicCxuQvsGBeMLD6HBd40xLezQ8arKZpHx/s/kGgKRseekWWeWjmtT6vpPTZE0+ZUfCxECo
-	V+evCsGq39jbzoQEooW6RapIypf/2hs/Lg8gtUSQ8E/69xWgG02crtcq7ABMSGc/9zTUE0oHsm98U
-	omE7CiaC/qwpgGRlKf300wNrnD5pptrOoILWdki4Qper+YTcXbpSkBFdZsH6nTSL8zJ7MWjQKyGbz
-	7rHy1jgyfDevNJROMa8hE9aYCuzs3u0UeLUk+Fvt0g7Kt8Mb7ChYuVQoK11CG7HyEwEK+tlHKABNe
-	n/po3wRQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1qvpzn-005mne-0f;
-	Thu, 26 Oct 2023 02:21:15 +0000
-Date: Thu, 26 Oct 2023 03:21:15 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Xiubo Li <xiubli@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
-Subject: [PATCH] ceph_wait_on_conflict_unlink(): grab reference before
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29101F958;
+	Fri, 27 Oct 2023 13:38:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B336C433C8;
+	Fri, 27 Oct 2023 13:38:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1698413915;
+	bh=CMLPBclS/Tv85Ts9mP4O5I7Xd7BY3qYUiYpRysEd71Q=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=S63DQxA83PyGOhGJDn/k0OCwIu7EB0CV3E46kcYZ5FtaS1GTHppIiqiM7/JfJOZd6
+	 YykOjUJ/LpEfdySAmL1WsMpWuWJoZy/TlVwrzhEamtAqufv0e81lzvdGKD06TQDMev
+	 rgkglFRCwZdJCMyXVR3SAbutdPDuFvyRP9F881dyJeRsxMT/SYFuGSFw3EuOh7Nnyo
+	 b/syiUTsrsvmQ6CB7WrOXy92Q/tQZuV2vhQ0PQsKxl4Ul9oPQYbImEu05Z+ANRxBRZ
+	 sGqyQU3PwK1rdc27h7Gatx4OjH2NTG0ihTCdRdygEfhp8d3Vyl9UnZ1k3MR9eN0Hcr
+	 Lz5Gre6HrVwlQ==
+Message-ID: <2cd170b595b1313292dbac4d12edc355683b678f.camel@kernel.org>
+Subject: Re: [PATCH] ceph_wait_on_conflict_unlink(): grab reference before
  dropping ->d_lock
-Message-ID: <20231026022115.GK800259@ZenIV>
+From: Jeff Layton <jlayton@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>, Xiubo Li <xiubli@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
+Date: Fri, 27 Oct 2023 09:38:33 -0400
+In-Reply-To: <20231026022115.GK800259@ZenIV>
+References: <20231026022115.GK800259@ZenIV>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-[at the moment in viro/vfs.git#fixes]
-Use of dget() after we'd dropped ->d_lock is too late - dentry might
-be gone by that point.
+On Thu, 2023-10-26 at 03:21 +0100, Al Viro wrote:
+> [at the moment in viro/vfs.git#fixes]
+> Use of dget() after we'd dropped ->d_lock is too late - dentry might
+> be gone by that point.
+>=20
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  fs/ceph/mds_client.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 615db141b6c4..293b93182955 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -861,8 +861,8 @@ int ceph_wait_on_conflict_unlink(struct dentry *dentr=
+y)
+>  		if (!d_same_name(udentry, pdentry, &dname))
+>  			goto next;
+> =20
+> +		found =3D dget_dlock(udentry);
+>  		spin_unlock(&udentry->d_lock);
+> -		found =3D dget(udentry);
+>  		break;
+>  next:
+>  		spin_unlock(&udentry->d_lock);
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/ceph/mds_client.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 615db141b6c4..293b93182955 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -861,8 +861,8 @@ int ceph_wait_on_conflict_unlink(struct dentry *dentry)
- 		if (!d_same_name(udentry, pdentry, &dname))
- 			goto next;
- 
-+		found = dget_dlock(udentry);
- 		spin_unlock(&udentry->d_lock);
--		found = dget(udentry);
- 		break;
- next:
- 		spin_unlock(&udentry->d_lock);
--- 
-2.39.2
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
