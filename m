@@ -1,136 +1,121 @@
-Return-Path: <ceph-devel+bounces-13-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-14-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96FCA7DAE46
-	for <lists+ceph-devel@lfdr.de>; Sun, 29 Oct 2023 21:46:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B137DB210
+	for <lists+ceph-devel@lfdr.de>; Mon, 30 Oct 2023 03:30:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3743DB20DA3
-	for <lists+ceph-devel@lfdr.de>; Sun, 29 Oct 2023 20:46:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E5ED1C20A89
+	for <lists+ceph-devel@lfdr.de>; Mon, 30 Oct 2023 02:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01AB101F6;
-	Sun, 29 Oct 2023 20:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CDE1379;
+	Mon, 30 Oct 2023 02:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="J+J7vOzD"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FteXrfTp"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84905D299;
-	Sun, 29 Oct 2023 20:46:39 +0000 (UTC)
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA101B6;
-	Sun, 29 Oct 2023 13:46:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=WDmAzo9+QKCs6bidBCjOfAWnOzKWHN56xcaNm45aYsg=; b=J+J7vOzDaNH/DoU/C03vQi1p6U
-	k15CryG4AE2paUu8p5lZjUWbOlxcz5JQe8Cc/D2zv03lFYH/WlYoEVsyfvwI6lzXEu/IxWMxxEkKw
-	FtIXITdU3kqDpZemQ6CByzQ/e0yukkuhhFqHJCNMHEB/EJQsRKYoloizfs1pApYDOutO17togsEkm
-	Y4UMaUulaI+wnfM8vi8SxoAE70jOCPuV73XJfVdOg6DNBLb0E1FbX+h47AhA8LSLrke85XHIAPQlD
-	Nk4vuZ2hIrzgqtXKiFdhYN8S7czN0hrAXLeUsUwzalofIBZW6QX/TJu/fBF0CA633FjycmAL/EEqF
-	V//5jVRQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1qxCg7-007ePd-0s;
-	Sun, 29 Oct 2023 20:46:35 +0000
-Date: Sun, 29 Oct 2023 20:46:35 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: ceph-devel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [RFC][PATCH] get rid of passing callbacks to ceph
- __dentry_leases_walk()
-Message-ID: <20231029204635.GV800259@ZenIV>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0EF1378
+	for <ceph-devel@vger.kernel.org>; Mon, 30 Oct 2023 02:30:07 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BBC5BE
+	for <ceph-devel@vger.kernel.org>; Sun, 29 Oct 2023 19:30:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1698633003;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/HpUXC3JPrBrGax2FnC82K3XfMYa1e9s8tOjT5ZffiY=;
+	b=FteXrfTpVBlI3NOz2Xcka3fFIG8Lq1yfrnJWTj9BmkUpH34SQc4uqklLsQkPvh9G7+IU5K
+	Lv4vN1BQxWeL0OghJfg/n7t8cHkYK8Vr9KCDCg6Z9iB++3J5I8yQaqOGJmtdP9ZSyfOChC
+	ZNXcGX/7sHOJfG6zOO5eVJ2rxQXH9rU=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-577-sA0SSVDkOUeiPjexN93eLg-1; Sun, 29 Oct 2023 22:30:01 -0400
+X-MC-Unique: sA0SSVDkOUeiPjexN93eLg-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-280184b2741so1334299a91.0
+        for <ceph-devel@vger.kernel.org>; Sun, 29 Oct 2023 19:30:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1698633000; x=1699237800;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/HpUXC3JPrBrGax2FnC82K3XfMYa1e9s8tOjT5ZffiY=;
+        b=glqk3g8qsPbkn7n5KTJgLqaGAe0V5HqtkvSa0JpuSizXZObl/6NEgXpZoQytun8Gmz
+         kM0OQbd+edcHTqHxukOXZYP0gwMJMa0TiZr+t8TQvHX8r1HvzebmlpdxNkGg8tlIIcng
+         aGuni2Lh+f004mDyFjGErSd+UHGe2/CnGT/OtK3EHU32oMHwEXsDezUJkEg1cbLS33mW
+         H9c/oq6PXzAJy+C8UcrB+gpI5o2+ijYchPYxPinCFWyA/ev0K3oB8ScE9aL7t3yzT71M
+         v2toY+ZZIeyFqGlqwWACG4PKjaZxtsd3YsUADmhj9F207kdJmFS7bmnH5bfzK7fQ6Ke2
+         BxAQ==
+X-Gm-Message-State: AOJu0Yy8WIgt729gMx9I6DbcMmdA2MJPnGz9R0mHopvNvMOgw2C0bN+1
+	FmqSeJJZ3T2+BlKuCxrmpA3R5kl+v3klCsH3t33Zc0xysxxhAzHOhNqekMBxUT5Q4058aUl/dVP
+	pEJ8/vc0l2I0ZuhHMYQYdz/XlL4SeDiAQvVs=
+X-Received: by 2002:a17:90b:38c6:b0:280:1df1:cbc7 with SMTP id nn6-20020a17090b38c600b002801df1cbc7mr3226193pjb.19.1698633000470;
+        Sun, 29 Oct 2023 19:30:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG0oU7E/0LQcG9ncujTjZpkf0rLEVN6z1PkBcPgrCwMikCgvLJ4kdha+NU745fBGfA6qDJ76w==
+X-Received: by 2002:a17:90b:38c6:b0:280:1df1:cbc7 with SMTP id nn6-20020a17090b38c600b002801df1cbc7mr3226183pjb.19.1698633000110;
+        Sun, 29 Oct 2023 19:30:00 -0700 (PDT)
+Received: from [10.72.112.142] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id pm1-20020a17090b3c4100b002805740d668sm1136675pjb.4.2023.10.29.19.29.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 29 Oct 2023 19:29:59 -0700 (PDT)
+Message-ID: <209b187c-f471-6921-4cda-7293e362d729@redhat.com>
+Date: Mon, 30 Oct 2023 10:29:55 +0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH] ceph_wait_on_conflict_unlink(): grab reference before
+ dropping ->d_lock
+Content-Language: en-US
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
+References: <20231026022115.GK800259@ZenIV>
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20231026022115.GK800259@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-__dentry_leases_walk() is gets a callback and calls it for
-a bunch of denties; there are exactly two callers and
-we already have a flag telling them apart - lwc->dir_lease.
 
-Seeing that indirect calls are costly these days, let's
-get rid of the callback and just call the right function
-directly.  Has a side benefit of saner signatures...
+On 10/26/23 10:21, Al Viro wrote:
+> [at the moment in viro/vfs.git#fixes]
+> Use of dget() after we'd dropped ->d_lock is too late - dentry might
+> be gone by that point.
+>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>   fs/ceph/mds_client.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 615db141b6c4..293b93182955 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -861,8 +861,8 @@ int ceph_wait_on_conflict_unlink(struct dentry *dentry)
+>   		if (!d_same_name(udentry, pdentry, &dname))
+>   			goto next;
+>   
+> +		found = dget_dlock(udentry);
+>   		spin_unlock(&udentry->d_lock);
+> -		found = dget(udentry);
+>   		break;
+>   next:
+>   		spin_unlock(&udentry->d_lock);
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 854cbdd66661..30b06d171a40 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1550,10 +1550,12 @@ struct ceph_lease_walk_control {
- 	unsigned long dir_lease_ttl;
- };
- 
-+static int __dir_lease_check(const struct dentry *, struct ceph_lease_walk_control *);
-+static int __dentry_lease_check(const struct dentry *);
-+
- static unsigned long
- __dentry_leases_walk(struct ceph_mds_client *mdsc,
--		     struct ceph_lease_walk_control *lwc,
--		     int (*check)(struct dentry*, void*))
-+		     struct ceph_lease_walk_control *lwc)
- {
- 	struct ceph_dentry_info *di, *tmp;
- 	struct dentry *dentry, *last = NULL;
-@@ -1581,7 +1583,10 @@ __dentry_leases_walk(struct ceph_mds_client *mdsc,
- 			goto next;
- 		}
- 
--		ret = check(dentry, lwc);
-+		if (lwc->dir_lease)
-+			ret = __dir_lease_check(dentry, lwc);
-+		else
-+			ret = __dentry_lease_check(dentry);
- 		if (ret & TOUCH) {
- 			/* move it into tail of dir lease list */
- 			__dentry_dir_lease_touch(mdsc, di);
-@@ -1638,7 +1643,7 @@ __dentry_leases_walk(struct ceph_mds_client *mdsc,
- 	return freed;
- }
- 
--static int __dentry_lease_check(struct dentry *dentry, void *arg)
-+static int __dentry_lease_check(const struct dentry *dentry)
- {
- 	struct ceph_dentry_info *di = ceph_dentry(dentry);
- 	int ret;
-@@ -1653,9 +1658,9 @@ static int __dentry_lease_check(struct dentry *dentry, void *arg)
- 	return DELETE;
- }
- 
--static int __dir_lease_check(struct dentry *dentry, void *arg)
-+static int __dir_lease_check(const struct dentry *dentry,
-+			     struct ceph_lease_walk_control *lwc)
- {
--	struct ceph_lease_walk_control *lwc = arg;
- 	struct ceph_dentry_info *di = ceph_dentry(dentry);
- 
- 	int ret = __dir_lease_try_check(dentry);
-@@ -1694,7 +1699,7 @@ int ceph_trim_dentries(struct ceph_mds_client *mdsc)
- 
- 	lwc.dir_lease = false;
- 	lwc.nr_to_scan  = CEPH_CAPS_PER_RELEASE * 2;
--	freed = __dentry_leases_walk(mdsc, &lwc, __dentry_lease_check);
-+	freed = __dentry_leases_walk(mdsc, &lwc);
- 	if (!lwc.nr_to_scan) /* more invalid leases */
- 		return -EAGAIN;
- 
-@@ -1704,7 +1709,7 @@ int ceph_trim_dentries(struct ceph_mds_client *mdsc)
- 	lwc.dir_lease = true;
- 	lwc.expire_dir_lease = freed < count;
- 	lwc.dir_lease_ttl = mdsc->fsc->mount_options->caps_wanted_delay_max * HZ;
--	freed +=__dentry_leases_walk(mdsc, &lwc, __dir_lease_check);
-+	freed +=__dentry_leases_walk(mdsc, &lwc);
- 	if (!lwc.nr_to_scan) /* more to check */
- 		return -EAGAIN;
- 
+Good catch.
+
+Thanks Al.
+
+- Xiubo
+
+
 
