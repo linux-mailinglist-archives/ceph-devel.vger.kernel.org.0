@@ -1,46 +1,46 @@
-Return-Path: <ceph-devel+bounces-17-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-18-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6487DB816
-	for <lists+ceph-devel@lfdr.de>; Mon, 30 Oct 2023 11:27:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9FEE7DB9BB
+	for <lists+ceph-devel@lfdr.de>; Mon, 30 Oct 2023 13:18:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C680B20D1F
-	for <lists+ceph-devel@lfdr.de>; Mon, 30 Oct 2023 10:27:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848FF2815D4
+	for <lists+ceph-devel@lfdr.de>; Mon, 30 Oct 2023 12:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7108F11C93;
-	Mon, 30 Oct 2023 10:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBDA15AC1;
+	Mon, 30 Oct 2023 12:18:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5HBZmSh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WmeWL7aE"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113E0DDDF
-	for <ceph-devel@vger.kernel.org>; Mon, 30 Oct 2023 10:27:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F07FC433C8;
-	Mon, 30 Oct 2023 10:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF79815487;
+	Mon, 30 Oct 2023 12:18:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03338C433C8;
+	Mon, 30 Oct 2023 12:18:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698661654;
-	bh=/8qqJvD80mfaFQGVhACpKeLa08FE08VtZT0Jhu0e78o=;
+	s=k20201202; t=1698668315;
+	bh=pjvwmMveD0Rl5oeHnCgOSQWlEHgXIC6eubBzyAKJuW4=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=D5HBZmShJGy6BRqLiGbDme1LfDPUunBp1nikCdIggHd3a5NYwmze2ZqZncCPGAIAI
-	 aP0nqgs96J/X2TzRWP96EPAeadU39vPs/nRcEfnKUJO6MjCusPf26d+pErtWmtb5xF
-	 gm3rTfYUjabylYtLQ1vgbLP41lY7sblA5yXcdXl3Aj2UiDKv0OA/ypGZ7YBH2ORZbC
-	 6CRJhJ3UKt86/fZeO8VLoGpdmgOxeS4r0m5mzBVDQ9a8WkYAgngJewYTjIkLL8DF2E
-	 fr6JlpLP97XIcebsRFY+GI9rh4b2I6kPRFYmRpr+dAGhSiVbUuDckpXKaVRjYXLoiT
-	 X7H6Ws+8Zh4VQ==
-Message-ID: <69be7ac2f83462d7df9766b7280eef936d3ee11d.camel@kernel.org>
-Subject: Re: [PATCH 3/3] libceph: check the data length when finishes
+	b=WmeWL7aEI+1EUPvLdw4G0aYb1xm32YQKLePlBjLDIoaRkInzHZBzCC9twHRlHn6iL
+	 Lg4C4O6f+vebKcHpf+fTA7GSZH/GvfAU6cU2HmnyPz+6SUCLLGyvEEeiV+98yRfHKH
+	 UvBN/V/tdr/j5tGZMSscy4btSCJVAHpeZz7xUvrCPtsgVyd00qP1uFC3E/63Gg2l5u
+	 Tq1HUirFUKxqMBuk5ntA7i8JvDQfS0pWpaWzsn5WkPT1hKghVvOJWj3hIHMxLbDx5p
+	 dAIfwTs/5QYS46KSyYDfkBkU3hRq5y1mfLxTGSON/SFMnHvDbAe0cCE8cU3TTPXcJ0
+	 4PuDRNHB8O7pQ==
+Message-ID: <5cc3b0c8cf428c74c88ae87c6c5556561f40cdaa.camel@kernel.org>
+Subject: Re: [RFC][PATCH] get rid of passing callbacks to ceph
+ __dentry_leases_walk()
 From: Jeff Layton <jlayton@kernel.org>
-To: xiubli@redhat.com, ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com, vshankar@redhat.com, mchangir@redhat.com
-Date: Mon, 30 Oct 2023 06:27:33 -0400
-In-Reply-To: <20231024050039.231143-4-xiubli@redhat.com>
-References: <20231024050039.231143-1-xiubli@redhat.com>
-	 <20231024050039.231143-4-xiubli@redhat.com>
+To: Al Viro <viro@zeniv.linux.org.uk>, ceph-devel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Date: Mon, 30 Oct 2023 08:18:33 -0400
+In-Reply-To: <20231029204635.GV800259@ZenIV>
+References: <20231029204635.GV800259@ZenIV>
 Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
@@ -51,49 +51,95 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Tue, 2023-10-24 at 13:00 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
+On Sun, 2023-10-29 at 20:46 +0000, Al Viro wrote:
+> __dentry_leases_walk() is gets a callback and calls it for
+> a bunch of denties; there are exactly two callers and
+> we already have a flag telling them apart - lwc->dir_lease.
 >=20
-> For sparse reading the real length of the data should equal to the
-> total length from the extent array.
+> Seeing that indirect calls are costly these days, let's
+> get rid of the callback and just call the right function
+> directly.  Has a side benefit of saner signatures...
 >=20
-> URL: https://tracker.ceph.com/issues/62081
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
->  net/ceph/osd_client.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->=20
-> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> index 800a2acec069..7af35106acaf 100644
-> --- a/net/ceph/osd_client.c
-> +++ b/net/ceph/osd_client.c
-> @@ -5921,6 +5921,13 @@ static int osd_sparse_read(struct ceph_connection =
-*con,
->  		fallthrough;
->  	case CEPH_SPARSE_READ_DATA:
->  		if (sr->sr_index >=3D count) {
-> +			if (sr->sr_datalen && count) {
-> +				pr_warn_ratelimited("sr_datalen %d sr_index %d count %d\n",
-> +						    sr->sr_datalen, sr->sr_index,
-> +						    count);
-> +				WARN_ON_ONCE(sr->sr_datalen);
-> +			}
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index 854cbdd66661..30b06d171a40 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -1550,10 +1550,12 @@ struct ceph_lease_walk_control {
+>  	unsigned long dir_lease_ttl;
+>  };
+> =20
+> +static int __dir_lease_check(const struct dentry *, struct ceph_lease_wa=
+lk_control *);
+> +static int __dentry_lease_check(const struct dentry *);
 > +
->  			sr->sr_state =3D CEPH_SPARSE_READ_HDR;
->  			goto next_op;
+>  static unsigned long
+>  __dentry_leases_walk(struct ceph_mds_client *mdsc,
+> -		     struct ceph_lease_walk_control *lwc,
+> -		     int (*check)(struct dentry*, void*))
+> +		     struct ceph_lease_walk_control *lwc)
+>  {
+>  	struct ceph_dentry_info *di, *tmp;
+>  	struct dentry *dentry, *last =3D NULL;
+> @@ -1581,7 +1583,10 @@ __dentry_leases_walk(struct ceph_mds_client *mdsc,
+>  			goto next;
 >  		}
-> @@ -5928,6 +5935,8 @@ static int osd_sparse_read(struct ceph_connection *=
-con,
->  		eoff =3D sr->sr_extent[sr->sr_index].off;
->  		elen =3D sr->sr_extent[sr->sr_index].len;
 > =20
-> +		sr->sr_datalen -=3D elen;
-> +
->  		dout("[%d] ext %d off 0x%llx len 0x%llx\n",
->  		     o->o_osd, sr->sr_index, eoff, elen);
+> -		ret =3D check(dentry, lwc);
+> +		if (lwc->dir_lease)
+> +			ret =3D __dir_lease_check(dentry, lwc);
+> +		else
+> +			ret =3D __dentry_lease_check(dentry);
+>  		if (ret & TOUCH) {
+>  			/* move it into tail of dir lease list */
+>  			__dentry_dir_lease_touch(mdsc, di);
+> @@ -1638,7 +1643,7 @@ __dentry_leases_walk(struct ceph_mds_client *mdsc,
+>  	return freed;
+>  }
 > =20
+> -static int __dentry_lease_check(struct dentry *dentry, void *arg)
+> +static int __dentry_lease_check(const struct dentry *dentry)
+>  {
+>  	struct ceph_dentry_info *di =3D ceph_dentry(dentry);
+>  	int ret;
+> @@ -1653,9 +1658,9 @@ static int __dentry_lease_check(struct dentry *dent=
+ry, void *arg)
+>  	return DELETE;
+>  }
+> =20
+> -static int __dir_lease_check(struct dentry *dentry, void *arg)
+> +static int __dir_lease_check(const struct dentry *dentry,
+> +			     struct ceph_lease_walk_control *lwc)
+>  {
+> -	struct ceph_lease_walk_control *lwc =3D arg;
+>  	struct ceph_dentry_info *di =3D ceph_dentry(dentry);
+> =20
+>  	int ret =3D __dir_lease_try_check(dentry);
+> @@ -1694,7 +1699,7 @@ int ceph_trim_dentries(struct ceph_mds_client *mdsc=
+)
+> =20
+>  	lwc.dir_lease =3D false;
+>  	lwc.nr_to_scan  =3D CEPH_CAPS_PER_RELEASE * 2;
+> -	freed =3D __dentry_leases_walk(mdsc, &lwc, __dentry_lease_check);
+> +	freed =3D __dentry_leases_walk(mdsc, &lwc);
+>  	if (!lwc.nr_to_scan) /* more invalid leases */
+>  		return -EAGAIN;
+> =20
+> @@ -1704,7 +1709,7 @@ int ceph_trim_dentries(struct ceph_mds_client *mdsc=
+)
+>  	lwc.dir_lease =3D true;
+>  	lwc.expire_dir_lease =3D freed < count;
+>  	lwc.dir_lease_ttl =3D mdsc->fsc->mount_options->caps_wanted_delay_max *=
+ HZ;
+> -	freed +=3D__dentry_leases_walk(mdsc, &lwc, __dir_lease_check);
+> +	freed +=3D__dentry_leases_walk(mdsc, &lwc);
+>  	if (!lwc.nr_to_scan) /* more to check */
+>  		return -EAGAIN;
+> =20
+>=20
 
-Seems like a reasonable sanity check.
+Nice cleanup.
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
