@@ -1,46 +1,48 @@
-Return-Path: <ceph-devel+bounces-18-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-19-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9FEE7DB9BB
-	for <lists+ceph-devel@lfdr.de>; Mon, 30 Oct 2023 13:18:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6EE7DB9EE
+	for <lists+ceph-devel@lfdr.de>; Mon, 30 Oct 2023 13:30:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848FF2815D4
-	for <lists+ceph-devel@lfdr.de>; Mon, 30 Oct 2023 12:18:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8BE8B20CD7
+	for <lists+ceph-devel@lfdr.de>; Mon, 30 Oct 2023 12:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EBDA15AC1;
-	Mon, 30 Oct 2023 12:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AE715E96;
+	Mon, 30 Oct 2023 12:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WmeWL7aE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MYaTarHF"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF79815487;
-	Mon, 30 Oct 2023 12:18:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03338C433C8;
-	Mon, 30 Oct 2023 12:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457E415EA6
+	for <ceph-devel@vger.kernel.org>; Mon, 30 Oct 2023 12:30:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356DCC433C7;
+	Mon, 30 Oct 2023 12:30:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1698668315;
-	bh=pjvwmMveD0Rl5oeHnCgOSQWlEHgXIC6eubBzyAKJuW4=;
+	s=k20201202; t=1698669037;
+	bh=tyd1jVHKW7qANZr6A1niky9YqK2sWbmLNLOySEGhz9w=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=WmeWL7aEI+1EUPvLdw4G0aYb1xm32YQKLePlBjLDIoaRkInzHZBzCC9twHRlHn6iL
-	 Lg4C4O6f+vebKcHpf+fTA7GSZH/GvfAU6cU2HmnyPz+6SUCLLGyvEEeiV+98yRfHKH
-	 UvBN/V/tdr/j5tGZMSscy4btSCJVAHpeZz7xUvrCPtsgVyd00qP1uFC3E/63Gg2l5u
-	 Tq1HUirFUKxqMBuk5ntA7i8JvDQfS0pWpaWzsn5WkPT1hKghVvOJWj3hIHMxLbDx5p
-	 dAIfwTs/5QYS46KSyYDfkBkU3hRq5y1mfLxTGSON/SFMnHvDbAe0cCE8cU3TTPXcJ0
-	 4PuDRNHB8O7pQ==
-Message-ID: <5cc3b0c8cf428c74c88ae87c6c5556561f40cdaa.camel@kernel.org>
-Subject: Re: [RFC][PATCH] get rid of passing callbacks to ceph
- __dentry_leases_walk()
+	b=MYaTarHFaevjdtoMUEb6w3uKc6KLXTDkW2DMsQoWGzPZqVoWy/p7JRhmvQBI+U/Co
+	 B3elP4Cral+0q3gJNe54N1Ox34BS0HoQ6JwgiB1TKhrfAucpvb6yXIvYrSP1MF9VaU
+	 c4pNEHXvd7uwlDilqtimEc+F5LAd1VktPwL6xtoTp33ZgbenGlOI9I7aIUKdg3Uq5F
+	 NEjQ6j10O4Yy8AX7Q44H+LTOuFEFMo8n7UbgWVn/hhYiZAiSh9giNSDeZuOl6tS4LR
+	 mdrskJ6+2MUvMgNrS/aml5WsYPvAwP9fzMVzaQ5CbqqPeYIRfmpy45EKzGW99dAMOF
+	 ehhJGpKbwQIhw==
+Message-ID: <cc4eb9db0d65d324bb658ef4a40f6715653d75aa.camel@kernel.org>
+Subject: Re: [PATCH 1/3] libceph: do not decrease the data length more than
+ once
 From: Jeff Layton <jlayton@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>, ceph-devel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Date: Mon, 30 Oct 2023 08:18:33 -0400
-In-Reply-To: <20231029204635.GV800259@ZenIV>
-References: <20231029204635.GV800259@ZenIV>
+To: xiubli@redhat.com, ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com, vshankar@redhat.com, mchangir@redhat.com
+Date: Mon, 30 Oct 2023 08:30:35 -0400
+In-Reply-To: <832919f25c9f923e5f908d18a3581375d02342ef.camel@kernel.org>
+References: <20231024050039.231143-1-xiubli@redhat.com>
+	 <20231024050039.231143-2-xiubli@redhat.com>
+	 <832919f25c9f923e5f908d18a3581375d02342ef.camel@kernel.org>
 Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
@@ -51,95 +53,45 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Sun, 2023-10-29 at 20:46 +0000, Al Viro wrote:
-> __dentry_leases_walk() is gets a callback and calls it for
-> a bunch of denties; there are exactly two callers and
-> we already have a flag telling them apart - lwc->dir_lease.
+On Mon, 2023-10-30 at 06:21 -0400, Jeff Layton wrote:
+> On Tue, 2023-10-24 at 13:00 +0800, xiubli@redhat.com wrote:
+> > From: Xiubo Li <xiubli@redhat.com>
+> >=20
+> > No need to decrease the data length again if we need to read the
+> > left data.
+> >=20
+> > URL: https://tracker.ceph.com/issues/62081
+> > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > ---
+> >  net/ceph/messenger_v2.c | 1 -
+> >  1 file changed, 1 deletion(-)
+> >=20
+> > diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+> > index d09a39ff2cf0..9e3f95d5e425 100644
+> > --- a/net/ceph/messenger_v2.c
+> > +++ b/net/ceph/messenger_v2.c
+> > @@ -1966,7 +1966,6 @@ static int prepare_sparse_read_cont(struct ceph_c=
+onnection *con)
+> >  				bv.bv_offset =3D 0;
+> >  			}
+> >  			set_in_bvec(con, &bv);
+> > -			con->v2.data_len_remain -=3D bv.bv_len;
+> >  			return 0;
+> >  		}
+> >  	} else if (iov_iter_is_kvec(&con->v2.in_iter)) {
 >=20
-> Seeing that indirect calls are costly these days, let's
-> get rid of the callback and just call the right function
-> directly.  Has a side benefit of saner signatures...
->=20
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
-> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> index 854cbdd66661..30b06d171a40 100644
-> --- a/fs/ceph/dir.c
-> +++ b/fs/ceph/dir.c
-> @@ -1550,10 +1550,12 @@ struct ceph_lease_walk_control {
->  	unsigned long dir_lease_ttl;
->  };
-> =20
-> +static int __dir_lease_check(const struct dentry *, struct ceph_lease_wa=
-lk_control *);
-> +static int __dentry_lease_check(const struct dentry *);
-> +
->  static unsigned long
->  __dentry_leases_walk(struct ceph_mds_client *mdsc,
-> -		     struct ceph_lease_walk_control *lwc,
-> -		     int (*check)(struct dentry*, void*))
-> +		     struct ceph_lease_walk_control *lwc)
->  {
->  	struct ceph_dentry_info *di, *tmp;
->  	struct dentry *dentry, *last =3D NULL;
-> @@ -1581,7 +1583,10 @@ __dentry_leases_walk(struct ceph_mds_client *mdsc,
->  			goto next;
->  		}
-> =20
-> -		ret =3D check(dentry, lwc);
-> +		if (lwc->dir_lease)
-> +			ret =3D __dir_lease_check(dentry, lwc);
-> +		else
-> +			ret =3D __dentry_lease_check(dentry);
->  		if (ret & TOUCH) {
->  			/* move it into tail of dir lease list */
->  			__dentry_dir_lease_touch(mdsc, di);
-> @@ -1638,7 +1643,7 @@ __dentry_leases_walk(struct ceph_mds_client *mdsc,
->  	return freed;
->  }
-> =20
-> -static int __dentry_lease_check(struct dentry *dentry, void *arg)
-> +static int __dentry_lease_check(const struct dentry *dentry)
->  {
->  	struct ceph_dentry_info *di =3D ceph_dentry(dentry);
->  	int ret;
-> @@ -1653,9 +1658,9 @@ static int __dentry_lease_check(struct dentry *dent=
-ry, void *arg)
->  	return DELETE;
->  }
-> =20
-> -static int __dir_lease_check(struct dentry *dentry, void *arg)
-> +static int __dir_lease_check(const struct dentry *dentry,
-> +			     struct ceph_lease_walk_control *lwc)
->  {
-> -	struct ceph_lease_walk_control *lwc =3D arg;
->  	struct ceph_dentry_info *di =3D ceph_dentry(dentry);
-> =20
->  	int ret =3D __dir_lease_try_check(dentry);
-> @@ -1694,7 +1699,7 @@ int ceph_trim_dentries(struct ceph_mds_client *mdsc=
-)
-> =20
->  	lwc.dir_lease =3D false;
->  	lwc.nr_to_scan  =3D CEPH_CAPS_PER_RELEASE * 2;
-> -	freed =3D __dentry_leases_walk(mdsc, &lwc, __dentry_lease_check);
-> +	freed =3D __dentry_leases_walk(mdsc, &lwc);
->  	if (!lwc.nr_to_scan) /* more invalid leases */
->  		return -EAGAIN;
-> =20
-> @@ -1704,7 +1709,7 @@ int ceph_trim_dentries(struct ceph_mds_client *mdsc=
-)
->  	lwc.dir_lease =3D true;
->  	lwc.expire_dir_lease =3D freed < count;
->  	lwc.dir_lease_ttl =3D mdsc->fsc->mount_options->caps_wanted_delay_max *=
- HZ;
-> -	freed +=3D__dentry_leases_walk(mdsc, &lwc, __dir_lease_check);
-> +	freed +=3D__dentry_leases_walk(mdsc, &lwc);
->  	if (!lwc.nr_to_scan) /* more to check */
->  		return -EAGAIN;
-> =20
+> It's been a while since I was in this code, but where does this get
+> decremented if you're removing it here?
 >=20
 
-Nice cleanup.
+My question was a bit vague, so let me elaborate a bit:
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+data_len_remain should be how much unconsumed data is in the message
+(IIRC). As we call prepare_sparse_read_cont multiple times, we're
+consuming the message data and this gets decremented as we go.
+
+In the above case, we're consuming the message data into the bvec, so
+why shouldn't we be decrementing the remaining data by that amount?=20
+--=20
+Jeff Layton <jlayton@kernel.org>
 
