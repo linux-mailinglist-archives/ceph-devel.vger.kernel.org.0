@@ -1,175 +1,142 @@
-Return-Path: <ceph-devel+bounces-32-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-33-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE197DFFFE
-	for <lists+ceph-devel@lfdr.de>; Fri,  3 Nov 2023 10:30:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 107917E0029
+	for <lists+ceph-devel@lfdr.de>; Fri,  3 Nov 2023 11:07:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7206F281DE4
-	for <lists+ceph-devel@lfdr.de>; Fri,  3 Nov 2023 09:30:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0CDE281DC6
+	for <lists+ceph-devel@lfdr.de>; Fri,  3 Nov 2023 10:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29907111BF;
-	Fri,  3 Nov 2023 09:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628CD12B7E;
+	Fri,  3 Nov 2023 10:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mj06hn5K"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bnzcmDPc"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDE2CA51
-	for <ceph-devel@vger.kernel.org>; Fri,  3 Nov 2023 09:29:50 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B324D42
-	for <ceph-devel@vger.kernel.org>; Fri,  3 Nov 2023 02:29:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699003785;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0/0vU/iHzYTi6s4HQTZiVFFEC3P+yEn1obudUnp/urY=;
-	b=Mj06hn5KyO233NkNz0/EE68hcNJJf19mYh6+YlJnFyiPrtbaifp33D/55d7opJlzvNzguY
-	7Vj1+yA98f87VkM9PInVC2P6rEI0UnPhKZsjchvz3fTKJmVqrv8wS4TW8aAWvWrQL9JFcM
-	T2kp83tRkKzwwk4ZYh85YCfFGCKg2PM=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-648-k0mEt17oPNe2gS4jg3DCWA-1; Fri, 03 Nov 2023 05:29:43 -0400
-X-MC-Unique: k0mEt17oPNe2gS4jg3DCWA-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-9d25d0788b8so124738366b.1
-        for <ceph-devel@vger.kernel.org>; Fri, 03 Nov 2023 02:29:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1199C13AC8
+	for <ceph-devel@vger.kernel.org>; Fri,  3 Nov 2023 10:07:44 +0000 (UTC)
+Received: from mail-oo1-xc36.google.com (mail-oo1-xc36.google.com [IPv6:2607:f8b0:4864:20::c36])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 281971BD
+	for <ceph-devel@vger.kernel.org>; Fri,  3 Nov 2023 03:07:40 -0700 (PDT)
+Received: by mail-oo1-xc36.google.com with SMTP id 006d021491bc7-58706a0309dso916908eaf.1
+        for <ceph-devel@vger.kernel.org>; Fri, 03 Nov 2023 03:07:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1699006059; x=1699610859; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yf/delVOYXcb2KeWvXmc+da1E/CJ2va8S01GTtVPdVw=;
+        b=bnzcmDPcPwiemtkl2zPJZP4PQbDgizzNpYk4p3D97Byg20rb4ysLtWjbti7kJVEGUd
+         uT+wATFi1R0lqzxPkGvyUmdLT5qGDpFDjZVEtiXA+RMFtI8rFsKC1dgvf4LdMG9sRhL/
+         fsRmvLpXGcrur56ETeNAVdkdydQv9b88IqShuxIUCqYGVJzYTERb+GjIktvX0GsTC1Yv
+         kohrdtOeiv7DP7BGmoVBVFOJypitDqwWIKCd6kEbsWJC/pbXTYzgctCB1gEiQHKEffNw
+         sI/2O2eFhQ9uAtPh9IX7L9Mt3ZX9WtITbs0/UiC0W6aJDLKG3qNGvWq8ohN+Wm7D/XTx
+         /BSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699003783; x=1699608583;
+        d=1e100.net; s=20230601; t=1699006059; x=1699610859;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0/0vU/iHzYTi6s4HQTZiVFFEC3P+yEn1obudUnp/urY=;
-        b=gmbpHpx1rTBa2RAfGB35TSwYC6q4Y5JfIOy2oEPFfIJg4UeqgndsiZG2nVuVdObelQ
-         OxmgNjhflCUXy1gWlcFxiNa6WGd2msrrEZRTeMqd3q8YUd9XojtuexmR7LqaulNMXSMk
-         vkusNZLp8qhjCAWNIkjd0B//1ySedl9bb2nWwrWmEDmhZmEyJPeBtIOWup+1F9qpQzso
-         sWvRldaXWR4hwIxprRPaq36WyvukOxb97UeU9iKmcHhUGY/E36XSxgPsFcgODczT6fpC
-         UvbT6ZhkP7MFJGjaXwB3ct2MvJW79KsLyv/e6o4RjpJosYOGnMz3QchuHcpNcj31Snia
-         M1Mw==
-X-Gm-Message-State: AOJu0YzaLxPViDbEWtLAAIjvRnbBc0FM0DWtpnPKEPCeZKvE+ImA+YLz
-	MS25ZSALAL/9+pVrtVV1qr8ViKckHmHuLjBBzGIstjcMJmKhLoRIVo/ssTGfLN74ImfoP7dkrfi
-	tIFi8FuQcqnYYhHyCbLmHp62M8noOq1kcVbB7Pg==
-X-Received: by 2002:a17:907:318c:b0:9d3:8d1e:ce8 with SMTP id xe12-20020a170907318c00b009d38d1e0ce8mr7156230ejb.20.1699003782760;
-        Fri, 03 Nov 2023 02:29:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHCpPOo/2w8re4r/ajIANVqN+/wubnx+xS1Vmab8i/q6VgYW4fCoNNP1sKdBacBSl/H+ysZLwx7K0ThAo94Ijs=
-X-Received: by 2002:a17:907:318c:b0:9d3:8d1e:ce8 with SMTP id
- xe12-20020a170907318c00b009d38d1e0ce8mr7156218ejb.20.1699003782368; Fri, 03
- Nov 2023 02:29:42 -0700 (PDT)
+        bh=Yf/delVOYXcb2KeWvXmc+da1E/CJ2va8S01GTtVPdVw=;
+        b=rI9vGHWQpcrlkT+zeLmgYKZpRgSKs4y9ofb1U7CICDsL+lVx7F+bANp15tHEYzU8FO
+         Ap//QPu02o0/9a1L0gzCyXa5eB2VgMv4IGCUgDYNji3c/QPOTXL+fL1SoS4aR+LV0AwT
+         pgHfZnAjlcJl0k/8T0KOaGztN90pK8cOEGMaSqvPNWJB0pBg5mcIuNLG3PWh6B/CSA0f
+         OOymWO0HvqXQjgcsTMw8DdBiDwOcoHwgIBoZIH2RQf95EMFRz3A8qXoaDGbLnPp+ddJI
+         Lf25P/HN/0fQpKxIlRLcjQ2WINHXUw0jLX8GG+ZzQs3f177bQhm8+DrOpR0MN0qr7F9R
+         c4EQ==
+X-Gm-Message-State: AOJu0YxMT4roWNPEGDARurWbglKUKuQlrK9d5zeUJBdeR+ytZ4eGU4fz
+	1518kVvWkptNCtoxDeuMzHYBi3kU/ouCSS0Bs5g=
+X-Google-Smtp-Source: AGHT+IGmpks/Lai9vYIosDBs2hLw/7DPRsdbSAl0K13CNZwZfw7FK+E8/cqQWmjV6Sl+9gSEwi5u12ykWk/n3QuIzvg=
+X-Received: by 2002:a4a:c919:0:b0:584:bb9:4945 with SMTP id
+ v25-20020a4ac919000000b005840bb94945mr20232839ooq.3.1699006059428; Fri, 03
+ Nov 2023 03:07:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231103064027.316296-1-vshankar@redhat.com> <CACPzV1mkHsWmUy60MxZg0VA-ewm=KW62ODT019jDtSL5EzErNw@mail.gmail.com>
- <184d7c48-42de-e602-e394-3c0b2cbeb0b7@redhat.com>
-In-Reply-To: <184d7c48-42de-e602-e394-3c0b2cbeb0b7@redhat.com>
-From: Venky Shankar <vshankar@redhat.com>
-Date: Fri, 3 Nov 2023 14:59:05 +0530
-Message-ID: <CACPzV1=ZfG-4AMMhE1_uCNDaC-bRXK8mng7s_zD8GQ0YbUafqg@mail.gmail.com>
-Subject: Re: [PATCH] ceph: reinitialize mds feature bit even when session in open
-To: Xiubo Li <xiubli@redhat.com>
-Cc: mchangir@redhat.com, ceph-devel@vger.kernel.org
+References: <20231103033900.122990-1-xiubli@redhat.com>
+In-Reply-To: <20231103033900.122990-1-xiubli@redhat.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Fri, 3 Nov 2023 11:07:27 +0100
+Message-ID: <CAOi1vP8EtALzni0sdj0o4j61KkC6XqgzEgikCDhDPOHX6LNYZw@mail.gmail.com>
+Subject: Re: [PATCH] libceph: remove the max extents check for sparse read
+To: xiubli@redhat.com
+Cc: ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com, 
+	mchangir@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 3, 2023 at 1:23=E2=80=AFPM Xiubo Li <xiubli@redhat.com> wrote:
+On Fri, Nov 3, 2023 at 4:41=E2=80=AFAM <xiubli@redhat.com> wrote:
 >
+> From: Xiubo Li <xiubli@redhat.com>
 >
-> On 11/3/23 14:43, Venky Shankar wrote:
-> > On Fri, Nov 3, 2023 at 12:10=E2=80=AFPM Venky Shankar <vshankar@redhat.=
-com> wrote:
-> >> Following along the same lines as per the user-space fix. Right
-> >> now this isn't really an issue with the ceph kernel driver because
-> >> of the feature bit laginess, however, that can change over time
-> >> (when the new snaprealm info type is ported to the kernel driver)
-> >> and depending on the MDS version that's being upgraded can cause
-> >> message decoding issues - so, fix that early on.
-> >>
-> >> URL: Fixes: http://tracker.ceph.com/issues/63188
-> >> Signed-off-by: Venky Shankar <vshankar@redhat.com>
-> >> ---
-> >>   fs/ceph/mds_client.c | 1 +
-> >>   1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> >> index a7bffb030036..48d75e17115c 100644
-> >> --- a/fs/ceph/mds_client.c
-> >> +++ b/fs/ceph/mds_client.c
-> >> @@ -4192,6 +4192,7 @@ static void handle_session(struct ceph_mds_sessi=
-on *session,
-> >>                  if (session->s_state =3D=3D CEPH_MDS_SESSION_OPEN) {
-> >>                          pr_notice_client(cl, "mds%d is already opened=
-\n",
-> >>                                           session->s_mds);
-> >> +                       session->s_features =3D features;
-> > Xiubo, the metrics stuff isn't done here (as it's done in the else
-> > case). That's probably required I guess??
+> There is no any limit for the extent array size and it's possible
+> that when reading with a large size contents. Else the messager
+> will fail by reseting the connection and keeps resending the inflight
+> IOs.
 >
-> That should be okay, but it harmless to do it here.
+> URL: https://tracker.ceph.com/issues/62081
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  net/ceph/osd_client.c | 12 ------------
+>  1 file changed, 12 deletions(-)
 >
-> So let's just fix it by:
+> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> index 7af35106acaf..177a1d92c517 100644
+> --- a/net/ceph/osd_client.c
+> +++ b/net/ceph/osd_client.c
+> @@ -5850,8 +5850,6 @@ static inline void convert_extent_map(struct ceph_s=
+parse_read *sr)
+>  }
+>  #endif
 >
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 41be58baaa57..de3c6b6cbd07 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -4263,17 +4263,16 @@ static void handle_session(struct
-> ceph_mds_session *session,
->                          pr_info_client(cl, "mds%d reconnect success\n",
->                                         session->s_mds);
+> -#define MAX_EXTENTS 4096
+> -
+>  static int osd_sparse_read(struct ceph_connection *con,
+>                            struct ceph_msg_data_cursor *cursor,
+>                            char **pbuf)
+> @@ -5882,16 +5880,6 @@ static int osd_sparse_read(struct ceph_connection =
+*con,
 >
-> -               if (session->s_state =3D=3D CEPH_MDS_SESSION_OPEN) {
-> +               if (session->s_state =3D=3D CEPH_MDS_SESSION_OPEN)
->                          pr_notice_client(cl, "mds%d is already opened\n"=
-,
->                                           session->s_mds);
-> -               } else {
-> +               else
->                          session->s_state =3D CEPH_MDS_SESSION_OPEN;
-> -                       session->s_features =3D features;
-> -                       renewed_caps(mdsc, session, 0);
-> -                       if (test_bit(CEPHFS_FEATURE_METRIC_COLLECT,
-> -                                    &session->s_features))
-> - metric_schedule_delayed(&mdsc->metric);
-> -               }
-> +               session->s_features =3D features;
-> +               renewed_caps(mdsc, session, 0);
-
-Call to renewed_caps() isn't really required if the session state is
-already open, isn't it? Doesn't harm to call it I guess, but...
-
-> +               if (test_bit(CEPHFS_FEATURE_METRIC_COLLECT,
-> +                            &session->s_features))
-> + metric_schedule_delayed(&mdsc->metric);
->
->                  /*
->                   * The connection maybe broken and the session in client
->
-> Thanks
->
-> - Xiubo
->
->
-> >
-> >>                  } else {
-> >>                          session->s_state =3D CEPH_MDS_SESSION_OPEN;
-> >>                          session->s_features =3D features;
-> >> --
-> >> 2.39.3
-> >>
-> >
+>                 if (count > 0) {
+>                         if (!sr->sr_extent || count > sr->sr_ext_len) {
+> -                               /*
+> -                                * Apply a hard cap to the number of exte=
+nts.
+> -                                * If we have more, assume something is w=
+rong.
+> -                                */
+> -                               if (count > MAX_EXTENTS) {
+> -                                       dout("%s: OSD returned 0x%x exten=
+ts in a single reply!\n",
+> -                                            __func__, count);
+> -                                       return -EREMOTEIO;
+> -                               }
+> -
+>                                 /* no extent array provided, or too short=
+ */
+>                                 kfree(sr->sr_extent);
+>                                 sr->sr_extent =3D kmalloc_array(count,
+> --
+> 2.39.1
 >
 
+Hi Xiubo,
 
---=20
-Cheers,
-Venky
+As noted in the tracker ticket, there are many "sanity" limits like
+that in the messenger and other parts of the kernel client.  First,
+let's change that dout to pr_warn_ratelimited so that it's immediately
+clear what is going on.  Then, if the limit actually gets hit, let's
+dig into why and see if it can be increased rather than just removed.
 
+Thanks,
+
+                Ilya
 
