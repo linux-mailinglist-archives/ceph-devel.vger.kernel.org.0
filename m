@@ -1,71 +1,71 @@
-Return-Path: <ceph-devel+bounces-59-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-60-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C582D7E22A8
-	for <lists+ceph-devel@lfdr.de>; Mon,  6 Nov 2023 14:01:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAF177E22AB
+	for <lists+ceph-devel@lfdr.de>; Mon,  6 Nov 2023 14:02:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E781B20EC1
-	for <lists+ceph-devel@lfdr.de>; Mon,  6 Nov 2023 13:01:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01975B20EA5
+	for <lists+ceph-devel@lfdr.de>; Mon,  6 Nov 2023 13:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36721F951;
-	Mon,  6 Nov 2023 13:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EFF200A5;
+	Mon,  6 Nov 2023 13:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jDps5Rcx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cnlpvj4K"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9BA1A592
-	for <ceph-devel@vger.kernel.org>; Mon,  6 Nov 2023 13:01:38 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20B62BF
-	for <ceph-devel@vger.kernel.org>; Mon,  6 Nov 2023 05:01:37 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE571A592
+	for <ceph-devel@vger.kernel.org>; Mon,  6 Nov 2023 13:02:40 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67636A9
+	for <ceph-devel@vger.kernel.org>; Mon,  6 Nov 2023 05:02:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699275696;
+	s=mimecast20190719; t=1699275758;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2he4cO+JKm41yuvaGZzl2SQojqAf9W5KklbyadCnAY8=;
-	b=jDps5RcxZ9h7IfmQBU7BqtTKA0mjv1a7dFulHydCaHaHHJ88ElQiZtOLHL5XeGTS2+z7IJ
-	9l0NIFq4Daal9UW/nCgK/9H1jpN0cCNSdwkGIf8a/q8v6tKbpF7rwLQHFZwHbscU53kWzd
-	Tf8PL3MrBp+2uxf3NW/lSpWM7bm5r2g=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=1Et0n6pE0VqcKcoQLytkFdqaSKPeLmD1dVaHH7tBy5o=;
+	b=Cnlpvj4KjIJxhEtjVg+xWF+4IIjocfRiRD0dap6INqPqjUFUZz3Vzcz1CLenc+nBZ4pqbU
+	JQ4240+3vqTnge2pZN0EsrGCDjUGu2nmKYBYwi17a2Rot+xxjKkARzXzKmrmwB7FrfyqCh
+	f2zv/MZGM09Qml1dZ9pVZ0eym/1ULCM=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-227-cjugnVgBMfyOJ5vjBIPmvg-1; Mon, 06 Nov 2023 08:01:34 -0500
-X-MC-Unique: cjugnVgBMfyOJ5vjBIPmvg-1
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-6b243dc6aeeso3278247b3a.3
-        for <ceph-devel@vger.kernel.org>; Mon, 06 Nov 2023 05:01:34 -0800 (PST)
+ us-mta-300-hr-iVX-MP0qRp6HHU9Qliw-1; Mon, 06 Nov 2023 08:02:15 -0500
+X-MC-Unique: hr-iVX-MP0qRp6HHU9Qliw-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-28014ce75d5so4236406a91.2
+        for <ceph-devel@vger.kernel.org>; Mon, 06 Nov 2023 05:02:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699275694; x=1699880494;
+        d=1e100.net; s=20230601; t=1699275734; x=1699880534;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2he4cO+JKm41yuvaGZzl2SQojqAf9W5KklbyadCnAY8=;
-        b=oT+GaqcsXFsZar2REcyuOyhBf+xCI1bTjnxPRMRETSvipE39rO9G9owy+4EQFbGKuf
-         wacSEo1zWT/4/5fvgA2YKRBkF6t6W94fS/WYyXXXmV/tErXNVtBV9W+VwbHigcmjx0T2
-         ehkCbsijN5qPzp3EuyqSOdw+LuAE0Y1NmIQq7H+zbw99FyYv52XA2aZJ82Q1xk1wjbIL
-         NWPcLmf7d4br68Tg2u3r2SY7i+fXNv1FgpDlOXWbtMBiNrK6WaUQYdWl2YOyTnm447XW
-         VK/S7vJ42xZXOXaMRhcyNqMc5B2nAnF3HgHFPPfDTSEdxbBJ3G9lv+Wk1zqYzcuihdio
-         JQ9A==
-X-Gm-Message-State: AOJu0Yxa0G6Q4Li7howuocEVdmunLpY0fXrpi5lqw4TMLnVcVVcjfn2n
-	GO4Y8fYRfVFvFAoR7G2RT94vU5xcBJ/JCUgAHvXx+6Ucr1Ws1WcF0EgZnvycbXdDFQD3Lu6Ckh1
-	MjGJpzWLUEydkMPhYns7rfg==
-X-Received: by 2002:a05:6a20:4401:b0:179:faa1:46ba with SMTP id ce1-20020a056a20440100b00179faa146bamr30709983pzb.35.1699275693653;
-        Mon, 06 Nov 2023 05:01:33 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGncxzvElqLxFuynkDXABQLNQjeaVRv4kfYGtOfADyuJOgMLWe37Ri6CwO6Q8HARzlbRkFAZw==
-X-Received: by 2002:a05:6a20:4401:b0:179:faa1:46ba with SMTP id ce1-20020a056a20440100b00179faa146bamr30709955pzb.35.1699275693288;
-        Mon, 06 Nov 2023 05:01:33 -0800 (PST)
+        bh=1Et0n6pE0VqcKcoQLytkFdqaSKPeLmD1dVaHH7tBy5o=;
+        b=sYTMJdpK4seIhC/UIhyQ3t5iltjKUgykHOGIjq3+IUgLObtIA+3UW+mG7ua+Pj/BEH
+         6nIrXKf4QID7spFq7YNFYM2CCXMC9uPSeBlpFhnunUUBfExTwFI+fwcACGzAqV2zQ7WO
+         /WaJhW6tnxse89mKyCVhGRiPbLegJRmMt2DB0hYsCsmq3zOxSnkFzM9U0Ti3HFIuqbub
+         aEDE0RiZ1VcG5J5BNFrbHgV/gKklLAYVooFH6d+YF66UARlnb3lzeWOIdDBzDpPTMYMH
+         JuUJMKU1XF1cJY6aeCvhQOUs715q5zuLrgwnXe7xaBtwH7p1w+gSRe1zU+xd4VLAO5os
+         V65A==
+X-Gm-Message-State: AOJu0YyvZkBxVlNqDekoHTObIBtjYYliwLXaP510bTIBl9TwVLeeurXl
+	66tj37kS6wXSoAxz+mO5j2qoM7GU9JR7iPz+JZaIjkY8lOMHnWCxuMR86+ZjmTRo+s0qcKi3kj6
+	Vg/DWsoHDUgARhwThknVC7Z4Z5Bry6b8f
+X-Received: by 2002:a17:90a:4e:b0:280:3a8:6499 with SMTP id 14-20020a17090a004e00b0028003a86499mr24876340pjb.40.1699275733839;
+        Mon, 06 Nov 2023 05:02:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFKWF30vzrdFjIdq1GSLPU3aS0wMZ+seCdFWFplCk2uMJ7AwuAcne6oi20VCj5rK4CZANVOGg==
+X-Received: by 2002:a17:90a:4e:b0:280:3a8:6499 with SMTP id 14-20020a17090a004e00b0028003a86499mr24876316pjb.40.1699275733389;
+        Mon, 06 Nov 2023 05:02:13 -0800 (PST)
 Received: from [10.72.112.221] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id s22-20020a17090aad9600b0027d0a60b9c9sm5475535pjq.28.2023.11.06.05.01.31
+        by smtp.gmail.com with ESMTPSA id 7-20020a17090a000700b00280fcbbe774sm1782100pja.10.2023.11.06.05.02.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Nov 2023 05:01:33 -0800 (PST)
-Message-ID: <c3efdf13-89b6-bcff-2ac4-7bb4681862a2@redhat.com>
-Date: Mon, 6 Nov 2023 21:01:28 +0800
+        Mon, 06 Nov 2023 05:02:13 -0800 (PST)
+Message-ID: <99d6468e-f287-43a7-fa55-48e570234a00@redhat.com>
+Date: Mon, 6 Nov 2023 21:02:09 +0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -74,67 +74,143 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH v3 2/2] libceph: check the data length when sparse-read
- finishes
+Subject: Re: [PATCH] libceph: remove the max extents check for sparse read
 Content-Language: en-US
-To: Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>
-Cc: ceph-devel@vger.kernel.org, vshankar@redhat.com, mchangir@redhat.com
-References: <20231106011644.248119-1-xiubli@redhat.com>
- <20231106011644.248119-3-xiubli@redhat.com>
- <CAOi1vP_NQmkreqVoM+CP=v3PkGh-79jYV8xgrmDA0b4z8PJ3mA@mail.gmail.com>
- <873e9540-cf61-e517-eb68-5b83e8984f0e@redhat.com>
- <85fd22f7f3b3c18cbb9a1edf5894300faca0f2fa.camel@kernel.org>
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com,
+ mchangir@redhat.com
+References: <20231103033900.122990-1-xiubli@redhat.com>
+ <CAOi1vP8EtALzni0sdj0o4j61KkC6XqgzEgikCDhDPOHX6LNYZw@mail.gmail.com>
+ <e350e6e7-22a2-69de-258f-70c2050dbd50@redhat.com>
+ <CAOi1vP9haOn0RujjiWU5TQ3F-ZEi8GKXYFV+xzTrX3V3saH46A@mail.gmail.com>
+ <cee744a4-de97-0055-be94-1f928b06928e@redhat.com>
+ <CAOi1vP-kUkUurOSS31_F9ND_X8BwxPp1uXo0EUkeuaP3ORK0Pg@mail.gmail.com>
 From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <85fd22f7f3b3c18cbb9a1edf5894300faca0f2fa.camel@kernel.org>
+In-Reply-To: <CAOi1vP-kUkUurOSS31_F9ND_X8BwxPp1uXo0EUkeuaP3ORK0Pg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
-On 11/6/23 20:32, Jeff Layton wrote:
-> On Mon, 2023-11-06 at 20:17 +0800, Xiubo Li wrote:
->> On 11/6/23 19:54, Ilya Dryomov wrote:
->>> On Mon, Nov 6, 2023 at 2:19 AM <xiubli@redhat.com> wrote:
+On 11/6/23 20:32, Ilya Dryomov wrote:
+> On Mon, Nov 6, 2023 at 1:15 PM Xiubo Li <xiubli@redhat.com> wrote:
+>>
+>> On 11/6/23 19:38, Ilya Dryomov wrote:
+>>> On Mon, Nov 6, 2023 at 1:14 AM Xiubo Li <xiubli@redhat.com> wrote:
+>>>> On 11/3/23 18:07, Ilya Dryomov wrote:
+>>>>
+>>>> On Fri, Nov 3, 2023 at 4:41 AM <xiubli@redhat.com> wrote:
+>>>>
 >>>> From: Xiubo Li <xiubli@redhat.com>
 >>>>
->>>> For sparse reading the real length of the data should equal to the
->>>> total length from the extent array.
+>>>> There is no any limit for the extent array size and it's possible
+>>>> that when reading with a large size contents. Else the messager
+>>>> will fail by reseting the connection and keeps resending the inflight
+>>>> IOs.
 >>>>
 >>>> URL: https://tracker.ceph.com/issues/62081
 >>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>>> Reviewed-by: Jeff Layton <jlayton@kernel.org>
 >>>> ---
->>>>    net/ceph/osd_client.c | 8 ++++++++
->>>>    1 file changed, 8 insertions(+)
+>>>>    net/ceph/osd_client.c | 12 ------------
+>>>>    1 file changed, 12 deletions(-)
 >>>>
 >>>> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
->>>> index 0e629dfd55ee..050dc39065fb 100644
+>>>> index 7af35106acaf..177a1d92c517 100644
 >>>> --- a/net/ceph/osd_client.c
 >>>> +++ b/net/ceph/osd_client.c
->>>> @@ -5920,6 +5920,12 @@ static int osd_sparse_read(struct ceph_connection *con,
->>>>                   fallthrough;
->>>>           case CEPH_SPARSE_READ_DATA:
->>>>                   if (sr->sr_index >= count) {
->>>> +                       if (sr->sr_datalen && count) {
->>>> +                               pr_warn_ratelimited("%s: datalen and extents mismath, %d left\n",
->>>> +                                                   __func__, sr->sr_datalen);
->>>> +                               return -EREMOTEIO;
->>> By returning EREMOTEIO here you have significantly changed the
->>> semantics (in v2 it was just a warning) but Jeff's Reviewed-by is
->>> retained.  Has he acked the change?
->> Oh, sorry I forgot to remove that.
+>>>> @@ -5850,8 +5850,6 @@ static inline void convert_extent_map(struct ceph_sparse_read *sr)
+>>>>    }
+>>>>    #endif
+>>>>
+>>>> -#define MAX_EXTENTS 4096
+>>>> -
+>>>>    static int osd_sparse_read(struct ceph_connection *con,
+>>>>                              struct ceph_msg_data_cursor *cursor,
+>>>>                              char **pbuf)
+>>>> @@ -5882,16 +5880,6 @@ static int osd_sparse_read(struct ceph_connection *con,
+>>>>
+>>>>                   if (count > 0) {
+>>>>                           if (!sr->sr_extent || count > sr->sr_ext_len) {
+>>>> -                               /*
+>>>> -                                * Apply a hard cap to the number of extents.
+>>>> -                                * If we have more, assume something is wrong.
+>>>> -                                */
+>>>> -                               if (count > MAX_EXTENTS) {
+>>>> -                                       dout("%s: OSD returned 0x%x extents in a single reply!\n",
+>>>> -                                            __func__, count);
+>>>> -                                       return -EREMOTEIO;
+>>>> -                               }
+>>>> -
+>>>>                                   /* no extent array provided, or too short */
+>>>>                                   kfree(sr->sr_extent);
+>>>>                                   sr->sr_extent = kmalloc_array(count,
+>>>> --
+>>>> 2.39.1
+>>>>
+>>>> Hi Xiubo,
+>>>>
+>>>> As noted in the tracker ticket, there are many "sanity" limits like
+>>>> that in the messenger and other parts of the kernel client.  First,
+>>>> let's change that dout to pr_warn_ratelimited so that it's immediately
+>>>> clear what is going on.
+>>>>
+>>>> Sounds good to me.
+>>>>
+>>>>    Then, if the limit actually gets hit, let's
+>>>> dig into why and see if it can be increased rather than just removed.
+>>>>
+>>>> The test result in https://tracker.ceph.com/issues/62081#note-16 is that I just changed the 'len' to 5000 in ceph PR https://github.com/ceph/ceph/pull/54301 to emulate a random writes to a file and then tries to read with a large size:
+>>>>
+>>>> [ RUN      ] LibRadosIoPP.SparseReadExtentArrayOpPP
+>>>> extents array size : 4297
+>>>>
+>>>> For the 'extents array size' it could reach up to a very large number, then what it should be ? Any idea ?
+>>> Hi Xiubo,
+>>>
+>>> I don't think it can be a very large number in practice.
+>>>
+>>> CephFS uses sparse reads only in the fscrypt case, right?
+>> Yeah, it is.
 >>
->> Jeff, Please take a look here again.
 >>
->> Thanks
+>>>     With
+>>> fscrypt, sub-4K writes to the object store aren't possible, right?
+>> Yeah.
 >>
->> - Xiubo
 >>
->>
-> Returning EREMOTEIO if the lengths don't match seems like a reasonable
-> thing to do. You can retain the R-b.
+>>> If the answer to both is yes, then the maximum number of extents
+>>> would be
+>>>
+>>>       64M (CEPH_MSG_MAX_DATA_LEN) / 4K = 16384
+>>>
+>>> even if the object store does tracking at byte granularity.
+>> So yeah, just for the fscrypt case if we set the max extent number to
+>> 16384 it should be fine. But the sparse read could also be enabled in
+>> non-fscrypt case.
+> Ah, I see that it's also exposed as a mount option.  If we expect
+> people to use it, then dropping MAX_EXTENTS altogether might be the
+> best approach after all -- it doesn't make sense to warn about
+> something that we don't really control.
 >
-Thanks Jeff.
+> How about printing the number of extents only if the allocation fails?
+> Something like:
+>
+>      if (!sr->sr_extent) {
+>              pr_err("failed to allocate %u sparse read extents\n", count);
+>              return -ENOMEM;
+>      }
+
+Yeah, this also looks good to me.
+
+I will fix it.
+
+Thanks
 
 - Xiubo
+
+
+> Thanks,
+>
+>                  Ilya
+>
 
 
