@@ -1,71 +1,71 @@
-Return-Path: <ceph-devel+bounces-53-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-54-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FE487E2114
-	for <lists+ceph-devel@lfdr.de>; Mon,  6 Nov 2023 13:16:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A3197E2124
+	for <lists+ceph-devel@lfdr.de>; Mon,  6 Nov 2023 13:18:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A373281366
-	for <lists+ceph-devel@lfdr.de>; Mon,  6 Nov 2023 12:16:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB003B20E16
+	for <lists+ceph-devel@lfdr.de>; Mon,  6 Nov 2023 12:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25A581EB50;
-	Mon,  6 Nov 2023 12:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD7D1EB4C;
+	Mon,  6 Nov 2023 12:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rt5MmEJv"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K0gLypdw"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4A21EB4A
-	for <ceph-devel@vger.kernel.org>; Mon,  6 Nov 2023 12:15:57 +0000 (UTC)
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B106E1BF
-	for <ceph-devel@vger.kernel.org>; Mon,  6 Nov 2023 04:15:54 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BDE1EB36
+	for <ceph-devel@vger.kernel.org>; Mon,  6 Nov 2023 12:18:03 +0000 (UTC)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4E36107
+	for <ceph-devel@vger.kernel.org>; Mon,  6 Nov 2023 04:18:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1699272953;
+	s=mimecast20190719; t=1699273081;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+sJt7sbRaLLbMIE8mWTEhgxYgqEMNmGci4zAkPiHSek=;
-	b=Rt5MmEJvmxcedA6b42ih5uvQZ2oFYATZMEJEmj60qCMCCGYePuBMWcPmndKgUOVKYON0t0
-	D7c98zhcaoifC3ypKLQVkb5P4lyAmsBABlT37RDbVEv6yoN6Ytl9WcVpDfccMT4OQeCmWG
-	XF4t95W3xfbg4NedXlwqwXkRhBKoVew=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=qsdZdLiyJN8osh7LUA5CumWrLvUzdg/q8I1JWyt2xxE=;
+	b=K0gLypdwiCrAyLMn5Fb299k4SR6Ottb8QotJsEZxeJzrVDRQB1/xGzaGJGlnGV4SrJY2v+
+	9LKBMfoKdHBhupaSkA/TLq9ini3cbci9ryRQJR88il1soA+6gq8htK4vZVs6LVC53B8yaP
+	QW9CIikiyTj9+fP2nqiVuN34NffX2Q8=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-12-Pi3P1pCAM26GWrJPyVx3gA-1; Mon, 06 Nov 2023 07:15:52 -0500
-X-MC-Unique: Pi3P1pCAM26GWrJPyVx3gA-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-6b1f7baa5ceso2924290b3a.2
-        for <ceph-devel@vger.kernel.org>; Mon, 06 Nov 2023 04:15:52 -0800 (PST)
+ us-mta-155-NOzGU8oHPdmjy-3AXzOl8g-1; Mon, 06 Nov 2023 07:17:59 -0500
+X-MC-Unique: NOzGU8oHPdmjy-3AXzOl8g-1
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-28032570a00so3179994a91.0
+        for <ceph-devel@vger.kernel.org>; Mon, 06 Nov 2023 04:17:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699272951; x=1699877751;
+        d=1e100.net; s=20230601; t=1699273078; x=1699877878;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+sJt7sbRaLLbMIE8mWTEhgxYgqEMNmGci4zAkPiHSek=;
-        b=XnCxcQbhCkEmD7ejyQhCmNaHUthEnR4sfkVZB1IzyJBHEw1R2LjpxOCyhGdbIMazjE
-         lB9Gp3wOoTcRvT/r4vmi7HK7Ds4HUf/t2Czx8tH92tKL76+T8JkFYUJkZ12tv6ywSIs2
-         N7RvXDY/L1hSu9b0DL4UJMFo2Fww9cQYj8vs9uIPv40T61dH9UdEqJjRON1LGKsb1UG5
-         g8m8BFrurYK/bWXhn/HZ2rl/A8Q9xNqtAzFWO2xMpDaZnFt/MyXTZh5hHaeiMQAR/NcX
-         S4NCCVQRLcUMAF5Q/c+X6sqeHACE4h55/PNh7IdsJaqrZUk+RFcNo1qxwndz6pgwNllJ
-         fU7A==
-X-Gm-Message-State: AOJu0YzU/xXIlaB0dpETbZKbgGlGKDvx65lM48EXGuab0ZbYA45Aly0t
-	JpWwSvEuLBA71PN0h+EKnnYZtntkkq1wTDcfW+VgOxwLU1wSoy9LvokRtU0Dz8M707SqT46ecsb
-	ry5zWgnDAiIWQMdtInxnLpQ==
-X-Received: by 2002:a05:6a00:1307:b0:6bd:8c4a:ab8f with SMTP id j7-20020a056a00130700b006bd8c4aab8fmr25503014pfu.2.1699272951199;
-        Mon, 06 Nov 2023 04:15:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF2KjM2PVQEEII8Xr33UlEJ+HTwSa4GtjJbBZ6ikKrajTlDLBw4dq36yvNazpHJFoVg+UwBCg==
-X-Received: by 2002:a05:6a00:1307:b0:6bd:8c4a:ab8f with SMTP id j7-20020a056a00130700b006bd8c4aab8fmr25502994pfu.2.1699272950582;
-        Mon, 06 Nov 2023 04:15:50 -0800 (PST)
+        bh=qsdZdLiyJN8osh7LUA5CumWrLvUzdg/q8I1JWyt2xxE=;
+        b=hZPwrkX42/Hg+Kuxd4eNXTjRlYOK6A5KObe72h/rlMikOuzEUhzg3nWHmC3Bc6LR+l
+         stEB9u2DWYaV4Afz4GsXlqddnSZapbW6dn7RlwDmasFLBaqDTSx5DDQ2P9qNLn9xPH9m
+         uDQKg3+g3YfNlf5FXyFohEpnZe78++oj+L54P5n5Q3b1kHKVzKkykFyqoKGNaEh8ycfD
+         nsvbOjgRj7g3nJUVfNhMi3kh0MtoUWNNbX7WPzdV1CETsOur24Ckj1KwP+Nxxs3FXvQa
+         28BO8wgrkNb5F14hNP6CXHHTmvWumqngF8FkxpCCpB+8KLVECr1EwKT/+WG4x09eaCsg
+         fcZQ==
+X-Gm-Message-State: AOJu0YxDG3QIruKAikv4ycq9BTHCcv6mVpyyvAlKbuvjIQxoNaVzEghp
+	CcA5SS18K/VANytdRIgMIf2MlRtPBP75d4VmHSIn7R88x8K4yz/paQ+wJ+CbeBfb/pvjDyp8BPj
+	aD8I9QDJ4fr7swVliHcFuyw==
+X-Received: by 2002:a17:90b:617:b0:27d:58a8:fa7f with SMTP id gb23-20020a17090b061700b0027d58a8fa7fmr24186280pjb.37.1699273078668;
+        Mon, 06 Nov 2023 04:17:58 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGVg58KpmJH+4d6C/bNzkV8igVqstDp4ZeDqxDC8cYZ+hoeivUksrEazQAHbD0KKPJLc7nNqA==
+X-Received: by 2002:a17:90b:617:b0:27d:58a8:fa7f with SMTP id gb23-20020a17090b061700b0027d58a8fa7fmr24186255pjb.37.1699273077996;
+        Mon, 06 Nov 2023 04:17:57 -0800 (PST)
 Received: from [10.72.112.221] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id p56-20020a056a0026f800b006c31c239345sm5697415pfw.177.2023.11.06.04.15.48
+        by smtp.gmail.com with ESMTPSA id nh5-20020a17090b364500b00280202c092fsm5401295pjb.33.2023.11.06.04.17.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Nov 2023 04:15:50 -0800 (PST)
-Message-ID: <3d84df08-661d-ce82-45e6-88168b65bc1d@redhat.com>
-Date: Mon, 6 Nov 2023 20:15:46 +0800
+        Mon, 06 Nov 2023 04:17:57 -0800 (PST)
+Message-ID: <873e9540-cf61-e517-eb68-5b83e8984f0e@redhat.com>
+Date: Mon, 6 Nov 2023 20:17:54 +0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -74,112 +74,58 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.13.0
-Subject: Re: [PATCH] libceph: remove the max extents check for sparse read
+Subject: Re: [PATCH v3 2/2] libceph: check the data length when sparse-read
+ finishes
 Content-Language: en-US
 To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
- vshankar@redhat.com, mchangir@redhat.com
-References: <20231103033900.122990-1-xiubli@redhat.com>
- <CAOi1vP8EtALzni0sdj0o4j61KkC6XqgzEgikCDhDPOHX6LNYZw@mail.gmail.com>
- <23b5dc4e0607a033714e50c3326d587fd0cf99bf.camel@kernel.org>
- <1cded211-047b-ae79-fcf8-0838c1f8a21c@redhat.com>
- <CAOi1vP8x0-o3+wqi6oTBAY_v7-SnvNoC48AcCAJP8BOAUb+sLg@mail.gmail.com>
+Cc: ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com,
+ mchangir@redhat.com
+References: <20231106011644.248119-1-xiubli@redhat.com>
+ <20231106011644.248119-3-xiubli@redhat.com>
+ <CAOi1vP_NQmkreqVoM+CP=v3PkGh-79jYV8xgrmDA0b4z8PJ3mA@mail.gmail.com>
 From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <CAOi1vP8x0-o3+wqi6oTBAY_v7-SnvNoC48AcCAJP8BOAUb+sLg@mail.gmail.com>
+In-Reply-To: <CAOi1vP_NQmkreqVoM+CP=v3PkGh-79jYV8xgrmDA0b4z8PJ3mA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
-On 11/6/23 19:42, Ilya Dryomov wrote:
-> On Mon, Nov 6, 2023 at 7:43 AM Xiubo Li <xiubli@redhat.com> wrote:
+On 11/6/23 19:54, Ilya Dryomov wrote:
+> On Mon, Nov 6, 2023 at 2:19 AM <xiubli@redhat.com> wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
 >>
->> On 11/3/23 18:14, Jeff Layton wrote:
->>> On Fri, 2023-11-03 at 11:07 +0100, Ilya Dryomov wrote:
->>>> On Fri, Nov 3, 2023 at 4:41 AM <xiubli@redhat.com> wrote:
->>>>> From: Xiubo Li <xiubli@redhat.com>
->>>>>
->>>>> There is no any limit for the extent array size and it's possible
->>>>> that when reading with a large size contents. Else the messager
->>>>> will fail by reseting the connection and keeps resending the inflight
->>>>> IOs.
->>>>>
->>>>> URL: https://tracker.ceph.com/issues/62081
->>>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>>>> ---
->>>>>    net/ceph/osd_client.c | 12 ------------
->>>>>    1 file changed, 12 deletions(-)
->>>>>
->>>>> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
->>>>> index 7af35106acaf..177a1d92c517 100644
->>>>> --- a/net/ceph/osd_client.c
->>>>> +++ b/net/ceph/osd_client.c
->>>>> @@ -5850,8 +5850,6 @@ static inline void convert_extent_map(struct ceph_sparse_read *sr)
->>>>>    }
->>>>>    #endif
->>>>>
->>>>> -#define MAX_EXTENTS 4096
->>>>> -
->>>>>    static int osd_sparse_read(struct ceph_connection *con,
->>>>>                              struct ceph_msg_data_cursor *cursor,
->>>>>                              char **pbuf)
->>>>> @@ -5882,16 +5880,6 @@ static int osd_sparse_read(struct ceph_connection *con,
->>>>>
->>>>>                   if (count > 0) {
->>>>>                           if (!sr->sr_extent || count > sr->sr_ext_len) {
->>>>> -                               /*
->>>>> -                                * Apply a hard cap to the number of extents.
->>>>> -                                * If we have more, assume something is wrong.
->>>>> -                                */
->>>>> -                               if (count > MAX_EXTENTS) {
->>>>> -                                       dout("%s: OSD returned 0x%x extents in a single reply!\n",
->>>>> -                                            __func__, count);
->>>>> -                                       return -EREMOTEIO;
->>>>> -                               }
->>>>> -
->>>>>                                   /* no extent array provided, or too short */
->>>>>                                   kfree(sr->sr_extent);
->>>>>                                   sr->sr_extent = kmalloc_array(count,
->>>>> --
->>>>> 2.39.1
->>>>>
->>>> Hi Xiubo,
->>>>
->>>> As noted in the tracker ticket, there are many "sanity" limits like
->>>> that in the messenger and other parts of the kernel client.  First,
->>>> let's change that dout to pr_warn_ratelimited so that it's immediately
->>>> clear what is going on.  Then, if the limit actually gets hit, let's
->>>> dig into why and see if it can be increased rather than just removed.
->>>>
->>> Yeah, agreed. I think when I wrote this, I couldn't figure out if there
->>> was an actual hard cap on the number of extents, so I figured 4k ought
->>> to be enough for anybody. Clearly that was wrong though.
->>>
->>> I'd still favor raising the cap instead eliminating it altogether. Is
->>> there a hard cap on the number of extents that the OSD will send in a
->>> single reply? That's really what this limit should be.
->> I went through the messager code again carefully, I found that even in
->> case when the errno is '-ENOMEM' for a request the messager will trigger
->> the connection fault, which will reconnect the connection and retry all
->> the osd requests. This looks incorrect.
-> In theory, ENOMEM can be transient.  If memory is too fragmented (e.g.
-> kmalloc is used and there is no physically contiguous chunk of required
-> size available), it makes sense to retry the allocation after some time
-> passes.
->
->> IMO only in case when the errno is any of '-EBADMSG' or '-EREMOTEIO',
->> etc should we retry the osd requests. And for the errors that caused by
->> the client side we should fail the osd requests instead.
-> The messenger never fails higher level requests, no matter what the
-> error is.  Whether it's a good idea is debatable (personally I'm not
-> a fan), but this is how it behaves in userspace, so there isn't much
-> implementation freedom here.
+>> For sparse reading the real length of the data should equal to the
+>> total length from the extent array.
+>>
+>> URL: https://tracker.ceph.com/issues/62081
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+>> ---
+>>   net/ceph/osd_client.c | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+>> index 0e629dfd55ee..050dc39065fb 100644
+>> --- a/net/ceph/osd_client.c
+>> +++ b/net/ceph/osd_client.c
+>> @@ -5920,6 +5920,12 @@ static int osd_sparse_read(struct ceph_connection *con,
+>>                  fallthrough;
+>>          case CEPH_SPARSE_READ_DATA:
+>>                  if (sr->sr_index >= count) {
+>> +                       if (sr->sr_datalen && count) {
+>> +                               pr_warn_ratelimited("%s: datalen and extents mismath, %d left\n",
+>> +                                                   __func__, sr->sr_datalen);
+>> +                               return -EREMOTEIO;
+> By returning EREMOTEIO here you have significantly changed the
+> semantics (in v2 it was just a warning) but Jeff's Reviewed-by is
+> retained.  Has he acked the change?
 
-Okay. Get it.
+Oh, sorry I forgot to remove that.
+
+Jeff, Please take a look here again.
 
 Thanks
 
 - Xiubo
-
 
 > Thanks,
 >
