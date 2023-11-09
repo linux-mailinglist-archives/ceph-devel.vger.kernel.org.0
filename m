@@ -1,163 +1,250 @@
-Return-Path: <ceph-devel+bounces-75-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-76-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C5E47E707E
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Nov 2023 18:41:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05AD27E72A6
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 Nov 2023 21:10:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14DC7B20BD3
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Nov 2023 17:41:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57A4D281023
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 Nov 2023 20:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3A023766;
-	Thu,  9 Nov 2023 17:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956D0374C0;
+	Thu,  9 Nov 2023 20:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ASH1BbMH"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="meYMseRi"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from lindbergh.monkeyblade.net (lindbergh.monkeyblade.net [23.128.96.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238232031E
-	for <ceph-devel@vger.kernel.org>; Thu,  9 Nov 2023 17:41:03 +0000 (UTC)
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27273D58;
-	Thu,  9 Nov 2023 09:41:02 -0800 (PST)
-Received: by mail-ed1-x52b.google.com with SMTP id 4fb4d7f45d1cf-53f9af41444so1912439a12.1;
-        Thu, 09 Nov 2023 09:41:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1699551660; x=1700156460; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=07kyYbTdzzvjgx9MD5sep6il5lQYPpmm+4Zz1muN1eM=;
-        b=ASH1BbMHNm50aAdVE5S51mJRF1XIKsGyhuSpZ7nkfXZvC300bwbJGWlbAWAOHOGN2r
-         Pp5Y1U80gaySe0wDLfGCrVpJcP4C3cHOQ+h6A/OD0FK/EB76+7rRopFQ0W88d0prHv4a
-         LVIRpOeEu/CwBn+xnXcY0SYUKzVbBM7FIoX7DymPXUTcsM/vetGC+aPZR0kBErzbtAei
-         zUJsNix1mQLvNrqTbBR+hnGAR0t875B+3XnU/vavv1JPzmBlp6+DKCU4TGNucMIRXz0I
-         9HqLCY2zSW6r9Lp/3jOh64TRFKFF0OJCiTJuWlfNPs1a8rFrm7IUtMdk0Epvn2ITsj2c
-         4Adg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1699551660; x=1700156460;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=07kyYbTdzzvjgx9MD5sep6il5lQYPpmm+4Zz1muN1eM=;
-        b=N1Sg7RSDNTIiorYjj9dFlWAjsNwdulM/pm5/Uo5RJte5HzYEvk1zs2BA9kC42K5LSw
-         ajNpupS5fcAq0Z10R9xTrKb1S3VB756ZWIhSCK26f3qE1f9M77tTSPNYj6tJC2wqbz07
-         wrBL0+2mgPDBhQWm9FdoABETzS3cb0DZ2a0xMmfOLYfNSrhZt85Za4j/dag8j+oL1R44
-         Ve5xta1PVmERZH6rqozIzG01PI+pn2GDJ1cd6plbRjNJ3SUMGAiOHwsipt+pq2w0C8lc
-         vMgUUK8i1syA2Fy4Nz+O1K9N7Ph8GPDtqNXERw5xgGGdcDyBTRIjFVvGdtAdmlQCmQ58
-         YWDQ==
-X-Gm-Message-State: AOJu0YyE3n1Rp54s9/bRdZZ1VHgjyFa0jSvtA6phr2MaJmieJlmxjPxk
-	UJodeHrcbke6/Z3ojMNOBK3+vIvGQxE=
-X-Google-Smtp-Source: AGHT+IF1roK4NxSaYsYXjL/5lEKfT5WDq2m+QyojtS+xlnXp6AZgkXvaeyZcL/jUoXiMWpML1xcgRw==
-X-Received: by 2002:a17:907:744:b0:9de:32bb:faab with SMTP id xc4-20020a170907074400b009de32bbfaabmr4670264ejb.32.1699551660369;
-        Thu, 09 Nov 2023 09:41:00 -0800 (PST)
-Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
-        by smtp.gmail.com with ESMTPSA id g24-20020a170906349800b0099bccb03eadsm2793845ejb.205.2023.11.09.09.40.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Nov 2023 09:40:59 -0800 (PST)
-From: Ilya Dryomov <idryomov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph updates for 6.7-rc1
-Date: Thu,  9 Nov 2023 18:40:42 +0100
-Message-ID: <20231109174044.269054-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.41.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316EF374C1
+	for <ceph-devel@vger.kernel.org>; Thu,  9 Nov 2023 20:10:31 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.120])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBA7D44AF
+	for <ceph-devel@vger.kernel.org>; Thu,  9 Nov 2023 12:10:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1699560630; x=1731096630;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=8dCLp2+y+Vp81Snocx4WjEi+kHxZnTxlXpSehl2oVrs=;
+  b=meYMseRiCKSoFvNWyuGNsTgmxECCNIj3jLivLOxQelvt2E/INJiBa1a8
+   fsg/ja3Svf518H68xXvfoXQr4tf2zMWxDmzQvnFllTT2fxrpQ8kXZmu1U
+   wpzk05ZhMyDDlvjgv/Hc6IF85SA801nwy53UTYjJ6BX4/rK5eZxE6pydy
+   XFhwNhUGkJaqyNcezZ30lrNVBvs5i/y00BrW23KHJPZRIg0sh4XixkgrP
+   UfE5X4u7zPkpbkuwFEmUsgWT0RFJDjgcgwTDskl4zMmn+nAR5EouIgSHv
+   OplSeRzkuQnsdd9+nWf4WLzpmhY/FxPVmlu6vQfdzMqYHcG1jytn+3kxi
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10889"; a="388924676"
+X-IronPort-AV: E=Sophos;i="6.03,290,1694761200"; 
+   d="scan'208";a="388924676"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Nov 2023 12:10:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10889"; a="887135184"
+X-IronPort-AV: E=Sophos;i="6.03,290,1694761200"; 
+   d="scan'208";a="887135184"
+Received: from lkp-server01.sh.intel.com (HELO 17d9e85e5079) ([10.239.97.150])
+  by orsmga004.jf.intel.com with ESMTP; 09 Nov 2023 12:10:28 -0800
+Received: from kbuild by 17d9e85e5079 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1r1BMA-00096W-1o;
+	Thu, 09 Nov 2023 20:10:26 +0000
+Date: Fri, 10 Nov 2023 04:10:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Xiubo Li <xiubli@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org
+Subject: [ceph-client:testing 5/17] include/linux/kern_levels.h:5:25:
+ warning: format '%s' expects argument of type 'char *', but argument 5 has
+ type 'u32' {aka 'unsigned int'}
+Message-ID: <202311100323.X2ldielo-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Linus,
+tree:   https://github.com/ceph/ceph-client.git testing
+head:   df68d14f678dc8f70ab1dc9cb4f1257af7b7d91b
+commit: c67942de8d2ccb3f1a8d1b87908f679be5a9d6a3 [5/17] [DO NOT MERGE] ceph: BUG if MDS changed truncate_seq with client caps still outstanding
+config: i386-randconfig-006-20231110 (https://download.01.org/0day-ci/archive/20231110/202311100323.X2ldielo-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20231110/202311100323.X2ldielo-lkp@intel.com/reproduce)
 
-The following changes since commit ffc253263a1375a65fa6c9f62a893e9767fbebfa:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202311100323.X2ldielo-lkp@intel.com/
 
-  Linux 6.6 (2023-10-29 16:31:08 -1000)
+All warnings (new ones prefixed by >>):
 
-are available in the Git repository at:
+         |         ^~~~~~
+   fs/ceph/inode.c:789:33: note: in expansion of macro 'pr_err_client'
+     789 |                                 pr_err_client(" truncate_seq %u -> %u\n",
+         |                                 ^~~~~~~~~~~~~
+   include/linux/kern_levels.h:5:25: warning: format '%llu' expects a matching 'long long unsigned int' argument [-Wformat=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:427:25: note: in definition of macro 'printk_index_wrap'
+     427 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:498:9: note: in expansion of macro 'printk'
+     498 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
+      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
+         |                         ^~~~~~~~
+   include/linux/printk.h:498:16: note: in expansion of macro 'KERN_ERR'
+     498 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~
+   include/linux/ceph/ceph_debug.h:68:9: note: in expansion of macro 'pr_err'
+      68 |         pr_err("[%pU %llu]: " fmt, &client->fsid,                       \
+         |         ^~~~~~
+   fs/ceph/inode.c:789:33: note: in expansion of macro 'pr_err_client'
+     789 |                                 pr_err_client(" truncate_seq %u -> %u\n",
+         |                                 ^~~~~~~~~~~~~
+   fs/ceph/inode.c:791:72: error: expected ')' before 'isize'
+     791 |                                 pr_err_client("  size %lld -> %llu\n", isize, size);
+         |                                                                        ^~~~~
+   include/linux/printk.h:427:25: note: in definition of macro 'printk_index_wrap'
+     427 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:498:9: note: in expansion of macro 'printk'
+     498 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/printk.h:498:25: note: in expansion of macro 'pr_fmt'
+     498 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |                         ^~~~~~
+   include/linux/ceph/ceph_debug.h:68:9: note: in expansion of macro 'pr_err'
+      68 |         pr_err("[%pU %llu]: " fmt, &client->fsid,                       \
+         |         ^~~~~~
+   fs/ceph/inode.c:791:33: note: in expansion of macro 'pr_err_client'
+     791 |                                 pr_err_client("  size %lld -> %llu\n", isize, size);
+         |                                 ^~~~~~~~~~~~~
+   include/linux/printk.h:427:24: note: to match this '('
+     427 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                        ^
+   include/linux/printk.h:455:26: note: in expansion of macro 'printk_index_wrap'
+     455 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
+         |                          ^~~~~~~~~~~~~~~~~
+   include/linux/printk.h:498:9: note: in expansion of macro 'printk'
+     498 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/ceph/ceph_debug.h:68:9: note: in expansion of macro 'pr_err'
+      68 |         pr_err("[%pU %llu]: " fmt, &client->fsid,                       \
+         |         ^~~~~~
+   fs/ceph/inode.c:791:33: note: in expansion of macro 'pr_err_client'
+     791 |                                 pr_err_client("  size %lld -> %llu\n", isize, size);
+         |                                 ^~~~~~~~~~~~~
+   include/linux/kern_levels.h:5:25: warning: format '%p' expects a matching 'void *' argument [-Wformat=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:427:25: note: in definition of macro 'printk_index_wrap'
+     427 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:498:9: note: in expansion of macro 'printk'
+     498 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
+      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
+         |                         ^~~~~~~~
+   include/linux/printk.h:498:16: note: in expansion of macro 'KERN_ERR'
+     498 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~
+   include/linux/ceph/ceph_debug.h:68:9: note: in expansion of macro 'pr_err'
+      68 |         pr_err("[%pU %llu]: " fmt, &client->fsid,                       \
+         |         ^~~~~~
+   fs/ceph/inode.c:791:33: note: in expansion of macro 'pr_err_client'
+     791 |                                 pr_err_client("  size %lld -> %llu\n", isize, size);
+         |                                 ^~~~~~~~~~~~~
+   include/linux/kern_levels.h:5:25: warning: format '%llu' expects a matching 'long long unsigned int' argument [-Wformat=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:427:25: note: in definition of macro 'printk_index_wrap'
+     427 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:498:9: note: in expansion of macro 'printk'
+     498 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
+      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
+         |                         ^~~~~~~~
+   include/linux/printk.h:498:16: note: in expansion of macro 'KERN_ERR'
+     498 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~
+   include/linux/ceph/ceph_debug.h:68:9: note: in expansion of macro 'pr_err'
+      68 |         pr_err("[%pU %llu]: " fmt, &client->fsid,                       \
+         |         ^~~~~~
+   fs/ceph/inode.c:791:33: note: in expansion of macro 'pr_err_client'
+     791 |                                 pr_err_client("  size %lld -> %llu\n", isize, size);
+         |                                 ^~~~~~~~~~~~~
+>> include/linux/kern_levels.h:5:25: warning: format '%s' expects argument of type 'char *', but argument 5 has type 'u32' {aka 'unsigned int'} [-Wformat=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:427:25: note: in definition of macro 'printk_index_wrap'
+     427 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:129:17: note: in expansion of macro 'printk'
+     129 |                 printk(fmt, ##__VA_ARGS__);             \
+         |                 ^~~~~~
+   include/linux/printk.h:585:9: note: in expansion of macro 'no_printk'
+     585 |         no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~~~~
+   include/linux/kern_levels.h:15:25: note: in expansion of macro 'KERN_SOH'
+      15 | #define KERN_DEBUG      KERN_SOH "7"    /* debug-level messages */
+         |                         ^~~~~~~~
+   include/linux/printk.h:585:19: note: in expansion of macro 'KERN_DEBUG'
+     585 |         no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+         |                   ^~~~~~~~~~
+   include/linux/ceph/ceph_debug.h:50:9: note: in expansion of macro 'pr_debug'
+      50 |         pr_debug(" [%pU %llu] %s: " fmt, &client->fsid,                 \
+         |         ^~~~~~~~
+   fs/ceph/inode.c:794:25: note: in expansion of macro 'doutc'
+     794 |                         doutc(cl, "%s truncate_seq %u -> %u\n",
+         |                         ^~~~~
+>> include/linux/kern_levels.h:5:25: warning: format '%u' expects a matching 'unsigned int' argument [-Wformat=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:427:25: note: in definition of macro 'printk_index_wrap'
+     427 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:129:17: note: in expansion of macro 'printk'
+     129 |                 printk(fmt, ##__VA_ARGS__);             \
+         |                 ^~~~~~
+   include/linux/printk.h:585:9: note: in expansion of macro 'no_printk'
+     585 |         no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~~~~
+   include/linux/kern_levels.h:15:25: note: in expansion of macro 'KERN_SOH'
+      15 | #define KERN_DEBUG      KERN_SOH "7"    /* debug-level messages */
+         |                         ^~~~~~~~
+   include/linux/printk.h:585:19: note: in expansion of macro 'KERN_DEBUG'
+     585 |         no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+         |                   ^~~~~~~~~~
+   include/linux/ceph/ceph_debug.h:50:9: note: in expansion of macro 'pr_debug'
+      50 |         pr_debug(" [%pU %llu] %s: " fmt, &client->fsid,                 \
+         |         ^~~~~~~~
+   fs/ceph/inode.c:794:25: note: in expansion of macro 'doutc'
+     794 |                         doutc(cl, "%s truncate_seq %u -> %u\n",
+         |                         ^~~~~
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-6.7-rc1
 
-for you to fetch changes up to 56d2e2cfa21315c12945c22e141c7e7ec8b0a630:
+vim +5 include/linux/kern_levels.h
 
-  ceph: allow idmapped mounts (2023-11-03 23:28:34 +0100)
+314ba3520e513a Joe Perches 2012-07-30  4  
+04d2c8c83d0e3a Joe Perches 2012-07-30 @5  #define KERN_SOH	"\001"		/* ASCII Start Of Header */
+04d2c8c83d0e3a Joe Perches 2012-07-30  6  #define KERN_SOH_ASCII	'\001'
+04d2c8c83d0e3a Joe Perches 2012-07-30  7  
 
-There are a few conflicts in fs/ceph/inode.c caused by a clash between
-the conversion to new timestamp accessors in VFS and logging changes in
-CephFS.  I have the resolution in for-linus-merged, it's the same as in
-linux-next.
+:::::: The code at line 5 was first introduced by commit
+:::::: 04d2c8c83d0e3ac5f78aeede51babb3236200112 printk: convert the format for KERN_<LEVEL> to a 2 byte pattern
 
-----------------------------------------------------------------
-Two items:
+:::::: TO: Joe Perches <joe@perches.com>
+:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
 
-- support for idmapped mounts in CephFS (Christian Brauner, Alexander
-  Mikhalitsyn).  The series was originally developed by Christian and
-  later picked up and brought over the finish line by Alexander, who
-  also contributed an enabler on the MDS side (separate owner_{u,g}id
-  fields on the wire).  The required exports for mnt_idmap_{get,put}()
-  in VFS have been acked by Christian and received no objection from
-  Christoph.
-
-- a churny change in CephFS logging to include cluster and client
-  identifiers in log and debug messages (Xiubo Li).  This would help
-  in scenarios with dozens of CephFS mounts on the same node which are
-  getting increasingly common, especially in the Kubernetes world.
-
-----------------------------------------------------------------
-Alexander Mikhalitsyn (3):
-      fs: export mnt_idmap_get/mnt_idmap_put
-      ceph: add enable_unsafe_idmap module parameter
-      ceph: pass idmap to __ceph_setattr
-
-Christian Brauner (9):
-      ceph: stash idmapping in mdsc request
-      ceph: handle idmapped mounts in create_request_message()
-      ceph: pass an idmapping to mknod/symlink/mkdir
-      ceph: allow idmapped getattr inode op
-      ceph: allow idmapped permission inode op
-      ceph: allow idmapped setattr inode op
-      ceph: allow idmapped set_acl inode op
-      ceph: allow idmapped atomic_open inode op
-      ceph: allow idmapped mounts
-
-Xiubo Li (5):
-      libceph: add doutc and *_client debug macros support
-      ceph: pass the mdsc to several helpers
-      ceph: rename _to_client() to _to_fs_client()
-      ceph: print cluster fsid and client global_id in all debug logs
-      libceph, ceph: move mdsmap.h to fs/ceph
-
- fs/ceph/acl.c                       |  12 +-
- fs/ceph/addr.c                      | 299 +++++++-------
- fs/ceph/cache.c                     |   2 +-
- fs/ceph/caps.c                      | 763 +++++++++++++++++++++---------------
- fs/ceph/crypto.c                    |  43 +-
- fs/ceph/debugfs.c                   |  10 +-
- fs/ceph/dir.c                       | 242 +++++++-----
- fs/ceph/export.c                    |  49 +--
- fs/ceph/file.c                      | 282 +++++++------
- fs/ceph/inode.c                     | 529 ++++++++++++++-----------
- fs/ceph/ioctl.c                     |  21 +-
- fs/ceph/locks.c                     |  57 +--
- fs/ceph/mds_client.c                | 678 +++++++++++++++++++-------------
- fs/ceph/mds_client.h                |  13 +-
- fs/ceph/mdsmap.c                    |  29 +-
- {include/linux => fs}/ceph/mdsmap.h |   5 +-
- fs/ceph/metric.c                    |   5 +-
- fs/ceph/quota.c                     |  29 +-
- fs/ceph/snap.c                      | 192 +++++----
- fs/ceph/super.c                     |  99 +++--
- fs/ceph/super.h                     |  23 +-
- fs/ceph/xattr.c                     | 108 ++---
- fs/mnt_idmapping.c                  |   2 +
- include/linux/ceph/ceph_debug.h     |  38 ++
- include/linux/ceph/ceph_fs.h        |  10 +-
- include/linux/mnt_idmapping.h       |   3 +
- 26 files changed, 2070 insertions(+), 1473 deletions(-)
- rename {include/linux => fs}/ceph/mdsmap.h (92%)
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
