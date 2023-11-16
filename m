@@ -1,108 +1,67 @@
-Return-Path: <ceph-devel+bounces-103-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-104-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EDCB7EDCC5
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Nov 2023 09:19:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6F57EDD01
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Nov 2023 09:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DA0F1C20A3B
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Nov 2023 08:19:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 770711C209B3
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Nov 2023 08:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10B710A14;
-	Thu, 16 Nov 2023 08:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED223C8E4;
+	Thu, 16 Nov 2023 08:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hwunZvox"
+	dkim=pass (2048-bit key) header.d=corebizinsight.com header.i=@corebizinsight.com header.b="qQz4QSjn"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A89031AB;
-	Thu, 16 Nov 2023 00:19:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=KWSUxhA1Oe74ysp9fs9nW8FRTQcU3EMf4gVGsq6IKw0=; b=hwunZvoxdDucA0oaNtZJUVOuVi
-	5KEcSLIhgMRGlnyr4jDmdugMH8egOaq5IECwOW0JGVjP9laNiiEjTw/oRbTSVMXWH1jwqdL6AuW3Z
-	AYCBXQtTbMJR9s2nh0t8C96+iCjogsChpuqQga3b0EZg5Hrxf9vo5Ma0nyQE3LynKY9MucHl+pqoi
-	NguxO3ood6uxDzPkmqsmVtjwFt+A/PFl4SUOfUKK86Vo3yW5Eaou68ywuCNIOpjIr57LnlECuviGa
-	o7uwsi3/A+v4wnDSrHWtOHg1omA/HZuNkY/0GFtddeGmpV1A7JOeAhUSJkitGU8Wv9BWM6ozkSv/Q
-	wchcQq3Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1r3Xap-00GVyv-0A;
-	Thu, 16 Nov 2023 08:19:19 +0000
-Date: Thu, 16 Nov 2023 08:19:19 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: jlayton@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
-Subject: [deadlock or dead code] ceph_encode_dentry_release() misuse of dget()
-Message-ID: <20231116081919.GZ1957730@ZenIV>
+Received: from mail.corebizinsight.com (mail.corebizinsight.com [217.61.112.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B9751A1
+	for <ceph-devel@vger.kernel.org>; Thu, 16 Nov 2023 00:40:47 -0800 (PST)
+Received: by mail.corebizinsight.com (Postfix, from userid 1002)
+	id 5A28582CBC; Thu, 16 Nov 2023 09:40:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=corebizinsight.com;
+	s=mail; t=1700124035;
+	bh=CEmchsDu5Oe+RNHCZSBmKSgMOuy1xnO2dydqkEjt3Qs=;
+	h=Date:From:To:Subject:From;
+	b=qQz4QSjnVP84vc/kh2OB5tCvHvGgAMs80On+qSaPgP0qsixG5fl1NA93VxwiN1H8w
+	 4OrMjiSaanuaWxvtjERfskqvUFwexo2sJui1wF4LiklOIyQvEkqoXj8wtZjUPPvIw/
+	 /yMKqRrKWj9aJ06ypgdMIismpYAlxhvwOzMGKjZslu6UKLhc+h+HppwV3KlxfjoAXf
+	 EgcPTPvoZPhAZlw3S+k8PAUP6mJDjEK0rsKuvUTP12DargwYguk+EsyovHQi3L2frm
+	 p0SfZHCIphjRA+afXts0IRS6B7dy4vsgQYjONrXBl/k73H/g/vsc7KrcxSB4BbzH3y
+	 Ey2pQfrdDiIiA==
+Received: by mail.corebizinsight.com for <ceph-devel@vger.kernel.org>; Thu, 16 Nov 2023 08:40:14 GMT
+Message-ID: <20231116084500-0.1.21.9obs.0.fg1abhi5yh@corebizinsight.com>
+Date: Thu, 16 Nov 2023 08:40:14 GMT
+From: "Jakub Kovarik" <jakub.kovarik@corebizinsight.com>
+To: <ceph-devel@vger.kernel.org>
+Subject: =?UTF-8?Q?Pros=C3=ADm_kontaktujte?=
+X-Mailer: mail.corebizinsight.com
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This
-        spin_lock(&dentry->d_lock);
-        if (di->lease_session && di->lease_session->s_mds == mds)
-                force = 1;
-        if (!dir) {
-                parent = dget(dentry->d_parent);
-                dir = d_inode(parent);
-        }
-        spin_unlock(&dentry->d_lock);
-has a problem if we ever get called with dir == NULL.
+Dobr=C3=A9 r=C3=A1no,
 
-The thing is, dget(dentry->d_parent) will spin if dentry->d_parent->d_lock
-is held.  IOW, the whole thing is an equivalent of
-	spin_lock(&dentry->d_lock);
-	spin_lock(&dentry->d_parent->d_lock);
-which takes them in the wrong order.
+Je mo=C5=BEn=C3=A9 s v=C3=A1mi nav=C3=A1zat spolupr=C3=A1ci?
 
-Said that, I'm not sure it ever gets called with dir == NULL;
-we have two callers -
-        if (req->r_dentry_drop) {
-                ret = ceph_encode_dentry_release(&p, req->r_dentry,
-                                req->r_parent, mds, req->r_dentry_drop,
-                                req->r_dentry_unless);
-                if (ret < 0)
-                        goto out_err;
-                releases += ret;
-        }
-and
-        if (req->r_old_dentry_drop) {
-                ret = ceph_encode_dentry_release(&p, req->r_old_dentry,
-                                req->r_old_dentry_dir, mds,
-                                req->r_old_dentry_drop,
-                                req->r_old_dentry_unless);
-                if (ret < 0)
-                        goto out_err;
-                releases += ret;
-        }
-Now, ->r_dentry_drop is set in ceph_mknod(), ceph_symlink(), ceph_mkdir(),
-ceph_link(), ceph_unlink(), all with
-        req->r_parent = dir;
-        ihold(dir);
-ceph_rename(), with
-        req->r_parent = new_dir;
-        ihold(new_dir);
-and ceph_atomic_open(), with
-        req->r_parent = dir;
-        if (req->r_op == CEPH_MDS_OP_CREATE)
-                req->r_mnt_idmap = mnt_idmap_get(idmap);
-        ihold(dir);
-All of that will oops if ->r_parent set to NULL.
-->r_old_dentry_drop() is set in ceph_rename(), with
-        struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(old_dir->i_sb);
-	...
-        req->r_old_dentry_dir = old_dir;
-which also can't manage to leave ->r_old_dentry_dir set to NULL.
+R=C3=A1d si promluv=C3=ADm s osobou zab=C3=BDvaj=C3=ADc=C3=AD se prodejn=C3=
+=AD =C4=8Dinnost=C3=AD.
 
-Am I missing something subtle here?  Looks like that dget() is never
-reached...
+Pom=C3=A1h=C3=A1me efektivn=C4=9B z=C3=ADsk=C3=A1vat nov=C3=A9 z=C3=A1kaz=
+n=C3=ADky.
+
+Nevahejte me kontaktovat.
+
+V p=C5=99=C3=ADpad=C4=9B z=C3=A1jmu V=C3=A1s bude kontaktovat n=C3=A1=C5=A1=
+ anglicky mluv=C3=ADc=C3=AD z=C3=A1stupce.
+
+
+Pozdravy
+Jakub Kovarik
 
