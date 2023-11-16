@@ -1,139 +1,108 @@
-Return-Path: <ceph-devel+bounces-102-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-103-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011B77EDBD4
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Nov 2023 08:16:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDCB7EDCC5
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Nov 2023 09:19:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A98161F23BE0
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Nov 2023 07:16:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DA0F1C20A3B
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Nov 2023 08:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD7BDF56;
-	Thu, 16 Nov 2023 07:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10B710A14;
+	Thu, 16 Nov 2023 08:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TAB/9b9Y"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="hwunZvox"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA26C199
-	for <ceph-devel@vger.kernel.org>; Wed, 15 Nov 2023 23:15:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700118954;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jn+jeSb43oeou7KuihthY2acdrQcbYIXhnriasDatDg=;
-	b=TAB/9b9Y5iWjPt44G91nbwR1Ex+GyuVRg+UNyriFZr7K3KxelXrTutVhoDxfHadBTDX3uL
-	XWrbCrgZP9YtK3HzfL9vLkqgYtLPGeg/AQVYn3SvUd0wJAaRo4OJRdG6RhxONH8emZDxrs
-	gF8UO4YAEmtgxJlVTuwiDDWn9lOFK24=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-283-dslEDXvAMdixkrNehKr_XA-1; Thu, 16 Nov 2023 02:15:51 -0500
-X-MC-Unique: dslEDXvAMdixkrNehKr_XA-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8D97281B160;
-	Thu, 16 Nov 2023 07:15:51 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (unknown [10.72.112.63])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id C19DF492BFD;
-	Thu, 16 Nov 2023 07:15:48 +0000 (UTC)
-From: xiubli@redhat.com
-To: ceph-devel@vger.kernel.org
-Cc: jlayton@kernel.org,
-	idryomov@gmail.com,
-	vshankar@redhat.com,
-	mchangir@redhat.com,
-	Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH 2/2] ceph: update the oldest_client_tid via the renew caps
-Date: Thu, 16 Nov 2023 15:13:38 +0800
-Message-ID: <20231116071338.678918-3-xiubli@redhat.com>
-In-Reply-To: <20231116071338.678918-1-xiubli@redhat.com>
-References: <20231116071338.678918-1-xiubli@redhat.com>
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A89031AB;
+	Thu, 16 Nov 2023 00:19:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=KWSUxhA1Oe74ysp9fs9nW8FRTQcU3EMf4gVGsq6IKw0=; b=hwunZvoxdDucA0oaNtZJUVOuVi
+	5KEcSLIhgMRGlnyr4jDmdugMH8egOaq5IECwOW0JGVjP9laNiiEjTw/oRbTSVMXWH1jwqdL6AuW3Z
+	AYCBXQtTbMJR9s2nh0t8C96+iCjogsChpuqQga3b0EZg5Hrxf9vo5Ma0nyQE3LynKY9MucHl+pqoi
+	NguxO3ood6uxDzPkmqsmVtjwFt+A/PFl4SUOfUKK86Vo3yW5Eaou68ywuCNIOpjIr57LnlECuviGa
+	o7uwsi3/A+v4wnDSrHWtOHg1omA/HZuNkY/0GFtddeGmpV1A7JOeAhUSJkitGU8Wv9BWM6ozkSv/Q
+	wchcQq3Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1r3Xap-00GVyv-0A;
+	Thu, 16 Nov 2023 08:19:19 +0000
+Date: Thu, 16 Nov 2023 08:19:19 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: jlayton@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
+Subject: [deadlock or dead code] ceph_encode_dentry_release() misuse of dget()
+Message-ID: <20231116081919.GZ1957730@ZenIV>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: Xiubo Li <xiubli@redhat.com>
+This
+        spin_lock(&dentry->d_lock);
+        if (di->lease_session && di->lease_session->s_mds == mds)
+                force = 1;
+        if (!dir) {
+                parent = dget(dentry->d_parent);
+                dir = d_inode(parent);
+        }
+        spin_unlock(&dentry->d_lock);
+has a problem if we ever get called with dir == NULL.
 
-Update the oldest_client_tid via the session renew caps msg to
-make sure that the MDSs won't pile up the completed request list
-in a very large size.
+The thing is, dget(dentry->d_parent) will spin if dentry->d_parent->d_lock
+is held.  IOW, the whole thing is an equivalent of
+	spin_lock(&dentry->d_lock);
+	spin_lock(&dentry->d_parent->d_lock);
+which takes them in the wrong order.
 
-URL: https://tracker.ceph.com/issues/63364
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/mds_client.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+Said that, I'm not sure it ever gets called with dir == NULL;
+we have two callers -
+        if (req->r_dentry_drop) {
+                ret = ceph_encode_dentry_release(&p, req->r_dentry,
+                                req->r_parent, mds, req->r_dentry_drop,
+                                req->r_dentry_unless);
+                if (ret < 0)
+                        goto out_err;
+                releases += ret;
+        }
+and
+        if (req->r_old_dentry_drop) {
+                ret = ceph_encode_dentry_release(&p, req->r_old_dentry,
+                                req->r_old_dentry_dir, mds,
+                                req->r_old_dentry_drop,
+                                req->r_old_dentry_unless);
+                if (ret < 0)
+                        goto out_err;
+                releases += ret;
+        }
+Now, ->r_dentry_drop is set in ceph_mknod(), ceph_symlink(), ceph_mkdir(),
+ceph_link(), ceph_unlink(), all with
+        req->r_parent = dir;
+        ihold(dir);
+ceph_rename(), with
+        req->r_parent = new_dir;
+        ihold(new_dir);
+and ceph_atomic_open(), with
+        req->r_parent = dir;
+        if (req->r_op == CEPH_MDS_OP_CREATE)
+                req->r_mnt_idmap = mnt_idmap_get(idmap);
+        ihold(dir);
+All of that will oops if ->r_parent set to NULL.
+->r_old_dentry_drop() is set in ceph_rename(), with
+        struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(old_dir->i_sb);
+	...
+        req->r_old_dentry_dir = old_dir;
+which also can't manage to leave ->r_old_dentry_dir set to NULL.
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index fdfea11d9568..7d38b988273c 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -1579,6 +1579,9 @@ create_session_full_msg(struct ceph_mds_client *mdsc, int op, u64 seq)
- 		size = METRIC_BYTES(count);
- 	extra_bytes += 2 + 4 + 4 + size;
- 
-+	/* flags, mds auth caps and oldest_client_tid */
-+	extra_bytes += 4 + 4 + 8;
-+
- 	/* Allocate the message */
- 	msg = ceph_msg_new(CEPH_MSG_CLIENT_SESSION, sizeof(*h) + extra_bytes,
- 			   GFP_NOFS, false);
-@@ -1597,9 +1600,9 @@ create_session_full_msg(struct ceph_mds_client *mdsc, int op, u64 seq)
- 	 * Serialize client metadata into waiting buffer space, using
- 	 * the format that userspace expects for map<string, string>
- 	 *
--	 * ClientSession messages with metadata are v4
-+	 * ClientSession messages with metadata are v7
- 	 */
--	msg->hdr.version = cpu_to_le16(4);
-+	msg->hdr.version = cpu_to_le16(7);
- 	msg->hdr.compat_version = cpu_to_le16(1);
- 
- 	/* The write pointer, following the session_head structure */
-@@ -1635,6 +1638,15 @@ create_session_full_msg(struct ceph_mds_client *mdsc, int op, u64 seq)
- 		return ERR_PTR(ret);
- 	}
- 
-+	/* version == 5, flags */
-+	ceph_encode_32(&p, 0);
-+
-+	/* version == 6, mds auth caps */
-+	ceph_encode_32(&p, 0);
-+
-+	/* version == 7, oldest_client_tid */
-+	ceph_encode_64(&p, cpu_to_le64(mdsc->oldest_tid));
-+
- 	msg->front.iov_len = p - msg->front.iov_base;
- 	msg->hdr.front_len = cpu_to_le32(msg->front.iov_len);
- 
-@@ -2030,10 +2042,12 @@ static int send_renew_caps(struct ceph_mds_client *mdsc,
- 
- 	doutc(cl, "to mds%d (%s)\n", session->s_mds,
- 	      ceph_mds_state_name(state));
--	msg = ceph_create_session_msg(CEPH_SESSION_REQUEST_RENEWCAPS,
-+
-+	/* send connect message */
-+	msg = create_session_full_msg(mdsc, CEPH_SESSION_REQUEST_RENEWCAPS,
- 				      ++session->s_renew_seq);
--	if (!msg)
--		return -ENOMEM;
-+	if (IS_ERR(msg))
-+		return PTR_ERR(msg);
- 	ceph_con_send(&session->s_con, msg);
- 	return 0;
- }
--- 
-2.41.0
-
+Am I missing something subtle here?  Looks like that dget() is never
+reached...
 
