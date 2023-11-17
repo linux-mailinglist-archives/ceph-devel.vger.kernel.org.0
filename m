@@ -1,117 +1,139 @@
-Return-Path: <ceph-devel+bounces-108-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-109-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F390C7EEA40
-	for <lists+ceph-devel@lfdr.de>; Fri, 17 Nov 2023 01:16:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D430D7EEB63
+	for <lists+ceph-devel@lfdr.de>; Fri, 17 Nov 2023 04:22:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ECFE1C20B1D
-	for <lists+ceph-devel@lfdr.de>; Fri, 17 Nov 2023 00:16:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F934281154
+	for <lists+ceph-devel@lfdr.de>; Fri, 17 Nov 2023 03:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB63641;
-	Fri, 17 Nov 2023 00:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0315683;
+	Fri, 17 Nov 2023 03:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fnVoZpyl"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H3c+wAVc"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E087011D
-	for <ceph-devel@vger.kernel.org>; Thu, 16 Nov 2023 16:16:06 -0800 (PST)
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF1DFB9
+	for <ceph-devel@vger.kernel.org>; Thu, 16 Nov 2023 19:22:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700180166;
+	s=mimecast20190719; t=1700191333;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6apKVHCejDBwt4J+kzqGjH7pHyP8+WMv9AObeB4sOHA=;
-	b=fnVoZpyliPxEQmIqoR4g2OmOCBU6Ujmqcgd9dVeZ7frp4jBzXDE7ZcAZLStRkM5tZ6ssqe
-	2a8FAPhrKDoxOfnUjZa8mmH2SkCe2+g+eu1UkBA8RzzTqa0sBgXBu2jNIRsdg1igE1kvhl
-	DyjiUEhzVWZAxB7LHb2vxpjprKUGFNI=
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
- [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-588-B-ypKAF0Pr-2dZ4b18mo4Q-1; Thu, 16 Nov 2023 19:16:04 -0500
-X-MC-Unique: B-ypKAF0Pr-2dZ4b18mo4Q-1
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-6c415e09b2cso1702698b3a.2
-        for <ceph-devel@vger.kernel.org>; Thu, 16 Nov 2023 16:16:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700180162; x=1700784962;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6apKVHCejDBwt4J+kzqGjH7pHyP8+WMv9AObeB4sOHA=;
-        b=oYOtJtE0eO+aYrqHV0HIqtE6Es58IcupXlvGfbcNa8krfZ1S5tH40Jsr6C4iH9vQro
-         G9i65kfmw8YSAxtfzjIvBZcH29Y2K7WWOwmDBJh//BzFe4om+ytJZP78qXxyj/PPtu7T
-         yd0AqdSg3+aAln77/HBolczJibovZP3FpFmD9I1/cB5eUYOfI4k/NFISBIoJowVmAL1q
-         JhQ6YcLUF6j7CRJY8469olTsEuBLifjbz8JnT8FygtJHMK5Ztk5cDGnTwCRcowB/7aKn
-         ozAG5qCWa/K8bGeVAuzyOSHysWmWpjsSeIiijJIWLQrnQ7cMDIVCoSzOoUNPLlZBwW7n
-         BV9Q==
-X-Gm-Message-State: AOJu0YxuFTxJcTuP0hX5DkJ/R5qPrHMSSkw/cPPBh9N+kaZ4NVJqhvM0
-	HPNQS0ps/M8DQUaa8QdyVBok4mYs/kVAAiTfgAfqrfw9jVQNu3aqTPvvwJZL49IyJ46C0EokJm2
-	1AzcNIQtqFJvDGL2q56pDJQ==
-X-Received: by 2002:a05:6a21:19a:b0:187:c662:9b7e with SMTP id le26-20020a056a21019a00b00187c6629b7emr3196673pzb.25.1700180162456;
-        Thu, 16 Nov 2023 16:16:02 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHuu6yhl6PYfi2c3RpfXd9jLV6jHijWwt0Ez8Q6tompMv+QEx+QBeAuEm9mvgzA+/SAxy8OVA==
-X-Received: by 2002:a05:6a21:19a:b0:187:c662:9b7e with SMTP id le26-20020a056a21019a00b00187c6629b7emr3196660pzb.25.1700180162171;
-        Thu, 16 Nov 2023 16:16:02 -0800 (PST)
-Received: from [10.72.112.63] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 23-20020a17090a005700b0027d05817fcdsm333546pjb.0.2023.11.16.16.15.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Nov 2023 16:16:01 -0800 (PST)
-Message-ID: <3a5ed688-898c-7620-e06e-ab2ff2cfdca2@redhat.com>
-Date: Fri, 17 Nov 2023 08:15:57 +0800
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=OZkIo3gmOmARkH9D6G/diT0yhlLPEb/bpyU7MwfHSdo=;
+	b=H3c+wAVc4M9HbQhr2TOH/Zx7OEI81FWNDlwKqDlRz5cC+CWUJGrYrG6fXDMhySreJbOem/
+	w6owFGmDsr/4AnPcNeGpGgyggQF4zFzepSfJYjoUJj7xabiGmaqhqph0Pia2BlB66FckX6
+	FvjQnUmE74VQnLqsFj1PUsgmktnSzqY=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-609-7y-W_D6aNAqEyR9gY0rPQA-1; Thu,
+ 16 Nov 2023 22:22:09 -0500
+X-MC-Unique: 7y-W_D6aNAqEyR9gY0rPQA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 132F61C060E4;
+	Fri, 17 Nov 2023 03:22:09 +0000 (UTC)
+Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (unknown [10.72.112.63])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id A60421C060AE;
+	Fri, 17 Nov 2023 03:22:05 +0000 (UTC)
+From: xiubli@redhat.com
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	jlayton@kernel.org,
+	vshankar@redhat.com,
+	mchangir@redhat.com,
+	Xiubo Li <xiubli@redhat.com>,
+	stable@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>
+Subject: [PATCH] ceph: fix deadlock or deadcode of misusing dget()
+Date: Fri, 17 Nov 2023 11:19:51 +0800
+Message-ID: <20231117031951.710177-1-xiubli@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [deadlock or dead code] ceph_encode_dentry_release() misuse of
- dget()
-Content-Language: en-US
-To: Jeff Layton <jlayton@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
-References: <20231116081919.GZ1957730@ZenIV>
- <44265305e099888191aa7482743f0fa7900e8336.camel@kernel.org>
- <20231116162814.GA1957730@ZenIV>
- <e96818f94a6ba3a040004b2cadd569fc2f224554.camel@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+
 From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <e96818f94a6ba3a040004b2cadd569fc2f224554.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+The lock order is incorrect between denty and its parent, we should
+always make sure that the parent get the lock first.
 
-On 11/17/23 00:50, Jeff Layton wrote:
-> On Thu, 2023-11-16 at 16:28 +0000, Al Viro wrote:
->> On Thu, Nov 16, 2023 at 07:50:03AM -0500, Jeff Layton wrote:
->>
->>>> Am I missing something subtle here?  Looks like that dget() is never
->>>> reached...
->>> No, I think you're correct. That looks like dead code to me too.
->>> Probably we can just remove that "if (!dir)" condition altogether.
->>>
->>> Did you want to send a patch, or would you rather Xiubo or I do it?
->> Up to you...  AFAICS, it had been dead code since ca6c8ae0f793 "ceph: pass
->> parent inode info to ceph_encode_dentry_release if we have it".  In other
->> words, that "if we have it" had already been true at that point.  Prior
->> to that commit dget() in there had been unconditional (and really a deadlock
->> fodder); making it conditional had made it actually unreachable and that
->> fixed the actual bug.
-> That makes sense.
->
-> Xiubo, would you mind spinning up a patch for this? You're probably in
-> the best position to make sure it gets tested these days.
+Switch to use the 'dget_parent()' to get the parent dentry and also
+keep holding the parent until the corresponding inode is not being
+refereenced.
 
-Hi Jeff, Al
+Cc: stable@vger.kernel.org
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+URL: https://www.spinics.net/lists/ceph-devel/msg58622.html
+Fixes: adf0d68701c7 ("ceph: fix unsafe dcache access in ceph_encode_dentry_release")
+Cc: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/caps.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-Sure, I will fix this. Thanks very much.
-
-- Xiubo
-
-
-> Thanks!
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 284424659329..6f7a56a800c2 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -4923,6 +4923,11 @@ int ceph_encode_dentry_release(void **p, struct dentry *dentry,
+ 	int force = 0;
+ 	int ret;
+ 
++	if (!dir) {
++		parent = dget_parent(dentry);
++		dir = d_inode(parent);
++	}
++
+ 	/*
+ 	 * force an record for the directory caps if we have a dentry lease.
+ 	 * this is racy (can't take i_ceph_lock and d_lock together), but it
+@@ -4932,14 +4937,9 @@ int ceph_encode_dentry_release(void **p, struct dentry *dentry,
+ 	spin_lock(&dentry->d_lock);
+ 	if (di->lease_session && di->lease_session->s_mds == mds)
+ 		force = 1;
+-	if (!dir) {
+-		parent = dget(dentry->d_parent);
+-		dir = d_inode(parent);
+-	}
+ 	spin_unlock(&dentry->d_lock);
+ 
+ 	ret = ceph_encode_inode_release(p, dir, mds, drop, unless, force);
+-	dput(parent);
+ 
+ 	cl = ceph_inode_to_client(dir);
+ 	spin_lock(&dentry->d_lock);
+@@ -4952,8 +4952,10 @@ int ceph_encode_dentry_release(void **p, struct dentry *dentry,
+ 		if (IS_ENCRYPTED(dir) && fscrypt_has_encryption_key(dir)) {
+ 			int ret2 = ceph_encode_encrypted_fname(dir, dentry, *p);
+ 
+-			if (ret2 < 0)
++			if (ret2 < 0) {
++				dput(parent);
+ 				return ret2;
++			}
+ 
+ 			rel->dname_len = cpu_to_le32(ret2);
+ 			*p += ret2;
+@@ -4965,6 +4967,8 @@ int ceph_encode_dentry_release(void **p, struct dentry *dentry,
+ 	} else {
+ 		spin_unlock(&dentry->d_lock);
+ 	}
++
++	dput(parent);
+ 	return ret;
+ }
+ 
+-- 
+2.39.1
 
 
