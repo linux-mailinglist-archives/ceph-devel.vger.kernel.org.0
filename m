@@ -1,228 +1,91 @@
-Return-Path: <ceph-devel+bounces-178-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-179-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9C087F3CC0
-	for <lists+ceph-devel@lfdr.de>; Wed, 22 Nov 2023 05:29:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 101D27F3F70
+	for <lists+ceph-devel@lfdr.de>; Wed, 22 Nov 2023 09:03:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08AF61C20371
-	for <lists+ceph-devel@lfdr.de>; Wed, 22 Nov 2023 04:29:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 884E2B20E27
+	for <lists+ceph-devel@lfdr.de>; Wed, 22 Nov 2023 08:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E951C132;
-	Wed, 22 Nov 2023 04:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE7B20B31;
+	Wed, 22 Nov 2023 08:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RVsSrQ0M"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dbYyshax"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87FEC112
-	for <ceph-devel@vger.kernel.org>; Tue, 21 Nov 2023 20:29:47 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5D67B9
+	for <ceph-devel@vger.kernel.org>; Wed, 22 Nov 2023 00:03:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700627386;
+	s=mimecast20190719; t=1700640196;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ni9rUzf536MMNXosEPewL7ksFPjKlMlRmgB/zWpvKA0=;
-	b=RVsSrQ0Mpxl+ZnysLjrA2QD5Xx9Lz0p1k35HXqtccY1BtI7tHWXhDddHZrAboQzmN8GVkt
-	3KkECSoIty0HXzLkkRXFQWCZnTrFplnTSjliKGK82EiiUPGLGnjiQRQOBbzupDJ1lAIogS
-	XyD9E2h5CrXJ1tN+6r0Jpb3aFHqRlZ8=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FLQphpZjebqy0UYtjAw3tWn+ZzZY0MTZLm7W3avAOC0=;
+	b=dbYyshaxC776vgEIEZgQKV0Va+wzGS5EoCQBYl6LsYkj87sX7rFMi7PIIy+jo2e5DKyvNv
+	IGJZDD4E1v0SuD5oNq9DvbCbeSS8gKygpI9p3vI2JYug1cTbThW9lX9JI949SqOKjAG8Gy
+	P8dv4Uotw/shSKhy9MQZdONjf8bDPL0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-379-Inr3LV6gNXC6JhhaJNhTjg-1; Tue, 21 Nov 2023 23:29:45 -0500
-X-MC-Unique: Inr3LV6gNXC6JhhaJNhTjg-1
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1cc252cbde2so80811435ad.0
-        for <ceph-devel@vger.kernel.org>; Tue, 21 Nov 2023 20:29:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700627384; x=1701232184;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ni9rUzf536MMNXosEPewL7ksFPjKlMlRmgB/zWpvKA0=;
-        b=hFrf3h56TfHX5Ha8Az9NsC7NJ+Jid3uEPzKUbP4AOcxDL7cDb2Lg+vftTTj2mihBty
-         pDtucIi+c5QVATA53sV/wxW8UAWI6FkWWY9dG5bp5IZQY41JF7F5GZZqMaGRJgrWgkdV
-         3UnwqtPOaxg0+Xifw8CXyMhfua0+WUIdFHZgNHjBqzRPdxUcaTjdnw0lf/PaFd9ZZE+E
-         dfsXVhQ+15CNt+DC5gMM0/+YOPwEJZFMJnW0Uepx2LGpfPqi9ra9rvCmbxm2Sd5cYYai
-         FeeoLcoGriiQculIfmmwJbVxGV7pk/Q221V+HCPY+FvVTbPRR1bYDyb87xTE+PYwonvg
-         cJVA==
-X-Gm-Message-State: AOJu0YzPLmH78KLC7c71vMGMk43U2n/pPZOKbtg5Y9VTPlxz/sB3kvuv
-	Fg/evWvc8+EQAG4aDYCFH4/Bmj1kIBWtiHG4FEOqiFuF1IkB5K/htt3EXuaSfc/OhRErfiJcEMy
-	MPd8Ik7BDutUEwzU3122FOSsY0zafeq1MPSQ=
-X-Received: by 2002:a17:903:24d:b0:1cf:50a0:566d with SMTP id j13-20020a170903024d00b001cf50a0566dmr1391869plh.7.1700627383959;
-        Tue, 21 Nov 2023 20:29:43 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE1GIJIoGrGb8XiGKZPey8twt4tfN45REcxda1deEvqy4kwy8rE791WEDcv1dnwQshBlJ/4mA==
-X-Received: by 2002:a17:903:24d:b0:1cf:50a0:566d with SMTP id j13-20020a170903024d00b001cf50a0566dmr1391863plh.7.1700627383623;
-        Tue, 21 Nov 2023 20:29:43 -0800 (PST)
-Received: from [10.72.112.224] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id o24-20020a170902779800b001c613091aeasm8669183pll.297.2023.11.21.20.29.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 Nov 2023 20:29:43 -0800 (PST)
-Message-ID: <d5eda932-dec0-ba2d-2f4d-a7edbbfa1f81@redhat.com>
-Date: Wed, 22 Nov 2023 12:29:39 +0800
+ us-mta-583-oS4LtOGmOrqOlUnHC5Mavg-1; Wed, 22 Nov 2023 03:03:12 -0500
+X-MC-Unique: oS4LtOGmOrqOlUnHC5Mavg-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8352585A59D;
+	Wed, 22 Nov 2023 08:03:12 +0000 (UTC)
+Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (unknown [10.72.112.224])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id C0E592166B26;
+	Wed, 22 Nov 2023 08:03:09 +0000 (UTC)
+From: xiubli@redhat.com
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	jlayton@kernel.org,
+	vshankar@redhat.com,
+	mchangir@redhat.com,
+	Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: remove duplicated code for ceph_netfs_issue_read
+Date: Wed, 22 Nov 2023 16:01:01 +0800
+Message-ID: <20231122080101.1016608-1-xiubli@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2] ceph: quota: Fix invalid pointer access if
- get_quota_realm return ERR_PTR
-Content-Language: en-US
-To: Wenchao Hao <haowenchao2@huawei.com>, Ilya Dryomov <idryomov@gmail.com>,
- Jeff Layton <jlayton@kernel.org>, Luis Henriques <lhenriques@suse.de>,
- ceph-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <20231120082637.2717550-1-haowenchao2@huawei.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+
 From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20231120082637.2717550-1-haowenchao2@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+When allocating an osd request the libceph.ko will help add the
+'read_from_replica' flag by default.
 
-On 11/20/23 16:26, Wenchao Hao wrote:
-> This issue is reported by smatch that get_quota_realm() might return
-> ERR_PTR but we did not handle it. It's not a immediate bug, while we
-> still should address it to avoid potential bugs if get_quota_realm()
-> is changed to return other ERR_PTR in future.
->
-> Set ceph_snap_realm's pointer in get_quota_realm()'s to address this
-> issue, the pointer would be set to NULL if get_quota_realm() failed
-> to get struct ceph_snap_realm, so no ERR_PTR would happen any more.
->
-> Signed-off-by: Wenchao Hao <haowenchao2@huawei.com>
-> ---
-> V2:
->   - Fix all potential invalid pointer access caused by get_quota_realm
->   - Update commit comment and point it's not a immediate bug
->
->   fs/ceph/quota.c | 41 +++++++++++++++++++++++------------------
->   1 file changed, 23 insertions(+), 18 deletions(-)
->
-> diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-> index 9d36c3532de1..e85a85b34a83 100644
-> --- a/fs/ceph/quota.c
-> +++ b/fs/ceph/quota.c
-> @@ -197,10 +197,10 @@ void ceph_cleanup_quotarealms_inodes(struct ceph_mds_client *mdsc)
->   }
->   
->   /*
-> - * This function walks through the snaprealm for an inode and returns the
-> - * ceph_snap_realm for the first snaprealm that has quotas set (max_files,
-> + * This function walks through the snaprealm for an inode and set the
-> + * realmp with the first snaprealm that has quotas set (max_files,
->    * max_bytes, or any, depending on the 'which_quota' argument).  If the root is
-> - * reached, return the root ceph_snap_realm instead.
-> + * reached, set the realmp with the root ceph_snap_realm instead.
->    *
->    * Note that the caller is responsible for calling ceph_put_snap_realm() on the
->    * returned realm.
-> @@ -211,10 +211,9 @@ void ceph_cleanup_quotarealms_inodes(struct ceph_mds_client *mdsc)
->    * this function will return -EAGAIN; otherwise, the snaprealms walk-through
->    * will be restarted.
->    */
-> -static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
-> -					       struct inode *inode,
-> -					       enum quota_get_realm which_quota,
-> -					       bool retry)
-> +static int get_quota_realm(struct ceph_mds_client *mdsc, struct inode *inode,
-> +			   enum quota_get_realm which_quota,
-> +			   struct ceph_snap_realm **realmp, bool retry)
->   {
->   	struct ceph_client *cl = mdsc->fsc->client;
->   	struct ceph_inode_info *ci = NULL;
-> @@ -222,8 +221,10 @@ static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
->   	struct inode *in;
->   	bool has_quota;
->   
-> +	if (realmp)
-> +		*realmp = NULL;
->   	if (ceph_snap(inode) != CEPH_NOSNAP)
-> -		return NULL;
-> +		return 0;
->   
->   restart:
->   	realm = ceph_inode(inode)->i_snap_realm;
-> @@ -250,7 +251,7 @@ static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
->   				break;
->   			ceph_put_snap_realm(mdsc, realm);
->   			if (!retry)
-> -				return ERR_PTR(-EAGAIN);
-> +				return -EAGAIN;
->   			goto restart;
->   		}
->   
-> @@ -259,8 +260,11 @@ static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
->   		iput(in);
->   
->   		next = realm->parent;
-> -		if (has_quota || !next)
-> -		       return realm;
-> +		if (has_quota || !next) {
-> +			if (realmp)
-> +				*realmp = realm;
-> +			return 0;
-> +		}
->   
->   		ceph_get_snap_realm(mdsc, next);
->   		ceph_put_snap_realm(mdsc, realm);
-> @@ -269,14 +273,15 @@ static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
->   	if (realm)
->   		ceph_put_snap_realm(mdsc, realm);
->   
-> -	return NULL;
-> +	return 0;
->   }
->   
->   bool ceph_quota_is_same_realm(struct inode *old, struct inode *new)
->   {
->   	struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(old->i_sb);
-> -	struct ceph_snap_realm *old_realm, *new_realm;
-> +	struct ceph_snap_realm *old_realm = NULL, *new_realm = NULL;
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/addr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Here you initialized it as NULL.
-
->   	bool is_same;
-> +	int ret;
->   
->   restart:
->   	/*
-> @@ -286,9 +291,9 @@ bool ceph_quota_is_same_realm(struct inode *old, struct inode *new)
->   	 * dropped and we can then restart the whole operation.
->   	 */
->   	down_read(&mdsc->snap_rwsem);
-> -	old_realm = get_quota_realm(mdsc, old, QUOTA_GET_ANY, true);
-> -	new_realm = get_quota_realm(mdsc, new, QUOTA_GET_ANY, false);
-> -	if (PTR_ERR(new_realm) == -EAGAIN) {
-> +	get_quota_realm(mdsc, old, QUOTA_GET_ANY, &old_realm, true);
-> +	ret = get_quota_realm(mdsc, new, QUOTA_GET_ANY, &new_realm, false);
-> +	if (ret == -EAGAIN) {
->   		up_read(&mdsc->snap_rwsem);
->   		if (old_realm)
->   			ceph_put_snap_realm(mdsc, old_realm);
-> @@ -492,8 +497,8 @@ bool ceph_quota_update_statfs(struct ceph_fs_client *fsc, struct kstatfs *buf)
->   	bool is_updated = false;
->   
->   	down_read(&mdsc->snap_rwsem);
-> -	realm = get_quota_realm(mdsc, d_inode(fsc->sb->s_root),
-> -				QUOTA_GET_MAX_BYTES, true);
-> +	get_quota_realm(mdsc, d_inode(fsc->sb->s_root),
-> +				QUOTA_GET_MAX_BYTES, &realm, true);
-
-While here you ignored it.
-
-I think we can just ignore it and the 'get_quota_realm()' will help 
-initialize it.
-
-Thanks
-
-- Xiubo
-
->   	up_read(&mdsc->snap_rwsem);
->   	if (!realm)
->   		return false;
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 4bb19596e339..2b5c06fd5c7f 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -371,8 +371,8 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
+ 
+ 	req = ceph_osdc_new_request(&fsc->client->osdc, &ci->i_layout, vino,
+ 			off, &len, 0, 1, sparse ? CEPH_OSD_OP_SPARSE_READ : CEPH_OSD_OP_READ,
+-			CEPH_OSD_FLAG_READ | fsc->client->osdc.client->options->read_from_replica,
+-			NULL, ci->i_truncate_seq, ci->i_truncate_size, false);
++			CEPH_OSD_FLAG_READ, NULL, ci->i_truncate_seq,
++			ci->i_truncate_size, false);
+ 	if (IS_ERR(req)) {
+ 		err = PTR_ERR(req);
+ 		req = NULL;
+-- 
+2.41.0
 
 
