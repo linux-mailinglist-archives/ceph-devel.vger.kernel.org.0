@@ -1,132 +1,131 @@
-Return-Path: <ceph-devel+bounces-184-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-185-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B5DB7F576A
-	for <lists+ceph-devel@lfdr.de>; Thu, 23 Nov 2023 05:32:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0637E7F6888
+	for <lists+ceph-devel@lfdr.de>; Thu, 23 Nov 2023 21:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BFCDB211B1
-	for <lists+ceph-devel@lfdr.de>; Thu, 23 Nov 2023 04:32:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 682B0B20ED9
+	for <lists+ceph-devel@lfdr.de>; Thu, 23 Nov 2023 20:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF08BA45;
-	Thu, 23 Nov 2023 04:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5834F13FFE;
+	Thu, 23 Nov 2023 20:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WeCicJ26"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D1VACNqg"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E18111F
-	for <ceph-devel@vger.kernel.org>; Wed, 22 Nov 2023 20:32:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1700713954;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p/RxEdVo2tTEZY1l5idatcfPWUNnH5H6CT5tTe4WQUs=;
-	b=WeCicJ268YxnCf7hGvUYPffTxfrnwOmJfnDtHGCwq1Asl82gODOst6w49BE1coUnPTytUi
-	7pefA7Ij1ajlVKaTSQPZUX6x0PKLQagBQS8ooWvcz7r1cMgOMlOjn3ISUKmIDgPnzIQs0W
-	Th/xyILLCqQELu4tiUSicVaOtXCavOs=
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
- [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-519-dbWmPabDNNGBYXo5jDKMuA-1; Wed, 22 Nov 2023 23:32:32 -0500
-X-MC-Unique: dbWmPabDNNGBYXo5jDKMuA-1
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-1cf6177552cso6336955ad.3
-        for <ceph-devel@vger.kernel.org>; Wed, 22 Nov 2023 20:32:31 -0800 (PST)
+Received: from mail-oo1-xc33.google.com (mail-oo1-xc33.google.com [IPv6:2607:f8b0:4864:20::c33])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2D67D54;
+	Thu, 23 Nov 2023 12:46:25 -0800 (PST)
+Received: by mail-oo1-xc33.google.com with SMTP id 006d021491bc7-58d26808c0cso377761eaf.0;
+        Thu, 23 Nov 2023 12:46:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1700772385; x=1701377185; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hmi2ZZptlGD8jWl5fmw9s/Qi1QCFiZAILpkynqKKJDc=;
+        b=D1VACNqgS5g9FaNCJFV4RQvNmXdxnWf3e9mGym8p9aQpo4OOtJnMMUVCFe6yHYBeKa
+         yCvrgOU+c0WRY5AH2ue03PKq1pKz8h7OijZZeEJ2pS0HDIUOEqpjv/jv+CkagsgLgU6q
+         loxqyHAIU0V9VLmAiQd+IGbSKVd1Niv7STAPUUmZaCGZgwsQPu9m/XVtNE7zn6tRsBu+
+         vHvxKLmrFIhk6MNBNm4Znq/2DUFLwzHpRC4L1XtT5+WjV6h2hz0iqBzQb4mDNOOi+xGH
+         g4PTYN4IOxxD8sRNa7osNkF4husz9pZ0wvLU/Sdw2NRnbrzLPgl7DmJfb17K8fJO4KLV
+         miNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1700713951; x=1701318751;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p/RxEdVo2tTEZY1l5idatcfPWUNnH5H6CT5tTe4WQUs=;
-        b=T/9cFLt4iSmUIvwStZzfLnj8f1EoghclvqFOeeafJRPE6x/lFTTeZ1YNmvWvWi/oBv
-         kwRtfbDNXFGG8w+Orb4Ra64QkVzs2BLqf+TuQ+zfz3dzFQUEW6uw5pgkNS2v5OLo73rb
-         2hQieDVrX5KJZIU9gOj5NDDA3pAOKralzdyEBw37okQisNBUvoDmeELtc4WQeCz6EEGh
-         hxGdrxy5Rsx7YgeGEAebgR84ARL48N/exjknWl67P3n+BaWtUGkMD5Ko6y96GbhphVQK
-         4mD6cowzb1V394ev7evTJSjdMEvzqgtBGTZcSe12wY8svvkTxAa4u6fcEwW7zyS+nms0
-         rr6w==
-X-Gm-Message-State: AOJu0YwQT2jWHOl9HzSsRXWB962HlG2qQjh0c2omGSSCZKEuUzpH4Xf7
-	NhwYqHXOjTGfRWpavkNTSORaMYn8PXzjuxdtCFbeuAoa8M5P3kwnf/Sn67vZ8kYQNaX3GNSCMQG
-	wH7HMG1mUC0gUg3ZsDfiZGQ==
-X-Received: by 2002:a17:903:428b:b0:1c3:4b24:d89d with SMTP id ju11-20020a170903428b00b001c34b24d89dmr4875222plb.40.1700713951177;
-        Wed, 22 Nov 2023 20:32:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGQx5QnyMOtAGiy5FcvtpmUEdGNjAQiaQOFyix6Z/4HvNl6UhF7Ywdql+khXKEwVycn23klaA==
-X-Received: by 2002:a17:903:428b:b0:1c3:4b24:d89d with SMTP id ju11-20020a170903428b00b001c34b24d89dmr4875211plb.40.1700713950895;
-        Wed, 22 Nov 2023 20:32:30 -0800 (PST)
-Received: from [10.72.112.224] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id v3-20020a1709029a0300b001bf044dc1a6sm257314plp.39.2023.11.22.20.32.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Nov 2023 20:32:30 -0800 (PST)
-Message-ID: <9df30dc2-bc1c-b0fc-156f-baad37def05b@redhat.com>
-Date: Thu, 23 Nov 2023 12:32:27 +0800
+        d=1e100.net; s=20230601; t=1700772385; x=1701377185;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Hmi2ZZptlGD8jWl5fmw9s/Qi1QCFiZAILpkynqKKJDc=;
+        b=kebKkq0NyQemafv4Yj5nXlqq0ga4XEYrZVb20mh32KsYcuthH/O3GE1XyUSYbo6Uc8
+         eLFSmCk77UtaO8mg0T/43VJl1bUsrwOt1TCjjelbsvWMYry36w/Uz10RxWZBK2EdmcdH
+         JJ1UywKVK/J648Fv/+K6lolHq4gmi7JQq7Y7OtDpSvVEvrJSrxko9sXdbMOVRnFwXFny
+         p6YsJAE2L56kuvbhD4LAF2pRd6OhhpM7niK6VCB38dnc+ftxLXqpo0+CXdDsyy5Kal2e
+         wkQ/IbeMuj1j855amu6KzzdVc9xnXyRYeikBGMn27q9hHvhykbt/0uZNPzvyRPghYYFg
+         UzvA==
+X-Gm-Message-State: AOJu0YxlHMRl5x5MdqUMtpg7oT7z5NX4b3cr2adOO6zdbSIViXVGhL/g
+	qyWl7KGtxUylgiPYNAUjOdBrEr0kkcpvcMNo+yQ=
+X-Google-Smtp-Source: AGHT+IFosH156j+hwgsIfTA+AcmCQxhOJnCWseaSONNiW6tXcdViJapGXbh7zTFDjyxipX37PBLVLKgJJhyQKjod/Rs=
+X-Received: by 2002:a05:6820:2204:b0:581:ea96:f800 with SMTP id
+ cj4-20020a056820220400b00581ea96f800mr606085oob.6.1700772385183; Thu, 23 Nov
+ 2023 12:46:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
+References: <20231123030838.46158-1-ebiggers@kernel.org> <9df30dc2-bc1c-b0fc-156f-baad37def05b@redhat.com>
+In-Reply-To: <9df30dc2-bc1c-b0fc-156f-baad37def05b@redhat.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Thu, 23 Nov 2023 21:46:13 +0100
+Message-ID: <CAOi1vP89X18T3oPWqhQqkpN-MY2LJJAhX2ms-OFTaV7dn8G8Zg@mail.gmail.com>
 Subject: Re: [PATCH] ceph: select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
-Content-Language: en-US
-To: Eric Biggers <ebiggers@kernel.org>, ceph-devel@vger.kernel.org
-Cc: linux-fscrypt@vger.kernel.org, stable@vger.kernel.org
-References: <20231123030838.46158-1-ebiggers@kernel.org>
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20231123030838.46158-1-ebiggers@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Xiubo Li <xiubli@redhat.com>
+Cc: Eric Biggers <ebiggers@kernel.org>, ceph-devel@vger.kernel.org, 
+	linux-fscrypt@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 11/23/23 11:08, Eric Biggers wrote:
-> From: Eric Biggers <ebiggers@google.com>
+On Thu, Nov 23, 2023 at 5:32=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
 >
-> The kconfig options for filesystems that support FS_ENCRYPTION are
-> supposed to select FS_ENCRYPTION_ALGS.  This is needed to ensure that
-> required crypto algorithms get enabled as loadable modules or builtin as
-> is appropriate for the set of enabled filesystems.  Do this for CEPH_FS
-> so that there aren't any missing algorithms if someone happens to have
-> CEPH_FS as their only enabled filesystem that supports encryption.
 >
-> Fixes: f061feda6c54 ("ceph: add fscrypt ioctls and ceph.fscrypt.auth vxattr")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
-> ---
->   fs/ceph/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
+> On 11/23/23 11:08, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> >
+> > The kconfig options for filesystems that support FS_ENCRYPTION are
+> > supposed to select FS_ENCRYPTION_ALGS.  This is needed to ensure that
+> > required crypto algorithms get enabled as loadable modules or builtin a=
+s
+> > is appropriate for the set of enabled filesystems.  Do this for CEPH_FS
+> > so that there aren't any missing algorithms if someone happens to have
+> > CEPH_FS as their only enabled filesystem that supports encryption.
+> >
+> > Fixes: f061feda6c54 ("ceph: add fscrypt ioctls and ceph.fscrypt.auth vx=
+attr")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > ---
+> >   fs/ceph/Kconfig | 1 +
+> >   1 file changed, 1 insertion(+)
+> >
+> > diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
+> > index 94df854147d35..7249d70e1a43f 100644
+> > --- a/fs/ceph/Kconfig
+> > +++ b/fs/ceph/Kconfig
+> > @@ -1,19 +1,20 @@
+> >   # SPDX-License-Identifier: GPL-2.0-only
+> >   config CEPH_FS
+> >       tristate "Ceph distributed file system"
+> >       depends on INET
+> >       select CEPH_LIB
+> >       select LIBCRC32C
+> >       select CRYPTO_AES
+> >       select CRYPTO
+> >       select NETFS_SUPPORT
+> > +     select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
+> >       default n
+> >       help
+> >         Choose Y or M here to include support for mounting the
+> >         experimental Ceph distributed file system.  Ceph is an extremel=
+y
+> >         scalable file system designed to provide high performance,
+> >         reliable access to petabytes of storage.
+> >
+> >         More information at https://ceph.io/.
+> >
+> >         If unsure, say N.
+> >
+> > base-commit: 9b6de136b5f0158c60844f85286a593cb70fb364
 >
-> diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
-> index 94df854147d35..7249d70e1a43f 100644
-> --- a/fs/ceph/Kconfig
-> +++ b/fs/ceph/Kconfig
-> @@ -1,19 +1,20 @@
->   # SPDX-License-Identifier: GPL-2.0-only
->   config CEPH_FS
->   	tristate "Ceph distributed file system"
->   	depends on INET
->   	select CEPH_LIB
->   	select LIBCRC32C
->   	select CRYPTO_AES
->   	select CRYPTO
->   	select NETFS_SUPPORT
-> +	select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
->   	default n
->   	help
->   	  Choose Y or M here to include support for mounting the
->   	  experimental Ceph distributed file system.  Ceph is an extremely
->   	  scalable file system designed to provide high performance,
->   	  reliable access to petabytes of storage.
->   
->   	  More information at https://ceph.io/.
->   
->   	  If unsure, say N.
+> Thanks Eric. This looks good to me.
 >
-> base-commit: 9b6de136b5f0158c60844f85286a593cb70fb364
+> Reviewed-by: Xiubo Li <xiubli@redhat.com>
 
-Thanks Eric. This looks good to me.
+Applied.
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+Thanks,
 
+                Ilya
 
