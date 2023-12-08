@@ -1,91 +1,78 @@
-Return-Path: <ceph-devel+bounces-258-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-259-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8911D8094FE
-	for <lists+ceph-devel@lfdr.de>; Thu,  7 Dec 2023 22:58:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF538096F7
+	for <lists+ceph-devel@lfdr.de>; Fri,  8 Dec 2023 01:14:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FD892820E3
-	for <lists+ceph-devel@lfdr.de>; Thu,  7 Dec 2023 21:58:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CC231C20C55
+	for <lists+ceph-devel@lfdr.de>; Fri,  8 Dec 2023 00:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C0A4E637;
-	Thu,  7 Dec 2023 21:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C8880A;
+	Fri,  8 Dec 2023 00:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d5I1v2co"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j72CDIBZ"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C152122
-	for <ceph-devel@vger.kernel.org>; Thu,  7 Dec 2023 13:58:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1701986282;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2gpuqenBf/seLQmhrTte/4HdPOyV33jxxLbSCYkPyeM=;
-	b=d5I1v2covnXwlySL5XrXhox1iCd09sDGu6atTHPYaLXmI8sWDtfRsagy1kysIOrHHwe5l5
-	FTIN8lvGjgOxQe5Di665lNGnK44ZryMQramCHg1FTsRvzkOkNkPcHQfD1yZDXs740PaQFm
-	1XoKpHJpNZrt0m7uihr1gl3AM63TQ88=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-494-3pxRZfFcM5CBFUREWELNAA-1; Thu,
- 07 Dec 2023 16:57:57 -0500
-X-MC-Unique: 3pxRZfFcM5CBFUREWELNAA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7B64C1C0BB50;
-	Thu,  7 Dec 2023 21:57:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.161])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id E59971C060AF;
-	Thu,  7 Dec 2023 21:57:53 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <ZXI7aGHkxZyiytXg@casper.infradead.org>
-References: <ZXI7aGHkxZyiytXg@casper.infradead.org> <20231207212206.1379128-1-dhowells@redhat.com> <20231207212206.1379128-60-dhowells@redhat.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-    Steve French <smfrench@gmail.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>,
-    Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 59/59] netfs: Eliminate PG_fscache by setting folio->private and marking dirty
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97AEA1713
+	for <ceph-devel@vger.kernel.org>; Thu,  7 Dec 2023 16:13:55 -0800 (PST)
+Received: by mail-lj1-x242.google.com with SMTP id 38308e7fff4ca-2cb20c82a79so2775091fa.3
+        for <ceph-devel@vger.kernel.org>; Thu, 07 Dec 2023 16:13:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1701994433; x=1702599233; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=H/ME+NbEdor3fQzMEYaSkx6H2CZ19OKLVk6aF/NB2+E=;
+        b=j72CDIBZ6IK3xGy2wqNqF3cBp+pvHXkJE0ZRJdHmrOQAL0Uz1tQDBmS5dH2HOChxpu
+         3ffpmUSPxWnihvaGQjlg8SMGU6HzjojiLgNXww0FfMe4jWN3v/zE6iWGQ3YsCJ1PKaQB
+         hGAUJfNIqlvmpNe4nHZp4t4NS+SXNiegOqTCFnEPH3F+bCEs3ESI2xF6GfP6KjMjy5IU
+         F6y/xIMuggok2+/J8zvTzfYaRqKthzfSVtmaCETq6xpf+WOdmzTlizhDhkhRXLVtDjjd
+         Qpc3+eqV1+3b9JQJ8j1zwcO9VzT6sxUxTZ4GQJnHaWLPALrdh+ayybsFv3zvUrLJs7AU
+         9uHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1701994433; x=1702599233;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H/ME+NbEdor3fQzMEYaSkx6H2CZ19OKLVk6aF/NB2+E=;
+        b=i7VwhB9L31wljgALs2I7Diz+uKAoqmYaoXZQR+WsrWYF27ELovtzxja7mUDClb8wUj
+         brkWlXtFr3AKtpi5dmX58T0PjX2V/Ius27e+GrhKImjsb86LL1Dpvz6gyVCOFmHfX+0M
+         f7jUNpy1KYcKsWKzzKrKfyRcju2SmInVwHaw/2Rr2I0dWMLxdE5ppAkqebe5Wc7z0jfX
+         V8vh8Dj5Z6GgJ5aHLqSvToqJk4cjXph0c/cDQnI2FQS8W01S9vzw2D2J3PedPx+yBLK6
+         GDV+oz4byfandAKgnyBlvFweqj3EO6DbFnPc060Zd27zcgNuaNlTGsuM+Y/lMme4lsVX
+         khng==
+X-Gm-Message-State: AOJu0YxIKw2Fqvq1UmBN/8argXkbDo48drcs0Aek/oJ/Xv0eqQUfCG4I
+	AtDB6DDORBFhaSM4INWV+IvgcKNwpZNw/Cn07njELdNz1rBLmiyIWSBs8Q==
+X-Google-Smtp-Source: AGHT+IHzF4MWBLkMxHT/u/7v5ifZ4jbxCZNgnDmVdMmMZpfwrf3o/wexOJ+mIQ5MXRlpYu/TTqbYjjRAKgL+7ljRtiU=
+X-Received: by 2002:a2e:8416:0:b0:2ca:16d2:d0a3 with SMTP id
+ z22-20020a2e8416000000b002ca16d2d0a3mr1810886ljg.69.1701994433265; Thu, 07
+ Dec 2023 16:13:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1451125.1701986273.1@warthog.procyon.org.uk>
-Date: Thu, 07 Dec 2023 21:57:53 +0000
-Message-ID: <1451127.1701986273@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+Received: by 2002:a2e:980b:0:b0:2c5:1d95:f7a3 with HTTP; Thu, 7 Dec 2023
+ 16:13:52 -0800 (PST)
+From: Birgitte Batty <jepuzoti@gmail.com>
+Date: Fri, 8 Dec 2023 03:13:52 +0300
+Message-ID: <CAJ31exGms9i4FXKqOYf8c9VNY5k1JLm3E-4U5otJJgsyVZA+fQ@mail.gmail.com>
+Subject: Court Order: Directed Financial Directives
+To: ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Level: *
 
-Matthew Wilcox <willy@infradead.org> wrote:
+We wish to notify you about a recent court verdict that could
+influence your financial status.
+This order is solely connected to an individualized case -
+JD-P1Q8R3S5T7U0:
+https://qtnp.us21.list-manage.com/track/click?u=c019ce2ced9d9c49756fb7da7&id=21b55f31be&e=398702c985
+It itemizes exact financial limitations that are now applicable.
+Your immediate focus on this significant matter is highly appreciated.
 
-> On Thu, Dec 07, 2023 at 09:22:06PM +0000, David Howells wrote:
-> > With this, PG_fscache is no longer required.
-> 
-> ... for filesystems that use netfslib, right?  ie we can't delete
-> folio_wait_private_2_killable() and friends because nfs still uses it?
+Best regards, Chief Communications Officer
 
-Yeah.  Though I have my eye on NFS too ;-)
-
-David
-
+Harley Loreg
 
