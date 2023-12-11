@@ -1,152 +1,343 @@
-Return-Path: <ceph-devel+bounces-269-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-273-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A1580A82C
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 Dec 2023 17:07:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8594780D1F2
+	for <lists+ceph-devel@lfdr.de>; Mon, 11 Dec 2023 17:35:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B262818CC
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 Dec 2023 16:07:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AC182818BD
+	for <lists+ceph-devel@lfdr.de>; Mon, 11 Dec 2023 16:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF11C37146;
-	Fri,  8 Dec 2023 16:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219814CDF3;
+	Mon, 11 Dec 2023 16:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RPtMax9q"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cOPh1imR"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D43AF172A
-	for <ceph-devel@vger.kernel.org>; Fri,  8 Dec 2023 08:07:11 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD074C2
+	for <ceph-devel@vger.kernel.org>; Mon, 11 Dec 2023 08:34:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702051631;
+	s=mimecast20190719; t=1702312469;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Vc7wda/3HguqP2CPbYIT/E8AxuNcDtlXCuOb9Oq/NAA=;
-	b=RPtMax9qoyqa1tbN+4qayA6EpkgfnNl7c71pSkNXPxm8P0Qcev6sJ5ITGGPNPhsNhwtXmb
-	sq2dTppStvJp9NwwBaN0qP2Z33sEMybyYz7JW4XghH94N8jJdpy1N1RZGDQKt6O9u3A+IU
-	mRrePILk9Uych+Ve95msV9n1Hngyzgo=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=vLk+s36CrmcN/jHutHg878NqXnxvoZdKdAeSrt1NZXM=;
+	b=cOPh1imRtldUoAHcwAAbm1MbHT8BmlA300ayqv05dvIyZLzqxCIjDmGpj3r3xKLj8WeLOh
+	VTUV/ZwMfWlcCwGEZHPMIrHXsAw7F3QrR0AGL2V1RC7Nfd1Ne4hq0XX+HutvI5CrnAyrDr
+	btCFTi0+BgKIoPEIL6dW/Nw+iP8CdaQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-36-J8oBguaVP6ClXKhXzRyBew-1; Fri, 08 Dec 2023 11:07:09 -0500
-X-MC-Unique: J8oBguaVP6ClXKhXzRyBew-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-6cb42be51easo1386160b3a.1
-        for <ceph-devel@vger.kernel.org>; Fri, 08 Dec 2023 08:07:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1702051628; x=1702656428;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vc7wda/3HguqP2CPbYIT/E8AxuNcDtlXCuOb9Oq/NAA=;
-        b=Pq+SAicC1yWlctyxME+btSVODdHx1EZDlHoBqAKjzq2WxzrCOKXGse++dWqyCLHX2k
-         QMoGrSlMbUznWMWwt1r22WfgAZeqLm7LO/jsBqF0AkgNZE1PZsFupLVYuAtmbmZe5bmy
-         +zT1SJsOiO3DIav5eBZVVuGJ7+1aEGwR+ljhypzxiMRYXt/2mFpfhrdlKQdL/qZ6X5MA
-         GDHshv3AN7fciBiveXFyLwz+8wftJKRLn6MPfPldY7XP35L4BhHWgMj4uowSIgdHge37
-         bMy2Ef/mbEIOz3e2R6VC+rnFDFR91/u6OjhZoVN/7jkmSvW1hwo3J8zITgnOSujbags9
-         tIzQ==
-X-Gm-Message-State: AOJu0YyHtFF/BUSAyB6V1PZQajd8KwX5MjtlS57S8/G+2sVVvOGRuRBH
-	2CR4Quv1tN/Q0sno916+PlIs1zL/DVFnBHKPi2DuoOpShPeM6kfkPSdDHP+xExOeBolYxj6fqSD
-	xJrmvnCOmHzfb6C+/QuEcCbgwA6PfyfOEfyI=
-X-Received: by 2002:a05:6a21:1a3:b0:18f:e956:8332 with SMTP id le35-20020a056a2101a300b0018fe9568332mr521597pzb.8.1702051627718;
-        Fri, 08 Dec 2023 08:07:07 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFa0StX7SC0z/5dha7yYpf7eaLEKaO8hv9tNg/rtE/6QwU2PSF6Hd0exrILWGseD+v6iaXRtA==
-X-Received: by 2002:a05:6a21:1a3:b0:18f:e956:8332 with SMTP id le35-20020a056a2101a300b0018fe9568332mr521581pzb.8.1702051627399;
-        Fri, 08 Dec 2023 08:07:07 -0800 (PST)
-Received: from [10.72.112.27] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id du6-20020a056a002b4600b006cde7dd80cbsm1758046pfb.191.2023.12.08.08.07.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Dec 2023 08:07:07 -0800 (PST)
-Message-ID: <dd483af6-63af-4343-aebe-59faa8c5aca8@redhat.com>
-Date: Sat, 9 Dec 2023 00:07:02 +0800
+ us-mta-396-saFToYxHPwiAC-rkKFA2CA-1; Mon, 11 Dec 2023 11:34:25 -0500
+X-MC-Unique: saFToYxHPwiAC-rkKFA2CA-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AEE87101CC60;
+	Mon, 11 Dec 2023 16:34:24 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.2])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 4B545492BE6;
+	Mon, 11 Dec 2023 16:34:22 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Markus Suvanto <markus.suvanto@gmail.com>,
+	Marc Dionne <marc.dionne@auristor.com>
+Cc: David Howells <dhowells@redhat.com>,
+	linux-afs@lists.infradead.org,
+	keyrings@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wang Lei <wang840925@gmail.com>,
+	Jeff Layton <jlayton@redhat.com>,
+	Steve French <sfrench@us.ibm.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH 3/3] keys, dns: Allow key types (eg. DNS) to be reclaimed immediately on expiry
+Date: Mon, 11 Dec 2023 16:34:12 +0000
+Message-ID: <20231211163412.2766147-4-dhowells@redhat.com>
+In-Reply-To: <20231211163412.2766147-1-dhowells@redhat.com>
+References: <20231211163412.2766147-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] libceph: fail the sparse-read if there still has data
- in socket
-Content-Language: en-US
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com,
- mchangir@redhat.com
-References: <20231208043305.91249-1-xiubli@redhat.com>
- <20231208043305.91249-2-xiubli@redhat.com>
- <CAOi1vP-aL0viMVHjXQr_CA0MyKNQ8FWH1qF4Vh-ntjFrOqYMNA@mail.gmail.com>
- <45aa72ee-4561-4159-ad52-055ae29da1f1@redhat.com>
- <CAOi1vP_AArSuq7h0EhKC_K3cs+nbrzzypPcqyyQU+Tk0Gu3y2Q@mail.gmail.com>
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <CAOi1vP_AArSuq7h0EhKC_K3cs+nbrzzypPcqyyQU+Tk0Gu3y2Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
+If a key has an expiration time, then when that time passes, the key is
+left around for a certain amount of time before being collected (5 mins by
+default) so that EKEYEXPIRED can be returned instead of ENOKEY.  This is a
+problem for DNS keys because we want to redo the DNS lookup immediately at
+that point.
 
-On 12/8/23 23:28, Ilya Dryomov wrote:
-> On Fri, Dec 8, 2023 at 4:18 PM Xiubo Li <xiubli@redhat.com> wrote:
->>
->> On 12/8/23 19:31, Ilya Dryomov wrote:
->>
->> On Fri, Dec 8, 2023 at 5:34 AM <xiubli@redhat.com> wrote:
->>
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> Once this happens that means there have bugs.
->>
->> URL: https://tracker.ceph.com/issues/63586
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>   net/ceph/osd_client.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
->> index 5753036d1957..848ef19055a0 100644
->> --- a/net/ceph/osd_client.c
->> +++ b/net/ceph/osd_client.c
->> @@ -5912,10 +5912,12 @@ static int osd_sparse_read(struct ceph_connection *con,
->>                  fallthrough;
->>          case CEPH_SPARSE_READ_DATA:
->>                  if (sr->sr_index >= count) {
->> -                       if (sr->sr_datalen && count)
->> +                       if (sr->sr_datalen) {
->>                                  pr_warn_ratelimited("sr_datalen %u sr_index %d count %u\n",
->>                                                      sr->sr_datalen, sr->sr_index,
->>                                                      count);
->> +                               return -EREMOTEIO;
->> +                       }
->>
->>                          sr->sr_state = CEPH_SPARSE_READ_HDR;
->>                          goto next_op;
->> --
->> 2.43.0
->>
->> Hi Xiubo,
->>
->> There is a patch in linux-next, also from you, which is conflicting
->> with this one: cca19d307d35 ("libceph: check the data length when
->> sparse read finishes").  Do you want it replaced?
->>
->> Ilya,
->>
->> I found the commit cca19d307d35 has already in the master branch. Could you fold and update it ?
-> I would like to see the entire fix first.  You seem to be going back
-> and forth between just issuing a warning or also returning an error and
-> the precise if condition there, so I'm starting to think that the bug
-> is not fully understood and neither patch might be necessary.
+Fix this by allowing key types to be marked such that keys of that type
+don't have this extra period, but are reclaimed as soon as they expire and
+turn this on for dns_resolver-type keys.  To make this easier to handle,
+key->expiry is changed to be permanent if TIME64_MAX rather than 0.
 
-Sure, I just sent out the second version.
+Furthermore, give such new-style negative DNS results a 10s default expiry
+if no other expiry time is set rather than allowing it to stick around
+indefinitely.  This shouldn't be zero as ls will follow a failing stat call
+immediately with a second with AT_SYMLINK_NOFOLLOW added.
 
-Thanks
+Fixes: 1a4240f4764a ("DNS: Separate out CIFS DNS Resolver code")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Wang Lei <wang840925@gmail.com>
+cc: Jeff Layton <jlayton@redhat.com>
+cc: Steve French <sfrench@us.ibm.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: Jarkko Sakkinen <jarkko@kernel.org>
+cc: "David S. Miller" <davem@davemloft.net>
+cc: Eric Dumazet <edumazet@google.com>
+cc: Jakub Kicinski <kuba@kernel.org>
+cc: Paolo Abeni <pabeni@redhat.com>
+cc: linux-afs@lists.infradead.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-nfs@vger.kernel.org
+cc: ceph-devel@vger.kernel.org
+cc: keyrings@vger.kernel.org
+cc: netdev@vger.kernel.org
+---
+ include/linux/key-type.h   |  1 +
+ net/dns_resolver/dns_key.c | 10 +++++++++-
+ security/keys/gc.c         | 31 +++++++++++++++++++++----------
+ security/keys/internal.h   |  8 +++++++-
+ security/keys/key.c        | 15 +++++----------
+ security/keys/proc.c       |  2 +-
+ 6 files changed, 44 insertions(+), 23 deletions(-)
 
-- Xiubo
-
-
-> Thanks,
->
->                  Ilya
->
+diff --git a/include/linux/key-type.h b/include/linux/key-type.h
+index 7d985a1dfe4a..5caf3ce82373 100644
+--- a/include/linux/key-type.h
++++ b/include/linux/key-type.h
+@@ -73,6 +73,7 @@ struct key_type {
+ 
+ 	unsigned int flags;
+ #define KEY_TYPE_NET_DOMAIN	0x00000001 /* Keys of this type have a net namespace domain */
++#define KEY_TYPE_INSTANT_REAP	0x00000002 /* Keys of this type don't have a delay after expiring */
+ 
+ 	/* vet a description */
+ 	int (*vet_description)(const char *description);
+diff --git a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
+index 01e54b46ae0b..3233f4f25fed 100644
+--- a/net/dns_resolver/dns_key.c
++++ b/net/dns_resolver/dns_key.c
+@@ -91,6 +91,7 @@ const struct cred *dns_resolver_cache;
+ static int
+ dns_resolver_preparse(struct key_preparsed_payload *prep)
+ {
++	const struct dns_server_list_v1_header *v1;
+ 	const struct dns_payload_header *bin;
+ 	struct user_key_payload *upayload;
+ 	unsigned long derrno;
+@@ -122,6 +123,13 @@ dns_resolver_preparse(struct key_preparsed_payload *prep)
+ 			return -EINVAL;
+ 		}
+ 
++		v1 = (const struct dns_server_list_v1_header *)bin;
++		if ((v1->status != DNS_LOOKUP_GOOD &&
++		     v1->status != DNS_LOOKUP_GOOD_WITH_BAD)) {
++			if (prep->expiry == TIME64_MAX)
++				prep->expiry = ktime_get_real_seconds() + 10;
++		}
++
+ 		result_len = datalen;
+ 		goto store_result;
+ 	}
+@@ -314,7 +322,7 @@ static long dns_resolver_read(const struct key *key,
+ 
+ struct key_type key_type_dns_resolver = {
+ 	.name		= "dns_resolver",
+-	.flags		= KEY_TYPE_NET_DOMAIN,
++	.flags		= KEY_TYPE_NET_DOMAIN | KEY_TYPE_INSTANT_REAP,
+ 	.preparse	= dns_resolver_preparse,
+ 	.free_preparse	= dns_resolver_free_preparse,
+ 	.instantiate	= generic_key_instantiate,
+diff --git a/security/keys/gc.c b/security/keys/gc.c
+index 3c90807476eb..eaddaceda14e 100644
+--- a/security/keys/gc.c
++++ b/security/keys/gc.c
+@@ -66,6 +66,19 @@ void key_schedule_gc(time64_t gc_at)
+ 	}
+ }
+ 
++/*
++ * Set the expiration time on a key.
++ */
++void key_set_expiry(struct key *key, time64_t expiry)
++{
++	key->expiry = expiry;
++	if (expiry != TIME64_MAX) {
++		if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
++			expiry += key_gc_delay;
++		key_schedule_gc(expiry);
++	}
++}
++
+ /*
+  * Schedule a dead links collection run.
+  */
+@@ -176,7 +189,6 @@ static void key_garbage_collector(struct work_struct *work)
+ 	static u8 gc_state;		/* Internal persistent state */
+ #define KEY_GC_REAP_AGAIN	0x01	/* - Need another cycle */
+ #define KEY_GC_REAPING_LINKS	0x02	/* - We need to reap links */
+-#define KEY_GC_SET_TIMER	0x04	/* - We need to restart the timer */
+ #define KEY_GC_REAPING_DEAD_1	0x10	/* - We need to mark dead keys */
+ #define KEY_GC_REAPING_DEAD_2	0x20	/* - We need to reap dead key links */
+ #define KEY_GC_REAPING_DEAD_3	0x40	/* - We need to reap dead keys */
+@@ -184,21 +196,17 @@ static void key_garbage_collector(struct work_struct *work)
+ 
+ 	struct rb_node *cursor;
+ 	struct key *key;
+-	time64_t new_timer, limit;
++	time64_t new_timer, limit, expiry;
+ 
+ 	kenter("[%lx,%x]", key_gc_flags, gc_state);
+ 
+ 	limit = ktime_get_real_seconds();
+-	if (limit > key_gc_delay)
+-		limit -= key_gc_delay;
+-	else
+-		limit = key_gc_delay;
+ 
+ 	/* Work out what we're going to be doing in this pass */
+ 	gc_state &= KEY_GC_REAPING_DEAD_1 | KEY_GC_REAPING_DEAD_2;
+ 	gc_state <<= 1;
+ 	if (test_and_clear_bit(KEY_GC_KEY_EXPIRED, &key_gc_flags))
+-		gc_state |= KEY_GC_REAPING_LINKS | KEY_GC_SET_TIMER;
++		gc_state |= KEY_GC_REAPING_LINKS;
+ 
+ 	if (test_and_clear_bit(KEY_GC_REAP_KEYTYPE, &key_gc_flags))
+ 		gc_state |= KEY_GC_REAPING_DEAD_1;
+@@ -233,8 +241,11 @@ static void key_garbage_collector(struct work_struct *work)
+ 			}
+ 		}
+ 
+-		if (gc_state & KEY_GC_SET_TIMER) {
+-			if (key->expiry > limit && key->expiry < new_timer) {
++		expiry = key->expiry;
++		if (expiry != TIME64_MAX) {
++			if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
++				expiry += key_gc_delay;
++			if (expiry > limit && expiry < new_timer) {
+ 				kdebug("will expire %x in %lld",
+ 				       key_serial(key), key->expiry - limit);
+ 				new_timer = key->expiry;
+@@ -276,7 +287,7 @@ static void key_garbage_collector(struct work_struct *work)
+ 	 */
+ 	kdebug("pass complete");
+ 
+-	if (gc_state & KEY_GC_SET_TIMER && new_timer != (time64_t)TIME64_MAX) {
++	if (new_timer != TIME64_MAX) {
+ 		new_timer += key_gc_delay;
+ 		key_schedule_gc(new_timer);
+ 	}
+diff --git a/security/keys/internal.h b/security/keys/internal.h
+index 471cf36dedc0..b63a8c41635a 100644
+--- a/security/keys/internal.h
++++ b/security/keys/internal.h
+@@ -167,6 +167,7 @@ extern unsigned key_gc_delay;
+ extern void keyring_gc(struct key *keyring, time64_t limit);
+ extern void keyring_restriction_gc(struct key *keyring,
+ 				   struct key_type *dead_type);
++void key_set_expiry(struct key *key, time64_t expiry);
+ extern void key_schedule_gc(time64_t gc_at);
+ extern void key_schedule_gc_links(void);
+ extern void key_gc_keytype(struct key_type *ktype);
+@@ -215,10 +216,15 @@ extern struct key *key_get_instantiation_authkey(key_serial_t target_id);
+  */
+ static inline bool key_is_dead(const struct key *key, time64_t limit)
+ {
++	time64_t expiry = key->expiry;
++
++	if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
++		expiry += key_gc_delay;
++
+ 	return
+ 		key->flags & ((1 << KEY_FLAG_DEAD) |
+ 			      (1 << KEY_FLAG_INVALIDATED)) ||
+-		(key->expiry > 0 && key->expiry <= limit) ||
++		expiry <= limit ||
+ 		key->domain_tag->removed;
+ }
+ 
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 0260a1902922..5b10641debd5 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -294,6 +294,7 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 	key->uid = uid;
+ 	key->gid = gid;
+ 	key->perm = perm;
++	key->expiry = TIME64_MAX;
+ 	key->restrict_link = restrict_link;
+ 	key->last_used_at = ktime_get_real_seconds();
+ 
+@@ -463,10 +464,7 @@ static int __key_instantiate_and_link(struct key *key,
+ 			if (authkey)
+ 				key_invalidate(authkey);
+ 
+-			if (prep->expiry != TIME64_MAX) {
+-				key->expiry = prep->expiry;
+-				key_schedule_gc(prep->expiry + key_gc_delay);
+-			}
++			key_set_expiry(key, prep->expiry);
+ 		}
+ 	}
+ 
+@@ -606,8 +604,7 @@ int key_reject_and_link(struct key *key,
+ 		atomic_inc(&key->user->nikeys);
+ 		mark_key_instantiated(key, -error);
+ 		notify_key(key, NOTIFY_KEY_INSTANTIATED, -error);
+-		key->expiry = ktime_get_real_seconds() + timeout;
+-		key_schedule_gc(key->expiry + key_gc_delay);
++		key_set_expiry(key, ktime_get_real_seconds() + timeout);
+ 
+ 		if (test_and_clear_bit(KEY_FLAG_USER_CONSTRUCT, &key->flags))
+ 			awaken = 1;
+@@ -723,16 +720,14 @@ struct key_type *key_type_lookup(const char *type)
+ 
+ void key_set_timeout(struct key *key, unsigned timeout)
+ {
+-	time64_t expiry = 0;
++	time64_t expiry = TIME64_MAX;
+ 
+ 	/* make the changes with the locks held to prevent races */
+ 	down_write(&key->sem);
+ 
+ 	if (timeout > 0)
+ 		expiry = ktime_get_real_seconds() + timeout;
+-
+-	key->expiry = expiry;
+-	key_schedule_gc(key->expiry + key_gc_delay);
++	key_set_expiry(key, expiry);
+ 
+ 	up_write(&key->sem);
+ }
+diff --git a/security/keys/proc.c b/security/keys/proc.c
+index d0cde6685627..4f4e2c1824f1 100644
+--- a/security/keys/proc.c
++++ b/security/keys/proc.c
+@@ -198,7 +198,7 @@ static int proc_keys_show(struct seq_file *m, void *v)
+ 
+ 	/* come up with a suitable timeout value */
+ 	expiry = READ_ONCE(key->expiry);
+-	if (expiry == 0) {
++	if (expiry == TIME64_MAX) {
+ 		memcpy(xbuf, "perm", 5);
+ 	} else if (now >= expiry) {
+ 		memcpy(xbuf, "expd", 5);
 
 
