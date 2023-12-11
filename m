@@ -1,47 +1,47 @@
-Return-Path: <ceph-devel+bounces-273-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-274-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8594780D1F2
-	for <lists+ceph-devel@lfdr.de>; Mon, 11 Dec 2023 17:35:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C0680DD31
+	for <lists+ceph-devel@lfdr.de>; Mon, 11 Dec 2023 22:33:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AC182818BD
-	for <lists+ceph-devel@lfdr.de>; Mon, 11 Dec 2023 16:34:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AF552825CA
+	for <lists+ceph-devel@lfdr.de>; Mon, 11 Dec 2023 21:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219814CDF3;
-	Mon, 11 Dec 2023 16:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561BF54F96;
+	Mon, 11 Dec 2023 21:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cOPh1imR"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FIsacUxQ"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD074C2
-	for <ceph-devel@vger.kernel.org>; Mon, 11 Dec 2023 08:34:30 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6936FE
+	for <ceph-devel@vger.kernel.org>; Mon, 11 Dec 2023 13:32:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702312469;
+	s=mimecast20190719; t=1702330370;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
 	bh=vLk+s36CrmcN/jHutHg878NqXnxvoZdKdAeSrt1NZXM=;
-	b=cOPh1imRtldUoAHcwAAbm1MbHT8BmlA300ayqv05dvIyZLzqxCIjDmGpj3r3xKLj8WeLOh
-	VTUV/ZwMfWlcCwGEZHPMIrHXsAw7F3QrR0AGL2V1RC7Nfd1Ne4hq0XX+HutvI5CrnAyrDr
-	btCFTi0+BgKIoPEIL6dW/Nw+iP8CdaQ=
+	b=FIsacUxQCa2FrNyNOXsWouJ0thGJUcCqM1yQz8u5945m+SOF0UBfNweTsbAcPJ1GBaelts
+	UGNQa1dWkyp3A4kNBywsHEUfjJt3o73uk0J1xNX1PoJ7roHoSacH8gtXG5Wnu0Yv8RJJHh
+	0ZzRUf3eE3CGwHm3AG977SkA3p0kKK4=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-396-saFToYxHPwiAC-rkKFA2CA-1; Mon, 11 Dec 2023 11:34:25 -0500
-X-MC-Unique: saFToYxHPwiAC-rkKFA2CA-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+ us-mta-494-nqGgQDaJMCWom6Mz8Zu_Pg-1; Mon, 11 Dec 2023 16:32:44 -0500
+X-MC-Unique: nqGgQDaJMCWom6Mz8Zu_Pg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AEE87101CC60;
-	Mon, 11 Dec 2023 16:34:24 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6174A85A589;
+	Mon, 11 Dec 2023 21:32:43 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.2])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 4B545492BE6;
-	Mon, 11 Dec 2023 16:34:22 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 0614740C6EB9;
+	Mon, 11 Dec 2023 21:32:40 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Markus Suvanto <markus.suvanto@gmail.com>,
 	Marc Dionne <marc.dionne@auristor.com>
@@ -62,11 +62,11 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-nfs@vger.kernel.org,
 	ceph-devel@vger.kernel.org,
 	netdev@vger.kernel.org
-Subject: [PATCH 3/3] keys, dns: Allow key types (eg. DNS) to be reclaimed immediately on expiry
-Date: Mon, 11 Dec 2023 16:34:12 +0000
-Message-ID: <20231211163412.2766147-4-dhowells@redhat.com>
-In-Reply-To: <20231211163412.2766147-1-dhowells@redhat.com>
-References: <20231211163412.2766147-1-dhowells@redhat.com>
+Subject: [PATCH v2 3/3] keys, dns: Allow key types (eg. DNS) to be reclaimed immediately on expiry
+Date: Mon, 11 Dec 2023 21:32:33 +0000
+Message-ID: <20231211213233.2793525-4-dhowells@redhat.com>
+In-Reply-To: <20231211213233.2793525-1-dhowells@redhat.com>
+References: <20231211213233.2793525-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
 If a key has an expiration time, then when that time passes, the key is
 left around for a certain amount of time before being collected (5 mins by
