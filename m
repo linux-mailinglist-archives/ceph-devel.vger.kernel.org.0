@@ -1,47 +1,47 @@
-Return-Path: <ceph-devel+bounces-274-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-275-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C0680DD31
-	for <lists+ceph-devel@lfdr.de>; Mon, 11 Dec 2023 22:33:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDAC780EF33
+	for <lists+ceph-devel@lfdr.de>; Tue, 12 Dec 2023 15:46:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AF552825CA
-	for <lists+ceph-devel@lfdr.de>; Mon, 11 Dec 2023 21:33:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9320C281B7D
+	for <lists+ceph-devel@lfdr.de>; Tue, 12 Dec 2023 14:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561BF54F96;
-	Mon, 11 Dec 2023 21:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61046745F8;
+	Tue, 12 Dec 2023 14:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FIsacUxQ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ik0mN7sY"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6936FE
-	for <ceph-devel@vger.kernel.org>; Mon, 11 Dec 2023 13:32:50 -0800 (PST)
+	by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D45A8
+	for <ceph-devel@vger.kernel.org>; Tue, 12 Dec 2023 06:46:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702330370;
+	s=mimecast20190719; t=1702392388;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=vLk+s36CrmcN/jHutHg878NqXnxvoZdKdAeSrt1NZXM=;
-	b=FIsacUxQCa2FrNyNOXsWouJ0thGJUcCqM1yQz8u5945m+SOF0UBfNweTsbAcPJ1GBaelts
-	UGNQa1dWkyp3A4kNBywsHEUfjJt3o73uk0J1xNX1PoJ7roHoSacH8gtXG5Wnu0Yv8RJJHh
-	0ZzRUf3eE3CGwHm3AG977SkA3p0kKK4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-494-nqGgQDaJMCWom6Mz8Zu_Pg-1; Mon, 11 Dec 2023 16:32:44 -0500
-X-MC-Unique: nqGgQDaJMCWom6Mz8Zu_Pg-1
+	bh=y8Ls3k4OLqAXdAO2oDj775VG4CjskNZZKzFBZns4rfY=;
+	b=ik0mN7sYkIhInt/gfNavqLT+Xak8cO6Lt4WN8aBWQcPi0DAoe5sdz4MbrxBnbir000wB4W
+	rTPnlyEHC4R0GNcLFyjneh0O9488SfcKxP1DWDB1c+/TTyGlaJs6aNqTZT3xTGnouiqRsn
+	9Z+0VgU6UP9e9mEVQtcTizXD7nzslBk=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-10-x3bcL5NYNR6aT9ys9ue44w-1; Tue,
+ 12 Dec 2023 09:46:24 -0500
+X-MC-Unique: x3bcL5NYNR6aT9ys9ue44w-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6174A85A589;
-	Mon, 11 Dec 2023 21:32:43 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 361261E441D3;
+	Tue, 12 Dec 2023 14:46:22 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.2])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 0614740C6EB9;
-	Mon, 11 Dec 2023 21:32:40 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id AFA6840C6EB9;
+	Tue, 12 Dec 2023 14:46:19 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Markus Suvanto <markus.suvanto@gmail.com>,
 	Marc Dionne <marc.dionne@auristor.com>
@@ -62,11 +62,11 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-nfs@vger.kernel.org,
 	ceph-devel@vger.kernel.org,
 	netdev@vger.kernel.org
-Subject: [PATCH v2 3/3] keys, dns: Allow key types (eg. DNS) to be reclaimed immediately on expiry
-Date: Mon, 11 Dec 2023 21:32:33 +0000
-Message-ID: <20231211213233.2793525-4-dhowells@redhat.com>
-In-Reply-To: <20231211213233.2793525-1-dhowells@redhat.com>
-References: <20231211213233.2793525-1-dhowells@redhat.com>
+Subject: [PATCH v3 3/3] keys, dns: Allow key types (eg. DNS) to be reclaimed immediately on expiry
+Date: Tue, 12 Dec 2023 14:46:11 +0000
+Message-ID: <20231212144611.3100234-4-dhowells@redhat.com>
+In-Reply-To: <20231212144611.3100234-1-dhowells@redhat.com>
+References: <20231212144611.3100234-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -110,13 +110,20 @@ cc: ceph-devel@vger.kernel.org
 cc: keyrings@vger.kernel.org
 cc: netdev@vger.kernel.org
 ---
+
+Notes:
+    Changes
+    =======
+    ver #3)
+     - Don't add to TIME64_MAX (ie. permanent) when checking expiry time.
+
  include/linux/key-type.h   |  1 +
  net/dns_resolver/dns_key.c | 10 +++++++++-
  security/keys/gc.c         | 31 +++++++++++++++++++++----------
- security/keys/internal.h   |  8 +++++++-
+ security/keys/internal.h   | 11 ++++++++++-
  security/keys/key.c        | 15 +++++----------
  security/keys/proc.c       |  2 +-
- 6 files changed, 44 insertions(+), 23 deletions(-)
+ 6 files changed, 47 insertions(+), 23 deletions(-)
 
 diff --git a/include/linux/key-type.h b/include/linux/key-type.h
 index 7d985a1dfe4a..5caf3ce82373 100644
@@ -245,7 +252,7 @@ index 3c90807476eb..eaddaceda14e 100644
  		key_schedule_gc(new_timer);
  	}
 diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 471cf36dedc0..b63a8c41635a 100644
+index 471cf36dedc0..2cffa6dc8255 100644
 --- a/security/keys/internal.h
 +++ b/security/keys/internal.h
 @@ -167,6 +167,7 @@ extern unsigned key_gc_delay;
@@ -256,20 +263,23 @@ index 471cf36dedc0..b63a8c41635a 100644
  extern void key_schedule_gc(time64_t gc_at);
  extern void key_schedule_gc_links(void);
  extern void key_gc_keytype(struct key_type *ktype);
-@@ -215,10 +216,15 @@ extern struct key *key_get_instantiation_authkey(key_serial_t target_id);
+@@ -215,10 +216,18 @@ extern struct key *key_get_instantiation_authkey(key_serial_t target_id);
   */
  static inline bool key_is_dead(const struct key *key, time64_t limit)
  {
 +	time64_t expiry = key->expiry;
 +
-+	if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
-+		expiry += key_gc_delay;
++	if (expiry != TIME64_MAX) {
++		if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
++			expiry += key_gc_delay;
++		if (expiry <= limit)
++			return true;
++	}
 +
  	return
  		key->flags & ((1 << KEY_FLAG_DEAD) |
  			      (1 << KEY_FLAG_INVALIDATED)) ||
 -		(key->expiry > 0 && key->expiry <= limit) ||
-+		expiry <= limit ||
  		key->domain_tag->removed;
  }
  
