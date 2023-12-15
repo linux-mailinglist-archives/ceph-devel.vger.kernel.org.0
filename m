@@ -1,192 +1,191 @@
-Return-Path: <ceph-devel+bounces-354-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-355-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A60813EAE
-	for <lists+ceph-devel@lfdr.de>; Fri, 15 Dec 2023 01:23:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D62B814794
+	for <lists+ceph-devel@lfdr.de>; Fri, 15 Dec 2023 13:03:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F07F283F8F
-	for <lists+ceph-devel@lfdr.de>; Fri, 15 Dec 2023 00:23:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16BF61C2316A
+	for <lists+ceph-devel@lfdr.de>; Fri, 15 Dec 2023 12:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB924431;
-	Fri, 15 Dec 2023 00:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930BC28E23;
+	Fri, 15 Dec 2023 12:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ta+kvlFQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEdkeyJ+"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE8933E0
-	for <ceph-devel@vger.kernel.org>; Fri, 15 Dec 2023 00:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1702599779;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hc58d1Y30Sc7WBDpfRtJPe3Kp2H3/Q1q0qOZDj/PHqE=;
-	b=Ta+kvlFQ6rwp09G4Ak2Blj3iAIxZKeiBvBz8v4bg0d6a9lA/I8Ycv8m7DoCdtS8hgm7S0W
-	B6W5bjuYezhUIrHTMdEsqDFdeYgRnaTBcYCNPIuG2zZ9VedLCHCIZ7OMRE7ARJ2yHeFFwC
-	BLyx3wpffs7zM7oPFO5LgANV7LawKGA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-447-JE8A4878OQuGc-OURMxZjg-1; Thu, 14 Dec 2023 19:22:55 -0500
-X-MC-Unique: JE8A4878OQuGc-OURMxZjg-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 89BF18350E2;
-	Fri, 15 Dec 2023 00:22:55 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (unknown [10.72.113.27])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id A872C492BC6;
-	Fri, 15 Dec 2023 00:22:52 +0000 (UTC)
-From: xiubli@redhat.com
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	jlayton@kernel.org,
-	vshankar@redhat.com,
-	mchangir@redhat.com,
-	Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v3 3/3] libceph: just wait for more data to be available on the socket
-Date: Fri, 15 Dec 2023 08:20:34 +0800
-Message-ID: <20231215002034.205780-4-xiubli@redhat.com>
-In-Reply-To: <20231215002034.205780-1-xiubli@redhat.com>
-References: <20231215002034.205780-1-xiubli@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2086725572;
+	Fri, 15 Dec 2023 12:03:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97454C433C8;
+	Fri, 15 Dec 2023 12:03:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1702641806;
+	bh=HBrttvezNQe0QQVMwijBpOeV4YQmzTr0YV92KoJQ8ZE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=eEdkeyJ+YkOxXK7th6GRD7Su1DsGpLwnVcFzG3pqhXXV6sI6Tn6btiHFay3VqWF+h
+	 T+lrgu/3HmiLtAI0QKKQ62wvS1K4bOc0BGKCu+rJ3MHBjANlPTc1cgwbhuu7Qs0qxa
+	 LVYHmvsKnnzSWcXuVttKC63psYuNX0maV8G8MjvrciytdpGH7Yvdza/mcYRZ1Ni4Kf
+	 sy+F5V7FcG6mbiknZbtPYM54eM9rsKahjq0oe2NL7D6gXgGlUJDU/D9a80iEYIRvaS
+	 5x2NrNfBun9TS+2Hac++AYbPUvA/6Rtpn4/d+HKcTvbMkziwMRKyPObJkJCT4XoKGN
+	 305s520nTspaQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>,
+	Steve French <smfrench@gmail.com>,
+	David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	linux-cachefs@redhat.com,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/39] netfs, afs, 9p: Delegate high-level I/O to netfslib
+Date: Fri, 15 Dec 2023 13:03:14 +0100
+Message-ID: <20231215-einziehen-landen-94a63dd17637@brauner>
+X-Mailer: git-send-email 2.42.0
+In-Reply-To: <20231213152350.431591-1-dhowells@redhat.com>
+References: <20231213152350.431591-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6217; i=brauner@kernel.org; h=from:subject:message-id; bh=HBrttvezNQe0QQVMwijBpOeV4YQmzTr0YV92KoJQ8ZE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTWODS2Tfm66uSZXeJqJUsnCukueuim0bUrM61+qxbj4 TCO/EdGHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNxkGD4Z8bHlZptWDLtokYW 6+zLF4+csT+Y/8qobP1VpUfHVsZ6FzH8U2Pb/zzyZqDya7H3sT/98l8W3bEPlJEzjP+6P/tTSOk NFgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
-From: Xiubo Li <xiubli@redhat.com>
+On Wed, 13 Dec 2023 15:23:10 +0000, David Howells wrote:
+> I have been working on my netfslib helpers to the point that I can run
+> xfstests on AFS to completion (both with write-back buffering and, with a
+> small patch, write-through buffering in the pagecache).  I have a patch for
+> 9P, but am currently unable to test it.
+> 
+> The patches remove a little over 800 lines from AFS, 300 from 9P, albeit with
+> around 3000 lines added to netfs.  Hopefully, I will be able to remove a bunch
+> of lines from Ceph too.
+> 
+> [...]
 
-The messages from ceph maybe split into multiple socket packages
-and we just need to wait for all the data to be availiable on the
-sokcet.
+Ok, that's on vfs.netfs for now. It's based on vfs.rw as that has splice
+changes that would cause needless conflicts. It helps to not have such
+series based on -next.
 
-This will add 'sr_total_resid' to record the total length for all
-data items for sparse-read message and 'sr_resid_elen' to record
-the current extent total length.
+Fwiw, I'd rather have this based on a mainline tag in the future. Linus
+has stated loads of times that he doesn't mind handling merge conflicts
+and for me it's a lot easier if I have a stable mainline tag. linux-next
+is too volatile. Thanks!
 
-URL: https://tracker.ceph.com/issues/63586
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- include/linux/ceph/messenger.h |  2 ++
- net/ceph/messenger.c           |  1 +
- net/ceph/messenger_v1.c        | 21 ++++++++++++++++-----
- net/ceph/osd_client.c          |  1 +
- 4 files changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenger.h
-index 2eaaabbe98cb..05e9b39a58f8 100644
---- a/include/linux/ceph/messenger.h
-+++ b/include/linux/ceph/messenger.h
-@@ -231,10 +231,12 @@ struct ceph_msg_data {
- 
- struct ceph_msg_data_cursor {
- 	size_t			total_resid;	/* across all data items */
-+	size_t			sr_total_resid;	/* across all data items for sparse-read */
- 
- 	struct ceph_msg_data	*data;		/* current data item */
- 	size_t			resid;		/* bytes not yet consumed */
- 	int			sr_resid;	/* residual sparse_read len */
-+	int			sr_resid_elen;	/* total sparse_read elen */
- 	bool			need_crc;	/* crc update needed */
- 	union {
- #ifdef CONFIG_BLOCK
-diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-index 3c8b78d9c4d1..eafd592af382 100644
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -1073,6 +1073,7 @@ void ceph_msg_data_cursor_init(struct ceph_msg_data_cursor *cursor,
- 	cursor->total_resid = length;
- 	cursor->data = msg->data;
- 	cursor->sr_resid = 0;
-+	cursor->sr_resid_elen = 0;
- 
- 	__ceph_msg_data_cursor_init(cursor);
- }
-diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
-index 4cb60bacf5f5..7425fa26e4c3 100644
---- a/net/ceph/messenger_v1.c
-+++ b/net/ceph/messenger_v1.c
-@@ -160,7 +160,9 @@ static size_t sizeof_footer(struct ceph_connection *con)
- static void prepare_message_data(struct ceph_msg *msg, u32 data_len)
- {
- 	/* Initialize data cursor if it's not a sparse read */
--	if (!msg->sparse_read)
-+	if (msg->sparse_read)
-+		msg->cursor.sr_total_resid = data_len;
-+	else
- 		ceph_msg_data_cursor_init(&msg->cursor, msg, data_len);
- }
- 
-@@ -1032,18 +1034,25 @@ static int read_partial_sparse_msg_data(struct ceph_connection *con)
- 	bool do_datacrc = !ceph_test_opt(from_msgr(con->msgr), NOCRC);
- 	u32 crc = 0;
- 	int ret = 1;
-+	int len;
- 
- 	if (do_datacrc)
- 		crc = con->in_data_crc;
- 
--	do {
--		if (con->v1.in_sr_kvec.iov_base)
-+	while (cursor->sr_total_resid && ret > 0) {
-+		len = 0;
-+		if (con->v1.in_sr_kvec.iov_base) {
- 			ret = read_partial_message_chunk(con,
- 							 &con->v1.in_sr_kvec,
- 							 con->v1.in_sr_len,
- 							 &crc);
--		else if (cursor->sr_resid > 0)
-+			if (ret == 1)
-+				len = con->v1.in_sr_len;
-+		} else if (cursor->sr_resid > 0) {
- 			ret = read_partial_sparse_msg_extent(con, &crc);
-+			if (ret == 1)
-+				len = cursor->sr_resid_elen;
-+		}
- 
- 		if (ret <= 0) {
- 			if (do_datacrc)
-@@ -1051,11 +1060,13 @@ static int read_partial_sparse_msg_data(struct ceph_connection *con)
- 			return ret;
- 		}
- 
-+		cursor->sr_total_resid -= len;
-+
- 		memset(&con->v1.in_sr_kvec, 0, sizeof(con->v1.in_sr_kvec));
- 		ret = con->ops->sparse_read(con, cursor,
- 				(char **)&con->v1.in_sr_kvec.iov_base);
- 		con->v1.in_sr_len = ret;
--	} while (ret > 0);
-+	}
- 
- 	if (do_datacrc)
- 		con->in_data_crc = crc;
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index 848ef19055a0..b53b017afc0a 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -5946,6 +5946,7 @@ static int osd_sparse_read(struct ceph_connection *con,
- 
- 		/* send back the new length and nullify the ptr */
- 		cursor->sr_resid = elen;
-+		cursor->sr_resid_elen = elen;
- 		ret = elen;
- 		*pbuf = NULL;
- 
--- 
-2.43.0
+Applied to the vfs.netfs branch of the vfs/vfs.git tree.
+Patches in the vfs.netfs branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.netfs
+
+[01/39] netfs, fscache: Move fs/fscache/* into fs/netfs/
+        https://git.kernel.org/vfs/vfs/c/94029f4c6459
+[02/39] netfs, fscache: Combine fscache with netfs
+        https://git.kernel.org/vfs/vfs/c/77eb7aa4805e
+[03/39] netfs, fscache: Remove ->begin_cache_operation
+        https://git.kernel.org/vfs/vfs/c/a7f70e4b4ebf
+[04/39] netfs, fscache: Move /proc/fs/fscache to /proc/fs/netfs and put in a symlink
+        https://git.kernel.org/vfs/vfs/c/131e9eb7bd1f
+[05/39] netfs: Move pinning-for-writeback from fscache to netfs
+        https://git.kernel.org/vfs/vfs/c/1792e1940f54
+[06/39] netfs: Add a procfile to list in-progress requests
+        https://git.kernel.org/vfs/vfs/c/1491057f69dc
+[07/39] netfs: Allow the netfs to make the io (sub)request alloc larger
+        https://git.kernel.org/vfs/vfs/c/6c3efd20150f
+[08/39] netfs: Add a ->free_subrequest() op
+        https://git.kernel.org/vfs/vfs/c/e0b44a08ac20
+[09/39] afs: Don't use folio->private to record partial modification
+        https://git.kernel.org/vfs/vfs/c/9d2a996de9a2
+[10/39] netfs: Provide invalidate_folio and release_folio calls
+        https://git.kernel.org/vfs/vfs/c/6136f4723a2e
+[11/39] netfs: Implement unbuffered/DIO vs buffered I/O locking
+        https://git.kernel.org/vfs/vfs/c/1243d122feca
+[12/39] netfs: Add iov_iters to (sub)requests to describe various buffers
+        https://git.kernel.org/vfs/vfs/c/a164fd03f073
+[13/39] netfs: Add support for DIO buffering
+        https://git.kernel.org/vfs/vfs/c/669e8c33691d
+[14/39] netfs: Provide tools to create a buffer in an xarray
+        https://git.kernel.org/vfs/vfs/c/c554dc89292d
+[15/39] netfs: Add bounce buffering support
+        https://git.kernel.org/vfs/vfs/c/476c24c3e80b
+[16/39] netfs: Add func to calculate pagecount/size-limited span of an iterator
+        https://git.kernel.org/vfs/vfs/c/25d0f84de71d
+[17/39] netfs: Limit subrequest by size or number of segments
+        https://git.kernel.org/vfs/vfs/c/53ee4e38619a
+[18/39] netfs: Export netfs_put_subrequest() and some tracepoints
+        https://git.kernel.org/vfs/vfs/c/ac3fc1846a06
+[19/39] netfs: Extend the netfs_io_*request structs to handle writes
+        https://git.kernel.org/vfs/vfs/c/90999722fa0b
+[20/39] netfs: Add a hook to allow tell the netfs to update its i_size
+        https://git.kernel.org/vfs/vfs/c/27dfd078db66
+[21/39] netfs: Make netfs_put_request() handle a NULL pointer
+        https://git.kernel.org/vfs/vfs/c/0ffd2319fb64
+[22/39] netfs: Make the refcounting of netfs_begin_read() easier to use
+        https://git.kernel.org/vfs/vfs/c/f7125395caba
+[23/39] netfs: Prep to use folio->private for write grouping and streaming write
+        https://git.kernel.org/vfs/vfs/c/acadf22234e3
+[24/39] netfs: Dispatch write requests to process a writeback slice
+        https://git.kernel.org/vfs/vfs/c/17c2b775e3f4
+[25/39] netfs: Provide func to copy data to pagecache for buffered write
+        https://git.kernel.org/vfs/vfs/c/dd6ed9717a0b
+[26/39] netfs: Make netfs_read_folio() handle streaming-write pages
+        https://git.kernel.org/vfs/vfs/c/c958b464f07f
+[27/39] netfs: Allocate multipage folios in the writepath
+        https://git.kernel.org/vfs/vfs/c/6076cc863769
+[28/39] netfs: Implement support for unbuffered/DIO read
+        https://git.kernel.org/vfs/vfs/c/9409fe70ca46
+[29/39] netfs: Implement unbuffered/DIO write support
+        https://git.kernel.org/vfs/vfs/c/7acd7b902241
+[30/39] netfs: Implement buffered write API
+        https://git.kernel.org/vfs/vfs/c/7b1321366337
+[31/39] netfs: Allow buffered shared-writeable mmap through netfs_page_mkwrite()
+        https://git.kernel.org/vfs/vfs/c/d156da6e235c
+[32/39] netfs: Provide netfs_file_read_iter()
+        https://git.kernel.org/vfs/vfs/c/899ae1e25a64
+[33/39] netfs, cachefiles: Pass upper bound length to allow expansion
+        https://git.kernel.org/vfs/vfs/c/52882c158a30
+[34/39] netfs: Provide a writepages implementation
+        https://git.kernel.org/vfs/vfs/c/02bf7b4afdba
+[35/39] netfs: Provide a launder_folio implementation
+        https://git.kernel.org/vfs/vfs/c/cf4e16d98659
+[36/39] netfs: Implement a write-through caching option
+        https://git.kernel.org/vfs/vfs/c/7bf6f13f4a63
+[37/39] netfs: Optimise away reads above the point at which there can be no data
+        https://git.kernel.org/vfs/vfs/c/fad15293bd0d
+[38/39] afs: Use the netfs write helpers
+        https://git.kernel.org/vfs/vfs/c/0095df30ad7b
+[39/39] 9p: Use netfslib read/write_iter
+        https://git.kernel.org/vfs/vfs/c/361e79613421
 
