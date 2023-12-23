@@ -1,61 +1,31 @@
-Return-Path: <ceph-devel+bounces-433-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-434-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70CFD81CB81
-	for <lists+ceph-devel@lfdr.de>; Fri, 22 Dec 2023 15:49:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A573881D206
+	for <lists+ceph-devel@lfdr.de>; Sat, 23 Dec 2023 04:55:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5584B23044
-	for <lists+ceph-devel@lfdr.de>; Fri, 22 Dec 2023 14:48:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ACB22837DB
+	for <lists+ceph-devel@lfdr.de>; Sat, 23 Dec 2023 03:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB8023745;
-	Fri, 22 Dec 2023 14:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="aAgxxDeh"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF44515D1;
+	Sat, 23 Dec 2023 03:55:18 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7FC22F0C
-	for <ceph-devel@vger.kernel.org>; Fri, 22 Dec 2023 14:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-35fb96f3404so7613565ab.2
-        for <ceph-devel@vger.kernel.org>; Fri, 22 Dec 2023 06:48:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1703256526; x=1703861326; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+/ZtCzo4gYUCk7AMUM/tMA1erkQjpbn3vDUdNYgyjz8=;
-        b=aAgxxDehu5Q1sN59k+x0HZ6yBENWY1kl1mn3s1js3owRcypyP/39gKqAke5Xn6vVvQ
-         KOFkIcpieWVImkGIIFZ3EjqlPBf73mijaETSePkexTwn3aN8HmsIPuEnzWMy7HgmR+Cn
-         0i6evkso8DlS8M6HcaHNz5WOtY3uQaAtbjHSM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1703256526; x=1703861326;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+/ZtCzo4gYUCk7AMUM/tMA1erkQjpbn3vDUdNYgyjz8=;
-        b=cYU3MDaNFhmFyJTqHh0FK3sN9KaVPb6BRiq6idu8MQkYfUAoH9DbL7fphJW/yYN2zZ
-         6r2oWuG6fdNrrDJqfYgl4ts9ZThHbkQ39MAN17Si9wAjF1xKPugxzVe20HSV4YzrH2dq
-         IPwEd7Zk0IM79vpkvtgo3Cl17M8nlV111z6aKZCXz9swqgIh4A5GpGQkTnj1R6LBoYu4
-         6zD8IsaT9OXuwZyAviZHahhfi1WY0PO/mbrNk/NZSMMWXmqzsGGTlbzfpWpcKlwZz9nj
-         WSs2TvOnBGjR42skHxol4n+QHZRQYPL3nP5L8h0tRWfyOA+MUmqrW1rhJumMLx65O5/I
-         tg0w==
-X-Gm-Message-State: AOJu0Yw9QQHdCM6Hw9Vc60Fh94tpvDQiXkC4QhTjXv+ljLu95IFdaQc9
-	ifMpvUNvYLGFzKMjOZTBCmWI+O6m67pm
-X-Google-Smtp-Source: AGHT+IGNYEaCd7VnPJU+SLpCD00SyqziVzBEcJfYwyIvGvGwG7rBqN/uqdW99GtII8NqYrU3bv6fnw==
-X-Received: by 2002:a05:6e02:330a:b0:35f:d251:3373 with SMTP id bm10-20020a056e02330a00b0035fd2513373mr1879802ilb.28.1703256526712;
-        Fri, 22 Dec 2023 06:48:46 -0800 (PST)
-Received: from [172.22.22.28] (c-98-61-227-136.hsd1.mn.comcast.net. [98.61.227.136])
-        by smtp.googlemail.com with ESMTPSA id l3-20020a92d943000000b0035fda20a688sm680466ilq.60.2023.12.22.06.48.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 22 Dec 2023 06:48:46 -0800 (PST)
-Message-ID: <31812ee1-3f57-48b0-a623-fa5921156cb6@ieee.org>
-Date: Fri, 22 Dec 2023 08:48:45 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB7E10F4;
+	Sat, 23 Dec 2023 03:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=26;SR=0;TI=SMTPD_---0Vz0J.hE_1703303701;
+Received: from 30.212.153.241(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0Vz0J.hE_1703303701)
+          by smtp.aliyun-inc.com;
+          Sat, 23 Dec 2023 11:55:04 +0800
+Message-ID: <d50555e9-3b8e-41d4-bec6-317aaaec5ff0@linux.alibaba.com>
+Date: Sat, 23 Dec 2023 11:55:00 +0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -63,84 +33,123 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rbd: use check_sub_overflow() to limit the number of
- snapshots
+Subject: Re: [PATCH] Fix EROFS Kconfig
 Content-Language: en-US
-To: Ilya Dryomov <idryomov@gmail.com>, Dmitry Antipov <dmantipov@yandex.ru>
-Cc: Dongsheng Yang <dongsheng.yang@easystack.cn>, ceph-devel@vger.kernel.org,
- linux-block@vger.kernel.org
-References: <20231221133928.49824-1-dmantipov@yandex.ru>
- <CAOi1vP9wHBG_g7mxZ4NoM5Y6b_xW-fRF6iUcvC_W3UcF3FbESA@mail.gmail.com>
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <CAOi1vP9wHBG_g7mxZ4NoM5Y6b_xW-fRF6iUcvC_W3UcF3FbESA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+To: David Howells <dhowells@redhat.com>, Gao Xiang <xiang@kernel.org>
+Cc: Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>,
+ Steve French <smfrench@gmail.com>, Matthew Wilcox <willy@infradead.org>,
+ Marc Dionne <marc.dionne@auristor.com>, Paulo Alcantara <pc@manguebit.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Ilya Dryomov <idryomov@gmail.com>,
+ Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ Jeff Layton <jlayton@kernel.org>
+References: <20231221132400.1601991-5-dhowells@redhat.com>
+ <20231221132400.1601991-1-dhowells@redhat.com>
+ <2265065.1703250126@warthog.procyon.org.uk>
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <2265065.1703250126@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 12/22/23 8:23 AM, Ilya Dryomov wrote:
-> On Thu, Dec 21, 2023 at 2:40 PM Dmitry Antipov <dmantipov@yandex.ru> wrote:
->>
->> When compiling with clang-18 and W=1, I've noticed the following
->> warning:
->>
->> drivers/block/rbd.c:6093:17: warning: result of comparison of constant
->> 2305843009213693948 with expression of type 'u32' (aka 'unsigned int')
->> is always false [-Wtautological-constant-out-of-range-compare]
->>   6093 |         if (snap_count > (SIZE_MAX - sizeof (struct ceph_snap_context))
->>        |             ~~~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>   6094 |                                  / sizeof (u64)) {
->>        |                                  ~~~~~~~~~~~~~~
->>
->> Since the plain check with '>' makes sense only if U32_MAX == SIZE_MAX
->> which is not true for the 64-bit kernel, prefer 'check_sub_overflow()'
->> in 'rbd_dev_v2_snap_context()' and 'rbd_dev_ondisk_valid()' as well.
->>
->> Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
->> ---
->>   drivers/block/rbd.c | 8 ++++----
->>   1 file changed, 4 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
->> index a999b698b131..ef8e6fbc9a79 100644
->> --- a/drivers/block/rbd.c
->> +++ b/drivers/block/rbd.c
->> @@ -933,7 +933,7 @@ static bool rbd_image_format_valid(u32 image_format)
->>
->>   static bool rbd_dev_ondisk_valid(struct rbd_image_header_ondisk *ondisk)
->>   {
->> -       size_t size;
->> +       size_t size, result;
->>          u32 snap_count;
->>
->>          /* The header has to start with the magic rbd header text */
->> @@ -956,7 +956,7 @@ static bool rbd_dev_ondisk_valid(struct rbd_image_header_ondisk *ondisk)
->>           */
->>          snap_count = le32_to_cpu(ondisk->snap_count);
->>          size = SIZE_MAX - sizeof (struct ceph_snap_context);
->> -       if (snap_count > size / sizeof (__le64))
->> +       if (check_sub_overflow(size / sizeof(__le64), snap_count, &result))
-> 
-> Hi Dmitry,
-> 
-> There is a limit on the number of snapshots:
-> 
-> #define RBD_MAX_SNAP_COUNT      510     /* allows max snapc to fit in 4KB */
-> 
-> It's not direct, but it's a hard limit, at least in the current
-> implementation.  Let's just replace these with direct comparisons for
-> RBD_MAX_SNAP_COUNT.
+Hi,
 
-The point of the original code was to ensure the on-disk snap_count
-value was sane, but there's no point in checking for a 64-bit size_t. 
-Comparing against RBD_MAX_SNAP_COUNT is better.  I think it's safe
-to assume RBD_MAX_SNAP_COUNT (or rather, the size required to hold
-that many snapshot IDs) can always be represented in a size_t.
-
-					-Alex
-
+On 12/22/23 9:02 PM, David Howells wrote:
+> This needs an additional change (see attached).
 > 
-> Thanks,
-> 
->                  Ilya
+> diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
+> index 1d318f85232d..1949763e66aa 100644
+> --- a/fs/erofs/Kconfig
+> +++ b/fs/erofs/Kconfig
+> @@ -114,7 +114,8 @@ config EROFS_FS_ZIP_DEFLATE
+>  
+>  config EROFS_FS_ONDEMAND
+>  	bool "EROFS fscache-based on-demand read support"
+> -	depends on CACHEFILES_ONDEMAND && (EROFS_FS=m && FSCACHE || EROFS_FS=y && FSCACHE=y)
+> +	depends on CACHEFILES_ONDEMAND && FSCACHE && \
+> +		(EROFS_FS=m && NETFS_SUPPORT || EROFS_FS=y && NETFS_SUPPORT=y)
+>  	default n
+>  	help
+>  	  This permits EROFS to use fscache-backed data blobs with on-demand
 > 
 
+Thanks for the special reminder.  I noticed that it has been included in
+this commit[*] in the dev tree.
+
+[*]
+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=netfs-lib&id=7472173cc3baf4a0bd8c803e56c37efdb8388f1c
+
+
+Besides I noticed an issue when trying to configure EROFS_FS_ONDEMAND.
+The above kconfig indicates that EROFS_FS_ONDEMAND depends on
+NETFS_SUPPORT, while NETFS_SUPPORT has no prompt in menuconfig and can
+only be selected by, e.g. fs/ceph/Kconfig:
+
+	config CEPH_FS
+        select NETFS_SUPPORT
+
+IOW EROFS_FS_ONDEMAND will not be prompted and has no way being
+configured if NETFS_SUPPORT itself is not selected by any other filesystem.
+
+
+I tried to fix this in following way:
+
+diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
+index 1949763e66aa..5b7b71e537f1 100644
+--- a/fs/erofs/Kconfig
++++ b/fs/erofs/Kconfig
+@@ -5,6 +5,7 @@ config EROFS_FS
+        depends on BLOCK
+        select FS_IOMAP
+        select LIBCRC32C
++       select NETFS_SUPPORT if EROFS_FS_ONDEMAND
+        help
+          EROFS (Enhanced Read-Only File System) is a lightweight read-only
+          file system with modern designs (e.g. no buffer heads, inline
+@@ -114,8 +115,10 @@ config EROFS_FS_ZIP_DEFLATE
+
+ config EROFS_FS_ONDEMAND
+        bool "EROFS fscache-based on-demand read support"
+-       depends on CACHEFILES_ONDEMAND && FSCACHE && \
+-               (EROFS_FS=m && NETFS_SUPPORT || EROFS_FS=y &&
+NETFS_SUPPORT=y)
++       depends on EROFS_FS
++       select FSCACHE
+        default n
+        help
+          This permits EROFS to use fscache-backed data blobs with on-demand
+
+
+But still the dependency for CACHEFILES_ONDEMAND and CACHEFILES can not
+be resolved.  Though CACHEFILES is not a must during the linking stage
+as EROFS only calls fscache APIs directly, CACHEFILES is indeed needed
+to ensure that the EROFS on-demand functionality works at runtime.
+
+If we let EROFS_FS_ONDEMAND select CACHEFILES_ONDEMAND, then only
+CACHEFILES_ONDEMAND will be selected while CACHEFILES can be still N.
+Maybe EROFS_FS_ONDEMAND needs to selct both CACHEFILES_ONDEMAND and
+CACHEFILES?
+
+Besides if we make EROFS_FS_ONDEMAND depends on CACHEFILES_ONDEMAND,
+then there will be a recursive dependency loop, as
+
+fs/netfs/Kconfig:3:error: recursive dependency detected!
+fs/netfs/Kconfig:3:	symbol NETFS_SUPPORT is selected by EROFS_FS_ONDEMAND
+fs/erofs/Kconfig:116:	symbol EROFS_FS_ONDEMAND depends on
+CACHEFILES_ONDEMAND
+fs/cachefiles/Kconfig:30:	symbol CACHEFILES_ONDEMAND depends on CACHEFILES
+fs/cachefiles/Kconfig:3:	symbol CACHEFILES depends on NETFS_SUPPORT
+
+
+Hi Xiang, any better idea?
+
+
+
+-- 
+Thanks,
+Jingbo
 
