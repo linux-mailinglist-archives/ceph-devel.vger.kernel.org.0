@@ -1,137 +1,83 @@
-Return-Path: <ceph-devel+bounces-443-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-444-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D48BD81EC32
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 Dec 2023 05:52:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE66581F6FD
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Dec 2023 11:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88EBE1F22B97
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 Dec 2023 04:52:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64CD01F22A4D
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Dec 2023 10:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99AE73D65;
-	Wed, 27 Dec 2023 04:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E405F6FA5;
+	Thu, 28 Dec 2023 10:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jNHF2Kfa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N0lbqOyo"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453A03C24;
-	Wed, 27 Dec 2023 04:52:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA1C8C433C7;
-	Wed, 27 Dec 2023 04:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AB46AA4;
+	Thu, 28 Dec 2023 10:47:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32363C433C8;
+	Thu, 28 Dec 2023 10:47:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1703652729;
-	bh=8F+Q5xY7ENU1tuVu95m/QH9Eg3HBzZHdpbuoDo4Aoas=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jNHF2KfaQ2Qsj1QbrgaaEqFRB2ZR3rqukSbzooYdkFMzyNaacP/myu8JmNqjTVUrc
-	 mcqYp4Eb96m7hzPoFHIP56ydgRNWhAOLe9fJhnqhi5YNbzR/Nfg3EUsGqSifQ0ULYk
-	 +NnbEm0lDiwWs67t9ceP4NohDDpW1g1OJ8JO8qP6zVVwMTVXjvbC/Yl73i9N9NSoCG
-	 8XYv6EffwyImbgtiKYeW0pC0aqrScnG+TPOgNHVW1wwRljHojTG9Ths02/yoMscE0O
-	 uamWRo2ItoeQAAQ5wua5zI4WBdHal+XHAN7zWJEt1TR+iB2CctHdiCXWLfTF++lxus
-	 9lPWXn2rq9DTQ==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-fscrypt@vger.kernel.org
-Cc: ceph-devel@vger.kernel.org
-Subject: [PATCH] fscrypt: document that CephFS supports fscrypt now
-Date: Tue, 26 Dec 2023 22:51:58 -0600
-Message-ID: <20231227045158.87276-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1703760473;
+	bh=5Oj5V39vAkN1/+i+CrgR3hM1xoyNKUjIkt8y2kK2itI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N0lbqOyoJyeMAeYseh2byh6ANjb73lLSFoo/4Vf3UE84vYDk1TieZPcsFMbb0loqB
+	 J5c41nJjfroqg+lE9GGc0kOGcMTJxCy3AYauRg4GYPutMX/m+iGhLmhRqkfKY8IoEv
+	 HQ6gkkpXqpfaUSwSu7V7SK0kirgYW//TghKZrO0OFcZ8vFivTervREY8Iia7YzaARU
+	 4nrS8pD062BAXhO50kSt3MeaqULSjKL976XU3bOxCS4tcxu9/yoI/LjuylHOVl+oXi
+	 rYFTNFdvU8qGKDS84wZ+xsCp/I0UcygpkM55NDFDntoL8POVYFgAFXl/4qpQMmPknr
+	 lSRN3+TRLr3ug==
+Date: Thu, 28 Dec 2023 11:47:45 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: David Howells <dhowells@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+	Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v5 15/40] netfs: Add support for DIO buffering
+Message-ID: <20231228-wohlbefinden-museen-c5efad4e0d84@brauner>
+References: <20231221132400.1601991-1-dhowells@redhat.com>
+ <20231221132400.1601991-16-dhowells@redhat.com>
+ <20231226165442.GA1202197@dev-arch.thelio-3990X>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20231226165442.GA1202197@dev-arch.thelio-3990X>
 
-From: Eric Biggers <ebiggers@google.com>
+> This will break the build with versions of clang that have support for
+> counted_by (as it has been reverted in main but reapplication to main is
+> being actively worked on) because while annotating pointers with this
+> attribute is a goal of the counted_by attribute, it is not ready yet.
+> Please consider removing this and adding a TODO to annotate it when
+> support is available.
 
-The help text for CONFIG_FS_ENCRYPTION and the fscrypt.rst documentation
-file both list the filesystems that support fscrypt.  CephFS added
-support for fscrypt in v6.6, so add CephFS to the list.
+It's really unpleasant that we keep getting new attributes that we
+seemingly are encouraged to use and get sent patches for it. And then we
+learn a little later that that stuff isn't ready yet. It's annoying. I
+know it isn't your fault but it would be wise to be a little more
+careful. IOW, unless both clang and gcc do support that thing
+appropriately don't send patches to various subsystems for this.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- Documentation/filesystems/fscrypt.rst | 18 +++++++++---------
- fs/crypto/Kconfig                     |  2 +-
- 2 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/filesystems/fscrypt.rst b/Documentation/filesystems/fscrypt.rst
-index 8d38b47b7b83c..e86b886b64d0e 100644
---- a/Documentation/filesystems/fscrypt.rst
-+++ b/Documentation/filesystems/fscrypt.rst
-@@ -24,29 +24,29 @@ completeness this documentation covers the kernel's API anyway.)
- 
- Unlike dm-crypt, fscrypt operates at the filesystem level rather than
- at the block device level.  This allows it to encrypt different files
- with different keys and to have unencrypted files on the same
- filesystem.  This is useful for multi-user systems where each user's
- data-at-rest needs to be cryptographically isolated from the others.
- However, except for filenames, fscrypt does not encrypt filesystem
- metadata.
- 
- Unlike eCryptfs, which is a stacked filesystem, fscrypt is integrated
--directly into supported filesystems --- currently ext4, F2FS, and
--UBIFS.  This allows encrypted files to be read and written without
--caching both the decrypted and encrypted pages in the pagecache,
--thereby nearly halving the memory used and bringing it in line with
--unencrypted files.  Similarly, half as many dentries and inodes are
--needed.  eCryptfs also limits encrypted filenames to 143 bytes,
--causing application compatibility issues; fscrypt allows the full 255
--bytes (NAME_MAX).  Finally, unlike eCryptfs, the fscrypt API can be
--used by unprivileged users, with no need to mount anything.
-+directly into supported filesystems --- currently ext4, F2FS, UBIFS,
-+and CephFS.  This allows encrypted files to be read and written
-+without caching both the decrypted and encrypted pages in the
-+pagecache, thereby nearly halving the memory used and bringing it in
-+line with unencrypted files.  Similarly, half as many dentries and
-+inodes are needed.  eCryptfs also limits encrypted filenames to 143
-+bytes, causing application compatibility issues; fscrypt allows the
-+full 255 bytes (NAME_MAX).  Finally, unlike eCryptfs, the fscrypt API
-+can be used by unprivileged users, with no need to mount anything.
- 
- fscrypt does not support encrypting files in-place.  Instead, it
- supports marking an empty directory as encrypted.  Then, after
- userspace provides the key, all regular files, directories, and
- symbolic links created in that directory tree are transparently
- encrypted.
- 
- Threat model
- ============
- 
-diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
-index 2d0c8922f6350..5aff5934baa12 100644
---- a/fs/crypto/Kconfig
-+++ b/fs/crypto/Kconfig
-@@ -4,21 +4,21 @@ config FS_ENCRYPTION
- 	select CRYPTO
- 	select CRYPTO_HASH
- 	select CRYPTO_SKCIPHER
- 	select CRYPTO_LIB_SHA256
- 	select KEYS
- 	help
- 	  Enable encryption of files and directories.  This
- 	  feature is similar to ecryptfs, but it is more memory
- 	  efficient since it avoids caching the encrypted and
- 	  decrypted pages in the page cache.  Currently Ext4,
--	  F2FS and UBIFS make use of this feature.
-+	  F2FS, UBIFS, and CephFS make use of this feature.
- 
- # Filesystems supporting encryption must select this if FS_ENCRYPTION.  This
- # allows the algorithms to be built as modules when all the filesystems are,
- # whereas selecting them from FS_ENCRYPTION would force them to be built-in.
- #
- # Note: this option only pulls in the algorithms that filesystem encryption
- # needs "by default".  If userspace will use "non-default" encryption modes such
- # as Adiantum encryption, then those other modes need to be explicitly enabled
- # in the crypto API; see Documentation/filesystems/fscrypt.rst for details.
- #
-
-base-commit: 0fc24a6549f9b6efc538b67a098ab577b1f9a00e
--- 
-2.43.0
-
+In any case, this is now fixed. I pulled an updated version from David.
 
