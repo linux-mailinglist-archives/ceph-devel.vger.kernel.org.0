@@ -1,99 +1,100 @@
-Return-Path: <ceph-devel+bounces-478-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-479-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46885824DC7
-	for <lists+ceph-devel@lfdr.de>; Fri,  5 Jan 2024 05:53:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D2B825136
+	for <lists+ceph-devel@lfdr.de>; Fri,  5 Jan 2024 10:52:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8B6E284B79
-	for <lists+ceph-devel@lfdr.de>; Fri,  5 Jan 2024 04:53:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BAAF1F22AB0
+	for <lists+ceph-devel@lfdr.de>; Fri,  5 Jan 2024 09:52:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF8453AC;
-	Fri,  5 Jan 2024 04:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578BE24A1C;
+	Fri,  5 Jan 2024 09:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VTLZVg7n"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xwOOP7fu"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477DD5242;
-	Fri,  5 Jan 2024 04:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mJPEL62eVi84Xk7Scl6XWRFXGzmJNpF/Y9oGJQjtN1Y=; b=VTLZVg7nKMZm2KMb7lg5o9PvD5
-	EuqpAOQdauiVq2ESgt9amfX38XAf1Eqi30RKATfAQwiC/S26DRQe7Xg551K/uydbVKqSrYBHhgzkQ
-	HZGLojzYHxm4D70Yt265+wjirR1nF8dkpWKbkjDzu7U75qpfE0vlUkN07fYxHbtZEcVQ/SNlbqES4
-	/MN3Pbux3ZFtP4r+fR6Y2T67jx1rtDwl0HLQy38FmRaUjcNxCm0kup5Lqq9a7ASB4vAHdaJN08D6G
-	7RUGVMngFqMssgEZomd1Shj2d37M6lrh7x3H+GYVkuVoLkd8u/f15GD5BFjMiqwewHWlMm3/pAaZ/
-	DtD0tYiw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-	id 1rLcBs-00GuHr-UY; Fri, 05 Jan 2024 04:52:17 +0000
-Date: Fri, 5 Jan 2024 04:52:16 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Anna Schumaker <Anna.Schumaker@netapp.com>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92CB241F1;
+	Fri,  5 Jan 2024 09:51:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCECBC433C7;
+	Fri,  5 Jan 2024 09:51:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1704448313;
+	bh=zObzgg5xDJEKxicGf3Aen7ihBLVfTRp4ARHI1eYeTGw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xwOOP7fuywfd1ANXwChAgafiVt6B0zrHR1/0aqaK1ovDh1Lkg+16fd1QnPwt+Ekjo
+	 VwYsj48E0GWH2S/Dd0Xadf0ObUYNutn2N41IwLEZDwGEK0/yflNVJbjQVsAx5ELjVP
+	 yWGogO+2utQetgOGuziLE8oCjcMl/bCYbI0tfZhg=
+Date: Fri, 5 Jan 2024 10:51:50 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jeffrey E Altman <jaltman@auristor.com>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	David Howells <dhowells@redhat.com>,
+	Markus Suvanto <markus.suvanto@gmail.com>,
+	Wang Lei <wang840925@gmail.com>, Jeff Layton <jlayton@redhat.com>,
+	Steve French <smfrench@gmail.com>,
 	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
 	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Fix oops in NFS
-Message-ID: <ZZeLAAf6qiieA5fy@casper.infradead.org>
-References: <2202548.1703245791@warthog.procyon.org.uk>
- <20231221230153.GA1607352@dev-arch.thelio-3990X>
- <20231221132400.1601991-1-dhowells@redhat.com>
- <20231221132400.1601991-38-dhowells@redhat.com>
- <2229136.1703246451@warthog.procyon.org.uk>
+	keyrings@vger.kernel.org, netdev@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 6.6 067/156] keys, dns: Allow key types (eg. DNS) to be
+ reclaimed immediately on expiry
+Message-ID: <2024010526-catalyst-flame-2e33@gregkh>
+References: <20231230115812.333117904@linuxfoundation.org>
+ <20231230115814.539935693@linuxfoundation.org>
+ <cd1d6f0d-a05b-412c-882a-e62ee9e67b85@auristor.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <2229136.1703246451@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cd1d6f0d-a05b-412c-882a-e62ee9e67b85@auristor.com>
 
-On Fri, Dec 22, 2023 at 12:00:51PM +0000, David Howells wrote:
-> David Howells <dhowells@redhat.com> wrote:
+On Thu, Jan 04, 2024 at 09:13:34PM -0500, Jeffrey E Altman wrote:
+> On 12/30/2023 6:58 AM, Greg Kroah-Hartman wrote:
+> > 6.6-stable review patch.  If anyone has any objections, please let me know.
+> > 
+> > ------------------
+> > 
+> > From: David Howells <dhowells@redhat.com>
+> > 
+> > [ Upstream commit 39299bdd2546688d92ed9db4948f6219ca1b9542 ]
+> Greg,
 > 
-> > A better way, though, is to move the call to nfs_netfs_inode_init()
-> > and give it a flag to say whether or not we want the facility.
+> Upstream commit 39299bdd2546688d92ed9db4948f6219ca1b9542 ("keys, dns: Allow
+> key types (eg. DNS) to be reclaimed immediately on expiry") was subsequently
+> fixed by
 > 
-> Okay, I think I'll fold in the attached change.
+>   commit 1997b3cb4217b09e49659b634c94da47f0340409
+>   Author: Edward Adam Davis <eadavis@qq.com>
+>   Date:   Sun Dec 24 00:02:49 2023 +0000
+> 
+>     keys, dns: Fix missing size check of V1 server-list header
+> 
+>   Fixes: b946001d3bb1 ("keys, dns: Allow key types (eg. DNS) to be reclaimed
+> immediately on expiry")
+> 
+> If it is not too late, would it be possible to apply 1997b3cb421 to the
+> branches b946001d3bb1 was cherry-picked to before release?
+> I believe the complete set of branches are
+> 
+>   linux-6.6.y, linux-6.1.y, linux-5.15.y, linux-5.10.y, linux-5.0.y
 
-This commit (100ccd18bb41 in linux-next 20240104) is bad for me.  After
-it, running xfstests gives me first a bunch of errors along these lines:
+The stable trees were already released with this change in it, so I'll
+queue this up for the next round, thanks.
 
-00004 depmod: ERROR: failed to load symbols from /lib/modules/6.7.0-rc7-00037-g100ccd18bb41/kernel/fs/gfs2/gfs2.ko: Exec format error
-00004 depmod: ERROR: failed to load symbols from /lib/modules/6.7.0-rc7-00037-g100ccd18bb41/kernel/fs/zonefs/zonefs.ko: Exec format error
-00004 depmod: ERROR: failed to load symbols from /lib/modules/6.7.0-rc7-00037-g100ccd18bb41/kernel/security/keys/encrypted-keys/encrypted-keys.ko: Exec format error
-
-and then later:
-
-00016 generic/001       run fstests generic/001 at 2024-01-05 04:50:46
-00017 [not run] this test requires a valid $TEST_DEV
-00017 generic/002       run fstests generic/002 at 2024-01-05 04:50:46
-00017 [not run] this test requires a valid $TEST_DEV
-00017 generic/003       run fstests generic/003 at 2024-01-05 04:50:47
-00018 [not run] this test requires a valid $SCRATCH_DEV
-...
-
-so I think that's page cache corruption of some kind.
+greg k-h
 
