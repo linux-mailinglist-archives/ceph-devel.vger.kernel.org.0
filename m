@@ -1,47 +1,64 @@
-Return-Path: <ceph-devel+bounces-489-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-490-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9906E827AD8
-	for <lists+ceph-devel@lfdr.de>; Mon,  8 Jan 2024 23:49:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8611682821D
+	for <lists+ceph-devel@lfdr.de>; Tue,  9 Jan 2024 09:40:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3151928509A
-	for <lists+ceph-devel@lfdr.de>; Mon,  8 Jan 2024 22:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A675288427
+	for <lists+ceph-devel@lfdr.de>; Tue,  9 Jan 2024 08:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B3B5674B;
-	Mon,  8 Jan 2024 22:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9177238FB7;
+	Tue,  9 Jan 2024 08:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j++Ya042"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hae9Vcp8"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3188326AD1;
-	Mon,  8 Jan 2024 22:48:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65B9DC433C7;
-	Mon,  8 Jan 2024 22:48:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C92229431;
+	Tue,  9 Jan 2024 08:33:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 359E9C433F1;
+	Tue,  9 Jan 2024 08:33:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1704754093;
-	bh=2dn01Ck7l9ZSNneq0vNQpDyByDGDn8pwsyKXUDoZh+8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=j++Ya042narb+knTvJOY2epSK5WKovJhRVG8Vi6o/sRSdUtMt03nYFrJPl/JiagIK
-	 XLOncxosj2WCkpcULAnF+5nVHvt9tiBLog7bT1m0n8uo6E+MN8Mug9n0x1z4k5yDNO
-	 KnZYEFGTjv/+BNxk3e5t9SlipKhl6o1q7A/EJEbfq4ELeL7kqZYj90HCkwKmoLCuu0
-	 0dYrM+MRnywQumVZ4/vnaJFxNC0/3jQPIdGJAkm/lb2ErmkQKPkS46D2U7+M+3hNT1
-	 OyRQbRWQomXojWRZbHa0peIv5gnuKNCXDj57bwOh7XpA70E4eJeFYHL/Ec8CHHDlEH
-	 xPsI2ZYxYZCWg==
-Date: Mon, 8 Jan 2024 14:48:11 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [GIT PULL] fscrypt updates for 6.8
-Message-ID: <20240108224811.GA94550@sol.localdomain>
+	s=k20201202; t=1704789185;
+	bh=A8Hyrx8gv2NivKMAgmiyJ4RK4toNpxNWKdpezhMjsB4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hae9Vcp8/kaaJWKrCD8n2rypMTJgDsf+fIUhRrlgD2zzHG1fE0pMkgVLy2Aay16i1
+	 cyOHkhWI6T9AA0gmkJRtZt2jCOTuc/GnE/NFt35tRFGpCvFIalZbChShpHaOxn17RM
+	 sI5RHW0Ki3H0e99EmMwZ6tO0SgA6QAqR2LAPQFlkuKHdVPcV2i/aQ865CceI5/rxfK
+	 gR0HZ9dSmm6LFVOSKnwJUC2JqLjmUkL+hI52eC592xyJdoFew40D8m5YvlAVdr2EqL
+	 CHVYbJeXgyIcRIjxYeABsn7YZUkU56k8rkALLN+maFLPBr7Q+5gP4DXI0YDvuJOFww
+	 WRb5Fwe1ZVgUw==
+Date: Tue, 9 Jan 2024 08:32:57 +0000
+From: Simon Horman <horms@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>,
+	Jeff Layton <jlayton@kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>, linux-cachefs@redhat.com,
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yiqun Leng <yqleng@linux.alibaba.com>,
+	Jia Zhu <zhujia.zj@bytedance.com>
+Subject: Re: [PATCH 1/5] cachefiles: Fix __cachefiles_prepare_write()
+Message-ID: <20240109083257.GK132648@kernel.org>
+References: <20240107160916.GA129355@kernel.org>
+ <20240103145935.384404-1-dhowells@redhat.com>
+ <20240103145935.384404-2-dhowells@redhat.com>
+ <1544730.1704753090@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -50,38 +67,21 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <1544730.1704753090@warthog.procyon.org.uk>
 
-The following changes since commit 33cc938e65a98f1d29d0a18403dbbee050dcad9a:
+On Mon, Jan 08, 2024 at 10:31:30PM +0000, David Howells wrote:
+> Simon Horman <horms@kernel.org> wrote:
+> 
+> > I realise these patches have been accepted, but I have a minor nit:
+> > pos is now unsigned, and so cannot be less than zero.
+> 
+> Good point.  How about the attached patch.  Whilst I would prefer to use
+> unsigned long long to avoid the casts, it might 
 
-  Linux 6.7-rc4 (2023-12-03 18:52:56 +0900)
+Hi David,
 
-are available in the Git repository at:
+I would also prefer to avoid casts, but I agree this is a good way forward.
+Thanks for the quick fix.
 
-  https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
-
-for you to fetch changes up to 2a0e85719892a1d63f8f287563e2c1778a77879e:
-
-  fs: move fscrypt keyring destruction to after ->put_super (2023-12-27 21:56:01 -0600)
-
-----------------------------------------------------------------
-
-Adjust the timing of the fscrypt keyring destruction, to prepare for
-btrfs's fscrypt support. Also document that CephFS supports fscrypt now.
-
-----------------------------------------------------------------
-Eric Biggers (4):
-      fscrypt.rst: update definition of struct fscrypt_context_v2
-      fscrypt: update comment for do_remove_key()
-      fscrypt: document that CephFS supports fscrypt now
-      f2fs: move release of block devices to after kill_block_super()
-
-Josef Bacik (1):
-      fs: move fscrypt keyring destruction to after ->put_super
-
- Documentation/filesystems/fscrypt.rst | 21 +++++++++++----------
- fs/crypto/Kconfig                     |  2 +-
- fs/crypto/keyring.c                   |  6 +++---
- fs/f2fs/super.c                       | 13 ++++++++-----
- fs/super.c                            | 12 ++++++------
- 5 files changed, 29 insertions(+), 25 deletions(-)
+Reviewed-by: Simon Horman <horms@kernel.org>
 
