@@ -1,222 +1,263 @@
-Return-Path: <ceph-devel+bounces-529-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-530-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE6B82E966
-	for <lists+ceph-devel@lfdr.de>; Tue, 16 Jan 2024 07:03:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9933D82EC79
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Jan 2024 11:01:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD565B226E4
-	for <lists+ceph-devel@lfdr.de>; Tue, 16 Jan 2024 06:03:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6765F1C22B6A
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Jan 2024 10:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93E5134DF;
-	Tue, 16 Jan 2024 06:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1408E1B7F7;
+	Tue, 16 Jan 2024 10:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HA96MowV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AljnCxbg"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC79134D9
-	for <ceph-devel@vger.kernel.org>; Tue, 16 Jan 2024 06:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1705384985;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HNIFIBX3rsjA4UvAWg68N+X5wGzA8xsA1jGnp4p1Y3c=;
-	b=HA96MowVwISeHRSSQ0em3aZ847rfeBHgBpBy6mUambirjoKi7HXg1Lle3KGXxarmNp9LTr
-	iAzR14HPHXQYWAPja655sJuG5KGfouGZr2PBcitxGLJVgafKOR5iE08K6KgkFZnPkarpRg
-	F2zdjwbdZrVTTH42fC8ez6Cm+oD5/X0=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-447-JgdJW07FPfqJbCsZ_B1pSg-1; Tue, 16 Jan 2024 01:03:03 -0500
-X-MC-Unique: JgdJW07FPfqJbCsZ_B1pSg-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a2bffe437b5so306441766b.1
-        for <ceph-devel@vger.kernel.org>; Mon, 15 Jan 2024 22:03:03 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415621B7ED
+	for <ceph-devel@vger.kernel.org>; Tue, 16 Jan 2024 10:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-598dfed6535so1447675eaf.0
+        for <ceph-devel@vger.kernel.org>; Tue, 16 Jan 2024 02:00:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1705399218; x=1706004018; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fseC8UXBuADa/pKJIdDQ0qJOUNGx5GVC4FkOhJYySFI=;
+        b=AljnCxbgjir0fKAvj7FJjXPYpXOo7VMGdjCMbjfGLQ4PBAGGjHNzZriP9gWaOmv6K3
+         prXKY9eisaHae17EFFlebbjxcqzSfZJlwAYYYCpWGTt6QL2V3CL0fMz96Gt39XgLrZXD
+         +wVXiUPAx5ICusLNdzrw1rwmhPFpAlo7DKArx88l2NdYg2ryb9wzQorxcXXIXc09MmqC
+         9w1GiuHLhuwGHDMVqij9eZZpHjWZ3qrXmau8VNOdjXdw5ElV2YtbKO3ud6odRPJqkYjG
+         6KKp+vvnngRTZ5ZAn7qq2/PwCJsnD6iPQbV8cwB7CE2BAJpI50iw0kRmDAkSFxiCer+U
+         K5yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705384982; x=1705989782;
+        d=1e100.net; s=20230601; t=1705399218; x=1706004018;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HNIFIBX3rsjA4UvAWg68N+X5wGzA8xsA1jGnp4p1Y3c=;
-        b=J3ykjC6C/uUNZUsjDq2x0UBYfbp2lY1hnY38TtjDwuCLACpYKD6sdGYlzI6HXPI5uL
-         cASaE7hyNqDxJoabQWtTYbgieJWhr5lpktsWSFykPfaK+SS6JTMq9TQlIhmC0G3RGnSJ
-         17/v5Ouyz6Mjw+um8BlJs1ELR5w+E3lUeIS/cdrYCTacPX90JlwqENQyYLLPy5pNu4K+
-         GweoDF8m9OTBzK+/WF0UhlKw5VWeRvy21vVG9GbwNKxKK5YfEmwmD/nRxmOoMbAvHu6s
-         yH+iRfr1RcDbzl1Usr4VJLxr2+QiaAfyp0JhDNUDHPGpHpSa8JgjZF+MJPxad1M/rdlG
-         /CTg==
-X-Gm-Message-State: AOJu0YwcTG9eV8AUwYDCD3A4dwRGvid57HXenL/gIOvtQgodbwQMq03M
-	3Mj/fuVEA4Y+yZhoX1BMZ53s5OGy27D8V3feXZrNSlmF3S1h9M2sVyXlqHtXK8CPy8h99ql2jfN
-	rw0YJx5cdunNJr0ZwolrLgB+B4vyla9u9L6J9HtIZ0Yu0Zg==
-X-Received: by 2002:a17:907:36c8:b0:a27:6615:1653 with SMTP id bj8-20020a17090736c800b00a2766151653mr4093912ejc.34.1705384982554;
-        Mon, 15 Jan 2024 22:03:02 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEnBPAtI8f1QH7G2pAT1e5IS2+caImjWVdJBiqkM1lq1v5pBR85hpUWcnaxSrh9OVKm1X4Pxgp2DZQvuMER2Uo=
-X-Received: by 2002:a17:907:36c8:b0:a27:6615:1653 with SMTP id
- bj8-20020a17090736c800b00a2766151653mr4093909ejc.34.1705384982229; Mon, 15
- Jan 2024 22:03:02 -0800 (PST)
+        bh=fseC8UXBuADa/pKJIdDQ0qJOUNGx5GVC4FkOhJYySFI=;
+        b=O8Ww1W/sXjgNCwSvNBMqwPHMmEmrNGGjRkkwuqtDlT3ndSODH0gK7QXvh3+LRBHglF
+         373Mk3qZHO9zDkcm6A2boP3bL5x2bFuFfuG64f1HHhs3zTidUYgm/9ZpUfavcCBJ373+
+         VJazs0kYiF606whcjjxkZ4I6zU9nckwPz/nGxXwptnzc34xVslqm5A+TYZgWR851d/VU
+         YE04ezsHmBOoTYB7w+kXItHCIQTkRQGpHsLaO+97TgCtuhKgMsNXszw/S5cpBXiopuap
+         4dFus/qB0f6k9S+t6yZrqB5vW+cLskq3Y5fnaAl62nHvNfnXRdAcfnqaoRBEVQBIhH+F
+         3ehg==
+X-Gm-Message-State: AOJu0Yyy7zJOJN86S8PZ/62FH0N5kNEl5SkCVRJLzTgZpyU6QexEsp+2
+	bpyYWseqeYwCdnvGmazPkaJ7LSE0QE1PTgcNp9Mqn6t3HeE=
+X-Google-Smtp-Source: AGHT+IFkyU1u51HleZwIYjjqma4ceGWCP/ndCJtQ7LYORAzzd/drxAs2W4nLtncPXfvrbmbMi+RiNfjPKnJmCMroTD8=
+X-Received: by 2002:a4a:ac89:0:b0:598:4160:406e with SMTP id
+ b9-20020a4aac89000000b005984160406emr3626364oon.0.1705399218271; Tue, 16 Jan
+ 2024 02:00:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240104041723.1120866-1-xiubli@redhat.com>
-In-Reply-To: <20240104041723.1120866-1-xiubli@redhat.com>
-From: Milind Changire <mchangir@redhat.com>
-Date: Tue, 16 Jan 2024 11:32:26 +0530
-Message-ID: <CAED=hWAqrXxr9aDzpytvruKTX9dojVj0cCW58boUuz_7hVnT9g@mail.gmail.com>
-Subject: Re: [PATCH] ceph: always check dir caps asynchronously
-To: xiubli@redhat.com
-Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, jlayton@kernel.org, 
-	vshankar@redhat.com
+References: <20231215002034.205780-1-xiubli@redhat.com> <20231215002034.205780-4-xiubli@redhat.com>
+ <CAOi1vP9ZOyNVC4yquNK6QUFWDr6z+M1e9M2St7uPhRkhfL7QPA@mail.gmail.com> <a1d6e998-f496-4408-9d76-3671ee73e054@redhat.com>
+In-Reply-To: <a1d6e998-f496-4408-9d76-3671ee73e054@redhat.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Tue, 16 Jan 2024 11:00:05 +0100
+Message-ID: <CAOi1vP8xOFA4QgMwjGyzTJuAC6T6+XDypXW3Dhhin0RnUh-ZAQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] libceph: just wait for more data to be available
+ on the socket
+To: Xiubo Li <xiubli@redhat.com>
+Cc: ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com, 
+	mchangir@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Approved.
-
-Reviewed-by: Milind Changire <mchangir@redhat.com>
-
-On Thu, Jan 4, 2024 at 9:49=E2=80=AFAM <xiubli@redhat.com> wrote:
+On Tue, Jan 16, 2024 at 5:09=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
+>
+>
+> On 1/16/24 06:38, Ilya Dryomov wrote:
+>
+> On Fri, Dec 15, 2023 at 1:22=E2=80=AFAM <xiubli@redhat.com> wrote:
 >
 > From: Xiubo Li <xiubli@redhat.com>
 >
-> The MDS will issue the 'Fr' caps for async dirop, while there is
-> buggy in kclient and it could miss releasing the async dirop caps,
-> which is 'Fsxr'. And then the MDS will complain with:
+> The messages from ceph maybe split into multiple socket packages
+> and we just need to wait for all the data to be availiable on the
+> sokcet.
 >
-> "[WRN] client.xxx isn't responding to mclientcaps(revoke) ..."
+> This will add 'sr_total_resid' to record the total length for all
+> data items for sparse-read message and 'sr_resid_elen' to record
+> the current extent total length.
 >
-> So when releasing the dirop async requests or when they fail we
-> should always make sure that being revoked caps could be released.
->
-> URL: https://tracker.ceph.com/issues/50223
+> URL: https://tracker.ceph.com/issues/63586
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  fs/ceph/caps.c       | 6 ------
->  fs/ceph/mds_client.c | 9 ++++-----
->  fs/ceph/mds_client.h | 2 +-
->  fs/ceph/super.h      | 2 --
->  4 files changed, 5 insertions(+), 14 deletions(-)
+>  include/linux/ceph/messenger.h |  2 ++
+>  net/ceph/messenger.c           |  1 +
+>  net/ceph/messenger_v1.c        | 21 ++++++++++++++++-----
+>  net/ceph/osd_client.c          |  1 +
+>  4 files changed, 20 insertions(+), 5 deletions(-)
 >
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index a9e19f1f26e0..4dd92f09b16e 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -3216,7 +3216,6 @@ static int ceph_try_drop_cap_snap(struct ceph_inode=
-_info *ci,
+> diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenge=
+r.h
+> index 2eaaabbe98cb..05e9b39a58f8 100644
+> --- a/include/linux/ceph/messenger.h
+> +++ b/include/linux/ceph/messenger.h
+> @@ -231,10 +231,12 @@ struct ceph_msg_data {
 >
->  enum put_cap_refs_mode {
->         PUT_CAP_REFS_SYNC =3D 0,
-> -       PUT_CAP_REFS_NO_CHECK,
->         PUT_CAP_REFS_ASYNC,
->  };
+>  struct ceph_msg_data_cursor {
+>         size_t                  total_resid;    /* across all data items =
+*/
+> +       size_t                  sr_total_resid; /* across all data items =
+for sparse-read */
 >
-> @@ -3332,11 +3331,6 @@ void ceph_put_cap_refs_async(struct ceph_inode_inf=
-o *ci, int had)
->         __ceph_put_cap_refs(ci, had, PUT_CAP_REFS_ASYNC);
+>         struct ceph_msg_data    *data;          /* current data item */
+>         size_t                  resid;          /* bytes not yet consumed=
+ */
+>         int                     sr_resid;       /* residual sparse_read l=
+en */
+> +       int                     sr_resid_elen;  /* total sparse_read elen=
+ */
+>
+> Hi Xiubo,
+>
+> Is adding yet another sparse-read field to the cursor really needed?
+> Would making read_partial_sparse_msg_extent() decrement sr_total_resid
+> as it goes just like sr_resid is decremented work?
+>
+> This can be improved by removing it. Let me fix it.
+>
+>         bool                    need_crc;       /* crc update needed */
+>         union {
+>  #ifdef CONFIG_BLOCK
+> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+> index 3c8b78d9c4d1..eafd592af382 100644
+> --- a/net/ceph/messenger.c
+> +++ b/net/ceph/messenger.c
+> @@ -1073,6 +1073,7 @@ void ceph_msg_data_cursor_init(struct ceph_msg_data=
+_cursor *cursor,
+>         cursor->total_resid =3D length;
+>         cursor->data =3D msg->data;
+>         cursor->sr_resid =3D 0;
+> +       cursor->sr_resid_elen =3D 0;
+>
+>         __ceph_msg_data_cursor_init(cursor);
 >  }
->
-> -void ceph_put_cap_refs_no_check_caps(struct ceph_inode_info *ci, int had=
-)
-> -{
-> -       __ceph_put_cap_refs(ci, had, PUT_CAP_REFS_NO_CHECK);
-> -}
-> -
->  /*
->   * Release @nr WRBUFFER refs on dirty pages for the given @snapc snap
->   * context.  Adjust per-snap dirty page accounting as appropriate.
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 7bdee08ec2eb..f278194a1a01 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -1089,7 +1089,7 @@ void ceph_mdsc_release_request(struct kref *kref)
->         struct ceph_mds_request *req =3D container_of(kref,
->                                                     struct ceph_mds_reque=
-st,
->                                                     r_kref);
-> -       ceph_mdsc_release_dir_caps_no_check(req);
-> +       ceph_mdsc_release_dir_caps_async(req);
->         destroy_reply_info(&req->r_reply_info);
->         if (req->r_request)
->                 ceph_msg_put(req->r_request);
-> @@ -4428,7 +4428,7 @@ void ceph_mdsc_release_dir_caps(struct ceph_mds_req=
-uest *req)
->         }
->  }
->
-> -void ceph_mdsc_release_dir_caps_no_check(struct ceph_mds_request *req)
-> +void ceph_mdsc_release_dir_caps_async(struct ceph_mds_request *req)
+> diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
+> index 4cb60bacf5f5..7425fa26e4c3 100644
+> --- a/net/ceph/messenger_v1.c
+> +++ b/net/ceph/messenger_v1.c
+> @@ -160,7 +160,9 @@ static size_t sizeof_footer(struct ceph_connection *c=
+on)
+>  static void prepare_message_data(struct ceph_msg *msg, u32 data_len)
 >  {
->         struct ceph_client *cl =3D req->r_mdsc->fsc->client;
->         int dcaps;
-> @@ -4436,8 +4436,7 @@ void ceph_mdsc_release_dir_caps_no_check(struct cep=
-h_mds_request *req)
->         dcaps =3D xchg(&req->r_dir_caps, 0);
->         if (dcaps) {
->                 doutc(cl, "releasing r_dir_caps=3D%s\n", ceph_cap_string(=
-dcaps));
-> -               ceph_put_cap_refs_no_check_caps(ceph_inode(req->r_parent)=
-,
-> -                                               dcaps);
-> +               ceph_put_cap_refs_async(ceph_inode(req->r_parent), dcaps)=
-;
->         }
+>         /* Initialize data cursor if it's not a sparse read */
+> -       if (!msg->sparse_read)
+> +       if (msg->sparse_read)
+> +               msg->cursor.sr_total_resid =3D data_len;
+> +       else
+>                 ceph_msg_data_cursor_init(&msg->cursor, msg, data_len);
 >  }
 >
-> @@ -4473,7 +4472,7 @@ static void replay_unsafe_requests(struct ceph_mds_=
-client *mdsc,
->                 if (req->r_session->s_mds !=3D session->s_mds)
->                         continue;
+> @@ -1032,18 +1034,25 @@ static int read_partial_sparse_msg_data(struct ce=
+ph_connection *con)
+>         bool do_datacrc =3D !ceph_test_opt(from_msgr(con->msgr), NOCRC);
+>         u32 crc =3D 0;
+>         int ret =3D 1;
+> +       int len;
 >
-> -               ceph_mdsc_release_dir_caps_no_check(req);
-> +               ceph_mdsc_release_dir_caps_async(req);
+>         if (do_datacrc)
+>                 crc =3D con->in_data_crc;
 >
->                 __send_request(session, req, true);
->         }
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index e85172a92e6c..92695a280d7b 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -579,7 +579,7 @@ extern int ceph_mdsc_do_request(struct ceph_mds_clien=
-t *mdsc,
->                                 struct inode *dir,
->                                 struct ceph_mds_request *req);
->  extern void ceph_mdsc_release_dir_caps(struct ceph_mds_request *req);
-> -extern void ceph_mdsc_release_dir_caps_no_check(struct ceph_mds_request =
-*req);
-> +extern void ceph_mdsc_release_dir_caps_async(struct ceph_mds_request *re=
-q);
->  static inline void ceph_mdsc_get_request(struct ceph_mds_request *req)
->  {
->         kref_get(&req->r_kref);
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index f418b43d0e05..8832da060253 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -1258,8 +1258,6 @@ extern void ceph_take_cap_refs(struct ceph_inode_in=
-fo *ci, int caps,
->  extern void ceph_get_cap_refs(struct ceph_inode_info *ci, int caps);
->  extern void ceph_put_cap_refs(struct ceph_inode_info *ci, int had);
->  extern void ceph_put_cap_refs_async(struct ceph_inode_info *ci, int had)=
+> -       do {
+> -               if (con->v1.in_sr_kvec.iov_base)
+> +       while (cursor->sr_total_resid && ret > 0) {
+> +               len =3D 0;
+> +               if (con->v1.in_sr_kvec.iov_base) {
+>                         ret =3D read_partial_message_chunk(con,
+>                                                          &con->v1.in_sr_k=
+vec,
+>                                                          con->v1.in_sr_le=
+n,
+>                                                          &crc);
+> -               else if (cursor->sr_resid > 0)
+> +                       if (ret =3D=3D 1)
+> +                               len =3D con->v1.in_sr_len;
+> +               } else if (cursor->sr_resid > 0) {
+>                         ret =3D read_partial_sparse_msg_extent(con, &crc)=
 ;
-> -extern void ceph_put_cap_refs_no_check_caps(struct ceph_inode_info *ci,
-> -                                           int had);
->  extern void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int n=
-r,
->                                        struct ceph_snap_context *snapc);
->  extern void __ceph_remove_capsnap(struct inode *inode,
-> --
-> 2.43.0
+> +                       if (ret =3D=3D 1)
+> +                               len =3D cursor->sr_resid_elen;
+> +               }
 >
+> I was waiting for Jeff's review since this is his code, but it's been
+> a while so I'll just comment.
+>
+> To me, it's a sign of suboptimal structure that you needed to add new
+> fields to the cursor just to be able tell whether this function is done
+> with the message, because it's something that is already tracked but
+> gets lost between the loops here.
+>
+> Currently this function is structured as:
+>
+>     do {
+>         if (set up for kvec)
+>            read as much as possible into kvec
+>         else if (set up for pages)
+>            read as much as possible into pages
+>
+>         if (short read)
+>             bail, will be called again later
+>
+>          invoke con->ops->sparse_read() for processing the thing what
+>          was read and setting up the next read OR setting up the initial
+>          read
+>     } until (con->ops->sparse_read() returns "done")
+>
+> If it was me, I would pursue refactoring this to:
+>
+>     do {
+>         if (set up for kvec)
+>            read as much as possible into kvec
+>         else if (set up for pages)
+>            read as much as possible into pages
+>         else
+>            bail
+>
+> Why bail here ? For the new sparse read both the 'kvec' and 'pages' shoul=
+dn't be set, so the following '->sparse_read()' will set up them and contin=
+ue.
+>
+> Or you just want the 'read_partial_sparse_msg_data()' to read data but no=
+t the first time to trigger the '->sparse_read()' ? Before I tried a simila=
+r approach and it was not as optional as this one as I do.
 
+Hi Xiubo,
 
---=20
-Milind
+I addressed that in the previous message:
 
+    ... and invoke con->ops->sparse_read() for the first time elsewhere,
+    likely in prepare_message_data().  The rationale is that the state
+    machine inside con->ops->sparse_read() is conceptually a cursor and
+    prepare_message_data() is where the cursor is initialized for normal
+    reads.
+
+The benefit is that no additional state would be needed.
+
+> The 'cursor->sr_total_resid', which is similar with 'cursor->total_resid'=
+, will just record the total data length for current sparse-read request an=
+d will determine whether should we skip parsing the "(page) data" in 'read_=
+partial_message()'.
+
+I understand the intent behind cursor->sr_total_resid, but it would be
+nice to do without it because of its inherent redundancy.
+
+Did you try calling con->ops->sparse_read() for the first time exactly
+where cursor->sr_total_resid is initialized in your patch?
+
+Thanks,
+
+                Ilya
 
