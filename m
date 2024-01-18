@@ -1,54 +1,53 @@
-Return-Path: <ceph-devel+bounces-589-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-590-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8953D831B74
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 Jan 2024 15:36:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6877831F0E
+	for <lists+ceph-devel@lfdr.de>; Thu, 18 Jan 2024 19:24:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCFEC2835C4
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 Jan 2024 14:36:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17790B21C3C
+	for <lists+ceph-devel@lfdr.de>; Thu, 18 Jan 2024 18:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11EE635;
-	Thu, 18 Jan 2024 14:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A282D612;
+	Thu, 18 Jan 2024 18:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JuVF0BFA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dm26CBT9"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67215375
-	for <ceph-devel@vger.kernel.org>; Thu, 18 Jan 2024 14:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA402D603
+	for <ceph-devel@vger.kernel.org>; Thu, 18 Jan 2024 18:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705588574; cv=none; b=kKctGxYMAo7qQNaKeLnpQnkPD+RRzdshy+vJjyj0psGJkU4glTRTTMidZrqPuPeM+TsWay7CAk5qWJrjmv6uWyIR7ZF/AvoypUAlQ0BMZmps1su1+KloPqzd3y0gLaOJA753UgxwdlRDQDRsY20TEaIjC/YfwZ2JI6Ftw8zFT8Y=
+	t=1705602289; cv=none; b=pVURiyZC3UqDw+iMW3UdDobpeoze8+pGgQ/WAas8UuYJPcTcTfAeiJV9pH69Oj7eJcaTZdtAq0nKQv45Gq+VFkVXwE12GxBmSyb3+TKXSwm7JfGtiSI77paqB99yHXfTQEEfUgkyn9jlzevaa7rX1H4+BDWVceRW9nIEXrc0huQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705588574; c=relaxed/simple;
-	bh=cfIC/09YpHRI08ILoRoIcxJ2hDWWrec3+FYlNERkg0s=;
-	h=Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:
-	 Content-Transfer-Encoding:User-Agent:MIME-Version; b=Bx5ukm1pW4+agRhUKQrHxbT9XyEVjDUPwVNx498UBzY5ak0k9wfhnDaw5VJiBe193QVEKja8NZ/GDaLTsVy/FOr1eSICKy9emlyq/ShOcgES6TCkgQ5U1jcl4mBrCqpqNejATkAYarv0jJFTXuaVb86dp0eY4pzk7TMCNMAg25g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JuVF0BFA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65DB3C43390;
-	Thu, 18 Jan 2024 14:36:13 +0000 (UTC)
+	s=arc-20240116; t=1705602289; c=relaxed/simple;
+	bh=2GvICaGZQvZnSLjeA3skb5EnXM3iaFtmvJnwAyh0ER0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tthnvUWchjGfM8HneGKZd91LZZgqKHaJU0b8/63nKJCx3/i0wduBA1lNUUrY97pk4hX3ybevioId69RxGGICW+Ag7I6l2dTAYI0frlOj9AdK6DA3DtPEFZVYutzja/KfMETtMPsqNLw3H0dWnlqCPgW+dcLyklS/umeHo9QqbFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dm26CBT9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7844C433F1;
+	Thu, 18 Jan 2024 18:24:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705588573;
-	bh=cfIC/09YpHRI08ILoRoIcxJ2hDWWrec3+FYlNERkg0s=;
+	s=k20201202; t=1705602289;
+	bh=2GvICaGZQvZnSLjeA3skb5EnXM3iaFtmvJnwAyh0ER0=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=JuVF0BFAJFEWdf+Nrg0nhSU0TNRROw5UnTyz7BcNRIT7egGuGRbgI8NOonoIol5qZ
-	 EvKX+3bPkBLSPjPpC4KumAGtpnOZRJQ7BVbnh+WeAon0p+r4GU0BnuidtTBRsKiShD
-	 hyMIr1M0lqUnddrVO4gDWa9ewmPIBvB4V3aM/25i0YwWtb5qvnZ9IkgMYGuyA3WtwL
-	 Jm/ZNeZlyv1Go1Nbs/zM/LELL6R8+6eBcr/LhNWkgsNkX4hSuR2/wW9c3XY34yNuHZ
-	 HVZ7332CPRmO9lNPIYqx1aR+aWO5bOojTGHFrs3W87oFeL/WV7dtpa6esrhkfGA0+X
-	 2mfgHD/pxjs5g==
-Message-ID: <5e63fddf849ad639ffd6e8ad2caea3f5b6e4cb7a.camel@kernel.org>
+	b=Dm26CBT9kdXTSCTV0CIDJobHK3qHDtSKfB+t+f7NTVeUIJsk7+y8Kg1pA/EDlMVqO
+	 iD4+bE0a0B4/eqV8w4gd8PkRbEa2k8B2V9T2f6yWxrW04jGvj7ZeEQWC4ucOTHAUAi
+	 SMa/PZTfrWag5LilcGKleDxxbH9NhbygcL/yD2bz03S+vFXs79/RUxmAI5QxeSNSRx
+	 4HkJzZqPg8SH8/OlJRzp7SYuGDzPaVhyIHtVqfoKuiiYaZNHa+2n8O8Sg5nS49ggxw
+	 wmcfY3Hngun4djUYIGClkxvGRmiLYimzzOHXckPSCEMsyebCufrxyHpGAHzMryDv5x
+	 EG1DwQudZnO1Q==
+Message-ID: <ca7f6ba894524474d513807a165f02f4ad50a506.camel@kernel.org>
 Subject: Re: [PATCH v4 3/3] libceph: just wait for more data to be available
  on the socket
 From: Jeff Layton <jlayton@kernel.org>
 To: xiubli@redhat.com, ceph-devel@vger.kernel.org
 Cc: idryomov@gmail.com, vshankar@redhat.com, mchangir@redhat.com
-Date: Thu, 18 Jan 2024 09:36:12 -0500
+Date: Thu, 18 Jan 2024 13:24:47 -0500
 In-Reply-To: <20240118105047.792879-4-xiubli@redhat.com>
 References: <20240118105047.792879-1-xiubli@redhat.com>
 	 <20240118105047.792879-4-xiubli@redhat.com>
@@ -77,25 +76,11 @@ On Thu, 2024-01-18 at 18:50 +0800, xiubli@redhat.com wrote:
 > The messages from ceph maybe split into multiple socket packages
 > and we just need to wait for all the data to be availiable on the
 > sokcet.
->
+>=20
 > This will add 'sr_total_resid' to record the total length for all
 > data items for sparse-read message and 'sr_resid_elen' to record
 > the current extent total length.
 >=20
-
-It's been a while since I was in the ceph messenger code, and my v1
-memory is especially fuzzy. I really don't quite understand how tracking
-yet another length field solves the stated problem.
-
-I'd really appreciate a description of the problem that you saw and how
-this solves it. The ceph bug is not very straightforward.
-
-I get that we need to wait for a certain amount of data to be available
-on the socket before we drive the sparse_read op, but I don't quite see
-how that's being achieved here.
-
-Also, why is this not a problem on messenger v2?
-
 > URL: https://tracker.ceph.com/issues/63586
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
@@ -173,13 +158,6 @@ ph_connection *con)
 >  				(char **)&con->v1.in_sr_kvec.iov_base);
 > +		if (ret <=3D 0) {
 > +			ret =3D ret ? : 1; /* must return > 0 to indicate success */
-
-The above is a gcc-ism that we probably shouldn't be using. Can this be:
-
-	ret =3D ret ? ret : 1;
-
-?
-
 > +			break;
 > +		}
 >  		con->v1.in_sr_len =3D ret;
@@ -195,6 +173,24 @@ The above is a gcc-ism that we probably shouldn't be using. Can this be:
 > =20
 >  static int read_partial_msg_data(struct ceph_connection *con)
 
+Looking back over this code...
+
+The way it works today, once we determine it's a sparse read, we call
+read_sparse_msg_data. At that point we call either
+read_partial_message_chunk (to read into the kvec) or
+read_sparse_msg_extent if sr_resid is already set (indicating that we're
+receiving an extent).
+
+read_sparse_msg_extent calls ceph_tcp_recvpage in a loop until
+cursor->sr_resid have been received. The exception there when
+ceph_tcp_recvpage returns <=3D 0.
+
+ceph_tcp_recvpage returns 0 if sock_recvmsg returns -EAGAIN (maybe also
+in other cases). So it sounds like the client just timed out on a read
+from the socket or caught a signal or something?
+
+If that's correct, then do we know what ceph_tcp_recvpage returned when
+the problem happened?
 --=20
 Jeff Layton <jlayton@kernel.org>
 
