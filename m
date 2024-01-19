@@ -1,58 +1,58 @@
-Return-Path: <ceph-devel+bounces-593-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-594-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF853832842
-	for <lists+ceph-devel@lfdr.de>; Fri, 19 Jan 2024 12:03:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69BBD832869
+	for <lists+ceph-devel@lfdr.de>; Fri, 19 Jan 2024 12:10:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6EC2819E4
-	for <lists+ceph-devel@lfdr.de>; Fri, 19 Jan 2024 11:03:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EF341C21308
+	for <lists+ceph-devel@lfdr.de>; Fri, 19 Jan 2024 11:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887FC4C3C9;
-	Fri, 19 Jan 2024 11:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B434C61B;
+	Fri, 19 Jan 2024 11:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JkLISUST"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAu/Yuf4"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CD103C464
-	for <ceph-devel@vger.kernel.org>; Fri, 19 Jan 2024 11:03:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06413527A
+	for <ceph-devel@vger.kernel.org>; Fri, 19 Jan 2024 11:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705662210; cv=none; b=btR7B2S0RZWryHzUsiuifxsJpsX3ljQ/R3vrlryOp+xLOAySOgj8Cm+ZvWys/IRg7qj8nf9/daRVE6ERViKft/epGjP4B7a5L57Kk1QULtB7aAYOb4XLuIslW5FVE7AO5k/mumJFeXTpwUtt/ImBNnPFZzsttjhqVv5CL4zSIEI=
+	t=1705662598; cv=none; b=KxXgY0yVqC3DaKCC04m7oEPhG61u2oLrSRYVgee6uY3H/+VhWwGY8ejmHB9Dfkc3XE31pxYxTytpTr9Mg/bw65cJF3Wrj7QNGufJTCa6VPXb7Ls+PD9LFQ2dMqzN656TyIncEb1JD+6SrX1jVuhqk+SHF1uy6XaLfMzzmDpp4cI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705662210; c=relaxed/simple;
-	bh=90L0TyGCRa/p8YzdnnC8AwWqJVVgZhNTJSSFq0KBZJ0=;
+	s=arc-20240116; t=1705662598; c=relaxed/simple;
+	bh=+OSHvrr5F7J9p5E87OJpK3GK0J69iY/RalQKSGFpjuM=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DrqjRHUowHVBsCIuTaF4tgg3vg9+b/ibZOnxjppzDyJKlKHv2VYT5RvNCOAMoC/Efk26yGmmXiEBNVgPIKx2bexo37lFPzl5RAH6pNZ6/Z4iah3afpEJFdJv5FHRFwCI+C50zF+wC5+TLbC0y0aCKUiadg0pyJaH2EhhukyBiOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JkLISUST; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17B7DC433F1;
-	Fri, 19 Jan 2024 11:03:29 +0000 (UTC)
+	 Content-Type:MIME-Version; b=a87q+4/EpgWSXozc5nShW8a8lokHQM0cxeX/GXbsT7ULwXYZdNofPqC1XEMm95obPtoKClD0v/Z9PEuYKf23Kp7GTw7ZKrKZL8GcP9Ijy1xa07sBuL4SOs5LBDMhZYDxFlFVEOTzmsQMKLLUyWZtAvVm5rAG2YwhuuYfh+x0UAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAu/Yuf4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA337C433C7;
+	Fri, 19 Jan 2024 11:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705662209;
-	bh=90L0TyGCRa/p8YzdnnC8AwWqJVVgZhNTJSSFq0KBZJ0=;
+	s=k20201202; t=1705662598;
+	bh=+OSHvrr5F7J9p5E87OJpK3GK0J69iY/RalQKSGFpjuM=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=JkLISUSTwhFFTvdoO2gCWG6TQ+aLJb9zJCBUntk9xTDCN/PPjHauKPjqLlEzMaCC2
-	 Sk2sgZTjwrA4wVn3zn1SOYb0kpGD036Ev2eXLmUR9xt7nKMGOtM3133WcZ7hmK6oTa
-	 8N1lSCoBTqr+eR9fMmYjPUahYtYHU6H/NZHDcTOZHjkkHrtB5cE4j8VtUTXiWOdDCu
-	 vd6uW5GJ+oN8BIL3EltDvGji0zN2Qvl3ILEaJ2SnKxLHOaEi8vnrSDmJh8BioWWhaD
-	 Xbcbq9X+jMGxKwKc+BuRRkL99Iv83gsSysX2SK8sJPkj4c5UI3IjCQCjoJOLIsrYO4
-	 ucROis58rcrFg==
-Message-ID: <6f1e6ba6f0f5ca1b613aa0372c109289193170ee.camel@kernel.org>
-Subject: Re: [PATCH v4 1/3] libceph: fail the sparse-read if there still has
- data in socket
+	b=JAu/Yuf4vvasvQd8a6X4OWhl+F0buUmwTqmmXOEEAajNEUAc2VdhMzBTSGFtMCklG
+	 zVkJsIMI6iYJsjCT+5RrWc3jaPOMKevfvCM2qvxGKOSKKSUg0QSUlNGbwAiGv1uF/3
+	 Ef9ctG42HcBKtk4O3hEJNquJOKEga47iSUvVTuAcJdzOc9EkciLPJhT+BiJsY3uCYz
+	 DvkSs7+MuIE/gQmw2owf/7wtXsGkqcCLojUw2bsYVrZ/r/7Ro+cpYBwk7dfmHxwXDh
+	 oxpZatswTgbF5CHtnxkhjYLoT3LezOhCKhqy9CYOg3pP7WOxIh4D7qnGDNkcItJHWK
+	 gyu/JxJ2l7cYg==
+Message-ID: <f0c7ec2741851ff71e77f2e7598c0de665cce4ac.camel@kernel.org>
+Subject: Re: [PATCH v4 3/3] libceph: just wait for more data to be available
+ on the socket
 From: Jeff Layton <jlayton@kernel.org>
 To: Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
 Cc: idryomov@gmail.com, vshankar@redhat.com, mchangir@redhat.com
-Date: Fri, 19 Jan 2024 06:03:27 -0500
-In-Reply-To: <bd81112b-bdbd-466a-943e-90742c100c47@redhat.com>
+Date: Fri, 19 Jan 2024 06:09:56 -0500
+In-Reply-To: <ede93dec-3faf-48d1-859e-5edf4323fd15@redhat.com>
 References: <20240118105047.792879-1-xiubli@redhat.com>
-	 <20240118105047.792879-2-xiubli@redhat.com>
-	 <cca21aec6fa2a1728cb85099e1ba750bdf2fd696.camel@kernel.org>
-	 <bd81112b-bdbd-466a-943e-90742c100c47@redhat.com>
+	 <20240118105047.792879-4-xiubli@redhat.com>
+	 <ca7f6ba894524474d513807a165f02f4ad50a506.camel@kernel.org>
+	 <ede93dec-3faf-48d1-859e-5edf4323fd15@redhat.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxwn8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1WvegyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqVT2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtVYrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8snVluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQcDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQfCBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sELZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/
 	r0kmR/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2BrQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRIONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZWf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQOlDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7RjiR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27XiQQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBMYXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9qLqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoac8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3FLpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx
@@ -72,93 +72,152 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Fri, 2024-01-19 at 12:07 +0800, Xiubo Li wrote:
-> On 1/18/24 22:03, Jeff Layton wrote:
+On Fri, 2024-01-19 at 12:35 +0800, Xiubo Li wrote:
+> On 1/19/24 02:24, Jeff Layton wrote:
 > > On Thu, 2024-01-18 at 18:50 +0800, xiubli@redhat.com wrote:
 > > > From: Xiubo Li <xiubli@redhat.com>
 > > >=20
-> > > Once this happens that means there have bugs.
+> > > The messages from ceph maybe split into multiple socket packages
+> > > and we just need to wait for all the data to be availiable on the
+> > > sokcet.
+> > >=20
+> > > This will add 'sr_total_resid' to record the total length for all
+> > > data items for sparse-read message and 'sr_resid_elen' to record
+> > > the current extent total length.
 > > >=20
 > > > URL: https://tracker.ceph.com/issues/63586
 > > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > > > ---
-> > >   net/ceph/osd_client.c | 9 +++++++++
-> > >   1 file changed, 9 insertions(+)
+> > >   include/linux/ceph/messenger.h |  1 +
+> > >   net/ceph/messenger_v1.c        | 32 +++++++++++++++++++++----------=
+-
+> > >   2 files changed, 22 insertions(+), 11 deletions(-)
 > > >=20
-> > > diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> > > index 9be80d01c1dc..f8029b30a3fb 100644
-> > > --- a/net/ceph/osd_client.c
-> > > +++ b/net/ceph/osd_client.c
-> > > @@ -5912,6 +5912,13 @@ static int osd_sparse_read(struct ceph_connect=
-ion *con,
-> > >   		fallthrough;
-> > >   	case CEPH_SPARSE_READ_DATA:
-> > >   		if (sr->sr_index >=3D count) {
-> > > +			if (sr->sr_datalen) {
-> > > +				pr_warn_ratelimited("sr_datalen %u sr_index %d count %u\n",
-> > > +						    sr->sr_datalen, sr->sr_index,
-> > > +						    count);
-> > > +				return -EREMOTEIO;
-> > > +			}
-> > > +
-> > Ok, so the server has (presumably) sent us a longer value for the
-> > sr_datalen than was in the extent map?
-> >=20
-> > Why should the sparse read engine care about that? It was (presumably)
-> > able to do its job of handling the read. Why not just advance past the
-> > extra junk and try to do another sparse read? Do we really need to fail
-> > the op for this?
->=20
-> Hi Jeff,
->=20
-> I saw the problem just when I first debugging the sparse-read bug, and=
-=20
-> the length will be very large, more detail and the logs please see the=
-=20
-> tracker https://tracker.ceph.com/issues/63586:
->=20
->  =A0=A0=A0=A0 11741055 <4>[180940.606488] libceph: sr_datalen 251723776 s=
-r_index=20
-> 0 count 0
->=20
-> In this case the request could cause the same request being retrying=20
-> infinitely. While just in other case the when the ceph send a incorrect=
-=20
-> data length, how should we do ? Should we retry it ? How could we skip=
-=20
-> it if the length is so large ?
->=20
->=20
-
-If the sparse_read datalen is so long that it goes beyond the length of
-the entire frame, then it's clearly malformed and we have to reject it.
-
-I do wonder though whether this is the right place to do that. It seems
-like the client ought to do that sort of vetting of lengths before it
-starts dealing with the read data.
-
-IOW, maybe there should be a simple check in the
-CEPH_SPARSE_READ_DATA_LEN case that validates that the sr_datalen fits
-inside the "data_len" of the entire frame?
-
->=20
->=20
-> >=20
-> > >   			sr->sr_state =3D CEPH_SPARSE_READ_HDR;
-> > >   			goto next_op;
+> > > diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/mess=
+enger.h
+> > > index 2eaaabbe98cb..ca6f82abed62 100644
+> > > --- a/include/linux/ceph/messenger.h
+> > > +++ b/include/linux/ceph/messenger.h
+> > > @@ -231,6 +231,7 @@ struct ceph_msg_data {
+> > >  =20
+> > >   struct ceph_msg_data_cursor {
+> > >   	size_t			total_resid;	/* across all data items */
+> > > +	size_t			sr_total_resid;	/* across all data items for sparse-read *=
+/
+> > >  =20
+> > >   	struct ceph_msg_data	*data;		/* current data item */
+> > >   	size_t			resid;		/* bytes not yet consumed */
+> > > diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
+> > > index 4cb60bacf5f5..2733da891688 100644
+> > > --- a/net/ceph/messenger_v1.c
+> > > +++ b/net/ceph/messenger_v1.c
+> > > @@ -160,7 +160,9 @@ static size_t sizeof_footer(struct ceph_connectio=
+n *con)
+> > >   static void prepare_message_data(struct ceph_msg *msg, u32 data_len=
+)
+> > >   {
+> > >   	/* Initialize data cursor if it's not a sparse read */
+> > > -	if (!msg->sparse_read)
+> > > +	if (msg->sparse_read)
+> > > +		msg->cursor.sr_total_resid =3D data_len;
+> > > +	else
+> > >   		ceph_msg_data_cursor_init(&msg->cursor, msg, data_len);
+> > >   }
+> > >  =20
+> > > @@ -1032,35 +1034,43 @@ static int read_partial_sparse_msg_data(struc=
+t ceph_connection *con)
+> > >   	bool do_datacrc =3D !ceph_test_opt(from_msgr(con->msgr), NOCRC);
+> > >   	u32 crc =3D 0;
+> > >   	int ret =3D 1;
+> > > +	int len;
+> > >  =20
+> > >   	if (do_datacrc)
+> > >   		crc =3D con->in_data_crc;
+> > >  =20
+> > > -	do {
+> > > -		if (con->v1.in_sr_kvec.iov_base)
+> > > +	while (cursor->sr_total_resid) {
+> > > +		len =3D 0;
+> > > +		if (con->v1.in_sr_kvec.iov_base) {
+> > > +			len =3D con->v1.in_sr_kvec.iov_len;
+> > >   			ret =3D read_partial_message_chunk(con,
+> > >   							 &con->v1.in_sr_kvec,
+> > >   							 con->v1.in_sr_len,
+> > >   							 &crc);
+> > > -		else if (cursor->sr_resid > 0)
+> > > +			len =3D con->v1.in_sr_kvec.iov_len - len;
+> > > +		} else if (cursor->sr_resid > 0) {
+> > > +			len =3D cursor->sr_resid;
+> > >   			ret =3D read_partial_sparse_msg_extent(con, &crc);
+> > > -
+> > > -		if (ret <=3D 0) {
+> > > -			if (do_datacrc)
+> > > -				con->in_data_crc =3D crc;
+> > > -			return ret;
+> > > +			len -=3D cursor->sr_resid;
 > > >   		}
-> > > @@ -5919,6 +5926,8 @@ static int osd_sparse_read(struct ceph_connecti=
-on *con,
-> > >   		eoff =3D sr->sr_extent[sr->sr_index].off;
-> > >   		elen =3D sr->sr_extent[sr->sr_index].len;
+> > > +		cursor->sr_total_resid -=3D len;
+> > > +		if (ret <=3D 0)
+> > > +			break;
 > > >  =20
-> > > +		sr->sr_datalen -=3D elen;
-> > > +
-> > >   		dout("[%d] ext %d off 0x%llx len 0x%llx\n",
-> > >   		     o->o_osd, sr->sr_index, eoff, elen);
+> > >   		memset(&con->v1.in_sr_kvec, 0, sizeof(con->v1.in_sr_kvec));
+> > >   		ret =3D con->ops->sparse_read(con, cursor,
+> > >   				(char **)&con->v1.in_sr_kvec.iov_base);
+> > > +		if (ret <=3D 0) {
+> > > +			ret =3D ret ? : 1; /* must return > 0 to indicate success */
+> > > +			break;
+> > > +		}
+> > >   		con->v1.in_sr_len =3D ret;
+> > > -	} while (ret > 0);
+> > > +	}
 > > >  =20
+> > >   	if (do_datacrc)
+> > >   		con->in_data_crc =3D crc;
+> > >  =20
+> > > -	return ret < 0 ? ret : 1;  /* must return > 0 to indicate success *=
+/
+> > > +	return ret;
+> > >   }
+> > >  =20
+> > >   static int read_partial_msg_data(struct ceph_connection *con)
+> > Looking back over this code...
+> >=20
+> > The way it works today, once we determine it's a sparse read, we call
+> > read_sparse_msg_data. At that point we call either
+> > read_partial_message_chunk (to read into the kvec) or
+> > read_sparse_msg_extent if sr_resid is already set (indicating that we'r=
+e
+> > receiving an extent).
+> >=20
+> > read_sparse_msg_extent calls ceph_tcp_recvpage in a loop until
+> > cursor->sr_resid have been received. The exception there when
+> > ceph_tcp_recvpage returns <=3D 0.
+> >=20
+> > ceph_tcp_recvpage returns 0 if sock_recvmsg returns -EAGAIN (maybe also
+> > in other cases). So it sounds like the client just timed out on a read
+> > from the socket or caught a signal or something?
+> >=20
+> > If that's correct, then do we know what ceph_tcp_recvpage returned when
+> > the problem happened?
+>=20
+> It should just return parital data, and we should continue from here in=
+=20
+> the next loop when the reset data comes.
 >=20
 
+Tracking this extra length seems like the wrong fix. We're already
+looping in read_sparse_msg_extent until the sr_resid goes to 0. ISTM
+that it's just that read_sparse_msg_extent is returning inappropriately
+in the face of timeouts.
+
+IOW, it does this:
+
+                ret =3D ceph_tcp_recvpage(con->sock, rpage, (int)off, len);
+                if (ret <=3D 0)
+                        return ret;
+
+...should it just not be returning there when ret =3D=3D 0? Maybe it should
+be retrying the recvpage instead?
 --=20
 Jeff Layton <jlayton@kernel.org>
 
