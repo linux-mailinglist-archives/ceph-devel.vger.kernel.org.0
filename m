@@ -1,240 +1,212 @@
-Return-Path: <ceph-devel+bounces-629-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-630-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CBF9837240
-	for <lists+ceph-devel@lfdr.de>; Mon, 22 Jan 2024 20:17:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22E98372E8
+	for <lists+ceph-devel@lfdr.de>; Mon, 22 Jan 2024 20:45:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12B71C2ACA0
-	for <lists+ceph-devel@lfdr.de>; Mon, 22 Jan 2024 19:17:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6025B28F2B
+	for <lists+ceph-devel@lfdr.de>; Mon, 22 Jan 2024 19:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AEA63DB86;
-	Mon, 22 Jan 2024 19:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12263FE39;
+	Mon, 22 Jan 2024 19:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aRd1UdAo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KbjXL7l7"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C853D570
-	for <ceph-devel@vger.kernel.org>; Mon, 22 Jan 2024 19:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA0D3FB08
+	for <ceph-devel@vger.kernel.org>; Mon, 22 Jan 2024 19:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705950795; cv=none; b=aqU5ClWoQ5XO/boauenWgz7TIugaDQ69aU8D/F4ToHIpl2aBaU5M2P+c+GciutIMfojFd1tuqmwEgN/+mmoNZrTC0fYfAYusB7gG+o4Dlqdb+dg1EYbWXOZu5TDUEgHfiTA9pP2Y2rQrw0OGAEY/Zn4ehRmj/E830iNu3dwr1Eg=
+	t=1705952505; cv=none; b=bra83DemGJD4fUJOGfBdKrsWmPNGMtBwT2Rya7rybdToGVHEo0AnEITLvS8IL3Dx2QXWAiVQdV4Zh5pfJhG8Qj1WsQ0pYESO6fa1nDBMyBiu/rm+PhQB8yK7akloPPuVP0jPiwyTJGGaCdHRI9k+IRWzHyYNySP5BCe04QYZBM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705950795; c=relaxed/simple;
-	bh=h02Q+LSIon6Qe2NXEGVjoa0MJGyvhuDgxVUCLZ4AJEI=;
+	s=arc-20240116; t=1705952505; c=relaxed/simple;
+	bh=qjXTuwntwW4ejqd6hLTt1n+O0Xc6Wv5is3kZQPaB3nM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I5eL6td+WSGwcFLDfZm32+GJ7dyXZ4GLcKQ0lsUSIG1eYYbSONk2KWyeXtnigjYlZ3qtJE/YWPqHvrefLCKI2JK5lCsgGt95Utje5EGwNrqPwIedcbXipkUfKua83et4PZnxyZ14X4v+1416cipGXYMYOcGqOZ8FS7N0vdPaNXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aRd1UdAo; arc=none smtp.client-ip=209.85.160.50
+	 To:Cc:Content-Type; b=ZNuzMbNA+sP/z8Ty/wxtx0HlH4hxPuXFf9P55B0ulUk/naDfPy9NUWzk1UTUhsDFOdvvPWgCTtdxQpQm+MAnzCrNzN/O1BneetXNyvFX9dc/bFq4Q/1She1W4xrBPAfXW3POmPdFbBK0hxb4d8mCm+p3G2GMb5OW08KWqPtgS0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KbjXL7l7; arc=none smtp.client-ip=209.85.160.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-210a07b58f3so872453fac.2
-        for <ceph-devel@vger.kernel.org>; Mon, 22 Jan 2024 11:13:13 -0800 (PST)
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-214410e969cso847236fac.0
+        for <ceph-devel@vger.kernel.org>; Mon, 22 Jan 2024 11:41:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705950793; x=1706555593; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1705952503; x=1706557303; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MEof78q1se32pZTGWqWB+OFylFVCFKW3ddExRDb8rYM=;
-        b=aRd1UdAoG9qEBhDc0WDwlIOnsfuCUnOmD+Ez5aWlp36WpPe2ET8y521BioRm/AFcrQ
-         Q18tAjFyiC7kGj/2pjl3vytUe269gwua4z4mugJe5EbJjlySOhdk+ipFHE+2GCLBm7h9
-         iVocwtFyKR96riSaSvwuVwYCN8C+tVIsqNo3JZbHMhE90BrceLrn6cn+baHyt2/s95nT
-         ejKptxjmb1Kv+Uzy6s5/QaHF+8gSmXB047INiXxHGFaEN7klWZhGr4ZlRBPie3lNhK9r
-         LH4Cy5xu74l4ahRgIZQTScK9l6WR3KVH0kQVKrBFMjERrRm6Y9MDRrQ2s/jpr6/5PvIM
-         ejiA==
+        bh=zNngi2RN+lE6eGxbDPAGD9H9Zny6R25nhuyLmOnj8X8=;
+        b=KbjXL7l78424AM3RM7Ir/m29AiHVohY/vRAcLk/TpzS2fFfr24U+sRESgY7lTNVsmr
+         PLQqjzHggeysr3/Q7fr0UIfEqDxLEQcewA/6S0+6msziOYZWyDc9bH82+MCl0pCo9oj4
+         Ed+Xh+biM88iODG1xtclTjGnscDkwyrI+qioeexAGSX87ZWeQn1adhe86w32cFfFKiXj
+         9kgCGAS5j+A6KhuMQ3r2pZ8ohkQAUDraXIE3ufkc1gZ2shsd/VpFEH9BKCqQ/FNGDMpB
+         1lNd8gVxhJyp7u/vgo51TxiTk+QJDyBRyokOGmoFmtC2vwcI2L56MPQEqJGtZcHKImb+
+         bLag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705950793; x=1706555593;
+        d=1e100.net; s=20230601; t=1705952503; x=1706557303;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MEof78q1se32pZTGWqWB+OFylFVCFKW3ddExRDb8rYM=;
-        b=MAsqRU+CIet0MBJSnAklYiG2Z4jLx6ZuuxFXqQbzod2fyIGOKMW2FTmHNwwWQ6oKBn
-         yTyG2i+o8K62aG9YUz3QsYb+I8xey05mt+5a0ds+AwMHA/U/hqI0nyhW+JO3D31lhIPo
-         6Jzy/1UA64/BlzCpMCpAiyBXp4+aFjPzZAs7nx+umIrtH6A8l92mDgqEHnrybKR9uHv0
-         2NUgUWvQHRD93Lw0+MP9RqG99WPxlRCM+0uN8o97mLh1Nz+6MaxhoKQjAV/fK/edWvk2
-         OBzxDuPFQfuzhrFZ+iizAP6ZJz5CJpo55/EijRX1YAHwmij/BnM3hBLbDadRcbfaCydT
-         gDkg==
-X-Gm-Message-State: AOJu0YzxgQVPLYWVLqq4Is1eVWwrJOsfFtgw/IFpGPy6Zy26AI3iXIiX
-	y6IU6BEnG70NVkj9Z6nmq+lhmUnOqorrL/JyVfYZv3cdSn4aKqMGg7Ahtizc+/3oOWWcaDqQpyd
-	fJ1qa0djbW5PJVP50HQ6td+V35cI=
-X-Google-Smtp-Source: AGHT+IEgySMF5fgr8KkewJAok8S9qIoxTpGUZ8z9mLhkmE9VFIGrakaBJrS6tn4pmrYPuufWVGTBVRhnNCs8ECqKJOM=
-X-Received: by 2002:a05:6870:9614:b0:206:b172:2a38 with SMTP id
- d20-20020a056870961400b00206b1722a38mr373279oaq.17.1705950793123; Mon, 22 Jan
- 2024 11:13:13 -0800 (PST)
+        bh=zNngi2RN+lE6eGxbDPAGD9H9Zny6R25nhuyLmOnj8X8=;
+        b=l69BYb+3ahu2LtAbWmAubpchNfIP7MlWop91oskoltN0/863BQemo79x22zkeqhLZQ
+         cPZ+qh/8nA66iE1qxwK6oIUHCCp/QeTbn0ZJULPjDBAZgJ/KJCzfJVi5Xp4+vCx8Hx3r
+         v0dHEPcn3L3qlW9lmF62aL/oyAlddxI6QGvQ3y0763l0mBvvawkyYOxd1Bu2vpAm290Z
+         mJtbk13wXmkvdE3gWPiI3JpTqctLox+93lumiswg+z4dXuBd9jhFW4RiUPQBvgrfETUh
+         llleIau/FKTRdzi77WFsnxHs87wF7cjzTGOaCgvDqzF2h/EeLysgENlLa6bhpZ+t2DqM
+         /Maw==
+X-Gm-Message-State: AOJu0Yxrs3xNBXefUP+W5JEk0itT/axeK+kOhf6TAtcNzUEHJ+b9+5eJ
+	uUdGIMx88ZhzJ0vDNejIhSeOMNm3fgYL7eein2x/e4sqLeD3RLFG0DtxCKjUnG7PTiWMjVYBdev
+	7l0RUAVZmUSdegTOifanjA010Buo=
+X-Google-Smtp-Source: AGHT+IG2JBNnWYVIcKHuTzOsRFdIOVCZPo800iEuYxzVY5AiBkSUXb/A3UdGA6o7kig0RCN9msOBCHtE2fvXEzDxmhY=
+X-Received: by 2002:a05:6870:7193:b0:214:816f:8816 with SMTP id
+ d19-20020a056870719300b00214816f8816mr65079oah.3.1705952503136; Mon, 22 Jan
+ 2024 11:41:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231215002034.205780-1-xiubli@redhat.com> <20231215002034.205780-4-xiubli@redhat.com>
- <CAOi1vP9ZOyNVC4yquNK6QUFWDr6z+M1e9M2St7uPhRkhfL7QPA@mail.gmail.com>
- <a1d6e998-f496-4408-9d76-3671ee73e054@redhat.com> <CAOi1vP8xOFA4QgMwjGyzTJuAC6T6+XDypXW3Dhhin0RnUh-ZAQ@mail.gmail.com>
- <68e4cf5a-f64f-4545-87b0-762ab920d9ba@redhat.com>
-In-Reply-To: <68e4cf5a-f64f-4545-87b0-762ab920d9ba@redhat.com>
+References: <20240118105047.792879-1-xiubli@redhat.com> <20240118105047.792879-4-xiubli@redhat.com>
+ <62794a33b27424dac66d4a09515147f763acc9de.camel@kernel.org>
+ <CAOi1vP9sLmYVwpBjhyKD9mrXLUoRgXpK5EcQL0V7=uJUHuGbVw@mail.gmail.com> <69fdd8a5c50987ad468567573e88a54c91ef971e.camel@kernel.org>
+In-Reply-To: <69fdd8a5c50987ad468567573e88a54c91ef971e.camel@kernel.org>
 From: Ilya Dryomov <idryomov@gmail.com>
-Date: Mon, 22 Jan 2024 20:13:01 +0100
-Message-ID: <CAOi1vP_Ht9xM=k5FvXEnjAOP0kvp_rebpz+ehvmGoaOZXgMhwQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] libceph: just wait for more data to be available
+Date: Mon, 22 Jan 2024 20:41:30 +0100
+Message-ID: <CAOi1vP8M_85Xr20swLJzjh5y4J2ZoDe4R4ZQ602MrNtV6UcVVA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] libceph: just wait for more data to be available
  on the socket
-To: Xiubo Li <xiubli@redhat.com>
-Cc: ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com, 
+To: Jeff Layton <jlayton@kernel.org>
+Cc: xiubli@redhat.com, ceph-devel@vger.kernel.org, vshankar@redhat.com, 
 	mchangir@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 17, 2024 at 2:26=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
+On Mon, Jan 22, 2024 at 6:14=E2=80=AFPM Jeff Layton <jlayton@kernel.org> wr=
+ote:
 >
+> On Mon, 2024-01-22 at 17:55 +0100, Ilya Dryomov wrote:
+> > On Mon, Jan 22, 2024 at 4:02=E2=80=AFPM Jeff Layton <jlayton@kernel.org=
+> wrote:
+> > >
+> > > On Thu, 2024-01-18 at 18:50 +0800, xiubli@redhat.com wrote:
+> > > > From: Xiubo Li <xiubli@redhat.com>
+> > > >
+> > > > The messages from ceph maybe split into multiple socket packages
+> > > > and we just need to wait for all the data to be availiable on the
+> > > > sokcet.
+> > > >
+> > > > This will add 'sr_total_resid' to record the total length for all
+> > > > data items for sparse-read message and 'sr_resid_elen' to record
+> > > > the current extent total length.
+> > > >
+> > > > URL: https://tracker.ceph.com/issues/63586
+> > > > Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> > > > ---
+> > > >  include/linux/ceph/messenger.h |  1 +
+> > > >  net/ceph/messenger_v1.c        | 32 +++++++++++++++++++++---------=
+--
+> > > >  2 files changed, 22 insertions(+), 11 deletions(-)
+> > > >
+> > > > diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/me=
+ssenger.h
+> > > > index 2eaaabbe98cb..ca6f82abed62 100644
+> > > > --- a/include/linux/ceph/messenger.h
+> > > > +++ b/include/linux/ceph/messenger.h
+> > > > @@ -231,6 +231,7 @@ struct ceph_msg_data {
+> > > >
+> > > >  struct ceph_msg_data_cursor {
+> > > >       size_t                  total_resid;    /* across all data it=
+ems */
+> > > > +     size_t                  sr_total_resid; /* across all data it=
+ems for sparse-read */
+> > > >
+> > > >       struct ceph_msg_data    *data;          /* current data item =
+*/
+> > > >       size_t                  resid;          /* bytes not yet cons=
+umed */
+> > > > diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
+> > > > index 4cb60bacf5f5..2733da891688 100644
+> > > > --- a/net/ceph/messenger_v1.c
+> > > > +++ b/net/ceph/messenger_v1.c
+> > > > @@ -160,7 +160,9 @@ static size_t sizeof_footer(struct ceph_connect=
+ion *con)
+> > > >  static void prepare_message_data(struct ceph_msg *msg, u32 data_le=
+n)
+> > > >  {
+> > > >       /* Initialize data cursor if it's not a sparse read */
+> > > > -     if (!msg->sparse_read)
+> > > > +     if (msg->sparse_read)
+> > > > +             msg->cursor.sr_total_resid =3D data_len;
+> > > > +     else
+> > > >               ceph_msg_data_cursor_init(&msg->cursor, msg, data_len=
+);
+> > > >  }
+> > > >
+> > > >
+> > >
+> > > Sorry, disregard my last email.
+> > >
+> > > I went and looked at the patch in the tree, and I better understand w=
+hat
+> > > you're trying to do. We already have a value that gets set to data_le=
+n
+> > > called total_resid, but that is a nonsense value in a sparse read,
+> > > because we can advance farther through the receive buffer than the
+> > > amount of data in the socket.
+> >
+> > Hi Jeff,
+> >
+> > I see that total_resid is set to sparse_data_requested(), which is
+> > effectively the size of the receive buffer, not data_len.  (This is
+> > ignoring the seemingly unnecessary complication of trying to support
+> > normal reads mixed with sparse reads in the same message, which I'm
+> > pretty sure doesn't work anyway.)
+> >
 >
-> On 1/16/24 18:00, Ilya Dryomov wrote:
+> Oh right. I missed that bit when I was re-reviewing this. Once we're in
+> a sparse read we'll override that value. Ok, so maybe we don't need
+> sr_total_resid.
 >
-> On Tue, Jan 16, 2024 at 5:09=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrot=
-e:
+> > With that, total_resid should represent the amount that needs to be
+> > filled in (advanced through) in the receive buffer.  When total_resid
+> > reaches 0, wouldn't that mean that the amount of data in the socket is
+> > also 0?  If not, where would the remaining data in the socket go?
+> >
 >
-> [...]
-> I was waiting for Jeff's review since this is his code, but it's been
-> a while so I'll just comment.
->
-> To me, it's a sign of suboptimal structure that you needed to add new
-> fields to the cursor just to be able tell whether this function is done
-> with the message, because it's something that is already tracked but
-> gets lost between the loops here.
->
-> Currently this function is structured as:
->
->     do {
->         if (set up for kvec)
->            read as much as possible into kvec
->         else if (set up for pages)
->            read as much as possible into pages
->
->         if (short read)
->             bail, will be called again later
->
->          invoke con->ops->sparse_read() for processing the thing what
->          was read and setting up the next read OR setting up the initial
->          read
->     } until (con->ops->sparse_read() returns "done")
->
-> If it was me, I would pursue refactoring this to:
->
->     do {
->         if (set up for kvec)
->            read as much as possible into kvec
->         else if (set up for pages)
->            read as much as possible into pages
->         else
->            bail
->
-> Why bail here ? For the new sparse read both the 'kvec' and 'pages' shoul=
-dn't be set, so the following '->sparse_read()' will set up them and contin=
-ue.
->
-> Or you just want the 'read_partial_sparse_msg_data()' to read data but no=
-t the first time to trigger the '->sparse_read()' ? Before I tried a simila=
-r approach and it was not as optional as this one as I do.
->
-> Hi Xiubo,
->
-> I addressed that in the previous message:
->
->     ... and invoke con->ops->sparse_read() for the first time elsewhere,
->     likely in prepare_message_data().  The rationale is that the state
->     machine inside con->ops->sparse_read() is conceptually a cursor and
->     prepare_message_data() is where the cursor is initialized for normal
->     reads.
->
-> The benefit is that no additional state would be needed.
->
-> Hi Ilya,
->
-> I am afraid this won't work if my understanding is correct.
->
-> I think you want to call the first 'con->ops->sparse_read()' earlier some=
-where such as in 'prepare_message_data()' to parse and skip the extra spare=
--read extent array info and then we could reuse the 'cursor->total_resid' a=
-s others, right ?
->
-> As we know the 'cursor->total_resid' is for pure data only, while for spa=
-rse-read it introduce some extra extent array info.
->
-> For sparse-read we need to call 'con->ops->sparse_read()' several times f=
-or each sparse-read OP and each time it will only parse part of the extra i=
-nfo. That means we need to call 'con->ops->sparse_read()' many times in 'pr=
-epare_message_data()' in this approach.
->
-> The the most important thing is that we couldn't do this in 'prepare_mess=
-age_data()', because the 'prepare_message_data()' will be called just befor=
-e parsing the "front" and "middle" of the msg.
+> With a properly formed reply, then I think yes, there should be no
+> remaining data in the socket at the end of the receive.
 
-Hi Xiubo,
+There would be no actual data, but a message footer which follows the
+data section and ends the message would be outstanding.
 
-I see, I missed that in my suggestion.
+>
+> At this point I think I must just be confused about the actual problem.
+> I think I need a detailed description of it before I can properly review
+> this patch.
 
->
-> Else if we did this in somewhere place out of 'prepare_message_data()', t=
-hen we must do it in the following code just before  Line#1267:
->
-> 1262         /* (page) data */      1263         if (data_len) {        1=
-264                 if (!m->num_data_items)              1265              =
-           return -EIO;                         1266    1267               =
-  if (m->sparse_read) 1268                         ret =3D read_partial_spa=
-rse_msg_data(con); 1269                 else if (ceph_test_opt(from_msgr(co=
-n->msgr), RXBOUNCE)) 1270                         ret =3D read_partial_msg_=
-data_bounce(con); 1271                 else           1272                 =
-        ret =3D read_partial_msg_data(con);    1273                 if (ret=
- <=3D 0) 1274                         return ret; 1275         }
->
-> But this still couldn't resolve the multiple sparse-read OPs case, once t=
-he first OP parsing finishes we couldn't jump back to call 'prepare_message=
-_data()'.
->
-> The sparse-read data in the socket buffer will be:
->
-> OP1: <sparse-read header> <sparse-read extents> <sparse-read real data le=
-ngth> <real data 1>; OP2: <sparse-read header> <sparse-read extents> <spars=
-e-read real data length> <real data 2>; OP3:....
->
-> Currently the 'cursor->total_resid' will record the total length of <real=
- data 1> + <real data 2> + ...
->
-> And the 'cursor->sr_total_resid' will record all the above.
->
-> The 'cursor->sr_total_resid', which is similar with 'cursor->total_resid'=
-, will just record the total data length for current sparse-read request an=
-d will determine whether should we skip parsing the "(page) data" in 'read_=
-partial_message()'.
->
-> I understand the intent behind cursor->sr_total_resid, but it would be
-> nice to do without it because of its inherent redundancy.
->
-> The above is why I added ''cursor->sr_total_resid'.
->
-> Did you try calling con->ops->sparse_read() for the first time exactly
-> where cursor->sr_total_resid is initialized in your patch?
->
-> Yeah, I did but it didn't work as I mentioned above. If I am wrong, pleas=
-e correct me.
+AFAIU the problem is that a short read may occur while reading the
+message footer from the socket.  Later, when the socket is ready for
+another read, the messenger invokes all read_partial* handlers,
+including read_partial_sparse_msg_data().  The contract between the
+messenger and these handlers is that the handler should bail if the
+area of the message it's responsible for is already processed.  So,
+in this case, it's expected that read_sparse_msg_data() would bail,
+allowing the messenger to invoke read_partial() for the footer and
+pick up where it left off.
 
-I think you are right, and also in that introducing a separate field
-makes for an easier fix.  I continue to claim that a separate field is
-_inherently_ redundant though -- it's just that due to the structure of
-the current code, it's not obvious.
+However read_sparse_msg_data() violates that contract and ends up
+calling into the state machine in the OSD client.  The state machine
+assumes that it's a new op and interprets some piece of the footer (or
+even completely random memory?) as the sparse-read header and returns
+bogus extent length, etc.
 
-There is definitely a way to make this (to be precise: allow
-read_partial_sparse_msg_data() to be invoked by the messenger on short
-reads of the footer without causing any damage like attempting to parse
-random data as sparse-read header and/or extents) happen without adding
-additional fields to the cursor or elsewhere.  But it might involve
-refactoring the entire state machine such that information isn't lost
-between the messenger and the OSD client, so I'm not asking that you
-take that on here.
-
-I wouldn't object to cursor->sr_total_resid being added, I just don't
-like it ;)
+(BTW it's why I suggested the rename from read_sparse_msg_data() to
+read_partial_sparse_msg_data() in another patch -- to highlight that
+it's one of the "partial" handlers and the respective behavior.)
 
 Thanks,
 
