@@ -1,56 +1,56 @@
-Return-Path: <ceph-devel+bounces-650-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-651-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D12D8391B4
-	for <lists+ceph-devel@lfdr.de>; Tue, 23 Jan 2024 15:48:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C658391BB
+	for <lists+ceph-devel@lfdr.de>; Tue, 23 Jan 2024 15:50:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 995ADB28129
-	for <lists+ceph-devel@lfdr.de>; Tue, 23 Jan 2024 14:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65EA02850B5
+	for <lists+ceph-devel@lfdr.de>; Tue, 23 Jan 2024 14:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506F55FBB5;
-	Tue, 23 Jan 2024 14:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913E556755;
+	Tue, 23 Jan 2024 14:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HYRgxoIY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MCtE6QS7"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65EB5FBA5
-	for <ceph-devel@vger.kernel.org>; Tue, 23 Jan 2024 14:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CA850271
+	for <ceph-devel@vger.kernel.org>; Tue, 23 Jan 2024 14:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706021252; cv=none; b=Vwigo8TocNVnM0ZYzFkpHomEU6d271gIeGHmKjwKbTMoYBsgMN0t6BipqysFt0l+zOds2YDUkD2SsG/TMQyu09LZUY9ozz5fyxn+ImLzGmU6LBlG0GJMgEzZJzo/DxJGoCDkrEwhBr1by8BatvzGq3vGLp3lTsSP35AndVdFpIE=
+	t=1706021408; cv=none; b=qBtEPEg09sGxrHQRWHxcZzwnlTo4Pv6L1pxiMQCWH+HwcYKNH1PT7OKAOG6jEBsB9sbqXfPnshIvH9ICjQqujPn3hkunpgkKCzaDiI04AEwMfc6DoasOkPN2WLypmddj/oPVOrALeRTQvvnC3DUsNtFMVNnEUeNWYP5g7mZEVUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706021252; c=relaxed/simple;
-	bh=QJgyC7cxY5V5IFzjOf4r7f+zMhFCO886dVU1YqAm18Q=;
+	s=arc-20240116; t=1706021408; c=relaxed/simple;
+	bh=tLwir4Qy3wzojW1g833smiLX/E/TcZ2eyYFWXOZwZkY=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JhaNBtSkKuN2w+1TUBp1f6gOUo6scCYKwNETUVKEw9h2HyKE83+6jiMwuCSFqbbi81WwsLAjT5DxdIGvJrwP57mIxS263aOnazF+NrJjRVTzt8x5CeRaM6Sekj/8jhGeEIOumUtK1HrXfPfInULmFm2xLRyjhYTIDHztUss9D24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HYRgxoIY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0BE6C43394;
-	Tue, 23 Jan 2024 14:47:31 +0000 (UTC)
+	 Content-Type:MIME-Version; b=XVbQeYJBxtgnr4LCDIrYlF7PyxWUVpE5XjlChwF3HMRxp9c4ADF1SNV3dLPcxFLUWQRCjj6TsX8SiMXQ76INXm+HLCw2UgD16nx2guKxu/XFEYasvHf+vD5TmCu/WTyhzXrazOeleHnwIQ2P3FTa/X0j6x3774Il7VIsrTiU1ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MCtE6QS7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2163BC433F1;
+	Tue, 23 Jan 2024 14:50:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706021252;
-	bh=QJgyC7cxY5V5IFzjOf4r7f+zMhFCO886dVU1YqAm18Q=;
+	s=k20201202; t=1706021407;
+	bh=tLwir4Qy3wzojW1g833smiLX/E/TcZ2eyYFWXOZwZkY=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=HYRgxoIYlqqIzcAMPEq9096kxzwnILdTrL9XYch4AOKxD5/dYq8pfq1hmhlj3ukvE
-	 MfxzAJY7xMuFoH95IcxnN8Ns4Wg5Ekvbv62ZbG+wPdWw4t9gZYgvz9n0Tmj3ulEQYq
-	 prkLA/kno2my+jOmPrWFbFFD9lkEJrHUx7WJ7xe1Y+dzmfaUjWM+yUIRVEXVrR2dAG
-	 w2ws2WYtzR+NgdjNkcJ/TTp1i7torliNUBGg4lEw+N4iqJ/YHI+Tr3XolpED3Qx0k5
-	 IqEKADMIESD7tqMPBN49tUd2Cgj62gJnEd5PYSRIeden4MVcPYGuWTSaIJ1shRv6Kf
-	 RDKukmtB172Uw==
-Message-ID: <3139b844b60348f306449e3ea4a3c91c40a18d74.camel@kernel.org>
-Subject: Re: [PATCH v5 3/3] libceph: just wait for more data to be available
- on the socket
+	b=MCtE6QS7myyHBC1pQSrrqp1m2wPcU1rHyqOI6GBLd37tVAqTCsAZ0EcPdvzzLsi9K
+	 n58wm/Bski1WKhza9thNIq2Cn1vx6Da3f0iARXL9P5Xz0JD4pk0gmpA9N9E5Z659o6
+	 JAPB2RLsBMwUW++bFjwQxKo8EBstCN0sHAClepqgooc1/Ty10NS+017VnFLcyJ7NZH
+	 tbZ3kfoqbOc6+oQ4DsHMdfwEJxvqXL8ZP5r3+Z2CLo9eWjDJtccfLUfte0MkkG8SbS
+	 EfReonTTFgAge57BaB9dvPVk+aEsdLSClTENpgyB2FZ0xFGdzQdfxeXYFIYdHENaMC
+	 9Oe4d/ypzd2JA==
+Message-ID: <37eb6c116734349484ece4c329c94a690b260726.camel@kernel.org>
+Subject: Re: [PATCH v5 1/3] libceph: fail the sparse-read if there still has
+ data in socket
 From: Jeff Layton <jlayton@kernel.org>
 To: xiubli@redhat.com, ceph-devel@vger.kernel.org
 Cc: idryomov@gmail.com, vshankar@redhat.com, mchangir@redhat.com
-Date: Tue, 23 Jan 2024 09:47:30 -0500
-In-Reply-To: <20240123131204.1166101-4-xiubli@redhat.com>
+Date: Tue, 23 Jan 2024 09:50:06 -0500
+In-Reply-To: <20240123131204.1166101-2-xiubli@redhat.com>
 References: <20240123131204.1166101-1-xiubli@redhat.com>
-	 <20240123131204.1166101-4-xiubli@redhat.com>
+	 <20240123131204.1166101-2-xiubli@redhat.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxwn8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1WvegyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqVT2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtVYrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8snVluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQcDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQfCBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sELZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/
 	r0kmR/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2BrQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRIONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZWf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQOlDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7RjiR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27XiQQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBMYXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9qLqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoac8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3FLpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx
@@ -73,187 +73,55 @@ MIME-Version: 1.0
 On Tue, 2024-01-23 at 21:12 +0800, xiubli@redhat.com wrote:
 > From: Xiubo Li <xiubli@redhat.com>
 >=20
-> A short read may occur while reading the message footer from the
-> socket.  Later, when the socket is ready for another read, the
-> messenger shoudl invoke all read_partial* handlers, except the
-> read_partial_sparse_msg_data().  The contract between the messenger
-> and these handlers is that the handlers should bail if the area
-> of the message is responsible for is already processed.  So,
-> in this case, it's expected that read_sparse_msg_data() would bail,
-> allowing the messenger to invoke read_partial() for the footer and
-> pick up where it left off.
+> Once this happens that means there have bugs.
 >=20
-> However read_partial_sparse_msg_data() violates that contract and
-> ends up calling into the state machine in the OSD client. The
-> sparse-read state machine just assumes that it's a new op and
-> interprets some piece of the footer as the sparse-read extents/data
-> and then returns bogus extents/data length, etc.
->=20
-> This will just reuse the 'total_resid' to determine whether should
-> the read_partial_sparse_msg_data() bail out or not. Because once
-> it reaches to zero that means all the extents and data have been
-> successfully received in last read, else it could break out when
-> partially reading any of the extents and data. And then the
-> osd_sparse_read() could continue where it left off.
->=20
-
-Thanks for the detailed description. That really helps!
-
 > URL: https://tracker.ceph.com/issues/63586
 > Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  include/linux/ceph/messenger.h |  2 +-
->  net/ceph/messenger_v1.c        | 25 +++++++++++++------------
->  net/ceph/messenger_v2.c        |  4 ++--
->  net/ceph/osd_client.c          |  9 +++------
->  4 files changed, 19 insertions(+), 21 deletions(-)
+>  net/ceph/osd_client.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
 >=20
-> diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenge=
-r.h
-> index 2eaaabbe98cb..1717cc57cdac 100644
-> --- a/include/linux/ceph/messenger.h
-> +++ b/include/linux/ceph/messenger.h
-> @@ -283,7 +283,7 @@ struct ceph_msg {
->  	struct kref kref;
->  	bool more_to_follow;
->  	bool needs_out_seq;
-> -	bool sparse_read;
-> +	u64 sparse_read_total;
->  	int front_alloc_len;
-> =20
->  	struct ceph_msgpool *pool;
-> diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
-> index 4cb60bacf5f5..4c76c8390de1 100644
-> --- a/net/ceph/messenger_v1.c
-> +++ b/net/ceph/messenger_v1.c
-> @@ -160,8 +160,9 @@ static size_t sizeof_footer(struct ceph_connection *c=
-on)
->  static void prepare_message_data(struct ceph_msg *msg, u32 data_len)
->  {
->  	/* Initialize data cursor if it's not a sparse read */
-> -	if (!msg->sparse_read)
-> -		ceph_msg_data_cursor_init(&msg->cursor, msg, data_len);
-> +	u64 len =3D msg->sparse_read_total ? : data_len;
-> +
-> +	ceph_msg_data_cursor_init(&msg->cursor, msg, len);
->  }
-> =20
->  /*
-> @@ -1036,7 +1037,7 @@ static int read_partial_sparse_msg_data(struct ceph=
-_connection *con)
->  	if (do_datacrc)
->  		crc =3D con->in_data_crc;
-> =20
-> -	do {
-> +	while (cursor->total_resid) {
->  		if (con->v1.in_sr_kvec.iov_base)
->  			ret =3D read_partial_message_chunk(con,
->  							 &con->v1.in_sr_kvec,
-> @@ -1044,23 +1045,23 @@ static int read_partial_sparse_msg_data(struct ce=
-ph_connection *con)
->  							 &crc);
->  		else if (cursor->sr_resid > 0)
->  			ret =3D read_partial_sparse_msg_extent(con, &crc);
-> -
-> -		if (ret <=3D 0) {
-> -			if (do_datacrc)
-> -				con->in_data_crc =3D crc;
-> -			return ret;
-> -		}
-> +		if (ret <=3D 0)
-> +			break;
-> =20
->  		memset(&con->v1.in_sr_kvec, 0, sizeof(con->v1.in_sr_kvec));
->  		ret =3D con->ops->sparse_read(con, cursor,
->  				(char **)&con->v1.in_sr_kvec.iov_base);
-> +		if (ret <=3D 0) {
-> +			ret =3D ret ? : 1; /* must return > 0 to indicate success */
-
-nit: this syntax is a gcc-ism (AIUI) and is not preferred. It'd be
-better spell it out in this case (particularly since it's only 4 extra
-chars:
-
-			ret =3D ret ? ret : 1;
-
-> +			break;
-> +		}
->  		con->v1.in_sr_len =3D ret;
-> -	} while (ret > 0);
-> +	}
-> =20
->  	if (do_datacrc)
->  		con->in_data_crc =3D crc;
-> =20
-> -	return ret < 0 ? ret : 1;  /* must return > 0 to indicate success */
-> +	return ret;
->  }
-> =20
->  static int read_partial_msg_data(struct ceph_connection *con)
-> @@ -1253,7 +1254,7 @@ static int read_partial_message(struct ceph_connect=
-ion *con)
->  		if (!m->num_data_items)
->  			return -EIO;
-> =20
-> -		if (m->sparse_read)
-> +		if (m->sparse_read_total)
->  			ret =3D read_partial_sparse_msg_data(con);
->  		else if (ceph_test_opt(from_msgr(con->msgr), RXBOUNCE))
->  			ret =3D read_partial_msg_data_bounce(con);
-> diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-> index f8ec60e1aba3..a0ca5414b333 100644
-> --- a/net/ceph/messenger_v2.c
-> +++ b/net/ceph/messenger_v2.c
-> @@ -1128,7 +1128,7 @@ static int decrypt_tail(struct ceph_connection *con=
-)
->  	struct sg_table enc_sgt =3D {};
->  	struct sg_table sgt =3D {};
->  	struct page **pages =3D NULL;
-> -	bool sparse =3D con->in_msg->sparse_read;
-> +	bool sparse =3D !!con->in_msg->sparse_read_total;
->  	int dpos =3D 0;
->  	int tail_len;
->  	int ret;
-> @@ -2060,7 +2060,7 @@ static int prepare_read_tail_plain(struct ceph_conn=
-ection *con)
->  	}
-> =20
->  	if (data_len(msg)) {
-> -		if (msg->sparse_read)
-> +		if (msg->sparse_read_total)
->  			con->v2.in_state =3D IN_S_PREPARE_SPARSE_DATA;
->  		else
->  			con->v2.in_state =3D IN_S_PREPARE_READ_DATA;
 > diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-> index 6beab9be51e2..1a5b1e1e24ca 100644
+> index 9be80d01c1dc..6beab9be51e2 100644
 > --- a/net/ceph/osd_client.c
 > +++ b/net/ceph/osd_client.c
-> @@ -5510,7 +5510,7 @@ static struct ceph_msg *get_reply(struct ceph_conne=
-ction *con,
->  	}
+> @@ -5857,8 +5857,8 @@ static int osd_sparse_read(struct ceph_connection *=
+con,
+>  	struct ceph_osd *o =3D con->private;
+>  	struct ceph_sparse_read *sr =3D &o->o_sparse_read;
+>  	u32 count =3D sr->sr_count;
+> -	u64 eoff, elen;
+> -	int ret;
+> +	u64 eoff, elen, len =3D 0;
+> +	int i, ret;
 > =20
->  	m =3D ceph_msg_get(req->r_reply);
-> -	m->sparse_read =3D (bool)srlen;
-> +	m->sparse_read_total =3D srlen;
+>  	switch (sr->sr_state) {
+>  	case CEPH_SPARSE_READ_HDR:
+> @@ -5909,6 +5909,13 @@ static int osd_sparse_read(struct ceph_connection =
+*con,
+>  		/* Convert sr_datalen to host-endian */
+>  		sr->sr_datalen =3D le32_to_cpu((__force __le32)sr->sr_datalen);
+>  		sr->sr_state =3D CEPH_SPARSE_READ_DATA;
+> +		for (i =3D 0; i < count; i++)
+> +			len +=3D sr->sr_extent[i].len;
+> +		if (sr->sr_datalen !=3D len) {
+> +			pr_warn_ratelimited("data len %u !=3D extent len %llu\n",
+> +					    sr->sr_datalen, len);
+> +			return -EREMOTEIO;
+> +		}
+>  		fallthrough;
+>  	case CEPH_SPARSE_READ_DATA:
+>  		if (sr->sr_index >=3D count) {
+> @@ -5919,6 +5926,8 @@ static int osd_sparse_read(struct ceph_connection *=
+con,
+>  		eoff =3D sr->sr_extent[sr->sr_index].off;
+>  		elen =3D sr->sr_extent[sr->sr_index].len;
 > =20
->  	dout("get_reply tid %lld %p\n", tid, m);
+> +		sr->sr_datalen -=3D elen;
+> +
+>  		dout("[%d] ext %d off 0x%llx len 0x%llx\n",
+>  		     o->o_osd, sr->sr_index, eoff, elen);
 > =20
-> @@ -5777,11 +5777,8 @@ static int prep_next_sparse_read(struct ceph_conne=
-ction *con,
->  	}
-> =20
->  	if (o->o_sparse_op_idx < 0) {
-> -		u64 srlen =3D sparse_data_requested(req);
-> -
-> -		dout("%s: [%d] starting new sparse read req. srlen=3D0x%llx\n",
-> -		     __func__, o->o_osd, srlen);
-> -		ceph_msg_data_cursor_init(cursor, con->in_msg, srlen);
-> +		dout("%s: [%d] starting new sparse read req\n",
-> +		     __func__, o->o_osd);
->  	} else {
->  		u64 end;
-> =20
-
-The patch itself looks fine though.
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
