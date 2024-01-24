@@ -1,284 +1,195 @@
-Return-Path: <ceph-devel+bounces-653-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-654-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32E0F839E2A
-	for <lists+ceph-devel@lfdr.de>; Wed, 24 Jan 2024 02:20:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7031B83A010
+	for <lists+ceph-devel@lfdr.de>; Wed, 24 Jan 2024 04:25:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9447B22387
-	for <lists+ceph-devel@lfdr.de>; Wed, 24 Jan 2024 01:20:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECFEC1F22E74
+	for <lists+ceph-devel@lfdr.de>; Wed, 24 Jan 2024 03:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0791106;
-	Wed, 24 Jan 2024 01:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE1353B9;
+	Wed, 24 Jan 2024 03:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ECK+GHkx"
+	dkim=pass (2048-bit key) header.d=qnap.com header.i=@qnap.com header.b="UjD/+uzw"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2112.outbound.protection.outlook.com [40.107.255.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E593CEC5
-	for <ceph-devel@vger.kernel.org>; Wed, 24 Jan 2024 01:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706059244; cv=none; b=K/PHC+/Jy/yIDvSs86xGT4Cp3KZKdLSwPfpqHgSZhkERyF6bQQpBqroeWMktCazzaCDf8da+Mng2gqKpLo7O0YScIczyYDq9tfDpxhZZbDwnx1IneY9ykqqcxBbhLPanuj3qpdPAsQudrTrmXNEXdYP23VYJS9ddbuPiDiiugxE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706059244; c=relaxed/simple;
-	bh=y2BswqU4i22c1HEvovu3sD3vMZpv10iXfJs7DhVIg4M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tsksfI1Gpns3uMlwavTZ90reOuFnrThYP03d1OLlRgtY7JoGmbD+BSh16/CKvwfK7gCRsodWRGMQqOfY9q1IjbKb55SF2q3QzeWhOhiAjMvTfuvH0ZiHmSZqP8tIYd5MmELGDJq/iQIY2eN1fA+xFyWeSDD2KBpSR74sutGjvFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ECK+GHkx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1706059240;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ernLNckXgAa0tYKW2Y3MqYCPJfv5P4TeQtkjJiWZ5i4=;
-	b=ECK+GHkxGORHDstMV/EroslbwEkrn2En/W8r7kihJHCIQGmAYqTd2rGF4qTz/kl920smyb
-	rDBgbtFkhRHeAFIy5IK9EaaK4qBr3KG3C4aFksVDIpctc4Paakg1u42oDWbHXnotwXufYk
-	W/bL8uOFY2V0G/UqAsMmkwa7dyrKBUM=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-107-635TkM1BNiKwZ1WwCH_Ocg-1; Tue, 23 Jan 2024 20:20:38 -0500
-X-MC-Unique: 635TkM1BNiKwZ1WwCH_Ocg-1
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-290a26e6482so2528879a91.0
-        for <ceph-devel@vger.kernel.org>; Tue, 23 Jan 2024 17:20:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706059238; x=1706664038;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ernLNckXgAa0tYKW2Y3MqYCPJfv5P4TeQtkjJiWZ5i4=;
-        b=jgj5iQGQ/1W7SfJZjsSrn1Gs3XtINBdrGTkl3uuLlViWE0+7cqQl1YaxyylVd9lt3s
-         mTr7YxyMdsysCCMck9Zkw/Lfd0lnfTUtC5TKyHBT1d5/H/Ohu8e4nnTc4ug76y8wGaw9
-         8Nm+T9RXfwQ37aV+lCMfmZNGlwpIkrC2J7GqlRIEDKbe0GgTuAl00kXq6lo0SMi5Sf3D
-         tdZjjgeITK6itiLIAhp6cTfSVE1JIsXIdYdlPvMbnkbFbKWXoEAJHxeBiCFLeSFHr+k+
-         hycPn1M0bi+CSgpRwoubn9y5cuaVMO19SkJKGY1DDGZxGvSFC3wUg5e9WE0GMxwwmf50
-         DwBw==
-X-Gm-Message-State: AOJu0Yy8uuRIaa/TlNJanob1ig3TP2jrTrHBgwltGDme+ceQH1qu6z+F
-	VOqmcQc/ugIYBa+t2097swWDfNC6P7hkYAZM2xZ2tvOydghO/eukdvyQDALCXAmTv7DzdzgEDrf
-	1iFxRx7S/zMZDMQsQBRV0pCo6yherSxKYXxrPDug1prlzKQapwDK0KyAlQ7s=
-X-Received: by 2002:a05:6a20:dd82:b0:19c:6293:e967 with SMTP id kw2-20020a056a20dd8200b0019c6293e967mr82486pzb.115.1706059237732;
-        Tue, 23 Jan 2024 17:20:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFi8LiBWTrV1joHH5CPcD4pcuPwaIMuB7RzreGPwBjyLVrR52+9687xKl3BZcDwayTfjU4g5A==
-X-Received: by 2002:a05:6a20:dd82:b0:19c:6293:e967 with SMTP id kw2-20020a056a20dd8200b0019c6293e967mr82481pzb.115.1706059237425;
-        Tue, 23 Jan 2024 17:20:37 -0800 (PST)
-Received: from [10.72.112.62] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id a25-20020aa78659000000b006dd7c177749sm2107989pfo.143.2024.01.23.17.20.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jan 2024 17:20:37 -0800 (PST)
-Message-ID: <2d8e9ed1-5854-4dd0-bc05-2d41c731ba2d@redhat.com>
-Date: Wed, 24 Jan 2024 09:20:32 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AA88475
+	for <ceph-devel@vger.kernel.org>; Wed, 24 Jan 2024 03:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706066725; cv=fail; b=RyyKYNPLeKoGVYFWTK9AECYSKRdOP4GIcinT4iid6LsR/bniUku9aSC8pvu11YAnM+hPjpn2zRnz6NzOy6n20S8uLdWFh5DaXHO+0pjj9Q+D+RWEH5hHhOamPwxx8I2+ThjlKqBwVH51OW4YOx0cMsmDr/3MAi0KzofwTaRiHdc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706066725; c=relaxed/simple;
+	bh=rlGkVuEJ5HUvWUDvRWRVJ6j253bzsMN1YM04gnzp8X0=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ejC7RaMTlAPkOptoZkpm3cbtVXj0zU+PWZ6ymOaOT1ike6321OwXoaVaMQAHDUJV/37LEaUIevQJga5Mw0B9eEiAyibppI8iW9FdTd/kHWoVPagZCyxomkJCbibThs6J2nNiwSfWKxy1VuZlI+sQEvNIT0YKZjbB9dMP7fcNoDo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qnap.com; spf=pass smtp.mailfrom=qnap.com; dkim=pass (2048-bit key) header.d=qnap.com header.i=@qnap.com header.b=UjD/+uzw; arc=fail smtp.client-ip=40.107.255.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qnap.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qnap.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PGxZNhEjfPfryBwvJfxpb8jmWry4Z/b6dpCRZUynqekUVEuaqoxqnyqA4ez5aGxCQlQE9fhchKk5qXnIOHf4irVVQEp397VVStRseMpsi6qOo9TacKz/wg3LG87mQHkCPnCP2p66TCKgitKRHpIwvBQHwujiF5+caUuzMEFxglohUAuP5FT4Bvf9PdkzSj/Lotvii+HbpBo76T+NS6CJgTFQyUYiVHCCOwaQivnKb3qGbXE1pZtpJrgVStg0wRP2hkjfrgbV6zcSHgT34axaxsPuStdMSuhXkntZDhBHWhM2AsZ8B1t4exVhITWXDbeo+bNElgKut12zGQYtEYU9dw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rlGkVuEJ5HUvWUDvRWRVJ6j253bzsMN1YM04gnzp8X0=;
+ b=EVXeOchpoaL6Qxqw4q3MdV9+NiTVaBXATWYH9tSjndrMqgUFimQb4FQ0CNyM261+gWLrGucZ807BPbDyogVFz0AdyepZRdOl0kgAx4M6poWClmE+2LJp5r/xviGkTEGCOdW3WUyjwJpY+kbCnf2Rtj2hxx1hb2GVk8sZFe+grEr4G86I6YDDt7WWpOqCBdt2tpI+CDO5fquAknKMrBH533HOLfLinjnKesSXzAejEP3Ou6J4FQ7dnKu8sVHcWgszk1q/jqvKlE08UIILuuGzaOjzQB6LEok9PdcfWVYZ3Mg+nr5/mjnHF+pzMh11IOa9cNBREaph7GVr+BvtcXyqqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=qnap.com; dmarc=pass action=none header.from=qnap.com;
+ dkim=pass header.d=qnap.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qnap.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rlGkVuEJ5HUvWUDvRWRVJ6j253bzsMN1YM04gnzp8X0=;
+ b=UjD/+uzwaDX+LjZz3irNKYAkWpAZc4DuKNxPYWogF18mypvNbejEjlFBzILtGjSOlWoLj/Kc2w8n7kJIeSklYm3AVW042NMMIaqLp4MJ6P+mHoTy2sqRF6l9LFqqbko3OqA7tynja4nPIUYBvCfd0FscOaytUaGro06cJ22MYYzDVZwFwP38WkHJ0t1l1D8TeHr+x2AZccMg/oYm9hxhzAc36rETaqvqidp3EfJ5HOJgOCGJNhOlte1HYgtwqJMgZTddf2mu2oYcGdetYZXUEmrmCzbfZuGjXHqo8AakuK5Yvq5/PEct1gmjB5X9zjB+WX3K9gEUhEg5mbmIdBG1pw==
+Received: from SEZPR04MB6972.apcprd04.prod.outlook.com (2603:1096:101:ef::7)
+ by OSQPR04MB7730.apcprd04.prod.outlook.com (2603:1096:604:27e::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7228.22; Wed, 24 Jan
+ 2024 03:25:18 +0000
+Received: from SEZPR04MB6972.apcprd04.prod.outlook.com
+ ([fe80::43a3:875d:d7bd:409b]) by SEZPR04MB6972.apcprd04.prod.outlook.com
+ ([fe80::43a3:875d:d7bd:409b%4]) with mapi id 15.20.7202.035; Wed, 24 Jan 2024
+ 03:25:17 +0000
+From: =?utf-8?B?RnJhbmsgSHNpYW8g6JWt5rOV5a6j?= <frankhsiao@qnap.com>
+To: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
+Subject: Read operation gets EOF return when there is multi-client read/write
+ after linux 5.16-rc1
+Thread-Topic: Read operation gets EOF return when there is multi-client
+ read/write after linux 5.16-rc1
+Thread-Index: AQHaTnBMaFmF63blQUOSXPXYY4zuRA==
+Date: Wed, 24 Jan 2024 03:25:17 +0000
+Message-ID:
+ <SEZPR04MB697268A8E75E22B0A0F10129B77B2@SEZPR04MB6972.apcprd04.prod.outlook.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=qnap.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEZPR04MB6972:EE_|OSQPR04MB7730:EE_
+x-ms-office365-filtering-correlation-id: ec09b565-0882-4932-0670-08dc1c8c1651
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ cx8IlC/bN8+bCe+aJPiAEvLiLjKOcIOOKaDRxshO3bDWR2xy3exDJVlXCIO/NcpjzY35/12yF8CnGZW1lKd+Sq8unjagQPsMmw/wEUE10f2WbV3gUjKjlTFuJB7SVbgps1L3XkHSr653HLz13rnxYua2iSswcKGpa6zHJU6ZbDT+YdeLcBEhoKG/NuWagti5CoK1gS7ySILN8sgUe8w7E+ZVH6FpPD0QirkzYG25BS5hbymKY822d9CyFIPIN0p809z+8FlxRi9FK360EJjv5ASixjtp1kATqPXvNiiFzFXivTrmBzDdjryVRFGK/pDwESQ0EmBnZrEgu5DTAUdWkjszzbA3ybgDzsGqf8D0ozxhfyhVI/2Q8+LnJqmH6IhAfiV/tKpacTS+9eI7W1//8x5mKlJqymhkoIpy48i6vSOG6IKEbPOseV1jVAIXJpuB0/3HvxKk26tRk59b/6wWxRzE56yOXBMqHaqKNs87O/Zu/u6uPUW8IZpTxH/lIUlqYIuhzu2f4PQIZ8dBGh26eQJx9VGJ/AsL/LTFlJVhYI9DSWFz9UOUnv1cwNzC0kiDC2PWi7XW1kwYhovEPgG4SVYFqenJ4j6CGEpofEibAP5525qL2qbv9FybR3IYxxAS
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR04MB6972.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(136003)(346002)(39860400002)(396003)(366004)(230922051799003)(451199024)(1800799012)(64100799003)(186009)(8676002)(8936002)(9686003)(52536014)(33656002)(26005)(83380400001)(2906002)(38070700009)(5660300002)(41300700001)(478600001)(64756008)(316002)(6916009)(6506007)(7696005)(66446008)(122000001)(38100700002)(91956017)(71200400001)(76116006)(66946007)(66476007)(66556008)(86362001)(55016003)(55236004);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?ajhQUUtDRHVBL1QxeDdpVUlWdUJzbzBieEJpM2FGTXFsOHY1WVZzam8rWDFz?=
+ =?utf-8?B?eWgrYWRHMVlkbFlZM29TMnpXM2grTlpFbllkeU9zRHFaamgrVWpoL2FaTVd1?=
+ =?utf-8?B?YjBFRTNVbjJaQ1E2dEkvbm4zc3dOYUxldWgrQXFIR3lGQlVFMmYwWkdYRzUz?=
+ =?utf-8?B?V01ZZGl0bzJBUGtCZW9pQUVKTGxkOUJqQytQUGNHU3BoU0QyVFVSN1l6enBr?=
+ =?utf-8?B?UTFqa0lRZmRGMFh4d3laOUFUSnhSRktCNjJhRzRXbks3bTdpYW0yUC9GcTFB?=
+ =?utf-8?B?OFB4MVBQNEVPY2poN1RVVGxTTjJVVWtiUmg0dUtjMVBpRWhrNi9UdkpXWUNv?=
+ =?utf-8?B?QVJzWURrUzFkU3B2cmp3R2ZqWUpOV2U2ZEUwdHJJWExpWlhXSTBvUnlTZmxO?=
+ =?utf-8?B?ckxMN25zd0hqN2FFZWo4empydzVCc3J5TEkzYUxyekFwUWcwdk9SeXlmVGJs?=
+ =?utf-8?B?YWw3MGJKaS94MlRmdWpwYlVjYVBDYmxxVFQvUzJSMUVlRFZsMVdFZGJCWEgy?=
+ =?utf-8?B?SUR1ZEpJK2JEclBNRGRaMFF4YnNRSXF2RW5DUUZaSzE0UldlL1dsTWJZZWlS?=
+ =?utf-8?B?dkFHRnBPZk9sOVU1OHpoc3ByaWV0RE1VUENVQnVYS3BueU5xTXdIdUVHc0M3?=
+ =?utf-8?B?Yk5GZGlOUkVxN1c2TnJwS2hsSk1pcC95ZFJJZVNIWEVjM2tOMXYxNXpnRFA5?=
+ =?utf-8?B?SVJVcXRjc2dLNnQ0TDZRK2J1VzY0VGZocmZFRXdCMXhhTlJpMy9DOUJCMzR5?=
+ =?utf-8?B?NVRFcEljNlZ6eUllRlk2aWUyL1BIN2N5emNmRWd0Y1BDdU9OTmZBb3Y4NTBo?=
+ =?utf-8?B?a29nQU5QZU12K0JqckNnRmRTYXJBbDdmQ1RkdTV5bXluMlI5T3VsUDlXdS9i?=
+ =?utf-8?B?bjF5MytDUC8xaFB0SElTRjdDS0JmdjR3aEdNMG8yUkhSeU5oOFBaUnBOUzY4?=
+ =?utf-8?B?em9iWmJhbWkzSGI3bkRxbHJFcnlIZjAzSGxiQWttOVcvb1hRS01VNlRJUElT?=
+ =?utf-8?B?MzAyRmZGOGhTYWFaS1R3OHl5TXEwa21RSDZzVkdreFhpR1NleXg3bGJ4aVA3?=
+ =?utf-8?B?LzByMFlxSW9EYys5NzBab3N6RUV5eTBnQWVvVDYwTU1XbkJBd1BZNWhFRHVq?=
+ =?utf-8?B?aWJabnUwK1hHZXltdlZHeXJWdCtuV1g4MXZwTzVUVUwyNXZCMngzOTV1RUxY?=
+ =?utf-8?B?bHV0UzVsQnVDR243bFI5TGE5K1p1dEtKS013N2ZNazBVL1pWaFh5TG5wRGh5?=
+ =?utf-8?B?czlML1dTN2VpMUVhRmxjMmpWTGxNSWlkdHBPK05IYk5VK0daeUVlVVByZFBK?=
+ =?utf-8?B?anlsTTFRSFB2N2JON2RKVzVITGlPQm1HODQ4TDV3b1oyQnp6aEowTVo3RTFT?=
+ =?utf-8?B?cityL3F2d1Z1ZFVvSGxvVmlYN0tPNXFCaVlVTTZsaHZuNkxwYWhKSnYvOFJX?=
+ =?utf-8?B?NE5aNEUwTStYcGJ5UHh5VVUyYnE5QlFad2RIaGZMMDVzd3dtYjZicFl3a3Zw?=
+ =?utf-8?B?SVpqazVKcXNSaGs1MkhrbGgyZTdEU3BxSGkvODNGVDc2SDdOU0Q1WjNyUVdI?=
+ =?utf-8?B?bEdkOUVOY1QrS0dXd0RKK1NvaDFQSkdqMklzUmJVMzcvejU0Ums4T2FyTm05?=
+ =?utf-8?B?dno3MW1NVnBPRjc2RUpiZElSNytJcE9jWTlJNXM5M0J6NjJJajVzaTZsbVVn?=
+ =?utf-8?B?d2RSK1lHc2VpZHdZbkdzWXdsVk82OSs4c2xZMitWUEV6UjdMcHRPTzdhMjQz?=
+ =?utf-8?B?Ym42bzZrVkxIb1V4MU05RWM0Y1RDM21USlFrMStUVzFJWHlmeUdKMHl6VXlT?=
+ =?utf-8?B?RUpBSGRHaVdpa0xCM3BGT2FZaktoQ3V1aFJ6QmJCWkNRVDcxZURvOHpXR3Zr?=
+ =?utf-8?B?eGxCLy90akc1UVZJZW9iWGVUVmNUaEg2cm5lZnNSN3Z5Q1ZraGVMdW1tazlt?=
+ =?utf-8?B?SjVwcTZ5TWxyZEdWRGhGbEJrcFZ3aG9iM0IxRkU2dEk1RFJ0UnFKVmQ4ZE9Q?=
+ =?utf-8?B?R3pHU3l5MzBGaDI2NDVJMHlzVzcwUytCeHBwVUhZK0llaDFBdG9ZRGhSOWpR?=
+ =?utf-8?B?WTNEV2I2eWNoZHViZjlZOWpzVFVHVWtlbXVvbzA0WjRtNTRmalFsZW1NUmZ2?=
+ =?utf-8?Q?l6IU=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/3] libceph: just wait for more data to be available
- on the socket
-Content-Language: en-US
-To: Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com, vshankar@redhat.com, mchangir@redhat.com
-References: <20240123131204.1166101-1-xiubli@redhat.com>
- <20240123131204.1166101-4-xiubli@redhat.com>
- <3139b844b60348f306449e3ea4a3c91c40a18d74.camel@kernel.org>
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <3139b844b60348f306449e3ea4a3c91c40a18d74.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: qnap.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR04MB6972.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec09b565-0882-4932-0670-08dc1c8c1651
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jan 2024 03:25:17.4670
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 6eba8807-6ef0-4e31-890c-a6ecfbb98568
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ++nQ3V4v8UHMziGdeDjOWugq7Zi3vSmkoQ84XRkY+JZWk/djIRcHSNaKBpVSMqYIngGAho9EI/iHl+W86TMd8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR04MB7730
 
-
-On 1/23/24 22:47, Jeff Layton wrote:
-> On Tue, 2024-01-23 at 21:12 +0800, xiubli@redhat.com wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> A short read may occur while reading the message footer from the
->> socket.  Later, when the socket is ready for another read, the
->> messenger shoudl invoke all read_partial* handlers, except the
->> read_partial_sparse_msg_data().  The contract between the messenger
->> and these handlers is that the handlers should bail if the area
->> of the message is responsible for is already processed.  So,
->> in this case, it's expected that read_sparse_msg_data() would bail,
->> allowing the messenger to invoke read_partial() for the footer and
->> pick up where it left off.
->>
->> However read_partial_sparse_msg_data() violates that contract and
->> ends up calling into the state machine in the OSD client. The
->> sparse-read state machine just assumes that it's a new op and
->> interprets some piece of the footer as the sparse-read extents/data
->> and then returns bogus extents/data length, etc.
->>
->> This will just reuse the 'total_resid' to determine whether should
->> the read_partial_sparse_msg_data() bail out or not. Because once
->> it reaches to zero that means all the extents and data have been
->> successfully received in last read, else it could break out when
->> partially reading any of the extents and data. And then the
->> osd_sparse_read() could continue where it left off.
->>
-> Thanks for the detailed description. That really helps!
->
-I just copied from Ilya's comments and with some changes.
-
->> URL: https://tracker.ceph.com/issues/63586
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> ---
->>   include/linux/ceph/messenger.h |  2 +-
->>   net/ceph/messenger_v1.c        | 25 +++++++++++++------------
->>   net/ceph/messenger_v2.c        |  4 ++--
->>   net/ceph/osd_client.c          |  9 +++------
->>   4 files changed, 19 insertions(+), 21 deletions(-)
->>
->> diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenger.h
->> index 2eaaabbe98cb..1717cc57cdac 100644
->> --- a/include/linux/ceph/messenger.h
->> +++ b/include/linux/ceph/messenger.h
->> @@ -283,7 +283,7 @@ struct ceph_msg {
->>   	struct kref kref;
->>   	bool more_to_follow;
->>   	bool needs_out_seq;
->> -	bool sparse_read;
->> +	u64 sparse_read_total;
->>   	int front_alloc_len;
->>   
->>   	struct ceph_msgpool *pool;
->> diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
->> index 4cb60bacf5f5..4c76c8390de1 100644
->> --- a/net/ceph/messenger_v1.c
->> +++ b/net/ceph/messenger_v1.c
->> @@ -160,8 +160,9 @@ static size_t sizeof_footer(struct ceph_connection *con)
->>   static void prepare_message_data(struct ceph_msg *msg, u32 data_len)
->>   {
->>   	/* Initialize data cursor if it's not a sparse read */
->> -	if (!msg->sparse_read)
->> -		ceph_msg_data_cursor_init(&msg->cursor, msg, data_len);
->> +	u64 len = msg->sparse_read_total ? : data_len;
->> +
->> +	ceph_msg_data_cursor_init(&msg->cursor, msg, len);
->>   }
->>   
->>   /*
->> @@ -1036,7 +1037,7 @@ static int read_partial_sparse_msg_data(struct ceph_connection *con)
->>   	if (do_datacrc)
->>   		crc = con->in_data_crc;
->>   
->> -	do {
->> +	while (cursor->total_resid) {
->>   		if (con->v1.in_sr_kvec.iov_base)
->>   			ret = read_partial_message_chunk(con,
->>   							 &con->v1.in_sr_kvec,
->> @@ -1044,23 +1045,23 @@ static int read_partial_sparse_msg_data(struct ceph_connection *con)
->>   							 &crc);
->>   		else if (cursor->sr_resid > 0)
->>   			ret = read_partial_sparse_msg_extent(con, &crc);
->> -
->> -		if (ret <= 0) {
->> -			if (do_datacrc)
->> -				con->in_data_crc = crc;
->> -			return ret;
->> -		}
->> +		if (ret <= 0)
->> +			break;
->>   
->>   		memset(&con->v1.in_sr_kvec, 0, sizeof(con->v1.in_sr_kvec));
->>   		ret = con->ops->sparse_read(con, cursor,
->>   				(char **)&con->v1.in_sr_kvec.iov_base);
->> +		if (ret <= 0) {
->> +			ret = ret ? : 1; /* must return > 0 to indicate success */
-> nit: this syntax is a gcc-ism (AIUI) and is not preferred. It'd be
-> better spell it out in this case (particularly since it's only 4 extra
-> chars:
->
-> 			ret = ret ? ret : 1;
-
-Sure.
-
-Thanks Jeff.
-
-- Xiubo
-
-
->> +			break;
->> +		}
->>   		con->v1.in_sr_len = ret;
->> -	} while (ret > 0);
->> +	}
->>   
->>   	if (do_datacrc)
->>   		con->in_data_crc = crc;
->>   
->> -	return ret < 0 ? ret : 1;  /* must return > 0 to indicate success */
->> +	return ret;
->>   }
->>   
->>   static int read_partial_msg_data(struct ceph_connection *con)
->> @@ -1253,7 +1254,7 @@ static int read_partial_message(struct ceph_connection *con)
->>   		if (!m->num_data_items)
->>   			return -EIO;
->>   
->> -		if (m->sparse_read)
->> +		if (m->sparse_read_total)
->>   			ret = read_partial_sparse_msg_data(con);
->>   		else if (ceph_test_opt(from_msgr(con->msgr), RXBOUNCE))
->>   			ret = read_partial_msg_data_bounce(con);
->> diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
->> index f8ec60e1aba3..a0ca5414b333 100644
->> --- a/net/ceph/messenger_v2.c
->> +++ b/net/ceph/messenger_v2.c
->> @@ -1128,7 +1128,7 @@ static int decrypt_tail(struct ceph_connection *con)
->>   	struct sg_table enc_sgt = {};
->>   	struct sg_table sgt = {};
->>   	struct page **pages = NULL;
->> -	bool sparse = con->in_msg->sparse_read;
->> +	bool sparse = !!con->in_msg->sparse_read_total;
->>   	int dpos = 0;
->>   	int tail_len;
->>   	int ret;
->> @@ -2060,7 +2060,7 @@ static int prepare_read_tail_plain(struct ceph_connection *con)
->>   	}
->>   
->>   	if (data_len(msg)) {
->> -		if (msg->sparse_read)
->> +		if (msg->sparse_read_total)
->>   			con->v2.in_state = IN_S_PREPARE_SPARSE_DATA;
->>   		else
->>   			con->v2.in_state = IN_S_PREPARE_READ_DATA;
->> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
->> index 6beab9be51e2..1a5b1e1e24ca 100644
->> --- a/net/ceph/osd_client.c
->> +++ b/net/ceph/osd_client.c
->> @@ -5510,7 +5510,7 @@ static struct ceph_msg *get_reply(struct ceph_connection *con,
->>   	}
->>   
->>   	m = ceph_msg_get(req->r_reply);
->> -	m->sparse_read = (bool)srlen;
->> +	m->sparse_read_total = srlen;
->>   
->>   	dout("get_reply tid %lld %p\n", tid, m);
->>   
->> @@ -5777,11 +5777,8 @@ static int prep_next_sparse_read(struct ceph_connection *con,
->>   	}
->>   
->>   	if (o->o_sparse_op_idx < 0) {
->> -		u64 srlen = sparse_data_requested(req);
->> -
->> -		dout("%s: [%d] starting new sparse read req. srlen=0x%llx\n",
->> -		     __func__, o->o_osd, srlen);
->> -		ceph_msg_data_cursor_init(cursor, con->in_msg, srlen);
->> +		dout("%s: [%d] starting new sparse read req\n",
->> +		     __func__, o->o_osd);
->>   	} else {
->>   		u64 end;
->>   
-> The patch itself looks fine though.
->
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
->
-
+V2hlbiBtdWx0aXBsZSBjZXBoIGtlcm5lbCBjbGllbnRzIHBlcmZvcm0gcmVhZC93cml0ZSBvbiB0
+aGUgc2FtZSBmaWxlLCB0aGUgcmVhZApvcGVyYXRpb24oY2VwaF9zeW5jX3JlYWQpIHJldHVybnMg
+RU9GKHJldCA9IDApIGV2ZW4gdGhvdWdoIHRoZSBmaWxlIGhhcyBiZWVuCndyaXR0ZW4gYnkgYW5v
+dGhlciBjbGllbnQuCgpNeSBlbnZzIHVzZSBDZXBoIHF1aW5jeSh2MTcuMi42KSBhbmQgbW91bnQg
+Y2VwaGZzIGJ5IGNlcGgga2VybmVsIGNsaWVudC4gRm9yIHRoZQpjbGllbnQgc2lkZSwgSSB1c2Ug
+U2FtYmEodjQuMTguOCkgdG8gZXhwb3J0IHRoZSBmb2xkZXIgYXMgc21iIHNoYXJlIGFuZCB0ZXN0
+IGl0CndpdGggc21idG9ydHVyZS4gVGhlIHRlc3QgY2FzZSBpcyBzbWIyLnJ3LnJ3MSB3aXRoIHRo
+ZSBmb2xsb3dpbmcgZmFpbHVyZQptZXNzYWdlOgoKdGVzdDogc2FtYmE0LnNtYjIucncucncxIApD
+aGVja2luZyBkYXRhIGludGVncml0eSBvdmVyIDEwIG9wcyAKcmVhZCBmYWlsZWQoTlRfU1RBVFVT
+X0VORF9PRl9GSUxFKSAKZmFpbHVyZTogc2FtYmE0LnNtYjIucncucncxIFsgCkV4Y2VwdGlvbjog
+cmVhZCAwLCBleHBlY3RlZCA0NDAgCl0KCkFmdGVyIHNvbWUgdGVzdGluZywgSSBmaWd1cmVkIG91
+dCB0aGF0IHRoZSBmYWlsdXJlIG9ubHkgaGFwcGVucyB3aGVuIEkgaGF2ZQpsaW51eCBrZXJuZWwg
+dmVyc2lvbj49NS4xNi1yYzEsIHNwZWNpZmljYWxseSBhZnRlciBjb21taXQKYzNkOGUwYjVkZTQ4
+N2E3YzQ2Mjc4MTc0NWJjMTc2OTRhNDI2NjY5Ni4gS2VybmVsIGxvZ3MgYXMgYmVsb3cob24gNS4x
+Ni1yYzEpOgoKCltXZWQgSmFuIDEwIDA5OjQ0OjU2IDIwMjRdIFsxNTMyMjFdIGNlcGhfcmVhZF9p
+dGVyOjE1NTk6IGNlcGg6IMKgYWlvX3N5bmNfcmVhZAowMDAwMDAwMDc4OWRjY2VlIDEwMDAwMDAx
+MGVmLmZmZmZmZmZmZmZmZmZmZmUgMH40NDAgZ290IGNhcCByZWZzIG9uIEZyIApbV2VkIEphbiAx
+MCAwOTo0NDo1NiAyMDI0XSBbMTUzMjIxXSBjZXBoX3N5bmNfcmVhZDo4NTI6IGNlcGg6IMKgc3lu
+Y19yZWFkIG9uIGZpbGUgCjAwMDAwMDAwZDllODYxZmIgMH40NDAgCltXZWQgSmFuIDEwIDA5OjQ0
+OjU2IDIwMjRdIFsxNTMyMjFdIGNlcGhfc3luY19yZWFkOjkxMzogY2VwaDogwqBzeW5jX3JlYWQg
+MH40NDAgZ290IDQ0MCBpX3NpemUgMCAKW1dlZCBKYW4gMTAgMDk6NDQ6NTYgMjAyNF0gWzE1MzIy
+MV0gY2VwaF9zeW5jX3JlYWQ6OTY2OiBjZXBoOiDCoHN5bmNfcmVhZCByZXN1bHQgMCByZXRyeV9v
+cCAyIAoKLi4uICAKCltXZWQgSmFuIDEwIDA5OjQ0OjU3IDIwMjRdIFsxNTMyMjFdIGNlcGhfcmVh
+ZF9pdGVyOjE1NTk6IGNlcGg6IMKgYWlvX3N5bmNfcmVhZAowMDAwMDAwMDc4OWRjY2VlIDEwMDAw
+MDAxMGVmLmZmZmZmZmZmZmZmZmZmZmUgMH40NDAgZ290IGNhcCByZWZzIG9uIEZyIApbV2VkIEph
+biAxMCAwOTo0NDo1NyAyMDI0XSBbMTUzMjIxXSBjZXBoX3N5bmNfcmVhZDo4NTI6IGNlcGg6IMKg
+c3luY19yZWFkIG9uIGZpbGUKMDAwMDAwMDBkOWU4NjFmYiAwfjAKCgpUaGUgbG9ncyBpbmRpY2F0
+ZSB0aGF0OiAKMS4gY2VwaF9zeW5jX3JlYWQgbWF5IHJlYWQgZGF0YSBidXQgaV9zaXplIGlzIG9i
+c29sZXRlIGluIHNpbXVsdGFuZW91cyBydyBzaXR1YXRpb24gCjIuIFRoZSBjb21taXQgaW4gNS4x
+Ni1yYzEgY2FwIHJldCB0byBpX3NpemUgYW5kIHNldCByZXRyeV9vcCA9IENIRUNLX0VPRiAKMy4g
+V2hlbiByZXRyeWluZywgY2VwaF9zeW5jX3JlYWQgZ2V0cyBsZW49MCBzaW5jZSBpb3YgY291bnQg
+aGFzIG1vZGlmaWVkIGluIApjb3B5X3BhZ2VfdG9faXRlciAKNC4gY2VwaF9yZWFkX2l0ZXIgcmV0
+dXJuIDAKCkknbSBub3Qgc3VyZSBpZiBteSB1bmRlcnN0YW5kaW5nIGlzIGNvcnJlY3QuIEFzIGEg
+cmVmZXJlbmNlLCBoZXJlIGlzIG15IHNpbXBsZQpwYXRjaCBhbmQgSSBuZWVkIG1vcmUgY29tbWVu
+dHMuIFRoZSBwdXJwb3NlIG9mIHRoZSBwYXRjaCBpcyB0byBwcmV2ZW50CnN5bmMgcmVhZCBoYW5k
+bGVyIGZyb20gZG9pbmcgY29weSBwYWdlIHdoZW4gcmV0ID4gaV9zaXplLgoKVGhhbmtzLgoKCmRp
+ZmYgLS1naXQgYS9mcy9jZXBoL2ZpbGUuYyBiL2ZzL2NlcGgvZmlsZS5jCmluZGV4IDIyMGE0MTgz
+MWI0Ni4uNTg5N2Y1MmVlOTk4IDEwMDY0NAotLS0gYS9mcy9jZXBoL2ZpbGUuYworKysgYi9mcy9j
+ZXBoL2ZpbGUuYwpAQCAtOTI2LDYgKzkyNiw5IEBAIHN0YXRpYyBzc2l6ZV90IGNlcGhfc3luY19y
+ZWFkKHN0cnVjdCBraW9jYiAqaW9jYiwgc3RydWN0IGlvdl9pdGVyICp0bywKCsKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIGlkeCA9IDA7CsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGxlZnQgPSByZXQg
+PiAwID8gcmV0IDogMDsKKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpZiAobGVmdCA+IGlfc2l6ZSkg
+eworIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGxlZnQgPSBpX3NpemU7CisgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgfQrCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCB3aGlsZSAobGVmdCA+
+IDApIHsKwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc2l6ZV90IGxlbiwgY29w
+aWVkOwrCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBwYWdlX29mZiA9IG9mZiAm
+IH5QQUdFX01BU0s7CkBAIC05NTIsNyArOTU1LDcgQEAgc3RhdGljIHNzaXplX3QgY2VwaF9zeW5j
+X3JlYWQoc3RydWN0IGtpb2NiICppb2NiLCBzdHJ1Y3QgaW92X2l0ZXIgKnRvLArCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBicmVhazsKwqAgwqAgwqAgwqAgfQoKLSDCoCDCoCDC
+oCBpZiAob2ZmID4gaW9jYi0+a2lfcG9zKSB7CisgwqAgwqAgwqAgaWYgKG9mZiA+IGlvY2ItPmtp
+X3BvcyB8fCBpX3NpemUgPT0gMCkgewrCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpZiAob2ZmID49
+IGlfc2l6ZSkgewrCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAqcmV0cnlfb3Ag
+PSBDSEVDS19FT0Y7CsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHJldCA9IGlf
+c2l6ZSAtIGlvY2ItPmtpX3Bvczs=
 
