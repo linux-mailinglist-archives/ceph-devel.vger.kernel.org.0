@@ -1,110 +1,79 @@
-Return-Path: <ceph-devel+bounces-655-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-656-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5652183B2F5
-	for <lists+ceph-devel@lfdr.de>; Wed, 24 Jan 2024 21:21:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89FA183B65D
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Jan 2024 02:06:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBB931F22C31
-	for <lists+ceph-devel@lfdr.de>; Wed, 24 Jan 2024 20:21:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D778BB246E3
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Jan 2024 01:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F669133438;
-	Wed, 24 Jan 2024 20:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6455F1369;
+	Thu, 25 Jan 2024 01:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dE9tWOUM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hs0PqrQu"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6899C811E4;
-	Wed, 24 Jan 2024 20:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5CC63AE;
+	Thu, 25 Jan 2024 01:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706127688; cv=none; b=gQnzlIxXxS+zUVwcZnX35vlcTmi/ATysUR6S5Q7k5wYVIklCUV4lxIx0EcIJR9emb46RZP6ZPksv3WNleU6OytMadNlwQKAEc9rrnb3df7t1TpnbTTzhtf5vAV/8Ax7lV0aG0NkwPUH3hXK/bY07fHgG2DM4N6mr93bb8yUn/qE=
+	t=1706144750; cv=none; b=gm40NILI4T6ipHLD3LiQSEYqhlOqAxNBvJWwbTUow7kBbALJl9Uzq1oe97ZoPJKBiva3lY0awyB/mkxNHP9ihI6T90EnBboGbtTCWM0EKEIZnLwCKopzluToewti5j9bzK/KwalnQruPVBkOna3E41ch1BboC+6Fjrk0Q4zgRA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706127688; c=relaxed/simple;
-	bh=VW4mEIcdmik+s5egPBqVRNRoX+de9lNQLbQm1R62l4M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rg5D6nY/Men2++/HidMMjr6l8BMnbIizrsdVLF3vnF/TB3ACo0prjmKlnv0iF8Y1/34NQbTRfynsPmO+x4ROtFyixXeoYhEJBwB0sQPG7Gt/PbbEUdQUIVv39DIAK1Hw/g06FoNLxDbFkRLIo3yQajqLLMZTGrjn5WrtDpLvy4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dE9tWOUM; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a30f7c9574eso170657666b.0;
-        Wed, 24 Jan 2024 12:21:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706127684; x=1706732484; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ChRDax5hJj6+YTMJxBY2kDCwCF/6rG7mvJwTLJmb7rA=;
-        b=dE9tWOUM77q/4kHPm/tDtrU+45nkBMUvKLbNmTNtB/NDpbytEiNHIaz+9ekSZ3rzmE
-         dUEAorsqjzuermmH6NnLwByRNbXe1r18LXZkVGPhfiyjtSlAO2+NDx6QRuR529rUqIg+
-         l0GQzmzCU0hKSh4meoECT4IwjYGlyi19We4YxFna0I5hqPedJyn7Lqm2Md1embd5r4YR
-         ugBt2ctMkdjemWTmKDbGYRZIhW8cORgN9AQUN8LbTBFni61E9bu/uKv7gEEJReFKDD5c
-         iFB1ldxvVpcCtMTe0/vlQy7olIuWUQ6Bb78C4lV7xSz3MQtAaX9ZTAcueIUEDb2s5ELD
-         i6Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706127684; x=1706732484;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ChRDax5hJj6+YTMJxBY2kDCwCF/6rG7mvJwTLJmb7rA=;
-        b=YDkuT/yQduEhyPK9lU0Hdm99GSjjCvR6VrLuhpDovu+Z+5ArTrMLKiDBeyujDkcUNR
-         7nErHkYL56ZgdY+z4Bbi7leT5Iueq2YVZGu8ApPlkaKOymrAdYqlhcvyoHj5pEi4Zctn
-         +uL7/gdf+CLjLyv0IWjAvI94oAX1UvJMSnTsIwKscw0WdO8ZyMbxbGLr572+Tak/wutx
-         kN0sEPT0Ky2AgBYXMDfM93Ark00KPjIEMhReK943UYFrcJKLq9ALY8WpWmr40hLialw4
-         q75DMgcQp7eKKw5WAHVLm5QtI8AW9uwnnj7SNTGtw5rPA5Luk0hLgqaYTjbAGQD/gedz
-         vASQ==
-X-Gm-Message-State: AOJu0Yzu+tFI+HMMjgSW7ahN6yuIDxjmMah3K8Ou4Zc937aDRu1UHk91
-	alSotZ9wEPEIixALCag5pzRl3zqlSxJtiAXpKxTHNUhtqpq5RwdZ
-X-Google-Smtp-Source: AGHT+IFdiG2NXpLxaUC69wnle/LvaJbZhVfrAQgsr2s46zHIaM+Y9faBfFjTZ7KPYhHCqlzfWoe7fQ==
-X-Received: by 2002:a17:906:5294:b0:a31:49ad:f37e with SMTP id c20-20020a170906529400b00a3149adf37emr256936ejm.73.1706127684298;
-        Wed, 24 Jan 2024 12:21:24 -0800 (PST)
-Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
-        by smtp.gmail.com with ESMTPSA id su13-20020a17090703cd00b00a26a93731c5sm226398ejb.111.2024.01.24.12.21.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jan 2024 12:21:23 -0800 (PST)
-From: Ilya Dryomov <idryomov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 6.8-rc2
-Date: Wed, 24 Jan 2024 21:21:06 +0100
-Message-ID: <20240124202109.1567593-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.41.0
+	s=arc-20240116; t=1706144750; c=relaxed/simple;
+	bh=M4KvLojT4IjqBF+YmPzMSICn8NeVt5RlUd93zY74MgQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=O0SIItkZZVZ7gbPPD/MY6Tyu8VLyNiivuj+iUo5EppmxqLsE0fPC5cWUuw0Yy20fWfE91Vm6KbQxmEq4Bav1XLlIRJv4nOiHsVqijMwyak38Kpt8f14xRSL6YxNTxq8iiAfzK6sZ3VMC8twec5qT8ONioyeXpnGpn8lwQULYKSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hs0PqrQu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C5C35C433F1;
+	Thu, 25 Jan 2024 01:05:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706144749;
+	bh=M4KvLojT4IjqBF+YmPzMSICn8NeVt5RlUd93zY74MgQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=hs0PqrQuhsWSyE2F5Y8flTLMdLt8zMGH8dmrK8+6qhjdGFwvN+D18/Toe/1S3NpBp
+	 iatQEjoqfKEHnlIZX2ZWDH0i+qy4fqk6w+Q+BY1wYpi//7QYvwtZ0Ue58SSf9cHxnu
+	 ySbNdlLnStmaZxXpxsO/d42+wfMkYa1slkD0QZOSZ0qF9+uDNWksWZzrQYjlEjYpWM
+	 68pL2UNGmR2Hsg0Qtpeg1+FvhdeytTj4lRMA2oYfXkV6V7Bv2a3IbndRAaELsV7eaL
+	 w09ieyS2JuJpcE6U5wZWi+V799/bXYB7kyE6f5W3/ujr6bEgtmSCP+v5FxkBwo6iNz
+	 nwTv8h5B9cuTA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B5CF0DFF762;
+	Thu, 25 Jan 2024 01:05:49 +0000 (UTC)
+Subject: Re: [GIT PULL] Ceph fixes for 6.8-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240124202109.1567593-1-idryomov@gmail.com>
+References: <20240124202109.1567593-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240124202109.1567593-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.8-rc2
+X-PR-Tracked-Commit-Id: ded080c86b3f99683774af0441a58fc2e3d60cae
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6098d87eaf31f48153c984e2adadf14762520a87
+Message-Id: <170614474973.13085.1781497391276692794.pr-tracker-bot@kernel.org>
+Date: Thu, 25 Jan 2024 01:05:49 +0000
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+The pull request you sent on Wed, 24 Jan 2024 21:21:06 +0100:
 
-The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
+> https://github.com/ceph/ceph-client.git tags/ceph-for-6.8-rc2
 
-  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6098d87eaf31f48153c984e2adadf14762520a87
 
-are available in the Git repository at:
+Thank you!
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-6.8-rc2
-
-for you to fetch changes up to ded080c86b3f99683774af0441a58fc2e3d60cae:
-
-  rbd: don't move requests to the running list on errors (2024-01-22 00:14:10 +0100)
-
-----------------------------------------------------------------
-A fix to avoid triggering an assert in some cases where RBD exclusive
-mappings are involved and a deprecated API cleanup.
-
-----------------------------------------------------------------
-Christophe JAILLET (1):
-      rbd: remove usage of the deprecated ida_simple_*() API
-
-Ilya Dryomov (1):
-      rbd: don't move requests to the running list on errors
-
- drivers/block/rbd.c | 32 +++++++++++++++++++-------------
- 1 file changed, 19 insertions(+), 13 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
