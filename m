@@ -1,120 +1,110 @@
-Return-Path: <ceph-devel+bounces-717-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-718-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD5A283EB71
-	for <lists+ceph-devel@lfdr.de>; Sat, 27 Jan 2024 07:38:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB5383F6E7
+	for <lists+ceph-devel@lfdr.de>; Sun, 28 Jan 2024 17:20:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FF151F24670
-	for <lists+ceph-devel@lfdr.de>; Sat, 27 Jan 2024 06:38:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E6A11F275C7
+	for <lists+ceph-devel@lfdr.de>; Sun, 28 Jan 2024 16:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D86918EB4;
-	Sat, 27 Jan 2024 06:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43B155E6D;
+	Sun, 28 Jan 2024 16:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lk6T48pI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LiVIUZ/6"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFF7801;
-	Sat, 27 Jan 2024 06:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F3A55E42;
+	Sun, 28 Jan 2024 16:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706337477; cv=none; b=lIdrfZiA6pq/hBfh4R7aeG75pnvCtOVANffrdBgukmi8ZTUxp14CQEzlC3pQsitUZmMxDIuGNKJd/kcIxeF7hm0v3IoeuCp7nRLXeZmUmfFVd0Cj3bbK+8O53IISf7qMBi08sfh2Ai46l3E0737th7uH+9v8YgolRhR6zAAq5JM=
+	t=1706458361; cv=none; b=lV/CQfVjphBfKC5eFSW5PsrrOYkTdx55sn2sV0q6tC78csLfFwB31sCUVQq+w1knLSQB6jVxdpHbZig9v5QXkpk1nGxgfm/KUsr0Izdf9Z+TI95ot6MOOy5mu7XfhYwBhrCdvUuB5NXrMoVu9gR3+U7tN/u9MZHoY8r+d8DwZoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706337477; c=relaxed/simple;
-	bh=eiun4me+83JhgNCDe4y9ORXCfAlPGIdgEeQXmo7Bor8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rn0qnARSeKpBH9PmyhQNLTxtloXSae7DhpUECHPgV8ahHathVpEEMX0swARXYyWcejfnCMvMt8by5QTCykBTWHUnylNydxbeV8g4AkuSm8keiWBVEGJ1zk30GftiBs3AYrUzDVZwp4JBh1oFrmJsJSNCTQhHoQlXxh3LidhdvRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lk6T48pI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1289AC433F1;
-	Sat, 27 Jan 2024 06:37:56 +0000 (UTC)
+	s=arc-20240116; t=1706458361; c=relaxed/simple;
+	bh=4k9nqVGQh0LBC+PNpDzpSxYqznixZdGVN25GvS4gXNo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EW3v6FOGH9mK3mwP95DjgL+1C1o4iX6PeXk/ayt/PuvUcF5XJCjaxsMEyjGCDYk9NW2nmW32sN+RCm6CNaWiVStk+JYnKyd2nX6uocBWXnDOehKv2h1uvbGwmPmlNAdXWI939ZWrld3BFpVf30CC+Ech93Nn/8mumxgS3WSdGu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LiVIUZ/6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C8FAC433C7;
+	Sun, 28 Jan 2024 16:12:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706337476;
-	bh=eiun4me+83JhgNCDe4y9ORXCfAlPGIdgEeQXmo7Bor8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lk6T48pIofWov6dE1nAMdxwOCZRx/5CPJ2kUK7+BYj3Bf166s7nQOu/NX+lNl1am5
-	 knxc/Uc15XNMmNX+3WwpDOeqybdbEasK0tw0toixzLq8LS9CgrIUKBEvf3hQbvmOYg
-	 yakTAw5+8whCrlkaI0Wq7LLyBnSXaos3qGiT7d2E6NSv16g4SZavpxc4anc0ALNS+u
-	 5z9s4G4HlzSOqDOKOhhOYlC0oiUU0NXf/EYYyr7om7E5BxNZqeKOw9IGRCf6r91OMu
-	 YIiFrZ0NDMCGpIEAlTXGEzDJVf9UVBpGqAQhpVJGEdClcqB/Q9hQ9xWH/PZ4SsB4hG
-	 3PVqtbe7kxpnQ==
-Date: Fri, 26 Jan 2024 22:37:54 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: xiubli@redhat.com
-Cc: linux-fscrypt@vger.kernel.org, tytso@mit.edu, jaegeuk@kernel.org,
-	linux-kernel@vger.kernel.org, idryomov@gmail.com,
-	ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com
-Subject: Re: [PATCH] fscrypt: to make sure the inode->i_blkbits is correctly
- set
-Message-ID: <20240127063754.GA11935@sol.localdomain>
-References: <20240125044826.1294268-1-xiubli@redhat.com>
+	s=k20201202; t=1706458361;
+	bh=4k9nqVGQh0LBC+PNpDzpSxYqznixZdGVN25GvS4gXNo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LiVIUZ/6UpMJtdjDmZ1+PUKnbV1HluXx5Xu52T1uDsMFo4FyhGiaCQRyfxgeiSK+z
+	 IGxYlsxf1Q4F2HrWv7EMNX91bvgPZYY5qAV/SSV+eaqPhqZeisnyc+cqca6E4SdjAZ
+	 0bLhnAH7QDDnDS/AJrplCK6PUqCP263bk5LViAXJdzCqen6Z6IatnnP/qrJb+bWZoG
+	 LAQAczlQiMEBu60KpPK9oGaXEjyfwyVq0Q0IRbMfm6kQMShFxEQDcjVDbQsgrlYGji
+	 v5a5n2cTxk1XzU1wVu6VdASGSmXSJFb/V4877NF4OGMy6rneSrKzaMHhrK8Rpjf8xh
+	 2DZf86wdaV6SA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Venky Shankar <vshankar@redhat.com>,
+	Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Sasha Levin <sashal@kernel.org>,
+	ceph-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.7 31/39] ceph: reinitialize mds feature bit even when session in open
+Date: Sun, 28 Jan 2024 11:10:51 -0500
+Message-ID: <20240128161130.200783-31-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240128161130.200783-1-sashal@kernel.org>
+References: <20240128161130.200783-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240125044826.1294268-1-xiubli@redhat.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.7.2
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 25, 2024 at 12:48:25PM +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
-> 
-> The inode->i_blkbits should be already set before calling
-> fscrypt_get_encryption_info() and it will be used this to setup the
-> ci_data_unit_bits.
-> 
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/crypto/keysetup.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
-> index d71f7c799e79..909187e52bae 100644
-> --- a/fs/crypto/keysetup.c
-> +++ b/fs/crypto/keysetup.c
-> @@ -702,6 +702,9 @@ int fscrypt_get_encryption_info(struct inode *inode, bool allow_unsupported)
->  /**
->   * fscrypt_prepare_new_inode() - prepare to create a new inode in a directory
->   * @dir: a possibly-encrypted directory
->   * @inode: the new inode.  ->i_mode must be set already.
->   *         ->i_ino doesn't need to be set yet.
+From: Venky Shankar <vshankar@redhat.com>
 
-Maybe just change the above to "->i_mode and ->i_blkbits", instead of adding a
-separate paragraph?
+[ Upstream commit f48e0342a74d7770cdf1d11894bdc3b6d989b29e ]
 
->   * @encrypt_ret: (output) set to %true if the new inode will be encrypted
->   *
->   * If the directory is encrypted, set up its ->i_crypt_info in preparation for
->   * encrypting the name of the new file.  Also, if the new inode will be
->   * encrypted, set up its ->i_crypt_info and set *encrypt_ret=true.
->   *
->   * This isn't %GFP_NOFS-safe, and therefore it should be called before starting
->   * any filesystem transaction to create the inode.  For this reason, ->i_ino
->   * isn't required to be set yet, as the filesystem may not have set it yet.
->   *
->   * This doesn't persist the new inode's encryption context.  That still needs to
->   * be done later by calling fscrypt_set_context().
->   *
-> + * Please note that the inode->i_blkbits should be already set before calling
-> + * this and later it will be used to setup the ci_data_unit_bits.
-> + *
->   * Return: 0 on success, -ENOKEY if the encryption key is missing, or another
->   *	   -errno code
->   */
-> @@ -717,6 +720,9 @@ int fscrypt_prepare_new_inode(struct inode *dir, struct inode *inode,
->  	if (IS_ERR(policy))
->  		return PTR_ERR(policy);
->  
-> +	if (WARN_ON_ONCE(inode->i_blkbits == 0))
-> +		return -EINVAL;
-> +
+Following along the same lines as per the user-space fix. Right
+now this isn't really an issue with the ceph kernel driver because
+of the feature bit laginess, however, that can change over time
+(when the new snaprealm info type is ported to the kernel driver)
+and depending on the MDS version that's being upgraded can cause
+message decoding issues - so, fix that early on.
 
-Thanks,
+Link: http://tracker.ceph.com/issues/63188
+Signed-off-by: Venky Shankar <vshankar@redhat.com>
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/ceph/mds_client.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Eric
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index d95eb525519a..558c3af44449 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -4128,12 +4128,12 @@ static void handle_session(struct ceph_mds_session *session,
+ 			pr_info_client(cl, "mds%d reconnect success\n",
+ 				       session->s_mds);
+ 
++		session->s_features = features;
+ 		if (session->s_state == CEPH_MDS_SESSION_OPEN) {
+ 			pr_notice_client(cl, "mds%d is already opened\n",
+ 					 session->s_mds);
+ 		} else {
+ 			session->s_state = CEPH_MDS_SESSION_OPEN;
+-			session->s_features = features;
+ 			renewed_caps(mdsc, session, 0);
+ 			if (test_bit(CEPHFS_FEATURE_METRIC_COLLECT,
+ 				     &session->s_features))
+-- 
+2.43.0
+
 
