@@ -1,60 +1,60 @@
-Return-Path: <ceph-devel+bounces-723-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-724-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470B683F744
-	for <lists+ceph-devel@lfdr.de>; Sun, 28 Jan 2024 17:28:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66ECA83F791
+	for <lists+ceph-devel@lfdr.de>; Sun, 28 Jan 2024 17:36:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 037E72851F3
-	for <lists+ceph-devel@lfdr.de>; Sun, 28 Jan 2024 16:28:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B40A1F24B22
+	for <lists+ceph-devel@lfdr.de>; Sun, 28 Jan 2024 16:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B0265BAC;
-	Sun, 28 Jan 2024 16:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05FF98612D;
+	Sun, 28 Jan 2024 16:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQ/ADdLs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rnpfjvmb"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422DF657DC;
-	Sun, 28 Jan 2024 16:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E8185C72;
+	Sun, 28 Jan 2024 16:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706458437; cv=none; b=HK2QS8vysKr/QRJDe64D6Wdr1ujgPXOthkFrNjUVtXg7ZG10rO7lheyBTOVUfsieXP1YWwpIb2UKg3d9+p+ymBu1LQrSYNWcoAhM8bNfGy1u6iFuxDbNp/HXpFZhWd5KqxXX6sJKnEzFqttvEwLszDedcvHqD0sfKdlx8MQFr+A=
+	t=1706458499; cv=none; b=A7mw52kUh8vw8xNKIqCWSoaOEHct+K01HPi4Z17lUgX9PeEA99iqNwD+JEwjIhrntwOF3if7oIbcFuiqxEKkNgHYcK5QunWU0WwZPQbBmJ82urw0HzFUhTIAIPlXyGJJJu8j28uTaKEjv5a5lRb+zyfRv3vzdJD1upVB1jF+6/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706458437; c=relaxed/simple;
-	bh=+tz46MaXGXaNAhV+LKQZqBPN9T29kafpRdmIUMP/QwM=;
+	s=arc-20240116; t=1706458499; c=relaxed/simple;
+	bh=OQh/WkUxd9pGHLShgHQD+MmfBJhAHHbHq4FOwNrwc50=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CL1DdaLDWUje964fGzvWq/CbOOpuMxSWuqMOJvBFRCp827L4Jg53CjrQzkByX2kAfND2uZc181RiISwMBI0NM1mAi2LOdq6aX8O4/2keZ9uK4msiMp0Y4UViF/lifiS6bQ/6yOX5jdvPOjWhmtmG70X+WKZY1PzW9PFS9cRFumk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fQ/ADdLs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF497C433F1;
-	Sun, 28 Jan 2024 16:13:55 +0000 (UTC)
+	 MIME-Version; b=iOq7ULIe9nZnwNjiXffc58+TugJW6zh2fNulrE5KPc/bWVG4fGdNGjVFwLaZpns5xgWPONJ2DN+sVcCOOCrrQ0as/3dLG+TqXLL956/oAFeHBDHsU8xDlDAz9JgAhyaYLEWV8ABuhIkr+foB3A5XHeH2DqzWC2tCx4m4wq8LrH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rnpfjvmb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1D28C433C7;
+	Sun, 28 Jan 2024 16:14:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706458436;
-	bh=+tz46MaXGXaNAhV+LKQZqBPN9T29kafpRdmIUMP/QwM=;
+	s=k20201202; t=1706458499;
+	bh=OQh/WkUxd9pGHLShgHQD+MmfBJhAHHbHq4FOwNrwc50=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fQ/ADdLsaAxd5uXggrZYobHIIjFMndFXp/bolHKrM2hRDNSislMJnwbPuKE/J+X+l
-	 BErIJ2w9RT+CH0AYG9Zow3YJL01qol/GBNoC5BTr4yWssBZZpOBqtAf7VXFh95vzXy
-	 1TTdhYndy8wBU7wQE7w85q52EXu3RyBTIJRC8/08DA6+z2/ZyUMvdvPyBf0n0P4L3H
-	 7cZcJXIP5L0tWxjf4lze5CPBaSIjvl3gCVj5os4w6yW6uCTuJp1TtjcF0A0VEiSKES
-	 Hrj7Nqsos5drPLqTjRPCx45B31hbdE+XQYsSRVO/iVlg2hVwu6XmYNzR7kT3tv2m4D
-	 EXvhQsnE7D3IQ==
+	b=Rnpfjvmb6qbKXI7dC8LIeM47yAfok6s674cO2psLBztsSiJqgjHkrfU6vrFYCoctq
+	 SlGRq0gUn0gEiEiRKdamB9gt1t+Id787K68glOVLxajItrCYVQ30wjNIXAlXh2w1uy
+	 zEmFOnUBii2AcW1m9sQ726bzRID7aha6+jbqf2U5WWBNda68sSoZ8iS/KMZ2jZOik9
+	 NPoobDKLxnuRAFembaWT+VKeTbWIu7/MczSsI726x/Rqjg0J4XFtGYR1qVv03X3EZl
+	 bv3bVXEKCpHiYkAsld9fX0W0pCwYCd0obXn1Xc24BhcEHuvcgaecbuAAzGibgC8jz6
+	 0J5ViOEIzeGcw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Wenchao Hao <haowenchao2@huawei.com>,
+Cc: Venky Shankar <vshankar@redhat.com>,
 	Xiubo Li <xiubli@redhat.com>,
 	Ilya Dryomov <idryomov@gmail.com>,
 	Sasha Levin <sashal@kernel.org>,
 	ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 25/31] ceph: fix invalid pointer access if get_quota_realm return ERR_PTR
-Date: Sun, 28 Jan 2024 11:12:55 -0500
-Message-ID: <20240128161315.201999-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 20/27] ceph: reinitialize mds feature bit even when session in open
+Date: Sun, 28 Jan 2024 11:14:05 -0500
+Message-ID: <20240128161424.203600-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240128161315.201999-1-sashal@kernel.org>
-References: <20240128161315.201999-1-sashal@kernel.org>
+In-Reply-To: <20240128161424.203600-1-sashal@kernel.org>
+References: <20240128161424.203600-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -63,139 +63,46 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.14
+X-stable-base: Linux 6.1.75
 Content-Transfer-Encoding: 8bit
 
-From: Wenchao Hao <haowenchao2@huawei.com>
+From: Venky Shankar <vshankar@redhat.com>
 
-[ Upstream commit 0f4cf64eabc6e16cfc2704f1960e82dc79d91c8d ]
+[ Upstream commit f48e0342a74d7770cdf1d11894bdc3b6d989b29e ]
 
-This issue is reported by smatch that get_quota_realm() might return
-ERR_PTR but we did not handle it. It's not a immediate bug, while we
-still should address it to avoid potential bugs if get_quota_realm()
-is changed to return other ERR_PTR in future.
+Following along the same lines as per the user-space fix. Right
+now this isn't really an issue with the ceph kernel driver because
+of the feature bit laginess, however, that can change over time
+(when the new snaprealm info type is ported to the kernel driver)
+and depending on the MDS version that's being upgraded can cause
+message decoding issues - so, fix that early on.
 
-Set ceph_snap_realm's pointer in get_quota_realm()'s to address this
-issue, the pointer would be set to NULL if get_quota_realm() failed
-to get struct ceph_snap_realm, so no ERR_PTR would happen any more.
-
-[ xiubli: minor code style clean up ]
-
-Signed-off-by: Wenchao Hao <haowenchao2@huawei.com>
+Link: http://tracker.ceph.com/issues/63188
+Signed-off-by: Venky Shankar <vshankar@redhat.com>
 Reviewed-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ceph/quota.c | 39 ++++++++++++++++++++++-----------------
- 1 file changed, 22 insertions(+), 17 deletions(-)
+ fs/ceph/mds_client.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-index f7fcf7f08ec6..ca4932e6f71b 100644
---- a/fs/ceph/quota.c
-+++ b/fs/ceph/quota.c
-@@ -194,10 +194,10 @@ void ceph_cleanup_quotarealms_inodes(struct ceph_mds_client *mdsc)
- }
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 82874be94524..da9fcf48ab6c 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -3650,11 +3650,11 @@ static void handle_session(struct ceph_mds_session *session,
+ 		if (session->s_state == CEPH_MDS_SESSION_RECONNECTING)
+ 			pr_info("mds%d reconnect success\n", session->s_mds);
  
- /*
-- * This function walks through the snaprealm for an inode and returns the
-- * ceph_snap_realm for the first snaprealm that has quotas set (max_files,
-+ * This function walks through the snaprealm for an inode and set the
-+ * realmp with the first snaprealm that has quotas set (max_files,
-  * max_bytes, or any, depending on the 'which_quota' argument).  If the root is
-- * reached, return the root ceph_snap_realm instead.
-+ * reached, set the realmp with the root ceph_snap_realm instead.
-  *
-  * Note that the caller is responsible for calling ceph_put_snap_realm() on the
-  * returned realm.
-@@ -208,18 +208,19 @@ void ceph_cleanup_quotarealms_inodes(struct ceph_mds_client *mdsc)
-  * this function will return -EAGAIN; otherwise, the snaprealms walk-through
-  * will be restarted.
-  */
--static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
--					       struct inode *inode,
--					       enum quota_get_realm which_quota,
--					       bool retry)
-+static int get_quota_realm(struct ceph_mds_client *mdsc, struct inode *inode,
-+			   enum quota_get_realm which_quota,
-+			   struct ceph_snap_realm **realmp, bool retry)
- {
- 	struct ceph_inode_info *ci = NULL;
- 	struct ceph_snap_realm *realm, *next;
- 	struct inode *in;
- 	bool has_quota;
- 
-+	if (realmp)
-+		*realmp = NULL;
- 	if (ceph_snap(inode) != CEPH_NOSNAP)
--		return NULL;
-+		return 0;
- 
- restart:
- 	realm = ceph_inode(inode)->i_snap_realm;
-@@ -245,7 +246,7 @@ static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
- 				break;
- 			ceph_put_snap_realm(mdsc, realm);
- 			if (!retry)
--				return ERR_PTR(-EAGAIN);
-+				return -EAGAIN;
- 			goto restart;
- 		}
- 
-@@ -254,8 +255,11 @@ static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
- 		iput(in);
- 
- 		next = realm->parent;
--		if (has_quota || !next)
--		       return realm;
-+		if (has_quota || !next) {
-+			if (realmp)
-+				*realmp = realm;
-+			return 0;
-+		}
- 
- 		ceph_get_snap_realm(mdsc, next);
- 		ceph_put_snap_realm(mdsc, realm);
-@@ -264,7 +268,7 @@ static struct ceph_snap_realm *get_quota_realm(struct ceph_mds_client *mdsc,
- 	if (realm)
- 		ceph_put_snap_realm(mdsc, realm);
- 
--	return NULL;
-+	return 0;
- }
- 
- bool ceph_quota_is_same_realm(struct inode *old, struct inode *new)
-@@ -272,6 +276,7 @@ bool ceph_quota_is_same_realm(struct inode *old, struct inode *new)
- 	struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(old->i_sb);
- 	struct ceph_snap_realm *old_realm, *new_realm;
- 	bool is_same;
-+	int ret;
- 
- restart:
- 	/*
-@@ -281,9 +286,9 @@ bool ceph_quota_is_same_realm(struct inode *old, struct inode *new)
- 	 * dropped and we can then restart the whole operation.
- 	 */
- 	down_read(&mdsc->snap_rwsem);
--	old_realm = get_quota_realm(mdsc, old, QUOTA_GET_ANY, true);
--	new_realm = get_quota_realm(mdsc, new, QUOTA_GET_ANY, false);
--	if (PTR_ERR(new_realm) == -EAGAIN) {
-+	get_quota_realm(mdsc, old, QUOTA_GET_ANY, &old_realm, true);
-+	ret = get_quota_realm(mdsc, new, QUOTA_GET_ANY, &new_realm, false);
-+	if (ret == -EAGAIN) {
- 		up_read(&mdsc->snap_rwsem);
- 		if (old_realm)
- 			ceph_put_snap_realm(mdsc, old_realm);
-@@ -485,8 +490,8 @@ bool ceph_quota_update_statfs(struct ceph_fs_client *fsc, struct kstatfs *buf)
- 	bool is_updated = false;
- 
- 	down_read(&mdsc->snap_rwsem);
--	realm = get_quota_realm(mdsc, d_inode(fsc->sb->s_root),
--				QUOTA_GET_MAX_BYTES, true);
-+	get_quota_realm(mdsc, d_inode(fsc->sb->s_root), QUOTA_GET_MAX_BYTES,
-+			&realm, true);
- 	up_read(&mdsc->snap_rwsem);
- 	if (!realm)
- 		return false;
++		session->s_features = features;
+ 		if (session->s_state == CEPH_MDS_SESSION_OPEN) {
+ 			pr_notice("mds%d is already opened\n", session->s_mds);
+ 		} else {
+ 			session->s_state = CEPH_MDS_SESSION_OPEN;
+-			session->s_features = features;
+ 			renewed_caps(mdsc, session, 0);
+ 			if (test_bit(CEPHFS_FEATURE_METRIC_COLLECT,
+ 				     &session->s_features))
 -- 
 2.43.0
 
