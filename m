@@ -1,126 +1,165 @@
-Return-Path: <ceph-devel+bounces-798-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-799-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD71D849086
-	for <lists+ceph-devel@lfdr.de>; Sun,  4 Feb 2024 22:06:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 616D28498FD
+	for <lists+ceph-devel@lfdr.de>; Mon,  5 Feb 2024 12:36:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF9E7B222D8
-	for <lists+ceph-devel@lfdr.de>; Sun,  4 Feb 2024 21:06:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B718281058
+	for <lists+ceph-devel@lfdr.de>; Mon,  5 Feb 2024 11:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419D525564;
-	Sun,  4 Feb 2024 21:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B4C18EB1;
+	Mon,  5 Feb 2024 11:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="Lg3Mqzm4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ea5No9/B"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8604E286A6
-	for <ceph-devel@vger.kernel.org>; Sun,  4 Feb 2024 21:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10DE18E00;
+	Mon,  5 Feb 2024 11:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707080790; cv=none; b=Eu6yV90nfPvGCwODwn54H6nzlCQaLXB8W7X/9qKKpgDbTcQY81/a+0WUkCtrAbW8VhjBZPWxJ63880bw6GtCoLd33f8djT+QE1HdtS0ozfVgre7jnSQkNesjlpxe7nIWc544Tppoghnq7ymf3IHHWDyMbmIp8YglCSSfWmcoL0I=
+	t=1707132980; cv=none; b=cMOup714zGX1IJaloq3IfS/vL3L6351XKFKbbtz9J9QfqGjbzQq0fukJEvS5E8s4+sdhUs2Gq8xj9/CHerdVe28QM408QvWpaaAi7ojaxbOzW1Z2bbZ4Yb9Jn8xXqRoPYBtuoK8pKeXy3eGE/Nd3ZGrcXofgNI3MeHAxI1y9nHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707080790; c=relaxed/simple;
-	bh=PTpkAQYaiEd/H/K1pEJCdiG03wTlBPR/xvUqZnaKzc0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JTzgdHrEvhoOWTzX4W+5PzsPd211B8cE5Epr64S1idqCblm9DjhUI+RmdGO914BfGCUGDcRCn5Es7hpTsCJBiTNJwwopvzVj8aDCSnnNQDnoFTsEbxtye+i4BNwjVXhz1AQ6WL3XTqODNpkhq6yFZrq2cfxbw2bHRznce2Wax6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=Lg3Mqzm4; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a271a28aeb4so536364466b.2
-        for <ceph-devel@vger.kernel.org>; Sun, 04 Feb 2024 13:06:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1707080786; x=1707685586; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wIBefr9jY7okRpcwBBo6tcStVqxml+OF8xjJACWyuys=;
-        b=Lg3Mqzm4WzfQFGhaQV7dhSQzdFhfvPtZFdlMePwUtZ6xuJm1XRh41ZOGdCj+aWTzFj
-         3saA9+S5jaa/vfqEYxVFc5e32mEzkvvwIKVkaXybEoH91lWy3DWTfmuTepaia4phvUFY
-         zXPdJwk2pUMjsnenipIOvB9cg5fCpeCrYFFAI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707080786; x=1707685586;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wIBefr9jY7okRpcwBBo6tcStVqxml+OF8xjJACWyuys=;
-        b=Cmth/P1QxJ3kHavVJ7lD+c43Br1F5DrsaE4e5SaSOpJUwtaf7UwHqcr4ANZMpxo9a2
-         9R4VGPhNTix3rXdwWJkbTrAbPmUtnfafKkvgCI2qSoELXFJx1IdbgNOJFbz5u7g07Hk2
-         rv8lvn7YaOcdDigUT951ho6QNvb4QOhS9ypDHBKr7KKwNRzqOrnBqtGOPF3FjoSTE3RL
-         JX18lsIsq0AGYKs5Mp+9OtDbTN16pBHPgjGT4NJ8shK3VeGe5nnpZr0KzLo1DQUbi1hX
-         OKMdDPQbB+PpBYaKWybI6hyWbyGl4cO/gQHcR+aBhVI25bplgbHsVLHAJu90EFh9jknw
-         lCxg==
-X-Gm-Message-State: AOJu0Yx0F5ras0uy3g5vOgqD3UC2q53iucny9/9VxC9VQZb0MEeV2nMU
-	WGczwfvUSQBc9R+pQoQ4LmBxOoRWogUNkt97gTOnb7KFssqHb8mOZGBK6Qt51Q==
-X-Google-Smtp-Source: AGHT+IGkokpPEnIXbIHAoQGWdATZZl6xxNcxvTGj+iXBZGdRkSBb+EOhzYTxOFZwHRqw5vByITGcig==
-X-Received: by 2002:a17:906:d554:b0:a2f:b9be:66df with SMTP id cr20-20020a170906d55400b00a2fb9be66dfmr6807154ejc.17.1707080786682;
-        Sun, 04 Feb 2024 13:06:26 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCWYQQKl7q9Vn/UAOvmcfLyfIm/GrO4H0ab7oKfZi3tiJb5xm9pQBy5eKYEK9Y5UtIAYZIiIf7GPnT7ICt9fZB2Gbj1S9tYBufvayaV0UNZT7lNjuRgwC6md504LsmvAcMIQA5qokHZxyioBRVAeeTFnwaAdxlnq4wdOr4e6h/5vEz5PBUFUF99x3BEC1i/PQkn8l6rbSNa8OVrqFws9eByrURodsF5OINMhSc9H1CIrIYAciSrS/r1TkGwklgb0A1yoPBFgyZ78
-Received: from [10.211.55.3] ([94.107.229.70])
-        by smtp.googlemail.com with ESMTPSA id hw16-20020a170907a0d000b00a372330e834sm2872890ejc.102.2024.02.04.13.06.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 Feb 2024 13:06:26 -0800 (PST)
-Message-ID: <fccd3a15-b3a1-4ea2-ad0f-a6c0d3a8e134@ieee.org>
-Date: Sun, 4 Feb 2024 15:06:25 -0600
+	s=arc-20240116; t=1707132980; c=relaxed/simple;
+	bh=XXMTy7omW95QL4wYydLM30UA75bH/787fQ5A85xLdT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OhrKDpFUkiXYAYVsE4XM5HIxXDxBNFSu1EaOjLZVcdNnpVvDGSuW3956uJkyLndAW91OEzRG3QpLElJVd1tqglrJ8pn2nhPG9BlnE9PMC7dTN/zTAM5CBLcbssyTBIRRgzZS1elTUVKsSaggeYA0IN2k+FVNMKBPyp540haKkBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ea5No9/B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF8BEC433C7;
+	Mon,  5 Feb 2024 11:36:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707132979;
+	bh=XXMTy7omW95QL4wYydLM30UA75bH/787fQ5A85xLdT4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ea5No9/B9/3ZwCOcBfLkGLDE/MvFK7jfTUn58PgVM0YUBlaEetZHBUxE4H4EzZn42
+	 VWdhM23gfRNhm+XkbKtNEj3C0OmneHbqvfBlFcfZLvnjj3kZ4di005cvbN+JyjMJdQ
+	 BruEA7v+rRVY+KS6rCy/IwVi0gCGBix8KOWYvJHTF29ICn+h5BgF4YiPjGhV27Ivp0
+	 jO6Cl/P5PsiUPrSoyHjFnTn7f3CBaebYqvaP/rB+cBxBXBaKeixBPxLeuM1DmUhs89
+	 fZgMOGkmBEvIyeouCRrK7VIoPHz5+OYJ84CAAZZqjo1XPLWVZIGfTK1XnMbrLvuspx
+	 LDK7mVCz6FqrA==
+Date: Mon, 5 Feb 2024 12:36:07 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Chuck Lever <chuck.lever@oracle.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Eric Van Hensbergen <ericvh@kernel.org>, 
+	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
+	Christian Schoenebeck <linux_oss@crudebyte.com>, David Howells <dhowells@redhat.com>, 
+	Marc Dionne <marc.dionne@auristor.com>, Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
+	Alexander Aring <aahringo@redhat.com>, David Teigland <teigland@redhat.com>, 
+	Andreas Gruenbacher <agruenba@redhat.com>, Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>, 
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, Mark Fasheh <mark@fasheh.com>, 
+	Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, 
+	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
+	Namjae Jeon <linkinjeon@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, v9fs@lists.linux.dev, linux-afs@lists.infradead.org, 
+	ceph-devel@vger.kernel.org, gfs2@lists.linux.dev, linux-nfs@vger.kernel.org, 
+	ocfs2-devel@lists.linux.dev, linux-cifs@vger.kernel.org
+Subject: Re: [PATCH v3 04/47] filelock: add some new helper functions
+Message-ID: <20240205-wegschauen-unappetitlich-2b0926023605@brauner>
+References: <20240131-flsplit-v3-0-c6129007ee8d@kernel.org>
+ <20240131-flsplit-v3-4-c6129007ee8d@kernel.org>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] block: rbd: make rbd_bus_type const
-Content-Language: en-US
-To: "Ricardo B. Marliere" <ricardo@marliere.net>,
- Ilya Dryomov <idryomov@gmail.com>,
- Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>
-Cc: ceph-devel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20240204-bus_cleanup-block-v1-1-fc77afd8d7cc@marliere.net>
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <20240204-bus_cleanup-block-v1-1-fc77afd8d7cc@marliere.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240131-flsplit-v3-4-c6129007ee8d@kernel.org>
 
-On 2/4/24 9:31 AM, Ricardo B. Marliere wrote:
-> Now that the driver core can properly handle constant struct bus_type,
-> move the rbd_bus_type variable to be a constant structure as well,
-> placing it into read-only memory which can not be modified at runtime.
-> 
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Ricardo B. Marliere <ricardo@marliere.net>
+> diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+> index 085ff6ba0653..a814664b1053 100644
+> --- a/include/linux/filelock.h
+> +++ b/include/linux/filelock.h
+> @@ -147,6 +147,29 @@ int fcntl_setlk64(unsigned int, struct file *, unsigned int,
+>  int fcntl_setlease(unsigned int fd, struct file *filp, int arg);
+>  int fcntl_getlease(struct file *filp);
+>  
+> +static inline bool lock_is_unlock(struct file_lock *fl)
+> +{
+> +	return fl->fl_type == F_UNLCK;
+> +}
+> +
+> +static inline bool lock_is_read(struct file_lock *fl)
+> +{
+> +	return fl->fl_type == F_RDLCK;
+> +}
+> +
+> +static inline bool lock_is_write(struct file_lock *fl)
+> +{
+> +	return fl->fl_type == F_WRLCK;
+> +}
+> +
+> +static inline void locks_wake_up(struct file_lock *fl)
+> +{
+> +	wake_up(&fl->fl_wait);
+> +}
+> +
+> +/* for walking lists of file_locks linked by fl_list */
+> +#define for_each_file_lock(_fl, _head)	list_for_each_entry(_fl, _head, fl_list)
+> +
 
-Great!
+This causes a build warning for fs/ceph/ and fs/afs when
+!CONFIG_FILE_LOCKING. I'm about to fold the following diff into this
+patch. The diff looks a bit wonky but essentially I've moved
+lock_is_unlock(), lock_is_{read,write}(), locks_wake_up() and
+for_each_file_lock() out of the ifdef CONFIG_FILE_LOCKING:
 
-Reviewed-by: Alex Elder <elder@linaro.org>
+diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+index a814664b1053..62be9c6b1e59 100644
+--- a/include/linux/filelock.h
++++ b/include/linux/filelock.h
+@@ -133,20 +133,6 @@ struct file_lock_context {
+        struct list_head        flc_lease;
+ };
 
-> ---
->   drivers/block/rbd.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 0202a4e5d6cf..21f2b9e9b9ff 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -575,7 +575,7 @@ static const struct attribute_group rbd_bus_group = {
->   };
->   __ATTRIBUTE_GROUPS(rbd_bus);
->   
-> -static struct bus_type rbd_bus_type = {
-> +static const struct bus_type rbd_bus_type = {
->   	.name		= "rbd",
->   	.bus_groups	= rbd_bus_groups,
->   };
-> 
-> ---
-> base-commit: aa826a9b19b93bf8aabc462381ae436a60b2a320
-> change-id: 20240204-bus_cleanup-block-9986bfea7975
-> 
-> Best regards,
+-#ifdef CONFIG_FILE_LOCKING
+-int fcntl_getlk(struct file *, unsigned int, struct flock *);
+-int fcntl_setlk(unsigned int, struct file *, unsigned int,
+-                       struct flock *);
+-
+-#if BITS_PER_LONG == 32
+-int fcntl_getlk64(struct file *, unsigned int, struct flock64 *);
+-int fcntl_setlk64(unsigned int, struct file *, unsigned int,
+-                       struct flock64 *);
+-#endif
+-
+-int fcntl_setlease(unsigned int fd, struct file *filp, int arg);
+-int fcntl_getlease(struct file *filp);
+-
+ static inline bool lock_is_unlock(struct file_lock *fl)
+ {
+        return fl->fl_type == F_UNLCK;
+@@ -170,6 +156,20 @@ static inline void locks_wake_up(struct file_lock *fl)
+ /* for walking lists of file_locks linked by fl_list */
+ #define for_each_file_lock(_fl, _head) list_for_each_entry(_fl, _head, fl_list)
+
++#ifdef CONFIG_FILE_LOCKING
++int fcntl_getlk(struct file *, unsigned int, struct flock *);
++int fcntl_setlk(unsigned int, struct file *, unsigned int,
++                       struct flock *);
++
++#if BITS_PER_LONG == 32
++int fcntl_getlk64(struct file *, unsigned int, struct flock64 *);
++int fcntl_setlk64(unsigned int, struct file *, unsigned int,
++                       struct flock64 *);
++#endif
++
++int fcntl_setlease(unsigned int fd, struct file *filp, int arg);
++int fcntl_getlease(struct file *filp);
++
+ /* fs/locks.c */
+ void locks_free_lock_context(struct inode *inode);
+ void locks_free_lock(struct file_lock *fl);
 
 
