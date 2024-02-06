@@ -1,181 +1,127 @@
-Return-Path: <ceph-devel+bounces-832-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-833-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B797484B12A
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Feb 2024 10:26:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015A584B871
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Feb 2024 15:53:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77EEA285693
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Feb 2024 09:26:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33B2F1C24027
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Feb 2024 14:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C8774E2A;
-	Tue,  6 Feb 2024 09:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42392132C3E;
+	Tue,  6 Feb 2024 14:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WiuHuBnV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VlwG/D5t"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47EDD7C089
-	for <ceph-devel@vger.kernel.org>; Tue,  6 Feb 2024 09:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3373131E40;
+	Tue,  6 Feb 2024 14:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707211562; cv=none; b=ZNaU1v/jI0RxWNYuorN0T7UMK9eQkTJI1gTB3XKlqKgUC+BJaXVVv3/mSfLnS4uzjL3TweyBou/Bax2owutd4R7PA9hcBa9M/QRpzOu4LBzkgGqNq3LWht5ZIzu7hRQtSsroIo3aqGAXUNY95WPhIiIiJbTpmqXJ/n2G1dfzGaQ=
+	t=1707231174; cv=none; b=BmdJVrBGUKcGGCOddcOVc3yo82MO50AZdq9FuRVbSVAVm7mMk5zpekwQcz3CMTg5DFb+sNJmjho9EWk+uy4K1X6DluLwwVlqVbSlZi+MiqhBS0Dbx/xRRzYzLv2sJ1+nWQUUQUNe2ZZ5RdN1GI57+F/K5bfY4p3lJly39bB9/x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707211562; c=relaxed/simple;
-	bh=9uMY6P78LwwcvH4sE0s/NPBifzqOtKJCV9DG4plHcoQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jY607Snj1P7a6A39HaoRwcKzw5kIFrarIf8MDt5ONcVtd0gONgGrRlr6wvDYDNBxt4o9BYZMydT1QaBugU3OGza7rnGexOAxltQppkjzOZe5avDgIJdo5+QIeiOEWJZB8Er2bPZyeMZEL6aq5Rm0AbLEQ1hRiVwKJkBmF9dyy+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WiuHuBnV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1707211560;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SzDXzRmLqYC0aEDfGTRLSdyelNjMpbJog7SVe3Y1jHw=;
-	b=WiuHuBnVervQfWv0dZ+onRqpyhv5nM4Mcb7emKIh6GYTNyJlCggmTqCVFv7rYrumhYeZYL
-	hmd3ufrStJathKvyPMPcM24nQgFHYGRqxuCei/W5oP174p3bgW0RZizxAwTacOJdYi79Dp
-	aTUzJSzFYSIbBQGyGmqUbvj6YGI/d90=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-516-C57GYng3NfGV4juVJlSvvQ-1; Tue, 06 Feb 2024 04:25:58 -0500
-X-MC-Unique: C57GYng3NfGV4juVJlSvvQ-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a2f71c83b7eso332890666b.1
-        for <ceph-devel@vger.kernel.org>; Tue, 06 Feb 2024 01:25:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707211557; x=1707816357;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SzDXzRmLqYC0aEDfGTRLSdyelNjMpbJog7SVe3Y1jHw=;
-        b=rrZVgjsjUvdM2KwPF/Upy4AcpBAyE5GeQxIISTIk734zbTpKN7UXY/5UQ2QjqHXWG4
-         EJ8nuKI9hddhe7Kg+CjAaiMEAHWwPhBSEzv62Vn3SYKRuiuZKB6GmA8Sg/9m15jZ7nkY
-         ePiBuOssOmfkE7xRpygp54L867cDAPZAgYG9TDVq9kfv/T2Gix9SdGNGui2kV3ceJP84
-         HZXNBv10hd92AfOojBNXLJFTcK+n/ZoTWUkcl0xr0yJDaNKpQtTxUVsaUgoI1anP45/s
-         9pH5J0K4hwZn7yt+Hby4pTtrCcGKgnVkFMScFslETL78FREgrAVUbNc7C2uq6JoMZ3L5
-         RsyA==
-X-Gm-Message-State: AOJu0YwE0ivhpg7dHhSQBacUC4ybwvG2fK6gXfIJ5Y3EFo2ibPZ2YP+b
-	1+DElhPdg7eKopV4CCbgyJuzzUuKz+g+5NymrMUn8atvPagn0OqYz2bwE2hWJpXJXDl/B7k9AoA
-	n3Qka0fZ/v6WizK/K189j35MupCpgNVU2xFpvW7KG9XIixfbDeqV/Hvbqy3B0x7jcxrXfCA1MW8
-	W7RhdGc8TqI4n22PorrGcl01zxmhwaOo6OKw==
-X-Received: by 2002:a17:906:710b:b0:a37:f127:8c0d with SMTP id x11-20020a170906710b00b00a37f1278c0dmr1376728ejj.64.1707211557538;
-        Tue, 06 Feb 2024 01:25:57 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEmo+uCFh4BqM1hHxJTakpeQuz1hljQNzCjvscZdxi0Ik/Ks7itpEdO7nGveLnaAvJlxffPJR11XFBLQYJ0Yig=
-X-Received: by 2002:a17:906:710b:b0:a37:f127:8c0d with SMTP id
- x11-20020a170906710b00b00a37f1278c0dmr1376717ejj.64.1707211557167; Tue, 06
- Feb 2024 01:25:57 -0800 (PST)
+	s=arc-20240116; t=1707231174; c=relaxed/simple;
+	bh=WM6G8+4SZkOtjR5TKR7CAXeyhI3wvKML7VzcZML8OWo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QS6e+DQIQnQV+ZrR3J+Lxz+6Te0hENL4wJXUDj36fdT708c81xLxr4qfNYknnaBjzgf9sPnqcQr5ZjHyDqOoNzFYKgZ56QxlhCD6jBXz7jtf5fd2rFUvsZ+DoelPypJHa0KnC15UcHGEs2aXS1uK11Tu/4Q1FL2HY3lNMTYQwr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VlwG/D5t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A678BC433F1;
+	Tue,  6 Feb 2024 14:52:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707231174;
+	bh=WM6G8+4SZkOtjR5TKR7CAXeyhI3wvKML7VzcZML8OWo=;
+	h=From:Date:Subject:To:Cc:From;
+	b=VlwG/D5t+2JeXoqVpFAf7vTkRwYqTVz7krGVvLoEBc0xIFkcF/hk3A5t5HeFVLT6m
+	 T1THwDt/e6y/WLXJBXLOd0FM4X22o4fvUv9uxr7jL3V8e1doBRSzzREdhwozulHNMb
+	 vSwthXdFgGLGSxiatqBBgMeo+4otoV9YPrPph4esgl099thYUgF1L0GDyhL9+AXsfv
+	 df4tPcWfsgoti6riJYJ685M81tdiVVcj64GDAk7Ur/irQGKd0hPHICEGo98qnVqTaz
+	 Ga50WIU1CevHJyv85lcQfI8jvCg4hymHDjHkqrwBSE9qhs+CPVvxI40Yxs4xvnfdqL
+	 klUle3Qu52TKw==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Tue, 06 Feb 2024 09:52:49 -0500
+Subject: [PATCH] ceph: mark lock variable __maybe_unused in
+ ceph_count_file_locks
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231117081509.723731-1-xiubli@redhat.com> <20231117081509.723731-3-xiubli@redhat.com>
-In-Reply-To: <20231117081509.723731-3-xiubli@redhat.com>
-From: Venky Shankar <vshankar@redhat.com>
-Date: Tue, 6 Feb 2024 14:55:20 +0530
-Message-ID: <CACPzV1mu8Fn_x5dV3vTOktcpw+mYgV4cG-1n3ecnUw9rBqj3fQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] ceph: update the oldest_client_tid via the renew caps
-To: xiubli@redhat.com
-Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, jlayton@kernel.org, 
-	mchangir@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240206-flsplit-v1-1-17497d0c1e14@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAMBHwmUC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDIwMz3bSc4oKczBLdFJM0EyPzFMtUg8QUJaDqgqLUtMwKsEnRsbW1AL5
+ tN/VZAAAA
+To: Christian Brauner <brauner@kernel.org>, Xiubo Li <xiubli@redhat.com>, 
+ Ilya Dryomov <idryomov@gmail.com>
+Cc: ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1555; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=WM6G8+4SZkOtjR5TKR7CAXeyhI3wvKML7VzcZML8OWo=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlwkfFR8f7zh3ukzkRgliPb0GctNJwERkyRt83s
+ +DFJqcyI+yJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZcJHxQAKCRAADmhBGVaC
+ FYOvD/9GMpgNxpq4H21CrUmYR5+jKs33o2/9lPtAbT6DHmL4/mAcx8AZgt+ZsESLnLGfSsk2A6G
+ C0lUkJlUZTp515FJWMVKdJAbFhNMNIR4YT4wvMdko8pDnVJE34s0Hm2N1xVT7Uq3RthCHscf8Vl
+ g1cfyySni5hjZTkuUVhG0JbvcQ+Pz7ZBMfsSxztv5hjqUmjStF3GVkTpLsSEZsyVJxEfRCvG/bH
+ oYnKupZd7V9MqFRolYFNnfxl/U64D3vRot9udxBshgX+EBkU/n6PQsCdon/nLthvpoF0rHFHJSG
+ vQwD1/0JCf58cHAI+49CxAh1j2BZtDxiMdHxGi425T1wwhAck9kWJKVkQ4Uu5uWQHoVoNbA3x9t
+ /dQse0Hwa3mH+UUzuuWQojG3aIFy3kAIlUMae6f6DmH8CbZdfOY1oPsCdju9iGerwwx2OwYrvsz
+ P0z6NE8QaQwmw7EdfJwIG+maXL2xfF6gI7YC1cbYIkr9wUChxVDJ2u9zH7OeNSP3HS2GvUCAGUG
+ +GjBWhldW10uZ6da5YWvtVQUyzv9gEeL1BIiUwnRzYplqw6e20P4c50/17Cb3lM1FsqgUx2kgmi
+ UUQ5wxcuLtCClRGCMQfocnOEwHRc+ER4ziOmmRvRO4B44zXGTZm0zhaCGhd6FAPvpRHTgWZH/B9
+ sPchd4DNDBr2A8w==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Fri, Nov 17, 2023 at 1:47=E2=80=AFPM <xiubli@redhat.com> wrote:
->
-> From: Xiubo Li <xiubli@redhat.com>
->
-> Update the oldest_client_tid via the session renew caps msg to
-> make sure that the MDSs won't pile up the completed request list
-> in a very large size.
->
-> URL: https://tracker.ceph.com/issues/63364
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  fs/ceph/mds_client.c | 24 +++++++++++++++++++-----
->  1 file changed, 19 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index fdfea11d9568..7bdee08ec2eb 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -1579,6 +1579,9 @@ create_session_full_msg(struct ceph_mds_client *mds=
-c, int op, u64 seq)
->                 size =3D METRIC_BYTES(count);
->         extra_bytes +=3D 2 + 4 + 4 + size;
->
-> +       /* flags, mds auth caps and oldest_client_tid */
-> +       extra_bytes +=3D 4 + 4 + 8;
-> +
->         /* Allocate the message */
->         msg =3D ceph_msg_new(CEPH_MSG_CLIENT_SESSION, sizeof(*h) + extra_=
-bytes,
->                            GFP_NOFS, false);
-> @@ -1597,9 +1600,9 @@ create_session_full_msg(struct ceph_mds_client *mds=
-c, int op, u64 seq)
->          * Serialize client metadata into waiting buffer space, using
->          * the format that userspace expects for map<string, string>
->          *
-> -        * ClientSession messages with metadata are v4
-> +        * ClientSession messages with metadata are v7
->          */
-> -       msg->hdr.version =3D cpu_to_le16(4);
-> +       msg->hdr.version =3D cpu_to_le16(7);
->         msg->hdr.compat_version =3D cpu_to_le16(1);
->
->         /* The write pointer, following the session_head structure */
-> @@ -1635,6 +1638,15 @@ create_session_full_msg(struct ceph_mds_client *md=
-sc, int op, u64 seq)
->                 return ERR_PTR(ret);
->         }
->
-> +       /* version =3D=3D 5, flags */
-> +       ceph_encode_32(&p, 0);
-> +
-> +       /* version =3D=3D 6, mds auth caps */
-> +       ceph_encode_32(&p, 0);
-> +
-> +       /* version =3D=3D 7, oldest_client_tid */
-> +       ceph_encode_64(&p, mdsc->oldest_tid);
-> +
->         msg->front.iov_len =3D p - msg->front.iov_base;
->         msg->hdr.front_len =3D cpu_to_le32(msg->front.iov_len);
->
-> @@ -2030,10 +2042,12 @@ static int send_renew_caps(struct ceph_mds_client=
- *mdsc,
->
->         doutc(cl, "to mds%d (%s)\n", session->s_mds,
->               ceph_mds_state_name(state));
-> -       msg =3D ceph_create_session_msg(CEPH_SESSION_REQUEST_RENEWCAPS,
-> +
-> +       /* send connect message */
-> +       msg =3D create_session_full_msg(mdsc, CEPH_SESSION_REQUEST_RENEWC=
-APS,
->                                       ++session->s_renew_seq);
-> -       if (!msg)
-> -               return -ENOMEM;
-> +       if (IS_ERR(msg))
-> +               return PTR_ERR(msg);
->         ceph_con_send(&session->s_con, msg);
->         return 0;
->  }
-> --
-> 2.41.0
->
+The "lock" variable won't be used if CONFIG_FILE_LOCKING=n. We can't
+remove it altogether though, since we do need it for the
+for_each_file_lock loops. Reduce its scope and mark it __maybe_unused.
 
-Reviewed-by: Venky Shankar <vshankar@redhat.com>
-Tested-by: Venky Shankar <vshankar@redhat.com>
+Fixes: 3956f35fbd36 ("ceph: adapt to breakup of struct file_lock")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202402062210.3YyBVGF1-lkp@intel.com/
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+This warning is fallout from the big file_lock re-org, so this should
+probably go in via Christian's tree.
+---
+ fs/ceph/locks.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
+index ebf4ac0055dd..edfbf94f0d14 100644
+--- a/fs/ceph/locks.c
++++ b/fs/ceph/locks.c
+@@ -377,7 +377,6 @@ int ceph_flock(struct file *file, int cmd, struct file_lock *fl)
+ void ceph_count_locks(struct inode *inode, int *fcntl_count, int *flock_count)
+ {
+ 	struct ceph_client *cl = ceph_inode_to_client(inode);
+-	struct file_lock *lock;
+ 	struct file_lock_context *ctx;
+ 
+ 	*fcntl_count = 0;
+@@ -385,6 +384,8 @@ void ceph_count_locks(struct inode *inode, int *fcntl_count, int *flock_count)
+ 
+ 	ctx = locks_inode_context(inode);
+ 	if (ctx) {
++		struct file_lock __maybe_unused *lock;
++
+ 		spin_lock(&ctx->flc_lock);
+ 		for_each_file_lock(lock, &ctx->flc_posix)
+ 			++(*fcntl_count);
 
---=20
-Cheers,
-Venky
+---
+base-commit: 77f8316a9199a752ffcd136bd01d0566f54e0ea9
+change-id: 20240206-flsplit-d4f427d9e0ad
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
 
 
