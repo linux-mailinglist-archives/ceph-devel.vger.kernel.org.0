@@ -1,125 +1,132 @@
-Return-Path: <ceph-devel+bounces-829-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-830-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D14784B0F8
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Feb 2024 10:22:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C53484B10E
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Feb 2024 10:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBFAC285FA2
-	for <lists+ceph-devel@lfdr.de>; Tue,  6 Feb 2024 09:22:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7AD0B2528E
+	for <lists+ceph-devel@lfdr.de>; Tue,  6 Feb 2024 09:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C50612D74D;
-	Tue,  6 Feb 2024 09:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CE812DD89;
+	Tue,  6 Feb 2024 09:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="awzZiwNW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="POyntJTu"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F4612D15B
-	for <ceph-devel@vger.kernel.org>; Tue,  6 Feb 2024 09:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695B712D17A
+	for <ceph-devel@vger.kernel.org>; Tue,  6 Feb 2024 09:23:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707211286; cv=none; b=W+ljGfDaQuS+IzBUGkvzzS7kiKS/lEkADhClPuTZOG1ocNC0V6nT4q0FGf9tcIgfEjAGp0HiKcoB7d67ljPMXybftc5coyArDDz6ZyS2ks/cK4C944us5xW7n472F8QrkEkRSEqr2OIKLvm2Xp7mEh5WkorbWesNvWtjORZ+RqE=
+	t=1707211401; cv=none; b=mAg9FnxY3cNQWnZSbho5pCwui48i2V5wI0EErYBgLskNyUpkqHGbDK23JLknFYPW9VghuiYNOz4rXlHgAM4aB5g/nqiuLs0HP0NwRThe8CJoKfkt9IEm8LfyH7aBC0NPUqVobIkPdq99HTYtkcbJbJSaxa1sMdOz/aaKggvejMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707211286; c=relaxed/simple;
-	bh=HjKXMPYrm2ud/m+KySITGS3V3mfDiWP8ob4wyjcEJRs=;
+	s=arc-20240116; t=1707211401; c=relaxed/simple;
+	bh=3NNqBFGIjeV1AKByKSLhrS7Ac+6gI9aohQyed1ZoEd4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YRiZbf/04rj0bb9imJKkGgs00ivCIp2stD9jZuqFJ+cL8C9wJHCUKGIqjKaGOV2IX+k2xd+V28zYnY5tMfW+QjXA/HfzNu1unSZT2XIex4JuFv/mDNyWO/S1n1iX/Ca8McMD4g+4sAYyohNHLqJjIWg3ba2M1fIqI9c2KOHnOLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=awzZiwNW; arc=none smtp.client-ip=170.10.129.124
+	 To:Cc:Content-Type; b=sI6rWxShB5q7Q1PGWkB1Z+Z3mhbRKlU+kUJQpViwPff2oXEmAs3H6FdtU9dJ072QDSfhRvnKR5weCmxQ+atIaBJ5CdA55dArOU/cgm737gH2SJc7JQwJyb7n7Zq6VoLMr/U/JWbri7hk7EN+CYnMMFw3a9n93VVZFL7pvAPlyGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=POyntJTu; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1707211282;
+	s=mimecast20190719; t=1707211399;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qxgmi5nVmHBLiLOEX7KdonYAIEXEAm68ZuGhjyZ6ofI=;
-	b=awzZiwNWrFlX3Dk7YJv1z7qNUNdu1z5+PtM5G9+UVkp6KIZKa84RB8CKEu8MFsLHaPunPP
-	V9hcMELuh1/GVab/im8zOwZW7wOeHumrCR91+UuYEf5C3pEfnO1qLPZEsS7wIDrlvmJIcS
-	p5H+awATFP2Yle8syzl+m9dVuQ0cmvI=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=02O1iwLjyGE7o3ZgJFapQf5gK7RGa7fuxMFso2F2jbg=;
+	b=POyntJTuEJuKMw8UCtlgYKQfxf2+NHrBK7zVO2Gb8xQkCOKPe2C0ig2xYqal6AMBF0Vpai
+	rnTjo6kw3utsE/NE/6+6TXHAllBNRwl5cpfY0VGYav9JnjBwFau2/26LYcYwBlHnJNkqAy
+	9mYkkt4MLBT7BUgnNloleEgrPlCbD4g=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-631-_ebC24fWOK64sHMaSFhotw-1; Tue, 06 Feb 2024 04:21:21 -0500
-X-MC-Unique: _ebC24fWOK64sHMaSFhotw-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a336006ef27so43592466b.0
-        for <ceph-devel@vger.kernel.org>; Tue, 06 Feb 2024 01:21:21 -0800 (PST)
+ us-mta-385-H-9OxGeSMjeYnu09Pt8ZJg-1; Tue, 06 Feb 2024 04:23:17 -0500
+X-MC-Unique: H-9OxGeSMjeYnu09Pt8ZJg-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a3158fbb375so334644266b.3
+        for <ceph-devel@vger.kernel.org>; Tue, 06 Feb 2024 01:23:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707211280; x=1707816080;
+        d=1e100.net; s=20230601; t=1707211397; x=1707816197;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qxgmi5nVmHBLiLOEX7KdonYAIEXEAm68ZuGhjyZ6ofI=;
-        b=JZlHfiJekRSQaAzeLha6Razl0QGUufA/dsSPsMWoqTl1IR7iryzqNlGNDLdR5QUpV9
-         /Wxragai/Z5hXICg7EP2R7Z9nL9Fwv0V9qIYlMcLeOLZ4WzG+Y48OzrsUHYh0bn7bfGf
-         WPSIKrWtPyGyo7HvVD5Y50FqsqbTSQhcZO2rSf0jlGLZ7rrl1BIVEUc+J4huKy0hVCAP
-         Ek6Bg5tcLLxFsrKP/x8lzjZCk1qAeQs3MUj2VgfBkIGF1X+odAmLX+u37mYAX3DjykCj
-         NkOBfYTPN0mfvK8ae9qku++F57yOw2S2bHkrvE2nP77scgUrxGkJaPpR5Mf5Qf7CKSHb
-         3xCg==
-X-Gm-Message-State: AOJu0YxhfpbkhJyUp+IfGh0gRMqKDXKgDSx16exVsinLpvsRBd19JuMt
-	hmHGoDjANvQamuFewtbMtMt+nBp3tndA2930u4lu3IfGxzQ2fK5wqfUL0scHgXkrojQT34NVuN7
-	vN3CgQYL/e2C4lKoXQJvgyn+Tkij6/fIhWgd5R11og2fhnYTcHugr2yrAVtKEBPsWmjfrECJxBA
-	Y/2/LQpnL4IOmn8aDb4+HTBnjb6/bTSapbfw==
-X-Received: by 2002:a17:906:3d29:b0:a38:187c:2a9f with SMTP id l9-20020a1709063d2900b00a38187c2a9fmr1008619ejf.36.1707211280352;
-        Tue, 06 Feb 2024 01:21:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFbA/y2PN4qW6S/2T+4g/YaWCYqzpXFF6OrLC4H2MGsAQBOwEKoKQKRvUkCgl3Vcd3x342HcyRgy1SFTFvoWPk=
-X-Received: by 2002:a17:906:3d29:b0:a38:187c:2a9f with SMTP id
- l9-20020a1709063d2900b00a38187c2a9fmr1008607ejf.36.1707211280064; Tue, 06 Feb
- 2024 01:21:20 -0800 (PST)
+        bh=02O1iwLjyGE7o3ZgJFapQf5gK7RGa7fuxMFso2F2jbg=;
+        b=qZ3QJzsW7Nl4Qs9Jo9qM9SjgSShqspjw/XPf7lNNDUq/u7ek+thGMQwWvJ8edxkG/O
+         TwgjwJOPnTnggb8QY6y7Et4WIz9rJ6JB3N66Yok0EtPVWDqOaIeyBD3vrf3K0ObbUXoX
+         i6sQg5eR09digdzf1dntwbbJDT2V+5Ru28S9C5EYcLyy35Uem2hlFg3v59C7qZamEyZ1
+         SV2PjUpFA80amWwwayUGJagO8Wq425c4bgVV5tghCPZ3Y+1FgSKIdyuaQMPMQE6cH8tP
+         6qHTxsiPE13dNElc9+7Fkgce5At/1P3ekgZt/CdXnYK8teUB8QmCUBNcBRS4C8sYHgYP
+         0ffQ==
+X-Gm-Message-State: AOJu0YyDnfLwC4f+FKBoksn6wK7feP+Jy7O9z7OkZN1qGKeVWfjlchui
+	66JrbzyojAce8HEvVL33uBCsTFOJbIblgHEhFotTkhEuzZ7V/bwvrZ7RI8iF/zeFUFLSTzl7rpg
+	2JwL/4iatdpBYpo/hOT8Ng95U/MR3J02EAdPYnWEBZelz4DgXZk6xRA6WxKJPlMybQrbsDWpmvp
+	9Fc3mQCN28fCbEjgOEVYIPEbQEKvN2T4pdHA==
+X-Received: by 2002:a17:906:2c47:b0:a38:b94:48bf with SMTP id f7-20020a1709062c4700b00a380b9448bfmr1157233ejh.0.1707211396930;
+        Tue, 06 Feb 2024 01:23:16 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGKG8CaQ4IF1cf4Jv+p1a3b5AvA5yNYD3X3Ey61RcafhQcqmT4JJ2Ul2ADTM8jsb/FHqucUgUpqGLv7o0CcxR0=
+X-Received: by 2002:a17:906:2c47:b0:a38:b94:48bf with SMTP id
+ f7-20020a1709062c4700b00a380b9448bfmr1157226ejh.0.1707211396677; Tue, 06 Feb
+ 2024 01:23:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231205011439.84238-1-xiubli@redhat.com>
-In-Reply-To: <20231205011439.84238-1-xiubli@redhat.com>
+References: <20230824095551.134118-1-xiubli@redhat.com>
+In-Reply-To: <20230824095551.134118-1-xiubli@redhat.com>
 From: Venky Shankar <vshankar@redhat.com>
-Date: Tue, 6 Feb 2024 14:50:43 +0530
-Message-ID: <CACPzV1n1eR0ZSBfhJ9eC5PW1+55GSr7omuwEmXic-YX5AE1+mw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] ceph: check the cephx mds auth access in client side
+Date: Tue, 6 Feb 2024 14:52:40 +0530
+Message-ID: <CACPzV1=ONJL35DeXB20GEpou4xQSQ_DtbM4rC7AMjLOF+nkXpg@mail.gmail.com>
+Subject: Re: [PATCH] ceph: skip reconnecting if MDS is not ready
 To: xiubli@redhat.com
-Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, jlayton@kernel.org, 
-	mchangir@redhat.com
+Cc: ceph-devel@vger.kernel.org, pdonnell@redhat.com, idryomov@gmail.com, 
+	jlayton@kernel.org, mchangir@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 5, 2023 at 6:47=E2=80=AFAM <xiubli@redhat.com> wrote:
+On Thu, Aug 24, 2023 at 3:28=E2=80=AFPM <xiubli@redhat.com> wrote:
 >
 > From: Xiubo Li <xiubli@redhat.com>
 >
-> The code are refered to the userspace libcephfs:
-> https://github.com/ceph/ceph/pull/48027.
+> When MDS closed the session the kclient will send to reconnect to
+> it immediately, but if the MDS just restarted and still not ready
+> yet, such as still in the up:replay state and the sessionmap journal
+> logs hasn't be replayed, the MDS will close the session.
 >
+> And then the kclient could remove the session and later when the
+> mdsmap is in RECONNECT phrase it will skip reconnecting. But the
+> will wait until timeout and then evicts the kclient.
 >
-> V3:
-> - Fix https://tracker.ceph.com/issues/63141.
+> Just skip sending the reconnection request until the MDS is ready.
 >
-> V2:
-> - Fix memleak for built 'path'.
+> URL: https://tracker.ceph.com/issues/62489
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/mds_client.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 >
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 9aae39289b43..a9ef93411679 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -5809,7 +5809,8 @@ static void mds_peer_reset(struct ceph_connection *=
+con)
 >
-> Xiubo Li (6):
->   ceph: save the cap_auths in client when session being opened
->   ceph: add ceph_mds_check_access() helper support
->   ceph: check the cephx mds auth access for setattr
->   ceph: check the cephx mds auth access for open
->   ceph: check the cephx mds auth access for async dirop
->   ceph: add CEPHFS_FEATURE_MDS_AUTH_CAPS_CHECK feature bit
->
->  fs/ceph/dir.c        |  28 +++++
->  fs/ceph/file.c       |  61 +++++++++-
->  fs/ceph/inode.c      |  46 ++++++--
->  fs/ceph/mds_client.c | 265 ++++++++++++++++++++++++++++++++++++++++++-
->  fs/ceph/mds_client.h |  28 ++++-
->  5 files changed, 415 insertions(+), 13 deletions(-)
+>         pr_warn_client(mdsc->fsc->client, "mds%d closed our session\n",
+>                        s->s_mds);
+> -       if (READ_ONCE(mdsc->fsc->mount_state) !=3D CEPH_MOUNT_FENCE_IO)
+> +       if (READ_ONCE(mdsc->fsc->mount_state) !=3D CEPH_MOUNT_FENCE_IO &&
+> +           ceph_mdsmap_get_state(mdsc->mdsmap, s->s_mds) >=3D CEPH_MDS_S=
+TATE_RECONNECT)
+>                 send_mds_reconnect(mdsc, s);
+>  }
 >
 > --
-> 2.41.0
+> 2.39.1
 >
 
 Tested-by: Venky Shankar <vshankar@redhat.com>
