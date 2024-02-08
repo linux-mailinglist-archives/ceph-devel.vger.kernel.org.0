@@ -1,384 +1,230 @@
-Return-Path: <ceph-devel+bounces-837-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-838-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5338A84C50E
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Feb 2024 07:38:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41BC584DA54
+	for <lists+ceph-devel@lfdr.de>; Thu,  8 Feb 2024 07:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA2B71F23B04
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Feb 2024 06:38:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABC0F1F21A03
+	for <lists+ceph-devel@lfdr.de>; Thu,  8 Feb 2024 06:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0431CD35;
-	Wed,  7 Feb 2024 06:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9739B67C70;
+	Thu,  8 Feb 2024 06:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VzvwsCW0"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sr3taV0X"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8EE1CD2D;
-	Wed,  7 Feb 2024 06:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B9B692F2
+	for <ceph-devel@vger.kernel.org>; Thu,  8 Feb 2024 06:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707287928; cv=none; b=s56/ftCAqdvAmU5oqEgmBHAAGHtzlIXdzeKmYKCJi47AT8FGeUz05B0obiz2tjyfrKrfIZMoRAIJy+l3v8fACbmJUPK0ndfuBkFgRd0MIOuhLMfRS7lhO/z8NbWYVSsd/k/D9MTj5EOjwZyv0POhTjnAnze0b3OK/cmAmjPOOMw=
+	t=1707374848; cv=none; b=FFC5r4joBHw4l7Mo4ZDiLd17I2kqWF+QnN2QIxOGzuEniNHwEvaW3MJnmznnOLf4GhPRoKTc9jAZkC2mjWnYFHGTGDVIkmj3GKCrHEA3IMEONm5h7PWa/v0S6H5smqZEVW7obErEHcIxBxfyoaa8euM6atjXDs/DJnOl2hmr/fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707287928; c=relaxed/simple;
-	bh=5XH2+QhIIh6vtV8cZGfPe4lADyppCqTou0VjC/BHAxA=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=S0J6wlnGX3xdQkINbuBdZecWL9/3xaGKK4chYOSB+bjcVYopYjjVYroHy9kPbMJGHGxy/qaLMsviNU5dAenoVnG2YGnCOD9t7S2helJRDSj/kq9FZl6a68pkaVB8KurBAKv9yxdRGho6/5NFw41G9nTrzFnXbMFCHdg/borOzV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VzvwsCW0; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1707287926; x=1738823926;
-  h=date:from:to:cc:subject:message-id;
-  bh=5XH2+QhIIh6vtV8cZGfPe4lADyppCqTou0VjC/BHAxA=;
-  b=VzvwsCW0o6AxVDLl3cmC1Zh4dOgp/5ZM1c02bxr0d9SesmfFoLAd9s+o
-   Pdr62y2docpaiLdOJUwVQw0NBXkPuLILc/OFu/of6CDuPVOz6ziwuHwIY
-   dq/gXRrC8WvDiRhnFPK/M6HAOmaRQQqEJ0n6oXBnJJsVsOSpPSkHjdob3
-   XpYBNs/MbBHE5uasDy8OX1QKMPYsiiSpm/CsNiiFFj2Buu6OnlB8Lznsf
-   oR0tPfJ0baASa55kZW/vDUpzBT0DJ3C/f9nrjd4YpI0FN1RO1+3odZ8L2
-   ZgNKSSQkDnaAuQrX2v7v3nrqQ9GbZaZmz9yoY7g6U4VyJjb0kPBk6E07q
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10976"; a="23399320"
-X-IronPort-AV: E=Sophos;i="6.05,250,1701158400"; 
-   d="scan'208";a="23399320"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Feb 2024 22:38:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.05,250,1701158400"; 
-   d="scan'208";a="6015081"
-Received: from lkp-server01.sh.intel.com (HELO 01f0647817ea) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 06 Feb 2024 22:38:42 -0800
-Received: from kbuild by 01f0647817ea with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rXbZu-0002Hc-2Y;
-	Wed, 07 Feb 2024 06:38:38 +0000
-Date: Wed, 07 Feb 2024 14:37:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Memory Management List <linux-mm@kvack.org>,
- ceph-devel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- kunit-dev@googlegroups.com, linux-arm-kernel@lists.infradead.org,
- linux-bcachefs@vger.kernel.org, linux-cifs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- nouveau@lists.freedesktop.org, ntfs3@lists.linux.dev,
- samba-technical@lists.samba.org
-Subject: [linux-next:master] BUILD REGRESSION
- ac139fc7db67968e5061715508b5fc4aa7c40c56
-Message-ID: <202402071439.AER2foE3-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1707374848; c=relaxed/simple;
+	bh=M5y5+e2O6skt1ZwNKmTau9qOQ2OW/xvRgw4ntIniXpY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BwpKPXihoOOS0GDy4Tsi7Ro4fbmIr97TFVNbBaxFMfskMtZGJp3B+TRswvC+imP6VbOfcAO7t2gsxBUcEhxzkcm0ceof67LnO+14TdROgKRBUHne3sBw9YoPhcwMR+dgHIwf4gzIcSkrFMSRdZt0EHVId3+K5kPuv1qhTntpO7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sr3taV0X; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1707374844;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lF0YcezM9M/Tbc6+2NBTjjXolhiV1/+hEVh7x7+h7tI=;
+	b=Sr3taV0XqgcIvLjcE1GJt/8pzT4Cckrws6GdmiJUN4ESWC9wl2DUosxD+OwT3/ccuhF79U
+	NgLNoC7D9K2/Ca+I1Qu35qmD5qVmcHl7WhWrjRsaRttVxj4OgWnyzSRxT0ucZLCoqSu0BA
+	slyoeOI8Xaps6VjzyVWbd2H/boCh4wQ=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-29-sPXe_dl-Peqpv8xQGgHRXA-1; Thu, 08 Feb 2024 01:47:22 -0500
+X-MC-Unique: sPXe_dl-Peqpv8xQGgHRXA-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a2f71c83b7eso105591266b.1
+        for <ceph-devel@vger.kernel.org>; Wed, 07 Feb 2024 22:47:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707374842; x=1707979642;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lF0YcezM9M/Tbc6+2NBTjjXolhiV1/+hEVh7x7+h7tI=;
+        b=ELbCM1fuk4VmiRnQOi7MPrjaVussugje7eGwbSFlYHStBs54lH/6aYUyxGUCtDOfEX
+         k0zzrJF1iSrRQAJTQyMJ/46jk+weB/T0R+OKPH7nsOyec87V5UZMctTbNF6M2e1n1FIx
+         nISzN6qA54GESFY6nScm3USl/CfJ8Yyh7DaTUMLBs559aUqEKdDXcv3JYFqRRruk7gIN
+         l+lGqWx2txaz70pe21ft1+NgtrdgtnE9rGBw9k2rntWY94v7u4RtCjHXgPDKJjayekcm
+         D0Slom9nE9y3reK9mDm8BnbFOkwaKbSVLI2FQ+kMJv1PiyLCrewV1sIYunGhea43lHP3
+         bioA==
+X-Gm-Message-State: AOJu0YzHiwW0EjKqoeNzml9rc/HGbnLcmH5GadPZme9mL7P1BQqst2e6
+	D0PSjjedWXEdMox9OG9m7qAxSNBOG7sgYRKeu8sLru9OfpsWWm7BMJxziVM6Inf/GJsU0Qab2Tr
+	UPmDUPC4oEUpSO8E9IC+ny7VHbgxFc/szXj0v1Nn+Q0H6UTIedB1Rb6HDQs/Kv+tTfROhtcqeV+
+	6x233ajJUUaXYu6fgVpbP5wklWRkvUDifF2A==
+X-Received: by 2002:a17:906:3ca1:b0:a38:5ae:9c97 with SMTP id b1-20020a1709063ca100b00a3805ae9c97mr4824449ejh.40.1707374841763;
+        Wed, 07 Feb 2024 22:47:21 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGNnDvZSoki2Y3hqmd6TWzawg9jtOFZoE6SNv49VThaT/eO4/hNbfxe/rtHGJS/geOdmDBeTsGhT11v5gZ1HOc=
+X-Received: by 2002:a17:906:3ca1:b0:a38:5ae:9c97 with SMTP id
+ b1-20020a1709063ca100b00a3805ae9c97mr4824432ejh.40.1707374841315; Wed, 07 Feb
+ 2024 22:47:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240104041723.1120866-1-xiubli@redhat.com>
+In-Reply-To: <20240104041723.1120866-1-xiubli@redhat.com>
+From: Venky Shankar <vshankar@redhat.com>
+Date: Thu, 8 Feb 2024 12:16:44 +0530
+Message-ID: <CACPzV1=6ZOsbEkVffDUzQQbz_hPVFLUzauJHoeeXiFvqOt98EQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: always check dir caps asynchronously
+To: xiubli@redhat.com
+Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, jlayton@kernel.org, 
+	mchangir@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: ac139fc7db67968e5061715508b5fc4aa7c40c56  Add linux-next specific files for 20240206
+On Thu, Jan 4, 2024 at 9:49=E2=80=AFAM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> The MDS will issue the 'Fr' caps for async dirop, while there is
+> buggy in kclient and it could miss releasing the async dirop caps,
+> which is 'Fsxr'. And then the MDS will complain with:
+>
+> "[WRN] client.xxx isn't responding to mclientcaps(revoke) ..."
+>
+> So when releasing the dirop async requests or when they fail we
+> should always make sure that being revoked caps could be released.
+>
+> URL: https://tracker.ceph.com/issues/50223
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/caps.c       | 6 ------
+>  fs/ceph/mds_client.c | 9 ++++-----
+>  fs/ceph/mds_client.h | 2 +-
+>  fs/ceph/super.h      | 2 --
+>  4 files changed, 5 insertions(+), 14 deletions(-)
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index a9e19f1f26e0..4dd92f09b16e 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -3216,7 +3216,6 @@ static int ceph_try_drop_cap_snap(struct ceph_inode=
+_info *ci,
+>
+>  enum put_cap_refs_mode {
+>         PUT_CAP_REFS_SYNC =3D 0,
+> -       PUT_CAP_REFS_NO_CHECK,
+>         PUT_CAP_REFS_ASYNC,
+>  };
+>
+> @@ -3332,11 +3331,6 @@ void ceph_put_cap_refs_async(struct ceph_inode_inf=
+o *ci, int had)
+>         __ceph_put_cap_refs(ci, had, PUT_CAP_REFS_ASYNC);
+>  }
+>
+> -void ceph_put_cap_refs_no_check_caps(struct ceph_inode_info *ci, int had=
+)
+> -{
+> -       __ceph_put_cap_refs(ci, had, PUT_CAP_REFS_NO_CHECK);
+> -}
+> -
+>  /*
+>   * Release @nr WRBUFFER refs on dirty pages for the given @snapc snap
+>   * context.  Adjust per-snap dirty page accounting as appropriate.
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 7bdee08ec2eb..f278194a1a01 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -1089,7 +1089,7 @@ void ceph_mdsc_release_request(struct kref *kref)
+>         struct ceph_mds_request *req =3D container_of(kref,
+>                                                     struct ceph_mds_reque=
+st,
+>                                                     r_kref);
+> -       ceph_mdsc_release_dir_caps_no_check(req);
+> +       ceph_mdsc_release_dir_caps_async(req);
+>         destroy_reply_info(&req->r_reply_info);
+>         if (req->r_request)
+>                 ceph_msg_put(req->r_request);
+> @@ -4428,7 +4428,7 @@ void ceph_mdsc_release_dir_caps(struct ceph_mds_req=
+uest *req)
+>         }
+>  }
+>
+> -void ceph_mdsc_release_dir_caps_no_check(struct ceph_mds_request *req)
+> +void ceph_mdsc_release_dir_caps_async(struct ceph_mds_request *req)
+>  {
+>         struct ceph_client *cl =3D req->r_mdsc->fsc->client;
+>         int dcaps;
+> @@ -4436,8 +4436,7 @@ void ceph_mdsc_release_dir_caps_no_check(struct cep=
+h_mds_request *req)
+>         dcaps =3D xchg(&req->r_dir_caps, 0);
+>         if (dcaps) {
+>                 doutc(cl, "releasing r_dir_caps=3D%s\n", ceph_cap_string(=
+dcaps));
+> -               ceph_put_cap_refs_no_check_caps(ceph_inode(req->r_parent)=
+,
+> -                                               dcaps);
+> +               ceph_put_cap_refs_async(ceph_inode(req->r_parent), dcaps)=
+;
+>         }
+>  }
+>
+> @@ -4473,7 +4472,7 @@ static void replay_unsafe_requests(struct ceph_mds_=
+client *mdsc,
+>                 if (req->r_session->s_mds !=3D session->s_mds)
+>                         continue;
+>
+> -               ceph_mdsc_release_dir_caps_no_check(req);
+> +               ceph_mdsc_release_dir_caps_async(req);
+>
+>                 __send_request(session, req, true);
+>         }
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index e85172a92e6c..92695a280d7b 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -579,7 +579,7 @@ extern int ceph_mdsc_do_request(struct ceph_mds_clien=
+t *mdsc,
+>                                 struct inode *dir,
+>                                 struct ceph_mds_request *req);
+>  extern void ceph_mdsc_release_dir_caps(struct ceph_mds_request *req);
+> -extern void ceph_mdsc_release_dir_caps_no_check(struct ceph_mds_request =
+*req);
+> +extern void ceph_mdsc_release_dir_caps_async(struct ceph_mds_request *re=
+q);
+>  static inline void ceph_mdsc_get_request(struct ceph_mds_request *req)
+>  {
+>         kref_get(&req->r_kref);
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index f418b43d0e05..8832da060253 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -1258,8 +1258,6 @@ extern void ceph_take_cap_refs(struct ceph_inode_in=
+fo *ci, int caps,
+>  extern void ceph_get_cap_refs(struct ceph_inode_info *ci, int caps);
+>  extern void ceph_put_cap_refs(struct ceph_inode_info *ci, int had);
+>  extern void ceph_put_cap_refs_async(struct ceph_inode_info *ci, int had)=
+;
+> -extern void ceph_put_cap_refs_no_check_caps(struct ceph_inode_info *ci,
+> -                                           int had);
+>  extern void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int n=
+r,
+>                                        struct ceph_snap_context *snapc);
+>  extern void __ceph_remove_capsnap(struct inode *inode,
+> --
+> 2.43.0
+>
 
-Error/Warning reports:
+Tested-by: Venky Shankar <vshankar@redhat.com>
 
-https://lore.kernel.org/oe-kbuild-all/202402061900.rTuYDlo6-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202402062106.cfArbjsv-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202402062134.a6CqAt3s-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202402062139.MKznS4Qf-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202402062151.Kq60k2LK-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202402062210.3YyBVGF1-lkp@intel.com
+--=20
+Cheers,
+Venky
 
-Error/Warning: (recently discovered and may have been fixed)
-
-arch/sh/boot/compressed/../../../../lib/xz/xz_dec_lzma2.c:648:(.text+0xaf0): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-arch/sh/boot/compressed/../../../../lib/zlib_inflate/inffast.c:132:(.text+0x738): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-arch/sh/boot/compressed/../../../../lib/zlib_inflate/inflate.c:57:(.text+0xbd0): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-arch/sh/boot/compressed/../../../../lib/zlib_inflate/inftrees.c:270:(.text+0x3dc): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-arch/xtensa/boot/lib/inflate.c:91:(.text+0x1a4): undefined reference to `__ubsan_handle_out_of_bounds'
-drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c:1955: warning: Function parameter or struct member 'gsp' not described in 'nvkm_gsp_radix3_sg'
-fs/ceph/locks.c:379:27: warning: unused variable 'lock' [-Wunused-variable]
-make[2]: *** kselftest/livepatch/test_modules: No such file or directory.  Stop.
-powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data202' from `fs/overlayfs/copy_up.o' being placed in section `.bss..Lubsan_data202'
-powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data219' from `kernel/ptrace.o' being placed in section `.bss..Lubsan_data219'
-powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data327' from `kernel/sched/core.o' being placed in section `.bss..Lubsan_data327'
-sh4-linux-ld: arch/sh/boot/compressed/../../../../lib/zlib_inflate/inffast.c:305:(.text+0xac4): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-sh4-linux-ld: arch/sh/boot/compressed/../../../../lib/zlib_inflate/inftrees.c:315:(.text+0x60c): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-sh4-linux-ld: arch/sh/boot/compressed/misc.o:(.debug_addr+0x388): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-sh4-linux-ld: misc.c:(.text+0x23d4): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-xtensa-linux-ld: arch/xtensa/boot/lib/inflate.c:487:(.text+0x546): undefined reference to `__ubsan_handle_out_of_bounds'
-
-Error/Warning ids grouped by kconfigs:
-
-gcc_recent_errors
-|-- arc-randconfig-r113-20240206
-|   `-- drivers-gpu-drm-bridge-imx-imx8mp-hdmi-pvi.c:sparse:sparse:Using-plain-integer-as-NULL-pointer
-|-- arm-randconfig-r071-20240206
-|   `-- fs-ceph-locks.c:warning:unused-variable-lock
-|-- i386-buildonly-randconfig-003-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-randconfig-014-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-randconfig-016-20240206
-|   `-- include-kunit-test.h:warning:s-directive-argument-is-null
-|-- i386-randconfig-052-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- mips-allyesconfig
-|   |-- (.ref.text):relocation-truncated-to-fit:R_MIPS_26-against-start_secondary
-|   `-- (.text):relocation-truncated-to-fit:R_MIPS_26-against-kernel_entry
-|-- nios2-randconfig-001-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- parisc-defconfig
-|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
-|-- parisc-randconfig-001-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- powerpc-randconfig-r022-20230201
-|   |-- powerpc-linux-ld:warning:orphan-section-bss..Lubsan_data202-from-fs-overlayfs-copy_up.o-being-placed-in-section-.bss..Lubsan_data202
-|   |-- powerpc-linux-ld:warning:orphan-section-bss..Lubsan_data219-from-kernel-ptrace.o-being-placed-in-section-.bss..Lubsan_data219
-|   `-- powerpc-linux-ld:warning:orphan-section-bss..Lubsan_data327-from-kernel-sched-core.o-being-placed-in-section-.bss..Lubsan_data327
-|-- powerpc64-randconfig-003-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- sh-randconfig-r003-20220501
-|   |-- arch-sh-boot-compressed-..-..-..-..-lib-zlib_inflate-inffast.c:(.text):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|   |-- arch-sh-boot-compressed-..-..-..-..-lib-zlib_inflate-inflate.c:(.text):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|   |-- arch-sh-boot-compressed-..-..-..-..-lib-zlib_inflate-inftrees.c:(.text):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|   |-- sh4-linux-ld:arch-sh-boot-compressed-..-..-..-..-lib-zlib_inflate-inffast.c:(.text):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|   `-- sh4-linux-ld:arch-sh-boot-compressed-..-..-..-..-lib-zlib_inflate-inftrees.c:(.text):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|-- sh-randconfig-r015-20220607
-|   `-- sh4-linux-ld:misc.c:(.text):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|-- sh-randconfig-r023-20230502
-|   |-- arch-sh-boot-compressed-..-..-..-..-lib-xz-xz_dec_lzma2.c:(.text):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|   `-- sh4-linux-ld:arch-sh-boot-compressed-misc.o:(.debug_addr):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|-- sparc64-randconfig-001-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- sparc64-randconfig-002-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- x86_64-randconfig-003-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- x86_64-randconfig-004-20240206
-|   `-- include-kunit-test.h:warning:s-directive-argument-is-null
-|-- x86_64-randconfig-161-20240206
-|   |-- fs-bcachefs-btree_locking.c-bch2_trans_relock()-warn:passing-zero-to-PTR_ERR
-|   |-- fs-bcachefs-buckets.c-bch2_trans_account_disk_usage_change()-error:we-previously-assumed-trans-disk_res-could-be-null-(see-line-)
-|   `-- mm-huge_memory.c-thpsize_create()-warn:Calling-kobject_put-get-with-state-initialized-unset-from-line:
-|-- x86_64-rhel-8.3-bpf
-|   `-- make:kselftest-livepatch-test_modules:No-such-file-or-directory.-Stop.
-`-- xtensa-randconfig-r022-20220710
-    |-- arch-xtensa-boot-lib-inflate.c:(.text):undefined-reference-to-__ubsan_handle_out_of_bounds
-    `-- xtensa-linux-ld:arch-xtensa-boot-lib-inflate.c:(.text):undefined-reference-to-__ubsan_handle_out_of_bounds
-clang_recent_errors
-|-- arm64-randconfig-002-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-buildonly-randconfig-002-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-buildonly-randconfig-004-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-randconfig-003-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-randconfig-004-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-randconfig-013-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-randconfig-054-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- powerpc-randconfig-003-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- x86_64-randconfig-006-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- x86_64-randconfig-012-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- x86_64-randconfig-014-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-`-- x86_64-randconfig-122-20240206
-    |-- fs-quota-dquot.c:sparse:sparse:incompatible-types-in-comparison-expression-(different-address-spaces):
-    `-- fs-smb-client-file.c:sparse:sparse:symbol-cifs_req_ops-was-not-declared.-Should-it-be-static
-
-elapsed time: 1479m
-
-configs tested: 179
-configs skipped: 3
-
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                              allmodconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                              allyesconfig   gcc  
-arc                                 defconfig   gcc  
-arc                   randconfig-001-20240206   gcc  
-arc                   randconfig-002-20240206   gcc  
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   clang
-arm                              allyesconfig   gcc  
-arm                                 defconfig   clang
-arm                        mvebu_v7_defconfig   clang
-arm                        neponset_defconfig   gcc  
-arm                   randconfig-001-20240206   clang
-arm                   randconfig-002-20240206   gcc  
-arm                   randconfig-003-20240206   gcc  
-arm                   randconfig-004-20240206   clang
-arm64                            allmodconfig   clang
-arm64                             allnoconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                 randconfig-001-20240206   gcc  
-arm64                 randconfig-002-20240206   clang
-arm64                 randconfig-003-20240206   gcc  
-arm64                 randconfig-004-20240206   gcc  
-csky                             allmodconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                             allyesconfig   gcc  
-csky                                defconfig   gcc  
-csky                  randconfig-001-20240206   gcc  
-csky                  randconfig-002-20240206   gcc  
-hexagon                          allmodconfig   clang
-hexagon                           allnoconfig   clang
-hexagon                          allyesconfig   clang
-hexagon                             defconfig   clang
-hexagon               randconfig-001-20240206   clang
-hexagon               randconfig-002-20240206   clang
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20240206   clang
-i386         buildonly-randconfig-002-20240206   clang
-i386         buildonly-randconfig-003-20240206   gcc  
-i386         buildonly-randconfig-004-20240206   clang
-i386         buildonly-randconfig-005-20240206   gcc  
-i386         buildonly-randconfig-006-20240206   gcc  
-i386                                defconfig   clang
-i386                  randconfig-001-20240206   clang
-i386                  randconfig-002-20240206   clang
-i386                  randconfig-003-20240206   clang
-i386                  randconfig-004-20240206   clang
-i386                  randconfig-005-20240206   clang
-i386                  randconfig-006-20240206   clang
-i386                  randconfig-011-20240206   clang
-i386                  randconfig-012-20240206   gcc  
-i386                  randconfig-013-20240206   clang
-i386                  randconfig-014-20240206   gcc  
-i386                  randconfig-015-20240206   gcc  
-i386                  randconfig-016-20240206   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20240206   gcc  
-loongarch             randconfig-002-20240206   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-m68k                       m5249evb_defconfig   gcc  
-m68k                        mvme147_defconfig   gcc  
-m68k                            q40_defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-mips                          malta_defconfig   gcc  
-mips                      maltasmvp_defconfig   gcc  
-mips                           mtx1_defconfig   clang
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-nios2                 randconfig-001-20240206   gcc  
-nios2                 randconfig-002-20240206   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                         allyesconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                           allmodconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                           allyesconfig   gcc  
-parisc                              defconfig   gcc  
-parisc                randconfig-001-20240206   gcc  
-parisc                randconfig-002-20240206   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   clang
-powerpc                   currituck_defconfig   clang
-powerpc                  iss476-smp_defconfig   gcc  
-powerpc                   microwatt_defconfig   gcc  
-powerpc                      ppc64e_defconfig   gcc  
-powerpc               randconfig-001-20240206   clang
-powerpc               randconfig-002-20240206   gcc  
-powerpc               randconfig-003-20240206   clang
-powerpc                  storcenter_defconfig   gcc  
-powerpc64             randconfig-001-20240206   gcc  
-powerpc64             randconfig-002-20240206   clang
-powerpc64             randconfig-003-20240206   gcc  
-riscv                            allmodconfig   clang
-riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   clang
-riscv                               defconfig   clang
-riscv                 randconfig-001-20240206   gcc  
-riscv                 randconfig-002-20240206   clang
-s390                             allmodconfig   clang
-s390                              allnoconfig   clang
-s390                             allyesconfig   gcc  
-s390                                defconfig   clang
-s390                  randconfig-001-20240206   clang
-s390                  randconfig-002-20240206   clang
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                    randconfig-001-20240206   gcc  
-sh                    randconfig-002-20240206   gcc  
-sh                          sdk7780_defconfig   gcc  
-sh                           se7722_defconfig   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-sparc64               randconfig-001-20240206   gcc  
-sparc64               randconfig-002-20240206   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   gcc  
-um                                  defconfig   clang
-um                    randconfig-001-20240206   clang
-um                    randconfig-002-20240206   gcc  
-um                           x86_64_defconfig   clang
-x86_64                            allnoconfig   clang
-x86_64                           allyesconfig   clang
-x86_64       buildonly-randconfig-001-20240206   gcc  
-x86_64       buildonly-randconfig-002-20240206   clang
-x86_64       buildonly-randconfig-003-20240206   gcc  
-x86_64       buildonly-randconfig-004-20240206   gcc  
-x86_64       buildonly-randconfig-005-20240206   gcc  
-x86_64       buildonly-randconfig-006-20240206   gcc  
-x86_64                              defconfig   gcc  
-x86_64                randconfig-001-20240206   clang
-x86_64                randconfig-002-20240206   clang
-x86_64                randconfig-003-20240206   gcc  
-x86_64                randconfig-004-20240206   gcc  
-x86_64                randconfig-005-20240206   gcc  
-x86_64                randconfig-006-20240206   clang
-x86_64                randconfig-011-20240206   gcc  
-x86_64                randconfig-012-20240206   clang
-x86_64                randconfig-013-20240206   gcc  
-x86_64                randconfig-014-20240206   clang
-x86_64                randconfig-015-20240206   gcc  
-x86_64                randconfig-016-20240206   clang
-x86_64                randconfig-071-20240206   gcc  
-x86_64                randconfig-072-20240206   gcc  
-x86_64                randconfig-073-20240206   gcc  
-x86_64                randconfig-074-20240206   gcc  
-x86_64                randconfig-075-20240206   clang
-x86_64                randconfig-076-20240206   gcc  
-x86_64                          rhel-8.3-rust   clang
-xtensa                           alldefconfig   gcc  
-xtensa                            allnoconfig   gcc  
-xtensa                randconfig-001-20240206   gcc  
-xtensa                randconfig-002-20240206   gcc  
-xtensa                         virt_defconfig   gcc  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
