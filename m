@@ -1,50 +1,50 @@
-Return-Path: <ceph-devel+bounces-851-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-850-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91ECF855B09
-	for <lists+ceph-devel@lfdr.de>; Thu, 15 Feb 2024 08:03:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF0FA855B04
+	for <lists+ceph-devel@lfdr.de>; Thu, 15 Feb 2024 08:03:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FAE61F23B55
-	for <lists+ceph-devel@lfdr.de>; Thu, 15 Feb 2024 07:03:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3E3B1C2B6F9
+	for <lists+ceph-devel@lfdr.de>; Thu, 15 Feb 2024 07:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756C311702;
-	Thu, 15 Feb 2024 07:03:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A38DDD9;
+	Thu, 15 Feb 2024 07:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HA7jzaYa"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="USrYMYg3"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8CFD51D;
-	Thu, 15 Feb 2024 07:03:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3E3C15B;
+	Thu, 15 Feb 2024 07:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707980602; cv=none; b=RnAOkonUOh6/GuS6oer4DL7y9JHgr2f10xt/X//j1fn8L7zxt3+LQfDUutBiWn7YGuh3B9WMrA0wKkj7Vvw5860pzhV/od7aQa1CnKzZJk8fb0nHxRaqBJe3UMQExOwQ294+I8QLR+x1LINeM8t02/RGKQzi/0c/oKuPB8DY+YQ=
+	t=1707980601; cv=none; b=pcMi8+coJP6S2MQLfDOXfkBOlrWCNNkICobIjxnLGqUFE4iOaEbTReBboGkaE0sI2V8/HAV14ytSSY9SYlWuPuiLiRNhxKesD0cLCpRZFxb4N8gf65GQyU5fjBEulaGy5vtBt5qaN9Q6B4GGXbsXg2rxoicbWwm2KU3BNpbQTYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707980602; c=relaxed/simple;
-	bh=a9QVJFBPnRDzEIDwo35ISQTCrjJdpKkLwXzS5MaqizE=;
+	s=arc-20240116; t=1707980601; c=relaxed/simple;
+	bh=8LTkkIg47/HDrdzbdQLcU8aL/okzfwKjVikEO0IDv20=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QSzu+Mjb1aMtES28ggc/sWqglzdnK6jH7vGwkSl7vuHE32It1JhWWD8yvvRRAv3SWL/IlwF1E7BP4Rs1ehoZZUag2yh5t/oGoV9WgErKhWubayhXOv2o4wbzlkUjkR+7uxTTcjiZsEu3G7f+zGgIQHyW7Pddl2WztL7j9rrllFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HA7jzaYa; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=oKwjnQTEu5ikrkXmr2fs5GSWc08WsmLtWAx/VnZA1Q6yweVKqWxphql6vOsnelnsGzjKFSd0wHoBmhyq8idzYERlsU1/znEc3Pa6sfKgZQFoWFvuIycL3EJn97y4PxUR7WKz3J8AefzTeUpiAEKUgsKAmZrOKFF+coFiQAQEg6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=USrYMYg3; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=ZigXghdw7FPPNjYPfgXfrl3xig0YzK0yTKopqAeqWSw=; b=HA7jzaYaYdXjkmYnaBpxilg6Ki
-	11yS23O2NB33310yE7yq2DHhRzyVjlMvJzFaQfcKWMY8mYkc8fWZkQ9/He7H5SxX7lSUMxsDuYwLa
-	Qa8VCCsWOZ4/f5VC8FR778/M60GJQe1w4dh2wulK2VYPkAwxr5ACuIUBiFh0i+TSzfK3AIW2x10g9
-	hjQrIYwxwPO7GnCt5A9PLNbuS6KJ2zqhNtJehnxzKkW9qMxUapBapJD7BVxhHtfw/NUduY/mUAg3g
-	ifUGS26f+7+G1THUMvGQrXDnxhCn1Ik48tvcQ8FPqJv3UV210Hwl8178ABpMxSPO8mPW2oT+tFON2
-	loq7cLQg==;
+	bh=w+8VBJngr1LpgzhqtRiN7EAhAvx8U1FPWiPOb3OkKso=; b=USrYMYg35Bzm5+f4s1dmAh5PSS
+	QkjuHrEenWxWrcgJc+gsmXtpRg40aRLWetOipmPw48dpOffUTa5q75aq+Wk3KisE/+OFvpYc6IfaL
+	nzO04wFtrZ7qxMRNLsxVNt2eQKi7q73/IIvtZl7Yu4HzDpDwoo08SSmRihcJHFMtltcufV7NpC0UR
+	MPQwkFkO9fwQcHYroBMeQ9s07q1fCbJMJql/tukDY8rJeipHGTF4+YLyCvKS/H2f6hB7NWIOuaXS/
+	L0OMMU3LiJLyo+31u9dQebfl/szvAl8qAp1N2C2fYiBqLm4LBVLxiA3vLmhLMEkJwUXqazwKfGy1l
+	mjIlZIbw==;
 Received: from 2a02-8389-2341-5b80-39d3-4735-9a3c-88d8.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:39d3:4735:9a3c:88d8] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1raVm2-0000000FANr-02ZR;
-	Thu, 15 Feb 2024 07:03:10 +0000
+	id 1raVm4-0000000FANy-1sSl;
+	Thu, 15 Feb 2024 07:03:12 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: Richard Weinberger <richard@nod.at>,
@@ -70,9 +70,9 @@ Cc: Richard Weinberger <richard@nod.at>,
 	linux-mmc@vger.kernel.org,
 	linux-mtd@lists.infradead.org,
 	linux-s390@vger.kernel.org
-Subject: [PATCH 01/17] ubd: pass queue_limits to blk_mq_alloc_disk
-Date: Thu, 15 Feb 2024 08:02:44 +0100
-Message-Id: <20240215070300.2200308-2-hch@lst.de>
+Subject: [PATCH 02/17] aoe: pass queue_limits to blk_mq_alloc_disk
+Date: Thu, 15 Feb 2024 08:02:45 +0100
+Message-Id: <20240215070300.2200308-3-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240215070300.2200308-1-hch@lst.de>
 References: <20240215070300.2200308-1-hch@lst.de>
@@ -85,47 +85,65 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Pass the few limits ubd imposes directly to blk_mq_alloc_disk instead
-of setting them one at a time.
+Pass the few limits aoe imposes directly to blk_mq_alloc_disk instead
+of setting them one at a time and improve the way the default
+max_hw_sectors is initialized while we're at it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/um/drivers/ubd_kern.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/block/aoe/aoeblk.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
-index 25f1b18ce7d4e9..48e11f073551b4 100644
---- a/arch/um/drivers/ubd_kern.c
-+++ b/arch/um/drivers/ubd_kern.c
-@@ -881,6 +881,10 @@ static const struct blk_mq_ops ubd_mq_ops = {
- static int ubd_add(int n, char **error_out)
- {
- 	struct ubd *ubd_dev = &ubd_devs[n];
+diff --git a/drivers/block/aoe/aoeblk.c b/drivers/block/aoe/aoeblk.c
+index 2ff6e2da8cc41c..b6dac8cee70fe1 100644
+--- a/drivers/block/aoe/aoeblk.c
++++ b/drivers/block/aoe/aoeblk.c
+@@ -24,8 +24,8 @@ static DEFINE_MUTEX(aoeblk_mutex);
+ static struct kmem_cache *buf_pool_cache;
+ static struct dentry *aoe_debugfs_dir;
+ 
+-/* GPFS needs a larger value than the default. */
+-static int aoe_maxsectors;
++/* random default picked from the historic block max_sectors cap */
++static int aoe_maxsectors = 2560;
+ module_param(aoe_maxsectors, int, 0644);
+ MODULE_PARM_DESC(aoe_maxsectors,
+ 	"When nonzero, set the maximum number of sectors per I/O request");
+@@ -334,6 +334,10 @@ aoeblk_gdalloc(void *vp)
+ 	mempool_t *mp;
+ 	struct blk_mq_tag_set *set;
+ 	sector_t ssize;
 +	struct queue_limits lim = {
-+		.max_segments		= MAX_SG,
-+		.seg_boundary_mask	= PAGE_SIZE - 1,
++		.max_hw_sectors		= aoe_maxsectors,
++		.io_opt			= SZ_2M,
 +	};
- 	struct gendisk *disk;
- 	int err = 0;
+ 	ulong flags;
+ 	int late = 0;
+ 	int err;
+@@ -371,7 +375,7 @@ aoeblk_gdalloc(void *vp)
+ 		goto err_mempool;
+ 	}
  
-@@ -906,7 +910,7 @@ static int ubd_add(int n, char **error_out)
- 	if (err)
- 		goto out;
- 
--	disk = blk_mq_alloc_disk(&ubd_dev->tag_set, NULL, ubd_dev);
-+	disk = blk_mq_alloc_disk(&ubd_dev->tag_set, &lim, ubd_dev);
- 	if (IS_ERR(disk)) {
- 		err = PTR_ERR(disk);
- 		goto out_cleanup_tags;
-@@ -914,8 +918,6 @@ static int ubd_add(int n, char **error_out)
- 	ubd_dev->queue = disk->queue;
- 
- 	blk_queue_write_cache(ubd_dev->queue, true, false);
--	blk_queue_max_segments(ubd_dev->queue, MAX_SG);
--	blk_queue_segment_boundary(ubd_dev->queue, PAGE_SIZE - 1);
- 	err = ubd_disk_register(UBD_MAJOR, ubd_dev->size, n, disk);
- 	if (err)
- 		goto out_cleanup_disk;
+-	gd = blk_mq_alloc_disk(set, NULL, d);
++	gd = blk_mq_alloc_disk(set, &lim, d);
+ 	if (IS_ERR(gd)) {
+ 		pr_err("aoe: cannot allocate block queue for %ld.%d\n",
+ 			d->aoemajor, d->aoeminor);
+@@ -384,14 +388,9 @@ aoeblk_gdalloc(void *vp)
+ 	WARN_ON(d->flags & DEVFL_TKILL);
+ 	WARN_ON(d->gd);
+ 	WARN_ON(d->flags & DEVFL_UP);
+-	/* random number picked from the history block max_sectors cap */
+-	blk_queue_max_hw_sectors(gd->queue, 2560u);
+-	blk_queue_io_opt(gd->queue, SZ_2M);
+ 	d->bufpool = mp;
+ 	d->blkq = gd->queue;
+ 	d->gd = gd;
+-	if (aoe_maxsectors)
+-		blk_queue_max_hw_sectors(gd->queue, aoe_maxsectors);
+ 	gd->major = AOE_MAJOR;
+ 	gd->first_minor = d->sysminor;
+ 	gd->minors = AOE_PARTITIONS;
 -- 
 2.39.2
 
