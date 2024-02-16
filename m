@@ -1,223 +1,111 @@
-Return-Path: <ceph-devel+bounces-871-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-872-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2451F8576FC
-	for <lists+ceph-devel@lfdr.de>; Fri, 16 Feb 2024 08:49:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DCD285843E
+	for <lists+ceph-devel@lfdr.de>; Fri, 16 Feb 2024 18:37:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 495CB1C21C5A
-	for <lists+ceph-devel@lfdr.de>; Fri, 16 Feb 2024 07:49:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18D76283237
+	for <lists+ceph-devel@lfdr.de>; Fri, 16 Feb 2024 17:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C44175BE;
-	Fri, 16 Feb 2024 07:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2895132499;
+	Fri, 16 Feb 2024 17:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="MYeVffNE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NKCfSaKb"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97D415E96
-	for <ceph-devel@vger.kernel.org>; Fri, 16 Feb 2024 07:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F17D219ED;
+	Fri, 16 Feb 2024 17:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708069786; cv=none; b=koBBDwwCx4gP17QOtPqoc/QvjY+JMPxyiVM5J/FjxKBYrScex0kpy0QzPfU+3XpSX6kuzZhkyf2+p6RAgYGUBhzSHkCdYs1+W5umzJWcqgzLNIfWM/NI5I/67/KOqrhq/fwIQzmt4Y0eSkFqLtbwcxMcuLFZSSgSaEIDl//YQkU=
+	t=1708105039; cv=none; b=DG5EXsv3xTyj0k9CDpSRzqAe3dHSKpcbVy6ZaVefYYhftv6f1Alo+y/bLtKAvUmitIJBvRFHd2bJdT+tYhg1uxK5xWyGLi/5e/PX+jacy0MLdxfkGkLXCQ/fd0PYeiRQPrRWMQ7od60O4xjuFfXQU1W17IDhER9Oqlb4+6bYB4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708069786; c=relaxed/simple;
-	bh=V2EdJjvqxAqCtw18lO2fEH+iEeksTk/mBimlO53/O40=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nECvaOZ+ocBI6b6gB+s2QJxuWYRhXaAHk5IjZ2XQfbQF5pZ4zSym3d23s5b8nVom8u0Hnwq/vsbvhSLyV8b9zb3YZyDD8Hw79VreNSFJZnGIj3OCij7EKqo+8LgXsARWAIugZ66blrvssssHvx5vAUs9bRQ71kGXy8Oz/+MpWj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=MYeVffNE; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5639c8cc449so508682a12.2
-        for <ceph-devel@vger.kernel.org>; Thu, 15 Feb 2024 23:49:43 -0800 (PST)
+	s=arc-20240116; t=1708105039; c=relaxed/simple;
+	bh=K3ILZL73XsaCWQJVqqLCkkb+Rz4ec5sI85BBccikSU4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LGX4v+SzWe5v2s3OchKqn7i2xmCtoi/tDJHrL7S0Yqq385I6fVk64TdF4FJEUQ+zkaeyNnQb0yNQKUkM+wBbloWCzr3PT07/RBUJIoHkPxgGb08zX5ZNmSb1aGjx87myf8aWVeWeHA9BpTUxhGsszqB4MkdFXiWAgFDzwE4zgr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NKCfSaKb; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-33d26da3e15so188740f8f.1;
+        Fri, 16 Feb 2024 09:37:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1708069782; x=1708674582; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FKtrR0GptUvN+scEUpBPwjTH5qrhKCgtCeXIuRBm1rE=;
-        b=MYeVffNEmZUTahVi/A4kJeB/m1pFJlznUyhAFsFFTT5b3esiD5FrC0EuBHJX4QvWC1
-         KER7CWomH96ZhR3MwL5pZhZ5w+iv51BNlP44YJ+LsFRY+MOcsDG93lGCieDX0BsmX7hk
-         1eVrAXEWh+/bx1SZ4E2l61VXyvBBfDXLm3VfWpSg23XQjwpHqbhcd2iKWdDsshoKIuSF
-         8pbfeKkfasgl78V7yN71gUlLlwaBG2nfG3LsS0fKTj4s0+N1I5Z477pTdvbBcnFBYpJD
-         O8TpvrEOMZlpnK+WV/mXfz5uOfVFs6IqHSJqQZd55NVhu14JcDxy/0jl2B46EPtF2v5t
-         VjCg==
+        d=gmail.com; s=20230601; t=1708105036; x=1708709836; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7PL5pjz0aQhfCwh8cDYpS+9GgpPQ8XWmRdLVnQ4KRRE=;
+        b=NKCfSaKbl0BI6vej5f0CeS/QqE/B4BWPDXFVgbO+UU3gAOeGgZ4n8jyLofBCIe+PqR
+         I4sNjgwYslIfCtFyim6YGjTTOg4EeFzCL+65t7bgpRwXpf1yEip8t6Ra7Z1+U1cexew4
+         bI/G3LrUxa9dpiFJAbHfGC5uBrm0P9gKC87FCkBKqxjgJ6pvehb0FaMfzsGzShpC6p8C
+         YQRX3Gqi3/muMV0wiEKpPPfLknt5Z04dFlj3rkwUuWJ+kDRGOlsEJ5WUcF5GSqMhny/D
+         aF+zQ6iuqwkFVm9KrjXi0I4kJUAzK5AXAZ3HhEPw5DBbGyP04RGy3NC7NGlF4zDKyQAn
+         5ITQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708069782; x=1708674582;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FKtrR0GptUvN+scEUpBPwjTH5qrhKCgtCeXIuRBm1rE=;
-        b=Cyjn7C1O8mYQTCmNSIvkX+/M5AAMuqQoTizhCxuklMV+lF27zMbaLNus/3OaN6o4aJ
-         p4S4Ao6wEHo+lxJkRLMNJHaGLTWDH0M7qvEB1Zk1s0L0sN+Q9pNv1jBtABHmBKbn26Iu
-         mkiz6q9eHsQq/5ji/LCZKHLwXWhAx76fczrj5iadmLTmGUBE2nBm2kwPLcorDuwExqjq
-         jPW9NxLBzIdMPWOeQHcLO7j2KZIRZbg16T8r34Wepq6P7+7A2PFl4ZoLq7bwmOzcmfua
-         r8+cIM5Y5CxOidGvpy2U+PuHpJMT9YipCssyDhrk+vQx3LBPjU1K6MVDnR/fO+XVRTHx
-         j/Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMA1Bx+1amPY5m4ZKj+EWr2HtbhbhmJghZLdwL+p4jZBqAhLHw1YkR+r5kLzapJgHtExIB50SbF66c7SnDp43JxxQCW+PTUBcrmg==
-X-Gm-Message-State: AOJu0Yzqi/hfk6q/D0q+iLIKzosP+sBl2TBq/2Lc9fwqm7M22hrpXo/s
-	tjtMzXvMUEg0qyt+2XgiP5otWTYs5wcZFzBRRurcNp27oD3Sp7QzPvNyCfhpufnorptAWZZ+V77
-	GpevOZJLKK7LQjugTJERpDPr7gs9Yylwyb3fhvQ==
-X-Google-Smtp-Source: AGHT+IEz+DOqbldxdx8VWXCWP6/6fTdJY+pnjm4uq4NWwzDh2gUwnQ0y3y2rNodnC/dPtB2uhZ02GJwHr8oI/OyBPSQ=
-X-Received: by 2002:a05:6402:3593:b0:563:fc1d:4568 with SMTP id
- y19-20020a056402359300b00563fc1d4568mr440920edc.10.1708069782007; Thu, 15 Feb
- 2024 23:49:42 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708105036; x=1708709836;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7PL5pjz0aQhfCwh8cDYpS+9GgpPQ8XWmRdLVnQ4KRRE=;
+        b=B9NiXMy4wITj58HLSBIRcsGfQ2GvEOI5z/a+K1PhkJBvFLeTdmE02WQP1lAxrk5dZ+
+         vNLfIf2WJZbo3bwamdK7haPchgYbX9Vh0hnByWI84TnLnLvOm78JR/Uqq+qT1QloXbDv
+         EwhaBMjE9ZYJt1TbAvPhebpGgkl30QEkLwcIuoEfYrjsNAxB50KgZngj/P3jUIQnlNJR
+         vh8u3QsOqdpA8hqUa/SFEOAVCWZlFESGTzIwQtonScG89w3pUD39QvM7n5TVTEb7r4ps
+         CDiC6YMlibEp6zHCVERJxH6sZy7METpJmpPtGEfyU8zcizo5jwEmG1Kzw9KwStvmoykF
+         IzVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuu/bx9VxQCZ787Z6lERM4MiiZ8L/KydYRPXqG0iJQQmqIk9ev6kqLr0jQBI2uV8DhZ1JU6y9tKJfvSMXc6gXFEEKzD8j8oYrlvxe/
+X-Gm-Message-State: AOJu0YwYt0snruea+iuoE9fieFwpXEN/t/aYf4WrOYO/RWEsA5D1S6Fi
+	G8U3au0c1K0MifbO1h0w+rmniFAsBNFLF/m3G08DjGF9OhNJeR73EirTNu0a
+X-Google-Smtp-Source: AGHT+IE4Pg4KOZFCvGbz9RS6Hr8h5JfxjxLesAYKmccGoAykkWg5lkM4U9fXR0qhVQka1c1+7hYq1Q==
+X-Received: by 2002:a5d:6f19:0:b0:33d:2779:442a with SMTP id ay25-20020a5d6f19000000b0033d2779442amr570329wrb.9.1708105035546;
+        Fri, 16 Feb 2024 09:37:15 -0800 (PST)
+Received: from zambezi.redhat.com (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
+        by smtp.gmail.com with ESMTPSA id u1-20020a5d5141000000b0033ce3311805sm2755864wrt.10.2024.02.16.09.37.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Feb 2024 09:37:14 -0800 (PST)
+From: Ilya Dryomov <idryomov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 6.8-rc5
+Date: Fri, 16 Feb 2024 18:37:02 +0100
+Message-ID: <20240216173705.1837988-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.41.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240215070300.2200308-1-hch@lst.de> <20240215070300.2200308-9-hch@lst.de>
-In-Reply-To: <20240215070300.2200308-9-hch@lst.de>
-From: Jinpu Wang <jinpu.wang@ionos.com>
-Date: Fri, 16 Feb 2024 08:49:30 +0100
-Message-ID: <CAMGffE=cpyWvxWwdmhyxhgBr7zxvqHS2BQwx-zm2=cm3VjRFxQ@mail.gmail.com>
-Subject: Re: [PATCH 08/17] rnbd-clt: pass queue_limits to blk_mq_alloc_disk
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	Justin Sanders <justin@coraid.com>, Denis Efremov <efremov@linux.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Geoff Levand <geoff@infradead.org>, 
-	Ilya Dryomov <idryomov@gmail.com>, "Md. Haris Iqbal" <haris.iqbal@ionos.com>, 
-	Ming Lei <ming.lei@redhat.com>, Maxim Levitsky <maximlevitsky@gmail.com>, 
-	Alex Dubov <oakad@yahoo.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Vineeth Vijayan <vneethv@linux.ibm.com>, linux-block@vger.kernel.org, nbd@other.debian.org, 
-	ceph-devel@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 15, 2024 at 8:03=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
-e:
->
-> Pass the limits rnbd-clt imposes directly to blk_mq_alloc_disk instead
-> of setting them one at a time.
->
-> While at it don't set an explicit number of discard segments, as 1 is
-> the default (which most drivers rely on).
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-lgtm, thx!
-Acked-by: Jack Wang <jinpu.wang@ionos.com>
-> ---
->  drivers/block/rnbd/rnbd-clt.c | 64 ++++++++++++++---------------------
->  1 file changed, 25 insertions(+), 39 deletions(-)
->
-> diff --git a/drivers/block/rnbd/rnbd-clt.c b/drivers/block/rnbd/rnbd-clt.=
-c
-> index d51be4f2df61a3..b7ffe03c61606d 100644
-> --- a/drivers/block/rnbd/rnbd-clt.c
-> +++ b/drivers/block/rnbd/rnbd-clt.c
-> @@ -1329,43 +1329,6 @@ static void rnbd_init_mq_hw_queues(struct rnbd_clt=
-_dev *dev)
->         }
->  }
->
-> -static void setup_request_queue(struct rnbd_clt_dev *dev,
-> -                               struct rnbd_msg_open_rsp *rsp)
-> -{
-> -       blk_queue_logical_block_size(dev->queue,
-> -                                    le16_to_cpu(rsp->logical_block_size)=
-);
-> -       blk_queue_physical_block_size(dev->queue,
-> -                                     le16_to_cpu(rsp->physical_block_siz=
-e));
-> -       blk_queue_max_hw_sectors(dev->queue,
-> -                                dev->sess->max_io_size / SECTOR_SIZE);
-> -
-> -       /*
-> -        * we don't support discards to "discontiguous" segments
-> -        * in on request
-> -        */
-> -       blk_queue_max_discard_segments(dev->queue, 1);
-> -
-> -       blk_queue_max_discard_sectors(dev->queue,
-> -                                     le32_to_cpu(rsp->max_discard_sector=
-s));
-> -       dev->queue->limits.discard_granularity =3D
-> -                                       le32_to_cpu(rsp->discard_granular=
-ity);
-> -       dev->queue->limits.discard_alignment =3D
-> -                                       le32_to_cpu(rsp->discard_alignmen=
-t);
-> -       if (le16_to_cpu(rsp->secure_discard))
-> -               blk_queue_max_secure_erase_sectors(dev->queue,
-> -                                       le32_to_cpu(rsp->max_discard_sect=
-ors));
-> -       blk_queue_flag_set(QUEUE_FLAG_SAME_COMP, dev->queue);
-> -       blk_queue_flag_set(QUEUE_FLAG_SAME_FORCE, dev->queue);
-> -       blk_queue_max_segments(dev->queue, dev->sess->max_segments);
-> -       blk_queue_io_opt(dev->queue, dev->sess->max_io_size);
-> -       blk_queue_virt_boundary(dev->queue, SZ_4K - 1);
-> -       blk_queue_write_cache(dev->queue,
-> -                             !!(rsp->cache_policy & RNBD_WRITEBACK),
-> -                             !!(rsp->cache_policy & RNBD_FUA));
-> -       blk_queue_max_write_zeroes_sectors(dev->queue,
-> -                                          le32_to_cpu(rsp->max_write_zer=
-oes_sectors));
-> -}
-> -
->  static int rnbd_clt_setup_gen_disk(struct rnbd_clt_dev *dev,
->                                    struct rnbd_msg_open_rsp *rsp, int idx=
-)
->  {
-> @@ -1403,18 +1366,41 @@ static int rnbd_clt_setup_gen_disk(struct rnbd_cl=
-t_dev *dev,
->  static int rnbd_client_setup_device(struct rnbd_clt_dev *dev,
->                                     struct rnbd_msg_open_rsp *rsp)
->  {
-> +       struct queue_limits lim =3D {
-> +               .logical_block_size     =3D le16_to_cpu(rsp->logical_bloc=
-k_size),
-> +               .physical_block_size    =3D le16_to_cpu(rsp->physical_blo=
-ck_size),
-> +               .io_opt                 =3D dev->sess->max_io_size,
-> +               .max_hw_sectors         =3D dev->sess->max_io_size / SECT=
-OR_SIZE,
-> +               .max_hw_discard_sectors =3D le32_to_cpu(rsp->max_discard_=
-sectors),
-> +               .discard_granularity    =3D le32_to_cpu(rsp->discard_gran=
-ularity),
-> +               .discard_alignment      =3D le32_to_cpu(rsp->discard_alig=
-nment),
-> +               .max_segments           =3D dev->sess->max_segments,
-> +               .virt_boundary_mask     =3D SZ_4K - 1,
-> +               .max_write_zeroes_sectors =3D
-> +                       le32_to_cpu(rsp->max_write_zeroes_sectors),
-> +       };
->         int idx =3D dev->clt_device_id;
->
->         dev->size =3D le64_to_cpu(rsp->nsectors) *
->                         le16_to_cpu(rsp->logical_block_size);
->
-> -       dev->gd =3D blk_mq_alloc_disk(&dev->sess->tag_set, NULL, dev);
-> +       if (rsp->secure_discard) {
-> +               lim.max_secure_erase_sectors =3D
-> +                       le32_to_cpu(rsp->max_discard_sectors);
-> +       }
-> +
-> +       dev->gd =3D blk_mq_alloc_disk(&dev->sess->tag_set, &lim, dev);
->         if (IS_ERR(dev->gd))
->                 return PTR_ERR(dev->gd);
->         dev->queue =3D dev->gd->queue;
->         rnbd_init_mq_hw_queues(dev);
->
-> -       setup_request_queue(dev, rsp);
-> +       blk_queue_flag_set(QUEUE_FLAG_SAME_COMP, dev->queue);
-> +       blk_queue_flag_set(QUEUE_FLAG_SAME_FORCE, dev->queue);
-> +       blk_queue_write_cache(dev->queue,
-> +                             !!(rsp->cache_policy & RNBD_WRITEBACK),
-> +                             !!(rsp->cache_policy & RNBD_FUA));
-> +
->         return rnbd_clt_setup_gen_disk(dev, rsp, idx);
->  }
->
-> --
-> 2.39.2
->
+Hi Linus,
+
+The following changes since commit 841c35169323cd833294798e58b9bf63fa4fa1de:
+
+  Linux 6.8-rc4 (2024-02-11 12:18:13 -0800)
+
+are available in the Git repository at:
+
+  https://github.com/ceph/ceph-client.git tags/ceph-for-6.8-rc5
+
+for you to fetch changes up to dbc347ef7f0c53aa4a5383238a804d7ebbb0b5ca:
+
+  ceph: add ceph_cap_unlink_work to fire check_caps() immediately (2024-02-13 11:22:54 +0100)
+
+----------------------------------------------------------------
+Additional cap handling fixes from Xiubo to avoid "client isn't
+responding to mclientcaps(revoke)" stalls on the MDS side.
+
+----------------------------------------------------------------
+Xiubo Li (2):
+      ceph: always queue a writeback when revoking the Fb caps
+      ceph: add ceph_cap_unlink_work to fire check_caps() immediately
+
+ fs/ceph/caps.c       | 65 ++++++++++++++++++++++++++++++++--------------------
+ fs/ceph/mds_client.c | 48 ++++++++++++++++++++++++++++++++++++++
+ fs/ceph/mds_client.h |  5 ++++
+ 3 files changed, 93 insertions(+), 25 deletions(-)
 
