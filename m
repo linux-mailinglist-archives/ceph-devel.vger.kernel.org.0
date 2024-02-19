@@ -1,132 +1,107 @@
-Return-Path: <ceph-devel+bounces-877-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-878-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F3C859CDE
-	for <lists+ceph-devel@lfdr.de>; Mon, 19 Feb 2024 08:30:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C22FA859E8A
+	for <lists+ceph-devel@lfdr.de>; Mon, 19 Feb 2024 09:38:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16DD9280DB9
-	for <lists+ceph-devel@lfdr.de>; Mon, 19 Feb 2024 07:30:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E4A52820B6
+	for <lists+ceph-devel@lfdr.de>; Mon, 19 Feb 2024 08:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC93208D7;
-	Mon, 19 Feb 2024 07:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LKNqnE5h"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CF42137F;
+	Mon, 19 Feb 2024 08:38:41 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA2D200A8
-	for <ceph-devel@vger.kernel.org>; Mon, 19 Feb 2024 07:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B05E208B9;
+	Mon, 19 Feb 2024 08:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708327846; cv=none; b=AMj0FGVh/jfhARlug2C+KweTWh6R7MMQrlHFddRWTyNbDS0+IkQ7pQ4PFyz4KfnPe3M/MXOx0zjow7B7NzT8Eoc0WDhvZAQgwkQdN+wm0aBPv+FX3brcVBc0OIEUEYor6RnGEA4WW0h+wKN7vdmLztxU6nq16mY+N/bn5UUDMB8=
+	t=1708331921; cv=none; b=Af50z4cL+RdoRQr4a5t79aWrgVjRKWLdqXu8Yd4z2+Mhh4AaxCLs2tJgX0ifYkXhWV7/+NWsxccVoOLMR4nXmSuDrWl1bQHbhCpad6WSpT/Xo/bEfETMAitYMHTIP0OboSglxgFpc+TGpK0E4lvi5gvTCblSD+K9GDJJ3AUIQq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708327846; c=relaxed/simple;
-	bh=fcmiswH5gETvfHfmxK5Qqt7ezwV/vjoUzFWmL0iL7F0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gLkyfhBPN1gEeLCuFr1DLbH6wwui9i6DWFwBqtbSQU2lKJ5l4dhUsdpGCvOuZdlUFjM8U6lQaCumLfT4fpFYxfBpqkE/4opuazvjlYup3M77sSR6UQWfHagYNYZ/asZ+VHlzFo2I2fkey9gAfpTslpmm2TFJBvpDoWAv5a7EGzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LKNqnE5h; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1708327844;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0oTOHI1ld78xCIl+csGrh3KXKL/ZAzjWvqRsCb+xla8=;
-	b=LKNqnE5h2T1+jnmaSWZ/NuMLhivE3+57HslaaBfWjnLSOdZdkaj337UyDU7YXxcSsqLjiH
-	Q7hmY8zqXHcPxVNX0H0jBMpb/TSGx6WAgxiXz1lWFDaFVFfbHlvQN0nRWvcOtj9lwOc+ai
-	BiP52ZeEf2nRhd4Pw6ookWCV3GLMgwo=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-358-T5i48-Q2OqC-VS0dQQlpHw-1; Mon,
- 19 Feb 2024 02:30:40 -0500
-X-MC-Unique: T5i48-Q2OqC-VS0dQQlpHw-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4B7C61C54027;
-	Mon, 19 Feb 2024 07:30:40 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (unknown [10.72.112.169])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 04BAA492BE2;
-	Mon, 19 Feb 2024 07:30:36 +0000 (UTC)
-From: xiubli@redhat.com
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	jlayton@kernel.org,
-	vshankar@redhat.com,
-	mchangir@redhat.com,
-	pdonnell@redhat.com,
-	Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: reverse MDSMap dencoding of max_xattr_size/bal_rank_mask
-Date: Mon, 19 Feb 2024 15:28:08 +0800
-Message-ID: <20240219072808.39272-1-xiubli@redhat.com>
+	s=arc-20240116; t=1708331921; c=relaxed/simple;
+	bh=dAs2OALmkNudBmi4/5a+XrcRC0uaaEkJeqpRp/lL8ZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qZT1BpEGH/bKGTW51pnWYOkYoNYE7zS0VJ/RVRtiD4h/RboYyv76O0uxOMpHZQpMGfwbifulXMPDKfbcn7rOySnBTqZea+LsKc3/M/VDsQPfE3nWkpFJntknPNUFPsuDxFg/OteZOodVvk2zpkwFZsAn6b6XcKaPhIFWKmBvF/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1rbzAY-0007jO-Uv; Mon, 19 Feb 2024 09:38:35 +0100
+Message-ID: <960e015a-ec2e-42c2-bd9e-4aa47ab4ef2a@leemhuis.info>
+Date: Mon, 19 Feb 2024 09:38:33 +0100
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+User-Agent: Mozilla Thunderbird
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Subject: Re: [PATCH 2/2] netfs: Fix missing zero-length check in unbuffered
+ write
+Content-Language: en-US, de-DE
+To: David Howells <dhowells@redhat.com>,
+ Christian Brauner <christian@brauner.io>
+Cc: Eric Van Hensbergen <ericvh@kernel.org>,
+ Dominique Martinet <asmadeus@codewreck.org>, Jeff Layton
+ <jlayton@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ netfs@lists.linux.dev, linux-afs@lists.infradead.org,
+ linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+ ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux_oss@crudebyte.com,
+ Linux kernel regressions list <regressions@lists.linux.dev>
+References: <20240129094924.1221977-1-dhowells@redhat.com>
+ <20240129094924.1221977-3-dhowells@redhat.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+In-Reply-To: <20240129094924.1221977-3-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1708331919;be4d50cb;
+X-HE-SMSGID: 1rbzAY-0007jO-Uv
 
-From: Xiubo Li <xiubli@redhat.com>
+On 29.01.24 10:49, David Howells wrote:
+> Fix netfs_unbuffered_write_iter() to return immediately if
+> generic_write_checks() returns 0, indicating there's nothing to write.
+> Note that netfs_file_write_iter() already does this.
+> 
+> Also, whilst we're at it, put in checks for the size being zero before we
+> even take the locks.  Note that generic_write_checks() can still reduce the
+> size to zero, so we still need that check.
+> 
+> Without this, a warning similar to the following is logged to dmesg:
+> 
+> 	netfs: Zero-sized write [R=1b6da]
+> 
+> and the syscall fails with EIO, e.g.:
+> 
+> 	/sbin/ldconfig.real: Writing of cache extension data failed: Input/output error
+> 
+> This can be reproduced on 9p by:
+> 
+> 	xfs_io -f -c 'pwrite 0 0' /xfstest.test/foo
+> 
+> Fixes: 153a9961b551 ("netfs: Implement unbuffered/DIO write support")
+> Reported-by: Eric Van Hensbergen <ericvh@kernel.org>
+> Link: https://lore.kernel.org/r/ZbQUU6QKmIftKsmo@FV7GG9FTHL/
 
-Ceph added the bal_rank_mask with encoded (ev) version 17.  This
-was merged into main Oct 2022 and made it into the reef release
-normally. While a latter commit added the max_xattr_size also
-with encoded (ev) version 17 but places it before bal_rank_mask.
+David, thx for fixing Eric's regression, which I'm tracking.
 
-And this will breaks some usages, for example when upgrading old
-cephs to newer versions.
+Christian, just wondering: that patch afaics is sitting in vfs.netfs for
+about three weeks now -- is that intentional or did it maybe fell
+through the cracks somehow?
 
-URL: https://tracker.ceph.com/issues/64440
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/mdsmap.c | 7 ++++---
- fs/ceph/mdsmap.h | 6 +++++-
- 2 files changed, 9 insertions(+), 4 deletions(-)
+> [...]
 
-diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
-index fae97c25ce58..8109aba66e02 100644
---- a/fs/ceph/mdsmap.c
-+++ b/fs/ceph/mdsmap.c
-@@ -380,10 +380,11 @@ struct ceph_mdsmap *ceph_mdsmap_decode(struct ceph_mds_client *mdsc, void **p,
- 		ceph_decode_skip_8(p, end, bad_ext);
- 		/* required_client_features */
- 		ceph_decode_skip_set(p, end, 64, bad_ext);
-+		/* bal_rank_mask */
-+		ceph_decode_skip_string(p, end, bad_ext);
-+	}
-+	if (mdsmap_ev >= 18) {
- 		ceph_decode_64_safe(p, end, m->m_max_xattr_size, bad_ext);
--	} else {
--		/* This forces the usage of the (sync) SETXATTR Op */
--		m->m_max_xattr_size = 0;
- 	}
- bad_ext:
- 	doutc(cl, "m_enabled: %d, m_damaged: %d, m_num_laggy: %d\n",
-diff --git a/fs/ceph/mdsmap.h b/fs/ceph/mdsmap.h
-index 89f1931f1ba6..43337e9ed539 100644
---- a/fs/ceph/mdsmap.h
-+++ b/fs/ceph/mdsmap.h
-@@ -27,7 +27,11 @@ struct ceph_mdsmap {
- 	u32 m_session_timeout;          /* seconds */
- 	u32 m_session_autoclose;        /* seconds */
- 	u64 m_max_file_size;
--	u64 m_max_xattr_size;		/* maximum size for xattrs blob */
-+	/*
-+	 * maximum size for xattrs blob.
-+	 * Setting it to 0 will force the usage of the (sync) SETXATTR Op.
-+	 */
-+	u64 m_max_xattr_size;
- 	u32 m_max_mds;			/* expected up:active mds number */
- 	u32 m_num_active_mds;		/* actual up:active mds number */
- 	u32 possible_max_rank;		/* possible max rank index */
--- 
-2.43.0
-
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
