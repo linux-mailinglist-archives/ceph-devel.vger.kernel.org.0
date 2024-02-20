@@ -1,177 +1,172 @@
-Return-Path: <ceph-devel+bounces-882-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-883-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5531E85BA2E
-	for <lists+ceph-devel@lfdr.de>; Tue, 20 Feb 2024 12:19:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3612485BD15
+	for <lists+ceph-devel@lfdr.de>; Tue, 20 Feb 2024 14:22:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A50C1C23C99
-	for <lists+ceph-devel@lfdr.de>; Tue, 20 Feb 2024 11:19:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0543287862
+	for <lists+ceph-devel@lfdr.de>; Tue, 20 Feb 2024 13:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A61664BB;
-	Tue, 20 Feb 2024 11:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A986A33A;
+	Tue, 20 Feb 2024 13:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jzBjwymk"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="U4EaD3gb"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223E765BD9;
-	Tue, 20 Feb 2024 11:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338966A03C
+	for <ceph-devel@vger.kernel.org>; Tue, 20 Feb 2024 13:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708427938; cv=none; b=LovNWBrJgKhWqNO2R15LlVLTpMRZaAb0bD63L/bFrf7/IfjW2gruxoamfvyilHTGQDbTXWoqH8M2N9wd+ZeKXrjHH4Po/s9ZDU311B2xjtxZ8eOzmORKJ5VABgLGbxX2+I9bVFTW44IDD79dTnQmC+mJIJNsqskhmEEy4XWj5YA=
+	t=1708435326; cv=none; b=rIIfZNndZv/XP5367/kpPnFz7qubbK1rqCwRSjgUTsuG13cS/e4A+9Ty/QKP3S4gTYgQr+/iRpkXCZY/luySLxF5hyhbb7y8wTe4E2hpVW4sdqMYVNVtYASGXiiT2nbRgDRPBJQoDE/cIy0hygNNED6UfJRnQE11Z2mYqj3TIkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708427938; c=relaxed/simple;
-	bh=EUGtUfVHDff9tyqyS13cOvf6pLSq+DFA2mtqIG6XRrQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D1WxPL2BygUX9VrO06Ls0fHjDCWB1aJ2gCetn48TYB0fCcb4t6tEIAZVEaZ6DN09ir7kMD6YktRX7H/Rsj0LpQDSVrmdQLWS6p+d7f9vnmnv+HqmLzim+KhOnDaWe2GjWGK1HTeLbFy0LHLbSU3vhSa6HJTEfeBU0Nl+VoVFOwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jzBjwymk; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3c132695f1bso4070475b6e.2;
-        Tue, 20 Feb 2024 03:18:56 -0800 (PST)
+	s=arc-20240116; t=1708435326; c=relaxed/simple;
+	bh=NGXD1jHINHNZY+mCOyyB934Anjl+YnZ1Y0xUYO0JiJ8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OZtc7IW2Usdu2sGpVk52WIopVVfqkw8giOMewrTGZyFE5yoJreP5MLekDV8JD62SkRBxfuhIqpDThA5uwm/fv/ANuZp1hMfnEiWihtde9juTZEXsGIidpcwwUmV/aVgHJEUL4NenabjhNTc1/TSmUKxyP6A2jvA1ax40Yt9mHy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=U4EaD3gb; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1db8f32cae5so7457245ad.1
+        for <ceph-devel@vger.kernel.org>; Tue, 20 Feb 2024 05:22:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708427936; x=1709032736; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1708435323; x=1709040123; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QnXxqyxgAOCE9B1gsdMTfmeu8SJJIbR4o3Oy9m1fJBo=;
-        b=jzBjwymkV9MuUowIWG+XBioG4DtqBvq1rrVex/sM0oSBWEAZdotEO5ii0mKQWeTHfe
-         hAU+nF6yicbTzgg9s3zfevDEmbwVAEQY9i6LDJefHSJyJT/BiaJntQes6YV2qPfJgK6D
-         Deg4lGxvkUFHmrLlR1uzbpW4RUkfDogmsZCy+v2ADlT6Of19wz99N5wzwxCrAcQcPfme
-         chMckhc7HRI9myI6y0s3aEOe44Z+BBBRQjFaYAWbWlbWoq92DP5my8JGEp2ofS1Dcspf
-         Vtdex59rW0aO/RaTswQHmqIzlYQW/hRJntkcGL5sPzm0g3SKtF3XiYwLXxnOLddypmZY
-         Wg4A==
+        bh=ARy7Q4Eliz2JX6LXysl5nmstDWlOnwvyUH57xirN7sY=;
+        b=U4EaD3gbkDBssxO23P5k9vYtIYEhIf/7RWMIA0K30JHBiHYjnmCXphVpHLwEe0RYuu
+         PLzwDZ0QX3j4RQxdV0pKFXkFG0QpnJ69U4mSTvfaXW7465QPoscfQWVXcZC+cf4FLRyk
+         Cqfdd3RiGggLxQIqNw6vV5cbullvrNrcWH4s3YyJPn1pzXppZOd+ps6ShdohcPnc6SeX
+         eSeiRreP8WFwSAB8EL/0rxp3RV06rJ4XKpbCqX9IfIArcoQrgB13pyR/saOCvhTbp9WD
+         LETmRR5PYENeqmYcHarveOLZLgFe29nsuXMO3VkrLRNlF3Bsms8GX4PmHAujSQPawG8z
+         2rbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708427936; x=1709032736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1708435323; x=1709040123;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QnXxqyxgAOCE9B1gsdMTfmeu8SJJIbR4o3Oy9m1fJBo=;
-        b=EK8PyW5zyFQHoykAkz5UmU9ZrUfrE+5hBufo+q0lcT1LGMR86oyuh3IdgUFq8SsKI/
-         FgmjDNQp0J7LlfMAakriXqi2Fdi6Qyj0lsFj83p5+NHvaPHIlFh8fE5z2FYv0Qn57jdn
-         MPgvRoA3pzdguALjF5VBS/lx0dNdnHdYhGDs0TTy1tQTJpJnsCXLhcY1CIS+syePBBYd
-         KP0F87p+Ks4zPLE4Rdgd/DiEVgsa19OrSYni9h/dUtLxE0/YRizovm1TmXIDlEDT1VsA
-         z6JI2nIDb2kH02aNRZF27Lr4y30NFqCFn9wuEFn7VE6xnh0wWbAafTeMlKyXwx/Bk6aZ
-         zjPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDr5Zv5OMX+tA7XBuKJA00VdckH/HxzDESfqL4Yd75w9a9ihCcDsoK3VTE9l8JvelziWAQwmS3ZyEbCT2IEqXLQbsJRMBjbzTpWRhnHTsEy1ENzFa6BXu8YxboIaFNj2QkY8RINg/8H2LqrFOg0jHkDmYwjPPVhvlCz5WKe1XzJLtjBVA61kV1Vm1HWQX9doszA+uG+ibVfN8ylHs7pQ==
-X-Gm-Message-State: AOJu0YyPLSA3cbkpNjmN4Hsu24It7AHgPKSMCzQuk1JLfq8QwyGS2Slv
-	IWam7xyPHqQub3QacfcGcw5uXI/JSFcGHRppmAIWDTB/Ho+UkcuSorsP1CaStNV3KXIPD3JI22v
-	/OaEs1I+Pk7fjg97pwiiA/1Lj1og=
-X-Google-Smtp-Source: AGHT+IFqXfo9MqRRXkJHVGd1zP5btF8tonhuNN58hdV1sWRe6/06+YeQrZc/xVd+r5scxRDkntVJIrsGV3fU9rwHZzE=
-X-Received: by 2002:a05:6808:201a:b0:3c1:5fa3:ab8 with SMTP id
- q26-20020a056808201a00b003c15fa30ab8mr4610653oiw.39.1708427936094; Tue, 20
- Feb 2024 03:18:56 -0800 (PST)
+        bh=ARy7Q4Eliz2JX6LXysl5nmstDWlOnwvyUH57xirN7sY=;
+        b=GCpEEnfOiAiuH+ZYE9OSM4XmRf9nBUXd3aQzfq/s+1wqOyCSSJ6EuV23ayJ/TdPBEr
+         6Wh8UtBWcsWUwaiW9oGBsNnZygQK+/9226uGUMhyakCImfxpppbTjTdL2yhm3l8f1loa
+         DRJLJ9oSY2dSEWcW1wSe6e+DOGyQKsYSOnpjU0qV8ZSnqjEqOxuxtzpSqDwWwaiJ5JDT
+         QVxnUGkBXNb8TwAz5y0vUkV46EWhwmAd4rQ5fLD5cpCg9cDVPK5+RWyp2OXixOq3L+Zb
+         c4hKtXMVWW+RD6ajZ+vog6Jr8Y3bheM1ODVjZZfeRcYrLN2PA4JmeWQhpIp7EJWVYmVa
+         VwbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyafsbp2dC4CdtXNhQT67x2x6NMiA8C9f0MKLu27ClE0W1bhYvl1SOL6BYCfafiDGRfocMlOTU8/fl81MGXAqvkgVAZpMDfJCI5g==
+X-Gm-Message-State: AOJu0YyDJsvAKkNisSHLuQH5b6Nd5c53dNJEGrjblZXqQBxL4ZoxZiPS
+	ae6KUUxqHYErHtLt2oJbgt5TInncgk0NAycLaEtuiidUzLOlvg7K+nBtYWYvSPQ=
+X-Google-Smtp-Source: AGHT+IFDzsxf+QvkIBQ6Yn25tgbgykQJpLVIKvsCINFaIpP2CqGk59RWuZcUGoZYhYkVR41rTlrzkA==
+X-Received: by 2002:a17:902:b113:b0:1dc:e32:d0b7 with SMTP id q19-20020a170902b11300b001dc0e32d0b7mr3120302plr.0.1708435323550;
+        Tue, 20 Feb 2024 05:22:03 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.194])
+        by smtp.gmail.com with ESMTPSA id iw11-20020a170903044b00b001db5e807cd2sm6188911plb.82.2024.02.20.05.22.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Feb 2024 05:22:02 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Richard Weinberger <richard@nod.at>, 
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+ Johannes Berg <johannes@sipsolutions.net>, 
+ Justin Sanders <justin@coraid.com>, Denis Efremov <efremov@linux.com>, 
+ Josef Bacik <josef@toxicpanda.com>, Geoff Levand <geoff@infradead.org>, 
+ Ilya Dryomov <idryomov@gmail.com>, 
+ "Md. Haris Iqbal" <haris.iqbal@ionos.com>, Jack Wang <jinpu.wang@ionos.com>, 
+ Ming Lei <ming.lei@redhat.com>, Maxim Levitsky <maximlevitsky@gmail.com>, 
+ Alex Dubov <oakad@yahoo.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, 
+ Vineeth Vijayan <vneethv@linux.ibm.com>, linux-block@vger.kernel.org, 
+ nbd@other.debian.org, ceph-devel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+ linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
+In-Reply-To: <20240215070300.2200308-1-hch@lst.de>
+References: <20240215070300.2200308-1-hch@lst.de>
+Subject: Re: pass queue_limits to blk_mq_alloc_disk for simple drivers
+Message-Id: <170843532172.4095460.11560055671499890721.b4-ty@kernel.dk>
+Date: Tue, 20 Feb 2024 06:22:01 -0700
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240215070300.2200308-1-hch@lst.de> <20240215070300.2200308-8-hch@lst.de>
-In-Reply-To: <20240215070300.2200308-8-hch@lst.de>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 20 Feb 2024 12:18:44 +0100
-Message-ID: <CAOi1vP9K=YYrtuCGF5B41He8D5q2zSmiCHjHezo0Dgu1gKH4+w@mail.gmail.com>
-Subject: Re: [PATCH 07/17] rbd: pass queue_limits to blk_mq_alloc_disk
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	Justin Sanders <justin@coraid.com>, Denis Efremov <efremov@linux.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Geoff Levand <geoff@infradead.org>, 
-	"Md. Haris Iqbal" <haris.iqbal@ionos.com>, Jack Wang <jinpu.wang@ionos.com>, 
-	Ming Lei <ming.lei@redhat.com>, Maxim Levitsky <maximlevitsky@gmail.com>, 
-	Alex Dubov <oakad@yahoo.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Vineeth Vijayan <vneethv@linux.ibm.com>, linux-block@vger.kernel.org, nbd@other.debian.org, 
-	ceph-devel@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-On Thu, Feb 15, 2024 at 8:03=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
-e:
->
-> Pass the limits rbd imposes directly to blk_mq_alloc_disk instead
-> of setting them one at a time.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/block/rbd.c | 29 +++++++++++++++--------------
->  1 file changed, 15 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 6b4f1898a722a3..26ff5cd2bf0abc 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -4952,6 +4952,14 @@ static int rbd_init_disk(struct rbd_device *rbd_de=
-v)
->         struct request_queue *q;
->         unsigned int objset_bytes =3D
->             rbd_dev->layout.object_size * rbd_dev->layout.stripe_count;
-> +       struct queue_limits lim =3D {
-> +               .max_hw_sectors         =3D objset_bytes >> SECTOR_SHIFT,
-> +               .max_user_sectors       =3D objset_bytes >> SECTOR_SHIFT,
-> +               .io_min                 =3D rbd_dev->opts->alloc_size,
-> +               .io_opt                 =3D rbd_dev->opts->alloc_size,
-> +               .max_segments           =3D USHRT_MAX,
-> +               .max_segment_size       =3D UINT_MAX,
-> +       };
->         int err;
->
->         memset(&rbd_dev->tag_set, 0, sizeof(rbd_dev->tag_set));
-> @@ -4966,7 +4974,13 @@ static int rbd_init_disk(struct rbd_device *rbd_de=
-v)
->         if (err)
->                 return err;
->
-> -       disk =3D blk_mq_alloc_disk(&rbd_dev->tag_set, NULL, rbd_dev);
-> +       if (rbd_dev->opts->trim) {
-> +               lim.discard_granularity =3D rbd_dev->opts->alloc_size;
-> +               lim.max_hw_discard_sectors =3D objset_bytes >> SECTOR_SHI=
-FT;
-> +               lim.max_write_zeroes_sectors =3D objset_bytes >> SECTOR_S=
-HIFT;
-> +       }
-> +
-> +       disk =3D blk_mq_alloc_disk(&rbd_dev->tag_set, &lim, rbd_dev);
->         if (IS_ERR(disk)) {
->                 err =3D PTR_ERR(disk);
->                 goto out_tag_set;
-> @@ -4987,19 +5001,6 @@ static int rbd_init_disk(struct rbd_device *rbd_de=
-v)
->         blk_queue_flag_set(QUEUE_FLAG_NONROT, q);
->         /* QUEUE_FLAG_ADD_RANDOM is off by default for blk-mq */
->
-> -       blk_queue_max_hw_sectors(q, objset_bytes >> SECTOR_SHIFT);
-> -       q->limits.max_sectors =3D queue_max_hw_sectors(q);
-> -       blk_queue_max_segments(q, USHRT_MAX);
-> -       blk_queue_max_segment_size(q, UINT_MAX);
-> -       blk_queue_io_min(q, rbd_dev->opts->alloc_size);
-> -       blk_queue_io_opt(q, rbd_dev->opts->alloc_size);
-> -
-> -       if (rbd_dev->opts->trim) {
-> -               q->limits.discard_granularity =3D rbd_dev->opts->alloc_si=
-ze;
-> -               blk_queue_max_discard_sectors(q, objset_bytes >> SECTOR_S=
-HIFT);
-> -               blk_queue_max_write_zeroes_sectors(q, objset_bytes >> SEC=
-TOR_SHIFT);
-> -       }
-> -
->         if (!ceph_test_opt(rbd_dev->rbd_client->client, NOCRC))
->                 blk_queue_flag_set(QUEUE_FLAG_STABLE_WRITES, q);
->
-> --
-> 2.39.2
->
 
-Acked-by: Ilya Dryomov <idryomov@gmail.com>
+On Thu, 15 Feb 2024 08:02:43 +0100, Christoph Hellwig wrote:
+> this series converts all "simple" blk-mq drivers that don't have complex
+> internal layering or other oddities to pass the queue_limits to
+> blk_mq_alloc_disk.  None of these drivers updates the limits at runtime.
+> 
+> Diffstat:
+>  arch/um/drivers/ubd_kern.c          |    8 +-
+>  drivers/block/aoe/aoeblk.c          |   15 ++---
+>  drivers/block/floppy.c              |    6 +-
+>  drivers/block/mtip32xx/mtip32xx.c   |   13 ++--
+>  drivers/block/nbd.c                 |   13 ++--
+>  drivers/block/ps3disk.c             |   17 +++---
+>  drivers/block/rbd.c                 |   29 +++++-----
+>  drivers/block/rnbd/rnbd-clt.c       |   64 +++++++++--------------
+>  drivers/block/sunvdc.c              |   18 +++---
+>  drivers/block/ublk_drv.c            |   90 +++++++++++++++------------------
+>  drivers/cdrom/gdrom.c               |   14 ++---
+>  drivers/memstick/core/ms_block.c    |   14 ++---
+>  drivers/memstick/core/mspro_block.c |   15 ++---
+>  drivers/mmc/core/queue.c            |   97 +++++++++++++++++++-----------------
+>  drivers/mtd/mtd_blkdevs.c           |   12 ++--
+>  drivers/mtd/ubi/block.c             |    6 +-
+>  drivers/s390/block/scm_blk.c        |   17 +++---
+>  17 files changed, 222 insertions(+), 226 deletions(-)
+> 
+> [...]
 
-Thanks,
+Applied, thanks!
 
-                Ilya
+[01/17] ubd: pass queue_limits to blk_mq_alloc_disk
+        commit: 5d6789ce33a97718564d0b8d2ea34e03d650e624
+[02/17] aoe: pass queue_limits to blk_mq_alloc_disk
+        commit: 9999200f583107f7e244e50935d480433b7d8a3b
+[03/17] floppy: pass queue_limits to blk_mq_alloc_disk
+        commit: 48bc8c7ba6fb39a4325b07f3abe8fe5a77361c7e
+[04/17] mtip: pass queue_limits to blk_mq_alloc_disk
+        commit: 68c3135fb5fbd85c7b2ca851184f30f54433a9d3
+[05/17] nbd: pass queue_limits to blk_mq_alloc_disk
+        commit: 9a0d4970288de29191fa45bf0ab4d8398bfa3a01
+[06/17] ps3disk: pass queue_limits to blk_mq_alloc_disk
+        commit: a7f18b74dbe171625afc2751942a92f71a4dd4ba
+[07/17] rbd: pass queue_limits to blk_mq_alloc_disk
+        commit: 24f30b770c0f450346f1c99120427b2e938cdfd0
+[08/17] rnbd-clt: pass queue_limits to blk_mq_alloc_disk
+        commit: e6ed9892f10d7195d621ede1cedc41421f1ca607
+[09/17] sunvdc: pass queue_limits to blk_mq_alloc_disk
+        commit: d0fa9a8b0af71b69cf3dec10feaebe19d55a72cf
+[10/17] gdrom: pass queue_limits to blk_mq_alloc_disk
+        commit: a339cf2bbfbe6e16ead79276d608912d36065884
+[11/17] ms_block: pass queue_limits to blk_mq_alloc_disk
+        commit: f93b43ae3feafedc5777099ca1a0e05352b92671
+[12/17] mspro_block: pass queue_limits to blk_mq_alloc_disk
+        commit: 9f633ecd43046659e3345bc4a4404e1d2ba67463
+[13/17] mtd_blkdevs: pass queue_limits to blk_mq_alloc_disk
+        commit: 3ec44e52bfce60f6da65165bc86eb382462d173d
+[14/17] ubiblock: pass queue_limits to blk_mq_alloc_disk
+        commit: 21b700c0812b6aa8f794c36b971772b2b08dab9a
+[15/17] scm_blk: pass queue_limits to blk_mq_alloc_disk
+        commit: 066be10aef5a7ddd8ad537db7a5145c6d79d4ea2
+[16/17] ublk: pass queue_limits to blk_mq_alloc_disk
+        commit: 494ea040bcb5f4cc78c37dc53c7915752c24f739
+[17/17] mmc: pass queue_limits to blk_mq_alloc_disk
+        commit: 616f8766179277324393f7b77e07f14cb3503825
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 
