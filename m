@@ -1,131 +1,150 @@
-Return-Path: <ceph-devel+bounces-893-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-894-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B6685D3B0
-	for <lists+ceph-devel@lfdr.de>; Wed, 21 Feb 2024 10:33:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8568685D3CF
+	for <lists+ceph-devel@lfdr.de>; Wed, 21 Feb 2024 10:38:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACBD31C20E6C
-	for <lists+ceph-devel@lfdr.de>; Wed, 21 Feb 2024 09:33:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A82C31C22C5A
+	for <lists+ceph-devel@lfdr.de>; Wed, 21 Feb 2024 09:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A79D3D0DB;
-	Wed, 21 Feb 2024 09:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jTbH9xZ4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C573D546;
+	Wed, 21 Feb 2024 09:37:56 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A9B3CF7C
-	for <ceph-devel@vger.kernel.org>; Wed, 21 Feb 2024 09:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4883C496;
+	Wed, 21 Feb 2024 09:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708507912; cv=none; b=FZInGlvK7/Ds0cKrn55VLs8AM1kvYAeRlPwutKEeqqDdqI5ESDEZ9j2x6c9AlUgQWtRR4rLx0d7CcZIumxLxF3avM4P82EOr4dS1Pka5pfmM2l5opmiM01Mkx74GgfnV1bbkNiA30Iev2yulMNBe0Inq9kJPvv5TvffHZvqeja4=
+	t=1708508276; cv=none; b=ewiQvgU9BRnxF9zOWQv1vTPJOJ54Bbg9kVFQL47L9XU97uMPzMSxoKG5w4/UO8yjWKNCtoNHZpwv/sSB8pYi9s3+17qID3+2Qr97AWQyBU8MnW9YProJBqkovlwZoJBMvVD2TRx+LKRPcw30AaowKxBWpuzESYSBhNhbXgd+Y/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708507912; c=relaxed/simple;
-	bh=Sk7OADt/GC5ZSh09AukTehOm5KyFvI3dhRXub929sg4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HLuhRDE1jNmKdmI2jxGnUlS6f1M9UZZgti+Q587Xe/MxufOL9/kDNg1f26sgZEFmdvrrgSdjYrccRI/9XRondNIUbcRi39dMs9JTCIkNJnProTkn8fUsebbohzAKIWwZSKMEoYDoiPaBNs+NqK535SiHpLVfl9jE7O5BdpUnVdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jTbH9xZ4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1708507909;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=j0DjlctYhTY4XSf/MpQKrTspHxwi6/fUJfJo1W7LjTA=;
-	b=jTbH9xZ40Xj/PE2PgpY8n12HG1DqMl30vFXppcfNy1/oMFGVdIsUdlkJ4MUo0hQBiPssU6
-	jPQJ1iJ2eM7EZV9Rx2LGmj3i7khvUPzgoTAtXn8VSLk6v8v45otpD0xXT3aMPzPy0a620V
-	jQvbNPGeNkQnbgQrr3LOarduBvANJ44=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-263-eWh7V3cVMEKzo0AdmtJdSQ-1; Wed, 21 Feb 2024 04:31:47 -0500
-X-MC-Unique: eWh7V3cVMEKzo0AdmtJdSQ-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7D00F885623;
-	Wed, 21 Feb 2024 09:31:47 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (unknown [10.72.112.141])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id B6410492BCA;
-	Wed, 21 Feb 2024 09:31:41 +0000 (UTC)
-From: xiubli@redhat.com
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	jlayton@kernel.org,
-	vshankar@redhat.com,
-	mchangir@redhat.com,
-	Xiubo Li <xiubli@redhat.com>,
-	=?UTF-8?q?Frank=20Hsiao=20=E8=95=AD=E6=B3=95=E5=AE=A3?= <frankhsiao@qnap.com>
-Subject: [PATCH] ceph: skip copying the data extends the file EOF
-Date: Wed, 21 Feb 2024 17:29:25 +0800
-Message-ID: <20240221092925.89408-1-xiubli@redhat.com>
+	s=arc-20240116; t=1708508276; c=relaxed/simple;
+	bh=vxEdb4fDXLlgKcxr5wWNQsyVJDFErAasA1jI5h1O60c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YivRwM28+87uWVgCbZbqSO8A+2AkPUYNMK9tO1bjqKDuBBOLDllvhOr5Bd+HMZhhcDvJI2rLomjcGeSq/MS0mciaM2N8FFcVchzYhpyblQrc8JFHfz4RzhOsMPk/GsgnVqXqygZscZqaO2/tkxgCm+T19/j30V/Ms0Q3SyCxLn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6083befe2a7so30683917b3.0;
+        Wed, 21 Feb 2024 01:37:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708508272; x=1709113072;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BTOc5ufmZ/JRdQx/6tbCljAs5aqBkOn4kOQdynUVTFs=;
+        b=v+vEYJXFtAirSI6cewwC+th7L7J3FKE9+ILO9Wrlfz3r+b2HaAY/9f5Tfrhwzzu+y5
+         UcaqgHIKMdT7gTTrdkGOaZ4kH1TsYUzpKg1ZeV1KuTONdDt9ah/d11zPj0sf0ElBz3wn
+         a5dTcbnShPCMWXCTncTnjxVmvc697mipmmb9mGakM6w90ZeCg/4GOWy3FERSitO52K2Q
+         eyZMR0KuxJ6L31L4OfJZsIvkLLl2ccun/6MhuMn04r9Tz1Vyu/hNqDjrZzzOiM/3KOh1
+         crLEEGJqShtJq5g9VEX+VxUJbEIBfeVKKm8mb5wHLYEIcOqs5ZWbQLRX57le9BAss8Jg
+         g03g==
+X-Forwarded-Encrypted: i=1; AJvYcCUQNXX072Ta5TsJV9J+Rw8k4whACS+6iBQv+p39BjFL/7cvmPw2HOJbu49vIjgHi756jJ3FVJNybf680VFatpdn22eI4Ty2zeb5kPFarT2KFdgujqGVbJGG9PdwN0n49tAIDS7nYZfBePTZlkvb5eOXmoC50aTiEAV8flHYsCYxrq3G37Ivi/lY/kOcbRm26XMSMnf+1Uxvg78D7E4Vj8rKfgyHbe7wky6uMUK50PE9sMBmVjSMNpWVamB212gDhkLG
+X-Gm-Message-State: AOJu0YzWV6RUNFY1vhnMeVINxbGkqzT5BjsqlhhSoCU2r/8MXlpoDEkr
+	Jn7IpdPiGPYBqz6AZraa2m/CmMKxpcPG5/k3kyrtQG9jfDD2JcnCr8Sd3dPJfs0=
+X-Google-Smtp-Source: AGHT+IHQSNXfMytke8N95SRy8X32kCIyhuwq1sajc8Gn8EhmVB04du5PKNF46oO0ZPBeE4honrzEmw==
+X-Received: by 2002:a81:af10:0:b0:608:173e:2486 with SMTP id n16-20020a81af10000000b00608173e2486mr8742725ywh.19.1708508272369;
+        Wed, 21 Feb 2024 01:37:52 -0800 (PST)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id z20-20020a81c214000000b00604a3e9c407sm2435801ywc.41.2024.02.21.01.37.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Feb 2024 01:37:52 -0800 (PST)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dcc80d6006aso5313342276.0;
+        Wed, 21 Feb 2024 01:37:52 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUfbmNzA72Y0Roc0sUlpXXOmA9EsWzkr7jXiTaSEuK+RvHd1VGkbSCFQBQYKHyKFpT+cqS7Qt0Zddm2lg7+ggieNzazo5eeRAV8x+IC0Wvzqyjc0dph/yNjuPZa7al436uat5+xHkRVwiP7yBvRodi6TeAfnPg7746J3FrZQAUBvt3Sab4HCyt9osZO/lr2wb+Msoxy2NiuKSZo7YWh9aayyY7zurd6yozAgTN4GzB7mQAd8N9yIgcmaadgzF8DHVOs
+X-Received: by 2002:a25:accb:0:b0:dc7:3165:2db1 with SMTP id
+ x11-20020a25accb000000b00dc731652db1mr15173023ybd.49.1708508272053; Wed, 21
+ Feb 2024 01:37:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
+References: <20240215070300.2200308-1-hch@lst.de> <20240215070300.2200308-18-hch@lst.de>
+ <CAMuHMdWV4nWQHUpBKM2gHWeH9j9c0Di4bhg+F4-SAPEAmZuNSA@mail.gmail.com> <20240221054424.GA12033@lst.de>
+In-Reply-To: <20240221054424.GA12033@lst.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 21 Feb 2024 10:37:39 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUVHvgVkZsmbsxkScDq+XzMLTONk3Cwmg2N_Rz_-qqWxw@mail.gmail.com>
+Message-ID: <CAMuHMdUVHvgVkZsmbsxkScDq+XzMLTONk3Cwmg2N_Rz_-qqWxw@mail.gmail.com>
+Subject: Re: [PATCH 17/17] mmc: pass queue_limits to blk_mq_alloc_disk
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	Justin Sanders <justin@coraid.com>, Denis Efremov <efremov@linux.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Geoff Levand <geoff@infradead.org>, 
+	Ilya Dryomov <idryomov@gmail.com>, "Md. Haris Iqbal" <haris.iqbal@ionos.com>, 
+	Jack Wang <jinpu.wang@ionos.com>, Ming Lei <ming.lei@redhat.com>, 
+	Maxim Levitsky <maximlevitsky@gmail.com>, Alex Dubov <oakad@yahoo.com>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Vineeth Vijayan <vneethv@linux.ibm.com>, linux-block@vger.kernel.org, 
+	nbd@other.debian.org, ceph-devel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	linux-mtd@lists.infradead.org, linux-s390@vger.kernel.org, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Xiubo Li <xiubli@redhat.com>
+Hi Christoph,
 
-If hits the EOF it will revise the return value to the i_size
-instead of the real length read, but it will advance the offset
-of iovc, then for the next try it may be incorrectly skipped.
+On Wed, Feb 21, 2024 at 6:44=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
+e:
+> On Tue, Feb 20, 2024 at 11:01:05PM +0100, Geert Uytterhoeven wrote:
+> > On Thu, Feb 15, 2024 at 9:16=E2=80=AFAM Christoph Hellwig <hch@lst.de> =
+wrote:
+> > > Pass the queue limit set at initialization time directly to
+> > > blk_mq_alloc_disk instead of updating it right after the allocation.
+> > >
+> > > This requires refactoring the code a bit so that what was mmc_setup_q=
+ueue
+> > > before also allocates the gendisk now and actually sets all limits.
+> > >
+> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> >
+> > Thanks for your patch, which is now commit 616f876617927732 ("mmc: pass
+> > queue_limits to blk_mq_alloc_disk") in block/for-next.
+> >
+> > I have bisected the following failure on White-Hawk (also seen on
+> > other R-Car Gen3/4 systems) to this commit:
+> >
+> >     renesas_sdhi_internal_dmac ee140000.mmc: mmc0 base at
+> > 0x00000000ee140000, max clock rate 200 MHz
+> >     mmc0: new HS400 MMC card at address 0001
+> >     ------------[ cut here ]------------
+> >     WARNING: CPU: 1 PID: 20 at block/blk-settings.c:202
+> > blk_validate_limits+0x12c/0x1e0
+>
+> This is:
+>
+>         if (lim->virt_boundary_mask) {
+>                 if (WARN_ON_ONCE(lim->max_segment_size &&
+>                                  lim->max_segment_size !=3D UINT_MAX))
+>                         return -EINVAL;
+>
+> so we end up here with both a virt_boundary_mask and a
+> max_segment_size set, which is rather bogus.  I think the
+> problem is the order of check in the core blk_validate_limits
+> that artificially causes this.  Can you try this patch?
 
-This will just skip advancing the iovc's offset more than i_size.
+Thanks, good thinking, as that fixed the issue for me!
 
-URL: https://patchwork.kernel.org/project/ceph-devel/list/?series=819323
-Reported-by: Frank Hsiao 蕭法宣 <frankhsiao@qnap.com>
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/file.c | 18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 71d29571712d..2b2b07a0a61b 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1195,7 +1195,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
- 		}
- 
- 		idx = 0;
--		left = ret > 0 ? ret : 0;
-+		left = ret > 0 ? umin(ret, i_size) : 0;
- 		while (left > 0) {
- 			size_t plen, copied;
- 
-@@ -1224,15 +1224,13 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
- 	}
- 
- 	if (ret > 0) {
--		if (off > *ki_pos) {
--			if (off >= i_size) {
--				*retry_op = CHECK_EOF;
--				ret = i_size - *ki_pos;
--				*ki_pos = i_size;
--			} else {
--				ret = off - *ki_pos;
--				*ki_pos = off;
--			}
-+		if (off >= i_size) {
-+			*retry_op = CHECK_EOF;
-+			ret = i_size - *ki_pos;
-+			*ki_pos = i_size;
-+		} else {
-+			ret = off - *ki_pos;
-+			*ki_pos = off;
- 		}
- 
- 		if (last_objver)
--- 
-2.43.0
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
