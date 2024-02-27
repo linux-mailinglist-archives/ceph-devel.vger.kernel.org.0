@@ -1,116 +1,385 @@
-Return-Path: <ceph-devel+bounces-920-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-921-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DD578689F0
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Feb 2024 08:35:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95559869D8D
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Feb 2024 18:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED35C288FE7
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Feb 2024 07:35:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C47F28528A
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Feb 2024 17:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA55F54F91;
-	Tue, 27 Feb 2024 07:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE41913A884;
+	Tue, 27 Feb 2024 17:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dvw/8HoN"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="j0Y4guR5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qpIkoT9E";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="L1Evg5D5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Nb4Lh4H5"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F1554BC8
-	for <ceph-devel@vger.kernel.org>; Tue, 27 Feb 2024 07:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD12A148300
+	for <ceph-devel@vger.kernel.org>; Tue, 27 Feb 2024 17:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709019317; cv=none; b=m5qwbLDmRQsKMT6y81HwPYabU03nWE9BjvY/cYoG6O8kbUCFc+FsDPM8K6Aq3AFdsQtFjAKNkGvJh98iORzSOlVmjFCdK/7kEYZpdQa8JhvlqvOcd+TGDNumlTeVJUBEMf4mdSCWYLIx1KPSd4nz2WXLfYTwkNn2llfo2yRQNv0=
+	t=1709054583; cv=none; b=n6OtWRxXY+35MbircmKskWXNfarjjnwysKUwl93MeOR+yx8xkw3E+wzLdEkpChxfgdY0Xq64gYUKZGlLcew1BKyZFeDqY6MDbENwPJKE83mhJcbcVFCdjPz3TQcHoJv75/mW+tR/MEnr0bruvhnyOXva1Muw9FhWtGOcB7IiUxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709019317; c=relaxed/simple;
-	bh=SbnvlbVLSrVUIa12z554E3ZwgFFhW67FWkmcrg/edHg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P4iFgOM0VcneoikecqHO4ggBgSpOkYT+RZNli8/1fFUQJkorlS7c29v/TvoN8xngwtPdb1S/ubYW+22zeK/igSrEx3cF0Q8nQksA4fKc8qlap5DlybJ6t8copkxP/VRWd107Oz3kstjJBT3WGGuSCPbyYzfCjNp/CS3WpWmxD8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dvw/8HoN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709019315;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	s=arc-20240116; t=1709054583; c=relaxed/simple;
+	bh=b1NpiwnXh78BEsezwSpt9TknntjZmavUOBBrvE7g1po=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RHcQQrT9vXl1ITkWAcF5hnMmWQLuQ0vzic6DRpOGoWDLlqrEmG8yjSNN1dPnKFslU+6gNghDjEfyTUMgXygT2/nJ/pipZ3CuqgBlm56abjgRFu4AOx9vR3NAUNZ/CtqZbegFEFMriRzLOCYixHXlrCwZGFu2gX3CeVS8Ibrb2/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=j0Y4guR5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qpIkoT9E; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=L1Evg5D5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Nb4Lh4H5; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D1E6A22784;
+	Tue, 27 Feb 2024 17:22:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709054577; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GLFW9RwKtlppoBE+ulPAYSDrSOVlLSJlI0YwqnhKTYg=;
-	b=dvw/8HoNiVVF+hJhO53oQ890CilvI92m1nVBHyKCT4QbJWg+kCIt1Q+6mQvewmMHvjGIt1
-	HmiZq+g+a4wJ+eWKQ5QCvj2T+t1161C8+o/zzyi8sdZewN36wyZRbJgGhIN9esKfm7H/1c
-	BQxeETlXWbyJXevmgeSLWmUycLbvFTM=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-681-vIUJLW1YMyWcfMyWET3q2Q-1; Tue,
- 27 Feb 2024 02:35:13 -0500
-X-MC-Unique: vIUJLW1YMyWcfMyWET3q2Q-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	bh=F2RlJWCHX0+kB70dKeSM+eTaztKmmZDJ9TxNA/UJ2wA=;
+	b=j0Y4guR5Ni9hldpEMegR3CMeGO7Z4RNSxSOKpRD6ilu4jyTFXAEoAAYIFX+nBiZ57/437L
+	29K71Nq8WYy1Sj3Ym+/UCHM+lDjUR9eT1F5Tuj2kVSoBKcVTX2n43yeWCfcnEERCk/pk+6
+	n0keIxo2xMWhyClNLXKoKU0+WZM3UBI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709054577;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F2RlJWCHX0+kB70dKeSM+eTaztKmmZDJ9TxNA/UJ2wA=;
+	b=qpIkoT9Ej8soe085M9bJ4gI7VKlVQ8p2DqJRFPq2FiaagGKfz3vJqK2jx44OOMkeSdF2Vi
+	vUj2gi2+QFSt4KDQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709054576; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F2RlJWCHX0+kB70dKeSM+eTaztKmmZDJ9TxNA/UJ2wA=;
+	b=L1Evg5D5rJVEs2VZ6fkiJPgUZUnU7phzANkeKd6n7FCkxBpAuw+vKKScMgShj9OB+uPoyQ
+	UrRYV5fRmD9XkQBfld3ozQoxX+7Ogv8IXLDIYI+n9WLLrvfEzlLEsw0tNuWaxEZY1OLKpb
+	fns2hDHCnwwXb6p/gjaXFn9DJGXVKFo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709054576;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F2RlJWCHX0+kB70dKeSM+eTaztKmmZDJ9TxNA/UJ2wA=;
+	b=Nb4Lh4H5Rcg+W1OJv7GX07NxURQ791+ce5UJliF0tdxtngNKICSq3VP33vsYxlH085/6jd
+	JuKqvTKb9UO02IBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 47F5B3C2B608;
-	Tue, 27 Feb 2024 07:35:13 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (unknown [10.72.112.214])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 7D0A02166B33;
-	Tue, 27 Feb 2024 07:35:10 +0000 (UTC)
-From: xiubli@redhat.com
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	jlayton@kernel.org,
-	vshankar@redhat.com,
-	mchangir@redhat.com,
-	Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v4 6/6] ceph: add CEPHFS_FEATURE_MDS_AUTH_CAPS_CHECK feature bit
-Date: Tue, 27 Feb 2024 15:27:05 +0800
-Message-ID: <20240227072705.593676-7-xiubli@redhat.com>
-In-Reply-To: <20240227072705.593676-1-xiubli@redhat.com>
-References: <20240227072705.593676-1-xiubli@redhat.com>
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 555BF13A58;
+	Tue, 27 Feb 2024 17:22:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xljPEHAa3mUCaAAAD6G6ig
+	(envelope-from <lhenriques@suse.de>); Tue, 27 Feb 2024 17:22:56 +0000
+Received: from localhost (brahms.olymp [local])
+	by brahms.olymp (OpenSMTPD) with ESMTPA id af82a16c;
+	Tue, 27 Feb 2024 17:22:51 +0000 (UTC)
+From: Luis Henriques <lhenriques@suse.de>
+To: xiubli@redhat.com
+Cc: ceph-devel@vger.kernel.org,  idryomov@gmail.com,  jlayton@kernel.org,
+  vshankar@redhat.com,  mchangir@redhat.com
+Subject: Re: [PATCH v6 3/3] libceph: just wait for more data to be available
+ on the socket
+In-Reply-To: <20240125023920.1287555-4-xiubli@redhat.com> (xiubli@redhat.com's
+	message of "Thu, 25 Jan 2024 10:39:20 +0800")
+References: <20240125023920.1287555-1-xiubli@redhat.com>
+	<20240125023920.1287555-4-xiubli@redhat.com>
+Date: Tue, 27 Feb 2024 17:22:51 +0000
+Message-ID: <871q8x4yac.fsf@suse.de>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spamd-Result: default: False [-3.10 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 TO_DN_NONE(0.00)[];
+	 RCPT_COUNT_FIVE(0.00)[6];
+	 RCVD_COUNT_THREE(0.00)[4];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_LAST(0.00)[];
+	 FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,kernel.org,redhat.com];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -3.10
 
-From: Xiubo Li <xiubli@redhat.com>
+Hi Xiubo!
 
-Since we have support checking the mds auth cap in kclient, just
-set the feature bit.
+xiubli@redhat.com writes:
 
-URL: https://tracker.ceph.com/issues/61333
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/mds_client.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> A short read may occur while reading the message footer from the
+> socket.  Later, when the socket is ready for another read, the
+> messenger shoudl invoke all read_partial* handlers, except the
+> read_partial_sparse_msg_data().  The contract between the messenger
+> and these handlers is that the handlers should bail if the area
+> of the message is responsible for is already processed.  So,
+> in this case, it's expected that read_sparse_msg_data() would bail,
+> allowing the messenger to invoke read_partial() for the footer and
+> pick up where it left off.
+>
+> However read_partial_sparse_msg_data() violates that contract and
+> ends up calling into the state machine in the OSD client. The
+> sparse-read state machine just assumes that it's a new op and
+> interprets some piece of the footer as the sparse-read extents/data
+> and then returns bogus extents/data length, etc.
+>
+> This will just reuse the 'total_resid' to determine whether should
+> the read_partial_sparse_msg_data() bail out or not. Because once
+> it reaches to zero that means all the extents and data have been
+> successfully received in last read, else it could break out when
+> partially reading any of the extents and data. And then the
+> osd_sparse_read() could continue where it left off.
 
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 3d9107f72553..317a0fd6a8ba 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -35,8 +35,9 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_32BITS_RETRY_FWD,
- 	CEPHFS_FEATURE_NEW_SNAPREALM_INFO,
- 	CEPHFS_FEATURE_HAS_OWNER_UIDGID,
-+	CEPHFS_FEATURE_MDS_AUTH_CAPS_CHECK,
- 
--	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_HAS_OWNER_UIDGID,
-+	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_MDS_AUTH_CAPS_CHECK,
- };
- 
- #define CEPHFS_FEATURES_CLIENT_SUPPORTED {	\
-@@ -52,6 +53,7 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_OP_GETVXATTR,		\
- 	CEPHFS_FEATURE_32BITS_RETRY_FWD,	\
- 	CEPHFS_FEATURE_HAS_OWNER_UIDGID,	\
-+	CEPHFS_FEATURE_MDS_AUTH_CAPS_CHECK,	\
- }
- 
- /*
--- 
-2.43.0
+I'm seeing an issue with fstest generic/580, which seems to enter an
+infinite loop effectively rendering the testing VM unusable.  It's pretty
+easy to reproduce, just run the test ensuring to be using msgv2 (I'm
+mounting the filesystem with 'ms_mode=3Dcrc'), and you should see the
+following on the logs:
+
+[...]
+  libceph: prepare_sparse_read_cont: ret 0x1000 total_resid 0x0 resid 0x0=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20
+  libceph: osd1 (2)192.168.155.1:6810 read processing error=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+  libceph: mon0 (2)192.168.155.1:40608 session established=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+  libceph: bad late_status 0x1=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+  libceph: osd1 (2)192.168.155.1:6810 protocol error, bad epilogue=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+  libceph: mon0 (2)192.168.155.1:40608 session established=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+  libceph: prepare_sparse_read_cont: ret 0x1000 total_resid 0x0 resid 0x0=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20
+  libceph: osd1 (2)192.168.155.1:6810 read processing error=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20
+  libceph: mon0 (2)192.168.155.1:40608 session established=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+  libceph: bad late_status 0x1=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+[...]
+
+Reverting this patch (commit 8e46a2d068c9 ("libceph: just wait for more
+data to be available on the socket")) seems to fix.  I haven't
+investigated it further, but since it'll take me some time to refresh my
+memory, I thought I should report it immediately.  Maybe someone has any
+idea.
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+
+> URL: https://tracker.ceph.com/issues/63586
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  include/linux/ceph/messenger.h |  2 +-
+>  net/ceph/messenger_v1.c        | 25 +++++++++++++------------
+>  net/ceph/messenger_v2.c        |  4 ++--
+>  net/ceph/osd_client.c          |  9 +++------
+>  4 files changed, 19 insertions(+), 21 deletions(-)
+>
+> diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenge=
+r.h
+> index 2eaaabbe98cb..1717cc57cdac 100644
+> --- a/include/linux/ceph/messenger.h
+> +++ b/include/linux/ceph/messenger.h
+> @@ -283,7 +283,7 @@ struct ceph_msg {
+>  	struct kref kref;
+>  	bool more_to_follow;
+>  	bool needs_out_seq;
+> -	bool sparse_read;
+> +	u64 sparse_read_total;
+>  	int front_alloc_len;
+>=20=20
+>  	struct ceph_msgpool *pool;
+> diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
+> index 4cb60bacf5f5..126b2e712247 100644
+> --- a/net/ceph/messenger_v1.c
+> +++ b/net/ceph/messenger_v1.c
+> @@ -160,8 +160,9 @@ static size_t sizeof_footer(struct ceph_connection *c=
+on)
+>  static void prepare_message_data(struct ceph_msg *msg, u32 data_len)
+>  {
+>  	/* Initialize data cursor if it's not a sparse read */
+> -	if (!msg->sparse_read)
+> -		ceph_msg_data_cursor_init(&msg->cursor, msg, data_len);
+> +	u64 len =3D msg->sparse_read_total ? : data_len;
+> +
+> +	ceph_msg_data_cursor_init(&msg->cursor, msg, len);
+>  }
+>=20=20
+>  /*
+> @@ -1036,7 +1037,7 @@ static int read_partial_sparse_msg_data(struct ceph=
+_connection *con)
+>  	if (do_datacrc)
+>  		crc =3D con->in_data_crc;
+>=20=20
+> -	do {
+> +	while (cursor->total_resid) {
+>  		if (con->v1.in_sr_kvec.iov_base)
+>  			ret =3D read_partial_message_chunk(con,
+>  							 &con->v1.in_sr_kvec,
+> @@ -1044,23 +1045,23 @@ static int read_partial_sparse_msg_data(struct ce=
+ph_connection *con)
+>  							 &crc);
+>  		else if (cursor->sr_resid > 0)
+>  			ret =3D read_partial_sparse_msg_extent(con, &crc);
+> -
+> -		if (ret <=3D 0) {
+> -			if (do_datacrc)
+> -				con->in_data_crc =3D crc;
+> -			return ret;
+> -		}
+> +		if (ret <=3D 0)
+> +			break;
+>=20=20
+>  		memset(&con->v1.in_sr_kvec, 0, sizeof(con->v1.in_sr_kvec));
+>  		ret =3D con->ops->sparse_read(con, cursor,
+>  				(char **)&con->v1.in_sr_kvec.iov_base);
+> +		if (ret <=3D 0) {
+> +			ret =3D ret ? ret : 1; /* must return > 0 to indicate success */
+> +			break;
+> +		}
+>  		con->v1.in_sr_len =3D ret;
+> -	} while (ret > 0);
+> +	}
+>=20=20
+>  	if (do_datacrc)
+>  		con->in_data_crc =3D crc;
+>=20=20
+> -	return ret < 0 ? ret : 1;  /* must return > 0 to indicate success */
+> +	return ret;
+>  }
+>=20=20
+>  static int read_partial_msg_data(struct ceph_connection *con)
+> @@ -1253,7 +1254,7 @@ static int read_partial_message(struct ceph_connect=
+ion *con)
+>  		if (!m->num_data_items)
+>  			return -EIO;
+>=20=20
+> -		if (m->sparse_read)
+> +		if (m->sparse_read_total)
+>  			ret =3D read_partial_sparse_msg_data(con);
+>  		else if (ceph_test_opt(from_msgr(con->msgr), RXBOUNCE))
+>  			ret =3D read_partial_msg_data_bounce(con);
+> diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+> index f8ec60e1aba3..a0ca5414b333 100644
+> --- a/net/ceph/messenger_v2.c
+> +++ b/net/ceph/messenger_v2.c
+> @@ -1128,7 +1128,7 @@ static int decrypt_tail(struct ceph_connection *con)
+>  	struct sg_table enc_sgt =3D {};
+>  	struct sg_table sgt =3D {};
+>  	struct page **pages =3D NULL;
+> -	bool sparse =3D con->in_msg->sparse_read;
+> +	bool sparse =3D !!con->in_msg->sparse_read_total;
+>  	int dpos =3D 0;
+>  	int tail_len;
+>  	int ret;
+> @@ -2060,7 +2060,7 @@ static int prepare_read_tail_plain(struct ceph_conn=
+ection *con)
+>  	}
+>=20=20
+>  	if (data_len(msg)) {
+> -		if (msg->sparse_read)
+> +		if (msg->sparse_read_total)
+>  			con->v2.in_state =3D IN_S_PREPARE_SPARSE_DATA;
+>  		else
+>  			con->v2.in_state =3D IN_S_PREPARE_READ_DATA;
+> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> index 837b69541376..ad2ed334cdbb 100644
+> --- a/net/ceph/osd_client.c
+> +++ b/net/ceph/osd_client.c
+> @@ -5510,7 +5510,7 @@ static struct ceph_msg *get_reply(struct ceph_conne=
+ction *con,
+>  	}
+>=20=20
+>  	m =3D ceph_msg_get(req->r_reply);
+> -	m->sparse_read =3D (bool)srlen;
+> +	m->sparse_read_total =3D srlen;
+>=20=20
+>  	dout("get_reply tid %lld %p\n", tid, m);
+>=20=20
+> @@ -5777,11 +5777,8 @@ static int prep_next_sparse_read(struct ceph_conne=
+ction *con,
+>  	}
+>=20=20
+>  	if (o->o_sparse_op_idx < 0) {
+> -		u64 srlen =3D sparse_data_requested(req);
+> -
+> -		dout("%s: [%d] starting new sparse read req. srlen=3D0x%llx\n",
+> -		     __func__, o->o_osd, srlen);
+> -		ceph_msg_data_cursor_init(cursor, con->in_msg, srlen);
+> +		dout("%s: [%d] starting new sparse read req\n",
+> +		     __func__, o->o_osd);
+>  	} else {
+>  		u64 end;
+>=20=20
+> --=20
+>
+> 2.43.0
+>
 
 
