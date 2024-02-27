@@ -1,60 +1,60 @@
-Return-Path: <ceph-devel+bounces-916-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-917-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322138689E7
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Feb 2024 08:35:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3658689EC
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Feb 2024 08:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC8C528845F
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Feb 2024 07:35:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B37E91C22035
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Feb 2024 07:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9C354F87;
-	Tue, 27 Feb 2024 07:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3757B55E65;
+	Tue, 27 Feb 2024 07:35:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bpbjzzm2"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LgV7HVl+"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5344954BC4
-	for <ceph-devel@vger.kernel.org>; Tue, 27 Feb 2024 07:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4363454FAB
+	for <ceph-devel@vger.kernel.org>; Tue, 27 Feb 2024 07:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709019304; cv=none; b=EHcBkl/Nb8yyzG3WwD7wxW7RISBUK/tT57sBNCrqW+b6mKgZOcxLSKCLRJCwlEjZeP9m/YRZDh1d8jYoO9btsfpGPpXfDJ/dfKOe81plkSRs1ce4kT6Rw9BrEYj2jpD3cKfVTk6K0VSW9Th+DL6fQNbqg8MJN331X7OAdP9hmNg=
+	t=1709019308; cv=none; b=Dfp7I7YJkCfcx9JegR4hMjRce4vIMf1wGhQbPC+GdJ/jOhs/5HaBZz8+d/ScvDAP5GY8hDcrRQ/Q5DtmAKEC9FBY/bepRZZ8TreCcwkPN570DZBVAhR+hHi9VWVueJjCGEJwiWypmcId3L2g5tikT8BvpFsWNiqhjI8px7lpPd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709019304; c=relaxed/simple;
-	bh=e8IijoIt4u5lsNxfwvv6PXQ/O8nGiaeI2M4VnwJQVxo=;
+	s=arc-20240116; t=1709019308; c=relaxed/simple;
+	bh=LQf/fXvyIMPCmUBsrwBqE65vjx8ATvvxXYL0Yj8ybRA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nP9c02dhc/yo6eLj9x/nXHCDt/uFzNBeEbDQEBVnoRiHoSv4NmhoFyK3lYdHFcwk95U/0mG38AEkG4PFDgcs7cgzQPCTkIQ934yEgFpuY9tZlNfDx15qETgTfUAt9paJcgb829KhhaMGyuAUQx3qZyAYJWpBNnnMrUA4tbk6Sy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bpbjzzm2; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=jPuTZOW9h2hF3HEmz2Jax5PwFnyzjCjUJR/XX8MwdOU6g92npUWyUoqZL5ZHDwYi+DaoYSJRBKAIJaZX8N/vbJCdD0V+v/V1LpTH35+Oc4AsdIxpaRT/wi3eim8xW338B1CbiKEFpiOvcPDCYs0KZWDK36KwgZUheRpARIwn7No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LgV7HVl+; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709019301;
+	s=mimecast20190719; t=1709019306;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3N3HxCq2o2s4Qf8fNMRz6oScYoLXVycFtzR1aKrwcdc=;
-	b=Bpbjzzm2IuJj0HwHpgfCl0BtDdKqdKvT1L5lr+iAF2OQ74OI1ZsqO4+A3hgJF2hwWo//cj
-	Aus7VAI1ahR6XxifN8MGiHJCO8M/0VmyI09d0zhbfB9C3jFFfAedSqg/KofV6L2VxKdvYU
-	N0htLyVglP+f6FD8Gr6BAcFbLNcF21k=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-207-4I1ppKYFOkOMJaf6Xu7YeA-1; Tue,
- 27 Feb 2024 02:34:59 -0500
-X-MC-Unique: 4I1ppKYFOkOMJaf6Xu7YeA-1
+	bh=vGkv5rWtqYBystXXt8q9klp/8vFOQn94fFlhZ+kyrHI=;
+	b=LgV7HVl+caNygmOQNSzWcOd7u97JajEYfZZUfcKkKMfKj/6Pvf/UFhK1qY8jNSGCe1iPcX
+	eaUqv2m3z92L+Wmi5nTlxOYhPKSgknkwCjlMPtPWiRGzcV7xnTJwfC7On9bmFGgkBn5tu9
+	ZRp5mbX/HkILroz5//bPRDU76VHCdaw=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-177-Jgxt9XT6Ox2-N8NHzo2TkA-1; Tue, 27 Feb 2024 02:35:02 -0500
+X-MC-Unique: Jgxt9XT6Ox2-N8NHzo2TkA-1
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CAFE31C29EA0;
-	Tue, 27 Feb 2024 07:34:58 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7097B862DC0;
+	Tue, 27 Feb 2024 07:35:02 +0000 (UTC)
 Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (unknown [10.72.112.214])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id F21E02166B32;
-	Tue, 27 Feb 2024 07:34:55 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 780562166B5D;
+	Tue, 27 Feb 2024 07:34:59 +0000 (UTC)
 From: xiubli@redhat.com
 To: ceph-devel@vger.kernel.org
 Cc: idryomov@gmail.com,
@@ -62,9 +62,9 @@ Cc: idryomov@gmail.com,
 	vshankar@redhat.com,
 	mchangir@redhat.com,
 	Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v4 2/6] ceph: add ceph_mds_check_access() helper support
-Date: Tue, 27 Feb 2024 15:27:01 +0800
-Message-ID: <20240227072705.593676-3-xiubli@redhat.com>
+Subject: [PATCH v4 3/6] ceph: check the cephx mds auth access for setattr
+Date: Tue, 27 Feb 2024 15:27:02 +0800
+Message-ID: <20240227072705.593676-4-xiubli@redhat.com>
 In-Reply-To: <20240227072705.593676-1-xiubli@redhat.com>
 References: <20240227072705.593676-1-xiubli@redhat.com>
 Precedence: bulk
@@ -78,204 +78,126 @@ X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
 From: Xiubo Li <xiubli@redhat.com>
 
-This will help check the mds auth access in client side. Always
-insert the server path in front of the target path when matching
-the paths.
+If we hit any failre just try to force it to do the sync setattr.
 
 URL: https://tracker.ceph.com/issues/61333
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/ceph/mds_client.c | 162 +++++++++++++++++++++++++++++++++++++++++++
- fs/ceph/mds_client.h |   3 +
- 2 files changed, 165 insertions(+)
+ fs/ceph/inode.c | 46 +++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 37 insertions(+), 9 deletions(-)
 
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index b715ccfff419..ee330f355958 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -5634,6 +5634,168 @@ void send_flush_mdlog(struct ceph_mds_session *s)
- 	mutex_unlock(&s->s_mutex);
- }
- 
-+static int ceph_mds_auth_match(struct ceph_mds_client *mdsc,
-+			       struct ceph_mds_cap_auth *auth,
-+			       char *tpath)
-+{
-+	const struct cred *cred = get_current_cred();
-+	uint32_t caller_uid = from_kuid(&init_user_ns, cred->fsuid);
-+	uint32_t caller_gid = from_kgid(&init_user_ns, cred->fsgid);
-+	struct ceph_client *cl = mdsc->fsc->client;
-+	const char *spath = mdsc->fsc->mount_options->server_path;
-+	bool gid_matched = false;
-+	uint32_t gid, tlen, len;
-+	int i, j;
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 3030136b0a61..486ad9d917d0 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -2492,6 +2492,34 @@ int __ceph_setattr(struct mnt_idmap *idmap, struct inode *inode,
+ 	bool lock_snap_rwsem = false;
+ 	bool fill_fscrypt;
+ 	int truncate_retry = 20; /* The RMW will take around 50ms */
++	struct dentry *dentry;
++	char *path;
++	int pathlen;
++	u64 pathbase;
++	bool do_sync = false;
 +
-+	doutc(cl, "match.uid %lld\n", auth->match.uid);
-+	if (auth->match.uid != MDS_AUTH_UID_ANY) {
-+		if (auth->match.uid != caller_uid)
-+			return 0;
-+		if (auth->match.num_gids) {
-+			for (i = 0; i < auth->match.num_gids; i++) {
-+				if (caller_gid == auth->match.gids[i])
-+					gid_matched = true;
-+			}
-+			if (!gid_matched && cred->group_info->ngroups) {
-+				for (i = 0; i < cred->group_info->ngroups; i++) {
-+					gid = from_kgid(&init_user_ns, cred->group_info->gid[i]);
-+					for (j = 0; j < auth->match.num_gids; j++) {
-+						if (gid == auth->match.gids[j]) {
-+							gid_matched = true;
-+							break;
-+						}
-+					}
-+					if (gid_matched)
-+						break;
-+				}
-+			}
-+			if (!gid_matched)
-+				return 0;
++	dentry = d_find_alias(inode);
++	if (!dentry) {
++		do_sync = true;
++	} else {
++		path = ceph_mdsc_build_path(mdsc, dentry, &pathlen, &pathbase, 0);
++		if (IS_ERR(path)) {
++			do_sync = true;
++			err = 0;
++		} else {
++			err = ceph_mds_check_access(mdsc, path, MAY_WRITE);
 +		}
-+	}
++		ceph_mdsc_free_path(path, pathlen);
++		dput(dentry);
 +
-+	/* path match */
-+	if (auth->match.path) {
-+		if (!tpath)
-+			return 0;
-+
-+		tlen = strlen(tpath);
-+		len = strlen(auth->match.path);
-+		if (len) {
-+			char *_tpath = tpath;
-+			bool free_tpath = false;
-+			int m, n;
-+
-+			doutc(cl, "server path %s, tpath %s, match.path %s\n",
-+			      spath, tpath, auth->match.path);
-+			if (spath && (m = strlen(spath)) != 1) {
-+				/* mount path + '/' + tpath + an extra space */
-+				n = m + 1 + tlen + 1;
-+				_tpath = kmalloc(n, GFP_NOFS);
-+				if (!_tpath)
-+					return -ENOMEM;
-+				/* remove the leading '/' */
-+				snprintf(_tpath, n, "%s/%s", spath + 1, tpath);
-+				free_tpath = true;
-+				tlen = strlen(_tpath);
-+			}
-+
-+			/*
-+			 * Please note the tailing '/' for match.path has already
-+			 * been removed when parsing.
-+			 *
-+			 * Remove the tailing '/' for the target path.
-+			 */
-+			while (tlen && _tpath[tlen - 1] == '/') {
-+				_tpath[tlen - 1] = '\0';
-+				tlen -= 1;
-+			}
-+			doutc(cl, "_tpath %s\n", _tpath);
-+
-+			/* In case first == _tpath && tlen == len:
-+			 *  match.path=/foo  --> /foo _path=/foo     --> match
-+			 *  match.path=/foo/ --> /foo _path=/foo     --> match
-+			 *
-+			 * In case first == _tmatch.path && tlen > len:
-+			 *  match.path=/foo/ --> /foo _path=/foo/    --> match
-+			 *  match.path=/foo  --> /foo _path=/foo/    --> match
-+			 *  match.path=/foo/ --> /foo _path=/foo/d   --> match
-+			 *  match.path=/foo  --> /foo _path=/food    --> mismatch
-+			 *
-+			 * All the other cases                       --> mismatch
-+			 */
-+			char *first = strstr(_tpath, auth->match.path);
-+			if (first != _tpath) {
-+				if (free_tpath)
-+					kfree(_tpath);
-+				return 0;
-+			}
-+
-+			if (tlen > len && _tpath[len] != '/') {
-+				if (free_tpath)
-+					kfree(_tpath);
-+				return 0;
-+			}
-+		}
-+	}
-+
-+	doutc(cl, "matched\n");
-+	return 1;
-+}
-+
-+int ceph_mds_check_access(struct ceph_mds_client *mdsc, char *tpath, int mask)
-+{
-+	const struct cred *cred = get_current_cred();
-+	uint32_t caller_uid = from_kuid(&init_user_ns, cred->fsuid);
-+	uint32_t caller_gid = from_kgid(&init_user_ns, cred->fsgid);
-+	struct ceph_mds_cap_auth *rw_perms_s = NULL;
-+	struct ceph_client *cl = mdsc->fsc->client;
-+	bool root_squash_perms = true;
-+	int i, err;
-+
-+	doutc(cl, "tpath '%s', mask %d, caller_uid %d, caller_gid %d\n",
-+	      tpath, mask, caller_uid, caller_gid);
-+
-+	for (i = 0; i < mdsc->s_cap_auths_num; i++) {
-+		struct ceph_mds_cap_auth *s = &mdsc->s_cap_auths[i];
-+
-+		err = ceph_mds_auth_match(mdsc, s, tpath);
-+		if (err < 0) {
++		/* For none EACCES cases will let the MDS do the mds auth check */
++		if (err == -EACCES) {
 +			return err;
-+		} else if (err > 0) {
-+			// always follow the last auth caps' permision
-+			root_squash_perms = true;
-+			rw_perms_s = NULL;
-+			if ((mask & MAY_WRITE) && s->writeable &&
-+			    s->match.root_squash && (!caller_uid || !caller_gid))
-+				root_squash_perms = false;
-+
-+			if (((mask & MAY_WRITE) && !s->writeable) ||
-+			    ((mask & MAY_READ) && !s->readable))
-+				rw_perms_s = s;
++		} else if (err < 0) {
++			do_sync = true;
++			err = 0;
 +		}
 +	}
-+
-+	doutc(cl, "root_squash_perms %d, rw_perms_s %p\n", root_squash_perms,
-+	      rw_perms_s);
-+	if (root_squash_perms && rw_perms_s == NULL) {
-+		doutc(cl, "access allowed\n");
-+		return 0;
-+	}
-+
-+	if (!root_squash_perms) {
-+		doutc(cl, "root_squash is enabled and user(%d %d) isn't allowed to write",
-+		      caller_uid, caller_gid);
-+	}
-+	if (rw_perms_s) {
-+		doutc(cl, "mds auth caps readable/writeable %d/%d while request r/w %d/%d",
-+		      rw_perms_s->readable, rw_perms_s->writeable, !!(mask & MAY_READ),
-+		      !!(mask & MAY_WRITE));
-+	}
-+	doutc(cl, "access denied\n");
-+	return -EACCES;
-+}
-+
- /*
-  * called before mount is ro, and before dentries are torn down.
-  * (hmm, does this still race with new lookups?)
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index b98aadac480e..3d9107f72553 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -603,6 +603,9 @@ extern void ceph_queue_cap_unlink_work(struct ceph_mds_client *mdsc);
- extern int ceph_iterate_session_caps(struct ceph_mds_session *session,
- 				     int (*cb)(struct inode *, int mds, void *),
- 				     void *arg);
-+extern int ceph_mds_check_access(struct ceph_mds_client *mdsc, char *tpath,
-+				 int mask);
-+
- extern void ceph_mdsc_pre_umount(struct ceph_mds_client *mdsc);
  
- static inline void ceph_mdsc_free_path(char *path, int len)
+ retry:
+ 	prealloc_cf = ceph_alloc_cap_flush();
+@@ -2538,7 +2566,7 @@ int __ceph_setattr(struct mnt_idmap *idmap, struct inode *inode,
+ 		/* It should never be re-set once set */
+ 		WARN_ON_ONCE(ci->fscrypt_auth);
+ 
+-		if (issued & CEPH_CAP_AUTH_EXCL) {
++		if (!do_sync && (issued & CEPH_CAP_AUTH_EXCL)) {
+ 			dirtied |= CEPH_CAP_AUTH_EXCL;
+ 			kfree(ci->fscrypt_auth);
+ 			ci->fscrypt_auth = (u8 *)cia->fscrypt_auth;
+@@ -2567,7 +2595,7 @@ int __ceph_setattr(struct mnt_idmap *idmap, struct inode *inode,
+ 		      ceph_vinop(inode),
+ 		      from_kuid(&init_user_ns, inode->i_uid),
+ 		      from_kuid(&init_user_ns, attr->ia_uid));
+-		if (issued & CEPH_CAP_AUTH_EXCL) {
++		if (!do_sync && (issued & CEPH_CAP_AUTH_EXCL)) {
+ 			inode->i_uid = fsuid;
+ 			dirtied |= CEPH_CAP_AUTH_EXCL;
+ 		} else if ((issued & CEPH_CAP_AUTH_SHARED) == 0 ||
+@@ -2585,7 +2613,7 @@ int __ceph_setattr(struct mnt_idmap *idmap, struct inode *inode,
+ 		      ceph_vinop(inode),
+ 		      from_kgid(&init_user_ns, inode->i_gid),
+ 		      from_kgid(&init_user_ns, attr->ia_gid));
+-		if (issued & CEPH_CAP_AUTH_EXCL) {
++		if (!do_sync && (issued & CEPH_CAP_AUTH_EXCL)) {
+ 			inode->i_gid = fsgid;
+ 			dirtied |= CEPH_CAP_AUTH_EXCL;
+ 		} else if ((issued & CEPH_CAP_AUTH_SHARED) == 0 ||
+@@ -2599,7 +2627,7 @@ int __ceph_setattr(struct mnt_idmap *idmap, struct inode *inode,
+ 	if (ia_valid & ATTR_MODE) {
+ 		doutc(cl, "%p %llx.%llx mode 0%o -> 0%o\n", inode,
+ 		      ceph_vinop(inode), inode->i_mode, attr->ia_mode);
+-		if (issued & CEPH_CAP_AUTH_EXCL) {
++		if (!do_sync && (issued & CEPH_CAP_AUTH_EXCL)) {
+ 			inode->i_mode = attr->ia_mode;
+ 			dirtied |= CEPH_CAP_AUTH_EXCL;
+ 		} else if ((issued & CEPH_CAP_AUTH_SHARED) == 0 ||
+@@ -2618,11 +2646,11 @@ int __ceph_setattr(struct mnt_idmap *idmap, struct inode *inode,
+ 		      inode, ceph_vinop(inode),
+ 		      atime.tv_sec, atime.tv_nsec,
+ 		      attr->ia_atime.tv_sec, attr->ia_atime.tv_nsec);
+-		if (issued & CEPH_CAP_FILE_EXCL) {
++		if (!do_sync && (issued & CEPH_CAP_FILE_EXCL)) {
+ 			ci->i_time_warp_seq++;
+ 			inode_set_atime_to_ts(inode, attr->ia_atime);
+ 			dirtied |= CEPH_CAP_FILE_EXCL;
+-		} else if ((issued & CEPH_CAP_FILE_WR) &&
++		} else if (!do_sync && (issued & CEPH_CAP_FILE_WR) &&
+ 			   timespec64_compare(&atime,
+ 					      &attr->ia_atime) < 0) {
+ 			inode_set_atime_to_ts(inode, attr->ia_atime);
+@@ -2658,7 +2686,7 @@ int __ceph_setattr(struct mnt_idmap *idmap, struct inode *inode,
+ 						     CEPH_FSCRYPT_BLOCK_SIZE));
+ 			req->r_fscrypt_file = attr->ia_size;
+ 			fill_fscrypt = true;
+-		} else if ((issued & CEPH_CAP_FILE_EXCL) && attr->ia_size >= isize) {
++		} else if (!do_sync && (issued & CEPH_CAP_FILE_EXCL) && attr->ia_size >= isize) {
+ 			if (attr->ia_size > isize) {
+ 				i_size_write(inode, attr->ia_size);
+ 				inode->i_blocks = calc_inode_blocks(attr->ia_size);
+@@ -2695,11 +2723,11 @@ int __ceph_setattr(struct mnt_idmap *idmap, struct inode *inode,
+ 		      inode, ceph_vinop(inode),
+ 		      mtime.tv_sec, mtime.tv_nsec,
+ 		      attr->ia_mtime.tv_sec, attr->ia_mtime.tv_nsec);
+-		if (issued & CEPH_CAP_FILE_EXCL) {
++		if (!do_sync && (issued & CEPH_CAP_FILE_EXCL)) {
+ 			ci->i_time_warp_seq++;
+ 			inode_set_mtime_to_ts(inode, attr->ia_mtime);
+ 			dirtied |= CEPH_CAP_FILE_EXCL;
+-		} else if ((issued & CEPH_CAP_FILE_WR) &&
++		} else if (!do_sync && (issued & CEPH_CAP_FILE_WR) &&
+ 			   timespec64_compare(&mtime, &attr->ia_mtime) < 0) {
+ 			inode_set_mtime_to_ts(inode, attr->ia_mtime);
+ 			dirtied |= CEPH_CAP_FILE_WR;
 -- 
 2.43.0
 
