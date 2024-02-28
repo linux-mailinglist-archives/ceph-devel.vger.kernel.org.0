@@ -1,79 +1,79 @@
-Return-Path: <ceph-devel+bounces-922-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-923-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE25686A45B
-	for <lists+ceph-devel@lfdr.de>; Wed, 28 Feb 2024 01:22:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC0086A48B
+	for <lists+ceph-devel@lfdr.de>; Wed, 28 Feb 2024 01:45:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B81D1F2B34C
-	for <lists+ceph-devel@lfdr.de>; Wed, 28 Feb 2024 00:22:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9F201F23881
+	for <lists+ceph-devel@lfdr.de>; Wed, 28 Feb 2024 00:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664D236B;
-	Wed, 28 Feb 2024 00:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85137A23;
+	Wed, 28 Feb 2024 00:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IV0ta4lB"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZQaWPm0q"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4A5363
-	for <ceph-devel@vger.kernel.org>; Wed, 28 Feb 2024 00:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58EA01103
+	for <ceph-devel@vger.kernel.org>; Wed, 28 Feb 2024 00:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709079756; cv=none; b=jnX8d+cnhCdTy+htPAPlvQkCVxH6rGNVbm/usSIIRN7h3fIGi910Pu1xM+BAS7FAN+37oSm7y+JXGGcTxUSjYBkL7Z1DBqx/AySiE7dvdWyhrCIqoJTZDD0KpapbiFfnubzFIhInlMQ52FI46XDItObZbFTz2FB1xq1kwoaZTyE=
+	t=1709081152; cv=none; b=FhvUwQoo7vi5SNNFroZ6dxy+D49Uq8qBbD/QVAZJYKBj5Qzv3C1rAnXQVxtvtqlTOCksmVEZ6oLPkwW8wtryVnHbLPdyJTBpUA3jZDqEdn8dGimydJRH13Vgbz0o0T1VN+z4xdYFdass0ZwxOKpsObwl5lIvmTBIM5FSS40h53Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709079756; c=relaxed/simple;
-	bh=AvthNizxEnoDWVRmPuDgHVRQdoqUS9mVhOmEfBdR37A=;
+	s=arc-20240116; t=1709081152; c=relaxed/simple;
+	bh=gSZyUP6O6g6J4r0kXzxhii7OTqAez7MkpEAt9mr2qdo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OmyV3K1lyctfx/9Rbev8LiL3gGp85V1oHc3kHHU+vPtpCss3B6nlZalvYWetv6IKaZlv9ri3QGAMtJVqAhJhq3ISmh7fss8R0+FN0C3mhuCVeZhCi/1S4c7/k4dPPfh2WzdR54gKZQH35KHlxevz8Mdzi5F+I0Pp9AvzL+5H0Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IV0ta4lB; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=YD4QohvWWuSA8p0fnOhQ0KKYNOV61xgxI87+S7PM6E9AoBay2oeF1KCWMZb726y7lI3S1LsVu1lyPwMEgSVaBy6eT/P9vNo+meiZwK9IN14ZGFpvXkie/zO4lBmgfLJEqoZYaJ8gTRwp6y/TPsUsxLLdXxY/9fit9EREM7CC7yU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZQaWPm0q; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709079753;
+	s=mimecast20190719; t=1709081149;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LDn8Z9M8eJrtz+eFKCzeIbal9gKBwiSbIH7LzjGN38M=;
-	b=IV0ta4lB5yXcGSbfCcLzRHK1j2y9DZTJUJq+ApxBuxbZA/4b8p50my+ODsB5I8lVpt479b
-	f7QgDjhBS9BNx72hr9teCkKVdoSkvhpsbfZr0YKr4L+gca9iwZ54gY6KjjqaRl6BZG1dZc
-	NJEsZv1A2glfdMrulL0Pmbu5Qx4SdIw=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Ar8Zc8bvpsf0N4SaHRr4rzqiyWfxRRv+3XLplpbFMcA=;
+	b=ZQaWPm0qoGTcToiklcsx5sdwXcxCRUI+7P7Jfu0C34UaelBf6h80m3uYkAM2c8tqx/p8SP
+	P0N5RjUNIJUZnSoLTKfn5SKxn1ik5rVZRsM96x+hNR81cltl7ntYZOo+sS17z5ONk0BwwE
+	AxuTPsUJSOFM7mJWmgaUdM0WihDpwW4=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-502-HhWAuP0rMWWN4OH7lFh9qA-1; Tue, 27 Feb 2024 19:22:28 -0500
-X-MC-Unique: HhWAuP0rMWWN4OH7lFh9qA-1
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1dc8e1a6011so34629665ad.2
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Feb 2024 16:22:28 -0800 (PST)
+ us-mta-607-whP4JQQvNjusfmmmV5fl1A-1; Tue, 27 Feb 2024 19:45:47 -0500
+X-MC-Unique: whP4JQQvNjusfmmmV5fl1A-1
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-6e5355a7e7fso1219292b3a.2
+        for <ceph-devel@vger.kernel.org>; Tue, 27 Feb 2024 16:45:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709079747; x=1709684547;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1709081146; x=1709685946;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LDn8Z9M8eJrtz+eFKCzeIbal9gKBwiSbIH7LzjGN38M=;
-        b=lVRYcRlEJiPc1Y66s4WG2DVZI90bYYWMHeh3z9VidbnTxzIpt6lig0rw72LpnGCmfq
-         41w7HdDnbpi4DgBhDFIfhbkpXu+C9Nk0zCEjROm7Frfog6mBmnMCi5fo9n5xNgd3lpzo
-         SHsO2MLrncLcUrzPcgTjZ46RTv0wfzCCatvagr3KwJaFebeCWnQ0GQmQDfuj5nhEmo6O
-         oBtrlS/H8Y6k/m0X9AoLj3ZOYMy9il46UiE9jYvQcKWanPYl6HnJgAd6txNo/UNnsWo5
-         GKzlZd6Ski1fMSLEVKKFFoEm2YZKm2Og8n7o2FZLtF9VSyFwaY2wJmbtTRsJ242FvulG
-         Z6EQ==
-X-Gm-Message-State: AOJu0YxeZx6wC1z8GJmZVL89EGwAUY9yb0Y8R+UbPsX0E2WoVasUisQw
-	2VUA5xOn16jhP//ZR7m/ti3Anmn2KcgFQaPIoG8IqRM4JwTZx10G8CwkVmVJD+2fHZ/fH8BT0U1
-	kvB1bk1vdy8NxCJZKupM3lGc5bqIT/GPA4qilERUP+YUFXxJoBRbRgjrStrg=
-X-Received: by 2002:a17:903:2310:b0:1dc:b30b:505b with SMTP id d16-20020a170903231000b001dcb30b505bmr6285261plh.31.1709079747568;
-        Tue, 27 Feb 2024 16:22:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFBtiC921MlAIoF/dE03NPxSmmJt0UvO4VvyKbJ13eTEmRSbsYntdVwvLxoLHUuoW19wi9ZSw==
-X-Received: by 2002:a17:903:2310:b0:1dc:b30b:505b with SMTP id d16-20020a170903231000b001dcb30b505bmr6285246plh.31.1709079747248;
-        Tue, 27 Feb 2024 16:22:27 -0800 (PST)
+        bh=Ar8Zc8bvpsf0N4SaHRr4rzqiyWfxRRv+3XLplpbFMcA=;
+        b=Q1/1+CV9P/d+2DBlypFAbPfgwZmm8ocYJik3IPI2T7xUxokHiwezsh9ZdR9Ac3LTpD
+         IwY49PLqdOOfJnUKeHBkc4DEPK5u36qzDyjZjLbdJNvgywidCm3r02k/sccOnQL6xFzj
+         YWZJrHJZVpR7xUvtA/WVmtyAN9osKy2aSm85zo8XhG+sHAtaSQeJo/BGGNuPshAl3+V1
+         NiWSlI6OPfs/5cMAjbGuU9Hf2e0gQlPFbZrzrBHyiYKyNUzENP+qY5gX9eVBW4Tw5rES
+         Uhax1WhPEY4qkQJsPJbkWDb6w3gYqgiJsXLnQEUiBvdjeiktQA6dQQHxS9IU8mkOczP2
+         MXXg==
+X-Gm-Message-State: AOJu0YwvIKvjOVmAH4WkMieHm+1/BaQriz5ygjWk33k9M+82DfV97UvG
+	sUAesxZ4JJwwnK9dBTYX0VLt0m0y3uZiWDOjZ9AZGyGeFWafvr4UXqs3Ler802+9f98HocNyujX
+	UEm8WoNKk1CptlupNfE8Gmv3gPcYVoc69ZPsZLML6cbTBlSqaOIaoMPulzSk=
+X-Received: by 2002:a17:902:a3c6:b0:1d9:9e4f:c0b3 with SMTP id q6-20020a170902a3c600b001d99e4fc0b3mr10001816plb.64.1709081146335;
+        Tue, 27 Feb 2024 16:45:46 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFQDeeFYyzee8qHoEMmjCRvcx2e+eIuWqAutzQoa4Zch0jIPe35S1ujU8fDBeKFMiqxUoYO0Q==
+X-Received: by 2002:a17:902:a3c6:b0:1d9:9e4f:c0b3 with SMTP id q6-20020a170902a3c600b001d99e4fc0b3mr10001804plb.64.1709081146000;
+        Tue, 27 Feb 2024 16:45:46 -0800 (PST)
 Received: from [10.72.112.85] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id lh3-20020a170903290300b001dc95cded74sm2100852plb.233.2024.02.27.16.22.24
+        by smtp.gmail.com with ESMTPSA id s18-20020a170902a51200b001d9a42f6183sm2101916plq.45.2024.02.27.16.45.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Feb 2024 16:22:26 -0800 (PST)
-Message-ID: <2563efc0-38a8-45b4-b6fe-e0eac5d8c558@redhat.com>
-Date: Wed, 28 Feb 2024 08:22:22 +0800
+        Tue, 27 Feb 2024 16:45:45 -0800 (PST)
+Message-ID: <831bfb4a-6213-4e32-8c68-252be354342e@redhat.com>
+Date: Wed, 28 Feb 2024 08:45:41 +0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -83,16 +83,16 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v6 3/3] libceph: just wait for more data to be available
  on the socket
+Content-Language: en-US
 To: Luis Henriques <lhenriques@suse.de>
 Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, jlayton@kernel.org,
  vshankar@redhat.com, mchangir@redhat.com
 References: <20240125023920.1287555-1-xiubli@redhat.com>
  <20240125023920.1287555-4-xiubli@redhat.com> <871q8x4yac.fsf@suse.de>
-Content-Language: en-US
 From: Xiubo Li <xiubli@redhat.com>
 In-Reply-To: <871q8x4yac.fsf@suse.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
 On 2/28/24 01:22, Luis Henriques wrote:
@@ -149,11 +149,28 @@ On 2/28/24 01:22, Luis Henriques wrote:
 > memory, I thought I should report it immediately.  Maybe someone has any
 > idea.
 
-Thanks Luis to reporting this.
+The following patch should fix it. I haven't test it yet. Will do it 
+later today:
 
-Let me try to have a look and fix it.
 
-- Xiubo
+diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+index a0ca5414b333..2c32ad4d9774 100644
+--- a/net/ceph/messenger_v2.c
++++ b/net/ceph/messenger_v2.c
+@@ -1860,10 +1860,10 @@ static int prepare_read_control_remainder(struct 
+ceph_connection *con)
+  static int prepare_read_data(struct ceph_connection *con)
+  {
+         struct bio_vec bv;
++       u64 len = con->in_msg->sparse_read_total ? : data_len(con->in_msg);
+
+         con->in_data_crc = -1;
+-       ceph_msg_data_cursor_init(&con->v2.in_cursor, con->in_msg,
+-                                 data_len(con->in_msg));
++       ceph_msg_data_cursor_init(&con->v2.in_cursor, con->in_msg, len);
+
+         get_bvec_at(&con->v2.in_cursor, &bv);
+         if (ceph_test_opt(from_msgr(con->msgr), RXBOUNCE)) {
 
 
 > Cheers,
