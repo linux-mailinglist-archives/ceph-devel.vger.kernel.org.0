@@ -1,46 +1,45 @@
-Return-Path: <ceph-devel+bounces-927-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-929-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CBD986B117
-	for <lists+ceph-devel@lfdr.de>; Wed, 28 Feb 2024 15:00:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D7886B13C
+	for <lists+ceph-devel@lfdr.de>; Wed, 28 Feb 2024 15:05:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 174D81F27043
-	for <lists+ceph-devel@lfdr.de>; Wed, 28 Feb 2024 14:00:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0CA1F22B23
+	for <lists+ceph-devel@lfdr.de>; Wed, 28 Feb 2024 14:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F1D157E8A;
-	Wed, 28 Feb 2024 14:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94641534ED;
+	Wed, 28 Feb 2024 14:05:13 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00151509AB
-	for <ceph-devel@vger.kernel.org>; Wed, 28 Feb 2024 14:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0357814DFD6
+	for <ceph-devel@vger.kernel.org>; Wed, 28 Feb 2024 14:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709128824; cv=none; b=ShmYrJnJpO9+1iK4zt4AU7ruYBXWRUA0pr+yUrCE4Q4KOT5YhKkyzNNSUplRQMx7xIoycp0HjIAIp0lFJUnrVM6uoNa8NwXjw8eadAY3ojDl2/qOGzIcipoVRz7MkFE+D9WTeVx3xGwSSN3j+9lnIPIzs0RRyj6ToLao1EUdOGk=
+	t=1709129113; cv=none; b=IXiCBRUz+gERNynz5Gfd3URB//7bcLnVVACa1XmRxjQCRb129nlMwUlPPBhdV0tIG5mKrB8pHs55lVFXPZFDO5IgQEt9yA26O9LjqdXkIh/+xyKQzlCEPGlbwIe/pT9N9Cw17bbHj9SmnwIgW4464UU0Gzd9nQ+7Fg/rLVcLQ5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709128824; c=relaxed/simple;
-	bh=D8NXY2ItVpwUES37gGIiU5wimOI8cGreVo83CtoNigw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WHMBh1Urbtd+dLmvqp/kF4AEw4I0hzrPSP41v/POv28iDsiQLzl5VWpFV1PxuWvBfDgURpGnp/se24pCFPZddOtiH4JEdORSg2YqnVu7M4TzP2neHlPtZKhyl1YGQeFL7II1YTAaoOlH2AEhcOD2SkrSpaLHMFH71si6Bw3hBjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+	s=arc-20240116; t=1709129113; c=relaxed/simple;
+	bh=L3K4rtzy6gxBJUGpTTcskVWOegBL2LVnvlohsA27NJs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PfbOzvfpdWWxVqKLNRGuoLnwtUejpb/mQ8Ij37avd850+Dn3YaQEOpHKdO5m6gbX4GcJ+TsmBUZUzG1yi4mBD25BDiY8ubTLL231wnXQQObGLdNAI7Zpt6jWJHdsmDQ10fExjv5bsejsuFb3DCjZcS+zT7cCwpTL8wVliAbyzFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:48c4:26a9:d9ec:22cb])
-	by albert.telenet-ops.be with bizsmtp
-	id se072B0044gWvPH06e07Y7; Wed, 28 Feb 2024 15:00:13 +0100
+	by andre.telenet-ops.be with bizsmtp
+	id se542B0064gWvPH01e54PF; Wed, 28 Feb 2024 15:05:10 +0100
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rfKTV-001tZG-EJ;
-	Wed, 28 Feb 2024 15:00:07 +0100
+	id 1rfKYI-001tZa-F6;
+	Wed, 28 Feb 2024 15:05:04 +0100
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1rfKTe-006hlI-Vc;
-	Wed, 28 Feb 2024 15:00:06 +0100
+	id 1rfKYR-006hqA-UZ;
+	Wed, 28 Feb 2024 15:05:03 +0100
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Chris Down <chris@chrisdown.name>,
 	Petr Mladek <pmladek@suse.com>,
@@ -58,12 +57,10 @@ To: Chris Down <chris@chrisdown.name>,
 Cc: linux-kernel@vger.kernel.org,
 	ceph-devel@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/4] ceph: Use no_printk() helper
-Date: Wed, 28 Feb 2024 15:00:05 +0100
-Message-Id: <a21767eccb823435a7f18cdf115d7d572b4e945d.1709127473.git.geert+renesas@glider.be>
+Subject: [PATCH net-next] Simplify net_dbg_ratelimited() dummy
+Date: Wed, 28 Feb 2024 15:05:02 +0100
+Message-Id: <5d75ce122b5cbfe62b018a7719960e34cfcbb1f2.1709128975.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1709127473.git.geert+renesas@glider.be>
-References: <cover.1709127473.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -72,51 +69,30 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When printk-indexing is enabled, each printk() invocation emits a
-pi_entry structure.  This is even true when the call is protected by an
-always-false check: while the actual code to print the message is
-optimized out by the compiler, the pi_entry structure is still emitted.
-
-Fix this by replacing "if (0) printk(...)" constructs by calls to the
-no_printk() helper.
-
-This reduces the size of an arm64 kernel with CONFIG_PRINTK_INDEX=y and
-CONFIG_CEPH_FS=y by ca. 4 KiB.
+There is no need to wrap calls to the no_printk() helper inside an
+always-false check, as no_printk() already does that internally.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/linux/ceph/ceph_debug.h | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+ include/linux/net.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/include/linux/ceph/ceph_debug.h b/include/linux/ceph/ceph_debug.h
-index 11a92a946016eab5..5f904591fa5f9e57 100644
---- a/include/linux/ceph/ceph_debug.h
-+++ b/include/linux/ceph/ceph_debug.h
-@@ -27,17 +27,13 @@
- 		 ##__VA_ARGS__)
- # else
- /* faux printk call just to see any compiler warnings. */
--#  define dout(fmt, ...)	do {				\
--		if (0)						\
--			printk(KERN_DEBUG fmt, ##__VA_ARGS__);	\
--	} while (0)
--#  define doutc(client, fmt, ...)	do {			\
--		if (0)						\
--			printk(KERN_DEBUG "[%pU %llu] " fmt,	\
--			&client->fsid,				\
--			client->monc.auth->global_id,		\
--			##__VA_ARGS__);				\
--		} while (0)
-+#  define dout(fmt, ...)					\
-+		no_printk(KERN_DEBUG fmt, ##__VA_ARGS__)
-+#  define doutc(client, fmt, ...)				\
-+		no_printk(KERN_DEBUG "[%pU %llu] " fmt,		\
-+			  &client->fsid,			\
-+			  client->monc.auth->global_id,		\
-+			  ##__VA_ARGS__)
- # endif
- 
+diff --git a/include/linux/net.h b/include/linux/net.h
+index c9b4a63791a45948..15df6d5f27a7badc 100644
+--- a/include/linux/net.h
++++ b/include/linux/net.h
+@@ -299,10 +299,7 @@ do {									\
+ 	net_ratelimited_function(pr_debug, fmt, ##__VA_ARGS__)
  #else
+ #define net_dbg_ratelimited(fmt, ...)				\
+-	do {							\
+-		if (0)						\
+-			no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__); \
+-	} while (0)
++	no_printk(KERN_DEBUG pr_fmt(fmt), ##__VA_ARGS__)
+ #endif
+ 
+ #define net_get_random_once(buf, nbytes)			\
 -- 
 2.34.1
 
