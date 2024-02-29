@@ -1,145 +1,156 @@
-Return-Path: <ceph-devel+bounces-939-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-940-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CAC786C73D
-	for <lists+ceph-devel@lfdr.de>; Thu, 29 Feb 2024 11:48:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADABC86CDAD
+	for <lists+ceph-devel@lfdr.de>; Thu, 29 Feb 2024 16:54:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02D611F231C1
-	for <lists+ceph-devel@lfdr.de>; Thu, 29 Feb 2024 10:48:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09903B25926
+	for <lists+ceph-devel@lfdr.de>; Thu, 29 Feb 2024 15:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1070B79DDF;
-	Thu, 29 Feb 2024 10:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AC615F320;
+	Thu, 29 Feb 2024 15:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mdlrkwjx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r1JUMKjI"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534BE79DCF;
-	Thu, 29 Feb 2024 10:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED1915F308;
+	Thu, 29 Feb 2024 15:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709203712; cv=none; b=p2rMt1BU12xnjTP0d4LLwpACWLJR+YGD+1RtjDkcykUVM380x6fUcQbfdS482LEwZnV/NZQEzQohyd7OAS7qMBenVjzgAfHLbaIFVOV6lEo07t99le/YM5bcRAhxqAX5oE+6MHAmx5XNboI3KrqCuazt9y9biOU0anUwQjerJwo=
+	t=1709221769; cv=none; b=jM843040C4cZboKQnHpH5tdv4i4bhsqSmDpmGEZ/Cw8VaFG1MOA70wtgazxma3GPhot+PL3+4zktKG9nHEcmwA1Dbqw7V9OSpsn0FViv0zlkNYNrx4ycpmsb5kYoVlduJ0KLLABsu1SoLBWn6XOM5X59uK7xYkFuKW/cf3OWPwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709203712; c=relaxed/simple;
-	bh=b6a/bwHTRJFN6ecS46XR5ZRCXemQ7CwQoG3XkXz9OJU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZIB/E0ivqjDJgApKHRslwY/4uXm9XxGpUDo6LRXROYqtpZP6CAl4sHLAzzahKFDcvz96TstprLowbHGTDuB6Kl5Sb4Su1NR5lcpgCjsXGJZPf3jZxnWMrgcdBoiYvDDP4hv7XY3mfA3ziFlbHDs7F8xbD24GkfuikOQrpbW41Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mdlrkwjx; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-5a04dd6721dso202239eaf.0;
-        Thu, 29 Feb 2024 02:48:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709203710; x=1709808510; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NnCCO7nodxLFeiorzdBxG1atN61rxSRJVQMtzMIAomA=;
-        b=Mdlrkwjx+ppNlpDi9pGzuVPD5wok1kW9Xm7EIGnSL5bBsWD5DMLaTx/wKf8oFnztrS
-         FKmmrPZhyYOh43AFWjjTDvAFl7GPQw1U5XzclSZcRxgMpbWaDxqaIoF9XzCgb4+D4HvA
-         DrA9Gya3g7VOm9LTsaMPY4C9oDImvtt8qyFYznbYsUyFIuH/2LPbC4/v1NtaF5AJmXlR
-         +A/KHrNpCgZVV1QyI9SR7t2k13wxg7hLn0yGcjVEoTHWJ2fHSPgf2DL7PYQxeIXUntOU
-         OZnHvXgnLKKZOEF9f5s1z16mX9fmLMbmU06BYDHehYPsJve21Vk6PqLWnFbTQD7/fdQ8
-         aoCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709203710; x=1709808510;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NnCCO7nodxLFeiorzdBxG1atN61rxSRJVQMtzMIAomA=;
-        b=rmhpfpHKUUTXEIflSuOPl8SK3J1yL8weR1XeYoA46Cw49DWY1lQEfH5uJgk19BlZng
-         Na6j4y4BFzFZxmUfWNWzDmcuAl24YauR6uTqRNvFBw8TIqzZqKXyyQXjqKlHZH2waz5N
-         uImkLNuGtARMoHT/4RvjJqhepvg5nZdscJE3rrP+Jv1SXY9iNOgA2nxAWCNN0ggBfgfx
-         fStIoCCuPWBBKdIDSJ7FSMZFxvsmcHr92wR87XSwRMBP28jHBmmeRBOGKvnqnUkmqFnA
-         b4KuTBNK+JwY4afUywk+Nj08ksV59OWpCRmggG7iqRsEZJX6015BpTpZxtu4I9vFHDTr
-         K8GA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5Xi7VFDYI9dt6uneAb0C+rAMPclI0CpCLGl/IgbbqVp2TsS5jqlhGAtwFg4Uezpk/ypwdWCely1fikU6NDOH0hqbensGd
-X-Gm-Message-State: AOJu0YzH8urYY/3sTWOWPqYTbhIWkuHn/XAcHSMRy45Ven/RXWCI/RGx
-	gFPI7YIbkPJ5Lf4KJNGTxDm9D1fLOXSB6hxIOtWl4Z+BKAoZlgBtrUsw6t4dx8qaVPxaH0nfcFa
-	FhCQNJQQUccxYa7jx1qCj1PFLyvQ=
-X-Google-Smtp-Source: AGHT+IFz18nU38OzSmBaEvQANGtpy7VF58o0lr/KLcVKXCo7GX1xRj8n5lBF2WnMt0eXlyNJ+GUDp96PZKqo+UGfU64=
-X-Received: by 2002:a4a:d2c7:0:b0:5a0:4598:1f81 with SMTP id
- j7-20020a4ad2c7000000b005a045981f81mr1636677oos.4.1709203709783; Thu, 29 Feb
- 2024 02:48:29 -0800 (PST)
+	s=arc-20240116; t=1709221769; c=relaxed/simple;
+	bh=894SECjX07TeJHgEDN4GpeYDrHauzDYi/LFjH0WQrXA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=L9FdGofX9vCxXrHlGVpGjx0Yg63QsNzIkdchGG/CLyAPJsdXJvKD5GWt6NyyxGkq8Vvp6pOlRfWnqkkHz2z1n7E7DOBkHQnqJ8O/6Aj3oLRIsFZX/KgvDEig+I7R1zYXIuE1n0HTTkw8Re93rbWIPY3BoIwGRYUOEpmRMOtoIN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r1JUMKjI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B64F9C433A6;
+	Thu, 29 Feb 2024 15:49:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709221768;
+	bh=894SECjX07TeJHgEDN4GpeYDrHauzDYi/LFjH0WQrXA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=r1JUMKjILmIExy8I6Zi0vmVS8LhIsFeyoGWbpLuQSMPVimfjZSi0MeQcaPCZy5w1U
+	 frm+o/TWdI+46DBT47nIB5AXAWU3Wgm1JsUbxWz2ioSAr1dgVYFFuUHLZo8jHmf2re
+	 F3NrJgzogFLb9ELFXIOC0WcrS2KyA2HB9Vt9KF6w4NCqITovXZgBB6wDzxSdKCxlnT
+	 2koSV5us7TVI2wMvsvFTNwoDLRFLXF5vABYyzEFS8+jAH5iY1pOvuk9hklW/raBbYk
+	 Kdh1ymR7Jq0llEAbrLy7HKD8xtMzuCcGKPJ5ljll6ydhk0FgF0vyPQpHD1Lp6bZjs5
+	 aZcL1dU/w2KnA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Xiubo Li <xiubli@redhat.com>,
+	Milind Changire <mchangir@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Sasha Levin <sashal@kernel.org>,
+	ceph-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.7 20/26] ceph: always queue a writeback when revoking the Fb caps
+Date: Thu, 29 Feb 2024 10:48:39 -0500
+Message-ID: <20240229154851.2849367-20-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240229154851.2849367-1-sashal@kernel.org>
+References: <20240229154851.2849367-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240229041950.738878-1-xiubli@redhat.com>
-In-Reply-To: <20240229041950.738878-1-xiubli@redhat.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Thu, 29 Feb 2024 11:48:17 +0100
-Message-ID: <CAOi1vP-n34TCcKoLLKe3yXRqS93qT4nc5pkM8Byo-D4zH-KZWA@mail.gmail.com>
-Subject: Re: [PATCH] libceph: init the cursor when preparing the sparse read
-To: xiubli@redhat.com
-Cc: ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com, 
-	mchangir@redhat.com, stable@vger.kernel.org, 
-	Luis Henriques <lhenriques@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.7.6
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 29, 2024 at 5:22=E2=80=AFAM <xiubli@redhat.com> wrote:
->
-> From: Xiubo Li <xiubli@redhat.com>
->
-> The osd code has remove cursor initilizing code and this will make
-> the sparse read state into a infinite loop. We should initialize
-> the cursor just before each sparse-read in messnger v2.
->
-> Cc: stable@vger.kernel.org
-> URL: https://tracker.ceph.com/issues/64607
-> Fixes: 8e46a2d068c9 ("libceph: just wait for more data to be available on=
- the socket")
-> Reported-by: Luis Henriques <lhenriques@suse.de>
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ---
->  net/ceph/messenger_v2.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-> index a0ca5414b333..7ae0f80100f4 100644
-> --- a/net/ceph/messenger_v2.c
-> +++ b/net/ceph/messenger_v2.c
-> @@ -2025,6 +2025,7 @@ static int prepare_sparse_read_cont(struct ceph_con=
-nection *con)
->  static int prepare_sparse_read_data(struct ceph_connection *con)
->  {
->         struct ceph_msg *msg =3D con->in_msg;
-> +       u64 len =3D con->in_msg->sparse_read_total ? : data_len(con->in_m=
-sg);
->
->         dout("%s: starting sparse read\n", __func__);
->
-> @@ -2034,6 +2035,8 @@ static int prepare_sparse_read_data(struct ceph_con=
-nection *con)
->         if (!con_secure(con))
->                 con->in_data_crc =3D -1;
->
-> +       ceph_msg_data_cursor_init(&con->v2.in_cursor, con->in_msg, len);
-> +
->         reset_in_kvecs(con);
->         con->v2.in_state =3D IN_S_PREPARE_SPARSE_DATA_CONT;
->         con->v2.data_len_remain =3D data_len(msg);
-> --
-> 2.43.0
->
+From: Xiubo Li <xiubli@redhat.com>
 
-Hi Xiubo,
+[ Upstream commit 902d6d013f75b68f31d208c6f3ff9cdca82648a7 ]
 
-How did this get missed?  Was generic/580 not paired with msgr2 in crc
-mode or are we not running generic/580 at all?
+In case there is 'Fw' dirty caps and 'CHECK_CAPS_FLUSH' is set we
+will always ignore queue a writeback. Queue a writeback is very
+important because it will block kclient flushing the snapcaps to
+MDS and which will block MDS waiting for revoking the 'Fb' caps.
 
-Multiple runs have happened since the patch was staged so if the matrix
-is set up correctly ms_mode=3Dcrc should have been in effect for xfstests
-at least a couple of times.
+Link: https://tracker.ceph.com/issues/50223
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+Reviewed-by: Milind Changire <mchangir@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/ceph/caps.c | 48 ++++++++++++++++++++++++------------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-Thanks,
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index 9c02f328c966c..ad4d5387aa1c8 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -2155,6 +2155,30 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags)
+ 		      ceph_cap_string(cap->implemented),
+ 		      ceph_cap_string(revoking));
+ 
++		/* completed revocation? going down and there are no caps? */
++		if (revoking) {
++			if ((revoking & cap_used) == 0) {
++				doutc(cl, "completed revocation of %s\n",
++				      ceph_cap_string(cap->implemented & ~cap->issued));
++				goto ack;
++			}
++
++			/*
++			 * If the "i_wrbuffer_ref" was increased by mmap or generic
++			 * cache write just before the ceph_check_caps() is called,
++			 * the Fb capability revoking will fail this time. Then we
++			 * must wait for the BDI's delayed work to flush the dirty
++			 * pages and to release the "i_wrbuffer_ref", which will cost
++			 * at most 5 seconds. That means the MDS needs to wait at
++			 * most 5 seconds to finished the Fb capability's revocation.
++			 *
++			 * Let's queue a writeback for it.
++			 */
++			if (S_ISREG(inode->i_mode) && ci->i_wrbuffer_ref &&
++			    (revoking & CEPH_CAP_FILE_BUFFER))
++				queue_writeback = true;
++		}
++
+ 		if (cap == ci->i_auth_cap &&
+ 		    (cap->issued & CEPH_CAP_FILE_WR)) {
+ 			/* request larger max_size from MDS? */
+@@ -2182,30 +2206,6 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags)
+ 			}
+ 		}
+ 
+-		/* completed revocation? going down and there are no caps? */
+-		if (revoking) {
+-			if ((revoking & cap_used) == 0) {
+-				doutc(cl, "completed revocation of %s\n",
+-				      ceph_cap_string(cap->implemented & ~cap->issued));
+-				goto ack;
+-			}
+-
+-			/*
+-			 * If the "i_wrbuffer_ref" was increased by mmap or generic
+-			 * cache write just before the ceph_check_caps() is called,
+-			 * the Fb capability revoking will fail this time. Then we
+-			 * must wait for the BDI's delayed work to flush the dirty
+-			 * pages and to release the "i_wrbuffer_ref", which will cost
+-			 * at most 5 seconds. That means the MDS needs to wait at
+-			 * most 5 seconds to finished the Fb capability's revocation.
+-			 *
+-			 * Let's queue a writeback for it.
+-			 */
+-			if (S_ISREG(inode->i_mode) && ci->i_wrbuffer_ref &&
+-			    (revoking & CEPH_CAP_FILE_BUFFER))
+-				queue_writeback = true;
+-		}
+-
+ 		/* want more caps from mds? */
+ 		if (want & ~cap->mds_wanted) {
+ 			if (want & ~(cap->mds_wanted | cap->issued))
+-- 
+2.43.0
 
-                Ilya
 
