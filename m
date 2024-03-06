@@ -1,145 +1,211 @@
-Return-Path: <ceph-devel+bounces-956-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-957-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51EB2872C03
-	for <lists+ceph-devel@lfdr.de>; Wed,  6 Mar 2024 02:17:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20910873587
+	for <lists+ceph-devel@lfdr.de>; Wed,  6 Mar 2024 12:24:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E99A28953A
-	for <lists+ceph-devel@lfdr.de>; Wed,  6 Mar 2024 01:17:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 873421F26C4A
+	for <lists+ceph-devel@lfdr.de>; Wed,  6 Mar 2024 11:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F1E6FDC;
-	Wed,  6 Mar 2024 01:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BCC7CF3A;
+	Wed,  6 Mar 2024 11:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EFd3+H6M"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CDcHP2WC";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DZUEh/+j";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CDcHP2WC";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="DZUEh/+j"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D60463D9
-	for <ceph-devel@vger.kernel.org>; Wed,  6 Mar 2024 01:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B628F7BB17;
+	Wed,  6 Mar 2024 11:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709687867; cv=none; b=rf7wMGFFQUfurnx6VFQTZKrku9fw1soaToVYZps60GMZpTe9sjuySackFeBGf9oOCh1+T98D3esUv+4SUKE1NqppxHOnVJWcqJyggrF5bDJQhqmk8tkPCRU/OIhyRP2j4frwQqb9SeGCnCswzSuVjdT2FRDkPlIM9FTXhH+AKuQ=
+	t=1709724281; cv=none; b=ecDz/tI40y+ZjB67tkl9Jv3wemcwhtGJwdFj78Of0e4rAJfOuRAYVo1dEXFEV1rZ9UK/zHMk/sNXpfI7fLq+xByRMvA1kiPv5BGbSZIadjQ2ayjS/4nuJNb0OI/ZN0zydIb0mQ3dKcDezlYO+5hmGP33TZUVlUdj+72t/WgT0I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709687867; c=relaxed/simple;
-	bh=y65RKsbmlzXJf/JzYfgyoDk48h1PddbLHcQTH86O6+c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bZDBw9Z1v6LlN7FJRhLfoUHbYe/HwDV0HVqHUUMHADB7DlfvmVvHPKHN4SbQoJ8US0AQvHx+KEN5v5B5jK1WtgfyEEZkT36tHKRCPRuWM1OQVOXe0cLX+GvaZM/XmMSeFSAwKm77KT9DJCVYQ/LW6BDfF7CZxH9b4rtg5tGnRQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EFd3+H6M; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1709687864;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KSopfOJkAuYOw6M3itXYUuSKT5SC9i3M+OvcTTde/l4=;
-	b=EFd3+H6MTTJBCHD7+x4QFvHR2HydqUpqgAMig88iqtDcOGU6vCE4vXsJXYeDqx8eJUnwCW
-	2/74nNM/yTdTvLUqEX0neC4yrvLWURr7TB3BHc2awTyq8+K+XxHc3qmOUQMw7Xu3SXLEU9
-	cZu+YqLUPIsKyHVi2U4AsR0DBGioVzA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-57-amOpKSPGOZGuX2z2dQNEjA-1; Tue, 05 Mar 2024 20:17:42 -0500
-X-MC-Unique: amOpKSPGOZGuX2z2dQNEjA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	s=arc-20240116; t=1709724281; c=relaxed/simple;
+	bh=nLXY6FdbORSIR6lx3hLaHRZJzgY+pdtrixTnkTvcyBU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fI7NjudXTFmD/oTjLeLJT/GijI8k509EajlRqK0MbU816btDd4ywYv1g5E9qJIA55jv9ecs6UbK1r4zD7NvRPL5Y+a8n0SMyr2RAC05dpHpnUhIzez7tZpM+dBH62NCbfFqZnpaVD9tPPBC5J74PfHC3CcTLURA3ipojFyKyn/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CDcHP2WC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DZUEh/+j; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CDcHP2WC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=DZUEh/+j; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7B6B4800265;
-	Wed,  6 Mar 2024 01:17:41 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (unknown [10.72.112.9])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 5AB1F1C060D6;
-	Wed,  6 Mar 2024 01:17:35 +0000 (UTC)
-From: xiubli@redhat.com
-To: linux-fscrypt@vger.kernel.org
-Cc: ebiggers@kernel.org,
-	tytso@mit.edu,
-	jaegeuk@kernel.org,
-	linux-kernel@vger.kernel.org,
-	idryomov@gmail.com,
-	ceph-devel@vger.kernel.org,
-	jlayton@kernel.org,
-	vshankar@redhat.com,
-	mchangir@redhat.com,
-	Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: return -ENODATA when xattr doesn't exist for removexattr
-Date: Wed,  6 Mar 2024 09:15:02 +0800
-Message-ID: <20240306011502.183332-1-xiubli@redhat.com>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B2AA668836;
+	Wed,  6 Mar 2024 11:24:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709724277; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btRou0Rd51lnj5GZrjg73LrUj608fRRr98VyK+uI1hU=;
+	b=CDcHP2WCnIsowGyww0Vy8Hc0okGO5z3RkUxLHKQeLr9oyc/b5xm2H7DzoAmUFk6apBLGhL
+	Fa6m8Q0QCThEJf+bu9MtUvoPPlpsrhvKaU9XOFmn6W9wo2XagFnhwnt3QBo25qpyNOuPs1
+	bG/CU3oK/oAM7ylMDGummyyt8nA0qOQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709724277;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btRou0Rd51lnj5GZrjg73LrUj608fRRr98VyK+uI1hU=;
+	b=DZUEh/+j3ashhl7h3NOjjrvhgHNQa82IcSX0qKEYBUUKkInSrMkBookX5Sqh9jH+55ZaUJ
+	db+GSI8dQlfMrTAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709724277; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btRou0Rd51lnj5GZrjg73LrUj608fRRr98VyK+uI1hU=;
+	b=CDcHP2WCnIsowGyww0Vy8Hc0okGO5z3RkUxLHKQeLr9oyc/b5xm2H7DzoAmUFk6apBLGhL
+	Fa6m8Q0QCThEJf+bu9MtUvoPPlpsrhvKaU9XOFmn6W9wo2XagFnhwnt3QBo25qpyNOuPs1
+	bG/CU3oK/oAM7ylMDGummyyt8nA0qOQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709724277;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btRou0Rd51lnj5GZrjg73LrUj608fRRr98VyK+uI1hU=;
+	b=DZUEh/+j3ashhl7h3NOjjrvhgHNQa82IcSX0qKEYBUUKkInSrMkBookX5Sqh9jH+55ZaUJ
+	db+GSI8dQlfMrTAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2FDAC13A65;
+	Wed,  6 Mar 2024 11:24:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kbayBnVS6GUVEwAAD6G6ig
+	(envelope-from <lhenriques@suse.de>); Wed, 06 Mar 2024 11:24:37 +0000
+Received: from localhost (brahms.olymp [local])
+	by brahms.olymp (OpenSMTPD) with ESMTPA id e845dec5;
+	Wed, 6 Mar 2024 11:24:32 +0000 (UTC)
+From: Luis Henriques <lhenriques@suse.de>
+To: xiubli@redhat.com
+Cc: ceph-devel@vger.kernel.org,  idryomov@gmail.com,  jlayton@kernel.org,
+  vshankar@redhat.com,  mchangir@redhat.com,  stable@vger.kernel.org
+Subject: Re: [PATCH v2] libceph: init the cursor when preparing the sparse read
+In-Reply-To: <20240306010544.182527-1-xiubli@redhat.com> (xiubli@redhat.com's
+	message of "Wed, 6 Mar 2024 09:05:44 +0800")
+References: <20240306010544.182527-1-xiubli@redhat.com>
+Date: Wed, 06 Mar 2024 11:24:32 +0000
+Message-ID: <87msrbr4b3.fsf@suse.de>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=CDcHP2WC;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="DZUEh/+j"
+X-Spamd-Result: default: False [-1.56 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 FROM_HAS_DN(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 TO_DN_NONE(0.00)[];
+	 DWL_DNSWL_LOW(-1.00)[suse.de:dkim];
+	 RCVD_COUNT_THREE(0.00)[4];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[7];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[ceph.com:url,suse.de:dkim,suse.de:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_LAST(0.00)[];
+	 FREEMAIL_CC(0.00)[vger.kernel.org,gmail.com,kernel.org,redhat.com];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 BAYES_HAM(-0.25)[73.24%]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: B2AA668836
+X-Spam-Level: 
+X-Spam-Score: -1.56
+X-Spam-Flag: NO
 
-From: Xiubo Li <xiubli@redhat.com>
+xiubli@redhat.com writes:
 
-The POSIX says we should return -ENODATA when the corresponding
-attribute doesn't exist when removing it. While there is one
-exception for the acl ones in the local filesystems, for exmaple
-for xfs, which will treat it as success.
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> The osd code has remove cursor initilizing code and this will make
+> the sparse read state into a infinite loop. We should initialize
+> the cursor just before each sparse-read in messnger v2.
+>
+> Cc: stable@vger.kernel.org
+> URL: https://tracker.ceph.com/issues/64607
+> Fixes: 8e46a2d068c9 ("libceph: just wait for more data to be available on=
+ the socket")
+> Reported-by: Luis Henriques <lhenriques@suse.de>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>
+> V2:
+> - Just removed the unnecessary 'sparse_read_total' check.
+>
 
-While in the MDS side there have two ways to remove the xattr:
-sending a CEPH_MDS_OP_SETXATTR request by setting the 'flags' with
-CEPH_XATTR_REMOVE and just issued a CEPH_MDS_OP_RMXATTR request
-directly.
+Thanks a lot for the quick fix, Xiubo.  FWIW:
 
-For the first one it will always return 0 when the corresponding
-xattr doesn't exist, while for the later one it will return
--ENODATA instead, this should be fixed in MDS to make them to be
-consistent.
+Tested-by: Luis Henriques <lhenriques@suse.de>
 
-URL: https://tracker.ceph.com/issues/64679
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/acl.c   | 9 ++++++++-
- fs/ceph/xattr.c | 5 ++---
- 2 files changed, 10 insertions(+), 4 deletions(-)
+Note that I still see this test failing occasionally, but I haven't had
+time to help debugging it.  And that's a different issue, of course.  TBH
+I don't remember if this test ever used to reliably pass.  Here's the
+output diff shown by fstests in case you're not able to reproduce it:
 
-diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
-index 1564eacc253d..836b92526fa2 100644
---- a/fs/ceph/acl.c
-+++ b/fs/ceph/acl.c
-@@ -158,7 +158,14 @@ int ceph_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 		goto out_free;
- 	}
- 
--	ceph_set_cached_acl(inode, type, acl);
-+	/*
-+	 * If the attribute didn't exist to start with that's fine.
-+	 */
-+	if (!acl && ret == -ENODATA)
-+		ret = 0;
-+
-+	if (!ret)
-+		ceph_set_cached_acl(inode, type, acl);
- 
- out_free:
- 	kfree(value);
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index e066a556eccb..08b14eea66e9 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -613,11 +613,10 @@ static int __set_xattr(struct ceph_inode_info *ci,
- 			return err;
- 		}
- 		if (update_xattr < 0) {
--			if (xattr)
--				__remove_xattr(ci, xattr);
-+			err = __remove_xattr(ci, xattr);
- 			kfree(name);
- 			kfree(*newxattr);
--			return 0;
-+			return err;
- 		}
- 	}
- 
--- 
-2.43.0
+@@ -65,7 +65,7 @@
+ # Getting encryption key status
+ Present (user_count=3D1, added_by_self)
+ # Removing encryption key
+-Removed encryption key with identifier 69b2f6edeee720cce0577937eb8a6751
++Removed encryption key with identifier 69b2f6edeee720cce0577937eb8a6751, b=
+ut files still busy
+ # Getting encryption key status
+ Absent
+ # Verifying that the encrypted directory was "locked"
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+>
+> net/ceph/messenger_v2.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+> index a0ca5414b333..ab3ab130a911 100644
+> --- a/net/ceph/messenger_v2.c
+> +++ b/net/ceph/messenger_v2.c
+> @@ -2034,6 +2034,9 @@ static int prepare_sparse_read_data(struct ceph_con=
+nection *con)
+>  	if (!con_secure(con))
+>  		con->in_data_crc =3D -1;
+>=20=20
+> +	ceph_msg_data_cursor_init(&con->v2.in_cursor, con->in_msg,
+> +				  con->in_msg->sparse_read_total);
+> +
+>  	reset_in_kvecs(con);
+>  	con->v2.in_state =3D IN_S_PREPARE_SPARSE_DATA_CONT;
+>  	con->v2.data_len_remain =3D data_len(msg);
+> --=20
+>
+> 2.43.0
+>
 
 
