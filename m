@@ -1,108 +1,79 @@
-Return-Path: <ceph-devel+bounces-967-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-968-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81904876D5B
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 Mar 2024 23:55:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4718E876ECB
+	for <lists+ceph-devel@lfdr.de>; Sat,  9 Mar 2024 03:24:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2A1E1C21605
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 Mar 2024 22:55:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91948B213C6
+	for <lists+ceph-devel@lfdr.de>; Sat,  9 Mar 2024 02:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED48376F6;
-	Fri,  8 Mar 2024 22:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D347320B00;
+	Sat,  9 Mar 2024 02:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUiglckr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuPUcrl5"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3598936139;
-	Fri,  8 Mar 2024 22:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2A111187;
+	Sat,  9 Mar 2024 02:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709938537; cv=none; b=XFXvBbuQEfZe5gk1WyFaEWA1/K3/zBBSEVXS+Y7F6+x9zuWORwl2fTbDG1oGed+rLfilKbfMayrb7l+R1iewOIY8LVPKEXsrRQimvuHYKaWZDKeykmmKgzpYSqWwEPTIkMf8harR0cpjM7vpTl0OXKZbU52Ak/8SgOtS7bsKhkM=
+	t=1709951039; cv=none; b=p4eUIFT8P8ZMm3H3lkCCNLE3iVsXpejCJj1AGxNJh5LAnjoxY7sacXnUWpIfdvDvXjFgWXtL/M4HXqeLgc2PgYwpBFzUhgxY64aFZbnuuH21a1/5H6OE0IsxOxWc4MRt/IxbD8CwXvIoT245xXDqqQSp8U/PEqf091D9dQ6X1Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709938537; c=relaxed/simple;
-	bh=pfSg6It/BB7aJ2Ztply1ld0UBZWdSEmCaafMV+dOaHg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JjCYgzwHJ8rPayrM2magsSdY5hLAYwhrKU3e2xLZEsJSpI0rpTjbV6ub6zhlJ1FbW+RxYpnsATLHr1s6kwVT8c9XXvnqybOPkJPNtUOTOErndETzO75sCQeFZqgBhYdBQAOqVXQyQQsqgnSPBpQ49oOhpnQxtffIdvm8tfKX1/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUiglckr; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-33d38c9ca5bso1448646f8f.2;
-        Fri, 08 Mar 2024 14:55:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709938534; x=1710543334; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NYEGJ3+KsY3Gr5UtdEMMKdOU2b2xTlEcMdWaY9cKiX0=;
-        b=EUiglckrfWJ7v0RsvoRfOu+y5LTjRjq0gVrUda6+gtHHiY4cql9ui1WFFXEew81Lpn
-         hBA0bNDdIpvuQd1HRsc9HOi5aGxPTa+n4h301KUUVR3Tw+6nSyxAGAxQqYa3P2wXXq0u
-         0XslnrILKxVFtmOdBjXVUKRXpOUp/Ce3582OEQLLV770mMqMKmnxnW+GvB6kzHtKjdZs
-         2X45o+hzIqtSCVgdZSoaZX/eP+mqEwSTmIGaw1cMSQpM1aw5QgWTPRzjqbvRnDdvcR9X
-         MiGmsHub1lC61aLkYS2b6SkPAQR+WnnA+MpiIbGX3K1HSLv4bRoyM9Rli/2RdcMLY8yI
-         2G0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709938534; x=1710543334;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NYEGJ3+KsY3Gr5UtdEMMKdOU2b2xTlEcMdWaY9cKiX0=;
-        b=uARq8VsGgRWDUtjkfte8I6H98rCkms5gmXiJGWwEIOGrRYNuTR5jY/FdKW13g9/FcE
-         UIom7qmjOc0pwusrPohH6CENzLFBT4mAqH77uvoxEhwS0top5f1W0+b6L1HxZO3R56KU
-         x2ph4FBpoXHs37wiXjRCXCpWb9fJs6KAIsBJaVMsPnY5S8hqg5sV2uBjK0mSZ9LCER3k
-         1exauWTGRmmiHryxzHzBS/QYt7qz0bHPwwa5dqWipR/invx8F5MF+bqZ3f1QRBwwF/rF
-         NQ0a7MVUIVKwp9owAEbMYkiHZVD0ZuiJA6iFIkk/pvB6jjbAl6EDsmnOeEAziV2hGCCP
-         ToOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVytFiwfVypg7lun199DHYWXixHnmRnNkMeWQUG70HPlv5RoMIJkIjmoWUKSPQPGX2KbO0R4x5VdtCbo265vIhbzztcCQZMsD37OCH9
-X-Gm-Message-State: AOJu0YwgxXzIweg20q0NouQ0GmUY6vrIVhlWtl1y9daFUYaO6FXNTTqR
-	ni1T3/XN+fF93QFLo0w5aDuJwKREzKdpqJCfN5IYmF0ScstCdZQMn7zUVa/2
-X-Google-Smtp-Source: AGHT+IHPETF3Ift0Imjx2qP+woHemr9mwseZ/sG4FNO4Tgl7m0MVLd4Ar45Yui8oflOwdkPKAqxIYg==
-X-Received: by 2002:a05:6000:24f:b0:33d:6ef6:8762 with SMTP id m15-20020a056000024f00b0033d6ef68762mr326282wrz.29.1709938534350;
-        Fri, 08 Mar 2024 14:55:34 -0800 (PST)
-Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
-        by smtp.gmail.com with ESMTPSA id q27-20020a056000137b00b0033e72e104c5sm473743wrz.34.2024.03.08.14.55.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Mar 2024 14:55:32 -0800 (PST)
-From: Ilya Dryomov <idryomov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fix for 6.8-rc8
-Date: Fri,  8 Mar 2024 23:55:14 +0100
-Message-ID: <20240308225519.2098316-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.41.0
+	s=arc-20240116; t=1709951039; c=relaxed/simple;
+	bh=iSmAGuLbJhm5b4Bu6X4d/jOW0QLP41BZaDHV8Vsi1vY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=a0y8X19Lwd6Kvlgj78h8g4xSXzxyApLuXwMQ6DZVYOthqghl3h3wFoJPrQ/uS8kSzMD3ejI9JJJrqS686dZC3EIxuZzJJKFc+ajMBb9wKY2urkuVDQ53RcOSZNQqir855LA8xacAQBX+vUwmY+3Ni8+sjQMdxmBXQAsfRcCXK3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuPUcrl5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3D298C433C7;
+	Sat,  9 Mar 2024 02:23:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709951039;
+	bh=iSmAGuLbJhm5b4Bu6X4d/jOW0QLP41BZaDHV8Vsi1vY=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ZuPUcrl5gwgb8b0lghlDd2V+htFEtlbIND4RwUEpTkbhH9oMsHVb688xHK5rgrnu9
+	 9B9aAPTa9pn4A3o6q+c8grviGONXOg+KSl/9QC9xS9LY04ncOBq6gGEpaQONDA2Amw
+	 AN2zpw7s6I7Mh6D8OApW/0iJHRQPkmBZej+PQMUiXIPd5v3Ick9UZG29Qt5xyjVVsT
+	 QOL+mrPGDvBijyeqvS5OXLHt9Lhvi0/gwg0e9jtMsuAUTd3xmEt0tX3xf7aOuC0Xt0
+	 YsUNp3Nfa1+jN/GeQ2xvifKtxX9BJR56B/tuRV2NkG5fvi7Akhdu/+kC4YX86PxvEz
+	 /aZWBgufy7yWg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 1EA4DC39562;
+	Sat,  9 Mar 2024 02:23:59 +0000 (UTC)
+Subject: Re: [GIT PULL] Ceph fix for 6.8-rc8
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240308225519.2098316-1-idryomov@gmail.com>
+References: <20240308225519.2098316-1-idryomov@gmail.com>
+X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240308225519.2098316-1-idryomov@gmail.com>
+X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.8-rc8
+X-PR-Tracked-Commit-Id: 321e3c3de53c7530cd518219d01f04e7e32a9d23
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 09e5c48fea173b72f1c763776136eeb379b1bc47
+Message-Id: <170995103911.25885.2822617709688513134.pr-tracker-bot@kernel.org>
+Date: Sat, 09 Mar 2024 02:23:59 +0000
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+The pull request you sent on Fri,  8 Mar 2024 23:55:14 +0100:
 
-The following changes since commit 90d35da658da8cff0d4ecbb5113f5fac9d00eb72:
+> https://github.com/ceph/ceph-client.git tags/ceph-for-6.8-rc8
 
-  Linux 6.8-rc7 (2024-03-03 13:02:52 -0800)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/09e5c48fea173b72f1c763776136eeb379b1bc47
 
-are available in the Git repository at:
+Thank you!
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-6.8-rc8
-
-for you to fetch changes up to 321e3c3de53c7530cd518219d01f04e7e32a9d23:
-
-  libceph: init the cursor when preparing sparse read in msgr2 (2024-03-06 12:43:01 +0100)
-
-----------------------------------------------------------------
-A follow-up for sparse read fixes that went into -rc4 -- msgr2 case was
-missed and is corrected here.
-
-----------------------------------------------------------------
-Xiubo Li (1):
-      libceph: init the cursor when preparing sparse read in msgr2
-
- net/ceph/messenger_v2.c | 3 +++
- 1 file changed, 3 insertions(+)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
