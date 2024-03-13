@@ -1,140 +1,174 @@
-Return-Path: <ceph-devel+bounces-970-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-971-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E628878BC2
-	for <lists+ceph-devel@lfdr.de>; Tue, 12 Mar 2024 01:03:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E1987A576
+	for <lists+ceph-devel@lfdr.de>; Wed, 13 Mar 2024 11:02:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC3D81C211FB
-	for <lists+ceph-devel@lfdr.de>; Tue, 12 Mar 2024 00:03:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8E8B1F211B0
+	for <lists+ceph-devel@lfdr.de>; Wed, 13 Mar 2024 10:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6658472;
-	Tue, 12 Mar 2024 00:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404143A28E;
+	Wed, 13 Mar 2024 10:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CdIHrF+J"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dETBsuE7"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7FF79CC
-	for <ceph-devel@vger.kernel.org>; Tue, 12 Mar 2024 00:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3F23AC16
+	for <ceph-devel@vger.kernel.org>; Wed, 13 Mar 2024 10:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710201806; cv=none; b=tdD+gu/IGDlI0qy0Va+56dwYkRlTvb2F03+J/md0yeXmqHqrsGRHCggi8zY46X+Di+uXtCOY/AGTmoXonEpTz+hjLilaSeIP8LPiOrB2IlbGQeK68S5xP2msP1+R77rCTZ/fgMMzr8EfeBUV+2lU+tfOXt+3uUh6xpAt4XywVjY=
+	t=1710324124; cv=none; b=CGctY216d7B/rDRnpVpaoY248Rod1XLak9JE5kqaphB7ZQTj8XYdMZkQvT1BKMrP14Nxz0vw/NsuQYcDPCeHlXdRsgTSgJazTDJRmBdCvDIG+uFyRel+dm/rm6sksSc0WUeOuC6ZXrkzHTH0yJi72efWxe6x9l554fzCcHOmow8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710201806; c=relaxed/simple;
-	bh=vEVvDZ3C501jyXorksPcnb24ViyC8qmPoISEg/Xnado=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rSuV3d9gRG3oGN4PFH+CrOoK92gCYW0Gl8bUVRjV1ytLpYNAaCtV3KmBC0lZxUCODieNIxC7E0sgb/XehCbqw2WlfzZ4vUX4zssex7nALx2hSytBvZnpgbRHSsLPtgOyZISyulKN+GNHzGwpH52mtCWXa6JClY9rK24m873OSIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CdIHrF+J; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1710324124; c=relaxed/simple;
+	bh=eaURv39rf+ykpCglmGDZGN9OIXmeTMrslZuSeaci82Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RtrHbWmzIeUxfbd45fOGKp8pNaqLStkwfXGlcXJliXqBVpTUvYWMe4EISSdHNFxIjGJB3MncZPkm8nfHWczzxxqISMlf/9w87rhZSnOPy5CLu7deACjk0sMS3paidMxJqA5nMsNGA+8bXcLdwhtqRawrfj1R9AAmT6JcN+WGJ14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dETBsuE7; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710201803;
+	s=mimecast20190719; t=1710324121;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uaNIBBc+JitDpKvmzNnQpcdqvKiIGo31c+IvsHwtQqk=;
-	b=CdIHrF+JbqD1+nrOBBnGVh1dzpwJCE8ZcljaVC+15EMMfj1RUL3otmTkXYdQ6P6epmzGuE
-	Ib8s5rULiYQP2ixDEaUPtnsuwfzP/Ciux13A2ag7C81U64TmDMPiE7mR9dfY/mVnHSvWzN
-	eO2bbe9KcnAada1gAUjDrZBll66Cg2Q=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-589-lH7gRTELPKmheZzX83Srbg-1; Mon, 11 Mar 2024 20:03:22 -0400
-X-MC-Unique: lH7gRTELPKmheZzX83Srbg-1
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-5cf35636346so3516292a12.3
-        for <ceph-devel@vger.kernel.org>; Mon, 11 Mar 2024 17:03:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710201800; x=1710806600;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uaNIBBc+JitDpKvmzNnQpcdqvKiIGo31c+IvsHwtQqk=;
-        b=HamFsE8zzDa8xLsGgOZDCx5xYJLIJpHatiOZkdC2TU0KWczjTgy7CpoIyMvrhWonMB
-         ovFA+MiQ7puetv/RjpthlQC8aMBw0yLlKf6kvxI7molmklBuP3yqyay5Nn7EtBuwgz/n
-         hKcHMSz99g/lQi2/pQEwE4Y/eEPuK2r32mWfCA1DJmbe77CSCcLl22bctiniEF1b+CFr
-         RZy49ruHZoG11Wg/9yfA4+cq1uWA+/c50yYeyDLD4hD+wOKqJ6ht2NehK4ErZddfpDNa
-         eeRu4gUS6aVoLFprYRYm2mUZ7deXWWErpKWjdhSj10vWHT4r/tDMQmOl34akDYq5fT7v
-         0rFg==
-X-Gm-Message-State: AOJu0Yy9LBN0CkzT0cU8LvY1vYDYtH/2x6JmzGfWVvTF7XBD23er9iJH
-	uCacTpNXfVcjTntCOWPKMpJxxNCd1y6vy+rR5FaEbDeUGlMjGRC32vNkxiBrluIWQ4XyKie2WdS
-	9XH2gXjZC00qpOy47TZeDbDImGPtXv/fDjtS5zsPvpNp3H4d81I0K2j564Aw2cKT7xGdpuQ==
-X-Received: by 2002:a05:6a21:9211:b0:1a1:6afb:8e3 with SMTP id tl17-20020a056a21921100b001a16afb08e3mr2478948pzb.19.1710201800674;
-        Mon, 11 Mar 2024 17:03:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHNUjfH6vLuGzDxhiXZO6cxgcF+UAIkhYy1Fce4EoC5OoLAriGqfGAPOuY/WukZLS11muaWtA==
-X-Received: by 2002:a05:6a21:9211:b0:1a1:6afb:8e3 with SMTP id tl17-20020a056a21921100b001a16afb08e3mr2478921pzb.19.1710201800287;
-        Mon, 11 Mar 2024 17:03:20 -0700 (PDT)
-Received: from [10.72.112.38] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id s63-20020a17090a69c500b0029b9f35648asm5204053pjj.24.2024.03.11.17.03.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 11 Mar 2024 17:03:19 -0700 (PDT)
-Message-ID: <629e5c13-a9ca-486e-88f4-d7f0f0cf8b96@redhat.com>
-Date: Tue, 12 Mar 2024 08:03:15 +0800
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UxZTjh3vy+Lik+CXhClPmkjsTJPkm68U4Q9SRxDQexE=;
+	b=dETBsuE78mi4naL8nmkPeXHgVK+Haz4zhCUmR9hcVB1h5dVNJ8CnORBVxsImsLj8V3DQHs
+	vm8q3JL9AtUDKFyBTRF3ZDi4FGQGfx5OhMhsQzKUJWhgukJ0DX559Oo0gmdb1BS5cFqJEX
+	bx6HOWpZDroeNZ0rxmfIG+2Gny9/SfM=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-498--Uk4NPsjP-m865zlFI_OOA-1; Wed,
+ 13 Mar 2024 06:01:58 -0400
+X-MC-Unique: -Uk4NPsjP-m865zlFI_OOA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 37E40280009B;
+	Wed, 13 Mar 2024 10:01:58 +0000 (UTC)
+Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (unknown [10.72.112.174])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 678C52166B4F;
+	Wed, 13 Mar 2024 10:01:55 +0000 (UTC)
+From: xiubli@redhat.com
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	jlayton@kernel.org,
+	vshankar@redhat.com,
+	mchangir@redhat.com,
+	Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH v2] ceph: return -ENODATA when xattr doesn't exist for removexattr
+Date: Wed, 13 Mar 2024 17:59:42 +0800
+Message-ID: <20240313095942.775312-1-xiubli@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/6] ceph: check the cephx mds auth access in client
- side
-Content-Language: en-US
-To: Venky Shankar <vshankar@redhat.com>
-Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, jlayton@kernel.org,
- mchangir@redhat.com
-References: <20240227072705.593676-1-xiubli@redhat.com>
- <CACPzV1nBgM8xxfVY04M4AeTCyE3Lofw-oCnfkeo=cJEX3vrkgA@mail.gmail.com>
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <CACPzV1nBgM8xxfVY04M4AeTCyE3Lofw-oCnfkeo=cJEX3vrkgA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+
+From: Xiubo Li <xiubli@redhat.com>
+
+The POSIX says we should return -ENODATA when the corresponding
+attribute doesn't exist when removing it. While there is one
+exception for the acl ones in the local filesystems, for exmaple
+for xfs, which will treat it as success.
+
+While in the MDS side there have two ways to remove the xattr:
+sending a CEPH_MDS_OP_SETXATTR request by setting the 'flags' with
+CEPH_XATTR_REMOVE and just issued a CEPH_MDS_OP_RMXATTR request
+directly.
+
+For the first one it will always return 0 when the corresponding
+xattr doesn't exist, while for the later one it will return
+-ENODATA instead, this should be fixed in MDS to make them to be
+consistent.
+
+And at the same time added a new flags CEPH_XATTR_REMOVE2 and in
+MDS side it will return -ENODATA when the xattr doesn't exist.
+While the CEPH_XATTR_REMOVE will be kept to be compatible with
+old cephs.
+
+Please note this commit also fixed a bug, which is that even when
+the ACL xattrs don't exist the ctime/mode still will be updated.
+
+URL: https://tracker.ceph.com/issues/64679
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+
+V2:
+- Fixed the test faiures in
+https://tracker.ceph.com/issues/64679#note-4.
+- Added a new CEPH_XATTR_REMOVE2 flags.
 
 
-On 3/11/24 13:42, Venky Shankar wrote:
-> On Tue, Feb 27, 2024 at 1:04 PM <xiubli@redhat.com> wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> The code are refered to the userspace libcephfs:
->> https://github.com/ceph/ceph/pull/48027.
->>
->>
->> V4:
->> - Fix https://tracker.ceph.com/issues/64172
->> - Improve the comments and code in ceph_mds_auth_match() to make it
->>    to be more readable.
->>
->> V3:
->> - Fix https://tracker.ceph.com/issues/63141.
->>
->> V2:
->> - Fix memleak for built 'path'.
->>
->>
->> Xiubo Li (6):
->>    ceph: save the cap_auths in client when session being opened
->>    ceph: add ceph_mds_check_access() helper support
->>    ceph: check the cephx mds auth access for setattr
->>    ceph: check the cephx mds auth access for open
->>    ceph: check the cephx mds auth access for async dirop
->>    ceph: add CEPHFS_FEATURE_MDS_AUTH_CAPS_CHECK feature bit
->>
->>   fs/ceph/dir.c        |  28 +++++
->>   fs/ceph/file.c       |  66 ++++++++++-
->>   fs/ceph/inode.c      |  46 ++++++--
->>   fs/ceph/mds_client.c | 270 ++++++++++++++++++++++++++++++++++++++++++-
->>   fs/ceph/mds_client.h |  28 ++++-
->>   5 files changed, 425 insertions(+), 13 deletions(-)
->>
->> --
->> 2.43.0
->>
-> Tested-by: Venky Shankar <vshankar@redhat.com>
->
-Thanks Venky ！
+ fs/ceph/acl.c                | 6 ++++++
+ fs/ceph/xattr.c              | 7 +++----
+ include/linux/ceph/ceph_fs.h | 1 +
+ 3 files changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
+index 1564eacc253d..b50de6787bd8 100644
+--- a/fs/ceph/acl.c
++++ b/fs/ceph/acl.c
+@@ -155,6 +155,12 @@ int ceph_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+ 			newattrs.ia_valid = ATTR_MODE | ATTR_CTIME;
+ 			__ceph_setattr(idmap, inode, &newattrs, NULL);
+ 		}
++
++		/*
++		 * If the attribute didn't exist to start with that's fine.
++		 */
++		if (!acl && ret == -ENODATA)
++			ret = 0;
+ 		goto out_free;
+ 	}
+ 
+diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
+index e066a556eccb..a39189484100 100644
+--- a/fs/ceph/xattr.c
++++ b/fs/ceph/xattr.c
+@@ -613,11 +613,10 @@ static int __set_xattr(struct ceph_inode_info *ci,
+ 			return err;
+ 		}
+ 		if (update_xattr < 0) {
+-			if (xattr)
+-				__remove_xattr(ci, xattr);
++			err = __remove_xattr(ci, xattr);
+ 			kfree(name);
+ 			kfree(*newxattr);
+-			return 0;
++			return err;
+ 		}
+ 	}
+ 
+@@ -1131,7 +1130,7 @@ static int ceph_sync_setxattr(struct inode *inode, const char *name,
+ 		if (flags & CEPH_XATTR_REPLACE)
+ 			op = CEPH_MDS_OP_RMXATTR;
+ 		else
+-			flags |= CEPH_XATTR_REMOVE;
++			flags |= CEPH_XATTR_REMOVE | CEPH_XATTR_REMOVE2;
+ 	}
+ 
+ 	doutc(cl, "name %s value size %zu\n", name, size);
+diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+index ee1d0e5f9789..c1d9c5f6ff1b 100644
+--- a/include/linux/ceph/ceph_fs.h
++++ b/include/linux/ceph/ceph_fs.h
+@@ -383,6 +383,7 @@ extern const char *ceph_mds_op_name(int op);
+  */
+ #define CEPH_XATTR_CREATE  (1 << 0)
+ #define CEPH_XATTR_REPLACE (1 << 1)
++#define CEPH_XATTR_REMOVE2 (1 << 30)
+ #define CEPH_XATTR_REMOVE  (1 << 31)
+ 
+ /*
+-- 
+2.39.1
 
 
