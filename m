@@ -1,178 +1,128 @@
-Return-Path: <ceph-devel+bounces-974-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-975-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAEF587B8A7
-	for <lists+ceph-devel@lfdr.de>; Thu, 14 Mar 2024 08:41:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9DB87BD46
+	for <lists+ceph-devel@lfdr.de>; Thu, 14 Mar 2024 14:08:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87C36286749
-	for <lists+ceph-devel@lfdr.de>; Thu, 14 Mar 2024 07:41:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE9C0285235
+	for <lists+ceph-devel@lfdr.de>; Thu, 14 Mar 2024 13:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2557F5C8E4;
-	Thu, 14 Mar 2024 07:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B3B5B1FB;
+	Thu, 14 Mar 2024 13:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PboQHTMn"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="AdKXiqpb"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1766C5C8E1
-	for <ceph-devel@vger.kernel.org>; Thu, 14 Mar 2024 07:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC40A5A790
+	for <ceph-devel@vger.kernel.org>; Thu, 14 Mar 2024 13:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710402106; cv=none; b=dR0yWLiupd3xudkmOMTPLiTTlsPXey7oJnktdJv98t5Zo5kzbIZvP39em5qowK/sknnSfe+OUdhbqK9Gkis1dhXh+GGvfeGf4FbpNybbfgXaXRcbH5Imt1bObHPJWi6kAy2Kg7VlEHtuOKPu3m6HnZCSYdAwDDa3nD5bh8XWl50=
+	t=1710421699; cv=none; b=lsNY6qY7c3QbrvdvayQeqYeiK0R9hEDwFqJP5omzE/PR4Wunm9d4zUl+1B2Vthraewbd1l+Mor2IbR6oEQTzJSUJZEqlper0PiLMqT8OohQlNHQr3FRVk5G8MwKQDzgeYQj3d2xAsvOC6Nyce1lUjZSpR46AE+Arj59ShKZxarE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710402106; c=relaxed/simple;
-	bh=ACAE15DGce74ymN7kX5QViBV047C0DWXuIh/f+2E7PU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pzbh6oMJhIeWCaZXzP/iqssd0RAvHGmWaqqLNoDWChEx1YbSWeBIaUkce626gTmeo70QvIGCEAhSI1eMimafiEUl9ryten0q8AsQoNUqOQzfHOzuFW6+9CJaecuQK569htcLnoIB79eoYh+CER07Fgv+2nTg+tIVimjKJb0f5Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PboQHTMn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710402103;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=lLcCgoq+mcIMktiDLj535CzSfinLkeeA6WRnJOxV608=;
-	b=PboQHTMnFDprhhv24L54SiPp7zTDvOAHnflNfDGXKCUrwdsKlSMFMrrjzip1EdLM2I2dUk
-	aAGxD9Gw1uDMZ3LYuHiqWjFLNiLVAmcYtDatsFjwyIfigcc/QHDUNBe1S/ayD8U8cPU7+1
-	g2Q9jNruov8LzhHHg34z2ZRX8PDFrKs=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-554-rsEzxMXwNbaQ901BwW-EjQ-1; Thu,
- 14 Mar 2024 03:41:40 -0400
-X-MC-Unique: rsEzxMXwNbaQ901BwW-EjQ-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0CF67383009C;
-	Thu, 14 Mar 2024 07:41:40 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (unknown [10.72.112.32])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 12EBA492BD0;
-	Thu, 14 Mar 2024 07:41:36 +0000 (UTC)
-From: xiubli@redhat.com
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	jlayton@kernel.org,
-	vshankar@redhat.com,
-	mchangir@redhat.com,
-	Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v3] ceph: return -ENODATA when xattr doesn't exist for removexattr
-Date: Thu, 14 Mar 2024 15:39:15 +0800
-Message-ID: <20240314073915.844541-1-xiubli@redhat.com>
+	s=arc-20240116; t=1710421699; c=relaxed/simple;
+	bh=f1RjpYk+wUVGcUzWsEOUuhMJaZVlrsH0nJwtARIVQis=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MxTJhqbXZa9XoDB31+ZoWPKGYd7RHLQHPNnhJIzM4aFtwuzjOmfRyiZJ+Rc3spILj+saQo+hAN5OCCPz/KQ5AAbi710MmGzlq4y4D7YRq4FKQB+K2xSM3Q7HXbKx3c8UaiFIur/OduK6rZjX9tA0bEQLBUmeCCaR0Ve/5zGFeIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=AdKXiqpb; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-513d212f818so609273e87.2
+        for <ceph-devel@vger.kernel.org>; Thu, 14 Mar 2024 06:08:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1710421696; x=1711026496; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7F+GMfmTIeHQjgM+fN0XugEriGVcEET+uvRlxfdDDkg=;
+        b=AdKXiqpbZbTRHaHNMUfFQIz7Cos0PIjajNXdkrEmCIer4vIXHcyZm9IIwDrOhv8RIz
+         NHcV2ARyBMypBYLHttp9otFiT7wszy9N2U0UbX77I6hPBoUH9BflyydkFgGEjj9rOljo
+         sH4oE2gfBTnNQqQiWC7v+s1hdf6bBzIi8hK7yKVDaPrkmwEHzmWY/VSePDH/g7afRl9d
+         Oqrcg3MUpsu3Gd9tbaiNIEhrS0ixRDv1zjIels9DnZuZmrA1JfIaoCKMlooI6WOcx9x3
+         5uQuTETc/ZSy9iN4PsL3XAjox3HCGuShOPQEmQWGs4+rRrv74dmYhtcDrNraSVlzLxdV
+         BCVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710421696; x=1711026496;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7F+GMfmTIeHQjgM+fN0XugEriGVcEET+uvRlxfdDDkg=;
+        b=g3uMrweTcynFO7Ay6Xsr/zeWRfvYXMy4heajTCEaQ5Whznvet8/9cu1dS9TUjpm1aA
+         ox3XnmZ8+5LwHL+rTTdHCurqiB1r95kTFsVLpdyStoEqq16AMhJRsbvqM9c5pQcSbsdz
+         yInbG40M6Csuy9i5Sjm3gmtiPEevawlvtiAkoU5xbqGURYbiA8Tks5Orfk/Z1p4omDIN
+         0mZlFMmC+RCip+f4g3JiYVYULdivF6MXgYq1oVf1z05rs/zco1mtPpBaaRCp7WFyxLjL
+         1jH8rbb4r6fW8XT/6Mhia/N7Qa6exdyVZZ/eh3B0gqkIzUEF7LbmF8bv1IaEVzy8bI9K
+         7YGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBg99DSGwNbHycGEI7lgcd2AF3cLLNKS3rGKD8JPW5E/Cu9Dx4fwfbnGIiWAoeHvcSTosyJ8hYB07PMsa5QxdNGpOiDyvWI+h6UQ==
+X-Gm-Message-State: AOJu0Yw6nFYBZDLTjiRXKttK2BDlUTO5q89YL2u84KzUi3IArGRQx/Yz
+	QP22AdEnUu/Z5yIChOb17DUu7iJzYf6PsYuVIFcZ9kEBzIfr/aIFt6kjv3KwbssO918CoiGs/90
+	du2/G/rp0aVpq/h3DK8X3178leWUnSAq5okaz7CZZ3JVi8A5u
+X-Google-Smtp-Source: AGHT+IFHtrfJtNBtI2EsrPtjKBAkxhfSnsboFEe2tmEPRF+rDfTqUN6uL/var8SH6nCXb1/uJK+v42k/DM67/PYhulU=
+X-Received: by 2002:a2e:be90:0:b0:2d4:6aba:f1a3 with SMTP id
+ a16-20020a2ebe90000000b002d46abaf1a3mr1474815ljr.6.1710421695825; Thu, 14 Mar
+ 2024 06:08:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+References: <20231011100541.sfn3prgtmp7hk2oj@quack3> <CAKPOu+_xdFALt9sgdd5w66Ab6KTqiy8+Z0Yd3Ss4+92jh8nCwg@mail.gmail.com>
+ <20231011120655.ndb7bfasptjym3wl@quack3> <CAKPOu+-hLrrpZShHh0o6uc_KMW91suEd0_V_uzp5vMf4NM-8yw@mail.gmail.com>
+ <CAKPOu+_0yjg=PrwAR8jKok8WskjdDEJOBtu3uKR_4Qtp8b7H1Q@mail.gmail.com>
+ <20231011135922.4bij3ittlg4ujkd7@quack3> <20231011-braumeister-anrufen-62127dc64de0@brauner>
+ <20231011170042.GA267994@mit.edu> <20231011172606.mztqyvclq6hq2qa2@quack3>
+ <20231012142918.GB255452@mit.edu> <20231012144246.h3mklfe52gwacrr6@quack3> <28DSITL9912E1.2LSZUVTGTO52Q@mforney.org>
+In-Reply-To: <28DSITL9912E1.2LSZUVTGTO52Q@mforney.org>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Thu, 14 Mar 2024 14:08:04 +0100
+Message-ID: <CAKPOu+910gjDp9Lk3sW=CmTM8j_FHEYyfH-kQKz-piRJHkQiDw@mail.gmail.com>
+Subject: Re: [PATCH v2] fs/{posix_acl,ext2,jfs,ceph}: apply umask if ACL
+ support is disabled
+To: Michael Forney <mforney@mforney.org>
+Cc: Jan Kara <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>, Christian Brauner <brauner@kernel.org>, 
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>, 
+	Jan Kara <jack@suse.com>, Dave Kleikamp <shaggy@kernel.org>, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	jfs-discussion@lists.sourceforge.net, Yang Xu <xuyang2018.jy@fujitsu.com>, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Xiubo Li <xiubli@redhat.com>
+On Wed, Mar 13, 2024 at 9:39=E2=80=AFPM Michael Forney <mforney@mforney.org=
+> wrote:
+> Turns out that symlinks are inheriting umask on my system (which
+> has CONFIG_EXT4_FS_POSIX_ACL=3Dn):
+>
+> $ umask 022
+> $ ln -s target symlink
+> $ ls -l symlink
+> lrwxr-xr-x    1 michael  michael           6 Mar 13 13:28 symlink -> targ=
+et
+> $
+>
+> Looking at the referenced functions, posix_acl_create() returns
+> early before applying umask for symlinks, but ext4_init_acl() now
+> applies the umask unconditionally.
 
-The POSIX says we should return -ENODATA when the corresponding
-attribute doesn't exist when removing it. While there is one
-exception for the acl ones in the local filesystems, for exmaple
-for xfs, which will treat it as success.
+Indeed, I forgot to exclude symlinks from this - sorry for the breakage.
 
-While in the MDS side there have two ways to remove the xattr:
-sending a CEPH_MDS_OP_SETXATTR request by setting the 'flags' with
-CEPH_XATTR_REMOVE and just issued a CEPH_MDS_OP_RMXATTR request
-directly.
+> After reverting this commit, it works correctly. I am also unable
+> to reproduce the mentioned issue with O_TMPFILE after reverting the
+> commit. It seems that the bug was fixed properly in ac6800e279a2
+> ('fs: Add missing umask strip in vfs_tmpfile'), and all branches
+> that have this ext4_init_acl patch already had ac6800e279a2 backported.
 
-For the first one it will always return 0 when the corresponding
-xattr doesn't exist, while for the later one it will return
--ENODATA instead, this should be fixed in MDS to make them to be
-consistent.
+I can post a patch that adds the missing check or a revert - what do
+the FS maintainers prefer?
 
-And at the same time added a new flags CEPH_XATTR_REMOVE2 and in
-MDS side it will return -ENODATA when the xattr doesn't exist.
-While the CEPH_XATTR_REMOVE will be kept to be compatible with
-old cephs.
+(There was a bug with O_TMPFILE ignoring umasks years ago - I first
+posted the patch in 2018 or so - but by the time my patch actually got
+merged, the bug had already been fixed somewhere else IIRC.)
 
-Please note this commit also fixed a bug, which is that even when
-the ACL xattrs don't exist the ctime/mode still will be updated.
-
-URL: https://tracker.ceph.com/issues/64679
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
-
-V3:
-- Fixed failure in
-https://pulpito.ceph.com/vshankar-2024-03-13_13:59:32-fs-wip-vshankar-testing-20240307.013758-testing-default-smithi/7596711/.
-
-V2:
-- Fixed the test faiures in
-https://tracker.ceph.com/issues/64679#note-4.
-- Added a new CEPH_XATTR_REMOVE2 flags.
-
-
-
- fs/ceph/acl.c                | 5 +++++
- fs/ceph/xattr.c              | 7 +++----
- include/linux/ceph/ceph_fs.h | 1 +
- 3 files changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/fs/ceph/acl.c b/fs/ceph/acl.c
-index 1564eacc253d..c0634347746f 100644
---- a/fs/ceph/acl.c
-+++ b/fs/ceph/acl.c
-@@ -148,6 +148,11 @@ int ceph_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 	}
- 
- 	ret = __ceph_setxattr(inode, name, value, size, 0);
-+	/*
-+	 * If the attribute didn't exist to start with that's fine.
-+	 */
-+	if (!acl && ret == -ENODATA)
-+		ret = 0;
- 	if (ret) {
- 		if (new_mode != old_mode) {
- 			newattrs.ia_ctime = old_ctime;
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index e066a556eccb..a39189484100 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -613,11 +613,10 @@ static int __set_xattr(struct ceph_inode_info *ci,
- 			return err;
- 		}
- 		if (update_xattr < 0) {
--			if (xattr)
--				__remove_xattr(ci, xattr);
-+			err = __remove_xattr(ci, xattr);
- 			kfree(name);
- 			kfree(*newxattr);
--			return 0;
-+			return err;
- 		}
- 	}
- 
-@@ -1131,7 +1130,7 @@ static int ceph_sync_setxattr(struct inode *inode, const char *name,
- 		if (flags & CEPH_XATTR_REPLACE)
- 			op = CEPH_MDS_OP_RMXATTR;
- 		else
--			flags |= CEPH_XATTR_REMOVE;
-+			flags |= CEPH_XATTR_REMOVE | CEPH_XATTR_REMOVE2;
- 	}
- 
- 	doutc(cl, "name %s value size %zu\n", name, size);
-diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-index ee1d0e5f9789..c1d9c5f6ff1b 100644
---- a/include/linux/ceph/ceph_fs.h
-+++ b/include/linux/ceph/ceph_fs.h
-@@ -383,6 +383,7 @@ extern const char *ceph_mds_op_name(int op);
-  */
- #define CEPH_XATTR_CREATE  (1 << 0)
- #define CEPH_XATTR_REPLACE (1 << 1)
-+#define CEPH_XATTR_REMOVE2 (1 << 30)
- #define CEPH_XATTR_REMOVE  (1 << 31)
- 
- /*
--- 
-2.39.1
-
+Max
 
