@@ -1,141 +1,148 @@
-Return-Path: <ceph-devel+bounces-984-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-985-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5063087FEEF
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Mar 2024 14:36:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0532087FF60
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Mar 2024 15:15:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8997B22FA6
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Mar 2024 13:36:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B45E82854D4
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Mar 2024 14:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FD28061F;
-	Tue, 19 Mar 2024 13:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD4681754;
+	Tue, 19 Mar 2024 14:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mseA4T9J"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RtvmcyL4"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256328062E
-	for <ceph-devel@vger.kernel.org>; Tue, 19 Mar 2024 13:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9370581721
+	for <ceph-devel@vger.kernel.org>; Tue, 19 Mar 2024 14:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710855354; cv=none; b=pX2kjkmf1ioviKd0UbzMS7qyndY0AVlenNrCshrQZtcFH+x6zq9ltPHFQyTa+INBPCsDeCC6UucNKcm8F+e8nwCn8YAUYN3lYn1RoBjV96AQGhKvxDU+NR+F4nthoJYN55E3bDQ2gOZrwi22ZERdeqAQYfOOo99VMDcPnIQR6xk=
+	t=1710857701; cv=none; b=JR77aWTSDS9u11uf2BaQwnY+yJvDSE2+mgxragQNe/WSXE7hp4NA2rmNu4/Am7Ag4DdROk8RDOZeoKpC3UrtU3xfcC9corB7kDlp5MfIp6S+cFtYadge4iWjq9wdPYn2IXZSG3x/kGpyxSn44YLAANgfI/Jkb3qXPfwxE3ckKJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710855354; c=relaxed/simple;
-	bh=s+Dx460IHZ8eYNhkQ7CibwGHRVkiC9dJpvRrmgIVz4Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S9QqiJRmk5aC0NeBZQeAM2blf6SivDNqo45Ux2agjQK7YNZBDxedMbRZGU1aVI9JgCYmdcZmy5BII7SVf2uM8hdUy30WboopTnLEZeovVv7G5/iUH0z1q2C6Ul2zvn/5CF9v/6x6Q3KHOreF90VPwZm7qKI9z8rnkfCTdOY+LwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mseA4T9J; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3c1a2f7e1d2so3584185b6e.1
-        for <ceph-devel@vger.kernel.org>; Tue, 19 Mar 2024 06:35:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1710855352; x=1711460152; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cosl3kf7wvccd1O0cS0Y+OnoOyr7DQWY4iYmQrZutYA=;
-        b=mseA4T9J8cbxDalWYhRYktQXujfXbYkUrDOfzZF2bdHXNl75zqiofv6BiCEIB28JVZ
-         u9mJHOLxhrsfMT4MT14Gq3xqGAddFv6lO+rGPgKd1ytjrR/3gYc9myfO+dZ0QduzLyYy
-         cqZsXcd1jZkd1S6+7wuf09Jyc0im0VfMsO2hbfF3afmeVH/gdjGS92uhYISU0JBG0LVX
-         tEJoNcJeuyYLZYleWPQp+N/Bl9d2E0SEYXMKDVsOegu72neP7Jp4qzc7dBdJIb2yAEFU
-         POGY79kNObykAHl5JpWS+1k+Cc5ZwUFbHrulWLRDzf7JBLsVaBaplsXsGSDf1HhBmAyS
-         /n/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710855352; x=1711460152;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cosl3kf7wvccd1O0cS0Y+OnoOyr7DQWY4iYmQrZutYA=;
-        b=nCIUrwnDPp21gtSRREE4snxZhNQepyrvSRvi0aYNp9GI4qlSTRL59b4/UFKpJ9u0Kv
-         bf63Rt/l8uB6Iw3kh4G3hTGTeBgXwP0AxC+3MlCeGNfYX1mn42Wqo3sA7S+1kwoC/NOc
-         ZtWdtKtpqHaRb8UUAj2mqqto8AQYG+xLdgXvS6XLSYV/zy3w7VZ5Gy2uq+Oj7nAeAlX0
-         YqwHSxIGQnj7VK4t+fa9+GxFxAiajLBnrp2oF9D+j3CmMgD0c6hNHLz95uPVDpgdPYHC
-         t8RolJ68leK+rdgHV1Sx6E1F5vcJ7aiAhWMZicU5jh2TTrX3e866AKc+mdumqEx7fVSM
-         Ajkg==
-X-Gm-Message-State: AOJu0YyK6wDH48DiHzD9eEs8V1+Zw22RSGzX8twpdDbHXLacZbZ5i/om
-	wBn1U8C8sKqZF+CXK7K0NPBpAGXmOTq6SyKRlJCKkJOaxoRk2vBmF6Przu4zutn6TvjsaDQjyEp
-	RVU0HQ9ujgd0R0ErSPAMp7CZtDreoKcR6u1c=
-X-Google-Smtp-Source: AGHT+IH+XJCljV4a/fBvcIGJSSmQF2rLjWB7pkYrxHRcirawGayjHPwgOJ8kfjt/8Ynhn4nCxrTSbovfXJQ1qXgBkG8=
-X-Received: by 2002:a05:6808:2087:b0:3c3:6dc5:c1a1 with SMTP id
- s7-20020a056808208700b003c36dc5c1a1mr18229245oiw.41.1710855351958; Tue, 19
- Mar 2024 06:35:51 -0700 (PDT)
+	s=arc-20240116; t=1710857701; c=relaxed/simple;
+	bh=xkAb1InU9RoZkNjiU+AcuFfqyRq8G3AqX8f6uQ9VC8Q=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=gwxgpg4nt8UNCDGhXUmJ7UcIcCxLjZLG7EpcHFEqKvGPEzjk+Hn4RhvbCkjc9Fyizyg9FjCSlkWG6yZt5FEvbIXAEjqCna+zPED06u9zjT7HYJVnoDmOMlTgy54fmTPZ85OCFvaY/RNLPAbwiHtD9y1JhR0aaCXOYYGQp4XrZR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RtvmcyL4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1710857698;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tO0V8aj/5qg/fr51DKNlXHyJU/GLErDbNftb0tj9j8Q=;
+	b=RtvmcyL4kzI30IanKwMzmLkflj0sG042jvnU7holnqxmexELP7MxHJeDyH+CiHgVXrWJGB
+	pp+H3run3aSqbtOrP8WXieOQcLYaMK5Gx9x0X4nKKLQnIOwUcWeWg6OU7EA48R2zZYSuZg
+	Yc/zWnfO4Jjimyw24NhDy2Z9zlHj82I=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-368--eOoKW_BP26pSFwrkb5TTQ-1; Tue, 19 Mar 2024 10:14:56 -0400
+X-MC-Unique: -eOoKW_BP26pSFwrkb5TTQ-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5463C101CF81;
+	Tue, 19 Mar 2024 14:14:55 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.146])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 58E25492BD0;
+	Tue, 19 Mar 2024 14:14:52 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAJfpegv8X0PY7PvxEF=zEwRbdZ7yZZcwB80iDO+XLverognx+g@mail.gmail.com>
+References: <CAJfpegv8X0PY7PvxEF=zEwRbdZ7yZZcwB80iDO+XLverognx+g@mail.gmail.com> <1668172.1709764777@warthog.procyon.org.uk> <ZelGX3vVlGfEZm8H@casper.infradead.org> <1831809.1709807788@warthog.procyon.org.uk>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+    Trond Myklebust <trond.myklebust@hammerspace.com>,
+    Christoph Hellwig <hch@lst.de>,
+    Andrew Morton <akpm@linux-foundation.org>,
+    Alexander Viro <viro@zeniv.linux.org.uk>,
+    Christian Brauner <brauner@kernel.org>,
+    Jeff Layton <jlayton@kernel.org>, linux-mm@kvack.org,
+    linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
+    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+    ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] mm: Replace ->launder_folio() with flush and wait
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240319002925.1228063-1-xiubli@redhat.com> <20240319002925.1228063-3-xiubli@redhat.com>
-In-Reply-To: <20240319002925.1228063-3-xiubli@redhat.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 19 Mar 2024 14:35:40 +0100
-Message-ID: <CAOi1vP_xiO-0EFq2T100Tx30ayR4dyegxJR-CcZX34peYg09gg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] ceph: set the correct mask for getattr reqeust for read
-To: xiubli@redhat.com
-Cc: ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com, 
-	mchangir@redhat.com, frankhsiao@qnap.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <651178.1710857687.1@warthog.procyon.org.uk>
+Date: Tue, 19 Mar 2024 14:14:47 +0000
+Message-ID: <651179.1710857687@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-On Tue, Mar 19, 2024 at 1:32=E2=80=AFAM <xiubli@redhat.com> wrote:
->
-> From: Xiubo Li <xiubli@redhat.com>
->
-> In case of hitting the file EOF the ceph_read_iter() needs to
-> retrieve the file size from MDS, and the Fr caps is not a neccessary.
->
-> URL: https://patchwork.kernel.org/project/ceph-devel/list/?series=3D81932=
-3
-> Reported-by: Frank Hsiao =E8=95=AD=E6=B3=95=E5=AE=A3 <frankhsiao@qnap.com=
->
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> Tested-by: Frank Hsiao =E8=95=AD=E6=B3=95=E5=AE=A3 <frankhsiao@qnap.com>
-> ---
->  fs/ceph/file.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index c35878427985..a85f95c941fc 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -2191,14 +2191,16 @@ static ssize_t ceph_read_iter(struct kiocb *iocb,=
- struct iov_iter *to)
->                 int statret;
->                 struct page *page =3D NULL;
->                 loff_t i_size;
-> +               int mask =3D CEPH_STAT_CAP_SIZE;
->                 if (retry_op =3D=3D READ_INLINE) {
->                         page =3D __page_cache_alloc(GFP_KERNEL);
->                         if (!page)
->                                 return -ENOMEM;
->                 }
->
-> -               statret =3D __ceph_do_getattr(inode, page,
-> -                                           CEPH_STAT_CAP_INLINE_DATA, !!=
-page);
-> +               if (retry_op =3D=3D READ_INLINE)
-> +                       mask =3D CEPH_STAT_CAP_INLINE_DATA;
+Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-Hi Xiubo,
+> >  (2) invalidate_inode_pages2() is used in some places to effect
+> >      invalidation of the pagecache in the case where the server tells us
+> >      that a third party modified the server copy of a file.  What the
+> >      right behaviour should be here, I'm not sure, but at the moment, any
+> >      dirty data will get laundered back to the server.  Possibly it should
+> >      be simply invalidated locally or the user asked how they want to
+> >      handle the divergence.
+> 
+> Skipping ->launder_page will mean there's a window where the data
+> *will* be lost, AFAICS.
+> 
+> Of course concurrent cached writes on different hosts against the same
+> region (the size of which depends on how the caching is done) will
+> conflict.
 
-This introduces an additional retry_op =3D=3D READ_INLINE branch right
-below an existing one.  Should this be:
+Indeed.  Depending on when you're using invalidate_inode_pages2() and co. and
+what circumstances you're using it for, you *are* going to suffer data loss.
 
-    int mask =3D CEPH_STAT_CAP_SIZE;
-    if (retry_op =3D=3D READ_INLINE) {
-            page =3D __page_cache_alloc(GFP_KERNEL);
-            if (!page)
-                    return -ENOMEM;
+For instance, if you have dirty data on the local host and get an invalidation
+notification from the server: if you write just your dirty data back, you may
+corrupt the file on the server, losing the third party changes; if you write
+back your entire copy of the file, you might avoid corrupting the file, but
+completely obliterate the third party changes; if you discard your changes,
+you lose those instead, but save the third party changes.
 
-            mask =3D CEPH_STAT_CAP_INLINE_DATA;
-    }
+I'm working towards supporting disconnected operation where I'll need to add
+some sort of user interaction mechanism that will allow the user to say how
+they want to handle this.
 
-Thanks,
+> But if concurrent writes are to different regions, then they shouldn't
+> be lost, no?  Without the current ->launder_page thing I don't see how
+> that could be guaranteed.
 
-                Ilya
+Define "different regions".  If they're not on the same folios, then why would
+they be lost by simply flushing the data before doing the invalidation?  If
+they are on different parts of the same folio, all the above still apply when
+you flush the whole folio.
+
+Now, you can mitigate the latter case by keeping track of which bytes changed,
+but that still allows you to corrupt the file by writing back just your
+particular changes.
+
+And then there's the joker in the deck: mmap.  The main advantage of
+invalidate_inode_pages2() is that it forcibly unmaps the page before
+laundering it.  However, this doesn't prevent you then corrupting the upstream
+copy by writing the changes back.
+
+What particular usage case of invalidate_inode_pages2() are you thinking of?
+
+DIO read/write can only be best effort: flush, invalidate then do the DIO
+which may bring the buffers back in because they're mmapped.  In which case
+doing a flush and a non-laundering invalidate that leaves dirty pages in place
+ought to be fine.
+
+David
+
 
