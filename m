@@ -1,148 +1,148 @@
-Return-Path: <ceph-devel+bounces-985-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-986-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0532087FF60
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Mar 2024 15:15:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D560880040
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Mar 2024 16:09:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B45E82854D4
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Mar 2024 14:15:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D82C11F23416
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Mar 2024 15:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD4681754;
-	Tue, 19 Mar 2024 14:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF52C657D1;
+	Tue, 19 Mar 2024 15:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RtvmcyL4"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DizG0a9m"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9370581721
-	for <ceph-devel@vger.kernel.org>; Tue, 19 Mar 2024 14:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37149657C6
+	for <ceph-devel@vger.kernel.org>; Tue, 19 Mar 2024 15:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710857701; cv=none; b=JR77aWTSDS9u11uf2BaQwnY+yJvDSE2+mgxragQNe/WSXE7hp4NA2rmNu4/Am7Ag4DdROk8RDOZeoKpC3UrtU3xfcC9corB7kDlp5MfIp6S+cFtYadge4iWjq9wdPYn2IXZSG3x/kGpyxSn44YLAANgfI/Jkb3qXPfwxE3ckKJo=
+	t=1710860944; cv=none; b=RILBS1wkyU6yc0Mk4xMtJVzmL4yu2sJoTOOSD5BOCLAO/wSIvARGlSKyP6+I9Ab8pKZ41d5/aN+ImngDH1YNgRmdOeYIeEhglyiVjy6JWtMfdQKje9ycB8Wglrmz4y3o6KNSZ+5p8n0BYFZT9O12abCItPBvQ5HgqqZNbloECsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710857701; c=relaxed/simple;
-	bh=xkAb1InU9RoZkNjiU+AcuFfqyRq8G3AqX8f6uQ9VC8Q=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=gwxgpg4nt8UNCDGhXUmJ7UcIcCxLjZLG7EpcHFEqKvGPEzjk+Hn4RhvbCkjc9Fyizyg9FjCSlkWG6yZt5FEvbIXAEjqCna+zPED06u9zjT7HYJVnoDmOMlTgy54fmTPZ85OCFvaY/RNLPAbwiHtD9y1JhR0aaCXOYYGQp4XrZR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RtvmcyL4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710857698;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tO0V8aj/5qg/fr51DKNlXHyJU/GLErDbNftb0tj9j8Q=;
-	b=RtvmcyL4kzI30IanKwMzmLkflj0sG042jvnU7holnqxmexELP7MxHJeDyH+CiHgVXrWJGB
-	pp+H3run3aSqbtOrP8WXieOQcLYaMK5Gx9x0X4nKKLQnIOwUcWeWg6OU7EA48R2zZYSuZg
-	Yc/zWnfO4Jjimyw24NhDy2Z9zlHj82I=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-368--eOoKW_BP26pSFwrkb5TTQ-1; Tue, 19 Mar 2024 10:14:56 -0400
-X-MC-Unique: -eOoKW_BP26pSFwrkb5TTQ-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5463C101CF81;
-	Tue, 19 Mar 2024 14:14:55 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.146])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 58E25492BD0;
-	Tue, 19 Mar 2024 14:14:52 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAJfpegv8X0PY7PvxEF=zEwRbdZ7yZZcwB80iDO+XLverognx+g@mail.gmail.com>
-References: <CAJfpegv8X0PY7PvxEF=zEwRbdZ7yZZcwB80iDO+XLverognx+g@mail.gmail.com> <1668172.1709764777@warthog.procyon.org.uk> <ZelGX3vVlGfEZm8H@casper.infradead.org> <1831809.1709807788@warthog.procyon.org.uk>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-    Trond Myklebust <trond.myklebust@hammerspace.com>,
-    Christoph Hellwig <hch@lst.de>,
-    Andrew Morton <akpm@linux-foundation.org>,
-    Alexander Viro <viro@zeniv.linux.org.uk>,
-    Christian Brauner <brauner@kernel.org>,
-    Jeff Layton <jlayton@kernel.org>, linux-mm@kvack.org,
-    linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
-    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-    ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] mm: Replace ->launder_folio() with flush and wait
+	s=arc-20240116; t=1710860944; c=relaxed/simple;
+	bh=AduthGbtQ503NWc/iPovz6pKbBm8npo69sGP7oQmalc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oQcZbEU84hjCDfWLCnSr2oXqeHD1l0EwL3lAS/YkNwt+nPe0+OfttFU6WqDp4cNEmO5kwSZC+S0yyhmxtIpczi1wctaSby13IVEXQf5GNwsECQYp04TfN1xXIkXSDtqwLr0M92Sv4zEG/Baknp3L37El3jNNr1XUN9Jm1MECxRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DizG0a9m; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a450bedffdfso693338466b.3
+        for <ceph-devel@vger.kernel.org>; Tue, 19 Mar 2024 08:09:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1710860940; x=1711465740; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8vVW1HzP6IOcVuRYdPUYojDY6rzYnYjkQOqlmjORT00=;
+        b=DizG0a9mRs2JYkrg7/n/6oZ7h0KsYJtZDVNmIjG1y2muDmfjm69wWeqfGQKECndFay
+         mDqR5a6vgZGdr3cr1FLB3ONUqH2ct1wP3xtZB+F0CkEDhOW1ioLOYyNZ5NAvmMab7e+7
+         YnFjgAim086t6DnN7ApNjZpXiaJmkc/JYtocW5VjhxulmuNPTNB1XkvO+I2jMjVejeXc
+         HFBt7UuXEwoHVeheGPaFRXP4+CQJVtliiGRM5zbBG3a3j8ovy/lcqTWGkLfyPSDrMnAm
+         iox0tVRbms2FEL2dseEslYJjTRyup3aYJNfhG8Q7q3PAM2iUJPWKnvKAElejpV4t/Xsh
+         HUtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710860940; x=1711465740;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8vVW1HzP6IOcVuRYdPUYojDY6rzYnYjkQOqlmjORT00=;
+        b=lGMBP8bs71KArmt/9D6Er4bg/9uBNWikPXxlCxwp9Y+1yU7HMvLqYsub+20+Mmg+2G
+         flVXGFPjQNTwq5GomJCfh5sBCBY86lVZWbRsnfMCNzPCN0elkO5mokQWo3PbJ7e3hiGF
+         gK6xI26mUbFe7T7m2kJYh2BeasU8kdw5L4CE/IGm9f9ov05SYekZ8UBYahsYBWgLGYwr
+         Twp77sbrIBxMeG0hDsS+u+ZzIbU4UKJgH9RUPccLMRQebtf2aloRVHJXKbT2XtAEAuqi
+         vwPyTeanMO0JS3YhkyP/lbMA/RA6tqXab6AKyjsBRFRwB0Xk00wIiI5s4zpDBmbdTxod
+         c9PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxQT4hfrcXgO43RVXHzbni3qJcNqbnGj2CDYhyhfgI83Ko9xtyHjilm6SukO1riBB2/BYMhYEBgCOBKZo/cXdKVRK/vOxehojltQ==
+X-Gm-Message-State: AOJu0Yy4DgMnsTHGkrl/vfYnzmF/omejnfWVoAYmyy9fBmhu/L5c7S3G
+	6TLXpBe/pf/rEo+orbraWYeHyPdM5tLkpuAddDTj9f1He2L9Q3Njn++1nEoD78E=
+X-Google-Smtp-Source: AGHT+IEU4aA3OJtwbmANEftZa3Y1K8Y1Av3UtRZT7xLYjrH5u09EsLG01f4jd+nbMYggdaVPSMdzDg==
+X-Received: by 2002:a17:906:3105:b0:a46:13a9:b78e with SMTP id 5-20020a170906310500b00a4613a9b78emr10602241ejx.2.1710860940584;
+        Tue, 19 Mar 2024 08:09:00 -0700 (PDT)
+Received: from alley (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id d15-20020a170906344f00b00a46e07cd1fcsm809541ejb.133.2024.03.19.08.08.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Mar 2024 08:09:00 -0700 (PDT)
+Date: Tue, 19 Mar 2024 16:08:58 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Chris Down <chris@chrisdown.name>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jessica Yu <jeyu@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jason Baron <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>,
+	Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org,
+	ceph-devel@vger.kernel.org
+Subject: Re: [PATCH 0/4] printk_index: Fix false positives
+Message-ID: <ZfmqihpAyrhPn-7P@alley>
+References: <cover.1709127473.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <651178.1710857687.1@warthog.procyon.org.uk>
-Date: Tue, 19 Mar 2024 14:14:47 +0000
-Message-ID: <651179.1710857687@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1709127473.git.geert+renesas@glider.be>
 
-Miklos Szeredi <miklos@szeredi.hu> wrote:
-
-> >  (2) invalidate_inode_pages2() is used in some places to effect
-> >      invalidation of the pagecache in the case where the server tells us
-> >      that a third party modified the server copy of a file.  What the
-> >      right behaviour should be here, I'm not sure, but at the moment, any
-> >      dirty data will get laundered back to the server.  Possibly it should
-> >      be simply invalidated locally or the user asked how they want to
-> >      handle the divergence.
+On Wed 2024-02-28 15:00:01, Geert Uytterhoeven wrote:
+> 	Hi all,
 > 
-> Skipping ->launder_page will mean there's a window where the data
-> *will* be lost, AFAICS.
+> When printk-indexing is enabled, each printk() invocation emits a
+> pi_entry structure, containing the format string and other information
+> related to its location in the kernel sources.  This is even true when
+> the printk() is protected by an always-false check, as is typically the
+> case for debug messages: while the actual code to print the message is
+> optimized out by the compiler, the pi_entry structure is still emitted.
+> Hence when debugging is disabled, this leads to the inclusion in the
+> index of lots of printk formats that cannot be emitted by the current
+> kernel.
 > 
-> Of course concurrent cached writes on different hosts against the same
-> region (the size of which depends on how the caching is done) will
-> conflict.
+> This series fixes that for the common debug helpers under include/.
+> It reduces the size of an arm64 defconfig kernel with
+> CONFIG_PRINTK_INDEX=y by ca. 1.5 MiB, or 28% of the overhead of
+> enabling CONFIG_PRINTK_INDEX=y.
+> 
+> Notes:
+>   - netdev_(v)dbg() and netif_(v)dbg() are not affected, as
+>     net{dev,if}_printk() do not implement printk-indexing, except
+>     for the single global internal instance of __netdev_printk().
+>   - This series fixes only debug code in global header files under
+>     include/.  There are more cases to fix in subsystem-specific header
+>     files and in sources files.
+> 
+> Thanks for your comments!
+> 
+> Geert Uytterhoeven (4):
+>   printk: Let no_printk() use _printk()
+>   dev_printk: Add and use dev_no_printk()
+>   dyndbg: Use *no_printk() helpers
+>   ceph: Use no_printk() helper
+> 
+>  include/linux/ceph/ceph_debug.h | 18 +++++++-----------
+>  include/linux/dev_printk.h      | 25 +++++++++++++------------
+>  include/linux/dynamic_debug.h   |  4 ++--
+>  include/linux/printk.h          |  2 +-
+>  4 files changed, 23 insertions(+), 26 deletions(-)
 
-Indeed.  Depending on when you're using invalidate_inode_pages2() and co. and
-what circumstances you're using it for, you *are* going to suffer data loss.
+The whole series looks good to me:
 
-For instance, if you have dirty data on the local host and get an invalidation
-notification from the server: if you write just your dirty data back, you may
-corrupt the file on the server, losing the third party changes; if you write
-back your entire copy of the file, you might avoid corrupting the file, but
-completely obliterate the third party changes; if you discard your changes,
-you lose those instead, but save the third party changes.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-I'm working towards supporting disconnected operation where I'll need to add
-some sort of user interaction mechanism that will allow the user to say how
-they want to handle this.
+I am going take it via printk tree for 6.10.
 
-> But if concurrent writes are to different regions, then they shouldn't
-> be lost, no?  Without the current ->launder_page thing I don't see how
-> that could be guaranteed.
+I am sorry that I haven't looked at it in time before the merge
+window for 6.9. I have been snowed under various tasks. The changes
+are not complicated. But they also are not critical to be pushed
+an expedite way.
 
-Define "different regions".  If they're not on the same folios, then why would
-they be lost by simply flushing the data before doing the invalidation?  If
-they are on different parts of the same folio, all the above still apply when
-you flush the whole folio.
-
-Now, you can mitigate the latter case by keeping track of which bytes changed,
-but that still allows you to corrupt the file by writing back just your
-particular changes.
-
-And then there's the joker in the deck: mmap.  The main advantage of
-invalidate_inode_pages2() is that it forcibly unmaps the page before
-laundering it.  However, this doesn't prevent you then corrupting the upstream
-copy by writing the changes back.
-
-What particular usage case of invalidate_inode_pages2() are you thinking of?
-
-DIO read/write can only be best effort: flush, invalidate then do the DIO
-which may bring the buffers back in because they're mmapped.  In which case
-doing a flush and a non-laundering invalidate that leaves dirty pages in place
-ought to be fine.
-
-David
-
+Best Regards,
+Petr
 
