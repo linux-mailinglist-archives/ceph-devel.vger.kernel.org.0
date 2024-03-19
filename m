@@ -1,89 +1,79 @@
-Return-Path: <ceph-devel+bounces-989-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-990-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D0F8802D5
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Mar 2024 18:00:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF6088084B
+	for <lists+ceph-devel@lfdr.de>; Wed, 20 Mar 2024 00:54:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153C9284F83
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Mar 2024 16:59:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEE1F1F22C7A
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Mar 2024 23:54:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E3C13AF2;
-	Tue, 19 Mar 2024 16:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7C05FBA6;
+	Tue, 19 Mar 2024 23:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="0u9/fpcI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lrNIPM4x"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bKZIbLkA"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698FC1118E;
-	Tue, 19 Mar 2024 16:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47EC93FBAF
+	for <ceph-devel@vger.kernel.org>; Tue, 19 Mar 2024 23:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710867590; cv=none; b=cbrqfawiaPDJOumImTYUGOhyDTd6Totzd5pLDLxWl1h2LFmrCASZB2ZZc2HuEg0roKn5U+qnskUaifWfASWYb5CsuUoQGQS/jC2auTeCEvPy9YIjdyufLl13Vb13FYqbdI3pAHB/l938aOH7Ib4BmUZHhtT1E63+LlI8mZNIfT4=
+	t=1710892448; cv=none; b=nwUxVenKggNT/X03dQi/1NpjbomIXzxkUNoMZyBuHQ63Ok4Mu5qWPXWiToF4LSn944NlMyVxNULgMy24/1R2/5xYBxU2qU7//dN9unS6D2o7ECogyIYAZ5KBeXWgaaVMyUG900Z6Qp12Tyx0ZyDxDSn9bgF6sRZLgShJn278o8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710867590; c=relaxed/simple;
-	bh=TPYwpJrngVJym4yY5SzYj0P5kZ+FMMniYM2lAo+nnhI=;
+	s=arc-20240116; t=1710892448; c=relaxed/simple;
+	bh=mIbjAL4Tsu4N7WJ2AnDN9Y2PUjmWm7rx8+1Q54N1ipI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VO+ahk80UR8HHCy8r8La9dAtuzltYDny1OZdJ1muhMHrlMoFCvLZAG6JjwBu4HN53O5efHOWmlW5fF5izkglVozXTJ7xnK2OGi1hZhAs6d0S5amOwgnTW5emDwACBoKKid4DFmmh7ik3O9Z6t6pH3liOXYf3ANNTtqIzcb/eYzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=0u9/fpcI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lrNIPM4x; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 8750E1140101;
-	Tue, 19 Mar 2024 12:59:47 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Tue, 19 Mar 2024 12:59:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1710867587;
-	 x=1710953987; bh=cHdFUwNUaNtHseK/mzgvFDOdmo7eBJ0OS3s8iO/q7R0=; b=
-	0u9/fpcIJQPoY0zpSCSJ6gTPGTGnlb3KOcQLJQwVoFNWumffgMIIO56GHh0ukM4I
-	PWYbUjIJOaDdaZZ3BKwmOQIybUPlcppqssGdWvfDmEfRO1C+EhqIHG5qLORrYn1o
-	qq6MWOx/cN4EvD9Wu/N9lFNoUoWXO1uo9Aa+Py8FP7yFheRD3pvRA4a6VyaWd+Rb
-	yqy2xrgqf+UftdQXAjWZorzwEthFH1X4bUPGo5GhF13V1yLhgioycWUwQLGTQ1BP
-	E4Jc5iJ4+9kAOv2HXWSWAp1Xxj+FuEJ9YkgfYRN2bwlUe96iq7tSRA01cR+2list
-	hQl6u6AbGGgsmn8nPUK2xQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1710867587; x=
-	1710953987; bh=cHdFUwNUaNtHseK/mzgvFDOdmo7eBJ0OS3s8iO/q7R0=; b=l
-	rNIPM4xpEKf2RZpW1L6EY8hMPyl0jjOpe1MzAtqVxSww7hjUNwG+igvOnMrB2vKD
-	uk5/6o9swhOhRdTEBhPQFfKaj2tVsMMNPM5/dnt4AMFILolNuIwVeOnWY2ciHnyf
-	WN58rRHTp6Mo14sWlR8R0Yap+DaTkJMfaGFljXx5ENWroxZPgRr3/BmE6e0bNba7
-	U2BXvYFY+eiV8fi8BFz5gTGNoHm4orSK7Gja3/QQsrhR0aTgZOUVC7b3Yuj2UBry
-	8bn/qTnv6kojC+Hzm+5xruFjYzL6RIr66kh6rlkc/RP1JlEFJydP1JVI4wkb4yEL
-	1eKgP3HUkQNAR3pU7X/Cg==
-X-ME-Sender: <xms:gsT5ZcZAHXxbcYEsXh2kFe2XEGrKSbNqGQBdQc-OzhXhZ7TWuh1B9Q>
-    <xme:gsT5ZXaUJNPxGEC-EGUIISLXOzYax5A6JWwRmGSgMLewfoFfXMLfjJvPstAyL2Oiy
-    4ZRT7XKSrQL8SE0>
-X-ME-Received: <xmr:gsT5ZW-SHey_qu8C_n65vo9NmpDxAoNNWHaiCuCOvvihVmXqK7X5lJfVjYvTCYCktg6McJZf_WNCST2JODi6EI6tUlu4y9gsfgZw7W-x_DDDaaeQ2BvN>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrledtgdejtdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegvrhhn
-    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
-    drfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddugfdtgfegleefvdehfeeiveej
-    ieefveeiteeggffggfeulefgjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhf
-    mh
-X-ME-Proxy: <xmx:gsT5ZWp_Xp8g-XeIUTn3R3XwcTxPEI87lEYYuBopKtA1ZW2yuelMCA>
-    <xmx:gsT5ZXpAsV-4kCS8ULBvaHC4sBvy5j1Au1FZfetCOl79nYNNGA7CyQ>
-    <xmx:gsT5ZUSsxLu4tR4TgEBX3FnVK8rJNxhJI8Q-5dX6YQnrD8gAnJxrrg>
-    <xmx:gsT5ZXoC0N7zIHK-a-_46_RtZYXB5rwZGTfRRa9OZt-BiFUrc2fU6g>
-    <xmx:g8T5ZeelEAZbKzgWvJSrQWBb4nfdzh9IQCPESFVTj-2G0oAdFX45Qg>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 19 Mar 2024 12:59:44 -0400 (EDT)
-Message-ID: <63e67db9-7425-4928-afb2-cbe7cc6232bb@fastmail.fm>
-Date: Tue, 19 Mar 2024 17:59:42 +0100
+	 In-Reply-To:Content-Type; b=PO/DD+V6jf8dMwGSIUEhi0C0nJP2q/R3YOuVZAN6meZ+Mdx+8Gn2g4KsdsgnBYz+5MXVsnQjli5U3tXM3ysF6w9HO6yjQpMvXf6Gy6aNexJA6qzst3rWf00A25i+C4R0jEa0AtpvN9O7WnUboTTmH4edhRhjIXcu3XAz8Jpsjd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bKZIbLkA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1710892445;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zbEun43ZBsQsywHu6L/M5t0ZX1iHNKcnRwo0liRQ+Lg=;
+	b=bKZIbLkAN+Hb05fTIxjcEEj29p6tqkvI8SrAkBp2p8vam9meCdxmNiNRRxABKOnnHSJdLQ
+	zdIdCTU5aNLMlszOWIbQlfFNUwaDVFgniO1QSEw5+EOq5Y6F/nsiOr7avoDlCrjWEYDZLT
+	97EiO1nGHmSVgP07PIgigC/XQ8No0nE=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-458-u6Ce9Rf-Oqu-dIawrJeCrw-1; Tue, 19 Mar 2024 19:54:03 -0400
+X-MC-Unique: u6Ce9Rf-Oqu-dIawrJeCrw-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1e00e166ff4so24126335ad.0
+        for <ceph-devel@vger.kernel.org>; Tue, 19 Mar 2024 16:54:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1710892442; x=1711497242;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zbEun43ZBsQsywHu6L/M5t0ZX1iHNKcnRwo0liRQ+Lg=;
+        b=L88c0qTHrQloiScPD7+aYIOV+qEGY0s1U5U2otLDyk3tKufZEvSBEmX+lGl996ISoL
+         HA8FFz7hUXMFKPVhguAWoxEEFnZkEXCRBEQtxy4DM9vCb7IRBQVfHaKiE/xKIoWSHxmB
+         yZweZ7tdc/AEBaevMmWJ9UvXFHjDhRaS/Wj6P4MGf04Fb5LcADJL51wI16J8wic/r8om
+         dL1L3AOOB5cCtaD5G0cnCTwtpU7Un0sVLer73IkDP73iI7l+/6J/5js6d1xJm3Ie2m/B
+         s7Nxr1a+mBdzFW8j8dGlWl7FBHGy0DZuP/wLuKgWIucj8f5qjyqZEByvYw8Akd7pn4NC
+         NjcQ==
+X-Gm-Message-State: AOJu0YwC54zNoKmu5j1vi5S3k7qpdgm3hENkTHSFKE9hRND0uipljOIv
+	uLTLpYSdqiM0+u1QTgRX2QWCZzg3W1+DxzSkqpLr/AvR2F2pfgGlLfwsyble6zC3zGUxsE4sgam
+	bhdO1wNEN3yws+nR2hbRuS3W5Lq0gwDwAS3EBMadO/6CQbUzwlKbnjw9HcI8=
+X-Received: by 2002:a17:902:a3c4:b0:1dd:78f8:3e1 with SMTP id q4-20020a170902a3c400b001dd78f803e1mr3822489plb.44.1710892442564;
+        Tue, 19 Mar 2024 16:54:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFIIxPYx5X98gEM1xNWeFvytFo3bhp8CWTpeDgtB12FcKOGmF49Wa8b+jK+mCMxSaS+HG7fJA==
+X-Received: by 2002:a17:902:a3c4:b0:1dd:78f8:3e1 with SMTP id q4-20020a170902a3c400b001dd78f803e1mr3822478plb.44.1710892442141;
+        Tue, 19 Mar 2024 16:54:02 -0700 (PDT)
+Received: from [10.72.112.131] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id ja9-20020a170902efc900b001ddd0eb63f4sm12096443plb.105.2024.03.19.16.53.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 19 Mar 2024 16:54:01 -0700 (PDT)
+Message-ID: <c03bce46-b4a6-40e4-984d-19c1e676d07e@redhat.com>
+Date: Wed, 20 Mar 2024 07:53:56 +0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -91,62 +81,79 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm: Replace ->launder_folio() with flush and wait
-To: Miklos Szeredi <miklos@szeredi.hu>, David Howells <dhowells@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
- Trond Myklebust <trond.myklebust@hammerspace.com>,
- Christoph Hellwig <hch@lst.de>, Andrew Morton <akpm@linux-foundation.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
- v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
- ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1668172.1709764777@warthog.procyon.org.uk>
- <ZelGX3vVlGfEZm8H@casper.infradead.org>
- <1831809.1709807788@warthog.procyon.org.uk>
- <CAJfpegv8X0PY7PvxEF=zEwRbdZ7yZZcwB80iDO+XLverognx+g@mail.gmail.com>
- <651179.1710857687@warthog.procyon.org.uk>
- <CAJfpegsUYUwp2YNnCE3ZP+JtL0whgQ=3+wcsBABGXH9MjXC0zA@mail.gmail.com>
- <CAJfpegsCBEm11OHS8bfQdgossOgofPcYhLTFtw7_+T66iBvznw@mail.gmail.com>
-Content-Language: en-US, de-DE, fr
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <CAJfpegsCBEm11OHS8bfQdgossOgofPcYhLTFtw7_+T66iBvznw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v3 2/2] ceph: set the correct mask for getattr reqeust for
+ read
+Content-Language: en-US
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com,
+ mchangir@redhat.com, frankhsiao@qnap.com
+References: <20240319002925.1228063-1-xiubli@redhat.com>
+ <20240319002925.1228063-3-xiubli@redhat.com>
+ <CAOi1vP_xiO-0EFq2T100Tx30ayR4dyegxJR-CcZX34peYg09gg@mail.gmail.com>
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <CAOi1vP_xiO-0EFq2T100Tx30ayR4dyegxJR-CcZX34peYg09gg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-
-On 3/19/24 17:40, Miklos Szeredi wrote:
-> On Tue, 19 Mar 2024 at 17:13, Miklos Szeredi <miklos@szeredi.hu> wrote:
+On 3/19/24 21:35, Ilya Dryomov wrote:
+> On Tue, Mar 19, 2024 at 1:32 AM <xiubli@redhat.com> wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
 >>
->> On Tue, 19 Mar 2024 at 15:15, David Howells <dhowells@redhat.com> wrote:
+>> In case of hitting the file EOF the ceph_read_iter() needs to
+>> retrieve the file size from MDS, and the Fr caps is not a neccessary.
 >>
->>> What particular usage case of invalidate_inode_pages2() are you thinking of?
+>> URL: https://patchwork.kernel.org/project/ceph-devel/list/?series=819323
+>> Reported-by: Frank Hsiao 蕭法宣 <frankhsiao@qnap.com>
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> Tested-by: Frank Hsiao 蕭法宣 <frankhsiao@qnap.com>
+>> ---
+>>   fs/ceph/file.c | 8 +++++---
+>>   1 file changed, 5 insertions(+), 3 deletions(-)
 >>
->> FUSE_NOTIFY_INVAL_INODE will trigger invalidate_inode_pages2_range()
->> to clean up the cache.
+>> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>> index c35878427985..a85f95c941fc 100644
+>> --- a/fs/ceph/file.c
+>> +++ b/fs/ceph/file.c
+>> @@ -2191,14 +2191,16 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>                  int statret;
+>>                  struct page *page = NULL;
+>>                  loff_t i_size;
+>> +               int mask = CEPH_STAT_CAP_SIZE;
+>>                  if (retry_op == READ_INLINE) {
+>>                          page = __page_cache_alloc(GFP_KERNEL);
+>>                          if (!page)
+>>                                  return -ENOMEM;
+>>                  }
 >>
->> The server is free to discard writes resulting from this invalidation
->> and delay reads in the region until the invalidation finishes.  This
->> would no longer work with your change, since the mapping could
->> silently be reinstated between the writeback and the removal from the
->> cache due to the page being unlocked/relocked.
-> 
-> This would also matter if a distributed filesystem wanted to implement
-> coherence even if there are mmaps.   I.e. a client could get exclusive
-> access to a region by issuing FUSE_NOTIFY_INVAL_INODE on all other
-> clients and blocking reads.  With your change this would fail.
-> 
-> Again, this is purely theoretical, and without a way to differentiate
-> between the read-only and write cases it has limited usefulness.
-> Adding leases to fuse (which I plan to do) would make this much more
-> useful.
+>> -               statret = __ceph_do_getattr(inode, page,
+>> -                                           CEPH_STAT_CAP_INLINE_DATA, !!page);
+>> +               if (retry_op == READ_INLINE)
+>> +                       mask = CEPH_STAT_CAP_INLINE_DATA;
+> Hi Xiubo,
+>
+> This introduces an additional retry_op == READ_INLINE branch right
+> below an existing one.  Should this be:
+>
+>      int mask = CEPH_STAT_CAP_SIZE;
+>      if (retry_op == READ_INLINE) {
+>              page = __page_cache_alloc(GFP_KERNEL);
+>              if (!page)
+>                      return -ENOMEM;
+>
+>              mask = CEPH_STAT_CAP_INLINE_DATA;
+>      }
 
-Thanks Miklos! Fyi, we are actually planning to extend fuse
-notifications from inode to page ranges.
+Look good to me.
+
+Thanks Ilya.
+
+- Xiubo
 
 
-Thanks,
-Bernd
+> Thanks,
+>
+>                  Ilya
+>
+
 
