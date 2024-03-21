@@ -1,105 +1,77 @@
-Return-Path: <ceph-devel+bounces-991-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-992-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8BB881B2A
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 Mar 2024 03:19:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D56886547
+	for <lists+ceph-devel@lfdr.de>; Fri, 22 Mar 2024 03:52:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC65228529F
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 Mar 2024 02:19:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04D671C22F07
+	for <lists+ceph-devel@lfdr.de>; Fri, 22 Mar 2024 02:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43AC1FA2;
-	Thu, 21 Mar 2024 02:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFC93C17;
+	Fri, 22 Mar 2024 02:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JWE8oM+K"
+	dkim=pass (2048-bit key) header.d=profitsavvy.pl header.i=@profitsavvy.pl header.b="YdAf/Wtb"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mail.profitsavvy.pl (mail.profitsavvy.pl [46.36.38.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502785660
-	for <ceph-devel@vger.kernel.org>; Thu, 21 Mar 2024 02:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827D279CC
+	for <ceph-devel@vger.kernel.org>; Fri, 22 Mar 2024 02:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.36.38.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710987484; cv=none; b=u13bW7omIJNljbfpgMfiHPvYwYxl2tq9CVNDOzpuYtBT8CRWh/BHYFCL8z+DAvXv+1PIu98u3JzoKpMi/0WSz13sO43xq6yDISxpO3yPH/0VEH/MxsW5i+tsDqgUulgI+gKjVRAuPIPDvvc6UzCmSrp8f+XXZA+XzQk3wzi42e0=
+	t=1711075924; cv=none; b=PzN//7OXK1nzOw5gGJyxrZPx7i5TBSYsC00w4a3UEUJSyTV8OFBGo3Bdj3VYhEDf590JEUNN+b42TKZ1/zzyQVWBi4MJacJSXeBWtUBJTgEbkWVKqTYnL8/jaovF7d0W7mQ2BY3O1ZY12XHPfvtke1yb/FiktSnx0+LTdcFN8Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710987484; c=relaxed/simple;
-	bh=Cat/Tvq3oeGsG9xqSx7bX74Fygx9pXxw2MmBcSTxezA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o0wZa+VeVrEqe20qptwAwkkXNt5SjVhvZs3+4N0+mFLu1H40oLXGjPRx8MTKccXVOZfjmeWhl/M1gH44H7JVA5wJI2qruROAl5F64mEaNYTrgBwRVjE53t992uWAS9x0J3GqS77XHNYoShkWT7R3rat7W+ibjGID0wl9luDwR+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JWE8oM+K; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710987480;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=j59PTLMDxYOFJM3q5U1JQbi4m2vsY64uVQTexjFuzik=;
-	b=JWE8oM+K9g/Rsz1zU3PiUkV5W+mDJPcGOl7ZkK7CLUYLclXFtzCXf+hjhY4g3fQSv7/c+d
-	JvistTvpEVpTK+c7gNEWQ7Dj6fnF2NNa4IQgrhinbKE3PhXZZStAXh/6vdTTvttOEni0rB
-	wr2/hK5IoGQt8wHfi6YZwgM1YY5KIL0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-477-fVgzoMBpMRu2k3y1C0UonA-1; Wed, 20 Mar 2024 22:17:55 -0400
-X-MC-Unique: fVgzoMBpMRu2k3y1C0UonA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6F3F98007A4;
-	Thu, 21 Mar 2024 02:17:55 +0000 (UTC)
-Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (unknown [10.72.112.10])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id AC5ABC017A0;
-	Thu, 21 Mar 2024 02:17:51 +0000 (UTC)
-From: xiubli@redhat.com
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	jlayton@kernel.org,
-	vshankar@redhat.com,
-	mchangir@redhat.com,
-	Xiubo Li <xiubli@redhat.com>,
-	Stefan Kooman <stefan@bit.nl>
-Subject: [PATCH] ceph: make the ceph-cap workqueue UNBOUND
-Date: Thu, 21 Mar 2024 10:15:36 +0800
-Message-ID: <20240321021536.64693-1-xiubli@redhat.com>
+	s=arc-20240116; t=1711075924; c=relaxed/simple;
+	bh=hT1DBAeWi6ip4mLrTwBikUtRP2T6ijJjUg+RC7D4T2s=;
+	h=Message-ID:Date:From:To:Subject:MIME-Version:Content-Type; b=QQ5TSBYp6OMELNBwm/zL2WgyB1gzTIo9X3/3ihcV6knXJfQ0JZwTQ+el7a9gfRz05Gseb4dEknTppK7ZMjQ+mQxi1lNpCHQtlzUHk6bIPpVBz+UZISruk+u9Nfn8cQ6RU+5lW9CzeYBgMcW1aXtZNshmU95dImB4PkjiJKRGLUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=profitsavvy.pl; spf=pass smtp.mailfrom=profitsavvy.pl; dkim=pass (2048-bit key) header.d=profitsavvy.pl header.i=@profitsavvy.pl header.b=YdAf/Wtb; arc=none smtp.client-ip=46.36.38.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=profitsavvy.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=profitsavvy.pl
+Received: by mail.profitsavvy.pl (Postfix, from userid 1001)
+	id 32A6522601; Thu, 21 Mar 2024 10:11:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=profitsavvy.pl;
+	s=mail; t=1711012280;
+	bh=hT1DBAeWi6ip4mLrTwBikUtRP2T6ijJjUg+RC7D4T2s=;
+	h=Date:From:To:Subject:From;
+	b=YdAf/WtbqJ5TtyzyDpAJoB6159DXORRSotmG4ArhxAjDVvH5GOaGyXybKBy/RH3op
+	 d4atMqlU0A/+wSKYiCDQ8iEJdnVCLpCbL0hi+RQbpI5kRTHU570QREhsrKuznhr77P
+	 O0zrTJzeiFdJbn5gje1BwuTEF2CfZDbF9dM8tQND4GCLHkRv+3OzXIs3hGILJwQR59
+	 mhApyf0tvjyUFxCN10ayJgbk0fcYHnBCD9ay7rk9x498W28Sltj/bn4Lwf5OUJRlaH
+	 P8DfZYJ0M25R8Z/GBcR+qNvLRO7q1pKTPFQSBusoFium8yEYuRtPaBu/GfA1/d29jO
+	 MsFBgboUJ3F/A==
+Received: by mail.profitsavvy.pl for <ceph-devel@vger.kernel.org>; Thu, 21 Mar 2024 09:11:16 GMT
+Message-ID: <20240321084500-0.1.z.28iv.0.kb0643p6a0@profitsavvy.pl>
+Date: Thu, 21 Mar 2024 09:11:16 GMT
+From: "Marcin Socha" <marcin.socha@profitsavvy.pl>
+To: <ceph-devel@vger.kernel.org>
+Subject: =?UTF-8?Q?Sprz=C4=99t_poleasingowyKomputery_poleasingowe_na_sprzeda=C5=BC?=
+X-Mailer: mail.profitsavvy.pl
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Xiubo Li <xiubli@redhat.com>
+Szanowni Pa=C5=84stwo,
 
-There is not harm to mark the ceph-cap workqueue unbounded, just
-like we do in ceph-inode workqueue.
+oferujemy poleasingowe sprz=C4=99ty komputerowe popularnych marek takich =
+jak Dell, HP czy Lenovo.=20
 
-URL: https://www.spinics.net/lists/ceph-users/msg78775.html
-URL: https://tracker.ceph.com/issues/64977
-Reported-by: Stefan Kooman <stefan@bit.nl>
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Do wyboru mamy laptopy, komputery stacjonarne, monitory, stacje robocze. =
+Mo=C5=BCemy odkupi=C4=87 od Pa=C5=84stwa dotychczasowe urz=C4=85dzenia, z=
+apewni=C4=87 30-dniowy test nowych urz=C4=85dze=C5=84, serwis oraz r=C3=B3=
+=C5=BCne formy finansowania.=20
 
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index 4dcbbaa297f6..0bfe4f8418fd 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -851,7 +851,7 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
- 	fsc->inode_wq = alloc_workqueue("ceph-inode", WQ_UNBOUND, 0);
- 	if (!fsc->inode_wq)
- 		goto fail_client;
--	fsc->cap_wq = alloc_workqueue("ceph-cap", 0, 1);
-+	fsc->cap_wq = alloc_workqueue("ceph-cap", WQ_UNBOUND, 1);
- 	if (!fsc->cap_wq)
- 		goto fail_inode_wq;
- 
--- 
-2.43.0
+Czy s=C4=85 Pa=C5=84stwo zainteresowani spersonalizowan=C4=85 ofert=C4=85=
+?
 
+
+Pozdrawiam
+Marcin Socha
 
