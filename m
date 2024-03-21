@@ -1,159 +1,105 @@
-Return-Path: <ceph-devel+bounces-990-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-991-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF6088084B
-	for <lists+ceph-devel@lfdr.de>; Wed, 20 Mar 2024 00:54:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8BB881B2A
+	for <lists+ceph-devel@lfdr.de>; Thu, 21 Mar 2024 03:19:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEE1F1F22C7A
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Mar 2024 23:54:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC65228529F
+	for <lists+ceph-devel@lfdr.de>; Thu, 21 Mar 2024 02:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7C05FBA6;
-	Tue, 19 Mar 2024 23:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43AC1FA2;
+	Thu, 21 Mar 2024 02:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bKZIbLkA"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JWE8oM+K"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47EC93FBAF
-	for <ceph-devel@vger.kernel.org>; Tue, 19 Mar 2024 23:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502785660
+	for <ceph-devel@vger.kernel.org>; Thu, 21 Mar 2024 02:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1710892448; cv=none; b=nwUxVenKggNT/X03dQi/1NpjbomIXzxkUNoMZyBuHQ63Ok4Mu5qWPXWiToF4LSn944NlMyVxNULgMy24/1R2/5xYBxU2qU7//dN9unS6D2o7ECogyIYAZ5KBeXWgaaVMyUG900Z6Qp12Tyx0ZyDxDSn9bgF6sRZLgShJn278o8U=
+	t=1710987484; cv=none; b=u13bW7omIJNljbfpgMfiHPvYwYxl2tq9CVNDOzpuYtBT8CRWh/BHYFCL8z+DAvXv+1PIu98u3JzoKpMi/0WSz13sO43xq6yDISxpO3yPH/0VEH/MxsW5i+tsDqgUulgI+gKjVRAuPIPDvvc6UzCmSrp8f+XXZA+XzQk3wzi42e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1710892448; c=relaxed/simple;
-	bh=mIbjAL4Tsu4N7WJ2AnDN9Y2PUjmWm7rx8+1Q54N1ipI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PO/DD+V6jf8dMwGSIUEhi0C0nJP2q/R3YOuVZAN6meZ+Mdx+8Gn2g4KsdsgnBYz+5MXVsnQjli5U3tXM3ysF6w9HO6yjQpMvXf6Gy6aNexJA6qzst3rWf00A25i+C4R0jEa0AtpvN9O7WnUboTTmH4edhRhjIXcu3XAz8Jpsjd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bKZIbLkA; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1710987484; c=relaxed/simple;
+	bh=Cat/Tvq3oeGsG9xqSx7bX74Fygx9pXxw2MmBcSTxezA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o0wZa+VeVrEqe20qptwAwkkXNt5SjVhvZs3+4N0+mFLu1H40oLXGjPRx8MTKccXVOZfjmeWhl/M1gH44H7JVA5wJI2qruROAl5F64mEaNYTrgBwRVjE53t992uWAS9x0J3GqS77XHNYoShkWT7R3rat7W+ibjGID0wl9luDwR+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JWE8oM+K; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1710892445;
+	s=mimecast20190719; t=1710987480;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zbEun43ZBsQsywHu6L/M5t0ZX1iHNKcnRwo0liRQ+Lg=;
-	b=bKZIbLkAN+Hb05fTIxjcEEj29p6tqkvI8SrAkBp2p8vam9meCdxmNiNRRxABKOnnHSJdLQ
-	zdIdCTU5aNLMlszOWIbQlfFNUwaDVFgniO1QSEw5+EOq5Y6F/nsiOr7avoDlCrjWEYDZLT
-	97EiO1nGHmSVgP07PIgigC/XQ8No0nE=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=j59PTLMDxYOFJM3q5U1JQbi4m2vsY64uVQTexjFuzik=;
+	b=JWE8oM+K9g/Rsz1zU3PiUkV5W+mDJPcGOl7ZkK7CLUYLclXFtzCXf+hjhY4g3fQSv7/c+d
+	JvistTvpEVpTK+c7gNEWQ7Dj6fnF2NNa4IQgrhinbKE3PhXZZStAXh/6vdTTvttOEni0rB
+	wr2/hK5IoGQt8wHfi6YZwgM1YY5KIL0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-458-u6Ce9Rf-Oqu-dIawrJeCrw-1; Tue, 19 Mar 2024 19:54:03 -0400
-X-MC-Unique: u6Ce9Rf-Oqu-dIawrJeCrw-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1e00e166ff4so24126335ad.0
-        for <ceph-devel@vger.kernel.org>; Tue, 19 Mar 2024 16:54:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1710892442; x=1711497242;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zbEun43ZBsQsywHu6L/M5t0ZX1iHNKcnRwo0liRQ+Lg=;
-        b=L88c0qTHrQloiScPD7+aYIOV+qEGY0s1U5U2otLDyk3tKufZEvSBEmX+lGl996ISoL
-         HA8FFz7hUXMFKPVhguAWoxEEFnZkEXCRBEQtxy4DM9vCb7IRBQVfHaKiE/xKIoWSHxmB
-         yZweZ7tdc/AEBaevMmWJ9UvXFHjDhRaS/Wj6P4MGf04Fb5LcADJL51wI16J8wic/r8om
-         dL1L3AOOB5cCtaD5G0cnCTwtpU7Un0sVLer73IkDP73iI7l+/6J/5js6d1xJm3Ie2m/B
-         s7Nxr1a+mBdzFW8j8dGlWl7FBHGy0DZuP/wLuKgWIucj8f5qjyqZEByvYw8Akd7pn4NC
-         NjcQ==
-X-Gm-Message-State: AOJu0YwC54zNoKmu5j1vi5S3k7qpdgm3hENkTHSFKE9hRND0uipljOIv
-	uLTLpYSdqiM0+u1QTgRX2QWCZzg3W1+DxzSkqpLr/AvR2F2pfgGlLfwsyble6zC3zGUxsE4sgam
-	bhdO1wNEN3yws+nR2hbRuS3W5Lq0gwDwAS3EBMadO/6CQbUzwlKbnjw9HcI8=
-X-Received: by 2002:a17:902:a3c4:b0:1dd:78f8:3e1 with SMTP id q4-20020a170902a3c400b001dd78f803e1mr3822489plb.44.1710892442564;
-        Tue, 19 Mar 2024 16:54:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIIxPYx5X98gEM1xNWeFvytFo3bhp8CWTpeDgtB12FcKOGmF49Wa8b+jK+mCMxSaS+HG7fJA==
-X-Received: by 2002:a17:902:a3c4:b0:1dd:78f8:3e1 with SMTP id q4-20020a170902a3c400b001dd78f803e1mr3822478plb.44.1710892442141;
-        Tue, 19 Mar 2024 16:54:02 -0700 (PDT)
-Received: from [10.72.112.131] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id ja9-20020a170902efc900b001ddd0eb63f4sm12096443plb.105.2024.03.19.16.53.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 19 Mar 2024 16:54:01 -0700 (PDT)
-Message-ID: <c03bce46-b4a6-40e4-984d-19c1e676d07e@redhat.com>
-Date: Wed, 20 Mar 2024 07:53:56 +0800
+ us-mta-477-fVgzoMBpMRu2k3y1C0UonA-1; Wed, 20 Mar 2024 22:17:55 -0400
+X-MC-Unique: fVgzoMBpMRu2k3y1C0UonA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6F3F98007A4;
+	Thu, 21 Mar 2024 02:17:55 +0000 (UTC)
+Received: from li-a71a4dcc-35d1-11b2-a85c-951838863c8d.ibm.com.com (unknown [10.72.112.10])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id AC5ABC017A0;
+	Thu, 21 Mar 2024 02:17:51 +0000 (UTC)
+From: xiubli@redhat.com
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	jlayton@kernel.org,
+	vshankar@redhat.com,
+	mchangir@redhat.com,
+	Xiubo Li <xiubli@redhat.com>,
+	Stefan Kooman <stefan@bit.nl>
+Subject: [PATCH] ceph: make the ceph-cap workqueue UNBOUND
+Date: Thu, 21 Mar 2024 10:15:36 +0800
+Message-ID: <20240321021536.64693-1-xiubli@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] ceph: set the correct mask for getattr reqeust for
- read
-Content-Language: en-US
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com,
- mchangir@redhat.com, frankhsiao@qnap.com
-References: <20240319002925.1228063-1-xiubli@redhat.com>
- <20240319002925.1228063-3-xiubli@redhat.com>
- <CAOi1vP_xiO-0EFq2T100Tx30ayR4dyegxJR-CcZX34peYg09gg@mail.gmail.com>
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <CAOi1vP_xiO-0EFq2T100Tx30ayR4dyegxJR-CcZX34peYg09gg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
+From: Xiubo Li <xiubli@redhat.com>
 
-On 3/19/24 21:35, Ilya Dryomov wrote:
-> On Tue, Mar 19, 2024 at 1:32 AM <xiubli@redhat.com> wrote:
->> From: Xiubo Li <xiubli@redhat.com>
->>
->> In case of hitting the file EOF the ceph_read_iter() needs to
->> retrieve the file size from MDS, and the Fr caps is not a neccessary.
->>
->> URL: https://patchwork.kernel.org/project/ceph-devel/list/?series=819323
->> Reported-by: Frank Hsiao 蕭法宣 <frankhsiao@qnap.com>
->> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->> Tested-by: Frank Hsiao 蕭法宣 <frankhsiao@qnap.com>
->> ---
->>   fs/ceph/file.c | 8 +++++---
->>   1 file changed, 5 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
->> index c35878427985..a85f95c941fc 100644
->> --- a/fs/ceph/file.c
->> +++ b/fs/ceph/file.c
->> @@ -2191,14 +2191,16 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
->>                  int statret;
->>                  struct page *page = NULL;
->>                  loff_t i_size;
->> +               int mask = CEPH_STAT_CAP_SIZE;
->>                  if (retry_op == READ_INLINE) {
->>                          page = __page_cache_alloc(GFP_KERNEL);
->>                          if (!page)
->>                                  return -ENOMEM;
->>                  }
->>
->> -               statret = __ceph_do_getattr(inode, page,
->> -                                           CEPH_STAT_CAP_INLINE_DATA, !!page);
->> +               if (retry_op == READ_INLINE)
->> +                       mask = CEPH_STAT_CAP_INLINE_DATA;
-> Hi Xiubo,
->
-> This introduces an additional retry_op == READ_INLINE branch right
-> below an existing one.  Should this be:
->
->      int mask = CEPH_STAT_CAP_SIZE;
->      if (retry_op == READ_INLINE) {
->              page = __page_cache_alloc(GFP_KERNEL);
->              if (!page)
->                      return -ENOMEM;
->
->              mask = CEPH_STAT_CAP_INLINE_DATA;
->      }
+There is not harm to mark the ceph-cap workqueue unbounded, just
+like we do in ceph-inode workqueue.
 
-Look good to me.
+URL: https://www.spinics.net/lists/ceph-users/msg78775.html
+URL: https://tracker.ceph.com/issues/64977
+Reported-by: Stefan Kooman <stefan@bit.nl>
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks Ilya.
-
-- Xiubo
-
-
-> Thanks,
->
->                  Ilya
->
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 4dcbbaa297f6..0bfe4f8418fd 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -851,7 +851,7 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
+ 	fsc->inode_wq = alloc_workqueue("ceph-inode", WQ_UNBOUND, 0);
+ 	if (!fsc->inode_wq)
+ 		goto fail_client;
+-	fsc->cap_wq = alloc_workqueue("ceph-cap", 0, 1);
++	fsc->cap_wq = alloc_workqueue("ceph-cap", WQ_UNBOUND, 1);
+ 	if (!fsc->cap_wq)
+ 		goto fail_inode_wq;
+ 
+-- 
+2.43.0
 
 
