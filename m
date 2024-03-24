@@ -1,79 +1,163 @@
-Return-Path: <ceph-devel+bounces-994-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-995-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1716B8872E1
-	for <lists+ceph-devel@lfdr.de>; Fri, 22 Mar 2024 19:18:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46421887F72
+	for <lists+ceph-devel@lfdr.de>; Sun, 24 Mar 2024 23:21:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 491101C22532
-	for <lists+ceph-devel@lfdr.de>; Fri, 22 Mar 2024 18:18:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E74782811D5
+	for <lists+ceph-devel@lfdr.de>; Sun, 24 Mar 2024 22:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E38612DB;
-	Fri, 22 Mar 2024 18:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E45238FB9;
+	Sun, 24 Mar 2024 22:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQ3lzpjm"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QHl15LKF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zDkYXSwc";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QHl15LKF";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zDkYXSwc"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4447560ED1;
-	Fri, 22 Mar 2024 18:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D01E18638;
+	Sun, 24 Mar 2024 22:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711131466; cv=none; b=BomMgoWBswt3vbic+F/M7kkX1RYVl0OBuPuJaK8NGpnJUp24OycfAnhltLV1o+h3vqiVJeEobaZQucWEP4JuTCzhwdpVYj5VLbDfGB2pPM8rzbghol79FZpCaStuSIaqIwSJgxO5lfBb06UEJNNan2n5JxDsVYcXvNCpJD3lkQs=
+	t=1711318896; cv=none; b=rtLiowpdq/YCOcLOjuVlfetvwjUu33AqnJDKUceX+9+aDI3NlAS4eAodSRPwmXTpucfRO7Ie7zig7o+B9iFRO+bARQ6RgPG7bqNGOa6e1qenRuAAn343Kg2IGQF/2rF21UR/7P/viQwLNrkxgWOi1aryCitBns7MIuCgJcU3SEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711131466; c=relaxed/simple;
-	bh=vTDbh6MfVjEG+BiUEnTOdwJ0ztrszozH78esjfXpkWs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Cji/kNXCSvHvpbfmk/IZbELBEIF14g+yBLXHHjOLAin3zGAUg0mf0BjZ6VyC72Kwg3+LgY+SbGPbVFtZC/AhYiqMO98nw1Gy8HBAgU3D+Rf/6hx/B6cyatCZuf7BzRxwV0a3CrLztGCIT6P3fnr+xfSlPBIFZeB9yo411SjEZV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQ3lzpjm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1D9E6C433A6;
-	Fri, 22 Mar 2024 18:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711131466;
-	bh=vTDbh6MfVjEG+BiUEnTOdwJ0ztrszozH78esjfXpkWs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=KQ3lzpjm5S+pRf3ZuP1vAfRqrGEqLsoKfvY4K0klcRbWzxOZ5ieodskMXfxL38CIq
-	 POcVVyNTS7YXJKobv2Kqz473rnNMBGTKGp6hZ/q8Z+kemcKkxehVpPZ76gSW9fN/qz
-	 Fv2qmiKFchkvoK7H8SNfMHuOWyoshQgy7LachVJ4pocawbU61fmwKbYmHZG2Jcn2xZ
-	 QHLAUnD5gx6D5Eq5csvU2AvjWrBvjHQXZr0LYzbO6rz3E3vmQlkAHL6MjoCDdMkJVZ
-	 FH1AtyNzZXsgx53jGiVX/z3k1J4uIposm9UaLpBGHmgi+rnh3+4Xape4EY5STL7Iw6
-	 a4AMH5MY3P23Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 14362D95056;
-	Fri, 22 Mar 2024 18:17:46 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph fixes for 6.9-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240322175308.2289495-1-idryomov@gmail.com>
-References: <20240322175308.2289495-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240322175308.2289495-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.9-rc1
-X-PR-Tracked-Commit-Id: 825b82f6b82aa38dbb771d24e135152012500e51
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ff9c18e435b042596c9d48badac7488e3fa76a55
-Message-Id: <171113146607.17281.2540026461558505706.pr-tracker-bot@kernel.org>
-Date: Fri, 22 Mar 2024 18:17:46 +0000
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1711318896; c=relaxed/simple;
+	bh=+ASgVRvQKrRO6vd7heqIOrfqPHwgmRlRMnaiQ9C9BII=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:Date:Message-id; b=GEBDlq+FtKR7wwxddi0awYQycvVGM9tnbbGzLdSK/hPcnNzmpeFTBlTgYy6eGftaCRLbZMHrUuPOt0XNtErfQleHhB8mDDq8FtVHE3GMcHs+B6IFOPQKdddF3Qy1X4ckHUIomtgDOSDC/xbsmaf4yqOznU7ScbfVefLOd5KRMbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QHl15LKF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zDkYXSwc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QHl15LKF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zDkYXSwc; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8996E3494D;
+	Sun, 24 Mar 2024 22:21:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1711318886; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Q22e8y7gYn1Cil1GqA4W9UMt88586a/ZvqqOpFe5eJU=;
+	b=QHl15LKFyv2F1CDKyizBVU1kPj0PEOHci3OiPUxZVjZQCzVfGGMQVFib2uOINDsMwIN7AY
+	e2T9lpWdUz4pQ6xbuJfKl5+MPTCAmzcqB6wm4xpLCRbrINUNYGhzT7e07Yk6ZuzNZsk4K1
+	iSjnZlpjlwwtChLQx9n3sp1VHb8W504=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1711318886;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Q22e8y7gYn1Cil1GqA4W9UMt88586a/ZvqqOpFe5eJU=;
+	b=zDkYXSwcbnYrKLWV/7xCzOph6v2kGdCvyA1l5uBM2ICCgUrrjBeBrpNH9OtQ+poHwOnIqI
+	zqaH3i6kwZ8UTECQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1711318886; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Q22e8y7gYn1Cil1GqA4W9UMt88586a/ZvqqOpFe5eJU=;
+	b=QHl15LKFyv2F1CDKyizBVU1kPj0PEOHci3OiPUxZVjZQCzVfGGMQVFib2uOINDsMwIN7AY
+	e2T9lpWdUz4pQ6xbuJfKl5+MPTCAmzcqB6wm4xpLCRbrINUNYGhzT7e07Yk6ZuzNZsk4K1
+	iSjnZlpjlwwtChLQx9n3sp1VHb8W504=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1711318886;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Q22e8y7gYn1Cil1GqA4W9UMt88586a/ZvqqOpFe5eJU=;
+	b=zDkYXSwcbnYrKLWV/7xCzOph6v2kGdCvyA1l5uBM2ICCgUrrjBeBrpNH9OtQ+poHwOnIqI
+	zqaH3i6kwZ8UTECQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4A32513695;
+	Sun, 24 Mar 2024 22:21:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id JmE+N2OnAGZXMwAAD6G6ig
+	(envelope-from <neilb@suse.de>); Sun, 24 Mar 2024 22:21:23 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+From: "NeilBrown" <neilb@suse.de>
+To: Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+ Jeff Layton <jlayton@kernel.org>
+Cc: ceph-devel@vger.kernel.org , linux-kernel@vger.kernel.org
+Subject: [PATCH] ceph: redirty page before returning AOP_WRITEPAGE_ACTIVATE
+Date: Mon, 25 Mar 2024 09:21:20 +1100
+Message-id: <171131888022.13576.8585118457506044105@noble.neil.brown.name>
+X-Spam-Score: -3.77
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.77 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	 RCPT_COUNT_FIVE(0.00)[5];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
+	 FREEMAIL_TO(0.00)[redhat.com,gmail.com,kernel.org];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-0.26)[73.52%];
+	 RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+X-Spam-Level: 
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=QHl15LKF;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=zDkYXSwc
+X-Rspamd-Queue-Id: 8996E3494D
 
-The pull request you sent on Fri, 22 Mar 2024 18:53:07 +0100:
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-6.9-rc1
+The page has been marked clean before writepage is called.  If we don't
+redirty it before postponing the write, it might never get written.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ff9c18e435b042596c9d48badac7488e3fa76a55
+Fixes: 503d4fa6ee28 ("ceph: remove reliance on bdi congestion")
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ fs/ceph/addr.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thank you!
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 1340d77124ae..ee9caf7916fb 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -795,8 +795,10 @@ static int ceph_writepage(struct page *page, struct writ=
+eback_control *wbc)
+ 	ihold(inode);
+=20
+ 	if (wbc->sync_mode =3D=3D WB_SYNC_NONE &&
+-	    ceph_inode_to_fs_client(inode)->write_congested)
++	    ceph_inode_to_fs_client(inode)->write_congested) {
++		redirty_page_for_writepage(wbc, page);
+ 		return AOP_WRITEPAGE_ACTIVATE;
++	}
+=20
+ 	wait_on_page_fscache(page);
+=20
+--=20
+2.44.0
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
 
