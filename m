@@ -1,145 +1,264 @@
-Return-Path: <ceph-devel+bounces-1014-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1015-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC82A890258
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Mar 2024 15:55:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F996890543
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Mar 2024 17:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C30AB23AA4
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Mar 2024 14:55:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEC172917ED
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Mar 2024 16:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41F212FF78;
-	Thu, 28 Mar 2024 14:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9638F3BBE2;
+	Thu, 28 Mar 2024 16:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="gafSkfD4"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UEH4rgRE"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5F812E1DB
-	for <ceph-devel@vger.kernel.org>; Thu, 28 Mar 2024 14:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866443BBC1
+	for <ceph-devel@vger.kernel.org>; Thu, 28 Mar 2024 16:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711637641; cv=none; b=kdF6dv7yFdCAv+hm6rS5BpKjcObBNLUnviglpdCItvsedttNoFzLs26qm8kYLVLvgpP6pYyp3phC8y6Zfohl+gGcmss5LH5FYYwOV1hMM6dUo/DMyLf18ptTaPIxAruU8PSlmNbehg5CFsgxdack0qFPk0D5xGiMNqW3scSzxJw=
+	t=1711643685; cv=none; b=JYpzIVgbsNaVdVgFqiuMBnaTQo1sgxLUFmiov5hJSWlxvUUxRUBMqh2wIV8cWYJumvuL96McZUb8li7hQ7m9ZY2KU94wizFxvgvr28qq2eBmA3Va2piskmyOO8aDawKt7P5MeHUTqgazj3lAaFLmimKHEfxa+nNXyiQdHXhJ83s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711637641; c=relaxed/simple;
-	bh=iZIfvRAXPiN1hUOqhcrIgulJC/h0qg4G0zbfy7UTFog=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kvGWTMetdUOlhLh/2FsAt633gMZEkJLcINo1dwfQ2UswLce9RSu1P5fBwVJun5jWrsnyNoMa8edC/L6stjgJJz5K4T8Tso+Bw6QzrnKVn7a5SNhrxQRUL39GiLdcX/Ac7Yrn7+8zHKiWD1BkaUkS0rdEl4Fo8bp8S7FCd5QV/Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=gafSkfD4; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-696719f8dfcso5340856d6.0
-        for <ceph-devel@vger.kernel.org>; Thu, 28 Mar 2024 07:53:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1711637638; x=1712242438; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ch1rSN60qRNe5jZReHI5Y78NslDtRUbpHN7Kv6Yk4Rs=;
-        b=gafSkfD4I9UUsl7v479VXMwpQfzA11f7ivm4sjOBEbRWuFRyiSmT1MZbdowifcrVd6
-         kFEXvPwaA9xgqLNj18mmuAo5rTyLYjRmGgj30qY9c5m0+gUm+KCbnGM+FqGZFQGcZIjN
-         0SJKUFYFxNUFLVfAW+tJnv7KFHDXI5d5kWdeY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711637638; x=1712242438;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ch1rSN60qRNe5jZReHI5Y78NslDtRUbpHN7Kv6Yk4Rs=;
-        b=l5o7cDk5JqkrvoJd8z7HK3FUFptJsBNuOT0IkftCZR5w/4kYAP2pGrYEjsM7JTQUrK
-         qzTnnPITYEofbeWHCmWAuF37hLfjVyecXN+95rEF9chpZ+uSBANbitPyfj7JjWgsPHOF
-         RYZ3y5aCRPUC32XwY7/C8vep0D5C3VSuEuUlImm8exNrp8B/B18d9htsNQvMj2aZ7MCf
-         Y9ieRWpg2bRDB4YZn/b2z8bQem7yoDoXnLbJ2DXb8kTNkzQbe4w3XwR9La1i9xmxDPo9
-         swuDq6HUINhKu57CocX4OstB2GM+wIzKRqyWVwkIdrKCNA0KM6PYviuNviVbDqpe9hs4
-         taPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDkeGQZrJyweWrm+CWQcDbI7c3MACitgnWj0E6EixCRAPUPSgEER1gtIlbCeiyS6hTNpgsBJYxZNZzZX2D4R6PYhiQBiS+aRDAMQ==
-X-Gm-Message-State: AOJu0Yy7a8zVcyO3c2m0bgXtG4UvUKTBb8YznSBII5L/xUrSRzpt3twg
-	IzIJUdADdFm6LElHc5ynBmMpp7rngS1lJNAKyheKVQuZ15r2sG+bQLfygpz/Hw==
-X-Google-Smtp-Source: AGHT+IEnRGCY/sQi9y+ccYFEbyJVObyHWpdhYti3ZYxnNsR7GFx/Tq+iuzOTlBR8697MpFQbDAmQmg==
-X-Received: by 2002:ad4:5507:0:b0:696:990b:dfeb with SMTP id pz7-20020ad45507000000b00696990bdfebmr2685430qvb.16.1711637638145;
-        Thu, 28 Mar 2024 07:53:58 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.googlemail.com with ESMTPSA id jf11-20020a0562142a4b00b006987272f5cbsm399690qvb.71.2024.03.28.07.53.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Mar 2024 07:53:57 -0700 (PDT)
-Message-ID: <b8e848fe-96d8-4f75-a2e9-2ed5c11a2fd7@ieee.org>
-Date: Thu, 28 Mar 2024 09:53:55 -0500
+	s=arc-20240116; t=1711643685; c=relaxed/simple;
+	bh=FxowD6lDojXc8FSJtt52Ai9DVogDp93KiS0BtjsLW1Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bdUmEP5VyFRcRn17Xg3UkBL6MPsvAdktH1m3EEmIV2OnIuZ2WOy99QTRISKUShJVRoiagjwVKt6pYRdBAW8VWXycKF+9s4+h8Zwn/eGe998jF6rVF0C3Vl8tMkIAnlCDTDUNf6nTDL83RES/1BXIevooNySzYula+McHFJ439To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UEH4rgRE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1711643682;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ffhOAbislEtDui9sz/UMzHfpFDxhB+Cw1cNj4X99Z0A=;
+	b=UEH4rgREv7KbzttZb6v5ueW+G8n9J+hAuOyoRjiBgDi5rK7Lra0MHgx/WyN/9R5UHW8CQD
+	anuCUDcR1v1+59affwYbKw1XIGVXD900uS1xs3hx1K4kshdR44Zcwt057OtsXZGIRIYf/2
+	vsHUYNsIvXKrlnS387TfbgadvN+AW0A=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-452-2dgsIfgmMnmMsc1zau3KSw-1; Thu, 28 Mar 2024 12:34:36 -0400
+X-MC-Unique: 2dgsIfgmMnmMsc1zau3KSw-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1B630800262;
+	Thu, 28 Mar 2024 16:34:35 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.146])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id D4330492BC6;
+	Thu, 28 Mar 2024 16:34:31 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>,
+	Jeff Layton <jlayton@kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Dominique Martinet <asmadeus@codewreck.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Steve French <smfrench@gmail.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	netfs@lists.linux.dev,
+	linux-cachefs@redhat.com,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 00/26] netfs, afs, 9p, cifs: Rework netfs to use ->writepages() to copy to cache
+Date: Thu, 28 Mar 2024 16:33:52 +0000
+Message-ID: <20240328163424.2781320-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/9] rbd: avoid out-of-range warning
-Content-Language: en-US
-To: Arnd Bergmann <arnd@kernel.org>, linux-kernel@vger.kernel.org,
- Ilya Dryomov <idryomov@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- Nathan Chancellor <nathan@kernel.org>, Alex Elder <elder@inktank.com>,
- Josh Durgin <josh.durgin@inktank.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Dongsheng Yang <dongsheng.yang@easystack.cn>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Hannes Reinecke <hare@suse.de>, Christian Brauner <brauner@kernel.org>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- "Ricardo B. Marliere" <ricardo@marliere.net>,
- Jinjie Ruan <ruanjinjie@huawei.com>, Alex Elder <elder@linaro.org>,
- ceph-devel@vger.kernel.org, linux-block@vger.kernel.org, llvm@lists.linux.dev
-References: <20240328143051.1069575-1-arnd@kernel.org>
- <20240328143051.1069575-4-arnd@kernel.org>
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <20240328143051.1069575-4-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
-On 3/28/24 9:30 AM, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> clang-14 points out that the range check is always true on 64-bit
-> architectures since a u32 is not greater than the allowed size:
-> 
-> drivers/block/rbd.c:6079:17: error: result of comparison of constant 2305843009213693948 with expression of type 'u32' (aka 'unsigned int') is always false [-Werror,-Wtautological-constant-out-of-range-compare]
-w
->              ~~~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> This is harmless, so just change the type of the temporary to size_t
-> to shut up that warning.
+Hi Christian, Willy,
 
-This fixes the warning, but then the now size_t value is passed
-to ceph_decode_32_safe(), which implies a different type conversion.
-That too is not harmful, but...
+The primary purpose of these patches is to rework the netfslib writeback
+implementation such that pages read from the cache are written to the cache
+through ->writepages(), thereby allowing the fscache page flag to be
+retired.
 
-Could we just cast the value in the comparison instead?
+The reworking also:
 
-   if ((size_t)snap_count > (SIZE_MAX - sizeof (struct ceph_snap_context))
+ (1) builds on top of the new writeback_iter() infrastructure;
 
-You could drop the space between sizeof and ( while
-you're at it (I always used the space back then).
+ (2) makes it possible to use vectored write RPCs as discontiguous streams
+     of pages can be accommodated;
 
-					-Alex
+ (3) makes it easier to do simultaneous content crypto and stream division.
 
-> 
-> Fixes: bb23e37acb2a ("rbd: refactor rbd_header_from_disk()")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   drivers/block/rbd.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 26ff5cd2bf0a..cb25ee513ada 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -6062,7 +6062,7 @@ static int rbd_dev_v2_snap_context(struct rbd_device *rbd_dev,
->   	void *p;
->   	void *end;
->   	u64 seq;
-> -	u32 snap_count;
-> +	size_t snap_count;
->   	struct ceph_snap_context *snapc;
->   	u32 i;
->   
+ (4) provides support for retrying writes and re-dividing a stream;
+
+ (5) replaces the ->launder_folio() op, so that ->writepages() is used
+     instead;
+
+ (6) uses mempools to allocate the netfs_io_request and netfs_io_subrequest
+     structs to avoid allocation failure in the writeback path.
+
+Some code that uses the fscache page flag is retained for compatibility
+purposes with nfs and ceph.  The code is switched to using the synonymous
+private_2 label instead and marked with deprecation comments.  I have a
+separate set of patches that convert cifs to use this code.
+
+-~-
+
+In this new implementation, writeback_iter() is used to pump folios,
+progressively creating two parallel, but separate streams.  Either or both
+streams can contain gaps, and the subrequests in each stream can be of
+variable size, don't need to align with each other and don't need to align
+with the folios.  (Note that more streams can be added if we have multiple
+servers to duplicate data to).
+
+Indeed, subrequests can cross folio boundaries, may cover several folios or
+a folio may be spanned by multiple subrequests, e.g.:
+
+         +---+---+-----+-----+---+----------+
+Folios:  |   |   |     |     |   |          |
+         +---+---+-----+-----+---+----------+
+
+           +------+------+     +----+----+
+Upload:    |      |      |.....|    |    |
+           +------+------+     +----+----+
+
+         +------+------+------+------+------+
+Cache:   |      |      |      |      |      |
+         +------+------+------+------+------+
+
+Data that got read from the server that needs copying to the cache is
+stored in folios that are marked dirty and have folio->private set to a
+special value.
+
+The progressive subrequest construction permits the algorithm to be
+preparing both the next upload to the server and the next write to the
+cache whilst the previous ones are already in progress.  Throttling can be
+applied to control the rate of production of subrequests - and, in any
+case, we probably want to write them to the server in ascending order,
+particularly if the file will be extended.
+
+Content crypto can also be prepared at the same time as the subrequests and
+run asynchronously, with the prepped requests being stalled until the
+crypto catches up with them.  This might also be useful for transport
+crypto, but that happens at a lower layer, so probably would be harder to
+pull off.
+
+The algorithm is split into three parts:
+
+ (1) The issuer.  This walks through the data, packaging it up, encrypting
+     it and creating subrequests.  The part of this that generates
+     subrequests only deals with file positions and spans and so is usable
+     for DIO/unbuffered writes as well as buffered writes.
+
+ (2) The collector.  This asynchronously collects completed subrequests,
+     unlocks folios, frees crypto buffers and performs any retries.  This
+     runs in a work queue so that the issuer can return to the caller for
+     writeback (so that the VM can have its kswapd thread back) or async
+     writes.
+
+     Collection is slightly complex as the collector has to work out where
+     discontiguities happen in the folio list so that it doesn't try and
+     collect folios that weren't included in the write out.
+
+ (3) The retryer.  This pauses the issuer, waits for all outstanding
+     subrequests to complete and then goes through the failed subrequests
+     to reissue them.  This may involve reprepping them (with cifs, the
+     credits must be renegotiated and a subrequest may need splitting), and
+     doing RMW for content crypto if there's a conflicting change on the
+     server.
+
+David
+
+David Howells (26):
+  cifs: Fix duplicate fscache cookie warnings
+  9p: Clean up some kdoc and unused var warnings.
+  netfs: Update i_blocks when write committed to pagecache
+  netfs: Replace PG_fscache by setting folio->private and marking dirty
+  mm: Remove the PG_fscache alias for PG_private_2
+  netfs: Remove deprecated use of PG_private_2 as a second writeback
+    flag
+  netfs: Make netfs_io_request::subreq_counter an atomic_t
+  netfs: Use subreq_counter to allocate subreq debug_index values
+  mm: Provide a means of invalidation without using launder_folio
+  cifs: Use alternative invalidation to using launder_folio
+  9p: Use alternative invalidation to using launder_folio
+  afs: Use alternative invalidation to using launder_folio
+  netfs: Remove ->launder_folio() support
+  netfs: Use mempools for allocating requests and subrequests
+  mm: Export writeback_iter()
+  netfs: Switch to using unsigned long long rather than loff_t
+  netfs: Fix writethrough-mode error handling
+  netfs: Add some write-side stats and clean up some stat names
+  netfs: New writeback implementation
+  netfs, afs: Implement helpers for new write code
+  netfs, 9p: Implement helpers for new write code
+  netfs, cachefiles: Implement helpers for new write code
+  netfs: Cut over to using new writeback code
+  netfs: Remove the old writeback code
+  netfs: Miscellaneous tidy ups
+  netfs, afs: Use writeback retry to deal with alternate keys
+
+ fs/9p/vfs_addr.c             |  60 +--
+ fs/9p/vfs_inode_dotl.c       |   4 -
+ fs/afs/file.c                |   8 +-
+ fs/afs/internal.h            |   6 +-
+ fs/afs/validation.c          |   4 +-
+ fs/afs/write.c               | 187 ++++----
+ fs/cachefiles/io.c           |  75 +++-
+ fs/ceph/addr.c               |  24 +-
+ fs/ceph/inode.c              |   2 +
+ fs/netfs/Makefile            |   3 +-
+ fs/netfs/buffered_read.c     |  40 +-
+ fs/netfs/buffered_write.c    | 832 ++++-------------------------------
+ fs/netfs/direct_write.c      |  30 +-
+ fs/netfs/fscache_io.c        |  14 +-
+ fs/netfs/internal.h          |  55 ++-
+ fs/netfs/io.c                | 155 +------
+ fs/netfs/main.c              |  55 ++-
+ fs/netfs/misc.c              |  10 +-
+ fs/netfs/objects.c           |  81 +++-
+ fs/netfs/output.c            | 478 --------------------
+ fs/netfs/stats.c             |  17 +-
+ fs/netfs/write_collect.c     | 813 ++++++++++++++++++++++++++++++++++
+ fs/netfs/write_issue.c       | 673 ++++++++++++++++++++++++++++
+ fs/nfs/file.c                |   8 +-
+ fs/nfs/fscache.h             |   6 +-
+ fs/nfs/write.c               |   4 +-
+ fs/smb/client/cifsfs.h       |   1 -
+ fs/smb/client/file.c         | 136 +-----
+ fs/smb/client/fscache.c      |  16 +-
+ fs/smb/client/inode.c        |  27 +-
+ include/linux/fscache.h      |  22 +-
+ include/linux/netfs.h        | 196 +++++----
+ include/linux/pagemap.h      |   1 +
+ include/net/9p/client.h      |   2 +
+ include/trace/events/netfs.h | 249 ++++++++++-
+ mm/filemap.c                 |  52 ++-
+ mm/page-writeback.c          |   1 +
+ net/9p/Kconfig               |   1 +
+ net/9p/client.c              |  49 +++
+ net/9p/trans_fd.c            |   1 -
+ 40 files changed, 2492 insertions(+), 1906 deletions(-)
+ delete mode 100644 fs/netfs/output.c
+ create mode 100644 fs/netfs/write_collect.c
+ create mode 100644 fs/netfs/write_issue.c
 
 
