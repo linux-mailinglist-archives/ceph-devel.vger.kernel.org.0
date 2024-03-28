@@ -1,439 +1,167 @@
-Return-Path: <ceph-devel+bounces-1041-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1042-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C164890623
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Mar 2024 17:48:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 722D7890DDA
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Mar 2024 23:53:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68C31B22528
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Mar 2024 16:48:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AFF11C22F0B
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Mar 2024 22:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C594413F428;
-	Thu, 28 Mar 2024 16:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5039A51C43;
+	Thu, 28 Mar 2024 22:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P0bZP8uK"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GjvVCqp+"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF5F13E8AE
-	for <ceph-devel@vger.kernel.org>; Thu, 28 Mar 2024 16:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7A2208CA
+	for <ceph-devel@vger.kernel.org>; Thu, 28 Mar 2024 22:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711643956; cv=none; b=PnvbNFwFsEKZs7cSe3q88bPM1gF3l4liJw9jmETcgacu0EUj0UV3cKsJqfG2bGBcKjlRKJ8xrp5LeA774kcFR9rljTpFtbkvv0tcy8ap09UUgllVsw6pekcbBzJGlNdDfWhLu6/9Hw9y1BMPOUhXeZuH+PvB61Qqo9x9HuZYZaw=
+	t=1711666431; cv=none; b=Fj4Y7VQT1JqKA3cy/QHkfFAIi6MNO0fYtNK9KLMHfJpcCZj3TLqaI3a96eBvifktK+3D/IG/NQACM3Lmyg0Df90klHuy/Xh41hDAniesuX9vZG+s1TDTZjUsiG6gjzhXIpe9eMXyPNLZA2foVys9rrwLkaRoY3OpEGNVarcS9rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711643956; c=relaxed/simple;
-	bh=/05oRYXuuD62BOWpkiLmjztCrdnWPcumQgd+9QYa1e4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G6Mf3QKmuhIXYRfcnDDz7kh41kcxFrN9aS967qCpggOFRgHyJIgp/a8RF1hx973Eq/r1Uf1rXNNsC7bfbfFKpMXtr3ZG56x6K0bjkZ7yJu0Ieb/cfeRNDMspvgyTxv6bSXFkX0Wr8XaL0CB/ygaC4KugSEoSESijlJsKS4u/F6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P0bZP8uK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1711643952;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=clNmVAkUKGd8Z01ZlWkYBIz9mR2bmkgLzFIGVS5d4sY=;
-	b=P0bZP8uKTkT+7RRDrbOLvUlSmtPPsC+uEmZ9h6/472MemOVef0+My/uf09Rllx2BN/kVHY
-	QxHQ/zwLh/Cd2hGPuy7iooSqbOntXdvmMmulwKDzHL0Se7jhp/SHAe7kk/XQRGXPl8d0RK
-	BgTe2saWeuMh43WBmZpgjnAG96sHYsk=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-7-ZlAnjQNcP7WbHuSb6f6JGQ-1; Thu, 28 Mar 2024 12:39:09 -0400
-X-MC-Unique: ZlAnjQNcP7WbHuSb6f6JGQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A36488007A2;
-	Thu, 28 Mar 2024 16:39:07 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.146])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 98F80C423E0;
-	Thu, 28 Mar 2024 16:39:04 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Dominique Martinet <asmadeus@codewreck.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Steve French <smfrench@gmail.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	netfs@lists.linux.dev,
-	linux-cachefs@redhat.com,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 26/26] netfs, afs: Use writeback retry to deal with alternate keys
-Date: Thu, 28 Mar 2024 16:34:18 +0000
-Message-ID: <20240328163424.2781320-27-dhowells@redhat.com>
-In-Reply-To: <20240328163424.2781320-1-dhowells@redhat.com>
-References: <20240328163424.2781320-1-dhowells@redhat.com>
+	s=arc-20240116; t=1711666431; c=relaxed/simple;
+	bh=m2sHr69UQ23/+yNNagVCVSd+tL9gNcumuplvgXMM3eE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hTFag5MzTXrx3Z3juj6KBCgaNHvDouFmu3KSBKdPSWjvZkXtNUtx8hvNnrJ4p64pDoqrLTqTXffISDPq9Mcw5U8n0JS1r2D+oBEHesuUDi9FKloR39/9Qxh42e5X4mqybxXKDgJoboLaimWlboXLz1xE2KsO0Dfi5YaiaTfjGMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GjvVCqp+; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-55a179f5fa1so1834836a12.0
+        for <ceph-devel@vger.kernel.org>; Thu, 28 Mar 2024 15:53:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1711666428; x=1712271228; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TEbIDW7kbPaE87dBPORDU/rsnpNPLPoHlh1VVnWn9NA=;
+        b=GjvVCqp+UrkJj/Q1BkHxcMX1d1B0WrYzJZU4b12Im5rjUMSk/I1e59Gl2QrWEdObM3
+         WVc/EDOfGYTRdrVD47dbkVYM7MuIf37jur8eZgPmL+8hG7PgTYwfXzifmBWzk8lveWAu
+         pL0hI0UrIrSW/nh8lmgfAbsXzygVZWxD4TtHdgZcC4pdTnUigPdjglq+uAMNxGA2jvri
+         K6tZOk2oF/XSN3H5BV90vwHs0JQbplddepfes2CCS4QTGh07WMaBJrLApLTdwTjGhLPZ
+         EGKKa3bVP2Cb8BAMFjmMMbQTMCoCKjcFvd0keKtBzIICixLNsRrR6gCAEJa8cbc6+Mid
+         zDzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1711666428; x=1712271228;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TEbIDW7kbPaE87dBPORDU/rsnpNPLPoHlh1VVnWn9NA=;
+        b=KjpeiGRlMaZPgI/lYogJw7WvjHrMnNUFFYzVpupv1mFlGZLQqYFEtMd4yr859FkMwC
+         iHQVTu1TBhOYH/UYH7IWON4UPU3NQHsMwgRMwODgUNPQPGWMo6JqnirKcsrML1+r2mYW
+         RhcJfapFwPpdLpxMOHgPV15Vw0+iYigQ6KxwnvpOz9+lRdubYBQS+7ccV1nRRV5Tyjr3
+         GygZoDaquCAr8I7tOKK/nPmDU0tQ8y2xkdxr2e5/hnErp5YRtx9XnZo+B9je990use5u
+         t1GPS62QpTz/9qelr/1a1DfFvsG5IfnKBr0iGXu2LKd8NZd2jPWT8fdIWD0NWunBwEX4
+         YqTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUBjaxx3JIWuoxjLwan3DpdR05ZvjX8rRwCkEhgFDaA3Zblr8KMZQqbrVU0i9k5I4p1ASmGZBJhuknqQRpGTkG2Cri7Zdui9KuC2g==
+X-Gm-Message-State: AOJu0Yyb0oY6aVfCZJqLywjbv4S+UaviyxYavK0nYVTC2n9FMGl/zVsl
+	4ho/AQmQ4SfiLFpKvrFHPTYzVFDo75co+1cFvtqxacYSmpJ+PC5ogafawQ8ffc6xmmrrHpdCHzl
+	T/ykEDFYNs4DDLEzIEgJuDV/sq4d14dJhkzcV
+X-Google-Smtp-Source: AGHT+IHSOF7Jz1HlwWi9ZnZS4sDGFwM0sUVO6wKPz80s3bzKUakcomIa558eS7Mlmg+NfUj6hjAXDu38td4y54TNQ6s=
+X-Received: by 2002:a05:6402:254a:b0:56b:e089:56ed with SMTP id
+ l10-20020a056402254a00b0056be08956edmr540944edb.39.1711666427673; Thu, 28 Mar
+ 2024 15:53:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+References: <20240328143051.1069575-1-arnd@kernel.org> <20240328143051.1069575-3-arnd@kernel.org>
+In-Reply-To: <20240328143051.1069575-3-arnd@kernel.org>
+From: Justin Stitt <justinstitt@google.com>
+Date: Thu, 28 Mar 2024 15:53:35 -0700
+Message-ID: <CAFhGd8rCzhqK18KLtLVLWyWHtQzJsHCkkkQQyLbmw83K6ExKkw@mail.gmail.com>
+Subject: Re: [PATCH 2/9] libceph: avoid clang out-of-range warning
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>, 
+	Ilya Dryomov <idryomov@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Jeff Layton <jlayton@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Milind Changire <mchangir@redhat.com>, Patrick Donnelly <pdonnell@redhat.com>, 
+	Christian Brauner <brauner@kernel.org>, ceph-devel@vger.kernel.org, netdev@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use a hook in the new writeback code's retry algorithm to rotate the keys
-once all the outstanding subreqs have failed rather than doing it
-separately on each subreq.
+On Thu, Mar 28, 2024 at 7:31=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wro=
+te:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> clang-14 points out that on 64-bit architectures, a u32
+> is never larger than constant based on SIZE_MAX:
+>
+> net/ceph/osdmap.c:1425:10: error: result of comparison of constant 461168=
+6018427387891 with expression of type 'u32' (aka 'unsigned int') is always =
+false [-Werror,-Wtautological-constant-out-of-range-compare]
+>         if (len > (SIZE_MAX - sizeof(*pg)) / sizeof(u32))
+>             ~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> net/ceph/osdmap.c:1608:10: error: result of comparison of constant 230584=
+3009213693945 with expression of type 'u32' (aka 'unsigned int') is always =
+false [-Werror,-Wtautological-constant-out-of-range-compare]
+>         if (len > (SIZE_MAX - sizeof(*pg)) / (2 * sizeof(u32)))
+>             ~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> The code is correct anyway, so just shut up that warning.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-afs@lists.infradead.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/afs/file.c            |   1 +
- fs/afs/internal.h        |   1 +
- fs/afs/write.c           | 175 +++++++++++++++++++--------------------
- fs/netfs/write_collect.c |   9 +-
- include/linux/netfs.h    |   2 +
- 5 files changed, 96 insertions(+), 92 deletions(-)
+OK.
 
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index 8f983e3ecae7..c3f0c45ae9a9 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -368,6 +368,7 @@ static int afs_check_write_begin(struct file *file, loff_t pos, unsigned len,
- static void afs_free_request(struct netfs_io_request *rreq)
- {
- 	key_put(rreq->netfs_priv);
-+	afs_put_wb_key(rreq->netfs_priv2);
- }
- 
- static void afs_update_i_size(struct inode *inode, loff_t new_i_size)
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 887245f9336d..6e1d3c4daf72 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -1601,6 +1601,7 @@ extern int afs_check_volume_status(struct afs_volume *, struct afs_operation *);
- void afs_prepare_write(struct netfs_io_subrequest *subreq);
- void afs_issue_write(struct netfs_io_subrequest *subreq);
- void afs_begin_writeback(struct netfs_io_request *wreq);
-+void afs_retry_request(struct netfs_io_request *wreq, struct netfs_io_stream *stream);
- extern int afs_writepages(struct address_space *, struct writeback_control *);
- extern int afs_fsync(struct file *, loff_t, loff_t, int);
- extern vm_fault_t afs_page_mkwrite(struct vm_fault *vmf);
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 6ef7d4cbc008..838db2e94388 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -29,43 +29,39 @@ static void afs_pages_written_back(struct afs_vnode *vnode, loff_t start, unsign
- 
- /*
-  * Find a key to use for the writeback.  We cached the keys used to author the
-- * writes on the vnode.  *_wbk will contain the last writeback key used or NULL
-- * and we need to start from there if it's set.
-+ * writes on the vnode.  wreq->netfs_priv2 will contain the last writeback key
-+ * record used or NULL and we need to start from there if it's set.
-+ * wreq->netfs_priv will be set to the key itself or NULL.
-  */
--static int afs_get_writeback_key(struct afs_vnode *vnode,
--				 struct afs_wb_key **_wbk)
-+static void afs_get_writeback_key(struct netfs_io_request *wreq)
- {
--	struct afs_wb_key *wbk = NULL;
--	struct list_head *p;
--	int ret = -ENOKEY, ret2;
-+	struct afs_wb_key *wbk, *old = wreq->netfs_priv2;
-+	struct afs_vnode *vnode = AFS_FS_I(wreq->inode);
-+
-+	key_put(wreq->netfs_priv);
-+	wreq->netfs_priv = NULL;
-+	wreq->netfs_priv2 = NULL;
- 
- 	spin_lock(&vnode->wb_lock);
--	if (*_wbk)
--		p = (*_wbk)->vnode_link.next;
-+	if (old)
-+		wbk = list_next_entry(old, vnode_link);
- 	else
--		p = vnode->wb_keys.next;
-+		wbk = list_first_entry(&vnode->wb_keys, struct afs_wb_key, vnode_link);
- 
--	while (p != &vnode->wb_keys) {
--		wbk = list_entry(p, struct afs_wb_key, vnode_link);
-+	list_for_each_entry_from(wbk, &vnode->wb_keys, vnode_link) {
- 		_debug("wbk %u", key_serial(wbk->key));
--		ret2 = key_validate(wbk->key);
--		if (ret2 == 0) {
-+		if (key_validate(wbk->key) == 0) {
- 			refcount_inc(&wbk->usage);
-+			wreq->netfs_priv = key_get(wbk->key);
-+			wreq->netfs_priv2 = wbk;
- 			_debug("USE WB KEY %u", key_serial(wbk->key));
- 			break;
- 		}
--
--		wbk = NULL;
--		if (ret == -ENOKEY)
--			ret = ret2;
--		p = p->next;
- 	}
- 
- 	spin_unlock(&vnode->wb_lock);
--	if (*_wbk)
--		afs_put_wb_key(*_wbk);
--	*_wbk = wbk;
--	return 0;
-+
-+	afs_put_wb_key(old);
- }
- 
- static void afs_store_data_success(struct afs_operation *op)
-@@ -88,72 +84,83 @@ static const struct afs_operation_ops afs_store_data_operation = {
- };
- 
- /*
-- * write to a file
-+ * Prepare a subrequest to write to the server.  This sets the max_len
-+ * parameter.
-  */
--static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t pos)
-+void afs_prepare_write(struct netfs_io_subrequest *subreq)
-+{
-+	//if (test_bit(NETFS_SREQ_RETRYING, &subreq->flags))
-+	//	subreq->max_len = 512 * 1024;
-+	//else
-+	subreq->max_len = 256 * 1024 * 1024;
-+}
-+
-+/*
-+ * Issue a subrequest to write to the server.
-+ */
-+void afs_issue_write(struct netfs_io_subrequest *subreq)
- {
-+	struct netfs_io_request *wreq = subreq->rreq;
- 	struct afs_operation *op;
--	struct afs_wb_key *wbk = NULL;
--	loff_t size = iov_iter_count(iter);
-+	struct afs_vnode *vnode = AFS_FS_I(wreq->inode);
-+	unsigned long long pos = subreq->start + subreq->transferred;
-+	size_t len = subreq->len - subreq->transferred;
- 	int ret = -ENOKEY;
- 
--	_enter("%s{%llx:%llu.%u},%llx,%llx",
-+	_enter("R=%x[%x],%s{%llx:%llu.%u},%llx,%zx",
-+	       wreq->debug_id, subreq->debug_index,
- 	       vnode->volume->name,
- 	       vnode->fid.vid,
- 	       vnode->fid.vnode,
- 	       vnode->fid.unique,
--	       size, pos);
-+	       pos, len);
- 
--	ret = afs_get_writeback_key(vnode, &wbk);
--	if (ret) {
--		_leave(" = %d [no keys]", ret);
--		return ret;
--	}
-+#if 0 // Error injection
-+	if (subreq->debug_index == 3)
-+		return netfs_write_subrequest_terminated(subreq, -ENOANO, false);
- 
--	op = afs_alloc_operation(wbk->key, vnode->volume);
--	if (IS_ERR(op)) {
--		afs_put_wb_key(wbk);
--		return -ENOMEM;
-+	if (!test_bit(NETFS_SREQ_RETRYING, &subreq->flags)) {
-+		set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
-+		return netfs_write_subrequest_terminated(subreq, -EAGAIN, false);
- 	}
-+#endif
-+
-+	op = afs_alloc_operation(wreq->netfs_priv, vnode->volume);
-+	if (IS_ERR(op))
-+		return netfs_write_subrequest_terminated(subreq, -EAGAIN, false);
- 
- 	afs_op_set_vnode(op, 0, vnode);
--	op->file[0].dv_delta = 1;
-+	op->file[0].dv_delta	= 1;
- 	op->file[0].modification = true;
--	op->store.pos = pos;
--	op->store.size = size;
--	op->flags |= AFS_OPERATION_UNINTR;
--	op->ops = &afs_store_data_operation;
-+	op->store.pos		= pos;
-+	op->store.size		= len,
-+	op->flags		|= AFS_OPERATION_UNINTR;
-+	op->ops			= &afs_store_data_operation;
- 
--try_next_key:
- 	afs_begin_vnode_operation(op);
- 
--	op->store.write_iter = iter;
--	op->store.i_size = max(pos + size, vnode->netfs.remote_i_size);
--	op->mtime = inode_get_mtime(&vnode->netfs.inode);
-+	op->store.write_iter	= &subreq->io_iter;
-+	op->store.i_size	= umax(pos + len, vnode->netfs.remote_i_size);
-+	op->mtime		= inode_get_mtime(&vnode->netfs.inode);
- 
- 	afs_wait_for_operation(op);
--
--	switch (afs_op_error(op)) {
-+	ret = afs_put_operation(op);
-+	switch (ret) {
- 	case -EACCES:
- 	case -EPERM:
- 	case -ENOKEY:
- 	case -EKEYEXPIRED:
- 	case -EKEYREJECTED:
- 	case -EKEYREVOKED:
--		_debug("next");
--
--		ret = afs_get_writeback_key(vnode, &wbk);
--		if (ret == 0) {
--			key_put(op->key);
--			op->key = key_get(wbk->key);
--			goto try_next_key;
--		}
-+		/* If there are more keys we can try, use the retry algorithm
-+		 * to rotate the keys.
-+		 */
-+		if (wreq->netfs_priv2)
-+			set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
- 		break;
- 	}
- 
--	afs_put_wb_key(wbk);
--	_leave(" = %d", afs_op_error(op));
--	return afs_put_operation(op);
-+	netfs_write_subrequest_terminated(subreq, ret < 0 ? ret : subreq->len, false);
- }
- 
- /*
-@@ -162,44 +169,32 @@ static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t
-  */
- void afs_begin_writeback(struct netfs_io_request *wreq)
- {
-+	afs_get_writeback_key(wreq);
- 	wreq->io_streams[0].avail = true;
- }
- 
- /*
-- * Prepare a subrequest to write to the server.  This sets the max_len
-- * parameter.
-- */
--void afs_prepare_write(struct netfs_io_subrequest *subreq)
--{
--	//if (test_bit(NETFS_SREQ_RETRYING, &subreq->flags))
--	//	subreq->max_len = 512 * 1024;
--	//else
--	subreq->max_len = 256 * 1024 * 1024;
--}
--
--/*
-- * Issue a subrequest to write to the server.
-+ * Prepare to retry the writes in request.  Use this to try rotating the
-+ * available writeback keys.
-  */
--void afs_issue_write(struct netfs_io_subrequest *subreq)
-+void afs_retry_request(struct netfs_io_request *wreq, struct netfs_io_stream *stream)
- {
--	struct afs_vnode *vnode = AFS_FS_I(subreq->rreq->inode);
--	ssize_t ret;
--
--	_enter("%x[%x],%zx",
--	       subreq->rreq->debug_id, subreq->debug_index, subreq->io_iter.count);
--
--#if 0 // Error injection
--	if (subreq->debug_index == 3)
--		return netfs_write_subrequest_terminated(subreq, -ENOANO, false);
-+	struct netfs_io_subrequest *subreq =
-+		list_first_entry(&stream->subrequests,
-+				 struct netfs_io_subrequest, rreq_link);
- 
--	if (!test_bit(NETFS_SREQ_RETRYING, &subreq->flags)) {
--		set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
--		return netfs_write_subrequest_terminated(subreq, -EAGAIN, false);
-+	switch (subreq->error) {
-+	case -EACCES:
-+	case -EPERM:
-+	case -ENOKEY:
-+	case -EKEYEXPIRED:
-+	case -EKEYREJECTED:
-+	case -EKEYREVOKED:
-+		afs_get_writeback_key(wreq);
-+		if (!wreq->netfs_priv)
-+			stream->failed = true;
-+		break;
- 	}
--#endif
--
--	ret = afs_store_data(vnode, &subreq->io_iter, subreq->start);
--	netfs_write_subrequest_terminated(subreq, ret < 0 ? ret : subreq->len, false);
- }
- 
- /*
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index bea939ab0830..7ff15e2d7270 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -168,6 +168,13 @@ static void netfs_retry_write_stream(struct netfs_io_request *wreq,
- 
- 	_enter("R=%x[%x:]", wreq->debug_id, stream->stream_nr);
- 
-+	if (list_empty(&stream->subrequests))
-+		return;
-+
-+	if (stream->source == NETFS_UPLOAD_TO_SERVER &&
-+	    wreq->netfs_ops->retry_request)
-+		wreq->netfs_ops->retry_request(wreq, stream);
-+
- 	if (unlikely(stream->failed))
- 		return;
- 
-@@ -187,8 +194,6 @@ static void netfs_retry_write_stream(struct netfs_io_request *wreq,
- 		return;
- 	}
- 
--	if (list_empty(&stream->subrequests))
--		return;
- 	next = stream->subrequests.next;
- 
- 	do {
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index c2ba364041b0..298552f5122c 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -235,6 +235,7 @@ struct netfs_io_request {
- 	struct iov_iter		iter;		/* Unencrypted-side iterator */
- 	struct iov_iter		io_iter;	/* I/O (Encrypted-side) iterator */
- 	void			*netfs_priv;	/* Private data for the netfs */
-+	void			*netfs_priv2;	/* Private data for the netfs */
- 	struct bio_vec		*direct_bv;	/* DIO buffer list (when handling iovec-iter) */
- 	unsigned int		direct_bv_count; /* Number of elements in direct_bv[] */
- 	unsigned int		debug_id;
-@@ -306,6 +307,7 @@ struct netfs_request_ops {
- 	void (*begin_writeback)(struct netfs_io_request *wreq);
- 	void (*prepare_write)(struct netfs_io_subrequest *subreq);
- 	void (*issue_write)(struct netfs_io_subrequest *subreq);
-+	void (*retry_request)(struct netfs_io_request *wreq, struct netfs_io_stream *stream);
- 	void (*invalidate_cache)(struct netfs_io_request *wreq);
- };
- 
+>
+> Fixes: 6f428df47dae ("libceph: pg_upmap[_items] infrastructure")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
+Reviewed-by: Justin Stitt <justinstitt@google.com>
+
+> ---
+>  fs/ceph/snap.c    | 2 +-
+>  net/ceph/osdmap.c | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+> index c65f2b202b2b..521507ea8260 100644
+> --- a/fs/ceph/snap.c
+> +++ b/fs/ceph/snap.c
+> @@ -374,7 +374,7 @@ static int build_snap_context(struct ceph_mds_client =
+*mdsc,
+>
+>         /* alloc new snap context */
+>         err =3D -ENOMEM;
+> -       if (num > (SIZE_MAX - sizeof(*snapc)) / sizeof(u64))
+> +       if ((size_t)num > (SIZE_MAX - sizeof(*snapc)) / sizeof(u64))
+>                 goto fail;
+>         snapc =3D ceph_create_snap_context(num, GFP_NOFS);
+>         if (!snapc)
+> diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
+> index 295098873861..8e7cb2fde6f1 100644
+> --- a/net/ceph/osdmap.c
+> +++ b/net/ceph/osdmap.c
+> @@ -1438,7 +1438,7 @@ static struct ceph_pg_mapping *__decode_pg_temp(voi=
+d **p, void *end,
+>         ceph_decode_32_safe(p, end, len, e_inval);
+>         if (len =3D=3D 0 && incremental)
+>                 return NULL;    /* new_pg_temp: [] to remove */
+> -       if (len > (SIZE_MAX - sizeof(*pg)) / sizeof(u32))
+> +       if ((size_t)len > (SIZE_MAX - sizeof(*pg)) / sizeof(u32))
+>                 return ERR_PTR(-EINVAL);
+>
+>         ceph_decode_need(p, end, len * sizeof(u32), e_inval);
+> @@ -1621,7 +1621,7 @@ static struct ceph_pg_mapping *__decode_pg_upmap_it=
+ems(void **p, void *end,
+>         u32 len, i;
+>
+>         ceph_decode_32_safe(p, end, len, e_inval);
+> -       if (len > (SIZE_MAX - sizeof(*pg)) / (2 * sizeof(u32)))
+> +       if ((size_t)len > (SIZE_MAX - sizeof(*pg)) / (2 * sizeof(u32)))
+>                 return ERR_PTR(-EINVAL);
+>
+>         ceph_decode_need(p, end, 2 * len * sizeof(u32), e_inval);
+> --
+> 2.39.2
+>
 
