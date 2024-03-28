@@ -1,114 +1,173 @@
-Return-Path: <ceph-devel+bounces-1010-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1011-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC4788F043
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 Mar 2024 21:38:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052728901BF
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Mar 2024 15:31:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50AAC1C2F0A2
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 Mar 2024 20:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3BA629752F
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Mar 2024 14:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BBB153506;
-	Wed, 27 Mar 2024 20:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925A3128389;
+	Thu, 28 Mar 2024 14:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OnhVmZ9d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eWM+Qp30"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAFE1534E4
-	for <ceph-devel@vger.kernel.org>; Wed, 27 Mar 2024 20:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F081879;
+	Thu, 28 Mar 2024 14:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711571883; cv=none; b=IC91dC11H7tg1lXviUxY74Egk7kP4r/LtrDKoNHJMP+LmaugLcm6wlCrX233yWR6Uu1VXcrzsZNLUKoKyZqXIDnOgulkXTqGnyABDcs0atdoRvAKc1m7OlTGYtzHYvKiJbSweIYGITFGkS0/o0YMAvFeCLecCf+8vWrHZ5KbaTE=
+	t=1711636265; cv=none; b=TsaSuZaa+mOPb4gMTrYw6L6GZvvkXyWSJl1F6oLiN/d9cyei/sqjeLivDoKuLEArbftgkr8kn/4RC8rMN9pSq8Gslumnb5ALq7gqV9IAkh6ac+f9ubVSGA5egeD7c36qrt3LE6ob/nVFyIDbCG9PrsXhJb8Ue7u7TlApyLr1VNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711571883; c=relaxed/simple;
-	bh=+q1X6OO5OjLhXHnuIwVLwdI8semz6sAtm2DvDrQfzL0=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=OGVvKcT/Fa6LoY9geXnAKS014waJVXutLK862oAzpeWCyJVsIn0vf/KjpXGL7WyFX8uhXvSV1iCohk8w4Z/Z/g/X1JJd2cFswdU+M6D9dXvmNwKNCDQ1kYmJBPwQMMg8MMxjrg4so6gB0oD+aZvleAgFln6ceESi1ijLbsEDSD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OnhVmZ9d; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1711571880;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6qoPQD+VTVHHhRyd75iNpboVK+lvHVLazCUjHaMH4s4=;
-	b=OnhVmZ9dFDBmRY+/OpAeMEHQFmgMjPnRthAZxdLK/7RdWw2xbC8dA4OWJwgUizywLnYPfa
-	DkgfS/LwcyurqRqtTAAstnjmwwL6hbniGS30MSaKj/qLNESwm7+a/sllGBltoQGKsi9wOU
-	VVwcziBaj+2gnu2wrMyBnxJu46wr+f8=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-393-9x-QYYaoNBy5Yt-5m2eKqg-1; Wed, 27 Mar 2024 16:37:55 -0400
-X-MC-Unique: 9x-QYYaoNBy5Yt-5m2eKqg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2DAB0101A552;
-	Wed, 27 Mar 2024 20:37:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.146])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 9A6CBC53360;
-	Wed, 27 Mar 2024 20:37:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <ZgRpPd1Ado-0_iYx@casper.infradead.org>
-References: <ZgRpPd1Ado-0_iYx@casper.infradead.org> <2318298.1711551844@warthog.procyon.org.uk> <2506007.1711562145@warthog.procyon.org.uk>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: dhowells@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
-    Trond Myklebust <trond.myklebust@hammerspace.com>,
-    Christoph Hellwig <hch@lst.de>,
-    Andrew Morton <akpm@linux-foundation.org>,
-    Alexander Viro <viro@zeniv.linux.org.uk>,
-    Christian Brauner <brauner@kernel.org>,
-    Jeff Layton <jlayton@kernel.org>, linux-mm@kvack.org,
-    linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
-    v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
-    ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, devel@lists.orangefs.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2] mm, netfs: Provide a means of invalidation without using launder_folio
+	s=arc-20240116; t=1711636265; c=relaxed/simple;
+	bh=zN2hzijZlAwA7dSIUuqXqTXuAGGw3rihlUXROhzown4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XSfHzXv59ixjGGMOCuKiEcRfQH5Wz0iPodm6syal3cKs1ibOcBB8VQ6aE2+tAAVPsfPQQBTyRyb/qoda2KTCVttB0xw3cB816Y4UGNxWeP4Km2wwe+2WJvcSsEZOcPsQad/YfFPQWfacVFhDbYmSmLNrUyj97Cy6uzU917PbO2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eWM+Qp30; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7141C433C7;
+	Thu, 28 Mar 2024 14:30:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1711636264;
+	bh=zN2hzijZlAwA7dSIUuqXqTXuAGGw3rihlUXROhzown4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eWM+Qp30VXj9Cmh0LnGCxoeRKFCdiRG/+7cYiw3/d1A2+4+cFEwZTeR0JCmdB7dCq
+	 BJ9rIQbF9IBEI+soObC424HP7laoiCA3/oi1O9qP9rBITnPfxuSYeV5KRvg9hYcRab
+	 e/dCX3l7xvE+Crt9nLuvyn+RK8JuQn+i+0gl/X6RqKrS31M7lA4cVVAcZLH+2tD70I
+	 3HfxG2oBSEgx+79CZh8PlNRuEJmIOG2T+nm5DpqItFA2gaY6b7ltr3jg7UjRUmiCnX
+	 fBIiKt6tGKRHDPmTgbO18UpcTP5WlsP5+HLng5MSKm27q042WFMvRohaMfXHDUBt2+
+	 CV0uOkwqjgK7A==
+From: Arnd Bergmann <arnd@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Dongsheng Yang <dongsheng.yang@easystack.cn>,
+	Jens Axboe <axboe@kernel.dk>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	dm-devel@lists.linux.dev,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Xiubo Li <xiubli@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	David Ahern <dsahern@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	ceph-devel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-nilfs@vger.kernel.org,
+	kasan-dev@googlegroups.com,
+	linux-kbuild@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH 0/9] address remaining -Wtautological-constant-out-of-range-compare
+Date: Thu, 28 Mar 2024 15:30:38 +0100
+Message-Id: <20240328143051.1069575-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2541307.1711571866.1@warthog.procyon.org.uk>
-Date: Wed, 27 Mar 2024 20:37:46 +0000
-Message-ID: <2541308.1711571866@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+Content-Transfer-Encoding: 8bit
 
-Matthew Wilcox <willy@infradead.org> wrote:
+From: Arnd Bergmann <arnd@arndb.de>
 
-> > +	/* Prevent new folios from being added to the inode. */
-> > +	filemap_invalidate_lock(mapping);
-> 
-> I'm kind of surprised that the callers wouldn't want to hold that lock
-> over a call to this function.  I guess you're working on the callers,
-> so you'd know better than I would, but I would have used lockdep to
-> assert that invalidate_lock was held.
+The warning option was introduced a few years ago but left disabled
+by default. All of the actual bugs that this has found have been
+fixed in the meantime, and this series should address the remaining
+false-positives, as tested on arm/arm64/x86 randconfigs as well as
+allmodconfig builds for all architectures supported by clang.
 
-I'm not sure.  None of the places that look like they'd be calling this
-currently take that lock (though possibly they should).
+Please apply the patches individually to subsystem maintainer trees.
 
-Also, should I provide it with explicit range, I wonder?
+      Arnd
 
-> > +	if (unlikely(!RB_EMPTY_ROOT(&mapping->i_mmap.rb_root)))
-> > +		unmap_mapping_pages(mapping, 0, ULONG_MAX, false);
-> 
-> Is this optimisation worth it?
+Arnd Bergmann (9):
+  dm integrity: fix out-of-range warning
+  libceph: avoid clang out-of-range warning
+  rbd: avoid out-of-range warning
+  kcov: avoid clang out-of-range warning
+  ipv4: tcp_output: avoid warning about NET_ADD_STATS
+  nilfs2: fix out-of-range warning
+  infiniband: uverbs: avoid out-of-range warnings
+  mlx5: stop warning for 64KB pages
+  kbuild: enable tautological-constant-out-of-range-compare
 
-Perhaps not.
+ drivers/block/rbd.c                                    | 2 +-
+ drivers/infiniband/core/uverbs_ioctl.c                 | 4 ++--
+ drivers/md/dm-integrity.c                              | 2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/en/xsk/setup.c | 6 ++++--
+ fs/ceph/snap.c                                         | 2 +-
+ fs/nilfs2/ioctl.c                                      | 2 +-
+ kernel/kcov.c                                          | 3 ++-
+ net/ceph/osdmap.c                                      | 4 ++--
+ net/ipv4/tcp_output.c                                  | 2 +-
+ scripts/Makefile.extrawarn                             | 1 -
+ 10 files changed, 15 insertions(+), 13 deletions(-)
 
-David
+-- 
+2.39.2
+
+Cc: Ilya Dryomov <idryomov@gmail.com>
+Cc: Dongsheng Yang <dongsheng.yang@easystack.cn>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Leon Romanovsky <leon@kernel.org>
+Cc: Alasdair Kergon <agk@redhat.com>
+Cc: Mike Snitzer <snitzer@kernel.org>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
+Cc: dm-devel@lists.linux.dev
+Cc: Saeed Mahameed <saeedm@nvidia.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Xiubo Li <xiubli@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Andrey Konovalov <andreyknvl@gmail.com>
+Cc: David Ahern <dsahern@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Nicolas Schier <nicolas@fjasle.eu>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Bill Wendling <morbo@google.com>
+Cc: Justin Stitt <justinstitt@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Tariq Toukan <tariqt@nvidia.com>
+Cc: ceph-devel@vger.kernel.org
+Cc: linux-block@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-rdma@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: linux-nilfs@vger.kernel.org
+Cc: kasan-dev@googlegroups.com
+Cc: linux-kbuild@vger.kernel.org
+Cc: llvm@lists.linux.dev
 
 
