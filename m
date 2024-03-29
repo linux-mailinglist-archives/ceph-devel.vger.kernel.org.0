@@ -1,167 +1,167 @@
-Return-Path: <ceph-devel+bounces-1042-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1043-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 722D7890DDA
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Mar 2024 23:53:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25500890ED4
+	for <lists+ceph-devel@lfdr.de>; Fri, 29 Mar 2024 01:05:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AFF11C22F0B
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Mar 2024 22:53:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8575289C00
+	for <lists+ceph-devel@lfdr.de>; Fri, 29 Mar 2024 00:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5039A51C43;
-	Thu, 28 Mar 2024 22:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2259780C;
+	Fri, 29 Mar 2024 00:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GjvVCqp+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i3bTekP7"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7A2208CA
-	for <ceph-devel@vger.kernel.org>; Thu, 28 Mar 2024 22:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4E818E
+	for <ceph-devel@vger.kernel.org>; Fri, 29 Mar 2024 00:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711666431; cv=none; b=Fj4Y7VQT1JqKA3cy/QHkfFAIi6MNO0fYtNK9KLMHfJpcCZj3TLqaI3a96eBvifktK+3D/IG/NQACM3Lmyg0Df90klHuy/Xh41hDAniesuX9vZG+s1TDTZjUsiG6gjzhXIpe9eMXyPNLZA2foVys9rrwLkaRoY3OpEGNVarcS9rQ=
+	t=1711670738; cv=none; b=S8MyUogF7v5W1jYxBF1HB4MDkICXAmgPKwv9CWRMa896UgsSSc2M0KY1KDf0SoFICQ/0PLuQUeebQqDs60/ZGF4GIYV4ecQTM0+1jXkycbEPYvcXxAltQKxHmyN0qsO2XrAaLk4/nR90L4NdJ8b/pDYTbqFjjlIYYHQzAtyRsFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711666431; c=relaxed/simple;
-	bh=m2sHr69UQ23/+yNNagVCVSd+tL9gNcumuplvgXMM3eE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hTFag5MzTXrx3Z3juj6KBCgaNHvDouFmu3KSBKdPSWjvZkXtNUtx8hvNnrJ4p64pDoqrLTqTXffISDPq9Mcw5U8n0JS1r2D+oBEHesuUDi9FKloR39/9Qxh42e5X4mqybxXKDgJoboLaimWlboXLz1xE2KsO0Dfi5YaiaTfjGMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GjvVCqp+; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-55a179f5fa1so1834836a12.0
-        for <ceph-devel@vger.kernel.org>; Thu, 28 Mar 2024 15:53:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1711666428; x=1712271228; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TEbIDW7kbPaE87dBPORDU/rsnpNPLPoHlh1VVnWn9NA=;
-        b=GjvVCqp+UrkJj/Q1BkHxcMX1d1B0WrYzJZU4b12Im5rjUMSk/I1e59Gl2QrWEdObM3
-         WVc/EDOfGYTRdrVD47dbkVYM7MuIf37jur8eZgPmL+8hG7PgTYwfXzifmBWzk8lveWAu
-         pL0hI0UrIrSW/nh8lmgfAbsXzygVZWxD4TtHdgZcC4pdTnUigPdjglq+uAMNxGA2jvri
-         K6tZOk2oF/XSN3H5BV90vwHs0JQbplddepfes2CCS4QTGh07WMaBJrLApLTdwTjGhLPZ
-         EGKKa3bVP2Cb8BAMFjmMMbQTMCoCKjcFvd0keKtBzIICixLNsRrR6gCAEJa8cbc6+Mid
-         zDzA==
+	s=arc-20240116; t=1711670738; c=relaxed/simple;
+	bh=cjxm1Ryfb5Z9F4sbSdTRXRhffmjVd0tmVnxtg9IiFvg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=utywLtsrJGnD99nPZfRk+weUn2ytsutOjorTUJB0Nlz/3N+hmO3KDoz2b1AG0QnjX7Gw56Xoi0pT7MP8z5mugdccxVQpjz65SHmdza1ETK6CEq1G6himuOtqcGJMfTlL7tpttCpdzxoS5eml3aneOoxI8zes5EAhBHDNJwUllK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i3bTekP7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1711670736;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oquIsO/B8A2Gk2EwI1tx+d6zNaq8dTKXgOE1D72BOIw=;
+	b=i3bTekP7uHuTkj6ouHBfEKGr8LYAO9pNQDW0BfyP/03t49V2PPgG25WWQDROoKbNz9xbCm
+	DFBCsbYVKXopkWbFIIX1TaJ9JlwHkX1X/KXZR3qDwUvmcQwl+LaU+X+ruTLu0AWzRq3jr6
+	U45UX+ggdQjXbK+mH5JLW4dYeW+8fAs=
+Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com
+ [209.85.160.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-367-yH3gCG-IM2WnWL38zxW1OA-1; Thu, 28 Mar 2024 20:05:34 -0400
+X-MC-Unique: yH3gCG-IM2WnWL38zxW1OA-1
+Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-22a1dbcf8e6so1222774fac.2
+        for <ceph-devel@vger.kernel.org>; Thu, 28 Mar 2024 17:05:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1711666428; x=1712271228;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TEbIDW7kbPaE87dBPORDU/rsnpNPLPoHlh1VVnWn9NA=;
-        b=KjpeiGRlMaZPgI/lYogJw7WvjHrMnNUFFYzVpupv1mFlGZLQqYFEtMd4yr859FkMwC
-         iHQVTu1TBhOYH/UYH7IWON4UPU3NQHsMwgRMwODgUNPQPGWMo6JqnirKcsrML1+r2mYW
-         RhcJfapFwPpdLpxMOHgPV15Vw0+iYigQ6KxwnvpOz9+lRdubYBQS+7ccV1nRRV5Tyjr3
-         GygZoDaquCAr8I7tOKK/nPmDU0tQ8y2xkdxr2e5/hnErp5YRtx9XnZo+B9je990use5u
-         t1GPS62QpTz/9qelr/1a1DfFvsG5IfnKBr0iGXu2LKd8NZd2jPWT8fdIWD0NWunBwEX4
-         YqTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUBjaxx3JIWuoxjLwan3DpdR05ZvjX8rRwCkEhgFDaA3Zblr8KMZQqbrVU0i9k5I4p1ASmGZBJhuknqQRpGTkG2Cri7Zdui9KuC2g==
-X-Gm-Message-State: AOJu0Yyb0oY6aVfCZJqLywjbv4S+UaviyxYavK0nYVTC2n9FMGl/zVsl
-	4ho/AQmQ4SfiLFpKvrFHPTYzVFDo75co+1cFvtqxacYSmpJ+PC5ogafawQ8ffc6xmmrrHpdCHzl
-	T/ykEDFYNs4DDLEzIEgJuDV/sq4d14dJhkzcV
-X-Google-Smtp-Source: AGHT+IHSOF7Jz1HlwWi9ZnZS4sDGFwM0sUVO6wKPz80s3bzKUakcomIa558eS7Mlmg+NfUj6hjAXDu38td4y54TNQ6s=
-X-Received: by 2002:a05:6402:254a:b0:56b:e089:56ed with SMTP id
- l10-20020a056402254a00b0056be08956edmr540944edb.39.1711666427673; Thu, 28 Mar
- 2024 15:53:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1711670734; x=1712275534;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oquIsO/B8A2Gk2EwI1tx+d6zNaq8dTKXgOE1D72BOIw=;
+        b=lWJVRrtUJya4xS8w8H/F5EJoZ2jkegDg7t5PfzbNnyhEXBd/Q38GEDDxTFFOdWbCi9
+         nfa850yES57RSxSZmBiFIyXmrX8Svkqx/SKwEZ1GxdIuVkfVWTfvxDRl+tIR6nd1ld5T
+         hmwQ+oXW8w8gX2vWUeZjmZntTxc4vsKYWKBQWPvKTRlpME/hjadkLm3akyICRHKvy2oJ
+         Lvx/WpAMeGJ7CXTsEfAprQU6oDgh9INa7nqCnDuc4qTCeLc5mON1lU80vXOkEcoGCaeH
+         ooIJoOIT4wWqcnOrtzbfJlSE8GTM0/ilgYSzMJId3DPBnzQk7AqSF91kGfmb8PuhmGhl
+         lWFw==
+X-Forwarded-Encrypted: i=1; AJvYcCU++xbz326dIScnWrGNLy6Lshklp1E9EcFvD45B8PuKvJ3s+ncaRCA8sOGH/BSzy5Sde4jUzOnrqC8BrrdmS1x0ercW8Znx+7KfqQ==
+X-Gm-Message-State: AOJu0YznsfxJavugIdy714Lfn+AObF5m69UAfKiP7Erb+yb4t5C+gI6x
+	G3ZEpSYkBmHPQ/9UZ/yxcfr0h77088tafS6ZJRIa3yzg33K2Cztpbf5MD30nGkoo6slw/BOaZ1x
+	tKI4quRSa9iWLcHhCWuKCEnzD4NxqCX9Q4H74FTsbYOJyQNHFkOGY/72mgpw=
+X-Received: by 2002:a05:6870:9213:b0:22a:e91:2d9c with SMTP id e19-20020a056870921300b0022a0e912d9cmr744883oaf.56.1711670733962;
+        Thu, 28 Mar 2024 17:05:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGnEoQrZF39Z3vBtcbSJQo0k22y/TmSjLE13uEQmcKttgsZxV4Si5B4aokUcJRse8C4U5UT1g==
+X-Received: by 2002:a05:6870:9213:b0:22a:e91:2d9c with SMTP id e19-20020a056870921300b0022a0e912d9cmr744867oaf.56.1711670733707;
+        Thu, 28 Mar 2024 17:05:33 -0700 (PDT)
+Received: from [10.72.112.41] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id j23-20020aa78d17000000b006e681769ee0sm2020583pfe.145.2024.03.28.17.05.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 28 Mar 2024 17:05:33 -0700 (PDT)
+Message-ID: <93fc9138-7498-4268-9bd2-d5b87f215963@redhat.com>
+Date: Fri, 29 Mar 2024 08:05:20 +0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240328143051.1069575-1-arnd@kernel.org> <20240328143051.1069575-3-arnd@kernel.org>
-In-Reply-To: <20240328143051.1069575-3-arnd@kernel.org>
-From: Justin Stitt <justinstitt@google.com>
-Date: Thu, 28 Mar 2024 15:53:35 -0700
-Message-ID: <CAFhGd8rCzhqK18KLtLVLWyWHtQzJsHCkkkQQyLbmw83K6ExKkw@mail.gmail.com>
-Subject: Re: [PATCH 2/9] libceph: avoid clang out-of-range warning
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>, 
-	Ilya Dryomov <idryomov@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Jeff Layton <jlayton@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Milind Changire <mchangir@redhat.com>, Patrick Donnelly <pdonnell@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>, ceph-devel@vger.kernel.org, netdev@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/9] rbd: avoid out-of-range warning
+Content-Language: en-US
+To: Alex Elder <elder@ieee.org>, Arnd Bergmann <arnd@kernel.org>,
+ linux-kernel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>,
+ Jens Axboe <axboe@kernel.dk>, Nathan Chancellor <nathan@kernel.org>,
+ Alex Elder <elder@inktank.com>, Josh Durgin <josh.durgin@inktank.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Dongsheng Yang <dongsheng.yang@easystack.cn>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Hannes Reinecke <hare@suse.de>, Christian Brauner <brauner@kernel.org>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ "Ricardo B. Marliere" <ricardo@marliere.net>,
+ Jinjie Ruan <ruanjinjie@huawei.com>, Alex Elder <elder@linaro.org>,
+ ceph-devel@vger.kernel.org, linux-block@vger.kernel.org, llvm@lists.linux.dev
+References: <20240328143051.1069575-1-arnd@kernel.org>
+ <20240328143051.1069575-4-arnd@kernel.org>
+ <b8e848fe-96d8-4f75-a2e9-2ed5c11a2fd7@ieee.org>
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <b8e848fe-96d8-4f75-a2e9-2ed5c11a2fd7@ieee.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 28, 2024 at 7:31=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wro=
-te:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> clang-14 points out that on 64-bit architectures, a u32
-> is never larger than constant based on SIZE_MAX:
->
-> net/ceph/osdmap.c:1425:10: error: result of comparison of constant 461168=
-6018427387891 with expression of type 'u32' (aka 'unsigned int') is always =
-false [-Werror,-Wtautological-constant-out-of-range-compare]
->         if (len > (SIZE_MAX - sizeof(*pg)) / sizeof(u32))
->             ~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> net/ceph/osdmap.c:1608:10: error: result of comparison of constant 230584=
-3009213693945 with expression of type 'u32' (aka 'unsigned int') is always =
-false [-Werror,-Wtautological-constant-out-of-range-compare]
->         if (len > (SIZE_MAX - sizeof(*pg)) / (2 * sizeof(u32)))
->             ~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> The code is correct anyway, so just shut up that warning.
 
-OK.
+On 3/28/24 22:53, Alex Elder wrote:
+> On 3/28/24 9:30 AM, Arnd Bergmann wrote:
+>> From: Arnd Bergmann <arnd@arndb.de>
+>>
+>> clang-14 points out that the range check is always true on 64-bit
+>> architectures since a u32 is not greater than the allowed size:
+>>
+>> drivers/block/rbd.c:6079:17: error: result of comparison of constant 
+>> 2305843009213693948 with expression of type 'u32' (aka 'unsigned 
+>> int') is always false 
+>> [-Werror,-Wtautological-constant-out-of-range-compare]
+> w
+>>              ~~~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>
+>> This is harmless, so just change the type of the temporary to size_t
+>> to shut up that warning.
+>
+> This fixes the warning, but then the now size_t value is passed
+> to ceph_decode_32_safe(), which implies a different type conversion.
+> That too is not harmful, but...
+>
+> Could we just cast the value in the comparison instead?
+>
+>   if ((size_t)snap_count > (SIZE_MAX - sizeof (struct ceph_snap_context))
+>
+> You could drop the space between sizeof and ( while
+> you're at it (I always used the space back then).
+>
+Agree.
 
->
-> Fixes: 6f428df47dae ("libceph: pg_upmap[_items] infrastructure")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+- Xiubo
 
-Reviewed-by: Justin Stitt <justinstitt@google.com>
 
-> ---
->  fs/ceph/snap.c    | 2 +-
->  net/ceph/osdmap.c | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
+> -Alex
 >
-> diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-> index c65f2b202b2b..521507ea8260 100644
-> --- a/fs/ceph/snap.c
-> +++ b/fs/ceph/snap.c
-> @@ -374,7 +374,7 @@ static int build_snap_context(struct ceph_mds_client =
-*mdsc,
+>>
+>> Fixes: bb23e37acb2a ("rbd: refactor rbd_header_from_disk()")
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>> ---
+>>   drivers/block/rbd.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+>> index 26ff5cd2bf0a..cb25ee513ada 100644
+>> --- a/drivers/block/rbd.c
+>> +++ b/drivers/block/rbd.c
+>> @@ -6062,7 +6062,7 @@ static int rbd_dev_v2_snap_context(struct 
+>> rbd_device *rbd_dev,
+>>       void *p;
+>>       void *end;
+>>       u64 seq;
+>> -    u32 snap_count;
+>> +    size_t snap_count;
+>>       struct ceph_snap_context *snapc;
+>>       u32 i;
 >
->         /* alloc new snap context */
->         err =3D -ENOMEM;
-> -       if (num > (SIZE_MAX - sizeof(*snapc)) / sizeof(u64))
-> +       if ((size_t)num > (SIZE_MAX - sizeof(*snapc)) / sizeof(u64))
->                 goto fail;
->         snapc =3D ceph_create_snap_context(num, GFP_NOFS);
->         if (!snapc)
-> diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
-> index 295098873861..8e7cb2fde6f1 100644
-> --- a/net/ceph/osdmap.c
-> +++ b/net/ceph/osdmap.c
-> @@ -1438,7 +1438,7 @@ static struct ceph_pg_mapping *__decode_pg_temp(voi=
-d **p, void *end,
->         ceph_decode_32_safe(p, end, len, e_inval);
->         if (len =3D=3D 0 && incremental)
->                 return NULL;    /* new_pg_temp: [] to remove */
-> -       if (len > (SIZE_MAX - sizeof(*pg)) / sizeof(u32))
-> +       if ((size_t)len > (SIZE_MAX - sizeof(*pg)) / sizeof(u32))
->                 return ERR_PTR(-EINVAL);
 >
->         ceph_decode_need(p, end, len * sizeof(u32), e_inval);
-> @@ -1621,7 +1621,7 @@ static struct ceph_pg_mapping *__decode_pg_upmap_it=
-ems(void **p, void *end,
->         u32 len, i;
->
->         ceph_decode_32_safe(p, end, len, e_inval);
-> -       if (len > (SIZE_MAX - sizeof(*pg)) / (2 * sizeof(u32)))
-> +       if ((size_t)len > (SIZE_MAX - sizeof(*pg)) / (2 * sizeof(u32)))
->                 return ERR_PTR(-EINVAL);
->
->         ceph_decode_need(p, end, 2 * len * sizeof(u32), e_inval);
-> --
-> 2.39.2
->
+
 
