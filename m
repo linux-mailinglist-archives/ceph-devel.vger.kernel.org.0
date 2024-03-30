@@ -1,109 +1,217 @@
-Return-Path: <ceph-devel+bounces-1046-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1047-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C279F8924BF
-	for <lists+ceph-devel@lfdr.de>; Fri, 29 Mar 2024 21:00:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5680A8928A4
+	for <lists+ceph-devel@lfdr.de>; Sat, 30 Mar 2024 02:03:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6338AB21B9A
-	for <lists+ceph-devel@lfdr.de>; Fri, 29 Mar 2024 20:00:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E1011C21209
+	for <lists+ceph-devel@lfdr.de>; Sat, 30 Mar 2024 01:03:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A2A13B58C;
-	Fri, 29 Mar 2024 20:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEBF1366;
+	Sat, 30 Mar 2024 01:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ibdChtO/"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nEiRr5d0"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1920A131E59;
-	Fri, 29 Mar 2024 20:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD739ECC
+	for <ceph-devel@vger.kernel.org>; Sat, 30 Mar 2024 01:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711742437; cv=none; b=U+/SbMjZXFFV5DmCRmBAAN7gMYg3DReVOIIFVGEM1/cPwThxnzy9A03wNDMZOl2vR/DoXWfFAdUBgB23VhlT62a39SDnxtql4Y26Z8m+28xFqzSUgkFDLruM3/R0yMGgzHhPoE2hvwd96fiOjGyCXt+1v9kNkndBXOn8oEd2nZ4=
+	t=1711760613; cv=none; b=elfWGz371S3y2N5v4B7IGzU6NR1Rzl+m8rJFxgnNrxTvwuPUsfmyPY/dRURr/l/M+FldVVlsxseU9BDZRpro9j8pC/obbCgcPqfNZHHgsjqHmdyvDxj1j4BvfCEh/2xdFBRRNjwc5atZMW91lfEFObsztTVw48ch5/cXnbs63q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711742437; c=relaxed/simple;
-	bh=O10HO98LXxHRjwwegetD1LC2QarBz8wOkuidkGTxkic=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=PnBmFAmNiNutZAk0OAiRfOfj4Z2HD6NoW97nrh2+lO5n6JMkXzTn3Ihn7SnnGPbDb9SMGZsG4adEqxuLnV30VfuxMDc4fgkYIMiyQCOsPWJT8o7iIwlxXVMZY4IqORrEwr2MotYud95+XXa7IkqNz6Nheiojtzqm8ru8lXqtTjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ibdChtO/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 88958C43399;
-	Fri, 29 Mar 2024 20:00:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711742436;
-	bh=O10HO98LXxHRjwwegetD1LC2QarBz8wOkuidkGTxkic=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ibdChtO/bXootBctSxklNeA7bYCBts1UgwUFhft4x2sjMGXGiyQ6xGf96V2e0eOA1
-	 ODq9Ia/6579epCaP4lnUDfDLkut5fsOWeaFbJF7me6TstZSBLf3BMrkYDf55Adi731
-	 zHrMkkINKMdPiMUb6gLSoTWBG++DiMupsV5KEmKMPytdOQEZ4kBSph0dMZLkdeLFkK
-	 EbluA1me7aURKnJpRkImBfuddbCDZ41vUC7YUj2cCjTbvsHIIgprJTvRvr6boPp1Ff
-	 UJoxCMbUZIsBcLic6mF8suqylfUb00h7TTGot8oyp8sxfTR9PMGMw0bRiDFpkQ8O6Y
-	 waG7vYyhosOoA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 7B142D84BAF;
-	Fri, 29 Mar 2024 20:00:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1711760613; c=relaxed/simple;
+	bh=PhpfGLga0n/ALXtTxHjokXPE/jXjvNuKnl7wAoZ5VfM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=anvlWTLaGqv4ksaljQ+itZSQX/ZMeSKf80DBfr/rRvuUcFJ4eNyfgYOVDTDLQF42/VP8G5rtahNobn9sKTMxUH8n6rihz4Dl+BZm4yOjMRo+RXxOgcgTHEnzQEWjeGFrobC16CeoI581ZxtL6k+Z13Ifjgn4qCkG5r0jp5q5x9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nEiRr5d0; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b1dd93cb-2025-44c5-87db-17302564c040@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1711760609;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JXiJJHZRlrxCQbjNpD/DG/Sam9Mk/EeRhDZTqjMOOdA=;
+	b=nEiRr5d0ISkrWl+RgoStfXsEYYaBXkKMHJrzYX/lNHAgBPe02h6dEOPwkvTr3HEfXDaU3o
+	ro9FTWY02LthEpm6/PRMqPJHmn81nw7jWZKghjOT1Yu4tyPiSQ2KJpcQGeb4WR7DoJDRZP
+	CRlh1My2puEF8N8UqRBF1F80IqgE6hw=
+Date: Fri, 29 Mar 2024 18:03:21 -0700
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/9] address remaining
- -Wtautological-constant-out-of-range-compare
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171174243650.4906.1760676317968487901.git-patchwork-notify@kernel.org>
-Date: Fri, 29 Mar 2024 20:00:36 +0000
-References: <20240328143051.1069575-1-arnd@kernel.org>
-In-Reply-To: <20240328143051.1069575-1-arnd@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, idryomov@gmail.com,
- dongsheng.yang@easystack.cn, axboe@kernel.dk, jgg@ziepe.ca, leon@kernel.org,
- agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
- dm-devel@lists.linux.dev, saeedm@nvidia.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, xiubli@redhat.com,
- jlayton@kernel.org, konishi.ryusuke@gmail.com, dvyukov@google.com,
- andreyknvl@gmail.com, dsahern@kernel.org, masahiroy@kernel.org,
- nathan@kernel.org, nicolas@fjasle.eu, ndesaulniers@google.com,
- morbo@google.com, justinstitt@google.com, keescook@chromium.org,
- gustavoars@kernel.org, tariqt@nvidia.com, ceph-devel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
- netdev@vger.kernel.org, linux-nilfs@vger.kernel.org,
- kasan-dev@googlegroups.com, linux-kbuild@vger.kernel.org,
- llvm@lists.linux.dev
+Subject: Re: [PATCH 19/26] netfs: New writeback implementation
+Content-Language: en-US
+To: David Howells <dhowells@redhat.com>,
+ Christian Brauner <christian@brauner.io>, Jeff Layton <jlayton@kernel.org>,
+ Gao Xiang <hsiangkao@linux.alibaba.com>,
+ Dominique Martinet <asmadeus@codewreck.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Steve French <smfrench@gmail.com>,
+ Marc Dionne <marc.dionne@auristor.com>, Paulo Alcantara <pc@manguebit.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Ilya Dryomov <idryomov@gmail.com>,
+ netfs@lists.linux.dev, linux-cachefs@redhat.com,
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Latchesar Ionkov <lucho@ionkov.net>,
+ Christian Schoenebeck <linux_oss@crudebyte.com>
+References: <20240328163424.2781320-1-dhowells@redhat.com>
+ <20240328163424.2781320-20-dhowells@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20240328163424.2781320-20-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 28 Mar 2024 15:30:38 +0100 you wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On 28/03/2024 16:34, David Howells wrote:
+> The current netfslib writeback implementation creates writeback requests of
+> contiguous folio data and then separately tiles subrequests over the space
+> twice, once for the server and once for the cache.  This creates a few
+> issues:
 > 
-> The warning option was introduced a few years ago but left disabled
-> by default. All of the actual bugs that this has found have been
-> fixed in the meantime, and this series should address the remaining
-> false-positives, as tested on arm/arm64/x86 randconfigs as well as
-> allmodconfig builds for all architectures supported by clang.
+>   (1) Every time there's a discontiguity or a change between writing to only
+>       one destination or writing to both, it must create a new request.
+>       This makes it harder to do vectored writes.
 > 
-> [...]
+>   (2) The folios don't have the writeback mark removed until the end of the
+>       request - and a request could be hundreds of megabytes.
+> 
+>   (3) In future, I want to support a larger cache granularity, which will
+>       require aggregation of some folios that contain unmodified data (which
+>       only need to go to the cache) and some which contain modifications
+>       (which need to be uploaded and stored to the cache) - but, currently,
+>       these are treated as discontiguous.
+> 
+> There's also a move to get everyone to use writeback_iter() to extract
+> writable folios from the pagecache.  That said, currently writeback_iter()
+> has some issues that make it less than ideal:
+> 
+>   (1) there's no way to cancel the iteration, even if you find a "temporary"
+>       error that means the current folio and all subsequent folios are going
+>       to fail;
+> 
+>   (2) there's no way to filter the folios being written back - something
+>       that will impact Ceph with it's ordered snap system;
+> 
+>   (3) and if you get a folio you can't immediately deal with (say you need
+>       to flush the preceding writes), you are left with a folio hanging in
+>       the locked state for the duration, when really we should unlock it and
+>       relock it later.
+> 
+> In this new implementation, I use writeback_iter() to pump folios,
+> progressively creating two parallel, but separate streams and cleaning up
+> the finished folios as the subrequests complete.  Either or both streams
+> can contain gaps, and the subrequests in each stream can be of variable
+> size, don't need to align with each other and don't need to align with the
+> folios.
+> 
+> Indeed, subrequests can cross folio boundaries, may cover several folios or
+> a folio may be spanned by multiple folios, e.g.:
+> 
+>           +---+---+-----+-----+---+----------+
+> Folios:  |   |   |     |     |   |          |
+>           +---+---+-----+-----+---+----------+
+> 
+>             +------+------+     +----+----+
+> Upload:    |      |      |.....|    |    |
+>             +------+------+     +----+----+
+> 
+>           +------+------+------+------+------+
+> Cache:   |      |      |      |      |      |
+>           +------+------+------+------+------+
+> 
+> The progressive subrequest construction permits the algorithm to be
+> preparing both the next upload to the server and the next write to the
+> cache whilst the previous ones are already in progress.  Throttling can be
+> applied to control the rate of production of subrequests - and, in any
+> case, we probably want to write them to the server in ascending order,
+> particularly if the file will be extended.
+> 
+> Content crypto can also be prepared at the same time as the subrequests and
+> run asynchronously, with the prepped requests being stalled until the
+> crypto catches up with them.  This might also be useful for transport
+> crypto, but that happens at a lower layer, so probably would be harder to
+> pull off.
+> 
+> The algorithm is split into three parts:
+> 
+>   (1) The issuer.  This walks through the data, packaging it up, encrypting
+>       it and creating subrequests.  The part of this that generates
+>       subrequests only deals with file positions and spans and so is usable
+>       for DIO/unbuffered writes as well as buffered writes.
+> 
+>   (2) The collector. This asynchronously collects completed subrequests,
+>       unlocks folios, frees crypto buffers and performs any retries.  This
+>       runs in a work queue so that the issuer can return to the caller for
+>       writeback (so that the VM can have its kswapd thread back) or async
+>       writes.
+> 
+>   (3) The retryer.  This pauses the issuer, waits for all outstanding
+>       subrequests to complete and then goes through the failed subrequests
+>       to reissue them.  This may involve reprepping them (with cifs, the
+>       credits must be renegotiated, and a subrequest may need splitting),
+>       and doing RMW for content crypto if there's a conflicting change on
+>       the server.
+> 
+> [!] Note that some of the functions are prefixed with "new_" to avoid
+> clashes with existing functions.  These will be renamed in a later patch
+> that cuts over to the new algorithm.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: Eric Van Hensbergen <ericvh@kernel.org>
+> cc: Latchesar Ionkov <lucho@ionkov.net>
+> cc: Dominique Martinet <asmadeus@codewreck.org>
+> cc: Christian Schoenebeck <linux_oss@crudebyte.com>
+> cc: Marc Dionne <marc.dionne@auristor.com>
+> cc: v9fs@lists.linux.dev
+> cc: linux-afs@lists.infradead.org
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
 
-Here is the summary with links:
-  - [2/9] libceph: avoid clang out-of-range warning
-    (no matching commit)
-  - [5/9] ipv4: tcp_output: avoid warning about NET_ADD_STATS
-    (no matching commit)
-  - [8/9] mlx5: stop warning for 64KB pages
-    https://git.kernel.org/netdev/net-next/c/a5535e533694
+[..snip..]
+> +/*
+> + * Begin a write operation for writing through the pagecache.
+> + */
+> +struct netfs_io_request *new_netfs_begin_writethrough(struct kiocb *iocb, size_t len)
+> +{
+> +	struct netfs_io_request *wreq = NULL;
+> +	struct netfs_inode *ictx = netfs_inode(file_inode(iocb->ki_filp));
+> +
+> +	mutex_lock(&ictx->wb_lock);
+> +
+> +	wreq = netfs_create_write_req(iocb->ki_filp->f_mapping, iocb->ki_filp,
+> +				      iocb->ki_pos, NETFS_WRITETHROUGH);
+> +	if (IS_ERR(wreq))
+> +		mutex_unlock(&ictx->wb_lock);
+> +
+> +	wreq->io_streams[0].avail = true;
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+in case IS_ERR(wreq) is true, the execution falls through and this
+derefere is invalid.
+
+> +	trace_netfs_write(wreq, netfs_write_trace_writethrough);
+
+not sure if we still need trace function call in case of error
+
+> +	return wreq;
+> +}
+> +
+
+[..snip..]
+
 
 
 
