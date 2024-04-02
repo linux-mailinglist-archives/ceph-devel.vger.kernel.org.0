@@ -1,122 +1,115 @@
-Return-Path: <ceph-devel+bounces-1053-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1054-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DCCE894DDC
-	for <lists+ceph-devel@lfdr.de>; Tue,  2 Apr 2024 10:46:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7BEC8950B7
+	for <lists+ceph-devel@lfdr.de>; Tue,  2 Apr 2024 12:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 250EF1F22FDB
-	for <lists+ceph-devel@lfdr.de>; Tue,  2 Apr 2024 08:46:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A62F51C22479
+	for <lists+ceph-devel@lfdr.de>; Tue,  2 Apr 2024 10:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C1E57305;
-	Tue,  2 Apr 2024 08:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5321760275;
+	Tue,  2 Apr 2024 10:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Nve+G0HI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3pKIoou"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CB854777
-	for <ceph-devel@vger.kernel.org>; Tue,  2 Apr 2024 08:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C337B4776F;
+	Tue,  2 Apr 2024 10:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712047589; cv=none; b=iiCeIdBboSfrdkVDji0BPvqdn2Tuhahwlt8guOM5DZ8KjETBqYCo9y4ICiH6US0HeE7/ZAvlEKkKycxRqWHD3mn0F3iSrpk0BnTYSeO1E8Tt4mGr+mM5pL3/8edZ3M7vVbGnOKzZG8ua/WcAC7Ou/QBDo614uM8hUoI1l3nqt/I=
+	t=1712054938; cv=none; b=eeh0HHKLZZQ17dPoeQpQszzUucChVaAMK4aHUj1WtnlbI/V6n9bxLD5s5bEOS5fCjuXkse7+jW79YbDArYe2xq+hSJFmRiKkQdL4tzWU9cfR8hIr5ib+wcDkmQjWfx9ItRINQ2B+2Io+kGFh/imMa3fdgyXq57xOYffIqQ1kGAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712047589; c=relaxed/simple;
-	bh=0iCwHoYu3g7mLUt+X6CnAiX5DTbCc5GT+Ny5u3rTSPw=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=XBhGUHKEmjlpCKli9TuEqvBxmZDGmBdqpBzJLK9MFVN6RGwxSaCv0nRZUWfaQX3p1Tx8hegNROIe24bzdkmGBn1CVOI5wx5BM2VyDCbAKz+tp50wGNRKl06M9diVzjC7DHvrYoFf4I/DHh2ok0qTRg9+kTFq3Del+dI5s4QhcG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Nve+G0HI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712047586;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/8zVm5/YGf5Pgwy9JsdjJMXQWirBEfx89VnmYMfPJM4=;
-	b=Nve+G0HICr+HlsGYeXz7e+Vjm+MEgHgiw4Q4s5u0VlXBa/7VxtL+F2Q2ooLt3601sIWI2O
-	2gXx9Ab3vxdnhCiIUB3LNAH5XtPNOy7ZUJr8NDphx1Z7TcTFjiad8H0UfdwetMj0sIMbW0
-	xQPpYsn1NFZBj92dAL3aTMcGNEd65Io=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-158-jPb3_1pmPI27HEkPRk0xlA-1; Tue, 02 Apr 2024 04:46:21 -0400
-X-MC-Unique: jPb3_1pmPI27HEkPRk0xlA-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7A144185A784;
-	Tue,  2 Apr 2024 08:46:20 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.146])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 5D5BC1C060A4;
-	Tue,  2 Apr 2024 08:46:16 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240328163424.2781320-20-dhowells@redhat.com>
-References: <20240328163424.2781320-20-dhowells@redhat.com> <20240328163424.2781320-1-dhowells@redhat.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-    Naveen Mamindlapalli <naveenm@marvell.com>,
-    Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Jeff Layton <jlayton@kernel.org>,
-    Gao Xiang <hsiangkao@linux.alibaba.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Matthew Wilcox <willy@infradead.org>,
-    Steve French <smfrench@gmail.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-    linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
-    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
-    Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [PATCH 19/26] netfs: New writeback implementation
+	s=arc-20240116; t=1712054938; c=relaxed/simple;
+	bh=0o849oaUCS/1to/11XOBsrrHkZ6HnWiwjHhXX1XawsY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GDwHJ7XqCP8SICjGWIrNkHKwcgYY8likZYkKfgvTtsD6y9dBFOW0/r+ZmavJnj+muzbMcIM32zhkHSsnM8kiy20Yq4v78EncUpGOFz4gUfj4XHqA8nKON5pj+KCdRBlddNKlC1pE9hTmT3NQnArXv4vMNftcjaxHgyIM4r0CdPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3pKIoou; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B1F0C433C7;
+	Tue,  2 Apr 2024 10:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1712054937;
+	bh=0o849oaUCS/1to/11XOBsrrHkZ6HnWiwjHhXX1XawsY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=s3pKIoouIXwXD4lmoPfSlZSDJZnmmtOa1RUJNiFaCXHRyfUJWBCybV99rJXm7gV8y
+	 T7Fjk4lyWWWjVz2Gcq+2fNAoTMJnNX/2F2ImxDn9loGZaAaUiIrrOGUofL9i7svfdk
+	 XAdlme0aallBdCc4GUuODtk5GZtLEzaPI3vng58HDE2HBNIlc4c6Bq3f6hazpMeaEx
+	 Xgj2CoKMoSLbndyirg0YejiKL0ZEAGFUReEzmqbp1wYq+3/s1f3ZCIqrcblHvsWe1U
+	 u/Fu8N++N778FF1N0TJzW8msw8oIsVzOMv/4cCc32kKXWGv+qqR4NqN76QQvHhbwO4
+	 xB4Ir5cVjt1jw==
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Steve French <smfrench@gmail.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	netfs@lists.linux.dev,
+	linux-cachefs@redhat.com,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeff Layton <jlayton@kernel.org>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Gao Xiang <xiang@kernel.org>
+Subject: Re: [PATCH 00/26] netfs, afs, 9p, cifs: Rework netfs to use ->writepages() to copy to cache
+Date: Tue,  2 Apr 2024 12:48:39 +0200
+Message-ID: <20240402-angezapft-geltung-eedf20c747b6@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240328163424.2781320-1-dhowells@redhat.com>
+References: <20240328163424.2781320-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3047563.1712047571.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 02 Apr 2024 09:46:11 +0100
-Message-ID: <3047564.1712047571@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1071; i=brauner@kernel.org; h=from:subject:message-id; bh=0o849oaUCS/1to/11XOBsrrHkZ6HnWiwjHhXX1XawsY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRxP+pcP3O9duihh7ft/O8vis97k3zynpVeQfGsW8E7b q56dXSyVUcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEuNwYGTasXTr9sKjU3hPX Ei5oGyxbtVov5EPVyh7dA8dse88LRt5l+M2u8X9Xtd2ZVVnejNGvL9xPN9z30XT+j+sXvgWrTvz jocYCAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-David Howells <dhowells@redhat.com> wrote:
+On Thu, 28 Mar 2024 16:33:52 +0000, David Howells wrote:
+> The primary purpose of these patches is to rework the netfslib writeback
+> implementation such that pages read from the cache are written to the cache
+> through ->writepages(), thereby allowing the fscache page flag to be
+> retired.
+> 
+> The reworking also:
+> 
+> [...]
 
-> +struct netfs_io_request *new_netfs_begin_writethrough(struct kiocb *ioc=
-b, size_t len)
-> +{
-> +	struct netfs_io_request *wreq =3D NULL;
-> +	struct netfs_inode *ictx =3D netfs_inode(file_inode(iocb->ki_filp));
-> +
-> +	mutex_lock(&ictx->wb_lock);
-> +
-> +	wreq =3D netfs_create_write_req(iocb->ki_filp->f_mapping, iocb->ki_fil=
-p,
-> +				      iocb->ki_pos, NETFS_WRITETHROUGH);
-> +	if (IS_ERR(wreq))
-> +		mutex_unlock(&ictx->wb_lock);
+Pulled from netfs-writeback which contains the minor fixes pointed out.
 
-This needs a "return wreq;" adding and appropriate braces.  Thanks to thos=
-e
-who pointed it out.
+---
 
-David
+Applied to the vfs.netfs branch of the vfs/vfs.git tree.
+Patches in the vfs.netfs branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.netfs
 
