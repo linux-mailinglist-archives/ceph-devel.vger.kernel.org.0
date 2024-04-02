@@ -1,189 +1,106 @@
-Return-Path: <ceph-devel+bounces-1051-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1052-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B30893BA1
-	for <lists+ceph-devel@lfdr.de>; Mon,  1 Apr 2024 15:54:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FAF8894D94
+	for <lists+ceph-devel@lfdr.de>; Tue,  2 Apr 2024 10:33:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 309501C21422
-	for <lists+ceph-devel@lfdr.de>; Mon,  1 Apr 2024 13:54:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 260B11F2103C
+	for <lists+ceph-devel@lfdr.de>; Tue,  2 Apr 2024 08:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583853FE58;
-	Mon,  1 Apr 2024 13:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2293F8F7;
+	Tue,  2 Apr 2024 08:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c29yWJov"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FzsIc/2t"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5AC3F8F1;
-	Mon,  1 Apr 2024 13:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2418229429
+	for <ceph-devel@vger.kernel.org>; Tue,  2 Apr 2024 08:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1711979639; cv=none; b=tQWzCsmlMbfa4nu4nMmBeNLBSw/Wa18pE4srCoW/WALjyTW3Xk/AcipeATv+JqWKfAbNJw9lYl7wvp/GNd4e3YGHmtto4f0VbP4C/WIlCB84O2qSiN/RlrL2PO2gQjA3Adxh30lRR96/7qnIp0TceatzAxC3urqzGxj7im+MjUo=
+	t=1712046773; cv=none; b=J6ovH+GoKNmOgpD3u5+nKPmujqsOSDvhqdF0/GKLswLtpCrefv4O/t+v+iqek6CwqXaiZwjvG9+Zm4gwCEvD4mKz/eRGXC4NP8zLWTcZ+s6bxItZ95N9s/f96TNrcl8H/YaXhY4ncIamZb/HzlDJuALU2Q2BUdN19jzWLn3cMV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1711979639; c=relaxed/simple;
-	bh=dmYCendNfZLK2ZYRN4P3XHXSgHmLS9K4qfGr3Ifd3v0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u6zYjs94S03IZeCtmtIlyX/0RK17WPiPjQkkDmYDdljlVx5Ikj7KZ0xlYzZkJBOfdBVG1MpITp77wpluPmQpDILA0kJhTsyLJuHYzRXhvMhIcA7cyKxg5+Zg8gi+oK1VsYYFRNPRyFN8P2/SZACqIjf4YrJy966YDreftmU1DIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c29yWJov; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADA0CC433C7;
-	Mon,  1 Apr 2024 13:53:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1711979638;
-	bh=dmYCendNfZLK2ZYRN4P3XHXSgHmLS9K4qfGr3Ifd3v0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c29yWJov1MPD3KNJnAc3J10X31RIJx5rJ8pZ9aMASTtRIDHTlXt3YBkMhR/2MmTeW
-	 zKg7sKvzusvvzXvEpqIv8nO9JilxGOlGDD9rpErvCQJiT/+cOIdnykZR54Pb5hp73A
-	 n3db2XvRlrrFuw27hXNlQVFklZF/bwBt1Tvksi8eyn/LaeBo2QoMfURHysv0Ra+tcm
-	 5GNCZFCSDd/aMOWF7fV3ver/b2jE5QU8+WhPmhCzIjV1dmrOHawVXzxIdY9jTI6kkp
-	 3RzhX7bCaKGHmMTJC3G9ZTma+EDhOVW6r/AdWBj3gvJJLSd3U3a0S7GGRMCCfrXnpN
-	 BcEw/0JlvpOew==
-Date: Mon, 1 Apr 2024 14:53:51 +0100
-From: Simon Horman <horms@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Steve French <smfrench@gmail.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-	linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 26/26] netfs, afs: Use writeback retry to deal with
- alternate keys
-Message-ID: <20240401135351.GD26556@kernel.org>
-References: <20240328163424.2781320-1-dhowells@redhat.com>
- <20240328163424.2781320-27-dhowells@redhat.com>
+	s=arc-20240116; t=1712046773; c=relaxed/simple;
+	bh=SbhTatDUNlFMsocczlgnCcBAF0CiyLb5vhHsAQLt2SU=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=QZ672nOzvPfofvfwNz8G36CKE26OwWru3ksfN0yodbvEAiyT2J69hQauzpSWXQZhAOJxk3GuwrQ497g0GjwJiiHojoQ/45O2zFS0TS6hyFqogrQOCRm6ToLhOdUJPn6aVfgxCtAgBxDHaBH75hrdNbEf59hHikxVGZcLwG+Yruo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FzsIc/2t; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1712046771;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y+sMESiDiEk7NQ7Fx8r6KwgieS1M3kfYVE+bjq9Liog=;
+	b=FzsIc/2tj8j5mb1ls42Lh9l6ewaBsQVJFLtRoA0eQzyI580YRtDInN+sRF+pUIu4ljRPH0
+	UxQygn8nMcpiFsk57OlDtlPHPTnkwh4nKffxn5uyas7PM37m7Qs6/ruD6tU1ohhPwFYKa7
+	WD/8iRWjD3KVLKunpXwx4Tto6dDnQvY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-367-5i1cRV1HP_OxdCzQ3Kdzqw-1; Tue, 02 Apr 2024 04:32:47 -0400
+X-MC-Unique: 5i1cRV1HP_OxdCzQ3Kdzqw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8F188879844;
+	Tue,  2 Apr 2024 08:32:46 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.146])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 66B2CC1576F;
+	Tue,  2 Apr 2024 08:32:42 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240401135351.GD26556@kernel.org>
+References: <20240401135351.GD26556@kernel.org> <20240328163424.2781320-1-dhowells@redhat.com> <20240328163424.2781320-27-dhowells@redhat.com>
+To: Simon Horman <horms@kernel.org>
+Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+    Jeff Layton <jlayton@kernel.org>,
+    Gao Xiang <hsiangkao@linux.alibaba.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Matthew Wilcox <willy@infradead.org>,
+    Steve French <smfrench@gmail.com>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+    linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+    linux-mm@kvack.org, netdev@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 26/26] netfs, afs: Use writeback retry to deal with alternate keys
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240328163424.2781320-27-dhowells@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3002685.1712046757.1@warthog.procyon.org.uk>
+Date: Tue, 02 Apr 2024 09:32:37 +0100
+Message-ID: <3002686.1712046757@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-On Thu, Mar 28, 2024 at 04:34:18PM +0000, David Howells wrote:
+Simon Horman <horms@kernel.org> wrote:
 
-...
+> > +	op->store.size		= len,
+> 
+> nit: this is probably more intuitively written using len;
 
-> +void afs_issue_write(struct netfs_io_subrequest *subreq)
->  {
-> +	struct netfs_io_request *wreq = subreq->rreq;
->  	struct afs_operation *op;
-> -	struct afs_wb_key *wbk = NULL;
-> -	loff_t size = iov_iter_count(iter);
-> +	struct afs_vnode *vnode = AFS_FS_I(wreq->inode);
-> +	unsigned long long pos = subreq->start + subreq->transferred;
-> +	size_t len = subreq->len - subreq->transferred;
->  	int ret = -ENOKEY;
->  
-> -	_enter("%s{%llx:%llu.%u},%llx,%llx",
-> +	_enter("R=%x[%x],%s{%llx:%llu.%u},%llx,%zx",
-> +	       wreq->debug_id, subreq->debug_index,
->  	       vnode->volume->name,
->  	       vnode->fid.vid,
->  	       vnode->fid.vnode,
->  	       vnode->fid.unique,
-> -	       size, pos);
-> +	       pos, len);
->  
-> -	ret = afs_get_writeback_key(vnode, &wbk);
-> -	if (ret) {
-> -		_leave(" = %d [no keys]", ret);
-> -		return ret;
-> -	}
-> +#if 0 // Error injection
-> +	if (subreq->debug_index == 3)
-> +		return netfs_write_subrequest_terminated(subreq, -ENOANO, false);
->  
-> -	op = afs_alloc_operation(wbk->key, vnode->volume);
-> -	if (IS_ERR(op)) {
-> -		afs_put_wb_key(wbk);
-> -		return -ENOMEM;
-> +	if (!test_bit(NETFS_SREQ_RETRYING, &subreq->flags)) {
-> +		set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
-> +		return netfs_write_subrequest_terminated(subreq, -EAGAIN, false);
->  	}
-> +#endif
-> +
-> +	op = afs_alloc_operation(wreq->netfs_priv, vnode->volume);
-> +	if (IS_ERR(op))
-> +		return netfs_write_subrequest_terminated(subreq, -EAGAIN, false);
->  
->  	afs_op_set_vnode(op, 0, vnode);
-> -	op->file[0].dv_delta = 1;
-> +	op->file[0].dv_delta	= 1;
->  	op->file[0].modification = true;
-> -	op->store.pos = pos;
-> -	op->store.size = size;
-> -	op->flags |= AFS_OPERATION_UNINTR;
-> -	op->ops = &afs_store_data_operation;
-> +	op->store.pos		= pos;
-> +	op->store.size		= len,
+I'm not sure it makes a difference, but switching 'size' to 'len' in kafs is a
+separate thing that doesn't need to be part of this patchset.
 
-nit: this is probably more intuitively written using len;
+David
 
-> +	op->flags		|= AFS_OPERATION_UNINTR;
-> +	op->ops			= &afs_store_data_operation;
->  
-> -try_next_key:
->  	afs_begin_vnode_operation(op);
->  
-> -	op->store.write_iter = iter;
-> -	op->store.i_size = max(pos + size, vnode->netfs.remote_i_size);
-> -	op->mtime = inode_get_mtime(&vnode->netfs.inode);
-> +	op->store.write_iter	= &subreq->io_iter;
-> +	op->store.i_size	= umax(pos + len, vnode->netfs.remote_i_size);
-> +	op->mtime		= inode_get_mtime(&vnode->netfs.inode);
->  
->  	afs_wait_for_operation(op);
-> -
-> -	switch (afs_op_error(op)) {
-> +	ret = afs_put_operation(op);
-> +	switch (ret) {
->  	case -EACCES:
->  	case -EPERM:
->  	case -ENOKEY:
->  	case -EKEYEXPIRED:
->  	case -EKEYREJECTED:
->  	case -EKEYREVOKED:
-> -		_debug("next");
-> -
-> -		ret = afs_get_writeback_key(vnode, &wbk);
-> -		if (ret == 0) {
-> -			key_put(op->key);
-> -			op->key = key_get(wbk->key);
-> -			goto try_next_key;
-> -		}
-> +		/* If there are more keys we can try, use the retry algorithm
-> +		 * to rotate the keys.
-> +		 */
-> +		if (wreq->netfs_priv2)
-> +			set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
->  		break;
->  	}
->  
-> -	afs_put_wb_key(wbk);
-> -	_leave(" = %d", afs_op_error(op));
-> -	return afs_put_operation(op);
-> +	netfs_write_subrequest_terminated(subreq, ret < 0 ? ret : subreq->len, false);
->  }
->  
->  /*
-
-...
 
