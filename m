@@ -1,68 +1,69 @@
-Return-Path: <ceph-devel+bounces-1061-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1062-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5329D89827E
-	for <lists+ceph-devel@lfdr.de>; Thu,  4 Apr 2024 09:52:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E42E8982B3
+	for <lists+ceph-devel@lfdr.de>; Thu,  4 Apr 2024 10:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E737C1F27780
-	for <lists+ceph-devel@lfdr.de>; Thu,  4 Apr 2024 07:52:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5B62B27628
+	for <lists+ceph-devel@lfdr.de>; Thu,  4 Apr 2024 08:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7EF5C919;
-	Thu,  4 Apr 2024 07:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EE05D734;
+	Thu,  4 Apr 2024 08:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e7YdRRZW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HpIhqWVL"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B16445970
-	for <ceph-devel@vger.kernel.org>; Thu,  4 Apr 2024 07:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8789057899
+	for <ceph-devel@vger.kernel.org>; Thu,  4 Apr 2024 08:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712217126; cv=none; b=ouaKJbxO/EHXSz2xMgiPR2TES+wVefL8vE0bSAmZoxX8uX0Q5mBnQNYG/uHbS/TM/dDIlwiwW54/v05EfkH/eoNjLRr/RyXQ43WZHaGjQ1MLAll2Kq6UJ8h9wRdFuNjSn8tX9Br2Q0E7o4ge5/M982pE6olBJsPna86jUz4kWEQ=
+	t=1712217719; cv=none; b=gg2O336SV6WgB3mtJlRMnlU2IwDtngQ1JLDwBBrXWsAaLJl/zM+mlfhtiLviFYevIU8/qVbUUBv44RmgI/ADieo8p0MbpHsNycG4XUmFsir7zo22O59mX3TNAvhyUeUZwmV93DGg55EspbQ+dv0aWd36R2yM4u1a4U4LtLkRNu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712217126; c=relaxed/simple;
-	bh=xuyJ4Vq6zUtNBwqm/4jt8kNEn56EDs4LkP7OBIGqEmE=;
-	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
-	 Date:Message-ID; b=XwoXMWwIAIvEE5cWSmTsQ0hX8+FLOzI/zgxEi+MurI6bFhlcHCa6eBppbPC3k4RGyxsTs5Zx/oMJuP82y66S2vveaIjWF5UwNXr02hEzRWpEuQc8mCYTxlOifaGnfDp/5V72j3FdRPIswvmE+7pT/H8xYKkcjK2GBFs7BdZNh8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e7YdRRZW; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1712217719; c=relaxed/simple;
+	bh=nn75BfzRjv6UXMTe1POmsOm6uuisJffR5hjMsK9B4pM=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=Rnwas8Eb/Os4r6fkwfurdTAYsHAN02JmYyFG3wEdr+h7X6MXkC42FuFpajtCGWrByj27DXIaDHhddpgybuCDehA/exB6chIDljLhGun0dTUX6YzchdgTZ2l+MP9xxynksLBIZ7raLpA8OYjnXAxFd6tWI00lWsDSYoaHJM++YuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HpIhqWVL; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712217124;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
+	s=mimecast20190719; t=1712217716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=C9vFcjZDN/Fxaa0QMjaZwgnMDGjE5U9a9cC8FQf1Wik=;
-	b=e7YdRRZWW84TmSxRG+tjr/QdCtYADhzQKLOCzLY3W6W3ugkk7X2sDtYrqIX0Ml3s+2PAMc
-	z8+c+kveZuzT1dXpGY3Sk+/OhXK0wRBshZfrvB470bYzyYp6mZDGpHKC7sw9td87NUWThu
-	ifoae6CkMVUR+n+r4tXj7akfyA3wbF0=
+	bh=IE/xA/cazcP+HXhdhjRdwQDAS2gMvpTgfIxHPPrU41I=;
+	b=HpIhqWVLd9Jw0OGLGmvbTeru7ZTqYTwTx8arfZwTCfGyrW8RyBVA8pofLCHX1acBkbKwEf
+	O9eQFPbjXyDrEKt6kM/uUqhBbj+KraNF/+sHzhQDGifL0JbwMyQX0E9riCxTTRZ3Bztquu
+	9jJ8Z3RME9IWeg4P/Bd+4qAC5IUjt3o=
 Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
  by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-668-4vRV2FK2MnqAak7lNxvr5w-1; Thu,
- 04 Apr 2024 03:52:01 -0400
-X-MC-Unique: 4vRV2FK2MnqAak7lNxvr5w-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-169-c0jY6rVYNYiCi_bmX-evYA-1; Thu,
+ 04 Apr 2024 04:01:52 -0400
+X-MC-Unique: c0jY6rVYNYiCi_bmX-evYA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A8E333806736;
-	Thu,  4 Apr 2024 07:52:00 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1BF723C02748;
+	Thu,  4 Apr 2024 08:01:51 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.42.28.146])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 739012166B33;
-	Thu,  4 Apr 2024 07:51:56 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id DD1EAC1576F;
+	Thu,  4 Apr 2024 08:01:47 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
 	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
 	Kingdom.
 	Registered in England and Wales under Company Registration No. 3798903
 From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240328163424.2781320-22-dhowells@redhat.com>
-References: <20240328163424.2781320-22-dhowells@redhat.com> <20240328163424.2781320-1-dhowells@redhat.com>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Jeff Layton <jlayton@kernel.org>,
+In-Reply-To: <3655511.1712217111@warthog.procyon.org.uk>
+References: <3655511.1712217111@warthog.procyon.org.uk> <20240328163424.2781320-22-dhowells@redhat.com> <20240328163424.2781320-1-dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>
+Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
     Gao Xiang <hsiangkao@linux.alibaba.com>,
     Dominique Martinet <asmadeus@codewreck.org>,
     Matthew Wilcox <willy@infradead.org>,
@@ -87,17 +88,62 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3655510.1712217111.1@warthog.procyon.org.uk>
-Date: Thu, 04 Apr 2024 08:51:51 +0100
-Message-ID: <3655511.1712217111@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+Content-ID: <3666290.1712217703.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 04 Apr 2024 09:01:43 +0100
+Message-ID: <3666291.1712217703@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
 David Howells <dhowells@redhat.com> wrote:
 
-> +	size_t len = subreq->len - subreq->transferred;
+> > +	size_t len =3D subreq->len - subreq->transferred;
+> =
 
-This actually needs to be 'int len' because of the varargs packet formatter.
+> This actually needs to be 'int len' because of the varargs packet format=
+ter.
+
+I think the attached change is what's required.
 
 David
+---
+diff --git a/net/9p/client.c b/net/9p/client.c
+index 844aca4fe4d8..04af2a7bf54b 100644
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -1670,10 +1670,10 @@ p9_client_write_subreq(struct netfs_io_subrequest =
+*subreq)
+ 	struct p9_client *clnt =3D fid->clnt;
+ 	struct p9_req_t *req;
+ 	unsigned long long start =3D subreq->start + subreq->transferred;
+-	size_t len =3D subreq->len - subreq->transferred;
+-	int written, err;
++	int written, len =3D subreq->len - subreq->transferred;
++	int err;
+ =
+
+-	p9_debug(P9_DEBUG_9P, ">>> TWRITE fid %d offset %llu len %zd\n",
++	p9_debug(P9_DEBUG_9P, ">>> TWRITE fid %d offset %llu len %d\n",
+ 		 fid->fid, start, len);
+ =
+
+ 	/* Don't bother zerocopy for small IO (< 1024) */
+@@ -1699,11 +1699,11 @@ p9_client_write_subreq(struct netfs_io_subrequest =
+*subreq)
+ 	}
+ =
+
+ 	if (written > len) {
+-		pr_err("bogus RWRITE count (%d > %lu)\n", written, len);
++		pr_err("bogus RWRITE count (%d > %u)\n", written, len);
+ 		written =3D len;
+ 	}
+ =
+
+-	p9_debug(P9_DEBUG_9P, "<<< RWRITE count %zd\n", len);
++	p9_debug(P9_DEBUG_9P, "<<< RWRITE count %d\n", len);
+ =
+
+ 	p9_req_put(clnt, req);
+ 	netfs_write_subrequest_terminated(subreq, written, false);
 
 
