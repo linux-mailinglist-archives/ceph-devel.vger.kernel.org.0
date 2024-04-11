@@ -1,120 +1,198 @@
-Return-Path: <ceph-devel+bounces-1070-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1071-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE3E88A0954
-	for <lists+ceph-devel@lfdr.de>; Thu, 11 Apr 2024 09:11:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF428A1DA1
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 Apr 2024 20:15:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D49B51C21CAA
-	for <lists+ceph-devel@lfdr.de>; Thu, 11 Apr 2024 07:11:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5CD4289D7D
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 Apr 2024 18:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A2D13F453;
-	Thu, 11 Apr 2024 07:10:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616FC1EE285;
+	Thu, 11 Apr 2024 17:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KdPORDvy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/hC85zL"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF43813F44B
-	for <ceph-devel@vger.kernel.org>; Thu, 11 Apr 2024 07:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274D51EE28F
+	for <ceph-devel@vger.kernel.org>; Thu, 11 Apr 2024 17:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1712819402; cv=none; b=DmwGdKlUYi0EcJAvrjLM3ztsAbvxQuHf7Os6FDqr4KPgC5VoHj22JIWGDB4bzz9+XjAL3HOacy9/GxZTJYk/hMptiRh7eBB6Vujn6geXR0bD+lheUBRh3y+DiRm1vRrKkiHqwVh9zyig1VSJVd9XDpK1qiKDkBgOMij2r8Y+Io8=
+	t=1712856018; cv=none; b=h33hRaaP1r7RpWAXi9F4bMmDbgREG6fTg9p44ygg4P0EyCvESPx92UaNNgp2LRibBcv7TR5ppannAKlpY8vioQUyQ0IsEAOlyUUHdbl4bzSDUOWjKRy+6pbvstqSisOcdBYgVdJPPVeCCaldLGhq9i3h+P4RTeh6nX/G7pmmpCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1712819402; c=relaxed/simple;
-	bh=wH6i3JfODjwBAUH9Z8++yMSzU4HiqQg5BInTQ+RTfj8=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=JVDgJt7J4+sb6Lj8gFaALf9YTNkqS9YUgkRE7g7v7VLLmphyWUYzJNQEUeynLM9bRBwitnqtq+xgskjQASGqZQVzr6Ju/1R69ldUtC8eZ6d3SB1B32BFeQSOHk70sMr4aaMvlRITbTyMHcFo1kOQ7yxZaa4fk+kiAPQdmCiIctQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KdPORDvy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1712819399;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5NgjUa+lwKskPLBb4G2miG3MSH6bZPhgAN2v8MXqMrQ=;
-	b=KdPORDvyAGaCitMq9wwXgNGYL0XQyzLahmqE98fg/+g542J7oqCQHbUwAU+BqYXfLX8XpW
-	4HVMdsmzQbbNknJBI8FOfHnw6qGH7qa67Git2RuLhxzpgynOZaxZrByIt6S+58NnSRj2v8
-	usC+IDH+WuPEh7OIF2tw6xStv1wTseg=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-19-Lr1cEV93NVGDpSocSvNLIw-1; Thu, 11 Apr 2024 03:09:56 -0400
-X-MC-Unique: Lr1cEV93NVGDpSocSvNLIw-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CA3F310499A0;
-	Thu, 11 Apr 2024 07:09:54 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.146])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 3F2182166B34;
-	Thu, 11 Apr 2024 07:09:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240410173815.GA514426@kernel.org>
-References: <20240410173815.GA514426@kernel.org> <20240401135351.GD26556@kernel.org> <20240328163424.2781320-1-dhowells@redhat.com> <20240328163424.2781320-27-dhowells@redhat.com> <3002686.1712046757@warthog.procyon.org.uk>
-To: Simon Horman <horms@kernel.org>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Jeff Layton <jlayton@kernel.org>,
-    Gao Xiang <hsiangkao@linux.alibaba.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Matthew Wilcox <willy@infradead.org>,
-    Steve French <smfrench@gmail.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-    linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
-    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 26/26] netfs, afs: Use writeback retry to deal with alternate keys
+	s=arc-20240116; t=1712856018; c=relaxed/simple;
+	bh=iF2rHWPjvJ6EKggdoOTc8+Uk2cO8cQy3exFzNZhkUUY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mwtiOfk/+mPCO5Cmu0P2IkM+J7nAMw6kDzkWnm5MM5kcBbi3J+G2wWXn5UAVf6egWizc9sFLNNmATjh/b12r2htDlpOGj9O3tfp9ywdK5e3tKTnFTZ0mL784+sq8kvP9K5u3ZztzBv3paQyvT0HwPHsU9Oc0MyR01y8hzHaODJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W/hC85zL; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-22efc6b8dc5so82438fac.0
+        for <ceph-devel@vger.kernel.org>; Thu, 11 Apr 2024 10:20:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1712856015; x=1713460815; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4R3cE0WWuvQw8P2xO92A3FlqnR+3vHMPpz/++uUthkE=;
+        b=W/hC85zLzwNV5pv+eGcVOdtNk7S6jIPZRu9xszIdnHbw+Aq6zvYNNjcKkv/joZsecT
+         cOEu6yOZ0jjmsp+TkorNhP4EaHbrxA8E5YkMQhqfqrR+gs+I/piC4qvoqbtW41RVax7K
+         8YCoJPR6j0z76w1vlj7zOda/cd4j6W7mURwrm7bDsD+sfM1NcqMUPrCHbWjffFA9c5U9
+         JyUsQu8DZONgYM0j+Iv3vrZBRNpXNETi7TAjo94M+yddDXOpTcWHUfuiNRkPhQ4Nz7VH
+         X+a0vUxu7K/R75WUcukl/zAxzb2e47Bw8Si0kSyj8jJK2GJkoUJRuglrrSACGSbz6qVn
+         ILXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1712856015; x=1713460815;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4R3cE0WWuvQw8P2xO92A3FlqnR+3vHMPpz/++uUthkE=;
+        b=RczmjJz65+wdNT0NapxDh2Ax5mvj8Rt/pnnrK/meuSqFeDb5qz73+xHQ7sWRWfIz2J
+         rYsOxNs7WBSgNeuI7UOZkcxo4e9UiEQE2T7z20BKPQt9quI593CTGvaoRAndYwvS24CP
+         03mk6XBNHznQ62FRoHN7ldc8JINe71dbWl1LX42Q3m3mXL+3hDOnHaJzTb5WETbQ2lEE
+         mSt63eqosTVoKFLzWQ6460vdEQOhzMtL/nDikrYkppFtrcKVRKCDVggHxsHHQgP9+1S7
+         LtmeW+3nI7/hDKpysyg+Mbmc0p5HhsN/Zo5CJ/6X7U54FAqQgoyr0vYy6EdBIr0NKGdV
+         4LEA==
+X-Gm-Message-State: AOJu0YyY8s0Nop9+DHFfj80GCSTe43fjDiWnXzSzK0SpgMR6ARRgZSyT
+	oKKPRZxBb73VZSzz/YDxNUD87sWeyf8UM1FReKdwkVDmCRVzlesfsPnRiZxmbHuvV69pCIuTA0L
+	zIXq7oFo9scptqYh02CH3FoxF6fg=
+X-Google-Smtp-Source: AGHT+IFpl7melUBBOZZqOLkAFXLGrp5OO3QMKJ6+ZfpTuCOpQLfR8mcFbh16BrD/T48L4gG3QaiKUIUHCYA2tQW8+QY=
+X-Received: by 2002:a05:6870:a907:b0:22a:4da3:b004 with SMTP id
+ eq7-20020a056870a90700b0022a4da3b004mr188439oab.2.1712856015300; Thu, 11 Apr
+ 2024 10:20:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1780363.1712819386.1@warthog.procyon.org.uk>
+References: <20240409064943.1377026-1-xiubli@redhat.com>
+In-Reply-To: <20240409064943.1377026-1-xiubli@redhat.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Thu, 11 Apr 2024 19:20:03 +0200
+Message-ID: <CAOi1vP_+xrZ7TwgQeZL1XLt=di5HdRGxit+8kpMbYDCSpHEjdQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: switch to use cap_delay_lock for the unlink delay list
+To: xiubli@redhat.com
+Cc: ceph-devel@vger.kernel.org, vshankar@redhat.com, mchangir@redhat.com, 
+	Marc Ruhmann <ruhmann@luis.uni-hannover.de>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 11 Apr 2024 08:09:46 +0100
-Message-ID: <1780364.1712819386@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-Simon Horman <horms@kernel.org> wrote:
+On Tue, Apr 9, 2024 at 8:52=E2=80=AFAM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> The same list item will be used in both cap_delay_list and
+> cap_unlink_delay_list, so it's buggy to use two different locks
+> to protect them.
+>
+> Reported-by: Marc Ruhmann <ruhmann@luis.uni-hannover.de>
+> Fixes: dbc347ef7f0c ("ceph: add ceph_cap_unlink_work to fire check_caps()=
+ immediately")
+> URL: https://lists.ceph.io/hyperkitty/list/ceph-users@ceph.io/thread/AODC=
+76VXRAMXKLFDCTK4TKFDDPWUSCN5
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/caps.c       | 4 ++--
+>  fs/ceph/mds_client.c | 9 ++++-----
+>  fs/ceph/mds_client.h | 3 +--
+>  3 files changed, 7 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index bfa8f72cd3cf..197cb383f829 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -4799,13 +4799,13 @@ int ceph_drop_caps_for_unlink(struct inode *inode=
+)
+>
+>                         doutc(mdsc->fsc->client, "%p %llx.%llx\n", inode,
+>                               ceph_vinop(inode));
+> -                       spin_lock(&mdsc->cap_unlink_delay_lock);
+> +                       spin_lock(&mdsc->cap_delay_lock);
+>                         ci->i_ceph_flags |=3D CEPH_I_FLUSH;
+>                         if (!list_empty(&ci->i_cap_delay_list))
+>                                 list_del_init(&ci->i_cap_delay_list);
+>                         list_add_tail(&ci->i_cap_delay_list,
+>                                       &mdsc->cap_unlink_delay_list);
+> -                       spin_unlock(&mdsc->cap_unlink_delay_lock);
+> +                       spin_unlock(&mdsc->cap_delay_lock);
+>
+>                         /*
+>                          * Fire the work immediately, because the MDS may=
+be
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 639bde44ab23..494d80b3e41d 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -2532,7 +2532,7 @@ static void ceph_cap_unlink_work(struct work_struct=
+ *work)
+>         struct ceph_client *cl =3D mdsc->fsc->client;
+>
+>         doutc(cl, "begin\n");
+> -       spin_lock(&mdsc->cap_unlink_delay_lock);
+> +       spin_lock(&mdsc->cap_delay_lock);
+>         while (!list_empty(&mdsc->cap_unlink_delay_list)) {
+>                 struct ceph_inode_info *ci;
+>                 struct inode *inode;
+> @@ -2544,15 +2544,15 @@ static void ceph_cap_unlink_work(struct work_stru=
+ct *work)
+>
+>                 inode =3D igrab(&ci->netfs.inode);
+>                 if (inode) {
+> -                       spin_unlock(&mdsc->cap_unlink_delay_lock);
+> +                       spin_unlock(&mdsc->cap_delay_lock);
+>                         doutc(cl, "on %p %llx.%llx\n", inode,
+>                               ceph_vinop(inode));
+>                         ceph_check_caps(ci, CHECK_CAPS_FLUSH);
+>                         iput(inode);
+> -                       spin_lock(&mdsc->cap_unlink_delay_lock);
+> +                       spin_lock(&mdsc->cap_delay_lock);
+>                 }
+>         }
+> -       spin_unlock(&mdsc->cap_unlink_delay_lock);
+> +       spin_unlock(&mdsc->cap_delay_lock);
+>         doutc(cl, "done\n");
+>  }
+>
+> @@ -5538,7 +5538,6 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
+>         INIT_LIST_HEAD(&mdsc->cap_wait_list);
+>         spin_lock_init(&mdsc->cap_delay_lock);
+>         INIT_LIST_HEAD(&mdsc->cap_unlink_delay_list);
+> -       spin_lock_init(&mdsc->cap_unlink_delay_lock);
+>         INIT_LIST_HEAD(&mdsc->snap_flush_list);
+>         spin_lock_init(&mdsc->snap_flush_lock);
+>         mdsc->last_cap_flush_tid =3D 1;
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 317a0fd6a8ba..80b310e33f2b 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -481,9 +481,8 @@ struct ceph_mds_client {
+>         struct delayed_work    delayed_work;  /* delayed work */
+>         unsigned long    last_renew_caps;  /* last time we renewed our ca=
+ps */
+>         struct list_head cap_delay_list;   /* caps with delayed release *=
+/
+> -       spinlock_t       cap_delay_lock;   /* protects cap_delay_list */
+>         struct list_head cap_unlink_delay_list;  /* caps with delayed rel=
+ease for unlink */
+> -       spinlock_t       cap_unlink_delay_lock;  /* protects cap_unlink_d=
+elay_list */
+> +       spinlock_t       cap_delay_lock;   /* protects cap_delay_list and=
+ cap_unlink_delay_list */
+>         struct list_head snap_flush_list;  /* cap_snaps ready to flush */
+>         spinlock_t       snap_flush_lock;
+>
+> --
+> 2.43.0
+>
 
-> On Tue, Apr 02, 2024 at 09:32:37AM +0100, David Howells wrote:
-> > Simon Horman <horms@kernel.org> wrote:
-> > =
+LGTM, queued up for 6.9-rc.
 
-> > > > +	op->store.size		=3D len,
-> > > =
+Thanks,
 
-> > > nit: this is probably more intuitively written using len;
-> > =
-
-> > I'm not sure it makes a difference, but switching 'size' to 'len' in k=
-afs is a
-> > separate thing that doesn't need to be part of this patchset.
-> =
-
-> Sorry, I meant, using ';' rather than ',' at the end of the line.
-
-Ah, yes.  That makes a lot more sense!
-
-David
-
+                Ilya
 
