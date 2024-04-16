@@ -1,129 +1,105 @@
-Return-Path: <ceph-devel+bounces-1083-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1084-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E27458A5DDC
-	for <lists+ceph-devel@lfdr.de>; Tue, 16 Apr 2024 00:51:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 034C38A77E8
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Apr 2024 00:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C5F31C21B68
-	for <lists+ceph-devel@lfdr.de>; Mon, 15 Apr 2024 22:51:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975E81F2322A
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Apr 2024 22:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB108158A15;
-	Mon, 15 Apr 2024 22:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09630139D0B;
+	Tue, 16 Apr 2024 22:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jv8dZKAe"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OS/AKfnT"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227A01B80F;
-	Mon, 15 Apr 2024 22:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496DD132C1E
+	for <ceph-devel@vger.kernel.org>; Tue, 16 Apr 2024 22:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713221503; cv=none; b=gkg0mpF6ESCFctkCNM92WzMOCI9mqMakL5rOLUQIIHXmNPqq+Dba2zbzRbEEom0ym2PPbX7VM0nTcN0AfqTgO2yZ4pH/RLGmeMJFJfwkqHVmfYf3mdkwluekwb+m94XXGqS5GhE7mKf6ysHRmzcpsHoBbetxjSA/LKvR3iEWmr8=
+	t=1713307255; cv=none; b=OtOo9aa2H6jHd9EKavXt8pBu6eRufYIzg5KpAYa3TNuza/6v2Lo9avAfH/A5vvlhBLxbgNUZ7TT7yuF1hl8ek7aUY7yR5RjOjUlCz6REr9PoO9NgukI7bmh/sFzd4pekug6RXwTtlZEl8JQQWW4lPpleqzuFgpcUYg+0EhYRPdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713221503; c=relaxed/simple;
-	bh=210MiktY9ffZFXiFwX3XKrZn/rqxu8+UIHYBzztKE80=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O7DRg1QVy8/sHGFcWTzQngne1ZXDihtRzZU86oI8Gv9i+5UniOBKerFAAOThfj0jzS5/8VZIJrH76/khPB5VuPqB/CCf+5ow+ugT4pnkjir031Jglx/ONgHyCtc21LmCYdIvHbrYVfZVaDNNgRORGXsEyrUiSiYdG46VDk8bYA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jv8dZKAe; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-516d0c004b1so4937876e87.2;
-        Mon, 15 Apr 2024 15:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1713221500; x=1713826300; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=63WuSgSRy34JNOa9pVcP0sGLwbzNT5xJkZeCbwGkCUE=;
-        b=Jv8dZKAeOd7N++mj5aVTg0b+uwwW6TInljFgYMkN+gJF2svxVZXZfyRtZ1A1lYZ0qs
-         InuJNbFaI65WrSXYTUI2PvnOPnv/brCxLC1n8wNSCStCA6UNrHAzYrw6EH1698sUvurp
-         x8TNNmjnyUJzBTOH15Ry47c7NqUjVDfkNx90gSkrzU4Ug2KNdtLz8Xms+c5n91c2eF2l
-         8BL8rXfQciDwpaEZN897z1u4Z7QsgASytTXISoQ4jB8VcPUoqhtcPJlrWqRKYC2Awfw+
-         SDY8QGFdP6YxEA7IdDO3pjooicse1JUCcPTrCbTOv1moNbIjqC4UgC+sZHrEykN13OaB
-         mzcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1713221500; x=1713826300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=63WuSgSRy34JNOa9pVcP0sGLwbzNT5xJkZeCbwGkCUE=;
-        b=JZCg24s7kQ91ejvfbsssxLTm021IgSbVmCUZLK0V29ZeDSBvGeDl0VIeZZY4GGZvjZ
-         mUH7iZbQX5bTy2pntZyLZlWhhFW/47cC0cAXZ+wIg9v00Ucl+y6VoBMlDDJ2gm5NzqwP
-         Lvduk4SrLFyh3YPefNWKz328ouQSvATTnbsN+vqf9UA5L2mYqbb6i2KYmcFIb+oK2XA0
-         zxGm98Aa30hlODxml6FDm23AiwSBKibeGA8gYe6HbNlEJiwn7VrHPpPx/HmOEo6b4zjz
-         Un78RCwh0GOdO1ZvoaWP3pQchsJAM/gz9AkZ1hhIl2eF0WoVNM6hfyJlUkfEjtZOBcyw
-         Vbtg==
-X-Forwarded-Encrypted: i=1; AJvYcCUlace++9rH8nZSN6uXURIcQScC1hG7bFPT8cUE+T+m9SfxhssyOAzRsF5wbYl1TgP6ZM6/INhXSilC5oN61p9f+G2FitXLEPBiD2t0i1isgkSfrzoeeliJJ+TpUTir6gAsS0RkXkwLR/HiMwElOIA/J6GP6D6liUvlaJCm4LHAeIBa9+4bumwvLksOz1S6udFHK8HGZ79I2Nk7I2Zk5WP6b/vL8DsmaSh/mfhmXUTRZvNvs9bKOyVrrOmSzxGyH+7oG0KkYV7PYfMyghkNQE82gGGeamhZ
-X-Gm-Message-State: AOJu0YxG1yqHiIW1/4yakwJDtoVS4IqhJX/wrDLsMmfJCK/rLx73dO6G
-	KixQzcgxQG45iaFOya2dBh7a01M/oCg/cY869TDUHIq492gUetAKoNluSMYbYj4I9WbtjZxSR6M
-	0QQEn58KAAF5iA5UKdyGYS3Uu0pKLlw==
-X-Google-Smtp-Source: AGHT+IF8RFFMQuN5vGtuRwBPhuh0oAZccy2g38TQjUdEv5QNHmaH/Tohq78D8IN9/9jH1PsE9dc35dj2/YRmRw43rn8=
-X-Received: by 2002:a19:5f1e:0:b0:516:b07a:5b62 with SMTP id
- t30-20020a195f1e000000b00516b07a5b62mr8309996lfb.54.1713221500147; Mon, 15
- Apr 2024 15:51:40 -0700 (PDT)
+	s=arc-20240116; t=1713307255; c=relaxed/simple;
+	bh=N5nwDmbhe++pDB3bapq0vGCRdzBr3y4GS9c/nfTtZFY=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=s5EyytHEGhi9qkFbnXIQvkpGa5mVTFo7DFex/eekbFHwXNadHjBDCzeZos85Xn0SotoVIr9fzN+EuYYzVgkFe9tm9MYnNMi4sAJV15vaTFXiGjzIZdfRxX1AnFRau7V/umPT6f1iHhN8ALMFehk5leyrVxYA8lideb03l+/y8JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OS/AKfnT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1713307253;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N5nwDmbhe++pDB3bapq0vGCRdzBr3y4GS9c/nfTtZFY=;
+	b=OS/AKfnT3/1SC0gc0UW6VbJxmOlBktiExDHFnqvciNtVh6fspQH17SmjBzW8XU+JUxUGlt
+	4N2uEcJXAJCHoczGS81U6MdPotVVoq2oik9dMwn4pGrgBGqun/nZMRH2fRDObGudUoJkRW
+	Hi7L2jeQpgIQnRu2n6a5QZULYX/ol5w=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-282-Ck5vkIIGNTuza5woUV3wRQ-1; Tue,
+ 16 Apr 2024 18:40:49 -0400
+X-MC-Unique: Ck5vkIIGNTuza5woUV3wRQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F39E21C05149;
+	Tue, 16 Apr 2024 22:40:47 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.10])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 6583339DCA;
+	Tue, 16 Apr 2024 22:40:44 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAH2r5msFoGAE79pS5bEt5T8a60LU82mdjNdpfe0bG4YpvY8t-g@mail.gmail.com>
+References: <CAH2r5msFoGAE79pS5bEt5T8a60LU82mdjNdpfe0bG4YpvY8t-g@mail.gmail.com> <20240328163424.2781320-1-dhowells@redhat.com> <20240328163424.2781320-2-dhowells@redhat.com> <39de1e2ac2ae6a535e23faccd304d7c5459054a2.camel@kernel.org> <2345944.1713186234@warthog.procyon.org.uk>
+To: Steve French <smfrench@gmail.com>
+Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+    Christian Brauner <christian@brauner.io>,
+    Gao Xiang <hsiangkao@linux.alibaba.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Matthew Wilcox <willy@infradead.org>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+    linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+    linux-mm@kvack.org, netdev@vger.kernel.org,
+    linux-kernel@vger.kernel.org, Steve French <sfrench@samba.org>,
+    Shyam Prasad N <nspmangalore@gmail.com>,
+    Rohith Surabattula <rohiths.msft@gmail.com>
+Subject: Re: [PATCH 01/26] cifs: Fix duplicate fscache cookie warnings
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240328163424.2781320-1-dhowells@redhat.com> <20240328163424.2781320-2-dhowells@redhat.com>
- <39de1e2ac2ae6a535e23faccd304d7c5459054a2.camel@kernel.org> <2345944.1713186234@warthog.procyon.org.uk>
-In-Reply-To: <2345944.1713186234@warthog.procyon.org.uk>
-From: Steve French <smfrench@gmail.com>
-Date: Mon, 15 Apr 2024 17:51:30 -0500
-Message-ID: <CAH2r5msFoGAE79pS5bEt5T8a60LU82mdjNdpfe0bG4YpvY8t-g@mail.gmail.com>
-Subject: Re: [PATCH 01/26] cifs: Fix duplicate fscache cookie warnings
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Christian Brauner <christian@brauner.io>, 
-	Gao Xiang <hsiangkao@linux.alibaba.com>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Matthew Wilcox <willy@infradead.org>, Marc Dionne <marc.dionne@auristor.com>, 
-	Paulo Alcantara <pc@manguebit.com>, Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
-	Eric Van Hensbergen <ericvh@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev, 
-	linux-cachefs@redhat.com, linux-afs@lists.infradead.org, 
-	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, 
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Steve French <sfrench@samba.org>, Shyam Prasad N <nspmangalore@gmail.com>, 
-	Rohith Surabattula <rohiths.msft@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2754965.1713307239.1@warthog.procyon.org.uk>
+Date: Tue, 16 Apr 2024 23:40:39 +0100
+Message-ID: <2754966.1713307239@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-Should this be merged independently (and sooner? in rc5?)
+Steve French <smfrench@gmail.com> wrote:
 
-On Mon, Apr 15, 2024 at 8:04=E2=80=AFAM David Howells <dhowells@redhat.com>=
- wrote:
->
-> Jeff Layton <jlayton@kernel.org> wrote:
->
-> > > +struct cifs_fscache_inode_key {
-> > > +
-> > > +   __le64  uniqueid;       /* server inode number */
-> > > +   __le64  createtime;     /* creation time on server */
-> > > +   u8      type;           /* S_IFMT file type */
-> > > +} __packed;
-> > > +
-> >
-> > Interesting. So the uniqueid of the inode is not unique within the fs?
-> > Or are the clients are mounting shares that span multiple filesystems?
-> > Or, are we looking at a situation where the uniqueid is being quickly
-> > reused for new inodes after the original inode is unlinked?
->
-> The problem is that it's not unique over time.  creat(); unlink(); creat(=
-);
-> may yield a repeat of the uniqueid.  It's like i_ino in that respect.
->
-> David
->
+> Should this be merged independently (and sooner? in rc5?)
 
+It's already upstream through the cifs tree and I've dropped it from my
+branch.
 
---=20
-Thanks,
+David
 
-Steve
 
