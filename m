@@ -1,115 +1,117 @@
-Return-Path: <ceph-devel+bounces-1100-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1101-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40D48A9CF8
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 Apr 2024 16:26:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC518AD100
+	for <lists+ceph-devel@lfdr.de>; Mon, 22 Apr 2024 17:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60B4128219B
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 Apr 2024 14:26:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68CD028CF94
+	for <lists+ceph-devel@lfdr.de>; Mon, 22 Apr 2024 15:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30D1168B06;
-	Thu, 18 Apr 2024 14:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF8A15350D;
+	Mon, 22 Apr 2024 15:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jce5rIBB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gGiVSfI/"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF6816E897
-	for <ceph-devel@vger.kernel.org>; Thu, 18 Apr 2024 14:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABDC152523;
+	Mon, 22 Apr 2024 15:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1713450179; cv=none; b=tUz2Io0hV1yAn1R2cCVTmtewYdCTe1O9ybV2KksEd6VIMaDigctxKHo+p5vOh7GF/40jgKtJLk+d5L+ftHA/cOp37+SQutKjFHk4c3UfMML+cGCDut5ZZYKTow/5sXfqxdSXj9ER825bWC4RIvQJEzWFe9qhnXOJAcdTkVGXNm0=
+	t=1713800101; cv=none; b=l5j3uJARGOk3Y0KtwF+QvavWD0dgrcpRCx/iwax/e6Rq0kVo6oexHMYRdDhuYMp3o1Q9qV8eDdkHcmzOZx0kUW4tibA0macx0tIWKW1EBaI5nt653quKdRiER7MLBhi/kbWLtzr9F5OfM02+YmbgBEZIEiYh4WzEJ5Gf2cFopa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1713450179; c=relaxed/simple;
-	bh=72AnnAUiezh+FbXgLGnLYxiCZu3uG/Vh/gdvX/Z/Egc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EgKbtQp8hDRXMNCp188bc6FlAcIa1+/Osp8GR5ai6UGiWYJju03Hu+hI0g5ZpqhbENRGXS0xzi4kvufi6PePMXZqD3ngZmj4TgiElFwiATf/lgl+fCAXi5h9bIFs7JMFPdk5bkourzqohj1Pt1GGtTJMMGj738yXTDmkDYlr7sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jce5rIBB; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1713450177;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=405/Ib014H0t8PmuvN85ek41Br4yY4YaM7xugt0iZck=;
-	b=Jce5rIBBxdgFgocZlX9A0FHTAOVDZDgLiVL1qJ27rqw/CEaOxi5SwnQEQvpjciLULM1vXE
-	WvLJBXnVAVOUxy+AhS8bxylwDxY66xXvqhGSVLbrsLsU9/o2vBdMlWQXC0efrWTu45BZWM
-	b2U+an3ZH7S9/buw3hnEvV+PB8Kukek=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-327-faGbicrrOG6XdDYB_LbONQ-1; Thu, 18 Apr 2024 10:22:55 -0400
-X-MC-Unique: faGbicrrOG6XdDYB_LbONQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7167D81F317;
-	Thu, 18 Apr 2024 14:22:52 +0000 (UTC)
-Received: from li-25d5c94c-2c69-11b2-a85c-c76ff7643ea0.ibm.com.com (unknown [10.72.116.7])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 1CD8443FAD;
-	Thu, 18 Apr 2024 14:22:49 +0000 (UTC)
-From: xiubli@redhat.com
-To: idryomov@gmail.com,
-	ceph-devel@vger.kernel.org
-Cc: vshankar@redhat.com,
-	mchangir@redhat.com,
-	Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v5 6/6] ceph: add CEPHFS_FEATURE_MDS_AUTH_CAPS_CHECK feature bit
-Date: Thu, 18 Apr 2024 22:20:19 +0800
-Message-ID: <20240418142019.133191-7-xiubli@redhat.com>
-In-Reply-To: <20240418142019.133191-1-xiubli@redhat.com>
-References: <20240418142019.133191-1-xiubli@redhat.com>
+	s=arc-20240116; t=1713800101; c=relaxed/simple;
+	bh=k+hbCfeBQPRpXXeKDg3W6ZAq2kwbOldMPCT7MKeU7xA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iWUoin+6i1tPvpPa5U5yTGvslnTvMKvvPH4k6X8K3brb7WfVvPmOmvyyss6acJYqHlMzJ2QdRb7OGmsLtTZetqJi4Jq1Tt+XRDEMqjrAQ6BynJwTuaCWUnoFX1sHtrDdpz41gWMU2U34SNEk0B0/Oc0qWBSMpnKIdk32Aw5i2v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gGiVSfI/; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2d872102372so42289411fa.0;
+        Mon, 22 Apr 2024 08:34:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1713800098; x=1714404898; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wN70iPYr3n9W1U+WIrHwJM/MMTxEMvnw8AZRwUzGnOI=;
+        b=gGiVSfI/J/bKvPkIxlMn4IXC37a3foRqSwz8mGuQkE2dW6J5TpcgoM8LvVpzGtW2mw
+         CMGYG4WBR2tPXkl8ndggSz6nTBqlHr7A2VNV4mKGby1JSolLELa2yfDZun4ytfFuiLmK
+         L/0v1+3i47yJ4ojOPK8+AVQeCDDNrFVtdkZ5gXoxHyE8PoKTIlqIcCF2nBqUuJzNBTBz
+         m5kDn/OM6u23MIMtrvn9ttCJIcY5g4O+BNwQNzbnPKd+j9pBNsdiI1JUqVf1BjDTNzzm
+         Hf5aM69xQ5PA3zATxtOJE5XJIxsSWDTi/TLWA++I4/YS+hrJ9XbSjZ5HU5tRtAneKuyR
+         1M8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1713800098; x=1714404898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wN70iPYr3n9W1U+WIrHwJM/MMTxEMvnw8AZRwUzGnOI=;
+        b=XREIp95U6huwDAIKiwhoWggc5bSnBN0tiGlH8hV86Cec1tlBoqonV0zFdaoozWm4zj
+         dP87ouBMZh5DyXzmUwluIAn9QHXV10yblgCvtAx3uzr73NAAabCxr+muoz0OaMJI7gzS
+         npY/Sta0fZJZunCwDNgO4zypPGJsjVFOfUyK6ISkVbgImDG1t/k+KTMVFHTYIMPwV8ex
+         68YsKPxvCZam9o8+3sy3MXLj7w+3S/yt/OAuV0x6WDXy3psEpTStlSAMCLsEr4L+frIT
+         IY4sjDUqnToQY5UlXUMB9NmxkSqRCIbrhiCZcIM7acsDhxYBONSJBcDNsrIty33VCWV3
+         juqA==
+X-Forwarded-Encrypted: i=1; AJvYcCVlpQcHZQ2GPtZxVj3Pf1dzYqjj78iQlBiR+RuIP08ZcgOwBgZMo7m0OilnRYRA0BdC+JOqtFJ/VkeyoYiIVlEAaGnVRes8LA/X6Y2dw1w22lYBz9teoP8CXOFoOncrTEZUbo+nC7SQ5YUQD1lTTz5EO8G6jbvxmTOIo8FZUci0phcpd/V+2vM=
+X-Gm-Message-State: AOJu0Yw+Sh4l6qO0w7z8Q7zmC6NnW6uGsr4CYyJM3jVd9yzRpt+p+i95
+	yDN6WoEG/H+FKEZeKz8J676LAYlgmcb7RnKiIsgg509fVberDqSuzsi4s0IB42DrG8Wd8oAHfKn
+	PCYc7v4N79Oj2xQySWd4fwTmsWL4=
+X-Google-Smtp-Source: AGHT+IFVaXdFYTTUUh/Ynnj3KGqzpi6jgLFcOLxDKW0sdOvKDfA0SAHpCjiqna5bFgyiQX7G5wZqnnHNc+OwlBR8vKc=
+X-Received: by 2002:a2e:86ca:0:b0:2d8:606d:c797 with SMTP id
+ n10-20020a2e86ca000000b002d8606dc797mr7960ljj.10.1713800097720; Mon, 22 Apr
+ 2024 08:34:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+References: <20240417160842.76665-1-ryncsn@gmail.com> <20240417160842.76665-5-ryncsn@gmail.com>
+ <fc89e5b9-cfc4-4303-b3ff-81f00a891488@redhat.com> <ZiB3rp6m4oWCdszj@casper.infradead.org>
+ <e5b9172c-3123-4926-bd1d-1c1c93f610bb@redhat.com>
+In-Reply-To: <e5b9172c-3123-4926-bd1d-1c1c93f610bb@redhat.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Mon, 22 Apr 2024 23:34:40 +0800
+Message-ID: <CAMgjq7AKwxBkw+tP0GhmLh8aRqXA81i1QOgoqyJ2LP5xqeeJWA@mail.gmail.com>
+Subject: Re: [PATCH 4/8] ceph: drop usage of page_index
+To: Xiubo Li <xiubli@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, "Huang, Ying" <ying.huang@intel.com>, 
+	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Neil Brown <neilb@suse.de>, Minchan Kim <minchan@kernel.org>, 
+	Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Xiubo Li <xiubli@redhat.com>
+On Thu, Apr 18, 2024 at 9:40=E2=80=AFAM Xiubo Li <xiubli@redhat.com> wrote:
+> On 4/18/24 09:30, Matthew Wilcox wrote:
+> > On Thu, Apr 18, 2024 at 08:28:22AM +0800, Xiubo Li wrote:
+> >> Thanks for you patch and will it be doable to switch to folio_index()
+> >> instead ?
+> > No.  Just use folio->index.  You only need folio_index() if the folio
+> > might belong to the swapcache instead of a file.
+> >
+> Hmm, Okay.
+>
+> Thanks
+>
+> - Xiubo
+>
 
-Since we have support checking the mds auth cap in kclient, just
-set the feature bit.
+Hi Xiubo
 
-URL: https://tracker.ceph.com/issues/61333
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/mds_client.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thanks for the comment,
 
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 4c45b95abbcd..a58bcf7491d0 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -35,8 +35,9 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_32BITS_RETRY_FWD,
- 	CEPHFS_FEATURE_NEW_SNAPREALM_INFO,
- 	CEPHFS_FEATURE_HAS_OWNER_UIDGID,
-+	CEPHFS_FEATURE_MDS_AUTH_CAPS_CHECK,
- 
--	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_HAS_OWNER_UIDGID,
-+	CEPHFS_FEATURE_MAX = CEPHFS_FEATURE_MDS_AUTH_CAPS_CHECK,
- };
- 
- #define CEPHFS_FEATURES_CLIENT_SUPPORTED {	\
-@@ -52,6 +53,7 @@ enum ceph_feature_type {
- 	CEPHFS_FEATURE_OP_GETVXATTR,		\
- 	CEPHFS_FEATURE_32BITS_RETRY_FWD,	\
- 	CEPHFS_FEATURE_HAS_OWNER_UIDGID,	\
-+	CEPHFS_FEATURE_MDS_AUTH_CAPS_CHECK,	\
- }
- 
- /*
--- 
-2.43.0
-
+As Matthew mentioned there is no need to use folio_index unless you
+are access swapcache. And I found that ceph is not using folios
+internally yet, needs a lot of conversions. So I think I'll just keep
+using page->index here, later conversions may change it to
+folio->index.
 
