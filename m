@@ -1,60 +1,60 @@
-Return-Path: <ceph-devel+bounces-1116-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1117-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF268B7843
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 Apr 2024 16:06:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7564E8B7850
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Apr 2024 16:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2BEA1C2243B
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 Apr 2024 14:06:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C0F62851FF
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Apr 2024 14:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3243D1836EB;
-	Tue, 30 Apr 2024 14:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEA3194C8A;
+	Tue, 30 Apr 2024 14:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="P/3bWFkq"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bjo5U5gN"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4447B181D13
-	for <ceph-devel@vger.kernel.org>; Tue, 30 Apr 2024 14:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4840719066D
+	for <ceph-devel@vger.kernel.org>; Tue, 30 Apr 2024 14:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714485712; cv=none; b=H3ZJKuW/73wcTf7mBR5j39ppIaHT1v6aY78mEQkPq38hjM3MsJi+gDjdjCLhlWI/YhXtsSyaMJ7xX0uZ5U3DoWZJP8MPz3xXTZe6oH71/bnMqZwBzOgvUVlZ9KCMCsgAEbIuwkOXFPXMW4TicB+9YdN5GlPSNl8ESEp+846tWNc=
+	t=1714485719; cv=none; b=bvrrCfvuErN+pyKRpf/Q59MpXV7E+17z8NkPbkxKLutv75+WHwU9akDmMNO59w8PrKBUxT2jXk6PMnmdNOcNY2SModBIA+k/yp/7zSEH82w0yhxGNfEQdy47fMSz6Akryr5j4jDiiqT1tkAz/DxmKQqPza6v05chnihbSzc1TXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714485712; c=relaxed/simple;
-	bh=N/pxwlo7f7DhhDbjpJKIOSIkf0H/gdwvbBctTVHPJTE=;
+	s=arc-20240116; t=1714485719; c=relaxed/simple;
+	bh=k7butF2E3M5C92rNJOBuk0ayz9QDvlWgyRICJgRL0vo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=huEzobpI9nN4vWfndQc6y2x5KTc2Akimaer264Ynx6fj/awL7ljg6RjEISWmOkntvEau5GB6lCzDBTxQ5bZeeIM/+Vch9BaK+gSLrS8o+O4R3vD/4VIDqD53ks7THuZJWwDI74q6uAEJ4CsbGiVw4m8aR0F/SXbckETRJyZAYus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=P/3bWFkq; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=W7DFmEvdiaTrJY0wE12AR5s4RvlrFher83v5zWs9vKyAZjI6wZ5waT0ZbmiOS+Rg/i9Upl9mQisah+yI8zCvz5ISuPWo29G0Z0eIG2pTkmaseUpz5amroN3O2p955QmEcXDQ10BsrUCaag4p5IClhtDCY7rUkQEKVWrqUUwcVPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bjo5U5gN; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1714485710;
+	s=mimecast20190719; t=1714485717;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lxboyIOnAB/iBhiu6cMnQnAmXZl1NM4PiDGjMuEEdPE=;
-	b=P/3bWFkqL9fQEjQtzlzDLQIhG/ipbCurmWOQhdBRQqHqqaBtJobreAZ/SG6YRB6vqhy/hu
-	MJzpScJIPrBwnPHrshBOkC8FpWpVLNgY9RWnsCI+FmkvG5ndGYokxdcT8CTaz0P3XPgt5p
-	j0wBtJasBE16t2fH6Z8ryTlSGD9hJv8=
+	bh=gjD+U3QAvMJsWp5JWtEGQmPuhzWaXONmtLXPtsHvH4g=;
+	b=Bjo5U5gNX9CVkyevfEGYUujgOpRpO1v47vlksIgWA4QH7qazRFIpIEN1xxP/ysuvM6WlCa
+	H04ISjq+j0M1fYpHA1PRXPYF6UWO5lUQxF5MjsmRrg1/1gnTU0AmJNPsNfmFTI7usMs6/p
+	IM63AwQ11bRISyK0uP2/5zVCVdwzoEU=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-488-wfAbPLrYPZm0o4ADY4YKUw-1; Tue, 30 Apr 2024 10:01:46 -0400
-X-MC-Unique: wfAbPLrYPZm0o4ADY4YKUw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+ us-mta-630-DVP6iI7mM5u1xsuiWmwWLg-1; Tue, 30 Apr 2024 10:01:49 -0400
+X-MC-Unique: DVP6iI7mM5u1xsuiWmwWLg-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 813A418065B1;
-	Tue, 30 Apr 2024 14:01:44 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2227C104B50C;
+	Tue, 30 Apr 2024 14:01:48 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.22])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 1C7DC51BF;
-	Tue, 30 Apr 2024 14:01:41 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 38BD1492BC7;
+	Tue, 30 Apr 2024 14:01:45 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Christian Brauner <christian@brauner.io>,
 	Jeff Layton <jlayton@kernel.org>,
@@ -80,14 +80,10 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org,
 	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Steve French <sfrench@samba.org>,
-	devel@lists.orangefs.org
-Subject: [PATCH v2 10/22] netfs: Remove ->launder_folio() support
-Date: Tue, 30 Apr 2024 15:00:41 +0100
-Message-ID: <20240430140056.261997-11-dhowells@redhat.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 11/22] netfs: Use mempools for allocating requests and subrequests
+Date: Tue, 30 Apr 2024 15:00:42 +0100
+Message-ID: <20240430140056.261997-12-dhowells@redhat.com>
 In-Reply-To: <20240430140056.261997-1-dhowells@redhat.com>
 References: <20240430140056.261997-1-dhowells@redhat.com>
 Precedence: bulk
@@ -97,178 +93,275 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-Remove support for ->launder_folio() from netfslib and expect filesystems
-to use filemap_invalidate_inode() instead.  netfs_launder_folio() can then
-be got rid of.
+Use mempools for allocating requests and subrequests in an effort to make
+sure that allocation always succeeds so that when performing writeback we
+can always make progress.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
-cc: Eric Van Hensbergen <ericvh@kernel.org>
-cc: Latchesar Ionkov <lucho@ionkov.net>
-cc: Dominique Martinet <asmadeus@codewreck.org>
-cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-cc: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Steve French <sfrench@samba.org>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: linux-mm@kvack.org
-cc: linux-fsdevel@vger.kernel.org
 cc: netfs@lists.linux.dev
-cc: v9fs@lists.linux.dev
-cc: linux-afs@lists.infradead.org
-cc: ceph-devel@vger.kernel.org
-cc: linux-cifs@vger.kernel.org
-cc: devel@lists.orangefs.org
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
 ---
- fs/netfs/buffered_write.c    | 74 ------------------------------------
- fs/netfs/main.c              |  1 -
- include/linux/netfs.h        |  2 -
- include/trace/events/netfs.h |  3 --
- 4 files changed, 80 deletions(-)
+ fs/netfs/internal.h   |  2 ++
+ fs/netfs/main.c       | 51 ++++++++++++++++++++++++++++++++-----
+ fs/netfs/objects.c    | 59 ++++++++++++++++++++++++++++---------------
+ include/linux/netfs.h |  5 ++--
+ 4 files changed, 89 insertions(+), 28 deletions(-)
 
-diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
-index 57c6eab01261..d8f66ce94575 100644
---- a/fs/netfs/buffered_write.c
-+++ b/fs/netfs/buffered_write.c
-@@ -1200,77 +1200,3 @@ int netfs_writepages(struct address_space *mapping,
- 	return ret;
- }
- EXPORT_SYMBOL(netfs_writepages);
--
--/*
-- * Deal with the disposition of a laundered folio.
-- */
--static void netfs_cleanup_launder_folio(struct netfs_io_request *wreq)
--{
--	if (wreq->error) {
--		pr_notice("R=%08x Laundering error %d\n", wreq->debug_id, wreq->error);
--		mapping_set_error(wreq->mapping, wreq->error);
--	}
--}
--
--/**
-- * netfs_launder_folio - Clean up a dirty folio that's being invalidated
-- * @folio: The folio to clean
-- *
-- * This is called to write back a folio that's being invalidated when an inode
-- * is getting torn down.  Ideally, writepages would be used instead.
-- */
--int netfs_launder_folio(struct folio *folio)
--{
--	struct netfs_io_request *wreq;
--	struct address_space *mapping = folio->mapping;
--	struct netfs_folio *finfo = netfs_folio_info(folio);
--	struct netfs_group *group = netfs_folio_group(folio);
--	struct bio_vec bvec;
--	unsigned long long i_size = i_size_read(mapping->host);
--	unsigned long long start = folio_pos(folio);
--	size_t offset = 0, len;
--	int ret = 0;
--
--	if (finfo) {
--		offset = finfo->dirty_offset;
--		start += offset;
--		len = finfo->dirty_len;
--	} else {
--		len = folio_size(folio);
--	}
--	len = min_t(unsigned long long, len, i_size - start);
--
--	wreq = netfs_alloc_request(mapping, NULL, start, len, NETFS_LAUNDER_WRITE);
--	if (IS_ERR(wreq)) {
--		ret = PTR_ERR(wreq);
--		goto out;
--	}
--
--	if (!folio_clear_dirty_for_io(folio))
--		goto out_put;
--
--	trace_netfs_folio(folio, netfs_folio_trace_launder);
--
--	_debug("launder %llx-%llx", start, start + len - 1);
--
--	/* Speculatively write to the cache.  We have to fix this up later if
--	 * the store fails.
--	 */
--	wreq->cleanup = netfs_cleanup_launder_folio;
--
--	bvec_set_folio(&bvec, folio, len, offset);
--	iov_iter_bvec(&wreq->iter, ITER_SOURCE, &bvec, 1, len);
--	if (group != NETFS_FOLIO_COPY_TO_CACHE)
--		__set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
--	ret = netfs_begin_write(wreq, true, netfs_write_trace_launder);
--
--out_put:
--	folio_detach_private(folio);
--	netfs_put_group(group);
--	kfree(finfo);
--	netfs_put_request(wreq, false, netfs_rreq_trace_put_return);
--out:
--	_leave(" = %d", ret);
--	return ret;
--}
--EXPORT_SYMBOL(netfs_launder_folio);
+diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
+index 156ab138e224..c67da478cd2b 100644
+--- a/fs/netfs/internal.h
++++ b/fs/netfs/internal.h
+@@ -37,6 +37,8 @@ int netfs_begin_read(struct netfs_io_request *rreq, bool sync);
+ extern unsigned int netfs_debug;
+ extern struct list_head netfs_io_requests;
+ extern spinlock_t netfs_proc_lock;
++extern mempool_t netfs_request_pool;
++extern mempool_t netfs_subrequest_pool;
+ 
+ #ifdef CONFIG_PROC_FS
+ static inline void netfs_proc_add_rreq(struct netfs_io_request *rreq)
 diff --git a/fs/netfs/main.c b/fs/netfs/main.c
-index c5a73c9ed126..844efbb2e7a2 100644
+index 844efbb2e7a2..4805b9377364 100644
 --- a/fs/netfs/main.c
 +++ b/fs/netfs/main.c
-@@ -34,7 +34,6 @@ static const char *netfs_origins[nr__netfs_io_origin] = {
- 	[NETFS_COPY_TO_CACHE]		= "CC",
- 	[NETFS_WRITEBACK]		= "WB",
- 	[NETFS_WRITETHROUGH]		= "WT",
--	[NETFS_LAUNDER_WRITE]		= "LW",
- 	[NETFS_UNBUFFERED_WRITE]	= "UW",
- 	[NETFS_DIO_READ]		= "DR",
- 	[NETFS_DIO_WRITE]		= "DW",
+@@ -7,6 +7,7 @@
+ 
+ #include <linux/module.h>
+ #include <linux/export.h>
++#include <linux/mempool.h>
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
+ #include "internal.h"
+@@ -23,6 +24,11 @@ unsigned netfs_debug;
+ module_param_named(debug, netfs_debug, uint, S_IWUSR | S_IRUGO);
+ MODULE_PARM_DESC(netfs_debug, "Netfs support debugging mask");
+ 
++static struct kmem_cache *netfs_request_slab;
++static struct kmem_cache *netfs_subrequest_slab;
++mempool_t netfs_request_pool;
++mempool_t netfs_subrequest_pool;
++
+ #ifdef CONFIG_PROC_FS
+ LIST_HEAD(netfs_io_requests);
+ DEFINE_SPINLOCK(netfs_proc_lock);
+@@ -98,25 +104,54 @@ static int __init netfs_init(void)
+ {
+ 	int ret = -ENOMEM;
+ 
++	netfs_request_slab = kmem_cache_create("netfs_request",
++					       sizeof(struct netfs_io_request), 0,
++					       SLAB_HWCACHE_ALIGN | SLAB_ACCOUNT,
++					       NULL);
++	if (!netfs_request_slab)
++		goto error_req;
++
++	if (mempool_init_slab_pool(&netfs_request_pool, 100, netfs_request_slab) < 0)
++		goto error_reqpool;
++
++	netfs_subrequest_slab = kmem_cache_create("netfs_subrequest",
++						  sizeof(struct netfs_io_subrequest), 0,
++						  SLAB_HWCACHE_ALIGN | SLAB_ACCOUNT,
++						  NULL);
++	if (!netfs_subrequest_slab)
++		goto error_subreq;
++
++	if (mempool_init_slab_pool(&netfs_subrequest_pool, 100, netfs_subrequest_slab) < 0)
++		goto error_subreqpool;
++
+ 	if (!proc_mkdir("fs/netfs", NULL))
+-		goto error;
++		goto error_proc;
+ 	if (!proc_create_seq("fs/netfs/requests", S_IFREG | 0444, NULL,
+ 			     &netfs_requests_seq_ops))
+-		goto error_proc;
++		goto error_procfile;
+ #ifdef CONFIG_FSCACHE_STATS
+ 	if (!proc_create_single("fs/netfs/stats", S_IFREG | 0444, NULL,
+ 				netfs_stats_show))
+-		goto error_proc;
++		goto error_procfile;
+ #endif
+ 
+ 	ret = fscache_init();
+ 	if (ret < 0)
+-		goto error_proc;
++		goto error_fscache;
+ 	return 0;
+ 
+-error_proc:
++error_fscache:
++error_procfile:
+ 	remove_proc_entry("fs/netfs", NULL);
+-error:
++error_proc:
++	mempool_exit(&netfs_subrequest_pool);
++error_subreqpool:
++	kmem_cache_destroy(netfs_subrequest_slab);
++error_subreq:
++	mempool_exit(&netfs_request_pool);
++error_reqpool:
++	kmem_cache_destroy(netfs_request_slab);
++error_req:
+ 	return ret;
+ }
+ fs_initcall(netfs_init);
+@@ -125,5 +160,9 @@ static void __exit netfs_exit(void)
+ {
+ 	fscache_exit();
+ 	remove_proc_entry("fs/netfs", NULL);
++	mempool_exit(&netfs_subrequest_pool);
++	kmem_cache_destroy(netfs_subrequest_slab);
++	mempool_exit(&netfs_request_pool);
++	kmem_cache_destroy(netfs_request_slab);
+ }
+ module_exit(netfs_exit);
+diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
+index 8acc03a64059..1a4e2ce735ce 100644
+--- a/fs/netfs/objects.c
++++ b/fs/netfs/objects.c
+@@ -6,6 +6,8 @@
+  */
+ 
+ #include <linux/slab.h>
++#include <linux/mempool.h>
++#include <linux/delay.h>
+ #include "internal.h"
+ 
+ /*
+@@ -20,17 +22,22 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
+ 	struct inode *inode = file ? file_inode(file) : mapping->host;
+ 	struct netfs_inode *ctx = netfs_inode(inode);
+ 	struct netfs_io_request *rreq;
++	mempool_t *mempool = ctx->ops->request_pool ?: &netfs_request_pool;
++	struct kmem_cache *cache = mempool->pool_data;
+ 	bool is_unbuffered = (origin == NETFS_UNBUFFERED_WRITE ||
+ 			      origin == NETFS_DIO_READ ||
+ 			      origin == NETFS_DIO_WRITE);
+ 	bool cached = !is_unbuffered && netfs_is_cache_enabled(ctx);
+ 	int ret;
+ 
+-	rreq = kzalloc(ctx->ops->io_request_size ?: sizeof(struct netfs_io_request),
+-		       GFP_KERNEL);
+-	if (!rreq)
+-		return ERR_PTR(-ENOMEM);
++	for (;;) {
++		rreq = mempool_alloc(mempool, GFP_KERNEL);
++		if (rreq)
++			break;
++		msleep(10);
++	}
+ 
++	memset(rreq, 0, kmem_cache_size(cache));
+ 	rreq->start	= start;
+ 	rreq->len	= len;
+ 	rreq->upper_len	= len;
+@@ -56,7 +63,7 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
+ 	if (rreq->netfs_ops->init_request) {
+ 		ret = rreq->netfs_ops->init_request(rreq, file);
+ 		if (ret < 0) {
+-			kfree(rreq);
++			mempool_free(rreq, rreq->netfs_ops->request_pool ?: &netfs_request_pool);
+ 			return ERR_PTR(ret);
+ 		}
+ 	}
+@@ -88,6 +95,14 @@ void netfs_clear_subrequests(struct netfs_io_request *rreq, bool was_async)
+ 	}
+ }
+ 
++static void netfs_free_request_rcu(struct rcu_head *rcu)
++{
++	struct netfs_io_request *rreq = container_of(rcu, struct netfs_io_request, rcu);
++
++	mempool_free(rreq, rreq->netfs_ops->request_pool ?: &netfs_request_pool);
++	netfs_stat_d(&netfs_n_rh_rreq);
++}
++
+ static void netfs_free_request(struct work_struct *work)
+ {
+ 	struct netfs_io_request *rreq =
+@@ -110,8 +125,7 @@ static void netfs_free_request(struct work_struct *work)
+ 		}
+ 		kvfree(rreq->direct_bv);
+ 	}
+-	kfree_rcu(rreq, rcu);
+-	netfs_stat_d(&netfs_n_rh_rreq);
++	call_rcu(&rreq->rcu, netfs_free_request_rcu);
+ }
+ 
+ void netfs_put_request(struct netfs_io_request *rreq, bool was_async,
+@@ -143,20 +157,25 @@ void netfs_put_request(struct netfs_io_request *rreq, bool was_async,
+ struct netfs_io_subrequest *netfs_alloc_subrequest(struct netfs_io_request *rreq)
+ {
+ 	struct netfs_io_subrequest *subreq;
+-
+-	subreq = kzalloc(rreq->netfs_ops->io_subrequest_size ?:
+-			 sizeof(struct netfs_io_subrequest),
+-			 GFP_KERNEL);
+-	if (subreq) {
+-		INIT_WORK(&subreq->work, NULL);
+-		INIT_LIST_HEAD(&subreq->rreq_link);
+-		refcount_set(&subreq->ref, 2);
+-		subreq->rreq = rreq;
+-		subreq->debug_index = atomic_inc_return(&rreq->subreq_counter);
+-		netfs_get_request(rreq, netfs_rreq_trace_get_subreq);
+-		netfs_stat(&netfs_n_rh_sreq);
++	mempool_t *mempool = rreq->netfs_ops->subrequest_pool ?: &netfs_subrequest_pool;
++	struct kmem_cache *cache = mempool->pool_data;
++
++	for (;;) {
++		subreq = mempool_alloc(rreq->netfs_ops->subrequest_pool ?: &netfs_subrequest_pool,
++				       GFP_KERNEL);
++		if (subreq)
++			break;
++		msleep(10);
+ 	}
+ 
++	memset(subreq, 0, kmem_cache_size(cache));
++	INIT_WORK(&subreq->work, NULL);
++	INIT_LIST_HEAD(&subreq->rreq_link);
++	refcount_set(&subreq->ref, 2);
++	subreq->rreq = rreq;
++	subreq->debug_index = atomic_inc_return(&rreq->subreq_counter);
++	netfs_get_request(rreq, netfs_rreq_trace_get_subreq);
++	netfs_stat(&netfs_n_rh_sreq);
+ 	return subreq;
+ }
+ 
+@@ -178,7 +197,7 @@ static void netfs_free_subrequest(struct netfs_io_subrequest *subreq,
+ 	trace_netfs_sreq(subreq, netfs_sreq_trace_free);
+ 	if (rreq->netfs_ops->free_subrequest)
+ 		rreq->netfs_ops->free_subrequest(subreq);
+-	kfree(subreq);
++	mempool_free(subreq, rreq->netfs_ops->subrequest_pool ?: &netfs_subrequest_pool);
+ 	netfs_stat_d(&netfs_n_rh_sreq);
+ 	netfs_put_request(rreq, was_async, netfs_rreq_trace_put_subreq);
+ }
 diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index ddafc6ebff42..3af589dabd7f 100644
+index 3af589dabd7f..0b6c2c2d3c23 100644
 --- a/include/linux/netfs.h
 +++ b/include/linux/netfs.h
-@@ -172,7 +172,6 @@ enum netfs_io_origin {
- 	NETFS_COPY_TO_CACHE,		/* This write is to copy a read to the cache */
- 	NETFS_WRITEBACK,		/* This write was triggered by writepages */
- 	NETFS_WRITETHROUGH,		/* This write was made by netfs_perform_write() */
--	NETFS_LAUNDER_WRITE,		/* This is triggered by ->launder_folio() */
- 	NETFS_UNBUFFERED_WRITE,		/* This is an unbuffered write */
- 	NETFS_DIO_READ,			/* This is a direct I/O read */
- 	NETFS_DIO_WRITE,		/* This is a direct I/O write */
-@@ -352,7 +351,6 @@ int netfs_unpin_writeback(struct inode *inode, struct writeback_control *wbc);
- void netfs_clear_inode_writeback(struct inode *inode, const void *aux);
- void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t length);
- bool netfs_release_folio(struct folio *folio, gfp_t gfp);
--int netfs_launder_folio(struct folio *folio);
+@@ -20,6 +20,7 @@
+ #include <linux/uio.h>
  
- /* VMA operations API. */
- vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, struct netfs_group *netfs_group);
-diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
-index e03fafb0c1e3..30769103638f 100644
---- a/include/trace/events/netfs.h
-+++ b/include/trace/events/netfs.h
-@@ -26,7 +26,6 @@
- #define netfs_write_traces					\
- 	EM(netfs_write_trace_copy_to_cache,	"COPY2CACH")	\
- 	EM(netfs_write_trace_dio_write,		"DIO-WRITE")	\
--	EM(netfs_write_trace_launder,		"LAUNDER  ")	\
- 	EM(netfs_write_trace_unbuffered_write,	"UNB-WRITE")	\
- 	EM(netfs_write_trace_writeback,		"WRITEBACK")	\
- 	E_(netfs_write_trace_writethrough,	"WRITETHRU")
-@@ -38,7 +37,6 @@
- 	EM(NETFS_COPY_TO_CACHE,			"CC")		\
- 	EM(NETFS_WRITEBACK,			"WB")		\
- 	EM(NETFS_WRITETHROUGH,			"WT")		\
--	EM(NETFS_LAUNDER_WRITE,			"LW")		\
- 	EM(NETFS_UNBUFFERED_WRITE,		"UW")		\
- 	EM(NETFS_DIO_READ,			"DR")		\
- 	E_(NETFS_DIO_WRITE,			"DW")
-@@ -135,7 +133,6 @@
- 	EM(netfs_folio_trace_end_copy,		"end-copy")	\
- 	EM(netfs_folio_trace_filled_gaps,	"filled-gaps")	\
- 	EM(netfs_folio_trace_kill,		"kill")		\
--	EM(netfs_folio_trace_launder,		"launder")	\
- 	EM(netfs_folio_trace_mkwrite,		"mkwrite")	\
- 	EM(netfs_folio_trace_mkwrite_plus,	"mkwrite+")	\
- 	EM(netfs_folio_trace_read_gaps,		"read-gaps")	\
+ enum netfs_sreq_ref_trace;
++typedef struct mempool_s mempool_t;
+ 
+ /**
+  * folio_start_private_2 - Start an fscache write on a folio.  [DEPRECATED]
+@@ -236,8 +237,8 @@ struct netfs_io_request {
+  * Operations the network filesystem can/must provide to the helpers.
+  */
+ struct netfs_request_ops {
+-	unsigned int	io_request_size;	/* Alloc size for netfs_io_request struct */
+-	unsigned int	io_subrequest_size;	/* Alloc size for netfs_io_subrequest struct */
++	mempool_t *request_pool;
++	mempool_t *subrequest_pool;
+ 	int (*init_request)(struct netfs_io_request *rreq, struct file *file);
+ 	void (*free_request)(struct netfs_io_request *rreq);
+ 	void (*free_subrequest)(struct netfs_io_subrequest *rreq);
 
 
