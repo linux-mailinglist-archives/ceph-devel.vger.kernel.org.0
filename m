@@ -1,151 +1,191 @@
-Return-Path: <ceph-devel+bounces-1132-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1133-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8628B8B96BC
-	for <lists+ceph-devel@lfdr.de>; Thu,  2 May 2024 10:48:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57DD88BBAA7
+	for <lists+ceph-devel@lfdr.de>; Sat,  4 May 2024 13:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177571F21314
-	for <lists+ceph-devel@lfdr.de>; Thu,  2 May 2024 08:48:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F21912824B6
+	for <lists+ceph-devel@lfdr.de>; Sat,  4 May 2024 11:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E9453E3B;
-	Thu,  2 May 2024 08:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C0617C7C;
+	Sat,  4 May 2024 11:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I5PHE+4t"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WxDpsC4z"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576F554BCF;
-	Thu,  2 May 2024 08:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A804C9D
+	for <ceph-devel@vger.kernel.org>; Sat,  4 May 2024 11:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1714639647; cv=none; b=sSV1QfA9ZSl0v3mAQycwvfr2ywC+1GlOwZKnLlO1Gu1ehRNmUT7qUQ3Z9XJcLLMm4KBxz+q1jMW0otYnlHwEXZqm5bugl0hX4jly9xHSp3v4NX8M6kKkojUxDZkOFhDKnMX0IU9uP/SagIEoBCklO0/YZ3OOu1hE5ju6lg9MRho=
+	t=1714821797; cv=none; b=VmD7RM8Yajpk0+LyXVnH9tM7qyIghH1uLSVDRkBAfRTob4r0SXxa4PLcytwotUh0xYzHe8CRKbD2+6onCMbV5IAUZ/Grbe3kUKmf/jPwwHDo9yxOLr9k3xIpliiQepcQQpem541ckuPtrs01MDF2NYfqyldCu99jVjsieDEQ+50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1714639647; c=relaxed/simple;
-	bh=gNeowpHLn3XanGMjOPlcSsZZHe5AP0lM6lADWQVCs4I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ud6Sj7E2tBp/NwLnq+ZdRgw36KdW1L2+72ObfGqFnEx08ZI4pY9h88zySSUl9yDaiC46oXjncDDVH0FWHrjvi502ug58oiiZ4Dr+9Jev7gt58HgKHsgKl0RQuliXzVqijvCd+ki2gNeCFL1VGN094+IlX/RGAEDCiHvbIgT3LjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I5PHE+4t; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2b27c532e50so1828766a91.2;
-        Thu, 02 May 2024 01:47:26 -0700 (PDT)
+	s=arc-20240116; t=1714821797; c=relaxed/simple;
+	bh=nzq406uOC4To9YxA1rtM4dRXj/CVM05dNP+jYYvWWAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jSAHDG8E+Sw5C1h/ZLHe4te7xWAxbbXPKitf5QHuM3ohqgWCMSIG/JWVLN4NojDi66r8gGlyUSijX+NTC+VOgS9xb/IfELIyjzcGd9nlRsXQsFF1rUnItPBvykbVmZ+c0zv1kLjzz36BXAjDypYdCqbxGRhgsirHaZU3sa8UtU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WxDpsC4z; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-41adf3580dbso2393005e9.0
+        for <ceph-devel@vger.kernel.org>; Sat, 04 May 2024 04:23:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1714639645; x=1715244445; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5+IkB3+J9K42d+V5Wi+AdhWpwnXMtEpYhZXm/5fw+dM=;
-        b=I5PHE+4twrtf5dhvKYH5hN/V49DsPYFYXHrVXJz4Uudg8ZC0JnomULnFERh+pUDA4L
-         +jIe+95GH3pWuJRibjH19ZGQ8nPfRzvMy/asEY5jej+YiRGkV0rTqOZliapyETGSyFtC
-         EvRCb6QFDUH5wDsHsYkjxMeTdxqbSiKA16p11OXacJ8wpX6G8s8MiMDHkKVpaPy6HnXh
-         GXS6VRQ3NM3B/w3ZNoDyXBNuJF/dOFc03q/4Qw7OHBtcsMJTWLnlRpNpnzAbu7zojZOJ
-         OmRDi7NmNjJLlecu862rZ8DG7Dilbu42zeRfXjqoSYekmaVyK+qt+i4r/8wo6RyQnYFi
-         EdwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1714639645; x=1715244445;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
+        d=linaro.org; s=google; t=1714821794; x=1715426594; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=5+IkB3+J9K42d+V5Wi+AdhWpwnXMtEpYhZXm/5fw+dM=;
-        b=KeRVtBQrx/y2kb4ZFpkAdm3JWtuC7+anNISsYwz47BE5ZsTPwVesQ3xlSYQRSKFuNS
-         mN5ql31LQjBDK1FEZHl5Qn+8H0IznG2eTSE5OXY7uF6pJdbm68m5SRv6Y1QdPLhtYbAx
-         leLbb982onOMorYC7N/G9SlQSyyNlCquTRm+UF1H6OwJ4/p9HYb59hERzpyB0QvaSwZR
-         VxPpfdtVJuRioOYqT2JAYVl3b1pl5WICMo/BnKAURzeEw5dYSNdpkvBuRN7xbEvdT25Q
-         JC9KC53fKJ/BDNTeLH7uahrzALqnals293kdBv7uT52K5QHTMUHPBcv4kOUEkq8vuDJD
-         f2Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpGo9kKkAPlPut5Z2elNXqcAgM9FtaL8Ii9uoRV1iM+0kokB7d4IFM5d2GzKTBqqzmBwEC74suKXo2H08QbkG8jssui+lutK1QluD6M6ACoTS1qagVj8ItRJX1PNWQhkHaPa05sjrdmvbZEXrTREcsBk7zthk+1vqEgbv83nNTP3QiWSfXQXM=
-X-Gm-Message-State: AOJu0YwJTkqL1zF8S1jhuNj5cmTa7Hdoy79SAQTxdWQb5KhJCKRXTKFu
-	7AULcxZdG5/3um6nkoRuVOL1Wf3hIPk79pu3+ZnRheFaGJnWaISR
-X-Google-Smtp-Source: AGHT+IFyJzDWLYcpgS33rbs90FlHpYKxLcb6n/RLJGWRhgWQpaZsVJE2vmaB1MgKiD0eY8T7Jpul2g==
-X-Received: by 2002:a17:90a:986:b0:2b3:be55:bf6f with SMTP id 6-20020a17090a098600b002b3be55bf6fmr981227pjo.22.1714639645519;
-        Thu, 02 May 2024 01:47:25 -0700 (PDT)
-Received: from KASONG-MB2.tencent.com ([1.203.116.31])
-        by smtp.gmail.com with ESMTPSA id q6-20020a17090a938600b002b273cbbdf1sm686805pjo.49.2024.05.02.01.47.20
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 02 May 2024 01:47:24 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Chris Li <chrisl@kernel.org>,
-	Barry Song <v-songbaohua@oppo.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Neil Brown <neilb@suse.de>,
-	Minchan Kim <minchan@kernel.org>,
-	Hugh Dickins <hughd@google.com>,
-	David Hildenbrand <david@redhat.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>,
-	Xiubo Li <xiubli@redhat.com>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	ceph-devel@vger.kernel.org
-Subject: [PATCH v4 03/12] ceph: drop usage of page_index
-Date: Thu,  2 May 2024 16:46:00 +0800
-Message-ID: <20240502084609.28376-4-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240502084609.28376-1-ryncsn@gmail.com>
-References: <20240502084609.28376-1-ryncsn@gmail.com>
-Reply-To: Kairui Song <kasong@tencent.com>
+        bh=YXchWMwvtaueIr8HpH6bHAEwGBvyjWsDOTfoyis6uk4=;
+        b=WxDpsC4zCx42orj00ymDkIZPtj8nePJbmW36wwf4C8xsc1WhNCaNYc4DSDQ2+2jnCZ
+         Q7znnLUHXuK+4qcYFSOpZC3SykQS92G2aFfsEVk2ZXRA5j0ivxpByvJeuTru0fEJTH+8
+         xBSlCd4mudhSYG2d8lvwVfr9rmEv+JDvECQSA8nG7/qnVfpBI1Kwx8XIFdS97vcrtGIZ
+         EDC+1wZBDfGL4mIftVw7jcAZhwCkVHoGhliFJr5bARmKbzizdjpeqTIW/0eFCau7tOyj
+         odZxjn4rngCEojyruaE9IUVmewphb/XO4Xduq8bmKlrasuCqGbtVGisxtwYlEf3WVdV3
+         xC1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1714821794; x=1715426594;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YXchWMwvtaueIr8HpH6bHAEwGBvyjWsDOTfoyis6uk4=;
+        b=lEwAkMHyUPZlwESVyRRNK9HIIPDtgX2WrmOwJYcPy9nyAubqtMDOoo/i4vbuJrl2Jb
+         YudioS/HhQmX4emrYzAkPVMxHGqO4aPMTOORjICgzxLHwDZV1ZQC2PbvtKXRExoKTQOz
+         vTxF464MxYEFkuxhfPzTfl+xLZPyaTu6kWL/AmcD7EyVh/FbKb97imzewve7jtnxFtMo
+         Pdo3o9ed3tNMesmoVLf0bOSXSWvHmBoS0lUKlGBNVeSoSJqwe3jz6tJwURUkLEgmDAko
+         x4arnqHNveb6j4BJMa/48hxrCGR+VhvBVvbYHoQVE0R97Zw7QlRVmpvY1VCXVZ0BGCbL
+         EayQ==
+X-Gm-Message-State: AOJu0Ywpx+AVnfr78v3UjWrnU5D2fCX7bc9aU5OIjoXoGDzwTFNYifOO
+	d9/ER35uCqE9lPqiTvYSIDsDHwxCDG0diECacqzFPWu1Hg+ByM9AQTuBw75GdxM=
+X-Google-Smtp-Source: AGHT+IFotzaVczH7uq3A15Hmn0A06167+r9aBE1mV29vV6WImFPONLQ7de6Mqn1y1zTL+Vr6JND0eA==
+X-Received: by 2002:a05:600c:4fd4:b0:41b:ed36:e055 with SMTP id o20-20020a05600c4fd400b0041bed36e055mr4826790wmq.7.1714821793574;
+        Sat, 04 May 2024 04:23:13 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id p20-20020a05600c469400b0041bc41287cesm8945252wmo.16.2024.05.04.04.23.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 May 2024 04:23:13 -0700 (PDT)
+Date: Sat, 4 May 2024 14:23:09 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: sage@inktank.com
+Cc: ceph-devel@vger.kernel.org
+Subject: [bug report] crush: remove forcefeed functionality
+Message-ID: <379ff867-95b7-4d45-8973-d4d0867e78b7@moroto.mountain>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Kairui Song <kasong@tencent.com>
+Hello Sage Weil,
 
-page_index is needed for mixed usage of page cache and swap cache,
-for pure page cache usage, the caller can just use page->index instead.
+Commit 41ebcc0907c5 ("crush: remove forcefeed functionality") from
+May 7, 2012 (linux-next), leads to the following Smatch static
+checker warning:
 
-It can't be a swap cache page here, so just drop it.
+	net/ceph/crush/mapper.c:1012 crush_do_rule()
+	warn: iterator 'j' not incremented
 
-Signed-off-by: Kairui Song <kasong@tencent.com>
-Cc: Xiubo Li <xiubli@redhat.com>
-Cc: Ilya Dryomov <idryomov@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: ceph-devel@vger.kernel.org
----
- fs/ceph/dir.c   | 2 +-
- fs/ceph/inode.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+net/ceph/crush/mapper.c
+    1004                         for (i = 0; i < wsize; i++) {
+    1005                                 int bno;
+    1006                                 numrep = curstep->arg1;
+    1007                                 if (numrep <= 0) {
+    1008                                         numrep += result_max;
+    1009                                         if (numrep <= 0)
+    1010                                                 continue;
+    1011                                 }
+--> 1012                                 j = 0;
+                                         ^^^^^^
+The 2012 commit removed the j++ so now j is always 0.
 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 0e9f56eaba1e..570a9d634cc5 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -141,7 +141,7 @@ __dcache_find_get_entry(struct dentry *parent, u64 idx,
- 	if (ptr_pos >= i_size_read(dir))
- 		return NULL;
- 
--	if (!cache_ctl->page || ptr_pgoff != page_index(cache_ctl->page)) {
-+	if (!cache_ctl->page || ptr_pgoff != cache_ctl->page->index) {
- 		ceph_readdir_cache_release(cache_ctl);
- 		cache_ctl->page = find_lock_page(&dir->i_data, ptr_pgoff);
- 		if (!cache_ctl->page) {
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 7b2e77517f23..1f92d3faaa6b 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1861,7 +1861,7 @@ static int fill_readdir_cache(struct inode *dir, struct dentry *dn,
- 	unsigned idx = ctl->index % nsize;
- 	pgoff_t pgoff = ctl->index / nsize;
- 
--	if (!ctl->page || pgoff != page_index(ctl->page)) {
-+	if (!ctl->page || pgoff != ctl->page->index) {
- 		ceph_readdir_cache_release(ctl);
- 		if (idx == 0)
- 			ctl->page = grab_cache_page(&dir->i_data, pgoff);
--- 
-2.44.0
+    1013                                 /* make sure bucket id is valid */
+    1014                                 bno = -1 - w[i];
+    1015                                 if (bno < 0 || bno >= map->max_buckets) {
+    1016                                         /* w[i] is probably CRUSH_ITEM_NONE */
+    1017                                         dprintk("  bad w[i] %d\n", w[i]);
+    1018                                         continue;
+    1019                                 }
+    1020                                 if (firstn) {
+    1021                                         int recurse_tries;
+    1022                                         if (choose_leaf_tries)
+    1023                                                 recurse_tries =
+    1024                                                         choose_leaf_tries;
+    1025                                         else if (map->chooseleaf_descend_once)
+    1026                                                 recurse_tries = 1;
+    1027                                         else
+    1028                                                 recurse_tries = choose_tries;
+    1029                                         osize += crush_choose_firstn(
+    1030                                                 map,
+    1031                                                 cw,
+    1032                                                 map->buckets[bno],
+    1033                                                 weight, weight_max,
+    1034                                                 x, numrep,
+    1035                                                 curstep->arg2,
+    1036                                                 o+osize, j,
+    1037                                                 result_max-osize,
+    1038                                                 choose_tries,
+    1039                                                 recurse_tries,
+    1040                                                 choose_local_retries,
+    1041                                                 choose_local_fallback_retries,
+    1042                                                 recurse_to_leaf,
+    1043                                                 vary_r,
+    1044                                                 stable,
+    1045                                                 c+osize,
+    1046                                                 0,
+    1047                                                 choose_args);
+    1048                                 } else {
+    1049                                         out_size = ((numrep < (result_max-osize)) ?
+    1050                                                     numrep : (result_max-osize));
+    1051                                         crush_choose_indep(
+    1052                                                 map,
+    1053                                                 cw,
+    1054                                                 map->buckets[bno],
+    1055                                                 weight, weight_max,
+    1056                                                 x, out_size, numrep,
+    1057                                                 curstep->arg2,
+    1058                                                 o+osize, j,
+    1059                                                 choose_tries,
+    1060                                                 choose_leaf_tries ?
+    1061                                                    choose_leaf_tries : 1,
+    1062                                                 recurse_to_leaf,
+    1063                                                 c+osize,
+    1064                                                 0,
+    1065                                                 choose_args);
+    1066                                         osize += out_size;
+    1067                                 }
+    1068                         }
+    1069 
+    1070                         if (recurse_to_leaf)
+    1071                                 /* copy final _leaf_ values to output set */
+    1072                                 memcpy(o, c, osize*sizeof(*o));
+    1073 
+    1074                         /* swap o and w arrays */
+    1075                         swap(o, w);
+    1076                         wsize = osize;
+    1077                         break;
+    1078 
+    1079 
+    1080                 case CRUSH_RULE_EMIT:
+    1081                         for (i = 0; i < wsize && result_len < result_max; i++) {
+    1082                                 result[result_len] = w[i];
+    1083                                 result_len++;
+    1084                         }
+    1085                         wsize = 0;
+    1086                         break;
+    1087 
+    1088                 default:
+    1089                         dprintk(" unknown op %d at step %d\n",
+    1090                                 curstep->op, step);
+    1091                         break;
+    1092                 }
+    1093         }
+    1094 
+    1095         return result_len;
+    1096 }
 
+regards,
+dan carpenter
 
