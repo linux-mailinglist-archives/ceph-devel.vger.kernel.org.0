@@ -1,135 +1,138 @@
-Return-Path: <ceph-devel+bounces-1135-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1136-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63CB78C139E
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 May 2024 19:15:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 483308C1869
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 May 2024 23:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 213F0282647
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 May 2024 17:15:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2F3E28222E
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 May 2024 21:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BDAF4EB;
-	Thu,  9 May 2024 17:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA87D86253;
+	Thu,  9 May 2024 21:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="IpmBfoON"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ija/fl61"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140868BF0
-	for <ceph-devel@vger.kernel.org>; Thu,  9 May 2024 17:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFD48624B
+	for <ceph-devel@vger.kernel.org>; Thu,  9 May 2024 21:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715274939; cv=none; b=eBUxZbSdALP8Sdpev8dyZGmKUJUnR9zAsf69vYD5uCZl6oKLOabz5LDmyUgXuxc2FOM/bDAIysmAQhuxVCQv15A7FsZ266dRXX0OkNODSZgDvhJjRoNS8jQdU2l/xeKzD158yPH8Bw5Wi27wpRM5t+Gl40sVVAHxr72ruP41qXs=
+	t=1715290428; cv=none; b=rtHyAQ2Rn9BEoLNrgXCoG4rSh1HUNYylcjI2QfS1Xkh1O/bID9uE8K3u6IlaR15ecEpb+uxnioL//th5X6u5oTjGhw+zMabZMM2IJbQqxj5wFKW4zoxyzQ5sW2D4t+ahd9s5EpCXnZp13RXPw1l80MYlZXk0IAqEJMocg95WLnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715274939; c=relaxed/simple;
-	bh=I2b3mZDphqAOw1CzA9XXn8owOPYBXLxuDEHOZbykNDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KdTUbNNMnCfmP6yzKKWaJxHVGl/Zr99KNePqNbrK1bBuvgbn235ZpGSftFMJtcXwAXkwI6p+DqHgxK/VKN+h5LsA0s6kWyLdnNVXpAyMNX1yPfTFJbfdrJu17AN9R6oOtXIhmmC8m9kT/YhKqhG2jyTE6EWP4vm+U/jbslZ62E0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=IpmBfoON; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+	s=arc-20240116; t=1715290428; c=relaxed/simple;
+	bh=7Qd7kioQIn6Ug3QVYIeKDHVOfBDjLq7+QwL5mOTHriA=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=nCRx21Ht1fdVJgpoH2omfJko6LctDbZiuoBbdDZelgOndS5PnYrVDAI75BJVHHCfyi8r3pKVD5DqI4x7MBwTKUTDTWErkTjmCowkpoKkKCZdVJfsnVGlLAhUoc/m4E/RWvM0sEOCD1Z40TONT0/clDv30Fyehr21wFSoP/jlqHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ija/fl61; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715290426;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IcaQVOny0rQHUK0pL7eF7lEuZY7XrpmUt/qtfJiKS4s=;
+	b=Ija/fl61EQLZSiq338Weocqjqz0pwGyeBRbAufp0RDa27x7SqISjBA8S1oa5DClQ3PSGrQ
+	3idD7y33wuqm531tQFQ1jOsmG/NdYXHvgsMU3oiFy9yoHujUCMqREidwenzb5NIxZSG95I
+	HIVkbvA9qd52fjz/JmKfpYjL5qLX8t8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-84-SXXJHLiOO2OSZBwSwPH1GA-1; Thu, 09 May 2024 17:33:43 -0400
+X-MC-Unique: SXXJHLiOO2OSZBwSwPH1GA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D7BD83F363
-	for <ceph-devel@vger.kernel.org>; Thu,  9 May 2024 17:15:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715274932;
-	bh=R13CNUyH1MbzjMY2CalRPAAS/uvh6wjQHgeABBOaJzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=IpmBfoON8mJ+WWwGbHsP8UaUf2S5liiFXgWu3IAoBYajxKhDY/PLxu1mf7aidkXQO
-	 Ri+az5lfvHD/JRuYXHLoUH9TLLCOcRLFyT4Wf+aaAu/Ze9G7GL3hQ6EKMXF0vpoQUe
-	 xuKwvPuoe9kVjjP4g1IWRYW7xPJmRGxf+zq0SCAy6m9kQ02fhgQXibYNPl3fMn09I+
-	 uz9x4cAO6ZyCov0dG9+kgwlqrAySwVB1d+twyXvO/Ba34KvaZ5EhXMe0B/QmhgYq2k
-	 Bdl1iBLz8wlk0blPCvQoX6/26Mnqpc3hMsEyEVeRQoM3G1K3TagNm/jBhk5GhqEhEe
-	 JsOoHFpRAa5WA==
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a59c3cf5f83so72962266b.2
-        for <ceph-devel@vger.kernel.org>; Thu, 09 May 2024 10:15:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715274931; x=1715879731;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R13CNUyH1MbzjMY2CalRPAAS/uvh6wjQHgeABBOaJzE=;
-        b=a21txFAxuPdDPlYq92xMmqbKQBWNzlnXLLt8B8kDQ+ujSG5gndmVhwGvp59jRikU5Z
-         ehn3KczJsoS2bS+vEtfeTnojBKhajplr9UJ3jeNt7Q1MdZtm8gMghCw2V5RsE5Jno97Z
-         xydpvaIkNC21KrzF8HFgT3U4YnuUBujdE7bJHdeNZJMLuPe3uRhThDSPv/6KeNAPbz+0
-         o/FpR+NX7jHtDBSlzHBSfUdGkXHnVr/tD3VUGyMIffXAYddo3OdZbZZCIHgMZVK3T/3u
-         uR5mzTvkkSt9/4MqdF/XgW7PVq4+GLPyGdPTMTf+Td9QKfuvWUW6TY+KqJBBO4t+Ktiy
-         qXWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBQ8HnCpQ9zNZ6HlDasZ55iN433cJVYv0yQB0WoHX/5+DlezuXQvz9INb7L/dQbI5b/79/8FRwrbVMPlG4AwVuWsQAE1J4pqpIzQ==
-X-Gm-Message-State: AOJu0YzUTMLPe8TfcmN9+RzXg+9SzpkTfWcP811/XGw1xwVAApQu0d/2
-	5X04+OAKLNIs1NTC5fxXG89IMt8IqOQzkNOTxdOAA1Fkr9IQiIoVqoT4jankANdMkJkBb4OpuWS
-	BIeKqZnzagBk8QKDchT9zOzQPsqJEOE97cHUVsoz/kWDrdBKm4z3z9FPIKPq4QA+BtxFQ3+0ZZw
-	c=
-X-Received: by 2002:a17:906:3849:b0:a59:b02a:90dc with SMTP id a640c23a62f3a-a5a2d66ac03mr15004766b.54.1715274930678;
-        Thu, 09 May 2024 10:15:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHRId3ZK7jZnEUqxnKrbYMBDrOXsoSZ6C8TgHiChCG3zHZRXUk/mhnLLXZdmjv+NVtyVoseaw==
-X-Received: by 2002:a17:906:3849:b0:a59:b02a:90dc with SMTP id a640c23a62f3a-a5a2d66ac03mr15001366b.54.1715274929765;
-        Thu, 09 May 2024 10:15:29 -0700 (PDT)
-Received: from localhost (host-82-49-69-7.retail.telecomitalia.it. [82.49.69.7])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81bfsm93194566b.129.2024.05.09.10.15.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 10:15:29 -0700 (PDT)
-Date: Thu, 9 May 2024 19:15:27 +0200
-From: Andrea Righi <andrea.righi@canonical.com>
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 046A38030A4;
+	Thu,  9 May 2024 21:33:42 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.34])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 12FA0116F842;
+	Thu,  9 May 2024 21:33:37 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <Zj0ErxVBE3DYT2Ea@gpd>
+References: <Zj0ErxVBE3DYT2Ea@gpd> <20231221132400.1601991-1-dhowells@redhat.com> <20231221132400.1601991-41-dhowells@redhat.com>
+To: Andrea Righi <andrea.righi@canonical.com>
+Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+    Steve French <smfrench@gmail.com>,
+    Matthew Wilcox <willy@infradead.org>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Paulo Alcantara <pc@manguebit.com>,
+    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+    Dominique Martinet <asmadeus@codewreck.org>,
+    Eric Van Hensbergen <ericvh@kernel.org>,
+    Ilya Dryomov <idryomov@gmail.com>,
+    Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-mm@kvack.org, netdev@vger.kernel.org,
+    linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
+    Christian Schoenebeck <linux_oss@crudebyte.com>
 Subject: Re: [PATCH v5 40/40] 9p: Use netfslib read/write_iter
-Message-ID: <Zj0ErxVBE3DYT2Ea@gpd>
-References: <20231221132400.1601991-1-dhowells@redhat.com>
- <20231221132400.1601991-41-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231221132400.1601991-41-dhowells@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1567251.1715290417.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 09 May 2024 22:33:37 +0100
+Message-ID: <1567252.1715290417@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-On Thu, Dec 21, 2023 at 01:23:35PM +0000, David Howells wrote:
-> Use netfslib's read and write iteration helpers, allowing netfslib to take
-> over the management of the page cache for 9p files and to manage local disk
-> caching.  In particular, this eliminates write_begin, write_end, writepage
-> and all mentions of struct page and struct folio from 9p.
-> 
-> Note that netfslib now offers the possibility of write-through caching if
-> that is desirable for 9p: just set the NETFS_ICTX_WRITETHROUGH flag in
-> v9inode->netfs.flags in v9fs_set_netfs_context().
-> 
-> Note also this is untested as I can't get ganesha.nfsd to correctly parse
-> the config to turn on 9p support.
+Andrea Righi <andrea.righi@canonical.com> wrote:
 
-It looks like this patch has introduced a regression with autopkgtest,
-see: https://bugs.launchpad.net/bugs/2056461
+> On Thu, Dec 21, 2023 at 01:23:35PM +0000, David Howells wrote:
+> > Use netfslib's read and write iteration helpers, allowing netfslib to =
+take
+> > over the management of the page cache for 9p files and to manage local=
+ disk
+> > caching.  In particular, this eliminates write_begin, write_end, write=
+page
+> > and all mentions of struct page and struct folio from 9p.
+> > =
 
-I haven't looked at the details yet, I just did some bisecting and
-apparently reverting this one seems to fix the problem.
+> > Note that netfslib now offers the possibility of write-through caching=
+ if
+> > that is desirable for 9p: just set the NETFS_ICTX_WRITETHROUGH flag in
+> > v9inode->netfs.flags in v9fs_set_netfs_context().
+> > =
 
-Let me know if you want me to test something in particular or if you
-already have a potential fix. Otherwise I'll take a look.
+> > Note also this is untested as I can't get ganesha.nfsd to correctly pa=
+rse
+> > the config to turn on 9p support.
+> =
 
-Thanks,
--Andrea
+> It looks like this patch has introduced a regression with autopkgtest,
+> see: https://bugs.launchpad.net/bugs/2056461
+> =
+
+> I haven't looked at the details yet, I just did some bisecting and
+> apparently reverting this one seems to fix the problem.
+> =
+
+> Let me know if you want me to test something in particular or if you
+> already have a potential fix. Otherwise I'll take a look.
+
+Do you have a reproducer?
+
+I'll be at LSF next week, so if I can't fix it tomorrow, I won't be able t=
+o
+poke at it until after that.
+
+David
+
 
