@@ -1,121 +1,135 @@
-Return-Path: <ceph-devel+bounces-1134-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1135-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 591228BF9B9
-	for <lists+ceph-devel@lfdr.de>; Wed,  8 May 2024 11:44:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CB78C139E
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 May 2024 19:15:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE56A1F24338
-	for <lists+ceph-devel@lfdr.de>; Wed,  8 May 2024 09:44:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 213F0282647
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 May 2024 17:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E217A15C;
-	Wed,  8 May 2024 09:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2BDAF4EB;
+	Thu,  9 May 2024 17:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="My78PoTV"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="IpmBfoON"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF04A78C98
-	for <ceph-devel@vger.kernel.org>; Wed,  8 May 2024 09:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140868BF0
+	for <ceph-devel@vger.kernel.org>; Thu,  9 May 2024 17:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715161442; cv=none; b=AFgxfEjFornIS10DrbCBkozSthJQEbk0keTZ+YIjQsArMs8njOfspFd0CD+K2Ft7pCs3DCFb0F5SMkA8YZZC4+m635Tx9iYGM5Tk8oeoaE5R8gfUOUZGJR/i8xsjJeQCp9gEsxE+jaZA/5frVxQHn0rWiaqU2tejVn5EQtYUhr8=
+	t=1715274939; cv=none; b=eBUxZbSdALP8Sdpev8dyZGmKUJUnR9zAsf69vYD5uCZl6oKLOabz5LDmyUgXuxc2FOM/bDAIysmAQhuxVCQv15A7FsZ266dRXX0OkNODSZgDvhJjRoNS8jQdU2l/xeKzD158yPH8Bw5Wi27wpRM5t+Gl40sVVAHxr72ruP41qXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715161442; c=relaxed/simple;
-	bh=kSW/pT/O7/Iw5xbxsAXp1TlMty8Qliv7zEd21f+55Ks=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XeYfabERvhHdL65zGvJPDUSLGGCXBQMFyfJeezgQXrqq/0jiUAizsLSJxvqlIuUxP8VPecgnt2cetlBaZE3QqI5Vx737AMcUa5OnZO0oevaVW2sd3huRFqjQ4IvZcRBVp4DQfc2ayfUXDky8ivLe9PWUhuEQamMPmunnsLCTnBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=My78PoTV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715161439;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kZJGjN0aaOfyYHY5FWaP8VsGSluVnWbx5jZl5CWflhY=;
-	b=My78PoTVSnH+IRyJ/OgUPjsj+8FXrXKKeBWRBe4IDKcyfxmErhwTT9DIifT3k4L6S58dYD
-	+0hynq+ubqCsemTjbz9+tRLQ8kfXN2Y+FjMSyG0edaBr/XzNMLRhRz93RrjVFC1GAAxGli
-	vXDT3ImZzmC/VQFB1h8SXvLsAw0nUhs=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-563-6FhHQbQMMY2eVxds6QPTng-1; Wed, 08 May 2024 05:43:56 -0400
-X-MC-Unique: 6FhHQbQMMY2eVxds6QPTng-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	s=arc-20240116; t=1715274939; c=relaxed/simple;
+	bh=I2b3mZDphqAOw1CzA9XXn8owOPYBXLxuDEHOZbykNDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KdTUbNNMnCfmP6yzKKWaJxHVGl/Zr99KNePqNbrK1bBuvgbn235ZpGSftFMJtcXwAXkwI6p+DqHgxK/VKN+h5LsA0s6kWyLdnNVXpAyMNX1yPfTFJbfdrJu17AN9R6oOtXIhmmC8m9kT/YhKqhG2jyTE6EWP4vm+U/jbslZ62E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=IpmBfoON; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AFB3B185A780;
-	Wed,  8 May 2024 09:43:55 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.72.116.76])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 330B440C6EB7;
-	Wed,  8 May 2024 09:43:52 +0000 (UTC)
-From: xiubli@redhat.com
-To: ceph-devel@vger.kernel.org,
-	idryomov@gmail.com
-Cc: vshankar@redhat.com,
-	mchangir@redhat.com,
-	Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH] ceph: defer clearing the CEPH_I_FLUSH_SNAPS flag
-Date: Wed,  8 May 2024 17:43:49 +0800
-Message-ID: <20240508094349.179222-1-xiubli@redhat.com>
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D7BD83F363
+	for <ceph-devel@vger.kernel.org>; Thu,  9 May 2024 17:15:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1715274932;
+	bh=R13CNUyH1MbzjMY2CalRPAAS/uvh6wjQHgeABBOaJzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=IpmBfoON8mJ+WWwGbHsP8UaUf2S5liiFXgWu3IAoBYajxKhDY/PLxu1mf7aidkXQO
+	 Ri+az5lfvHD/JRuYXHLoUH9TLLCOcRLFyT4Wf+aaAu/Ze9G7GL3hQ6EKMXF0vpoQUe
+	 xuKwvPuoe9kVjjP4g1IWRYW7xPJmRGxf+zq0SCAy6m9kQ02fhgQXibYNPl3fMn09I+
+	 uz9x4cAO6ZyCov0dG9+kgwlqrAySwVB1d+twyXvO/Ba34KvaZ5EhXMe0B/QmhgYq2k
+	 Bdl1iBLz8wlk0blPCvQoX6/26Mnqpc3hMsEyEVeRQoM3G1K3TagNm/jBhk5GhqEhEe
+	 JsOoHFpRAa5WA==
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a59c3cf5f83so72962266b.2
+        for <ceph-devel@vger.kernel.org>; Thu, 09 May 2024 10:15:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715274931; x=1715879731;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R13CNUyH1MbzjMY2CalRPAAS/uvh6wjQHgeABBOaJzE=;
+        b=a21txFAxuPdDPlYq92xMmqbKQBWNzlnXLLt8B8kDQ+ujSG5gndmVhwGvp59jRikU5Z
+         ehn3KczJsoS2bS+vEtfeTnojBKhajplr9UJ3jeNt7Q1MdZtm8gMghCw2V5RsE5Jno97Z
+         xydpvaIkNC21KrzF8HFgT3U4YnuUBujdE7bJHdeNZJMLuPe3uRhThDSPv/6KeNAPbz+0
+         o/FpR+NX7jHtDBSlzHBSfUdGkXHnVr/tD3VUGyMIffXAYddo3OdZbZZCIHgMZVK3T/3u
+         uR5mzTvkkSt9/4MqdF/XgW7PVq4+GLPyGdPTMTf+Td9QKfuvWUW6TY+KqJBBO4t+Ktiy
+         qXWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBQ8HnCpQ9zNZ6HlDasZ55iN433cJVYv0yQB0WoHX/5+DlezuXQvz9INb7L/dQbI5b/79/8FRwrbVMPlG4AwVuWsQAE1J4pqpIzQ==
+X-Gm-Message-State: AOJu0YzUTMLPe8TfcmN9+RzXg+9SzpkTfWcP811/XGw1xwVAApQu0d/2
+	5X04+OAKLNIs1NTC5fxXG89IMt8IqOQzkNOTxdOAA1Fkr9IQiIoVqoT4jankANdMkJkBb4OpuWS
+	BIeKqZnzagBk8QKDchT9zOzQPsqJEOE97cHUVsoz/kWDrdBKm4z3z9FPIKPq4QA+BtxFQ3+0ZZw
+	c=
+X-Received: by 2002:a17:906:3849:b0:a59:b02a:90dc with SMTP id a640c23a62f3a-a5a2d66ac03mr15004766b.54.1715274930678;
+        Thu, 09 May 2024 10:15:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRId3ZK7jZnEUqxnKrbYMBDrOXsoSZ6C8TgHiChCG3zHZRXUk/mhnLLXZdmjv+NVtyVoseaw==
+X-Received: by 2002:a17:906:3849:b0:a59:b02a:90dc with SMTP id a640c23a62f3a-a5a2d66ac03mr15001366b.54.1715274929765;
+        Thu, 09 May 2024 10:15:29 -0700 (PDT)
+Received: from localhost (host-82-49-69-7.retail.telecomitalia.it. [82.49.69.7])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c81bfsm93194566b.129.2024.05.09.10.15.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 10:15:29 -0700 (PDT)
+Date: Thu, 9 May 2024 19:15:27 +0200
+From: Andrea Righi <andrea.righi@canonical.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>
+Subject: Re: [PATCH v5 40/40] 9p: Use netfslib read/write_iter
+Message-ID: <Zj0ErxVBE3DYT2Ea@gpd>
+References: <20231221132400.1601991-1-dhowells@redhat.com>
+ <20231221132400.1601991-41-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20231221132400.1601991-41-dhowells@redhat.com>
 
-From: Xiubo Li <xiubli@redhat.com>
+On Thu, Dec 21, 2023 at 01:23:35PM +0000, David Howells wrote:
+> Use netfslib's read and write iteration helpers, allowing netfslib to take
+> over the management of the page cache for 9p files and to manage local disk
+> caching.  In particular, this eliminates write_begin, write_end, writepage
+> and all mentions of struct page and struct folio from 9p.
+> 
+> Note that netfslib now offers the possibility of write-through caching if
+> that is desirable for 9p: just set the NETFS_ICTX_WRITETHROUGH flag in
+> v9inode->netfs.flags in v9fs_set_netfs_context().
+> 
+> Note also this is untested as I can't get ganesha.nfsd to correctly parse
+> the config to turn on 9p support.
 
-Clear the flag just after the capsnap request being sent out. Else the
-ceph_check_caps() will race with it and send the cap update request
-just before this capsnap request. Which will cause the cap update request
-to miss setting the CEPH_CLIENT_CAPS_PENDING_CAPSNAP flag and finally
-the mds will drop the capsnap request to floor.
+It looks like this patch has introduced a regression with autopkgtest,
+see: https://bugs.launchpad.net/bugs/2056461
 
-URL: https://tracker.ceph.com/issues/64209
-URL: https://tracker.ceph.com/issues/65705
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/caps.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+I haven't looked at the details yet, I just did some bisecting and
+apparently reverting this one seems to fix the problem.
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 197cb383f829..fe6452321466 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -1678,8 +1678,6 @@ static void __ceph_flush_snaps(struct ceph_inode_info *ci,
- 		last_tid = capsnap->cap_flush.tid;
- 	}
- 
--	ci->i_ceph_flags &= ~CEPH_I_FLUSH_SNAPS;
--
- 	while (first_tid <= last_tid) {
- 		struct ceph_cap *cap = ci->i_auth_cap;
- 		struct ceph_cap_flush *cf = NULL, *iter;
-@@ -1724,6 +1722,15 @@ static void __ceph_flush_snaps(struct ceph_inode_info *ci,
- 		ceph_put_cap_snap(capsnap);
- 		spin_lock(&ci->i_ceph_lock);
- 	}
-+
-+	/*
-+	 * Clear the flag just after the capsnap request being sent out. Else the
-+	 * ceph_check_caps() will race with it and send the cap update request
-+	 * just before this capsnap request. Which will cause the cap update request
-+	 * to miss setting the CEPH_CLIENT_CAPS_PENDING_CAPSNAP flag and finally
-+	 * the mds will drop the capsnap request to floor.
-+	 */
-+	ci->i_ceph_flags &= ~CEPH_I_FLUSH_SNAPS;
- }
- 
- void ceph_flush_snaps(struct ceph_inode_info *ci,
--- 
-2.44.0
+Let me know if you want me to test something in particular or if you
+already have a potential fix. Otherwise I'll take a look.
 
+Thanks,
+-Andrea
 
