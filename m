@@ -1,105 +1,151 @@
-Return-Path: <ceph-devel+bounces-1138-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1139-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ABB78C1F5C
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 May 2024 09:57:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DC98C23EA
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 May 2024 13:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 179BE282A09
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 May 2024 07:57:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72651B24B77
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 May 2024 11:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C7F15F301;
-	Fri, 10 May 2024 07:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E64170850;
+	Fri, 10 May 2024 11:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CBytiO1F"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FaGM2Fto"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6198E15F31F
-	for <ceph-devel@vger.kernel.org>; Fri, 10 May 2024 07:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA9A170849;
+	Fri, 10 May 2024 11:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715327854; cv=none; b=EmGdOwlqK9+UbnWWTCGiMU3U94x0j8+qAKqgJV0vg2JY5fZdwmOyE87ViJp+ZrLzmAZkKng16BDKbe0DeHxJLnLrD7LSOY1Sou5J61mwUQZxYZ5x/ud1/FotyTQgEpfLo9tzkeZhOqOWu3Dp9/vLljEQIUUbknF9ko7zAeJ8cnc=
+	t=1715341805; cv=none; b=A9eU0YossiSObRR+r2q4lThDkZd0hEvQd86szCKhTCz55o5n2f64ymiIf2cTSpD0FIQiTVqAHpTf3JN91yF2VNJKpvCmw6+J7H9dQdJhr+QALyLubKIut3at3FV9I8k2YZD/bikR5p9qzY1kgCPM4EQIIVu7+FV8m0gEYYqqmnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715327854; c=relaxed/simple;
-	bh=0ZBc+Q6dI2nvBKuIrhZxI1E2dONPs+Fjuws1+0I2wc0=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=ZEJhNc386TORZrBHv+rmTjMCkyyjqOLZkWIH2h1qa8IVeTjaR4EnuRqzaRSHiLtuvn7e7qZAZxqHBfDkjXGKyphy/e60ucdpR/DpyejinTdinsa6aby1Au74PzVvaRt7QQZG3d2LfjFvLVQPlZf5hXPMYJl/GLZHU3TeaNuyECk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CBytiO1F; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715327852;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0ZBc+Q6dI2nvBKuIrhZxI1E2dONPs+Fjuws1+0I2wc0=;
-	b=CBytiO1FV+DgHJ40lcDOkbpqVscF1k1nhl5MbMj/nEb1mU46RTMCgbGpDB/RpEU6FvXBwM
-	SMWAJJY+3iiaXZXy++7Vff/FJni8lJY2HpGrQK8DAWa1lRl9vjPqPHnOmN3k+xw/zGrBDf
-	ENc6k3qiT9HM/aIG/xfYUIqC1IvHGU4=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-377-_VIFnsB-PaqnQWIh6XDzdA-1; Fri,
- 10 May 2024 03:57:27 -0400
-X-MC-Unique: _VIFnsB-PaqnQWIh6XDzdA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 73F983C0C892;
-	Fri, 10 May 2024 07:57:26 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.34])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 1A1BA11847D6;
-	Fri, 10 May 2024 07:57:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <Zj22cFnMynv_EF8x@gpd>
-References: <Zj22cFnMynv_EF8x@gpd> <Zj0ErxVBE3DYT2Ea@gpd> <20231221132400.1601991-1-dhowells@redhat.com> <20231221132400.1601991-41-dhowells@redhat.com> <1567252.1715290417@warthog.procyon.org.uk>
-To: Andrea Righi <andrea.righi@canonical.com>
-Cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
-    Steve French <smfrench@gmail.com>,
-    Matthew Wilcox <willy@infradead.org>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-    Dominique Martinet <asmadeus@codewreck.org>,
-    Eric Van Hensbergen <ericvh@kernel.org>,
-    Ilya Dryomov <idryomov@gmail.com>,
-    Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
-    Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [PATCH v5 40/40] 9p: Use netfslib read/write_iter
+	s=arc-20240116; t=1715341805; c=relaxed/simple;
+	bh=4l5Ap/GQGcYF0sHhsyCYu2fRIWgnQn2r2DT/zqLBNUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZBJR51I7sGtU5HaxxpbCh64fWcodZ3yW3tY0xuwFsKudebHkwlwQIco+xmud8cvVsMq0+F7mxKnLSEfqYMSMRemK68fcpjnfMh6ooptmk6/TH6a8np9yXfSQcIoYba14HLN7hSqAVxPc3+fndaa9cujYdx6iM5bcbSVtuicIfyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FaGM2Fto; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6edc61d0ff6so1692283b3a.2;
+        Fri, 10 May 2024 04:50:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715341803; x=1715946603; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7WZK1EC9ikQfyuHFTfKb94AiIKSPD5K2lma7no+Kt3Y=;
+        b=FaGM2FtoNu1aXaqPgls9vgfcmriY7CifDQP5C/9J9eI2Oup2Am4RnXz3AxoFsleeIO
+         bA49p1B1lczIJuVn2a/rwHkO5rA+qSzmTlYzx43CC9SHo5YNQVqm1Np8MOMetbw+Y9BI
+         /8av+/8JVsmGlqoDFeYTTUPnBzHlnbvG1BsXySqUkrpRUCHJcUaADjfJsBiR8+MVLddL
+         d3AxRdFEbC76JtuSxJ4T0LxFCeZR0z/ISVYKikxq5p1UG30Po3RV9zLe9c/8suWoNohd
+         F7qkHOWJkXadnfr6Yn2F+1EJMBWWfho4bhvvto4qtaCNCSwOq5L68ng0A+yrSfIrOU2s
+         uvVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715341803; x=1715946603;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7WZK1EC9ikQfyuHFTfKb94AiIKSPD5K2lma7no+Kt3Y=;
+        b=WYRN7XDt4rRkZyLoAdZMjA4u9uACCQU52s9MT36B2vaaVZiWW22ng1N6mBmXy09Lbu
+         lkzNTZHm7VOaFGC6PzyHBZFbDKjr5EgWWu2qAlxJdXFPhLqBSUR0UWd68KN6nVThshEg
+         GzW/8V/lYHA+8jGjtTYeHkPSbt786I+QzKGQzmqDzvrqVaAvrxm1ySFVnnsBKdYeos36
+         PYRJUq7vJ2KDHWqfRDUHKN6su3dlD6BY1mLPFV+/9fzFwke6/0T17oI/Py7Zj1jJsStH
+         JNkdvtOaDrV6iqdtyDaaXagvwrtwMvTPi+bme3VUFBW4tFD0ngy51UVVoW46dzcH4zwf
+         isrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfyZAr41Ye8HoAwFPik1qEllQht963t6R2w7QRNXnZofz8jv4AiYYVsG731hq2GZkX2d6ulmVBkRMXtKXHT579LdsdWwyr1N86kWlnNte8EM9+gUYBu7OkXRH+1P4Q/Sw2oI0wJFqPMv3itSqy+AEyRCI7/3dPAULJGqrWEFBRWuq8MWMAs4I=
+X-Gm-Message-State: AOJu0YwgUEurn5hwnaEuk2sNQGIQDUGOn+lxd2GSg6UILIMi1QGhrQtL
+	yxXl8BgdVpLBhNZE4YgXRvanWfxWOmhfs0vhJXIzCbUIdA5dKi5H
+X-Google-Smtp-Source: AGHT+IGzJePUE/u2//e0nGqK25e74fSzzO7KZJDptjk5/1bik27/+5woaxZ+Rq3FhnwvPq89SZQajQ==
+X-Received: by 2002:a05:6a21:339f:b0:1af:dbe7:ccbe with SMTP id adf61e73a8af0-1afde103d87mr3133457637.28.1715341803002;
+        Fri, 10 May 2024 04:50:03 -0700 (PDT)
+Received: from KASONG-MC4.tencent.com ([43.132.141.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c134155sm30183825ad.231.2024.05.10.04.49.58
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 10 May 2024 04:50:02 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Chris Li <chrisl@kernel.org>,
+	Barry Song <v-songbaohua@oppo.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Neil Brown <neilb@suse.de>,
+	Minchan Kim <minchan@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Hugh Dickins <hughd@google.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>,
+	Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	ceph-devel@vger.kernel.org
+Subject: [PATCH v5 03/12] ceph: drop usage of page_index
+Date: Fri, 10 May 2024 19:47:38 +0800
+Message-ID: <20240510114747.21548-4-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.45.0
+In-Reply-To: <20240510114747.21548-1-ryncsn@gmail.com>
+References: <20240510114747.21548-1-ryncsn@gmail.com>
+Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1578870.1715327842.1@warthog.procyon.org.uk>
-Date: Fri, 10 May 2024 08:57:22 +0100
-Message-ID: <1578871.1715327842@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+Content-Transfer-Encoding: 8bit
 
-Andrea Righi <andrea.righi@canonical.com> wrote:
+From: Kairui Song <kasong@tencent.com>
 
-> The only reproducer that I have at the moment is the autopkgtest command
-> mentioned in the bug, that is a bit convoluted, I'll try to see if I can
-> better isolate the problem and find a simpler reproducer, but I'll also
-> be travelling next week to a Canonical event.
+page_index is needed for mixed usage of page cache and swap cache,
+for pure page cache usage, the caller can just use page->index instead.
 
-Note that the netfslib has some tracepoints that might help debug it.
+It can't be a swap cache page here, so just drop it.
 
-David
+Signed-off-by: Kairui Song <kasong@tencent.com>
+Cc: Xiubo Li <xiubli@redhat.com>
+Cc: Ilya Dryomov <idryomov@gmail.com>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: ceph-devel@vger.kernel.org
+---
+ fs/ceph/dir.c   | 2 +-
+ fs/ceph/inode.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index 0e9f56eaba1e..570a9d634cc5 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -141,7 +141,7 @@ __dcache_find_get_entry(struct dentry *parent, u64 idx,
+ 	if (ptr_pos >= i_size_read(dir))
+ 		return NULL;
+ 
+-	if (!cache_ctl->page || ptr_pgoff != page_index(cache_ctl->page)) {
++	if (!cache_ctl->page || ptr_pgoff != cache_ctl->page->index) {
+ 		ceph_readdir_cache_release(cache_ctl);
+ 		cache_ctl->page = find_lock_page(&dir->i_data, ptr_pgoff);
+ 		if (!cache_ctl->page) {
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 7b2e77517f23..1f92d3faaa6b 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1861,7 +1861,7 @@ static int fill_readdir_cache(struct inode *dir, struct dentry *dn,
+ 	unsigned idx = ctl->index % nsize;
+ 	pgoff_t pgoff = ctl->index / nsize;
+ 
+-	if (!ctl->page || pgoff != page_index(ctl->page)) {
++	if (!ctl->page || pgoff != ctl->page->index) {
+ 		ceph_readdir_cache_release(ctl);
+ 		if (idx == 0)
+ 			ctl->page = grab_cache_page(&dir->i_data, pgoff);
+-- 
+2.45.0
 
 
