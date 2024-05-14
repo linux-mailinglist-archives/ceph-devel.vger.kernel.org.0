@@ -1,99 +1,67 @@
-Return-Path: <ceph-devel+bounces-1139-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1140-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5DC98C23EA
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 May 2024 13:50:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95C28C4C97
+	for <lists+ceph-devel@lfdr.de>; Tue, 14 May 2024 09:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72651B24B77
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 May 2024 11:50:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 943DD2824C4
+	for <lists+ceph-devel@lfdr.de>; Tue, 14 May 2024 07:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E64170850;
-	Fri, 10 May 2024 11:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE6EC101CA;
+	Tue, 14 May 2024 07:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FaGM2Fto"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fwlHLOZy"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA9A170849;
-	Fri, 10 May 2024 11:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32008171C2
+	for <ceph-devel@vger.kernel.org>; Tue, 14 May 2024 07:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715341805; cv=none; b=A9eU0YossiSObRR+r2q4lThDkZd0hEvQd86szCKhTCz55o5n2f64ymiIf2cTSpD0FIQiTVqAHpTf3JN91yF2VNJKpvCmw6+J7H9dQdJhr+QALyLubKIut3at3FV9I8k2YZD/bikR5p9qzY1kgCPM4EQIIVu7+FV8m0gEYYqqmnY=
+	t=1715670552; cv=none; b=iI3MWh0R4kAzv24jPnesNZqtzMJxehND08xA8koqz+5IstCumOEQGlpuQtPEGB5SlpHgiot2eO+KhTCKciaqrI+W3qUNTLBV4Bw52bclfqcAnPyzb/5zLyK5FhN0ekR9jwZCBXdS1pWrOTGh5Cz9sOoSUiHnr0txHo0xsSdr5OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715341805; c=relaxed/simple;
-	bh=4l5Ap/GQGcYF0sHhsyCYu2fRIWgnQn2r2DT/zqLBNUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZBJR51I7sGtU5HaxxpbCh64fWcodZ3yW3tY0xuwFsKudebHkwlwQIco+xmud8cvVsMq0+F7mxKnLSEfqYMSMRemK68fcpjnfMh6ooptmk6/TH6a8np9yXfSQcIoYba14HLN7hSqAVxPc3+fndaa9cujYdx6iM5bcbSVtuicIfyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FaGM2Fto; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6edc61d0ff6so1692283b3a.2;
-        Fri, 10 May 2024 04:50:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715341803; x=1715946603; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7WZK1EC9ikQfyuHFTfKb94AiIKSPD5K2lma7no+Kt3Y=;
-        b=FaGM2FtoNu1aXaqPgls9vgfcmriY7CifDQP5C/9J9eI2Oup2Am4RnXz3AxoFsleeIO
-         bA49p1B1lczIJuVn2a/rwHkO5rA+qSzmTlYzx43CC9SHo5YNQVqm1Np8MOMetbw+Y9BI
-         /8av+/8JVsmGlqoDFeYTTUPnBzHlnbvG1BsXySqUkrpRUCHJcUaADjfJsBiR8+MVLddL
-         d3AxRdFEbC76JtuSxJ4T0LxFCeZR0z/ISVYKikxq5p1UG30Po3RV9zLe9c/8suWoNohd
-         F7qkHOWJkXadnfr6Yn2F+1EJMBWWfho4bhvvto4qtaCNCSwOq5L68ng0A+yrSfIrOU2s
-         uvVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715341803; x=1715946603;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7WZK1EC9ikQfyuHFTfKb94AiIKSPD5K2lma7no+Kt3Y=;
-        b=WYRN7XDt4rRkZyLoAdZMjA4u9uACCQU52s9MT36B2vaaVZiWW22ng1N6mBmXy09Lbu
-         lkzNTZHm7VOaFGC6PzyHBZFbDKjr5EgWWu2qAlxJdXFPhLqBSUR0UWd68KN6nVThshEg
-         GzW/8V/lYHA+8jGjtTYeHkPSbt786I+QzKGQzmqDzvrqVaAvrxm1ySFVnnsBKdYeos36
-         PYRJUq7vJ2KDHWqfRDUHKN6su3dlD6BY1mLPFV+/9fzFwke6/0T17oI/Py7Zj1jJsStH
-         JNkdvtOaDrV6iqdtyDaaXagvwrtwMvTPi+bme3VUFBW4tFD0ngy51UVVoW46dzcH4zwf
-         isrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfyZAr41Ye8HoAwFPik1qEllQht963t6R2w7QRNXnZofz8jv4AiYYVsG731hq2GZkX2d6ulmVBkRMXtKXHT579LdsdWwyr1N86kWlnNte8EM9+gUYBu7OkXRH+1P4Q/Sw2oI0wJFqPMv3itSqy+AEyRCI7/3dPAULJGqrWEFBRWuq8MWMAs4I=
-X-Gm-Message-State: AOJu0YwgUEurn5hwnaEuk2sNQGIQDUGOn+lxd2GSg6UILIMi1QGhrQtL
-	yxXl8BgdVpLBhNZE4YgXRvanWfxWOmhfs0vhJXIzCbUIdA5dKi5H
-X-Google-Smtp-Source: AGHT+IGzJePUE/u2//e0nGqK25e74fSzzO7KZJDptjk5/1bik27/+5woaxZ+Rq3FhnwvPq89SZQajQ==
-X-Received: by 2002:a05:6a21:339f:b0:1af:dbe7:ccbe with SMTP id adf61e73a8af0-1afde103d87mr3133457637.28.1715341803002;
-        Fri, 10 May 2024 04:50:03 -0700 (PDT)
-Received: from KASONG-MC4.tencent.com ([43.132.141.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c134155sm30183825ad.231.2024.05.10.04.49.58
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 10 May 2024 04:50:02 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Chris Li <chrisl@kernel.org>,
-	Barry Song <v-songbaohua@oppo.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Neil Brown <neilb@suse.de>,
-	Minchan Kim <minchan@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>,
-	Xiubo Li <xiubli@redhat.com>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	ceph-devel@vger.kernel.org
-Subject: [PATCH v5 03/12] ceph: drop usage of page_index
-Date: Fri, 10 May 2024 19:47:38 +0800
-Message-ID: <20240510114747.21548-4-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240510114747.21548-1-ryncsn@gmail.com>
-References: <20240510114747.21548-1-ryncsn@gmail.com>
-Reply-To: Kairui Song <kasong@tencent.com>
+	s=arc-20240116; t=1715670552; c=relaxed/simple;
+	bh=WpL+CR6AfvXYj0lRMNFI/29t7gTkRMlOdAPdRlncLlQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SKgq5NEok2jf+dWSfjSNnhKeYZJpEKaeHLwk6eOGIT1bG4eYsnGEtDtCpuqWs0KiUgAx+TmWDbi4TAO3TkwXiNhH0X4nWT2+CvQ5nATjMlulOS/B7KYUDjDaasJS2JUj+SnEQSTg2l2xKSo/lF63DdIwlxw8v8JONkKyWHUuR3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fwlHLOZy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715670550;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0ZIQbOFDMSm6n034QsJIWhtCrHouktEi7A5jDH8SbyE=;
+	b=fwlHLOZySBaoiL4mZ0eEwM93f3HiS1F2TGzgGbkvTlnk+d4m1FqB9awDFisFG+qN68vMXH
+	2KWrt0uYIXQNmcymAyY8CeMwP5yeXmF6rJbclTrB5f+9SEoOn6x/BoejSPVsg25sGzGhy0
+	VHTS9jQmykDMeh+s1QadiFeCc6u2r1w=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-460-akb6LilRNl6pL1ZnJaFVBg-1; Tue, 14 May 2024 03:09:06 -0400
+X-MC-Unique: akb6LilRNl6pL1ZnJaFVBg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 25C4C185A78E;
+	Tue, 14 May 2024 07:09:06 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.72.116.29])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 5EB8340C6EB7;
+	Tue, 14 May 2024 07:09:02 +0000 (UTC)
+From: xiubli@redhat.com
+To: ceph-devel@vger.kernel.org,
+	idryomov@gmail.com
+Cc: vshankar@redhat.com,
+	mchangir@redhat.com,
+	Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: stop reconnecting to MDS after connection being closed
+Date: Tue, 14 May 2024 15:08:56 +0800
+Message-ID: <20240514070856.194701-1-xiubli@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -101,51 +69,39 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-From: Kairui Song <kasong@tencent.com>
+From: Xiubo Li <xiubli@redhat.com>
 
-page_index is needed for mixed usage of page cache and swap cache,
-for pure page cache usage, the caller can just use page->index instead.
+The reconnect feature never been supported by MDS in mds non-RECONNECT
+state. This reconnect requests will incorrectly close the just reopened
+sessions when the MDS kills them during the "mds_session_blocklist_on_evict"
+option is disabled.
 
-It can't be a swap cache page here, so just drop it.
+Remove it for now.
 
-Signed-off-by: Kairui Song <kasong@tencent.com>
-Cc: Xiubo Li <xiubli@redhat.com>
-Cc: Ilya Dryomov <idryomov@gmail.com>
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: ceph-devel@vger.kernel.org
+Fixes: 7e70f0ed9f3e ("ceph: attempt mds reconnect if mds closes our session")
+URL: https://tracker.ceph.com/issues/65647
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
 ---
- fs/ceph/dir.c   | 2 +-
- fs/ceph/inode.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fs/ceph/mds_client.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 0e9f56eaba1e..570a9d634cc5 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -141,7 +141,7 @@ __dcache_find_get_entry(struct dentry *parent, u64 idx,
- 	if (ptr_pos >= i_size_read(dir))
- 		return NULL;
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index f5b25d178118..97a126c54578 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -6241,9 +6241,6 @@ static void mds_peer_reset(struct ceph_connection *con)
  
--	if (!cache_ctl->page || ptr_pgoff != page_index(cache_ctl->page)) {
-+	if (!cache_ctl->page || ptr_pgoff != cache_ctl->page->index) {
- 		ceph_readdir_cache_release(cache_ctl);
- 		cache_ctl->page = find_lock_page(&dir->i_data, ptr_pgoff);
- 		if (!cache_ctl->page) {
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 7b2e77517f23..1f92d3faaa6b 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1861,7 +1861,7 @@ static int fill_readdir_cache(struct inode *dir, struct dentry *dn,
- 	unsigned idx = ctl->index % nsize;
- 	pgoff_t pgoff = ctl->index / nsize;
+ 	pr_warn_client(mdsc->fsc->client, "mds%d closed our session\n",
+ 		       s->s_mds);
+-	if (READ_ONCE(mdsc->fsc->mount_state) != CEPH_MOUNT_FENCE_IO &&
+-	    ceph_mdsmap_get_state(mdsc->mdsmap, s->s_mds) >= CEPH_MDS_STATE_RECONNECT)
+-		send_mds_reconnect(mdsc, s);
+ }
  
--	if (!ctl->page || pgoff != page_index(ctl->page)) {
-+	if (!ctl->page || pgoff != ctl->page->index) {
- 		ceph_readdir_cache_release(ctl);
- 		if (idx == 0)
- 			ctl->page = grab_cache_page(&dir->i_data, pgoff);
+ static void mds_dispatch(struct ceph_connection *con, struct ceph_msg *msg)
 -- 
-2.45.0
+2.44.0
 
 
