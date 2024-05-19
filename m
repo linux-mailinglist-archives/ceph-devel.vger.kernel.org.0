@@ -1,81 +1,82 @@
-Return-Path: <ceph-devel+bounces-1148-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1149-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AAF88C946C
-	for <lists+ceph-devel@lfdr.de>; Sun, 19 May 2024 13:35:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2EF8C948C
+	for <lists+ceph-devel@lfdr.de>; Sun, 19 May 2024 13:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C6A61C20A15
-	for <lists+ceph-devel@lfdr.de>; Sun, 19 May 2024 11:35:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 418E61F21799
+	for <lists+ceph-devel@lfdr.de>; Sun, 19 May 2024 11:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6EC44C8C;
-	Sun, 19 May 2024 11:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA56D45BE4;
+	Sun, 19 May 2024 11:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DTf3aZaV"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iYZPusQj"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538591DA4C;
-	Sun, 19 May 2024 11:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C1B8BEA;
+	Sun, 19 May 2024 11:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716118515; cv=none; b=G4EkGgL0qhpFrKf8EjwLC6eT62eepY+YidIrmN/aTOFznL72AgFkxzHxSYS7gNral59vuuoY46GKG1z/T5A/TJq80nyZ21l6fGStmrrria7qiBVbVsb2S9CayG6khcydO9c9l5vHxMteD3yCXTGNRr0gWSfQq6GhL1v8y01EI9I=
+	t=1716119781; cv=none; b=TtRKQxrEE9HloCA1RRrcen9fZ4RPAjTKj95VWTdB2CtuAP8aX5QBgN+rONamvblDtPq1lTtloOX0LB4rYAPAKSdFUhmtgI97vUAoHm19+WW7jCg2Q1j4gyWOl8aBNxt7beJyUqoYG3d2Xl239V3XAwPbOvww5RNfP3zBe67CmnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716118515; c=relaxed/simple;
-	bh=isaENKlZ4Dah/OxcrVqJYrYbUtnL+lzE100loLpjCUQ=;
+	s=arc-20240116; t=1716119781; c=relaxed/simple;
+	bh=cvI1px9O6st8lE8BzPkgS3iM0oL4c8mM9MP987YJZDU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o3AlJ9VGET1T/ldcS4sF7Z/TVWc6hK6XZ8bGf5FtUJ/0FoUovqCsSg1A2Q7SioOKNeeqMUmGps0s2qK7lV/OCLoAL5tHry4aHrnpyVaM+932Mkki9TWs+Dsvlp1tnGAnYY7tv4eTqREcswQ8C/JqORMWK/Fm2CrcZ/87FPVgacI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DTf3aZaV; arc=none smtp.client-ip=192.198.163.14
+	 Content-Type:Content-Disposition:In-Reply-To; b=d3jUB7Q/0KRQr2tNTJtibNqoUbfvvr+H2zuVX1vFw9cPILUfLiKbyWkBAQgvA8jUVRbxqMwJlJBhsRIJfcD9A10QgJpHP/3uDNKsPMmSbJ6Yd9ipOU4oSZCcIyRSAiCps7Kt5o0jRfA3RbcLwodBxHV0hclJbxE36DVZ7AhKZ+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iYZPusQj; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1716118514; x=1747654514;
+  t=1716119779; x=1747655779;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=isaENKlZ4Dah/OxcrVqJYrYbUtnL+lzE100loLpjCUQ=;
-  b=DTf3aZaVQPMmuzn00F856J/rZBmXvEvRWBRTWgzMYebe4oyXKAT9XcL0
-   hMfKUqCet2vNnrMZaxv1mkNTnWzoWoiI7IDdO+ViRSD+Q+DsvwF/i/kza
-   fJ3vGH+uJ46BdkPg/v+Yb2AJpDE/XgsYKUkeL4BHL6CwJLPz0bcyTGcng
-   /tJ4uanGZLAuriXtNybGqcfhb7BrLx4NOhXNkOLdXwr52aBl5E3gX4HrE
-   /KxpHTC4mGTeDpdYLPeJat5B8f2+AHppLJKtdqW3zJhlJwmfWzdTu0Cr7
-   6f1O+Vn5Blg9ctkDvSNsIqXGLTiZD3dmEQrWzFh+SDHSmJC/OYmU5vnot
+  bh=cvI1px9O6st8lE8BzPkgS3iM0oL4c8mM9MP987YJZDU=;
+  b=iYZPusQjHX/Bn97EIb5+DlQ9yBPDbl083kjVfnU8XKrUPw0b3HgtiUny
+   B0OkrgEniDhaZ2+jCEGsBJZCkrEsJkPAjH4i82jppqeCITnz1Q+7G9x1d
+   dh7nQrsDKAAzWlj7Nd3+WYSL2HTqHJ7JGAYTSQvHijoIGZ+dpH/FItiLf
+   dBS3Owcju1Wc+bpQc7uxb/DHohUT/XLG8aW5Nm3L8lgUA8imsvm2OWf2B
+   11mKemxBLcJ0BXmKFfG+kIwH6TLSAFJJtknW3O767lEWHKHXSpfB0c/Bz
+   w/+DZ9VB7Gz/3vb/lZZQbEvh3MAM0gs9m4tt9TS5JMf2IyB0Iua2en3uR
    A==;
-X-CSE-ConnectionGUID: SYixLLS6R621jPBg8n5KaA==
-X-CSE-MsgGUID: RmLUmSTFSyyJvqxPeh7V0g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11076"; a="12471171"
-X-IronPort-AV: E=Sophos;i="6.08,172,1712646000"; 
-   d="scan'208";a="12471171"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 04:35:13 -0700
-X-CSE-ConnectionGUID: e+Fvgo46RiiKvLpMd/vxEA==
-X-CSE-MsgGUID: 8Vz8LuzuRQOvbwnqMjcXGg==
+X-CSE-ConnectionGUID: BphWRI4rSpS3Yj/3x6nR1g==
+X-CSE-MsgGUID: M+bojiynReq1eJ8UwYZrfw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11076"; a="22828833"
+X-IronPort-AV: E=Sophos;i="6.08,173,1712646000"; 
+   d="scan'208";a="22828833"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2024 04:56:19 -0700
+X-CSE-ConnectionGUID: sr0koyjmRuCZYaFNK954jg==
+X-CSE-MsgGUID: UWeqezrhSamDUYPoGjS+AQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,172,1712646000"; 
-   d="scan'208";a="36829411"
+X-IronPort-AV: E=Sophos;i="6.08,173,1712646000"; 
+   d="scan'208";a="37079835"
 Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 19 May 2024 04:35:09 -0700
+  by orviesa005.jf.intel.com with ESMTP; 19 May 2024 04:56:15 -0700
 Received: from kbuild by 108735ec233b with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1s8eol-0003QC-0d;
-	Sun, 19 May 2024 11:35:07 +0000
-Date: Sun, 19 May 2024 19:34:53 +0800
+	id 1s8f9B-0003bu-1L;
+	Sun, 19 May 2024 11:56:13 +0000
+Date: Sun, 19 May 2024 19:55:48 +0800
 From: kernel test robot <lkp@intel.com>
 To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
 	ceph-devel@vger.kernel.org
 Subject: Re: [PATCH 1/2 net-next] libceph: Use sruct_size() in
  ceph_create_snap_context()
-Message-ID: <202405191909.7qhhefnu-lkp@intel.com>
+Message-ID: <202405191916.QmDasdJ5-lkp@intel.com>
 References: <5b7c72bdb52703bbfa5511ed500aed4babde1308.1716109606.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
@@ -97,31 +98,31 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-JAILLET/libcep
 base:   net-next/main
 patch link:    https://lore.kernel.org/r/5b7c72bdb52703bbfa5511ed500aed4babde1308.1716109606.git.christophe.jaillet%40wanadoo.fr
 patch subject: [PATCH 1/2 net-next] libceph: Use sruct_size() in ceph_create_snap_context()
-config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240519/202405191909.7qhhefnu-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240519/202405191909.7qhhefnu-lkp@intel.com/reproduce)
+config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20240519/202405191916.QmDasdJ5-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240519/202405191916.QmDasdJ5-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405191909.7qhhefnu-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405191916.QmDasdJ5-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   net/ceph/snapshot.c: In function 'ceph_create_snap_context':
->> net/ceph/snapshot.c:32:25: error: implicit declaration of function 'sruct_size'; did you mean 'struct_size'? [-Werror=implicit-function-declaration]
+>> net/ceph/snapshot.c:32:18: error: call to undeclared function 'sruct_size'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
       32 |         snapc = kzalloc(sruct_size(snapc, snaps, snap_count), gfp_flags);
-         |                         ^~~~~~~~~~
-         |                         struct_size
->> net/ceph/snapshot.c:32:43: error: 'snaps' undeclared (first use in this function); did you mean 'snapc'?
+         |                         ^
+>> net/ceph/snapshot.c:32:36: error: use of undeclared identifier 'snaps'; did you mean 'snapc'?
       32 |         snapc = kzalloc(sruct_size(snapc, snaps, snap_count), gfp_flags);
          |                                           ^~~~~
          |                                           snapc
-   net/ceph/snapshot.c:32:43: note: each undeclared identifier is reported only once for each function it appears in
-   cc1: some warnings being treated as errors
+   net/ceph/snapshot.c:30:28: note: 'snapc' declared here
+      30 |         struct ceph_snap_context *snapc;
+         |                                   ^
+   2 errors generated.
 
 
-vim +32 net/ceph/snapshot.c
+vim +/sruct_size +32 net/ceph/snapshot.c
 
     11	
     12	/*
