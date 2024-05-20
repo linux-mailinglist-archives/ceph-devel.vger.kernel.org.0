@@ -1,159 +1,129 @@
-Return-Path: <ceph-devel+bounces-1150-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1151-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D436F8C94AF
-	for <lists+ceph-devel@lfdr.de>; Sun, 19 May 2024 14:55:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D3818CA2C5
+	for <lists+ceph-devel@lfdr.de>; Mon, 20 May 2024 21:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62CDD1F21519
-	for <lists+ceph-devel@lfdr.de>; Sun, 19 May 2024 12:55:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B68F21F21EB4
+	for <lists+ceph-devel@lfdr.de>; Mon, 20 May 2024 19:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD655481AB;
-	Sun, 19 May 2024 12:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C5C19BBA;
+	Mon, 20 May 2024 19:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="BZzJlsLk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JgakLSE8"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.smtpout.orange.fr (smtp-27.smtpout.orange.fr [80.12.242.27])
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7D0DF58;
-	Sun, 19 May 2024 12:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.27
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE6511CBD
+	for <ceph-devel@vger.kernel.org>; Mon, 20 May 2024 19:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716123319; cv=none; b=Wk6968E/67FeovUCmeOUBgqCYTUE7uI1w8ndiMoJJAyxCPhs8O3m0hvc2+GKFZDM5H/+6/BBD6xcjgAd3tsPA1h6UkpVFReUI8lzTDLM/iic9spWfZZch/7sQByGNCB9FgCPN98AN9XSTlHKplwdITWFqYKmEKxp1R04YwaDR3U=
+	t=1716233863; cv=none; b=D3D6ky/XgUgzZL/XhO0P0SOS0mmuSUFRaua8Xk54Dgjw5u5RB+B8R94ijhlrSbVsa4ePPKvP3HjuTFtR9ir7dn2My4vGOLAIVb4dh7l0Ym1TmEMk0bZT5jPL7CEbvACvI27wW8TLq7v39sksbJeGjM0I9WQ9sBb64wUajfC3zdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716123319; c=relaxed/simple;
-	bh=96ddWgy+DqQkkmfLAmqY9C/dPMMuWMqOSDKoVWxeAKs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DeTQMdZiZIw5wOjloaXukgCuuPx9fMEz8cvfBFtIlTi4dx4E39jUiYmFC3K9PZnxyNyTgN93TQ2Qi0njXnVvLKSDUN76YPEqxIunV4BOb4qLEsZPtD72LdlOXgrDKbX4qqFiehPz0XMACn5dQBr0gQarijaJCRKDXVHcMgBkMeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=BZzJlsLk; arc=none smtp.client-ip=80.12.242.27
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 8fvNsas0Vml3s8fvOsAwyi; Sun, 19 May 2024 14:46:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1716122764;
-	bh=IdukyeSVMol9uozX3qDqOVLoOKjojIJiN8ffYrHylXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=BZzJlsLkWkm524qgL4YZGWx+ntPz7Rzw0DUp9YfZpHYTMG1V/qZ1j/xA0rqb31b6D
-	 Ze1E4DqsikBm5Ill2qHE+XDEhXWC3ZFehpfiCphM3ASZMwpAAO/CIEfwIM+6x9P6Ky
-	 x6WsGkQgBOq1nHhw0PEBknAxA1z+uduyhETuzPgM3mtjxFIH+esfSPTlHY8a47SGMQ
-	 SbFz/W6Y7B139j0qJ0iTWL1RRCutlXtYtYAzuRhMi6FxijWkz0RdrpRJ5rWmCOJSgo
-	 7QFtAkzsg4qdY6XoRzEF48NImLtbHFx5GWDL1P0HpI1Sm3lFTze6XFl5jLcuLSJln6
-	 2MqonpmJnfoSw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 19 May 2024 14:46:04 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <64403766-cc22-4dbe-b4b3-af3ad32fb9ea@wanadoo.fr>
-Date: Sun, 19 May 2024 14:45:59 +0200
+	s=arc-20240116; t=1716233863; c=relaxed/simple;
+	bh=lhc4Hhaxt+ne8454GzRL0E4HyEQzYoNh0/jfxE34BdQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tvSuR7IYgCLls3ec8xzSXzWElXTTtlUudvXRvj1vShNElYCWfoxVSFe/fdc7tPAxQPaHRIREOtdwa6a5dFizPWVpyUISld/+tQUzTpq2d1oh5xiMEPFkCcWw37ove4GvXMBO+N+BwY66TGo3ZcpkuUyLeTbH3+VC1S1dl28Q/dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JgakLSE8; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5b273b9f1deso1951040eaf.3
+        for <ceph-devel@vger.kernel.org>; Mon, 20 May 2024 12:37:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716233860; x=1716838660; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xSH3/q/it/EXxRr4A4hwsSfVakXqO4lNxFCX09pP3Tg=;
+        b=JgakLSE8+q+0BnXOJJzIW12rL/8Uc8XdCiseHPaamWosINbQySaIB2cu+8f7IBXqOl
+         AM/br7RmrZQOP5lK9KqCKcbDQQjDCAgcmF1XzXTEvB3gJJBU+jdd6OnWES22Aw9olDaB
+         1snmHO2we3JjDlF/Ky6coYSZpyEaAwQKPIzJ2KyFkj0XnMALZz8y0BAYzfgCPtLdbt8A
+         Hg5a1nV6yoLIaIETp/APhOtf/4+yHR+4XtXa7DQdgWbxAp4aTdly35a0YnbFywZkO+ON
+         DjPUcoSgQEB35caNyybDTtzzRDOiN7YxaigOZ8CX/4qhabjT5NWNwSFceIVdl7ZdYm9e
+         wJYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716233860; x=1716838660;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xSH3/q/it/EXxRr4A4hwsSfVakXqO4lNxFCX09pP3Tg=;
+        b=UhNhd+7lHgO4wUOHyOzMqX+ROlyZEJc+ORb3hv0vyWTtvJWesAl1mHq56WtAXYmbR2
+         Lr+dGJF25Hx/gjNjNptMvGhl0ByM6cc5G+dWbx+7p1iTS8yaXrqKlMSV6ovMja3v+Kon
+         k0jG39vO6agtkkF2LU23hzo0WwkonzG/VsYbXuBmJlkVFI3hqAj7tvzdSaFkN7RpsANv
+         gyaSx+a10uuiBcANM1EwFtyLrhs0RcdNZT/fLxA6szD5IjWEi9Xkdg0JrKR8AzQsQQiN
+         Q4n4VNHxWBNz8HWugscLBtL4eCR6WB7gWNPp9Zx7D9T48/epvgwMYQzJ2p/DFQ69XwA8
+         Q3BA==
+X-Gm-Message-State: AOJu0Ywr2XIk23V4DWqOLoJ7rOQI2Ko7d4Hx+yOvQJjoXmFDMoK8IT9j
+	HGIgBvx5ibQetF8ti8LlkY8f4Si7hIli9Euj1zmOd0eS4HmXe8v0yp5ridoNcPB8IZWyyqqBGja
+	Yrn7gnWj41T22p22MUrtPATXBVLQ=
+X-Google-Smtp-Source: AGHT+IGFPSEF0Uz18F50+ZM/y0DXNPUMHJOZQfaDKMmSsT4hA07eQveQKgZUfw9rMc1JGZaboe5H2NKqXtXHDKB7eSA=
+X-Received: by 2002:a4a:ab86:0:b0:5b2:3782:7846 with SMTP id
+ 006d021491bc7-5b281956da7mr34135543eaf.4.1716233860632; Mon, 20 May 2024
+ 12:37:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2 net-next] libceph: Use sruct_size() in
- ceph_create_snap_context()
-To: kernel test robot <lkp@intel.com>, Ilya Dryomov <idryomov@gmail.com>,
- Xiubo Li <xiubli@redhat.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- ceph-devel@vger.kernel.org
-References: <5b7c72bdb52703bbfa5511ed500aed4babde1308.1716109606.git.christophe.jaillet@wanadoo.fr>
- <202405191909.7qhhefnu-lkp@intel.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <202405191909.7qhhefnu-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240321021536.64693-1-xiubli@redhat.com>
+In-Reply-To: <20240321021536.64693-1-xiubli@redhat.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Mon, 20 May 2024 21:37:28 +0200
+Message-ID: <CAOi1vP-RdbfmBAku9j104osphc3tk4zgbG-=eQ5yTz1a9s4e=g@mail.gmail.com>
+Subject: Re: [PATCH] ceph: make the ceph-cap workqueue UNBOUND
+To: xiubli@redhat.com
+Cc: ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com, 
+	mchangir@redhat.com, Stefan Kooman <stefan@bit.nl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le 19/05/2024 à 13:34, kernel test robot a écrit :
-> Hi Christophe,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on net-next/main]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-JAILLET/libceph-Use-__counted_by-in-struct-ceph_snap_context/20240519-172142
-> base:   net-next/main
-> patch link:    https://lore.kernel.org/r/5b7c72bdb52703bbfa5511ed500aed4babde1308.1716109606.git.christophe.jaillet%40wanadoo.fr
-> patch subject: [PATCH 1/2 net-next] libceph: Use sruct_size() in ceph_create_snap_context()
-> config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240519/202405191909.7qhhefnu-lkp@intel.com/config)
-> compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240519/202405191909.7qhhefnu-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202405191909.7qhhefnu-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->     net/ceph/snapshot.c: In function 'ceph_create_snap_context':
->>> net/ceph/snapshot.c:32:25: error: implicit declaration of function 'sruct_size'; did you mean 'struct_size'? [-Werror=implicit-function-declaration]
->        32 |         snapc = kzalloc(sruct_size(snapc, snaps, snap_count), gfp_flags);
->           |                         ^~~~~~~~~~
->           |                         struct_size
->>> net/ceph/snapshot.c:32:43: error: 'snaps' undeclared (first use in this function); did you mean 'snapc'?
->        32 |         snapc = kzalloc(sruct_size(snapc, snaps, snap_count), gfp_flags);
->           |                                           ^~~~~
->           |                                           snapc
->     net/ceph/snapshot.c:32:43: note: each undeclared identifier is reported only once for each function it appears in
->     cc1: some warnings being treated as errors
-> 
-> 
-> vim +32 net/ceph/snapshot.c
-> 
->      11	
->      12	/*
->      13	 * Ceph snapshot contexts are reference counted objects, and the
->      14	 * returned structure holds a single reference.  Acquire additional
->      15	 * references with ceph_get_snap_context(), and release them with
->      16	 * ceph_put_snap_context().  When the reference count reaches zero
->      17	 * the entire structure is freed.
->      18	 */
->      19	
->      20	/*
->      21	 * Create a new ceph snapshot context large enough to hold the
->      22	 * indicated number of snapshot ids (which can be 0).  Caller has
->      23	 * to fill in snapc->seq and snapc->snaps[0..snap_count-1].
->      24	 *
->      25	 * Returns a null pointer if an error occurs.
->      26	 */
->      27	struct ceph_snap_context *ceph_create_snap_context(u32 snap_count,
->      28							gfp_t gfp_flags)
->      29	{
->      30		struct ceph_snap_context *snapc;
->      31	
->    > 32		snapc = kzalloc(sruct_size(snapc, snaps, snap_count), gfp_flags);
+On Thu, Mar 21, 2024 at 3:18=E2=80=AFAM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> There is not harm to mark the ceph-cap workqueue unbounded, just
+> like we do in ceph-inode workqueue.
+>
+> URL: https://www.spinics.net/lists/ceph-users/msg78775.html
+> URL: https://tracker.ceph.com/issues/64977
+> Reported-by: Stefan Kooman <stefan@bit.nl>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/super.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index 4dcbbaa297f6..0bfe4f8418fd 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -851,7 +851,7 @@ static struct ceph_fs_client *create_fs_client(struct=
+ ceph_mount_options *fsopt,
+>         fsc->inode_wq =3D alloc_workqueue("ceph-inode", WQ_UNBOUND, 0);
+>         if (!fsc->inode_wq)
+>                 goto fail_client;
+> -       fsc->cap_wq =3D alloc_workqueue("ceph-cap", 0, 1);
+> +       fsc->cap_wq =3D alloc_workqueue("ceph-cap", WQ_UNBOUND, 1);
 
-Ouch!
+Hi Xiubo,
 
-this was build-tested, but I must have made a mistake when editing the 
-patch file to add the "net-next".
+You wrote that there is no harm in making ceph-cap workqueue unbound,
+but, if it's made unbound, it would be almost the same as ceph-inode
+workqueue.  The only difference would be that max_active parameter for
+ceph-cap workqueue is 1 instead of 0 (i.e. some default which is pretty
+high).  Given that max_active is interpreted as a per-CPU number even
+for unbound workqueues, up to $NUM_CPUS work items submitted to
+ceph-cap workqueue could still be active in a system.
 
-Sorry about that.
-I'll resend when the net-next branch will re-open.
+Does CephFS need/rely on $NUM_CPUS limit sowewhere?  If not, how about
+removing ceph-cap workqueue and submitting its work items to ceph-inode
+workqueue instead?
 
-CJ
+Thanks,
 
->      33		if (!snapc)
->      34			return NULL;
->      35	
->      36		refcount_set(&snapc->nref, 1);
->      37		snapc->num_snaps = snap_count;
->      38	
->      39		return snapc;
->      40	}
->      41	EXPORT_SYMBOL(ceph_create_snap_context);
->      42	
-> 
-
+                Ilya
 
