@@ -1,221 +1,151 @@
-Return-Path: <ceph-devel+bounces-1156-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1157-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8758CB1C6
-	for <lists+ceph-devel@lfdr.de>; Tue, 21 May 2024 17:55:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 725AD8CB32C
+	for <lists+ceph-devel@lfdr.de>; Tue, 21 May 2024 19:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AA3DB23B18
-	for <lists+ceph-devel@lfdr.de>; Tue, 21 May 2024 15:55:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E22A282E12
+	for <lists+ceph-devel@lfdr.de>; Tue, 21 May 2024 17:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85C0142E73;
-	Tue, 21 May 2024 15:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3D214884B;
+	Tue, 21 May 2024 17:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thofu.net header.i=@thofu.net header.b="PglxLQMG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fDPzEdJG"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7892614291B
-	for <ceph-devel@vger.kernel.org>; Tue, 21 May 2024 15:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1D6149015;
+	Tue, 21 May 2024 17:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716306941; cv=none; b=i3HGurEfpjVdMhQJN7XwK7/5GbkkH7PhukvxIXY528lwD5vOIFjQ17NslHLzMXRXfVrDJDM+EuY0eazMx8smvihIz3NktSlPe68P+LIqphRFbRmTzIK5oX995Y+bwtecGQ7zTcEIVRdZPwt2pbgaGFUiI0K9AvVUlOnmLqZejms=
+	t=1716314357; cv=none; b=e8+8YuCXjaTOTUucgOvmsU4G1Clx4VCMkqRRcyi5t0A8HPp8FiQyZFbVg3y+JWc/NmSCgu0NFl1wqZx73JpiY/NsacL2ItpOBdxMzsKLLkDpT6UcRNRBu9bivRcht8nOqztUQUiSZTUKJM4qzedhvrrPO8W2By7SrpCeRCRNATM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716306941; c=relaxed/simple;
-	bh=bNkN5SquYHJd28wHlLOnKEWzd1d8/AqJrr6SNYxKAb0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:References:To:
-	 In-Reply-To:Content-Type; b=B1zUwePsoCqL7/eCh4HBxfYHl2wC7VRQzsghAaM2pj+g2wYyGesQzaJj0aEDFykz2/f4GsKOQxtnVZ/VKa/gav1MjCHusSSgJkJJMEPo0V5p9eurrLy9jUqSTXgqn6J6QStDhAAcNqL2YM/hNv9FpIgGnHW8bHfYtsO92M2ztAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thofu.net; spf=pass smtp.mailfrom=thofu.net; dkim=pass (2048-bit key) header.d=thofu.net header.i=@thofu.net header.b=PglxLQMG; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thofu.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thofu.net
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4VkJtX4kBpz9sGf
-	for <ceph-devel@vger.kernel.org>; Tue, 21 May 2024 17:55:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thofu.net; s=MBO0001;
-	t=1716306932; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fsHiM9sS/wBJ2+boiqxIBYUTMmMgXr74bMLWlaX6jL8=;
-	b=PglxLQMGdHl2RBeUYVFyS0WMX6OTOsz8EAu0rWIdZmkWABwGSi6+ysY4fRdEbO6CHcRQYD
-	M6Mmek/QQ7sRnE2dvH0zSRlN8IT2kDTNM0PIBU1LPAQ+uMLGj0Z2l8LgxztLThebg2GWNJ
-	XvzeIlEtcJChY0bHj8thuDjXoI+ZyoZLUU2MpOqLNzMxc3DYqhQ3EppucKZO8gfnlYWnY4
-	NCimmzeB1KNEJgBfGZKJmVznJTDf6CbxseHTv3jZjby4qEPQGeexoNVWKPg9ZHUSGxCekU
-	p77lqkF69k9eC90vhnhzdS/nX88QQMesVkvAm0Fzck6EDlKxTRp6zyarkU458g==
-Message-ID: <94937c2e-f8e3-438b-bde9-a1d290891469@thofu.net>
-Date: Tue, 21 May 2024 17:55:32 +0200
+	s=arc-20240116; t=1716314357; c=relaxed/simple;
+	bh=pF5hHy19sUckxhcdMkEFs5kvEYZ//ekSfwCm69AGbd8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QCXmVROmaCnzayYIKNHJ/IDtt+WZXDyNLEMMV9VMVHUDsbQCJ8FUe4uyOmhtGrYEovnd4702g3NVYB5WZQgtZfBJS5SUUccHQ45NKJgmEY156gJrJgaEv5Q7KupSyGRfJjBbAIBIQPwJRnDjDbq1YUXY7ryPuMfIy0UfpPcDMmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fDPzEdJG; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1ecddf96313so94011325ad.2;
+        Tue, 21 May 2024 10:59:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716314355; x=1716919155; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XI4mdMYQHMDzDk9xWjXkWCPqz9rl1k4l8GTTN28ztKU=;
+        b=fDPzEdJGcl1Fz/kN3HfWEEnx2idgTNqCtf/oyANLXEZ2E0dwiZeD+LOI6YXcxmNH6F
+         TDazD1T3afBWh30KLXROF7f/WEal+MolYq5UrvbHQDgoTOPRds/X/hrYDdYB+0u3Hkz4
+         YNzgaqySRGffuOBS6aESxl8ICdytzBtyrpxkPJ2GnExiFXVPi+BtVKREz5aOnc17NhJM
+         xl+5e08S6JofsYUNZ03UmXTIymgk4NUfYtuaRg5uPkxF6lLY5O7YFlgW9acSt5jyfKxh
+         rAOAb0Ccby4tyO7L/7BhQ1k4aZZ8UEOnMlOgKjZtlPfFDsl4Q97/bAKcifBwx5gO8hrn
+         FOKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716314355; x=1716919155;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XI4mdMYQHMDzDk9xWjXkWCPqz9rl1k4l8GTTN28ztKU=;
+        b=nLxP+cx6+e+GTRynXC6lWmixWQHJKol6kKeUjb0Xt1kkhRYQbsOa7+I4kbBNNq9bbl
+         UWAE8TUL0+zCx6lUEoKyEnvU1ALlw+MAqTjJSAEIdTf8m/sQ1/GdM+QRF5WcbJPU+G7w
+         RDY5QPncs0SUO35mrKOCgtqy5NZvB40AZAqTXpSLUfrgEQZy5t583IZmikVfikDo9/GE
+         tusem8J22buhmvmVr286hUAkd7Lad7ycbV+/1092e8nDncNTl4idrurRWpLI01zN1Ayl
+         0613zkPVtAv2KdRytjFVWqWu672lCjMvbI0xgqdfOB77qNbQbj803OOpYheqTgeNqxy3
+         Q32A==
+X-Forwarded-Encrypted: i=1; AJvYcCW7oyNOnXJcQdaAHd+uDzs07Xyw60xKPFKJDgQH2TjwiJnfjuLclw++hNdE1K1YPMU8eekEoI4RErFvIZ2YI0u2FHFeeB5+7jIRdOWAA1iW9dZUniPae2TpNMjOH751ZCjBHA9zIi38IotLdG/n+7u8ok/tIVVHS8ewp9iwYllWC0YUUnjF92g=
+X-Gm-Message-State: AOJu0YwswMk0AkMFUhrImb4zSQB7tmfHGRRe4m6stqrIEyJxHD2pGm+R
+	/dOw/UAnjQ3944ETU0X5wWpH9LtRW2WTXULKFVixGJu0sUe1aFuh
+X-Google-Smtp-Source: AGHT+IHhaw8cihGDeGD+zUXeJgbKIcB5gsMYz1cB7sCZetbMXuUWE1Yeub/1vlqxEDZ7M5X2P6lZ2Q==
+X-Received: by 2002:a17:902:7845:b0:1e2:a807:7159 with SMTP id d9443c01a7336-1ef43c09602mr364682635ad.6.1716314355180;
+        Tue, 21 May 2024 10:59:15 -0700 (PDT)
+Received: from localhost.localdomain ([101.32.222.185])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f2fcdf87besm44646935ad.105.2024.05.21.10.59.10
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 21 May 2024 10:59:14 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Chris Li <chrisl@kernel.org>,
+	Barry Song <v-songbaohua@oppo.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Neil Brown <neilb@suse.de>,
+	Minchan Kim <minchan@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Hugh Dickins <hughd@google.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>,
+	Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	ceph-devel@vger.kernel.org
+Subject: [PATCH v6 03/11] ceph: drop usage of page_index
+Date: Wed, 22 May 2024 01:58:45 +0800
+Message-ID: <20240521175854.96038-4-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.45.0
+In-Reply-To: <20240521175854.96038-1-ryncsn@gmail.com>
+References: <20240521175854.96038-1-ryncsn@gmail.com>
+Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Thorsten Fuchs <t.fuchs@thofu.net>
-Subject: Re: [PATCH] ceph: fix stale xattr when using read() on dir with '-o
- dirstat'
-References: <10830198.216745.1716300283630@office.mailbox.org>
-Reply-To: t.fuchs@thofu.net
-To: ceph-devel@vger.kernel.org
-In-Reply-To: <10830198.216745.1716300283630@office.mailbox.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Xiubo Li <xiubli@redhat.com> hat am 21.05.2024 15:31 CEST geschrieben:
->
-> On 5/21/24 14:13, Xiubo Li wrote:
->>
->> Hi Thorsten
->>
->> On 5/17/24 12:47, t.fuchs@thofu.net wrote:
->>> Hi Xiubo,
->>>
->>> Thanks for the response.
->>>
->>> These are the steps I used to test the issue on a cephfs mount with the dirstat option enabled:
->>>
->>> ```
->>> mkdir -p dir1/dir2
->>> touch dir1/dir2/file
->>> cat dir1
->>> ```
->>>
->>> Output without patch applied:
->>> ```
->>> entries:                      1
->>>   files:                       0
->>>   subdirs:                     1
->>> rentries:                     2
->>>   rfiles:                      0
->>>   rsubdirs:                    2
->>> rbytes:                       0
->>> rctime:    1715919375.649629819
->>> ```
->>>
->>> Output with patch applied:
->>> ```
->>> entries:                      1
->>>   files:                       0
->>>   subdirs:                     1
->>> rentries:                     3
->>>   rfiles:                      1
->>>   rsubdirs:                    2
->>> rbytes:                       0
->>> rctime:    1715919859.046790099
->>> ```
->>
->> Unfortunately, it doesn't work in case of:
->>
->> $ mkdir -p dir1/dir2; touch dir1/dir2/file
->>
->> $ cat dir1
->>
->> It seems in this case the mds still will send the stale metadatas 
->> back for some reasons.
->>
-> It's because in MDS it will defer propagating rstat if multiple 
-> mkdir/create requests come and are handled in 
-> 'mds_dirstat_min_interval' seconds.
->
-> In this case as a workaround we need to wait around 5 seconds, which 
-> is 'mds_tick_interval' and the scatter_tick() is fired.
->
-> Maybe this should be fixed in both kclient and mds.
->
-> - Xiubo
->
-I improved my test environment and did some more checks. Seems I made a 
-mistake
-in the assumption that `cat` or `getfattr` would return the correct 
-value immediately after
-creating the file; it indeed takes a few seconds to get propagated.
-This behavior is well explained by your description.
-So the initial patch only fixes the behavior of `cat` to be equivalent 
-to `getfattr` and return
-correct values after a few seconds instead of keeping stale values for a 
-longer timespan.
-It's not immediate.
->>
->> And also I think you means 's/CEPH_STAT_CAP_XATTR/CEPH_STAT_CAP_RSTAT/' ?
->>
->> Thanks
->>
->> - Xiubo
->>
-Did you mean CEPH_STAT_RSTAT? I couldn't find the symbol 
-CEPH_STAT_CAP_RSTAT.
-I tested this with `err = ceph_do_getattr(inode, CEPH_STAT_RSTAT, 
-false);` which works fine.
-Unlike CEPH_STAT_CAP_XATTR it does not require the force flag to be set 
-to true.
-- Thorsten
->>> The unpatched code does not show the new file in the recursive
->>> attributes.
->>> Accessing the directory with e.g. `ls dir1` seems to update the
->>> attributes and `cat` will return the correct information
->>> afterwards.
->>>
->>> Interestingly the call `mkdir -p dir1/dir2/dir3 && cat dir1` will
->>> not count dir3 initially even with the patch but fixes itself after
->>> a few seconds with the patch.
->>> This behavior is the same for `getfattr` though; hence I did not
->>> investigate more.
->>>
->>> Best regards,
->>> Thorsten
->>>
->>>> Xiubo Li<xiubli@redhat.com>  hat am 17.05.2024 02:32 CEST geschrieben:
->>>>
->>>>   
->>>> Hi Thorsten,
->>>>
->>>> Thanks for your patch.
->>>>
->>>> BTW, could share the steps to reproduce this issue you are trying to fix ?
->>>>
->>>> Maybe this worth to add a test case in ceph qa suite.
->>>>
->>>> Thanks
->>>>
->>>> - Xiubo
->>>>
->>>> On 5/17/24 01:00, Thorsten Fuchs wrote:
->>>>> Fixes stale recursive stats (rbytes, rentries, ...) being returned for
->>>>> a directory after creating/deleting entries in subdirectories.
->>>>>
->>>>> Now `getfattr` and `cat` return the same values for the attributes.
->>>>>
->>>>> Signed-off-by: Thorsten Fuchs<t.fuchs@thofu.net>
->>>>> ---
->>>>>    fs/ceph/dir.c | 6 +++++-
->>>>>    1 file changed, 5 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
->>>>> index 0e9f56eaba1e..e3cf76660305 100644
->>>>> --- a/fs/ceph/dir.c
->>>>> +++ b/fs/ceph/dir.c
->>>>> @@ -2116,12 +2116,16 @@ static ssize_t ceph_read_dir(struct file *file, char __user *buf, size_t size,
->>>>>     struct ceph_dir_file_info *dfi = file->private_data;
->>>>>     struct inode *inode = file_inode(file);
->>>>>     struct ceph_inode_info *ci = ceph_inode(inode);
->>>>> - int left;
->>>>> + int left, err;
->>>>>     const int bufsize = 1024;
->>>>>    
->>>>>     if (!ceph_test_mount_opt(ceph_sb_to_fs_client(inode->i_sb), DIRSTAT))
->>>>>      return -EISDIR;
->>>>>    
->>>>> + err = ceph_do_getattr(inode, CEPH_STAT_CAP_XATTR, true);
->>>>> + if (err)
->>>>> +  return err;
->>>>> +
->>>>>     if (!dfi->dir_info) {
->>>>>      dfi->dir_info = kmalloc(bufsize, GFP_KERNEL);
->>>>>      if (!dfi->dir_info)
+From: Kairui Song <kasong@tencent.com>
+
+page_index is needed for mixed usage of page cache and swap cache,
+for pure page cache usage, the caller can just use page->index instead.
+
+It can't be a swap cache page here, so just drop it.
+
+Signed-off-by: Kairui Song <kasong@tencent.com>
+Cc: Xiubo Li <xiubli@redhat.com>
+Cc: Ilya Dryomov <idryomov@gmail.com>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: ceph-devel@vger.kernel.org
+---
+ fs/ceph/dir.c   | 2 +-
+ fs/ceph/inode.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index 0e9f56eaba1e..570a9d634cc5 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -141,7 +141,7 @@ __dcache_find_get_entry(struct dentry *parent, u64 idx,
+ 	if (ptr_pos >= i_size_read(dir))
+ 		return NULL;
+ 
+-	if (!cache_ctl->page || ptr_pgoff != page_index(cache_ctl->page)) {
++	if (!cache_ctl->page || ptr_pgoff != cache_ctl->page->index) {
+ 		ceph_readdir_cache_release(cache_ctl);
+ 		cache_ctl->page = find_lock_page(&dir->i_data, ptr_pgoff);
+ 		if (!cache_ctl->page) {
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 99561fddcb38..a69570ea2c19 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1863,7 +1863,7 @@ static int fill_readdir_cache(struct inode *dir, struct dentry *dn,
+ 	unsigned idx = ctl->index % nsize;
+ 	pgoff_t pgoff = ctl->index / nsize;
+ 
+-	if (!ctl->page || pgoff != page_index(ctl->page)) {
++	if (!ctl->page || pgoff != ctl->page->index) {
+ 		ceph_readdir_cache_release(ctl);
+ 		if (idx == 0)
+ 			ctl->page = grab_cache_page(&dir->i_data, pgoff);
+-- 
+2.45.0
+
 
