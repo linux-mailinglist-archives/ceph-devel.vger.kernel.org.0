@@ -1,137 +1,143 @@
-Return-Path: <ceph-devel+bounces-1152-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1153-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6AE8CA2DB
-	for <lists+ceph-devel@lfdr.de>; Mon, 20 May 2024 21:48:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525F48CA562
+	for <lists+ceph-devel@lfdr.de>; Tue, 21 May 2024 02:33:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7F7281706
-	for <lists+ceph-devel@lfdr.de>; Mon, 20 May 2024 19:48:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47AC0B21B46
+	for <lists+ceph-devel@lfdr.de>; Tue, 21 May 2024 00:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F061D554;
-	Mon, 20 May 2024 19:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AFF610C;
+	Tue, 21 May 2024 00:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HsBMTqxJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KTJjHaxp"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1D318EBF
-	for <ceph-devel@vger.kernel.org>; Mon, 20 May 2024 19:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B9615B7
+	for <ceph-devel@vger.kernel.org>; Tue, 21 May 2024 00:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716234527; cv=none; b=Eilnk8IGRIKPOT3a+Jy6XmU4xIUirOabRYxi+xhCED6Su/ClY6v+eVh2SWCxy8sIw1Z0Ipkiigdg3cisAxA7tnyi41Pt8KEkrePdxvwWZ7zhNnsuQSBsHr93Loztt4SCs+jjmmHqa9Kd2qMJBewgtSQdb0/+m0xQK84uTiSzIXM=
+	t=1716251575; cv=none; b=j8wiNDtaFbkl5eEyOgU1PhchaGL9uaoIEG1glpI+Z0peRS3iTh1FMu8vqnFbGPI6Pp3Zpr2tSTdQvnCTymy1KaUYHSykGU5Y5jGEnckNrw2vRiG7WXP9Ek4+BTUJv1EHPBBRoZnKVO3vAy3xVcFPWH490M735s+fD4fHXFpELF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716234527; c=relaxed/simple;
-	bh=wOh7qU7VhpZ2RQtzgWmyprkdHXACyOO8EQc4xmk8y+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cy3FpwXOqAVVEsfeAyffILObq6Y82BS6d4edZ8kBtaA+bqGyJwFTCLtRVYU+FtxuDorL1l4PNIbgALsbeskSVpyJX3XYuVLnmcF85QMO8CQZFcrfJ5el2Rao5oFVNoOyf5XoQMf9L3LO3jlRwUQUN09aKu6s7Ngewdod9uocePA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HsBMTqxJ; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-350513d2c6aso2244148f8f.2
-        for <ceph-devel@vger.kernel.org>; Mon, 20 May 2024 12:48:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716234524; x=1716839324; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zD6hmBMc+p55WtncPBuxs1EOCKG6h2Y9zxSM/TxDUg8=;
-        b=HsBMTqxJJFmYWR2Mr9aMbD7CMHMJv997H8FfXDLF5lS2gBLpVt5ZwN3yQziK6lGZ1h
-         iDNyaKLkQ0F4cMOAsLNi3CxmKwGXAdM29fVZFyhWwt/ks/3F7FG5oynXGsbpFsGGtJXV
-         GX/ljEAQXvwVOcHpbt5RplbnoIl6rS2PZhb2ob4XD2KOGp+6vTxQC3dLfX+H85gNXV3F
-         2jlTqSK/dbVB0G7Q9lI4rkBCYmujwaEMGEgS8H2xuQ3v5j6mQxahKLRr4puDRx+CZtI2
-         PxPe7+uUbrt2RBXh02gUSkpvQ73mj7uLnCMbAwDXIZxQhK/jyIEdPFEn+wW/+JGF+byK
-         0Ofw==
+	s=arc-20240116; t=1716251575; c=relaxed/simple;
+	bh=fJOiTk/iNpIQGDBT8ov2FCIPhgk6zXZQNw1RaFJJ0Rk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L4P9mhIoA9W+sIAWhSl0ajRFWg5BxhiH2zDVhqO1c3oc0R2cotQ306dCirMjTeWHYt3+FrDUdn9JcFP43tRtR+e8oJ+46w6JxJTPCHKK3oRwRWcIRBmB7dwioBopI70E4vMhwnC4+3Al/VurrXD20Lw8c2jYQbneThKAWlpM5FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KTJjHaxp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1716251572;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wcLWECU84oFD1HOiYc28B9aeY6hAeWxqTdSGNd9MPRM=;
+	b=KTJjHaxpFbPcQqOZYhEEY4HQu41jEjBQYn8v2tTNw3YvjtaoT4xWfbOq0ZbuxI5/VvaX0m
+	wkTISLfdgRXSF8fSvURpr89UuMVHN8SuRec/DqReCATF139c8hzwpEHayDp/QBa+kMASg7
+	1tKVvadZqpdHOW86drWAf3DXV0+T18Y=
+Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
+ [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-689-07vj44ZhMduVJWBaSrDUzA-1; Mon, 20 May 2024 20:32:50 -0400
+X-MC-Unique: 07vj44ZhMduVJWBaSrDUzA-1
+Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5b2bc2bd85dso10155603eaf.2
+        for <ceph-devel@vger.kernel.org>; Mon, 20 May 2024 17:32:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716234524; x=1716839324;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zD6hmBMc+p55WtncPBuxs1EOCKG6h2Y9zxSM/TxDUg8=;
-        b=DCm3KeH65Uy21HgT78n41/BF3vlkDQLYoTt2w0pvLms6MH4BNlOta7Kcu1KVhzgJTP
-         QWaLq7QgoyhYE9mlqG88R+O0WAkhbyAXfVyU+yhG9byWw1SgSDmsFBeXHnoyqGNwe5pM
-         3Bqj2EP1Zapp2/ZQieAo2MoIsJdVppojfj0aKfb2ortTuNQQ2FhdeRKEU9jMLsFnh9E9
-         nrhtkF11vUAjML3L3sYrHd3Lf0c3dGyHWkIXMfSKk49ZtbOZonA5WQZzpie7QWwJa41i
-         IW/ByNkr6d/V9PIw1tHonssxsQLwl2nHwDrYTBXfuqHzguMAhnktlbiU8T8Fr8M9glU3
-         b2Yw==
-X-Gm-Message-State: AOJu0YzsNQoGz1PfXpd7jZ2VDWyEpkdH0Ed0Z4HRQUaslhaX3CXxCWaI
-	dx+YhEKHR153C/0cR1ik0/XrDBxlLhXkQCbptfm2ak7VGoJ65zHBEDFHJJcNeXUap68DD6gvgWM
-	KaBD3z6XinOt2s2qXdoWHp9uLw1tfTUWFSXU=
-X-Google-Smtp-Source: AGHT+IFTpJViDLUMI/9KvuhOfMuyw/YneTL6ZCHIRW+Plfr5ZwDI45sigMNiriP+t/hJtQwgU/mYVM2IQylhHMKeiFI=
-X-Received: by 2002:a05:600c:310d:b0:41b:f979:e359 with SMTP id
- 5b1f17b1804b1-41fead6dc04mr275455735e9.38.1716234523566; Mon, 20 May 2024
- 12:48:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1716251570; x=1716856370;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wcLWECU84oFD1HOiYc28B9aeY6hAeWxqTdSGNd9MPRM=;
+        b=tnHqSZZonW3G0CbDYj4yQqBRUQrOvD8P67HroEr3p69rbjmi7WnGDGbYf/+3T+UPvs
+         SR+NRj9pe1B18ikFL9kBNrZcChb5Bv/4trGebpZyQeX4W+JabHR3bSl8oTnPuEPFCgDf
+         hcqyidf0r+H+3ziJOGN1mI655FZTuxketsfBp0LGjsgS/tIsZlUsx7LwB73t315gAEy6
+         rwrbKpJ6hrXCVTSREKeK8wbdL5ZVAnwx3fh84cfK0pZGJTfKtXl3RLLfYez8ir1+S172
+         QgVHTfxjBZlVH8RklkYy01Yj4Pdi1W7Zw2tuGqn8FjZbP9MmYGENxVmBNTL5/nRLAHAB
+         IJng==
+X-Forwarded-Encrypted: i=1; AJvYcCUPuFPOfOYoWhKnOzxx5b7cR7e130F8CkdVrMwJFhPHNWflfESL2t9z/8kY1np7Yg80Y5DrY2ppW3UHdhQ4ScUl+CLSt/pvCm1k4w==
+X-Gm-Message-State: AOJu0Yx9LhfKR3q41r2OH+5lIJTntfljWKzbcCvdQ8NHS6jkMHy0S50P
+	E8SgOpr1aVz2wNUO0MDyK9pOrD7Qo5vqGZ+1F2h0Z6JFHFCuoUV77+sSKwV7VHqymN1uLxYzujr
+	SleTY2rNC6SB/E79CsCz8z08x6rVHxqdJwTJlM9y7U+dq40vyeY6Mqf0VbKw=
+X-Received: by 2002:a05:6358:8005:b0:192:75c4:2ee2 with SMTP id e5c5f4694b2df-193bb2dd2d1mr3145968855d.32.1716251569744;
+        Mon, 20 May 2024 17:32:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IETh+Vbu1JPihq8Oq65XxoXIbGLDFNVTlK2XPdjV3Px478h9iyYRKBexSoEeQC/zYwFYuhl2Q==
+X-Received: by 2002:a05:6358:8005:b0:192:75c4:2ee2 with SMTP id e5c5f4694b2df-193bb2dd2d1mr3145966855d.32.1716251569220;
+        Mon, 20 May 2024 17:32:49 -0700 (PDT)
+Received: from [10.72.116.32] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-660ab682716sm5855077a12.88.2024.05.20.17.32.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 May 2024 17:32:48 -0700 (PDT)
+Message-ID: <5561ff7d-16b3-40e1-b9c4-7327a0dabc05@redhat.com>
+Date: Tue, 21 May 2024 08:32:43 +0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240321021536.64693-1-xiubli@redhat.com> <CAOi1vP-RdbfmBAku9j104osphc3tk4zgbG-=eQ5yTz1a9s4e=g@mail.gmail.com>
-In-Reply-To: <CAOi1vP-RdbfmBAku9j104osphc3tk4zgbG-=eQ5yTz1a9s4e=g@mail.gmail.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Mon, 20 May 2024 21:48:29 +0200
-Message-ID: <CAOi1vP8D5=cgumccKuywsLoZTCWeh8j1QbnkVS7RkvrEb3C4tw@mail.gmail.com>
-Subject: Re: [PATCH] ceph: make the ceph-cap workqueue UNBOUND
-To: xiubli@redhat.com
-Cc: ceph-devel@vger.kernel.org, jlayton@kernel.org, vshankar@redhat.com, 
-	mchangir@redhat.com, Stefan Kooman <stefan@bit.nl>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] doc: ceph: update userspace command to get CephFS
+ metadata
+To: Artem Ikonnikov <artem@datacrunch.io>, linux-doc@vger.kernel.org
+Cc: Ilya Dryomov <idryomov@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ ceph-devel@vger.kernel.org
+References: <ZkkgZlRk+PbFBUOJ@kurwa>
+Content-Language: en-US
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <ZkkgZlRk+PbFBUOJ@kurwa>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 20, 2024 at 9:37=E2=80=AFPM Ilya Dryomov <idryomov@gmail.com> w=
-rote:
->
-> On Thu, Mar 21, 2024 at 3:18=E2=80=AFAM <xiubli@redhat.com> wrote:
-> >
-> > From: Xiubo Li <xiubli@redhat.com>
-> >
-> > There is not harm to mark the ceph-cap workqueue unbounded, just
-> > like we do in ceph-inode workqueue.
-> >
-> > URL: https://www.spinics.net/lists/ceph-users/msg78775.html
-> > URL: https://tracker.ceph.com/issues/64977
-> > Reported-by: Stefan Kooman <stefan@bit.nl>
-> > Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> > ---
-> >  fs/ceph/super.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> > index 4dcbbaa297f6..0bfe4f8418fd 100644
-> > --- a/fs/ceph/super.c
-> > +++ b/fs/ceph/super.c
-> > @@ -851,7 +851,7 @@ static struct ceph_fs_client *create_fs_client(stru=
-ct ceph_mount_options *fsopt,
-> >         fsc->inode_wq =3D alloc_workqueue("ceph-inode", WQ_UNBOUND, 0);
-> >         if (!fsc->inode_wq)
-> >                 goto fail_client;
-> > -       fsc->cap_wq =3D alloc_workqueue("ceph-cap", 0, 1);
-> > +       fsc->cap_wq =3D alloc_workqueue("ceph-cap", WQ_UNBOUND, 1);
->
-> Hi Xiubo,
->
-> You wrote that there is no harm in making ceph-cap workqueue unbound,
-> but, if it's made unbound, it would be almost the same as ceph-inode
-> workqueue.  The only difference would be that max_active parameter for
-> ceph-cap workqueue is 1 instead of 0 (i.e. some default which is pretty
-> high).  Given that max_active is interpreted as a per-CPU number even
-> for unbound workqueues, up to $NUM_CPUS work items submitted to
-> ceph-cap workqueue could still be active in a system.
->
-> Does CephFS need/rely on $NUM_CPUS limit sowewhere?  If not, how about
-> removing ceph-cap workqueue and submitting its work items to ceph-inode
-> workqueue instead?
 
-Related question: why ceph_force_reconnect() flushes only one of these
-workqueues (ceph-inode) instead of both?  When invalidating everything,
-aren't we concerned with potential stale work items from before the
-session is recovered?
+On 5/19/24 05:40, Artem Ikonnikov wrote:
+> According to ceph documentation "getfattr -d /some/dir" no longer displays
+> the list of all extended attributes. Both CephFS kernel and FUSE clients
+> hide this information.
+>
+> To retrieve the information you have to specify the particular attribute
+> name e.g. "getfattr -n ceph.dir.rbytes /some/dir"
+>
+> Link: https://docs.ceph.com/en/latest/cephfs/quota/
+> Signed-off-by: Artem Ikonnikov <artem@datacrunch.io>
+> ---
+>   Documentation/filesystems/ceph.rst | 15 +++++++++------
+>   1 file changed, 9 insertions(+), 6 deletions(-)
+>
+> diff --git a/Documentation/filesystems/ceph.rst b/Documentation/filesystems/ceph.rst
+> index 085f309ece60..6d2276a87a5a 100644
+> --- a/Documentation/filesystems/ceph.rst
+> +++ b/Documentation/filesystems/ceph.rst
+> @@ -67,12 +67,15 @@ Snapshot names have two limitations:
+>     more than 255 characters, and `<node-id>` takes 13 characters, the long
+>     snapshot names can take as much as 255 - 1 - 1 - 13 = 240.
+>   
+> -Ceph also provides some recursive accounting on directories for nested
+> -files and bytes.  That is, a 'getfattr -d foo' on any directory in the
+> -system will reveal the total number of nested regular files and
+> -subdirectories, and a summation of all nested file sizes.  This makes
+> -the identification of large disk space consumers relatively quick, as
+> -no 'du' or similar recursive scan of the file system is required.
+> +Ceph also provides some recursive accounting on directories for nested files
+> +and bytes.  You can run the commands::
+> +
+> + getfattr -n ceph.dir.rfiles /some/dir
+> + getfattr -n ceph.dir.rbytes /some/dir
+> +
+> +to get the total number of nested files and their combined size, respectively.
+> +This makes the identification of large disk space consumers relatively quick,
+> +as no 'du' or similar recursive scan of the file system is required.
+>   
+>   Finally, Ceph also allows quotas to be set on any directory in the system.
+>   The quota can restrict the number of bytes or the number of files stored
 
-Thanks,
+LGTM.
 
-                Ilya
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
+
 
