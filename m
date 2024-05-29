@@ -1,49 +1,50 @@
-Return-Path: <ceph-devel+bounces-1165-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1163-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EBA28D2BEC
-	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2024 07:05:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AB848D2BE5
+	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2024 07:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EC781F25DBF
-	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2024 05:05:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C9181C22820
+	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2024 05:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3871215B99F;
-	Wed, 29 May 2024 05:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9F915B968;
+	Wed, 29 May 2024 05:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j6TH1jV+"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OeadjJJG"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98FA15B572;
-	Wed, 29 May 2024 05:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E0415B569;
+	Wed, 29 May 2024 05:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716959123; cv=none; b=jb3bJ1pPNrij/4KEeot+58GHIs80sPJIuD1KUaKpFW1V4xmfKIoQNWlV/OoBc4cUMX445fZ0KnpGQY5v5hW2MVeZ9/jIDgiwb6IDLKVT4W2lIIpSV3679TCkkhLEBA3az/1NXEOoOuyZ98pllwkoxXY4TEkYQf1ywcICP4PF0uU=
+	t=1716959122; cv=none; b=b9MPHFgTCdJtE9HM59qTQITEL9jGn+op2QiEx44HBuwu24zkwT/woE9O17Dkur4BdmHX6aemZNRDabHd5BhojbufJJIM7ZYZDg7gbGiUh13jtW077IdboDh6Y3JKKJXiu9VoBZrWn0ge8Zf6miI+OYjpkBD9oTOhufJf1/FKpX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716959123; c=relaxed/simple;
-	bh=ZlR0M/WDziIdI3zApUxmnVbN25kmmXkWi5Zxl1krXKU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SqqyQt9myZj9mTqz3rvDMDmBZIVEys91cQXi2J8NjVKq5jyk/qrcUN1ARE+vAZ2ukxA04k/+GXs3t0LUVjWYwiXCZbLCpA7N/qolsyDXxo7c7tdl9herJ0e9ueYU/nJUxXjOFR7TqtlFYEdX6kKsp1TA+ZdhmkJ/iiR+bO9Lrgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j6TH1jV+; arc=none smtp.client-ip=198.137.202.133
+	s=arc-20240116; t=1716959122; c=relaxed/simple;
+	bh=BKqjRgAUBDAEkcY3F8nYF+/jiJdinAAzSez7/+1I6I0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=THXPqd3VQqmlNqvRF4SeGoCbSj28wzFXOLLBrUOtAjw81oYNKliUs+qCyE8pgVuZBhvdK7kww7gT8gt25IQL0g/Q5XxzFaFEQkcEvYItlaJzLGEcTA/vrOHtVju407da+MgQT1huYzFky4ZDv8LQZZGI9ZzGtchaWraVkP4hBWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OeadjJJG; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=TkLi7QJRJk+eDm0XKX9y4O+chg+2e2GHQobCf0qIp3Q=; b=j6TH1jV+bD9SRCoTjPn2/w5mPx
-	Sn9ZORQd/0Vc8GCHMbe57GctL2xLaw94IPMXbiJcX95T1JOMiz6/rTaTDfBNMHzt2nFlgKG30WzoF
-	dIAc0Wxprcex1TUAE9kVEamco0ms0NAnDTyHDmkwxAjOMGcnTzwA/qjowsfaaOxk+Q7ohP80n6DFh
-	v0tR+RqojdE8wkTeuKbpKCEu64xWSJW+O63gy+h/ERmksEVT5Z+j3VJtipRNQyIKdFcIPJifoT7Lc
-	JNKkuNwua/4XXVb82UFUzCKKgQOn1LTgSY21EVqNBDHbXJZj6E9u2XVKVoPDNoZ/0QiJ/ZgSUMdps
-	IHDNZnvQ==;
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+	:Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=/OLpY6jO6BGmZUZluvnHNfe+GDP4sT7VwC1y29SpC6U=; b=OeadjJJGioCa4ge9VNZLLPIeJ8
+	O9S5rUx9FafsfCUd/nVJdDPOpkJsv/E9yKCxbOOv290nnhE62p3wpyYQNPmrOmNyU3hzVOzhGPQxa
+	5a4T1lTIFSW+n3MtalzxAOCYtI3DQHhzspZ8bYnEdLFBuQ+bNkNK5b871ug/c8Zf1MXixhuq1fwcL
+	BxKay23FFqMmNqBL5VSxy6HUEZFvyI7zrsX4GqEOmWHd2HuIc7ZktQuuiNYT9hnqC19jbRgfOjXtD
+	KR9+Ssjbvj0F4kFxGdIepfLmbgfwNS35I/CDczeE6V2t2s7vUtO9/Gkm7F3aD4SXdu4zuGlpm8kbx
+	t86dAPmA==;
 Received: from 2a02-8389-2341-5b80-7775-b725-99f7-3344.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:7775:b725:99f7:3344] helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sCBUs-00000002pSJ-2CVr;
-	Wed, 29 May 2024 05:05:11 +0000
+	id 1sCBUv-00000002pSP-1Lzk;
+	Wed, 29 May 2024 05:05:13 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>,
 	"Martin K. Petersen" <martin.petersen@oracle.com>
@@ -60,10 +61,12 @@ Cc: Richard Weinberger <richard@nod.at>,
 	ceph-devel@vger.kernel.org,
 	xen-devel@lists.xenproject.org,
 	linux-scsi@vger.kernel.org
-Subject: convert the SCSI ULDs to the atomic queue limits API
-Date: Wed, 29 May 2024 07:04:02 +0200
-Message-ID: <20240529050507.1392041-1-hch@lst.de>
+Subject: [PATCH 01/12] ubd: untagle discard vs write zeroes not support handling
+Date: Wed, 29 May 2024 07:04:03 +0200
+Message-ID: <20240529050507.1392041-2-hch@lst.de>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240529050507.1392041-1-hch@lst.de>
+References: <20240529050507.1392041-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -73,39 +76,42 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi all,
+Discard and Write Zeroes are different operation and implemented
+by different fallocate opcodes for ubd.  If one fails the other one
+can work and vice versa.
 
-this series converts the SCSI upper level drivers to the atomic queue
-limits API.
+Split the code to disable the operations in ubd_handler to only
+disable the operation that actually failed.
 
-The first patch is a bug fix for ubd that later patches depend on and
-might be worth picking up for 6.10.
+Fixes: 50109b5a03b4 ("um: Add support for DISCARD in the UBD Driver")
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/um/drivers/ubd_kern.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-The second patch changes the max_sectors calculation to take the optimal
-I/O size into account so that sd, nbd and rbd don't have to mess with
-the user max_sector value.  I'd love to see a careful review from the
-nbd and rbd maintainers for this one!
+diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
+index ef805eaa9e013d..a79a3b7c33a647 100644
+--- a/arch/um/drivers/ubd_kern.c
++++ b/arch/um/drivers/ubd_kern.c
+@@ -471,9 +471,14 @@ static void ubd_handler(void)
+ 		for (count = 0; count < n/sizeof(struct io_thread_req *); count++) {
+ 			struct io_thread_req *io_req = (*irq_req_buffer)[count];
+ 
+-			if ((io_req->error == BLK_STS_NOTSUPP) && (req_op(io_req->req) == REQ_OP_DISCARD)) {
+-				blk_queue_max_discard_sectors(io_req->req->q, 0);
+-				blk_queue_max_write_zeroes_sectors(io_req->req->q, 0);
++			if (io_req->error == BLK_STS_NOTSUPP) {
++				struct request_queue *q = io_req->req->q;
++
++				if (req_op(io_req->req) == REQ_OP_DISCARD)
++					blk_queue_max_discard_sectors(q, 0);
++				if (req_op(io_req->req) == REQ_OP_WRITE_ZEROES)
++					blk_queue_max_write_zeroes_sectors(q,
++							0);
+ 			}
+ 			blk_mq_end_request(io_req->req, io_req->error);
+ 			kfree(io_req);
+-- 
+2.43.0
 
-The following patches clean up a few lose ends in the sd driver, and
-then convert sd and sr to the atomic queue limits API.  The final
-patches remove the now unused block APIs, and convert a few to be
-specific to their now more narrow use case.
-
-The patches are against Jens' block-6.10 tree.  Due to the amount of
-block layer changes in here, and other that will depend on it, it
-would be good if this could eventually be merged through the block
-tree, or at least a shared branch between the SCSI and block trees.
-
-Diffstat:
- arch/um/drivers/ubd_kern.c   |   10 +
- block/blk-settings.c         |  238 +------------------------------------------
- drivers/block/nbd.c          |    2 
- drivers/block/rbd.c          |    1 
- drivers/block/xen-blkfront.c |    4 
- drivers/scsi/sd.c            |  218 ++++++++++++++++++++-------------------
- drivers/scsi/sd.h            |    6 -
- drivers/scsi/sd_zbc.c        |   27 ++--
- drivers/scsi/sr.c            |   42 ++++---
- include/linux/blkdev.h       |   40 +++----
- 10 files changed, 196 insertions(+), 392 deletions(-)
 
