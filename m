@@ -1,79 +1,111 @@
-Return-Path: <ceph-devel+bounces-1162-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1165-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A858CF171
-	for <lists+ceph-devel@lfdr.de>; Sat, 25 May 2024 23:32:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EBA28D2BEC
+	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2024 07:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E11B1F21568
-	for <lists+ceph-devel@lfdr.de>; Sat, 25 May 2024 21:32:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EC781F25DBF
+	for <lists+ceph-devel@lfdr.de>; Wed, 29 May 2024 05:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD762128807;
-	Sat, 25 May 2024 21:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3871215B99F;
+	Wed, 29 May 2024 05:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqZb+B0R"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j6TH1jV+"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAE012A144;
-	Sat, 25 May 2024 21:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98FA15B572;
+	Wed, 29 May 2024 05:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716672729; cv=none; b=Z3eirmT3rMh1R7h65EgGJgRjAcLNjkmfQsc/AnoGtVI5E2G7A4fkO4xpxI3Pndy8bdMxwl0qSBHaNbVf1P9owX4Po2vASZQFTUIXSv6qs0xN31X4kUvf9RTMciX0RfiKXdHbKeL/2qKU0Vl/gB+J1uboPZyixpWxhepuPIwYw+s=
+	t=1716959123; cv=none; b=jb3bJ1pPNrij/4KEeot+58GHIs80sPJIuD1KUaKpFW1V4xmfKIoQNWlV/OoBc4cUMX445fZ0KnpGQY5v5hW2MVeZ9/jIDgiwb6IDLKVT4W2lIIpSV3679TCkkhLEBA3az/1NXEOoOuyZ98pllwkoxXY4TEkYQf1ywcICP4PF0uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716672729; c=relaxed/simple;
-	bh=9Eg1k3p8BipcszsZLNndHQqZpvewIp55QoJUVm1TvSc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=r2muv19H7v77lHJYlmSl4ElhigQ0qvjJjqjMELFzYDUl1MO65sQOVinYn73rL4rV+b/kaYQXxqxPjdg0nZyorGA9FNpMmAqLJ3pUJgOIg+ozIYigAvTLF5l2zr1aAfwgrr0q1VPN/mD4FfTBf9FHoxN+WXET1xURRJjVV5QXQFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NqZb+B0R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 61EC8C32789;
-	Sat, 25 May 2024 21:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716672729;
-	bh=9Eg1k3p8BipcszsZLNndHQqZpvewIp55QoJUVm1TvSc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=NqZb+B0RDBuKl7bf3VXA9zgKu0YDPmn1teyJDs9qQo2BEMVElzwsmKWiH4+UGvZuW
-	 4IaLJUMU4ewOLry4H8p10G9yOgxvAMDxKJaI66uruVbJfim/sA1F1ExB/4Ak6lFHBN
-	 x+swwn/0pUdG4RTv4uriNjaXuJymjfkRrFEG5VEafDq1iuliiVJIAtU+LVeIpNijFc
-	 k0PUZX00dmjxYx6RIWyS81bShFjKkTaaB5SVnqLqQ+UjIDMcrtP9eoE9VNO083Yb6v
-	 ZYsIibv++lObGod2dRHXurRp0QWoOjoHjAnF5Si+p1CHbk0MIDbX+SA58CJJViBVni
-	 EYwfhzGFNN3VQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 5A3E0C433F2;
-	Sat, 25 May 2024 21:32:09 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph updates for 6.10-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240525095738.3046298-1-idryomov@gmail.com>
-References: <20240525095738.3046298-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <ceph-devel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240525095738.3046298-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.10-rc1
-X-PR-Tracked-Commit-Id: 93a2221c9c1ae32643df67c482dc4c4c591b7514
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 74eca356f6d4429497a097a8ed4dfa76c441bab9
-Message-Id: <171667272936.25058.2908553170380448829.pr-tracker-bot@kernel.org>
-Date: Sat, 25 May 2024 21:32:09 +0000
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1716959123; c=relaxed/simple;
+	bh=ZlR0M/WDziIdI3zApUxmnVbN25kmmXkWi5Zxl1krXKU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SqqyQt9myZj9mTqz3rvDMDmBZIVEys91cQXi2J8NjVKq5jyk/qrcUN1ARE+vAZ2ukxA04k/+GXs3t0LUVjWYwiXCZbLCpA7N/qolsyDXxo7c7tdl9herJ0e9ueYU/nJUxXjOFR7TqtlFYEdX6kKsp1TA+ZdhmkJ/iiR+bO9Lrgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=j6TH1jV+; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=TkLi7QJRJk+eDm0XKX9y4O+chg+2e2GHQobCf0qIp3Q=; b=j6TH1jV+bD9SRCoTjPn2/w5mPx
+	Sn9ZORQd/0Vc8GCHMbe57GctL2xLaw94IPMXbiJcX95T1JOMiz6/rTaTDfBNMHzt2nFlgKG30WzoF
+	dIAc0Wxprcex1TUAE9kVEamco0ms0NAnDTyHDmkwxAjOMGcnTzwA/qjowsfaaOxk+Q7ohP80n6DFh
+	v0tR+RqojdE8wkTeuKbpKCEu64xWSJW+O63gy+h/ERmksEVT5Z+j3VJtipRNQyIKdFcIPJifoT7Lc
+	JNKkuNwua/4XXVb82UFUzCKKgQOn1LTgSY21EVqNBDHbXJZj6E9u2XVKVoPDNoZ/0QiJ/ZgSUMdps
+	IHDNZnvQ==;
+Received: from 2a02-8389-2341-5b80-7775-b725-99f7-3344.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:7775:b725:99f7:3344] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sCBUs-00000002pSJ-2CVr;
+	Wed, 29 May 2024 05:05:11 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jens Axboe <axboe@kernel.dk>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Dongsheng Yang <dongsheng.yang@easystack.cn>,
+	=?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+	linux-um@lists.infradead.org,
+	linux-block@vger.kernel.org,
+	nbd@other.debian.org,
+	ceph-devel@vger.kernel.org,
+	xen-devel@lists.xenproject.org,
+	linux-scsi@vger.kernel.org
+Subject: convert the SCSI ULDs to the atomic queue limits API
+Date: Wed, 29 May 2024 07:04:02 +0200
+Message-ID: <20240529050507.1392041-1-hch@lst.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-The pull request you sent on Sat, 25 May 2024 11:57:37 +0200:
+Hi all,
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-6.10-rc1
+this series converts the SCSI upper level drivers to the atomic queue
+limits API.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/74eca356f6d4429497a097a8ed4dfa76c441bab9
+The first patch is a bug fix for ubd that later patches depend on and
+might be worth picking up for 6.10.
 
-Thank you!
+The second patch changes the max_sectors calculation to take the optimal
+I/O size into account so that sd, nbd and rbd don't have to mess with
+the user max_sector value.  I'd love to see a careful review from the
+nbd and rbd maintainers for this one!
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+The following patches clean up a few lose ends in the sd driver, and
+then convert sd and sr to the atomic queue limits API.  The final
+patches remove the now unused block APIs, and convert a few to be
+specific to their now more narrow use case.
+
+The patches are against Jens' block-6.10 tree.  Due to the amount of
+block layer changes in here, and other that will depend on it, it
+would be good if this could eventually be merged through the block
+tree, or at least a shared branch between the SCSI and block trees.
+
+Diffstat:
+ arch/um/drivers/ubd_kern.c   |   10 +
+ block/blk-settings.c         |  238 +------------------------------------------
+ drivers/block/nbd.c          |    2 
+ drivers/block/rbd.c          |    1 
+ drivers/block/xen-blkfront.c |    4 
+ drivers/scsi/sd.c            |  218 ++++++++++++++++++++-------------------
+ drivers/scsi/sd.h            |    6 -
+ drivers/scsi/sd_zbc.c        |   27 ++--
+ drivers/scsi/sr.c            |   42 ++++---
+ include/linux/blkdev.h       |   40 +++----
+ 10 files changed, 196 insertions(+), 392 deletions(-)
 
