@@ -1,109 +1,88 @@
-Return-Path: <ceph-devel+bounces-1189-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1190-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56998D483F
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2024 11:18:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35498D4CAB
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2024 15:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BFABB229E5
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2024 09:18:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88A1E2844ED
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2024 13:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA52C6F30D;
-	Thu, 30 May 2024 09:18:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AD44D8DC;
+	Thu, 30 May 2024 13:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=storingio.onmicrosoft.com header.i=@storingio.onmicrosoft.com header.b="FF5BD8mz"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2119.outbound.protection.outlook.com [40.107.7.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9054E6F2F6;
-	Thu, 30 May 2024 09:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5186F17D8B9;
+	Thu, 30 May 2024 13:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.119
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717060701; cv=fail; b=DNg2LpEXv5Pn4cnFa8rGVzFlSSdm7agWvwg1aWyc1Fk6yIO50s/U/urZkLZSec61NCZTZTSUqOD0Mb1dg8s1NS4Qa9x2LJ7EGQB6IznJ9lwXlTeP2zcV+7xPkz7Tos35T9j6NfXmlxIsH/yUZFTrsMy2Ofba1aKEhUK8fXMaPMY=
+	t=1717075612; cv=fail; b=OFYSpEkf6P8xikn0HhStb/yPTQouHYYfIj5A0Y+2zfRYLYQwQjmmeUjI7SFrImHiW02q623hk85v/OvuyAy9bbLh8DbBWnr72pfHIgLn95vNThUroGoFPP/SEcQb2N3Bd/cUDqpt7PshRMSac2oRX63T/zpc/9jPchIy8a7DO/E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717060701; c=relaxed/simple;
-	bh=veKFwid068RyUd8W1xKG0kw25hZi+ouAw1qmTdpUqPA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Y3HnbK/HUdCSt87kujOm2F8vSO9bps48qIjHrZd3LqR5M+dKpKKB2VGCXOk4GvlDlkhkOrSd8UfrL22HeqZAvTeV7GmihAVtTLFscAHWRZ716gySQ4Q34iIlx5Qpv8Tn93HlAjB20KRcRfbKIQNVdekAv2JrNYcOYqwu2i9J56w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44U7n5hV002784;
-	Thu, 30 May 2024 09:16:43 GMT
-DKIM-Signature: =?UTF-8?Q?v=3D1;_a=3Drsa-sha256;_c=3Drelaxed/relaxed;_d=3Doracle.com;_h?=
- =?UTF-8?Q?=3Dcc:content-transfer-encoding:content-type:date:from:in-reply?=
- =?UTF-8?Q?-to:message-id:mime-version:references:subject:to;_s=3Dcorp-202?=
- =?UTF-8?Q?3-11-20;_bh=3DBdPYxC5USHVULUTy7ZfZqhM+RCgM6BcNA8YOCr9E+nE=3D;_b?=
- =?UTF-8?Q?=3DiEXCWqw7ljieCh6HQcv6moF6g6zlOtYTs6l/bQyZBV7mrEjbMzJiceT6F0TR?=
- =?UTF-8?Q?mJYApcHD_rrmIiuOIR//EoyWR5w5CSCCTXNENc+IUNFx3eivp4gh377HOwdhGXi?=
- =?UTF-8?Q?LP5i7sN6kjGLHM_LDBfpz+1caJFy25YoJCcGZ/fD/OU2M+YZLB4kMTCD69tUswW?=
- =?UTF-8?Q?3N8vMnLx5eV8OkcTv0Xc_vNISwufG4aQ5sr3GKcT/Xq7FCrvNjhtKsIEv90+n7P?=
- =?UTF-8?Q?+gACPMVFAPtt9crp60YwPRs3dr_smafucRx/zlmlFgn9uu1Q+J/CM2vjEQXkAQ3?=
- =?UTF-8?Q?uxyo1jJ1rqG7DC7kE0Kqc8IyI4bl7JCo_Mw=3D=3D_?=
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3yb8fcghay-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 May 2024 09:16:43 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44U7Jqpe006215;
-	Thu, 30 May 2024 09:16:42 GMT
-Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2042.outbound.protection.outlook.com [104.47.55.42])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3yd7c6pax4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 30 May 2024 09:16:42 +0000
+	s=arc-20240116; t=1717075612; c=relaxed/simple;
+	bh=k6Tze9a/JVtCRbHXCYcZO2+gHgns9pvNJh45qa3ejs8=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=QAjrhvrHJnp41e8+0DgLXCKsmRh+OCNSM4Zrf97/5VWpXTIRTUaw23VBIbWRBpahF7dhvdWVEAtU2rYZnV8rV4WxKPdBwwg7sNQFIRyiOhCRgFnJwHIyiEcCiA18r+KfYPRl+fx6v+XwvABPOn8TM23Bdd7ummxeRczp9/HaSVw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=volumez.com; spf=pass smtp.mailfrom=volumez.com; dkim=pass (2048-bit key) header.d=storingio.onmicrosoft.com header.i=@storingio.onmicrosoft.com header.b=FF5BD8mz; arc=fail smtp.client-ip=40.107.7.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=volumez.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=volumez.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZW4sdwt7nQbdjT0+fvotSJ75hJ6npAhUXI5NdHvh5g2RfO7Hwze0n6s4G7cAHt5sM7X2WtDBBIjEVtGgby77A+ClUiEEERrhNwsldrqxryazhuHk5ou7HAB5cNLPT9RuywPSPtBJxKEfr2b19fM2xMP911XbMN9HPtFlE8saewhwqJtkhvVSbPAg8DCxN3hXyf84ug3gHb0sz+fEuR3KELd3qgrluqMkrcjbpCSvNpTKIvZAl8hJYsIULC7JIvXVKG9eEzs9OUInDVTmSWxH9lvDF7uTRgPeBdEI4Vx+xN3+sihlxpPD1k/ioz6RTGWx7AGkO/97mo0nYRPoKptH0Q==
+ b=C6fzBMc9EasrK0hc+JYeHHd+aLX5sl1S3t5D2BjcmjUVeelauu9B7HTZHvSVepccPuffC2v+bJuKLHLN+lknfSy8Dvyub9Hu+/GkL4/A0wij/+LKdF6G69UIBcsH2aI4Mw6ULDRn7t72LZsGxQjonUNzacJHwEgCkUPL2dfMQ+nhQrtfI+NaBJiyY6LvDQHSKyIY1SlSQ2VguNneHRj7+8qpnArMHCHVCK4sdEg18duEWznkvwOhS5zNNJo8OuxnwYz6r+l1TjqMxbOP9jABojkknI+6gbN+UiYTT54xjRKJaovLv9++LYUkEx++kPSuhmOeq3fmaer0Vo2v9cKndw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BdPYxC5USHVULUTy7ZfZqhM+RCgM6BcNA8YOCr9E+nE=;
- b=MxU1uyBe/4XWuZlHRz6ZGJ//6QpvoPjDgaSd3O0hpy4VHW1FKCqSfE04+mAGBtdbxoYWqCUHOyGsTS2P/9xlDtT8XnZ+LhvY0R5Vd95y2NAnjwGhp4xgVLBXB3sbAsBonL5WRbbXn0DjH9NSfjgUnnTwIEhEs4cvGQRqyUtu4dJ2HGLMSYWC/iPr63WwiOmOhrxrCtgmsx5x64f+6e9/9zVXTFWxMNhGyg93UvvaLsue55s/d2FjpgKWvjnh8wJy3jrDClGkKIJyV57+rifk4KX+Pm9/9bI/KQtbCB2kUqIIUt3SuMxwaxr8QlFdg57WNNJiDjxXgGEZyxMIXlNwhA==
+ bh=8LjktfkSojzHlVV+cN/LfzKEvgw75PDXePaqim/1vS4=;
+ b=OE6YLfWlkWdpYDpFQcooIHtEX6NKLh/E0TC2LVLGgAOsSNTds5s+DLB4GMPpF8dU2tX4na5+8B6RSLWrckPvAbHzRSC6jmNuQodnBWLnNiuomBhq82P8I3w+q09gpvo03O866CrzEc9JSbTwwuhU8xRD4BX6cCKWGMm2ejHlARI3H6UX2Q7tfeSQa+LCoNNdsfTujyf2vQ7BfMJEG8BGWsxOfCanP0wUTOn9j6eAsATiFJWDjfN7+hKENTpl6dHp+Y5jdTqqIKYWQpO9BwKcFHA6snpoUHgsEX4iFxSP5bOik11c/6ay3/KJhfR509/tYawnf7bZewQT/ncck21pqg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+ smtp.mailfrom=volumez.com; dmarc=pass action=none header.from=volumez.com;
+ dkim=pass header.d=volumez.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ d=storingio.onmicrosoft.com; s=selector1-storingio-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BdPYxC5USHVULUTy7ZfZqhM+RCgM6BcNA8YOCr9E+nE=;
- b=G/7QTVDgO+k85ObUI8TepKa4ed7WFzUGZgaPA/T1NlpuXHcU5g6u/DK/lJFVobL9IyH3DZgHV7oNkueIPT1RrT/AuDv25KcA5Mk5siotZ7nswU82hU2RiKjTMiHDBmwJmkT3sO/vg+heGPGmcBgVVb9ScoszC+PtHlQMwESHSG8=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by PH0PR10MB5706.namprd10.prod.outlook.com (2603:10b6:510:148::10) with
+ bh=8LjktfkSojzHlVV+cN/LfzKEvgw75PDXePaqim/1vS4=;
+ b=FF5BD8mzADiSra2OYQiZH+1UD3p1fVV3Guz8MDBVzWDAbi64aufLnlZVNZxh3GC1ZDR7h80x4VlfFtzMYEsX7HNEC3Z8hnCUDte7nmKq3thHpVGb+uVN/0BfYaVpbBAOb//r6/2TVIHZBwo1oWf/hh9tDb9E6OZ9I7Y6kaOFb4o4CfVR8YQxnjbNGo6zI1mOxEhMMoTQmtQPkX0YPANSoZGdczdPQmWiDQCijfVNlenujbURfgNVJjdlcN+rycJNrKrip/CLtTa2q4djaIKaS9actFdTILfPIbELECrSTMMEWCA0oRgxkEFrWOEf9hJCsDFMiNHzk3oTOhS/i0oxJQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=volumez.com;
+Received: from AM0PR04MB5107.eurprd04.prod.outlook.com (2603:10a6:208:cb::11)
+ by PAXPR04MB8814.eurprd04.prod.outlook.com (2603:10a6:102:20d::20) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.22; Thu, 30 May
- 2024 09:16:39 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.7633.018; Thu, 30 May 2024
- 09:16:39 +0000
-Message-ID: <1a1854bb-1f28-44d1-a4ac-30872bd6c3c8@oracle.com>
-Date: Thu, 30 May 2024 10:16:33 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/12] sd: convert to the atomic queue limits API
-To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Josef Bacik
- <josef@toxicpanda.com>, Ilya Dryomov <idryomov@gmail.com>,
-        Dongsheng Yang <dongsheng.yang@easystack.cn>,
-        =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
-        linux-um@lists.infradead.org, linux-block@vger.kernel.org,
-        nbd@other.debian.org, ceph-devel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org
-References: <20240529050507.1392041-1-hch@lst.de>
- <20240529050507.1392041-10-hch@lst.de>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20240529050507.1392041-10-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM9P193CA0024.EURP193.PROD.OUTLOOK.COM
- (2603:10a6:20b:21e::29) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.21; Thu, 30 May
+ 2024 13:26:45 +0000
+Received: from AM0PR04MB5107.eurprd04.prod.outlook.com
+ ([fe80::de53:c058:7ef:21fb]) by AM0PR04MB5107.eurprd04.prod.outlook.com
+ ([fe80::de53:c058:7ef:21fb%3]) with mapi id 15.20.7611.030; Thu, 30 May 2024
+ 13:26:45 +0000
+From: Ofir Gal <ofir.gal@volumez.com>
+To: davem@davemloft.net,
+	linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	netdev@vger.kernel.org,
+	ceph-devel@vger.kernel.org
+Cc: dhowells@redhat.com,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	kbusch@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	sagi@grimberg.me,
+	philipp.reisner@linbit.com,
+	lars.ellenberg@linbit.com,
+	christoph.boehmwalder@linbit.com,
+	idryomov@gmail.com,
+	xiubli@redhat.com
+Subject: [PATCH 0/4] bugfix: Introduce sendpages_ok() to check sendpage_ok() on contiguous pages
+Date: Thu, 30 May 2024 16:26:22 +0300
+Message-ID: <20240530132629.4180932-1-ofir.gal@volumez.com>
+X-Mailer: git-send-email 2.45.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TL2P290CA0005.ISRP290.PROD.OUTLOOK.COM
+ (2603:1096:950:2::15) To AM0PR04MB5107.eurprd04.prod.outlook.com
+ (2603:10a6:208:cb::11)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -111,470 +90,299 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH0PR10MB5706:EE_
-X-MS-Office365-Filtering-Correlation-Id: 58489bb1-ca80-451c-ae61-08dc80893636
+X-MS-TrafficTypeDiagnostic: AM0PR04MB5107:EE_|PAXPR04MB8814:EE_
+X-MS-Office365-Filtering-Correlation-Id: a523813c-b37c-469d-4f78-08dc80ac26fa
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|7416005|376005;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?Zk0xKzhCaGd6TXRoNUJzU21JbVY5VEkrRVA4TndzUW1Ycm5kUnRnWmozM3Fs?=
- =?utf-8?B?UGpOYTVxdXYrdlI3bHlUSTY3c3Q3SHBVODBFRWYra25zaDdXbEJUUnV6ME5w?=
- =?utf-8?B?OWFldVYvMHhRdVkvNmFQcHRnSjFlWDdLT0szV1RDanpKQWxPMURhbmJUSjlo?=
- =?utf-8?B?NEMrMzZzWHlKeE9SRTNESGN4YmE0ekIxWHlIZHZvdWdaaVpIZXRFRFREQktw?=
- =?utf-8?B?R2RocTEvczQ4ZUhJZ3p0RmZDaEpzWGkxREtBejJVWjlyN05yc1Rtak5YUWpF?=
- =?utf-8?B?dk54SVlSaURrQ3lFZmtEV3NZWjVRNG5KamtqRzFHNFlVdTBmZDFHRFFWbjBi?=
- =?utf-8?B?Mmh2bmtTYnZHTnpEOVRTcVRzSUJvQmpLQUNsV0xaK2o5aklIdzUvZ3ZGVXlT?=
- =?utf-8?B?SGxHdk1hbmNxdklPQnp2VVovYUhWRE0xK1lHaGhhbGo1cVlrLzg4VDZyMDVu?=
- =?utf-8?B?U1JjZVlrYW5QK2tKZnRPV25VQlhTZFE0am5hbnlXbWoxdlE4cWpuU2ZjUGR2?=
- =?utf-8?B?MmlYMmN0UlRpYVF4VDRNTVBTMlVzVURhcytXSmtXRnU0T1J5Q1VXK2FwSTNK?=
- =?utf-8?B?QzRwemsxbGxTeWNhZ3Z0bUZ1V250YXN5NEU2VjZxbXFqZGVGRUgzYVIyNVN0?=
- =?utf-8?B?TW82K05MM3hYQUlQQ2xNMUlUWmpDNTRtWVRTZlI3ZGJ0RGJvYS9wOFdHTjh4?=
- =?utf-8?B?c1ZXUkkxdnluYk1yUjJPbmoxRkxNM3MvaElUSjNDTm5pTFMzWWNMVWhxSkQ3?=
- =?utf-8?B?Umlwb01mMU16a3VRQWxMRHlpNk9jcGxWMDVuTCthQkVSQ3FEdW4vcVJLY3lB?=
- =?utf-8?B?RS9Ddk9FZTV5MHpMdy8vRTRSaXp4T0JHaU1pNjRObVFzaU1GenFwWWhGRGNO?=
- =?utf-8?B?WmtMbmw1UXFoMVd6dXlyM0dJbjM0cVFRaXVjdmRCbG1DSHZNL2JYZXZsTi9l?=
- =?utf-8?B?VzMrSzVETUFFUGpFZitUWVJOSlNDMXJFQlEzQTdNYjlXZUwrZjN2SDh0cENM?=
- =?utf-8?B?cVpvcFRuTEhVQ0pCUWs4NGpnN1ZiN3I4Zkw4K0NvSi9yWnlIT0Y4RktLTDVl?=
- =?utf-8?B?cUFpeklwdDdXM29WaGx1VXNjak9KVkF2eDFpRTNsenVaMWZIL3ZKSW94OTc2?=
- =?utf-8?B?TUcxRU1HNWV2QWx3Y1FrWTVYWDJSWDVSMi8rVGhtSi96OGdhTTRja2N6TW1y?=
- =?utf-8?B?cHd5U3Z0TFZHUDM2K2dIZG9rN3JqK2xWY0RFVVVqVWpTZTRvbnM2KytZNnNF?=
- =?utf-8?B?UmFiQUdCaUw1UFYrSnRzWSt5dEJycW1sUjI3N0hXVEdGcDlBVHVhZWZTa2pK?=
- =?utf-8?B?UHJYbXhJOTdzaGFzSEd0VktpTXIzaSt2Y2RtR3NHbUdaRUI5RXRnWkRGOVRP?=
- =?utf-8?B?WXpXbndBTGp1aCtBRlc2dFloNFFMVFRQbEZwb3RIMnZXalVDYnBWdVBjOENa?=
- =?utf-8?B?eW5qa0xKVjllZXVjNHdoanhOYk5CZ1hrdFJGNFNxOURoTnlhdkxYYUZuRWxN?=
- =?utf-8?B?aGU3YzVLMEhFajByTXlQWTYxYUZFSERETmdIbTNIYjdMTnR2a0V3Y1J0QXJL?=
- =?utf-8?B?elRTNG1nbVJkQTRMOG4vbHl5TjBqaDNKMGFzclRITXVsUndVbU1uMTYwTXpN?=
- =?utf-8?B?aTI2VFRhbmpmQnYxVU9ieXcwNnAraStPTjBaaVpTRFpSM0hUenl6anZLdU45?=
- =?utf-8?B?dktJcEszckovaVRpSnVPSnFtYXFkTXBmZXNkSzkxNkJXeEY2MFVJN3JBPT0=?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(7416005)(376005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|7416005|1800799015|366007|52116005|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5K6LXFgqrWvufaEfgeHLMz00z0KC6Nd1JQ2FQXC2C8mhMZsQbSE5MCtAMlv2?=
+ =?us-ascii?Q?LTKaQvkv4xdqFKX5iw6lzF8QlN5Y3u+oT6i0CwfsMIPadrvDKYzThwpGCmar?=
+ =?us-ascii?Q?a2Hfa+aX9nhPHtaHAAWdoPf/yAbtJCqCeMBZoNK+Ci0ZAscZ6by/Ak5Vywwl?=
+ =?us-ascii?Q?ycbAb4kTrjd6fJSmHE36kJZpA+a7wCSNLEiVOJpAoI/8B3+qGYozmnxNQqmV?=
+ =?us-ascii?Q?vEDAUJ/GlUSFEhZrEP1fKBlfy8siEU2PHUeLljmVNfYT0QFY6P09+83vaTJj?=
+ =?us-ascii?Q?LJvRIlXP6iHaGozQhggpfmsWJx4DBH/sCqzhBZXHL5wWIoGuwkiXTzOcfHS2?=
+ =?us-ascii?Q?Rw4dmFFRMvACOCxyrAQIbs2rKzPq77d9xgUh26Wqh1F4XVOgBFWiJoPYUhWo?=
+ =?us-ascii?Q?uAykZxt9Pk0lw5ap28fj8oGexiwHElsdnXV6ErUZx1y03WXw4mex7Bl6pT+e?=
+ =?us-ascii?Q?pDaIyoNxxtMSfWwJQlIkYW6vioabu/doTOGAT0kkZpxTW2Ls/sn9eXQJlxNa?=
+ =?us-ascii?Q?0G85hNoPcnCak8njkER4/2PaC/O3Y0PsaaYZ8DmdaKYfSKRsplIRAHfjC5CN?=
+ =?us-ascii?Q?zG2UyZNZ4G4Nug5QIlISAaD6WnBwJjgjnRuNbG4FaRKvQhSu3Wb3dh2nFArj?=
+ =?us-ascii?Q?aZO7Jy4W8xXvOfiM5Hv7tWhu1INylZW1PAMM+6OwupcBK3rXgztO38Owj/zZ?=
+ =?us-ascii?Q?ivaJZLNoeLxITv57GZdrhQi7PgHKM2GuE+0kkaRR3Qp7CkaxyozBOXnAZb1l?=
+ =?us-ascii?Q?1Z9TZMf2QnB5V4YMU+VNnMdmqmghIZB30uyaAIqWQd0BwsOywFM08Bm+lbE7?=
+ =?us-ascii?Q?u4HLebabEMRfG3DO3ps9AYFPHeUd82VLrYGx81B1gyR3szZtVhRXT6O3aYFb?=
+ =?us-ascii?Q?WefgQQkx47E0ylHNvkTF5cvYsubbKkG4J140t29mz+5sfqIPGXZsXOYCxcbx?=
+ =?us-ascii?Q?DDfQx7KNO/8BvZwWN/UaWbx5ODmtsqs5/T+exT8Pa3U/aJI5g3ThpcvRnEjn?=
+ =?us-ascii?Q?2JK4bw3XgKdA/XyytCQ2tewNxSB2K+EJnHsN0NySdBGoU16yOG7Uh4zCnlhP?=
+ =?us-ascii?Q?YbrvLJ9GPaC6iEr4OdcgHN7RmOENZOlmoE7P78CmDUAq0/spHRdiBM8v9VhA?=
+ =?us-ascii?Q?Cql0DGQSSY+MTgF41TNpSduzjrfxNgXFYWdv0QwHQD/ubupxGjK/h1yTSjMD?=
+ =?us-ascii?Q?7bH21vuSuomjt3cLI27JrG+POeHkMM9HesQlsnkEDXDh43+2iluxemyh3DiC?=
+ =?us-ascii?Q?CqPxWTCMrvFlM033hGQKPwSW8mV7b2E04JhWK9ys64Ryf5TKLXZ5SO7GUEuc?=
+ =?us-ascii?Q?7Q5SRlNRK2eCbr2dIZz4DfIX+I+y+IOCgS0Su6+R9JrBQg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB5107.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007)(52116005)(38350700005);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?amJLcStFaDB3aGZZZndOMzkyRGQvc3BFeUNZNUtkN25iNVoxUnJlWkZzam81?=
- =?utf-8?B?VXcyU3dXYU5sRjl0Ylh3TlBqWXo5VnFCR3B4UEtvNDRIeER3WmNPRXRScmRx?=
- =?utf-8?B?REZKY3hIRDhjaStkRExVd3I2eGRmYTk2Smd0NnBMcGh6d1dtTEhxVHIwa0dY?=
- =?utf-8?B?UEZ6OHhnMm9MN2NLQ0svUjE4TTN6ZHF6dHBwRUd1cVdQRHp5RXNXbWlaeTdC?=
- =?utf-8?B?V2ZsNFNzY2x5RzkxNEhuZExaZkhJMTh3SkdwdG43TFdUWkI5SWVSTmN5d1ZI?=
- =?utf-8?B?NndIS0Z6VUpaMVAzMjE5NzVWSE5Ib05FaVBsZTA0SVVqVDlGc3hMNVBUajJL?=
- =?utf-8?B?SDROVTlRV2ZwaUxWNWQ4Q1hrOGtCOXNjckovNmZreUxiRVlJRWR2QnJmVGJL?=
- =?utf-8?B?UWtzV1hadmd1ckc0ZGQ5eU1uRGVWb0kzK25HcGp5eitYN1NGTWZCdURWTUNW?=
- =?utf-8?B?NkdvMS8xVWpBL3FDZWdNWktLQW9xR2R6RW5PK1NidTI2Q2JsUGFFVjVHOWFM?=
- =?utf-8?B?NGd5SXBxekZ1cEZCNVRjSEkyQ3U5Tlp0M0ZkQUJWRGxvWXgvSGZOM3RPMTlz?=
- =?utf-8?B?U0VMb1hOanF4NzlqTC9ibjI2ZXFKZGFsZTJDb3dQL3UxZ3BOSVhoamlEcFhi?=
- =?utf-8?B?WS80SkZWZ2o2SHdVSEx3ZWcrUWpHUm1JM0dkTVdnZGxqRjVDRS9MTUxlSjdR?=
- =?utf-8?B?SUkvcVQzSmx3ZFVoSDVia1crYXdQMk9IWlFmbDFMRG5GMkhzTTNaRnpwbGp3?=
- =?utf-8?B?WUx0bURzeHBhTU1mTzlkbDExcEZ3dm1VRDVDb0xTZ0pSZWxSNjIwVzJxKzJt?=
- =?utf-8?B?MHZhL1ZPaEpydXhKaDAxUi9PeEFZZXF5TjJKekx1Y2hCb0FnMklFaUxVWmF6?=
- =?utf-8?B?K3NiVmZxZ0VpUjlUZjA1d3RFcXlYaFk1VEMxd3gxdTlHTExqR1hJc0dFajRq?=
- =?utf-8?B?TzMzbG5UMWFoMnJaMVkrQm01cDZ0L1M4a2wyMlp5WXlMWWhYVjVvN2UrNnRY?=
- =?utf-8?B?bCtjcDNCVG0wTkRqM0l2bGxPVFp3WDlUdHdmcmJxUTd1TE5RRm41dU9BaTFY?=
- =?utf-8?B?aWgwTnFyeFMvcUJ6Kzc5OVZDY1FXMkZKOTF2TWdhT3djMUtudVNETzQxeDd2?=
- =?utf-8?B?c0s5TkE3bFhVd2NEWVBxMk1Pd3J4MThKTmhLWllZRnYvUDBxMzlCZHdpa2FJ?=
- =?utf-8?B?MUxJVHdEUGE4SSt0Z2U5cmhyVHRGenp3RHk5bUNEYnBpazlnbVJWKzJGRUQ2?=
- =?utf-8?B?ZUNmVnJtaExlZTFONGFyZDgvUkxMZENzNzhLOStYSzZ2TGRyanpjUFB5enlj?=
- =?utf-8?B?anN6ekFNM2wrM2RzS3lRdkwvRFM4UHB6NXVzeWVRQ3JWTW93ejNMS01YZ3JH?=
- =?utf-8?B?Y0haMWh3a3ZaZ0ljaTBLOGFQNFVlQ1NhMHJXVUlHT1FRNGpKQjFWSDBtQkFt?=
- =?utf-8?B?OHRXQldRaTZaTnpFY0h4TmFqQlRVUjA4aFRVUWxCN29zOCtlajZ3YVR2aTB0?=
- =?utf-8?B?MTJyeTNqR3g5YjkwMTRrcHRzeGhqZDBLN1lKNjZpd29FNjZKd1ZWSE5TZEhO?=
- =?utf-8?B?VzlUQUlKajRSU1N4czhWdWdxK1llU2RoNS9KT0VFa3RLWkFFRENRSjAzU1Vo?=
- =?utf-8?B?Y01zOFFMODJPaEQ4bTkrbkdzd2ZjRGEvTVBYZlN3RXdWN1V1U25MWG1sN0NM?=
- =?utf-8?B?bmtQYm40c3JmZVowL0xnYmg2VWd3VEcxTzMyQzREWE9kRm5kT2plczExS1Fm?=
- =?utf-8?B?RDVrbzkzcG1odGZSZWE0TlZsSzU4bGZpM3FDQXBFYlVibitaRVEwMDlqd0xZ?=
- =?utf-8?B?RWpETGp2L1VQRVlHQ0RJT0NxTWltZWxwU1hhSlNmbFBSZTFCNUppb2hFMTJn?=
- =?utf-8?B?Y0tPVVpRL0w1U21EU2FIQVhkVEphdGdjOGJYcEdFc1RjVnZ2S1FnT1ZFamdR?=
- =?utf-8?B?eWdBbmhyYTcxK09QSFk1T3BCUWVsTDhUSVVMSzIyTlVmRXV0T1UrQTJSRW5P?=
- =?utf-8?B?bTJrZnluNm1vNTkyaW5aS1psTFV4QWN2RnZuNHE3Z0RFK1MwalV4RXVaeWt3?=
- =?utf-8?B?U1RvMWxYYjh0QW9QR3B4c0dsVmVPRFlJR3pITFhCWFJTaFNEcWgvK1lNbFdx?=
- =?utf-8?B?b3R2a0l6YktNWmRMcU9jYndBWFUvWHNzenk0TEVOUEs3QWlMcFU2RnZtaGVD?=
- =?utf-8?B?c0E9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	UKTJAUO3q0sghuFUKdNK7rSr3+26ZMaipkdPiZvhJNc6wEVZhwno+clU5y4O/Pp2HdYW9iY9QMLMMu16TGOXKV3oMqO6rCXomRyHdIh/WZfnTafxZz4bl4UmIM1aGNnza2BXXAKWMZhOy89w23kxxkLdAvcbSne+mnYN+gYyu7tBvhFK8HSJ0LyLN22ccrn8smNq6J3SS6TQxzSGOnTYS6o7//CFbHNaxMIx5yrdTbVTyM7juYmbzAKLezaOGOmFtu14XqszW5g5ilg3xVRAKAtNPlQ1UVvjqyIbahZr71mY+wKwbf0jJSiIyb3sQPinnCkfuOvXDXSGFWGk7WdKk6Kg2elkAL0MtyuzKyp8WFRxFURwuezmn8qYPRAVucqDnqEPXAVEdNx1UOd3F7bpYuRtRa2xDXL7LN8lY4qFNaaFTk2rnxKAhk7pgfiAPoaQtLchXox5YiNwAymXCHJi9qo4iFJIjwEDrTiPRcLepaAWdUPt4qYGcDZXXMW8XftWdeFHEbUV7EDIED/sBj8hfOAGscwNl2qU6E7IYjlsm9EBer516R1/bQotVqeWKIlKz5QLaotXqC9hIEHT5GXx1HmqlLAFlMZe5/AytMHkTeg=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 58489bb1-ca80-451c-ae61-08dc80893636
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FxylndTLLIT5mi3T1QBvtfSkQsPkA/D/mz3+VU5/6oGrklnPt6TZxhAcwr4b?=
+ =?us-ascii?Q?YjsVXln+/QO/Xlf537gf/b9P2xhdmGfwS9AGCzk7TyygUMmT4mrkLR34RXys?=
+ =?us-ascii?Q?UrIXkYI0h3yRMKUiagNSld2dDYuxfuYselXj8cvNEFTt8TOPnKmdX0QCmeSk?=
+ =?us-ascii?Q?vzAcqI14LaxfCDVne/nVatDnmoCaIvCeAXvzaenR2DnIrTUhg9CUvCOdkqjl?=
+ =?us-ascii?Q?0ysdkNGoj7hOXMLdZDVRvZMAWgoNBLQ/I2Fm/7Ajvq4nFqhxyJ/wschAFzij?=
+ =?us-ascii?Q?BW2iR34NKRLMXkNMhD+eiNcO4gpFSljqzfVjWBUKSw1zqhGolqQE/xtH2kyh?=
+ =?us-ascii?Q?WaO2cnUEq8V113MGMzGvKYSbIRWbM6ZAgzAj4bedbKAFLCXl1lj0oRB0e8T3?=
+ =?us-ascii?Q?f7p04oODve2tN0h9hbZOk1CkYcv2/sm7+tK0+H20dvSuBlFo43is3RRXa5Ng?=
+ =?us-ascii?Q?l66LSDN3ZMLudFuBWsLD2e3FCsZIV9BVWTm69vVTBRk1dZTiG7rH4PGAUArN?=
+ =?us-ascii?Q?6hm+NU1GEvDgdnJYN/cs26/CyqUOTS7Kww9Edy02BxazWSiZLOCf0l4iAMac?=
+ =?us-ascii?Q?/AGPJWq0TaEFuBlhapVqsx4yx43OOse/GBgarByLzLd1GNPCUZsh60hTk63g?=
+ =?us-ascii?Q?vEvVbxWDjil3xGFKtEJi7xFhZsBG8ZGar+7TbF0Fmkuf4rYHKzw4oa7PsGL0?=
+ =?us-ascii?Q?Gc4GD+/3YViitvn4giM3LEuxuGuIpcTKdULIGOaYytYhxXeedo1nUK5TSX/o?=
+ =?us-ascii?Q?e2UQZ11nWN6ExU5eQX2jon5GoCrMZXEyP7qVIvEKQFjC1osANhMlHNZYdJnc?=
+ =?us-ascii?Q?RI2L4YGtnsBk25S3np3INekoSzLoP8+4D+S9QODCAPVA5QqatqMs1AdiK8Yr?=
+ =?us-ascii?Q?hvuzSLRRTS9DMVwrNhX9iz8zjguf+i4GsddSPboTQ0yL63rvRfHbOZlzh4UB?=
+ =?us-ascii?Q?xOr24wjzP+lwjfQjLlUmZkMOFF2srXhahZEMXJppGmTpbEmd9MXMUc/1iPgY?=
+ =?us-ascii?Q?eA1GtNsRyS8nZfuxlbFFh2v6YnB4HA0wDhtPmv5RFIwfGBQha2cCp+QN7ysv?=
+ =?us-ascii?Q?0ep0OAyNWWogiDT3g0NK4xwojPEFj8cKwzVIkzIpsRlzyDjoJzlfGs3m8+u3?=
+ =?us-ascii?Q?9mYV6cEnIWPzot8TX3x0LXUdA2MwB5HUyVm+ORBCkXb+6/2VvEQCXK1hhzo2?=
+ =?us-ascii?Q?thnFcheulDMIbisP6xrmNc6AaGutTe1OLRHl8XW9RW6Wu0vmNyBJLeE9rJ+G?=
+ =?us-ascii?Q?bDRZ4iNQ+S11QGJg2RCHPoXCDNQl2M9mMC43cpzz51onV76cTLCF8X7+gxHe?=
+ =?us-ascii?Q?C64D458kF6JuxuaF4GNyezLWdXFiBlX0nXJg3S4Y1tiuPXgYu6vvAQvVFaeV?=
+ =?us-ascii?Q?JbWca41yNHJ9cjIL4hejGJPFBy02tz2eZdXa+hpjgscAd+bY6i3dWX3+DNvd?=
+ =?us-ascii?Q?KxB3NU9oqqlC8868xPJ4azlqK9ysMsg5gnhKEdchnR4koPXGN/xvrcSfyIN9?=
+ =?us-ascii?Q?StsC9MTjhGD4weOibRF242Y92t6p7A9tzGODp1wgTdxaP2ItR8+SJPFjivmd?=
+ =?us-ascii?Q?6QW+st+JbUlk1fPXpi2ZS4N9xo7ROthEp+h+1YOY?=
+X-OriginatorOrg: volumez.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a523813c-b37c-469d-4f78-08dc80ac26fa
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB5107.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 09:16:39.0204
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 13:26:45.7217
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: b1841924-914b-4377-bb23-9f1fac784a1d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B5GSa65PHgdF5oTKzy44z/QFhMi5Un1nMJTu2pndw9ivSAwVhBMG/01UeobuMRTKqOVi2hMHLSMrwmVHN7oHSQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5706
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-30_06,2024-05-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0 bulkscore=0
- suspectscore=0 mlxscore=0 adultscore=0 spamscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2405300069
-X-Proofpoint-GUID: j10R_a81KfEQxABw76oXQWImEvLQnw5t
-X-Proofpoint-ORIG-GUID: j10R_a81KfEQxABw76oXQWImEvLQnw5t
+X-MS-Exchange-CrossTenant-UserPrincipalName: n/pKJKpIxV1BIax2S9jvVxMhQhmv24+Qt0QRDV6dh1D423I+4Jv7J1YLchX3v7QVhEUeCMWIff82YPLm+jTIDw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8814
 
-On 29/05/2024 06:04, Christoph Hellwig wrote:
-> Assign all queue limits through a local queue_limits variable and
-> queue_limits_commit_update so that we can't race updating them from
-> multiple places, and free the queue when updating them so that
-> in-progress I/O submissions don't see half-updated limits.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   drivers/scsi/sd.c     | 126 ++++++++++++++++++++++++------------------
->   drivers/scsi/sd.h     |   6 +-
->   drivers/scsi/sd_zbc.c |  15 ++---
->   3 files changed, 84 insertions(+), 63 deletions(-)
-> 
-> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-> index 2d08b69154b995..03e67936b27928 100644
-> --- a/drivers/scsi/sd.c
-> +++ b/drivers/scsi/sd.c
-> @@ -101,12 +101,13 @@ MODULE_ALIAS_SCSI_DEVICE(TYPE_ZBC);
->   
->   #define SD_MINORS	16
->   
-> -static void sd_config_discard(struct scsi_disk *, unsigned int);
-> -static void sd_config_write_same(struct scsi_disk *);
-> +static void sd_config_discard(struct scsi_disk *sdkp, struct queue_limits *lim,
-> +		unsigned int mode);
+skb_splice_from_iter() warns on !sendpage_ok() which results in nvme-tcp
+data transfer failure. This warning leads to hanging IO.
 
-Are there any reasons why we keep forward declarations like this? 
-AFAICS, this sd_config_discard forward declaration could be removed.
+nvme-tcp using sendpage_ok() to check the first page of an iterator in
+order to disable MSG_SPLICE_PAGES. The iterator can represent a list of
+contiguous pages.
 
-> +static void sd_config_write_same(struct scsi_disk *sdkp,
-> +		struct queue_limits *lim);
->   static int  sd_revalidate_disk(struct gendisk *);
->   static void sd_unlock_native_capacity(struct gendisk *disk);
->   static void sd_shutdown(struct device *);
-> -static void sd_read_capacity(struct scsi_disk *sdkp, unsigned char *buffer);
->   static void scsi_disk_release(struct device *cdev);
->   
->   static DEFINE_IDA(sd_index_ida);
-> @@ -456,7 +457,8 @@ provisioning_mode_store(struct device *dev, struct device_attribute *attr,
->   {
->   	struct scsi_disk *sdkp = to_scsi_disk(dev);
->   	struct scsi_device *sdp = sdkp->device;
-> -	int mode;
-> +	struct queue_limits lim;
-> +	int mode, err;
->   
->   	if (!capable(CAP_SYS_ADMIN))
->   		return -EACCES;
-> @@ -472,8 +474,13 @@ provisioning_mode_store(struct device *dev, struct device_attribute *attr,
->   	if (mode < 0)
->   		return -EINVAL;
->   
-> -	sd_config_discard(sdkp, mode);
-> -
-> +	lim = queue_limits_start_update(sdkp->disk->queue);
-> +	sd_config_discard(sdkp, &lim, mode);
-> +	blk_mq_freeze_queue(sdkp->disk->queue);
-> +	err = queue_limits_commit_update(sdkp->disk->queue, &lim);
-> +	blk_mq_unfreeze_queue(sdkp->disk->queue);
-> +	if (err)
-> +		return err;
->   	return count;
->   }
->   static DEVICE_ATTR_RW(provisioning_mode);
-> @@ -556,6 +563,7 @@ max_write_same_blocks_store(struct device *dev, struct device_attribute *attr,
->   {
->   	struct scsi_disk *sdkp = to_scsi_disk(dev);
->   	struct scsi_device *sdp = sdkp->device;
-> +	struct queue_limits lim;
->   	unsigned long max;
->   	int err;
->   
-> @@ -577,8 +585,13 @@ max_write_same_blocks_store(struct device *dev, struct device_attribute *attr,
->   		sdkp->max_ws_blocks = max;
->   	}
->   
-> -	sd_config_write_same(sdkp);
-> -
-> +	lim = queue_limits_start_update(sdkp->disk->queue);
-> +	sd_config_write_same(sdkp, &lim);
-> +	blk_mq_freeze_queue(sdkp->disk->queue);
-> +	err = queue_limits_commit_update(sdkp->disk->queue, &lim);
-> +	blk_mq_unfreeze_queue(sdkp->disk->queue);
-> +	if (err)
-> +		return err;
->   	return count;
->   }
->   static DEVICE_ATTR_RW(max_write_same_blocks);
-> @@ -827,17 +840,15 @@ static void sd_disable_discard(struct scsi_disk *sdkp)
->   	blk_queue_max_discard_sectors(sdkp->disk->queue, 0);
->   }
->   
-> -static void sd_config_discard(struct scsi_disk *sdkp, unsigned int mode)
-> +static void sd_config_discard(struct scsi_disk *sdkp, struct queue_limits *lim,
-> +		unsigned int mode)
->   {
-> -	struct request_queue *q = sdkp->disk->queue;
->   	unsigned int logical_block_size = sdkp->device->sector_size;
->   	unsigned int max_blocks = 0;
->   
-> -	q->limits.discard_alignment =
-> -		sdkp->unmap_alignment * logical_block_size;
-> -	q->limits.discard_granularity =
-> -		max(sdkp->physical_block_size,
-> -		    sdkp->unmap_granularity * logical_block_size);
-> +	lim->discard_alignment = sdkp->unmap_alignment * logical_block_size;
-> +	lim->discard_granularity = max(sdkp->physical_block_size,
-> +			sdkp->unmap_granularity * logical_block_size);
->   	sdkp->provisioning_mode = mode;
->   
->   	switch (mode) {
-> @@ -875,7 +886,8 @@ static void sd_config_discard(struct scsi_disk *sdkp, unsigned int mode)
->   		break;
->   	}
->   
-> -	blk_queue_max_discard_sectors(q, max_blocks * (logical_block_size >> 9));
-> +	lim->max_hw_discard_sectors = max_blocks *
-> +		(logical_block_size >> SECTOR_SHIFT);
->   }
->   
->   static void *sd_set_special_bvec(struct request *rq, unsigned int data_len)
-> @@ -1010,9 +1022,9 @@ static void sd_disable_write_same(struct scsi_disk *sdkp)
->   	blk_queue_max_write_zeroes_sectors(sdkp->disk->queue, 0);
->   }
->   
-> -static void sd_config_write_same(struct scsi_disk *sdkp)
-> +static void sd_config_write_same(struct scsi_disk *sdkp,
-> +		struct queue_limits *lim)
->   {
-> -	struct request_queue *q = sdkp->disk->queue;
->   	unsigned int logical_block_size = sdkp->device->sector_size;
->   
->   	if (sdkp->device->no_write_same) {
-> @@ -1066,8 +1078,8 @@ static void sd_config_write_same(struct scsi_disk *sdkp)
->   	}
->   
->   out:
-> -	blk_queue_max_write_zeroes_sectors(q, sdkp->max_ws_blocks *
-> -					 (logical_block_size >> 9));
-> +	lim->max_write_zeroes_sectors =
-> +		sdkp->max_ws_blocks * (logical_block_size >> 9);
+When MSG_SPLICE_PAGES is enabled skb_splice_from_iter() is being used,
+it requires all pages in the iterator to be sendable.
+skb_splice_from_iter() checks each page with sendpage_ok().
 
-Would it be ok to use SECTOR_SHIFT here? A similar change is made in 
-sd_config_discard(), above
+nvme_tcp_try_send_data() might allow MSG_SPLICE_PAGES when the first
+page is sendable, but the next one are not. skb_splice_from_iter() will
+attempt to send all the pages in the iterator. When reaching an
+unsendable page the IO will hang.
 
->   }
->   
->   static blk_status_t sd_setup_flush_cmnd(struct scsi_cmnd *cmd)
-> @@ -2523,7 +2535,7 @@ static void read_capacity_error(struct scsi_disk *sdkp, struct scsi_device *sdp,
->   #define READ_CAPACITY_RETRIES_ON_RESET	10
->   
->   static int read_capacity_16(struct scsi_disk *sdkp, struct scsi_device *sdp,
-> -						unsigned char *buffer)
-> +		struct queue_limits *lim, unsigned char *buffer)
->   {
->   	unsigned char cmd[16];
->   	struct scsi_sense_hdr sshdr;
-> @@ -2597,7 +2609,7 @@ static int read_capacity_16(struct scsi_disk *sdkp, struct scsi_device *sdp,
->   
->   	/* Lowest aligned logical block */
->   	alignment = ((buffer[14] & 0x3f) << 8 | buffer[15]) * sector_size;
-> -	blk_queue_alignment_offset(sdp->request_queue, alignment);
-> +	lim->alignment_offset = alignment;
->   	if (alignment && sdkp->first_scan)
->   		sd_printk(KERN_NOTICE, sdkp,
->   			  "physical block alignment offset: %u\n", alignment);
-> @@ -2608,7 +2620,7 @@ static int read_capacity_16(struct scsi_disk *sdkp, struct scsi_device *sdp,
->   		if (buffer[14] & 0x40) /* LBPRZ */
->   			sdkp->lbprz = 1;
->   
-> -		sd_config_discard(sdkp, SD_LBP_WS16);
-> +		sd_config_discard(sdkp, lim, SD_LBP_WS16);
->   	}
->   
->   	sdkp->capacity = lba + 1;
-> @@ -2711,13 +2723,14 @@ static int sd_try_rc16_first(struct scsi_device *sdp)
->    * read disk capacity
->    */
->   static void
-> -sd_read_capacity(struct scsi_disk *sdkp, unsigned char *buffer)
-> +sd_read_capacity(struct scsi_disk *sdkp, struct queue_limits *lim,
-> +		unsigned char *buffer)
->   {
->   	int sector_size;
->   	struct scsi_device *sdp = sdkp->device;
->   
->   	if (sd_try_rc16_first(sdp)) {
-> -		sector_size = read_capacity_16(sdkp, sdp, buffer);
-> +		sector_size = read_capacity_16(sdkp, sdp, lim, buffer);
->   		if (sector_size == -EOVERFLOW)
->   			goto got_data;
->   		if (sector_size == -ENODEV)
-> @@ -2737,7 +2750,7 @@ sd_read_capacity(struct scsi_disk *sdkp, unsigned char *buffer)
->   			int old_sector_size = sector_size;
->   			sd_printk(KERN_NOTICE, sdkp, "Very big device. "
->   					"Trying to use READ CAPACITY(16).\n");
-> -			sector_size = read_capacity_16(sdkp, sdp, buffer);
-> +			sector_size = read_capacity_16(sdkp, sdp, lim, buffer);
->   			if (sector_size < 0) {
->   				sd_printk(KERN_NOTICE, sdkp,
->   					"Using 0xffffffff as device size\n");
-> @@ -2796,9 +2809,8 @@ sd_read_capacity(struct scsi_disk *sdkp, unsigned char *buffer)
->   		 */
->   		sector_size = 512;
->   	}
-> -	blk_queue_logical_block_size(sdp->request_queue, sector_size);
-> -	blk_queue_physical_block_size(sdp->request_queue,
-> -				      sdkp->physical_block_size);
-> +	lim->logical_block_size = sector_size;
-> +	lim->physical_block_size = sdkp->physical_block_size;
->   	sdkp->device->sector_size = sector_size;
->   
->   	if (sdkp->capacity > 0xffffffff)
-> @@ -3220,11 +3232,11 @@ static unsigned int sd_discard_mode(struct scsi_disk *sdkp)
->   	return SD_LBP_DISABLE;
->   }
->   
-> -/**
-> - * sd_read_block_limits - Query disk device for preferred I/O sizes.
-> - * @sdkp: disk to query
-> +/*
-> + * Query disk device for preferred I/O sizes.
->    */
-> -static void sd_read_block_limits(struct scsi_disk *sdkp)
-> +static void sd_read_block_limits(struct scsi_disk *sdkp,
-> +		struct queue_limits *lim)
->   {
->   	struct scsi_vpd *vpd;
->   
-> @@ -3258,7 +3270,7 @@ static void sd_read_block_limits(struct scsi_disk *sdkp)
->   			sdkp->unmap_alignment =
->   				get_unaligned_be32(&vpd->data[32]) & ~(1 << 31);
->   
-> -		sd_config_discard(sdkp, sd_discard_mode(sdkp));
-> +		sd_config_discard(sdkp, lim, sd_discard_mode(sdkp));
->   	}
->   
->    out:
-> @@ -3278,10 +3290,10 @@ static void sd_read_block_limits_ext(struct scsi_disk *sdkp)
->   }
->   
->   /**
+The patch introduces a helper sendpages_ok(), it returns true if all the
+continuous pages are sendable.
 
-below is not a kernel doc comment
-
-> - * sd_read_block_characteristics - Query block dev. characteristics
-> - * @sdkp: disk to query
-> + * Query block dev. characteristics
->    */
-> -static void sd_read_block_characteristics(struct scsi_disk *sdkp)
-> +static void sd_read_block_characteristics(struct scsi_disk *sdkp,
-> +		struct queue_limits *lim)
->   {
->   	struct request_queue *q = sdkp->disk->queue;
->   	struct scsi_vpd *vpd;
-> @@ -3307,29 +3319,26 @@ static void sd_read_block_characteristics(struct scsi_disk *sdkp)
->   
->   #ifdef CONFIG_BLK_DEV_ZONED /* sd_probe rejects ZBD devices early otherwise */
->   	if (sdkp->device->type == TYPE_ZBC) {
-> -		/*
-> -		 * Host-managed.
-> -		 */
-> -		disk_set_zoned(sdkp->disk);
-> +		lim->zoned = true;
->   
->   		/*
->   		 * Per ZBC and ZAC specifications, writes in sequential write
->   		 * required zones of host-managed devices must be aligned to
->   		 * the device physical block size.
->   		 */
-> -		blk_queue_zone_write_granularity(q, sdkp->physical_block_size);
-> +		lim->zone_write_granularity = sdkp->physical_block_size;
->   	} else {
->   		/*
->   		 * Host-aware devices are treated as conventional.
->   		 */
-> -		WARN_ON_ONCE(blk_queue_is_zoned(q));
-> +		lim->zoned = false;
->   	}
->   #endif /* CONFIG_BLK_DEV_ZONED */
->   
->   	if (!sdkp->first_scan)
->   		return;
->   
-> -	if (blk_queue_is_zoned(q))
-> +	if (lim->zoned)
->   		sd_printk(KERN_NOTICE, sdkp, "Host-managed zoned block device\n");
->   	else if (sdkp->zoned == 1)
->   		sd_printk(KERN_NOTICE, sdkp, "Host-aware SMR disk used as regular disk\n");
-> @@ -3605,8 +3614,10 @@ static int sd_revalidate_disk(struct gendisk *disk)
->   	struct scsi_device *sdp = sdkp->device;
->   	struct request_queue *q = sdkp->disk->queue;
->   	sector_t old_capacity = sdkp->capacity;
-> +	struct queue_limits lim;
->   	unsigned char *buffer;
->   	unsigned int dev_max;
-> +	int err;
->   
->   	SCSI_LOG_HLQUEUE(3, sd_printk(KERN_INFO, sdkp,
->   				      "sd_revalidate_disk\n"));
-> @@ -3627,12 +3638,14 @@ static int sd_revalidate_disk(struct gendisk *disk)
->   
->   	sd_spinup_disk(sdkp);
->   
-> +	lim = queue_limits_start_update(sdkp->disk->queue);
-> +
->   	/*
->   	 * Without media there is no reason to ask; moreover, some devices
->   	 * react badly if we do.
->   	 */
->   	if (sdkp->media_present) {
-> -		sd_read_capacity(sdkp, buffer);
-> +		sd_read_capacity(sdkp, &lim, buffer);
->   		/*
->   		 * Some USB/UAS devices return generic values for mode pages
->   		 * until the media has been accessed. Trigger a READ operation
-> @@ -3651,10 +3664,10 @@ static int sd_revalidate_disk(struct gendisk *disk)
->   
->   		if (scsi_device_supports_vpd(sdp)) {
->   			sd_read_block_provisioning(sdkp);
-> -			sd_read_block_limits(sdkp);
-> +			sd_read_block_limits(sdkp, &lim);
->   			sd_read_block_limits_ext(sdkp);
-> -			sd_read_block_characteristics(sdkp);
-> -			sd_zbc_read_zones(sdkp, buffer);
-> +			sd_read_block_characteristics(sdkp, &lim);
-> +			sd_zbc_read_zones(sdkp, &lim, buffer);
->   			sd_read_cpr(sdkp);
->   		}
->   
-> @@ -3683,28 +3696,33 @@ static int sd_revalidate_disk(struct gendisk *disk)
->   	q->limits.max_dev_sectors = logical_to_sectors(sdp, dev_max);
+Drivers who want to send contiguous pages with MSG_SPLICE_PAGES may use
+this helper to check whether the page list is OK. If the helper does not
+return true, the driver should remove MSG_SPLICE_PAGES flag.
 
 
-is setting q->limits.max_dev_sectors directly proper?
+The bug is reproducible, in order to reproduce we need nvme-over-tcp
+controllers with optimal IO size bigger than PAGE_SIZE. Creating a raid
+with bitmap over those devices reproduces the bug.
 
->   
->   	if (sd_validate_min_xfer_size(sdkp))
-> -		blk_queue_io_min(sdkp->disk->queue,
-> -				 logical_to_bytes(sdp, sdkp->min_xfer_blocks));
-> +		lim.io_min = logical_to_bytes(sdp, sdkp->min_xfer_blocks);
->   	else
-> -		blk_queue_io_min(sdkp->disk->queue, 0);
-> +		lim.io_min = 0;
->   
->   	/*
->   	 * Limit default to SCSI host optimal sector limit if set. There may be
->   	 * an impact on performance for when the size of a request exceeds this
->   	 * host limit.
->   	 */
-> -	q->limits.io_opt = sdp->host->opt_sectors << SECTOR_SHIFT;
-> +	lim.io_opt = sdp->host->opt_sectors << SECTOR_SHIFT;
->   	if (sd_validate_opt_xfer_size(sdkp, dev_max)) {
-> -		q->limits.io_opt = min_not_zero(q->limits.io_opt,
-> +		lim.io_opt = min_not_zero(lim.io_opt,
->   				logical_to_bytes(sdp, sdkp->opt_xfer_blocks));
->   	}
->   
->   	sdkp->first_scan = 0;
->   
->   	set_capacity_and_notify(disk, logical_to_sectors(sdp, sdkp->capacity));
-> -	sd_config_write_same(sdkp);
-> +	sd_config_write_same(sdkp, &lim);
->   	kfree(buffer);
->   
+In order to simulate large optimal IO size you can use dm-stripe with a
+single device.
+Script to reproduce the issue on top of brd devices using dm-stripe is
+attached below.
 
+
+I have added 3 prints to test my theory. One in nvme_tcp_try_send_data()
+and two others in skb_splice_from_iter() the first before sendpage_ok()
+and the second on !sendpage_ok(), after the warning.
+...
+nvme_tcp: sendpage_ok, page: 0x654eccd7 (pfn: 120755), len: 262144, offset: 0
+skbuff: before sendpage_ok - i: 0. page: 0x654eccd7 (pfn: 120755)
+skbuff: before sendpage_ok - i: 1. page: 0x1666a4da (pfn: 120756)
+skbuff: before sendpage_ok - i: 2. page: 0x54f9f140 (pfn: 120757)
+WARNING: at net/core/skbuff.c:6848 skb_splice_from_iter+0x142/0x450
+skbuff: !sendpage_ok - page: 0x54f9f140 (pfn: 120757). is_slab: 1, page_count: 1
+...
+
+
+stack trace:
+...
+WARNING: at net/core/skbuff.c:6848 skb_splice_from_iter+0x141/0x450
+Workqueue: nvme_tcp_wq nvme_tcp_io_work
+Call Trace:
+ ? show_regs+0x6a/0x80
+ ? skb_splice_from_iter+0x141/0x450
+ ? __warn+0x8d/0x130
+ ? skb_splice_from_iter+0x141/0x450
+ ? report_bug+0x18c/0x1a0
+ ? handle_bug+0x40/0x70
+ ? exc_invalid_op+0x19/0x70
+ ? asm_exc_invalid_op+0x1b/0x20
+ ? skb_splice_from_iter+0x141/0x450
+ tcp_sendmsg_locked+0x39e/0xee0
+ ? _prb_read_valid+0x216/0x290
+ tcp_sendmsg+0x2d/0x50
+ inet_sendmsg+0x43/0x80
+ sock_sendmsg+0x102/0x130
+ ? vprintk_default+0x1d/0x30
+ ? vprintk+0x3c/0x70
+ ? _printk+0x58/0x80
+ nvme_tcp_try_send_data+0x17d/0x530
+ nvme_tcp_try_send+0x1b7/0x300
+ nvme_tcp_io_work+0x3c/0xc0
+ process_one_work+0x22e/0x420
+ worker_thread+0x50/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0xd6/0x100
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x3c/0x60
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1b/0x30
+...
+
+Ofir Gal (4):
+  net: introduce helper sendpages_ok()
+  nvme-tcp: use sendpages_ok() instead of sendpage_ok()
+  drbd: use sendpages_ok() to instead of sendpage_ok()
+  libceph: use sendpages_ok() to instead of sendpage_ok()
+
+ drivers/block/drbd/drbd_main.c |  2 +-
+ drivers/nvme/host/tcp.c        |  2 +-
+ include/linux/net.h            | 20 ++++++++++++++++++++
+ net/ceph/messenger_v1.c        |  2 +-
+ net/ceph/messenger_v2.c        |  2 +-
+ 5 files changed, 24 insertions(+), 4 deletions(-)
+
+---
+ reproduce.sh | 114 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 114 insertions(+)
+ create mode 100755 reproduce.sh
+
+diff --git a/reproduce.sh b/reproduce.sh
+new file mode 100755
+index 000000000..8ae226b18
+--- /dev/null
++++ b/reproduce.sh
+@@ -0,0 +1,114 @@
++#!/usr/bin/env sh
++# SPDX-License-Identifier: MIT
++
++set -e
++
++load_modules() {
++    modprobe nvme
++    modprobe nvme-tcp
++    modprobe nvmet
++    modprobe nvmet-tcp
++}
++
++setup_ns() {
++    local dev=$1
++    local num=$2
++    local port=$3
++    ls $dev > /dev/null
++
++    mkdir -p /sys/kernel/config/nvmet/subsystems/$num
++    cd /sys/kernel/config/nvmet/subsystems/$num
++    echo 1 > attr_allow_any_host
++
++    mkdir -p namespaces/$num
++    cd namespaces/$num/
++    echo $dev > device_path
++    echo 1 > enable
++
++    ln -s /sys/kernel/config/nvmet/subsystems/$num \
++        /sys/kernel/config/nvmet/ports/$port/subsystems/
++}
++
++setup_port() {
++    local num=$1
++
++    mkdir -p /sys/kernel/config/nvmet/ports/$num
++    cd /sys/kernel/config/nvmet/ports/$num
++    echo "127.0.0.1" > addr_traddr
++    echo tcp > addr_trtype
++    echo 8009 > addr_trsvcid
++    echo ipv4 > addr_adrfam
++}
++
++setup_big_opt_io() {
++    local dev=$1
++    local name=$2
++
++    # Change optimal IO size by creating dm stripe
++    dmsetup create $name --table \
++        "0 `blockdev --getsz $dev` striped 1 512 $dev 0"
++}
++
++setup_targets() {
++    # Setup ram devices instead of using real nvme devices
++    modprobe brd rd_size=1048576 rd_nr=2 # 1GiB
++
++    setup_big_opt_io /dev/ram0 ram0_big_opt_io
++    setup_big_opt_io /dev/ram1 ram1_big_opt_io
++
++    setup_port 1
++    setup_ns /dev/mapper/ram0_big_opt_io 1 1
++    setup_ns /dev/mapper/ram1_big_opt_io 2 1
++}
++
++setup_initiators() {
++    nvme connect -t tcp -n 1 -a 127.0.0.1 -s 8009
++    nvme connect -t tcp -n 2 -a 127.0.0.1 -s 8009
++}
++
++reproduce_warn() {
++    local devs=$@
++
++    # Hangs here
++    mdadm --create /dev/md/test_md --level=1 --bitmap=internal \
++        --bitmap-chunk=1024K --assume-clean --run --raid-devices=2 $devs
++}
++
++echo "###################################
++
++The script creates 2 nvme initiators in order to reproduce the bug.
++The script doesn't know which controllers it created, choose the new nvme
++controllers when asked.
++
++###################################
++
++Press enter to continue.
++"
++
++read tmp
++
++echo "# Creating 2 nvme controllers for the reproduction. current nvme devices:"
++lsblk -s | grep nvme || true
++echo "---------------------------------
++"
++
++load_modules
++setup_targets
++setup_initiators
++
++sleep 0.1 # Wait for the new nvme ctrls to show up
++
++echo "# Created 2 nvme devices. nvme devices list:"
++
++lsblk -s | grep nvme
++echo "---------------------------------
++"
++
++echo "# Insert the new nvme devices as separated lines. both should be with size of 1G"
++read dev1
++read dev2
++
++ls /dev/$dev1 > /dev/null
++ls /dev/$dev2 > /dev/null
++
++reproduce_warn /dev/$dev1 /dev/$dev2
+-- 
+2.34.1
 
