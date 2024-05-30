@@ -1,211 +1,135 @@
-Return-Path: <ceph-devel+bounces-1199-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1200-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E9A8D4DDF
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2024 16:25:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D04888D5190
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2024 19:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F37F71F224C2
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2024 14:25:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F84A28A1A5
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2024 17:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1464817F503;
-	Thu, 30 May 2024 14:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=storingio.onmicrosoft.com header.i=@storingio.onmicrosoft.com header.b="mjxLnEl4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EF9482ED;
+	Thu, 30 May 2024 17:58:13 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2139.outbound.protection.outlook.com [40.107.6.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F9117C212;
-	Thu, 30 May 2024 14:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.139
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717079087; cv=fail; b=LWXsUtNIdkS3BzjHkPZ0+52dK3uyUToI19jriVJ11+kVgjlr9q+iE3oiYTewcKt0fIdIhz7qZRxMTGxHs0cbn8rRymG11s8QdVCPHwekiBSQwVtYWR3hb7zOSm4gwADFO944TOb02sPPE/haR3NTzfU6qmonnCy6HLsGGAfJe5A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717079087; c=relaxed/simple;
-	bh=2+Im+2kXu18jMablAeBcJ/QIXTeWmdY+pzCZJV985fo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PFXyNqGldMOTSvEeIEfgGOKapGeexFiMabBSjd+PD4FTiHgy9D4h2KU0KgmgQCu39VtPRnCSOPiQ0yJN+VwZ5wSGB/G179JtAxMNrMGOvwjUCnfMYOlKZo2dzHCO7POZ9WL1t9aujym5oadWvf6dfS1EtKwTw3ZAH/ipXO4b7S4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=volumez.com; spf=pass smtp.mailfrom=volumez.com; dkim=pass (2048-bit key) header.d=storingio.onmicrosoft.com header.i=@storingio.onmicrosoft.com header.b=mjxLnEl4; arc=fail smtp.client-ip=40.107.6.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=volumez.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=volumez.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CiHAveJnL6YbHJxKvpjO1zMgHCNvNtqKeIYkc5lHwF9gbFffN966JGI0jsghHcrqbsOyTWpIwlJg6yKs3BYYd49MW5ZmwcgrXgV7Yr+s9Z70UsLqGIYWQX4SY7hNQrRiiRL07bUK4roTHxaebkE103FZPX0udc+mzw5ovIBCVhmRSNj8VhhaanqzIVJrz82j0pwbl3bMtY599uokVcG1enUXRorqwzhfZSp6aIirqeMkibrBv7OwLhmWTF3czUsVvXGtBZXW0IgLM9b/QjG/hDRNVpUJIw6vpaxgAeZO+ctdbzxjtb8bacboOlSWOg5aXFR5g/rNytmnkSf83DTU4g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1Rfv8LDVgRTz9jiC1OhOxn9YPDgrbU5FKBlQ7Avcww4=;
- b=QR/uQOORYHc+A/s/H72fskenTHs0t/tjAI1i35qQSq9bdJbYJUys5NsTZrZD1QhxDy05+pUtGA4PW+bSdirtjkC0chn+ex+AWm19yTz+rGAKzOR8k2evtpRHybuv5sEKIk4m989ShwrzanXaUr/lpfILXEb+Qjz/bKVPkoOXlhAQT77HPeO7bY6yEsqsWlkkiwQGGg/jAqvVQDn19d5QZnFBbX3aE3jJ9CzfGtiwvHIkMLxjEqYHG+NTUlCjgrqUbDnmupOEatELFFCZT2DaGZoToKEhgIhOikymLRiie37WiZPNr5Ok9TNLKK1OpurWArU/Lcb/l/D8W9rCnruh6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=volumez.com; dmarc=pass action=none header.from=volumez.com;
- dkim=pass header.d=volumez.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=storingio.onmicrosoft.com; s=selector1-storingio-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Rfv8LDVgRTz9jiC1OhOxn9YPDgrbU5FKBlQ7Avcww4=;
- b=mjxLnEl4eu2bSrIUS83OqzUtoh3HNuU9SLnJ3+YTNZ4zDLjDTLtWKtkQ2rY+DjdrXdT5/RBGIpKI2Q2/EEff+uSxs1C6ZNYRIv3uelcQ+fNNUhCY5WU7rAqTLSV9LasoPhCdEkoeIsJqctaOzNsmJbOfkwm5FrwamuoXfpsift87uU4ekT+eapJhLT53U8xPSo9iGHazg3KN02Hm/K4d2h+mZZ6qM+aBw+Yaw1yGLDPFMmyb+1xXNjbqFB4khsPIfD6/nfXXEUx7pQYWY+s7eMqKEmm/oPScn1bOKQvhQdQwtXLbtGyqNPEOr2BPTO2GwPPlEL6o3KsY5giHwW1sWw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=volumez.com;
-Received: from AM0PR04MB5107.eurprd04.prod.outlook.com (2603:10a6:208:cb::11)
- by GV1PR04MB9216.eurprd04.prod.outlook.com (2603:10a6:150:2b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.19; Thu, 30 May
- 2024 14:24:39 +0000
-Received: from AM0PR04MB5107.eurprd04.prod.outlook.com
- ([fe80::de53:c058:7ef:21fb]) by AM0PR04MB5107.eurprd04.prod.outlook.com
- ([fe80::de53:c058:7ef:21fb%3]) with mapi id 15.20.7611.030; Thu, 30 May 2024
- 14:24:38 +0000
-From: Ofir Gal <ofir.gal@volumez.com>
-To: davem@davemloft.net,
-	linux-block@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	netdev@vger.kernel.org,
-	ceph-devel@vger.kernel.org
-Cc: dhowells@redhat.com,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	idryomov@gmail.com,
-	xiubli@redhat.com
-Subject: [PATCH v2 4/4] libceph: use sendpages_ok() instead of sendpage_ok()
-Date: Thu, 30 May 2024 17:24:14 +0300
-Message-ID: <20240530142417.146696-5-ofir.gal@volumez.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240530142417.146696-1-ofir.gal@volumez.com>
-References: <20240530142417.146696-1-ofir.gal@volumez.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TL0P290CA0001.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:5::15) To AM0PR04MB5107.eurprd04.prod.outlook.com
- (2603:10a6:208:cb::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B79224D4;
+	Thu, 30 May 2024 17:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1717091892; cv=none; b=XeNQCWlgoTMyqEqGbKi2I1lgVT2aqpKPFtO3O0lL3yRw0hKyBkB62MyyfxHegT5LgKQchUo+w9lPakR/XuyG+d5C7sYdOyqL+NeHz1QomZl3fjmBNPDK/vE9T3u1YtAT7ZhphPed3TMRQ6nrhOGSq+v1ceTEeJ4xboJI6cH30Lc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1717091892; c=relaxed/simple;
+	bh=zy9/jkZo5Kkm2qDUeVoKDrkhkws3NyE2cNMGwJegfBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JWWk7SgJRhRb2nNx5KKBOlTUqsmLTD8+OKGwUO+pUvyf7gbWYlAtMzp1LtBOrwgaiMkFVrXIQ3B8knRJQguzL+OAgyNX8p0Jrm3dnFkZD4AsEmHoqh9ZJyOvBAiFUDiQwIaLV76ylntH/hJnPrcYu31Ij5EjpluHytXPqUpOaYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-421160b07eeso433155e9.0;
+        Thu, 30 May 2024 10:58:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717091889; x=1717696689;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hC23jucMm+q+/3nVmnb3JFDkYf90kQS7VVGYEUblW18=;
+        b=AtxxUSC9Z9RFut9NgaZlrP6TaCw2KB0TbOgcgSLlDhS24WgEzwAyZrjSV/EJc6TOjU
+         gDV8HzxCRTCDgj93e6P79AhmSssN34Y79P97XG0FbbhIw8dlquQ+1wCqHujl4WieNiBJ
+         ApkDl2KECNdpWQsSxbjcd68J7SjxBiuQ1NriYqa4Wet++NJJeiO7lGslnPIUav6GMNaG
+         Ix5GvhhE/GqeKGjuc44reOoX5g6khcL8dlBjxo/bk6cID4PdlLHbYF2soVOnzQ6einIY
+         XxaOlGJH4jFXOXWsA87u/636dI1NWVA83k7FnDcpVjaYfcWx+nC1CGPJpmaS2MnJQA6w
+         TJag==
+X-Forwarded-Encrypted: i=1; AJvYcCUdcwrjah0Hxb9HKciNprZV0tLoodaHHCxYdvWzwnZjqzzAiv+xUTTHu4CJoUZ3fPWIdE+AGQAXlJF8XAddNUI2WXOzMIL/ne37Gdg2qWl79D0bfBccYxp0InNAhYkOglREMsCYT9nZxUtRfoG4ygHq84I70h9+Q8GpW/P6Px+U
+X-Gm-Message-State: AOJu0Yxe5tmAZ+l0GCNjpjBlJmRogAGXo47mmArADLUhbwp0IoOEMlUv
+	VpORhkHBSrNDkYWglxMyfLWfUjwzxgNSy63nsGiV1AKvxzw1Q4Ag
+X-Google-Smtp-Source: AGHT+IEKs/D/YOXJKNpqQBu1D27NdILizXiASB7GFF049ZDfxVYEPi5NY+sGao+1Yf3CzW3yUcmd7w==
+X-Received: by 2002:a5d:678d:0:b0:35d:bdda:3553 with SMTP id ffacd0b85a97d-35dc00bc230mr2126917f8f.4.1717091889059;
+        Thu, 30 May 2024 10:58:09 -0700 (PDT)
+Received: from [10.100.102.74] (85.65.193.189.dynamic.barak-online.net. [85.65.193.189])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212709d341sm31609825e9.36.2024.05.30.10.58.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 May 2024 10:58:08 -0700 (PDT)
+Message-ID: <d6b2c19b-c2a6-400c-bbf1-bf0469138777@grimberg.me>
+Date: Thu, 30 May 2024 20:58:06 +0300
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR04MB5107:EE_|GV1PR04MB9216:EE_
-X-MS-Office365-Filtering-Correlation-Id: 098d4a6f-7f93-4ea9-ed34-08dc80b43cc8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|7416005|1800799015|52116005|366007|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?oTYtWA9BMj49DaXyDpz1Z37O4Y8mcHDr3QFsXZiX+ZzYgiIhFuBdbA+7FO7R?=
- =?us-ascii?Q?ndTGdK9lxo3cg6Dkc2tdmOJn9rd3GU+6r8bmGAPCHUdy8Qa5HXZMSaEf9sxd?=
- =?us-ascii?Q?JSXgj0eglM7ItVl9sMhcVhBcU8n/NZXitK/DXaSWGFt0vYRe8b7ZHfPSmtoG?=
- =?us-ascii?Q?VeGjXrwCF90mu8Fc9EWvvcewVnil7+f5Wx2Hw22QhoE3X07uiBGG+IDWoBA7?=
- =?us-ascii?Q?RuKYvLh6D4n7P9FSbC636FBZR8Dqk11cm8wJTpTMua+c2Gi53THjCE0awvpA?=
- =?us-ascii?Q?KuF81XsPMlE3FRdAoDAJo5e2fJTmYAoHot2gOiOGVDiaBqlumdygn7f5ZEQt?=
- =?us-ascii?Q?qc6gp9llozoc5gakWAEdPU2mfoXXiFR6jP24lQCZi9EvluXTJkuxaU7TyxmG?=
- =?us-ascii?Q?3J9a4ZIxXtxqrP0d+/3Vcdwt27UazslyDby+vVbt5SmyD3qB0eFiVaIWhPV0?=
- =?us-ascii?Q?8ItbJJRXnLkyhBCGw7MEQpJwq7SLB5xKYDBw5ScKBMdu4YGUzKRkSszqbfsS?=
- =?us-ascii?Q?+e7hV9v760Lf34ryJaCLh5t/SJpXS39+SKLJ7ylpKGQDIeMDPnS5P9n9T/5i?=
- =?us-ascii?Q?bJHOkbxxKpdVTXzext4XtWoeGxeZh2LNpuDNwIFxGrracI2PG2aOVHNbjOke?=
- =?us-ascii?Q?Nyo0pSFbkk6YX7wl6rKSkOZuSo+udQJruTrP/EzfNPRTT+dffGph3enuXZzL?=
- =?us-ascii?Q?YHfxWA7mDK6AO5lKle0mdJHovxDjrgBMuFkdNh3TWb75G5ayVlVvyED6haCS?=
- =?us-ascii?Q?R9I/aBY/ryjCIT2NXpsnN3cETdamBHmjT1q+M+aaJ/oHb7mMPBelVaI81WgR?=
- =?us-ascii?Q?OAoRf2wd3ZhIGal2T6tsc4fpTdJsOp8kelsVeZeANecCHkdCLhY4f9a6P08m?=
- =?us-ascii?Q?s3+FLp/ZZo59NPjP7N11QZxHLR0aMyNI5p/OePB1lKv7wMVZ5GmNCBYgDGD7?=
- =?us-ascii?Q?foUS12uqh4R6IAk528+LxZ+Bd0UZMyjQVc8fG1QgGip6cK8S2zeDfuwRvnlw?=
- =?us-ascii?Q?ZRIpRcVVJ47QBRK3cIxU7MnasdDqwZT1UPxvUiReFDOhu7GLkNsB386vXVJa?=
- =?us-ascii?Q?oyGkp4YPA1jLqwMLObZotXUA5Lwp+fau7F2HNrGGt0A/QuRCJ466IFamxhiq?=
- =?us-ascii?Q?l26lkDwO0TIv6fhsS7TURTarOdcTSKGySqqzxFVQVk/SRk1bxawQdpiL6COJ?=
- =?us-ascii?Q?OOxAL1YcDasIdMRcx7yKi0tfzw3uJgKdXPhGuaw/2etocL8iRWKDdK6xkQLU?=
- =?us-ascii?Q?VVByqQ9+w7zptNEEs8x7eGRz7NBTC4TTkb15OVAV6pkbFn4rfWDv3B1QFSjR?=
- =?us-ascii?Q?4ds+Gb//CL8LHV6QGA4wqwbDiLHJzHLB+MUc1XXAUtD28Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB5107.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(52116005)(366007)(38350700005);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?GneuxvJmFXOR1NzOJJ9Pd/nAr2iKW5NVnUVsqBREjttgsSj8pup4osM0f57s?=
- =?us-ascii?Q?EerR4THBMKet1vLDXWI3upe+M9SooisaskjEZZo6fBfHGjyBZLEKfYvcC35A?=
- =?us-ascii?Q?ZsJcaz4R7rar/hzdNIHnAv2Ze8zAIgOAsGM4sMrE+uiLbGkAXfQMyMkCcl8D?=
- =?us-ascii?Q?SMaGR61bHSfRJU3OlBPcmNcXFIwk+OvEAv/fgMrSmZAPbmL2A78UtdJBVhlk?=
- =?us-ascii?Q?cKMaeRYsw/7QJUOcfj6e81/BwJTzqttwUHhc5ihehHp7qfMlKLiFqXmjY/E7?=
- =?us-ascii?Q?VqQHABX3j7j976GWW0pFvZZZhmnuO5ni6JPW1u5zouUI+EStBidFfOGrPqca?=
- =?us-ascii?Q?cxBLz/FUoEw9zO8MIZTTFToxS6G1eLI97qQUdwghjXVEKnAI/ntBOdnx6BaE?=
- =?us-ascii?Q?q8rOZOdF6FNNhaG/FtllE2RhVBTZDEBSFFJsQpyfGJ3PFXcEXVYHYY1dmDHh?=
- =?us-ascii?Q?W5dD78VYGnK+6xwxK6l8GWm/HFVqqWmWGeU+i4GWM/kmEBAd4SyNmm5Bk3oR?=
- =?us-ascii?Q?S6XqztrnPQu77u1ysi489GMivkS1KztFi8/3kFBp5GzvTTjA+NksHgYxsVgl?=
- =?us-ascii?Q?L50hFiuDy3dsRg+kKVsjceSEhbhWHVECfazUpPcNEIbdzVSj9V3HL/TKmBaf?=
- =?us-ascii?Q?a0FMfTHTsy8D52GTwTyumxwtvIpccuuKbIBm4dW9nRsKvashgvU0oAlE9J5o?=
- =?us-ascii?Q?N2Jmn2AG0S50T/sRYELEGeUKU4MPaq3UZKY3y2zWcrUiV6pc00VgQ3FGpsHe?=
- =?us-ascii?Q?xkiGWqrkaV++3aCZsPZaHssBsPxkED1lUyr5ZyeYWJ2sjSTYXgRrPttK9qBy?=
- =?us-ascii?Q?w3zwJgnA/J6ke1JXJ3T3r2WOs/yDOKON90VdfdCp33fa4ktETsxdLibIFi6Y?=
- =?us-ascii?Q?WYy9mHszbyHR3IUetW4ldncDQsOqVNOR+rtGyxrKxJNC78BrgqCozucgL8UL?=
- =?us-ascii?Q?8Obr7+lTOUhTh6RZNJ3SCLMUwCRxaagOlp1FyC6BNVCpUjmCDcun1FHm7Mzo?=
- =?us-ascii?Q?NnpR7k1AUWVpW//H8AduKx2XpHqmFh+keXCALAiRKY1W6EPLOdISSR3E+E5S?=
- =?us-ascii?Q?lQegjTQr+1ldAd0OFDPr4nGKmx6iei+w18QWMmmg0gGSD1NmHP16NT+Fz2Dm?=
- =?us-ascii?Q?AUWFhDKyLGfsXf9s2vB0hgV2YoC1pHDO1dQwpZWIreuEJ/mpCCfnVgbTmGC6?=
- =?us-ascii?Q?nQu7KW50y87N0T61LsiBUyLCOlTU+uzRPTKUDiIOP9OLVrlMVS2VLJaPh8jK?=
- =?us-ascii?Q?mS3OII0HdwvF6LKbpJSEWvb/6mWLp7REFbkQvVAHVovh5rR2RBiDQXahqPsU?=
- =?us-ascii?Q?hRaXJeTmCIXhadrLkBKMn8gg+J4L+HBMeX6u36IhrXHp7+wavr/+Kebp/npK?=
- =?us-ascii?Q?IQkLOO/si0hFpNTh8Iam6M4xUcMzV67GfW1YxG68Wa8D46Ta9fNWIUBChiqg?=
- =?us-ascii?Q?z++5YvAGNTHLDP4ol1RqLQLvSxhVIhAuef22glrkD4ORVGxWeWxmV2x3CGf8?=
- =?us-ascii?Q?0sOxQtVs2ieC/3IgA56mW2cqaYkXKkgbWZ96kLvfq/QByPrui4q2HGWPnnAC?=
- =?us-ascii?Q?YtV9fXSR5lT7F448ydcMhUIFdHsHyj2nGLJDDLIL?=
-X-OriginatorOrg: volumez.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 098d4a6f-7f93-4ea9-ed34-08dc80b43cc8
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB5107.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2024 14:24:38.2864
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: b1841924-914b-4377-bb23-9f1fac784a1d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rrDZeKBWZAoNXt1n+KcAUd3ZUOqddFaZEvFKWTJ44/IqmneyE+Hxuv0H1e5nxDQfCIf6NQjG4AJI+Mi2aiMIgA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB9216
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] bugfix: Introduce sendpages_ok() to check
+ sendpage_ok() on contiguous pages
+To: Ofir Gal <ofir.gal@volumez.com>, davem@davemloft.net,
+ linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+ netdev@vger.kernel.org, ceph-devel@vger.kernel.org
+Cc: dhowells@redhat.com, edumazet@google.com, pabeni@redhat.com,
+ kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, philipp.reisner@linbit.com,
+ lars.ellenberg@linbit.com, christoph.boehmwalder@linbit.com,
+ idryomov@gmail.com, xiubli@redhat.com
+References: <20240530132629.4180932-1-ofir.gal@volumez.com>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20240530132629.4180932-1-ofir.gal@volumez.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Currently ceph_tcp_sendpage() and do_try_sendpage() use sendpage_ok() in
-order to enable MSG_SPLICE_PAGES, it check the first page of the
-iterator, the iterator may represent contiguous pages.
+Hey Ofir,
 
-MSG_SPLICE_PAGES enables skb_splice_from_iter() which checks all the
-pages it sends with sendpage_ok().
+On 30/05/2024 16:26, Ofir Gal wrote:
+> skb_splice_from_iter() warns on !sendpage_ok() which results in nvme-tcp
+> data transfer failure. This warning leads to hanging IO.
+>
+> nvme-tcp using sendpage_ok() to check the first page of an iterator in
+> order to disable MSG_SPLICE_PAGES. The iterator can represent a list of
+> contiguous pages.
+>
+> When MSG_SPLICE_PAGES is enabled skb_splice_from_iter() is being used,
+> it requires all pages in the iterator to be sendable.
+> skb_splice_from_iter() checks each page with sendpage_ok().
+>
+> nvme_tcp_try_send_data() might allow MSG_SPLICE_PAGES when the first
+> page is sendable, but the next one are not. skb_splice_from_iter() will
+> attempt to send all the pages in the iterator. When reaching an
+> unsendable page the IO will hang.
 
-When ceph_tcp_sendpage() or do_try_sendpage() send an iterator that the
-first page is sendable, but one of the other pages isn't
-skb_splice_from_iter() warns and aborts the data transfer.
+Interesting. Do you know where this buffer came from? I find it strange
+that a we get a bvec with a contiguous segment which consists of non slab
+originated pages together with slab originated pages... it is surprising 
+to see
+a mix of the two.
 
-Using the new helper sendpages_ok() in order to enable MSG_SPLICE_PAGES
-solves the issue.
+I'm wandering if this is something that happened before david's splice_pages
+changes. Maybe before that with multipage bvecs? Anyways it is strange, 
+never
+seen that.
 
-Signed-off-by: Ofir Gal <ofir.gal@volumez.com>
----
- net/ceph/messenger_v1.c | 2 +-
- net/ceph/messenger_v2.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+David,  strange that nvme-tcp is setting a single contiguous element 
+bvec but it
+is broken up into PAGE_SIZE increments in skb_splice_from_iter...
 
-diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
-index 0cb61c76b9b8..a6788f284cd7 100644
---- a/net/ceph/messenger_v1.c
-+++ b/net/ceph/messenger_v1.c
-@@ -94,7 +94,7 @@ static int ceph_tcp_sendpage(struct socket *sock, struct page *page,
- 	 * coalescing neighboring slab objects into a single frag which
- 	 * triggers one of hardened usercopy checks.
- 	 */
--	if (sendpage_ok(page))
-+	if (sendpages_ok(page, size, offset))
- 		msg.msg_flags |= MSG_SPLICE_PAGES;
- 
- 	bvec_set_page(&bvec, page, size, offset);
-diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
-index bd608ffa0627..27f8f6c8eb60 100644
---- a/net/ceph/messenger_v2.c
-+++ b/net/ceph/messenger_v2.c
-@@ -165,7 +165,7 @@ static int do_try_sendpage(struct socket *sock, struct iov_iter *it)
- 		 * coalescing neighboring slab objects into a single frag
- 		 * which triggers one of hardened usercopy checks.
- 		 */
--		if (sendpage_ok(bv.bv_page))
-+		if (sendpages_ok(bv.bv_page, bv.bv_len, bv.bv_offset))
- 			msg.msg_flags |= MSG_SPLICE_PAGES;
- 		else
- 			msg.msg_flags &= ~MSG_SPLICE_PAGES;
--- 
-2.34.1
+>
+> The patch introduces a helper sendpages_ok(), it returns true if all the
+> continuous pages are sendable.
+>
+> Drivers who want to send contiguous pages with MSG_SPLICE_PAGES may use
+> this helper to check whether the page list is OK. If the helper does not
+> return true, the driver should remove MSG_SPLICE_PAGES flag.
+>
+>
+> The bug is reproducible, in order to reproduce we need nvme-over-tcp
+> controllers with optimal IO size bigger than PAGE_SIZE. Creating a raid
+> with bitmap over those devices reproduces the bug.
+>
+> In order to simulate large optimal IO size you can use dm-stripe with a
+> single device.
+> Script to reproduce the issue on top of brd devices using dm-stripe is
+> attached below.
 
+This is a great candidate for blktests. would be very beneficial to have 
+it added there.
 
