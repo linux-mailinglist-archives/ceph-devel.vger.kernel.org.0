@@ -1,63 +1,63 @@
-Return-Path: <ceph-devel+bounces-1201-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1202-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902698D528C
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2024 21:45:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A528D5294
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2024 21:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C20071C2383A
-	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2024 19:45:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AE04B2337C
+	for <lists+ceph-devel@lfdr.de>; Thu, 30 May 2024 19:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60DD158A01;
-	Thu, 30 May 2024 19:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6FC1136673;
+	Thu, 30 May 2024 19:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="O+dyHa1D"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="LeBK1nTD"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1377158874;
-	Thu, 30 May 2024 19:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08047433CA;
+	Thu, 30 May 2024 19:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717098295; cv=none; b=n3iwWoy+bgP/jr2vaYyLnLbb2jgPYXz7vwvX9mPOlNwm+utcBRTKIzxX6aQuJIOfEKG1UDqKd0186OUqQqGfsJn7JWXFLb1CdGOjjEvR5ET7sBzmT6bGCwYQGm121grhb8cpwRnqarCzRgzLCSz7aPhAfMo0tBXf4YptC/S7CEQ=
+	t=1717098437; cv=none; b=CR55GeR5xvNTe9rPNfiz7i6WvuusRXEs9Uxpr5IjU46Qi6XVQKh7YCXaV2GqbERp56UKJdewldPA5dwDHPNJijr5cc2HU0BwHJ6ARrwmS0MbLBcsdG4rngBsPsrSuyw292SL8uATmAolnp+Iadz2fnjBJ2CKONHBq8eh2j1qSsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717098295; c=relaxed/simple;
-	bh=NqD7BFqcvpYiPPucUb5Xs7cfQLPshp0Z3ca0XeE2TaQ=;
+	s=arc-20240116; t=1717098437; c=relaxed/simple;
+	bh=T4P6Ag1Go7nBQSOYVyvPB8OAHJbSm/JWRXRwZA3iazE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jwBn2wtixZ6CeRTs491ctFnZYKQHY+hHIJ7pXETRHpH7fpjK8nJmSUhUyL5FVI7UoS2M335UBx09LUeUe0sw0u2t4FvHNWH0B4QdOXu1tz139T1k3LQ1f7ek/InhmV0eSiZovuKrycsp6caH/uL6yjhFKANrOi9+LPP3P72D8Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=O+dyHa1D; arc=none smtp.client-ip=199.89.1.12
+	 In-Reply-To:Content-Type; b=aMi3vTz3W0cxBF2G/aHQ/Rz78koTEvGL718AcYVrY+dEwq/DaWgbBrlZubfGFCr1CitXS8vCqKO/y17/oJtfYenES9WOVwByQIDMHOIn97mVNJiK+H/7zk0amz49CPWM/Z+M+NoCn/Ce8Z3Nk97NmLq00hB4ZwwRV49j9TaqJvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=LeBK1nTD; arc=none smtp.client-ip=199.89.1.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4VqxY061N4zlgMVV;
-	Thu, 30 May 2024 19:44:52 +0000 (UTC)
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Vqxbk6tSqz6Cnk9T;
+	Thu, 30 May 2024 19:47:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
 	content-transfer-encoding:content-type:content-type:in-reply-to
 	:from:from:content-language:references:subject:subject
 	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1717098288; x=1719690289; bh=1qawYRnNtHLyKkfk2KIuL7Vw
-	Fij1fGlSBD1rE6Kec4k=; b=O+dyHa1DO+LxwuvN37caN3rc79Al5B59aVt872Yy
-	myvPBRd3qJOpB/ssbZf9DD6jeQwG3oky5nPyGHmKtOjLfDnHlE+e3wVIfqzpWjOs
-	6hfPZNndbOYIdhdiprqYgfQpwZxp2KIDZmAsJBYG5LuLkM6flrrsn+Z7CP3aCzDV
-	pwN4+gbFQD4bp6z4s36qcFNV+1waUaRjvrfL+xtNhs1hivVR8LlUKLXvQ4CEJ/sF
-	RymJznQ8+fPT5LcsiI4IQupBmhHjJpPce8ad1C01w5LQVIcRKBZRcPzwxcXH/hff
-	wu+Gqo4QOptIYFBfw/rmjL36jeH02rPcp9YADbGYnOeaDg==
+	 s=mr01; t=1717098428; x=1719690429; bh=gIZD+XBfeoiXCs+vsIOauc0J
+	AFtw0ViQpf0RwIfdqeI=; b=LeBK1nTDoaUU8KAvyoiidxeqI1H8VC7yltJTPW4y
+	XkYIFoLA0Xsv871K8AMKv1pruRb7L5Vojxd3TXpVjOmpzCKnxzsAzPwXavUCLmiG
+	5Io9SoOjP5YKnml8f0lVeIWDw6umtR8N2JBzgwVMlGiuo36RH4kWKMRKIp7SrKHq
+	49OVo1TUglVJnZ/FHnf1DulkWr6IflF9OncnRDnJq9pnqGyM16QVtbsNy1ahrI3q
+	GKMmq9vzmNV1PmpyA8YGpgIcN378oHvXWXKo5o6AkOKWk1xSeOKUZJjERmaxIpao
+	1jHLbCjdnG+qM70N4r3Tjg99XIgFTQPKTwcpUYGYirs6RQ==
 X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id XhrHqHFE5lIy; Thu, 30 May 2024 19:44:48 +0000 (UTC)
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id tO0K_eu1GhdP; Thu, 30 May 2024 19:47:08 +0000 (UTC)
 Received: from [100.96.154.26] (unknown [104.132.0.90])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4VqxXv0mMXzlgMVR;
-	Thu, 30 May 2024 19:44:46 +0000 (UTC)
-Message-ID: <2384c3c9-5629-4438-a87b-0e05e1b6f5cc@acm.org>
-Date: Thu, 30 May 2024 12:44:46 -0700
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VqxbZ4pbBz6Cnk9F;
+	Thu, 30 May 2024 19:47:06 +0000 (UTC)
+Message-ID: <8d927897-0436-4f47-9b03-c3e9adb90f40@acm.org>
+Date: Thu, 30 May 2024 12:47:06 -0700
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -65,8 +65,8 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/12] ubd: untagle discard vs write zeroes not support
- handling
+Subject: Re: [PATCH 02/12] block: take io_opt and io_min into account for
+ max_sectors
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
  "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc: Richard Weinberger <richard@nod.at>,
@@ -79,20 +79,37 @@ Cc: Richard Weinberger <richard@nod.at>,
  nbd@other.debian.org, ceph-devel@vger.kernel.org,
  xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org
 References: <20240529050507.1392041-1-hch@lst.de>
- <20240529050507.1392041-2-hch@lst.de>
+ <20240529050507.1392041-3-hch@lst.de>
 Content-Language: en-US
 From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240529050507.1392041-2-hch@lst.de>
+In-Reply-To: <20240529050507.1392041-3-hch@lst.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 5/28/24 22:04, Christoph Hellwig wrote:
-> Discard and Write Zeroes are different operation and implemented
-> by different fallocate opcodes for ubd.  If one fails the other one
-> can work and vice versa.
+> The soft max_sectors limit is normally capped by the hardware limits and
+> an arbitrary upper limit enforced by the kernel, but can be modified by
+> the user.  A few drivers want to increase this limit (nbd, rbd) or
+> adjust it up or down based on hardware capabilities (sd).
 > 
-> Split the code to disable the operations in ubd_handler to only
-> disable the operation that actually failed.
+> Change blk_validate_limits to default max_sectors to the optimal I/O
+> size, or upgrade it to the preferred minimal I/O size if that is
+> larger than the kernel default if no optimal I/O size is provided based
+> on the logic in the SD driver.
+> 
+> This keeps the existing kernel default for drivers that do not provide
+> an io_opt or very big io_min value, but picks a much more useful
+> default for those who provide these hints, and allows to remove the
+> hacks to set the user max_sectors limit in nbd, rbd and sd.
+> 
+> Note that rd picks a different value for the optimal I/O size vs the
+             ^^
+             rbd?
+
+> user max_sectors value, so this is a bit of a behavior change that
+> could use careful review from people familiar with rbd.
+
+Anyway:
 
 Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
