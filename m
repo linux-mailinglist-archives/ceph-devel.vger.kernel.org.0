@@ -1,250 +1,155 @@
-Return-Path: <ceph-devel+bounces-1232-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1233-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113968D5C0D
-	for <lists+ceph-devel@lfdr.de>; Fri, 31 May 2024 09:51:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2EA68D5D26
+	for <lists+ceph-devel@lfdr.de>; Fri, 31 May 2024 10:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 347141C25379
-	for <lists+ceph-devel@lfdr.de>; Fri, 31 May 2024 07:51:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 290091F25345
+	for <lists+ceph-devel@lfdr.de>; Fri, 31 May 2024 08:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AF086126;
-	Fri, 31 May 2024 07:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X0VqmD7V"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38ED015575F;
+	Fri, 31 May 2024 08:51:10 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7053984FAE;
-	Fri, 31 May 2024 07:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A275136E23;
+	Fri, 31 May 2024 08:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717141766; cv=none; b=fuXIQerByqsVvZGPDopj56rYd8ZYygc2/nK+f/0P5SG9Wpcvyget/9B2nL68e4XxAsbaacU3vwx1t+5eacQWpmlCz7KaAxQHLl56MiuGFWkQk6J6mtOpic2BKR8uy9k7MLdRxTBcEBJUKjNNcHDDHMdYcBwxP7Spx6M8plj/D94=
+	t=1717145470; cv=none; b=ECqiiPOYCioumBJ2R5dkkHRFOjnzK07ybp6dGMmIHSNhY6UsIYinsjAI0xMyb7OyltLX80doh7zXzlYdHgPXm8Qp+bogKb57z4ule4FQeVTxXnTynTXQM+4IwX73Q+f/RyZUNlz2XMs4auHI//87hgBtX/AlXTlD35cAw8jM8Pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717141766; c=relaxed/simple;
-	bh=+8W9Xu5zwZ1qwA3HGgNS7JOt5fFlLzyEvjw3egjQ04c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=af9MLs+WJOPGDkBM16D0Hh4zQuh7L9DWM0GzrrH5k4AsnXHyUdmRPinfj8kI5B+Q+m6z1zwtzfO5apOthO6mugAoCfCic5XCN3WoOe6A4tRVAonCWgh4kH4Sy7V05U6xmV6JYfUJAzK8col+HJ5WwrcpCtysmu4sjoAMPOshRHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=X0VqmD7V; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=puwKRK0RcHItIRFrYIY/fDmsBtElHLDF9wXWafbLcHw=; b=X0VqmD7VHuCNDs94Elv2YloGby
-	p5+jzBSrlgnlZnALN2myqc19yIqGUbxATwdTIB+h+Oym2URU0toacKR0d4Ppc/0DS03DVNLrJR/JN
-	C0oEYlZlZaXdI7CfyuNl+mRUzoVf6pmjadJVEWgRdvSHT99utfWmtBwMcKGiPPrFiDu5UYBU0AJTT
-	bf8QszdcpR2GXbNackCU5hnE6pc8UUMxryRLdq12mSDIJJq0EfwCw9eywAFGNliDSf5mo+yP4eS4k
-	EUChub1u9DFsYyI4C013eed0SbY3fXmcR7jEUJDVEc5q22Vd0+RSQtqNiHgElauAc4ssidf+0okIP
-	pkpsRF1w==;
-Received: from 2a02-8389-2341-5b80-5ba9-f4da-76fa-44a9.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:5ba9:f4da:76fa:44a9] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sCx0q-00000009XpF-495X;
-	Fri, 31 May 2024 07:49:21 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Jens Axboe <axboe@kernel.dk>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Dongsheng Yang <dongsheng.yang@easystack.cn>,
-	=?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
-	linux-um@lists.infradead.org,
-	linux-block@vger.kernel.org,
-	nbd@other.debian.org,
-	ceph-devel@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	linux-scsi@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Damien Le Moal <dlemoal@kernel.org>
-Subject: [PATCH 14/14] block: add special APIs for run-time disabling of discard and friends
-Date: Fri, 31 May 2024 09:48:09 +0200
-Message-ID: <20240531074837.1648501-15-hch@lst.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240531074837.1648501-1-hch@lst.de>
-References: <20240531074837.1648501-1-hch@lst.de>
+	s=arc-20240116; t=1717145470; c=relaxed/simple;
+	bh=hdoU16+sLSX8raAJ/eIvXAYVtS2Mu3wXvkczNWSlYNw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IUfMI4+my4rE38YGIPAHwM5ria3Z8Y+1e/+kwtrIU2hQACFvW5kkLeC6ytvWWePsbsRgX+y6XxOlS2Gpt2g37QveskI4nwDcAEgkpcfvnBReQkMKnjhSdPjjAhOJoKXlsGu9XbhPAppbvOM1aqyX339pCv5n/VkBbw43350fLUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4211323a709so2347125e9.3;
+        Fri, 31 May 2024 01:51:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717145467; x=1717750267;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FW4G8B4caU0ie3GvcsCDqWy2GOMbEDVFmUW+vM3YSGY=;
+        b=ng3n+VP104e+rwZqGWoH+vovlSg/mNPxA0HiOCmENTwiZ1jRI/fWoR8Ok3e/UbnRdO
+         ONuTULClhUpWGA2DxwnufAuuyaV1I5hsecjBsdgqJSr/CZaES0qoG+oGR+7AJecdE++Y
+         TGwZgP80xa0ywTDTjhIN10ZviGUvW+CR1dTojBl4Vy6eSDwWjaef4FiRs4ATv4nLb8db
+         YgpJKxLOCvDmqkXNNbjALi00c2mo+mJb+dzI8ggsNa+WtTk+ZW8J3kyGnb78KLH57YOq
+         n2APqU2XH1xqxKmwmHyHDElA/MXI8HajxVf33Ub9pQkM85Y4beb5p36Q1Hs/h2mYEvB8
+         KnzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXC7SwkcMBfHKNNvoCdicZQnBCniyiq7y6qCOBHdScaFlmFEZEWPmjVqnDwmoaVx7zhEi50LA6upz7yLFtmoZ0OHff+h2lC8NF2tU/wYo4XZZ+P0MO4pqB/HUqbYbs8fkkqQ7bh3IxqysaftTgXU0BF3MahaFA9XroNfNnGrENW
+X-Gm-Message-State: AOJu0YwpU+obmjbQEkdUpHu6XgNEJ0OLLlOPIatKtBmhTLDWaY3Yf/lZ
+	P5NHNWgCEhhdCQ6RXZTvF/PexO4JCKYwRaFj4U3sfb7yYHSlTumN
+X-Google-Smtp-Source: AGHT+IE0qlRpHCk7A3rlMfeWBmqpGsLaF/G7osysiPnBEXojpS8nDJKC0ci0ffQT8IRDohTHpm1cAg==
+X-Received: by 2002:adf:f308:0:b0:354:db35:63a9 with SMTP id ffacd0b85a97d-35e0f1af8c1mr944414f8f.0.1717145466515;
+        Fri, 31 May 2024 01:51:06 -0700 (PDT)
+Received: from [10.100.102.74] (85.65.193.189.dynamic.barak-online.net. [85.65.193.189])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dd04c0a33sm1389227f8f.7.2024.05.31.01.51.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 May 2024 01:51:06 -0700 (PDT)
+Message-ID: <8d0c198f-9c15-4a8f-957a-2e4aecddd2e5@grimberg.me>
+Date: Fri, 31 May 2024 11:51:04 +0300
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] net: introduce helper sendpages_ok()
+To: Ofir Gal <ofir.gal@volumez.com>, davem@davemloft.net,
+ linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+ netdev@vger.kernel.org, ceph-devel@vger.kernel.org
+Cc: dhowells@redhat.com, edumazet@google.com, pabeni@redhat.com,
+ kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, philipp.reisner@linbit.com,
+ lars.ellenberg@linbit.com, christoph.boehmwalder@linbit.com,
+ idryomov@gmail.com, xiubli@redhat.com
+References: <20240530142417.146696-1-ofir.gal@volumez.com>
+ <20240530142417.146696-2-ofir.gal@volumez.com>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20240530142417.146696-2-ofir.gal@volumez.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-A few drivers optimistically try to support discard, write zeroes and
-secure erase and disable the features from the I/O completion handler
-if the hardware can't support them.  This disable can't be done using
-the atomic queue limits API because the I/O completion handlers can't
-take sleeping locks or freeze the queue.  Keep the existing clearing
-of the relevant field to zero, but replace the old blk_queue_max_*
-APIs with new disable APIs that force the value to 0.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
----
- arch/um/drivers/ubd_kern.c   |  4 ++--
- block/blk-settings.c         | 41 ------------------------------------
- drivers/block/xen-blkfront.c |  4 ++--
- drivers/scsi/sd.c            |  4 ++--
- include/linux/blkdev.h       | 28 ++++++++++++++++++------
- 5 files changed, 28 insertions(+), 53 deletions(-)
 
-diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
-index 093c87879d08ba..cdcb75a68989dd 100644
---- a/arch/um/drivers/ubd_kern.c
-+++ b/arch/um/drivers/ubd_kern.c
-@@ -451,9 +451,9 @@ static void ubd_end_request(struct io_thread_req *io_req)
- {
- 	if (io_req->error == BLK_STS_NOTSUPP) {
- 		if (req_op(io_req->req) == REQ_OP_DISCARD)
--			blk_queue_max_discard_sectors(io_req->req->q, 0);
-+			blk_queue_disable_discard(io_req->req->q);
- 		else if (req_op(io_req->req) == REQ_OP_WRITE_ZEROES)
--			blk_queue_max_write_zeroes_sectors(io_req->req->q, 0);
-+			blk_queue_disable_write_zeroes(io_req->req->q);
- 	}
- 	blk_mq_end_request(io_req->req, io_req->error);
- 	kfree(io_req);
-diff --git a/block/blk-settings.c b/block/blk-settings.c
-index 0b038729608f4b..996f247fc98e80 100644
---- a/block/blk-settings.c
-+++ b/block/blk-settings.c
-@@ -293,47 +293,6 @@ int queue_limits_set(struct request_queue *q, struct queue_limits *lim)
- }
- EXPORT_SYMBOL_GPL(queue_limits_set);
- 
--/**
-- * blk_queue_max_discard_sectors - set max sectors for a single discard
-- * @q:  the request queue for the device
-- * @max_discard_sectors: maximum number of sectors to discard
-- **/
--void blk_queue_max_discard_sectors(struct request_queue *q,
--		unsigned int max_discard_sectors)
--{
--	struct queue_limits *lim = &q->limits;
--
--	lim->max_hw_discard_sectors = max_discard_sectors;
--	lim->max_discard_sectors =
--		min(max_discard_sectors, lim->max_user_discard_sectors);
--}
--EXPORT_SYMBOL(blk_queue_max_discard_sectors);
--
--/**
-- * blk_queue_max_secure_erase_sectors - set max sectors for a secure erase
-- * @q:  the request queue for the device
-- * @max_sectors: maximum number of sectors to secure_erase
-- **/
--void blk_queue_max_secure_erase_sectors(struct request_queue *q,
--		unsigned int max_sectors)
--{
--	q->limits.max_secure_erase_sectors = max_sectors;
--}
--EXPORT_SYMBOL(blk_queue_max_secure_erase_sectors);
--
--/**
-- * blk_queue_max_write_zeroes_sectors - set max sectors for a single
-- *                                      write zeroes
-- * @q:  the request queue for the device
-- * @max_write_zeroes_sectors: maximum number of sectors to write per command
-- **/
--void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
--		unsigned int max_write_zeroes_sectors)
--{
--	q->limits.max_write_zeroes_sectors = max_write_zeroes_sectors;
--}
--EXPORT_SYMBOL(blk_queue_max_write_zeroes_sectors);
--
- void disk_update_readahead(struct gendisk *disk)
- {
- 	blk_apply_bdi_limits(disk->bdi, &disk->queue->limits);
-diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-index fd7c0ff2139cee..9b4ec3e4908cce 100644
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -1605,8 +1605,8 @@ static irqreturn_t blkif_interrupt(int irq, void *dev_id)
- 				blkif_req(req)->error = BLK_STS_NOTSUPP;
- 				info->feature_discard = 0;
- 				info->feature_secdiscard = 0;
--				blk_queue_max_discard_sectors(rq, 0);
--				blk_queue_max_secure_erase_sectors(rq, 0);
-+				blk_queue_disable_discard(rq);
-+				blk_queue_disable_secure_erase(rq);
- 			}
- 			break;
- 		case BLKIF_OP_FLUSH_DISKCACHE:
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 049071b5681989..d957e29b17a98a 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -837,7 +837,7 @@ static unsigned char sd_setup_protect_cmnd(struct scsi_cmnd *scmd,
- static void sd_disable_discard(struct scsi_disk *sdkp)
- {
- 	sdkp->provisioning_mode = SD_LBP_DISABLE;
--	blk_queue_max_discard_sectors(sdkp->disk->queue, 0);
-+	blk_queue_disable_discard(sdkp->disk->queue);
- }
- 
- static void sd_config_discard(struct scsi_disk *sdkp, struct queue_limits *lim,
-@@ -1019,7 +1019,7 @@ static void sd_disable_write_same(struct scsi_disk *sdkp)
- {
- 	sdkp->device->no_write_same = 1;
- 	sdkp->max_ws_blocks = 0;
--	blk_queue_max_write_zeroes_sectors(sdkp->disk->queue, 0);
-+	blk_queue_disable_write_zeroes(sdkp->disk->queue);
- }
- 
- static void sd_config_write_same(struct scsi_disk *sdkp,
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index ad995e7a769811..ac8e0cb2353a0e 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -912,15 +912,31 @@ static inline void queue_limits_cancel_update(struct request_queue *q)
- 	mutex_unlock(&q->limits_lock);
- }
- 
-+/*
-+ * These helpers are for drivers that have sloppy feature negotiation and might
-+ * have to disable DISCARD, WRITE_ZEROES or SECURE_DISCARD from the I/O
-+ * completion handler when the device returned an indicator that the respective
-+ * feature is not actually supported.  They are racy and the driver needs to
-+ * cope with that.  Try to avoid this scheme if you can.
-+ */
-+static inline void blk_queue_disable_discard(struct request_queue *q)
-+{
-+	q->limits.max_discard_sectors = 0;
-+}
-+
-+static inline void blk_queue_disable_secure_erase(struct request_queue *q)
-+{
-+	q->limits.max_secure_erase_sectors = 0;
-+}
-+
-+static inline void blk_queue_disable_write_zeroes(struct request_queue *q)
-+{
-+	q->limits.max_write_zeroes_sectors = 0;
-+}
-+
- /*
-  * Access functions for manipulating queue properties
-  */
--void blk_queue_max_secure_erase_sectors(struct request_queue *q,
--		unsigned int max_sectors);
--extern void blk_queue_max_discard_sectors(struct request_queue *q,
--		unsigned int max_discard_sectors);
--extern void blk_queue_max_write_zeroes_sectors(struct request_queue *q,
--		unsigned int max_write_same_sectors);
- void disk_update_readahead(struct gendisk *disk);
- extern void blk_limits_io_min(struct queue_limits *limits, unsigned int min);
- extern void blk_limits_io_opt(struct queue_limits *limits, unsigned int opt);
--- 
-2.43.0
+On 30/05/2024 17:24, Ofir Gal wrote:
+> Network drivers are using sendpage_ok() to check the first page of an
+> iterator in order to disable MSG_SPLICE_PAGES. The iterator can
+> represent list of contiguous pages.
+>
+> When MSG_SPLICE_PAGES is enabled skb_splice_from_iter() is being used,
+> it requires all pages in the iterator to be sendable. Therefore it needs
+> to check that each page is sendable.
+>
+> The patch introduces a helper sendpages_ok(), it returns true if all the
+> contiguous pages are sendable.
+>
+> Drivers who want to send contiguous pages with MSG_SPLICE_PAGES may use
+> this helper to check whether the page list is OK. If the helper does not
+> return true, the driver should remove MSG_SPLICE_PAGES flag.
+>
+> Signed-off-by: Ofir Gal <ofir.gal@volumez.com>
+> ---
+>   include/linux/net.h | 20 ++++++++++++++++++++
+>   1 file changed, 20 insertions(+)
+>
+> diff --git a/include/linux/net.h b/include/linux/net.h
+> index 688320b79fcc..b33bdc3e2031 100644
+> --- a/include/linux/net.h
+> +++ b/include/linux/net.h
+> @@ -322,6 +322,26 @@ static inline bool sendpage_ok(struct page *page)
+>   	return !PageSlab(page) && page_count(page) >= 1;
+>   }
+>   
+> +/*
+> + * Check sendpage_ok on contiguous pages.
+> + */
+> +static inline bool sendpages_ok(struct page *page, size_t len, size_t offset)
+> +{
+> +	unsigned int pagecount;
+> +	size_t page_offset;
+> +	int k;
+> +
+> +	page = page + offset / PAGE_SIZE;
+> +	page_offset = offset % PAGE_SIZE;
 
+lets not modify the input page variable.
+
+p = page + offset >> PAGE_SHIFT;
+poffset = offset & PAGE_MASK;
+
+> +	pagecount = DIV_ROUND_UP(len + page_offset, PAGE_SIZE);
+> +
+> +	for (k = 0; k < pagecount; k++)
+> +		if (!sendpage_ok(page + k))
+> +			return false;
+
+perhaps instead of doing a costly DIV_ROUND_UP for every network send we 
+can do:
+
+         count = 0;
+         while (count < len) {
+                 if (!sendpage_ok(p))
+                         return false;
+                 page++;
+                 count += PAGE_SIZE;
+         }
+
+And we can lose page_offset.
+
+It can be done in a number of ways, but we should be able to do it
+without the DIV_ROUND_UP...
+
+I still don't understand how a page in the middle of a contiguous range ends
+up coming from the slab while others don't.
+
+Ofir, can you please check which condition in sendpage_ok actually fails?
 
