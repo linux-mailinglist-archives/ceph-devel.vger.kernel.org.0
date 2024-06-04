@@ -1,133 +1,152 @@
-Return-Path: <ceph-devel+bounces-1264-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1265-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A05D8FB624
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Jun 2024 16:52:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08BD68FB7B6
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Jun 2024 17:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDFCA1F276C1
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Jun 2024 14:52:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6100928331C
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Jun 2024 15:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCCE13E40F;
-	Tue,  4 Jun 2024 14:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FDD144313;
+	Tue,  4 Jun 2024 15:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b="1wDv1eu6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O5x9wBfG"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028B213B78A
-	for <ceph-devel@vger.kernel.org>; Tue,  4 Jun 2024 14:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4C013C9CF
+	for <ceph-devel@vger.kernel.org>; Tue,  4 Jun 2024 15:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717512223; cv=none; b=rADDpcoqB5JCiYH3uvAlGbhnXBhVVmSxInRgsY071h53J+o5WXjlY3EdRpDuNl2A2KfcjaEKGj3y/acFY3e41+dhLg686HT+uJHtIKr4WcaKCZwct4pgfowow/OnV3YAdOYFzIFN6hV0JVGRzIu8iGdLA0h4r+baEgvf8A4Gay4=
+	t=1717515865; cv=none; b=C/SRo56Tf0py5+/KWDvlfZWQenEuEdW1ukFdpk5SVxiT7iKTCEhqEZrfpAJjAI2A8NkWZ46+5Xn8MGgZedBf338vDYYz1t2+wLBLh0e6o9Sb9rvuZzzTVSU9Q9ihrPoaiHZggnSaNB09LVqfTgDyKUZPGlI4sSup7HSJVUPSJPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717512223; c=relaxed/simple;
-	bh=ctL3vOIMlqdpL6CapPC1i2IXAG8LcWYLTNh2SbfxJmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OVNJ/Rr16JlO8LRkTrmecPeiZgBzwFwCHZLvo0aKeQ8qdbTNheylIeySQfL1soTlEqIlqYbL9QKeLguw2+98TIdbYjAtSB/m9iC0JbMkA/W9l4c+GTv70jSZweR4u8X2p+a9RCIBCwvxcw0cZN6c8hEDGl5XjxMUple/qX/BkdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com; spf=pass smtp.mailfrom=linbit.com; dkim=pass (2048-bit key) header.d=linbit-com.20230601.gappssmtp.com header.i=@linbit-com.20230601.gappssmtp.com header.b=1wDv1eu6; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linbit.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ba5868965so861328e87.2
-        for <ceph-devel@vger.kernel.org>; Tue, 04 Jun 2024 07:43:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linbit-com.20230601.gappssmtp.com; s=20230601; t=1717512218; x=1718117018; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZCEn26vgqSLqQ0Kbr2xP1FXMBBWSrXPv0PAuT8e/Jrs=;
-        b=1wDv1eu6oWQwOgVoxRmo6/jVdW76i+Rv7vHzZR3oochQDxCFUrsKeAeDWAVR33in34
-         JARx+1OWL95eZDw6y8yTGXcpuVnreGTvDCXMXW0lqSsTq0/UcruHNGzOFy2MS1cwVMbN
-         KJEWSw6dmB/57HAUDd0Gh3faRLuMdlLtLjJSrgdOy9EXFkkyWQ9K9dojckCID7QV8+pz
-         UMAqIVP35kFTK15dTCN6GTg7eU0ycjn4zod2ty0+EoHDqZhI/yZe58skmzTLPSz9myys
-         RYR8z4oU8HgODH7cjFD72QFzHrzspbSPS7zhNj9VHHMA1VUskDAReSkBqGVnbNDvOvPS
-         ddmw==
+	s=arc-20240116; t=1717515865; c=relaxed/simple;
+	bh=QD1J//h8tQdo074E0J0laZ4AfjORkp8s15b/n3/HjMM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k5ZDa8+5y1TMTrWtY061q5Bapv2Dj6zx3jP5DMvI9yf814me/bSmEdir1f0K17l9RvR0PY2cnmFuXDfzsTXFMFzohWmIiebVlmoWqldzu/tsNMS1JPOvGU/jgCcsbM8KjRvkuE4iP0sgZHzpHuXV4+hhfnsOS5NandX8gDBz1nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O5x9wBfG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1717515862;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UxuL7apbG1hgJ1mZ84Pc7untQLBZaPpvNK0/1eeeriI=;
+	b=O5x9wBfG+1g++djlgsbIdHS4Hn/6Uv909z7vrhttv6i96wsb1fWRhAwNa4hcuoeJrb2rUN
+	lRMzXiOQX8k29P9DMhcCW8nJeNknEFXZrbRPkBMhiOMvb7++Y1afSTVvzz9BnYyyk3enXc
+	cDUjiWjfjAZjAzlZqJAIROdejm+8LpU=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-551-4wRlsErbNTikX29PJrb3LA-1; Tue, 04 Jun 2024 11:44:21 -0400
+X-MC-Unique: 4wRlsErbNTikX29PJrb3LA-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a68afe5b95dso177007666b.2
+        for <ceph-devel@vger.kernel.org>; Tue, 04 Jun 2024 08:44:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717512218; x=1718117018;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZCEn26vgqSLqQ0Kbr2xP1FXMBBWSrXPv0PAuT8e/Jrs=;
-        b=beunIvPB6rjpQbt5rsYo8zYpDJ1+Ehv0tC/RxYA5QvHtQ7kox3jTQWPc9N+6WVoQiZ
-         TFXPXRDblWk8dtYUWr+jSV1Vi16WEkKayU5cNi1J/Ury9eVxe8J+mYVV1UzGzHl6Pcq7
-         UAbYqkSeqjJLkSr+skXt/ufFLra1YGPFkseYbIc8UK/67Xcc0sE523g+Pi8aEdQMXR9i
-         Za+9wvW03tuQcsG8tWBld01OdnmHnqib/fhSXN+QncRF4EdGhdJ1TIRcs+LIBEoNdyns
-         ifXSLo+c4IYawYbrQZ6qv/nqIS9MGv9e6nQu77G4s3XL8fKPvBsMe3ZxV/kvIaXRlxB2
-         SDZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCbiMG5zEGT1yzfrwAQn/6QUyjx0SFHT5ipnBRRdswmpYCBWVag3G57kuYu60+JnrEurs0jwma7J7U6V2xcw4Kd9gCDG9ctwucGg==
-X-Gm-Message-State: AOJu0YyJsaEw1j+YmSO2E7B41VqVEdAOpDhCyoInNzcN3prPhJ1YAL73
-	nUK5RE/aW7+B0ENBlCRJ+/KC057ulXECI7tEcRBBAFtvBwF8AC3PrjdgamG4Oto=
-X-Google-Smtp-Source: AGHT+IE7Xgjew2+pYIorgscT+zEtC6CiHfD7k5h5SBbUKiV5TVIkUTo4RiJEiP56EYmy6Bj8NTlM6Q==
-X-Received: by 2002:a05:6512:1152:b0:52b:9c8a:735a with SMTP id 2adb3069b0e04-52b9c8a74fcmr3991508e87.40.1717512218053;
-        Tue, 04 Jun 2024 07:43:38 -0700 (PDT)
-Received: from [192.168.178.55] (h082218028181.host.wavenet.at. [82.218.28.181])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a6522d405sm3599992a12.1.2024.06.04.07.43.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Jun 2024 07:43:37 -0700 (PDT)
-Message-ID: <c117893f-865a-4fdf-a480-705c31a72ee3@linbit.com>
-Date: Tue, 4 Jun 2024 16:43:36 +0200
+        d=1e100.net; s=20230601; t=1717515859; x=1718120659;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UxuL7apbG1hgJ1mZ84Pc7untQLBZaPpvNK0/1eeeriI=;
+        b=nr6FU6vRF/NLSXTuWsl5faqMPXmNN3lVUt3f58zrCr/c7zJIPMLoMTRuzzPgXFaW4x
+         /dGvXR/jhekX4xNYNkWnSWL/Nw+OHX0Tkwhw6VMD4GlpEmK4YYIkKpABDh5uettuyda9
+         dH9NP2QNVwuNl0ZwO1IXhaHq/uM6dX+LCUO+IPKbLYvk5Ew/PEpfM+j0KOK0lPLjsJ4z
+         YLcSdjCkDH9ejCoUZSc2m/EmKYX96Hka8SeKAjKm/ndbdegI5tQAAwfV61XsLRWjXrih
+         mPtFiFjcIK1cMJxRotAM2O9M565820mNYUpqseQicxIfyHkqCYIr3REBIAd945VaqDHc
+         er1A==
+X-Gm-Message-State: AOJu0YzmkLYLeSYvwcz5Axj0p7eGuxwsooIyhO+IerdBVDcpdcHbAObQ
+	rRhExuGdfaEGQfEAseQrMa4C1IxNdX8bnYT7Y5s9mG/so/hjgetClcxNB/XND+1G4qBKoimmK70
+	Ev2cHSheQZ0Ycfbo2Dj/LP21J1KKE21+D2dIRjVgwZjmycXfv/8fib2TzuPlmI9NlMJ6J2mqeJM
+	WI3W9KS8n3aib7T0Uj7MbVqC8wEfDGY0Qi6Q==
+X-Received: by 2002:a17:906:69d5:b0:a62:b97b:b3bb with SMTP id a640c23a62f3a-a6822049316mr830294066b.74.1717515859335;
+        Tue, 04 Jun 2024 08:44:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFzF6ahZV81xyF7FABjFabgBzKjFrviZBPX7bJjBHfCLUuzZeMOynt/RecaYhD8Z73UShqxC2YgM6gmBAqO5sQ=
+X-Received: by 2002:a17:906:69d5:b0:a62:b97b:b3bb with SMTP id
+ a640c23a62f3a-a6822049316mr830292766b.74.1717515858943; Tue, 04 Jun 2024
+ 08:44:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] drbd: use sendpages_ok() instead of sendpage_ok()
-To: Ofir Gal <ofir.gal@volumez.com>, davem@davemloft.net,
- linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
- netdev@vger.kernel.org, ceph-devel@vger.kernel.org
-Cc: dhowells@redhat.com, edumazet@google.com, pabeni@redhat.com,
- philipp.reisner@linbit.com, lars.ellenberg@linbit.com
-References: <20240530142417.146696-1-ofir.gal@volumez.com>
- <20240530142417.146696-4-ofir.gal@volumez.com>
-From: =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>
-Content-Language: en-US
-In-Reply-To: <20240530142417.146696-4-ofir.gal@volumez.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240508094349.179222-1-xiubli@redhat.com>
+In-Reply-To: <20240508094349.179222-1-xiubli@redhat.com>
+From: Venky Shankar <vshankar@redhat.com>
+Date: Tue, 4 Jun 2024 21:13:42 +0530
+Message-ID: <CACPzV1=o9zOtkw2NzVSFhVodZAE__8WAijiv0wuC1tyz5d5SkQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: defer clearing the CEPH_I_FLUSH_SNAPS flag
+To: xiubli@redhat.com
+Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, mchangir@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 30.05.24 um 16:24 schrieb Ofir Gal:
-> Currently _drbd_send_page() use sendpage_ok() in order to enable
-> MSG_SPLICE_PAGES, it check the first page of the iterator, the iterator
-> may represent contiguous pages.
-> 
-> MSG_SPLICE_PAGES enables skb_splice_from_iter() which checks all the
-> pages it sends with sendpage_ok().
-> 
-> When _drbd_send_page() sends an iterator that the first page is
-> sendable, but one of the other pages isn't skb_splice_from_iter() warns
-> and aborts the data transfer.
-> 
-> Using the new helper sendpages_ok() in order to enable MSG_SPLICE_PAGES
-> solves the issue.
-> 
-> Signed-off-by: Ofir Gal <ofir.gal@volumez.com>
+On Wed, May 8, 2024 at 3:13=E2=80=AFPM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> Clear the flag just after the capsnap request being sent out. Else the
+> ceph_check_caps() will race with it and send the cap update request
+> just before this capsnap request. Which will cause the cap update request
+> to miss setting the CEPH_CLIENT_CAPS_PENDING_CAPSNAP flag and finally
+> the mds will drop the capsnap request to floor.
+>
+> URL: https://tracker.ceph.com/issues/64209
+> URL: https://tracker.ceph.com/issues/65705
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  drivers/block/drbd/drbd_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
-> index 113b441d4d36..a5dbbf6cce23 100644
-> --- a/drivers/block/drbd/drbd_main.c
-> +++ b/drivers/block/drbd/drbd_main.c
-> @@ -1550,7 +1550,7 @@ static int _drbd_send_page(struct drbd_peer_device *peer_device, struct page *pa
->  	 * put_page(); and would cause either a VM_BUG directly, or
->  	 * __page_cache_release a page that would actually still be referenced
->  	 * by someone, leading to some obscure delayed Oops somewhere else. */
-> -	if (!drbd_disable_sendpage && sendpage_ok(page))
-> +	if (!drbd_disable_sendpage && sendpages_ok(page, len, offset))
->  		msg.msg_flags |= MSG_NOSIGNAL | MSG_SPLICE_PAGES;
->  
->  	drbd_update_congested(peer_device->connection);
+>  fs/ceph/caps.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 197cb383f829..fe6452321466 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -1678,8 +1678,6 @@ static void __ceph_flush_snaps(struct ceph_inode_in=
+fo *ci,
+>                 last_tid =3D capsnap->cap_flush.tid;
+>         }
+>
+> -       ci->i_ceph_flags &=3D ~CEPH_I_FLUSH_SNAPS;
+> -
+>         while (first_tid <=3D last_tid) {
+>                 struct ceph_cap *cap =3D ci->i_auth_cap;
+>                 struct ceph_cap_flush *cf =3D NULL, *iter;
+> @@ -1724,6 +1722,15 @@ static void __ceph_flush_snaps(struct ceph_inode_i=
+nfo *ci,
+>                 ceph_put_cap_snap(capsnap);
+>                 spin_lock(&ci->i_ceph_lock);
+>         }
+> +
+> +       /*
+> +        * Clear the flag just after the capsnap request being sent out. =
+Else the
+> +        * ceph_check_caps() will race with it and send the cap update re=
+quest
+> +        * just before this capsnap request. Which will cause the cap upd=
+ate request
+> +        * to miss setting the CEPH_CLIENT_CAPS_PENDING_CAPSNAP flag and =
+finally
+> +        * the mds will drop the capsnap request to floor.
+> +        */
+> +       ci->i_ceph_flags &=3D ~CEPH_I_FLUSH_SNAPS;
+>  }
+>
+>  void ceph_flush_snaps(struct ceph_inode_info *ci,
+> --
+> 2.44.0
+>
 
-Acked-by: Christoph Böhmwalder <christoph.boehmwalder@linbit.com>
+Tested-by: Venky Shankar <vshankar@redhat.com>
 
--- 
-Christoph Böhmwalder
-LINBIT | Keeping the Digital World Running
-DRBD HA —  Disaster Recovery — Software defined Storage
+--=20
+Cheers,
+Venky
+
 
