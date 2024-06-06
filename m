@@ -1,61 +1,62 @@
-Return-Path: <ceph-devel+bounces-1272-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1273-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 649268FF1F5
-	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2024 18:15:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF2B8FF1FC
+	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2024 18:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBD4E1F26701
-	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2024 16:15:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEA2028A7EE
+	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2024 16:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47503198A3C;
-	Thu,  6 Jun 2024 16:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2022C1990D3;
+	Thu,  6 Jun 2024 16:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=storingio.onmicrosoft.com header.i=@storingio.onmicrosoft.com header.b="abEI+9vx"
+	dkim=pass (2048-bit key) header.d=storingio.onmicrosoft.com header.i=@storingio.onmicrosoft.com header.b="HnRwMqYX"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2104.outbound.protection.outlook.com [40.107.7.104])
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2115.outbound.protection.outlook.com [40.107.22.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19FD947A;
-	Thu,  6 Jun 2024 16:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A82947A;
+	Thu,  6 Jun 2024 16:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717690357; cv=fail; b=mzhQGYBtr+eBM0bW1Xsij+XEsr2HVttYsMUE8c04WB8hSfXDoRr7gk4kBQQjAO75EaNxAUcyqd4/xk2NbBKxOJb5J4f2o/7q+TlNH9MDTUXsZZbAl38iUsIh+xHMYqGPlk6gAm7cjzPnflrDN3ACP/9tjE/G7vYCZU+IBsY7p08=
+	t=1717690361; cv=fail; b=B9jNr3A//03QCswQif6yvFeq6uVcPJOenS0sRQRJg52locyTvDQlMZK9Ati/INUvN4gHDAHfamu+gaiMdsQYHBrMmiOhSEAUHe8T1ffzbCs1W3K2UeiiseI2zYlEQL8K45W4LBzzqZjVCkaGTCQd3vcJaU8w0axBwwX11GtZguI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717690357; c=relaxed/simple;
-	bh=HCroDG5itaNt1moOR85LhTsQHE1o7zA0xUTZBHyhrEs=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=tGNcaRMEAxFY6yoGNd1f6JRsSqt8sad6SK1ZmOF/BZz7YeL0EajMlAlKESrorcvCR95zwdeSCygmDjMQcbyFI5zDwmRp2Gh0J+anibpetrEZy62DcFqzxmX/EqBqAsQGGYCmjWk0/U1TXZ/Wg7qX8M3qMJ+41wgcp1S5q3fcaZ0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=volumez.com; spf=pass smtp.mailfrom=volumez.com; dkim=pass (2048-bit key) header.d=storingio.onmicrosoft.com header.i=@storingio.onmicrosoft.com header.b=abEI+9vx; arc=fail smtp.client-ip=40.107.7.104
+	s=arc-20240116; t=1717690361; c=relaxed/simple;
+	bh=+/CS8USn6wiB6FaZ6ooyFQf+NWxoxcSHGKvL5rcyZcA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=etzyTD5TD5LjU6TZ9Xnc66e0QSy8f86wPgyRMrN5GcbPvxdTTxm55c7N67NIjOpyDeFjzIJJh+Nlb85VO5qKg50400KE1rvIkFrfUbdYO9rAOf9a2c93wl4O6rGM8X04FyPALoKMgvu0dYPCt4rjti66HQCD+t54KXZKoLGZHNk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=volumez.com; spf=pass smtp.mailfrom=volumez.com; dkim=pass (2048-bit key) header.d=storingio.onmicrosoft.com header.i=@storingio.onmicrosoft.com header.b=HnRwMqYX; arc=fail smtp.client-ip=40.107.22.115
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=volumez.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=volumez.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FKWXPxuKiVfNGkpgyQKWSDOruvn0lKqQTSTnsrJ0vGsPDTZbsX/AiH6aukepDb4Jns/plF7Os+kQZSNDGy0tKNDJrAqr0iC0AKXmCveVN3rZuzOJSnmQYLIfST9njLDgRVBLlSoXJgHE05PGrsc0CilPWD3v5D3Rthz7R7BE+wlWZlpYi/dLWUO8ZbZwefX3kdgnb6x03apPoDuz7y6h4Wt64tfVZT0eEDwgeQ9RnHUqQM+tLU4Cp9TNTCMWRWCBC6nRigH54NvPcKZc/qBC5Qf0nDL94AJKBzYX5gZ7tMvR5ijHn6cUcxFPNdq37EUP1mY8rT2LX8Qgc9kGgjGDqw==
+ b=l8TFrB5JNyhttNDjLD4iHD+1Ch1MYvCereAK1Daz/J6yxTvN7MRjGyiHAV+Yj5aKIhqE0m0m5QyPa7AbcUXX62GFL5TgarmSdiWP1rD2LXQXobsyLv+fJwN76PFblQgJoFey3GTP8JbYeEW4nLrt1NuIwXwZtHrbkSFLPTdsO30cosV2VYXTfQE96Aa0mIOode7sZhu5F/p3urgSTekFufSi1NpFOY+DVc23LMY0/1LSiBcr81GtM7sIZlQmlOuhc7xRcsbN63Sc6INpAbKDfMKXigv1SHrx13ysmy9qsSx7otMLaRMmp8Fj3GlW/rX4se/NPJZKmfL4Yt3gc+ELlg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uFIG2PIf+zrG95p1W83U82nH4ppR/MDBZY9tN1VXlNs=;
- b=XRgsZB6X92DF7WPTJgR/M8xeIZwqA8Bx8f3nLK0Q45EVaeyQ6nL0AfUJeG2Ebwy+ZYnSQZ2NkFVYa0DtY1HaEM7H16R/tjriiQUnTlXFRkhyXfJKOH0yGw/xxG4pfy19sReyvEzXsYTxEo7M/GR2xtmpY00fIJO7mFGs8qnupU8au08lLFhtAjPzVgJKwpgH6WwVwSfqnqHZBAo8L8jR6oU/sJe44AIn7NjwTwfGNYPbfwcotBV4j9exYkwhZmrxHitvi38/tN4P0Ab/MIv8fwf8EMck1XCDpzPxO3CR2Y/LhTxoQKAxU5eAflIqpMT0NlzLOUdtekQ2CCF5LlF+/g==
+ bh=DhHgDslOBASD7s64P5KfwTymBRlfINLihCyBsaaDRLk=;
+ b=eEJGofUIagvpmSoAD6BkIDf1MdNL1K31hDCsACUgXMvJTTbQY/kTVeW+wtis3qjRqkOcKbEKbbXE/BvbPWnbhcsbhGc9r0AQ4lojjzIo5gDh5q8LLWejYLYEwVK8tfniShVoEIgnJkCWLr8Hf/nEU/y1KClHCXGStzIT/NnOxnluJDy+tnd8+dh7OGFnKOZZFCp00KfSgxII14Xly0VVpnPDBya0qr/gMnHEnM4WQnejCLuDyR8SMCzFJU+sYZofsavjR1F+5/qY1WoxCr9rKNRdRZBDAWei50KKDYF2I1TwghAEVRYcOxQ1VypzxVFdXU5lI/cxae5Ey6PosZACBA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=volumez.com; dmarc=pass action=none header.from=volumez.com;
  dkim=pass header.d=volumez.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=storingio.onmicrosoft.com; s=selector1-storingio-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uFIG2PIf+zrG95p1W83U82nH4ppR/MDBZY9tN1VXlNs=;
- b=abEI+9vxzlifdvI8uoiOaRjbu/eFRGyN2vZoVC12zx4vdFEtprSey01YfXy9yoJR2AlhXlbQXiobtYEc7Z53TCSN4XyQbGJX1Mwsc1My1y+4WxIUWD43JSm7OfmR6jMPMzRPQJx02rq7RceTnuqMe+ykuapJAae7826d0vVhPMcROMYfQz0mIDtKJXuFymB0g6hqmB3q4WhuRIEW6B188b012s4niiyxonOd3dyhOxnORsjwHW3JZy2nSMbTmbM4bdipQ+hoDnAryi6JGFgDpcCSAWUKRHHnd/6NQrDLS+y1Cr7v2aRJsdn6QiSLUHQ+9JkouFnReJV71dKxFORvaQ==
+ bh=DhHgDslOBASD7s64P5KfwTymBRlfINLihCyBsaaDRLk=;
+ b=HnRwMqYXN5iP57YmaMMTgARS3eDndI1Uz6cTEfkL60nAniGpLJWyMStyJUGUIe90AlgEz1u60+E6SVYE8to0YVGZ0gzdNSp6zoUkIa98lPrnIko5Juoc2Zh2gYNYfv3Jfdr34zCXQ4XxEfk5wcycypyRvIAr5GMXOFtZ8xgW5dpwL+zgkduuxIC1U+O/24ag295CWJOmj4fbz5vKAOmGhnSsPUJ/K/dx55uyIo6m2wllTLIHF/zwE3za/vCVS2w70uMK5UEqHdl1DHEAGFAUP+tHfcKBa5P6urD+hblMXLqvCYvzcuwqL2+JF/ZgLvmN/eAtudnBkTzxXkc+1YxWyQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=volumez.com;
 Received: from AM0PR04MB5107.eurprd04.prod.outlook.com (2603:10a6:208:cb::11)
  by AS8PR04MB7815.eurprd04.prod.outlook.com (2603:10a6:20b:28a::13) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7633.33; Thu, 6 Jun
- 2024 16:12:31 +0000
+ 2024 16:12:37 +0000
 Received: from AM0PR04MB5107.eurprd04.prod.outlook.com
  ([fe80::de53:c058:7ef:21fb]) by AM0PR04MB5107.eurprd04.prod.outlook.com
  ([fe80::de53:c058:7ef:21fb%4]) with mapi id 15.20.7633.021; Thu, 6 Jun 2024
- 16:12:31 +0000
+ 16:12:37 +0000
 From: Ofir Gal <ofir.gal@volumez.com>
 To: davem@davemloft.net,
 	linux-block@vger.kernel.org,
@@ -75,12 +76,14 @@ Cc: dhowells@redhat.com,
 	christoph.boehmwalder@linbit.com,
 	idryomov@gmail.com,
 	xiubli@redhat.com
-Subject: [PATCH v3 0/4] bugfix: Introduce sendpages_ok() to check sendpage_ok() on contiguous pages
-Date: Thu,  6 Jun 2024 19:12:12 +0300
-Message-ID: <20240606161219.2745817-1-ofir.gal@volumez.com>
+Subject: [PATCH v3 1/4] net: introduce helper sendpages_ok()
+Date: Thu,  6 Jun 2024 19:12:13 +0300
+Message-ID: <20240606161219.2745817-2-ofir.gal@volumez.com>
 X-Mailer: git-send-email 2.45.1
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20240606161219.2745817-1-ofir.gal@volumez.com>
+References: <20240606161219.2745817-1-ofir.gal@volumez.com>
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-ClientProxiedBy: TL0P290CA0009.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:5::6)
  To AM0PR04MB5107.eurprd04.prod.outlook.com (2603:10a6:208:cb::11)
 Precedence: bulk
@@ -91,327 +94,133 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: AM0PR04MB5107:EE_|AS8PR04MB7815:EE_
-X-MS-Office365-Filtering-Correlation-Id: d5b66dfa-8c9a-46cf-5f3c-08dc864377f9
+X-MS-Office365-Filtering-Correlation-Id: 9495f9fe-f094-4370-d8a9-08dc86437baa
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230031|7416005|376005|1800799015|52116005|366007|38350700005;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NTNleVVheVNXL2RNUkxNTkZycHBRc0puY1BRRDQvUnV6UHh2TzBaNzRKckVr?=
- =?utf-8?B?SWpCYStoSWtWQXV1N3lYZVRXNFRQb2FwQzRKSHdtMVBrZGs0QzVYNXRCWlhi?=
- =?utf-8?B?UXJ5czNGWFFHeTk3c0I2WXQrVWQreHdna040N2Nzbm5pbTYxanVaSUdkUFV4?=
- =?utf-8?B?Zk4xdTkwV3cxcURQNVpQSDlnZFEyZnQ0Mko5bzBoZFNHdnd2R3pvYVFGUGZT?=
- =?utf-8?B?aVVJQUYvMUthSVRTTS9hVTEyT3J0L3M3UTg2QStXb2VTdkRlNGxqaG5SWnhD?=
- =?utf-8?B?a1BGdkhnWWJLOUhoTFZvUWF5eU9sQjJ2MGxKQ2VDbnhYYVBRakVtQlVJaUV1?=
- =?utf-8?B?WXZVK2hNWXE3ekRsSk5TeVBwdU9XaEFGdUxXTDhwNGZNT1ZCU2tGQjY5UFk0?=
- =?utf-8?B?SXg1d1pKdTZIQ3pKZ1RUeXllWVh5Qm9OKytuOHFWYUxsWjNlalFPcmRRenJa?=
- =?utf-8?B?bFJ3MmVVSzBqTXR3SDkyYXZuaVVndGFEd25TaEcrRmJlalNacVo1VGJNRThO?=
- =?utf-8?B?TDNWMU1tTWNDb2FZQkNqL2ZnUWR5V0xBWXFzcC95RUd0SkZKQmdaQUcyU1lw?=
- =?utf-8?B?R0RoSVAyRlkwZ21nTTVqV3NCRGg3TUNTbEZhZEFRSitBQjlzWEZadVgzVlE4?=
- =?utf-8?B?Zk1WTlF5VEtXSXdlTEdjRTNleG1MV1l5TWI1bXJZU2NVYzdtb2JiYmJmUFdo?=
- =?utf-8?B?eHpxa253ZWtmbDhHM080TysrOXFweFdRR05OTHVUeDZUNWZzRXJBN2EvQzVk?=
- =?utf-8?B?N2VGd05FZFl3SUEzaWNTRjRyVE1qbGJwVXdUMTk4SHNUQWJGOHNBRHZmN2JR?=
- =?utf-8?B?WmJJNFJuc253WWhKamVoai8rdU81SG1jTzNnUk85UDZmNlhKb0M3bkNiUnBN?=
- =?utf-8?B?ckExMnR3Y2JlblhTK3BlN1lMalB1MTdzUVNwT01WUEpsalcyWTlSajRycjZV?=
- =?utf-8?B?cVFNTzZYUmtKNzhCOVJXR1NxVmFsTjZTZVVMYXdiaGt6a1lzUGN6Z1Iwdmpy?=
- =?utf-8?B?ZXVyK3VQUmtCWmd4ZWFIdHBMbGNmZ0EzTTNxWlkzd0JaMTI2L0M2SnJUTElF?=
- =?utf-8?B?eS9HZzRmZGN1Ylk1enVES0RTa05OMk9sekZ6Tk81MDVjak1XMzhSck5Oc2x2?=
- =?utf-8?B?QzhsUXZRNHViM3NEZFh2SGNPWEpxMFFmVjBwblNyZkowVjBZbnlOM1EvK29R?=
- =?utf-8?B?ZzBXVHlHNTFmNjRTUkhLUVlWY3g4ZkdZN2ZaZWJlVVZDMDdJanZ1MzFDcXJJ?=
- =?utf-8?B?QXVheTVDUExMckVTb0JkdjZLZkZmbDYwcE1mZjd6NytDWWorUWljSWRncmVn?=
- =?utf-8?B?U1lSd3I3TlJrMGJ6ZGl6RVpwd2hhZ282aTNGTUY4RTI5T0RQS1dWN1R6Y01B?=
- =?utf-8?B?ZVkyVXFRL2pMbGl0WVljeXJFWGRqeEZuajFmNWJHVjhTbUZwV2xjM0FqbGc0?=
- =?utf-8?B?R250MTZuSnE1VFlpVHV6dkRCbFVuZlZ3MFRXakNraWhLZmNHTWNhck9mTEhM?=
- =?utf-8?B?eHB4bTFsdXlkYmR0WU1qUUc1WVhqWVJDSW12WitSenNCU1VTSkNqM1k2STRP?=
- =?utf-8?B?Q2o5a2dJS1JYbEVSOGhCZWd0OVE1elRKS2lKZVdCVW1IblZNNFdsQnp2Q1ds?=
- =?utf-8?B?T1g0RGthbDVreitxUlRVeENiUjMxVitFUytQSWJUNjBsSXV0TTF2VHRuM2p4?=
- =?utf-8?B?LzBwKzcxeEhpZkplZ2M4cWxPMG13WkNQazJJcThZUEoySk5SdVFpazI3RG9z?=
- =?utf-8?B?OXhQWnRORTd3MUtZM3BxbXNsTUR2ak5qZGNESkxzOXI4ejJYOTZYWDRlU2lW?=
- =?utf-8?Q?GGR1NA4zFiOQFEt/YQeVZjdsZtHCC07TN2uLY=3D?=
+	=?us-ascii?Q?+XKTzYWFGIukks25OQqVp53B7+PK0OmQJFA1IXBK2QVw1G+c8iV96kkCfqCr?=
+ =?us-ascii?Q?L3mESWo0Ud0sDD9g8wTFZi3dA+ot27IuFT3q6u/WOHUpz6tX3+SejwiJKAAB?=
+ =?us-ascii?Q?PDvhgpmFvIb5tx3xJRgUoP+BBm2d5B9QNd+O0vlFuoyrJP4h/nG9HUhAK6vz?=
+ =?us-ascii?Q?9+W52gIJHuuraruOTBMUD0eurUHouKdsfjYlW1S3/8Ka37E3Y68T23w9Kk4y?=
+ =?us-ascii?Q?KkBX1Yjs8IE/uNmZB60D9Rm87VBcM6Pzbs1YD7Z/io6nul7XW5pi3S9yLxeX?=
+ =?us-ascii?Q?kblnUaST4sxcglC0Qosv8KZCMvtm+pOtwo5TLfrjnjjIK9yUafWhEz3G0q5O?=
+ =?us-ascii?Q?OUJNIe09VK3DwCUiItWqM6CV+ZOQXz+e+5q6UORYBtGVyWD7UcY0R47DWO1z?=
+ =?us-ascii?Q?/izyxFKOZEfmrqMfoIUyGtTWvOP2ouaLNm9yxHp6cVxbIzINhCNsQTjdmaSd?=
+ =?us-ascii?Q?NLqHV8cCXLIIur7PnrsyPSTB1sWV/TfU9pb3rbhlEDAaqddzgg7xLfOHJq6/?=
+ =?us-ascii?Q?M6grnTIRSoZa3zwlD14VH3v6HV9v2gaYLoBq1eXMe1asQGLRaYNQuhU4giEx?=
+ =?us-ascii?Q?Wfc6ZMLjpHLl1mDoGU8q+Igh8xBMcq7KZecRkm9p5/wNWFDCxtEQIxcwBz7g?=
+ =?us-ascii?Q?MApaFdnPR0tfmGVOBwCfh/ODsoTpf0VRRHEbueZUvRb9ouLpMbnZY916NEgn?=
+ =?us-ascii?Q?c5ECzquyxRR7A3DrY7wSnS0w8Wi8K1Ak+6/diAu3O8qQiibZEruJ9/XpUCE0?=
+ =?us-ascii?Q?e9/kqIY7jGFQUfwM5AOEa/j/qQDJUfIHdxBEoLHBUed1psN0H7DzOBJX46zD?=
+ =?us-ascii?Q?8F8U5eWaKHdsQCojAadLN4UnoSulEVJCRjYrtsMhZMz+8IGVlD39I5ChV6p5?=
+ =?us-ascii?Q?4LPkHUVWmSojxtcC6etlL78XrAF0uo7jdgmfbdGqP5nr/fjbzyurPRiXtHt7?=
+ =?us-ascii?Q?G87UAWHoqFLiCibFSNcJwpyJR2VLeyA2uwbu41BZebnnYl6qHrbUUcyTEvk/?=
+ =?us-ascii?Q?WLxOFrcRuBLYapC10dhdf7rBboZMUqmmEPZbXAoSAaUoJaqYP+sKDK9BC8YW?=
+ =?us-ascii?Q?SxOtMIuSNrgozKNCpdCFS4BTaBK5Bzv+v11yaUYjfIlC4lYhbubCgbKcnp9V?=
+ =?us-ascii?Q?4rtdPSuW7zvv3lvpfPtJbBbXCERQ3EpdBuJPUqmGqUsEvi0Oqk2kvQWjSqhg?=
+ =?us-ascii?Q?rZ5nFwENbk++6D2bk5nApgi/498+tLxJ7soIa853cpyerJ80I6gxfz6PAAti?=
+ =?us-ascii?Q?6/JfZ/MBPMqn2nJfyIFGe1ao3PocdhE3X8zIoJC6OqZL0ClEcnykwJmNwWaQ?=
+ =?us-ascii?Q?j857JDlYxdOrfLi8TO5sv2RSotHtgWIsf2pkg+TBK6zLmZLMjLwH4eEXN3k/?=
+ =?us-ascii?Q?n/eH8zQ=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR04MB5107.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(376005)(1800799015)(52116005)(366007)(38350700005);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?blpGWlN5M3NXdEk0QitQWE5sNjMvMzdKVWNFeDRHaU5ieXM3WHZUYkY1S2R6?=
- =?utf-8?B?V1dmV2laZjdGbmQxdC9DTERrRG5pZzIyL0lwRXdLRWgvZjF0U2paemZTR0Vh?=
- =?utf-8?B?c1RKLzIvTFpiN1BaZG0rL2ZHMVpCVW4yZnNaNTcyMU5GVmYxTFQvSXpNMFE2?=
- =?utf-8?B?N29aUFZmWkNDSFYrcUo1ZHdlVkZRbXhNMTJVTmt2SjFYZkRMSzBCS2tOVDRj?=
- =?utf-8?B?R3BrMjZ2WFFJSmVLc1pkOFEwR2FROW93aDRIRjUrN0IzQVB6MG1Oc1QyV3pZ?=
- =?utf-8?B?cWtmWEhQMmlkelNJemNKQnNnNUEraHduVXFKYzNack1qcDVrVytWcHo0ZEov?=
- =?utf-8?B?R1BPbXF5Y1o4cGpTODAxS2xjUDJGZEdHTEVOQTBwQXFQaDNsTWc2cFpFNTVu?=
- =?utf-8?B?NWxaVHR6Yk5vdkFRem9YUnJ6OEd3SE9MY3FJRDJObVF4ZG5JVGg5RW90VUdP?=
- =?utf-8?B?R1NoREg3MmtaYmp1MEtIU1ZTNzNpZ0hnb1FLMFgvZ1diWkhQK3IxZWRQdURs?=
- =?utf-8?B?N1p0YTcvZTJGeHNjRDFnVVlZcEdJbm5zbmsxdm5JUzBDUjRiSUd1SXNqc3kx?=
- =?utf-8?B?TUdZTUFRdkJsT3hTUUphRmpEblo0K3pGeUpScjlQUHA0aXNFZ1RpazJMMVRr?=
- =?utf-8?B?c1MrYkdpQU8zWVNhVnM1ZUxJMUFQa21ORmEya3dBVzUvUjFzTTRCTC9uZnpm?=
- =?utf-8?B?RGdYT1hPVDErY0FmeHVBNnNIK09pU21lRHlzQW9LS2c3RXJ4ZnNVSm5EVGtF?=
- =?utf-8?B?OENyL3BGUm9OZkF5bWJEVkNnQ21WbkhkM3Q2SmU2TGNmY3pFV0pUdnMvWUpL?=
- =?utf-8?B?WFJQRjF3dml2NmJKOXVmT05JRWhTTUlDTGZzVEdkUTh1Y2x2cFJINHBlcVVE?=
- =?utf-8?B?LzZCeE5ZanIrNnBmYTc2RUkxRU5qKzBsaC9ML0JuL29PT0M5R2lnd2RPNDA4?=
- =?utf-8?B?NTRqVHkyV2tTaXR5Q2pBMlZjczYrek4rNVhaR05TOUh1UmFiT1lFUURLTHYw?=
- =?utf-8?B?V1pJeU9CTVVwYzFpZ04zMjR6Qjl6QWxBbGtuR0FNS0draFAvblNUUjhlLzdt?=
- =?utf-8?B?eUtHbk5xSE5oVm03Rml5eGxFMjNWaEFZWFNPREwvREpJc202bUxkblh2UkQ3?=
- =?utf-8?B?YTlKODYvVUpBOGc5REtxc3RzYUw4SnNRTzQyMXp3SS8ydGZYV3cxbkxSbmxJ?=
- =?utf-8?B?QWVMYUlnUEVZTTJucVBlbWV1VWU5M1U2Q1BRYldJQVBsczRqREdMd3dPWkhL?=
- =?utf-8?B?eDMrNVA3bHZZSTA2ekZPSUluOWhkTDRjVkV2eDF3R2tCbEVmOTV4U2l6bG43?=
- =?utf-8?B?ZDE5WU1WQktweWZuZEppK1FNMWJRSlAwQ055QUtjdUYvMlFaL2Q4eTA4MTA2?=
- =?utf-8?B?Q2xyZ2ZBVjJQRUJRbTRnTWRjRW0xc3VjWlM5S0N6VWRQT0s0Nis4OHBSKytV?=
- =?utf-8?B?OUJiQjdUek10cXdQRzk5aEhtZFpMQ0tld21ObzlXazEyRXNSM0p6cWVLNWJO?=
- =?utf-8?B?MXVIeHZ1cWl1bWxnRFpGRGNjNGlmRWdZMG53YlJCWWtsZHo5RG94NkRDY0Rx?=
- =?utf-8?B?NFZjSkNSZk9DS01ZZUwxbHhXNWdtbDVleDllTlRaWnI5V3htUWsxOXF1Q3Mx?=
- =?utf-8?B?WHgwTlBzRExCT0pPQVN0MU13ZUx3czg2bzllRE80L1RhTHRkM2gzR0FJaXZO?=
- =?utf-8?B?Z1I3ZFZrVVhQUEdlOE9vd1BlZndmRDVsRCtRS3hXM0hoeExPNkxyaUJNRkE5?=
- =?utf-8?B?SzU0dElnUGlVdHphQjFkb3I5SHg3RE56aTFSS1FzdzJnZHlwWjJBU2src3Z4?=
- =?utf-8?B?bDlmaDhsdkNNNHhDc0xkY2dOblpZOVZ6bEROOHdZVngrR3FkY0QwVEdlb0FE?=
- =?utf-8?B?ZWtxaEt5Z2JUbFgwbFhyM3VqQVFLSm9SZHJZWDNBZE1GY1BHUXpDK0VWTklU?=
- =?utf-8?B?TVQrNm9icFd0MkU4Q2NrNmI0OGxXdTBFdHNweHFPeDBwRGFLWjNqVThWUTl6?=
- =?utf-8?B?Ykt3bnJlOHVIa2NJZjJ2elFNZHlEbjNpOEN1b21ZbEEzOGZBRm4ra0s1dzRo?=
- =?utf-8?B?L2NlMmF1YkxVWUdyeml0bm5NTlFmeUR2QUFEdFZadThSVXdEUjdBNVBIcFZy?=
- =?utf-8?Q?glVhtxc3OBMFnTORPkHyuW9Db?=
+	=?us-ascii?Q?yt5zKlB+VUpDVLwyW7Kr+roCIftrJWXwCOZHBcAJUQCsShpi3DBL0tVxme/m?=
+ =?us-ascii?Q?X+Ykq+0BG3A8jA8uN9o/K011akwwpG67V8GXw9xZCjC62qdZVcTk2mt7rH6m?=
+ =?us-ascii?Q?/rKmkmn09yY/r2HquOYC6RRqlfJIrnHUa98IyyF/RKuqrEw1NCnoshV/r7Yi?=
+ =?us-ascii?Q?gDMXYiZHzmfajUwhcUh+mwH59c0KplSF6C08f3Al0zIjqTdtxUrYl55hsIgO?=
+ =?us-ascii?Q?JWhGxUGrImSWHz/n+0RBbbp8m2B+/nesuNdsXF/Lx9OlD70ZaY0PBiAgpIn6?=
+ =?us-ascii?Q?sKVAl9WZnEd1sx9L+s7Ko3tXWSoAmJFnru1MIVYOW5kk/v2e5UXwhaH54v77?=
+ =?us-ascii?Q?ggrrkruyTjvORF3aXI3ZnAKCoG7Jm8maWSjw0A6x5nQzcGXj3q/7B8ZuLUxm?=
+ =?us-ascii?Q?5L4mMJzRgpQGIdHXyyGlxwu844tF8cm+ijFpaNFdZ9gPATKscAP3DfMeMqKo?=
+ =?us-ascii?Q?UaJ97ApwY7MJvWqfRMey4zeLCV+j+XpCuE9Xe6yZxnkeBJBir4i8zoljIWjw?=
+ =?us-ascii?Q?NmZPfXks+8G/r5Uy6p17btx0ewdJxAdJBUIRCkZ6PRtyxzTT1bqIxuP/T3zv?=
+ =?us-ascii?Q?x08QmmAFotynjJL1TMYbLMXxkilcFWkXdxULaAaXQKuVMHfopKDGGX19Cu5P?=
+ =?us-ascii?Q?0RH7ngYcG43raOXgocisNTwNLZXLxhTPMBeX26JJ9Q++DS4Roaemb+NRmpXP?=
+ =?us-ascii?Q?abyceXfX/jYA0InZnRYNE4FumvdM0PwzhuwuMbBB1Z7zxPo94Zjm0vUHgyEB?=
+ =?us-ascii?Q?Ixd8TtqRFuhaAzJyv80qbz+y0B4PPl6DL7dSJ6iFt4gAtfUqBlngKFsxxlaI?=
+ =?us-ascii?Q?wTw9OW7fXVCcuqZUV/wKB2iS2dTG9EHZ+0LQBxUKEcQO1HoTYeY3caBc/K6l?=
+ =?us-ascii?Q?D0VlXl+1zHBbfq7XN5xvaOBZp/fBigucRs18xGLJ9kxXOftMAdufxcrzua3x?=
+ =?us-ascii?Q?dpGMnry5mzgY2rWbr1caY8rGd4GxVWTQAZ7H513GwEyzvgG80/IIoTmXTILk?=
+ =?us-ascii?Q?YmjW/eZGilCLB52stdbJWPAnYk0cp1J1x38B39KFZSE6gDg+rZSVbJDJz4NG?=
+ =?us-ascii?Q?zRcWE0hLTbV87TpSvr6hRKF1OHlD6Wrp6Z0ZhvI0NAHyE4j249V/z1zxIjGe?=
+ =?us-ascii?Q?yaMghXcGWrcdw9DEa5A+QS1zjtrhlGDFoXehu8BFkSnbl3g6XljYwa9vxD9w?=
+ =?us-ascii?Q?gSQgkNt2x+Gcq9nrj/vYpZvNJOuRI6uiMjK61OtMR5fcmg1KhxgPI2miJcmU?=
+ =?us-ascii?Q?vDDyZHRxmH9R+RwREWoghUG/KSqRaIHwjxX9/s+BAYrSFExD/KUgCWPQzcrV?=
+ =?us-ascii?Q?t/XsSkHv6jSgFWXtb/lfoS9xOPVvwL131MIpUcB6QjnKmTA8H6JGeu1BYZda?=
+ =?us-ascii?Q?lugnqzM1hYkAeusP16e4WohXIrfc3sOsAukiV9n/9w8Jn7/IvcjDonfegJnI?=
+ =?us-ascii?Q?iYE91p+1KWVqQStvylHvDSTANzql4/G+BAD6gc7cXUXmmurnfNkrLjmBSgGl?=
+ =?us-ascii?Q?/QWoYwxeC8Zk9+D98WaMDNIMHxqULRytUJpV6g0CLLGvHuNQNwSyD+39mZOI?=
+ =?us-ascii?Q?AF8V7wfDMB0ianROLLio7j/bylEo/4UOQZBtwPAZ?=
 X-OriginatorOrg: volumez.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5b66dfa-8c9a-46cf-5f3c-08dc864377f9
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9495f9fe-f094-4370-d8a9-08dc86437baa
 X-MS-Exchange-CrossTenant-AuthSource: AM0PR04MB5107.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 16:12:31.5450
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2024 16:12:37.6557
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: b1841924-914b-4377-bb23-9f1fac784a1d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /L1tenLMGjnGtRlyogkI7rZ2pbMsA5DpGSubu0MwPymAZMhZxzYa34gDylYgYdr8OFvWRCB83IkM1FikHaMUnA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: SDSTf6hIfi2ZUAOtzmEVi5AlBH7LHlJRL+gpMgPwGIuKvuRF9TPx90IezFHwD6kvmWv0VWeaKdyAJsPrk/vwiQ==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7815
 
-skb_splice_from_iter() warns on !sendpage_ok() which results in nvme-tcp
-data transfer failure. This warning leads to hanging IO.
-
-nvme-tcp using sendpage_ok() to check the first page of an iterator in
-order to disable MSG_SPLICE_PAGES. The iterator can represent a list of
-contiguous pages.
+Network drivers are using sendpage_ok() to check the first page of an
+iterator in order to disable MSG_SPLICE_PAGES. The iterator can
+represent list of contiguous pages.
 
 When MSG_SPLICE_PAGES is enabled skb_splice_from_iter() is being used,
-it requires all pages in the iterator to be sendable.
-skb_splice_from_iter() checks each page with sendpage_ok().
-
-nvme_tcp_try_send_data() might allow MSG_SPLICE_PAGES when the first
-page is sendable, but the next one are not. skb_splice_from_iter() will
-attempt to send all the pages in the iterator. When reaching an
-unsendable page the IO will hang.
+it requires all pages in the iterator to be sendable. Therefore it needs
+to check that each page is sendable.
 
 The patch introduces a helper sendpages_ok(), it returns true if all the
-continuous pages are sendable.
+contiguous pages are sendable.
 
 Drivers who want to send contiguous pages with MSG_SPLICE_PAGES may use
 this helper to check whether the page list is OK. If the helper does not
 return true, the driver should remove MSG_SPLICE_PAGES flag.
 
-The root cause of the bug is a bug in md-bitmap, it sends a pages that
-wasn't allocated for the bitmap. This cause the IO to be a mixture of
-slab and non slab pages.
-As Christoph Hellwig said in the v2, the issue can occur in similar
-cases due to IO merges.
-
-
-The bug is reproducible, in order to reproduce we need nvme-over-tcp
-controllers with optimal IO size bigger than PAGE_SIZE. Creating a raid
-with bitmap over those devices reproduces the bug.
-
-In order to simulate large optimal IO size you can use dm-stripe with a
-single device.
-Script to reproduce the issue on top of brd devices using dm-stripe is
-attached below (will be added as blktest).
-
-
-I have added 3 prints to test my theory. One in nvme_tcp_try_send_data()
-and two others in skb_splice_from_iter() the first before sendpage_ok()
-and the second on !sendpage_ok(), after the warning.
-...
-nvme_tcp: sendpage_ok, page: 0x654eccd7 (pfn: 120755), len: 262144, offset: 0
-skbuff: before sendpage_ok - i: 0. page: 0x654eccd7 (pfn: 120755)
-skbuff: before sendpage_ok - i: 1. page: 0x1666a4da (pfn: 120756)
-skbuff: before sendpage_ok - i: 2. page: 0x54f9f140 (pfn: 120757)
-WARNING: at net/core/skbuff.c:6848 skb_splice_from_iter+0x142/0x450
-skbuff: !sendpage_ok - page: 0x54f9f140 (pfn: 120757). is_slab: 1, page_count: 1
-...
-
-
-stack trace:
-...
-WARNING: at net/core/skbuff.c:6848 skb_splice_from_iter+0x141/0x450
-Workqueue: nvme_tcp_wq nvme_tcp_io_work
-Call Trace:
- ? show_regs+0x6a/0x80
- ? skb_splice_from_iter+0x141/0x450
- ? __warn+0x8d/0x130
- ? skb_splice_from_iter+0x141/0x450
- ? report_bug+0x18c/0x1a0
- ? handle_bug+0x40/0x70
- ? exc_invalid_op+0x19/0x70
- ? asm_exc_invalid_op+0x1b/0x20
- ? skb_splice_from_iter+0x141/0x450
- tcp_sendmsg_locked+0x39e/0xee0
- ? _prb_read_valid+0x216/0x290
- tcp_sendmsg+0x2d/0x50
- inet_sendmsg+0x43/0x80
- sock_sendmsg+0x102/0x130
- ? vprintk_default+0x1d/0x30
- ? vprintk+0x3c/0x70
- ? _printk+0x58/0x80
- nvme_tcp_try_send_data+0x17d/0x530
- nvme_tcp_try_send+0x1b7/0x300
- nvme_tcp_io_work+0x3c/0xc0
- process_one_work+0x22e/0x420
- worker_thread+0x50/0x3f0
- ? __pfx_worker_thread+0x10/0x10
- kthread+0xd6/0x100
- ? __pfx_kthread+0x10/0x10
- ret_from_fork+0x3c/0x60
- ? __pfx_kthread+0x10/0x10
- ret_from_fork_asm+0x1b/0x30
-...
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Ofir Gal <ofir.gal@volumez.com>
 ---
-Changelog:
-v3, removed the ROUND_DIV_UP as sagi suggested. add reviewed tags from
-    Christoph Hellwig, Hannes Reinecke and Christoph Böhmwalder.
-    Add explanation to the root cause issue in the cover letter.
-v2, fix typo in patch subject
+ include/linux/net.h | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-Ofir Gal (4):
-  net: introduce helper sendpages_ok()
-  nvme-tcp: use sendpages_ok() instead of sendpage_ok()
-  drbd: use sendpages_ok() instead of sendpage_ok()
-  libceph: use sendpages_ok() instead of sendpage_ok()
-
- drivers/block/drbd/drbd_main.c |  2 +-
- drivers/nvme/host/tcp.c        |  2 +-
- include/linux/net.h            | 22 ++++++++++++++++++++++
- net/ceph/messenger_v1.c        |  2 +-
- net/ceph/messenger_v2.c        |  2 +-
- 5 files changed, 26 insertions(+), 4 deletions(-)
-
- reproduce.sh | 114 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 114 insertions(+)
- create mode 100755 reproduce.sh
-
-diff --git a/reproduce.sh b/reproduce.sh
-new file mode 100755
-index 000000000..8ae226b18
---- /dev/null
-+++ b/reproduce.sh
-@@ -0,0 +1,114 @@
-+#!/usr/bin/env sh
-+# SPDX-License-Identifier: MIT
+diff --git a/include/linux/net.h b/include/linux/net.h
+index 688320b79fcc..421a6b5b9ad1 100644
+--- a/include/linux/net.h
++++ b/include/linux/net.h
+@@ -322,6 +322,28 @@ static inline bool sendpage_ok(struct page *page)
+ 	return !PageSlab(page) && page_count(page) >= 1;
+ }
+ 
++/*
++ * Check sendpage_ok on contiguous pages.
++ */
++static inline bool sendpages_ok(struct page *page, size_t len, size_t offset)
++{
++	struct page *p;
++	size_t count;
 +
-+set -e
++	p = page + (offset >> PAGE_SHIFT);
 +
-+load_modules() {
-+    modprobe nvme
-+    modprobe nvme-tcp
-+    modprobe nvmet
-+    modprobe nvmet-tcp
++	count = 0;
++	while (count < len) {
++		if (!sendpage_ok(p))
++			return false;
++
++		p++;
++		count += PAGE_SIZE;
++	}
++
++	return true;
 +}
 +
-+setup_ns() {
-+    local dev=$1
-+    local num=$2
-+    local port=$3
-+    ls $dev > /dev/null
-+
-+    mkdir -p /sys/kernel/config/nvmet/subsystems/$num
-+    cd /sys/kernel/config/nvmet/subsystems/$num
-+    echo 1 > attr_allow_any_host
-+
-+    mkdir -p namespaces/$num
-+    cd namespaces/$num/
-+    echo $dev > device_path
-+    echo 1 > enable
-+
-+    ln -s /sys/kernel/config/nvmet/subsystems/$num \
-+        /sys/kernel/config/nvmet/ports/$port/subsystems/
-+}
-+
-+setup_port() {
-+    local num=$1
-+
-+    mkdir -p /sys/kernel/config/nvmet/ports/$num
-+    cd /sys/kernel/config/nvmet/ports/$num
-+    echo "127.0.0.1" > addr_traddr
-+    echo tcp > addr_trtype
-+    echo 8009 > addr_trsvcid
-+    echo ipv4 > addr_adrfam
-+}
-+
-+setup_big_opt_io() {
-+    local dev=$1
-+    local name=$2
-+
-+    # Change optimal IO size by creating dm stripe
-+    dmsetup create $name --table \
-+        "0 `blockdev --getsz $dev` striped 1 512 $dev 0"
-+}
-+
-+setup_targets() {
-+    # Setup ram devices instead of using real nvme devices
-+    modprobe brd rd_size=1048576 rd_nr=2 # 1GiB
-+
-+    setup_big_opt_io /dev/ram0 ram0_big_opt_io
-+    setup_big_opt_io /dev/ram1 ram1_big_opt_io
-+
-+    setup_port 1
-+    setup_ns /dev/mapper/ram0_big_opt_io 1 1
-+    setup_ns /dev/mapper/ram1_big_opt_io 2 1
-+}
-+
-+setup_initiators() {
-+    nvme connect -t tcp -n 1 -a 127.0.0.1 -s 8009
-+    nvme connect -t tcp -n 2 -a 127.0.0.1 -s 8009
-+}
-+
-+reproduce_warn() {
-+    local devs=$@
-+
-+    # Hangs here
-+    mdadm --create /dev/md/test_md --level=1 --bitmap=internal \
-+        --bitmap-chunk=1024K --assume-clean --run --raid-devices=2 $devs
-+}
-+
-+echo "###################################
-+
-+The script creates 2 nvme initiators in order to reproduce the bug.
-+The script doesn't know which controllers it created, choose the new nvme
-+controllers when asked.
-+
-+###################################
-+
-+Press enter to continue.
-+"
-+
-+read tmp
-+
-+echo "# Creating 2 nvme controllers for the reproduction. current nvme devices:"
-+lsblk -s | grep nvme || true
-+echo "---------------------------------
-+"
-+
-+load_modules
-+setup_targets
-+setup_initiators
-+
-+sleep 0.1 # Wait for the new nvme ctrls to show up
-+
-+echo "# Created 2 nvme devices. nvme devices list:"
-+
-+lsblk -s | grep nvme
-+echo "---------------------------------
-+"
-+
-+echo "# Insert the new nvme devices as separated lines. both should be with size of 1G"
-+read dev1
-+read dev2
-+
-+ls /dev/$dev1 > /dev/null
-+ls /dev/$dev2 > /dev/null
-+
-+reproduce_warn /dev/$dev1 /dev/$dev2
+ int kernel_sendmsg(struct socket *sock, struct msghdr *msg, struct kvec *vec,
+ 		   size_t num, size_t len);
+ int kernel_sendmsg_locked(struct sock *sk, struct msghdr *msg,
 -- 
 2.45.1
 
