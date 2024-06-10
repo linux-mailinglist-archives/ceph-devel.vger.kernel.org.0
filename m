@@ -1,183 +1,145 @@
-Return-Path: <ceph-devel+bounces-1277-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1278-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D81418FF2BC
-	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2024 18:42:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0BBD901EC7
+	for <lists+ceph-devel@lfdr.de>; Mon, 10 Jun 2024 12:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B1532891AB
-	for <lists+ceph-devel@lfdr.de>; Thu,  6 Jun 2024 16:42:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D803A1C219D6
+	for <lists+ceph-devel@lfdr.de>; Mon, 10 Jun 2024 10:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6CF198A19;
-	Thu,  6 Jun 2024 16:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="LCzVh+sV"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15B2762EB;
+	Mon, 10 Jun 2024 10:05:19 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E4917BC9
-	for <ceph-devel@vger.kernel.org>; Thu,  6 Jun 2024 16:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF2F7440B;
+	Mon, 10 Jun 2024 10:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717692130; cv=none; b=klsZoXITNvfzvV60llIWpKIepZyKP+qT6VGDBd1CPeHfyloAffoKUe6VQ7OYgH728OIPFuBcPinYBC5utop4BqZs7hRm+6wqCv+6KiXrTeAc69fD0w7BSOKZBTn661HEDqBwD7V6dycpfbQIFMxNVc4ZrtjBT+v4pp5Hf7dhVWg=
+	t=1718013919; cv=none; b=XoaZKfCuRZqjMiodv4Qz8stdP7oFGs9RUSdJnDVUSzaOTtUdgKrzOXT8ZUNQ709i/VEBdZHzQXyNjFG+m0t9DKltz4ID271VGGj8dP0BwyNBt1opgX85ayqFpbi8z1c+CeRqFc2qB1zrq5MUBMW/n6cug9zMvEVPx4KHDXls9yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717692130; c=relaxed/simple;
-	bh=ZRNfyg/9QgeO3gss2GzH/5lgQLFM3FF9Hna9vq7/wuA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rOBvIGj8gTilwhzPsfQAsV5au28HeKv5Z3FIgw3fl6x6y2EBMEiH2M8RaLNPdvHqlQR0VAuCNDQsQelSbTvxwIcjAEW2u1pvORgB7ArlEgB5IdzLKZrz/C7RYGTxXOWsdoMh5jOXIiC55SYNyc+uHEZFJ0OQNw7EyCt1/YYtWeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=LCzVh+sV; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57a2f032007so1493340a12.0
-        for <ceph-devel@vger.kernel.org>; Thu, 06 Jun 2024 09:42:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1717692125; x=1718296925; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KWNindFIaZB1HTMS5OMX0T5eIKkBoU4yCP7CEwF9Bsg=;
-        b=LCzVh+sVi4j+dFc5vM+617+Ey5nt535/Z3ZfEcFCt9YOm5AD4gv7nteljTsXANoazc
-         3tn6k9481ql2El2XSV824BW7y5OEaT9nAukscsOQMG82Sxnr1SUJ8mN14ZxPtDHzRKhG
-         SIh/yDkow1TUNIRmMjbN71LHKuvavqrYUGU/29djsogQ8zHoqTSXLuF6YhI4OQpVa6tA
-         zE0wFubbrfvli++xgVaQgFcyYMKI7djIvmosjsIyBW44FWEhMeSteeAQVgJA02wdpFoG
-         5+3+f8ibQvmvE+Ch22WY9aMWvRJ3p5rc7dDy22spDB5V1uXYeIExQyFj4ZlLrmIjQLBX
-         cP+w==
+	s=arc-20240116; t=1718013919; c=relaxed/simple;
+	bh=AlIc3EQR7y+80/Ejg9RLFaGvxiBK2RPW8SK61+OQ71E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KzuvLgxFRlQ9/LFeeXSJ0k74Ow2JwsjE/SJVZUdTeqTdDvqthV8aiQlZJC/LQIRC70TUKbhqrz677Z5kHmINQ4j1r5O5r2OUc8OrP59I/B+SW14+YcIKoU/GQC2qJ/TKhFgqnhx2Z7DItmvepWAw8lR9XW2vQ1sU/kX07v5noRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42111cf1ca1so2426105e9.3;
+        Mon, 10 Jun 2024 03:05:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717692125; x=1718296925;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KWNindFIaZB1HTMS5OMX0T5eIKkBoU4yCP7CEwF9Bsg=;
-        b=MSJnLyr3Nm0OCFAtMz7x5kv0QOC2OMalvgwL5KJCPnrXaOe1dqkBUmHdiCKsOujWnM
-         vA091YfT0rIjk5MhYRGTQSdZ41lMFP8LdJfqaSFFqUyiXfChISiI0owhgEXPT9zAxoqU
-         VVDhf3OHfSMVA5humvo11ja8CjKVrAC6HlQutyauyxVXwA3XIUGnz6AY5yekgwcUtGBM
-         eB5xuM3KW3pHrHmgvn7vL9Tfmx0RaNvD67A+4Ms1EMa5IfwFmzv6C78awbp7xgIJ8h8j
-         VajOCb9Dw69PJxc2x/Yy1Xn0N4z7gWVfyri+SILU5zlux7tGNMPpbTqZugXxW/tErEmn
-         LLaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0zYe592eqQR/R8WN93wkVDUPcKG74fcQuLzEv8kc/Dqgauv+GwBTHxeoQwE5EHlybgkes9MTmT5WeWdSaXK2LvZ6LgD+RkzTBzQ==
-X-Gm-Message-State: AOJu0YyN0xKRvkrzxoYcEI84bbQDu7qXc0Csxcw9ub9MYQkpoG2ljJ5k
-	3+TaaLqgjvN0sLAwhDiHg0HDq1cHrV9r/cP/tM9yWeOpBJ0EaImFokkMwGSWaD4=
-X-Google-Smtp-Source: AGHT+IGezYB/CP2cKfOnUTPtY92b+O/1mJo3K5LLRIqQOWwVekjh9HlCAC/3Rn7sQArIvZjoyd3fGQ==
-X-Received: by 2002:a17:906:fb0e:b0:a69:1137:120a with SMTP id a640c23a62f3a-a6cdb0f5646mr6187166b.51.1717692125468;
-        Thu, 06 Jun 2024 09:42:05 -0700 (PDT)
-Received: from raven.blarg.de (p200300dc6f0efb00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f0e:fb00:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c806eb099sm118003766b.102.2024.06.06.09.42.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 09:42:05 -0700 (PDT)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: xiubli@redhat.com,
-	idryomov@gmail.com,
-	ceph-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH] fs/ceph/mds_client: use cap_wait_list only if debugfs is enabled
-Date: Thu,  6 Jun 2024 18:41:57 +0200
-Message-Id: <20240606164157.3765143-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1718013916; x=1718618716;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wPxDOJtBGiXCEwsNw0PSamD2lxZ6+BuGL88bRkvKmGc=;
+        b=J2UcTCIxTNYtirp6rg9Rqg7+ofjmDrXXLI/p3esk4iWmOcc94kIr3FgOf8OlmXFqfG
+         vSdtdLsAOQam1KieJpZ6wi/eRirGonX4enS8N9sOW1tXtVQVcwbZ/D6e112xLmcAs1NE
+         w2SvjDfpn4hkCpsKCUpO5U2GJuU67EPkLpMJhCHIHQ+xI3qzuTlB3UyD8mNHMtKgbFu0
+         CvEuR+743C9yQOzhv6Ug8cyL64p1nTLW2ghhUt38Y4BH0qNX1jcuP/7vUoA/AqpIoBj+
+         47wTWqIlGwaLUCBdBzAGnX2G6mFQKR+IwVVQyTThje0WFbaE72fGmJR4IL0Lmll0Nf3A
+         s6Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIPidb0grVnOu1OBjhiStaBBv6RqZmgD6P4xIesmi2z6WQ9290jKryl78M4zW7RL2fvB1iLz29uJpJmqqp7H+QDkeEcSWrjC7ctL7WQeyUAXkOuZIwe4Oa3Djr5sC0uNtA4UjIn4bVHHxVgyIguxJod2EZdLxudi7GsksEei8A
+X-Gm-Message-State: AOJu0YwMEh41Q+Ht8CwL5G4F1aAFVAia52WhCqvlunaOhwOA7CDvUgv2
+	g5waBXdGUXCibEbKiizho/83tr1s8d3lU2mkwMUENing19AdyQQr
+X-Google-Smtp-Source: AGHT+IE6UPZS8bKWfPcSCEvXL5Mn6tb7fajf/wnPYc9kjt0FZaI/nNLOOovqnumfJenKH3vEDaiJTA==
+X-Received: by 2002:a05:600c:5129:b0:420:29dd:84e2 with SMTP id 5b1f17b1804b1-42164a2a8c7mr63035595e9.2.1718013916264;
+        Mon, 10 Jun 2024 03:05:16 -0700 (PDT)
+Received: from [10.50.4.180] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215814e7cbsm171616535e9.39.2024.06.10.03.05.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Jun 2024 03:05:15 -0700 (PDT)
+Message-ID: <5efdb532-2589-4327-9eb7-cfa0a40ed000@grimberg.me>
+Date: Mon, 10 Jun 2024 13:05:13 +0300
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/4] net: introduce helper sendpages_ok()
+To: Ofir Gal <ofir.gal@volumez.com>, davem@davemloft.net,
+ linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+ netdev@vger.kernel.org, ceph-devel@vger.kernel.org
+Cc: dhowells@redhat.com, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
+ philipp.reisner@linbit.com, lars.ellenberg@linbit.com,
+ christoph.boehmwalder@linbit.com, idryomov@gmail.com, xiubli@redhat.com
+References: <20240606161219.2745817-1-ofir.gal@volumez.com>
+ <20240606161219.2745817-2-ofir.gal@volumez.com>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20240606161219.2745817-2-ofir.gal@volumez.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Only debugfs uses this list.  By omitting it, we save some memory and
-reduce lock contention on `caps_list_lock`.
 
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- fs/ceph/caps.c       | 6 ++++++
- fs/ceph/mds_client.c | 2 ++
- fs/ceph/mds_client.h | 6 ++++++
- 3 files changed, 14 insertions(+)
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index c4941ba245ac..772879aa26ee 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -3067,10 +3067,13 @@ int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi, int need,
- 				       flags, &_got);
- 		WARN_ON_ONCE(ret == -EAGAIN);
- 		if (!ret) {
-+#ifdef CONFIG_DEBUG_FS
- 			struct ceph_mds_client *mdsc = fsc->mdsc;
- 			struct cap_wait cw;
-+#endif
- 			DEFINE_WAIT_FUNC(wait, woken_wake_function);
- 
-+#ifdef CONFIG_DEBUG_FS
- 			cw.ino = ceph_ino(inode);
- 			cw.tgid = current->tgid;
- 			cw.need = need;
-@@ -3079,6 +3082,7 @@ int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi, int need,
- 			spin_lock(&mdsc->caps_list_lock);
- 			list_add(&cw.list, &mdsc->cap_wait_list);
- 			spin_unlock(&mdsc->caps_list_lock);
-+#endif // CONFIG_DEBUG_FS
- 
- 			/* make sure used fmode not timeout */
- 			ceph_get_fmode(ci, flags, FMODE_WAIT_BIAS);
-@@ -3097,9 +3101,11 @@ int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi, int need,
- 			remove_wait_queue(&ci->i_cap_wq, &wait);
- 			ceph_put_fmode(ci, flags, FMODE_WAIT_BIAS);
- 
-+#ifdef CONFIG_DEBUG_FS
- 			spin_lock(&mdsc->caps_list_lock);
- 			list_del(&cw.list);
- 			spin_unlock(&mdsc->caps_list_lock);
-+#endif
- 
- 			if (ret == -EAGAIN)
- 				continue;
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index c2157f6e0c69..62238f3e6e19 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -5505,7 +5505,9 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
- 	INIT_DELAYED_WORK(&mdsc->delayed_work, delayed_work);
- 	mdsc->last_renew_caps = jiffies;
- 	INIT_LIST_HEAD(&mdsc->cap_delay_list);
-+#ifdef CONFIG_DEBUG_FS
- 	INIT_LIST_HEAD(&mdsc->cap_wait_list);
-+#endif
- 	spin_lock_init(&mdsc->cap_delay_lock);
- 	INIT_LIST_HEAD(&mdsc->cap_unlink_delay_list);
- 	INIT_LIST_HEAD(&mdsc->snap_flush_list);
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index cfa18cf915a0..13dd83f783ec 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -416,6 +416,8 @@ struct ceph_quotarealm_inode {
- 	struct inode *inode;
- };
- 
-+#ifdef CONFIG_DEBUG_FS
-+
- struct cap_wait {
- 	struct list_head	list;
- 	u64			ino;
-@@ -424,6 +426,8 @@ struct cap_wait {
- 	int			want;
- };
- 
-+#endif // CONFIG_DEBUG_FS
-+
- enum {
- 	CEPH_MDSC_STOPPING_BEGIN = 1,
- 	CEPH_MDSC_STOPPING_FLUSHING = 2,
-@@ -512,7 +516,9 @@ struct ceph_mds_client {
- 	spinlock_t	caps_list_lock;
- 	struct		list_head caps_list; /* unused (reserved or
- 						unreserved) */
-+#ifdef CONFIG_DEBUG_FS
- 	struct		list_head cap_wait_list;
-+#endif
- 	int		caps_total_count;    /* total caps allocated */
- 	int		caps_use_count;      /* in use */
- 	int		caps_use_max;	     /* max used caps */
--- 
-2.39.2
+On 06/06/2024 19:12, Ofir Gal wrote:
+> Network drivers are using sendpage_ok() to check the first page of an
+> iterator in order to disable MSG_SPLICE_PAGES. The iterator can
+> represent list of contiguous pages.
+>
+> When MSG_SPLICE_PAGES is enabled skb_splice_from_iter() is being used,
+> it requires all pages in the iterator to be sendable. Therefore it needs
+> to check that each page is sendable.
+>
+> The patch introduces a helper sendpages_ok(), it returns true if all the
+> contiguous pages are sendable.
+>
+> Drivers who want to send contiguous pages with MSG_SPLICE_PAGES may use
+> this helper to check whether the page list is OK. If the helper does not
+> return true, the driver should remove MSG_SPLICE_PAGES flag.
+>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Ofir Gal <ofir.gal@volumez.com>
+> ---
+>   include/linux/net.h | 22 ++++++++++++++++++++++
+>   1 file changed, 22 insertions(+)
+>
+> diff --git a/include/linux/net.h b/include/linux/net.h
+> index 688320b79fcc..421a6b5b9ad1 100644
+> --- a/include/linux/net.h
+> +++ b/include/linux/net.h
+> @@ -322,6 +322,28 @@ static inline bool sendpage_ok(struct page *page)
+>   	return !PageSlab(page) && page_count(page) >= 1;
+>   }
+>   
+> +/*
+> + * Check sendpage_ok on contiguous pages.
+> + */
+> +static inline bool sendpages_ok(struct page *page, size_t len, size_t offset)
+> +{
+> +	struct page *p;
+> +	size_t count;
+> +
+> +	p = page + (offset >> PAGE_SHIFT);
+> +
+> +	count = 0;
 
+Assignment can move to the declaration.
+
+> +	while (count < len) {
+> +		if (!sendpage_ok(p))
+> +			return false;
+> +
+> +		p++;
+> +		count += PAGE_SIZE;
+> +	}
+> +
+> +	return true;
+> +}
+> +
+>   int kernel_sendmsg(struct socket *sock, struct msghdr *msg, struct kvec *vec,
+>   		   size_t num, size_t len);
+>   int kernel_sendmsg_locked(struct sock *sk, struct msghdr *msg,
+
+Other than that,
+
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
 
