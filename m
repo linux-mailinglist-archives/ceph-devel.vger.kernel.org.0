@@ -1,195 +1,182 @@
-Return-Path: <ceph-devel+bounces-1280-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1282-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9064B902E39
-	for <lists+ceph-devel@lfdr.de>; Tue, 11 Jun 2024 04:12:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0266A902FE9
+	for <lists+ceph-devel@lfdr.de>; Tue, 11 Jun 2024 07:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33CB41F230C6
-	for <lists+ceph-devel@lfdr.de>; Tue, 11 Jun 2024 02:12:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7096285CA4
+	for <lists+ceph-devel@lfdr.de>; Tue, 11 Jun 2024 05:20:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12539BA42;
-	Tue, 11 Jun 2024 02:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC248171641;
+	Tue, 11 Jun 2024 05:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gZMoXNjV"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SP0peDuU"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7868488
-	for <ceph-devel@vger.kernel.org>; Tue, 11 Jun 2024 02:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C871E488;
+	Tue, 11 Jun 2024 05:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718071934; cv=none; b=I54qrhclZcQsXeSiG+3hsRIx1N7gv7BjepTZk5D4CPdO8s+WakIhZHsOTDoRR3Cu1qjo/7/UzX13ek5lfX4iLj1HYYVDBDjEdnoEOLFYX3Mr7U2cE8zX+1vXBH4bOOwsbDSqLiW1XDb1omvSH9Oilrd35ca4SV2vRPSAIZSCrl0=
+	t=1718083189; cv=none; b=EIoK7UfaGzKLbDeD2AwyFmoVe3q2q6nFxBwB+VXj3JsI06ziL4u6t6Xdj9PFyk+g5wOArVoEF4y47qAKKpMCbxPHkCmus9Zj9XU1vZqQGUS0x64bnrsV4vyb3GEMB+T9M6QAhC1iC5ED7oq7+9ECVCHIxE/xETkCfa3cGOMIc6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718071934; c=relaxed/simple;
-	bh=6xP1ei76jr5aHAJqlhhcWItU2AXyK4KV8+AWVUgjv+A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QK02aYxz/kRhJiABFGNQbLSbVTtVT7QggA8HY3OI37ugT8kLJZl8sx+16pydA0z8d7ZZ/T1izH3FMAnGRmRzAuFB9zglhgsuljfscDYl7EiWIEIRknsXlvGp46VWRODBEI9MXoZPZ/MeZoMIZ0n4UH5kSUuM5GGizZ4XSPTfh+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gZMoXNjV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718071932;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rl1gGO4UgKTAEFs1CZF/0wGX2Tf6+LMOtr2l88VGC+Q=;
-	b=gZMoXNjVhxjk0PT466nrnFlzIlgeAYV1k3WdRRZsrDrrTx8aCw8ejl4BJNlWMjxp28woiX
-	qLesmXre/HQt0ESuTah1JJ1TANfu1kz1P+GNNMtbQvgC9PyFfYPTLkvUtcPk2Smm7VO1Sj
-	6rQ8JVloB8MbRrOuRbzHzF0HGvIc0BU=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-77-zAVULFTkN1asltxu777H9w-1; Mon, 10 Jun 2024 22:12:06 -0400
-X-MC-Unique: zAVULFTkN1asltxu777H9w-1
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-681907af573so4088323a12.1
-        for <ceph-devel@vger.kernel.org>; Mon, 10 Jun 2024 19:12:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718071926; x=1718676726;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rl1gGO4UgKTAEFs1CZF/0wGX2Tf6+LMOtr2l88VGC+Q=;
-        b=ceE5ua9T/ogL+ZD+TSzvqOMkOXk0N10iK2GbYmEJRY9Sp4EuQd4ql+n8hobxPb1AiU
-         47i4NFVAgmHQ3Oen015S0lAI/ln/OkyZ6J9DfLt4kNQC6knodBawH7fmW5/31O/6RsQt
-         OMGlTxHuslTEaErEV+DXV6x1jCduusRLdkDWrdp5YAzbbjSb0lSQrnOyBrd98vDWYFKt
-         AAss4ymM540/rA4H0q90/AhC3lJxEX1CwNK4mQ4rMDbkD9RE+Tm+IUSeLkd2ON4pTTLm
-         VASrwhs7bSJ3kP9QuoWuUQhkbCeRaSVdr+8wQaivZJEsRmR9pybJyemNGCd+S7loFC+E
-         hdNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqWasq/uZKv6R0eYYfgh++AckR/Q/mffZk9t7ChYppwxeXVE9Fo7xl6H70pfpe5M5V/+AcPkD8YtdIlUDYoEg1phMCVOhpZUEFkw==
-X-Gm-Message-State: AOJu0Yx9n1QMCPTDMF6zbCeiJEPU4q5H0MECKCkRqkRTshPLIBsufGxa
-	FLZhKP+jfM1LWzWRWqg4wPku8CJPHy4/puXfhV7i5lVe8r9eYlE4pPXbK8KVkKTviGTiU4aG9I2
-	m2DTB48ygQRNgGm7mXW1VaMQRvj0LJ0F+cgp2lEn33A38nhCUNoroyXZCRtk=
-X-Received: by 2002:a17:902:d2c8:b0:1f2:fc8b:ebfe with SMTP id d9443c01a7336-1f6d0389353mr119517835ad.48.1718071925837;
-        Mon, 10 Jun 2024 19:12:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEHdprNhnBBG8Q7R+GJT6+3TiYFLUc4wINGfuZT0vXuCOjJzIKH6fw+aACuUgHH/+RFZfCiNQ==
-X-Received: by 2002:a17:902:d2c8:b0:1f2:fc8b:ebfe with SMTP id d9443c01a7336-1f6d0389353mr119517745ad.48.1718071925468;
-        Mon, 10 Jun 2024 19:12:05 -0700 (PDT)
-Received: from [10.72.116.2] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f6bd778fc2sm89270965ad.119.2024.06.10.19.12.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jun 2024 19:12:05 -0700 (PDT)
-Message-ID: <a72e754a-3e72-491c-935c-ca5c1f21a8f7@redhat.com>
-Date: Tue, 11 Jun 2024 10:11:44 +0800
+	s=arc-20240116; t=1718083189; c=relaxed/simple;
+	bh=hch/0P55byq5GbA9713XqbKHtmWPgz2RFxBLYpB4kbo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HgNOG+OsbdsKoI80rVrawWwkHXtiCxMFIge11OjQjS0nMJqW7ILOnHLQ+dKFsfE5PhQYY9X7rfMSn2HXUXZZ1ONt9kYnXVV230HaCBnJcGtK9h8V9OnD9NHgyzKm9GhIQQOXCAYZM6zJXKRV9b+SCyzuhvcHtflJAJiOj8cyyGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SP0peDuU; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=xQZ0tGVxbRfMe28F2c3vaqhpukPqzWUR2mw3UooUIr8=; b=SP0peDuUs+KEwheRnMyMlYgkS7
+	BJO3TbWxLcYZrtF9hG/zSYlaaEBbMSCF64VvtU307jsPdSrtdMGsHLbLIPlb+3JQ+eYPkj0WFLQ82
+	0RHyWfdxKEhDZW5T1ob5hHG0b14ikv/6qveZEUAQmVDgvdsZVt4TYWW6sqJaVmrwg5KcUOZQ84nPg
+	CjpVq303dQfXA8cJ1suDHbBA/aeCpy9t1nwAxlcRoZCDjrGUy5Vn9fE6+OpvbxggFWtigsP5ZcQpg
+	pUZerKUXlbVu4I0/QgfLjMkjQJmRXdy7KEomGmmJMn8IDs2fYlaMIz6Izl+aZ3CL2CjeVsmwbwNGT
+	O/+0DiLA==;
+Received: from 2a02-8389-2341-5b80-cdb4-8e7d-405d-6b77.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:cdb4:8e7d:405d:6b77] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sGtuu-00000007Qnj-2sBx;
+	Tue, 11 Jun 2024 05:19:33 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Richard Weinberger <richard@nod.at>,
+	Philipp Reisner <philipp.reisner@linbit.com>,
+	Lars Ellenberg <lars.ellenberg@linbit.com>,
+	=?UTF-8?q?Christoph=20B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Ming Lei <ming.lei@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	=?UTF-8?q?Roger=20Pau=20Monn=C3=A9?= <roger.pau@citrix.com>,
+	Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Song Liu <song@kernel.org>,
+	Yu Kuai <yukuai3@huawei.com>,
+	Vineeth Vijayan <vneethv@linux.ibm.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	linux-m68k@lists.linux-m68k.org,
+	linux-um@lists.infradead.org,
+	drbd-dev@lists.linbit.com,
+	nbd@other.debian.org,
+	linuxppc-dev@lists.ozlabs.org,
+	ceph-devel@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	xen-devel@lists.xenproject.org,
+	linux-bcache@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-raid@vger.kernel.org,
+	linux-mmc@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	nvdimm@lists.linux.dev,
+	linux-nvme@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	linux-block@vger.kernel.org
+Subject: move features flags into queue_limits
+Date: Tue, 11 Jun 2024 07:19:00 +0200
+Message-ID: <20240611051929.513387-1-hch@lst.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/ceph/mds_client: use cap_wait_list only if debugfs is
- enabled
-To: Max Kellermann <max.kellermann@ionos.com>, idryomov@gmail.com,
- ceph-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <20240606164157.3765143-1-max.kellermann@ionos.com>
-Content-Language: en-US
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20240606164157.3765143-1-max.kellermann@ionos.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+Hi all,
 
-On 6/7/24 00:41, Max Kellermann wrote:
-> Only debugfs uses this list.  By omitting it, we save some memory and
-> reduce lock contention on `caps_list_lock`.
->
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-> ---
->   fs/ceph/caps.c       | 6 ++++++
->   fs/ceph/mds_client.c | 2 ++
->   fs/ceph/mds_client.h | 6 ++++++
->   3 files changed, 14 insertions(+)
->
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index c4941ba245ac..772879aa26ee 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -3067,10 +3067,13 @@ int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi, int need,
->   				       flags, &_got);
->   		WARN_ON_ONCE(ret == -EAGAIN);
->   		if (!ret) {
-> +#ifdef CONFIG_DEBUG_FS
->   			struct ceph_mds_client *mdsc = fsc->mdsc;
->   			struct cap_wait cw;
-> +#endif
->   			DEFINE_WAIT_FUNC(wait, woken_wake_function);
->   
-> +#ifdef CONFIG_DEBUG_FS
->   			cw.ino = ceph_ino(inode);
->   			cw.tgid = current->tgid;
->   			cw.need = need;
-> @@ -3079,6 +3082,7 @@ int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi, int need,
->   			spin_lock(&mdsc->caps_list_lock);
->   			list_add(&cw.list, &mdsc->cap_wait_list);
->   			spin_unlock(&mdsc->caps_list_lock);
-> +#endif // CONFIG_DEBUG_FS
->   
->   			/* make sure used fmode not timeout */
->   			ceph_get_fmode(ci, flags, FMODE_WAIT_BIAS);
-> @@ -3097,9 +3101,11 @@ int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi, int need,
->   			remove_wait_queue(&ci->i_cap_wq, &wait);
->   			ceph_put_fmode(ci, flags, FMODE_WAIT_BIAS);
->   
-> +#ifdef CONFIG_DEBUG_FS
->   			spin_lock(&mdsc->caps_list_lock);
->   			list_del(&cw.list);
->   			spin_unlock(&mdsc->caps_list_lock);
-> +#endif
->   
->   			if (ret == -EAGAIN)
->   				continue;
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index c2157f6e0c69..62238f3e6e19 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -5505,7 +5505,9 @@ int ceph_mdsc_init(struct ceph_fs_client *fsc)
->   	INIT_DELAYED_WORK(&mdsc->delayed_work, delayed_work);
->   	mdsc->last_renew_caps = jiffies;
->   	INIT_LIST_HEAD(&mdsc->cap_delay_list);
-> +#ifdef CONFIG_DEBUG_FS
->   	INIT_LIST_HEAD(&mdsc->cap_wait_list);
-> +#endif
->   	spin_lock_init(&mdsc->cap_delay_lock);
->   	INIT_LIST_HEAD(&mdsc->cap_unlink_delay_list);
->   	INIT_LIST_HEAD(&mdsc->snap_flush_list);
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index cfa18cf915a0..13dd83f783ec 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -416,6 +416,8 @@ struct ceph_quotarealm_inode {
->   	struct inode *inode;
->   };
->   
-> +#ifdef CONFIG_DEBUG_FS
-> +
->   struct cap_wait {
->   	struct list_head	list;
->   	u64			ino;
-> @@ -424,6 +426,8 @@ struct cap_wait {
->   	int			want;
->   };
->   
-> +#endif // CONFIG_DEBUG_FS
-> +
->   enum {
->   	CEPH_MDSC_STOPPING_BEGIN = 1,
->   	CEPH_MDSC_STOPPING_FLUSHING = 2,
-> @@ -512,7 +516,9 @@ struct ceph_mds_client {
->   	spinlock_t	caps_list_lock;
->   	struct		list_head caps_list; /* unused (reserved or
->   						unreserved) */
-> +#ifdef CONFIG_DEBUG_FS
->   	struct		list_head cap_wait_list;
-> +#endif
->   	int		caps_total_count;    /* total caps allocated */
->   	int		caps_use_count;      /* in use */
->   	int		caps_use_max;	     /* max used caps */
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+this is the third and last major series to convert settings to
+queue_limits for this merge window.  After a bunch of prep patches to
+get various drivers in shape, it moves all the queue_flags that specify
+driver controlled features into the queue limits so that they can be
+set atomically and are separated from the blk-mq internal flags.
 
+Note that I've only Cc'ed the maintainers for drivers with non-mechanical
+changes as the Cc list is already huge.
+
+This series sits on top of the "convert the SCSI ULDs to the atomic queue
+limits API v2" and "move integrity settings to queue_limits v2" series.
+
+A git tree is available here:
+
+    git://git.infradead.org/users/hch/block.git block-limit-flags
+
+Gitweb:
+
+    http://git.infradead.org/?p=users/hch/block.git;a=shortlog;h=refs/heads/block-limit-flags
+
+Diffstat:
+ Documentation/block/writeback_cache_control.rst |   67 +++++---
+ arch/m68k/emu/nfblock.c                         |    1 
+ arch/um/drivers/ubd_kern.c                      |    3 
+ arch/xtensa/platforms/iss/simdisk.c             |    5 
+ block/blk-core.c                                |    7 
+ block/blk-flush.c                               |   36 ++--
+ block/blk-mq-debugfs.c                          |   13 -
+ block/blk-mq.c                                  |   42 +++--
+ block/blk-settings.c                            |   46 ++----
+ block/blk-sysfs.c                               |  118 ++++++++-------
+ block/blk-wbt.c                                 |    4 
+ block/blk.h                                     |    2 
+ drivers/block/amiflop.c                         |    5 
+ drivers/block/aoe/aoeblk.c                      |    1 
+ drivers/block/ataflop.c                         |    5 
+ drivers/block/brd.c                             |    6 
+ drivers/block/drbd/drbd_main.c                  |    6 
+ drivers/block/floppy.c                          |    3 
+ drivers/block/loop.c                            |   79 +++++-----
+ drivers/block/mtip32xx/mtip32xx.c               |    2 
+ drivers/block/n64cart.c                         |    2 
+ drivers/block/nbd.c                             |   24 +--
+ drivers/block/null_blk/main.c                   |   13 -
+ drivers/block/null_blk/zoned.c                  |    3 
+ drivers/block/pktcdvd.c                         |    1 
+ drivers/block/ps3disk.c                         |    8 -
+ drivers/block/rbd.c                             |   12 -
+ drivers/block/rnbd/rnbd-clt.c                   |   14 -
+ drivers/block/sunvdc.c                          |    1 
+ drivers/block/swim.c                            |    5 
+ drivers/block/swim3.c                           |    5 
+ drivers/block/ublk_drv.c                        |   21 +-
+ drivers/block/virtio_blk.c                      |   37 ++--
+ drivers/block/xen-blkfront.c                    |   33 +---
+ drivers/block/zram/zram_drv.c                   |    6 
+ drivers/cdrom/gdrom.c                           |    1 
+ drivers/md/bcache/super.c                       |    9 -
+ drivers/md/dm-table.c                           |  181 +++++-------------------
+ drivers/md/dm-zone.c                            |    2 
+ drivers/md/dm-zoned-target.c                    |    2 
+ drivers/md/dm.c                                 |   13 -
+ drivers/md/md.c                                 |   40 -----
+ drivers/md/raid5.c                              |    6 
+ drivers/mmc/core/block.c                        |   42 ++---
+ drivers/mmc/core/queue.c                        |   20 +-
+ drivers/mmc/core/queue.h                        |    3 
+ drivers/mtd/mtd_blkdevs.c                       |    9 -
+ drivers/nvdimm/btt.c                            |    4 
+ drivers/nvdimm/pmem.c                           |   14 -
+ drivers/nvme/host/core.c                        |   33 ++--
+ drivers/nvme/host/multipath.c                   |   24 ---
+ drivers/nvme/host/zns.c                         |    3 
+ drivers/s390/block/dasd_genhd.c                 |    1 
+ drivers/s390/block/dcssblk.c                    |    2 
+ drivers/s390/block/scm_blk.c                    |    5 
+ drivers/scsi/iscsi_tcp.c                        |    8 -
+ drivers/scsi/scsi_lib.c                         |    5 
+ drivers/scsi/sd.c                               |   60 +++----
+ drivers/scsi/sd.h                               |    7 
+ drivers/scsi/sd_zbc.c                           |   17 +-
+ include/linux/blkdev.h                          |  119 +++++++++++----
+ 61 files changed, 556 insertions(+), 710 deletions(-)
 
