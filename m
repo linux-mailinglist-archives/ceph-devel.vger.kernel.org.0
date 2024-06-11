@@ -1,69 +1,80 @@
-Return-Path: <ceph-devel+bounces-1363-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1364-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16737904049
-	for <lists+ceph-devel@lfdr.de>; Tue, 11 Jun 2024 17:43:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E42C09041BC
+	for <lists+ceph-devel@lfdr.de>; Tue, 11 Jun 2024 18:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 250361C22065
-	for <lists+ceph-devel@lfdr.de>; Tue, 11 Jun 2024 15:43:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CB2CB244F9
+	for <lists+ceph-devel@lfdr.de>; Tue, 11 Jun 2024 16:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9350C381C6;
-	Tue, 11 Jun 2024 15:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFAE57CB5;
+	Tue, 11 Jun 2024 16:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dz/Z14nZ"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="Zt6ibg/s"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0C737703
-	for <ceph-devel@vger.kernel.org>; Tue, 11 Jun 2024 15:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1797D58ADB
+	for <ceph-devel@vger.kernel.org>; Tue, 11 Jun 2024 16:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718120613; cv=none; b=SMNfnzdaotXPgBgp5xeyKxOl0p4eu4VstbyLOnbwDCa3K6xYnK1xEuFY+tPGfTvumeWhjDmlu95+fCZecBhMmGO6i9hat4OQ3d+tBYNMI+7GeJ2Q3ArsXNWyz5RXx86drxVw6iFYRQiwn6ysQ3C5qlstVekN1Tvsc+slmOKFgH8=
+	t=1718124659; cv=none; b=nKcbUX8tPUJzh4tfD38VDAP5vxAB0Rt+f7B7Th0uFiGP3J41AiWbWrR74kF9AS0+d+o8oGpREEs2/NQeoRMR8CvcbE8nColBxMANvxlMeqW/uRvleE349IJaEQRqWizI8QhPSG6nH1bqj61KqGp4MZ1pDTE1CSI7zf5VP+HTy90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718120613; c=relaxed/simple;
-	bh=hxyesTbSn4JUu13b+/8fKE9DKC9Hdh6kphyvoTo4A04=;
+	s=arc-20240116; t=1718124659; c=relaxed/simple;
+	bh=2FT/emrK48iE3dx07WXN0ST/iq8T21acuyaCQMRLCLQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZTMNxHJM5Qx6VQhn8qzeAaxPMbkhGfb6thiW2YNU8KC2sViSCNIBYura4HlBOluXM9HceaaJ40XXIdMT3mYraZz5pFKKboSljHnpQMNieqTyjxnn0YIGj/zMSt1JxTPu4b6kik6LJntFI+p8U749m76dk1Z05Eugoakq96641zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dz/Z14nZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1718120609;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m3mVOlE8X03VcFujwgTUstJqoq0FTNeRmucJ5uXzzb4=;
-	b=Dz/Z14nZSs1aPPwRcTWcoffN9LXTGUPR+Ee1yE5piuar6G5CEIxf0AjExhvjrcLnkM23uq
-	gXS06fQItKRsGvA0DVY4vhaw75aYWI/VxkXNMptt0Jw2LkOIL8t4ygxKgLHPX2DdOmpOIR
-	8n5bjUxAllgET4RabtV4ZDhmMKRxOUo=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-541-M7gCHZsfNvaRoPk4wQQxjw-1; Tue,
- 11 Jun 2024 11:43:27 -0400
-X-MC-Unique: M7gCHZsfNvaRoPk4wQQxjw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8414F1956068;
-	Tue, 11 Jun 2024 15:43:15 +0000 (UTC)
-Received: from localhost (unknown [10.39.193.36])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DD4331954AC1;
-	Tue, 11 Jun 2024 15:43:10 +0000 (UTC)
-Date: Tue, 11 Jun 2024 11:43:09 -0400
-From: Stefan Hajnoczi <stefanha@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XzvBwb8DUStzyemn6gx/DpFIK3LRE0cbUoD5ICjA3bt3OrgNzeObmRJ1Sr1C1UX3pPROebC/wM8iN7HAqHJnctxdLyMYrf0xPrvWUPAS06vygwcFE/7e5G0uyRLd2Xi5hItlINFIzpX3E5H/67g/CV/VpC41r/e/cZ6N3G0YE08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=Zt6ibg/s; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-62a2424ed00so56078457b3.1
+        for <ceph-devel@vger.kernel.org>; Tue, 11 Jun 2024 09:50:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1718124657; x=1718729457; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=k7qH/Egkqtc5OmSCKcG8suDn1pwScsKWRQ+gioBgKgY=;
+        b=Zt6ibg/sXDFPcB1PdqLbi9y9Lq84fI4dtsabAaKnS71DR4ge4yMuB1Z9lS7wA4wHrn
+         shpAYklqhBt+02fv/lI70+9yLugOwkE6jd95eVKnaVgZYxsTh2WCsmHTgQ1UVgNRVLal
+         wmO5N6RWxwgoiytstIBOrWyQFGmt3N38VbBAgwcFn/bnZiw+iwyuahz+8bpIWwoYMk5k
+         XMp/oVXEeglCEkIcBUpukavQm3svwzpoI5LogCeDIIPsZ/TBEY3fH93kounsMrkvv0iU
+         qwThWU60dMvFW8JzcIe4TZiEEXk0LdCstA848HdLhK4LdxhwQLIYyB46hHTq4v902MUD
+         ZUhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718124657; x=1718729457;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k7qH/Egkqtc5OmSCKcG8suDn1pwScsKWRQ+gioBgKgY=;
+        b=saWds10l1nUmQXppaFyDH3A0jMGEPsJvwbodyLwVL1SZe5h9vlV5T0xUEvcSq7LZmk
+         yWYG6pQJEE75awGUpvNEW29dnjPlXVijs1IFnYQyhBX5EwnvBd70sjJAOrrV0aGMlMJZ
+         s2qn8PtVmeQqaR4ui4LGY1X/dwagHV2rvS5qJ+VCVz+/kzA0OoapgZpJFv1tEdXq6arp
+         LUSsKSi9aeFEcSf2ftr4TgQJ1Ks7SF+jELwsT6g13HTOzdmgFr3fX0s6JMPfCZ///FKe
+         PaS7M29B3nEz2VUGo55rmYlkPIxLL/iSmpd4MZqpq13JjGzNZO1d70bH3mJb6qQcTE0d
+         JdFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUe8VdRe4ALtNelySgQW7fs+1UHV3W9Wjrq7JsUhxOL2t6HtU8j+tP6DNJgUe53FNr4tjxeIeeOlPBYTX+Wgh0qSFz4FpReO9LuLA==
+X-Gm-Message-State: AOJu0Yy6OI3gtgPvY0RdRq22LEtHWlF9B6IuUO3NT5nM8ZVt/P+eoE5K
+	Jo+G/K0dWV592DGT3zNmVNhkx6Z9UwGlmRyXxGXXRe3LEQdrM0XdLdA2p8I8NUs=
+X-Google-Smtp-Source: AGHT+IFLbNcRGoXteJvsvQz9ePKtTqtffGprFSIVvQoC+S7q0aJ0DFFhhqHjAFy+KyUVXYjD8ktBew==
+X-Received: by 2002:a0d:d851:0:b0:618:95a3:70b9 with SMTP id 00721157ae682-62cd565129cmr130634777b3.36.1718124656832;
+        Tue, 11 Jun 2024 09:50:56 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62ccaef2825sm20935207b3.139.2024.06.11.09.50.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Jun 2024 09:50:56 -0700 (PDT)
+Date: Tue, 11 Jun 2024 12:50:55 -0400
+From: Josef Bacik <josef@toxicpanda.com>
 To: Christoph Hellwig <hch@lst.de>
 Cc: Jens Axboe <axboe@kernel.dk>, Geert Uytterhoeven <geert@linux-m68k.org>,
 	Richard Weinberger <richard@nod.at>,
 	Philipp Reisner <philipp.reisner@linbit.com>,
 	Lars Ellenberg <lars.ellenberg@linbit.com>,
 	Christoph =?iso-8859-1?Q?B=F6hmwalder?= <christoph.boehmwalder@linbit.com>,
-	Josef Bacik <josef@toxicpanda.com>, Ming Lei <ming.lei@redhat.com>,
+	Ming Lei <ming.lei@redhat.com>,
 	"Michael S. Tsirkin" <mst@redhat.com>,
 	Jason Wang <jasowang@redhat.com>,
 	Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
@@ -81,55 +92,30 @@ Cc: Jens Axboe <axboe@kernel.dk>, Geert Uytterhoeven <geert@linux-m68k.org>,
 	linux-mtd@lists.infradead.org, nvdimm@lists.linux.dev,
 	linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
 	linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 08/26] virtio_blk: remove virtblk_update_cache_mode
-Message-ID: <20240611154309.GA371660@fedora.redhat.com>
+Subject: Re: [PATCH 09/26] nbd: move setting the cache control flags to
+ __nbd_set_size
+Message-ID: <20240611165055.GD247672@perftesting>
 References: <20240611051929.513387-1-hch@lst.de>
- <20240611051929.513387-9-hch@lst.de>
+ <20240611051929.513387-10-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="RRHJimCDVdpqhQ+7"
-Content-Disposition: inline
-In-Reply-To: <20240611051929.513387-9-hch@lst.de>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
-
-
---RRHJimCDVdpqhQ+7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240611051929.513387-10-hch@lst.de>
 
-On Tue, Jun 11, 2024 at 07:19:08AM +0200, Christoph Hellwig wrote:
-> virtblk_update_cache_mode boils down to a single call to
-> blk_queue_write_cache.  Remove it in preparation for moving the cache
-> control flags into the queue_limits.
->=20
+On Tue, Jun 11, 2024 at 07:19:09AM +0200, Christoph Hellwig wrote:
+> Move setting the cache control flags in nbd in preparation for moving
+> these flags into the queue_limits structure.
+> 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/block/virtio_blk.c | 13 +++----------
->  1 file changed, 3 insertions(+), 10 deletions(-)
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
---RRHJimCDVdpqhQ+7
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmZocI0ACgkQnKSrs4Gr
-c8gYxQf+MiHN7lIto5cvBArHuLRaYXdHSqN8WkOxjyk6pKDVJN3zByol4IsQ1or0
-gi3U/1yXaU1lyM8v76HhRI789ZE9OXHiRD8iKWM54w0uldvJLPNzByqsrvapKvmR
-XjYyMxgp/uFJZ4qxg3nonI2Fa2FzSjqA/ct/sTYj8AbXOsOEK/bUZasvnrwUuIhP
-FwODujdCtfIpzMvn4c262LUiz3TOY+p3nH/CSKsYZwR5xiUbbZCf30PKrwN4RcmU
-ti4hIKoOJcLH5gjgeXpfx7jOM/6Qr7eQrEelsDnuMAKYXC9WMj48+O6Cf8mFja4M
-N1txQKX0NepjOjzDmydD5Dx/69S/sg==
-=ehtQ
------END PGP SIGNATURE-----
-
---RRHJimCDVdpqhQ+7--
-
+Josef
 
