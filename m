@@ -1,237 +1,149 @@
-Return-Path: <ceph-devel+bounces-1403-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1405-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D6CC90856D
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2024 09:57:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1182909014
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2024 18:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 680AEB23C22
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2024 07:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39FE9285D4A
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2024 16:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA315157E7D;
-	Fri, 14 Jun 2024 07:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD1B171082;
+	Fri, 14 Jun 2024 16:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="Fm1tcN3V"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fnn26j4m"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BA01822F8
-	for <ceph-devel@vger.kernel.org>; Fri, 14 Jun 2024 07:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C2E1F946
+	for <ceph-devel@vger.kernel.org>; Fri, 14 Jun 2024 16:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718351809; cv=none; b=hBwiVKx1x9cpLZGif1RluSMtuR7ThoIc1qQzv2qfBeGJlITVT7k5yVfeXLCgghFwcnAUGe24Bi4qn/moh1pMDJvcgAjt0H45OK8pKSLlxg/5+bFKz0+RV93NfBahYsKUfzO6dTlbWbz+ZIXx74uLgqTi0Oh+SHN09fRGXGJbEV8=
+	t=1718382224; cv=none; b=SU/MGB/tGZGhqHyP4uRTH1SFd7OKaUtEM2aMQy+UQxLQV0Cf3xRPV+nV2a4Dan9xE7f4aw8x4MFv9+kvlgFlBd2xLOYlPgPPmizUAp18MYc5W5sC84RnAznOV/iCR7R9tp6hfjkn2OyB8vcHViiaqW62v/9qN1v5vztk+jyFf+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718351809; c=relaxed/simple;
-	bh=cCTHejGQxMi6RzmM8k0/qqpdwyLsfEJT+eXWS8ocifI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qsi4TGdLvlfEnA9FVItZC0MdOiCJFyeRrtVp5WYEJcmseTetT++MTXY8TN87Fu+BTER18P/JECyQw7flhnpo/mfGcjEJ0MG+IyrsWb3lhFQI6zJka4zu5/YP1jBf/u0sTy3V/SRojOOATKpUDYaEOUANEQ/NTEH3WczjXSEQXcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=Fm1tcN3V; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-44116be80ecso11040631cf.2
-        for <ceph-devel@vger.kernel.org>; Fri, 14 Jun 2024 00:56:46 -0700 (PDT)
+	s=arc-20240116; t=1718382224; c=relaxed/simple;
+	bh=HZ41Gql5aJt7BwrUTWs3sJtFjMM4tWyXduNZXZ8PxKM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=I55ou+jKft4GP753WIqCVQ2JYM1212ql4Q2vSFg6d+sfGmMYyzOq9UEC34gOY3Td25Pt1NZy1d8V+6RUkncqvl3WFie1WvnBlcPptdxv59BVpatH0v1SHxuz0awzaMjsQybg1mXzsZP8PiXPth+sLvIdOkcoHskZ/Dj2usYf6kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fnn26j4m; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2c4e2cd931aso158058a91.0
+        for <ceph-devel@vger.kernel.org>; Fri, 14 Jun 2024 09:23:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1718351805; x=1718956605; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=BedO1x12znmji4xt7UpC8XDe1FvgdzsEI86mvlWGudA=;
-        b=Fm1tcN3Vo3gJO6/SCGnqGesXhAtXTa/SULB8j+OCYKi91pBbnkv9madB1toyUbEmqU
-         n1PWVnReUBEajRAGUKRwA/n4y6aByM5MFtRcCVNryNdcI08bph4xYoVR37w9nTKZYbm2
-         Ey9Gr1/er1ywu6fbx5njWRb6cyHvBMvDWfQuU=
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1718382222; x=1718987022; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qOsdq+Rd2jD/oYTlQL4Vcr47c5ELyE1/1jwJx8ny+zc=;
+        b=fnn26j4m9gsLVxX2s6BtefQmg0/n12mcjasgx23uaFOh/aFQkIpoxGihTUJFFNWqVq
+         9ZFyNU3d7HkS7zXJWhdkONUF4IieHmjaD/6mb2vwROebWk3ABbWmzt8uX8/XM2fPyPTJ
+         WH0LZL0V1DsS22J0q5zm4+Y88L349yMyk/4DLG+Ehjsh+P4To0rc5KuDPYJuAnmMC24s
+         47siZyE2YLHxyi6e+WC9yZEzuSXvloXn2SYcqB9506Zc3qxq/kWtIGSzaSfhBB7vHs+8
+         iQf/dPj40UnzYbQ7sh70oFkiB8aMP0jo/Kl2abZDK4QP2himYi2of6FNTtpXwUSyEKlG
+         2OXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718351805; x=1718956605;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BedO1x12znmji4xt7UpC8XDe1FvgdzsEI86mvlWGudA=;
-        b=Ke/cHmqnFkPugOstjAqbnBEHVzPHwL2niG0Frr0Nouzpm6npnTIaHWwTqt8XQReH42
-         ec29f0VlagNOZSrqoDox7vCdklCWEsaOcVZz07WZb/QKixWVBXohZGf5wnQ1myWDWnwL
-         mcRoHUqdNS6ETxRaILlxjKk0fa1oWiaIEnJGe8vZKFYqA8PfX8o1rHgXXIHV6FwwnejY
-         rht+htEOLvXaaSio5G+L8E6iKq1CmNX0qNhriLwpQU1ogtTkcnUL0kPXZjGgoKxa42PB
-         K90JH6gtXSZJB4xUD+Z0C+H6QIanpH6TEtTrso6D2QLeQuHxaglowpAltfhi6/bTQ+Zg
-         t5fw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXmvgLn58IVWkpGvJDeNIU7iYlz2wiIoG2QfU45qYb0XxcN8TfqUEtVyY9SAH8OhiTRMrkyspD7Bkk3DwhZUrp2StGZXZmWaZ/0w==
-X-Gm-Message-State: AOJu0YyzSHTMZGHXGOmiXgRkzPXI8AKayKzcQPqrXwXb4B08PfRynXaZ
-	AgV6dHuwTB+QTe7x4wBafwBA7PmqYEeySiXL9X1Jitkj6dxGIcATpOHozzMDxdQ=
-X-Google-Smtp-Source: AGHT+IEDi8BhVjLu2vbVbmBxB83hP6gyIibQXt+H84ODwaVrhmTedMPZYFZeMGGsfo/+7hGiDnXdRg==
-X-Received: by 2002:a05:622a:1822:b0:43e:2639:a987 with SMTP id d75a77b69052e-44216b3a874mr27744421cf.59.1718351804940;
-        Fri, 14 Jun 2024 00:56:44 -0700 (PDT)
-Received: from localhost ([213.195.124.163])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-441f2ff9ef8sm13823221cf.89.2024.06.14.00.56.44
+        d=1e100.net; s=20230601; t=1718382222; x=1718987022;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qOsdq+Rd2jD/oYTlQL4Vcr47c5ELyE1/1jwJx8ny+zc=;
+        b=Pdx558GxsfkScxzstbtYp3BAbF61qiA8Nn3joKtZ/Yb6qqXw8F0su3+Sbdk1paRFyz
+         WbLJNM6aalS/iWhCsOqfXDNZTk7jufmRE6vq55a5wbCwD/l32Or7R9deTK+IIhAqy/4H
+         tjurIMI6SZqNdDm6VtInj4XQw14WXrLoP6L3y9M51NWlqKZLEp6+bCSDk3eqZ+kSZyVc
+         B4fe+1RMHq5XfuLZ3TSwvWA4qTuPHHmtIELsAUvH+uMnEoQzZRy4qJlsuQmDy4AI881+
+         K4OM7FdnhiSGpEXO7hdW5Nj9Dclu/BzxZv6imn4qipJbPMMJm8Tb368gKpVCd5RlMnG7
+         6/pw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVv6QZyQy8dn+E5GWW+X0NLp/C8fYZEFyrsy9m4va8N0txjB9AfyCjJknZo8L7dDbqWp+MYo06/nTOb/Hkv8JEEmMyR1NopYnp6A==
+X-Gm-Message-State: AOJu0YydbFVSkpdJTZwwO931cc0q/lXGMgyaCUArneKho+/gSeJJ0W5F
+	56FpZPGtfn5FDHjJc/WLZDgN+0XSSNlUqnLQO6MFieseyrHqTvg14NEpoxsqlL0=
+X-Google-Smtp-Source: AGHT+IFzZlkOeh7ub8gHV6v3rJ7EdBnks7HtbNFvAppAM0NMs6uCGvh3Ey3eFD0Th7n1FGRILE+Uqw==
+X-Received: by 2002:a17:90a:d313:b0:2c4:da09:e29 with SMTP id 98e67ed59e1d1-2c4dbd431cbmr3209949a91.3.1718382222558;
+        Fri, 14 Jun 2024 09:23:42 -0700 (PDT)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4c46701absm4112038a91.40.2024.06.14.09.23.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 00:56:44 -0700 (PDT)
-Date: Fri, 14 Jun 2024 09:56:42 +0200
-From: Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Geert Uytterhoeven <geert@linux-m68k.org>,
-	Richard Weinberger <richard@nod.at>,
-	Philipp Reisner <philipp.reisner@linbit.com>,
-	Lars Ellenberg <lars.ellenberg@linbit.com>,
-	Christoph =?utf-8?Q?B=C3=B6hmwalder?= <christoph.boehmwalder@linbit.com>,
-	Josef Bacik <josef@toxicpanda.com>, Ming Lei <ming.lei@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>, Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>, Song Liu <song@kernel.org>,
-	Yu Kuai <yukuai3@huawei.com>,
-	Vineeth Vijayan <vneethv@linux.ibm.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-m68k@lists.linux-m68k.org, linux-um@lists.infradead.org,
-	drbd-dev@lists.linbit.com, nbd@other.debian.org,
-	linuxppc-dev@lists.ozlabs.org, ceph-devel@vger.kernel.org,
-	virtualization@lists.linux.dev, xen-devel@lists.xenproject.org,
-	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
-	linux-mtd@lists.infradead.org, nvdimm@lists.linux.dev,
-	linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
-	linux-scsi@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 10/26] xen-blkfront: don't disable cache flushes when
- they fail
-Message-ID: <Zmv3usMvGGK7ZbMT@macbook>
-References: <20240611051929.513387-1-hch@lst.de>
- <20240611051929.513387-11-hch@lst.de>
- <ZmlVziizbaboaBSn@macbook>
- <20240612150030.GA29188@lst.de>
- <ZmnFH17bTV2Ot_iR@macbook>
- <20240613140508.GA16529@lst.de>
+        Fri, 14 Jun 2024 09:23:42 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Christoph Hellwig <hch@lst.de>
+Cc: Richard Weinberger <richard@nod.at>, 
+ Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+ Johannes Berg <johannes@sipsolutions.net>, 
+ Josef Bacik <josef@toxicpanda.com>, Ilya Dryomov <idryomov@gmail.com>, 
+ Dongsheng Yang <dongsheng.yang@easystack.cn>, 
+ =?utf-8?q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>, 
+ linux-um@lists.infradead.org, linux-block@vger.kernel.org, 
+ nbd@other.debian.org, ceph-devel@vger.kernel.org, 
+ xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org
+In-Reply-To: <20240531074837.1648501-1-hch@lst.de>
+References: <20240531074837.1648501-1-hch@lst.de>
+Subject: Re: convert the SCSI ULDs to the atomic queue limits API v2
+Message-Id: <171838222101.240089.17677804682941719694.b4-ty@kernel.dk>
+Date: Fri, 14 Jun 2024 10:23:41 -0600
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240613140508.GA16529@lst.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0-rc0
 
-On Thu, Jun 13, 2024 at 04:05:08PM +0200, Christoph Hellwig wrote:
-> On Wed, Jun 12, 2024 at 05:56:15PM +0200, Roger Pau Monné wrote:
-> > Right.  AFAICT advertising "feature-barrier" and/or
-> > "feature-flush-cache" could be done based on whether blkback
-> > understand those commands, not on whether the underlying storage
-> > supports the equivalent of them.
-> > 
-> > Worst case we can print a warning message once about the underlying
-> > storage failing to complete flush/barrier requests, and that data
-> > integrity might not be guaranteed going forward, and not propagate the
-> > error to the upper layer?
-> > 
-> > What would be the consequence of propagating a flush error to the
-> > upper layers?
+
+On Fri, 31 May 2024 09:47:55 +0200, Christoph Hellwig wrote:
+> this series converts the SCSI upper level drivers to the atomic queue
+> limits API.
 > 
-> If you propage the error to the upper layer you will generate an
-> I/O error there, which usually leads to a file system shutdown.
+> The first patch is a bug fix for ubd that later patches depend on and
+> might be worth picking up for 6.10.
 > 
-> > Given the description of the feature in the blkif header, I'm afraid
-> > we cannot guarantee that seeing the feature exposed implies barrier or
-> > flush support, since the request could fail at any time (or even from
-> > the start of the disk attachment) and it would still sadly be a correct
-> > implementation given the description of the options.
+> The second patch changes the max_sectors calculation to take the optimal
+> I/O size into account so that sd, nbd and rbd don't have to mess with
+> the user max_sector value.  I'd love to see a careful review from the
+> nbd and rbd maintainers for this one!
 > 
-> Well, then we could do something like the patch below, which keeps
-> the existing behavior, but insolates the block layer from it and
-> removes the only user of blk_queue_write_cache from interrupt
-> context:
+> [...]
 
-LGTM, I'm not sure there's much else we can do.
+Applied, thanks!
 
-> ---
-> From e6e82c769ab209a77302994c3829cf6ff7a595b8 Mon Sep 17 00:00:00 2001
-> From: Christoph Hellwig <hch@lst.de>
-> Date: Thu, 30 May 2024 08:58:52 +0200
-> Subject: xen-blkfront: don't disable cache flushes when they fail
-> 
-> blkfront always had a robust negotiation protocol for detecting a write
-> cache.  Stop simply disabling cache flushes in the block layer as the
-> flags handling is moving to the atomic queue limits API that needs
-> user context to freeze the queue for that.  Instead handle the case
-> of the feature flags cleared inside of blkfront.  This removes old
-> debug code to check for such a mismatch which was previously impossible
-> to hit, including the check for passthrough requests that blkfront
-> never used to start with.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/block/xen-blkfront.c | 44 +++++++++++++++++++-----------------
->  1 file changed, 23 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-> index 9b4ec3e4908cce..e2c92d5095ff17 100644
-> --- a/drivers/block/xen-blkfront.c
-> +++ b/drivers/block/xen-blkfront.c
-> @@ -788,6 +788,14 @@ static int blkif_queue_rw_req(struct request *req, struct blkfront_ring_info *ri
->  			 * A barrier request a superset of FUA, so we can
->  			 * implement it the same way.  (It's also a FLUSH+FUA,
->  			 * since it is guaranteed ordered WRT previous writes.)
-> +			 *
-> +			 * Note that can end up here with a FUA write and the
-> +			 * flags cleared.  This happens when the flag was
-> +			 * run-time disabled and raced with I/O submission in
-> +			 * the block layer.  We submit it as a normal write
+[01/14] ubd: refactor the interrupt handler
+        commit: 5db755fbb1a0de4a4cfd5d5edfaa19853b9c56e6
+[02/14] ubd: untagle discard vs write zeroes not support handling
+        commit: 31ade7d4fdcf382beb8cb229a1f5d77e0f239672
+[03/14] rbd: increase io_opt again
+        commit: a00d4bfce7c6d7fa4712b8133ec195c9bd142ae6
+[04/14] block: take io_opt and io_min into account for max_sectors
+        commit: a23634644afc2f7c1bac98776440a1f3b161819e
+[05/14] sd: simplify the ZBC case in provisioning_mode_store
+        commit: b3491b0db165c0cbe25874da66d97652c03db654
+[06/14] sd: add a sd_disable_discard helper
+        commit: b0dadb86a90bd5a7b723f9d3a6cf69da9b596496
+[07/14] sd: add a sd_disable_write_same helper
+        commit: 9972b8ce0d4ba373901bdd1e15e4de58fcd7f662
+[08/14] sd: simplify the disable case in sd_config_discard
+        commit: d15b9bd42cd3b2077812d4bf32f532a9bd5c4914
+[09/14] sd: factor out a sd_discard_mode helper
+        commit: f1e8185fc12c699c3abf4f39b1ff5d7793da3a95
+[10/14] sd: cleanup zoned queue limits initialization
+        commit: 9c1d339a1bf45f4d3a2e77bbf24b0ec51f02551c
+[11/14] sd: convert to the atomic queue limits API
+        commit: 804e498e0496d889090f32f812b5ce1a4f2aa63e
+[12/14] sr: convert to the atomic queue limits API
+        commit: 969f17e10f5b732c05186ee0126c8a08166d0cda
+[13/14] block: remove unused queue limits API
+        commit: 1652b0bafeaa8281ca9a805d81e13d7647bd2f44
+[14/14] block: add special APIs for run-time disabling of discard and friends
+        commit: 73e3715ed14844067c5c598e72777641004a7f60
 
-Since blkfront no longer signals that FUA is no longer available for the
-device, getting a request with FUA is not actually a race I think?
+Best regards,
+-- 
+Jens Axboe
 
-> +			 * here.  A pure flush should never end up here with
-> +			 * the flags cleared as they are completed earlier for
-> +			 * the !feature_flush case.
->  			 */
->  			if (info->feature_flush && info->feature_fua)
->  				ring_req->operation =
-> @@ -795,8 +803,6 @@ static int blkif_queue_rw_req(struct request *req, struct blkfront_ring_info *ri
->  			else if (info->feature_flush)
->  				ring_req->operation =
->  					BLKIF_OP_FLUSH_DISKCACHE;
-> -			else
-> -				ring_req->operation = 0;
->  		}
->  		ring_req->u.rw.nr_segments = num_grant;
->  		if (unlikely(require_extra_req)) {
-> @@ -887,16 +893,6 @@ static inline void flush_requests(struct blkfront_ring_info *rinfo)
->  		notify_remote_via_irq(rinfo->irq);
->  }
->  
-> -static inline bool blkif_request_flush_invalid(struct request *req,
-> -					       struct blkfront_info *info)
-> -{
-> -	return (blk_rq_is_passthrough(req) ||
-> -		((req_op(req) == REQ_OP_FLUSH) &&
-> -		 !info->feature_flush) ||
-> -		((req->cmd_flags & REQ_FUA) &&
-> -		 !info->feature_fua));
-> -}
-> -
->  static blk_status_t blkif_queue_rq(struct blk_mq_hw_ctx *hctx,
->  			  const struct blk_mq_queue_data *qd)
->  {
-> @@ -908,23 +904,30 @@ static blk_status_t blkif_queue_rq(struct blk_mq_hw_ctx *hctx,
->  	rinfo = get_rinfo(info, qid);
->  	blk_mq_start_request(qd->rq);
->  	spin_lock_irqsave(&rinfo->ring_lock, flags);
-> -	if (RING_FULL(&rinfo->ring))
-> -		goto out_busy;
->  
-> -	if (blkif_request_flush_invalid(qd->rq, rinfo->dev_info))
-> -		goto out_err;
-> +	/*
-> +	 * Check if the backend actually supports flushes.
-> +	 *
-> +	 * While the block layer won't send us flushes if we don't claim to
-> +	 * support them, the Xen protocol allows the backend to revoke support
-> +	 * at any time.  That is of course a really bad idea and dangerous, but
-> +	 * has been allowed for 10+ years.  In that case we simply clear the
-> +	 * flags, and directly return here for an empty flush and ignore the
-> +	 * FUA flag later on.
-> +	 */
-> +	if (unlikely(req_op(qd->rq) == REQ_OP_FLUSH && !info->feature_flush))
-> +		goto out;
 
-Don't you need to complete the request here?
 
-Thanks, Roger.
 
