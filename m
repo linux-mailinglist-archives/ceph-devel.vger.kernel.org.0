@@ -1,31 +1,31 @@
-Return-Path: <ceph-devel+bounces-1404-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1402-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2F19908598
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2024 10:01:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A3B908509
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2024 09:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1263D1C21D9A
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2024 08:01:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAA89B26E7B
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Jun 2024 07:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A0514D29B;
-	Fri, 14 Jun 2024 08:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7DE185085;
+	Fri, 14 Jun 2024 07:30:36 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from www.kot-begemot.co.uk (ns1.kot-begemot.co.uk [217.160.28.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0BE1474CB;
-	Fri, 14 Jun 2024 08:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62F9ECC;
+	Fri, 14 Jun 2024 07:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.160.28.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718352102; cv=none; b=quJMngRge9PKEoIzzpPeN/InYzQQH4awdsHV78HJrANpQypCYU9PzBxE3TdK8t5NGPcigjtEdEwsa8NVlL3zBtJZKYdXLF6UlZHOdRg6qdBJK5mvCljDfNRi/h+XCCTE/K4IMeJRfqb54dQk9yUdWI9YczF6fbv1RZGfiipcNus=
+	t=1718350236; cv=none; b=SrGiFoFQl6YVBms1ErarXkYSNVigcsiPeokSs3bvEHRfofesEQLIa/MQULPTkpSZ2hCLRBbV7Xoh2QY+r/6L44PqW0TTAUCIIx4EmJAfEmAR9scMb8y7lYvdgk2ZuSzTUAyozowkpmNkPaHJv0rp5kWa1jwsSjDmC0u8wdYnhZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718352102; c=relaxed/simple;
-	bh=o6mCE3xjAE4ne3tJGZ1/jXYFyYsP/lO4Ylyx4twrtvs=;
+	s=arc-20240116; t=1718350236; c=relaxed/simple;
+	bh=oLtasVYWOKLHBL3D/xrVIOFLQfLSJvF9p1FP70GLEgI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PZwLIfbQM8a2mcngJ0XjJGgm7PagVEP/mPWXDXovE5+UN9GRgfihgVzLnjAiE+KkrZRk5tZpW2gCidMF0nYJ2rSZheUhiW9OmPE30+LmCbvd4Qk2sjvans5k0Ikg4TAW2Ziv1PheKmiDI9DpQucmh+LQCONEAPjNRqsHB6Ysbms=
+	 In-Reply-To:Content-Type; b=Bg3iy3D+OAhANy+pQjvXWzz1WzUIh4ND6t7aaPn5PZ1iZnaTyAsPawlF5WIIJ/l7qJhCbOE1FAFFqqL1LBL0PsHrDy/ib/OK+KtKCtZn7T+rQQkNi2zL+EsusUXWEIWRjNCVZ9Uan/TBbLQv+hRtbqzPIsHESE0fj3TD5lnHEwg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cambridgegreys.com; spf=pass smtp.mailfrom=cambridgegreys.com; arc=none smtp.client-ip=217.160.28.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cambridgegreys.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cambridgegreys.com
@@ -33,14 +33,14 @@ Received: from [192.168.17.6] (helo=jain.kot-begemot.co.uk)
 	by www.kot-begemot.co.uk with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <anton.ivanov@cambridgegreys.com>)
-	id 1sI1MY-004Axd-Js; Fri, 14 Jun 2024 07:28:42 +0000
+	id 1sI1NW-004AyG-4w; Fri, 14 Jun 2024 07:29:42 +0000
 Received: from jain.kot-begemot.co.uk ([192.168.3.3])
 	by jain.kot-begemot.co.uk with esmtp (Exim 4.96)
 	(envelope-from <anton.ivanov@cambridgegreys.com>)
-	id 1sI1MU-000Wne-1M;
-	Fri, 14 Jun 2024 08:28:42 +0100
-Message-ID: <b15de345-838b-4cbb-a156-22b527ed03b6@cambridgegreys.com>
-Date: Fri, 14 Jun 2024 08:28:38 +0100
+	id 1sI1NT-000Wne-0I;
+	Fri, 14 Jun 2024 08:29:41 +0100
+Message-ID: <b9909e61-7fc2-4d10-8000-d23b7def93de@cambridgegreys.com>
+Date: Fri, 14 Jun 2024 08:29:38 +0100
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -48,7 +48,8 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/14] ubd: refactor the interrupt handler
+Subject: Re: [PATCH 02/14] ubd: untagle discard vs write zeroes not support
+ handling
 Content-Language: en-US
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
  "Martin K. Petersen" <martin.petersen@oracle.com>
@@ -59,11 +60,12 @@ Cc: Richard Weinberger <richard@nod.at>,
  =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>,
  linux-um@lists.infradead.org, linux-block@vger.kernel.org,
  nbd@other.debian.org, ceph-devel@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org
+ xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org,
+ Bart Van Assche <bvanassche@acm.org>, Damien Le Moal <dlemoal@kernel.org>
 References: <20240531074837.1648501-1-hch@lst.de>
- <20240531074837.1648501-2-hch@lst.de>
+ <20240531074837.1648501-3-hch@lst.de>
 From: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-In-Reply-To: <20240531074837.1648501-2-hch@lst.de>
+In-Reply-To: <20240531074837.1648501-3-hch@lst.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Spam-Score: -1.0
@@ -73,82 +75,42 @@ X-Clacks-Overhead: GNU Terry Pratchett
 
 
 On 31/05/2024 08:47, Christoph Hellwig wrote:
-> Instead of a separate handler function that leaves no work in the
-> interrupt hanler itself, split out a per-request end I/O helper and
-> clean up the coding style and variable naming while we're at it.
+> Discard and Write Zeroes are different operation and implemented
+> by different fallocate opcodes for ubd.  If one fails the other one
+> can work and vice versa.
 > 
+> Split the code to disable the operations in ubd_handler to only
+> disable the operation that actually failed.
+> 
+> Fixes: 50109b5a03b4 ("um: Add support for DISCARD in the UBD Driver")
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 > Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
 > ---
->   arch/um/drivers/ubd_kern.c | 49 ++++++++++++++------------------------
->   1 file changed, 18 insertions(+), 31 deletions(-)
+>   arch/um/drivers/ubd_kern.c | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
 > 
 > diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
-> index ef805eaa9e013d..0c9542d58c01b7 100644
+> index 0c9542d58c01b7..093c87879d08ba 100644
 > --- a/arch/um/drivers/ubd_kern.c
 > +++ b/arch/um/drivers/ubd_kern.c
-> @@ -447,43 +447,30 @@ static int bulk_req_safe_read(
->   	return n;
->   }
+> @@ -449,10 +449,11 @@ static int bulk_req_safe_read(
 >   
-> -/* Called without dev->lock held, and only in interrupt context. */
-> -static void ubd_handler(void)
-> +static void ubd_end_request(struct io_thread_req *io_req)
+>   static void ubd_end_request(struct io_thread_req *io_req)
 >   {
-> -	int n;
-> -	int count;
-> -
-> -	while(1){
-> -		n = bulk_req_safe_read(
-> -			thread_fd,
-> -			irq_req_buffer,
-> -			&irq_remainder,
-> -			&irq_remainder_size,
-> -			UBD_REQ_BUFFER_SIZE
-> -		);
-> -		if (n < 0) {
-> -			if(n == -EAGAIN)
-> -				break;
-> -			printk(KERN_ERR "spurious interrupt in ubd_handler, "
-> -			       "err = %d\n", -n);
-> -			return;
-> -		}
-> -		for (count = 0; count < n/sizeof(struct io_thread_req *); count++) {
-> -			struct io_thread_req *io_req = (*irq_req_buffer)[count];
-> -
-> -			if ((io_req->error == BLK_STS_NOTSUPP) && (req_op(io_req->req) == REQ_OP_DISCARD)) {
-> -				blk_queue_max_discard_sectors(io_req->req->q, 0);
-> -				blk_queue_max_write_zeroes_sectors(io_req->req->q, 0);
-> -			}
-> -			blk_mq_end_request(io_req->req, io_req->error);
-> -			kfree(io_req);
-> -		}
-> +	if (io_req->error == BLK_STS_NOTSUPP &&
-> +	    req_op(io_req->req) == REQ_OP_DISCARD) {
-> +		blk_queue_max_discard_sectors(io_req->req->q, 0);
-> +		blk_queue_max_write_zeroes_sectors(io_req->req->q, 0);
+> -	if (io_req->error == BLK_STS_NOTSUPP &&
+> -	    req_op(io_req->req) == REQ_OP_DISCARD) {
+> -		blk_queue_max_discard_sectors(io_req->req->q, 0);
+> -		blk_queue_max_write_zeroes_sectors(io_req->req->q, 0);
+> +	if (io_req->error == BLK_STS_NOTSUPP) {
+> +		if (req_op(io_req->req) == REQ_OP_DISCARD)
+> +			blk_queue_max_discard_sectors(io_req->req->q, 0);
+> +		else if (req_op(io_req->req) == REQ_OP_WRITE_ZEROES)
+> +			blk_queue_max_write_zeroes_sectors(io_req->req->q, 0);
 >   	}
-> +	blk_mq_end_request(io_req->req, io_req->error);
-> +	kfree(io_req);
->   }
->   
->   static irqreturn_t ubd_intr(int irq, void *dev)
->   {
-> -	ubd_handler();
-> +	int len, i;
-> +
-> +	while ((len = bulk_req_safe_read(thread_fd, irq_req_buffer,
-> +			&irq_remainder, &irq_remainder_size,
-> +			UBD_REQ_BUFFER_SIZE)) >= 0) {
-> +		for (i = 0; i < len / sizeof(struct io_thread_req *); i++)
-> +			ubd_end_request((*irq_req_buffer)[i]);
-> +	}
-> +
-> +	if (len < 0 && len != -EAGAIN)
-> +		pr_err("spurious interrupt in %s, err = %d\n", __func__, len);
->   	return IRQ_HANDLED;
->   }
->   
+>   	blk_mq_end_request(io_req->req, io_req->error);
+>   	kfree(io_req);
 Acked-By: Anton Ivanov <anton.ivanov@cambridgegreys.com>
 -- 
 Anton R. Ivanov
