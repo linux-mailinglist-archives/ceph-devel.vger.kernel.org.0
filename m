@@ -1,46 +1,76 @@
-Return-Path: <ceph-devel+bounces-1507-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1508-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10ABB92B077
-	for <lists+ceph-devel@lfdr.de>; Tue,  9 Jul 2024 08:44:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD5192B873
+	for <lists+ceph-devel@lfdr.de>; Tue,  9 Jul 2024 13:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE1DC1F21567
-	for <lists+ceph-devel@lfdr.de>; Tue,  9 Jul 2024 06:44:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157B41F2184B
+	for <lists+ceph-devel@lfdr.de>; Tue,  9 Jul 2024 11:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1956913C699;
-	Tue,  9 Jul 2024 06:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5ED157A6C;
+	Tue,  9 Jul 2024 11:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ixObtDEA"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424A92BD05;
-	Tue,  9 Jul 2024 06:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0931149C79
+	for <ceph-devel@vger.kernel.org>; Tue,  9 Jul 2024 11:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720507481; cv=none; b=NKmJLHNne3WabA9TnOUt04tFoVRiRYXVf8IZmyTLWUJmUm0f/5gVRhSQbRdA9TafSUMtRk7VefAlFKyktblbCSsRd5qsaNJTwD+0uBzjIkp0EsYFkvP3jiPNZJsJnFtW2fmL9mCFKqwobdvUjYlO3xSnSk5i47VUCu31GsrUZrY=
+	t=1720525147; cv=none; b=mSz3iMGghQg+0pX8n1srwcG6tyqwTOsPaN7gz9PsXTUH7H2uvF66GNItaIQ9nK1MZUW9YuIDcuDTQjnJYOjqX37SZ8iHF3ebYCeIUK6iDKhICgQwQByEPAgvd6ZGSbKx6TDw2ffPBjxW9/nDaaLZi8nm3+DQQSmBMvnqer8+KpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720507481; c=relaxed/simple;
-	bh=tPQKrOh3XCh0ep4i3FomGxJApwdxRzt2A7+8IwIn/R0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dhRQ3xuBFL4nRCvnZB8fF8DIVI3EwcWOxwQZHh4MogqodQHbxlXW9CKuvlM0enFJEzARi1RwmQXkdAvTvBi1ULQAD+htXP7RUDoQ+K6dXQlaQTrbZzIymjOPWc4j4fYZivvnzhft8uP8lCMPPdua8YXFrkV7OWDtt5wAWRx6ecQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-03 (Coremail) with SMTP id rQCowAAXHNRK3Ixmp_jKFA--.39114S2;
-	Tue, 09 Jul 2024 14:44:26 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: xiubli@redhat.com,
-	idryomov@gmail.com
-Cc: ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] ceph: convert comma to semicolon
-Date: Tue,  9 Jul 2024 14:44:00 +0800
-Message-Id: <20240709064400.869619-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720525147; c=relaxed/simple;
+	bh=ENJSSZ1eAgVeaWtWrVeKUX1XFtIaWW6JC43PV4Wscok=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GnesudJ4S4zrfvZoUDnGoUVjZ0FxKo0Le4lA0Dkb3J+YytuvI2Iw8zvha8E5ZoORN/g4PZ6hAy2Ret9J00I/3xnV5RSgQuNXVBdhpAHhskymUyIxKe5FVfXzETOcYNmeDL3F5DSa1h+gt89EdM+F0ZjPrxCR5xWLfkAP7O12u7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ixObtDEA; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4266ed6c691so8587125e9.3
+        for <ceph-devel@vger.kernel.org>; Tue, 09 Jul 2024 04:39:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720525144; x=1721129944; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=07CwLjHeyvixvwmAVL3VgM5mpy8NCPZJG69pkFSBWJg=;
+        b=ixObtDEA5Ow03dy0tMdEOzbQPwGui0NHH9+HiWgr1nB0HRVv+ylHkvby/X4tp8NWAL
+         /OsqcuCIH0JsW2u0mEkN/lsz5a3HSe1UH7uT9+WHnBnEIQZxj5NM/YHz08KEzEI3X7i7
+         0VyAArrUHsXX8C6COaTzLJ5jn7hEVrHuHR0PyFOILrdqwdal7xmWAYwpFRRtDz8g2KEv
+         acrqOdomoyTblRM5oAeNyxjZ5ynoEevTJMSnVMj5Ipx+GqTS8O+kNjR/n6hd+xZGLUco
+         EPSNgBb/psNtyRNQj6ccvxnrHiY6udcgE6WmKzcghIRVwsZbPRJmn7mwTsK4VAuAh7b1
+         ZE8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720525144; x=1721129944;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=07CwLjHeyvixvwmAVL3VgM5mpy8NCPZJG69pkFSBWJg=;
+        b=GAT0BaivKcSx8UH4nxbrePq5F5zE+hRTTnFCojjYlLaB+U6lUPPCZvL5vvZKJbZf79
+         ZqPgM4RqSB3xVJIWrS0Bq7IHoTlhR4yJwRFYaAZvdyfbX5AmGXAzde+ZhuzECHPHJl9u
+         HrTJXLzHeXSv0QA2s2Rmylb+tXIkLJFQn1cJM7WyZ7a2G5gTmZUhvTH3Kk+ZySoKTjZU
+         M0SUAlN+G2fjOp7y9qlDVr0Q5ruhXBLndqu9FBZLF2eDPPpLqq6KfZW5CJ7x664VtZSX
+         p9MvtqRgcsPVeeHg9mw5Cjl16dgLrgKfAAhjJOqfjCk8aKminjUilGNKfJLKJBanaiTz
+         VCbg==
+X-Gm-Message-State: AOJu0YzuHQu9HB+L+xm8q3KbXB+hsHQgio3hKnvhFxacPZ9eWIao4v7y
+	O9JK2nwBya+UMAO1wK4opEtevA7liCBapJgk24paeSI4oQ8EkFL+eYjgrg==
+X-Google-Smtp-Source: AGHT+IFJ9JZySp1S+ZFj3wuXXj7v2XNeo33RqUbLBuRRQOUovZAzt+Io0CwkVf8btmY4aI3xXt/ECw==
+X-Received: by 2002:a05:600c:4998:b0:426:5b21:9801 with SMTP id 5b1f17b1804b1-426708f2197mr15537465e9.27.1720525143781;
+        Tue, 09 Jul 2024 04:39:03 -0700 (PDT)
+Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266a38f5a5sm75124905e9.43.2024.07.09.04.39.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jul 2024 04:39:02 -0700 (PDT)
+From: Ilya Dryomov <idryomov@gmail.com>
+To: ceph-devel@vger.kernel.org
+Cc: Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] libceph: fix race between delayed_work() and ceph_monc_stop()
+Date: Tue,  9 Jul 2024 13:38:46 +0200
+Message-ID: <20240709113848.336103-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -48,44 +78,85 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAAXHNRK3Ixmp_jKFA--.39114S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYo7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z2
-	80aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAK
-	zVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr1j6F4UJw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7MxkIecxEwVAFwVW8AwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
-	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
-	wI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
-	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
-	jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
-	ZFpf9x0JUIdgAUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Replace a comma between expression statements by a semicolon.
+The way the delayed work is handled in ceph_monc_stop() is prone to
+races with mon_fault() and possibly also finish_hunting().  Both of
+these can requeue the delayed work which wouldn't be canceled by any of
+the following code in case that happens after cancel_delayed_work_sync()
+runs -- __close_session() doesn't mess with the delayed work in order
+to avoid interfering with the hunting interval logic.  This part was
+missed in commit b5d91704f53e ("libceph: behave in mon_fault() if
+cur_mon < 0") and use-after-free can still ensue on monc and objects
+that hang off of it, with monc->auth and monc->monmap being
+particularly susceptible to quickly being reused.
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+To fix this:
+
+- clear monc->cur_mon and monc->hunting as part of closing the session
+  in ceph_monc_stop()
+- bail from delayed_work() if monc->cur_mon is cleared, similar to how
+  it's done in mon_fault() and finish_hunting() (based on monc->hunting)
+- call cancel_delayed_work_sync() after the session is closed
+
+Cc: stable@vger.kernel.org
+Link: https://tracker.ceph.com/issues/66857
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 ---
- fs/ceph/dir.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ceph/mon_client.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 5aadc56e0cc0..18c72b305858 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1589,7 +1589,7 @@ void __ceph_dentry_dir_lease_touch(struct ceph_dentry_info *di)
- 	}
+diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+index f263f7e91a21..ab66b599ac47 100644
+--- a/net/ceph/mon_client.c
++++ b/net/ceph/mon_client.c
+@@ -1085,13 +1085,19 @@ static void delayed_work(struct work_struct *work)
+ 	struct ceph_mon_client *monc =
+ 		container_of(work, struct ceph_mon_client, delayed_work.work);
  
- 	spin_lock(&mdsc->dentry_list_lock);
--	__dentry_dir_lease_touch(mdsc, di),
-+	__dentry_dir_lease_touch(mdsc, di);
- 	spin_unlock(&mdsc->dentry_list_lock);
+-	dout("monc delayed_work\n");
+ 	mutex_lock(&monc->mutex);
++	dout("%s mon%d\n", __func__, monc->cur_mon);
++	if (monc->cur_mon < 0) {
++		goto out;
++	}
++
+ 	if (monc->hunting) {
+ 		dout("%s continuing hunt\n", __func__);
+ 		reopen_session(monc);
+ 	} else {
+ 		int is_auth = ceph_auth_is_authenticated(monc->auth);
++
++		dout("%s is_authed %d\n", __func__, is_auth);
+ 		if (ceph_con_keepalive_expired(&monc->con,
+ 					       CEPH_MONC_PING_TIMEOUT)) {
+ 			dout("monc keepalive timeout\n");
+@@ -1116,6 +1122,8 @@ static void delayed_work(struct work_struct *work)
+ 		}
+ 	}
+ 	__schedule_delayed(monc);
++
++out:
+ 	mutex_unlock(&monc->mutex);
  }
  
+@@ -1232,13 +1240,15 @@ EXPORT_SYMBOL(ceph_monc_init);
+ void ceph_monc_stop(struct ceph_mon_client *monc)
+ {
+ 	dout("stop\n");
+-	cancel_delayed_work_sync(&monc->delayed_work);
+ 
+ 	mutex_lock(&monc->mutex);
+ 	__close_session(monc);
++	monc->hunting = false;
+ 	monc->cur_mon = -1;
+ 	mutex_unlock(&monc->mutex);
+ 
++	cancel_delayed_work_sync(&monc->delayed_work);
++
+ 	/*
+ 	 * flush msgr queue before we destroy ourselves to ensure that:
+ 	 *  - any work that references our embedded con is finished.
 -- 
-2.25.1
+2.45.1
 
 
