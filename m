@@ -1,47 +1,47 @@
-Return-Path: <ceph-devel+bounces-1520-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1521-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D09592E9A4
-	for <lists+ceph-devel@lfdr.de>; Thu, 11 Jul 2024 15:34:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5746B92E9A8
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 Jul 2024 15:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B73C1281297
-	for <lists+ceph-devel@lfdr.de>; Thu, 11 Jul 2024 13:34:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAEBCB2707E
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 Jul 2024 13:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC3B15FCFB;
-	Thu, 11 Jul 2024 13:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCF515FCED;
+	Thu, 11 Jul 2024 13:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJCMyte9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YoYUAGOx"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780F415ECED;
-	Thu, 11 Jul 2024 13:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1132C15ECD6;
+	Thu, 11 Jul 2024 13:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720704875; cv=none; b=CXqE7o0kkgSgdhHkxLmZNkfdlzS1mEgUW5Cdu5ifbN2bs4KaIy4TMExgHa/31r424AYu9d57siYVcriiGplRfmNXqspoK0LtnjZ6puWaKbM1RvY9iXhvt4z4UzOPgMExGikstrX6KS9c6cEe+qcLiCzaqR4l/fZRp6JU754V86I=
+	t=1720704894; cv=none; b=qc0kDG6IYa4va0bmvWvCMg4WRgg7IuEUJKDxAt4aFIItSgx3xKOx6K15akecrET4UBpVfZv7qjE7GivgreP/m5qmVJCAfCbiI/tI3e380HleNLDexKLjBswsXuKExs+NdY46ULYFhAdL/ak2Xb9W5YsvRUZcgnE5+98dDFyEV50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720704875; c=relaxed/simple;
-	bh=2245hG+1Ai1cZny9nsPPBR8t+Q8qNnh9+uiqqQ1DY0c=;
+	s=arc-20240116; t=1720704894; c=relaxed/simple;
+	bh=kajOBRfoA6WFVWgCgi1DP00EMj9Q8CGGNokxoWvBAKQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B2SmVqmCVeiCgy2UR1cY+igp4D/pSGak41zSfZO6Dr11Js5eyfeZjEt8B+JrPAZVScpNMDmQyx0eqtqLw4ICEZLvyk1rpgJsanj0908/Yc+ttPtGqpKQtoifPclDg8YrWj9PgasrLAw9q0CUBi/oAKrz2+oNtoLuuCphmN4rMCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJCMyte9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E49C3C32786;
-	Thu, 11 Jul 2024 13:34:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uk5miI2nAc+22yPaQFyYVfDFtkhUj7aqI80ZKhaJL1JoKX3MLyxbIncsMEu0Sy7jM2QIjdlJf/xRU+RHJQa0s5LiFAFJeyT97R6q7FyIxNOZylRcf9jXIo1W+NIB8wvPqOx7hTitNgZwMkldVQCubLIQ6gJkXUXL9d1adI+0iug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YoYUAGOx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A08AC116B1;
+	Thu, 11 Jul 2024 13:34:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720704874;
-	bh=2245hG+1Ai1cZny9nsPPBR8t+Q8qNnh9+uiqqQ1DY0c=;
+	s=k20201202; t=1720704893;
+	bh=kajOBRfoA6WFVWgCgi1DP00EMj9Q8CGGNokxoWvBAKQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sJCMyte9hfIJGg1Y2Ex3vGQBwOzi5YhtSoMLqo82KRwpSJz99+9DAuvs6dQ0rJkOZ
-	 DU++zPfDQKVMQ+0kexZ9uParR+Ligk47q5JUG+8SeI/HNS2kAAk6ZqlIPwMU5rQi4I
-	 eWkosPCP/5eNGevePrua9M3qxxGuycxgVkeWSdlF1zusEFlGgYFL0ThZTBuYM2/BSR
-	 d0ChOf5zLEuR53NHciVn2yh66iJMhqTOZZkmNMXMj8P9slRoEAdt1DLP+gZ7DULk/f
-	 4dPEHyD6Q27bF7QZjsyQo1FowlydNcco2WJ+sk8199GJuznccJ6axC16ONEo3cAvdW
-	 RSopsS0nF7dDg==
-Date: Thu, 11 Jul 2024 14:34:30 +0100
+	b=YoYUAGOxovEwvOFVTpiiHPe9pP6oMN4ibUG5EpgEWVIKtG3kzIHCOKESD8txRJ9rg
+	 3lgi7eKRbhFkdj8Gig0/qpg8ispPvDvCa2sjEX8F6VHy2bknHL2u3iOa/ZUNV2H/ga
+	 qbaiXNMs+XnbXxSTGst1mxYdOHU1yZXDOl/2atxCcifAET3+vULaMRZ2k9Lo7x3dV7
+	 KPwD0CnP+3DzhDeqEC+c1mDkHTXOvLKsBRkyrpI2TDUkGSKiD3tqcc1UaE+sSlAwHG
+	 6UIvr7H2fZPpR350Ire+fyArY9CX+vEPSZTKEiPpeHLW84YSSAubIyKTVf7Wnth9uY
+	 RHxpO9OW4fNNQ==
+Date: Thu, 11 Jul 2024 14:34:49 +0100
 From: Simon Horman <horms@kernel.org>
 To: Jeff Johnson <quic_jjohnson@quicinc.com>
 Cc: Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
@@ -50,11 +50,11 @@ Cc: Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	ceph-devel@vger.kernel.org, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/2] libceph: suppress crush_choose_indep()
+Subject: Re: [PATCH net-next 2/2] libceph: fix crush_choose_firstn()
  kernel-doc warnings
-Message-ID: <20240711133430.GE8788@kernel.org>
+Message-ID: <20240711133449.GF8788@kernel.org>
 References: <20240710-kd-crush_choose_indep-v1-0-fe2b85f322c6@quicinc.com>
- <20240710-kd-crush_choose_indep-v1-1-fe2b85f322c6@quicinc.com>
+ <20240710-kd-crush_choose_indep-v1-2-fe2b85f322c6@quicinc.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -63,35 +63,19 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240710-kd-crush_choose_indep-v1-1-fe2b85f322c6@quicinc.com>
+In-Reply-To: <20240710-kd-crush_choose_indep-v1-2-fe2b85f322c6@quicinc.com>
 
-On Wed, Jul 10, 2024 at 11:10:03AM -0700, Jeff Johnson wrote:
+On Wed, Jul 10, 2024 at 11:10:04AM -0700, Jeff Johnson wrote:
 > Currently, when built with "make W=1", the following warnings are
 > generated:
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'map' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'work' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'bucket' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'weight' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'weight_max' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'x' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'left' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'numrep' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'type' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'out' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'outpos' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'tries' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'recurse_tries' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'recurse_to_leaf' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'out2' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'parent_r' not described in 'crush_choose_indep'
-> net/ceph/crush/mapper.c:655: warning: Function parameter or struct member 'choose_args' not described in 'crush_choose_indep'
 > 
-> These warnings are generated because the prologue comment for
-> crush_choose_indep() uses the kernel-doc prefix, but the actual
-> comment is a very brief description that is not in kernel-doc
-> format. Since this is a static function there is no need to fully
-> document the function, so replace the kernel-doc comment prefix with a
-> standard comment prefix to remove these warnings.
+> net/ceph/crush/mapper.c:466: warning: Function parameter or struct member 'work' not described in 'crush_choose_firstn'
+> net/ceph/crush/mapper.c:466: warning: Function parameter or struct member 'weight' not described in 'crush_choose_firstn'
+> net/ceph/crush/mapper.c:466: warning: Function parameter or struct member 'weight_max' not described in 'crush_choose_firstn'
+> net/ceph/crush/mapper.c:466: warning: Function parameter or struct member 'choose_args' not described in 'crush_choose_firstn'
+> 
+> Update the crush_choose_firstn() kernel-doc to document these
+> parameters.
 > 
 > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
