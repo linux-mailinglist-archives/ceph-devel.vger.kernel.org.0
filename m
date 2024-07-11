@@ -1,70 +1,70 @@
-Return-Path: <ceph-devel+bounces-1522-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1523-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54B0992EADB
-	for <lists+ceph-devel@lfdr.de>; Thu, 11 Jul 2024 16:36:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CB492EAE3
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 Jul 2024 16:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4ABCB2588E
-	for <lists+ceph-devel@lfdr.de>; Thu, 11 Jul 2024 14:36:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BC3B283281
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 Jul 2024 14:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470B6167DB8;
-	Thu, 11 Jul 2024 14:36:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FBD16B725;
+	Thu, 11 Jul 2024 14:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JOJ8+KKJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fs4+WMZ7"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F6E5477A;
-	Thu, 11 Jul 2024 14:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9056816A95C;
+	Thu, 11 Jul 2024 14:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720708575; cv=none; b=GCgNGsa8ZqU9PvKEWbh4Yv3G2s0J3ZR+X3PQ7QMs4kfDchfBCRhgiTBzvdMOQ8w87zvUGCvQGQ15nGYpAqoJijCbMuuSt8M7f6tcX9m+5Pe67vtEHwJYkeLOAj+HsSs8jmNpHwESXSwKncgDNLDYCYxFlAkbIF5afl0QU0X7txo=
+	t=1720708613; cv=none; b=LTGqIcb9N59wQ1f9rPj4+xu4pikIb2gEVJV3Nx/975E6jjiFXoOd/Yq8By0ICwSBjilFZ8CWuqHAFiUc7DbMnN8E42OPyFXt4lgrkcieym56x7lL+H1EdBCx8epeRHrNDJhab5wSF+RQf7r7y2dJXuwNI4zsOf7z0/ODP8+xs7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720708575; c=relaxed/simple;
-	bh=LfEu9sb6Z+gel615ImLHeuJjyLCTqsRyAeVtCFQG56Y=;
+	s=arc-20240116; t=1720708613; c=relaxed/simple;
+	bh=4slNKHgU3sDBnSzdUljMVppcwxGiJhBU/AKQY/Pjy2o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uOoH1Nd755WnHRlqyk7G6vsl+wph1IWLV/FLvTDTmixV/hJiOYOiwIVHcH14LFOr9x39GuuHJl1+Rb1xJxciHzhmYyYt8eyv241smjKnqldgAySDoRZHNMK7FcOw3m1RmxdXQPMseotfTXkh5qsl6Q00bM+Eup4wRn0zJJe4R3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JOJ8+KKJ; arc=none smtp.client-ip=209.85.161.51
+	 To:Cc:Content-Type; b=VK6EkHBR2q2y7Fy5EjvLpfwLezSRA8FOvvXW97k2LFpI2H4fJsq7lk0EmjmG7mjtlN7TJ/RdlYn+EHaB+Yu2swsaW0z3FTtHOdZ6tZKfh2aOyq8Jr7fyGwUY3xqtIpZ46K22/KKGygMedL3OKOtZ7M2g976hyIZLiA+yT3qjtYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fs4+WMZ7; arc=none smtp.client-ip=209.85.161.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5b9794dad09so470464eaf.3;
-        Thu, 11 Jul 2024 07:36:14 -0700 (PDT)
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5c477d97159so535707eaf.3;
+        Thu, 11 Jul 2024 07:36:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720708573; x=1721313373; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1720708611; x=1721313411; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=H+PqPRglT2FHcXxhn+n2H1tP06M07i0/kKzQT19g7WU=;
-        b=JOJ8+KKJOk/O0UyVlBpAJWtXQAtSqnoOiZ2pQYM8xe/6V31Gz9lVIMcbpKK+LAskmm
-         7iuZ3Or/JgVn2FaG0mWf1Woyq8UAQnOnqx/SZPkZ2JnaY5cY6hMKD/I3TMgaIXRa6Mpz
-         OSCQZduL4+W19Jzu3cPRV6qkiDpMZRa3L2GoV6XD4C2nCvqk0d6zNhMha+vGXklonc0u
-         x/SF4nozUn+pyJw5wcYp0td3KzS6qJ8bUA+wVXSvYlcTV8vjlTSbr8EFnCz+EVjkS0MU
-         I9bNB66mMrFwjVjdAinQ3iDEXhpC+7TAgAFVTW1/iPB2OaPeN0JCEQ7KnPxg4A+N+9c5
-         v+hw==
+        bh=KAc1FusjAxJkbPWpKrSy+SvGdBb2Dote+7JaNjWHCH4=;
+        b=Fs4+WMZ7OoqAKT345HB97E8goYD8ng5kcuV01MkAOTnIeTEC1WSh/DHHCaoRH8sxoE
+         2r5a2+F2FbHcwTuJpJdJcAoejSzygckcJ2TlSHb/j0BFjJIqV/tMMq680LIltpP+UzOq
+         Jv/FO/KF/gNhk81n1EmGZojn4/Apv27fdm0hY4wkxjt/PE+LamI83xWNcpvFyuIa3jTW
+         jxppkyUQvdlA0N1P3X04Ly1q5n92kR7MLcoXComyxxG227XVUPoKnPH2JX9T0YadIzGG
+         5u7A6AIADfB7d9sAM+IVYMMM17e7kTdHnGkZWb2m2E4hjaWL/KOat5qMyTg7fZgmeoGN
+         BsVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720708573; x=1721313373;
+        d=1e100.net; s=20230601; t=1720708611; x=1721313411;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=H+PqPRglT2FHcXxhn+n2H1tP06M07i0/kKzQT19g7WU=;
-        b=IVA6fwai3sC0+knpbOboobPG75fE/71XS6vCTryYiU7PwmCWo4y2GLkgoQgbT/gOxs
-         S1HgxVbo6q0dRhw29ezg5TBATFLjwMB/l2lYp5q0vwmuhEuUdAXG1FUj1a0f+ode5Jw2
-         esfilM/KXncBrljRju0EOmK2d2p1clurv2xLeV8hlaC0CvFTrU/4fAL9eA5miQ6gStah
-         mkTiROp6AJ+5Blq0e4aQg1QjtAFtxcYPJGYmUxOA5KPSTBNNg6IdUmN3B/tn8qakjr14
-         oF3l2WSllDny1jIknjMyjY0G5+8Wv/xxamBzoBhi2aElK3O+IJ+TA4n+nTnlu59VIm9E
-         R8OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbzfnaUKmzSTUukLrwahExl3VeEs4+MCXtQmV+ly6zydHKCaFqcYSJJ6ybkxGYMMUv7hQYA1qSqpzzQTt0htkA3u9/tRRXaHaoJWdlS3Z9smD7hd2Q9z8O5lZ5+vjUGkK36kGIiPT3OoWvsUw3Pz8Wn+HwCTSPuBo21mXpm5yTTw==
-X-Gm-Message-State: AOJu0YxuEHXZ/hZbeHtPLCP4vRSi9rjBF6UqSBlzCzc+4ZjXdJSEiejh
-	d2f9+P8PFfcY9cfJ9yay1v07Y619Ml0eXFjuk4kH/qB3qOVPLgIcbiuQZk1QOWzzY8ylHnMd+cY
-	jhEzFX4hbH16WTQQn2BSEc20SWSZJIpu3
-X-Google-Smtp-Source: AGHT+IGtTQquLNTbMYd9rOgNH1oOM2R3SJRK1YZxTRtl4EZyBB7ADAwRP9obmzcbsrU4h8aPdW4wT6MZ5Y8IkxrjRv0=
-X-Received: by 2002:a4a:51c1:0:b0:5c4:7933:951b with SMTP id
- 006d021491bc7-5c68e0c7128mr9395294eaf.1.1720708573493; Thu, 11 Jul 2024
- 07:36:13 -0700 (PDT)
+        bh=KAc1FusjAxJkbPWpKrSy+SvGdBb2Dote+7JaNjWHCH4=;
+        b=hP7HFIyf+U8Yyg61mkJ8Ps+AwsQwYi7kkzg7g0IsD/3XCt/RSwyaxJuMDSIk77aqNN
+         xKfVAM0KZQiWkqPl9k8S3QKWksCHQhUDHlssq4V0GRNp5CKo8lUIl3yeeBGSnaATmWWl
+         0kyypXpJXzuYiXPAZcZkgChM0kjfVZ/7RCZX2rUCcVfwui0oGYX+Kzjo713MC8YrbOT/
+         ELGSsvPIoTi5VyfoB6lh8onLkrLb/UDVb8XFDe8caCgIva6uo/9s7QvKl4Tytxh3Pl0m
+         a+xiGDyWzkUl+cwHyPsZ3UmhI9qowr9hyIKk0H9jdnboorhW0FQAY5pGPBB9wwvr2k0r
+         n3Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSSZ0MseLQiGV44MmUKV80InG0DS1X4+P5T8gWPzUzim0Qp/vFTLDVPt76jY3LeQ6LrZjdFIHIZ8WFtfSSI9RX3ddj5d/r0uyabqYg7DFkWveqsvBP83LO3Nnv3MEAvzZTfkE9CsjloMMtGpPCKPdT4fCjfVzEPThsi/dxU8S1rg==
+X-Gm-Message-State: AOJu0Yy3X4Q2+N4bVwKv540VSYqdKWgtL5kfLw95i7mW4D8SsJ/fJubi
+	ePLaJNDUAOpwYiijQ7ind5jlrwSU3fZiEewBMX8hQ3Uv11b0Z6KQmfoD9EGPRIAx+8qm6CzpNAj
+	16XTClp2g3N8GOtteicahnUG1EYM=
+X-Google-Smtp-Source: AGHT+IHlsyKAbOPlpAgM9FeBXzfBx5JJ1FLjxH9PVvcAYjcXVwTsf5ATIJYyplaTlDjKBXFfWXGDTYhTdKC7NWppfGk=
+X-Received: by 2002:a05:6820:1c4d:b0:5c6:8eb6:91b2 with SMTP id
+ 006d021491bc7-5c68eb6929bmr9709299eaf.1.1720708611592; Thu, 11 Jul 2024
+ 07:36:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -72,12 +72,12 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240710-kd-crush_choose_indep-v1-0-fe2b85f322c6@quicinc.com>
- <20240710-kd-crush_choose_indep-v1-1-fe2b85f322c6@quicinc.com> <20240711133430.GE8788@kernel.org>
-In-Reply-To: <20240711133430.GE8788@kernel.org>
+ <20240710-kd-crush_choose_indep-v1-2-fe2b85f322c6@quicinc.com> <20240711133449.GF8788@kernel.org>
+In-Reply-To: <20240711133449.GF8788@kernel.org>
 From: Ilya Dryomov <idryomov@gmail.com>
-Date: Thu, 11 Jul 2024 16:36:01 +0200
-Message-ID: <CAOi1vP9VRSq1TGZG+NmsDdtHx6rximzqqGT7waDHX2i4Fbyozw@mail.gmail.com>
-Subject: Re: [PATCH net-next 1/2] libceph: suppress crush_choose_indep()
+Date: Thu, 11 Jul 2024 16:36:39 +0200
+Message-ID: <CAOi1vP8PcENtRZ3N75FebVEH+R6a1dnV7nnYdsUgggk8LnV+oQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 2/2] libceph: fix crush_choose_firstn()
  kernel-doc warnings
 To: Simon Horman <horms@kernel.org>
 Cc: Jeff Johnson <quic_jjohnson@quicinc.com>, Xiubo Li <xiubli@redhat.com>, 
@@ -90,50 +90,21 @@ Content-Transfer-Encoding: quoted-printable
 On Thu, Jul 11, 2024 at 3:34=E2=80=AFPM Simon Horman <horms@kernel.org> wro=
 te:
 >
-> On Wed, Jul 10, 2024 at 11:10:03AM -0700, Jeff Johnson wrote:
+> On Wed, Jul 10, 2024 at 11:10:04AM -0700, Jeff Johnson wrote:
 > > Currently, when built with "make W=3D1", the following warnings are
 > > generated:
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'map' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'work' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'bucket' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'weight' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'weight_max' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'x' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'left' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'numrep' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'type' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'out' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'outpos' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'tries' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'recurse_tries' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'recurse_to_leaf' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'out2' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'parent_r' not described in 'crush_choose_indep'
-> > net/ceph/crush/mapper.c:655: warning: Function parameter or struct memb=
-er 'choose_args' not described in 'crush_choose_indep'
 > >
-> > These warnings are generated because the prologue comment for
-> > crush_choose_indep() uses the kernel-doc prefix, but the actual
-> > comment is a very brief description that is not in kernel-doc
-> > format. Since this is a static function there is no need to fully
-> > document the function, so replace the kernel-doc comment prefix with a
-> > standard comment prefix to remove these warnings.
+> > net/ceph/crush/mapper.c:466: warning: Function parameter or struct memb=
+er 'work' not described in 'crush_choose_firstn'
+> > net/ceph/crush/mapper.c:466: warning: Function parameter or struct memb=
+er 'weight' not described in 'crush_choose_firstn'
+> > net/ceph/crush/mapper.c:466: warning: Function parameter or struct memb=
+er 'weight_max' not described in 'crush_choose_firstn'
+> > net/ceph/crush/mapper.c:466: warning: Function parameter or struct memb=
+er 'choose_args' not described in 'crush_choose_firstn'
+> >
+> > Update the crush_choose_firstn() kernel-doc to document these
+> > parameters.
 > >
 > > Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 >
