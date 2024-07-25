@@ -1,166 +1,148 @@
-Return-Path: <ceph-devel+bounces-1560-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1561-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF84B93BE26
-	for <lists+ceph-devel@lfdr.de>; Thu, 25 Jul 2024 10:46:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4369E93BF20
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Jul 2024 11:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E95B0B22D44
-	for <lists+ceph-devel@lfdr.de>; Thu, 25 Jul 2024 08:46:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDED11F22FBE
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Jul 2024 09:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B06190063;
-	Thu, 25 Jul 2024 08:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E6C196DA4;
+	Thu, 25 Jul 2024 09:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kgCH4ewv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnbI382N"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F9C190045
-	for <ceph-devel@vger.kernel.org>; Thu, 25 Jul 2024 08:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648532746C
+	for <ceph-devel@vger.kernel.org>; Thu, 25 Jul 2024 09:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721897189; cv=none; b=CT2WBPsbAqk/HatCGx9wBmEO81/QxntcDZhzCftyCtsZ5eVy07p/VWis8UTUuJxK+wMWZTM7mSgcjBz95cXxvWjtlSkH/WFgGAYXWf7NQobOthxi+YpuwuTT1gIUSiELgQpPikXOmmaANiV7WqTXIteCuwY2Ohrbxze/WedztKs=
+	t=1721899897; cv=none; b=Kd0ToVEOYAqzsA7abPvyGEMNncqqvWTp5wKNAZbeiog4wfkmm32fe67k/k9ymFO08ynV8e1bLH6Hk9Yw3bSFx+iAfcx9l3tDDkzRmbhp9E3viA0sg3QNOVs/EkzH2AexgizdmQkK2cstMnbIJsJLxkrkdVk4B2tCIkVYgFSKgHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721897189; c=relaxed/simple;
-	bh=6Unbf2IkB+/ToIza3Uw317a89w2HFf4IhKGsVD3vIgw=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=YOgLjn0yELBJc+Fbx/Z076IX4Qrdp9j/lpwJGTlgvuZcAOZkdJhRWEidYAgk18he9+pBJvS/yzxNb4/Df1ig5TaYpJ7fIJrMuFGNfS++jPDYnHufzMkL6/76tBcjjlt8lBRsxW1AbZaH/uoYXE0fEwd1+1Zu2hJuccfTlAIvvM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kgCH4ewv; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Subject: Re: [PATCH 1/3] rbd: rename RBD_LOCK_STATE_RELEASING and
- releasing_wait
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721897182;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3HPJgSqOpNO9/U/b/EDCG1KWzJfAy+KVGw5P46cz6L8=;
-	b=kgCH4ewvHQWBUtW9YF73d0K3nRN3IbVKabNif58oIAaoZ07raCUKoI7Z5kCX0xzjBT/EeM
-	67oCtKE0VnpnsvU7qFBQiMxEJLegGfaXIvc5qqWXr616EMpnUzZ/9MXKLCbKNE1b6vxw3G
-	KHHpeXTKHiKUftYJlDEu3IGgj6TWTe8=
-To: Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org
-References: <20240724062914.667734-1-idryomov@gmail.com>
- <20240724062914.667734-2-idryomov@gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Dongsheng Yang <dongsheng.yang@linux.dev>
-Message-ID: <eaaa29e9-0a3a-facb-cd46-fde4a4be1b9a@linux.dev>
-Date: Thu, 25 Jul 2024 16:46:13 +0800
+	s=arc-20240116; t=1721899897; c=relaxed/simple;
+	bh=2psGS/Kq2y04OCmOaDGEuSk2F+t0xBGk/XxXJOqDzD4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WS0ff/QIfxmkHc41LhXVphy/hOcPPfSpJBgV/iAeaqUwYvGmgx3lBYM+oGN+YgcWs4i+eLl5EonG0INyWS9Q5033jBq0OUuCnN4+6lXr0+YOXEC0Oi8VOaSRhf0d41C4PgwTibOPFAvVYU75cZNMR6crgNbyw/Bt2nEH2mNaz3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TnbI382N; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3d9de9f8c8dso424569b6e.1
+        for <ceph-devel@vger.kernel.org>; Thu, 25 Jul 2024 02:31:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721899895; x=1722504695; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L63uLJ1OVayTKhoPVSWEeh9caApiPw1yVitNuh0+kqs=;
+        b=TnbI382NpvssqxAHPAMvb2+4Gcm/ihkwWO0aTwaxLWGY7mKHiFlvjDQok7roEEXL0u
+         pVpc6zkhsD9Wtme+7bX2Q5bJXAFCJcoydZjBEZP1wmeb4IGTJ4AWXWJQ9vntmE9UB0Ob
+         bev46OKMo3wpOs1ejrCP909V/Tw1fmJh5QcNDHVuFxyzPeSgA2SnXAqQNhvMR+ZwpkQF
+         Jn9bMOewFV2y7LBNDpT6jVbTEOFj4NCidWaBYsl6pr0sxpkCgGnFw8yulq7+33b0/8UI
+         ACkoHLdVy3OGkfm8qTudluNdF+p6nmrdfajXclXDUZwIk1lFtXM5zmg7pod/A0uzwkqE
+         ZM5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721899895; x=1722504695;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L63uLJ1OVayTKhoPVSWEeh9caApiPw1yVitNuh0+kqs=;
+        b=r2lW3GOhWmPUKLZIwww8sdV3OquRsrzeIdFT01YcxAbyZvk/Tkpbr4dWnJ3bXwLOku
+         GtmIydrAS9ExwO/s55HVGOdJXV/f1bBlDHJr0xFB5GOrXXox9Bk26nwkeRgMwVgLB+N+
+         4/aTAu7lsJXmMK3BWDSAzyldqn8xlI0ZKIyIzVeP+ugONsiTA6WVrc0LTF+isJfh+H7U
+         u6DEV6wBWWgyGcB/JBmyOq7snwNr2Hr7oxw5wFtakl2QGoFrF3R+QbUXmtGt9MitxXgR
+         k/KIClT68zOhr6LK7q64vpCNzuTdQJinjXhkMKgTDJzbvLRmb3p5Oj67IsOT/aJ4DT7W
+         w7yw==
+X-Gm-Message-State: AOJu0YxkvrM16EMilo79djoFUZtm4Dx368dffZRv2Irjt0mZTA9OcwRo
+	dxx+atSiGXg/z3U9MkepDPeEbRFApXMEvXP5vo9X3xnGB8SapVsdOrsbQ6MvfEh4rkShdL8XO/J
+	BRaLXTGTHG2rVpRqAqauW3QJi14dGlEJA
+X-Google-Smtp-Source: AGHT+IEbmAk8CWvTONV7dwlEmsEEJKk5QKK6QA1PQ+VKQag6V0oje6MdlZCSxNvPluHz4gQyQBbkEx6dP8Vbw5t8xUI=
+X-Received: by 2002:a05:6808:d4f:b0:3da:b074:95f4 with SMTP id
+ 5614622812f47-3db11040b9bmr2405334b6e.47.1721899895343; Thu, 25 Jul 2024
+ 02:31:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240724062914.667734-2-idryomov@gmail.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240724062914.667734-1-idryomov@gmail.com> <20240724062914.667734-4-idryomov@gmail.com>
+ <9c6bdd62-58a4-e660-9e59-f2f999795d9b@linux.dev>
+In-Reply-To: <9c6bdd62-58a4-e660-9e59-f2f999795d9b@linux.dev>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Thu, 25 Jul 2024 11:31:23 +0200
+Message-ID: <CAOi1vP_wyoEhawoArdUmX4i0w1u37Ei7f7nbjy=_ub0gogRd4Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rbd: don't assume rbd_is_lock_owner() for exclusive mappings
+To: Dongsheng Yang <dongsheng.yang@linux.dev>
+Cc: ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jul 25, 2024 at 10:45=E2=80=AFAM Dongsheng Yang
+<dongsheng.yang@linux.dev> wrote:
+>
+>
+>
+> =E5=9C=A8 2024/7/24 =E6=98=9F=E6=9C=9F=E4=B8=89 =E4=B8=8B=E5=8D=88 2:29, =
+Ilya Dryomov =E5=86=99=E9=81=93:
+> > Expanding on the previous commit, assuming that rbd_is_lock_owner()
+> > always returns true (i.e. that we are either in RBD_LOCK_STATE_LOCKED
+> > or RBD_LOCK_STATE_QUIESCING) if the mapping is exclusive is wrong too.
+> > In case ceph_cls_set_cookie() fails, the lock would be temporarily
+> > released even if the mapping is exclusive, meaning that we can end up
+> > even in RBD_LOCK_STATE_UNLOCKED.
+> >
+> > IOW, exclusive mappings are really "just" about disabling automatic
+> > lock transitions (as documented in the man page), not about grabbing
+> > the lock and holding on to it whatever it takes.
+>
+> Hi Ilya,
+>         Could you explain more about "disabling atomic lock transitions"?=
+ To be
+> honest, I was thinking --exclusive means "grabbing
+> the lock and holding on to it whatever it takes."
 
+Hi Dongsheng,
 
-在 2024/7/24 星期三 下午 2:29, Ilya Dryomov 写道:
-> ... to RBD_LOCK_STATE_QUIESCING to quiescing_wait to recognize that
+Here are the relevant excerpts from the documentation [1]:
 
-Hi Ilya,
-   s/to quiescing_wait/and quiescing_wait
+> To maintain multi-client access, the exclusive-lock feature
+> implements automatic cooperative lock transitions between clients.
+>
+> Whenever a client that holds an exclusive lock on an RBD image gets
+> a request to release the lock, it stops handling writes, flushes its
+> caches and releases the lock.
+>
+> By default, the exclusive-lock feature does not prevent two or more
+> concurrently running clients from opening the same RBD image and
+> writing to it in turns (whether on the same node or not). In effect,
+> their writes just get linearized as the lock is automatically
+> transitioned back and forth in a cooperative fashion.
+>
+> To disable automatic lock transitions between clients, the
+> RBD_LOCK_MODE_EXCLUSIVE flag may be specified when acquiring the
+> exclusive lock. This is exposed by the --exclusive option for rbd
+> device map command.
 
-Otherwise:
+This is mostly equivalent to "grab the lock and hold on to it", but
+it's not guaranteed that the lock would never be released.  If a watch
+error occurs, the lock cookie needs to be updated after the watch is
+reestablished.  If ceph_cls_set_cookie() fails, we have no choice but
+to release the lock and immediately attempt to reacquire it because
+otherwise the lock cookie would disagree with that of the new watch.
 
-Reviewed-by: Dongsheng Yang <dongsheng.yang@easystack.cn>
+The code in question has always behaved this way.  Prior to commit
+14bb211d324d ("rbd: support updating the lock cookie without releasing
+the lock"), the lock was (briefly) released on watch errors
+unconditionally.
 
+[1] https://docs.ceph.com/en/latest/rbd/rbd-exclusive-locks/
 
-> this state and the associated completion are backing rbd_quiesce_lock(),
-> which isn't specific to releasing the lock.
-> 
-> While exclusive lock does get quiesced before it's released, it also
-> gets quiesced before an attempt to update the cookie is made and there
-> the lock is not released as long as ceph_cls_set_cookie() succeeds.
-> 
-> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-> ---
->   drivers/block/rbd.c | 20 ++++++++++----------
->   1 file changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index 9c6cff54831f..77a9f19a0035 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -362,7 +362,7 @@ enum rbd_watch_state {
->   enum rbd_lock_state {
->   	RBD_LOCK_STATE_UNLOCKED,
->   	RBD_LOCK_STATE_LOCKED,
-> -	RBD_LOCK_STATE_RELEASING,
-> +	RBD_LOCK_STATE_QUIESCING,
->   };
->   
->   /* WatchNotify::ClientId */
-> @@ -422,7 +422,7 @@ struct rbd_device {
->   	struct list_head	running_list;
->   	struct completion	acquire_wait;
->   	int			acquire_err;
-> -	struct completion	releasing_wait;
-> +	struct completion	quiescing_wait;
->   
->   	spinlock_t		object_map_lock;
->   	u8			*object_map;
-> @@ -525,7 +525,7 @@ static bool __rbd_is_lock_owner(struct rbd_device *rbd_dev)
->   	lockdep_assert_held(&rbd_dev->lock_rwsem);
->   
->   	return rbd_dev->lock_state == RBD_LOCK_STATE_LOCKED ||
-> -	       rbd_dev->lock_state == RBD_LOCK_STATE_RELEASING;
-> +	       rbd_dev->lock_state == RBD_LOCK_STATE_QUIESCING;
->   }
->   
->   static bool rbd_is_lock_owner(struct rbd_device *rbd_dev)
-> @@ -3458,12 +3458,12 @@ static void rbd_lock_del_request(struct rbd_img_request *img_req)
->   	spin_lock(&rbd_dev->lock_lists_lock);
->   	if (!list_empty(&img_req->lock_item)) {
->   		list_del_init(&img_req->lock_item);
-> -		need_wakeup = (rbd_dev->lock_state == RBD_LOCK_STATE_RELEASING &&
-> +		need_wakeup = (rbd_dev->lock_state == RBD_LOCK_STATE_QUIESCING &&
->   			       list_empty(&rbd_dev->running_list));
->   	}
->   	spin_unlock(&rbd_dev->lock_lists_lock);
->   	if (need_wakeup)
-> -		complete(&rbd_dev->releasing_wait);
-> +		complete(&rbd_dev->quiescing_wait);
->   }
->   
->   static int rbd_img_exclusive_lock(struct rbd_img_request *img_req)
-> @@ -4181,16 +4181,16 @@ static bool rbd_quiesce_lock(struct rbd_device *rbd_dev)
->   	/*
->   	 * Ensure that all in-flight IO is flushed.
->   	 */
-> -	rbd_dev->lock_state = RBD_LOCK_STATE_RELEASING;
-> -	rbd_assert(!completion_done(&rbd_dev->releasing_wait));
-> +	rbd_dev->lock_state = RBD_LOCK_STATE_QUIESCING;
-> +	rbd_assert(!completion_done(&rbd_dev->quiescing_wait));
->   	if (list_empty(&rbd_dev->running_list))
->   		return true;
->   
->   	up_write(&rbd_dev->lock_rwsem);
-> -	wait_for_completion(&rbd_dev->releasing_wait);
-> +	wait_for_completion(&rbd_dev->quiescing_wait);
->   
->   	down_write(&rbd_dev->lock_rwsem);
-> -	if (rbd_dev->lock_state != RBD_LOCK_STATE_RELEASING)
-> +	if (rbd_dev->lock_state != RBD_LOCK_STATE_QUIESCING)
->   		return false;
->   
->   	rbd_assert(list_empty(&rbd_dev->running_list));
-> @@ -5383,7 +5383,7 @@ static struct rbd_device *__rbd_dev_create(struct rbd_spec *spec)
->   	INIT_LIST_HEAD(&rbd_dev->acquiring_list);
->   	INIT_LIST_HEAD(&rbd_dev->running_list);
->   	init_completion(&rbd_dev->acquire_wait);
-> -	init_completion(&rbd_dev->releasing_wait);
-> +	init_completion(&rbd_dev->quiescing_wait);
->   
->   	spin_lock_init(&rbd_dev->object_map_lock);
->   
-> 
+Thanks,
+
+                Ilya
 
