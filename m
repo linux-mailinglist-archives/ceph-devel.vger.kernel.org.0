@@ -1,109 +1,269 @@
-Return-Path: <ceph-devel+bounces-1575-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1576-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E57B93F0CF
-	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2024 11:19:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E7C393F10F
+	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2024 11:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB88A1C218C9
-	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2024 09:19:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D90D41F22E4B
+	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2024 09:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CC913DDAA;
-	Mon, 29 Jul 2024 09:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DAF13E3F6;
+	Mon, 29 Jul 2024 09:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="C4r9PlUd"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="NuKJXL9P"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AD913CFB8
-	for <ceph-devel@vger.kernel.org>; Mon, 29 Jul 2024 09:18:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B97D13E8B6
+	for <ceph-devel@vger.kernel.org>; Mon, 29 Jul 2024 09:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722244737; cv=none; b=YhU/AvnqF7CC4ZJcOKTmM4NtKgP8JXdLyNT3wYW9alknl79QhUOWYr5Z+fs2NVUAPN4auI4u6yqTFs3VDXpk0uy7TjG0YmwVbchVEX27eDg3UEDpDKtmQtq49+rCkMx+JbYnurw1/GnZ3yjU2SRJ+KM2a3dlygGsWOywdY+5ZHA=
+	t=1722245316; cv=none; b=EY9Gl+5ex0UCoPB7Q+prkls15x5OyGbaZQsIIJGaliBs5pjXlGt1CUc9tT9otpFcplrrLqntgGDhowO0rFJfXGJrFsxOoGrI5ohOKa9fgDg+paOcVE8YA6owkXjAzof0+5Qc8L0kIJGMHfgBAWGPDwqGKp00uufuC8qW05KrYVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722244737; c=relaxed/simple;
-	bh=zP4Oo8VlfPL1y5ooMCv+q6dYa7B/A/lNVPXp7kK15YA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AdIHxeINH5Wc7h2u6gH0LLVlneFgT3QR9VFfqPE9zCo8Qv5OwUWlqO8JIjJAIi9Ssoge2x+AsH/T9sKjfrU8E4cfemMz+pPkhAb4L+THVsDRKNFZwFCwYhVvJG8jqdUd3n/wslDKmUu5HJL1+7y4ZaSAAEy3Kytpv6sa1cHTBqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=C4r9PlUd; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1722245316; c=relaxed/simple;
+	bh=KZWJF5oSY7HJ23Uf34KCCrdaHErkdUmBfHVE1m4vszo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZC7cfbsK5N5QnOEsiJ5SbZHluK6jRlfksefi1LKVL3Kdts9BKs7kJi181sScmxWIEnY4hIwI82HVURYW58DjGf7yd2g3TG6c6lFVsbWYKJ7owGWtPcHwQSEWB3/tx325bE8qApNqL7XuW4NgpBVoHgre/x5mou0IFhJst6SXyxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=NuKJXL9P; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7a9e25008aso421124066b.0
-        for <ceph-devel@vger.kernel.org>; Mon, 29 Jul 2024 02:18:54 -0700 (PDT)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7aac70e30dso418222166b.1
+        for <ceph-devel@vger.kernel.org>; Mon, 29 Jul 2024 02:28:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1722244733; x=1722849533; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zP4Oo8VlfPL1y5ooMCv+q6dYa7B/A/lNVPXp7kK15YA=;
-        b=C4r9PlUdhu4HMa0IKtW2rDSbWHDBx46lhHY/8KfX0wAC57bCOYPgP8GLjW83lw/WdP
-         J+v6Jv2HI1dW25OeYaksCtJifWAEe/HilzQFARYLQVE648lhtJ7xaaGnujNG5f8By6uS
-         ul4uOwJoqWbRskUwY8DW1JElMfaHXT4TxHDaBL0qDbPpw00u4A/iVLv6uTLPvkzzWZLS
-         t8kDuFAkVo+tR0iG9nZlrn9PJ6oZuZx8G+PJRSQoTaj+StGe2mLD4GA55aVf3cKJ9+Hh
-         mEHgrveuUzKId92nnAM8Y4sYPKTXA7Ol6pT2taxhY10vdlIX1kxGZEECkY1C8MWEIJ6l
-         XKaw==
+        d=ionos.com; s=google; t=1722245313; x=1722850113; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zb9VzgX66ul+EUSAfUjFvHjvcVAUBg0+FBC33/4bxE4=;
+        b=NuKJXL9PUu19RA3lXpYTqEgBSLFaSmKIw0KtxJT1+EPhlf+9dpsl500OEbmyo+MvUr
+         y1b4XV11/0sYA+1y6v2ZypdQF1rsCPlQa7NeBmzFpVyoDd0ON9WtplJ6h22CCwzkNT3d
+         VgMNXqdCsXohAmaenS6Noi8h9ycuAIOOb9r5nzsP8xxFE++zOZro3Z2v44bruptoHXwo
+         cVjfzcS4DfmvcrXbXfOvJpAcdZ0LXCUUcu14HMbZz6ZHV+uFSbMJclPScfgsNmLerIdn
+         jkuMdANWJfBSWVmj6abVi8Q+UgL4eagHPjc3meFdPKVdKWFy2Vrv7Z+fyLb1sFVGwtjB
+         k7Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722244733; x=1722849533;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zP4Oo8VlfPL1y5ooMCv+q6dYa7B/A/lNVPXp7kK15YA=;
-        b=fNZgCoR+B7p3ioVxhGSVh/tkU4gqpW2o050cxKlv9roCcEJwigL2jVQLN/DkbxWoUT
-         nm0B/XJFdHQD5XhI228e6i/mLsoxfCDTbG7Y51Z1iBHdtu8A+peAGlgftSiEp/bJJiZH
-         ZdjLTKmjejeyN3dh12qqWabLsWQtRvPSb0foLaPjLoD2SYRBupGf5UPeQ06/Ytp+hOm+
-         LB5wGqu4qwcbWpswm8Vla8i+Gq02tXFV71JB1IjfnKhpPIN4f7eEIlYvoXd+6KNN8IA+
-         VbQYRFAc3ng+pfk2QSRlyCoGGcINtpf+arcWOAoyU92pI0wUTnc851xnovZct65hJSwp
-         M/jA==
-X-Forwarded-Encrypted: i=1; AJvYcCWq0oa71fEl5sR4oNxyt5mMemPjPSkMDg3IrLBdCB5pwm7+o4n3vXtgvS0pUKE6kzoptWdvJZ3esNsNZxXMA2T0Xqk/vJlJoKLZAg==
-X-Gm-Message-State: AOJu0Ywm3XU+rJFyt2yijD3DfyP/gRt9WiVAUgLsABHFbZ3KAxvEw0V1
-	GJiW+wXNKMvKDqjkY4nIS2PqepGXVesCAoOHV3VyQFkMc7bM5Oy88wtMrRVy8zLb0dSAvp/RY+8
-	vM66Bko1pLauQf24QhRuTF0J74XsnsftGE9OZjQ==
-X-Google-Smtp-Source: AGHT+IEMMA8egk2Qrs/8YwOO8v1/PGB/RaFQ9lcTBCtxwZZFTvrycQmzBYT2gE5tB6GWwAAQvzXd5f7JMOHEksDWTYk=
-X-Received: by 2002:a17:907:3e1a:b0:a77:b5c2:399 with SMTP id
- a640c23a62f3a-a7d400af792mr514406966b.31.1722244733283; Mon, 29 Jul 2024
- 02:18:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722245313; x=1722850113;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Zb9VzgX66ul+EUSAfUjFvHjvcVAUBg0+FBC33/4bxE4=;
+        b=BluEzdLXIlzAmPqFXjOWkwR+PPCpCsxnRYPjuAbuD/7zRXs/UEgZcERpjmPnlyf5W5
+         U6gxVJy/SPsgX3f/1lqFb3ggwAJQObSzD1jJtwXq43XtLPFz6w2NwZ3FozWtO43ATAcN
+         DMR+CnJTwPe4cUH4Zpz53+9SPvZniSv+a0CR8P/1LMiDYj2tNCo1i7+mfFQx5A5PcqFr
+         DORmlRk1twGHC14lg0DZ/yJCRMbiSxUIPGleZ+vyZ1c6k2ViCAZ16kGEWSRTloCnaNYF
+         xPmI64b82+UF7+iGwnvgf3+jbXt4mCuTPlphmwMNq+LzDQ/6qAqKhALgVsz/rxHAV3oO
+         RgTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ2Vp5WlZbmmORJ8lBQgAo9nMtiZe3BHghxYuKYDE/dnwY6xpzBin2N+LOrqf296biwQmPbyG9m+7BLTtVkzqqDKvRus+4HSLyBg==
+X-Gm-Message-State: AOJu0YyMTnhtg/zrxBsK4Sk8FDIghPKSOlOXU2zRvxeyGUIl7nMWDbcq
+	aBw/gzPd/pdb8izg05vikeFtTckBRN7HO9oUj/e2JB8UlexG7c29sG537pHuWG0=
+X-Google-Smtp-Source: AGHT+IF28YDU5y/QrxYQDHg2q9k8RB4sAVv0+DO2KSJGo95MGgcxetSe963dDXT1fw3tAw3zcm81yg==
+X-Received: by 2002:a17:907:1c19:b0:a7a:ab8a:380 with SMTP id a640c23a62f3a-a7d40145821mr598571666b.69.1722245312585;
+        Mon, 29 Jul 2024 02:28:32 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f03cd00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f03:cd00:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad4ae4dsm479944366b.136.2024.07.29.02.28.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 02:28:32 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: dhowells@redhat.com,
+	jlayton@kernel.org
+Cc: willy@infradead.org,
+	linux-cachefs@redhat.com,
+	linux-fsdevel@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH v2] fs/netfs/fscache_io: remove the obsolete "using_pgpriv2" flag
+Date: Mon, 29 Jul 2024 11:28:28 +0200
+Message-ID: <20240729092828.857383-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKPOu+_DA8XiMAA2ApMj7Pyshve_YWknw8Hdt1=zCy9Y87R1qw@mail.gmail.com>
-In-Reply-To: <CAKPOu+_DA8XiMAA2ApMj7Pyshve_YWknw8Hdt1=zCy9Y87R1qw@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 29 Jul 2024 11:18:42 +0200
-Message-ID: <CAKPOu+8s3f8WdhyEPqfXMBrbE+j4OqzGXCUv=rTTmWzbWvr-Tg@mail.gmail.com>
-Subject: Re: RCU stalls and GPFs in ceph/netfs
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	ceph-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 28, 2024 at 12:49=E2=80=AFPM Max Kellermann
-<max.kellermann@ionos.com> wrote:
-> in the last few days, I have been chasing a 6.10 regression. After
-> updating one of our servers from 6.9.10 to 6.10.1, I found various
-> problems that may or may not be caused by the same code change
-> (abbreviated):
+This fixes a crash bug caused by commit ae678317b95e ("netfs: Remove
+deprecated use of PG_private_2 as a second writeback flag") by
+removing a leftover folio_end_private_2() call after all calls to
+folio_start_private_2() had been removed by the commit.
 
-Today, I gave this another try and it turned out to be a simple
-leftover folio_end_private_2() call. It was really caused by commit
-ae678317b95e ("netfs: Remove deprecated use of PG_private_2 as a
-second writeback flag"), after all.
+By calling folio_end_private_2() without folio_start_private_2(), the
+folio refcounter breaks and causes trouble like RCU stalls and general
+protection faults.
 
-I posted two candidate patches which both fix this bug;
+Cc: stable@vger.kernel.org
+Fixes: ae678317b95e ("netfs: Remove deprecated use of PG_private_2 as a second writeback flag")
+Link: https://lore.kernel.org/ceph-devel/CAKPOu+_DA8XiMAA2ApMj7Pyshve_YWknw8Hdt1=zCy9Y87R1qw@mail.gmail.com/
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/ceph/addr.c          |  2 +-
+ fs/netfs/fscache_io.c   | 29 +----------------------------
+ include/linux/fscache.h | 30 ++++--------------------------
+ 3 files changed, 6 insertions(+), 55 deletions(-)
 
-Minimal fix: https://lore.kernel.org/lkml/20240729090639.852732-1-max.kelle=
-rmann@ionos.com/
-Fix which removes a bunch of obsolete code:
-https://lore.kernel.org/lkml/20240729091532.855688-1-max.kellermann@ionos.c=
-om/
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 8c16bc5250ef..485cbd1730d1 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -512,7 +512,7 @@ static void ceph_fscache_write_to_cache(struct inode *inode, u64 off, u64 len, b
+ 	struct fscache_cookie *cookie = ceph_fscache_cookie(ci);
+ 
+ 	fscache_write_to_cache(cookie, inode->i_mapping, off, len, i_size_read(inode),
+-			       ceph_fscache_write_terminated, inode, true, caching);
++			       ceph_fscache_write_terminated, inode, caching);
+ }
+ #else
+ static inline void ceph_fscache_write_to_cache(struct inode *inode, u64 off, u64 len, bool caching)
+diff --git a/fs/netfs/fscache_io.c b/fs/netfs/fscache_io.c
+index 38637e5c9b57..0d8f3f646598 100644
+--- a/fs/netfs/fscache_io.c
++++ b/fs/netfs/fscache_io.c
+@@ -166,30 +166,10 @@ struct fscache_write_request {
+ 	loff_t			start;
+ 	size_t			len;
+ 	bool			set_bits;
+-	bool			using_pgpriv2;
+ 	netfs_io_terminated_t	term_func;
+ 	void			*term_func_priv;
+ };
+ 
+-void __fscache_clear_page_bits(struct address_space *mapping,
+-			       loff_t start, size_t len)
+-{
+-	pgoff_t first = start / PAGE_SIZE;
+-	pgoff_t last = (start + len - 1) / PAGE_SIZE;
+-	struct page *page;
+-
+-	if (len) {
+-		XA_STATE(xas, &mapping->i_pages, first);
+-
+-		rcu_read_lock();
+-		xas_for_each(&xas, page, last) {
+-			folio_end_private_2(page_folio(page));
+-		}
+-		rcu_read_unlock();
+-	}
+-}
+-EXPORT_SYMBOL(__fscache_clear_page_bits);
+-
+ /*
+  * Deal with the completion of writing the data to the cache.
+  */
+@@ -198,10 +178,6 @@ static void fscache_wreq_done(void *priv, ssize_t transferred_or_error,
+ {
+ 	struct fscache_write_request *wreq = priv;
+ 
+-	if (wreq->using_pgpriv2)
+-		fscache_clear_page_bits(wreq->mapping, wreq->start, wreq->len,
+-					wreq->set_bits);
+-
+ 	if (wreq->term_func)
+ 		wreq->term_func(wreq->term_func_priv, transferred_or_error,
+ 				was_async);
+@@ -214,7 +190,7 @@ void __fscache_write_to_cache(struct fscache_cookie *cookie,
+ 			      loff_t start, size_t len, loff_t i_size,
+ 			      netfs_io_terminated_t term_func,
+ 			      void *term_func_priv,
+-			      bool using_pgpriv2, bool cond)
++			      bool cond)
+ {
+ 	struct fscache_write_request *wreq;
+ 	struct netfs_cache_resources *cres;
+@@ -232,7 +208,6 @@ void __fscache_write_to_cache(struct fscache_cookie *cookie,
+ 	wreq->mapping		= mapping;
+ 	wreq->start		= start;
+ 	wreq->len		= len;
+-	wreq->using_pgpriv2	= using_pgpriv2;
+ 	wreq->set_bits		= cond;
+ 	wreq->term_func		= term_func;
+ 	wreq->term_func_priv	= term_func_priv;
+@@ -260,8 +235,6 @@ void __fscache_write_to_cache(struct fscache_cookie *cookie,
+ abandon_free:
+ 	kfree(wreq);
+ abandon:
+-	if (using_pgpriv2)
+-		fscache_clear_page_bits(mapping, start, len, cond);
+ 	if (term_func)
+ 		term_func(term_func_priv, ret, false);
+ }
+diff --git a/include/linux/fscache.h b/include/linux/fscache.h
+index 9de27643607f..f8c52bddaa15 100644
+--- a/include/linux/fscache.h
++++ b/include/linux/fscache.h
+@@ -177,8 +177,7 @@ void __fscache_write_to_cache(struct fscache_cookie *cookie,
+ 			      loff_t start, size_t len, loff_t i_size,
+ 			      netfs_io_terminated_t term_func,
+ 			      void *term_func_priv,
+-			      bool using_pgpriv2, bool cond);
+-extern void __fscache_clear_page_bits(struct address_space *, loff_t, size_t);
++			      bool cond);
+ 
+ /**
+  * fscache_acquire_volume - Register a volume as desiring caching services
+@@ -573,24 +572,6 @@ int fscache_write(struct netfs_cache_resources *cres,
+ 	return ops->write(cres, start_pos, iter, term_func, term_func_priv);
+ }
+ 
+-/**
+- * fscache_clear_page_bits - Clear the PG_fscache bits from a set of pages
+- * @mapping: The netfs inode to use as the source
+- * @start: The start position in @mapping
+- * @len: The amount of data to unlock
+- * @caching: If PG_fscache has been set
+- *
+- * Clear the PG_fscache flag from a sequence of pages and wake up anyone who's
+- * waiting.
+- */
+-static inline void fscache_clear_page_bits(struct address_space *mapping,
+-					   loff_t start, size_t len,
+-					   bool caching)
+-{
+-	if (caching)
+-		__fscache_clear_page_bits(mapping, start, len);
+-}
+-
+ /**
+  * fscache_write_to_cache - Save a write to the cache and clear PG_fscache
+  * @cookie: The cookie representing the cache object
+@@ -600,7 +581,6 @@ static inline void fscache_clear_page_bits(struct address_space *mapping,
+  * @i_size: The new size of the inode
+  * @term_func: The function to call upon completion
+  * @term_func_priv: The private data for @term_func
+- * @using_pgpriv2: If we're using PG_private_2 to mark in-progress write
+  * @caching: If we actually want to do the caching
+  *
+  * Helper function for a netfs to write dirty data from an inode into the cache
+@@ -612,21 +592,19 @@ static inline void fscache_clear_page_bits(struct address_space *mapping,
+  * marked with PG_fscache.
+  *
+  * If given, @term_func will be called upon completion and supplied with
+- * @term_func_priv.  Note that if @using_pgpriv2 is set, the PG_private_2 flags
+- * will have been cleared by this point, so the netfs must retain its own pin
+- * on the mapping.
++ * @term_func_priv.
+  */
+ static inline void fscache_write_to_cache(struct fscache_cookie *cookie,
+ 					  struct address_space *mapping,
+ 					  loff_t start, size_t len, loff_t i_size,
+ 					  netfs_io_terminated_t term_func,
+ 					  void *term_func_priv,
+-					  bool using_pgpriv2, bool caching)
++					  bool caching)
+ {
+ 	if (caching)
+ 		__fscache_write_to_cache(cookie, mapping, start, len, i_size,
+ 					 term_func, term_func_priv,
+-					 using_pgpriv2, caching);
++					 caching);
+ 	else if (term_func)
+ 		term_func(term_func_priv, -ENOBUFS, false);
+ 
+-- 
+2.43.0
 
-You decide which one you prefer.
-
-Max
 
