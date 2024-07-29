@@ -1,120 +1,248 @@
-Return-Path: <ceph-devel+bounces-1582-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1583-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38B5693F9D9
-	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2024 17:51:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 750CA93FA73
+	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2024 18:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B74A91F23160
-	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2024 15:51:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B5FA282C99
+	for <lists+ceph-devel@lfdr.de>; Mon, 29 Jul 2024 16:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA1D158D6A;
-	Mon, 29 Jul 2024 15:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C808B15B14C;
+	Mon, 29 Jul 2024 16:20:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaV8kUDb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZbZqqXmg"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFAC8004F;
-	Mon, 29 Jul 2024 15:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7828002E
+	for <ceph-devel@vger.kernel.org>; Mon, 29 Jul 2024 16:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722268281; cv=none; b=J1yglG9t0O+FajhOAz1R8BZawXezp8Zkz7aNoiaequugwgieSse/7XW6TzM7PavFzDld9nQ6L28gT0vdnL67BVzu6mMW0uFRXi5yaaqu19HvwGVvE6ebXfvkbDngHfaQCqBDqzz2YsFSSNngEGD82EY3OK2sY+If4d2agfNz1Bw=
+	t=1722270027; cv=none; b=L/MlmwrcgNjbXp4s/m7AIpKTf3s6PgAa/wKUZtERaPvA758Uewzvf4LJNczFt1yT7ZLdq/KNbVaiqK8zF5M+6w2efACcImC4AqWNTHbyEXWIxK2kCdHZ8HEFE2kUrg9dnI7ZyW6Rsp25+1u/pnSiAbciuwjzJ7dx5mw8/MsWGAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722268281; c=relaxed/simple;
-	bh=Xjk9/3K2La58GqYFP1mT6tUiDmazLKWz3gdhSQvHVoA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Z2kE5KBisqtYNzBmq/AmgicFq70eIczzUEdeRCtjl1w/yY4sIODzUhLlqhCXsUyqEFNPpsweYyB+QWE5UqbX4pon1eyXH+nYpZwAu/YOfd1POnjJA31vdVkverpRMAGC/z50CzkyrS58VcLjhp0RbySc5kg11hl4RmZ1CPnryLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaV8kUDb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC964C32786;
-	Mon, 29 Jul 2024 15:51:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722268281;
-	bh=Xjk9/3K2La58GqYFP1mT6tUiDmazLKWz3gdhSQvHVoA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=qaV8kUDbcoLuDqbBio3SBFAPhJn3z2pExnW07qRef4jQS7O0tUzd/ABSIAaT594na
-	 FOmDVoYDPMAaSPRXGmcNSDbr6d9rsIFw+hMjJyMQaJx4y0pWgtYTm4WuLTfsD1Qcon
-	 Hs4S9kZ6qW69jd1hVA4aQlzSursiCpjwa4bT+WwCs5xSFzy3lKH6XeNOpX2VOgXfOh
-	 WN41CL6BfX6wbLRXSJgFnA4/p7KsPhO4+2RlwVxT+TBNzsKW1Bz8DvE3XyT/GlTwn0
-	 ehLGSOe1zf0ksfaBfQ8m3OA5Ibm3oh5bYduvv09K01yVipZWKeX1GbIPOCBrxEmQ/I
-	 nN4rpjfyMpU+w==
-Message-ID: <422ab8b216ea792156d12f5321f9fa1a12dbb93d.camel@kernel.org>
-Subject: Re: [PATCH] fs/netfs/fscache_io: remove the obsolete
- "using_pgpriv2" flag
-From: Jeff Layton <jlayton@kernel.org>
-To: Max Kellermann <max.kellermann@ionos.com>, dhowells@redhat.com
-Cc: willy@infradead.org, linux-cachefs@redhat.com, 
- linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, xiubli@redhat.com,
- Ilya Dryomov <idryomov@gmail.com>
-Date: Mon, 29 Jul 2024 11:51:18 -0400
-In-Reply-To: <CAKPOu+8fgsNi3UVfrZQf9WBHwrXq_D=6oauqWJeiOqSeQedgaw@mail.gmail.com>
-References: <20240729091532.855688-1-max.kellermann@ionos.com>
-	 <d03ba5c264de1d3601853d91810108d9897661fb.camel@kernel.org>
-	 <CAKPOu+8fgsNi3UVfrZQf9WBHwrXq_D=6oauqWJeiOqSeQedgaw@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1722270027; c=relaxed/simple;
+	bh=o4ybFsYlIEZgvNTOsvc3mtG5HslGRcMXCe0Z+Lvm4P0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HQ9WpPnZ9l8NCyRMDGKXrSN1F5BTtzIXP7kpEHmKuj++G78v+E3ZHV9AVl3hM8iXuzC0dgFH/TnT0djuVaRYQDaUpy2WvDc8NSjcnqNbrPEbvWoaIDAji1icgYmOICqt07xD6RcGOfbDL8RrfRbYHHHQ8kohZWkv9wQtn3mQxIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZbZqqXmg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722270024;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DvXomQdGvyRIG4lEnvJDoKu3S4z81D4SNbDuP6bJxR8=;
+	b=ZbZqqXmgd7ripwMiVAt0rRT071tSxsii8P684u44xruh1BcRCZJAioJH2ugbkAgQgf7KZ+
+	FVtX0U1hKfyk1GJ0JkQLEuZTXJjJpVrQwCHJ8Ex0ZjchI9VXyTnp522dI1kuBsiY+SmX5u
+	vTqRIdCte4BL2G5H6WeMM+RfqC3PW+k=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-277-GK5lTh9JNCCiXxwe-IyT3A-1; Mon,
+ 29 Jul 2024 12:20:21 -0400
+X-MC-Unique: GK5lTh9JNCCiXxwe-IyT3A-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3E49D1955F42;
+	Mon, 29 Jul 2024 16:20:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk.com (unknown [10.42.28.216])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D295119560AE;
+	Mon, 29 Jul 2024 16:20:05 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>,
+	Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 00/24] netfs: Read/write improvements
+Date: Mon, 29 Jul 2024 17:19:29 +0100
+Message-ID: <20240729162002.3436763-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, 2024-07-29 at 17:35 +0200, Max Kellermann wrote:
-> On Mon, Jul 29, 2024 at 2:56=E2=80=AFPM Jeff Layton <jlayton@kernel.org>
-> wrote:
-> > Either way, you can add this to both patches:
-> >=20
-> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
->=20
-> Stop the merge :-)
->=20
-> I just found that my patch introduces another lockup; copy_file_range
-> locks up this way:
->=20
-> =C2=A0[<0>] folio_wait_private_2+0xd9/0x140
-> =C2=A0[<0>] ceph_write_begin+0x56/0x90
-> =C2=A0[<0>] generic_perform_write+0xc0/0x210
-> =C2=A0[<0>] ceph_write_iter+0x4e2/0x650
-> =C2=A0[<0>] iter_file_splice_write+0x30d/0x550
-> =C2=A0[<0>] splice_file_range_actor+0x2c/0x40
-> =C2=A0[<0>] splice_direct_to_actor+0xee/0x270
-> =C2=A0[<0>] splice_file_range+0x80/0xc0
-> =C2=A0[<0>] ceph_copy_file_range+0xbb/0x5b0
-> =C2=A0[<0>] vfs_copy_file_range+0x33e/0x5d0
-> =C2=A0[<0>] __x64_sys_copy_file_range+0xf7/0x200
-> =C2=A0[<0>] do_syscall_64+0x64/0x100
-> =C2=A0[<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
->=20
-> Turns out that there are still private_2 users left in both fs/ceph
-> and fs/netfs. My patches fix one problem, but cause another problem.
-> Too bad!
->=20
-> This leaves me confused again: how shall I fix this? Can all
-> folio_wait_private_2() calls simply be removed?
-> This looks like some refactoring gone wrong, and some parts don't
-> make
-> sense (like netfs and ceph claim ownership of the folio_private
-> pointer). I could try to fix the mess, but I need to know how this is
-> meant to be. David, can you enlighten me?
->=20
-> Max
+Hi Christian, Steve, Willy,
 
-I suspect the folio_wait_private_2 call in ceph_write_begin should have
-also been removed in ae678317b95, and it just got missed somehow in the
-original patch. All of the other callsites that did anything with
-private_2 were removed in that patch.
+This set of patches includes one fscache fix and one cachefiles fix
 
-David, can you confirm that?
---=20
-Jeff Layton <jlayton@kernel.org>
+ (1) Fix a cookie access race in fscache.
+
+ (2) Fix the setxattr/removexattr syscalls to pull their arguments into
+     kernel space before taking the sb_writers lock to avoid a deadlock
+     against mm->mmap_lock.
+
+A couple of adjustments to the /proc/fs/netfs/stats file:
+
+ (3) All the netfs stats lines begin 'Netfs:'.  Change this to something a
+     bit more useful.
+
+ (4) Add a couple of stats counters to track the numbers of skips and waits
+     on the per-inode writeback serialisation lock to make it easier to
+     check for this as a source of performance loss.
+
+Some miscellaneous bits:
+
+ (5) Reduce the number of conditional branches in netfs_perform_write().
+
+ (6) Move the CIFS_INO_MODIFIED_ATTR flag to the netfs_inode struct and
+     remove cifs_post_modify().
+
+ (7) Move the max_len/max_nr_segs members from netfs_io_subrequest to
+     netfs_io_request as they're only needed for one subreq at a time.
+
+ (8) Add an 'unknown' source value for tracing purposes.
+
+ (9) Remove NETFS_COPY_TO_CACHE as it's no longer used.
+
+(10) Set the request work function up front at allocation time.
+
+(11) Use bh-disabling spinlocks for rreq->lock as cachefiles completion may
+     be run from block-filesystem DIO completion in softirq context.
+
+Then there's the main performance enhancing changes:
+
+(12) Define a structure, struct folio_queue, and a new iterator type,
+     ITER_FOLIOQ, to hold a buffer as a replacement for ITER_XARRAY.  See
+     that patch for questions about naming and form.
+
+(13) Make cifs RDMA support ITER_FOLIOQ.
+
+(14) Add a function to reset the iterator in a subrequest.
+
+(15) Use folio queues in the write-side helpers instead of xarrays.
+
+(16) Simplify the write-side helpers to use sheaves to skip gaps rather than
+     trying to work out where gaps are.
+
+(17) In afs, make the read subrequests asynchronous, putting them into work
+     items to allow the next patch to do progressive unlocking/reading.
+
+(18) Overhaul the read-side helpers to improve performance.
+
+(19) Remove fs/netfs/io.c.
+
+(20) Fix the caching of a partial block at the end of a file.
+
+(21) Allow a store to be cancelled.
+
+Then some changes for cifs to make it use folio queues instead of xarrays
+for crypto bufferage:
+
+(22) Use raw iteration functions rather than manually coding iteration when
+     hashing data.
+
+(23) Switch to using folio_queue for crypto buffers.
+
+(24) Remove the xarray bits.
+
+David
+
+David Howells (23):
+  cachefiles: Fix non-taking of sb_writers around set/removexattr
+  netfs: Adjust labels in /proc/fs/netfs/stats
+  netfs: Record contention stats for writeback lock
+  netfs: Reduce number of conditional branches in netfs_perform_write()
+  netfs, cifs: Move CIFS_INO_MODIFIED_ATTR to netfs_inode
+  netfs: Move max_len/max_nr_segs from netfs_io_subrequest to
+    netfs_io_stream
+  netfs: Reserve netfs_sreq_source 0 as unset/unknown
+  netfs: Remove NETFS_COPY_TO_CACHE
+  netfs: Set the request work function upon allocation
+  netfs: Use bh-disabling spinlocks for rreq->lock
+  mm: Define struct folio_queue and ITER_FOLIOQ to handle a sequence of
+    folios
+  cifs: Provide the capability to extract from ITER_FOLIOQ to RDMA SGEs
+  netfs: Use new folio_queue data type and iterator instead of xarray
+    iter
+  netfs: Provide an iterator-reset function
+  netfs: Simplify the writeback code
+  afs: Make read subreqs async
+  netfs: Speed up buffered reading
+  netfs: Remove fs/netfs/io.c
+  cachefiles, netfs: Fix write to partial block at EOF
+  netfs: Cancel dirty folios that have no storage destination
+  cifs: Use iterate_and_advance*() routines directly for hashing
+  cifs: Switch crypto buffer to use a folio_queue rather than an xarray
+  cifs: Don't support ITER_XARRAY
+
+Max Kellermann (1):
+  fs/netfs/fscache_cookie: add missing "n_accesses" check
+
+ fs/9p/vfs_addr.c             |   5 +-
+ fs/afs/file.c                |  29 +-
+ fs/afs/fsclient.c            |   9 +-
+ fs/afs/write.c               |   4 +-
+ fs/afs/yfsclient.c           |   9 +-
+ fs/cachefiles/io.c           |  19 +-
+ fs/cachefiles/xattr.c        |  34 +-
+ fs/ceph/addr.c               |  72 ++--
+ fs/netfs/Makefile            |   3 +-
+ fs/netfs/buffered_read.c     | 677 ++++++++++++++++++++++++-----------
+ fs/netfs/buffered_write.c    | 309 ++++++++--------
+ fs/netfs/direct_read.c       | 147 +++++++-
+ fs/netfs/fscache_cookie.c    |   4 +
+ fs/netfs/internal.h          |  33 +-
+ fs/netfs/io.c                | 647 ---------------------------------
+ fs/netfs/iterator.c          |  50 +++
+ fs/netfs/main.c              |   6 +-
+ fs/netfs/misc.c              |  94 +++++
+ fs/netfs/objects.c           |  16 +-
+ fs/netfs/read_collect.c      | 540 ++++++++++++++++++++++++++++
+ fs/netfs/read_retry.c        | 256 +++++++++++++
+ fs/netfs/stats.c             |  23 +-
+ fs/netfs/write_collect.c     | 243 ++++---------
+ fs/netfs/write_issue.c       |  92 ++---
+ fs/nfs/fscache.c             |  19 +-
+ fs/nfs/fscache.h             |   7 +-
+ fs/smb/client/cifsencrypt.c  | 144 +-------
+ fs/smb/client/cifsglob.h     |   3 +-
+ fs/smb/client/cifssmb.c      |   6 +-
+ fs/smb/client/file.c         |  71 ++--
+ fs/smb/client/smb2ops.c      | 218 ++++++-----
+ fs/smb/client/smb2pdu.c      |  10 +-
+ fs/smb/client/smbdirect.c    |  82 +++--
+ include/linux/folio_queue.h  | 138 +++++++
+ include/linux/iov_iter.h     | 104 ++++++
+ include/linux/netfs.h        |  44 ++-
+ include/linux/uio.h          |  18 +
+ include/trace/events/netfs.h | 140 ++++++--
+ lib/iov_iter.c               | 229 +++++++++++-
+ lib/kunit_iov_iter.c         | 259 ++++++++++++++
+ lib/scatterlist.c            |  69 +++-
+ 41 files changed, 3175 insertions(+), 1707 deletions(-)
+ delete mode 100644 fs/netfs/io.c
+ create mode 100644 fs/netfs/read_collect.c
+ create mode 100644 fs/netfs/read_retry.c
+ create mode 100644 include/linux/folio_queue.h
+
 
