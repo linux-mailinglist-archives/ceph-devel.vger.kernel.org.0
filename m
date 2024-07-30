@@ -1,101 +1,92 @@
-Return-Path: <ceph-devel+bounces-1614-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1615-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7E99411E5
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 Jul 2024 14:30:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D61BF941458
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Jul 2024 16:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6253B268D4
-	for <lists+ceph-devel@lfdr.de>; Tue, 30 Jul 2024 12:30:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90CD8286133
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Jul 2024 14:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE1019EEBB;
-	Tue, 30 Jul 2024 12:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E011A2571;
+	Tue, 30 Jul 2024 14:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KkUnA/32"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aRQPTTe7"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0445418F2FF;
-	Tue, 30 Jul 2024 12:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13EA335D3
+	for <ceph-devel@vger.kernel.org>; Tue, 30 Jul 2024 14:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722342597; cv=none; b=KM/4N43sq2SHReYbLciNSuWemMTLKK1tNlnL5pHmEK4MyTD3zE0cV1unOlOqUpK5PfbpyziSOJQrWZPaGAH9sBYanYXccGc3PSw5iMg1GzoJryOJzAVSjZxLRYEwWNGQ9xGsRCqShNXzo4bv/BC2mBZP5gtkaA9h82Poz8eqzxA=
+	t=1722349621; cv=none; b=YR5cfjd0ImHRB22ijlfOn/LvrbXM6b2UJLDHf34/tAGyk/dyU4zVLcxetCfK96GSf3XiwzZWpcuaFgI70Lf7vQ5pssOinnfhadWS6nptASZgbRDTKl1J/WFPUIIpeKPiuEZVoMEEwm+xXbZ2npc2PciSVhMgTdUepQ+JEZhkI/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722342597; c=relaxed/simple;
-	bh=VwgmwLcqB9ZFY4Gq8oFzw8DPmba5sKvUZygIQYJUFJ8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CM1WGLJyTYIX5Op/EgFbtrhPHQNb0FbZB7aaw0GjKfGE/QE0FjzNKPfe6Q/nzBOZBttsNpnwM185Kd1QpvtbJ0S8PfqhU/juFdCcuuxtEADYYqgF7yk5elVWTHY5dxHyXmjjw9fAPXRTD/11CJH1a1OO2ufldv1iEaJ287fLoII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KkUnA/32; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D6B5C32782;
-	Tue, 30 Jul 2024 12:29:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722342596;
-	bh=VwgmwLcqB9ZFY4Gq8oFzw8DPmba5sKvUZygIQYJUFJ8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KkUnA/32/zuP2yfY+2BHZWzBcAP6eKFvYJzwWg50srUl6w+CFGAAsp0WSVoyBsClT
-	 RqacX6MYF5YOZXuFyCH1T+vUJ++Nz0X1eEHzYVtQCG70dV6lycBDRT1l0bC44Pawpd
-	 +iPYigs44yG43C7YtEGs+CmmNOd07N1gVv7oVL3sAsGWuDWypjD0wUHbrIyVdGM4TS
-	 vrI0xEOfD8OBBv8DrpRSzlAYcZ84bFwSacznjY87leU+5uoMBw6sHmr0W8MuWdQEGa
-	 PdIEIXWlUrWuRQDGAlE0qFxCsmO+XkMEeW2ssvA5Zhnhvuu4KAm3BW6AkdQu1fHQWH
-	 w+/JLXA6Quvug==
-From: Christian Brauner <brauner@kernel.org>
-To: dhowells@redhat.com,
-	jlayton@kernel.org,
-	Max Kellermann <max.kellermann@ionos.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	willy@infradead.org,
-	linux-cachefs@redhat.com,
-	linux-fsdevel@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] fs/netfs/fscache_io: remove the obsolete "using_pgpriv2" flag
-Date: Tue, 30 Jul 2024 14:29:46 +0200
-Message-ID: <20240730-bogen-absuchen-8ab2d9ba0406@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240729092828.857383-1-max.kellermann@ionos.com>
-References: <20240729092828.857383-1-max.kellermann@ionos.com>
+	s=arc-20240116; t=1722349621; c=relaxed/simple;
+	bh=QwOqJyMeabVVRXz2SZZrMQsxGHIjnHfDQSOp9Mld0Ok=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=sbngvbBNT76QwjBH+Hk+QGzzTIme9xZ9q4OSXDB5GJV2BUQG4tTDSzbWWRS3spLnWO3J1eSQs9HwBh1aYinD9CohonPnDyo8w09DBZ1B2NmNWvEz/7zNlRCKNvjurcOXd/Nyt4GjdoJis1cgyh1ORYPMygxgj4tix0lDvhzvdPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aRQPTTe7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722349618;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HN99UYk8Kh6g/3OE9am3X/kGbGNdhXjLG7Bh6vntP4U=;
+	b=aRQPTTe7x59fWJwfSJ7vHyxpYCh4yQO7916O1UbWBF4Ch2znvVwL6w3ANXE3bDjFCghFZp
+	T7h+kHIm+x2BEhCDAcNajdwQXXOb7OpEMFxzuqoVZdBX4tuBi6TuTHT8O6Wghmgrk9qSVQ
+	ImFewi491LftShpr9mSXGMxyM+X3wcs=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-416-inhxdHUVP768Hgmk5_Y2BQ-1; Tue,
+ 30 Jul 2024 10:26:55 -0400
+X-MC-Unique: inhxdHUVP768Hgmk5_Y2BQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 957731956080;
+	Tue, 30 Jul 2024 14:26:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.216])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E4ECC1955D42;
+	Tue, 30 Jul 2024 14:26:50 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240729090639.852732-1-max.kellermann@ionos.com>
+References: <20240729090639.852732-1-max.kellermann@ionos.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: dhowells@redhat.com, jlayton@kernel.org, willy@infradead.org,
+    linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+    ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    stable@vger.kernel.org
+Subject: Re: [PATCH] fs/ceph/addr: pass using_pgpriv2=false to fscache_write_to_cache()
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1287; i=brauner@kernel.org; h=from:subject:message-id; bh=VwgmwLcqB9ZFY4Gq8oFzw8DPmba5sKvUZygIQYJUFJ8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaStuLPXbsNutWrb//0s9qtDC+4qLxCUPskaGWuox6y2J pWnfcXUjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIm0bWL4Z6Y6h3Vi5b6S3S8m Bl+YNE1i6+I5d4u91me4+v1Y+SriThTD/7znfiksf3dX7a+6M2XhuqRz75nya4/vVRJP31p8af4 DfQ4A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3516607.1722349609.1@warthog.procyon.org.uk>
+Date: Tue, 30 Jul 2024 15:26:49 +0100
+Message-ID: <3516608.1722349609@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon, 29 Jul 2024 11:28:28 +0200, Max Kellermann wrote:
-> This fixes a crash bug caused by commit ae678317b95e ("netfs: Remove
-> deprecated use of PG_private_2 as a second writeback flag") by
-> removing a leftover folio_end_private_2() call after all calls to
-> folio_start_private_2() had been removed by the commit.
-> 
-> By calling folio_end_private_2() without folio_start_private_2(), the
-> folio refcounter breaks and causes trouble like RCU stalls and general
-> protection faults.
-> 
-> [...]
+For the moment, ceph has to continue using PG_private_2.  It doesn't use
+netfs_writepages().  I have mostly complete patches to fix that, but they got
+popped onto the back burner for a bit.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+I've finally managed to get cephfs set up and can now reproduce the hang
+you're seeing.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+David
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] fs/netfs/fscache_io: remove the obsolete "using_pgpriv2" flag
-      https://git.kernel.org/vfs/vfs/c/f7244a2b1d4c
 
