@@ -1,186 +1,232 @@
-Return-Path: <ceph-devel+bounces-1633-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1634-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A62594748A
-	for <lists+ceph-devel@lfdr.de>; Mon,  5 Aug 2024 07:11:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFAE5947E32
+	for <lists+ceph-devel@lfdr.de>; Mon,  5 Aug 2024 17:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCB471C20C22
-	for <lists+ceph-devel@lfdr.de>; Mon,  5 Aug 2024 05:11:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96C8E281F36
+	for <lists+ceph-devel@lfdr.de>; Mon,  5 Aug 2024 15:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82F813D52F;
-	Mon,  5 Aug 2024 05:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E45158DDF;
+	Mon,  5 Aug 2024 15:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GPP/4HM6"
+	dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b="DU1vCdcd"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from a1-bg02.venev.name (a1-bg02.venev.name [213.240.239.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFEE13AA2A
-	for <ceph-devel@vger.kernel.org>; Mon,  5 Aug 2024 05:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D620524D7;
+	Mon,  5 Aug 2024 15:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.240.239.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722834703; cv=none; b=XZpo6RvnK7wQrCo01epCgeqUv9eBopefiwMI/J3WkcixAvIi8pzNtZjT6csIfGZoKJ4PSqeqAZLOFu6BurlOhh7kAYkfqmpSonEyLbcE60QxS08O4BJF5WtVIpEFWhHeIQ83VTHgdzen1DPbeF6EM98a5lt3IzC8qW+kXGkngG4=
+	t=1722872084; cv=none; b=aP/+/GbXCctKNk3kTo8rKSD5zg8eB3uWnz3g6kPaV0/ybUsIDDmEIp0zTzrK/TYu3NFvEF78hQRFsqbZMZQltNKAJebVZdvCek5dWk+50uRwJmcVMezAEEIvxNpkcgMGxVgBAiH8+Z0FK5M7HpqF1nAulYvmZdvQ+5/UNkt4NRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722834703; c=relaxed/simple;
-	bh=uhEzFv14+ygwaZ8YJmzw/d8haQW368jbl7aWdujaThY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZBGFUNfOuJwRzaUnzzRIg3/IvKRprkDUcitm4XWjKlwJKdiBLBtMXnNIcsKsiL7DjCcXpExkcFw4vHHawfhDhDxEFDpNxSwUYRomGYsME3+0T1e1xoRTQsQo2O4rRQVuWsC/gvb5LPo6rMYK0BE8CYKryGJ1DD0VYWn7SOms2ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GPP/4HM6; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722834700;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ORKFR99mh6i19div5TbeDUIHUDACz1MP6sWyxECr6c0=;
-	b=GPP/4HM6qsxeyqvWi5fVwAa+i8hrSGr7w4R+9Ts8kz918N5ytpxxAutNKxHlc26ayt1oC8
-	pOKlmOJfuuJ0ox1MQgEk/+4KEBXBCvAUlF8jd1ycRzMa1Y0Av8z6spKCcG87aQe9l414P1
-	1/rf0vmugToVajupEZH0bMnO3YkUhuQ=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-547-3iq1sjskNZaLoHPpA54PPw-1; Mon, 05 Aug 2024 01:11:38 -0400
-X-MC-Unique: 3iq1sjskNZaLoHPpA54PPw-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-70d1c28cd89so8560399b3a.1
-        for <ceph-devel@vger.kernel.org>; Sun, 04 Aug 2024 22:11:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722834697; x=1723439497;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ORKFR99mh6i19div5TbeDUIHUDACz1MP6sWyxECr6c0=;
-        b=oOtY7ysTAj+QtLEamDQb0O+9tm7KNMBktVV/DbOvtMyRaKrLhKraNhVwh3BHL59iL7
-         qRrcflVU0d6fpxqRNiG8gUMMRaW7GrTwzqbOb37j77tDmGjYfzD2zo30GEb62eLVnmlF
-         e+1pMaeT847O9e5hHsy0r2PM2Caiovh6oax4pKmpO31RGW4+gIfJYls8G/Zdw+1rfWEg
-         7KKUnFpKZjOpdTMf+3yPoHy2fXhDwlYQujlg1ubvsBcZshgq8UugaAn76e+WAvEbMaOM
-         Z2tyTxeBJEo0/mE2fvV8SQZAo4tW9awAwameWl2Oc690aj6D0KeEt1D/KywMrSQF5QLN
-         BUtA==
-X-Gm-Message-State: AOJu0YzYKqEnZannFxFKfRIfYz4Xdiku16TkplI8QOUH38fc9F9PqWRd
-	4BmzAtx0NJRuylnwaD/ijJ7g5DMWSWE1O8zFPgySPezKMk9nwUDrjRI+kT6TKI9re07lwI1kOC+
-	BqoWLtxBwRL6iTZvyxVJj+x++M4KZq5HUqXZYKmEJ41h+MDB7+wjh7ikGTY+XsjvVblo=
-X-Received: by 2002:a05:6a00:9451:b0:70e:98e3:1aef with SMTP id d2e1a72fcca58-7106d084745mr8298462b3a.29.1722834697471;
-        Sun, 04 Aug 2024 22:11:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFvHCXhH8dsIHLQNzoo3uscp8Dgu4ntqfoZu0YC8zySIMvSGPRmnzyM6a+fNO73dUlTVrCF7w==
-X-Received: by 2002:a05:6a00:9451:b0:70e:98e3:1aef with SMTP id d2e1a72fcca58-7106d084745mr8298450b3a.29.1722834697025;
-        Sun, 04 Aug 2024 22:11:37 -0700 (PDT)
-Received: from [10.72.116.44] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ec4292fsm4666369b3a.73.2024.08.04.22.11.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 04 Aug 2024 22:11:36 -0700 (PDT)
-Message-ID: <bcc43b79-1186-479f-8c27-9a652260106e@redhat.com>
-Date: Mon, 5 Aug 2024 13:11:33 +0800
+	s=arc-20240116; t=1722872084; c=relaxed/simple;
+	bh=az9IZNBf572XOHxYtYloLtOpMtowQ2MhfSY+bSjR3u0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UXyP5K77W7JpuiZr+pdCUm1Pqa8jDRVrl40T94ROkxmbtXDkJXJW2eEHN5sDJYr45C0yk/M3iuULt81x+gB716sQdMTUrRiTpOfvt+MSq4ZLnHWQe3mmWoCfG1fSHzU8Y6eBhSGItiueodl3Y/18eNgOLh8NETeqBZzs4O0AN44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name; spf=pass smtp.mailfrom=venev.name; dkim=pass (4096-bit key) header.d=venev.name header.i=@venev.name header.b=DU1vCdcd; arc=none smtp.client-ip=213.240.239.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=venev.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=venev.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=venev.name;
+	s=default; h=Content-Type:Date:To:From:Subject:Message-ID:
+	Content-Transfer-Encoding:Reply-To:Sender;
+	bh=+75xdacdFsxgXARR9Bk36Kwb9foV0OHSOEia2xj7zNY=; b=DU1vCdcd8zw9fBuCWcoIUbwd1N
+	2iT4Z2yvNfgooj+qsR6kbQdFMB9mEb7MPKt+VAoy6pAe7pdqbgGMWBQrTjm5IV6JpccyuRHsKWCg8
+	Rm17xbh2I4uvc8TnSgoWclni/8uEnZX1ZZNQZxYYW6vOydyZyCxT1dwypsgxPJWMzLLdQpNi9XOzZ
+	jBdxIDopSyhf0zizQWlafTUXsK7M8QxIKO6z3QFsgepxGo7bCk96cgSQoj9gHujAgmI29thBGKnyZ
+	JIHQo5ifmjbTVVxxKdXiAmT2JnJtfvBzgOSDGRnJiqWkna5Bz5E1b1neZS7ktgEtT2RHJNLn+ij+8
+	c0twlongBZLwZmjIhvx4IMPrzemy8q5T1L97b0sO72NJvGvnJWzyX0TlX2+R8Jw9DwsIohvt63eqW
+	MoEUb5Ss/pbmwKjWA50Ci8vF+YZggJfErFSVHV4vuZ648gk776yysPSbzOrwMy6FxkMY+MrEwAVF6
+	z5CW82XGZNsIuwlYe4uhvqrl67Yygm4I/UHkyfVvGCHb8guYqtSndoAm83uWZbVrjk+/oC6rDYviQ
+	RLzXAlFqmhITeb21xqpoxDmHR7V5nOxYNlXwzj1jjvUHlxOYl3meT+TU7c9TDxbWQmoUuqBsiXZNU
+	4nlHURCPdc4d2xHyDHQQ6UAtQuaw/qfcCTwy00QFM=;
+Received: from a1-bg02.venev.name ([213.240.239.49] helo=pmx1.venev.name)
+	by a1-bg02.venev.name with esmtps
+	id 1sazj7-00000000p6D-1noa
+	(TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	(envelope-from <hristo@venev.name>);
+	Mon, 05 Aug 2024 15:34:25 +0000
+Received: from plank.m.venev.name ([213.240.239.48])
+	by pmx1.venev.name with ESMTPSA
+	id CTunOf/wsGZK/wIAT9YxdQ
+	(envelope-from <hristo@venev.name>); Mon, 05 Aug 2024 15:34:25 +0000
+Message-ID: <c39524ab0e2b2045f21bc64f3742ac2b96abd2b9.camel@venev.name>
+Subject: Re: [PATCH] netfs: Set NETFS_RREQ_WRITE_TO_CACHE when caching is
+ possible
+From: Hristo Venev <hristo@venev.name>
+To: Trond Myklebust <trondmy@hammerspace.com>, "max.kellermann@ionos.com"
+	 <max.kellermann@ionos.com>, "dhowells@redhat.com" <dhowells@redhat.com>
+Cc: "dan.aloni@vastdata.com" <dan.aloni@vastdata.com>, "xiubli@redhat.com"
+ <xiubli@redhat.com>, "linux-fsdevel@vger.kernel.org"
+ <linux-fsdevel@vger.kernel.org>, "ceph-devel@vger.kernel.org"
+ <ceph-devel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "netfs@lists.linux.dev"
+ <netfs@lists.linux.dev>,  "jlayton@kernel.org" <jlayton@kernel.org>,
+ "idryomov@gmail.com" <idryomov@gmail.com>,  "willy@infradead.org"
+ <willy@infradead.org>, "blokos@free.fr" <blokos@free.fr>, 
+ "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Date: Mon, 05 Aug 2024 18:34:23 +0300
+In-Reply-To: <ba17aecba9615f85b7901ea96609abdad3c29db1.camel@hammerspace.com>
+References: <20240729091532.855688-1-max.kellermann@ionos.com>
+	 <3575457.1722355300@warthog.procyon.org.uk>
+	 <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com>
+	 <CAKPOu+-4C7qPrOEe=trhmpqoC-UhCLdHGmeyjzaUymg=k93NEA@mail.gmail.com>
+	 <3717298.1722422465@warthog.procyon.org.uk>
+	 <CAKPOu+-4LQM2-Ciro0LbbhVPa+YyHD3BnLL+drmG5Ca-b4wmLg@mail.gmail.com>
+	 <845520c7e608c31751506f8162f994b48d235776.camel@venev.name>
+	 <ba17aecba9615f85b7901ea96609abdad3c29db1.camel@hammerspace.com>
+Autocrypt: addr=hristo@venev.name; prefer-encrypt=mutual;
+ keydata=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
+ AjQ6o01lu
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-m+Z7TPUh5Rd+PvHZw/pU"
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: ceph_read_iter NULL pointer dereference
-To: Luis Henriques <luis.henriques@linux.dev>
-Cc: ceph-devel@vger.kernel.org
-References: <87msluswte.fsf@linux.dev>
-Content-Language: en-US
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <87msluswte.fsf@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Hi Luis,
-
-Thanks for your reporting, BTW, could this be reproduceable ?
-
-This is also the first time I see this crash BUG.
 
 
-The 'i_size == 0' could be easy to reproduce, please see my following 
-debug logs:
+--=-m+Z7TPUh5Rd+PvHZw/pU
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-++++++++++++++++++++++++++++
+On Sun, 2024-08-04 at 23:22 +0000, Trond Myklebust wrote:
+> On Sun, 2024-08-04 at 16:57 +0300, Hristo Venev wrote:
+> > In addition to Ceph, in NFS there are also some crashes related to
+> > the
+> > use of 0x356 as a pointer.
+> >=20
+> > `netfs_is_cache_enabled()` only returns true when the fscache
+> > cookie
+> > is
+> > fully initialized. This may happen after the request has been
+> > created,
+> > so check for the cookie's existence instead.
+> >=20
+> > Link:
+> > https://lore.kernel.org/linux-nfs/b78c88db-8b3a-4008-94cb-82ae08f0e37b@=
+free.fr/T/
+> > Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio-
+> > > private and marking dirty")
+> > Cc: linux-nfs@vger.kernel.org=C2=A0<linux-nfs@vger.kernel.org>
+> > Cc: blokos <blokos@free.fr>
+> > Cc: Trond Myklebust <trondmy@hammerspace.com>
+> > Cc: dan.aloni@vastdata.com=C2=A0<dan.aloni@vastdata.com>
+> > Signed-off-by: Hristo Venev <hristo@venev.name>
+> > ---
+> > =C2=A0fs/netfs/objects.c | 6 +++---
+> > =C2=A01 file changed, 3 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
+> > index f4a6427274792..a74ca90c86c9b 100644
+> > --- a/fs/netfs/objects.c
+> > +++ b/fs/netfs/objects.c
+> > @@ -27,7 +27,6 @@ struct netfs_io_request
+> > *netfs_alloc_request(struct
+> > address_space *mapping,
+> > =C2=A0	bool is_unbuffered =3D (origin =3D=3D NETFS_UNBUFFERED_WRITE ||
+> > =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 origin =3D=3D NETFS_DIO_READ ||
+> > =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 origin =3D=3D NETFS_DIO_WRITE);
+> > -	bool cached =3D !is_unbuffered &&
+> > netfs_is_cache_enabled(ctx);
+> > =C2=A0	int ret;
+> > =C2=A0
+> > =C2=A0	for (;;) {
+> > @@ -56,8 +55,9 @@ struct netfs_io_request
+> > *netfs_alloc_request(struct
+> > address_space *mapping,
+> > =C2=A0	refcount_set(&rreq->ref, 1);
+> > =C2=A0
+> > =C2=A0	__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
+> > -	if (cached) {
+> > -		__set_bit(NETFS_RREQ_WRITE_TO_CACHE, &rreq-
+> > >flags);
+> > +	if (!is_unbuffered &&
+> > fscache_cookie_valid(netfs_i_cookie(ctx))) {
+> > +		if(netfs_is_cache_enabled(ctx))
+> > +			__set_bit(NETFS_RREQ_WRITE_TO_CACHE,
+> > &rreq-
+> > > flags);
+> > =C2=A0		if (test_bit(NETFS_ICTX_USE_PGPRIV2, &ctx->flags))
+> > =C2=A0			/* Filesystem uses deprecated PG_private_2
+> > marking. */
+> > =C2=A0			__set_bit(NETFS_RREQ_USE_PGPRIV2, &rreq-
+> > > flags);
+>=20
+> Does this mean that netfs could still end up setting a value for
+> folio-
+> > private in NFS given some other set of circumstances?
 
-  ceph_read_iter: 0~1024 trying to get caps on 000000006a438277 
-100000001f7.fffffffffffffffe
-  try_get_cap_refs: 000000006a438277 100000001f7.fffffffffffffffe need 
-Fr want Fc
-  __ceph_caps_issued: 000000006a438277 100000001f7.fffffffffffffffe cap 
-000000001a8b6d16 issued pAsLsXsFrw
-  try_get_cap_refs: 000000006a438277 100000001f7.fffffffffffffffe have 
-pAsLsXsFrw but not Fc (revoking -)
-  try_get_cap_refs: 000000006a438277 100000001f7.fffffffffffffffe ret 1 
-got Fr
-  ceph_read_iter: sync 000000006a438277 100000001f7.fffffffffffffffe 
-0~1024 got cap refs on Fr
-  ceph_sync_read: on file 00000000e029b65e 0~400
-  __ceph_sync_read: on inode 000000006a438277 
-100000001f7.fffffffffffffffe 0~400
-  __ceph_sync_read: orig 0~1024 reading 0~1024
-  __ceph_sync_read: 0~1024 got -2 i_size 0
-  __ceph_sync_read: result 0 retry_op 0
-  ceph_read_iter: 000000006a438277 100000001f7.fffffffffffffffe dropping 
-cap refs on Fr = 0
-  __ceph_put_cap_refs: 000000006a438277 100000001f7.fffffffffffffffe had 
-Fr last
-  __ceph_caps_issued: 000000006a438277 100000001f7.fffffffffffffffe cap 
-000000001a8b6d16 issued pAsLsXsFrw
-+++++++++++++++++++++++++++++++++
+Hopefully not? For NFS the cookie should be allocated in
+`nfs_fscache_init_inode`, and for Ceph I think `ceph_fill_inode` (which
+calls `ceph_fscache_register_inode_cookie`) should also be called early
+enough as well.
 
-I just created one empty file and then in Client.A open it for r/w, and 
-then open the same file in Client.B and did a simple read.
+> --=20
+> Trond Myklebust
+> Linux NFS client maintainer, Hammerspace
+> trond.myklebust@hammerspace.com
+>=20
+>=20
 
-Currently ceph kclient won't check the 'i_size' before sending out the 
-sync read request to Rados, but will do it after it getting the contents 
-back, As I remembered this logic comply to the "MIX" filelock state in MDS:
 
-[LOCK_MIX]       = { 0,         false, LOCK_MIX,  0,    0,   REQ, ANY, 
-0,   0,   0, CEPH_CAP_GRD|CEPH_CAP_GWR|CEPH_CAP_GLAZYIO,0,0,CEPH_CAP_GRD },
+--=-m+Z7TPUh5Rd+PvHZw/pU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-You can raise one ceph tracker for this.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks
+iQIzBAABCgAdFiEEb/2s7vGPWBH9BOGpSkmD6rj9B8sFAmaw8P8ACgkQSkmD6rj9
+B8uUow/+N0iSbLU5Dj4n4YCskaXe0oYauxtSCavu/FgTNgiGxMSAZAftYPNXznPt
+pD955SG00oNSAv3pJ899be31Pngurud6Ab7mhBJ+0JRNBsxJnD1NYAcDTAlKhLT/
+u6PDNmB82e0fnDSOx9PYQXuepfTwG3xuUJblbLU62O/D3XEEe9BgTfevf+4LHqZF
+z7ezu6qdGxeKyeVjWysFWdwjDybOYvdpiBgUML+0gnQq8A+RrB7dnVjfEJmxqksL
+0ciUxXg+uvQHNVtCoR+zuKRztS7dpgeYgggUGgHVXFdC3WzCxExJZemZmXJBmB+L
+8rWM4TGFCet6lNE1H5RUsBpvGQcYKqGpPDpeLQuI+dhmmTg3q29IM9ERTsD91FqA
+b+xzw0B84IPa2j6RWHjvh4C8kHRRKaDroCuzB8/9tl5XwqFYFjoF/9aO+Js6Cwf6
+5gukhuhgWFfxlqr8XJ7jQsS+KRMVGbvGxFezuquPGcINEfK+g5yPQDUBv334H/Jh
+W4yKbXZ4pHeXiZLSXqBuDZYK2oGRRJaTYJ+9875HCDEZC377I7DGT7EcpUj1afVb
+KsA9k5xMB/RRbP9n6VVBZ5e1osIwZfkCPG9+ZiqBbi658gHoTPsOJ0X4Z2R0p1I6
+2owPKsdeN2oUerNNVQ/5MBKqWzgwsjvMO0KreUMgl7b97fIDbSI=
+=67v8
+-----END PGP SIGNATURE-----
 
-- Xiubo
-
-On 8/3/24 00:39, Luis Henriques wrote:
-> Hi Xiubo,
->
-> I was wondering if you ever seen the BUG below.  I've debugged it a bit
-> and the issue seems occurs here, while doing the SetPageUptodate():
->
-> 		if (ret <= 0)
-> 			left = 0;
-> 		else if (off + ret > i_size)
-> 			left = i_size - off;
-> 		else
-> 			left = ret;
-> 		while (left > 0) {
-> 			size_t plen, copied;
->
-> 			plen = min_t(size_t, left, PAGE_SIZE - page_off);
-> 			SetPageUptodate(pages[idx]);
-> 			copied = copy_page_to_iter(pages[idx++],
-> 						   page_off, plen, to);
-> 			off += copied;
-> 			left -= copied;
-> 			page_off = 0;
-> 			if (copied < plen) {
-> 				ret = -EFAULT;
-> 				break;
-> 			}
-> 		}
->
-> So, the issue is that we have idx > num_pages.  And I'm almost sure that's
-> because of i_size being '0' and 'left' ending up with a huge value.  But
-> haven't managed to figure out yet why i_size is '0'.
->
-> (Note: I'll be offline next week, but I'll continue looking into this the
-> week after.  But I figured I should report the bug anyway, in case you've
-> seen something similar.)
->
-> Cheers,
-
+--=-m+Z7TPUh5Rd+PvHZw/pU--
 
