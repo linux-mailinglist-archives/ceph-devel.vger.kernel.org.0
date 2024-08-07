@@ -1,106 +1,122 @@
-Return-Path: <ceph-devel+bounces-1637-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1638-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD3194A1E0
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Aug 2024 09:38:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 157A694A340
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Aug 2024 10:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42FDFB23CA8
-	for <lists+ceph-devel@lfdr.de>; Wed,  7 Aug 2024 07:38:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDEBCB216F7
+	for <lists+ceph-devel@lfdr.de>; Wed,  7 Aug 2024 08:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1771C8236;
-	Wed,  7 Aug 2024 07:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C051C9DD4;
+	Wed,  7 Aug 2024 08:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBYmt/KJ"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1F57C6D4;
-	Wed,  7 Aug 2024 07:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-qv1-f66.google.com (mail-qv1-f66.google.com [209.85.219.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D317F3A267
+	for <ceph-devel@vger.kernel.org>; Wed,  7 Aug 2024 08:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723016318; cv=none; b=UR/cTadlYAn3YxdupXRHOhUt/KxUTpkLcaZGgwAwIziT8kvWO0FA0AjdE4p6E9HomZu3COLqjHzcU5Kd9NkzX0MK6q11iy+GYd5PHc+DlUXJKSWQ72YiriIu2pELPtXGVcYiHD9Hf9Q4Nv0ClCpNOplUIhOLowsNCsCtsP84mAY=
+	t=1723020361; cv=none; b=Bjr8KmGX2+6EF8zqwIelP1oJMZ9tGnKDyoKr3kqDO+d/P1LxVp9n+Vk5yFvt5SBq35SuBG2Hcj23ZOuu3EBU/mO3D8ZV1QAZHloJqggee5wAGpJwl4ZX2qn8r9f+E/uc8JPC/rQrUdtaMxHdj35Vcav4IjelexK5C2vsyTnLBrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723016318; c=relaxed/simple;
-	bh=XRA9gxRLFd+aej8AzR4p1woSAT7nCVx80V+h4XrJ6rk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QIt5P6av5lPWFpta5NWDFOlgfbPLgY5UJQjDPMuTxJmlEnIMYVifV+O4s0aqi89i6x3T4hoKblI1suVmBwHWdxIwFjluSUPD1wybSeDI8jwmFGBxiPFu0b0AfncrOMU6fO66kUblocfOa62RVovmrpK7aVFNBhowtGOkEV3sg9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6FBB2FEC;
-	Wed,  7 Aug 2024 00:38:55 -0700 (PDT)
-Received: from [10.57.81.112] (unknown [10.57.81.112])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 687A53F5A1;
-	Wed,  7 Aug 2024 00:38:25 -0700 (PDT)
-Message-ID: <e693ed7a-97bf-486b-84fb-f57e44a399b4@arm.com>
-Date: Wed, 7 Aug 2024 08:38:23 +0100
+	s=arc-20240116; t=1723020361; c=relaxed/simple;
+	bh=JIYCeV4uJlSo6zUb+VhPLW29iaO4GQB7NXb1N4DGxQU=;
+	h=From:To:In-Reply-To:References:Subject:Message-ID:Date:
+	 MIME-Version:Content-Type; b=JXNHKSawbAilAUMyIvZ8gj3LXcPAAwFwg2ylw3o6bN5DAamL1ZODw1gf0wZdgg3cVX6u++bEiuJYhuFeGoUVONDVh/CRag5r9W1s/9pIN5sWOt5lCbwNFqGpjCv+beoe4nrx9quAA76op0bgrSjliuznl2l0ZABcGsnv8Xl/8J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jBYmt/KJ; arc=none smtp.client-ip=209.85.219.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f66.google.com with SMTP id 6a1803df08f44-6b78c3670d0so8827186d6.1
+        for <ceph-devel@vger.kernel.org>; Wed, 07 Aug 2024 01:45:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723020358; x=1723625158; darn=vger.kernel.org;
+        h=mime-version:date:content-transfer-encoding:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u1sL1RtDxHH3sdVCstkS8dJ4vmd28DZhKMS7GN8oGS0=;
+        b=jBYmt/KJ29xqnShld7mcf2RJdMshp+6P48DEUvH5J8J0n1BMh03SsiFaY0qLiSZC/p
+         4Sxw4qpHuLAx+2jdslxCtzzU2wAJ7sN6xcuC3oO+AQgorIV5NQzEJl6gaCCCCuEE0Dny
+         cxOR5NsLhOJaxF35UZTfcSmRIJBjINwA/hgK/BmBmcOIfxiqBvFQXbfqqsduhamfhCZ4
+         jOj+ZJb6ESICx6W9XeEowR167uzsE0kRnsurLX5wA0gHnYiSFE6av4FZuHqKhcG3kTbl
+         rvaSShkkYpfhGdboyrExVRXGyTAZGiM+JJRWDPMCbVMOqDtSwr7/x/oVH0Spp0lv0qWH
+         3H8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723020358; x=1723625158;
+        h=mime-version:date:content-transfer-encoding:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u1sL1RtDxHH3sdVCstkS8dJ4vmd28DZhKMS7GN8oGS0=;
+        b=lYygt28SkLkH2XPK9/PIsM94BmTkiLk7RUTEpZhR0G0YEfBNBo1P1HeSLVVx0OfBpc
+         Aakemn/TujRx/MaV50nqexEdJ2mZdwc2/oUJoU0s0WkJwjKZgDCEFDXSgHAUe3MCJUFf
+         DL4ux1Q5MXr6WGoJtK0FvHXfoBGB8IGNRRUso+20t1YMw7sGqMkrBGbDNfCob3Dme7f9
+         HWoqWlRyDP+m8MfG7LyDii6+6TpS2AkErUV3Sx8D0SmTaqQ0H50KjoYxaOvZqeS8QT97
+         yQP9f5VZDXflwmndBktGrM26o4W9COBoMWGEtX829KiKv4zerbencrhYMwf0tKXSbjf4
+         jqXg==
+X-Gm-Message-State: AOJu0YzXPrTvnK5NFNNl2o5TbGK/GHLqFqD09aauHi4V/OHrJlgQICzy
+	hZjqX6w8y4lJlWXtAtV0x9b5ZJwFvfKNkC5oFw4VIXm7Oa5UKOZAcrID3fAC
+X-Google-Smtp-Source: AGHT+IEpFdf+wjgR/NiDQ2B4Pqg0guAKql2u9BwwolGL7P6R+Ep9lr0LMAbVUqHpnxOlWon7QCuq6A==
+X-Received: by 2002:a05:6214:43c2:b0:6b0:86ab:feaf with SMTP id 6a1803df08f44-6bb98423a2fmr229486796d6.48.1723020358627;
+        Wed, 07 Aug 2024 01:45:58 -0700 (PDT)
+Received: from smtpclient.apple ([115.126.45.176])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb9c777e01sm54863326d6.1.2024.08.07.01.45.56
+        for <ceph-devel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 07 Aug 2024 01:45:58 -0700 (PDT)
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
+From: Doris Wickstrom <depohinoelle@gmail.com>
+To: ceph-devel@vger.kernel.org
+In-Reply-To: <1195ec63-51c5-d10d-2b3e-ed36b301906d@gmail.com>
+References: <ddd89871-777a-6bb0-62d9-beb1074963f1@gmail.com>
+ <1195ec63-51c5-d10d-2b3e-ed36b301906d@gmail.com>
+Subject: Last Chance: Site Revamp in 2024
+Message-ID: <50f459ed-b13b-e649-4b46-dbceae626678@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 07 Aug 2024 08:45:51 +0000
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next:master] [fs] cdc4ad36a8:
- kernel_BUG_at_include/linux/page-flags.h
-Content-Language: en-GB
-To: Matthew Wilcox <willy@infradead.org>,
- kernel test robot <oliver.sang@intel.com>,
- Christian Brauner <brauner@kernel.org>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
- Linux Memory Management List <linux-mm@kvack.org>,
- linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
- intel-gfx@lists.freedesktop.org, linux-bcachefs@vger.kernel.org,
- ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-um@lists.infradead.org, linux-mtd@lists.infradead.org,
- jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
- linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
- ocfs2-devel@lists.linux.dev, linux-karma-devel@lists.sourceforge.net,
- devel@lists.orangefs.org, reiserfs-devel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <202408062249.2194d51b-lkp@intel.com>
- <ZrLuBz1eBdgFzIyC@casper.infradead.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <ZrLuBz1eBdgFzIyC@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
 
-On 07/08/2024 04:46, Matthew Wilcox wrote:
-> On Tue, Aug 06, 2024 at 10:26:17PM +0800, kernel test robot wrote:
->> kernel test robot noticed "kernel_BUG_at_include/linux/page-flags.h" on:
->>
->> commit: cdc4ad36a871b7ac43fcc6b2891058d332ce60ce ("fs: Convert aops->write_begin to take a folio")
->> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
->>
->> [test failed on linux-next/master 1e391b34f6aa043c7afa40a2103163a0ef06d179]
->>
->> in testcase: boot
-> 
-> This patch should fix it.
-> 
-> Christian, can you squash the fix in?
-> 
-> 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 7d28304aea0f..66ff87417090 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2904,7 +2904,8 @@ shmem_write_begin(struct file *file, struct address_space *mapping,
->  	if (ret)
->  		return ret;
->  
-> -	if (folio_test_has_hwpoisoned(folio)) {
-> +	if (folio_test_hwpoison(folio) ||
-> +	    (folio_test_large(folio) && folio_test_has_hwpoisoned(folio))) {
+Hi Ceph Storage,
 
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-Tested-by: Ryan Roberts <ryan.roberts@arm.com>
+I wanted to follow up one last time regarding the =
+potential site refresh for your business in 2024.
+
+We=E2=80=99ve crafted =
+many stunning websites and have received positive client feedback. Our =
+sites are fast, mobile-responsive, and perform well on Google.
+
+Would you like to see our portfolio and learn more?
+
+Please let me know:
 
 
->  		folio_unlock(folio);
->  		folio_put(folio);
->  		return -EIO;
+ * Yes: I'd love to see the portfolio and more info.
+ * No: I'm not interested. Please do not email me again.
+ *=20
+  =20
 
+PS: We offer design assurance. If you don=E2=80=99t like the design, you =
+don=E2=80=99t pay.
+
+Thanks,
+DorisOn Wednesday, Jul 17, 2024 at 4:06 AM =
+depohinoelle@gmail.com wrote:
+> Hi Hang, I intended to follow up on my =
+previous email about enhancing Ceph Storage website. We believe it can =
+greatly enhance your online presence. Would you care to discuss this =
+further? Eagerly awaiting your response. Best regards, DorisOn Monday, Jul =
+15, 2024 at 4:42 AM depohinoelle@gmail.com wrote: > Hi Hang, I hope this =
+message finds you well. I'm delighted to advise you that we can assist in =
+upgrading Ceph Storage website. Our goal is to enhance your online presence=
+ and help expand your business. Would you like more information about our =
+offerings and portfolio? Anticipating your response. Best regards, Doris
 
