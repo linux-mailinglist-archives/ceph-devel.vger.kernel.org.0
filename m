@@ -1,61 +1,61 @@
-Return-Path: <ceph-devel+bounces-1643-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1644-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53B6094BC7F
-	for <lists+ceph-devel@lfdr.de>; Thu,  8 Aug 2024 13:48:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3DD294C64B
+	for <lists+ceph-devel@lfdr.de>; Thu,  8 Aug 2024 23:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 775461C21155
-	for <lists+ceph-devel@lfdr.de>; Thu,  8 Aug 2024 11:48:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65E631F256AC
+	for <lists+ceph-devel@lfdr.de>; Thu,  8 Aug 2024 21:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE91318C331;
-	Thu,  8 Aug 2024 11:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C3E148318;
+	Thu,  8 Aug 2024 21:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NrFn4w1Z"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KWQJ5aZu"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B68189BAB
-	for <ceph-devel@vger.kernel.org>; Thu,  8 Aug 2024 11:48:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72F77F484
+	for <ceph-devel@vger.kernel.org>; Thu,  8 Aug 2024 21:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723117710; cv=none; b=lp20RYyo/u41ERi3Qr6kZHfwA5+0VdMOPYE+GSqiLd5AvP+HPFOt2A8wMAL2EcptJjBbCs3yjxR92zk6QmipS4XzWWEYb3hWMl20u9rzgQKGdzq6SeU/z9nTk3Wbcu7TtTpZP8HBGLkYcR9MWk4DTqL76ocIiGUCIHmwpsQqmII=
+	t=1723152694; cv=none; b=W32WK2W1yvPq2tTVPR8whiuZAt9GpbeVPVU4Uxqg+NRqSmWY5oOCwTjwG+xLRFKmVz6WXxTUugozMDD0oF+QQShyqa7s8fCmNp7rRRxiu+Q8mIL64YN4oI3kQ5tZtRde0jWSQ4Q62PAyKpUh7dQUA2cwAUrtmaeKKmp7AE5rY1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723117710; c=relaxed/simple;
-	bh=pxNCAzafY1mC1+UJrMyPNc/mk8CnbxQk81qrJbtQWKY=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=UJBWqhWgP2qA/B4hwZ4TkxK2u8LWAc+/zORw0kPnSEjw4zvfvPiGYEiJ6yEdmuqBlT9W6+Okgu0N2/DuAsMtAyz5v34fFPQUASYTvv80HdY8Rmv3PpdzrMMoLX21U0B1+NXKmtDa6ib5YuNLLkdJ1WHk5nKa5/CXwxKLx77RoIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NrFn4w1Z; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1723152694; c=relaxed/simple;
+	bh=MyNWyii6bU5O8DpARyOzkQUWO+hxrWUPkyfZ2UadKhA=;
+	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
+	 Date:Message-ID; b=fWEvUkwb6xKF20OXFfW7BR7OzI+uMUfHfAyjUzckiVaDe2LYLF5qsiXS3IwdSxEBfDPU91/M/w4HYRGdVhTpWVoOLlZPa3zgFqpj3XJuSuBYbPw7ia/CA8wUyOq0KHcSC599iSp3zG9enKzaxiqsxIm3VuTrKF+8zLzG3XfnjxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KWQJ5aZu; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723117707;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=mimecast20190719; t=1723152691;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=QA2XG5xvt1prpF0gDErNq6ZwHl8YnRbOm+7kGy4pkyw=;
-	b=NrFn4w1Z8wHaaIei5+gmh83tMxKUyc8b7aKB0b02+pQmv0ScDAStxR028Uq1J88YDkBh5c
-	vllKW38+OpC8pzX3Lqx41xvNGAeIk0X0pTDDfHQo69JLvxNV2K6kAIPvoR0ssuQ1f738+X
-	ENoWy3SffWZ76eYZ2Ng//+L6L4qJkl8=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+	bh=lBew0DBZPcSI+nscYqrappS6bJzFQOs+iJhXYUlkzgU=;
+	b=KWQJ5aZuwTkEDpq8illaptOyI6kUI+OOCG4H1BmbrK5eNX0bmO+Si6TojTU30Zp1OisanT
+	0VlU4gj01l+1IepuRQfaFQ4tSYpPo1Q10dD3IdBzH2zRHGEXueFd/oAaf++5wYT0c/iwk9
+	RN1KlFBbaG6jl9r2aDYvu/b1vMUBHzU=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-498-CvWWlom_PlSRKIGjs6rp7A-1; Thu,
- 08 Aug 2024 07:48:22 -0400
-X-MC-Unique: CvWWlom_PlSRKIGjs6rp7A-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-452-YVN5bS2tPDqGoFi0NMMKPA-1; Thu,
+ 08 Aug 2024 17:31:30 -0400
+X-MC-Unique: YVN5bS2tPDqGoFi0NMMKPA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5760D18BEF79;
-	Thu,  8 Aug 2024 11:47:01 +0000 (UTC)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 810CA1954225;
+	Thu,  8 Aug 2024 21:31:27 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.42.28.216])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 14A7A195ED25;
-	Thu,  8 Aug 2024 11:46:54 +0000 (UTC)
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E898B19560A3;
+	Thu,  8 Aug 2024 21:31:23 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
 	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
 	Kingdom.
@@ -63,14 +63,14 @@ Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
 From: David Howells <dhowells@redhat.com>
 In-Reply-To: <861629.1723061874@warthog.procyon.org.uk>
 References: <861629.1723061874@warthog.procyon.org.uk> <CAKPOu+-4LQM2-Ciro0LbbhVPa+YyHD3BnLL+drmG5Ca-b4wmLg@mail.gmail.com> <20240729091532.855688-1-max.kellermann@ionos.com> <3575457.1722355300@warthog.procyon.org.uk> <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com> <CAKPOu+-4C7qPrOEe=trhmpqoC-UhCLdHGmeyjzaUymg=k93NEA@mail.gmail.com> <3717298.1722422465@warthog.procyon.org.uk>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: dhowells@redhat.com, Hristo Venev <hristo@venev.name>,
-    Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
-    Jeff Layton <jlayton@kernel.org>, willy@infradead.org,
+Cc: dhowells@redhat.com, Max Kellermann <max.kellermann@ionos.com>,
+    Hristo Venev <hristo@venev.name>, Ilya Dryomov <idryomov@gmail.com>,
+    Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+    willy@infradead.org, Christian Brauner <brauner@kernel.org>,
     ceph-devel@vger.kernel.org, netfs@lists.linux.dev,
     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
     stable@vger.kernel.org
-Subject: [PATCH v2] netfs: Fix handling of USE_PGPRIV2 and WRITE_TO_CACHE flags
+Subject: [PATCH v3] netfs: Fix handling of USE_PGPRIV2 and WRITE_TO_CACHE flags
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -78,19 +78,15 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1068322.1723117607.1@warthog.procyon.org.uk>
+Content-ID: <1173208.1723152682.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 08 Aug 2024 12:46:47 +0100
-Message-ID: <1068323.1723117607@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Date: Thu, 08 Aug 2024 22:31:22 +0100
+Message-ID: <1173209.1723152682@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Okay, I updated to -rc2 and now the apparent UAF of a ceph inode doesn't
-seem to happen.  I've fixed a couple of minor issues in the patch:
-
- - Switched a kdebug() to a _debug().
-
- - netfs_rreq_unlock_folios_pgpriv2() needed to updated the 'account'
-   variable in the caller, not do it's own thing.
+It turned out that I had accidentally disabled caching for 9p, afs and cif=
+s,
+so here's a v3 that fixes that.
 
 David
 ---
@@ -169,9 +165,8 @@ Link: https://lore.kernel.org/r/3575457.1722355300@warthog.procyon.org.uk/=
 
  fs/netfs/buffered_read.c     |  125 ++++++++++++++++++++++++++++++++++++-=
 ------
- fs/netfs/objects.c           |    4 -
- fs/netfs/write_issue.c       |    2 =
-
+ fs/netfs/objects.c           |   10 ---
+ fs/netfs/write_issue.c       |    4 +
  fs/nfs/fscache.c             |    2 =
 
  fs/nfs/fscache.h             |    2 =
@@ -179,7 +174,7 @@ Link: https://lore.kernel.org/r/3575457.1722355300@warthog.procyon.org.uk/=
  include/linux/netfs.h        |    3 -
  include/trace/events/netfs.h |    1 =
 
- 9 files changed, 114 insertions(+), 30 deletions(-)
+ 9 files changed, 116 insertions(+), 36 deletions(-)
 
 diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
 index 73b5a07bf94d..cc0a2240de98 100644
@@ -420,34 +415,60 @@ rreq)
  	*_folio =3D folio;
  	_leave(" =3D 0");
 diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index f4a642727479..0faea0cee179 100644
+index f4a642727479..0294df70c3ff 100644
 --- a/fs/netfs/objects.c
 +++ b/fs/netfs/objects.c
-@@ -57,10 +57,6 @@ struct netfs_io_request *netfs_alloc_request(struct add=
+@@ -24,10 +24,6 @@ struct netfs_io_request *netfs_alloc_request(struct add=
 ress_space *mapping,
+ 	struct netfs_io_request *rreq;
+ 	mempool_t *mempool =3D ctx->ops->request_pool ?: &netfs_request_pool;
+ 	struct kmem_cache *cache =3D mempool->pool_data;
+-	bool is_unbuffered =3D (origin =3D=3D NETFS_UNBUFFERED_WRITE ||
+-			      origin =3D=3D NETFS_DIO_READ ||
+-			      origin =3D=3D NETFS_DIO_WRITE);
+-	bool cached =3D !is_unbuffered && netfs_is_cache_enabled(ctx);
+ 	int ret;
+ =
+
+ 	for (;;) {
+@@ -56,12 +52,6 @@ struct netfs_io_request *netfs_alloc_request(struct add=
+ress_space *mapping,
+ 	refcount_set(&rreq->ref, 1);
  =
 
  	__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
- 	if (cached) {
+-	if (cached) {
 -		__set_bit(NETFS_RREQ_WRITE_TO_CACHE, &rreq->flags);
 -		if (test_bit(NETFS_ICTX_USE_PGPRIV2, &ctx->flags))
 -			/* Filesystem uses deprecated PG_private_2 marking. */
 -			__set_bit(NETFS_RREQ_USE_PGPRIV2, &rreq->flags);
- 	}
+-	}
  	if (file && file->f_flags & O_NONBLOCK)
  		__set_bit(NETFS_RREQ_NONBLOCK, &rreq->flags);
+ 	if (rreq->netfs_ops->init_request) {
 diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index 9258d30cffe3..d35bb0f25d69 100644
+index 9258d30cffe3..3f7e37e50c7d 100644
 --- a/fs/netfs/write_issue.c
 +++ b/fs/netfs/write_issue.c
-@@ -102,7 +102,7 @@ struct netfs_io_request *netfs_create_write_req(struct=
+@@ -94,6 +94,8 @@ struct netfs_io_request *netfs_create_write_req(struct a=
+ddress_space *mapping,
+ {
+ 	struct netfs_io_request *wreq;
+ 	struct netfs_inode *ictx;
++	bool is_buffered =3D (origin =3D=3D NETFS_WRITEBACK ||
++			    origin =3D=3D NETFS_WRITETHROUGH);
+ =
+
+ 	wreq =3D netfs_alloc_request(mapping, file, start, 0, origin);
+ 	if (IS_ERR(wreq))
+@@ -102,7 +104,7 @@ struct netfs_io_request *netfs_create_write_req(struct=
  address_space *mapping,
  	_enter("R=3D%x", wreq->debug_id);
  =
 
  	ictx =3D netfs_inode(wreq->inode);
 -	if (test_bit(NETFS_RREQ_WRITE_TO_CACHE, &wreq->flags))
-+	if (fscache_operation_valid(&wreq->cache_resources))
++	if (is_buffered && netfs_is_cache_enabled(ictx))
  		fscache_begin_write_operation(&wreq->cache_resources, netfs_i_cookie(ic=
 tx));
  =
