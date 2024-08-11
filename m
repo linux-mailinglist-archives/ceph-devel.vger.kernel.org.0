@@ -1,87 +1,91 @@
-Return-Path: <ceph-devel+bounces-1649-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1650-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D0194E323
-	for <lists+ceph-devel@lfdr.de>; Sun, 11 Aug 2024 22:55:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3261494E329
+	for <lists+ceph-devel@lfdr.de>; Sun, 11 Aug 2024 22:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3176E281A32
-	for <lists+ceph-devel@lfdr.de>; Sun, 11 Aug 2024 20:55:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF984281062
+	for <lists+ceph-devel@lfdr.de>; Sun, 11 Aug 2024 20:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D173415C139;
-	Sun, 11 Aug 2024 20:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8B915C120;
+	Sun, 11 Aug 2024 20:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rqnjjrk4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bAumNzNI"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C3115748B;
-	Sun, 11 Aug 2024 20:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4662D8F47;
+	Sun, 11 Aug 2024 20:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723409720; cv=none; b=iGzzftqFOumAVCjz3ZOaqfc7at3U80WzpMoOvT0RnkfH+5LTJEPl4HqLfTY1pWIuqW5320dPWLzJOhcWv/QQJD6SU464cmmVLJSNY+D7tJ3XdfxufuuUVJO/TBGfhaAoA/c52Kr0XSzQ5WIG7X26mvx1Xz2NSAW8civJ4RP86SM=
+	t=1723409875; cv=none; b=rlD0AAlAJlifptkUWGmHoVFL7d5qlvpV5Dv0np/J/C8x4yH6ClLS/N2+uSocUeI0b4Kx9nBLPyz9Xf9Dc+ZweA2IC1RYn1MQhaD7WwHe4g1GExhJ1rR0xQ6BuLe7PlmTVpUkD3i9m3AjJjVJgE3jlFylybWNAV39NqL4aGJ7fHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723409720; c=relaxed/simple;
-	bh=Gn3mBmXSNAIEDTNNdahtRzycMSUt9QdZhgGG3ql5dho=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o9i3bpvkJalZBWEaI2w4Zu0CdaKooZujUhKtZaw9FtotqqjdlCo14lQeDtLn2z/7xuu69ioAoDrAdwQ7xT8lvJg3n4kEtkTLmbUHXLvODA69Ethy00xsPXD1sN1F+KNiLRcwVs+o1tdoRrCUQqHSOWwnbwHH84B6PZF8xc411x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rqnjjrk4; arc=none smtp.client-ip=209.85.167.173
+	s=arc-20240116; t=1723409875; c=relaxed/simple;
+	bh=t3DhI0jMTj4Ni02MAmr0uBN4yMx/G+0wYr56cMRafrk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KrifUXLWMxSzekoJGnWVVNAAHz6TgwfC51jd3NsWcPm4mt2a8yzZH6XLoGizDXCpEQSCbwgiEA63U+DXIY21pDcRdYsVjr7yI3Y6Lp38bDwPye2w5t4oiz3IKkLz0qu5WXw7VuES1cqy2vGvMvYMPLnym+x48Skgc2/ydgZRklE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bAumNzNI; arc=none smtp.client-ip=209.85.128.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3db157cb959so2676386b6e.0;
-        Sun, 11 Aug 2024 13:55:18 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-685cc5415e8so37981047b3.3;
+        Sun, 11 Aug 2024 13:57:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723409718; x=1724014518; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=H4SeDVIANIrOeb9t0saBRKGNpwjINdqknCPqErRRrlI=;
-        b=Rqnjjrk4QZacTd/OOE/SJtpZprKZkLXpIBFZbiHaVCqeFjExqUVA7JyVzqG6vfnnrP
-         phJP2rYFXMdYITjel1LAmkwAESAFd5CADiKKYqSiBCHQfGotzDQI/zCHrTwKBFxa92FQ
-         M0ZzdWNc+koUNhGSunqR8RmTWYpR+8Iv7h7+eY+MmurQBcTToj5iKaE4CIGRWivCKsaK
-         N6cOkgorQfyly5H2s1buPxK8U+eRpmasTUUkveWGDO295WpTs5WOPizwHCS+NGwswerc
-         tgb2XhSyxzIb5UNzZzwG9FPW4EpcUdhQjq3FZln6HDmKsN2IQ19l01EGtUNzc1CXwUZm
-         c7Sg==
+        d=gmail.com; s=20230601; t=1723409873; x=1724014673; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t3DhI0jMTj4Ni02MAmr0uBN4yMx/G+0wYr56cMRafrk=;
+        b=bAumNzNIsNMS+JtvQtlSLnMfzNmRmldrIrQrtyOjH2xD1LjTd6MLmMJiRQNGzVuo3W
+         wTF8BKBmDEfw5Vp3ZvC4JklwsBZewJx8bZnu+VvWwtGBApg3cHOTfkakH+EGQX7uFjlf
+         9BUmjhNIkuGbdZNs/5ibvKIvUvb8J/kKj/suGnmzceU4K28Kl4vHrMaMUO7zlwX08DJI
+         tRJ5WGiVYhZWQFHdJ1xghGsKa/uy2APu3cde/Zj19mYEH0d8mftKnGX6eo7hUb12N8kP
+         Js7TfQvS7qdEB3RAptKaWKYGUs3uaLwqTvFdzvl4TaMgsQ9nOWtSrnL7yN1wHM7g/lRf
+         vytw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723409718; x=1724014518;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H4SeDVIANIrOeb9t0saBRKGNpwjINdqknCPqErRRrlI=;
-        b=kJj/MsKvzQEFs8D5ntzZba9ee7KxYM5US5waHtYm05Xy6Mg0tir8AxxJtJ07cIRaNm
-         330QdGdkVXSmTZ3k8cyNfyIIqnyIvyKeIdKVCnIPln8LrwLhxiIb90jEfQGwL1KpQ45n
-         YzTydsu6yu+TdTVnEoA+omjGQRDMMZg4HzuNKSiVGd1sM5Hk8RWPrebcwouqssrcZZj+
-         CWpqZfV2kDJtYSE5vrC3blDvhdCHTQHlDdpaMzi7sPJEi0ab+OaO2E8kdcx7eGToQGxm
-         6+wPDBarbxvWdWfD6IdLiBJf879ll1Ha9NnzZdqeRdXEaq21De7ZeKrIgvJFhuRu5e3Y
-         WGJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVOSJ/iG0NZZ22UyIBoZ4bR9jG5ll6PpmcTLRSF7i+biz8QDvQ95PMZvKl3rhHTPXcuFIj7Mn9gG1V8WCw84vcNvoQLNlGNpGrPiTcWv2xYkbk75YFdwHT6htT04Tshudd+gOtctX4i3vmiKWbHhMUMLa/FM1EVuRuwz7/PpFdRqg==
-X-Gm-Message-State: AOJu0Ywzs0LCokkUgk40YXwo19xgrl5VHs7Gfht7xeli9xm9ly9ipvTH
-	cA47+Zm9yxnLwujhA5CIoNIwsGEcs9rMFtYUpHRXlNUkeRueE6ps
-X-Google-Smtp-Source: AGHT+IEJwN2eVeEROsDiqEyPNFYRAjj3OwAeO8Gj7zX0gtGLDUKvMoX+5i1EWN3cTP8T7z8ov1UEoQ==
-X-Received: by 2002:a05:6358:5923:b0:1ad:1adc:ad39 with SMTP id e5c5f4694b2df-1b176f1d0f3mr1107090355d.8.1723409718057;
-        Sun, 11 Aug 2024 13:55:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723409873; x=1724014673;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t3DhI0jMTj4Ni02MAmr0uBN4yMx/G+0wYr56cMRafrk=;
+        b=XGFWJh+GZKDsrJRgWLetLcUPw5DAGEFuzPGceaBdLr9UHJV4mBtii3NuCDXl98WvKD
+         1YFkxdbECmGgL3UUU1uDWR8CGmAp8YyUqD9f++z+RyJ+EOEz4vnF0NWdcoQDGKxzZcXl
+         f4cgv0Ly3IuRCXrrxqy9s7E6GwfU3r7QZZief/Qoknr+CbYaw4na7GAz0pMOCJQJ8E6T
+         NA9y7Ue6mDuQ8ofyZ4ZGwh4OYb2SwJDY4Yu5tMWr5ltg+2kDQPStp9VkU88lmKgs0QQT
+         2WxwKyN4xiiC0wnLtmsm8iN2Iukq9FYG1gYGAy5PwKVolT9FPMG6HdWQ8YjoZswSxii4
+         wkcg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3XuQnDZ1eKW8gXwJtc3zCtaRun1j/EMJAe+/ViR5np8ImyTzuTuxY+CPCFKqLp8n5b/SgfekO@vger.kernel.org, AJvYcCX1g8B+N3HwyndNMKOJkSkDz6hlJlCZGfynsloy85h8m+bwBAq/iq/soG5InZmp0ab6ixg6Cmy5Hhgn+cQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrHODmJvrZtWnVR/udvXyZXGBEcIdVBqH8Ni9IGJK7DWHfvos+
+	Qsf3h8CMG9XCzcEsWPKgOw3V51tEJddbl8zleAvZPHaclsdQA7kk
+X-Google-Smtp-Source: AGHT+IH7E7MaTbLeBJJxHYmmp6f6nAwbH5bzPSGFKtD6G2Uabyt2FwSv5McC1COIO/sogIvJCU5KNg==
+X-Received: by 2002:a05:690c:389:b0:627:24d0:5037 with SMTP id 00721157ae682-69ebf484afemr112314207b3.0.1723409873207;
+        Sun, 11 Aug 2024 13:57:53 -0700 (PDT)
 Received: from dev0.. ([2405:201:6803:30b3:6c2e:a6d:389a:e911])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5874ef7sm2759636b3a.38.2024.08.11.13.55.13
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb900360sm25868695ad.92.2024.08.11.13.57.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 13:55:17 -0700 (PDT)
+        Sun, 11 Aug 2024 13:57:52 -0700 (PDT)
 From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: idryomov@gmail.com,
-	xiubli@redhat.com,
+To: jain.abhinav177@gmail.com
+Cc: ceph-devel@vger.kernel.org,
 	davem@davemloft.net,
 	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	ceph-devel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
+	idryomov@gmail.com,
 	javier.carrasco.cruz@gmail.com,
-	Abhinav Jain <jain.abhinav177@gmail.com>
-Subject: [PATCH net v2] libceph: Make the arguments const as per the TODO
-Date: Mon, 12 Aug 2024 02:25:09 +0530
-Message-Id: <20240811205509.1089027-1-jain.abhinav177@gmail.com>
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	skhan@linuxfoundation.org,
+	xiubli@redhat.com
+Subject: Re: [PATCH net] libceph: Make the input const as per the TODO
+Date: Mon, 12 Aug 2024 02:27:46 +0530
+Message-Id: <20240811205746.1089180-1-jain.abhinav177@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240811193645.1082042-1-jain.abhinav177@gmail.com>
+References: <20240811193645.1082042-1-jain.abhinav177@gmail.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -90,115 +94,9 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-net/ceph/crypto.c:
-Modify arguments to const in ceph_crypto_key_decode().
-Modify ceph_key_preparse() and ceph_crypto_key_unarmor()
-in accordance with the changes.
+I realised that I made a bit of mistakes while sending this patch and hence
+I have sent a v2. Kindly check v2 here:
 
-net/ceph/crypto.h:
-Add changes in the prototype of ceph_crypto_key_decode().
-
-net/ceph/auth_x.c:
-Modify the arguments to function ceph_crypto_key_decode()
-being called in the function process_one_ticket().
-
-v1:
-lore.kernel.org/all/20240811193645.1082042-1-jain.abhinav177@gmail.com
-
-Changes since v1:
- - Incorrect changes made in v1 fixed.
- - Found the other files where the change needed to be made.
-
-Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+lore.kernel.org/all/20240811205509.1089027-1-jain.abhinav177@gmail.com
 ---
- net/ceph/auth_x.c |  4 +++-
- net/ceph/crypto.c | 15 ++++++++-------
- net/ceph/crypto.h |  2 +-
- 3 files changed, 12 insertions(+), 9 deletions(-)
-
-diff --git a/net/ceph/auth_x.c b/net/ceph/auth_x.c
-index b71b1635916e..81272603f981 100644
---- a/net/ceph/auth_x.c
-+++ b/net/ceph/auth_x.c
-@@ -204,7 +204,9 @@ static int process_one_ticket(struct ceph_auth_client *ac,
- 	if (tkt_struct_v != 1)
- 		goto bad;
- 
--	ret = ceph_crypto_key_decode(&new_session_key, &dp, dend);
-+	ret = ceph_crypto_key_decode(&new_session_key, \
-+		(const void **)&dp, (const void *)dend);
-+
- 	if (ret)
- 		goto out;
- 
-diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
-index 051d22c0e4ad..905b80d738b1 100644
---- a/net/ceph/crypto.c
-+++ b/net/ceph/crypto.c
-@@ -86,7 +86,7 @@ int ceph_crypto_key_encode(struct ceph_crypto_key *key, void **p, void *end)
- 	return 0;
- }
- 
--int ceph_crypto_key_decode(struct ceph_crypto_key *key, void **p, void *end)
-+int ceph_crypto_key_decode(struct ceph_crypto_key *key, const void **p, const void *end)
- {
- 	int ret;
- 
-@@ -109,7 +109,8 @@ int ceph_crypto_key_unarmor(struct ceph_crypto_key *key, const char *inkey)
- {
- 	int inlen = strlen(inkey);
- 	int blen = inlen * 3 / 4;
--	void *buf, *p;
-+	void *buf;
-+	const void *p;
- 	int ret;
- 
- 	dout("crypto_key_unarmor %s\n", inkey);
-@@ -123,7 +124,7 @@ int ceph_crypto_key_unarmor(struct ceph_crypto_key *key, const char *inkey)
- 	}
- 
- 	p = buf;
--	ret = ceph_crypto_key_decode(key, &p, p + blen);
-+	ret = ceph_crypto_key_decode(key, &p, (const void *)((const char *)p + blen));
- 	kfree(buf);
- 	if (ret)
- 		return ret;
-@@ -300,7 +301,7 @@ static int ceph_key_preparse(struct key_preparsed_payload *prep)
- 	struct ceph_crypto_key *ckey;
- 	size_t datalen = prep->datalen;
- 	int ret;
--	void *p;
-+	const void *p;
- 
- 	ret = -EINVAL;
- 	if (datalen <= 0 || datalen > 32767 || !prep->data)
-@@ -311,9 +312,9 @@ static int ceph_key_preparse(struct key_preparsed_payload *prep)
- 	if (!ckey)
- 		goto err;
- 
--	/* TODO ceph_crypto_key_decode should really take const input */
--	p = (void *)prep->data;
--	ret = ceph_crypto_key_decode(ckey, &p, (char*)prep->data+datalen);
-+	p = prep->data;
-+	ret = ceph_crypto_key_decode(ckey, &p, \
-+			(const void *)((const char *)prep->data + datalen));
- 	if (ret < 0)
- 		goto err_ckey;
- 
-diff --git a/net/ceph/crypto.h b/net/ceph/crypto.h
-index 13bd526349fa..ba57376fa635 100644
---- a/net/ceph/crypto.h
-+++ b/net/ceph/crypto.h
-@@ -22,7 +22,7 @@ struct ceph_crypto_key {
- int ceph_crypto_key_clone(struct ceph_crypto_key *dst,
- 			  const struct ceph_crypto_key *src);
- int ceph_crypto_key_encode(struct ceph_crypto_key *key, void **p, void *end);
--int ceph_crypto_key_decode(struct ceph_crypto_key *key, void **p, void *end);
-+int ceph_crypto_key_decode(struct ceph_crypto_key *key, const void **p, const void *end);
- int ceph_crypto_key_unarmor(struct ceph_crypto_key *key, const char *in);
- void ceph_crypto_key_destroy(struct ceph_crypto_key *key);
- 
--- 
-2.34.1
-
 
