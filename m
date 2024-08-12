@@ -1,180 +1,153 @@
-Return-Path: <ceph-devel+bounces-1655-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1656-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A99694E9E8
-	for <lists+ceph-devel@lfdr.de>; Mon, 12 Aug 2024 11:36:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F72994ED91
+	for <lists+ceph-devel@lfdr.de>; Mon, 12 Aug 2024 15:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E11D1C2153C
-	for <lists+ceph-devel@lfdr.de>; Mon, 12 Aug 2024 09:36:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19CB11F22472
+	for <lists+ceph-devel@lfdr.de>; Mon, 12 Aug 2024 13:02:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7C716132B;
-	Mon, 12 Aug 2024 09:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tNDtPsbd"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D1F17BB2E;
+	Mon, 12 Aug 2024 13:02:06 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A7D16D4D9
-	for <ceph-devel@vger.kernel.org>; Mon, 12 Aug 2024 09:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05864D8D1;
+	Mon, 12 Aug 2024 13:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723455359; cv=none; b=Wvu9/h+wAoVhH0Hk2XkTrgqNKAxNkaJU54GKHYyBqmCubbIioPSfbUEADc5qRrnI3eyemSzJajRsnTlHxY/gFOntfNxBGpWdiNNtnn+BvJrqrkUiiyxpvbwsQjcUro7Blcribnr7w/yNBfPwS+pCNa3fSh3r9Y8uiTwKlbajUHc=
+	t=1723467726; cv=none; b=AhCW2rRYTEEpjX99hTG1q/v83EftL/tbe6mYcEczH4z4OBFgPZ0j1o6W59A97l08dIAyuPmvW2TZo2nlWuW3Py2j1KTude+G4rjyMtMCBnD7OcXPioUmomS++2j28dP9GsbwCSSwj50hPrGI2rrTn/S8ckEWox3tXT8mIZBnaN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723455359; c=relaxed/simple;
-	bh=YoTfLOPmmUGVMc4b0IgPpBwZ45tKk8gYBGfAMaAA4mg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=T+kcLHKUKKz7BsEH+c4B8U8grcd1Idpr8F7ge/tnJtQXzJ5oVK4HKA/zZLN5bYcVocQYfMO/dvJWm5oos21Fv9nAaff3BRpx5mldL/+EBN9Haq2E/Y7FO/jWGszkvOUJSYJNtdlocytWcZKSNFp+lSLfWcUYc7CWHBwFccDFj4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tNDtPsbd; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723455354;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wMVaPmrmq752rvKiEd42/RiX6UfIwyIDgRY6yPX73SU=;
-	b=tNDtPsbdwhxwCx0AS1ZSwrw/F95USOyIhVTBluoXGsXQH6O4C4gvwpbS7g5tCxexX936ac
-	Zj7x5CISxCT7/xD3ewK8kIWSrvMyp+pzehk/SOX6nnM+7+xERHfcUsMN7vvY/R5XtGzDpr
-	hdqi35IfUngOPlNyK7x8t+IE55NOIcU=
-From: Luis Henriques <luis.henriques@linux.dev>
-To: Xiubo Li <xiubli@redhat.com>
-Cc: ceph-devel@vger.kernel.org
-Subject: Re: ceph_read_iter NULL pointer dereference
-In-Reply-To: <bcc43b79-1186-479f-8c27-9a652260106e@redhat.com> (Xiubo Li's
-	message of "Mon, 5 Aug 2024 13:11:33 +0800")
-References: <87msluswte.fsf@linux.dev>
-	<bcc43b79-1186-479f-8c27-9a652260106e@redhat.com>
-Date: Mon, 12 Aug 2024 10:35:47 +0100
-Message-ID: <877ccmcccs.fsf@linux.dev>
+	s=arc-20240116; t=1723467726; c=relaxed/simple;
+	bh=as8kn+c7p1Dq/fpAWxsQXzGWdCzINA9p7OO4grgDg74=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZYUyE/uPaoMerS67FvXPyY1Fe19/VtQETWzvz3XTtldNd/Q/5KhER6kvv3FxSjIQUlCBjH5N/MGHJ2fuv2MqIXN2E6fZKIkx1IKPkLpUguO3o0bKzkp9uG7D0GJqMriteoadkscutx5LeJxpC+2QnRjOSWDBQvJ00cXxj8Qhsis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
+Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
+	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id 35255464CE;
+	Mon, 12 Aug 2024 15:01:55 +0200 (CEST)
+Message-ID: <db686d0c-2f27-47c8-8c14-26969433b13b@proxmox.com>
+Date: Mon, 12 Aug 2024 15:01:52 +0200
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 14/40] netfs: Add iov_iters to (sub)requests to
+ describe various buffers
+From: Christian Ebner <c.ebner@proxmox.com>
+To: David Howells <dhowells@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+ Steve French <smfrench@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Marc Dionne <marc.dionne@auristor.com>, Paulo Alcantara <pc@manguebit.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+ Dominique Martinet <asmadeus@codewreck.org>,
+ Eric Van Hensbergen <ericvh@kernel.org>, Ilya Dryomov <idryomov@gmail.com>,
+ Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+ linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20231221132400.1601991-1-dhowells@redhat.com>
+ <20231221132400.1601991-15-dhowells@redhat.com>
+ <d0ada96d-1805-44d2-b02c-eff64ec0c7d6@proxmox.com>
+Content-Language: en-US, de-DE
+In-Reply-To: <d0ada96d-1805-44d2-b02c-eff64ec0c7d6@proxmox.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 05 2024, Xiubo Li wrote:
+On 8/8/24 10:07, Christian Ebner wrote:
+> Hi,
+> 
+> recently some of our (Proxmox VE) users report issues with file 
+> corruptions when accessing contents located on CephFS via the in-kernel 
+> ceph client [0,1]. According to these reports, our kernels based on 
+> (Ubuntu) v6.8 do show these corruptions, using the FUSE client or the 
+> in-kernel ceph client with kernels based on v6.5 does not show these.
+> Unfortunately the corruption is hard to reproduce.
+> 
+> After a further report of file corruption [2] with a completely 
+> unrelated code path, we managed to reproduce the corruption for one file 
+> by sheer chance on one of our ceph test clusters. We were able to narrow 
+> it down to be possibly an issue with reading of the contents via the 
+> in-kernel ceph client. Note that we can exclude the file contents itself 
+> being corrupt, as any not affected kernel version or the FUSE client 
+> gives the correct contents.
+> 
+> The issue is present also in the current mainline kernel 6.11-rc2.
+> 
+> Bisection with the reproducer points to this commit:
+> 
+> "92b6cc5d: netfs: Add iov_iters to (sub)requests to describe various 
+> buffers"
+> 
+> Description of the issue:
+> 
+> * file copied from local filesystem to cephfs via:
+> `cp /tmp/proxmox-backup-server_3.2-1.iso 
+> /mnt/pve/cephfs/proxmox-backup-server_3.2-1.iso`
+> * sha256sum on local filesystem:
+> `1d19698e8f7e769cf0a0dcc7ba0018ef5416c5ec495d5e61313f9c84a4237607 
+> /tmp/proxmox-backup-server_3.2-1.iso`
+> * sha256sum on cephfs with kernel up to above commit:
+> `1d19698e8f7e769cf0a0dcc7ba0018ef5416c5ec495d5e61313f9c84a4237607 
+> /mnt/pve/cephfs/proxmox-backup-server_3.2-1.iso`
+> * sha256sum on cephfs with kernel after above commit:
+> `89ad3620bf7b1e0913b534516cfbe48580efbaec944b79951e2c14e5e551f736 
+> /mnt/pve/cephfs/proxmox-backup-server_3.2-1.iso`
+> * removing and/or recopying the file does not change the issue, the 
+> corrupt checksum remains the same.
+> * Only this one particular file has been observed to show the issue, for 
+> others the checksums match.
+> * Accessing the same file from different clients results in the same 
+> output: The one with above patch applied do show the incorrect checksum, 
+> ones without the patch show the correct checksum.
+> * The issue persists even across reboot of the ceph cluster and/or clients.
+> * The file is indeed corrupt after reading, as verified by a `cmp -b`.
+> 
+> Does anyone have an idea what could be the cause of this issue, or how 
+> to further debug this? Happy to provide more information or a dynamic 
+> debug output if needed.
+> 
+> Best regards,
+> 
+> Chris
+> 
+> [0] https://forum.proxmox.com/threads/78340/post-676129
+> [1] https://forum.proxmox.com/threads/149249/
+> [2] https://forum.proxmox.com/threads/151291/
 
-> Hi Luis,
->
-> Thanks for your reporting, BTW, could this be reproduceable ?
->
-> This is also the first time I see this crash BUG.
->
->
-> The 'i_size =3D=3D 0' could be easy to reproduce, please see my following=
- debug
-> logs:
->
-> ++++++++++++++++++++++++++++
->
-> =C2=A0ceph_read_iter: 0~1024 trying to get caps on 000000006a438277
-> 100000001f7.fffffffffffffffe
-> =C2=A0try_get_cap_refs: 000000006a438277 100000001f7.fffffffffffffffe nee=
-d Fr want Fc
-> =C2=A0__ceph_caps_issued: 000000006a438277 100000001f7.fffffffffffffffe c=
-ap
-> 000000001a8b6d16 issued pAsLsXsFrw
-> =C2=A0try_get_cap_refs: 000000006a438277 100000001f7.fffffffffffffffe hav=
-e pAsLsXsFrw
-> but not Fc (revoking -)
-> =C2=A0try_get_cap_refs: 000000006a438277 100000001f7.fffffffffffffffe ret=
- 1 got Fr
-> =C2=A0ceph_read_iter: sync 000000006a438277 100000001f7.fffffffffffffffe =
-0~1024 got
-> cap refs on Fr
-> =C2=A0ceph_sync_read: on file 00000000e029b65e 0~400
-> =C2=A0__ceph_sync_read: on inode 000000006a438277 100000001f7.fffffffffff=
-ffffe 0~400
-> =C2=A0__ceph_sync_read: orig 0~1024 reading 0~1024
-> =C2=A0__ceph_sync_read: 0~1024 got -2 i_size 0
-> =C2=A0__ceph_sync_read: result 0 retry_op 0
-> =C2=A0ceph_read_iter: 000000006a438277 100000001f7.fffffffffffffffe dropp=
-ing cap refs
-> on Fr =3D 0
-> =C2=A0__ceph_put_cap_refs: 000000006a438277 100000001f7.fffffffffffffffe =
-had Fr last
-> =C2=A0__ceph_caps_issued: 000000006a438277 100000001f7.fffffffffffffffe c=
-ap
-> 000000001a8b6d16 issued pAsLsXsFrw
-> +++++++++++++++++++++++++++++++++
->
-> I just created one empty file and then in Client.A open it for r/w, and t=
-hen
-> open the same file in Client.B and did a simple read.
->
-> Currently ceph kclient won't check the 'i_size' before sending out the sy=
-nc read
-> request to Rados, but will do it after it getting the contents back, As I
-> remembered this logic comply to the "MIX" filelock state in MDS:
->
-> [LOCK_MIX]=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =3D { 0,=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 false, LOCK_MIX,=C2=A0 0,=C2=A0=C2=A0=C2=A0 =
-0,=C2=A0=C2=A0 REQ, ANY, 0,=C2=A0=C2=A0 0,=C2=A0=C2=A0
-> 0, CEPH_CAP_GRD|CEPH_CAP_GWR|CEPH_CAP_GLAZYIO,0,0,CEPH_CAP_GRD },
->
-> You can raise one ceph tracker for this.
+Hi,
 
-I'll do that, and thanks for analysis.  I'll need to catch-up with a few
-things first after being a week offline, but I'll get back to this bug
-shortly.
+please allow me to send a followup regarding this:
 
-Cheers,
---=20
-Lu=C3=ADs
+Thanks to a suggestion by my colleague Friedrich Weber we have some 
+further interesting findings.
 
+The issue is related to the readahead size passed to `mount.ceph`, when 
+mounting the filesystem [0].
 
->
-> Thanks
->
-> - Xiubo
->
-> On 8/3/24 00:39, Luis Henriques wrote:
->> Hi Xiubo,
->>
->> I was wondering if you ever seen the BUG below.  I've debugged it a bit
->> and the issue seems occurs here, while doing the SetPageUptodate():
->>
->> 		if (ret <=3D 0)
->> 			left =3D 0;
->> 		else if (off + ret > i_size)
->> 			left =3D i_size - off;
->> 		else
->> 			left =3D ret;
->> 		while (left > 0) {
->> 			size_t plen, copied;
->>
->> 			plen =3D min_t(size_t, left, PAGE_SIZE - page_off);
->> 			SetPageUptodate(pages[idx]);
->> 			copied =3D copy_page_to_iter(pages[idx++],
->> 						   page_off, plen, to);
->> 			off +=3D copied;
->> 			left -=3D copied;
->> 			page_off =3D 0;
->> 			if (copied < plen) {
->> 				ret =3D -EFAULT;
->> 				break;
->> 			}
->> 		}
->>
->> So, the issue is that we have idx > num_pages.  And I'm almost sure that=
-'s
->> because of i_size being '0' and 'left' ending up with a huge value.  But
->> haven't managed to figure out yet why i_size is '0'.
->>
->> (Note: I'll be offline next week, but I'll continue looking into this the
->> week after.  But I figured I should report the bug anyway, in case you've
->> seen something similar.)
->>
->> Cheers,
->
+Passing an `rasize` in the range of [0..1k] leads to the correct 
+checksum, independent of the bisected patch being applied or not.
+Ranges from (1k..1M] lead to corrupt, but different checksums for 
+different `rasize` values, and finally `rasize` values above 1M lead to 
+a corrupt, but constant checksum value. Again, without the bisected 
+patch, the issue is not present.
+
+Please let me know if I can provide further information or debug outputs 
+in order to narrow down the issue.
+
+Best regards,
+Chris
+
+[0] https://docs.ceph.com/en/reef/man/8/mount.ceph/#advanced
+
 
