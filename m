@@ -1,161 +1,268 @@
-Return-Path: <ceph-devel+bounces-1662-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1663-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802F99522CC
-	for <lists+ceph-devel@lfdr.de>; Wed, 14 Aug 2024 21:50:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739D2952373
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 Aug 2024 22:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B38AC1C21EEB
-	for <lists+ceph-devel@lfdr.de>; Wed, 14 Aug 2024 19:50:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3D961F2221D
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 Aug 2024 20:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A901BF317;
-	Wed, 14 Aug 2024 19:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A101C68B4;
+	Wed, 14 Aug 2024 20:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cj15zXkb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GIY4Uewl"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD861B5804
-	for <ceph-devel@vger.kernel.org>; Wed, 14 Aug 2024 19:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7681C463E
+	for <ceph-devel@vger.kernel.org>; Wed, 14 Aug 2024 20:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723665016; cv=none; b=vAftVBZ8njCqAEBYDNePF8+rQUL048khl3e6Ixq+D1opEw3xnmcvi/8sQ91orkcrKW4TD2kyrpVCDfvNwk7hCergPeM3h2CyID26tO9H0J4fI0PNfGimrAPf/iBUsU9zLOFhki3TnNsfGAi5NwgHR9uMQEk5vm6nKEFH0sSVbYg=
+	t=1723667954; cv=none; b=B+fVNL2a1YpgWe5qT850lz5HjPTwUWN2Nbqg/1PaGfrcWdQIbeVPg5LTrSbCoCAZoaLmUY8vuWGesuZ+0oJoITmyUs8qP8d8ulg40fJneU2QEnnqd/4csusKE2mdsNCBMI79pxOX6T4C+1Me7tugO6/QbScmZJkNLX3aKZ5KuvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723665016; c=relaxed/simple;
-	bh=0IJfcZS7r6EPJLniVsMkD68/yY+O53iik/ZnogU9/aw=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=JEk6a/ALxyHrOHBSHLwpbw4KBNl6kwFJTau5/Ef19FtB/AQ4k4wY0curZsb131QbPSrVg6fY5dIc/3W1UC/dIY5ZCyqxi0DJubMtoG/bbvb2SPTfTczPMLsJk8SfLCUTLWSMY2hZoBra8Ps8tln0LIyTm1Wvj2zDmIDCuYc6D5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cj15zXkb; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1723667954; c=relaxed/simple;
+	bh=58NvRL6I3meHI4Ytv/TxU/cXiYub3jbCyc5s3+cIGXE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q3NnlVE6Iy1sCEv+OJloOjG8krNJQej36gdhvZBX7KgYRQxe5UJHc5bhxhsLUxXL9zuhNkuslA2ZY5f4bXaIzTCOQx8VR+vjed1eMh5oTITmNKbYgyilp4+dHWHRsgJfJCtk8xxXC4s2XNnk0enwXgE8tqSOLJInVobQcVoM+rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GIY4Uewl; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723665013;
+	s=mimecast20190719; t=1723667950;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=/f2tGiDB/aYV2fKGojac/R/nY51VPmqymykpR+kaL+k=;
-	b=Cj15zXkb4dX33uPtpNkN/lH+5xnlksvjwftGBekbKQVZqqhhNr/TLG++7E4UnkM/M33jP6
-	20xfIVD3JZva4IcwYTXUs5O0mqBKiVsYKk8amdY4seHSFlTcG3qaWKxatuWZ2RfLJHjNuh
-	amn4Ihgs0pkrWhY+MD8rGW0Ib6dlHqI=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+	bh=2qkrZ0/6WswDsKwJcP06CqB1C0tA8HBneZAb2bmJdwA=;
+	b=GIY4UewlC1nlCXAQmerbgIdS940ua2jKrZV2UXQpbq8FlkKLhjXQH+z1pfe86X+htLOWhN
+	BGwuyZricdCFg3jVR00uX38eKxnu6miYzuMsd3+6v3nSpr7Fwqm9dp99FbWu14Wvx6l0BN
+	0wWGEuYG8W9IlzzYe6o33oVEyN2id44=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-411-GYkvsiM6PluIyAv1x30gAA-1; Wed,
- 14 Aug 2024 15:50:09 -0400
-X-MC-Unique: GYkvsiM6PluIyAv1x30gAA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-609-4Uw9jJb8M_aeO76Ft5VBjg-1; Wed,
+ 14 Aug 2024 16:39:05 -0400
+X-MC-Unique: 4Uw9jJb8M_aeO76Ft5VBjg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C148E1953942;
-	Wed, 14 Aug 2024 19:50:07 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.30])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 37E9E19560AA;
-	Wed, 14 Aug 2024 19:50:04 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 06CDE1956095;
+	Wed, 14 Aug 2024 20:39:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk.com (unknown [10.42.28.30])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E87101955E8C;
+	Wed, 14 Aug 2024 20:38:53 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-cc: dhowells@redhat.com, Max Kellermann <max.kellermann@ionos.com>,
-    Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
-    Jeff Layton <jlayton@kernel.org>,
-    Matthew Wilcox <willy@infradead.org>, ceph-devel@vger.kernel.org,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] netfs, ceph: Partially revert "netfs: Replace PG_fscache by setting folio->private and marking dirty"
+To: Christian Brauner <christian@brauner.io>,
+	Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/25] netfs: Read/write improvements
+Date: Wed, 14 Aug 2024 21:38:20 +0100
+Message-ID: <20240814203850.2240469-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2181766.1723665003.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 14 Aug 2024 20:50:03 +0100
-Message-ID: <2181767.1723665003@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-    =
+Hi Christian, Steve, Willy,
 
-This partially reverts commit 2ff1e97587f4d398686f52c07afde3faf3da4e5c.
+This set of patches includes a couple of fixes:
 
-In addition to reverting the removal of PG_private_2 wrangling from the
-buffered read code[1][2], the removal of the waits for PG_private_2 from
-netfs_release_folio() and netfs_invalidate_folio() need reverting too.
+ (1) Revert the removal of waits on PG_private_2 from netfs_release_page()
+     and netfs_invalidate_page().
 
-It also adds a wait into ceph_evict_inode() to wait for netfs read and
-copy-to-cache ops to complete.
+ (2) Make cachefiles take the sb_writers lock around set/removexattr.
 
-Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio->private =
-and marking dirty")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Max Kellermann <max.kellermann@ionos.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: Xiubo Li <xiubli@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: ceph-devel@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-mm@kvack.org
-Link: https://lore.kernel.org/r/3575457.1722355300@warthog.procyon.org.uk =
-[1]
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/c=
-ommit/?id=3D8e5ced7804cb9184c4a23f8054551240562a8eda [2]
----
- fs/ceph/inode.c |    1 +
- fs/netfs/misc.c |    7 +++++++
- 2 files changed, 8 insertions(+)
+A couple of adjustments to the /proc/fs/netfs/stats file:
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 71cd70514efa..4a8eec46254b 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -695,6 +695,7 @@ void ceph_evict_inode(struct inode *inode)
- =
+ (3) All the netfs stats lines begin 'Netfs:'.  Change this to something a
+     bit more useful.
 
- 	percpu_counter_dec(&mdsc->metric.total_inodes);
- =
+ (4) Add a couple of stats counters to track the numbers of skips and waits
+     on the per-inode writeback serialisation lock to make it easier to
+     check for this as a source of performance loss.
 
-+	netfs_wait_for_outstanding_io(inode);
- 	truncate_inode_pages_final(&inode->i_data);
- 	if (inode->i_state & I_PINNING_NETFS_WB)
- 		ceph_fscache_unuse_cookie(inode, true);
-diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 83e644bd518f..554a1a4615ad 100644
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -101,6 +101,8 @@ void netfs_invalidate_folio(struct folio *folio, size_=
-t offset, size_t length)
- =
+Some miscellaneous bits:
 
- 	_enter("{%lx},%zx,%zx", folio->index, offset, length);
- =
+ (5) Reduce the number of conditional branches in netfs_perform_write().
 
-+	folio_wait_private_2(folio); /* [DEPRECATED] */
-+
- 	if (!folio_test_private(folio))
- 		return;
- =
+ (6) Move the CIFS_INO_MODIFIED_ATTR flag to the netfs_inode struct and
+     remove cifs_post_modify().
 
-@@ -165,6 +167,11 @@ bool netfs_release_folio(struct folio *folio, gfp_t g=
-fp)
- =
+ (7) Move the max_len/max_nr_segs members from netfs_io_subrequest to
+     netfs_io_request as they're only needed for one subreq at a time.
 
- 	if (folio_test_private(folio))
- 		return false;
-+	if (unlikely(folio_test_private_2(folio))) { /* [DEPRECATED] */
-+		if (current_is_kswapd() || !(gfp & __GFP_FS))
-+			return false;
-+		folio_wait_private_2(folio);
-+	}
- 	fscache_note_page_release(netfs_i_cookie(ctx));
- 	return true;
- }
+ (8) Add an 'unknown' source value for tracing purposes.
+
+ (9) Remove NETFS_COPY_TO_CACHE as it's no longer used.
+
+(10) Set the request work function up front at allocation time.
+
+(11) Use bh-disabling spinlocks for rreq->lock as cachefiles completion may
+     be run from block-filesystem DIO completion in softirq context.
+
+Then there's the main performance enhancing changes:
+
+(12) Define a structure, struct folio_queue, and a new iterator type,
+     ITER_FOLIOQ, to hold a buffer as a replacement for ITER_XARRAY.  See
+     that patch for questions about naming and form.
+
+(13) Provide a copy_folio_from_iter() wrapper.
+
+(14) Make cifs RDMA support ITER_FOLIOQ.
+
+(15) Use folio queues in the write-side helpers instead of xarrays.
+
+(16) Add a function to reset the iterator in a subrequest.
+
+(17) Simplify the write-side helpers to use sheaves to skip gaps rather than
+     trying to work out where gaps are.
+
+(18) In afs, make the read subrequests asynchronous, putting them into work
+     items to allow the next patch to do progressive unlocking/reading.
+
+(19) Overhaul the read-side helpers to improve performance.
+
+(20) Remove fs/netfs/io.c.
+
+(21) Fix the caching of a partial block at the end of a file.
+
+(22) Allow a store to be cancelled.
+
+Then some changes for cifs to make it use folio queues instead of xarrays
+for crypto bufferage:
+
+(23) Use raw iteration functions rather than manually coding iteration when
+     hashing data.
+
+(24) Switch to using folio_queue for crypto buffers.
+
+(25) Remove the xarray bits.
+
+Changes
+=======
+ver #2)
+ - Rebase to the merge of vfs.fixes after v6.11-rc3.
+ - Add fixes for missing waits on PG_private_2.
+ - Make the read-side helper overhaul support PG_private_2-based
+   filesystems also.
+ - When reading, only limit server downloads to the max download size, not
+   cache reads or simple zeroing.
+ - Add some missing cases of skipping forward when iterating over a folio
+   queue list when the place we're at has the current slot number parked
+   just past the last slot (typically, because we're extending the list
+   incrementally).
+ - Don't use folio_batch_release() to release the refs on pages in the
+   folio_queue struct mid-read as we rely on the count in the batch later.
+ - Fix the determination of whether an operation can access the cache.
+
+David
+
+David Howells (25):
+  netfs, ceph: Partially revert "netfs: Replace PG_fscache by setting
+    folio->private and marking dirty"
+  cachefiles: Fix non-taking of sb_writers around set/removexattr
+  netfs: Adjust labels in /proc/fs/netfs/stats
+  netfs: Record contention stats for writeback lock
+  netfs: Reduce number of conditional branches in netfs_perform_write()
+  netfs, cifs: Move CIFS_INO_MODIFIED_ATTR to netfs_inode
+  netfs: Move max_len/max_nr_segs from netfs_io_subrequest to
+    netfs_io_stream
+  netfs: Reserve netfs_sreq_source 0 as unset/unknown
+  netfs: Remove NETFS_COPY_TO_CACHE
+  netfs: Set the request work function upon allocation
+  netfs: Use bh-disabling spinlocks for rreq->lock
+  mm: Define struct folio_queue and ITER_FOLIOQ to handle a sequence of
+    folios
+  iov_iter: Provide copy_folio_from_iter()
+  cifs: Provide the capability to extract from ITER_FOLIOQ to RDMA SGEs
+  netfs: Use new folio_queue data type and iterator instead of xarray
+    iter
+  netfs: Provide an iterator-reset function
+  netfs: Simplify the writeback code
+  afs: Make read subreqs async
+  netfs: Speed up buffered reading
+  netfs: Remove fs/netfs/io.c
+  cachefiles, netfs: Fix write to partial block at EOF
+  netfs: Cancel dirty folios that have no storage destination
+  cifs: Use iterate_and_advance*() routines directly for hashing
+  cifs: Switch crypto buffer to use a folio_queue rather than an xarray
+  cifs: Don't support ITER_XARRAY
+
+ fs/9p/vfs_addr.c             |   5 +-
+ fs/afs/file.c                |  30 +-
+ fs/afs/fsclient.c            |   9 +-
+ fs/afs/write.c               |   4 +-
+ fs/afs/yfsclient.c           |   9 +-
+ fs/cachefiles/io.c           |  19 +-
+ fs/cachefiles/xattr.c        |  34 +-
+ fs/ceph/addr.c               |  76 ++--
+ fs/ceph/inode.c              |   1 +
+ fs/netfs/Makefile            |   4 +-
+ fs/netfs/buffered_read.c     | 766 ++++++++++++++++++++-------------
+ fs/netfs/buffered_write.c    | 309 +++++++-------
+ fs/netfs/direct_read.c       | 147 ++++++-
+ fs/netfs/internal.h          |  43 +-
+ fs/netfs/io.c                | 796 -----------------------------------
+ fs/netfs/iterator.c          |  50 +++
+ fs/netfs/main.c              |   7 +-
+ fs/netfs/misc.c              | 101 +++++
+ fs/netfs/objects.c           |  16 +-
+ fs/netfs/read_collect.c      | 544 ++++++++++++++++++++++++
+ fs/netfs/read_pgpriv2.c      | 264 ++++++++++++
+ fs/netfs/read_retry.c        | 256 +++++++++++
+ fs/netfs/stats.c             |  27 +-
+ fs/netfs/write_collect.c     | 246 ++++-------
+ fs/netfs/write_issue.c       |  93 ++--
+ fs/nfs/fscache.c             |  19 +-
+ fs/nfs/fscache.h             |   7 +-
+ fs/smb/client/cifsencrypt.c  | 144 +------
+ fs/smb/client/cifsglob.h     |   3 +-
+ fs/smb/client/cifssmb.c      |   6 +-
+ fs/smb/client/file.c         |  71 ++--
+ fs/smb/client/smb2ops.c      | 218 +++++-----
+ fs/smb/client/smb2pdu.c      |  10 +-
+ fs/smb/client/smbdirect.c    |  82 ++--
+ include/linux/folio_queue.h  | 156 +++++++
+ include/linux/iov_iter.h     | 104 +++++
+ include/linux/netfs.h        |  45 +-
+ include/linux/uio.h          |  18 +
+ include/trace/events/netfs.h | 144 +++++--
+ lib/iov_iter.c               | 240 ++++++++++-
+ lib/kunit_iov_iter.c         | 259 ++++++++++++
+ lib/scatterlist.c            |  69 ++-
+ 42 files changed, 3515 insertions(+), 1936 deletions(-)
+ delete mode 100644 fs/netfs/io.c
+ create mode 100644 fs/netfs/read_collect.c
+ create mode 100644 fs/netfs/read_pgpriv2.c
+ create mode 100644 fs/netfs/read_retry.c
+ create mode 100644 include/linux/folio_queue.h
 
 
