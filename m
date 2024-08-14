@@ -1,52 +1,55 @@
-Return-Path: <ceph-devel+bounces-1659-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1660-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C4F95132B
-	for <lists+ceph-devel@lfdr.de>; Wed, 14 Aug 2024 05:36:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1960A95187C
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 Aug 2024 12:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F55F1F23637
-	for <lists+ceph-devel@lfdr.de>; Wed, 14 Aug 2024 03:36:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5D7BB21DD1
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 Aug 2024 10:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74273BBCB;
-	Wed, 14 Aug 2024 03:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF7D1AD9C0;
+	Wed, 14 Aug 2024 10:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bnB73+uC"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A4010953;
-	Wed, 14 Aug 2024 03:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D214039879
+	for <ceph-devel@vger.kernel.org>; Wed, 14 Aug 2024 10:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723606608; cv=none; b=VhDvj2keBvrQdB1CS8sgxqO2IT6r9vBkEyfk0e24U+X7JWa6Cdhzzzw+RJQvFN4Xi0O/+T/ZHy4Cw7u4d8Ia4ZCiNi7qgLpGEN2Z9671jTYhpX3hgTT8Q5c2MM/VUUftJDvPt3wT7ElwPWXGXWZ0VCzg6TU4uFWzBhti8E+9svw=
+	t=1723630686; cv=none; b=ho2p9Gx1InpPyTDQi38EQ4Tt4jBGjrs/WRqZQHDZuwYkf4sm4IpWZOY5xhgY1CZLtOe5gr1RItqOPPhrVKl7WJa95msBA6SSPELZmqEncj9B0FRVqwhAX/C3Ay0jqCq7oH8yXqYEjZrphJIXMQ0HVU8TKZKv93XzyH5p8sPGv0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723606608; c=relaxed/simple;
-	bh=6OsNJBQBUVldXwm9OyXQ0qbPsA/7FgEPlE2lfoONoEA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cui525YmcL24jWoIALF+/kAlqhVNPUy8FGBtPtXFLdW1gEO0KzB0o336fEIRds9E5mg1zVKnmDxU80jA5c0Av+i4FTbHWbzVG6KWt+ZWixMYSyvdv0wizXVX9dh5R2PWDOCpf8+12DQoqAPBqMotVjtS1lHdac3KTbaigZ9gke0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WkDPG5GMsz1HFwv;
-	Wed, 14 Aug 2024 11:33:38 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id C1D92140109;
-	Wed, 14 Aug 2024 11:36:42 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 14 Aug
- 2024 11:36:42 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <xiubli@redhat.com>, <idryomov@gmail.com>, <mchangir@redhat.com>,
-	<jlayton@kernel.org>
-CC: <ceph-devel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH -next] ceph: Remove unused declarations
-Date: Wed, 14 Aug 2024 11:34:15 +0800
-Message-ID: <20240814033415.3800889-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723630686; c=relaxed/simple;
+	bh=dO+V3Q4mP5ciW1bskPsfNP/iO06+JgIWP+/xapvpFuU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UsxW8dDsBbxAxSmfVfwaqHDa5lpG62+2+/hGMl4cbOs4rDi5crudppJoiOzCgdeVT0zQnTYyPojBVdCCCWX5InClS2n9fbmErAi7pgsBEiQA5olehnJGd3FforHNGtk3OxsXLmAprIPpcxl2WUIdv0ojSHXEde24bPoEsLIG/dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bnB73+uC; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723630680;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kvi/W8gOyyklHrp/rAIiYdjJk0RXfYfHnh/CvWe1Mpg=;
+	b=bnB73+uC8YaUXiP1QvbZ43ueP4gSV5uMMrv5clNaQAlIngqwu2M8OeUJ2ehBq/Fa7/gGD5
+	Ml1MK0ufFq/abZeihTeJ5pCiWf7dnyE826yZWpayw6uZlMQtuV7SyT1j8AjCWVu3B6B0Ts
+	mXuzbn/PjnrWrLeL26XOll2n+HEodNM=
+From: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+To: Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Milind Changire <mchangir@redhat.com>
+Cc: ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+Subject: [PATCH] ceph: fix memory in MDS client cap_auths
+Date: Wed, 14 Aug 2024 11:17:50 +0100
+Message-ID: <20240814101750.13293-1-luis.henriques@linux.dev>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -54,60 +57,41 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+X-Migadu-Flow: FLOW_OUT
 
-These functions is never implemented and used.
+The cap_auths that are allocated during an MDS session opening are never
+released, causing a memory leak detected by kmemleak.  Fix this by freeing
+the memory allocated when shutting down the mds client.
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Fixes: 1d17de9534cb ("ceph: save cap_auths in MDS client when session is opened")
+Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
 ---
- fs/ceph/mds_client.h            | 3 ---
- fs/ceph/super.h                 | 2 --
- include/linux/ceph/osd_client.h | 2 --
- 3 files changed, 7 deletions(-)
+ fs/ceph/mds_client.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 9bcc7f181bfe..585ab5a6d87d 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -559,9 +559,6 @@ extern struct ceph_mds_session *
- ceph_get_mds_session(struct ceph_mds_session *s);
- extern void ceph_put_mds_session(struct ceph_mds_session *s);
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 276e34ab3e2c..d798d0a5b2b1 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -6015,6 +6015,20 @@ static void ceph_mdsc_stop(struct ceph_mds_client *mdsc)
+ 		ceph_mdsmap_destroy(mdsc->mdsmap);
+ 	kfree(mdsc->sessions);
+ 	ceph_caps_finalize(mdsc);
++
++	if (mdsc->s_cap_auths) {
++		int i;
++
++		mutex_lock(&mdsc->mutex);
++		for (i = 0; i < mdsc->s_cap_auths_num; i++) {
++			kfree(mdsc->s_cap_auths[i].match.gids);
++			kfree(mdsc->s_cap_auths[i].match.path);
++			kfree(mdsc->s_cap_auths[i].match.fs_name);
++		}
++		kfree(mdsc->s_cap_auths);
++		mutex_unlock(&mdsc->mutex);
++	}
++
+ 	ceph_pool_perm_destroy(mdsc);
+ }
  
--extern int ceph_send_msg_mds(struct ceph_mds_client *mdsc,
--			     struct ceph_msg *msg, int mds);
--
- extern int ceph_mdsc_init(struct ceph_fs_client *fsc);
- extern void ceph_mdsc_close_sessions(struct ceph_mds_client *mdsc);
- extern void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc);
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 6e817bf1337c..c88bf53f68e9 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1056,8 +1056,6 @@ extern int ceph_fill_trace(struct super_block *sb,
- extern int ceph_readdir_prepopulate(struct ceph_mds_request *req,
- 				    struct ceph_mds_session *session);
- 
--extern int ceph_inode_holds_cap(struct inode *inode, int mask);
--
- extern bool ceph_inode_set_size(struct inode *inode, loff_t size);
- extern void __ceph_do_pending_vmtruncate(struct inode *inode);
- 
-diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-index f66f6aac74f6..d7941478158c 100644
---- a/include/linux/ceph/osd_client.h
-+++ b/include/linux/ceph/osd_client.h
-@@ -449,8 +449,6 @@ extern int ceph_osdc_init(struct ceph_osd_client *osdc,
- extern void ceph_osdc_stop(struct ceph_osd_client *osdc);
- extern void ceph_osdc_reopen_osds(struct ceph_osd_client *osdc);
- 
--extern void ceph_osdc_handle_reply(struct ceph_osd_client *osdc,
--				   struct ceph_msg *msg);
- extern void ceph_osdc_handle_map(struct ceph_osd_client *osdc,
- 				 struct ceph_msg *msg);
- void ceph_osdc_update_epoch_barrier(struct ceph_osd_client *osdc, u32 eb);
--- 
-2.34.1
-
 
