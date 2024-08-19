@@ -1,79 +1,80 @@
-Return-Path: <ceph-devel+bounces-1695-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1696-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECFCA9560CD
-	for <lists+ceph-devel@lfdr.de>; Mon, 19 Aug 2024 03:17:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228F09560E7
+	for <lists+ceph-devel@lfdr.de>; Mon, 19 Aug 2024 03:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C1DBB21F65
-	for <lists+ceph-devel@lfdr.de>; Mon, 19 Aug 2024 01:17:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC700282161
+	for <lists+ceph-devel@lfdr.de>; Mon, 19 Aug 2024 01:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45051946B;
-	Mon, 19 Aug 2024 01:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E59621EB3D;
+	Mon, 19 Aug 2024 01:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MPNp7855"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dckD/Va9"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87631B960
-	for <ceph-devel@vger.kernel.org>; Mon, 19 Aug 2024 01:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAE01A270
+	for <ceph-devel@vger.kernel.org>; Mon, 19 Aug 2024 01:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724030222; cv=none; b=CbShR8udmfTPrtui3qgyJ861+zDvJ5KMrzRWwDv+JJjwCtledSISNBlGKe9QFHwpUjoPcB/QbLymUYd5i3v8xRuhht1D98IDfZ/SbpTNBMqwptE/4ZDpAEi2TxA9A5Taegjc0nTC3trhjiIbqmjqWPWtcmH37ubJuKlrbzDq440=
+	t=1724031107; cv=none; b=iAPMVsslR+2ZXoAVKegbPx5kaq60oj9w4XpMenc78TUEIG4qU+0hr4yMFQDmIH3gXHtkl0jP4PODSO2pw0fWw08zJCUKppaPOGJVJrze3hyas/gW2Wksb8KLVuHbMcKkFsHDmJph6cM6MqP3Xv01x4qbDjTMCSesdGFtvjOdeAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724030222; c=relaxed/simple;
-	bh=tp/Xpdn1oemCOIemM7zlCWHNVyPm8ld8A4jJVsyxICU=;
+	s=arc-20240116; t=1724031107; c=relaxed/simple;
+	bh=HQ5/dI0Bdm9EgRmrjx9EPAhLLGK7WM59NQ2TNadHhEY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pgfaZVjjErWW+e0m9zDFbK7iBpYuh7XVQRZTKRQDYwfxjXJiVEc5eXEcNhu9REBiHkvPHzKsPjbDgCS7uEBeTBEYYfsCygQGGVHLvKT9Joo+b4fP5sxHwzEhZN8dN1ddMhckxd6lvlKdzeNp4VSpkDRbuCjLacGZgIo4XiYWVTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MPNp7855; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=dl0xP8O/KTElimCoTFxy3kSAPBs0hjd3x5gzKhozYo4TndjKeXIXNmQYhzTxbZJZrVRKR8xJS9JoLgFKS16eO3vMvkygU/zs9+Tj17xHYvuCG6JVq/7rPZc1gYPFhQrCXJqMzqMLeAYghoNAhAWT+lixRoPO8xaQ0/ap55H7N5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dckD/Va9; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724030219;
+	s=mimecast20190719; t=1724031103;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=n6JHQznnoP2B1M81XzspAZrHfEQzedoU2DAU6mxzvA0=;
-	b=MPNp7855NgBnYJdmMjTLdO/g8JZ+oGXAbfmt0D5lbYPxacK+20M2DWoWb6MmdC3CpGAIxs
-	sjZD44Gfij134qXVd4qx3Dh4PvdlRSL8G0OtIP/enj4O3BmZikGz0Rgvdb2HJtwqQd97VE
-	ugLGkAfvF4w7RWsIwbwpbpJu1E5yx2U=
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com
- [209.85.160.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=+CCs3r6hJH4DMfIS+VQJMNGzaRyfgBQFWrMHED7vXl8=;
+	b=dckD/Va9vV6fg1h/SXbPOI9PcwJpa9hSdAjHeECxtN/y5Ln9oZ6JuzyKDpAn8VniQ2xe7Q
+	TDiWkiRyj+JajNPQj06iAzFlzaVpXOhDIukC7k6hyvhIqmleCI+p3xMbthn7SkGNgNQ/qn
+	iavUW78rGh7FxWen7yFTy6chZHah/J0=
+Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
+ [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-55-l7rAojqsOSeYRs2bErBX3w-1; Sun, 18 Aug 2024 21:16:58 -0400
-X-MC-Unique: l7rAojqsOSeYRs2bErBX3w-1
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-2701a253946so3987313fac.3
-        for <ceph-devel@vger.kernel.org>; Sun, 18 Aug 2024 18:16:58 -0700 (PDT)
+ us-mta-76-sNHuauoHOpiaNRYBN96-lg-1; Sun, 18 Aug 2024 21:31:42 -0400
+X-MC-Unique: sNHuauoHOpiaNRYBN96-lg-1
+Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-7092f2d50ceso2805033a34.2
+        for <ceph-devel@vger.kernel.org>; Sun, 18 Aug 2024 18:31:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724030217; x=1724635017;
+        d=1e100.net; s=20230601; t=1724031101; x=1724635901;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n6JHQznnoP2B1M81XzspAZrHfEQzedoU2DAU6mxzvA0=;
-        b=MtP7+NBqNPbZVEb69MoBtY9IkzxrY6pqbSSU81BH1wMP5Z7a02mE0oRcadxruy0ed4
-         2csMEjaykjXUv/6k5yHXbDBgA5/NFbrwQtHtDL9G+jSY1716ZQM+jelrjz5Pzbpq3Bol
-         1vRqlpJAUh1hsE1RbhG8CkYRxnZ/pOHCANpl3im0w07OpWq2KIgXPptzWQ4XY5TnlNiZ
-         85gbK6wDgHRMBLhJ04oDumIrk2uOSOCRhy/eeKzgLwOamkqiAewHeu31zDb8LNbN2NFq
-         PQiMW8nMX9A0eLJa2wyIAnekNKDpHSu1nitXZYAoaZWTSNQjH01gg8uep092u42yj/3G
-         2zzg==
-X-Gm-Message-State: AOJu0Yz4ckWU79S9SB7E1e3HWQGJFfhLc8jpJ+878QCE0VLZttj8w/zM
-	MOkVA88mYOgOrrKAQd18jIdyABTFq33hBx/njfhhptped+IzChyB/8ZGLluMUuecpo0i+T2397x
-	sWg+pmO0+oY6ggcxrGyrmNPHqKISIy0BD8WtWusN63l2VdJsGe2TOcEumkwA=
-X-Received: by 2002:a05:6870:d287:b0:267:e2b2:ec52 with SMTP id 586e51a60fabf-2701c575da2mr11080123fac.49.1724030217411;
-        Sun, 18 Aug 2024 18:16:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNijeH38JzYRoylQE2EDaHQsya4pFknB7VNjzjMz3uv9RcA0uMNAhd+JhGjC4VTEGgrfD3sw==
-X-Received: by 2002:a05:6870:d287:b0:267:e2b2:ec52 with SMTP id 586e51a60fabf-2701c575da2mr11080105fac.49.1724030216967;
-        Sun, 18 Aug 2024 18:16:56 -0700 (PDT)
+        bh=+CCs3r6hJH4DMfIS+VQJMNGzaRyfgBQFWrMHED7vXl8=;
+        b=WTZ6hhr9dGoVqATFQaDo4ju/NLUvgKntrNSJIGxqbLr+l9fl/61Kc3ncUHSvhFVE6k
+         H9l6k52qLXWKxKBN30AyPMPy+hEUfqty10IfBfoQvfy214a06vu6oUBnh9yx06yQs3Sb
+         JGFOj0dF9283afxloVQ4a02ayXO5x+JNxvZ4kkK6uNT2G8aYGWMJgIuyb8heIr4VxInt
+         qi5P37vR8hkPQdrohQqwGvCHyV54zLafjQideQaGACPoALmTbRgXvyaDvcFOU9CXFhK1
+         wnTfzEgJNwuLYtSG/3iSQC7S1lBLtDZKOqqycStqo1jLmeHTRjKbAwdE4PkjkBCCkWBt
+         5Xpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRzqjsCHZOoUK/4lGHFErp2LQh1qHXc3za5h3X3uTPVSADqM6bjJYDPmF1uXKQEF2XaMKrfoc+12LNbD4HiyT1hziGsc1BRVStgw==
+X-Gm-Message-State: AOJu0YwSRb9xLGcA1lgAHnjm2dCmYvDL4GZ/BbvsNukJZlIyoXNmENBo
+	5QBP2cWflJOer+U2QHKcHUW6/mA0yj2+jcn/AVASYa2NHLgHdj92ZihYsl64LeBIODcJJHFXlWd
+	xV+I02foNkmaIbb01s6cW8VPNkmtk8WYN1/5S2PccsChKicrspjKvMMJWVrw=
+X-Received: by 2002:a05:6830:919:b0:709:47a6:627c with SMTP id 46e09a7af769-70cac84915emr9933895a34.4.1724031101678;
+        Sun, 18 Aug 2024 18:31:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG6X1a7pPkn+SUa6v7Wbgpm6Nj8OlxFtxYJDnVVkia7xEYC08b4X5v9+urMoiKWMtuL+brG/w==
+X-Received: by 2002:a05:6830:919:b0:709:47a6:627c with SMTP id 46e09a7af769-70cac84915emr9933887a34.4.1724031101377;
+        Sun, 18 Aug 2024 18:31:41 -0700 (PDT)
 Received: from [10.72.116.30] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7127add6de9sm5930734b3a.12.2024.08.18.18.16.54
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61dd9c9sm6712306a12.41.2024.08.18.18.31.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Aug 2024 18:16:56 -0700 (PDT)
-Message-ID: <74549d76-1187-4ed6-9589-e5978ba513d0@redhat.com>
-Date: Mon, 19 Aug 2024 09:16:51 +0800
+        Sun, 18 Aug 2024 18:31:40 -0700 (PDT)
+Message-ID: <de34373f-7e53-406f-9ac3-cd9d7dc1c889@redhat.com>
+Date: Mon, 19 Aug 2024 09:31:32 +0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -81,72 +82,97 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] ceph: Remove unused declarations
-To: Yue Haibing <yuehaibing@huawei.com>, idryomov@gmail.com,
- mchangir@redhat.com, jlayton@kernel.org
-Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240814033415.3800889-1-yuehaibing@huawei.com>
+Subject: Re: [PATCH] netfs, ceph: Partially revert "netfs: Replace PG_fscache
+ by setting folio->private and marking dirty"
+To: David Howells <dhowells@redhat.com>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+ Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, ceph-devel@vger.kernel.org,
+ netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <2181767.1723665003@warthog.procyon.org.uk>
 Content-Language: en-US
 From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20240814033415.3800889-1-yuehaibing@huawei.com>
+In-Reply-To: <2181767.1723665003@warthog.procyon.org.uk>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
-On 8/14/24 11:34, Yue Haibing wrote:
-> These functions is never implemented and used.
+On 8/15/24 03:50, David Howells wrote:
+>      
+> This partially reverts commit 2ff1e97587f4d398686f52c07afde3faf3da4e5c.
 >
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> In addition to reverting the removal of PG_private_2 wrangling from the
+> buffered read code[1][2], the removal of the waits for PG_private_2 from
+> netfs_release_folio() and netfs_invalidate_folio() need reverting too.
+>
+> It also adds a wait into ceph_evict_inode() to wait for netfs read and
+> copy-to-cache ops to complete.
+>
+> Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio->private and marking dirty")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Max Kellermann <max.kellermann@ionos.com>
+> cc: Ilya Dryomov <idryomov@gmail.com>
+> cc: Xiubo Li <xiubli@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: ceph-devel@vger.kernel.org
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> cc: linux-mm@kvack.org
+> Link: https://lore.kernel.org/r/3575457.1722355300@warthog.procyon.org.uk [1]
+> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8e5ced7804cb9184c4a23f8054551240562a8eda [2]
 > ---
->   fs/ceph/mds_client.h            | 3 ---
->   fs/ceph/super.h                 | 2 --
->   include/linux/ceph/osd_client.h | 2 --
->   3 files changed, 7 deletions(-)
+>   fs/ceph/inode.c |    1 +
+>   fs/netfs/misc.c |    7 +++++++
+>   2 files changed, 8 insertions(+)
 >
-> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-> index 9bcc7f181bfe..585ab5a6d87d 100644
-> --- a/fs/ceph/mds_client.h
-> +++ b/fs/ceph/mds_client.h
-> @@ -559,9 +559,6 @@ extern struct ceph_mds_session *
->   ceph_get_mds_session(struct ceph_mds_session *s);
->   extern void ceph_put_mds_session(struct ceph_mds_session *s);
+> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> index 71cd70514efa..4a8eec46254b 100644
+> --- a/fs/ceph/inode.c
+> +++ b/fs/ceph/inode.c
+> @@ -695,6 +695,7 @@ void ceph_evict_inode(struct inode *inode)
 >   
-> -extern int ceph_send_msg_mds(struct ceph_mds_client *mdsc,
-> -			     struct ceph_msg *msg, int mds);
-> -
->   extern int ceph_mdsc_init(struct ceph_fs_client *fsc);
->   extern void ceph_mdsc_close_sessions(struct ceph_mds_client *mdsc);
->   extern void ceph_mdsc_force_umount(struct ceph_mds_client *mdsc);
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index 6e817bf1337c..c88bf53f68e9 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -1056,8 +1056,6 @@ extern int ceph_fill_trace(struct super_block *sb,
->   extern int ceph_readdir_prepopulate(struct ceph_mds_request *req,
->   				    struct ceph_mds_session *session);
+>   	percpu_counter_dec(&mdsc->metric.total_inodes);
 >   
-> -extern int ceph_inode_holds_cap(struct inode *inode, int mask);
-> -
->   extern bool ceph_inode_set_size(struct inode *inode, loff_t size);
->   extern void __ceph_do_pending_vmtruncate(struct inode *inode);
+> +	netfs_wait_for_outstanding_io(inode);
+>   	truncate_inode_pages_final(&inode->i_data);
+>   	if (inode->i_state & I_PINNING_NETFS_WB)
+>   		ceph_fscache_unuse_cookie(inode, true);
+> diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
+> index 83e644bd518f..554a1a4615ad 100644
+> --- a/fs/netfs/misc.c
+> +++ b/fs/netfs/misc.c
+> @@ -101,6 +101,8 @@ void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t length)
 >   
-> diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-> index f66f6aac74f6..d7941478158c 100644
-> --- a/include/linux/ceph/osd_client.h
-> +++ b/include/linux/ceph/osd_client.h
-> @@ -449,8 +449,6 @@ extern int ceph_osdc_init(struct ceph_osd_client *osdc,
->   extern void ceph_osdc_stop(struct ceph_osd_client *osdc);
->   extern void ceph_osdc_reopen_osds(struct ceph_osd_client *osdc);
+>   	_enter("{%lx},%zx,%zx", folio->index, offset, length);
 >   
-> -extern void ceph_osdc_handle_reply(struct ceph_osd_client *osdc,
-> -				   struct ceph_msg *msg);
->   extern void ceph_osdc_handle_map(struct ceph_osd_client *osdc,
->   				 struct ceph_msg *msg);
->   void ceph_osdc_update_epoch_barrier(struct ceph_osd_client *osdc, u32 eb);
+> +	folio_wait_private_2(folio); /* [DEPRECATED] */
+> +
+>   	if (!folio_test_private(folio))
+>   		return;
+>   
+> @@ -165,6 +167,11 @@ bool netfs_release_folio(struct folio *folio, gfp_t gfp)
+>   
+>   	if (folio_test_private(folio))
+>   		return false;
+> +	if (unlikely(folio_test_private_2(folio))) { /* [DEPRECATED] */
+> +		if (current_is_kswapd() || !(gfp & __GFP_FS))
+> +			return false;
+> +		folio_wait_private_2(folio);
+> +	}
+>   	fscache_note_page_release(netfs_i_cookie(ctx));
+>   	return true;
+>   }
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+Just back from PTOs.
 
-Thanks!
+This LGTM and I will run the test today locally.
+
+Thanks David.
+
+- Xiubo
 
 
 
