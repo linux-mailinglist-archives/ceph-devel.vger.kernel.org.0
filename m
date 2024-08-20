@@ -1,177 +1,268 @@
-Return-Path: <ceph-devel+bounces-1700-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1701-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65BD9957E53
-	for <lists+ceph-devel@lfdr.de>; Tue, 20 Aug 2024 08:38:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FDBF957F0C
+	for <lists+ceph-devel@lfdr.de>; Tue, 20 Aug 2024 09:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D05DD1F24756
-	for <lists+ceph-devel@lfdr.de>; Tue, 20 Aug 2024 06:38:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4D05285BDB
+	for <lists+ceph-devel@lfdr.de>; Tue, 20 Aug 2024 07:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8301E4F06;
-	Tue, 20 Aug 2024 06:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22414181339;
+	Tue, 20 Aug 2024 07:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ecli/CT9"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lPAQPgR5"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6136D1DF68E
-	for <ceph-devel@vger.kernel.org>; Tue, 20 Aug 2024 06:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724135631; cv=none; b=eMxp4Gyi4bbsFTwOWeVfJRkFqEATRZVY82Q8D4Vv9zMqLtGLiy0p6yVIlEfled6x7RSAsuGWP8JCRF2g1CJ9faTP44mVrkqE83z8pq2afmAK18IIKDCDtgKkLDqHnXUX7AS9f4gM9KI/OLjlawAxEUNuS0xlAs45Or9nc09u5UI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724135631; c=relaxed/simple;
-	bh=s6oLVLudE3Hlrcb3NSM12n/aL0wm6duShgC7tYMwKjk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TEFuHWjJ6bLSg/5hmvIsHM8UYCgMz2Cgg5IJtZrgYq4Wh4cy3/dhtGWcCr0NPFBEP/G8KGg8wqWLGU0TlqA/t+mITs5FREg9gMk8kqt8vALxl61b7jYx2sWXvFbsWVjanMblsmJrYT111tz88g97tfpa1pFmwfKljWOWEDt0/IU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ecli/CT9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724135627;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lxu/JaDhP8Y+hBmSZIP+97DXMICgK3G2N7aESVf67vs=;
-	b=Ecli/CT9Eue15Yy7IQxrQVQaDbkZ0w1oIQ4qlliT/HL/cE8oGXmN1LFvpPN739haM7OLpO
-	4Lq+Ru00MPSoM8dcSI7JCA9xc1J6c2rvwFX15IzZMOpXVNeDcMxrQSiY5d1N6rIwDPc8Dd
-	fQdYP51HR5LnRyF1IzVDYMQThcDGaH0=
-Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
- [209.85.167.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-515-WAVHK0juPnaTsn1EP0qfqg-1; Tue, 20 Aug 2024 02:33:45 -0400
-X-MC-Unique: WAVHK0juPnaTsn1EP0qfqg-1
-Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3db1d480843so4456543b6e.2
-        for <ceph-devel@vger.kernel.org>; Mon, 19 Aug 2024 23:33:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724135624; x=1724740424;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lxu/JaDhP8Y+hBmSZIP+97DXMICgK3G2N7aESVf67vs=;
-        b=jlxngBf61AyyRhVCAOrS0kU/aHFKjQPpGP1KPG9YPpH2y2F25xbxCxanyrVkjiZyid
-         IYrSdr0sKsEFBpPGQmSgWceIyUYqaTuvLgzK5p51gPMoHyHECZiNDn30iW/bL49J9xKm
-         eo8Gq2sSuULduZyxUPgjCgwjA8sg4XL84K/iNOvy/PcqqbW8jkUC2znTbUBpdCWRItgi
-         64MTZR8yEBjr+ESB7YmXAq/ZA7Ij+ZGxATWK85poOp/69H3gQPqgQWr6Oci1qYAXOmyo
-         8uTvKD4qdBQV93Vpa+fGaUu4bJ9OO96mBCzVWugdgjGHJjd8i7/OptgJfXvnFzgelTBI
-         RaFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4gzdqNjIIpjgEKZmBEuMTZyXKpKmtgtX5xMqY2mSTXXyiWLxDXrqsSZvms3GLcCeeYUyd/gHjGhV2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk7y9bXYIBR8+ZIQBhRGwdTy+fLcsedUs9d9T8akBxygqdHT4U
-	GEfvjVccdd6dx3hdEDvC2WH3gyCyWrt5CFLtk8V6JeDykSWGmFJvMUBoitMsAE7hMKa60ugNUob
-	IZuEzJluRUKCBUO3LItTbLecQPUL4qu4A4uYsqDW9nbFRGvXrp0dco0Enc/I=
-X-Received: by 2002:a05:6870:c18e:b0:261:1600:b1eb with SMTP id 586e51a60fabf-2701c5a0f1amr15718597fac.31.1724135624499;
-        Mon, 19 Aug 2024 23:33:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH8KkMFHadnq0O47HFRRH7mfcRoBRFl5n5bs0K+MpLyDgPkvJUq6Qf7YTL/Zl0oYygtgXFAZQ==
-X-Received: by 2002:a05:6870:c18e:b0:261:1600:b1eb with SMTP id 586e51a60fabf-2701c5a0f1amr15718588fac.31.1724135624177;
-        Mon, 19 Aug 2024 23:33:44 -0700 (PDT)
-Received: from [10.72.116.30] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6b61c691csm8591114a12.21.2024.08.19.23.33.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 23:33:43 -0700 (PDT)
-Message-ID: <cb360270-caf1-4128-918a-59b1bb6ab2d3@redhat.com>
-Date: Tue, 20 Aug 2024 14:33:30 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1662916BE0F;
+	Tue, 20 Aug 2024 07:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724137680; cv=fail; b=A5NRQBovDkNtb93K+WCvMB3g28eW76AThTvw32QONsO1q569IC51f7vaYO6jy4pFdUK0Yoe6SNlnBxbUEqI9jiPRS0l6BZZzefK7yvTq3whL8uOog7Xj94v/uExfdLsxtIMPgg67XN1iuPIvNF8DBv8G16GQ+J4dviisOWs9av4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724137680; c=relaxed/simple;
+	bh=ZTBiahL32hNqmkzWRKy6VzL71XDPYLtt5U1yHXthLNE=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=g3seqIMk77G0Cq+5V5Gfg7oKGuOecnCiE40Nz54C4LG1ottiN5vKd7xuJzyTqdhz2jp7nBPbZ0+tDjE96adAHefaXQH9Rpw5BeBUFF71guqSpHy92Y60nJnEN5ke97gadaksn7riDN+nGCiTDXZA4hFyjTU+X+y0XLUpjoVTez8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lPAQPgR5; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724137676; x=1755673676;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=ZTBiahL32hNqmkzWRKy6VzL71XDPYLtt5U1yHXthLNE=;
+  b=lPAQPgR50BxXvNGRkvsjS7bw3iePY6Wzqq46zpsJDvGREegZZOzWLscq
+   IVDAkX6kckJZUWCaYpGchrUDKLVC5uWXM8xqJD8DPM4/W8DRNgFVM3YjQ
+   KT26gwSGx95AXNCOD28Ic4NbbU2wHf94lOLjwShNTdD2JSw3t1gDDaQfM
+   JBi+ax9sI3MuURyZUYhv3ACy0AC77Umlpx0eSyPOsXfCvFedpkbVlNPRw
+   jtGByopV3y49YWlTUJ/QGm5yrqSBk8KCqLplvlC2CGmdXB6lbLg5bRbr6
+   B399GMQsBfY2MsAly8tU6VWWukfvR5C8McniFdgAJ/MQcNnC6gucEzH+W
+   w==;
+X-CSE-ConnectionGUID: 2Z723YOESW+tt0Vf4VdPQw==
+X-CSE-MsgGUID: YTtUey4vSie4EMuUN+Wo8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11169"; a="22582702"
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="22582702"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Aug 2024 00:07:55 -0700
+X-CSE-ConnectionGUID: lmlm4r+WQ2y7f3TdgYhDMA==
+X-CSE-MsgGUID: 9+G4E3NnSKGrnHJ/490bIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,161,1719903600"; 
+   d="scan'208";a="60330834"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Aug 2024 00:07:55 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 20 Aug 2024 00:07:54 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 20 Aug 2024 00:07:54 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 20 Aug 2024 00:07:54 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.45) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 20 Aug 2024 00:07:54 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Er9SwFFS7SMoEYukHBT03n1SM/HBQ4MkP48syntx85EAmBD2R6FTs9mT8AKo10vDmvIUklxbNeMnFEnpep2O9ym14tFtS2DWgmyvvbTQ8l9mAhfIwOq8B4LPt/pUO84EoF0vsxcLQbVMbIL+3S/G7sI81KFgjj1Fq5kt94zcS2ZaCN72OV+QP2tSYYUt7jcf0r7J5u5rq9OiOJ/1e0tINokotoT46/k7wDkqIDjYMtQLtI/rL6N0HLqSRo5Zi9Zc4w7WMo+zWBGZ09wH9xl5g/IcMD/9qkntsGtUbFsEGcyrDUXtKB5AS61BpGZxxUT3SYNOYgvANw3ckR3puBLMAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fREMayC3CWYewnj+uZxMkcim9bBx/zwwMXX1rGPGqdY=;
+ b=UThD+uj0BTEXB7X+szi83Vv/tVRdP96maIh5rOu6wjjNJxisVClhNCfOYSN9C0Bgw2nMVQX6joxBWU2UrLucSjLdqfdTYCivPwonF0/nIHKFVtr94fwdNWufj0sDqHYl0UvDA9y+zPUPSi67Zv5g7lRrSXudZW7y5NU9r4AYtH6QSfra6m8sDAmGW3nPhXMMYwynJ4PNaL9vNdtnGajn9CbpO7DYajCT3104Jkyw05oZkxzHD86bW6Dw89TJjUx3jVwDPZzhTMzEY4sIaS826DJBICfoEz3mgT6+gOKUuA685VN5QFTO2FkA5ljqtgeftnii2XPw7S5q0lu/yfGbHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by DS7PR11MB7833.namprd11.prod.outlook.com (2603:10b6:8:ea::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Tue, 20 Aug
+ 2024 07:07:50 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.7875.019; Tue, 20 Aug 2024
+ 07:07:50 +0000
+Date: Tue, 20 Aug 2024 15:07:34 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Dominique Martinet <asmadeus@codewreck.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>, Marc Dionne
+	<marc.dionne@auristor.com>, Ilya Dryomov <idryomov@gmail.com>, Steve French
+	<sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, Trond Myklebust
+	<trond.myklebust@hammerspace.com>, <v9fs@lists.linux.dev>,
+	<linux-afs@lists.infradead.org>, <ceph-devel@vger.kernel.org>,
+	<netfs@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-nfs@vger.kernel.org>, <linux-cifs@vger.kernel.org>,
+	<samba-technical@lists.samba.org>, <oliver.sang@intel.com>
+Subject: [linus:master] [9p]  e3786b29c5: xfstests.generic.465.fail
+Message-ID: <202408201441.9e7177d2-oliver.sang@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SI2PR02CA0014.apcprd02.prod.outlook.com
+ (2603:1096:4:194::19) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] netfs, ceph: Partially revert "netfs: Replace PG_fscache
- by setting folio->private and marking dirty"
-To: David Howells <dhowells@redhat.com>,
- Christian Brauner <brauner@kernel.org>
-Cc: Max Kellermann <max.kellermann@ionos.com>,
- Ilya Dryomov <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, ceph-devel@vger.kernel.org,
- netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <2181767.1723665003@warthog.procyon.org.uk>
-Content-Language: en-US
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <2181767.1723665003@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|DS7PR11MB7833:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6b380c5f-f1c2-48f9-77c6-08dcc0e6cd5b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?2/ZhI/5Yep08hMglVzbVu9y1BgSwpWUTitAMqM0+HRZ704GfojI+Y4ULyKUT?=
+ =?us-ascii?Q?DEE1kfEf+RIVLHppI6W7qFPj9LVaA8KLKCgxHYOUm65mxW2CfEDxk6Gks5AO?=
+ =?us-ascii?Q?SvFGK5AV4geLB/7JRnXPtLuj0NPL9m6ujN7uYhOfKXfmc6zobxmO6f41NTpO?=
+ =?us-ascii?Q?IfOHR0f1lLq2Yhxv/IG51edtatPF7zyXcyeP/qCO+xTAggseJxiaADx00JkE?=
+ =?us-ascii?Q?11/TBQ1fkGijrJc14ItRccrumPTvXmxFAzp2iuU3fbYB6DBXugNIV7v/9uSt?=
+ =?us-ascii?Q?XUQyaTudHGv25j2K80fHz8u3GGsflSyOXISuSVZt/4r9y6tZfJ1eYy+RVlWC?=
+ =?us-ascii?Q?N4EMxonLZMrkdA8DdoLsIQXv/IKKKB/t3BZjpfEQXqAW0ngett+KnDS/OWS5?=
+ =?us-ascii?Q?RnTqRgwAyY1EPZFg2PfKzxZthDSgn4sFny+QXSEShXikqq+Jb5Zoo+pbl5oA?=
+ =?us-ascii?Q?Tpx1bh9Vcf2nOrliAzZ5U2YetVQdSluHUuAgclfADxNNbhM/Nt5y2lQqEQWc?=
+ =?us-ascii?Q?fBrhAHz988H1XrocdlbOxrCk/5aI/2B7L1LJxU7wYTeK9Z+vT5ieHeNiZ6Zr?=
+ =?us-ascii?Q?2hM+XbGosGwuM6T7NmhJv7WlmqaMR1SkXwSCjbnP03pYB6lBKwxgjWpT34+r?=
+ =?us-ascii?Q?KYoo1qzwDBUMvEieVzL54+3aYJkWIII8RHvigFMCBMfFFu2dujM2mkRY3YoY?=
+ =?us-ascii?Q?cwZiMLkyZEvdxF6N1blIEFkKmKiKrASWGlkbumXrzyCQX0Io/r+i4IH5F1F2?=
+ =?us-ascii?Q?ufyk1VxyrnhJv3oQ6iJtKSBC5GG4Ivik1Rjo0LjpvXdj3pEmR7b8pzxBw9Fk?=
+ =?us-ascii?Q?GuTXW9P6gf7TzHJBApPL5Wbx3VE0mboroHUbbPu50bfrTI9PPYpYHa3fMEPw?=
+ =?us-ascii?Q?LG3xMA84nmLNUh9qOBO456rg6e7eKKnryFGYTxBiYIeTfjEy/kc3GOdvSE2D?=
+ =?us-ascii?Q?lsxxb1436rylQI8dhY/OWbFE8/JYm3TTlXjf/TQa4reRWO4AXinVc7zF5ycn?=
+ =?us-ascii?Q?ib5WyNIQu74f/M9Ys55Z3TdmGAfPPIN7KxRmbGGxHGtZ9BbIb6h65R+6IeZ4?=
+ =?us-ascii?Q?iEncfdZgZ089+hI/CER5V46XR1yV2ot0fQKDHBH0BPP4/ge+DEooD1Wc+xGs?=
+ =?us-ascii?Q?9m2i533Hgi5N6Wq1ARuHqE3pBIibogJ1niU8esRUCfCxwpaxNxiKAcRE9004?=
+ =?us-ascii?Q?QUzFSLY2nCdFACqSZruY1MyNCvf4MAomq4uSwBJ12jZG6Tjzr2sE2wOQcTJp?=
+ =?us-ascii?Q?vCzguCad2K97kVEU75Yq00ADMYMNZjDoGDWirQueds9Pi5JFHVHQESwwj5tF?=
+ =?us-ascii?Q?kLgu2WvkAlSDC040/efiOi5h?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?WEOLT6m8s8vQ7hS022swBKEmqm3SezAVLCDgI7Ws9ycD206JhYOlr+vGSIfm?=
+ =?us-ascii?Q?gq2hFxKvCtutzmFONajL02JVdiv/f8njOSC8oN7fF9InzwAp/QIckaZqmpjH?=
+ =?us-ascii?Q?t3wx18jEm6Udab9cn3XYZEmldQgBkqp/qFBsvEfYWA5MjUWoru3yhcOKzvgK?=
+ =?us-ascii?Q?K41i4s2ysRV5OuGFJ26SVSt2sH9kqqHxYS42/Kwn3vB4T0WymJ37lknheMR7?=
+ =?us-ascii?Q?fN4ECGMh4griiXFqka9hJH1zbuoJ57OFq1mGQigWLmaZ4zRhCZAuI+GNgjEE?=
+ =?us-ascii?Q?O1RK6Kx/flWnfRxT0R5yHOROcJc7m4+GhWtXob4Iv148XUHP34B0R3uas9ey?=
+ =?us-ascii?Q?zdP7+hefepeEagYD/9VAT0LJKX0sCzVky5VCt2+G4eqH+eQ8ctE+VJ96tCe4?=
+ =?us-ascii?Q?jl/2sG8zJZgIdi0dAJNumvQEwT1enqifaiVn9Ilt+kMGZdNxXymK7TqEj9OY?=
+ =?us-ascii?Q?cXGOYacDLaaBF5y0BejNo0KfwUA9v+lHDloOwPuAWNU/bQXSAsJgFRK1CHee?=
+ =?us-ascii?Q?FRg2R5sSbBwyA0C+HVO0KOzL6n2FzoAwgMfLtpgfC9PTfupzygTNs2cPmUXE?=
+ =?us-ascii?Q?vK73uUyBd+fEwLbC3kJDo2hCUEIsaaStVdVC/k9i8vZr4YHc0Kcq8IxQ9Lq4?=
+ =?us-ascii?Q?YggmweCLnuii5lYaCbGYdKYZareM8aFuV01vfG23pdhKj19EfXU+TE7IEGWw?=
+ =?us-ascii?Q?lVwIPPGdMM5rQopt9TZkQBfBZTa1K2b43+4VHnCoEyVhqCi2lVKZcQi6RYkH?=
+ =?us-ascii?Q?KIEkLTRv9pfE4sZjrmsqS2P+ef1XjLC8uzA9o3vL7a5cHYsKvnXxs6QZwIak?=
+ =?us-ascii?Q?fbwE3jBay6oT6rtv1Vr/6aVMAkMvXSGsHeQG++dkfe+067BAECK86CIyo/D/?=
+ =?us-ascii?Q?PIAFk3fgZJPE27Xu/EX+tcu5SWccXocXEsDKZhVDQbBWBbXgD57WhzNXDiGc?=
+ =?us-ascii?Q?6YrAVxfMNJMzg1nd52S2xcAb/a/4OpIBsPmieT+TX4kyjALkpqdNZRjnGzHI?=
+ =?us-ascii?Q?HXVyFQmkI5/5IEpddRlgWDmLRd8IbwdgIK7YGQ/M1njO9bxX2GAoc5MsK/Gz?=
+ =?us-ascii?Q?d3TT2zzN+7V97IBx8M8JQA8fBBN4ykAp9h0ZC7xEii9h3jXQ86OLlt8rZPfZ?=
+ =?us-ascii?Q?UVPckJ3xJOWHBL2u1Z1BsmwmI84/oIc66DXW9ltNBYIVf1zMOsCvqVtQAMc9?=
+ =?us-ascii?Q?BBMXVagy1xZ21YJ1MOfpij8etMGS5ityZmwwoxuSAmg9oIycWyqjnfTISTur?=
+ =?us-ascii?Q?ITQBRgBTS5PYqdW2XWUCwpvjHQ7WHFKeUvU5g/Hw51jc40TReh7NkbjgTrOA?=
+ =?us-ascii?Q?oprezJpx6h6DqKGNHEUhngqyKTBH5PbibSfbGZ6gDifMmmy48gfXW0kiag5N?=
+ =?us-ascii?Q?Fs0naCiAZOfqX3jWzNv6PyipnUCOU3zxp9iL+BeSaj4ECz6dI6i5SwqZqIKV?=
+ =?us-ascii?Q?uDy9kQ+OtMJ86ZNURqzfIhqnAOEdMKVEa2CnazzipP8JFKLrIdwywlPWNa5T?=
+ =?us-ascii?Q?vfG76UTlG7UibEyNFudwyrYFlg0cCC5TJrhgAvaUDNDfc6kTLkfb54siNaKR?=
+ =?us-ascii?Q?7yrR3Jvreb8YhWCQ9DP2gBnU/pHX/LNFYFSPcZ/EvcL7H7HdggFa4Do12TVJ?=
+ =?us-ascii?Q?iw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b380c5f-f1c2-48f9-77c6-08dcc0e6cd5b
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Aug 2024 07:07:50.0879
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8wLFrG7gMZmpYi4mcIjGupFW4KUKDzv7pdqROP29TqOqCbZqiwwJvBuv0+RY3w/ySf2E+iAlpZU/KIefLHHvwg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB7833
+X-OriginatorOrg: intel.com
 
 
-On 8/15/24 03:50, David Howells wrote:
->      
-> This partially reverts commit 2ff1e97587f4d398686f52c07afde3faf3da4e5c.
->
-> In addition to reverting the removal of PG_private_2 wrangling from the
-> buffered read code[1][2], the removal of the waits for PG_private_2 from
-> netfs_release_folio() and netfs_invalidate_folio() need reverting too.
->
-> It also adds a wait into ceph_evict_inode() to wait for netfs read and
-> copy-to-cache ops to complete.
->
-> Fixes: 2ff1e97587f4 ("netfs: Replace PG_fscache by setting folio->private and marking dirty")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Max Kellermann <max.kellermann@ionos.com>
-> cc: Ilya Dryomov <idryomov@gmail.com>
-> cc: Xiubo Li <xiubli@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: Matthew Wilcox <willy@infradead.org>
-> cc: ceph-devel@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> cc: linux-mm@kvack.org
-> Link: https://lore.kernel.org/r/3575457.1722355300@warthog.procyon.org.uk [1]
-> Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8e5ced7804cb9184c4a23f8054551240562a8eda [2]
-> ---
->   fs/ceph/inode.c |    1 +
->   fs/netfs/misc.c |    7 +++++++
->   2 files changed, 8 insertions(+)
->
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index 71cd70514efa..4a8eec46254b 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -695,6 +695,7 @@ void ceph_evict_inode(struct inode *inode)
->   
->   	percpu_counter_dec(&mdsc->metric.total_inodes);
->   
-> +	netfs_wait_for_outstanding_io(inode);
->   	truncate_inode_pages_final(&inode->i_data);
->   	if (inode->i_state & I_PINNING_NETFS_WB)
->   		ceph_fscache_unuse_cookie(inode, true);
-> diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-> index 83e644bd518f..554a1a4615ad 100644
-> --- a/fs/netfs/misc.c
-> +++ b/fs/netfs/misc.c
-> @@ -101,6 +101,8 @@ void netfs_invalidate_folio(struct folio *folio, size_t offset, size_t length)
->   
->   	_enter("{%lx},%zx,%zx", folio->index, offset, length);
->   
-> +	folio_wait_private_2(folio); /* [DEPRECATED] */
-> +
->   	if (!folio_test_private(folio))
->   		return;
->   
-> @@ -165,6 +167,11 @@ bool netfs_release_folio(struct folio *folio, gfp_t gfp)
->   
->   	if (folio_test_private(folio))
->   		return false;
-> +	if (unlikely(folio_test_private_2(folio))) { /* [DEPRECATED] */
-> +		if (current_is_kswapd() || !(gfp & __GFP_FS))
-> +			return false;
-> +		folio_wait_private_2(folio);
-> +	}
->   	fscache_note_page_release(netfs_i_cookie(ctx));
->   	return true;
->   }
->
-Tested it and worked fine.
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
-Tested-by: Xiubo Li <xiubli@redhat.com>
+Hello,
 
-Thanks
+kernel test robot noticed "xfstests.generic.465.fail" on:
 
+commit: e3786b29c54cdae3490b07180a54e2461f42144c ("9p: Fix DIO read through netfs")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+
+in testcase: xfstests
+version: xfstests-x86_64-f5ada754-1_20240812
+with following parameters:
+
+	disk: 4HDD
+	fs: ext4
+	fs2: smbv3
+	test: generic-465
+
+
+
+compiler: gcc-12
+test machine: 4 threads Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz (Skylake) with 32G memory
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202408201441.9e7177d2-oliver.sang@intel.com
+
+2024-08-17 02:14:44 mount /dev/sda1 /fs/sda1
+2024-08-17 02:14:44 mkdir -p /smbv3//cifs/sda1
+2024-08-17 02:14:44 export FSTYP=cifs
+2024-08-17 02:14:44 export TEST_DEV=//localhost/fs/sda1
+2024-08-17 02:14:44 export TEST_DIR=/smbv3//cifs/sda1
+2024-08-17 02:14:44 export CIFS_MOUNT_OPTIONS=-ousername=root,password=pass,noperm,vers=3.0,mfsymlinks,actimeo=0
+2024-08-17 02:14:44 echo generic/465
+2024-08-17 02:14:44 ./check -E tests/cifs/exclude.incompatible-smb3.txt -E tests/cifs/exclude.very-slow.txt generic/465
+FSTYP         -- cifs
+PLATFORM      -- Linux/x86_64 lkp-skl-d05 6.11.0-rc1-00012-ge3786b29c54c #1 SMP PREEMPT_DYNAMIC Fri Aug 16 01:36:30 CST 2024
+
+generic/465       - output mismatch (see /lkp/benchmarks/xfstests/results//generic/465.out.bad)
+    --- tests/generic/465.out	2024-08-12 20:11:27.000000000 +0000
+    +++ /lkp/benchmarks/xfstests/results//generic/465.out.bad	2024-08-17 02:15:42.471144932 +0000
+    @@ -1,3 +1,597 @@
+     QA output created by 465
+     non-aio dio test
+    +read file: No data available
+    +read file: Invalid argument
+    +read file: No data available
+    +read file: Invalid argument
+    +read file: No data available
+    ...
+    (Run 'diff -u /lkp/benchmarks/xfstests/tests/generic/465.out /lkp/benchmarks/xfstests/results//generic/465.out.bad'  to see the entire diff)
+Ran: generic/465
+Failures: generic/465
+Failed 1 of 1 tests
+
+
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20240820/202408201441.9e7177d2-oliver.sang@intel.com
+
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
