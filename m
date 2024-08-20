@@ -1,59 +1,61 @@
-Return-Path: <ceph-devel+bounces-1703-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1704-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B292795910C
-	for <lists+ceph-devel@lfdr.de>; Wed, 21 Aug 2024 01:21:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90AE8959119
+	for <lists+ceph-devel@lfdr.de>; Wed, 21 Aug 2024 01:22:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E16B285CC0
-	for <lists+ceph-devel@lfdr.de>; Tue, 20 Aug 2024 23:21:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B562C1C225D4
+	for <lists+ceph-devel@lfdr.de>; Tue, 20 Aug 2024 23:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A851C825D;
-	Tue, 20 Aug 2024 23:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F241C9DE9;
+	Tue, 20 Aug 2024 23:21:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KGstn2nf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HfNARwPO"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4C518E035
-	for <ceph-devel@vger.kernel.org>; Tue, 20 Aug 2024 23:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153031C825D
+	for <ceph-devel@vger.kernel.org>; Tue, 20 Aug 2024 23:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724196082; cv=none; b=gItLndtUlC5/ZsKw4Cm+fjTH611Qyf3Wp83kkP7heBY+hPc6C9pC2g1frzQRnYQGSm5NdmsfK/G+xp4LSHIYo8ekhARFn3fKcLSLpXScfCGdz6ZnLY5dsLdhXF+/kxgRRT8/TcP+euGKDpoh0tatYc3TriadB6YaOthU6viKRMo=
+	t=1724196090; cv=none; b=kG344k1ABdeQbk+wSnnk9X9xrVohVTNVgtrv/FE70CIW9maWznmw+RxnYCAVCh/s2um34Cuz46VF4PB3somY6FCWIzrj6CJc/PfOtYa3tLDc71xYpUssX/kOjW7cU+CISB1uax7lRYFWeYEwPYDWRQMsW5MWxshhHQtdZr0dP3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724196082; c=relaxed/simple;
-	bh=VIiPmwmjpJuuOg36PkDA9EDqjYYvPo2xpfcKotIB4Uc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RwhWoteHlUhWMHuHMZx4CQoI5ZUlypo9Hesjr0HX7MNImcGvGcwomI5HaUEso/5L6sHM/Fe8KHjAMeZ0l4IrofJ6tO77S0dOcc5mcXEYzuGq/nTk28vsvBEpaxLORZbFsHvjU+zCMHnjaOSVuzgp/Mm7K8kddnbBhBzPJ/qF1Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KGstn2nf; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1724196090; c=relaxed/simple;
+	bh=J0AzZjY++lVaELd9SlHmM+WmZKF2PT/cunGaBNDmsAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nhqnqmf/5iA8e2hMNAyMferlsOQvLWe1EHkx8KIhKxGe2svLEclfb0/Ncu3U1jo5RMPsU3nqdBHV5xL9DCy6FX1WIZ/DgaIx+1g3iT9zZrYwml1ZdX4AVwMhkpN39I33FdWh+3MwoxIB6pd82MW65V9q1AjFWL5o7AKQpLtRWQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HfNARwPO; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724196079;
+	s=mimecast20190719; t=1724196088;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=fCjK9t7HkWPXdjZnzcV3YJhj3lK29P+RVZIMnJ9iM+Q=;
-	b=KGstn2nfktKJhnwx+/uiiKUBMxa63m9+PKXZjI3eJUyZOaxD7wW5jnAEaXJUBSbSI14DBn
-	cJc+ZM1u5JARl6Vw3DwairttQU5Ourwhht/sKQi5JLQ/pwx6QP4MWZWdzzYlkBbnOo0/II
-	/040/tPf0zP8Y0my6xE+JVgcg2zZvZw=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i1WfTcBSz40dFfs4YPek5T5SHQcjJbpn4yprFOLb05E=;
+	b=HfNARwPOrZ1QjDDz7F+L6XRu5/fbc1oqKOPejC3gLKxjsrYtMmFZnHlJzIqnzs5nIgkUdK
+	FulJEKARDt87SetIzbBe8MFk8eCYYyeIOlfvBPYOP3z3CZMfz60aTyWgXpgg1WjRMiFBK5
+	AuYdb3v/hm7g5gVe+kwuBlM2wIXWJtI=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-617-IHAldsebOD2s3EiBWC1CDA-1; Tue,
- 20 Aug 2024 19:21:16 -0400
-X-MC-Unique: IHAldsebOD2s3EiBWC1CDA-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-515-qlsSCgy2P9econK9DfSahQ-1; Tue,
+ 20 Aug 2024 19:21:23 -0400
+X-MC-Unique: qlsSCgy2P9econK9DfSahQ-1
 Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 259D41955F40;
-	Tue, 20 Aug 2024 23:21:13 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EBEED1955D48;
+	Tue, 20 Aug 2024 23:21:19 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.42.28.30])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C53DE19560AA;
-	Tue, 20 Aug 2024 23:21:07 +0000 (UTC)
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8A1AE1955E8C;
+	Tue, 20 Aug 2024 23:21:14 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Christian Brauner <christian@brauner.io>
 Cc: David Howells <dhowells@redhat.com>,
@@ -69,10 +71,13 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-erofs@lists.ozlabs.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] mm, netfs, afs: Truncation fixes
-Date: Wed, 21 Aug 2024 00:20:54 +0100
-Message-ID: <20240820232105.3792638-1-dhowells@redhat.com>
+	linux-kernel@vger.kernel.org,
+	Marc Dionne <marc.dionne@auristor.com>
+Subject: [PATCH 1/4] mm: Fix missing folio invalidation calls during truncation
+Date: Wed, 21 Aug 2024 00:20:55 +0100
+Message-ID: <20240820232105.3792638-2-dhowells@redhat.com>
+In-Reply-To: <20240820232105.3792638-1-dhowells@redhat.com>
+References: <20240820232105.3792638-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -82,39 +87,55 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi Christian,
+When AS_RELEASE_ALWAYS is set on a mapping, the ->release_folio() and
+->invalidate_folio() calls should be invoked even if PG_private and
+PG_private_2 aren't set.  This is used by netfslib to keep track of the
+point above which reads can be skipped in favour of just zeroing pagecache
+locally.
 
-Here are some fixes for truncation, netfslib and afs that I discovered whilst
-trying Pankaj Raghav's minimum folio order patchset:
+There are a couple of places in truncation in which invalidation is only
+called when folio_has_private() is true.  Fix these to check
+folio_needs_release() instead.
 
- (1) Fix truncate to make it honour AS_RELEASE_ALWAYS in a couple of places
-     that got missed.
+Without this, the generic/075 and generic/112 xfstests (both fsx-based
+tests) fail with minimum folio size patches applied[1].
 
- (2) Fix duplicated editing of a partially invalidated folio in afs's
-     post-setattr edit phase.
+Fixes: b4fa966f03b7 ("mm, netfs, fscache: stop read optimisation when folio removed from pagecache")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+cc: Pankaj Raghav <p.raghav@samsung.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+cc: netfs@lists.linux.dev
+cc: linux-mm@kvack.org
+cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/r/20240815090849.972355-1-kernel@pankajraghav.com/ [1]
+---
+ mm/truncate.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- (3) Fix netfs_release_folio() to indicate that the folio is busy if the
-     folio is dirty (as does iomap).
-
- (4) Fix the trimming of a folio that contain streaming-write data when
-     truncation occurs into or past that folio
-
-The patches can also be found here:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-fixes
-
-Thanks,
-David
-
-David Howells (4):
-  mm: Fix missing folio invalidation calls during truncation
-  afs: Fix post-setattr file edit to do truncation correctly
-  netfs: Fix netfs_release_folio() to say no if folio dirty
-  netfs: Fix trimming of streaming-write folios in netfs_inval_folio()
-
- fs/afs/inode.c  | 11 +++++++---
- fs/netfs/misc.c | 53 +++++++++++++++++++++++++++++++++++--------------
- mm/truncate.c   |  4 ++--
- 3 files changed, 48 insertions(+), 20 deletions(-)
+diff --git a/mm/truncate.c b/mm/truncate.c
+index 4d61fbdd4b2f..0668cd340a46 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -157,7 +157,7 @@ static void truncate_cleanup_folio(struct folio *folio)
+ 	if (folio_mapped(folio))
+ 		unmap_mapping_folio(folio);
+ 
+-	if (folio_has_private(folio))
++	if (folio_needs_release(folio))
+ 		folio_invalidate(folio, 0, folio_size(folio));
+ 
+ 	/*
+@@ -219,7 +219,7 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
+ 	if (!mapping_inaccessible(folio->mapping))
+ 		folio_zero_range(folio, offset, length);
+ 
+-	if (folio_has_private(folio))
++	if (folio_needs_release(folio))
+ 		folio_invalidate(folio, offset, length);
+ 	if (!folio_test_large(folio))
+ 		return true;
 
 
