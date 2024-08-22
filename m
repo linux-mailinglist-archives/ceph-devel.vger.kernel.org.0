@@ -1,126 +1,121 @@
-Return-Path: <ceph-devel+bounces-1721-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1722-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FD0A95B818
-	for <lists+ceph-devel@lfdr.de>; Thu, 22 Aug 2024 16:15:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8814D95B93E
+	for <lists+ceph-devel@lfdr.de>; Thu, 22 Aug 2024 17:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E8E61C2316A
-	for <lists+ceph-devel@lfdr.de>; Thu, 22 Aug 2024 14:15:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00AEDB28304
+	for <lists+ceph-devel@lfdr.de>; Thu, 22 Aug 2024 15:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5C21CBEA8;
-	Thu, 22 Aug 2024 14:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2881CC8BB;
+	Thu, 22 Aug 2024 15:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="kA7BTrdu"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UKAPoAOP"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91E11C9EA9;
-	Thu, 22 Aug 2024 14:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31171CB31F
+	for <ceph-devel@vger.kernel.org>; Thu, 22 Aug 2024 15:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724336089; cv=none; b=rsAEGvTvN4OZ/PmRPZ2uLkHB17MgTlFjH5Hafpl5rLSHjpDO9qPx5Fzy4YEReqRGszjF1NfkO12+YZq9aWJK3mPyKfeVO4POVNolMshbtL2vvqKDxQyoxQfNPP+bbEvXxIADVzMiarYQtMEjTxnmmFwA/f2JrKQhG+Oapw2Ymlc=
+	t=1724338898; cv=none; b=eIfxLKT8HAjAiMHRiLavJk91eNTBLRjV7scV2tuuJemk7ZCvl4j9Cf0GcSPOmBEZs452W3UaNhzR+4LVG2eqFqGUCloGvhHmFk3bio6s/eHf3ytkTvmFbKYJcABjioZb/4N+iCEpv6yTSBOWqfNUmnBCdM/yQcDQreaNrwpbLg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724336089; c=relaxed/simple;
-	bh=ABrQ7oZj7HItZ++KBBLZhaOKkO4dlFdYO8a2+1zZoVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QLXaw3ubgmptyALBA8xQuSAQJMRjFFD/tOcppM58kVzTCVt6LIu/kM1yq1uPfAHGg/Rjs0coIGwwwTLzfHyB/fUhJSj1UWp9t5kynljCi9+prSWQHnS7H6c+NTNWoLC9X1m5bR9WPITaLbNQhcGs1lWpaMdDhVuE+CdTN+RGfew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=kA7BTrdu; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=khZNhpNB80qRXc7XUBOgMYS3wq0hh9NWDosI/OczzUc=; b=kA7BTrduAgNWa07m
-	sBvyovpgWpiK4VUq+CwvQO4Ra8y3ixBCaTUoVjcpT3vkCHjVk23/t9YZVnCHAg040+hPDTpI0YsJ/
-	adtQVxIAUcVYY1kA0d4oI7xD/zeDLBKXZ8sxZH0xguCnsSeeG5Yz6dY10d3I1sn0sZgWTWeMaWxCq
-	B5DDVxiW0tPlfXZdHxqUC3/vKEvU6BRVsP6RoRsovdXx8Z4Tph5VQ9KAicmWZop0rbREo4YdlV+Md
-	BYfsuGjHMm5CN4OI518R9K+8LP1O+XOJ5iRb0Pib6RfD0EzMAwDF3vwyjjhtMZDqgmIHH/bpgjepa
-	hCABFnv6O4zi3TbkTw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sh822-000sVD-1P;
-	Thu, 22 Aug 2024 13:39:18 +0000
-Date: Thu, 22 Aug 2024 13:39:18 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Li Zetao <lizetao1@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, marcel@holtmann.org, johan.hedberg@gmail.com,
-	luiz.dentz@gmail.com, idryomov@gmail.com, xiubli@redhat.com,
-	dsahern@kernel.org, trondmy@kernel.org, anna@kernel.org,
-	chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
-	jmaloy@redhat.com, ying.xue@windriver.com, jacob.e.keller@intel.com,
-	willemb@google.com, kuniyu@amazon.com, wuyun.abel@bytedance.com,
-	quic_abchauha@quicinc.com, gouhao@uniontech.com,
-	netdev@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
-	tipc-discussion@lists.sourceforge.net
-Subject: Re: [PATCH net-next 1/8] atm: use min() to simplify the code
-Message-ID: <Zsc_hiWX9uvg_Oep@gallifrey>
-References: <20240822133908.1042240-1-lizetao1@huawei.com>
- <20240822133908.1042240-2-lizetao1@huawei.com>
+	s=arc-20240116; t=1724338898; c=relaxed/simple;
+	bh=HzRe2jksaT1cCrv5dqF/GmSe0qz6I9yQwld3Skd3v7w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=slxOG6BZ6QOPWlYGfeP2Zh72uMJVlT3BlQIRav6yLHQW61GPqJgXbr8lpRemPZRKC0R5il9JJ3mGJPQtGI1Hkmc0IXOUiQTqV7hqDtas7nC0IBqM+ZodmK4um4No9/1cQ2nOISTPgG1lK4unBYueihcLlBSQ6TUdy2lgY9OXzRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UKAPoAOP; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1724338893;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Y98WIZxKPFZj+2fDBLN5zYtw3h6tEOgBZP3SB9fAeHs=;
+	b=UKAPoAOPyrn+AMDGfHUPIoUA8EUJAXCgwrZJPhdrpeespcNzxfmshcuqV7eeDBb9bpF+6y
+	uh68LvbwqilVyS66bOc1czbFnr3iDOjxGcB4JsMAGQj0GhKWJqmUjNkelXjdG5LbqvkgnQ
+	O1xQaMM2NwO+Jv5suNayKpla6LvF84Q=
+From: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+To: Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>
+Cc: ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+Subject: [RFC PATCH] ceph: fix out-of-bound array access when doing a file read
+Date: Thu, 22 Aug 2024 16:01:13 +0100
+Message-ID: <20240822150113.14274-1-luis.henriques@linux.dev>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20240822133908.1042240-2-lizetao1@huawei.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 13:36:47 up 106 days, 50 min,  1 user,  load average: 0.01, 0.03,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-* Li Zetao (lizetao1@huawei.com) wrote:
-> When copying data to user, it needs to determine the copy length.
-> It is easier to understand using min() here.
-> 
-> Signed-off-by: Li Zetao <lizetao1@huawei.com>
-> ---
->  net/atm/addr.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/atm/addr.c b/net/atm/addr.c
-> index 0530b63f509a..6c4c942b2cb9 100644
-> --- a/net/atm/addr.c
-> +++ b/net/atm/addr.c
-> @@ -136,7 +136,7 @@ int atm_get_addr(struct atm_dev *dev, struct sockaddr_atmsvc __user * buf,
->  	unsigned long flags;
->  	struct atm_dev_addr *this;
->  	struct list_head *head;
-> -	int total = 0, error;
-> +	size_t total = 0, error;
+If, while doing a read, the inode is updated and the size is set to zero,
+__ceph_sync_read() may not be able to handle it.  It is thus easy to hit a
+NULL pointer dereferrence by continuously reading a file while, on another
+client, we keep truncating and writing new data into it.
 
-Aren't you accidentally changing the type of 'error' there, and the function
-returns 'int'.
+This patch fixes the issue by adding extra checks to avoid integer overflows
+for the case of a zero size inode.  This will prevent the loop doing page
+copies from running and thus accessing the pages[] array beyond num_pages.
 
-Dave
+Link: https://tracker.ceph.com/issues/67524
+Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+---
+Hi!
 
+Please note that this patch is only lightly tested and, to be honest, I'm
+not sure if this is the correct way to fix this bug.  For example, if the
+inode size is 0, then maybe ceph_osdc_wait_request() should have returned
+0 and the problem would be solved.  However, it seems to be returning the
+size of the reply message and that's not something easy to change.  Or maybe
+I'm just reading it wrong.  Anyway, this is just an RFC to see if there's
+other ideas.
 
->  	struct sockaddr_atmsvc *tmp_buf, *tmp_bufp;
->  
->  	spin_lock_irqsave(&dev->lock, flags);
-> @@ -155,7 +155,7 @@ int atm_get_addr(struct atm_dev *dev, struct sockaddr_atmsvc __user * buf,
->  	    memcpy(tmp_bufp++, &this->addr, sizeof(struct sockaddr_atmsvc));
->  	spin_unlock_irqrestore(&dev->lock, flags);
->  	error = total > size ? -E2BIG : total;
-> -	if (copy_to_user(buf, tmp_buf, total < size ? total : size))
-> +	if (copy_to_user(buf, tmp_buf, min(total, size)))
->  		error = -EFAULT;
->  	kfree(tmp_buf);
->  	return error;
-> -- 
-> 2.34.1
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Also, the tracker contains a simple testcase for crashing the client.
+
+ fs/ceph/file.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 4b8d59ebda00..dc23d5e5b11e 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1200,9 +1200,9 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+ 		}
+ 
+ 		idx = 0;
+-		if (ret <= 0)
++		if ((ret <= 0) || (i_size == 0))
+ 			left = 0;
+-		else if (off + ret > i_size)
++		else if ((i_size >= off) && (off + ret > i_size))
+ 			left = i_size - off;
+ 		else
+ 			left = ret;
+@@ -1210,6 +1210,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+ 			size_t plen, copied;
+ 
+ 			plen = min_t(size_t, left, PAGE_SIZE - page_off);
++			WARN_ON_ONCE(idx >= num_pages);
+ 			SetPageUptodate(pages[idx]);
+ 			copied = copy_page_to_iter(pages[idx++],
+ 						   page_off, plen, to);
+@@ -1234,7 +1235,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_t *ki_pos,
+ 	}
+ 
+ 	if (ret > 0) {
+-		if (off >= i_size) {
++		if ((i_size >= *ki_pos) && (off >= i_size)) {
+ 			*retry_op = CHECK_EOF;
+ 			ret = i_size - *ki_pos;
+ 			*ki_pos = i_size;
 
