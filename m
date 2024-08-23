@@ -1,220 +1,142 @@
-Return-Path: <ceph-devel+bounces-1726-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1727-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B5D95C0A5
-	for <lists+ceph-devel@lfdr.de>; Fri, 23 Aug 2024 00:08:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F12C095C2F0
+	for <lists+ceph-devel@lfdr.de>; Fri, 23 Aug 2024 03:44:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 210101C2258F
-	for <lists+ceph-devel@lfdr.de>; Thu, 22 Aug 2024 22:08:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FE84B221C4
+	for <lists+ceph-devel@lfdr.de>; Fri, 23 Aug 2024 01:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E22D1D2F48;
-	Thu, 22 Aug 2024 22:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC501B80F;
+	Fri, 23 Aug 2024 01:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fjMwn3/C"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NUBI5Xpy"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911EA1D27A8
-	for <ceph-devel@vger.kernel.org>; Thu, 22 Aug 2024 22:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D891A94B
+	for <ceph-devel@vger.kernel.org>; Fri, 23 Aug 2024 01:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724364442; cv=none; b=pL9jC7bxadTQddSPq4vor0ctjyy3RVOwx1xz0w2Vo00SIOZO7cho/WB4HhOCnGXoQ4oQFCWcYRfM/ofVmAlW9Nqk44Y/G8mNn0wAZMfIqm08s7nwdtEfn3adTcEiiQVuaZEcvSWcomfjI1txyLTfAGBoeKdTuMRjgJMrTZxfE5E=
+	t=1724377437; cv=none; b=Xjy5pUaKNFbD7xlPGT1Ek3AMO1yvHZ88t9AMSnWEWLEgKmel+jOIIWC6NNBcYHSQ13HtYt8OCd8XUDH1k5Meu6Uczj/B5jNRTwQ6Xli1TJlShyZJWsjKjQqZIR8OOFuOniK+3BbU/ZKDTH6PXCSDbarNHDgBBZvwju8d5Kcq/vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724364442; c=relaxed/simple;
-	bh=BDYrAsd6P1ev6Wpp5VhwprsXS01M0sKadjGZCpGaMhk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hqJoqxCkeiG2tNxWe3dp0zNEvM90LifNRMelLBy9mF2dn0vAOIP7GmCwld1wTClkQtSFOtt49rJOBaUKeTfwvAPu9mGL26BTtIUTy8LMMntynTDRDb/F46EzEqy0ETWPt7Lw2aVoR9fKLmbA9bbAiswKyvoYBJ0LXgrvxLXL2OQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fjMwn3/C; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1724377437; c=relaxed/simple;
+	bh=NgVcCQ/knzm/n00VC2EBeQ+6MU+SmFAQYqMr2MBwrVA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jc5EweP+g8QgTAwvge/VHEgpmcy9ARV4vhxL+hNutZSY9juigeTOEGsnQNMNF0dC9VBV5f3aGQijUP1kZiUxPUAjSURNbAiTinGRxHpH/UgubVVcxCVPdCG7i03ztQB+qcf7a5StUz1xtkqzvbA+VKkz8is0FpfWEn6GpV2s3CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NUBI5Xpy; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724364439;
+	s=mimecast20190719; t=1724377434;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=K4cMR1cPV7JXYWx72h4PebZI2yNIfo6unToml+bPSHM=;
-	b=fjMwn3/C/6IXyTvq87+ndoupGiQsPdRRMuPHBZ6JoKuGTNa3X1mV13UczQlwWz9sr5wrHZ
-	DFtdEWoporZQegzDqD06y2SygKyWvyq6VBn2khmgY5mHt9bkQ6uIdCmPDojc7yMr3xcrIn
-	kMyA3g2QyI49NxI+7m7oGCcJ6am/wEA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-517-bMIxmBy2PluYI0jC0-NnCQ-1; Thu,
- 22 Aug 2024 18:07:14 -0400
-X-MC-Unique: bMIxmBy2PluYI0jC0-NnCQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C8AD61955F40;
-	Thu, 22 Aug 2024 22:07:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.42.28.30])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F0C2F19560A3;
-	Thu, 22 Aug 2024 22:07:06 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>
-Cc: David Howells <dhowells@redhat.com>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>
-Subject: [PATCH 2/2] netfs, cifs: Fix handling of short DIO read
-Date: Thu, 22 Aug 2024 23:06:49 +0100
-Message-ID: <20240822220650.318774-3-dhowells@redhat.com>
-In-Reply-To: <20240822220650.318774-1-dhowells@redhat.com>
-References: <20240822220650.318774-1-dhowells@redhat.com>
+	bh=ZiebQTQXIquzH5uU+5vCbj/ZQSVrIFh3t9Pwy/5cYBk=;
+	b=NUBI5XpyfMqlexnkhzlBG5/gbyCkjol7ozgF6oHjqF5yxK722QVGrwjjOchyvuvjF4UQuy
+	XAjmO/T0fGQFjS2V67mcRbnIwQCjyBp1KaqQ7dHu6SgzrgYum5+iXTVdMeh1qNJAInRmkg
+	nfEaskpnjsU8nbRPRHZUOmdLg91ctOE=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-654-yacIyhPHNQqzQw17ziGalQ-1; Thu, 22 Aug 2024 21:43:53 -0400
+X-MC-Unique: yacIyhPHNQqzQw17ziGalQ-1
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2023cadc9a4so13693525ad.0
+        for <ceph-devel@vger.kernel.org>; Thu, 22 Aug 2024 18:43:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724377432; x=1724982232;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZiebQTQXIquzH5uU+5vCbj/ZQSVrIFh3t9Pwy/5cYBk=;
+        b=vkqh8+mNUncMYc8SBddoImUXyPzKQQTz2odl/ZZ8F6/otVA7b0Eyu9RcNSCVzevYmG
+         Km+GDBgU/EaMtp4g9rW1U5bX14euO+2xTX/16vRqgrqLlupnHdT3SYGbn/N+QS5V29lF
+         l54zzO+AtGbfvk+YLlFaX+rJBa2SMKRVZqnPcXmyGx3Apw3uT3vXPsK6UyY09TqG3F31
+         uaSn/c/Fy9jIVSOHK2G6kPMjELTHaqu3pRajUUJfTOK7esWudNaJ95M+zQBFRCHoXAFx
+         EFc1f9s7OOzRmLGfPyDRR2cdnaI1iC+gemCeSxaQ+ajMXbjFjRiUrLjWAL8c06HdkWPU
+         xKbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVV5iTsVxTj77pdhh1m0og4xZpgW8TvjcRmZzgYzJEGgsdA9GeCcK2iYKyQbJfOoPxUnDL4up289pe9@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNBhM5RiU59Og/+xY25ujaiH0mjEmJUY3M/WQHYL2ndJNp61Qm
+	x4lLKHaZwhTlfyg66ZiLp5HGvxJBgPdzeU2R2llyg2ncVy1+Hqy/IgbzSf53xxOKz5FWIujcu7l
+	i7veTZxMhQXR5gHKUGn9dhgBqbt6w510k6ebGoVvcGWq0utsZUeXVR2h14ZU=
+X-Received: by 2002:a17:902:ce0d:b0:202:4317:79a4 with SMTP id d9443c01a7336-2039e4c5ac3mr7035485ad.33.1724377431975;
+        Thu, 22 Aug 2024 18:43:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEEHCXpQkFKJj4TZLiD84ye/nQAAmTg7vAgIcp25w8JTbA2w+iIvVhCFxfBP0wCjLwUvW5ZLg==
+X-Received: by 2002:a17:902:ce0d:b0:202:4317:79a4 with SMTP id d9443c01a7336-2039e4c5ac3mr7035335ad.33.1724377431600;
+        Thu, 22 Aug 2024 18:43:51 -0700 (PDT)
+Received: from [10.72.112.8] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385fcf6besm18584435ad.304.2024.08.22.18.43.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Aug 2024 18:43:49 -0700 (PDT)
+Message-ID: <1f8da693-4996-4a3a-9a50-4f757402d76a@redhat.com>
+Date: Fri, 23 Aug 2024 09:43:46 +0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ceph: Convert to use jiffies macro
+To: Chen Yufan <chenyufan@vivo.com>, Ilya Dryomov <idryomov@gmail.com>,
+ ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20240822095541.121094-1-chenyufan@vivo.com>
+Content-Language: en-US
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20240822095541.121094-1-chenyufan@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Short DIO reads, particularly in relation to cifs, are not being handled
-correctly by cifs and netfslib.  This can be tested by doing a DIO read of
-a file where the size of read is larger than the size of the file.  When it
-crosses the EOF, it gets a short read and this gets retried, and in the
-case of cifs, the retry read fails, with the failure being translated to
-ENODATA.
 
-Fix this by the following means:
+On 8/22/24 17:55, Chen Yufan wrote:
+> Use time_after_eq macro instead of using
+> jiffies directly to handle wraparound.
+> The modifications made compared to the previous version are as follows:
+> 1. Remove extra '+' in the header.
+>
+> Signed-off-by: Chen Yufan <chenyufan@vivo.com>
+> ---
+>   fs/ceph/caps.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 808c9c048..6a55825c3 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -17,6 +17,7 @@
+>   #include "crypto.h"
+>   #include <linux/ceph/decode.h>
+>   #include <linux/ceph/messenger.h>
+> +#include <linux/jiffies.h>
+>   
+>   /*
+>    * Capability management
+> @@ -4659,7 +4660,7 @@ unsigned long ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
+>   		 * slowness doesn't block mdsc delayed work,
+>   		 * preventing send_renew_caps() from running.
+>   		 */
+> -		if (jiffies - loop_start >= 5 * HZ)
+> +		if (time_after_eq(jiffies, loop_start + 5 * HZ))
+>   			break;
+>   	}
+>   	spin_unlock(&mdsc->cap_delay_lock);
+Hi Yufan,
 
- (1) Add a flag, NETFS_SREQ_HIT_EOF, for the filesystem to set when it
-     detects that the read did hit the EOF.
+Thanks for your patch and this LGTM.
 
- (2) Make the netfslib read assessment stop processing subrequests when it
-     encounters one with that flag set.
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
 
- (3) Return rreq->transferred, the accumulated contiguous amount read to
-     that point, to userspace for a DIO read.
+Will apply to the 'testing' branch with an adjustment of the header 
+files order.
 
- (4) Make cifs set the flag and clear the error if the read RPC returned
-     ENODATA and the read-to file position is at or after the remote inode
-     size.
+Thanks
 
- (5) Make cifs set the flag and clear the error if a short read occurred
-     without error and the read-to file position is now at the remote inode
-     size.
-
-Fixes: 69c3c023af25 ("cifs: Implement netfslib hooks")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/io.c           | 17 +++++++++++------
- fs/smb/client/smb2pdu.c | 15 ++++++++++++++-
- include/linux/netfs.h   |  1 +
- 3 files changed, 26 insertions(+), 7 deletions(-)
-
-diff --git a/fs/netfs/io.c b/fs/netfs/io.c
-index a72bc01b9609..d6510a9385dc 100644
---- a/fs/netfs/io.c
-+++ b/fs/netfs/io.c
-@@ -367,7 +367,8 @@ static void netfs_rreq_assess_dio(struct netfs_io_request *rreq)
- 		if (subreq->error || subreq->transferred == 0)
- 			break;
- 		transferred += subreq->transferred;
--		if (subreq->transferred < subreq->len)
-+		if (subreq->transferred < subreq->len ||
-+		    test_bit(NETFS_SREQ_HIT_EOF, &subreq->flags))
- 			break;
- 	}
- 
-@@ -502,7 +503,8 @@ void netfs_subreq_terminated(struct netfs_io_subrequest *subreq,
- 
- 	subreq->error = 0;
- 	subreq->transferred += transferred_or_error;
--	if (subreq->transferred < subreq->len)
-+	if (subreq->transferred < subreq->len &&
-+	    !test_bit(NETFS_SREQ_HIT_EOF, &subreq->flags))
- 		goto incomplete;
- 
- complete:
-@@ -781,10 +783,13 @@ int netfs_begin_read(struct netfs_io_request *rreq, bool sync)
- 			    TASK_UNINTERRUPTIBLE);
- 
- 		ret = rreq->error;
--		if (ret == 0 && rreq->submitted < rreq->len &&
--		    rreq->origin != NETFS_DIO_READ) {
--			trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_read);
--			ret = -EIO;
-+		if (ret == 0) {
-+			if (rreq->origin == NETFS_DIO_READ) {
-+				ret = rreq->transferred;
-+			} else if (rreq->submitted < rreq->len) {
-+				trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_read);
-+				ret = -EIO;
-+			}
- 		}
- 	} else {
- 		/* If we decrement nr_outstanding to 0, the ref belongs to us. */
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index d80107d1ba9e..e182fdbec887 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -4507,6 +4507,7 @@ static void
- smb2_readv_callback(struct mid_q_entry *mid)
- {
- 	struct cifs_io_subrequest *rdata = mid->callback_data;
-+	struct netfs_inode *ictx = netfs_inode(rdata->rreq->inode);
- 	struct cifs_tcon *tcon = tlink_tcon(rdata->req->cfile->tlink);
- 	struct TCP_Server_Info *server = rdata->server;
- 	struct smb2_hdr *shdr =
-@@ -4603,8 +4604,20 @@ smb2_readv_callback(struct mid_q_entry *mid)
- 		/* We may have got an EOF error because fallocate
- 		 * failed to enlarge the file.
- 		 */
--		if (rdata->subreq.start < rdata->subreq.rreq->i_size)
-+		if (rdata->subreq.start + rdata->subreq.transferred < rdata->subreq.rreq->i_size)
- 			rdata->result = 0;
-+		if (rdata->subreq.start + rdata->subreq.transferred + rdata->got_bytes >=
-+		    ictx->remote_i_size) {
-+			__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
-+			rdata->result = 0;
-+		}
-+	} else {
-+		if (rdata->got_bytes < rdata->actual_len &&
-+		    rdata->subreq.start + rdata->subreq.transferred + rdata->got_bytes ==
-+		    ictx->remote_i_size) {
-+			__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
-+			rdata->result = 0;
-+		}
- 	}
- 	trace_smb3_rw_credits(rreq_debug_id, subreq_debug_index, rdata->credits.value,
- 			      server->credits, server->in_flight,
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 983816608f15..c47443e7a97e 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -198,6 +198,7 @@ struct netfs_io_subrequest {
- #define NETFS_SREQ_NEED_RETRY		9	/* Set if the filesystem requests a retry */
- #define NETFS_SREQ_RETRYING		10	/* Set if we're retrying */
- #define NETFS_SREQ_FAILED		11	/* Set if the subreq failed unretryably */
-+#define NETFS_SREQ_HIT_EOF		12	/* Set if we hit the EOF */
- };
- 
- enum netfs_io_origin {
+- Xiubo
 
 
