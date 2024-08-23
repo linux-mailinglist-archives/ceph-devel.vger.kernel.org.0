@@ -1,47 +1,47 @@
-Return-Path: <ceph-devel+bounces-1729-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1730-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4942795C67C
-	for <lists+ceph-devel@lfdr.de>; Fri, 23 Aug 2024 09:25:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E6295CA83
+	for <lists+ceph-devel@lfdr.de>; Fri, 23 Aug 2024 12:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61273B21683
-	for <lists+ceph-devel@lfdr.de>; Fri, 23 Aug 2024 07:25:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D55C5B23BF8
+	for <lists+ceph-devel@lfdr.de>; Fri, 23 Aug 2024 10:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDD013B2A8;
-	Fri, 23 Aug 2024 07:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EBC16EB4B;
+	Fri, 23 Aug 2024 10:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X0vCAbUe"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WjqS93v3"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6390C12C484;
-	Fri, 23 Aug 2024 07:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918641428E8
+	for <ceph-devel@vger.kernel.org>; Fri, 23 Aug 2024 10:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724397928; cv=none; b=XPi2XmpZe7OGW1zRB/Mlao9kVX7AmWH/SEebR2GZRKN4FEyJHcj8oSYSxCUxeNG24K/trkJIRHXVA3rxdKSZC7vxOkUL2pR4W86/NeCPDQiB+4GQpzWs1QCnTERkidBHlcnPgrw6ZQdz07SVcHfxo1waoZ9RS1EzrR/TZmBexac=
+	t=1724409220; cv=none; b=NnL85+QDIzJchd0MBd+bS6kobdio9IAwQXGWRP2DE+WyJ1kg8G/LzEWx8ceCrRHim2Q9IyPlH9tfTDDboJssZfV9ijBroAMzjKjdF/Dt9OZqX++Hh9goCY5P9xhyGfoE56eate/j4skbPDxn+mdYaLTpEFtboODgDGp+pV/CQiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724397928; c=relaxed/simple;
-	bh=l2borQ6BL7UJAeCJ8fjSxCZVWGtcnM5bweA18vjtZOw=;
+	s=arc-20240116; t=1724409220; c=relaxed/simple;
+	bh=5tzmMqE4uw8YNLH37w3JdkTPy1lBds4uLS8HcjKaLqE=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NHQTP/ZCM5VJancj9g7Lz02Zn1YjC5Tb8QxJkzgrIvwULqJJA/iY/qjkcTCjE6DlTq/ppd+6oZX1/jVxqsLKWDNE9q6G2iBmpmcTqCSnSccf/mjFKQ9SafTYG1a1HWcizZBCQ/tWF2dfMwF3GLQv5Yq+5PxgMT3xKiiTi1Qk9B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X0vCAbUe; arc=none smtp.client-ip=95.215.58.181
+	 MIME-Version:Content-Type; b=Ms0VL38nCpk4ny4Q8RtVPHflLkBVqH5wxcunx3nkEtcnp61Am4Hc+gD3vwjDHdACdnGWStCKklMP+Ti/cJqGFhtRr7cKmwDcZSwxPkZI8l6r4ZFZZAopzlRNPMIbc8igNB85k16D/t+6ZOEbIovVmifDcdbYQl08Mparaaeki2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WjqS93v3; arc=none smtp.client-ip=91.218.175.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724397923;
+	t=1724409215;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=o6nm/KD+x6LmewnNHCRvgZAlRU/7D6SolWNRFixGP90=;
-	b=X0vCAbUe7cjqzn/KTpFLWQ/IA8WPDIZ1X3i7ZEd3K3LTEUBbB0ls4Ct+/5PoFDX9JtWfRJ
-	RIXM7CfDJX2jfsTHW9UhderGbVrJ0xtfHRX96C/QENigg3AKyJ0joQ+ggTxKJFtfmZj3Yo
-	qqKdluJtJhwBG3SSDD47hDiUxALM+Gw=
+	bh=23y0Dpx06rVTsxajJlUy4GfX8Ye+RAWg4FefK6RDN4E=;
+	b=WjqS93v31AaeOz0pzVGR2Z4adLcbTjz0oM06c1Y7ujqJmomR35nb+1tG6FieL7NBvE0Pq8
+	0f0kkVVWnWCxswKVxuCNXUdIVH3Bn89p4oyenW2GqSWQSsw0egg66HhkgnuQ/U9NYZeAif
+	QrecW6NMUJE5EYhBPdgQA8MNPmoL+p0=
 From: Luis Henriques <luis.henriques@linux.dev>
 To: Xiubo Li <xiubli@redhat.com>
 Cc: Ilya Dryomov <idryomov@gmail.com>,  ceph-devel@vger.kernel.org,
@@ -52,8 +52,8 @@ In-Reply-To: <0205e0b6-fad9-4519-adec-f1d1b30d9ef9@redhat.com> (Xiubo Li's
 	message of "Fri, 23 Aug 2024 09:48:16 +0800")
 References: <20240822150113.14274-1-luis.henriques@linux.dev>
 	<0205e0b6-fad9-4519-adec-f1d1b30d9ef9@redhat.com>
-Date: Fri, 23 Aug 2024 08:25:20 +0100
-Message-ID: <87ikvrhfa7.fsf@linux.dev>
+Date: Fri, 23 Aug 2024 11:33:27 +0100
+Message-ID: <87msl3lea0.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -130,18 +130,22 @@ could
 >> +		else if ((i_size >=3D off) && (off + ret > i_size))
 >
 > And the 'off' also could equal to little than the 'i_size'.
->
-> BTW, could you reproduce the crash issue ?
 
-Yes, 100% reproducible :-)
+(I forgot to comment here.)
 
-See https://tracker.ceph.com/issues/67524
+This change is _exactly_ what will prevent the NULL pointer from
+occurring, because if 'i_size' is 0, then:
+
+		left =3D i_size - off;
+
+will leave 'left' with a huge value.  And the loop 'while (left > 0) {}'
+will execute until the access to 'pages[idx]' crashes.
 
 Cheers,
 --=20
 Lu=C3=ADs
 
-
+> BTW, could you reproduce the crash issue ?
 >
 > Thanks
 >
@@ -169,4 +173,5 @@ _t *ki_pos,
 >>   			*ki_pos =3D i_size;
 >>
 >
+
 
