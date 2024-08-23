@@ -1,177 +1,107 @@
-Return-Path: <ceph-devel+bounces-1730-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1731-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E6295CA83
-	for <lists+ceph-devel@lfdr.de>; Fri, 23 Aug 2024 12:33:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7C895CC82
+	for <lists+ceph-devel@lfdr.de>; Fri, 23 Aug 2024 14:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D55C5B23BF8
-	for <lists+ceph-devel@lfdr.de>; Fri, 23 Aug 2024 10:33:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D6DF1F26985
+	for <lists+ceph-devel@lfdr.de>; Fri, 23 Aug 2024 12:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EBC16EB4B;
-	Fri, 23 Aug 2024 10:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8FA1865E7;
+	Fri, 23 Aug 2024 12:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WjqS93v3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tqr7a4k+"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918641428E8
-	for <ceph-devel@vger.kernel.org>; Fri, 23 Aug 2024 10:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A496185B70;
+	Fri, 23 Aug 2024 12:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724409220; cv=none; b=NnL85+QDIzJchd0MBd+bS6kobdio9IAwQXGWRP2DE+WyJ1kg8G/LzEWx8ceCrRHim2Q9IyPlH9tfTDDboJssZfV9ijBroAMzjKjdF/Dt9OZqX++Hh9goCY5P9xhyGfoE56eate/j4skbPDxn+mdYaLTpEFtboODgDGp+pV/CQiA=
+	t=1724416789; cv=none; b=WdFCcEPrcNUQcM8+bsUdx9V4Ye+e2ecGxv2Be8+gXFEb9ZmJFpnYWzXCrJnCoyt8Qym8K6Hm9zSaQwBxaSAqCq9FUKCbEI0GjI/2jqNSE1+xgPV50nnT56SYETGlEiuhb9F3+Bvg/qSuZGbXmlnirEOKe0jhx3rZCQIgpJozVzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724409220; c=relaxed/simple;
-	bh=5tzmMqE4uw8YNLH37w3JdkTPy1lBds4uLS8HcjKaLqE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ms0VL38nCpk4ny4Q8RtVPHflLkBVqH5wxcunx3nkEtcnp61Am4Hc+gD3vwjDHdACdnGWStCKklMP+Ti/cJqGFhtRr7cKmwDcZSwxPkZI8l6r4ZFZZAopzlRNPMIbc8igNB85k16D/t+6ZOEbIovVmifDcdbYQl08Mparaaeki2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WjqS93v3; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724409215;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=23y0Dpx06rVTsxajJlUy4GfX8Ye+RAWg4FefK6RDN4E=;
-	b=WjqS93v31AaeOz0pzVGR2Z4adLcbTjz0oM06c1Y7ujqJmomR35nb+1tG6FieL7NBvE0Pq8
-	0f0kkVVWnWCxswKVxuCNXUdIVH3Bn89p4oyenW2GqSWQSsw0egg66HhkgnuQ/U9NYZeAif
-	QrecW6NMUJE5EYhBPdgQA8MNPmoL+p0=
-From: Luis Henriques <luis.henriques@linux.dev>
-To: Xiubo Li <xiubli@redhat.com>
-Cc: Ilya Dryomov <idryomov@gmail.com>,  ceph-devel@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] ceph: fix out-of-bound array access when doing a
- file read
-In-Reply-To: <0205e0b6-fad9-4519-adec-f1d1b30d9ef9@redhat.com> (Xiubo Li's
-	message of "Fri, 23 Aug 2024 09:48:16 +0800")
-References: <20240822150113.14274-1-luis.henriques@linux.dev>
-	<0205e0b6-fad9-4519-adec-f1d1b30d9ef9@redhat.com>
-Date: Fri, 23 Aug 2024 11:33:27 +0100
-Message-ID: <87msl3lea0.fsf@linux.dev>
+	s=arc-20240116; t=1724416789; c=relaxed/simple;
+	bh=OQN7Mf7HQDUQaFApg1+V9RgbCzXwyxIPK7zuLgztQ10=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=a4Iy58aDqMM5/otSEiZEI+1chBtHNHaq7IgVYtYB7XDVfmH9Hmb0eTajIeAnOVg//CCtHVX4zCFBu8L1+XFRNBXLAS+xREmKB47QjNNM3D++EwrKvsOtJ+g9oN18dx5HGEk5p/oP7v/iv598TEJffhcODImVBuYdvXimKEvzpXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tqr7a4k+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 292C2C32786;
+	Fri, 23 Aug 2024 12:39:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724416788;
+	bh=OQN7Mf7HQDUQaFApg1+V9RgbCzXwyxIPK7zuLgztQ10=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Tqr7a4k+ccRM4DsoOY2ydy+JCEJZDrohUYfQJAvlzdh5t8ixJwsUBY0DES6Rl/oKr
+	 VbmP+9k+07wMjNk+o+6XDCeUoaTgI+jsXsnIn3Y+JR/tF5scYDamudVnGlgnKYE1Zj
+	 B9eyNR1aQwtl8u76hHA5tLSIpbqRml4b4IBNw3J2On5pNEYSKjCjIZVWrKKwFhcMIR
+	 5IgtarUhZ2Zksg/LALvyQdsi9YCec95qCJzNSZySlA/dzymJPqm59ggAOXaNvY7Q9R
+	 cr1VJYKZNJqn/sTSV9L9HnTyWNLdfrm5bUTvSFNM9zUDFDpMCtQLsWpMFM+lFU02tB
+	 ay6weNJME3dSA==
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] netfs, cifs: DIO read and read-retry fixes
+Date: Fri, 23 Aug 2024 14:39:34 +0200
+Message-ID: <20240823-relation-offiziell-fda6c4626508@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240822220650.318774-1-dhowells@redhat.com>
+References: <20240822220650.318774-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1333; i=brauner@kernel.org; h=from:subject:message-id; bh=OQN7Mf7HQDUQaFApg1+V9RgbCzXwyxIPK7zuLgztQ10=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSdaOZRKjvtxCkjtZRpcoliflzLrNA9yto3dz9n4D2cN mNb+YKqjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIl8bGFkmKibfHdXY2p8D2P7 gt4dxrZNMYKPfzS8Mpxuoqb24KpAIiPD/M//2mKuxJza36Alxn+QTc3k9y63rq8fDFb8+Hsssus eOwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 23 2024, Xiubo Li wrote:
+On Thu, 22 Aug 2024 23:06:47 +0100, David Howells wrote:
+> Here are a couple of fixes to DIO read handling and the retrying of reads,
+> particularly in relation to cifs.
+> 
+>  (1) Fix the missing credit renegotiation in cifs on the retrying of reads.
+>      The credits we had ended with the original read (or the last retry)
+>      and to perform a new read we need more credits otherwise the server
+>      can reject our read with EINVAL.
+> 
+> [...]
 
-> On 8/22/24 23:01, Luis Henriques (SUSE) wrote:
->> If, while doing a read, the inode is updated and the size is set to zero,
->> __ceph_sync_read() may not be able to handle it.  It is thus easy to hit=
- a
->> NULL pointer dereferrence by continuously reading a file while, on anoth=
-er
->> client, we keep truncating and writing new data into it.
->>
->> This patch fixes the issue by adding extra checks to avoid integer overf=
-lows
->> for the case of a zero size inode.  This will prevent the loop doing page
->> copies from running and thus accessing the pages[] array beyond num_page=
-s.
->>
->> Link: https://tracker.ceph.com/issues/67524
->> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
->> ---
->> Hi!
->>
->> Please note that this patch is only lightly tested and, to be honest, I'm
->> not sure if this is the correct way to fix this bug.  For example, if the
->> inode size is 0, then maybe ceph_osdc_wait_request() should have returned
->> 0 and the problem would be solved.  However, it seems to be returning the
->> size of the reply message and that's not something easy to change.  Or m=
-aybe
->> I'm just reading it wrong.  Anyway, this is just an RFC to see if there's
->> other ideas.
->>
->> Also, the tracker contains a simple testcase for crashing the client.
->>
->>   fs/ceph/file.c | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
->> index 4b8d59ebda00..dc23d5e5b11e 100644
->> --- a/fs/ceph/file.c
->> +++ b/fs/ceph/file.c
->> @@ -1200,9 +1200,9 @@ ssize_t __ceph_sync_read(struct inode *inode, loff=
-_t *ki_pos,
->>   		}
->>     		idx =3D 0;
->> -		if (ret <=3D 0)
->> +		if ((ret <=3D 0) || (i_size =3D=3D 0))
->
-> Hi Luis,
->
-> This change looks incorrect to me.
->
-> As I mentioned before when the 'IFILE' lock is in MIX state the 'Frw' cap=
-s could
-> be issued to multiple clients at the same time. Which means the file coul=
-d be
-> updated by another client and the local 'i_size' may haven't been changed=
- in
-> time. So in this case the 'ret' will be larger than '0' and the 'i_size' =
-could
-> be '0'.
->
->
->>   			left =3D 0;
->> -		else if (off + ret > i_size)
->> +		else if ((i_size >=3D off) && (off + ret > i_size))
->
-> And the 'off' also could equal to little than the 'i_size'.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-(I forgot to comment here.)
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-This change is _exactly_ what will prevent the NULL pointer from
-occurring, because if 'i_size' is 0, then:
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-		left =3D i_size - off;
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-will leave 'left' with a huge value.  And the loop 'while (left > 0) {}'
-will execute until the access to 'pages[idx]' crashes.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-Cheers,
---=20
-Lu=C3=ADs
-
-> BTW, could you reproduce the crash issue ?
->
-> Thanks
->
-> - Xiubo
->
->>   			left =3D i_size - off;
->>   		else
->>   			left =3D ret;
->> @@ -1210,6 +1210,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff=
-_t *ki_pos,
->>   			size_t plen, copied;
->>     			plen =3D min_t(size_t, left, PAGE_SIZE - page_off);
->> +			WARN_ON_ONCE(idx >=3D num_pages);
->>   			SetPageUptodate(pages[idx]);
->>   			copied =3D copy_page_to_iter(pages[idx++],
->>   						   page_off, plen, to);
->> @@ -1234,7 +1235,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff=
-_t *ki_pos,
->>   	}
->>     	if (ret > 0) {
->> -		if (off >=3D i_size) {
->> +		if ((i_size >=3D *ki_pos) && (off >=3D i_size)) {
->>   			*retry_op =3D CHECK_EOF;
->>   			ret =3D i_size - *ki_pos;
->>   			*ki_pos =3D i_size;
->>
->
-
+[1/2] cifs: Fix lack of credit renegotiation on read retry
+      https://git.kernel.org/vfs/vfs/c/82d55e76bf2f
+[2/2] netfs, cifs: Fix handling of short DIO read
+      https://git.kernel.org/vfs/vfs/c/942ad91e2956
 
