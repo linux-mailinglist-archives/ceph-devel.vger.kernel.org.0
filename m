@@ -1,47 +1,47 @@
-Return-Path: <ceph-devel+bounces-1753-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1754-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0894395DF4C
-	for <lists+ceph-devel@lfdr.de>; Sat, 24 Aug 2024 19:58:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B318F95DF59
+	for <lists+ceph-devel@lfdr.de>; Sat, 24 Aug 2024 20:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E292813E2
-	for <lists+ceph-devel@lfdr.de>; Sat, 24 Aug 2024 17:58:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 642B71F21BB5
+	for <lists+ceph-devel@lfdr.de>; Sat, 24 Aug 2024 18:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5972D7174F;
-	Sat, 24 Aug 2024 17:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1CA52F70;
+	Sat, 24 Aug 2024 18:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBEB53IM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VwEKT7GY"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED623987D;
-	Sat, 24 Aug 2024 17:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C4C20B0F;
+	Sat, 24 Aug 2024 18:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724522268; cv=none; b=sLOARKFArHt3VC7N07hEgEZN3HJWSXLogXAzbvuG+saE6gQ8hl45P8jiYEtudPfyGzwcAjloiVzkAI2VoEEAXRWKlqGsoPiUvnNxieIHgeW+sA5I312JhbJSdjO/ntntGo+OCTd7rUI0ELseM4p2bdL0i02E/M6p0YZKmjuqSgo=
+	t=1724522605; cv=none; b=QRYdrmJjbdzxvg4RKRvLRgmDLKii2k01vdcSr7YY6VNd5/pFn9zTf7Tt7Wxi0jcUr06tbJg5mtW7mpc/hUJ6UN7726nvtbYxISnH9N55O/tD7qu0Pn7a7QMKppuopxwe8tSmpzRB1cAGf0GT53wUP5kAta7L/Y0L6h3Ui+57DpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724522268; c=relaxed/simple;
-	bh=oEC/+m38S2q+OT1r6TMT+9zd4AY0AHroz+LufgpqoRk=;
+	s=arc-20240116; t=1724522605; c=relaxed/simple;
+	bh=RFmHCUIsqlb05LzxYhXpFiVUrQMsqddPLjxKmpoiTzU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RIZCAyLbuVlEj9w/ODbo5Ths8Ee1Qy99OqMO8pHjUhyYIx6gHhe2FQTuEN+NlwdsieaddqYM3MUMiwXc6ZeuAiX31A/I+RijDb0R1Nlh7jkewfjkaDtiIY7Cz8/NUuUmwqojIntPCDLRu64/XUmLObsHXnxO2lz1QiqWRt1F4MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBEB53IM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65B60C32781;
-	Sat, 24 Aug 2024 17:57:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=reUVzzlqkX9DZB++7E/7AsNrII3ZuM+RiaEI5OyGPnohGsMBvOvMoDw06bEnij/4IvLHavy/C1E24/fAFZCQAeVxj4g3YTZK0MNwQFZrzetI7ybzEBVHOxv6Ai3LUIMy8TqMKJ38iCEsXNq6rz3H3scGiTeI4X2hR+LSiUkzszo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VwEKT7GY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B22C4C32781;
+	Sat, 24 Aug 2024 18:03:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724522266;
-	bh=oEC/+m38S2q+OT1r6TMT+9zd4AY0AHroz+LufgpqoRk=;
+	s=k20201202; t=1724522604;
+	bh=RFmHCUIsqlb05LzxYhXpFiVUrQMsqddPLjxKmpoiTzU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WBEB53IMMPhu5BFX2LFOtSS/4/xz74sUdoNKC123AzEvkHVKNBfmVgWOVrdxYPCB9
-	 Gq0AL9akqos52Azw6lMxapx1S02zSYYi4jelYFq6bQehr+on3WDhAKMaoEmbwKBPcW
-	 OzqqMe1XGgamgJql/Txf2Q/jlbQNgFCfjpbFEn4zAcm/VFD2FnDI0k1Ul2a7gM5UCO
-	 990Nzqy5E29jDPdesnuoH/XlOcmMdnqTLnyQfPvTiA/Lpx0JC69yepnpYhs/5p+oGd
-	 +8VM6AKg8pb/MYCyvCIWCP0w/0NSHL4LBM/bV3m0JnF2BFt1AXPbE6RVyUC8q233Hh
-	 o2C/OTMNVPCXw==
-Date: Sat, 24 Aug 2024 18:57:38 +0100
+	b=VwEKT7GYEyM5O28duV16IGtZ/0bTQk5TOj8dlaU/LiSG1/7DTRY6OPgTwcJDOWw4F
+	 2SvmW8D/f1Fg2SsQKobDZYa63ofNNu0FXe1/cf2Q5NaSG5CVJTH8L69GbJlZ36hd+g
+	 bQBEQunlsXQm9Qi4Wdtvgy5dKYFyOGqvx/yZZZZoqYy0ks5GVK/IJNagGTE58UZLsZ
+	 zADAFaq/3c48Iht3dG0Uj0a85Dp7JqVdQZghu7hbO+qQ0TDSSaWO73OOGBtS/Y0fXm
+	 66YTevEkNgtY5A9AOC/DUakCBEcBTW/eamPdGSSlWsXAbMDkruYDSHexEUMLGg4v65
+	 SBlMDpa4IzBGQ==
+Date: Sat, 24 Aug 2024 19:03:16 +0100
 From: Simon Horman <horms@kernel.org>
 To: Li Zetao <lizetao1@huawei.com>
 Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
@@ -56,10 +56,10 @@ Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
 	gouhao@uniontech.com, netdev@vger.kernel.org,
 	linux-bluetooth@vger.kernel.org, ceph-devel@vger.kernel.org,
 	linux-nfs@vger.kernel.org, tipc-discussion@lists.sourceforge.net
-Subject: Re: [PATCH net-next 6/8] ipv6: mcast: use min() to simplify the code
-Message-ID: <20240824175738.GO2164@kernel.org>
+Subject: Re: [PATCH net-next 7/8] tipc: use min() to simplify the code
+Message-ID: <20240824180316.GP2164@kernel.org>
 References: <20240822133908.1042240-1-lizetao1@huawei.com>
- <20240822133908.1042240-7-lizetao1@huawei.com>
+ <20240822133908.1042240-8-lizetao1@huawei.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -68,54 +68,42 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240822133908.1042240-7-lizetao1@huawei.com>
+In-Reply-To: <20240822133908.1042240-8-lizetao1@huawei.com>
 
-On Thu, Aug 22, 2024 at 09:39:06PM +0800, Li Zetao wrote:
-> When coping sockaddr in ip6_mc_msfget(), the time of copies
-> depends on the minimum value between sl_count and gf_numsrc.
-> Using min() here is very semantic.
+On Thu, Aug 22, 2024 at 09:39:07PM +0800, Li Zetao wrote:
+> When calculating size of own domain based on number of peers, the result
+> should be less than MAX_MON_DOMAIN, so using min() here is very semantic.
 > 
 > Signed-off-by: Li Zetao <lizetao1@huawei.com>
 > ---
->  net/ipv6/mcast.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  net/tipc/monitor.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/net/ipv6/mcast.c b/net/ipv6/mcast.c
-> index 7ba01d8cfbae..b244dbf61d5f 100644
-> --- a/net/ipv6/mcast.c
-> +++ b/net/ipv6/mcast.c
-> @@ -586,7 +586,8 @@ int ip6_mc_msfget(struct sock *sk, struct group_filter *gsf,
->  	const struct in6_addr *group;
->  	struct ipv6_mc_socklist *pmc;
->  	struct ip6_sf_socklist *psl;
-> -	int i, count, copycount;
-> +	unsigned int count;
-> +	int i, copycount;
+> diff --git a/net/tipc/monitor.c b/net/tipc/monitor.c
+> index 77a3d016cade..e2f19627e43d 100644
+> --- a/net/tipc/monitor.c
+> +++ b/net/tipc/monitor.c
+> @@ -149,7 +149,7 @@ static int dom_size(int peers)
 >  
->  	group = &((struct sockaddr_in6 *)&gsf->gf_group)->sin6_addr;
->  
-> @@ -610,7 +611,7 @@ int ip6_mc_msfget(struct sock *sk, struct group_filter *gsf,
->  	psl = sock_dereference(pmc->sflist, sk);
->  	count = psl ? psl->sl_count : 0;
+>  	while ((i * i) < peers)
+>  		i++;
+> -	return i < MAX_MON_DOMAIN ? i : MAX_MON_DOMAIN;
+> +	return min(i, MAX_MON_DOMAIN);
+>  }
 
-Both count and psl->sl_count are unsigned int,
-so this looks safe (and more correct than what it replaces, IMHO).
+Perhaps this whole function is open coding something, but
+if so I couldn't find it.
 
->  
-> -	copycount = count < gsf->gf_numsrc ? count : gsf->gf_numsrc;
-> +	copycount = min(count, gsf->gf_numsrc);
+In any case this looks safe to me as i is an unsigned int
+while MAX_MON_DOMAIN is 64 (also an unsigned int, I believe).
 
-And gsf->gf_numsrc is a __u32, so min operating on it and
-count looks safe to me.
-
-Further, the code it replaces seems to be a max() operation in
-both intent and function.
+And the code being replaced appears to be a min() operation
+in both form and function.
 
 Reviewed-by: Simon Horman <horms@kernel.org>
 
->  	gsf->gf_numsrc = count;
->  	for (i = 0; i < copycount; i++) {
->  		struct sockaddr_in6 *psin6;
+>  
+>  static void map_set(u64 *up_map, int i, unsigned int v)
 > -- 
 > 2.34.1
 > 
