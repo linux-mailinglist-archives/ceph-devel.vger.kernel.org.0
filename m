@@ -1,47 +1,47 @@
-Return-Path: <ceph-devel+bounces-1752-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1753-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F39795DF38
-	for <lists+ceph-devel@lfdr.de>; Sat, 24 Aug 2024 19:38:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0894395DF4C
+	for <lists+ceph-devel@lfdr.de>; Sat, 24 Aug 2024 19:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C7ED1F21D36
-	for <lists+ceph-devel@lfdr.de>; Sat, 24 Aug 2024 17:38:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E292813E2
+	for <lists+ceph-devel@lfdr.de>; Sat, 24 Aug 2024 17:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C1E4D8BC;
-	Sat, 24 Aug 2024 17:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5972D7174F;
+	Sat, 24 Aug 2024 17:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UcQOtRSS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBEB53IM"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5554539AEB;
-	Sat, 24 Aug 2024 17:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED623987D;
+	Sat, 24 Aug 2024 17:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724521076; cv=none; b=d1G0aBX366BTW9lfrZU9kdTftEME1Wkw8kpUiDTn4oJaNewyepQ13sUSOzUMKe2ibGqt5dHCp/X1ZewcQn37iENTDPnSB15pSUdR93BYjeeZIWWabBfXzfIyu6NwHhzmqcllU/kKyvJxkzXYOgQopsB7AqGGcUKRcCl1deE3yQk=
+	t=1724522268; cv=none; b=sLOARKFArHt3VC7N07hEgEZN3HJWSXLogXAzbvuG+saE6gQ8hl45P8jiYEtudPfyGzwcAjloiVzkAI2VoEEAXRWKlqGsoPiUvnNxieIHgeW+sA5I312JhbJSdjO/ntntGo+OCTd7rUI0ELseM4p2bdL0i02E/M6p0YZKmjuqSgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724521076; c=relaxed/simple;
-	bh=kvFHrsJZkycSTtQ8Bk9AGl8Z5ArrHeL5DmVbuvmclFs=;
+	s=arc-20240116; t=1724522268; c=relaxed/simple;
+	bh=oEC/+m38S2q+OT1r6TMT+9zd4AY0AHroz+LufgpqoRk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JI8SqpNgFRFsuZ7qLyqtHDlGCml+ZP0Ig4XDfAILHaXdDhzBnLAMxYV1Yedh3+deAXjSESPoR3ZMaEqxJWDL60MJVUW3O1WKqyCtIM0klD82+8LOivlXYUOQmSL5VbmpZZGX4vbUHQCHBEdLyuu6grENJjzTywyg/Uz/7/Yj/xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UcQOtRSS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C20A0C32781;
-	Sat, 24 Aug 2024 17:37:49 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=RIZCAyLbuVlEj9w/ODbo5Ths8Ee1Qy99OqMO8pHjUhyYIx6gHhe2FQTuEN+NlwdsieaddqYM3MUMiwXc6ZeuAiX31A/I+RijDb0R1Nlh7jkewfjkaDtiIY7Cz8/NUuUmwqojIntPCDLRu64/XUmLObsHXnxO2lz1QiqWRt1F4MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBEB53IM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65B60C32781;
+	Sat, 24 Aug 2024 17:57:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724521075;
-	bh=kvFHrsJZkycSTtQ8Bk9AGl8Z5ArrHeL5DmVbuvmclFs=;
+	s=k20201202; t=1724522266;
+	bh=oEC/+m38S2q+OT1r6TMT+9zd4AY0AHroz+LufgpqoRk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UcQOtRSSjWW7zN/YQVx94pfQM7OEZjl8Ds54OGdQiAOAW5oL3HOyRJ0Kq3JHAZCWE
-	 fGDWlGWjIFWupfgOc9PMidFqC/cycQ7l7bZo0RsmMSuQzJIZqCRdwX/vDbaBJu3NAI
-	 QV9DapgZmd2U330XSXZ7Hir30DvBzRjwaRpwxUCmv3jfmAWmLgK4cHYY2kEJ6//5ik
-	 +OHW8ifYBJ2TORxAAL2N7qMOe+8o7GTHA0dksMuO8GeLXr/7WmoIjKcHTWY/Qsyr8k
-	 O97PydhxV4jUDBBDQab1BfawVDXKPE6bZ+OCNa+H6tshQwV+0w/A/sKTGM6Ar9yp8o
-	 t7xBgjeHkolDg==
-Date: Sat, 24 Aug 2024 18:37:47 +0100
+	b=WBEB53IMMPhu5BFX2LFOtSS/4/xz74sUdoNKC123AzEvkHVKNBfmVgWOVrdxYPCB9
+	 Gq0AL9akqos52Azw6lMxapx1S02zSYYi4jelYFq6bQehr+on3WDhAKMaoEmbwKBPcW
+	 OzqqMe1XGgamgJql/Txf2Q/jlbQNgFCfjpbFEn4zAcm/VFD2FnDI0k1Ul2a7gM5UCO
+	 990Nzqy5E29jDPdesnuoH/XlOcmMdnqTLnyQfPvTiA/Lpx0JC69yepnpYhs/5p+oGd
+	 +8VM6AKg8pb/MYCyvCIWCP0w/0NSHL4LBM/bV3m0JnF2BFt1AXPbE6RVyUC8q233Hh
+	 o2C/OTMNVPCXw==
+Date: Sat, 24 Aug 2024 18:57:38 +0100
 From: Simon Horman <horms@kernel.org>
 To: Li Zetao <lizetao1@huawei.com>
 Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
@@ -56,10 +56,10 @@ Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
 	gouhao@uniontech.com, netdev@vger.kernel.org,
 	linux-bluetooth@vger.kernel.org, ceph-devel@vger.kernel.org,
 	linux-nfs@vger.kernel.org, tipc-discussion@lists.sourceforge.net
-Subject: Re: [PATCH net-next 3/8] net: caif: use max() to simplify the code
-Message-ID: <20240824173747.GN2164@kernel.org>
+Subject: Re: [PATCH net-next 6/8] ipv6: mcast: use min() to simplify the code
+Message-ID: <20240824175738.GO2164@kernel.org>
 References: <20240822133908.1042240-1-lizetao1@huawei.com>
- <20240822133908.1042240-4-lizetao1@huawei.com>
+ <20240822133908.1042240-7-lizetao1@huawei.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -68,40 +68,56 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240822133908.1042240-4-lizetao1@huawei.com>
+In-Reply-To: <20240822133908.1042240-7-lizetao1@huawei.com>
 
-On Thu, Aug 22, 2024 at 09:39:03PM +0800, Li Zetao wrote:
-> When processing the tail append of sk buffer, the final length needs
-> to be determined based on expectlen and addlen. Using max() here can
-> increase the readability of the code.
+On Thu, Aug 22, 2024 at 09:39:06PM +0800, Li Zetao wrote:
+> When coping sockaddr in ip6_mc_msfget(), the time of copies
+> depends on the minimum value between sl_count and gf_numsrc.
+> Using min() here is very semantic.
 > 
 > Signed-off-by: Li Zetao <lizetao1@huawei.com>
 > ---
->  net/caif/cfpkt_skbuff.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+>  net/ipv6/mcast.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/net/caif/cfpkt_skbuff.c b/net/caif/cfpkt_skbuff.c
-> index 2ae8cfa3df88..96236d21b18e 100644
-> --- a/net/caif/cfpkt_skbuff.c
-> +++ b/net/caif/cfpkt_skbuff.c
-> @@ -298,10 +298,8 @@ struct cfpkt *cfpkt_append(struct cfpkt *dstpkt,
->  	if (unlikely(is_erronous(dstpkt) || is_erronous(addpkt))) {
->  		return dstpkt;
->  	}
-> -	if (expectlen > addlen)
-> -		neededtailspace = expectlen;
-> -	else
-> -		neededtailspace = addlen;
-> +
-> +	neededtailspace = max(expectlen, addlen);
+> diff --git a/net/ipv6/mcast.c b/net/ipv6/mcast.c
+> index 7ba01d8cfbae..b244dbf61d5f 100644
+> --- a/net/ipv6/mcast.c
+> +++ b/net/ipv6/mcast.c
+> @@ -586,7 +586,8 @@ int ip6_mc_msfget(struct sock *sk, struct group_filter *gsf,
+>  	const struct in6_addr *group;
+>  	struct ipv6_mc_socklist *pmc;
+>  	struct ip6_sf_socklist *psl;
+> -	int i, count, copycount;
+> +	unsigned int count;
+> +	int i, copycount;
+>  
+>  	group = &((struct sockaddr_in6 *)&gsf->gf_group)->sin6_addr;
+>  
+> @@ -610,7 +611,7 @@ int ip6_mc_msfget(struct sock *sk, struct group_filter *gsf,
+>  	psl = sock_dereference(pmc->sflist, sk);
+>  	count = psl ? psl->sl_count : 0;
 
-The types of all three variables involved here are u16,
-so this looks correct to me. And the code replaced
-seems to be an open coding of max() both in intent and function.
+Both count and psl->sl_count are unsigned int,
+so this looks safe (and more correct than what it replaces, IMHO).
+
+>  
+> -	copycount = count < gsf->gf_numsrc ? count : gsf->gf_numsrc;
+> +	copycount = min(count, gsf->gf_numsrc);
+
+And gsf->gf_numsrc is a __u32, so min operating on it and
+count looks safe to me.
+
+Further, the code it replaces seems to be a max() operation in
+both intent and function.
 
 Reviewed-by: Simon Horman <horms@kernel.org>
 
->  
->  	if (dst->tail + neededtailspace > dst->end) {
->  		/* Create a dumplicate of 'dst' with more tail space */
+>  	gsf->gf_numsrc = count;
+>  	for (i = 0; i < copycount; i++) {
+>  		struct sockaddr_in6 *psin6;
+> -- 
+> 2.34.1
+> 
+> 
 
