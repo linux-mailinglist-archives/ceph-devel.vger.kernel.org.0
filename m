@@ -1,145 +1,374 @@
-Return-Path: <ceph-devel+bounces-1765-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1766-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57187960C3D
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Aug 2024 15:37:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA82960FD2
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Aug 2024 17:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F9341C22DC3
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Aug 2024 13:37:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9008F1F218C2
+	for <lists+ceph-devel@lfdr.de>; Tue, 27 Aug 2024 15:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5B11C0DCC;
-	Tue, 27 Aug 2024 13:36:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DF31C93A3;
+	Tue, 27 Aug 2024 15:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="w+JX/Hgq"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wzwPnOiZ"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EE81BCA04
-	for <ceph-devel@vger.kernel.org>; Tue, 27 Aug 2024 13:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6BC1C6F5F;
+	Tue, 27 Aug 2024 15:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724765800; cv=none; b=Tk4fIARhVA16cGiglTcqAdTRZU8vjVQkcy/ouUqCeumPeDy+4teWdwk1Zj1l7NiltJ3eHoiMmTxjtYRGu91GUOxqx2nRyw87Ll2gsrhXxVGWUYNK/00snZ9/DeYo0y1Lm5fVMronJlYe20DFOKiEfVSEJGH2ge4BOugnBzRIzKY=
+	t=1724770922; cv=none; b=jm2gfY6YANWSvg129+pGWnaRi1Fw6SnNt6fEfpTTIXpEE3q76kBr4wAVQhhT0/MZ7a/PFlfi6J7GNemthB2drGfo57gG9ETzF1WOjCwRGLfIlJh7hqgZeA15rHa6acBnEpVQmvSzh9MG45kBnHHsQTaysY1tK8mQNooGDbPQMPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724765800; c=relaxed/simple;
-	bh=2BfLlfZNpjATIv4G7J2SgXFYlzQxHH4irggz/urF4y4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qnTo7xCFtHxuRCCRhUrDQHYG20/MBsHKjLN/XAFh8jms6b7PRthyPoXFY+xwBaAx3L/5i/Of55Q5NjPSnXL7Ob7zO1TqmHRx1B52XKFcZMT/SrmUyzx6qNClLbrim1Jhg9jlQLSxpxOyEWUTlNcZD73FxMxxgNLaUcpnLA/+lQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=w+JX/Hgq; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1724765796;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iRIGZ0wgkj3ZUOkwKf4jqmKYT6MZrP5kCetvM2EiQSI=;
-	b=w+JX/HgqXJY99M2E1FzwM/vwsbRRKPRUp+jjaol77ATBJkajayTrTlwJ07tJxC+jLraHyf
-	588bIZuK+HRR6oiFJydwVqpkevg+inmV1CIng0/MuriQQ6xo0XB57Qk95LF9lom7PeZyc3
-	N2CUdtz7o94Bvuwh07IwHw+V/86bqPo=
-From: Luis Henriques <luis.henriques@linux.dev>
-To: Xiubo Li <xiubli@redhat.com>
-Cc: Ilya Dryomov <idryomov@gmail.com>,  ceph-devel@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] ceph: fix out-of-bound array access when doing a
- file read
-In-Reply-To: <20240822150113.14274-1-luis.henriques@linux.dev> (Luis
-	Henriques's message of "Thu, 22 Aug 2024 16:01:13 +0100")
-References: <20240822150113.14274-1-luis.henriques@linux.dev>
-Date: Tue, 27 Aug 2024 14:36:14 +0100
-Message-ID: <87mskyxf3l.fsf@linux.dev>
+	s=arc-20240116; t=1724770922; c=relaxed/simple;
+	bh=9sAfGli9gYUmQoujjwPSxkMs08KBa9qqVzVQDT1mDVk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XG+vGBQo5l2PXQ4G3ZSN9JNZyuLJL9/MNoZe4skIRH0M5Vtoh531xeTHtxc1ygKiUVVQF0Vr3wXdmemgxFSVMLwxjmGJLThZPOaED6ccRg0kw6LN9zOyldFnmoeBTOuDsDBY0RkRXUmOog+2xsVYXCSqsvxf+xcPwCH91E2NYsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wzwPnOiZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E19BAC4DDEF;
+	Tue, 27 Aug 2024 15:02:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724770922;
+	bh=9sAfGli9gYUmQoujjwPSxkMs08KBa9qqVzVQDT1mDVk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=wzwPnOiZBC/VU7qNJH939H0Emvjm0/YWDMpJWfUetGFmZeXlzGLvUmcnm8oECoWu+
+	 iN2ka40NOtDhcwheaH6gcaC0FvFORYCptEcPYuOXw11W/CQ0DnR7LA+KQ9EXcWTsjl
+	 Z+Cku+LZtuPYJz2oz9nSqsDE/r1KyIXCSBze+Knc=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Max Kellermann <max.kellermann@ionos.com>,
+	David Howells <dhowells@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Xiubo Li <xiubli@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	ceph-devel@vger.kernel.org,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 6.10 009/273] netfs, ceph: Revert "netfs: Remove deprecated use of PG_private_2 as a second writeback flag"
+Date: Tue, 27 Aug 2024 16:35:33 +0200
+Message-ID: <20240827143833.738064110@linuxfoundation.org>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240827143833.371588371@linuxfoundation.org>
+References: <20240827143833.371588371@linuxfoundation.org>
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 22 2024, Luis Henriques (SUSE) wrote:
+6.10-stable review patch.  If anyone has any objections, please let me know.
 
-> If, while doing a read, the inode is updated and the size is set to zero,
-> __ceph_sync_read() may not be able to handle it.  It is thus easy to hit a
-> NULL pointer dereferrence by continuously reading a file while, on another
-> client, we keep truncating and writing new data into it.
->
-> This patch fixes the issue by adding extra checks to avoid integer overfl=
-ows
-> for the case of a zero size inode.  This will prevent the loop doing page
-> copies from running and thus accessing the pages[] array beyond num_pages.
->
-> Link: https://tracker.ceph.com/issues/67524
-> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
-> ---
-> Hi!
->
-> Please note that this patch is only lightly tested and, to be honest, I'm
-> not sure if this is the correct way to fix this bug.  For example, if the
-> inode size is 0, then maybe ceph_osdc_wait_request() should have returned
-> 0 and the problem would be solved.  However, it seems to be returning the
-> size of the reply message and that's not something easy to change.  Or ma=
-ybe
-> I'm just reading it wrong.  Anyway, this is just an RFC to see if there's
-> other ideas.
->
-> Also, the tracker contains a simple testcase for crashing the client.
+------------------
 
-Just for the record, I've done a quick bisect as this bug is easily
-reproducible.  The issue was introduced in v6.9-rc1, with commit
-1065da21e5df ("ceph: stop copying to iter at EOF on sync reads").
-Reverting it makes the crash go away.
+From: David Howells <dhowells@redhat.com>
 
-Cheers,
---=20
-Lu=C3=ADs
+commit 8e5ced7804cb9184c4a23f8054551240562a8eda upstream.
 
+This reverts commit ae678317b95e760607c7b20b97c9cd4ca9ed6e1a.
 
->  fs/ceph/file.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 4b8d59ebda00..dc23d5e5b11e 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1200,9 +1200,9 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_=
-t *ki_pos,
->  		}
->=20=20
->  		idx =3D 0;
-> -		if (ret <=3D 0)
-> +		if ((ret <=3D 0) || (i_size =3D=3D 0))
->  			left =3D 0;
-> -		else if (off + ret > i_size)
-> +		else if ((i_size >=3D off) && (off + ret > i_size))
->  			left =3D i_size - off;
->  		else
->  			left =3D ret;
-> @@ -1210,6 +1210,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_=
-t *ki_pos,
->  			size_t plen, copied;
->=20=20
->  			plen =3D min_t(size_t, left, PAGE_SIZE - page_off);
-> +			WARN_ON_ONCE(idx >=3D num_pages);
->  			SetPageUptodate(pages[idx]);
->  			copied =3D copy_page_to_iter(pages[idx++],
->  						   page_off, plen, to);
-> @@ -1234,7 +1235,7 @@ ssize_t __ceph_sync_read(struct inode *inode, loff_=
-t *ki_pos,
->  	}
->=20=20
->  	if (ret > 0) {
-> -		if (off >=3D i_size) {
-> +		if ((i_size >=3D *ki_pos) && (off >=3D i_size)) {
->  			*retry_op =3D CHECK_EOF;
->  			ret =3D i_size - *ki_pos;
->  			*ki_pos =3D i_size;
->
+Revert the patch that removes the deprecated use of PG_private_2 in
+netfslib for the moment as Ceph is actually still using this to track
+data copied to the cache.
+
+Fixes: ae678317b95e ("netfs: Remove deprecated use of PG_private_2 as a second writeback flag")
+Reported-by: Max Kellermann <max.kellermann@ionos.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Xiubo Li <xiubli@redhat.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: ceph-devel@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
+https: //lore.kernel.org/r/3575457.1722355300@warthog.procyon.org.uk
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/ceph/addr.c               |   19 +++++
+ fs/netfs/buffered_read.c     |    8 ++
+ fs/netfs/io.c                |  144 +++++++++++++++++++++++++++++++++++++++++++
+ include/trace/events/netfs.h |    1 
+ 4 files changed, 170 insertions(+), 2 deletions(-)
+
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -498,6 +498,11 @@ const struct netfs_request_ops ceph_netf
+ };
+ 
+ #ifdef CONFIG_CEPH_FSCACHE
++static void ceph_set_page_fscache(struct page *page)
++{
++	folio_start_private_2(page_folio(page)); /* [DEPRECATED] */
++}
++
+ static void ceph_fscache_write_terminated(void *priv, ssize_t error, bool was_async)
+ {
+ 	struct inode *inode = priv;
+@@ -515,6 +520,10 @@ static void ceph_fscache_write_to_cache(
+ 			       ceph_fscache_write_terminated, inode, true, caching);
+ }
+ #else
++static inline void ceph_set_page_fscache(struct page *page)
++{
++}
++
+ static inline void ceph_fscache_write_to_cache(struct inode *inode, u64 off, u64 len, bool caching)
+ {
+ }
+@@ -706,6 +715,8 @@ static int writepage_nounlock(struct pag
+ 		len = wlen;
+ 
+ 	set_page_writeback(page);
++	if (caching)
++		ceph_set_page_fscache(page);
+ 	ceph_fscache_write_to_cache(inode, page_off, len, caching);
+ 
+ 	if (IS_ENCRYPTED(inode)) {
+@@ -789,6 +800,8 @@ static int ceph_writepage(struct page *p
+ 		return AOP_WRITEPAGE_ACTIVATE;
+ 	}
+ 
++	folio_wait_private_2(page_folio(page)); /* [DEPRECATED] */
++
+ 	err = writepage_nounlock(page, wbc);
+ 	if (err == -ERESTARTSYS) {
+ 		/* direct memory reclaimer was killed by SIGKILL. return 0
+@@ -1062,7 +1075,8 @@ get_more_pages:
+ 				unlock_page(page);
+ 				break;
+ 			}
+-			if (PageWriteback(page)) {
++			if (PageWriteback(page) ||
++			    PagePrivate2(page) /* [DEPRECATED] */) {
+ 				if (wbc->sync_mode == WB_SYNC_NONE) {
+ 					doutc(cl, "%p under writeback\n", page);
+ 					unlock_page(page);
+@@ -1070,6 +1084,7 @@ get_more_pages:
+ 				}
+ 				doutc(cl, "waiting on writeback %p\n", page);
+ 				wait_on_page_writeback(page);
++				folio_wait_private_2(page_folio(page)); /* [DEPRECATED] */
+ 			}
+ 
+ 			if (!clear_page_dirty_for_io(page)) {
+@@ -1254,6 +1269,8 @@ new_request:
+ 			}
+ 
+ 			set_page_writeback(page);
++			if (caching)
++				ceph_set_page_fscache(page);
+ 			len += thp_size(page);
+ 		}
+ 		ceph_fscache_write_to_cache(inode, offset, len, caching);
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -466,7 +466,7 @@ retry:
+ 	if (!netfs_is_cache_enabled(ctx) &&
+ 	    netfs_skip_folio_read(folio, pos, len, false)) {
+ 		netfs_stat(&netfs_n_rh_write_zskip);
+-		goto have_folio;
++		goto have_folio_no_wait;
+ 	}
+ 
+ 	rreq = netfs_alloc_request(mapping, file,
+@@ -507,6 +507,12 @@ retry:
+ 	netfs_put_request(rreq, false, netfs_rreq_trace_put_return);
+ 
+ have_folio:
++	if (test_bit(NETFS_ICTX_USE_PGPRIV2, &ctx->flags)) {
++		ret = folio_wait_private_2_killable(folio);
++		if (ret < 0)
++			goto error;
++	}
++have_folio_no_wait:
+ 	*_folio = folio;
+ 	kleave(" = 0");
+ 	return 0;
+--- a/fs/netfs/io.c
++++ b/fs/netfs/io.c
+@@ -99,6 +99,146 @@ static void netfs_rreq_completed(struct
+ }
+ 
+ /*
++ * [DEPRECATED] Deal with the completion of writing the data to the cache.  We
++ * have to clear the PG_fscache bits on the folios involved and release the
++ * caller's ref.
++ *
++ * May be called in softirq mode and we inherit a ref from the caller.
++ */
++static void netfs_rreq_unmark_after_write(struct netfs_io_request *rreq,
++					  bool was_async)
++{
++	struct netfs_io_subrequest *subreq;
++	struct folio *folio;
++	pgoff_t unlocked = 0;
++	bool have_unlocked = false;
++
++	rcu_read_lock();
++
++	list_for_each_entry(subreq, &rreq->subrequests, rreq_link) {
++		XA_STATE(xas, &rreq->mapping->i_pages, subreq->start / PAGE_SIZE);
++
++		xas_for_each(&xas, folio, (subreq->start + subreq->len - 1) / PAGE_SIZE) {
++			if (xas_retry(&xas, folio))
++				continue;
++
++			/* We might have multiple writes from the same huge
++			 * folio, but we mustn't unlock a folio more than once.
++			 */
++			if (have_unlocked && folio->index <= unlocked)
++				continue;
++			unlocked = folio_next_index(folio) - 1;
++			trace_netfs_folio(folio, netfs_folio_trace_end_copy);
++			folio_end_private_2(folio);
++			have_unlocked = true;
++		}
++	}
++
++	rcu_read_unlock();
++	netfs_rreq_completed(rreq, was_async);
++}
++
++static void netfs_rreq_copy_terminated(void *priv, ssize_t transferred_or_error,
++				       bool was_async) /* [DEPRECATED] */
++{
++	struct netfs_io_subrequest *subreq = priv;
++	struct netfs_io_request *rreq = subreq->rreq;
++
++	if (IS_ERR_VALUE(transferred_or_error)) {
++		netfs_stat(&netfs_n_rh_write_failed);
++		trace_netfs_failure(rreq, subreq, transferred_or_error,
++				    netfs_fail_copy_to_cache);
++	} else {
++		netfs_stat(&netfs_n_rh_write_done);
++	}
++
++	trace_netfs_sreq(subreq, netfs_sreq_trace_write_term);
++
++	/* If we decrement nr_copy_ops to 0, the ref belongs to us. */
++	if (atomic_dec_and_test(&rreq->nr_copy_ops))
++		netfs_rreq_unmark_after_write(rreq, was_async);
++
++	netfs_put_subrequest(subreq, was_async, netfs_sreq_trace_put_terminated);
++}
++
++/*
++ * [DEPRECATED] Perform any outstanding writes to the cache.  We inherit a ref
++ * from the caller.
++ */
++static void netfs_rreq_do_write_to_cache(struct netfs_io_request *rreq)
++{
++	struct netfs_cache_resources *cres = &rreq->cache_resources;
++	struct netfs_io_subrequest *subreq, *next, *p;
++	struct iov_iter iter;
++	int ret;
++
++	trace_netfs_rreq(rreq, netfs_rreq_trace_copy);
++
++	/* We don't want terminating writes trying to wake us up whilst we're
++	 * still going through the list.
++	 */
++	atomic_inc(&rreq->nr_copy_ops);
++
++	list_for_each_entry_safe(subreq, p, &rreq->subrequests, rreq_link) {
++		if (!test_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags)) {
++			list_del_init(&subreq->rreq_link);
++			netfs_put_subrequest(subreq, false,
++					     netfs_sreq_trace_put_no_copy);
++		}
++	}
++
++	list_for_each_entry(subreq, &rreq->subrequests, rreq_link) {
++		/* Amalgamate adjacent writes */
++		while (!list_is_last(&subreq->rreq_link, &rreq->subrequests)) {
++			next = list_next_entry(subreq, rreq_link);
++			if (next->start != subreq->start + subreq->len)
++				break;
++			subreq->len += next->len;
++			list_del_init(&next->rreq_link);
++			netfs_put_subrequest(next, false,
++					     netfs_sreq_trace_put_merged);
++		}
++
++		ret = cres->ops->prepare_write(cres, &subreq->start, &subreq->len,
++					       subreq->len, rreq->i_size, true);
++		if (ret < 0) {
++			trace_netfs_failure(rreq, subreq, ret, netfs_fail_prepare_write);
++			trace_netfs_sreq(subreq, netfs_sreq_trace_write_skip);
++			continue;
++		}
++
++		iov_iter_xarray(&iter, ITER_SOURCE, &rreq->mapping->i_pages,
++				subreq->start, subreq->len);
++
++		atomic_inc(&rreq->nr_copy_ops);
++		netfs_stat(&netfs_n_rh_write);
++		netfs_get_subrequest(subreq, netfs_sreq_trace_get_copy_to_cache);
++		trace_netfs_sreq(subreq, netfs_sreq_trace_write);
++		cres->ops->write(cres, subreq->start, &iter,
++				 netfs_rreq_copy_terminated, subreq);
++	}
++
++	/* If we decrement nr_copy_ops to 0, the usage ref belongs to us. */
++	if (atomic_dec_and_test(&rreq->nr_copy_ops))
++		netfs_rreq_unmark_after_write(rreq, false);
++}
++
++static void netfs_rreq_write_to_cache_work(struct work_struct *work) /* [DEPRECATED] */
++{
++	struct netfs_io_request *rreq =
++		container_of(work, struct netfs_io_request, work);
++
++	netfs_rreq_do_write_to_cache(rreq);
++}
++
++static void netfs_rreq_write_to_cache(struct netfs_io_request *rreq) /* [DEPRECATED] */
++{
++	rreq->work.func = netfs_rreq_write_to_cache_work;
++	if (!queue_work(system_unbound_wq, &rreq->work))
++		BUG();
++}
++
++/*
+  * Handle a short read.
+  */
+ static void netfs_rreq_short_read(struct netfs_io_request *rreq,
+@@ -275,6 +415,10 @@ again:
+ 	clear_bit_unlock(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
+ 	wake_up_bit(&rreq->flags, NETFS_RREQ_IN_PROGRESS);
+ 
++	if (test_bit(NETFS_RREQ_COPY_TO_CACHE, &rreq->flags) &&
++	    test_bit(NETFS_RREQ_USE_PGPRIV2, &rreq->flags))
++		return netfs_rreq_write_to_cache(rreq);
++
+ 	netfs_rreq_completed(rreq, was_async);
+ }
+ 
+--- a/include/trace/events/netfs.h
++++ b/include/trace/events/netfs.h
+@@ -145,6 +145,7 @@
+ 	EM(netfs_folio_trace_clear_g,		"clear-g")	\
+ 	EM(netfs_folio_trace_clear_s,		"clear-s")	\
+ 	EM(netfs_folio_trace_copy_to_cache,	"mark-copy")	\
++	EM(netfs_folio_trace_end_copy,		"end-copy")	\
+ 	EM(netfs_folio_trace_filled_gaps,	"filled-gaps")	\
+ 	EM(netfs_folio_trace_kill,		"kill")		\
+ 	EM(netfs_folio_trace_kill_cc,		"kill-cc")	\
+
 
 
