@@ -1,132 +1,141 @@
-Return-Path: <ceph-devel+bounces-1769-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1770-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C0E961935
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Aug 2024 23:30:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBFEA961E5E
+	for <lists+ceph-devel@lfdr.de>; Wed, 28 Aug 2024 07:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1B372850A5
-	for <lists+ceph-devel@lfdr.de>; Tue, 27 Aug 2024 21:30:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79DF5B20DDE
+	for <lists+ceph-devel@lfdr.de>; Wed, 28 Aug 2024 05:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F9A1D4143;
-	Tue, 27 Aug 2024 21:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95341514C6;
+	Wed, 28 Aug 2024 05:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sbj2Nwni"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jh59zb2W"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832EC481CD;
-	Tue, 27 Aug 2024 21:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFABC14EC44
+	for <ceph-devel@vger.kernel.org>; Wed, 28 Aug 2024 05:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724794193; cv=none; b=WbGWqwXRRtmfR5/WkhltJMFwWKlYXkVjxpOP1VWP7hgQCz6nIRUv5g7lRLG6xnmRSZIB1bR+WT4aAqAsU23S3e0gEQuy6xOHlcdsOSApDykICvy5u1ymL7+SDylEULy+34xb02mFZPZSA0SgZfT2FA7zLBAarX9t0PjsTGA0f9g=
+	t=1724824040; cv=none; b=aQQq4GU3w3smlgYrQzCuZfnRU4CC+Levov2Zrdg/V7gvxiJ2/jAx+DZBR2XSQC0C2JL2QP4vGoZSnkRiwKq5IMCLC6nocne79VL+zmPZmC4DsuDKlwS59l36a0TRT3sDd8BW3RNCFnD7HPvVoY6r2RxlhP4g+oyzJ6PB5vfIFkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724794193; c=relaxed/simple;
-	bh=d+yn0nkxzSuimP+TA4VAK1zkmLd8RAXtLCH9HszvZbs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dK1k1yt/uUOPEounG6h3hsRdvY1tTRvF3iwLVIAjtNt5h2beSCUfm5eSil8/u0h36hc7UgCzc9WPHldnymwJxgUw6/au3xqZ18qw9FZ745hfkdp5e6YQPQJH4GYIAfncpCCKTMek3u3W90yfKCxOM4mx1ZNhRIrjEKmqIos2frw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sbj2Nwni; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-533496017f8so7974377e87.0;
-        Tue, 27 Aug 2024 14:29:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724794190; x=1725398990; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d+yn0nkxzSuimP+TA4VAK1zkmLd8RAXtLCH9HszvZbs=;
-        b=Sbj2NwniihelUq8zKM8FyTI2uCym5fkmKiARY9P4C3dBAkCncGpDizzw67x9hI+po8
-         /40I4fr6ao3G60lke8HSIK2K5PJJRUYk7rjVIrPqOTRZt1LwGEQVmUqNgkm871vf241B
-         QKOF3v7r0RHlEaOKol5SgxY8IO7DSp0LHdp/u9YuoQj9yClFIBp4TZ60EqKGO3XrKlWe
-         pDqSVwzcY+Qehu3qEwtWOOZeJ7r5ciM4WOEXQmNhhH3Us28OzwSz1jw19/E/8xPJCW3p
-         PQkaPzaarAZ5rDGUlR/taIec4enZvkSHzhnAKkS1FfkxtfTZ9MZR1xSVNIUDhGEjH+IL
-         i2rw==
+	s=arc-20240116; t=1724824040; c=relaxed/simple;
+	bh=RrLam6mqwyBGcfuSrxWmoW3n5YB6vJkgt4F0ExG4lRU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kTNOqzizbiT+4a9vl9T7smRFEVu8fGLzQUUXRGj+wLObUuVzNyB8oMtrFHl+sqzPIuftUUu3dQsVKupho/YC9MYaO/AhNHh9y4qG1sKeui0oJLNmMdfyuT/FdpahbczDWeXsv721Y+Qi8URzpZYRVSpeWqP9E0rjnd9tgaa7Gtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jh59zb2W; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1724824037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ckZJuFCVMRgzqQidtTbaqZnRjLzSgCGjaZ05Ho69de8=;
+	b=Jh59zb2WaYH83UWqqxVyo6dThn/NcCqldeqgiL0c5CltzDXi6YjtsygR1CHS0hYPfggA5w
+	Mi9GqUxm5qiwLrWYhf8rkGs4z5xmuCRpgCFDwj+3XP/yc3sHoqdaFmpWaCbcEeXNCZkIvQ
+	p93AGK+QDPjY4suvlaM/ag2+fY7pKuI=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-108-Cz5QN-BJO2isEjv9vBIY8Q-1; Wed, 28 Aug 2024 01:47:15 -0400
+X-MC-Unique: Cz5QN-BJO2isEjv9vBIY8Q-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-201e24bd4d9so65736735ad.0
+        for <ceph-devel@vger.kernel.org>; Tue, 27 Aug 2024 22:47:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724794190; x=1725398990;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d+yn0nkxzSuimP+TA4VAK1zkmLd8RAXtLCH9HszvZbs=;
-        b=BelUIXGRgRZSbFwItGB/K4swAH9CJHphYfM8Z8/ItXn48tIxIZq75vwT4oOrY2FBpF
-         H+SI0LDx/7PyFZ4XZHo4GDarQnm7VAkvRGXwGpR+Iqp7hM0Fb+H+mPvQ/4aG2AheaDDu
-         DL6UDG0iTtAu3M3WOUi7r8apFdh9rejCp1ASaXRoSLEZgu8GhlCugQZcUCHgPP8TC/pl
-         m647XGEAcrvLGLZS/YcCKf93zApQFVy/2/cc4jc6b8TgcoLM84wo4+C8FQYXNZ4RELrJ
-         Ud391H7g4MxCwIa48bNnjuiA9sUK684uecfAobEx+jWlyqKxc2+qsZKPd5GHmq/8cW35
-         FIuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNBdZDuhEOj+8oBgYqb1L9PeT5lYaNF0T7GWloDrY3behD7tBeUNO2JGEQ7roFsct1VScQB41q/9ytyQ==@vger.kernel.org, AJvYcCWsVR3C/IIAlXMn7ax6fGrGZr8raH9jNPSzh0/Met9DafCeEd9hoo7zPblZEeaK7AE/gnum3ejcxd+K@vger.kernel.org, AJvYcCX3xOo0rFad4HXL5uSt02xxK4gh+znU9XcVUNNgqjrV41kuYvAI2lFxTtv+Oo/szXSCvBpQtK+kNLIq4e2gfQ==@vger.kernel.org, AJvYcCX81jNXvpMktZwC/v8coiy9UGXyEkgNrQofI1sYIt4OVYce9uWHi561kFlqeRmGeNTLyzn+dBdZ9ieQ@vger.kernel.org, AJvYcCXY6W0vJPCiMlDeat2mrY6jxHIoOhUsF+YRUHcis1MYpToVlhgsRAnzPEY+5E83IiYSovv/7x+O@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCyoaji2s+3LrapigVMaby0EGRGzuyQInZ/phAIoVV7SvCwIcd
-	qBi0J+oRIgvR1cD77sUoY7MhNt6BwwW5OrqMTipvIRgz6Y7FouWLx6nSxy+abhhF0uTNT8QUIA5
-	jN/1A0waSk+WqhZSDzW6I7I9/2Uw=
-X-Google-Smtp-Source: AGHT+IGMOY6Yiz4YkwEpjgWpibJQdtfTsGczDtl/VBKoJFb+V6GQ4EsLOSKLYsP/M6ZKPP5miCYIGAihYSQoDTyOxJw=
-X-Received: by 2002:a05:6512:2386:b0:52c:df8c:72cc with SMTP id
- 2adb3069b0e04-5343885f615mr9361153e87.43.1724794189192; Tue, 27 Aug 2024
- 14:29:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724824035; x=1725428835;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ckZJuFCVMRgzqQidtTbaqZnRjLzSgCGjaZ05Ho69de8=;
+        b=krO2CJkl+HS+vq6UX0hsrviuvHW28d7z8OM8iv7iw9LVgOvbr3Tsni/HEDcFl6nQGj
+         qPCEN70ShmS6InhJGwQbel2hAAomPG213eKnE9c2UCfhWJddHiMl+DEqfFpXrAPC9RPr
+         bIjnlDj0hhEINVMIzR4nnaFSOia0cUl5A/oBzoxHPmQsFtDg4yCvi1EVok3N3vPGyisM
+         eu06/xz9sWojI9+Ac7k+iPe9pD5wxtbEvtKjNZS+j83nzE2rmlgWzRbTOIU/5QNkc700
+         4ZuMG3pTTf5DYXiRZr4m8lab/AS60hLjh2S9WlQim0+stHiA/KX9EOjaj0Aq/cuAPx5E
+         EB2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXAnVKM1AT83LngGGdJxaap7Y99KgmXZEX7K0ztTG1NJlNLWCd2qCO7hACBz6k6Vw1oE4RZvrs1RDpP@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrZr5g66Dt9BU6+GLlPrYBRIUiKlS/RJbGSKS0/uHTk2PZzkIE
+	HwrOWkwwRyAyZv+RKke/6BBq/Fys/MvFYAtbQ9jd9A/nQ5OjM/V9cN/oP8MHRAaxMowj/DYmt2S
+	p48v5fybt9fNJKmwbFHSBYkgUs5mDMIjFRyXcrvojDC2NuX4/76jq8WY5Wdg=
+X-Received: by 2002:a17:902:d4cc:b0:203:a0c9:6953 with SMTP id d9443c01a7336-203a0c96986mr201053525ad.0.1724824034786;
+        Tue, 27 Aug 2024 22:47:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF+eoKXJOfQW0YjvLqpCE/9ty7ghlsendTsMnu/B13VMaWGHQQyiTP0Mu4p+h0BUfBvtZv58Q==
+X-Received: by 2002:a17:902:d4cc:b0:203:a0c9:6953 with SMTP id d9443c01a7336-203a0c96986mr201053435ad.0.1724824034431;
+        Tue, 27 Aug 2024 22:47:14 -0700 (PDT)
+Received: from [10.72.116.72] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385be0e08sm91516135ad.285.2024.08.27.22.47.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 22:47:14 -0700 (PDT)
+Message-ID: <5d44ae23-4a68-446a-9ae8-f5b809437b32@redhat.com>
+Date: Wed, 28 Aug 2024 13:47:10 +0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240827143833.371588371@linuxfoundation.org> <20240827143836.571273512@linuxfoundation.org>
- <Zs4v6aV4-VpIqdfy@codewreck.org>
-In-Reply-To: <Zs4v6aV4-VpIqdfy@codewreck.org>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 27 Aug 2024 16:29:38 -0500
-Message-ID: <CAH2r5mtaz5NSzhvq0hyWJJVvYyk_h-LxW=Ku_YjwSEe49EDO7A@mail.gmail.com>
-Subject: Re: [PATCH 6.10 083/273] 9p: Fix DIO read through netfs
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, 
-	patches@lists.linux.dev, David Howells <dhowells@redhat.com>, 
-	Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov <lucho@ionkov.net>, 
-	Christian Schoenebeck <linux_oss@crudebyte.com>, Marc Dionne <marc.dionne@auristor.com>, 
-	Ilya Dryomov <idryomov@gmail.com>, Steve French <sfrench@samba.org>, 
-	Paulo Alcantara <pc@manguebit.com>, Trond Myklebust <trond.myklebust@hammerspace.com>, v9fs@lists.linux.dev, 
-	linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Sasha Levin <sashal@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-We are working through this regression with David this week -
-hopefully will have more info in a few days
-
-On Tue, Aug 27, 2024 at 2:59=E2=80=AFPM Dominique Martinet
-<asmadeus@codewreck.org> wrote:
->
-> Greg Kroah-Hartman wrote on Tue, Aug 27, 2024 at 04:36:47PM +0200:
-> > From: Dominique Martinet <asmadeus@codewreck.org>
-> >
-> > [ Upstream commit e3786b29c54cdae3490b07180a54e2461f42144c ]
->
-> As much as I'd like to have this in, it breaks cifs so please hold this
-> patch until at least these two patches also get backported (I didn't
-> actually test the fix so not sure which is needed, *probably*
-> either/both):
-> 950b03d0f66 ("netfs: Fix missing iterator reset on retry of short read")
-> https://lore.kernel.org/r/20240823200819.532106-8-dhowells@redhat.com ("n=
-etfs, cifs: Fix handling of short DIO read")
->
-> For some reason the former got in master but the later wasn't despite
-> having been sent together, I might have missed some mails and only the
-> first might actually be required.. David, Steve please let us know if
-> just the first is enough.
->
-> Either way the 9p patch can wait a couple more weeks; stuck debian CI
-> (9p) is bad but cifs corruptions are worse.
->
-> Thanks,
-> --
-> Dominique
->
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] ceph: fix out-of-bound array access when doing a file
+ read
+To: Luis Henriques <luis.henriques@linux.dev>
+Cc: Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240822150113.14274-1-luis.henriques@linux.dev>
+ <87mskyxf3l.fsf@linux.dev>
+Content-Language: en-US
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <87mskyxf3l.fsf@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---=20
-Thanks,
+On 8/27/24 21:36, Luis Henriques wrote:
+> On Thu, Aug 22 2024, Luis Henriques (SUSE) wrote:
+>
+>> If, while doing a read, the inode is updated and the size is set to zero,
+>> __ceph_sync_read() may not be able to handle it.  It is thus easy to hit a
+>> NULL pointer dereferrence by continuously reading a file while, on another
+>> client, we keep truncating and writing new data into it.
+>>
+>> This patch fixes the issue by adding extra checks to avoid integer overflows
+>> for the case of a zero size inode.  This will prevent the loop doing page
+>> copies from running and thus accessing the pages[] array beyond num_pages.
+>>
+>> Link: https://tracker.ceph.com/issues/67524
+>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>> ---
+>> Hi!
+>>
+>> Please note that this patch is only lightly tested and, to be honest, I'm
+>> not sure if this is the correct way to fix this bug.  For example, if the
+>> inode size is 0, then maybe ceph_osdc_wait_request() should have returned
+>> 0 and the problem would be solved.  However, it seems to be returning the
+>> size of the reply message and that's not something easy to change.  Or maybe
+>> I'm just reading it wrong.  Anyway, this is just an RFC to see if there's
+>> other ideas.
+>>
+>> Also, the tracker contains a simple testcase for crashing the client.
+> Just for the record, I've done a quick bisect as this bug is easily
+> reproducible.  The issue was introduced in v6.9-rc1, with commit
+> 1065da21e5df ("ceph: stop copying to iter at EOF on sync reads").
+> Reverting it makes the crash go away.
 
-Steve
+Thanks very much Luis.
+
+So let's try to find the root cause of it and then improve the patch.
+
+Thanks
+
+- Xiubo
+
+
+> Cheers,
+
 
