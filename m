@@ -1,141 +1,153 @@
-Return-Path: <ceph-devel+bounces-1770-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1771-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBFEA961E5E
-	for <lists+ceph-devel@lfdr.de>; Wed, 28 Aug 2024 07:47:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E65A962630
+	for <lists+ceph-devel@lfdr.de>; Wed, 28 Aug 2024 13:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79DF5B20DDE
-	for <lists+ceph-devel@lfdr.de>; Wed, 28 Aug 2024 05:47:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10AC1C23B4F
+	for <lists+ceph-devel@lfdr.de>; Wed, 28 Aug 2024 11:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95341514C6;
-	Wed, 28 Aug 2024 05:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3F5172777;
+	Wed, 28 Aug 2024 11:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jh59zb2W"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="mJLhydL7"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFABC14EC44
-	for <ceph-devel@vger.kernel.org>; Wed, 28 Aug 2024 05:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B04B16D9BA;
+	Wed, 28 Aug 2024 11:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724824040; cv=none; b=aQQq4GU3w3smlgYrQzCuZfnRU4CC+Levov2Zrdg/V7gvxiJ2/jAx+DZBR2XSQC0C2JL2QP4vGoZSnkRiwKq5IMCLC6nocne79VL+zmPZmC4DsuDKlwS59l36a0TRT3sDd8BW3RNCFnD7HPvVoY6r2RxlhP4g+oyzJ6PB5vfIFkE=
+	t=1724845095; cv=none; b=tFGD7awYtbvMvlrquhvJPVXJUuuxXPfZM02s79P6BR63UXn9gHrs7HW/NsDHZwsTP27J0UiVn6XhK49JQ/EmMs28i8eCLhJW3BiEzjnFIScfG+4ODhe5IrohhYhD9kGjV/RUCNiQZ51veVafpDGOWddSyxf87oKBp9iK4v6Z0/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724824040; c=relaxed/simple;
-	bh=RrLam6mqwyBGcfuSrxWmoW3n5YB6vJkgt4F0ExG4lRU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kTNOqzizbiT+4a9vl9T7smRFEVu8fGLzQUUXRGj+wLObUuVzNyB8oMtrFHl+sqzPIuftUUu3dQsVKupho/YC9MYaO/AhNHh9y4qG1sKeui0oJLNmMdfyuT/FdpahbczDWeXsv721Y+Qi8URzpZYRVSpeWqP9E0rjnd9tgaa7Gtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jh59zb2W; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1724824037;
+	s=arc-20240116; t=1724845095; c=relaxed/simple;
+	bh=E31P5Kg44PX5FddtsdpCqwEt5trkfZRkPjofUJ7lGjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RwNQtunbkDsJSQct7g2iHqBIsWT87v+OhsVWRYQQGvXeI2BBybqsMSb4F+HFaMxQHKMNEN2ZIy5Vli8cZqwKOjbGMdMntrXGSi1p1jgHPPpSVtqe02eLV7SLiCgTsRY2GkzreIVZn7OylwnRpGPtjb2NQZvqi2gvcuyb2iNn7yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=mJLhydL7; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Wv2Tr0lJSz9smc;
+	Wed, 28 Aug 2024 13:38:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1724845088;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ckZJuFCVMRgzqQidtTbaqZnRjLzSgCGjaZ05Ho69de8=;
-	b=Jh59zb2WaYH83UWqqxVyo6dThn/NcCqldeqgiL0c5CltzDXi6YjtsygR1CHS0hYPfggA5w
-	Mi9GqUxm5qiwLrWYhf8rkGs4z5xmuCRpgCFDwj+3XP/yc3sHoqdaFmpWaCbcEeXNCZkIvQ
-	p93AGK+QDPjY4suvlaM/ag2+fY7pKuI=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-108-Cz5QN-BJO2isEjv9vBIY8Q-1; Wed, 28 Aug 2024 01:47:15 -0400
-X-MC-Unique: Cz5QN-BJO2isEjv9vBIY8Q-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-201e24bd4d9so65736735ad.0
-        for <ceph-devel@vger.kernel.org>; Tue, 27 Aug 2024 22:47:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724824035; x=1725428835;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ckZJuFCVMRgzqQidtTbaqZnRjLzSgCGjaZ05Ho69de8=;
-        b=krO2CJkl+HS+vq6UX0hsrviuvHW28d7z8OM8iv7iw9LVgOvbr3Tsni/HEDcFl6nQGj
-         qPCEN70ShmS6InhJGwQbel2hAAomPG213eKnE9c2UCfhWJddHiMl+DEqfFpXrAPC9RPr
-         bIjnlDj0hhEINVMIzR4nnaFSOia0cUl5A/oBzoxHPmQsFtDg4yCvi1EVok3N3vPGyisM
-         eu06/xz9sWojI9+Ac7k+iPe9pD5wxtbEvtKjNZS+j83nzE2rmlgWzRbTOIU/5QNkc700
-         4ZuMG3pTTf5DYXiRZr4m8lab/AS60hLjh2S9WlQim0+stHiA/KX9EOjaj0Aq/cuAPx5E
-         EB2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXAnVKM1AT83LngGGdJxaap7Y99KgmXZEX7K0ztTG1NJlNLWCd2qCO7hACBz6k6Vw1oE4RZvrs1RDpP@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrZr5g66Dt9BU6+GLlPrYBRIUiKlS/RJbGSKS0/uHTk2PZzkIE
-	HwrOWkwwRyAyZv+RKke/6BBq/Fys/MvFYAtbQ9jd9A/nQ5OjM/V9cN/oP8MHRAaxMowj/DYmt2S
-	p48v5fybt9fNJKmwbFHSBYkgUs5mDMIjFRyXcrvojDC2NuX4/76jq8WY5Wdg=
-X-Received: by 2002:a17:902:d4cc:b0:203:a0c9:6953 with SMTP id d9443c01a7336-203a0c96986mr201053525ad.0.1724824034786;
-        Tue, 27 Aug 2024 22:47:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF+eoKXJOfQW0YjvLqpCE/9ty7ghlsendTsMnu/B13VMaWGHQQyiTP0Mu4p+h0BUfBvtZv58Q==
-X-Received: by 2002:a17:902:d4cc:b0:203:a0c9:6953 with SMTP id d9443c01a7336-203a0c96986mr201053435ad.0.1724824034431;
-        Tue, 27 Aug 2024 22:47:14 -0700 (PDT)
-Received: from [10.72.116.72] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20385be0e08sm91516135ad.285.2024.08.27.22.47.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 22:47:14 -0700 (PDT)
-Message-ID: <5d44ae23-4a68-446a-9ae8-f5b809437b32@redhat.com>
-Date: Wed, 28 Aug 2024 13:47:10 +0800
+	bh=M9H3cmWIhxcYHesHqGjL9yLjjaE0Sjuz4VP0wEL0R1w=;
+	b=mJLhydL76GrRuW737D6RbtsIACkQniYpae63FPhyPs9Pee+QHLNrfzj/Dn6gSl2+qVcAck
+	MVhc292Hk0qoYqRGPD9zpnjIJaX8d5O1yrEGSsYMHhB1+EF4LynKehX/Qv4NwsOAORThkP
+	k5bWZcHdv0PyZBZcaqlBvqgtANUpntIsXofOCzDNTvyXHhr67zhJgWGQGo5atd0XckJdjA
+	rR8WlNWo6KNpCx03tSIETgCaJaWlHH6X25OSelFFa9ulW6U63lsK1ZpkkPI1xPEYndn84+
+	YFzGD2FOYgW6xaGMmQg8fuRa8gQKRsMbN/YCojlBlhbfJL6rkfQG9gO0UIpgVg==
+Date: Wed, 28 Aug 2024 11:38:02 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>,
+	Steve French <sfrench@samba.org>,
+	Pankaj Raghav <p.raghav@samsung.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Marc Dionne <marc.dionne@auristor.com>
+Subject: Re: [PATCH 1/9] mm: Fix missing folio invalidation calls during
+ truncation
+Message-ID: <20240828113802.xw5wzlq2hxrquclb@quentin>
+References: <20240823200819.532106-1-dhowells@redhat.com>
+ <20240823200819.532106-2-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] ceph: fix out-of-bound array access when doing a file
- read
-To: Luis Henriques <luis.henriques@linux.dev>
-Cc: Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240822150113.14274-1-luis.henriques@linux.dev>
- <87mskyxf3l.fsf@linux.dev>
-Content-Language: en-US
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <87mskyxf3l.fsf@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240823200819.532106-2-dhowells@redhat.com>
 
+On Fri, Aug 23, 2024 at 09:08:09PM +0100, David Howells wrote:
+> When AS_RELEASE_ALWAYS is set on a mapping, the ->release_folio() and
+> ->invalidate_folio() calls should be invoked even if PG_private and
+> PG_private_2 aren't set.  This is used by netfslib to keep track of the
+Should we update the comment in pagemap? 
 
-On 8/27/24 21:36, Luis Henriques wrote:
-> On Thu, Aug 22 2024, Luis Henriques (SUSE) wrote:
->
->> If, while doing a read, the inode is updated and the size is set to zero,
->> __ceph_sync_read() may not be able to handle it.  It is thus easy to hit a
->> NULL pointer dereferrence by continuously reading a file while, on another
->> client, we keep truncating and writing new data into it.
->>
->> This patch fixes the issue by adding extra checks to avoid integer overflows
->> for the case of a zero size inode.  This will prevent the loop doing page
->> copies from running and thus accessing the pages[] array beyond num_pages.
->>
->> Link: https://tracker.ceph.com/issues/67524
->> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
->> ---
->> Hi!
->>
->> Please note that this patch is only lightly tested and, to be honest, I'm
->> not sure if this is the correct way to fix this bug.  For example, if the
->> inode size is 0, then maybe ceph_osdc_wait_request() should have returned
->> 0 and the problem would be solved.  However, it seems to be returning the
->> size of the reply message and that's not something easy to change.  Or maybe
->> I'm just reading it wrong.  Anyway, this is just an RFC to see if there's
->> other ideas.
->>
->> Also, the tracker contains a simple testcase for crashing the client.
-> Just for the record, I've done a quick bisect as this bug is easily
-> reproducible.  The issue was introduced in v6.9-rc1, with commit
-> 1065da21e5df ("ceph: stop copying to iter at EOF on sync reads").
-> Reverting it makes the crash go away.
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 55b254d951da..18dd6174e6cc 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -204,7 +204,8 @@ enum mapping_flags {
+        AS_EXITING      = 4,    /* final truncate in progress */
+        /* writeback related tags are not used */
+        AS_NO_WRITEBACK_TAGS = 5,
+-       AS_RELEASE_ALWAYS = 6,  /* Call ->release_folio(), even if no private data */
++       AS_RELEASE_ALWAYS = 6,  /* Call ->release_folio() and ->invalidate_folio,
++                                  even if no private data */
+        AS_STABLE_WRITES = 7,   /* must wait for writeback before modifying
+                                   folio contents */
+        AS_INACCESSIBLE = 8,    /* Do not attempt direct R/W access to the mapping */
 
-Thanks very much Luis.
+> point above which reads can be skipped in favour of just zeroing pagecache
+> locally.
+> 
+> There are a couple of places in truncation in which invalidation is only
+> called when folio_has_private() is true.  Fix these to check
+> folio_needs_release() instead.
+> 
+> Without this, the generic/075 and generic/112 xfstests (both fsx-based
+> tests) fail with minimum folio size patches applied[1].
+> 
+> Fixes: b4fa966f03b7 ("mm, netfs, fscache: stop read optimisation when folio removed from pagecache")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+> cc: Pankaj Raghav <p.raghav@samsung.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: Marc Dionne <marc.dionne@auristor.com>
+> cc: linux-afs@lists.infradead.org
+> cc: netfs@lists.linux.dev
+> cc: linux-mm@kvack.org
+> cc: linux-fsdevel@vger.kernel.org
+> Link: https://lore.kernel.org/r/20240815090849.972355-1-kernel@pankajraghav.com/ [1]
+> ---
+>  mm/truncate.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/truncate.c b/mm/truncate.c
+> index 4d61fbdd4b2f..0668cd340a46 100644
+> --- a/mm/truncate.c
+> +++ b/mm/truncate.c
+> @@ -157,7 +157,7 @@ static void truncate_cleanup_folio(struct folio *folio)
+>  	if (folio_mapped(folio))
+>  		unmap_mapping_folio(folio);
+>  
+> -	if (folio_has_private(folio))
+> +	if (folio_needs_release(folio))
+>  		folio_invalidate(folio, 0, folio_size(folio));
+>  
+>  	/*
+> @@ -219,7 +219,7 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
+>  	if (!mapping_inaccessible(folio->mapping))
+>  		folio_zero_range(folio, offset, length);
+>  
+> -	if (folio_has_private(folio))
+> +	if (folio_needs_release(folio))
+>  		folio_invalidate(folio, offset, length);
+>  	if (!folio_test_large(folio))
+>  		return true;
+> 
 
-So let's try to find the root cause of it and then improve the patch.
-
-Thanks
-
-- Xiubo
-
-
-> Cheers,
-
+-- 
+Pankaj Raghav
 
