@@ -1,133 +1,98 @@
-Return-Path: <ceph-devel+bounces-1781-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1782-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E1696426B
-	for <lists+ceph-devel@lfdr.de>; Thu, 29 Aug 2024 12:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3314964758
+	for <lists+ceph-devel@lfdr.de>; Thu, 29 Aug 2024 15:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28284286208
-	for <lists+ceph-devel@lfdr.de>; Thu, 29 Aug 2024 10:57:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F2C92823E4
+	for <lists+ceph-devel@lfdr.de>; Thu, 29 Aug 2024 13:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A66918FDB9;
-	Thu, 29 Aug 2024 10:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A231AE85B;
+	Thu, 29 Aug 2024 13:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="PkwIU1PE"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fi8Wj1mz"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C0418FC8C
-	for <ceph-devel@vger.kernel.org>; Thu, 29 Aug 2024 10:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC611AD9FA;
+	Thu, 29 Aug 2024 13:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724929060; cv=none; b=bWBT5vagc65rwxsdpSwUdxl6NFjMoPuueI8Sg6qHluWepUCkJhWcqIYbDtHj70jqcMSz/QKuWWygGUNNJf9DUuIoIjsw1UOwJj7AfkWGOOgIEHOW93//cz3RDzkBQkgeeVCwLlm3cKGRxKBOXBROKA45+b9C6jJyQuYUHnsw9nQ=
+	t=1724939872; cv=none; b=kig7LDTVhAT3qDx3nhtUFxyTzr7AqTChvaZb62U0HtYQUamgpqKu9qJrJMa8rE737pGJALRdZTfPKQGWmJcTVOuR0Ct/sQbM5Z1v5v/ECamqwpMrUvVMbP/+4TszU91dBHejlp1X2t4vbQY93hj+MsNC1AFZqpGFcrh1GYSsI2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724929060; c=relaxed/simple;
-	bh=500LP0qX1Sxb5P/oDJaDqZYnHpB6IUucJWF0j3xgaiY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=icOzP2Zvz9YF57JNcg/M195e50TZ1HngQwkZ80tT6gERUBpbY2WNIz9aLs453AqtQPrhI3K8c1n2jHXIzD4REztO+bMrv/8cPwTZWuZhh484U4HuX132quGcBTBPKB99JOGpIanOsgJAx4uokWKr1TPrUZN++9wiOA6oHlUyyIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=PkwIU1PE; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5bef295a429so541858a12.2
-        for <ceph-devel@vger.kernel.org>; Thu, 29 Aug 2024 03:57:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1724929055; x=1725533855; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eOayM7maWjGIKq5l/ubENwa1iRZX5CDdJ8r1AolwTwc=;
-        b=PkwIU1PEOqNXrcI0blogFzl2VtpgbD+2z9pe8NGYPbEegaOoG2SK2/M/5LYJDvQ9kh
-         rS5IphUQNfXjROb/HiWXHHRNfcMOCCRvGIr6bsGdgm+DCS+fCiCEg+LxpZMN+B0piq47
-         sVowWmWmLSepxLMrQZNEabAytUP1cimVo8lS5rEdq0lmZZCIF8TYJDwDOzC+6aoVEo3r
-         bgpkCMIOd4VtQVKNTpOSiO6Y9dS0+bIVJ6D7G8SjVIx5JL8VBOkEKQYNXqcACHl0ssnF
-         fQQOvU8wgu1wwLS8cAS+ITuEDSatuwl6y3WZQ0teX58+fhShVL420BzriJnlgt35nIgY
-         nKEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724929055; x=1725533855;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eOayM7maWjGIKq5l/ubENwa1iRZX5CDdJ8r1AolwTwc=;
-        b=Jxn/jbF5NT5dy1yqQSntL3yTiy7mnzfScnpuBYkjA8dY1i7rQQmGi4PicR1AyJwIl1
-         v7uwBRk1XE90TLVN6h1KX3bIh884wIPmdOZnwfMSF5XBrihBPPvgUuEoq5EN8knz2GD8
-         X16/M8pVnWI6fgtg1geFLNhjMMN4yVhx9g3SHdULccMBk99bHH4hTsRuT+IVoUaguURE
-         PI7IJxnk91bTaVL5EsrqIB3EvvBEK9Cob+QQIaXz4FShQYvwW/uPKAmI0poP7Vu/plhU
-         y4athCP36mAybaZJAIzE8CsLvv/Cn20i91k2PvbFwPhn16vBtYQdGP0Q1WpTl1mARmWk
-         Ugdg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3zve+zwPMYlkN0uqhXVeCxhYkNKj3VTu+C5mjMMesIAaUAOG0ZmXYxsRVZFV2JP0/WXn4pGVflIb0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVwQl9hanPRzsaLdcibHEiGCUudY2juEcLvxy/b1kLlwNw9puu
-	+7O230RTwXFksdLA4TvDGX9sHgx6LbZAt54spsRigXeluJZ3erQy7jpjChQ4Ixg=
-X-Google-Smtp-Source: AGHT+IEiZ/4/Lm7l+/N0PPQZZ3S9N+xlV2UqquwAjiCDrKqRI1NFP6Lr1WlXVP+v4DAsa0HeQ0181w==
-X-Received: by 2002:a05:6402:4308:b0:5a2:5bd2:ca50 with SMTP id 4fb4d7f45d1cf-5c21ed85291mr1772134a12.25.1724929055077;
-        Thu, 29 Aug 2024 03:57:35 -0700 (PDT)
-Received: from raven.intern.cm-ag (p200300dc6f0ebd00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f0e:bd00:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c7c32dsm568410a12.48.2024.08.29.03.57.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 03:57:34 -0700 (PDT)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: xiubli@redhat.com,
-	idryomov@gmail.com,
-	ceph-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH] fs/ceph/quota: ignore quota with CAP_SYS_RESOURCE
-Date: Thu, 29 Aug 2024 12:57:17 +0200
-Message-ID: <20240829105717.1163483-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1724939872; c=relaxed/simple;
+	bh=2SRfQnOkjrGsIdLv3up5m1cm2I8BhCPtTqy+1qCTNmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qBtkLa1muETTswCMeSq1xKwL2eads5MKzLxiSkYUZ9lscV1nph0YHURoiTiowgH4mGQBK17T6C3dTBg4UNXXAEtdbEG5TlktrxNdEtOBCexIaKua+NbCcCiq2uDnd7hoQDxW1HgWvG2ihqukeZpNnAeu+GtTLL+uJndyVJ5qF74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fi8Wj1mz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05B08C4CEC9;
+	Thu, 29 Aug 2024 13:57:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724939871;
+	bh=2SRfQnOkjrGsIdLv3up5m1cm2I8BhCPtTqy+1qCTNmE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fi8Wj1mz+XR0Bx7TlQDx5tYh+hfgW086Ar3j9shr7Iql1qKxt1MIlhmVIf6fvTxUs
+	 rT1QD58bBimfeBwBNyvO0fNWIZRB2aqdepoEY9H3oD9gxzcdj4DEerGpndstcHFRp1
+	 mxCGJvxVnJ3P/sPfVES3NavKfyuzURRJKplGy+Co=
+Date: Thu, 29 Aug 2024 15:57:48 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	David Howells <dhowells@redhat.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Ilya Dryomov <idryomov@gmail.com>, Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	v9fs@lists.linux.dev, linux-afs@lists.infradead.org,
+	ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>,
+	Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 6.10 083/273] 9p: Fix DIO read through netfs
+Message-ID: <2024082940-unbend-purple-a400@gregkh>
+References: <20240827143833.371588371@linuxfoundation.org>
+ <20240827143836.571273512@linuxfoundation.org>
+ <Zs4v6aV4-VpIqdfy@codewreck.org>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zs4v6aV4-VpIqdfy@codewreck.org>
 
-CAP_SYS_RESOURCE allows users to "override disk quota limits".  Most
-filesystems have a CAP_SYS_RESOURCE check in all quota check code
-paths, but Ceph currently does not.  This patch implements the
-feature.
+On Wed, Aug 28, 2024 at 04:58:33AM +0900, Dominique Martinet wrote:
+> Greg Kroah-Hartman wrote on Tue, Aug 27, 2024 at 04:36:47PM +0200:
+> > From: Dominique Martinet <asmadeus@codewreck.org>
+> > 
+> > [ Upstream commit e3786b29c54cdae3490b07180a54e2461f42144c ]
+> 
+> As much as I'd like to have this in, it breaks cifs so please hold this
+> patch until at least these two patches also get backported (I didn't
+> actually test the fix so not sure which is needed, *probably*
+> either/both):
+> 950b03d0f66 ("netfs: Fix missing iterator reset on retry of short read")
+> https://lore.kernel.org/r/20240823200819.532106-8-dhowells@redhat.com ("netfs, cifs: Fix handling of short DIO read")
+> 
+> For some reason the former got in master but the later wasn't despite
+> having been sent together, I might have missed some mails and only the
+> first might actually be required.. David, Steve please let us know if
+> just the first is enough.
+> 
+> Either way the 9p patch can wait a couple more weeks; stuck debian CI
+> (9p) is bad but cifs corruptions are worse.
 
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- fs/ceph/quota.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Ok, now dropped, thanks!
 
-diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-index 06ee397e0c3a..666315ec74d3 100644
---- a/fs/ceph/quota.c
-+++ b/fs/ceph/quota.c
-@@ -429,6 +429,9 @@ bool ceph_quota_is_max_files_exceeded(struct inode *inode)
- 
- 	WARN_ON(!S_ISDIR(inode->i_mode));
- 
-+	if (capable(CAP_SYS_RESOURCE))
-+		return false;
-+
- 	return check_quota_exceeded(inode, QUOTA_CHECK_MAX_FILES_OP, 1);
- }
- 
-@@ -451,6 +454,9 @@ bool ceph_quota_is_max_bytes_exceeded(struct inode *inode, loff_t newsize)
- 	if (newsize <= size)
- 		return false;
- 
-+	if (capable(CAP_SYS_RESOURCE))
-+		return false;
-+
- 	return check_quota_exceeded(inode, QUOTA_CHECK_MAX_BYTES_OP, (newsize - size));
- }
- 
-@@ -473,6 +479,9 @@ bool ceph_quota_is_max_bytes_approaching(struct inode *inode, loff_t newsize)
- 	if (newsize <= size)
- 		return false;
- 
-+	if (capable(CAP_SYS_RESOURCE))
-+		return false;
-+
- 	return check_quota_exceeded(inode, QUOTA_CHECK_MAX_BYTES_APPROACHING_OP,
- 				    (newsize - size));
- }
--- 
-2.45.2
-
+greg k-h
 
