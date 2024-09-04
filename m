@@ -1,125 +1,103 @@
-Return-Path: <ceph-devel+bounces-1786-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1787-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785C696C33B
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Sep 2024 18:00:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0205196CA74
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Sep 2024 00:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB7A71C24B8F
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Sep 2024 16:00:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3554A1C224EE
+	for <lists+ceph-devel@lfdr.de>; Wed,  4 Sep 2024 22:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9D71E0B70;
-	Wed,  4 Sep 2024 15:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D4415B56E;
+	Wed,  4 Sep 2024 22:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q51cqhWj"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD9A1E0B6E;
-	Wed,  4 Sep 2024 15:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E7215B0FF
+	for <ceph-devel@vger.kernel.org>; Wed,  4 Sep 2024 22:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725465523; cv=none; b=GVTDrtAApyk7car8bOt0/rIqWLVzieEDUBFYcbiYeWB1RU2/zBG/+46oqy6+vanD49+QcKei+++5gPZxi6nP5Tr/LcoRkfxAmyYKMs8TSt1DWTfQfZPImnCcQKRGhA2wYYbWeL2ANIRa1XP+yWlVfmgGZedOBlm/wxFstquIExQ=
+	t=1725489006; cv=none; b=ijSK20soRGA21kOKrrN1nC0PQihaYLLVHOzsJthVcah19jVwNi6UsF6sO1POhM4IvMMuaCFZuPL7tBlSw+SKBZOQYsTySw8ButIOvYSrnhdreiLyEsVZhmP70MT4ZTzFwHsycgI0rkiLx2MI49hJdZPva7p/n3L7MvbIkfl63lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725465523; c=relaxed/simple;
-	bh=Vp+fcDwe0I7fH8fIp60ulHhQK+XVLedtB7wO3n3NvF8=;
-	h=Message-ID:Date:MIME-Version:Cc:From:Subject:To:Content-Type; b=bKu4LBQNcfNXyIvF4qCgWSNmgE91OfR+ok5d2SvLa/g0T3vaeZZovA41Nw18LqWovBEimYU5Ag9Zrs+Fv8DBSsa7/iXzhjwhQ2iGSIpmutOLR+jk3/hIWT/l5vALCNhw5xj8ZiQHdDSfMzW9zSy6ajEHm/1lSat+7df6dQVAwpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
-Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
-	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id 0743547432;
-	Wed,  4 Sep 2024 17:49:13 +0200 (CEST)
-Message-ID: <85bef384-4aef-4294-b604-83508e2fc350@proxmox.com>
-Date: Wed, 4 Sep 2024 17:49:11 +0200
+	s=arc-20240116; t=1725489006; c=relaxed/simple;
+	bh=5mFmEuWk1s7KjvrUh9V1P9Pytd1Z5tvRRPnoMxfIe48=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JCllPZH59ZTPldjlcVb6jhR0a2T1AfohoXI/4EYjFJa5K2HQMZ5hyQ7IqbZ3DsjurbJgLjwBZQbZBwQGgskpOX/HZKCkQsWE++Fyqga4JorA8W4g6KmK9kabh9hMvOdjIKkBOpwAAQuFKFRqUn9cGoXLh/wevgsjjdMuVoMlPeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q51cqhWj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1725489004;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vacV9jI5IqY5bHcu2IexRKJ1d7tsZr4x/4sOj29hEyU=;
+	b=Q51cqhWjALnfmdRorAdAdmqO2D0gK0TcrSLECwxQJD1HQatsHXsQGqlstsvIyEI8VPO3Sr
+	sDpFoSqmh5niEDT3pYwwyV/nXcyBx1YTapfuol2RcnDUDyZlyes71jFjla3sRTwnnxT1YL
+	hosQb7bNVllj8XwjmHrKvxDleMgcuWo=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-13-Ep68t4hPN1y4KeytYPKKxQ-1; Wed,
+ 04 Sep 2024 18:30:02 -0400
+X-MC-Unique: Ep68t4hPN1y4KeytYPKKxQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 840251955F41;
+	Wed,  4 Sep 2024 22:30:00 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.72.116.17])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9DE641955F44;
+	Wed,  4 Sep 2024 22:29:56 +0000 (UTC)
+From: xiubli@redhat.com
+To: ceph-devel@vger.kernel.org,
+	idryomov@gmail.com
+Cc: vshankar@redhat.com,
+	gfarnum@redhat.com,
+	pdonnell@redhat.com,
+	Xiubo Li <xiubli@redhat.com>
+Subject: [PATCH] ceph: remove the incorrect Fw reference check when dirtying pages
+Date: Thu,  5 Sep 2024 06:29:52 +0800
+Message-ID: <20240904222952.937201-1-xiubli@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US, de-DE
-Cc: regressions@lists.linux.dev, ceph-devel@vger.kernel.org,
- stable@vger.kernel.org
-From: Christian Ebner <c.ebner@proxmox.com>
-Subject: [REGRESSION]: cephfs: file corruption when reading content via
- in-kernel ceph client
-To: David Howells <dhowells@redhat.com>, Jeff Layton <jlayton@kernel.org>,
- Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hi,
+From: Xiubo Li <xiubli@redhat.com>
 
-some of our customers (Proxmox VE) are seeing issues with file 
-corruptions when accessing contents located on CephFS via the in-kernel 
-Ceph client [0,1], we managed to reproduce this regression on kernels up 
-to the latest 6.11-rc6.
-Accessing the same content on the CephFS using the FUSE client or the 
-in-kernel ceph client with older kernels (Ubuntu kernel on v6.5) does 
-not show file corruptions.
-Unfortunately the corruption is hard to reproduce, seemingly only a 
-small subset of files is affected. However, once a file is affected, the 
-issue is persistent and can easily be reproduced.
+When doing the direct-io reads it will also try to mark pages dirty,
+but for the read path it won't hold the Fw caps and there is case
+will it get the Fw reference.
 
-Bisection with the reproducer points to this commit:
+Fixes: 5dda377cf0a6 ("ceph: set i_head_snapc when getting CEPH_CAP_FILE_WR reference")
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/ceph/addr.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-"92b6cc5d: netfs: Add iov_iters to (sub)requests to describe various 
-buffers"
-
-Description of the issue:
-
-A file was copied from local filesystem to cephfs via:
-```
-cp /tmp/proxmox-backup-server_3.2-1.iso 
-/mnt/pve/cephfs/proxmox-backup-server_3.2-1.iso
-```
-* sha256sum on local 
-filesystem:`1d19698e8f7e769cf0a0dcc7ba0018ef5416c5ec495d5e61313f9c84a4237607 
-/tmp/proxmox-backup-server_3.2-1.iso`
-* sha256sum on cephfs with kernel up to above commit: 
-`1d19698e8f7e769cf0a0dcc7ba0018ef5416c5ec495d5e61313f9c84a4237607 
-/mnt/pve/cephfs/proxmox-backup-server_3.2-1.iso`
-* sha256sum on cephfs with kernel after above commit: 
-`89ad3620bf7b1e0913b534516cfbe48580efbaec944b79951e2c14e5e551f736 
-/mnt/pve/cephfs/proxmox-backup-server_3.2-1.iso`
-* removing and/or recopying the file does not change the issue, the 
-corrupt checksum remains the same.
-* accessing the same file from different clients results in the same 
-output: the one with above patch applied do show the incorrect checksum, 
-ones without the patch show the correct checksum.
-* the issue persists even across reboot of the ceph cluster and/or clients.
-* the file is indeed corrupt after reading, as verified by a `cmp -b`. 
-Interestingly, the first 4M contain the correct data, the following 4M 
-are read as all zeros, which differs from the original data.
-* the issue is related to the readahead size: mounting the cephfs with a 
-`rasize=0` makes the issue disappear, same is true for sizes up to 128k 
-(please note that the ranges as initially reported on the mailing list 
-[3] are not correct for rasize [0..128k] the file is not corrupted).
-
-In the bugtracker issue [4] I attached a  ftrace with "*ceph*" as filter 
-while performing a read on the latest kernel 6.11-rc6 while performing
-```
-dd if=/mnt/pve/cephfs/proxmox-backup-server_3.2-1.iso of=/tmp/test.out 
-bs=8M count=1
-```
-the relevant part shown by task `dd-26192`.
-
-Please let me know if I can provide further information or debug outputs 
-in order to narrow down the issue.
-
-[0] https://forum.proxmox.com/threads/78340/post-676129
-[1] https://forum.proxmox.com/threads/149249/
-[2] https://forum.proxmox.com/threads/151291/
-[3] 
-https://lore.kernel.org/lkml/db686d0c-2f27-47c8-8c14-26969433b13b@proxmox.com/
-[4] https://bugzilla.kernel.org/show_bug.cgi?id=219237
-
-#regzbot introduced: 92b6cc5d
-
-Regards,
-Christian Ebner
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index c4744a02db75..0df4623785dd 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -95,7 +95,6 @@ static bool ceph_dirty_folio(struct address_space *mapping, struct folio *folio)
+ 
+ 	/* dirty the head */
+ 	spin_lock(&ci->i_ceph_lock);
+-	BUG_ON(ci->i_wr_ref == 0); // caller should hold Fw reference
+ 	if (__ceph_have_pending_cap_snap(ci)) {
+ 		struct ceph_cap_snap *capsnap =
+ 				list_last_entry(&ci->i_cap_snaps,
+-- 
+2.45.1
 
 
