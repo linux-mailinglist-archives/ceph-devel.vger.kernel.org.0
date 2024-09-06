@@ -1,86 +1,77 @@
-Return-Path: <ceph-devel+bounces-1791-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1792-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 985DF96E9E6
-	for <lists+ceph-devel@lfdr.de>; Fri,  6 Sep 2024 08:16:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2CA696EBC0
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Sep 2024 09:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4D231C2365C
-	for <lists+ceph-devel@lfdr.de>; Fri,  6 Sep 2024 06:16:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DCB7283D6C
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Sep 2024 07:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8362413D2BE;
-	Fri,  6 Sep 2024 06:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1973A40879;
+	Fri,  6 Sep 2024 07:15:57 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+Received: from proxmox-new.maurer-it.com (proxmox-new.maurer-it.com [94.136.29.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96BFA13E3EF
-	for <ceph-devel@vger.kernel.org>; Fri,  6 Sep 2024 06:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1B513B7A6;
+	Fri,  6 Sep 2024 07:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.136.29.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725603317; cv=none; b=lGceYvJardauGc4nsGFnuZawgUbc+NPsJeg8uXiBSIXVEN1OaDVxhlHPSzlwFK1AOFbm2e3ai4y7xtXwdf+fnxUqHbqfSnNp7H5354BZrBBgIFx4Ts0BZxJc6ta/oa7G5EdMc9sJYrA3IIyVComW7afNeEhd3x7tT+k9PyDxnkg=
+	t=1725606956; cv=none; b=qzjW8SoFCC4qvjwJNMsYgXuP9aZP3zqDPvgpmgFV35cLeQqz5JYaZMem0cbtI27EkmrS0ZnpWpI1yigI6z/9F011CCUp850XYi+wGBu4JPC04SkFZGyMV9uWBdHDCc7oLFjTd+B2OjpKzFdNKcFeYzY+KEH5YfC8aNdIawghF0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725603317; c=relaxed/simple;
-	bh=R1bErVVlsa4zohE+Vzc5OBmwaqGxSq0aIdPCtjDTfkM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QRoS8b/tVPBouDbP9RM9wesamE2qwtAGOdWq5IdOXLHYUEo3MY6q7zND/bl4LkUMY5gR6/KSrdA69ZpexWvANWYnoerHHumivWmschJzHx6r0r82yUk+0GhB0rY2AZQdvJmNhnIPm2JeZyugJQBwjzLn1UjqaaL7mDVXAqEWBHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4X0Qtc4yDyz1S9tf;
-	Fri,  6 Sep 2024 14:14:48 +0800 (CST)
-Received: from kwepemf500003.china.huawei.com (unknown [7.202.181.241])
-	by mail.maildlp.com (Postfix) with ESMTPS id E8D071400DB;
-	Fri,  6 Sep 2024 14:15:11 +0800 (CST)
-Received: from huawei.com (10.175.112.208) by kwepemf500003.china.huawei.com
- (7.202.181.241) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 6 Sep
- 2024 14:15:11 +0800
-From: Zhang Zekun <zhangzekun11@huawei.com>
-To: <xiubli@redhat.com>, <idryomov@gmail.com>, <ceph-devel@vger.kernel.org>
-CC: <chenjun102@huawei.com>, <zhangzekun11@huawei.com>
-Subject: [PATCH] ceph: Remove empty definition in header file
-Date: Fri, 6 Sep 2024 14:01:34 +0800
-Message-ID: <20240906060134.129970-1-zhangzekun11@huawei.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1725606956; c=relaxed/simple;
+	bh=hdP07BeDVLYJXc6FZnBRqQoVhLrlnPPQMX6uR1xlb6o=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=udV9nTd7CYp2vdhx8WGl4XIHD7qhqcIc+GNDD+WGjFsWFlMDnXNAVWtIanaz5pFHeueejOtDLUjNPCpSvzmlSXZD6NuIfjSytgJ1nNqMV7lNUNsFzD8Yl31alrRrSetJPNkdsJEiPCoJmyPtp2JE39rwq7ECu+stHoGDqx5Nnzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com; spf=pass smtp.mailfrom=proxmox.com; arc=none smtp.client-ip=94.136.29.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=proxmox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proxmox.com
+Received: from proxmox-new.maurer-it.com (localhost.localdomain [127.0.0.1])
+	by proxmox-new.maurer-it.com (Proxmox) with ESMTP id 3CC6C451B7;
+	Fri,  6 Sep 2024 09:15:47 +0200 (CEST)
+Date: Fri, 6 Sep 2024 09:15:46 +0200 (CEST)
+From: Christian Ebner <c.ebner@proxmox.com>
+To: Xiubo Li <xiubli@redhat.com>, David Howells <dhowells@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>
+Cc: regressions@lists.linux.dev, ceph-devel@vger.kernel.org,
+	stable@vger.kernel.org
+Message-ID: <1679397305.24654.1725606946541@webmail.proxmox.com>
+In-Reply-To: <0e60c3b8-f9af-489a-ba6f-968cb12b55dd@redhat.com>
+References: <85bef384-4aef-4294-b604-83508e2fc350@proxmox.com>
+ <0e60c3b8-f9af-489a-ba6f-968cb12b55dd@redhat.com>
+Subject: Re: [REGRESSION]: cephfs: file corruption when reading content via
+ in-kernel ceph client
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf500003.china.huawei.com (7.202.181.241)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.6-Rev67
+X-Originating-Client: open-xchange-appsuite
 
-The real definition of ceph_acl_chmod() has been removed since
-commit 4db658ea0ca2 ("ceph: Fix up after semantic merge conflict"),
-remain the empty definition untouched in the header files. Let's
-remove the empty definition.
+> On 06.09.2024 03:01 CEST Xiubo Li <xiubli@redhat.com> wrote:
+> 
+>  
+> Hi Christian,
+> 
+> Thanks for reporting this.
+> 
+> Let me have a look and how to fix this.
+> 
+> - Xiubo
+> 
 
-Signed-off-by: Zhang Zekun <zhangzekun11@huawei.com>
----
- fs/ceph/super.h | 4 ----
- 1 file changed, 4 deletions(-)
+Thanks for looking into it, please do not hesitate to contact me if I can be of help regarding debugging or testing a possible fix.
 
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index c88bf53f68e9..384eac22db57 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1206,10 +1206,6 @@ static inline void ceph_init_inode_acls(struct inode *inode,
- 					struct ceph_acl_sec_ctx *as_ctx)
- {
- }
--static inline int ceph_acl_chmod(struct dentry *dentry, struct inode *inode)
--{
--	return 0;
--}
- 
- static inline void ceph_forget_all_cached_acls(struct inode *inode)
- {
--- 
-2.17.1
+Regards,
+Christian Ebner
 
 
