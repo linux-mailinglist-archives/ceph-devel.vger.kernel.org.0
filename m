@@ -1,79 +1,50 @@
-Return-Path: <ceph-devel+bounces-1813-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1814-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06538976DF6
-	for <lists+ceph-devel@lfdr.de>; Thu, 12 Sep 2024 17:40:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85FA976ECB
+	for <lists+ceph-devel@lfdr.de>; Thu, 12 Sep 2024 18:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FB79B217FB
-	for <lists+ceph-devel@lfdr.de>; Thu, 12 Sep 2024 15:40:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54BDAB24D22
+	for <lists+ceph-devel@lfdr.de>; Thu, 12 Sep 2024 16:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE251B984E;
-	Thu, 12 Sep 2024 15:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2551BB6A2;
+	Thu, 12 Sep 2024 16:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="KYutAf2z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOM5TRfb"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5831B9832
-	for <ceph-devel@vger.kernel.org>; Thu, 12 Sep 2024 15:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6D71865ED;
+	Thu, 12 Sep 2024 16:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726155582; cv=none; b=lywatYKaOU1Mu1Xdc75rQHoi4GA+kVAzS1/ceHLsiKMGqR3ZBbcpeJ1UgBo0bKqSJ2bG60kIQARJyBqZb856bT2ARKAHPUBiMq8O5bqfHIkOcoOwMCELUFzEWabgsBbXJacEAVEYFOWC2KO93KjSyLH1j42i+ZCsFuOX7pEIybg=
+	t=1726158794; cv=none; b=W0ziwlSp1SPyQg4S8W68Zexgr+DKSHjp6SQdpkbGsJI4qnzUB3SNk7/f5gx/EfhxjAU9vim2+le2FlW3g5gzi/Ut9jEpp7zC24ETxMjYvZc0Yl+77ZiIaF1aOtwarU0WsKTTclU6ZpP/HOXdXL7H8DEbSpeR+9oGolCI3uYGtSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726155582; c=relaxed/simple;
-	bh=36Sxi+gbBpE+8wmTVMyJTVNzyvmV3WPwvvIGgTk/KzQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bdbp7+O+yaYyTwJWed1YCCxmDU0hzpJpaNPvJ0oKdNICCMNxh+mKxJzezOOeYFtHX1/1GkRRE0Jub3Jv/bWSrRIvkYLcpxcI2l5th0EGT4c7v1BK3a3++HhYlDwDM+b6e8QRBtwwZDVIogR/BBo7SjHAFJwXAvF0IKFG6DmurGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=KYutAf2z; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c254a544bfso157002a12.1
-        for <ceph-devel@vger.kernel.org>; Thu, 12 Sep 2024 08:39:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1726155579; x=1726760379; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=z9euUjqtbYgwWwgE1/oq9DzNoO18ZxptGpiy8C+yuEE=;
-        b=KYutAf2z6ZdLzRKbhPktFomiuVkRknUGUH4UeVhcTvTkCE+NxdsnddJuRg7m9daqro
-         YRZTGuNzbQwzuZQilReSOzgw9mAvQBLB2RnmuxaC4SYBlmWPiDn0wG2Kh5MkphFTUbNz
-         xijolhFaPcF+1VzcT6T4iw0H+I/JKIYEqa2R9i5Y1y9MIXw3fWGnq5g44paPhJ1E2KoX
-         7rH7km5U5ik9Z8Prm6lcGjippwCKjCFCh67Xwl51WTvxxUhGX1LgAGcbu7PhICmqxcjd
-         NBaIGgx5Tkye0zMpIw2JCbn6/oRx3SqVgFI9yhrgc2ndkSJ7c6JiEZklnYWtckYRJf9a
-         nqKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726155579; x=1726760379;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z9euUjqtbYgwWwgE1/oq9DzNoO18ZxptGpiy8C+yuEE=;
-        b=p1UgenwYFQnG8Hz57Q3PVAa0wLEmhVaxlETlibujzhcBkkqSQp3VBbrTtHtIHPqwlK
-         h9DGohyN9OHWAXQwiA8XgroBc4dvUZmNDTvb7imghU9gHybTHzj49Fx29Wvq4urDT4Jj
-         WMbMqZ342HSUJ3+Yu3Mx2zs4VsFEre1jZqe4VVW5QtvqZLi50ADSfBsO2grDInwnjRfv
-         uj/nuixu2AChIyW0Qd9WIf7wtQeynWjagLGUjnSJ1oGskZs/dLEv+6xD07ZPzhOHuGDZ
-         twM+GmPzx4Ksx5smCxIC333ttPoO9B6k4rWvUEWd2ojGlxd+vParMc32epcTajNULnlU
-         kyzg==
-X-Gm-Message-State: AOJu0YwKzNvm4iXii2GaPP1NuLX68KQ2ZsalAaYdO17CMw+FU0rxCEaq
-	kIs2IdRKEMgBj4WqwyVimqWVeVagn65Ix+gCrRbKIgdBhs2zeKmZ8Kl44hZs9dE=
-X-Google-Smtp-Source: AGHT+IHCqQ88trVe2YKiL2igp8EWFO/FeGG+AEqn7eeF6kH5sk4mmdw/rmPnL7ucA079Y/QGVbLl/g==
-X-Received: by 2002:a05:6402:2113:b0:5c3:eb29:83ce with SMTP id 4fb4d7f45d1cf-5c413e60babmr1334577a12.9.1726155579239;
-        Thu, 12 Sep 2024 08:39:39 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-212.dynamic.mnet-online.de. [62.216.208.212])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd52135sm6694734a12.49.2024.09.12.08.39.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 08:39:38 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: xiubli@redhat.com,
-	idryomov@gmail.com
-Cc: ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] ceph: Use struct_size() helper
-Date: Thu, 12 Sep 2024 17:39:24 +0200
-Message-ID: <20240912153924.78724-1-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726158794; c=relaxed/simple;
+	bh=RJ/rsTqfJsi7HX8JrXAOqj7jxzrHlUkrE0IsT+BeVyA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=CrIxc7RMfiocu1qsb3YNv3nrtR4bVgAEajgy4D90Ji9o5QG5XaLp9i/tGQF5yLjY2rpRlNknYA1vpecCpE88YIg0VvLjkh1N3GE64i+H9FAVWQcjKi6xD+uigb3iwJPFWGJ4S/ChLiDrBv4XbbRnfc4YZWy1/kZFFOW90HLUuX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOM5TRfb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18877C4CEC3;
+	Thu, 12 Sep 2024 16:33:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726158794;
+	bh=RJ/rsTqfJsi7HX8JrXAOqj7jxzrHlUkrE0IsT+BeVyA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=JOM5TRfbOc71NFRgtcbZxpD33gcCjGOVLAuzmdJJEW/yma+eULX1K8/epnJsyqQsk
+	 EJWk155bp7m2fzvv8OioW24quF768VahV8l5cMA5wsS1sE/eg8wyAath9HrtCQQHlb
+	 JbNW84AvpCU/6D1BR1hbYitHTjeNPrLVoyZnKVfaQ3NdDvDDWuAimeVMiwhjfEkj0S
+	 tmrO2VgyRFUfnpHQpN2lxlDb50RP6zmOOBdctgWtW9DKT/DYdhk68w+fGM1ZFAMYwq
+	 Y145sncCVHNeUW4xPJHhUwFsttlj6x1fktg5572C8FAswQ5vt57VDqRn0ACWI3lDax
+	 pjtMy2JmtOeqQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D233822D1B;
+	Thu, 12 Sep 2024 16:33:16 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -81,28 +52,71 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next 0/8] Some modifications to optimize code readability
+From: patchwork-bot+bluetooth@kernel.org
+Message-Id: 
+ <172615879499.1648954.6225809739644290566.git-patchwork-notify@kernel.org>
+Date: Thu, 12 Sep 2024 16:33:14 +0000
+References: <20240822133908.1042240-1-lizetao1@huawei.com>
+In-Reply-To: <20240822133908.1042240-1-lizetao1@huawei.com>
+To: Li Zetao <lizetao1@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, marcel@holtmann.org, johan.hedberg@gmail.com,
+ luiz.dentz@gmail.com, idryomov@gmail.com, xiubli@redhat.com,
+ dsahern@kernel.org, trondmy@kernel.org, anna@kernel.org,
+ chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
+ okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, jmaloy@redhat.com,
+ ying.xue@windriver.com, linux@treblig.org, jacob.e.keller@intel.com,
+ willemb@google.com, kuniyu@amazon.com, wuyun.abel@bytedance.com,
+ quic_abchauha@quicinc.com, gouhao@uniontech.com, netdev@vger.kernel.org,
+ linux-bluetooth@vger.kernel.org, ceph-devel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, tipc-discussion@lists.sourceforge.net
 
-Use struct_size() to calculate the number of bytes to be allocated.
+Hello:
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- fs/ceph/addr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series was applied to bluetooth/bluetooth-next.git (master)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index c4744a02db75..ab494f250d80 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -2133,7 +2133,7 @@ static int __ceph_pool_perm_get(struct ceph_inode_info *ci,
- 	}
- 
- 	pool_ns_len = pool_ns ? pool_ns->len : 0;
--	perm = kmalloc(sizeof(*perm) + pool_ns_len + 1, GFP_NOFS);
-+	perm = kmalloc(struct_size(perm, pool_ns, pool_ns_len + 1), GFP_NOFS);
- 	if (!perm) {
- 		err = -ENOMEM;
- 		goto out_unlock;
+On Thu, 22 Aug 2024 21:39:00 +0800 you wrote:
+> This patchset is mainly optimized for readability in contexts where size
+> needs to be determined. By using min() or max(), or even directly
+> removing redundant judgments (such as the 5th patch), the code is more
+> consistent with the context.
+> 
+> Li Zetao (8):
+>   atm: use min() to simplify the code
+>   Bluetooth: use min() to simplify the code
+>   net: caif: use max() to simplify the code
+>   libceph: use min() to simplify the code
+>   net: remove redundant judgments to simplify the code
+>   ipv6: mcast: use min() to simplify the code
+>   tipc: use min() to simplify the code
+>   SUNRPC: use min() to simplify the code
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,1/8] atm: use min() to simplify the code
+    (no matching commit)
+  - [net-next,2/8] Bluetooth: use min() to simplify the code
+    (no matching commit)
+  - [net-next,3/8] net: caif: use max() to simplify the code
+    https://git.kernel.org/bluetooth/bluetooth-next/c/b4985aa8e312
+  - [net-next,4/8] libceph: use min() to simplify the code
+    (no matching commit)
+  - [net-next,5/8] net: remove redundant judgments to simplify the code
+    (no matching commit)
+  - [net-next,6/8] ipv6: mcast: use min() to simplify the code
+    https://git.kernel.org/bluetooth/bluetooth-next/c/26549dab8a46
+  - [net-next,7/8] tipc: use min() to simplify the code
+    https://git.kernel.org/bluetooth/bluetooth-next/c/a18308623ce3
+  - [net-next,8/8] SUNRPC: use min() to simplify the code
+    (no matching commit)
+
+You are awesome, thank you!
 -- 
-2.46.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
