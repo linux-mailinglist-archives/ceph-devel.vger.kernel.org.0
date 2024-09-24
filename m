@@ -1,350 +1,198 @@
-Return-Path: <ceph-devel+bounces-1835-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1836-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AB7498428E
-	for <lists+ceph-devel@lfdr.de>; Tue, 24 Sep 2024 11:48:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF1B984518
+	for <lists+ceph-devel@lfdr.de>; Tue, 24 Sep 2024 13:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A3C6280E26
-	for <lists+ceph-devel@lfdr.de>; Tue, 24 Sep 2024 09:48:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9F0C1F225B1
+	for <lists+ceph-devel@lfdr.de>; Tue, 24 Sep 2024 11:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828E415575C;
-	Tue, 24 Sep 2024 09:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F339C126BE0;
+	Tue, 24 Sep 2024 11:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ke8RdNqR"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MO6rlmjb"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24823335A5;
-	Tue, 24 Sep 2024 09:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4193F9D5
+	for <ceph-devel@vger.kernel.org>; Tue, 24 Sep 2024 11:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727171295; cv=none; b=Ohe+4SJ9R4ybfLiTZeukZCXPVssJ2gdAOo/gJsLM8eaPDryeLVsnXfFd61sXWTEkiOk1Q0DGsY0lQ+EHE1E7pHrjb/u82cquRlgzua6G/g9w+3YCYrYtBxNvrVTxcnJmxiZoB9NAEAXUrkxDssC9/TT0Nk6i4LociSxrw0Ew1lU=
+	t=1727178425; cv=none; b=nrA6VjH3HLvFaoNg2GW3XBWNFrpkfSWFiepVxV+PS8dA04bIAKH2fPqz+VFrg+OCZzGKErxfSJySgc0c34WKOxTBm9+S+YCz7iOi0fl4QeZ2ud0uHPPHYkxx7Vxt6cKvxmYXBJ+V64ufPEh/PowveexNMpHVuUcCZ0p1Y1BzxWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727171295; c=relaxed/simple;
-	bh=IJb2CY2sQexSIpMJlLAZTjDzjCwF7sXuLr8nOkq3T5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDQl5yKkMBPM1x598Uw+2zPSySySHf4XUJ2W2CBedSIePBDwvfMjm+335kB9ZWPztlw2eoLYsjTBEBgKLTmotGFWtERbasj4s9xZSYAtGUs+3aK6aTTwBM+J/dRYpxqWVjuZCo5Y8kznPhElIv1yqDFVFXeZiYDCYlt2fCuMAeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ke8RdNqR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F92C4CEC4;
-	Tue, 24 Sep 2024 09:48:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727171294;
-	bh=IJb2CY2sQexSIpMJlLAZTjDzjCwF7sXuLr8nOkq3T5Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ke8RdNqRNrJOuxH3G/Ln6qNlL6QGQ/daYetAAt1sBMZJ0y7LmzxW+cIsoaM+SDRcd
-	 /NWgG9uAVX1OmTbwLZrk4VFMjmveHy1t4tOE37b5Y2dGlELjeIm7+IkM7UBrgbIziL
-	 1QGpr3l1xvgyERkKlbolB+xbud5VGkGTGjU6JIA8yDzMBiKY+W2wzl5OhT5LmV3ZU0
-	 eTUk0TlfWFAObQkz/Ll3WDJbzS8KBoTZ2//YyyX50l+Pw5hXRlPeVVhdVTv6UM9hLz
-	 z8Sl1ai3JtBKE54ANx/ZqRBNkENUlruWITPhgRJV2uTN1PVF26og/aWR0YLlquICkM
-	 l0CYDkm4yULGg==
-Date: Tue, 24 Sep 2024 12:48:09 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 15/25] netfs: Use new folio_queue data type and
- iterator instead of xarray iter
-Message-ID: <20240924094809.GA1182241@unreal>
-References: <20240814203850.2240469-1-dhowells@redhat.com>
- <20240814203850.2240469-16-dhowells@redhat.com>
+	s=arc-20240116; t=1727178425; c=relaxed/simple;
+	bh=1Rno3X/tcUXyjAzZFybjHt5u8uoSvmFC1uiy7YhMS6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=naM5UEEepddaQ1unI89YlGJp3Vrxf6ayQp0kpKGjsPArvnx/cirCrDMFInZcOXL3WDS9qPUxqorhb9R80kWhKf+bg6eJGkho6z5xpDbZRM5TQoITFK4wffFVCrDdFX3PTjUPSEwo4ibMpK2VJZXcIWNHV0o7IELLPe9Vq2Md5zU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MO6rlmjb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727178421;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/ocVpdGpwmay2oJQ3a8TNZ1kfq4jlTVv5kM5n0IJVcE=;
+	b=MO6rlmjbxAc84heBNFKZugBSLTMRPBzUne2ws8bC5ygU3UgDeT8Ge7WCOw6QInil45qpk1
+	vyWZvFydmiwMrO6FifDexFR3/Rmpe1SObBkprPALGej2jfo3t3G3lnmCe0erLwqdtAAKz8
+	sOLaIxXuTABpKMZ5P2fKEHzTSDIS31A=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-665-p__N551COgmXyOgqQHjf-Q-1; Tue, 24 Sep 2024 07:47:00 -0400
+X-MC-Unique: p__N551COgmXyOgqQHjf-Q-1
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2052a68430fso62532905ad.2
+        for <ceph-devel@vger.kernel.org>; Tue, 24 Sep 2024 04:47:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727178419; x=1727783219;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ocVpdGpwmay2oJQ3a8TNZ1kfq4jlTVv5kM5n0IJVcE=;
+        b=rTDsMgHP4DCsPVbalmzPGyMV5UzOsnGKK76XQWGDwp/Z4ZjqFMN7w4FVGxDcR+RnWO
+         +K6LKyZX1POWe7OETrgMXZUaZuH849ApmuttC7SJTpRNfCAbkyGKi6J/fKk69kEePF8d
+         WFgOqvzOHdqeOW/N+6xMNBdCwNzofl2JCWFPo8Mudrxn540KUMcOg6DcY8/fKz8Y33pG
+         GvZ2KQ5/GKjjmzWOMUfXxLT7IrRTWtkL09u+MBk/hBDruAE2CxhMNHJ/K0Ql1HW5Tl+r
+         8palpWIEEH33B3WZj5CmcTwoHzcKX4oy52d+lhwmnDzbfZmZqT7odOau85SwmL0n7HGJ
+         Svqg==
+X-Gm-Message-State: AOJu0Yxac8afFeQkEqFUrdiyq5SOkOeFy4kiNh5f2h4NZQajsm1lToWL
+	orEUE8dFfyzvG1WCfSNXdgZ5BsZm05AeBRSgjJbHs1KSg7KMEMtn28K/yps/hWcVyRkgQ8zLufW
+	sW/7z7pNAlbUQEpHgYfQnM0bUiQd59MS/r8L0LI+DR1ughlTgQvaPmeylAW4=
+X-Received: by 2002:a17:903:22c5:b0:205:6f2d:adf7 with SMTP id d9443c01a7336-208d83a8387mr186046045ad.21.1727178419260;
+        Tue, 24 Sep 2024 04:46:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFzqT2VGJE3w+prt4FsKWnRv5qQpgZKE/po0qC1Yab4/u73TH9DY01BnYu3ZU8PV3a6JR3s7Q==
+X-Received: by 2002:a17:903:22c5:b0:205:6f2d:adf7 with SMTP id d9443c01a7336-208d83a8387mr186045855ad.21.1727178418899;
+        Tue, 24 Sep 2024 04:46:58 -0700 (PDT)
+Received: from [10.72.116.56] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20af17e3272sm9174985ad.179.2024.09.24.04.46.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 24 Sep 2024 04:46:58 -0700 (PDT)
+Message-ID: <336f83cc-4a57-48dd-8598-e5b4ceab7d46@redhat.com>
+Date: Tue, 24 Sep 2024 19:46:49 +0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240814203850.2240469-16-dhowells@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] ceph: flush all the caps release when syncing the
+ whole filesystem
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: ceph-devel@vger.kernel.org, vshankar@redhat.com
+References: <20240730054135.640396-1-xiubli@redhat.com>
+ <20240730054135.640396-3-xiubli@redhat.com>
+ <CAOi1vP9g92tv8sEbFbSkV73PwrqqNNQktcYxUvdwCYBZkhhnsw@mail.gmail.com>
+Content-Language: en-US
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <CAOi1vP9g92tv8sEbFbSkV73PwrqqNNQktcYxUvdwCYBZkhhnsw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14, 2024 at 09:38:35PM +0100, David Howells wrote:
-> Make the netfs write-side routines use the new folio_queue struct to hold=
- a
-> rolling buffer of folios, with the issuer adding folios at the tail and t=
-he
-> collector removing them from the head as they're processed instead of usi=
-ng
-> an xarray.
->=20
-> This will allow a subsequent patch to simplify the write collector.
->=20
-> The primary mark (as tested by folioq_is_marked()) is used to note if the
-> corresponding folio needs putting.
->=20
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/netfs/internal.h          |  9 +++-
->  fs/netfs/misc.c              | 76 ++++++++++++++++++++++++++++++++
->  fs/netfs/objects.c           |  1 +
->  fs/netfs/stats.c             |  4 +-
->  fs/netfs/write_collect.c     | 84 +++++++++++++++++++-----------------
->  fs/netfs/write_issue.c       | 28 ++++++------
->  include/linux/netfs.h        |  8 ++--
->  include/trace/events/netfs.h |  1 +
->  8 files changed, 150 insertions(+), 61 deletions(-)
 
-According to git bisect, this commit causes to the following kernel
-splat during boot of the system with 9p fs.
+On 9/24/24 14:26, Ilya Dryomov wrote:
+> On Tue, Jul 30, 2024 at 7:41 AM <xiubli@redhat.com> wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> We have hit a race between cap releases and cap revoke request
+>> that will cause the check_caps() to miss sending a cap revoke ack
+>> to MDS. And the client will depend on the cap release to release
+>> that revoking caps, which could be delayed for some unknown reasons.
+>>
+>> In Kclient we have figured out the RCA about race and we need
+>> a way to explictly trigger this manually could help to get rid
+>> of the caps revoke stuck issue.
+>>
+>> URL: https://tracker.ceph.com/issues/67221
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/ceph/caps.c       | 22 ++++++++++++++++++++++
+>>   fs/ceph/mds_client.c |  1 +
+>>   fs/ceph/super.c      |  1 +
+>>   fs/ceph/super.h      |  1 +
+>>   4 files changed, 25 insertions(+)
+>>
+>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+>> index c09add6d6516..a0a39243aeb3 100644
+>> --- a/fs/ceph/caps.c
+>> +++ b/fs/ceph/caps.c
+>> @@ -4729,6 +4729,28 @@ void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc)
+>>          ceph_mdsc_iterate_sessions(mdsc, flush_dirty_session_caps, true);
+>>   }
+>>
+>> +/*
+>> + * Flush all cap releases to the mds
+>> + */
+>> +static void flush_cap_releases(struct ceph_mds_session *s)
+>> +{
+>> +       struct ceph_mds_client *mdsc = s->s_mdsc;
+>> +       struct ceph_client *cl = mdsc->fsc->client;
+>> +
+>> +       doutc(cl, "begin\n");
+>> +       spin_lock(&s->s_cap_lock);
+>> +       if (s->s_num_cap_releases)
+>> +               ceph_flush_session_cap_releases(mdsc, s);
+>> +       spin_unlock(&s->s_cap_lock);
+>> +       doutc(cl, "done\n");
+>> +
+>> +}
+>> +
+>> +void ceph_flush_cap_releases(struct ceph_mds_client *mdsc)
+>> +{
+>> +       ceph_mdsc_iterate_sessions(mdsc, flush_cap_releases, true);
+>> +}
+>> +
+>>   void __ceph_touch_fmode(struct ceph_inode_info *ci,
+>>                          struct ceph_mds_client *mdsc, int fmode)
+>>   {
+>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+>> index 86d0148819b0..fc563b59959a 100644
+>> --- a/fs/ceph/mds_client.c
+>> +++ b/fs/ceph/mds_client.c
+>> @@ -5904,6 +5904,7 @@ void ceph_mdsc_sync(struct ceph_mds_client *mdsc)
+>>          want_tid = mdsc->last_tid;
+>>          mutex_unlock(&mdsc->mutex);
+>>
+>> +       ceph_flush_cap_releases(mdsc);
+>>          ceph_flush_dirty_caps(mdsc);
+>>          spin_lock(&mdsc->cap_dirty_lock);
+>>          want_flush = mdsc->last_cap_flush_tid;
+>> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+>> index f489b3e12429..0a1215b4f0ba 100644
+>> --- a/fs/ceph/super.c
+>> +++ b/fs/ceph/super.c
+>> @@ -126,6 +126,7 @@ static int ceph_sync_fs(struct super_block *sb, int wait)
+>>          if (!wait) {
+>>                  doutc(cl, "(non-blocking)\n");
+>>                  ceph_flush_dirty_caps(fsc->mdsc);
+>> +               ceph_flush_cap_releases(fsc->mdsc);
+> Hi Xiubo,
+>
+> Is there a significance to flushing cap releases before dirty caps on
+> the blocking path and doing it vice versa (i.e. flushing cap releases
+> after dirty caps) on the non-blocking path?
 
-#
-# Caches
-#
-CONFIG_NETFS_SUPPORT=3Dy
-# CONFIG_NETFS_STATS is not set
-# CONFIG_NETFS_DEBUG is not set
-# CONFIG_FSCACHE is not set
-# end of Caches
+Hi Ilya,
 
-=2E..
-CONFIG_9P_FS=3Dy
-=2E..
+The dirty caps and the cap releases are not related.
 
-[    1.510725][    T1] Run /sbin/init as init process
-[    1.510937][    T1]   with arguments:
-[    1.511060][    T1]     /sbin/init
-[    1.511233][    T1]   with environment:
-[    1.511332][    T1]     HOME=3D/
-[    1.511448][    T1]     TERM=3Dlinux
-[    1.516066][    T1] page: refcount:0 mapcount:0 mapping:0000000000000000=
- index:0x0 pfn:0x6ce48
-[    1.516920][    T1] flags: 0x4000000000000000(zone=3D1)
-[    1.517112][    T1] raw: 4000000000000000 ffffea0001b39248 ffffea0000158=
-3c8 0000000000000000
-[    1.517374][    T1] raw: 0000000000000000 0000000000000000 00000000fffff=
-fff 0000000000000000
-[    1.517767][    T1] page dumped because: VM_BUG_ON_FOLIO(((unsigned int)=
- folio_ref_count(folio) + 127u <=3D 127u))
-[    1.518144][    T1] ------------[ cut here ]------------
-[    1.518311][    T1] kernel BUG at include/linux/mm.h:1444!
-[    1.518488][    T1] Oops: invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC =
-KASAN
-[    1.518738][    T1] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.1=
-1.0+ #2488
-[    1.518990][    T1] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), =
-BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[    1.519325][    T1] RIP: 0010:__iov_iter_get_pages_alloc+0x16d4/0x2210
-[    1.519540][    T1] Code: 84 f2 fa ff ff 48 89 ef e8 49 28 98 ff e9 e5 f=
-a ff ff 48 8d 48 ff e9 2c fe ff ff 48 c7 c6 20 ee 21 83 48 89 cf e8 7c 2d 8=
-a ff <0f> 0b 48 b8 00 00 00 00 00 fc ff df 4c 8b 74 24 68 44 8b 5c 24 30
-[    1.520110][    T1] RSP: 0000:ffff8880060f6e40 EFLAGS: 00010286
-[    1.520317][    T1] RAX: 000000000000005c RBX: ffffea0001b39234 RCX: 000=
-0000000000000
-[    1.520547][    T1] RDX: 000000000000005c RSI: 0000000000000004 RDI: fff=
-fed1000c1edbb
-[    1.520776][    T1] RBP: dffffc0000000000 R08: 0000000000000000 R09: fff=
-ffbfff0718ce0
-[    1.521027][    T1] R10: 0000000000000003 R11: 0000000000000001 R12: fff=
-f8880065bd7e0                                                              =
-                                                                    12:43:4=
-5 [122/
-[    1.521252][    T1] R13: ffff888006644000 R14: 0000000000000002 R15: 000=
-0000000001000
-[    1.521475][    T1] FS:  0000000000000000(0000) GS:ffff88806ce80000(0000=
-) knlGS:0000000000000000
-[    1.521761][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    1.521961][    T1] CR2: 0000000000000000 CR3: 0000000003881001 CR4: 000=
-0000000370eb0
-[    1.522200][    T1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000=
-0000000000000
-[    1.522418][    T1] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000=
-0000000000400
-[    1.522636][    T1] Call Trace:
-[    1.522750][    T1]  <TASK>
-[    1.522823][    T1]  ? __die+0x52/0x8f
-[    1.522939][    T1]  ? die+0x2a/0x50
-[    1.523061][    T1]  ? do_trap+0x1d9/0x2c0
-[    1.523163][    T1]  ? __iov_iter_get_pages_alloc+0x16d4/0x2210
-[    1.523334][    T1]  ? do_error_trap+0xa3/0x160
-[    1.523465][    T1]  ? __iov_iter_get_pages_alloc+0x16d4/0x2210
-[    1.523633][    T1]  ? handle_invalid_op+0x2c/0x30
-[    1.523765][    T1]  ? __iov_iter_get_pages_alloc+0x16d4/0x2210
-[    1.523942][    T1]  ? exc_invalid_op+0x29/0x40
-[    1.524087][    T1]  ? asm_exc_invalid_op+0x16/0x20
-[    1.524238][    T1]  ? __iov_iter_get_pages_alloc+0x16d4/0x2210
-[    1.524426][    T1]  ? iov_iter_extract_pages+0x1ee0/0x1ee0
-[    1.524575][    T1]  ? radix_tree_node_alloc.constprop.0+0x16a/0x2c0
-[    1.524762][    T1]  ? lock_acquire+0xe2/0x500
-[    1.524916][    T1]  ? mark_lock+0xfc/0x2dc0
-[    1.525071][    T1]  iov_iter_get_pages_alloc2+0x3d/0xe0
-[    1.525208][    T1]  ? print_usage_bug.part.0+0x600/0x600
-[    1.525392][    T1]  p9_get_mapped_pages.part.0.constprop.0+0x3bf/0x6c0
-[    1.525595][    T1]  ? p9pdu_vwritef+0x320/0x1f20
-[    1.525756][    T1]  ? p9_virtio_request+0x550/0x550
-[    1.525918][    T1]  ? pdu_read+0xc0/0xc0
-[    1.526056][    T1]  ? lock_release+0x220/0x780
-[    1.526218][    T1]  ? pdu_read+0xc0/0xc0
-[    1.526341][    T1]  p9_virtio_zc_request+0x728/0x1020
-[    1.526501][    T1]  ? p9pdu_vwritef+0x320/0x1f20
-[    1.526662][    T1]  ? p9_virtio_probe+0xa20/0xa20
-[    1.526824][    T1]  ? netfs_read_to_pagecache+0x601/0xd50
-[    1.526990][    T1]  ? mark_lock+0xfc/0x2dc0
-[    1.527159][    T1]  ? p9pdu_finalize+0xdc/0x1d0
-[    1.527321][    T1]  ? p9_client_prepare_req+0x235/0x360
-[    1.527483][    T1]  ? p9_tag_alloc+0x6e0/0x6e0
-[    1.527644][    T1]  ? lock_release+0x220/0x780
-[    1.527806][    T1]  p9_client_zc_rpc.constprop.0+0x236/0x7d0
-[    1.528013][    T1]  ? __create_object+0x5e/0x80
-[    1.528175][    T1]  ? p9_client_flush.isra.0+0x390/0x390
-[    1.528345][    T1]  ? lockdep_hardirqs_on_prepare+0x268/0x3e0
-[    1.528544][    T1]  ? __call_rcu_common.constprop.0+0x475/0xc80
-[    1.528785][    T1]  ? p9_req_put+0x17a/0x200
-[    1.528944][    T1]  p9_client_read_once+0x343/0x840
-[    1.529114][    T1]  ? p9_client_getlock_dotl+0x3c0/0x3c0
-[    1.529274][    T1]  p9_client_read+0xf1/0x150
-[    1.529440][    T1]  v9fs_issue_read+0x107/0x2c0
-[    1.529608][    T1]  ? v9fs_issue_write+0x140/0x140
-[    1.529736][    T1]  netfs_read_to_pagecache+0x601/0xd50
-[    1.529858][    T1]  netfs_readahead+0x6af/0xbe0
-[    1.530000][    T1]  read_pages+0x17b/0xaf0
-[    1.530136][    T1]  ? lru_move_tail+0x8f0/0x8f0
-[    1.530299][    T1]  ? file_ra_state_init+0xd0/0xd0
-[    1.530479][    T1]  page_cache_ra_unbounded+0x324/0x5f0
-[    1.530638][    T1]  filemap_get_pages+0x597/0x16b0
-[    1.530801][    T1]  ? filemap_add_folio+0x140/0x140
-[    1.530957][    T1]  ? lock_is_held_type+0x81/0xe0
-[    1.531121][    T1]  filemap_read+0x2ec/0xa90
-[    1.531282][    T1]  ? filemap_get_pages+0x16b0/0x16b0
-[    1.531443][    T1]  ? 0xffffffff81000000
-[    1.531565][    T1]  ? find_held_lock+0x2d/0x110
-[    1.531720][    T1]  ? lock_is_held_type+0x81/0xe0
-[    1.531888][    T1]  ? down_read_interruptible+0x1f6/0x490
-[    1.532062][    T1]  ? down_read+0x450/0x450
-[    1.532229][    T1]  ? lockdep_hardirqs_on_prepare+0x3e0/0x3e0
-[    1.532435][    T1]  ? find_held_lock+0x2d/0x110
-[    1.532594][    T1]  netfs_buffered_read_iter+0xe2/0x130
-[    1.532755][    T1]  ? netfs_file_read_iter+0xb2/0x130
-[    1.532904][    T1]  __kernel_read+0x2db/0x8a0
-[    1.533066][    T1]  ? __x64_sys_lseek+0x1d0/0x1d0
-[    1.533221][    T1]  bprm_execve+0x548/0x1410
-[    1.533381][    T1]  ? setup_arg_pages+0xb40/0xb40
-[    1.533534][    T1]  ? __cond_resched+0x17/0x70
-[    1.533684][    T1]  kernel_execve+0x26a/0x2f0
-[    1.533808][    T1]  try_to_run_init_process+0xf/0x30
-[    1.533933][    T1]  ? rest_init+0x1b0/0x1b0
-[    1.534064][    T1]  kernel_init+0xe2/0x140
-[    1.534160][    T1]  ? _raw_spin_unlock_irq+0x24/0x30
-[    1.534285][    T1]  ret_from_fork+0x2d/0x70
-[    1.534415][    T1]  ? rest_init+0x1b0/0x1b0
-[    1.534558][    T1]  ret_from_fork_asm+0x11/0x20
-[    1.534730][    T1]  </TASK>
-[    1.534858][    T1] Modules linked in:
-[    1.535016][    T1] ---[ end trace 0000000000000000 ]---
-[    1.535173][    T1] RIP: 0010:__iov_iter_get_pages_alloc+0x16d4/0x2210
-[    1.535385][    T1] Code: 84 f2 fa ff ff 48 89 ef e8 49 28 98 ff e9 e5 f=
-a ff ff 48 8d 48 ff e9 2c fe ff ff 48 c7 c6 20 ee 21 83 48 89 cf e8 7c 2d 8=
-a ff <0f> 0b 48 b8 00 00 00 00 00 fc ff df 4c 8b 74 24 68 44 8b 5c 24 30
-[    1.535967][    T1] RSP: 0000:ffff8880060f6e40 EFLAGS: 00010286
-[    1.536183][    T1] RAX: 000000000000005c RBX: ffffea0001b39234 RCX: 000=
-0000000000000
-[    1.536426][    T1] RDX: 000000000000005c RSI: 0000000000000004 RDI: fff=
-fed1000c1edbb
-[    1.536667][    T1] RBP: dffffc0000000000 R08: 0000000000000000 R09: fff=
-ffbfff0718ce0
-[    1.536914][    T1] R10: 0000000000000003 R11: 0000000000000001 R12: fff=
-f8880065bd7e0
-[    1.537163][    T1] R13: ffff888006644000 R14: 0000000000000002 R15: 000=
-0000000001000
-[    1.537409][    T1] FS:  0000000000000000(0000) GS:ffff88806ce80000(0000=
-) knlGS:0000000000000000
-[    1.537842][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    1.538035][    T1] CR2: 0000000000000000 CR3: 0000000003881001 CR4: 000=
-0000000370eb0
-[    1.538281][    T1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000=
-0000000000000
-[    1.538519][    T1] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000=
-0000000000400
-[    1.538779][    T1] ------------[ cut here ]------------
-[    1.538904][    T1] WARNING: CPU: 1 PID: 1 at kernel/exit.c:886 do_exit+=
-0x17c4/0x23a0
-[    1.539110][    T1] Modules linked in:
-[    1.539229][    T1] CPU: 1 UID: 0 PID: 1 Comm: swapper/0 Tainted: G     =
- D            6.11.0+ #2488
-[    1.539459][    T1] Tainted: [D]=3DDIE
-[    1.539567][    T1] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), =
-BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-[    1.539860][    T1] RIP: 0010:do_exit+0x17c4/0x23a0
-[    1.540008][    T1] Code: bb 68 04 00 00 31 f6 e8 5a 92 ff ff e9 d6 f8 f=
-f ff 4c 89 fe bf 05 06 00 00 e8 c8 53 02 00 e9 5c ec ff ff 0f 0b e9 b7 e8 f=
-f ff <0f> 0b e9 27 ea ff ff 48 89 df e8 ad 90 ff ff 48 85 c0 49 89 c7 0f
-[    1.540502][    T1] RSP: 0000:ffff8880060f7e68 EFLAGS: 00010286
-[    1.540657][    T1] RAX: dffffc0000000000 RBX: ffff8880060e8000 RCX: 1ff=
-ffffff07aebdf
-[    1.540860][    T1] RDX: 1ffff11000c1d20b RSI: 0000000000000008 RDI: fff=
-f8880060e9058
-[    1.541078][    T1] RBP: ffff8880060e8708 R08: 0000000000000000 R09: fff=
-ffbfff07ae5c1
-[    1.541261][    T1] R10: 0000000000000000 R11: 0000000000000001 R12: fff=
-f888006108000
-[    1.541437][    T1] R13: ffff8880060e8710 R14: ffff888006100000 R15: 000=
-000000000000b
-[    1.541645][    T1] FS:  0000000000000000(0000) GS:ffff88806ce80000(0000=
-) knlGS:0000000000000000
-[    1.541875][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    1.542043][    T1] CR2: 0000000000000000 CR3: 0000000003881001 CR4: 000=
-0000000370eb0
-[    1.542237][    T1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000=
-0000000000000
-[    1.542432][    T1] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000=
-0000000000400
-[    1.542622][    T1] Call Trace:
-[    1.542733][    T1]  <TASK>
-[    1.542801][    T1]  ? __warn.cold+0x5f/0x1ed
-[    1.542930][    T1]  ? do_exit+0x17c4/0x23a0
-[    1.543063][    T1]  ? report_bug+0x1e6/0x290
-[    1.543190][    T1]  ? handle_bug+0x4f/0x90
-[    1.543290][    T1]  ? exc_invalid_op+0x13/0x40
-[    1.543418][    T1]  ? asm_exc_invalid_op+0x16/0x20
-[    1.543545][    T1]  ? do_exit+0x17c4/0x23a0
-[    1.543676][    T1]  ? do_exit+0x1c2/0x23a0
-[    1.543774][    T1]  ? __cond_resched+0x17/0x70
-[    1.543904][    T1]  ? is_current_pgrp_orphaned+0x90/0x90
-[    1.544040][    T1]  ? kernel_execve+0x26a/0x2f0
-[    1.544169][    T1]  ? __iov_iter_get_pages_alloc+0x16d4/0x2210
-[    1.544329][    T1]  make_task_dead+0xf0/0x110
-[    1.544462][    T1]  rewind_stack_and_make_dead+0x16/0x20
-[    1.544595][    T1] RIP: 0000:0x0
-[    1.544708][    T1] Code: Unable to access opcode bytes at 0xfffffffffff=
-fffd6.
-[    1.544903][    T1] RSP: 0000:0000000000000000 EFLAGS: 00000000 ORIG_RAX=
-: 0000000000000000
-[    1.545098][    T1] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 000=
-0000000000000
-[    1.545286][    T1] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000=
-0000000000000
-[    1.545489][    T1] RBP: 0000000000000000 R08: 0000000000000000 R09: 000=
-0000000000000
-[    1.545699][    T1] R10: 0000000000000000 R11: 0000000000000000 R12: 000=
-0000000000000
-[    1.545898][    T1] R13: 0000000000000000 R14: 0000000000000000 R15: 000=
-0000000000000
-[    1.546099][    T1]  </TASK>
-[    1.546198][    T1] Kernel panic - not syncing: kernel: panic_on_warn se=
-t ...
-[    1.546654][    T1] Kernel Offset: disabled
-[    1.546769][    T1] ---[ end Kernel panic - not syncing: kernel: panic_o=
-n_warn set ... ]---
+If caps are dirty it should be in the dirty list anyway in theory. Else 
+when the file is closed or inode is released will it be in the release 
+lists.
 
 Thanks
+
+- Xiubo
+
+
+> Thanks,
+>
+>                  Ilya
+>
+
 
