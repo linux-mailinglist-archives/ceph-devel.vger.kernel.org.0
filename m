@@ -1,137 +1,150 @@
-Return-Path: <ceph-devel+bounces-1849-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1850-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 684F2988BF5
-	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 23:46:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E404C988CF3
+	for <lists+ceph-devel@lfdr.de>; Sat, 28 Sep 2024 01:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20C5F1F22277
-	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 21:46:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1E37282F46
+	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 23:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C43C172BDE;
-	Fri, 27 Sep 2024 21:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE781B81CB;
+	Fri, 27 Sep 2024 23:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWWMHkvD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X4seaDAc"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E88414BF8B;
-	Fri, 27 Sep 2024 21:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C15C18A93C;
+	Fri, 27 Sep 2024 23:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727473610; cv=none; b=dN1qGMPgX7zHctRKKRJ8qqOrf0d8DPSoJ/3+9aQeE9y1N2nFzu7xs+AYG8XMRtlBJC5bvn0Ljf0LfJnpj7bWGe1XmLoJ1eyL0TdLmX4PAvMS/WY2oceFUfYg9awl/NTZlnUQy2fAeR0N945UcBTgII4L6dbf+P3MkZR7RY5N790=
+	t=1727479328; cv=none; b=ZcYjlCaYmjttUkZbwRAHMmnBs8bc+cOcxa/lU5TNVcXeuSXOMhJJmxbVIgZlitrnF8aPWz1dRenxDCFRlH9AexdF0Rc273QKdOU1Rn6Fjw+LdOM373HEp0SudfT2+2cENdapnR/gFUIQCU1u470sCgwk6XPjdSikH5iDftwQSRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727473610; c=relaxed/simple;
-	bh=Wn0F4ZZKy7MrtCQLcs6efedBXXHQO4GrYg9FzCiBgHk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rBegVL+aXmUA5GN8JeLwhZxLbwRoATigGSKkao9XjzFpu5+wq4Cqi+XeAFaFjHVcZRNuSgbCca2mzhozFDnb0U0N/vwqWVWOOb0gPzTAvHaPrGe2Okuioo8eotY1FkX0/r53UwHJW199Czuc0o6sv8cfbgRdDnqZCEIyfiZG3x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWWMHkvD; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1727479328; c=relaxed/simple;
+	bh=Ni1PSWIgWkGtc+GXe+ot0cv4W+TUNKSABP3D+pYXhYY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Aljw4uJHbpowFPGlo/yKGUFcKY2flch0V+zTq1LYKG8Ldds/ppo7Lzz9Fbang/eVpz83DRfWHPPNXqSUdSP8UiwAYGfaUMQPdXb7jNOAq0DaQSHhuGv+fXxSyylg4/ryNSdrP7Y7Ef3EK0apqzCSoTWqPajSKjtNlx4NttEthSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X4seaDAc; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cafda818aso24499545e9.2;
-        Fri, 27 Sep 2024 14:46:48 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2057835395aso27746795ad.3;
+        Fri, 27 Sep 2024 16:22:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727473607; x=1728078407; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yn/nHA6wY7ndJPorvaTWw/EXz9mbabGh25VhoL58iXI=;
-        b=NWWMHkvDO5DQjyP67ytlAOGUc+1qUdWc5oc6YHUS4jbpT3/2Eho+PZYit/Gt6mUm1/
-         BY57NFTbiS4NPEMG20YtZdJzlBwZP4947bvKnHuXreTkwhA1iZSVGGMC8K2uAAtt5ANT
-         NxJ8DQICQhRIZpzT+FFThUg34WMezz8kJNo2uza3tRNM6ZNw8IUj0JdUVyZl+5KrT/Ed
-         5DgWSOpGGWwmqsFDPNYdGozDsM8qLXHZq5i3sdhOXhhvdPyxzrnX8x2NYYk1bzQGQzHE
-         fd3iFPGaRYnxu/smUN6jzFUgpPRNv3UlupDeeqLpUAU610wpX6rVlzJzxpSAYmnwyJ41
-         oKdA==
+        d=gmail.com; s=20230601; t=1727479327; x=1728084127; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7LAvOZp6Vqb9AO/+VS+wUvq7SL5EIr/lbn9RL5sF1d0=;
+        b=X4seaDAcW8hCvrmZ9f5CUE/Zi37ZWomZWDCIw6yZyfARvhHxzARH9E75WjX23kL4ks
+         KNcQ1vxN5/ysi2HY/cGBOVo/Gndnx5O0EuLOHB4OAxIavTMqr1AxJToHSRQ0PXhUtFHh
+         PlEbj+uZP7IRWseMXITL2I5WKPiWkjR1JCMXWvhq7dEXL86U5V/rHNHmXtqcvIOJlwMO
+         uuNQsBH59fEWr3EbYPRGIsaM+yfwwsNmna7RUpAjXLXFO0i4/1+vlAQm/GM05hGA+nQ5
+         nx5SJgv//TTGiYGrH2ZI8XZpoKYeGZdio3JUbOFPyjFht1nHnATjXxjqJZfKvRD4VNL5
+         k8Ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727473607; x=1728078407;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yn/nHA6wY7ndJPorvaTWw/EXz9mbabGh25VhoL58iXI=;
-        b=pKV2Q3DDIeD2pewRpueTjTWyJlWM5AnoSWrCenT3zRG1NfqJmVe7O46ah9kXqUwVeB
-         TYK+JlMVl4y3udGIrxLl4HKKshkLcRlBYofx2N3vrzoOCeJLDlm5sasffzN3G43Nt2Ti
-         E2hWu00GZBZIkN1C7FyfNBF3O2WmeE2TJrzZCqrGLX7OJwFbEDEoq8ZfhH5NHcUbOvlf
-         70EXITQfRcxRKuj8hRlzFWnwprB6zYfHNRHrl076wTFbj0ufiSxa521TS+VHtAX84Clp
-         ts9Gx8Nl+oh4gdG0+ibb2euKY+ecrzPCKnnEZLTnFEhmj9iy93IwDvvsgHyc3bE9cFzq
-         hdzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCWNLxAgiuPbhU0dECE1TCQT84+UwmMQrGtDOIg8af+H8SMN3E570ra8UqyJwfQc6VJNjV8r8Thfj3ZPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY5T0P+m3ZaEN3tYCzsBimBTBkQVaMs9L+wslloTyd8ri0gUrO
-	60v1FNe+0vQquI4KxpBy6/GI5ohMmJiUy0RXY901OMKi/8iCqmDhDovf5Q==
-X-Google-Smtp-Source: AGHT+IGovXrIxhKdAwoOy3jyj3LmcNzEFNW26eyNFeKEnYT4q4VO5oouO+6VkbozV9mGzQJzRc5aNQ==
-X-Received: by 2002:a05:600c:4f82:b0:42c:bb41:a05a with SMTP id 5b1f17b1804b1-42f584a06camr33248175e9.34.1727473606615;
-        Fri, 27 Sep 2024 14:46:46 -0700 (PDT)
-Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e902560cfsm115186515e9.0.2024.09.27.14.46.44
+        d=1e100.net; s=20230601; t=1727479327; x=1728084127;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7LAvOZp6Vqb9AO/+VS+wUvq7SL5EIr/lbn9RL5sF1d0=;
+        b=cxCqjFnW6fHcA58yQ9PvzV613qd8IHdXvc+PjW9PwSYlkVxsMudvlYPRCFn6kBB8vW
+         z7R64yGU8JZpV13N7XnYBarha9f7YnaMuS/wCJE/tbKoTonqRUNPYRi6U9cJi0S4+7IF
+         DVUjb1leN8p4z1dM0LzkntJ2RhjjFARkDLhJ0G8Taj6EobMx5RMdGsrBngP1EX0eEnNg
+         +E6Oj+7CpIDAO+p3FPakSQCzw/bCSGMaXaIOrk4NgiTXm8O0DbLkjB7+yrMTc2q1S4sk
+         Jg9QvwoHuVkM6vtDVV2KWup3dL1TfoH8mXSnqXOFsZN6PjrkIe7RJo7mRQodbvRI4o7G
+         /VhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOY8wjuKC918UWHfM3Kn06RGIyECCcbQGrNihQKgWmegZXKQ5ZTilApBf/7OpAVBK2CiCESR8BknxZTg==@vger.kernel.org, AJvYcCV06H6+NiGZcI82Y/O91GrMp4oaQdEEw2azexo7cdqhqGxpdQ5PxlHV1a8wEUl1JxIMOgVv2kLN17S6@vger.kernel.org, AJvYcCVmvq2cDKjl8FFqCSlDWheqRFMTPxYdq2LCTEf7JfB+AZZWA3aYupmXnkIyJI8nw8+H/zuhD8VDC8kz@vger.kernel.org, AJvYcCW/UHUNNDBa/Rq8pp45dx8+B5L6TJorCv0xziX1OJdnde+7ohqxYrkKgwXKJwZp6jJvIre1+Y3XX8viBxKSVw==@vger.kernel.org, AJvYcCW9y9pdHqf9Wi1WmEhGR9xb5IVjrWAq81j+2t4xBeks5oZN4afdz5/zZnIhFA3eOQePCjAvrqBtVAbd1jhH@vger.kernel.org, AJvYcCWqpJrmq13P2shzHCmpFB+nTpbCXCyGbxfyaOaZB9mpah1hej0IEZdT3hh38hwZOxUATY9wCyn7@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx66ifhfdNrF/S8JGnHsL+C+ikL2sSSjm6bPrnN5ymnJzFsuBaL
+	uqF++FGh4LFrfxNz3H8lSl4Ya8D6WP+ckP1R2LoI0kgEBz+dgp7a
+X-Google-Smtp-Source: AGHT+IFXTEMtPJJpJatKRUAfPM6/3maacD+r+Yf+RlOH8FPWHZYjxB+hsah3pGiJOGYuet3l4rSHvQ==
+X-Received: by 2002:a17:902:e74e:b0:206:bbaa:84e9 with SMTP id d9443c01a7336-20b37b9b53cmr81601675ad.47.1727479326584;
+        Fri, 27 Sep 2024 16:22:06 -0700 (PDT)
+Received: from [192.168.0.235] ([38.34.87.7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e5169csm18253515ad.238.2024.09.27.16.22.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 14:46:44 -0700 (PDT)
-From: Ilya Dryomov <idryomov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 6.12-rc1
-Date: Fri, 27 Sep 2024 23:46:17 +0200
-Message-ID: <20240927214629.141146-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.46.1
+        Fri, 27 Sep 2024 16:22:06 -0700 (PDT)
+Message-ID: <d87e3b4dfd4624d182d3d23992eacb7b9ffeff90.camel@gmail.com>
+Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Manu Bretelle <chantr4@gmail.com>, asmadeus@codewreck.org, 
+ ceph-devel@vger.kernel.org, christian@brauner.io, ericvh@kernel.org, 
+ hsiangkao@linux.alibaba.com, idryomov@gmail.com, jlayton@kernel.org, 
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-nfs@vger.kernel.org,  marc.dionne@auristor.com,
+ netdev@vger.kernel.org, netfs@lists.linux.dev,  pc@manguebit.com,
+ smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com, 
+ v9fs@lists.linux.dev, willy@infradead.org
+Date: Fri, 27 Sep 2024 16:22:01 -0700
+In-Reply-To: <2668612.1727471502@warthog.procyon.org.uk>
+References: <55cef4bef5a14a70b97e104c4ddd8ef64430f168.camel@gmail.com>
+	 <20240923183432.1876750-1-chantr4@gmail.com>
+	 <20240814203850.2240469-20-dhowells@redhat.com>
+	 <2663729.1727470216@warthog.procyon.org.uk>
+	 <2668612.1727471502@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+On Fri, 2024-09-27 at 22:11 +0100, David Howells wrote:
 
-The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
+[...]
 
-  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
+> If you look here:
+>=20
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/lo=
+g/?h=3Dnetfs-fixes
+>=20
+> you can see some patches I've added.  If you can try this branch or cherr=
+y
+> pick:
+>=20
+> 	netfs: Fix write oops in generic/346 (9p) and generic/074 (cifs)
+> 	netfs: Advance iterator correctly rather than jumping it
+> 	netfs: Use a folio_queue allocation and free functions
+> 	netfs: Add a tracepoint to log the lifespan of folio_queue structs
 
-are available in the Git repository at:
+I used your branch netfs-fixes, namely at the following commit:
+8e18fe180b0a ("netfs: Abstract out a rolling folio buffer implementation")
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-6.12-rc1
+> And then turn on the following "netfs" tracepoints:
+>=20
+> 	read,sreq,rreq,failure,write,write_iter,folio,folioq,progress,donate
+>
 
-for you to fetch changes up to c08dfb1b49492c09cf13838c71897493ea3b424e:
+System can't boot, so I used the following kernel command line:
+... trace_event=3D:netfs_read,:netfs_sreq,:netfs_rreq,:netfs_failure,:netfs=
+_write,:netfs_write_iter,:netfs_folio,:netfs_folioq,:netfs_progress,:netfs_=
+donate
 
-  ceph: remove the incorrect Fw reference check when dirtying pages (2024-09-24 22:51:33 +0200)
+No warnings like "Failed to enable trace event ...", so I assume it worked
+as expected.
 
-----------------------------------------------------------------
-Three CephFS fixes from Xiubo and Luis and a bunch of assorted
-cleanups.
+A fresh dmesg is here:
+https://gist.github.com/eddyz87/e8f4780d833675a7e58854596394a70f
 
-----------------------------------------------------------------
-Chen Yufan (1):
-      ceph: Convert to use jiffies macro
+Don't see any tracepoint output there, so something is probably missing.
 
-Li Zetao (1):
-      libceph: use min() to simplify code in ceph_dns_resolve_name()
+> > Alternatively I can pack this thing in a dockerfile, so that you would
+> > be able to reproduce locally (but that would have to wait till my eveni=
+ng).
+>=20
+> I don't have Docker set up, so I'm not sure how easy that would be for me=
+ to
+> use.
 
-Luis Henriques (SUSE) (1):
-      ceph: fix a memory leak on cap_auths in MDS client
+What's your preferred setup for the repro?
 
-Xiubo Li (3):
-      ceph: rename ceph_flush_cap_releases() to ceph_flush_session_cap_releases()
-      ceph: flush all caps releases when syncing the whole filesystem
-      ceph: remove the incorrect Fw reference check when dirtying pages
-
-Yan Zhen (1):
-      ceph: Fix typo in the comment
-
-Yue Haibing (1):
-      ceph: Remove unused declarations
-
-Zhang Zekun (1):
-      ceph: Remove empty definition in header file
-
- fs/ceph/addr.c                  |  1 -
- fs/ceph/caps.c                  | 29 ++++++++++++++++++++++++++---
- fs/ceph/dir.c                   |  2 +-
- fs/ceph/inode.c                 |  2 +-
- fs/ceph/mds_client.c            | 25 +++++++++++++++++++------
- fs/ceph/mds_client.h            |  7 ++-----
- fs/ceph/super.c                 |  1 +
- fs/ceph/super.h                 |  7 +------
- include/linux/ceph/osd_client.h |  2 --
- net/ceph/messenger.c            |  2 +-
- 10 files changed, 52 insertions(+), 26 deletions(-)
 
