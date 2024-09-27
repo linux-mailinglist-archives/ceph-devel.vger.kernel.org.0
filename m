@@ -1,206 +1,109 @@
-Return-Path: <ceph-devel+bounces-1841-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1842-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9AB987D15
-	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 04:36:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCFDD987FFB
+	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 10:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C35A1F231D5
-	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 02:36:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704C91F23B9D
+	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 08:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72946169AE4;
-	Fri, 27 Sep 2024 02:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A841898E2;
+	Fri, 27 Sep 2024 08:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fNoG65DF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HaAIXMic"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67CA6158203
-	for <ceph-devel@vger.kernel.org>; Fri, 27 Sep 2024 02:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A4F188CB7;
+	Fri, 27 Sep 2024 08:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727404593; cv=none; b=NpqqTqXdVENngkHc+GjfcX41FLLJF7/7oR0sESu4VCPcVCBbK7zos56MgFj5cfy8NaZL6vl9gWNQD16LVjsh2juWRAGam5CJc1JoJYhD9UMyhK3jqldkDieRk4OiVQkPHU+3/6TZDVs6yAU0zJnWf27hsmIpKmImUnRwjh0MkGM=
+	t=1727424365; cv=none; b=qPCl7zYfDTxdMNqYt5TiXbxOnhNiU1leP+L5ANK9L0RnhVhpFIgZMM+0aBnuzO4KndZ4baX+B5d4Blz3agLsNofS6ywPaI8j10TSVtG7FZJlGSdE0ES3mE8c6yfqD3kAxYT3SxTa1xCxcxp7qJwDsFfZzy1NPxavpu4BQMnGxlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727404593; c=relaxed/simple;
-	bh=mZ+KhtQiBSI/+qaapAamwjybeR6ZwApCLrR2UNP8WCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c3VZpzfUy6eBcb1u321aeSx4XWMl3nlrYrgj43J3ZkbGFjRQayUr5tBxHlY9RAeTUypLMyVP09dKZ3GphX2gkIVXTUBk2Nacr/R0pyT7B1R274WYwiOAFIAdCgdgxVatp23S+/b7eM9oeDMHKP/qtS7nxjIKH50Ci/2N8S7jiCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fNoG65DF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727404590;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ym242b+NmBq4yeY0MnkyJlyTL0K7MkuCVeOhxNbnTRU=;
-	b=fNoG65DFduPuvWijPPkv2Gsci4N+Jm6to2mJXTYU70jomv9UehT1xvHmvzEx1x/hcbxewO
-	fKZeTRWkBwcqu98PmRFUhv7MglkSFsNs3OJwWJ07vFo/hldhsfeIeA3+mnL+jKGgWnGxET
-	lQakhequAwfuDSpRVuZ1f9gfVm218qk=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-638-j79XSRRjPcSgLcALV8rr0A-1; Thu, 26 Sep 2024 22:36:27 -0400
-X-MC-Unique: j79XSRRjPcSgLcALV8rr0A-1
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-208b130a763so18673045ad.0
-        for <ceph-devel@vger.kernel.org>; Thu, 26 Sep 2024 19:36:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727404587; x=1728009387;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ym242b+NmBq4yeY0MnkyJlyTL0K7MkuCVeOhxNbnTRU=;
-        b=qRhbuDYmtUtdiJ6FUFrzyvWHywxySq/vM8aXSw4CGEN0+dKevzi7C95qJzDLtopwvK
-         Hv7Z1zXmFlgxU2sLsTsGEmMu/2StVr8hMNKJh0zv32KjTS0sIRp1p3SU2yndWwrxJ7Gk
-         LUX+uxPQeJV3GpQV3prGW3j9jMvndXs6aibfsBEQp6J9a5twkfxK/mnAAk2LRnZP8oAI
-         EZLDJwcUxnV5NehXJVuhdqHpO+aYD1konaUer/SMuu9QplcfPu27/G09PtfFBSmBqDhg
-         3IMhjGjWACTlfXS7gWssD1MuaNeTP7SuXloDxcCLyBUODYgNHeAuAuVG7Xh9iwtEy2Ob
-         X+Nw==
-X-Gm-Message-State: AOJu0Yz3ZvukwEow0fhOFU9mc0sAaPoWxtL8bmphojJOTZSqp6f0I+ez
-	QCr+ioQX8sO9dtPVPivoNGNqFyWzI2H6H8O5rmrp1w37QCf20feO9q2HqH7r0LGnoUPvMts7tj1
-	589fctEQSv5mWNqAPE9KDbP3ZJ80aXLk84J2zSyZZV/jkcl9XSjlQU0NPhpc=
-X-Received: by 2002:a17:902:fd05:b0:205:4e4a:72d9 with SMTP id d9443c01a7336-20b367d5bdfmr22900475ad.7.1727404586687;
-        Thu, 26 Sep 2024 19:36:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGoR7+AB7T7J2KWTuIVYBQkFR4Wg2FuSYmTGwLggKR+BQ9na48jcWGlovNU5SV4zwc8E7T2mg==
-X-Received: by 2002:a17:902:fd05:b0:205:4e4a:72d9 with SMTP id d9443c01a7336-20b367d5bdfmr22900305ad.7.1727404586289;
-        Thu, 26 Sep 2024 19:36:26 -0700 (PDT)
-Received: from [10.72.116.139] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37d61dfcsm4704365ad.20.2024.09.26.19.36.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Sep 2024 19:36:25 -0700 (PDT)
-Message-ID: <d564fe25-a425-4e22-82e1-2b034edf370d@redhat.com>
-Date: Fri, 27 Sep 2024 10:36:21 +0800
+	s=arc-20240116; t=1727424365; c=relaxed/simple;
+	bh=KjsjOpufVwVtvtG9C4bCus2/XmKmDXOmFJWmSRq/BY0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sVECCzO6ZT6P5v8TGkhZAg9Lv4sJKFjSsN6wTrxv98//XX39N3/DR6pvlNvDxzDea0KVrkjtrDZM+qDlf9hw0F1HXCXjOWVh2JfEVbu6YNLZJjEf5KmUNs93NwGgLiy+pzb2+v1gzNm9x9eBcUIEJrgsQpfkJ1fcJ0RObzps/iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HaAIXMic; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8945C4CEC4;
+	Fri, 27 Sep 2024 08:06:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727424364;
+	bh=KjsjOpufVwVtvtG9C4bCus2/XmKmDXOmFJWmSRq/BY0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HaAIXMict1VrTe7i8TwVZ5W3EQ/WTegi8/OHOEkwPr173UnrLezn4mPejbmDGj2Va
+	 JzClZWAAEFXfx5vFVFkjx+3Bkn30tc+SssdrENLR5FslHOsVouXCdLzMO+adoH9tnc
+	 zkXNylEWRwKw5LUIOdH0peE5GHb2oq7StB/T/R1ZqX2rjLg3gyt73TQdT9CGlK1e1y
+	 +0R1PmoplUYpYy45bYv/DHBqbVebHLvqJ+Zj3yrLJO2EGsPMgBdMR6uK6DZ+/mXWG2
+	 BnuUyJDVL64zGvygjtGlvBwmLB3O/DZn15DHVuse1YXw/gPPN/DLf8Erpw19GuMUJ6
+	 BIWbB7FwYdy7Q==
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Markus Suvanto <markus.suvanto@gmail.com>,
+	Steve French <sfrench@samba.org>,
+	Marc Dionne <marc.dionne@auristor.com>
+Subject: Re: (subset) [PATCH 5/8] afs: Fix possible infinite loop with unresponsive servers
+Date: Fri, 27 Sep 2024 10:05:44 +0200
+Message-ID: <20240927-raunt-gekrochen-aa4fd2c2e59b@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240923150756.902363-6-dhowells@redhat.com>
+References: <20240923150756.902363-1-dhowells@redhat.com> <20240923150756.902363-6-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] ceph: flush all the caps release when syncing the
- whole filesystem
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: ceph-devel@vger.kernel.org, vshankar@redhat.com
-References: <20240730054135.640396-1-xiubli@redhat.com>
- <20240730054135.640396-3-xiubli@redhat.com>
- <CAOi1vP9g92tv8sEbFbSkV73PwrqqNNQktcYxUvdwCYBZkhhnsw@mail.gmail.com>
- <336f83cc-4a57-48dd-8598-e5b4ceab7d46@redhat.com>
- <CAOi1vP_LbSL2Zh-ndry2jXCMmueEc4=j-gbCTyrWn96g=1jmvg@mail.gmail.com>
-Content-Language: en-US
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <CAOi1vP_LbSL2Zh-ndry2jXCMmueEc4=j-gbCTyrWn96g=1jmvg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1319; i=brauner@kernel.org; h=from:subject:message-id; bh=KjsjOpufVwVtvtG9C4bCus2/XmKmDXOmFJWmSRq/BY0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR9S0+55/AnN86X/6qh8Jnw2/fN3txs/vdb88Csxor51 h0HFWpKOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbCv4SR4f4hM23PS4ZOM4SW /uIJzdp91vHK3XmrQzc7J2s8lPYT0GT4Z2t0NERa9/mHUpZlb9KM7mza0TV9pafR+8KMuYvUDR4 GMAEA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
+On Mon, 23 Sep 2024 16:07:49 +0100, David Howells wrote:
+> A return code of 0 from afs_wait_for_one_fs_probe is an indication
+> that the endpoint state attached to the operation is stale and has
+> been superseded.  In that case the iteration needs to be restarted
+> so that the newer probe result state gets used.
+> 
+> Failure to do so can result in an tight infinite loop around the
+> iterate_address label, where all addresses are thought to be responsive
+> and have been tried, with nothing to refresh the endpoint state.
+> 
+> [...]
 
-On 9/24/24 21:24, Ilya Dryomov wrote:
-> On Tue, Sep 24, 2024 at 1:47 PM Xiubo Li <xiubli@redhat.com> wrote:
->>
->> On 9/24/24 14:26, Ilya Dryomov wrote:
->>> On Tue, Jul 30, 2024 at 7:41 AM <xiubli@redhat.com> wrote:
->>>> From: Xiubo Li <xiubli@redhat.com>
->>>>
->>>> We have hit a race between cap releases and cap revoke request
->>>> that will cause the check_caps() to miss sending a cap revoke ack
->>>> to MDS. And the client will depend on the cap release to release
->>>> that revoking caps, which could be delayed for some unknown reasons.
->>>>
->>>> In Kclient we have figured out the RCA about race and we need
->>>> a way to explictly trigger this manually could help to get rid
->>>> of the caps revoke stuck issue.
->>>>
->>>> URL: https://tracker.ceph.com/issues/67221
->>>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
->>>> ---
->>>>    fs/ceph/caps.c       | 22 ++++++++++++++++++++++
->>>>    fs/ceph/mds_client.c |  1 +
->>>>    fs/ceph/super.c      |  1 +
->>>>    fs/ceph/super.h      |  1 +
->>>>    4 files changed, 25 insertions(+)
->>>>
->>>> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
->>>> index c09add6d6516..a0a39243aeb3 100644
->>>> --- a/fs/ceph/caps.c
->>>> +++ b/fs/ceph/caps.c
->>>> @@ -4729,6 +4729,28 @@ void ceph_flush_dirty_caps(struct ceph_mds_client *mdsc)
->>>>           ceph_mdsc_iterate_sessions(mdsc, flush_dirty_session_caps, true);
->>>>    }
->>>>
->>>> +/*
->>>> + * Flush all cap releases to the mds
->>>> + */
->>>> +static void flush_cap_releases(struct ceph_mds_session *s)
->>>> +{
->>>> +       struct ceph_mds_client *mdsc = s->s_mdsc;
->>>> +       struct ceph_client *cl = mdsc->fsc->client;
->>>> +
->>>> +       doutc(cl, "begin\n");
->>>> +       spin_lock(&s->s_cap_lock);
->>>> +       if (s->s_num_cap_releases)
->>>> +               ceph_flush_session_cap_releases(mdsc, s);
->>>> +       spin_unlock(&s->s_cap_lock);
->>>> +       doutc(cl, "done\n");
->>>> +
->>>> +}
->>>> +
->>>> +void ceph_flush_cap_releases(struct ceph_mds_client *mdsc)
->>>> +{
->>>> +       ceph_mdsc_iterate_sessions(mdsc, flush_cap_releases, true);
->>>> +}
->>>> +
->>>>    void __ceph_touch_fmode(struct ceph_inode_info *ci,
->>>>                           struct ceph_mds_client *mdsc, int fmode)
->>>>    {
->>>> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
->>>> index 86d0148819b0..fc563b59959a 100644
->>>> --- a/fs/ceph/mds_client.c
->>>> +++ b/fs/ceph/mds_client.c
->>>> @@ -5904,6 +5904,7 @@ void ceph_mdsc_sync(struct ceph_mds_client *mdsc)
->>>>           want_tid = mdsc->last_tid;
->>>>           mutex_unlock(&mdsc->mutex);
->>>>
->>>> +       ceph_flush_cap_releases(mdsc);
->>>>           ceph_flush_dirty_caps(mdsc);
->>>>           spin_lock(&mdsc->cap_dirty_lock);
->>>>           want_flush = mdsc->last_cap_flush_tid;
->>>> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
->>>> index f489b3e12429..0a1215b4f0ba 100644
->>>> --- a/fs/ceph/super.c
->>>> +++ b/fs/ceph/super.c
->>>> @@ -126,6 +126,7 @@ static int ceph_sync_fs(struct super_block *sb, int wait)
->>>>           if (!wait) {
->>>>                   doutc(cl, "(non-blocking)\n");
->>>>                   ceph_flush_dirty_caps(fsc->mdsc);
->>>> +               ceph_flush_cap_releases(fsc->mdsc);
->>> Hi Xiubo,
->>>
->>> Is there a significance to flushing cap releases before dirty caps on
->>> the blocking path and doing it vice versa (i.e. flushing cap releases
->>> after dirty caps) on the non-blocking path?
->> Hi Ilya,
->>
->> The dirty caps and the cap releases are not related.
->>
->> If caps are dirty it should be in the dirty list anyway in theory. Else
->> when the file is closed or inode is released will it be in the release
->> lists.
-> So doing
->
->      ceph_flush_dirty_caps(mdsc);
->      ceph_flush_cap_releases(mdsc);
->
-> in both cases just so that it's consistent is fine, right?
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-Yeah.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> Thanks,
->
->                  Ilya
->
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[5/8] afs: Fix possible infinite loop with unresponsive servers
+      https://git.kernel.org/vfs/vfs/c/6e45740867ee
 
