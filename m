@@ -1,145 +1,137 @@
-Return-Path: <ceph-devel+bounces-1848-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1849-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078E4988BB5
-	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 23:12:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 684F2988BF5
+	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 23:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3944F1C20B84
-	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 21:12:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20C5F1F22277
+	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 21:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989B61C2DDA;
-	Fri, 27 Sep 2024 21:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C43C172BDE;
+	Fri, 27 Sep 2024 21:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FsJTpKKn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWWMHkvD"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E42136352
-	for <ceph-devel@vger.kernel.org>; Fri, 27 Sep 2024 21:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E88414BF8B;
+	Fri, 27 Sep 2024 21:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727471518; cv=none; b=eZm0gF1FVBSD37OA2xt5rpKjBT7ZPeStttZ5D5wjTcmzzC4EJqEK9+J59+Cqx8354RYfPGIjCORXBso3X7nm8kUBCF+mxaAbVvSepFO2tXxTkpgyQA8ruO1FBJ0Oc0fWqKsFfuMwRUznSFPQEVxR/kY8ezvG+C8b1v6qKoF590E=
+	t=1727473610; cv=none; b=dN1qGMPgX7zHctRKKRJ8qqOrf0d8DPSoJ/3+9aQeE9y1N2nFzu7xs+AYG8XMRtlBJC5bvn0Ljf0LfJnpj7bWGe1XmLoJ1eyL0TdLmX4PAvMS/WY2oceFUfYg9awl/NTZlnUQy2fAeR0N945UcBTgII4L6dbf+P3MkZR7RY5N790=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727471518; c=relaxed/simple;
-	bh=j3c5/Zh4p82GAk9vaXtDQNsggU/jIEjNscDXUpnSLwI=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=caHPD0r4cfb4R+RjWdwZGG/nLEzHnaXIIdmR1HkKbMMvkJ775EHGndgc2yBAaICQyFOsBrVvuftLBaTbXPjnFLW4eqZsVO1L75fURi3opAuGynAgDiGWL7jKGkTRCH5Oaf1yJMvMMo49G9Qqv+M/hoRaYMxlLyfpu7KhWOMfNNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FsJTpKKn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727471515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8uMxOBU2H6Hw+qD+HRMDEGiSShQKw6OKRseN26Hxg0M=;
-	b=FsJTpKKnXbio8SND1s1thRm9O+Ioa7LV/ohIU03LvcLBVubCeLSwPhE1dyTSBb+jfNKVZ8
-	GHwWXy1+trr933LG+RJ+dfxgJ0lRhulKrVE+XI8QT/vWODhKbkXZugqJuHOGNKH4WxTm6k
-	Vb4OZ/lpvZXFEEmyBeDVsN41G9vDUWQ=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-nkGTJbKIOsK6M6_0H6aoDw-1; Fri,
- 27 Sep 2024 17:11:52 -0400
-X-MC-Unique: nkGTJbKIOsK6M6_0H6aoDw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F2381936B95;
-	Fri, 27 Sep 2024 21:11:49 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BC3D43003DF2;
-	Fri, 27 Sep 2024 21:11:43 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <55cef4bef5a14a70b97e104c4ddd8ef64430f168.camel@gmail.com>
-References: <55cef4bef5a14a70b97e104c4ddd8ef64430f168.camel@gmail.com> <20240923183432.1876750-1-chantr4@gmail.com> <20240814203850.2240469-20-dhowells@redhat.com> <2663729.1727470216@warthog.procyon.org.uk>
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: dhowells@redhat.com, Manu Bretelle <chantr4@gmail.com>,
-    asmadeus@codewreck.org, ceph-devel@vger.kernel.org,
-    christian@brauner.io, ericvh@kernel.org, hsiangkao@linux.alibaba.com,
-    idryomov@gmail.com, jlayton@kernel.org,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-    linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
-    netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
-    smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
-    v9fs@lists.linux.dev, willy@infradead.org
-Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
+	s=arc-20240116; t=1727473610; c=relaxed/simple;
+	bh=Wn0F4ZZKy7MrtCQLcs6efedBXXHQO4GrYg9FzCiBgHk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rBegVL+aXmUA5GN8JeLwhZxLbwRoATigGSKkao9XjzFpu5+wq4Cqi+XeAFaFjHVcZRNuSgbCca2mzhozFDnb0U0N/vwqWVWOOb0gPzTAvHaPrGe2Okuioo8eotY1FkX0/r53UwHJW199Czuc0o6sv8cfbgRdDnqZCEIyfiZG3x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWWMHkvD; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cafda818aso24499545e9.2;
+        Fri, 27 Sep 2024 14:46:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1727473607; x=1728078407; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yn/nHA6wY7ndJPorvaTWw/EXz9mbabGh25VhoL58iXI=;
+        b=NWWMHkvDO5DQjyP67ytlAOGUc+1qUdWc5oc6YHUS4jbpT3/2Eho+PZYit/Gt6mUm1/
+         BY57NFTbiS4NPEMG20YtZdJzlBwZP4947bvKnHuXreTkwhA1iZSVGGMC8K2uAAtt5ANT
+         NxJ8DQICQhRIZpzT+FFThUg34WMezz8kJNo2uza3tRNM6ZNw8IUj0JdUVyZl+5KrT/Ed
+         5DgWSOpGGWwmqsFDPNYdGozDsM8qLXHZq5i3sdhOXhhvdPyxzrnX8x2NYYk1bzQGQzHE
+         fd3iFPGaRYnxu/smUN6jzFUgpPRNv3UlupDeeqLpUAU610wpX6rVlzJzxpSAYmnwyJ41
+         oKdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727473607; x=1728078407;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yn/nHA6wY7ndJPorvaTWw/EXz9mbabGh25VhoL58iXI=;
+        b=pKV2Q3DDIeD2pewRpueTjTWyJlWM5AnoSWrCenT3zRG1NfqJmVe7O46ah9kXqUwVeB
+         TYK+JlMVl4y3udGIrxLl4HKKshkLcRlBYofx2N3vrzoOCeJLDlm5sasffzN3G43Nt2Ti
+         E2hWu00GZBZIkN1C7FyfNBF3O2WmeE2TJrzZCqrGLX7OJwFbEDEoq8ZfhH5NHcUbOvlf
+         70EXITQfRcxRKuj8hRlzFWnwprB6zYfHNRHrl076wTFbj0ufiSxa521TS+VHtAX84Clp
+         ts9Gx8Nl+oh4gdG0+ibb2euKY+ecrzPCKnnEZLTnFEhmj9iy93IwDvvsgHyc3bE9cFzq
+         hdzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCWNLxAgiuPbhU0dECE1TCQT84+UwmMQrGtDOIg8af+H8SMN3E570ra8UqyJwfQc6VJNjV8r8Thfj3ZPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY5T0P+m3ZaEN3tYCzsBimBTBkQVaMs9L+wslloTyd8ri0gUrO
+	60v1FNe+0vQquI4KxpBy6/GI5ohMmJiUy0RXY901OMKi/8iCqmDhDovf5Q==
+X-Google-Smtp-Source: AGHT+IGovXrIxhKdAwoOy3jyj3LmcNzEFNW26eyNFeKEnYT4q4VO5oouO+6VkbozV9mGzQJzRc5aNQ==
+X-Received: by 2002:a05:600c:4f82:b0:42c:bb41:a05a with SMTP id 5b1f17b1804b1-42f584a06camr33248175e9.34.1727473606615;
+        Fri, 27 Sep 2024 14:46:46 -0700 (PDT)
+Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42e902560cfsm115186515e9.0.2024.09.27.14.46.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2024 14:46:44 -0700 (PDT)
+From: Ilya Dryomov <idryomov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 6.12-rc1
+Date: Fri, 27 Sep 2024 23:46:17 +0200
+Message-ID: <20240927214629.141146-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2668611.1727471502.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 27 Sep 2024 22:11:42 +0100
-Message-ID: <2668612.1727471502@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
 
-Eduard Zingerman <eddyz87@gmail.com> wrote:
+Hi Linus,
 
-> On Fri, 2024-09-27 at 21:50 +0100, David Howells wrote:
-> > Is it possible for you to turn on some tracepoints and access the trac=
-es?
-> > Granted, you probably need to do the enablement during boot.
-> =
+The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
 
-> Yes, sure, tell me what you need.
+  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
 
-If you look here:
+are available in the Git repository at:
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log=
-/?h=3Dnetfs-fixes
+  https://github.com/ceph/ceph-client.git tags/ceph-for-6.12-rc1
 
-you can see some patches I've added.  If you can try this branch or cherry
-pick:
+for you to fetch changes up to c08dfb1b49492c09cf13838c71897493ea3b424e:
 
-	netfs: Fix write oops in generic/346 (9p) and generic/074 (cifs)
-	netfs: Advance iterator correctly rather than jumping it
-	netfs: Use a folio_queue allocation and free functions
-	netfs: Add a tracepoint to log the lifespan of folio_queue structs
+  ceph: remove the incorrect Fw reference check when dirtying pages (2024-09-24 22:51:33 +0200)
 
-And then turn on the following "netfs" tracepoints:
+----------------------------------------------------------------
+Three CephFS fixes from Xiubo and Luis and a bunch of assorted
+cleanups.
 
-	read,sreq,rreq,failure,write,write_iter,folio,folioq,progress,donate
+----------------------------------------------------------------
+Chen Yufan (1):
+      ceph: Convert to use jiffies macro
 
-which can be done by:
+Li Zetao (1):
+      libceph: use min() to simplify code in ceph_dns_resolve_name()
 
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_read/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_rreq/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_sreq/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_failure/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_write/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_write_iter/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_folio/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_folioq/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_progress/enable
-	echo 1 >/sys/kernel/debug/tracing/events/netfs/netfs_donate/enable
+Luis Henriques (SUSE) (1):
+      ceph: fix a memory leak on cap_auths in MDS client
 
-or through trace-cmd.
+Xiubo Li (3):
+      ceph: rename ceph_flush_cap_releases() to ceph_flush_session_cap_releases()
+      ceph: flush all caps releases when syncing the whole filesystem
+      ceph: remove the incorrect Fw reference check when dirtying pages
 
-> Alternatively I can pack this thing in a dockerfile, so that you would
-> be able to reproduce locally (but that would have to wait till my evenin=
-g).
+Yan Zhen (1):
+      ceph: Fix typo in the comment
 
-I don't have Docker set up, so I'm not sure how easy that would be for me =
-to
-use.
+Yue Haibing (1):
+      ceph: Remove unused declarations
 
-Thanks,
-David
+Zhang Zekun (1):
+      ceph: Remove empty definition in header file
 
+ fs/ceph/addr.c                  |  1 -
+ fs/ceph/caps.c                  | 29 ++++++++++++++++++++++++++---
+ fs/ceph/dir.c                   |  2 +-
+ fs/ceph/inode.c                 |  2 +-
+ fs/ceph/mds_client.c            | 25 +++++++++++++++++++------
+ fs/ceph/mds_client.h            |  7 ++-----
+ fs/ceph/super.c                 |  1 +
+ fs/ceph/super.h                 |  7 +------
+ include/linux/ceph/osd_client.h |  2 --
+ net/ceph/messenger.c            |  2 +-
+ 10 files changed, 52 insertions(+), 26 deletions(-)
 
