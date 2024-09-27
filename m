@@ -1,108 +1,131 @@
-Return-Path: <ceph-devel+bounces-1844-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1845-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6E2988008
-	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 10:08:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18B098835B
+	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 13:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A7FB282B47
-	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 08:08:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 708A2B22886
+	for <lists+ceph-devel@lfdr.de>; Fri, 27 Sep 2024 11:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0099A1898E9;
-	Fri, 27 Sep 2024 08:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDE98187349;
+	Fri, 27 Sep 2024 11:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Outd2lB0"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IDFVmkk/"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E20188CB7;
-	Fri, 27 Sep 2024 08:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0A2176AD8
+	for <ceph-devel@vger.kernel.org>; Fri, 27 Sep 2024 11:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727424494; cv=none; b=Px+BW4IHy/7b8vy2AYidIiT2gS9szfsk8SCOkLHr9YqBu/RtmNH2feZ2FrQ+fflUGULxdLYjPzzBxHRtxxoaEmHwBHTpDE07AF4158lqUzeTd5idVjW5NRH33q/MVzXJw/OEHe90olKideTM+L1s4k6fpCHW90hDmnYVEVEjiOw=
+	t=1727436705; cv=none; b=QgSGPN1phnmrVSkolPCFEGcVSeEczknohe73WUe+93Fy2bDVfcO+ESFXWKd4ZZWH36KmAkmdbgcZUztqCB+WYNJmn8qd0okP+YX3rVS8uuUz2qYy5oML48ZERD7rXwWN+mPMAqL57OAlAzjnTBtVuQlaTBS6bHPszDeI73LJwh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727424494; c=relaxed/simple;
-	bh=qrr8F6mhp37/8goTelXVcSv72h5Emk8kpcyLOVTI7nQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A0fgcehOzCbX08qFwbCZgqOR6hShXMABfS6r2jjw1WQ5SJUh4na295JbGoH4piX/OB5u9dQhzCqamOzeGXw8g1A6UFGieziwtQYiwZlqOZUzncG7YbegeS9AP3T5/48+edaDAiS9GMoPwyqgjxmQxyxP4ILiWdN6BrGet/NVCPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Outd2lB0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C4DC4CEC4;
-	Fri, 27 Sep 2024 08:08:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727424494;
-	bh=qrr8F6mhp37/8goTelXVcSv72h5Emk8kpcyLOVTI7nQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Outd2lB01VOTLYDOGeswQwueKzlm+EOifqdxlQ4wB/8MrqP6mZtqn6n+rKIoTqc1e
-	 kiisilHVnZCIEJvalKnA3qR2YHOkwk+HzZxQYLedHYLRTpBSFEheAsUMMOVVXFYRgj
-	 oZNhoNHLcUvthQxoFMAThjmuiGgHXqnMfBJJboyDD3j6cY2fyYQxHOwaNlAfY9ESKo
-	 grEtBzrVEHlyEpt136/mYVhFyRdz36/t+JDZSXA5Mge9d5fwWXYM2cDL4KIrNMeMd8
-	 WUGeJbN6K897pM3Cb8O2g8BA94c0wF4P33q9OSZrB7Mfqe5Ls744JoZHQWmwTx2/kE
-	 UOLO55iVty1Fw==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Steve French <sfrench@samba.org>,
-	Marc Dionne <marc.dionne@auristor.com>
-Subject: Re: (subset) [PATCH 6/8] afs: Fix the setting of the server responding flag
-Date: Fri, 27 Sep 2024 10:07:59 +0200
-Message-ID: <20240927-inklusive-erfunden-8a9df201244e@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240923150756.902363-7-dhowells@redhat.com>
-References: <20240923150756.902363-1-dhowells@redhat.com> <20240923150756.902363-7-dhowells@redhat.com>
+	s=arc-20240116; t=1727436705; c=relaxed/simple;
+	bh=YDhBB++WY9IH1JhgG25ZpHtR8kFUAOQTXDEhpfWvS8Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gg6GLgCynYSUum0v4zseLRH1mYGP7ZX9VyXU3HXLR9XX3xCnLIKtmZEpYb85EN0lle26FUBXfUO6+7juQpBDrG0aGorPZoD5qPwPUrqovbcDUNUY8tyUpDqqKwYEVwvqz3uaj+4WwxaVDm4tjkFQ3Jv4ceJsjo9jUpasp2eZ6Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IDFVmkk/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727436702;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jFcc+IBAU7MXkAN2KLkkTW/Krtoq5BAQf3N5Pt3PLzU=;
+	b=IDFVmkk/znUpMqWtw24vl88in30ymUac8nqmw51Nc9IF7lZYRQtmO5FTx/uEIY3tCnnG/0
+	t9D7KAOclm3sMUYDd051K4ioZv0D1OSgWY4c+YJ1pzE6kcsQ1//zE+JjV3oO+HRxOdPZa7
+	2ekrnANPcMixAozLMtd2JiMC2LHA8aU=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-75-Nu7OZA_wPc-N3a2Neljkcg-1; Fri, 27 Sep 2024 07:31:41 -0400
+X-MC-Unique: Nu7OZA_wPc-N3a2Neljkcg-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a8d2ecdf414so137823666b.2
+        for <ceph-devel@vger.kernel.org>; Fri, 27 Sep 2024 04:31:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727436700; x=1728041500;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jFcc+IBAU7MXkAN2KLkkTW/Krtoq5BAQf3N5Pt3PLzU=;
+        b=By8BbgD1JK8MlndlX4/XIezxlbcG/iZoq1QD20RdlWltPkXLyUsXIwNVLIDwahAxVb
+         Tox8O3CngH48reeLiWCJTh0/4HFkkMrApiEIAp7p0+mvZMw7wRhMFhCv88fPEg2+u7an
+         paN4kg3DaioyBe7ayLKXV097cMV2stLad14QVeUhl9rmqTHJ4I0VC6prKlp6ZlxaR+HC
+         HhZ5jt1m+TD9utgQY+fBwdTLTShkGN+yDS2GHMCffqjwx/SVQNJOdy68xkmZr3+WPgU3
+         1UmU5ir4NwzVRvcZLwJwluk51T3Kp3SJb3gyuhCLlH8zUz4HnwZFmWYSVXFQZKbvXxJy
+         VMEQ==
+X-Gm-Message-State: AOJu0YxAiCNpuUMrA2YnBGo+WivIRqA9y3PhK0Kcd3aLVyYLyEyEZllq
+	i/iEJ9atsKkpKKbsPtaiePa/3RLhfQI/ILGhVdlYiTVcoKhbnan1yS15DzEFOjFJMRpbhaau6g9
+	cw35yHlHnfBY0c/z4Pi2olwOgbkGEBD9zGKwcasSVay1NjuEzBDrbrbgvWBZEMfbUwF92sz88W3
+	jECJPsCIWoB/zc29H/HeqLBVHDq5yqnqQCZQ==
+X-Received: by 2002:a17:907:60cc:b0:a86:7a84:abb7 with SMTP id a640c23a62f3a-a93c4915538mr302210366b.20.1727436700408;
+        Fri, 27 Sep 2024 04:31:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH3muSExJo0l1UkovXWgpXdV77M69CRHCrPAKqXAunhhgHdjcK5L+BQamNGkveKQh5xbInY2BZaAKnqO4yPP6E=
+X-Received: by 2002:a17:907:60cc:b0:a86:7a84:abb7 with SMTP id
+ a640c23a62f3a-a93c4915538mr302207666b.20.1727436700004; Fri, 27 Sep 2024
+ 04:31:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1300; i=brauner@kernel.org; h=from:subject:message-id; bh=qrr8F6mhp37/8goTelXVcSv72h5Emk8kpcyLOVTI7nQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR9S3928A/vY47APBNFzaQswV4+Pw8Hlu3a9bd+cD9uO Frlc/JtRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETyLzMyTNTnfr5xfcZix1xr Tj7JEPepAnKn+FvmbAnf0rfRyop5DsP/gIP2Vf3Nm3a29nDoVNhIl9UaHjpdV197f2eb0M+i678 5AQ==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20240904222952.937201-1-xiubli@redhat.com>
+In-Reply-To: <20240904222952.937201-1-xiubli@redhat.com>
+From: Venky Shankar <vshankar@redhat.com>
+Date: Fri, 27 Sep 2024 17:01:02 +0530
+Message-ID: <CACPzV1nvL+5GcA0vPe-ird-VyiQb_PXbP8uLLG4bpzXrer9yyg@mail.gmail.com>
+Subject: Re: [PATCH] ceph: remove the incorrect Fw reference check when
+ dirtying pages
+To: xiubli@redhat.com
+Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, gfarnum@redhat.com, 
+	pdonnell@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 23 Sep 2024 16:07:50 +0100, David Howells wrote:
-> In afs_wait_for_operation(), we set transcribe the call responded flag to
-> the server record that we used after doing the fileserver iteration loop -
-> but it's possible to exit the loop having had a response from the server
-> that we've discarded (e.g. it returned an abort or we started receiving
-> data, but the call didn't complete).
-> 
-> This means that op->server might be NULL, but we don't check that before
-> attempting to set the server flag.
-> 
-> [...]
+On Thu, Sep 5, 2024 at 4:00=E2=80=AFAM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> When doing the direct-io reads it will also try to mark pages dirty,
+> but for the read path it won't hold the Fw caps and there is case
+> will it get the Fw reference.
+>
+> Fixes: 5dda377cf0a6 ("ceph: set i_head_snapc when getting CEPH_CAP_FILE_W=
+R reference")
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/addr.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index c4744a02db75..0df4623785dd 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -95,7 +95,6 @@ static bool ceph_dirty_folio(struct address_space *mapp=
+ing, struct folio *folio)
+>
+>         /* dirty the head */
+>         spin_lock(&ci->i_ceph_lock);
+> -       BUG_ON(ci->i_wr_ref =3D=3D 0); // caller should hold Fw reference
+>         if (__ceph_have_pending_cap_snap(ci)) {
+>                 struct ceph_cap_snap *capsnap =3D
+>                                 list_last_entry(&ci->i_cap_snaps,
+> --
+> 2.45.1
+>
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Reviewed-by: Venky Shankar <vshankar@redhat.com>
+Tested-by: Venky Shankar <vshankar@redhat.com>
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+--=20
+Cheers,
+Venky
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[6/8] afs: Fix the setting of the server responding flag
-      https://git.kernel.org/vfs/vfs/c/830c1b2c1c28
 
