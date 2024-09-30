@@ -1,133 +1,120 @@
-Return-Path: <ceph-devel+bounces-1858-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1859-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 057F398AA3C
-	for <lists+ceph-devel@lfdr.de>; Mon, 30 Sep 2024 18:50:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 454F598ABA9
+	for <lists+ceph-devel@lfdr.de>; Mon, 30 Sep 2024 20:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00A8B1F22D0C
-	for <lists+ceph-devel@lfdr.de>; Mon, 30 Sep 2024 16:49:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE0E5283834
+	for <lists+ceph-devel@lfdr.de>; Mon, 30 Sep 2024 18:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E541953BA;
-	Mon, 30 Sep 2024 16:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26338198E77;
+	Mon, 30 Sep 2024 18:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YJHYfrs9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kl2aoY1Q"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9681946AA;
-	Mon, 30 Sep 2024 16:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C72F192D7F;
+	Mon, 30 Sep 2024 18:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727714804; cv=none; b=ik1EqUmQWvcFXq8/m/mn+1syl6nBg0RrWwUJv5KYHq86M5UccLO55ZxVGSDjPaSSSktILhyYNMYVLkCUnJ8JDAhRCPQSUXGk6wTHwbRA6X5AfG2djAyYhiqhi7nh9did/zWUV0oIgC4Jh7N10Svs0ND5XUaKmMIOJzMOm7ZL35g=
+	t=1727719760; cv=none; b=cAr28Hq05NcETnPhWYQPh6cG9hh9mS+gVuVJipGY8OFF1s9Az74C2d4Pt1Z9mZJ2i0YORupBUlOOViVfIM4WnMNS83di/posllsydUr26FrGn7r+NRpvkHLOAyP29Na+3hel+iR5Q6cPK+7AMqSOsOXWh6qepG9BhAkptjadxrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727714804; c=relaxed/simple;
-	bh=1rGJ3ml+BkufanYBiG4ElBjkODsCW83l25J2SX/Nfmc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZaUPklMNsKYNvD+Mjh4I/wDxnu0iEmmQP00eS6gJ3B8I/VAYDDFspb3GP1Bu7N9nc0m7urHGcn9Z7ZbzgeZDFcUHPncRdaOmtS2Cni4jEb3CQhE3rv8cxO6wWdC8OQgpRhFhzVNGHzFU/2jfIIzo/53seHYuI6KgW2i8AXmE7Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YJHYfrs9; arc=none smtp.client-ip=209.85.214.173
+	s=arc-20240116; t=1727719760; c=relaxed/simple;
+	bh=iDVMlPhvSyC8aDz+QP9lfgkSrj0TyoQwJsbyx9OLZG0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PaqCAC1qBl8OzMHejS3IdhOcVUPOSSFOiUAKMXQK3gZXOSC1PS310Wyqv+J7Tbw64sqkzn/PvAXZlAB6pHZ3B6qtsjJjKwxHzSxd0IjvDkyVDNSl5EJbDpwApYhf1uTLMdHIK+P9b0TItbX8CuONxd3fLak5P5oQCnoTNm9LtGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kl2aoY1Q; arc=none smtp.client-ip=209.85.167.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20ba6b39a78so3168215ad.3;
-        Mon, 30 Sep 2024 09:46:43 -0700 (PDT)
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3e03a5ed4d7so2444570b6e.1;
+        Mon, 30 Sep 2024 11:09:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727714803; x=1728319603; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oFMgdLn7hB0TMtt+qsWxpUh5i8iT0KYc/LM27VmdFOA=;
-        b=YJHYfrs9rpOwz+to2j6Ewri3t9bulRdMja1hdfA+4zSyelhdRwvxLUkdTp82IwFElq
-         BXql3ebOzd+EZ0dI+c/vxh92LxBsv9Uu0qtdFrEU4cdBRdB9vcwMT8j84b2iQr0c/I9A
-         Lk4sv7eUnDmCKfx3B+Zjov7D3gkzu9ix3sdZH0SCEM6ycWlOsEhlpjy3ZMEJcY535nHL
-         YTy+KGU7pGeMAulxfv1eP+Qn1UYOMGlLZQERGvfj3gPXht7XdBVZPUVc+FWh57rV6xFY
-         YtpVY/TNPtuFOqg5RQcoY0VWJdXuriWGMzazx01WzMDFGdPVwV/af2iMJmBFfh1E2LHH
-         nlaQ==
+        d=gmail.com; s=20230601; t=1727719758; x=1728324558; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1xn/A8bwzO7MBrq+CmhDCgTc2Fwd90kZtHzG93XkpEA=;
+        b=kl2aoY1Q5gqrRCZfeOpWBc1nOj4XPiph+/5+/z+xP+8ag2W/GYf0xd5Kw3KRtvJxCL
+         C9Tbsx0Qgc897ycZPogd34fau1nx98lHzQWd7WyIB708b5I72UyP7WAVBZWtRFnkB3rK
+         PWeH0Xb0vFlu/kOpDYpa1pGY4qEhtYggON1Wz2p9kIB+8Rag29O+kAPpOSAg8uWuaGWr
+         Wu/Thy6+SJzBrtqUY/yM+fRct9SqepoSCvHIM7Qa95IMSRq75kKhqFbe25IVUnfl/BDQ
+         qkshyQaRxxpDaE1/kqQBFWWDLnBa5Puja0UYigDz0B9IsMqt4NdLfhGJusmaf11WAIae
+         xBrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727714803; x=1728319603;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oFMgdLn7hB0TMtt+qsWxpUh5i8iT0KYc/LM27VmdFOA=;
-        b=uwT7KMhsGPy75Myyn0ejoae+y/DdljZCiYXdhyNo1eRQORxrbLAg0zoPc8uukkoMcf
-         lNNI5ZevBVCQeaL5IIJIKkyoyi/HRPVDzr1Ns08t4UZC7lb0iT5/w3Kvs3JDvRRP8VlC
-         7/aHmwbKKV5kkOL/Kv48g59Bh1tvjKqwTDmG3Y88dshYZgk6Vy7u5pU/WVhVFKFHHZRp
-         IbAWtHfJV0CXM62lu2IcWH/bWKJlDghNZOWxutPaoDAbcwGjdKW8njvEYmIj+pZOgx4q
-         e3vfZFUzsl0d928g5ENWK+KsbzJc3Mq2Wb/kpbdbcAxYA7/3cPTZxNRi3hsTpUZgejjA
-         FgAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUurJcBxE+Jf1VdErf8gnsQNhLUa5tet9/FhHqD7rfQRH4uwXWdzJKIbUuj8IAj/dz5Yg1nhGsl1cIX@vger.kernel.org, AJvYcCV3yGyHlJ9hE7W3Y5aXSnhEJgjTMMG+kHRCsHys5Uobv1haaRmLgRyg5fct3ByPWuMBkNchMfy/zOhdXg==@vger.kernel.org, AJvYcCV4sbMorniZ3KfQc0Rih4TZ9ZWlJgcBgpSZqePsWlFe7ubS/caetrCgOeKzGpM0d8Jydpoc50ULZtuwypTt@vger.kernel.org, AJvYcCVb6pIf1TbZjzsiLKYVxRS7TPzolRyG6Vy2elsiHFh45x8RHqahw2Gl3UKV5UDr6j84a3kA+b1Z@vger.kernel.org, AJvYcCXXL5UV8hH0YeVMWh/DvPd0jDv7VgJEHYqfd1T0sQ61PzVZkubiSl1pz9sp+Hg83uPa5nUFH9Su+Qde@vger.kernel.org, AJvYcCXrkyUnt7g+t5QYVU2eJU1ZynbB40QkddROShZ4HQNURiGCf532IpTCrfO3XdxT9LPMgJA72U21Lwu9vQFQrg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJME94YiV0877LQk+iWJrD6qCwVVUJF/LlFnYLHIY6PB22WCxp
-	mO7zjjtLd0Aj4HsCgnFZf1mOTrO71GLznNYhQH0bSZ+s9IXisZiy
-X-Google-Smtp-Source: AGHT+IFZC3EJ0qzaaUHzbstF3Ibe+95zgKik8WWlYGIZbkQX0EKejoD/dNihbdBEqG2pUNucAQRStA==
-X-Received: by 2002:a17:90a:bf03:b0:2e0:a28a:ef88 with SMTP id 98e67ed59e1d1-2e0b8eeebe9mr12068969a91.41.1727714802654;
-        Mon, 30 Sep 2024 09:46:42 -0700 (PDT)
-Received: from [192.168.0.235] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e0b6c9d354sm8211290a91.25.2024.09.30.09.46.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Sep 2024 09:46:42 -0700 (PDT)
-Message-ID: <423fbd9101dab18ba772f24db4ab2fecf5de2261.camel@gmail.com>
-Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: David Howells <dhowells@redhat.com>, Leon Romanovsky <leon@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Manu Bretelle
- <chantr4@gmail.com>,  asmadeus@codewreck.org, ceph-devel@vger.kernel.org,
- christian@brauner.io,  ericvh@kernel.org, hsiangkao@linux.alibaba.com,
- idryomov@gmail.com,  jlayton@kernel.org, linux-afs@lists.infradead.org,
- linux-cifs@vger.kernel.org,  linux-erofs@lists.ozlabs.org,
- linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-nfs@vger.kernel.org,  marc.dionne@auristor.com,
- netdev@vger.kernel.org, netfs@lists.linux.dev,  pc@manguebit.com,
- smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com, 
- v9fs@lists.linux.dev, willy@infradead.org
-Date: Mon, 30 Sep 2024 09:46:36 -0700
-In-Reply-To: <2969660.1727700717@warthog.procyon.org.uk>
-References: <2968940.1727700270@warthog.procyon.org.uk>
-	 <20240925103118.GE967758@unreal>
-	 <20240923183432.1876750-1-chantr4@gmail.com>
-	 <20240814203850.2240469-20-dhowells@redhat.com>
-	 <1279816.1727220013@warthog.procyon.org.uk>
-	 <4b5621958a758da830c1cf09c6f6893aed371f9d.camel@gmail.com>
-	 <2969660.1727700717@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        d=1e100.net; s=20230601; t=1727719758; x=1728324558;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1xn/A8bwzO7MBrq+CmhDCgTc2Fwd90kZtHzG93XkpEA=;
+        b=BPvPHIz9XuLIeWXiKRiczQWDjOZi1ABKKTEOf9ns/+pOU/hg/ccO7Yd7TwSz89XJx9
+         duZhAFjMCX52EKBWFn0ip19uoNG4+BpmRjIj9oQQmjxOoBd2STir5qdFMI7aJkcX8yzI
+         IIBvniznqbxq8Y1ow2HPJXrQ6rh8xyuMRbyWAszgNdJEb7NXocVazFBEN/4evW009UP0
+         LnUXket3yEqagdn6GiODmvJ0MZUWWlR+zk5m7CXsQ+Cr+E83TlVWJInEpvXL/JgAR+oP
+         xWEo58FJ7tmcB0v7bIMxrjqwksA3JZnkneAc3LQqouEq9QWzdKSOaJNhBJ99EY5zsGv0
+         H5ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUNfMrU4skXX8O2HAK8QQuoJnaijike8SpCNFlStZVO1NuCgQ/kX5epV1yofXLCgHDIClWZyeXavpaM@vger.kernel.org, AJvYcCVXjKojHodKjHUUqtdKNoja3yqliY6qPe+UQNPHZWta9ouP+1snnzMze/59y/sx6e/jgumD+sOkhx/FZ/Pf@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywncf1v9hsX1DM8MQpjvbLgx5PSIGXCjXqYCB+4XXi5pmn2JBQK
+	V88jWK6QK4/nl3ffgcjK9klbakrSxxxLdoD9FbPJypgvqYcOv05Bj0pTHVnpN8lAh8c6DCV1p3V
+	qpp2sMKEj8pMXfdJUDwitHPV+L/I=
+X-Google-Smtp-Source: AGHT+IFK+sgS7rJjHT4JmP4KrvFnACsWw4V1/xwvMVkBRq6nQAEM2hOEAGp7ta7mwf+TKwuP5NCyZaOR07eNe/KBZ/Y=
+X-Received: by 2002:a05:6870:5b88:b0:261:1f7d:cf6e with SMTP id
+ 586e51a60fabf-28710c45c43mr7339001fac.41.1727719758592; Mon, 30 Sep 2024
+ 11:09:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240912153924.78724-1-thorsten.blum@toblux.com>
+In-Reply-To: <20240912153924.78724-1-thorsten.blum@toblux.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Mon, 30 Sep 2024 20:09:06 +0200
+Message-ID: <CAOi1vP_1jRDmkQBH4BaxicTyYXtTJVjLXQb9T_XCmvUm7qTf0A@mail.gmail.com>
+Subject: Re: [PATCH] ceph: Use struct_size() helper
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: xiubli@redhat.com, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-09-30 at 13:51 +0100, David Howells wrote:
-> David Howells <dhowells@redhat.com> wrote:
->=20
-> > Okay, let's try something a little more drastic.  See if we can at leas=
-t get
-> > it booting to the point we can read the tracelog.  If you can apply the
-> > attached patch?
->=20
-> It's also on my branch:
->=20
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/lo=
-g/?h=3Dnetfs-fixes
->=20
-> along with another one that clears the folio pointer after unlocking.
+On Thu, Sep 12, 2024 at 5:39=E2=80=AFPM Thorsten Blum <thorsten.blum@toblux=
+.com> wrote:
+>
+> Use struct_size() to calculate the number of bytes to be allocated.
+>
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  fs/ceph/addr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index c4744a02db75..ab494f250d80 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -2133,7 +2133,7 @@ static int __ceph_pool_perm_get(struct ceph_inode_i=
+nfo *ci,
+>         }
+>
+>         pool_ns_len =3D pool_ns ? pool_ns->len : 0;
+> -       perm =3D kmalloc(sizeof(*perm) + pool_ns_len + 1, GFP_NOFS);
+> +       perm =3D kmalloc(struct_size(perm, pool_ns, pool_ns_len + 1), GFP=
+_NOFS);
+>         if (!perm) {
+>                 err =3D -ENOMEM;
+>                 goto out_unlock;
+> --
+> 2.46.0
+>
 
-Hi David,
-
-dmesg is here:
-https://gist.github.com/eddyz87/3a5f2a7ae9ba6803fc46f06223a501fc
-
-Used the following commit from your branch:
-ba1659e0f147 ("9p: [DEBUGGING] Don't release pages or folioq structs")
-
-Still does not boot, unfortunately.
-Are there any hacks possible to printout tracelog before complete boot some=
-how?
+Applied.
 
 Thanks,
-Eduard
 
+                Ilya
 
