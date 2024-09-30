@@ -1,120 +1,101 @@
-Return-Path: <ceph-devel+bounces-1859-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1860-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 454F598ABA9
-	for <lists+ceph-devel@lfdr.de>; Mon, 30 Sep 2024 20:09:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A03F98AC1C
+	for <lists+ceph-devel@lfdr.de>; Mon, 30 Sep 2024 20:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE0E5283834
-	for <lists+ceph-devel@lfdr.de>; Mon, 30 Sep 2024 18:09:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96F8C1C2265D
+	for <lists+ceph-devel@lfdr.de>; Mon, 30 Sep 2024 18:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26338198E77;
-	Mon, 30 Sep 2024 18:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96E21991D6;
+	Mon, 30 Sep 2024 18:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kl2aoY1Q"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WkQOw5kt"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C72F192D7F;
-	Mon, 30 Sep 2024 18:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D41192D7F
+	for <ceph-devel@vger.kernel.org>; Mon, 30 Sep 2024 18:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727719760; cv=none; b=cAr28Hq05NcETnPhWYQPh6cG9hh9mS+gVuVJipGY8OFF1s9Az74C2d4Pt1Z9mZJ2i0YORupBUlOOViVfIM4WnMNS83di/posllsydUr26FrGn7r+NRpvkHLOAyP29Na+3hel+iR5Q6cPK+7AMqSOsOXWh6qepG9BhAkptjadxrk=
+	t=1727721320; cv=none; b=d9xUUQqa6EJmsLyR+t8EtFmkb89+SeupBjW5CFryHQwjwi0qdY7/Ikt7+JX9VRaaDdW+HIdjGJr3aHeG4eSx8codzT2BtUK1cIDU42aLU8dR/CKQuIMlKmpCBYzY0nH6BsKVwvIrT30uIlvQYHMOutqzr+dHxouF8gzt4mhP4OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727719760; c=relaxed/simple;
-	bh=iDVMlPhvSyC8aDz+QP9lfgkSrj0TyoQwJsbyx9OLZG0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PaqCAC1qBl8OzMHejS3IdhOcVUPOSSFOiUAKMXQK3gZXOSC1PS310Wyqv+J7Tbw64sqkzn/PvAXZlAB6pHZ3B6qtsjJjKwxHzSxd0IjvDkyVDNSl5EJbDpwApYhf1uTLMdHIK+P9b0TItbX8CuONxd3fLak5P5oQCnoTNm9LtGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kl2aoY1Q; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3e03a5ed4d7so2444570b6e.1;
-        Mon, 30 Sep 2024 11:09:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727719758; x=1728324558; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1xn/A8bwzO7MBrq+CmhDCgTc2Fwd90kZtHzG93XkpEA=;
-        b=kl2aoY1Q5gqrRCZfeOpWBc1nOj4XPiph+/5+/z+xP+8ag2W/GYf0xd5Kw3KRtvJxCL
-         C9Tbsx0Qgc897ycZPogd34fau1nx98lHzQWd7WyIB708b5I72UyP7WAVBZWtRFnkB3rK
-         PWeH0Xb0vFlu/kOpDYpa1pGY4qEhtYggON1Wz2p9kIB+8Rag29O+kAPpOSAg8uWuaGWr
-         Wu/Thy6+SJzBrtqUY/yM+fRct9SqepoSCvHIM7Qa95IMSRq75kKhqFbe25IVUnfl/BDQ
-         qkshyQaRxxpDaE1/kqQBFWWDLnBa5Puja0UYigDz0B9IsMqt4NdLfhGJusmaf11WAIae
-         xBrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727719758; x=1728324558;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1xn/A8bwzO7MBrq+CmhDCgTc2Fwd90kZtHzG93XkpEA=;
-        b=BPvPHIz9XuLIeWXiKRiczQWDjOZi1ABKKTEOf9ns/+pOU/hg/ccO7Yd7TwSz89XJx9
-         duZhAFjMCX52EKBWFn0ip19uoNG4+BpmRjIj9oQQmjxOoBd2STir5qdFMI7aJkcX8yzI
-         IIBvniznqbxq8Y1ow2HPJXrQ6rh8xyuMRbyWAszgNdJEb7NXocVazFBEN/4evW009UP0
-         LnUXket3yEqagdn6GiODmvJ0MZUWWlR+zk5m7CXsQ+Cr+E83TlVWJInEpvXL/JgAR+oP
-         xWEo58FJ7tmcB0v7bIMxrjqwksA3JZnkneAc3LQqouEq9QWzdKSOaJNhBJ99EY5zsGv0
-         H5ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUNfMrU4skXX8O2HAK8QQuoJnaijike8SpCNFlStZVO1NuCgQ/kX5epV1yofXLCgHDIClWZyeXavpaM@vger.kernel.org, AJvYcCVXjKojHodKjHUUqtdKNoja3yqliY6qPe+UQNPHZWta9ouP+1snnzMze/59y/sx6e/jgumD+sOkhx/FZ/Pf@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywncf1v9hsX1DM8MQpjvbLgx5PSIGXCjXqYCB+4XXi5pmn2JBQK
-	V88jWK6QK4/nl3ffgcjK9klbakrSxxxLdoD9FbPJypgvqYcOv05Bj0pTHVnpN8lAh8c6DCV1p3V
-	qpp2sMKEj8pMXfdJUDwitHPV+L/I=
-X-Google-Smtp-Source: AGHT+IFK+sgS7rJjHT4JmP4KrvFnACsWw4V1/xwvMVkBRq6nQAEM2hOEAGp7ta7mwf+TKwuP5NCyZaOR07eNe/KBZ/Y=
-X-Received: by 2002:a05:6870:5b88:b0:261:1f7d:cf6e with SMTP id
- 586e51a60fabf-28710c45c43mr7339001fac.41.1727719758592; Mon, 30 Sep 2024
- 11:09:18 -0700 (PDT)
+	s=arc-20240116; t=1727721320; c=relaxed/simple;
+	bh=u/r1gsK3d9HgHSLkwy9YD8P0OsrJDIi+1lCKi06YOU0=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=EcrVn74+EGZE2scOx6xZcr7nze3qeGfYb44yyaJKHOTckiX8BWhOwarYD/ua8EnSHH3SaADRay//hULJr39rQoqEhfohd/3bUkM09huOUHQij1GaUQ0pbke5+zW6H/libCZxI/6euiwYMu3XJfVzWuaGQHUvnq8I4sp1mxfcjjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WkQOw5kt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1727721318;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7X8o4DowsqGONQ/4kasxk3OiTMOAJHVfF5+gN/kqpqg=;
+	b=WkQOw5kt70R/WrIEdj2b5mUT+hMkUkKd1zw3+SQlm684xmNjgEdlKh6YEnR1NcV+AAGQ5a
+	XxgkF0eCyqq9ff6s50XZKg9WFgamqjdUntt18PbzCzGFSJZ2Eztsi1vobHDwXhOfsPZObu
+	JqdLvxAGYhKaNQteBTmxuJ5T7UQoPBw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-453--d_Kp97WPyK6rMA1zpyZig-1; Mon,
+ 30 Sep 2024 14:35:14 -0400
+X-MC-Unique: -d_Kp97WPyK6rMA1zpyZig-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (unknown [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 59638196A10F;
+	Mon, 30 Sep 2024 18:35:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 10E771944CF6;
+	Mon, 30 Sep 2024 18:35:02 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <423fbd9101dab18ba772f24db4ab2fecf5de2261.camel@gmail.com>
+References: <423fbd9101dab18ba772f24db4ab2fecf5de2261.camel@gmail.com> <2968940.1727700270@warthog.procyon.org.uk> <20240925103118.GE967758@unreal> <20240923183432.1876750-1-chantr4@gmail.com> <20240814203850.2240469-20-dhowells@redhat.com> <1279816.1727220013@warthog.procyon.org.uk> <4b5621958a758da830c1cf09c6f6893aed371f9d.camel@gmail.com> <2969660.1727700717@warthog.procyon.org.uk>
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: dhowells@redhat.com, Leon Romanovsky <leon@kernel.org>,
+    Christian Brauner <brauner@kernel.org>,
+    Manu Bretelle <chantr4@gmail.com>, asmadeus@codewreck.org,
+    ceph-devel@vger.kernel.org, christian@brauner.io, ericvh@kernel.org,
+    hsiangkao@linux.alibaba.com, idryomov@gmail.com, jlayton@kernel.org,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+    linux-nfs@vger.kernel.org, marc.dionne@auristor.com,
+    netdev@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com,
+    smfrench@gmail.com, sprasad@microsoft.com, tom@talpey.com,
+    v9fs@lists.linux.dev, willy@infradead.org
+Subject: Re: [PATCH v2 19/25] netfs: Speed up buffered reading
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912153924.78724-1-thorsten.blum@toblux.com>
-In-Reply-To: <20240912153924.78724-1-thorsten.blum@toblux.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Mon, 30 Sep 2024 20:09:06 +0200
-Message-ID: <CAOi1vP_1jRDmkQBH4BaxicTyYXtTJVjLXQb9T_XCmvUm7qTf0A@mail.gmail.com>
-Subject: Re: [PATCH] ceph: Use struct_size() helper
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: xiubli@redhat.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3007427.1727721302.1@warthog.procyon.org.uk>
+Date: Mon, 30 Sep 2024 19:35:02 +0100
+Message-ID: <3007428.1727721302@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, Sep 12, 2024 at 5:39=E2=80=AFPM Thorsten Blum <thorsten.blum@toblux=
-.com> wrote:
->
-> Use struct_size() to calculate the number of bytes to be allocated.
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
->  fs/ceph/addr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index c4744a02db75..ab494f250d80 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -2133,7 +2133,7 @@ static int __ceph_pool_perm_get(struct ceph_inode_i=
-nfo *ci,
->         }
->
->         pool_ns_len =3D pool_ns ? pool_ns->len : 0;
-> -       perm =3D kmalloc(sizeof(*perm) + pool_ns_len + 1, GFP_NOFS);
-> +       perm =3D kmalloc(struct_size(perm, pool_ns, pool_ns_len + 1), GFP=
-_NOFS);
->         if (!perm) {
->                 err =3D -ENOMEM;
->                 goto out_unlock;
-> --
-> 2.46.0
->
+Eduard Zingerman <eddyz87@gmail.com> wrote:
 
-Applied.
+> Are there any hacks possible to printout tracelog before complete boot
+> somehow?
 
-Thanks,
+You could try setting CONFIG_NETFS_DEBUG=y.  That'll print some stuff to
+dmesg.
 
-                Ilya
+David
+
 
