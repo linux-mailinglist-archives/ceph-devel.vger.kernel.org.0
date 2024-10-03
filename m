@@ -1,60 +1,82 @@
-Return-Path: <ceph-devel+bounces-1879-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1880-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D733798F13D
-	for <lists+ceph-devel@lfdr.de>; Thu,  3 Oct 2024 16:19:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA8198F4D8
+	for <lists+ceph-devel@lfdr.de>; Thu,  3 Oct 2024 19:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EFFD1F21EAF
-	for <lists+ceph-devel@lfdr.de>; Thu,  3 Oct 2024 14:19:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3525D2839DC
+	for <lists+ceph-devel@lfdr.de>; Thu,  3 Oct 2024 17:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B6C1865EB;
-	Thu,  3 Oct 2024 14:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03801A7275;
+	Thu,  3 Oct 2024 17:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sQOQ31A8"
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="eQ0ANPeT"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A36197A65;
-	Thu,  3 Oct 2024 14:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CED1A7248
+	for <ceph-devel@vger.kernel.org>; Thu,  3 Oct 2024 17:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727965162; cv=none; b=IFzjYjQioZWU1srzKoY0AbkxfEsWtkbJT57smcR1JA9oxLzCEa2kruwDBuXcXlbgDBoIu8EOVTN5FNEUrH9EzLPHNXoXYHB7/YgxEjBgoFA5dKJOVUJhL/CGUFCCCOY7vRNAbaDEOC/DxDt46CyiEndXzd6H0rAdyHOaWsDofRY=
+	t=1727975364; cv=none; b=nTwrRo0r65oBWUjD/I3KlAiLecuJZaSrKoVQHcRA029Rw0mF2WA9aRMHEWnM+SU3E8kWsbXbpzZQdWWQlbQ/GHeDZhNvYRXNsVBPmyB7nVo1l5Gb6j0Mr1HIHwmaqA3OMcj3MIoNVVUhGaGWonSVlEJyLErVik84CdKScIgZCoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727965162; c=relaxed/simple;
-	bh=yvV/XCZSBeAgPdM0l8YoGpcgZKpyLl9J2RRsBcI7UM8=;
+	s=arc-20240116; t=1727975364; c=relaxed/simple;
+	bh=veZob2f6f+jF2aoHyYukXoVPX5HhWe0/4HygDAWChU4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QJlmhRBHJdTouzK+CeMdNseXZvDqX/wmrymIYwDMWN2bIi+AFXJJnB+xV8XxDW/kgx6wNSsDCpwy4zc8CRxd9POwPL4t7rBYjhk8gMTU/YPmss0Kb/1YvG5ZFHCU/z900orJvFfB6BaltkjQpHPv7r2zZ1o4Gi5NF6nrb7EBUy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sQOQ31A8; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zVgRWuybk2Cw8g/RlzCJeQTCunq05g5McEWnZP+Fqjg=; b=sQOQ31A87Eez7nqYo4z6bXXHcY
-	KMIfgDY9QdWpwKMwpj76N4pBHwBawzpnp65CuuYOcIQ74zYbQ579z1WO+BOiuQBGZAg1kX1ytavoO
-	tY+EP7PLiGFyVpjKYqnx1pFY8ZxazOj8/TqmZzblMbtTsvhSZMmwgiGgSAERI/oHV2Db/WoNnC5ns
-	de1+k6AfBrzZRxWuVh3zuRseJ0LJEzzcMpSsGja8d+hjOqjVuifwRHorRY+ZSPlLq7jDXVAQulbqB
-	QCDOf8gZ+r2tHssTkhiiTlK9ZGNf55QAxb48bAGwWiP4BBCNjHpXxgEa7P+qltoYx+hDZr7RfsrhW
-	O3Ov+DKQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1swMfm-000000080GV-3Jt3;
-	Thu, 03 Oct 2024 14:19:18 +0000
-Date: Thu, 3 Oct 2024 15:19:18 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Jan Kara <jack@suse.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fACPns2rLnShOYb8V1eGO188v63phUUU1vVoghpxUpv70q5f3HCokJI0+H8nOyEr1HwyDhRDSkATflmQTnigDYJ/khP5KZS9bMVCy/YXHvT31BI3znlWQTm9I+98K1IFT2uSGVofD2OlnD/EH57QfEAME16guaYyZPdv8HecUPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=eQ0ANPeT; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6cb3cbc28deso10479446d6.3
+        for <ceph-devel@vger.kernel.org>; Thu, 03 Oct 2024 10:09:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1727975362; x=1728580162; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lv6+V5DD1q+EbvJERytZupM7GavIklndcKQm84ak25U=;
+        b=eQ0ANPeTYr8J7l35leuTWmevYYkn3K9uaDc2xiHwiHkiLe3SJ+5kibIXt7agq4PFDA
+         JQeUfRsW08ZF3ba3BvlcmILg9PRosdgOwcoWZ610B9g29P9PX8fWgVVh9fqSJrT88H/P
+         JqNHnzjsVMK8ESNdiSz1gSOgah2yixAcfEi5aXNaUFOBKEKyBJwaFtjtZCoSuHMHpLoY
+         dzU2ZZ0ItUGWtzbdHoDRBlvR8C0YHbuhPLB81Is+wNq9pgJ08W/T017eQLZ7VGm3fG8z
+         wuUzmqxV6scwPswbdeJUiaSFdUZYanVxkelJwG+RVL3CIF/01tKvZL0HKohFo0pr2syG
+         wg4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727975362; x=1728580162;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lv6+V5DD1q+EbvJERytZupM7GavIklndcKQm84ak25U=;
+        b=aK7Ibg0zNbJU4oqWpcU7FTey3J4Rkh3m4sR7TS5P6pMUAgDE64FONlqmP9CsK8fINX
+         w2YDzLniZyBjY98XvKXXdE36e8OEF9tgvF7fmTStHKJuMTIaB2E7vja/NOBGmg2r4K6C
+         YyaoJzRwx0IJ6bKxRAwpUZRtyOdFHIyTsLOEY3OdPig3odYYjbqjK+t1yiJ0nql0PgPB
+         BoFdHPi8pwgn8nRObSK5P0hLFUqfSMq9lHLr106+HApmrfLbLr8G/6JouM7xI5DXVpyh
+         p448tQiUv+PkcWYtEb4BSjVapWb+ITQBWrv7b1luHSyhOuHFGD+e4eEyfd23d+24O5WA
+         iQ/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUkhO7hGE8pVXO3Eese6P+l0f4Hv8I26QCv/FpdGOOmzk73jGPvRbLTKgksMHJ+4g7HQsvURO7nYTq+@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYVd3gLBQDYW4gc/mVc9YooxNac5vFBMRTUSqCtbckAW1npyp2
+	kuvxMXvnIXhQ+AYqe3tGvpu5ec5iy4LZb7B7q2x43I4FzGsgyktddBO9ir6ZYSQ=
+X-Google-Smtp-Source: AGHT+IEkPpCAXCAtA9gfAP3eyJpKVnJ4NiXCYXXWlVAcJ8PH9XCm1z/O2+YTyJX5Rf/ppniNPbZCyg==
+X-Received: by 2002:a05:6214:5547:b0:6cb:3d8c:994a with SMTP id 6a1803df08f44-6cb81a955femr111164996d6.32.1727975361783;
+        Thu, 03 Oct 2024 10:09:21 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cb937f478fsm8082636d6.121.2024.10.03.10.09.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 10:09:20 -0700 (PDT)
+Date: Thu, 3 Oct 2024 13:09:19 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
 	ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
 	linux-nilfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 1/6] fs: Move clearing of mappedtodisk to buffer.c
-Message-ID: <Zv6n5oAy_2lZzrZ2@casper.infradead.org>
+Subject: Re: [PATCH 4/6] btrfs: Switch from using the private_2 flag to
+ owner_2
+Message-ID: <20241003170919.GA1652670@perftesting>
 References: <20241002040111.1023018-1-willy@infradead.org>
- <20241002040111.1023018-2-willy@infradead.org>
- <20241003121020.36i4ufbbuf4fbua7@quack3>
+ <20241002040111.1023018-5-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -63,30 +85,18 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241003121020.36i4ufbbuf4fbua7@quack3>
+In-Reply-To: <20241002040111.1023018-5-willy@infradead.org>
 
-On Thu, Oct 03, 2024 at 02:10:20PM +0200, Jan Kara wrote:
-> On Wed 02-10-24 05:01:03, Matthew Wilcox (Oracle) wrote:
-> > The mappedtodisk flag is only meaningful for buffer head based
-> > filesystems.  It should not be cleared for other filesystems.  This allows
-> > us to reuse the mappedtodisk flag to have other meanings in filesystems
-> > that do not use buffer heads.
-> > 
-> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+On Wed, Oct 02, 2024 at 05:01:06AM +0100, Matthew Wilcox (Oracle) wrote:
+> We are close to removing the private_2 flag, so switch btrfs to using
+> owner_2 for its ordered flag.  This is mostly used by buffer head
+> filesystems, so btrfs can use it because it doesn't use buffer heads.
 > 
-> The patch looks good. But I'm bit confused about the changelog. There's no
-> generic code checking for mappedtodisk. Only nilfs2 actually uses it for
-> anything, all other filesystems just never look at it as far as my grepping
-> shows. So speaking about "filesystems that do not use buffer heads" looks
-> somewhat broad to me. Anyway feel free to add:
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Hmm.  f2fs also uses it in page_mkwrite().  But it looks odd to me.
-Perhaps we could get rid of mappedtodisk entirely ... I see ext4
-used to use it until someone removed it in 9ea7df534ed2 ;-)
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-Anyway, what the changelog is trying to say is that only
-buffer-head filesystems ever have the mappedtodisk flag set, eg by
-block_read_full_folio() or do_mpage_readpage().  So it doesn't make
-sense to clear it for non-buffer-head filesystems, and may inhibit their
-ability to use it for unrelated purposes.
+Thanks,
+
+Josef
 
