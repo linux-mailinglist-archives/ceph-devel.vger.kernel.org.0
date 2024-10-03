@@ -1,102 +1,60 @@
-Return-Path: <ceph-devel+bounces-1878-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1879-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ABBB98EEDB
-	for <lists+ceph-devel@lfdr.de>; Thu,  3 Oct 2024 14:13:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D733798F13D
+	for <lists+ceph-devel@lfdr.de>; Thu,  3 Oct 2024 16:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D7FE1C213A7
-	for <lists+ceph-devel@lfdr.de>; Thu,  3 Oct 2024 12:13:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EFFD1F21EAF
+	for <lists+ceph-devel@lfdr.de>; Thu,  3 Oct 2024 14:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C41016F0C1;
-	Thu,  3 Oct 2024 12:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B6C1865EB;
+	Thu,  3 Oct 2024 14:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XHlOASG1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FLB2yonR";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XHlOASG1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FLB2yonR"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sQOQ31A8"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A3F16C6A7;
-	Thu,  3 Oct 2024 12:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A36197A65;
+	Thu,  3 Oct 2024 14:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727957593; cv=none; b=Y8En0Eqk8uA5FSo+o5ijPoctDhJAvEFkNHf9vX3z/HZ9oxaMPRDxO7OLL9zUXdqqhuMJJtvzvWGK8tWtLybk5sFSMlahCYrC4vrZxTXdkG5K79FLnbSPTCbqgkcAWcI0thyKdCTKxjvCBfMhr4DTT8M8LsvsiBySQEl9uqQFtk4=
+	t=1727965162; cv=none; b=IFzjYjQioZWU1srzKoY0AbkxfEsWtkbJT57smcR1JA9oxLzCEa2kruwDBuXcXlbgDBoIu8EOVTN5FNEUrH9EzLPHNXoXYHB7/YgxEjBgoFA5dKJOVUJhL/CGUFCCCOY7vRNAbaDEOC/DxDt46CyiEndXzd6H0rAdyHOaWsDofRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727957593; c=relaxed/simple;
-	bh=ZJIsPxUxCakaPDnQQGQAClJ/pXQL3cD6sbEbl4qM8L0=;
+	s=arc-20240116; t=1727965162; c=relaxed/simple;
+	bh=yvV/XCZSBeAgPdM0l8YoGpcgZKpyLl9J2RRsBcI7UM8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JU2ho9cr0Prgv13wlDUNTRkK+Zajnyt9iRHkEnQpRtiJ1zYLjbzP2G/riFeL/mDa4e6Uk4K/UIZ0U15qNBEMEvrGdjiNOpP5zXh9mc+j3tQ7HTFOpcU0LZexmRsc1RvOBqT/l9sCAKGVyXgVwBN+J4min5v1lcn/PHdXPVMRxtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XHlOASG1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FLB2yonR; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XHlOASG1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FLB2yonR; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 65D3B21C03;
-	Thu,  3 Oct 2024 12:13:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727957589; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YmDERVK5Bjc/XeyReSYqm539EjnZa14Ik4KdwHWDMhA=;
-	b=XHlOASG1XtOXjH9Ll6eRj7NR60sQUaktDbEdmUb2GBrh5e1Vn5NMKWXh3cG0Vb4LF+wa/W
-	v9+OIwmg3CDOKupnArecYb48DZMzNM6zXh6J2JPRNAdUaSSbiL+nHPnbEd5AlP8Yt7sGxX
-	+plBcN7tmjOB+qF2ThHL8loAeB0AH2I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727957589;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YmDERVK5Bjc/XeyReSYqm539EjnZa14Ik4KdwHWDMhA=;
-	b=FLB2yonRDGwAdDIY9qTyqPWbywTauirq+ZYTd+3+CEPo8E9U+ysqhRSFmBjHOVxENQq5aP
-	Mucg9UAU4w3mUrDw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=XHlOASG1;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=FLB2yonR
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727957589; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YmDERVK5Bjc/XeyReSYqm539EjnZa14Ik4KdwHWDMhA=;
-	b=XHlOASG1XtOXjH9Ll6eRj7NR60sQUaktDbEdmUb2GBrh5e1Vn5NMKWXh3cG0Vb4LF+wa/W
-	v9+OIwmg3CDOKupnArecYb48DZMzNM6zXh6J2JPRNAdUaSSbiL+nHPnbEd5AlP8Yt7sGxX
-	+plBcN7tmjOB+qF2ThHL8loAeB0AH2I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727957589;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YmDERVK5Bjc/XeyReSYqm539EjnZa14Ik4KdwHWDMhA=;
-	b=FLB2yonRDGwAdDIY9qTyqPWbywTauirq+ZYTd+3+CEPo8E9U+ysqhRSFmBjHOVxENQq5aP
-	Mucg9UAU4w3mUrDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5905B13882;
-	Thu,  3 Oct 2024 12:13:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HJi6FVWK/mbYIgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 03 Oct 2024 12:13:09 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0E9ECA086F; Thu,  3 Oct 2024 14:13:05 +0200 (CEST)
-Date: Thu, 3 Oct 2024 14:13:04 +0200
-From: Jan Kara <jack@suse.cz>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QJlmhRBHJdTouzK+CeMdNseXZvDqX/wmrymIYwDMWN2bIi+AFXJJnB+xV8XxDW/kgx6wNSsDCpwy4zc8CRxd9POwPL4t7rBYjhk8gMTU/YPmss0Kb/1YvG5ZFHCU/z900orJvFfB6BaltkjQpHPv7r2zZ1o4Gi5NF6nrb7EBUy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sQOQ31A8; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zVgRWuybk2Cw8g/RlzCJeQTCunq05g5McEWnZP+Fqjg=; b=sQOQ31A87Eez7nqYo4z6bXXHcY
+	KMIfgDY9QdWpwKMwpj76N4pBHwBawzpnp65CuuYOcIQ74zYbQ579z1WO+BOiuQBGZAg1kX1ytavoO
+	tY+EP7PLiGFyVpjKYqnx1pFY8ZxazOj8/TqmZzblMbtTsvhSZMmwgiGgSAERI/oHV2Db/WoNnC5ns
+	de1+k6AfBrzZRxWuVh3zuRseJ0LJEzzcMpSsGja8d+hjOqjVuifwRHorRY+ZSPlLq7jDXVAQulbqB
+	QCDOf8gZ+r2tHssTkhiiTlK9ZGNf55QAxb48bAGwWiP4BBCNjHpXxgEa7P+qltoYx+hDZr7RfsrhW
+	O3Ov+DKQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1swMfm-000000080GV-3Jt3;
+	Thu, 03 Oct 2024 14:19:18 +0000
+Date: Thu, 3 Oct 2024 15:19:18 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Jan Kara <jack@suse.cz>
 Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
 	ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
 	linux-nilfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 6/6] migrate: Remove references to Private2
-Message-ID: <20241003121304.fhrjs5ocuzyqbemk@quack3>
+Subject: Re: [PATCH 1/6] fs: Move clearing of mappedtodisk to buffer.c
+Message-ID: <Zv6n5oAy_2lZzrZ2@casper.infradead.org>
 References: <20241002040111.1023018-1-willy@infradead.org>
- <20241002040111.1023018-7-willy@infradead.org>
+ <20241002040111.1023018-2-willy@infradead.org>
+ <20241003121020.36i4ufbbuf4fbua7@quack3>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -105,79 +63,30 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241002040111.1023018-7-willy@infradead.org>
-X-Rspamd-Queue-Id: 65D3B21C03
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.com:email,infradead.org:email];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20241003121020.36i4ufbbuf4fbua7@quack3>
 
-On Wed 02-10-24 05:01:08, Matthew Wilcox (Oracle) wrote:
-> These comments are now stale; rewrite them.
+On Thu, Oct 03, 2024 at 02:10:20PM +0200, Jan Kara wrote:
+> On Wed 02-10-24 05:01:03, Matthew Wilcox (Oracle) wrote:
+> > The mappedtodisk flag is only meaningful for buffer head based
+> > filesystems.  It should not be cleared for other filesystems.  This allows
+> > us to reuse the mappedtodisk flag to have other meanings in filesystems
+> > that do not use buffer heads.
+> > 
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> The patch looks good. But I'm bit confused about the changelog. There's no
+> generic code checking for mappedtodisk. Only nilfs2 actually uses it for
+> anything, all other filesystems just never look at it as far as my grepping
+> shows. So speaking about "filesystems that do not use buffer heads" looks
+> somewhat broad to me. Anyway feel free to add:
 
-Looks good. Feel free to add:
+Hmm.  f2fs also uses it in page_mkwrite().  But it looks odd to me.
+Perhaps we could get rid of mappedtodisk entirely ... I see ext4
+used to use it until someone removed it in 9ea7df534ed2 ;-)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  mm/migrate.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index df91248755e4..21264c24a404 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -472,7 +472,7 @@ static int folio_expected_refs(struct address_space *mapping,
->   * The number of remaining references must be:
->   * 1 for anonymous folios without a mapping
->   * 2 for folios with a mapping
-> - * 3 for folios with a mapping and PagePrivate/PagePrivate2 set.
-> + * 3 for folios with a mapping and the private flag set.
->   */
->  static int __folio_migrate_mapping(struct address_space *mapping,
->  		struct folio *newfolio, struct folio *folio, int expected_count)
-> @@ -786,7 +786,7 @@ static int __migrate_folio(struct address_space *mapping, struct folio *dst,
->   * @mode: How to migrate the page.
->   *
->   * Common logic to directly migrate a single LRU folio suitable for
-> - * folios that do not use PagePrivate/PagePrivate2.
-> + * folios that do not have private data.
->   *
->   * Folios are locked upon entry and exit.
->   */
-> -- 
-> 2.43.0
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Anyway, what the changelog is trying to say is that only
+buffer-head filesystems ever have the mappedtodisk flag set, eg by
+block_read_full_folio() or do_mpage_readpage().  So it doesn't make
+sense to clear it for non-buffer-head filesystems, and may inhibit their
+ability to use it for unrelated purposes.
 
