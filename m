@@ -1,91 +1,103 @@
-Return-Path: <ceph-devel+bounces-1884-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1885-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17CCE9907EE
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Oct 2024 17:47:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452399909EC
+	for <lists+ceph-devel@lfdr.de>; Fri,  4 Oct 2024 19:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFA4E28B042
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Oct 2024 15:47:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 024BE283097
+	for <lists+ceph-devel@lfdr.de>; Fri,  4 Oct 2024 17:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8762D21B44C;
-	Fri,  4 Oct 2024 15:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118301D9A51;
+	Fri,  4 Oct 2024 17:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ISZ4oeb3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fD3FiFLA"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3D31CACE4
-	for <ceph-devel@vger.kernel.org>; Fri,  4 Oct 2024 15:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800EB1E376B;
+	Fri,  4 Oct 2024 17:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728056257; cv=none; b=pGyEpZLf6IYFShcTS/SZ7oiM4gvKgMeoXI3BZVKOVwKR7wIwKqSDSnxVXFW5pwzVVMrkSgRSbcIR0p13YZjJS7P9Mj5MQZblLSR+n4Yt/X0Ok+l/OMyimWoF+m4IJ3/xmYV9anqim8lgmr4WArL2+a23xOgN0SdFTOdOnWeUCUo=
+	t=1728061576; cv=none; b=ckcoJoGunNC21DZN0LZ8GuFEUBaHQaOj+FCZ3ViXT6inw4A04sgX0D0l3Vq4y/7EZ+d+s6dsbVNBIQV+5DUrIQQci+njWnSd0nZJwetpsRPipyP23QB7/r4EWHCO/rNFjU4zvpj13RYAsCNvbrn0mEgov3O/UBJV4FXx8XivIdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728056257; c=relaxed/simple;
-	bh=0D1cYSeQQ+jhwWd4TLI5hO7NsEF3R3zty8OXiKh3+ps=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=BLptfiG3oDZNNfSlHqVMRHWFqzX0Ec28pE1076/JTGIRubBcR8cstRYmsWV2v9BJOiR/XJxmVrTdR3ragrsSB4nRJoA6kg5JFMjSAJj0zmm3DFAjUDlrMX7SW+qU0rLeyqx/6INTDxwqup920kCdr1VSsxkSbFG1vem5bQjOUzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ISZ4oeb3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728056255;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0D1cYSeQQ+jhwWd4TLI5hO7NsEF3R3zty8OXiKh3+ps=;
-	b=ISZ4oeb3sril25uP10lrVr0l9sn/EMQM5IGHls7rCxlNXu+P2U4RwJExM4iIhRm3SaOYQn
-	CEnYj0DfA5oryQKTbLHLzkD8RfXwF53JIjmOaBns8HsiYNjw02wGScZmnUynwqXh+QAj5w
-	FQRVtl7iGN2L9gk/JzGZ8Wk0uDGsV3E=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-536-5Gug8Q8zOBabFupWhhPBXw-1; Fri,
- 04 Oct 2024 11:37:31 -0400
-X-MC-Unique: 5Gug8Q8zOBabFupWhhPBXw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 565A61955EB5;
-	Fri,  4 Oct 2024 15:37:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.145])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 37C221956054;
-	Fri,  4 Oct 2024 15:37:28 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20241003010512.58559-1-batrick@batbytes.com>
-References: <20241003010512.58559-1-batrick@batbytes.com>
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: dhowells@redhat.com, Xiubo Li <xiubli@redhat.com>,
-    Patrick Donnelly <batrick@batbytes.com>,
-    Jeff Layton <jlayton@kernel.org>,
-    Patrick Donnelly <pdonnell@redhat.com>, stable@vger.kernel.org,
-    ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ceph: fix cap ref leak via netfs init_request
+	s=arc-20240116; t=1728061576; c=relaxed/simple;
+	bh=9HsYwzndrMM5eK3xjeOx1q9GYUptfxoE7kjLCX3szzs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FQ9F5V/Fhm8FyoBQHdf34sGJ7Fg1gO04tR0Rq7JigQsCD5+2PosBuFH7MsAL7pmDrTPFw0wsp2wajrS8bb7FiUa0KKXUChTDFOoTG46uKlc2pq9dYbWHJTpaA14Vtn+/JCWKBqC0Qi6K467PYSMDOTGCLtjT582igBrD5Hywu6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fD3FiFLA; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5daa93677e1so1256906eaf.3;
+        Fri, 04 Oct 2024 10:06:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728061573; x=1728666373; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XWpd/wenAT0Lbq60RUb6kZo/W2VeUIRlYq/dT+QbHuM=;
+        b=fD3FiFLAQKX38HmtgN2czhh8S/qrNPUVGv4PAUt1oGKajHistJDOy+4EtB26W8Mkyh
+         9R9OH3xLuz83zMnNF3s1iJO3S3KWtC+K3MzxIIXH+FP5hC8Sg1yaqlAapH4MIlOEeLHj
+         PUDLQz3WOzhz2RnYQHw3KUlc9h7uHer/6CEAGmm+zuJD1nXUe2r6B4Gy0ustMybDtj2y
+         NRLoAeQfUBz5vMBuE+i4/d7fMmPZJaWv5onLofqnVwysvT3qm7X4Nz3bR2evmTDQL5Kz
+         UT8kRJHDCltMpRNLmBRHgFMLmg11P3uz2FKz9GYbgO45mF6P2HLJHGVEIEdSH7ELfet3
+         +6qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728061573; x=1728666373;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XWpd/wenAT0Lbq60RUb6kZo/W2VeUIRlYq/dT+QbHuM=;
+        b=hewzjpCewAh7hMj2JVksTbonznIhVTgxeNs6z6W5INV8uUtx+i1ptZqG/zi+xg0rPe
+         AlYmd8r00ZUmiJ2aCAn175MG3Fcb3UrA+poAqj1aYYqHFXppDzcmlLkdCqqy5csOZEmf
+         PUgJDjJqPZPl0A3EaBQQ3iqY4L3cvACqWVQmEUPXC+evkm6V9335cS23DCGVaOdzHWeT
+         Ufiquak0XMpJju5T0V1vUQmUmfYpIm/oSYTHt1q4ua5EwmkjYY1P4+CGWLF2D8Sr2YWQ
+         GXz5h5diFVIRD94KTuCmgc57BwvtRmhmwQci78il9c6DJlkfBw1IX06+VJKkgcgW82dW
+         ByUw==
+X-Forwarded-Encrypted: i=1; AJvYcCURcpYU+z2E2nkKV/5LoTGiGN6iE9O0lfxqwjfl8HfpqnT40agiuv/m/fBaONPgbKfKmJVmeuxow484@vger.kernel.org, AJvYcCXbdCGPCfYWnJj2cscBolcxj8HYm/ntOFt1rBGldWZwPA9+7HiCBn18RREtFXsRvMIxChmP95S4ECW4vHjW@vger.kernel.org, AJvYcCXhiQ0ievj+shOPf9lK0cOPaO8sIvMHTrHWLsAoTp9ZZKXj30HmhhAaGptuNtkzaW3ggqJRw8xu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMHqEcV5/H0uTTSyRn/RFk8XCQgRb4NzhPvcl5eJnWCdkzwfTV
+	mAgXLeNC+xlXQJtgDzPYuISPTOkfZeLU4gpA17oEbmx9/MnaAprVwgX+v2UkNeaZPNNFQSK4B+x
+	lszplzyF0b/Rr+g6pBU7/Vbm3ljY=
+X-Google-Smtp-Source: AGHT+IHgiBBu9yfFpxkoqHDKPeQVhYNE+CvmBMgljLxeStnjl6NoyRX4gxW0/1NYVWF/0tSBf8te4xywKAUqfh8Kgng=
+X-Received: by 2002:a05:6820:50d:b0:5e5:bf7f:3469 with SMTP id
+ 006d021491bc7-5e7cbe62bb6mr2150439eaf.0.1728061573525; Fri, 04 Oct 2024
+ 10:06:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3822913.1728056247.1@warthog.procyon.org.uk>
-Date: Fri, 04 Oct 2024 16:37:27 +0100
-Message-ID: <3822914.1728056247@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20241003010512.58559-1-batrick@batbytes.com> <3822914.1728056247@warthog.procyon.org.uk>
+In-Reply-To: <3822914.1728056247@warthog.procyon.org.uk>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Fri, 4 Oct 2024 19:06:01 +0200
+Message-ID: <CAOi1vP9p-_nUYTZLF+B=u1xGG_6SEZ8a1CS-dD8313A9S_-yJg@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix cap ref leak via netfs init_request
+To: David Howells <dhowells@redhat.com>
+Cc: Xiubo Li <xiubli@redhat.com>, Patrick Donnelly <batrick@batbytes.com>, 
+	Jeff Layton <jlayton@kernel.org>, Patrick Donnelly <pdonnell@redhat.com>, stable@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ilya,
+On Fri, Oct 4, 2024 at 5:37=E2=80=AFPM David Howells <dhowells@redhat.com> =
+wrote:
+>
+> Hi Ilya,
+>
+> Are you going to pick this up, or should I ask Christian to take it throu=
+gh
+> the vfs tree?
 
-Are you going to pick this up, or should I ask Christian to take it through
-the vfs tree?
+Hi David,
 
-David
+I picked it up yesterday.
 
+Thanks,
+
+                Ilya
 
