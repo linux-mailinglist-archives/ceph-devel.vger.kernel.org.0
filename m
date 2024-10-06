@@ -1,79 +1,102 @@
-Return-Path: <ceph-devel+bounces-1887-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1892-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8DA990A60
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Oct 2024 19:50:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24BAF991BBB
+	for <lists+ceph-devel@lfdr.de>; Sun,  6 Oct 2024 03:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FED7281DF7
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Oct 2024 17:50:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40A871C20FBA
+	for <lists+ceph-devel@lfdr.de>; Sun,  6 Oct 2024 01:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047C01DD865;
-	Fri,  4 Oct 2024 17:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A434713633F;
+	Sun,  6 Oct 2024 01:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBKgm563"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="dBKnlPGp"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79F11DACBE;
-	Fri,  4 Oct 2024 17:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5659C125;
+	Sun,  6 Oct 2024 01:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728064207; cv=none; b=aGHGwmmfdbO4wMVJEaE4HjLvcZKKuPJ7isYhVz4Hkaff7F1ubJNCs81dXNdXbeWvzeIqcwHC2Fvua332yLuGS6VZqBGAZ9qzeMQkn2gFfH+Y+grlCA7EPoMoEWsYYN6M5Ux+FoC4KbKurfOomic9vfkQ5oxKKDC34Lo7PzlPiMA=
+	t=1728177606; cv=none; b=sGOPIb17PQB8dSv/PubYw/OR9LrSqUbJ1E1bL5Mkk8aBE/mZ6PKDWiBQ4QvioKbclaIenSdcbhcCFdvPGVjuncp3hYQeNtQpnEiZ/qO9mRDLBk542CFaKLzMSPnFDeUTu2v8RwGWv9kWljL2ub3ViF9ISdn5ViBXqqtZhzVzAbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728064207; c=relaxed/simple;
-	bh=jgdML/3ztlQAG27D/LlMyBH91rSZzIgfhSi9pIlvEyQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=qyLyvrKBglXHGeuQiV08ZA8nQWG1jyn0fidLUuktTuMy6iFIvdhkta5XIATkcJjR5fC36c0mgscWWbJLCi4exLt8xfPMoYeWXsStjvDdzbhkgOwsW++KfyYrXQqdhrUN9HcnSCAutKA1Vi28o6wBSuMnkaoodhJPs9Q8GwAHmis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBKgm563; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99BB1C4CEC6;
-	Fri,  4 Oct 2024 17:50:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728064207;
-	bh=jgdML/3ztlQAG27D/LlMyBH91rSZzIgfhSi9pIlvEyQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=FBKgm563VPHnYts9pwPkLhhvEvHt5cXY0ixDbfBuEiCXVNNkmEj/a49lq7dDsKbYi
-	 kd2qaOazhPublxSlG4Q+ed48gIFBQtPGkwAjlpXF6yN9/hVZYXGyVo4VKfrs7xhbvM
-	 nTNHaf8kzETuXrh8KV+wzPUJEQoacfoAzh1+xfGzx/dWpkiKG8MTl4G+/3oNa+x8js
-	 a7j8G7jPBml2AllWmvLmfnfSJhT2Muh/lO0cRhPxZPn44o1TjHKY8BeISJfaFa18Yb
-	 y/cACq7mQjZcZCKoqj/92A9vgiSDvLQ8tl3PO87hMUWyaYhC4er9wTMX32Pwz57L26
-	 ToJtG8jQue3Dg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 716BE3ACF641;
-	Fri,  4 Oct 2024 17:50:12 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph fixes for 6.12-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241004170658.479285-1-idryomov@gmail.com>
-References: <20241004170658.479285-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20241004170658.479285-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.12-rc2
-X-PR-Tracked-Commit-Id: ccda9910d8490f4fb067131598e4b2e986faa5a0
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a3a37691e662b76d9c8a4d74cd856b5a4ae8286e
-Message-Id: <172806421120.2676326.10147533197506663248.pr-tracker-bot@kernel.org>
-Date: Fri, 04 Oct 2024 17:50:11 +0000
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1728177606; c=relaxed/simple;
+	bh=K5QznJ7oLJq0CHCu1m0LWOUpKLw/YOlJ7Q+ZHactze8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LAXQ2vdhePQCI4m1sTQzEkp61MzsAbWje2J3m0Law6mDh0J9NbIQwo5Wy6B1iPdSENEpGRIp/+55isyFKwIFWFl7wCjs6ppdSZ2kBKMW26uy5wQlcgFdCeRn0E494QuRPwx4DGeYkhDG6tnhGA8Nz79zxE7ARYqRmvp3gljApC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=dBKnlPGp; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=zOmjNsQeGB4gYpz+P8xM7+JLeAOzJIzD4/EaLpDFxLM=; b=dBKnlPGpwTOaOJ5j
+	rG+6ndepMBFdUKMltOTg8395YbJWBik5wvnXyuTBIeibl8VMdmAAxE1dGJqQcAlNHy79mD/iRBwPg
+	JfuU+9MEMUg+q1qjrN8KYGwR0zbYwO56jN44TksVolrMX+ZoWDJ4avWr04eKwOjcGeMAjxHaGavPh
+	zrCjGTF9a3NGEN/kk/E/4kbeQ0P7nxbTiadBZkKOFtK5OuBujlrXaBRegV/bzwpaQytX6pMMTOlef
+	NAJHbt5IEygigZSz+JgxBmELBc5zhCZbSWeGo2lPuVyYY4PjkAmAcYmNhfDyrJTmOGH+1VDNtWdlj
+	H/frKNzc/IICNLiK/Q==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1sxFwD-009DsK-27;
+	Sun, 06 Oct 2024 01:19:57 +0000
+From: linux@treblig.org
+To: xiubli@redhat.com,
+	idryomov@gmail.com,
+	ceph-devel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH 0/5] Ceph deadcoding
+Date: Sun,  6 Oct 2024 02:19:51 +0100
+Message-ID: <20241006011956.373622-1-linux@treblig.org>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Fri,  4 Oct 2024 19:06:56 +0200:
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-6.12-rc2
+Hi,
+  This series is a set of deadcoding in fs/ceph and net/ceph.
+It's strictly function deletion so should have no change
+in behaviour.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a3a37691e662b76d9c8a4d74cd856b5a4ae8286e
+(get_maintainer was suggesting the netdev team as well
+as ceph? Is that correct???)
 
-Thank you!
+Build & boot tested on x86-64.
+
+Dave
+
+Dr. David Alan Gilbert (5):
+  libceph: Remove unused ceph_pagelist functions
+  libceph: Remove unused pagevec functions
+  libceph: Remove unused ceph_osdc_watch_check
+  libceph: Remove unused ceph_crypto_key_encode
+  ceph: Remove fs/ceph deadcode
+
+ fs/ceph/caps.c                  | 14 ---------
+ fs/ceph/mds_client.c            |  8 -----
+ fs/ceph/mds_client.h            |  2 --
+ fs/ceph/super.h                 |  1 -
+ include/linux/ceph/libceph.h    |  6 ----
+ include/linux/ceph/osd_client.h |  2 --
+ include/linux/ceph/pagelist.h   | 12 --------
+ net/ceph/crypto.c               | 12 --------
+ net/ceph/crypto.h               |  1 -
+ net/ceph/osd_client.c           | 34 ---------------------
+ net/ceph/pagelist.c             | 38 ------------------------
+ net/ceph/pagevec.c              | 52 ---------------------------------
+ 12 files changed, 182 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.46.2
+
 
