@@ -1,157 +1,154 @@
-Return-Path: <ceph-devel+bounces-1893-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1894-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B46991BBD
-	for <lists+ceph-devel@lfdr.de>; Sun,  6 Oct 2024 03:21:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8AF993E36
+	for <lists+ceph-devel@lfdr.de>; Tue,  8 Oct 2024 07:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35F881C21075
-	for <lists+ceph-devel@lfdr.de>; Sun,  6 Oct 2024 01:21:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 511C0286046
+	for <lists+ceph-devel@lfdr.de>; Tue,  8 Oct 2024 05:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C223B13D53D;
-	Sun,  6 Oct 2024 01:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E170C13AD29;
+	Tue,  8 Oct 2024 05:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ONLdQOm0"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HHzY7ajq"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7578F5A;
-	Sun,  6 Oct 2024 01:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0FC13A878
+	for <ceph-devel@vger.kernel.org>; Tue,  8 Oct 2024 05:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728177608; cv=none; b=A/dBRUBf3tMMpX+XPEdDLrlJ0HMWAu0L0QMmqI2zDNINmotD4sfMBORhYL919DZ1O4CKxCW4qlLIO0xX4LowjAxkpiGwCK0eEoLpNuw6cheMVezfZ1vfY4OIinZvNbMp9xMMw/T/9sZFPJlEcxJBpiGd5jTPo2UxhmrHF0Fo3XA=
+	t=1728364317; cv=none; b=mmZPSKjEKhD80+L3gKT/2RrwLY10fAg7woc4G8mptPGRCZarYYbb4tdHzE68HeiMEUNdUnI3kOoUf51iwVP7r/NYtq65puQheFB9b4eXRPHtAM6TPhwLzQHj26Sp3pTtQ1MIsfQaD7vwMdamjZQmbotKHwc9LYwSC/F1RgcLzy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728177608; c=relaxed/simple;
-	bh=AMhJWtDJ3DmzilqLovKPEDl9iPQ/8NhBRi8PAwhpUvI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ufo2gzjjk9+pz7V+S+2Er1rwzPn7JjWuJ0dWZPvqeOHqc+AqRqTVteSOIHwGIDyOD31wp8hrBAvgG/wrOA0QRh0msEYFsxYn3oynQIDNMDj61that4oh3OU2UCcMAJscApbqRwA3IZMP9/rCEAKkABzzvVRGNN8G7Qmbea++KEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ONLdQOm0; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=MBiF799tS1XTKKBb+cgx7wzKHjzYh+/tYFwc8HgQmQg=; b=ONLdQOm0N/tzF3tx
-	s1Ij7raGrn0g92/9J3eznWbCx2R+1+t21GzH5abDBTTMN+LoSsDoErcBQpU/UfRM/FMSg9SKLBdrw
-	AL33d77AhekdXjL+Z7QG5TqTVAvSpKSKWU6GLyQDkDTblCbGJACnbsXglYDflIOzeomOGOVSEN+c+
-	rqrbsmxELV4IjT9E8b5znraK44qnyduck3rdD1C+3/BbqNbZ/VxTjhDyNA+0P/5LLEo8X8y457ka4
-	pjZ6FqQWxMg/bEXjc2JpaNuovoAbg4iSekleoljWo2sOtlXs1VYVHLhRGq/fdVzqHj7DV+y4d7fT6
-	5CLXQrNnvaQgl19rzA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sxFwG-009DsK-1v;
-	Sun, 06 Oct 2024 01:20:00 +0000
-From: linux@treblig.org
-To: xiubli@redhat.com,
-	idryomov@gmail.com,
-	ceph-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH 5/5] ceph: Remove fs/ceph deadcode
-Date: Sun,  6 Oct 2024 02:19:56 +0100
-Message-ID: <20241006011956.373622-6-linux@treblig.org>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241006011956.373622-1-linux@treblig.org>
-References: <20241006011956.373622-1-linux@treblig.org>
+	s=arc-20240116; t=1728364317; c=relaxed/simple;
+	bh=SLh25qXOWVmw4SCKmmsEBzMRI0rs9M22+5MD2EXMFRo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dGm1VakvU+N95gp9MtZHx911c/smtjeqKzmWTuuUl02XLwB2dEWxhoTbyPpFihMmiHZKcjKdeNfUkdFCDixOLmka9NhvWX6GwgAZ7TU0AWyGyBf9GyHjHFZDaHbd9Z8bABHuYB1skBvV3c71BfnuUZ/V6d0sOL6kXp8Zb6fol1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HHzY7ajq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728364313;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tic6eRj2qzs0tb10TUTBxQR/oXtJbgGmgQXaAU//xHA=;
+	b=HHzY7ajqd1HaV7hQwKuu/l9GH4hHE3igb3GefV9FjeNHI+m8Jxn+5WaOlAxBoO9erUVsQv
+	KWo8edv8QKgdxSe4K9dOESC2N38FJpIql9xTSP8aW6BGOTaJUFJv8c4E8tcMVgk024+Gfb
+	1EvadcMck+3kJEmqsNUhvqHhRJoM6qs=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-627-Re_uTFSRP86NUVkdsrsB7w-1; Tue, 08 Oct 2024 01:11:52 -0400
+X-MC-Unique: Re_uTFSRP86NUVkdsrsB7w-1
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-20b4efbb863so51308495ad.3
+        for <ceph-devel@vger.kernel.org>; Mon, 07 Oct 2024 22:11:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728364311; x=1728969111;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tic6eRj2qzs0tb10TUTBxQR/oXtJbgGmgQXaAU//xHA=;
+        b=QLH3GCW6K3zJ45qpJapi/Ct9HZux/9CvjnMGUPDT7e8OZ6Ovot5kQMXZrZqe779eUG
+         OXufHH239GXs8LyaQ8n3iOVcGV8PWQQYD17hWlvsIDzZcOWnRF5fPXk1n1SyPDPN/tU5
+         nptLgFKJ5S8RpViJkbfNBqa1kHj92ToHaM7oHglgsUhPhmw+4m9oDItSlBdchLsi1SgO
+         AOY8ODrUGribD1KKDOqDzUw5BzIK6za+2XeVl2HFQLjmfR99R1jbDFrIZewDfrBRo1YZ
+         QIyhz3+x2k69nkn+49o86D9ryQlKntKbclubUUERedeI+NUSSZ5J0LNZNO5updJLyNp3
+         7gqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWP7FG66xvliHuDlL56w3K006AgnrjhHhd0zOoUN636mP9jB/c4fILyHTVPUG/YkHuBvUhKmhCLzpbr@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsQkb4DWU3Xm2knoqGdfuBFQplQFyawiEwWVKIrCRWz62kJT+c
+	/DQA8+jtxxQLSF0WgaWkJGZ/95FaJniYNFA6OqVZDkllnsvAu8Cc5e6wUof2qHYdR1rx6chu6Bs
+	yAr2MyCLQMxSZ/9sHAR/cztwrLXMvjfBTWwLeC0v9sWA7uwzJIsG57GIXj+4=
+X-Received: by 2002:a17:902:ecc6:b0:20b:7250:e744 with SMTP id d9443c01a7336-20bff224cc5mr153889865ad.56.1728364310167;
+        Mon, 07 Oct 2024 22:11:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF0Uxz8LXRrdNf1WhECQYg5MY0qjfcxniTa+aF4mi4a2jy2Z32EREelBAIdcmIUg3bfv1+WZg==
+X-Received: by 2002:a17:902:ecc6:b0:20b:7250:e744 with SMTP id d9443c01a7336-20bff224cc5mr153889655ad.56.1728364309790;
+        Mon, 07 Oct 2024 22:11:49 -0700 (PDT)
+Received: from [10.72.116.34] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c138d0cd9sm48174755ad.107.2024.10.07.22.11.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 22:11:49 -0700 (PDT)
+Message-ID: <b21e1214-20e5-4dc8-846d-d3a14d66fc1a@redhat.com>
+Date: Tue, 8 Oct 2024 13:11:41 +0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ceph: fix cap ref leak via netfs init_request
+To: Patrick Donnelly <batrick@batbytes.com>, Ilya Dryomov
+ <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
+ David Howells <dhowells@redhat.com>
+Cc: Patrick Donnelly <pdonnell@redhat.com>, stable@vger.kernel.org,
+ ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241003010512.58559-1-batrick@batbytes.com>
+Content-Language: en-US
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <20241003010512.58559-1-batrick@batbytes.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-ceph_caps_revoking() has been unused since 2017's commit
-3fb99d483e61 ("ceph: nuke startsync op")
+On 10/3/24 09:05, Patrick Donnelly wrote:
+> From: Patrick Donnelly <pdonnell@redhat.com>
+>
+> Log recovered from a user's cluster:
+>
+>      <7>[ 5413.970692] ceph:  get_cap_refs 00000000958c114b ret 1 got Fr
+>      <7>[ 5413.970695] ceph:  start_read 00000000958c114b, no cache cap
+>      ...
+>      <7>[ 5473.934609] ceph:   my wanted = Fr, used = Fr, dirty -
+>      <7>[ 5473.934616] ceph:  revocation: pAsLsXsFr -> pAsLsXs (revoking Fr)
+>      <7>[ 5473.934632] ceph:  __ceph_caps_issued 00000000958c114b cap 00000000f7784259 issued pAsLsXs
+>      <7>[ 5473.934638] ceph:  check_caps 10000000e68.fffffffffffffffe file_want - used Fr dirty - flushing - issued pAsLsXs revoking Fr retain pAsLsXsFsr  AUTHONLY NOINVAL FLUSH_FORCE
+>
+> The MDS subsequently complains that the kernel client is late releasing caps.
+>
+> Approximately, a series of changes to this code by the three commits cited
+> below resulted in subtle resource cleanup to be missed. The main culprit is the
+> change in error handling in 2d31604 which meant that a failure in init_request
+> would no longer cause cleanup to be called. That would prevent the
+> ceph_put_cap_refs which would cleanup the leaked cap ref.
+>
+> Closes: https://tracker.ceph.com/issues/67008
+> Fixes: 49870056005ca9387e5ee31451991491f99cc45f ("ceph: convert ceph_readpages to ceph_readahead")
+> Fixes: 2de160417315b8d64455fe03e9bb7d3308ac3281 ("netfs: Change ->init_request() to return an error code")
+> Fixes: a5c9dc4451394b2854493944dcc0ff71af9705a3 ("ceph: Make ceph_init_request() check caps on readahead")
+> Signed-off-by: Patrick Donnelly <pdonnell@redhat.com>
+> Cc: stable@vger.kernel.org
+> ---
+>   fs/ceph/addr.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 53fef258c2bc..702c6a730b70 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -489,8 +489,11 @@ static int ceph_init_request(struct netfs_io_request *rreq, struct file *file)
+>   	rreq->io_streams[0].sreq_max_len = fsc->mount_options->rsize;
+>   
+>   out:
+> -	if (ret < 0)
+> +	if (ret < 0) {
+> +		if (got)
+> +			ceph_put_cap_refs(ceph_inode(inode), got);
+>   		kfree(priv);
+> +	}
+>   
+>   	return ret;
+>   }
+>
+> base-commit: e32cde8d2bd7d251a8f9b434143977ddf13dcec6
 
-ceph_mdsc_open_export_target_sessions() has been unused since 2013's
-commit 11df2dfb610d ("ceph: add imported caps when handling cap export message")
+Good catch!
 
-Remove them.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- fs/ceph/caps.c       | 14 --------------
- fs/ceph/mds_client.c |  8 --------
- fs/ceph/mds_client.h |  2 --
- fs/ceph/super.h      |  1 -
- 4 files changed, 25 deletions(-)
-
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index bed34fc11c91..0d6b2c0269bf 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -978,20 +978,6 @@ int __ceph_caps_revoking_other(struct ceph_inode_info *ci,
- 	return 0;
- }
- 
--int ceph_caps_revoking(struct ceph_inode_info *ci, int mask)
--{
--	struct inode *inode = &ci->netfs.inode;
--	struct ceph_client *cl = ceph_inode_to_client(inode);
--	int ret;
--
--	spin_lock(&ci->i_ceph_lock);
--	ret = __ceph_caps_revoking_other(ci, NULL, mask);
--	spin_unlock(&ci->i_ceph_lock);
--	doutc(cl, "%p %llx.%llx %s = %d\n", inode, ceph_vinop(inode),
--	      ceph_cap_string(mask), ret);
--	return ret;
--}
--
- int __ceph_caps_used(struct ceph_inode_info *ci)
- {
- 	int used = 0;
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index c4a5fd94bbbb..923635532f03 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -1747,14 +1747,6 @@ static void __open_export_target_sessions(struct ceph_mds_client *mdsc,
- 	}
- }
- 
--void ceph_mdsc_open_export_target_sessions(struct ceph_mds_client *mdsc,
--					   struct ceph_mds_session *session)
--{
--	mutex_lock(&mdsc->mutex);
--	__open_export_target_sessions(mdsc, session);
--	mutex_unlock(&mdsc->mutex);
--}
--
- /*
-  * session caps
-  */
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 3dd54587944a..38bb7e0d2d79 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -634,8 +634,6 @@ extern void ceph_mdsc_handle_fsmap(struct ceph_mds_client *mdsc,
- 
- extern struct ceph_mds_session *
- ceph_mdsc_open_export_target_session(struct ceph_mds_client *mdsc, int target);
--extern void ceph_mdsc_open_export_target_sessions(struct ceph_mds_client *mdsc,
--					  struct ceph_mds_session *session);
- 
- extern int ceph_trim_caps(struct ceph_mds_client *mdsc,
- 			  struct ceph_mds_session *session,
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 037eac35a9e0..b0b15e87251d 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -796,7 +796,6 @@ extern int __ceph_mark_dirty_caps(struct ceph_inode_info *ci, int mask,
- 
- extern int __ceph_caps_revoking_other(struct ceph_inode_info *ci,
- 				      struct ceph_cap *ocap, int mask);
--extern int ceph_caps_revoking(struct ceph_inode_info *ci, int mask);
- extern int __ceph_caps_used(struct ceph_inode_info *ci);
- 
- static inline bool __ceph_is_file_opened(struct ceph_inode_info *ci)
--- 
-2.46.2
+Reviewed-by: Xiubo Li <xiubli@redhat.com>
 
 
