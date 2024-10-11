@@ -1,154 +1,261 @@
-Return-Path: <ceph-devel+bounces-1894-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1895-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F8AF993E36
-	for <lists+ceph-devel@lfdr.de>; Tue,  8 Oct 2024 07:12:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B9599AEC4
+	for <lists+ceph-devel@lfdr.de>; Sat, 12 Oct 2024 00:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 511C0286046
-	for <lists+ceph-devel@lfdr.de>; Tue,  8 Oct 2024 05:12:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51196B22384
+	for <lists+ceph-devel@lfdr.de>; Fri, 11 Oct 2024 22:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E170C13AD29;
-	Tue,  8 Oct 2024 05:11:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCB81D1503;
+	Fri, 11 Oct 2024 22:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HHzY7ajq"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="NYzjn6q6"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0FC13A878
-	for <ceph-devel@vger.kernel.org>; Tue,  8 Oct 2024 05:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E241322E;
+	Fri, 11 Oct 2024 22:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728364317; cv=none; b=mmZPSKjEKhD80+L3gKT/2RrwLY10fAg7woc4G8mptPGRCZarYYbb4tdHzE68HeiMEUNdUnI3kOoUf51iwVP7r/NYtq65puQheFB9b4eXRPHtAM6TPhwLzQHj26Sp3pTtQ1MIsfQaD7vwMdamjZQmbotKHwc9LYwSC/F1RgcLzy4=
+	t=1728686864; cv=none; b=vD3tVqlBHGV5+CETR2UdWJPJ3EXek/dRXSTDmTdPHnBWCoj+Uq89sEhYd8f6u1x8/Jerq/+BvzQ+R7f6pvtvFpTMzfKh3h9CQN8Zvw38AhwWGQmuhhTDOP9xwLCbkUppQUzFhKNkGQGLCZu7uH3kn7xJChRqd/wmbN15b+otM4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728364317; c=relaxed/simple;
-	bh=SLh25qXOWVmw4SCKmmsEBzMRI0rs9M22+5MD2EXMFRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dGm1VakvU+N95gp9MtZHx911c/smtjeqKzmWTuuUl02XLwB2dEWxhoTbyPpFihMmiHZKcjKdeNfUkdFCDixOLmka9NhvWX6GwgAZ7TU0AWyGyBf9GyHjHFZDaHbd9Z8bABHuYB1skBvV3c71BfnuUZ/V6d0sOL6kXp8Zb6fol1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HHzY7ajq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728364313;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tic6eRj2qzs0tb10TUTBxQR/oXtJbgGmgQXaAU//xHA=;
-	b=HHzY7ajqd1HaV7hQwKuu/l9GH4hHE3igb3GefV9FjeNHI+m8Jxn+5WaOlAxBoO9erUVsQv
-	KWo8edv8QKgdxSe4K9dOESC2N38FJpIql9xTSP8aW6BGOTaJUFJv8c4E8tcMVgk024+Gfb
-	1EvadcMck+3kJEmqsNUhvqHhRJoM6qs=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-627-Re_uTFSRP86NUVkdsrsB7w-1; Tue, 08 Oct 2024 01:11:52 -0400
-X-MC-Unique: Re_uTFSRP86NUVkdsrsB7w-1
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-20b4efbb863so51308495ad.3
-        for <ceph-devel@vger.kernel.org>; Mon, 07 Oct 2024 22:11:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728364311; x=1728969111;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tic6eRj2qzs0tb10TUTBxQR/oXtJbgGmgQXaAU//xHA=;
-        b=QLH3GCW6K3zJ45qpJapi/Ct9HZux/9CvjnMGUPDT7e8OZ6Ovot5kQMXZrZqe779eUG
-         OXufHH239GXs8LyaQ8n3iOVcGV8PWQQYD17hWlvsIDzZcOWnRF5fPXk1n1SyPDPN/tU5
-         nptLgFKJ5S8RpViJkbfNBqa1kHj92ToHaM7oHglgsUhPhmw+4m9oDItSlBdchLsi1SgO
-         AOY8ODrUGribD1KKDOqDzUw5BzIK6za+2XeVl2HFQLjmfR99R1jbDFrIZewDfrBRo1YZ
-         QIyhz3+x2k69nkn+49o86D9ryQlKntKbclubUUERedeI+NUSSZ5J0LNZNO5updJLyNp3
-         7gqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWP7FG66xvliHuDlL56w3K006AgnrjhHhd0zOoUN636mP9jB/c4fILyHTVPUG/YkHuBvUhKmhCLzpbr@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsQkb4DWU3Xm2knoqGdfuBFQplQFyawiEwWVKIrCRWz62kJT+c
-	/DQA8+jtxxQLSF0WgaWkJGZ/95FaJniYNFA6OqVZDkllnsvAu8Cc5e6wUof2qHYdR1rx6chu6Bs
-	yAr2MyCLQMxSZ/9sHAR/cztwrLXMvjfBTWwLeC0v9sWA7uwzJIsG57GIXj+4=
-X-Received: by 2002:a17:902:ecc6:b0:20b:7250:e744 with SMTP id d9443c01a7336-20bff224cc5mr153889865ad.56.1728364310167;
-        Mon, 07 Oct 2024 22:11:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF0Uxz8LXRrdNf1WhECQYg5MY0qjfcxniTa+aF4mi4a2jy2Z32EREelBAIdcmIUg3bfv1+WZg==
-X-Received: by 2002:a17:902:ecc6:b0:20b:7250:e744 with SMTP id d9443c01a7336-20bff224cc5mr153889655ad.56.1728364309790;
-        Mon, 07 Oct 2024 22:11:49 -0700 (PDT)
-Received: from [10.72.116.34] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c138d0cd9sm48174755ad.107.2024.10.07.22.11.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 22:11:49 -0700 (PDT)
-Message-ID: <b21e1214-20e5-4dc8-846d-d3a14d66fc1a@redhat.com>
-Date: Tue, 8 Oct 2024 13:11:41 +0800
+	s=arc-20240116; t=1728686864; c=relaxed/simple;
+	bh=wnFR1KMTiXA09NIs9BwaYu51mrqwZTB59Q9vEXxNXso=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SnC5V+UbDL2bF9uiQk09rXG1wkkV/Gyu1YqR8cr9oFepBhjRpa1ic3VhKitNfq4tayqyDJqEH4pyP+rciQQm1hgphzKoYDQKuHXCY5FS2lsn+lEUE+42YTAHESfv7OMZoC9hMwbB8QZFuYk/fYuTZfbFlipafWpAQVCCJrW7cRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=NYzjn6q6; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=9CRHsu/4o39+CfyKz29v8UH0rvLQukqd+SAqdLtdYMw=; b=NYzjn6q6/VZsZOTv
+	YuwEHN3T+ilzOSydXXopeNegjUEP7U1aH9arTDN+EUAxCNC3EFZFc9shZURtRnharQMYgsWzAhoh1
+	vCD41DNSdT18mmQW8rc9ZGW6a5YbmD0UowPjrY+2DfOw5u6wl2FnHpee3+9TLM7UhfetX0ct3Dru1
+	e3s5aS3Y8AaeLxtShcT2Uvi6Q1pid0C9oniQkQvNy6pSnBu9g5vldSq1K4LVQw6u81o5oqzXhf+t2
+	ktofP1Hkp3bOfA5PuSAGB2KbIareUsX+BfgRR1XFEPo0xM8t+jPWECH6KegY2N+CqqEBz/5OWXjqp
+	WHW1roQkYXvochH4Og==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1szOQ5-00AcNy-2i;
+	Fri, 11 Oct 2024 22:47:37 +0000
+From: linux@treblig.org
+To: idryomov@gmail.com,
+	xiubli@redhat.com,
+	ceph-devel@vger.kernel.org
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] libceph: Remove crush deadcode
+Date: Fri, 11 Oct 2024 23:47:36 +0100
+Message-ID: <20241011224736.236863-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ceph: fix cap ref leak via netfs init_request
-To: Patrick Donnelly <batrick@batbytes.com>, Ilya Dryomov
- <idryomov@gmail.com>, Jeff Layton <jlayton@kernel.org>,
- David Howells <dhowells@redhat.com>
-Cc: Patrick Donnelly <pdonnell@redhat.com>, stable@vger.kernel.org,
- ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241003010512.58559-1-batrick@batbytes.com>
-Content-Language: en-US
-From: Xiubo Li <xiubli@redhat.com>
-In-Reply-To: <20241003010512.58559-1-batrick@batbytes.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-On 10/3/24 09:05, Patrick Donnelly wrote:
-> From: Patrick Donnelly <pdonnell@redhat.com>
->
-> Log recovered from a user's cluster:
->
->      <7>[ 5413.970692] ceph:  get_cap_refs 00000000958c114b ret 1 got Fr
->      <7>[ 5413.970695] ceph:  start_read 00000000958c114b, no cache cap
->      ...
->      <7>[ 5473.934609] ceph:   my wanted = Fr, used = Fr, dirty -
->      <7>[ 5473.934616] ceph:  revocation: pAsLsXsFr -> pAsLsXs (revoking Fr)
->      <7>[ 5473.934632] ceph:  __ceph_caps_issued 00000000958c114b cap 00000000f7784259 issued pAsLsXs
->      <7>[ 5473.934638] ceph:  check_caps 10000000e68.fffffffffffffffe file_want - used Fr dirty - flushing - issued pAsLsXs revoking Fr retain pAsLsXsFsr  AUTHONLY NOINVAL FLUSH_FORCE
->
-> The MDS subsequently complains that the kernel client is late releasing caps.
->
-> Approximately, a series of changes to this code by the three commits cited
-> below resulted in subtle resource cleanup to be missed. The main culprit is the
-> change in error handling in 2d31604 which meant that a failure in init_request
-> would no longer cause cleanup to be called. That would prevent the
-> ceph_put_cap_refs which would cleanup the leaked cap ref.
->
-> Closes: https://tracker.ceph.com/issues/67008
-> Fixes: 49870056005ca9387e5ee31451991491f99cc45f ("ceph: convert ceph_readpages to ceph_readahead")
-> Fixes: 2de160417315b8d64455fe03e9bb7d3308ac3281 ("netfs: Change ->init_request() to return an error code")
-> Fixes: a5c9dc4451394b2854493944dcc0ff71af9705a3 ("ceph: Make ceph_init_request() check caps on readahead")
-> Signed-off-by: Patrick Donnelly <pdonnell@redhat.com>
-> Cc: stable@vger.kernel.org
-> ---
->   fs/ceph/addr.c | 5 ++++-
->   1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 53fef258c2bc..702c6a730b70 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -489,8 +489,11 @@ static int ceph_init_request(struct netfs_io_request *rreq, struct file *file)
->   	rreq->io_streams[0].sreq_max_len = fsc->mount_options->rsize;
->   
->   out:
-> -	if (ret < 0)
-> +	if (ret < 0) {
-> +		if (got)
-> +			ceph_put_cap_refs(ceph_inode(inode), got);
->   		kfree(priv);
-> +	}
->   
->   	return ret;
->   }
->
-> base-commit: e32cde8d2bd7d251a8f9b434143977ddf13dcec6
+crush_bucket_alg_name(), crush_get_bucket_item_weight(), crush_hash32(),
+and crush_hash32_5() were added by commit
+5ecc0a0f8128 ("ceph: CRUSH mapping algorithm")
+in 2009 but never used.
 
-Good catch!
+crush_hash_name() was added a little later by commit
+fb690390e305 ("ceph: make CRUSH hash function a bucket property")
+and also not used.
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+Remove them.
+
+They called a couple of static functions crush_hash32_rjenkins1()
+and crush_hash32_rjenkins1_5() which are now unused.
+
+Also remove them.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ include/linux/crush/crush.h |  2 --
+ include/linux/crush/hash.h  |  5 ----
+ net/ceph/crush/crush.c      | 37 -----------------------
+ net/ceph/crush/hash.c       | 59 -------------------------------------
+ 4 files changed, 103 deletions(-)
+
+diff --git a/include/linux/crush/crush.h b/include/linux/crush/crush.h
+index 30dba392b730..ed26099957df 100644
+--- a/include/linux/crush/crush.h
++++ b/include/linux/crush/crush.h
+@@ -117,7 +117,6 @@ enum {
+ 	CRUSH_BUCKET_STRAW = 4,
+ 	CRUSH_BUCKET_STRAW2 = 5,
+ };
+-extern const char *crush_bucket_alg_name(int alg);
+ 
+ /*
+  * although tree was a legacy algorithm, it has been buggy, so
+@@ -314,7 +313,6 @@ struct crush_map {
+ 
+ 
+ /* crush.c */
+-extern int crush_get_bucket_item_weight(const struct crush_bucket *b, int pos);
+ extern void crush_destroy_bucket_uniform(struct crush_bucket_uniform *b);
+ extern void crush_destroy_bucket_list(struct crush_bucket_list *b);
+ extern void crush_destroy_bucket_tree(struct crush_bucket_tree *b);
+diff --git a/include/linux/crush/hash.h b/include/linux/crush/hash.h
+index 904df41f7847..0ee007a98236 100644
+--- a/include/linux/crush/hash.h
++++ b/include/linux/crush/hash.h
+@@ -12,13 +12,8 @@
+ 
+ #define CRUSH_HASH_DEFAULT CRUSH_HASH_RJENKINS1
+ 
+-extern const char *crush_hash_name(int type);
+-
+-extern __u32 crush_hash32(int type, __u32 a);
+ extern __u32 crush_hash32_2(int type, __u32 a, __u32 b);
+ extern __u32 crush_hash32_3(int type, __u32 a, __u32 b, __u32 c);
+ extern __u32 crush_hash32_4(int type, __u32 a, __u32 b, __u32 c, __u32 d);
+-extern __u32 crush_hash32_5(int type, __u32 a, __u32 b, __u32 c, __u32 d,
+-			    __u32 e);
+ 
+ #endif
+diff --git a/net/ceph/crush/crush.c b/net/ceph/crush/crush.c
+index 254ded0b05f6..9331f91f1242 100644
+--- a/net/ceph/crush/crush.c
++++ b/net/ceph/crush/crush.c
+@@ -7,43 +7,6 @@
+ # include "crush.h"
+ #endif
+ 
+-const char *crush_bucket_alg_name(int alg)
+-{
+-	switch (alg) {
+-	case CRUSH_BUCKET_UNIFORM: return "uniform";
+-	case CRUSH_BUCKET_LIST: return "list";
+-	case CRUSH_BUCKET_TREE: return "tree";
+-	case CRUSH_BUCKET_STRAW: return "straw";
+-	case CRUSH_BUCKET_STRAW2: return "straw2";
+-	default: return "unknown";
+-	}
+-}
+-
+-/**
+- * crush_get_bucket_item_weight - Get weight of an item in given bucket
+- * @b: bucket pointer
+- * @p: item index in bucket
+- */
+-int crush_get_bucket_item_weight(const struct crush_bucket *b, int p)
+-{
+-	if ((__u32)p >= b->size)
+-		return 0;
+-
+-	switch (b->alg) {
+-	case CRUSH_BUCKET_UNIFORM:
+-		return ((struct crush_bucket_uniform *)b)->item_weight;
+-	case CRUSH_BUCKET_LIST:
+-		return ((struct crush_bucket_list *)b)->item_weights[p];
+-	case CRUSH_BUCKET_TREE:
+-		return ((struct crush_bucket_tree *)b)->node_weights[crush_calc_tree_node(p)];
+-	case CRUSH_BUCKET_STRAW:
+-		return ((struct crush_bucket_straw *)b)->item_weights[p];
+-	case CRUSH_BUCKET_STRAW2:
+-		return ((struct crush_bucket_straw2 *)b)->item_weights[p];
+-	}
+-	return 0;
+-}
+-
+ void crush_destroy_bucket_uniform(struct crush_bucket_uniform *b)
+ {
+ 	kfree(b->h.items);
+diff --git a/net/ceph/crush/hash.c b/net/ceph/crush/hash.c
+index fe79f6d2d0db..33792c0ea132 100644
+--- a/net/ceph/crush/hash.c
++++ b/net/ceph/crush/hash.c
+@@ -24,17 +24,6 @@
+ 
+ #define crush_hash_seed 1315423911
+ 
+-static __u32 crush_hash32_rjenkins1(__u32 a)
+-{
+-	__u32 hash = crush_hash_seed ^ a;
+-	__u32 b = a;
+-	__u32 x = 231232;
+-	__u32 y = 1232;
+-	crush_hashmix(b, x, hash);
+-	crush_hashmix(y, a, hash);
+-	return hash;
+-}
+-
+ static __u32 crush_hash32_rjenkins1_2(__u32 a, __u32 b)
+ {
+ 	__u32 hash = crush_hash_seed ^ a ^ b;
+@@ -73,34 +62,6 @@ static __u32 crush_hash32_rjenkins1_4(__u32 a, __u32 b, __u32 c, __u32 d)
+ 	return hash;
+ }
+ 
+-static __u32 crush_hash32_rjenkins1_5(__u32 a, __u32 b, __u32 c, __u32 d,
+-				      __u32 e)
+-{
+-	__u32 hash = crush_hash_seed ^ a ^ b ^ c ^ d ^ e;
+-	__u32 x = 231232;
+-	__u32 y = 1232;
+-	crush_hashmix(a, b, hash);
+-	crush_hashmix(c, d, hash);
+-	crush_hashmix(e, x, hash);
+-	crush_hashmix(y, a, hash);
+-	crush_hashmix(b, x, hash);
+-	crush_hashmix(y, c, hash);
+-	crush_hashmix(d, x, hash);
+-	crush_hashmix(y, e, hash);
+-	return hash;
+-}
+-
+-
+-__u32 crush_hash32(int type, __u32 a)
+-{
+-	switch (type) {
+-	case CRUSH_HASH_RJENKINS1:
+-		return crush_hash32_rjenkins1(a);
+-	default:
+-		return 0;
+-	}
+-}
+-
+ __u32 crush_hash32_2(int type, __u32 a, __u32 b)
+ {
+ 	switch (type) {
+@@ -130,23 +91,3 @@ __u32 crush_hash32_4(int type, __u32 a, __u32 b, __u32 c, __u32 d)
+ 		return 0;
+ 	}
+ }
+-
+-__u32 crush_hash32_5(int type, __u32 a, __u32 b, __u32 c, __u32 d, __u32 e)
+-{
+-	switch (type) {
+-	case CRUSH_HASH_RJENKINS1:
+-		return crush_hash32_rjenkins1_5(a, b, c, d, e);
+-	default:
+-		return 0;
+-	}
+-}
+-
+-const char *crush_hash_name(int type)
+-{
+-	switch (type) {
+-	case CRUSH_HASH_RJENKINS1:
+-		return "rjenkins1";
+-	default:
+-		return "unknown";
+-	}
+-}
+-- 
+2.47.0
 
 
