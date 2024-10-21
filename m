@@ -1,199 +1,146 @@
-Return-Path: <ceph-devel+bounces-1911-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1912-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A899A6B13
-	for <lists+ceph-devel@lfdr.de>; Mon, 21 Oct 2024 15:52:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE3C9A944B
+	for <lists+ceph-devel@lfdr.de>; Tue, 22 Oct 2024 01:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8CE5B2424E
-	for <lists+ceph-devel@lfdr.de>; Mon, 21 Oct 2024 13:52:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D31861F22CF9
+	for <lists+ceph-devel@lfdr.de>; Mon, 21 Oct 2024 23:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDC51F709B;
-	Mon, 21 Oct 2024 13:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E571FF7DC;
+	Mon, 21 Oct 2024 23:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X7X29sQ+"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Kzfj3jpq"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83DC1DC04C
-	for <ceph-devel@vger.kernel.org>; Mon, 21 Oct 2024 13:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB991FF5EB
+	for <ceph-devel@vger.kernel.org>; Mon, 21 Oct 2024 23:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729518747; cv=none; b=HL2vRUW0i8+kSgyDhj4uagUwaYnmsh0C/MXVQdtce0lyV03SIuxiJooO+RGWOA0uSxZUsX0e2ssZMn49YAp7GNe7Nb6XpWaR1SRP6vEznMF9BAICfhfm1Ii9s5PdMVJdYZMxelBmllYPV7OQGeHexaPC6g+DmYFNU4GuUjXLgtI=
+	t=1729553993; cv=none; b=bhwoSiSgV6UwB8jREeDuwA/BzmeFIrdfN/UgRHfdlPCiNkhyWcDOovKf+6XzFGEdhAcACKeDOWyyowmY6/lkP0ld2bpuBFgcMpJQH+vkfEF1E1Jy65mmaTzBNcKw7Ey7KdV9h/We6zlL8vbaSrHkQ5HBCg5gzOx6bwfLPNcdfx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729518747; c=relaxed/simple;
-	bh=yixNZRtUAPrY+e+uVVeUhm+RcEKp0QQb5IT69xYtxTM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i8oNaeolxV9IG7QC+gF0p/8DpzMpAs+zY6p0cQ/w+jPcix9SHiP/V7c29UWeWkEBSp+8OMHTTzGwlcI5fnkmxPUHRJtTDsuKiORHdCLZp5njTWkyrkaw6pqMua/EZ7zhcdge71sqkBvJqJiKyS3ac0QO4ftvuZ3B5rXgL+EWjpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X7X29sQ+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729518744;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AydGMqBX7Z+tuYb/IW4dKkC2L7bMtStxPdbI/fd8h+M=;
-	b=X7X29sQ+aAIWUDECvx4jO+QdzU7GtOgvAQpunSAvqZH9dY/RusGWrdImKwZUEwOByTExLJ
-	dZl3NPDndo/PYRQoHEg1ptCzEIE+KLG/iGy5nF5R/FbnZfg6wF095SqvixIt9xwGeOAj7l
-	OFIOrMYVMAOTjg2xjr0+lzKN2mhlBSE=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-66-5MUfrPonMIy6cg-0-g4_yg-1; Mon, 21 Oct 2024 09:52:22 -0400
-X-MC-Unique: 5MUfrPonMIy6cg-0-g4_yg-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a8711c48990so327666466b.2
-        for <ceph-devel@vger.kernel.org>; Mon, 21 Oct 2024 06:52:22 -0700 (PDT)
+	s=arc-20240116; t=1729553993; c=relaxed/simple;
+	bh=q1QmvXn6GwPcneGjGwPv0xmS4RRUjRFacDa92Vsp7Kw=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=eEgPQjn3KElr3H+lJAdRpo1ne0SHwTcngYJCrJqt3DR5VOHxFwrAmblmUXdq6WQ/7Uj+mPLckNdu/XVR1LbBHN7S46dRIV7soOXVKeACZmQD1j7p7NVUf5zbVNuScb20kIHzU2U06pEm8QikNXTibKSTCOILczNCx/BSkYz4MHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Kzfj3jpq; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b155cca097so329455285a.1
+        for <ceph-devel@vger.kernel.org>; Mon, 21 Oct 2024 16:39:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1729553990; x=1730158790; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X7tHUckLE/MLiHUlkx0kAjj3yltxCb3kfPASiHLjhco=;
+        b=Kzfj3jpq5Gs6Iyof3iA7rovfU2wLkd9Tl9jotb42aKAxDv1hEyEWdJFW3Yl2oB9wi4
+         x+UYwFcHG5FTNw3OiuzdHqfFrDDlTTo9vkfe+S8/KQv2aAYcRkn9Ac+IULwekeeQhaYu
+         VJQaLNUNKeDcAKFZFoIcHiHNd4ur112PjTRwcDC/+g+UXtBx5MK0x6IOtsmfONfbBxei
+         4oqqOZ2g71XbJCpB1IH8cuBNPO+RGSMvCw8z0/V5b90L3YJ3/htlYjsS0P0+BNx+PjKU
+         y+Rfo7VyX4lNQkeCqX0TcvolcjJWOtv7yrDRIdyHXCtek63tYyZPcPWkitTkHo2S/nUu
+         zAQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729518741; x=1730123541;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AydGMqBX7Z+tuYb/IW4dKkC2L7bMtStxPdbI/fd8h+M=;
-        b=UPKm7J6bd7eFjO8DVMkcQbBcyOE+uTv1YbHaBEZhIiQcuZaoFQhLEiZnCd6crmFxK9
-         9sf9FFUMdd9edRf/RZgeBzMgrHNP7oOXZvz2XEN2ybqYsjm7tN3y7WKPRqrupRQblkzZ
-         RcQytVu4/Zbrug6eqqWGKJobL+7eeSP7BSU0M4LKsPAnrb0+XoV3cP/Xx+3yxoKAt+JP
-         EfnfddIbDdnkD7qMOjwjFBFPSXl1BylLwlwRw54BECs1DX2R8nv2iK1p3hb6ejktuNvR
-         Vdi4WB7F46PS6zMX/RwIm5mzlOW0QgIsK7tew78K3bR/BdjOKDlapappIpjnkeFpGnDz
-         eIgA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6QolfJnOErm5Dxt0l20QcmDKutxjcdNIGX4iWOP1CwRxQK0QcoirNIt6xNx5umygo2GRpzErgZlSW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0tMxGJYqG6klSUtTgvyHWVvcbFPQKMpCyQi0YlAC//W+VU84W
-	Pn4yh7GTQk8uiDb1QUd8hX6aBG5EqyyqAaRSgw82bAMH6Xzj3bYtqXp3JpuOkmthoFyQ0QvOdsb
-	NLu0PfD929GsOBydJQsK4FBIRJhtWJORgPlm71whAD2IDoOX4YFxZTImMB5zqEy4dpAQZvc6hGx
-	QuTwRUpMKXhTBBhUGr1WDjgLl1ShM4PzQpWw==
-X-Received: by 2002:a17:906:6a29:b0:a99:e504:40c5 with SMTP id a640c23a62f3a-a9a69bb4776mr1227165166b.39.1729518741327;
-        Mon, 21 Oct 2024 06:52:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGulfB1IarH/oSLq12aN14lRQiyUgCefQvibXPQP2R5iRcNGCUEollbP940MRbZl/f06qFQIKF2e26dmG30dRw=
-X-Received: by 2002:a17:906:6a29:b0:a99:e504:40c5 with SMTP id
- a640c23a62f3a-a9a69bb4776mr1227163466b.39.1729518740965; Mon, 21 Oct 2024
- 06:52:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729553990; x=1730158790;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=X7tHUckLE/MLiHUlkx0kAjj3yltxCb3kfPASiHLjhco=;
+        b=T8xfMya88Zfkiql6XdbysiSUPaM053F3wpDytUpmhA67R3XpsOsoXlNQBByPEsHYOz
+         KAO6Xe4uCnUej/Evq0Fb6Xn2V7Z5kS+FdE/BiERpLzigdltImwWt+EY/Oaw4fChLw+NP
+         yCmNIQxO9RrmO00TuiAGwDtU3fMPr/6+mPR3UrRnrVfsuYJOPpicqZPndDd8/h4mcTmX
+         JAvC9VwO1eKD7M4g7zEOes0kbwcKORY30y0IQ3xI/9m2lF5oUzzOsKR8qTGOLLEfFDIR
+         XhDaEq58z3AOppzGBTdsvbRJ3jtwFj0k6hTpsCzAeEP2NWoHMswgjR3KMHI2oRZ/ApNl
+         YZHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDQEaX4R9mqNXmpHo34WOOHapH6ihtPRYrKcv6FeJVf0m3j9WRkH+DR7lzOSNFEsQ/8YyIYZf/pTlN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXCnUFA/LX89/2EtOtA44ycC/NQKXTX01UACfp1LmwlHAJzO+Y
+	dZzb9IH0Pbt1JOSZJRjDSGagGG1J64i4bwdoBLeSiPGdBib1QH5cfynohDbDJA==
+X-Google-Smtp-Source: AGHT+IHMuRe4JiqCCfpTVHmSm+FewrxBnBkGSC7Nzs4TDMNE+u2iWG54d8b/+ap0PMLoJ5C40bnP5Q==
+X-Received: by 2002:a05:620a:1928:b0:7ac:e8bf:894a with SMTP id af79cd13be357-7b1755db38cmr237177885a.20.1729553990490;
+        Mon, 21 Oct 2024 16:39:50 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1659c88f1sm226044385a.17.2024.10.21.16.39.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Oct 2024 16:39:50 -0700 (PDT)
+Date: Mon, 21 Oct 2024 19:39:49 -0400
+Message-ID: <b94aa34a25a19ea729faa1c8240ebf5b@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241013011642.555987-1-batrick@batbytes.com> <3039501f-f7b2-443b-a727-c53c41b41ed9@redhat.com>
-In-Reply-To: <3039501f-f7b2-443b-a727-c53c41b41ed9@redhat.com>
-From: Patrick Donnelly <pdonnell@redhat.com>
-Date: Mon, 21 Oct 2024 09:51:53 -0400
-Message-ID: <CA+2bHPaYD8VuLrYcJJ93ODPHVhC3QvCL=5d78_4mUXpmF=1hYA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] ceph: correct ceph_mds_cap_item field name
-To: Xiubo Li <xiubli@redhat.com>
-Cc: Patrick Donnelly <batrick@batbytes.com>, Ilya Dryomov <idryomov@gmail.com>, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20241021_1626/pstg-lib:20241021_1624/pstg-pwork:20241021_1626
+From: Paul Moore <paul@paul-moore.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v2 4/6] LSM: lsm_context in security_dentry_init_security
+References: <20241014151450.73674-5-casey@schaufler-ca.com>
+In-Reply-To: <20241014151450.73674-5-casey@schaufler-ca.com>
 
-Hi Xiubo,
+On Oct 14, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> 
+> Replace the (secctx,seclen) pointer pair with a single lsm_context
+> pointer to allow return of the LSM identifier along with the context
+> and context length. This allows security_release_secctx() to know how
+> to release the context. Callers have been modified to use or save the
+> returned data from the new structure.
+> 
+> Special care is taken in the NFS code, which uses the same data structure
+> for its own copied labels as it does for the data which comes from
+> security_dentry_init_security().  In the case of copied labels the data
+> has to be freed, not released.
+> 
+> The scaffolding funtion lsmcontext_init() is no longer needed and is
+> removed.
+> 
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: ceph-devel@vger.kernel.org
+> Cc: linux-nfs@vger.kernel.org
+> ---
+>  fs/ceph/super.h               |  3 +--
+>  fs/ceph/xattr.c               | 16 ++++++----------
+>  fs/fuse/dir.c                 | 35 ++++++++++++++++++-----------------
+>  fs/nfs/dir.c                  |  2 +-
+>  fs/nfs/inode.c                | 17 ++++++++++-------
+>  fs/nfs/internal.h             |  8 +++++---
+>  fs/nfs/nfs4proc.c             | 22 +++++++++-------------
+>  fs/nfs/nfs4xdr.c              | 22 ++++++++++++----------
+>  include/linux/lsm_hook_defs.h |  2 +-
+>  include/linux/nfs4.h          |  8 ++++----
+>  include/linux/nfs_fs.h        |  2 +-
+>  include/linux/security.h      | 26 +++-----------------------
+>  security/security.c           |  9 ++++-----
+>  security/selinux/hooks.c      |  9 +++++----
+>  14 files changed, 80 insertions(+), 101 deletions(-)
 
-On Sun, Oct 13, 2024 at 8:57=E2=80=AFPM Xiubo Li <xiubli@redhat.com> wrote:
->
-> Hi Patrick,
->
-> Thanks for your patches.
->
-> BTW, I think this should be the V2, right ?
->
-> Then could you explain what's the difference between V1 and V2 ?Usually
-> we will add this in the cover-letter.
+...
 
-There's no difference. These patches accidentally got picked up with
-the other set I sent out (I already sent a new series for that set:
-"ceph: use entity name from new device string"). These are the three
-patches:
+> diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
+> index 039898d70954..47652d217d05 100644
+> --- a/include/linux/nfs_fs.h
+> +++ b/include/linux/nfs_fs.h
+> @@ -457,7 +457,7 @@ static inline void nfs4_label_free(struct nfs4_label *label)
+>  {
+>  #ifdef CONFIG_NFS_V4_SECURITY_LABEL
+>  	if (label) {
+> -		kfree(label->label);
+> +		kfree(label->lsmctx.context);
 
-https://lore.kernel.org/ceph-devel/20241012235529.520289-1-batrick@batbytes=
-.com/T/#r691410e455d5b10da617880b91a6c45703ff764e
+Shouldn't this be a call to security_release_secctx() instead of a raw
+kfree()?
 
-I can resend in a new series if you like.
-
-
-> And also we will add a version tag from the second version of the patch
-> series, which is something like:
->
->    [PATCH v2 0/3]
->    [PATCH v2 1/3]
->    ...
->    [PATCH v2 3/3]
->
-> At the same time please add a cover-letter if there are more than 1
-> patch in the series, which will be the '[PATCH 0/3]', and you can
-> generate it by using the '--cover-letter' option:
->
->    $ git patch-format -3 --cover-letter
->
-> Please note that in the cover-letter patch you need to add the title, a
-> summary about this series and certainly a comment about the changes from
-> the last version manually. One example about this please see
-> https://lore.kernel.org/all/20240418142019.133191-1-xiubli@redhat.com/.
->
-> If there is only one patch in the series, then the cover-letter is not a
-> must and you can just do it likes:
-> https://patchwork.kernel.org/project/ceph-devel/patch/20240314073915.8445=
-41-1-xiubli@redhat.com/,
->
-> Thanks
->
-> - Xiubo
->
->
-> On 10/13/24 09:16, Patrick Donnelly wrote:
-> > The issue_seq is sent with bulk cap releases, not the current sequence =
-number.
-> >
-> > See also ceph.git commit: "include/ceph_fs: correct ceph_mds_cap_item f=
-ield name".
-> >
-> > See-also: https://tracker.ceph.com/issues/66704
-> > Signed-off-by: Patrick Donnelly <pdonnell@redhat.com>
-> > ---
-> >   fs/ceph/mds_client.c         | 2 +-
-> >   include/linux/ceph/ceph_fs.h | 2 +-
-> >   2 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> > index c4a5fd94bbbb..0be82de8a6da 100644
-> > --- a/fs/ceph/mds_client.c
-> > +++ b/fs/ceph/mds_client.c
-> > @@ -2362,7 +2362,7 @@ static void ceph_send_cap_releases(struct ceph_md=
-s_client *mdsc,
-> >               item->ino =3D cpu_to_le64(cap->cap_ino);
-> >               item->cap_id =3D cpu_to_le64(cap->cap_id);
-> >               item->migrate_seq =3D cpu_to_le32(cap->mseq);
-> > -             item->seq =3D cpu_to_le32(cap->issue_seq);
-> > +             item->issue_seq =3D cpu_to_le32(cap->issue_seq);
-> >               msg->front.iov_len +=3D sizeof(*item);
-> >
-> >               ceph_put_cap(mdsc, cap);
-> > diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.=
-h
-> > index ee1d0e5f9789..4ff3ad5e9210 100644
-> > --- a/include/linux/ceph/ceph_fs.h
-> > +++ b/include/linux/ceph/ceph_fs.h
-> > @@ -822,7 +822,7 @@ struct ceph_mds_cap_release {
-> >   struct ceph_mds_cap_item {
-> >       __le64 ino;
-> >       __le64 cap_id;
-> > -     __le32 migrate_seq, seq;
-> > +     __le32 migrate_seq, issue_seq;
-> >   } __attribute__ ((packed));
-> >
-> >   #define CEPH_MDS_LEASE_REVOKE           1  /*    mds  -> client */
-> >
-> > base-commit: 75b607fab38d149f232f01eae5e6392b394dd659
->
-
+>  		kfree(label);
+>  	}
+>  #endif
 
 --
-Patrick Donnelly, Ph.D.
-He / Him / His
-Red Hat Partner Engineer
-IBM, Inc.
-GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
-
+paul-moore.com
 
