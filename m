@@ -1,80 +1,85 @@
-Return-Path: <ceph-devel+bounces-1914-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1915-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21E0B9AB153
-	for <lists+ceph-devel@lfdr.de>; Tue, 22 Oct 2024 16:49:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 104659AB155
+	for <lists+ceph-devel@lfdr.de>; Tue, 22 Oct 2024 16:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD16D2813CA
-	for <lists+ceph-devel@lfdr.de>; Tue, 22 Oct 2024 14:49:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3DD1B23D80
+	for <lists+ceph-devel@lfdr.de>; Tue, 22 Oct 2024 14:49:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4491A00C9;
-	Tue, 22 Oct 2024 14:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83531A00C9;
+	Tue, 22 Oct 2024 14:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b="kPtpWVPD"
+	dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b="euFVfnXv"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B3742065
-	for <ceph-devel@vger.kernel.org>; Tue, 22 Oct 2024 14:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1411A19E836
+	for <ceph-devel@vger.kernel.org>; Tue, 22 Oct 2024 14:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729608551; cv=none; b=MLnVU5OpuJOZ0ATsEQnRH5H7QKTdZ5wivVLcCpsxrJPACSAMgsrF07OjkSRj8DvVZl/p9F/6J+HFLEJ4MwB15VtpKpa7ihDTLHOP/3fA35P1cn/Y0LYGc0NUxiPH00QjgeMORY5qkQVhz4ZOCMMe4Dhnhpu/7/b0qy8r1IMco5c=
+	t=1729608557; cv=none; b=ViLzPVRhM6DAcy4b1XyVEZXz5OFUqVryIvo8rLmln8xYVWvTafcg6YDPWq/5cfATU2z4Qe22qk0aUmsPk3OtHulLQtIuheHcpLXNis+KQUHt2KanCEuJLNh8N06MscivegKkClXa1Lp+sTdTi1nME5u/o72BwMKPLJzS9Gh0BzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729608551; c=relaxed/simple;
-	bh=3LQjBU2NptVK3uvEYO7/wNfxRHp8C2WVWmyIbAQXQLc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QBu6OpTUTfjhOSS0DbzCI0PA3ysKhZmRXRfLOz63EwR3lRWWLlHaiYSoN5hEpQ8uLQ7HPbrdomF0M2bURQRiKhuh4yzI12iZcFxfq5sws5/F7gHFNC2EGl69c8m05H+J1h/EtOE1tflKo+VM+YSqFgrp/2TX6wBO23fUyZkhtik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com; spf=none smtp.mailfrom=batbytes.com; dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b=kPtpWVPD; arc=none smtp.client-ip=209.85.210.54
+	s=arc-20240116; t=1729608557; c=relaxed/simple;
+	bh=lFchxuWYdoChXXQRufyH2iiBvFGz6l9XBMUrcB9WM6s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rY4j4KtFqdAwHmYjmbi0Z8qGvl2caGOXBNiF3xefTf1I3XUs5KMJSGMmxgdvsLN2h1jtepDBcM/b1CSjcae2t8oaQUkySxHqRgGyEg1TAfbIhbL/ynxK7g/AG6t5uK+tZ8sS91mTxTm3yyeqjwzDjgFrasP+pTw+5NItBkvivdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com; spf=none smtp.mailfrom=batbytes.com; dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b=euFVfnXv; arc=none smtp.client-ip=209.85.161.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=batbytes.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7180e45d42fso3417806a34.0
-        for <ceph-devel@vger.kernel.org>; Tue, 22 Oct 2024 07:49:09 -0700 (PDT)
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5ebc05007daso1338428eaf.1
+        for <ceph-devel@vger.kernel.org>; Tue, 22 Oct 2024 07:49:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=batbytes-com.20230601.gappssmtp.com; s=20230601; t=1729608549; x=1730213349; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9fvY5MJdcCe/8ndgD+S+xzsw7jUpi7llSam7Opftd/4=;
-        b=kPtpWVPDNmIOnIi8SP2epCxSHpR5wzW2GRhRu4kw2s5Ip9W5uBDqdsg9ivIeZ7ge0R
-         hZQfYxAqNIc2LB5ZbxB1CV/dW8ConMnT7BkpvxgshtUZmF4zPuc5XIyy3aFK05GOMte7
-         fpq1g+Wro1K81QV77pL8IoVseAK6fjv78/oIwni9vVmSKEeHMjh9bi7HYsq+yTcfOJrV
-         Emxbb5/NQNmZ7fU9v9kPQDAqrEdE+lFF/2rP1hQ3X2q1HlMSrGLsuJJ7s1ZR9rFadLLo
-         wYuBI2ETdZPEGrgIjZUmn2kkbtXtn57MEYxz3bPyuJc9IVWMwEToCBFhCNdVGU/3sFD+
-         tKgQ==
+        d=batbytes-com.20230601.gappssmtp.com; s=20230601; t=1729608555; x=1730213355; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qKaj8XArk4+aUuXdEGwzY4pbQVUlMNZ2d7arPW6y4hE=;
+        b=euFVfnXvL3lY+cdxbzYrRV7OwKEvHrB729WWGf1MgUkeePZSHGSTXqbdWhYcRRqq+y
+         cOKZW4KxK5rJD9ET3ieYlk/xS9KlTlFmG8ElqqQPGveXuxJI/v328m0w119/1bFTNVxF
+         CCBEhoEa92U5XwVi8VfKVwL7ojdLvcOXcSFv2xzXPi+obqvq5xcyzlEHnFdDzk2XymWg
+         dEucFuD1FJYzPPpP8tH8mAjG4VxGzdHiVAuA2pqfaBaP6ageIBh50ZBJX8KRNLrB5B25
+         K2HtgB/JHL7NZh5l5ge4fX++oCLUPMmC1jsKi30mEQBtYassSqffEiTlpp2+WOwA8dzg
+         scCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729608549; x=1730213349;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9fvY5MJdcCe/8ndgD+S+xzsw7jUpi7llSam7Opftd/4=;
-        b=qDcKoSqSZN7e2AdPqSB7k2bIHR6Fv4vW0DRgGEmuXIGhLEw3YCCScJHnkvq66ZxuEy
-         zS8O8gIWYQUxX2BSLiognK84ldzrConaQSK7b4wEsmyDziFXD7eTgIM88NiY9lO9O6H1
-         NwGTrDqIur2vRTpL4GB9tXLXyS8/83Sj6BqIf0ZNxcg7/SPgQ1SKOvGvBVXNvtd/Opgl
-         DmgdQBa+vUdDJDZb0pLzVz3/6YpUKXZU5SIXOr50mO4CrK1AQ8BlaXrYEtXVU1GnzInM
-         jv+BAA/aXdcIAGPeyzEM5+8WtufY0K5Tg7cW5XSE3VFlOVyM/FdBJCuYrIPdYB1YYDcu
-         MPag==
-X-Forwarded-Encrypted: i=1; AJvYcCWrCn/KUHPWwu1CezClAJPTP2gXdJHHoOSe1UGqZOSW3Q6NTMePSC6BtLDhe5uSkntHPSIV2Z7RL3Kp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz08vj6vIZ5KFvaa7WXzE0n2hre/QBcJ7DHFczUqXhsx/1ZVGZZ
-	fiMC48oORgWBIcQjJG80AXlalww5B8iCIO5ug5SjOHjGmkyB5Sufdsc2hdMpsw==
-X-Google-Smtp-Source: AGHT+IEWsqVQB9L0AeieSatmVN1Q71xQ1WGs05yp4jFTkJkdDnI9yZU2wQ0beQwdCWLK4nxNCcK8Kg==
-X-Received: by 2002:a05:6830:4490:b0:716:a8d5:d501 with SMTP id 46e09a7af769-7181a8348c0mr13161041a34.19.1729608548691;
-        Tue, 22 Oct 2024 07:49:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729608555; x=1730213355;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qKaj8XArk4+aUuXdEGwzY4pbQVUlMNZ2d7arPW6y4hE=;
+        b=KQn7m4IyMvuzBSAL0amnbpDDHtSNN9v+eKcdmo4uaS6Ig6QFykYmJNfaiUDqsvkQSv
+         xfJSHOqBwvtTR4X9EEZPPPcbJtE9aK7LaK0aYeiPaxfvIQtF8VnX/2ddZX4lAVgDNNnA
+         nJKpCOxZSfbocoDpql6VFAeY0/nO+goh7jxWySgZt8BBjYOA/TinLZ7l5d115V7jmjWO
+         OxiRQgkEiQk84QHLR6vphtfKwkiMaV+b8/+MbGrR7J/9nWROq39pXRnkmSkpf2Z+BvPZ
+         FT7CSeWvmuQUuDlN4FKFaTb5joHVLuleLAgddaw6RQ9FJFArv9FeMEhlfSHomRowBt5q
+         WXCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWLoGLr1y1GHIM3A8stQ0T164i10lxMINYwkyHRf5XryfiCT8VVrRKfvAkZBLfUttfQrhoLz/XBC8Hf@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRMPWE2FtNmZkDn3pPusI839KswDY0NZll43r/r69p01QjVW21
+	6KfmdDl6PfdPolsl8onVFhEF0f6fCTK1UW74VeoocxVQQ8U8l9HnpbZjeHtNtA==
+X-Google-Smtp-Source: AGHT+IEwaVAWGLfmNMr+lJeaJ8Yjtm1v6/BmAIKrS4HDg/0jFnT+ZsEs65PuzbPkJaDPNgiT6tOGMw==
+X-Received: by 2002:a05:6358:311b:b0:1c3:7503:86bd with SMTP id e5c5f4694b2df-1c3cd4f3699mr170166855d.14.1729608555009;
+        Tue, 22 Oct 2024 07:49:15 -0700 (PDT)
 Received: from batbytes.com ([216.212.123.7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce008fb5e0sm29567476d6.33.2024.10.22.07.49.07
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce008fb5e0sm29567476d6.33.2024.10.22.07.49.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 07:49:08 -0700 (PDT)
+        Tue, 22 Oct 2024 07:49:14 -0700 (PDT)
 From: Patrick Donnelly <batrick@batbytes.com>
-To: Ilya Dryomov <idryomov@gmail.com>,
-	Xiubo Li <xiubli@redhat.com>
-Cc: Patrick Donnelly <pdonnell@redhat.com>,
+To: Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>
+Cc: Patrick Donnelly <batrick@batbytes.com>,
+	Patrick Donnelly <pdonnell@redhat.com>,
 	ceph-devel@vger.kernel.org (open list:CEPH DISTRIBUTED FILE SYSTEM CLIENT (CEPH)),
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 0/3] ceph: use issue_seq for struct field names
-Date: Tue, 22 Oct 2024 10:48:32 -0400
-Message-ID: <20241022144838.1049499-1-batrick@batbytes.com>
+Subject: [PATCH 1/3] ceph: correct ceph_mds_cap_item field name
+Date: Tue, 22 Oct 2024 10:48:33 -0400
+Message-ID: <20241022144838.1049499-2-batrick@batbytes.com>
 X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241022144838.1049499-1-batrick@batbytes.com>
+References: <20241022144838.1049499-1-batrick@batbytes.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -83,23 +88,43 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Patrick Donnelly <pdonnell@redhat.com>
+The issue_seq is sent with bulk cap releases, not the current sequence number.
 
-Respinning this because the last series accidentally included patches from
-another set.
+See also ceph.git commit: "include/ceph_fs: correct ceph_mds_cap_item field name".
 
-Patrick Donnelly (3):
-  ceph: correct ceph_mds_cap_item field name
-  ceph: correct ceph_mds_cap_peer field name
-  ceph: improve caps debugging output
+See-also: https://tracker.ceph.com/issues/66704
+Signed-off-by: Patrick Donnelly <pdonnell@redhat.com>
+---
+ fs/ceph/mds_client.c         | 2 +-
+ include/linux/ceph/ceph_fs.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
- fs/ceph/caps.c               | 49 ++++++++++++++++++------------------
- fs/ceph/mds_client.c         |  2 +-
- include/linux/ceph/ceph_fs.h |  4 +--
- 3 files changed, 27 insertions(+), 28 deletions(-)
-
-
-base-commit: c2ee9f594da826bea183ed14f2cc029c719bf4da
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index c4a5fd94bbbb..0be82de8a6da 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2362,7 +2362,7 @@ static void ceph_send_cap_releases(struct ceph_mds_client *mdsc,
+ 		item->ino = cpu_to_le64(cap->cap_ino);
+ 		item->cap_id = cpu_to_le64(cap->cap_id);
+ 		item->migrate_seq = cpu_to_le32(cap->mseq);
+-		item->seq = cpu_to_le32(cap->issue_seq);
++		item->issue_seq = cpu_to_le32(cap->issue_seq);
+ 		msg->front.iov_len += sizeof(*item);
+ 
+ 		ceph_put_cap(mdsc, cap);
+diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+index ee1d0e5f9789..4ff3ad5e9210 100644
+--- a/include/linux/ceph/ceph_fs.h
++++ b/include/linux/ceph/ceph_fs.h
+@@ -822,7 +822,7 @@ struct ceph_mds_cap_release {
+ struct ceph_mds_cap_item {
+ 	__le64 ino;
+ 	__le64 cap_id;
+-	__le32 migrate_seq, seq;
++	__le32 migrate_seq, issue_seq;
+ } __attribute__ ((packed));
+ 
+ #define CEPH_MDS_LEASE_REVOKE           1  /*    mds  -> client */
 -- 
 Patrick Donnelly, Ph.D.
 He / Him / His
