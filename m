@@ -1,96 +1,87 @@
-Return-Path: <ceph-devel+bounces-1920-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1921-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1ADC9AD6A0
-	for <lists+ceph-devel@lfdr.de>; Wed, 23 Oct 2024 23:23:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7058E9AE77C
+	for <lists+ceph-devel@lfdr.de>; Thu, 24 Oct 2024 16:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59980285382
-	for <lists+ceph-devel@lfdr.de>; Wed, 23 Oct 2024 21:23:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1A62B2691A
+	for <lists+ceph-devel@lfdr.de>; Thu, 24 Oct 2024 14:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E821155757;
-	Wed, 23 Oct 2024 21:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BFA1E883B;
+	Thu, 24 Oct 2024 14:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="bJa7AJnr"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O6dtO7D/"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from sonic307-8.consmr.mail.bf2.yahoo.com (sonic307-8.consmr.mail.bf2.yahoo.com [74.6.134.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596EB1EBA1D
-	for <ceph-devel@vger.kernel.org>; Wed, 23 Oct 2024 21:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.134.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330D01E490B
+	for <ceph-devel@vger.kernel.org>; Thu, 24 Oct 2024 14:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729718631; cv=none; b=rT9F7eCGknkIFq3NYOFgmhKQr8dsslCXvxvWGHU/bRS+8B30Et+Eve0QpRBoWeJfORTaQ0Srqg+EDlB797KyDqHj6l0DsAAQHSQNyP5SzT5ewaFGkpNhhwBeIM+sp5aPU6g2spA55GfcaJ7fXQ20ZaO/nosBUjVHE8C6GE0Eyck=
+	t=1729778767; cv=none; b=g6SAvJfjgGn0V9xQUS1/8NIo70n5af0eefHzlL910vBJFR9UEeVg1ozc0TaoR8z7ZZK3VCMBCnJj9yVkFu24b1ueOIRGdRifqh1Oe4b76XzlXb1WeIS6Y18mnJoRW7KsKMNoA5JK7rixDJ+8m3Q5rRxyVK2N9eLqAu0zJJh2Uas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729718631; c=relaxed/simple;
-	bh=Sup8gk0Jh9dp2tp0MS3GDtUxMfc7JJz0W6FXIbQqBeI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fvKZcub+cg2ZC3G19eZv+Q7JaBJMeDsTsDBaSfwVG62YF9qEcqkGQAtC1KWlhQV9TssrwG/GiAkk7puv+YGUwdR+PHX50TwIUR171IdHDMfY5oyStxkyVIjt5KLRVQrAxaKYzkivC8DzxjdmpvrbCPwbukC28OmMmNJBzYKGZEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=bJa7AJnr; arc=none smtp.client-ip=74.6.134.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729718627; bh=3aGNvorbrJQqUlvZprczBEHswF8znlJbxyXOeuCfEmI=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=bJa7AJnrffVyloCsT8u/qij63QPc6BSUwHcYKTrczeTMjUXPHTHuP6shYuFoOxKxFUwZR3HDc/V7fD1vauHrxKRLOzjawCV14U88uaFocagbMiaT2zowWWXhfGxPeCTp3CWG8IKQf3b9gnaVE3l/4eCg48Ev6qc7ajxospBIogA0koayxAwGizypcFnFlrB0RHfxeDqvfLs98kUdDfnhlTEFj/wIJUFmS4j+mq6ydcNNeRO5qEv4d/uZDO4yK6VhGyAQqeVGL+pTJ5vBX6IwGFVd6S6TsCeU15NTkvQGqB3SgGgQ0Hu3cOhkhRgmpJcaiIFiZZkBhXqQ9yxRMe26Vw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729718627; bh=cP6HoVGuYJbYaK54knQHpRlie56YRTrdCQJZh6j5PZH=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=s+Ysv6HFNi0jsmdyzAw3HjJ9B3eEIkzBLffMGM5NBVV+y5a+aU1zckjLAIRUDOJVEn7fatMJtP+7gnm1DKs1AfCVgmMnruGPmVM2Dv+v5PcricCvPiZ4cAY9v68dxRpCCb2JQTbs34ok7cj7uZT3rwMzJpQoQbETFTLqtVfkWk12YlbiCTcoQkmntpeR7As3LIQUt4gjw6O9jPq4RXNCd0910Ch0MwfUyEFW1f1dV4rsyPisFknmzqnj/t3I696XnsAM2PRXIiI+Jprs3IjtMxOoDRe3BUCB6nnBdnj3rmDktPMGNxntcTN7iR7Ert89PQK3P/oBNVLn/7Ydg2sx0g==
-X-YMail-OSG: rMKaiQ8VM1mF3D0Q77wRlza1iij_wJRglWPL5RJbYMngyqc2.moBZvK1ylcv3gQ
- fysSizy23Phn7OnY9iDDxTth91j.VMlj7bdsErmzphLbt2KdifhTp5ofTgV2KeEdOM25UOLg9ZIl
- kXvyD2i4P43C7GHtpgFumIj.C2iby1cfIAwcvuCh8Y3BblgllULgEKErAQNM6ooLQwnP1Rd7Wpe8
- sK8LGzy5LGM_7GYDEkSPk3fU2ozta3weeWHMUaJFrgggTN0NJyP.McSqXwI4MZVS0FW429H85m4W
- vPPiHTARxsJd51QmKszyYbtUaUd51QuI1nsfqyYOfPcilN.x4kAI.b6y0pWPP22IWWvAIh_Wf1il
- UMG8lCkKeD9nTOT3MoA4Zyr2A6v0OpFKoCIf0okfiATJWC48EOBdrC3.mqE4ZmqS0T3ExfCnzoDs
- wkEnBt0WKybabMBnYGAH43rkQJbHZJxKpE8BZa2o8.U2Mpl3DNEgSGE9R1iFQGPBF81EkFThyWQu
- u6SetXa6KJHE9qMlLH84ART2EWzQmbeQXVHL5dQo6txcNyClExeoIk2t0XMgeEl19ACLnRlXiP4J
- xaTT2IiUt1EzJ2w1bRLQiz41RslcAqjRpSrThVBucYkpQhOtn1Pye3MAa3gLeHV6pztqw59w5y27
- g1bFJ2y3t5URwBpQTy92fKKals2HRP1eTfzzfTzuC_3kPm.i0JXBkvwwBY02KEfoj558vqxRTmom
- wjDVd45HR54Fs68gVip4ZrX3OuYFzkF2GHgNAHaS_PI0nZnAPxz_CV3dLy285DYGpL.JM5fbu_t3
- SLRD3fIWYCSvr8vkqthURfv5bkSZ1nhhLGToRvebCZME1roOnIYqtgO7rbC6PQVcHaxeouwEfhKP
- s1X2XRKtBEaExBt96gg8dkRB_kHRW7UoW0ks45.ih5LEEjNFTb67HyW4.uzo0wEQGRgZvIEWK53d
- HA6rdX6ble8bqRIowV3cNhKLggsXpGpi14ksWTJNv0Twoqb7PlJIFSg0MnNNfMKf6QW4_kN8RzeA
- Hs266ki1NM0u4yVxlXECkbJ5hg0hguCq5p7ouvmVgUdzveT0jQ1TJj4YBvWrOkXZE_tB8xRTUHwd
- Ms4NvUpV4d8cU.ESEb7xp_KsfOXm_WQThVJZVLLbiAflew_CB0de0oLMGldeNBw9QBTVvt78TdoQ
- 309cpZ_v2joVkc6S9ollgYaZhz7vsp297GE0Qb.yPfOG7sQoR5ChDFmgmmgM6_J5mkxGyGvoMMSK
- gKQ9XTcE29v.o4lVj0F50tavgOfv1FI1TFnLcfmErwax7lRNfRB5D.xnOzESjiSK_euqIUTpGfo.
- aTvRiCGqmK2uhe2daTLi3DSGnwTkuDqEeC1C.rNwsNCaIWwGsN_cZR459u877giGrJu8le5fXTbR
- fwPMky9_cTU6u6uM1jJ8zKoedaeufVZCL9dn3V0ANWG6m9vHM4BMtNOeZBIqbGNziEi7XjAsoVhV
- AJA9SkSYAr3pnSK3leKcIQql0LC57Zi.MPU6iRmX4QW_IceMok3rIdq8OmSXZddBXhumR7qEyl0h
- JzcLgy5PfEGUX9kU.PpZOXcQOukq6P_a3BxYWhGaHhlaU7xT50epKST5Fi5AkO3lEdnm5rIrjD4r
- tBIzvJrhMdFcHU1CS_caCt4wokp3cGSYUEDHgpuO3nEI_sYa7jinxgHk_Ev1h.vt67hlWafJ1xzW
- QOu0uT5lIhsxONSGF1ymDdmNiE4Iwn0wiLpLD8IfBZozcLebdTrX1oxw4dq1pun90xJJzw99Mwfr
- S7BwGtBUFDSuptgyJ.H0y8yJglBaeB9SN8M1clhY9njZHiYhiZt1O5jFQJab45hTaLJ90YYzYv0M
- e1uE66KY.u0GvdagfURyC6Us3NUywrcoj71yl51sct4RPkO2dIcydYVLd2is4AD4TGA9jsUAs3nj
- _MovYCUwXfmvO3t8yaiwvXG_10Zo1Jcab4D3t211Xgq._ZolBYf_KYai6_nvhp5AfmN_PKaDliA6
- iH.9nUBXaFKR5ENFCRzjKtuqnZ84Hf4GbVsNosVTB.CKLsDVOTcjGa47bfqY5bKrwG3gCWRlWRHu
- 4._oi_MmtwjqrfpSa2Qp.2KYyl6CaEnUr1DxGT.wjP5lNekTCmRhFC9Jsu_hp63hg2k15DZQm1sh
- 2YQJF_wh_wj.cc6oin6Ku7pA4FhX5mTPCAaWIcMIJPR2D.jOzr1NRu8BR6yY675cr0gncw.kDp2m
- FDwRtqqYIqdq8HFk22lHwIJ9L0AetvPNizLQrAIqCuPArSl.gmWmH6rkN3Ks9p14m_pTqhGbxyZg
- ZO_S5tBpp50l_RooLOni.srrB
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: db6fdd30-de6b-4b5e-8649-08f948fd5c07
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.bf2.yahoo.com with HTTP; Wed, 23 Oct 2024 21:23:47 +0000
-Received: by hermes--production-gq1-5dd4b47f46-pfhh2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d261940d1cdfc655543cc442dda3a810;
-          Wed, 23 Oct 2024 21:23:42 +0000 (UTC)
-From: Casey Schaufler <casey@schaufler-ca.com>
-To: casey@schaufler-ca.com,
-	paul@paul-moore.com,
-	linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	keescook@chromium.org,
-	john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org,
-	mic@digikod.net,
+	s=arc-20240116; t=1729778767; c=relaxed/simple;
+	bh=iCXu0kdmkDCPfTarrWhzzb+ssLpDK7QDMuI+v1DkZL8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XclytcBwacuMzexZ9jcRjq72rpOpVR1ZPDRq+zW8ZVUfxUA9Ty08aD+BEzwHXRHQ1wPHuAu4lF4xHKasBlw8L65FJU/UfLSZ5rhbNmkff7GrqK+VmCHcluWytKSveBiKLl3EhLQQzWcwwzuaqV+o7NGPSm5TXa2yHYtxMbrvI7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O6dtO7D/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729778761;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ev9kJ9rlV3vqxDuSiIe2EjcyS0bQJKHDy9szPwe6evI=;
+	b=O6dtO7D/QYkDZIxr1JoA3QzgIy3M8ihmRxIXPWc+Ybv6D9SyNq0IhkRKoSeYuWQkzPYSby
+	DNrFsgDp3Okm5NiMsxWs27l74/9gmKjY+3HD/wry9t6hoFARhnDc4imN8lbTyx3L9VmP3H
+	JPRfUFfCbt8rig+eeNkZ+idJeBs8G9M=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-345-DDRJR6TRMWaIDdipoI9l1Q-1; Thu,
+ 24 Oct 2024 10:05:57 -0400
+X-MC-Unique: DDRJR6TRMWaIDdipoI9l1Q-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 358ED1954B11;
+	Thu, 24 Oct 2024 14:05:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk.com (unknown [10.42.28.231])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2DA351955F42;
+	Thu, 24 Oct 2024 14:05:46 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>,
+	Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: David Howells <dhowells@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
 	ceph-devel@vger.kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH v3 4/5] LSM: lsm_context in security_dentry_init_security
-Date: Wed, 23 Oct 2024 14:21:57 -0700
-Message-ID: <20241023212158.18718-5-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241023212158.18718-1-casey@schaufler-ca.com>
-References: <20241023212158.18718-1-casey@schaufler-ca.com>
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 00/27] netfs: Read performance improvements and "single-blob" support
+Date: Thu, 24 Oct 2024 15:04:58 +0100
+Message-ID: <20241024140539.3828093-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -98,332 +89,241 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Replace the (secctx,seclen) pointer pair with a single lsm_context
-pointer to allow return of the LSM identifier along with the context
-and context length. This allows security_release_secctx() to know how
-to release the context. Callers have been modified to use or save the
-returned data from the new structure.
+Hi Christian, Steve, Willy,
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Cc: ceph-devel@vger.kernel.org
-Cc: linux-nfs@vger.kernel.org
----
- fs/ceph/super.h               |  3 +--
- fs/ceph/xattr.c               | 16 ++++++----------
- fs/fuse/dir.c                 | 35 ++++++++++++++++++-----------------
- fs/nfs/nfs4proc.c             | 20 ++++++++++++--------
- include/linux/lsm_hook_defs.h |  2 +-
- include/linux/security.h      | 26 +++-----------------------
- security/security.c           |  9 ++++-----
- security/selinux/hooks.c      |  9 +++++----
- 8 files changed, 50 insertions(+), 70 deletions(-)
+This set of patches is primarily about two things: improving read
+performance and supporting monolithic single-blob objects that have to be
+read/written as such (e.g. AFS directory contents).  The implementation of
+the two parts is interwoven as each makes the other possible.
 
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 2508aa8950b7..c9fad8c825dd 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1133,8 +1133,7 @@ struct ceph_acl_sec_ctx {
- 	void *acl;
- #endif
- #ifdef CONFIG_CEPH_FS_SECURITY_LABEL
--	void *sec_ctx;
--	u32 sec_ctxlen;
-+	struct lsm_context lsmctx;
- #endif
- #ifdef CONFIG_FS_ENCRYPTION
- 	struct ceph_fscrypt_auth *fscrypt_auth;
-diff --git a/fs/ceph/xattr.c b/fs/ceph/xattr.c
-index f7996770cc2c..0b9e1f385d31 100644
---- a/fs/ceph/xattr.c
-+++ b/fs/ceph/xattr.c
-@@ -1383,8 +1383,7 @@ int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
- 	int err;
- 
- 	err = security_dentry_init_security(dentry, mode, &dentry->d_name,
--					    &name, &as_ctx->sec_ctx,
--					    &as_ctx->sec_ctxlen);
-+					    &name, &as_ctx->lsmctx);
- 	if (err < 0) {
- 		WARN_ON_ONCE(err != -EOPNOTSUPP);
- 		err = 0; /* do nothing */
-@@ -1409,7 +1408,7 @@ int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
- 	 */
- 	name_len = strlen(name);
- 	err = ceph_pagelist_reserve(pagelist,
--				    4 * 2 + name_len + as_ctx->sec_ctxlen);
-+				    4 * 2 + name_len + as_ctx->lsmctx.len);
- 	if (err)
- 		goto out;
- 
-@@ -1432,8 +1431,9 @@ int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
- 	ceph_pagelist_encode_32(pagelist, name_len);
- 	ceph_pagelist_append(pagelist, name, name_len);
- 
--	ceph_pagelist_encode_32(pagelist, as_ctx->sec_ctxlen);
--	ceph_pagelist_append(pagelist, as_ctx->sec_ctx, as_ctx->sec_ctxlen);
-+	ceph_pagelist_encode_32(pagelist, as_ctx->lsmctx.len);
-+	ceph_pagelist_append(pagelist, as_ctx->lsmctx.context,
-+			     as_ctx->lsmctx.len);
- 
- 	err = 0;
- out:
-@@ -1446,16 +1446,12 @@ int ceph_security_init_secctx(struct dentry *dentry, umode_t mode,
- 
- void ceph_release_acl_sec_ctx(struct ceph_acl_sec_ctx *as_ctx)
- {
--#ifdef CONFIG_CEPH_FS_SECURITY_LABEL
--	struct lsm_context scaff; /* scaffolding */
--#endif
- #ifdef CONFIG_CEPH_FS_POSIX_ACL
- 	posix_acl_release(as_ctx->acl);
- 	posix_acl_release(as_ctx->default_acl);
- #endif
- #ifdef CONFIG_CEPH_FS_SECURITY_LABEL
--	lsmcontext_init(&scaff, as_ctx->sec_ctx, as_ctx->sec_ctxlen, 0);
--	security_release_secctx(&scaff);
-+	security_release_secctx(&as_ctx->lsmctx);
- #endif
- #ifdef CONFIG_FS_ENCRYPTION
- 	kfree(as_ctx->fscrypt_auth);
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 54104dd48af7..eea4d0d27ce1 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -466,29 +466,29 @@ static int get_security_context(struct dentry *entry, umode_t mode,
- {
- 	struct fuse_secctx *fctx;
- 	struct fuse_secctx_header *header;
--	void *ctx = NULL, *ptr;
--	u32 ctxlen, total_len = sizeof(*header);
-+	struct lsm_context lsmctx = { };
-+	void *ptr;
-+	u32 total_len = sizeof(*header);
- 	int err, nr_ctx = 0;
--	const char *name;
-+	const char *name = NULL;
- 	size_t namelen;
- 
- 	err = security_dentry_init_security(entry, mode, &entry->d_name,
--					    &name, &ctx, &ctxlen);
--	if (err) {
--		if (err != -EOPNOTSUPP)
--			goto out_err;
--		/* No LSM is supporting this security hook. Ignore error */
--		ctxlen = 0;
--		ctx = NULL;
--	}
-+					    &name, &lsmctx);
-+
-+	/* If no LSM is supporting this security hook ignore error */
-+	if (err && err != -EOPNOTSUPP)
-+		goto out_err;
- 
--	if (ctxlen) {
-+	if (lsmctx.len) {
- 		nr_ctx = 1;
- 		namelen = strlen(name) + 1;
- 		err = -EIO;
--		if (WARN_ON(namelen > XATTR_NAME_MAX + 1 || ctxlen > S32_MAX))
-+		if (WARN_ON(namelen > XATTR_NAME_MAX + 1 ||
-+		    lsmctx.len > S32_MAX))
- 			goto out_err;
--		total_len += FUSE_REC_ALIGN(sizeof(*fctx) + namelen + ctxlen);
-+		total_len += FUSE_REC_ALIGN(sizeof(*fctx) + namelen +
-+					    lsmctx.len);
- 	}
- 
- 	err = -ENOMEM;
-@@ -501,19 +501,20 @@ static int get_security_context(struct dentry *entry, umode_t mode,
- 	ptr += sizeof(*header);
- 	if (nr_ctx) {
- 		fctx = ptr;
--		fctx->size = ctxlen;
-+		fctx->size = lsmctx.len;
- 		ptr += sizeof(*fctx);
- 
- 		strcpy(ptr, name);
- 		ptr += namelen;
- 
--		memcpy(ptr, ctx, ctxlen);
-+		memcpy(ptr, lsmctx.context, lsmctx.len);
- 	}
- 	ext->size = total_len;
- 	ext->value = header;
- 	err = 0;
- out_err:
--	kfree(ctx);
-+	if (nr_ctx)
-+		security_release_secctx(&lsmctx);
- 	return err;
- }
- 
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index 76776d716744..0b116ef3a752 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -114,6 +114,7 @@ static inline struct nfs4_label *
- nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
- 	struct iattr *sattr, struct nfs4_label *label)
- {
-+	struct lsm_context shim;
- 	int err;
- 
- 	if (label == NULL)
-@@ -128,21 +129,24 @@ nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
- 	label->label = NULL;
- 
- 	err = security_dentry_init_security(dentry, sattr->ia_mode,
--				&dentry->d_name, NULL,
--				(void **)&label->label, &label->len);
--	if (err == 0)
--		return label;
-+				&dentry->d_name, NULL, &shim);
-+	if (err)
-+		return NULL;
- 
--	return NULL;
-+	label->label = shim.context;
-+	label->len = shim.len;
-+	return label;
- }
- static inline void
- nfs4_label_release_security(struct nfs4_label *label)
- {
--	struct lsm_context scaff; /* scaffolding */
-+	struct lsm_context shim;
- 
- 	if (label) {
--		lsmcontext_init(&scaff, label->label, label->len, 0);
--		security_release_secctx(&scaff);
-+		shim.context = label->label;
-+		shim.len = label->len;
-+		shim.id = LSM_ID_UNDEF;
-+		security_release_secctx(&shim);
- 	}
- }
- static inline u32 *nfs4_bitmask(struct nfs_server *server, struct nfs4_label *label)
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 69e1076448c6..e2f1ce37c41e 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -83,7 +83,7 @@ LSM_HOOK(int, 0, move_mount, const struct path *from_path,
- 	 const struct path *to_path)
- LSM_HOOK(int, -EOPNOTSUPP, dentry_init_security, struct dentry *dentry,
- 	 int mode, const struct qstr *name, const char **xattr_name,
--	 void **ctx, u32 *ctxlen)
-+	 struct lsm_context *cp)
- LSM_HOOK(int, 0, dentry_create_files_as, struct dentry *dentry, int mode,
- 	 struct qstr *name, const struct cred *old, struct cred *new)
- 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 7d0adc1833ab..3ad59666e56c 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -237,25 +237,6 @@ struct lsm_context {
- 	int	id;		/* Identifies the module */
- };
- 
--/**
-- * lsmcontext_init - initialize an lsmcontext structure.
-- * @cp: Pointer to the context to initialize
-- * @context: Initial context, or NULL
-- * @size: Size of context, or 0
-- * @id: Which LSM provided the context
-- *
-- * Fill in the lsmcontext from the provided information.
-- * This is a scaffolding function that will be removed when
-- * lsm_context integration is complete.
-- */
--static inline void lsmcontext_init(struct lsm_context *cp, char *context,
--				   u32 size, int id)
--{
--	cp->id = id;
--	cp->context = context;
--	cp->len = size;
--}
--
- /*
-  * Values used in the task_security_ops calls
-  */
-@@ -409,8 +390,8 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
- int security_move_mount(const struct path *from_path, const struct path *to_path);
- int security_dentry_init_security(struct dentry *dentry, int mode,
- 				  const struct qstr *name,
--				  const char **xattr_name, void **ctx,
--				  u32 *ctxlen);
-+				  const char **xattr_name,
-+				  struct lsm_context *lsmcxt);
- int security_dentry_create_files_as(struct dentry *dentry, int mode,
- 					struct qstr *name,
- 					const struct cred *old,
-@@ -883,8 +864,7 @@ static inline int security_dentry_init_security(struct dentry *dentry,
- 						 int mode,
- 						 const struct qstr *name,
- 						 const char **xattr_name,
--						 void **ctx,
--						 u32 *ctxlen)
-+						 struct lsm_context *lsmcxt)
- {
- 	return -EOPNOTSUPP;
- }
-diff --git a/security/security.c b/security/security.c
-index 4ca3c9e28b6f..1d57e4e1bceb 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1734,8 +1734,7 @@ void security_inode_free(struct inode *inode)
-  * @mode: mode used to determine resource type
-  * @name: name of the last path component
-  * @xattr_name: name of the security/LSM xattr
-- * @ctx: pointer to the resulting LSM context
-- * @ctxlen: length of @ctx
-+ * @lsmctx: pointer to the resulting LSM context
-  *
-  * Compute a context for a dentry as the inode is not yet available since NFSv4
-  * has no label backed by an EA anyway.  It is important to note that
-@@ -1745,11 +1744,11 @@ void security_inode_free(struct inode *inode)
-  */
- int security_dentry_init_security(struct dentry *dentry, int mode,
- 				  const struct qstr *name,
--				  const char **xattr_name, void **ctx,
--				  u32 *ctxlen)
-+				  const char **xattr_name,
-+				  struct lsm_context *lsmctx)
- {
- 	return call_int_hook(dentry_init_security, dentry, mode, name,
--			     xattr_name, ctx, ctxlen);
-+			     xattr_name, lsmctx);
- }
- EXPORT_SYMBOL(security_dentry_init_security);
- 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index ce5e45abd8d3..79776a5e651d 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2869,8 +2869,8 @@ static void selinux_inode_free_security(struct inode *inode)
- 
- static int selinux_dentry_init_security(struct dentry *dentry, int mode,
- 					const struct qstr *name,
--					const char **xattr_name, void **ctx,
--					u32 *ctxlen)
-+					const char **xattr_name,
-+					struct lsm_context *cp)
- {
- 	u32 newsid;
- 	int rc;
-@@ -2885,8 +2885,9 @@ static int selinux_dentry_init_security(struct dentry *dentry, int mode,
- 	if (xattr_name)
- 		*xattr_name = XATTR_NAME_SELINUX;
- 
--	return security_sid_to_context(newsid, (char **)ctx,
--				       ctxlen);
-+	cp->id = LSM_ID_SELINUX;
-+	return security_sid_to_context(newsid, (char **)cp->context,
-+				       &cp->len);
- }
- 
- static int selinux_dentry_create_files_as(struct dentry *dentry, int mode,
--- 
-2.46.0
+READ PERFORMANCE
+================
+
+The read performance improvements are intended to speed up some loss of
+performance detected in cifs and to a lesser extend in afs.  The problem is
+that we queue too many work items during the collection of read results:
+each individual subrequest is collected by its own work item, and then they
+have to interact with each other when a series of subrequests don't exactly
+align with the pattern of folios that are being read by the overall
+request.
+
+Whilst the processing of the pages covered by individual subrequests as
+they complete potentially allows folios to be woken in parallel and with
+minimum delay, it can shuffle wakeups for sequential reads out of order -
+and that is the most common I/O pattern.
+
+The final assessment and cleanup of an operation is then held up until the
+last I/O completes - and for a synchronous sequential operation, this means
+the bouncing around of work items just adds latency.
+
+Two changes have been made to make this work:
+
+ (1) All collection is now done in a single "work item" that works
+     progressively through the subrequests as they complete (and also
+     dispatches retries as necessary).
+
+ (2) For readahead and AIO, this work item be done on a workqueue and can
+     run in parallel with the ultimate consumer of the data; for
+     synchronous direct or unbuffered reads, the collection is run in the
+     application thread and not offloaded.
+
+Functions such as smb2_readv_callback() then just tell netfslib that the
+subrequest has terminated; netfslib does a minimal bit of processing on the
+spot - stat counting and tracing mostly - and then queues/wakes up the
+worker.  This simplifies the logic as the collector just walks sequentially
+through the subrequests as they complete and walks through the folios, if
+buffered, unlocking them as it goes.  It also keeps to a minimum the amount
+of latency injected into the filesystem's low-level I/O handling
+
+
+SINGLE-BLOB OBJECT SUPPORT
+==========================
+
+Single-blob objects are files for which the content of the file must be
+read from or written to the server in a single operation because reading
+them in parts may yield inconsistent results.  AFS directories are an
+example of this as there exists the possibility that the contents are
+generated on the fly and would differ between reads or might change due to
+third party interference.
+
+Such objects will be written to and retrieved from the cache if one is
+present, though we allow/may need to propose multiple subrequests to do so.
+The important part is that read from/write to the *server* is monolithic.
+
+Single blob reading is, for the moment, fully synchronous and does result
+collection in the application thread and, also for the moment, the API is
+supplied the buffer in the form of a folio_queue chain rather than using
+the pagecache.
+
+
+AFS CHANGES
+===========
+
+This series makes a number of changes to the kafs filesystem, primarily in
+the area of directory handling:
+
+ (1) AFS's FetchData RPC reply processing is made partially asynchronous
+     which allows the netfs_io_request's outstanding operation counter to
+     be removed as part of reducing the collection to a single work item.
+
+ (2) Directory and symlink reading are plumbed through netfslib using the
+     single-blob object API and are now cacheable with fscache.  This also
+     allows the afs_read struct to be eliminated and netfs_io_subrequest to
+     be used directly instead.
+
+ (3) Directory and symlink content are now stored in a folio_queue buffer
+     rather than in the pagecache.  This means we don't require the RCU
+     read lock and xarray iteration to access it, and folios won't randomly
+     disappear under us because the VM wants them back.
+
+     There are some downsides to this, though: the storage folios are no
+     longer known to the VM, drop_caches can't flush them, the folios are
+     not migrateable.  The inode must also be marked dirty manually to get
+     the data written to the cache in the background.
+
+ (4) The vnode operation lock is changed from a mutex struct to a private
+     lock implementation.  The problem is that the lock now needs to be
+     dropped in a separate thread and mutexes don't permit that.
+
+ (5) When a new directory is created, we now initialise it locally and mark
+     it valid rather than downloading it (we know what it's likely to look
+     like).
+
+
+SUPPORTING CHANGES
+==================
+
+To support the above some other changes are also made:
+
+ (1) A "rolling buffer" implementation is created to abstract out the two
+     separate folio_queue chaining implementations I had (one for read and
+     one for write).
+
+ (2) Functions are provided to create/extend a buffer in a folio_queue
+     chain and tear it down again.  This is used to handle AFS directories,
+     but could also be used to create bounce buffers for content crypto and
+     transport crypto.
+
+ (3) The was_async argument is dropped from netfs_read_subreq_terminated().
+     Instead we wake the read collection work item by either queuing it or
+     waking up the app thread.
+
+ (4) We don't need to use BH-excluding locks when communicating between the
+     issuing thread and the collection thread as neither of them now run in
+     BH context.
+
+
+MISCELLANY
+==========
+
+Also included are some fixes from Matthew Wilcox that need to be applied
+first; a number of new tracepoints; a split of the netfslib write
+collection code to put retrying into its own file (it gets more complicated
+with content encryption).
+
+There are also some minor fixes AFS included, including fixing the AFS
+directory format struct layout, reducing some directory over-invalidation
+and making afs_mkdir() translate EEXIST to ENOTEMPY (which is not available
+on all systems the servers support).
+
+
+The patches can also be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-writeback
+
+Thanks,
+David
+
+David Howells (24):
+  netfs: Use a folio_queue allocation and free functions
+  netfs: Add a tracepoint to log the lifespan of folio_queue structs
+  netfs: Abstract out a rolling folio buffer implementation
+  netfs: Make netfs_advance_write() return size_t
+  netfs: Split retry code out of fs/netfs/write_collect.c
+  netfs: Drop the error arg from netfs_read_subreq_terminated()
+  netfs: Drop the was_async arg from netfs_read_subreq_terminated()
+  netfs: Don't use bh spinlock
+  afs: Don't use mutex for I/O operation lock
+  afs: Fix EEXIST error returned from afs_rmdir() to be ENOTEMPTY
+  afs: Fix directory format encoding struct
+  netfs: Remove some extraneous directory invalidations
+  cachefiles: Add some subrequest tracepoints
+  cachefiles: Add auxiliary data trace
+  afs: Add more tracepoints to do with tracking validity
+  netfs: Add functions to build/clean a buffer in a folio_queue
+  netfs: Add support for caching single monolithic objects such as AFS
+    dirs
+  afs: Make afs_init_request() get a key if not given a file
+  afs: Use netfslib for directories
+  afs: Use netfslib for symlinks, allowing them to be cached
+  afs: Eliminate afs_read
+  afs: Make {Y,}FS.FetchData an asynchronous operation
+  netfs: Change the read result collector to only use one work item
+  afs: Make afs_mkdir() locally initialise a new directory's content
+
+Matthew Wilcox (Oracle) (3):
+  netfs: Remove call to folio_index()
+  netfs: Fix a few minor bugs in netfs_page_mkwrite()
+  netfs: Remove unnecessary references to pages
+
+ fs/9p/vfs_addr.c                  |   8 +-
+ fs/afs/callback.c                 |   4 +-
+ fs/afs/dir.c                      | 743 ++++++++++++++++--------------
+ fs/afs/dir_edit.c                 | 265 ++++++-----
+ fs/afs/file.c                     | 244 +++++-----
+ fs/afs/fs_operation.c             | 113 ++++-
+ fs/afs/fsclient.c                 |  59 +--
+ fs/afs/inode.c                    | 104 ++++-
+ fs/afs/internal.h                 |  97 ++--
+ fs/afs/main.c                     |   2 +-
+ fs/afs/mntpt.c                    |  22 +-
+ fs/afs/rotate.c                   |   4 +-
+ fs/afs/rxrpc.c                    |   8 +-
+ fs/afs/super.c                    |   4 +-
+ fs/afs/validation.c               |  31 +-
+ fs/afs/write.c                    |  16 +-
+ fs/afs/xdr_fs.h                   |   2 +-
+ fs/afs/yfsclient.c                |  48 +-
+ fs/cachefiles/io.c                |   4 +
+ fs/cachefiles/xattr.c             |   9 +-
+ fs/ceph/addr.c                    |  13 +-
+ fs/netfs/Makefile                 |   5 +-
+ fs/netfs/buffered_read.c          | 274 ++++-------
+ fs/netfs/buffered_write.c         |  41 +-
+ fs/netfs/direct_read.c            |  80 ++--
+ fs/netfs/direct_write.c           |  10 +-
+ fs/netfs/internal.h               |  36 +-
+ fs/netfs/main.c                   |   6 +-
+ fs/netfs/misc.c                   | 163 +++----
+ fs/netfs/objects.c                |  21 +-
+ fs/netfs/read_collect.c           | 703 ++++++++++++++++------------
+ fs/netfs/read_pgpriv2.c           |  35 +-
+ fs/netfs/read_retry.c             | 209 +++++----
+ fs/netfs/read_single.c            | 195 ++++++++
+ fs/netfs/rolling_buffer.c         | 225 +++++++++
+ fs/netfs/stats.c                  |   4 +-
+ fs/netfs/write_collect.c          | 244 +---------
+ fs/netfs/write_issue.c            | 239 +++++++++-
+ fs/netfs/write_retry.c            | 233 ++++++++++
+ fs/nfs/fscache.c                  |   6 +-
+ fs/nfs/fscache.h                  |   3 +-
+ fs/smb/client/cifssmb.c           |  12 +-
+ fs/smb/client/file.c              |   3 +-
+ fs/smb/client/smb2ops.c           |   2 +-
+ fs/smb/client/smb2pdu.c           |  14 +-
+ include/linux/folio_queue.h       |  12 +-
+ include/linux/netfs.h             |  55 ++-
+ include/linux/rolling_buffer.h    |  61 +++
+ include/trace/events/afs.h        | 178 ++++++-
+ include/trace/events/cachefiles.h |  13 +-
+ include/trace/events/netfs.h      |  97 ++--
+ lib/kunit_iov_iter.c              |   4 +-
+ 52 files changed, 3147 insertions(+), 1836 deletions(-)
+ create mode 100644 fs/netfs/read_single.c
+ create mode 100644 fs/netfs/rolling_buffer.c
+ create mode 100644 fs/netfs/write_retry.c
+ create mode 100644 include/linux/rolling_buffer.h
 
 
