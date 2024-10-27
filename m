@@ -1,70 +1,70 @@
-Return-Path: <ceph-devel+bounces-1983-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-1984-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC26D9B1FF7
-	for <lists+ceph-devel@lfdr.de>; Sun, 27 Oct 2024 20:53:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C7D9B203B
+	for <lists+ceph-devel@lfdr.de>; Sun, 27 Oct 2024 21:16:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7292F28155E
-	for <lists+ceph-devel@lfdr.de>; Sun, 27 Oct 2024 19:53:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01E4A1C20FDC
+	for <lists+ceph-devel@lfdr.de>; Sun, 27 Oct 2024 20:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A410A17B433;
-	Sun, 27 Oct 2024 19:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23B2176AAF;
+	Sun, 27 Oct 2024 20:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PQxMjf4C"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IpfTZT6F"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D8D286A1;
-	Sun, 27 Oct 2024 19:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F363D17736;
+	Sun, 27 Oct 2024 20:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730058797; cv=none; b=B4IYhrjJrqwTeT58zimQYXddsAfzrm0s3xvKhaL8UT7E2lVP/ZcqxvM0PEYcNhAR/dKYmOq2rzjGnk9O85DTs4gcBXYkgExWEy7K3rcKrYsK+7lwitQlSr1lScLay4YEoBCdtaL9wBs6BTbwN3YYAqoEZ4Mdelpmz8SIo2E3jwY=
+	t=1730060182; cv=none; b=PDgY8365XMg2yGO+1QuWROLT4KhjGkIhegf0j+WhE7JZkWhY2K0spXopZBhagVwKAN4Lxgiz/IzglcNaWykQV853JCDX25r9NrYuHO2JP4pYRkqIl9N9L26vx3K12izt144Zia5TfLAqeY+Owy8n3kyZ/B7V/Ear6vfeWqOFPbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730058797; c=relaxed/simple;
-	bh=c2OcbVFjFuUi7hi0qa0JMn5XlXvwQdQmqgxCiMBr8QA=;
+	s=arc-20240116; t=1730060182; c=relaxed/simple;
+	bh=E1xMQGOuYOuYKoue3PXR3HXcoc01gwh4bw9uBxNkrqU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eAtEDxjThAOFwLMh6mTwtcz4LmEwaKT+zks+8ON3QixnznpcSG1V/W9tIZ+coa1pN+nTezufwwriz41immInUUE29TNZSTg5RXcZldLeNrQl6ECySgnE9dF1Pp4G7OqnEO9wbWyfa5v3QrpUqX/QIyQo1oT2zcH39qhVEdDmAto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PQxMjf4C; arc=none smtp.client-ip=209.85.160.52
+	 To:Cc:Content-Type; b=ci7jh1HuchRLoNPTV8CCJm1sbc+LG+J1Etbt/o/WlYfVdrYRbuy+8DfGviw/seYI0fMRU4TAKzthoIsA+gV/B00dW4etoR6+XIwVwmkZnmW4ZeE78bS7Qn16BnKgDn4xGARpyO3SDcLpHvsYbv6cEceGmoC24U/p+2f3r7dbXDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IpfTZT6F; arc=none smtp.client-ip=209.85.167.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-288c7567f5dso1792193fac.1;
-        Sun, 27 Oct 2024 12:53:15 -0700 (PDT)
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3e60966297fso2047572b6e.1;
+        Sun, 27 Oct 2024 13:16:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730058795; x=1730663595; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730060180; x=1730664980; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kpZwKtoPENRDM58Vhybc2mG/ybYD9EOEy2sbkHhuTBE=;
-        b=PQxMjf4CBVKCvm28Dy4QeLI0pwhyFU4Zo2FLVl8mEkap4jnSRyb/Za0oOPMPHWqumO
-         ii02liZst22tTDLH4e77itwvYpBGiRV0SOCaB1i8bplRt0p2ioSIgvsnjtE19OPijvlc
-         UosQpnFKO2ESMZ156dLTYYnypfwL/RIo8uO26gJvantxLsmfWZskZ/fF815tUXY5IuXo
-         U4AfG4Qv8ifDrCtf0MerFnHQIYmY0dC7jJOc587w3uY4i58UH+/QoX5HsXsSX7RzJFgE
-         Y4AprutHyPHTuGZUZEKjxcOdk2atJoxOBdVqq3w28EuDdIOxb2iL2/yYRwZhsqk6MFPr
-         dU+g==
+        bh=1szp9LKkxD/n7tHW53F2agK+dK5EsqpznWjYnTzGGAY=;
+        b=IpfTZT6Fxl+Q7KiHlauboT9berswpZm322SVZpQL+jz/RBLxA5vLRsgRYF+bKzAI4d
+         eJYCKDdjif2dEGNrzsPlYY38TjMoSR7bYUV+irbYaFX6wpjTaTcwce45i+2FHB6em7sF
+         7BeAeyNUNSjB+TsNnsefdgZKw/wAn2oQ/vDQwm0omK8pAY82WT6R50wqgjjLQb3zuofq
+         wjYxSEks2M5be7KviqXD+/5kJGXsOqYb2p6clD2d/z4U4E7Getlz00slyr4DYEaxiXS2
+         WdVg4F5aSzpK2p/ovqKnAf/ABg8mPuk5a236bUIVPPD0PqDadAdci76+p9lJa3fpTc3N
+         +bMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730058795; x=1730663595;
+        d=1e100.net; s=20230601; t=1730060180; x=1730664980;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kpZwKtoPENRDM58Vhybc2mG/ybYD9EOEy2sbkHhuTBE=;
-        b=uuWJxrQrfW5gQASo1Qcw6GamUN0gyo2Waah2rwjP0pxMqWeDMeHb8CON8erchpNapS
-         HzsRAg9v6dZFv9qwSvG/kx1KC4d4CYdFEiDB/Iiwv+5Bniaraym4Nka98+eND5NQnM2f
-         ykAvT+o9Vwt7uni/7SBnTvqlvnFKNCvsnkBGRrIymrF7zYLBWi7I+KbH837Qmw8/7x90
-         03uNrNWtYXpMhiTcX0g2+N9ORf0oWC6so8mRJBF4CURRUzD1Z03gU+UaHD907nDti6IX
-         vBWbdCl6mSodsivrktUDAR0lVG0hXChyIIJVm4xSWQNOvjg06O8JC7S9RXrsAl1PiFvh
-         q95w==
-X-Forwarded-Encrypted: i=1; AJvYcCUzMEeE0WrS7qYWFohOouDHpZXqJ7fpt5u1J7lTcDih3QSNUOQZfVrrNnOc3lXHAempFUgb7zkN3N+ASVBL@vger.kernel.org, AJvYcCVcMikjV7P3XQI7jMDWijDTXS1tb+PhGs4MIoe1rPjXT0JrpvzkdvpDg7Z/wgGrXs1dwCQwluoh2uoD@vger.kernel.org
-X-Gm-Message-State: AOJu0Yywpjq2yBSOchMu5Y13ERrAVoWj7Vr3AsJjMIVx/veDcgOvrSRR
-	sMo6fO5n1EbmZVs/cUq3tQ8i0oMN4ieNUROXIv/jymVC1ZhLQENjWtzu4DhftU/AcAwpfdukR8M
-	/kTE5gZpBm+x9kbDhLGnI9MvKuBQ=
-X-Google-Smtp-Source: AGHT+IE/0ePnsx2a4in0XRQPmNmJb+zbu6jJdlqSpWh4ING4cZKG5GvITNdeWwvcYiSe6FM8GdWvRgLp9BuHWZ76oMQ=
-X-Received: by 2002:a05:6870:8a0c:b0:27b:5a02:f940 with SMTP id
- 586e51a60fabf-29051bc479fmr4347534fac.23.1730058794633; Sun, 27 Oct 2024
- 12:53:14 -0700 (PDT)
+        bh=1szp9LKkxD/n7tHW53F2agK+dK5EsqpznWjYnTzGGAY=;
+        b=J4w/frrO0PypdBEl5hRLzIHFp0RS/LPuVwvWYBxRx8aHgNxWyC6+s71PKKkq5eQ/8Z
+         JF5iZkdQtp0jVcWDBcz4+FfVzH1DkQ0ch14pbp0eHGPapf2yCd8W7TobXJ5c/JcmNbGY
+         TIWI1r9Ly/KZJFYD0XFxRzJfcVnrU7Y5BFfzxqobC8Nxev1tY76e99g9qUciuWNQi3Ya
+         ADdsxKGkwKBII/AIG8TNG12LU0J3r0mXOczbFtLUe4mrE6mard/zuafZB5X8Ear2TnBe
+         8kfbHxT7ndbOqOUKyO32NsaAF7dwJC7AjFRsDdUkAgQorY2Jf4AufH13q2Z/87DkJ9u0
+         iEFg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+LNDwnGZpQ/RLlHNZZ+skSuFn2RMSRegivzNYiAoYt7Epy3mwZpzuhkMnA/qanbNnNL6H/4FlLr9K@vger.kernel.org, AJvYcCWn7icarGSkBuBo/v+4v3r/uMMKviqcVMiVv8MH4+nhKEkUAmKhSApR+ivx18t/Pk0Yt3IX7GTtWpRhtuC2@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPCLogDABEiSzUbju4xbzfXkfOYUgsJMKgZm1ROypZGMtooO0r
+	ebmpILW4/BOOJ2z4CZeyo0PIfjoSDeq7Q2oH4adC/3PnKlSdmATKecScTknfluS/wYLEJqm3biH
+	YIGn2GellSIa0LHHZEjmHY53qlZ0=
+X-Google-Smtp-Source: AGHT+IG1OQNQ0FJ+Z2qflN/6JfbUrc5rw7d6MF/HWc7iYM5zPWDzbKX7MVrgoWTuDAEvEOIllO/gV26tcc1t7FfQM7M=
+X-Received: by 2002:a05:6870:d38a:b0:288:2b43:e0e3 with SMTP id
+ 586e51a60fabf-29051d49e8dmr4294239fac.35.1730060180110; Sun, 27 Oct 2024
+ 13:16:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -74,8 +74,8 @@ MIME-Version: 1.0
 References: <20241006011956.373622-1-linux@treblig.org>
 In-Reply-To: <20241006011956.373622-1-linux@treblig.org>
 From: Ilya Dryomov <idryomov@gmail.com>
-Date: Sun, 27 Oct 2024 20:53:03 +0100
-Message-ID: <CAOi1vP8bCkkeVCpT4Y8shSyMgq3FxN6eFawD8_pTnpA0a6PTzQ@mail.gmail.com>
+Date: Sun, 27 Oct 2024 21:16:08 +0100
+Message-ID: <CAOi1vP8PaYSZCoWHkNFfSQyb2n0qc4pB7iJRrMpJ+9Ck9=UHdg@mail.gmail.com>
 Subject: Re: [PATCH 0/5] Ceph deadcoding
 To: linux@treblig.org
 Cc: xiubli@redhat.com, ceph-devel@vger.kernel.org, 
@@ -94,33 +94,16 @@ On Sun, Oct 6, 2024 at 3:19=E2=80=AFAM <linux@treblig.org> wrote:
 >
 > (get_maintainer was suggesting the netdev team as well
 > as ceph? Is that correct???)
->
-> Build & boot tested on x86-64.
->
-> Dave
->
-> Dr. David Alan Gilbert (5):
->   libceph: Remove unused ceph_pagelist functions
->   libceph: Remove unused pagevec functions
->   libceph: Remove unused ceph_osdc_watch_check
->   libceph: Remove unused ceph_crypto_key_encode
->   ceph: Remove fs/ceph deadcode
->
->  fs/ceph/caps.c                  | 14 ---------
->  fs/ceph/mds_client.c            |  8 -----
->  fs/ceph/mds_client.h            |  2 --
->  fs/ceph/super.h                 |  1 -
->  include/linux/ceph/libceph.h    |  6 ----
->  include/linux/ceph/osd_client.h |  2 --
->  include/linux/ceph/pagelist.h   | 12 --------
->  net/ceph/crypto.c               | 12 --------
->  net/ceph/crypto.h               |  1 -
->  net/ceph/osd_client.c           | 34 ---------------------
->  net/ceph/pagelist.c             | 38 ------------------------
->  net/ceph/pagevec.c              | 52 ---------------------------------
->  12 files changed, 182 deletions(-)
 
-Applied.
+Hi David,
+
+No, it's not correct.  It's probably caused by
+
+F:    net/
+
+entry in "NETWORKING [GENERAL]" section.  I don't recall
+get_maintainer.pl doing that in the past, but I could be wrong.
+Anyway, I'll send a patch to exclude net/ceph there.
 
 Thanks,
 
