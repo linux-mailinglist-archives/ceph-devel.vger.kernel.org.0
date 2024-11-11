@@ -1,69 +1,50 @@
-Return-Path: <ceph-devel+bounces-2068-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2069-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB83F9C2415
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 Nov 2024 18:50:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F14AD9C3A9C
+	for <lists+ceph-devel@lfdr.de>; Mon, 11 Nov 2024 10:13:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B40D1F24FAE
-	for <lists+ceph-devel@lfdr.de>; Fri,  8 Nov 2024 17:50:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 772E9282D34
+	for <lists+ceph-devel@lfdr.de>; Mon, 11 Nov 2024 09:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10123DAC18;
-	Fri,  8 Nov 2024 17:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5E01714CD;
+	Mon, 11 Nov 2024 09:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EnlVuOKH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fgPSPhwK"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94673DABEA
-	for <ceph-devel@vger.kernel.org>; Fri,  8 Nov 2024 17:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F011016A959;
+	Mon, 11 Nov 2024 09:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731087414; cv=none; b=LL/eCWhx2hqPet8rrH21RqZs86c+3Hk6SQyzKXE9eFLk+8YrU0wCwJYuQOjs16IEeaCp1g1gYLpnmtW5OTH4YXWN1MCaazkn1pwI0aIKx4+aYFmmlJTupMuT6P4+6Ymu5JBGQ93UTE/YQqsvsTUQ6lzkQZjfwOh7LbJJBBo8rBc=
+	t=1731316379; cv=none; b=hb4dNgDtEt1pzeC+FsijQ8uLvQsRo7zkF1/dQcTIDGdj3MbXr6A+HfcEnxqnfp7osEgZqDaidC7wvpGo+WDXgMSl5pGJH1oJz/qiEB4ybcaRSs7anMyWS5qrklr4JPBWqT7jrY78nsbRrg/1H9EgCo9S33Mfs/mN0YdPsuPKTHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731087414; c=relaxed/simple;
-	bh=YfHQHHklQqGthguUT+hofehz3Evx2ahQywNsAF+2OGI=;
+	s=arc-20240116; t=1731316379; c=relaxed/simple;
+	bh=eLegIPzm6kl+o1xbtiBt0w/Vn129KLVaIrdkjfKYWaA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mmkNAs2AK4MHmmbxbUqcUGm1ep52f5drVo+FKUxshbSFpQyuoPfpUH7lH+0hoNq7nGB4iLUw5tZJNobrAgvbM6Ck/DkGkaSduXEuEZeCHb0zYthtxU6SKP85pdHd6KI3ng+eDjdXCdx8BqGZY5RlQ/VKv7mKotf81uYb8o42XDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EnlVuOKH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731087411;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jlfv2ApsSBgn//KdBsSlx8BkotK5+tCpg2808yZLllw=;
-	b=EnlVuOKHtxRm5r/XUbwfEDUBfGg31uzPO+BhRxchcqfbRr6OVJnmSkMZd0jMy66pgqC8zh
-	2AnnDYGSll+xZ6ojZPTVsb7ehvZRQrSsSm2bzTFHRwyPrGf2ZS3fc+iey5vHpGiUcoTRPF
-	7N0oO5JsWY4du3oVMEUlc0lotqfO3QA=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-226-sjYpWV5SMt6Lmz3uofTwYw-1; Fri,
- 08 Nov 2024 12:36:48 -0500
-X-MC-Unique: sjYpWV5SMt6Lmz3uofTwYw-1
-X-Mimecast-MFC-AGG-ID: sjYpWV5SMt6Lmz3uofTwYw
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 935F41954128;
-	Fri,  8 Nov 2024 17:36:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk.com (unknown [10.42.28.231])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9CB78195E480;
-	Fri,  8 Nov 2024 17:36:37 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: David Howells <dhowells@redhat.com>,
+	 MIME-Version:Content-Type; b=ACjyU5n7k2nOg9QueFtI6LYwdN8HtxLJhGJjoYSxR6XO6idLkWoAYYnD1pP5q1+TDcMLhkkC4pr+HZqBxd36ceJWFY3zkxwvCB2X9lZ8RRmozU3leoSy2J//PSIEdWT7pkSzGYxv7uYsKW0/4gj9jpk5fkiY/xxhRG38nOa912E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fgPSPhwK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56D85C4CED0;
+	Mon, 11 Nov 2024 09:12:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731316378;
+	bh=eLegIPzm6kl+o1xbtiBt0w/Vn129KLVaIrdkjfKYWaA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fgPSPhwKVCoHhP5ZUhqFPaUA3BckikO442jgj8GZjtPjAiQvZy2Zt8UJaqx4sZ4cn
+	 tLQLnuNp8PDWRuevwPEyIHOAmeXYlFpVSIX3s7ozITJY1rKstBsCZlFlksJ0gw6tmS
+	 kdvvTwHsIdFewza2NlXVyqYUKM9MykIn/gCPy6V7rfKaE5bePR/WM3+hqBWYTt+baE
+	 ElCEQ+0slDPOh3YKguR0LIEL0eNaL2YyYEX/vSMtnmZZUKcDhQynA4VIMn0yTrjVZ3
+	 fE5fwQWPiTHePSimVwb1JplWrql7brpCmIVXRpE7c1XmVUtvAeONSspLa67X4zbXJl
+	 sD6sd7jx8WGRQ==
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
 	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
 	Dominique Martinet <asmadeus@codewreck.org>,
 	Marc Dionne <marc.dionne@auristor.com>,
 	Paulo Alcantara <pc@manguebit.com>,
@@ -82,11 +63,13 @@ Cc: David Howells <dhowells@redhat.com>,
 	linux-mm@kvack.org,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	syzbot+af5c06208fa71bf31b16@syzkaller.appspotmail.com,
-	Chang Yu <marcus.yu.56@gmail.com>
-Subject: [PATCH v4 33/33] netfs: Report on NULL folioq in netfs_writeback_unlock_folios()
-Date: Fri,  8 Nov 2024 17:32:34 +0000
-Message-ID: <20241108173236.1382366-34-dhowells@redhat.com>
+	Gao Xiang <xiang@kernel.org>,
+	Steve French <smfrench@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v4 00/33] netfs: Read performance improvements and "single-blob" support
+Date: Mon, 11 Nov 2024 10:12:33 +0100
+Message-ID: <20241111-kochkunst-kroll-f8386db7f273@brauner>
+X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241108173236.1382366-1-dhowells@redhat.com>
 References: <20241108173236.1382366-1-dhowells@redhat.com>
 Precedence: bulk
@@ -95,97 +78,101 @@ List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4915; i=brauner@kernel.org; h=from:subject:message-id; bh=eLegIPzm6kl+o1xbtiBt0w/Vn129KLVaIrdkjfKYWaA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQbnuoTcJer1I9iZPy/KXnXkR3yzUvPeSUdKhatyKkPP 1/h4qTTUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJHXyowMJ73NZvvz71XzWu/R kX/O6mpbvrbzAbX0naeF5dI9IzTqGRmeOOw/3D7HYsVKm7tHJ/g+THnPZ3IgVWj+mYxQHlHHyPM MAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-It seems that it's possible to get to netfs_writeback_unlock_folios() with
-an empty rolling buffer during buffered writes.  This should not be
-possible as the rolling buffer is initialised as the write request is set
-up and thereafter maintains at least one folio_queue struct therein until
-it gets destroyed.  This allows lockless addition and removal of
-folio_queue structs in the buffer because, unlike with a ring buffer, the
-producer and consumer each only need to look at and alter one pointer into
-the buffer.
+On Fri, 08 Nov 2024 17:32:01 +0000, David Howells wrote:
+> This set of patches is primarily about two things: improving read
+> performance and supporting monolithic single-blob objects that have to be
+> read/written as such (e.g. AFS directory contents).  The implementation of
+> the two parts is interwoven as each makes the other possible.
+> 
+> READ PERFORMANCE
+> ================
+> 
+> [...]
 
-Now, the rolling buffer is only used for buffered I/O operations as
-netfs_collect_write_results() should only call
-netfs_writeback_unlock_folios() if the request is of origin type
-NETFS_WRITEBACK, NETFS_WRITETHROUGH or NETFS_PGPRIV2_COPY_TO_CACHE.
+Applied to the vfs-6.14.netfs branch of the vfs/vfs.git tree.
+Patches in the vfs-6.14.netfs branch should appear in linux-next soon.
 
-So it would seem that one of the following occurred: (1) I/O started before
-the request was fully initialised, (2) the origin got switched mid-flow or
-(3) the request has already been freed and this is a UAF error.  I think the
-last is the most likely.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Make netfs_writeback_unlock_folios() report information about the request
-and subrequests if folioq is seen to be NULL to try and help debug this,
-throw a warning and return.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Note that this does not try to fix the problem.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Reported-by: syzbot+af5c06208fa71bf31b16@syzkaller.appspotmail.com
-Link: https://syzkaller.appspot.com/bug?extid=af5c06208fa71bf31b16
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Chang Yu <marcus.yu.56@gmail.com>
-Link: https://lore.kernel.org/r/ZxshMEW4U7MTgQYa@gmail.com/
-cc: Jeff Layton <jlayton@kernel.org>
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/write_collect.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.14.netfs
 
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index 3d8b87c8e6a6..4a1499167770 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -21,6 +21,34 @@
- #define NEED_RETRY		0x10	/* A front op requests retrying */
- #define SAW_FAILURE		0x20	/* One stream or hit a permanent failure */
- 
-+static void netfs_dump_request(const struct netfs_io_request *rreq)
-+{
-+	pr_err("Request R=%08x r=%d fl=%lx or=%x e=%ld\n",
-+	       rreq->debug_id, refcount_read(&rreq->ref), rreq->flags,
-+	       rreq->origin, rreq->error);
-+	pr_err("  st=%llx tsl=%zx/%llx/%llx\n",
-+	       rreq->start, rreq->transferred, rreq->submitted, rreq->len);
-+	pr_err("  cci=%llx/%llx/%llx\n",
-+	       rreq->cleaned_to, rreq->collected_to, atomic64_read(&rreq->issued_to));
-+	pr_err("  iw=%pSR\n", rreq->netfs_ops->issue_write);
-+	for (int i = 0; i < NR_IO_STREAMS; i++) {
-+		const struct netfs_io_subrequest *sreq;
-+		const struct netfs_io_stream *s = &rreq->io_streams[i];
-+
-+		pr_err("  str[%x] s=%x e=%d acnf=%u,%u,%u,%u\n",
-+		       s->stream_nr, s->source, s->error,
-+		       s->avail, s->active, s->need_retry, s->failed);
-+		pr_err("  str[%x] ct=%llx t=%zx\n",
-+		       s->stream_nr, s->collected_to, s->transferred);
-+		list_for_each_entry(sreq, &s->subrequests, rreq_link) {
-+			pr_err("  sreq[%x:%x] sc=%u s=%llx t=%zx/%zx r=%d f=%lx\n",
-+			       sreq->stream_nr, sreq->debug_index, sreq->source,
-+			       sreq->start, sreq->transferred, sreq->len,
-+			       refcount_read(&sreq->ref), sreq->flags);
-+		}
-+	}
-+}
-+
- /*
-  * Successful completion of write of a folio to the server and/or cache.  Note
-  * that we are not allowed to lock the folio here on pain of deadlocking with
-@@ -87,6 +115,12 @@ static void netfs_writeback_unlock_folios(struct netfs_io_request *wreq,
- 	unsigned long long collected_to = wreq->collected_to;
- 	unsigned int slot = wreq->buffer.first_tail_slot;
- 
-+	if (WARN_ON_ONCE(!folioq)) {
-+		pr_err("[!] Writeback unlock found empty rolling buffer!\n");
-+		netfs_dump_request(wreq);
-+		return;
-+	}
-+
- 	if (wreq->origin == NETFS_PGPRIV2_COPY_TO_CACHE) {
- 		if (netfs_pgpriv2_unlock_copied_folios(wreq))
- 			*notes |= MADE_PROGRESS;
-
+[01/33] kheaders: Ignore silly-rename files
+        https://git.kernel.org/vfs/vfs/c/3033d243b97c
+[02/33] netfs: Remove call to folio_index()
+        https://git.kernel.org/vfs/vfs/c/f709cec9dc52
+[03/33] netfs: Fix a few minor bugs in netfs_page_mkwrite()
+        https://git.kernel.org/vfs/vfs/c/07a80742a52b
+[04/33] netfs: Remove unnecessary references to pages
+        https://git.kernel.org/vfs/vfs/c/53f5f31a1549
+[05/33] netfs: Use a folio_queue allocation and free functions
+        https://git.kernel.org/vfs/vfs/c/1d044b4cb3e9
+[06/33] netfs: Add a tracepoint to log the lifespan of folio_queue structs
+        https://git.kernel.org/vfs/vfs/c/7583f643f714
+[07/33] netfs: Abstract out a rolling folio buffer implementation
+        https://git.kernel.org/vfs/vfs/c/2029a747a14d
+[08/33] netfs: Make netfs_advance_write() return size_t
+        https://git.kernel.org/vfs/vfs/c/34961bbe07a5
+[09/33] netfs: Split retry code out of fs/netfs/write_collect.c
+        https://git.kernel.org/vfs/vfs/c/8816207a3e26
+[10/33] netfs: Drop the error arg from netfs_read_subreq_terminated()
+        https://git.kernel.org/vfs/vfs/c/44c5114bb155
+[11/33] netfs: Drop the was_async arg from netfs_read_subreq_terminated()
+        https://git.kernel.org/vfs/vfs/c/3c8a83f74e0e
+[12/33] netfs: Don't use bh spinlock
+        https://git.kernel.org/vfs/vfs/c/5c962f9982cd
+[13/33] afs: Don't use mutex for I/O operation lock
+        https://git.kernel.org/vfs/vfs/c/244059f6472c
+[14/33] afs: Fix EEXIST error returned from afs_rmdir() to be ENOTEMPTY
+        https://git.kernel.org/vfs/vfs/c/10e890507ed5
+[15/33] afs: Fix directory format encoding struct
+        https://git.kernel.org/vfs/vfs/c/c8f34615191c
+[16/33] netfs: Remove some extraneous directory invalidations
+        https://git.kernel.org/vfs/vfs/c/ab143ef48b3b
+[17/33] cachefiles: Add some subrequest tracepoints
+        https://git.kernel.org/vfs/vfs/c/46599823a281
+[18/33] cachefiles: Add auxiliary data trace
+        https://git.kernel.org/vfs/vfs/c/499c9d489d7b
+[19/33] afs: Add more tracepoints to do with tracking validity
+        https://git.kernel.org/vfs/vfs/c/606d920396fd
+[20/33] netfs: Add functions to build/clean a buffer in a folio_queue
+        https://git.kernel.org/vfs/vfs/c/823f8d570db5
+[21/33] netfs: Add support for caching single monolithic objects such as AFS dirs
+        https://git.kernel.org/vfs/vfs/c/5ae8e69c119a
+[22/33] afs: Make afs_init_request() get a key if not given a file
+        https://git.kernel.org/vfs/vfs/c/bfeb953ddf0b
+[23/33] afs: Use netfslib for directories
+        https://git.kernel.org/vfs/vfs/c/2b6bae4ca558
+[24/33] afs: Use netfslib for symlinks, allowing them to be cached
+        https://git.kernel.org/vfs/vfs/c/a16c68c66f52
+[25/33] afs: Eliminate afs_read
+        https://git.kernel.org/vfs/vfs/c/b84e275b6da2
+[26/33] afs: Fix cleanup of immediately failed async calls
+        https://git.kernel.org/vfs/vfs/c/355d07737082
+[27/33] afs: Make {Y,}FS.FetchData an asynchronous operation
+        https://git.kernel.org/vfs/vfs/c/e31fb01515da
+[28/33] netfs: Change the read result collector to only use one work item
+        https://git.kernel.org/vfs/vfs/c/1bd9011ee163
+[29/33] afs: Make afs_mkdir() locally initialise a new directory's content
+        https://git.kernel.org/vfs/vfs/c/4e93a341aec1
+[30/33] afs: Use the contained hashtable to search a directory
+        https://git.kernel.org/vfs/vfs/c/08890740b1d7
+[31/33] afs: Locally initialise the contents of a new symlink on creation
+        https://git.kernel.org/vfs/vfs/c/d4f4a6bde676
+[32/33] afs: Add a tracepoint for afs_read_receive()
+        https://git.kernel.org/vfs/vfs/c/f06ba511d8d5
+[33/33] netfs: Report on NULL folioq in netfs_writeback_unlock_folios()
+        https://git.kernel.org/vfs/vfs/c/19375843912f
 
