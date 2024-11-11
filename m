@@ -1,178 +1,118 @@
-Return-Path: <ceph-devel+bounces-2069-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2070-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F14AD9C3A9C
-	for <lists+ceph-devel@lfdr.de>; Mon, 11 Nov 2024 10:13:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFDB79C4972
+	for <lists+ceph-devel@lfdr.de>; Tue, 12 Nov 2024 00:01:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 772E9282D34
-	for <lists+ceph-devel@lfdr.de>; Mon, 11 Nov 2024 09:13:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BAD3B21FD0
+	for <lists+ceph-devel@lfdr.de>; Mon, 11 Nov 2024 23:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5E01714CD;
-	Mon, 11 Nov 2024 09:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6361917E46E;
+	Mon, 11 Nov 2024 23:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fgPSPhwK"
+	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="AEb6De3e"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic312-20.consmr.mail.sg3.yahoo.com (sonic312-20.consmr.mail.sg3.yahoo.com [106.10.244.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F011016A959;
-	Mon, 11 Nov 2024 09:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA8C158D8B
+	for <ceph-devel@vger.kernel.org>; Mon, 11 Nov 2024 23:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731316379; cv=none; b=hb4dNgDtEt1pzeC+FsijQ8uLvQsRo7zkF1/dQcTIDGdj3MbXr6A+HfcEnxqnfp7osEgZqDaidC7wvpGo+WDXgMSl5pGJH1oJz/qiEB4ybcaRSs7anMyWS5qrklr4JPBWqT7jrY78nsbRrg/1H9EgCo9S33Mfs/mN0YdPsuPKTHY=
+	t=1731366093; cv=none; b=AbVF9LZiwzFL7WEof+frUqpVfDzWlmvwRTA6RNUW5WeMR8gJt7zxxcXYgMDjz6iuTK/P4VSb2eqWc5vDoKef3IXme7H0vkL8B+cGw7W9b+YW9hTSzpZBqDdme890pMfGXE0LU2eZ+GwiQyugck6Fy3/I1bmpkcwbtRQ/vb6k6ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731316379; c=relaxed/simple;
-	bh=eLegIPzm6kl+o1xbtiBt0w/Vn129KLVaIrdkjfKYWaA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ACjyU5n7k2nOg9QueFtI6LYwdN8HtxLJhGJjoYSxR6XO6idLkWoAYYnD1pP5q1+TDcMLhkkC4pr+HZqBxd36ceJWFY3zkxwvCB2X9lZ8RRmozU3leoSy2J//PSIEdWT7pkSzGYxv7uYsKW0/4gj9jpk5fkiY/xxhRG38nOa912E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fgPSPhwK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56D85C4CED0;
-	Mon, 11 Nov 2024 09:12:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731316378;
-	bh=eLegIPzm6kl+o1xbtiBt0w/Vn129KLVaIrdkjfKYWaA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fgPSPhwKVCoHhP5ZUhqFPaUA3BckikO442jgj8GZjtPjAiQvZy2Zt8UJaqx4sZ4cn
-	 tLQLnuNp8PDWRuevwPEyIHOAmeXYlFpVSIX3s7ozITJY1rKstBsCZlFlksJ0gw6tmS
-	 kdvvTwHsIdFewza2NlXVyqYUKM9MykIn/gCPy6V7rfKaE5bePR/WM3+hqBWYTt+baE
-	 ElCEQ+0slDPOh3YKguR0LIEL0eNaL2YyYEX/vSMtnmZZUKcDhQynA4VIMn0yTrjVZ3
-	 fE5fwQWPiTHePSimVwb1JplWrql7brpCmIVXRpE7c1XmVUtvAeONSspLa67X4zbXJl
-	 sD6sd7jx8WGRQ==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>,
-	Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1731366093; c=relaxed/simple;
+	bh=cG7reSJoypxhSF8WZxlnJTDYEnJc2ocW1SAjGk4F16Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=sMw7zXoIfAplBrahu4T5ip8QBnOlibbZAL8qlDfpgBOGb74/+bBhPS/WS9hIW8wKkiKCzjOjRw/1vHxIkC+QOT/9NKI8zhHwGF7FjMQ8fvm/4nYdB3ob6vc0R0Vn9xeCvBgSkfSAiNnUnKrYy3k4xX1iQiZjDGXod8BHLFZl9ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=AEb6De3e; arc=none smtp.client-ip=106.10.244.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1731366085; bh=VAY3jISqxsGqhWsIMu+XZ8jzanX+gBt2aTfBTDDEbuQ=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=AEb6De3euIYUsDYPQFVErxUKQgP0DlKMx3LArR0KXaQBurpgpW6ecyJ2ZpEwP4BJZ54iduOTyZwMUPUyuLPjFRB5PloseegN2/VtWXI2FT4SkwwSq5MkV80m1+bZSBgTgT9fggwIgEPHL7lEnYaj9Y1oFifW9wPmuHv0wl12tQO2rgy/l9lKio86USsjxl+tK9BviAvXEMkreWRtHnqkTQBYyZMI434gPunyiOBhHFOzzKXtaipSR9ong11dtN0UiX54YWv5WSdCB+ueWhtT70KiW4k2KKz8fX8uum14ff+Gu/Q+ZaHu0yCln9c13mF73EGnq11XQVzNSpJtzm43Nw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731366085; bh=2ShWKdwrlFy6U3cnI/bUiZsuToNmwBsJNu1Z4iWqffV=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=f/tjklWYOM0IKgWIZRiEhODKWJ/vVPZ5Q4kuBPmhOeGwP8hWTmhdEX9s5q6cOMTicIEJO8fteJS3ykb8lArZ5WseRk1Gsr1aVSIUrWqztlWtw5Y3FJHR/M++SuDXKdM6UeZDq8VTue4T/N7B8/jzldOaqdLqtwnEgvwCnY6a67S4CRgMgutGnjwAsPDmumHmgzJvFyG46okFzUNH08I94Fd8Klv3JzHDYXwMoESKNLSUM3M+1pyfql7a+QjTf7pPey7tD5XV2Gle3OaavRI40ZDwgwadVEbKPmALe3BfhN3jnwttZXSPoaR7jzNmdUS64uTQKfr04vtZSp2w1J4z8A==
+X-YMail-OSG: h6rPJJgVM1kaK0zIZ7qbFRwuu1neEu1.ud3XMHsCgXd_CH_rfIO3u0BwSljdQpc
+ gp6Bufn1xYi1UoViRVyHo8YoxW_PwgmaTjxu0E1xF8AfMSroQU39ODz2xQEKs_uPaouLBvzNTt0o
+ nvp6icWKArPpxV009lAm0PxXJgtFYatRLNfOMTQnO7CzmhXyCafuyUTYpPhvLH9Efh1tBHYVMG76
+ JfkukRv9y7ghxL.RlX28fSlpePQPrOakvL5Z3HLHk4GlytBEb1_y18XYE9EyTA3Pvpc3Y.SerVqe
+ K.pkcZYzW8P779QikwYSGMg4cHxd.FJdDAE_CtRYjnBq7yNpHr9SbHbobLsF9M.kmzMe5LwhFVDq
+ CvZgnAhj1iNkx_535o4fc0Rk54xHVGDN49RfS_CfwOh9AmG8.Jyb4WUBiqFifPiWfCWjdE7.HRRR
+ pjRRAaFwDT9bhw04Oic3EcfexPnmhJ7W6G9CTMVI59yhzC6T0EcGVljuexIID1w8PZT80rwm0VRj
+ CQwJBHkrgzxzYxHJm1Az3W9_7wVjquxbvpCJjg27Lcnz1pvyyZgkaUsGj70Z8ei8juOG0ynEBrAh
+ NhGi0gnxeXDE6g_2F7NcYW.MNCXaIu.QhQoUoC2Ixx7iVHV_cQ8zCHQuH4TVIRpTp12yeGO4pPvB
+ 7q_vUjm8On43s9gNC359jnSf7Xu_5iOnQxwo97YKIL2OpmVgEzDpX.qLsU_7bC.8W0Ki.k3BT09V
+ 3obeymFLfNGCLYq2ioM4mG1h6tGD8RLpEQtowzYWOPJXQJ_H91hd3CRdyYhqUgLVMpeJBvbml1yo
+ nO5Qyr12PhN5seV5_SLkRIyWtJaJQr1cmGqF6HFJhbBiZzSMDTbNZuTnjOsDiFhHp675_UFBO97t
+ 4d6w2TOysg3puI.Sm9JHXHpliy.Gte31BWw7Hh9d8kunb41rbqilpcmIMGdl0vSmgevc8SVR4Yu8
+ saQX_mmvEOY5HIci1aWV9vh1V.5VoFStwE9GpD7NiVrxKOEdygTGc8tHkQ0cR_mJoLj0X3uxHBRn
+ wCnfOX66IXgFGJJ0Mn0Fzk7Lwkj6Pdd0qEqchu9ISGTjthL_lJAA4upIYxI9eCn.KLA.g87Uw0zf
+ _ZYq37dAb9CSz5chc8BUIWnGjeybOsWHad82vjCOtva1xOTgr2bw5FE7kn30KgT7SoRbVttf2h4u
+ gjvaSXyNIsECkuMhdRYVhzPfVIc_6HP7VrUVlb_pKXwEqMDhWFdPmkyXmqcPucerMR44_eBtTu8U
+ A60rn1P1QD9t_WKEmRCO8NljX3ewEpPKSgaJFw8adGFyQoX4xjMcO35n61NH0_AsRU0wF0AvMVBY
+ XyjpPCTSnLVShQwsPbPgQtVe0ZUXngo5AkZMCzEawrYO3kcxm90sqZMxDgVxGO.iY8JUL6XTXjQb
+ nvqMn.5CSqWpvl8ZKCP9OaLHmmIYXCnh.h9rxaRMX9LUHFbVRuf0ECHpXBMzLPb_TYnTGbqtFCjP
+ Cyg9jxUywKSS2fZyEf6PHeUm5BHM__ex2Bi1PfN1BoAV0KpDYay5z7SaYmtBlmYrb17qQxE0yFBi
+ 64g1RYrQZ.qCvuHlN_FZXt.cdisYL9JRfugsNL9NEVLQC6Tmyt7avz1zWXBgKnsFobG0Y142ipbZ
+ Fit.tqHqL99y2HUYSLrZ__8i7y67QxHkr85lsEIpVB8sSOetMwSKvbrNEvS9TRRxYVLWpaWk4kbd
+ 4Usv06m_9LawHzTfUFTTDdNp2G5CDZow9HlbiwJn_2v6Fj3J74OXi_0g4aA31gxKO1URc8rXQdvz
+ U2THYXKUs_gs475TMp_9NvGAw4n4mImrLtwd9W8GhzjZbuHyc2dXwgrxBNmJkuY4w70q3OevYKR2
+ i4yqVqZx8E0PFriLchKm_G_Bh6iep8xtApp3kvzl85lZa1xTYqMKYnafHYj.G.bAH0qBMFNqwUJ8
+ F.7J.ailbcTG1KLv0KioJy79y5OhU.XW2aD9xKi9I3JDcm.wGXfdD7sXbvAEZhterZUBYAkilZ8y
+ C.KETEiJjAbjonxntk_VyySKMo47vtnitPiLIR1kYa_SFQ1skqjwDLTYeHNkUjbLMmbiPcNMuwpX
+ FNx3Ci6ecvyGY2RsIR7Z7fHj7s2okUcLvT4_OLLV.d67.6jfczVARqJMngm7ka4djPno5vl74ORl
+ SAV_eRUjqknaAqEPgryiQLa36GAVfS6NicCrpDt.U5w5OyevKtYvrCl6u83udOPsQf1gsA1aRJVc
+ evk236WmJm0LdqzN_xHWWFFN9g0vSubQLeyKoUXFt1Ru2XxX3B8VQHME-
+X-Sonic-MF: <abdul.rahim@myyahoo.com>
+X-Sonic-ID: 3f86b400-b84b-40d7-bc51-9595ddb8a81e
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.sg3.yahoo.com with HTTP; Mon, 11 Nov 2024 23:01:25 +0000
+Received: by hermes--production-sg3-5b7954b588-f8smd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 7fa1234fe99fc0a71fe48f5ec805f6a6;
+          Mon, 11 Nov 2024 22:10:42 +0000 (UTC)
+From: Abdul Rahim <abdul.rahim@myyahoo.com>
+To: xiubli@redhat.com,
+	idryomov@gmail.com
+Cc: ceph-devel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Gao Xiang <xiang@kernel.org>,
-	Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v4 00/33] netfs: Read performance improvements and "single-blob" support
-Date: Mon, 11 Nov 2024 10:12:33 +0100
-Message-ID: <20241111-kochkunst-kroll-f8386db7f273@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241108173236.1382366-1-dhowells@redhat.com>
-References: <20241108173236.1382366-1-dhowells@redhat.com>
+	Abdul Rahim <abdul.rahim@myyahoo.com>
+Subject: [PATCH] Use strscpy() instead of strcpy()
+Date: Tue, 12 Nov 2024 03:40:37 +0530
+Message-ID: <20241111221037.92853-1-abdul.rahim@myyahoo.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4915; i=brauner@kernel.org; h=from:subject:message-id; bh=eLegIPzm6kl+o1xbtiBt0w/Vn129KLVaIrdkjfKYWaA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQbnuoTcJer1I9iZPy/KXnXkR3yzUvPeSUdKhatyKkPP 1/h4qTTUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJHXyowMJ73NZvvz71XzWu/R kX/O6mpbvrbzAbX0naeF5dI9IzTqGRmeOOw/3D7HYsVKm7tHJ/g+THnPZ3IgVWj+mYxQHlHHyPM MAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+References: <20241111221037.92853-1-abdul.rahim.ref@myyahoo.com>
 
-On Fri, 08 Nov 2024 17:32:01 +0000, David Howells wrote:
-> This set of patches is primarily about two things: improving read
-> performance and supporting monolithic single-blob objects that have to be
-> read/written as such (e.g. AFS directory contents).  The implementation of
-> the two parts is interwoven as each makes the other possible.
-> 
-> READ PERFORMANCE
-> ================
-> 
-> [...]
+strcpy() is generally considered unsafe and use of strscpy() is
+recommended [1]
 
-Applied to the vfs-6.14.netfs branch of the vfs/vfs.git tree.
-Patches in the vfs-6.14.netfs branch should appear in linux-next soon.
+this fixes checkpatch warning:
+    WARNING: Prefer strscpy over strcpy
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy [1]
+Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
+---
+ fs/ceph/export.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+index 44451749c544..0e5b3c7b3756 100644
+--- a/fs/ceph/export.c
++++ b/fs/ceph/export.c
+@@ -452,7 +452,7 @@ static int __get_snap_name(struct dentry *parent, char *name,
+ 		goto out;
+ 	if (ceph_snap(inode) == CEPH_SNAPDIR) {
+ 		if (ceph_snap(dir) == CEPH_NOSNAP) {
+-			strcpy(name, fsc->mount_options->snapdir_name);
++			strscpy(name, fsc->mount_options->snapdir_name);
+ 			err = 0;
+ 		}
+ 		goto out;
+-- 
+2.43.0
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.14.netfs
-
-[01/33] kheaders: Ignore silly-rename files
-        https://git.kernel.org/vfs/vfs/c/3033d243b97c
-[02/33] netfs: Remove call to folio_index()
-        https://git.kernel.org/vfs/vfs/c/f709cec9dc52
-[03/33] netfs: Fix a few minor bugs in netfs_page_mkwrite()
-        https://git.kernel.org/vfs/vfs/c/07a80742a52b
-[04/33] netfs: Remove unnecessary references to pages
-        https://git.kernel.org/vfs/vfs/c/53f5f31a1549
-[05/33] netfs: Use a folio_queue allocation and free functions
-        https://git.kernel.org/vfs/vfs/c/1d044b4cb3e9
-[06/33] netfs: Add a tracepoint to log the lifespan of folio_queue structs
-        https://git.kernel.org/vfs/vfs/c/7583f643f714
-[07/33] netfs: Abstract out a rolling folio buffer implementation
-        https://git.kernel.org/vfs/vfs/c/2029a747a14d
-[08/33] netfs: Make netfs_advance_write() return size_t
-        https://git.kernel.org/vfs/vfs/c/34961bbe07a5
-[09/33] netfs: Split retry code out of fs/netfs/write_collect.c
-        https://git.kernel.org/vfs/vfs/c/8816207a3e26
-[10/33] netfs: Drop the error arg from netfs_read_subreq_terminated()
-        https://git.kernel.org/vfs/vfs/c/44c5114bb155
-[11/33] netfs: Drop the was_async arg from netfs_read_subreq_terminated()
-        https://git.kernel.org/vfs/vfs/c/3c8a83f74e0e
-[12/33] netfs: Don't use bh spinlock
-        https://git.kernel.org/vfs/vfs/c/5c962f9982cd
-[13/33] afs: Don't use mutex for I/O operation lock
-        https://git.kernel.org/vfs/vfs/c/244059f6472c
-[14/33] afs: Fix EEXIST error returned from afs_rmdir() to be ENOTEMPTY
-        https://git.kernel.org/vfs/vfs/c/10e890507ed5
-[15/33] afs: Fix directory format encoding struct
-        https://git.kernel.org/vfs/vfs/c/c8f34615191c
-[16/33] netfs: Remove some extraneous directory invalidations
-        https://git.kernel.org/vfs/vfs/c/ab143ef48b3b
-[17/33] cachefiles: Add some subrequest tracepoints
-        https://git.kernel.org/vfs/vfs/c/46599823a281
-[18/33] cachefiles: Add auxiliary data trace
-        https://git.kernel.org/vfs/vfs/c/499c9d489d7b
-[19/33] afs: Add more tracepoints to do with tracking validity
-        https://git.kernel.org/vfs/vfs/c/606d920396fd
-[20/33] netfs: Add functions to build/clean a buffer in a folio_queue
-        https://git.kernel.org/vfs/vfs/c/823f8d570db5
-[21/33] netfs: Add support for caching single monolithic objects such as AFS dirs
-        https://git.kernel.org/vfs/vfs/c/5ae8e69c119a
-[22/33] afs: Make afs_init_request() get a key if not given a file
-        https://git.kernel.org/vfs/vfs/c/bfeb953ddf0b
-[23/33] afs: Use netfslib for directories
-        https://git.kernel.org/vfs/vfs/c/2b6bae4ca558
-[24/33] afs: Use netfslib for symlinks, allowing them to be cached
-        https://git.kernel.org/vfs/vfs/c/a16c68c66f52
-[25/33] afs: Eliminate afs_read
-        https://git.kernel.org/vfs/vfs/c/b84e275b6da2
-[26/33] afs: Fix cleanup of immediately failed async calls
-        https://git.kernel.org/vfs/vfs/c/355d07737082
-[27/33] afs: Make {Y,}FS.FetchData an asynchronous operation
-        https://git.kernel.org/vfs/vfs/c/e31fb01515da
-[28/33] netfs: Change the read result collector to only use one work item
-        https://git.kernel.org/vfs/vfs/c/1bd9011ee163
-[29/33] afs: Make afs_mkdir() locally initialise a new directory's content
-        https://git.kernel.org/vfs/vfs/c/4e93a341aec1
-[30/33] afs: Use the contained hashtable to search a directory
-        https://git.kernel.org/vfs/vfs/c/08890740b1d7
-[31/33] afs: Locally initialise the contents of a new symlink on creation
-        https://git.kernel.org/vfs/vfs/c/d4f4a6bde676
-[32/33] afs: Add a tracepoint for afs_read_receive()
-        https://git.kernel.org/vfs/vfs/c/f06ba511d8d5
-[33/33] netfs: Report on NULL folioq in netfs_writeback_unlock_folios()
-        https://git.kernel.org/vfs/vfs/c/19375843912f
 
