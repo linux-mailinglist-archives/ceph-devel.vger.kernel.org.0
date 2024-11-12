@@ -1,108 +1,84 @@
-Return-Path: <ceph-devel+bounces-2071-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2072-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA5D9C4EBE
-	for <lists+ceph-devel@lfdr.de>; Tue, 12 Nov 2024 07:22:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7589C63C5
+	for <lists+ceph-devel@lfdr.de>; Tue, 12 Nov 2024 22:50:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8943287DF4
-	for <lists+ceph-devel@lfdr.de>; Tue, 12 Nov 2024 06:22:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78B1AB23118
+	for <lists+ceph-devel@lfdr.de>; Tue, 12 Nov 2024 21:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21687209F2D;
-	Tue, 12 Nov 2024 06:22:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11854219E5F;
+	Tue, 12 Nov 2024 21:16:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="G5utOPbN"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QsXA01Io"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC8819EED4;
-	Tue, 12 Nov 2024 06:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E36149DFF
+	for <ceph-devel@vger.kernel.org>; Tue, 12 Nov 2024 21:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731392520; cv=none; b=SVExE+r1fTy+ruFCUEkiMKzOCte7ZoS/6Z7ro5QcLkO2cllMuWa2WWn2LO5zZpPVxph4dvLWhnYApvwVlKnbiQB8mcYq2ImuxxboXiaIlgdSaqQQfrNAzCL4MnpGG9QhZ5lcq/Nd+RJiG2veB3U6zzjQRgjOrTFMTRC44fLGexI=
+	t=1731446174; cv=none; b=dUxwQrIUJdWnuOHjpo3Jga1BTkjZdrzuRZC+GL3/hsqTo5UtxaU1ljIqu0uLfn1XYuv5EEr7Akhl5llLlPUurLzit7YvmgiFzsmPtJdpChB1MEeoQMvAi9S2kLWhckhzmfqO20aWBZoFVyB4Gu+pJLaPjmyv1BZ3FGLUXtBek0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731392520; c=relaxed/simple;
-	bh=r2QCV0892MPtZWYZl539dJKThx3xuUvps7cOqsg/zi4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cv4oE9xHl0KHYak9baMTJkptZGqEg6UYbvjMz1BmQzL+fsOTLFm1xnc+dHwIYMZb10hHblqdgvORZ+O332iFXNJVqp5DvQZyFDz8Q44espqBJnkbINkRazZRa3MAnuBDL+Olc3mFJyNbQPriZjh/cpiA/IWyYSQND9D3ivUjzdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=G5utOPbN; arc=none smtp.client-ip=80.12.242.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id AkHitiEQVSqkGAkHjt2eYJ; Tue, 12 Nov 2024 07:21:55 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1731392515;
-	bh=1uiG7k/zawHrJQJxDGDleKSXD1C3nsDmTYzQhxgWjX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=G5utOPbNY/SBfuwz1mH8ZkOzAMXnnfsUz8/+uYi+2hl4d0yvwSmP7qucjW2ST8iQ8
-	 2u37G7F0lRfdndEHQ5l3+lQODynQc+934DAuv94quLiiad3yiwX3cUf8oKNit+B547
-	 R/1oODiK7N/MKmiZvfMsR3AYq6b4khuiX+K1PM0o/Z6vLcHM5yg7qxBFV/qGn4KmJk
-	 P5nPweircKOyXDVAEeY/UCBYXDWt0t1JPrJBdBF5Uz4yQSuHrfBSLrNHrQpNlZSQOy
-	 Xln74cz8vGA792HcosMI2eUhR/IHHQPrvj/yqjn4zAiOwvTDkBD5JZ5cbzZQfuehFR
-	 rbd8f6LwiAgJw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 12 Nov 2024 07:21:55 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <8fef8eab-cd82-4e05-ad9b-1bb8b5fe974b@wanadoo.fr>
-Date: Tue, 12 Nov 2024 07:21:54 +0100
+	s=arc-20240116; t=1731446174; c=relaxed/simple;
+	bh=idgxBwg+ecmwQcPU8J7cbMzIR9H2YKpY1e19001XMEg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nadh1tuTaR3M2vX+KvX2s4HEqTegxI0zYEUs48PZzNw15gXg931EphwjYAYYDG4Do34cheIjV3RLUBazakgYAInXtFCjbbp5RMarHxMhKRinFOKjnXj/pqdMU0EdFQdIAJT3YXNBXzd+cUQgfqu6yowLslsRX7RB8vJNr5JH/ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QsXA01Io; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1731446166;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wYcFeXVW7KhZxdfS3M8PWwaYqDY2atAEB5NmiQdrI4U=;
+	b=QsXA01IoLTbZvYcUDy2kp6PmUxzSK/joDX1DR4euJIP1AHt8h+xHqstix+Ql6Yp26ctWH7
+	LKe80B2VlbNeUAR+8/2L0z9wJS5QYkkVFQNGNq+9e2+5DN9Sdb39tAIAekCfLMftIakP/y
+	3PE0AQKsIL5IVyDLkUj8KTRanob6rOs=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ceph: Use str_true_false() helper in status_show()
+Date: Tue, 12 Nov 2024 22:14:39 +0100
+Message-ID: <20241112211439.207184-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Use strscpy() instead of strcpy()
-To: Abdul Rahim <abdul.rahim@myyahoo.com>, xiubli@redhat.com,
- idryomov@gmail.com
-Cc: ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241111221037.92853-1-abdul.rahim.ref@myyahoo.com>
- <20241111221037.92853-1-abdul.rahim@myyahoo.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241111221037.92853-1-abdul.rahim@myyahoo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Le 11/11/2024 à 23:10, Abdul Rahim a écrit :
-> strcpy() is generally considered unsafe and use of strscpy() is
-> recommended [1]
-> 
-> this fixes checkpatch warning:
->      WARNING: Prefer strscpy over strcpy
-> 
-> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy [1]
-> Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
-> ---
->   fs/ceph/export.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-> index 44451749c544..0e5b3c7b3756 100644
-> --- a/fs/ceph/export.c
-> +++ b/fs/ceph/export.c
-> @@ -452,7 +452,7 @@ static int __get_snap_name(struct dentry *parent, char *name,
->   		goto out;
->   	if (ceph_snap(inode) == CEPH_SNAPDIR) {
->   		if (ceph_snap(dir) == CEPH_NOSNAP) {
-> -			strcpy(name, fsc->mount_options->snapdir_name);
-> +			strscpy(name, fsc->mount_options->snapdir_name);
+Remove hard-coded strings by using the str_true_false() helper function.
 
-This does not compile because when the size of 'name' is not known at 
-compilation time, you need to use the 3-argument version of strscpy().
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ fs/ceph/debugfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please always compile test your patches before sending them. Even, when 
-the change looks trivial.
-
-CJ
-
->   			err = 0;
->   		}
->   		goto out;
+diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+index 24c08078f5aa..fdf9dc15eafa 100644
+--- a/fs/ceph/debugfs.c
++++ b/fs/ceph/debugfs.c
+@@ -357,7 +357,7 @@ static int status_show(struct seq_file *s, void *p)
+ 
+ 	seq_printf(s, "instance: %s.%lld %s/%u\n", ENTITY_NAME(inst->name),
+ 		   ceph_pr_addr(client_addr), le32_to_cpu(client_addr->nonce));
+-	seq_printf(s, "blocklisted: %s\n", fsc->blocklisted ? "true" : "false");
++	seq_printf(s, "blocklisted: %s\n", str_true_false(fsc->blocklisted));
+ 
+ 	return 0;
+ }
+-- 
+2.47.0
 
 
