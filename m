@@ -1,157 +1,139 @@
-Return-Path: <ceph-devel+bounces-2073-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2074-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2B4A9C6674
-	for <lists+ceph-devel@lfdr.de>; Wed, 13 Nov 2024 02:06:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC6F9C7CB5
+	for <lists+ceph-devel@lfdr.de>; Wed, 13 Nov 2024 21:16:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F901F2563B
-	for <lists+ceph-devel@lfdr.de>; Wed, 13 Nov 2024 01:06:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F55A1F21A3A
+	for <lists+ceph-devel@lfdr.de>; Wed, 13 Nov 2024 20:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADE7BA34;
-	Wed, 13 Nov 2024 01:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B3517BEC7;
+	Wed, 13 Nov 2024 20:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UKVbaMHl"
+	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="T5K9yH5Q"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic312-20.consmr.mail.sg3.yahoo.com (sonic312-20.consmr.mail.sg3.yahoo.com [106.10.244.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9764A2F5A;
-	Wed, 13 Nov 2024 01:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240AB1442F3
+	for <ceph-devel@vger.kernel.org>; Wed, 13 Nov 2024 20:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731460005; cv=none; b=EcLfVDRgibLchlx2iHWlgnlt+526s/ehYNH8rUTDApJiFTCWF+p+2nJV23pv3ilyPtd9++Z8xLU25uLAqit+7+dxhSnnM6yJJ977SwNt39JacMourmmE5tOIvsPTHeUlkEwTWu23nBYwxROhrj67Nt0Cyij2A1twwhPcugpI6NY=
+	t=1731528953; cv=none; b=kuPQqw0tNSBKfzihrNK5KAE4EdI5UwABZuhbCmhzJUPWicSfGJs46uWCw9JL+Xx7RYb/9078jazPBPZeEAAm/OskGbraF2pHxvEn81MuD5QxOfDlz8TYae6kzPmzeFWa38GH9nhaFN5F1XWD7A19etjWk5WEcMSRgNa+GmxYs6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731460005; c=relaxed/simple;
-	bh=jUOI7YM6MSLcyJwnqrB7V58PYe0qyz24mpLSBFMB2VU=;
+	s=arc-20240116; t=1731528953; c=relaxed/simple;
+	bh=Yv3ptKdLEwQGel+r075biMutE2FNylghIJrzYRKibkQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EZjEdWxjH1WZP70ucnE0mBoXLiwRrp6zeu5pwsZ/qLaRxTudRxJ7TG6PfOQN45i9BeKyFfxcSWTIu1iwbS+VskgA3/aBXyRe5OzW6ClOEXwMGX0pHXpmEZc3mNNyIxrftWY2CR1adoNyB1SSLOZ94glVwI2JXV/RsdU8eBG4RQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UKVbaMHl; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1731460003; x=1762996003;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jUOI7YM6MSLcyJwnqrB7V58PYe0qyz24mpLSBFMB2VU=;
-  b=UKVbaMHlBXt//1psrCZveNKWcV1SVvJ1QhRZbbOr4mHArrzgoHhNa8Wk
-   q8QmadqvS1cLldwMVn9mrC+57SFTZJuj3kCGF/DsuBlihEGsdpR5eVWoR
-   trLBybJOWZIUQ0OlGw8nTbkUySqpFwp8vF58BsePA9I2IAABpV9qTw0a4
-   aUsIK24B6FH9IKbsCxRQu41tXap/vxzCtp/Xs1N0Mp33AxCQP9u+9vqkz
-   +0l044mxJEANvuJCgT4TXdFjjbDQ+et2WgMzf0ZDx+gJRxEaOtIsMWY0+
-   w4mbNKgxOq+5BuhNH3c7ShWgA5/q0OeIoQxvzcrlNbDK7K8a70lxaIBZM
-   g==;
-X-CSE-ConnectionGUID: DlhmXGw3RA+OmvbOj4vJ9A==
-X-CSE-MsgGUID: /VQbLNJcTHCRw7fQEd2c7Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11254"; a="30730129"
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="30730129"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Nov 2024 17:06:43 -0800
-X-CSE-ConnectionGUID: FyxkOQ9zSl+fFiGokKVcwA==
-X-CSE-MsgGUID: 9IgAG/SiQpi6Ys4JK01k2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,149,1728975600"; 
-   d="scan'208";a="88119007"
-Received: from lkp-server01.sh.intel.com (HELO bcfed0da017c) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 12 Nov 2024 17:06:41 -0800
-Received: from kbuild by bcfed0da017c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tB1qB-0001u5-0y;
-	Wed, 13 Nov 2024 01:06:39 +0000
-Date: Wed, 13 Nov 2024 09:06:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Abdul Rahim <abdul.rahim@myyahoo.com>, xiubli@redhat.com,
-	idryomov@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Abdul Rahim <abdul.rahim@myyahoo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZKP5hq3Tj7+WcrmJU5x7BKApkwXu1i7omAFFm9CfqWWL+AKEwBojJm+So+8ZdF57RjQQzdJFHCACdzu/arb49msvU8k8PCXkx2jKPavFzEXFqWJCm4t9uZyn74NzCNZ9d7iAB/RTdhIlm9uhlN66mYHQPB5k0cHRr++/E/GNHQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=T5K9yH5Q; arc=none smtp.client-ip=106.10.244.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1731528943; bh=beyMROixDhnL0DdVaybfjGhLGJmyzSqp34H2SyKrlBE=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject:Reply-To; b=T5K9yH5Qa2Vpy/6885+JikB9pl3XzUMvpelkJKYwXMwab0XNL84AlxZjfvZIMES1eesNPMS6LI2IWBK5VEtT/H5zli5yfxtyQ2lMtMj+1RP9cdJpTaz+3EnVAdcZH2s8zMOdJrBk9sGTq6ec0x89EUEhsWHsVnf+B/tEYicfidcbClGD8kXzbpMl+KpYXsrs2MClGRnLRue7coRZmURrsX59aXpOMvHCWZRi9U6s9Nwx5pnj8K/b+TnhtXukM3ZdtsyZZU26zclAj6bQIcQaOG+fcsefjOHzJMmwXlOSW2O8wf4pS0N5mebgR4I4hBHYdMryQ9OjPdIxKDL/QoIpww==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731528943; bh=7BkUlhNlWdROeg/t4VTpA8NV7QZPKujHIJEgIZgO5fK=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=CVAsU+HAVgf8j+25cxzy3BQFsiJk9RkbPQKI0KB2anJeAlowqecwdstpyOKItyaaJMIVTehqTQL85Osw/LxBLTqSAifn1yHLEQFaxK10XcwOHreC3yN4c8vcPEErq/dqA1h2mt1P18kBdgpVK4s8RXXS1g+B95ZLaPrfk4FpS6ZH2lope8MEDpKG3NZyYPE205tXZUqtew45VIxjv7TsJ4TbG0NpY4JUWZTzI6XcRDAGfDX9E8nqXfOrUXQ9xsNQKl6iqnrv2M1Y/Mtbg/Z1SwAKl9fVSmtw4uZIY//v5l7+/N1jB2zncVF5RUnEjq+WsAoXa8hdWh0+t4lNoYnbdw==
+X-YMail-OSG: j4YlkUYVM1lPxTS82WrUwVGeJ5E.xjG..XSKQyNUS.Fn8ov9kxCk50AT5kZ4Wo3
+ u8bYRPJcIaGL..aiOimu1BKsAhBdCSXEDXdDKsVhX0aJuJxy1C8ffKxb0mUWrNg0jzeNsnfy.r.n
+ bxhCB3QHsFRuaPkcnGd.02ZrpfsibxIlCURhKxaQDkU2xXdyxZF0x3cmJYWVVyVse2S0Murm1PIL
+ qDXAlpFC3xTc1eIQmXUEs4bFfPzAS6mJDRs3wJSdximX0UtM_JWWMp3J33GBx7iLwPh.qDo9Q9pR
+ zNBTHlphy_lRTyBx0yad1n4aK5vx1sf1257RBrwu9hV4dshMEeodZ6oTl_PavAwm5mZxvgFmMTZ.
+ ka1_MdfKMm26YyTtPf_WW5wY5z49nXdisyJ2IOr5V0aoAjybPtzNeq.Gtu3iZlfMAj3f41VrUjVg
+ R9X3ChGX_3pnrdVDyEfIr8zzlUTvufg_EWmbbiMXx9npgoBz1YCJEE5WtLyNhl31l3v4uN9hZpuI
+ UMRTuh_DXotm6wUermt6RhcTs1NHT75YJuGWOnrYkf8J04gE4NoUPS3DkZVmmLv3RAngiNr8vwsy
+ aVrEXQ7_PSRJwkCoRsOLahgJ0N.p60NVi2Gt6QBlzVNfJeeVUtSxy5h5qVVJGF2EnnADh1IRLvo4
+ PW4B3xZH_GsHgGJu_UZioRP8o7zoELi08PE8q8QlYvbaoWMBQEqEuZwSC2SJ5szeVwnlrSmSc3gF
+ 7aGrTr02Je5WqGugmPofgGBRSaehbjgJFdqynyuQ1YRDcpcmLUqXyzbk3sIZn_moDyjH_ph4veDz
+ fe.3pEhnmJdxFFvfnSsAIOcVLmuxKRCLR2XzvEKTU1gDNIWmDISqnPDZUtVId1oeF9sug_YRJL23
+ 3QZ2a4cV5rMcZjWE5zgLcylh7n3oAMGT2uSnQTpOg7WmOUXk34sCSdzCl22QmMqZH.r54IG1qtot
+ Zh3PljRaTYhXKQKiFemM0DYvQBZTSOhPiWL6S.3YjcWPQUNQZyZE5pEL6Wwi.mH1TUMv1K4FP7Wn
+ FG6ZzOJjuR1hx3gPhQkyCKZ5mMmB7_o9wXP0Q5fTydDKuxyxlCgggw_hWzureKg7qxLBfdSK.XFZ
+ oqgLFR1D9LzzeO3mWhCGWNRsOZy2kpwnbufUtngo4s2VRpElNNB09PRs4NWIneA2iDTyLfF1fdmh
+ QMP5rdo9wtdD8mnmagB0EN4fdWLICU2LoI51hflBrACfgEbqDnl_vSLcpHv_0BF_IqMG3M4.FV9Y
+ R3pxy8NVZedgbMDJiyGgXny.o3hqsBtMN8.C2PgqhIIFHhpzX06f6oHlCYJ7ggf3jpGl71i6N_EP
+ JxY8ZjNg8CjodivaH1P2MewI_7e7ogZWIhUHco27kbxCYDaHDh8Rh3Rct65_RKC3Z3gztqBSEVhK
+ NylAng.KkoedJEGg3CqJ9ucDEybhD5GdD.gg5MByg0YvNCPrOhNAWkEOFlUNwcqjOh1URDdN67ED
+ qf5iy6fnFWaPQL.pihw2FEi3TVZPmP1_PfGsgPLLIiE3B3mOPyo4AT1LerPl_jNnDpteLJ8bWt6P
+ 6D.7PCzTqukIbH1Sjdi.nG0CO.qPJYj6TckS._D1oz3kzeW4UCJuWrTYpeIIKla0IXPNajGlA3PL
+ 3hCjIEl75EJmG5w3sbtqzRljrPDLZ307NQhL4txZ1jFVtsMGUdCG9WjURTZOtO_4s9dyYmBxilyy
+ zJIblZodf70kJt2iZv5ZHvVPNphDpbmpRXD1KLsQkzoU3hshbBEB2xYvsNI1O3J8NR5r57pvDegk
+ c5ob1NHGVD6yF7WOgpLB20E6.lH7bcKQ4REgXepfHgosOzKF2oWf7dgy6MWVYuCDe2szqI9Fl4Q8
+ pOtfSY5ZwG9HAP3fiWnS2Gj3pgZ3vAS5qQZqzgsarIjJ112FKhit7ddBy5CyG8qvtNl3qv4k0vO5
+ 7AThxJybRyWV3SbrSGhPADshglj4eQ3maAjFSfB56WvA_.7X.Jd8LirNVDkgWw0qrkSB.TQ_5dQe
+ m3VzyF5tJfZo2HGGRwIzkMyE5r2rg6q74zY1fWRhLdWtHXXSBaUD_v2dhfyhDbsNCZHa8ocoGylX
+ VQpEMlZsUw0T.7AuA.JBYBUst.AcJ2L_bf6YJvYIqHDouwtlF1KPL8t4iR8QgkL86ylN6XHzrWYI
+ avyexg9GYafPqk7dREQp7hmSGj.V8LLCUxShbu6rLTbmWlgae__RyW5jauAhndQcQtxRyBOGOS3B
+ QpBAjqb6rMR8fwLEd3UkDlQr5G4MSFsI-
+X-Sonic-MF: <abdul.rahim@myyahoo.com>
+X-Sonic-ID: 6c3f9df7-3f61-4b16-aa46-bb221d09a195
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.sg3.yahoo.com with HTTP; Wed, 13 Nov 2024 20:15:43 +0000
+Received: by hermes--production-sg3-5b7954b588-7n7t7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6e35b61bd0fa8f5014433ff06e4d5859;
+          Wed, 13 Nov 2024 20:15:38 +0000 (UTC)
+Date: Thu, 14 Nov 2024 01:45:35 +0530
+From: Abdul Rahim <abdul.rahim@myyahoo.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] Use strscpy() instead of strcpy()
-Message-ID: <202411130853.c11sinW2-lkp@intel.com>
-References: <20241111221037.92853-1-abdul.rahim@myyahoo.com>
+Message-ID: <o6dz6grwkknan6er5lig6i37ocfekn6i3fljltptn7aol45sfl@n5amdhwr7wmt>
+References: <20241111221037.92853-1-abdul.rahim.ref@myyahoo.com>
+ <20241111221037.92853-1-abdul.rahim@myyahoo.com>
+ <8fef8eab-cd82-4e05-ad9b-1bb8b5fe974b@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241111221037.92853-1-abdul.rahim@myyahoo.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8fef8eab-cd82-4e05-ad9b-1bb8b5fe974b@wanadoo.fr>
+X-Mailer: WebService/1.1.22876 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Hi Abdul,
+On Tue, Nov 12, 2024 at 07:21:54AM +0100, Christophe JAILLET wrote:
+> Le 11/11/2024 � 23:10, Abdul Rahim a �crit�:
+> > strcpy() is generally considered unsafe and use of strscpy() is
+> > recommended [1]
+> > 
+> > this fixes checkpatch warning:
+> >      WARNING: Prefer strscpy over strcpy
+> > 
+> > Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy [1]
+> > Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
+> > ---
+> >   fs/ceph/export.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+> > index 44451749c544..0e5b3c7b3756 100644
+> > --- a/fs/ceph/export.c
+> > +++ b/fs/ceph/export.c
+> > @@ -452,7 +452,7 @@ static int __get_snap_name(struct dentry *parent, char *name,
+> >   		goto out;
+> >   	if (ceph_snap(inode) == CEPH_SNAPDIR) {
+> >   		if (ceph_snap(dir) == CEPH_NOSNAP) {
+> > -			strcpy(name, fsc->mount_options->snapdir_name);
+> > +			strscpy(name, fsc->mount_options->snapdir_name);
+> 
+> This does not compile because when the size of 'name' is not known at
+> compilation time, you need to use the 3-argument version of strscpy().
+> 
+> Please always compile test your patches before sending them. Even, when the
+> change looks trivial.
+> 
 
-kernel test robot noticed the following build errors:
+Sure.
 
-[auto build test ERROR on ceph-client/testing]
-[also build test ERROR on ceph-client/for-linus linus/master v6.12-rc7 next-20241112]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> CJ
+> 
+> >   			err = 0;
+> >   		}
+> >   		goto out;
+> 
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Abdul-Rahim/Use-strscpy-instead-of-strcpy/20241112-064257
-base:   https://github.com/ceph/ceph-client.git testing
-patch link:    https://lore.kernel.org/r/20241111221037.92853-1-abdul.rahim%40myyahoo.com
-patch subject: [PATCH] Use strscpy() instead of strcpy()
-config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20241113/202411130853.c11sinW2-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241113/202411130853.c11sinW2-lkp@intel.com/reproduce)
+Should it be: NAME_MAX+1 ? 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411130853.c11sinW2-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/linux/bitfield.h:10,
-                    from include/linux/fortify-string.h:5,
-                    from include/linux/string.h:390,
-                    from include/linux/ceph/ceph_debug.h:7,
-                    from fs/ceph/export.c:2:
-   fs/ceph/export.c: In function '__get_snap_name':
->> include/linux/build_bug.h:16:51: error: negative width in bit-field '<anonymous>'
-      16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); })))
-         |                                                   ^
-   include/linux/compiler.h:243:33: note: in expansion of macro 'BUILD_BUG_ON_ZERO'
-     243 | #define __must_be_array(a)      BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-         |                                 ^~~~~~~~~~~~~~~~~
-   include/linux/string.h:79:47: note: in expansion of macro '__must_be_array'
-      79 |         sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) +    \
-         |                                               ^~~~~~~~~~~~~~~
-   include/linux/args.h:25:24: note: in expansion of macro '__strscpy0'
-      25 | #define __CONCAT(a, b) a ## b
-         |                        ^
-   include/linux/args.h:26:27: note: in expansion of macro '__CONCAT'
-      26 | #define CONCATENATE(a, b) __CONCAT(a, b)
-         |                           ^~~~~~~~
-   include/linux/string.h:113:9: note: in expansion of macro 'CONCATENATE'
-     113 |         CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src, __VA_ARGS__)
-         |         ^~~~~~~~~~~
-   fs/ceph/export.c:455:25: note: in expansion of macro 'strscpy'
-     455 |                         strscpy(name, fsc->mount_options->snapdir_name);
-         |                         ^~~~~~~
-
-
-vim +16 include/linux/build_bug.h
-
-bc6245e5efd70c Ian Abbott       2017-07-10   6  
-bc6245e5efd70c Ian Abbott       2017-07-10   7  #ifdef __CHECKER__
-bc6245e5efd70c Ian Abbott       2017-07-10   8  #define BUILD_BUG_ON_ZERO(e) (0)
-bc6245e5efd70c Ian Abbott       2017-07-10   9  #else /* __CHECKER__ */
-bc6245e5efd70c Ian Abbott       2017-07-10  10  /*
-bc6245e5efd70c Ian Abbott       2017-07-10  11   * Force a compilation error if condition is true, but also produce a
-8788994376d84d Rikard Falkeborn 2019-12-04  12   * result (of value 0 and type int), so the expression can be used
-bc6245e5efd70c Ian Abbott       2017-07-10  13   * e.g. in a structure initializer (or where-ever else comma expressions
-bc6245e5efd70c Ian Abbott       2017-07-10  14   * aren't permitted).
-bc6245e5efd70c Ian Abbott       2017-07-10  15   */
-8788994376d84d Rikard Falkeborn 2019-12-04 @16  #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); })))
-527edbc18a70e7 Masahiro Yamada  2019-01-03  17  #endif /* __CHECKER__ */
-527edbc18a70e7 Masahiro Yamada  2019-01-03  18  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+See: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/exportfs.h?h=v6.12-rc7#n203
 
