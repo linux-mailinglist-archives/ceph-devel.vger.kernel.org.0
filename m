@@ -1,173 +1,119 @@
-Return-Path: <ceph-devel+bounces-2076-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2077-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18C59C86D2
-	for <lists+ceph-devel@lfdr.de>; Thu, 14 Nov 2024 11:05:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A18029C8CCA
+	for <lists+ceph-devel@lfdr.de>; Thu, 14 Nov 2024 15:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60CB8286430
-	for <lists+ceph-devel@lfdr.de>; Thu, 14 Nov 2024 10:05:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66FE4281D6B
+	for <lists+ceph-devel@lfdr.de>; Thu, 14 Nov 2024 14:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C381DEFFE;
-	Thu, 14 Nov 2024 10:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DEF2A1D1;
+	Thu, 14 Nov 2024 14:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="lBvUpBi7"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="H3gWrOrL"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from sonic309-19.consmr.mail.sg3.yahoo.com (sonic309-19.consmr.mail.sg3.yahoo.com [106.10.244.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward101a.mail.yandex.net (forward101a.mail.yandex.net [178.154.239.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F412714EC47
-	for <ceph-devel@vger.kernel.org>; Thu, 14 Nov 2024 10:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FEA2943F
+	for <ceph-devel@vger.kernel.org>; Thu, 14 Nov 2024 14:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731578731; cv=none; b=XoMQV9s6YRmGcwYUAxLNhIm1Xd1IU/TeFbIwAAo3Bm9EMn93lj/zNZKq3i78dxWZt5890vlo+Ys2aUu2L3d3wnp+J5+9LR36UFoaFhEgUWFu+/Sevrb/7DMn5bxrbIInECAY+SYE2AddnrqPqeWy9aEyL5HP4USv/ukek2fGTxk=
+	t=1731594279; cv=none; b=ZXhvVwxXGPoGxb9oikAJ9I/ObP3GRB6j2xN2dsNW5XnRjvYv+SSnImpH2aUQmgwh4I6m7Dj7egtUUn3tT8/tbt/A56bvFNQR04ZvgCCXJAcnrN/p21tiCRDGC2pwRj73Vs4KqtJ8SVcc9nmC3X4glahtbVWja1OCq1B6SRrkuas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731578731; c=relaxed/simple;
-	bh=ujuFWP5IudXgfr6kb5/OHHUrPYxNktMIuuva0b0QnDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F3K+IxIaDHoVH060AQrwZWktCyw7/FQbliYttsD1t97FQsUiB8why7lp/C8e/B4V3SMDwR9Dw9gSvjifVcdLb6xfqSSFJAt1qJ2iHxk3GCS479TMP8fMcZ/7NiIzC9ljpJF4/LKpwakTuMygtsmTgJ7UiqsDR+/Xqmx5V1C7B7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=lBvUpBi7; arc=none smtp.client-ip=106.10.244.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1731578728; bh=gJpyH1C6EU8gW7Mszbb3z0hswoif4TAAEvnVJ+e8GeA=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject:Reply-To; b=lBvUpBi7se7efhfHmpynDcOwL6EpXD7dHjgT1I6GieWh238JehC/uW0OFSu5kKyPTII6scFkV37DkEtDTgQotiPSxqUxyNjuJ74aAopmpwKTi1xAElAqCmBJouwsJYjHXOV9pgDLoWsdLo1K5poFslSXyz+9fMHVQ9B8Qig8sibvNMu/P311djFGjbw6nxd3N9kYkSV6WdpNVBiyOhNQeb3ijzol1U0ZwtFYhvY+VyXPCskK9XAeLcmWALX6/yKlAOtJxWjOBrxk7ZpZ3RhRG0T28vS29QisGJV/Ufigm/qP4fCvOwBeTW6oNbJ/1dUYxTpxCfRG3BHLK+OZp8BOPw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731578728; bh=lBe5VbBjO0vojkhKRdnMgU7CxsB4q6tTEol1Bl4/xUm=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=qkvFaay+E/aaMU2ErxDQfyoPxt50kezzoJlvG2cBk75jo/V94W5y1UOvEgk3u2q6/KuGK+wTwRKnOCZVk0uP8Mb9BV6dr9b0bY2gsol/J5JETc2mS8eV7iybux1iwwkJllhS/puTJhwa1yHANLw4rAWl7p8YZq54+6UcnRJ9q7j5O1KG9dIT6uenZYUL83yb2csI5eQhTlklIAxbriZoN+W59XPlO+eOGBtTw3CaCWjqhpQoZpl8zwoatzGSDVQUy0BMcjuvTSk/PyTJP6Z7HFN7vKEaqOpMSEDwvnpjEQ5tFBYd6/kpizSB+yjaUooAEWqvGqrmTTpwWvd3SEe3sg==
-X-YMail-OSG: 3um2ik0VM1n7muLuBxDgs_7b.c839jmepRhQwuTLuzCwrqPBp3QiuvVlXIhVwC6
- cmwVbWkI26TjX5Zx_pY9pgKF.J.S8wfNE_N5nkem4l4liRdVCOZFoWTHiwkuKd4vawBcXwtfnk6m
- ZjzdHLv.JZesvb7XA36yTVPeMyNNtiA.7p3AlXZ7GUq0UOsXHMNDjncp2SeEmlocNqQW46VBbvN0
- VbrgVf4e2qUca7lAl4t2q0H3x9zjN9qqp.D_lBK_bugSuJH.ycLfZh5EirFBK2T.RVgc6lsO6Gdz
- _VAM6F3nd340cH2lyguMhxGgO853RQlsXfGi8x_oKL69Zl90snmtm7Fth.DMgZxE3Bm9NKZDyaQd
- 4l.6CHjuKQ0tI922mMHxlMvSiUmhIXPcQPXQPu.uo8ClE9xaIoSL6.PMwkanPkcxvIDCwqeMRF8F
- f0DuV58XIJMdkc54JKdqVdJE8w0r5J96G9n4BQRq0MpaKhM6YuGT7Y9dq.mw_zUmNC.Ej19poZWr
- DDFZG.SvVj4UcTiynXj4XuZ2KYT.Dc6NvBh6lshZqQd26ejCV6ewFnZtVwqQpPWx0tOJdiNQCXUG
- kXvfj0kpHnsCD1owgzES6W44obbMiaSfC20e_Mj0rLfmQwdaWnn3CmcOkaBu3z7fQ9INWaRk1YWv
- Fu3iCb69mcbrO0vx2AC0Wy0uKS0dWtB18asbTSvX.h2fixMRPBdBKz_uB_U0VKX3kSImsRna8x27
- x9TmDsJaMI.2Hie5aWh5QJP.JuGoB0pg.xxs9FSyFB4SaC_hYMVS0AhPzMVP381p4yuOryntO23_
- Mb9K7996Ywq20RJjhj5mCn0.BDGbvpmDEUhJ7hRWRxGl7kcG.XDFIqesm0h7WjnISoaYi3FJ63YS
- yOv7_IhMjrMA4Ol5_yveTsjY.6ElNX4Zsaqx6HjmKEpWqxw_1zTVsecTuP7gXUN6oBqB06G1aRm_
- asflfyaPViWEdMWtctygYNfMSggHuKEu13zF_Nizxy2sD5uIRk0kDuwNMofYQ2qvVuuqQyTdVdIK
- MarfOIxAWWs1AwSku_GK5LwaBibAX5zbFlVTrq_Fp4VWJ.8K7CAkQp0wgLGF.jXg.OKfvbqEoHdU
- yQgE1wZYSLeywOFwWCxHjIC5G9VCb0VoPgiXAVBPtfSDP8B1VVMN63laVXIVUX1wZLBfNQzmZkkJ
- OSbuaM2zN6jfWhBw5SzRVqs3nEGiTPyzEdmviQU_0wKZdbA4X8DRklkSQFnoM9V0JgMiRvUhUikm
- ym_eb0u9tIaCiLfNaLeDm6NhQOpfeT5heLSH.cISvFZYO8OozIet6HYMEvAh932hIV0c.G4kiG7T
- shPBYIKklJjtMZgccbWhJA66uMrDq9C2BkAYhDm7Ax4KKr9JebTne4h7AasG80MvD.1R.MLINmBj
- P8t8lzAGlEculpHByDPEWXlBDZEL3DwcJmmpWItDfvH8z8qYh_8lWnVWvJiBt4.4zWNl6NkNrDZX
- YJV3dPFn3gbRlpu9q33ogrY4b7HFErGoMvNx.DQP5k0Mc5XaRK6Yi_K_glxxI9yo79bBF4qGGPnL
- uyPO7aqZ0TZu3WEGr95X46VJhSA3lyJl3d8fFZo3.UFr17YZzvsGNDZdXimdVJLAenq1BFtJ3zgn
- URWTwSbVfGUz5VIUC9nE0cJFqRP8VruP06w8oDYZrJyo9EJiexYs6.QZtmTRvSHUXKINR_U2CH_e
- 66FhhshbgwdP5gBmT4F21WwlheC3JaCcbZnA2S981Wu_AFys3SohbJEw4dzR3nUBdEk4oXRIVefc
- CONxUblgHfN4EjZ08FkrGTrCgSJQAMvtI5cJPvJtn0lWRlSVO2r1jZS.aLvlq1xiL5sRm24xbUSB
- TgYIsdUKl_K8jREBKRRUQRPH.XV_FEq1zgRcoBOZZ3znN06VJf.YBcvVA.VpyGIaB.eHq6l4F6lo
- Wsq5BDjIAM7c0D1uq7zVJSNi3KSGnRa4B6Ws5se3wCWXnX_dk94pe.DAXVP83vJ53pVZUq2GaCfQ
- Vn98nAinSvN03bWq6.1DjFamRJihFGyG_oDuXYuzRJVRxHf.pAnS4j3arGoygBDjLN.I.75nleI.
- feFcSV8uwJ_UeSqMRHT3S18ZWODkrcROWR5u4okmoFiVEqcpjI.559kAJ4Lj9aSWPiPu54803_yO
- q0SJvwhVw6mmAAJ7CWN0MoxhUyd5nkJ25RPMWF5F3mYQ5wh_fHamHwu3Bg823.bqnVNO1yGpi9kd
- rk1CnXI8wM2cwZFYhe1MPEvE2h7cwOxU-
-X-Sonic-MF: <abdul.rahim@myyahoo.com>
-X-Sonic-ID: b5178632-0830-41e3-b50d-21924672062e
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.sg3.yahoo.com with HTTP; Thu, 14 Nov 2024 10:05:28 +0000
-Received: by hermes--production-sg3-5b7954b588-xx7q2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f67cf62a101493f495e2da74bb42cb27;
-          Thu, 14 Nov 2024 09:14:46 +0000 (UTC)
-Date: Thu, 14 Nov 2024 14:44:42 +0530
-From: Abdul Rahim <abdul.rahim@myyahoo.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Use strscpy() instead of strcpy()
-Message-ID: <bigyu3u3rawsy5c5oxpe7xpmq24jhuxdrnklplaqjs2san7jxh@k3k2ypxcdspk>
-References: <20241111221037.92853-1-abdul.rahim.ref@myyahoo.com>
- <20241111221037.92853-1-abdul.rahim@myyahoo.com>
- <8fef8eab-cd82-4e05-ad9b-1bb8b5fe974b@wanadoo.fr>
- <o6dz6grwkknan6er5lig6i37ocfekn6i3fljltptn7aol45sfl@n5amdhwr7wmt>
- <e7cfb6b2-51a4-4c8e-9c43-20653bd1443f@wanadoo.fr>
+	s=arc-20240116; t=1731594279; c=relaxed/simple;
+	bh=xzMxe90Huz6utt9AZb0F8nnbLzpNCZVdw7AUybkeZwM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T62DdQBmPOvULvSMpc6g2ffVxzhlsGMP4dBaOLp8B69nITmuvA9jJSo5Bq8REPpxX03ja8nus9u1Pqpasi4ezWsRuMcU5hPGS6B5W3vvzpHjR+NWIvQPaP4tdfsZHYwdIgSqWgiRo/uZPSX/9qiIlItOPKuLBEejLIVVzpvcSAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=H3gWrOrL; arc=none smtp.client-ip=178.154.239.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:c110:0:640:2b5b:0])
+	by forward101a.mail.yandex.net (Yandex) with ESMTPS id 7040760A96;
+	Thu, 14 Nov 2024 17:24:26 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id PONBhZQOqOs0-RP5gQHaZ;
+	Thu, 14 Nov 2024 17:24:25 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1731594265; bh=SMsV7QxlmpUjdzvJWoPIcb/3xzQMpy6/p+njmuho8BI=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=H3gWrOrLTSLK2TVgg5A91u4UHdmLv6t0Gb94xMjSgGAK9KFE9SkS5w5R0/MINrM4q
+	 s5q+rY2j+WuInlmX5CQGXpZ4k7XTdIlpNFQHwQPArdMHi7uWhq1Lu6MhaSyiJXn8pk
+	 eQlgov5VI6UB3bbk1s65Ac4wqYm0gA3q4rRNK/+A=
+Authentication-Results: mail-nwsmtp-smtp-production-main-73.iva.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Dmitry Antipov <dmantipov@yandex.ru>
+To: Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>
+Cc: ceph-devel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Dmitry Antipov <dmantipov@yandex.ru>
+Subject: [PATCH] ceph: fix overflow detection in build_snap_context()
+Date: Thu, 14 Nov 2024 17:23:28 +0300
+Message-ID: <20241114142328.505379-1-dmantipov@yandex.ru>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e7cfb6b2-51a4-4c8e-9c43-20653bd1443f@wanadoo.fr>
-X-Mailer: WebService/1.1.22876 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Wed, Nov 13, 2024 at 10:28:36PM +0100, Christophe JAILLET wrote:
-> Le 13/11/2024 � 21:15, Abdul Rahim a �crit�:
-> > On Tue, Nov 12, 2024 at 07:21:54AM +0100, Christophe JAILLET wrote:
-> > > Le 11/11/2024 � 23:10, Abdul Rahim a �crit�:
-> > > > strcpy() is generally considered unsafe and use of strscpy() is
-> > > > recommended [1]
-> > > > 
-> > > > this fixes checkpatch warning:
-> > > >       WARNING: Prefer strscpy over strcpy
-> > > > 
-> > > > Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy [1]
-> > > > Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
-> > > > ---
-> > > >    fs/ceph/export.c | 2 +-
-> > > >    1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-> > > > index 44451749c544..0e5b3c7b3756 100644
-> > > > --- a/fs/ceph/export.c
-> > > > +++ b/fs/ceph/export.c
-> > > > @@ -452,7 +452,7 @@ static int __get_snap_name(struct dentry *parent, char *name,
-> > > >    		goto out;
-> > > >    	if (ceph_snap(inode) == CEPH_SNAPDIR) {
-> > > >    		if (ceph_snap(dir) == CEPH_NOSNAP) {
-> > > > -			strcpy(name, fsc->mount_options->snapdir_name);
-> > > > +			strscpy(name, fsc->mount_options->snapdir_name);
-> > > 
-> > > This does not compile because when the size of 'name' is not known at
-> > > compilation time, you need to use the 3-argument version of strscpy().
-> > > 
-> > > Please always compile test your patches before sending them. Even, when the
-> > > change looks trivial.
-> > > 
-> > 
-> > Sure.
-> > 
-> > > CJ
-> > > 
-> > > >    			err = 0;
-> > > >    		}
-> > > >    		goto out;
-> > > 
-> > 
+Since total number of snap contexts is 'u32', it can't exceed
+'(SIZE_MAX - sizeof(...)) / sizeof(u64))'. And if we really
+care about detecting possible overflows, it's better to use
+explicit 'check_add_overflow()' instead. Compile tested only.
 
-> > Should it be: NAME_MAX+1 ?
-> > 
-> > See: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/exportfs.h?h=v6.12-rc7#n203
-> > 
-> > 
-> 
-> Looks like a good idea, maybe with a comment related to get_name() in the
-> export_operations structure, so that we remind where this limit comes from?
-> 
-> CJ
-> 
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-index 0e5b3c7b3756..48265c879fcf 100644
---- a/fs/ceph/export.c
-+++ b/fs/ceph/export.c
-@@ -452,7 +452,12 @@ static int __get_snap_name(struct dentry *parent, char *name,
- 		goto out;
- 	if (ceph_snap(inode) == CEPH_SNAPDIR) {
- 		if (ceph_snap(dir) == CEPH_NOSNAP) {
--			strcpy(name, fsc->mount_options->snapdir_name);
-+			/*
-+			 * get_name assumes that name is pointing to a
-+			 * NAME_MAX+1 sized buffer
-+			 */
-+			strscpy(name, fsc->mount_options->snapdir_name, 
-+					NAME_MAX+1);
- 			err = 0;
+Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+---
+ fs/ceph/snap.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index c65f2b202b2b..3fa5baa73665 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -341,7 +341,11 @@ static int build_snap_context(struct ceph_mds_client *mdsc,
+ 	struct ceph_snap_realm *parent = realm->parent;
+ 	struct ceph_snap_context *snapc;
+ 	int err = 0;
+-	u32 num = realm->num_prior_parent_snaps + realm->num_snaps;
++	u32 num, cnt;
++
++	if (check_add_overflow(realm->num_prior_parent_snaps,
++			       realm->num_snaps, &cnt))
++		return -EOVERFLOW;
+ 
+ 	/*
+ 	 * build parent context, if it hasn't been built.
+@@ -354,8 +358,11 @@ static int build_snap_context(struct ceph_mds_client *mdsc,
+ 			list_add(&parent->rebuild_item, realm_queue);
+ 			return 1;
  		}
- 		goto out;
+-		num += parent->cached_context->num_snaps;
+-	}
++		if (check_add_overflow(parent->cached_context->num_snaps,
++				       cnt, &num))
++			return -EOVERFLOW;
++	} else
++		num = cnt;
+ 
+ 	/* do i actually need to update?  not if my context seq
+ 	   matches realm seq, and my parents' does to.  (this works
+@@ -374,8 +381,6 @@ static int build_snap_context(struct ceph_mds_client *mdsc,
+ 
+ 	/* alloc new snap context */
+ 	err = -ENOMEM;
+-	if (num > (SIZE_MAX - sizeof(*snapc)) / sizeof(u64))
+-		goto fail;
+ 	snapc = ceph_create_snap_context(num, GFP_NOFS);
+ 	if (!snapc)
+ 		goto fail;
+-- 
+2.47.0
 
-
-Looks good?
 
