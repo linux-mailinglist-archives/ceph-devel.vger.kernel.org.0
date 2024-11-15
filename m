@@ -1,58 +1,83 @@
-Return-Path: <ceph-devel+bounces-2080-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2081-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574AB9CDCA1
-	for <lists+ceph-devel@lfdr.de>; Fri, 15 Nov 2024 11:32:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00D7E9CDD66
+	for <lists+ceph-devel@lfdr.de>; Fri, 15 Nov 2024 12:24:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19DD72825DD
-	for <lists+ceph-devel@lfdr.de>; Fri, 15 Nov 2024 10:32:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 576A8B22308
+	for <lists+ceph-devel@lfdr.de>; Fri, 15 Nov 2024 11:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35A11B6539;
-	Fri, 15 Nov 2024 10:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9AF1B2195;
+	Fri, 15 Nov 2024 11:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="rW/eJ1LP"
+	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="UBzKEsqC"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from forward103d.mail.yandex.net (forward103d.mail.yandex.net [178.154.239.214])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic310-19.consmr.mail.sg3.yahoo.com (sonic310-19.consmr.mail.sg3.yahoo.com [106.10.244.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9708B1B5EDC;
-	Fri, 15 Nov 2024 10:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.214
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2380A7D3F4
+	for <ceph-devel@vger.kernel.org>; Fri, 15 Nov 2024 11:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731666720; cv=none; b=nuFoS2ndO+N/hokPS26hEu0Mn+YdalpnAAhf7CtNVKCAfvw+dznjWo/V+6UFA8pMDtgcG0MqQp8hR0w0Xy412slo6yvxKafKOvV8J2XSyW8hlyUsLEI3EmMLbM8iO7PRQ82OdTETPmdGSIvftERL9mgfXF+edmAH5DqIuMGrk14=
+	t=1731669885; cv=none; b=ImgDw6TvNePTeBMYNvjDuAhfxfHZzD/vuL2pJ3TZT8sQxl1WHSnKiSOgB9GqE/6ZvJaBkKwqtQl1cw3ZTWHhttz4q8YFNelBrr4JhCdns7ie4a8C8m+VTb3b5aLuGS2OIpQZL3PR5CaJmToVHNwh8/eFFIcNe8eo1S6qB01AKh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731666720; c=relaxed/simple;
-	bh=RrJaHlVMymGlw8fwDlYcfB8vt61avtxcamuUvFLvaM4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ePLDDgMNPs0pscSytz712MxNUpAIOZjx3/0y0hJYLv1Iev3RPKJpNOM90ouASx1vLe+CUXE+dZq+dCcr7ItZ/8Vp+Fy6/GDIAFFkljAZRXLcQUBtJU/K159mdw5yE8b9PKe3Gk0l0xfWix0fok2483WFiOpaP5aSj9lSpWUrQv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=rW/eJ1LP; arc=none smtp.client-ip=178.154.239.214
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:3143:0:640:c03:0])
-	by forward103d.mail.yandex.net (Yandex) with ESMTPS id C5A256095E;
-	Fri, 15 Nov 2024 13:31:48 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id lVKc247OdSw0-z0zZUYFA;
-	Fri, 15 Nov 2024 13:31:48 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1731666708; bh=uQmpaFKxMGiJXm+HiZXngl2vcYv0imLPVObMGqPD1Ts=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=rW/eJ1LPw8H//qhRi97+TZhMBmWMUv4Bmjl8gyI7K0+/Qvb9I/jxWkuVI4BVUxg0W
-	 kvqTnfAP19d11yn4izjq7Wbvk5HFeTzSPyZqMt1xhhigy0k4E5Ao1Npy+FaiA7J07S
-	 zm3dx6sii1dHHzjTjYVjf0XbmU6XKsakvTsITLsg=
-Authentication-Results: mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-From: Dmitry Antipov <dmantipov@yandex.ru>
-To: Jeff Layton <jlayton@kernel.org>
+	s=arc-20240116; t=1731669885; c=relaxed/simple;
+	bh=t0Fl5hfSyZNiuPBvDejZLRu40BusxN7bDAG45nb+WZg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=L4PgYlosbs2k3VpebWEzMF/HJGDN+jzZj26z04ehV529ZB432BQjvy9Sm9xs0FIBLh8bYrEtKU42sAzFME/QkyZiunb+8Rhdhz4NUKKKFWqXEOaD7C/0QEQQqHQBWT+r7Qjh8kG19S+k8KvfaotquPVhfz9prGyt5awFED01DbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=UBzKEsqC; arc=none smtp.client-ip=106.10.244.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1731669875; bh=slYMq2Zmby0491A1PE7H8ao60Az9AMutaRCL53H62hw=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=UBzKEsqC6jRZgIPLCoQVeFPWXtHsgRSieURYcZ5Ap8oWLFpHXoiiFg1k+ufRAVqTVIRaz49LRLRLiXPqahoLgpo9PqYl1eJVRkVBS2rcTuvlXIOFR7jhX6y7Jk9VggnW8K2x6wHDVCvNQYDMNqBi4gseCBIOQ1uLG/5IdYS98ODQbshproUyxq7yM0mR5XVIkj9wPc+WzP7T6qKIH7W0YKz+Wtgjho8WL2ElE+SRjmE4NTa7pzcp6h5f/Dyx7SKBl+Y/HF7xuKJ99EWhZr2n90PvSWYpgvwcFKZOBRvmTsqNu5luKUEoZMhDY6mTJDYvKSoxenfUsJxn7OOX47Widw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731669875; bh=zNitpFp8uUxC1vF8jUB/vl1kv8bRHd2Yq1qQ3KoSzwO=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=nh03Wytec4Rp9xXsV5r0Alh40FTZhZp0/YBxUYFvVktvXC8DaURlwd3DGTj79o06fIRz7U4XM0nRaunxLfariFar+60nVBI5Tr+YaxTaYnaUJWx4YgUENeYbFkeaMGph/aFl2M8VVqzmSmXeeipVnNXRtv8N9QJYDq4XXYHffx6ubCjWghOC+ia9tZoU/IhSt8s54YMpuJO9iuzt2+o+VTp9stOLf+JRcidULG6BTukH7qUtpYtjug+WcBaPqug51OUlJbhVwbTPWfMQj5T7tJ7CAne0A+QqEtR8A+mNYD7gL2eBs6OxxnwOoVDei68pUuNne1uLyxruCxqNDm9hcg==
+X-YMail-OSG: hejv99EVM1lSPqrykHDhFKDGiuwUHabCln9Os.wApfMRQv8U93ubwdvVb23Bhig
+ uskkdF6Ojqrt3SLrYydimWZJSN0QttvFqc_UQIgCvpRCW4wi3wgtbPDyZDpk5.oYlU2YzRlnTsMn
+ oh3xX_h8QbNgO5qOQxHsP3CHFJZmWnW0pnOQAMWeHjkUuGiwYlDJGm_.1yagr4eLDNrUuMHrRpLE
+ PXqnrnfjtZvC0IZYMjlNWp82qedU.8frG0QDM.1LVzx8QxWrCHFl8BuMrMm8Td5JXp8X8QxRrBIj
+ zLnlvLw.tAhI65gu8Qp5i1bjh8M2uckecZOPYIc3ikyJ7yWSOg6kPIAVgST5aJ9uQI1YtlbIWO5t
+ Rwkbs07JML6WYT1N3ilZ6edEXwY.c7TKjZpKAscYgdm4HDXygEZC2BFXG2F9QFljE2iVY1MLfNyZ
+ Mmryk2d9jH5bHEJkMc62ITEm9BxTL7bcQlRtJzviaKLoUGlEFhAF3l2PHGS78yolQkc5M8zGELzD
+ G46gDdh9hCzAXYnzkErpTd4zNhnaOsFQk6vQpbF_KCUh2AWtUqCV9CySmwDjiVAeKWTy08Lk_1lU
+ SGX_rt67jHk2M2AaGzUNAKq3G8dZyiBc.YkoaC82JBySy0UcsNpVpafQ4lEyIvA7yRzwoBYgucLA
+ 9aaCeyZYla4JqKdtuQovcEZSwDTDt0hJEVnk7s7UdI.y_JLlyGzUtTvLPTgPazfm.i3LcuFAEj9V
+ IV6HvSXoiBTkjOtxLNlBBsSYZth4zpi5siwcdvIrCXH.fht1XRWY.WsNlTLYEH16_dsvVW6ctIM4
+ w4B1vAmPR0o9PN.ZV2FZrJ.DPwgfJC1dGIb0q8Q2W0zZbA1yoCujO194x9SLIK0i_L7MicdYhd8h
+ UMYni2vsbjzfKKhTL_4xoqGuM_G3un8JmUqmTbL0YmCbyn6lkISLfgrtLhJnB2W0Oq2Rj2NRp4bA
+ aw1a4AczTnm8hjxe26FcS0..bCN0hPliAw9Py6a5fThyy_mQXnbTaJQThsf6fe2nHpHlcPIMFeet
+ O.9DquiupoOs7h0AX142kIZE6FGAesocLp3f4uYbRbh6V1akxb1tCz5FMwSbsjYhxO3g_rRwVVnF
+ dGUiVnYWvmnkpN_OwKKyf_dWtcsXBbBdgeN6QilVGSjS1YFytV2Zv1rM190HeQUlu1L.VFLGewlI
+ PRXqUiud5hwGQvAlmeRoVXNqkwVcUYd2y8OWfriwGOgtM3GImWgGTJHUJY4KXYnWC8zSdHQqMhX6
+ akCEX_lB0nEeXhpv3uvN.D7iz9fWjlmiFh8V44ju_WD.FHiwhT3_3McjT8VATMvo5DW26nrqVjM_
+ .mtSzPcaBAmN0b3qqwSf2lY4jDIXDAkM_MMmXxHIRfnDS..9FjLPbf1UEiuK3hmyxPHnuy3RRaTm
+ kNq5nX4vMD1nUKNLD4B3QZuHjVX5Hnt97HJf3F9s0dB9fr4NB5TfRDRGL.3XERxkv6moDEyyuEil
+ Ui5FIIX8GsD_MGXZm2vgifB7MpHu0F2f2KwMI8vOw0vAvtzdr.FYDrHdswa4TB25wpDZRGI5Id0g
+ DFKrCW1e4g11IUXtgZJ8LLwMVqHukhT9gSl8r7OE6IH5gqEF94tzU3SuBJMQXvQCPXOjFGqDR4vC
+ _7FC7M1OsLB_rPS2kYTgWomqYACb5aCCgMrUYxN1Gn7Xkg9PUSukehce9NpcdbW7Z42MhplKrVA3
+ gHl34AaatAv24DhID.k3Ue0WplXtr7tXTgoqwPdtfl4O.tDNpUpGV14C234zAwCUZos2WaQAtkuo
+ M5feo8gA71yLLovXvFoMC4zaJPN7Bbz3op8E7gHkMpeyVlLnVdVLw1NIiNW9uMVE_eCxDWTf1IID
+ ZxqjV.mX9pq.UN7E7c3e5e11lbiiffmYQcNt_R4k8An1UBAbzjbYKzIWPk68gHOdj9O8I5vWdMdf
+ ytk12atGm8Jq1qUrOETt.yhgLauvCpcGqCg6UYTqDVqPywyXeMVHZHtUihUC0eW.BW8U38P.1_FX
+ tvLTFhwCY.RYgXH3MjydGBZ2jJK_Alp8jogHwUsH1lDfB4xzpFrcFGghVNIHmvvBrMBy1k_Olyoj
+ 5UaulKe377KFuxw54_RqOlNyjXHSnh72cqumhI735rbvmF9qwxxNBuS1j306T7kEAuo9i.3lb1xH
+ Y1V3lfKs2dGad4eOQ3ueNMMrE4GygJWcEIA8D5L43k07KrO1U6.hSuEqkopI5WcWCHGitKCb00Ak
+ .vQ60DEx4kXx0U74s_KTL.tdvv47l4YHdK60HP9N6rRUU4O5qt_eZxw--
+X-Sonic-MF: <abdul.rahim@myyahoo.com>
+X-Sonic-ID: 87d31a78-8c80-4d80-bee8-a391d60809c3
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.sg3.yahoo.com with HTTP; Fri, 15 Nov 2024 11:24:35 +0000
+Received: by hermes--production-sg3-5b7954b588-2czcw (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 30b2b63ae3584f58ae1ae168a243895b;
+          Fri, 15 Nov 2024 11:24:33 +0000 (UTC)
+From: Abdul Rahim <abdul.rahim@myyahoo.com>
+To: xiubli@redhat.com,
+	idryomov@gmail.com
 Cc: ceph-devel@vger.kernel.org,
-	stable@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Dmitry Antipov <dmantipov@yandex.ru>
-Subject: [PATCH 4.19/5.4/5.10] ceph: fix possible overflow in start_read()
-Date: Fri, 15 Nov 2024 13:31:24 +0300
-Message-ID: <20241115103124.1361582-1-dmantipov@yandex.ru>
-X-Mailer: git-send-email 2.47.0
+	linux-kernel@vger.kernel.org,
+	Abdul Rahim <abdul.rahim@myyahoo.com>
+Subject: [PATCH v2] ceph: Use strscpy() instead of strcpy()
+Date: Fri, 15 Nov 2024 16:54:19 +0530
+Message-ID: <20241115112419.11137-1-abdul.rahim@myyahoo.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -60,42 +85,54 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+References: <20241115112419.11137-1-abdul.rahim.ref@myyahoo.com>
 
-For a huge read request with >= 524288 pages in list passed
-to 'start_read()', 'nr_pages << PAGE_SHIFT' may overflow 'int'
-(for a convenient 4K page size) and make 'len' undefined, so
-prefer 's64' for 'nr_pages' instead. Compile tested only.
+strcpy() performs no bounds checking on the destination buffer. This
+could result in linear overflows beyond the end of the buffer, leading
+to all kinds of misbehaviors. [1]
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+this fixes checkpatch warning:
+    WARNING: Prefer strscpy over strcpy
 
-Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
+[1] : https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy
+Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
 ---
- fs/ceph/addr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Changes since v1:
+- Added third parameter in strscpy()
+- Added comment to explain where the limit `NAME_MAX+1` is comming from
+  as suggested by Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 2362f2591f4a..bc50918284bf 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -329,7 +329,7 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
- 	int i;
- 	struct page **pages;
- 	pgoff_t next_index;
--	int nr_pages = 0;
-+	s64 nr_pages = 0;
- 	int got = 0;
- 	int ret = 0;
- 
-@@ -370,7 +370,7 @@ static int start_read(struct inode *inode, struct ceph_rw_context *rw_ctx,
- 			break;
- 	}
- 	len = nr_pages << PAGE_SHIFT;
--	dout("start_read %p nr_pages %d is %lld~%lld\n", inode, nr_pages,
-+	dout("start_read %p nr_pages %lld is %lld~%lld\n", inode, nr_pages,
- 	     off, len);
- 	vino = ceph_vino(inode);
- 	req = ceph_osdc_new_request(osdc, &ci->i_layout, vino, off, &len,
+Link to v1: https://lore.kernel.org/lkml/20241111221037.92853-1-abdul.rahim@myyahoo.com/
+
+The function __get_snap_name() is assigned to .get_name() from 
+struct export_operations, when `ceph_snap(inode) != CEPH_NOSNAP`.
+`struct export_operations` is comming from `include/linux/exportfs.h`,
+and according to [1], the operation get_name assumes that the variable
+`name` is pointing to a buffer of size NAME_MAX+1
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/exportfs.h?h=v6.12-rc7#n203
+
+ fs/ceph/export.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ceph/export.c b/fs/ceph/export.c
+index 44451749c544..96421f2b6cec 100644
+--- a/fs/ceph/export.c
++++ b/fs/ceph/export.c
+@@ -452,7 +452,11 @@ static int __get_snap_name(struct dentry *parent, char *name,
+ 		goto out;
+ 	if (ceph_snap(inode) == CEPH_SNAPDIR) {
+ 		if (ceph_snap(dir) == CEPH_NOSNAP) {
+-			strcpy(name, fsc->mount_options->snapdir_name);
++			/* .get_name() from struct export_operations assumes
++			 * that its 'name' parameter is pointing to a 
++			 * NAME_MAX+1 sized buffer */
++			strscpy(name, fsc->mount_options->snapdir_name,
++					NAME_MAX+1);
+ 			err = 0;
+ 		}
+ 		goto out;
 -- 
-2.47.0
+2.43.0
 
 
