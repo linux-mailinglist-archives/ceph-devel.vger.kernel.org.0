@@ -1,232 +1,238 @@
-Return-Path: <ceph-devel+bounces-2178-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2179-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 024D69D1E44
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2024 03:29:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B889A9D21ED
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2024 09:53:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6FBD283CD1
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2024 02:29:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D9D2B22945
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2024 08:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63CCC149C7B;
-	Tue, 19 Nov 2024 02:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A9C1BFDEC;
+	Tue, 19 Nov 2024 08:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b="NzHdh1fd"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YwX88J07"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C12146A71
-	for <ceph-devel@vger.kernel.org>; Tue, 19 Nov 2024 02:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854CE1AA786
+	for <ceph-devel@vger.kernel.org>; Tue, 19 Nov 2024 08:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731983295; cv=none; b=alfU8qHWsxgCDbPUSiPItbquZd/FXpivtlAbbWRQQH0i/OE18QMZJY1b8ZM0zuauIxQGusC6B2+282C4Nww7Ca3YwzyNGw45cPZWNiDqSErV3mf5dgGpfaF/N1p0B7wy3qOE4GjUvHLGgVIbWecgIOVglyzu31Fps07C1YSntoI=
+	t=1732006379; cv=none; b=JL9XlacYWgDfRMV5r+JGj2pNQW1zTb9x5wmUl5UY4s+8JU61+o1xNR2j45GdX3C75ymppmHa6c91WvP7SySAQRv27ykaS3yj7KSfeB0C307Cvucb5LJoN8r5hz/ceOfU+wSWh/5cGcJP3m8pUooGwWhLrxEvTlt2VKIvUr7+j68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731983295; c=relaxed/simple;
-	bh=UccQ+prik4fjQkC8oH/YJPmgnEYnbjg/FRuiAZaLDKk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KcdbtSAtDjCTM48RDtALcbHj0Yjjbp8LGTdHLDTw0t66gX3BKuZJYi6KCqv0VUKY741bWXYrOb+fD5pinecYPsVXQkiVka72tQjcV3rcmZ/WuAktKzOvSjQsGQ8tiZBCdvM/wgiDKT5WmHPirEpA3jD9pK7vuvLyroGs28bauBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com; spf=none smtp.mailfrom=batbytes.com; dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b=NzHdh1fd; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=batbytes.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-462d8b29c14so2553401cf.1
-        for <ceph-devel@vger.kernel.org>; Mon, 18 Nov 2024 18:28:13 -0800 (PST)
+	s=arc-20240116; t=1732006379; c=relaxed/simple;
+	bh=1PQE1f1xCJGY7Tky1gUdhI5mXqSifmAXMo1KKarsrpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uPYdYP2QseFInDpHjYtaBPV/xFWY8HGbrrK/X4CkWwv7ZTs4/nmAgvSiHQc3Ebp5IynLNNQlH7tyL/vc9DnUKDa86fw7ImGb8/xqzb2rhwixrFxdR6tFUZUiUnRQjvJpTP6i0jShPIiiFoXWW+iKLwZNvfPDC5aZf59prp6z3so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YwX88J07; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-431ac30d379so5738285e9.1
+        for <ceph-devel@vger.kernel.org>; Tue, 19 Nov 2024 00:52:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=batbytes-com.20230601.gappssmtp.com; s=20230601; t=1731983292; x=1732588092; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hi9UHqDjN8Ni6rhq09eAG7OKaykNr6weeLf4m29aeTQ=;
-        b=NzHdh1fdUPWgGcBCU2JOLeTc3LZkaARV1dJjT3KLJXHyNa4ArQ8MERYAxfY9+FfNB6
-         KE3BQthteZuV2mhcpkn/3qZ645kVFjALSR4AURxaeZoqngUssPvreD1Kao8IFbSSMHu/
-         t8Fm5sjr4sJVdNsYg4XhxYutwYbxYSuP064zqiyfVEINCTl4be4xlyR/QjVCk36RazyO
-         bEVm1/AlOpUCCA0cEpaUvcdHhvZ04rGZ/CannL2aLmr4BRwTmAG+aAxIT/TjuF+qcC2C
-         czKdkeUIwokIqs9Vte1fQfKtf4KM0EUqFT7ulLt1Pp2poP/JqTplH7tAkG0p6mXCt+Bl
-         gqPA==
+        d=suse.com; s=google; t=1732006375; x=1732611175; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=qaBG3Z7R9DOuiOybc185RSD4M8rIPEBBhrkZgjFmOxU=;
+        b=YwX88J07/QkBNEkAjW82kPZVlFUMTCMLsjf6gwhsceK2l+pfQq+2IhMEYkPxcbHwhM
+         iIQcYiE8dfVaomj+NhbmG33a7kOfZvnjheNotc1ehgHzsh9k5KiMvqplMIWd1Ktpn9J3
+         Jl0NwUBhIo15kB0LHJKNp3KvnQt5IzMLrmOUt5OqKtW5fSa8heyxjOg/WBK+TsNjc4QK
+         7m994E+mkEwkTIETkvQ3HV9EOmS6rF7kT/r6PvKAWOsvp3P9FDmpG8UYYfYu5j2pKTin
+         nV23yVqo7cve/XHz6GfmTRniT88Dp7udY5CmrOUKjj10LxJKyDd7AoBmqCML/ASfnVOk
+         i85A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731983292; x=1732588092;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hi9UHqDjN8Ni6rhq09eAG7OKaykNr6weeLf4m29aeTQ=;
-        b=GcOnCDLY/GiBhCXo6m5RjFCVZDXJ1d7N3FDxaK6OWrwIVmSf2oncyCpu2EWkWODRXA
-         0tjW9fVggjfmDiftvC2Y8NtkA3gCBP16HDFViDijxmg2q7R6OvD+1t4mBXR9WSzjmSqc
-         ckpigytFpc+gxhSPukIWIAyJhC1wKhUtZ5hMvMdyfiPjWQPhQPJViyRL1tdZFS1X+QNn
-         /UKHgzSkp1mBl1UUhq3Rxa8v4sNHHs0li28WEPtltQLCOdxaaVwSynHX2NQfKVMc/eI9
-         OroI3Sezgie48xMoRNON4Rk20KCDJC2hY+nIe+GnNRr/h3tEpQjXRaNt17jU9UOEh8gg
-         LFEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbPpbhA5jY+6bOnCsyqJi79kq7ahUCcmFJQrBZuwhSSY3dExeCvpZ3qN8kKvHlCWg/UcATObK0ymGV@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEkdeATQjm4wZFA27AT+drGIwyayZoxALSLsCuTgxzScvmzPMJ
-	yXuBHs9kAZ/tt56cEvzstDrzg2DU9rMz61pJowchpi+J3oUMK36NM66iktNHCw==
-X-Google-Smtp-Source: AGHT+IGWVd9s0tTOzkt/L9+H/nMMqNCNUSOHI3hwM03OUxXzbfjHm/cnEHga8/2MuOW51g+LHySeXg==
-X-Received: by 2002:a05:6214:2029:b0:6d4:f77:613c with SMTP id 6a1803df08f44-6d40f776480mr185856656d6.25.1731983292642;
-        Mon, 18 Nov 2024 18:28:12 -0800 (PST)
-Received: from batbytes.com ([216.212.123.7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b37a8a9fdesm48293485a.124.2024.11.18.18.28.11
+        d=1e100.net; s=20230601; t=1732006375; x=1732611175;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qaBG3Z7R9DOuiOybc185RSD4M8rIPEBBhrkZgjFmOxU=;
+        b=poYMLRJEcR2YTQmrVa0odOAgf4BjNESCLPx/TBMH7K/E7vlRbuE8cUz0slnYiNpwMk
+         9kQIyVcVeHbo8YocgHSfc6ampfsI10BPWXixCTu9qKt0I83OX0ULm4Zm7uYt91iBlVTs
+         Kkf7X+fhAXiwtICCUCQczncphoy0Icy0jv/tPve/9gyf31JgXizNx2Rt6+KMnTkMnodb
+         KMfDqa3hA+p3NagBVm42wAuvOBXvgr1fLDrLz9+bfl2dC2eiDB8YRVFzjP30OsG1pSCw
+         zL0i1xWM3ZGOT2UJbm43kU2x6pxKpvGy1gwtpoqk4PTks7wB5oGRdjHmYbXgkssRpkwd
+         e95w==
+X-Forwarded-Encrypted: i=1; AJvYcCW9FbUB9jQ724ckho63z5ieU5i01ap6HNX/d+8tAStg7Mbx8jSmUuDD4LQC5mCpPVocRhcxlIjLtMJ8@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYVOv5k8bZ6LvF9oubuLjho4hKH9fkFVxpVIbmvQIr/a1RvTqt
+	UbJWHnygz+xnuYr3Hb+VWRTZenVCioj+OnypzwPEboyX6qVSlJZ+ukhkPUrOn2w=
+X-Google-Smtp-Source: AGHT+IHrqP9nC2rPwknktgIKbjWoIt1yh0m5e2N0IUvcTBAuP3H8V/AdHOWp2OIw94YWQU//ijQi/A==
+X-Received: by 2002:a5d:6d0f:0:b0:382:2492:3218 with SMTP id ffacd0b85a97d-38225aaee39mr12773115f8f.47.1732006374705;
+        Tue, 19 Nov 2024 00:52:54 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3824a8109a7sm3705943f8f.104.2024.11.19.00.52.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2024 18:28:12 -0800 (PST)
-From: Patrick Donnelly <batrick@batbytes.com>
-To: Xiubo Li <xiubli@redhat.com>,
-	Ilya Dryomov <idryomov@gmail.com>
-Cc: Patrick Donnelly <pdonnell@redhat.com>,
-	ceph-devel@vger.kernel.org (open list:CEPH DISTRIBUTED FILE SYSTEM CLIENT (CEPH)),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 3/3] ceph: improve caps debugging output
-Date: Mon, 18 Nov 2024 21:27:50 -0500
-Message-ID: <20241119022752.1256662-4-batrick@batbytes.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241119022752.1256662-1-batrick@batbytes.com>
-References: <20241119022752.1256662-1-batrick@batbytes.com>
+        Tue, 19 Nov 2024 00:52:54 -0800 (PST)
+Date: Tue, 19 Nov 2024 09:52:46 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Easwar Hariharan <eahariha@linux.microsoft.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Nicolas Palix <nicolas.palix@imag.fr>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Russell King <linux@armlinux.org.uk>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Ofir Bitton <obitton@habana.ai>, Oded Gabbay <ogabbay@kernel.org>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jeroen de Borst <jeroendb@google.com>,
+	Praveen Kaligineedi <pkaligineedi@google.com>,
+	Shailend Chand <shailend@google.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	James Smart <james.smart@broadcom.com>,
+	Dick Kennedy <dick.kennedy@broadcom.com>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.com>,
+	Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jack Wang <jinpu.wang@cloud.ionos.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+	Joe Lawrence <joe.lawrence@redhat.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	Louis Peens <louis.peens@corigine.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	cocci@inria.fr, linux-arm-kernel@lists.infradead.org,
+	linux-s390@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, linux-scsi@vger.kernel.org,
+	xen-devel@lists.xenproject.org, linux-block@vger.kernel.org,
+	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
+	linux-mm@kvack.org, linux-bluetooth@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-rpi-kernel@lists.infradead.org,
+	ceph-devel@vger.kernel.org, live-patching@vger.kernel.org,
+	linux-sound@vger.kernel.org, etnaviv@lists.freedesktop.org,
+	oss-drivers@corigine.com, linuxppc-dev@lists.ozlabs.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>
+Subject: Re: [PATCH v2 19/21] livepatch: Convert timeouts to secs_to_jiffies()
+Message-ID: <ZzxR3uAcWFEPUIUK@pathway.suse.cz>
+References: <20241115-converge-secs-to-jiffies-v2-0-911fb7595e79@linux.microsoft.com>
+ <20241115-converge-secs-to-jiffies-v2-19-911fb7595e79@linux.microsoft.com>
+ <718febc4-59ee-4701-ad62-8b7a8fa7a910@csgroup.eu>
+ <Zzsfuuv3AVomkMxn@pathway.suse.cz>
+ <96f3b51b-c28c-4ea8-b61e-a4982196215f@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <96f3b51b-c28c-4ea8-b61e-a4982196215f@linux.microsoft.com>
 
-From: Patrick Donnelly <pdonnell@redhat.com>
+On Mon 2024-11-18 10:18:49, Easwar Hariharan wrote:
+> On 11/18/2024 3:06 AM, Petr Mladek wrote:
+> > On Sat 2024-11-16 11:10:52, Christophe Leroy wrote:
+> >>
+> >>
+> >> Le 15/11/2024 à 22:26, Easwar Hariharan a écrit :
+> >>> [Vous ne recevez pas souvent de courriers de eahariha@linux.microsoft.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> >>>
+> >>> Changes made with the following Coccinelle rules:
+> >>>
+> >>> @@ constant C; @@
+> >>>
+> >>> - msecs_to_jiffies(C * 1000)
+> >>> + secs_to_jiffies(C)
+> >>>
+> >>> @@ constant C; @@
+> >>>
+> >>> - msecs_to_jiffies(C * MSEC_PER_SEC)
+> >>> + secs_to_jiffies(C)
+> >>>
+> >>> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+> >>> ---
+> >>>   samples/livepatch/livepatch-callbacks-busymod.c |  2 +-
+> >>>   samples/livepatch/livepatch-shadow-fix1.c       |  2 +-
+> >>>   samples/livepatch/livepatch-shadow-mod.c        | 10 +++++-----
+> >>>   3 files changed, 7 insertions(+), 7 deletions(-)
+> >>>
+> >>> diff --git a/samples/livepatch/livepatch-callbacks-busymod.c b/samples/livepatch/livepatch-callbacks-busymod.c
+> >>> index 378e2d40271a9717d09eff51d3d3612c679736fc..d0fd801a7c21b7d7939c29d83f9d993badcc9aba 100644
+> >>> --- a/samples/livepatch/livepatch-callbacks-busymod.c
+> >>> +++ b/samples/livepatch/livepatch-callbacks-busymod.c
+> >>> @@ -45,7 +45,7 @@ static int livepatch_callbacks_mod_init(void)
+> >>>   {
+> >>>          pr_info("%s\n", __func__);
+> >>>          schedule_delayed_work(&work,
+> >>> -               msecs_to_jiffies(1000 * 0));
+> >>> +               secs_to_jiffies(0));
+> >>
+> >> Using secs_to_jiffies() is pointless, 0 is universal, should become
+> >> schedule_delayed_work(&work, 0);
+> > 
+> > Yes, schedule_delayed_work(&work, 0) looks like the right solution.
+> > 
+> > Or even better, it seems that the delayed work might get replaced by
+> > a normal workqueue work.
+> > 
+> > Anyway, I am working on a patchset which would remove this sample
+> > module. There is no need to put much effort into the clean up
+> > of this particular module. Do whatever is easiest for you.
+> > 
+> > Best Regards,
+> > Petr
+> 
+> If we're removing the module, I'll drop it from the series. Just to
+> clarify, do you mean to remove all of samples/livepatch/* or some
+> particular file(s)?
 
-This improves uniformity and exposes important sequence numbers.
+To be precise, I am going to replace:
 
-Now looks like:
+	samples/livepatch/livepatch-callbacks-demo.c
+	samples/livepatch/livepatch-callbacks-mod.c
+	samples/livepatch/livepatch-callbacks-busymod.c
 
-    <7>[   73.749563] ceph:           caps.c:4465 : [c9653bca-110b-4f70-9f84-5a195b205e9a 15290]  caps mds2 op export ino 20000000000.fffffffffffffffe inode 0000000008d2e5ea seq 0 iseq 0 mseq 0
-    ...
-    <7>[   73.749574] ceph:           caps.c:4102 : [c9653bca-110b-4f70-9f84-5a195b205e9a 15290]  cap 20000000000.fffffffffffffffe export to peer 1 piseq 1 pmseq 1
-    ...
-    <7>[   73.749645] ceph:           caps.c:4465 : [c9653bca-110b-4f70-9f84-5a195b205e9a 15290]  caps mds1 op import ino 20000000000.fffffffffffffffe inode 0000000008d2e5ea seq 1 iseq 1 mseq 1
-    ...
-    <7>[   73.749681] ceph:           caps.c:4244 : [c9653bca-110b-4f70-9f84-5a195b205e9a 15290]  cap 20000000000.fffffffffffffffe import from peer 2 piseq 686 pmseq 0
-    ...
-    <7>[  248.645596] ceph:           caps.c:4465 : [c9653bca-110b-4f70-9f84-5a195b205e9a 15290]  caps mds1 op revoke ino 20000000000.fffffffffffffffe inode 0000000008d2e5ea seq 2538 iseq 1 mseq 1
+with a completely different modules because I am reworking the
+callbacks API.
 
-See also: "mds: add issue_seq to all cap messages" in ceph.git
+All other sample modules are going to stay.
 
-See-also: https://tracker.ceph.com/issues/66704
-Signed-off-by: Patrick Donnelly <pdonnell@redhat.com>
----
- fs/ceph/caps.c | 35 +++++++++++++++++------------------
- 1 file changed, 17 insertions(+), 18 deletions(-)
+Feel free to remove livepatch-callbacks-busymod.c from the patchset.
+But also feel free to keep it. The API rework goes slowly. I am not
+sure if it would be ready for 6.14.
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 27410bc9ce15..810abf6f7d2c 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -4085,8 +4085,7 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
- 	struct ceph_cap *cap, *tcap, *new_cap = NULL;
- 	struct ceph_inode_info *ci = ceph_inode(inode);
- 	u64 t_cap_id;
--	unsigned mseq = le32_to_cpu(ex->migrate_seq);
--	unsigned t_issue_seq, t_mseq;
-+	u32 t_issue_seq, t_mseq;
- 	int target, issued;
- 	int mds = session->s_mds;
- 
-@@ -4100,8 +4099,8 @@ static void handle_cap_export(struct inode *inode, struct ceph_mds_caps *ex,
- 		target = -1;
- 	}
- 
--	doutc(cl, "%p %llx.%llx ci %p mds%d mseq %d target %d\n",
--	      inode, ceph_vinop(inode), ci, mds, mseq, target);
-+	doutc(cl, " cap %llx.%llx export to peer %d piseq %u pmseq %u\n",
-+	      ceph_vinop(inode), target, t_issue_seq, t_mseq);
- retry:
- 	down_read(&mdsc->snap_rwsem);
- 	spin_lock(&ci->i_ceph_lock);
-@@ -4228,18 +4227,22 @@ static void handle_cap_import(struct ceph_mds_client *mdsc,
- 	u64 realmino = le64_to_cpu(im->realm);
- 	u64 cap_id = le64_to_cpu(im->cap_id);
- 	u64 p_cap_id;
-+	u32 piseq = 0;
-+	u32 pmseq = 0;
- 	int peer;
- 
- 	if (ph) {
- 		p_cap_id = le64_to_cpu(ph->cap_id);
- 		peer = le32_to_cpu(ph->mds);
-+		piseq = le32_to_cpu(ph->issue_seq);
-+		pmseq = le32_to_cpu(ph->mseq);
- 	} else {
- 		p_cap_id = 0;
- 		peer = -1;
- 	}
- 
--	doutc(cl, "%p %llx.%llx ci %p mds%d mseq %d peer %d\n",
--	      inode, ceph_vinop(inode), ci, mds, mseq, peer);
-+	doutc(cl, " cap %llx.%llx import from peer %d piseq %u pmseq %u\n",
-+	      ceph_vinop(inode), peer, piseq, pmseq);
- retry:
- 	cap = __get_cap_for_mds(ci, mds);
- 	if (!cap) {
-@@ -4268,15 +4271,13 @@ static void handle_cap_import(struct ceph_mds_client *mdsc,
- 		doutc(cl, " remove export cap %p mds%d flags %d\n",
- 		      ocap, peer, ph->flags);
- 		if ((ph->flags & CEPH_CAP_FLAG_AUTH) &&
--		    (ocap->seq != le32_to_cpu(ph->issue_seq) ||
--		     ocap->mseq != le32_to_cpu(ph->mseq))) {
-+		    (ocap->seq != piseq ||
-+		     ocap->mseq != pmseq)) {
- 			pr_err_ratelimited_client(cl, "mismatched seq/mseq: "
- 					"%p %llx.%llx mds%d seq %d mseq %d"
- 					" importer mds%d has peer seq %d mseq %d\n",
- 					inode, ceph_vinop(inode), peer,
--					ocap->seq, ocap->mseq, mds,
--					le32_to_cpu(ph->issue_seq),
--					le32_to_cpu(ph->mseq));
-+					ocap->seq, ocap->mseq, mds, piseq, pmseq);
- 		}
- 		ceph_remove_cap(mdsc, ocap, (ph->flags & CEPH_CAP_FLAG_RELEASE));
- 	}
-@@ -4350,7 +4351,7 @@ void ceph_handle_caps(struct ceph_mds_session *session,
- 	struct ceph_snap_realm *realm = NULL;
- 	int op;
- 	int msg_version = le16_to_cpu(msg->hdr.version);
--	u32 seq, mseq;
-+	u32 seq, mseq, issue_seq;
- 	struct ceph_vino vino;
- 	void *snaptrace;
- 	size_t snaptrace_len;
-@@ -4360,8 +4361,6 @@ void ceph_handle_caps(struct ceph_mds_session *session,
- 	bool close_sessions = false;
- 	bool do_cap_release = false;
- 
--	doutc(cl, "from mds%d\n", session->s_mds);
--
- 	if (!ceph_inc_mds_stopping_blocker(mdsc, session))
- 		return;
- 
-@@ -4375,6 +4374,7 @@ void ceph_handle_caps(struct ceph_mds_session *session,
- 	vino.snap = CEPH_NOSNAP;
- 	seq = le32_to_cpu(h->seq);
- 	mseq = le32_to_cpu(h->migrate_seq);
-+	issue_seq = le32_to_cpu(h->issue_seq);
- 
- 	snaptrace = h + 1;
- 	snaptrace_len = le32_to_cpu(h->snap_trace_len);
-@@ -4462,12 +4462,11 @@ void ceph_handle_caps(struct ceph_mds_session *session,
- 
- 	/* lookup ino */
- 	inode = ceph_find_inode(mdsc->fsc->sb, vino);
--	doutc(cl, " op %s ino %llx.%llx inode %p\n", ceph_cap_op_name(op),
--	      vino.ino, vino.snap, inode);
-+	doutc(cl, " caps mds%d op %s ino %llx.%llx inode %p seq %u iseq %u mseq %u\n",
-+          session->s_mds, ceph_cap_op_name(op), vino.ino, vino.snap, inode,
-+          seq, issue_seq, mseq);
- 
- 	mutex_lock(&session->s_mutex);
--	doutc(cl, " mds%d seq %lld cap seq %u\n", session->s_mds,
--	      session->s_seq, (unsigned)seq);
- 
- 	if (!inode) {
- 		doutc(cl, " i don't have ino %llx\n", vino.ino);
--- 
-Patrick Donnelly, Ph.D.
-He / Him / His
-Red Hat Partner Engineer
-IBM, Inc.
-GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
-
+Best Regards,
+Petr
 
