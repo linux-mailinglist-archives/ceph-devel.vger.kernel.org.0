@@ -1,228 +1,106 @@
-Return-Path: <ceph-devel+bounces-2174-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2175-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 118829D1DE4
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2024 03:01:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD869D1E3E
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2024 03:28:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B135B20BED
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2024 02:01:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB84CB24413
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2024 02:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D91A28E3F;
-	Tue, 19 Nov 2024 02:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7305E1386C9;
+	Tue, 19 Nov 2024 02:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ep+CQk8v"
+	dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b="aND0gznr"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1B7179A7
-	for <ceph-devel@vger.kernel.org>; Tue, 19 Nov 2024 02:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C1E1A28C
+	for <ceph-devel@vger.kernel.org>; Tue, 19 Nov 2024 02:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731981709; cv=none; b=pQSZXZm5fCoPF1QGz6qCkVfRdabMQRmbBFsGAYwkKifEri/OPwkpUcMDAeJvrSoHeJ85NvZy35pYuaw3Wa+JLK3yWlEqaiY90QwMu/m/VL5dHZGYEZIKITp81LBvXyh/OifdITR3aEZyibyrMlxqZgJi4DPOrKjWRIFowvkhEuI=
+	t=1731983288; cv=none; b=lvau/3Y7uKg2PeilOPL4lv2w0IONddS5/a6+xSGgIoMo3aqGrVFOx0mhN8syyPXT8EWaY8H8nLCHdI9BV07WAvRtxwvjBS0h7pV5wWbueYgZ/WWYrXQQuxssgUg8mwWOf4pOdB8WeUVS0Umc4/LQbmbKsG+IP1doORL9EFthPqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731981709; c=relaxed/simple;
-	bh=4CzWe3Pkngg0Rn8+xCLUS3Ji7Q6SjGFZsFlNQpLG7+k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UY6LHztIPRc/2xzDky5GIVwzWEkGRzudgWarqW64VymTE6xueV7ftEs4N2kYZWWCtyzV4Q93V2Xurdmp9Rfz8YxtJ5LKf5nGS9c3aXhRiv3Tzmj+AZHFq/wSClj+/ZJjPAMqWCjwCaaSpP5DhqsOP28GdL1fUA8YBX9k/XWa93w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ep+CQk8v; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1731981705;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=a8nUNLEPwNPPGxVhi+HpyrPTnv0LRBFFFV5oZ0N0j2k=;
-	b=Ep+CQk8vT291U7TUifDK7c2jWGACyLj8U+rMGtOKOIHo4tqi61FTBM0itnk5H1kvt1Qubh
-	UGyMNgJPhSVzwnA+wYlJQrPkvRdp66RyWkRXbTRODJRhnjUlx2cONKAKoqxRep5vsKLdFi
-	WMI3JyAgPWpSJhC3kvBaodlNqXYSYc0=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-437-gIJSTsaDPnamsGw43v6luw-1; Mon, 18 Nov 2024 21:01:44 -0500
-X-MC-Unique: gIJSTsaDPnamsGw43v6luw-1
-X-Mimecast-MFC-AGG-ID: gIJSTsaDPnamsGw43v6luw
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6d425d1f0dbso22844326d6.1
-        for <ceph-devel@vger.kernel.org>; Mon, 18 Nov 2024 18:01:44 -0800 (PST)
+	s=arc-20240116; t=1731983288; c=relaxed/simple;
+	bh=KcRvi2yVNqSpAiSseRhYHxCQ/0+wMvC8RvSVpSLK2/c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WxL0eAW9Eflt2BvWa4yz593CR28qLmI3GZ0b630iozM+xRTkd4Wyw+mq5Pv+Jfgf0z1HGnexUbJjjt/qeEpxn4iVbN9fo+HDm6O+iqsMIjjXN1CzJoIQnuS3vUuonVsb2jXhoirQs6wg3mJS1Zq68Rvz7odIyg6z9lCRQ2iyNe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com; spf=none smtp.mailfrom=batbytes.com; dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b=aND0gznr; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=batbytes.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-856ec390e30so1441111241.0
+        for <ceph-devel@vger.kernel.org>; Mon, 18 Nov 2024 18:28:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=batbytes-com.20230601.gappssmtp.com; s=20230601; t=1731983285; x=1732588085; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qcAlilVvCqmcxVYfBzypm0OcUF8kidVLMM3xa7PfgoY=;
+        b=aND0gznrOr8b9vQMxE/psHwyvHs69dPPAobIl/070JxxqOZOmarDiWl01ugOv8X/eL
+         cEeqNGf9DDE1V7nB7qtxe+JcNO9yGDzsH7IGDdr7/aVRq/g22KWcCyZVd7GWvHpOTCxg
+         VfuYK31va7z5mM8xMcHLz4Yy3EIXjSrBrUA0gSRmKEmK1Fx75cWD5tCMQ/zS5tNO0BeT
+         R8gQNnlk/1I3n2OiqK8RP5YayMnoR+ZTqCejNcAydz5pAffoDC+6WcrFJFbXTZK0KPN+
+         YacJMYu0cfjJC/D6A0i8k7XWQRsaL9+CqcROji+KLXgRoMCYZ02kMTYv6u2K9IPPTNjG
+         DKXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731981703; x=1732586503;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a8nUNLEPwNPPGxVhi+HpyrPTnv0LRBFFFV5oZ0N0j2k=;
-        b=QlzFR+kwfcLE+IHUXLY1f53V1qj9m1c27CqpRW0WYmI03FZXg9FiHvJa5ksHYuUvNU
-         Hns/DankJI2/9/yIBiQ1ubyLq8rEp8jXaJMo+yc/gQRkA+0FnOjUQ+ilFmHzY/BGG0np
-         Grd47xuPZuDAtepRHhaDBz+kvNRE4ni99U9g4DWhxk+f3QDH2MmwLDGGA5YMDSLGHKLp
-         3Xag3SdF12171HHCy+XLWJvi8UADPM3jKvqiVaGO0WL/RwXIyOV4O66gR7oz5FKIMskd
-         MjctoeKCjPGtgfdjE3hM+5czPC6GTfHo6lPPkZdIw67QueYEgZko0BlODPf02Ts2b93v
-         mwxA==
-X-Forwarded-Encrypted: i=1; AJvYcCWb0ERVI1yulKlIKZzoVIt5qI5mg4vR2vYdeF9thI6QP1cGSuJjLGwntOayZKNOqSQ37Z0tF86rWj/v@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkDQ8Bm5j1Y5V20GbTzUgep1waKwArztM8pzlWMNpOQPWGo8qR
-	Cq4aX6uPD4BzpgWho8VNBVPb1YnC5+/g2eWepD0Mk98eIE0hVWWnt559kyMq9EZPJZ0x6I/RfRD
-	Pht9E58PfGODcMYd4BFf6mH38fMNp8WBGISajE82oH8RbhW/DW9O+3p4Kkl3HzhnbLseBK9iBoI
-	+kPKb6W49tgflZsbtdrChN8GdE5+ryaNwbHA==
-X-Received: by 2002:a0c:f9c8:0:b0:6d4:1a8a:ade5 with SMTP id 6a1803df08f44-6d42b916b30mr28338276d6.20.1731981703679;
-        Mon, 18 Nov 2024 18:01:43 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFRqDulaPRW/bZrFjSc/8bcQfzDYWKud3q8xsut29HBWC/z8H85bhXSWjCX2BdSW4r970zyh5zGm19KVYSPf2c=
-X-Received: by 2002:a0c:f9c8:0:b0:6d4:1a8a:ade5 with SMTP id
- 6a1803df08f44-6d42b916b30mr28338076d6.20.1731981703422; Mon, 18 Nov 2024
- 18:01:43 -0800 (PST)
+        d=1e100.net; s=20230601; t=1731983285; x=1732588085;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qcAlilVvCqmcxVYfBzypm0OcUF8kidVLMM3xa7PfgoY=;
+        b=IbDkZd5XaUqj0FIn9YlGhnI8ebVneqYN/boBnnD9LnXtZC/4bX/rjX/RphPDfxPnI8
+         QuTxSte71LqOjM7p2c9MrMWWrtOrgw7oWGRJwODrTYcsTRB4bhze0KTXNZakUN+IeNX9
+         OtFYhxX97eXynaGXenGiNY4LZgUtbeTIXRzKiZ+MVDk+6iLexHG4mUg92UbsVYuzOCav
+         3ApfdhF9rQu7/cn1qIkd58xh+xX+hZ7OWOaqD3P7ORWhGJ+BfQBeKNuu0z9IBmuwNWNB
+         KNpC2pqg4H6BnlaypkiwhLGKLC/4n232oamFOjKaohTDLyCdfex2wYY6wJWeOYLnKWli
+         W5sg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6kjjTReYXn0qjCra+QCmhdZv2mJpCth9oGYjDrHfJY0WGoBrDNkPcmTnYP++b9rQLSHVMzonMJD6e@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDPM8mkeypxS/LCzRz8BIDKjyuEyDaL8a2lqTDoUAxxY86BIH+
+	PJbszbjq9PXyORhEVUrZ+7rLTh6Pqn9vSNwEs9q2o6y4IP9vAsMCtAUu+5KqZir0jJVrtX8lbXt
+	5Qg==
+X-Google-Smtp-Source: AGHT+IHqSM7w5Qh0KSC2SIlQjD0xZ3fL5XR3Jm/pb8CPdX8iBoUwupiyIwuqYFV4nQCidxFE9LFnrw==
+X-Received: by 2002:a05:6102:4188:b0:4a4:6a8a:d2dd with SMTP id ada2fe7eead31-4ad62d1dbd6mr11173081137.21.1731983285518;
+        Mon, 18 Nov 2024 18:28:05 -0800 (PST)
+Received: from batbytes.com ([216.212.123.7])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b37a8a9fdesm48293485a.124.2024.11.18.18.28.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2024 18:28:04 -0800 (PST)
+From: Patrick Donnelly <batrick@batbytes.com>
+To: Ilya Dryomov <idryomov@gmail.com>,
+	Xiubo Li <xiubli@redhat.com>
+Cc: Patrick Donnelly <pdonnell@redhat.com>,
+	ceph-devel@vger.kernel.org (open list:CEPH DISTRIBUTED FILE SYSTEM CLIENT (CEPH)),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 0/3] ceph: rename some seq fields to issue_seq
+Date: Mon, 18 Nov 2024 21:27:47 -0500
+Message-ID: <20241119022752.1256662-1-batrick@batbytes.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022144838.1049499-1-batrick@batbytes.com>
- <20241022144838.1049499-3-batrick@batbytes.com> <CAOi1vP_S75CpvjRG5DXinG20PUOqc3Kf+nxtRjmZekjDbM+q1g@mail.gmail.com>
-In-Reply-To: <CAOi1vP_S75CpvjRG5DXinG20PUOqc3Kf+nxtRjmZekjDbM+q1g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+
 From: Patrick Donnelly <pdonnell@redhat.com>
-Date: Mon, 18 Nov 2024 21:01:17 -0500
-Message-ID: <CA+2bHPZeeA0-i-e1TyjYrvCWW+c6uWfxMqaJuehj=1T1=KV1Ng@mail.gmail.com>
-Subject: Re: [PATCH 2/3] ceph: correct ceph_mds_cap_peer field name
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Patrick Donnelly <batrick@batbytes.com>, Xiubo Li <xiubli@redhat.com>, 
-	"open list:CEPH DISTRIBUTED FILE SYSTEM CLIENT (CEPH)" <ceph-devel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 18, 2024 at 5:55=E2=80=AFAM Ilya Dryomov <idryomov@gmail.com> w=
-rote:
->
-> On Tue, Oct 22, 2024 at 4:49=E2=80=AFPM Patrick Donnelly <batrick@batbyte=
-s.com> wrote:
-> >
-> > See also ceph.git commit: "include/ceph_fs: correct ceph_mds_cap_peer f=
-ield name".
-> >
-> > See-also: https://tracker.ceph.com/issues/66704
-> > Signed-off-by: Patrick Donnelly <pdonnell@redhat.com>
-> > ---
-> >  fs/ceph/caps.c               | 23 ++++++++++++-----------
-> >  include/linux/ceph/ceph_fs.h |  2 +-
-> >  2 files changed, 13 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> > index bed34fc11c91..88a674cf27a8 100644
-> > --- a/fs/ceph/caps.c
-> > +++ b/fs/ceph/caps.c
-> > @@ -4086,17 +4086,17 @@ static void handle_cap_export(struct inode *ino=
-de, struct ceph_mds_caps *ex,
-> >         struct ceph_inode_info *ci =3D ceph_inode(inode);
-> >         u64 t_cap_id;
-> >         unsigned mseq =3D le32_to_cpu(ex->migrate_seq);
-> > -       unsigned t_seq, t_mseq;
-> > +       unsigned t_issue_seq, t_mseq;
-> >         int target, issued;
-> >         int mds =3D session->s_mds;
-> >
-> >         if (ph) {
-> >                 t_cap_id =3D le64_to_cpu(ph->cap_id);
-> > -               t_seq =3D le32_to_cpu(ph->seq);
-> > +               t_issue_seq =3D le32_to_cpu(ph->issue_seq);
-> >                 t_mseq =3D le32_to_cpu(ph->mseq);
-> >                 target =3D le32_to_cpu(ph->mds);
-> >         } else {
-> > -               t_cap_id =3D t_seq =3D t_mseq =3D 0;
-> > +               t_cap_id =3D t_issue_seq =3D t_mseq =3D 0;
-> >                 target =3D -1;
-> >         }
-> >
-> > @@ -4134,12 +4134,12 @@ static void handle_cap_export(struct inode *ino=
-de, struct ceph_mds_caps *ex,
-> >         if (tcap) {
-> >                 /* already have caps from the target */
-> >                 if (tcap->cap_id =3D=3D t_cap_id &&
-> > -                   ceph_seq_cmp(tcap->seq, t_seq) < 0) {
-> > +                   ceph_seq_cmp(tcap->seq, t_issue_seq) < 0) {
-> >                         doutc(cl, " updating import cap %p mds%d\n", tc=
-ap,
-> >                               target);
-> >                         tcap->cap_id =3D t_cap_id;
-> > -                       tcap->seq =3D t_seq - 1;
-> > -                       tcap->issue_seq =3D t_seq - 1;
-> > +                       tcap->seq =3D t_issue_seq - 1;
-> > +                       tcap->issue_seq =3D t_issue_seq - 1;
-> >                         tcap->issued |=3D issued;
-> >                         tcap->implemented |=3D issued;
-> >                         if (cap =3D=3D ci->i_auth_cap) {
-> > @@ -4154,7 +4154,7 @@ static void handle_cap_export(struct inode *inode=
-, struct ceph_mds_caps *ex,
-> >                 int flag =3D (cap =3D=3D ci->i_auth_cap) ? CEPH_CAP_FLA=
-G_AUTH : 0;
-> >                 tcap =3D new_cap;
-> >                 ceph_add_cap(inode, tsession, t_cap_id, issued, 0,
-> > -                            t_seq - 1, t_mseq, (u64)-1, flag, &new_cap=
-);
-> > +                            t_issue_seq - 1, t_mseq, (u64)-1, flag, &n=
-ew_cap);
-> >
-> >                 if (!list_empty(&ci->i_cap_flush_list) &&
-> >                     ci->i_auth_cap =3D=3D tcap) {
-> > @@ -4268,14 +4268,14 @@ static void handle_cap_import(struct ceph_mds_c=
-lient *mdsc,
-> >                 doutc(cl, " remove export cap %p mds%d flags %d\n",
-> >                       ocap, peer, ph->flags);
-> >                 if ((ph->flags & CEPH_CAP_FLAG_AUTH) &&
-> > -                   (ocap->seq !=3D le32_to_cpu(ph->seq) ||
-> > +                   (ocap->seq !=3D le32_to_cpu(ph->issue_seq) ||
-> >                      ocap->mseq !=3D le32_to_cpu(ph->mseq))) {
-> >                         pr_err_ratelimited_client(cl, "mismatched seq/m=
-seq: "
-> >                                         "%p %llx.%llx mds%d seq %d mseq=
- %d"
-> >                                         " importer mds%d has peer seq %=
-d mseq %d\n",
-> >                                         inode, ceph_vinop(inode), peer,
-> >                                         ocap->seq, ocap->mseq, mds,
-> > -                                       le32_to_cpu(ph->seq),
-> > +                                       le32_to_cpu(ph->issue_seq),
-> >                                         le32_to_cpu(ph->mseq));
-> >                 }
-> >                 ceph_remove_cap(mdsc, ocap, (ph->flags & CEPH_CAP_FLAG_=
-RELEASE));
-> > @@ -4350,7 +4350,7 @@ void ceph_handle_caps(struct ceph_mds_session *se=
-ssion,
-> >         struct ceph_snap_realm *realm =3D NULL;
-> >         int op;
-> >         int msg_version =3D le16_to_cpu(msg->hdr.version);
-> > -       u32 seq, mseq;
-> > +       u32 seq, mseq, issue_seq;
-> >         struct ceph_vino vino;
-> >         void *snaptrace;
-> >         size_t snaptrace_len;
-> > @@ -4375,6 +4375,7 @@ void ceph_handle_caps(struct ceph_mds_session *se=
-ssion,
-> >         vino.snap =3D CEPH_NOSNAP;
-> >         seq =3D le32_to_cpu(h->seq);
-> >         mseq =3D le32_to_cpu(h->migrate_seq);
-> > +       issue_seq =3D le32_to_cpu(h->issue_seq);
-> >
-> >         snaptrace =3D h + 1;
-> >         snaptrace_len =3D le32_to_cpu(h->snap_trace_len);
-> > @@ -4598,7 +4599,7 @@ void ceph_handle_caps(struct ceph_mds_session *se=
-ssion,
-> >                 cap->cap_id =3D le64_to_cpu(h->cap_id);
-> >                 cap->mseq =3D mseq;
-> >                 cap->seq =3D seq;
-> > -               cap->issue_seq =3D seq;
-> > +               cap->issue_seq =3D issue_seq;
->
-> Hi Patrick,
->
-> This isn't just a rename -- a different field is decoded and assigned
-> to cap->issue_seq now.  What is the impact of this change and should it
-> be mentioned in the commit message?
+This fixes an accidental non-rename change to the caps. Caught by Ilya, thanks!
 
-You are right. This change slipped in by accident with some other
-changes I have not yet pushed. I will revert this one.
+Patrick Donnelly (3):
+  ceph: correct ceph_mds_cap_item field name
+  ceph: correct ceph_mds_cap_peer field name
+  ceph: improve caps debugging output
 
---=20
+ fs/ceph/caps.c               | 47 ++++++++++++++++++------------------
+ fs/ceph/mds_client.c         |  2 +-
+ include/linux/ceph/ceph_fs.h |  4 +--
+ 3 files changed, 26 insertions(+), 27 deletions(-)
+
+
+base-commit: 8350142a4b4cedebfa76cd4cc6e5a7ba6a330629
+-- 
 Patrick Donnelly, Ph.D.
 He / Him / His
 Red Hat Partner Engineer
