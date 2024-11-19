@@ -1,146 +1,101 @@
-Return-Path: <ceph-devel+bounces-2185-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2186-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED839D26FE
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2024 14:33:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65AA19D2786
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2024 14:59:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8003A281003
-	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2024 13:33:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE4331F23C2B
+	for <lists+ceph-devel@lfdr.de>; Tue, 19 Nov 2024 13:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CE91CBE86;
-	Tue, 19 Nov 2024 13:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10EE51CDA35;
+	Tue, 19 Nov 2024 13:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CaN6pvEF"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QFejK1C0"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892B41CC8B7;
-	Tue, 19 Nov 2024 13:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3163A1CCEF7
+	for <ceph-devel@vger.kernel.org>; Tue, 19 Nov 2024 13:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732023153; cv=none; b=mIg+x3itEVdrDRJdBChr7W3rt5xsoZOpv2C+10zdNTDnj9hxxfDxN+MgFq/zCmfNvGkHufrowunGOZQ46lEoHlqtz4w1XjkNxOgpfQXaVO95H0xrhKSaChB5FnUn2+GJu/vAU4g++GE+dx4sPNHrhH3IzGfELK59ysIisV4YuQg=
+	t=1732024737; cv=none; b=Yevsu86/nhz6QdA7QHx9+LIkJBR12FwYWnIxqpLoFyf4+mk7MLjgPz/KRKUlJ2JeFnllQ6cAEq1UKW3NorMzKyRBhoiDZjpiLgSyXGR7h1h4Qwok+SYSZRECva9QU/GFcP24fuun59W47n73X/aeRdg0x4RLPkMEX6qN0cXBXwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732023153; c=relaxed/simple;
-	bh=/j3cTtOfwy2k+1qKpmNoJEfyTJIC5wBk/keMFw6kf9s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jW7ruXaVmYkJxU/JQZJHcVjPsQ3T5bFtu/ebBzuYmhhOAmtRztUVC2lwGNZbILdllOyQkjHITHRAve58eBTVQxOoxxcHQIV00JB5YHk/GX51Up+vBVf0bwTWg0Wr7VQuxsFEj7dyf3RagnRXxpnzjtSZUDUtzN1HtsplS2RU5og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CaN6pvEF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EA40C4CECF;
-	Tue, 19 Nov 2024 13:32:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732023153;
-	bh=/j3cTtOfwy2k+1qKpmNoJEfyTJIC5wBk/keMFw6kf9s=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=CaN6pvEF2EcVAT0hppSiZqexe0hGDSyPb2eA7M2tFJiVF+BL32IV75NHw1W7To0Er
-	 QUAbUo81nJXW8/2sYNQLyWI/TFpgeQY0jUcq57af0ZsYpmk/grCHrRtK69pjqYfj30
-	 dP6pLicUkxcpJe5z/U6zZwHNNWEHfm/FBw7Up/zbK4G1h+30WFhWz8IN8ufib/foyY
-	 OwRsUeT5nXQWVUcen7ltbrglNG84X1mmKvFcTdZSfip31R3XnkeI2H7j3TDfbD+5R+
-	 Mb9+al0RW7Pb7n4qnDJ5cpqbLx8oxjpRW/XvN1FxvgAOYOiwelxn1YO/P0s644DNpg
-	 iRKwAKoyycH4g==
-Message-ID: <83981951a40bc654c3b80960dce7a7dbcf3e0aac.camel@kernel.org>
-Subject: Re: [PATCH] fs/ceph/mds_client: give up on paths longer than
- PATH_MAX
-From: Jeff Layton <jlayton@kernel.org>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: Ilya Dryomov <idryomov@gmail.com>, Patrick Donnelly
- <pdonnell@redhat.com>,  Venky Shankar <vshankar@redhat.com>,
- xiubli@redhat.com, ceph-devel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, dario@cure53.de, stable@vger.kernel.org
-Date: Tue, 19 Nov 2024 08:32:31 -0500
-In-Reply-To: <CAKPOu+-orms2QBeDy34jArutySe_S3ym-t379xkPmsyCWXH=xw@mail.gmail.com>
-References: <20241118222828.240530-1-max.kellermann@ionos.com>
-	 <CAOi1vP8Ni3s+NGoBt=uB0MF+kb5B-Ck3cBbOH=hSEho-Gruffw@mail.gmail.com>
-	 <c32e7d6237e36527535af19df539acbd5bf39928.camel@kernel.org>
-	 <CAKPOu+-orms2QBeDy34jArutySe_S3ym-t379xkPmsyCWXH=xw@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1732024737; c=relaxed/simple;
+	bh=JRMmo+WtD8ZQ9tnK5iu3KlaQlw+IagjhyTaOOGeU6ZY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X3/qwLATj//jOhTvHr991VZbkSE7Ph+Mwep1pp2JH202k1Qec5JzEkbh3WhRNTKmJYkrcmo7HE1fMaRTb2iLfr1ZPL9/2eAyHeEVymuHLXUt469X8CMTAOW91UBOEr0fzdnWHTnJ4XAQLHa5T4Cl+G1zBAVdcm5BmGsp2XqunAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QFejK1C0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1732024735;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LqgjF5czC77lSXqlwmOXziI5fgt/MDDIJWvfKiacIM4=;
+	b=QFejK1C0KWqdCkQ1dpEwjmLUCdcKO1e5T95kgdd/OCjniGhYkDGduQN76HrdWoqnpYhFVT
+	nrnYsdyKWDrXXdROZme19TbyKu31FzUoqspXMd8qiRlq1DyAKnu7H33W/JUVII10q1vfqb
+	TsC2E+VfTTCHPQ81HJ/CfYRDgc3mrxU=
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
+ [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-317-ZDjq7b77M22k8rn0GStjEQ-1; Tue, 19 Nov 2024 08:58:54 -0500
+X-MC-Unique: ZDjq7b77M22k8rn0GStjEQ-1
+X-Mimecast-MFC-AGG-ID: ZDjq7b77M22k8rn0GStjEQ
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3e60e1775bdso4677867b6e.2
+        for <ceph-devel@vger.kernel.org>; Tue, 19 Nov 2024 05:58:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732024733; x=1732629533;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LqgjF5czC77lSXqlwmOXziI5fgt/MDDIJWvfKiacIM4=;
+        b=TAd2X5kts7/kioy/2SMWUnipEV1yKdNkbJdEUCr4h8WmQAjua2KvkClFsHccROshNU
+         0yHo3PBDzVjQ0EFBTAAfZUr9QOW37ubeAvd4pU+Lrc9yUmcZL9fn3xUADDhw0ikSnjMk
+         K+xCqsfVZHgY/jCZGv5KTN8ucnjxe5KfY6f0WaSEFFz7O6AzmCXZN4feNPSrNmrVPafY
+         yixKJN6unEGGh/cRYkPMGcsJnODn0x8jpRzFrVuI4CmireJmnaWLGdHVCLomSF1Vsa/E
+         lH6+KXoC20SWkkHY+UAa+98PNToYuNoe1302s1aBKEUPRxr9vxpQ8k8u+65CjA/Sohz6
+         o3AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkoQsAmU7bpjaR/4cBW0gMaACqXPobOk7JCpgUAJwXox2MtuMsTFYaP7o5vGg6T25GlOHdYYyXKjsq@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIYk1nmc/Qq3xUHLGbwnrEx/+pjRwp6x/lo+06mJO4Kd+txF7F
+	wbkvscwXuyc+qMdb9kC4hU2hHTTOCbuR5w3Auirl7UHCmImUmm7Txvf58ZYSUkf0NphrSGFxAMi
+	HFJXU7C5l6AHZprCT7yFjIJvnBjfirxl/ZQon6N46dOEgECYhyaZByZxcWxV5wDDjd0bjUhV5W+
+	24kbVodHuretwSG3iCK4LuTTtZwfYszjByoQ==
+X-Received: by 2002:a05:6808:2106:b0:3e7:acf6:e611 with SMTP id 5614622812f47-3e7bc7db1acmr13764062b6e.25.1732024733310;
+        Tue, 19 Nov 2024 05:58:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEVO3hakjeF20vHmqn/nW3qXqE2dxIDPQCWRIT8loTe7Ij8PL+k+df4akrF5mL359u8Mhj8Ursl1P1+38egrro=
+X-Received: by 2002:a05:6808:2106:b0:3e7:acf6:e611 with SMTP id
+ 5614622812f47-3e7bc7db1acmr13764038b6e.25.1732024733013; Tue, 19 Nov 2024
+ 05:58:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241118222828.240530-1-max.kellermann@ionos.com>
+ <CAOi1vP8Ni3s+NGoBt=uB0MF+kb5B-Ck3cBbOH=hSEho-Gruffw@mail.gmail.com>
+ <c32e7d6237e36527535af19df539acbd5bf39928.camel@kernel.org> <CAKPOu+-orms2QBeDy34jArutySe_S3ym-t379xkPmsyCWXH=xw@mail.gmail.com>
+In-Reply-To: <CAKPOu+-orms2QBeDy34jArutySe_S3ym-t379xkPmsyCWXH=xw@mail.gmail.com>
+From: Patrick Donnelly <pdonnell@redhat.com>
+Date: Tue, 19 Nov 2024 08:58:27 -0500
+Message-ID: <CA+2bHPZUUO8A-PieY0iWcBH-AGd=ET8uz=9zEEo4nnWH5VkyFA@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph/mds_client: give up on paths longer than PATH_MAX
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Ilya Dryomov <idryomov@gmail.com>, 
+	Venky Shankar <vshankar@redhat.com>, xiubli@redhat.com, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dario@cure53.de, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-11-19 at 14:02 +0100, Max Kellermann wrote:
+On Tue, Nov 19, 2024 at 8:02=E2=80=AFAM Max Kellermann <max.kellermann@iono=
+s.com> wrote:
+>
 > On Tue, Nov 19, 2024 at 1:51=E2=80=AFPM Jeff Layton <jlayton@kernel.org> =
 wrote:
 > > -ENAMETOOLONG could be problematic there. This function is often called
@@ -148,50 +103,78 @@ wrote:
 > > in a call. The system call that caused us to generate this path
 > > probably doesn't involve a pathname itself, so the caller may be
 > > confused by an -ENAMETOOLONG return.
->=20
+>
 > It is unfortunate that the Ceph-MDS protocol requires having to
 > convert a file descriptor back to a path name - but do you really
 > believe EIO would cause less confusion? ENAMETOOLONG is exactly what
 > happens, even if it's an internal error. But there are many error
 > codes that describe internal errors, so there's some prior art.
->=20
-> EIO just doesn't fit, returning EIO would be confusing - even more so
-> because EIO isn't a documented error code for open().
->=20
 
-Fair enough. EIO is just my goto when I don't have a better idea.
+The protocol does **not** require building the full path for most
+operations unless it involves a snapshot. For snapshots we have to
+climb the directory tree until we find the directory with the
+snapshot. e.g.:
 
-Probably you want some weird error code that will make people stand up
-and take notice. Maybe?
+$ tree -a foo/ foo/.snap/ foo/bar/baz/.snap/
+foo/
+=E2=94=94=E2=94=80=E2=94=80 bar
+    =E2=94=94=E2=94=80=E2=94=80 baz
+        =E2=94=94=E2=94=80=E2=94=80 file
+foo/.snap/
+=E2=94=94=E2=94=80=E2=94=80 1
+    =E2=94=94=E2=94=80=E2=94=80 bar
+        =E2=94=94=E2=94=80=E2=94=80 baz
+            =E2=94=94=E2=94=80=E2=94=80 file
+foo/bar/baz/.snap/
+=E2=94=9C=E2=94=80=E2=94=80 _1_1099511627779
+=E2=94=82   =E2=94=94=E2=94=80=E2=94=80 file
+=E2=94=94=E2=94=80=E2=94=80 2
+    =E2=94=94=E2=94=80=E2=94=80 file
 
-     #define ENOSR           63      /* Out of streams resources */  =20
 
-> If this is about building path names for sending to the MDS, and not
-> for the userspace ABI, maybe the PATH_MAX limitation is wrong here. If
-> Ceph doesn't have such a limitation, the Ceph code shouldn't use the
-> userspace ABI limit for protocol use.
->=20
+If you read "file" via foo/.snap/1 you get:
 
-It is possible to build a dir hierarchy that is deeper than can be
-represented by a PATH_MAX-length string. No reason you can't allocate a
-bigger buffer there. Does the MDS have a limit on the size of a path
-string that it'll accept?
+2024-11-19T13:47:23.523+0000 7f9b3b79b640  1 --
+[v2:172.21.10.4:6874/192645635,v1:172.21.10.4:6875/192645635] <=3D=3D
+client.4417 172.21.10.4:0/1322260999 43506 =3D=3D=3D=3D
+client_request(client.4417:121 open #0x10000000003//1/bar/baz/file
+2024-11-19T13:47:23.524518+0000 caller_uid=3D1141,
+caller_gid=3D1141{1000,1141,}) =3D=3D=3D=3D 199+0+0 (crc 0 0 0) 0x55acb2d55=
+180
+con 0x55acb2b3cc00
 
-> > You may want to go with a more generic error code here -- -EIO or
-> > something. It might also be worthwhile to leave in a pr_warn_once or
-> > something since there may be users confused by this error return.
->=20
-> Users cannot read the kernel log, and this allows users to flood the
-> kernel log. So we get all the disadvantages of the kernel log while
-> our users get none of the advantages.
+and for foo/bar/baz/.snap/2/
 
-Sure. I'd make this a pr_warn_once or heavily ratelimit it or
-something. No need for a lot of these messages, but eventually users
-are going to wonder why they're getting these weird errors and bug the
-admins. Giving them this hint might be helpful.
+2024-11-19T13:47:56.796+0000 7f9b3b79b640  1 --
+[v2:172.21.10.4:6874/192645635,v1:172.21.10.4:6875/192645635] <=3D=3D
+client.4417 172.21.10.4:0/1322260999 43578 =3D=3D=3D=3D
+client_request(client.4417:155 open #0x10000000005//2/file
+2024-11-19T13:47:56.798370+0000 caller_uid=3D1141,
+caller_gid=3D1141{1000,1141,}) =3D=3D=3D=3D 191+0+0 (crc 0 0 0) 0x55acb2d56=
+000
+con 0x55acb2b3cc00
 
-Alternately you could add a conditional tracepoint or something, but
-those are more obscure.
+(Note: the MDS protocol indicates a snapshot in the relative file path
+via double forward slash.)
+
+If you create "file":
+
+2024-11-19T13:56:56.895+0000 7f9b34f8e640  7 mds.0.server
+reply_client_request 0 ((0) Success) client_request(client.4467:7
+create owner_uid=3D1141, owner_gid=3D1141 #0x10000000005/file
+2024-11-19T13:56:56.890430+0000 caller_uid=3D1141,
+caller_gid=3D1141{1000,1141,})
+
+(During path lookups when planning to read the file, the client will
+usually get read caps so it doesn't need to formally open the file. So
+this last example uses a create.)
+
+
 --=20
-Jeff Layton <jlayton@kernel.org>
+Patrick Donnelly, Ph.D.
+He / Him / His
+Red Hat Partner Engineer
+IBM, Inc.
+GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+
 
