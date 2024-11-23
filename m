@@ -1,138 +1,133 @@
-Return-Path: <ceph-devel+bounces-2189-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2190-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 246BA9D4B0D
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 Nov 2024 11:48:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3BA9D6805
+	for <lists+ceph-devel@lfdr.de>; Sat, 23 Nov 2024 08:21:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF0CC286A52
-	for <lists+ceph-devel@lfdr.de>; Thu, 21 Nov 2024 10:48:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C4A6281DF2
+	for <lists+ceph-devel@lfdr.de>; Sat, 23 Nov 2024 07:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1841CB51C;
-	Thu, 21 Nov 2024 10:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5401417A5A4;
+	Sat, 23 Nov 2024 07:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VspBJCtP"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="Uk05GTB8"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CBE15D5C5
-	for <ceph-devel@vger.kernel.org>; Thu, 21 Nov 2024 10:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6505E16DEA9
+	for <ceph-devel@vger.kernel.org>; Sat, 23 Nov 2024 07:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732186104; cv=none; b=Sifz4VgkbByeJHLV2jSO4ewKahtfcMt8mvNiKBjP5bcx6SkuZzbA/GH6bZ7McambrYZ+UDlpmJk5dgT+ZmtzVilfJOCFHzAD158s4b7R8iqQazyjAdNaMUjkWbd0BFOQfkPukn/+Fy1QqTQ+R07yDM9jWLZfI1p5bG+37JnsrWY=
+	t=1732346488; cv=none; b=DpXgzvQPCai5sDArWH/V1nGxfyePDAMmWUyw74eqal1kgrocIgN2yo28tHMcnLjTyYw32OWzXw7KFMUH0znL0cF7/TX4zPWVtLDwemjtqVtp6wke+ZAEzZuFuj8opu3Ia8B3ifb8apvRuKzf5NZgynRwKYjk4eDeaY6NK4KH0GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732186104; c=relaxed/simple;
-	bh=iZbIvkb47XP3o6P1YZINDCc219qubY3DBwYu/F3bLG8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EqhFvUDXK2lny/CXEJacnewgpZbAUIt6HqbsrUF0jft+BQYqN1KQcf51TIHvcF0MpWiNx615rHd/uljQ3/RjEH9JSO3ou3ab/TmJMTnxAqq8W/C3aLTYVtXkhNz6P+9Hi2Cp+A+4KHbDQoCzEWPC9bt1hJoSWXAQtfYQiuxfLi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VspBJCtP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732186102;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iZbIvkb47XP3o6P1YZINDCc219qubY3DBwYu/F3bLG8=;
-	b=VspBJCtPJlNDnjAs+vqVwd0hXpxp5LTx7lKORqQiIgslJ6nLoe/IZhbAfeZqmGuIEQUQXb
-	U9nbGRkVkAlpQYEK0ExIF3S5VmxcLN8feWg46TZ3/XeIHfy/HHv8pXCJKSuNdUQ8KsTXGz
-	QFB+EKUxDvS3Diawuiv5UTNRdu5Ls5I=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-668-j9mhp-wAP8SM_Q6nyOrTyw-1; Thu, 21 Nov 2024 05:48:20 -0500
-X-MC-Unique: j9mhp-wAP8SM_Q6nyOrTyw-1
-X-Mimecast-MFC-AGG-ID: j9mhp-wAP8SM_Q6nyOrTyw
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5cfbec84b8dso543439a12.1
-        for <ceph-devel@vger.kernel.org>; Thu, 21 Nov 2024 02:48:20 -0800 (PST)
+	s=arc-20240116; t=1732346488; c=relaxed/simple;
+	bh=+Uh18BnwWLPB7ox5dDwpLR/2M4WjGNtc7pg5MyVHUEY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oYjrBf/zAqmoqo0Opdy0noBkCALJSeuxufsSKd4Y5e6kEBpzAVKZhqNuWU3+1Tb2PCS7wLDYKhnE8GVci5B2zB7rbmQwxEZsaagi/UDz3Ck0DbDnSQBQsT+MxUHLb2XSB6OKGxbR2JEbzqjfZvpLqDc78j38KnhPbk4SPgi8Rvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=Uk05GTB8; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cef772621eso3620681a12.3
+        for <ceph-devel@vger.kernel.org>; Fri, 22 Nov 2024 23:21:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1732346484; x=1732951284; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/YTNmEWfSDtA7h9QFVeEH/ye6CcFDrvL5f8PLeF/T+E=;
+        b=Uk05GTB8nUAMRYjwQvNPtk8cpgWtM72DeYgoQl6V+I+VxYK9UJja+pzd3XeKoB0TcJ
+         E3KfMXbp0gsMqUZwvs/r54HryN5+awdj5BlQvcNZ4DNtepozyP26+iutPXhuu+kT3lXi
+         Y5oqNJPgaVmwjI8icDHZH19aNMlz1G4iB+XPX+NbNtV3OM50Y1LETOYzLNjIkm3QkDSs
+         q2yiZliz2N7e3ZEsR5P+j9rDeMAwX1RBS3xEvLvb5ZKP2gxpNE6ESSGaxXurXl1XLPJ1
+         y45QHho7KNouBRpvt+59WEv/QW7vVzOPYt4W0Bm6Fo4kYMTGAaZsYHuyUpQsmCD8bYsH
+         uJAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732186099; x=1732790899;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iZbIvkb47XP3o6P1YZINDCc219qubY3DBwYu/F3bLG8=;
-        b=IczbQCJb9vs0mDT18BPSPXA2Cuv19RIy6Fv2fSTmRszm/jBfwUh26mNkQbA77kUCoy
-         RN3snnXyyKpk2DgRlKC46KnEDgsycCGUY7855tpat6lcl27itc72+wvBuv54Xj24rFa8
-         RSHzaX9TfQ7rFc5L/FpU+APUg0/PsSWvCGs5Y43hwThRJvf6TsVWyzJToAAxWg+a4JSR
-         QqYt8TEsYlfI3EwTKAeaumV0icpJmsQ/IZCnZR8Ci6O5s3cvT2gj73/HQZdtHjLdW5OB
-         gvKXKd77sOcH9Ihc+huxaIPdz6NhhRQ0e8zrkKfTWPjMx45OxB5GnOCUPfbC7eJFbgjN
-         dvKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJPydU0TiX4sRkHLsyZ+GgqmGOmIsQaJts1rwvSiLCnXJjczBgjy5WnX83qSnmigb+BRpWu2SwlOTX@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV/CAvkyanFWvAATyA4/kO3S3PxOwovMNkCdyouddwP60mZZtb
-	j6MNOchxp5rLTKXXxwcbsQU5mB11U7KXivqJwFtvNaK0jNQvjAT4uBU47IDBxFAy/49LZnrsPVZ
-	lBob1881drMly11TG6HOofxK5gxM7uRidgH35+Mwf0VeqSg2XEKJGYrD3AsrPUrW9BNvQdajHs6
-	SKBZJzl/JHbz3m/IPUt4jDZ9jh7wOMaq0/cg==
-X-Received: by 2002:a05:6402:42c7:b0:5cf:de9c:9b4a with SMTP id 4fb4d7f45d1cf-5cff4ce4070mr5293726a12.28.1732186099109;
-        Thu, 21 Nov 2024 02:48:19 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGmXdB0HEkcU2syXmIrZsaNM5eevZc1PCVj6O2kU6gC46bTp8zQWRPl44RvEDWYjsCEUZpJa2ogiFJBnhxSGNE=
-X-Received: by 2002:a05:6402:42c7:b0:5cf:de9c:9b4a with SMTP id
- 4fb4d7f45d1cf-5cff4ce4070mr5293709a12.28.1732186098821; Thu, 21 Nov 2024
- 02:48:18 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732346484; x=1732951284;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/YTNmEWfSDtA7h9QFVeEH/ye6CcFDrvL5f8PLeF/T+E=;
+        b=E8nyHEdXQTNnDkfrGUpA2HiRy9GRFKBcSqcaxk5ClW45OQcrFWC3yPGZ5qrPzXzsOg
+         lX9rHdXsfqfzDh7/66Cb83W4ytEPzQoISJDEVRdFRnoo/2+a67f27+zVT9VntANv6VcW
+         2Q3pBBJth8gdXwDrzIZhr99hfnUXoAqgkmuT6Os+yrsYNXOGidIuF+aRb6BjNgcit/pL
+         R/jYUH87+BvNmqkYzBuT2MZely4lxOESzvG2OsBJ9WWkFq4E4QFBVBXxPiwFYeMpyF7B
+         doksDQKkWvdsIUS0jtAYkYgMEO+aI8H2zY4Cx5EtwtpkNRSVa/LpzC2Ao3fU9n2AGp1G
+         OCKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDYi8LSzcIoDRFv6szwoHSUyZMMetBxQ4rtn+T+src3pQ9de2aPJfpiTzA/Wd+wvXDZg9P+kil8K0F@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfnxMhm9csokYmMHs8DYvOuPWxYzEysCD7faX3LdWSfsjVYqRa
+	YCuOOlza9S5gD2FNd9fVtnEK4ftoknRu94KCxC8HcisttD29pIHsY8pP8HJxooo=
+X-Gm-Gg: ASbGncvp2pAbsMXJgllLT7hZAmyQJKxkqvAB/tUs8/I2/7HR3YlnCzIC80AGnKQTmO9
+	d33S3Ppdik+BFERy8V8lZ9zJpQPScXBjmUZ5tAiemD7BpSX0RfFNA/3cqlFiPFS35ojSmD+qk+z
+	l5vRX76QhTTteWNlWlx2X6WvQh8G10fmhTzjYs4bRhdUqadryXJeeVNm6QXd5MTed6EiDxljdcd
+	fUK4xyPzA+RQ8sPSJybDvS1dPnEVaRPRkUVoRk+CDobJ/3VH7ymYz+QJHkYqO6NWPC8yI6ypmzn
+	KcKeuGjAtnIIR9EeCJZO8h3pFuY1p/KZofCyMwfd9iUoQBAXjw==
+X-Google-Smtp-Source: AGHT+IHXLdLmo1tmtjgCD0qXUsxAXVAd8FLm9qOjaiXqI+c53wWX0tVyWhZvrhtWm4ABhSfP9OWgKg==
+X-Received: by 2002:a05:6402:5212:b0:5cf:bb9e:cca7 with SMTP id 4fb4d7f45d1cf-5d0207b2521mr4251606a12.28.1732346483822;
+        Fri, 22 Nov 2024 23:21:23 -0800 (PST)
+Received: from raven.intern.cm-ag (p200300dc6f12b600023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f12:b600:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d01ffd96e4sm1590029a12.60.2024.11.22.23.21.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Nov 2024 23:21:23 -0800 (PST)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: xiubli@redhat.com,
+	idryomov@gmail.com,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org,
+	Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH 1/2] fs/ceph/mds_client: pass cred pointer to ceph_mds_auth_match()
+Date: Sat, 23 Nov 2024 08:21:20 +0100
+Message-ID: <20241123072121.1897163-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118222828.240530-1-max.kellermann@ionos.com>
- <CAOi1vP8Ni3s+NGoBt=uB0MF+kb5B-Ck3cBbOH=hSEho-Gruffw@mail.gmail.com>
- <c32e7d6237e36527535af19df539acbd5bf39928.camel@kernel.org>
- <CAKPOu+-orms2QBeDy34jArutySe_S3ym-t379xkPmsyCWXH=xw@mail.gmail.com>
- <CA+2bHPZUUO8A-PieY0iWcBH-AGd=ET8uz=9zEEo4nnWH5VkyFA@mail.gmail.com>
- <CAKPOu+8k9ze37v8YKqdHJZdPs8gJfYQ9=nNAuPeWr+eWg=yQ5Q@mail.gmail.com> <CA+2bHPZW5ngyrAs8LaYzm__HGewf0De51MvffNZW4h+WX7kfwA@mail.gmail.com>
-In-Reply-To: <CA+2bHPZW5ngyrAs8LaYzm__HGewf0De51MvffNZW4h+WX7kfwA@mail.gmail.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Thu, 21 Nov 2024 12:48:07 +0200
-Message-ID: <CAO8a2SiRwVUDT8e3fN1jfFOw3Z92dtWafZd8M6MHB57D3d_wvg@mail.gmail.com>
-Subject: Re: [PATCH] fs/ceph/mds_client: give up on paths longer than PATH_MAX
-To: Patrick Donnelly <pdonnell@redhat.com>
-Cc: Max Kellermann <max.kellermann@ionos.com>, Jeff Layton <jlayton@kernel.org>, 
-	Ilya Dryomov <idryomov@gmail.com>, Venky Shankar <vshankar@redhat.com>, xiubli@redhat.com, 
-	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, dario@cure53.de, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-IMHO, we should first have a solution for the immediate problem,
-remove infinite retries and fail early, and cap it at 3 retries in
-case there is a temporary issue here.
-I would use ENAMETOOLONG as the primary error code, as it is the most
-informative, and couple it with a rate-limited kernel log
-(pr_warn_once) for debugging without flooding.
-I would also open a bug/feature request for a dynamic buffer
-allocation that bypasses PATH_MAX for protocol-specific paths.
+This eliminates a redundant get_current_cred() call, because
+ceph_mds_check_access() has already obtained this pointer.
 
-On Tue, Nov 19, 2024 at 5:17=E2=80=AFPM Patrick Donnelly <pdonnell@redhat.c=
-om> wrote:
->
-> On Tue, Nov 19, 2024 at 9:54=E2=80=AFAM Max Kellermann <max.kellermann@io=
-nos.com> wrote:
-> >
-> > On Tue, Nov 19, 2024 at 2:58=E2=80=AFPM Patrick Donnelly <pdonnell@redh=
-at.com> wrote:
-> > > The protocol does **not** require building the full path for most
-> > > operations unless it involves a snapshot.
-> >
-> > We don't use Ceph snapshots, but before today's emergency update, we
-> > could shoot down an arbitrary server with a single (unprivileged)
-> > system call using this vulnerability.
-> >
-> > I'm not sure what your point is, but this vulnerability exists, it
-> > works without snapshots and we think it's serious.
->
-> I'm not suggesting there isn't a bug. I'm correcting a misunderstanding.
->
-> --
-> Patrick Donnelly, Ph.D.
-> He / Him / His
-> Red Hat Partner Engineer
-> IBM, Inc.
-> GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
->
->
+As a side effect, this also fixes a reference leak in
+ceph_mds_auth_match(): by omitting the get_current_cred() call, no
+additional cred reference is taken.
+
+Fixes: 596afb0b8933 ("ceph: add ceph_mds_check_access() helper")
+Cc: stable@vger.kernel.org
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/ceph/mds_client.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 6baec1387f7d..e8a5994de8b6 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -5615,9 +5615,9 @@ void send_flush_mdlog(struct ceph_mds_session *s)
+ 
+ static int ceph_mds_auth_match(struct ceph_mds_client *mdsc,
+ 			       struct ceph_mds_cap_auth *auth,
++			       const struct cred *cred,
+ 			       char *tpath)
+ {
+-	const struct cred *cred = get_current_cred();
+ 	u32 caller_uid = from_kuid(&init_user_ns, cred->fsuid);
+ 	u32 caller_gid = from_kgid(&init_user_ns, cred->fsgid);
+ 	struct ceph_client *cl = mdsc->fsc->client;
+@@ -5740,7 +5740,7 @@ int ceph_mds_check_access(struct ceph_mds_client *mdsc, char *tpath, int mask)
+ 	for (i = 0; i < mdsc->s_cap_auths_num; i++) {
+ 		struct ceph_mds_cap_auth *s = &mdsc->s_cap_auths[i];
+ 
+-		err = ceph_mds_auth_match(mdsc, s, tpath);
++		err = ceph_mds_auth_match(mdsc, s, cred, tpath);
+ 		if (err < 0) {
+ 			return err;
+ 		} else if (err > 0) {
+-- 
+2.45.2
 
 
