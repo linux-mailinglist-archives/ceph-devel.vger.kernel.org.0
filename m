@@ -1,92 +1,92 @@
-Return-Path: <ceph-devel+bounces-2209-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2210-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB6E9DB796
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Nov 2024 13:29:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C41A59DB7A0
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Nov 2024 13:29:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8D0DB23C14
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Nov 2024 12:29:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 396FCB23F5C
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Nov 2024 12:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2781819D8A7;
-	Thu, 28 Nov 2024 12:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D875919DF8D;
+	Thu, 28 Nov 2024 12:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SR+2143n"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NF86R7YP"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EFC19C574
-	for <ceph-devel@vger.kernel.org>; Thu, 28 Nov 2024 12:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D46219CD1E
+	for <ceph-devel@vger.kernel.org>; Thu, 28 Nov 2024 12:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732796937; cv=none; b=PZ4zjg5kuI608SXS7lEfsU3YCO87+/3hkeEo88fw4sBc0cWTOJV+aMaY6gZ6SH7FPiJhCty9NgZLQup9AxYPEnnwwgbzmd7W23CwpFJyfw9/p4AiBeAp4nCGniPTpIZ+RhIOCsY2xy21jmxwPxM9ngAjPwEZ5MY9pAbE3v/KrsU=
+	t=1732796957; cv=none; b=lZ4D2mGKRiYrKKJL/DKdoSh5UA3ZT2hqA0clty4srTFdipK944d+hwY7mrHMW4OP+RZdMIZ4DioKw9ODv0dBQPTKvqXcahRLXimnFF5YsHZCFVpKMd0EPxYozXnhbdQRPf6A16GmsCS8sBW1qlRsGL5Jud8ryOp51y9IwXYgkvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732796937; c=relaxed/simple;
-	bh=7YyGrl4KoRmc0JeVQNy93UMWTak4tQ4PB7z7wqFR2wU=;
+	s=arc-20240116; t=1732796957; c=relaxed/simple;
+	bh=JpPbSJkGmB+FiXHSVu+2bxdWkGhcoXfBF30rmHgjyGg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h78Kww+S9CDrsLeX8M2bzE97FXq1Uygmo4e7/ANK0pRl1CSiSBkrhb7TAbCi/zDnuWQUf8CIWoFBkAw/u6kz9BOnc8jYpe4ooXBPZWwV6MZiWpJengDjeUvoqpkrffcUZuct1pQxKtoMpbYSKx9BEwnW3PxPp6XAPXeWpO+TlLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SR+2143n; arc=none smtp.client-ip=170.10.129.124
+	 To:Cc:Content-Type; b=bQXyNQViHw40lBZYcK34FqyiBYROqiZ/tdvVje2EKDZoBDhMTVm+CKIvfj/hZctGiN7vSOEhjKduGeAB9Kpome07RvHFOKlfn4CvkbGdmSwEPRhwc5OFycmnROK8xCAEzLPMZnSq32YmgbGDH0+mAJaHnjrmbznhOJNP4aC2Hhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NF86R7YP; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732796934;
+	s=mimecast20190719; t=1732796954;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZACMslqIaF7iVtmlx12c8LPoSlN7TzLegXngDuX2z78=;
-	b=SR+2143n/ny/c1ljGZjDnEADm/Ip4JnzZKHEGegX2fSpQuWWcE1/kNzNUvhvIvpffUaami
-	pQnV8KfkLGfnmwFF1tW7gB4vxoTu6M1GGF94HZMZeKWCvFMHdHksmJydcDHl7j7pLyw10t
-	usmZaRSuxFMIGWqNTbACv75cFVGLQL0=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=0Nxf6CkGK3NslY+JLgqPcTLt32q1OCumzkrHYUKQkbE=;
+	b=NF86R7YPaO4OmYapdN/YmkctK36hyatOwgFnMmypDgOYs+5hDSzw9VI6kPrX1Sfwh9Y/oh
+	pkRUEbh4+BmMaTxCAagWRlwi7lwQxDFd7HAWNdry//JprUXWVkYB37Tpxs4gq9uxDC5E3q
+	Hb7mXLh0aj/aMRbdo2tBNwPWG0P55Bs=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-663-ZQP8qgtFN6m2nGQf0X2NvA-1; Thu, 28 Nov 2024 07:28:53 -0500
-X-MC-Unique: ZQP8qgtFN6m2nGQf0X2NvA-1
-X-Mimecast-MFC-AGG-ID: ZQP8qgtFN6m2nGQf0X2NvA
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-385d6ee042eso94028f8f.0
-        for <ceph-devel@vger.kernel.org>; Thu, 28 Nov 2024 04:28:53 -0800 (PST)
+ us-mta-584-WySaN6ZmMESUj57-dOpYeg-1; Thu, 28 Nov 2024 07:29:13 -0500
+X-MC-Unique: WySaN6ZmMESUj57-dOpYeg-1
+X-Mimecast-MFC-AGG-ID: WySaN6ZmMESUj57-dOpYeg
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5cfbec85442so510285a12.1
+        for <ceph-devel@vger.kernel.org>; Thu, 28 Nov 2024 04:29:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732796932; x=1733401732;
+        d=1e100.net; s=20230601; t=1732796952; x=1733401752;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZACMslqIaF7iVtmlx12c8LPoSlN7TzLegXngDuX2z78=;
-        b=TZMC2+q4jDpmI25LXSCuWXokhkfbRpECAi38ZgqUxvUhi+2AvmY1yh/pOp847hCre2
-         6aRDYTQ6qHE3dVEzGMX/OXp+GwDEG10J0QjSzOoL+MJeUw/yIPRQa+ohVDnE1N+XlmDz
-         juy4UiWQKn8gFQaLl+m35S40pZR9AIOnoEXFTpeeXLSxxfZeTRMyvl/oacTRzsObYqPT
-         RIr3vcV7IA0bkfabgUlW8ZVjsS6EXlydI+pwVfV1+418ac+zLCYvxZwZFCGGKaW8UOuF
-         P/coptRB4AWIcNWrrQI7B7cuFS2yIg6MAHpwS8954rI01qN5nm1qtob+7wJptkZqe2NP
-         DbJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzrZ09N3cy/m+TZ01qQp0hSjc+9CU/q7NpbqGnWFGmFLEtE/AfalaQUGAIcJvkj/QBVqCKEs2OHJ3a@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqPL/sGC7bQpC04YBeYOm2hLTQxNy5wI32/U9cE2+tVnP4657D
-	qKuZoM0dofq3lP6R8NLtz+4wxnvnjTkSAdg3YCPAg2BcIeGvZ2ItQf0en5Ek4gBKy5iiwUG955G
-	MBTxCbb9+piqL7VLgWPFn14ohI3hT26phfOnefKfSJlZQ+KQQ+IbRjOGVvPWfPfuRaJvqb8JWVn
-	tYZ7+l9WAj6jpSlZzMYPJsgFkBpbLCKF99YA==
-X-Gm-Gg: ASbGnct5eB0+5i/3kXJEilQaVCt8HvN511tcFaL9Jt89EwW87yfsdLzOTBYXAcjlQdc
-	DvYSbzXFLda9cQLkj+TVNiM9ITi1Qj5w=
-X-Received: by 2002:a05:6000:18ac:b0:382:4a27:1319 with SMTP id ffacd0b85a97d-385c6eb5840mr5776119f8f.6.1732796931972;
-        Thu, 28 Nov 2024 04:28:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGGOqoP8tsZ6KQpRsoqtGa6KHF61EJ3NUmj3Aw3MlprtODTvHQ/TDY7uTpa3Nw0Vy2Is2RlK3QrcXMwzmVV8rU=
-X-Received: by 2002:a05:6000:18ac:b0:382:4a27:1319 with SMTP id
- ffacd0b85a97d-385c6eb5840mr5776067f8f.6.1732796931576; Thu, 28 Nov 2024
- 04:28:51 -0800 (PST)
+        bh=0Nxf6CkGK3NslY+JLgqPcTLt32q1OCumzkrHYUKQkbE=;
+        b=mKm1Xm/SWD2S94iUbLB3ta2mZRg62dz+ryxv1EG/qIKEP1uHWkCD1kMw4C5GaB0fia
+         OMizkO8q8sZv5+KL2RlSQAypQBT+mhLpq9g8boYzbxqhTfzr8czzofci6vxlaHoMJqIu
+         oPoeXH+DLYJE5OMuDrT9PuoyH8MqWTiRm8ONLtKPPUcEJAb0XAQt+7UB3CMNQmRTBUIM
+         OJZQpt97rL/OLDoyN+htJt5hQu22K2BZWcPddDS6g7nWqUA8PsVymeVCqwtEfzuCzzKj
+         dBCozCZRYD3JBQ+nsGVWZ+UVhNmtiMAcwvY3QVNEzS+0oJunjhn4rV9Cy+3IYcUBrinV
+         DRMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWLDSvbYDsj/l3JPpPtdYu3a8DXT4wDtBr4ghDH5bSkcSQ3134I5w8HRjVdslfCgmnsK4Jn7asrOC77@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeNGOaA27n2+a7XZcra9Veum1oc5yk32svjAfvvi5kWxSnQ5B+
+	Yi3YopoOBpvCeF4s0C5I/UNFRCVyG/xFL4j/W+fV8P49Cb5v9SO8LeEeeU3D0Vx7clRU28gctwd
+	sx7X+9YNS0ADi8LYy7lbsssJffrnmtcf63ZmSHqs3196e1t0CYjBa2a0SdGI7QZhDiZJvK6CgK0
+	AjdCfEJyDi08XkT8KOjMXD1acC+fHAXYiDIg==
+X-Gm-Gg: ASbGnctgLsAznXHpbGVS3o10CV4aIP5UCkxjmIu5+reaSwVYFat/Yb+ZEeJ8jeh9pTu
+	x4bJWUB41kERfGa+bVgdIFFOr7Mq5K4M=
+X-Received: by 2002:a05:6402:5243:b0:5cf:e26b:9797 with SMTP id 4fb4d7f45d1cf-5d080c604fcmr5605166a12.29.1732796951977;
+        Thu, 28 Nov 2024 04:29:11 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGuE0zkJ6zJza+fGet7qX+06h7Jmet7/bu0xRwgqC9A06SMAgod8PaoQJd1k5pY7KRDfw0cJAGqmNIglvOyUZo=
+X-Received: by 2002:a05:6402:5243:b0:5cf:e26b:9797 with SMTP id
+ 4fb4d7f45d1cf-5d080c604fcmr5605060a12.29.1732796951475; Thu, 28 Nov 2024
+ 04:29:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241115-converge-secs-to-jiffies-v2-0-911fb7595e79@linux.microsoft.com>
- <20241115-converge-secs-to-jiffies-v2-18-911fb7595e79@linux.microsoft.com>
-In-Reply-To: <20241115-converge-secs-to-jiffies-v2-18-911fb7595e79@linux.microsoft.com>
+References: <20241115-converge-secs-to-jiffies-v1-0-19aadc34941b@linux.microsoft.com>
+ <20241115-converge-secs-to-jiffies-v1-18-19aadc34941b@linux.microsoft.com>
+In-Reply-To: <20241115-converge-secs-to-jiffies-v1-18-19aadc34941b@linux.microsoft.com>
 From: Alex Markuze <amarkuze@redhat.com>
-Date: Thu, 28 Nov 2024 14:28:40 +0200
-Message-ID: <CAO8a2SgQ-==SjhDFZpi2s3r9FUGA96jwuJL7kTDwE=Hw4UcgUg@mail.gmail.com>
-Subject: Re: [PATCH v2 18/21] ceph: Convert timeouts to secs_to_jiffies()
+Date: Thu, 28 Nov 2024 14:29:00 +0200
+Message-ID: <CAO8a2SjKS2nWWVkAcqXkZhR+Q1TocULkwRk09ABf8XQjjzwJPQ@mail.gmail.com>
+Subject: Re: [PATCH 18/22] ceph: Convert timeouts to secs_to_jiffies()
 To: Easwar Hariharan <eahariha@linux.microsoft.com>
 Cc: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, 
 	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
@@ -140,7 +140,7 @@ Content-Transfer-Encoding: quoted-printable
 
 looks good
 
-On Sat, Nov 16, 2024 at 12:32=E2=80=AFAM Easwar Hariharan
+On Fri, Nov 15, 2024 at 11:35=E2=80=AFPM Easwar Hariharan
 <eahariha@linux.microsoft.com> wrote:
 >
 > Changes made with the following Coccinelle rules:
