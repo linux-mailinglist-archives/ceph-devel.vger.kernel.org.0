@@ -1,100 +1,239 @@
-Return-Path: <ceph-devel+bounces-2213-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2214-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A859DB85A
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Nov 2024 14:12:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74569DBBE0
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Nov 2024 18:43:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CF7E1623EC
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Nov 2024 17:43:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF2A1C1741;
+	Thu, 28 Nov 2024 17:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rHIRLOjM"
+X-Original-To: ceph-devel@vger.kernel.org
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70F15B21545
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Nov 2024 13:12:12 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4636F1A0BFE;
-	Thu, 28 Nov 2024 13:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="WfukNIsV"
-X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9DC1A0AF7
-	for <ceph-devel@vger.kernel.org>; Thu, 28 Nov 2024 13:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DCF1C173D
+	for <ceph-devel@vger.kernel.org>; Thu, 28 Nov 2024 17:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732799527; cv=none; b=SJKY1kMpuH9EEfiNKON72GhCmDAl0ny7+mO/94HWPTEcQ925oK9h8gcoxOJfJgSsburgbFi7Kl9wPfe5+Ayho/E6Mc/aGQNvvscUOfR3CzZm+7ZbE1d5ktfEpXqQoWBaNzlE3D33pzkIN9QH9b/i51eXUxvOmghNGL1q5pIVHLU=
+	t=1732815790; cv=none; b=nDuj8k4kBjA0xgkDF/BFpKfcJnWBHWQgeVAQMd1B2A/JAlcqkQX+duhMMJx2SsBijA031MSyZwEdG8hTaa3J0Vep1e1RtHutv53S4qn2+64QFv/yVjMnvLfmzhYZZmqkqYFVrW4qFWCkALDitIZT8AgXnHkC0zAzd7dvsYs8zUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732799527; c=relaxed/simple;
-	bh=RSVSJUlGidziblJUxiTLtOwxA2rGIZxQe7Q2HII3bj8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZnxDa522p0DcMKVkY8Gi8GvUV4QkpHssb4mKIoOMQ3IjHB3bcCUBlaCpRM5mbjtOf2TC+d1tO9NrfnADo3y6uPYLRGAOiMzT0iBKNtv4xx1Xqd//Vdnv8jm/d2AGHsYUlaLKWYYeDBQUqvJBebZqSGQpbcwaa9PqbsJqlJkomv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=WfukNIsV; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-aa549f2f9d2so90661866b.3
-        for <ceph-devel@vger.kernel.org>; Thu, 28 Nov 2024 05:12:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1732799523; x=1733404323; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RSVSJUlGidziblJUxiTLtOwxA2rGIZxQe7Q2HII3bj8=;
-        b=WfukNIsV9w1A3v+mw5nsNNGLg3DrszqV88B17Wa1xUW8EJiUhdVcU//VgGFMj/Jz96
-         GF9O2csXZs8Z2kb0JguNrMWiDGhi9wq0dfqxFDDypRsLqium2sIuL86GQ6tiNkroAaYp
-         RW1XBGvs56c2Kld6Yrp01H6QCV+pZWsA2oMr4M6XWYkagFtgEXa2bv6FPW8yv8AynsCo
-         iYjDaz+qB68GVq7j/Gma7sun0obGNEv7dWWoemReGeySGsabntUoetUZqWgmApVVZzHq
-         n8RA0fYpfksyd3AtwwNgzhap4X45hzocTuCln6s7n5s6EPpcml9aV84MnA9lCXFTKVM9
-         O0KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732799523; x=1733404323;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RSVSJUlGidziblJUxiTLtOwxA2rGIZxQe7Q2HII3bj8=;
-        b=dhPXHQxvUzH0IB+Q8oCq72dTcpGQHYrtmAeCJ0VKFY1VW6pAUIjikEMothGrmGo25C
-         8y7+nguCce/8egb5FQ6QLNFgp3fEn1xSWQ0Pe2R3p9CgeWy+Hz6Shidsfla4wQwf2Vud
-         VXsTVNCAnCXpdWxWmXgIArCfbr1Bc2AkVfh/NYYQ6BAKbFIQWyztRoJxKYdoJNBugsJ5
-         sKrVv42bzj9LDgrkOTqODP5hsuKSTic66LypuWKGsTjatLAnVVmpmW5E2SeWfwOol9Nf
-         6H1/WsL/BSFGvPFzbqLy2BghFy0wI54XKVLBeu5Y5uMErP+S0HByFYRpNntsFDrYtcvu
-         8ZhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPf3gBed0aUbSDj17A4a6tyFQdw/QBDOrpV4pm1DfYweCdnlnmDrR5Jg0B1Qs9lL3cS0WV0l8l5tl7@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcCXXt+vfGDgX3dShwfIw2jbky11yg3DbsGezTQ1RS02hlBcel
-	//urJqE+asbIJdnFOUifRVsdWNNXeUhq18wvBj7nbayKDmwjKmA0gz1D4X/0RZezD/3I3hqSK0D
-	pAzxB4T+lALFZ8Tjx9KSBB9HIdCN8FVMOe1G+nSvpAyZZ37Z8EQs=
-X-Gm-Gg: ASbGnct7VAYL2YH0s86+qGy+Mtezlr+/68cFykSRl5yMpGGH2lo/MAXLxgEzk2xoXLP
-	qR4I8tn2YLL3ZVCJHJ+CFsN20p8PNbW7Xd9j0GyRQV0utpPwauX73g0g/JjQs
-X-Google-Smtp-Source: AGHT+IG1z9xD1ww7s3NzrjYICCANEgPUfErUCJ+27Ulo0O2S8YfixqzsbTMswQj+hKgVIkE2rjhXF92c63MiUh+CN0g=
-X-Received: by 2002:a17:906:1db2:b0:aa5:459e:2db with SMTP id
- a640c23a62f3a-aa581062652mr505113866b.53.1732799523286; Thu, 28 Nov 2024
- 05:12:03 -0800 (PST)
+	s=arc-20240116; t=1732815790; c=relaxed/simple;
+	bh=RjReZj0QDzpFI7Q/vMsPmi2g8ogk0HU+HpzCZa4NdQ8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=muIAkCj6bKVbZ3IDXDsF7BLVsYR7PWyWQ8dZORn88MQawKBNRR/n+NIu33LH++zlGFO9K4CHqdeajvzcxxaXHRZU7qonok0yHJTShN1h7MSwyYmYgU1XXO1N21qzPBO0i5qLNTs1rA7xRpIoWpcElaG+1Hqst1dggjppevmlLXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rHIRLOjM; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732815785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UTJusEyLcdkeaTqu07tNbbd+H/RHd4566STj5QW1iJE=;
+	b=rHIRLOjMokzLXIcWoYkQRZQAdNEhxX+svwO+8hBUAEc+JHJic39XNTIjjguYhIPP/hLHYw
+	Ycb/qKvZ7XzV/eVsO3eFIoCkrRR1RtKBCtjpNza7rqj/OTiLw1imLltN2XvnGsQYETP9Z1
+	8nhCy5k1PXkiRZKVVcZ3mRyKKIAmZdw=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: Luis Henriques <luis.henriques@linux.dev>,  Goldwyn Rodrigues
+ <rgoldwyn@suse.de>,  Xiubo Li <xiubli@redhat.com>,  Ilya Dryomov
+ <idryomov@gmail.com>,  ceph-devel@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] ceph: ceph: fix out-of-bound array access when
+ doing a file read
+In-Reply-To: <CAO8a2SjWXbVxDy4kcKF6JSesB=_QEfb=ZfPbwXpiY_GUuwA8zQ@mail.gmail.com>
+	(Alex Markuze's message of "Wed, 27 Nov 2024 15:47:02 +0200")
+References: <yvmwdvnfzqz3efyoypejvkd4ihn5viagy4co7f4pquwrlvjli6@t7k6uihd2pp3>
+	<87ldxvuwp9.fsf@linux.dev>
+	<CAO8a2SjWXbVxDy4kcKF6JSesB=_QEfb=ZfPbwXpiY_GUuwA8zQ@mail.gmail.com>
+Date: Thu, 28 Nov 2024 17:42:43 +0000
+Message-ID: <87mshj8dbg.fsf@orpheu.olymp>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241127212027.2704515-1-max.kellermann@ionos.com>
- <CAO8a2SiS16QFJ0mDtAW0ieuy9Nh6RjnP7-39q0oZKsVwNL=kRQ@mail.gmail.com>
- <CAKPOu+-Xa37qO1oQQtmLbZ34-KHckMmOumpf9n4ewnHr6YyZoQ@mail.gmail.com>
- <CAKPOu+9H+NGa44_p4DDw3H=kWfi-zANN_wb3OtsQScjDGmecyQ@mail.gmail.com> <CAO8a2Sh6wJ++BQE_6WjK0H5ySNer8i2GqqW=BY3uAgK-6Wbj=g@mail.gmail.com>
-In-Reply-To: <CAO8a2Sh6wJ++BQE_6WjK0H5ySNer8i2GqqW=BY3uAgK-6Wbj=g@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Thu, 28 Nov 2024 14:11:52 +0100
-Message-ID: <CAKPOu+8H=cGbY4TgoT4bZvWwFPH7ZQ8MioMUey+nJvb0my4xUg@mail.gmail.com>
-Subject: Re: [PATCH] fs/ceph/file: fix memory leaks in __ceph_sync_read()
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Nov 28, 2024 at 1:49=E2=80=AFPM Alex Markuze <amarkuze@redhat.com> =
-wrote:
-> The ergonomics and error handling on this function seem awkward. I'll
-> take a closer look on how to arrange it better.
+Hi Alex,
 
-Does that mean you misunderstood page ownership, or do you still
-believe my patch is wrong?
-To me, "pages must not be freed manually" and "pages must be freed
-manually" can't both be right at the same time.
+[ Thank you for looking into this. ]
+
+On Wed, Nov 27 2024, Alex Markuze wrote:
+
+> Hi, Folks.
+> AFAIK there is no side effect that can affect MDS with this fix.
+> This crash happens following this patch
+> "1065da21e5df9d843d2c5165d5d576be000142a6" "ceph: stop copying to iter
+> at EOF on sync reads".
+>
+> Per your fix Luis, it seems to address only the cases when i_size goes
+> to zero but can happen anytime the `i_size` goes below  `off`.
+> I propose fixing it this way:
+
+Hmm... you're probably right.  I didn't see this happening, but I guess it
+could indeed happen.
+
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 4b8d59ebda00..19b084212fee 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -1066,7 +1066,7 @@ ssize_t __ceph_sync_read(struct inode *inode,
+> loff_t *ki_pos,
+>         if (ceph_inode_is_shutdown(inode))
+>                 return -EIO;
+>
+> -       if (!len)
+> +       if (!len || !i_size)
+>                 return 0;
+>         /*
+>          * flush any page cache pages in this range.  this
+> @@ -1200,12 +1200,11 @@ ssize_t __ceph_sync_read(struct inode *inode,
+> loff_t *ki_pos,
+>                 }
+>
+>                 idx =3D 0;
+> -               if (ret <=3D 0)
+> -                       left =3D 0;
+
+Right now I don't have any means for testing this patch.  However, I don't
+think this is completely correct.  By removing the above condition you're
+discarding cases where an error has occurred (i.e. where ret is negative).
+
+Why not simply modify my patch and do:
+
+		if (i_size < off)
+			ret =3D 0;
+
+instead of:
+		if (i_size =3D=3D 0)
+			ret =3D 0;
+
+?
+
+(Again, totally untested!)
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+> -               else if (off + ret > i_size)
+> -                       left =3D i_size - off;
+> +               if (off + ret > i_size)
+> +                       left =3D (i_size > off) ? i_size - off : 0;
+>                 else
+> -                       left =3D ret;
+> +                       left =3D (ret > 0) ? ret : 0;
+> +
+>                 while (left > 0) {
+>                         size_t plen, copied;
+>
+>
+> On Thu, Nov 7, 2024 at 1:09=E2=80=AFPM Luis Henriques <luis.henriques@lin=
+ux.dev> wrote:
+>>
+>> (CC'ing Alex)
+>>
+>> On Wed, Nov 06 2024, Goldwyn Rodrigues wrote:
+>>
+>> > Hi Xiubo,
+>> >
+>> >> BTW, so in the following code:
+>> >>
+>> >> 1202                 idx =3D 0;
+>> >> 1203                 if (ret <=3D 0)
+>> >> 1204                         left =3D 0;
+>> >> 1205                 else if (off + ret > i_size)
+>> >> 1206                         left =3D i_size - off;
+>> >> 1207                 else
+>> >> 1208                         left =3D ret;
+>> >>
+>> >> The 'ret' should be larger than '0', right ?
+>> >>
+>> >> If so we do not check anf fix it in the 'else if' branch instead?
+>> >>
+>> >> Because currently the read path code won't exit directly and keep
+>> >> retrying to read if it found that the real content length is longer t=
+han
+>> >> the local 'i_size'.
+>> >>
+>> >> Again I am afraid your current fix will break the MIX filelock semant=
+ic ?
+>> >
+>> > Do you think changing left to ssize_t instead of size_t will
+>> > fix the problem?
+>> >
+>> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+>> > index 4b8d59ebda00..f8955773bdd7 100644
+>> > --- a/fs/ceph/file.c
+>> > +++ b/fs/ceph/file.c
+>> > @@ -1066,7 +1066,7 @@ ssize_t __ceph_sync_read(struct inode *inode, lo=
+ff_t *ki_pos,
+>> >       if (ceph_inode_is_shutdown(inode))
+>> >               return -EIO;
+>> >
+>> > -     if (!len)
+>> > +     if (!len || !i_size)
+>> >               return 0;
+>> >       /*
+>> >        * flush any page cache pages in this range.  this
+>> > @@ -1087,7 +1087,7 @@ ssize_t __ceph_sync_read(struct inode *inode, lo=
+ff_t *ki_pos,
+>> >               size_t page_off;
+>> >               bool more;
+>> >               int idx;
+>> > -             size_t left;
+>> > +             ssize_t left;
+>> >               struct ceph_osd_req_op *op;
+>> >               u64 read_off =3D off;
+>> >               u64 read_len =3D len;
+>> >
+>>
+>> I *think* (although I haven't tested it) that you're patch should work as
+>> well.  But I also think it's a bit more hacky: the overflow will still be
+>> there:
+>>
+>>                 if (ret <=3D 0)
+>>                         left =3D 0;
+>>                 else if (off + ret > i_size)
+>>                         left =3D i_size - off;
+>>                 else
+>>                         left =3D ret;
+>>                 while (left > 0) {
+>>                         // ...
+>>                 }
+>>
+>> If 'i_size' is '0', 'left' (which is now signed) will now have a negative
+>> value in the 'else if' branch and the loop that follows will not be
+>> executed.  My version will simply set 'ret' to '0' before this 'if'
+>> construct.
+>>
+>> So, in my opinion, what needs to be figured out is whether this will cau=
+se
+>> problems on the MDS side or not.  Because on the kernel client, it should
+>> be safe to ignore reads to an inode that has size set to '0', even if
+>> there's already data available to be read.  Eventually, the inode metada=
+ta
+>> will get updated and by then we can retry the read.
+>>
+>> Unfortunately, the MDS continues to be a huge black box for me and the
+>> locking code in particular is very tricky.  I'd rather defer this for
+>> anyone that is familiar with the code.
+>>
+>> Cheers,
+>> --
+>> Lu=C3=ADs
+>>
 
