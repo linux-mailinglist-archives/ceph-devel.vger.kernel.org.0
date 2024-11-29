@@ -1,316 +1,201 @@
-Return-Path: <ceph-devel+bounces-2226-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2227-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB80E9DE6C5
-	for <lists+ceph-devel@lfdr.de>; Fri, 29 Nov 2024 13:58:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB8949DE77D
+	for <lists+ceph-devel@lfdr.de>; Fri, 29 Nov 2024 14:26:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 319FBB22813
-	for <lists+ceph-devel@lfdr.de>; Fri, 29 Nov 2024 12:58:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DC711616B0
+	for <lists+ceph-devel@lfdr.de>; Fri, 29 Nov 2024 13:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B862719E7E3;
-	Fri, 29 Nov 2024 12:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E8C19E7ED;
+	Fri, 29 Nov 2024 13:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G07qwqKt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQc4Js1i"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96E319D098;
-	Fri, 29 Nov 2024 12:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732885087; cv=fail; b=AfOzo4PP23HfKcugbqRpjB5x0Cm1Jogx/kF1AOmE+jvbeOo+d+rtpLPGCUGQZmHGLeGoNhIMn4LzhuFGleZ9+hhTygkbUanzU9Kp5p1WcXvemImPyMW4dljbLc+bg/yvy+FUAIRNOVPnXT5yefsjmM3rfgsiApl0q2+nEq9KuUc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732885087; c=relaxed/simple;
-	bh=weL3piMTjoNujiNid4RDogwwA/DCEKj+1u5pMzDG49k=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=b3FAs7E6TnurYONqc4J6le3CwCcvu/Bz7XZj/7H3kJBB0LNGWOLKXN3bHTvsMwJ53to3P7YNZU4NEwneQtGBZ0LlRdtNlDBqEReWOHlF4X2P/pJ5MV4/NcCdv84dVW7OK+XoAhUYbsPbH8d2/pgGcdiOqPrSka5EWLDDtuD6SSo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G07qwqKt; arc=fail smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732885086; x=1764421086;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=weL3piMTjoNujiNid4RDogwwA/DCEKj+1u5pMzDG49k=;
-  b=G07qwqKtG+z5vgkkyA8yT6aMH8uoMXGhr4X9pnSjBLzHGdVZFE6noSKa
-   u86u8WjhB0tjMK4dsimpW9JfiGAWNwHdkAG56q4AohAQ/vl8T4bkJ8BcC
-   N+FceARtUQGQZl9BO0DgSPSLF9E05V61nMewzmxmF+R0MNEyDW91GmMti
-   HAc7rPzoKbVNnVrfqR9GnGxArciYLzvpBJIVNgu3bzU+ax0UaVLpUeukm
-   oeBzh1KRmRVF8wxF5tC4mtSxVzMluI6DSps4Kro+bBDUf3cGTBiT91CKc
-   wRoCSZ/doNlj3YQlCGSAlVQqP2yV8o4Hja7uEKbc4XVa4QfijBVWyGuh/
-   Q==;
-X-CSE-ConnectionGUID: slLDaV0mRO2caP4Z9mURKQ==
-X-CSE-MsgGUID: ewuHcardRi2bH6XSJdeK6w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11271"; a="33054650"
-X-IronPort-AV: E=Sophos;i="6.12,195,1728975600"; 
-   d="scan'208";a="33054650"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2024 04:58:04 -0800
-X-CSE-ConnectionGUID: HAvQQNW/RNWOl4aOfrc//Q==
-X-CSE-MsgGUID: QKzxRDpsRp2+YRSgSDDPkg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,195,1728975600"; 
-   d="scan'208";a="92593314"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Nov 2024 04:58:04 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 29 Nov 2024 04:58:03 -0800
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 29 Nov 2024 04:58:03 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.176)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 29 Nov 2024 04:58:02 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=quCbtJ24tWPmPATmSXI/wOXpATuCaCo0hIr9k7ZcwEZewHb/EuBWyTInctB5QwhSROxmEXN3PiwxGX687e7QwCYxAlBFD70gzdNI5a8r7uNBpjJWZqy9uxCqXKbkTFYWqlm7HzQFc2+yE9/f2BbXDBXPre1STezTtXrVQpV2vaJOZ/1nNyvtn+PSE/1JAAqbG/bkxJG+ApYSq82+VTLWjkX1PcITcSpGlfM0J8Rl0y6X35x1eEQM7RI77zmYQHh5gixrXJqrvrpBxim9bIJUMU28zFs1eWDnsxbKwG0fhFcgSoOfMvE+Ro/5A5OsQ5rKCZr4/tJg2yF1pLgVvvEmcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SV+OufASk8xBhFc+yWg6QA9nU9jS1Mod881QXXOOPQA=;
- b=lJRjYzW7QtP0TJ254CvUOkjztPHqGJmr37Wdd1gmdGN7C2dILYcW7EJsd+41ncfJ1q1qHgmJaGY941JBQJOQiPEGlP9tIexdimvDINiV0Wrm9lg+1ZXYDtdx3QnJPejJ6MA6mxT5sbz+WQthSO56tiBrHYLkVhwJtZCB1Go351VQJcKLR/tCNEfmn1rGlmykc/coPhXRCHztsFeZMPpe4kLsXEYN1OWauVRPxDYj+UxE45GOZm1+E7DFSGg2TStYKLnOVDNTSSgr9W/BUx+7vo9kkTrBXxAW5PDSt5fcnRAJo/tfwcjW+AUjbhXBZ/MC4Yhl76E8g8JFTWGgqYCT+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
- by SA2PR11MB5147.namprd11.prod.outlook.com (2603:10b6:806:118::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.15; Fri, 29 Nov
- 2024 12:58:00 +0000
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6%4]) with mapi id 15.20.8207.010; Fri, 29 Nov 2024
- 12:58:00 +0000
-Message-ID: <b9fcb12a-b7a4-4c33-836e-67109ce07deb@intel.com>
-Date: Fri, 29 Nov 2024 13:57:52 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/21] Converge on using secs_to_jiffies()
-To: Easwar Hariharan <eahariha@linux.microsoft.com>
-CC: <netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <cocci@inria.fr>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-s390@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <intel-xe@lists.freedesktop.org>,
-	<linux-scsi@vger.kernel.org>, <xen-devel@lists.xenproject.org>,
-	<linux-block@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
-	<ath11k@lists.infradead.org>, <linux-mm@kvack.org>,
-	<linux-bluetooth@vger.kernel.org>, <linux-staging@lists.linux.dev>,
-	<linux-rpi-kernel@lists.infradead.org>, <ceph-devel@vger.kernel.org>,
-	<live-patching@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-	<etnaviv@lists.freedesktop.org>, <oss-drivers@corigine.com>,
-	<linuxppc-dev@lists.ozlabs.org>, Anna-Maria Behnsen
-	<anna-maria@linutronix.de>
-References: <20241115-converge-secs-to-jiffies-v2-0-911fb7595e79@linux.microsoft.com>
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Content-Language: en-US
-In-Reply-To: <20241115-converge-secs-to-jiffies-v2-0-911fb7595e79@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: WA2P291CA0045.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1f::19) To MN6PR11MB8102.namprd11.prod.outlook.com
- (2603:10b6:208:46d::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3220619884C;
+	Fri, 29 Nov 2024 13:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732886804; cv=none; b=P4pDmWSgy+nuAg0bjOIprgdP1u8xP3Uk8dX2mCC9UUnqdi+rCArWDFa/m6Z8DBAI0bv3F1W8/jsCU/ojtNhO4S8dHWynGgY9vrDOSjVgn6YV896Jyv/9lPL+6iOes51LPPva9qTkcggMyD+Gs+s5fjcbRo3Nu5Tjam2nM46DC2U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732886804; c=relaxed/simple;
+	bh=2UYDAkrQpCwfYdwnS3mJ52m794KPVXFmugJzLQfshls=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lycsWN1kXzelaiyMXzk6z/gSYuOjIhFZyU+Em/hFqMqk+r73rQAK7RMOcZ3LmY6CdJL1cUy98dDqebgKSiWLAi/ULK4ZGhji0PS5li9vdRGN8lLvtuITZsEbjP9MgjChfmC26qpgERndptoEVSNvoPWEX2DWIp3Lh1Mg+0fJo5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQc4Js1i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ABDEC4CECF;
+	Fri, 29 Nov 2024 13:26:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732886803;
+	bh=2UYDAkrQpCwfYdwnS3mJ52m794KPVXFmugJzLQfshls=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=kQc4Js1ij6ZMKz+H6ZLKx3DnlPX5U1bSYLjmQVdsXl2onrdi53EnUemTihHQMSwSu
+	 w+HywW5hgw+8/bdAeGiM+l2sk+tQR0tb3HSRTzJUPQMNguM6dGR1ggHQ380L8Q50AA
+	 XV0HDijOlN2/QlP0e+3vdFW+loBQUTqfhDeA1q2YcH2t3mLz4IZud5Oiurluc24sa8
+	 Lx+O7Fg8prgmDivNkU0QYkOq2+ImAlT6ZkAjIzXi3csp3lvb0sDfANjI7kQCl8N/Q6
+	 uVBYYbLR/AD3Iz6r1ttmJMAn1RE5bLja+QY5J3O9yCgIl9JoqYENklr+gygoyUO0qy
+	 IvonJKN6+lwNQ==
+Message-ID: <a8f7569120339dedc6bbe50df773e0e55baf11fa.camel@kernel.org>
+Subject: Re: [PATCH 1/5] ceph: Do not look at the index of an encrypted page
+From: Jeff Layton <jlayton@kernel.org>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Ilya Dryomov
+	 <idryomov@gmail.com>
+Cc: Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>
+Date: Fri, 29 Nov 2024 08:26:42 -0500
+In-Reply-To: <20241129055058.858940-2-willy@infradead.org>
+References: <20241129055058.858940-1-willy@infradead.org>
+	 <20241129055058.858940-2-willy@infradead.org>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
+ MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
+ gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
+ 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
+ R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
+ rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
+ ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
+ Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
+ lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
+ iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
+ QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
+ YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
+ wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
+ LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
+ 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
+ c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
+ LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
+ TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
+ 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
+ xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
+ +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
+ Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
+ BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
+ N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
+ naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
+ RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
+ FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
+ 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
+ P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
+ aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
+ T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
+ dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
+ 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
+ kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
+ uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
+ AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
+ FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
+ 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
+ sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
+ qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
+ sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
+ IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
+ UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
+ dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
+ EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
+ apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
+ M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
+ dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
+ 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
+ jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
+ flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
+ BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
+ AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
+ 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
+ HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
+ 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
+ uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
+ DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
+ CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
+ Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
+ AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
+ aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
+ f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 (3.54.1-1.fc41app1) 
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|SA2PR11MB5147:EE_
-X-MS-Office365-Filtering-Correlation-Id: 67d5165e-3df9-44c0-490c-08dd10757449
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?dkxVcnZ6ZG1sM1ZPYjdBekZPRHhJMzJOVDlWdVc4Lzg3T254OEFXSFVEbEV1?=
- =?utf-8?B?bitJLy9YVHdIeHB5Q1o4QjZVSzJZcDFHem5rTXcyMnF1VTFvU3RiQ3BUNVhy?=
- =?utf-8?B?TlZhckMvZm1GSXNaVm1ra2JjWklJM3MwWUQ2eEhSbENQa1ZSa3VXMUN2QUhl?=
- =?utf-8?B?aXIxZWdpejRINDMvb1dwM0Z1UllBQUNad3lzMEliTGRva2lOUFV3WjZrNjN2?=
- =?utf-8?B?Y1V2dmtWVmV0ejBzazAxcnFBcHpCSXpzcE9Vam1UUkEyQTRRM1pVeGYrbDJS?=
- =?utf-8?B?RkpOSEgrMEhLNklaMXJJazdSbUVFWEVoSWdsaHluQkNRWVd0Um81ODB3WS9O?=
- =?utf-8?B?N3c1a1FEejgyWkVyemxrU1VXMkdWMmF2RGtFTFpoNjNObFpMdVAzaytNU1RL?=
- =?utf-8?B?OUZwd3ZBVTk5RG1BdHNKOUFEV2JPSXVuVGdMOVY3Q0NJQmZPTTNGdUpzRkZV?=
- =?utf-8?B?NFpCTnJndkNSRkdNNzc1NzhkVzN2Z1poaGtBcmVkdElHOGpSVHA5UFlCKzlG?=
- =?utf-8?B?M3pjMUovRkxnZ2wySlFteHRqTWRhRFBHUzBiazJCcnJZZ0xSQmNPdDlQcWlz?=
- =?utf-8?B?ZWFMb0tkYU9lcFRQTjVJN2ZuZmIwb3R6K2sxTW5HeEg5RGFMUzFraXhKZVJP?=
- =?utf-8?B?bFl6WkkyU0NOL1g2OFBTVUUrNEhJc2d4YTZnRHl2em9kVHZNZkRFQnVQSFRX?=
- =?utf-8?B?bDNjM2NndjB3WkhITmtMb2w4U3NNSjZRdE1XRUNMQjNVejEyQkdhaUtnUWRk?=
- =?utf-8?B?Vndia0hpeFFUaERTWUtjYWdZK0c5d0NHelZPNFRpVWNmd0ZpVmVUNk5wSUx0?=
- =?utf-8?B?QW5DN2xLREVFaXRlZWJ1Tnp1RDMwYS8yN0ZZempwbXhudzNJUE5vczhuZ2N4?=
- =?utf-8?B?UTJya0tlYWcrM1ZNdWI3UFo5WHo5QTE2bUhvVi9ITXpSOHdlczREY1FodStv?=
- =?utf-8?B?QXR6RDdheE9NSmNHTVhJV1RMNk10djE4anhhL0I2dnhveFZLNkhuZWw0ZndJ?=
- =?utf-8?B?OEhNK3Z4SGtDVHZHeCt2NU9SRjdIMEl2MWRBVGFpV2NpWlpIMmY5ZktTdlY5?=
- =?utf-8?B?L0RHL0tTdkNGRUl2alA5VW1ROUlLWnRUSTdNMXB2YkVVa3NIUDZKckNaWG1I?=
- =?utf-8?B?cmdvaEJYVWYvdWFIYVYyMCtKeGY4RGpVb3hjbDVqblVHTU1mQVd2djNCaGFV?=
- =?utf-8?B?QnZTaDlSWGtyVjJTL0pvQVRjc282VFpMdG0xVVUzb05PUit3VG1SVWN3T0tP?=
- =?utf-8?B?VldMMG4zdk1BZGhUVjZNZ3YvVVZaNFRIZkx4MHk4YXF2QTg4U2pUWlRXdS94?=
- =?utf-8?B?VHp1VFFXNEU1elUzQVJZbWNTcS9YOWlLcUwySzhZWDd6aWRRcUMvTVpzL1Bq?=
- =?utf-8?B?ZEN2anZzNEJVMmQ5Q0xpbW15cFdLa2NiM2RGYnZvZU4zSmQyaTNkS1VxMENx?=
- =?utf-8?B?WWprTEpoVkg1WEJrQ3Z2SlpEOVA5dXdkY3p4NnBWNmhBYlpnZXFWS3V4dmVy?=
- =?utf-8?B?RDlyQ2ZrZ3B5VlR2TkFOUWVqb0NJT05UazByRlRoUnJIbmNYNi8xTk1WM0Zt?=
- =?utf-8?B?cExlWS85VWJiU0MwaDNPQnBXMTc1ZStybFY5SkNWSitvUXh0cUFObE04R2pa?=
- =?utf-8?B?NlZMalFXWURBaDgvdFpISm9yVHFGaStaUHlHckJWNmpxVUhObVMrcnV1NTU1?=
- =?utf-8?B?anloQTgzZllIUFVLYmZnYjJYV3kvMUJqSlJ1M3BtQ2orbnlsRzFIK2hMN0or?=
- =?utf-8?Q?kqlUCgrkXGW14PGqqE=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TzBicjlHQkRsSklUZGpsMVBLRW9WOUVoUUxVMTZLREpncm9KZGhPN2hKa0cx?=
- =?utf-8?B?S1NHZHNaKzJjM1ZleElOVjVPSkh0eklmRFY1enpxWk9TUFlnbkoxeGdzMXNn?=
- =?utf-8?B?NFVjTks5ZjZCRndhR05rTzBQQmdaM2FBaWNGK29wOTZmc2gyS1JWdlczQzZo?=
- =?utf-8?B?OFlSd0FUQVBtaGNzak1nbHQ4cFZVRDNvbDB2Qm54RURlOEZEL01xN1JTMFRk?=
- =?utf-8?B?U1NOSDE5UTdiUWl0TjlKSG96eUtPQ1lPL2Z0Q2dUSFRBQUNTeWdkSHY5YTBh?=
- =?utf-8?B?cVNRZys3RXVTbmJkdm01VExFV0tKaW1NbUdDUDhUZzk1VWVWTkZEcWo1aU1o?=
- =?utf-8?B?cGVJY1VuMmdZbmtxaHQ2UC94OFBhVzRBOGJCbzk0b0FCcDd6UlliQnFBaXB4?=
- =?utf-8?B?ZUhRb21KZ2VlNG9FTjIvUGxxb3BvUnM0Tk00NUlsQzN1NVFIcHFZaUxHVGtG?=
- =?utf-8?B?ZitGeGtHR05mMzd0M1Y5QlpPLzlqTlFMR2xrbjhjTW5OdndkL3lGM0lQNkhP?=
- =?utf-8?B?MEdwZ2FPTnc5Sm85Vm5pOFRmTTl0akdlRFhIR2h2bktZTFBFeHdsQ0dNUlI4?=
- =?utf-8?B?S3dDUWJUM0xoRVZ5R21TaUMwelozRGdkVzVzemhTTFBTOWxnNTUwSjdVcUtj?=
- =?utf-8?B?Q2VQOVZEWXYzQWJpd0ViQnpwR3I2MWVkVkMweWc1Nm4vWkhBVzhxQmFzczA1?=
- =?utf-8?B?VTJ6NVdoeGVuZ2dOQzlWQzFYQ1c5UStNWHVhRmlzbGlGS0lERVFaSFFxUUpI?=
- =?utf-8?B?cURYMEs3RStNbCtMZmlJNDhzVjlhTjFwRHdzZjlrYlR1S0I5RkVYUDhKbXk5?=
- =?utf-8?B?Tm41ZUhiMnlQZnhER0w0NU1GM01FWGxJSHFUeURaUis2Tng1T1Z5a04wdUJM?=
- =?utf-8?B?MWxVbCszdk42UUpZM1pVMWVZQTFzc3pySUlzOG5WN2tXZm11cHZmUG9Ddkx1?=
- =?utf-8?B?SmdmbFVJMnljR1RQam1xR3BSd29oYmJjcGZNVU5qL3hzYUtMWTN2UHBrMlJ4?=
- =?utf-8?B?d1ZoSmFrVU5GQXc0N1J5Rm1HeVRwSXVHUGhXOHhIWW1lMkYwNTFudFlwMUlz?=
- =?utf-8?B?bzlzcENOblQ4U2k1NTRLeGoySW9pdmJZZjIyL3dwQTdvaGk1cnUzUE5yeUdr?=
- =?utf-8?B?OVRSWDNIZUgwMkd0UmZ4TFZnNzhpSitJSm8xRjB4TUcxbVl3cmxscDhZNzRI?=
- =?utf-8?B?cEtYLytwY0h4RGJOY1d6U01PYVI0cUh3Vm0zOEhsV2paN2U3VTZ5TTNwS2F0?=
- =?utf-8?B?Q1I4OFlpMnY3UjV0NXVVSmJiYzF3bklpVlJOMW1Wc21NZVc3ZXdTbzBBUHp1?=
- =?utf-8?B?KzluVlN4UnFPem9PZEZhODI0L05BNWVZRnBkbVZCU1Bkb2JYQWZVRTZObGcx?=
- =?utf-8?B?ZFpTNzVZZXdBVEtSc2o4YzdXdXRnY2p0b0tLTzFVR296cEg3ZkFlYVAwMXc0?=
- =?utf-8?B?Z1lka1lNQjNHZDdISXNCQTFXRkRiWkNFWk9SbmhvRkJSSlRLWWRGaWFtTllq?=
- =?utf-8?B?c3plVkVtRTB6ZGYrSG9KbjkwOXB4a3h6cnNVc0FZWDhNVUV3ZDVGcVRsRW40?=
- =?utf-8?B?YjhQeThqMkYwQzE5dHpWUDg5cmVObE1DRGlGL0IyMWZCR1ZrYU1SYmY2eUUy?=
- =?utf-8?B?VVZNTmpRUzRnc2FnSEVIbEJidmFGdEVEblExcVJIV1RnR3VEOFpxTEJoZmlk?=
- =?utf-8?B?NnJXTmZOWXFVV244ZzFhSHhQUGtKaHUvcUptdzJ1ZXRTRlM2djdxaHFwZndM?=
- =?utf-8?B?VUlMTjJBUS90ME9EQUhVU2tHcVdrTFYrWjVWNkZsWGNyRjAyc2JSUUYxY0tj?=
- =?utf-8?B?c3RKZ1pFenJ3RjZwWUJtbXpKQmhxWXBpUlRIR3ZXUnVqWDVVVlplbmtUZTN3?=
- =?utf-8?B?WHZld1VzY2pQWnNyeldBV3FHM2xobmpiTC9rM29IS29yaVJYYWJScnQwdHNY?=
- =?utf-8?B?SVFXa1czanVTdlg3Ny9leFlURnRqUGVDZHg5U0Vrb1c3TUdwVGlWdFlYS1Z2?=
- =?utf-8?B?RFVSZzlOMk91N0ZrU2F6RGQ0ZkRvdjJzRmdIRVZMeUd4ZUQxRHp2NXl4d1pU?=
- =?utf-8?B?YXdBaXFGUGUvR3BNOUF4c0pGOE1FQ005eWd1Q2ZaR1FxYkFLc1krYWFtTjk5?=
- =?utf-8?B?anFqOG5TNWNyRlZJR3N5UGY4bmtsVHRNRjA2S1pvbzRtNVhqYmNvNUVRNkhn?=
- =?utf-8?B?T0E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67d5165e-3df9-44c0-490c-08dd10757449
-X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2024 12:58:00.6662
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7oJDD6qW2ylePjbQiFLukqf725XNvKEjJdGC96Qc7GsdtHc8H4mr0M/UZyhXA11t6B6X2TWAYoqh/Ueo1h3WJ/GmLtyX9JwWT9WrZpqkg70=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5147
-X-OriginatorOrg: intel.com
+
+On Fri, 2024-11-29 at 05:50 +0000, Matthew Wilcox (Oracle) wrote:
+> If the pages array contains encrypted pages, we cannot look at
+> page->index because that field is uninitialised.  Instead, use the new
+> ceph_fscrypt_pagecache_folio() to get the pagecache folio and look at
+> the index of that.
+>=20
+> Fixes: 4de77f25fd85 (ceph: use osd_req_op_extent_osd_iter for netfs reads=
+)
+
+This commit may be a better candidate for the fixes tag:
+
+     d55207717ded ceph: add encryption support to writepage and writepages
 
 
-[removed most non-list recipients, it's just too much]
-
-On 11/15/24 10:26 PM, Easwar Hariharan wrote:
-> This is a series that follows up on my previous series to introduce
-> secs_to_jiffies() and convert a few initial users.[1] In the review for
-> that series, Anna-Maria requested converting other users with
-> Coccinelle. This is part 1 that converts users of msecs_to_jiffies()
-> that use the multiply pattern of either of:
-> - msecs_to_jiffies(N*1000), or
-> - msecs_to_jiffies(N*MSEC_PER_SEC)
-> 
-> The entire conversion is made with Coccinelle in the script added in
-> patch 2. Some changes suggested by Coccinelle have been deferred to
-> later parts that will address other possible variant patterns.
-> 
-> CC: Anna-Maria Behnsen <anna-maria@linutronix.de>
-> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
-> 
-> [1] https://lore.kernel.org/all/20241030-open-coded-timeouts-v3-0-9ba123facf88@linux.microsoft.com/
-> [2] https://lore.kernel.org/all/8734kngfni.fsf@somnus/
-> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
-> Changes in v2:
-> - EDITME: describe what is new in this series revision.
-> - EDITME: use bulletpoints and terse descriptions.
-> - Link to v1: https://lore.kernel.org/r/20241115-converge-secs-to-jiffies-v1-0-19aadc34941b@linux.microsoft.com
+>  fs/ceph/addr.c   | 5 ++++-
+>  fs/ceph/crypto.h | 7 +++++++
+>  2 files changed, 11 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 4c82348fe1e6..284a6244fcdf 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -1346,8 +1346,11 @@ static int ceph_writepages_start(struct address_sp=
+ace *mapping,
+>  			memset(data_pages + i, 0,
+>  			       locked_pages * sizeof(*pages));
+>  		} else {
+> +			struct folio *folio;
+> +
+>  			BUG_ON(num_ops !=3D req->r_num_ops);
+> -			index =3D pages[i - 1]->index + 1;
+> +			folio =3D ceph_fscrypt_pagecache_folio(pages[i - 1]);
+> +			index =3D folio->index + 1;
+>  			/* request message now owns the pages array */
+>  			pages =3D NULL;
+>  		}
+> diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
+> index 47e0c319fc68..7d75c4874aa8 100644
+> --- a/fs/ceph/crypto.h
+> +++ b/fs/ceph/crypto.h
+> @@ -280,6 +280,13 @@ static inline struct page *ceph_fscrypt_pagecache_pa=
+ge(struct page *page)
+>  }
+>  #endif /* CONFIG_FS_ENCRYPTION */
+> =20
+> +static inline struct folio *ceph_fscrypt_pagecache_folio(struct page *pa=
+ge)
+> +{
+> +	if (fscrypt_is_bounce_page(page))
+> +		page =3D fscrypt_pagecache_page(page);
+> +	return page_folio(page);
+> +}
+> +
+>  static inline loff_t ceph_fscrypt_page_offset(struct page *page)
+>  {
+>  	return page_offset(ceph_fscrypt_pagecache_page(page));
 
-that is not a proper changelog, you were supposed to edit those
-placeholder entries; please look around for examples
+Patch looks good though:
 
-There is also just too much recipients. Please split up your patches
-into smaller pieces. You will also learn the process on a smaller
-sample.
-
-And definitively please wait for 48h before reposting such big series.
-
-Regarding code - you could also convert msecs_to_jiffies(const * HZ),
-there are 10 that are greppable.
-
-> 
-> ---
-> Easwar Hariharan (21):
->        netfilter: conntrack: Cleanup timeout definitions
->        coccinelle: misc: Add secs_to_jiffies script
->        arm: pxa: Convert timeouts to use secs_to_jiffies()
->        s390: kernel: Convert timeouts to use secs_to_jiffies()
->        powerpc/papr_scm: Convert timeouts to secs_to_jiffies()
->        mm: kmemleak: Convert timeouts to secs_to_jiffies()
->        accel/habanalabs: Convert timeouts to secs_to_jiffies()
->        drm/xe: Convert timeout to secs_to_jiffies()
->        drm/etnaviv: Convert timeouts to secs_to_jiffies()
->        scsi: lpfc: Convert timeouts to secs_to_jiffies()
->        scsi: arcmsr: Convert timeouts to secs_to_jiffies()
->        scsi: pm8001: Convert timeouts to secs_to_jiffies()
->        xen/blkback: Convert timeouts to secs_to_jiffies()
->        gve: Convert timeouts to secs_to_jiffies()
->        wifi: ath11k: Convert timeouts to secs_to_jiffies()
->        Bluetooth: MGMT: Convert timeouts to secs_to_jiffies()
->        staging: vc04_services: Convert timeouts to secs_to_jiffies()
->        ceph: Convert timeouts to secs_to_jiffies()
->        livepatch: Convert timeouts to secs_to_jiffies()
->        ALSA: line6: Convert timeouts to secs_to_jiffies()
->        nfp: Convert timeouts to secs_to_jiffies()
-> 
->   arch/arm/mach-pxa/sharpsl_pm.c                      |  6 +++---
->   arch/powerpc/platforms/pseries/papr_scm.c           |  2 +-
->   arch/s390/kernel/lgr.c                              |  3 ++-
->   arch/s390/kernel/time.c                             |  4 ++--
->   arch/s390/kernel/topology.c                         |  2 +-
->   drivers/accel/habanalabs/common/device.c            |  2 +-
->   drivers/accel/habanalabs/common/habanalabs_drv.c    |  3 +--
->   drivers/block/xen-blkback/blkback.c                 |  2 +-
->   drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c            |  2 +-
->   drivers/gpu/drm/xe/xe_device.c                      |  2 +-
->   drivers/net/ethernet/google/gve/gve_tx_dqo.c        |  6 ++----
->   drivers/net/ethernet/netronome/nfp/nfp_net_common.c |  2 +-
->   drivers/net/wireless/ath/ath11k/debugfs.c           |  2 +-
->   drivers/scsi/arcmsr/arcmsr_hba.c                    |  2 +-
->   drivers/scsi/lpfc/lpfc_init.c                       | 18 +++++++++---------
->   drivers/scsi/lpfc/lpfc_nportdisc.c                  |  8 ++++----
->   drivers/scsi/lpfc/lpfc_nvme.c                       |  2 +-
->   drivers/scsi/lpfc/lpfc_sli.c                        |  4 ++--
->   drivers/scsi/lpfc/lpfc_vmid.c                       |  2 +-
->   drivers/scsi/pm8001/pm8001_init.c                   |  2 +-
->   .../vc04_services/bcm2835-audio/bcm2835-vchiq.c     |  2 +-
->   fs/ceph/quota.c                                     |  2 +-
->   mm/kmemleak.c                                       |  4 ++--
->   net/bluetooth/mgmt.c                                |  2 +-
->   net/netfilter/nf_conntrack_proto_sctp.c             | 21 ++++++++-------------
->   samples/livepatch/livepatch-callbacks-busymod.c     |  2 +-
->   samples/livepatch/livepatch-shadow-fix1.c           |  2 +-
->   samples/livepatch/livepatch-shadow-mod.c            | 10 +++++-----
->   scripts/coccinelle/misc/secs_to_jiffies.cocci       | 21 +++++++++++++++++++++
->   sound/usb/line6/toneport.c                          |  2 +-
->   30 files changed, 79 insertions(+), 65 deletions(-)
-> ---
-> base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
-> change-id: 20241112-converge-secs-to-jiffies-d99d1016bd11
-> 
-> Best regards,
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
