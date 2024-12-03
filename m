@@ -1,153 +1,138 @@
-Return-Path: <ceph-devel+bounces-2239-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2240-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1904F9E29E6
-	for <lists+ceph-devel@lfdr.de>; Tue,  3 Dec 2024 18:48:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C6411611DC
-	for <lists+ceph-devel@lfdr.de>; Tue,  3 Dec 2024 17:48:11 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABDC1FECC3;
-	Tue,  3 Dec 2024 17:47:39 +0000 (UTC)
-X-Original-To: ceph-devel@vger.kernel.org
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D169E2CD7
+	for <lists+ceph-devel@lfdr.de>; Tue,  3 Dec 2024 21:13:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED9B1FECCE
-	for <ceph-devel@vger.kernel.org>; Tue,  3 Dec 2024 17:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D679CB31BC0
+	for <lists+ceph-devel@lfdr.de>; Tue,  3 Dec 2024 18:29:48 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250221FC7EF;
+	Tue,  3 Dec 2024 18:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rBVOdYsW"
+X-Original-To: ceph-devel@vger.kernel.org
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283DA1FBEA7
+	for <ceph-devel@vger.kernel.org>; Tue,  3 Dec 2024 18:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733248059; cv=none; b=smdZdaJc/d2zQJ0tHtZ0MG8K50Cm02gVg/Asvhszvm0/eiaM+a/DcXstnq9qcVvqk01SSIKGxWqG3Fd/RUvkaONDHe4rvTFKmzF/YDxmhMQb32Ae6OsWYbAQQ06oajWmJJ1cCU7jRw7VySS7jwxvu2/OQk9Oft6EBbb1pIiaCWE=
+	t=1733250584; cv=none; b=YxnE+pdr8QeaH9BlztJoDHdhQMbDODCCYHyuaLTVLgfjiEwxTFaaMRGB1zmIls159pvUUvzr0RDSlScwt4+ea+IgQghEudLLk51nyfUD2XgMNdj+aH5p0QsnLgcedRntePrBfoXIODtKvHCiYFML/qy6nHkw7ftH9tR5B0svM2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733248059; c=relaxed/simple;
-	bh=Q95+gOI7pTAZtpI5+UrdylhdkgXfWijiKSsgRKgGNcI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OuN5ej7uAwI2zkQO+QCHRx6dsWrro4x1E993wcGkF/Pr5qXF2yz6uNTaFWYBxRbebG/W0MmCS5hSzTLZqTPC+Y58ebPCRzfTVHJwAJVBGv4mfQ4Kr5dBTcLFcH1r5RzPeLf9SQhOlnygkqxu8H8S2J9ZHQ/ygxecLlg1KwqtsLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1tIWyE-0003sq-Mm; Tue, 03 Dec 2024 18:45:58 +0100
-Message-ID: <fc624e3fd4a4a38dedf02e31be9e4f1c85fb40a0.camel@pengutronix.de>
-Subject: Re: [PATCH 09/22] drm/etnaviv: Convert timeouts to secs_to_jiffies()
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Easwar Hariharan <eahariha@linux.microsoft.com>, Pablo Neira Ayuso
- <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,  Nicolas Palix
- <nicolas.palix@imag.fr>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang
- <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>,
- Russell King <linux@armlinux.org.uk>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Ofir
- Bitton <obitton@habana.ai>, Oded Gabbay <ogabbay@kernel.org>, Lucas De
- Marchi <lucas.demarchi@intel.com>, Thomas =?ISO-8859-1?Q?Hellstr=F6m?=
- <thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- James Smart <james.smart@broadcom.com>, Dick Kennedy
- <dick.kennedy@broadcom.com>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Roger Pau =?ISO-8859-1?Q?Monn=E9?=
- <roger.pau@citrix.com>, Jens Axboe <axboe@kernel.dk>, Kalle Valo
- <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>, Jack
- Wang <jinpu.wang@cloud.ionos.com>, Marcel Holtmann <marcel@holtmann.org>,
- Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz
- <luiz.dentz@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Xiubo
- Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,  Josh Poimboeuf
- <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, Miroslav Benes
- <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, Joe Lawrence
- <joe.lawrence@redhat.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
- <tiwai@suse.com>, Russell King <linux+etnaviv@armlinux.org.uk>, Christian
- Gmeiner <christian.gmeiner@gmail.com>,  Louis Peens
- <louis.peens@corigine.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
- Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, cocci@inria.fr, 
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
- linux-scsi@vger.kernel.org, xen-devel@lists.xenproject.org, 
- linux-block@vger.kernel.org, linux-wireless@vger.kernel.org, 
- ath11k@lists.infradead.org, linux-mm@kvack.org,
- linux-bluetooth@vger.kernel.org,  linux-staging@lists.linux.dev,
- linux-rpi-kernel@lists.infradead.org,  ceph-devel@vger.kernel.org,
- live-patching@vger.kernel.org,  linux-sound@vger.kernel.org,
- etnaviv@lists.freedesktop.org,  oss-drivers@corigine.com,
- linuxppc-dev@lists.ozlabs.org, Anna-Maria Behnsen <anna-maria@linutronix.de>
-Date: Tue, 03 Dec 2024 18:45:50 +0100
-In-Reply-To: <20241115-converge-secs-to-jiffies-v1-9-19aadc34941b@linux.microsoft.com>
-References: 
-	<20241115-converge-secs-to-jiffies-v1-0-19aadc34941b@linux.microsoft.com>
-	 <20241115-converge-secs-to-jiffies-v1-9-19aadc34941b@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1733250584; c=relaxed/simple;
+	bh=agLgcQLieVyrvcqGbkgbP0D1qGeS9ONSZ17Cqy+yOcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R9dt157iUi2xH5jwJNJnfLRcgsVzRSw4nDyud4wy1NfkHv7300BN+lVTBHKv9j0XPCM10eo71UCtbbuu88h13OO/QkU3dzJo5ZRbN67kVbhomWuhyB0dPetNY0GOD/KqfkEg4V2CfJc9Rw9NpDQVHEOpf/tAbStIOHJi3tWGWSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rBVOdYsW; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4349fd77b33so48365395e9.2
+        for <ceph-devel@vger.kernel.org>; Tue, 03 Dec 2024 10:29:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733250580; x=1733855380; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qf0AnOkCKBwB1WK89tSCWB+hsIxd8TuIxna0rUXN2J0=;
+        b=rBVOdYsWQRn5bGoPdfJ1D/ggK5Y00KP8FB+0QC7E7dPfCtouBrU2tcf8PZrxI25eO5
+         OmyRQslUOPNftR26ylk9cwOtMiGWJTUwE5u+VjzwQvnoqdH6FVU6CeZlsyMtmJO3YXOI
+         +y7P5yMke3vHIVpaHwkVO2zrjd6Fm8v9xMV6GI5h07bu/eTFXX4Ksl9ycF7frLWQtf/n
+         4gnLcNOmSD7+EZPYjlkpXbvPEaGKEEbzvDncMMtOyutjg/HQl7+pPB2H1x4pjnLB5vre
+         1MgRoqAPh1FLy4ut3I1kod83RLsbs5ZUwNBJBOrpXE5HDk1+Oyz9o2RKbh6fFNLcBrAn
+         Sm+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733250580; x=1733855380;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qf0AnOkCKBwB1WK89tSCWB+hsIxd8TuIxna0rUXN2J0=;
+        b=dVtYbY0KjRzGUZpGcZF8EeBKnc3C6i4XanvTfllMWyQqUocDHquYgPapw9ToMhj/c9
+         O/033caCTvsmAXfJJO5HBZPCzdUVlyUL7Dn0X7cM9qhfnzVX5OQKPAJkC5fIGzZrk8//
+         y9ucsJge6+17WjShKN4nnCJLcHOZ54hGskTN4Me3+tAjstNJqZgcCf28OBqv2DU3MQPR
+         An7+vtGJfYrCGrRmbS2sMnTDkW7PGuj01YabpoKZ0S5o7J/onbkooSjkVdV5JfLVLAKJ
+         ypNGmPOlM4E8i9Vje02bcwULaUez83ILqXrvY3zcwNiMZ+BsI2NQzKmtkUrvZ3MMgPzS
+         6/Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCUm+cseDmzRZLqC+wQs3lM4Q51rIlwMgf9A2LRT35pT5uL5kgNChdTOyMRYAAS5s340JXj/bSzF8fyf@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoJlRCaL9f+luvzX+WpssKNJGBypFWeFV+SAwPLOhoNNVAeQFC
+	JMLkLmJrOhyaJjTBiCPa8Nyj/7XUHyTkiv27vw0tVxqilZRkvM+jKCrO2a6xS/A=
+X-Gm-Gg: ASbGncuc5tIiPEqMgBpvfFn4gxebFx/UIYm1A8QdG4hu55z4FHS9RzPh8nFIQAR7rWA
+	rzLQGKwAm71M4fQmUELXyxc6nkWihM6CFnyUtSUnLNgYd8Y8BLC9O90PK8mCMt/uXx9+aOfBq/Y
+	13pGeo1s5V270gMqssEKeJZC5VTuej5dNWg2HlvkstLuyODMFV3CEqJOe19ICFlHLXEfZ+v4xLE
+	gXvnlTeGMiuJB2p6odPAH0eRePSLaxGiyGRGIOsEYCkBsZTIefnY+c=
+X-Google-Smtp-Source: AGHT+IF1kLG7zVHMpyS9c7iFXFIZf0+r0yyyReDQk236Sg7h7ThKmIgaUhHFEEl9EsnFiqwlrEeuDQ==
+X-Received: by 2002:a7b:cc85:0:b0:434:a59c:43c6 with SMTP id 5b1f17b1804b1-434d0a03d75mr29305785e9.26.1733250580341;
+        Tue, 03 Dec 2024 10:29:40 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-385e9c075e8sm9609115f8f.7.2024.12.03.10.29.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2024 10:29:39 -0800 (PST)
+Date: Tue, 3 Dec 2024 21:29:35 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org
+Subject: Re: [bug report] ceph: decode interval_sets for delegated inos
+Message-ID: <a7f2d7f9-014b-4535-a0d1-74c351d13eca@stanley.mountain>
+References: <e660f348-5a0e-486d-8bae-e6c229f0e047@stanley.mountain>
+ <d75b6bb5-f960-4e75-90f3-e7246a2cd295@riscstar.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d75b6bb5-f960-4e75-90f3-e7246a2cd295@riscstar.com>
 
-Am Freitag, dem 15.11.2024 um 21:22 +0000 schrieb Easwar Hariharan:
-> Changes made with the following Coccinelle rules:
->=20
-> @@ constant C; @@
->=20
-> - msecs_to_jiffies(C * 1000)
-> + secs_to_jiffies(C)
->=20
-> @@ constant C; @@
->=20
-> - msecs_to_jiffies(C * MSEC_PER_SEC)
-> + secs_to_jiffies(C)
->=20
-Thanks, applied to etnaviv/next.
+On Tue, Dec 03, 2024 at 11:06:50AM -0600, Alex Elder wrote:
+> On 12/3/24 2:19 AM, Dan Carpenter wrote:
+> > Hello Jeff Layton,
+> > 
+> > Commit d48464878708 ("ceph: decode interval_sets for delegated inos")
+> > from Nov 15, 2019 (linux-next), leads to the following Smatch static
+> > checker warning:
+> > 
+> > 	fs/ceph/mds_client.c:644 ceph_parse_deleg_inos()
+> > 	warn: potential user controlled sizeof overflow 'sets * 2 * 8' '0-u32max * 8'
+> > 
+> > fs/ceph/mds_client.c
+> >      637 static int ceph_parse_deleg_inos(void **p, void *end,
+> >      638                                  struct ceph_mds_session *s)
+> >      639 {
+> >      640         u32 sets;
+> >      641
+> >      642         ceph_decode_32_safe(p, end, sets, bad);
+> >                                              ^^^^
+> > set to user data here.
+> > 
+> >      643         if (sets)
+> > --> 644                 ceph_decode_skip_n(p, end, sets * 2 * sizeof(__le64), bad);
+> >                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+> > This is safe on 64bit but on 32bit systems it can integer overflow/wrap.
+> 
+> So the point of this is that "sets" is u32, and because that is
+> multiplied by 16 when passed to ceph_decode_skip_n(), the result
+> could exceed 32 bits?  I.e., would this address it?
+> 
+> 	if (sets) {
+> 	    size_t scale = 2 * sizeof(__le64);
+> 
+> 	    if (sets < SIZE_MAX / scale)
+> 		ceph_decode_skip_n(p, end, sets * scale, bad);
+> 	    else
+> 		goto bad;
+> 	}
+> 
 
-Regards,
-Lucas
+Yes, that works.  I don't know if there are any static checker warnings which
+will complain that the "sets < SIZE_MAX / scale" is always true on 64 bit.  I
+don't think there is?
 
-> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
-> ---
->  drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c b/drivers/gpu/drm/e=
-tnaviv/etnaviv_cmdbuf.c
-> index 721d633aece9d4c81f0019e4c55884f26ee61c60..0f5a2c885d0ab7029c7248e15=
-d6ea3c31823b782 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_cmdbuf.c
-> @@ -100,7 +100,7 @@ int etnaviv_cmdbuf_init(struct etnaviv_cmdbuf_suballo=
-c *suballoc,
->  		mutex_unlock(&suballoc->lock);
->  		ret =3D wait_event_interruptible_timeout(suballoc->free_event,
->  						       suballoc->free_space,
-> -						       msecs_to_jiffies(10 * 1000));
-> +						       secs_to_jiffies(10));
->  		if (!ret) {
->  			dev_err(suballoc->dev,
->  				"Timeout waiting for cmdbuf space\n");
->=20
+regards,
+dan carpenter
 
 
