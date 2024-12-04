@@ -1,79 +1,72 @@
-Return-Path: <ceph-devel+bounces-2242-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2243-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F52C9E3A5E
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Dec 2024 13:51:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB0089E3AD3
+	for <lists+ceph-devel@lfdr.de>; Wed,  4 Dec 2024 14:07:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45A0F280E8A
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Dec 2024 12:51:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04FCFB2F644
+	for <lists+ceph-devel@lfdr.de>; Wed,  4 Dec 2024 13:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10FA81B4130;
-	Wed,  4 Dec 2024 12:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767591B87F7;
+	Wed,  4 Dec 2024 13:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bXNLgNva"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="DPWSlsl7"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406211B395B
-	for <ceph-devel@vger.kernel.org>; Wed,  4 Dec 2024 12:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983881B4130
+	for <ceph-devel@vger.kernel.org>; Wed,  4 Dec 2024 13:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733316702; cv=none; b=ArJ+GUIMHpUvjDjlgrqFChsnukZp5H4Z0yzUfzEvYzN+qPJCCO3WLaroORb/Zz68i6LidEvIA7N+qIMhyoE3xLTqNbDtOOAWaK6c/4rL3cXSwMlm7nFCrWbDTDCm0ZAOy2Xy2xteTNP7gUJ+4hfmCD8ccEa6+ilSAlUKmfNZQVc=
+	t=1733317552; cv=none; b=iv5cRqQu8oijyDKFBqPzlvjRTh8CJNjWPl+iJkKgxWWUvLRDW7+M6n+qdBfFZBJIRTasO+9ie7/5Mqn/rg7n5IwxPfi9UtVkYrMWtZmYa3CI0i42Af+RPxFYjApcyG6OxThxS3nam3E65bnqX7q7R5dVOzSOt1YkyUJg8qi48VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733316702; c=relaxed/simple;
-	bh=I9NCyPO4krisSUhdqeg72XRIllo/A9wyK93lujKfyPU=;
+	s=arc-20240116; t=1733317552; c=relaxed/simple;
+	bh=Z3EENbcgyMum84QzWlYJALT23zS7loMokMBszOJOSX4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rROzh6GJIT1+K34+4co6qWqtNh6v068kpl2/EEiII/M7loQ5DojEL35CszPEoXiDQaRreYwwEJKOBJ6mW7RG7lV3iAfRW+cU32FhpqQBMZaJuS3NhrpiPeCtSaljnU31jpyy6X4TycVyUwrmRJjzRfqgwclC2LuTVlzfLYuzU98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bXNLgNva; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733316700;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I9NCyPO4krisSUhdqeg72XRIllo/A9wyK93lujKfyPU=;
-	b=bXNLgNvadHU22Dt4aXgAM/HcwG6hT3HhVkwvdGFER2vVmHpuFJQXY1FXuGSwRPlxabsIcd
-	FvHs0WKvS9boQ9alp/r9EtqAW68NQM3GzBW6PpizRkmGTlmxG0tDNPGKiYlZOjFQaIB8oM
-	7NZRohsJtqmmNA0iqlBavFoOPFfNYfo=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-561-sF34ycfYM7mcmeJtI9zzaA-1; Wed, 04 Dec 2024 07:51:39 -0500
-X-MC-Unique: sF34ycfYM7mcmeJtI9zzaA-1
-X-Mimecast-MFC-AGG-ID: sF34ycfYM7mcmeJtI9zzaA
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5d035c8f3afso4319330a12.2
-        for <ceph-devel@vger.kernel.org>; Wed, 04 Dec 2024 04:51:38 -0800 (PST)
+	 To:Cc:Content-Type; b=BGXNve0/dIrP0OUiTHjoW4y1N9FOC8OTuwcc5oo/Btqr/dA8nq6D5HDp7nq8inyy/dvUm2HxARbpz4iwFVWUUr2dzvKhrc3TySpbMsMCTDwOxtR6DVHj6tQzL5e8kJYB7o1etu/uOl5bhpIyfaw+869s2NuIWb8X9/UlNfqtbdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=DPWSlsl7; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d0bf77af4dso5911588a12.3
+        for <ceph-devel@vger.kernel.org>; Wed, 04 Dec 2024 05:05:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1733317548; x=1733922348; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z3EENbcgyMum84QzWlYJALT23zS7loMokMBszOJOSX4=;
+        b=DPWSlsl7sjY4NmrKmvWt3tRZMtRWqkcyrBKrUYMvEta/xr1bWiKbRyJyhdpZGSuEHD
+         ewcejePyZq9mHxYJ5QwjPWba/yFpO2eudzyONjs+nvbiET5O+sDO737PUxdRlkZYKDbo
+         RHK2eA3TY83w2JitClwhGvhkHQbpOsV0eWsZa2Hm5NuEeUB7aLP4QYitiqswC6H42Ft0
+         mSFmlcT64FSJ3rXwqxmh1o5HehBmPRtJKwdmNlS3ZkhRMJvcfOmhpjsfksxwFJFlULzF
+         pqxS9XXvK7fRp4nuB1J8yboy4QHIHWWYO0V6U8WGuN31wkxvQCbIcJQTv9HwRLklM2Tr
+         yhvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733316698; x=1733921498;
+        d=1e100.net; s=20230601; t=1733317548; x=1733922348;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I9NCyPO4krisSUhdqeg72XRIllo/A9wyK93lujKfyPU=;
-        b=Y88ZerhXLq5+BBO2bVJQ4bwSX5cbk4KRcJNnQW7Zv2jmbJxXzVs/3ZHvieS48CpR8g
-         06fNIbb5SsgzQ37g30HG6KcGrq/3z8OgK2YZIUWWZ39QM/nqXXFJodVJjJNZiNIejcfS
-         3aLkL2JPTS0hGx6Q2XGsJ7s/xRtIeh/4uKGT3FXwzSikygzABa+sML4miu7e6I/ccNhD
-         eM9E5EHXjQnKNHLmAUlSvRNM7FhkVVf27CXO1SaN6TDulPr6MDiwclUHy+81NMGlj3df
-         Gh22+nrgGmgjZCAokx07lrOtLznx9A2O5P8S7BaqFj+OOy+dtFV4tGMkpThgplXm9JXZ
-         qUpw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/wmzE7KgXSDmzxB9UdIbhhQaNAbYlEa0NOOI3j8mMjMcBuUL+Ap41tIMjjoaRqBr2Vw9WoH1Hc1+T@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza3z54xzNHs5pZ850XwifVAt50oe365yGr67QZTBB2hlU/jnjx
-	k7l+G8GGGSXHQr639mjZTHmbId+HnfsX2VEGbRnEDwVgt2VsIvX/F3jl6v+HwUD3qU60y/gtf4P
-	iE8ghnGC+1On5AWSwWYg6dcmU5c/8EuIAztCAhmx3B3kZfumg7IGPTYReJ7q3wgzoy6x0Xk6Mif
-	dMhW9PVy+2SC7HimRTYi/zT38JMR7QxDhLuA==
-X-Gm-Gg: ASbGncvD+I4mYXxTrhd4MYpo/35ensJ01V4dcPuLgX1Ao6lN0ZU2rKI965Ru6aaqzAD
-	m5Un5ShceSXQaq7fpyBwx3NmyhDRv
-X-Received: by 2002:a05:6402:2553:b0:5d0:e826:f0f5 with SMTP id 4fb4d7f45d1cf-5d10cb4d7f8mr6517525a12.7.1733316697967;
-        Wed, 04 Dec 2024 04:51:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE20wvu66FctTl9GL0qP1II/9zpj8SnN8HlRgU9qZLjUzSG6Cef4lVTKQt72r7wwVeJdCksU1lfkJH214DU+Z0=
-X-Received: by 2002:a05:6402:2553:b0:5d0:e826:f0f5 with SMTP id
- 4fb4d7f45d1cf-5d10cb4d7f8mr6517499a12.7.1733316697667; Wed, 04 Dec 2024
- 04:51:37 -0800 (PST)
+        bh=Z3EENbcgyMum84QzWlYJALT23zS7loMokMBszOJOSX4=;
+        b=iPncj+5Ft3QlkUiZPPzeqiuOl8MaQZEekQgichTkrFo3Q2U02eKM3QLsL4r5JpH+MQ
+         14u6VRATf2FICkESmfutOTyic+e8On5/Zj9RzxbehtpnQYjHzmwJ7GrCnj3MVZK7gzDD
+         B+VTALk0Fsy8QpOpjmbj7P4gK8DxtlkOcXSOnfRd/PWn43bSS3LoQ65YwgHUEuxbi4zo
+         j40Jv5F8m1uWv5x6wvifKC30y0OKeHxl//L4D5DVWHGdW6xzmFr1DiYoos636ecDmkW7
+         otHb1Wjn21VIQug83e5YtaLZbL1eCePdiohrEIUNGQOp9vK+VTEOIKTLbXOtGfUO1N+0
+         uJAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwhz+fVOsEVuNMBjMqLmPAeROFDMaJVNjyX7Bh+4E4ARwv3dS+f9N1EQwAuPGU+3Axx/kCbOqJRp5e@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya6jydv44grwI9G4M6C6Wa0tFeM8G/hoFJlf8nJG+bzpDsLq5o
+	0aJq/fgKnzNDK0zYdiVuwGoEHS8ME155lEyG1VsGzu6XmliRb+Jw9541/GwOjYdGUB7KqyP7tZX
+	+plJsPPxWkSq89SIOEL0wbtM6tQJ+kfaCxBE8tA==
+X-Gm-Gg: ASbGncuZZsDhi2Np/Mg95m5p/QdCGJlThTeYwP996M5YjL5PJ6ZprNPQ4UP4DDjMlBP
+	LmvzG/FRJH2d2XEmTPTWdybkTPkaAZLUViCPMRuwU2nep9LIFhTcUfU6U9TDB
+X-Google-Smtp-Source: AGHT+IGrdr9TGaSHAfS1s7UDwKK36JSpdSVugCVWYYvYdWQLSIIW7IxynDRCS9finSrEfHe9b0yvURkSkUzxde1WavQ=
+X-Received: by 2002:a17:906:1ba9:b0:aa5:3853:553c with SMTP id
+ a640c23a62f3a-aa5f7f4ae96mr404733366b.53.1733317547869; Wed, 04 Dec 2024
+ 05:05:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -90,13 +83,14 @@ References: <20241118222828.240530-1-max.kellermann@ionos.com>
  <CAO8a2SiRwVUDT8e3fN1jfFOw3Z92dtWafZd8M6MHB57D3d_wvg@mail.gmail.com>
  <CAO8a2SiN+cnsK5LGMV+6jZM=VcO5kmxkTH1mR1bLF6Z5cPxH9A@mail.gmail.com>
  <CAKPOu+8u1Piy9KVvo+ioL93i2MskOvSTn5qqMV14V6SGRuMpOw@mail.gmail.com>
- <CAO8a2SizOPGE6z0g3qFV4E_+km_fxNx8k--9wiZ4hUG8_XE_6A@mail.gmail.com> <CAKPOu+_-RdM59URnGWp9x+Htzg5xHqUW9djFYi8msvDYwdGxyw@mail.gmail.com>
-In-Reply-To: <CAKPOu+_-RdM59URnGWp9x+Htzg5xHqUW9djFYi8msvDYwdGxyw@mail.gmail.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Wed, 4 Dec 2024 14:51:26 +0200
-Message-ID: <CAO8a2ShGd+jnLbLocJQv9ETD8JHVgvVezXDC60DewPneW48u5A@mail.gmail.com>
+ <CAO8a2SizOPGE6z0g3qFV4E_+km_fxNx8k--9wiZ4hUG8_XE_6A@mail.gmail.com>
+ <CAKPOu+_-RdM59URnGWp9x+Htzg5xHqUW9djFYi8msvDYwdGxyw@mail.gmail.com> <CAO8a2ShGd+jnLbLocJQv9ETD8JHVgvVezXDC60DewPneW48u5A@mail.gmail.com>
+In-Reply-To: <CAO8a2ShGd+jnLbLocJQv9ETD8JHVgvVezXDC60DewPneW48u5A@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Wed, 4 Dec 2024 14:05:36 +0100
+Message-ID: <CAKPOu+9vUdU8jjdEi76z847JGh5XU1AR93HXuRMv3=D8Jn4i2A@mail.gmail.com>
 Subject: Re: [PATCH] fs/ceph/mds_client: give up on paths longer than PATH_MAX
-To: Max Kellermann <max.kellermann@ionos.com>
+To: Alex Markuze <amarkuze@redhat.com>
 Cc: Patrick Donnelly <pdonnell@redhat.com>, Jeff Layton <jlayton@kernel.org>, 
 	Ilya Dryomov <idryomov@gmail.com>, Venky Shankar <vshankar@redhat.com>, xiubli@redhat.com, 
 	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org, dario@cure53.de, 
@@ -104,18 +98,13 @@ Cc: Patrick Donnelly <pdonnell@redhat.com>, Jeff Layton <jlayton@kernel.org>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-It's already in a testing branch; what branch are you working on?
+On Wed, Dec 4, 2024 at 1:51=E2=80=AFPM Alex Markuze <amarkuze@redhat.com> w=
+rote:
+> It's already in a testing branch; what branch are you working on?
 
-On Tue, Dec 3, 2024 at 2:21=E2=80=AFPM Max Kellermann <max.kellermann@ionos=
-.com> wrote:
->
-> On Mon, Nov 25, 2024 at 3:33=E2=80=AFPM Alex Markuze <amarkuze@redhat.com=
-> wrote:
-> > You and Illia agree on this point. I'll wait for replies and take your
-> > original patch into the testing branch unless any concerns are raised.
->
-> How long will you wait? It's been more than two weeks since I reported
-> this DoS vulnerability.
->
-
+It is? Which one? I checked
+https://github.com/ceph/ceph-client/commits/testing/ and it's not
+there. This is the repository mentioned on
+https://docs.ceph.com/en/latest/dev/developer_guide/testing_integration_tes=
+ts/tests-integration-testing-teuthology-kernel/
 
