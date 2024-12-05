@@ -1,72 +1,72 @@
-Return-Path: <ceph-devel+bounces-2257-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2258-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D58FA9E59EB
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2024 16:40:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFFA9E59F8
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2024 16:42:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80A87169B42
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2024 15:39:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89DAA169B2A
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2024 15:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC2B224AFC;
-	Thu,  5 Dec 2024 15:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D3821D58A;
+	Thu,  5 Dec 2024 15:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="WnYMLLp1"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="bRy0lif+"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C49222560
-	for <ceph-devel@vger.kernel.org>; Thu,  5 Dec 2024 15:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F7C219A8B
+	for <ceph-devel@vger.kernel.org>; Thu,  5 Dec 2024 15:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733413053; cv=none; b=mmNhb9E4PSEyEC5UbA8iuyNBFWNNYG4kk1EHVJR/q9/Ln9+QE+epUGZ1+EnqQriZuqe2drfayIVjCboMJL3h9EmPZBoLYwf3wOTPGQ+fZTv9JdS6FcDmUybfG7r4T2s/Pepi/RSPExxgdgIM/1vBcfmJxbRG5T2k2EEHyj0+RJU=
+	t=1733413366; cv=none; b=Duhk3rBE+0Sd0xFrwTaIHCAcNIXhRUxt3Utozw59e8Hh4Rlpg2O+ZktZJlc4PAHyGf+n7JUvLJEQEcAETrd1PsGPyDGqR0otL4PIVc0hzQdIl9vMte3WtEYTyNKAQsl0ZENoWoLfhmFDS2pGaXyhH5LySFRo+WXxWe8hPvFGy8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733413053; c=relaxed/simple;
-	bh=JNrJE4PNKWi4PgS2zzJNj42RXg3+tnZcjkDrm5MlRZo=;
+	s=arc-20240116; t=1733413366; c=relaxed/simple;
+	bh=QooC3WdeOAD0e0lYcAEtRhgjyLoS+4sHCp6vodx3A7s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I2wVLt7IHhKR9Q/FdGXmTAIO4WV9X+UZedzAjiy7LUUbOAvL1nkK6qkvECJRWLz45csb1p2XiQYF9g2ggWSfJVWLex4ZEW3SL+i54OC72Ek6j1a9Tvve/QxjEybzhJh4inClpDOiAQvvgJ///8H279irESWC/AW0X+9yiVP2Z94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=WnYMLLp1; arc=none smtp.client-ip=209.85.208.43
+	 To:Cc:Content-Type; b=cPfLiZ3X4rVssIYYcA5bH6CpGeqrQYeILjIVjaj5a1xgL7or4BzH1kUM5lKncIO8Vq6kwGF//3fY72SGrAzjvpdxMLVAHYNvMeIsU+NL24tnHlExAaGvgFhh5nZ5o6d/1G3cuAAeedvEzYheFegeloqPCQ2T7t4l9A2B9+YskrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=bRy0lif+; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aadb1so1393855a12.0
-        for <ceph-devel@vger.kernel.org>; Thu, 05 Dec 2024 07:37:30 -0800 (PST)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa560a65fd6so186331466b.0
+        for <ceph-devel@vger.kernel.org>; Thu, 05 Dec 2024 07:42:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1733413049; x=1734017849; darn=vger.kernel.org;
+        d=ionos.com; s=google; t=1733413362; x=1734018162; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=udUgQDGNdbMPWrJLGwmC+iYf+bG5pC2AYc0h2JBRvvw=;
-        b=WnYMLLp1WjvoBsTXPh3vkFRTyM5cK95FmKUXIbdd2p1FGkUotlrIndvOufIAb3H19b
-         mTvD1xa0YMBs1bLG5UiGZdnCgemKxzgSyzMN3AivnhuC0HSCHkmVf9huDkRnKjnF+IBI
-         5z+pi/0YhNV1DBO6tBOOOsLfFKtOeG8mZ6nrYgrVL/TMGAlv/HVhg7b+vcTZNly3XDq5
-         /FUS6wRxRnDZDzX1QIqHP1Rm6gEX1w1XgAb2ENydR9c69O9QgHP0R2dr0RunYSvtxQMY
-         mIkudEjz2QqcJ4ldOOWF45HJq89c2bdbsLFpeTy8KVpFTPQVVXuUBOoSm+BUc1b0/AB7
-         Wqxw==
+        bh=QooC3WdeOAD0e0lYcAEtRhgjyLoS+4sHCp6vodx3A7s=;
+        b=bRy0lif+SnNj2nq40HgFJekJuJU+SvFrX+Cy2J3Q00z9vUhCAWBo0Ja6jN3E9h28lN
+         SkArcnss03+gQ5oH3ii89Plmsd0xNar+sOK7w3uL1FH/nHS6XSO/FPbTB7tnpJKh+Ghp
+         rG8JkLiAhXbCXMIeh4Y/zlnK6MhpOla0e/mnEEnJ0Fi0mEwtUSAiXjWFu92/uBT3OiF6
+         SehkBwdB3F6hbwFtDLFoqV9k6trUiWlHogzrGCzfXKqhu9PF4odTyICeg8/QfIFpXnXd
+         q8KXvDR1blpVlw7EiicMKLLVP2odDO1TjQ8JEc/9cK+QnUFyoRIcpLl1cxiG0+47zExC
+         f2xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733413049; x=1734017849;
+        d=1e100.net; s=20230601; t=1733413362; x=1734018162;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=udUgQDGNdbMPWrJLGwmC+iYf+bG5pC2AYc0h2JBRvvw=;
-        b=XlY21qmDjEIB2Pw2GZhvxFAP8js8Sc8rAJplmSOl0EUbOMsuk5k7t8rt36sWpoRY3o
-         lXvvtC/ptHAO1KeRqTiPpgeLu/Zb8CWccgPL3Ubo/Hk+v2QLFNYEXBIwN2+yq2L3qrf4
-         xjOVhkPeS+oWJTAZl331ynZC5F6XUWhc7EfaDEZJ8UsaJ5q++aQz7iB2I4Uus1Jz5IJ0
-         glVvRMslUr8HsJJGbmRhkHNLGg19qG3sFME4Uv3ST+AjikZ5w5nVIgMTF4LSM1Zu/ElU
-         NdcTpyNAYYGv4e3dXE5lWs7hAW3X1Uxv5rVRJFjyb09Sv9kulsQxwehRa43BcrDDTU89
-         QzHw==
-X-Forwarded-Encrypted: i=1; AJvYcCU17Nb1V0iaFdmWGM1hgk2RARkCm3GCJgryr+02f6lnRaLskpaGBRz6L/KIJ6f8BKcsPBH9QZE8bamE@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq2OOcSxITtBTShlNtiO5G9Z5pFx61HZftzuPeuf0fnjV/su4s
-	hjksfRC0MzgEh5iSOh3HbPekzXoW7t4Ce09i06wip4uRue6EtcaBOfvQk2fVND2vW/PVWWZawO3
-	aDdj+r/nBTiSD1ifdFARFMbcTjgbCQsjPNY17jg==
-X-Gm-Gg: ASbGncs7TXUegADCVe0yhAkehX5TeBR/Km4ojCAecG08GwzA3/U+nkL5wOcKq1O/LPD
-	a82h0NGcRJ4eLcUqKGkAOE8086R9VuTuzZsjfwensvc6MprTRuoeCDIAZ/IxD
-X-Google-Smtp-Source: AGHT+IGEKXx+46UOY0lk1kFYEVr3spOj2UG1T/8pmt0vJkhgJLp4zvDKJOhOMmQCNljzjITZmsXudAKntczvHQzwFyY=
-X-Received: by 2002:a17:906:dc8d:b0:aa4:e18e:1ca9 with SMTP id
- a640c23a62f3a-aa5f7f2acd4mr1098076166b.60.1733413048798; Thu, 05 Dec 2024
- 07:37:28 -0800 (PST)
+        bh=QooC3WdeOAD0e0lYcAEtRhgjyLoS+4sHCp6vodx3A7s=;
+        b=FxSZ1PCBvs4HpfzKZvN6EfbB5bR5DUkuQNVLnUHPFQjx13P6OqVzukxnpcGnqKTcJ3
+         YYyHT42otlKruRhiUTT6tl8dOVxJm2gwMH6KzHk6J3d2eu/6+c1CCWUpmREcqgcyv1cI
+         KUPadpChXh6XZ/ECuxUfS+omeY/sBeyK+USAWjwYCnFKyYjb/4ldyOhCZCBvlPGwvRMj
+         Z6JYAzvwrnGivZ5Xhdpi0EQRfRxMjDYXEiy6pWGpn5Su1yzT5bn3LTra8SLjHqcT6N3I
+         tqPdDacygzsO77jTb5pMbzwnuA10sA+8E7DPAYZbgmNUGlgkzw0E4qi8UEyJXeGTMKnk
+         CFLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXCFFzkA80EIqMY8KKOSYHizORAXimYUJ1C3dPJ/wh/mqlcdWb8QqA1d+68Dn8R/yq5ZSNoKQ43B9L5@vger.kernel.org
+X-Gm-Message-State: AOJu0YympDOvGFvY9V7YG/kltn3IYVuGiV6Ee6zEuvQZm466142Z/Lnh
+	EVr3kdfz17uB1QqN885uC89GspcZQRtL60uQqGzI01K/3vZCSDqCHoqbl2xzWZTJ6VWjYBuIZ0b
+	PFZEpMOUeVcZQ3ZXzXl45q3ZcTpMTTT9e5Ijjgg==
+X-Gm-Gg: ASbGncuNfiY0FnNjvrIFDrrgk7X+gKTG8TC4UTw4a6YspZvd+O3uRJJEAOdtKhhWvAm
+	wmuNn1iv5nwBkUP+VQKFHc7JvghFVCbTJeCdE+wkPkO95buMh3Ds2/VVf0eO7
+X-Google-Smtp-Source: AGHT+IFRIZj39BqksGePaUik7a+kIHoLqLeLpwrOobFeFWewSYsxmbm4qW2oqzvnqze4KT6xrlgNWJQIXaK21ap6IUY=
+X-Received: by 2002:a17:907:1c21:b0:a9e:b08f:867e with SMTP id
+ a640c23a62f3a-aa62188ef0bmr348632966b.16.1733413361757; Thu, 05 Dec 2024
+ 07:42:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -82,11 +82,12 @@ References: <20241127212027.2704515-1-max.kellermann@ionos.com>
  <CAKPOu+98G8YSBP8Nsj9WG3f5+HhVFE4Z5bTcgKrtTjrEwYtWRw@mail.gmail.com>
  <CAKPOu+9K314xvSn0TbY-L0oJ3CviVo=K2-=yxGPTUNEcBh3mbQ@mail.gmail.com>
  <CAO8a2Sgjw4AuhEDT8_0w--gFOqTLT2ajTLwozwC+b5_Hm=478w@mail.gmail.com>
- <CAKPOu+-UaSsfdmJhTMEiudCWkDf8KU7pQz0rt1eNfeqS2ERvZw@mail.gmail.com> <CAOi1vP8PRbO3853M-MgMZfPOR+9TS1CrW5AGVP0s06u_=Xq3bg@mail.gmail.com>
-In-Reply-To: <CAOi1vP8PRbO3853M-MgMZfPOR+9TS1CrW5AGVP0s06u_=Xq3bg@mail.gmail.com>
+ <CAKPOu+-UaSsfdmJhTMEiudCWkDf8KU7pQz0rt1eNfeqS2ERvZw@mail.gmail.com>
+ <CAOi1vP8PRbO3853M-MgMZfPOR+9TS1CrW5AGVP0s06u_=Xq3bg@mail.gmail.com> <CAKPOu+-CpzPaY28MH9Og=mZTYmu99MUFTs+ezDZvud0HVb9PAw@mail.gmail.com>
+In-Reply-To: <CAKPOu+-CpzPaY28MH9Og=mZTYmu99MUFTs+ezDZvud0HVb9PAw@mail.gmail.com>
 From: Max Kellermann <max.kellermann@ionos.com>
-Date: Thu, 5 Dec 2024 16:37:17 +0100
-Message-ID: <CAKPOu+-CpzPaY28MH9Og=mZTYmu99MUFTs+ezDZvud0HVb9PAw@mail.gmail.com>
+Date: Thu, 5 Dec 2024 16:42:30 +0100
+Message-ID: <CAKPOu+9D4AozS0SPJEm0bNh8Y8WmQ-mYQeC39bMNefi8+KYErA@mail.gmail.com>
 Subject: Re: [PATCH] fs/ceph/file: fix memory leaks in __ceph_sync_read()
 To: Ilya Dryomov <idryomov@gmail.com>
 Cc: Alex Markuze <amarkuze@redhat.com>, xiubli@redhat.com, ceph-devel@vger.kernel.org, 
@@ -94,25 +95,12 @@ Cc: Alex Markuze <amarkuze@redhat.com>, xiubli@redhat.com, ceph-devel@vger.kerne
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 5, 2024 at 4:12=E2=80=AFPM Ilya Dryomov <idryomov@gmail.com> wr=
-ote:
-> Max, would you be willing to redo this patch to pass true for own_pages
-> and post a v2?  There is nothing "bad", "partial" or otherwise wrong
-> with this version, but having the pages be taken care of automatically
-> is a bit nicer and a conflict with Alex's ongoing work would be avoided.
+On Thu, Dec 5, 2024 at 4:37=E2=80=AFPM Max Kellermann <max.kellermann@ionos=
+.com> wrote:
+> btw. Alex's patch
+> (https://github.com/ceph/ceph-client/commit/2a802a906f9c89f8ae4)
+> introduces another memory leak
 
-Yes, I will send a patch for this. Even though I don't agree that this
-is the best way forward; I'd prefer to fix the leak with a minimal
-patch adding only the necessary calls, and not mix this with code
-refactoring. A minimal fix is easier to review. Mixing a bug fix with
-refactoring is more dangerous, which is important to avoid, because
-this patch will be put in all stable branches. But ... if you want to,
-I'll do that.
-
-btw. Alex's patch
-(https://github.com/ceph/ceph-client/commit/2a802a906f9c89f8ae4)
-introduces another memory leak: by postponing the
-ceph_osdc_put_request() call, the -EFAULT branch now leaks the
-ceph_osd_request object. I'll take care not to make the same mistake
-in my v2.
+Sorry, that was wrong. The "break" only exits the inner "while" loop.
+I got confused by nested loops.
 
