@@ -1,79 +1,72 @@
-Return-Path: <ceph-devel+bounces-2251-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2252-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C9E69E553B
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2024 13:17:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 394B29E5547
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2024 13:22:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DBD0287A50
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2024 12:17:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1C7A286A45
+	for <lists+ceph-devel@lfdr.de>; Thu,  5 Dec 2024 12:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA7F2185A2;
-	Thu,  5 Dec 2024 12:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6E321859F;
+	Thu,  5 Dec 2024 12:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EwG8IKNx"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="UZfDnC88"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BC1217F24
-	for <ceph-devel@vger.kernel.org>; Thu,  5 Dec 2024 12:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEC91C3C03
+	for <ceph-devel@vger.kernel.org>; Thu,  5 Dec 2024 12:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733401050; cv=none; b=Yyh3IeAjEldvW2gahFYtlwKmjJ5ATnMT4TFhmWjjabASBQEc7SiyBxKgWyebiDkZba7iJuvr3wC8mnuF444y1ADfmO96Lldk4ZtKvPSgOlaHk/JbYRp28XN5C7lk3KGsx3+KInGhmgVaQBB8EM6fFnDBkU8wjx5lIn6NVP+sN9M=
+	t=1733401344; cv=none; b=n9PtVCdk89b0p8EGtDVs7kzWKcPCyWXEnO2QwJVGPcCPGil7DB1ObXMQOalblMGWoA9kAwj90XxPS0K2Wp19mZZ1uoF/tVacurSqmZ1w0AJAtHiSJwvo+0NxXmvUUeT7CPY2qHGhur00tuH9LjvyFJ1yQPSlSbFJkTVqCUY8SiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733401050; c=relaxed/simple;
-	bh=78ORj5MT7/pCML0JdAvmPGsZjpcS39rBDcRK9aTcAp0=;
+	s=arc-20240116; t=1733401344; c=relaxed/simple;
+	bh=bmT3twxBWaTLEJxPl3rYSnM2xe3Wbx9wE5fovhcil+c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h/wMtCUO6XyD80Ss7EeEpvYD6IATIF3LMbTbJJoBVpGt0aKpRz2J6M1raS7u8u4LIp/7IbOfJpo6ZrsoavXjMz8siojSt/l3b8s1EXIBxoWmwsRlDgbsj2nbG5QwgkMv8F6ZdpglDQuAQ9R9xiQLuEDQvtPAR0OHF9f+QAUNb0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EwG8IKNx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733401046;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=78ORj5MT7/pCML0JdAvmPGsZjpcS39rBDcRK9aTcAp0=;
-	b=EwG8IKNxAMyk6chq+08knrMVD8v4Q5/Vz82JK9yK9E3KNDZNwSs35NX7aMK9vQVQm9cgJM
-	iVhUFtVGLVZWPon1rfhNVliOfB9otZxjpJij4beN/oPHXTR9AMCTd2Dp1knuPJXXwSvT4B
-	pa9CXE4gbt4/mvmUrFRReaN/eggWovg=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-311-OuMrXZSZM72_7RSlEtA0TQ-1; Thu, 05 Dec 2024 07:17:23 -0500
-X-MC-Unique: OuMrXZSZM72_7RSlEtA0TQ-1
-X-Mimecast-MFC-AGG-ID: OuMrXZSZM72_7RSlEtA0TQ
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5d0d0a5ae15so552971a12.0
-        for <ceph-devel@vger.kernel.org>; Thu, 05 Dec 2024 04:17:23 -0800 (PST)
+	 To:Cc:Content-Type; b=jRjLqS+fxswiXYPkkp0plgoh6FbJTdQKpOEh+BPpCqdHY2eb5qjNzg2jugNwcmC4CjN13l0C+pE5ABsa5GTNZ+/uW7QXbbQQR634HLGcQUIjk5pNiP/iC+2hgPLoC7MvmzZlyXT5Uej2nYgg/f3ixXc4FDQ3uHGKyCEXymZqVYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=UZfDnC88; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa53ebdf3caso152051066b.2
+        for <ceph-devel@vger.kernel.org>; Thu, 05 Dec 2024 04:22:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1733401339; x=1734006139; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bmT3twxBWaTLEJxPl3rYSnM2xe3Wbx9wE5fovhcil+c=;
+        b=UZfDnC887eX6zE+gWGL2CfSPad588iXUsGqmVcEKC82AtIxxIUppKU5me2ttPUPbfI
+         U9Ikuci2Ny7pdhcj4MD6jas7o2bw4uAAajahsFWQ3UySRhJTth9Dz+dVqx++iM4rY+vw
+         IpB7BjYwKA/zWRWGSy1gCoYGqadTEe01xskbLZ8qNCZ2ABqSUR+o/6GL4LdP6JXi+GvK
+         PjtWpafwZ7b+5g5C2asCHd5wU2jlDFVLwRy0cfEGHk4QOJP8gEM55tkLc8FT8uPuT963
+         98GBTMP7QcnhsXn2W3v0fEVFADsejGzam5Rh1ve7C9lRDUmRyFzH/EdYC4EFf8S473VE
+         gkZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733401042; x=1734005842;
+        d=1e100.net; s=20230601; t=1733401339; x=1734006139;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=78ORj5MT7/pCML0JdAvmPGsZjpcS39rBDcRK9aTcAp0=;
-        b=K0O1vns0xqSVz8XLiRdMe7DjyV4S8VJcK7pCRI0jhf3c2cnbFrM9QhrjQAOvUo5SaI
-         3dMQnoLmhcWtF+3SB7minW03p+iNrv+ISrL3PpkP1c023z1O9dJ8YcyBnkwyIkbrL+j+
-         84Bzx+X6GFOxu3M7Ub6RNHfiPWYik4gSUr7MnBZ5WosNx3jiHkkccXxly0AwpbZT2jYV
-         p7v2xMN07otp4YdbKvmQ5eR45N7eY16QnwWzQeEh/GOsPnZMLybDIye5FwWqspdBPls3
-         Ya9Y0WNmPfHV5jKGu9nH0QZpbG9W9MDAZ/DqfClAylmOnpwiHfvuJBR79RefuAeTRX1Y
-         2mUg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5lfFowdRASt2bbkkcCdPmqxf3vDauW1e1YBAQ1VLs5MkXvabtZzUEkTEwDYVp4K9NhNXxUdCJFAlp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhY8OJxPkKqriReuT+qA6F66PF5NKYzMjYB2cztsHhmfZum0yB
-	ELl9p9/Vj7V068P/WjT89tk+hCtuYlf/cpm6X41wZMm/vBLuPZ+B4rTy054L4M5J2Xp+OgIvm+S
-	F7SkAa3I4CT9GlAwlWbNDdLruLmGLBbrZNOv9TiBatF/gXuZHZZu95DGutIQqzztgFp3f7GcJXh
-	cVWBeaCFv5HeLdLPSJJPOWhBrIvMW4cXfmOg==
-X-Gm-Gg: ASbGncvWC393g3A3jPbyzW4Lhgffk//JMu19j1ggyPrDANg/DWgQBWgoWcyRCmJnrH8
-	G7byKHHJKMsgoB3Zug+uHjpLMc9963XYa08dbqAtZSl4raCZrCA==
-X-Received: by 2002:a05:6402:1e91:b0:5d0:a80d:bce9 with SMTP id 4fb4d7f45d1cf-5d10cb5bf71mr6852855a12.20.1733401042225;
-        Thu, 05 Dec 2024 04:17:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF3iXCeT32h33RCPB/Nuod7nzqqUOSinEmle6v0DZwf71ur+JzfVPYQboWjeRhNIDMCipSgjS8it6mvXG5oPag=
-X-Received: by 2002:a05:6402:1e91:b0:5d0:a80d:bce9 with SMTP id
- 4fb4d7f45d1cf-5d10cb5bf71mr6852840a12.20.1733401041869; Thu, 05 Dec 2024
- 04:17:21 -0800 (PST)
+        bh=bmT3twxBWaTLEJxPl3rYSnM2xe3Wbx9wE5fovhcil+c=;
+        b=U3MR1KBZlhprrKTgvhcw3CusYC++fbY6zY+bBrkL2s4PSx0vyQ6dB58CqmrsurKlwq
+         TERU3EoKnLmSj4xkng+mZ+InGpVPy28eQu66/9qDzW7hr0PCrdesJwl+AVWAnOtR66PM
+         wpBpWQK8ACC4HWGh6oR/bu4pve2cy+MF7iSZt+FgXX5brckpstwAW74CElFgiRA0srEp
+         rLYhYkVWdaeB9Xjb+ISLbbDio/6rFwamDycQqCCICuWAy1XeccM03THM4KpOChzz0NIP
+         Ls7+OICqQCNqWofnTXLGUSqXOijnJCbUZMuoNE4nTCkwiB1Nx8mYW2IpHlXVu2sJuIig
+         VNtw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmSSe+Jd7UYpKVt/FtLh30q/SGMXMejdBsq4od8UMo+pgU+xcYBruvnqUJzdk54OJXgIxgzKm9B/bi@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjMEvYoL/ySVfTUF1zyeoHuHAfLmpTfHPp48eENTDoliVJ2yg5
+	omvvk9HpPeeVDQ1x8l5tepXJV6geWOkdsU7AkmVyQV+z95mox2Rz43UhmhMJ4WYKzWP6xrEgo9X
+	YaLLg08vsDAQ3gSVt6651ScPRfeprTLQg2NX2tQ==
+X-Gm-Gg: ASbGnctwQIYNctr6sOrSzAbUGoYcmNEgAbxqAI1fQ8PPO7daA3QzDVWrN93HmoVgVQ/
+	XcsRP4dprApnjOFgSQgiqeG6sOWqGQoxkUqL7G1FMG1XtxLO++E7XIvKi7HZS
+X-Google-Smtp-Source: AGHT+IErxUl17Wl6jcYDVeSXOWMqLDuZkpuko8Wd7gO2UnqQ4Lyz1KIGiEY3SOGJuM05lO0GfwEsq893vtzezCFadTU=
+X-Received: by 2002:a17:907:770b:b0:aa6:2567:efe8 with SMTP id
+ a640c23a62f3a-aa62567f520mr200314766b.19.1733401338858; Thu, 05 Dec 2024
+ 04:22:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -87,64 +80,43 @@ References: <20241127212027.2704515-1-max.kellermann@ionos.com>
  <CAOi1vP-SSyTtLJ1_YVCxQeesY35TPxud8T=Wiw8Fk7QWEpu7jw@mail.gmail.com>
  <CAO8a2SiTOJkNs2y5C7fEkkGyYRmqjzUKMcnTEYXGU350U2fPzQ@mail.gmail.com> <CAKPOu+98G8YSBP8Nsj9WG3f5+HhVFE4Z5bTcgKrtTjrEwYtWRw@mail.gmail.com>
 In-Reply-To: <CAKPOu+98G8YSBP8Nsj9WG3f5+HhVFE4Z5bTcgKrtTjrEwYtWRw@mail.gmail.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Thu, 5 Dec 2024 14:17:10 +0200
-Message-ID: <CAO8a2Sio-30s=x-By8QuxA7xoMQekPVrQbGHZ92qgresCDM+HA@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Thu, 5 Dec 2024 13:22:08 +0100
+Message-ID: <CAKPOu+9K314xvSn0TbY-L0oJ3CviVo=K2-=yxGPTUNEcBh3mbQ@mail.gmail.com>
 Subject: Re: [PATCH] fs/ceph/file: fix memory leaks in __ceph_sync_read()
-To: Max Kellermann <max.kellermann@ionos.com>
+To: Alex Markuze <amarkuze@redhat.com>
 Cc: Ilya Dryomov <idryomov@gmail.com>, xiubli@redhat.com, ceph-devel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The full fix is now in the testing branch.
-
-Max, please follow the mailing list, I posted the patch last week on
-the initial thread regarding this issue. Please, comment on the
-correct thread, having two threads regarding the same issue introduces
-unnecessary confusion.
-
-The fix resolves the following tracker.
-
-https://tracker.ceph.com/issues/67524
-
-Additionally, these issues are no longer recreated after the fix.
-https://tracker.ceph.com/issues/68981
-https://tracker.ceph.com/issues/68980
-
-I will make a couple runs with KASAN and its peers, as it's not
-immediately clear why these two issues are affected.
-
-On Thu, Dec 5, 2024 at 2:02=E2=80=AFPM Max Kellermann <max.kellermann@ionos=
+On Thu, Dec 5, 2024 at 1:02=E2=80=AFPM Max Kellermann <max.kellermann@ionos=
 .com> wrote:
->
-> On Thu, Dec 5, 2024 at 12:31=E2=80=AFPM Alex Markuze <amarkuze@redhat.com=
-> wrote:
-> > This is a bad patch, I don't appreciate partial fixes that introduce
-> > unnecessary complications to the code, and it conflicts with the
-> > complete fix in the other thread.
->
-> Alex, and I don't appreciate the unnecessary complications you
-> introduce to the Ceph contribution process!
->
-> The mistake you made in your first review ("will end badly") is not a
-> big deal; happens to everybody - but you still don't admit the mistake
-> and you ghosted me for a week. But then saying you don't appreciate
-> the work of somebody who found a bug and posted a simple fix is not
-> good communication. You can say you prefer a different patch and
-> explain the technical reasons; but saying you don't appreciate it is
-> quite condescending.
->
-> Now back to the technical facts:
->
-> - What exactly about my patch is "bad"?
-> - Do you believe my patch is not strictly an improvement?
-> - Why do you believe my fix is only "partial"?
-> - What unnecessary complications are introduced by my two-line patch
-> in your opinion?
 > - What "other thread"? I can't find anything on LKML and ceph-devel.
->
-> Max
->
 
+Just in case you mean this patch authored by you:
+https://github.com/ceph/ceph-client/commit/2a802a906f9c89f8ae492dbfcd82ff41=
+272abab1
+
+I don't think that's a good patch, and if I had the power, I would
+certainly reject it, because:
+
+- it's big and confusing; hard to review
+- it's badly documented; the commit message is just "fixing a race
+condition when a file shrinks" but other than that, doesn't explain
+anything; a proper explanation is necessary for such a complicated
+diff
+- the patch changes many distinct things in one patch, but it should
+really be split
+- this patch is about the buffer overflow for which my patch is much
+simpler: https://lore.kernel.org/lkml/20241127212130.2704804-1-max.kellerma=
+nn@ionos.com/
+which I suggested merging instead of all the other candicate patches
+https://lore.kernel.org/lkml/CAKPOu+9kdcjMf36bF3HAW4K8v0mHxXQX3_oQfGSshmXBK=
+tS43A@mail.gmail.com/
+but you did not reply (as usual, sigh!)
+- deeply hidden in this patch is also a fix for the memory leak, but
+instead of making one large patch which fixes everything, you should
+first merge my trivial leak bug fix and then the fix for the buffer
+overflow on top
 
