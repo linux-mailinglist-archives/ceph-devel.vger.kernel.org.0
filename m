@@ -1,163 +1,265 @@
-Return-Path: <ceph-devel+bounces-2261-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2262-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 167279E6E89
-	for <lists+ceph-devel@lfdr.de>; Fri,  6 Dec 2024 13:50:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4289E7663
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Dec 2024 17:50:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5EE8281F89
-	for <lists+ceph-devel@lfdr.de>; Fri,  6 Dec 2024 12:50:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16AA31886DF5
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Dec 2024 16:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89C51FC7C0;
-	Fri,  6 Dec 2024 12:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1B51F3D2E;
+	Fri,  6 Dec 2024 16:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJU7ILLh"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="T4Cr13jn"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239553D6B;
-	Fri,  6 Dec 2024 12:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F85420628A
+	for <ceph-devel@vger.kernel.org>; Fri,  6 Dec 2024 16:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733489449; cv=none; b=Fv5UAxKrSgh+3QPHQNg662hHPFKIVFhGuo03TPa+j8H52u8Qm7PHxmLPa4TBdc76QVsGu86F/RxaYxhHSnKR8Ggvh9TqpGvLYDAOM4kwSRcUN1L2J7CPeocy88gq1bGulbp4FG6pmAsr2+CCU3oGEGE4dAlpiizc+ENuzSWZVHY=
+	t=1733503824; cv=none; b=PoSOaUl6dMeDMKWaOMYNUM738Mk4oc7issdFLMvYmTf0NzMLK/z+zgOUscRALqfRkcv8zzXLK/kVEuZIn6bkwQ2e7mGk5k++Ewnl5JypVeYpN67p116hRWkqQxUUf22oit8I+kkqDg5utdaYyFeYl3iRHXMp0sjYAToigLpgeF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733489449; c=relaxed/simple;
-	bh=XEZyDHk132hZI57xsp0Rf6mJbSdLueVq0jXAyMBO/2I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SiCUFBEgPOrYhyyQJL8i7fLWGcMaXOq6A+u+H/4MCfV37aW7nWRTrJZgXTtflFni6n15Wt0JYur5Ql9ITgYfWhoWH8qNFN7rY54qKbRMQ700CCSTpAgTGidYfVgQkqjI0K5ueCsHJeV8Sx0f1KnAh/77vygnoyaKy5KdHyfGil0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TJU7ILLh; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7fd24e274fdso640801a12.2;
-        Fri, 06 Dec 2024 04:50:47 -0800 (PST)
+	s=arc-20240116; t=1733503824; c=relaxed/simple;
+	bh=0D04ZDJQhhKbcCfZ0+z7XRpvmBxnzq8oculexf9LcKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tY94hUSZJDOqfZ4K3xa2ln8UNG3KijFlMhbHklsHVo8D2o6RLA1c0PGBXBi0DruAGFxWbOEbm2KhXOeJffQsNYWvJxfykl3U8XhPIlMxaCdvqczdmOSngjalmUe7LWlBdycAWQlzgXVpfLq3//TQW8AUcqGt5ngDTO9XBDfNty0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=T4Cr13jn; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-434a736518eso26232715e9.1
+        for <ceph-devel@vger.kernel.org>; Fri, 06 Dec 2024 08:50:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733489447; x=1734094247; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BvnJWSsrkTVTOK9NYAknHMey6BhHTV0eKyyrXxhAy+8=;
-        b=TJU7ILLhuKIB+DdZYmNnXK/p+SNbakk71AxgvLrcRnRrQZCrUZ5CPEcT09Wh5kSgIu
-         8cGePaouVZAbvm/siKXY3XoCLDO7jWZenC9wqe7LTCZjH3qZVm1viFl5stjZCprjo0OX
-         P+5XoOriZ+oPXVcH30IlEW57ugv76w6+A55QCN7s+M3tzU6FM0Bd85QY0+fGUrK1ljAz
-         j8/ZY3fcfee2h9ZtfRJ9kWYTtKtnVKg89YD/EMP+q6REaA1KgJ346p/5UQW65Epy64b1
-         qhP+5ieQNx8ht9uH/lT8mydH3Izim1gP6NOCREtUgmJAOezZnqosOt/r1YTy+2xD9ksT
-         GkgA==
+        d=ionos.com; s=google; t=1733503819; x=1734108619; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y/AXLN7pGOp4uRwVstDey0ey7djZ9Y/CWN5MDPVKybg=;
+        b=T4Cr13jnMNyPWHF5fxKrgemBGhq6p2j1YOD+dSIhD3FlFu9u/J13eGPsfvUWeHBwKK
+         hORgIbCMJdOezRn8pBhPCbpIIlkdRVTKYy4x66dllIY2nM7f+qb90GJsEYUP7L9fyYLf
+         3QNw43A4OjFaOYf3qRCrPlvCPHbci2Rl7GG5s+3l2LraNnVLcrWsGlhbQYOCFxknKBxw
+         eUZ554WjYb4d6fA6h86ZO0f7A2zxIjjGc/CKlgt5SSiAVTvGKk05JbRYVvXsJMsFOVDc
+         1NfZ2aRrQgrcV9egsT5m5cTBcx+48t6uoZb6jaQJvwcq9zxpB4rRE5e17jGgXt0fivsU
+         Ok7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733489447; x=1734094247;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BvnJWSsrkTVTOK9NYAknHMey6BhHTV0eKyyrXxhAy+8=;
-        b=kPV/gP9TfPaEVZfIESOpF9miDPYLT3FLQEPctBMXAcdyJ8a3ErtHAQ20h18khd6mF0
-         erDm/mSSkAoVeyPLJcOg0LrNlP7S1HPrUs/G7avrRy9QhRuwzNX+K54M9swC09xy6jnT
-         S6Bjmoe0fh9frWqGM9zyojET25/3xLl02scmP9rct7YmG9fM3F+uyd0+gemmMlk0S3mR
-         VifNlHqWtNzOri/2HoBFiLklcKoWHlCBtrMPtWzXt8CjswoeRjPbD6u03Vy96P1kYiYU
-         T+/BwL6TPZjk31+yMxoBsU3bMFOle9c44dnyETnc9EL7904UECzCA2ILcxATv3fxC4zH
-         TSNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYR1ATRm5tftTH/aALjMzbWeVGOqMKP7t6AHEv8N1b6fB8IXIPTy1uGp7zSc8ApbbVGh2UBECN@vger.kernel.org, AJvYcCVzwWv8EbrnEOvxfth10xLGrvav8UPxjd1O/Q3i44JylE8DbrNIiIt9+udI+AtgRBei9E8yd8bA3zdp@vger.kernel.org, AJvYcCXUK/HJI86OVYRxn8Pv01VLJWxLgkzkVJr1xbmplXBnVtJAexifX8nqKFfTZNnlyqXSEYzO9W+fXhmtH84q@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJhMHoJV9+/uB7whT7DN4eAXspzny57/vzJcWLmgTuHKHONW2/
-	0mi24NKTh1rvblLMm28tT9xuGUcPmkX3FVPKertkyJ83MBTvT3dRHgKl4m3niPVLNPiBrfnUczO
-	DJsA/gAW0TXkWnRRBekf/F8nyU+J+8Q9S
-X-Gm-Gg: ASbGnctnCu4MQIut6TEzQ1n0EKMTKMDQI2S3S7i0ZgxlkiRlhQQwfeNw+Vneg/chrf3
-	rSuTfBxMyW8TbpnjnKEj+Efq1vpQ2hsY=
-X-Google-Smtp-Source: AGHT+IGfoReZyqEHkx2l9Z6yTZIOzjckyeg+BIUhB/ROWL3Ic48D0l/l6lTNNJvqLqnQjmI0031T4Qs+fZHxaDSRsvg=
-X-Received: by 2002:a17:90b:17c2:b0:2ee:aa28:79aa with SMTP id
- 98e67ed59e1d1-2ef69366eb9mr4867604a91.6.1733489447225; Fri, 06 Dec 2024
- 04:50:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733503819; x=1734108619;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y/AXLN7pGOp4uRwVstDey0ey7djZ9Y/CWN5MDPVKybg=;
+        b=Hogxp45eLu7MocmM8KDbSX1BDKEtTmtdu8OICthM3PWfmSHV2/D0rrspmqSLOjtEyY
+         i++KtLWbfQmI3GTkCuaAG4ngHTiBfXkAmlwayEKCEiVuiQBKyFZIwxBOiW/6NtL9FNy1
+         sqSFidDKrA6A6nFE6h72sP5pey2rhdVg57Kxu23G7khIW+yGWMVGHZU08dcgFcoslCGR
+         PXQCNgrEfCrHvFAahyZ1CrbnYOaVABW7aHE9fDt1+dHC7Hy60zHdxKpyF/8otAxvYgoT
+         ksTNiHbEzbj9nQBoiTItBS5gTQlDFm4tUJ6xBKDslnOWcAReLTFjIySCLncbWYExDlj1
+         gVpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYpKZQuZ27pQDmDy570VLAdcDIaiXak/740jLbYX0FAM7qwpeeCQuB5vAcJaIwVsTM73WmKlVDoiPd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYjF5aDCkv2f73r71JAPORfYJNWZvCZGiHJpDMbyKT2+d4zgt0
+	kR3n8plzG5xqrepHZLjDqoAfjc8fdTc9Ht2eMJyUKCILkUOshRBg5zkJ0S40KNc=
+X-Gm-Gg: ASbGncteE3dGep/UWAzpTaUciFlIkVZs3+rJFoIUJxvuOmxhd001mmbKjNg6LB3kEGY
+	GieIPKEWkbjIX+zmn9HOcERtk6NYTa6x/+vkWyaEc8Gjc5e4oZBYQ795bkeK9EnNEj8jM9wTN4B
+	XkUjwmb6WCIhaB+Yd7R/oqdTkYH9HIEGaHc4HZogeW4WabhpQTQ+1ok7ldTfos4vqms1J5Thf8n
+	tIPaTJFJ+XP3VAfeZpfOwayhYT4mBVZE2JZzLiouDDQpuF2pXlhtIgSkRX/Ye1QY9lQyjVOygZK
+	ZsPOkktHSl3z7cS7Yt/P3IoWUXMmVr0982Iwq8DMDlMfDb7rYg==
+X-Google-Smtp-Source: AGHT+IEjd0/0Bv3IEzgcclSVQbheGNRcjIl0tIIjyWpUjukGx/SAq2YeahHwGZXirAS1p0eFgY6UsA==
+X-Received: by 2002:a05:600c:1c8a:b0:431:5f8c:ccb9 with SMTP id 5b1f17b1804b1-434ddeb9b30mr44571795e9.17.1733503819398;
+        Fri, 06 Dec 2024 08:50:19 -0800 (PST)
+Received: from raven.intern.cm-ag (p200300dc6f2c8700023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f2c:8700:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5273131sm97737235e9.12.2024.12.06.08.50.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 08:50:19 -0800 (PST)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: xiubli@redhat.com,
+	idryomov@gmail.com,
+	amarkuze@redhat.com,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Max Kellermann <max.kellermann@ionos.com>
+Subject: [PATCH] fs/ceph/io: make ceph_start_io_*() killable
+Date: Fri,  6 Dec 2024 17:50:14 +0100
+Message-ID: <20241206165014.165614-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOi1vP8PRbO3853M-MgMZfPOR+9TS1CrW5AGVP0s06u_=Xq3bg@mail.gmail.com>
- <20241205154951.4163232-1-max.kellermann@ionos.com> <CAO8a2Si+7uFkOCf4JxCSkLtJR=_nQOYPAZ_WkWES97ifhyHvBQ@mail.gmail.com>
-In-Reply-To: <CAO8a2Si+7uFkOCf4JxCSkLtJR=_nQOYPAZ_WkWES97ifhyHvBQ@mail.gmail.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Fri, 6 Dec 2024 13:50:36 +0100
-Message-ID: <CAOi1vP9Ovx1fJ8AH3gPEfeAT1nL3uT98EAngdO=FHtfiem6+3w@mail.gmail.com>
-Subject: Re: [PATCH v2] fs/ceph/file: fix memory leaks in __ceph_sync_read()
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: Max Kellermann <max.kellermann@ionos.com>, xiubli@redhat.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 5, 2024 at 5:30=E2=80=AFPM Alex Markuze <amarkuze@redhat.com> w=
-rote:
->
-> Good.
-> This sequence has not been tested independently, but it should be fine.
+This allows killing processes that wait for a lock when one process is
+stuck waiting for the Ceph server.  This is similar to the NFS commit
+38a125b31504 ("fs/nfs/io: make nfs_start_io_*() killable").
 
-Applied.
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/ceph/file.c | 22 +++++++++++++---------
+ fs/ceph/io.c   | 44 +++++++++++++++++++++++++++++++++-----------
+ fs/ceph/io.h   |  8 +++++---
+ 3 files changed, 51 insertions(+), 23 deletions(-)
 
-Thanks,
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 4b8d59ebda00..d79c0774dc6e 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -2127,10 +2127,11 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	if (ceph_inode_is_shutdown(inode))
+ 		return -ESTALE;
+ 
+-	if (direct_lock)
+-		ceph_start_io_direct(inode);
+-	else
+-		ceph_start_io_read(inode);
++	ret = direct_lock
++		? ceph_start_io_direct(inode)
++		: ceph_start_io_read(inode);
++	if (ret)
++		return ret;
+ 
+ 	if (!(fi->flags & CEPH_F_SYNC) && !direct_lock)
+ 		want |= CEPH_CAP_FILE_CACHE;
+@@ -2283,7 +2284,9 @@ static ssize_t ceph_splice_read(struct file *in, loff_t *ppos,
+ 	    (fi->flags & CEPH_F_SYNC))
+ 		return copy_splice_read(in, ppos, pipe, len, flags);
+ 
+-	ceph_start_io_read(inode);
++	ret = ceph_start_io_read(inode);
++	if (ret)
++		return ret;
+ 
+ 	want = CEPH_CAP_FILE_CACHE;
+ 	if (fi->fmode & CEPH_FILE_MODE_LAZY)
+@@ -2362,10 +2365,11 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		direct_lock = true;
+ 
+ retry_snap:
+-	if (direct_lock)
+-		ceph_start_io_direct(inode);
+-	else
+-		ceph_start_io_write(inode);
++	err = direct_lock
++		? ceph_start_io_direct(inode)
++		: ceph_start_io_write(inode);
++	if (err)
++		goto out_unlocked;
+ 
+ 	if (iocb->ki_flags & IOCB_APPEND) {
+ 		err = ceph_do_getattr(inode, CEPH_STAT_CAP_SIZE, false);
+diff --git a/fs/ceph/io.c b/fs/ceph/io.c
+index c456509b31c3..2735503bc479 100644
+--- a/fs/ceph/io.c
++++ b/fs/ceph/io.c
+@@ -47,20 +47,30 @@ static void ceph_block_o_direct(struct ceph_inode_info *ci, struct inode *inode)
+  * Note that buffered writes and truncates both take a write lock on
+  * inode->i_rwsem, meaning that those are serialised w.r.t. the reads.
+  */
+-void
++int
+ ceph_start_io_read(struct inode *inode)
+ {
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
++	int err;
+ 
+ 	/* Be an optimist! */
+-	down_read(&inode->i_rwsem);
++	err = down_read_killable(&inode->i_rwsem);
++	if (err)
++		return err;
++
+ 	if (!(READ_ONCE(ci->i_ceph_flags) & CEPH_I_ODIRECT))
+-		return;
++		return 0;
+ 	up_read(&inode->i_rwsem);
++
+ 	/* Slow path.... */
+-	down_write(&inode->i_rwsem);
++	err = down_write_killable(&inode->i_rwsem);
++	if (err)
++		return err;
++
+ 	ceph_block_o_direct(ci, inode);
+ 	downgrade_write(&inode->i_rwsem);
++
++	return 0;
+ }
+ 
+ /**
+@@ -83,11 +93,13 @@ ceph_end_io_read(struct inode *inode)
+  * Declare that a buffered write operation is about to start, and ensure
+  * that we block all direct I/O.
+  */
+-void
++int
+ ceph_start_io_write(struct inode *inode)
+ {
+-	down_write(&inode->i_rwsem);
+-	ceph_block_o_direct(ceph_inode(inode), inode);
++	int err = down_write_killable(&inode->i_rwsem);
++	if (!err)
++		ceph_block_o_direct(ceph_inode(inode), inode);
++	return err;
+ }
+ 
+ /**
+@@ -133,20 +145,30 @@ static void ceph_block_buffered(struct ceph_inode_info *ci, struct inode *inode)
+  * Note that buffered writes and truncates both take a write lock on
+  * inode->i_rwsem, meaning that those are serialised w.r.t. O_DIRECT.
+  */
+-void
++int
+ ceph_start_io_direct(struct inode *inode)
+ {
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
++	int err;
+ 
+ 	/* Be an optimist! */
+-	down_read(&inode->i_rwsem);
++	err = down_read_killable(&inode->i_rwsem);
++	if (err)
++		return err;
++
+ 	if (READ_ONCE(ci->i_ceph_flags) & CEPH_I_ODIRECT)
+-		return;
++		return 0;
+ 	up_read(&inode->i_rwsem);
++
+ 	/* Slow path.... */
+-	down_write(&inode->i_rwsem);
++	err = down_write_killable(&inode->i_rwsem);
++	if (err)
++		return err;
++
+ 	ceph_block_buffered(ci, inode);
+ 	downgrade_write(&inode->i_rwsem);
++
++	return 0;
+ }
+ 
+ /**
+diff --git a/fs/ceph/io.h b/fs/ceph/io.h
+index fa594cd77348..08d58253f533 100644
+--- a/fs/ceph/io.h
++++ b/fs/ceph/io.h
+@@ -2,11 +2,13 @@
+ #ifndef _FS_CEPH_IO_H
+ #define _FS_CEPH_IO_H
+ 
+-void ceph_start_io_read(struct inode *inode);
++#include <linux/compiler_attributes.h> // for __must_check
++
++__must_check int ceph_start_io_read(struct inode *inode);
+ void ceph_end_io_read(struct inode *inode);
+-void ceph_start_io_write(struct inode *inode);
++__must_check int ceph_start_io_write(struct inode *inode);
+ void ceph_end_io_write(struct inode *inode);
+-void ceph_start_io_direct(struct inode *inode);
++__must_check int ceph_start_io_direct(struct inode *inode);
+ void ceph_end_io_direct(struct inode *inode);
+ 
+ #endif /* FS_CEPH_IO_H */
+-- 
+2.45.2
 
-                Ilya
-
->
-> On Thu, Dec 5, 2024 at 5:49=E2=80=AFPM Max Kellermann <max.kellermann@ion=
-os.com> wrote:
-> >
-> > In two `break` statements, the call to ceph_release_page_vector() was
-> > missing, leaking the allocation from ceph_alloc_page_vector().
-> >
-> > Instead of adding the missing ceph_release_page_vector() calls, the
-> > Ceph maintainers preferred to transfer page ownership to the
-> > `ceph_osd_request` by passing `own_pages=3Dtrue` to
-> > osd_req_op_extent_osd_data_pages().  This requires postponing the
-> > ceph_osdc_put_request() call until after the block that accesses the
-> > `pages`.
-> >
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-> > ---
-> >  fs/ceph/file.c | 7 +++----
-> >  1 file changed, 3 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > index 4b8d59ebda00..ce342a5d4b8b 100644
-> > --- a/fs/ceph/file.c
-> > +++ b/fs/ceph/file.c
-> > @@ -1127,7 +1127,7 @@ ssize_t __ceph_sync_read(struct inode *inode, lof=
-f_t *ki_pos,
-> >
-> >                 osd_req_op_extent_osd_data_pages(req, 0, pages, read_le=
-n,
-> >                                                  offset_in_page(read_of=
-f),
-> > -                                                false, false);
-> > +                                                false, true);
-> >
-> >                 op =3D &req->r_ops[0];
-> >                 if (sparse) {
-> > @@ -1186,8 +1186,6 @@ ssize_t __ceph_sync_read(struct inode *inode, lof=
-f_t *ki_pos,
-> >                         ret =3D min_t(ssize_t, fret, len);
-> >                 }
-> >
-> > -               ceph_osdc_put_request(req);
-> > -
-> >                 /* Short read but not EOF? Zero out the remainder. */
-> >                 if (ret >=3D 0 && ret < len && (off + ret < i_size)) {
-> >                         int zlen =3D min(len - ret, i_size - off - ret)=
-;
-> > @@ -1221,7 +1219,8 @@ ssize_t __ceph_sync_read(struct inode *inode, lof=
-f_t *ki_pos,
-> >                                 break;
-> >                         }
-> >                 }
-> > -               ceph_release_page_vector(pages, num_pages);
-> > +
-> > +               ceph_osdc_put_request(req);
-> >
-> >                 if (ret < 0) {
-> >                         if (ret =3D=3D -EBLOCKLISTED)
-> > --
-> > 2.45.2
-> >
->
 
