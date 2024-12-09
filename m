@@ -1,405 +1,237 @@
-Return-Path: <ceph-devel+bounces-2280-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2281-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB2469E9E47
-	for <lists+ceph-devel@lfdr.de>; Mon,  9 Dec 2024 19:46:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB5229E9EED
+	for <lists+ceph-devel@lfdr.de>; Mon,  9 Dec 2024 20:05:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D6B71883B1D
-	for <lists+ceph-devel@lfdr.de>; Mon,  9 Dec 2024 18:46:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A0741882D7A
+	for <lists+ceph-devel@lfdr.de>; Mon,  9 Dec 2024 19:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC26155A34;
-	Mon,  9 Dec 2024 18:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1F8161311;
+	Mon,  9 Dec 2024 19:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="c953JziI"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LgfbDK0b"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0AAD13B59A
-	for <ceph-devel@vger.kernel.org>; Mon,  9 Dec 2024 18:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C3819D892;
+	Mon,  9 Dec 2024 19:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733769983; cv=fail; b=EOnzsXlRjP9E2q2IJN2pmsX+zV5LEbf67vwg1jSpUUIHrRq5hXFwIlY3goPs95j90Zastdw1u2WgWcQcrhpXs0pUFfvCumCqBH4A1iZI5sV+fPmFRG82e8g9RPGKCj4d/KFtwGK3cg0ppQLE53VnirAGAl1XF1wightvmF5T2C8=
+	t=1733770816; cv=fail; b=vC5eog5sUpXvyNS6kYAdkbOzTPcbjwOtb+JfGhB8h+KyLWJ0xkpLQD6KEMGKOR3tISfqls+8PpVFB5CUdYVm98aymtcMiCS/5MwxMbXgR0ON4H7hkQOb9XHR5wckw8UCtBiQn67Jab4/9NBssCAmCH/KnRwUrtrZYObMy3lH2oI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733769983; c=relaxed/simple;
-	bh=GePRzu9SRKmA/QJNONmbBc8Yh5VBoicmFn5EmW3YsUc=;
-	h=From:To:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=Lyoh4HEXIf4pRV8g8qD6fcbDsgypUXpTBSwWyL8euQpSy3INGQiPQSGhhSZIZnm0OO8Ja2M8heRBi8bjvHNiBVzOnbqp32IwHm5ciOCk2GfNlrm5WKNAn0PtHtTyrRQMFFKd2RLP+61qTuyxtuzIj9O/bG1eIqxJzZq0Y0rCyOI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=c953JziI; arc=fail smtp.client-ip=148.163.156.1
+	s=arc-20240116; t=1733770816; c=relaxed/simple;
+	bh=Gxx2FdGCtAZXZhdFfEA49sMHH0b+HEdc63Xb7GQ5+PE=;
+	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
+	 MIME-Version:Subject; b=n/nF6pC0Gh8XA3QafECUt21uCB9Q/j/sMKI1T2cCB/IBgqTS1otXObUEYTzP4zuI9tdftu9VzxYtzniqcpJScjNKCs5zvYa1PW4ZjVIEUWpi6vfS20qCqYMgCSFm3ju7MZZODDWQsbhEDjTOvYnyELcrrx6oKpzIeZOM68Mp23c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LgfbDK0b; arc=fail smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9Ebe3c011087
-	for <ceph-devel@vger.kernel.org>; Mon, 9 Dec 2024 18:46:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-id:content-transfer-encoding:content-type:date:from
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9CfUS3015089;
+	Mon, 9 Dec 2024 19:00:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
 	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=GePRzu9SRKmA/QJNONmbBc8Yh5VBoicmFn5EmW3YsUc=; b=c953JziI
-	NcZD1ByMSx7Eib+UTjGGUbaaCChOVZNzlfVTp2wEWSPb8sah+bOTZU63i29wIEmc
-	j2WTa1KnpiagD66sUL5ZKtUkb2j5DyR6lwJcBBpmTA/S6rhOdKvcC+4HgRyR2dn3
-	8Yo/9YAeB5gQ9JeriesxqEz10ewbIyUvb7soVTVwKb4rv/1TmXgADKLR5ZYxi2sw
-	7dLxP0Jx7iWuvO1og8Q4PIEEyIMkCzIC8AytBRZj0YV6gXWagkYUZmRJ7JJqrlkv
-	6mgvXaR4Tzi5dX+MWHBSW8OmjRTqm8cOOUx0XN429F2dNWxAgmO2juJhJWMGr+vF
-	+eWSegaHu7joWw==
+	pp1; bh=Gxx2FdGCtAZXZhdFfEA49sMHH0b+HEdc63Xb7GQ5+PE=; b=LgfbDK0b
+	J85992qwy0J/8MZTdQul80Uzt0by3573bdamr1ibbrlg3tjkMdWjFzC0HpxYvci4
+	EAxA3qOu7AZtdXab5CXyfcmnHHQmrqYuQJfzERYkHK9E4Bobq+yg3YxUf9O+IvRa
+	1WuuyYtokzD3U5nqMd38u1F4qakbYyKX6VrafR/dQJ27rOUUDyuXmM58j+bFuy2m
+	MIOmKaiT/HAwEM+al2rUCWfn7NbrDH8c9uUTz9Lj1Qkk3KV4EwaFCq4divXnaZUw
+	D3Fth7jDxFMa8OqDiQhmkQYPlHmBaGQrzyTq8OIUByyraQLsYZq5Eic6jrv0xSGB
+	C70tb8qUagXmYA==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8k1ys-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
-	for <ceph-devel@vger.kernel.org>; Mon, 09 Dec 2024 18:46:20 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B9Ii27V009127
-	for <ceph-devel@vger.kernel.org>; Mon, 9 Dec 2024 18:46:20 GMT
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2176.outbound.protection.outlook.com [104.47.59.176])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8k1yp-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce38k26x-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 18:46:19 +0000 (GMT)
+	Mon, 09 Dec 2024 19:00:05 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B9Iw7ik013074;
+	Mon, 9 Dec 2024 19:00:05 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2042.outbound.protection.outlook.com [104.47.58.42])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce38k261-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 19:00:05 +0000 (GMT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gEbUXxVyw+cKhXXFsr+8cn4EC4pMdq6xPOZC51zYfqatw+UvGALp4Um2UBj46qPhcdqVALl0ZWVHaqINGs2QSiJpHojIPDrAEUNDnPVxuE3IxOehZexVLt6mqU2zi0HuJTITH+zKB/3wgkGaBnpjtQ7MKxZgg1InparEIOFUUPxJ8ZSAe3te/nIv5ENaf15kU/mjCYx+uQTpTa/Lfx/j9QzfRUwdmNssReDIlhgrZ0jG/s2ROnkENKFd5+ubm3je6DfhgH51RfOmc65S41si+11di+HFresBYr60nZcX+To1uULVXAndDqBzaHV+IP39xLZLYiRfECwDV38ByHI8SA==
+ b=CYu8vZnnnM4qaiepAmf+Mm6d3M2fD0qCoQTO5fCY3aayCViCyJ8dC7YE30wBwKwBEbHTQvVuWQ5kMOcXIjNBPfrOWPqK7tBDI4UYb9g68pckHazsMS9j0+bPYiW/fOvgwAiSPawitsP4B+4Z7g51kZMRq+Ez5lWp9HyR2KgXtHKC5cRUBdu6tWPqp3PzOGAcWKZ4AoUclwVR2How2LAaMLp5d7qu8lRxWoDXVF1DG9eDHoHki5Y66oNR6OV7usrhnvQkvEP6JiSiIlp48eZ8nkBlghS5sO3H3FnKJUhEE1MGcyumSNXGBxCvlExyg4x3yKtLLJNJYAqGyy7paGeW6w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0zkAaJ4cuJ6sb238LfvkyPI0J+TXwYKxyzl/bHp9fVY=;
- b=QASnf2+tKjhoysWx1SvZ1pOV5e59PLyCnhMAOC/5r2wghYsQG6QCZ1xCuA4pXn8JcmLWBxcJZ+T/8nEqAcnFWC8sQ/X1E+MI88W/pNfQRpEkGrdimuV774Hin8OgrY8hAKyiz/sZmb7Y9HHMiMK8AZfdrHnDqJqIv9LS0Bs1Ss64+kxdbBWNNgjAIEAL10yNVcOepbkq45tuuRxosRD8432vK6M/NQ6O2ZPugg3+BAv2l81Tnhl2VcY+f2bVWy77edgM56OFXnkdN/YIteL2SaadqIS/cg+DpVwnjF4/ZrNAt3+zIsk6i0ATjHeL3Mf97+oAlPWvhMAiWQTfD6EZ5w==
+ bh=Gxx2FdGCtAZXZhdFfEA49sMHH0b+HEdc63Xb7GQ5+PE=;
+ b=jWxbogPrcaEnzsaBXyD8Btnbyz8xIcj4mzFcfQyQY7wcxKaMU5nUcBtTErH7q7B/ZTa1mf/RexeR3VCWwueHbXLOa/G/T8ESZr7icqFSt600X2ljhjx1vihcTEmPM1GNwzql8b233x7wWFZBJtWGpHbr+07WHfSmmLNizaXIPPNN6FDv4AN4a1VujpMbt79bkx6VHpzF3oVtWIHoLl/gwnTzShYy7TCnqPTXiw7l9gVND/2cEPl7LclFgO/nOE76ylDIOjW1k8h7gF8CcQYYk5G1KmMWRC3voNv+MKPJoRRX63mBRZrxn5yGXzRzOq4QS7Tpq/vpqM3pk9D5q0qX+w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
  header.d=ibm.com; arc=none
 Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by CH3PR15MB6261.namprd15.prod.outlook.com (2603:10b6:610:163::19) with
+ by SA1PR15MB5798.namprd15.prod.outlook.com (2603:10b6:806:334::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Mon, 9 Dec
- 2024 18:46:17 +0000
+ 2024 18:59:51 +0000
 Received: from SA1PR15MB5819.namprd15.prod.outlook.com
  ([fe80::6fd6:67be:7178:d89b]) by SA1PR15MB5819.namprd15.prod.outlook.com
  ([fe80::6fd6:67be:7178:d89b%7]) with mapi id 15.20.8230.010; Mon, 9 Dec 2024
- 18:46:17 +0000
+ 18:59:51 +0000
 From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "idryomov@gmail.com" <idryomov@gmail.com>,
+To: "max.kellermann@ionos.com" <max.kellermann@ionos.com>
+CC: "idryomov@gmail.com" <idryomov@gmail.com>,
         Alex Markuze
-	<Alex.Markuze@ibm.com>
-Thread-Topic: [EXTERNAL] [PATCH] ceph: improve error handling and
- short/overflow-read logic in __ceph_sync_read()
-Thread-Index: AQHbSZchpaDtxBRPtEiqVZCjH9oDnrLeQhMA
-Date: Mon, 9 Dec 2024 18:46:17 +0000
-Message-ID: <c96977d8fb8321251fd5cc5e5ad02c6ffd5edd43.camel@ibm.com>
-References: <20241208172930.3975558-1-amarkuze@redhat.com>
-	 <CO1PR15MB4876E2C9F48D78426091DCD092332@CO1PR15MB4876.namprd15.prod.outlook.com>
+	<amarkuze@redhat.com>,
+        "ceph-devel@vger.kernel.org"
+	<ceph-devel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        Xiubo Li <xiubli@redhat.com>
+Thread-Topic: [EXTERNAL] Re: [PATCH] fs/ceph/io: make ceph_start_io_*()
+ killable
+Thread-Index: AQHbSBDvGioVo1fY1kSWst7E0f1e0LLZlUSAgAA8dQCABHcwAA==
+Date: Mon, 9 Dec 2024 18:59:51 +0000
+Message-ID: <caf3a8455673bc602194c702de9b1013722ce4a2.camel@ibm.com>
+References: <20241206165014.165614-1-max.kellermann@ionos.com>
+	 <d3a588b67c3b1c52a759c59c19685ab8fcd59258.camel@ibm.com>
+	 <CAKPOu+-6SfZWQTazTP_0ipnd=S0ONx8vxe070wYgakB-g_igDg@mail.gmail.com>
+	 <cd3c88aae12ad392f815c15bab0d54c8f9092e46.camel@ibm.com>
+	 <CAKPOu+-AwRayUqOR9fEmZ88bpJkrknMbsZadknjDsBW=jcFL0g@mail.gmail.com>
 In-Reply-To:
- <CO1PR15MB4876E2C9F48D78426091DCD092332@CO1PR15MB4876.namprd15.prod.outlook.com>
+ <CAKPOu+-AwRayUqOR9fEmZ88bpJkrknMbsZadknjDsBW=jcFL0g@mail.gmail.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|CH3PR15MB6261:EE_
-x-ms-office365-filtering-correlation-id: 5d586f26-fc2b-4b93-dd44-08dd1881c3d8
+x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|SA1PR15MB5798:EE_
+x-ms-office365-filtering-correlation-id: a7e65df3-b0dc-4308-09f0-08dd1883a928
+x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|10070799003|376014|366016|38070700018;
+ BCL:0;ARA:13230040|1800799024|366016|376014|10070799003|38070700018;
 x-microsoft-antispam-message-info:
- =?utf-8?B?bFBwKy80K3hoQU1STWNQVWl0dWw1QlcwQXJZYmJKYlRMU1o4RWd5WFBKQXhq?=
- =?utf-8?B?WEJmaWl0djRpYzhicHZZSHFaOUJmdmRONWtaUWN2cEFSRGxublQvSHlrY2Nv?=
- =?utf-8?B?TmxNQjkxUjhHZE9HSUExbTV0aWg1MW8rRHpMbkIzYWl4UHFrejQ0YjUwSjFP?=
- =?utf-8?B?alVRTGtibzc4b1RwTmZRQkpiR2lQTUZpTG80WU8yQWltbWJyaE9lWEZ1VDdx?=
- =?utf-8?B?WnR6bFphK2F0OUpZNm5MRElucVhxNDVjRVVBaG5EVmVoK1hMQ21oSUpZbW9C?=
- =?utf-8?B?RDBWL0tiSGxTREJsSFMwZUlGbW9DbzBoa1dWT1BnQWNsWmEwS0pCNzZYS1RM?=
- =?utf-8?B?NnhmMy9odC85T0hUM2E0emNTeGpnQmsvcTJ4M2RYM08yNUREM3ZBTXQrS0Nv?=
- =?utf-8?B?b2pYSWc2R1lvakEvWVN1S21IMzRGMjhMN0M0Z09XTUNmUVdQK25PTklJM2U0?=
- =?utf-8?B?MFF3MmRHT3VneXh2RkZqVDhCd0RFVzBVTkpiUCtRc3dSRmwrN0hSR0craTAz?=
- =?utf-8?B?QllTVklUdjBHU1BXZjh4LzlwWGxZMjNiUWxVZmUvSzdPL3RSZGhOZUJCUStQ?=
- =?utf-8?B?QmxOY0hMUmlWQkF0bXBCcXZxbkN6VWQ5emRodS9JTzR2WmpBMTg0NDZTNElX?=
- =?utf-8?B?dVFKUE1IMEkyUHBzN1FndENDWG82Nk9peDFYTzgrTTcxb05yay95bVBKc3Ja?=
- =?utf-8?B?MG0xWisySEZycGRtQUpvRXU1Z2FvaXFnTnZnUlQ2cHZKQWpIdUFkQkZXTTZN?=
- =?utf-8?B?TW4rbEFWcGhybDUxMm9hc0xHQXFvWkl3NVEzVFM3TDhPdnB5Y3ZvR3dtOUxY?=
- =?utf-8?B?SDRyV0R1djU4YWRIZUREK25QR3pSOGpOZWo1Wko4QldGa2QwK3Y5b3B2ZDBz?=
- =?utf-8?B?VjBUOHBtK0NDaUNFRXBMb3Q3bGRPcEhjdjJ4emp2a00yRDhyU1psc3hBeWs3?=
- =?utf-8?B?V2tLRTZXZkZpWG9aUWdSeWZ5VWtuVlhVbC9rN1Z3a25sblE4V3hBT2F2ZVAz?=
- =?utf-8?B?Q20venhEbE40RGkvN0VqM2NFaDE0TWVaUUhwdlBPUjBwaTB3TTRLMmRPZ1Bh?=
- =?utf-8?B?RW9FTHkxS1dtUnNFNTJ2ZHdqR2NhNzBSb1RKbVBVdTA5Z2xtM0ptd3NsUlAr?=
- =?utf-8?B?c25WdXZFK21vdTcrSlVCcTNub256SmROeXhLSHVsUVJiTGJSRnJWR1RPUjhC?=
- =?utf-8?B?MlFjRllIMHV0OVVlQmdFRjZtYmhIcHgwWDB0dWVmeWg1ejFIMytGVzFjVm14?=
- =?utf-8?B?ZUs5VndzN1h5NCtuWWNlMVRNcVVJMTlqRzdnVGE5b0pkZ0JZaGg2Tlp1a0cr?=
- =?utf-8?B?b09aT2dqSEw5UTEzRFNkd3NUanYwUUdKZlB0U3U1eUhYVTZ4Qy95bTg5MHFB?=
- =?utf-8?B?cFNiTWdjZzM0QXNOU1VyUXEzMlo3Y1k3aUhYR2xBZGxDQlIzTDJ4VXdCMHI0?=
- =?utf-8?B?VWZmTEFzU1h2QmFCcUZpWmVpbWZRaHdta1FpV25NUXZvanJaS1FOVnlUc3pK?=
- =?utf-8?B?aGlxVWJ3UjI4YUFHc2VjRm1qZWtrRnNERStqTGM0Y25BRytueEUwSzNTL0k0?=
- =?utf-8?B?MkhvNjNMSlhiOUJGTFNIdFR1bzA4NHl3TDNUa0N3MHBEYWpRaXJYVDA3VFE3?=
- =?utf-8?B?RVBFVFU1cVphaEE5NFQrMFFGNHQrTEJNMUEyWHp6ZVV5OURKL1ZhbGMvVGR0?=
- =?utf-8?B?enpRUUlvdlkrTlZqVzVqTlJXRDNjakJ2cmhSSG9MYWxreUZJUmFBZTYrSmZt?=
- =?utf-8?B?cS9hdUw4ZjhRTGNRTWxVQUdjd1dQUUJ2S2tTUFo2UlMrUUowcndlblBQaVJI?=
- =?utf-8?Q?KpYjq2txxEm0bahuU14/3rTh1hcPJk/2A5Pxk=3D?=
+ =?utf-8?B?RzNPK1BRbktIOHVEYmpwYW82aHlhVFE5ODRTTFJMbUExaWVtYlhCMlBGVjZV?=
+ =?utf-8?B?RTNnUlE2Z3UyemVKN2FxcjNVWHF4ejdjTzF6NkN6dWwzcHBRTkZyOEpzaHov?=
+ =?utf-8?B?c2V5QVlZMlRvUGNsOGpJQkVhQ3VDVEVXWkNpai9JVm14azJwSkNQd3BMUlFr?=
+ =?utf-8?B?YUtJN3BhV2NPb3BMOW9oZWRVaG5ZTkM5ME9SOHJlYVM3QlhJL2NhUkExWVhK?=
+ =?utf-8?B?b09SZVB1NENZV1VzajIySVdHaWhEYkthTlE3MnJPcFFkUE5JaFpjTUhlUFlN?=
+ =?utf-8?B?dG54b2xYVjVMUUdJUEtRTnp5eVkrK0VXY0NNZmJPM0EyQnFXVStpb3Zjb2lI?=
+ =?utf-8?B?Qnc5ZklNVTI0cGxzMTlmK05FQ0diU3Q3Uk1SVHNLT014bktDVk1TVmVUSmJ0?=
+ =?utf-8?B?RWVIejNOZUZBSDVpUFNmbU9tU25XeEFtNWZMeGphYlZRSmxVUUJGRWJmOXRm?=
+ =?utf-8?B?Y3hDNWJsejQ1SmMxWEtwNkwvUVVwbm45UGF2a2w3b0FTLzdMYWVFeWt4NjVl?=
+ =?utf-8?B?UC9qR2hLMVl4NkNML2xkSjdKV21qall0SjEybkE2N0dKSVlOTDVkYXFFdFk0?=
+ =?utf-8?B?dzVvb3c3dGhkUEMyM21aT1YrbE1CY2tRVlh5MXdXQkFmbzAvak90TkxLaFJM?=
+ =?utf-8?B?TG5jak5qc1NMRVZxbXNGOGVwZ3dmRVduZ1NrTGZuV0NieVN6R2x4QklFRmI1?=
+ =?utf-8?B?cEZFendyL0JsL1QzYnlqL016bENiUi9OZEt3cWNlU2NlMFloRnZ6UTRqbncy?=
+ =?utf-8?B?SVRJRUt5VVUzbjBvUDhWbGNqdDdjYWVGMEZXdTJxQ3FWUnFiRnVqUUtmV0Nl?=
+ =?utf-8?B?YkoyWFE0WkdBaDA1d1lhOVE5VitkMGFaWTdzYnhVMDdyYzFmcS9XcmpraEFQ?=
+ =?utf-8?B?eHptSzZNaWorbEdJREVuUG9qLzNZYUo4cXp2NVkwYmdOOFJrdy9uMm9MeGpD?=
+ =?utf-8?B?MVdKd21YWDZFM1oxejJjMkVMRk5NS2dhQk1ZNzFvdjNNN2pIUGhnOXU2L1VO?=
+ =?utf-8?B?QzZVaklqUTZqNHpXVit2QjVnSk8rc3JVVE8xWEtsU0F2RnVGaFQyQXJpV2t0?=
+ =?utf-8?B?TUxCQjlqNjdYT3FyUnVCZUV3aHN0b2JiWi9OejVEOVhVSy9ua3ptc3VESmhW?=
+ =?utf-8?B?ODl0cWhIT09GTWpQOXljd1E0NG1oaEVCeFk0RTR0Mlc1Q0taWHMyMUhNQkRN?=
+ =?utf-8?B?YVJWU1kwNVB0SGZCdmxmYnpyaHkxRmVHVHhvVjJtaWNzVVluaExxZDdxTUxB?=
+ =?utf-8?B?MlN6OEtBSmVqWUFUM0cxWXNnS2ZlS2pNWjhMNzZoZFlvTzdnWFBJYkE5NkQ5?=
+ =?utf-8?B?WHhrOEExUWl1VitLWXNJOEtqWkNUaWlWNW5FSWdZY0tOQlJnZlFoV0xJeEtt?=
+ =?utf-8?B?dmowZWxpOE9tWnNaYTFQSW4rZzFUN2piZUt3bnNLQlVtQkprdnZsYWxBeFZx?=
+ =?utf-8?B?ZG5TajVxRGtJTktDeTBETCtOMUd2Z2RUY0ZhYjR5cFBJdGh4V0dSbElaZVJL?=
+ =?utf-8?B?WjlBc0pqcEtTeGdMUWlEU293cnJQZ1NYTVZuSm5zZDgwT0NqcTFJMEpSaUlv?=
+ =?utf-8?B?SHNENm9yOFljZndUNHozd011aHdvVEZKTFEyRHhKS0VFeU9zdTlMenVVUmRQ?=
+ =?utf-8?B?TWQ5dHZpWUxOWEVnL3hkUHArVWxXY0pmdk4rMGpxa3FyMnZkUUdwK3ZGdURD?=
+ =?utf-8?B?UTJLeXdWaWl4ZkIwNDVvaWYzN09NNnBkdUxMN3lrQmlNSzM2NW9GTzJibDdS?=
+ =?utf-8?B?VmRrVlI4ZDFIT2pnSmp1N3NsZW00K2thWFJwd2dPbGJtSndsd0VFNTE3TjlV?=
+ =?utf-8?Q?S87bYkU//L48Oyk32zFwB1p1/2zFvejvDPMFM=3D?=
 x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(10070799003)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?eWhSY2lCZWoxWXc5Y1l3Q09KYmd3Znd3SW5sNkE5dlgvZE4zUEFFZ2NNQzJ2?=
- =?utf-8?B?U1hPb2Vuc0ZYaGhsQUphVlcrQk9lTWtteE1Ec2RtK1VtQXRrZXRIOTdTd3pM?=
- =?utf-8?B?VExrWldZZStTcC93ckFrREd0VzkvMGpYbU1VMDh4YklCRGtPRHhnWmNBTmV6?=
- =?utf-8?B?QXczSnpiZFlqeWM4aGNaRklEa1pqU1VVQTRmZ0N4UWdPellxdHkyOWJIamFJ?=
- =?utf-8?B?Yk9DTGkwQ25ORER3U2swVUJRcEExbEFxQ21xQ2tEeUJkNTZod2N3MlY3SnQv?=
- =?utf-8?B?Mk5vQStVOWNhSzc3c2ZhM0J1YnRwaHRnT2ljQ1ZpdFlCRTNvakY0NCt4bFdS?=
- =?utf-8?B?cDhvSFI2SDEzZWhXT2NoMGNBU0E2OStiZFBXMGRiRGkzd2o1N28rTmZvS1pk?=
- =?utf-8?B?a0l5NHNpdVM2VzU0enlISFZEbTdGRXhJNlVWWVlVRmhUVDZYa3VzOGR6UHpv?=
- =?utf-8?B?WTMzcm02NHloeXJSRmVXdW9qbnpsdkFWZkE3V0FKNCtUVHYyQ1BjMjFyMTlI?=
- =?utf-8?B?T1kwUC8rSHhDT1IyQXNKaS9tTlQ2Wll5c2tWRmlMUUJTY2FVb2s3MDRmWHVi?=
- =?utf-8?B?ZW9mdWJyejZsRW5xK3ZIZjBmeUhmMGd6SmtvMHFydDFLcjVaODF6MTdWUktD?=
- =?utf-8?B?eUxUanNCV0pJU0MrdEl1SkEwQXRqVTQrNFR3N3JTcm9YQ09SdmVTT2ZQVU1G?=
- =?utf-8?B?V2U3NWVTUWxJOW40dE1wcTRIbkQ0NXRCa3JtbE9KRzJHaVZQdzVWUTZTQkRw?=
- =?utf-8?B?R2tjN3pVbHpGVFJDY1BldEMrV2RHa0ZPYnJCbVBHQUczbjh5ZEpvUXZhQjQ3?=
- =?utf-8?B?OFFJTTYrOFA3OVVEbE9yaExiakRMNlNNdldmTjZ2cDlBU0s4M2U4bjdVVEp3?=
- =?utf-8?B?eFVGKzFvQUVUTENmandZWngyblZWMm5samFZYlN4N0ppUE55K09aUDJpSmI3?=
- =?utf-8?B?Nm91ejRsOUNlc2Rsd2V0TEhaS0VCbkVpdDJHZm5aMVppVTg5NjBiS3ZTR05q?=
- =?utf-8?B?VXUrdDVUZ1pSS3BPV0RKNHpBRmNiZzQ5ZE9uOXNuUWxlVmNPT01EM1ZHZzZQ?=
- =?utf-8?B?S0JmMFVua0xKQytYSHVvK3BaMGZGTkRFMi84TkFlUTlMK0NTRy9VMHE4c2x1?=
- =?utf-8?B?OHZ6KzhUdDllckxUem1nMERITWxXTmRqQXNHK3U0Z01zb2RUbXF5Z09mZU9l?=
- =?utf-8?B?MFRSMUJWdTcxUitNUExSRzYrdXVHMTlKMHZGRUdQa3l2aXJpNGpvN3RhSjRH?=
- =?utf-8?B?UDJSOC9TRHFVZEZIbDdQN2pweFdrUW1kOFNhRDRHT0lzL09QZzJVc2hybG9p?=
- =?utf-8?B?SXljN29zbHZUOENqWjhFaWZrd2Q1bUhmTXFqajNKTkxWaGs5c0w4aklyOFRM?=
- =?utf-8?B?OHhVQ2tQREhtSVdFdFlkWTFjMnpBN2EvZmlPeWxjTDIreVlHVEJXRkwwWnVh?=
- =?utf-8?B?eVpNcHBqeHRad1ZtQW5ZN3FLYW9uMk5KRDJ1VCtrc1ZGVjlxSE9sUHRBQ2hw?=
- =?utf-8?B?ZXFFY0E0amd6VFcvaEY2ME1pRy8zRVdRS2p2dk8vaDVmV05aZ1hZdURpWUlx?=
- =?utf-8?B?WFR3czk1T3dlRmorVTRUeWM0anJPTUcyOGdOYnpITmM1aXY3M1h3aTFERFp0?=
- =?utf-8?B?dUxXZEhlVkhPbzRsRTJKbzBFR3BOQkQ4YVhuOFZ5bzRjSkJyV3JKUkdRMWhq?=
- =?utf-8?B?dzdIc0lNRkh0a1NCS3grNG1GZi9ZV1M3MXgrbENzWWlNbHVXYWorVWVJRXl0?=
- =?utf-8?B?QVVwK0RDbGlJSVc1NVZXbjI0eGNlWmdlbHZ2QzlMbndiY3F3L0FXaVRVUnc1?=
- =?utf-8?B?cHNnZnJvdkxFbGNvdW5leFpSaXpNbjBFUjg2V2lsYWs2V2NOY0k3TkVOSzJI?=
- =?utf-8?B?UDJNK3Z5VEtJbjFYVWtJYnpJRU1RMStYU0ZrTS9UM2JScUZkNDVUUERuNGJ0?=
- =?utf-8?B?dzNsOXppYnBNZ2ZvanQ0azl2UUVoWldjYTZHK3VOb05tSlZnczZBaTlpbDI0?=
- =?utf-8?B?WCtVVHdJaDRid1BMNjZJa3lkVzA4ZWtRM3dsSURwWnhWY2NUS2FqVHhTbTRW?=
- =?utf-8?B?VHd0QWplZjNaUSt1enU5YVBrZGVkWnpWeXAxNlNqR3VTT2MrbTk2RkdvSDVZ?=
- =?utf-8?B?dURNZythOWhNVGM2eTJJMHpMVHNDOHRjckV5Z1Ztam1TYnRZNzJSL3VuRUNK?=
- =?utf-8?Q?85bXcRjSBLq/1NO+UpWZ3O0=3D?=
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d586f26-fc2b-4b93-dd44-08dd1881c3d8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Dec 2024 18:46:17.1503
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cdnO4dcTCRhFstRwwcxtUrg1p8wQIeQXQvUz1WWU+5hdjnnxLBZjbAfJ5nKV53bW8tje2lQWVaw+2oJu9tQdTg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR15MB6261
-X-Proofpoint-GUID: Y7QUjWq071iNFgyBkR-56GsuU-LDmpHk
-X-Proofpoint-ORIG-GUID: WEnBEgKNAM9XbxWRjik1H4bvvoX5ikMb
+ =?utf-8?B?bzVxeUl5NjBlTzRqVHAwcU5WOHhaMXV3cFVsdmFJSVdjRTJkRGFDbEUrclAz?=
+ =?utf-8?B?Qmdid2xXS3dBZkJIZ1JVUDF0eFNxNHJBMWdjYzcrSlp4VHZnTDMxN3pzREJB?=
+ =?utf-8?B?NlZXUW5BT2pBc29ZcUUxV01lVE43ZSs0SGMya2lWOFFWV0ZHTFdLZVYxUVI1?=
+ =?utf-8?B?T2sxaUc0RVJQUHJIV05lak5JWEtCdjNCM1RkWFllYStzVGxqSStKNXlTaFlj?=
+ =?utf-8?B?ZUVWZ3RQclgrc09zTU8ydjlZN2IxZXFIa3NoWGVuNGpwbmkwb0tlZzZSQllN?=
+ =?utf-8?B?ZE5hZEZuRnJvMlZnWERkajhqSVVJTkhUKy9DKzk3bzh4SU16Rml1SThxeFB6?=
+ =?utf-8?B?WTBuN2ZDWHBldmhvVVVkK0FqY3VZZ05EeXJCZVN5cXYrNHhxOE90TkRwNzNi?=
+ =?utf-8?B?U01PNlJtTjNEM0UvSzNpTjJlSUhCZHR2VG4wNEJIclU2TFlkUGs5ODlLUUtB?=
+ =?utf-8?B?NFpsaEdBUUwvTHpBRHEzTWJJN2hJbmw0eFBwWU4reWV3YnRST3VwaU5GUmRl?=
+ =?utf-8?B?YVcxUVJHaHpzR1NCMlBBUisxL2VwY0dlQ01mUFU3ZUZvaUJLQmtiemZ3UWJX?=
+ =?utf-8?B?Z0hiT0YzMVlyMW85U2srbUs2TmJJMGZLeDIvaU5PVjZTS3AyakpQeThZbGVi?=
+ =?utf-8?B?NGQ4V2pnRnBKaW0rQUZqc0N3bCtrTHRQUDZzWFlISFczUGEwS0xVUGE4UGhG?=
+ =?utf-8?B?K1RoRXZranFoejdWYzhmakJ3QWNMOHkrb01CSmlrZmxRK2hRQkV5ZU1wRXN1?=
+ =?utf-8?B?NndubkZ1ekJLcEFxRlFDU2VGNG5udWl3RSs1Z1dMUVYrcFp1ZTRYbTFCZHFT?=
+ =?utf-8?B?amRNSklyMHV5WlFxWFdZZnlQUG1TdGJRekQ0ZE41dzArbklzTy8xUmNpZ1VM?=
+ =?utf-8?B?SmlhTHEwbmJTZ1JiYXFpK2tRc3R3aFBrU09lYU9FQ29VNUpncXlDSG1HSVlH?=
+ =?utf-8?B?MVNHa3RoWDh6UCt0Y2V5bDhUYzROYUp5MTdPY3AyQnhwK21vbVlsOHM3TEZ1?=
+ =?utf-8?B?OXdpcG41OWlFbUNiSGwyTjZxdjdrVTZNYTFaK3JKc2NoakhmQUpiMEJsQmQ2?=
+ =?utf-8?B?YkUvdHhPT3lmbXhuYUpucFJWR0JuNTJGQ0huWnZJVWZpaTVwbG5PT3VJOE5v?=
+ =?utf-8?B?TGVEQ1lQMXJpdE5obEE3ZEszcFpiYzRWdU9QNTBYUHhJSFdqQiszOTFUcVJC?=
+ =?utf-8?B?MC9ocW1jUlNRQW0ydmFmdTNIMDZpbkJGdytVMEJoNkM3MUhkWlFrVVFDa3NG?=
+ =?utf-8?B?QWpHU2wvMmR2YlJ6YUdzSVRxeTVoMlNaVXJuVVN6TmNXZnNqMzBabS9ZdXJm?=
+ =?utf-8?B?d1dOaDNVbjU4ais0SlBsb3kxRnVtMUZ6MExSbnlIeDI2eXl0TTd5dFBQTEhT?=
+ =?utf-8?B?eklkZ2FDZEJ5OWE4Z3ZZWERLMjVyamxXVEU5NVNXT0liN2YzLzA3WUlkYmFP?=
+ =?utf-8?B?bnBxVkwrTURIK1RVUFREQmtaVXBYTFdLQkZNTFBBaGhKTWhmbmZ5OVhmSEk4?=
+ =?utf-8?B?RXQzdVYzM1I0aDltWlcraWNLYjBjRnhWMmxPRUJaU2J1aVBrNDVZcVg0YUdL?=
+ =?utf-8?B?b3pQZ0ZCUklPcUpyejV1UjJLWDlXd2ZnNktKT0dCUERzVGtDam5uck9oRURk?=
+ =?utf-8?B?YkJiaTFmNGdkUi9oTVFoRG1uSUQ4MmZvNVpqWjZiQk5zSVBjRzdDeVQwazN5?=
+ =?utf-8?B?VHZsVEJOcmN1U0FrUEt3N1h4Tm9qQ2xpOFJHbCtqVWlySmFnNlRuTnpaUzkz?=
+ =?utf-8?B?enhpcWx1N1lPdzRjdDc0OGtBQmNGU1Joc1VEQXgySGtoTWZVTmJWWkhLSFB6?=
+ =?utf-8?B?QkRNSithRzBXamxWaEowNkVhSU5rT2lTM04xNUhGbUJHb1lLWFhEejNDeXZU?=
+ =?utf-8?B?M3VmWjZlY2NyMW1MK2c3M2dkRjFMNWxMQTFzVGFXem9CYXJMaVMyME9BMW9E?=
+ =?utf-8?B?ZmdvTGZ5ZGdxMXQvNlVaVlNXQjltVXpLZHo2bTlUTnB0UVhDNjFWQ3dDaWdS?=
+ =?utf-8?B?Y3RrK05WWThjeTQ0dmd0bVJvOWFvZjZpQ2VFQzIwOG5nWGFSNTl6dmFJWmZh?=
+ =?utf-8?B?aTNrRmtGK0hGV1oyZHdLeWRrT2hxR1RYRnM1TGhtM3RsQ2RGODlqMklrOTFI?=
+ =?utf-8?B?cDFzZ1Nvazl3SGlWV0c3SSt5WThPRGNSWFFVN1M4SFB4YzYyM0NyREljcFdT?=
+ =?utf-8?Q?6cCtWDNHSuUF/M15S2cmrgg=3D?=
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <2B4AAEB7E753264E8589981F85AF0E59@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+Content-ID: <7D53BC5341C5A641BD97483B4D985F18@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re:  [PATCH] ceph: improve error handling and short/overflow-read logic in
- __ceph_sync_read()
+X-OriginatorOrg: ibm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7e65df3-b0dc-4308-09f0-08dd1883a928
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Dec 2024 18:59:51.3679
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: UCow2/KmslDz6EgtcKhXVnKzXxnJsbr4xg3sAl+Rypr0bE6w8ZEuT/VlOvI5ExuTeEprGQ1o0Pu5fTQFLxBdxw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR15MB5798
+X-Proofpoint-GUID: lcyAqQUklGC82l9GLY7BEPgrCBkrGkK3
+X-Proofpoint-ORIG-GUID: ntGnkbIobaHGMwpFiiFYOYdZXl6dmTtg
+Subject: RE: [PATCH] fs/ceph/io: make ceph_start_io_*() killable
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
  definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 mlxscore=0
- malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=999
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090143
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
+ spamscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 mlxscore=0 malwarescore=0 mlxlogscore=909
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090147
 
-On Sun, 2024-12-08 at 17:32 +0000, Alex Markuze wrote:
-> This patch refines the read logic in __ceph_sync_read() to ensure
-> more
-> predictable and efficient behavior in various edge cases.
->=20
-> - Return early if the requested read length is zero or if the file
-> size
-> =C2=A0 (`i_size`) is zero.
-> - Initialize the index variable (`idx`) where needed and reorder some
-> =C2=A0 code to ensure it is always set before use.
-> - Improve error handling by checking for negative return values
-> earlier.
-> - Remove redundant encrypted file checks after failures. Only attempt
-> =C2=A0 filesystem-level decryption if the read succeeded.
-> - Simplify leftover calculations to correctly handle cases where the
-> read
-> =C2=A0 extends beyond the end of the file or stops short.
-> - This resolves multiple issues caused by integer overflow
-> =C2=A0 -
-> https://tracker.ceph.com/issues/67524=20
-> =C2=A0
-> =C2=A0 -
-> https://tracker.ceph.com/issues/68981=20
-> =C2=A0
-> =C2=A0 -
-> https://tracker.ceph.com/issues/68980=20
-> =C2=A0
->=20
-> Signed-off-by: Alex Markuze <amarkuze@redhat.com>
-> ---
-> =C2=A0fs/ceph/file.c | 29 ++++++++++++++---------------
-> =C2=A01 file changed, 14 insertions(+), 15 deletions(-)
->=20
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index ce342a5d4b8b..8e0400d461a2 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -1066,7 +1066,7 @@ ssize_t __ceph_sync_read(struct inode *inode,
-> loff_t *ki_pos,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ceph_inode_is_shutdo=
-wn(inode))
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 return -EIO;
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!len)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!len || !i_size)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * flush any page c=
-ache pages in this range.=C2=A0 this
-> @@ -1086,7 +1086,7 @@ ssize_t __ceph_sync_read(struct inode *inode,
-> loff_t *ki_pos,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 int num_pages;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 size_t page_off;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 bool more;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 int idx;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 int idx =3D 0;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 size_t left;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 struct ceph_osd_req_op *op;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 u64 read_off =3D off;
-> @@ -1160,7 +1160,14 @@ ssize_t __ceph_sync_read(struct inode *inode,
-> loff_t *ki_pos,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 else if (ret =3D=3D -ENOENT)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
-t =3D 0;
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (ret > 0 && IS_ENCRYPTED(inode)) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (ret < 0) {
-
-If I understood correctly, you simply added the check for error in the
-execution flow (ret < 0) before processing IS_ENCRYPTED(inode)
-condition. Am I correct here?
-
-Thanks,
-Slava.
-
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ceph_osdc_put_=
-request(req);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret =3D=3D=
- -EBLOCKLISTED)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fsc->blocklisted =3D true;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 }
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (IS_ENCRYPTED(inode)) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 in=
-t fret;
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fr=
-et =3D ceph_fscrypt_decrypt_extents(inode,
-> pages,
-> @@ -1187,7 +1194,7 @@ ssize_t __ceph_sync_read(struct inode *inode,
-> loff_t *ki_pos,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 }
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 /* Short read but not EOF? Zero out the remainder.
-> */
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (ret >=3D 0 && ret < len && (off + ret < i_size)) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (ret < len && (off + ret < i_size)) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 in=
-t zlen =3D min(len - ret, i_size - off -
-> ret);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 in=
-t zoff =3D page_off + ret;
-> =C2=A0
-> @@ -1197,13 +1204,11 @@ ssize_t __ceph_sync_read(struct inode *inode,
-> loff_t *ki_pos,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 re=
-t +=3D zlen;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 }
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 idx =3D 0;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (ret <=3D 0)
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 left =3D 0;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 else if (off + ret > i_size)
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 left =3D i_siz=
-e - off;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (off + ret > i_size)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 left =3D (i_si=
-ze > off) ? i_size - off : 0;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 else
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 le=
-ft =3D ret;
-> +
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 while (left > 0) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 si=
-ze_t plen, copied;
-> =C2=A0
-> @@ -1222,12 +1227,6 @@ ssize_t __ceph_sync_read(struct inode *inode,
-> loff_t *ki_pos,
-> =C2=A0
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 ceph_osdc_put_request(req);
-> =C2=A0
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 if (ret < 0) {
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret =3D=3D=
- -EBLOCKLISTED)
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fsc->blocklisted =3D true;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 break;
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 }
-> -
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 if (off >=3D i_size || !more)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 br=
-eak;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> --
-> 2.34.1
-
+T24gRnJpLCAyMDI0LTEyLTA2IGF0IDIzOjQ4ICswMTAwLCBNYXggS2VsbGVybWFubiB3cm90ZToN
+Cj4gT24gRnJpLCBEZWMgNiwgMjAyNCBhdCA4OjEx4oCvUE0gVmlhY2hlc2xhdiBEdWJleWtvDQo+
+IDxTbGF2YS5EdWJleWtvQGlibS5jb20+IHdyb3RlOg0KPiA+IFNob3VsZCBiZSB0aGUgY2hlY2sg
+b2YNCj4gPiB0aGlzIGZ1bmN0aW9uJ3Mgb3V0cHV0IG1hbmRhdG9yeT8gSSBhbSBub3QgZnVsbHkg
+c3VyZS4NCj4gDQo+IEJ1dCBJIGFtIGZ1bGx5IHN1cmUuDQo+IElmIHlvdSBkb24ndCBjaGVjayB0
+aGUgcmV0dXJuIHZhbHVlLCB5b3UgZG9uJ3Qga25vdyB3aGV0aGVyIHRoZSBpbm9kZQ0KPiB3YXMg
+bG9ja2VkLiBJZiB5b3UgZG9uJ3Qga25vdyB0aGF0LCB5b3UgY2FuJ3QgZGVjaWRlIHdoZXRoZXIg
+eW91IG5lZWQNCj4gdG8gdW5sb2NrIGl0LiBUaGF0IGJlaW5nIG9wdGlvbmFsIG5vdyAoY2FuY2Vs
+IGxvY2tpbmcgaWYgU0lHS0lMTCB3YXMNCj4gcmVjZWl2ZWQpIGlzIHRoZSBzb2xlIHBvaW50IG9m
+IG15IHBhdGNoLiBZb3UgTVVTVCBjaGVjayB0aGUgcmV0dXJuDQo+IHZhbHVlLiBUaGVyZSBpcyBu
+byBvdGhlciB3YXkuIERvbid0IHRydXN0IG15IHdvcmQgLSBqdXN0IHJlYWQgdGhlDQo+IGNvZGUu
+DQoNCg0KVGhlIGRvd25fd3JpdGVfa2lsbGFibGUoKSBjYW4gcmV0dXJuIC1FSU5UUiwgY3VycmVu
+dGx5Og0KaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjYuMTIuNC9zb3VyY2Uva2Vy
+bmVsL2xvY2tpbmcvcndzZW0uYyNMMTU5Mw0KDQpBbmQgLUVJTlRSIGNhbiBpbXBseSB0aGF0IGNs
+aWVudCBoYXMgYmVlbiBraWxsZWQ6DQpodHRwczovL2VsaXhpci5ib290bGluLmNvbS9saW51eC92
+Ni4xMi40L3NvdXJjZS9pbmNsdWRlL3VhcGkvYXNtLWdlbmVyaWMvZXJybm8tYmFzZS5oI0w4DQoN
+Ckl0IHNvdW5kcyB0byBtZSB0aGF0IHdlIHNpbXBseSBuZWVkIG5vdCB0byBleGVjdXRlIHRoZSBs
+b2dpYy4gQnV0IGRvIHdlDQpyZWFsbHkgbmVlZCB0byByZXBvcnQNCnRoZSBlcnJvciB0byB0aGUg
+Y2FsbGVyPyBJIGFtIHNpbXBseSB0cnlpbmcgdG8gZG91YmxlIGNoZWNrIHRoYXQNCmNhbGxlcidz
+IGxvZ2ljIGlzIHJlYWR5DQp0byBwcm9jZXNzIHRoZSBlcnJvciBjb25kaXRpb24gaW4gdGhlIGNv
+cnJlY3Qgd2F5Lg0KDQpUaGFua3MsDQpTbGF2YS4NCiANCg==
 
