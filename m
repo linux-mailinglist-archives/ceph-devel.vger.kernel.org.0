@@ -1,178 +1,174 @@
-Return-Path: <ceph-devel+bounces-2322-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2323-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A266A9ECA9B
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Dec 2024 11:49:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 749609ED3FE
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Dec 2024 18:47:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76F8D1886871
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Dec 2024 10:49:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4289A1889088
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Dec 2024 17:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CB3239BA1;
-	Wed, 11 Dec 2024 10:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0011FF1D4;
+	Wed, 11 Dec 2024 17:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XJVsM/PV"
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="iJ1Rv1gP"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9768D239BA6
-	for <ceph-devel@vger.kernel.org>; Wed, 11 Dec 2024 10:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CA41FF5E9
+	for <ceph-devel@vger.kernel.org>; Wed, 11 Dec 2024 17:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733914154; cv=none; b=FyiOIUEzAJY4bb4XJV6gYZAsVhNxnpigWPDx0hbPLBr/mXcW/bBodSKISfIRXuBp23BLCBqiApoI8erTB7vDqW3MrbXRbZ37K0SY+PUIejwqyUT/AQRGbzarblo+iPstrocUf7tPLWa4Th5dNW4cH3SigEp3/v7IN2nddc3pC+E=
+	t=1733939214; cv=none; b=N9p3zAFf6LsW+RDo/ohirZku8VX9xKi3CNuD5LQD79PNK+Q3K+z6+65ra5X5N+nn4agNgW0B4WwV7pdp8tOW3midMlcLXiLkRSGTZGjTC8oURuK2C4dasdxbNaykByMSVbWMRvRCs3xnl1uzk3yh/Ylpi01SBDrPy2Xlr83EbTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733914154; c=relaxed/simple;
-	bh=VF3J8rZVuEB+SGMA7k1N6HW5V4q+MqnBm02NVEhM1hE=;
+	s=arc-20240116; t=1733939214; c=relaxed/simple;
+	bh=xKfttj73jG1uTZpJNN82RMi2jpdXNIkxOf7nv7eMMZ0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aSI9E86IjDq8ffnXhxps3+NTy5AD9ZfpRAboH9FZrwxa/7wOFiZz+AWyJKJtrzRu1DHrg2zV2VKYCdRonIebkM/CAln7Xp3fvn8UcHv5xAdNDgfrWK10YJuOK/tA5b36JTJyhZAAEumtNmIRIwPpPQQf6plraLiOonctWOnUD84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XJVsM/PV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733914151;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VF3J8rZVuEB+SGMA7k1N6HW5V4q+MqnBm02NVEhM1hE=;
-	b=XJVsM/PVlKN8lNWXbrPIU5/B6My/9zsbjOL8JeyXBL5V5ukIuBJsV6ZPBuK3IRkiW9g8TO
-	129YM171QqpspxsD1dRoGdxeFglbcTgkq8cQtnXC6J2xu5+vUnaQMBtz2xZXWQPBWWnknv
-	INSJrzQ6+UUE/nUr6Lvy2tqGSVvtByU=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-61-8A6nsLWdNCqgX-TlxxhKdA-1; Wed, 11 Dec 2024 05:49:10 -0500
-X-MC-Unique: 8A6nsLWdNCqgX-TlxxhKdA-1
-X-Mimecast-MFC-AGG-ID: 8A6nsLWdNCqgX-TlxxhKdA
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-aa634496f58so191035066b.2
-        for <ceph-devel@vger.kernel.org>; Wed, 11 Dec 2024 02:49:09 -0800 (PST)
+	 To:Cc:Content-Type; b=sYtcC1u2ezzW8uBXa/vkH6VoHKvu/RXi0tNZ3SMGYikXzB+tuuUbxIg5/PLKhggGEb18KFNwyeZ0NluJm6dNo4DiP7QFNqE4+45+OLZS05G6FTFkZoyaEkJrhzVR7VkPyQUfdc2e0CKDZIZQPp8fVpehbeJFDQhcrIrcoBQPc50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=iJ1Rv1gP; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e39fb8548e2so5649793276.3
+        for <ceph-devel@vger.kernel.org>; Wed, 11 Dec 2024 09:46:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1733939211; x=1734544011; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XX4yF9JMGXX3II/VI0ICz4h+LN+8Yz44eu6TfJ04Ugk=;
+        b=iJ1Rv1gPyVXZinfE2j1hskrQVtwOTmifZx892vfPVXmW+A4luks2PdH2B2Tl4HOqN6
+         U9LqS7pYhhesWy/EGPUEEaXNixUTWci5GU5iiVALQSIcaGNrrwa3KRwiY7NIu2Xm5M9O
+         b3bR1JInOlALvNN3xwW/FiAhOLXRWEdfW4VOahL/Xlyp3XRxMh8RsYIj5yDvN6DZJ7Ul
+         iOh4z0HBbsY9FYf1yBBSENjuPtqUFQzg036S66WXVQnVehFi4bWC3djajWjWbKhxsi1b
+         JZ7nHrGpMISaEuXqGNuZ52zlgMmrRhLWgeS7Sg8Hjg+/P5uGHHslF0Tnhj90FCLu3x1z
+         uF0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733914149; x=1734518949;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VF3J8rZVuEB+SGMA7k1N6HW5V4q+MqnBm02NVEhM1hE=;
-        b=ayXaONk+lUA3Z+u3EVvO0VtdPzEfTQoXqhZ/N8foO3jmGKuPyPYRzA7aLOjCYRvtsQ
-         lFKGjpgxfpqfjyAcyoq/4NJWhkxhlUPKcEd1ix80CZ/S9f6eeuqF7qAWrc6FfIlDnR1z
-         VAgktIjSPIfA7RRYTygFWcwVto0tvgndtgbgDaCggAPaOz0eTzDVj4OozrOSrlkKBCBk
-         djX7+D71FdmHDyh2Gzg9zItTucDYsFyLRxKk1wz5m/jok6BoWd6GDrPV+h7bxp5ZpSr+
-         6nPFOsdyhKOsPOnezSfcWIptW6I653r1yoSaeto9XkEWeqv5UmHQmWZ/iko/kbFe/gGy
-         0jeQ==
-X-Gm-Message-State: AOJu0YwowWatvYnWXbyqOiyW8QBbaNDwKJLegDUnqcE3ZdFqE/pU0ozd
-	tHnl7skzdvIicSPHlU59Id1kCxljHsklnj7lXOzW9hOd7hgOWuSxbW19wC2WQWLy7vo5ycjarI0
-	SspbazW2gkc/OxqhlWCNs6GN1JK2NyGa6ktXoVmuEEkT3OMFoWhXzHJUcSSfwLEIEy2llWJCYUV
-	2dHvpAzFyfWwOEbXBbKd4s3TQxtsag6rWcOQ==
-X-Gm-Gg: ASbGncvoYHBYGFW3giBJwuryEyFfMYfAt78xg9aTM1hcx3sQqJNpz3UddiewViHP5Ik
-	866oYWyRY/FrppFokikew2Z0JYWX8aEfmFb8=
-X-Received: by 2002:a17:906:8454:b0:aa6:9461:a17e with SMTP id a640c23a62f3a-aa6b13c86f8mr205351666b.40.1733914148695;
-        Wed, 11 Dec 2024 02:49:08 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEX5UlLJwbQxwZCOn+N8EVyI7UZuxqq0/KzwWgkkS6PmtdGb2a+AsFRIvKwOkiMLG6op8O8w7J45hW4TRDjQHM=
-X-Received: by 2002:a17:906:8454:b0:aa6:9461:a17e with SMTP id
- a640c23a62f3a-aa6b13c86f8mr205349766b.40.1733914148216; Wed, 11 Dec 2024
- 02:49:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733939211; x=1734544011;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XX4yF9JMGXX3II/VI0ICz4h+LN+8Yz44eu6TfJ04Ugk=;
+        b=m8t3HorfNxMOeOcEpQnW8VgLKLi8lKvRPcJM3P/kMUq9X8hj1FG0+bTiRcz/30oHXS
+         QMJYk+eJqXaUZJqJOhTpg5xJBHbndGdREjshKG9oQ4o2bEyopo7/Egtz/Vyluy5Lf5fl
+         2L3fBwzTNv4NfDVQ+TENbV/Bkb0Kfj4MbWDAiLM1SXg40vjG3CJuT4YyE3s+8qFiL2pz
+         78mL053Jd/aYVkzUw+uXSA8XzRA8c+Z+2AhWUspy3/r6rfbaTnVYPw8wkXovazK32m9r
+         FtLVlONBqSChOUO4t6+BKXKULi/JKUTan3OVQ9JARba0UkZNTT0P6NT0tDQOE4eKrCRF
+         2Cmg==
+X-Forwarded-Encrypted: i=1; AJvYcCWEe59gEDDaYP0dggmug59wAT0+5d68Hjdu/Ugx1IdfzzqZOzZSJAhcXCfWtTPU1JeL+v3Od0MLtxNo@vger.kernel.org
+X-Gm-Message-State: AOJu0YybyJjwtN5Ft+GbG8qWW98O9uImFk6Y7yVDpagdO7aZ5gVD7rw1
+	5gMEsEaH2ZzNa4SlopS71+Xa3hO5CSQLg3RWa2tFdJGjAH+QoJyaXm2mw1VZVfWsCoFq/DpH3xC
+	ifc4/VbKPzQv9F0TOWmMRMhTRi5qRQQ8C3Ritkw==
+X-Gm-Gg: ASbGnctlQkuws27GEC9lEckn1DMPs8QDcmDkQh2N1iCGMRaszaOl5y4/sawvPADJHaW
+	ANTkWtpF5CfGlB3aF2+xpxu5cactuwRW/NJI=
+X-Google-Smtp-Source: AGHT+IG3lDp6pcc8WpN9DOxtNpymp29steFnShZFR78LeXrDU2v7lqz7zSz8oGrhbnT8m3jrCYcj2LxsZTVFVNmSQds=
+X-Received: by 2002:a05:6902:230d:b0:e39:8a36:5771 with SMTP id
+ 3f1490d57ef6-e3da3158089mr228005276.34.1733939211006; Wed, 11 Dec 2024
+ 09:46:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACKp3f=17HPw=aB1Di455buZriGTbErzu4ZVe48EK+vRNcTEdw@mail.gmail.com>
-In-Reply-To: <CACKp3f=17HPw=aB1Di455buZriGTbErzu4ZVe48EK+vRNcTEdw@mail.gmail.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Wed, 11 Dec 2024 12:48:57 +0200
-Message-ID: <CAO8a2SgkEcRFFuHHoQzQ5z9VPG7OPVhJ+cYBAW3vfWEsHrmXGg@mail.gmail.com>
-Subject: Re: Calling iput inside OSD dispatcher thread might cause deadlock?
-To: tzuchieh wu <ethan198912@gmail.com>
-Cc: ceph-devel@vger.kernel.org, ethanwu@synology.com
+References: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
+ <20241210-converge-secs-to-jiffies-v3-16-ddfefd7e9f2a@linux.microsoft.com>
+In-Reply-To: <20241210-converge-secs-to-jiffies-v3-16-ddfefd7e9f2a@linux.microsoft.com>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Wed, 11 Dec 2024 17:46:32 +0000
+Message-ID: <CAPY8ntDHcGpsaNytY2up_54e03twqZ2fj1=JTnb8x7LLo3uGDQ@mail.gmail.com>
+Subject: Re: [PATCH v3 16/19] staging: vc04_services: Convert timeouts to secs_to_jiffies()
+To: Easwar Hariharan <eahariha@linux.microsoft.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, 
+	Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, 
+	Robert Jarzmik <robert.jarzmik@free.fr>, Russell King <linux@armlinux.org.uk>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Ofir Bitton <obitton@habana.ai>, 
+	Oded Gabbay <ogabbay@kernel.org>, Lucas De Marchi <lucas.demarchi@intel.com>, 
+	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+	Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>, 
+	Shailend Chand <shailend@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	James Smart <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, =?UTF-8?Q?Roger_Pau_Monn=C3=A9?= <roger.pau@citrix.com>, 
+	Jens Axboe <axboe@kernel.dk>, Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jack Wang <jinpu.wang@cloud.ionos.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Xiubo Li <xiubli@redhat.com>, 
+	Ilya Dryomov <idryomov@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+	Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, 
+	Joe Lawrence <joe.lawrence@redhat.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Louis Peens <louis.peens@corigine.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, netfilter-devel@vger.kernel.org, 
+	coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	cocci@inria.fr, linux-arm-kernel@lists.infradead.org, 
+	linux-s390@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	intel-xe@lists.freedesktop.org, linux-scsi@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, linux-block@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, ath11k@lists.infradead.org, 
+	linux-mm@kvack.org, linux-bluetooth@vger.kernel.org, 
+	linux-staging@lists.linux.dev, linux-rpi-kernel@lists.infradead.org, 
+	ceph-devel@vger.kernel.org, live-patching@vger.kernel.org, 
+	linux-sound@vger.kernel.org, oss-drivers@corigine.com, 
+	linuxppc-dev@lists.ozlabs.org, Anna-Maria Behnsen <anna-maria@linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi, Ethan.
-Do you have a scenario where this can be recreated? I will take a look
-at this issue.
-Here is the tracker issue to follow this.
+On Tue, 10 Dec 2024 at 22:02, Easwar Hariharan
+<eahariha@linux.microsoft.com> wrote:
+>
+> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
+> secs_to_jiffies(). As the value here is a multiple of 1000, use
+> secs_to_jiffies() instead of msecs_to_jiffies to avoid the multiplication.
+>
+> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
+> the following Coccinelle rules:
+>
+> @@ constant C; @@
+>
+> - msecs_to_jiffies(C * 1000)
+> + secs_to_jiffies(C)
+>
+> @@ constant C; @@
+>
+> - msecs_to_jiffies(C * MSEC_PER_SEC)
+> + secs_to_jiffies(C)
+>
+> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 
-https://tracker.ceph.com/issues/69196
+Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 
-On Tue, Oct 29, 2024 at 11:14=E2=80=AFAM tzuchieh wu <ethan198912@gmail.com=
-> wrote:
+> ---
+>  drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> Hi,
-> Recently I was running into a hung task on kernel client.
-> After investigating the environment, I think there might be a deadlock
-> caused by calling iput inside OSD dispatch(ceph-msgr) thread
+> diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+> index dc0d715ed97078ad0f0a41db78428db4f4135a76..0dbe76ee557032d7861acfc002cc203ff2e6971d 100644
+> --- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+> +++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+> @@ -59,7 +59,7 @@ static int bcm2835_audio_send_msg_locked(struct bcm2835_audio_instance *instance
 >
-> My kernel cpeh client version is 5.15
-> The call stack for the kernel ceph-msgr thread is:
+>         if (wait) {
+>                 if (!wait_for_completion_timeout(&instance->msg_avail_comp,
+> -                                                msecs_to_jiffies(10 * 1000))) {
+> +                                                secs_to_jiffies(10))) {
+>                         dev_err(instance->dev,
+>                                 "vchi message timeout, msg=%d\n", m->type);
+>                         return -ETIMEDOUT;
 >
-> [<0>] wait_on_page_bit_common+0x106/0x300
-> [<0>] truncate_inode_pages_range+0x381/0x6a0
-> [<0>] ceph_evict_inode+0x4a/0x200 [ceph]
-> [<0>] evict+0xc6/0x190
-> [<0>] ceph_put_wrbuffer_cap_refs+0xdf/0x1d0 [ceph]
-> [<0>] writepages_finish+0x2c4/0x440 [ceph]
-> [<0>] handle_reply+0x5be/0x6d0 [libceph]
-> [<0>] dispatch+0x49/0xa60 [libceph]
-> [<0>] ceph_con_workfn+0x10fa/0x24b0 [libceph]
-> [<0>] worker_run_work+0xb8/0xd0
-> [<0>] process_one_work+0x1d3/0x3c0
-> [<0>] worker_thread+0x4d/0x3e0
-> [<0>] kthread+0x12d/0x150
-> [<0>] ret_from_fork+0x1f/0x30
+> --
+> 2.43.0
 >
-> And the following messages are from osdc in ceph debugfs
->
-> 2774296 osd30 4.1ea6f009 4.9 [30,14]/30 [30,14]/30 e18281
-> 200006dabea.00000003 0x40002c 92 write
-> ...
-> 2774578 osd30 4.1ea6f009 4.9 [30,14]/30 [30,14]/30 e18281
-> 200006dabea.00000003 0x400014 1 read
-> 2774579 osd30 4.1ea6f009 4.9 [30,14]/30 [30,14]/30 e18281
-> 200006dabea.00000003 0x400014 1 read
-> 2774580 osd30 4.1ea6f009 4.9 [30,14]/30 [30,14]/30 e18281
-> 200006dabea.00000003 0x400014 1 read
-> 2774581 osd30 4.1ea6f009 4.9 [30,14]/30 [30,14]/30 e18281
-> 200006dabea.00000003 0x400014 1 read
-> 2774582 osd30 4.1ea6f009 4.9 [30,14]/30 [30,14]/30 e18281
-> 200006dabea.00000003 0x400014 1 read
-> 2774583 osd30 4.1ea6f009 4.9 [30,14]/30 [30,14]/30 e18281
-> 200006dabea.00000003 0x400014 1 read
-> 2774584 osd30 4.1ea6f009 4.9 [30,14]/30 [30,14]/30 e18281
-> 200006dabea.00000003 0x400014 1 read
-> ...
->
-> We can see that kernel client has sent both write and multiple read
-> requests on object 200006dabea.00000003.
-> The iput_final waits for truncate_inode_pages_range to finish which in
-> turn waits for page bit.
-> From the above osdc and taking a look the code, I think
-> truncate_inode_pages_range might be waiting for readahead request to
-> finish.
-> The client cannot handle the readahead request from osd since the
-> ceph-msgr itself is blocking on handle_reply, however.
->
-> This following patch solved the problem by calling iput at a different th=
-read
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
-/fs/ceph/inode.c?id=3D3e1d0452edceebb903d23db53201013c940bf000
-> but was reverted later because session mutex is no longer held when
-> calling iput.
->
-> In the comment of the above patch, it also points out:
->
-> truncate_inode_pages_range() waits for readahead pages and
-> In general, it's not good to call iput_final() inside MDS/OSD dispatch
-> threads or while holding any mutex.
->
-> Therefore, it looks like calling iput inside OSD dispatch thread is not s=
-afe.
-> Any suggestion on this issue?
->
-> thanks,
-> ethan
->
-
 
