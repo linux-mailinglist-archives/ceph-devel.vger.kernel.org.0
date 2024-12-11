@@ -1,156 +1,139 @@
-Return-Path: <ceph-devel+bounces-2319-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2320-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC269EC5DD
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Dec 2024 08:45:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A759EC9EB
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Dec 2024 11:04:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7472218818E7
-	for <lists+ceph-devel@lfdr.de>; Wed, 11 Dec 2024 07:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2C43188B2BC
+	for <lists+ceph-devel@lfdr.de>; Wed, 11 Dec 2024 10:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7104F1C6F59;
-	Wed, 11 Dec 2024 07:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F3B236FBE;
+	Wed, 11 Dec 2024 10:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZaN44Yyj"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JsGXISkj"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7692770B;
-	Wed, 11 Dec 2024 07:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E25B236F98
+	for <ceph-devel@vger.kernel.org>; Wed, 11 Dec 2024 10:04:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733903144; cv=none; b=GzDdI8hzaLQn2L/XfHrecY7IjZbvhKwZT7Dd5/iy6ywS2PencOYkUYj+LW0z9lwpbb2MoXTwZyVzeUWJtd6Atz4GySrrr1K7+UGKJLSfYQyACJAhWZa3OVEPKqTcJ1JaHdMRW/3zOnMLdJZi73C/OdpF64/gmLG2JA5gWoDb+Xc=
+	t=1733911449; cv=none; b=jWlTpE3ogNDQjZLn9hyhMmt+FC431mlz7IWj9xx6ZI29339kevueCEzp1ArBr5BNAa5oX/PLX3ZPwiwaVmH6b+vLkDES3mQFOEKluY4P5vFG56vrUdChJSIl43dWroUJ32i/XtmSdAP/9wynoDAkLgsn3UaUmk94GQ7cnb4OAFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733903144; c=relaxed/simple;
-	bh=KM5Of7mM53fIwBBiaYiiUQ9BfxtVrpykBzubAzmUdlE=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=Re7CwYGk0kjql/dgwi39nC3/6P1g4Qr2/BpXTFBnYXbW45mzbuTXRJbChPY6v+HMXcylNM54cu2dK2BL28fNR/oinvTj/pj273ukDI4ga6KLK3+U6g2qv4nTxIdNUQ57ljUBIBGcxHRuuORmx9AK2bo+r3bGpZiu+0yzceHYVNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZaN44Yyj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A77C4CED2;
-	Wed, 11 Dec 2024 07:45:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733903143;
-	bh=KM5Of7mM53fIwBBiaYiiUQ9BfxtVrpykBzubAzmUdlE=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=ZaN44YyjhRMRn1ZZ+GmTOS40UgIRbhL4wBsfJy8XjSPG4QXarlwE2h8LLmlSyCwwE
-	 mhsyVMxQDuDVaxW28PxQeU8er7lMNhKnh1DPb1k4CbIDr8a5tkumkBV/uTN9xwnFYp
-	 h1HNwJmQE+rv8LC4BNlfDvTcPd5XXQGZmdVG4PmZqn4aLOwa4oWj50GSY3CEXVAf2K
-	 4s9JO62HtV4AyzHzBTTKIyxerUXbJDme/tcsfk9nrdzoiXAN6SWU/JWU3UcTsBRxgt
-	 rxzg89ETMye2AN+BOVUz+OAR29EzCnQNdPIoMqWIY7xMbpGfvp3pWcUv4qGp3pyh75
-	 7MY47GTKlC4gQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Easwar Hariharan <eahariha@linux.microsoft.com>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>,  Jozsef Kadlecsik
- <kadlec@netfilter.org>,  "David S. Miller" <davem@davemloft.net>,  Eric
- Dumazet <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,  Paolo
- Abeni <pabeni@redhat.com>,  Simon Horman <horms@kernel.org>,  Julia Lawall
- <Julia.Lawall@inria.fr>,  Nicolas Palix <nicolas.palix@imag.fr>,  Daniel
- Mack <daniel@zonque.org>,  Haojian Zhuang <haojian.zhuang@gmail.com>,
-  Robert Jarzmik <robert.jarzmik@free.fr>,  Russell King
- <linux@armlinux.org.uk>,  Heiko Carstens <hca@linux.ibm.com>,  Vasily
- Gorbik <gor@linux.ibm.com>,  Alexander Gordeev <agordeev@linux.ibm.com>,
-  Christian Borntraeger <borntraeger@linux.ibm.com>,  Sven Schnelle
- <svens@linux.ibm.com>,  Ofir Bitton <obitton@habana.ai>,  Oded Gabbay
- <ogabbay@kernel.org>,  Lucas De Marchi <lucas.demarchi@intel.com>,  Thomas
- =?utf-8?Q?Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,  Rodrigo
- Vivi
- <rodrigo.vivi@intel.com>,  Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
-  Thomas Zimmermann <tzimmermann@suse.de>,  David Airlie
- <airlied@gmail.com>,  Simona Vetter <simona@ffwll.ch>,  Jeroen de Borst
- <jeroendb@google.com>,  Praveen Kaligineedi <pkaligineedi@google.com>,
-  Shailend Chand <shailend@google.com>,  Andrew Lunn
- <andrew+netdev@lunn.ch>,  James Smart <james.smart@broadcom.com>,  Dick
- Kennedy <dick.kennedy@broadcom.com>,  "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>,  "Martin K. Petersen"
- <martin.petersen@oracle.com>,  Roger Pau =?utf-8?Q?Monn=C3=A9?=
- <roger.pau@citrix.com>,
-  Jens Axboe <axboe@kernel.dk>,  Jeff Johnson <jjohnson@kernel.org>,
-  Catalin Marinas <catalin.marinas@arm.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Jack Wang <jinpu.wang@cloud.ionos.com>,
-  Marcel Holtmann <marcel@holtmann.org>,  Johan Hedberg
- <johan.hedberg@gmail.com>,  Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  Florian Fainelli
- <florian.fainelli@broadcom.com>,  Ray Jui <rjui@broadcom.com>,  Scott
- Branden <sbranden@broadcom.com>,  Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,  Xiubo Li <xiubli@redhat.com>,
-  Ilya Dryomov <idryomov@gmail.com>,  Josh Poimboeuf <jpoimboe@kernel.org>,
-  Jiri Kosina <jikos@kernel.org>,  Miroslav Benes <mbenes@suse.cz>,  Petr
- Mladek <pmladek@suse.com>,  Joe Lawrence <joe.lawrence@redhat.com>,
-  Jaroslav Kysela <perex@perex.cz>,  Takashi Iwai <tiwai@suse.com>,  Louis
- Peens <louis.peens@corigine.com>,  Michael Ellerman <mpe@ellerman.id.au>,
-  Nicholas Piggin <npiggin@gmail.com>,  Christophe Leroy
- <christophe.leroy@csgroup.eu>,  Naveen N Rao <naveen@kernel.org>,
-  Madhavan Srinivasan <maddy@linux.ibm.com>,
-  netfilter-devel@vger.kernel.org,  coreteam@netfilter.org,
-  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,  cocci@inria.fr,
-  linux-arm-kernel@lists.infradead.org,  linux-s390@vger.kernel.org,
-  dri-devel@lists.freedesktop.org,  intel-xe@lists.freedesktop.org,
-  linux-scsi@vger.kernel.org,  xen-devel@lists.xenproject.org,
-  linux-block@vger.kernel.org,  linux-wireless@vger.kernel.org,
-  ath11k@lists.infradead.org,  linux-mm@kvack.org,
-  linux-bluetooth@vger.kernel.org,  linux-staging@lists.linux.dev,
-  linux-rpi-kernel@lists.infradead.org,  ceph-devel@vger.kernel.org,
-  live-patching@vger.kernel.org,  linux-sound@vger.kernel.org,
-  oss-drivers@corigine.com,  linuxppc-dev@lists.ozlabs.org,  Anna-Maria
- Behnsen <anna-maria@linutronix.de>,  Jeff Johnson
- <quic_jjohnson@quicinc.com>
-Subject: Re: [PATCH v3 14/19] wifi: ath11k: Convert timeouts to
- secs_to_jiffies()
-References: <20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com>
-	<20241210-converge-secs-to-jiffies-v3-14-ddfefd7e9f2a@linux.microsoft.com>
-	<87sequr7ho.fsf@kernel.org>
-Date: Wed, 11 Dec 2024 09:45:24 +0200
-In-Reply-To: <87sequr7ho.fsf@kernel.org> (Kalle Valo's message of "Wed, 11 Dec
-	2024 09:42:11 +0200")
-Message-ID: <87o71ir7cb.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1733911449; c=relaxed/simple;
+	bh=rKYrqQl4T8s2CXES0J8ZMyz+dspbXU3tZmAw41YdKcg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jahwkuT1s8JgnVYaG9bCHdvX2ThyDfzEEHyRXxLFdquqQ7lPzvEJbPUMtXSp7ZwVtiPgX1mRb0D/YFJnt6k8UhEfn7hY1ohw+cfuqJIByQ9pf+zSUENIBgmYTlPHHJ2zRf/l6l8Yy4CDyk1VzNXyOuVo612VGwwc0LVupvMDkjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JsGXISkj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733911446;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rKYrqQl4T8s2CXES0J8ZMyz+dspbXU3tZmAw41YdKcg=;
+	b=JsGXISkjZ5WiUUo47Vnl/c5adFDomYdHzTnwTzYhbqRUMalHQRJWgHZ5YDiO/7Z+uqn6o7
+	Huz2g4/26wijId4YH5yW/lKkPXmeEo9tBFPeGSokICXCqF/iidhteVDkMuPwEUwpJZJG6U
+	8rlfFEaOnMTf+wU0DOZzN1udNAEu5rg=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-197-VgB_UnViNlK69Gas9JcJ6w-1; Wed, 11 Dec 2024 05:04:04 -0500
+X-MC-Unique: VgB_UnViNlK69Gas9JcJ6w-1
+X-Mimecast-MFC-AGG-ID: VgB_UnViNlK69Gas9JcJ6w
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-aa67fcbb549so308350266b.0
+        for <ceph-devel@vger.kernel.org>; Wed, 11 Dec 2024 02:04:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733911443; x=1734516243;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rKYrqQl4T8s2CXES0J8ZMyz+dspbXU3tZmAw41YdKcg=;
+        b=kKbN79Ft50wRZFisoMx568/fycSctD1HT9vdMCFR3lS2y+8nixQhuPwnondSsL/w4+
+         uhUUnx2lU/hzYg2tSWVomQgOXbwsmKQXH4CIj8bNlnUnX6AP1P52tKPppxpaltIpjpJx
+         e40YmkcCMNxzyeN4dmUDBQglCoSfOqrmYGGMPcrZvyFQBmrm262uFZjyOlUJvaMm1L4q
+         YGuvPgG11gQ3vnTd4DrtqHcs/8wKoAvj9ct3nI3R6hI1q6ic2dcL5yaCwnpAhr6dlGFJ
+         HuvuKSc1Usc1gFw/+0B2+1lcFEa/L60y2RYrEVAyI6Vp1BvUdBvTl1JDP2czLkR6gWus
+         yWPQ==
+X-Gm-Message-State: AOJu0YzCoPQ/VIYs8qhmki9eoRJPbtJpNMQHfIUhPFhVGhpBSUazZ2ec
+	sIgb0x96YMkX4I35WHIaYFBkcEBOEegV0ala1SgiSHubB58vVOjGC15vjiVaGBDcjoveG6GAo6X
+	Mgn/bHRo+GKYbkILKCZc/qhIn721ZpbG+BUCG8b2df4xKrdPTt5dKepetAIchciwR/XhMT3xEvw
+	dxyC97ecJ1DQL9eXVGi84sz2b5eZVyTvYbtA==
+X-Gm-Gg: ASbGncuW4ILyC5p/G58AxmlLhUkTzAhpbAf0AKAdnA07S/MTVg4q7qg8xbrZZPS3f7f
+	CU1blAXQdmqm5CLi7ZV3/BbFNyWMkTmOo2OY=
+X-Received: by 2002:a17:907:3e8b:b0:aa6:75d3:7d2d with SMTP id a640c23a62f3a-aa6b13aff69mr219126266b.40.1733911443504;
+        Wed, 11 Dec 2024 02:04:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFuyQXneW3zNITc+iCyFOUZaLwr6ZZ7a5as15VxZV09VcmJYFa3g5u1NEyngKwdVMnnW2lLqT5/QIGv4iY3x5U=
+X-Received: by 2002:a17:907:3e8b:b0:aa6:75d3:7d2d with SMTP id
+ a640c23a62f3a-aa6b13aff69mr219123866b.40.1733911443165; Wed, 11 Dec 2024
+ 02:04:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241209114359.1309965-1-amarkuze@redhat.com> <547b3a59c43751dfa793fef35a66f03fafea84ea.camel@ibm.com>
+ <CAO8a2ShtipAxNUgrD7JkWdPG9brHjGreKnOGBQ3jYpXu+BFLpQ@mail.gmail.com> <bc3877022a3ec25c4b69752743d0ecdf40a4d5c0.camel@ibm.com>
+In-Reply-To: <bc3877022a3ec25c4b69752743d0ecdf40a4d5c0.camel@ibm.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Wed, 11 Dec 2024 12:03:52 +0200
+Message-ID: <CAO8a2SiivviV0HbDft71MBPQZdYyY=r87+BCUUFvX6EVgJEhdg@mail.gmail.com>
+Subject: Re: [PATCH] ceph: improve error handling and short/overflow-read
+ logic in __ceph_sync_read()
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Luis Henriques <luis.henriques@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Kalle Valo <kvalo@kernel.org> writes:
+I agree this function needs work, there is a major performance issue
+in there as well. One step at a time.
+Meanwhile I need this patch to be acked so It can move to the main
+branch, as it fixes multiple bugs seen in production.
 
-> Easwar Hariharan <eahariha@linux.microsoft.com> writes:
+On Tue, Dec 10, 2024 at 9:28=E2=80=AFPM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
 >
->> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
->> secs_to_jiffies(). As the value here is a multiple of 1000, use
->> secs_to_jiffies() instead of msecs_to_jiffies to avoid the multiplication.
->>
->> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
->> the following Coccinelle rules:
->>
->> @@ constant C; @@
->>
->> - msecs_to_jiffies(C * 1000)
->> + secs_to_jiffies(C)
->>
->> @@ constant C; @@
->>
->> - msecs_to_jiffies(C * MSEC_PER_SEC)
->> + secs_to_jiffies(C)
->>
->> Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
->> ---
->>  drivers/net/wireless/ath/ath11k/debugfs.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
+> On Tue, 2024-12-10 at 21:12 +0200, Alex Markuze wrote:
+> > The main goal of this patch is to solve erroneous read sizes and
+> > overflows.
+> > The convoluted 'if else' chain is a recipe for disaster. Currently,
+> > exec stops immediately on first ret that indicates an error.
+> > If you have additional refactoring thoughts feel free to add more
+> > patches, This is mainly a bug fix, that solves both the immediate
+> > overflow bug and attempts to make this code more manageable to
+> > mitigate future bugs.
 >
-> I assume we can take this to our ath.git tree, please let us know if
-> that's not the case.
+> I see your point. I simply see several cases of ret > 0 check:
+>
+> https://elixir.bootlin.com/linux/v6.12.3/source/fs/ceph/file.c#L1150
+> https://elixir.bootlin.com/linux/v6.12.3/source/fs/ceph/file.c#L1158
+> https://elixir.bootlin.com/linux/v6.12.3/source/fs/ceph/file.c#L1163 <-
+> your fix here
+> https://elixir.bootlin.com/linux/v6.12.3/source/fs/ceph/file.c#L1192 <-
+> your fix here too
+> https://elixir.bootlin.com/linux/v6.12.3/source/fs/ceph/file.c#L1236
+>
+> And there are places to check ret for negative values:
+>
+> https://elixir.bootlin.com/linux/v6.12.3/source/fs/ceph/file.c#L1160
+> https://elixir.bootlin.com/linux/v6.12.3/source/fs/ceph/file.c#L1226
+>
+> These checks distributes in the function's code, it could be confusing
+> and, potentially, be the source of new bugs during modifications. I
+> simply have feelings that this logic somehow requires refactoring to
+> improve the execution flow. But if you would like not to do it, then I
+> am OK with it.
+>
+> Thanks,
+> Slava.
+>
+>
 
-Nevermind, I now saw the discussion in the cover letter and assume that
-this patch will be sent separately.
-
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
