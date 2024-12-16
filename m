@@ -1,130 +1,220 @@
-Return-Path: <ceph-devel+bounces-2341-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2342-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D01E9F2DF4
-	for <lists+ceph-devel@lfdr.de>; Mon, 16 Dec 2024 11:14:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B669F2FD5
+	for <lists+ceph-devel@lfdr.de>; Mon, 16 Dec 2024 12:53:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4F49165341
-	for <lists+ceph-devel@lfdr.de>; Mon, 16 Dec 2024 10:14:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DF057A2DA1
+	for <lists+ceph-devel@lfdr.de>; Mon, 16 Dec 2024 11:53:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A48A202F8E;
-	Mon, 16 Dec 2024 10:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBAB204589;
+	Mon, 16 Dec 2024 11:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ArWhBjJl"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z59HD+Df"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817D72AF03;
-	Mon, 16 Dec 2024 10:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C45C204577
+	for <ceph-devel@vger.kernel.org>; Mon, 16 Dec 2024 11:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734344026; cv=none; b=KFvlKgOqE8enXyO8gpud4AJUQ9/uo7ht0xhWxQiBuTo0W/pq+RDPBazW8s7Grx4ihG5xsZv0/aUhlTb01wt5492el1JvIn8iiNiG2KuRyGi8D0l8Nmeq4iPihkL6a09dXvfcjCEFJyGtbjdddD2TGNNXJO0tDqwnAObg01WyfJM=
+	t=1734349889; cv=none; b=i0tou5W6Gyo3ZvxOL4IO9bA3Iho2nDFrjg9IrCFjP44aL+7qxI4+W64WpJKxLc/IK4VAZL3ipZiTCP18tWWheYGNVMoGKuMaHvGZNP0P9zBzsTngff22pMmEhvI1d+PE/MKTAHQM58P4aOqhasKZUh+145PNO1LF6oNN8sxmUH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734344026; c=relaxed/simple;
-	bh=6o4jofo5o0s4egvVbxhwmAn4YH9WdHGRsBXLWeO+DtM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=llWH7MRcpQy8dGn/jx8skZVadlDxoccd0lbpK7Y9ONTF97m5uy+cnN8V1Q5NUic78onqaRGtWZpJU+8uPwHSvo7bVxyg/xVU/ONFx3ST9VI8mpnN60w4AUgdKlbKlRbz6QEXsezNbuLCg2CyZkC3/dtVHoST2FM4Maa27ZfTI+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ArWhBjJl; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-728f1525565so4530416b3a.1;
-        Mon, 16 Dec 2024 02:13:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734344025; x=1734948825; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=V9ZM1VYLJhmWw0JXWXrNZw/asAR3qnp4u24wAg0Zo6s=;
-        b=ArWhBjJl3hPPOaKkIaY/r+yGPfLKSnkKdtF1TEpdvVhnWMOKURtfK/Wn5Ix/UNNpzX
-         pZrrqBnJVHlbkENmVJLNlVaP0hTHxqSN8zJtu3np8YV3WQzU4ZnbFqSRJzhDjS+Yv+lh
-         VZ+4KObdpdXeZOzP7J6NH3YfE4mb2gcewtTPjW0H/rFt7vFyAkkxqvA4RM2KWejpQv5x
-         6C9dvGXjsA4SCWDSU4qzdHbdptEKkGlTwCjtDds/pUGtc3zBBUKhfTHLoEVXAT8LG+64
-         3l1SCjyQChpZQ6AdjHNDjhLv+2L1bxmEamsQkDFoqb5Luj7Asd0eVlTi18xkAj0ava2e
-         s6GA==
+	s=arc-20240116; t=1734349889; c=relaxed/simple;
+	bh=EdcXrJM8eciF75ssg1aOMtBd/pzZtUA4Inzd7mCN6Aw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=md92ofAMeuxW27TaFAxiiMv+8Z10vTVA+1QNTp62haF+z4XRudkCTQdVYEdYbQ83TRRIiGYu8Je6ttPN6rGOFzgbfc4nFwd1SK42qfOADrc03KVizabiWwg478ulIGVUUFitHI3BUHwj6P4j0jxYcjNvgUjRK/bC9sVdiJ/6hRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z59HD+Df; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1734349884;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RnPQjDEcgL8iaO19tcntyyUWKSo+4FgA82NHisxYZ9g=;
+	b=Z59HD+DfZzuQAqywlRyXkGHlWx73Y0zQyY20+IXVK7HFL0ziUxY0qPq35jx4RvJDR4Kib6
+	quQXZlKbiFjM6YiNyE5QZ2IqQzisCgveS6bbMmykboH6GKnR/sxRAXCcemLzslgFeZWpqW
+	beIZbO+F5GeBqky1T+BzoBJyj9FT3i8=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-641-HWD6uR8sNb2PDnvDAfhpGw-1; Mon, 16 Dec 2024 06:51:23 -0500
+X-MC-Unique: HWD6uR8sNb2PDnvDAfhpGw-1
+X-Mimecast-MFC-AGG-ID: HWD6uR8sNb2PDnvDAfhpGw
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-aa68203d288so299083066b.1
+        for <ceph-devel@vger.kernel.org>; Mon, 16 Dec 2024 03:51:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734344025; x=1734948825;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V9ZM1VYLJhmWw0JXWXrNZw/asAR3qnp4u24wAg0Zo6s=;
-        b=BvT4pudPVPlb4iKaFCjVriJQTM2XQ1ovXhOWJJX9/XHZJLxM06tuvpcO53bImru50u
-         eCvT4kl2Vxc88xpU8zz6iCJEs/jJ35KLYnZX4JPex7oJ9Xomf7DV7UlJ1D97Oyy/ZGqJ
-         Rvw2LoZd+wf4aL+E3FBre6FRsndV44I9sGXMrnrPCZNuWNBT8r9f97h2CR9eSmG/3xx0
-         wF3n2iXF7VMS9U00uHiJ/FXBBXDISvwlPGYBWkrNprxLDwISbqsOzBEuwmjDsds7evRa
-         fovmE5gTJQioUfG7e4zELpVJBPn6fu0bPJmrlcDsFfTxlcTY1NeRO6ZTYAR93lG257QE
-         3ghw==
-X-Forwarded-Encrypted: i=1; AJvYcCUY8Pq35Ai8nboc5CMbQH0A9pYJBAiivv4BxokddKHnyu0ug4lvLY6bO2pJ9x7qC1iytiP1Vme733W8@vger.kernel.org, AJvYcCUgj+VAC9wZScEale4DvdNt6oaQkScbLqvU4dedr0S2X5GbGTg90AxvRBhi+bezyUJDTFJe6sYanOwG@vger.kernel.org, AJvYcCVFeBzHM9UQ22kV5ed0chN0KT+kFeFLr1umx5PCZWCynHEIE1ONeM2uAtRj803fgHYWvpH/6VBSSa24YeBM@vger.kernel.org, AJvYcCWDTIkjNr30p6AOumCmZ5VBQ8PY8TmJ4PwqmZR/c2nWTq8W9dgFXplTD2uaBQ4+Alk+Xj0a8Mbh709IN7nRCw==@vger.kernel.org, AJvYcCXFJ/hXevDkYzQJ1eERqLePiy2/yzSfCcywqxTxPgxv5+L7NwLTguvIDsJM0gt8uyAqfkCc+Q2lcMazrA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTe67VOy4vncRMgAkQ0GdDriMtRUv8BENPHvOjbXrwBVJxkU46
-	LSKkU9A+GbvtJf/9Eqrzilwlq3uynuXBk4nJCFbDKlKz3TrAfsJC
-X-Gm-Gg: ASbGncus2+wAW8zO/M4IDWlchL4Qx8c/EiHaaynjcEUCZWuSykEdl6rQWcHcD9tqNoj
-	XLiBaZUepirhuO+nFFomVyqJrHFdE+mh4SkrhMXgXzD4GAk/o6HfqWmU5Rqx8VcVN5iqlq99muG
-	uhzK0hN/75NHl2Qgj6t34NkrblyL3tGs8ad63hFuu7mX0N0WkmJ9bvpIteW5oedQsnzsGQufQp5
-	PUlDj6tLqSA0m3K+EootKncgwXHVIl23OhLDxjy4lNj5zYVX1XUmchop8N+mOYgIGTzUDUcW/kB
-	SlYE+eMwkiwL5gTiQkpgAt0=
-X-Google-Smtp-Source: AGHT+IFq3zJyvoXfAV7XVBdCiDQC4vaO/7xLrUwixiOvu21RBmLw5wfgxXzoYw8zU6Yia4k+KM7puQ==
-X-Received: by 2002:a05:6a20:4304:b0:1e1:bdae:e045 with SMTP id adf61e73a8af0-1e1dfd91980mr18130458637.23.1734344023005;
-        Mon, 16 Dec 2024 02:13:43 -0800 (PST)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72918bce39csm4517791b3a.189.2024.12.16.02.13.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2024 02:13:42 -0800 (PST)
-Message-ID: <843f5270-d715-4c98-b191-1c271eb418c5@gmail.com>
-Date: Mon, 16 Dec 2024 19:13:39 +0900
+        d=1e100.net; s=20230601; t=1734349882; x=1734954682;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RnPQjDEcgL8iaO19tcntyyUWKSo+4FgA82NHisxYZ9g=;
+        b=PssLEP+2GmwZ5HXp5i02AEIQtfF4Q93Fc7nUMx9p5K7/2tqRtocvFUTFbrOLVYD5zE
+         LqJqthCBuLp9KXW+ucXMStVZpuBZ1cKqOyl3fEpNSwKgQ0/qdvQqwKpSJQQ3F7WseZ7O
+         7YerRjD+39wXLFscNcFbTeRv4S0ttJQgSZ0zNgz4lfSvWomkpIv2kVKdJYM5JybKEn7p
+         AhP833QGH3k54qk+x9TF6XuWeoo3TXrtCHu4UBlwiYCK/fuQtLe4zKhpS1SmPPBMioav
+         dwfdOFQfK08XffR/1xVZVN8qaUfsrCgQBEpQUV42ASMKMIuMNrzTUDLhpSwIGQ0fLgCc
+         GqXA==
+X-Gm-Message-State: AOJu0Yz/8NHr09L5ePA3jqajWcwegdFy/zWtZEOpBl2+Ip8gzf9OYpqr
+	bDd8IvIkgnTWaNdD4oP/TUnQTjgNyXYan+h1Ezz1Re2z/TJNDLbXJNqB5Ijt3CqUNsKuJirouv4
+	OxmKgy6r44jpcr/GsXTtLwF1+FKV3Mmi9jZ4rdvpL4zoP+Mls+2R17kUuZ70xBLO87/0bPb59rj
+	vUYs43i+fc/mKutaTbnZlJyuK8yh17G85YqMFjgQLhsrxH
+X-Gm-Gg: ASbGncu+LWkfR5nvLmjEMyPDmGnPOWXFA0xNdiO9dIlxQDa56KvbqsROc2LyqdrsShW
+	hlmsuH5QNovreCn6qtuJW8IyPk+3pxjmwZ2k=
+X-Received: by 2002:a17:907:9690:b0:aa6:ac19:7502 with SMTP id a640c23a62f3a-aab778e0769mr1069562166b.4.1734349882395;
+        Mon, 16 Dec 2024 03:51:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFAOZ112rlmPL61foQzhWwfs/lgW6vyvHe217pV0qzLjSMBCsLb5HyfJmg26dPAxaygGgSWaCYbxu+ybsI2FcQ=
+X-Received: by 2002:a17:907:9690:b0:aa6:ac19:7502 with SMTP id
+ a640c23a62f3a-aab778e0769mr1069560966b.4.1734349882091; Mon, 16 Dec 2024
+ 03:51:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/10] netfs: Remove redundant use of smp_rmb()
-To: David Howells <dhowells@redhat.com>,
- Christian Brauner <christian@brauner.io>
-Cc: Max Kellermann <max.kellermann@ionos.com>,
- Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
- Trond Myklebust <trondmy@kernel.org>, Jeff Layton <jlayton@kernel.org>,
- Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
- linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
- linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Zilin Guan <zilin@seu.edu.cn>, Akira Yokosawa <akiyks@gmail.com>
-References: <20241213135013.2964079-1-dhowells@redhat.com>
- <20241213135013.2964079-7-dhowells@redhat.com>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <20241213135013.2964079-7-dhowells@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241207182622.97113-1-idryomov@gmail.com> <20241207182622.97113-2-idryomov@gmail.com>
+In-Reply-To: <20241207182622.97113-2-idryomov@gmail.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Mon, 16 Dec 2024 13:51:11 +0200
+Message-ID: <CAO8a2Sj9Ks4QMDgU+5-DoEXx86GVkdtAS0DqhvrBqSc68xv67g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ceph: fix memory leak in ceph_direct_read_write()
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: ceph-devel@vger.kernel.org, Max Kellermann <max.kellermann@ionos.com>, 
+	Jeff Layton <jlayton@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-David Howells wrote:
-> From: Zilin Guan <zilin@seu.edu.cn>
-> 
-> The function netfs_unbuffered_write_iter_locked() in
-> fs/netfs/direct_write.c contains an unnecessary smp_rmb() call after
-> wait_on_bit(). Since wait_on_bit() already incorporates a memory barrier
-> that ensures the flag update is visible before the function returns, the
-> smp_rmb() provides no additional benefit and incurs unnecessary overhead.
-> 
-> This patch removes the redundant barrier to simplify and optimize the code.
-> 
-> Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Akira Yokosawa <akiyks@gmail.com>
+Reviewed-by: Alex Markuze <amarkuze@redhat.com>
 
-Reviewed-by: Akira Yokosawa <akiyks@gmail.com>
-
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> Link: https://lore.kernel.org/r/20241207021952.2978530-1-zilin@seu.edu.cn/
+On Sat, Dec 7, 2024 at 8:26=E2=80=AFPM Ilya Dryomov <idryomov@gmail.com> wr=
+ote:
+>
+> The bvecs array which is allocated in iter_get_bvecs_alloc() is leaked
+> and pages remain pinned if ceph_alloc_sparse_ext_map() fails.
+>
+> There is no need to delay the allocation of sparse_ext map until after
+> the bvecs array is set up, so fix this by moving sparse_ext allocation
+> a bit earlier.  Also, make a similar adjustment in __ceph_sync_read()
+> for consistency (a leak of the same kind in __ceph_sync_read() has been
+> addressed differently).
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 03bc06c7b0bd ("ceph: add new mount option to enable sparse reads")
+> Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 > ---
->  fs/netfs/direct_write.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
+>  fs/ceph/file.c | 43 ++++++++++++++++++++++---------------------
+>  1 file changed, 22 insertions(+), 21 deletions(-)
+>
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index f9bb9e5493ce..0df2ffc69e92 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -1116,6 +1116,16 @@ ssize_t __ceph_sync_read(struct inode *inode, loff=
+_t *ki_pos,
+>                         len =3D read_off + read_len - off;
+>                 more =3D len < iov_iter_count(to);
+>
+> +               op =3D &req->r_ops[0];
+> +               if (sparse) {
+> +                       extent_cnt =3D __ceph_sparse_read_ext_count(inode=
+, read_len);
+> +                       ret =3D ceph_alloc_sparse_ext_map(op, extent_cnt)=
+;
+> +                       if (ret) {
+> +                               ceph_osdc_put_request(req);
+> +                               break;
+> +                       }
+> +               }
+> +
+>                 num_pages =3D calc_pages_for(read_off, read_len);
+>                 page_off =3D offset_in_page(off);
+>                 pages =3D ceph_alloc_page_vector(num_pages, GFP_KERNEL);
+> @@ -1129,16 +1139,6 @@ ssize_t __ceph_sync_read(struct inode *inode, loff=
+_t *ki_pos,
+>                                                  offset_in_page(read_off)=
+,
+>                                                  false, true);
+>
+> -               op =3D &req->r_ops[0];
+> -               if (sparse) {
+> -                       extent_cnt =3D __ceph_sparse_read_ext_count(inode=
+, read_len);
+> -                       ret =3D ceph_alloc_sparse_ext_map(op, extent_cnt)=
+;
+> -                       if (ret) {
+> -                               ceph_osdc_put_request(req);
+> -                               break;
+> -                       }
+> -               }
+> -
+>                 ceph_osdc_start_request(osdc, req);
+>                 ret =3D ceph_osdc_wait_request(osdc, req);
+>
+> @@ -1557,6 +1557,16 @@ ceph_direct_read_write(struct kiocb *iocb, struct =
+iov_iter *iter,
+>                         break;
+>                 }
+>
+> +               op =3D &req->r_ops[0];
+> +               if (sparse) {
+> +                       extent_cnt =3D __ceph_sparse_read_ext_count(inode=
+, size);
+> +                       ret =3D ceph_alloc_sparse_ext_map(op, extent_cnt)=
+;
+> +                       if (ret) {
+> +                               ceph_osdc_put_request(req);
+> +                               break;
+> +                       }
+> +               }
+> +
+>                 len =3D iter_get_bvecs_alloc(iter, size, &bvecs, &num_pag=
+es);
+>                 if (len < 0) {
+>                         ceph_osdc_put_request(req);
+> @@ -1566,6 +1576,8 @@ ceph_direct_read_write(struct kiocb *iocb, struct i=
+ov_iter *iter,
+>                 if (len !=3D size)
+>                         osd_req_op_extent_update(req, 0, len);
+>
+> +               osd_req_op_extent_osd_data_bvecs(req, 0, bvecs, num_pages=
+, len);
+> +
+>                 /*
+>                  * To simplify error handling, allow AIO when IO within i=
+_size
+>                  * or IO can be satisfied by single OSD request.
+> @@ -1597,17 +1609,6 @@ ceph_direct_read_write(struct kiocb *iocb, struct =
+iov_iter *iter,
+>                         req->r_mtime =3D mtime;
+>                 }
+>
+> -               osd_req_op_extent_osd_data_bvecs(req, 0, bvecs, num_pages=
+, len);
+> -               op =3D &req->r_ops[0];
+> -               if (sparse) {
+> -                       extent_cnt =3D __ceph_sparse_read_ext_count(inode=
+, size);
+> -                       ret =3D ceph_alloc_sparse_ext_map(op, extent_cnt)=
+;
+> -                       if (ret) {
+> -                               ceph_osdc_put_request(req);
+> -                               break;
+> -                       }
+> -               }
+> -
+>                 if (aio_req) {
+>                         aio_req->total_len +=3D len;
+>                         aio_req->num_reqs++;
+> --
+> 2.46.1
+>
+>
 
 
