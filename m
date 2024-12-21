@@ -1,126 +1,168 @@
-Return-Path: <ceph-devel+bounces-2394-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2395-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD4C9F9A9F
-	for <lists+ceph-devel@lfdr.de>; Fri, 20 Dec 2024 20:41:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5009F9E6F
+	for <lists+ceph-devel@lfdr.de>; Sat, 21 Dec 2024 06:15:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C256D7A1425
-	for <lists+ceph-devel@lfdr.de>; Fri, 20 Dec 2024 19:41:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 656C1189186F
+	for <lists+ceph-devel@lfdr.de>; Sat, 21 Dec 2024 05:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC61F2210CB;
-	Fri, 20 Dec 2024 19:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDCC19F43A;
+	Sat, 21 Dec 2024 05:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMJOnwOd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBXpg8Ka"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA3821A431;
-	Fri, 20 Dec 2024 19:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFED1DC05D;
+	Sat, 21 Dec 2024 05:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734723684; cv=none; b=nMJ5AqJcrXYMxddZ1I1Vv9eWql2n4g8ulvWiW/grZfHhmumOFrBBBgh6bZryV+HM+MMVe1zoDO5+T4OXOpeqYYwzCBkRQAi5LZri+0LP21rqtp3ReBhOG33BNNGziMPERZGJa3MDepULLdPVhbR2/yuh79CfthZMsq5MbEX9EbM=
+	t=1734758139; cv=none; b=tTRf2eXtVFJlRkda7dBladHLYp0+UoyC471ndFO4zcXVOQqMxTUv3Qr89YKrFeROmgJ6X1ixIgxSufVl+5mekSbT+ioJkGobEKn407mwjYqHYrvMGOB6sNUrnzKjdiH1hd/yrI6C9u5sXv9J3ToRgp9r2pSb3U4+SR5Ax9mwYqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734723684; c=relaxed/simple;
-	bh=E/WRb/pNvnXY2qk2YNDcschtiMdzQ+FZMT9rhWCoHcs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uqpAMeikUQYNwJan7WRp/oUnKcIV5lw6soXKeYFTnfrk96vO+gmsgILsbLMMvV2NNysSvInclvUR2RBgG+/lGqwrSp9C07SV30za3S60Pw8nc/rVhRkrvuZItRDDTMHnOgrjWz81BparHrsAhXHNqbw2KJlJeBtXCPREVYeljQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMJOnwOd; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43622354a3eso15954315e9.1;
-        Fri, 20 Dec 2024 11:41:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734723681; x=1735328481; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YjdD6prJzeYPbT7/p3B9He6nK1v9LqKxf93CEzQXR4Q=;
-        b=KMJOnwOdAcKYxccWeiMmM8G/S7I+WzkJWXrRtlEu0nf/+R/U/9ijoC/v5ItuDjEOCc
-         J43qKSaVPK67LQmGPmGag8nWmzr1iCtNAO7NbQ28oBf4ts1FZxEGmZ9K2o/Elq7zpn3x
-         Zn6ZqW6w21uU505Vz9mjp/5eHvyp4tbwsodmvec8WaaAS/e5lA15C+N7KnojoKeFoXo4
-         DbeOWjm+3lwUR50St0SRgj3puATf8M0R05p9k2jJLVLtCnO/EVj7yfh+RzoEv00gAKd2
-         HxeSNKqgeJbNEi4ocquEAoQhCDOD1c3jqcrnKzduT3vJT7Smin8+8v92UVjK+qq06ZTJ
-         ZMog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734723681; x=1735328481;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YjdD6prJzeYPbT7/p3B9He6nK1v9LqKxf93CEzQXR4Q=;
-        b=eJyJO9sc3vZCvy6JhmhACJ9r9hdaWN8w36Hn8cL6Mpnhp5IGpOiXgLL0zSPThBxPFL
-         VqW1uoAfob6weCYDuRZabNjO+nlVfXWn9PRCvFcQCvEGvlmJutCjkM8IKiwpvKvSYjc4
-         me3URFbr0e4mf4qUch1QXPx0AlqnQrastr97H2ycrrMxketuUQTcZK0nfpDGuFE5H+vK
-         NWbRHYCc3N6KJPeOo6oGgWkpa5EoteN91gTTydSh8cMEt3G98XaHuu0GvppVCp8A//Cz
-         q2Xv+sUp+h+do6ThfwQe+D9jke1+TqAC16SxnvigVHVLxlBHY/+wA5PMf8NBAdw6Gqyv
-         ErSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQd2fZ+xXXgiUatyA2dKSmp9G5/Ut6E5pALiu12GFphST+xSrOZIdatxrZeDc6Al/Q2BDphQ3e1KL9YDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzKBNmZFCwJD73/q4H2a/iUZ9GY8V5aj1EnUAbdkdtoV+0oUv2
-	w8g0dXr+w40jjsTwDBRsvmDd93dAguCwjgWAWcKBBa0qQSOSkWKWzgf3yw==
-X-Gm-Gg: ASbGncvjTWwRoJ6jiyp8NcDGHGAOaFjmLgaOp003svSABSWYZJK+8CPVleK0QjDzKXu
-	aYDpZFAlJOxhq18ToHit+mw3r2g22SM3n9lwcz83LWbemI6DhrKCsLPIzv2RZ4/UjawdZZEcNOa
-	O+ZF7Y9hxJZijbnNKwzEBkPoZibrpe2uXq5FmucuP3agwWHziLxNgP9nJW8y9B78EMA7bMpsv84
-	vGfPBxuk1lff1Sl6YMk7DX6bYa5LSHhrbtTKA0ZSKtHXoM1siwi/XXU9ioI0XM3/jvc9k+/dHPn
-	aZxE5XlxGR74pHKF8XlIO4mi
-X-Google-Smtp-Source: AGHT+IF4JCJH6I7vd5QJLBvz8WEPqMObti/syADEBcCIQLY/eB5ud5FXZS9EsS0FavKJQasBG83wcg==
-X-Received: by 2002:a05:6000:1547:b0:385:e16d:f89 with SMTP id ffacd0b85a97d-38a22200a09mr4270252f8f.34.1734723681049;
-        Fri, 20 Dec 2024 11:41:21 -0800 (PST)
-Received: from localhost.localdomain (ip-94-112-167-15.bb.vodafone.cz. [94.112.167.15])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a1c8b830csm4793412f8f.108.2024.12.20.11.41.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2024 11:41:20 -0800 (PST)
-From: Ilya Dryomov <idryomov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Ceph fixes for 6.13-rc4
-Date: Fri, 20 Dec 2024 20:40:54 +0100
-Message-ID: <20241220194104.1350097-1-idryomov@gmail.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1734758139; c=relaxed/simple;
+	bh=6D22z4Q6qM5owg8DKTRELAvvJsU6v0seLUtNWMGH3rc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tTyTQPCN9iagD8LBxoXy1XbFfwexQc/5IGhnsUrrrYr6w967Y19tITkMicl48DJ03eC0RCjL1V/eTk3tm5PxyXW3oO1QevN+VtHMAz7IkzZnakrgjNA72qjYROFl9mJpf9MEACvBLGIs+dm1WIg/evsxm2o+78CBdPs+xJzitU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBXpg8Ka; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92513C4CED0;
+	Sat, 21 Dec 2024 05:15:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734758138;
+	bh=6D22z4Q6qM5owg8DKTRELAvvJsU6v0seLUtNWMGH3rc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NBXpg8KaWOmk5BPV9JRlUwyRpdhTsLRyF3o8nRURr2/sbFbiwU2VhLnOWtq7YJJec
+	 Ot/mrxQD51xumkqWjcecDxrOC+vTCvlpENvgKus+wds6XuYQMZ4OjFmYVLVzNmKCQx
+	 8Yd4aIB+ofU4wRNrNx2mJNZo6Y8Ig66H3F2PCCchNTw5ieI+yPfxIk0SIIw6/HdH41
+	 HX+8wPXoowb5iLRcX7svVCHB1ds6rNhJGAqS3gQxaOmqT1MnGb2nQvhuhzrDVJM+Yw
+	 huvvldEYppAd0O00Hj7vzofTkZWWE0+YpLYoWM8cW36gTa9GhYsreT3EctWsy/x6p3
+	 x8mJPCbZig5Og==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30227ccf803so30688031fa.2;
+        Fri, 20 Dec 2024 21:15:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWGYreHwMUszy5UgNuZUTksceEcl518AJ8OCVnzRDwaZczjkPJnylw1YUIvjxs7AAhKkbo5MLe1v3qJkA==@vger.kernel.org, AJvYcCWSCIUaRI9WNkoiR2C4CwDdxDzKkhUjTSH29am2r5U/UnABcQSFwFQHAxzlrLY4Ijgk0Ku02IoiyMZI@vger.kernel.org, AJvYcCX4OD0BWgsTIfwCHejzb4Wbs1QjRUOWVphN7WOeL9URPj4Wd0dJr27TxNnLoBnheLQNQnRXsY5uN6l0vcg2rw==@vger.kernel.org, AJvYcCXWuKiJRAxB0ULYb+sV7GQW3R5QzcDVIOgohd8U22CaW687WMlQlXspxjCNEfxPI/wY7hqpCqhapmc2@vger.kernel.org, AJvYcCXpFdprpb/RC2RqVVz3qTWNF9y+ukZIqZaDyfYrWSk4Cffu0OAsqifYTJQqPJDeELEFX5aFQ0U036J4gI3e@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3cvYGpHu0L7ETAVbB0U+iEkcJhrnzUNsk7BsAK0J7EFOH3p13
+	xAUbVQXN0SCrUCHNmtL/CaS479CKWBMMbiiCdlaFZ+3Ijv78nPKXhlr9DiUElRB6MQuif8guWJ5
+	JMClfEpJGmmWsVCmMwE52dj87PVM=
+X-Google-Smtp-Source: AGHT+IFLGvnYDVZLLa6gb/IFLNG+NtJdTz+H8BQtiW/Pv7A9hdRHwl2vjaIxr7x6UhU9lyjaVH3MCdnPjifz3TMcGbU=
+X-Received: by 2002:ac2:5682:0:b0:542:2f5a:5f52 with SMTP id
+ 2adb3069b0e04-5422f5a5f9dmr180818e87.13.1734758137206; Fri, 20 Dec 2024
+ 21:15:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241213135013.2964079-1-dhowells@redhat.com> <20241213135013.2964079-2-dhowells@redhat.com>
+In-Reply-To: <20241213135013.2964079-2-dhowells@redhat.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 21 Dec 2024 14:15:00 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQndCMudAtVRAbfSfnV+XhSMDcnP-s1_GAQh8UiEdLBSg@mail.gmail.com>
+Message-ID: <CAK7LNAQndCMudAtVRAbfSfnV+XhSMDcnP-s1_GAQh8UiEdLBSg@mail.gmail.com>
+Subject: Re: [PATCH 01/10] kheaders: Ignore silly-rename files
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>, Max Kellermann <max.kellermann@ionos.com>, 
+	Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, 
+	Trond Myklebust <trondmy@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev, linux-afs@lists.infradead.org, 
+	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, 
+	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Marc Dionne <marc.dionne@auristor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Fri, Dec 13, 2024 at 10:50=E2=80=AFPM David Howells <dhowells@redhat.com=
+> wrote:
+>
+> Tell tar to ignore silly-rename files (".__afs*" and ".nfs*") when buildi=
+ng
+> the header archive.  These occur when a file that is open is unlinked
+> locally, but hasn't yet been closed.  Such files are visible to the user
+> via the getdents() syscall and so programs may want to do things with the=
+m.
+>
+> During the kernel build, such files may be made during the processing of
+> header files and the cleanup may get deferred by fput() which may result =
+in
+> tar seeing these files when it reads the directory, but they may have
+> disappeared by the time it tries to open them, causing tar to fail with a=
+n
+> error.  Further, we don't want to include them in the tarball if they sti=
+ll
+> exist.
+>
+> With CONFIG_HEADERS_INSTALL=3Dy, something like the following may be seen=
+:
 
-The following changes since commit 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8:
+I am confused.
 
-  Linux 6.13-rc3 (2024-12-15 15:58:23 -0800)
+kernel/gen_kheaders.sh is executed when CONFIG_IKHEADERS is enabled.
 
-are available in the Git repository at:
+How is CONFIG_HEADERS_INSTALL related?
 
-  https://github.com/ceph/ceph-client.git tags/ceph-for-6.13-rc4
 
-for you to fetch changes up to 18d44c5d062b97b97bb0162d9742440518958dc1:
 
-  ceph: allocate sparse_ext map only for sparse reads (2024-12-16 23:25:44 +0100)
+>    find: './kernel/.tmp_cpio_dir/include/dt-bindings/reset/.__afs2080': N=
+o such file or directory
+>    tar: ./include/linux/greybus/.__afs3C95: File removed before we read i=
+t
+>
+> The find warning doesn't seem to cause a problem.
 
-----------------------------------------------------------------
-A handful of important CephFS fixes from Max, Alex and myself: memory
-corruption due to a buffer overrun, potential infinite loop and several
-memory leaks on the error paths.  All but one marked for stable.
+I picked the following commit.
 
-----------------------------------------------------------------
-Alex Markuze (1):
-      ceph: improve error handling and short/overflow-read logic in __ceph_sync_read()
+https://lore.kernel.org/all/20241218202021.17276-1-elsk@google.com/
 
-Ilya Dryomov (3):
-      ceph: validate snapdirname option length when mounting
-      ceph: fix memory leak in ceph_direct_read_write()
-      ceph: allocate sparse_ext map only for sparse reads
+This shoots the root cause of the 'find' errors.
+Does it fix your problems too?
 
-Max Kellermann (2):
-      ceph: fix memory leaks in __ceph_sync_read()
-      ceph: give up on paths longer than PATH_MAX
 
- fs/ceph/file.c        | 77 +++++++++++++++++++++++++--------------------------
- fs/ceph/mds_client.c  |  9 +++---
- fs/ceph/super.c       |  2 ++
- net/ceph/osd_client.c |  2 ++
- 4 files changed, 46 insertions(+), 44 deletions(-)
+Your patch does not address the 'find' errors.
+
+
+
+
+
+
+>
+> Fix this by telling tar when called from in gen_kheaders.sh to exclude su=
+ch
+> files.  This only affects afs and nfs; cifs uses the Windows Hidden
+> attribute to prevent the file from being seen.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Masahiro Yamada <masahiroy@kernel.org>
+> cc: Marc Dionne <marc.dionne@auristor.com>
+> cc: linux-afs@lists.infradead.org
+> cc: linux-nfs@vger.kernel.org
+> cc: linux-kernel@vger.kernel.org
+> ---
+>  kernel/gen_kheaders.sh | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
+> index 383fd43ac612..7e1340da5aca 100755
+> --- a/kernel/gen_kheaders.sh
+> +++ b/kernel/gen_kheaders.sh
+> @@ -89,6 +89,7 @@ find $cpio_dir -type f -print0 |
+>
+>  # Create archive and try to normalize metadata for reproducibility.
+>  tar "${KBUILD_BUILD_TIMESTAMP:+--mtime=3D$KBUILD_BUILD_TIMESTAMP}" \
+> +    --exclude=3D".__afs*" --exclude=3D".nfs*" \
+>      --owner=3D0 --group=3D0 --sort=3Dname --numeric-owner --mode=3Du=3Dr=
+w,go=3Dr,a+X \
+>      -I $XZ -cf $tarfile -C $cpio_dir/ . > /dev/null
+>
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
