@@ -1,104 +1,104 @@
-Return-Path: <ceph-devel+bounces-2430-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2431-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F95A08CC0
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jan 2025 10:48:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20090A08D16
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jan 2025 10:56:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D02D188E7F1
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jan 2025 09:48:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90A403A2A48
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jan 2025 09:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2EE220CCDE;
-	Fri, 10 Jan 2025 09:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E417209F31;
+	Fri, 10 Jan 2025 09:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ytd/+Lfl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="N0W44tfq";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ytd/+Lfl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="N0W44tfq"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VsO9gsY7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="I7nNPC6r";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VsO9gsY7";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="I7nNPC6r"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E2620C028;
-	Fri, 10 Jan 2025 09:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD66209F44;
+	Fri, 10 Jan 2025 09:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736502334; cv=none; b=tgz0umkUbXFjJiheCe+mVUBl6tiznWVp0IAK6jpyhPqYzLh7LIxjGY2GQNGVKZV/JNy9y3TCuTV1yjkxp/ZdYvfUQEO7FG0I/o/g96dV74FepzrYSWcqLUiWVrD+flt9TaHxJoL8GhYiEnB66RUGEdTpFQjr/Di45lbngu/zLKs=
+	t=1736502844; cv=none; b=KFrKrFCtf/LbVJ1nZvbw2sgUNsmRV+YTWppeApxkSX9lToWvnWDF8Fq6iouzy82VVTOdye5WSDSVQGJdDQlm0LxEu8Lj07bhBnFKM5FwDjNq+ZiIJVggb9D0FDK0RL7m0g7Jgm4ExIm41T9OPYZgoepDEFn2Op7UbxVYkB5J5Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736502334; c=relaxed/simple;
-	bh=ba1wWltX8Jm35HQZX8TLwjITQhPwQitmTk5squ4TbsI=;
+	s=arc-20240116; t=1736502844; c=relaxed/simple;
+	bh=8/2e/mWos9wuKE0t99GBlAnYf5FdSlBLCcGc3g2a46Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ukOlNIBJdE/8KQFuzhopSODRxXPcFuNUlya2MKatHJIe+W1Ffsx8F63QsKKvVP5dWRXrMskmMe9hVUvdD7fd5/yp7TsBvxGDuEBKArZi9ZlekJfHczYrS9HZvOPuKf1RHJ09tE8a7Rc0aveC9JWLdxDLgofJp0TWLId7fM+ReUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ytd/+Lfl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=N0W44tfq; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ytd/+Lfl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=N0W44tfq; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=fmf/IWjeSbKkXXBS2kjHmhkVFXWJsqpUANgEbhD3HrXDYIg9g/HFIHWPtgVW89xwuD/A0m8Zf7dmkAyTvEmpc95x/AbCxuAun5NgySO/429lHnbg1xEGLO+QvF38r7qtbODv/YPXHWJ/IWtDZ88zhFP+fnfXBabDfGyDhVEbVWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VsO9gsY7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=I7nNPC6r; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VsO9gsY7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=I7nNPC6r; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 835E61F394;
-	Fri, 10 Jan 2025 09:45:30 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CA83B1F394;
+	Fri, 10 Jan 2025 09:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736502330; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1736502840; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=l2qa2L55vC2t0giFh2ERboOCPg3UQyUAglLoBSfdQWU=;
-	b=ytd/+LflNPJlx4BLtDzJr/90HuHsRgDUAEkCBNK26LiE3kostGv9zJ8ZGtxAz4im1SNuHl
-	6g7ApCSLY5OMCl0HrGPCQqfqeNLDCjvH/g/SBk5irLPQNlbFEyi3QtwUCjSFMZfmRWfXnD
-	HVcIGIKwenD+TBWVcP/3oIethkQYxgw=
+	bh=xsvN9OIFYxP3/GaFFOm/Gy5OVg27/U7FgUISQD7sGsI=;
+	b=VsO9gsY7FSoiORu9UOtTUHEkZxBWpDOl7mZL4F0w8LDwgAsKaEbZ81ZgIzGC7oNYNoWXYl
+	5oAbxGSvoOE5UYkdts6JYBB4ATYY2L47Q3qwyvOxRSBRVphj/Zu6EAqTv12UmuOvHTh/sS
+	Ra3RWHNKsieiK9s7zMTAz0WpFJNZ0xc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736502330;
+	s=susede2_ed25519; t=1736502840;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=l2qa2L55vC2t0giFh2ERboOCPg3UQyUAglLoBSfdQWU=;
-	b=N0W44tfqFC/v27LClS7d9iTzYM3YKvU++Drgu6JISJTTQU4BKE+s+64EfDC1nU4d15mxTZ
-	IVrejbLVKiqvWEBg==
+	bh=xsvN9OIFYxP3/GaFFOm/Gy5OVg27/U7FgUISQD7sGsI=;
+	b=I7nNPC6rgqoNGx+4/T56qwZ6wF4QxHoQeWhiI8tJhGvvN4AM5z1rGAZrMRHpNdxbbkE+0i
+	2ewNtGNDiqL3A3DQ==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="ytd/+Lfl";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=N0W44tfq
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736502330; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1736502840; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=l2qa2L55vC2t0giFh2ERboOCPg3UQyUAglLoBSfdQWU=;
-	b=ytd/+LflNPJlx4BLtDzJr/90HuHsRgDUAEkCBNK26LiE3kostGv9zJ8ZGtxAz4im1SNuHl
-	6g7ApCSLY5OMCl0HrGPCQqfqeNLDCjvH/g/SBk5irLPQNlbFEyi3QtwUCjSFMZfmRWfXnD
-	HVcIGIKwenD+TBWVcP/3oIethkQYxgw=
+	bh=xsvN9OIFYxP3/GaFFOm/Gy5OVg27/U7FgUISQD7sGsI=;
+	b=VsO9gsY7FSoiORu9UOtTUHEkZxBWpDOl7mZL4F0w8LDwgAsKaEbZ81ZgIzGC7oNYNoWXYl
+	5oAbxGSvoOE5UYkdts6JYBB4ATYY2L47Q3qwyvOxRSBRVphj/Zu6EAqTv12UmuOvHTh/sS
+	Ra3RWHNKsieiK9s7zMTAz0WpFJNZ0xc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736502330;
+	s=susede2_ed25519; t=1736502840;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=l2qa2L55vC2t0giFh2ERboOCPg3UQyUAglLoBSfdQWU=;
-	b=N0W44tfqFC/v27LClS7d9iTzYM3YKvU++Drgu6JISJTTQU4BKE+s+64EfDC1nU4d15mxTZ
-	IVrejbLVKiqvWEBg==
+	bh=xsvN9OIFYxP3/GaFFOm/Gy5OVg27/U7FgUISQD7sGsI=;
+	b=I7nNPC6rgqoNGx+4/T56qwZ6wF4QxHoQeWhiI8tJhGvvN4AM5z1rGAZrMRHpNdxbbkE+0i
+	2ewNtGNDiqL3A3DQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 65F7013A86;
-	Fri, 10 Jan 2025 09:45:30 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B945913A86;
+	Fri, 10 Jan 2025 09:54:00 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BM7eGDrsgGeFGAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 10 Jan 2025 09:45:30 +0000
+	id jhnvLDjugGf5GgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 10 Jan 2025 09:54:00 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1887BA0889; Fri, 10 Jan 2025 10:45:26 +0100 (CET)
-Date: Fri, 10 Jan 2025 10:45:26 +0100
+	id 63781A0889; Fri, 10 Jan 2025 10:54:00 +0100 (CET)
+Date: Fri, 10 Jan 2025 10:54:00 +0100
 From: Jan Kara <jack@suse.cz>
 To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, agruenba@redhat.com, amir73il@gmail.com, 
 	brauner@kernel.org, ceph-devel@vger.kernel.org, dhowells@redhat.com, 
 	hubcap@omnibond.com, jack@suse.cz, krisman@kernel.org, linux-nfs@vger.kernel.org, 
 	miklos@szeredi.hu, torvalds@linux-foundation.org
-Subject: Re: [PATCH 03/20] make take_dentry_name_snapshot() lockless
-Message-ID: <2pgmld6ntcxtxzdv3gax63dmxe2wi2p2nfmkqcqbv5zgi7rni7@zxoum5yaqgtp>
+Subject: Re: [PATCH 18/20] ocfs2_dentry_revalidate(): use stable parent inode
+ and name passed by caller
+Message-ID: <gqakhrasapfiocyilg5zbehb7m24n6sgtyoxe5pluih256v5ht@n7vp2zm5xsti>
 References: <20250110023854.GS1977892@ZenIV>
  <20250110024303.4157645-1-viro@zeniv.linux.org.uk>
- <20250110024303.4157645-3-viro@zeniv.linux.org.uk>
+ <20250110024303.4157645-18-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -107,125 +107,78 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250110024303.4157645-3-viro@zeniv.linux.org.uk>
-X-Rspamd-Queue-Id: 835E61F394
+In-Reply-To: <20250110024303.4157645-18-viro@zeniv.linux.org.uk>
 X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
+X-Spamd-Result: default: False [-3.80 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DKIM_TRACE(0.00)[suse.cz:+];
+	ARC_NA(0.00)[];
 	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
 	FREEMAIL_CC(0.00)[vger.kernel.org,redhat.com,gmail.com,kernel.org,omnibond.com,suse.cz,szeredi.hu,linux-foundation.org];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,linux.org.uk:email,suse.cz:dkim,suse.cz:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,linux.org.uk:email,suse.com:email]
+X-Spam-Score: -3.80
 X-Spam-Flag: NO
 
-On Fri 10-01-25 02:42:46, Al Viro wrote:
-> Use ->d_seq instead of grabbing ->d_lock; in case of shortname dentries
-> that avoids any stores to shared data objects and in case of long names
-> we are down to (unavoidable) atomic_inc on the external_name refcount.
-> 
-> Makes the thing safer as well - the areas where ->d_seq is held odd are
-> all nested inside the areas where ->d_lock is held, and the latter are
-> much more numerous.
-> 
-> NOTE: now that there is a lockless path where we might try to grab
-> a reference to an already doomed external_name instance, it is no
-> longer possible for external_name.u.count and external_name.u.head
-> to share space (kudos to Linus for spotting that).
-> 
-> To reduce the noice this commit just turns external_name.u into
-> a struct (instead of union); the next commit will dissolve it.
+On Fri 10-01-25 02:43:01, Al Viro wrote:
+> theoretically, ->d_name use in there is a UAF, but only if you are messing with
+> tracepoints...
 > 
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-Cool. One less lock roundtrip on relatively hot fsnotify path :). Feel free
-to add:
+Looks good. Feel free to add:
 
 Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
 > ---
->  fs/dcache.c | 35 +++++++++++++++++++++++++----------
->  1 file changed, 25 insertions(+), 10 deletions(-)
+>  fs/ocfs2/dcache.c | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
 > 
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 52662a5d08e4..f387dc97df86 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -296,9 +296,9 @@ static inline int dentry_cmp(const struct dentry *dentry, const unsigned char *c
->  }
+> diff --git a/fs/ocfs2/dcache.c b/fs/ocfs2/dcache.c
+> index ecb1ce6301c4..1873bbbb7e5b 100644
+> --- a/fs/ocfs2/dcache.c
+> +++ b/fs/ocfs2/dcache.c
+> @@ -45,8 +45,7 @@ static int ocfs2_dentry_revalidate(struct inode *dir, const struct qstr *name,
+>  	inode = d_inode(dentry);
+>  	osb = OCFS2_SB(dentry->d_sb);
 >  
->  struct external_name {
-> -	union {
-> -		atomic_t count;
-> -		struct rcu_head head;
-> +	struct {
-> +		atomic_t count;		// ->count and ->head can't be combined
-> +		struct rcu_head head;	// see take_dentry_name_snapshot()
->  	} u;
->  	unsigned char name[];
->  };
-> @@ -329,15 +329,30 @@ static inline int dname_external(const struct dentry *dentry)
+> -	trace_ocfs2_dentry_revalidate(dentry, dentry->d_name.len,
+> -				      dentry->d_name.name);
+> +	trace_ocfs2_dentry_revalidate(dentry, name->len, name->name);
 >  
->  void take_dentry_name_snapshot(struct name_snapshot *name, struct dentry *dentry)
->  {
-> -	spin_lock(&dentry->d_lock);
-> -	name->name = dentry->d_name;
-> -	if (unlikely(dname_external(dentry))) {
-> -		atomic_inc(&external_name(dentry)->u.count);
-> -	} else {
-> +	unsigned seq;
-> +	const unsigned char *s;
-> +
-> +	rcu_read_lock();
-> +retry:
-> +	seq = read_seqcount_begin(&dentry->d_seq);
-> +	s = READ_ONCE(dentry->d_name.name);
-> +	name->name.hash_len = dentry->d_name.hash_len;
-> +	name->name.name = name->inline_name.string;
-> +	if (likely(s == dentry->d_shortname.string)) {
->  		name->inline_name = dentry->d_shortname;
-> -		name->name.name = name->inline_name.string;
-> +	} else {
-> +		struct external_name *p;
-> +		p = container_of(s, struct external_name, name[0]);
-> +		// get a valid reference
-> +		if (unlikely(!atomic_inc_not_zero(&p->u.count)))
-> +			goto retry;
-> +		name->name.name = s;
->  	}
-> -	spin_unlock(&dentry->d_lock);
-> +	if (read_seqcount_retry(&dentry->d_seq, seq)) {
-> +		release_dentry_name_snapshot(name);
-> +		goto retry;
-> +	}
-> +	rcu_read_unlock();
->  }
->  EXPORT_SYMBOL(take_dentry_name_snapshot);
->  
+>  	/* For a negative dentry -
+>  	 * check the generation number of the parent and compare with the
+> @@ -54,12 +53,8 @@ static int ocfs2_dentry_revalidate(struct inode *dir, const struct qstr *name,
+>  	 */
+>  	if (inode == NULL) {
+>  		unsigned long gen = (unsigned long) dentry->d_fsdata;
+> -		unsigned long pgen;
+> -		spin_lock(&dentry->d_lock);
+> -		pgen = OCFS2_I(d_inode(dentry->d_parent))->ip_dir_lock_gen;
+> -		spin_unlock(&dentry->d_lock);
+> -		trace_ocfs2_dentry_revalidate_negative(dentry->d_name.len,
+> -						       dentry->d_name.name,
+> +		unsigned long pgen = OCFS2_I(dir)->ip_dir_lock_gen;
+> +		trace_ocfs2_dentry_revalidate_negative(name->len, name->name,
+>  						       pgen, gen);
+>  		if (gen != pgen)
+>  			goto bail;
 > -- 
 > 2.39.5
 > 
