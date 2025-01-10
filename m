@@ -1,128 +1,282 @@
-Return-Path: <ceph-devel+bounces-2424-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2425-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F79CA085C8
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jan 2025 04:12:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6AD4A08711
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jan 2025 06:53:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 396663A90E7
-	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jan 2025 03:12:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E157E166F92
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 Jan 2025 05:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C031A4F1F;
-	Fri, 10 Jan 2025 03:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E9E2063FB;
+	Fri, 10 Jan 2025 05:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="iIaR3zQr"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wk+dHY8N"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496F72942A
-	for <ceph-devel@vger.kernel.org>; Fri, 10 Jan 2025 03:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC508347C7;
+	Fri, 10 Jan 2025 05:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736478731; cv=none; b=aHL1hdy/SWM/b0FtDV04XeiISf1ZL0h8DdJvqb/vgiUgIXlYTKLVqImG1uzzC2BVUyCQYEn0DUiezOnhN83Y+DvXttXWXtAcc92/DjpEqHGcD7uZ8ZuQvlaLAIg71aviyXIZiw+nUZeCqaANSabJIuVSxp0KT9TEelHop1zET+k=
+	t=1736488407; cv=none; b=YJsxCtEuDew2wPOQDINa0uffwrm7xv3pH4eBvu4HPyAUNgGtghSXKEZ+NcpJBFwIVslGy+g5Bhram0u9iwt0XQdN6CE7W0bbgVB4WOIr1xZ8mQJJP/EGBs2RPEGcjGiG+Pl0Gg7Mk0gx+9D6iOHssrfIE+IyPCWU3fTr6tUVPaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736478731; c=relaxed/simple;
-	bh=D18utRlVGGzPCuWewtrj5krIU9bJrmplcMeXiRT1+TY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=atgC8ZnjqMDOncog8k0rQb4ZaCp4Ok1SiXhaHpNvIaE4sLjKkKDg1MtcP6FYwxLGCDAko44rEboHKIqLM57DeGRZ1rnQwHwKiLLsAsgVe/scobUgo6rba8OVj8fXUYA6WvjpkWrHYphKzskPzoYPbqyBsW6JP02tYK4Sh0wtGcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=iIaR3zQr; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d88c355e0dso2651837a12.0
-        for <ceph-devel@vger.kernel.org>; Thu, 09 Jan 2025 19:12:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1736478726; x=1737083526; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=M1QMtuuDrMek+cqp6TB29HWYKAOWii4BW9zvMrbHJAk=;
-        b=iIaR3zQr9AEjbZm4QgIkpIovhvlGfB/Pvp7eIl4rhPekf8k+6cNzGuD1i91pyFqPHt
-         rosrpVTUU4L4xFDsln+TO5MwcnFgobiUJGZLLgFtIcKt/xir8KOfpZ9CCwY2hRSIcW02
-         zY2cgbU/6w1qu+h0RNS6PpYETzIxO0+Lw8nGo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736478726; x=1737083526;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M1QMtuuDrMek+cqp6TB29HWYKAOWii4BW9zvMrbHJAk=;
-        b=V32AUmd69ynlVkOBiG2uXARGLQ5mH7C3BVLymqrCfIm0cNFNQBhTCIcAVuUUHjmlsU
-         XtHpSMOrPdG2Y0SzakH84RBYhPsQOZxbid/k3l8AfMRLOwfDpb/HwLLYvOzBtojxVW96
-         1yEQFrlkbZu5DwNiJ+K+v1c8UQIxB2j3p1I3qmaqI5v3WldpPC833xnsPxzQmcbMTPnf
-         mOD0sBRqfZhUJzoqim8CGnM8A1YAqFGVCJ9faxc+1g09Yu915dhXbdL2CYxeaUgG9KgD
-         iIKgbWoWzPh7kAiNz7/yON48+gIjrmAD/Ty5tjxs43nOZV9HoSan00L1+/XwJeiLbvBE
-         mf/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVndu8Han7Q65LZCVIXi4SxkcDk0sgPPl90Kw06JZsJ1vbyeOQoZ1nSnzkXi+3tfb4QLslft37kqd+l@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/CyWsI5c/OffGidxLH/D+qwg3OPP9YY7c5U8HYvBX4UDSW3RD
-	6/Hu4yK8R9DmDfABBcsHHxREc8mx3Dcfq0Ti7hYCi+641gqHrPP8AapFh1AR1436Ak9V58ysuGo
-	17wApTA==
-X-Gm-Gg: ASbGncsip17kBIgFQVjlw/9P/jGM+J/ORlH5SaMXypuL0mLY0Oj7KgdmDWydWXCa1iW
-	o4w54waChxlU2ykFXpc43hRLlnvZUyNLaA98a7AkFldBHP337ANX0UVVO8mg1mE0SIWrZSHyQgl
-	53KY6uuUS3rPN8fshEtEQVhVDxTjyAkFFBW5WRnAM+kKXKwMT98z3FYG8g0kI/GUtZK7LW1MJ2A
-	likVCcikVy5XV+GeTxAtypSG7TyzS1Jwd7HxEP7A1IG6IX1W1RwEFtu5Jy8ma3M7FF1i2iS3XNa
-	TdapdLHPmeewOe7WxIF0GhGXUaXkSEc=
-X-Google-Smtp-Source: AGHT+IFyrJZ2ofr3sMJOf0larMCO2gJP06nIiLM9XOtvkoKv1VG4g+ABQ/8MHBuiLkqxiMDYkjmVQA==
-X-Received: by 2002:a17:907:a0cf:b0:ab2:b77e:f421 with SMTP id a640c23a62f3a-ab2b77ef683mr670272566b.23.1736478726407;
-        Thu, 09 Jan 2025 19:12:06 -0800 (PST)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab2c95647absm124562466b.118.2025.01.09.19.12.04
-        for <ceph-devel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jan 2025 19:12:04 -0800 (PST)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aafc9d75f8bso325662166b.2
-        for <ceph-devel@vger.kernel.org>; Thu, 09 Jan 2025 19:12:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX0ZJnkRus/t8WeUtXCt75XcG0qxAvotNOnE4Rps7O24jEEE6UtiIHTbuGunpLN2zMMd5WjqXQHflcm@vger.kernel.org
-X-Received: by 2002:a17:907:7f24:b0:aa6:5eae:7ece with SMTP id
- a640c23a62f3a-ab2abc93e22mr778679366b.43.1736478723770; Thu, 09 Jan 2025
- 19:12:03 -0800 (PST)
+	s=arc-20240116; t=1736488407; c=relaxed/simple;
+	bh=MQWrL4mI3FHsNxpP9mVShaq2xyibwQTmuRqGRPyDMUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X5Ik3qa20ADqwzFFDu1YRTspyccbUHT8GQbPhoVPOLZ9DecUPrFJSXNSxILpdu877kiSTjPJGrmTMxgk03aB2shWhWGrdYziojKVa1OR8jUR6lzk2vFMaFEVjO4zpWM67Bx0UcKI2uCMKsJh5xpJWUBRNRCBu0RuiVYSFpH5JJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=wk+dHY8N; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=qXOr4LObb1DfxFpbCrHN4maUfTaww1DRKC318O1rvmE=; b=wk+dHY8NaMUI6hIOiLtMeDPF+4
+	OqanGe1ijg+8ND/9aTSPYUI4N4hj1izBBzhmmzbgdMBvSFbXcCBcyetJDj/Eh+k7Ou3MdwbhTOHhE
+	9EDA0x1flrXWTFiJf7NAyTqFZkxqcpUeuhT4SRUfJORXHwrEBCSVqI3S0Pqxif9pn5W6tFwcSIN+G
+	xaFIKJQzzgG7yBc7X+cMb3PXqyx1+/a4Wo/prKRDvKcYrVsr9Z4byG6kPk+rjfiEEm/0BwZ4uNF2j
+	al6hv7qD5qqTRc4O7NWRAiXTaMQOBeJ9xx9lLyWSUJNNkpXZg7QEq2OsJySzmnjFdophinmxOoHCR
+	8u89M/pg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tW7xR-0000000HUJs-30lr;
+	Fri, 10 Jan 2025 05:53:21 +0000
+Date: Fri, 10 Jan 2025 05:53:21 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, agruenba@redhat.com, amir73il@gmail.com,
+	brauner@kernel.org, ceph-devel@vger.kernel.org, dhowells@redhat.com,
+	hubcap@omnibond.com, jack@suse.cz, krisman@kernel.org,
+	linux-nfs@vger.kernel.org, miklos@szeredi.hu
+Subject: Re: [PATCH 20/20] 9p: fix ->rename_sem exclusion
+Message-ID: <20250110055321.GU1977892@ZenIV>
+References: <20250110023854.GS1977892@ZenIV>
+ <20250110024303.4157645-1-viro@zeniv.linux.org.uk>
+ <20250110024303.4157645-20-viro@zeniv.linux.org.uk>
+ <CAHk-=wh2i3j3GUYpiTBteS7Ln02endudZCqc9DRz==3p8T__yQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250110023854.GS1977892@ZenIV> <20250110024303.4157645-1-viro@zeniv.linux.org.uk>
- <20250110024303.4157645-20-viro@zeniv.linux.org.uk>
-In-Reply-To: <20250110024303.4157645-20-viro@zeniv.linux.org.uk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 9 Jan 2025 19:11:46 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh2i3j3GUYpiTBteS7Ln02endudZCqc9DRz==3p8T__yQ@mail.gmail.com>
-X-Gm-Features: AbW1kvZaQx4RZA3DoPNnn7ySYeCUxXnMhPsF3e4Ed8oCi4wmKUNd_tb4o7KrlrQ
-Message-ID: <CAHk-=wh2i3j3GUYpiTBteS7Ln02endudZCqc9DRz==3p8T__yQ@mail.gmail.com>
-Subject: Re: [PATCH 20/20] 9p: fix ->rename_sem exclusion
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, agruenba@redhat.com, amir73il@gmail.com, 
-	brauner@kernel.org, ceph-devel@vger.kernel.org, dhowells@redhat.com, 
-	hubcap@omnibond.com, jack@suse.cz, krisman@kernel.org, 
-	linux-nfs@vger.kernel.org, miklos@szeredi.hu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh2i3j3GUYpiTBteS7Ln02endudZCqc9DRz==3p8T__yQ@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, 9 Jan 2025 at 18:45, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> However, to reduce dentry_operations bloat, let's add one method instead -
-> ->d_want_unalias(alias, true) instead of ->d_unalias_trylock(alias) and
-> ->d_want_unalias(alias, false) instead of ->d_unalias_unlock(alias).
+On Thu, Jan 09, 2025 at 07:11:46PM -0800, Linus Torvalds wrote:
+> On Thu, 9 Jan 2025 at 18:45, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > However, to reduce dentry_operations bloat, let's add one method instead -
+> > ->d_want_unalias(alias, true) instead of ->d_unalias_trylock(alias) and
+> > ->d_want_unalias(alias, false) instead of ->d_unalias_unlock(alias).
+> 
+> Ugh.
+> 
+> So of all the patches, this is the one that I hate.
+> 
+> I absolutely detest interfaces with random true/false arguments, and
+> when it is about locking, the "detest" becomes something even darker
+> and more visceral.
+> 
+> I think it would be a lot better as separate ops, considering that
+> 
+>  (a) we'll probably have only one or two actual users, so it's not
+> like it complicates things on that side
+> 
+>  (b) we don't have *that* many "struct dentry_operations" structures:
+> I think they are all statically generated constant structures
+> (typically one or two per filesystem), so it's not like we're saving
+> memory by merging those pointers into one.
 
-Ugh.
+ACK.
 
-So of all the patches, this is the one that I hate.
+> Please?
 
-I absolutely detest interfaces with random true/false arguments, and
-when it is about locking, the "detest" becomes something even darker
-and more visceral.
+Done and force-pushed; see below for updated variant of that commit
 
-I think it would be a lot better as separate ops, considering that
+commit 1f28d77e868e63a07ab50e7fe161fc366b2fb23b
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Sun Jan 5 21:33:17 2025 -0500
 
- (a) we'll probably have only one or two actual users, so it's not
-like it complicates things on that side
+    9p: fix ->rename_sem exclusion
+    
+    9p wants to be able to build a path from given dentry to fs root and keep
+    it valid over a blocking operation.
+    
+    ->s_vfs_rename_mutex would be a natural candidate, but there are places
+    where we need that and where we have no way to tell if ->s_vfs_rename_mutex
+    is already held deeper in callchain.  Moreover, it's only held for
+    cross-directory renames; name changes within the same directory happen
+    without it.
+    
+    Solution:
+            * have d_move() done in ->rename() rather than in its caller
+            * maintain a 9p-private rwsem (per-filesystem)
+            * hold it exclusive over the relevant part of ->rename()
+            * hold it shared over the places where we want the path.
+    
+    That almost works.  FS_RENAME_DOES_D_MOVE is enough to put all d_move()
+    and d_exchange() calls under filesystem's control.  However, there's
+    also __d_unalias(), which isn't covered by any of that.
+    
+    If ->lookup() hits a directory inode with preexisting dentry elsewhere
+    (due to e.g. rename done on server behind our back), d_splice_alias()
+    called by ->lookup() will move/rename that alias.
+    
+    Add a couple of optional methods, so that __d_unalias() would do
+            if alias->d_op->d_unalias_trylock != NULL
+                    if (!alias->d_op->d_unalias_trylock(alias))
+                            fail (resulting in -ESTALE from lookup)
+            __d_move(...)
+            if alias->d_op->d_unalias_unlock != NULL
+                    alias->d_unalias_unlock(alias)
+    where it currently does __d_move().  9p instances do down_write_trylock()
+    and up_write() of ->rename_mutex.
+    
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
- (b) we don't have *that* many "struct dentry_operations" structures:
-I think they are all statically generated constant structures
-(typically one or two per filesystem), so it's not like we're saving
-memory by merging those pointers into one.
-
-Please?
-
-           Linus
+diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
+index 146e7d8aa736..d20a32b77b60 100644
+--- a/Documentation/filesystems/locking.rst
++++ b/Documentation/filesystems/locking.rst
+@@ -31,6 +31,8 @@ prototypes::
+ 	struct vfsmount *(*d_automount)(struct path *path);
+ 	int (*d_manage)(const struct path *, bool);
+ 	struct dentry *(*d_real)(struct dentry *, enum d_real_type type);
++	bool (*d_unalias_trylock)(const struct dentry *);
++	void (*d_unalias_unlock)(const struct dentry *);
+ 
+ locking rules:
+ 
+@@ -50,6 +52,8 @@ d_dname:	   no		no		no		no
+ d_automount:	   no		no		yes		no
+ d_manage:	   no		no		yes (ref-walk)	maybe
+ d_real		   no		no		yes 		no
++d_unalias_trylock  yes		no		no 		no
++d_unalias_unlock   yes		no		no 		no
+ ================== ===========	========	==============	========
+ 
+ inode_operations
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 7c352ebaae98..31eea688609a 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -1265,6 +1265,8 @@ defined:
+ 		struct vfsmount *(*d_automount)(struct path *);
+ 		int (*d_manage)(const struct path *, bool);
+ 		struct dentry *(*d_real)(struct dentry *, enum d_real_type type);
++		bool (*d_unalias_trylock)(const struct dentry *);
++		void (*d_unalias_unlock)(const struct dentry *);
+ 	};
+ 
+ ``d_revalidate``
+@@ -1428,6 +1430,25 @@ defined:
+ 
+ 	For non-regular files, the 'dentry' argument is returned.
+ 
++``d_unalias_trylock``
++	if present, will be called by d_splice_alias() before moving a
++	preexisting attached alias.  Returning false prevents __d_move(),
++	making d_splice_alias() fail with -ESTALE.
++
++	Rationale: setting FS_RENAME_DOES_D_MOVE will prevent d_move()
++	and d_exchange() calls from the outside of filesystem methods;
++	however, it does not guarantee that attached dentries won't
++	be renamed or moved by d_splice_alias() finding a preexisting
++	alias for a directory inode.  Normally we would not care;
++	however, something that wants to stabilize the entire path to
++	root over a blocking operation might need that.  See 9p for one
++	(and hopefully only) example.
++
++``d_unalias_unlock``
++	should be paired with ``d_unalias_trylock``; that one is called after
++	__d_move() call in __d_unalias().
++
++
+ Each dentry has a pointer to its parent dentry, as well as a hash list
+ of child dentries.  Child dentries are basically like files in a
+ directory.
+diff --git a/fs/9p/v9fs.h b/fs/9p/v9fs.h
+index 698c43dd5dc8..f28bc763847a 100644
+--- a/fs/9p/v9fs.h
++++ b/fs/9p/v9fs.h
+@@ -202,7 +202,7 @@ static inline struct v9fs_session_info *v9fs_inode2v9ses(struct inode *inode)
+ 	return inode->i_sb->s_fs_info;
+ }
+ 
+-static inline struct v9fs_session_info *v9fs_dentry2v9ses(struct dentry *dentry)
++static inline struct v9fs_session_info *v9fs_dentry2v9ses(const struct dentry *dentry)
+ {
+ 	return dentry->d_sb->s_fs_info;
+ }
+diff --git a/fs/9p/vfs_dentry.c b/fs/9p/vfs_dentry.c
+index 872c1abe3295..5061f192eafd 100644
+--- a/fs/9p/vfs_dentry.c
++++ b/fs/9p/vfs_dentry.c
+@@ -105,14 +105,30 @@ static int v9fs_lookup_revalidate(struct inode *dir, const struct qstr *name,
+ 	return __v9fs_lookup_revalidate(dentry, flags);
+ }
+ 
++static bool v9fs_dentry_unalias_trylock(const struct dentry *dentry)
++{
++	struct v9fs_session_info *v9ses = v9fs_dentry2v9ses(dentry);
++	return down_write_trylock(&v9ses->rename_sem);
++}
++
++static void v9fs_dentry_unalias_unlock(const struct dentry *dentry)
++{
++	struct v9fs_session_info *v9ses = v9fs_dentry2v9ses(dentry);
++	up_write(&v9ses->rename_sem);
++}
++
+ const struct dentry_operations v9fs_cached_dentry_operations = {
+ 	.d_revalidate = v9fs_lookup_revalidate,
+ 	.d_weak_revalidate = __v9fs_lookup_revalidate,
+ 	.d_delete = v9fs_cached_dentry_delete,
+ 	.d_release = v9fs_dentry_release,
++	.d_unalias_trylock = v9fs_dentry_unalias_trylock,
++	.d_unalias_unlock = v9fs_dentry_unalias_unlock,
+ };
+ 
+ const struct dentry_operations v9fs_dentry_operations = {
+ 	.d_delete = always_delete_dentry,
+ 	.d_release = v9fs_dentry_release,
++	.d_unalias_trylock = v9fs_dentry_unalias_trylock,
++	.d_unalias_unlock = v9fs_dentry_unalias_unlock,
+ };
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 7d42ca367522..2ac614fc8bba 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2961,7 +2961,12 @@ static int __d_unalias(struct dentry *dentry, struct dentry *alias)
+ 		goto out_err;
+ 	m2 = &alias->d_parent->d_inode->i_rwsem;
+ out_unalias:
++	if (alias->d_op->d_unalias_trylock &&
++	    !alias->d_op->d_unalias_trylock(alias))
++		goto out_err;
+ 	__d_move(alias, dentry, false);
++	if (alias->d_op->d_unalias_unlock)
++		alias->d_op->d_unalias_unlock(alias);
+ 	ret = 0;
+ out_err:
+ 	if (m2)
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index 4a6bdadf2f29..9a1a30857763 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -159,6 +159,8 @@ struct dentry_operations {
+ 	struct vfsmount *(*d_automount)(struct path *);
+ 	int (*d_manage)(const struct path *, bool);
+ 	struct dentry *(*d_real)(struct dentry *, enum d_real_type type);
++	bool (*d_unalias_trylock)(const struct dentry *);
++	void (*d_unalias_unlock)(const struct dentry *);
+ } ____cacheline_aligned;
+ 
+ /*
 
