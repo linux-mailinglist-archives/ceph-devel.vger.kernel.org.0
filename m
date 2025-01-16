@@ -1,96 +1,196 @@
-Return-Path: <ceph-devel+bounces-2489-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2490-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49CB1A140E2
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2025 18:31:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A5D3A140F7
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2025 18:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA6CD7A2F8B
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2025 17:31:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 616DB7A1F20
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2025 17:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770B5137930;
-	Thu, 16 Jan 2025 17:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD70145355;
+	Thu, 16 Jan 2025 17:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lesviallon.fr header.i=@lesviallon.fr header.b="WF1zj028"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BbDD5oD8"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from lesviallon.fr (89-95-58-186.abo.bbox.fr [89.95.58.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F871428E7
-	for <ceph-devel@vger.kernel.org>; Thu, 16 Jan 2025 17:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.95.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5A324A7C6;
+	Thu, 16 Jan 2025 17:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737048706; cv=none; b=AAs6LqHzhbAW4B39kpGx+rSBFgTVXYvuvAjX+wNZ17XclzSU0S84OOOi0xMIuRJLRnNpXWYPBJEJ5VXyVfsZIOLv+dUWQW2OLQanekDRiEgPWBlmBsKEFuM8AWVGkPF9/f5jhTFS6VF/LMTI/bpNFfJdznB84UQRdbW57SiwJro=
+	t=1737048869; cv=none; b=nzmJQ6DoE2OmfBbxwRBuOmAtfovYkODvi1PFfaAl7fIHeRZlgMFF2FKyhQFfNTPsMhk8PUnF6Bw6OHQTK6tEzMSnJofW4xb3XxpY0O7u9VAYpsz+J8+iXbXiIe3QwOMo+n03AXdb9isrzCxZEPh/N1ruESpk64ogQ5uXupwrggY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737048706; c=relaxed/simple;
-	bh=LIYCkQ7p3wKdd8QZ0EKklvH8xpPkwQAJkF+Irh0dmjc=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=UdhnEjETJuacllBSjEgBw2FD1K12T2YTsiFaENQ+CxBaF7onsHuIWexVp4hm3xxtQP7m3gwHWtfa03bRWjwsJDLHnAjbGA4JKU+wFnWzMC8gJL/G9Ddu69j7Ysn4SJlyUAFQwuAgJvy4ShwOBCBVOQ1GhM2g/1e7BtuGOKsWWxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lesviallon.fr; spf=pass smtp.mailfrom=lesviallon.fr; dkim=pass (1024-bit key) header.d=lesviallon.fr header.i=@lesviallon.fr header.b=WF1zj028; arc=none smtp.client-ip=89.95.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lesviallon.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lesviallon.fr
-Date: Thu, 16 Jan 2025 18:31:32 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lesviallon.fr;
-	s=dkim; t=1737048694;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LIYCkQ7p3wKdd8QZ0EKklvH8xpPkwQAJkF+Irh0dmjc=;
-	b=WF1zj028Hb7zE4dnuGFXdrIv3RqaTgGpuOnHHMM2+oKhGnrwaDNtaCXVE1lwqrWwMViIYl
-	9H5q4C7Od7uFiSsITapiGB4CHWjRCWFCXX8EN0/A2t1qoyGy9e/L7l5oPdhG514Sd+3lIh
-	Bmpu0gEzNdBMDQFKK/W8Cj37xAEV2kA=
-Authentication-Results: lesviallon.fr;
-	auth=pass smtp.mailfrom=antoine@lesviallon.fr
-From: Antoine Viallon <antoine@lesviallon.fr>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
- "idryomov@gmail.com" <idryomov@gmail.com>
-CC: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Subject: RE: [PATCH v2] ceph: fix memory leak in ceph_mds_auth_match()
-Disposition-Notification-To: Antoine Viallon <antoine@lesviallon.fr>
-X-Confirm-Reading-To: Antoine Viallon <antoine@lesviallon.fr>
-Return-Receipt-To: Antoine Viallon <antoine@lesviallon.fr>
-In-Reply-To: <187c44868453c865ea363753456a06916a4424b7.camel@ibm.com>
-References: <20250114123806.2339159-1-antoine@lesviallon.fr> <20250114224514.2399813-1-antoine@lesviallon.fr> <9cd7c8f4c194fcb8c63c818f2155a9b4f55ce682.camel@ibm.com> <CAOi1vP-zzoBrJF=rSLVRLdE_=pk8A5UWmQwQV0VhvdnzsPijkg@mail.gmail.com> <187c44868453c865ea363753456a06916a4424b7.camel@ibm.com>
-Message-ID: <A6CF52B9-65F9-4C7B-962B-F45F78E0A1B6@lesviallon.fr>
+	s=arc-20240116; t=1737048869; c=relaxed/simple;
+	bh=QdI/Oyw8R6iGT2ROakjIbjMZIwTzOMQIg8ekYLEo0x4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DCB/aIiM0WZknVFBk5HgQ3sHcxHn5KAx9cpEY+ccpNDXsCrJORa7x6jgBuQjDHc/LcCsBCtIG2Q2ZubB5qmPGLbaRvQNwBu+5i7JrpaX92OvzIO+TBkMF/sYviNnn/QIKYwQkPdyWHMHYpRoRR3oaaVJkbY6lhTEfK+7r8i12WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BbDD5oD8; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2ee46851b5eso1761820a91.1;
+        Thu, 16 Jan 2025 09:34:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737048867; x=1737653667; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7e2H3NJynS8ASdQYVmMB/7/0U+sJgpPc8AydkCIPguM=;
+        b=BbDD5oD81vK/cgIYG8f2fpbqAYzt4AGcCaXWbzLxCkEiFyPmS5GZDhrYD1kv1aOFbc
+         oJAsFqgjqA40+fSqlqTXQsjqbNdd//+PajSYWvC9oqR/EGu2/l6TWLIM7I0p9vv04SL4
+         HrcJ6gUsFKuQQYgBW3j1Fq/pDnfmJyeGz8jZ/O3XxPsLVwVXqvJ1y6rDIpJXGqKLsVsV
+         jn0YrQqQG5MgtJZW7AWqkDlar9SFzKnu+Bq8BwBBjSsO5PBex+X08sGucdXoVs5q61Oh
+         cfXwslouFUwqylwqttKFuOa7v5HT18EfRVT7FqSzT0VNUstkbkmHtTQddA9R2+esrp9g
+         NIDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737048867; x=1737653667;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7e2H3NJynS8ASdQYVmMB/7/0U+sJgpPc8AydkCIPguM=;
+        b=jO75RCFkbn9PyCl2chsW2ZQ1AKVc/kAfTwVx7vcDwhyGKwKkJUNzqeAaJSz1q0cBl2
+         TQVucLb3aPY1Tls465zg+ufP885yJj8AuwCyvd2/p67zHs6d2cLABfWB2CVpGtsMYI3d
+         eTK10D5+qyL5V4z82Yi1hkT8T1SLLRVvwy3WaovmPYHgmnA3nFuggeZ1+5xA7t5Vbe3y
+         N/dAkOotB0KoVnE8otdRlMfgrt/mmgKECdGWFhG88pd+GqMFIEI8tnv2g1U4elBt/GSm
+         OZWRNJdd1JzVoQU6zjcjW7MEYuI0r0XZ7Wp6Ek5T0+rppX9nl9qRHF5+UGM/dQjkhYU+
+         YkJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWC4jpl8XeTV75k5LvtMB2Kz48pulY3W8LrDobmT9Efn+bP06Z32cIlyI2KmLaW/64O5oqoTQ8ZO4WcwjvO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnFvU4HyVAsTjb3hOtt1AGyJbBJ2NdkBaMx+1Q/ei4e3OgJDO5
+	i2HST1SBxuBigHCrlSGSpgUETQ23Nf7jcZqs7d7vKNtzZH34AjlHVp7wUJkhoaHyxwX1PtkefVY
+	4+kIy0IQBWRmESDJNmDaHFWoE6sM=
+X-Gm-Gg: ASbGncvrbEzP8ELlFeT0eMs86KWwDj6WkArEiO/6nE2h8kY8jtfQEtXpyudPRe8yhOb
+	QoPv1veyR5QMiWi09beacqYplpVl5djPdF+qIVQ==
+X-Google-Smtp-Source: AGHT+IFxUCpsfsSC4DP1ZN+ZjvL+2FJzfrLCFzmfzhhSSbXJpqzIZi8KJxxY7lWHhsT7E2tGPd9tW7HFnkARKQfiMIM=
+X-Received: by 2002:a17:90b:4d04:b0:2ee:aa95:6de9 with SMTP id
+ 98e67ed59e1d1-2f548f71e2bmr51924503a91.33.1737048867081; Thu, 16 Jan 2025
+ 09:34:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+References: <06b84c0f4c7c86881d5985f391f6d0daa9ee28dd.camel@ibm.com>
+ <CAOi1vP9A2MT2iaDGny0FY9cwxEN1Lvknemgxw1fL6PtYcsvqww@mail.gmail.com> <67ab883da6c54de228f133f06dbd32426573aacc.camel@ibm.com>
+In-Reply-To: <67ab883da6c54de228f133f06dbd32426573aacc.camel@ibm.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Thu, 16 Jan 2025 18:34:15 +0100
+X-Gm-Features: AbW1kvbTDJ1w8_EXT8LCgq5YMq-JCOkGzw3lBZBzS3jqXm_TrbrlNcYdODGsI6k
+Message-ID: <CAOi1vP_qdq_UBAXxs7UmJK_ZR7HUFTixX7wVqnTsBYSAiKx5-Q@mail.gmail.com>
+Subject: Re: [RFC PATCH] ceph: switch libceph on ratelimited messages
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Alex Markuze <amarkuze@redhat.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "slava@dubeyko.com" <slava@dubeyko.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Autocrypt: addr=antoine@lesviallon.fr; prefer-encrypt=mutual; keydata=
- mQENBFsTKV8BCAC5m5cLL2RhcJK5H8kWmrwJ9TwlqAPIPe0+7Nr9D9vbyqoW4O407aBxspWZIpwx
- e+1fhocUlKVC8UYiD3PuTNoOAwbdypsahrFPSytFk4rFQ17KYJKc4SLClTJ76JzGSGux5fHoASjM
- GH5t4UY3dEzU7bNvGKsmbFFmZJ8XxSzae2FedPptNZ1NNK8Fd5ymD0o0sC+JFeHvgolhDqdkvhIc
- 3wW++SoPwRx2tIwoeIErMmZzG/dBbPfrEXmNmAtuqo3+CSk3ETFdV0W5laTUNl42rBmTBiGD6+48
- AqzT36sJwP9ILcTPz0r3aKY8oJNgSiRuE1dkwo/9J9lopQe0YQm1ABEBAAG0J0FudG9pbmUgVmlh
- bGxvbiA8YW50b2luZUBsZXN2aWFsbG9uLmZyPokBVAQTAQgAPgIbAwULCQgHAgYVCgkICwIEFgID
- AQIeAQIXgBYhBErEoo1yCPxvK1FeqdEmsTq1VeFvBQJmorugBQkRMyzBAAoJENEmsTq1VeFvs5EI
- AIsijg474qXk599K0b7EozfFiGuyg3Ms5iW8or3bqFHC4yr/XGEuhQt9Z/Dvr+AtpL7dAfoZl35d
- We1EzqE/IVaiIzwTRa2MSsXflusKn3Pc+JC2Jrz7ZrtnZu5F8YqGoD2oFsKSkPQ6kxf6opxNZbhd
- DO24D8zWl/nDjOvYJPhaZt2Kyv9VLe92ParyaKrD3zUYD5SXmdL44H/4D7fAsk6PxrCblUe0EoDF
- sq5mRby19bCRXkOzO+5u0FYcJSjcuZf8kMnW+z7z2lYxYkPqydTGg83QyNDmvhxtcs3FGn5AlIwa
- gg6IUHTJbf2SqYBVRsM3k2orXD73uZKDHos2lLe4OARkh43CEgorBgEEAZdVAQUBAQdArgn71jEI
- do7NGz5mHA4sbew+O3OCJc5VVPE6eO2stCADAQgHiQE8BBgBCAAmFiEESsSijXII/G8rUV6p0Sax
- OrVV4W8FAmSHjcICGwwFCQeEzgAACgkQ0SaxOrVV4W9Aqwf+O/neol0KyvO8oyvacXUEIrhDPPsa
- mkTjqsT72qZIPwFL6K8cNhqk09wtMVN9dElN6xKCToPp+0IDOepvmc0MC/BnhYpU9DSN6e57yX3i
- hPWy2Zlry3sn1iv6sxT9l8N2N4XZTOA6HL8C7wFTp9MDpD4ZTDTBc7jq/kT3qeIcSqZK7WKvE7jy
- /WuycpesDf7zsyGed1JyYy3ierguZuVS55ll7Od212ND9GjAetQl49vHujz2OPDp7Kh09+HBBkWl
- 1T1bjlGKXSaZJjdZ1ULJY2J5mfs3lN3uwBihwURyQcyhlLLVB3CaaJsJ4wlUXl87LyHpyXMSCDrA
- NL9Ty9GwFw==
-X-Spamd-Bar: /
 
-Thank you very much Ilya,
-your patch is clearer indeed=2E
+On Thu, Jan 16, 2025 at 2:38=E2=80=AFAM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+>
+> Hi Ilya,
+>
+> On Thu, 2025-01-16 at 00:21 +0100, Ilya Dryomov wrote:
+> > On Wed, Jan 15, 2025 at 9:53=E2=80=AFPM Viacheslav Dubeyko
+> > <Slava.Dubeyko@ibm.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > The libceph subsystem can generate enourmous amount of
+> > > messages in the case of error. As a result, system log
+> > > can be unreasonably big because of such messaging
+> > > policy. This patch switches on ratelimited version of
+> >
+> > Hi Slava,
+> >
+> > Do you have an example (which is not caused by a programming error)?
+> >
+>
+> Frankly speaking, there is no stable ground for definition
+> what is the programming error. :) And if end-user can see
+> some messages in the system log, then it's not always clear
+> what is the reason of it (faulty hardware, wrong configuration,
+> network issue, or programming error).
+>
+> Currently, I can see during running xfstests some sporadically
+> triggered issues (and I am going to investigate this). For example,
+> today I can reproduce it for generic/127 (but it passed successfully
+> multiple times before). The output of this issue is the infinite
+> sequence of messages in the system log:
+>
+> Jan 15 16:39:06 ceph-testing-0001 kernel: [ 4345.164299] libceph: mon2
+> (2)127.0.0.1:40902 socket error on write
+> Jan 15 16:39:06 ceph-testing-0001 kernel: [ 4345.164321] libceph: mon1
+> (2)127.0.0.1:40900 socket error on write
+> Jan 15 16:39:06 ceph-testing-0001 kernel: [ 4345.668314] libceph: mon1
+> (2)127.0.0.1:40900 socket error on write
+> Jan 15 16:39:06 ceph-testing-0001 kernel: [ 4345.668337] libceph: mon2
+> (2)127.0.0.1:40902 socket error on write
+> Jan 15 16:39:07 ceph-testing-0001 kernel: [ 4346.660371] libceph: mon2
+> (2)127.0.0.1:40902 socket error on write
+>
+> <skipped>
+>
+> Jan 15 17:16:30 ceph-testing-0001 kernel: [ 6589.691303] libceph: mon2
+> (2)127.0.0.1:40902 socket error on write
+> Jan 15 17:16:31 ceph-testing-0001 kernel: [ 6590.907396] libceph: osd1
+> (2)127.0.0.1:6810 socket error on write
+> Jan 15 17:16:34 ceph-testing-0001 kernel: [ 6593.659370] libceph: mon2
+> (2)127.0.0.1:40902 socket error on write
+> Jan 15 17:16:37 ceph-testing-0001 kernel: [ 6597.051461] libceph: mon2
+> (2)127.0.0.1:40902 socket error on write
+>
+> <continue to spam system log until the system restart>
 
-I'm also wondering if the allocation itself could be avoided=2E
-In any case, it is good enough for now :)
+If there is an infinite loop running in the background, one has
+a problem no matter whether the messages are ratelimited or not ;)
+A blanket change to impose a limit on all libceph messages isn't
+going help.
 
-Antoine Viallon
+>
+> > > pr_notice(), pr_info(), pr_warn(), and pr_err()
+> > > methods by means of introducing libceph_notice(),
+> > > libceph_info(), libceph_warn(), and libceph_err()
+> > > methods.
+> >
+> > Some of libceph messages are already ratelimited and standard
+> > pr_*_ratelimited macros are used for that.  They are few apart, so
+> > if there is a particular message that is too spammy, switching it to
+> > a ratelimited version shouldn't be a problem, but we won't take
+> > a blanket conversion like this.
+> >
+>
+> Yes, I agree that even ratelimited version of messaging cannot
+> solve the problem of spamming the system log by info, warning, or
+> error messages. As far as I can see, we have infinite cycle in
+> libceph core library that generates this never ending sequence of
+> messages. I believe that it's not user-friendly behavior and
+> we need to rework it somehow. I still don't quite follow why libceph
+> core library's logic is trying to repeat the same action and
+> reports the error if we already failed. Could we rework it somehow?
+
+I tried to elaborate on the premise in another thread:
+
+    The messenger assumes that most errors are transient, so it simply
+    reestablishes the session and resends outstanding requests.  The main
+    reason for this is that depending on how far in the message the error
+    is raised, a corresponding request may not be known yet (consider
+    a scenario where the error pops up before the messenger gets to the
+    fields that identify the request, for example) or there may not be
+    a external request to fail at all.
+
+It's also how the userspace messenger works, for the same reason.
+
+> I believe that we have some wrong logic in current implementation.
+
+AFAIR it's supposed to be looping with an exponential backoff, so it
+shouldn't busy loop.  If it gets into an actual busy loop on a vanilla
+kernel, that is something to look into.  The backoff factor and upper
+limit could probably be tweaked too, if needed.
+
+Thanks,
+
+                Ilya
 
