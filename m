@@ -1,139 +1,106 @@
-Return-Path: <ceph-devel+bounces-2484-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2485-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E40A13DE6
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2025 16:39:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D78A13E27
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2025 16:46:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56975188D9DD
-	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2025 15:39:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26EBA188D8E6
+	for <lists+ceph-devel@lfdr.de>; Thu, 16 Jan 2025 15:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986C522B8CA;
-	Thu, 16 Jan 2025 15:39:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75DC22B8AB;
+	Thu, 16 Jan 2025 15:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="j3YRDj3r"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="JIZ2k6LZ"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F45D1DDC12;
-	Thu, 16 Jan 2025 15:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C64A86329;
+	Thu, 16 Jan 2025 15:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737041941; cv=none; b=TCaPg6wdG1ZcXC+LZ9q+kEzLfVOPwjHcGoEP82DzRjS3DH8Cnr6yL7wPJ+xkAVU12FQR+gYwuKLPdP1vSrSAMZkjL0efk4/fNAY0YTyCQghoaDNOszyLlm8N7RICTs/5WHXLpwBx40399Y14GgnAnyMqOtr552MOYRM1kFAvNJk=
+	t=1737042391; cv=none; b=ShlJDEGBtmoNXOh1AV9jsKqKCvjsNuqHsn4ZfQvD6gygR6ISnmOfzEgDTIlJRK3yWDJU6RoQj4QdEfKOl52UaQQjmP1mfSUgeOzqqBzb3P355cKStK3GOVDUdJY+DGEO8CjgwF34DTJVAbObp0qAuAvjGjXpPrdFF03AfIcIFiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737041941; c=relaxed/simple;
-	bh=awwHzI1Z1/x3HyInkRgOMr1h572tgiAEaGwaKELzOdM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Gak/VnRsC7oZ3dWiBJaJZAS/Bhd4OmqiUoV1KefJ6ENq0Ntg0M/2QWeYxFkZzLc6OZdElMxSFsYb4f/MFmpqnzCLc0iy0CoZbWwYOf9knFOggtIqISoYk/llvQa2QAOC0zW8J7z4Ih6GWKdSSeZHwH8em4SpbfbQvbwXBv19AkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=j3YRDj3r; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8340AFF808;
-	Thu, 16 Jan 2025 15:38:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1737041936;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MmKv0Rf0wv9cIc2vKkICHbEQe1aK7ETgo4BrVAmd2x0=;
-	b=j3YRDj3reFI7El+9v37BTiRXv413bpugh7FunWxxPAHgmjxv7JhhtJ1h5tEF2v7xku2jMJ
-	K43/F515o4G4keeEPTl5opN2ki8kfw8YFOA9yQpUU9Z0JRBpILmjvqivrBv76NoVNvpX3Q
-	yRNNInjP7+i4yyAxaZ1Be4d96Z2iVnnl/dXZQ3rS19d1/VtLWm7MT8lNOQIehMJfD6J7ie
-	Lt6UHqtoPGfEKLw36oAzZXM7RAD1GqsnvniRjpvjV5lI/pdCxn6HRIbQxK9TEpRMGH0n9H
-	kUA2x8DtxPTHjzBgXfocZAMfE4JBfj/Ji/NSYvGQzODuHtNWCJVxiYePHB4rbg==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org,  agruenba@redhat.com,
-  amir73il@gmail.com,  brauner@kernel.org,  ceph-devel@vger.kernel.org,
-  dhowells@redhat.com,  hubcap@omnibond.com,  jack@suse.cz,
-  linux-nfs@vger.kernel.org,  miklos@szeredi.hu,
-  torvalds@linux-foundation.org
+	s=arc-20240116; t=1737042391; c=relaxed/simple;
+	bh=UImHlw4d/6uI7oG1fhuzXrfmbL0jjBq5KOZgHrs8WmQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OSCibQmHiOUpCyxOt7k+Be0sxtCBypeISGDU1XYfQkBLbEFQiA5IAlXB+MPpEyyJKcI/Q1fz4dtchYMy/RmiOwbpEBp8TRT0e2SZMHi9x+vYE/4KqYW6JEeuXjKhFr6bUm3qP9MDuTxDSM8yE9hPLxcjDJk3TI15XO1A5IoTD5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=JIZ2k6LZ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=F1qj6tl21IifxBG2YwVZZcUt++2u+OK18UMurQRpprQ=; b=JIZ2k6LZ0CgQPgEnPRfCSBY6Wi
+	cqFYYmCTMxJ8AdGjW6Y6PUaa39yISK0BJRkiNKxtjPqNMmmWlN8+g7uZdhUgldTqzb/JSOTAtgQiH
+	dwQgzPa3+f2cYSnEo8wSawzFAd4iaoWJBaSaMUa0estz2Sw9ZcloUEmswQ1lk9ncHbSPo17vILJOr
+	n7st97VPGGP7O3q5IsatHmZToICmI1kmGPixZju0xZgME6aFsuRL9XqQLHzhq8Px8nNNY6w6A9VKg
+	k1vx82FPuT7CPkERoGxzXJgQytUYUuIq5MJvV+oLe2UGgh0AOdjhGF+48OMErxbd2oDdb+2uQH+fK
+	0qEuiTPg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tYS4f-00000002RBE-2dhs;
+	Thu, 16 Jan 2025 15:46:25 +0000
+Date: Thu, 16 Jan 2025 15:46:25 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Gabriel Krisman Bertazi <gabriel@krisman.be>
+Cc: linux-fsdevel@vger.kernel.org, agruenba@redhat.com, amir73il@gmail.com,
+	brauner@kernel.org, ceph-devel@vger.kernel.org, dhowells@redhat.com,
+	hubcap@omnibond.com, jack@suse.cz, linux-nfs@vger.kernel.org,
+	miklos@szeredi.hu, torvalds@linux-foundation.org
 Subject: Re: [PATCH v2 06/20] generic_ci_d_compare(): use shortname_storage
-In-Reply-To: <20250116052317.485356-6-viro@zeniv.linux.org.uk> (Al Viro's
-	message of "Thu, 16 Jan 2025 05:23:03 +0000")
+Message-ID: <20250116154625.GG1977892@ZenIV>
 References: <20250116052103.GF1977892@ZenIV>
-	<20250116052317.485356-1-viro@zeniv.linux.org.uk>
-	<20250116052317.485356-6-viro@zeniv.linux.org.uk>
-Date: Thu, 16 Jan 2025 10:38:53 -0500
-Message-ID: <87cygmlqeq.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+ <20250116052317.485356-1-viro@zeniv.linux.org.uk>
+ <20250116052317.485356-6-viro@zeniv.linux.org.uk>
+ <87cygmlqeq.fsf@mailhost.krisman.be>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-GND-Sasl: gabriel@krisman.be
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87cygmlqeq.fsf@mailhost.krisman.be>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
+On Thu, Jan 16, 2025 at 10:38:53AM -0500, Gabriel Krisman Bertazi wrote:
+> >  	 * If the dentry name is stored in-line, then it may be concurrently
+> >  	 * modified by a rename.  If this happens, the VFS will eventually retry
+> >  	 * the lookup, so it doesn't matter what ->d_compare() returns.
+> >  	 * However, it's unsafe to call utf8_strncasecmp() with an unstable
+> >  	 * string.  Therefore, we have to copy the name into a temporary buffer.
+> 
+> This part of the comment needs updating since there is no more copying.
+> 
+> > +	 * As above, len is guaranteed to match str, so the shortname case
+> > +	 * is exactly when str points to ->d_shortname.
+> >  	 */
+> > -	if (len <= DNAME_INLINE_LEN - 1) {
+> > -		memcpy(strbuf, str, len);
+> > -		strbuf[len] = 0;
+> > -		str = strbuf;
+> > +	if (qstr.name == dentry->d_shortname.string) {
+> > +		strbuf = dentry->d_shortname; // NUL is guaranteed to be in there
+> > +		qstr.name = strbuf.string;
+> >  		/* prevent compiler from optimizing out the temporary buffer */
+> >  		barrier();
+> 
+> If I read the code correctly, I admit I don't understand how this
+> guarantees the stability.  Aren't you just assigning qstr.name back the
+> same value it had in case of an inlined name through a bounce pointer?
+> The previous implementation made sense to me, since the memcpy only
+> accessed each character once, and we guaranteed the terminating
+> character explicitly, but I'm having a hard time with this version.
 
-> ... and check the "name might be unstable" predicate
-> the right way.
->
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  fs/libfs.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
->
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 748ac5923154..3ad1b1b7fed6 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -1789,7 +1789,7 @@ int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
->  {
->  	const struct dentry *parent;
->  	const struct inode *dir;
-> -	char strbuf[DNAME_INLINE_LEN];
-> +	union shortname_store strbuf;
->  	struct qstr qstr;
->  
->  	/*
-> @@ -1809,22 +1809,23 @@ int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
->  	if (!dir || !IS_CASEFOLDED(dir))
->  		return 1;
->  
-> +	qstr.len = len;
-> +	qstr.name = str;
->  	/*
->  	 * If the dentry name is stored in-line, then it may be concurrently
->  	 * modified by a rename.  If this happens, the VFS will eventually retry
->  	 * the lookup, so it doesn't matter what ->d_compare() returns.
->  	 * However, it's unsafe to call utf8_strncasecmp() with an unstable
->  	 * string.  Therefore, we have to copy the name into a temporary buffer.
-
-This part of the comment needs updating since there is no more copying.
-
-> +	 * As above, len is guaranteed to match str, so the shortname case
-> +	 * is exactly when str points to ->d_shortname.
->  	 */
-> -	if (len <= DNAME_INLINE_LEN - 1) {
-> -		memcpy(strbuf, str, len);
-> -		strbuf[len] = 0;
-> -		str = strbuf;
-> +	if (qstr.name == dentry->d_shortname.string) {
-> +		strbuf = dentry->d_shortname; // NUL is guaranteed to be in there
-> +		qstr.name = strbuf.string;
->  		/* prevent compiler from optimizing out the temporary buffer */
->  		barrier();
-
-If I read the code correctly, I admit I don't understand how this
-guarantees the stability.  Aren't you just assigning qstr.name back the
-same value it had in case of an inlined name through a bounce pointer?
-The previous implementation made sense to me, since the memcpy only
-accessed each character once, and we guaranteed the terminating
-character explicitly, but I'm having a hard time with this version.
-
->  	}
-> -	qstr.len = len;
-> -	qstr.name = str;
->  
->  	return utf8_strncasecmp(dentry->d_sb->s_encoding, name, &qstr);
->  }
-
--- 
-Gabriel Krisman Bertazi
+This
+		strbuf = dentry->d_shortname; // NUL is guaranteed to be in there
+copies the entire array.  No bounce pointers of any sort; we copy
+the array contents, all 40 bytes of it.  And yes, struct (or union,
+in this case) assignment generates better code than manual memcpy()
+here.
 
