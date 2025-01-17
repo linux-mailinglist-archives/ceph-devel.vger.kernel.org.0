@@ -1,381 +1,256 @@
-Return-Path: <ceph-devel+bounces-2497-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2498-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B0AA14EFA
-	for <lists+ceph-devel@lfdr.de>; Fri, 17 Jan 2025 13:06:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F8B0A15124
+	for <lists+ceph-devel@lfdr.de>; Fri, 17 Jan 2025 15:05:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 264AE166B9A
-	for <lists+ceph-devel@lfdr.de>; Fri, 17 Jan 2025 12:06:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F4A3A1166
+	for <lists+ceph-devel@lfdr.de>; Fri, 17 Jan 2025 14:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E1E1FE472;
-	Fri, 17 Jan 2025 12:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9BA20011A;
+	Fri, 17 Jan 2025 14:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/ggTUjL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2FzkpTg"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6D51FC7FA;
-	Fri, 17 Jan 2025 12:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3E01FFC67;
+	Fri, 17 Jan 2025 14:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737115604; cv=none; b=ob9ZWN3wZyys1k2S5mMJXjWtpuiH+oRtjq+JQwKPszkaot7ZifCY96TTvp41Udbx1C35MA7eqZy/as6r6NLWKORDM8mXFrsOLPrVx1FJVVAmxJPngy0TdViGxuL/kn/Bx/ZG9jgSBGi991HV97ThZRJHDNcWlXjsqzYqUYIhznw=
+	t=1737122728; cv=none; b=ZIGQBG/25Cwe/Y56UHfrk4Ve9VkPqtLq5eS8DHTD0nkSfhoVLZmLYPy8FX0tFGgCc6DuxfayTJCpWWGdruIlM5pkxt3O9Su++nqlXEofFUkzssH6s8EAI0PMEFT93/1uMOGtce0rVLc1vnxxyrsGGeIh9fiyInZjUX99lb9sI/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737115604; c=relaxed/simple;
-	bh=j49ao7QV5+3H41o0KGWJFYHyB0qvGUR9dhXPS1VTM7w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZDsZk+rKPzTqpU3/tLlznvWIUD83mFqXZSM295QeaTd23WS1jTcj/MVWA1vi958J1iElFX4jcSj3FB1iL4sP5rAbYPCKttdccHgrOQRaM1vnx0JYkJpRRQQCipxhdcz2YBgUk7kd/oydCRbragQ7LMl+x4qhxXPhHvQR2D2mle8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g/ggTUjL; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ee8e8e29f6so2833749a91.0;
-        Fri, 17 Jan 2025 04:06:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737115602; x=1737720402; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PV8mv/YPl6pgHX/4ourdS6hzYAOsA1PyznHp/07gvFk=;
-        b=g/ggTUjL1meT3j3IizfG/n9WaTW3yJI2k0V9bxBK3ScRMkKNeYgcVvPXvPe2l35pHe
-         qLc+ZF1oItti5GT4p1mev0PLmFyqUvuSyEf28QOQlt0NJktJAzI9bZ8tvnnPv9+dnGg5
-         6wCN5XnWeY969yITihIf+DS/8fAlMLGZmeyAWxrwNjfgG1XbsfjAW4zlPg5ZZEKDhW5Y
-         02at7vpoDfUM0mwBC4LaT2YKBiaCH02rav5k+Yt56wRM53xFtmOQYoOl+Ilg5jm4dRjd
-         es2/aIvhTdCKKxBOueTWUmce3uueoiB7aQkM0McjXH7NwOLeuXMLMr8Axl4i6DmtSaLm
-         vNyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737115602; x=1737720402;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PV8mv/YPl6pgHX/4ourdS6hzYAOsA1PyznHp/07gvFk=;
-        b=ihWkMX+5JXr9KZeBcVjrimAtnqSTfgYw4Gxh/RjXrfNgku59MXsQHDyRTjQCqUCjNf
-         5BAf/U6g5iopAOvnoKzIESF6o+8kIXXqosbb/dXWBkldsX1+a6L53o2HBIPO8yhcwc4v
-         PX/Th7m+H5qbu58pbMnbXutELtFLR0WWn+A/HIIYlXB6xp4de3UtjVafbeDyZ6sjcPOw
-         uwHLby3Y5rEsBo9bI3r11qSB8DuPaZl7jNPGzOeKrGMkvbpG8yJEPeqgHkGrAxcXtCfQ
-         0wkIgkZigjMa1vQkv2gLn5vGIuZtrU1rp897frFl1+p4oB1V/32O/rkYM1s08fdunxaV
-         bx2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUiL+PmBHB9rM99i1x5esgq+wYWFZllPc+RdIiaq9+Gw2e98rVmbAl6wSKtPGew/wvJuzO+pmkrR2SHU92z@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL/6aJT/HLw2+6X6GzVqlN7KXLg6Ql/Ea6DHSHjR8U//CeXbvC
-	j7o/NyKZxOHJXZau7jDMEFL5HaYQ8rJk7PyhyY7S+o84MrByOwI6+a8gmc+EmKJ3/06IBeJgqFq
-	fhfiEKMYfU/s7D7BrrmjUJADAAXoWhkpb
-X-Gm-Gg: ASbGncvuM0AsszsGqcM+kT2SVgR07f08qs3HuPHIlnD+KOwHaJ3BddWowr7EiRcmCaH
-	pVURZRw7DvVsGCEZehsb8ce9/sBxUCxxD2FyhCrN0RdLIzx5zkYA=
-X-Google-Smtp-Source: AGHT+IEi8fQxhF0PxMtXe6h0vpZ4sUKLTwlfhgpgMugjbESw9vuWwwKXIJavDWQGdbR7KfmLD+JIVBdiaNoeuoqXSU4=
-X-Received: by 2002:a17:90b:3a05:b0:2ee:c9b6:4c42 with SMTP id
- 98e67ed59e1d1-2f782cb68fbmr3788656a91.16.1737115602008; Fri, 17 Jan 2025
- 04:06:42 -0800 (PST)
+	s=arc-20240116; t=1737122728; c=relaxed/simple;
+	bh=l+qiHU6T4rVjfgUUrI1egwfzPnw2yJEOOvd1gn166NY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZbjcNmF27mrneC+YgxvO4XiEYjq18NjWtWRMqI8xzDkYvczdULbK/Cfx5Es0e1nfshvX6g1G8m+Y4+njTLtl6ZUs38JYrgHgu/xYPF3FRi93rwA4F6bCOyAF4wTONGDm19rUx5qvdKOfb+x9N2+xhC0tP+7qMRyPzgQmwzkEjxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2FzkpTg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6575BC4CEE1;
+	Fri, 17 Jan 2025 14:05:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737122727;
+	bh=l+qiHU6T4rVjfgUUrI1egwfzPnw2yJEOOvd1gn166NY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=S2FzkpTg5w8bOvlGmbZ4H0AwSDfHjzHFLyyX/bl7pJvLaOIXmQLuHDz1lig+G1Brl
+	 Xh/18OAoL8zYtzw9v4EiQIlSsFdvUW9sdqGcJLkuEszyWTEnoxbTtOpzCZ/wR4M879
+	 UZB872+cF3GnP5/nqApNVOKTCA3/N4HMVfuMddkUK3TBJs3mikjBZ2iXKl05mow+k9
+	 SgElR9c2pB5fc5bjncLBYP3vXQdBG3rtxOpp3/rE98rD1wY1r2jXmHjApEYWbWj771
+	 dWoDyj0vEgqf7z90v1VmyWfSLQOCUt1vxeCdK+usOxkdXeCLME3VN4HLqhGfWJs8KI
+	 kejzwf21EvxZQ==
+Message-ID: <f35e66eaada0e85a2586cfe6e990e924bc1933e9.camel@kernel.org>
+Subject: Re: [PATCH v2 16/20] nfs{,4}_lookup_validate(): use stable parent
+ inode passed by caller
+From: Jeff Layton <jlayton@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: agruenba@redhat.com, amir73il@gmail.com, brauner@kernel.org, 
+	ceph-devel@vger.kernel.org, dhowells@redhat.com, hubcap@omnibond.com,
+ jack@suse.cz, 	krisman@kernel.org, linux-nfs@vger.kernel.org,
+ miklos@szeredi.hu, 	torvalds@linux-foundation.org
+Date: Fri, 17 Jan 2025 09:05:25 -0500
+In-Reply-To: <20250116052317.485356-16-viro@zeniv.linux.org.uk>
+References: <20250116052103.GF1977892@ZenIV>
+	 <20250116052317.485356-1-viro@zeniv.linux.org.uk>
+	 <20250116052317.485356-16-viro@zeniv.linux.org.uk>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250117035044.23309-1-slava@dubeyko.com>
-In-Reply-To: <20250117035044.23309-1-slava@dubeyko.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Fri, 17 Jan 2025 13:06:30 +0100
-X-Gm-Features: AbW1kvZcVDrBauUJjUXw3P2a4qpehoZp-bNquA6JHxc-cy40PHlpfM04XXm5uB4
-Message-ID: <CAOi1vP97xPyka60H=bMh3xyOtumO+WQfMYF8NG0V545oYnQG7Q@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: Fix kernel crash in generic/397 test
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	amarkuze@redhat.com, dhowells@redhat.com, Slava.Dubeyko@ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 17, 2025 at 4:51=E2=80=AFAM Viacheslav Dubeyko <slava@dubeyko.c=
-om> wrote:
->
-> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
->
-> The generic/397 test generate kernel crash for the case of
-> encrypted inode with unaligned file size (for example, 33K
-> or 1K):
->
-> Jan 3 12:34:40 ceph-testing-0001 root: run xfstest generic/397
-> Jan 3 12:34:40 ceph-testing-0001 kernel: [ 877.737811] run fstests generi=
-c/397 at 2025-01-03 12:34:40
-> Jan 3 12:34:40 ceph-testing-0001 systemd1: Started /usr/bin/bash c test -=
-w /proc/self/oom_score_adj && echo 250 > /proc/self/oom_score_adj; exec ./t=
-ests/generic/397.
-> Jan 3 12:34:40 ceph-testing-0001 kernel: [ 877.875761] libceph: mon0 (2)1=
-27.0.0.1:40674 session established
-> Jan 3 12:34:40 ceph-testing-0001 kernel: [ 877.876130] libceph: client461=
-4 fsid 19b90bca-f1ae-47a6-93dd-0b03ee637949
-> Jan 3 12:34:40 ceph-testing-0001 kernel: [ 877.991965] libceph: mon0 (2)1=
-27.0.0.1:40674 session established
-> Jan 3 12:34:40 ceph-testing-0001 kernel: [ 877.992334] libceph: client461=
-7 fsid 19b90bca-f1ae-47a6-93dd-0b03ee637949
-> Jan 3 12:34:40 ceph-testing-0001 kernel: [ 878.017234] libceph: mon0 (2)1=
-27.0.0.1:40674 session established
-> Jan 3 12:34:40 ceph-testing-0001 kernel: [ 878.017594] libceph: client462=
-0 fsid 19b90bca-f1ae-47a6-93dd-0b03ee637949
-> Jan 3 12:34:40 ceph-testing-0001 kernel: [ 878.031394] xfs_io (pid 18988)=
- is setting deprecated v1 encryption policy; recommend upgrading to v2.
-> Jan 3 12:34:40 ceph-testing-0001 kernel: [ 878.054528] libceph: mon0 (2)1=
-27.0.0.1:40674 session established
-> Jan 3 12:34:40 ceph-testing-0001 kernel: [ 878.054892] libceph: client462=
-3 fsid 19b90bca-f1ae-47a6-93dd-0b03ee637949
-> Jan 3 12:34:40 ceph-testing-0001 kernel: [ 878.070287] libceph: mon0 (2)1=
-27.0.0.1:40674 session established
-> Jan 3 12:34:40 ceph-testing-0001 kernel: [ 878.070704] libceph: client462=
-6 fsid 19b90bca-f1ae-47a6-93dd-0b03ee637949
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.264586] libceph: mon0 (2)1=
-27.0.0.1:40674 session established
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.265258] libceph: client462=
-9 fsid 19b90bca-f1ae-47a6-93dd-0b03ee637949
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.374578] -----------[ cut h=
-ere ]------------
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.374586] kernel BUG at net/=
-ceph/messenger.c:1070!
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.375150] Oops: invalid opco=
-de: 0000 [#1] PREEMPT SMP NOPTI
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.378145] CPU: 2 UID: 0 PID:=
- 4759 Comm: kworker/2:9 Not tainted 6.13.0-rc5+ #1
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.378969] Hardware name: QEM=
-U Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebui=
-lt.qemu.org 04/01/2014
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.380167] Workqueue: ceph-ms=
-gr ceph_con_workfn
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.381639] RIP: 0010:ceph_msg=
-_data_cursor_init+0x42/0x50
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.382152] Code: 89 17 48 8b =
-46 70 55 48 89 47 08 c7 47 18 00 00 00 00 48 89 e5 e8 de cc ff ff 5d 31 c0 =
-31 d2 31 f6 31 ff c3 cc cc cc cc 0f 0b <0f> 0b 0f 0b 66 2e 0f 1f 84 00 00 0=
-0 00 00 90 90 90 90 90 90 90 90
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.383928] RSP: 0018:ffffb4ff=
-c7cbbd28 EFLAGS: 00010287
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.384447] RAX: ffffffff82bb9=
-ac0 RBX: ffff981390c2f1f8 RCX: 0000000000000000
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.385129] RDX: 0000000000009=
-000 RSI: ffff981288232b58 RDI: ffff981390c2f378
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.385839] RBP: ffffb4ffc7cbb=
-e18 R08: 0000000000000000 R09: 0000000000000000
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.386539] R10: 0000000000000=
-000 R11: 0000000000000000 R12: ffff981390c2f030
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.387203] R13: ffff981288232=
-b58 R14: 0000000000000029 R15: 0000000000000001
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.387877] FS: 00000000000000=
-00(0000) GS:ffff9814b7900000(0000) knlGS:0000000000000000
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.388663] CS: 0010 DS: 0000 =
-ES: 0000 CR0: 0000000080050033
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.389212] CR2: 00005e106a055=
-4e0 CR3: 0000000112bf0001 CR4: 0000000000772ef0
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.389921] DR0: 0000000000000=
-000 DR1: 0000000000000000 DR2: 0000000000000000
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.390620] DR3: 0000000000000=
-000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.391307] PKRU: 55555554
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.391567] Call Trace:
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.391807] <TASK>
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.392021] ? show_regs+0x71/0=
-x90
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.392391] ? die+0x38/0xa0
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.392667] ? do_trap+0xdb/0x1=
-00
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.392981] ? do_error_trap+0x=
-75/0xb0
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.393372] ? ceph_msg_data_cu=
-rsor_init+0x42/0x50
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.393842] ? exc_invalid_op+0=
-x53/0x80
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.394232] ? ceph_msg_data_cu=
-rsor_init+0x42/0x50
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.394694] ? asm_exc_invalid_=
-op+0x1b/0x20
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.395099] ? ceph_msg_data_cu=
-rsor_init+0x42/0x50
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.395583] ? ceph_con_v2_try_=
-read+0xd16/0x2220
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.396027] ? _raw_spin_unlock=
-+0xe/0x40
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.396428] ? raw_spin_rq_unlo=
-ck+0x10/0x40
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.396842] ? finish_task_swit=
-ch.isra.0+0x97/0x310
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.397338] ? __schedule+0x44b=
-/0x16b0
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.397738] ceph_con_workfn+0x=
-326/0x750
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.398121] process_one_work+0=
-x188/0x3d0
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.398522] ? __pfx_worker_thr=
-ead+0x10/0x10
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.398929] worker_thread+0x2b=
-5/0x3c0
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.399310] ? __pfx_worker_thr=
-ead+0x10/0x10
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.399727] kthread+0xe1/0x120
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.400031] ? __pfx_kthread+0x=
-10/0x10
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.400431] ret_from_fork+0x43=
-/0x70
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.400771] ? __pfx_kthread+0x=
-10/0x10
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.401127] ret_from_fork_asm+=
-0x1a/0x30
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.401543] </TASK>
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.401760] Modules linked in:=
- hctr2 nhpoly1305_avx2 nhpoly1305_sse2 nhpoly1305 chacha_generic chacha_x86=
-_64 libchacha adiantum libpoly1305 essiv authenc mptcp_diag xsk_diag tcp_di=
-ag udp_diag raw_diag inet_diag unix_diag af_packet_diag netlink_diag intel_=
-rapl_msr intel_rapl_common intel_uncore_frequency_common skx_edac_common nf=
-it kvm_intel kvm crct10dif_pclmul crc32_pclmul polyval_clmulni polyval_gene=
-ric ghash_clmulni_intel sha256_ssse3 sha1_ssse3 aesni_intel joydev crypto_s=
-imd cryptd rapl input_leds psmouse sch_fq_codel serio_raw bochs i2c_piix4 f=
-loppy qemu_fw_cfg i2c_smbus mac_hid pata_acpi msr parport_pc ppdev lp parpo=
-rt efi_pstore ip_tables x_tables
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.407319] ---[ end trace 000=
-0000000000000 ]---
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.407775] RIP: 0010:ceph_msg=
-_data_cursor_init+0x42/0x50
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.408317] Code: 89 17 48 8b =
-46 70 55 48 89 47 08 c7 47 18 00 00 00 00 48 89 e5 e8 de cc ff ff 5d 31 c0 =
-31 d2 31 f6 31 ff c3 cc cc cc cc 0f 0b <0f> 0b 0f 0b 66 2e 0f 1f 84 00 00 0=
-0 00 00 90 90 90 90 90 90 90 90
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.410087] RSP: 0018:ffffb4ff=
-c7cbbd28 EFLAGS: 00010287
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.410609] RAX: ffffffff82bb9=
-ac0 RBX: ffff981390c2f1f8 RCX: 0000000000000000
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.411318] RDX: 0000000000009=
-000 RSI: ffff981288232b58 RDI: ffff981390c2f378
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.412014] RBP: ffffb4ffc7cbb=
-e18 R08: 0000000000000000 R09: 0000000000000000
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.412735] R10: 0000000000000=
-000 R11: 0000000000000000 R12: ffff981390c2f030
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.413438] R13: ffff981288232=
-b58 R14: 0000000000000029 R15: 0000000000000001
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.414121] FS: 00000000000000=
-00(0000) GS:ffff9814b7900000(0000) knlGS:0000000000000000
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.414935] CS: 0010 DS: 0000 =
-ES: 0000 CR0: 0000000080050033
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.415516] CR2: 00005e106a055=
-4e0 CR3: 0000000112bf0001 CR4: 0000000000772ef0
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.416211] DR0: 0000000000000=
-000 DR1: 0000000000000000 DR2: 0000000000000000
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.416907] DR3: 0000000000000=
-000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.417630] PKRU: 55555554
->
-> BUG_ON(length > msg->data_length) triggers the issue:
->
-> (gdb) l *ceph_msg_data_cursor_init+0x42
-> 0xffffffff823b45a2 is in ceph_msg_data_cursor_init (net/ceph/messenger.c:=
-1070).
-> 1065
-> 1066 void ceph_msg_data_cursor_init(struct ceph_msg_data_cursor *cursor,
-> 1067 struct ceph_msg *msg, size_t length)
-> 1068 {
-> 1069 BUG_ON(!length);
-> 1070 BUG_ON(length > msg->data_length);
-> 1071 BUG_ON(!msg->num_data_items);
-> 1072
-> 1073 cursor->total_resid =3D length;
-> 1074 cursor->data =3D msg->data;
->
-> The issue takes place because of this:
-> Jan 6 14:59:24 ceph-testing-0001 kernel: [ 202.628853] libceph: pid 144:n=
-et/ceph/messenger_v2.c:2034 prepare_sparse_read_data(): msg->data_length 33=
-792, msg->sparse_read_total 36864
-> 1070 BUG_ON(length > msg->data_length);
-> msg->sparse_read_total 36864 > msg->data_length 33792
->
-> The generic/397 test (xfstests) executes such steps:
-> (1) create encrypted files and directories;
-> (2) access the created files and folders with encryption key;
-> (3) access the created files and folders without encryption key.
->
-> The issue takes place in this portion of code:
->
->     if (IS_ENCRYPTED(inode)) {
->             struct page **pages;
->             size_t page_off;
->
->             err =3D iov_iter_get_pages_alloc2(&subreq->io_iter, &pages, l=
-en,
->                                             &page_off);
->             if (err < 0) {
->                     doutc(cl, "%llx.%llx failed to allocate pages, %d\n",
->                           ceph_vinop(inode), err);
->                     goto out;
->             }
->
->             /* should always give us a page-aligned read */
->             WARN_ON_ONCE(page_off);
->             len =3D err;
->             err =3D 0;
->
->             osd_req_op_extent_osd_data_pages(req, 0, pages, len, 0, false=
-,
->                                              false);
->
-> The reason of the issue is that subreq->io_iter.count keeps
-> unaligned value of length:
->
-> Jan 16 12:46:56 ceph-testing-0001 kernel: [  347.751182] pid 8059:lib/iov=
-_iter.c:1185 __iov_iter_get_pages_alloc(): maxsize 36864, maxpages 42949672=
-95, start 18446659367320516064
-> Jan 16 12:46:56 ceph-testing-0001 kernel: [  347.752808] pid 8059:lib/iov=
-_iter.c:1196 __iov_iter_get_pages_alloc(): maxsize 33792, maxpages 42949672=
-95, start 18446659367320516064
-> Jan 16 12:46:56 ceph-testing-0001 kernel: [  347.754394] pid 8059:lib/iov=
-_iter.c:1015 iter_folioq_get_pages(): maxsize 33792, maxpages 4294967295, e=
-xtracted 0, _start_offset 18446659367320516064
->
-> This patch simply assigns the aligned value to
-> subreq->io_iter.count before calling iov_iter_get_pages_alloc2().
->
-> ./check generic/397
-> FSTYP         -- ceph
-> PLATFORM      -- Linux/x86_64 ceph-testing-0001 6.13.0-rc7+ #58 SMP PREEM=
-PT_DYNAMIC Wed Jan 15 00:07:06 UTC 2025
-> MKFS_OPTIONS  -- 127.0.0.1:40629:/scratch
-> MOUNT_OPTIONS -- -o name=3Dfs,secret=3D<hidden>,ms_mode=3Dcrc,nowsync,cop=
-yfrom 127.0.0.1:<port>:/scratch /mnt/scratch
->
-> generic/397 1s ...  1s
-> Ran: generic/397
-> Passed all 1 tests
->
-> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+On Thu, 2025-01-16 at 05:23 +0000, Al Viro wrote:
+> we can't kill __nfs_lookup_revalidate() completely, but ->d_parent boiler=
+plate
+> in it is gone
+>=20
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
->  fs/ceph/addr.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 85936f6d2bf7..5e6ba92219f3 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -396,6 +396,15 @@ static void ceph_netfs_issue_read(struct netfs_io_su=
-brequest *subreq)
->                 struct page **pages;
->                 size_t page_off;
->
-> +               /*
-> +                * The io_iter.count needs to be corrected to aligned len=
-gth.
-> +                * Otherwise, iov_iter_get_pages_alloc2() operates with
-> +                * the initial unaligned length value. As a result,
-> +                * ceph_msg_data_cursor_init() triggers BUG_ON() in the c=
-ase
-> +                * if msg->sparse_read_total > msg->data_length.
-> +                */
-> +               subreq->io_iter.count =3D len;
+>  fs/nfs/dir.c | 43 +++++++++++++------------------------------
+>  1 file changed, 13 insertions(+), 30 deletions(-)
+>=20
+> diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
+> index 9910d9796f4c..c28983ee75ca 100644
+> --- a/fs/nfs/dir.c
+> +++ b/fs/nfs/dir.c
+> @@ -1732,8 +1732,8 @@ static int nfs_lookup_revalidate_dentry(struct inod=
+e *dir,
+>   * cached dentry and do a new lookup.
+>   */
+>  static int
+> -nfs_do_lookup_revalidate(struct inode *dir, struct dentry *dentry,
+> -			 unsigned int flags)
+> +nfs_do_lookup_revalidate(struct inode *dir, const struct qstr *name,
+> +			 struct dentry *dentry, unsigned int flags)
+>  {
+>  	struct inode *inode;
+>  	int error =3D 0;
+> @@ -1785,39 +1785,26 @@ nfs_do_lookup_revalidate(struct inode *dir, struc=
+t dentry *dentry,
+>  }
+> =20
+>  static int
+> -__nfs_lookup_revalidate(struct dentry *dentry, unsigned int flags,
+> -			int (*reval)(struct inode *, struct dentry *, unsigned int))
+> +__nfs_lookup_revalidate(struct dentry *dentry, unsigned int flags)
+>  {
+> -	struct dentry *parent;
+> -	struct inode *dir;
+> -	int ret;
+> -
+>  	if (flags & LOOKUP_RCU) {
+>  		if (dentry->d_fsdata =3D=3D NFS_FSDATA_BLOCKED)
+>  			return -ECHILD;
+> -		parent =3D READ_ONCE(dentry->d_parent);
+> -		dir =3D d_inode_rcu(parent);
+> -		if (!dir)
+> -			return -ECHILD;
+> -		ret =3D reval(dir, dentry, flags);
+> -		if (parent !=3D READ_ONCE(dentry->d_parent))
+> -			return -ECHILD;
+>  	} else {
+>  		/* Wait for unlink to complete - see unblock_revalidate() */
+>  		wait_var_event(&dentry->d_fsdata,
+>  			       smp_load_acquire(&dentry->d_fsdata)
+>  			       !=3D NFS_FSDATA_BLOCKED);
+> -		parent =3D dget_parent(dentry);
+> -		ret =3D reval(d_inode(parent), dentry, flags);
+> -		dput(parent);
+>  	}
+> -	return ret;
+> +	return 0;
+>  }
+> =20
+>  static int nfs_lookup_revalidate(struct inode *dir, const struct qstr *n=
+ame,
+>  				 struct dentry *dentry, unsigned int flags)
+>  {
+> -	return __nfs_lookup_revalidate(dentry, flags, nfs_do_lookup_revalidate)=
+;
+> +	if (__nfs_lookup_revalidate(dentry, flags))
+> +		return -ECHILD;
+> +	return nfs_do_lookup_revalidate(dir, name, dentry, flags);
+>  }
+> =20
+>  static void block_revalidate(struct dentry *dentry)
+> @@ -2216,11 +2203,14 @@ int nfs_atomic_open(struct inode *dir, struct den=
+try *dentry,
+>  EXPORT_SYMBOL_GPL(nfs_atomic_open);
+> =20
+>  static int
+> -nfs4_do_lookup_revalidate(struct inode *dir, struct dentry *dentry,
+> -			  unsigned int flags)
+> +nfs4_lookup_revalidate(struct inode *dir, const struct qstr *name,
+> +		       struct dentry *dentry, unsigned int flags)
+>  {
+>  	struct inode *inode;
+> =20
+> +	if (__nfs_lookup_revalidate(dentry, flags))
+> +		return -ECHILD;
+> +
+>  	trace_nfs_lookup_revalidate_enter(dir, dentry, flags);
+> =20
+>  	if (!(flags & LOOKUP_OPEN) || (flags & LOOKUP_DIRECTORY))
+> @@ -2259,14 +2249,7 @@ nfs4_do_lookup_revalidate(struct inode *dir, struc=
+t dentry *dentry,
+>  	return nfs_lookup_revalidate_dentry(dir, dentry, inode, flags);
+> =20
+>  full_reval:
+> -	return nfs_do_lookup_revalidate(dir, dentry, flags);
+> -}
+> -
+> -static int nfs4_lookup_revalidate(struct inode *dir, const struct qstr *=
+name,
+> -				  struct dentry *dentry, unsigned int flags)
+> -{
+> -	return __nfs_lookup_revalidate(dentry, flags,
+> -			nfs4_do_lookup_revalidate);
+> +	return nfs_do_lookup_revalidate(dir, name, dentry, flags);
+>  }
+> =20
+>  #endif /* CONFIG_NFSV4 */
 
-Hi Slava,
+Much nicer without the "reval" callback.
 
-So I take it that my hunch that it's subreq->io_iter and commenting out
-"len =3D err" assignment worked?  TBH munging the count this way feels as
-much of an ugly workaround as ignoring iov_iter_get_pages_alloc2()
-return value (unless it's an error) to me.
-
-Since this confirms that we have a regression introduced in ee4cdf7ba857
-("netfs: Speed up buffered reading"), let's wait for David to chime in.
-
-Thanks,
-
-                Ilya
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
