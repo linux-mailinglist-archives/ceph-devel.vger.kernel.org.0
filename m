@@ -1,85 +1,59 @@
-Return-Path: <ceph-devel+bounces-2511-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2512-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E70A15986
-	for <lists+ceph-devel@lfdr.de>; Fri, 17 Jan 2025 23:30:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C898CA15D3C
+	for <lists+ceph-devel@lfdr.de>; Sat, 18 Jan 2025 14:53:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CB78188CD01
-	for <lists+ceph-devel@lfdr.de>; Fri, 17 Jan 2025 22:30:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48154188849E
+	for <lists+ceph-devel@lfdr.de>; Sat, 18 Jan 2025 13:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DF81DB14C;
-	Fri, 17 Jan 2025 22:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A407018CBF2;
+	Sat, 18 Jan 2025 13:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="pUdAmumX"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Kc69DWY5"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFE41ACDE7
-	for <ceph-devel@vger.kernel.org>; Fri, 17 Jan 2025 22:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF3A2F50;
+	Sat, 18 Jan 2025 13:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737153015; cv=none; b=eT+Hsoj/xNksC8QbI9d6QMm6M2vOqbIao0wWww68rqPtB1of61TUOE9WxyzJlxqCqbSWENUzlP61bhLYzFPeGpzFLXa1eAZbg4BWPqMNtj3LTToTqHm/dz2Sg6ODdx9ddg33WHXYMx7JoYHR9D5h76kaJ0tn47EfDxiZiRTsQaA=
+	t=1737208394; cv=none; b=qJrbSV+O9Gb3nur6Jjr786cbLifWPUbFosf3+AK9fUUFv1q+1McAJAmF/gH8JS7xnF40wEpVfuoQLNWnWtsBBrsoNf4/14ICXViqEkmf2OBPKsv2NYMt7ondj1BlxuLTXZ43nwbay+BkRohuV4QcgwrtMW2K8Xwc6eCkijwc0Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737153015; c=relaxed/simple;
-	bh=xr4XumRL9mJCriRsNckzs7LehNxT7dtEBYJE0fFFcVo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FQLjdFnROH3RDiO71nwm411M6az3cBbSD14vnLD2OCzCbAAqV7u0DnPPKyERppfoaYNifesBd0O1b5Yu4mRugnfbm7CG+JJf6MHE8dYzAj8z2HAaBhkm4ov14WGNyj9rRsfuL8q98C+AMz1bvS/llRtCIRiJ+QlRT0tp6scQgp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=pUdAmumX; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-219f8263ae0so50263805ad.0
-        for <ceph-devel@vger.kernel.org>; Fri, 17 Jan 2025 14:30:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1737153012; x=1737757812; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JKzKB7GQOVB99Pmp+SqK7Er1d4vaJawJ00TnzS69gCk=;
-        b=pUdAmumX9beVhYp2dBZgEi2onLLfqbo9A+YIAfDNwTsImM3By9OFSqo7e976cgto9Y
-         mrL7WDr6RzUgV3pe9D31o+cZeXPf9Wsy9jeYWUdHBoLUvGhILDZKFRR/cl9s38vDMjbo
-         L533Z83xFCYfNoWCHg2IZVnupcJD+21Uuio85bwXuenOhY9ToN4MAbLHfD8aajNldHPQ
-         y2eDvmMhoMhbKK6BhJnluj64wA+BIH5k0NeFm7B4SG0ET0wQgnvxrwsF19oeKatcqj/7
-         +rzhvUVOQn57ZGHTdV+4nhHJzYIhAAMBXDuu9LL+57/smvs/C0y09hdHzh9XmtqXyLfU
-         ghAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737153012; x=1737757812;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JKzKB7GQOVB99Pmp+SqK7Er1d4vaJawJ00TnzS69gCk=;
-        b=PuGVLMehPYz92cKIRUk8JVEZRqK5iDo8EJhv5DqkDkcmOJC7EBRp4F08FN+hfLm+xc
-         DTp11MirPYua6tALRgOvQJk0q3IDYXhFcetctLtNqe8uBSJnMn7tPT68ShIEYfDjG9jn
-         RkAR9U4rY6SfON0t52QVe2Y0my5QDe8WSyU448xQFXIFi2IxSZDdLLlkKBbifRO/l5ld
-         yIqq2txheu3yhSuLKHtaNbXyfuxCAxuECC6GpJCDzxBg6OExunqL2N9CZN8puYdmFq2D
-         y9L+UmCdDYFWKTNUdNTaWFsUqmYZZAPmnmp3yg135aJl8ztPaYeabcvgu8HgduHgVbj6
-         0JcQ==
-X-Gm-Message-State: AOJu0Yw1tvisTvDclthO4RbxiuTvXAk3ybwRBpL475GVwLF1HJOpaORu
-	LhRpMqQXEXROf/Ayy3FZipsCMfXaGlXP7CUpX5REPj25dH1HIKy3jfoLGdbUx00Eo+j4aaGzDbK
-	z24s=
-X-Gm-Gg: ASbGncsPG2ohstPmb7dNfay3FYSp/Gxuac634OIWrBj1C2+BAYRcM173on1CUTUGh7Q
-	zBftFS4hIokn2IXYLej08bAhHMK/lfpW/cm1BpaXnF85ndtdUeEPcZbL//uHI0qmhIM60o3CFVt
-	C0qXdSctKf9Atad/ii0G8Y374xFCA1k9/OXodLMJ1tZkOugGNAIhQ3UaoUTeNEVF7sutKTUBWAK
-	sdMnlJov2Fpy68k1ahE83HEFwGw8RxoFbfarXW0H4NPEveg1hsmf+CWhtIN8Mt8Q2vFF84q+z0=
-X-Google-Smtp-Source: AGHT+IGRe1AquGZMFWjKl4R5TenxdEtlk7gYdzUwU6fJeIQO0+L3E0+EZvaXTaMv32TW8TqPA1lnZg==
-X-Received: by 2002:a05:6a20:7349:b0:1e1:afa9:d38b with SMTP id adf61e73a8af0-1eb2145ccd8mr6585640637.8.1737153012079;
-        Fri, 17 Jan 2025 14:30:12 -0800 (PST)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:7954:52d1:acc0:176e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72dab9c9462sm2494324b3a.100.2025.01.17.14.30.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2025 14:30:11 -0800 (PST)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com
-Subject: [PATCH] ceph: move ceph_frag_compare() into include/linux/ceph/ceph_frag.h
-Date: Fri, 17 Jan 2025 14:29:58 -0800
-Message-ID: <20250117222958.43129-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1737208394; c=relaxed/simple;
+	bh=ZnyNOwaPiDOb8UgezUN3RDOGYCQIj2OrMgtucTAln74=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=WHYggHZ9JRbSJirWiln6xCqvlFMhWpFZlz+iPtSwy8Z0xmMOLARXTd2GQieiqXYqddvRb2lCDiXV9UwBS3b+yJKqc7jIIQ+UIYng6F+HqEO82eBW0JoJbzbtAxVixQ7CeECjdDQkmwqjM9+zYczZUW4EGnLiXhpMCoeBh3l1jgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Kc69DWY5; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=0dwAW
+	uXni0RHdliEtVE1GPnfPT4rxlY1U+4bKW4Xon0=; b=Kc69DWY5g8k+6ObbQDZJX
+	WHfEouTIMzzF4U8qQDEoP+/wYshvZua/vjbcNLQeuPmxDV1VT6n+hwOxV3OiMEgn
+	GRDmSwp6R/03i41xiAbIlrBuZj4BYLuzqgLNSKGdgcwz+UUVTPtbQxa5ixPfQ9aK
+	pu0xOzQxm6iHwhgqSacu6Q=
+Received: from hello.company.local (unknown [111.205.82.7])
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgD3n+4rsotnc4r5Kw--.56432S2;
+	Sat, 18 Jan 2025 21:52:44 +0800 (CST)
+From: Liang Jie <buaajxlj@163.com>
+To: idryomov@gmail.com
+Cc: Slava.Dubeyko@ibm.com,
+	buaajxlj@163.com,
+	ceph-devel@vger.kernel.org,
+	fanggeng@lixiang.com,
+	liangjie@lixiang.com,
+	linux-kernel@vger.kernel.org,
+	xiubli@redhat.com,
+	yangchen11@lixiang.com
+Subject: Re: [PATCH] ceph: streamline request head structures in MDS client
+Date: Sat, 18 Jan 2025 21:52:43 +0800
+Message-Id: <20250118135243.3560118-1-buaajxlj@163.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <CAOi1vP8vNjDpyqT8wd0AuEWfvMjn0r5tML=pMNbWYb=kATAaOg@mail.gmail.com>
+References: <CAOi1vP8vNjDpyqT8wd0AuEWfvMjn0r5tML=pMNbWYb=kATAaOg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -87,96 +61,114 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:QCgvCgD3n+4rsotnc4r5Kw--.56432S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxGFW8urW5XryDZFy3WrWfXwb_yoWrAr4rpF
+	WrGayayw4DJay3Grn2van2v34F9an3Cw1xJr4DtryrAF90k34xtay7KayF9Fy7WrWxCr1Y
+	vF1jqF98Ww1jvaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUI9akUUUUU=
+X-CM-SenderInfo: pexdtyx0omqiywtou0bp/1tbiNgzYIGeLoCzZ5AAAsf
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+On Wed, 15 Jan 2025 21:15:11 +0100, Ilya Dryomov <idryomov@gmail.com> wrote:
+> On Fri, Jan 10, 2025 at 8:25=E2=80=AFPM Viacheslav Dubeyko
+> <Slava.Dubeyko@ibm.com> wrote:
+> >
+> > On Fri, 2025-01-10 at 18:05 +0800, Liang Jie wrote:
+> > > From: Liang Jie <liangjie@lixiang.com>
+> > >
+> > > The existence of the ceph_mds_request_head_old structure in the MDS
+> > > client
+> > > code is no longer required due to improvements in handling different
+> > > MDS
+> > > request header versions. This patch removes the now redundant
+> > > ceph_mds_request_head_old structure and replaces its usage with the
+> > > flexible and extensible ceph_mds_request_head structure.
+> > >
+> > > Changes include:
+> > > - Modification of find_legacy_request_head to directly cast the
+> > > pointer to
+> > >   ceph_mds_request_head_legacy without going through the old
+> > > structure.
+> > > - Update sizeof calculations in create_request_message to use
+> > > offsetofend
+> > >   for consistency and future-proofing, rather than referencing the
+> > > old
+> > >   structure.
+> > > - Use of the structured ceph_mds_request_head directly instead of the
+> > > old
+> > >   one.
+> > >
+> > > Additionally, this consolidation normalizes the handling of
+> > > request_head_version v1 to align with versions v2 and v3, leading to
+> > > a
+> > > more consistent and maintainable codebase.
+> > >
+> > > These changes simplify the codebase and reduce potential confusion
+> > > stemming
+> > > from the existence of an obsolete structure.
+> > >
+> > > Signed-off-by: Liang Jie <liangjie@lixiang.com>
+> > > ---
+> > >  fs/ceph/mds_client.c         | 16 ++++++++--------
+> > >  include/linux/ceph/ceph_fs.h | 14 --------------
+> > >  2 files changed, 8 insertions(+), 22 deletions(-)
+> > >
+> >
+> > Looks good to me. Nice cleanup.
+> >
+> > Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> 
+> Applied.
+> 
+> Thanks,
+> 
+>                 Ilya
 
-The fs/ceph/ceph_frag.c contains only tiny ceph_frag_compare()
-method. However, ceph frag related family of methods located
-in include/linux/ceph/ceph_frag.h.
+Hi Ilya,
 
-This patch moves ceph_frag_compare() method into
-include/linux/ceph/ceph_frag.h and deletes file
-fs/ceph/ceph_frag.c with the goal to keep all
-ceph frag related family of methods in one place.
+I have recently received a warning from the kernel test robot about an indentation
+issue adjacent to the changes made in my this patch.
 
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
----
- fs/ceph/Makefile               |  2 +-
- fs/ceph/ceph_frag.c            | 23 -----------------------
- include/linux/ceph/ceph_frag.h | 17 ++++++++++++++++-
- 3 files changed, 17 insertions(+), 25 deletions(-)
- delete mode 100644 fs/ceph/ceph_frag.c
+The warning is as follows:
+(link: https://lore.kernel.org/oe-kbuild-all/202501172005.IoKVy2Op-lkp@intel.com/)
 
-diff --git a/fs/ceph/Makefile b/fs/ceph/Makefile
-index 1f77ca04c426..4333af217557 100644
---- a/fs/ceph/Makefile
-+++ b/fs/ceph/Makefile
-@@ -7,7 +7,7 @@ obj-$(CONFIG_CEPH_FS) += ceph.o
- 
- ceph-y := super.o inode.o dir.o file.o locks.o addr.o ioctl.o \
- 	export.o caps.o snap.o xattr.o quota.o io.o \
--	mds_client.o mdsmap.o strings.o ceph_frag.o \
-+	mds_client.o mdsmap.o strings.o \
- 	debugfs.o util.o metric.o
- 
- ceph-$(CONFIG_CEPH_FSCACHE) += cache.o
-diff --git a/fs/ceph/ceph_frag.c b/fs/ceph/ceph_frag.c
-deleted file mode 100644
-index 6f67d5b884a0..000000000000
---- a/fs/ceph/ceph_frag.c
-+++ /dev/null
-@@ -1,23 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Ceph 'frag' type
-- */
--#include <linux/module.h>
--#include <linux/ceph/types.h>
--
--int ceph_frag_compare(__u32 a, __u32 b)
--{
--	unsigned va = ceph_frag_value(a);
--	unsigned vb = ceph_frag_value(b);
--	if (va < vb)
--		return -1;
--	if (va > vb)
--		return 1;
--	va = ceph_frag_bits(a);
--	vb = ceph_frag_bits(b);
--	if (va < vb)
--		return -1;
--	if (va > vb)
--		return 1;
--	return 0;
--}
-diff --git a/include/linux/ceph/ceph_frag.h b/include/linux/ceph/ceph_frag.h
-index 97bab0adc58a..cb2b7610bf95 100644
---- a/include/linux/ceph/ceph_frag.h
-+++ b/include/linux/ceph/ceph_frag.h
-@@ -70,6 +70,21 @@ static inline __u32 ceph_frag_next(__u32 f)
-  * comparator to sort frags logically, as when traversing the
-  * number space in ascending order...
-  */
--int ceph_frag_compare(__u32 a, __u32 b);
-+static inline int ceph_frag_compare(__u32 a, __u32 b)
-+{
-+	unsigned va = ceph_frag_value(a);
-+	unsigned vb = ceph_frag_value(b);
-+	if (va < vb)
-+		return -1;
-+	if (va > vb)
-+		return 1;
-+	va = ceph_frag_bits(a);
-+	vb = ceph_frag_bits(b);
-+	if (va < vb)
-+		return -1;
-+	if (va > vb)
-+		return 1;
-+	return 0;
-+}
- 
- #endif
--- 
-2.48.0
+> New smatch warnings:
+> fs/ceph/mds_client.c:3298 __prepare_send_request() warn: inconsistent indenting
+> 
+> vim +3298 fs/ceph/mds_client.c
+> 
+> 2f2dc053404feb Sage Weil      2009-10-06  3272  
+> ...
+> ce0d5bd3a6c176 Xiubo Li       2023-07-25  3295  	if (req->r_attempts) {
+> 164b631927701b Liang Jie      2025-01-10  3296  		old_max_retry = sizeof_field(struct ceph_mds_request_head,
+> ce0d5bd3a6c176 Xiubo Li       2023-07-25  3297  					    num_retry);
+> ce0d5bd3a6c176 Xiubo Li       2023-07-25 @3298  	       old_max_retry = 1 << (old_max_retry * BITS_PER_BYTE);
+> ce0d5bd3a6c176 Xiubo Li       2023-07-25  3299  	       if ((old_version && req->r_attempts >= old_max_retry) ||
+> ce0d5bd3a6c176 Xiubo Li       2023-07-25  3300  		   ((uint32_t)req->r_attempts >= U32_MAX)) {
+> 38d46409c4639a Xiubo Li       2023-06-12  3301  			pr_warn_ratelimited_client(cl, "request tid %llu seq overflow\n",
+> 38d46409c4639a Xiubo Li       2023-06-12  3302  						   req->r_tid);
+> 546a5d6122faae Xiubo Li       2022-03-30  3303  			return -EMULTIHOP;
+> 546a5d6122faae Xiubo Li       2022-03-30  3304  	       }
+> ce0d5bd3a6c176 Xiubo Li       2023-07-25  3305  	}
+
+The warning indicates suspect code indent on line 3298, existing before my
+proposed changes were made. After investigating the issue, it has become clear
+that the warning stems from a pre-existing code block that uses 15 spaces for
+indentation instead of conforming to the standard 16-space (two tabs) indentation.
+
+I am writing to seek your advice on how best to proceed. Would you recommend that
+I adjust the indentation within the scope of my current patch, or would it be more
+appropriate to address this as a separate style fix, given that the indentation
+issue is not directly introduced by my changes?
+
+I am happy to make the necessary adjustments to ensure the code base adheres to the
+kernel's coding standards. However, I also want to respect the best practices of
+contributing to the project and maintain the clarity and focus of my patch.
+
+Kindly advise on the preferred way forward.
+
+Thank you for your time and guidance.
+
+Best regards,
+Liang Jie
 
 
