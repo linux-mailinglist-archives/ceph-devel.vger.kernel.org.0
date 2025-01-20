@@ -1,99 +1,95 @@
-Return-Path: <ceph-devel+bounces-2518-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2519-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A259A16F7A
-	for <lists+ceph-devel@lfdr.de>; Mon, 20 Jan 2025 16:44:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F76A1712D
+	for <lists+ceph-devel@lfdr.de>; Mon, 20 Jan 2025 18:18:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14F90188802A
-	for <lists+ceph-devel@lfdr.de>; Mon, 20 Jan 2025 15:44:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F8737A1C0A
+	for <lists+ceph-devel@lfdr.de>; Mon, 20 Jan 2025 17:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BC801E9B05;
-	Mon, 20 Jan 2025 15:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453261EEA49;
+	Mon, 20 Jan 2025 17:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DMHlZven"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAPV259H"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68871E991C
-	for <ceph-devel@vger.kernel.org>; Mon, 20 Jan 2025 15:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF76B1EC012;
+	Mon, 20 Jan 2025 17:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737387836; cv=none; b=k8YsnNnOF+6y38zCGWbIghA23bmlqiN/WghkLm5d7aXCjRvxYVdVQhxWjGahU0DMPvxrR3TUTbwkhHxBOLg+k5jBemXuWM1ZeYLuVEN5jiZknKfey6fSpGSB8VI+QOIPGpKU5dQWGN0yLKhmCeBQWI3XanJid0rpQUPD8oQQVv8=
+	t=1737393428; cv=none; b=tPAj+zYqkEnWlU7jchyAqIcMEpe5YUJDCwkhgV0aXAQzuiT1E2bJWaH97YGhAQo5oIXI1aQP6tYp/+uMbKlkysZDkEdKmxQXamnkkb+hD97f+RsH/SlyNrepwUaE9wKewQdSU8iw4ihC9IFvLVRUg8KyZSnehy5EC5nboQ5FaLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737387836; c=relaxed/simple;
-	bh=7GSgh24e7Lrx6jF7Y+WvZ/VFxDmY/RDDmKTerlQyylE=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=D6JWtO07d2TwX7G/fuKHimItK/Jzh1ZPoeXRCjCnHUYMHtgHN/ao4iBQubR3h9SnNtWvOB0CN5qfgM5zks7lYemD4QJn7haHc3+V7O5XVojlixhTWVJVjiAmHoBqpBxMp5Jzf+PmVT3orZjww6MVN99+XygnscHpSaRdW84pRnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DMHlZven; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1737387833;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7GSgh24e7Lrx6jF7Y+WvZ/VFxDmY/RDDmKTerlQyylE=;
-	b=DMHlZvenOE1CQkLYPeMT+L/0r9fi55Y/EZ9Up+FKa4/csmhTkaR/EnizdZ9ZYdGHdus8wc
-	7sxr2akPcDySSbpni3oKKeikcIuGo4CTcukDRsrI+2DACIlCKJpfw0btofKgsKBTTDtRcB
-	ifvR92kDv8oN1/lJPcMv9g7v/Rp7tbc=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-689-vONu1RTdPVW21o9O61ZlCg-1; Mon,
- 20 Jan 2025 10:43:50 -0500
-X-MC-Unique: vONu1RTdPVW21o9O61ZlCg-1
-X-Mimecast-MFC-AGG-ID: vONu1RTdPVW21o9O61ZlCg
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6DE5C1955BD9;
-	Mon, 20 Jan 2025 15:43:49 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.5])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C30AC3003FD2;
-	Mon, 20 Jan 2025 15:43:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <1201003.1737382806@warthog.procyon.org.uk>
-References: <1201003.1737382806@warthog.procyon.org.uk> <1113699.1737376348@warthog.procyon.org.uk>
-To: Eric Biggers <ebiggers@google.com>
-Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
-    fstests@vger.kernel.org, ceph-devel@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org
+	s=arc-20240116; t=1737393428; c=relaxed/simple;
+	bh=91msOSdphe2y2ZT3cyG9Bzg3ubA969IG4m2JYPG5gCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NxdjMLUPWeOZol8lkcWegiNto/i0c1cIqpcjc85pzLEtEdLvnpT5xCfgvVtz7B9Udy2BDCgGDfKElZBR0R986Aebe1aldJdYHN7hawHYg7C+XsuNlAs17wKliZ5D/MMBKfWVIDA42ZOqHS79nnObdjs2vXG6EmDznq7z3WWaCSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RAPV259H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30157C4CEDD;
+	Mon, 20 Jan 2025 17:17:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737393427;
+	bh=91msOSdphe2y2ZT3cyG9Bzg3ubA969IG4m2JYPG5gCI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RAPV259HGrR72AzhsCkee8nXAfW7xeziRsijXdS7896cPjuhr5QUA4yjkkUkegYif
+	 g6CObNWVqpW9Q9Ht+9aP5WjyT5gigJrFThkhWWpaaasBgoD19v2mrCOK2HexdX0Jn8
+	 pU722wDNQJKg7hd0XVWp2/2H4SH8EMQYZQDG+7hjwlIa9+6xh+tZ5TSebGEjR7IFJg
+	 O9ndsGefv/JEPoD+xUhnBk6J6iDueQ4i6dpZz9Vzq4soATYglvKiJEenoZ4iFFi1iD
+	 sW8NcdUaRqBMDN8Eh+0II9sy6WgvXAVBHuONFXp1GJXZqQ45P7SRQrY0QeG8vLfRSH
+	 IKBbLgbbXqQWg==
+Date: Mon, 20 Jan 2025 09:17:05 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Alex Markuze <amarkuze@redhat.com>, fstests@vger.kernel.org,
+	ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Subject: Re: Error in generic/397 test script?
+Message-ID: <20250120171705.GA1159@sol.localdomain>
+References: <1113699.1737376348@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1207324.1737387826.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 20 Jan 2025 15:43:46 +0000
-Message-ID: <1207325.1737387826@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1113699.1737376348@warthog.procyon.org.uk>
 
-David Howells <dhowells@redhat.com> wrote:
+On Mon, Jan 20, 2025 at 12:32:28PM +0000, David Howells wrote:
+> Hi Eric,
+> 
+> In the generic/397 test script, you placed:
+> 
+> 	$XFS_IO_PROG -f $SCRATCH_MNT/edir/newfile |& _filter_scratch
+> 	$XFS_IO_PROG -f $SCRATCH_MNT/edir/0123456789abcdef |& _filter_scratch
+> 
+> but neither of those lines actually has a command on it, and when I run it,
+> I'm seeing xfs_io hang just waiting endlessly for someone to type commands on
+> stdin.
+> 
+> Would it be better to do:
+> 
+> 	echo >$SCRATCH_MNT/edir/newfile |& _filter_scratch
+> 	echo >$SCRATCH_MNT/edir/0123456789abcdef |& _filter_scratch
 
-> However, in this case (in which I'm running these against ceph), I don't=
- think
-> that the find should return nothing, so it's not a bug in the test scrip=
-t per
-> se.
+Those commands try to create new files and are supposed to fail with ENOKEY
+because the directory's encryption key is not present, as is explained in the
+comment just above them and can also be seen from 397.out.
 
-Turned out that I hadn't enabled XTS and so the tests for xts(aes) failed =
-and
-produced no files.
+First, I'm guessing the context here is that you're testing some (not yet
+upstream) kernel patches that introduce a bug where creating these files does
+not in fact fail?  That bug will need to be fixed before your patches are
+merged, of course.
 
-David
+Second, yes it would be a good idea to replace these with something that don't
+hang in the case of a kernel bug that allows the creation of these files.  This
+could be done using a shell redirection as you've proposed, but it would have to
+go in a subshell for the stderr to be filtered by _filter_scratch.  Feel free to
+send a patch after you've fixed that and tested it with upstream.
 
+- Eric
 
