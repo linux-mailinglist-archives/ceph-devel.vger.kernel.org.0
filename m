@@ -1,172 +1,135 @@
-Return-Path: <ceph-devel+bounces-2560-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2561-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E635A1C452
-	for <lists+ceph-devel@lfdr.de>; Sat, 25 Jan 2025 17:26:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0A1DA1D943
+	for <lists+ceph-devel@lfdr.de>; Mon, 27 Jan 2025 16:15:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C8241884005
-	for <lists+ceph-devel@lfdr.de>; Sat, 25 Jan 2025 16:26:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A7047A18DE
+	for <lists+ceph-devel@lfdr.de>; Mon, 27 Jan 2025 15:15:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCDC6F073;
-	Sat, 25 Jan 2025 16:25:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184301632C7;
+	Mon, 27 Jan 2025 15:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="pKAYO0g+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQYX/YYG"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7A26088F
-	for <ceph-devel@vger.kernel.org>; Sat, 25 Jan 2025 16:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EFE13CA81;
+	Mon, 27 Jan 2025 15:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737822358; cv=none; b=f4POHdOZ6JuozPiFgBJdVfxrcK+EXDADm7cmKOxz70MGmB+8JxErtZUBBi9KgelRA4MiVVsCzHR1hiIM5ONhEgsGGeAeL4qt/S5c/pytJkj02AgPVzv0UvvdTplcCnwR/Is8wfxkTdpysfvQP1wRutYp070O10zSjfuOpGpIKYE=
+	t=1737990878; cv=none; b=PngE0+OPqFujXhoZjyRH3HFRUQn2rUS2ILreYvAdPH86s0XcqJOT5M5zZTcMoyzQI7QIJZAwnRKYaWzDxYEnf05691uIqJeXrxHEcLMn09FgY1kAevfi9wnZ4aUHAJLOGH/pvoxAEAyjAPr/YNpGWl6UZPv3lJYWrr8GLcHu4Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737822358; c=relaxed/simple;
-	bh=Gd+UwXIueKOW4BRRtN9KBJUlKbMmHPEr3qiXTPPY06k=;
+	s=arc-20240116; t=1737990878; c=relaxed/simple;
+	bh=VpiVbnqCOrmY5SGmdXwaKYWHrqAFlTK+vn/3gB4wpMg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OQg8UazCXTkNWhiph4kuQ5ah7iRX2W3E/LXRFakbWSD+Swoa9C0PrSP3piRCfA93EbSqY4XPlsm9A7yJdMtvAVwnbxeFqt1ZXmDFb2SsMfSVf2X6An9ufjzzvpzFeJKWkB/v1QNoH3h2RZ6JsUrsmdEJMtOikRgJTfwCR9aafwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=pKAYO0g+; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2f78a4ca5deso4238424a91.0
-        for <ceph-devel@vger.kernel.org>; Sat, 25 Jan 2025 08:25:55 -0800 (PST)
+	 To:Cc:Content-Type; b=krM0XAQHswFsnMxWZw797y3T7K/p3NEDa7+dlaJAo6+jq1K4VTAYsdC8XjxLkAdIvnf9FZ+aOZlP9a285wNDa6tDIphd6o/lc8+iiwIgWiQ3xyDQ/GfnKaDQXEggPS3VJrprpf22D+/S7X4XE7IFriu4OSjEoEK64btpZle1BGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQYX/YYG; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ee8e8e29f6so6028832a91.0;
+        Mon, 27 Jan 2025 07:14:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1737822354; x=1738427154; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1737990877; x=1738595677; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9w0yclXKq1+ZE4rb7z474GY4D3cL/agwNUJRHPKnvMI=;
-        b=pKAYO0g+kfpZG1lfC7pr6Pqs6v5dATBcy2vkvvUb2Oh2c7cXiHl+U/8kh0APu7psZD
-         yzMvzVg6H3b2X4Uhm8DGXvtKr/I8G8g2zowYM3U4uvSxJp8u1Rcrl4renn+G2mx6hMQG
-         DHeG7GLOW2+C8QtSitv+eUBxkViVutvzeMqTk1xad5vg6/Ylx+tNI6WJwUAVWjsclHlU
-         GAOheuKAmZghIOEz5e3ZJGNmy5AbwNBFTphB2xedn/OEkO5pZfb46dme1Wg/POraXmoX
-         VNC+oafuPoMYsOsYbX5McUrmsFIcvIspqUoB3NJpQVBk42lxd7ub0HPuMPPlVMPYsZ9R
-         IwNQ==
+        bh=wblQpx+6gffsbQIq400BrdsSaygTfoWvxOhkC4R2KVE=;
+        b=CQYX/YYGlYc349nUhJS1wDnAp7U79d/CdqYauF4hwqgws+HhlgP9ixIMQ8cmAz5v9K
+         oKUf48aR78L+LWO1RtYAlRpFmc626Owwlp9Bq0QojCCT9aLozkvwHI7pQiAgUBcah56p
+         sxKh0Xj2pYyV37V920WnnBQD5MBSBdxx/hyfmHNOYvYnOcrLNwKjKtDQoq5Guc380g3N
+         Ky/xHKdTfBQ0qYOcG9jaUjo51BB2MCuJGf8HMxD0eYrdJ9DVfZVDOKWFzFmfPd98jqpb
+         sYeQHPkLTqcGCJroLaX9JARTInlclRfxmPcqDrhU9Ma7qxBbz+ODieRU9J5L8CpxYEbu
+         E7mA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737822354; x=1738427154;
+        d=1e100.net; s=20230601; t=1737990877; x=1738595677;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9w0yclXKq1+ZE4rb7z474GY4D3cL/agwNUJRHPKnvMI=;
-        b=Wq9iwhvrLRZSTTHm0M1ETuE0zGQUh2JzwdAXG5D61dy2uvINWCNn9HbKdSJRgoJ3mQ
-         gjh19tf1lAtBZyQpAv/L9BK47H8dnCdauqIOpt1tGslJobFtlIUHaGBooFu/MN7Ubhxu
-         Hnz1SIpyzAGeoqi+MfRnvvMbdMYyAqOeC18EO2gUbMiMRr5Bfe78isEDsUBShyzFmQCM
-         LJ2NkNN6OHe1X01p+IsJUrgujoO1ZemxMEoZ1dnSIwXR1LEkoPG0KnWoUiA6Y1dsxz+N
-         4LnVK6gX9izSDw6ZU9pAjrlt1yNfGziu3BkQ/B7yV4gSdW/iirr0HhKGT8BPsfv3/o2e
-         zZiw==
-X-Forwarded-Encrypted: i=1; AJvYcCU94QMjRrXnf4WcrHXqHPxEExp2CkdhXciN+MMeJaJsdy25EjBmiTEEZFOHsvbcFuyQc0cBJt6IJcLc@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywnl9u8F/OwddE3TcBAHRHc6SDTDY6SgLwtkQth0QmD6XWqvdFA
-	rJ09CUF3aHVWtm/JFubKSQFrDC/MbA1YW5wRAUE33i9iGMjLKSNUHZ7tT1l2kAG7+bz50PWpeNX
-	Cy5npANDkvJ1jh5LriWE0Snh9tAgUqReGKbd8
-X-Gm-Gg: ASbGncuXeaGFzHFcjo0XoYRhU6kwo/+wyjL/wIiKkLbQLycwxGtyn51Y1rjMEbJG+e2
-	afRG1JXAfaRnjfh/qyv1pyEMKIIVWz71FB5aquBfQI6XbTCnccDSjCmq7oWIlwHnjqNBC2g14Fg
-	==
-X-Google-Smtp-Source: AGHT+IHYinXSusgjbEegl0Q3oc5v3YMpnH3cgpRw66F16T4kF6MOtD01PGslFZsO9Lw2vhkg3s0T7IjjSmkdcoVRwVM=
-X-Received: by 2002:a17:90a:c2d0:b0:2ee:cb5c:6c with SMTP id
- 98e67ed59e1d1-2f782d383a1mr41395453a91.22.1737822354379; Sat, 25 Jan 2025
- 08:25:54 -0800 (PST)
+        bh=wblQpx+6gffsbQIq400BrdsSaygTfoWvxOhkC4R2KVE=;
+        b=EVYbud7VkOHOaD3xQtySj089AeSD4ll9NQBgHbg4CSbOqgRVW/uioZDha62v10R9Sy
+         7NwZPhmV2qSXag01nvKh3xTG273ZbVUs6QUgYgIPpE1jj/VF9ED/vHy9zdWyYAjBzWPN
+         lFuqzBr3kY3JZnfc9BvU1D5wKKFNIaGkFFFlRZuqLGOK5tjFCsNsglNeG/VtlIM0XVWW
+         SO9kUHqSVbbbPW9bCxdk/MNNJVS6gEPcOGL9CMFX/ovRMoKfNVfSHTdO1/p3uRIkKwnO
+         pJnQoCeSpx0jqvHWePpUmbyNqt7jY6dnmYDGDehx+TwdkZZVbRUFcLfdNYjQhitbAvpX
+         rDEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmmlACq4Ex4Vn6Dfo0DV8Cva26ELWPUaks1X1QX5rX+qYNcMq3ZiHrP+ibrdRuXxGNrSF3MQzjJwyLHsuYqg==@vger.kernel.org, AJvYcCWa6bQhTq9kQtxiq3RT9s0SUpAvvjAEiNxAVyPlNo6LxKeZnJSSJ/6D5spttEdQwfZXgRbH+mccOzmI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi5Roq3M/6zTcHrCINVsq8WOuwz/KJs464tNb/x6p9bHuxQj3q
+	R0xb9P9rdr93bgRtAvF5pu5HZQ+2AGepBGlt55/jGUtlDKTkkw+9sPjcwQOaEC0PG7RMFts3lMI
+	rCwocONcpIAR5VwsviP9Z2f/nsCU=
+X-Gm-Gg: ASbGncuwwqZEJymZgHxqhebndxaPVsWUjfm8IxgMc7dl3gF+hO/lrlJT4JCZWhDkD7c
+	04aLGcY2xPxtt4NVc2QfPqCOpG7mEkwaOHRFmVdr5CULM6bEANxhl0Nsay07SlAkKseq+LKWQ
+X-Google-Smtp-Source: AGHT+IGIYyCARvHHsfi1J8eavFeyhi7AzrtICHwY7kYCRUMbKR28JO0C0SQ0E60YxTVi0c1hFfx9eb5KZanEOjk/jZQ=
+X-Received: by 2002:a17:90a:d00b:b0:2ee:a4f2:b311 with SMTP id
+ 98e67ed59e1d1-2f782c907ffmr58799523a91.8.1737990876522; Mon, 27 Jan 2025
+ 07:14:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250123014511.GA1962481@ZenIV> <20250123014643.1964371-1-viro@zeniv.linux.org.uk>
- <20250123014643.1964371-19-viro@zeniv.linux.org.uk>
-In-Reply-To: <20250123014643.1964371-19-viro@zeniv.linux.org.uk>
-From: Mike Marshall <hubcap@omnibond.com>
-Date: Sat, 25 Jan 2025 11:25:43 -0500
-X-Gm-Features: AWEUYZmtTzGFDbO9QisKFQJH3QVSme3cG4eX9OmyvnAovbPjPT_7TPMe3OgZJqA
-Message-ID: <CAOg9mSQrak+49+g6JB5YEiWZOrcWr7PJyeGmi5ZdRWEwYPbcwg@mail.gmail.com>
-Subject: Re: [PATCH v3 19/20] orangefs_d_revalidate(): use stable parent inode
- and name passed by caller
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, agruenba@redhat.com, amir73il@gmail.com, 
-	brauner@kernel.org, ceph-devel@vger.kernel.org, dhowells@redhat.com, 
-	jack@suse.cz, krisman@kernel.org, linux-nfs@vger.kernel.org, 
-	miklos@szeredi.hu, torvalds@linux-foundation.org
+References: <20250124194623.19699-1-slava@dubeyko.com> <CA+2bHPbkATtMp_BgX=ySuPZkMSqd5EwjoRdsAsoOOxuoN3wzTw@mail.gmail.com>
+In-Reply-To: <CA+2bHPbkATtMp_BgX=ySuPZkMSqd5EwjoRdsAsoOOxuoN3wzTw@mail.gmail.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Mon, 27 Jan 2025 16:14:24 +0100
+X-Gm-Features: AWEUYZnoZBGM4f_u-5-f5T3tgI-x62QjVA1JmrZiVXOvXF7O4E8Z4SUEl88Gr1E
+Message-ID: <CAOi1vP8B9Js4ZwG++TJnRfmsnCFW2qftFKqL0gG+LUYZNjQJGQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: exchange hardcoded value on NAME_MAX
+To: Patrick Donnelly <pdonnell@redhat.com>
+Cc: Viacheslav Dubeyko <slava@dubeyko.com>, ceph-devel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, amarkuze@redhat.com, Slava.Dubeyko@ibm.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Tested-by: Mike Marshall <hubcap@omnibond.com>
+On Fri, Jan 24, 2025 at 9:51=E2=80=AFPM Patrick Donnelly <pdonnell@redhat.c=
+om> wrote:
+>
+> On Fri, Jan 24, 2025 at 2:46=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko=
+.com> wrote:
+> >
+> > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> >
+> > Initially, ceph_fs_debugfs_init() had temporary
+> > name buffer with hardcoded length of 80 symbols.
+> > Then, it was hardcoded again for 100 symbols.
+> > Finally, it makes sense to exchange hardcoded
+> > value on properly defined constant and 255 symbols
+> > should be enough for any name case.
+> >
+> > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> > ---
+> >  fs/ceph/debugfs.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
+> > index fdf9dc15eafa..fdd404fc8112 100644
+> > --- a/fs/ceph/debugfs.c
+> > +++ b/fs/ceph/debugfs.c
+> > @@ -412,7 +412,7 @@ void ceph_fs_debugfs_cleanup(struct ceph_fs_client =
+*fsc)
+> >
+> >  void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
+> >  {
+> > -       char name[100];
+> > +       char name[NAME_MAX];
+> >
+> >         doutc(fsc->client, "begin\n");
+> >         fsc->debugfs_congestion_kb =3D
+> > --
+> > 2.48.0
+> >
+> >
+>
+> Reviewed-by: Patrick Donnelly <pdonnell@ibm.com>
 
-On Wed, Jan 22, 2025 at 8:46=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
-rote:
->
-> ->d_name use is a UAF if the userland side of things can be slowed down
-> by attacker.
->
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  fs/orangefs/dcache.c | 19 ++++++++-----------
->  1 file changed, 8 insertions(+), 11 deletions(-)
->
-> diff --git a/fs/orangefs/dcache.c b/fs/orangefs/dcache.c
-> index c32c9a86e8d0..a19d1ad705db 100644
-> --- a/fs/orangefs/dcache.c
-> +++ b/fs/orangefs/dcache.c
-> @@ -13,10 +13,9 @@
->  #include "orangefs-kernel.h"
->
->  /* Returns 1 if dentry can still be trusted, else 0. */
-> -static int orangefs_revalidate_lookup(struct dentry *dentry)
-> +static int orangefs_revalidate_lookup(struct inode *parent_inode, const =
-struct qstr *name,
-> +                                     struct dentry *dentry)
->  {
-> -       struct dentry *parent_dentry =3D dget_parent(dentry);
-> -       struct inode *parent_inode =3D parent_dentry->d_inode;
->         struct orangefs_inode_s *parent =3D ORANGEFS_I(parent_inode);
->         struct inode *inode =3D dentry->d_inode;
->         struct orangefs_kernel_op_s *new_op;
-> @@ -26,14 +25,14 @@ static int orangefs_revalidate_lookup(struct dentry *=
-dentry)
->         gossip_debug(GOSSIP_DCACHE_DEBUG, "%s: attempting lookup.\n", __f=
-unc__);
->
->         new_op =3D op_alloc(ORANGEFS_VFS_OP_LOOKUP);
-> -       if (!new_op) {
-> -               ret =3D -ENOMEM;
-> -               goto out_put_parent;
-> -       }
-> +       if (!new_op)
-> +               return -ENOMEM;
->
->         new_op->upcall.req.lookup.sym_follow =3D ORANGEFS_LOOKUP_LINK_NO_=
-FOLLOW;
->         new_op->upcall.req.lookup.parent_refn =3D parent->refn;
-> -       strscpy(new_op->upcall.req.lookup.d_name, dentry->d_name.name);
-> +       /* op_alloc() leaves ->upcall zeroed */
-> +       memcpy(new_op->upcall.req.lookup.d_name, name->name,
-> +                       min(name->len, ORANGEFS_NAME_MAX - 1));
->
->         gossip_debug(GOSSIP_DCACHE_DEBUG,
->                      "%s:%s:%d interrupt flag [%d]\n",
-> @@ -78,8 +77,6 @@ static int orangefs_revalidate_lookup(struct dentry *de=
-ntry)
->         ret =3D 1;
->  out_release_op:
->         op_release(new_op);
-> -out_put_parent:
-> -       dput(parent_dentry);
->         return ret;
->  out_drop:
->         gossip_debug(GOSSIP_DCACHE_DEBUG, "%s:%s:%d revalidate failed\n",
-> @@ -115,7 +112,7 @@ static int orangefs_d_revalidate(struct inode *dir, c=
-onst struct qstr *name,
->          * If this passes, the positive dentry still exists or the negati=
-ve
->          * dentry still does not exist.
->          */
-> -       if (!orangefs_revalidate_lookup(dentry))
-> +       if (!orangefs_revalidate_lookup(dir, name, dentry))
->                 return 0;
->
->         /* We do not need to continue with negative dentries. */
-> --
-> 2.39.5
->
+Applied.
+
+Thanks,
+
+                Ilya
 
