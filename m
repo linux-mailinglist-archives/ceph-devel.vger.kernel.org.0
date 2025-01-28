@@ -1,146 +1,89 @@
-Return-Path: <ceph-devel+bounces-2563-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2564-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 513DBA202E3
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 Jan 2025 02:10:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E1AA2033C
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 Jan 2025 04:07:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C3163A2D4F
-	for <lists+ceph-devel@lfdr.de>; Tue, 28 Jan 2025 01:10:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B9463A593F
+	for <lists+ceph-devel@lfdr.de>; Tue, 28 Jan 2025 03:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF92371750;
-	Tue, 28 Jan 2025 01:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82FF2943F;
+	Tue, 28 Jan 2025 03:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="w4ykXNSY"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="S3k5tb7T"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E42B8462
-	for <ceph-devel@vger.kernel.org>; Tue, 28 Jan 2025 01:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDD679D0;
+	Tue, 28 Jan 2025 03:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738026643; cv=none; b=OB3Zo3mHc9c18dqCT5qOfvNlHqqB1c13m+vRsJ7dexLMlqqrRvFu5zDMujrqRgj+cQ5IEUc5kUVLauBbjz6LbmN14Cpe3AnjSsAVWmbnzLej19InGtR/xdYLsRJlD7HzorJcjxJ2uvTzOOBAW4uccwmFDxZjVHdj1basSuIZ1EU=
+	t=1738033652; cv=none; b=JQXNY2YG83Fuxq2g8VZy08/y7GH8sbIy37rBm4B/RoA/yFdfzwd3B453+UPKMFF5DYm8RYPEO1LZLFfM5myEQdksyYhYTLtHXkEuoMAAvVDyO+vg6Dp93mWtm7rowLpLdP5s92jUt6U+yx52o58/3UvJmkT9VBwfp4A019Nql5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738026643; c=relaxed/simple;
-	bh=idoWM8EkAkPekIxfJWfU90+4BQccVkcX3Cz8OZha4rk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pRXjZb8UfSnXQALa/J/e8tLumTgsPVW/CcX6ZH8J3gtq7O8OyH67L3rT3p3vJYNdOyL7dzpQ++GWIK+eCWoM4isohxa45mRaHEpFWS2tkQ2+K6OxPIuRgK1WestfnWUJxcCVsrzD1u/QVp2lV07banjhMvsLFsNHlqKwKo0wtEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=w4ykXNSY; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-21670dce0a7so106304965ad.1
-        for <ceph-devel@vger.kernel.org>; Mon, 27 Jan 2025 17:10:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1738026640; x=1738631440; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7aW1EosRXYDRl1YDPbjGpE1cgwqJRDI2u+FOfmgEW9c=;
-        b=w4ykXNSY9SfS6yyMyCqrkouAFYgAQ037wQgy+y4bZilneK579qODJcKZUCawkTMqjY
-         q7kPIC4TcgADEcaZTX7isH4G7bcubymmrTE3Pqe6W6mYparQl+99jydlY6VbeIdMSbJO
-         BLPfgKjNJIQJ/FuvyptodPRUlKHdTbG7ZkWwcHa9SCYJeJduk3KfVwTkRhyLWYZJ0IIl
-         V3EUDCJxUix9BnuMcN8f8fA/AaZwZaRTnjel2dQOcGHj2adnOfuglLPFK6wSIHuxOY7q
-         jSdjnP/XhGcQJUeMEBCK80Tw8Oe9oiDa7Dy4urK7G1T6vX0qB11An9CtrqxNieHPzlGP
-         MVcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738026640; x=1738631440;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7aW1EosRXYDRl1YDPbjGpE1cgwqJRDI2u+FOfmgEW9c=;
-        b=dWyp10TBH0YQFxdodjnLaIGeP/KM574+XLbS+e3B27Mtmf7hXttjK2g1iyr76njBJ4
-         7X6fAwQLYRrGnWhwButIfRTHZEKhejk16vRM4I6YN4d1hfNhU2pFMgjezb9yyHc3REVX
-         ehv1jryBjHmJlqwtNeWqREu1aXp0LPbhM2vECzqcgzm48bg0bG2bZDfXbbf9N4IEhqaK
-         OC9ZMkVy+IgO2PcwE/90+vJVEcs9uzTsyj1Ep9Kht8HwjQc1HZSlT6rA9f/ZrmjH7Ze9
-         2RL5NGe70SKwEK2di2IVDWhAsHw8wwVO9MONYcWa766RgtzK4qCfek0eejLfP3Q86i46
-         416Q==
-X-Gm-Message-State: AOJu0YzYHcjkYwPcEAP2p+wzTAdWN6/FPiNjaz8mcy/+gtJ3uSj4MX2G
-	2HpvXdvOxOMkuUOKz+gNj3El7k47sOE5LDE7wjD2iH04LTiujGCzHhch5fsKn6aELBNa/ruKvKB
-	qyp+AkHDE
-X-Gm-Gg: ASbGncublah9DUYJef3rBSdj4ryRl1/C44C6giWY3YpLM7eB4WEM+2NYiyJfTmqDbvb
-	KZEO+yIaqYQ1WzsCGyiOtZdbGKZWsurpB6UxheXqKvnH/pM6mwh7EogyvhidIOnp5KCPdGL+dUp
-	HuGQfzPzL3Dz1GOHdlhpfVEpsYdxAJ3juLgiyupUym1+nCtGpva6tOxvRcq+QV/EboSxH8CEMMC
-	8iXE8f6RKJuFdC4e1+95f78c8Yt1Q2w1AH2PR4YAcu4HRIUDwvFCHH67skA9XpdfsllSxv3TN2U
-	kaZm/X2feFuBSy5Ki2eAoDM=
-X-Google-Smtp-Source: AGHT+IG2DbeQ9tm5aIbKtVDA1Dig3K5nSBz2CgNabcBO5SVG1W/sVFCbwrxpG/Bo7uYNbhrWbPdlXw==
-X-Received: by 2002:a17:902:ea10:b0:216:4e9f:4ec9 with SMTP id d9443c01a7336-21c355c2906mr698721305ad.38.1738026640036;
-        Mon, 27 Jan 2025 17:10:40 -0800 (PST)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:c976:3cdd:dcf6:6f29])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21da424dabdsm69745735ad.253.2025.01.27.17.10.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2025 17:10:39 -0800 (PST)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com
-Subject: [PATCH] ceph: is_root_ceph_dentry() cleanup
-Date: Mon, 27 Jan 2025 17:10:23 -0800
-Message-ID: <20250128011023.55012-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1738033652; c=relaxed/simple;
+	bh=1XnMySzV3V3/Wl3zEmYuPWbrjzS0vj3TwNs/FGgGUVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uC8R8Gfp4rJVoMWw5Z6Wor6LVHK2NlMjLwUZqfH7L487VsqD67+YK9Rqp2hK9WcdOOPTX5FZKuxgV+9usAeH4AUgQj8DH6ZOKmtlzoExRK8hrgXixclY75j38bNgVOj+lE20j+bne5xi+C226mWh4UpIzI6GF0WT+y4i7lZose0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=S3k5tb7T; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=MbuaY6XvLxlfLLl236lmUxpSJWGWV82QFfRKdy3fMjY=; b=S3k5tb7TPvM5IUFxHkCDLbd3qD
+	0LN13s5cBiqTFvZVjY4u/zu/sTbAXOFBK1K+YtQith9ptMYEVIofLhhkUhDOXBL+E4PvGO6oICbLU
+	x+GGq8zBpAbwiu7N6SShlSa0gLMCZtzexcVTcbedRZKI8yXk8WaIZEzCReXRqbIqP7nBIHssDXfav
+	isIEemsYw8tUxtWSzBhQub26keOeqosCiv4OrUwyRx/C9ItStohRyWQN8MWI70jSstFy/Nqxnjsf6
+	/+nr8KrQbTyMAOXqC4Ry1AlaoewUIprnQEMWCoJoebU1/Q6oMWm2oj+74KqjuBDR6pG1JYBB7PL+a
+	UdHNZjiw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tcbwm-0000000DtjJ-1MiS;
+	Tue, 28 Jan 2025 03:07:28 +0000
+Date: Tue, 28 Jan 2025 03:07:28 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com,
+	amarkuze@redhat.com, Slava.Dubeyko@ibm.com
+Subject: Re: [PATCH] ceph: is_root_ceph_dentry() cleanup
+Message-ID: <20250128030728.GN1977892@ZenIV>
+References: <20250128011023.55012-1-slava@dubeyko.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250128011023.55012-1-slava@dubeyko.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+On Mon, Jan 27, 2025 at 05:10:23PM -0800, Viacheslav Dubeyko wrote:
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> 
+> This patch introduces CEPH_HIDDEN_DIR_NAME. It
+> declares name of the hidden directory .ceph in
+> the include/linux/ceph/ceph_fs.h instead of hiding
+> it in dir.c file. Also hardcoded length of the name
+> is changed on strlen(CEPH_HIDDEN_DIR_NAME).
 
-This patch introduces CEPH_HIDDEN_DIR_NAME. It
-declares name of the hidden directory .ceph in
-the include/linux/ceph/ceph_fs.h instead of hiding
-it in dir.c file. Also hardcoded length of the name
-is changed on strlen(CEPH_HIDDEN_DIR_NAME).
+Hmm...
 
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
----
- fs/ceph/dir.c                | 10 ++++++++--
- include/linux/ceph/ceph_fs.h |  2 ++
- 2 files changed, 10 insertions(+), 2 deletions(-)
+Speaking of that area
+	* how the hell could ceph_lookup() ever be called with dentry
+that is *NOT* negative?  VFS certainly won't do that; I'm not sure about
+ceph_handle_notrace_create(), but it doesn't look like that's possible
+without server being malicious (if it's possible at all).
 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 0bf388e07a02..5151c614b5cb 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -782,10 +782,16 @@ struct dentry *ceph_finish_lookup(struct ceph_mds_request *req,
- 	return dentry;
- }
- 
-+static inline
-+bool is_hidden_ceph_dir(struct dentry *dentry)
-+{
-+	size_t len = strlen(CEPH_HIDDEN_DIR_NAME);
-+	return strncmp(dentry->d_name.name, CEPH_HIDDEN_DIR_NAME, len) == 0;
-+}
-+
- static bool is_root_ceph_dentry(struct inode *inode, struct dentry *dentry)
- {
--	return ceph_ino(inode) == CEPH_INO_ROOT &&
--		strncmp(dentry->d_name.name, ".ceph", 5) == 0;
-+	return ceph_ino(inode) == CEPH_INO_ROOT && is_hidden_ceph_dir(dentry);
- }
- 
- /*
-diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-index 2d7d86f0290d..84a1391aab29 100644
---- a/include/linux/ceph/ceph_fs.h
-+++ b/include/linux/ceph/ceph_fs.h
-@@ -31,6 +31,8 @@
- #define CEPH_INO_CEPH   2            /* hidden .ceph dir */
- #define CEPH_INO_GLOBAL_SNAPREALM  3 /* global dummy snaprealm */
- 
-+#define CEPH_HIDDEN_DIR_NAME	".ceph"
-+
- /* arbitrary limit on max # of monitors (cluster of 3 is typical) */
- #define CEPH_MAX_MON   31
- 
--- 
-2.48.0
-
+	* speaking of malicious servers, what happens if
+it gets CEPH_MDS_OP_LOOKUP and it returns a normal reply to positive
+lookup, but with cpu_to_le32(-ENOENT) shoved into head->result?
+	AFAICS, ceph_handle_snapdir() will be called with dentry
+that is already made positive; results will not be pretty...
 
