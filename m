@@ -1,79 +1,131 @@
-Return-Path: <ceph-devel+bounces-2619-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2620-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00FFCA24412
-	for <lists+ceph-devel@lfdr.de>; Fri, 31 Jan 2025 21:30:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF460A245DA
+	for <lists+ceph-devel@lfdr.de>; Sat,  1 Feb 2025 01:11:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B040188B709
-	for <lists+ceph-devel@lfdr.de>; Fri, 31 Jan 2025 20:30:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B8083A85E4
+	for <lists+ceph-devel@lfdr.de>; Sat,  1 Feb 2025 00:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9851C1F4710;
-	Fri, 31 Jan 2025 20:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C14B4690;
+	Sat,  1 Feb 2025 00:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EavGf45T"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VAieKTRU"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BEB1F4706;
-	Fri, 31 Jan 2025 20:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6958B629;
+	Sat,  1 Feb 2025 00:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738355220; cv=none; b=OM/D9IR6cAxSEiJJA7HK120SLZH4hezAB8oPLd+ANR2/q+JazobCGYw74g+LZvL6a438less9Dq5a/8+DXRodginQgiq+HYZOi0Z0+UnBk8yZ3dO8gUDQ9lmAbc/us4pGVswyda4YrrjCqGx/s855yX/vqI3exw15azUTyX6uVg=
+	t=1738368706; cv=none; b=EfOr2AueiKCrE6e6bafHX50hGrP0LkZtd+TWaPBNY3T+DdgnGhpIlQ6bQmJPg8/5x8oBHp8pwzYivwK8i4FeDtfKCyN0Mhcq8lhuaQTiO8JJXJsp179qzJwlRBV65oG/w6BYx8TPtDXrY2QP24S4BttdvH9MQcOPvR/CHmUJRRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738355220; c=relaxed/simple;
-	bh=UWBwnZyAQeVr9/fBdPaIaXb5flEix//Ihiq2RtbiUCs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=sBpi/9nYJY9wsUQVpsp2sbsA9iEuAIOvolB67yT2ZH169aWgZBaFU6A/ZhwS84P5c2f9/WsbmL5KRn9KSAdlF6kijcO8ZGPeab5vomqf2CtcZqskz0ID91ldJbDNdsol3HmAVhX096wEcPRzmERJFaa9gBZd8Ipi1Rvu761RPGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EavGf45T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F41EC4CED1;
-	Fri, 31 Jan 2025 20:27:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738355220;
-	bh=UWBwnZyAQeVr9/fBdPaIaXb5flEix//Ihiq2RtbiUCs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=EavGf45TgHNEruqvEhEaRe7BUOLeVEh+d38dlPA1M5Ism9BQSB2x6VgMgfi6DrzSg
-	 a6GyDjNprMgCOFx346Dlu9kZYeOt9kKw4QkekZo0dggWoduhVohm5MuXBkwEYWumOd
-	 1R3cWGA+jm07H5VN+T2tXRho9yXLsGwRUHnMELr+ypTGYhJ8cyKJd/9XXqzD3Q1GEm
-	 R5ugtpRaDddaqjt7F60HPt3g1mhusLZwA4X2JTp0zbGUnRqzury3yNW1XsWKA3vk3j
-	 0+UbhADgBW8w2LjhoEJDVbTYiSkiYbtGamjltvjmfTFos8o1F/LhxnNsh1ktUBS5RN
-	 y4tJnwgvEGNpQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF0D380AA7D;
-	Fri, 31 Jan 2025 20:27:27 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph fixes for 6.14-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250131181425.3962976-1-idryomov@gmail.com>
-References: <20250131181425.3962976-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250131181425.3962976-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.14-rc1
-X-PR-Tracked-Commit-Id: 3981be13ec1baf811bfb93ed6a98bafc85cdeab1
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 626d1a1e99583f846e44d6eefdc9d1c8b82c372d
-Message-Id: <173835524656.1719808.2903667915229670938.pr-tracker-bot@kernel.org>
-Date: Fri, 31 Jan 2025 20:27:26 +0000
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1738368706; c=relaxed/simple;
+	bh=MYKomRfEqunKF+5LDSAdQtifzb1Zt5hNQibIdFjJ+s8=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ien2NZeGrw1V2KBJmjzy20S23UL2MD2y8OH1JJCfbdPJimvNplJvMxT3OuOSgxkDub5wrR+Qe9ZUAPheNwCzr2PPh1WeeUh6yEQFcZ+glIwbXsAfgCFs2noD8Zj47Wv5kYd6SXiOFOmCJdM4HBNvYUMfwx1CnrD8PQ/zBgoTLqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VAieKTRU; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.234.206] (unknown [20.236.11.185])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 7E312210C329;
+	Fri, 31 Jan 2025 16:11:36 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7E312210C329
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1738368698;
+	bh=URcW5d1wFUuTsZZ61zIwPjo02bqd3Xwwrj5siI/ejR4=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=VAieKTRUQduuqC4WMWksNFGAWFpl7wH2vcfIqWTtocImegfQz7yg09xx/uVhF84+8
+	 X7djRP48uKGESU6HAg1NDd667oKEWQCkly+4NL3U6jOR2q4YvgMKiwE4cdu5TQF7bE
+	 8JEcr4WkbAHOc5PABGxI8dv7PLkq6NUdzzexdebM=
+Message-ID: <632be2db-78d2-4249-92f0-3f60e0373172@linux.microsoft.com>
+Date: Fri, 31 Jan 2025 16:11:37 -0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: cocci@inria.fr, kernel-janitors@vger.kernel.org,
+ eahariha@linux.microsoft.com, LKML <linux-kernel@vger.kernel.org>,
+ linux-block@vger.kernel.org, linux-btrfs@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-pm@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-xfs@vger.kernel.org,
+ ceph-devel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, ibm-acpi-devel@lists.sourceforge.net,
+ imx@lists.linux.dev, kernel@pengutronix.de,
+ linux-arm-kernel@lists.infradead.org,
+ Andrew Morton <akpm@linux-foundation.org>, Carlos Maiolino <cem@kernel.org>,
+ Chris Mason <clm@fb.com>, Christoph Hellwig <hch@lst.de>,
+ Damien Le Moal <dlemoal@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
+ David Sterba <dsterba@suse.com>, Dick Kennedy <dick.kennedy@broadcom.com>,
+ Dongsheng Yang <dongsheng.yang@easystack.cn>,
+ Fabio Estevam <festevam@gmail.com>, Frank Li <Frank.Li@nxp.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ James Bottomley <James.Bottomley@HansenPartnership.com>,
+ James Smart <james.smart@broadcom.com>, Jaroslav Kysela <perex@perex.cz>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Jens Axboe <axboe@kernel.dk>,
+ Josef Bacik <josef@toxicpanda.com>, Julia Lawall <Julia.Lawall@inria.fr>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Ilya Dryomov <idryomov@gmail.com>,
+ Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>,
+ Keith Busch <kbusch@kernel.org>, Leon Romanovsky <leon@kernel.org>,
+ Mark Brown <broonie@kernel.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Nicolas Palix <nicolas.palix@imag.fr>, Niklas Cassel <cassel@kernel.org>,
+ Oded Gabbay <ogabbay@kernel.org>, Ricardo Ribalda <ribalda@google.com>,
+ Sagi Grimberg <sagi@grimberg.me>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Sebastian Reichel <sre@kernel.org>,
+ Selvin Xavier <selvin.xavier@broadcom.com>, Shawn Guo <shawnguo@kernel.org>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Takashi Iwai <tiwai@suse.com>,
+ Victor Gambier <victor.gambier@inria.fr>, Xiubo Li <xiubli@redhat.com>,
+ Yaron Avizrat <yaron.avizrat@intel.com>,
+ Ricardo Ribalda <ribalda@chromium.org>
+Subject: Re: [PATCH 01/16] coccinelle: misc: secs_to_jiffies: Patch
+ expressions too
+To: Markus Elfring <Markus.Elfring@web.de>
+References: <20250128-converge-secs-to-jiffies-part-two-v1-1-9a6ecf0b2308@linux.microsoft.com>
+ <e06cb7f5-7aa3-464c-a8a1-2c7b9b6a29eb@web.de>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <e06cb7f5-7aa3-464c-a8a1-2c7b9b6a29eb@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Fri, 31 Jan 2025 19:14:22 +0100:
+On 1/30/2025 3:01 AM, Markus Elfring wrote:
+>> Teach the script to suggest conversions for timeout patterns where the
+>> arguments to msecs_to_jiffies() are expressions as well.
+> 
+> Does anything hinder to benefit any more from a source code analysis approach
+> (like the following by the extended means of the semantic patch language)?
+> 
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-6.14-rc1
+Thank you, this is much more useful feedback, specifically due to the
+suggested patch below. I did intend to learn about the other modes and
+progressively upgrade secs_to_jiffies.cocci with them in the future once
+the existing instances were resolved, to help with future code
+submissions. The patch below will be super helpful in that.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/626d1a1e99583f846e44d6eefdc9d1c8b82c372d
+As it stands, I'll fix up the current rules in v2 following your
+suggestion to keep the multiplication in each line to allow Coccinelle
+to use the commutativity properties and find more instances.
 
-Thank you!
+I'll refrain from implementing the report mode until current instances
+have been fixed because of the issue we have already seen[1] with CI
+builds being broken. I would not want to break a strict CI build that is
+looking for coccicheck REPORT to return 0 results.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+[1]:
+https://lore.kernel.org/all/20250129-secs_to_jiffles-v1-1-35a5e16b9f03@chromium.org/
+
+<snip>
+
+Thanks,
+Easwar (he/him)
 
