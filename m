@@ -1,48 +1,48 @@
-Return-Path: <ceph-devel+bounces-2627-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2628-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44343A2680B
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Feb 2025 00:50:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C76A2680F
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Feb 2025 00:50:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D09131651F9
-	for <lists+ceph-devel@lfdr.de>; Mon,  3 Feb 2025 23:50:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 205D61885BE4
+	for <lists+ceph-devel@lfdr.de>; Mon,  3 Feb 2025 23:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDBA2116EB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB225211A08;
 	Mon,  3 Feb 2025 23:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ReXLE283"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="StqwqgSN"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D065D209692;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0134C20ADCF;
 	Mon,  3 Feb 2025 23:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738626625; cv=none; b=OTIPqy6IOlAglvMJ7oDiizV7XXUaRAmoW+QbxBQAFDG1nBN/AOQ1S4seW6x/wvNymENqBlkRZkKE1NqFbDG9zgnxTK5ZNbEwg6PrCH+EQg2my9tn8n+sAKtbjX6NuMsFUtO6TNd3vqZqBZ82uy+09veYknBTjBg1aUlnHl/OU9Y=
+	t=1738626625; cv=none; b=m6NW5OvMIUNeMKywYW7QCd/CNrk5/8zMBLulpuSyHTiegjQrpANyyAqfhpE68tEXZjBsM/YK50TWvC2XhT8kBnarodrl9/VY6vwXKFUYS/yomGDfckoRPALzuixiqcuRWAQemA1hju4ccIi1PNd1k2ScsJGUtV4SdOp6UZ9EZ9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1738626625; c=relaxed/simple;
-	bh=lcNBHMv7OMgX6nqVil6HxIOjmC/ftCct7tDml36hpRA=;
+	bh=ptKQwSeZ4N5bue1bB0zgDpOlUIKszvN84grZSQCcReQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J7QZVvW8st3e+u4oUba4a7frJoh4HA/B0Fz/QvtTrnSR/uU+sFnbvCvjXLJk47PWVHJmE+RMp+ibm2tZ1Qb4xi6dqfDJM5J4xLi1JWuGmEpQcM7QpS4ESUC7j8rYctVO9E0mWMhEngty/i2mMUlf1vntLWC2ANqtKm68iN3DP5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ReXLE283; arc=none smtp.client-ip=13.77.154.182
+	 In-Reply-To:To:Cc; b=pQ032g7apSrbeoRewfVrJT9KEiOcWqy1Y6aNP0VLDxdjPXeH45ZgnBVWQt9ramc21uFUoaN1UpICbtbjzJlb1FHrAuChr59OMSu33gqEAfVIZBFWMiNB/Dnt8Z7dcpCQINVHAiTLMRtG9tpNSsgp55aoVrxGld5EfGbd5aSe0hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=StqwqgSN; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Received: from eahariha-devbox.internal.cloudapp.net (unknown [40.91.112.99])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6B0C9205493D;
+	by linux.microsoft.com (Postfix) with ESMTPSA id 84A00205493E;
 	Mon,  3 Feb 2025 15:50:23 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6B0C9205493D
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 84A00205493E
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
 	s=default; t=1738626623;
-	bh=inEJFlb8r1npYTsCShTPXzeDexvNBQKU3TCcAYSm03w=;
+	bh=jl/YrVgNHMJyuougsZ83XWkAHGEtBSCoppF53ehyxrQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ReXLE283sX5Tuc0xrvz7bAVvEIGcJWw0rsBAmKKW/ZsT5S61O5VtjQ66Z15h9nzhF
-	 36WfZ+35qfNmyQRvN0ihBKzifDLm1J6exfsCS9sn+0/ui+NUyQWAcEYxIkhW55TQ/5
-	 imD44gbuz+LkK2jsREe0wluFIj6KbR/2Q+blP1Ck=
+	b=StqwqgSNG2KkJyJsRG/IWgyvZ5UocaH2m/+dfcXUagDXBgaYXw89QgEKxugfrep4v
+	 dLKXw3DPl9XGMIJreixUiyn7yAWneAEebfFyONYlzSWFZngQlphknQdYWu13Rs37yX
+	 3WP+/AGKzQjgplcS2c3XKuSfIiY+hG9bzK/eU1/c=
 From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Date: Mon, 03 Feb 2025 23:50:23 +0000
-Subject: [PATCH v2 2/3] rbd: convert timeouts to secs_to_jiffies()
+Date: Mon, 03 Feb 2025 23:50:24 +0000
+Subject: [PATCH v2 3/3] libceph: convert timeouts to secs_to_jiffies()
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250203-converge-secs-to-jiffies-part-two-v2-2-d7058a01fd0e@linux.microsoft.com>
+Message-Id: <20250203-converge-secs-to-jiffies-part-two-v2-3-d7058a01fd0e@linux.microsoft.com>
 References: <20250203-converge-secs-to-jiffies-part-two-v2-0-d7058a01fd0e@linux.microsoft.com>
 In-Reply-To: <20250203-converge-secs-to-jiffies-part-two-v2-0-d7058a01fd0e@linux.microsoft.com>
 To: Andrew Morton <akpm@linux-foundation.org>, 
@@ -81,47 +81,96 @@ the following Coccinelle rules:
 -msecs_to_jiffies(E * MSEC_PER_SEC)
 +secs_to_jiffies(E)
 
-While here, remove the no-longer necessary check for range since there's
+While here, remove the no-longer necessary checks for range since there's
 no multiplication involved.
 
 Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 ---
- drivers/block/rbd.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ include/linux/ceph/libceph.h | 12 ++++++------
+ net/ceph/ceph_common.c       | 18 ++++++------------
+ net/ceph/osd_client.c        |  3 +--
+ 3 files changed, 13 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index faafd7ff43d6ef53110ab3663cc7ac322214cc8c..41207133e21e9203192adf3b92390818e8fa5a58 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -108,7 +108,7 @@ static int atomic_dec_return_safe(atomic_t *v)
- #define RBD_OBJ_PREFIX_LEN_MAX	64
+diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
+index 733e7f93db66a7a29a4a8eba97e9ebf2c49da1f9..5f57128ef0c7d018341c15cc59288aa47edec646 100644
+--- a/include/linux/ceph/libceph.h
++++ b/include/linux/ceph/libceph.h
+@@ -72,15 +72,15 @@ struct ceph_options {
+ /*
+  * defaults
+  */
+-#define CEPH_MOUNT_TIMEOUT_DEFAULT	msecs_to_jiffies(60 * 1000)
+-#define CEPH_OSD_KEEPALIVE_DEFAULT	msecs_to_jiffies(5 * 1000)
+-#define CEPH_OSD_IDLE_TTL_DEFAULT	msecs_to_jiffies(60 * 1000)
++#define CEPH_MOUNT_TIMEOUT_DEFAULT	secs_to_jiffies(60)
++#define CEPH_OSD_KEEPALIVE_DEFAULT	secs_to_jiffies(5)
++#define CEPH_OSD_IDLE_TTL_DEFAULT	secs_to_jiffies(60)
+ #define CEPH_OSD_REQUEST_TIMEOUT_DEFAULT 0  /* no timeout */
+ #define CEPH_READ_FROM_REPLICA_DEFAULT	0  /* read from primary */
  
- #define RBD_NOTIFY_TIMEOUT	5	/* seconds */
--#define RBD_RETRY_DELAY		msecs_to_jiffies(1000)
-+#define RBD_RETRY_DELAY		secs_to_jiffies(1)
+-#define CEPH_MONC_HUNT_INTERVAL		msecs_to_jiffies(3 * 1000)
+-#define CEPH_MONC_PING_INTERVAL		msecs_to_jiffies(10 * 1000)
+-#define CEPH_MONC_PING_TIMEOUT		msecs_to_jiffies(30 * 1000)
++#define CEPH_MONC_HUNT_INTERVAL		secs_to_jiffies(3)
++#define CEPH_MONC_PING_INTERVAL		secs_to_jiffies(10)
++#define CEPH_MONC_PING_TIMEOUT		secs_to_jiffies(30)
+ #define CEPH_MONC_HUNT_BACKOFF		2
+ #define CEPH_MONC_HUNT_MAX_MULT		10
  
- /* Feature bits */
+diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+index 4c6441536d55b6323f4b9d93b5d4837cd4ec880c..c2a2c3bcc4e91a628c99bd1cef1211d54389efa2 100644
+--- a/net/ceph/ceph_common.c
++++ b/net/ceph/ceph_common.c
+@@ -527,29 +527,23 @@ int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
  
-@@ -4162,7 +4162,7 @@ static void rbd_acquire_lock(struct work_struct *work)
- 		dout("%s rbd_dev %p requeuing lock_dwork\n", __func__,
- 		     rbd_dev);
- 		mod_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork,
--		    msecs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT * MSEC_PER_SEC));
-+		    secs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT));
- 	}
- }
- 
-@@ -6283,9 +6283,7 @@ static int rbd_parse_param(struct fs_parameter *param,
+ 	case Opt_osdkeepalivetimeout:
+ 		/* 0 isn't well defined right now, reject it */
+-		if (result.uint_32 < 1 || result.uint_32 > INT_MAX / 1000)
++		if (result.uint_32 < 1)
+ 			goto out_of_range;
+-		opt->osd_keepalive_timeout =
+-		    msecs_to_jiffies(result.uint_32 * 1000);
++		opt->osd_keepalive_timeout = secs_to_jiffies(result.uint_32);
  		break;
- 	case Opt_lock_timeout:
+ 	case Opt_osd_idle_ttl:
+ 		/* 0 isn't well defined right now, reject it */
+-		if (result.uint_32 < 1 || result.uint_32 > INT_MAX / 1000)
++		if (result.uint_32 < 1)
+ 			goto out_of_range;
+-		opt->osd_idle_ttl = msecs_to_jiffies(result.uint_32 * 1000);
++		opt->osd_idle_ttl = secs_to_jiffies(result.uint_32);
+ 		break;
+ 	case Opt_mount_timeout:
  		/* 0 is "wait forever" (i.e. infinite timeout) */
 -		if (result.uint_32 > INT_MAX / 1000)
 -			goto out_of_range;
--		opt->lock_timeout = msecs_to_jiffies(result.uint_32 * 1000);
-+		opt->lock_timeout = secs_to_jiffies(result.uint_32);
+-		opt->mount_timeout = msecs_to_jiffies(result.uint_32 * 1000);
++		opt->mount_timeout = secs_to_jiffies(result.uint_32);
  		break;
- 	case Opt_pool_ns:
- 		kfree(pctx->spec->pool_ns);
+ 	case Opt_osd_request_timeout:
+ 		/* 0 is "wait forever" (i.e. infinite timeout) */
+-		if (result.uint_32 > INT_MAX / 1000)
+-			goto out_of_range;
+-		opt->osd_request_timeout =
+-		    msecs_to_jiffies(result.uint_32 * 1000);
++		opt->osd_request_timeout = secs_to_jiffies(result.uint_32);
+ 		break;
+ 
+ 	case Opt_share:
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index b24afec241382b60d775dd12a6561fa23a7eca45..ba61a48b4388c2eceb5b7a299906e7f90191dd5d 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -4989,8 +4989,7 @@ int ceph_osdc_notify(struct ceph_osd_client *osdc,
+ 	linger_submit(lreq);
+ 	ret = linger_reg_commit_wait(lreq);
+ 	if (!ret)
+-		ret = linger_notify_finish_wait(lreq,
+-				 msecs_to_jiffies(2 * timeout * MSEC_PER_SEC));
++		ret = linger_notify_finish_wait(lreq, secs_to_jiffies(2 * timeout));
+ 	else
+ 		dout("lreq %p failed to initiate notify %d\n", lreq, ret);
+ 
 
 -- 
 2.43.0
