@@ -1,72 +1,72 @@
-Return-Path: <ceph-devel+bounces-2631-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2632-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67460A27C9B
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Feb 2025 21:16:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8803A27CA0
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Feb 2025 21:16:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E761886775
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Feb 2025 20:16:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31E9B16479A
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Feb 2025 20:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9688217645;
-	Tue,  4 Feb 2025 20:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BB1217645;
+	Tue,  4 Feb 2025 20:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f2Al9XE6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BJnihFuD"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C573204589;
-	Tue,  4 Feb 2025 20:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD8120CCE5;
+	Tue,  4 Feb 2025 20:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738700159; cv=none; b=ugn+O9QZMpucRoULPueldHvp+1aHp0diBvSoeaJwrbLtmlZhh+7+SO+ULdjs5Ay7z7vhukaVYrHyyS9rvKQSmBr7Ioo6gUrKRHRh6iXP41zsfG5bjXTXlI2mtdlX9XcQlwwp5z7tDT7RCMgP0BbYfqYXSEVb9SzmB+rotvP7nj8=
+	t=1738700188; cv=none; b=uGJ7HzbnsP9Z3oza309TOC9ILeBvHZAnP0JGRKDHOq9YD+A3tg4du8ktjkylps7GRztGgoFfVaud5rnaeeiSzo2ckFkCCYd0qdbmS2o0FCEYSxpUhj/tu9B3Hll3bdfVCRXBzoSsvgbBHlmL69x6KACG9PF39JsI6CVloF9E8fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738700159; c=relaxed/simple;
-	bh=hcpGyDqUv/eSlKfr3GPwEttx+UOda14QMrCSTb26h48=;
+	s=arc-20240116; t=1738700188; c=relaxed/simple;
+	bh=6wdnt7/tCB7Z+FEpJBvdjTgNT/tgL4QV69RxqpyEVhw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fyuj/jRl3l88I72y1kBW8JNWHUddNZOhOWg/gpDfRt8VOkKmNtWj+C/7nVdR4c++uuIen6kcLxvjCMlbaK6zA9QZEYkSA6OVSRodsmDkgkN9xLfjnHinf8Yihzhf4J+ve6SFBInCX7AIHlYsx/0wpvNSBHXPSCzKWMD1oocSq7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f2Al9XE6; arc=none smtp.client-ip=209.85.216.46
+	 To:Cc:Content-Type; b=QFFzOJH7R70yqSO8++U1HE8v4T/20DKHdCXSL1Oo3m2GRunVkzZBkk+qzi5xzjxBrJBvEx6nAEZrLXFeiZD/5bUyOwkW7alY9viWf3pDIlB/rnsoWzzkrHMSg6Uu2Z+hmy90mORyvyLbucEbXwrNbnq6wVaimRGX0TCNfZjkw0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BJnihFuD; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2f9d17ac130so1102364a91.3;
-        Tue, 04 Feb 2025 12:15:57 -0800 (PST)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-21619108a6bso102004765ad.3;
+        Tue, 04 Feb 2025 12:16:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738700157; x=1739304957; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1738700186; x=1739304986; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HDo14UWXJJhikq+DLyV4VOaNI1GvjMImjjxkh0rzydg=;
-        b=f2Al9XE65iFejgX1zoaw3D08ZHyGN+XhU5YW1YzF8s9NNAz1DUpCN5NG0natGLpngH
-         wJ+R08gBP2oOSuouyGyj/CB76Soze5pXGfDIlr4x2whHJy27V2CoZLGodXuVhhT4Ccsa
-         o5l/NA5/ZDR5R0jWVGrKOo28KNvKEmzUSbmCFwtISi5sBJFm39hkqsF4vc2IPveD28os
-         kMeIDdddTvAJeqHPMK9CYoR8EzsQTW14qbA+0Ke+NkPlahsQXHfR7JMTg6OnH1DN80AW
-         WjNgY4nW/fkimFS6h9goYcMSn3QGWToN/eKRWdzPqgVn1jOhFNpBoI0UBfQ2e+gGEhsu
-         2Wug==
+        bh=KR/DuzPu4L6UmQMWZ9c+c7Q6VILPpItJGIL+ba1HmaQ=;
+        b=BJnihFuDJJORzwsj+PJa0Xv1wlYj6M31koYdlnbWmpMYDgepEo4lY1ed3nGUfyPm19
+         rXL3p75yLEcd6U0MeJpUJk1l5gKfJ9sJqzV37CsM3lFYTlydSQv/PHtGTnqwY94RMRMv
+         x+g2/N+Rb1/Lgv+x7B/MGNTByobc1tNUgROTHAOvJpIBdX0D5NCGGPD4yxXbRc8ptQuC
+         YP7U5yJVr7w0mE9M0P68zY7U0YHSKBnBrlARm0l9gDzQeIcN7LH7lqkk23npnrF2AcI3
+         71ArxO6tdtg4ENKu0jwkV7yXagFjKErqqgsuGa7cUpY/kD8WheaDeLGeIP13OY5Nz4vI
+         UGxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738700157; x=1739304957;
+        d=1e100.net; s=20230601; t=1738700186; x=1739304986;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HDo14UWXJJhikq+DLyV4VOaNI1GvjMImjjxkh0rzydg=;
-        b=ni9Gwm+oCTiWOiWONpYWc0Rh2wTX5YE+SKDSvmZuu/qO9rg+GIcfVIOCTjue+NuOUb
-         bwTMHtdYQxdds/8K8nocVLtRxPkdJfL3SwevO93Zfw2THKM0zIUeuxnKaYboqCS8Ra6A
-         SK78Iw8zgLZJGoP51pBqmjyrdTczT7k6o6jbolsNo/XRs8q2qzGnoub617/4AxCUK/LM
-         gUHGjvjXyAQ/WH+X2DZFV2FcmjJhrl1SoASKvCwBREmPJrOxieV+IheOWrOfkpPORPjV
-         Fx28/9+xlBDtRGjHoIc8X/UVsNh4hyOgCMb/k6lbUzvNo3UyiFMnx4ajI/H4AfZn4kNs
-         7y0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWpxiaBivGTfPA4QvVrXgK3lhWp2qiu95g/1uwfX/20ylg9OeiPBajX+eWKRwWP8buqElIK6H2FBorS3Zg=@vger.kernel.org, AJvYcCX297pxyVlxtWJQ9YbIWOL+ETgcpwTPsrRwlp/qY6gSA8VMn8HoxqymsKcAhMFOeZ+j0t6Dc+tUEAXf409Q@vger.kernel.org, AJvYcCX5LN3pDtgEdCL6vIGVOKsjmWzoq4WxOb4I4GAmT0JTHUCEcXIhFgjdcVuDKfVJEYjybfVKrMX30GGd@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF4IhyxH5WiJEKmA0TiwtTdhDHgo8mIYez0IRLZlQ+Yj9I9DUZ
-	2CXWRcWPyUI1JQ8BmL58aFFH6AxNZRv9KDL9ZKBmmmgs/FGP7GUj1xYZTpIFAt6utc8YvU28gwV
-	kq6zNilHwjSDzws3kp2D814oZTqQ=
-X-Gm-Gg: ASbGncv0rXc7ZUSzrWk6mCpOxRiPPAKWAEpWKmxknPP7OZ5UhsZcZva7ljU66iD2+oI
-	tKVtYmdMyu0iIii1K/2SUzT2iFmqBSUf1mOT/NOhAewVUfW6eT4iuIGmY5qouEON0J2cQbQ80
-X-Google-Smtp-Source: AGHT+IFpUn4ty+hTBTAscWBy/P6n51/jgfEImKVtStudLd6LSKIl/9ac2I1XNzbeRalZoB0WUHUyHWRLIpYi1FKnBlE=
-X-Received: by 2002:a17:90b:5289:b0:2ee:8008:b583 with SMTP id
- 98e67ed59e1d1-2f9e0792e11mr153173a91.16.1738700156925; Tue, 04 Feb 2025
- 12:15:56 -0800 (PST)
+        bh=KR/DuzPu4L6UmQMWZ9c+c7Q6VILPpItJGIL+ba1HmaQ=;
+        b=BXIfsbXEr0S6nLFinxiZEGfjq0ny1DSN8ACbQBNcKA/fezjmr48PpyoTUGk3AQ/JaW
+         mMzk5nYo3sDfm/kOSDeo3VB2JlIUwJRvKyoaaNE/8KpvZZxFKHqwbpT/ud8sWKmG2BAS
+         os1g+4VpWU5g3f1Z9T+ibnD7teHq9lMUnlHR/X9unbWoHZQPgQQAaXznXTBsCBaeJ4/9
+         NJWAY0YgL3CbMrd3k2TB2QWIb5p/voKHuW5+TW7ptD90NT6RVJHF+0o+ASO8z5/t7XMz
+         F7pWJDEyIxxNSx3dUKmFhkvx5UNOs9VmyuDF1kWbYpbvd0CxA781cFHXqv71fivDziqv
+         i0CA==
+X-Forwarded-Encrypted: i=1; AJvYcCUov4hzFw+xGSDMELOaOeM24dSCYkeUYAekFSFL6gMB/EbPCFU2QHj7CfXv2NbJDMftZQCB+4TE6EGbfErr@vger.kernel.org, AJvYcCWFg4i6SjZGNdfhW+qEpKVAIBGcGdx87DFDZ3JuoKmuJKok8RRJVHsrF3z8N07rkE56Nvi4gDgLozlcb0Y=@vger.kernel.org, AJvYcCXVdNvc3Br4fk+SdTQdtiXyKXFmuf4vbWvfNXMEIwfqvg0vsxwghLoFx9THesXH0+VcvF03qRDYWzdm@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx15+jM1Bg2i0H9fVcO+HIp9niyFs2XwsI10wA+kC/hoZFwI8x5
+	mQDHI+wyqAD11hzDPARoMfA020TFnCgiZK9jI9X/bDs9YtdQQAstRk10ibFdCg6yBA/s+rBhiVI
+	HAcob7ULOJG5DZYEGhtNAwFNhF04=
+X-Gm-Gg: ASbGnctVDOZXrKftXE5+gwPtfU9H4osGPurhxnFeB7cf8BL0ez2dVXgMNnw7ziGlfPY
+	mba4K5GwfYvFBRbXBmIAPjxZRmt8W9UbWzW88y+m14ytw1vHFpLeleolfZGR42k6RSWAlztvz
+X-Google-Smtp-Source: AGHT+IGMRCnWUgk4azvsM8AKV6n66tF8jJ5hJc5CJaJ9hjxGDmkew2CZ3MuiAN64LXIAW7Ct2k1pbf+SLC7mYsM4D9w=
+X-Received: by 2002:a17:902:e54c:b0:215:a04a:89d5 with SMTP id
+ d9443c01a7336-21f17df58famr2631635ad.2.1738700185995; Tue, 04 Feb 2025
+ 12:16:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -74,13 +74,13 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250203-converge-secs-to-jiffies-part-two-v2-0-d7058a01fd0e@linux.microsoft.com>
- <20250203-converge-secs-to-jiffies-part-two-v2-2-d7058a01fd0e@linux.microsoft.com>
-In-Reply-To: <20250203-converge-secs-to-jiffies-part-two-v2-2-d7058a01fd0e@linux.microsoft.com>
+ <20250203-converge-secs-to-jiffies-part-two-v2-3-d7058a01fd0e@linux.microsoft.com>
+In-Reply-To: <20250203-converge-secs-to-jiffies-part-two-v2-3-d7058a01fd0e@linux.microsoft.com>
 From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 4 Feb 2025 21:15:45 +0100
-X-Gm-Features: AWEUYZmez9Mpz0-SYRI0bR38UXb1Ekbuss658D4anHnBb41KwIIcd5IfJG1eviU
-Message-ID: <CAOi1vP8djn-cpTMv+qVO4-cK9GD7vousoNEg8hOQ2fTU5t+NOg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] rbd: convert timeouts to secs_to_jiffies()
+Date: Tue, 4 Feb 2025 21:16:13 +0100
+X-Gm-Features: AWEUYZltcKp5HWPVuFiXXXLg5FCvpTOIVUsJwjijbmOSBWMbuaFjZjJQs9hspCs
+Message-ID: <CAOi1vP9P7c37aGWOXCojBM+eQZ8eQLpHPQK_t2sO=SR53EboKA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] libceph: convert timeouts to secs_to_jiffies()
 To: Easwar Hariharan <eahariha@linux.microsoft.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, Julia Lawall <Julia.Lawall@inria.fr>, 
 	Nicolas Palix <nicolas.palix@imag.fr>, Dongsheng Yang <dongsheng.yang@easystack.cn>, 
@@ -112,52 +112,111 @@ h
 > -msecs_to_jiffies(E * MSEC_PER_SEC)
 > +secs_to_jiffies(E)
 >
-> While here, remove the no-longer necessary check for range since there's
+> While here, remove the no-longer necessary checks for range since there's
 > no multiplication involved.
 >
 > Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 > ---
->  drivers/block/rbd.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
+>  include/linux/ceph/libceph.h | 12 ++++++------
+>  net/ceph/ceph_common.c       | 18 ++++++------------
+>  net/ceph/osd_client.c        |  3 +--
+>  3 files changed, 13 insertions(+), 20 deletions(-)
 >
-> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-> index faafd7ff43d6ef53110ab3663cc7ac322214cc8c..41207133e21e9203192adf3b9=
-2390818e8fa5a58 100644
-> --- a/drivers/block/rbd.c
-> +++ b/drivers/block/rbd.c
-> @@ -108,7 +108,7 @@ static int atomic_dec_return_safe(atomic_t *v)
->  #define RBD_OBJ_PREFIX_LEN_MAX 64
+> diff --git a/include/linux/ceph/libceph.h b/include/linux/ceph/libceph.h
+> index 733e7f93db66a7a29a4a8eba97e9ebf2c49da1f9..5f57128ef0c7d018341c15cc5=
+9288aa47edec646 100644
+> --- a/include/linux/ceph/libceph.h
+> +++ b/include/linux/ceph/libceph.h
+> @@ -72,15 +72,15 @@ struct ceph_options {
+>  /*
+>   * defaults
+>   */
+> -#define CEPH_MOUNT_TIMEOUT_DEFAULT     msecs_to_jiffies(60 * 1000)
+> -#define CEPH_OSD_KEEPALIVE_DEFAULT     msecs_to_jiffies(5 * 1000)
+> -#define CEPH_OSD_IDLE_TTL_DEFAULT      msecs_to_jiffies(60 * 1000)
+> +#define CEPH_MOUNT_TIMEOUT_DEFAULT     secs_to_jiffies(60)
+> +#define CEPH_OSD_KEEPALIVE_DEFAULT     secs_to_jiffies(5)
+> +#define CEPH_OSD_IDLE_TTL_DEFAULT      secs_to_jiffies(60)
+>  #define CEPH_OSD_REQUEST_TIMEOUT_DEFAULT 0  /* no timeout */
+>  #define CEPH_READ_FROM_REPLICA_DEFAULT 0  /* read from primary */
 >
->  #define RBD_NOTIFY_TIMEOUT     5       /* seconds */
-> -#define RBD_RETRY_DELAY                msecs_to_jiffies(1000)
-> +#define RBD_RETRY_DELAY                secs_to_jiffies(1)
+> -#define CEPH_MONC_HUNT_INTERVAL                msecs_to_jiffies(3 * 1000=
+)
+> -#define CEPH_MONC_PING_INTERVAL                msecs_to_jiffies(10 * 100=
+0)
+> -#define CEPH_MONC_PING_TIMEOUT         msecs_to_jiffies(30 * 1000)
+> +#define CEPH_MONC_HUNT_INTERVAL                secs_to_jiffies(3)
+> +#define CEPH_MONC_PING_INTERVAL                secs_to_jiffies(10)
+> +#define CEPH_MONC_PING_TIMEOUT         secs_to_jiffies(30)
+>  #define CEPH_MONC_HUNT_BACKOFF         2
+>  #define CEPH_MONC_HUNT_MAX_MULT                10
 >
->  /* Feature bits */
+> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> index 4c6441536d55b6323f4b9d93b5d4837cd4ec880c..c2a2c3bcc4e91a628c99bd1ce=
+f1211d54389efa2 100644
+> --- a/net/ceph/ceph_common.c
+> +++ b/net/ceph/ceph_common.c
+> @@ -527,29 +527,23 @@ int ceph_parse_param(struct fs_parameter *param, st=
+ruct ceph_options *opt,
 >
-> @@ -4162,7 +4162,7 @@ static void rbd_acquire_lock(struct work_struct *wo=
-rk)
->                 dout("%s rbd_dev %p requeuing lock_dwork\n", __func__,
->                      rbd_dev);
->                 mod_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork,
-> -                   msecs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT * MSEC_PER_SE=
-C));
-> +                   secs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT));
->         }
->  }
->
-> @@ -6283,9 +6283,7 @@ static int rbd_parse_param(struct fs_parameter *par=
-am,
+>         case Opt_osdkeepalivetimeout:
+>                 /* 0 isn't well defined right now, reject it */
+> -               if (result.uint_32 < 1 || result.uint_32 > INT_MAX / 1000=
+)
+> +               if (result.uint_32 < 1)
+>                         goto out_of_range;
+> -               opt->osd_keepalive_timeout =3D
+> -                   msecs_to_jiffies(result.uint_32 * 1000);
+> +               opt->osd_keepalive_timeout =3D secs_to_jiffies(result.uin=
+t_32);
 >                 break;
->         case Opt_lock_timeout:
+>         case Opt_osd_idle_ttl:
+>                 /* 0 isn't well defined right now, reject it */
+> -               if (result.uint_32 < 1 || result.uint_32 > INT_MAX / 1000=
+)
+> +               if (result.uint_32 < 1)
+>                         goto out_of_range;
+> -               opt->osd_idle_ttl =3D msecs_to_jiffies(result.uint_32 * 1=
+000);
+> +               opt->osd_idle_ttl =3D secs_to_jiffies(result.uint_32);
+>                 break;
+>         case Opt_mount_timeout:
 >                 /* 0 is "wait forever" (i.e. infinite timeout) */
 > -               if (result.uint_32 > INT_MAX / 1000)
 > -                       goto out_of_range;
-> -               opt->lock_timeout =3D msecs_to_jiffies(result.uint_32 * 1=
-000);
-> +               opt->lock_timeout =3D secs_to_jiffies(result.uint_32);
+> -               opt->mount_timeout =3D msecs_to_jiffies(result.uint_32 * =
+1000);
+> +               opt->mount_timeout =3D secs_to_jiffies(result.uint_32);
 >                 break;
->         case Opt_pool_ns:
->                 kfree(pctx->spec->pool_ns);
+>         case Opt_osd_request_timeout:
+>                 /* 0 is "wait forever" (i.e. infinite timeout) */
+> -               if (result.uint_32 > INT_MAX / 1000)
+> -                       goto out_of_range;
+> -               opt->osd_request_timeout =3D
+> -                   msecs_to_jiffies(result.uint_32 * 1000);
+> +               opt->osd_request_timeout =3D secs_to_jiffies(result.uint_=
+32);
+>                 break;
+>
+>         case Opt_share:
+> diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+> index b24afec241382b60d775dd12a6561fa23a7eca45..ba61a48b4388c2eceb5b7a299=
+906e7f90191dd5d 100644
+> --- a/net/ceph/osd_client.c
+> +++ b/net/ceph/osd_client.c
+> @@ -4989,8 +4989,7 @@ int ceph_osdc_notify(struct ceph_osd_client *osdc,
+>         linger_submit(lreq);
+>         ret =3D linger_reg_commit_wait(lreq);
+>         if (!ret)
+> -               ret =3D linger_notify_finish_wait(lreq,
+> -                                msecs_to_jiffies(2 * timeout * MSEC_PER_=
+SEC));
+> +               ret =3D linger_notify_finish_wait(lreq, secs_to_jiffies(2=
+ * timeout));
+>         else
+>                 dout("lreq %p failed to initiate notify %d\n", lreq, ret)=
+;
+>
 >
 > --
 > 2.43.0
