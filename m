@@ -1,73 +1,74 @@
-Return-Path: <ceph-devel+bounces-2662-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2663-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04833A34C51
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2025 18:46:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DFCEA34DB7
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2025 19:29:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7891B7A33E0
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2025 17:45:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2F4D188C439
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2025 18:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C91227E88;
-	Thu, 13 Feb 2025 17:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE8F28A2DC;
+	Thu, 13 Feb 2025 18:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z0NE47cU"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BY+GVBha"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F1A221720
-	for <ceph-devel@vger.kernel.org>; Thu, 13 Feb 2025 17:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86F4241690
+	for <ceph-devel@vger.kernel.org>; Thu, 13 Feb 2025 18:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739468771; cv=none; b=F6DzE6c8Tcgj0jKVdmYn05n5K0zr2OjWJQwHn0kmc0trNA+J0xlyyDp259oz4Dv7BEfA7d5KssEUsZKYNL8L1WUhRn3cZAIxrgTV01gPFqpRGV1GohtSgCQF0TSSPTSaVDGqQkRQdTXZHQ988aI7o1VLYTEpvvBfcvhURC1Cw6o=
+	t=1739471355; cv=none; b=APK5BDzf8CK5ZHeIX8cBXMUker8TXxJltxb8S/70zEHyR2W4GHLp6LgX13kaaD0XwM0fOdPouJV/RXLktU7TPLDS63ruTdq75g5t7r3r+Tiw0GIO0J5o3ERD0tXxSksSDtFL7sQsEui4ocOyYtvlKqaYCpV8KCqLUnn+TLeeF8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739468771; c=relaxed/simple;
-	bh=4Qi4aFvSW5Z/Wvoeq9b06HzJ56rZuchfxdbZiQZMv0Y=;
+	s=arc-20240116; t=1739471355; c=relaxed/simple;
+	bh=Vls1h9b6LaiRYq0jkikt3QM36hYAo1T0Ul1t553zcpM=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uW7TAKvx5tv4/lZiOHriHPGqb9NVqMOpV8WwSS+gw2txFRiNPZ05YsYSC6PXC3vagqFSdIJoov1IPDLipScq+L0Cnrbub2GeZATXyslecC/FzJpTLfJ8PpoFG8uedSBSKhOZMmLYeDxCutvmo3q8GDzsvK0QrZDVaXNnLE+HmMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z0NE47cU; arc=none smtp.client-ip=192.198.163.18
+	 Content-Disposition; b=HxVFESsDWtYEFqnMN500XY0e/dOqZYsm6Lh0pTI6KuTt2hYvx03Y574fLATcp3bdhqk4IrEjo0OpkVv+5YUlnagbwz6idmvWM1VGGQskk7IX7/qG8JIq4e6NFgKSsSXVSi+OMNoX24H36QIF0SR6lJVn4CDw9ZXbgJJdXNQ5t1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BY+GVBha; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739468769; x=1771004769;
+  t=1739471354; x=1771007354;
   h=date:from:to:cc:subject:message-id:mime-version;
-  bh=4Qi4aFvSW5Z/Wvoeq9b06HzJ56rZuchfxdbZiQZMv0Y=;
-  b=Z0NE47cUy6ms6OliNJw8OKrrNR8/nXZER70jHfAl9Os5WOel/yvRGQdE
-   JBbArwyPSiSsVXGJP0ikBFjugc4ClHRarXojneCtEeAYNPpknzbM5V5vf
-   El8iQXw+FRw6226dkmOLkLK1w0ueCt5r0JHim33y0oZK99kPyOnCDPxps
-   TLyesLgtOvHPSJhW0uN5rvl9VkaMnRxUb6+mItV9q7A4trdGnxbEwLKMy
-   E3c2rDpMKAAofclGSNPbqgrwB33qZJImo+r0mxLIC3ZGRgEfcjqQA4pN/
-   V5U9R3Ohab2gd3C9VYFCe1FjaUjQ494NsmIVvPSTquWhowB5LTuYO9oLs
+  bh=Vls1h9b6LaiRYq0jkikt3QM36hYAo1T0Ul1t553zcpM=;
+  b=BY+GVBhaKtqby24SFhRgIZoGJKDqequ/CWGGzYdDQbk0csaiC1SWro99
+   nY7CP3rCUcWH7cO0FSRrwUwk37mc813Scnx6QMa/Zou1MAUDaw6pG5L3X
+   IAvzDhLlCeikMXAV1qjsqgoO8RvXRC3RNKjwAfM+0+sQ60rrygBfXcsYv
+   2Lxy7NKodbQ4808wuIOUJDLwTi9dpzfJI1vHnrifrvMYYOJu/BUzE3Xj3
+   yA+tVhvcZluFjZpyMYfja6VMsDqImugyQ9FfT65MuQhOdIinkDJhNxKPQ
+   4PYR0mzakwdHyf3PZXsKfyx/QzL74g/YZtFQgyfBrk22tLbdoLNN7NqO2
    w==;
-X-CSE-ConnectionGUID: kBR1IfdESLqedYnw78Xubg==
-X-CSE-MsgGUID: BUSFrWCoRAaBQu8e6Bobdg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="39417927"
+X-CSE-ConnectionGUID: jFeXQBnLTI2eXAe4qbFAOw==
+X-CSE-MsgGUID: LxnayCSiQi2ak1WhjZYrbA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="43961706"
 X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="39417927"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 09:46:08 -0800
-X-CSE-ConnectionGUID: Me2jYdVuRe+Rj7iK/9F/6Q==
-X-CSE-MsgGUID: BNRDYOI+Ty6LYxXW95dffw==
+   d="scan'208";a="43961706"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 10:29:13 -0800
+X-CSE-ConnectionGUID: 3UmGvbXNSoiaNb4XFiqiNQ==
+X-CSE-MsgGUID: k1bCbTfSRC+akK8WgdwsoQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117847849"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="112970290"
 Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 13 Feb 2025 09:46:07 -0800
+  by orviesa009.jf.intel.com with ESMTP; 13 Feb 2025 10:29:12 -0800
 Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tidHo-0018WJ-2d;
-	Thu, 13 Feb 2025 17:46:04 +0000
-Date: Fri, 14 Feb 2025 01:45:59 +0800
+	id 1tidxV-0018ZX-2q;
+	Thu, 13 Feb 2025 18:29:09 +0000
+Date: Fri, 14 Feb 2025 02:29:04 +0800
 From: kernel test robot <lkp@intel.com>
 To: Alex Markuze <amarkuze@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org
-Subject: [ceph-client:tls_logger 13/13] net/ceph/ceph_san.c:25:39: sparse:
- sparse: incorrect type in initializer (different address spaces)
-Message-ID: <202502140148.QryPfsF2-lkp@intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	ceph-devel@vger.kernel.org
+Subject: [ceph-client:tls_logger 13/13] net/ceph/messenger_v2.c:2791:12:
+ warning: stack frame size (9848) exceeds limit (8192) in 'process_control'
+Message-ID: <202502140205.1AGkREJM-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -80,65 +81,98 @@ Content-Disposition: inline
 tree:   https://github.com/ceph/ceph-client.git tls_logger
 head:   cd1e899feeb6a7da55cbb74b9245c8bbb77f82ba
 commit: cd1e899feeb6a7da55cbb74b9245c8bbb77f82ba [13/13] cephsun: using a dynamic buffer allocation
-config: alpha-randconfig-r133-20250213 (https://download.01.org/0day-ci/archive/20250214/202502140148.QryPfsF2-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250214/202502140148.QryPfsF2-lkp@intel.com/reproduce)
+config: x86_64-randconfig-005-20250213 (https://download.01.org/0day-ci/archive/20250214/202502140205.1AGkREJM-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502140205.1AGkREJM-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502140148.QryPfsF2-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502140205.1AGkREJM-lkp@intel.com/
 
-sparse warnings: (new ones prefixed by >>)
-   net/ceph/ceph_san.c:188:39: sparse: sparse: no newline at end of file
-   net/ceph/ceph_san.c:24:39: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct ceph_san_tls_logger * @@
-   net/ceph/ceph_san.c:24:39: sparse:     expected void const [noderef] __percpu *__vpp_verify
-   net/ceph/ceph_san.c:24:39: sparse:     got struct ceph_san_tls_logger *
->> net/ceph/ceph_san.c:25:39: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct cephsan_pagefrag * @@
-   net/ceph/ceph_san.c:25:39: sparse:     expected void const [noderef] __percpu *__vpp_verify
-   net/ceph/ceph_san.c:25:39: sparse:     got struct cephsan_pagefrag *
-   net/ceph/ceph_san.c:54:23: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct ceph_san_tls_logger * @@
-   net/ceph/ceph_san.c:54:23: sparse:     expected void const [noderef] __percpu *__vpp_verify
-   net/ceph/ceph_san.c:54:23: sparse:     got struct ceph_san_tls_logger *
-   net/ceph/ceph_san.c:72:23: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct ceph_san_tls_logger * @@
-   net/ceph/ceph_san.c:72:23: sparse:     expected void const [noderef] __percpu *__vpp_verify
-   net/ceph/ceph_san.c:72:23: sparse:     got struct ceph_san_tls_logger *
-   net/ceph/ceph_san.c:82:22: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct cephsan_pagefrag * @@
-   net/ceph/ceph_san.c:82:22: sparse:     expected void const [noderef] __percpu *__vpp_verify
-   net/ceph/ceph_san.c:82:22: sparse:     got struct cephsan_pagefrag *
+All warnings (new ones prefixed by >>):
 
-vim +25 net/ceph/ceph_san.c
+>> net/ceph/messenger_v2.c:2791:12: warning: stack frame size (9848) exceeds limit (8192) in 'process_control' [-Wframe-larger-than]
+    2791 | static int process_control(struct ceph_connection *con, void *p, void *end)
+         |            ^
+   1 warning generated.
+--
+>> net/ceph/messenger_v1.c:1326:5: warning: stack frame size (13688) exceeds limit (8192) in 'ceph_con_v1_try_read' [-Wframe-larger-than]
+    1326 | int ceph_con_v1_try_read(struct ceph_connection *con)
+         |     ^
+   1 warning generated.
 
-    15	
-    16	
-    17	static inline void *cephsan_pagefrag_get_ptr(struct cephsan_pagefrag *pf, u64 val);
-    18	/* The definitions for struct ceph_san_log_entry and struct ceph_san_tls_logger
-    19	 * have been moved to cephsan.h (under CONFIG_DEBUG_FS) to avoid duplication.
-    20	 */
-    21	
-    22	void log_cephsan(char *buf) {
-    23	    /* Use the per-core TLS logger */
-    24	    struct ceph_san_tls_logger *tls = this_cpu_ptr(&ceph_san_tls);
-  > 25		struct cephsan_pagefrag *pf = this_cpu_ptr(&ceph_san_pagefrag);
-    26	
-    27	    int head_idx = tls->head_idx++ & (CEPH_SAN_MAX_LOGS - 1);
-    28		int pre_len = tls->logs[head_idx].len;
-    29	    tls->logs[head_idx].pid = current->pid;
-    30	    tls->logs[head_idx].ts = jiffies;
-    31	    memcpy(tls->logs[head_idx].comm, current->comm, TASK_COMM_LEN);
-    32	
-    33		cephsan_pagefrag_free(pf, pre_len);
-    34	
-    35		int len = strlen(buf);
-    36	    u64 buf_idx = cephsan_pagefrag_alloc(pf, len);
-    37	    if (buf_idx) {
-    38			tls->logs[head_idx].len = len;
-    39	        tls->logs[head_idx].buf = cephsan_pagefrag_get_ptr(pf, buf_idx);
-    40			memcpy(tls->logs[head_idx].buf, buf, len);
-    41	    }
-    42	}
-    43	EXPORT_SYMBOL(log_cephsan);
-    44	
+
+vim +/process_control +2791 net/ceph/messenger_v2.c
+
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2790  
+cd1a677cad99402 Ilya Dryomov 2020-11-19 @2791  static int process_control(struct ceph_connection *con, void *p, void *end)
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2792  {
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2793  	int tag = con->v2.in_desc.fd_tag;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2794  	int ret;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2795  
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2796  	dout("%s con %p tag %d len %d\n", __func__, con, tag, (int)(end - p));
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2797  
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2798  	switch (tag) {
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2799  	case FRAME_TAG_HELLO:
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2800  		ret = process_hello(con, p, end);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2801  		break;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2802  	case FRAME_TAG_AUTH_BAD_METHOD:
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2803  		ret = process_auth_bad_method(con, p, end);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2804  		break;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2805  	case FRAME_TAG_AUTH_REPLY_MORE:
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2806  		ret = process_auth_reply_more(con, p, end);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2807  		break;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2808  	case FRAME_TAG_AUTH_DONE:
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2809  		ret = process_auth_done(con, p, end);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2810  		break;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2811  	case FRAME_TAG_AUTH_SIGNATURE:
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2812  		ret = process_auth_signature(con, p, end);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2813  		break;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2814  	case FRAME_TAG_SERVER_IDENT:
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2815  		ret = process_server_ident(con, p, end);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2816  		break;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2817  	case FRAME_TAG_IDENT_MISSING_FEATURES:
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2818  		ret = process_ident_missing_features(con, p, end);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2819  		break;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2820  	case FRAME_TAG_SESSION_RECONNECT_OK:
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2821  		ret = process_session_reconnect_ok(con, p, end);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2822  		break;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2823  	case FRAME_TAG_SESSION_RETRY:
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2824  		ret = process_session_retry(con, p, end);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2825  		break;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2826  	case FRAME_TAG_SESSION_RETRY_GLOBAL:
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2827  		ret = process_session_retry_global(con, p, end);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2828  		break;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2829  	case FRAME_TAG_SESSION_RESET:
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2830  		ret = process_session_reset(con, p, end);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2831  		break;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2832  	case FRAME_TAG_KEEPALIVE2_ACK:
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2833  		ret = process_keepalive2_ack(con, p, end);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2834  		break;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2835  	case FRAME_TAG_ACK:
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2836  		ret = process_ack(con, p, end);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2837  		break;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2838  	default:
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2839  		pr_err("bad tag %d\n", tag);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2840  		con->error_msg = "protocol error, bad tag";
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2841  		return -EINVAL;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2842  	}
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2843  	if (ret) {
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2844  		dout("%s con %p error %d\n", __func__, con, ret);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2845  		return ret;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2846  	}
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2847  
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2848  	prepare_read_preamble(con);
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2849  	return 0;
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2850  }
+cd1a677cad99402 Ilya Dryomov 2020-11-19  2851  
+
+:::::: The code at line 2791 was first introduced by commit
+:::::: cd1a677cad994021b19665ed476aea63f5d54f31 libceph, ceph: implement msgr2.1 protocol (crc and secure modes)
+
+:::::: TO: Ilya Dryomov <idryomov@gmail.com>
+:::::: CC: Ilya Dryomov <idryomov@gmail.com>
 
 -- 
 0-DAY CI Kernel Test Service
