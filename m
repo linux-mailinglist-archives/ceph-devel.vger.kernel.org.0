@@ -1,126 +1,146 @@
-Return-Path: <ceph-devel+bounces-2661-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2662-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EEBA34C45
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2025 18:46:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04833A34C51
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2025 18:46:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C68A16AF19
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2025 17:46:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7891B7A33E0
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2025 17:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1689F241687;
-	Thu, 13 Feb 2025 17:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C91227E88;
+	Thu, 13 Feb 2025 17:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MqwOKrlM"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z0NE47cU"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40ADA2040B7;
-	Thu, 13 Feb 2025 17:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F1A221720
+	for <ceph-devel@vger.kernel.org>; Thu, 13 Feb 2025 17:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739468744; cv=none; b=aLlTLwJHmY8nKXGKm/AlylExHNrctWj8TBzeVGJBy/8pl14xSdKhaDvVPHx3ceO6t6UkzGCgI+UPTMGBuj022y5G87uaEEaBstv7Tjjfw6umvNHfe25VRrs7Mvk+mvA4xFH6yg9jjcdlsSovncX6mtKmglc5WGcWmfGc8Jf2z7U=
+	t=1739468771; cv=none; b=F6DzE6c8Tcgj0jKVdmYn05n5K0zr2OjWJQwHn0kmc0trNA+J0xlyyDp259oz4Dv7BEfA7d5KssEUsZKYNL8L1WUhRn3cZAIxrgTV01gPFqpRGV1GohtSgCQF0TSSPTSaVDGqQkRQdTXZHQ988aI7o1VLYTEpvvBfcvhURC1Cw6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739468744; c=relaxed/simple;
-	bh=9g9XvpJ4vTHZRdoVn0NNOAe0M9fMrmh7qRY4E5RBo5I=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JaRg7IidlKAQiBO4hGtq62ejHDNeya3befkWh7RYalf+92TzzDR2PJFtN6D3BKgVriWc/QsnRwtmnQLNK0gKn0wLnbvi/aHzIh+06UuPRUEPj1t96ZRi2b9Xbh6ZWGsb79MRdTILvmmMji50gKfCVYe8c/Ic2c+52AHMy5M/UDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MqwOKrlM; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.1.94] (unknown [20.236.11.69])
-	by linux.microsoft.com (Postfix) with ESMTPSA id D7186203D61D;
-	Thu, 13 Feb 2025 09:45:40 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D7186203D61D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1739468742;
-	bh=CjdDB9uvZBBF3c03e9VylpCG5WkQPsjk1qSKlO3MQtE=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=MqwOKrlM0wNKTlUgCtpn9gJKIpfGiwVh9dHGNNF4ycPmXa/idcQ30iiksOd4FJJaH
-	 jrqNCD9r00CbzdjGOPFOZ+MnFU6woy29/+YEkOfP14iTKCcgK64o8pGQaLxlVNUpHe
-	 bIb4sXQD9rr6g8CsvFcC34/zgx+kxX5/LItW+SLg=
-Message-ID: <8f80b65e-724c-439c-a094-4bfbb1e296f1@linux.microsoft.com>
-Date: Thu, 13 Feb 2025 09:45:41 -0800
+	s=arc-20240116; t=1739468771; c=relaxed/simple;
+	bh=4Qi4aFvSW5Z/Wvoeq9b06HzJ56rZuchfxdbZiQZMv0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uW7TAKvx5tv4/lZiOHriHPGqb9NVqMOpV8WwSS+gw2txFRiNPZ05YsYSC6PXC3vagqFSdIJoov1IPDLipScq+L0Cnrbub2GeZATXyslecC/FzJpTLfJ8PpoFG8uedSBSKhOZMmLYeDxCutvmo3q8GDzsvK0QrZDVaXNnLE+HmMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z0NE47cU; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739468769; x=1771004769;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=4Qi4aFvSW5Z/Wvoeq9b06HzJ56rZuchfxdbZiQZMv0Y=;
+  b=Z0NE47cUy6ms6OliNJw8OKrrNR8/nXZER70jHfAl9Os5WOel/yvRGQdE
+   JBbArwyPSiSsVXGJP0ikBFjugc4ClHRarXojneCtEeAYNPpknzbM5V5vf
+   El8iQXw+FRw6226dkmOLkLK1w0ueCt5r0JHim33y0oZK99kPyOnCDPxps
+   TLyesLgtOvHPSJhW0uN5rvl9VkaMnRxUb6+mItV9q7A4trdGnxbEwLKMy
+   E3c2rDpMKAAofclGSNPbqgrwB33qZJImo+r0mxLIC3ZGRgEfcjqQA4pN/
+   V5U9R3Ohab2gd3C9VYFCe1FjaUjQ494NsmIVvPSTquWhowB5LTuYO9oLs
+   w==;
+X-CSE-ConnectionGUID: kBR1IfdESLqedYnw78Xubg==
+X-CSE-MsgGUID: BUSFrWCoRAaBQu8e6Bobdg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11344"; a="39417927"
+X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
+   d="scan'208";a="39417927"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 09:46:08 -0800
+X-CSE-ConnectionGUID: Me2jYdVuRe+Rj7iK/9F/6Q==
+X-CSE-MsgGUID: BNRDYOI+Ty6LYxXW95dffw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="117847849"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 13 Feb 2025 09:46:07 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tidHo-0018WJ-2d;
+	Thu, 13 Feb 2025 17:46:04 +0000
+Date: Fri, 14 Feb 2025 01:45:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org
+Subject: [ceph-client:tls_logger 13/13] net/ceph/ceph_san.c:25:39: sparse:
+ sparse: incorrect type in initializer (different address spaces)
+Message-ID: <202502140148.QryPfsF2-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: eahariha@linux.microsoft.com, Yaron Avizrat <yaron.avizrat@intel.com>,
- Oded Gabbay <ogabbay@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
- Nicolas Palix <nicolas.palix@imag.fr>, James Smart
- <james.smart@broadcom.com>, Dick Kennedy <dick.kennedy@broadcom.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, Ilya Dryomov <idryomov@gmail.com>,
- Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>,
- Xiubo Li <xiubli@redhat.com>, Damien Le Moal <dlemoal@kernel.org>,
- Niklas Cassel <cassel@kernel.org>, Carlos Maiolino <cem@kernel.org>,
- "Darrick J. Wong" <djwong@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Sagi Grimberg <sagi@grimberg.me>, Frank Li <Frank.Li@nxp.com>,
- Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Selvin Xavier <selvin.xavier@broadcom.com>,
- Kalesh AP <kalesh-anakkur.purayil@broadcom.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- cocci@inria.fr, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-sound@vger.kernel.org,
- linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-spi@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- platform-driver-x86@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net,
- linux-rdma@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 00/16] Converge on using secs_to_jiffies() part two
-To: Andrew Morton <akpm@linux-foundation.org>
-References: <20250128-converge-secs-to-jiffies-part-two-v1-0-9a6ecf0b2308@linux.microsoft.com>
- <20250128161643.289d9fe705ef2fdba0b82a52@linux-foundation.org>
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <20250128161643.289d9fe705ef2fdba0b82a52@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 1/28/2025 4:16 PM, Andrew Morton wrote:
-> On Tue, 28 Jan 2025 18:21:45 +0000 Easwar Hariharan <eahariha@linux.microsoft.com> wrote:
-> 
->> This is the second series (part 1*) that converts users of msecs_to_jiffies() that
->> either use the multiply pattern of either of:
->> - msecs_to_jiffies(N*1000) or
->> - msecs_to_jiffies(N*MSEC_PER_SEC)
->>
->> where N is a constant or an expression, to avoid the multiplication.
->>
->> The conversion is made with Coccinelle with the secs_to_jiffies() script
->> in scripts/coccinelle/misc. Attention is paid to what the best change
->> can be rather than restricting to what the tool provides.
->>
->> Andrew has kindly agreed to take the series through mm.git modulo the
->> patches maintainers want to pick through their own trees.
-> 
-> I added patches 2-16 to mm.git.  If any of these later get merged into
-> a subsystem tree, Stephen will tell us and I'll drop the mm.git copy.
+tree:   https://github.com/ceph/ceph-client.git tls_logger
+head:   cd1e899feeb6a7da55cbb74b9245c8bbb77f82ba
+commit: cd1e899feeb6a7da55cbb74b9245c8bbb77f82ba [13/13] cephsun: using a dynamic buffer allocation
+config: alpha-randconfig-r133-20250213 (https://download.01.org/0day-ci/archive/20250214/202502140148.QryPfsF2-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250214/202502140148.QryPfsF2-lkp@intel.com/reproduce)
 
-Hi Andrew, I don't see these in mm-nonmm-unstable. Did these get dropped in the confusion around
-casting secs_to_jiffies() to unsigned long[1]? That has since been merged in 6.14-rc2 via tglx' tree,
-and I have a v2 for just the ceph patches that needed some fixups at [2].
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502140148.QryPfsF2-lkp@intel.com/
 
-[1] https://lore.kernel.org/all/20250130192701.99626-1-eahariha@linux.microsoft.com/
-[2] https://lore.kernel.org/all/20250203-converge-secs-to-jiffies-part-two-v2-0-d7058a01fd0e@linux.microsoft.com/
+sparse warnings: (new ones prefixed by >>)
+   net/ceph/ceph_san.c:188:39: sparse: sparse: no newline at end of file
+   net/ceph/ceph_san.c:24:39: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct ceph_san_tls_logger * @@
+   net/ceph/ceph_san.c:24:39: sparse:     expected void const [noderef] __percpu *__vpp_verify
+   net/ceph/ceph_san.c:24:39: sparse:     got struct ceph_san_tls_logger *
+>> net/ceph/ceph_san.c:25:39: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct cephsan_pagefrag * @@
+   net/ceph/ceph_san.c:25:39: sparse:     expected void const [noderef] __percpu *__vpp_verify
+   net/ceph/ceph_san.c:25:39: sparse:     got struct cephsan_pagefrag *
+   net/ceph/ceph_san.c:54:23: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct ceph_san_tls_logger * @@
+   net/ceph/ceph_san.c:54:23: sparse:     expected void const [noderef] __percpu *__vpp_verify
+   net/ceph/ceph_san.c:54:23: sparse:     got struct ceph_san_tls_logger *
+   net/ceph/ceph_san.c:72:23: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct ceph_san_tls_logger * @@
+   net/ceph/ceph_san.c:72:23: sparse:     expected void const [noderef] __percpu *__vpp_verify
+   net/ceph/ceph_san.c:72:23: sparse:     got struct ceph_san_tls_logger *
+   net/ceph/ceph_san.c:82:22: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct cephsan_pagefrag * @@
+   net/ceph/ceph_san.c:82:22: sparse:     expected void const [noderef] __percpu *__vpp_verify
+   net/ceph/ceph_san.c:82:22: sparse:     got struct cephsan_pagefrag *
 
-Thanks,
-Easwar (he/him)
+vim +25 net/ceph/ceph_san.c
+
+    15	
+    16	
+    17	static inline void *cephsan_pagefrag_get_ptr(struct cephsan_pagefrag *pf, u64 val);
+    18	/* The definitions for struct ceph_san_log_entry and struct ceph_san_tls_logger
+    19	 * have been moved to cephsan.h (under CONFIG_DEBUG_FS) to avoid duplication.
+    20	 */
+    21	
+    22	void log_cephsan(char *buf) {
+    23	    /* Use the per-core TLS logger */
+    24	    struct ceph_san_tls_logger *tls = this_cpu_ptr(&ceph_san_tls);
+  > 25		struct cephsan_pagefrag *pf = this_cpu_ptr(&ceph_san_pagefrag);
+    26	
+    27	    int head_idx = tls->head_idx++ & (CEPH_SAN_MAX_LOGS - 1);
+    28		int pre_len = tls->logs[head_idx].len;
+    29	    tls->logs[head_idx].pid = current->pid;
+    30	    tls->logs[head_idx].ts = jiffies;
+    31	    memcpy(tls->logs[head_idx].comm, current->comm, TASK_COMM_LEN);
+    32	
+    33		cephsan_pagefrag_free(pf, pre_len);
+    34	
+    35		int len = strlen(buf);
+    36	    u64 buf_idx = cephsan_pagefrag_alloc(pf, len);
+    37	    if (buf_idx) {
+    38			tls->logs[head_idx].len = len;
+    39	        tls->logs[head_idx].buf = cephsan_pagefrag_get_ptr(pf, buf_idx);
+    40			memcpy(tls->logs[head_idx].buf, buf, len);
+    41	    }
+    42	}
+    43	EXPORT_SYMBOL(log_cephsan);
+    44	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
