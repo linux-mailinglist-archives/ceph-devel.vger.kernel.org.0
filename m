@@ -1,74 +1,73 @@
-Return-Path: <ceph-devel+bounces-2655-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2656-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3988FA33791
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2025 06:51:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04F44A33D19
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2025 11:58:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD280168B8A
-	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2025 05:51:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79D903A84B2
+	for <lists+ceph-devel@lfdr.de>; Thu, 13 Feb 2025 10:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA2A206F0F;
-	Thu, 13 Feb 2025 05:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B182135C0;
+	Thu, 13 Feb 2025 10:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PzQqIJ4P"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fgvyitxn"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC084204F85
-	for <ceph-devel@vger.kernel.org>; Thu, 13 Feb 2025 05:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE742135CF
+	for <ceph-devel@vger.kernel.org>; Thu, 13 Feb 2025 10:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739425905; cv=none; b=CYKgDoLHcdJYrZ3D8JaCQ+QSs4/2CX5fWsTt4Yr4RBJbC9ZTa3ihoje2ZE+iJN6fiQOgXOPaWnDn3rt9VZG/iFiet7U4a+Nn+0am++8eW1Dw48T8B243m25I3wB4JrELZVLWeSlgnwGKM8P5Fbp1yDfCb/x7WZE/+HG8+UiGraM=
+	t=1739444302; cv=none; b=Nskrafgexpz0ygwalaseCavmLt4nC5deCYeSykSTkOCtGjcBY3/0FGnJ1VhSikYvF/9Bc2jQIDXTrsL5B9mr2+tyLn2qWoPeX+iH97cz6H5tIm2Atajo7MvJWtM0A0+B3N/+IXeT059Tn1aIT76SI+P3CYaJXR+5k/dQZvSEj2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739425905; c=relaxed/simple;
-	bh=+NgcqgU4b4J+Z2Erz/ak4ix0hLEJo8md5cclSD+KSXU=;
+	s=arc-20240116; t=1739444302; c=relaxed/simple;
+	bh=tj+Hgy7VyfAwJg4jAzW0I5c3mGBtr/B6lo6DVFjLF6U=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ey+Vmg7wMA1EpXeo3Vwm+ZIkuLN0cajwSgoqq5iD2uk8KUYezAKczIYO2CUsJpjyodeWEQc//Q8m9vvg07QpuRsqr1pWzJZJT3ZOlZwZRAOZlUAwlrPPnpqmdJWqyCyoWc484AsWmhgv/2LTUj2BF58h/OWvs6FEQYm0RaTDhd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PzQqIJ4P; arc=none smtp.client-ip=192.198.163.9
+	 Content-Disposition; b=X3tsFjI/npz/p4QvINeFfGdl1REvzn3wAwxD1mXQkRmHg4rNLNWijosgQnSrgTxt0q/HNxBuGp5VUpLPKJyr2zOWD/s1MX3Q4mJTmKN0Ug0VCqkjJ1wOjA5gBU6+vuHZLfYwre2lopyBIidjkg6klmqBB8j9W7i0M2Whqput+Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fgvyitxn; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739425902; x=1770961902;
+  t=1739444300; x=1770980300;
   h=date:from:to:cc:subject:message-id:mime-version;
-  bh=+NgcqgU4b4J+Z2Erz/ak4ix0hLEJo8md5cclSD+KSXU=;
-  b=PzQqIJ4PqNdDAP+5/xKV6kGsBlEAvYcBW9JqvSOiyFcjGj5z+zE1Hy4w
-   VilOmw6M8xvzzhL2xiW3Rz/LsK53zWBscJ8PVi24bcdEALHYeXNCSMkJK
-   G+8Deqa6h9kp6/A5sD+xnSaSraLHO/U4NrJesCdfQ3+AkClQtclhfV6m+
-   1OzZCokDKL62++uXvzLh2+yS6uWjt57HLJ7wAutBoTsmiaP+/QXXHjYhe
-   YkmdySXHLVz4V8PiOgajpv55W9UxGsQFmp467ay9t0nGPQ4nHilhBU0tZ
-   +VrgXgaDp4RCd3d+U2knPsOAeslXAJT1mSmxNnWlrDPA1K3Xe52hHECRk
+  bh=tj+Hgy7VyfAwJg4jAzW0I5c3mGBtr/B6lo6DVFjLF6U=;
+  b=FgvyitxnqK+/QGPtHB6RS1ot0qlNlqdtQ2RzYZIOl1qkYjwQ8JiII5JD
+   LY5TtBbHW5K5GGb4gLXciD2hjBVWVOrielmOiYubA4zpr4PwjCB8w3Ozk
+   cW07ZyvN7E9U4s8pCWus3lOevhF9c0PpZvjXrRDkHgSnZ/qb8sby8TiVw
+   uQaeKWhyxrFuo8HYeVfTMsYcydszenWxbwQBPs0kOK9szNExoO3dPrG1K
+   p1SlgoHx1qQkix9lB+k6Gy6cEykQ4fIFKK4OhBjvodz/WGZpB607COA9W
+   1gzB2XhnNdn2sEExTY/ktyWiWVQaq+JfaaFQnjYoLD+3RZm4kWnfx+9gU
    Q==;
-X-CSE-ConnectionGUID: NtJ9SXkZQl+BGXGXQU4K/g==
-X-CSE-MsgGUID: 9yUrVBktR8anGEiKUW2R9Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="50759778"
+X-CSE-ConnectionGUID: 2NoC2d3JRzK95TmkyvCIHg==
+X-CSE-MsgGUID: KiFHM/xvQJ+8+Til76ZKZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11343"; a="57542057"
 X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="50759778"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Feb 2025 21:51:42 -0800
-X-CSE-ConnectionGUID: eDAzHSarTgyXwaXZn2F4IQ==
-X-CSE-MsgGUID: eQaSamxIRiKIHnvPdPCKRQ==
+   d="scan'208";a="57542057"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2025 02:58:20 -0800
+X-CSE-ConnectionGUID: lrtY8sMvRsWuJJHsqiw31w==
+X-CSE-MsgGUID: 3LR3jwkmRR6RRZXWa309iA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,282,1732608000"; 
-   d="scan'208";a="113566085"
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="112942475"
 Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 12 Feb 2025 21:51:41 -0800
+  by orviesa010.jf.intel.com with ESMTP; 13 Feb 2025 02:58:18 -0800
 Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tiS8Q-0016af-1w;
-	Thu, 13 Feb 2025 05:51:38 +0000
-Date: Thu, 13 Feb 2025 13:50:56 +0800
+	id 1tiWvA-0016wn-0N;
+	Thu, 13 Feb 2025 10:58:16 +0000
+Date: Thu, 13 Feb 2025 18:57:26 +0800
 From: kernel test robot <lkp@intel.com>
 To: Alex Markuze <amarkuze@redhat.com>
 Cc: oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org
-Subject: [ceph-client:tls_logger 3/13] net/ceph/ceph_san.c:100: warning:
- Function parameter or struct member 'pf' not described in
- 'cephsan_pagefrag_init'
-Message-ID: <202502131328.J5Q1ZaRE-lkp@intel.com>
+Subject: [ceph-client:tls_logger 6/13] include/linux/percpu-defs.h:219:59:
+ error: invalid use of undefined type 'struct ceph_san_tls_logger'
+Message-ID: <202502131856.1wNMq5pb-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -78,121 +77,153 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi Alex,
-
-First bad commit (maybe != root cause):
-
 tree:   https://github.com/ceph/ceph-client.git tls_logger
 head:   cd1e899feeb6a7da55cbb74b9245c8bbb77f82ba
-commit: a85b831a9a8fcd3420c8a0b8c0c56b608acad771 [3/13] cephsan: moving libceph
-config: i386-buildonly-randconfig-001-20250213 (https://download.01.org/0day-ci/archive/20250213/202502131328.J5Q1ZaRE-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250213/202502131328.J5Q1ZaRE-lkp@intel.com/reproduce)
+commit: 485747e7711ebb9bcda819027564d587d215874a [6/13] ceph_san: moving to per_cpu
+config: sh-randconfig-001-20250213 (https://download.01.org/0day-ci/archive/20250213/202502131856.1wNMq5pb-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250213/202502131856.1wNMq5pb-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502131328.J5Q1ZaRE-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502131856.1wNMq5pb-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+All error/warnings (new ones prefixed by >>):
 
->> net/ceph/ceph_san.c:100: warning: Function parameter or struct member 'pf' not described in 'cephsan_pagefrag_init'
->> net/ceph/ceph_san.c:121: warning: Function parameter or struct member 'pf' not described in 'cephsan_pagefrag_alloc'
->> net/ceph/ceph_san.c:162: warning: Function parameter or struct member 'pf' not described in 'cephsan_pagefrag_free'
->> net/ceph/ceph_san.c:172: warning: Function parameter or struct member 'pf' not described in 'cephsan_pagefrag_deinit'
+   net/ceph/ceph_san.c:15:7: warning: no previous prototype for 'get_log_cephsan' [-Wmissing-prototypes]
+      15 | char *get_log_cephsan(void) {
+         |       ^~~~~~~~~~~~~~~
+   In file included from include/asm-generic/percpu.h:7,
+                    from ./arch/sh/include/generated/asm/percpu.h:1,
+                    from include/linux/irqflags.h:19,
+                    from arch/sh/include/asm/cmpxchg-irq.h:5,
+                    from arch/sh/include/asm/cmpxchg.h:21,
+                    from arch/sh/include/asm/atomic.h:19,
+                    from include/linux/atomic.h:7,
+                    from include/asm-generic/bitops/atomic.h:5,
+                    from arch/sh/include/asm/bitops.h:23,
+                    from include/linux/bitops.h:68,
+                    from include/linux/thread_info.h:27,
+                    from include/asm-generic/preempt.h:5,
+                    from ./arch/sh/include/generated/asm/preempt.h:1,
+                    from include/linux/preempt.h:79,
+                    from include/linux/spinlock.h:56,
+                    from include/linux/mmzone.h:8,
+                    from include/linux/gfp.h:7,
+                    from include/linux/slab.h:16,
+                    from net/ceph/ceph_san.c:1:
+   net/ceph/ceph_san.c: In function 'get_log_cephsan':
+>> include/linux/percpu-defs.h:219:59: error: invalid use of undefined type 'struct ceph_san_tls_logger'
+     219 |         const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;    \
+         |                                                           ^
+   include/linux/percpu-defs.h:262:9: note: in expansion of macro '__verify_pcpu_ptr'
+     262 |         __verify_pcpu_ptr(ptr);                                         \
+         |         ^~~~~~~~~~~~~~~~~
+   include/linux/percpu-defs.h:266:33: note: in expansion of macro 'per_cpu_ptr'
+     266 | #define raw_cpu_ptr(ptr)        per_cpu_ptr(ptr, 0)
+         |                                 ^~~~~~~~~~~
+   include/linux/percpu-defs.h:267:33: note: in expansion of macro 'raw_cpu_ptr'
+     267 | #define this_cpu_ptr(ptr)       raw_cpu_ptr(ptr)
+         |                                 ^~~~~~~~~~~
+   net/ceph/ceph_san.c:17:39: note: in expansion of macro 'this_cpu_ptr'
+      17 |     struct ceph_san_tls_logger *tls = this_cpu_ptr(&ceph_san_tls);
+         |                                       ^~~~~~~~~~~~
+>> net/ceph/ceph_san.c:18:23: error: invalid use of undefined type 'struct ceph_san_tls_logger'
+      18 |     int head_idx = tls->head_idx++ & (CEPH_SAN_MAX_LOGS - 1);
+         |                       ^~
+>> net/ceph/ceph_san.c:18:39: error: 'CEPH_SAN_MAX_LOGS' undeclared (first use in this function); did you mean 'CEPH_SAN_LOG'?
+      18 |     int head_idx = tls->head_idx++ & (CEPH_SAN_MAX_LOGS - 1);
+         |                                       ^~~~~~~~~~~~~~~~~
+         |                                       CEPH_SAN_LOG
+   net/ceph/ceph_san.c:18:39: note: each undeclared identifier is reported only once for each function it appears in
+   net/ceph/ceph_san.c:19:8: error: invalid use of undefined type 'struct ceph_san_tls_logger'
+      19 |     tls->logs[head_idx].pid = current->pid;
+         |        ^~
+   net/ceph/ceph_san.c:20:8: error: invalid use of undefined type 'struct ceph_san_tls_logger'
+      20 |     tls->logs[head_idx].ts = jiffies;
+         |        ^~
+   net/ceph/ceph_san.c:21:15: error: invalid use of undefined type 'struct ceph_san_tls_logger'
+      21 |     memcpy(tls->logs[head_idx].comm, current->comm, TASK_COMM_LEN);
+         |               ^~
+   net/ceph/ceph_san.c:23:15: error: invalid use of undefined type 'struct ceph_san_tls_logger'
+      23 |     return tls->logs[head_idx].buf;
+         |               ^~
+>> net/ceph/ceph_san.c:18:9: warning: variable 'head_idx' set but not used [-Wunused-but-set-variable]
+      18 |     int head_idx = tls->head_idx++ & (CEPH_SAN_MAX_LOGS - 1);
+         |         ^~~~~~~~
+   net/ceph/ceph_san.c: At top level:
+>> net/ceph/ceph_san.c:30:6: error: redefinition of 'cephsan_cleanup'
+      30 | void cephsan_cleanup(void)
+         |      ^~~~~~~~~~~~~~~
+   In file included from net/ceph/ceph_san.c:6:
+   include/linux/ceph/ceph_san.h:104:20: note: previous definition of 'cephsan_cleanup' with type 'void(void)'
+     104 | static inline void cephsan_cleanup(void) {}
+         |                    ^~~~~~~~~~~~~~~
+>> net/ceph/ceph_san.c:37:5: error: redefinition of 'cephsan_init'
+      37 | int cephsan_init(void)
+         |     ^~~~~~~~~~~~
+   include/linux/ceph/ceph_san.h:105:26: note: previous definition of 'cephsan_init' with type 'int(void)'
+     105 | static inline int __init cephsan_init(void) { return 0; }
+         |                          ^~~~~~~~~~~~
+   In file included from include/linux/linkage.h:7,
+                    from include/linux/preempt.h:10:
+>> net/ceph/ceph_san.c:10:15: error: storage size of 'ceph_san_tls' isn't known
+      10 | EXPORT_SYMBOL(ceph_san_tls);
+         |               ^~~~~~~~~~~~
+   include/linux/export.h:56:28: note: in definition of macro '__EXPORT_SYMBOL'
+      56 |         extern typeof(sym) sym;                                 \
+         |                            ^~~
+   include/linux/export.h:68:41: note: in expansion of macro '_EXPORT_SYMBOL'
+      68 | #define EXPORT_SYMBOL(sym)              _EXPORT_SYMBOL(sym, "")
+         |                                         ^~~~~~~~~~~~~~
+   net/ceph/ceph_san.c:10:1: note: in expansion of macro 'EXPORT_SYMBOL'
+      10 | EXPORT_SYMBOL(ceph_san_tls);
+         | ^~~~~~~~~~~~~
+>> net/ceph/ceph_san.c:10:15: error: storage size of 'ceph_san_tls' isn't known
+      10 | EXPORT_SYMBOL(ceph_san_tls);
+         |               ^~~~~~~~~~~~
+   include/linux/export.h:56:28: note: in definition of macro '__EXPORT_SYMBOL'
+      56 |         extern typeof(sym) sym;                                 \
+         |                            ^~~
+   include/linux/export.h:68:41: note: in expansion of macro '_EXPORT_SYMBOL'
+      68 | #define EXPORT_SYMBOL(sym)              _EXPORT_SYMBOL(sym, "")
+         |                                         ^~~~~~~~~~~~~~
+   net/ceph/ceph_san.c:10:1: note: in expansion of macro 'EXPORT_SYMBOL'
+      10 | EXPORT_SYMBOL(ceph_san_tls);
+         | ^~~~~~~~~~~~~
+   net/ceph/ceph_san.c: In function 'get_log_cephsan':
+   net/ceph/ceph_san.c:24:1: warning: control reaches end of non-void function [-Wreturn-type]
+      24 | }
+         | ^
 
 
-vim +100 net/ceph/ceph_san.c
+vim +219 include/linux/percpu-defs.h
 
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11   90  
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11   91  
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11   92  /**
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11   93   * cephsan_pagefrag_init - Initialize the pagefrag allocator.
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11   94   *
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11   95   * Allocates a 16KB contiguous buffer and resets head and tail pointers.
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11   96   *
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11   97   * Return: 0 on success, negative error code on failure.
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11   98   */
-a85b831a9a8fcd3 net/ceph/ceph_san.c Alex Markuze 2025-02-11   99  int cephsan_pagefrag_init(struct cephsan_pagefrag *pf)
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11 @100  {
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  101  	pf->buffer = kmalloc(CEPHSAN_PAGEFRAG_SIZE, GFP_KERNEL);
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  102  	if (!pf->buffer)
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  103  		return -ENOMEM;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  104  
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  105  	pf->head = 0;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  106  	pf->tail = 0;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  107  	return 0;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  108  }
-a85b831a9a8fcd3 net/ceph/ceph_san.c Alex Markuze 2025-02-11  109  EXPORT_SYMBOL(cephsan_pagefrag_init);
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  110  
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  111  /**
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  112   * cephsan_pagefrag_alloc - Allocate bytes from the pagefrag buffer.
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  113   * @n: number of bytes to allocate.
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  114   *
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  115   * Allocates @n bytes if there is sufficient free space in the buffer.
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  116   * Advances the head pointer by @n bytes (wrapping around if needed).
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  117   *
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  118   * Return: pointer to the allocated memory, or NULL if not enough space.
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  119   */
-a85b831a9a8fcd3 net/ceph/ceph_san.c Alex Markuze 2025-02-11  120  u64 cephsan_pagefrag_alloc(struct cephsan_pagefrag *pf, unsigned int n)
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11 @121  {
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  122  	unsigned int used, free_space, remaining;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  123  	void *ptr;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  124  
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  125  	/* Compute usage in the circular buffer */
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  126  	if (pf->head >= pf->tail)
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  127  		used = pf->head - pf->tail;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  128  	else
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  129  		used = CEPHSAN_PAGEFRAG_SIZE - pf->tail + pf->head;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  130  
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  131  	free_space = CEPHSAN_PAGEFRAG_SIZE - used;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  132  	if (n > free_space)
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  133  		return 0;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  134  
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  135  	/* Check if allocation would wrap around buffer end */
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  136  	if (pf->head + n > CEPHSAN_PAGEFRAG_SIZE) {
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  137  		/* Calculate bytes remaining until buffer end */
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  138  		remaining = CEPHSAN_PAGEFRAG_SIZE - pf->head;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  139  		/* Move tail to start if needed */
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  140  		if (pf->tail < n - remaining)
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  141  			pf->tail = 0;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  142  
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  143  		/* Return pointer to new head at buffer start */
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  144  		ptr = pf->buffer;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  145  		pf->head = n - remaining;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  146  	} else {
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  147  		/* No wrap around needed */
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  148  		ptr = (char *)pf->buffer + pf->head;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  149  		pf->head += n;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  150  	}
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  151  	/* Return combined u64 with buffer index in lower 32 bits and size in upper 32 bits */
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  152  	return ((u64)(n) << 32) | (ptr - pf->buffer);
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  153  }
-a85b831a9a8fcd3 net/ceph/ceph_san.c Alex Markuze 2025-02-11  154  EXPORT_SYMBOL(cephsan_pagefrag_alloc);
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  155  /**
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  156   * cephsan_pagefrag_free - Free bytes in the pagefrag allocator.
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  157   * @n: number of bytes to free.
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  158   *
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  159   * Advances the tail pointer by @n bytes (wrapping around if needed).
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  160   */
-a85b831a9a8fcd3 net/ceph/ceph_san.c Alex Markuze 2025-02-11  161  void cephsan_pagefrag_free(struct cephsan_pagefrag *pf, unsigned int n)
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11 @162  {
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  163  	pf->tail = (pf->tail + n) % CEPHSAN_PAGEFRAG_SIZE;
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  164  }
-a85b831a9a8fcd3 net/ceph/ceph_san.c Alex Markuze 2025-02-11  165  EXPORT_SYMBOL(cephsan_pagefrag_free);
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  166  /**
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  167   * cephsan_pagefrag_deinit - Deinitialize the pagefrag allocator.
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  168   *
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  169   * Frees the allocated buffer and resets the head and tail pointers.
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11  170   */
-a85b831a9a8fcd3 net/ceph/ceph_san.c Alex Markuze 2025-02-11  171  void cephsan_pagefrag_deinit(struct cephsan_pagefrag *pf)
-04fa82972277cd8 fs/ceph/ceph_san.c  Alex Markuze 2025-02-11 @172  {
+62fde54123fb64 Tejun Heo 2014-06-17  205  
+9c28278a24c01c Tejun Heo 2014-06-17  206  /*
+6fbc07bbe2b5a8 Tejun Heo 2014-06-17  207   * __verify_pcpu_ptr() verifies @ptr is a percpu pointer without evaluating
+6fbc07bbe2b5a8 Tejun Heo 2014-06-17  208   * @ptr and is invoked once before a percpu area is accessed by all
+6fbc07bbe2b5a8 Tejun Heo 2014-06-17  209   * accessors and operations.  This is performed in the generic part of
+6fbc07bbe2b5a8 Tejun Heo 2014-06-17  210   * percpu and arch overrides don't need to worry about it; however, if an
+6fbc07bbe2b5a8 Tejun Heo 2014-06-17  211   * arch wants to implement an arch-specific percpu accessor or operation,
+6fbc07bbe2b5a8 Tejun Heo 2014-06-17  212   * it may use __verify_pcpu_ptr() to verify the parameters.
+9c28278a24c01c Tejun Heo 2014-06-17  213   *
+9c28278a24c01c Tejun Heo 2014-06-17  214   * + 0 is required in order to convert the pointer type from a
+9c28278a24c01c Tejun Heo 2014-06-17  215   * potential array type to a pointer to a single item of the array.
+9c28278a24c01c Tejun Heo 2014-06-17  216   */
+eba117889ac444 Tejun Heo 2014-06-17  217  #define __verify_pcpu_ptr(ptr)						\
+eba117889ac444 Tejun Heo 2014-06-17  218  do {									\
+9c28278a24c01c Tejun Heo 2014-06-17 @219  	const void __percpu *__vpp_verify = (typeof((ptr) + 0))NULL;	\
+9c28278a24c01c Tejun Heo 2014-06-17  220  	(void)__vpp_verify;						\
+9c28278a24c01c Tejun Heo 2014-06-17  221  } while (0)
+9c28278a24c01c Tejun Heo 2014-06-17  222  
 
-:::::: The code at line 100 was first introduced by commit
-:::::: 04fa82972277cd879d1bcb1efe97bbe1c53cd104 cephsan: a full string printout
+:::::: The code at line 219 was first introduced by commit
+:::::: 9c28278a24c01c0073fb89e53c1d2a605ab9587d percpu: reorder macros in percpu header files
 
-:::::: TO: Alex Markuze <amarkuze@redhat.com>
-:::::: CC: Alex Markuze <amarkuze@redhat.com>
+:::::: TO: Tejun Heo <tj@kernel.org>
+:::::: CC: Tejun Heo <tj@kernel.org>
 
 -- 
 0-DAY CI Kernel Test Service
