@@ -1,56 +1,57 @@
-Return-Path: <ceph-devel+bounces-2667-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2668-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7CABA361B9
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2025 16:30:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66556A361FE
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2025 16:41:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D5B316F2B2
-	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2025 15:30:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53DBA3AF994
+	for <lists+ceph-devel@lfdr.de>; Fri, 14 Feb 2025 15:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB59265CA3;
-	Fri, 14 Feb 2025 15:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFE9267383;
+	Fri, 14 Feb 2025 15:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMNaBY5F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e8dp+z91"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B431A9B23;
-	Fri, 14 Feb 2025 15:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B9C266F02;
+	Fri, 14 Feb 2025 15:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739547049; cv=none; b=eSWRuxnle1JcXo8Ct49ohGqFfz2TEFGam91s6l7C6mKjy1TSsUc/7mWq+Id85uCjsiJ5ZMLLRDztYceqznZavFgj218nXzzp03KO75sJbxyosmdAOmAnl5ekiFO8lO/t6XRnYPZkepxjRlUbw5/lvoSG7nqjtQFtBWiuM9BxL3Y=
+	t=1739547677; cv=none; b=dLTN/VV3SH9X2Qe1iBFCrmpSrPUheOXfcb4mnfFcXzmtIwSLSJrbo9KBwfzNZWGhERUxjhjlPcTIRo9CekiN0QWWCqrMNw93MpsizOxL41v4dguERNmX/mrc6+yGNrrc2lc+plMeJW5A4COinZLk3cysppa38zB8eK4lV7UdshY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739547049; c=relaxed/simple;
-	bh=WQjdwyjl5b753vfKXySzLJXjnPIhP2iYYqmPrE/69G8=;
+	s=arc-20240116; t=1739547677; c=relaxed/simple;
+	bh=M6N7DKZeN6F0OEso+y9Mj5g8RF3zgPM3K6F2zPjZQ9k=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YbmYetttjwB3jVA/0LnZuCCET/wH951mLZoBKPMxCVqhJ+VU60QAqmp+0/s9XjB5RQwMu3cXIjalGOpAm9Gq5t+Y+kgGVBDdBjHWKnQIZbGAsauG9jGUjzJh/8OVPv7foghtZK+YWFNk77GdQprlgMiUKtaTxP95iYss1ixpjas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SMNaBY5F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6D21C4CED1;
-	Fri, 14 Feb 2025 15:30:48 +0000 (UTC)
+	 Content-Type:MIME-Version; b=MoTCQFsmvAES0LWKLdHaYzRmSsEgupo83Xmoel++JEaOC4RDMMaO476wSQwU1tY/WQ5r4lnce16HPBEPxQOOLr3o4woCzTDfSsrNarLl6LVeUwxIIzutkvPZ+EhvpKEAV7U33yrsGbpo9X8sTVEbJsUgxqIFgPEeIqWvaRm6jek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e8dp+z91; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 892ABC4CED1;
+	Fri, 14 Feb 2025 15:41:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739547049;
-	bh=WQjdwyjl5b753vfKXySzLJXjnPIhP2iYYqmPrE/69G8=;
+	s=k20201202; t=1739547677;
+	bh=M6N7DKZeN6F0OEso+y9Mj5g8RF3zgPM3K6F2zPjZQ9k=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=SMNaBY5FTVQb6488SJUNeWhqN634md3Jm7Eei1O2+vAq5RvS523QSMXGYV7A2JGEb
-	 LG0zn+BqQR7MZLVRNs7aX6i9U650QI9gL7gw8o0v7tZMq5J/QyZbg2bbeJAxSAbZyd
-	 x34vp5aO7NKfKQhaVlId8irjZ6IOgPlNuzYVMLLzVoy3Fkp+Kbpo73SZjYkE6T/o2I
-	 sPUmeYjbU+48ag8pr4LJAtlWRFB3enD8jHnHsEnbt05HN1SVlAq9/k+YDIYAm7egqH
-	 gM7PlYgVDx6UmCcqqPBXuHN/Eg7/T9P4QZXE2X5IH2uuGABaydAp9pgSpiE6fviHrW
-	 CdVpMK6zDqMdg==
-Message-ID: <3ad23d9671d394131ac8cebcfd3368b65e679de8.camel@kernel.org>
+	b=e8dp+z91oG1fh8ff2K5rQzutzd6p8ufLnfnJj/HHPAdGnByKmLfwmylTR7lAn1PKr
+	 5ejBBB0H2Pj4fsXdTEKYHyqfdR72xIe3wD8qhDXYo06xuSki1EQx9z73htLxLkzaNw
+	 Jj4f9bU+YrEihTipYdUfVQvn/9hZnzSQ26kxaHHY8iUpgh7rD9IFNx+CFkbYrLuh3j
+	 FBcU39K66A/qQdp3u3MUHPGCFdPjMD3OWOrv3MpabvMY4yDuJ8WUs/LM8jcwbzB+NL
+	 zp0eUNTx60+J5MaDdvVUtSw5nXk7+Fz0q4taOFJfJdbEF3kSotwzrd8qjWNlbnFuOh
+	 jF5i/eHxiKQVA==
+Message-ID: <bbc3361f9c241942f44298286ba09b087a10b78b.camel@kernel.org>
 Subject: Re: [RFC] odd check in ceph_encode_encrypted_dname()
 From: Jeff Layton <jlayton@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>, =?ISO-8859-1?Q?Lu=EDs?= Henriques
 	 <lhenriques@suse.de>
 Cc: ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Ilya Dryomov
 	 <idryomov@gmail.com>
-Date: Fri, 14 Feb 2025 10:30:47 -0500
-In-Reply-To: <20250214024756.GY1977892@ZenIV>
+Date: Fri, 14 Feb 2025 10:41:15 -0500
+In-Reply-To: <20250214032820.GZ1977892@ZenIV>
 References: <20250214024756.GY1977892@ZenIV>
+	 <20250214032820.GZ1977892@ZenIV>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -135,62 +136,53 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Fri, 2025-02-14 at 02:47 +0000, Al Viro wrote:
-> AFAICS, this
+On Fri, 2025-02-14 at 03:28 +0000, Al Viro wrote:
+> On Fri, Feb 14, 2025 at 02:47:56AM +0000, Al Viro wrote:
 >=20
->         /* To understand the 240 limit, see CEPH_NOHASH_NAME_MAX comments=
- */
->         WARN_ON(elen > 240);
->         if ((elen > 0) && (dir !=3D parent)) {
->                 char tmp_buf[NAME_MAX];
+> [snip]
 >=20
->                 elen =3D snprintf(tmp_buf, sizeof(tmp_buf), "_%.*s_%ld",
->                                 elen, buf, dir->i_ino);
->                 memcpy(buf, tmp_buf, elen);
->         }
+> > Am I missing something subtle here?  Can elen be non-positive at that p=
+oint?
 >=20
-> could drop the (elen > 0) part of the test.  elen comes from
->         elen =3D ceph_base64_encode(cryptbuf, len, buf);
-> and that can't return a non-positive unless the second argument is 0 or
-> above 1G.  The latter is flat-out impossible - right before that call
-> we have
->         /* hash the end if the name is long enough */
->         if (len > CEPH_NOHASH_NAME_MAX) {
->                 u8 hash[SHA256_DIGEST_SIZE];
->                 u8 *extra =3D cryptbuf + CEPH_NOHASH_NAME_MAX;
+> Another fun question: for dentries with name of form _<something>_<inumbe=
+r>
+> we end up looking at fscrypt_has_encryption_key() not for the parent,
+> but for inode with inumber encoded in dentry name.  Fair enough, but...
+> what happens if we run into such dentry in ceph_mdsc_build_path()?
 >=20
->                 /*
->                  * hash the extra bytes and overwrite crypttext beyond th=
-at
->                  * point with it
->                  */
->                 sha256(extra, len - CEPH_NOHASH_NAME_MAX, hash);
->                 memcpy(extra, hash, SHA256_DIGEST_SIZE);
->                 len =3D CEPH_NOHASH_NAME_MAX + SHA256_DIGEST_SIZE;
->         }
-> which obviously caps it with CEPH_NOHASH_NAME_MAX + SHA256_DIGEST_SIZE,
-> i.e. (180 - SHA256_DIGEST_SIZE) + SHA256_DIGEST_SIZE.
+> There the call of ceph_encode_encrypted_fname() is under
+> 	if (fscrypt_has_encryption_key(d_inode(parent)))
 >=20
-> The former would have to come from
->         if (!fscrypt_fname_encrypted_size(dir, iname.len, NAME_MAX, &len)=
-) {
->                 elen =3D -ENAMETOOLONG;
->                 goto out;
->         }
-> and since fscrypt_fname_encrypted_size() must've returned true, we have
-> len no less than FSCRYPT_FNAME_MIN_MSG_LEN, i.e. it's 16 or greater.
->=20
-> That stuff went into the tree in dd66df0053ef8 "ceph: add support for enc=
-rypted
-> snapshot names" and as far as I can tell, everything above had been appli=
-cable
-> back then too.
->=20
-> Am I missing something subtle here?  Can elen be non-positive at that poi=
-nt?
+> Do we need the keys for both?
 >=20
 
-No, I think you nailed it.
+That sounds like a bug, but I don't fully recall whether snapshots have
+a special case here for some reason. Let me rephrase Al's question:
+
+If I have a snapshot dir that is prefixed with '_', why does it use a
+different filename encryption key than other snapshot dirs that don't
+start with that character?
+
+My guess here is that this code ought not overwrite "dir" with the
+result of parse_longname(), but I don't recall the significance of a
+snapshot name that starts with '_'.
+
+        /* Handle the special case of snapshot names that start with '_' */
+        if ((ceph_snap(dir) =3D=3D CEPH_SNAPDIR) && (name_len > 0) &&
+            (iname.name[0] =3D=3D '_')) {
+                dir =3D parse_longname(parent, iname.name, &name_len);
+                if (IS_ERR(dir))
+                        return PTR_ERR(dir);
+                iname.name++; /* skip initial '_' */
+        }
+        iname.len =3D name_len;
+
+        if (!fscrypt_has_encryption_key(dir)) {
+                memcpy(buf, d_name->name, d_name->len);
+                elen =3D d_name->len;
+                goto out;
+        }
+
 
 --=20
 Jeff Layton <jlayton@kernel.org>
