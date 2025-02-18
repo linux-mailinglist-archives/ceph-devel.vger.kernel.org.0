@@ -1,109 +1,202 @@
-Return-Path: <ceph-devel+bounces-2714-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2715-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36273A39055
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Feb 2025 02:23:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C79A3973C
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Feb 2025 10:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E156B1894C0D
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Feb 2025 01:21:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7910F16E573
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Feb 2025 09:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F33C45038;
-	Tue, 18 Feb 2025 01:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ec6MQOG6"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C8A22FF30;
+	Tue, 18 Feb 2025 09:37:27 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233F81D52B;
-	Tue, 18 Feb 2025 01:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2C322F166
+	for <ceph-devel@vger.kernel.org>; Tue, 18 Feb 2025 09:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739841698; cv=none; b=dFWb+nr7OoGt3ZROcIxNVtk0nT62S6PlNq1mEEQQFfSUG0ujm/fY2wCh2BglmzvZyyGeQSJC9YyYEk2O84Ci/h1jP05sfemxh4THqimJQ0RnQzGOH+PycK/cjfsom/Svj4TBZA5VFfOe2Zk4DAh90msULjV5vEoBQ+DaOnqkvb4=
+	t=1739871446; cv=none; b=ZcZyvARShdsp02888hfw0sM9C/+LDdFKJW83N9ZgZJkY5umvOlu21hN6G8yHoi5yEBj1fW/WZNVXNzEBtWYOTFrP2421jfRuauu0U8Ko+Q+EnsrPML3jdGnEuznAE045QHkTdxNggqF49ER18rA7VYbn4iaj8bL982BuFWl/ajo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739841698; c=relaxed/simple;
-	bh=7DGxI1QlBEmJ0uwXnLMdfKtd1VHwoWygB6sBz2GO6Qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D0MncxNLGGdtw42LVh+ZYqF+7x6CmDEwnDmh0xvA8uVqplcofmm1ZUqUR+oRf1F4ig9u2vKHA53tGwZ2MNBE5iu6pwezI1HpJjZVuLBrwe05qeX8zhmERerO+VQ1HiXg9ZAzCiu5fS//yyqRYJ7q0y8HzaKWJ4G9iRm8evHSl98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Ec6MQOG6; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=WF9Ri4h1K95Pl/my+41is+x07VggVScf/HOnxc636yI=; b=Ec6MQOG6rdNdOixigqk/VmqAK1
-	tH81I3Q9OnTGFIRRDuNLy7MRsZn8LFeoVrrMx1Y80CiO+j2uQEngX/GYf/6ax1sCepUVUO7U2cRpi
-	8xy+HTmlC65fErcY6g4gxbv5+C4o1hKSdmPDuNux0XkgmFNvYMN2tr1B/bkDnTwMbhkMVR7dYBdiP
-	F/Tw0HYeyjlGL0No9m4o8T0nrFbQ++bts5GsXodOoV1uIb/xtLo7Ff8RC6Fk206su5qGx3BkQmpVH
-	o+wTlK6VtZpXcqrQbDXfOfjDh9/liKgQ4VXAmNva9kLh93WaMQ4G1b2CjvZswGT5MTitTs1OguEkp
-	rhJFXUrQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tkCIm-0000000HSMu-16PI;
-	Tue, 18 Feb 2025 01:21:32 +0000
-Date: Tue, 18 Feb 2025 01:21:32 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "luis@igalia.com" <luis@igalia.com>,
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-	"jlayton@kernel.org" <jlayton@kernel.org>,
-	"idryomov@gmail.com" <idryomov@gmail.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC] odd check in ceph_encode_encrypted_dname()
-Message-ID: <20250218012132.GJ1977892@ZenIV>
-References: <20250214024756.GY1977892@ZenIV>
- <20250214032820.GZ1977892@ZenIV>
- <bbc3361f9c241942f44298286ba09b087a10b78b.camel@kernel.org>
- <87frkg7bqh.fsf@igalia.com>
- <20250215044616.GF1977892@ZenIV>
- <877c5rxlng.fsf@igalia.com>
- <4ac938a32997798a0b76189b33d6e4d65c23a32f.camel@ibm.com>
- <87cyfgwgok.fsf@igalia.com>
- <2e026bd7688e95440771b7ad4b44b57ab82535f6.camel@ibm.com>
+	s=arc-20240116; t=1739871446; c=relaxed/simple;
+	bh=1vzXxAhEudrAhyb1CsSMVfihnBRlSdyHD0J4se+ZkKs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GNz8VAfksU8ksuPrZ0wR+qtkJ9yyUg2q/a6yrXIsLJp1xNBilQnCC6mkurzXusx6QRZqwnyloFUup3fwV/FJ+MMBwdlf13Npw+/SbF7r1s+lCJaAR0rlI8tcno35iC2UCeVOP6dvmgM2r7eFgz/4Cy9LclN8oTCRGCuP7jsKphY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d14c647935so99805515ab.0
+        for <ceph-devel@vger.kernel.org>; Tue, 18 Feb 2025 01:37:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739871444; x=1740476244;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FLZ4fY1/NxqwbUdjoAoI1yEPFjdoeZ2kiHEcyPZJC1Y=;
+        b=iX2iyj/msFl9dTcDEfwN7o6uiMniKaISfHnKyiZlo/eMdIFbOVHXtTmvsNvoAR83hn
+         aDPdiTNNmH+l3UeQVUj1N3hN/yJEO3Rsm+viw1ZxyByUbAqMoHJ5ItiB9jq2xqIpQWEm
+         6paSWG/193qkc2KZA89lw5jXeejF0inztOpxpcQV1iRkguY5+eymivsPYrK5bR+pKg4r
+         929UV/fVT4ViO4TnPnDvjOVUIW1pdejHOLS1VQIc/xclwuXYIuZIVz/pvUzaITRQfCJM
+         RiG7Ii+fPG24/GbwlC5znQPK7b9+da6SCT+P6BPMoI5Pcj0qSfzusIlUD3KSICmBO87P
+         NJYA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+We4qX6Lp90wDNyV/AZEqmu9U7z4iEnRJ/QYQkzeJIrYc4K6KZ9I33HqYlUwJOSSZirvm3/vlfRP8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4fM7wQquUXKFSZ6Y5PlSFSgkyxsse6xDczJBgR69Dj9R9dfsw
+	oBHc3v2ivlY/Trl45qd8XZkIvY75FJ64gMukU/sIQLEej243Hdb0U8Mc8sBoh93JUOTTVFrq/st
+	lphbGaa2DqG0Ixm5BHJHVOwU4mXDu5r6ck5TpWlyrzjI62bt4UDLPzrA=
+X-Google-Smtp-Source: AGHT+IEm82RK3nnYqiu/mYzAVrx+dILIstbP39Ck3XYMaxYLNL9eyMHJ8hlfxzpUGC53uwrwTtS1l7Y1imi/shDsJlP6RzNpi6m1
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e026bd7688e95440771b7ad4b44b57ab82535f6.camel@ibm.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Received: by 2002:a05:6e02:1c8c:b0:3d0:21aa:a756 with SMTP id
+ e9e14a558f8ab-3d2807aba07mr117250795ab.5.1739871444163; Tue, 18 Feb 2025
+ 01:37:24 -0800 (PST)
+Date: Tue, 18 Feb 2025 01:37:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67b454d4.050a0220.173698.0051.GAE@google.com>
+Subject: [syzbot] [netfs?] INFO: task hung in pipe_write (6)
+From: syzbot <syzbot+5984e31a805252b3b40a@syzkaller.appspotmail.com>
+To: brauner@kernel.org, ceph-devel@vger.kernel.org, dhowells@redhat.com, 
+	idryomov@gmail.com, jack@suse.cz, jlayton@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
+	mhiramat@kernel.org, netfs@lists.linux.dev, rostedt@goodmis.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, xiubli@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Feb 17, 2025 at 10:04:50PM +0000, Viacheslav Dubeyko wrote:
+Hello,
 
-> [  326.477120] This frame has 1 object:
-> [  326.477466]  [32, 287) 'buf'
+syzbot found the following issue on:
 
-> (gdb) l *ceph_encode_encrypted_dname+0x4a5
-> 0xffffffff829d6605 is in ceph_encode_encrypted_dname (fs/ceph/crypto.c:273).
-> 268		u32 len;
-> 269		int name_len = elen;
-> 270		int ret;
-> 271		u8 *cryptbuf = NULL;
-> 272	
-> 273		buf[elen] = '\0';
+HEAD commit:    ad1b832bf1cf Merge tag 'devicetree-fixes-for-6.14-1' of gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1251a898580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e55cabe422b4fcaf
+dashboard link: https://syzkaller.appspot.com/bug?extid=5984e31a805252b3b40a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=170d57df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12df35a4580000
 
-Cute...  The fix is obvious (should be
-                        char buf[NAME_MAX + 1];
-rather than
-                        char buf[NAME_MAX];
-), but the funny part is that it had been a bug all along -
-if you give the mainline a name that has a 255-character component
-that happens to start with _, you'll get buf[] filled with a copy
-of that component (no NUL in sight) and have it passed as 'name' to
-parse_longname() that starts with
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9de6d97a8d34/disk-ad1b832b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/258463d6a9b5/vmlinux-ad1b832b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f0449b94f00a/bzImage-ad1b832b.xz
 
-        /* Skip initial '_' */
-	name++;
-	name_end = strrchr(name, '_');
+The issue was bisected to:
 
-See the problem?  strrchr() expects a NUL-terminated string; giving it an
-array that has no zero bytes in it is an UB.
+commit 7ba167c4c73ed96eb002c98a9d7d49317dfb0191
+Author: David Howells <dhowells@redhat.com>
+Date:   Mon Mar 18 16:57:31 2024 +0000
 
-That one is -stable fodder on its own, IMO...
+    netfs: Switch to using unsigned long long rather than loff_t
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=166625b0580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=156625b0580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=116625b0580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5984e31a805252b3b40a@syzkaller.appspotmail.com
+Fixes: 7ba167c4c73e ("netfs: Switch to using unsigned long long rather than loff_t")
+
+INFO: task kworker/1:2:837 blocked for more than 143 seconds.
+      Not tainted 6.14.0-rc2-syzkaller-00303-gad1b832bf1cf #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/1:2     state:D stack:25360 pid:837   tgid:837   ppid:2      task_flags:0x4208060 flags:0x00004000
+Workqueue: events p9_write_work
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5377 [inline]
+ __schedule+0x18bc/0x4c40 kernel/sched/core.c:6764
+ __schedule_loop kernel/sched/core.c:6841 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6856
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6913
+ __mutex_lock_common kernel/locking/mutex.c:662 [inline]
+ __mutex_lock+0x817/0x1010 kernel/locking/mutex.c:730
+ pipe_write+0x1c6/0x1a30 fs/pipe.c:456
+ __kernel_write_iter+0x433/0x950 fs/read_write.c:612
+ __kernel_write fs/read_write.c:632 [inline]
+ kernel_write+0x214/0x330 fs/read_write.c:653
+ p9_fd_write net/9p/trans_fd.c:432 [inline]
+ p9_write_work+0x57d/0xd70 net/9p/trans_fd.c:483
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3317
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3398
+ kthread+0x7a9/0x920 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8eb38f60 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8eb38f60 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8eb38f60 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6746
+3 locks held by kworker/1:2/837:
+ #0: ffff88801b080d48 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
+ #0: ffff88801b080d48 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x98b/0x18e0 kernel/workqueue.c:3317
+ #1: ffffc90003547c60 ((work_completion)(&m->wq)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
+ #1: ffffc90003547c60 ((work_completion)(&m->wq)){+.+.}-{0:0}, at: process_scheduled_works+0x9c6/0x18e0 kernel/workqueue.c:3317
+ #2: ffff8880233c5468 (&pipe->mutex){+.+.}-{4:4}, at: pipe_write+0x1c6/0x1a30 fs/pipe.c:456
+2 locks held by getty/5577:
+ #0: ffff8880354a20a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x616/0x1770 drivers/tty/n_tty.c:2211
+2 locks held by syz-executor138/5815:
+ #0: ffff8880233c5468 (&pipe->mutex){+.+.}-{4:4}, at: pipe_write+0x1c6/0x1a30 fs/pipe.c:456
+ #1: ffff888077e802e8 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:932 [inline]
+ #1: ffff888077e802e8 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: page_cache_ra_unbounded+0x156/0x820 mm/readahead.c:229
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.14.0-rc2-syzkaller-00303-gad1b832bf1cf #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:236 [inline]
+ watchdog+0x1058/0x10a0 kernel/hung_task.c:399
+ kthread+0x7a9/0x920 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
+NMI backtrace for cpu 0 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:106 [inline]
+NMI backtrace for cpu 0 skipped: idling at acpi_safe_halt+0x21/0x30 drivers/acpi/processor_idle.c:111
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
