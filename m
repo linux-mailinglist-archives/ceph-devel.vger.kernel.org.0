@@ -1,73 +1,68 @@
-Return-Path: <ceph-devel+bounces-2713-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2714-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA32A39027
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Feb 2025 02:08:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36273A39055
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Feb 2025 02:23:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9E21891769
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Feb 2025 01:08:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E156B1894C0D
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Feb 2025 01:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8829D250F8;
-	Tue, 18 Feb 2025 01:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F33C45038;
+	Tue, 18 Feb 2025 01:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n0ig7njm"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Ec6MQOG6"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E3D6A8D2
-	for <ceph-devel@vger.kernel.org>; Tue, 18 Feb 2025 01:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233F81D52B;
+	Tue, 18 Feb 2025 01:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739840878; cv=none; b=I44b3L5KqUbAZlJRPgbO3+uWc9hSFvtss9Z4i7magF0jGPTjNlhlUyUlCvKNIgdK5yZ6/ipj0JtBMuNhsNqnzgQ5+BemnYVwRmL97v8hF/XhPshIWNS4p42420shA3WWh8/LOzXVSmxv7gy7rKHKC8puCR29cLhZFPBNy69VaMU=
+	t=1739841698; cv=none; b=dFWb+nr7OoGt3ZROcIxNVtk0nT62S6PlNq1mEEQQFfSUG0ujm/fY2wCh2BglmzvZyyGeQSJC9YyYEk2O84Ci/h1jP05sfemxh4THqimJQ0RnQzGOH+PycK/cjfsom/Svj4TBZA5VFfOe2Zk4DAh90msULjV5vEoBQ+DaOnqkvb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739840878; c=relaxed/simple;
-	bh=GJHX0ckvYWbkaFJDLq14nAGpEZxYZUshURwjLG5Fw00=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=I+NBI/WmOUN/nFQChhbKSGjCRIpgAeBNgPkKSfqgOjA4TmtNGFP5sEVx3JrGmGBvzWKBsI/r05urN+0jomYOiNhuF9EsLVr6MGGgNMWPbl7zSG5ek4yiCTD0vxRJfKgDMPlAg0lDWwNkYXoSsTpOsmZwUXnkhn4QQG3HDGnxrh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n0ig7njm; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739840876; x=1771376876;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=GJHX0ckvYWbkaFJDLq14nAGpEZxYZUshURwjLG5Fw00=;
-  b=n0ig7njmG0zzN4h2fRELWybXzD1roHVJ95yWrvS0kPmbmENWR5qc54e3
-   rE5Oeb9t/GXf7O0dVq1Z1n2dhihh1vQvgCX4h1lz9mUTTbM6PUe0KzcD7
-   dN67Zm/sNh9HLgwTaMp66PDzdwcLXkR59N9HCJ1Yg8bMSkb4GVE59nvKq
-   OUf6cl3AXcT9n1VWtUnpZZ4weRJNDe44YSXOTZxADrH0LfdywkhR1Nyej
-   rfgixQfyNy6fkXQTv+sia9+QA9XeauOgIn5e57SXDCa9lMx9ia2Agc2rV
-   DEPbzLit8ZIsSYBzVsKsATQYBhLWojIKJWmYKFVazk0jQly809J37itaI
-   A==;
-X-CSE-ConnectionGUID: 2S5/ly+SR7+gTWL11e2Uow==
-X-CSE-MsgGUID: k/PACQ9ARMOLJlF0KuIGzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11348"; a="51144271"
-X-IronPort-AV: E=Sophos;i="6.13,294,1732608000"; 
-   d="scan'208";a="51144271"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Feb 2025 17:07:55 -0800
-X-CSE-ConnectionGUID: SpbA4+YvSB6H1j8ZGMK7+w==
-X-CSE-MsgGUID: ZYLew98uQUO8TIQQSyI8LQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,294,1732608000"; 
-   d="scan'208";a="114757673"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 17 Feb 2025 17:07:55 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tkC5Y-001DlD-2K;
-	Tue, 18 Feb 2025 01:07:52 +0000
-Date: Tue, 18 Feb 2025 09:07:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org
-Subject: [ceph-client:tls_logger 13/15] net/ceph/ceph_san.c:25 log_cephsan()
- warn: inconsistent indenting
-Message-ID: <202502180801.2Fu8xFiD-lkp@intel.com>
+	s=arc-20240116; t=1739841698; c=relaxed/simple;
+	bh=7DGxI1QlBEmJ0uwXnLMdfKtd1VHwoWygB6sBz2GO6Qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D0MncxNLGGdtw42LVh+ZYqF+7x6CmDEwnDmh0xvA8uVqplcofmm1ZUqUR+oRf1F4ig9u2vKHA53tGwZ2MNBE5iu6pwezI1HpJjZVuLBrwe05qeX8zhmERerO+VQ1HiXg9ZAzCiu5fS//yyqRYJ7q0y8HzaKWJ4G9iRm8evHSl98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Ec6MQOG6; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=WF9Ri4h1K95Pl/my+41is+x07VggVScf/HOnxc636yI=; b=Ec6MQOG6rdNdOixigqk/VmqAK1
+	tH81I3Q9OnTGFIRRDuNLy7MRsZn8LFeoVrrMx1Y80CiO+j2uQEngX/GYf/6ax1sCepUVUO7U2cRpi
+	8xy+HTmlC65fErcY6g4gxbv5+C4o1hKSdmPDuNux0XkgmFNvYMN2tr1B/bkDnTwMbhkMVR7dYBdiP
+	F/Tw0HYeyjlGL0No9m4o8T0nrFbQ++bts5GsXodOoV1uIb/xtLo7Ff8RC6Fk206su5qGx3BkQmpVH
+	o+wTlK6VtZpXcqrQbDXfOfjDh9/liKgQ4VXAmNva9kLh93WaMQ4G1b2CjvZswGT5MTitTs1OguEkp
+	rhJFXUrQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tkCIm-0000000HSMu-16PI;
+	Tue, 18 Feb 2025 01:21:32 +0000
+Date: Tue, 18 Feb 2025 01:21:32 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "luis@igalia.com" <luis@igalia.com>,
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+	"jlayton@kernel.org" <jlayton@kernel.org>,
+	"idryomov@gmail.com" <idryomov@gmail.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC] odd check in ceph_encode_encrypted_dname()
+Message-ID: <20250218012132.GJ1977892@ZenIV>
+References: <20250214024756.GY1977892@ZenIV>
+ <20250214032820.GZ1977892@ZenIV>
+ <bbc3361f9c241942f44298286ba09b087a10b78b.camel@kernel.org>
+ <87frkg7bqh.fsf@igalia.com>
+ <20250215044616.GF1977892@ZenIV>
+ <877c5rxlng.fsf@igalia.com>
+ <4ac938a32997798a0b76189b33d6e4d65c23a32f.camel@ibm.com>
+ <87cyfgwgok.fsf@igalia.com>
+ <2e026bd7688e95440771b7ad4b44b57ab82535f6.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -76,60 +71,39 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <2e026bd7688e95440771b7ad4b44b57ab82535f6.camel@ibm.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-tree:   https://github.com/ceph/ceph-client.git tls_logger
-head:   6426787926c0ab3f8cd024b9cac8bd0fd28813a4
-commit: cd1e899feeb6a7da55cbb74b9245c8bbb77f82ba [13/15] cephsun: using a dynamic buffer allocation
-config: csky-randconfig-r072-20250217 (https://download.01.org/0day-ci/archive/20250218/202502180801.2Fu8xFiD-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.2.0
+On Mon, Feb 17, 2025 at 10:04:50PM +0000, Viacheslav Dubeyko wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502180801.2Fu8xFiD-lkp@intel.com/
+> [  326.477120] This frame has 1 object:
+> [  326.477466]  [32, 287) 'buf'
 
-New smatch warnings:
-net/ceph/ceph_san.c:25 log_cephsan() warn: inconsistent indenting
+> (gdb) l *ceph_encode_encrypted_dname+0x4a5
+> 0xffffffff829d6605 is in ceph_encode_encrypted_dname (fs/ceph/crypto.c:273).
+> 268		u32 len;
+> 269		int name_len = elen;
+> 270		int ret;
+> 271		u8 *cryptbuf = NULL;
+> 272	
+> 273		buf[elen] = '\0';
 
-Old smatch warnings:
-net/ceph/ceph_san.c:28 log_cephsan() warn: inconsistent indenting
-net/ceph/ceph_san.c:33 log_cephsan() warn: inconsistent indenting
-net/ceph/ceph_san.c:39 log_cephsan() warn: inconsistent indenting
+Cute...  The fix is obvious (should be
+                        char buf[NAME_MAX + 1];
+rather than
+                        char buf[NAME_MAX];
+), but the funny part is that it had been a bug all along -
+if you give the mainline a name that has a 255-character component
+that happens to start with _, you'll get buf[] filled with a copy
+of that component (no NUL in sight) and have it passed as 'name' to
+parse_longname() that starts with
 
-vim +25 net/ceph/ceph_san.c
+        /* Skip initial '_' */
+	name++;
+	name_end = strrchr(name, '_');
 
-    15	
-    16	
-    17	static inline void *cephsan_pagefrag_get_ptr(struct cephsan_pagefrag *pf, u64 val);
-    18	/* The definitions for struct ceph_san_log_entry and struct ceph_san_tls_logger
-    19	 * have been moved to cephsan.h (under CONFIG_DEBUG_FS) to avoid duplication.
-    20	 */
-    21	
-    22	void log_cephsan(char *buf) {
-    23	    /* Use the per-core TLS logger */
-    24	    struct ceph_san_tls_logger *tls = this_cpu_ptr(&ceph_san_tls);
-  > 25		struct cephsan_pagefrag *pf = this_cpu_ptr(&ceph_san_pagefrag);
-    26	
-    27	    int head_idx = tls->head_idx++ & (CEPH_SAN_MAX_LOGS - 1);
-    28		int pre_len = tls->logs[head_idx].len;
-    29	    tls->logs[head_idx].pid = current->pid;
-    30	    tls->logs[head_idx].ts = jiffies;
-    31	    memcpy(tls->logs[head_idx].comm, current->comm, TASK_COMM_LEN);
-    32	
-    33		cephsan_pagefrag_free(pf, pre_len);
-    34	
-    35		int len = strlen(buf);
-    36	    u64 buf_idx = cephsan_pagefrag_alloc(pf, len);
-    37	    if (buf_idx) {
-    38			tls->logs[head_idx].len = len;
-    39	        tls->logs[head_idx].buf = cephsan_pagefrag_get_ptr(pf, buf_idx);
-    40			memcpy(tls->logs[head_idx].buf, buf, len);
-    41	    }
-    42	}
-    43	EXPORT_SYMBOL(log_cephsan);
-    44	
+See the problem?  strrchr() expects a NUL-terminated string; giving it an
+array that has no zero bytes in it is an UB.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+That one is -stable fodder on its own, IMO...
 
