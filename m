@@ -1,230 +1,169 @@
-Return-Path: <ceph-devel+bounces-2723-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2724-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F226FA3D914
-	for <lists+ceph-devel@lfdr.de>; Thu, 20 Feb 2025 12:43:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23428A3E12E
+	for <lists+ceph-devel@lfdr.de>; Thu, 20 Feb 2025 17:45:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03E73BD1DD
-	for <lists+ceph-devel@lfdr.de>; Thu, 20 Feb 2025 11:43:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B1977AC2D5
+	for <lists+ceph-devel@lfdr.de>; Thu, 20 Feb 2025 16:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5C31F37CE;
-	Thu, 20 Feb 2025 11:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1282120E016;
+	Thu, 20 Feb 2025 16:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T+BNbfyn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IRzEymQz"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C874D1E9B0D
-	for <ceph-devel@vger.kernel.org>; Thu, 20 Feb 2025 11:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5E820C00D;
+	Thu, 20 Feb 2025 16:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740051818; cv=none; b=AkBZnn1YGTyLBIZY6qzW4W2yJIFvuMpWNAZKLJty5mlxrQJqIFGhcOxCys5muQpn9i0gCQb6P9x1bkNzlGvy3qs2bgMC5/ZNZi5WEnd8swIkk+0amkQ0hJRotkRaewsp7vs8mxAGEJbVhMCXhJivgHWYrWPtUZJPFjTGrAcnIdI=
+	t=1740069808; cv=none; b=EfiHvV36kl2GodIMT3S3BChxRScBlH0PTCIEiBJpf6JGcmNsm6AvnOxhpU5O0ue1t/pBWCNY3rJQmA6sxNaGlGy6WXjN3+yI4eUuqYcKXNDJ3ZlF3oqWd0by9C6QT5f7rUWg3zQLMcOO51I1h2tQfRvwuXc1kkahATdv6ph7Y14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740051818; c=relaxed/simple;
-	bh=fUTEm9jG7+5Q0yQd7dUD8PFKxTRnfmBf+dEM7bJ5fEM=;
+	s=arc-20240116; t=1740069808; c=relaxed/simple;
+	bh=vVECa4utTX4xbUhcnJWoWLUVHp/KMDoJ9zPavXCFBLE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZEUsnu6GGoxNTBpuZq4KrRVMjj9ZhozcGadihT6RQdXpCfO7XwR499y8aD9HYHE1xxVLPbGiOdnCVxyaPahjj19VMqrag8Yi8rSCGm9TCVPvwJtvfbwICpTerwsX3Bs3Ta5FeRyNHaa+wL9QLSHXCyXNHOqbFHuk5enjB9ecBso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T+BNbfyn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740051815;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/1BaKvh9nmZplPNZ4mM70vwtiws75PwZUGLaZfHX6Iw=;
-	b=T+BNbfynpeQ7pkFgjvGl/Hpb0J+kOlK2TgNlY6Q/KZjWaCd7hMUBvzQN2NrJ1tzDF9wWBg
-	pWOmKTD1igFKcUMbdFV8XTV1eC6Sp1fpFzMDMzF7fsWWHyQiaX4MAWoWfOAAZQNhHqSNsg
-	EV0ZpsuRn7RWRYbZLN+lm5m2kbOEJHM=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-6-JsuLFTYDNtyxbSLhiwTh3w-1; Thu, 20 Feb 2025 06:43:34 -0500
-X-MC-Unique: JsuLFTYDNtyxbSLhiwTh3w-1
-X-Mimecast-MFC-AGG-ID: JsuLFTYDNtyxbSLhiwTh3w_1740051813
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-abbf1cebfa5so64119566b.1
-        for <ceph-devel@vger.kernel.org>; Thu, 20 Feb 2025 03:43:34 -0800 (PST)
+	 To:Cc:Content-Type; b=ekUH/UimQ5T4+8c8T71IF9Y14fZfUw93GV+j31yINhdsT1yyds59ttasQd7plh7eqtnT0GrF4NuN5GI+rvIZ4+oo5jqraIQLytmHknr5RJfuPse+XA8+2Sp3fMEDaGltc7ahaNv5i5X4v69lIhlV1PP3h8iY5k4icpmE2Ygf4EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IRzEymQz; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fc4418c0e1so4005513a91.1;
+        Thu, 20 Feb 2025 08:43:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740069806; x=1740674606; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TGKStiuvmu6PZ8iLcfPINnLEtELIaRoHYvov97O+LS8=;
+        b=IRzEymQzOj9QOg7SyFdfAictqfazKy2RYm2Tv58CbPI8i1RS4TFQQD/Omw9qfU3gPa
+         ePuZdhTVv3SjyKJS6lxm4wRAY+Mo6u5FtZ6awXGIZ9Gj+h86Fdn6lIpee21MACG3gaeG
+         77jnyncXD3YNCy6piVffOPYVltJ+j9Vv7rZzDIDo7FSnP2zMJkwl2ILvtybcBwusZ49B
+         188wj8UdlnXKmQIQABmn7VRF1mIiPAPr/gakgcqtxtN4i0JppJ7mOMZDp7NcZY0JHrXF
+         SzqVdjO6BpekgAXljpuUbrJH3r6y98490+7QJ7dqLQu81OfODHYsn0QI3jwpIdvw6qyc
+         uxmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740051812; x=1740656612;
+        d=1e100.net; s=20230601; t=1740069806; x=1740674606;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/1BaKvh9nmZplPNZ4mM70vwtiws75PwZUGLaZfHX6Iw=;
-        b=D5IfSSauDg7BAhOnSGrY2F0cFihav4maNGN+E3CFmPetuExLnWxPH7aSN8/ezG9BnB
-         RaUD6A9ERbF5l/nfTIdLmAqC53zFpZO0ili2eKPPF3So0ThyFLWxMls9cUKk0Gst2Grd
-         kmkoup7UvNJnKLF00w4vN47Yer3UsZeyFeAgSHo/L+nIFTTYpahREyw2DSSnGfGQ1Y3d
-         brTC4kqoCyPJuhZn/UnCf3/FpFudEqh6BpF0roIsilcZPkNFmegD3Y1Fsp35+PiRnxZr
-         FIqyEHZg1R+ITjdmES3/NLyUv4y3LyLnO8x2ekA5dNpp72c5GIABnJrkEnyIqVlJVo1d
-         zOdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyVLadY6PG6QZbERZvaZg3vtQGIIuDbdzyIUvwF1z5s1xbqCX5VRBzDonN/bL4sVwXzyQuSjOd/mTI@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqlOC/XnYjAWBlLLgGAlzKixwVfy0p+/dC1AbXIzbkyKzo13H8
-	9bBcjmnfD/gN3210MHbBhYo//26IpF5gIgsn8vrHhBsc5l85Sx8E6k9DSEH4qWzRwSbfG5SVKY2
-	hWU9iWsuwxAX9Nlz03t7zg7WZYZ9hdjNhngwWvkstLX90T/LzuwV31NdkBZssvbA7yEHn8cq5Kk
-	TuV+YTuNJVPQmf6TW03IrcQ1avH1PschiiYxYq+8gO8Q==
-X-Gm-Gg: ASbGnctp//0++uBhLNYJFR07RrRnQ99dzOqhsSmOAtsK4yQauZ6jpJFHW63S6p8W8I2
-	kcW1otSZ1mHtgtDreheha2Nf6t/+iDUuXuzryqC217tdZElIJSi63YOQihcbZYA==
-X-Received: by 2002:a17:907:6e94:b0:ab7:ca9:44e4 with SMTP id a640c23a62f3a-abbcccf515fmr620794466b.15.1740051812276;
-        Thu, 20 Feb 2025 03:43:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEjF/qLQmWeduIwi/gFBCy8i7kzGZScca4Gd8z9KFudySReQzjAU5Pgz3ik1K2OFw2Nid7nO/62lUapurvOy5E=
-X-Received: by 2002:a17:907:6e94:b0:ab7:ca9:44e4 with SMTP id
- a640c23a62f3a-abbcccf515fmr620792966b.15.1740051811863; Thu, 20 Feb 2025
- 03:43:31 -0800 (PST)
+        bh=TGKStiuvmu6PZ8iLcfPINnLEtELIaRoHYvov97O+LS8=;
+        b=GdeUqfxt+ENqZH6v/NbNC49xvMowj+nRwOE3EwZUvsx/YJ3Olb9TBtBguGkMdER4JR
+         QCGUEpqH06V3c/Pu4Pv1cyuzMlbL+4QWcMA+6sLHkv5ifK28qt8YcQSfaBerSjzV+JMA
+         wGVimMbZWB32obGchImKWOqVw/o6hLPAKWPN2BNu10JGnVdnoWrAuAepBpPyMhQSRaqU
+         YPyQe6xtBLi1vvpbFIWXmSBJ94RPtPh+G+DtMQzuM1W4jK4/W7U+KEtuBhonqipMC3n1
+         WOX6fMVzz5nb9Lyu2Ymbe8Nk3lV3uMJ4U9lkB0XGza22wb+zRY6/NKBoD+er/+OsojCS
+         nWbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAoq8ohybFccddFxRNqwdFzBZH5yQduaLH/hSIy9bvBCwbXjYuiByJ2NR2X3OAhQTGGz9vYQbJhPKNpVQAVTmcHqrNBntd@vger.kernel.org, AJvYcCVUnfWeWNvjLwSg0rpQ+LNqLqaeQET/WGHzZluvLNRT3zy58HVcrrDakopXlHM8WCKcyxRt/AXwBXG0@vger.kernel.org, AJvYcCVWPW3Kp75ZlCYM4vUc8tNBu0kq/mVA/VdIMo4XzLUTdOtdcHs3cF+ro/LTcdtDWc6hoiIBe9dLTTpz@vger.kernel.org, AJvYcCWxbZqBmWxHeZV1CgNzsfUbiZHqG6uSfcreonewHxdUWoLRQBo+mpmZYI3B5+10q16VmeE08EPJrI1XcB+5@vger.kernel.org, AJvYcCX6bfJmksfn/IubZ47/ZxUCCWxL9WreeXl2oanaLxG4KQBG3Rr4cknZXkuc88RWg0v3VKtMcDYWmg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW8GIbYUMJsIBBIKFXyhTPErtihLU4mjmnjEMaaqscL0ym/hbG
+	Ya6VKAWMBlz1xaCEutoH2lHQJxxVVUXXs8njWxwv5Ey7qcYnBC09vmR3Sv0Asvr3CliuNEoB5qw
+	9gmwcAykLUtlzJpJs4HyxXa7GwaE=
+X-Gm-Gg: ASbGnctRQmWH2lAwzmYgrYZYOqY/ab1PgpM0aU1HpFfXt5ZVqM1oF2aWTq2GZXvXnWk
+	h5YCEQ9lgHCsnxdKnam6ufKHo3vnm72U0Nstqm4ThyMa+T3tKGMfWrnVZJRZhuVNJ+yxImvWb
+X-Google-Smtp-Source: AGHT+IGbA2Q+XEnVZAQ4NEP7BEgN3IdARfcH5GHq6FTupNzUVVzv1CrxmhQmgth2w7JIYa+zxno9NRI2IlvxRC+uy/8=
+X-Received: by 2002:a17:90b:2d46:b0:2ee:8cbb:de28 with SMTP id
+ 98e67ed59e1d1-2fccc1287e9mr7457400a91.8.1740069806451; Thu, 20 Feb 2025
+ 08:43:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219003419.241017-1-slava@dubeyko.com> <CAO8a2SjeD0_OryT7i028WgdOG5kB=FyNMe+KnPHEujVtU1p7WQ@mail.gmail.com>
- <8b6bcbf5ba377180fed3a31115b1a20b31f0b7df.camel@ibm.com>
-In-Reply-To: <8b6bcbf5ba377180fed3a31115b1a20b31f0b7df.camel@ibm.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Thu, 20 Feb 2025 13:43:20 +0200
-X-Gm-Features: AWEUYZkcJPtA3NB22W1wIMC2CXuqzEai9FOvpvUbODqyuD138FZ5XTHMk729NBo
-Message-ID: <CAO8a2SgWRBXH2hFg5m9Gf0Nvr5=0PZXE8n2aane6kp7G8pCO_g@mail.gmail.com>
-Subject: Re: [PATCH] ceph: fix slab-use-after-free in have_mon_and_osd_map()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "slava@dubeyko.com" <slava@dubeyko.com>, 
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, "idryomov@gmail.com" <idryomov@gmail.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Patrick Donnelly <pdonnell@redhat.com>, 
-	David Howells <dhowells@redhat.com>
+References: <20241023212158.18718-1-casey@schaufler-ca.com> <20241023212158.18718-5-casey@schaufler-ca.com>
+In-Reply-To: <20241023212158.18718-5-casey@schaufler-ca.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Thu, 20 Feb 2025 11:43:15 -0500
+X-Gm-Features: AWEUYZk5wAy-pDKUyIeTJwZ9O0NtnaTtHtgvwhFaZG6kHfsbWwV584YyTGAvgfs
+Message-ID: <CAEjxPJ56H_Y-ObgNHrCggDK28NOARZ0CDmLDRvY5qgzu=YgE=A@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] LSM: lsm_context in security_dentry_init_security
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org, 
+	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
+	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, 
+	ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-It's a good fix, I just want to make sure we are not leaving more
-subtle correctness issues.
-Adding a NULL and a proper cleanup sounds like a good practice.
-
-On Wed, Feb 19, 2025 at 10:13=E2=80=AFPM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
+On Wed, Oct 23, 2024 at 5:23=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
 >
-> On Wed, 2025-02-19 at 14:44 +0200, Alex Markuze wrote:
-> > This fixes the TOCTOU problem of accessing the epoch field after map-fr=
-ee.
-> > I'd like to know if it's not leaving a correctness problem instead. Is
-> > the return value of  have_mon_and_osd_map still valid and relevant in
-> > this case, where it is being concurrently freed?
-> >
+> Replace the (secctx,seclen) pointer pair with a single lsm_context
+> pointer to allow return of the LSM identifier along with the context
+> and context length. This allows security_release_secctx() to know how
+> to release the context. Callers have been modified to use or save the
+> returned data from the new structure.
 >
-> Frankly speaking, I don't quite follow your point.
->
-> The handle_one_map() [1] can change the old map on new one:
->
->         if (newmap !=3D osdc->osdmap) {
->                 <skipped>
->                 ceph_osdmap_destroy(osdc->osdmap);
-> <--- Thread could sleep here --->
->                 osdc->osdmap =3D newmap;
->         }
->
-> And have_mon_and_osd_map() [2] can try to access osdc->osdmap
-> in the middle of this change operation without using the lock,
-> because this osdmap change is executing under osdc.lock.
->
-> So, do you mean that it is impossible case? Or do you mean that
-> the suggested fix is not enough for fixing the issue? What is your
-> vision of the fix then? :)
->
-> The issue is not about complete stop but about of switching from
-> one osdmap to another one. And have_mon_and_osd_map() is used
-> in __ceph_open_session() [3] to join the ceph cluster, and open
-> root directory:
->
-> /*
->  * mount: join the ceph cluster, and open root directory.
->  */
-> int __ceph_open_session(struct ceph_client *client, unsigned long started=
-)
-> {
->         unsigned long timeout =3D client->options->mount_timeout;
->         long err;
->
->         /* open session, and wait for mon and osd maps */
->         err =3D ceph_monc_open_session(&client->monc);
->         if (err < 0)
->                 return err;
->
->         while (!have_mon_and_osd_map(client)) {
->                 if (timeout && time_after_eq(jiffies, started + timeout))
->                         return -ETIMEDOUT;
->
->                 /* wait */
->                 dout("mount waiting for mon_map\n");
->                 err =3D wait_event_interruptible_timeout(client->auth_wq,
->                         have_mon_and_osd_map(client) || (client->auth_err=
- < 0),
->                         ceph_timeout_jiffies(timeout));
->                 if (err < 0)
->                         return err;
->                 if (client->auth_err < 0)
->                         return client->auth_err;
->         }
->
->         pr_info("client%llu fsid %pU\n", ceph_client_gid(client),
->                 &client->fsid);
->         ceph_debugfs_client_init(client);
->
->         return 0;
-> }
-> EXPORT_SYMBOL(__ceph_open_session);
->
-> So, we simply need to be sure that some osdmap is available,
-> as far as I can see. Potentially, maybe, we need to NULL
-> the osdc->osdmap in ceph_osdc_stop() [4]:
->
-> void ceph_osdc_stop(struct ceph_osd_client *osdc)
-> {
->         destroy_workqueue(osdc->completion_wq);
->         destroy_workqueue(osdc->notify_wq);
->         cancel_delayed_work_sync(&osdc->timeout_work);
->         cancel_delayed_work_sync(&osdc->osds_timeout_work);
->
->         down_write(&osdc->lock);
->         while (!RB_EMPTY_ROOT(&osdc->osds)) {
->                 struct ceph_osd *osd =3D rb_entry(rb_first(&osdc->osds),
->                                                 struct ceph_osd, o_node);
->                 close_osd(osd);
->         }
->         up_write(&osdc->lock);
->         WARN_ON(refcount_read(&osdc->homeless_osd.o_ref) !=3D 1);
->         osd_cleanup(&osdc->homeless_osd);
->
->         WARN_ON(!list_empty(&osdc->osd_lru));
->         WARN_ON(!RB_EMPTY_ROOT(&osdc->linger_requests));
->         WARN_ON(!RB_EMPTY_ROOT(&osdc->map_checks));
->         WARN_ON(!RB_EMPTY_ROOT(&osdc->linger_map_checks));
->         WARN_ON(atomic_read(&osdc->num_requests));
->         WARN_ON(atomic_read(&osdc->num_homeless));
->
->         ceph_osdmap_destroy(osdc->osdmap); <--- Here, we need to NULL the
-> poiner
->         mempool_destroy(osdc->req_mempool);
->         ceph_msgpool_destroy(&osdc->msgpool_op);
->         ceph_msgpool_destroy(&osdc->msgpool_op_reply);
-> }
->
-> Thanks,
-> Slava.
->
-> [1]
-> https://elixir.bootlin.com/linux/v6.14-rc2/source/net/ceph/osd_client.c#L=
-4025
-> [2]
-> https://elixir.bootlin.com/linux/v6.14-rc2/source/net/ceph/ceph_common.c#=
-L791
-> [3]
-> https://elixir.bootlin.com/linux/v6.14-rc2/source/net/ceph/ceph_common.c#=
-L800
-> [4]
-> https://elixir.bootlin.com/linux/v6.14-rc2/source/net/ceph/osd_client.c#L=
-5285
->
->
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: ceph-devel@vger.kernel.org
+> Cc: linux-nfs@vger.kernel.org
+> ---
+>  fs/ceph/super.h               |  3 +--
+>  fs/ceph/xattr.c               | 16 ++++++----------
+>  fs/fuse/dir.c                 | 35 ++++++++++++++++++-----------------
+>  fs/nfs/nfs4proc.c             | 20 ++++++++++++--------
+>  include/linux/lsm_hook_defs.h |  2 +-
+>  include/linux/security.h      | 26 +++-----------------------
+>  security/security.c           |  9 ++++-----
+>  security/selinux/hooks.c      |  9 +++++----
+>  8 files changed, 50 insertions(+), 70 deletions(-)
 >
 
+> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+> index 76776d716744..0b116ef3a752 100644
+> --- a/fs/nfs/nfs4proc.c
+> +++ b/fs/nfs/nfs4proc.c
+> @@ -114,6 +114,7 @@ static inline struct nfs4_label *
+>  nfs4_label_init_security(struct inode *dir, struct dentry *dentry,
+>         struct iattr *sattr, struct nfs4_label *label)
+>  {
+> +       struct lsm_context shim;
+>         int err;
+>
+>         if (label =3D=3D NULL)
+> @@ -128,21 +129,24 @@ nfs4_label_init_security(struct inode *dir, struct =
+dentry *dentry,
+>         label->label =3D NULL;
+>
+>         err =3D security_dentry_init_security(dentry, sattr->ia_mode,
+> -                               &dentry->d_name, NULL,
+> -                               (void **)&label->label, &label->len);
+> -       if (err =3D=3D 0)
+> -               return label;
+> +                               &dentry->d_name, NULL, &shim);
+> +       if (err)
+> +               return NULL;
+>
+> -       return NULL;
+> +       label->label =3D shim.context;
+> +       label->len =3D shim.len;
+> +       return label;
+>  }
+>  static inline void
+>  nfs4_label_release_security(struct nfs4_label *label)
+>  {
+> -       struct lsm_context scaff; /* scaffolding */
+> +       struct lsm_context shim;
+>
+>         if (label) {
+> -               lsmcontext_init(&scaff, label->label, label->len, 0);
+> -               security_release_secctx(&scaff);
+> +               shim.context =3D label->label;
+> +               shim.len =3D label->len;
+> +               shim.id =3D LSM_ID_UNDEF;
+
+Is there a patch that follows this one to fix this? Otherwise, setting
+this to UNDEF causes SELinux to NOT free the context, which produces a
+memory leak for every NFS inode security context. Reported by kmemleak
+when running the selinux-testsuite NFS tests.
+
+> +               security_release_secctx(&shim);
+>         }
+>  }
+>  static inline u32 *nfs4_bitmask(struct nfs_server *server, struct nfs4_l=
+abel *label)
 
