@@ -1,721 +1,242 @@
-Return-Path: <ceph-devel+bounces-2743-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2744-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83258A3E8E9
-	for <lists+ceph-devel@lfdr.de>; Fri, 21 Feb 2025 00:51:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9681FA3E9D6
+	for <lists+ceph-devel@lfdr.de>; Fri, 21 Feb 2025 02:22:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE769189865D
-	for <lists+ceph-devel@lfdr.de>; Thu, 20 Feb 2025 23:50:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F82D7A66A6
+	for <lists+ceph-devel@lfdr.de>; Fri, 21 Feb 2025 01:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA271267B73;
-	Thu, 20 Feb 2025 23:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD3A38F9C;
+	Fri, 21 Feb 2025 01:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Eofp7Ps/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pAl11aha";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Eofp7Ps/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pAl11aha"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VjvO2rdb"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1E6267B79
-	for <ceph-devel@vger.kernel.org>; Thu, 20 Feb 2025 23:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740095307; cv=none; b=q2Fk1usQ2aJ/BkwnCz2r++eycJeq3EW6XOWI0OERZ//ZmRPFkwIKQ1kwbxFxiss6VDewAnAQ6bbmxEzjOfKwYd4TAsEcoKeonlSL7zihhVziK32Y7VxMCg2MIlDFsWVzbUt1gZEQqbFBPVozPntcujN+DsFxzXNQ7C1YeDKoDQE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740095307; c=relaxed/simple;
-	bh=sDT9kgt9aSDhya89Xi3GrtI21E3nvo1A7lbO1Ilr1Xg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lz/CN1AjgBtI8zswBAVGfaSiTJDQFKZsZq17A+AG/Ey4xUVNs1GCDncWFF3IPPb3k6GWbgosYBx3/xGMTCB9V1CTS98tCT3yQ3QhOZAtg3BC8HNUvjGv8ECYJGZIFU/+wmcvhi5ZF9q6dspBVNFmPKGCo5ixsf6TdKuIfZsiBU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Eofp7Ps/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pAl11aha; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Eofp7Ps/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pAl11aha; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 31BC821197;
-	Thu, 20 Feb 2025 23:48:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740095302; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vkIxwLlnn5A04IZSkmkeCkcxAAunwSH3ABBUR7magHU=;
-	b=Eofp7Ps/HSzOKZJ9VLw6q+8ymG10vce/3dmKozzcTXcxJlkLa06gU22HW1/7C/b5z5jYnN
-	dYVBfxFPUPPowLiDRiWsK5dpBtWezm0UHzR5QPBincGTVm2nsnKlASip36gM9X6qm07my1
-	NL5se6u01RbufscGX4WvVoLZTdvHJrM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740095302;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vkIxwLlnn5A04IZSkmkeCkcxAAunwSH3ABBUR7magHU=;
-	b=pAl11ahakRt+zFwkXGM3j+es2WFQL7lm0y6moV+x9S27wM4GMvDRbUKoPGN/F6XrrxKYDY
-	w5sDqsJiUTKrFEAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="Eofp7Ps/";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=pAl11aha
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740095302; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vkIxwLlnn5A04IZSkmkeCkcxAAunwSH3ABBUR7magHU=;
-	b=Eofp7Ps/HSzOKZJ9VLw6q+8ymG10vce/3dmKozzcTXcxJlkLa06gU22HW1/7C/b5z5jYnN
-	dYVBfxFPUPPowLiDRiWsK5dpBtWezm0UHzR5QPBincGTVm2nsnKlASip36gM9X6qm07my1
-	NL5se6u01RbufscGX4WvVoLZTdvHJrM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740095302;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vkIxwLlnn5A04IZSkmkeCkcxAAunwSH3ABBUR7magHU=;
-	b=pAl11ahakRt+zFwkXGM3j+es2WFQL7lm0y6moV+x9S27wM4GMvDRbUKoPGN/F6XrrxKYDY
-	w5sDqsJiUTKrFEAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7EB4C13301;
-	Thu, 20 Feb 2025 23:48:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id dBA/DT2/t2deAwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Thu, 20 Feb 2025 23:48:13 +0000
-From: NeilBrown <neilb@suse.de>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Xiubo Li <xiubli@redhat.com>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	ceph-devel@vger.kernel.org,
-	netfs@lists.linux.dev
-Subject: [PATCH 6/6] VFS: Change vfs_mkdir() to return the dentry.
-Date: Fri, 21 Feb 2025 10:36:35 +1100
-Message-ID: <20250220234630.983190-7-neilb@suse.de>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250220234630.983190-1-neilb@suse.de>
-References: <20250220234630.983190-1-neilb@suse.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4013127726;
+	Fri, 21 Feb 2025 01:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740100910; cv=fail; b=VveTYjdsaHUf3IA3khxRlU3J8f9CS/zsLvfHrLuSUNvh+WE7hRQbYkHtcCjuRMgJ88BnWZoCTsOtFmYbF5UWn1JCVVki8Rn/mVS2jMI9GkDzPXPEuTsrdCAcQB44erALYYoofgSf/0S06QeYavFmxcCaBSDWP86SNYbElA37I58=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740100910; c=relaxed/simple;
+	bh=0o84wgMczG2Ne2YK5TePNmdVnw28ycCv5EW54qC3Udg=;
+	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
+	 MIME-Version:Subject; b=ERkaoIYovllXDaBC0j54n1yNqQxVWFFfqPzt6+SSB9MsOzmaN9Hk6LltKbES9+7rCxiUp7ww+QP8ZlugTd19qM74Uq9y8PwDd9FdOwyzJ6sQsxDqhisHm9a0hW0zyYLJ3ObK/RZvLEIjBFAVQLd/6PWneRhXImxr1iQ8L573zQM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VjvO2rdb; arc=fail smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KH25qO011118;
+	Fri, 21 Feb 2025 01:21:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	pp1; bh=0o84wgMczG2Ne2YK5TePNmdVnw28ycCv5EW54qC3Udg=; b=VjvO2rdb
+	JRD40R87P9p3TV6255W2JvtrgWA7k7kSGD5Yllqr9rEYOzxbNh5IA2A3sFCIwyXZ
+	Fq+eTrLqOhQor8IFRb0uKJq05PG8qPn/mDidzSjizhIkIpDqDw1CPA7u0WSxEc8S
+	NPvoE3vz0hDzXF/xAe7YIvhQH4C4nx2Wpgrtrf3maE5f6d8O8sLPzOmCjT+ReVj6
+	PAovnY7AX+hijqA1up4WkTInk0m4z4HHyDUdS2nCtvmwADqGLO5wS8P3T7gjwyjE
+	1tDfxti0vz5SaeO+DxvIhboXdTrWysO8lIUxFJxiwTMfk4odlbbemN6Y6ms+rT5D
+	sX0cHve6NUqTlg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44x03qvw3m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 01:21:37 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51L1K3CF022410;
+	Fri, 21 Feb 2025 01:21:37 GMT
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2042.outbound.protection.outlook.com [104.47.57.42])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44x03qvw39-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Feb 2025 01:21:36 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bulCAhXJy46V2yvf77cYWNwQsHMxGQg/Itbdm7qcEymKs5wCNYCa8yQOIlW5yMhxT1ttcTOCbFjCZoyxeSLae/MaJja4A6dTePUp4ARjNoPdC1xhCqQKwgPcArlqLbl74Vg1ynlpYALNIaq0sDdDVzAAofNznQ6RhL0/m5uf4D7Ekx9818oot/xnpDT77IxZ+CYBWsCFpfb69NllhYSA5F6lzDYgAddoTmbWno/11C3hcib6Mg2DnJ3L+H9VpvvifvZ8+1K6Yog0WR17il9QplgGG3Myx/2aGtfoT2ZBxZkROuXSDsDaaqESrvdRhFpzRoRrHhosNTceP7U+gHrJ4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0o84wgMczG2Ne2YK5TePNmdVnw28ycCv5EW54qC3Udg=;
+ b=kXb4hXPVnk4Y/gSkRpj9mlRmkK48MPvJrcimlEMLIHg2x38k11jme25RroRqFS/sWXw1m7gKSIEtyi+CGg7VVix2T6rGBPJi5mQbQDjWuQHpkHdIPAJuUQNGbBLs7kOo9R4BjOkgrfyvvA4M43T2GkRFiDsJIB1EoZEc8glWEYA/y1OsFB+5U6udEWdd71gKXD+sc22lMOu/CsQyt6yWPXq03pE4v3EvJDAwMLYb7Eprhl5I7EBdqd41dN9VF2q+nS9SpqXnxigU53fBUHdwLbypz/CbgJkxj8IRGpJmokeQZyTmDdaEodBctjFEEloUpx0VWrji3N3Sqlls/izflQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
+ header.d=ibm.com; arc=none
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
+ by SA3PR15MB6145.namprd15.prod.outlook.com (2603:10b6:806:2fc::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Fri, 21 Feb
+ 2025 01:21:34 +0000
+Received: from SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::6fd6:67be:7178:d89b]) by SA1PR15MB5819.namprd15.prod.outlook.com
+ ([fe80::6fd6:67be:7178:d89b%4]) with mapi id 15.20.8445.017; Fri, 21 Feb 2025
+ 01:21:34 +0000
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+To: "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+CC: "luis@igalia.com" <luis@igalia.com>,
+        "ceph-devel@vger.kernel.org"
+	<ceph-devel@vger.kernel.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "idryomov@gmail.com" <idryomov@gmail.com>
+Thread-Topic: [EXTERNAL] Re: [RFC] odd check in ceph_encode_encrypted_dname()
+Thread-Index:
+ AQHbfpCIos2EbKYFiUGV+rHGHxWwQbNG8KKAgAAHCy2AANRJAIAAtn1ygANLFYCAAA6HuYAANr0AgAA29QCAAXmIAIAAEnmAgAAWVwCAAxSpAA==
+Date: Fri, 21 Feb 2025 01:21:34 +0000
+Message-ID: <92deae26f56f47237fdf96eb4131a8b24ca2dc1f.camel@ibm.com>
+References: <bbc3361f9c241942f44298286ba09b087a10b78b.camel@kernel.org>
+	 <87frkg7bqh.fsf@igalia.com> <20250215044616.GF1977892@ZenIV>
+	 <877c5rxlng.fsf@igalia.com>
+	 <4ac938a32997798a0b76189b33d6e4d65c23a32f.camel@ibm.com>
+	 <87cyfgwgok.fsf@igalia.com>
+	 <2e026bd7688e95440771b7ad4b44b57ab82535f6.camel@ibm.com>
+	 <20250218012132.GJ1977892@ZenIV> <20250218235246.GA191109@ZenIV>
+	 <4a704933b76aa4db0572646008e929d41dd96d6e.camel@ibm.com>
+	 <20250219021850.GK1977892@ZenIV>
+In-Reply-To: <20250219021850.GK1977892@ZenIV>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|SA3PR15MB6145:EE_
+x-ms-office365-filtering-correlation-id: 1965659e-459c-4641-1f32-08dd521614c2
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|10070799003|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?T080UGo3YmFtNXhNeEU5YUpoUnl1UEJvMFNibW5CQndINEkrNTVzRXJvL0Rh?=
+ =?utf-8?B?LytxZHFlNVdBR1BHN2krd3pLRlhvOEZ5amRJcTJKeDV4SVBPcDhHRkE5K3M3?=
+ =?utf-8?B?QzM0aGVXU3lZNGhXQWl4bUdNcS9qWEZxRWg2ZXV3bTFqSlVxbHVYUm13b0tD?=
+ =?utf-8?B?ams0UVhTWUprYWg2d2F1MHJaaVIwa25VT2NYODVpQjVXK2hTUlI1TFhNQjNK?=
+ =?utf-8?B?aFNPUFMwTTJqZlJjdnU1akdYTHlKM3o5M2lBbVB4WFpORWp1dVVqL01yU0Q5?=
+ =?utf-8?B?TkRMSjNudDJVMlIzTkRZcU1jNTNSbStXcEVIUDRFQnVFWWtNUDFUbWU4WVc0?=
+ =?utf-8?B?WCtXVnlYZTAzSnREWXorejhSOWE4cnlkTWJMbVZBTUpMbEx1K00vd0lIbG5a?=
+ =?utf-8?B?WFl3RXVwK25DdmdGRkI4UElleDlQR2E0ZUdTWUNPdmNWNEdoaG41YWQ0dUJU?=
+ =?utf-8?B?eWg3STNVRlZKbC90VlM0VUdWb2tmYlJHa3NtZjNQOHdXUVc0ZEt4dW00ZU9X?=
+ =?utf-8?B?RWxHTDFkWnpMOUZYMVNnYkpweUFUQ29PVnpuc0pkVmhWdGdLeHo3REVkd0U3?=
+ =?utf-8?B?azNsOEZ6ZTRKT2t4MzV3bkNmb2dsWTVhMDBBdzVkSHNSWk1FSVdyUC80RWRM?=
+ =?utf-8?B?QlJEZzNmWEh4ZXJFeUNNWmdtM25ZUkRiTUpaL2lVM2hJMlJyb3BRcVJJcFZU?=
+ =?utf-8?B?T09QcHk2UlJtVUtKc1h1Y3dMbDhodnRYMjFHMWVOWms5Q05OMjhUWk15Y1Mx?=
+ =?utf-8?B?Mm9ndGtOSm0wK3R6bURKS284dXFpYjhEZzI3S2VZUWxqWlgvTEdLS1I3dUpi?=
+ =?utf-8?B?RTRYUXhaT2pNREpDbnhaZW5icVltcVNDcUJpa2g1ZTRvZEdPVXNwQ3RTc3dl?=
+ =?utf-8?B?UFRFNVIxL21GSzVvS3YrVnRBbVJlNUo0UWxNSHNWMGJEMld6Wno0azJUY1BZ?=
+ =?utf-8?B?V0YxN1NQSFRkdVlyVk81ZE1IT1U1RHFwNmVIVEIwSkF2anUrSzBXYnJRV3dN?=
+ =?utf-8?B?MU12Y2xBUk9tZFpIR0Z4ZlUyUGYvNzFraXJmb2M3eE5mSVNKMEdMdVdVV2Zz?=
+ =?utf-8?B?R0pQamVzblE3UWp3OWhWWXBla0EzVGt4TWplV04xTHNVa0lDM09SNzJmS2x5?=
+ =?utf-8?B?NGxwTVFBcVdHU3V3bUExZktieEx5Y2pYVFlOd1pNQUdhY0d4NEtjM1JEK1dl?=
+ =?utf-8?B?NTBBVVVhcmtseWsrTXNQeVoyUWYwNXpRclZtTWM5NHlYMEFUcGllVXkyR2I2?=
+ =?utf-8?B?Z0hrS3B1WmNNM1VaS1F6d3A1S1djQmcraUw3Z0NUSnFpU1c4VURiYU9aL2c2?=
+ =?utf-8?B?bjhwZEZDSmlVUlh0RWNMWWFFbmhWa21JK0RBQkVYeVArOUJCOXhmY0dkT1Jr?=
+ =?utf-8?B?NGhhNWlzK2NVV1ZhbTdJenk0bXVaVTAveWZVVHFHUVBCOVMvVk8rTzFQemZ1?=
+ =?utf-8?B?eFFVN0dxU2NpUDh3c3lDTWV6MmNNdVcwV09weFJBYnQvdEc3VGRFQlovMUN4?=
+ =?utf-8?B?Y2FDQWtHZUZPUjBZV3I5M0pyaHJJaG1PSCt6OGx0Wi9ZMDVoLzRxMG5sR0tn?=
+ =?utf-8?B?OGJ6azl1MGU5TXR2UTNGY0hEc1QzV1VINlVVQ3pwUllaTUVnNHpVQ09sVDFF?=
+ =?utf-8?B?RlFBanE1SS9MZlA4WThvK2R5Ujgwb0tBZldjN0hUS2Y2cklNbFdjR0RWRks5?=
+ =?utf-8?B?dEMwZzhYZk1jbGJaL1E1K3lvWlkrb3lzWG5Ic0p0bllLSkFaNmJXaWxMemhW?=
+ =?utf-8?B?KytucWNkVXlLVDFnZW9DV3RKNnd3bjVsdjZrY0ZmTDg5c21nNk9MZGRlcUpH?=
+ =?utf-8?B?a3hmUDc3K2RUbzB4UjF2aHl5ODRaK1QwMkh0QjRYV290dVg5dTZUc05xZEV2?=
+ =?utf-8?B?OStnaHJOeGdKOWpOaW9QUUtqMExuRWtzQmo5YVlyaWFDL2FXWG83ZWFuZXVW?=
+ =?utf-8?Q?pKDwX/qF26Uyjm+j3pbvhnTtz3ULjAZt?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?andtTitPWHBKMlNMd1RtbUZhRk4vcWNIRmlXMVZnNzl4ZWQ3RlZRMVFVQTl5?=
+ =?utf-8?B?aUNBTXJ1WUdoUVpmdmwrcTk3TDdZcUZmSFl3S3hnSHYvOUd5Q1VLcHVKSkpu?=
+ =?utf-8?B?WjZNV2prb0VsSjk5bnh3dFpMN01HYkg2Q3ZEMUZnaHB1SEU1U003SjFOVG9E?=
+ =?utf-8?B?Y01nV2lsZmV1Nm9JK0FzWWJjVXd4c2JqMHlSRC8xRjg4S2I1QmtIZGxwemJz?=
+ =?utf-8?B?dVU5RWJQVjZlVnhBeWFMMXBhSUVSWHk3VnM0aDFQUzBIck1DWlZZMG1OeEcw?=
+ =?utf-8?B?QURZK09vV240cWFiakwvWEU5eThMSXBoS0FWR3M3MTh1dWpDdEx6MUFHaEpI?=
+ =?utf-8?B?UjdORFdJSmJ1UmE2NlQ1NTV0OUxEaDFEb252Q2YwTW9NY2o2c3JkcWhiZXE0?=
+ =?utf-8?B?VlpOZ1orOWxpV3Q2b1dkc1lnRXNOUlFEdjVldkU0dkovNVVwSDJpTmxzMngx?=
+ =?utf-8?B?SmtDa2hlVnVIVzlJZUlieEt1U1VzZ0VUUDlIVGxCUnEwYzJuMnJESGZmY2sz?=
+ =?utf-8?B?NTc1TVNPRUlzNHBDci9qT05VMVRCeVQwNUpHZEZadUU1V0J3NmJndDFyZS9U?=
+ =?utf-8?B?NGVPdTJzUEp2SEp3OTNqRUYyOThGRS9CNmUwYXFyR2pRWmJUL3FSWlBrUVpD?=
+ =?utf-8?B?YVZwdUdMSXJTaExIbWlvTzVLdVFpQytBN1pGc2tVZk1LN2d5a0tYZ3pEckEr?=
+ =?utf-8?B?VzFDRzBGT1pnS1NJbVc3WE0xTDJjeXVVYVBFTlF6dVJ2ZzlGRSsrR29FYXlz?=
+ =?utf-8?B?ejBpY1V6ckpMYmg2MGhtOHNYU0Job0xNRzZsRUMyd212ZGQxb0FMNDFTZCtH?=
+ =?utf-8?B?cFNYNWY5OGlLYTVmVjA4TEk3bjdZZzZQWlFaNm9ueTJ1Tk8wSEZ5Z1hlbTEw?=
+ =?utf-8?B?VGdBZGhvZzQ0dlVBTUpWcGdqbEMxS2w3SWVBNnVvLzN2NE85alR4Z2ZMNDVx?=
+ =?utf-8?B?anUwQkVndHZoR1JTeUNtQVV5c0NmYmpQN242TVJCVlZ1dzhDREhPczE1dGlZ?=
+ =?utf-8?B?S3JJN1JCS2U1NTlQYUtUZkxEN05lMXo4OCtjRTI3aSt1WUNFRFhTdmczL2sr?=
+ =?utf-8?B?T2IyS2Z4M0ZRVmYrMXhFWXlDNWlsUFUwS2xmL0VDbFp0VVR2ZnQrL3Q5eWVa?=
+ =?utf-8?B?dXBxaktpalZnU01Ncit0cXRaeW51RWNKN3pmTmZPbTE4ZHVJbEtkaHRqOEQ4?=
+ =?utf-8?B?c1NqMHM2WGt1QlBmT3Z5TmljTTA1R0FPQ2tJZjBUT3M2eUdDdGdnVk9pSVAy?=
+ =?utf-8?B?OGJ1VXBZYTlBcTV1bklNZHRxdmsyS3pqVHpRYlBKTWNGeS9QTlh4Ynh0WUxX?=
+ =?utf-8?B?WXU1Z0JjM2x6N1AxSXpaelpVVEJSTGQxeFhhNkIvbU1sZjhGK1RsOFBNSlFp?=
+ =?utf-8?B?T2p6VzVNM2JzUGpjWmthVXNZc1lBalpXQUdmckp2UDJMdVU3ZXZXS21iL3BJ?=
+ =?utf-8?B?NWlUUVRqYUdycFdoZmpiQ2ZkUkNFTWtzTWZLT3NldGN4WmE5VVRMSS95OC9T?=
+ =?utf-8?B?RnQwMUt6cXp1em1idjJiVmxQb1dXYmxINC91Rk1aODlzRHc0L3phanR1SXZz?=
+ =?utf-8?B?QzNGWjNtQUpSMTFKY2crWVU2cW1yWVlHRFlFcjZhcG94USt0TEplTlR6YWVw?=
+ =?utf-8?B?UElCYUxrWjU4V3pzd3EwMEducUFXV1lPcFFxeTZ2WEpLekRSZVlWZnFFelMx?=
+ =?utf-8?B?ZEUrZC9SeXZoQVVqQVZKQy9UeW50cFBCR29FR2E5Y1M4OE1JaXdPNkp3b3Fa?=
+ =?utf-8?B?bUJFWFVBUWRxdDRuY3F0bXpGbWEyNndEYi9HenhGVzVNNnZXSG5ZWXJsYW5J?=
+ =?utf-8?B?b2V4aVhqcStQdEQwUldBL1pnY0JRVUtKUURmcVVUSzVWMDFuR284bkRhY0JI?=
+ =?utf-8?B?ZGFBc0pYQlNOcENKU21EV1dBcWpDblp1SGVjdWlUeTczb0NhYWVSRUtIV3NY?=
+ =?utf-8?B?bzZ6aVNRZWQ3SVBkVlVaVmNLY3JYU3lmYmVnWEV1MGNJam9MZWhxWkhLbGkz?=
+ =?utf-8?B?U3FYRFJvbTFZSVNUMDNkdmRKZlJwakUrQTU5R3RGT0lUMkFzTEUvRHBveXlN?=
+ =?utf-8?B?T1B1eGJZeFNrUEpSTm1vaGZaYjBDbGZ5cDFmL3hhYnpSeGlxcmVKTlNWamQv?=
+ =?utf-8?B?Y3NRdVpFbVpVckdQQ21iR3JReENUZkE2TG1SVlcyYzBaTzNaNU1hKzB4MTZL?=
+ =?utf-8?Q?9KIKBmaVicqkudkFu48lzQ8=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DD7F9D3F3545F84990593EA648391250@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 31BC821197
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,szeredi.hu,redhat.com,gmail.com,nod.at,cambridgegreys.com,sipsolutions.net,oracle.com,talpey.com,chromium.org];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[24];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim,suse.de:mid];
-	FROM_EQ_ENVFROM(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL41gfrsx5ox46amq79i8sk6fy),from(RLewrxuus8mos16izbn)];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+X-OriginatorOrg: ibm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1965659e-459c-4641-1f32-08dd521614c2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2025 01:21:34.7431
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xG+ARyVY+wpRRyEG1vCRl4LJZP761bRwt2DmEOxz+w9p5r/gdhy2ISYfh+Vd0LwoWqHl1fhJ5lUM8yrbLS7HvQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR15MB6145
+X-Proofpoint-GUID: HgCw6HGSTKcV5u6u6Mfv0zCfjjDc4UMD
+X-Proofpoint-ORIG-GUID: 08yHP4V7Q-Etpe8ny7ZQ0ByUa4NUH22K
+Subject: RE: [RFC] odd check in ceph_encode_encrypted_dname()
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_09,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ phishscore=0 mlxlogscore=819 impostorscore=0 bulkscore=0 clxscore=1015
+ malwarescore=0 lowpriorityscore=0 spamscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502210005
 
-vfs_mkdir() does not guarantee to leave the child dentry hashed or make
-it positive on success, and in many such cases the filesystem had to use
-a different dentry which it can now return.
-
-This patch changes vfs_mkdir() to return the dentry provided by the
-filesystems which is hashed and positive when provided.  This reduces
-the number of cases where the resulting dentry is not positive to a
-handful which don't deserve extra efforts.
-
-The only callers of vfs_mkdir() which are interested in the resulting
-inode are in-kernel filesystem clients: cachefiles, nfsd, smb/server.
-The only filesystems that don't reliably provide the inode are:
-- kernfs, tracefs which these clients are unlikely to be interested in
-- cifs in some configurations would need to do a lookup to find the
-  created inode, but doesn't.  cifs cannot be exported via NFS, is
-  unlikely to be used by cachefiles, and smb/server only has a soft
-  requirement for the inode, so this is unlikely to be a problem in
-  practice.
-- hostfs, nfs, cifs may need to do a lookup (rarely for NFS) and it is
-  possible for a race to make that lookup fail.  Actual failure
-  is unlikely and providing callers handle negative dentries graceful
-  they will fail-safe.
-
-So this patch removes the lookup code in nfsd and smb/server and adjusts
-them to fail safe if a negative dentry is provided:
-- cache-files already fails safe by restarting the task from the
-  top - it still does with this change, though it no longer calls
-  cachefiles_put_directory() as that will crash if the dentry is
-  negative.
-- nfsd reports "Server-fault" which it what it used to do if the lookup
-  failed. This will never happen on any file-systems that it can actually
-  export, so this is of no consequence.  I removed the fh_update()
-  call as that is not needed and out-of-place.  A subsequent
-  nfsd_create_setattr() call will call fh_update() when needed.
-- smb/server only wants the inode to call ksmbd_smb_inherit_owner()
-  which updates ->i_uid (without calling notify_change() or similar)
-  which can be safely skipping on cifs (I hope).
-
-If a different dentry is returned, the first one is put.  If necessary
-the fact that it is new can be determined by comparing pointers.  A new
-dentry will certainly have a new pointer (as the old is put after the
-new is obtained).
-Similarly if an error is returned (via ERR_PTR()) the original dentry is
-put.
-
-Signed-off-by: NeilBrown <neilb@suse.de>
----
- drivers/base/devtmpfs.c  |  7 +++---
- fs/cachefiles/namei.c    | 16 ++++++++------
- fs/ecryptfs/inode.c      | 14 ++++++++----
- fs/init.c                |  7 ++++--
- fs/namei.c               | 46 ++++++++++++++++++++++++++--------------
- fs/nfsd/nfs4recover.c    |  7 ++++--
- fs/nfsd/vfs.c            | 34 ++++++++++-------------------
- fs/overlayfs/dir.c       | 37 ++++----------------------------
- fs/overlayfs/overlayfs.h | 15 ++++++-------
- fs/overlayfs/super.c     |  7 +++---
- fs/smb/server/vfs.c      | 32 +++++++++-------------------
- fs/xfs/scrub/orphanage.c |  9 ++++----
- include/linux/fs.h       |  4 ++--
- 13 files changed, 105 insertions(+), 130 deletions(-)
-
-diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
-index 7a101009bee7..6dd1a8860f1c 100644
---- a/drivers/base/devtmpfs.c
-+++ b/drivers/base/devtmpfs.c
-@@ -175,18 +175,17 @@ static int dev_mkdir(const char *name, umode_t mode)
- {
- 	struct dentry *dentry;
- 	struct path path;
--	int err;
- 
- 	dentry = kern_path_create(AT_FDCWD, name, &path, LOOKUP_DIRECTORY);
- 	if (IS_ERR(dentry))
- 		return PTR_ERR(dentry);
- 
--	err = vfs_mkdir(&nop_mnt_idmap, d_inode(path.dentry), dentry, mode);
--	if (!err)
-+	dentry = vfs_mkdir(&nop_mnt_idmap, d_inode(path.dentry), dentry, mode);
-+	if (!IS_ERR(dentry))
- 		/* mark as kernel-created inode */
- 		d_inode(dentry)->i_private = &thread;
- 	done_path_create(&path, dentry);
--	return err;
-+	return PTR_ERR_OR_ZERO(dentry);
- }
- 
- static int create_path(const char *nodepath)
-diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
-index 7cf59713f0f7..83a60126de0f 100644
---- a/fs/cachefiles/namei.c
-+++ b/fs/cachefiles/namei.c
-@@ -128,18 +128,19 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
- 		ret = security_path_mkdir(&path, subdir, 0700);
- 		if (ret < 0)
- 			goto mkdir_error;
--		ret = cachefiles_inject_write_error();
--		if (ret == 0)
--			ret = vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700);
--		if (ret < 0) {
-+		subdir = ERR_PTR(cachefiles_inject_write_error());
-+		if (!IS_ERR(subdir))
-+			subdir = vfs_mkdir(&nop_mnt_idmap, d_inode(dir), subdir, 0700);
-+		ret = PTR_ERR(subdir);
-+		if (IS_ERR(subdir)) {
- 			trace_cachefiles_vfs_error(NULL, d_inode(dir), ret,
- 						   cachefiles_trace_mkdir_error);
- 			goto mkdir_error;
- 		}
- 		trace_cachefiles_mkdir(dir, subdir);
- 
--		if (unlikely(d_unhashed(subdir))) {
--			cachefiles_put_directory(subdir);
-+		if (unlikely(d_unhashed(subdir) || d_is_negative(subdir))) {
-+			dput(subdir);
- 			goto retry;
- 		}
- 		ASSERT(d_backing_inode(subdir));
-@@ -195,7 +196,8 @@ struct dentry *cachefiles_get_directory(struct cachefiles_cache *cache,
- 
- mkdir_error:
- 	inode_unlock(d_inode(dir));
--	dput(subdir);
-+	if (!IS_ERR(subdir))
-+		dput(subdir);
- 	pr_err("mkdir %s failed with error %d\n", dirname, ret);
- 	return ERR_PTR(ret);
- 
-diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-index 6315dd194228..51a5c54eb740 100644
---- a/fs/ecryptfs/inode.c
-+++ b/fs/ecryptfs/inode.c
-@@ -511,10 +511,16 @@ static struct dentry *ecryptfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- 	struct inode *lower_dir;
- 
- 	rc = lock_parent(dentry, &lower_dentry, &lower_dir);
--	if (!rc)
--		rc = vfs_mkdir(&nop_mnt_idmap, lower_dir,
--			       lower_dentry, mode);
--	if (rc || d_really_is_negative(lower_dentry))
-+	if (rc)
-+		goto out;
-+
-+	lower_dentry = vfs_mkdir(&nop_mnt_idmap, lower_dir,
-+				 lower_dentry, mode);
-+	rc = PTR_ERR(lower_dentry);
-+	if (IS_ERR(lower_dentry))
-+		goto out;
-+	rc = 0;
-+	if (d_unhashed(lower_dentry))
- 		goto out;
- 	rc = ecryptfs_interpose(lower_dentry, dentry, dir->i_sb);
- 	if (rc)
-diff --git a/fs/init.c b/fs/init.c
-index e9387b6c4f30..eef5124885e3 100644
---- a/fs/init.c
-+++ b/fs/init.c
-@@ -230,9 +230,12 @@ int __init init_mkdir(const char *pathname, umode_t mode)
- 		return PTR_ERR(dentry);
- 	mode = mode_strip_umask(d_inode(path.dentry), mode);
- 	error = security_path_mkdir(&path, dentry, mode);
--	if (!error)
--		error = vfs_mkdir(mnt_idmap(path.mnt), path.dentry->d_inode,
-+	if (!error) {
-+		dentry = vfs_mkdir(mnt_idmap(path.mnt), path.dentry->d_inode,
- 				  dentry, mode);
-+		if (IS_ERR(dentry))
-+			error = PTR_ERR(dentry);
-+	}
- 	done_path_create(&path, dentry);
- 	return error;
- }
-diff --git a/fs/namei.c b/fs/namei.c
-index 63fe4dc29c23..bd5eec2c0af4 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -4125,7 +4125,8 @@ EXPORT_SYMBOL(kern_path_create);
- 
- void done_path_create(struct path *path, struct dentry *dentry)
- {
--	dput(dentry);
-+	if (!IS_ERR(dentry))
-+		dput(dentry);
- 	inode_unlock(path->dentry->d_inode);
- 	mnt_drop_write(path->mnt);
- 	path_put(path);
-@@ -4271,7 +4272,7 @@ SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, d
- }
- 
- /**
-- * vfs_mkdir - create directory
-+ * vfs_mkdir - create directory returning correct dentry if possible
-  * @idmap:	idmap of the mount the inode was found from
-  * @dir:	inode of the parent directory
-  * @dentry:	dentry of the child directory
-@@ -4284,9 +4285,15 @@ SYSCALL_DEFINE3(mknod, const char __user *, filename, umode_t, mode, unsigned, d
-  * care to map the inode according to @idmap before checking permissions.
-  * On non-idmapped mounts or if permission checking is to be performed on the
-  * raw inode simply pass @nop_mnt_idmap.
-+ *
-+ * In the event that the filesystem does not use the *@dentry but leaves it
-+ * negative or unhashes it and possibly splices a different one returning it,
-+ * the original dentry is dput() and the alternate is returned.
-+ *
-+ * In case of an error the dentry is dput() and an ERR_PTR() is returned.
-  */
--int vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
--	      struct dentry *dentry, umode_t mode)
-+struct dentry *vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
-+			 struct dentry *dentry, umode_t mode)
- {
- 	int error;
- 	unsigned max_links = dir->i_sb->s_max_links;
-@@ -4294,31 +4301,36 @@ int vfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- 
- 	error = may_create(idmap, dir, dentry);
- 	if (error)
--		return error;
-+		goto err;
- 
-+	error = -EPERM;
- 	if (!dir->i_op->mkdir)
--		return -EPERM;
-+		goto err;
- 
- 	mode = vfs_prepare_mode(idmap, dir, mode, S_IRWXUGO | S_ISVTX, 0);
- 	error = security_inode_mkdir(dir, dentry, mode);
- 	if (error)
--		return error;
-+		goto err;
- 
-+	error = -EMLINK;
- 	if (max_links && dir->i_nlink >= max_links)
--		return -EMLINK;
-+		goto err;
- 
- 	de = dir->i_op->mkdir(idmap, dir, dentry, mode);
-+	error = PTR_ERR(de);
- 	if (IS_ERR(de))
--		return PTR_ERR(de);
-+		goto err;
- 	if (de) {
--		fsnotify_mkdir(dir, de);
--		/* Cannot return de yet */
--		dput(de);
--	} else {
--		fsnotify_mkdir(dir, dentry);
-+		dput(dentry);
-+		dentry = de;
- 	}
-+	fsnotify_mkdir(dir, dentry);
-+	return dentry;
- 
--	return 0;
-+err:
-+	dput(dentry);
-+
-+	return ERR_PTR(error);
- }
- EXPORT_SYMBOL(vfs_mkdir);
- 
-@@ -4338,8 +4350,10 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
- 	error = security_path_mkdir(&path, dentry,
- 			mode_strip_umask(path.dentry->d_inode, mode));
- 	if (!error) {
--		error = vfs_mkdir(mnt_idmap(path.mnt), path.dentry->d_inode,
-+		dentry = vfs_mkdir(mnt_idmap(path.mnt), path.dentry->d_inode,
- 				  dentry, mode);
-+		if (IS_ERR(dentry))
-+			error = PTR_ERR(dentry);
- 	}
- 	done_path_create(&path, dentry);
- 	if (retry_estale(error, lookup_flags)) {
-diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
-index 28f4d5311c40..c1d9bd07285f 100644
---- a/fs/nfsd/nfs4recover.c
-+++ b/fs/nfsd/nfs4recover.c
-@@ -233,9 +233,12 @@ nfsd4_create_clid_dir(struct nfs4_client *clp)
- 		 * as well be forgiving and just succeed silently.
- 		 */
- 		goto out_put;
--	status = vfs_mkdir(&nop_mnt_idmap, d_inode(dir), dentry, S_IRWXU);
-+	dentry = vfs_mkdir(&nop_mnt_idmap, d_inode(dir), dentry, S_IRWXU);
-+	if (IS_ERR(dentry))
-+		status = PTR_ERR(dentry);
- out_put:
--	dput(dentry);
-+	if (!status)
-+		dput(dentry);
- out_unlock:
- 	inode_unlock(d_inode(dir));
- 	if (status == 0) {
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 29cb7b812d71..34d7aa531662 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -1461,7 +1461,7 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 	struct inode	*dirp;
- 	struct iattr	*iap = attrs->na_iattr;
- 	__be32		err;
--	int		host_err;
-+	int		host_err = 0;
- 
- 	dentry = fhp->fh_dentry;
- 	dirp = d_inode(dentry);
-@@ -1488,28 +1488,15 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 			nfsd_check_ignore_resizing(iap);
- 		break;
- 	case S_IFDIR:
--		host_err = vfs_mkdir(&nop_mnt_idmap, dirp, dchild, iap->ia_mode);
--		if (!host_err && unlikely(d_unhashed(dchild))) {
--			struct dentry *d;
--			d = lookup_one_len(dchild->d_name.name,
--					   dchild->d_parent,
--					   dchild->d_name.len);
--			if (IS_ERR(d)) {
--				host_err = PTR_ERR(d);
--				break;
--			}
--			if (unlikely(d_is_negative(d))) {
--				dput(d);
--				err = nfserr_serverfault;
--				goto out;
--			}
-+		dchild = vfs_mkdir(&nop_mnt_idmap, dirp, dchild, iap->ia_mode);
-+		if (IS_ERR(dchild)) {
-+			host_err = PTR_ERR(dchild);
-+		} else if (d_is_negative(dchild)) {
-+			err = nfserr_serverfault;
-+			goto out;
-+		} else if (unlikely(dchild != resfhp->fh_dentry)) {
- 			dput(resfhp->fh_dentry);
--			resfhp->fh_dentry = dget(d);
--			err = fh_update(resfhp);
--			dput(dchild);
--			dchild = d;
--			if (err)
--				goto out;
-+			resfhp->fh_dentry = dget(dchild);
- 		}
- 		break;
- 	case S_IFCHR:
-@@ -1530,7 +1517,8 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 	err = nfsd_create_setattr(rqstp, fhp, resfhp, attrs);
- 
- out:
--	dput(dchild);
-+	if (!IS_ERR(dchild))
-+		dput(dchild);
- 	return err;
- 
- out_nfserr:
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index 21c3aaf7b274..fe493f3ed6b6 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -138,37 +138,6 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, struct inode *dir,
- 	goto out;
- }
- 
--int ovl_mkdir_real(struct ovl_fs *ofs, struct inode *dir,
--		   struct dentry **newdentry, umode_t mode)
--{
--	int err;
--	struct dentry *d, *dentry = *newdentry;
--
--	err = ovl_do_mkdir(ofs, dir, dentry, mode);
--	if (err)
--		return err;
--
--	if (likely(!d_unhashed(dentry)))
--		return 0;
--
--	/*
--	 * vfs_mkdir() may succeed and leave the dentry passed
--	 * to it unhashed and negative. If that happens, try to
--	 * lookup a new hashed and positive dentry.
--	 */
--	d = ovl_lookup_upper(ofs, dentry->d_name.name, dentry->d_parent,
--			     dentry->d_name.len);
--	if (IS_ERR(d)) {
--		pr_warn("failed lookup after mkdir (%pd2, err=%i).\n",
--			dentry, err);
--		return PTR_ERR(d);
--	}
--	dput(dentry);
--	*newdentry = d;
--
--	return 0;
--}
--
- struct dentry *ovl_create_real(struct ovl_fs *ofs, struct inode *dir,
- 			       struct dentry *newdentry, struct ovl_cattr *attr)
- {
-@@ -191,7 +160,8 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, struct inode *dir,
- 
- 		case S_IFDIR:
- 			/* mkdir is special... */
--			err =  ovl_mkdir_real(ofs, dir, &newdentry, attr->mode);
-+			newdentry =  ovl_do_mkdir(ofs, dir, newdentry, attr->mode);
-+			err = PTR_ERR_OR_ZERO(newdentry);
- 			break;
- 
- 		case S_IFCHR:
-@@ -219,7 +189,8 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, struct inode *dir,
- 	}
- out:
- 	if (err) {
--		dput(newdentry);
-+		if (!IS_ERR(newdentry))
-+			dput(newdentry);
- 		return ERR_PTR(err);
- 	}
- 	return newdentry;
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 0021e2025020..6f2f8f4cfbbc 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -241,13 +241,14 @@ static inline int ovl_do_create(struct ovl_fs *ofs,
- 	return err;
- }
- 
--static inline int ovl_do_mkdir(struct ovl_fs *ofs,
--			       struct inode *dir, struct dentry *dentry,
--			       umode_t mode)
-+static inline struct dentry *ovl_do_mkdir(struct ovl_fs *ofs,
-+					  struct inode *dir,
-+					  struct dentry *dentry,
-+					  umode_t mode)
- {
--	int err = vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode);
--	pr_debug("mkdir(%pd2, 0%o) = %i\n", dentry, mode, err);
--	return err;
-+	dentry = vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode);
-+	pr_debug("mkdir(%pd2, 0%o) = %i\n", dentry, mode, PTR_ERR_OR_ZERO(dentry));
-+	return dentry;
- }
- 
- static inline int ovl_do_mknod(struct ovl_fs *ofs,
-@@ -838,8 +839,6 @@ struct ovl_cattr {
- 
- #define OVL_CATTR(m) (&(struct ovl_cattr) { .mode = (m) })
- 
--int ovl_mkdir_real(struct ovl_fs *ofs, struct inode *dir,
--		   struct dentry **newdentry, umode_t mode);
- struct dentry *ovl_create_real(struct ovl_fs *ofs,
- 			       struct inode *dir, struct dentry *newdentry,
- 			       struct ovl_cattr *attr);
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 61e21c3129e8..b63474d1b064 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -327,9 +327,10 @@ static struct dentry *ovl_workdir_create(struct ovl_fs *ofs,
- 			goto retry;
- 		}
- 
--		err = ovl_mkdir_real(ofs, dir, &work, attr.ia_mode);
--		if (err)
--			goto out_dput;
-+		work = ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
-+		err = PTR_ERR(work);
-+		if (IS_ERR(work))
-+			goto out_err;
- 
- 		/* Weird filesystem returning with hashed negative (kernfs)? */
- 		err = -EINVAL;
-diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-index fe29acef5872..8554aa5a1059 100644
---- a/fs/smb/server/vfs.c
-+++ b/fs/smb/server/vfs.c
-@@ -206,8 +206,8 @@ int ksmbd_vfs_mkdir(struct ksmbd_work *work, const char *name, umode_t mode)
- {
- 	struct mnt_idmap *idmap;
- 	struct path path;
--	struct dentry *dentry;
--	int err;
-+	struct dentry *dentry, *d;
-+	int err = 0;
- 
- 	dentry = ksmbd_vfs_kern_path_create(work, name,
- 					    LOOKUP_NO_SYMLINKS | LOOKUP_DIRECTORY,
-@@ -222,27 +222,15 @@ int ksmbd_vfs_mkdir(struct ksmbd_work *work, const char *name, umode_t mode)
- 
- 	idmap = mnt_idmap(path.mnt);
- 	mode |= S_IFDIR;
--	err = vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
--	if (!err && d_unhashed(dentry)) {
--		struct dentry *d;
--
--		d = lookup_one(idmap, dentry->d_name.name, dentry->d_parent,
--			       dentry->d_name.len);
--		if (IS_ERR(d)) {
--			err = PTR_ERR(d);
--			goto out_err;
--		}
--		if (unlikely(d_is_negative(d))) {
--			dput(d);
--			err = -ENOENT;
--			goto out_err;
--		}
--
--		ksmbd_vfs_inherit_owner(work, d_inode(path.dentry), d_inode(d));
--		dput(d);
--	}
-+	d = dentry;
-+	dentry = vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
-+	if (IS_ERR(dentry))
-+		err = PTR_ERR(dentry);
-+	else if (d_is_negative(dentry))
-+		err = -ENOENT;
-+	if (!err && dentry != d)
-+		ksmbd_vfs_inherit_owner(work, d_inode(path.dentry), d_inode(dentry));
- 
--out_err:
- 	done_path_create(&path, dentry);
- 	if (err)
- 		pr_err("mkdir(%s): creation failed (err:%d)\n", name, err);
-diff --git a/fs/xfs/scrub/orphanage.c b/fs/xfs/scrub/orphanage.c
-index c287c755f2c5..3537f3cca6d5 100644
---- a/fs/xfs/scrub/orphanage.c
-+++ b/fs/xfs/scrub/orphanage.c
-@@ -167,10 +167,11 @@ xrep_orphanage_create(
- 	 * directory to control access to a file we put in here.
- 	 */
- 	if (d_really_is_negative(orphanage_dentry)) {
--		error = vfs_mkdir(&nop_mnt_idmap, root_inode, orphanage_dentry,
--				0750);
--		if (error)
--			goto out_dput_orphanage;
-+		orphanage_dentry = vfs_mkdir(&nop_mnt_idmap, root_inode,
-+					     orphanage_dentry, 0750);
-+		error = PTR_ERR(orphanage_dentry);
-+		if (IS_ERR(orphanage_dentry))
-+			goto out_unlock_root;
- 	}
- 
- 	/* Not a directory? Bail out. */
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 8f4fbecd40fc..eaad8e31c0d4 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1971,8 +1971,8 @@ bool inode_owner_or_capable(struct mnt_idmap *idmap,
-  */
- int vfs_create(struct mnt_idmap *, struct inode *,
- 	       struct dentry *, umode_t, bool);
--int vfs_mkdir(struct mnt_idmap *, struct inode *,
--	      struct dentry *, umode_t);
-+struct dentry *vfs_mkdir(struct mnt_idmap *, struct inode *,
-+			 struct dentry *, umode_t);
- int vfs_mknod(struct mnt_idmap *, struct inode *, struct dentry *,
-               umode_t, dev_t);
- int vfs_symlink(struct mnt_idmap *, struct inode *,
--- 
-2.47.1
-
+T24gV2VkLCAyMDI1LTAyLTE5IGF0IDAyOjE4ICswMDAwLCBBbCBWaXJvIHdyb3RlOg0KPiBPbiBX
+ZWQsIEZlYiAxOSwgMjAyNSBhdCAxMjo1ODo1NEFNICswMDAwLCBWaWFjaGVzbGF2IER1YmV5a28g
+d3JvdGU6DQo+ID4gT24gVHVlLCAyMDI1LTAyLTE4IGF0IDIzOjUyICswMDAwLCBBbCBWaXJvIHdy
+b3RlOg0KPiA+ID4gT24gVHVlLCBGZWIgMTgsIDIwMjUgYXQgMDE6MjE6MzJBTSArMDAwMCwgQWwg
+VmlybyB3cm90ZToNCj4gPiA+IA0KPiA+ID4gPiBTZWUgdGhlIHByb2JsZW0/ICBzdHJyY2hyKCkg
+ZXhwZWN0cyBhIE5VTC10ZXJtaW5hdGVkIHN0cmluZzsgZ2l2aW5nIGl0IGFuDQo+ID4gPiA+IGFy
+cmF5IHRoYXQgaGFzIG5vIHplcm8gYnl0ZXMgaW4gaXQgaXMgYW4gVUIuDQo+ID4gPiA+IA0KPiA+
+ID4gPiBUaGF0IG9uZSBpcyAtc3RhYmxlIGZvZGRlciBvbiBpdHMgb3duLCBJTU8uLi4NCj4gPiA+
+IA0KPiA+ID4gRldJVywgaXQncyBtb3JlIHVucGxlYXNhbnQ7IHRoZXJlIGFyZSBvdGhlciBjYWxs
+IGNoYWlucyBmb3IgcGFyc2VfbG9uZ25hbWUoKQ0KPiA+ID4gd2hlcmUgaXQncyBub3QgZmVhc2li
+bGUgdG8gTlVMLXRlcm1pbmF0ZSBpbiBwbGFjZS4gIEkgc3VzcGVjdCB0aGF0IHRoZQ0KPiA+ID4g
+cGF0Y2ggYmVsb3cgaXMgYSBiZXR0ZXIgd2F5IHRvIGhhbmRsZSB0aGF0LiAgQ29tbWVudHM/DQo+
+ID4gPiANCj4gPiANCj4gPiBMZXQgbWUgdGVzdCB0aGUgcGF0Y2guDQo+IA0KPiBUaGF0IG9uZSBp
+cyBvbiB0b3Agb2YgbWFpbmxpbmUgKC1yYzIpOyB0aGUgZW50aXJlIGJyYW5jaCBpcw0KPiANCj4g
+Z2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3Zpcm8vdmZzLmdp
+dCAjZF9uYW1lDQo+IA0KPiBUaGUgZmlyc3QgY29tbWl0IGluIHRoZXJlIGlzIHRoaXMgb25lLCB0
+aGVuIHR3byBwb3N0ZWQgZWFybGllciByZWJhc2VkDQo+IG9uIHRvcCBvZiB0aGF0ICh3aXRob3V0
+IHRoZSAiTlVMLXRlcm1pbmF0ZSBpbiBwbGFjZSIgaW4gdGhlIGxhc3Qgb25lLA0KPiB3aGljaCBp
+cyB3aGF0IHRyaXBwZWQgS0FTQU4gYW5kIGlzIG5vIGxvbmdlciBuZWVkZWQgZHVlIHRvIHRoZSBm
+aXJzdA0KPiBjb21taXQpLg0KDQpJIGhhdmUgdGVzdGVkIHBhdGNoc2V0IGJ5IHhmc3Rlc3RzIGFu
+ZCBJIGhhdmUgcGxheWVkIHdpdGggc25hcHNob3RzIG1hbnVhbGx5LiBJDQpoYXZlbid0IGZvdW5k
+IGFueSBuZXcgb3IgY3JpdGljYWwgaXNzdWVzLiBFdmVyeXRoaW5nIGxvb2tzIGdvb2QuDQoNClRl
+c3RlZC1ieTogVmlhY2hlc2xhdiBEdWJleWtvIDxTbGF2YS5EdWJleWtvQGlibS5jb20+DQoNClRo
+YW5rcywNClNsYXZhLg0KDQo=
 
