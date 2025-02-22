@@ -1,151 +1,96 @@
-Return-Path: <ceph-devel+bounces-2755-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2756-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55503A404BC
-	for <lists+ceph-devel@lfdr.de>; Sat, 22 Feb 2025 02:35:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D01FBA4056D
+	for <lists+ceph-devel@lfdr.de>; Sat, 22 Feb 2025 05:20:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 516FF7A9F07
-	for <lists+ceph-devel@lfdr.de>; Sat, 22 Feb 2025 01:34:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FAC8420AE1
+	for <lists+ceph-devel@lfdr.de>; Sat, 22 Feb 2025 04:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E02D3BBD8;
-	Sat, 22 Feb 2025 01:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB46A1FFC5C;
+	Sat, 22 Feb 2025 04:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="G91BkJTC"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="EHqfOfLP"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F286C2F37;
-	Sat, 22 Feb 2025 01:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B332BA2D;
+	Sat, 22 Feb 2025 04:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740188136; cv=none; b=IxVlSVO7xzQpcA/EPjMEpEq8XWuiNAADi3LuaKt2uZa4+no4YnL/nJHzTPkB8jSmvwjn6AnpTW55YylpmRnHENXXG0HffBpV6A23L92NWhyDE2TQjBQ+LgUaPxLPOiUC3jxRip9+eRmdEd6SlTsti3Sl0tK7ZCIp88ZoGQ3KOnQ=
+	t=1740197995; cv=none; b=LJGNvWI/k5IwIJXuRr2Nh7qfoMqhOfFj045qawniC54GvugHlibmIX1WnBHPiBVp5jnpm+hB2OC2x5yaKmeR3N4Hu4/qpMylJj60Noz+gm/xMD5HAKxVqznjS3SvV3uSjpw3IYmyJNjoXlTGKXZQ3yZOz+6k2wfuYmWhXhhdl3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740188136; c=relaxed/simple;
-	bh=+Y3nR6KOk00kptJvAX3izRRNzFgAnL/1ZVJtiELgKNU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mOfjlB0N6tmY89/EV2hAiD8tEkaKMA04RTH0U+WRr6bT6iMYiG2dxqZGcdylcCwbCFsgCLJuRT4dw3dUGgbyeCytes/l2TiEVQzHaUav94eOLOxS1RYzj/dNCJ0nYdeGMOtfA1OmIMYeR4SlWzdfrHgNrVIjr1bm5r0qQuK77wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=G91BkJTC; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=TAfZdMkdNZxHnDf3cV6Uyw2GXMut+94aHZJKX1tLc7U=; b=G91BkJTCPOJ6lmK/
-	oeoXr+HM/sJcbSY/ddaN+1K4BRMeePhxg5IaVn1BGrK22mb6uFc/9yTziGynodNcFab8FOGezgHTk
-	XZnvDxPbMUkbG6gkHuVm4m1IJtrBT+eJrMkuM5lkL5XI8SaHdEHoBByh0XHdpqjrMeL2DeUxqXF7V
-	k2ZT18EtxQO/sS0bU/eQcCF5Lg+0Y4GbIYs6wbwheEaHp0DtAfLMGelSXF8H9J1CorQB1vQnZopEW
-	r0eb7urqZLAW6CvEtepnFttY96QtVWyFfIq8r+7hxt1xp4ppFrfmCJi4fjqqRi8YycsVypBs4rQbA
-	7OoO7TZcSXGWMVebIw==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tleQU-0001zj-2b;
-	Sat, 22 Feb 2025 01:35:30 +0000
-From: linux@treblig.org
-To: idryomov@gmail.com,
-	xiubli@redhat.com,
-	ceph-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] ceph: osd_client deadcode
-Date: Sat, 22 Feb 2025 01:35:30 +0000
-Message-ID: <20250222013530.171376-1-linux@treblig.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740197995; c=relaxed/simple;
+	bh=tDY2pKsOd6hg0JuSzXsPAMcbWXEcTNcauXlC6e+36dw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SK2ZivlaUVzKqAbvcEWF2U2H8WV/ur5SOHrt4/gViMG42t6B5TDnuB8tPoHrxgsIvHv/AZEWzA61mPWGPRPWyKAhwUKOxUlFZ+GradV9GEJs0kwNBKRLUQJWqYGJ9vAaCp4mnyL2/1s4DXkCCKo8N95lSloGJYo+kzgvyJZ3CL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=EHqfOfLP; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=qfUBrmsjEzlreUx4AXwJcqcuev0D4ASn1NvBbAj8CU0=; b=EHqfOfLP9VxWQT6m6l+8Kqb+8D
+	Y/KlagZgn9RkQHu9FwnQ5H6MelwTA+wmY44O9vuFq41lY+jB0bC36GC1iMXRJBRN5nrcgug2Pki70
+	kISTP+dD1MJozKroh0sH6AxxkYUketYRci+k66PXl7v7R/q58wlNyzcJeLqL7zbuhIYXf/csxKnN4
+	VH5IkAClhhCxx5OMw2kXfDGs5prmq+kxor8YRBDndqLLzqeUYg4jelxYLnkQLVnHuc/ktsHneeuWG
+	goVu6wB/tCfwmkMw8ROOkrtvNgMawXX1O5CyNh8VqurD56b+GRJheL0VZa2hI9FdXXK90vEbfwK6c
+	uN4g9LKw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tlgzJ-00000004dod-0CaC;
+	Sat, 22 Feb 2025 04:19:37 +0000
+Date: Sat, 22 Feb 2025 04:19:37 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: NeilBrown <neilb@suse.de>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Miklos Szeredi <miklos@szeredi.hu>, Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
+	netfs@lists.linux.dev
+Subject: Re: [PATCH 1/6] Change inode_operations.mkdir to return struct
+ dentry *
+Message-ID: <20250222041937.GM1977892@ZenIV>
+References: <20250220234630.983190-1-neilb@suse.de>
+ <20250220234630.983190-2-neilb@suse.de>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220234630.983190-2-neilb@suse.de>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Fri, Feb 21, 2025 at 10:36:30AM +1100, NeilBrown wrote:
 
-osd_req_op_extent_osd_data_pagelist() was added in 2013 as part of
-commit a4ce40a9a7c1 ("libceph: combine initializing and setting osd data")
-but never used.
+> +In general, filesystems which use d_instantiate_new() to install the new
+> +inode can safely return NULL.  Filesystems which may not have an I_NEW inode
+> +should use d_drop();d_splice_alias() and return the result of the latter.
 
-The last use of osd_req_op_cls_request_data_pagelist() was removed in
-2017's
-commit ecd4a68a26a2 ("rbd: switch rbd_obj_method_sync() to
-ceph_osdc_call()")
+IMO that's a bad pattern, _especially_ if you want to go for "in-update"
+kind of stuff later.
 
-Remove them.
+That's pretty much the same thing as d_drop()/d_rehash() window.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- include/linux/ceph/osd_client.h |  6 ------
- net/ceph/osd_client.c           | 23 -----------------------
- 2 files changed, 29 deletions(-)
-
-diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-index d55b30057a45..50b14a5661c7 100644
---- a/include/linux/ceph/osd_client.h
-+++ b/include/linux/ceph/osd_client.h
-@@ -490,9 +490,6 @@ extern void osd_req_op_extent_osd_data_pages(struct ceph_osd_request *,
- 					struct page **pages, u64 length,
- 					u32 alignment, bool pages_from_pool,
- 					bool own_pages);
--extern void osd_req_op_extent_osd_data_pagelist(struct ceph_osd_request *,
--					unsigned int which,
--					struct ceph_pagelist *pagelist);
- #ifdef CONFIG_BLOCK
- void osd_req_op_extent_osd_data_bio(struct ceph_osd_request *osd_req,
- 				    unsigned int which,
-@@ -509,9 +506,6 @@ void osd_req_op_extent_osd_data_bvec_pos(struct ceph_osd_request *osd_req,
- void osd_req_op_extent_osd_iter(struct ceph_osd_request *osd_req,
- 				unsigned int which, struct iov_iter *iter);
- 
--extern void osd_req_op_cls_request_data_pagelist(struct ceph_osd_request *,
--					unsigned int which,
--					struct ceph_pagelist *pagelist);
- extern void osd_req_op_cls_request_data_pages(struct ceph_osd_request *,
- 					unsigned int which,
- 					struct page **pages, u64 length,
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index b24afec24138..6664ea73ccf8 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -220,16 +220,6 @@ void osd_req_op_extent_osd_data_pages(struct ceph_osd_request *osd_req,
- }
- EXPORT_SYMBOL(osd_req_op_extent_osd_data_pages);
- 
--void osd_req_op_extent_osd_data_pagelist(struct ceph_osd_request *osd_req,
--			unsigned int which, struct ceph_pagelist *pagelist)
--{
--	struct ceph_osd_data *osd_data;
--
--	osd_data = osd_req_op_data(osd_req, which, extent, osd_data);
--	ceph_osd_data_pagelist_init(osd_data, pagelist);
--}
--EXPORT_SYMBOL(osd_req_op_extent_osd_data_pagelist);
--
- #ifdef CONFIG_BLOCK
- void osd_req_op_extent_osd_data_bio(struct ceph_osd_request *osd_req,
- 				    unsigned int which,
-@@ -297,19 +287,6 @@ static void osd_req_op_cls_request_info_pagelist(
- 	ceph_osd_data_pagelist_init(osd_data, pagelist);
- }
- 
--void osd_req_op_cls_request_data_pagelist(
--			struct ceph_osd_request *osd_req,
--			unsigned int which, struct ceph_pagelist *pagelist)
--{
--	struct ceph_osd_data *osd_data;
--
--	osd_data = osd_req_op_data(osd_req, which, cls, request_data);
--	ceph_osd_data_pagelist_init(osd_data, pagelist);
--	osd_req->r_ops[which].cls.indata_len += pagelist->length;
--	osd_req->r_ops[which].indata_len += pagelist->length;
--}
--EXPORT_SYMBOL(osd_req_op_cls_request_data_pagelist);
--
- void osd_req_op_cls_request_data_pages(struct ceph_osd_request *osd_req,
- 			unsigned int which, struct page **pages, u64 length,
- 			u32 alignment, bool pages_from_pool, bool own_pages)
--- 
-2.48.1
-
+We'd be better off dropping that BUG_ON() in d_splice_alias() and teaching
+__d_add() to handle the "it's a hashed negative" case.
 
