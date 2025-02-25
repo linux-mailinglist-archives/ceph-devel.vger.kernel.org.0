@@ -1,350 +1,191 @@
-Return-Path: <ceph-devel+bounces-2779-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2781-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8538A430DD
-	for <lists+ceph-devel@lfdr.de>; Tue, 25 Feb 2025 00:30:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1FF0A44C92
+	for <lists+ceph-devel@lfdr.de>; Tue, 25 Feb 2025 21:22:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FD5718987EE
-	for <lists+ceph-devel@lfdr.de>; Mon, 24 Feb 2025 23:30:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 348557A399C
+	for <lists+ceph-devel@lfdr.de>; Tue, 25 Feb 2025 20:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B1A20C026;
-	Mon, 24 Feb 2025 23:29:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6BA221542;
+	Tue, 25 Feb 2025 20:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="loBfTiR6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J3mvHyzY";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="loBfTiR6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J3mvHyzY"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="OJWfAvqA"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0632920B1F3
-	for <ceph-devel@vger.kernel.org>; Mon, 24 Feb 2025 23:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB4D20F094;
+	Tue, 25 Feb 2025 20:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740439794; cv=none; b=ZfQgKNmbZk0HSsw4xaSkAoL0XsigLg1JsIywnCdqQYwYFW1Dw1wxqkPp+wR37cSnW9kwLgG/QZ+Sf1CWYJnGR2YstDgNXVhIwCVul4xtEjFn8tyJrNpj8E2Y2ZKDEXRfXuXdoDbGmq5b198iih2OUXKWvRkMKfjIwKRugUu6Ebw=
+	t=1740514642; cv=none; b=KK4jxZUkaiBLNJOls5BVl2G4A2EYBVPyqBMskkeJaESrT4CZxCXSv3EfdTDYEAmXx2UcSXmBgbD2moUwS81i2iq+n4bUeY5BtTE75RM+vawXlyAHLNIYeoOBNHU6b2HO8+0ZAw51av3qmoLzP/ORXgFP3riZgQxFClAOygiNz3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740439794; c=relaxed/simple;
-	bh=vt/y9E4/DcaZ9NV1EBDUcDNYGDvwjv/mQRtyYJZcYqk=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=N6pwwqkeWU5piX4QoVAAY88snhpDT5X05DS98EyaY4f3AvVjS8EIDWhnWD4Zzlf7OCsb+wSF18LW0mFGEPLKliImgar1FVaytMUHRUZZq35w/kEfdszm3C2iyHQ0FKkaGtwHkvJA7flXswWH61YE8EKQ37J8qFBFd8zBA8q/nNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=loBfTiR6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J3mvHyzY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=loBfTiR6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J3mvHyzY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1769F1F44E;
-	Mon, 24 Feb 2025 23:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740439789; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2oj990YaLGkPA4ae4sIKmdEX5RxKU3jTg87RjSWSYeg=;
-	b=loBfTiR6kAlC/sS0ot1CDtcKEiKmB6GXrsHNK+SsrbeZzGdV6O2ZrsmO8jw3wvJPHK58Kj
-	glzLsVFTkUpcycBhzhfiLzoYOAwECgg5wubkGZIw8GCF2DWKEIFm9faiQIbZ45b9stImh9
-	J9FQoxLwzfFLcLMM4Nzxcdvxtbe/i94=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740439789;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2oj990YaLGkPA4ae4sIKmdEX5RxKU3jTg87RjSWSYeg=;
-	b=J3mvHyzY65SyoNedSF0MYSEG2w3R6giaas15VW09Vb9TUfaAv1RMGveIpiZI1/xnVIoKU6
-	p9GIZjyHOh0bImAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740439789; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2oj990YaLGkPA4ae4sIKmdEX5RxKU3jTg87RjSWSYeg=;
-	b=loBfTiR6kAlC/sS0ot1CDtcKEiKmB6GXrsHNK+SsrbeZzGdV6O2ZrsmO8jw3wvJPHK58Kj
-	glzLsVFTkUpcycBhzhfiLzoYOAwECgg5wubkGZIw8GCF2DWKEIFm9faiQIbZ45b9stImh9
-	J9FQoxLwzfFLcLMM4Nzxcdvxtbe/i94=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740439789;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2oj990YaLGkPA4ae4sIKmdEX5RxKU3jTg87RjSWSYeg=;
-	b=J3mvHyzY65SyoNedSF0MYSEG2w3R6giaas15VW09Vb9TUfaAv1RMGveIpiZI1/xnVIoKU6
-	p9GIZjyHOh0bImAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A647613332;
-	Mon, 24 Feb 2025 23:29:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5OlzEuQAvWc2awAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 24 Feb 2025 23:29:40 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740514642; c=relaxed/simple;
+	bh=QWXk938u1ZUtRQ0fT2TND4jKL/fO2qpP0R5WJKK3KXc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jZ0gu8yg+jKmKTVfiM6psDY6m4Q3K7OPUjzvmDy4zaz9C8ZaU8VwQpub6rEl2pNOPtkfMuxij+C8RNqFhSHizShePgbSApQwXr1iCAOWn0XsSE7Whfw13WsAiMPGSaLswLEOkZqsPSo3n6/dOIqBo5tyAllHvwlzUCKR6vEhLQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=OJWfAvqA; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from eahariha-devbox.internal.cloudapp.net (unknown [40.91.112.99])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 920F4203CDFC;
+	Tue, 25 Feb 2025 12:17:19 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 920F4203CDFC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740514639;
+	bh=pRPTMwC85c4lYLBd5/aEkvEtme0QilCw7nKJr8ytgmI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=OJWfAvqAxjSS6nUkULU00Pa8nQ9u9kKy42lXSCjyZ4ZUUOElAuQC0IJLL8YdgMxy4
+	 fRHYXp6qo5lzLvyA3yVmWt3cKN1fewJPyBbSi8i8x+l37gp4hdCbMSActzutlKgtXo
+	 djKAYQpE3vAmx4Iwoj2HThNeFrxgkdmyOVA8YA+8=
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Subject: [PATCH v3 00/16] Converge on using secs_to_jiffies() part two
+Date: Tue, 25 Feb 2025 20:17:14 +0000
+Message-Id: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Viacheslav Dubeyko" <Slava.Dubeyko@ibm.com>
-Cc: "brauner@kernel.org" <brauner@kernel.org>, "Xiubo Li" <xiubli@redhat.com>,
- "idryomov@gmail.com" <idryomov@gmail.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>,
- "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
- "Dai.Ngo@oracle.com" <Dai.Ngo@oracle.com>,
- "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "johannes@sipsolutions.net" <johannes@sipsolutions.net>,
- "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
- "jlayton@kernel.org" <jlayton@kernel.org>,
- "anna@kernel.org" <anna@kernel.org>, "miklos@szeredi.hu" <miklos@szeredi.hu>,
- "trondmy@kernel.org" <trondmy@kernel.org>,
- "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "jack@suse.cz" <jack@suse.cz>, "tom@talpey.com" <tom@talpey.com>,
- "richard@nod.at" <richard@nod.at>,
- "anton.ivanov@cambridgegreys.com" <anton.ivanov@cambridgegreys.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "netfs@lists.linux.dev" <netfs@lists.linux.dev>,
- "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
- "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
- "senozhatsky@chromium.org" <senozhatsky@chromium.org>
-Subject: RE:  [PATCH 3/6] ceph: return the correct dentry on mkdir
-In-reply-to: <f7d3e39f5ced7832d451de172004172b59a994eb.camel@ibm.com>
-References: <>, <f7d3e39f5ced7832d451de172004172b59a994eb.camel@ibm.com>
-Date: Tue, 25 Feb 2025 10:29:37 +1100
-Message-id: <174043977707.74271.6498110571534472585@noble.neil.brown.name>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,redhat.com,gmail.com,vger.kernel.org,oracle.com,lists.infradead.org,sipsolutions.net,szeredi.hu,zeniv.linux.org.uk,suse.cz,talpey.com,nod.at,cambridgegreys.com,lists.linux.dev,chromium.org];
-	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEslvmcC/43NMRKCMBCF4aswqV1nExDQyns4FjFsZB0hThKjj
+ sPdDTY2FpT/K773FoE8UxC74i08JQ7sxhzlqhCm1+OZgLvcQqGqpJINGDcm8nkPZAJEBxe2Ngt
+ w0z5CfDiwVYWy0bq2dSOyc/Nk+fn9OBxz9xyi86/vZZLzOusblKpdoCcJCFtdk7F4UiW2+yuP9
+ +d6YONdcDaujRvE/JPUz1ZYLrFVtrsGN61GaTuk//Y0TR+h+4siOAEAAA==
+X-Change-ID: 20241217-converge-secs-to-jiffies-part-two-f44017aa6f67
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Yaron Avizrat <yaron.avizrat@intel.com>, Oded Gabbay <ogabbay@kernel.org>, 
+ Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, 
+ James Smart <james.smart@broadcom.com>, 
+ Dick Kennedy <dick.kennedy@broadcom.com>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+ David Sterba <dsterba@suse.com>, Ilya Dryomov <idryomov@gmail.com>, 
+ Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>, 
+ Xiubo Li <xiubli@redhat.com>, Damien Le Moal <dlemoal@kernel.org>, 
+ Niklas Cassel <cassel@kernel.org>, Carlos Maiolino <cem@kernel.org>, 
+ "Darrick J. Wong" <djwong@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
+ Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, Frank Li <Frank.Li@nxp.com>, 
+ Mark Brown <broonie@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+ Selvin Xavier <selvin.xavier@broadcom.com>, 
+ Kalesh AP <kalesh-anakkur.purayil@broadcom.com>, 
+ Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
+Cc: cocci@inria.fr, linux-kernel@vger.kernel.org, 
+ linux-scsi@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-sound@vger.kernel.org, linux-btrfs@vger.kernel.org, 
+ ceph-devel@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-ide@vger.kernel.org, linux-xfs@vger.kernel.org, 
+ linux-pm@vger.kernel.org, linux-nvme@lists.infradead.org, 
+ linux-spi@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, platform-driver-x86@vger.kernel.org, 
+ ibm-acpi-devel@lists.sourceforge.net, linux-rdma@vger.kernel.org, 
+ Easwar Hariharan <eahariha@linux.microsoft.com>, 
+ Takashi Iwai <tiwai@suse.de>, Carlos Maiolino <cmaiolino@redhat.com>
+X-Mailer: b4 0.14.2
 
-On Tue, 25 Feb 2025, Viacheslav Dubeyko wrote:
-> On Mon, 2025-02-24 at 13:15 +1100, NeilBrown wrote:
-> > On Fri, 21 Feb 2025, Viacheslav Dubeyko wrote:
-> > > On Fri, 2025-02-21 at 10:36 +1100, NeilBrown wrote:
-> > > > ceph already splices the correct dentry (in splice_dentry()) from the
-> > > > result of mkdir but does nothing more with it.
-> > > >=20
-> > > > Now that ->mkdir can return a dentry, return the correct dentry.
-> > > >=20
-> > > > Signed-off-by: NeilBrown <neilb@suse.de>
-> > > > ---
-> > > >  fs/ceph/dir.c | 9 ++++++++-
-> > > >  1 file changed, 8 insertions(+), 1 deletion(-)
-> > > >=20
-> > > > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> > > > index 39e0f240de06..c1a1c168bb27 100644
-> > > > --- a/fs/ceph/dir.c
-> > > > +++ b/fs/ceph/dir.c
-> > > > @@ -1099,6 +1099,7 @@ static struct dentry *ceph_mkdir(struct mnt_idm=
-ap *idmap, struct inode *dir,
-> > > >  	struct ceph_client *cl =3D mdsc->fsc->client;
-> > > >  	struct ceph_mds_request *req;
-> > > >  	struct ceph_acl_sec_ctx as_ctx =3D {};
-> > > > +	struct dentry *ret =3D NULL;
-> > >=20
-> > > I believe that it makes sense to initialize pointer by error here and a=
-lways
-> > > return ret as output. If something goes wrong in the logic, then we alr=
-eady have
-> > > error.
-> >=20
-> > I'm not certain that I understand, but I have made a change which seems
-> > to be consistent with the above and included it below.  Please let me
-> > know if it is what you intended.
-> >=20
-> > >=20
-> > > >  	int err;
-> > > >  	int op;
-> > > > =20
-> > > > @@ -1166,14 +1167,20 @@ static struct dentry *ceph_mkdir(struct mnt_i=
-dmap *idmap, struct inode *dir,
-> > > >  	    !req->r_reply_info.head->is_dentry)
-> > > >  		err =3D ceph_handle_notrace_create(dir, dentry);
-> > > >  out_req:
-> > > > +	if (!err && req->r_dentry !=3D dentry)
-> > > > +		/* Some other dentry was spliced in */
-> > > > +		ret =3D dget(req->r_dentry);
-> > > >  	ceph_mdsc_put_request(req);
-> > > >  out:
-> > > >  	if (!err)
-> > > > +		/* Should this use 'ret' ?? */
-> > >=20
-> > > Could we make a decision should or shouldn't? :)
-> > > It looks not good to leave this comment instead of proper implementatio=
-n. Do we
-> > > have some obstacles to make this decision?
-> >=20
-> > I suspect we should use ret, but I didn't want to make a change which
-> > wasn't directly required by my needed.  So I highlighted this which
-> > looks to me like a possible bug, hoping that someone more familiar with
-> > the code would give an opinion.  Do you agree that 'ret' (i.e.
-> > ->r_dentry) should be used when ret is not NULL?
-> >=20
->=20
-> I think if we are going to return ret as a dentry, then it makes sense to c=
-all
-> the ceph_init_inode_acls() for d_inode(ret). I don't see the point to call
-> ceph_init_inode_acls() for d_inode(dentry) then.
+This is the second series (part 1*) that converts users of msecs_to_jiffies() that
+either use the multiply pattern of either of:
+- msecs_to_jiffies(N*1000) or
+- msecs_to_jiffies(N*MSEC_PER_SEC)
 
-If the mkdir used the original dentry, then ->mkdir returns NULL so ret
-is NULL.  If the mkdir used a different dentry it returns that, so ret
-is not NULL.
+where N is a constant or an expression, to avoid the multiplication.
 
-I'll try to re-organise the code so that "dentry" is the correct dentry
-on success, and "ret" is the returned dentry, which might be NULL.
+The conversion is made with Coccinelle with the secs_to_jiffies() script
+in scripts/coccinelle/misc. Attention is paid to what the best change
+can be rather than restricting to what the tool provides.
 
-Thanks,
-NeilBrown
+Andrew has kindly agreed to take the series through mm.git modulo the
+patches maintainers want to pick through their own trees.
 
+This series is based on next-20250225
 
->=20
-> > >=20
-> > > >  		ceph_init_inode_acls(d_inode(dentry), &as_ctx);
-> > > >  	else
-> > > >  		d_drop(dentry);
-> > > >  	ceph_release_acl_sec_ctx(&as_ctx);
-> > > > -	return ERR_PTR(err);
-> > > > +	if (err)
-> > > > +		return ERR_PTR(err);
-> > > > +	return ret;
-> > >=20
-> > > What's about this?
-> > >=20
-> > > return err ? ERR_PTR(err) : ret;
-> >=20
-> > We could do that, but you said above that you thought we should always
-> > return 'ret' - which does make some sense.
-> >=20
-> > What do you think of the following alternate patch?
-> >=20
->=20
-> Patch looks good to me. Thanks.
->=20
-> Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
->=20
-> > Thanks,
-> > NeilBrown
-> >=20
-> > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> > index 39e0f240de06..d2e5c557df83 100644
-> > --- a/fs/ceph/dir.c
-> > +++ b/fs/ceph/dir.c
-> > @@ -1099,6 +1099,7 @@ static struct dentry *ceph_mkdir(struct mnt_idmap *=
-idmap, struct inode *dir,
-> >  	struct ceph_client *cl =3D mdsc->fsc->client;
-> >  	struct ceph_mds_request *req;
-> >  	struct ceph_acl_sec_ctx as_ctx =3D {};
-> > +	struct dentry *ret;
-> >  	int err;
-> >  	int op;
-> > =20
-> > @@ -1116,32 +1117,32 @@ static struct dentry *ceph_mkdir(struct mnt_idmap=
- *idmap, struct inode *dir,
-> >  		      ceph_vinop(dir), dentry, dentry, mode);
-> >  		op =3D CEPH_MDS_OP_MKDIR;
-> >  	} else {
-> > -		err =3D -EROFS;
-> > +		ret =3D ERR_PTR(-EROFS);
-> >  		goto out;
-> >  	}
-> > =20
-> >  	if (op =3D=3D CEPH_MDS_OP_MKDIR &&
-> >  	    ceph_quota_is_max_files_exceeded(dir)) {
-> > -		err =3D -EDQUOT;
-> > +		ret =3D ERR_PTR(-EDQUOT);
-> >  		goto out;
-> >  	}
-> >  	if ((op =3D=3D CEPH_MDS_OP_MKSNAP) && IS_ENCRYPTED(dir) &&
-> >  	    !fscrypt_has_encryption_key(dir)) {
-> > -		err =3D -ENOKEY;
-> > +		ret =3D ERR_PTR(-ENOKEY);
-> >  		goto out;
-> >  	}
-> > =20
-> > =20
-> >  	req =3D ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
-> >  	if (IS_ERR(req)) {
-> > -		err =3D PTR_ERR(req);
-> > +		ret =3D ERR_CAST(req);
-> >  		goto out;
-> >  	}
-> > =20
-> >  	mode |=3D S_IFDIR;
-> >  	req->r_new_inode =3D ceph_new_inode(dir, dentry, &mode, &as_ctx);
-> >  	if (IS_ERR(req->r_new_inode)) {
-> > -		err =3D PTR_ERR(req->r_new_inode);
-> > +		ret =3D ERR_CAST(req->r_new_inode);
-> >  		req->r_new_inode =3D NULL;
-> >  		goto out_req;
-> >  	}
-> > @@ -1165,15 +1166,23 @@ static struct dentry *ceph_mkdir(struct mnt_idmap=
- *idmap, struct inode *dir,
-> >  	    !req->r_reply_info.head->is_target &&
-> >  	    !req->r_reply_info.head->is_dentry)
-> >  		err =3D ceph_handle_notrace_create(dir, dentry);
-> > +	ret =3D ERR_PTR(err);
-> >  out_req:
-> > +	if (!IS_ERR(ret) && req->r_dentry !=3D dentry)
-> > +		/* Some other dentry was spliced in */
-> > +		ret =3D dget(req->r_dentry);
-> >  	ceph_mdsc_put_request(req);
-> >  out:
-> > -	if (!err)
-> > -		ceph_init_inode_acls(d_inode(dentry), &as_ctx);
-> > -	else
-> > +	if (!IS_ERR(ret)) {
-> > +		if (ret)
-> > +			ceph_init_inode_acls(d_inode(ret), &as_ctx);
-> > +		else
-> > +			ceph_init_inode_acls(d_inode(dentry), &as_ctx);
-> > +	} else {
-> >  		d_drop(dentry);
-> > +	}
-> >  	ceph_release_acl_sec_ctx(&as_ctx);
-> > -	return ERR_PTR(err);
-> > +	return ret;
-> >  }
-> > =20
-> >  static int ceph_link(struct dentry *old_dentry, struct inode *dir,
-> >=20
->=20
-> Thanks,
-> Slava.
->=20
->=20
+Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+
+* https://lore.kernel.org/all/20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com/
+
+---
+Changes in v3:
+- Change commit message prefix from libata: zpodd to ata: libata-zpodd: in patch 8 (Damien)
+- Split up overly long line in patch 9 (Christoph)
+- Fixup unnecessary line break in patch 14 (Ilpo)
+- Combine v1 and v2
+- Fix some additional hunks in patch 2 (scsi: lpfc) which the more concise script missed
+- msecs_to_jiffies -> msecs_to_jiffies() in commit messages throughout
+- Bug in secs_to_jiffies() uncovered by LKP merged in 6.14-rc2: bb2784d9ab4958 ("jiffies: Cast to unsigned long in secs_to_jiffies() conversion")
+- Link to v2: https://lore.kernel.org/r/20250203-converge-secs-to-jiffies-part-two-v2-0-d7058a01fd0e@linux.microsoft.com
+
+Changes in v2:
+- Remove unneeded range checks in rbd and libceph. While there, convert some timeouts that should have been fixed in part 1. (Ilya)
+- Fixup secs_to_jiffies.cocci to be a bit more verbose
+- Link to v1: https://lore.kernel.org/r/20250128-converge-secs-to-jiffies-part-two-v1-0-9a6ecf0b2308@linux.microsoft.com
+
+---
+Easwar Hariharan (16):
+      coccinelle: misc: secs_to_jiffies: Patch expressions too
+      scsi: lpfc: convert timeouts to secs_to_jiffies()
+      accel/habanalabs: convert timeouts to secs_to_jiffies()
+      ALSA: ac97: convert timeouts to secs_to_jiffies()
+      btrfs: convert timeouts to secs_to_jiffies()
+      rbd: convert timeouts to secs_to_jiffies()
+      libceph: convert timeouts to secs_to_jiffies()
+      ata: libata-zpodd: convert timeouts to secs_to_jiffies()
+      xfs: convert timeouts to secs_to_jiffies()
+      power: supply: da9030: convert timeouts to secs_to_jiffies()
+      nvme: convert timeouts to secs_to_jiffies()
+      spi: spi-fsl-lpspi: convert timeouts to secs_to_jiffies()
+      spi: spi-imx: convert timeouts to secs_to_jiffies()
+      platform/x86/amd/pmf: convert timeouts to secs_to_jiffies()
+      platform/x86: thinkpad_acpi: convert timeouts to secs_to_jiffies()
+      RDMA/bnxt_re: convert timeouts to secs_to_jiffies()
+
+ .../accel/habanalabs/common/command_submission.c   |  2 +-
+ drivers/accel/habanalabs/common/debugfs.c          |  2 +-
+ drivers/accel/habanalabs/common/device.c           |  2 +-
+ drivers/accel/habanalabs/common/habanalabs_drv.c   |  2 +-
+ drivers/ata/libata-zpodd.c                         |  3 +-
+ drivers/block/rbd.c                                |  8 ++---
+ drivers/infiniband/hw/bnxt_re/qplib_rcfw.c         |  2 +-
+ drivers/nvme/host/core.c                           |  6 ++--
+ drivers/platform/x86/amd/pmf/acpi.c                |  2 +-
+ drivers/platform/x86/thinkpad_acpi.c               |  2 +-
+ drivers/power/supply/da9030_battery.c              |  3 +-
+ drivers/scsi/lpfc/lpfc.h                           |  3 +-
+ drivers/scsi/lpfc/lpfc_els.c                       | 11 +++---
+ drivers/scsi/lpfc/lpfc_hbadisc.c                   |  2 +-
+ drivers/scsi/lpfc/lpfc_init.c                      | 10 +++---
+ drivers/scsi/lpfc/lpfc_scsi.c                      | 12 +++----
+ drivers/scsi/lpfc/lpfc_sli.c                       | 41 +++++++++-------------
+ drivers/scsi/lpfc/lpfc_vport.c                     |  2 +-
+ drivers/spi/spi-fsl-lpspi.c                        |  2 +-
+ drivers/spi/spi-imx.c                              |  2 +-
+ fs/btrfs/disk-io.c                                 |  6 ++--
+ fs/xfs/xfs_icache.c                                |  2 +-
+ fs/xfs/xfs_sysfs.c                                 |  8 ++---
+ include/linux/ceph/libceph.h                       | 12 +++----
+ net/ceph/ceph_common.c                             | 18 ++++------
+ net/ceph/osd_client.c                              |  3 +-
+ scripts/coccinelle/misc/secs_to_jiffies.cocci      | 10 ++++++
+ sound/pci/ac97/ac97_codec.c                        |  3 +-
+ 28 files changed, 82 insertions(+), 99 deletions(-)
+---
+base-commit: 0226d0ce98a477937ed295fb7df4cc30b46fc304
+change-id: 20241217-converge-secs-to-jiffies-part-two-f44017aa6f67
+
+Best regards,
+-- 
+Easwar Hariharan <eahariha@linux.microsoft.com>
 
 
