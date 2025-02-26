@@ -1,119 +1,269 @@
-Return-Path: <ceph-devel+bounces-2810-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2811-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCEFBA45811
-	for <lists+ceph-devel@lfdr.de>; Wed, 26 Feb 2025 09:26:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF33A4583B
+	for <lists+ceph-devel@lfdr.de>; Wed, 26 Feb 2025 09:31:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0D31628B4
-	for <lists+ceph-devel@lfdr.de>; Wed, 26 Feb 2025 08:26:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15407189277B
+	for <lists+ceph-devel@lfdr.de>; Wed, 26 Feb 2025 08:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC18A1E1DE4;
-	Wed, 26 Feb 2025 08:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F07A224259;
+	Wed, 26 Feb 2025 08:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SIvRvmLn"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Hm/CYtcW"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB88258CC5;
-	Wed, 26 Feb 2025 08:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D80224252
+	for <ceph-devel@vger.kernel.org>; Wed, 26 Feb 2025 08:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740558386; cv=none; b=Li48OXh53uyyaByunXEV58gmvSNczpAqpVWEKnchvl/zrN9eSvkAzpQN92dPPImzb+yFFNrOoRjyeW0wGZZgJOmRUtsGdPLCP4d/yoTFmoVUIkEeQnv/Mp6FXs/S2Ig5WwQWpw3nLflkECOSgOG0VZclDHfvFLc5gd+uk6dLVds=
+	t=1740558593; cv=none; b=O0EVuNJSigOm+SXANG6JDw+iGgeZQ1I2j9hAuMMTudqTAb491uUqFnvX5VIM42YNB8yicGZ/X9UEVpGBLTgt4nxNoqnos8YKa1H60wCFRCwHU1TeN2GYG/kjy8o7pUEZZPzedooqoZkCh3PQk9qi2GuuMscwOzOox8b7Uvf3d/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740558386; c=relaxed/simple;
-	bh=njsILLkZkjyzEv/vKowZpeaDQvMRXfnUx5wck86CXdw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=qMUPC1xwV7gs3LPaZEHQuOj+Uefn+Paw6YooZZcK5m77ppkM1AIupJ4ZqMi/wKDskP5ilh2G1sFcO4hd1tturMvlZmExwQMBASFdsEr0x11ouB5hfDAAmEeorNsgtCZXthu3ojvZ7ceBh0qEgaeL1iz8Ik2rc542InpxXvJUkGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SIvRvmLn; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740558375; x=1741163175; i=markus.elfring@web.de;
-	bh=JKZ0hhA194JzGtLnAGjE7Tna8UgHB+lZSaCvTNzqLik=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:Cc:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=SIvRvmLn8flUsGl5JcfolgQVFctLE8OIoa7MSA8VqUzJwiwUljIzskLbousNrkq+
-	 s6YCNQz7zIL9+lFqI5WSe7vUrJx0Yo77ScqwzShmSwXuPbW+uHdWmsvfkClFpA7rK
-	 usGxux+2O3/m/sH2Ol+aALD3UBAn0eLdYMCB/Zmhd8AxelKc6OigP+h1alFew5Dnc
-	 gPrustT65hY/Zl11lrJKD1kY3sy1JITGeTQFZwFBRfct+lEaKac+97UB4gEf52sZf
-	 Dfbezpt6AbuUfdntRPve72587MBApZwGt5tNaM+4croKEmsOyTmKlyMXy/PZQ37Cl
-	 n5TfjKV2NzLDX+X+gA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.43]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MLzn1-1u50kB3RC5-00JCvd; Wed, 26
- Feb 2025 09:26:14 +0100
-Message-ID: <3abf9e69-77bc-40eb-b84e-a84726c693a4@web.de>
-Date: Wed, 26 Feb 2025 09:26:02 +0100
+	s=arc-20240116; t=1740558593; c=relaxed/simple;
+	bh=+w08B6WQFLWGoY7KAUzC4ng4zpNF75XfE1/K5F/1xRU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VWa+0yZ6vVyAHTU/AXA9r0Ch9TuxC971I2I2RzYjg3v6jhNzFwzeWFD0IZO6YmCnGGiLrU3GZ3EbEyeGIGRG6mbyVMbFJRIht+eDkGPtgV7GbiEOvklS9YNCHNHpaR29MnsHKLYio0RDDuPfSG9R5frUBPiIIEojkNvCSySyO2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Hm/CYtcW; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abbac134a19so996708166b.0
+        for <ceph-devel@vger.kernel.org>; Wed, 26 Feb 2025 00:29:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1740558588; x=1741163388; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qd/P01QUb5F02hWZoi0IIwP5a5sgbN5wVj3NeUV9KKE=;
+        b=Hm/CYtcWSPW1k4fv9hDPqmE66S4dHDlH3+8R0sXYWiBdQitIDMEmtvpLhZI/Y5By9S
+         sKR7EEAWBP9y+hDW8nyhlSKuiTppxodU/pVlJAOgF6i/xxuAmdB3c+uBfd9mqRuVNfkm
+         1nhKI4KTfI2DVSCdQJax6zLJQSfl0Nir+9hLn1CXgOyXpo0ydvtgt1ILpZsIKfIze3f7
+         2ebGtc2bWVp0iTe6doS09oetqbmoeXAtO4D0lkQ6bDEIq2tJhJh7Mc+kWvYod31kDaMR
+         SK6SfwUwNyNGVyKGLHuM2oEtVFrf4Pzxk945NBPutBBNUiSSSx4OHm3lFzog+Lh4xehk
+         6bNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740558588; x=1741163388;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qd/P01QUb5F02hWZoi0IIwP5a5sgbN5wVj3NeUV9KKE=;
+        b=wp0fM5SBrGUE+/2U4V9mIaZCdLx0Jd7E5nAW/kuDVdfD/snpLZ0B8rAQ6bnAaBXCvN
+         KxwApiT6NDcM7WoRFugZrl+TNysfn5iAZ8/7j5loXy1A9gM8m/ZxGB5/jc+1NKURwywG
+         QJcQ3jcnRZDgNmS9PT11W/faAA97Pp+Fa+2eseLaTs51uKFBo1FNOqovik1B7o7TvzrG
+         O16TfPOT6StJcU3hmNFg4JMJo4lSnUoNtjQUVJaDbZPWfd0We9B6uF8YofO/X40acn67
+         nyp3vTRq4nwF7gnrjSOe9gsnstGWvvMjgQxK5eWQH++2fJnIrnK15yXdwNASMg+F2DKE
+         kWBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFj9N8ogUCbvzOGntUstSNZjQMG33YoVxtDXSI24WpIrcCRn68SRpxFJ5QSrghND3h/uJzcX00egk9@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdaO6yZLow5RA/yMQfH3FJS127j67jObiSJwXlLfZGf84IDT+a
+	tN+8biRmZwZ9dMcPevB+EQh+ofjEZFGrBDMoO/UAtlqNpqcHCSd/H/F2ju0EB/KuHwtfzosl/oP
+	iO9RwlrCnDLs5g/+12kalAnvB363SobJC1Bf1jw==
+X-Gm-Gg: ASbGnctx26d+IrSlcT/U/nwMn2CYiMScOFoZhcDVV5+ul2YuzM/muTujha8aBno3Qzm
+	ytY5i8dA0AaM683I/GEAKr52f20X3XUBkvsbLKAw2TsE9cr17uMwd5OYstrxrulhNThAZ5APG21
+	kO3Z1ZUQ==
+X-Google-Smtp-Source: AGHT+IHCBmf3hFVyDRWrbNjNMJpg3u3tAe5Gkum3edJXg5+W5jYzpdGCY2CkRcaqBj3q4FkgF3ZBCF2Ur/l8ZS65ls8=
+X-Received: by 2002:a17:907:7711:b0:ab7:c152:a3ca with SMTP id
+ a640c23a62f3a-abed0c66952mr598124866b.6.1740558587743; Wed, 26 Feb 2025
+ 00:29:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [cocci] [PATCH v3 01/16] coccinelle: misc: secs_to_jiffies: Patch
- expressions too
-To: Easwar Hariharan <eahariha@linux.microsoft.com>, cocci@inria.fr,
- Andrew Morton <akpm@linux-foundation.org>,
- Dongsheng Yang <dongsheng.yang@easystack.cn>,
- Ilya Dryomov <idryomov@gmail.com>, Jens Axboe <axboe@kernel.dk>,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
- Ricardo Ribalda <ribalda@chromium.org>, Xiubo Li <xiubli@redhat.com>
 References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
- <20250225-converge-secs-to-jiffies-part-two-v3-1-a43967e36c88@linux.microsoft.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- ceph-devel@vger.kernel.org, linux-block@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250225-converge-secs-to-jiffies-part-two-v3-1-a43967e36c88@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
+ <20250225-converge-secs-to-jiffies-part-two-v3-6-a43967e36c88@linux.microsoft.com>
+ <e53d7586-b278-4338-95a2-fa768d5d8b5e@wanadoo.fr> <CAPjX3Fcr+BoMRgZGbqqgpF+w-sHU+SqGT8QJ3QCp8uvJbnaFsQ@mail.gmail.com>
+ <7b8346a1-8a7d-4fcf-a026-119d77f2ca85@wanadoo.fr>
+In-Reply-To: <7b8346a1-8a7d-4fcf-a026-119d77f2ca85@wanadoo.fr>
+From: Daniel Vacek <neelx@suse.com>
+Date: Wed, 26 Feb 2025 09:29:36 +0100
+X-Gm-Features: AQ5f1Jrr13SgxwVjT6ysFNM9oHlwZl6dEEKFUrutAasFQHuednVFm1EELk7zLLU
+Message-ID: <CAPjX3Fc1UuWvih_krriaF32aPCbGP0SPg2TSrBA8Xb7a=Ozc5Q@mail.gmail.com>
+Subject: Re: [PATCH v3 06/16] rbd: convert timeouts to secs_to_jiffies()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Frank.Li@nxp.com, James.Bottomley@hansenpartnership.com, 
+	Julia.Lawall@inria.fr, Shyam-sundar.S-k@amd.com, akpm@linux-foundation.org, 
+	axboe@kernel.dk, broonie@kernel.org, cassel@kernel.org, cem@kernel.org, 
+	ceph-devel@vger.kernel.org, clm@fb.com, cocci@inria.fr, 
+	dick.kennedy@broadcom.com, djwong@kernel.org, dlemoal@kernel.org, 
+	dongsheng.yang@easystack.cn, dri-devel@lists.freedesktop.org, 
+	dsterba@suse.com, eahariha@linux.microsoft.com, festevam@gmail.com, 
+	hch@lst.de, hdegoede@redhat.com, hmh@hmh.eng.br, 
+	ibm-acpi-devel@lists.sourceforge.net, idryomov@gmail.com, 
+	ilpo.jarvinen@linux.intel.com, imx@lists.linux.dev, james.smart@broadcom.com, 
+	jgg@ziepe.ca, josef@toxicpanda.com, kalesh-anakkur.purayil@broadcom.com, 
+	kbusch@kernel.org, kernel@pengutronix.de, leon@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-ide@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	linux-pm@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	martin.petersen@oracle.com, nicolas.palix@imag.fr, ogabbay@kernel.org, 
+	perex@perex.cz, platform-driver-x86@vger.kernel.org, s.hauer@pengutronix.de, 
+	sagi@grimberg.me, selvin.xavier@broadcom.com, shawnguo@kernel.org, 
+	sre@kernel.org, tiwai@suse.com, xiubli@redhat.com, yaron.avizrat@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8T0doJfXh5Xn7cF2aNYOOKjzaCLuQ6TqMSMuzhfQJClOkTbtxxb
- WwwOPp7N2qlsBqQ00o23C3N3aVcUZY4TjAGA+UrRfMjxNPTKTdOiNBOQwZ9VQNsUmd6mbZy
- KL9u5kffTfvv716Cs7afT5khYDw06LMDjCV3+bzJsgWJ4vukB2wup+YsixbEw0HAWd2IhUU
- sgp5ksKAElGs1EpqGW8jA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OGs6+r90pjI=;Xp1eJI63N70NI9WqtvgfsrbPcjm
- rejW+UAjPV4MCQgv3/dxOZAaJVFE+L7EourFK4xAa//fhfqZ0btf2C18nTt3onMh/ij/Yb9Eb
- T0H359kFvwQMR64ul87fexPZIwayUvLL4EMgSbNeZ4Bo99udJSEfTvfapfE8PfdgejwtYtkGC
- vBgpCoA3d3unI7qRXRh9YVLc8njdbqop93SzJzAXXuvQkY0pr2isUFQYfceEEqHyZYUkasX/9
- hjnd9clqawcls/NWlpBzXvnXAdgWWjHcE4IMujQQ/PpeLAbn3IsfKZgbpv6eiTGG+Z7fqQqsZ
- dIR+iTAi+3sMw+MjNa0C/apJS83+HJ+uAVk+cEpMJCm8tp/OGvqnfUVvP4kbrGnEN5pjijKkq
- IuTDQ3D1VHOXo8aXYnRji0Z3C4oY7e1YAEwjE5PWdfkcCNxS7t6u87myzzJfNEsmWEs9jMW2+
- H0rnQaffodiEOSgUHrwEbtuLlWq4GpxSOc6Q/ZlC1jMNPSut2vd3xZ+dtmQv1Nl488cpPmwsS
- JKXdlIqpS/Uh+8ESz1Yl6L5lUJAqnFvBfMa65+cs1cjTgeHKmVDHZ8g0uMWqjjnwmcaWeGLrb
- icCBUjV9O5/YLaNVaiKyHShsLusR+U8qRmV4wk8XR7ZYZj5OeB1vpgawSCQfNexSQRRJsOXXJ
- I2QXL4g/1jt1QlapifmgrxUa6CaIzPZWYYBAm2hdaWdRzA+oSysm37nVGM2HwP+yrvthOwDo/
- 5nfI0R6Tp9iaevpPpq92IfJpBCmdKka/vd3uhPaera4sRHUu+SkehtOOc+kzWtp9JMB2bmJ08
- uneEpTPQTfnJijuPS8zw91Fp41AUNHad7+GYTKS8oi7ZilDK9MgcmZDqh2yEJn8LtqKnkqY0V
- b4FrlZkeeBIJ+ZoMrM9VligtBsZQrWT/hSFTPgKF4RnMWr/xsEbIjyr7VnuDQ6W6mc/KqkvMR
- T/Z1p7RMnlXqMVMdEG/RUPfCbNqkA37xnqclEC99lb2otbZ6V5hBEsFVSIF2u4RS0wTottnz1
- ebZ4KPntTuP1H8yR8EXRi43bm0/vIb3H52E9qW0y8ZBngoivBNQ0LwyHIq2aGZ++SHVHolGOJ
- juiTRD1tRMxCHnAA8RpZVJ51z8mhkoCut4QkOKTIsG5g6DPDxGr7uIpfJIuzwFY3TBmWI4bA4
- TQ1OGIFfyt9jpEYH7mNoq2q9TF9CZly0rFAUedyRYm5LpBSHPwp6TGCjI1WAe8yJ6pbSvJoa6
- 56jQAESh71iph7QxwpzQKoasaQuoeRBkQeCxh9NnE3lsHLTMCcuw3u7tn/F6wHdFCdoLcOyU3
- vnEpf/g3ha4eTjBE/N6jOgPnPN6P+USvCp0rn9Mb5kdujiLqyNfr1MmGc4W9EtG+aONjj5kGG
- pjlaod0Xin9HArUw2MYbXOw+oJWHaP1O6KCEzJV5TC9zhidAR4gDh4NUGv+eU8QBzOLaYpBOE
- 0S9XESzAIgZgr0noSVz8XSbEay1E=
 
-> Teach the script to suggest conversions for timeout patterns where the
-> arguments to msecs_to_jiffies() are expressions as well.
-=E2=80=A6
-> ---
->  scripts/coccinelle/misc/secs_to_jiffies.cocci | 10 ++++++++++
-=E2=80=A6
+On Wed, 26 Feb 2025 at 09:10, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Le 26/02/2025 =C3=A0 08:28, Daniel Vacek a =C3=A9crit :
+> > On Tue, 25 Feb 2025 at 22:10, Christophe JAILLET
+> > <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org> wrote:
+> >>
+> >> Le 25/02/2025 =C3=A0 21:17, Easwar Hariharan a =C3=A9crit :
+> >>> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
+> >>> secs_to_jiffies().  As the value here is a multiple of 1000, use
+> >>> secs_to_jiffies() instead of msecs_to_jiffies() to avoid the multipli=
+cation
+> >>>
+> >>> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci=
+ with
+> >>> the following Coccinelle rules:
+> >>>
+> >>> @depends on patch@ expression E; @@
+> >>>
+> >>> -msecs_to_jiffies(E * 1000)
+> >>> +secs_to_jiffies(E)
+> >>>
+> >>> @depends on patch@ expression E; @@
+> >>>
+> >>> -msecs_to_jiffies(E * MSEC_PER_SEC)
+> >>> +secs_to_jiffies(E)
+> >>>
+> >>> While here, remove the no-longer necessary check for range since ther=
+e's
+> >>> no multiplication involved.
+> >>
+> >> I'm not sure this is correct.
+> >> Now you multiply by HZ and things can still overflow.
+> >
+> > This does not deal with any additional multiplications. If there is an
+> > overflow, it was already there before to begin with, IMO.
+> >
+> >> Hoping I got casting right:
+> >
+> > Maybe not exactly? See below...
+> >
+> >> #define MSEC_PER_SEC    1000L
+> >> #define HZ 100
+> >>
+> >>
+> >> #define secs_to_jiffies(_secs) (unsigned long)((_secs) * HZ)
+> >>
+> >> static inline unsigned long _msecs_to_jiffies(const unsigned int m)
+> >> {
+> >>          return (m + (MSEC_PER_SEC / HZ) - 1) / (MSEC_PER_SEC / HZ);
+> >> }
+> >>
+> >> int main() {
+> >>
+> >>          int n =3D INT_MAX - 5;
+> >>
+> >>          printf("res  =3D %ld\n", secs_to_jiffies(n));
+> >>          printf("res  =3D %ld\n", _msecs_to_jiffies(1000 * n));
+> >
+> > I think the format should actually be %lu giving the below results:
+> >
+> > res  =3D 18446744073709551016
+> > res  =3D 429496130
+> >
+> > Which is still wrong nonetheless. But here, *both* results are wrong
+> > as the expected output should be 214748364200 which you'll get with
+> > the correct helper/macro.
+> >
+> > But note another thing, the 1000 * (INT_MAX - 5) already overflows
+> > even before calling _msecs_to_jiffies(). See?
+>
+> Agreed and intentional in my test C code.
+>
+> That is the point.
+>
+> The "if (result.uint_32 > INT_MAX / 1000)" in the original code was
+> handling such values.
 
-Will any information from previous patch review approaches trigger more de=
-sirable effects
-also for such an SmPL script?
+I see. But that was rather an unrelated side-effect. Still you're
+right, it needs to be handled carefully not to remove additional
+guarantees which were implied unintentionally. At least in places
+where these were provided in the first place.
 
-Regards,
-Markus
+> >
+> > Now, you'll get that mentioned correct result with:
+> >
+> > #define secs_to_jiffies(_secs) ((unsigned long)(_secs) * HZ)
+>
+> Not looked in details, but I think I would second on you on this, in
+> this specific example. Not sure if it would handle all possible uses of
+> secs_to_jiffies().
+
+Yeah, I was referring only in context of the example you presented,
+not for the rest of the kernel. Sorry about the confusion.
+
+> But it is not how secs_to_jiffies() is defined up to now. See [1].
+>
+> [1]:
+> https://elixir.bootlin.com/linux/v6.14-rc4/source/include/linux/jiffies.h=
+#L540
+>
+> >
+> > Still, why unsigned? What if you wanted to convert -5 seconds to jiffie=
+s?
+>
+> See commit bb2784d9ab495 which added the cast.
+
+Hmmm, fishy. Maybe a function would be better than a macro?
+
+> >
+> >>          return 0;
+> >> }
+> >>
+> >>
+> >> gives :
+> >>
+> >> res  =3D -600
+> >> res  =3D 429496130
+> >>
+> >> with msec, the previous code would catch the overflow, now it overflow=
+s
+> >> silently.
+> >
+> > What compiler options are you using? I'm not getting any warnings.
+>
+> I mean, with:
+>         if (result.uint_32 > INT_MAX / 1000)
+>                 goto out_of_range;
+> the overflow would be handled *at runtime*.
+
+Got it. But that may still fail if you configure HZ to 5000 or
+anything above 1000. Not that anyone should go this way but...
+
+> Without such a check, an unexpected value could be stored in
+> opt->lock_timeout.
+>
+> I think that a test is needed and with secs_to_jiffies(), I tentatively
+> proposed:
+>         if (result.uint_32 > INT_MAX / HZ)
+>                 goto out_of_range;
+
+Right, that should correctly handle any HZ value. Looks good to me.
+
+> CJ
+>
+> >
+> >> untested, but maybe:
+> >>          if (result.uint_32 > INT_MAX / HZ)
+> >>                  goto out_of_range;
+> >>
+> >> ?
+> >>
+> >> CJ
+> >>
+>
+> ...
 
