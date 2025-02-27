@@ -1,128 +1,121 @@
-Return-Path: <ceph-devel+bounces-2826-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2827-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7818EA4788E
-	for <lists+ceph-devel@lfdr.de>; Thu, 27 Feb 2025 10:03:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04F77A47C52
+	for <lists+ceph-devel@lfdr.de>; Thu, 27 Feb 2025 12:35:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B2BB7A411E
-	for <lists+ceph-devel@lfdr.de>; Thu, 27 Feb 2025 09:02:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D34C3A48DB
+	for <lists+ceph-devel@lfdr.de>; Thu, 27 Feb 2025 11:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D3B1227B9A;
-	Thu, 27 Feb 2025 09:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0BE22C324;
+	Thu, 27 Feb 2025 11:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nLspYqEw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YHmsJEzQ"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4BA22576C;
-	Thu, 27 Feb 2025 09:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23DB2253A8;
+	Thu, 27 Feb 2025 11:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740646985; cv=none; b=SXR8cJvgeK28GNoIUbBSC2CPnlCrYcK/9dVqrQpjDaOGIlyGtuwOtFQzhJipfNsUeKFa/BIMsHrA1G2R803n1cQaxQVYJz9d+QJehmR/Yf+HaVqdBnH8oJyFsNBBR3+r4BDXyug7fcHXuRTj/6ijAVIDeeyMWCfqhxBC2jokAUY=
+	t=1740656112; cv=none; b=cGpdqXDxO7iuNotKuUNI7PtE7Gju5Z0y8WsMSR6qhVOOLbDW3noQTVB3Th3/10ApOKLsS9TCp4IDqM/hwxs5b1neBn8iJoJMrzP6WwLdRi5jSt2IkMq9XanlT5/4ev60/LFVSu7/xYLMgoz4D+g44rpxgTSePkV/hBEQmtSbdeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740646985; c=relaxed/simple;
-	bh=NVCpCk+nbSUsNJ/EU7EEuGOPqCNbb7okhZbn+Sil+6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tiKcbViOayNAePsy0pUklxZwqZAKz5ZhJDjiW/QdW5lHGaxT+Vo5tfm0VqNhLPVFOMwAeAQi6wKqh5GEy+E3dflZVAGVaC6KcIWdzpA9FRLlTu4DM+sBdi+mk0OWcEJ+q7823JMaOAgky+oPyeIZyWfWStoybPumk/gacdR9Byw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nLspYqEw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B7E3C4CEDD;
-	Thu, 27 Feb 2025 09:02:48 +0000 (UTC)
+	s=arc-20240116; t=1740656112; c=relaxed/simple;
+	bh=f2zhIojI4Naq7mtH4LGVxFe7wqMNQCsUSDGEZbYfv3E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GXrzBsrcVH8Wf3HNh2KDSKL/7c7ruz7KO+llNipbbfqbcCFG/SzCmNpz+QqCGL1uNuTXHRbbwN6si/4WtqKAYqu7ZRaNHJjU4utlLxLQDPAid2DKxUBar7T/FKl+FP0NzNCm2Bfc4rXdOtiz1v1hPh/83I5b0jbAPTZOjh3iZT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YHmsJEzQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39177C4CEE4;
+	Thu, 27 Feb 2025 11:35:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740646984;
-	bh=NVCpCk+nbSUsNJ/EU7EEuGOPqCNbb7okhZbn+Sil+6M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nLspYqEw609cIT0ad0o594ZSe9+944oOqgtsX4PvzoyBCh2CjxvcaZKHcRlfZbkg3
-	 o98sgutNPNtNQvtB1V2TWfdkxk0jvPKNau6dHa8OKjnpZRzHC9C6ErL5o2r0XNXfYe
-	 ynD51HJPuofVM3zovm3pWhAZDAaeGPoIRj6tCVyu8o4t7sFTQlvipwFQwyRdAzsR2d
-	 B6voWJuIrlI+Cf1lPSYN2ZjYhqS7rvygaip7lyyFeeh6HBrO8Q/DpezIvl2iQUtyVl
-	 OXwKmfMuglQQ5kuzM1Q6kxE36HyfrIokC3I3woeNs2DsuZou71wXc13B0RkvyLg9Ys
-	 NykE1mhZbbdJQ==
-Date: Thu, 27 Feb 2025 10:02:45 +0100
-From: Carlos Maiolino <cem@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Easwar Hariharan <eahariha@linux.microsoft.com>, Yaron Avizrat <yaron.avizrat@intel.com>, 
-	Oded Gabbay <ogabbay@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>, 
-	Nicolas Palix <nicolas.palix@imag.fr>, James Smart <james.smart@broadcom.com>, 
-	Dick Kennedy <dick.kennedy@broadcom.com>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
-	David Sterba <dsterba@suse.com>, Ilya Dryomov <idryomov@gmail.com>, 
-	Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>, Xiubo Li <xiubli@redhat.com>, 
-	Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
-	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	Frank Li <Frank.Li@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-	Hans de Goede <hdegoede@redhat.com>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, 
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Selvin Xavier <selvin.xavier@broadcom.com>, 
-	Kalesh AP <kalesh-anakkur.purayil@broadcom.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Leon Romanovsky <leon@kernel.org>, cocci@inria.fr, linux-kernel@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-sound@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-ide@vger.kernel.org, linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, linux-spi@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, platform-driver-x86@vger.kernel.org, 
-	ibm-acpi-devel@lists.sourceforge.net, linux-rdma@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, 
-	Carlos Maiolino <cmaiolino@redhat.com>
-Subject: Re: [PATCH v3 00/16] Converge on using secs_to_jiffies() part two
-Message-ID: <3apo7evpkvcy5mafw7zdatr3n7lytugvfmumq2zou4nifyptnc@ucbu4c5g5jrq>
-References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
- <79b24031-5776-4eb3-960b-32b0530647fb@sirena.org.uk>
- <hJl1qb89zCHWejINoRSGGIO0m7NNi3wAmY9N_VC7royLnZoyL-ZozLkmLO-vCPlYc55-IPh76PIB_2_aKKjp1A==@protonmail.internalid>
- <20250226123851.a50e727d0a1bfe639ece4a72@linux-foundation.org>
+	s=k20201202; t=1740656111;
+	bh=f2zhIojI4Naq7mtH4LGVxFe7wqMNQCsUSDGEZbYfv3E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YHmsJEzQeJeJG7tScJcX1VhaWytUO0RRE7k2SlPy+jtF8TOIoFRVsk6d/cBdEiLZs
+	 DofoE9H61qcheY32zoZdi0bcy+yXFYT035Xx3r/n2hZYeyW0vSKLwrGLihaDOWpZuD
+	 EBakHOUwTR3K4bgTDlm/ydk/qBBIj1JNOasqhLfmfO0uJfjDhxrLEzEd6fixlKujRV
+	 T+8pvVGnaQqr+loSkdvR2vyKWj4HQ7ykfTazivD3118mHJdL6nlEPX/n0AODsZ9YLl
+	 t6yt07oSLhHbjs/QIBcIyvB0upxV2VUN9Fx794u66B4mAxPS0nMeNvJ8OrqXT9l0/X
+	 +gHgoXuBVpRQg==
+From: Christian Brauner <brauner@kernel.org>
+To: NeilBrown <neilb@suse.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	linux-nfs@vger.kernel.org,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Xiubo Li <xiubli@redhat.com>,
+	ceph-devel@vger.kernel.org,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	linux-fsdevel@vger.kernel.org,
+	Richard Weinberger <richard@nod.at>,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	linux-um@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 1/6] Change inode_operations.mkdir to return struct dentry *
+Date: Thu, 27 Feb 2025 12:34:53 +0100
+Message-ID: <20250227-narzissen-haifisch-2bf97aeb50d8@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250227013949.536172-2-neilb@suse.de>
+References: <20250227013949.536172-1-neilb@suse.de> <20250227013949.536172-2-neilb@suse.de>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226123851.a50e727d0a1bfe639ece4a72@linux-foundation.org>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2022; i=brauner@kernel.org; h=from:subject:message-id; bh=f2zhIojI4Naq7mtH4LGVxFe7wqMNQCsUSDGEZbYfv3E=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQf8H36MVdGktGBUeTtOpUDH6Z3nzud3NchrNJcaKAe5 ZFgJ7W+o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCKvVzP8T0rZ+3L6lG+Sa0r7 t+/ewD2DjzHD5ceFDoeNC1dZSxxTW8Dwm+2dn6h/yOv5e9L3xmv6XD0d7HZuWQZfgadE7vqXKze lcwIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 26, 2025 at 12:38:51PM -0800, Andrew Morton wrote:
-> On Wed, 26 Feb 2025 11:29:53 +0000 Mark Brown <broonie@kernel.org> wrote:
+On Thu, 27 Feb 2025 12:32:53 +1100, NeilBrown wrote:
+> Some filesystems, such as NFS, cifs, ceph, and fuse, do not have
+> complete control of sequencing on the actual filesystem (e.g.  on a
+> different server) and may find that the inode created for a mkdir
+> request already exists in the icache and dcache by the time the mkdir
+> request returns.  For example, if the filesystem is mounted twice the
+> directory could be visible on the other mount before it is on the
+> original mount, and a pair of name_to_handle_at(), open_by_handle_at()
+> calls could instantiate the directory inode with an IS_ROOT() dentry
+> before the first mkdir returns.
 > 
-> > On Tue, Feb 25, 2025 at 08:17:14PM +0000, Easwar Hariharan wrote:
-> > > This is the second series (part 1*) that converts users of msecs_to_jiffies() that
-> > > either use the multiply pattern of either of:
-> > > - msecs_to_jiffies(N*1000) or
-> > > - msecs_to_jiffies(N*MSEC_PER_SEC)
-> > >
-> > > where N is a constant or an expression, to avoid the multiplication.
-> >
-> > Please don't combine patches for multiple subsystems into a single
-> > series if there's no dependencies between them, it just creates
-> > confusion about how things get merged, problems for tooling and makes
-> > everything more noisy.  It's best to split things up per subsystem in
-> > that case.
-> 
-> I asked for this.  I'll merge everything, spend a few weeks gathering
-> up maintainer acks.  Anything which a subsystem maintainer merges will
-> be reported by Stephen and I'll drop that particular patch.
+> [...]
 
-I'm removing this from my queue then and let it go through your tree.
-Cheers,
+Applied to the vfs-6.15.async.dir branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.async.dir branch should appear in linux-next soon.
 
-Carlos
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> 
-> This way, nothing gets lost.  I take this approach often and it works.
-> 
-> If these were sent as a bunch of individual patches then it would be up
-> to the sender to keep track of what has been merged and what hasn't.
-> That person will be resending some stragglers many times.  Until they
-> give up and some patches get permanently lost.
-> 
-> Scale all that across many senders and the whole process becomes costly
-> and unreliable.  Whereas centralizing it on akpm is more efficient,
-> more reliable, more scalable, lower latency and less frustrating for
-> senders.
-> 
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.async.dir
+
+[1/6] Change inode_operations.mkdir to return struct dentry *
+      https://git.kernel.org/vfs/vfs/c/10a5b48c3eeb
+[2/6] hostfs: store inode in dentry after mkdir if possible.
+      https://git.kernel.org/vfs/vfs/c/28d16ecaa2a8
+[3/6] ceph: return the correct dentry on mkdir
+      https://git.kernel.org/vfs/vfs/c/948ec6393e44
+[4/6] fuse: return correct dentry for ->mkdir
+      https://git.kernel.org/vfs/vfs/c/ef04f867aeb2
+[5/6] nfs: change mkdir inode_operation to return alternate dentry if needed.
+      https://git.kernel.org/vfs/vfs/c/5ca75f993a4a
+[6/6] VFS: Change vfs_mkdir() to return the dentry.
+      https://git.kernel.org/vfs/vfs/c/9cdf09f608d0
 
