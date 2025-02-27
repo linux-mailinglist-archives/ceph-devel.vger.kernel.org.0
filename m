@@ -1,153 +1,98 @@
-Return-Path: <ceph-devel+bounces-2833-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2834-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479ABA47FF7
-	for <lists+ceph-devel@lfdr.de>; Thu, 27 Feb 2025 14:53:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DDDFA48873
+	for <lists+ceph-devel@lfdr.de>; Thu, 27 Feb 2025 20:01:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49AFC3A786C
-	for <lists+ceph-devel@lfdr.de>; Thu, 27 Feb 2025 13:50:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67EAF18821AC
+	for <lists+ceph-devel@lfdr.de>; Thu, 27 Feb 2025 19:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DC922F177;
-	Thu, 27 Feb 2025 13:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E348B1EA7E2;
+	Thu, 27 Feb 2025 19:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V5ilNhUm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QN39c1vY"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA0222B8AF
-	for <ceph-devel@vger.kernel.org>; Thu, 27 Feb 2025 13:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9858D17A313;
+	Thu, 27 Feb 2025 19:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740664199; cv=none; b=mJSUN/5Bj+dFMA8pcvykPQdGPuUjyvhFiZ3s8yQm4QThl3DOltAVhQFlUoOZgrsMi2EuBnbB/gvC5ft+kB/pqqzI7pN2RNJotHB0JJry7R2CPctoBDNtIDb+kQKC2VeLttnubc1vIYFx4dEHTABkC1ZK1ogFYNJLsIdCAuD9Az0=
+	t=1740682906; cv=none; b=vCvBYbvYHXKj2mcMLet1sQD12d4UIBSuVZ0JAqjXs90KB7NYC5c3MdN5ysFpFrarrwuuKnIjdsp7SGNRgZ8jLtJhfRYhBC4bGKqehR3atDKXDwHKEKma30o5TX2Hj3bY11uIgR31VqzB9wv4B8DLT8EbNh3o744swU6hGdS7IUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740664199; c=relaxed/simple;
-	bh=7cX201qpgIhIVLKgCS/C6EJzBqDp4hINeKlAjk9+2ZE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nxVi9wL2FTwNIWinQuFpfXfZSCo4KKEiOFFg4JczCFctznaAopBWU5pmSNAfwL7HGK0Vi7ezc5hCKz+Nqfig50jhwZiIA2T/FYYnCQsNpAg5rJCFeku/MxA9scKen++rvB0X1uptuq4omDTlU4jSNG7VJyewn0hj/11v1B0Lu7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V5ilNhUm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740664197;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AnR45FmfqnDkr8yeueN0wO5f3L5d7ELEsHPILizbINE=;
-	b=V5ilNhUmOb9phxGrAX5dzZZh7ucR3Ew2XWxt6K1TvpndZus4IlYJvt7Ubr68oF6QfUnL4f
-	lor9jHMmXDzGh9zgegAtXzWi3MdoLo/znqoRODmEFlzZJtQTiN7y90SeujQEi4L2R7P5i3
-	k3qF22pnvC9G/4TmOtzgbSTHMolN0O8=
-Received: from mail-ua1-f69.google.com (mail-ua1-f69.google.com
- [209.85.222.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-554-_NsjkletNXuAzgpVD7HlJA-1; Thu, 27 Feb 2025 08:49:55 -0500
-X-MC-Unique: _NsjkletNXuAzgpVD7HlJA-1
-X-Mimecast-MFC-AGG-ID: _NsjkletNXuAzgpVD7HlJA_1740664195
-Received: by mail-ua1-f69.google.com with SMTP id a1e0cc1a2514c-86b33deb84cso362561241.3
-        for <ceph-devel@vger.kernel.org>; Thu, 27 Feb 2025 05:49:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740664195; x=1741268995;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AnR45FmfqnDkr8yeueN0wO5f3L5d7ELEsHPILizbINE=;
-        b=MdEP4iojNazk1hz59hLWXgzNKdZ4HznQPX84k+v/Jr5GMk8uPP6xRSd8/hp/LkIs3q
-         Q5Q0Ifp72muu1znVqkT6KwaCEBY6hnO7p1X7LHcUEljI6uBEjyOUON4rpSBe82kWMmJ8
-         R9shpbawFpDKB9TQosfu/WF02KqN82MkYLt0e1NE69X1fD6Fo32fesUzLNwqSS8nbUuo
-         iz3TTMjXhHVcZ0yEUgEHYaeMqsrPnJsOhz1WxgyCqeHnMZBdHhyuRxB7QkjvHHbI0BEk
-         ihGWR5bAb7x0ES3mkYfm5nUdZvRVqrcQIgHnu57hNmxWfy0rt6MxriW+TLZ0YscEllun
-         Xsyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEL/haJhrA8aSMoMVENqiMzqp2LeCzJoiDMTzClgf9NMdT3IdymbI44fuqF0dImYFrp4AlZ1Q4bHCN@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh2n8l7lyAk1uPFIwVaTq6nzsk8ucYg6cfaisLPzmOUSYlbyey
-	MYpFoQsi7/n/GYTJTFDVYfp3FV2OBYHMSsyVZ71oQ4ROL6A/N+P1VUyrZJKvzHiYmHwbYBXASyp
-	qyYNczF24C/xBldOWyVV6DS3KbOzVUdx+fQxu7Lp+E6oa29OEQnxM9QFbPe/Dv3l7LAq99A9LE4
-	AMbNnxazu/87yblGQMdofz6ebCOZIHDt9tfA==
-X-Gm-Gg: ASbGncvnnpy/CzcSj76X9eBgQdFq3m9UnywdOpVOioBWrOlJjLEN6IxCxLwS+9Ei2Qs
-	0AIO0au1dA5+Kg6oDSEkhpvs+cdqTb1+afFFg2xnQFIJIvVn0xTmo779dfETIMZa/7U+gM8g2
-X-Received: by 2002:a05:6102:6cb:b0:4bc:de7e:4153 with SMTP id ada2fe7eead31-4c01e18b50dmr4220485137.3.1740664195267;
-        Thu, 27 Feb 2025 05:49:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFf9hFydBWUqU/pOSrfW+xDfSyL5zm3ZG+C0SiFAFQzNXv0rUvFxebBGu4a9/gKYBOKEiRhFAEx3a6AmT1KiYM=
-X-Received: by 2002:a05:6102:6cb:b0:4bc:de7e:4153 with SMTP id
- ada2fe7eead31-4c01e18b50dmr4220467137.3.1740664194959; Thu, 27 Feb 2025
- 05:49:54 -0800 (PST)
+	s=arc-20240116; t=1740682906; c=relaxed/simple;
+	bh=z2uX0uqipn42HUDO7nFkLHmTKkunvB8G3pQIRSUI+Qo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u1PFPj9wF5byQFq+rEiqdD2jtegNzTY0ShiUm0fNMhu3/V+8TTNm250kb6AYT9/TyEGSCM95mJ88ogtBQ223KXzV0kDj3lNV/NxPWalGRl+WTzkWlBdwSpEEA7LZTBvHsIkQ2SfkT6GyT1m57oVNrov4HGlpLlanJhbkWDttEYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QN39c1vY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5149C4CEDD;
+	Thu, 27 Feb 2025 19:01:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740682906;
+	bh=z2uX0uqipn42HUDO7nFkLHmTKkunvB8G3pQIRSUI+Qo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QN39c1vYxAwHPGcFalnYzSvoZb25lnxy8x6SG7Xg1OIS4Jvx4esHkW4m8Rtu1+sBy
+	 9xtPjfKoqu81r9Tcl4Q5TUw199c1mDy0EziGH4Thd3eyUsgZ37ZLi3SEoaNCAzdqXC
+	 MyQqXd0/i9vogmLdSRF6+7veI46X5R97mOOb1+Hbl/45KSb45W0NLGepZQbWU9M5j8
+	 u+l/seZDAfkRll8uPNpBv2caTZVKH/bm9nmnDfLuPG9LTkSWZwAcWlQcr10x/N/gPS
+	 1M8+C/VUaFJBc5PvqF61tYCKZBgbvBucB6PASdeKbhxLQZ3PIuhr9Ui7ZdDzHTjSC+
+	 dRmXPdJQrPi+Q==
+Date: Thu, 27 Feb 2025 20:01:39 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: NeilBrown <neilb@suse.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org, 
+	Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] ceph: return the correct dentry on mkdir
+Message-ID: <20250227-dinge-jazzkonzert-3f68e3839fac@brauner>
+References: <20250227013949.536172-1-neilb@suse.de>
+ <20250227013949.536172-4-neilb@suse.de>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3148604.1740657480@warthog.procyon.org.uk> <20250227-halbsatz-halbzeit-b9f6be29c21c@brauner>
- <CAOi1vP-5NLXpGrjjw6de-rP29ax8C7ct9srwPiwTk_VBQzkDuw@mail.gmail.com>
-In-Reply-To: <CAOi1vP-5NLXpGrjjw6de-rP29ax8C7ct9srwPiwTk_VBQzkDuw@mail.gmail.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Thu, 27 Feb 2025 15:49:44 +0200
-X-Gm-Features: AQ5f1JoEunfwlFzP4evBN7CXVff_jSd_yPGXCfTawN6PmAnpmIofJU2hcF_Rvew
-Message-ID: <CAO8a2Sgis34dEPcae=uMHfh9NRqY9B4jJdura0EwtCYL7D4L2A@mail.gmail.com>
-Subject: Re: Can you take ceph patches and ceph mm changes into the VFS tree?
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, Viacheslav Dubeyko <slava@dubeyko.com>, ceph-devel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250227013949.536172-4-neilb@suse.de>
 
-I like the direction of this work=E2=80=94it addresses some long=E2=80=91st=
-anding
-issues and makes the complex writeback logic far more manageable.
-The patches fix known problems with page locking and writeback
-blockers and improve the overall code structure. I don't see any
-specific issues.
-The changes do introduce some inherent risk due to the extensive
-nature of the modifications, the patches have already survived a good
-number of xfstest runs, which is very encouraging.
+On Thu, Feb 27, 2025 at 12:32:55PM +1100, NeilBrown wrote:
+> ceph already splices the correct dentry (in splice_dentry()) from the
+> result of mkdir but does nothing more with it.
+> 
+> Now that ->mkdir can return a dentry, return the correct dentry.
+> 
+> Note that previously ceph_mkdir() could call
+>    ceph_init_inode_acls()
+> on the inode from the wrong dentry, which would be NULL.  This
+> is safe as ceph_init_inode_acls() checks for NULL, but is not
+> strictly correct.  With this patch, the inode for the returned dentry
+> is passed to ceph_init_inode_acls().
+> 
+> Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> Signed-off-by: NeilBrown <neilb@suse.de>
+> ---
+>  fs/ceph/dir.c | 24 ++++++++++++++++--------
+>  1 file changed, 16 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index 39e0f240de06..5e98394e2dca 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -1099,6 +1099,7 @@ static struct dentry *ceph_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+>  	struct ceph_client *cl = mdsc->fsc->client;
+>  	struct ceph_mds_request *req;
+>  	struct ceph_acl_sec_ctx as_ctx = {};
+> +	struc dentry *ret;
 
-Reviewed-by: "Alex Markuze <amarkuze@redhat.com>"
-
-On Thu, Feb 27, 2025 at 3:10=E2=80=AFPM Ilya Dryomov <idryomov@gmail.com> w=
-rote:
->
-> On Thu, Feb 27, 2025 at 12:59=E2=80=AFPM Christian Brauner <brauner@kerne=
-l.org> wrote:
-> >
-> > On Thu, Feb 27, 2025 at 11:58:00AM +0000, David Howells wrote:
-> > > Hi Christian,
-> > >
-> > > Unless the ceph people would prefer to take them through the ceph tre=
-e, can
-> > > you consider taking the following fixes:
-> > >
-> > >     https://lore.kernel.org/r/20250205000249.123054-1-slava@dubeyko.c=
-om/
-> > >
-> > > into the VFS tree and adding:
-> > >
-> > >     https://lore.kernel.org/r/20250217185119.430193-1-willy@infradead=
-.org/
-> > >
-> > > on top of that.  Willy's patches are for the next merge window, but a=
-re
-> > > rebased on top of Viacheslav's patches.
-> > >
-> > > I have the patches here also:
-> > >
-> > >     https://web.git.kernel.org/pub/scm/linux/kernel/git/dhowells/linu=
-x-fs.git/log/?h=3Dceph-folio
-> >
-> > Sure! Thanks! I'll wait until tomorrow so people have time to reply.
->
-> No objection to taking Viacheslav's and Willy's patches through the VFS
-> tree given that there is a dependency and Willy wanted his 10/9 that is
-> strictly speaking outside of Ceph to go along.  It would be good if Alex
-> could review Viacheslav's series first though as it's a pretty sizeable
-> refactor.
->
-> Thanks,
->
->                 Ilya
->
-
+Forgot to mention that I fixed this when I applied.
 
