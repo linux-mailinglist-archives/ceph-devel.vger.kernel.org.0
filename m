@@ -1,59 +1,48 @@
-Return-Path: <ceph-devel+bounces-2838-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2840-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4453BA49725
-	for <lists+ceph-devel@lfdr.de>; Fri, 28 Feb 2025 11:25:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93330A4A88F
+	for <lists+ceph-devel@lfdr.de>; Sat,  1 Mar 2025 05:23:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B2113B48CF
-	for <lists+ceph-devel@lfdr.de>; Fri, 28 Feb 2025 10:23:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E9E171E21
+	for <lists+ceph-devel@lfdr.de>; Sat,  1 Mar 2025 04:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB54C25E444;
-	Fri, 28 Feb 2025 10:22:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F4F1B85EE;
+	Sat,  1 Mar 2025 04:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZy1Ll95"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Tic0cecF"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680BD25BADA;
-	Fri, 28 Feb 2025 10:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B8A1519BE;
+	Sat,  1 Mar 2025 04:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740738173; cv=none; b=R6vKQ22axQ+uFkUhVwH+VMVJ+s8zrFVnlCRh9Rz9NK8yMnJNPuAVX86+b76pp36hzZYTPof7ksiJ0qRCAce8dfQTpDS+/bhu8R4Jk0CdLYy6/MKryVpTk9wWaUvZmmcFpVkTj48G2Vqwl/1fgx3KEw1x713usozLvSzQrt5yj5Y=
+	t=1740802986; cv=none; b=EGXKrEZ84nErlhBBHHNQU3nbl8WMm5yawvS0+QGnhC57+vZCX+h1LFUAIKyk+VJemveMXqwp39JyW6mfu4nwzyFytyUb1WlFVS9ydLrVQoy7suwk6qQMfItIGY7G7QDAO/WXXJ9gJp2IXYPDINJaWzS1EWpZIW0rPN8aIY2lhy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740738173; c=relaxed/simple;
-	bh=TDGi4nu6CBnjZ08J2SjCtYhqNzs7LnfkQBYG9bn62X0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oS4ELLcJALQ940wASgql0Iry+azD2NZ1cmFxeI7CHJpD6w6/OKNLQtWWd+0i7T5cVtLouu7EhAkrBXgboSVF1EpJAirlS5LzmUDTbyZ6M3E9LJNuj5SUboCxiEZKE+Giqv4/iJnIBLCjCRQ7F+qeDm8h5pIHgXkLPX36ApskiNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZy1Ll95; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A9E2C4CED6;
-	Fri, 28 Feb 2025 10:22:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740738172;
-	bh=TDGi4nu6CBnjZ08J2SjCtYhqNzs7LnfkQBYG9bn62X0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AZy1Ll95a0QCSjG0lUGu0FevLb+DA3eYbfs6ZK0uv0ZKbqivkDfECLiIE61JGmU3j
-	 HF52yuH4hG42PVOaJ3kqkzzqWn1YRH4XZjINkJ3JfWq1ai22RBH6ohq/YU+EXbL3Dt
-	 2SUiymUqk3VdulEDcm1fQ6iKTrQa6v1BEjph9Hy0KcE5JLzwUGpyDWYYVyPSaj8jF7
-	 WITTy2mGWOK3tZ1nNWonJf9iE5vPrC7qWUszy5KAGaSzsO/jf5oW6ZMcfOYw+wHRBP
-	 OrbyuTgFjCOOLUPofj7vTEFT2qLaLUrpm1+6y5Zlv0OM3rP+TSbWBuJjoGt9Tki0L8
-	 B5rHl3Jg/aTLA==
-From: Christian Brauner <brauner@kernel.org>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	ceph-devel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH v3 0/9] Remove accesses to page->index from ceph
-Date: Fri, 28 Feb 2025 11:22:38 +0100
-Message-ID: <20250228-witzfigur-geerntet-589bdf7ae13f@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250217185119.430193-1-willy@infradead.org>
-References: <20250217185119.430193-1-willy@infradead.org>
+	s=arc-20240116; t=1740802986; c=relaxed/simple;
+	bh=yseNamwDxaZtO0KtuMWvy0i8Osu9fsrGhdEX7PvrknE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JCs1hDPjygsX4YZp9RhGh8B5PiT/mlqGdc2iAB4FFeyl23n+qnB97fYOqeg7XlPcNu/4QvmTLnWip3SPHATS25bmPOG6wYCeYXmmqhpZB7gIZEPXsjrRTXcRQU1W0AocbXOP0hdj/gZCPVz4tDMbbF1Pzxn5DkinREhHEBJW1O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Tic0cecF; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from eahariha-devbox.internal.cloudapp.net (unknown [40.91.112.99])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3AA842038A25;
+	Fri, 28 Feb 2025 20:23:04 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3AA842038A25
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740802984;
+	bh=PgYb7240sgPq/L5w2oKC7klJ5k6Fow9TNpoUkzNGK1k=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Tic0cecF/21Kg594q1CO/eg5+QgiwPz4LgD/n3MMHP2O9FfWF99KZzvmupgYjfLmY
+	 kKC2iohVgVPu30uDrBrUvlKGueIlVHYFXCQHgQjO2hELzw+/4iCNbOl8VIVFWOPAzC
+	 WINPoDOvtacWuCzAjkiPENuSeaZYK/qJx1E103wU=
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Subject: [PATCH v4 0/2] Converge on using secs_to_jiffies() part two
+Date: Sat, 01 Mar 2025 04:22:51 +0000
+Message-Id: <20250301-converge-secs-to-jiffies-part-two-v4-0-c9226df9e4ed@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -61,54 +50,79 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2235; i=brauner@kernel.org; h=from:subject:message-id; bh=TDGi4nu6CBnjZ08J2SjCtYhqNzs7LnfkQBYG9bn62X0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQf7Cu6ba2x5eu1GWcdZadcdXftPjhJfdvXPy6Tzmi4H uM5Jqe8raOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiF+YxMlxa+klF6uZjuecV nZ2al1bPuXQm8ajFsppvRt6FW+bwTbvH8N/RbM+85TX37b88DStO2fKcgXuF6pWqzO9yBSuNy/o WSrICAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJuLwmcC/43OsW4DIRAE0F+xqLPWsnBwdpX/iFIQbomJ4sMCQ
+ hxZ9+/h3CSNpStnijdzE4Vz5CKOu5vI3GKJae5BP+2EP7n5nSFOPQtC0pKkBZ/mxrn3hX2BmuA
+ jhtAFuLhcoX4nCFqjtM6ZYKzoziVziNf7xstrz6dYaso/98km13bVB5Q0btCbBISDM+wDvpHC8
+ fkzzl/X/Tn6nEoKde/TWaw7jf5sQrXFpm5PFofRoQwT8mNb/bNp2GKrbjutDsayMn588HtZll8
+ Wd1FLlAEAAA==
+X-Change-ID: 20241217-converge-secs-to-jiffies-part-two-f44017aa6f67
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
+ Daniel Vacek <neelx@suse.com>, Ilya Dryomov <idryomov@gmail.com>, 
+ Dongsheng Yang <dongsheng.yang@easystack.cn>, Jens Axboe <axboe@kernel.dk>, 
+ Xiubo Li <xiubli@redhat.com>
+Cc: ceph-devel@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Easwar Hariharan <eahariha@linux.microsoft.com>
+X-Mailer: b4 0.14.2
 
-On Mon, 17 Feb 2025 18:51:08 +0000, Matthew Wilcox (Oracle) wrote:
-> This is a rebase of Friday's patchset onto
-> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git netfs-fixes
-> as requested by Dave.
-> 
-> The original patch 1/7 is gone as it is no longer necessary.
-> Patches 2-6 are retained intact as patches 1-5 in this patchset.
-> Patch 7 is hopefully patches 6-9 in this patchset.
-> 
-> [...]
+This is the second series (part 1*) that converts users of msecs_to_jiffies() that
+either use the multiply pattern of either of:
+- msecs_to_jiffies(N*1000) or
+- msecs_to_jiffies(N*MSEC_PER_SEC)
 
-Applied to the vfs-6.15.ceph branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.ceph branch should appear in linux-next soon.
+where N is a constant or an expression, to avoid the multiplication.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+The conversion is made with Coccinelle with the secs_to_jiffies() script
+in scripts/coccinelle/misc. Attention is paid to what the best change
+can be rather than restricting to what the tool provides.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Andrew has kindly agreed to take the series through mm.git modulo the
+patches maintainers want to pick through their own trees.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+This series is based on next-20250225
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.ceph
+Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
 
-[1/9] ceph: Remove ceph_writepage()
-      https://git.kernel.org/vfs/vfs/c/19a288110435
-[2/9] ceph: Use a folio in ceph_page_mkwrite()
-      https://git.kernel.org/vfs/vfs/c/88a59bda3f37
-[3/9] ceph: Convert ceph_find_incompatible() to take a folio
-      https://git.kernel.org/vfs/vfs/c/f9707a8b5b9d
-[4/9] ceph: Convert ceph_readdir_cache_control to store a folio
-      https://git.kernel.org/vfs/vfs/c/baff9740bc8f
-[5/9] ceph: Convert writepage_nounlock() to write_folio_nounlock()
-      https://git.kernel.org/vfs/vfs/c/62171c16da60
-[6/9] ceph: Convert ceph_check_page_before_write() to use a folio
-      https://git.kernel.org/vfs/vfs/c/15fdaf2fd60d
-[7/9] ceph: Remove uses of page from ceph_process_folio_batch()
-      https://git.kernel.org/vfs/vfs/c/a55cf4fd8fae
-[8/9] ceph: Convert ceph_move_dirty_page_in_page_array() to move_dirty_folio_in_page_array()
-      https://git.kernel.org/vfs/vfs/c/ad49fe2b3d54
-[9/9] ceph: Pass a folio to ceph_allocate_page_array()
-      https://git.kernel.org/vfs/vfs/c/d1b452673af4
-[10/10] fs: Remove page_mkwrite_check_truncate()
-        https://git.kernel.org/vfs/vfs/c/9dcef93363e7
+* https://lore.kernel.org/all/20241210-converge-secs-to-jiffies-v3-0-ddfefd7e9f2a@linux.microsoft.com/
+
+---
+Changes in v4:
+- Restore correct range checks for rbd and libceph (Christophe J)
+- Link to v3: https://lore.kernel.org/r/20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com
+
+Changes in v3:
+- Change commit message prefix from libata: zpodd to ata: libata-zpodd: in patch 8 (Damien)
+- Split up overly long line in patch 9 (Christoph)
+- Fixup unnecessary line break in patch 14 (Ilpo)
+- Combine v1 and v2
+- Fix some additional hunks in patch 2 (scsi: lpfc) which the more concise script missed
+- msecs_to_jiffies -> msecs_to_jiffies() in commit messages throughout
+- Bug in secs_to_jiffies() uncovered by LKP merged in 6.14-rc2: bb2784d9ab4958 ("jiffies: Cast to unsigned long in secs_to_jiffies() conversion")
+- Link to v2: https://lore.kernel.org/r/20250203-converge-secs-to-jiffies-part-two-v2-0-d7058a01fd0e@linux.microsoft.com
+
+Changes in v2:
+- Remove unneeded range checks in rbd and libceph. While there, convert some timeouts that should have been fixed in part 1. (Ilya)
+- Fixup secs_to_jiffies.cocci to be a bit more verbose
+- Link to v1: https://lore.kernel.org/r/20250128-converge-secs-to-jiffies-part-two-v1-0-9a6ecf0b2308@linux.microsoft.com
+
+---
+Easwar Hariharan (2):
+      rbd: convert timeouts to secs_to_jiffies()
+      libceph: convert timeouts to secs_to_jiffies()
+
+ drivers/block/rbd.c          |  8 ++++----
+ include/linux/ceph/libceph.h | 12 ++++++------
+ net/ceph/ceph_common.c       | 18 ++++++++----------
+ net/ceph/osd_client.c        |  3 +--
+ 4 files changed, 19 insertions(+), 22 deletions(-)
+---
+base-commit: 0226d0ce98a477937ed295fb7df4cc30b46fc304
+change-id: 20241217-converge-secs-to-jiffies-part-two-f44017aa6f67
+
+Best regards,
+-- 
+Easwar Hariharan <eahariha@linux.microsoft.com>
+
 
