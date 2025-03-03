@@ -1,111 +1,179 @@
-Return-Path: <ceph-devel+bounces-2847-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2848-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C86AA4C3BE
-	for <lists+ceph-devel@lfdr.de>; Mon,  3 Mar 2025 15:46:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5CA1A4CAD5
+	for <lists+ceph-devel@lfdr.de>; Mon,  3 Mar 2025 19:13:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A04C918960CB
-	for <lists+ceph-devel@lfdr.de>; Mon,  3 Mar 2025 14:46:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B71641889ADA
+	for <lists+ceph-devel@lfdr.de>; Mon,  3 Mar 2025 18:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C912139DC;
-	Mon,  3 Mar 2025 14:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A77522ACF2;
+	Mon,  3 Mar 2025 18:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="lLccm+L+"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="E9elgDOP"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD470213E61
-	for <ceph-devel@vger.kernel.org>; Mon,  3 Mar 2025 14:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4961EF0B7;
+	Mon,  3 Mar 2025 18:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741013181; cv=none; b=aIFU92zPRNKof/L0XFsJsXO5SRHIYSHCG8NeEXRfwGlhzovepi5EqPEqXJ95i3LebsFzLLaQW7CJe6M10hzpaAgguURRdemSI5ITqThXQfVG0KD8gu8A2Z3D3uRNwurxcv7+SUoDT+qYQX0PsSyfnt3TpkaKoNN80y5WWUDOYF0=
+	t=1741025617; cv=none; b=ayE/PVxUnmKfWaSDd9t1hxN0yOf8HNvCED7SlP4aDNrwmK6WZdZchCKozivgaxRAOWD0p893cEAmXKb9cMmUMzYiYA8+W4TuWePPYpW3g6+sW4v8LJLn9QNPnpKqwjPaF+cikqUdZjpvtbPD8hrvhAjfkZMBzDoRF3IsL0oKwxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741013181; c=relaxed/simple;
-	bh=CSQeGS/UZUc31BUvv23G8CVIkT12nQMGyFgBEwHK2pc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y+vwFpfrXAVW+55xVJyv0KmrTH4q/DnBPkiOeSIAgdge7i5yanrtsMpaeCpqYH35ixPMwa1g0mBNPhKBqs9DilaBY6lc/9A0tI4nHgVZrGQAX7qSepKrTcqr8ADA2I3VpeFJsx9YvE9jEjH2g0mis8FKUgjqm5XTd0wLKupNEEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=lLccm+L+; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-471f88518c8so23270541cf.0
-        for <ceph-devel@vger.kernel.org>; Mon, 03 Mar 2025 06:46:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1741013179; x=1741617979; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qjaplGXAgQys6n43UvZfkCCurGUYwKZfvrBKCJx8kSQ=;
-        b=lLccm+L+C5gyQVjYsYDdL1zeNxIZuJZGkpcU6/9jM/EGmEqxoX9VEq8LeF0hguc262
-         OrZIVKmCGpEWYzV9XpeB++QZRuh7XVQ12POq2Tyc80nMnleI7zn72I1w46yYtznIxQfb
-         g0BdLTnqzhNoiDvBa4YtqzHg1bvB09UzU6OUI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741013179; x=1741617979;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qjaplGXAgQys6n43UvZfkCCurGUYwKZfvrBKCJx8kSQ=;
-        b=uVErKny8nOS5wyAyHaztUwoREO93L8UnkbSozuGpxzDV3YeHMqkwrKvQ2zu6xEuIII
-         ozmEXGCNgRB61cwyJnkK3wFkETOJC7CYDq+tZ00miUC0ZDfIJM+0XMtabhGzbMoyx9Kx
-         WqJhFPvrFA04F5NjW4yBrK+an4fplh4K/pfe9Hk6Tz3GkNSJ+TpacN1oCgJy+byJAiLa
-         qfCnNL2f0ADRD6Y1oUQpsj828Hx/IIm2qPeOuDGo2/UPgy/0IlVMPB68dvh28QnoNMYU
-         luDSvMbF7X4Oqu/jOi1dPjpvTn7wPYIYavrcyrHF5r/awPXomjwJsRCS+j3em88xz60i
-         E5BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWyjXLpPVl6dXVP1dhPDuTb6eK0HoeIx0FfAPy2Qlt1nTrBshw46SbOvfWunwO/6svHtLhg6CZ27BtY@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMxV14OgrnoWxqnteFrb5InyXXLIUazg3rvDK3mNG0D/ZlMrhF
-	aKTwsdRCDb3j7oLSX4Te4JKd4lpT/jJq1am1ihepMLBfOv+GaoqtXYxnMBF/cqChNHG56F2VmRB
-	xJ1HTtJADO3murWql65Oq/UxUWMzGE4SfPBKI5Q==
-X-Gm-Gg: ASbGnctlV6rnz3FO9y6fRQn9ulvBHhdA1bQGwBDXjn/+r61YxesUnjr1ZrzuG431ONp
-	j4K0CTHL1ygbeqUG7SdQ1IcJso2hSVRsNWRaG3Hy/Qc0u2aWJhxjAqTvwlHI7XzeCweeVvjzIOg
-	ncuZdwPEWFCblwcgTWkj3GIEc2Xtc=
-X-Google-Smtp-Source: AGHT+IEc70lGyxC8HHKIoOrpie2Jx8XsivN2M9IFYtspzolVa0r9jSj5J487Smay6+rDx9jahhDHL5KyYqxP+yy2+fA=
-X-Received: by 2002:ac8:5806:0:b0:474:f484:1b4b with SMTP id
- d75a77b69052e-474f4841d3emr20114471cf.23.1741013178811; Mon, 03 Mar 2025
- 06:46:18 -0800 (PST)
+	s=arc-20240116; t=1741025617; c=relaxed/simple;
+	bh=F6Z0BN+3hKZPN/y08u5s9KL0bARPiF2rGzp+BqQm9pw=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=os2jI4h4q6zZCbMjYDgmLSwQh8GQ8j1NgwkauwRCVFC873u54Mef1+v6H5hzLXphYLpIXDuqkF+gcArW0nXVdHUvwxVy02vhh+LT5d3UE09SBJG+Nh/HAH4KPvLdqLOOn1SIM+EWKWeLY8EATsaZLiuPyjJ1JwMvyt1Mg8S8zOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=E9elgDOP; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.97.24] (unknown [20.236.11.185])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 01FD42110480;
+	Mon,  3 Mar 2025 10:13:29 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 01FD42110480
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741025610;
+	bh=vjIVrkAKe+QXU3xO1k+YnRel/IS8P/2bHL0s5aUiBxY=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=E9elgDOPj8Ox/9Gsvyd7W/Zp9zOI0KKL5YZvCjgV3HlH6J2C9fc1dhIeRK+rgUGjz
+	 PKAS5/wQ4IPVLJ8hOYD+lbQVO4rWClH18aV+ljO4Mys1DuLjSTFNxpMnmnhU47qGMd
+	 HLNe9Pr2WNTiFJHXqXiCL26hr5bk9V6SW9AVWob4=
+Message-ID: <d5035d88-f714-47c2-ace6-8bd609d84633@linux.microsoft.com>
+Date: Mon, 3 Mar 2025 10:13:34 -0800
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227013949.536172-1-neilb@suse.de> <20250227013949.536172-5-neilb@suse.de>
-In-Reply-To: <20250227013949.536172-5-neilb@suse.de>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 3 Mar 2025 15:46:06 +0100
-X-Gm-Features: AQ5f1JoUFcZgsP72xjJitgL04_WZu20xfL4s-mJeajhIk4Eeu4PYIyUzi4H_ijM
-Message-ID: <CAJfpegtu1xs-FifNfc2VpQuhBjbniTqUcE+H=uNpdYW=cOSGkw@mail.gmail.com>
-Subject: Re: [PATCH 4/6] fuse: return correct dentry for ->mkdir
-To: NeilBrown <neilb@suse.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org, 
-	Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Daniel Vacek <neelx@suse.com>, Ilya Dryomov <idryomov@gmail.com>,
+ Dongsheng Yang <dongsheng.yang@easystack.cn>, Xiubo Li <xiubli@redhat.com>,
+ eahariha@linux.microsoft.com, ceph-devel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] rbd: convert timeouts to secs_to_jiffies()
+To: Alex Elder <elder@ieee.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>
+References: <20250301-converge-secs-to-jiffies-part-two-v4-0-c9226df9e4ed@linux.microsoft.com>
+ <20250301-converge-secs-to-jiffies-part-two-v4-1-c9226df9e4ed@linux.microsoft.com>
+ <4c4b3d6f-64b7-4ba3-8d2e-d8b1f1a03a53@ieee.org>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <4c4b3d6f-64b7-4ba3-8d2e-d8b1f1a03a53@ieee.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 27 Feb 2025 at 02:40, NeilBrown <neilb@suse.de> wrote:
->
-> fuse already uses d_splice_alias() to ensure an appropriate dentry is
-> found for a newly created dentry.  Now that ->mkdir can return that
-> dentry we do so.
->
-> This requires changing create_new_entry() to return a dentry and
-> handling that change in all callers.
->
-> Note that when create_new_entry() is asked to create anything other than
-> a directory we can be sure it will NOT return an alternate dentry as
-> d_splice_alias() only returns an alternate dentry for directories.
-> So we don't need to check for that case when passing one the result.
+On 3/2/2025 9:05 AM, Alex Elder wrote:
+> On 2/28/25 10:22 PM, Easwar Hariharan wrote:
+>> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
+>> secs_to_jiffies().  As the value here is a multiple of 1000, use
+>> secs_to_jiffies() instead of msecs_to_jiffies() to avoid the multiplication
+>>
+>> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
+>> the following Coccinelle rules:
+>>
+>> @depends on patch@ expression E; @@
+>>
+>> -msecs_to_jiffies(E * 1000)
+>> +secs_to_jiffies(E)
+>>
+>> @depends on patch@ expression E; @@
+>>
+>> -msecs_to_jiffies(E * MSEC_PER_SEC)
+>> +secs_to_jiffies(E)
+>>
+>> Change the check for range to check against HZ.
+>>
+>> Acked-by: Ilya Dryomov <idryomov@gmail.com>
+>> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+> 
+> I think what you've done in the last hunk below should not be
+> done that way.  I also suggest something to the (related, but
+> not part of this series) secs_to_jiffies() implementation.
+> 
+>> ---
+>>   drivers/block/rbd.c | 8 ++++----
+>>   1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+>> index faafd7ff43d6ef53110ab3663cc7ac322214cc8c..1c406b17f3cee741b7bdd9f742958b3f1d5b1bbe 100644
+>> --- a/drivers/block/rbd.c
+>> +++ b/drivers/block/rbd.c
+>> @@ -108,7 +108,7 @@ static int atomic_dec_return_safe(atomic_t *v)
+>>   #define RBD_OBJ_PREFIX_LEN_MAX    64
+>>     #define RBD_NOTIFY_TIMEOUT    5    /* seconds */
+>> -#define RBD_RETRY_DELAY        msecs_to_jiffies(1000)
+>> +#define RBD_RETRY_DELAY        secs_to_jiffies(1)
+>>     /* Feature bits */
+>>   @@ -4162,7 +4162,7 @@ static void rbd_acquire_lock(struct work_struct *work)
+>>           dout("%s rbd_dev %p requeuing lock_dwork\n", __func__,
+>>                rbd_dev);
+>>           mod_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork,
+>> -            msecs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT * MSEC_PER_SEC));
+>> +            secs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT));
+>>       }
+>>   }
+>>   @@ -6283,9 +6283,9 @@ static int rbd_parse_param(struct fs_parameter *param,
+>>           break;
+>>       case Opt_lock_timeout:
+>>           /* 0 is "wait forever" (i.e. infinite timeout) */
+>> -        if (result.uint_32 > INT_MAX / 1000)
+> 
+> Previously, the above line was verifying that the multiplication
+> done below would not overflow.  It was unrelated to whatever
+> msecs_to_jiffies() did.
+> 
+>> +        if (result.uint32 > INT_MAX / HZ)
+> 
+> Here you are assuming something about what secs_to_jiffies()
+> does.  It's a very reasonable assumption, but you are encoding
+> this in unrelated code, which you shouldn't do.
+> 
+> Just do the direct conversion as you've done above:
+> 
+>         if (result.uint32 > INT_MAX)
+> 
+>>               goto out_of_range;
+>> -        opt->lock_timeout = msecs_to_jiffies(result.uint_32 * 1000);
+>> +        opt->lock_timeout = secs_to_jiffies(result.uint_32);
+> 
+> Unfortunately, secs_to_jiffies() does not implement the clamp
+> operation that msecs_to_jiffies() does.  If you look at
+> __msecs_to_jiffies() you see that the unsigned value provided
+> is limited to MAX_JIFFY_OFFSET if it's negative when interpreted
+> as a signed int (i.e., if its high bit is set).
+> 
+> I think the secs_to_jiffies() implementation could benefit
+> from the use of an overflow check.  This might not be
+> exactly right, but it gives the idea:
 
-Still, I'd create a wrapper for non-dir callers with the above comment.
+Fair enough, let me explore this.
 
-As is, it's pretty confusing to deal with a "dentry", which is
-apparently "leaked" (no dput) but in reality it's just err or NULL.
+@Jens, @Andrew, can you drop the rbd and libceph patches from your respective
+trees while I work this out?
 
 Thanks,
-Miklos
+Easwar (he/him)
+
+> 
+> #define secs_to_jiffies(_secs)                    \
+>     ({                            \
+>         unsigned long _result;                \
+>                                 \
+>         if (check_mul_overflow(_secs, HZ, &_result))    \
+>             _result = MAX_JIFFY_OFFSET;        \
+>         (_result);                    \
+>     })
+> 
+>                     -Alex
+> 
+> 
+>>           break;
+>>       case Opt_pool_ns:
+>>           kfree(pctx->spec->pool_ns);
+>>
+
 
