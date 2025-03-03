@@ -1,221 +1,111 @@
-Return-Path: <ceph-devel+bounces-2846-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2847-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F994A4B3D2
-	for <lists+ceph-devel@lfdr.de>; Sun,  2 Mar 2025 18:32:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C86AA4C3BE
+	for <lists+ceph-devel@lfdr.de>; Mon,  3 Mar 2025 15:46:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6DAC16D1DF
-	for <lists+ceph-devel@lfdr.de>; Sun,  2 Mar 2025 17:32:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A04C918960CB
+	for <lists+ceph-devel@lfdr.de>; Mon,  3 Mar 2025 14:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71759433D9;
-	Sun,  2 Mar 2025 17:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C912139DC;
+	Mon,  3 Mar 2025 14:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mKOq1AHl"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="lLccm+L+"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995BF6F30C
-	for <ceph-devel@vger.kernel.org>; Sun,  2 Mar 2025 17:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD470213E61
+	for <ceph-devel@vger.kernel.org>; Mon,  3 Mar 2025 14:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740936750; cv=none; b=Nq2lka2ItHKtoto1AT91I1qd6OIYvkZokxUZRsdJx+TTLCAhwZNLLEE0nPi9PAIzxDLgs+9Gx8cvxbMAbafCgE27OWm7EAZZqRYi5ODymFB5H49KTn4Emao+nfaCHpLcZlRuboH6ICX9rqrMUi27LSPE1mqr/Sq8Oh+jW8/zp88=
+	t=1741013181; cv=none; b=aIFU92zPRNKof/L0XFsJsXO5SRHIYSHCG8NeEXRfwGlhzovepi5EqPEqXJ95i3LebsFzLLaQW7CJe6M10hzpaAgguURRdemSI5ITqThXQfVG0KD8gu8A2Z3D3uRNwurxcv7+SUoDT+qYQX0PsSyfnt3TpkaKoNN80y5WWUDOYF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740936750; c=relaxed/simple;
-	bh=y/MPwKXKpdb/0rrkJb/iKxu1lbNs2yMTNVMJAxngmUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=awb0RsEdp5XC2x1jI+p0AAA1j/2VgnNmqJdmFlDsim6AlH5ZOmNx0LCZjGiUg5wQAcwxTbJsaQw8G6dKRJDZPkgQg4Mw9feMDKn2sobuB6q1SIFnuJM78wWeaLFsGnsVpi+qLlZwBhzsvPjOqs2t/h7zew8uOJJMH2Yizd462RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mKOq1AHl; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740936748; x=1772472748;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=y/MPwKXKpdb/0rrkJb/iKxu1lbNs2yMTNVMJAxngmUk=;
-  b=mKOq1AHlJLO0fFVzriXyxj8iqp2kI1PCs/v+67Ijz2lbgiLtQDDXx/IA
-   ib5KoNCKWxdAfN6trZA3lwjDWonW/pFK3+oCVS8264wc5k+mQqEYonPIT
-   nu/OKWmpj+dWeivWEIc0DhlHzugrAAcmi3//s3AZxXiL0Z6r6ogjGnimH
-   HBMNYAMTZdedNmtGybEVJcLUB6VmpnAcjWUsWigFGgyrKr8HIHJf9TlIP
-   EASzAJ4b9wiro5+Ob3LMtHTPv1ZSuBeRrE0EKjTKOieo8DRnUPMZ2VoWK
-   3wRu8uDCE1tJvY95aej1Rzu+3ripJoTn0XWjF8m0p7NdMpMnuWeXSyy9T
-   g==;
-X-CSE-ConnectionGUID: XiyMOt6/RtqWLPJEFvB05g==
-X-CSE-MsgGUID: 5EmN0u0ATC2L52yYgkIhAg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11361"; a="44627289"
-X-IronPort-AV: E=Sophos;i="6.13,327,1732608000"; 
-   d="scan'208";a="44627289"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2025 09:32:28 -0800
-X-CSE-ConnectionGUID: 079H6gmXQzGTmDibwgioIA==
-X-CSE-MsgGUID: VBAXZoG6TqSvQPH3/9PpLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="148716727"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 02 Mar 2025 09:32:27 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tonAu-000HUP-2x;
-	Sun, 02 Mar 2025 17:32:24 +0000
-Date: Mon, 3 Mar 2025 01:31:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org
-Subject: [ceph-client:tls_logger 4/5] net/ceph/ceph_san.c:46
- ceph_san_tls_release() warn: inconsistent indenting
-Message-ID: <202503030155.aCLWiEGC-lkp@intel.com>
+	s=arc-20240116; t=1741013181; c=relaxed/simple;
+	bh=CSQeGS/UZUc31BUvv23G8CVIkT12nQMGyFgBEwHK2pc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y+vwFpfrXAVW+55xVJyv0KmrTH4q/DnBPkiOeSIAgdge7i5yanrtsMpaeCpqYH35ixPMwa1g0mBNPhKBqs9DilaBY6lc/9A0tI4nHgVZrGQAX7qSepKrTcqr8ADA2I3VpeFJsx9YvE9jEjH2g0mis8FKUgjqm5XTd0wLKupNEEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=lLccm+L+; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-471f88518c8so23270541cf.0
+        for <ceph-devel@vger.kernel.org>; Mon, 03 Mar 2025 06:46:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1741013179; x=1741617979; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qjaplGXAgQys6n43UvZfkCCurGUYwKZfvrBKCJx8kSQ=;
+        b=lLccm+L+C5gyQVjYsYDdL1zeNxIZuJZGkpcU6/9jM/EGmEqxoX9VEq8LeF0hguc262
+         OrZIVKmCGpEWYzV9XpeB++QZRuh7XVQ12POq2Tyc80nMnleI7zn72I1w46yYtznIxQfb
+         g0BdLTnqzhNoiDvBa4YtqzHg1bvB09UzU6OUI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741013179; x=1741617979;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qjaplGXAgQys6n43UvZfkCCurGUYwKZfvrBKCJx8kSQ=;
+        b=uVErKny8nOS5wyAyHaztUwoREO93L8UnkbSozuGpxzDV3YeHMqkwrKvQ2zu6xEuIII
+         ozmEXGCNgRB61cwyJnkK3wFkETOJC7CYDq+tZ00miUC0ZDfIJM+0XMtabhGzbMoyx9Kx
+         WqJhFPvrFA04F5NjW4yBrK+an4fplh4K/pfe9Hk6Tz3GkNSJ+TpacN1oCgJy+byJAiLa
+         qfCnNL2f0ADRD6Y1oUQpsj828Hx/IIm2qPeOuDGo2/UPgy/0IlVMPB68dvh28QnoNMYU
+         luDSvMbF7X4Oqu/jOi1dPjpvTn7wPYIYavrcyrHF5r/awPXomjwJsRCS+j3em88xz60i
+         E5BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWyjXLpPVl6dXVP1dhPDuTb6eK0HoeIx0FfAPy2Qlt1nTrBshw46SbOvfWunwO/6svHtLhg6CZ27BtY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMxV14OgrnoWxqnteFrb5InyXXLIUazg3rvDK3mNG0D/ZlMrhF
+	aKTwsdRCDb3j7oLSX4Te4JKd4lpT/jJq1am1ihepMLBfOv+GaoqtXYxnMBF/cqChNHG56F2VmRB
+	xJ1HTtJADO3murWql65Oq/UxUWMzGE4SfPBKI5Q==
+X-Gm-Gg: ASbGnctlV6rnz3FO9y6fRQn9ulvBHhdA1bQGwBDXjn/+r61YxesUnjr1ZrzuG431ONp
+	j4K0CTHL1ygbeqUG7SdQ1IcJso2hSVRsNWRaG3Hy/Qc0u2aWJhxjAqTvwlHI7XzeCweeVvjzIOg
+	ncuZdwPEWFCblwcgTWkj3GIEc2Xtc=
+X-Google-Smtp-Source: AGHT+IEc70lGyxC8HHKIoOrpie2Jx8XsivN2M9IFYtspzolVa0r9jSj5J487Smay6+rDx9jahhDHL5KyYqxP+yy2+fA=
+X-Received: by 2002:ac8:5806:0:b0:474:f484:1b4b with SMTP id
+ d75a77b69052e-474f4841d3emr20114471cf.23.1741013178811; Mon, 03 Mar 2025
+ 06:46:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250227013949.536172-1-neilb@suse.de> <20250227013949.536172-5-neilb@suse.de>
+In-Reply-To: <20250227013949.536172-5-neilb@suse.de>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 3 Mar 2025 15:46:06 +0100
+X-Gm-Features: AQ5f1JoUFcZgsP72xjJitgL04_WZu20xfL4s-mJeajhIk4Eeu4PYIyUzi4H_ijM
+Message-ID: <CAJfpegtu1xs-FifNfc2VpQuhBjbniTqUcE+H=uNpdYW=cOSGkw@mail.gmail.com>
+Subject: Re: [PATCH 4/6] fuse: return correct dentry for ->mkdir
+To: NeilBrown <neilb@suse.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, linux-nfs@vger.kernel.org, 
+	Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
+	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://github.com/ceph/ceph-client.git tls_logger
-head:   b980c3ea5fcc54aa543fd5e96212b7fb892d42a5
-commit: 284eb81c9d23609f54d9e015ce2c40076e8d8a87 [4/5] TLS logger
-config: sparc-randconfig-r071-20250302 (https://download.01.org/0day-ci/archive/20250303/202503030155.aCLWiEGC-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 14.2.0
+On Thu, 27 Feb 2025 at 02:40, NeilBrown <neilb@suse.de> wrote:
+>
+> fuse already uses d_splice_alias() to ensure an appropriate dentry is
+> found for a newly created dentry.  Now that ->mkdir can return that
+> dentry we do so.
+>
+> This requires changing create_new_entry() to return a dentry and
+> handling that change in all callers.
+>
+> Note that when create_new_entry() is asked to create anything other than
+> a directory we can be sure it will NOT return an alternate dentry as
+> d_splice_alias() only returns an alternate dentry for directories.
+> So we don't need to check for that case when passing one the result.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503030155.aCLWiEGC-lkp@intel.com/
+Still, I'd create a wrapper for non-dir callers with the above comment.
 
-New smatch warnings:
-net/ceph/ceph_san.c:46 ceph_san_tls_release() warn: inconsistent indenting
-net/ceph/ceph_san.c:71 get_cephsan_context() warn: inconsistent indenting
-net/ceph/ceph_san.c:120 log_cephsan_tls() warn: inconsistent indenting
-net/ceph/ceph_san.c:393 cephsan_pagefrag_deinit() warn: inconsistent indenting
+As is, it's pretty confusing to deal with a "dentry", which is
+apparently "leaked" (no dput) but in reality it's just err or NULL.
 
-Old smatch warnings:
-net/ceph/ceph_san.c:56 ceph_san_tls_release() warn: inconsistent indenting
-net/ceph/ceph_san.c:123 log_cephsan_tls() warn: inconsistent indenting
-
-vim +46 net/ceph/ceph_san.c
-
-    26	
-    27	static inline void *cephsan_pagefrag_get_ptr(struct cephsan_pagefrag *pf, u64 val);
-    28	/* The definitions for struct ceph_san_log_entry and struct ceph_san_tls_logger
-    29	 * have been moved to cephsan.h (under CONFIG_DEBUG_FS) to avoid duplication.
-    30	 */
-    31	
-    32	
-    33	/* Release function for TLS storage */
-    34	static void ceph_san_tls_release(void *ptr)
-    35	{
-    36	    struct tls_ceph_san_context *context = ptr;
-    37	    if (!context)
-    38	        return;
-    39	
-    40	    /* Remove from global list with lock protection */
-    41	    spin_lock(&g_ceph_san_contexts_lock);
-    42	    list_del(&context->list);
-    43	    spin_unlock(&g_ceph_san_contexts_lock);
-    44	
-    45	    /* Free all log entries */
-  > 46	        int head_idx = context->logger.head_idx & (CEPH_SAN_MAX_LOGS - 1);
-    47	        int tail_idx = (head_idx + 1) & (CEPH_SAN_MAX_LOGS - 1);
-    48	
-    49	    for (int i = tail_idx; (i & (CEPH_SAN_MAX_LOGS - 1)) != head_idx; i++) {
-    50	        struct ceph_san_log_entry_tls *entry = &context->logger.logs[i & (CEPH_SAN_MAX_LOGS - 1)];
-    51	        if (entry->buf) {
-    52	            if (entry->ts & 0x1)
-    53	                    kmem_cache_free(ceph_san_log_256_cache, entry->buf);
-    54				else
-    55	                    kmem_cache_free(ceph_san_log_128_cache, entry->buf);
-    56				entry->buf = NULL;
-    57			}
-    58		}
-    59	
-    60	    kmem_cache_free(ceph_san_tls_logger_cache, context);
-    61	}
-    62	
-    63	static struct tls_ceph_san_context *get_cephsan_context(void) {
-    64	    struct tls_ceph_san_context *context;
-    65	
-    66	    context = current->tls.state;
-    67	    if (context)
-    68	        return context;
-    69	
-    70	    context = kmem_cache_alloc(ceph_san_tls_logger_cache, GFP_KERNEL);
-  > 71		if (!context)
-    72			return NULL;
-    73	
-    74		context->logger.pid = current->pid;
-    75		memcpy(context->logger.comm, current->comm, TASK_COMM_LEN);
-    76	
-    77	     /* Initialize list entry */
-    78	    INIT_LIST_HEAD(&context->list);
-    79	
-    80	    /* Add to global list with lock protection */
-    81	    spin_lock(&g_ceph_san_contexts_lock);
-    82	    list_add(&context->list, &g_ceph_san_contexts);
-    83	    spin_unlock(&g_ceph_san_contexts_lock);
-    84	
-    85	    current->tls.state = context;
-    86	    current->tls.release = ceph_san_tls_release;
-    87	    return context;
-    88	}
-    89	
-    90	void log_cephsan_tls(char *buf) {
-    91	    /* Use the task's TLS storage */
-    92	    int len = strlen(buf);
-    93	    struct tls_ceph_san_context *ctx;
-    94	    struct ceph_san_tls_logger *logger;
-    95	    char *new_buf;
-    96	
-    97	    ctx = get_cephsan_context();
-    98	    if (!ctx)
-    99	        return;
-   100	
-   101	    logger = &ctx->logger;
-   102	
-   103	    /* Log the message */
-   104	    int head_idx = logger->head_idx + 1 & (CEPH_SAN_MAX_LOGS - 1);
-   105	    struct ceph_san_log_entry_tls *entry = &logger->logs[head_idx];
-   106	
-   107	    /* Only free and reallocate if sizes differ */
-   108	    if (!entry->buf || (entry->ts & 0x1) != (len > LOG_BUF_SMALL)) {
-   109	        if (entry->buf) {
-   110	            if (entry->ts & 0x1)
-   111	                kmem_cache_free(ceph_san_log_256_cache, entry->buf);
-   112	            else
-   113	                kmem_cache_free(ceph_san_log_128_cache, entry->buf);
-   114	            entry->buf = NULL;
-   115	        }
-   116	
-   117	        /* Allocate new buffer from appropriate cache */
-   118	        if (len <= LOG_BUF_SMALL) {
-   119	            new_buf = kmem_cache_alloc(ceph_san_log_128_cache, GFP_KERNEL);
- > 120				entry->ts = jiffies | 0x0;
-   121	        } else {
-   122	            new_buf = kmem_cache_alloc(ceph_san_log_256_cache, GFP_KERNEL);
-   123				entry->ts = jiffies | 0x1;
-   124	        }
-   125	    } else {
-   126	        /* Reuse existing buffer since size category hasn't changed */
-   127	        new_buf = entry->buf;
-   128	    }
-   129	
-   130	    if (!new_buf)
-   131	        return;
-   132	
-   133	    buf[len-1] = '\0';
-   134	    entry->buf = new_buf;
-   135	    memcpy(entry->buf, buf, len);
-   136	
-   137	    logger->head_idx = head_idx;
-   138	}
-   139	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Miklos
 
