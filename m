@@ -1,179 +1,100 @@
-Return-Path: <ceph-devel+bounces-2854-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2855-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BD3A4DDDD
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Mar 2025 13:26:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04858A4E691
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Mar 2025 17:46:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E808E189331C
-	for <lists+ceph-devel@lfdr.de>; Tue,  4 Mar 2025 12:26:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99BA08C31F9
+	for <lists+ceph-devel@lfdr.de>; Tue,  4 Mar 2025 16:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE482202984;
-	Tue,  4 Mar 2025 12:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877E6278171;
+	Tue,  4 Mar 2025 15:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FgyfwJXU"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sTQjuy6Y"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E374978F4C
-	for <ceph-devel@vger.kernel.org>; Tue,  4 Mar 2025 12:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC140278167;
+	Tue,  4 Mar 2025 15:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741091168; cv=none; b=TjANucnMcFZWzoQPT7/CM1th5xlbL9L+9OJQkSPITHKtMel/gTHUTFmRN7Yw1PSEXuYixnDZSrzqeOZczBt8m9cPIATRtfzDpcp/vwnnNp92Xd/uGzK27XSuNUg0AcMS6IW4nvEFZyOomwtS5YcAHGiakHlvbaTa00u8hcww4iA=
+	t=1741103307; cv=none; b=rYqNf2nobNTv+59KPhPwkP3W0f16NZHdqs9pGL1q4wDQGBIDxI7zYEVUYPAod7ckWAvLJbmFrO3THiZxSx+oV2o3ABGzVGyhC8F43hJwScnsA4dASyNGCWItXY6IbQT2NamdLCqmNGEED0vGADPHDOjCPddugrZlKODGf4yMbzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741091168; c=relaxed/simple;
-	bh=kYDNojtzVeBYeFX0FSbALMVfxUpg3XcCa74ud00h96U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jJLvJLTXVsmsE7yiNRjz5BMfCjq7y9x0rdelc3at5bEAiqPkRFxfkLX+DioUI3sIu+hAgYI19Hi2f6rs1qOE35OIN4I9wTKarutROc2WWSb6F3STopb+pTRRqOAItgs8S+wi0QiY2NBIyEW5JrEXKQNSwH3SgmCkIHCLRiuDYPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FgyfwJXU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741091165;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RpfTIYjR2fqGjFf5dQ50RUFTC3qMvYpGsNXcO8SeSqs=;
-	b=FgyfwJXUC9KcM2OxEYAZFtICw7h4dt116pu74cW88oLweiDje6jMCCjF05XbjUkzOPCr+4
-	xlLTqFBrEPQal5ouJSiNu/3zjuFn87j2PcMB+U1F0D/h4z7Nd5KRun4MPQr7aCi6OnjFfp
-	fgEA9ZZZRCJDIrb2P0EqSoz3cxTtdRg=
-Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com
- [209.85.221.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-145-vk4osMjSOr63wD417yWsRg-1; Tue, 04 Mar 2025 07:26:04 -0500
-X-MC-Unique: vk4osMjSOr63wD417yWsRg-1
-X-Mimecast-MFC-AGG-ID: vk4osMjSOr63wD417yWsRg_1741091164
-Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-523b9e72fb5so583999e0c.3
-        for <ceph-devel@vger.kernel.org>; Tue, 04 Mar 2025 04:26:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741091164; x=1741695964;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RpfTIYjR2fqGjFf5dQ50RUFTC3qMvYpGsNXcO8SeSqs=;
-        b=UGX8RKK55Tn+amlvEouUhcanrVFnyMyr1JE4hOoQkU4S/zh8pLlcphkAMc9zPp5Mzd
-         V0ytmrHvyNqR/CRHPY8eYCQGac6CoG1vfly6sYAFu1Omaw5HfD10oz7EUzBOFX1Cx/qg
-         sf6F8e8vpgVm3Ru8zEblt5RXbmtqXpzaJu9UezTjiKjSD+5dEpShmcyrqSPI06HCVyKK
-         sm4RlNCOo5cHiklOO1Db0BGqVx+IylTm/rgPhw4onLaFORMYm08Nk6x/z+iV3/RR8mQ+
-         q31yKD8G7fyLpFpEOnQgksjkB45f52cckQCJ6ftpceOIF/TgVQ8RGUftkojjXlerszhM
-         KPLw==
-X-Gm-Message-State: AOJu0Yy8xKoQx7UHhlRZAbNnOSL1RnSFMZM49Chk5XLsQvOTbhr9QOXC
-	JXHjHtHWcTOjFWuZ5tlhDel4VHpv57k/UEa1DfAOoqLMz6P/7+k3BRShJCOLuA8Br791ustO8ip
-	kyJ+XPCTTxbvxudcFBKpR6Me9WRLsYa3yQ08Zh8jhgXtlHmESRmCx4WWq/y8Tu4h6NYn4Ch2v3Z
-	vIvBCB/WRh7/gUyJkgQW46qp+VoIf5irC5XA==
-X-Gm-Gg: ASbGnct0BwMGJtQsk6Q6Bo+dK4fYM0DVYB8l2Gpbxd+mtci4LL04RHaThF8l7QYDatI
-	voeijvenxzt4ePJ3PJJviVEUUcg+B6j76UkLaCdFtrkfsdBooBIKPIwikg6hWSjtCsDxsrnTC
-X-Received: by 2002:a05:6122:8cb:b0:520:61ee:c7f9 with SMTP id 71dfb90a1353d-5235b8bdff9mr11040226e0c.7.1741091164175;
-        Tue, 04 Mar 2025 04:26:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEDx6gb5PkgjLLCOLIzl90WqunTEE7EQsEwOsTsqYJiseyYhhjqfEqGPQUG/CKHdvbnbwPqBu6zfbyu6w6fgJ8=
-X-Received: by 2002:a05:6122:8cb:b0:520:61ee:c7f9 with SMTP id
- 71dfb90a1353d-5235b8bdff9mr11040213e0c.7.1741091163468; Tue, 04 Mar 2025
- 04:26:03 -0800 (PST)
+	s=arc-20240116; t=1741103307; c=relaxed/simple;
+	bh=1DdOz3KEhsMs3Dr0+9/DkNpFMUaE0gQzUnXsIOdvhAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u6+GUv2T/9pO3WJ7pFxSW/wjNXq805n+Rf9TAyUw7CEEEBd7fHFfzkQlIZ3pvwYcwbi7WrM4klZBfQNhWKFi+xU7cbiMbshg9ISYkfiwcbf/ns7l5LjxrT24PEbk+6P6h6zmsscCW36FPNpgv8Ak5XrRnXrLoy8+XJl+WUn5OQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sTQjuy6Y; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=zOrlIceVWWSS603ADg2BUPx7j6TlefnAA/TeC7h1QEs=; b=sTQjuy6YA0NPe5jlzg5HickG58
+	fgj6dLc9DN53z3U/dqVY5PiAMAPvRoW9L1pTrAkKj25ZJPtvK23GstVapnWK7COFi9iynxfG8WkWy
+	GGNYvTwpWzokVkvYK+JOaO7s+b/KRffXl8lXXqdVeNX3X1g5dMgtNorpjsSIxFl3P+BS6ykI9OWfK
+	JdnkJkSu8pElazIxQ2Wnm/WliPkYBhW4Bk4DX7MdIJlwApZS4tmh4BUV90jqekXxxOh8gSZI0mgKD
+	SCjYlGODWFtozg5t4A9zIUKbGwzVVHTuJVJ/+7pqxYCO0q41d/yGJonZrUGxNQ9foORsZm2UHho0L
+	zDGz0+Cw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tpUVK-000000013Es-1XRM;
+	Tue, 04 Mar 2025 15:48:22 +0000
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-fsdevel@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Subject: [PATCH] ceph: Fix error handling in fill_readdir_cache()
+Date: Tue,  4 Mar 2025 15:48:16 +0000
+Message-ID: <20250304154818.250757-1-willy@infradead.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210230158.178252-1-slava@dubeyko.com>
-In-Reply-To: <20250210230158.178252-1-slava@dubeyko.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Tue, 4 Mar 2025 14:25:52 +0200
-X-Gm-Features: AQ5f1JrKEQat7dUiIiUY01cOWoVYIvjvvDzSNqKlBBDzj9AmH1rjDWwazh-wGvQ
-Message-ID: <CAO8a2SgEcLQyd0w3Rg3AOyZMN0nsFc7r78AWAxr9i9nvwZUnWw@mail.gmail.com>
-Subject: Re: [PATCH] ceph: cleanup hardcoded constants of file handle size
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
-	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Reviewed-by: Alex Markuze <amarkuze@redhat.com>
+__filemap_get_folio() returns an ERR_PTR, not NULL.  There are extensive
+assumptions that ctl->folio is NULL, not an error pointer, so it seems
+better to fix this one place rather than change all the places which
+check ctl->folio.
 
-On Tue, Feb 11, 2025 at 1:02=E2=80=AFAM Viacheslav Dubeyko <slava@dubeyko.c=
-om> wrote:
->
-> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
->
-> The ceph/export.c contains very confusing logic of
-> file handle size calculation based on hardcoded values.
-> This patch makes the cleanup of this logic by means of
-> introduction the named constants.
->
-> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> ---
->  fs/ceph/export.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
->
-> diff --git a/fs/ceph/export.c b/fs/ceph/export.c
-> index 150076ced937..b2f2af104679 100644
-> --- a/fs/ceph/export.c
-> +++ b/fs/ceph/export.c
-> @@ -33,12 +33,19 @@ struct ceph_nfs_snapfh {
->         u32 hash;
->  } __attribute__ ((packed));
->
-> +#define BYTES_PER_U32          (sizeof(u32))
-> +#define CEPH_FH_BASIC_SIZE \
-> +       (sizeof(struct ceph_nfs_fh) / BYTES_PER_U32)
-> +#define CEPH_FH_WITH_PARENT_SIZE \
-> +       (sizeof(struct ceph_nfs_confh) / BYTES_PER_U32)
-> +#define CEPH_FH_SNAPPED_INODE_SIZE \
-> +       (sizeof(struct ceph_nfs_snapfh) / BYTES_PER_U32)
-> +
->  static int ceph_encode_snapfh(struct inode *inode, u32 *rawfh, int *max_=
-len,
->                               struct inode *parent_inode)
->  {
->         struct ceph_client *cl =3D ceph_inode_to_client(inode);
-> -       static const int snap_handle_length =3D
-> -               sizeof(struct ceph_nfs_snapfh) >> 2;
-> +       static const int snap_handle_length =3D CEPH_FH_SNAPPED_INODE_SIZ=
-E;
->         struct ceph_nfs_snapfh *sfh =3D (void *)rawfh;
->         u64 snapid =3D ceph_snap(inode);
->         int ret;
-> @@ -88,10 +95,8 @@ static int ceph_encode_fh(struct inode *inode, u32 *ra=
-wfh, int *max_len,
->                           struct inode *parent_inode)
->  {
->         struct ceph_client *cl =3D ceph_inode_to_client(inode);
-> -       static const int handle_length =3D
-> -               sizeof(struct ceph_nfs_fh) >> 2;
-> -       static const int connected_handle_length =3D
-> -               sizeof(struct ceph_nfs_confh) >> 2;
-> +       static const int handle_length =3D CEPH_FH_BASIC_SIZE;
-> +       static const int connected_handle_length =3D CEPH_FH_WITH_PARENT_=
-SIZE;
->         int type;
->
->         if (ceph_snap(inode) !=3D CEPH_NOSNAP)
-> @@ -308,7 +313,7 @@ static struct dentry *ceph_fh_to_dentry(struct super_=
-block *sb,
->         if (fh_type !=3D FILEID_INO32_GEN  &&
->             fh_type !=3D FILEID_INO32_GEN_PARENT)
->                 return NULL;
-> -       if (fh_len < sizeof(*fh) / 4)
-> +       if (fh_len < sizeof(*fh) / BYTES_PER_U32)
->                 return NULL;
->
->         doutc(fsc->client, "%llx\n", fh->ino);
-> @@ -427,7 +432,7 @@ static struct dentry *ceph_fh_to_parent(struct super_=
-block *sb,
->
->         if (fh_type !=3D FILEID_INO32_GEN_PARENT)
->                 return NULL;
-> -       if (fh_len < sizeof(*cfh) / 4)
-> +       if (fh_len < sizeof(*cfh) / BYTES_PER_U32)
->                 return NULL;
->
->         doutc(fsc->client, "%llx\n", cfh->parent_ino);
-> --
-> 2.48.0
->
+Fixes: baff9740bc8f ("ceph: Convert ceph_readdir_cache_control to store a folio")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+---
+ fs/ceph/inode.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index c15970fa240f..6ac2bd555e86 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1870,9 +1870,12 @@ static int fill_readdir_cache(struct inode *dir, struct dentry *dn,
+ 
+ 		ctl->folio = __filemap_get_folio(&dir->i_data, pgoff,
+ 				fgf, mapping_gfp_mask(&dir->i_data));
+-		if (!ctl->folio) {
++		if (IS_ERR(ctl->folio)) {
++			int err = PTR_ERR(ctl->folio);
++
++			ctl->folio = NULL;
+ 			ctl->index = -1;
+-			return idx == 0 ? -ENOMEM : 0;
++			return idx == 0 ? err : 0;
+ 		}
+ 		/* reading/filling the cache are serialized by
+ 		 * i_rwsem, no need to use folio lock */
+-- 
+2.47.2
 
 
