@@ -1,101 +1,128 @@
-Return-Path: <ceph-devel+bounces-2866-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2867-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F2BCA50C6A
-	for <lists+ceph-devel@lfdr.de>; Wed,  5 Mar 2025 21:23:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F16FA54BEB
+	for <lists+ceph-devel@lfdr.de>; Thu,  6 Mar 2025 14:20:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86CB21719FD
-	for <lists+ceph-devel@lfdr.de>; Wed,  5 Mar 2025 20:23:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BA3B3A363B
+	for <lists+ceph-devel@lfdr.de>; Thu,  6 Mar 2025 13:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41CB2459FC;
-	Wed,  5 Mar 2025 20:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9577D20E00B;
+	Thu,  6 Mar 2025 13:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jWQ0Iow0"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zk3qtcQB"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABC7254AEC
-	for <ceph-devel@vger.kernel.org>; Wed,  5 Mar 2025 20:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC4F204C28
+	for <ceph-devel@vger.kernel.org>; Thu,  6 Mar 2025 13:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741206171; cv=none; b=tbg0Yfh5KUrWB/Bz7clyVqyKNQVUpHAU2lWVfe4UjjiTRsZd512oR4Ce9+OfbYDIGeLMHDtqXmtNBH5ugqqsuSFw+UEHaPij6wROA4T2f5pnt6y/wNbuBfN1igrq85MugaDyBYl3dw7FTUi/MleqYq1TQ4G5E3C/MvWbP8BHJSg=
+	t=1741267179; cv=none; b=pOq4oKfMK4cHdNTVLmejW+Nhwaem7GHyWDuvgILX1nLwPScrc00BiJlnFQbDOtSBV/pghitEQb3nyg9iwmFWPHy4AJQ+kTgIs+Wzpzl2TpXFayJY5jlwIM8tF39fNty4pe1/N5dG/sTIN5F2OxxNBS6Kd0qAQciDMKTJq+shgig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741206171; c=relaxed/simple;
-	bh=qNPO4hyQMmjaunQVLRgcSEf+SPUNHvyhOBDgrhBH8es=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=dGwZVWU1HMfPNLCiF7gcoeFk4g38y6AvpSk2MEYLn6Xm1pk6dkv2gCXO2WlqyHgDv1odbt7YpmJu4vtLu6AkiaIWEgnm4TTam2j+8IA213JuP4/j2Kw/YxRny0nIXLoH0lKlEdyspW2iXrqlub5ha+48UPW/W/YYnVezc2M673g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jWQ0Iow0; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1741267179; c=relaxed/simple;
+	bh=/UmRarJMMJ5YwDkxVjdSIsPu4GtiRgK/KoqehN6cnEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UrAIlNlIOQqJnoLmzsMn7k3D8NOJOToFbepQJttfepcUydQMWEnXNh8PGl7JCujLUGkGWjjjrxlXN8FS+j+iJKUaol/4lF/O+70yVw2TFpcGOJS0A+ZTB6WpDMODprnzaH/1z8y0XNhE99fWVvf5vnYfKxXGqsnKuMh60Q4u4vA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zk3qtcQB; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741206169;
+	s=mimecast20190719; t=1741267176;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2ibRmp/JHXOv49f/n9ru2NwNSIc5HZ94H+M9mUxQIns=;
-	b=jWQ0Iow0s6dRKsYzyKw3mTfivuO2uZOIlFcIxfuW/ILMGbU0/G34mgLDRLZhS1aImF85C8
-	TuRWoSf4Ml074BflfZr7cb0fprZD5JwqYKrrWI8S/RkblqghqcyQzElZW+AugDce82baDG
-	4RSXfecu22JIK53L3kKGlZnO1/3rlQo=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-170-b_PK09FnN66rT4AdGjPT2w-1; Wed,
- 05 Mar 2025 15:22:44 -0500
-X-MC-Unique: b_PK09FnN66rT4AdGjPT2w-1
-X-Mimecast-MFC-AGG-ID: b_PK09FnN66rT4AdGjPT2w_1741206163
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A89F718001D7;
-	Wed,  5 Mar 2025 20:22:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EB8621800373;
-	Wed,  5 Mar 2025 20:22:39 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAO8a2Sg2b2nW6S3ctS+H0F1Owt=rAkKCyjnFW3WoRSKYD-sSDQ@mail.gmail.com>
-References: <CAO8a2Sg2b2nW6S3ctS+H0F1Owt=rAkKCyjnFW3WoRSKYD-sSDQ@mail.gmail.com> <3989572.1734546794@warthog.procyon.org.uk> <4170997.1741192445@warthog.procyon.org.uk>
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: dhowells@redhat.com, Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-    Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>,
-    Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    Gregory Farnum <gfarnum@redhat.com>,
-    Venky Shankar <vshankar@redhat.com>,
-    Patrick Donnelly <pdonnell@redhat.com>
-Subject: Re: Is EOLDSNAPC actually generated? -- Re: Ceph and Netfslib
+	bh=/UmRarJMMJ5YwDkxVjdSIsPu4GtiRgK/KoqehN6cnEI=;
+	b=Zk3qtcQBSkCWbf+/QfpeN6LocNul3tXuSS8V8qDgKC+iA9rI9Dl2l1NUhjw3qwK0Ju+gwb
+	eN/CXE7ZbSUene0iIntedBgXAEfu7wgLSnkXoeZop2RwnBM5ITGcoLjeZ5bljySvMMVwVV
+	3Emh7f1UCdxLT7pgthVCh8OAkyxgnHo=
+Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com
+ [209.85.221.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-269-uKXUfrSXPNOPH3moUp6LXQ-1; Thu, 06 Mar 2025 08:19:35 -0500
+X-MC-Unique: uKXUfrSXPNOPH3moUp6LXQ-1
+X-Mimecast-MFC-AGG-ID: uKXUfrSXPNOPH3moUp6LXQ_1741267175
+Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-523a02ace1bso884950e0c.0
+        for <ceph-devel@vger.kernel.org>; Thu, 06 Mar 2025 05:19:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741267175; x=1741871975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/UmRarJMMJ5YwDkxVjdSIsPu4GtiRgK/KoqehN6cnEI=;
+        b=H09X6bBmcLs1URkpPxsFhav/2YV7rOrG0j7asWtDnNCDvLW5wdzsQeZf/Knr3FWhqb
+         DpBDWsVcY8EkRQWX3UeGUBRsXlEDjFS9r9IPH/Q0offpGD/YHgZ2Q67v8+GBIeDzXeju
+         3G7rxGSNTVDrgcoR30vVXQz+eBMZWkIaN0ViPmS1dqGAl5Jk7avPldUSxnQKkvWk5bY5
+         2tyJbPH/giLMjO7e99APycNvKkQJBkug5qb2KnN7Na7r4ggmdIPAZC1zoUsXICHbtMAC
+         aHvuVmWzNfpxaFGeT9pGHTiyM7I0nJCCMAavZPKSOczNWIT7bz5LeBfV9yGxtoM5iOXF
+         /kxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCtlwKu0lhdhaKT34Qr/VFdnFmSKAbIc/wMygQ9akwZliPBEy6b4wU0BOMpYfIfHYU4VRgfva0S7Av@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLRsBmdcP8/OXQ5TiF4m2T3QfIcoU0eZ3ef/ajQhY+905K0MTh
+	3iCFb5lG+eEbcpw97lr/REJCTJczgXuwgcrPJsawl7e/jfDOJpEy+Xb2qJTcy7tCzHrMuTmNVmR
+	qBXMLH3gLp4SUCnd7qPX/zLbg2VcF7gx1CMGC43iaHPYl4wIAVXNyksRPLkpQESdgoG5R1DWwpF
+	nEGxzQnJIxk/1Kit/rmSDOyw1FqtHThYNqjHPHS4lo5UiQ
+X-Gm-Gg: ASbGncuVp6F6H1D5qFOQC/+1vVg7OhYpZhPL1m85VcmyMOzTsLQwh583/cFrm68WqH0
+	IN60EODu0LbBo6WzKVKHVg4mykZ5O95wKtqMSE5BfcfgH9mKFJTkJvbFBT/aK1aB0Z3HLzTdg
+X-Received: by 2002:a05:6122:2011:b0:520:5e9b:49b3 with SMTP id 71dfb90a1353d-523c614d999mr4605207e0c.3.1741267174868;
+        Thu, 06 Mar 2025 05:19:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEHLEtL0W98X3g+hM+4bHJAgb1OIWKIGaTCaPzhCsDaa/IpOXbx0OwPWffGYSed4LbV0sDemUiBGgJXdVEG/3w=
+X-Received: by 2002:a05:6122:2011:b0:520:5e9b:49b3 with SMTP id
+ 71dfb90a1353d-523c614d999mr4605187e0c.3.1741267174635; Thu, 06 Mar 2025
+ 05:19:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4177846.1741206158.1@warthog.procyon.org.uk>
-Date: Wed, 05 Mar 2025 20:22:38 +0000
-Message-ID: <4177847.1741206158@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <3989572.1734546794@warthog.procyon.org.uk> <4170997.1741192445@warthog.procyon.org.uk>
+ <CAO8a2Sg2b2nW6S3ctS+H0F1Owt=rAkKCyjnFW3WoRSKYD-sSDQ@mail.gmail.com> <4177847.1741206158@warthog.procyon.org.uk>
+In-Reply-To: <4177847.1741206158@warthog.procyon.org.uk>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Thu, 6 Mar 2025 15:19:22 +0200
+X-Gm-Features: AQ5f1Jo-1L5xeXHFhQa3Tt-48u5cZdpLKv9zx26z8y6mEFdAUXn0xGXyLS1FSA4
+Message-ID: <CAO8a2SjC7EVW5VWCwVHMepXfYFtv9EqQhOuqDSLt9iuYzj7qEg@mail.gmail.com>
+Subject: Re: Is EOLDSNAPC actually generated? -- Re: Ceph and Netfslib
+To: David Howells <dhowells@redhat.com>
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, Ilya Dryomov <idryomov@gmail.com>, 
+	Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org, 
+	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	Gregory Farnum <gfarnum@redhat.com>, Venky Shankar <vshankar@redhat.com>, 
+	Patrick Donnelly <pdonnell@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Alex Markuze <amarkuze@redhat.com> wrote:
+Yes, that won't work on sparc/parsic/alpha and mips.
+Both the Block device server and the meta data server may return a
+code 85 to a client's request.
+Notice in this example that the rc value is taken from the request
+struct which in turn was serialised from the network.
 
-> That's a good point, though there is no code on the client that can
-> generate this error, I'm not convinced that this error can't be
-> received from the OSD or the MDS. I would rather some MDS experts
-> chime in, before taking any drastic measures.
-> 
-> + Greg, Venky, Patrik
+static void ceph_aio_complete_req(struct ceph_osd_request *req)
+{
+int rc =3D req->r_result;
 
-Note that the value of EOLDSNAPC is different on different arches, so it
-probably can't be simply cast from a network integer.
-
-David
+On Wed, Mar 5, 2025 at 10:22=E2=80=AFPM David Howells <dhowells@redhat.com>=
+ wrote:
+>
+> Alex Markuze <amarkuze@redhat.com> wrote:
+>
+> > That's a good point, though there is no code on the client that can
+> > generate this error, I'm not convinced that this error can't be
+> > received from the OSD or the MDS. I would rather some MDS experts
+> > chime in, before taking any drastic measures.
+> >
+> > + Greg, Venky, Patrik
+>
+> Note that the value of EOLDSNAPC is different on different arches, so it
+> probably can't be simply cast from a network integer.
+>
+> David
+>
 
 
