@@ -1,109 +1,228 @@
-Return-Path: <ceph-devel+bounces-2876-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2877-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BEF5A596E9
-	for <lists+ceph-devel@lfdr.de>; Mon, 10 Mar 2025 15:01:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F26A59C83
+	for <lists+ceph-devel@lfdr.de>; Mon, 10 Mar 2025 18:12:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A1283AA299
-	for <lists+ceph-devel@lfdr.de>; Mon, 10 Mar 2025 14:01:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 767983A911D
+	for <lists+ceph-devel@lfdr.de>; Mon, 10 Mar 2025 17:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA8322C325;
-	Mon, 10 Mar 2025 14:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42945231A57;
+	Mon, 10 Mar 2025 17:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SMBotOoi"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aKxrglvh"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A4A22B8C3
-	for <ceph-devel@vger.kernel.org>; Mon, 10 Mar 2025 14:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41381231A3F
+	for <ceph-devel@vger.kernel.org>; Mon, 10 Mar 2025 17:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741615247; cv=none; b=mP9BvvcrNsy3lgj1Lsip6oF2TZ4+F+iqOiujQhj/+qBWG8jti/PAqjkRaVVh80HP/MGn0lS+iWLWxOHAWuJbgevp6zC32lVFXbOA+/Xl5PIgcGFmRNOzLy5mZZKMNPXc52QbKSJFuXWL3ph4MVKsW3kVmkh7MTlwW/QgXowlxac=
+	t=1741626667; cv=none; b=hixeAjESgYHtmdWUHx1zqrqbzwaQb4vGTgxTdcwLpcDf3jFG5I8Ef/faLa2aJ/QDsiUeb5652Cfz/lt+MHVbVJAfx6RZBQ/MszURBTw78lEQUy0zCrasxTA59T6Rrzf3GrMlsK5j0OAsdR8TKF1QPacAvJ4rb3Yl3E5H0rCWEAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741615247; c=relaxed/simple;
-	bh=7pN5a36PdMZWwRnB1EFOzJ2DjXF1TQyqQPKJFRNyJf0=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=dZst8wDEGMGSpGsBT48COOa1eNI06psHw8Rzu76/2pM6Y8/uCewQS3+6jKr2vTYTPmIrb7poZN8156yj4v5HfAIqJR4mUtxgDRbXXyr03eler7DcNDBXdWaNfW/u6yqhLeLx2ouikkEFUhTv0DKcxbHkRF7sgqsNGkXOuUisoQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SMBotOoi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741615245;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/c+igC9XeGnpuXHYAUzk9J+PiUHEadMR4DUZba3bROg=;
-	b=SMBotOoiOV+EEOwCPJNfr+Lq3nnlsw0cgihKwoDvOmBXO112KWLJ362DVC9dFQyG5d14n9
-	9kZOaJHJstEXqJ2JPmM+3u4QkBR/T3pvMts1BZaMS0HLj4x/JkfAaLPr+IfcsUJsyqJ4Hn
-	Fy2J8Pr/hmcqvTmod5lrNBsV4U6HRtk=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-456-XDB2LGcpN8202Dm2B8rLBQ-1; Mon,
- 10 Mar 2025 10:00:41 -0400
-X-MC-Unique: XDB2LGcpN8202Dm2B8rLBQ-1
-X-Mimecast-MFC-AGG-ID: XDB2LGcpN8202Dm2B8rLBQ_1741615240
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7B93C18001F3;
-	Mon, 10 Mar 2025 14:00:40 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 05A0119560AB;
-	Mon, 10 Mar 2025 14:00:37 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250305194437.59309-1-slava@dubeyko.com>
-References: <20250305194437.59309-1-slava@dubeyko.com>
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: dhowells@redhat.com, ceph-devel@vger.kernel.org, amarkuze@redhat.com,
-    idryomov@gmail.com, linux-fsdevel@vger.kernel.org,
-    pdonnell@redhat.com, Slava.Dubeyko@ibm.com
-Subject: Re: [PATCH v4] ceph: fix slab-use-after-free in have_mon_and_osd_map()
+	s=arc-20240116; t=1741626667; c=relaxed/simple;
+	bh=np1RlJ0dj67ubCzPw+iTKg8/NU4oqPdl/P2mryoWguk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cC8AqwG2ZALn3wT7dTkRAmfHGZZ0Cw/dRbefa9IF1ySHwWljcRVBO47Mpg8BOpgND98gKLmjx8tP1oo7vm+ILD2/m7RpVNIwiHzdyt7VwVubsmAAJzRbHdTBbhNETHYr0crQl0u7et1tC0T1QCceYJA8ncBSE6fQqpGRsdB8heU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aKxrglvh; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741626665; x=1773162665;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=np1RlJ0dj67ubCzPw+iTKg8/NU4oqPdl/P2mryoWguk=;
+  b=aKxrglvh0bBJpvl1cOmBqytFShlh3f2legsTtW1YsxH2+15oKAQP7njw
+   in6c1NE4rUfrqYhcrsyin6KfFu0ACIboVfOsxO/0LnsUq3PHaO+b6orsv
+   HvZJKZr/T1geX12W+SNtEhr+TmwgaAZUFLmui7LfSmMjAmeGeSGATEktI
+   5rApMWqEs0yeR42EKtvYL7u4ChOW+zTVA9JsTiUD32VwR2Z0R3a1ruwb7
+   Z4S9Qreotcon3oyYGGlZSwWH6Np6xdzKeioZ2Wm7v0wpXonptPC+ydFCN
+   6A0D5cXLuAbjgK0Y5cjK+6NGMY747XISNoF0f+etxDJatUxK/Glq4LY5E
+   A==;
+X-CSE-ConnectionGUID: fV4EzRM4T4KG7N44ionuVg==
+X-CSE-MsgGUID: kajNMbkNROqL/4/1mvWK6Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11369"; a="53263936"
+X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
+   d="scan'208";a="53263936"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 10:11:04 -0700
+X-CSE-ConnectionGUID: jQut7fI5T7KyCvnxB4uQeg==
+X-CSE-MsgGUID: zt/RVzolQqegzC27Qf+A5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,236,1736841600"; 
+   d="scan'208";a="150849866"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 10 Mar 2025 10:11:03 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1trgeW-0004WB-2N;
+	Mon, 10 Mar 2025 17:10:57 +0000
+Date: Tue, 11 Mar 2025 01:10:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org
+Subject: [ceph-client:tls_logger 6/6] net/ceph/ceph_san.c:40:5: warning: this
+ 'if' clause does not guard...
+Message-ID: <202503110127.na2HCVqj-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1006062.1741615236.1@warthog.procyon.org.uk>
-Date: Mon, 10 Mar 2025 14:00:36 +0000
-Message-ID: <1006063.1741615236@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Viacheslav Dubeyko <slava@dubeyko.com> wrote:
+tree:   https://github.com/ceph/ceph-client.git tls_logger
+head:   8bb4b4a8adc916ebe57638af949152b069d7b58a
+commit: 8bb4b4a8adc916ebe57638af949152b069d7b58a [6/6] cephsan: bug fixes
+config: x86_64-rhel-9.4 (https://download.01.org/0day-ci/archive/20250311/202503110127.na2HCVqj-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250311/202503110127.na2HCVqj-lkp@intel.com/reproduce)
 
-> The generic/395 and generic/397 is capable of generating
-> the oops is on line net/ceph/ceph_common.c:794 with
-> KASAN enabled.
-> 
-> BUG: KASAN: slab-use-after-free in have_mon_and_osd_map+0x56/0x70
-> Read of size 4 at addr ffff88811012d810 by task mount.ceph/13305
-> ...
-> This patch fixes the issue by means of locking
-> client->osdc.lock and client->monc.mutex before
-> the checking client->osdc.osdmap and
-> client->monc.monmap in have_mon_and_osd_map() function.
-> Patch adds locking in the ceph_osdc_stop()
-> method during the destructruction of osdc->osdmap and
-> assigning of NULL to the pointer. The lock is used
-> in the ceph_monc_stop() during the freeing of monc->monmap
-> and assigning NULL to the pointer too. The monmap_show()
-> and osdmap_show() methods were reworked to prevent
-> the potential race condition during the methods call.
-> 
-> Reported-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503110127.na2HCVqj-lkp@intel.com/
 
-Reviewed-by: David Howells <dhowells@redhat.com>
+All warnings (new ones prefixed by >>):
 
+   In file included from include/asm-generic/bug.h:22,
+                    from arch/x86/include/asm/bug.h:99,
+                    from include/linux/bug.h:5,
+                    from include/linux/thread_info.h:13,
+                    from include/linux/spinlock.h:60,
+                    from include/linux/mmzone.h:8,
+                    from include/linux/gfp.h:7,
+                    from include/linux/slab.h:16,
+                    from net/ceph/ceph_san.c:1:
+   net/ceph/ceph_san.c: In function 'ceph_san_tls_release':
+>> include/linux/kern_levels.h:5:25: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 4 has type 'unsigned int' [-Wformat=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:473:25: note: in definition of macro 'printk_index_wrap'
+     473 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:544:9: note: in expansion of macro 'printk'
+     544 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
+      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
+         |                         ^~~~~~~~
+   include/linux/printk.h:544:16: note: in expansion of macro 'KERN_ERR'
+     544 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~
+   net/ceph/ceph_san.c:41:13: note: in expansion of macro 'pr_err'
+      41 |             pr_err("sig is wrong %p %llx != %llx", context, context->sig, CEPH_SAN_SIG);
+         |             ^~~~~~
+>> net/ceph/ceph_san.c:40:5: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+      40 |     if (context->sig != CEPH_SAN_SIG)
+         |     ^~
+   net/ceph/ceph_san.c:42:13: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+      42 |             return;
+         |             ^~~~~~
+   net/ceph/ceph_san.c: In function 'log_cephsan_tls':
+   net/ceph/ceph_san.c:112:37: warning: suggest parentheses around '+' in operand of '&' [-Wparentheses]
+     112 |     int head_idx = logger->head_idx + 1 & (CEPH_SAN_MAX_LOGS - 1);
+         |                    ~~~~~~~~~~~~~~~~~^~~
+   net/ceph/ceph_san.c: In function 'log_cephsan_percore':
+   net/ceph/ceph_san.c:155:33: warning: suggest parentheses around '+' in operand of '&' [-Wparentheses]
+     155 |     int head_idx = pc->head_idx + 1 & (CEPH_SAN_MAX_LOGS - 1);
+         |                    ~~~~~~~~~~~~~^~~
+--
+   In file included from include/asm-generic/bug.h:22,
+                    from arch/x86/include/asm/bug.h:99,
+                    from include/linux/bug.h:5,
+                    from include/linux/thread_info.h:13,
+                    from include/linux/spinlock.h:60,
+                    from include/linux/mmzone.h:8,
+                    from include/linux/gfp.h:7,
+                    from include/linux/slab.h:16,
+                    from ceph_san.c:1:
+   ceph_san.c: In function 'ceph_san_tls_release':
+>> include/linux/kern_levels.h:5:25: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 4 has type 'unsigned int' [-Wformat=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:473:25: note: in definition of macro 'printk_index_wrap'
+     473 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:544:9: note: in expansion of macro 'printk'
+     544 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
+      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
+         |                         ^~~~~~~~
+   include/linux/printk.h:544:16: note: in expansion of macro 'KERN_ERR'
+     544 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~
+   ceph_san.c:41:13: note: in expansion of macro 'pr_err'
+      41 |             pr_err("sig is wrong %p %llx != %llx", context, context->sig, CEPH_SAN_SIG);
+         |             ^~~~~~
+   ceph_san.c:40:5: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+      40 |     if (context->sig != CEPH_SAN_SIG)
+         |     ^~
+   ceph_san.c:42:13: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+      42 |             return;
+         |             ^~~~~~
+   ceph_san.c: In function 'log_cephsan_tls':
+   ceph_san.c:112:37: warning: suggest parentheses around '+' in operand of '&' [-Wparentheses]
+     112 |     int head_idx = logger->head_idx + 1 & (CEPH_SAN_MAX_LOGS - 1);
+         |                    ~~~~~~~~~~~~~~~~~^~~
+   ceph_san.c: In function 'log_cephsan_percore':
+   ceph_san.c:155:33: warning: suggest parentheses around '+' in operand of '&' [-Wparentheses]
+     155 |     int head_idx = pc->head_idx + 1 & (CEPH_SAN_MAX_LOGS - 1);
+         |                    ~~~~~~~~~~~~~^~~
+
+
+vim +/if +40 net/ceph/ceph_san.c
+
+    26	
+    27	static inline void *cephsan_pagefrag_get_ptr(struct cephsan_pagefrag *pf, u64 val);
+    28	/* The definitions for struct ceph_san_log_entry and struct ceph_san_tls_logger
+    29	 * have been moved to cephsan.h (under CONFIG_DEBUG_FS) to avoid duplication.
+    30	 */
+    31	
+    32	#define CEPH_SAN_SIG 0xDEADC0DE
+    33	/* Release function for TLS storage */
+    34	static void ceph_san_tls_release(void *ptr)
+    35	{
+    36	    struct tls_ceph_san_context *context = ptr;
+    37	    if (!context)
+    38	        return;
+    39	
+  > 40	    if (context->sig != CEPH_SAN_SIG)
+  > 41		    pr_err("sig is wrong %p %llx != %llx", context, context->sig, CEPH_SAN_SIG);
+    42		    return;
+    43	
+    44	    /* Remove from global list with lock protection */
+    45	    spin_lock(&g_ceph_san_contexts_lock);
+    46	    list_del(&context->list);
+    47	    spin_unlock(&g_ceph_san_contexts_lock);
+    48	
+    49	    /* Free all log entries */
+    50	        int head_idx = context->logger.head_idx & (CEPH_SAN_MAX_LOGS - 1);
+    51	        int tail_idx = (head_idx + 1) & (CEPH_SAN_MAX_LOGS - 1);
+    52	
+    53	    for (int i = tail_idx; (i & (CEPH_SAN_MAX_LOGS - 1)) != head_idx; i++) {
+    54	        struct ceph_san_log_entry_tls *entry = &context->logger.logs[i & (CEPH_SAN_MAX_LOGS - 1)];
+    55	        if (entry->buf) {
+    56	            if (entry->ts & 0x1)
+    57	                    kmem_cache_free(ceph_san_log_256_cache, entry->buf);
+    58				else
+    59	                    kmem_cache_free(ceph_san_log_128_cache, entry->buf);
+    60				entry->buf = NULL;
+    61			}
+    62		}
+    63	
+    64	    kmem_cache_free(ceph_san_tls_logger_cache, context);
+    65	}
+    66	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
