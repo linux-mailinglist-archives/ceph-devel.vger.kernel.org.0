@@ -1,140 +1,109 @@
-Return-Path: <ceph-devel+bounces-2875-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2876-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02486A552C3
-	for <lists+ceph-devel@lfdr.de>; Thu,  6 Mar 2025 18:19:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEF5A596E9
+	for <lists+ceph-devel@lfdr.de>; Mon, 10 Mar 2025 15:01:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2893C3A8087
-	for <lists+ceph-devel@lfdr.de>; Thu,  6 Mar 2025 17:19:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A1283AA299
+	for <lists+ceph-devel@lfdr.de>; Mon, 10 Mar 2025 14:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68EA92116F2;
-	Thu,  6 Mar 2025 17:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA8322C325;
+	Mon, 10 Mar 2025 14:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Uj9DeytJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SMBotOoi"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659981DE4EC
-	for <ceph-devel@vger.kernel.org>; Thu,  6 Mar 2025 17:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A4A22B8C3
+	for <ceph-devel@vger.kernel.org>; Mon, 10 Mar 2025 14:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741281547; cv=none; b=OJnNeHlH/6wfjGxzHu8hNZtNNBKl59xqiFEu3NlDpgTttBMpjNSEpZcXiIQ4YKOkxXWwrOFSNr2pFSlCJOnmjRnNwNurEPfmGOx8EAqVkHcbYJf4k4seDQ2bvEwcuynOc0qpFWFzxV0nBgg4Gk68zrfFcaE/qawxJ1Jlj7Btfys=
+	t=1741615247; cv=none; b=mP9BvvcrNsy3lgj1Lsip6oF2TZ4+F+iqOiujQhj/+qBWG8jti/PAqjkRaVVh80HP/MGn0lS+iWLWxOHAWuJbgevp6zC32lVFXbOA+/Xl5PIgcGFmRNOzLy5mZZKMNPXc52QbKSJFuXWL3ph4MVKsW3kVmkh7MTlwW/QgXowlxac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741281547; c=relaxed/simple;
-	bh=1zk/Wf5UBNnW+CYKHKRvUx81qFWSHkXU/Q2Txv1Mg1M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GyDZdPQTbhWmb5HfU77CF///Ctmz97C6QN1TFf6ndVOIi0CQTt/a9rwliWO3Jm61wwECM6hbwU0S7sVangqgJF3w1AZC79rAfEo0upbLlcg83BCZiMn7oa5gNL0dFPe/vT8fsH78/98lo0AilUThvusWrw3ng7BiHQXBgj1zrP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Uj9DeytJ; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1741615247; c=relaxed/simple;
+	bh=7pN5a36PdMZWwRnB1EFOzJ2DjXF1TQyqQPKJFRNyJf0=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=dZst8wDEGMGSpGsBT48COOa1eNI06psHw8Rzu76/2pM6Y8/uCewQS3+6jKr2vTYTPmIrb7poZN8156yj4v5HfAIqJR4mUtxgDRbXXyr03eler7DcNDBXdWaNfW/u6yqhLeLx2ouikkEFUhTv0DKcxbHkRF7sgqsNGkXOuUisoQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SMBotOoi; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741281544;
+	s=mimecast20190719; t=1741615245;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=VUWoEwD1QtHX1NkxE737fq82KwPX2Nk79R3EEcVwNlY=;
-	b=Uj9DeytJUdPw0Jz1TPjrg9hIvX8clwOaZt8n5cyG7HfDwAGU8QWn4GJKMhF9LDAlg7a84E
-	sEytR24OAgeGU//rV2u1scXs7CO+wYQr7mPKEFSpzaB4j76aHuHMBXM/CURiIaSlc3imhe
-	fKaMQer0kDL/frdUU5fl6aJL5yuyUzs=
-Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com
- [209.85.222.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-155-U5LDySs5O1-KDy53tMzuPQ-1; Thu, 06 Mar 2025 12:19:02 -0500
-X-MC-Unique: U5LDySs5O1-KDy53tMzuPQ-1
-X-Mimecast-MFC-AGG-ID: U5LDySs5O1-KDy53tMzuPQ_1741281542
-Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-86d376bc992so886062241.3
-        for <ceph-devel@vger.kernel.org>; Thu, 06 Mar 2025 09:19:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741281542; x=1741886342;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VUWoEwD1QtHX1NkxE737fq82KwPX2Nk79R3EEcVwNlY=;
-        b=SFNy+QG0K1TmOqocYzrsMEWHZg6onskianAzWmIRgxFYQJ5N0cLjruR5OvzKRekyof
-         4yljSLzjzSyhXJARj+MJNv0X94RVEktjQwu4fU95OCDxH7RCYPiw3l4bByZS7bb08HPU
-         aEc1WUaxDx1YcBqaWyTurgtPlJMCowjTmFtVGWmTj2SduzzHYmMydRABFsXJvn25tGI4
-         RhopQw4dq6McyEqVO2gUjipRZit/CWpkwQfINje4SC3lC0//hptGDNaHLC/UAqgHiveh
-         8lXPjbV5W016K8GZYmfENp0QPsE2/vq93BaGhfvrSl27+PS0fnJtDVyCCXIdRpHN1EKn
-         11QA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpZoLMRpzjGA8lTSNYlzLK5uFxfOwPHR/bixA7NMna1m7AIfy+D+ovzR/Huh073D0q8oeKPjkaiqMY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7k6yX0JiXL/7ifqDDTwYjpRlEFB1rAcXsY1AWjxltEGcqDzh3
-	hdEhSa+wZTFlQQclH56IVCW/LBdtzq2Xj+cBKhUHxSHINy0+ipAwSe4B48uSxlvVeZ9uYeU5y2s
-	JqUCL07wAIYZ19i6uozmNrX8B+v3iuEjnRvrLq4Pboftjk0zEgVoVNyCZ5vsxFLjtw3a7EPYESO
-	eQi3pabrEsfUN3IektNuchQIOAw7rVVMrzlQ==
-X-Gm-Gg: ASbGnctomwsDkORHE4PCVBBKp9mtJR4vvyjGwgp7lWpONK0oZQrnwH2QnAlX+PiL+mZ
-	erx3Y5ITjY7t4idWUnp6bQgv60r9KaHy03wTnpzQciogxz0cJV0fmwhIAAf7qPlFXjRbK8k8i
-X-Received: by 2002:a05:6102:5490:b0:4c1:9b88:5c30 with SMTP id ada2fe7eead31-4c2e292962emr5979449137.19.1741281542257;
-        Thu, 06 Mar 2025 09:19:02 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE7spgLqpPQaIcIR+gCiOtfl1Cc6hZYDhCnOcThE+Z2s7vNWkkQetRZiUqTe+9qs6bZrerq/C7urJCzh9HnSNo=
-X-Received: by 2002:a05:6102:5490:b0:4c1:9b88:5c30 with SMTP id
- ada2fe7eead31-4c2e292962emr5979396137.19.1741281541943; Thu, 06 Mar 2025
- 09:19:01 -0800 (PST)
+	bh=/c+igC9XeGnpuXHYAUzk9J+PiUHEadMR4DUZba3bROg=;
+	b=SMBotOoiOV+EEOwCPJNfr+Lq3nnlsw0cgihKwoDvOmBXO112KWLJ362DVC9dFQyG5d14n9
+	9kZOaJHJstEXqJ2JPmM+3u4QkBR/T3pvMts1BZaMS0HLj4x/JkfAaLPr+IfcsUJsyqJ4Hn
+	Fy2J8Pr/hmcqvTmod5lrNBsV4U6HRtk=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-456-XDB2LGcpN8202Dm2B8rLBQ-1; Mon,
+ 10 Mar 2025 10:00:41 -0400
+X-MC-Unique: XDB2LGcpN8202Dm2B8rLBQ-1
+X-Mimecast-MFC-AGG-ID: XDB2LGcpN8202Dm2B8rLBQ_1741615240
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7B93C18001F3;
+	Mon, 10 Mar 2025 14:00:40 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 05A0119560AB;
+	Mon, 10 Mar 2025 14:00:37 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250305194437.59309-1-slava@dubeyko.com>
+References: <20250305194437.59309-1-slava@dubeyko.com>
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: dhowells@redhat.com, ceph-devel@vger.kernel.org, amarkuze@redhat.com,
+    idryomov@gmail.com, linux-fsdevel@vger.kernel.org,
+    pdonnell@redhat.com, Slava.Dubeyko@ibm.com
+Subject: Re: [PATCH v4] ceph: fix slab-use-after-free in have_mon_and_osd_map()
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <3989572.1734546794@warthog.procyon.org.uk> <4170997.1741192445@warthog.procyon.org.uk>
- <CAO8a2Sg2b2nW6S3ctS+H0F1Owt=rAkKCyjnFW3WoRSKYD-sSDQ@mail.gmail.com>
- <CACPzV1mpUUnxpKQFtDzd25NzwooQLyyzdRhxEsHKtt3qfh35mA@mail.gmail.com>
- <128444.1741270391@warthog.procyon.org.uk> <CAJ4mKGZP2a8acd3Z7OT4UxJo-eygz30_V4Ouh05daMQ=pQv4aw@mail.gmail.com>
-In-Reply-To: <CAJ4mKGZP2a8acd3Z7OT4UxJo-eygz30_V4Ouh05daMQ=pQv4aw@mail.gmail.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Thu, 6 Mar 2025 19:18:51 +0200
-X-Gm-Features: AQ5f1JpQcoMH0pu_ANh7Fi3mDGR-c82TH6fAs4PV2crn8yOt0NZj2cZVfepYRdc
-Message-ID: <CAO8a2ShjbUuk9_+9P9oVcgTU87ZASNpa735xOyC+tMetL13bdA@mail.gmail.com>
-Subject: Re: Is EOLDSNAPC actually generated? -- Re: Ceph and Netfslib
-To: Gregory Farnum <gfarnum@redhat.com>
-Cc: David Howells <dhowells@redhat.com>, Venky Shankar <vshankar@redhat.com>, 
-	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, 
-	Jeff Layton <jlayton@kernel.org>, ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, Patrick Donnelly <pdonnell@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1006062.1741615236.1@warthog.procyon.org.uk>
+Date: Mon, 10 Mar 2025 14:00:36 +0000
+Message-ID: <1006063.1741615236@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-It's not about endians. It's just about the fact that some linux
-arches define the error code of EOLDSNAPC/ERETRY to a different
-number.
+Viacheslav Dubeyko <slava@dubeyko.com> wrote:
 
-On Thu, Mar 6, 2025 at 6:22=E2=80=AFPM Gregory Farnum <gfarnum@redhat.com> =
-wrote:
->
-> On Thu, Mar 6, 2025 at 6:13=E2=80=AFAM David Howells <dhowells@redhat.com=
-> wrote:
-> >
-> > Venky Shankar <vshankar@redhat.com> wrote:
-> >
-> > > > That's a good point, though there is no code on the client that can
-> > > > generate this error, I'm not convinced that this error can't be
-> > > > received from the OSD or the MDS. I would rather some MDS experts
-> > > > chime in, before taking any drastic measures.
-> > >
-> > > The OSDs could possibly return this to the client, so I don't think i=
-t
-> > > can be done away with.
-> >
-> > Okay... but then I think ceph has a bug in that you're assuming that th=
-e error
-> > codes on the wire are consistent between arches as mentioned with Alex.=
-  I
-> > think you need to interject a mapping table.
->
-> Without looking at the kernel code, Ceph in general wraps all error
-> codes to a defined arch-neutral endianness for the wire protocol and
-> unwraps them into the architecture-native format when decoding. Is
-> that not happening here? It should happen transparently as part of the
-> network decoding, so when I look in fs/ceph/file.c the usage seems
-> fine to me, and I see include/linux/ceph/decode.h is full of functions
-> that specify "le" and translating that to the cpu, so it seems fine.
-> And yes, the OSD can return EOLDSNAPC if the client is out of date
-> (and certain other conditions are true).
-> -Greg
->
+> The generic/395 and generic/397 is capable of generating
+> the oops is on line net/ceph/ceph_common.c:794 with
+> KASAN enabled.
+> 
+> BUG: KASAN: slab-use-after-free in have_mon_and_osd_map+0x56/0x70
+> Read of size 4 at addr ffff88811012d810 by task mount.ceph/13305
+> ...
+> This patch fixes the issue by means of locking
+> client->osdc.lock and client->monc.mutex before
+> the checking client->osdc.osdmap and
+> client->monc.monmap in have_mon_and_osd_map() function.
+> Patch adds locking in the ceph_osdc_stop()
+> method during the destructruction of osdc->osdmap and
+> assigning of NULL to the pointer. The lock is used
+> in the ceph_monc_stop() during the freeing of monc->monmap
+> and assigning NULL to the pointer too. The monmap_show()
+> and osdmap_show() methods were reworked to prevent
+> the potential race condition during the methods call.
+> 
+> Reported-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+
+Reviewed-by: David Howells <dhowells@redhat.com>
 
 
