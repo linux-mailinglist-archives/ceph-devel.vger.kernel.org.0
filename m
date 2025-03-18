@@ -1,147 +1,380 @@
-Return-Path: <ceph-devel+bounces-2967-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2968-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8213FA680D0
-	for <lists+ceph-devel@lfdr.de>; Wed, 19 Mar 2025 00:39:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35B4A680E2
+	for <lists+ceph-devel@lfdr.de>; Wed, 19 Mar 2025 00:48:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF90918901E6
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Mar 2025 23:39:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF7FF16FF9B
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Mar 2025 23:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF1E2080CD;
-	Tue, 18 Mar 2025 23:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1DF209677;
+	Tue, 18 Mar 2025 23:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="hC5HbG5N"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="bmltcFh4"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E1520765F
-	for <ceph-devel@vger.kernel.org>; Tue, 18 Mar 2025 23:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612B7207649
+	for <ceph-devel@vger.kernel.org>; Tue, 18 Mar 2025 23:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742341154; cv=none; b=BbbGh+FbOncIT/swtlMQJMJzTPzqbeEjiZM5ejuulGMGS1QqCHwux0lCfYEqQDuvViVWCutPxY71TNWa7+01PndGxlOn8PD3fxcJ4CcZl8EfT9NVCwNx5O+w7Z2KUsSRvFaXaeLv7ijd6krCyeAx4UmknKYD0UY2GWhKwwguaAw=
+	t=1742341703; cv=none; b=jlGJ2L+akPGlK+XBiG+wCkfpEkkjuFGOBfRTBSt+apPkDCVZ0CE8U4Z/U5QJZkGFysczcBYcCaXoy2qfQTqqQ06EbY1Q1w9syc2619miylQ5DNYUlj2TYgoHOSwP/vqyoUllInHyIjEis52hwh9jchW8IjwtYqOZuA6GGUET+iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742341154; c=relaxed/simple;
-	bh=dO6MdN6crxgKvoKISLjpEhatVL+JmkFEsG9Q13u6B/c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OMfzDC8S1RLj7xaOTIghMOAVrmqY1AKpnfIQWq37f7sj3iPS+obIVWdOFohU9DYkL1skKivUL8FrzflwmUqrKQQrNH8Pxfmj96eP/NmDb/IlUHX/hhr5kX+N/crwcts3PbJmosKd0tBFaZG1otc6oqWZjARUjomNP/1k0M/lvgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=hC5HbG5N; arc=none smtp.client-ip=209.85.161.46
+	s=arc-20240116; t=1742341703; c=relaxed/simple;
+	bh=owtQHzDcTFCGAoSc3JYGk77LcDrZ9gqG74YnNAq63Gk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KPlxcxVI6EsxESWTlWRxQCSz4jJNWrj89KRXv37JVK6gNirgbiV6ZDlcIyCI0AEIo3DZFVbnwuCD2U3J8yZXUqxpiIGcMVWkd8HgIJEYHCatxSlMU+C+cLLrIJCiZ3j7UDuF1lTVsRnoa0aVviKA0nzrVJe4ms9tFtsMAewj/ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=bmltcFh4; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-601e3f2cee1so2274343eaf.2
-        for <ceph-devel@vger.kernel.org>; Tue, 18 Mar 2025 16:39:12 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22398e09e39so134181535ad.3
+        for <ceph-devel@vger.kernel.org>; Tue, 18 Mar 2025 16:48:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1742341151; x=1742945951; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dO6MdN6crxgKvoKISLjpEhatVL+JmkFEsG9Q13u6B/c=;
-        b=hC5HbG5NuVX0acRdo7BuDYSL+fTdviiYRmRLrmEnw+stO8iLosFOQksNUQkw8zHdwh
-         cbP///AcKoqxAJJG43N7MXuzMACuEOektJYPbjxr0bnSJFArNRrtrzLfleLEppYVSuxH
-         grrkGoD216qyOa6pGmhsVLILgrvee50SuigLgId3OIpMBFGrKD9kpC96yTGqhEhHTUc2
-         G1sdjgLZVP7WVQAfhlH0nhdlqzACAlH//1vQCMbRbT4A9hXXtnTe2VrT50YfRL5/uFpZ
-         scJYVNXmY2aQWFQsUNeE4fUtRXMW8p4Ps1FGzBbrO7e7rgt5DU15xE6TTPg1+WybOoGt
-         jpOA==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1742341700; x=1742946500; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PR+NKwosoobeaGRhVj5bivnn5154fgxDCBRgqjhOj3M=;
+        b=bmltcFh4K17mbFhokOwuioMYmaeOOEGsZj7J+65Du+CIcL3mY8DRSe0IFJf83VFxLE
+         D1Rm6wjO3Rd26+tRxo45dv5efBIa0lLdhthuewD4Wc5h5Vco7A4XuGhvtozfDXUXZF8c
+         hgWUNtB+kdMGHobRNxiUeDmbB5fNapeyiXodL20XY8mUuQDBVEJQdB133Bg2VOWXXLH7
+         R/9CVq8lNCtplhRu4cgOEv5GQPmsabEXkIQsyWozKm6SG0T6RbTiDPeNYQcrKpfOy621
+         z852ESJAT8dm9cjsYbK6VoNeNSbrS4PBNPzf6yGZxSWOK0MYvRV8y5FJjms+zHjbSiBN
+         fSNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742341151; x=1742945951;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dO6MdN6crxgKvoKISLjpEhatVL+JmkFEsG9Q13u6B/c=;
-        b=Rg0aEcBw6PKf/TyB+OGlVmQnAXgpNarCw2JKWIci4lNDmb3Rorza2v5NxGNRWbxCP2
-         vXOVTJmpR/4GY6PMinWTYZHm2F5LmgvEr59c7oGwb+eYesGcGKRcOopINEtsmK8mpRdw
-         IM+TiJt3wNT7zJEklyI8mkSrE9nvRw8W9Zf5lTfYd42Nwe/KhIXAIHKP0GUUDkywzUAy
-         aOVoRSiqIwM1O6gPqKNHoTN21p1+Ga0Aq9eS03y4mS+QuJPVIq2A17wQpr4mInZI5iVC
-         5zjnGQx0tSKDb1z1r/oMjuGCHUcID+DNxx2xtr8LC80/SmKb3YAud41NwPIzEEb1wsRM
-         nsjQ==
-X-Gm-Message-State: AOJu0YyKUamx7J0WbQAJm76IKCDSNwDeZOfFs9jykEPI1YTzXJz/qV/q
-	ulJQLaCp4ZHpyuNNHQL8XiXxlsKwm+q/ate29z9u7K+W6IShZTWveCPuTNnKy9w=
-X-Gm-Gg: ASbGncvMejSWGU1PhVmceLHosXzUig6oPzGGtg0cYU8CSYujCMD/8vS2saCxPQbF4uf
-	qf/P56UER7yUxnvQTGz7rcL2+gDjli3qEEeUW9LtuGdNEy97Z3jwme9Sehp79z4meN9SrBhB7yG
-	InxmrVYHjMrMQ7ZqwWWX1edz300gaRLR5JWa5lL4z0DjsZ4SOuQqRFk78km8YEhGgJBdtc+oa7b
-	bBu5Pk8IG3EXas0UZrCf/jp7jaVNitNk6bsPONePxFRChWQy3Q9MMnOpxsP75uhaYXhNREfqW+e
-	E1MQj/txipXcO11iqQR8GMujO/St1Mg8Aa+k1J4kGwEVB7+pS8EihX91QunFg0utoq6V2e8Iq7S
-	2t2/FZJEoeGdTktoL43Scox82taI=
-X-Google-Smtp-Source: AGHT+IF0YHnyCkJLb241Yxe/MxQpg8KG8VU/7KhqVuRVJLn5hfWR6sGrsm/4d03hf4z2pClv+8HJKg==
-X-Received: by 2002:a05:6820:4617:b0:600:1feb:830f with SMTP id 006d021491bc7-6021e42bdc2mr329430eaf.4.1742341151367;
-        Tue, 18 Mar 2025 16:39:11 -0700 (PDT)
-Received: from ?IPv6:2600:1700:6476:1430:7a51:a450:8c55:68d0? ([2600:1700:6476:1430:7a51:a450:8c55:68d0])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-601db5394e7sm2226401eaf.0.2025.03.18.16.39.09
+        d=1e100.net; s=20230601; t=1742341700; x=1742946500;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PR+NKwosoobeaGRhVj5bivnn5154fgxDCBRgqjhOj3M=;
+        b=UA8xeGUkVqecesy3n3mDI9wphC7+ODnIKPRJjWCTAnzBoUscqplVKMKYNlcq1t882w
+         0D16xMR20NUr4P2ZS2arBlTSI1XRuMafJNAUIbj0xkOHJzEyrr3pEHL/azcUqEf6szw2
+         X4Njk/qC0Jm9nZp+qb3W7Jg7OSQUjsULZkdQfBFDfraBaenp/PbphXUWDBHuodFj4Pzm
+         FK3PocEFENRtHlRyLO6leHd5DCkishATNJGDQjL7j2GzEnoEQFnXE6Oifb4q4adUuYGh
+         vPdg3d8D0BmMuMjVAWZ8Wl/DrCCsFzCpWW6EFUGokSoYxu/umnIdJPOrmdQxq73PZB1I
+         B1oA==
+X-Gm-Message-State: AOJu0Yz3WrcMUXeQFbSXLopKBQZmb6s5C3MReWJnsMIZ+GGe5k2gyiNd
+	8s88E/q+5bqSvKUpsFBSiTvOz3lPogmNfFZUfeRtxIElCDzJtIr7j7GqsMrpYZmMuHfqV/D+Man
+	C3FYp6A==
+X-Gm-Gg: ASbGncsngeGqACstVneMn2wEjePxdFE65EYlMgHzzhjnIpUSdfafUrQhV2jVMIjDE19
+	VW6lW4fhQZ0atNY0ItKOct1EeWhPpnO4SYSDWTuTy64e/AhMuZ0+GFv4+C4/TqBFpJRevOJxhBr
+	sQZ6BF5licwXhZbtx31acNIPzZVEyZlFAg9PErckzRD74orqewHYPN/eoTjztHyap3N5TF1SNKd
+	faaWfLLs7tWdnSO5xecdbtyxo1DyJMdsSk2toDn+ETpz+Cg9JxMhiDO6Y1lf6abV9fekScBWgGy
+	2evvtdfhFf/5k85v+nnKwzILV0YOWGc2gmwqIVTpW5te9te/+A+D
+X-Google-Smtp-Source: AGHT+IFyxWq0NDJLDdOXscQWHRlDquTdmazyjqfr1H0MQwU0SvnopnHeB67q9jz5PNGD3nvFA3sBeg==
+X-Received: by 2002:a17:902:db12:b0:220:c4e8:3b9d with SMTP id d9443c01a7336-22649a47649mr7826925ad.37.1742341700180;
+        Tue, 18 Mar 2025 16:48:20 -0700 (PDT)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430::48])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-225c6bbe7b6sm101137395ad.177.2025.03.18.16.48.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 16:39:10 -0700 (PDT)
-Message-ID: <b5775ab98324c9030456acf18986352e554db203.camel@dubeyko.com>
-Subject: Re: Question about code in fs/ceph/addr.c
-From: slava@dubeyko.com
-To: Fan Ni <nifan.cxl@gmail.com>, David Howells <dhowells@redhat.com>
-Cc: ceph-devel@vger.kernel.org, Slava.Dubeyko@ibm.com
-Date: Tue, 18 Mar 2025 16:39:09 -0700
-In-Reply-To: <Z9oA3xSwEQgWzZ83@debian>
-References: <Z9nFlkVcXIII8Zdi@debian> <Z9m7wY8dGAlq4z0K@debian>
-	 <80300ccacebc13ee67100fe256b03f08dfd2819e.camel@dubeyko.com>
-	 <2681465.1742337725@warthog.procyon.org.uk> <Z9oA3xSwEQgWzZ83@debian>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (by Flathub.org) 
+        Tue, 18 Mar 2025 16:48:19 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org,
+	amarkuze@redhat.com
+Cc: dhowells@redhat.com,
+	idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com
+Subject: [RFC PATCH] ceph: fix ceph_fallocate() ignoring of FALLOC_FL_ALLOCATE_RANGE mode
+Date: Tue, 18 Mar 2025 16:47:52 -0700
+Message-ID: <20250318234752.886003-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-03-18 at 16:25 -0700, Fan Ni wrote:
-> On Tue, Mar 18, 2025 at 10:42:05PM +0000, David Howells wrote:
-> > Hi Fan,
-> >=20
-> > My aim is to get rid of all page/folio handling from the main part
-> > of the
-> > filesystem entirely and use netfslib instead.=C2=A0 See:
-> >=20
-> > =09
-> > https://lore.kernel.org/linux-fsdevel/20250313233341.1675324-1-dho
-> > wells@redhat.com/T/#u
-> >=20
-> > Now, this is a work in progress, but I think I have a decent shot
-> > at having it
-> > ready for the next merge window after the one that should open in
-> > about a
-> > week.
-> >=20
-> > Note that there, struct ceph_snap_context is built around a
-> > netfs_group struct
-> > and attachment to folios is handled by netfslib as much as
-> > possible.
-> >=20
-> > My patches can be obtained here:
-> >=20
-> > =09
-> > https://web.git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-
-> > fs.git/log/?h=3Dceph-iter
-> >=20
-> > David
-> >=20
-> Hi David,
->=20
-> Thanks for your information.=20
-> That is very useful information to me, since I am still slowly ramp-
-> up mm work and lack
-> of the whole picture of mm development work.=20
->=20
-> Just to make it more clear to me, so that means all &folio->page and
-> like
-> will be taken care of with your patches for fs/, right? If so, I will
-> skip fs
-> and try to work on other sub-system.
->=20
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-As far as I can see, we still have a lot of work in fs/ and CephFS code
-for switching from page to folio. :) So, you are really welcome to
-contribute.
+The fio test reveals the issue for the case of file size
+is not aligned on 4K (for example, 4122, 8600, 10K etc).
+The reproducing path:
 
-Thanks,
-Slava.
+target_dir=/mnt/cephfs
+report_dir=/report
+size=100ki
+nrfiles=10
+pattern=0x74657374
+
+fio --runtime=5M --rw=write --bs=4k --size=$size \
+--nrfiles=$nrfiles --numjobs=16 --buffer_pattern=0x74657374 \
+--iodepth=1 --direct=0 --ioengine=libaio --group_reporting \
+--name=fiotest --directory=$target_dir \
+--output $report_dir/sequential_write.log
+
+fio --runtime=5M --verify_only --verify=pattern \
+--verify_pattern=0x74657374 --size=$size --nrfiles=$nrfiles \
+--numjobs=16 --bs=4k --iodepth=1 --direct=0 --name=fiotest \
+--ioengine=libaio --group_reporting --verify_fatal=1 \
+--verify_state_save=0 --directory=$target_dir \
+--output $report_dir/verify_sequential_write.log
+
+The essence of the issue that the write phase calls
+the fallocate() to pre-allocate 10K of file size and, then,
+it writes only 8KB of data. However, CephFS code
+in ceph_fallocate() ignores the FALLOC_FL_ALLOCATE_RANGE
+mode and, finally, file is 8K in size only. As a result,
+verification phase initiates wierd behaviour of CephFS code.
+CephFS code calls ceph_fallocate() again and completely
+re-write the file content by some garbage. Finally,
+verification phase fails because file contains unexpected
+data pattern.
+
+fio: got pattern 'd0', wanted '74'. Bad bits 3
+fio: bad pattern block offset 0
+pattern: verify failed at file /mnt/cephfs/fiotest.3.0 offset 0, length 2631490270 (requested block: offset=0, length=4096, flags=8)
+fio: verify type mismatch (36969 media, 18 given)
+fio: got pattern '25', wanted '74'. Bad bits 3
+fio: bad pattern block offset 0
+pattern: verify failed at file /mnt/cephfs/fiotest.4.0 offset 0, length 1694436820 (requested block: offset=0, length=4096, flags=8)
+fio: verify type mismatch (6714 media, 18 given)
+
+Expected state ot the file:
+
+hexdump -C ./fiotest.0.0
+00000000 74 65 73 74 74 65 73 74 74 65 73 74 74 65 73 74 |testtesttesttest| *
+00002000 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 |................| *
+00002190 00 00 00 00 00 00 00 00 |........|
+00002198
+
+Real state of the file:
+
+head -n 2 ./fiotest.0.0
+00000000 35 e0 28 cc 38 a0 99 16 06 9c 6a a9 f2 cd e9 0a |5.(.8.....j.....|
+00000010 80 53 2a 07 09 e5 0d 15 70 4a 25 f7 0b 39 9d 18 |.S*.....pJ%..9..|
+
+The patch reworks ceph_fallocate() method by means of adding
+support of FALLOC_FL_ALLOCATE_RANGE mode. Also, it adds the checking
+that new size can be allocated by means of checking inode_newsize_ok(),
+fsc->max_file_size, and ceph_quota_is_max_bytes_exceeded().
+Invalidation and making dirty logic is moved into dedicated
+methods.
+
+There is one peculiarity for the case of generic/103 test.
+CephFS logic receives max_file_size from MDS server and it's 1TB
+by default. As a result, generic/103 can fail if max_file_size
+is smaller than volume size:
+
+generic/103 6s ... - output mismatch (see /home/slavad/XFSTESTS/xfstests-dev/results//generic/103.out.bad)
+--- tests/generic/103.out 2025-02-25 13:05:32.494668258 -0800
++++ /home/slavad/XFSTESTS/xfstests-dev/results//generic/103.out.bad 2025-03-17 22:28:26.475750878 -0700
+@ -1,2 +1,3 @
+QA output created by 103
++fallocate: No space left on device
+Silence is golden.
+
+The solution is to set the max_file_size equal to volume size:
+
+sudo ceph fs volume info cephfs
+{
+    "mon_addrs": [
+        "192.168.1.213:6789",
+        "192.168.1.212:6789",
+        "192.168.1.195:6789"
+    ],
+    "pools": {
+        "data": [
+            {
+                "avail": 7531994808320,
+                "name": "cephfs_data",
+                "used": 163955761152
+            }
+        ],
+        "metadata": [
+            {
+                "avail": 7531994808320,
+                "name": "cephfs_metadata",
+                "used": 706346483
+            }
+        ]
+    }
+}
+
+sudo ceph fs set cephfs max_file_size 7531994808320
+
+sudo ./check generic/103
+FSTYP         -- ceph
+PLATFORM      -- Linux/x86_64 ceph-0005 6.14.0-rc5+ #82 SMP PREEMPT_DYNAMIC Tue Mar 18 14:12:08 PDT 2025
+MKFS_OPTIONS  -- 192.168.1.212:6789:/scratch
+MOUNT_OPTIONS -- -o name=admin 192.168.1.212:6789:/scratch /mnt/cephfs/scratch
+
+generic/103 6s ...  8s
+Ran: generic/103
+Passed all 1 tests
+
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+---
+ fs/ceph/file.c | 114 +++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 91 insertions(+), 23 deletions(-)
+
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 851d70200c6b..7bf283eba29a 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -2655,24 +2655,64 @@ static int ceph_zero_objects(struct inode *inode, loff_t offset, loff_t length)
+ 	return ret;
+ }
+ 
+-static long ceph_fallocate(struct file *file, int mode,
++static inline
++void ceph_fallocate_mark_dirty(struct inode *inode,
++				struct ceph_cap_flush **prealloc_cf)
++{
++	struct ceph_inode_info *ci = ceph_inode(inode);
++	int dirty;
++
++	spin_lock(&ci->i_ceph_lock);
++	dirty = __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
++					prealloc_cf);
++	spin_unlock(&ci->i_ceph_lock);
++
++	if (dirty)
++		__mark_inode_dirty(inode, dirty);
++}
++
++static inline
++int ceph_fallocate_invalidate(struct inode *inode,
++				struct ceph_cap_flush **prealloc_cf,
+ 				loff_t offset, loff_t length)
++{
++	int ret = 0;
++
++	filemap_invalidate_lock(inode->i_mapping);
++	ceph_fscache_invalidate(inode, false);
++	ceph_zero_pagecache_range(inode, offset, length);
++	ret = ceph_zero_objects(inode, offset, length);
++	if (!ret)
++		ceph_fallocate_mark_dirty(inode, prealloc_cf);
++	filemap_invalidate_unlock(inode->i_mapping);
++
++	return ret;
++}
++
++static long ceph_fallocate(struct file *file, int mode,
++			   loff_t offset, loff_t length)
+ {
+ 	struct ceph_file_info *fi = file->private_data;
+ 	struct inode *inode = file_inode(file);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_cap_flush *prealloc_cf;
+ 	struct ceph_client *cl = ceph_inode_to_client(inode);
++	struct ceph_fs_client *fsc = ceph_inode_to_fs_client(inode);
+ 	int want, got = 0;
+-	int dirty;
+-	int ret = 0;
+ 	loff_t endoff = 0;
+ 	loff_t size;
++	loff_t new_size;
++	int ret = 0;
+ 
+ 	doutc(cl, "%p %llx.%llx mode %x, offset %llu length %llu\n",
+ 	      inode, ceph_vinop(inode), mode, offset, length);
+ 
+-	if (mode != (FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE))
++	if (mode == FALLOC_FL_ALLOCATE_RANGE ||
++	    mode == (FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE)) {
++		/*
++		 * Supported modes. Continue logic.
++		 */
++	} else
+ 		return -EOPNOTSUPP;
+ 
+ 	if (!S_ISREG(inode->i_mode))
+@@ -2687,18 +2727,35 @@ static long ceph_fallocate(struct file *file, int mode,
+ 
+ 	inode_lock(inode);
+ 
++	size = i_size_read(inode);
++	new_size = offset + length;
++
++	if (!(mode & FALLOC_FL_KEEP_SIZE) && new_size > size) {
++		ret = inode_newsize_ok(inode, new_size);
++		if (ret)
++			goto unlock;
++
++		if (new_size > max(size, fsc->max_file_size)) {
++			ret = -ENOSPC;
++			goto unlock;
++		}
++
++		if (ceph_quota_is_max_bytes_exceeded(inode, offset + length)) {
++			ret = -EDQUOT;
++			goto unlock;
++		}
++	}
++
+ 	if (ceph_snap(inode) != CEPH_NOSNAP) {
+ 		ret = -EROFS;
+ 		goto unlock;
+ 	}
+ 
+-	size = i_size_read(inode);
+-
+-	/* Are we punching a hole beyond EOF? */
+-	if (offset >= size)
+-		goto unlock;
+-	if ((offset + length) > size)
+-		length = size - offset;
++	if ((mode & FALLOC_FL_KEEP_SIZE) || (mode & FALLOC_FL_PUNCH_HOLE)) {
++		/* Are we punching a hole beyond EOF? */
++		if (offset >= size)
++			goto unlock;
++	}
+ 
+ 	if (fi->fmode & CEPH_FILE_MODE_LAZY)
+ 		want = CEPH_CAP_FILE_BUFFER | CEPH_CAP_FILE_LAZYIO;
+@@ -2713,20 +2770,31 @@ static long ceph_fallocate(struct file *file, int mode,
+ 	if (ret)
+ 		goto put_caps;
+ 
+-	filemap_invalidate_lock(inode->i_mapping);
+-	ceph_fscache_invalidate(inode, false);
+-	ceph_zero_pagecache_range(inode, offset, length);
+-	ret = ceph_zero_objects(inode, offset, length);
++	if (mode & FALLOC_FL_PUNCH_HOLE) {
++		if ((offset + length) > size)
++			length = size - offset;
+ 
+-	if (!ret) {
+-		spin_lock(&ci->i_ceph_lock);
+-		dirty = __ceph_mark_dirty_caps(ci, CEPH_CAP_FILE_WR,
+-					       &prealloc_cf);
+-		spin_unlock(&ci->i_ceph_lock);
+-		if (dirty)
+-			__mark_inode_dirty(inode, dirty);
++		ret = ceph_fallocate_invalidate(inode, &prealloc_cf,
++						offset, length);
++	} else if (mode & FALLOC_FL_KEEP_SIZE) {
++		/*
++		 * If the FALLOC_FL_KEEP_SIZE flag is specified in mode,
++		 * then the file size will not be changed even
++		 * if offset+size is greater than the file size.
++		 */
++	} else {
++		/*
++		 * FALLOC_FL_ALLOCATE_RANGE case:
++		 * The default operation (i.e., mode is zero) of fallocate()
++		 * allocates the disk space within the range specified by
++		 * offset and size.  The file size will be changed if
++		 * offset+size is greater than the file size.
++		 */
++		if ((offset + length) > size) {
++			ceph_inode_set_size(inode, offset + length);
++			ceph_fallocate_mark_dirty(inode, &prealloc_cf);
++		}
+ 	}
+-	filemap_invalidate_unlock(inode->i_mapping);
+ 
+ put_caps:
+ 	ceph_put_cap_refs(ci, got);
+-- 
+2.48.0
 
 
