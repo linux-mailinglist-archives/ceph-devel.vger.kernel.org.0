@@ -1,134 +1,241 @@
-Return-Path: <ceph-devel+bounces-2953-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2954-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A4BEA67C7E
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Mar 2025 20:01:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF73CA67CDA
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Mar 2025 20:12:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A05217B84B
-	for <lists+ceph-devel@lfdr.de>; Tue, 18 Mar 2025 19:01:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1603218879FA
+	for <lists+ceph-devel@lfdr.de>; Tue, 18 Mar 2025 19:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CFE1A5B8C;
-	Tue, 18 Mar 2025 19:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36CA212FBD;
+	Tue, 18 Mar 2025 19:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="n3X49hfK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mZcjZnpk"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CF11DDC2D
-	for <ceph-devel@vger.kernel.org>; Tue, 18 Mar 2025 19:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6C4212F9F
+	for <ceph-devel@vger.kernel.org>; Tue, 18 Mar 2025 19:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742324460; cv=none; b=cLpMC6C1tbrpQ5wweMICrGZuEI4sq7EmdjrtMG9Jf3pTbFlAxX5LgBcL966SH256gQF6nj3HhdpXPGeQCILP1MEOejGbFcFFIPAuW8e1M3T3cAswXQ/CBmSqgPgzIiFPHa+gyFCL6o1eBKD2Kv3xjs6Pxs8RhTpt2r2meNFA2PI=
+	t=1742325147; cv=none; b=hZcMTrF+bZdLQESuLrwEDvPWoEhnqHhh0Rp542KsHLRBvReQr4mv/6oVnc1bWNAErI/y2Agfzo47X6knVfLZJRfAw/Jhgs0ZU+wxVTAKaZFXX1fBKQaVu6M4uVLtQ3zYZ0Mq2fb2StVCW+UK1ea7PqobKepe529Y83r53IeUk34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742324460; c=relaxed/simple;
-	bh=wu9ejP7KKX/356JHQDIToZU2GavS+i7shgmdT7PwWbg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=g4Bp724OgLo/2N8eCt6DNLFKsOb72FEvL/4h1/5ofXBUnJBmthwOP6+4t0iH38UNjHdME0VyXYBR+Sjs0ctelCYp4vnKqDCChQFOjHQNxuxMsTqcfTKwijpRhLYi7OAWiI8SGPN4MaWRDNvr1VI8+jIW6ITkEL9+aPXh09o1cK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=n3X49hfK; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-601e77a880eso433097eaf.2
-        for <ceph-devel@vger.kernel.org>; Tue, 18 Mar 2025 12:00:56 -0700 (PDT)
+	s=arc-20240116; t=1742325147; c=relaxed/simple;
+	bh=tXl01hmni6T7r4BjqyE9K6WlhGrDQQDbAgv8vNqJzxM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EXaiVmI9+PajkeEcK+SjKtNxi2BBuCE5nvp/GrV+LUfYVlMyEPRwwYJHFTZAXHd/vC8P6zopYhWZydRovHgsAvL+fesfBoiZTrbMpGb/wZLqiJythebhKBoTlmPGaOg4inprNln5I/AN1fWuiqoVfvkIxXAZWKJxozUeiX6rKiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mZcjZnpk; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ff80290debso5602073a91.3
+        for <ceph-devel@vger.kernel.org>; Tue, 18 Mar 2025 12:12:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1742324456; x=1742929256; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wu9ejP7KKX/356JHQDIToZU2GavS+i7shgmdT7PwWbg=;
-        b=n3X49hfKjObdIHrkUlI8PvuA+qlfu+jp2lughWrUGefwlqrRZnolSTzDA921da5xt3
-         URFg60E1BtLwXl+ykNZm8MJbWuTAgKMgsHdkub/BOUHqeQU3uObu3Dd+Lx/lrCFV78i6
-         Qe8wWFOL3I78Ry/yfBluPRhqWe4DMxNz1F0mu2pkoD2ij/aAQNH4UnxuuwCQa0AWE3aB
-         lZbIFeu6GnrnctrNBcViWP6uvEYNzfEJDBWGU2c8akHbEWX2X8LpEqcx7SJv148akq6X
-         GMdagIkhBM5vLyXaCq62KewxycfnwqV9LRlX+XbU8SqEnJgUIQXwg3R/cdVjohA3iCf7
-         TTwQ==
+        d=gmail.com; s=20230601; t=1742325145; x=1742929945; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jMQSjeRiVVlPbntyfgaXxcc07tel+34n336i8xAzIS0=;
+        b=mZcjZnpkPeGa7iSvnrYGYPruV23/sclsnfrAA1pzMgNnZ6ujLqlImsOZcK3a9RCh/3
+         0nW2Jypaq1CCsHxZ6a1TDDA1Aw8McrsdEGJmCHot1eEImw8ag8cLfiGZPzaHORcQR258
+         YjMeLxo9qWf1urQEbkjbSopsWesfTmNd4W7wnKw13pZuXih3rcQvm3YCmbX9+LMUL+Vk
+         DGaCGtGoMhZr6CEM4+pI62VSb4rbY4HduNj0zgT1gaOdxXxURbUtzEBDtXGmUp+1BG/Y
+         TmFVOWZS0Ly53wmt8tIz+OOfmv8HUieU7iEZY/FkJj0tmrsCrXMPfvN+AzTGEHpmQVGp
+         0X5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742324456; x=1742929256;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wu9ejP7KKX/356JHQDIToZU2GavS+i7shgmdT7PwWbg=;
-        b=CS0v48hH/N0Jy/wNMyDfov0sIaUs8wjn778MK1O2O8cgAAjgTDRhGpVnNDeK/AN1Qd
-         YgFOLjelG4oSanwiq+QxC5/xZuM66hhaahgl/VOsBb+VpFnEn9QRQlbcCaMHTCYTcRoe
-         UeC4m3nm8e28/t+KmkEEuoxjm7GLsv7s8VaLX1pmCGGxB9M+SKXXEPgtcB0TvgYGTwxe
-         y5Cw3a/9h/jv0J54fxLcjyZzryjCmgOQ9d/s0yt5snNWp/0DmKqLL0SbRejdo/yXAVj5
-         sIIBa+6uwHRSCb4Bv0Q9R7rydODAHrahKwySX8ZgycgErnCrJcyYh+I4+9hnFRjL6kGv
-         Nfxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkk9f3Hu5Hi5l9vA/XsLny1ym9JsgQwjAk4pBntJfOxoJkT+7XpcwzrBVxL56NEFlmpqLGY9fOCK9p@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUWN7eHxWhDUYzUhySc4AUMdeDyajpMbHW6Owp1EVMUWPTONYC
-	J+520YnqoKqovzul2PJuA96CrEclZbTh+830Up3yPkFKdkInXEtlm9IllUa55hY=
-X-Gm-Gg: ASbGncuUXF2i/GW3pkNB2d5xyPMkoNDHniyc84zDK9zOopAq8w/j0OqqYXNMWhOa5X/
-	Qc3MTHzijXom2lHcsms2kgCrFfLsbeOlaglpxcNeH//LGH3lk98s2TqdoxXRkn1INPXAZhCMfxs
-	o4eubQqYQjkk0+gASBu1BjP3DSj6aWOYfpRSI+IO9JmSgMdf+2OFcqqaP/yKyAUjEqKQp0lWBYT
-	oP9bbYUJoUaRqYhiPcFB/jH3Xw3J8jTAPX++sJqqRDufgB0UGEtvt8qG12RYJMDhIgXm/QMTnUd
-	3uUJmoLDb6M9hJkFz69a0EUApM6UM/WzoOT4w1TyraeAKq6xLcbsNsENbDqFWuzlSq+bVmAPrVO
-	l7Gfe4plC6+pNEt6/
-X-Google-Smtp-Source: AGHT+IGbTOlTh2eSiAlxTr1zvu7NtBr3vt+5qsKC0S6NFwwlaAUvGZIh6L1yg7YqvXI1wE55JfC0MQ==
-X-Received: by 2002:a05:6820:5082:b0:601:bf4d:86e6 with SMTP id 006d021491bc7-6021cc89fcdmr137940eaf.1.1742324455939;
-        Tue, 18 Mar 2025 12:00:55 -0700 (PDT)
-Received: from ?IPv6:2600:1700:6476:1430:7a51:a450:8c55:68d0? ([2600:1700:6476:1430:7a51:a450:8c55:68d0])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-601db6598aesm2077956eaf.5.2025.03.18.12.00.54
+        d=1e100.net; s=20230601; t=1742325145; x=1742929945;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jMQSjeRiVVlPbntyfgaXxcc07tel+34n336i8xAzIS0=;
+        b=lfsj1iWIEEKkR/nJYjORv6tmLxLPmOytF/DEV58mvP8YWVoPeKuH1mIqT12eIOaXYX
+         h8pVpq605WbN6FFspn/URnQwSOyMzwwSXWwY/h7hgvs6a0fKxPX/CnRv9HsLNLgsY5bp
+         hQsPAwtuMi2LMcWsxHkWPUQuoHE0WMYDmXeM4D5psFBU2NfXmcRlEEQYfZqAevfTVEmm
+         x+/VjNvndPD/QUWwQ7xRtyL9cZpGxgMLfhdOgms1iRcR8E3Mq4UR3dDtUU9fsd/RS0mL
+         EXIL+Y+Lp9R7mZnqCSf8oY80NqWQG2utr44pwKfoV6dvOhc+iv5IUqu/Qk65WvSifjW8
+         vCAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAlJpqvMNAyummKzEdF+EV3tzShqJvmm8CEOKL0lSgPzTY4jeBil01f6EsBq0FPxA2/eq0vs0bPlWD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVyHU5dAVfy3KoZU/F5H0Lp4Tbe+FVZG+rIbZs/omSqU8TfB2L
+	cSeg5ta70aQlxhRGqsrZg++TkaxINS7nhpEPS/8km1g92YdI7kf3GCtXSQ==
+X-Gm-Gg: ASbGncvJnXz8Imt/qWZ1IJuUtUmXn5bE6952645HovvNzMQg2kUPHtweQ1xvO7hk2mD
+	mOo9O6WE24s08es+RSz4Jj5gMgE1N3I2e/EKBfX0L/zjn8ZorGflZEs5ldvHIUB+cYz6gCKJLrk
+	9GrB0mKLw41sqsivKErqfU9eGH6Nf+rGbMK9fBsiu9ir8aID5mlqjjM9HuiDkCflIlRl9gHfvp8
+	BhOL4YOF6+oODvuz3XLBvRdyvMMb6zNpAFNBxfJkMGf35Xtv87UFHdH3ZfEopICWU01IEuXKJed
+	C0Khn5LPNzPVwD+nI6qMVniNWB+0BpFg7tO4gRIzw0hqqmc76w==
+X-Google-Smtp-Source: AGHT+IG9e6nwzRU47QdwpzlEONYmkhcmoq5i14Pb9kr72QWphiQ2e5j+VvsPwNt6uYSdLR73W2vEjQ==
+X-Received: by 2002:a17:90b:1648:b0:2ee:9b2c:3253 with SMTP id 98e67ed59e1d1-301ba15d98amr446204a91.30.1742325145127;
+        Tue, 18 Mar 2025 12:12:25 -0700 (PDT)
+Received: from debian ([2601:646:8f03:9fee:5e33:e006:dcd5:852d])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301539ed03fsm8608471a91.16.2025.03.18.12.12.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Mar 2025 12:00:54 -0700 (PDT)
-Message-ID: <80300ccacebc13ee67100fe256b03f08dfd2819e.camel@dubeyko.com>
+        Tue, 18 Mar 2025 12:12:24 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Tue, 18 Mar 2025 12:12:22 -0700
+To: slava@dubeyko.com
+Cc: Fan Ni <nifan.cxl@gmail.com>, David Howells <dhowells@redhat.com>,
+	ceph-devel@vger.kernel.org, Slava.Dubeyko@ibm.com
 Subject: Re: Question about code in fs/ceph/addr.c
-From: slava@dubeyko.com
-To: Fan Ni <nifan.cxl@gmail.com>
-Cc: David Howells <dhowells@redhat.com>, ceph-devel@vger.kernel.org, 
-	Slava.Dubeyko@ibm.com
-Date: Tue, 18 Mar 2025 12:00:52 -0700
-In-Reply-To: <Z9m7wY8dGAlq4z0K@debian>
+Message-ID: <Z9nFlkVcXIII8Zdi@debian>
 References: <Z9m7wY8dGAlq4z0K@debian>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (by Flathub.org) 
+ <80300ccacebc13ee67100fe256b03f08dfd2819e.camel@dubeyko.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <80300ccacebc13ee67100fe256b03f08dfd2819e.camel@dubeyko.com>
 
-Hi Fan,
+On Tue, Mar 18, 2025 at 12:00:52PM -0700, slava@dubeyko.com wrote:
+> Hi Fan,
+> 
+> + CC David Howells <dhowells@redhat.com>
+> + CC ceph-devel@vger.kernel.org
+> 
+> On Tue, 2025-03-18 at 11:30 -0700, Fan Ni wrote:
+> > Hi Viacheslav,
+> > 
+> > This is Fan Ni. Recently I started to work on some mm work. One thing
+> > that I am working on is to reduce the use of &folio->page. When I
+> > check
+> > the fs/ceph code, I find some code that may be good candidate for the
+> > work to be done.
+> > 
+> > I see you sent some patches to add ceph_submit_write(), since the
+> > change
+> > I am planning to do is closely related to it, so I reach out to you
+> > to
+> > see if you have some input for me.
+> > 
+> > Based on my reading of the code, it seems ceph_wbc->pages[i] will
+> > always be the head page of the folio involved. I am thinking maybe we
+> > can
+> > keep folios instead of pages here, do you see any reason we should
+> > not
+> > use folios here and must be pages?
+> > 
+> 
+> I believe we need to switch from pages to folios in CephFS code. But it
+> is painful modification. We need to be really careful in this.
+> 
+> As far as I know, David Howells is making significant modification
+> namely in this direction. I think you need to synchronize the
+> implementation activity with him. I'd love to be involved but,
+> currently, I am focused on fixing other issues in CephFS code. :)
+> 
+> Thanks,
+> Slava.
+> 
 
-+ CC David Howells <dhowells@redhat.com>
-+ CC ceph-devel@vger.kernel.org
+Thanks Slava,
 
-On Tue, 2025-03-18 at 11:30 -0700, Fan Ni wrote:
-> Hi Viacheslav,
->=20
-> This is Fan Ni. Recently I started to work on some mm work. One thing
-> that I am working on is to reduce the use of &folio->page. When I
-> check
-> the fs/ceph code, I find some code that may be good candidate for the
-> work to be done.
->=20
-> I see you sent some patches to add ceph_submit_write(), since the
-> change
-> I am planning to do is closely related to it, so I reach out to you
-> to
-> see if you have some input for me.
->=20
-> Based on my reading of the code, it seems ceph_wbc->pages[i] will
-> always be the head page of the folio involved. I am thinking maybe we
-> can
-> keep folios instead of pages here, do you see any reason we should
-> not
-> use folios here and must be pages?
->=20
+Let me add more context here. 
+I have a patch as below, which only handle case 1 as mentioned in 
+the commit log. The question I am asking here is related to the
+handling of case 2 as the page passed to ceph_fscrypt_pagecache_page
+is from ceph_wbc->pages[i]. After checking the code, I think it can
+be folio instead of page.
+My goal is to remove page_snap_context() and use folio_snap_context().
 
-I believe we need to switch from pages to folios in CephFS code. But it
-is painful modification. We need to be really careful in this.
+Fan
 
-As far as I know, David Howells is making significant modification
-namely in this direction. I think you need to synchronize the
-implementation activity with him. I'd love to be involved but,
-currently, I am focused on fixing other issues in CephFS code. :)
 
-Thanks,
-Slava.
+From 02b26cad4f5cb0b43047cf6e343ba5257f95c6ee Mon Sep 17 00:00:00 2001
+From: Fan Ni <fan.ni@samsung.com>
+Date: Mon, 17 Mar 2025 14:29:06 -0700
+Subject: [PATCH] fs/ceph: Introduce folio_snap_context to avoid passing
+ &folio->page
+
+The functions that call page_snap_context() either passes in
+1) &folio->page, which is the common case; or
+2) ceph_fscrypt_pagecache_page(page), which only happens in
+get_writepages_data_length().
+
+We separate the handling of the call to page_snap_context for the two cases.
+For the first case, we remove the use of &folio->page by introducing an
+equivalent function folio_snap_context() which consumes struct folio directly.
+For the second case, it involves more changes to convert, we leave it
+unchanged for now.
+
+Signed-off-by: Fan Ni <fan.ni@samsung.com>
+---
+ fs/ceph/addr.c | 21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 29be367905a1..aa0ad730059a 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -67,6 +67,13 @@
+ static int ceph_netfs_check_write_begin(struct file *file, loff_t pos, unsigned int len,
+ 					struct folio **foliop, void **_fsdata);
+ 
++static inline struct ceph_snap_context *folio_snap_context(struct folio *folio)
++{
++	if (folio_test_private(folio))
++		return (void *)folio->private;
++	return NULL;
++}
++
+ static inline struct ceph_snap_context *page_snap_context(struct page *page)
+ {
+ 	if (PagePrivate(page))
+@@ -729,7 +736,7 @@ static int write_folio_nounlock(struct folio *folio,
+ 		return -EIO;
+ 
+ 	/* verify this is a writeable snap context */
+-	snapc = page_snap_context(&folio->page);
++	snapc = folio_snap_context(folio);
+ 	if (!snapc) {
+ 		doutc(cl, "%llx.%llx folio %p not dirty?\n", ceph_vinop(inode),
+ 		      folio);
+@@ -1140,7 +1147,7 @@ int ceph_check_page_before_write(struct address_space *mapping,
+ 	}
+ 
+ 	/* only if matching snap context */
+-	pgsnapc = page_snap_context(&folio->page);
++	pgsnapc = folio_snap_context(folio);
+ 	if (pgsnapc != ceph_wbc->snapc) {
+ 		doutc(cl, "folio snapc %p %lld != oldest %p %lld\n",
+ 		      pgsnapc, pgsnapc->seq,
+@@ -1586,7 +1593,7 @@ void ceph_wait_until_current_writes_complete(struct address_space *mapping,
+ 					     struct writeback_control *wbc,
+ 					     struct ceph_writeback_ctl *ceph_wbc)
+ {
+-	struct page *page;
++	struct folio *folio;
+ 	unsigned i, nr;
+ 
+ 	if (wbc->sync_mode != WB_SYNC_NONE &&
+@@ -1601,10 +1608,10 @@ void ceph_wait_until_current_writes_complete(struct address_space *mapping,
+ 						     PAGECACHE_TAG_WRITEBACK,
+ 						     &ceph_wbc->fbatch))) {
+ 			for (i = 0; i < nr; i++) {
+-				page = &ceph_wbc->fbatch.folios[i]->page;
+-				if (page_snap_context(page) != ceph_wbc->snapc)
++				folio = ceph_wbc->fbatch.folios[i];
++				if (folio_snap_context(folio) != ceph_wbc->snapc)
+ 					continue;
+-				wait_on_page_writeback(page);
++				folio_wait_writeback(folio);
+ 			}
+ 
+ 			folio_batch_release(&ceph_wbc->fbatch);
+@@ -1793,7 +1800,7 @@ ceph_find_incompatible(struct folio *folio)
+ 
+ 		folio_wait_writeback(folio);
+ 
+-		snapc = page_snap_context(&folio->page);
++		snapc = folio_snap_context(folio);
+ 		if (!snapc || snapc == ci->i_head_snapc)
+ 			break;
+ 
+-- 
+2.47.2
 
 
