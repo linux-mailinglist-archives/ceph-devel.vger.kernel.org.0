@@ -1,129 +1,115 @@
-Return-Path: <ceph-devel+bounces-2980-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-2981-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9A3A69EF1
-	for <lists+ceph-devel@lfdr.de>; Thu, 20 Mar 2025 05:07:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C76F0A6A8E1
+	for <lists+ceph-devel@lfdr.de>; Thu, 20 Mar 2025 15:44:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BA353B4D8F
-	for <lists+ceph-devel@lfdr.de>; Thu, 20 Mar 2025 04:07:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04D3098180E
+	for <lists+ceph-devel@lfdr.de>; Thu, 20 Mar 2025 14:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210F71C3C1D;
-	Thu, 20 Mar 2025 04:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A26A1E2606;
+	Thu, 20 Mar 2025 14:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eMDlmNbe"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M0rsfSwD"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AF678F5E
-	for <ceph-devel@vger.kernel.org>; Thu, 20 Mar 2025 04:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5541DED47
+	for <ceph-devel@vger.kernel.org>; Thu, 20 Mar 2025 14:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742443670; cv=none; b=Ji3liLxtw4m7GWzgUiqbM1q3lZwCHwS+fqSgmqj80NoLa8SvLoyKTdWCzW/d90DU7r3IjS5+Mcvemo5/4ix5DRXqaQkw4CRk/Qu0oeKtUrQLkLWax/uE3MjPWyA+3z1nbCuUNgvpgF8fWctLIXpbRAnLjv4Ns6USffUQYThDS4Y=
+	t=1742481869; cv=none; b=SbNlbTS4WSH2tHVKEf011j2RCBcJTDmN2iYQUKXJj3oGKt3C1sFEvT05X9yr3RxSvlR9E0a1f/WxFSNyInqzXdRfVofG9ZRyZHnDsokMu0b+u+KlMIJQPH3jksBQdpi2s6AgD8g7x+gBOWhAL6SJVxPIFXheRS2qVi9hvc/H3+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742443670; c=relaxed/simple;
-	bh=HhUPj+6CHoORJOPeSrROpdDhFffmAw1/d5cxWw8emj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uvbINE1SQ954IEcN+BGhV//ElAODSSNzY7j49E552lQZPgzsQgRhfQ9/JhAEcCu2ndZcAtJBoZBQ1UD8aJxBKh7cXWqn+Dr7f8Fo5a6VhX+k9d9Qpx6oGfblnqsJC5xjug3KDJbJg9R2Kz5nGB8DwaZ69C2v9iACF3gxsrNS4ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eMDlmNbe; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1742443668; x=1773979668;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=HhUPj+6CHoORJOPeSrROpdDhFffmAw1/d5cxWw8emj0=;
-  b=eMDlmNbeYSIzJO3jhtpTrA4vYaabsecrEoGkgfb519BdknhQ0yGgjzJi
-   2//JCCu8QarA1o0TbanL+hVp+66jtM/3JrOQfCHWi+j7n2azYAoWdUlLz
-   ZOZh64ELUAxCDZzH3Gm81V3wPJ52nc6Q84ln2NQIlemXkVu8Bquf6Wbmf
-   CwjjOnXwgfxLLxB8XImodnh7FuVoD86NQZYhlCpBEDYqMkxJXgvwuXr/h
-   PujSu9iMbhPAeQLDo6f76kY/QPNfGX8ubS12D1Hkf5FRBvNDL18pIfqNe
-   OR8WWmws+sm5HVsR+KAWH8K6ir/LQ1Aa5Mk/F8i7/5Q+JCY00RGIFeq47
-   g==;
-X-CSE-ConnectionGUID: 7ObzoUbNQuCuy2XOMGDdiw==
-X-CSE-MsgGUID: oihdii6yRsiop5yxrjY1JQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11378"; a="55040529"
-X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
-   d="scan'208";a="55040529"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2025 21:07:47 -0700
-X-CSE-ConnectionGUID: 8JCQGTlsRzWequHkxBRrmg==
-X-CSE-MsgGUID: Hy41Y46DTh+k919CWAujvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,260,1736841600"; 
-   d="scan'208";a="122741265"
-Received: from lkp-server02.sh.intel.com (HELO e98e3655d6d2) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 19 Mar 2025 21:07:46 -0700
-Received: from kbuild by e98e3655d6d2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tv7Af-0000Br-0G;
-	Thu, 20 Mar 2025 04:07:09 +0000
-Date: Thu, 20 Mar 2025 12:01:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org
-Subject: [ceph-client:tls_logger 21/39] fs/ceph/debugfs.c:413:25: error: no
- member named 'cgroups' in 'struct task_struct'
-Message-ID: <202503201109.rmiFfk3H-lkp@intel.com>
+	s=arc-20240116; t=1742481869; c=relaxed/simple;
+	bh=zJ2N5Sje1TsFpx1txcvkGVs9M1jCDKPalNO6wcsqJzA=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=Dqwnam7HqauDSiinNRCM1DYekuQLegwlwLULuvcjR5I4VLSCYItV3dnw8S0mBQVvZ0VIElH76foeVrXG2IgpPoQg/j62ACZnj9BdIgzsm6dDSJHE9aoIGk029vrMSf31L+YexNfM1CgFoBdwD77KwRhAIgLZDeVveSAXqoisLjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M0rsfSwD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742481866;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EL9f1EpuEC79rGyi/SbJ4e42e9KhE2EM/hh13H42cIk=;
+	b=M0rsfSwDuuNcwmfyNEG1dgLZMOL6Is3dcJYPIspDJux8+hCIGQmnv6oV81X3797rwNX69k
+	64/8zCz1H6Y306I3qyz4j9WV3rQns1FFbcyLrcS77taYRO5/5fpHrgNc75pOlFLQV4Hq3U
+	E6mhUwwUF5hFXZeXkIDZyyMj+O+g3LA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-617-kjbRVno5Nfm19xQJikLQEg-1; Thu,
+ 20 Mar 2025 10:44:22 -0400
+X-MC-Unique: kjbRVno5Nfm19xQJikLQEg-1
+X-Mimecast-MFC-AGG-ID: kjbRVno5Nfm19xQJikLQEg_1742481861
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 09E731800266;
+	Thu, 20 Mar 2025 14:44:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A473218001D4;
+	Thu, 20 Mar 2025 14:44:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <b1108a2b01c693430abb4566b1bd644a5985ecf6.camel@ibm.com>
+References: <b1108a2b01c693430abb4566b1bd644a5985ecf6.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-23-dhowells@redhat.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
+    "slava@dubeyko.com" <slava@dubeyko.com>,
+    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+    "idryomov@gmail.com" <idryomov@gmail.com>,
+    "jlayton@kernel.org" <jlayton@kernel.org>,
+    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 22/35] libceph, rbd: Convert ceph_osdc_notify() reply to ceph_databuf
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3172345.1742481855.1@warthog.procyon.org.uk>
+Date: Thu, 20 Mar 2025 14:44:15 +0000
+Message-ID: <3172346.1742481855@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-tree:   https://github.com/ceph/ceph-client.git tls_logger
-head:   9d7726eb13dd4dbf6bba377991e8c20e18f26dae
-commit: 150b41eb9654d09e993407ae522128f5af588e04 [21/39] debugfs: fixups
-config: s390-randconfig-r062-20250320 (https://download.01.org/0day-ci/archive/20250320/202503201109.rmiFfk3H-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250320/202503201109.rmiFfk3H-lkp@intel.com/reproduce)
+Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503201109.rmiFfk3H-lkp@intel.com/
+> >  		} else if (!completion_done(&lreq->notify_finish_wait)) {
+> > -			struct ceph_msg_data *data =
+> > -			    msg->num_data_items ? &msg->data[0] : NULL;
+> > -
+> > -			if (data) {
+> > -				if (lreq->preply_pages) {
+> > -					WARN_ON(data->type !=
+> > -							CEPH_MSG_DATA_PAGES);
+> > -					*lreq->preply_pages = data->pages;
+> > -					*lreq->preply_len = data->length;
+> > -					data->own_pages = false;
+> > -				}
+> > +			if (msg->num_data_items && lreq->reply) {
+> > +				struct ceph_msg_data *data = &msg->data[0];
+> 
+> This low-level access slightly worry me. I don't see any real problem
+> here. But, maybe, we need to hide this access into some iterator-like
+> function? However, it could be not feasible for the scope of this patchset.
 
-All errors (new ones prefixed by >>):
+Yeah.  This is something that precedes my changes and I think it needs fixing
+apart from it.
 
->> fs/ceph/debugfs.c:413:25: error: no member named 'cgroups' in 'struct task_struct'
-       if (!task || !task->cgroups)
-                     ~~~~  ^
-   fs/ceph/debugfs.c:416:17: error: no member named 'cgroups' in 'struct task_struct'
-       css = task->cgroups->subsys[0];
-             ~~~~  ^
->> fs/ceph/debugfs.c:418:39: error: incomplete definition of type 'struct cgroup_subsys_state'
-           cgroup_path_from_kernfs_id(css->cgroup->kn->id, cgroup_path, size);
-                                      ~~~^
-   include/linux/kthread.h:219:8: note: forward declaration of 'struct cgroup_subsys_state'
-   struct cgroup_subsys_state;
-          ^
-   3 errors generated.
+David
 
-
-vim +413 fs/ceph/debugfs.c
-
-   409	
-   410	static int print_task_cgroup(struct task_struct *task, char *cgroup_path, size_t size)
-   411	{
-   412	    struct cgroup_subsys_state *css;
- > 413	    if (!task || !task->cgroups)
-   414	        return 0;
-   415	
-   416	    css = task->cgroups->subsys[0];
-   417	    if (css) {
- > 418	        cgroup_path_from_kernfs_id(css->cgroup->kn->id, cgroup_path, size);
-   419	    }
-   420	    return 1;
-   421	}
-   422	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
