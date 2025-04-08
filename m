@@ -1,85 +1,173 @@
-Return-Path: <ceph-devel+bounces-3005-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3006-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAF46A7B916
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Apr 2025 10:41:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F32A7F410
+	for <lists+ceph-devel@lfdr.de>; Tue,  8 Apr 2025 07:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 585427A7001
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Apr 2025 08:39:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C60CB3B3589
+	for <lists+ceph-devel@lfdr.de>; Tue,  8 Apr 2025 05:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A879B19CD13;
-	Fri,  4 Apr 2025 08:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MBD2Nsm5"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19ED9204599;
+	Tue,  8 Apr 2025 05:19:26 +0000 (UTC)
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36ADD190462;
-	Fri,  4 Apr 2025 08:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C1A1A4E98
+	for <ceph-devel@vger.kernel.org>; Tue,  8 Apr 2025 05:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743756058; cv=none; b=JOFfp/78fLs/Ege+ZDpeWFUmnIXN/GQuLYROQ5NIel7Hg+260PrBruIrjv5mccdmsmF9VzrtX0Q502j0v5XLOR2OcnzCZ9up5oggv7kKMd3tW6zRMPZu/XiOjZIiB9JkAquZjUr/CM1nOS9NZtflKm/joN2TnK53sA0b4GpL2s0=
+	t=1744089565; cv=none; b=qhbOcwLmvjqQHmDlEYDSf3/zqshk1drKi0WGs162zBURT8NI2X2P8rM7jesKS2w/MoEi2kAP0FsUA3s9n2x10AmF8hN2iniCgSACWg/2bpQ2Q1uQx9PA6sq6bSuj/JsWyAuoNptB7uqYNp7tjpQ5/1pKiOsPitrPgP4W/GQPV18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743756058; c=relaxed/simple;
-	bh=mgWlpdtAZtS9MzZFKC2ROkD2L4zM4MSAKa2DQRqJcU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XgYrUZOP0dMIZV31QcerI+CKaVIr1+qdjeabn7QfRmLGSKq+I3zo5biAl9XaHHDHvvnyBXmAeNIeca7VDrOUP/G+kO8bH90lkU+iK/YBmBYwAHm63H9XxWA/5N3R7vVtI27/RP9AMo7Bgf0Ko3coMtANBJ308DeF4YMUF8mWZ+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MBD2Nsm5; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/o5JY8rHVbpSAUZBEImi6JefrhFq8j8aWHFRiUENmgk=; b=MBD2Nsm5RhEO/7aXU7MI1VmUzm
-	LIlfUS2tldABU92HagptKWIGQ7jT8eFKP4RYxwJFLpRmJkT0upfYq4HhnhqI2HZN6rUjvbmyrMjSc
-	SVn/Jw1QV5sIvPa/xHmRrarGqknZWnCqg7nLHS9+AsozKOO+ZlYprzBpmAwW+ZH80DH3k+tluQqEy
-	pSHunrlka5O9ySNKtoLfSSkdzyrDGlQZ5i58q1LmqHsAPLb6F9rUMCoaS/Qc8wj7LgLQxFdKCkgTB
-	2IaSkMK9fU4vfUwpRCbkoMA8p+YSq+96UjQnYqscHvxnkTPNUL0SSBHWcJAaidHWNlYDM8yjjb9Bv
-	4mN4596w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1u0cbf-0000000BAtH-3Iu5;
-	Fri, 04 Apr 2025 08:40:55 +0000
-Date: Fri, 4 Apr 2025 01:40:55 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Sheng Yong <shengyong2021@gmail.com>, akpm@linux-foundation.org,
-	vbabka@suse.cz, linux-kernel@vger.kernel.org,
-	linux-mm@archiver.kernel.org, Sheng Yong <shengyong1@xiaomi.com>,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH] lib/iov_iter: fix to increase non slab folio refcount
-Message-ID: <Z--bF9D8FFqVZ-s5@infradead.org>
-References: <20250401140255.1249264-1-shengyong1@xiaomi.com>
- <Z-v2ReHKyFIXQlKs@casper.infradead.org>
+	s=arc-20240116; t=1744089565; c=relaxed/simple;
+	bh=bsLvgNeudz4Q1kKxoMKscLZcSpogHxCceYaIqSlyiPg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=azZHjWcn/qZT/eKiiWVMpU1eXmKh/bJsNRoS9w89ga9WyV3pK+Pui1HWAk/AGJusNNl5wH1d4kdCtsSuaupU0VnTWQNtDYf6xFmrFwlVvZlElKtl1FlH3SdzcX2RZrjP30VtDGDNVuGNFaCNFB2ls2MaNLMiEJXMjmqKoMgBHPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d458e61faaso54548925ab.0
+        for <ceph-devel@vger.kernel.org>; Mon, 07 Apr 2025 22:19:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744089563; x=1744694363;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GHlAcPlI47sJryiPcSdLXFwtpjnpSvFHnU+hdarGisw=;
+        b=mxart1PO4xOjCDU5wwDX5xOwgd3W3DtXPhLbKB40tdLKQXD3OXWly1LNoSl5h/voxx
+         ulhx97CAFVTH6l+dLRcDCfLrKiu48GZvhPpMLwPcZISS6OMBdkrYym4dk3r2MRruBY20
+         RUJoFYnD43/RS9uPXuTxpW/QTEWUNZCIDdORJWDSzNMiyx2QUHo+yu6JUhuv3XAak/zD
+         sGKyBDvdoj1W9J4xFrtogmWloJtCCOtaRaOhS4GfupVa3wnl6wRBY/jVdJt3lc84lPhC
+         mXBapOTOT+gD/vA0oibTDyfygjT30BFmsBjKZU7O49xErWwvIhTKQbFJgANYddWcdQ16
+         Jafg==
+X-Gm-Message-State: AOJu0YwLSbknxQwavoeWZN/QaFaubCup6T/xlrU0LRokg+s/wmy2uo1R
+	21dhisgvt8rjD6ObiLXc/V8fX0964OeyGiG4DXWxJYTWTJykxM+BsWwEHF1cF5d1V2BYPd8Szo3
+	3luiKg6XQsbpmUCb4lVhZ6MMwTPXqjPecEPnQ/xTNit8upc0u6qOzxMAppg==
+X-Google-Smtp-Source: AGHT+IER0hBF2DzmlnrxWvXRfsi3KhFN3zgtpO4+S0j4KOwzWcNTqTnT8XeRpcarYWhn/ZTNQZkAeDg/uu4FL4SfsNVODF+6kv0p
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z-v2ReHKyFIXQlKs@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Received: by 2002:a05:6e02:3008:b0:3d4:2306:fbb6 with SMTP id
+ e9e14a558f8ab-3d703697026mr26474365ab.10.1744089563297; Mon, 07 Apr 2025
+ 22:19:23 -0700 (PDT)
+Date: Mon, 07 Apr 2025 22:19:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67f4b1db.050a0220.396535.0556.GAE@google.com>
+Subject: [syzbot] [ceph?] WARNING in __ceph_open_session
+From: syzbot <syzbot+c35d73ce910d86c0026e@syzkaller.appspotmail.com>
+To: ceph-devel@vger.kernel.org, edumazet@google.com, idryomov@gmail.com, 
+	linux-kernel@vger.kernel.org, sven@narfation.org, sw@simonwunderlich.de, 
+	syzkaller-bugs@googlegroups.com, xiubli@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 01, 2025 at 03:20:53PM +0100, Matthew Wilcox wrote:
-> On Tue, Apr 01, 2025 at 10:02:55PM +0800, Sheng Yong wrote:
-> > When testing EROFS file-backed mount over v9fs on qemu, I encounter
-> > a folio UAF and page sanity check reports the following call trace.
-> > Fix it by increasing non slab folio refcount correctly.
-> 
-> This report needs to say what the problem _is_, which is that pages may
-> be coalesced across a folio boundary.
+Hello,
 
-9p/virtio also really needs to move away from iov_iter_get_pages_alloc
-and to iov_iter_extract_pages.  That way it properly pins pages for user
-memory and doesn't do the pointless page reference for kernel iters that
-triggered this.  Of course until all callers are gone this fix is
-needed, but the caller also needs fixing to use the proper interface.
+syzbot found the following issue on:
 
-(Same for ceph and nfs)
+HEAD commit:    a4cda136f021 Add linux-next specific files for 20250404
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=148ca7cf980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8a257c454bb1afb7
+dashboard link: https://syzkaller.appspot.com/bug?extid=c35d73ce910d86c0026e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12fb2a74580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ef023f980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/59048bc9c206/disk-a4cda136.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ad2ba7306f20/vmlinux-a4cda136.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b3bef7acbf10/bzImage-a4cda136.xz
+
+The issue was bisected to:
+
+commit 00b35530811f2aa3d7ceec2dbada80861c7632a8
+Author: Eric Dumazet <edumazet@google.com>
+Date:   Thu Feb 6 14:04:22 2025 +0000
+
+    batman-adv: adopt netdev_hold() / netdev_put()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1703e23f980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1483e23f980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1083e23f980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c35d73ce910d86c0026e@syzkaller.appspotmail.com
+Fixes: 00b35530811f ("batman-adv: adopt netdev_hold() / netdev_put()")
+
+------------[ cut here ]------------
+do not call blocking ops when !TASK_RUNNING; state=1 set at [<ffffffff819c19fc>] prepare_to_wait_event+0x3ac/0x460 kernel/sched/wait.c:298
+WARNING: CPU: 1 PID: 5840 at kernel/sched/core.c:8745 __might_sleep+0xb9/0xe0 kernel/sched/core.c:8741
+Modules linked in:
+CPU: 1 UID: 0 PID: 5840 Comm: syz-executor181 Not tainted 6.14.0-next-20250404-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:__might_sleep+0xb9/0xe0 kernel/sched/core.c:8741
+Code: b7 0e 01 90 42 80 3c 23 00 74 08 48 89 ef e8 3e 13 9b 00 48 8b 4d 00 48 c7 c7 e0 33 4a 8c 44 89 ee 48 89 ca e8 18 11 f0 ff 90 <0f> 0b 90 90 eb b5 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 70 ff ff ff
+RSP: 0018:ffffc9000415f988 EFLAGS: 00010246
+RAX: fd368e7e13f3a900 RBX: 1ffff110058ec6b1 RCX: ffff88802c761e00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: ffff88802c763588 R08: ffffffff81828012 R09: fffffbfff1d7a980
+R10: dffffc0000000000 R11: fffffbfff1d7a980 R12: dffffc0000000000
+R13: 0000000000000001 R14: 0000000000000242 R15: ffffffff8c4ad740
+FS:  00005555827b3380(0000) GS:ffff88812508f000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000559c14e13950 CR3: 000000007bd64000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __mutex_lock_common kernel/locking/mutex.c:578 [inline]
+ __mutex_lock+0x12c/0x10c0 kernel/locking/mutex.c:746
+ have_mon_and_osd_map net/ceph/ceph_common.c:796 [inline]
+ __ceph_open_session+0x471/0xa30 net/ceph/ceph_common.c:826
+ ceph_real_mount fs/ceph/super.c:1167 [inline]
+ ceph_get_tree+0xac4/0x17b0 fs/ceph/super.c:1355
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1759
+ vfs_cmd_create+0xa0/0x1f0 fs/fsopen.c:225
+ vfs_fsconfig_locked fs/fsopen.c:-1 [inline]
+ __do_sys_fsconfig fs/fsopen.c:467 [inline]
+ __se_sys_fsconfig+0xa20/0xf40 fs/fsopen.c:344
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0b20653329
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffabd71a98 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
+RAX: ffffffffffffffda RBX: 00007fffabd71c68 RCX: 00007f0b20653329
+RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000003
+RBP: 00007f0b206c6610 R08: 0000000000000000 R09: 00007fffabd71c68
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007fffabd71c58 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
