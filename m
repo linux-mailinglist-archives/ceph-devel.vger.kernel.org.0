@@ -1,432 +1,200 @@
-Return-Path: <ceph-devel+bounces-3009-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3010-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B17DA80FDB
-	for <lists+ceph-devel@lfdr.de>; Tue,  8 Apr 2025 17:26:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 277C9A8102D
+	for <lists+ceph-devel@lfdr.de>; Tue,  8 Apr 2025 17:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4F0F44617A
-	for <lists+ceph-devel@lfdr.de>; Tue,  8 Apr 2025 15:21:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D638318954A1
+	for <lists+ceph-devel@lfdr.de>; Tue,  8 Apr 2025 15:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECA32288C6;
-	Tue,  8 Apr 2025 15:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911E73FB1B;
+	Tue,  8 Apr 2025 15:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J6C7hk8L"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SD1YRpC8"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAD722ACE3;
-	Tue,  8 Apr 2025 15:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EC47082A;
+	Tue,  8 Apr 2025 15:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744125669; cv=none; b=tC0SS5HzHQg1/qws2nIXDNz2GqOdVbq3EWY3NG2J0JSnOh7yxmOD/Iy0HTSDBC/Kr6nybZ+wKCxDwadnpclJ5FUhgvQnV+ybIDuvUYpEbg5SkH88CuJ/DCF3vrsbYRUpv+0zGXDx7TZkC4rSUhM21YR2n14ITNxQ6YWoAuyWBjk=
+	t=1744126220; cv=none; b=KPSyQkn+/TA+MrFdQ6eAKI0bMLTqS3tgiNwuVHB3enV7NtvzjONofBw13oHzYhDgBfsuQAADU5PDR2gtCSjUTO5moFsDl+em27LjiFie3wa3tgfyUqIuUaXDS+KjjHzFCL/ztlOd/nDmhI+nWf6K/xC5PkSQA3ySsTl5KYmkGiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744125669; c=relaxed/simple;
-	bh=tlASbFsigJX3SSXNOR5BwZ6wBMU9hlwNoPLD0u+SAzE=;
+	s=arc-20240116; t=1744126220; c=relaxed/simple;
+	bh=gyfvUTJnk9GIxej3TSFZXj/Em8JwGncurtYNGBzsiwQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oF3PROHwPBYjal8gjrtxg7UKPshsP+V2sIpvvUIBs1dIf3Vn9BG5mOpHbNHv8ldWkMp9KgWA4vtIUp+au1+Qb5MdTUUGBSQtHsgpTcqasa26DlEoVd3VzvZaSUgxwTHudntavRuLJ6rLA9xuMmu85a3uRf7suBYEzwjOCyvJi/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J6C7hk8L; arc=none smtp.client-ip=209.85.216.50
+	 To:Cc:Content-Type; b=FKTfZfjOOrEktI+vx/IkAETBZcoK4wPRU2aiKAs3/Hln1cEyLIMOcarev7rGzSFuon1IROyPXcJhesGKu239vxnLLh7Zh9qltx6OUWoj5iEmypVMg/RWQfdQFcB2Gb/dUHt3i5dWLebpfSHXAAdK3Q/fqVWGrbHOKDmdhy7xHKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SD1YRpC8; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-301918a4e1bso4021499a91.1;
-        Tue, 08 Apr 2025 08:21:07 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-af9065f0fc0so3856725a12.2;
+        Tue, 08 Apr 2025 08:30:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744125667; x=1744730467; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744126217; x=1744731017; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AyM5QAkblowIQiFcHDeZQk/KXFh+UxVQpiVBK0Pf8CQ=;
-        b=J6C7hk8Lp0V4W530EXrjSxT5NSm2BR9m0eo932g/k8qRaUDS/mOCHKE6g+TsEN3WXV
-         CwyV6vwrhspj44vo+QRFA2sqSmk3zeVRP6XdTUNIBZ7OCqdb812jMREqmplkSwLojJnV
-         DAiycGzES8JX8Q8HnZoy4k5awilZtz1dKwfBqDGU86Hb5PQaS+JF3ZQAxS2LXkpRCToo
-         qjQjHpkDI5jHkj4FfSarB8JU4gZAZE3jsr02BGAURw6YzTJCep0oDH0YUiNyBnNHonDu
-         mNj4rzx2MFQWnXsMp+Qrb9cm3CiN9YtjzGmxu+FAaKM4KN1yTFTFVjKXLQMVNlBVQjCX
-         q12A==
+        bh=K7P0Ph1eYkITU9mHXOzvfzfH81Uammd7Tgbce+HYzEg=;
+        b=SD1YRpC8SbVdY7o8dewsHp8ASIr1v9GDCSrLh7y3BfJ/hqwply3UZXfHKY/X8D/SaJ
+         mlcr0JhHWkcSkITM5iY2k0hTmMUWqaGfviLrIS+v09gTH0cSUcEmZMXWhzSD2zXuB0jp
+         PyGVAdfFirGMPflHrxZwFwu9F+deqKyolomhV01x94b05cyd0pdw93o8VfU0B+xV1Wra
+         kE+SF4bOfJFAem1AkjuICJ1PrV0GYm7JtIhhBk1mm6yleUD/jiiPDuskqDExVmJzKQMp
+         aSJKm/kFYBqn8YUJJtGZLKoUXlrfCfiQxmAAoLqBgrhqQtVdijCzSVD6Merl4aTYjwNt
+         IUTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744125667; x=1744730467;
+        d=1e100.net; s=20230601; t=1744126217; x=1744731017;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AyM5QAkblowIQiFcHDeZQk/KXFh+UxVQpiVBK0Pf8CQ=;
-        b=PrVRBhI14vsV/rfr6ZlwkDGlPWSnlj5vgaBdVdQLhfAms4TFKiFrQjfRP0zwWRGXHk
-         Q9F9UDiV1bBCZvsbKRKVROyE42kromJXk018pP1f/9FmraFif7qjTOp/tvaYNMobXsPS
-         YiKhCBHBt9Wfp0haARukpboXq3wMk4ntkdSkP8Nlu7u8eCBGKwGcQhAl0bx2pFEEvUxi
-         d1lF+L441IPJT4VwY37Izttol8sCUuoRGAuPSZFwKUbbvSC9XV8wtqHes03KJMyal02R
-         AY/RRVK+Fqapm2LYuJxFqGoOI9Q6rnhyDpjzMvlnkKDtcllKFOb/dD2A4T5sbiH1OdvI
-         XSbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZNYl0o9qcQOHxsJ7ISCPv/U3oG2ZGlrrTQ28VTZthoWtzBLTPtYk0lcrawxUigOIQh9sz5x0jDHsXLTFB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVRgP3dTEitjb0FQ4s2XrhmPeJLIbVfQXLRc1pF5hyJjA00IJ2
-	O65EwZ/jTUe6qXDBdJ0Z4hWF0yE8v/2FRxee7EdddmRGcKbJemiNvzVcyKlxgz2p5qB3KJYsPTz
-	NEDfgRW33EVVkoUO5Y99B3D/wSs4=
-X-Gm-Gg: ASbGncsQxpO+VjTA/7ssE1tJHqBz4bi4jEBoOu+OAOS+SwGMCPoU/382D51EsZ5VLuE
-	i4plHX6vPcnHHlHC7ZPf/N496GXEdva5ui6WHPJdP8pzPHJdFiD9G1MdCSnbTyoo5qEQVd2q+K6
-	q88z5mHH71m3Ffl3WFCK83AtAgxw==
-X-Google-Smtp-Source: AGHT+IFQXUIp2gr0kTVRugpWYUZRGkMW/vPlZXC2oJneTy/OvnPV7+1fEK78WZjYFPPoxY15nDZi2ZDqGYYOlngkGbk=
-X-Received: by 2002:a17:90b:5490:b0:2ff:62b7:dcc0 with SMTP id
- 98e67ed59e1d1-306a615b74dmr23025985a91.15.1744125666775; Tue, 08 Apr 2025
- 08:21:06 -0700 (PDT)
+        bh=K7P0Ph1eYkITU9mHXOzvfzfH81Uammd7Tgbce+HYzEg=;
+        b=sfYoj8FmzRTKFl51y01jt6cBQxYyQ3HXOoG5B9OtSkWUZP9yDvO1u8PY0/CXfW9Vw4
+         z1kDsbYFyQDjxBxj9VsoPMOWT6ibicmcGi0XGxXzMg+153IUKyUUSHNg9O88zvNmZr5Z
+         aDDua+MyPHj6VGjX3LMmS67LWn52DejQxuvx9AXlEeCKid0uPOGx/aVq9N+8bs5hMvko
+         63LGqPQzQfZLXHGpkYUPDbF4RSVdGqUpkQN9WdG6yqaIxE+qbsWgeAcdNrE+qB0oCngj
+         m+fcmeFMNZzWT08kRRDeD8dizgAbb42f3qozRXKYTzVg3EDYd0KexLKRXJ08O5Fvy+8y
+         3R+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWUvw44wHg1uNwKp4hBrdQmmHdBsYbrUVOBFjzJG3XypJXa8lM5EGyrg+gadqTu6mekHnpb1HDPRGS5Otg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG0gcmzk8u0w7csH3Q7TzSMC/Dbvsa0m58XVYNPVwgWHRmtmnA
+	IXGsrsJZsN794yUbdEuXrYcqaY6YFze6a5CAXzfdcx3sSqTqEZ+f9/djWAvvh1B5/uPNbpMN2dV
+	xaqar/sFdTc2t9ChYyfR+EWuM/4w=
+X-Gm-Gg: ASbGncvlOzaSEX1zBD22M8clFDUOivtJGeeEgHh3yqDkj7eW8/4tP4qp3FPNFFfbPyj
+	uBv9H5El1sJGeaXv2NtXNICCCoTNcJToRrurx8MHxbXmNAbTUZ15v9FsIIDNntJQBxNxRRaoTyy
+	zTRrfTUlaK8rgalGlnSEv9SxxqoQ==
+X-Google-Smtp-Source: AGHT+IEqd5SDFYpjzz1DoD1CXBTUCyglEGsknnBeNPWkdaP88kXraCFj2hjbNEoUn3Mfm2Rgcbff3hF+E9hiHibnS2A=
+X-Received: by 2002:a17:90a:d450:b0:2ff:5357:1c7e with SMTP id
+ 98e67ed59e1d1-306a48a4b94mr22487202a91.20.1744126217022; Tue, 08 Apr 2025
+ 08:30:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305194437.59309-1-slava@dubeyko.com>
-In-Reply-To: <20250305194437.59309-1-slava@dubeyko.com>
+References: <67f4b1db.050a0220.396535.0556.GAE@google.com>
+In-Reply-To: <67f4b1db.050a0220.396535.0556.GAE@google.com>
 From: Ilya Dryomov <idryomov@gmail.com>
-Date: Tue, 8 Apr 2025 17:20:54 +0200
-X-Gm-Features: ATxdqUGpFH2a3r_TvNkWPXpg08ymvx9r0VWR3gtLCDa6JKV2o0wnUBtNkr6WhFI
-Message-ID: <CAOi1vP_=TAq_2iECmp9hn9fV2JF5=1CzM_U+kdax4atx6A6wEA@mail.gmail.com>
-Subject: Re: [PATCH v4] ceph: fix slab-use-after-free in have_mon_and_osd_map()
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: ceph-devel@vger.kernel.org, dhowells@redhat.com, amarkuze@redhat.com, 
-	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
+Date: Tue, 8 Apr 2025 17:30:05 +0200
+X-Gm-Features: ATxdqUFKD9McGOLQDwRDoBtQ4uCOk-TjvDlt-jRLpjNP8Yc_QQv3yyPo8DLaSLo
+Message-ID: <CAOi1vP_5wiDzFqm8ndMWCZ-SdcZGUvmS4XN9HQC+-0LAuERiUQ@mail.gmail.com>
+Subject: Re: [syzbot] [ceph?] WARNING in __ceph_open_session
+To: syzbot <syzbot+c35d73ce910d86c0026e@syzkaller.appspotmail.com>
+Cc: ceph-devel@vger.kernel.org, edumazet@google.com, 
+	linux-kernel@vger.kernel.org, sven@narfation.org, sw@simonwunderlich.de, 
+	syzkaller-bugs@googlegroups.com, xiubli@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 5, 2025 at 8:44=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.co=
-m> wrote:
+On Tue, Apr 8, 2025 at 7:19=E2=80=AFAM syzbot
+<syzbot+c35d73ce910d86c0026e@syzkaller.appspotmail.com> wrote:
 >
-> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> Hello,
 >
-> The generic/395 and generic/397 is capable of generating
-> the oops is on line net/ceph/ceph_common.c:794 with
-> KASAN enabled.
+> syzbot found the following issue on:
 >
-> BUG: KASAN: slab-use-after-free in have_mon_and_osd_map+0x56/0x70
-> Read of size 4 at addr ffff88811012d810 by task mount.ceph/13305
+> HEAD commit:    a4cda136f021 Add linux-next specific files for 20250404
+> git tree:       linux-next
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D148ca7cf98000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D8a257c454bb1a=
+fb7
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dc35d73ce910d86c=
+0026e
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12fb2a74580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D13ef023f98000=
+0
 >
-> CPU: 2 UID: 0 PID: 13305 Comm: mount.ceph Not tainted 6.14.0-rc2-build2+ =
-#1266
-> Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/59048bc9c206/dis=
+k-a4cda136.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/ad2ba7306f20/vmlinu=
+x-a4cda136.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/b3bef7acbf10/b=
+zImage-a4cda136.xz
+>
+> The issue was bisected to:
+>
+> commit 00b35530811f2aa3d7ceec2dbada80861c7632a8
+> Author: Eric Dumazet <edumazet@google.com>
+> Date:   Thu Feb 6 14:04:22 2025 +0000
+>
+>     batman-adv: adopt netdev_hold() / netdev_put()
+
+The issue is caused by a WIP patch in the Ceph tree, not this commit.
+Please ignore this -- the patch in question is going to be reworked.
+
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D1703e23f98=
+0000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D1483e23f98=
+0000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1083e23f98000=
+0
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+c35d73ce910d86c0026e@syzkaller.appspotmail.com
+> Fixes: 00b35530811f ("batman-adv: adopt netdev_hold() / netdev_put()")
+>
+> ------------[ cut here ]------------
+> do not call blocking ops when !TASK_RUNNING; state=3D1 set at [<ffffffff8=
+19c19fc>] prepare_to_wait_event+0x3ac/0x460 kernel/sched/wait.c:298
+> WARNING: CPU: 1 PID: 5840 at kernel/sched/core.c:8745 __might_sleep+0xb9/=
+0xe0 kernel/sched/core.c:8741
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 5840 Comm: syz-executor181 Not tainted 6.14.0-next-202=
+50404-syzkaller #0 PREEMPT(full)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 02/12/2025
+> RIP: 0010:__might_sleep+0xb9/0xe0 kernel/sched/core.c:8741
+> Code: b7 0e 01 90 42 80 3c 23 00 74 08 48 89 ef e8 3e 13 9b 00 48 8b 4d 0=
+0 48 c7 c7 e0 33 4a 8c 44 89 ee 48 89 ca e8 18 11 f0 ff 90 <0f> 0b 90 90 eb=
+ b5 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 70 ff ff ff
+> RSP: 0018:ffffc9000415f988 EFLAGS: 00010246
+> RAX: fd368e7e13f3a900 RBX: 1ffff110058ec6b1 RCX: ffff88802c761e00
+> RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+> RBP: ffff88802c763588 R08: ffffffff81828012 R09: fffffbfff1d7a980
+> R10: dffffc0000000000 R11: fffffbfff1d7a980 R12: dffffc0000000000
+> R13: 0000000000000001 R14: 0000000000000242 R15: ffffffff8c4ad740
+> FS:  00005555827b3380(0000) GS:ffff88812508f000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000559c14e13950 CR3: 000000007bd64000 CR4: 00000000003526f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 > Call Trace:
-> <TASK>
-> dump_stack_lvl+0x57/0x80
-> ? have_mon_and_osd_map+0x56/0x70
-> print_address_description.constprop.0+0x84/0x330
-> ? have_mon_and_osd_map+0x56/0x70
-> print_report+0xe2/0x1e0
-> ? rcu_read_unlock_sched+0x60/0x80
-> ? kmem_cache_debug_flags+0xc/0x20
-> ? fixup_red_left+0x17/0x30
-> ? have_mon_and_osd_map+0x56/0x70
-> kasan_report+0x8d/0xc0
-> ? have_mon_and_osd_map+0x56/0x70
-> have_mon_and_osd_map+0x56/0x70
-> ceph_open_session+0x182/0x290
-> ? __pfx_ceph_open_session+0x10/0x10
-> ? __init_swait_queue_head+0x8d/0xa0
-> ? __pfx_autoremove_wake_function+0x10/0x10
-> ? shrinker_register+0xdd/0xf0
-> ceph_get_tree+0x333/0x680
-> vfs_get_tree+0x49/0x180
-> do_new_mount+0x1a3/0x2d0
-> ? __pfx_do_new_mount+0x10/0x10
-> ? security_capable+0x39/0x70
-> path_mount+0x6dd/0x730
-> ? __pfx_path_mount+0x10/0x10
-> ? kmem_cache_free+0x1e5/0x270
-> ? user_path_at+0x48/0x60
-> do_mount+0x99/0xe0
-> ? __pfx_do_mount+0x10/0x10
-> ? lock_release+0x155/0x190
-> __do_sys_mount+0x141/0x180
-> do_syscall_64+0x9f/0x100
-> entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> RIP: 0033:0x7f01b1b14f3e
-> Code: 48 8b 0d d5 3e 0f 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 0=
-0 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 8b 0d a2 3e 0f 00 f7 d8 64 89 01 48
-> RSP: 002b:00007fffd129fa08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 0000564ec01a7850 RCX: 00007f01b1b14f3e
-> RDX: 0000564ec00f2225 RSI: 00007fffd12a1964 RDI: 0000564ec0147a20
-> RBP: 00007fffd129fbd0 R08: 0000564ec014da90 R09: 0000000000000080
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fffd12a194e
-> R13: 0000000000000000 R14: 00007fffd129fa50 R15: 00007fffd129fa40
-> </TASK>
->
-> Allocated by task 13305:
-> stack_trace_save+0x8c/0xc0
-> kasan_save_stack+0x1e/0x40
-> kasan_save_track+0x10/0x30
-> __kasan_kmalloc+0x3a/0x50
-> __kmalloc_noprof+0x247/0x290
-> ceph_osdmap_alloc+0x16/0x130
-> ceph_osdc_init+0x27a/0x4c0
-> ceph_create_client+0x153/0x190
-> create_fs_client+0x50/0x2a0
-> ceph_get_tree+0xff/0x680
-> vfs_get_tree+0x49/0x180
-> do_new_mount+0x1a3/0x2d0
-> path_mount+0x6dd/0x730
-> do_mount+0x99/0xe0
-> __do_sys_mount+0x141/0x180
-> do_syscall_64+0x9f/0x100
-> entry_SYSCALL_64_after_hwframe+0x76/0x7e
->
-> Freed by task 9475:
-> stack_trace_save+0x8c/0xc0
-> kasan_save_stack+0x1e/0x40
-> kasan_save_track+0x10/0x30
-> kasan_save_free_info+0x3b/0x50
-> __kasan_slab_free+0x18/0x30
-> kfree+0x212/0x290
-> handle_one_map+0x23c/0x3b0
-> ceph_osdc_handle_map+0x3c9/0x590
-> mon_dispatch+0x655/0x6f0
-> ceph_con_process_message+0xc3/0xe0
-> ceph_con_v1_try_read+0x614/0x760
-> ceph_con_workfn+0x2de/0x650
-> process_one_work+0x486/0x7c0
-> process_scheduled_works+0x73/0x90
-> worker_thread+0x1c8/0x2a0
-> kthread+0x2ec/0x300
-> ret_from_fork+0x24/0x40
-> ret_from_fork_asm+0x1a/0x30
->
-> The buggy address belongs to the object at ffff88811012d800
-> which belongs to the cache kmalloc-512 of size 512
-> The buggy address is located 16 bytes inside of
-> freed 512-byte region [ffff88811012d800, ffff88811012da00)
->
-> The buggy address belongs to the physical page:
-> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1101=
-2c
-> head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-> flags: 0x200000000000040(head|node=3D0|zone=3D2)
-> page_type: f5(slab)
-> raw: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
-> raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
-> head: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
-> head: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
-> head: 0200000000000002 ffffea0004404b01 ffffffffffffffff 0000000000000000
-> head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
-> ffff88811012d700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff88811012d780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->
->     ffff88811012d800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->
-> ^
-> ffff88811012d880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff88811012d900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Disabling lock debugging due to kernel taint
-> libceph: client274326 fsid 8598140e-35c2-11ee-b97c-001517c545cc
-> libceph: mon0 (1)90.155.74.19:6789 session established
-> libceph: client274327 fsid 8598140e-35c2-11ee-b97c-001517c545cc
->
-> We have such scenario:
->
-> Thread 1:
-> void ceph_osdmap_destroy(...) {
->     <skipped>
->     kfree(map);
-> }
-> Thread 1 sleep...
->
-> Thread 2:
-> static bool have_mon_and_osd_map(struct ceph_client *client) {
->     return client->monc.monmap && client->monc.monmap->epoch &&
->         client->osdc.osdmap && client->osdc.osdmap->epoch;
-> }
-> Thread 2 has oops...
->
-> Thread 1 wake up:
-> static int handle_one_map(...) {
->     <skipped>
->     osdc->osdmap =3D newmap;
->     <skipped>
-> }
->
-> This patch fixes the issue by means of locking
-> client->osdc.lock and client->monc.mutex before
-> the checking client->osdc.osdmap and
-> client->monc.monmap in have_mon_and_osd_map() function.
-> Patch adds locking in the ceph_osdc_stop()
-> method during the destructruction of osdc->osdmap and
-> assigning of NULL to the pointer. The lock is used
-> in the ceph_monc_stop() during the freeing of monc->monmap
-> and assigning NULL to the pointer too. The monmap_show()
-> and osdmap_show() methods were reworked to prevent
-> the potential race condition during the methods call.
->
-> Reported-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> ---
->  net/ceph/ceph_common.c | 14 ++++++++++++--
->  net/ceph/debugfs.c     | 33 +++++++++++++++++++--------------
->  net/ceph/mon_client.c  |  9 ++++++++-
->  net/ceph/osd_client.c  |  4 ++++
->  4 files changed, 43 insertions(+), 17 deletions(-)
->
-> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-> index 4c6441536d55..5c8fd78d6bd5 100644
-> --- a/net/ceph/ceph_common.c
-> +++ b/net/ceph/ceph_common.c
-> @@ -790,8 +790,18 @@ EXPORT_SYMBOL(ceph_reset_client_addr);
->   */
->  static bool have_mon_and_osd_map(struct ceph_client *client)
->  {
-> -       return client->monc.monmap && client->monc.monmap->epoch &&
-> -              client->osdc.osdmap && client->osdc.osdmap->epoch;
-> +       bool have_mon_map =3D false;
-> +       bool have_osd_map =3D false;
-> +
-> +       mutex_lock(&client->monc.mutex);
-
-Hi Slava,
-
-This introduces a potential sleep into a function that is used as
-a wait_event condition in __ceph_open_session() which could result in
-a nested sleep.  This is frowned up by the scheduler because the task
-state may get reset to TASK_RUNNING when not desired:
-
-  do not call blocking ops when !TASK_RUNNING; state=3D1 set at
-[<ffffffff819c19fc>] prepare_to_wait_event+0x3ac/0x460
-kernel/sched/wait.c:298
-
-You would probably need to open-code waiting in __ceph_open_session()
-per [1].
-
-> +       have_mon_map =3D client->monc.monmap && client->monc.monmap->epoc=
-h;
-> +       mutex_unlock(&client->monc.mutex);
-> +
-> +       down_read(&client->osdc.lock);
-> +       have_osd_map =3D client->osdc.osdmap && client->osdc.osdmap->epoc=
-h;
-> +       up_read(&client->osdc.lock);
-> +
-> +       return have_mon_map && have_osd_map;
->  }
->
->  /*
-> diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
-> index 2110439f8a24..6e2014c813ca 100644
-> --- a/net/ceph/debugfs.c
-> +++ b/net/ceph/debugfs.c
-> @@ -36,18 +36,20 @@ static int monmap_show(struct seq_file *s, void *p)
->         int i;
->         struct ceph_client *client =3D s->private;
->
-> -       if (client->monc.monmap =3D=3D NULL)
-> -               return 0;
-> -
-> -       seq_printf(s, "epoch %d\n", client->monc.monmap->epoch);
-> -       for (i =3D 0; i < client->monc.monmap->num_mon; i++) {
-> -               struct ceph_entity_inst *inst =3D
-> -                       &client->monc.monmap->mon_inst[i];
-> -
-> -               seq_printf(s, "\t%s%lld\t%s\n",
-> -                          ENTITY_NAME(inst->name),
-> -                          ceph_pr_addr(&inst->addr));
-> +       mutex_lock(&client->monc.mutex);
-> +       if (client->monc.monmap) {
-> +               seq_printf(s, "epoch %d\n", client->monc.monmap->epoch);
-> +               for (i =3D 0; i < client->monc.monmap->num_mon; i++) {
-> +                       struct ceph_entity_inst *inst =3D
-> +                               &client->monc.monmap->mon_inst[i];
-> +
-> +                       seq_printf(s, "\t%s%lld\t%s\n",
-> +                                  ENTITY_NAME(inst->name),
-> +                                  ceph_pr_addr(&inst->addr));
-> +               }
->         }
-> +       mutex_unlock(&client->monc.mutex);
-
-Nit: I'd prefer
-
-        mutex_lock(&client->monc.mutex);
-        if (client->monc.monmap =3D=3D NULL)
-                goto out_unlock;
-
-        ...
-
-out_unlock:
-        mutex_unlock(&client->monc.mutex);
-        return 0;
-
-to an additional level of indentation here.
-
-> +
->         return 0;
->  }
->
-> @@ -56,13 +58,15 @@ static int osdmap_show(struct seq_file *s, void *p)
->         int i;
->         struct ceph_client *client =3D s->private;
->         struct ceph_osd_client *osdc =3D &client->osdc;
-> -       struct ceph_osdmap *map =3D osdc->osdmap;
-> +       struct ceph_osdmap *map =3D NULL;
->         struct rb_node *n;
->
-> +       down_read(&osdc->lock);
-> +
-> +       map =3D osdc->osdmap;
->         if (map =3D=3D NULL)
-> -               return 0;
-> +               goto finish_osdmap_show;
->
-> -       down_read(&osdc->lock);
->         seq_printf(s, "epoch %u barrier %u flags 0x%x\n", map->epoch,
->                         osdc->epoch_barrier, map->flags);
->
-> @@ -131,6 +135,7 @@ static int osdmap_show(struct seq_file *s, void *p)
->                 seq_printf(s, "]\n");
->         }
->
-> +finish_osdmap_show:
-
-Nit: I'd rename this label to out_unlock so that name communicates what
-the label is for.
-
->         up_read(&osdc->lock);
->         return 0;
->  }
-> diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
-> index ab66b599ac47..b299e5bbddb1 100644
-> --- a/net/ceph/mon_client.c
-> +++ b/net/ceph/mon_client.c
-> @@ -1232,6 +1232,7 @@ int ceph_monc_init(struct ceph_mon_client *monc, st=
-ruct ceph_client *cl)
->         ceph_auth_destroy(monc->auth);
->  out_monmap:
->         kfree(monc->monmap);
-> +       monc->monmap =3D NULL;
->  out:
->         return err;
->  }
-> @@ -1239,6 +1240,8 @@ EXPORT_SYMBOL(ceph_monc_init);
->
->  void ceph_monc_stop(struct ceph_mon_client *monc)
->  {
-> +       struct ceph_monmap *old_monmap;
-> +
->         dout("stop\n");
->
->         mutex_lock(&monc->mutex);
-> @@ -1266,7 +1269,11 @@ void ceph_monc_stop(struct ceph_mon_client *monc)
->         ceph_msg_put(monc->m_subscribe);
->         ceph_msg_put(monc->m_subscribe_ack);
->
-> -       kfree(monc->monmap);
-> +       mutex_lock(&monc->mutex);
-
-Did you have a specific reason for adding locking here and in
-ceph_osdc_stop()?  I see that David inquired about this in a comment
-on v2 and I think the answer to his question is no.  By this point we
-are long past the point of no return and no new messages can arrive for
-e.g. handle_one_map() to be called.
-
-[1] https://lwn.net/Articles/628628/
+>  <TASK>
+>  __mutex_lock_common kernel/locking/mutex.c:578 [inline]
+>  __mutex_lock+0x12c/0x10c0 kernel/locking/mutex.c:746
+>  have_mon_and_osd_map net/ceph/ceph_common.c:796 [inline]
+>  __ceph_open_session+0x471/0xa30 net/ceph/ceph_common.c:826
+>  ceph_real_mount fs/ceph/super.c:1167 [inline]
+>  ceph_get_tree+0xac4/0x17b0 fs/ceph/super.c:1355
+>  vfs_get_tree+0x90/0x2b0 fs/super.c:1759
+>  vfs_cmd_create+0xa0/0x1f0 fs/fsopen.c:225
+>  vfs_fsconfig_locked fs/fsopen.c:-1 [inline]
+>  __do_sys_fsconfig fs/fsopen.c:467 [inline]
+>  __se_sys_fsconfig+0xa20/0xf40 fs/fsopen.c:344
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f0b20653329
+> Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fffabd71a98 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
+> RAX: ffffffffffffffda RBX: 00007fffabd71c68 RCX: 00007f0b20653329
+> RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000003
+> RBP: 00007f0b206c6610 R08: 0000000000000000 R09: 00007fffabd71c68
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+> R13: 00007fffabd71c58 R14: 0000000000000001 R15: 0000000000000001
+>  </TASK>
 
 Thanks,
 
