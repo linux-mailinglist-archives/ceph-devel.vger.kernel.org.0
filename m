@@ -1,115 +1,117 @@
-Return-Path: <ceph-devel+bounces-3016-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3017-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E655A9382B
-	for <lists+ceph-devel@lfdr.de>; Fri, 18 Apr 2025 15:58:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8B5A96482
+	for <lists+ceph-devel@lfdr.de>; Tue, 22 Apr 2025 11:34:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC87C464D4E
-	for <lists+ceph-devel@lfdr.de>; Fri, 18 Apr 2025 13:58:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E463B4330
+	for <lists+ceph-devel@lfdr.de>; Tue, 22 Apr 2025 09:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7126126BF7;
-	Fri, 18 Apr 2025 13:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583F6202C58;
+	Tue, 22 Apr 2025 09:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MkGvdd7n"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cj8gb86c"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080F5224F6
-	for <ceph-devel@vger.kernel.org>; Fri, 18 Apr 2025 13:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB76202C5C
+	for <ceph-devel@vger.kernel.org>; Tue, 22 Apr 2025 09:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744984715; cv=none; b=C3sVPw5pdPPWhBjPfjNOhF3OQYIfS55m2bGfFS63BvcyokrZ+n+qV5l1W3Pl15dHbPL5J6Y1y0UbXcSFyFSdL6e/0VLTbuxE7Cr8dO4c2wDZXYC0y6hRfLB1X3al62KqUCTMVALeZTNTGTNgZ+365wPHeq2WNrZ+bTy8YgtLO8Q=
+	t=1745314332; cv=none; b=UHc1TGynAzhBTwY1Z0ycDtTYSdjkVOEMD41XQt39Lf1wBJOrVU75vP+SNnTACGZLU/UofMJwRCHRCIUGLyvc4goQBkZ8orDdIU5GSWeUUcWUb6dFitGC6NvEVJ4qWoacmGrmbHoTuPEBAW3To7kz+vDm9E/UCpnYJEyqD3W+nGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744984715; c=relaxed/simple;
-	bh=pPt2nH40rR+OHeDjnAewm63+49oFL0/hRd/GcDmvK5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DL1hoboN1mSOhe1k2YBNJuTCBVxMYUGpCXyXVPnrh05I6lYNXNRHWS3CEZhZsZQKxTnpfPKWy+5zibjvQn56wdvP4LUxElj9FdgmIC2stJO4PvAcZ/c5vDLC1DtCcEt3nAXjou+FQtTxX6CT6TIcZKrm2MSxbZbAIM2gnshcLXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MkGvdd7n; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1744984713; x=1776520713;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=pPt2nH40rR+OHeDjnAewm63+49oFL0/hRd/GcDmvK5c=;
-  b=MkGvdd7n9wchbvqSTDvpqdDN+MWsmdF3VQKMjzqgEl86skCm6SQY4RV1
-   Y/3w2rPauqrCgk6BeBh6oBiM7PwQ6KP7joLxV5QBk6uEXByz8EkqvgRmB
-   FyZ0v6b6dorsY+SRocaXTIEiqgRXIojQXAlapx1aMauRww1ReExFtR6M6
-   aBBOS4NUHR5WlGabXQCrpGTL2BNoaGriC3g2Aqb5PC8K8vSnE6yx4NBTi
-   4rmanI3qrnjILaB5pfMQLXLWsw4fJsOhc5S1ByUDcHjNwyYFl9f/GNwJa
-   wOOgLWFYyWVsA1JtJoTs9XjawhwOUQRjhmGeuI5yMtVD3QLTSWrAIWeJy
-   A==;
-X-CSE-ConnectionGUID: T5uqtmwsQhawNphPQO2W2Q==
-X-CSE-MsgGUID: Xx5KDqA9TMiiDPe9W5qgXA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11407"; a="57252662"
-X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
-   d="scan'208";a="57252662"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Apr 2025 06:58:32 -0700
-X-CSE-ConnectionGUID: 7kltDLE0Qq+lMB2TO/97/A==
-X-CSE-MsgGUID: cY7DD/P4RY6bonXeUbvWGQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,222,1739865600"; 
-   d="scan'208";a="131066087"
-Received: from lkp-server01.sh.intel.com (HELO 61e10e65ea0f) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 18 Apr 2025 06:58:31 -0700
-Received: from kbuild by 61e10e65ea0f with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1u5mEe-0002uX-3D;
-	Fri, 18 Apr 2025 13:58:28 +0000
-Date: Fri, 18 Apr 2025 21:57:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org
-Subject: [ceph-client:tls_logger 69/76] csky-linux-gcc: error: unrecognized
- command-line option '-fmacro-backtrace-limit=0'; did you mean
- '-ftemplate-backtrace-limit='?
-Message-ID: <202504182112.Y9Wc5U9x-lkp@intel.com>
+	s=arc-20240116; t=1745314332; c=relaxed/simple;
+	bh=UJtLZckgjShTD9DLK7kz6cd5GubJ7sJ5EHvnuNrUBeo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cZHath48sjGfiGvr4sKKukb0lq1M+8n08AJCq4uyKQSTFaXyp+oyJRm10Um6FWO99g8Jyac1h3ORoEPG5E7rpR/Y7lWQda4vmCobDy2ZKTyfnrd7CRSCNKQq4nUjANMklm8VT6FNeKxGWDFDj2xy+y7aIw1VNuNwFodPI4YXGTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cj8gb86c; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30db3f3c907so44458631fa.1
+        for <ceph-devel@vger.kernel.org>; Tue, 22 Apr 2025 02:32:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745314328; x=1745919128; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0sHGm3uxYYPA2BerxXuoC8RpvF0z2wS137WLjwPW764=;
+        b=Cj8gb86ccvAEpdkblHcRfd1KDgC7V4mNvG6ek4uBBSmn9+qnJBr2TbkGmJUTMtAcOW
+         yxDpe2EJpwBE5JAfOE1HM5qghudDF+qzWloApf1wuuBQrl9hj90mANQh2FPB/5MILoQy
+         fUp84l0GU98vOsty5iKEq6Or59gZ/oWfqEQEfYMiOHPKOR+KqkG2nfUBvLeHoZ8iZbX6
+         uZ2M1QrdqPllK9ij4CezEfP0Zr1TpjTpuIIT+qyjICcSo45oz5LG6RcLVXSEhe3eBwoe
+         VhtWOA9nzdkipKHOi7dEfW+YFoFrqyQeVlHlTGEU0A1kQsIepfqGivNvVcj9Ddey/HU/
+         sVYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745314328; x=1745919128;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0sHGm3uxYYPA2BerxXuoC8RpvF0z2wS137WLjwPW764=;
+        b=Lj6bbnfVo17CvPHogcJHyKdvkYoDiq8Pw+O+32OyWBAOQN/JfV2GPsSCTFGiuLR3MO
+         bi1ty6OIqR+7/FhgnB/3FHV7dnka+hzBCzuCaGo5NPo0WO577O2sOeBLJc+ukdM8TfdD
+         kRrn2GqUaZ14YUatJ/lqW6xbsS/OEWv/T+oG+QOxsg9X3QPIQL3ZhGTUsQ12eQHeM/1r
+         M0iTbI3A0F97PZNTDvCHDpegK9jeOvoDt3dagi+/ACW2sDCKsTYEPnODRxvRNbZp932E
+         bCRCa6QuFTHfmyE0pq9TexngyB2aLBo1x9Vfz7PYhXqYPtALMwr9QZMBoGRjCqeuD1fS
+         4cnA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0MWSnem8h2znva5wr/3JwnvShhHqx/xp7jyCueApR5Xe0PimLjne2G3iSf+5kpWuTwEDXAFXwmVRu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIaUKwgO1FAu3XbuymujJz6EkqT2MPX8gJTfRw1xT+iIT+qBPC
+	ozwniIPOUhbwT+DLkIGs2fMQzxCnfB99Iue21IhMGvqeL67sPZlacsP3qgYv/kE=
+X-Gm-Gg: ASbGnct5kYQq9JnWfY+R+Vv4kojz+b6M38LuJlXaS/4fax9bxlhgS7mgQINv61RwjL8
+	E9SGQoV4T06SgWR96PNL81qbY2v9zKc0CzyCvmZdfeuI79VguF3CkIzb3d5/OAdI6AGE1AEnZ9k
+	AU5cBaG8UnvUZaEZ++x0xI7JrKvfsbcQMC8rf8PRjlYI98u7GQa+z8a5kGoeAjv2TYlrT14Body
+	q4E46nwZLFfrxZRQ79OC8Ccnq5JwX+HP5dmC7qD6fx4iF8Xa3XKPjWanUOwENwD8DUJWqs2f/QV
+	BTahYZ+GXQ1rMZwkkON/IuU09Yhuc1s2zMHcEstQ0pWBWVYhXa0YpA==
+X-Google-Smtp-Source: AGHT+IEA9TeSEr74TXhupDPpKnSc+rpRb8Ccgxw8+9jpaQXfTwiOI4VwS54k+ElDOYyd22J8O2FG2Q==
+X-Received: by 2002:a2e:a888:0:b0:30d:69cd:ddcf with SMTP id 38308e7fff4ca-310903d1a72mr48182701fa.0.1745314328128;
+        Tue, 22 Apr 2025 02:32:08 -0700 (PDT)
+Received: from localhost.localdomain ([185.201.30.223])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-310907a6736sm13776621fa.51.2025.04.22.02.32.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 02:32:07 -0700 (PDT)
+From: Dmitry Kandybka <d.kandybka@gmail.com>
+To: Xiubo Li <xiubli@redhat.com>
+Cc: Ilya Dryomov <idryomov@gmail.com>,
+	ceph-devel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] ceph: fix possible integer overflow in ceph_zero_objects()
+Date: Tue, 22 Apr 2025 12:32:04 +0300
+Message-ID: <20250422093206.1228087-1-d.kandybka@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://github.com/ceph/ceph-client.git tls_logger
-head:   e971700a84a03996c40a4a05e47ddcb65d20ff25
-commit: 758e3b13187ab7e12eed0a51f51461c3f85a9fa5 [69/76] handling static and dynamic arrays better
-config: csky-randconfig-002-20250418 (https://download.01.org/0day-ci/archive/20250418/202504182112.Y9Wc5U9x-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250418/202504182112.Y9Wc5U9x-lkp@intel.com/reproduce)
+In 'ceph_zero_objects', promote 'object_size' to 'u64' to avoid possible
+integer overflow.
+Compile tested only.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202504182112.Y9Wc5U9x-lkp@intel.com/
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-All errors (new ones prefixed by >>):
+Signed-off-by: Dmitry Kandybka <d.kandybka@gmail.com>
+---
+ fs/ceph/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> csky-linux-gcc: error: unrecognized command-line option '-fmacro-backtrace-limit=0'; did you mean '-ftemplate-backtrace-limit='?
---
->> csky-linux-gcc: error: unrecognized command-line option '-fmacro-backtrace-limit=0'; did you mean '-ftemplate-backtrace-limit='?
---
->> csky-linux-gcc: error: unrecognized command-line option '-fmacro-backtrace-limit=0'; did you mean '-ftemplate-backtrace-limit='?
->> csky-linux-gcc: error: unrecognized command-line option '-fmacro-backtrace-limit=0'; did you mean '-ftemplate-backtrace-limit='?
-   make[3]: *** [scripts/Makefile.build:194: scripts/mod/empty.o] Error 1 shuffle=2816476035
->> csky-linux-gcc: error: unrecognized command-line option '-fmacro-backtrace-limit=0'; did you mean '-ftemplate-backtrace-limit='?
-   make[3]: *** [scripts/Makefile.build:102: scripts/mod/devicetable-offsets.s] Error 1 shuffle=2816476035
-   make[3]: Target 'scripts/mod/' not remade because of errors.
-   make[2]: *** [Makefile:1263: prepare0] Error 2 shuffle=2816476035
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:251: __sub-make] Error 2 shuffle=2816476035
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:251: __sub-make] Error 2 shuffle=2816476035
-   make: Target 'prepare' not remade because of errors.
-
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 851d70200c6b..a7254cab44cc 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -2616,7 +2616,7 @@ static int ceph_zero_objects(struct inode *inode, loff_t offset, loff_t length)
+ 	s32 stripe_unit = ci->i_layout.stripe_unit;
+ 	s32 stripe_count = ci->i_layout.stripe_count;
+ 	s32 object_size = ci->i_layout.object_size;
+-	u64 object_set_size = object_size * stripe_count;
++	u64 object_set_size = (u64) object_size * stripe_count;
+ 	u64 nearly, t;
+ 
+ 	/* round offset up to next period boundary */
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.5
+
 
