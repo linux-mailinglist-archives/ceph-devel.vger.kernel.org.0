@@ -1,77 +1,77 @@
-Return-Path: <ceph-devel+bounces-3026-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3027-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B7F0AA6430
-	for <lists+ceph-devel@lfdr.de>; Thu,  1 May 2025 21:43:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23112AA6432
+	for <lists+ceph-devel@lfdr.de>; Thu,  1 May 2025 21:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 862281B65271
-	for <lists+ceph-devel@lfdr.de>; Thu,  1 May 2025 19:43:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8844A4A5BD8
+	for <lists+ceph-devel@lfdr.de>; Thu,  1 May 2025 19:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC2F229B35;
-	Thu,  1 May 2025 19:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037EC22A4EE;
+	Thu,  1 May 2025 19:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="QWhfU2ry"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="2inv52Tw"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F37224B04
-	for <ceph-devel@vger.kernel.org>; Thu,  1 May 2025 19:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA13228CB2
+	for <ceph-devel@vger.kernel.org>; Thu,  1 May 2025 19:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746128593; cv=none; b=PRf0q3FIufDWiB0qPZuQihEnYPSsmjLjbq4G6cfSBByNDY5j4ljYbkIDGv+Fq/9ms78qmKJl//YTsuoxSeS8JsBmFCFAiafeeE4UFiqNJYUFqg57+7q9aUHjreblOK3shKpk+85hCJPZEjmH1DiiO5Fg5rYE+isDEIGuRowShbA=
+	t=1746128594; cv=none; b=ozRjYqFcNOtdymL+fBAIF53Aw7/9qlczQfq9sg7OZ4keCyECCl1wt2j3sazcigUh+Yhdyyc2ccqKJ1/UFaTjIJ9zEvGkJBrmwhvy0aZYIwLYjI9kWBzVIwQqpQMoe3PVlSLeYN+xRDfTN6jkNdfhTgcuPaptErztYFFB3jTBtjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746128593; c=relaxed/simple;
-	bh=IfY/4DT00hOkCqCiYI7CiwHK3YgJ3tnDAoUNImKI0Ps=;
+	s=arc-20240116; t=1746128594; c=relaxed/simple;
+	bh=Qlw96zmMGwb4MvpdHK1mBI13urZDXQDO3zR6AcSYDUM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YKlw45WAZKPZiCwZ02Q3+fF+gBrOtLWZvkRVT9+fi519Q3ypjW0MwrOpxeQcythgMDSr8rW9bonudx46Anmjff3l2A5pus0Oaykxumfpdu7ywWSwdz622Xx2HdhlRg8Tpoxeqv2awpNyvVOezMXMYHKbjt+mcIIVhfiue5bJDMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=QWhfU2ry; arc=none smtp.client-ip=209.85.210.169
+	 MIME-Version; b=fdMpsxY/zDqU47VgmOHffle2CaZRETiOsE03NMlkjfoy7POC0v+TF11Bqvgd4g7Ms+c24JuXVvJkDJLTSRdXMFDQsdQrUmG+4zDujw/42N+8hOa0ykfmajhlfMdwcGeSNgkk08XXzyoRoDSAHUHhKQgjVcfgXCh0owz7+/P/LNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=2inv52Tw; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-736c1cf75e4so1311130b3a.2
-        for <ceph-devel@vger.kernel.org>; Thu, 01 May 2025 12:43:11 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7396f13b750so1741517b3a.1
+        for <ceph-devel@vger.kernel.org>; Thu, 01 May 2025 12:43:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1746128591; x=1746733391; darn=vger.kernel.org;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1746128592; x=1746733392; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=atROUtGhqobdX+KHv0+wro4lBZgRuHBR2HqsMcw4zz8=;
-        b=QWhfU2ryvs/irxvG30vRBxpCRzQ8uivZVuOAkoQbIk9D31/ZMiR6IxwkSLFsBPd43B
-         SppRlh+/fmDVox2SCpPF670ERwJ/HRqvWm6yMWj1T95P7vZTTcICbpiY7fo6mFsVEj1Z
-         CKiay8EsvKwizl2PpyAgxEmhgUribDvi07D/LJ6kPQ16Qrq0vul+ae+8T16y4YKFtqeF
-         QgFAMgtjFsRfj2R+kj1BfW1fbiDVsEb9UZzw3FCw+VqR8k/y+Af1zt0cVGChDR2oarZL
-         hKTPwQC+/KnouJrWcFPkE/uV2oP5HSsafGvzd6HQhZ9ueYyzDNaI3mEedB+AurYYK3rA
-         jV5Q==
+        bh=iKuOTjRzfAtrB6DFEozUKn3GSt0zQlk92+VKe5OQ3fY=;
+        b=2inv52TwLjfQ4OOyUCTFq8D+/V6k2xdov/IcYTKMgrebdBLUi66GpWn/4QPdZj5+pq
+         sk0oExMr1jxhje5m4Gp69DMMrQe1c3I+REEiQ4hcZm8PVwT/t2huZdbnwK201ImHWYGy
+         vjGd3rS86o3MCiEkP8L0e7zHSyjbbsmfDDYzFq6VR0zzqCDbTMuDlc0RehOqPW2xAnlb
+         LkHYC5cH6qkHC3tcflB3soCUzZgAFT2NHPH7PSyrq0G9FnqmeJ37OapyjNrb145bVFn/
+         yI0I04xD8uNStNzy95uevmAfyUWOEhosH/c9cY13BqcF2plZ+Oqcn+RpI1gEelOcLCK3
+         C7gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746128591; x=1746733391;
+        d=1e100.net; s=20230601; t=1746128592; x=1746733392;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=atROUtGhqobdX+KHv0+wro4lBZgRuHBR2HqsMcw4zz8=;
-        b=fHHdVHEiAp88tNJplz8dEPhtFluuQu7lBWlP8TWlp3eKx0frZAF3/PyqrXb/vJIOCw
-         GPms/r+Ic9xsRAMw0LNljZxJ0XWqCvRQJjmPNE99//dQ0vmce5lwfGTG03271iFXyj0I
-         kR46nrazy+yHJOpnk6yJ5Q54esXb5hbHpPFaJxUWTHe79rPzeOyB+3g18wfk27a1HVSi
-         On2aZCcR1fvoV98olHoAgMIOZDY1iNs9dWdSvlcvhuiRbViCSUSEZvxwsuZzr4srCKzk
-         a8mAvzMoCpb7gohgvUNjblR+szdL9N2lc3OIUXuCIX/E4KnTbDWrruNUhSWOcQn2NiVr
-         fgMQ==
-X-Gm-Message-State: AOJu0YxfE6//ucuMew3U1+ZEpJRhvMdgI2rVLfluQ/TvG61fGm8CXl0W
-	GVNNcagKSrXjzFUIKcyUnox49LG76ciTgtR7l/qz+fggBAdiX2WOd7PI+g1ZMbfgFAXSMhHqoPL
-	uKSc=
-X-Gm-Gg: ASbGnct2Mz8rQR2e591vnaNmAr5/QXb6nVMvkbH8rCRQLZhZcnjtd4POI0ttne0JhrP
-	3Mp4qVJIsJ+BQO7uiOs6UAQ58uvxSJExZ+OSpPCTxg7XR1725XeLl1Ke0PJTcNa1fB6hHL2vtmI
-	okTLXG/ofY4Ds0AhoNQZjUvBC0lL9uyEGfRM/hViOrvfm6/xk+OffX+WJTb2dQMRng98tOuL6X8
-	JT1s99epDpT6gUt69z0S58yuG+5UtTrJTdBMJdVbpMJJQWT7WQoGw+uW4v2fuI8oZgaIUytkxvk
-	8dQvTADnVHh3rH/kdUSo05g3C6V3QzcdWdKf785EMVvya8FwzP5L/qgKIg==
-X-Google-Smtp-Source: AGHT+IEmg1et2uTan58Wd6xgiW0ggM0aCNGedSn5LtPBPf9OMUOMENel0POdJ3sSMEnM+nEWuGBs9w==
-X-Received: by 2002:a05:6a00:4482:b0:736:32d2:aa82 with SMTP id d2e1a72fcca58-74058b5afa8mr236273b3a.23.1746128590901;
-        Thu, 01 May 2025 12:43:10 -0700 (PDT)
+        bh=iKuOTjRzfAtrB6DFEozUKn3GSt0zQlk92+VKe5OQ3fY=;
+        b=ohwDP2rguuwpdvQouijqxycQCKyq5t8du2VSxgGau+wb5yIHS2nPUFIWW3+ZVQFvdN
+         4HlwkjyYoy/FsdRsWboi9tIVWRvp8PQu0axdSxogfvKkShg/uxGo+22qZlC293ncwTH7
+         5KMlfrwakfx308Zay5uo2bxNUDtNXpNjOsyuQ41MRSFRzruAeqZvwrCHWK191d6YVtEG
+         x6vzV82XFL2A/vFeHNN2+We+JUNwnDlv7xd9mUTKmxr0RvpRhaToqfQ65BuHNwgSPu1q
+         sMs4z/h0008JmXrznfzMKn5MwfDS+XemsggtX5MTL5goxRfZwQTptR77ne76yKDDZvjs
+         GhaQ==
+X-Gm-Message-State: AOJu0Yww4so28isGOLllhNB0pKvyKouDt128G/Lu2Nc/08yuzG+i95BT
+	v2A8i6yjFxvHEfh42T+AsqS3Rh/mhg3/6aCQTPYr3bpPyHIT3nI+mORT66lWPxBirj+pEeHyRud
+	djkA=
+X-Gm-Gg: ASbGncveFhDwFiFOc/JSgTmb2Q7oa6hZO3g5uMpDU9QBzX8KSjB1hugDyEC49El3OuM
+	tfxWF6opy0Efh1i6JxaQImS26+hirfnrWPtFnp/cSXobd+aFIBacw5c6NjPPQeIezXWjvt1Fz8j
+	Lf2i2nYim3GogfO9jqKrSw73vuwDI3qKY/Kx8vxaNNDaJGlsXhC/jzRf46LBu6NMHSxCt2B8Ue5
+	4171Y4bBGa5bmmMWOVrG+hhWDhC/T3aBQQ7x8VuAt1lSyhaPIrBLTc4DGodTgTkxVdFlqX9vT/9
+	1popzWAda8vLEiODTDUGbS6AZP7vO4XVx2P/N2DuOVuk/IkImyACFdcRww==
+X-Google-Smtp-Source: AGHT+IFBY/vwQtnJX3EGSQ5xn9qNCaUXSy6ba87sY+Hksmpz96KowjcefUgUVPK4XtggQ5M3GXExxg==
+X-Received: by 2002:a05:6a00:f0c:b0:736:3c2b:c38e with SMTP id d2e1a72fcca58-74058a42afcmr311937b3a.13.1746128592273;
+        Thu, 01 May 2025 12:43:12 -0700 (PDT)
 Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:7a9:d9dd:47b7:3886])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74058dc45basm50882b3a.69.2025.05.01.12.43.09
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74058dc45basm50882b3a.69.2025.05.01.12.43.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 12:43:10 -0700 (PDT)
+        Thu, 01 May 2025 12:43:11 -0700 (PDT)
 From: Viacheslav Dubeyko <slava@dubeyko.com>
 To: ceph-devel@vger.kernel.org
 Cc: idryomov@gmail.com,
@@ -80,9 +80,9 @@ Cc: idryomov@gmail.com,
 	amarkuze@redhat.com,
 	Slava.Dubeyko@ibm.com,
 	slava@dubeyko.com
-Subject: [RFC PATCH 1/2] ceph: introduce CEPH_INVALID_CACHE_IDX
-Date: Thu,  1 May 2025 12:42:47 -0700
-Message-ID: <20250501194248.660959-2-slava@dubeyko.com>
+Subject: [RFC PATCH 2/2] ceph: exchange BUG_ON on WARN_ON in ceph_readdir()
+Date: Thu,  1 May 2025 12:42:48 -0700
+Message-ID: <20250501194248.660959-3-slava@dubeyko.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250501194248.660959-1-slava@dubeyko.com>
 References: <20250501194248.660959-1-slava@dubeyko.com>
@@ -96,101 +96,75 @@ Content-Transfer-Encoding: 8bit
 
 From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-This patch introduces CEPH_INVALID_CACHE_IDX
-instead of hardcoded value. The CEPH_INVALID_CACHE_IDX
-constant is used for initialization and
-checking that cache index is invalid.
+This patch leaves BUG_ON() for debug case and
+introduces WARN_ON() for release case in ceph_readdir()
+logic. If dfi->readdir_cache_idx somehow is invalid,
+then we will have BUG_ON() in debug build but
+release build will issue WARN_ON() instead.
 
 Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 ---
- fs/ceph/dir.c   | 12 ++++++------
- fs/ceph/file.c  |  2 +-
- fs/ceph/super.h |  8 ++++++++
- 3 files changed, 15 insertions(+), 7 deletions(-)
+ fs/ceph/Kconfig | 13 +++++++++++++
+ fs/ceph/dir.c   | 21 ++++++++++++++++++---
+ 2 files changed, 31 insertions(+), 3 deletions(-)
 
+diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
+index 3e7def3d31c1..dba85d202a14 100644
+--- a/fs/ceph/Kconfig
++++ b/fs/ceph/Kconfig
+@@ -50,3 +50,16 @@ config CEPH_FS_SECURITY_LABEL
+ 
+ 	  If you are not using a security module that requires using
+ 	  extended attributes for file security labels, say N.
++
++config CEPH_FS_DEBUG
++	bool "Ceph client debugging"
++	depends on CEPH_FS
++	default n
++	help
++	  If you say Y here, this option enables additional pre-condition
++	  and post-condition checks in functions. Also it could enable
++	  BUG_ON() instead of returning the error code. This option could
++	  save more messages in system log and execute additional computation.
++
++	  If you are going to debug the code, then chose Y here.
++	  If unsure, say N.
 diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index a321aa6d0ed2..acecc16f2b99 100644
+index acecc16f2b99..c88326e2ddbf 100644
 --- a/fs/ceph/dir.c
 +++ b/fs/ceph/dir.c
-@@ -296,8 +296,8 @@ static int __dcache_readdir(struct file *file,  struct dir_context *ctx,
- 			err = ret;
- 		dput(last);
- 		/* last_name no longer match cache index */
--		if (dfi->readdir_cache_idx >= 0) {
--			dfi->readdir_cache_idx = -1;
-+		if (!is_cache_idx_invalid(dfi->readdir_cache_idx)) {
-+			dfi->readdir_cache_idx = CEPH_INVALID_CACHE_IDX;
- 			dfi->dir_release_count = 0;
- 		}
- 	}
-@@ -483,7 +483,7 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
- 
- 		if (test_bit(CEPH_MDS_R_DID_PREPOPULATE, &req->r_req_flags)) {
- 			dfi->readdir_cache_idx = req->r_readdir_cache_idx;
--			if (dfi->readdir_cache_idx < 0) {
-+			if (is_cache_idx_invalid(dfi->readdir_cache_idx)) {
- 				/* preclude from marking dir ordered */
- 				dfi->dir_ordered_count = 0;
- 			} else if (ceph_frag_is_leftmost(frag) &&
-@@ -497,7 +497,7 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
- 			doutc(cl, "%p %llx.%llx !did_prepopulate\n", inode,
+@@ -614,13 +614,28 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+ 		spin_lock(&ci->i_ceph_lock);
+ 		if (dfi->dir_ordered_count ==
+ 				atomic64_read(&ci->i_ordered_count)) {
++			bool is_invalid;
++			size_t size;
++
+ 			doutc(cl, " marking %p %llx.%llx complete and ordered\n",
+ 			      inode, ceph_vinop(inode));
+ 			/* use i_size to track number of entries in
+ 			 * readdir cache */
+-			BUG_ON(dfi->readdir_cache_idx < 0);
+-			i_size_write(inode, dfi->readdir_cache_idx *
+-				     sizeof(struct dentry*));
++
++			is_invalid =
++				is_cache_idx_invalid(dfi->readdir_cache_idx);
++
++#ifdef CONFIG_CEPH_FS_DEBUG
++			BUG_ON(is_invalid);
++#else
++			WARN_ON(is_invalid);
++#endif /* CONFIG_CEPH_FS_DEBUG */
++
++			if (!is_invalid) {
++				size = dfi->readdir_cache_idx;
++				size *= sizeof(struct dentry*);
++				i_size_write(inode, size);
++			}
+ 		} else {
+ 			doutc(cl, " marking %llx.%llx complete\n",
  			      ceph_vinop(inode));
- 			/* disable readdir cache */
--			dfi->readdir_cache_idx = -1;
-+			dfi->readdir_cache_idx = CEPH_INVALID_CACHE_IDX;
- 			/* preclude from marking dir complete */
- 			dfi->dir_release_count = 0;
- 		}
-@@ -643,7 +643,7 @@ static void reset_readdir(struct ceph_dir_file_info *dfi)
- 	kfree(dfi->last_name);
- 	dfi->last_name = NULL;
- 	dfi->dir_release_count = 0;
--	dfi->readdir_cache_idx = -1;
-+	dfi->readdir_cache_idx = CEPH_INVALID_CACHE_IDX;
- 	dfi->next_offset = 2;  /* compensate for . and .. */
- 	dfi->file_info.flags &= ~CEPH_F_ATEND;
- }
-@@ -703,7 +703,7 @@ static loff_t ceph_dir_llseek(struct file *file, loff_t offset, int whence)
- 			/* for hash offset, we don't know if a forward seek
- 			 * is within same frag */
- 			dfi->dir_release_count = 0;
--			dfi->readdir_cache_idx = -1;
-+			dfi->readdir_cache_idx = CEPH_INVALID_CACHE_IDX;
- 		}
- 
- 		if (offset != file->f_pos) {
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 851d70200c6b..2097a23c0c31 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -220,7 +220,7 @@ static int ceph_init_file_info(struct inode *inode, struct file *file,
- 		file->private_data = dfi;
- 		fi = &dfi->file_info;
- 		dfi->next_offset = 2;
--		dfi->readdir_cache_idx = -1;
-+		dfi->readdir_cache_idx = CEPH_INVALID_CACHE_IDX;
- 	} else {
- 		fi = kmem_cache_zalloc(ceph_file_cachep, GFP_KERNEL);
- 		if (!fi)
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index bb0db0cc8003..bcd1dda1ab81 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -840,6 +840,14 @@ struct ceph_file_info {
- 	u32 filp_gen;
- };
- 
-+#define CEPH_INVALID_CACHE_IDX		(-1)
-+
-+static inline
-+bool is_cache_idx_invalid(int cache_idx)
-+{
-+	return cache_idx <= CEPH_INVALID_CACHE_IDX;
-+}
-+
- struct ceph_dir_file_info {
- 	struct ceph_file_info file_info;
- 
 -- 
 2.48.0
 
