@@ -1,91 +1,87 @@
-Return-Path: <ceph-devel+bounces-3027-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3028-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23112AA6432
-	for <lists+ceph-devel@lfdr.de>; Thu,  1 May 2025 21:43:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C35EAB742D
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 May 2025 20:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8844A4A5BD8
-	for <lists+ceph-devel@lfdr.de>; Thu,  1 May 2025 19:43:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 285634C2522
+	for <lists+ceph-devel@lfdr.de>; Wed, 14 May 2025 18:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037EC22A4EE;
-	Thu,  1 May 2025 19:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE9D27F4CA;
+	Wed, 14 May 2025 18:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="2inv52Tw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kE05pZ4+"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA13228CB2
-	for <ceph-devel@vger.kernel.org>; Thu,  1 May 2025 19:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A127D1ACEDA;
+	Wed, 14 May 2025 18:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746128594; cv=none; b=ozRjYqFcNOtdymL+fBAIF53Aw7/9qlczQfq9sg7OZ4keCyECCl1wt2j3sazcigUh+Yhdyyc2ccqKJ1/UFaTjIJ9zEvGkJBrmwhvy0aZYIwLYjI9kWBzVIwQqpQMoe3PVlSLeYN+xRDfTN6jkNdfhTgcuPaptErztYFFB3jTBtjQ=
+	t=1747246825; cv=none; b=mzYkruE0O4iQeGiRJT81v2a+VXXDz2RX8th0vFAO5XL2qPh6JKZCci+r/J8z1G0ZjEZoRcPE0QgCkz7L5COvcyVcCkUkBXS0SuVO6LKwUuWjUW16JpV2Tp2wwsLTfu4AS8xnXKCSdE2k/hXhoYrIdNHQVEOkVexYq4gnjPWnjEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746128594; c=relaxed/simple;
-	bh=Qlw96zmMGwb4MvpdHK1mBI13urZDXQDO3zR6AcSYDUM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fdMpsxY/zDqU47VgmOHffle2CaZRETiOsE03NMlkjfoy7POC0v+TF11Bqvgd4g7Ms+c24JuXVvJkDJLTSRdXMFDQsdQrUmG+4zDujw/42N+8hOa0ykfmajhlfMdwcGeSNgkk08XXzyoRoDSAHUHhKQgjVcfgXCh0owz7+/P/LNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=2inv52Tw; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7396f13b750so1741517b3a.1
-        for <ceph-devel@vger.kernel.org>; Thu, 01 May 2025 12:43:13 -0700 (PDT)
+	s=arc-20240116; t=1747246825; c=relaxed/simple;
+	bh=LShLumqkihJQzxK2oSUHJJEnrPGHQ9OvLbKc+cZLSzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ae5b0zevEsUQiARnRC5f+Pf06Jvpv8ukz2JwRo+KYNiugSTeDofRyNQPNi9pTUJ4jIGbWgJgBN8alhSMa8SlloJjIJy/vJwahhuNHIiXbmhqzrC7KZUoIHgAwZTBrfavPDnqvfVx5pss9E9BckHbqwc2Q10eet9AWO1HFsCvXyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kE05pZ4+; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-23198fcdeb0so1226425ad.2;
+        Wed, 14 May 2025 11:20:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1746128592; x=1746733392; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iKuOTjRzfAtrB6DFEozUKn3GSt0zQlk92+VKe5OQ3fY=;
-        b=2inv52TwLjfQ4OOyUCTFq8D+/V6k2xdov/IcYTKMgrebdBLUi66GpWn/4QPdZj5+pq
-         sk0oExMr1jxhje5m4Gp69DMMrQe1c3I+REEiQ4hcZm8PVwT/t2huZdbnwK201ImHWYGy
-         vjGd3rS86o3MCiEkP8L0e7zHSyjbbsmfDDYzFq6VR0zzqCDbTMuDlc0RehOqPW2xAnlb
-         LkHYC5cH6qkHC3tcflB3soCUzZgAFT2NHPH7PSyrq0G9FnqmeJ37OapyjNrb145bVFn/
-         yI0I04xD8uNStNzy95uevmAfyUWOEhosH/c9cY13BqcF2plZ+Oqcn+RpI1gEelOcLCK3
-         C7gg==
+        d=gmail.com; s=20230601; t=1747246823; x=1747851623; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QgkpdbQA01DcUJClm3tXU5YnYdU7zJmZW671sYK0pa4=;
+        b=kE05pZ4+kcnDx7WisPilNjoMXufMMNgTjFWSwwZA8gviVvIcXCCQf3d3R153ZQl6zN
+         v0n5pKtwSobrdcRjUfOyrgVbzAq5Lo956vW3MMei6RHRihM2sCGlSL2366dym1GBjfOV
+         ecB36o3usXfCR9rXVLlKyaD4HlSep9Qr5GJTnLyHOqx0ReWYu7O1TyiwuQdmzB7Y9Zmv
+         QRIsfT2oiQuh/C0E++AbuRhf85X+v3oSyxpd0v9UrJfJp3MVGp30vzShGlxtI2s3SKoj
+         IkCwbar3r3kg7R79yz2TU2PIi4NqnDAdLuo2iJP1NZDer0e8qg0VgAXzxMxIDIL5m7A7
+         Cc/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746128592; x=1746733392;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iKuOTjRzfAtrB6DFEozUKn3GSt0zQlk92+VKe5OQ3fY=;
-        b=ohwDP2rguuwpdvQouijqxycQCKyq5t8du2VSxgGau+wb5yIHS2nPUFIWW3+ZVQFvdN
-         4HlwkjyYoy/FsdRsWboi9tIVWRvp8PQu0axdSxogfvKkShg/uxGo+22qZlC293ncwTH7
-         5KMlfrwakfx308Zay5uo2bxNUDtNXpNjOsyuQ41MRSFRzruAeqZvwrCHWK191d6YVtEG
-         x6vzV82XFL2A/vFeHNN2+We+JUNwnDlv7xd9mUTKmxr0RvpRhaToqfQ65BuHNwgSPu1q
-         sMs4z/h0008JmXrznfzMKn5MwfDS+XemsggtX5MTL5goxRfZwQTptR77ne76yKDDZvjs
-         GhaQ==
-X-Gm-Message-State: AOJu0Yww4so28isGOLllhNB0pKvyKouDt128G/Lu2Nc/08yuzG+i95BT
-	v2A8i6yjFxvHEfh42T+AsqS3Rh/mhg3/6aCQTPYr3bpPyHIT3nI+mORT66lWPxBirj+pEeHyRud
-	djkA=
-X-Gm-Gg: ASbGncveFhDwFiFOc/JSgTmb2Q7oa6hZO3g5uMpDU9QBzX8KSjB1hugDyEC49El3OuM
-	tfxWF6opy0Efh1i6JxaQImS26+hirfnrWPtFnp/cSXobd+aFIBacw5c6NjPPQeIezXWjvt1Fz8j
-	Lf2i2nYim3GogfO9jqKrSw73vuwDI3qKY/Kx8vxaNNDaJGlsXhC/jzRf46LBu6NMHSxCt2B8Ue5
-	4171Y4bBGa5bmmMWOVrG+hhWDhC/T3aBQQ7x8VuAt1lSyhaPIrBLTc4DGodTgTkxVdFlqX9vT/9
-	1popzWAda8vLEiODTDUGbS6AZP7vO4XVx2P/N2DuOVuk/IkImyACFdcRww==
-X-Google-Smtp-Source: AGHT+IFBY/vwQtnJX3EGSQ5xn9qNCaUXSy6ba87sY+Hksmpz96KowjcefUgUVPK4XtggQ5M3GXExxg==
-X-Received: by 2002:a05:6a00:f0c:b0:736:3c2b:c38e with SMTP id d2e1a72fcca58-74058a42afcmr311937b3a.13.1746128592273;
-        Thu, 01 May 2025 12:43:12 -0700 (PDT)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:7a9:d9dd:47b7:3886])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74058dc45basm50882b3a.69.2025.05.01.12.43.11
+        d=1e100.net; s=20230601; t=1747246823; x=1747851623;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QgkpdbQA01DcUJClm3tXU5YnYdU7zJmZW671sYK0pa4=;
+        b=N8IDg83o2Q67noV3IsSOmSuChdgphFxmGQ9pBAJUSmpQebLsFsXaZgtEpw+wc1glXy
+         adZP7EqZ5FEfAWLh27ptrsYKwxeT1sr7wAuyp4BpEw5DT7etokERvC50BtuGqSzOU0gq
+         PWEMJGmHnGdsLcStYgAjlaUM/EgJN1ayNDKJvnrmXRXFqGe9Jalvv/HDlb7DCmy+nzQ1
+         QLxivAIIEsE4DOW7DCMYZJbdKRf6At4QJQcDM1rrIj8jCnoqenqczQmHlg+ZUXf2uLTv
+         5mxzbkIo6g4VWfHrRQ+fALgdiuGwrjqmsG7uDU6D+ulhqNJUPTM95L3EHF8RXX0+KVpV
+         XOrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2k10+nK051F65TGwGH7fKr9u3Xkd9LRojKUTou80ZzjXnMdMpVjeRQbV8SaA586d4ZGPzb41q00s5@vger.kernel.org, AJvYcCWMgjkWhZ1XNypPdlTv9hlYsu0c/s35XhiMud1bpmC4y9V1tCe4XjcYQ2nfMnLyEPW333Dcr9HzWTsCA0M=@vger.kernel.org, AJvYcCWNS6F2Mfs2ct26EiRokfh56NMzGvQ78EG8XEpDHbFgU7IOokXktvDUj+GU7wMRNs4sio7GKXEFL+8aHU6x@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2i8UfAIin8KMBuqlp6Dr/9q9Vyx87YcuZDFZgpTZpeec9ZplV
+	kKkAY4Mm47cAhUmkAL10YVvE4ziygKQXqeFx5mwRteFxUlJtvEDPuv7oC9lD
+X-Gm-Gg: ASbGncv2S8TaqX3H12gCkPuYzIDkqar0LZItbOjGiZNp+2eQVlpwxh8GuGNHvwizq2V
+	8RZneZ38SSM8KpZT/q2b42gMiNa3eiWrtSkkh/PyKhpyS5xvHb774oAGao2BhF+KePyCSmGkpDn
+	K0PDnlTGLHugZR/u+9MgwnuF/JjKt7toJw0RDqtiEIZ2rO/KTvHRex7sEYnBKIDpypdKtg6bhx9
+	gwjKBz59jeLAAGThy8bQ5u/IP37HiIaHp/TKAtZM726lQWZu2I7C0LhnQ5LyYz2WAzxJZ43VyP7
+	BekOt3vHWUJ8pyuF1Nss5BfvMx+S6RDuX9BrnKIqY5B+dFOeTgFaXAtaQS2PaTalgsS5Cw==
+X-Google-Smtp-Source: AGHT+IFN9UctYMQlaAiLxuxtHAyS1yTR41k3TKQuKvdDE0nUJljmffGv5faKmGgk4C8wB16wzDcS9Q==
+X-Received: by 2002:a17:903:234a:b0:224:a74:28cd with SMTP id d9443c01a7336-23198124c72mr53403505ad.31.1747246822676;
+        Wed, 14 May 2025 11:20:22 -0700 (PDT)
+Received: from sid-Inspiron-15-3525.. ([106.222.228.33])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc828b422sm101914245ad.186.2025.05.14.11.20.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 12:43:11 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com
-Subject: [RFC PATCH 2/2] ceph: exchange BUG_ON on WARN_ON in ceph_readdir()
-Date: Thu,  1 May 2025 12:42:48 -0700
-Message-ID: <20250501194248.660959-3-slava@dubeyko.com>
+        Wed, 14 May 2025 11:20:22 -0700 (PDT)
+From: Siddarth Gundu <siddarthsgml@gmail.com>
+To: idryomov@gmail.com
+Cc: dongsheng.yang@easystack.cn,
+	axboe@kernel.dk,
+	ceph-devel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Siddarth Gundu <siddarthsgml@gmail.com>
+Subject: [PATCH] rbd: replace strcpy() with strscpy()
+Date: Wed, 14 May 2025 23:50:15 +0530
+Message-ID: <20250514182015.163117-1-siddarthsgml@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250501194248.660959-1-slava@dubeyko.com>
-References: <20250501194248.660959-1-slava@dubeyko.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -94,78 +90,39 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+strcpy() is deprecated; use strscpy() instead.
 
-This patch leaves BUG_ON() for debug case and
-introduces WARN_ON() for release case in ceph_readdir()
-logic. If dfi->readdir_cache_idx somehow is invalid,
-then we will have BUG_ON() in debug build but
-release build will issue WARN_ON() instead.
+Both the destination and source buffer are of fixed length
+so strscpy with 2-arguments is used.
 
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Link: https://github.com/KSPP/linux/issues/88
+Signed-off-by: Siddarth Gundu <siddarthsgml@gmail.com>
 ---
- fs/ceph/Kconfig | 13 +++++++++++++
- fs/ceph/dir.c   | 21 ++++++++++++++++++---
- 2 files changed, 31 insertions(+), 3 deletions(-)
+ drivers/block/rbd.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
-index 3e7def3d31c1..dba85d202a14 100644
---- a/fs/ceph/Kconfig
-+++ b/fs/ceph/Kconfig
-@@ -50,3 +50,16 @@ config CEPH_FS_SECURITY_LABEL
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index faafd7ff43d6..92b38972db1c 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -39,6 +39,7 @@
  
- 	  If you are not using a security module that requires using
- 	  extended attributes for file security labels, say N.
-+
-+config CEPH_FS_DEBUG
-+	bool "Ceph client debugging"
-+	depends on CEPH_FS
-+	default n
-+	help
-+	  If you say Y here, this option enables additional pre-condition
-+	  and post-condition checks in functions. Also it could enable
-+	  BUG_ON() instead of returning the error code. This option could
-+	  save more messages in system log and execute additional computation.
-+
-+	  If you are going to debug the code, then chose Y here.
-+	  If unsure, say N.
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index acecc16f2b99..c88326e2ddbf 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -614,13 +614,28 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
- 		spin_lock(&ci->i_ceph_lock);
- 		if (dfi->dir_ordered_count ==
- 				atomic64_read(&ci->i_ordered_count)) {
-+			bool is_invalid;
-+			size_t size;
-+
- 			doutc(cl, " marking %p %llx.%llx complete and ordered\n",
- 			      inode, ceph_vinop(inode));
- 			/* use i_size to track number of entries in
- 			 * readdir cache */
--			BUG_ON(dfi->readdir_cache_idx < 0);
--			i_size_write(inode, dfi->readdir_cache_idx *
--				     sizeof(struct dentry*));
-+
-+			is_invalid =
-+				is_cache_idx_invalid(dfi->readdir_cache_idx);
-+
-+#ifdef CONFIG_CEPH_FS_DEBUG
-+			BUG_ON(is_invalid);
-+#else
-+			WARN_ON(is_invalid);
-+#endif /* CONFIG_CEPH_FS_DEBUG */
-+
-+			if (!is_invalid) {
-+				size = dfi->readdir_cache_idx;
-+				size *= sizeof(struct dentry*);
-+				i_size_write(inode, size);
-+			}
- 		} else {
- 			doutc(cl, " marking %llx.%llx complete\n",
- 			      ceph_vinop(inode));
+ #include <linux/kernel.h>
+ #include <linux/device.h>
++#include <linux/string.h>
+ #include <linux/module.h>
+ #include <linux/blk-mq.h>
+ #include <linux/fs.h>
+@@ -3654,7 +3655,7 @@ static void __rbd_lock(struct rbd_device *rbd_dev, const char *cookie)
+ 	struct rbd_client_id cid = rbd_get_cid(rbd_dev);
+ 
+ 	rbd_dev->lock_state = RBD_LOCK_STATE_LOCKED;
+-	strcpy(rbd_dev->lock_cookie, cookie);
++	strscpy(rbd_dev->lock_cookie, cookie);
+ 	rbd_set_owner_cid(rbd_dev, &cid);
+ 	queue_work(rbd_dev->task_wq, &rbd_dev->acquired_lock_work);
+ }
 -- 
-2.48.0
+2.43.0
 
 
