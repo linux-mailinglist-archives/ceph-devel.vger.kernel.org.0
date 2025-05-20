@@ -1,66 +1,50 @@
-Return-Path: <ceph-devel+bounces-3049-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3050-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02674ABBFF4
-	for <lists+ceph-devel@lfdr.de>; Mon, 19 May 2025 15:55:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AB31ABD69E
+	for <lists+ceph-devel@lfdr.de>; Tue, 20 May 2025 13:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E75423B0893
-	for <lists+ceph-devel@lfdr.de>; Mon, 19 May 2025 13:52:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C6633A42AF
+	for <lists+ceph-devel@lfdr.de>; Tue, 20 May 2025 11:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136C22868B6;
-	Mon, 19 May 2025 13:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F5B270542;
+	Tue, 20 May 2025 11:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RLFtSFU1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODKh7+Ig"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE0B28312D
-	for <ceph-devel@vger.kernel.org>; Mon, 19 May 2025 13:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95981262FCF;
+	Tue, 20 May 2025 11:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747662566; cv=none; b=dlTWbV5+PozGYgBJR2RTzSFZLq0n/ydqNlfJbpvhptqzpOAH/0+EzkcL0P3dI9piwYJWPOuni9SDrlfuKxORfZxTctNWIBy3j7Fwp4G/iTvyIDrDwbA1Fk1cH0rN59RuQTY2Oom2/trnzzlpeoyS0kmZaZKSmom8bGjD3qQrPvA=
+	t=1747740069; cv=none; b=SNTl2nJ3p+us8EffWMK37o9pNNF3vfBlQdZuUeRcC9jcXqCKwFz3v+XD9P1NwxJe6eqzOjev6Mw0o92cUoGOJ8XImnendWaY7W1VQAZrzZIyu5D5Ak1+EGlF7R1QVq2QEU+MbxqoSieEQeyhs3aUNFCcGxjVFrQtkRnrZ/xujK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747662566; c=relaxed/simple;
-	bh=iv8jfhSY2pjUHanj+AjE29zg4dE6ieuCmxfmSPfpSmc=;
+	s=arc-20240116; t=1747740069; c=relaxed/simple;
+	bh=SxZF7UQR/ESUvDdE3/QnwrqfcMM8WfbnJhTz/dGTTyk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MCCJ8FIfcwW1eZBhsd+ileK4cGN4VyNhLmcA1uQuC7Q00zY6bNNkGeCAA66lHbJqp72M2AsKC7GUrZbHE+djjo3E20QVze18K2Qd3HHWKVfnurTnP8aQPTXqpL4KiTbVxsxo69pDuhibKt4ZSQLhHvAIrfRnRnnHE1zjAAmGAGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RLFtSFU1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747662564;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kg+gPJ9yl1JR7feLLpWZNLDRMWZLNWwVqA9/nsyErrQ=;
-	b=RLFtSFU1ddXyiM6Ms+4v1muAc6kARtSGOIYfOJP8y32yvYeIzgfwGQNslgtprgZim96IsC
-	fLOR7f4kBEmUZaGhy3LgOf9S61UPRz6MVNOspz/HXpEA294BsRX8pqVpgMXPKVSpRQqWwK
-	ChagFaLKAjs4sFmtokI8uCL4okTb6yc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-668-6HSQlFW9Nx2ZvVOhQWKZGQ-1; Mon,
- 19 May 2025 09:49:23 -0400
-X-MC-Unique: 6HSQlFW9Nx2ZvVOhQWKZGQ-1
-X-Mimecast-MFC-AGG-ID: 6HSQlFW9Nx2ZvVOhQWKZGQ_1747662561
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7E8F51956046;
-	Mon, 19 May 2025 13:49:21 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.188])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A8C2219560A3;
-	Mon, 19 May 2025 13:49:17 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>
-Cc: David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.com>,
+	 MIME-Version:Content-Type; b=BAQzxLM6o3Ed1/dpxYQuGJpfV0t3ic3OWus1j3Eku+ep7vanG7VwHT1RAplBlz9oYC57zCVkqjN0qCf5R6pdOwJwRb1Ys1CnTjPlg+0JJZrzyxkdJgqIcaB9FMBLtrV4QgPwj0uudKsgKIW1jlS2wu97c1EH2BEUj9c64nwv3W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODKh7+Ig; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9183C4CEE9;
+	Tue, 20 May 2025 11:21:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747740069;
+	bh=SxZF7UQR/ESUvDdE3/QnwrqfcMM8WfbnJhTz/dGTTyk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ODKh7+Igw5KIRi/8u5+nTGJQp+jMs4JSk9o+fC9+2QLk3ByZZ105laATtt4wGWi1B
+	 L+/87e6TVGkPlfa6WiNtIQ3+oaH+Y6uSMsYOwz0+qw3/XDoxgncfS4m7LtSbW7b+tJ
+	 jjavKA13uZ/Rxs5m2Kl2guWpdYl785pMLzvIURxcy/Z0vpiGxX5GEA7DFqTNg0h2oL
+	 oHybhGDrOZiuhrzPb/anbw9Hc5sV9ELs6db6UMQiLhHag1e4xYdstJ52jAi70DIinM
+	 knthEzQx3dkbsY1/d9ozlSeh1WuC1+CbwLoDHaygmssjOadY8AbQWS4wKPna4yfV9n
+	 c3Ra+e1jmVYHg==
+From: Christian Brauner <brauner@kernel.org>
+To: Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>
+Cc: Paulo Alcantara <pc@manguebit.com>,
 	Max Kellermann <max.kellermann@ionos.com>,
 	netfs@lists.linux.dev,
 	linux-afs@lists.infradead.org,
@@ -70,9 +54,10 @@ Cc: David Howells <dhowells@redhat.com>,
 	v9fs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 11/11] fs/netfs: remove unused flag NETFS_RREQ_BLOCKED
-Date: Mon, 19 May 2025 14:48:07 +0100
-Message-ID: <20250519134813.2975312-12-dhowells@redhat.com>
+Subject: Re: [PATCH 00/11] netfs: Miscellaneous cleanups
+Date: Tue, 20 May 2025 13:20:58 +0200
+Message-ID: <20250520-biodiesel-lausbub-b47b9d0c8122@brauner>
+X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250519134813.2975312-1-dhowells@redhat.com>
 References: <20250519134813.2975312-1-dhowells@redhat.com>
 Precedence: bulk
@@ -81,66 +66,57 @@ List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2314; i=brauner@kernel.org; h=from:subject:message-id; bh=SxZF7UQR/ESUvDdE3/QnwrqfcMM8WfbnJhTz/dGTTyk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTopM5buV2MaXfDjYd/VmqVLFc5/nXqvw3zTS97h2lYJ XP7K9RrdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkJA/DP1Xmxqde9g43J4aw RD6wdhG/XOM/0euQ0yK3e/YduWe+PGf4w19VMPvW0VNLNT9NN3Arjc62/L1935d5tXtyd7genFt 0gh0A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-From: Max Kellermann <max.kellermann@ionos.com>
+On Mon, 19 May 2025 14:47:56 +0100, David Howells wrote:
+> Here are some miscellaneous very minor cleanups for netfslib for the next
+> merge window, primarily from Max Kellermann, if you could pull them.
+> 
+>  (0) Update the netfs docs.  This is already in the VFS tree, but it's a
+>      dependency for other patches here.
+> 
+>  (1) Remove NETFS_SREQ_SEEK_DATA_READ.
+> 
+> [...]
 
-NETFS_RREQ_BLOCKED was added by commit 016dc8516aec ("netfs: Implement
-unbuffered/DIO read support") but has never been used either.  Without
-NETFS_RREQ_BLOCKED, NETFS_RREQ_NONBLOCK makes no sense, and thus can
-be removed as well.
+Applied to the vfs-6.16.netfs branch of the vfs/vfs.git tree.
+Patches in the vfs-6.16.netfs branch should appear in linux-next soon.
 
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/direct_read.c | 3 ---
- fs/netfs/objects.c     | 2 --
- include/linux/netfs.h  | 2 --
- 3 files changed, 7 deletions(-)
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
-index 5e3f0aeb51f3..f11a89f2fdd9 100644
---- a/fs/netfs/direct_read.c
-+++ b/fs/netfs/direct_read.c
-@@ -106,9 +106,6 @@ static int netfs_dispatch_unbuffered_reads(struct netfs_io_request *rreq)
- 			netfs_wait_for_pause(rreq);
- 		if (test_bit(NETFS_RREQ_FAILED, &rreq->flags))
- 			break;
--		if (test_bit(NETFS_RREQ_BLOCKED, &rreq->flags) &&
--		    test_bit(NETFS_RREQ_NONBLOCK, &rreq->flags))
--			break;
- 		cond_resched();
- 	} while (size > 0);
- 
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index dc6b41ef18b0..d6f8984f9f5b 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -64,8 +64,6 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
- 	}
- 
- 	__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
--	if (file && file->f_flags & O_NONBLOCK)
--		__set_bit(NETFS_RREQ_NONBLOCK, &rreq->flags);
- 	if (rreq->netfs_ops->init_request) {
- 		ret = rreq->netfs_ops->init_request(rreq, file);
- 		if (ret < 0) {
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 5f60d8e3a7ef..cf634c28522d 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -270,8 +270,6 @@ struct netfs_io_request {
- #define NETFS_RREQ_IN_PROGRESS		5	/* Unlocked when the request completes */
- #define NETFS_RREQ_FOLIO_COPY_TO_CACHE	6	/* Copy current folio to cache from read */
- #define NETFS_RREQ_UPLOAD_TO_SERVER	8	/* Need to write to the server */
--#define NETFS_RREQ_NONBLOCK		9	/* Don't block if possible (O_NONBLOCK) */
--#define NETFS_RREQ_BLOCKED		10	/* We blocked */
- #define NETFS_RREQ_PAUSE		11	/* Pause subrequest generation */
- #define NETFS_RREQ_USE_IO_ITER		12	/* Use ->io_iter rather than ->i_pages */
- #define NETFS_RREQ_ALL_QUEUED		13	/* All subreqs are now queued */
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.16.netfs
+
+[01/11] netfs: Update main API document
+        https://git.kernel.org/vfs/vfs/c/47373f2ab1d5
+[02/11] fs/netfs: remove unused flag NETFS_SREQ_SEEK_DATA_READ
+        https://git.kernel.org/vfs/vfs/c/ee14258fbbf1
+[03/11] fs/netfs: remove unused source NETFS_INVALID_WRITE
+        https://git.kernel.org/vfs/vfs/c/ddcfb59dcdec
+[04/11] fs/netfs: remove unused flag NETFS_ICTX_WRITETHROUGH
+        https://git.kernel.org/vfs/vfs/c/456cf30144c6
+[05/11] fs/netfs: remove unused enum choice NETFS_READ_HOLE_CLEAR
+        https://git.kernel.org/vfs/vfs/c/25d0f55b5f5f
+[06/11] fs/netfs: reorder struct fields to eliminate holes
+        https://git.kernel.org/vfs/vfs/c/b6c86807c1a3
+[07/11] fs/netfs: remove `netfs_io_request.ractl`
+        https://git.kernel.org/vfs/vfs/c/7327b21c7203
+[08/11] fs/netfs: declare field `proc_link` only if CONFIG_PROC_FS=y
+        https://git.kernel.org/vfs/vfs/c/bdbba439f946
+[09/11] folio_queue: remove unused field `marks3`
+        https://git.kernel.org/vfs/vfs/c/ac4c7df8c62c
+[10/11] fs/netfs: remove unused flag NETFS_RREQ_DONT_UNLOCK_FOLIOS
+        https://git.kernel.org/vfs/vfs/c/48f59da41422
+[11/11] fs/netfs: remove unused flag NETFS_RREQ_BLOCKED
+        https://git.kernel.org/vfs/vfs/c/e8900578e0f7
 
