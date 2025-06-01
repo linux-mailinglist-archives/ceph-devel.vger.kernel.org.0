@@ -1,238 +1,223 @@
-Return-Path: <ceph-devel+bounces-3061-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3062-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A730EAC9352
-	for <lists+ceph-devel@lfdr.de>; Fri, 30 May 2025 18:19:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7948BAC9F3F
+	for <lists+ceph-devel@lfdr.de>; Sun,  1 Jun 2025 18:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45784A246E6
-	for <lists+ceph-devel@lfdr.de>; Fri, 30 May 2025 16:17:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A82DF7A8039
+	for <lists+ceph-devel@lfdr.de>; Sun,  1 Jun 2025 16:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79F11A23B5;
-	Fri, 30 May 2025 16:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22FF1E51F1;
+	Sun,  1 Jun 2025 16:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WQh5egVZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b1p+hm5e"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2242D2E401;
-	Fri, 30 May 2025 16:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748621865; cv=fail; b=GLuMhwHdE1PmNLDzPGpHUMT64rmNSBA8rOdGDDVxqdgLyt/RsLmWblApAR3AlpyguQLxc1GLdSnWgzhUgs30JkjBoGgrcwQ3SgCZEyVb3qN+7s7DLg/hmr1uVGzqXCtZLFpVLKyhmv4yV09TIMRSlR3HbE6G6kimLrgwLl5TO4A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748621865; c=relaxed/simple;
-	bh=XQW+Qo6kN373xeO2u2Vq06sH8oP4aou72BuIQoPauFo=;
-	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=BGpzQ3GGXEvncCQaxOW9CV/LXYEnlAxH4eVhMFX3o2FcSZl//5wbsbk6gfTPCwz5Cto9aSeHTVlKPnxMqIZGmWislC0/RJJ+onGB2mQVX3K8ZrJDKDIIEIjY6sLag4Fkfm1lUJ4EKkGY6LhgWKEpbgOEA2zeUqciBALvc4bXbU4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WQh5egVZ; arc=fail smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54UC8gcn017111;
-	Fri, 30 May 2025 16:17:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=XQW+Qo6kN373xeO2u2Vq06sH8oP4aou72BuIQoPauFo=; b=WQh5egVZ
-	WLoB8NJIZsAYvC/VSUuOl8/0KytO2d4nhlPg2kpqaKKs6fzRFPx0NJ7fXFAHmAUD
-	Tb8hjylQmBQx3oL7EJiruiA7bwrjhp/Y51ELbwEduK3WwZzy2DuQowRCFrBnTgHT
-	QJWcMcq84VJSeygn9ipMic+IB4bf1yo2j0fFBVN4Cg5HI7oJOUPr/hNCWwR9I1Vr
-	CekD+8RWjRTYjamXVdzcHCQsBeARxj1LphATGHW0r3Uzew1mhi/Ei0m7DaQgLBwu
-	xuEOgcrfrjktCGZ/Kq++vA00ZOJtRcuePRYBRBxsUICDmpmK/PHq0Og1NytM2oyW
-	uk1v9lKv9xQBzA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46x40hvp4a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 May 2025 16:17:41 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54UGB2IB011125;
-	Fri, 30 May 2025 16:17:40 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2076.outbound.protection.outlook.com [40.107.220.76])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46x40hvp42-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 May 2025 16:17:40 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ADAG9+ZJMb/K4kzd8I/teUvGExW4M/r6+gruzJ1MDTJU0WVO5Yy8sjg5Oi1uXrxmw6WSnrLWo/QDdjn25Hjr3GF2KthA6P4XdYqhB3nI9xcDvnDZtU99K/25ivD+eddl257P6pG5RbevbMLfziONrM0x4965d9LUOduqfl0Ra5SXZVKpHY8WHCZ8W2sUlXWXYFy0z/H5pnqhUyG2HqL/Y7b53+CXEu/d1s4Wmpyy9vCkuq9IPxxm5srX+nLR9VNQOijV8cjmgI/sSMDS9Z/1xtSx4zzrVD3KNvRWSJ/7kG/OUmzjacT/wuOD5Op+3KMS37+hdYh6Q178E2ngYSAAAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XQW+Qo6kN373xeO2u2Vq06sH8oP4aou72BuIQoPauFo=;
- b=cDtJZ2Xq8kDfI6wkFPB5g1mEOBuQqODkxSGDhzUNfUJ6wwuQsmPnMAVHXoddq5c56nb79A2llDXhQ2lJNGq9RgwdKrL6D8Jmkw0JALnCbYof/dK0nh7y/WDQwrv31KHW7L4paz2SHEYEWquiMo03XmVPgaveR1EMtKUUff1DAPFo7lbAsBLlG5b0NjHkbMyC48TLaCsL0HIP2r+iPEFX4ehRF2EUAwr4tSPjw74iTtykjkopfEZpYMs3eZOW/odop4jM8SDrB+tSLrI6dpshI9XD1Ax5t/FLgAj1OyAuZ+clIyQD3djsju5+t5LQVILkq9TJsSJhEKytmUFStOQEWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by SJ0PR15MB5227.namprd15.prod.outlook.com (2603:10b6:a03:42a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.33; Fri, 30 May
- 2025 16:17:38 +0000
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b]) by SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b%6]) with mapi id 15.20.8769.025; Fri, 30 May 2025
- 16:17:38 +0000
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: "frank.li@vivo.com" <frank.li@vivo.com>, Xiubo Li <xiubli@redhat.com>,
-        "idryomov@gmail.com" <idryomov@gmail.com>
-CC: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Thread-Topic: [EXTERNAL] [PATCH] ceph: correct superblock flags
-Thread-Index: AQHb0TxI2r81OZVdG0+9Iy6QFqBT17PrWj8A
-Date: Fri, 30 May 2025 16:17:38 +0000
-Message-ID: <5b3f5414f900b16dfcc316c5b46b5c6bc8d2354e.camel@ibm.com>
-References: <20250530084459.2434286-1-frank.li@vivo.com>
-In-Reply-To: <20250530084459.2434286-1-frank.li@vivo.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|SJ0PR15MB5227:EE_
-x-ms-office365-filtering-correlation-id: f057b158-d8ea-4167-20c0-08dd9f957f22
-x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|10070799003|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bVptMndlNGpXcldoams3emZLV2g2bjJiNlI1bTMyZ0w0TUFuY0FDTFdPZFE5?=
- =?utf-8?B?b3RkV2NDZkk2VjVtOTZ4TTJsM1hPancrUFVTT0xZSThpSSt0Sllxd21scUh1?=
- =?utf-8?B?cXI5S3pTUk9oUk1ZRkFQdXpja0V6UTlrcGtwbmd2NkZhVzg3SzRYU0Zkdk55?=
- =?utf-8?B?WGlRMUd3STJOT1JEZk1CT3BzeTdjMjZQdkd6SWIyOXNFQjY1M0gxQXhLM1pH?=
- =?utf-8?B?Q05Id0VBNDEzSldUeUR4SlBIZzRZd3FjdmxNbFVzZ0hsaVhxQ0RXLzc0amZz?=
- =?utf-8?B?U1ExbkVSN0ZIbGRnODVKS1VrRjJSUCthK0F2aG9GUHB1OCttcTNvM0ZzWmNW?=
- =?utf-8?B?WUlucll6OUhGSmhnVUh5dnJYWDNaa3FFUElBbGZGaE5lWDNaYlVuVjFDQ1Nu?=
- =?utf-8?B?WUtlVmJUVG1uYkh4anJJWkVqMG9QY0NueGRxTEM5emhQU3VmVGExTWlhYUk3?=
- =?utf-8?B?MzRYdTkvMURzMlpvbjI4NmZmQ05xRWxxek1PSVNHdjFLWnFsaXVtNWxlOHMv?=
- =?utf-8?B?Q1hiejVoL3pBckpicHFOdFRFYmlEK09NSWdCcXRmVEtHUWVOYjlGalM0M1Z1?=
- =?utf-8?B?RnFidWFNOWhnMTJaU2FqT3VKTFY4ZTBYQkhMOWpPdHhwWWVYaThMU04vLzhC?=
- =?utf-8?B?R0F6aHFVS0YraysweHNnaTJmYXdKL2VSTUxrSzlua1JIY0NNREJZZG8rOFRW?=
- =?utf-8?B?Qk1vN2tNbGNidUwxV2VrTEM4NTBEeUdNNk5wbEIzQ1BKb2NyUmQ3bk0zY1lC?=
- =?utf-8?B?VE1kRW5uOFNkRlNvN284QzB2b3UzTDVKUVpxZm51RHFjdTdDRjJVMmlZTGcw?=
- =?utf-8?B?RlViNmdiV3l5dzRtUk1oRlpiU2w2WFUwSGMvcndqY3c4bDJyQWtrOXh5ZENE?=
- =?utf-8?B?b3U2S2kraGw4cE5Ld2xUM3hEL1RBcjRLbktqTU0xbGhpcjd5TmtlMGdqOUJN?=
- =?utf-8?B?REZoa3lPSjJQc3Q3U21ESmU2SzFlS3ZzTVV0TUJIaituTDhhWHVDMDhnaCs4?=
- =?utf-8?B?ZlhFQmxreXpCQkkxSm90cE1SMzQwVktORU1oZ05zMlJoYnp3eGVwTUN1aDlL?=
- =?utf-8?B?bmUxQzYrWlNTN2k5VGlKV2RTYWREQkQ5cmxTZ293bi8wZHBUQURZTnhtc3ht?=
- =?utf-8?B?UlNxQTFBS3ZPT0NRUUh3MlV3Zms0UmdzbExMR3ZLdUIvaXFjeE5OZ0VBdjZK?=
- =?utf-8?B?SVdMQlEwYndpWm1VSUlaV3dVMSsrSXQzb05qbVJnTWRHdGdPTWVub0o4RGZh?=
- =?utf-8?B?YnlkMjBJQ0wxVFR3R3o4Nzk5bFROL3dvSVVwR2F0eDNOM0s3aFZtWUFoVW5N?=
- =?utf-8?B?UHZmbVpnVjhkMUNHQm1pQVYvU0YzbEdYakl5OGk2U1R5eEptLzZGaTBmOGNC?=
- =?utf-8?B?UjB5TnZyR2kyWkUxNExvTHJzaldQMHRGeGgvR292S1NwS2U1UG1walZoWnVC?=
- =?utf-8?B?TG9BK3IvMXRpbXN0dGtZL2VPdDY5Qkk4elhqMzRNOWtydU44WTFDb3NhR1BQ?=
- =?utf-8?B?b3dHV2szSlUweWljS0I3d25lQzJiVEFmUUR3MzI0Q0QyWWhVVk9jNlYwenUx?=
- =?utf-8?B?NnkzNkx3S00xT0hSYUFoMjFMTlJwankwaFdJdEZYMmpBY0Y4RUZwV0lyNXBr?=
- =?utf-8?B?enEyeGhGN3F5WURtR1laYVQ0WDVnMzZyN0tTZitSS3dSOGptenluQVRodGEy?=
- =?utf-8?B?dUtkcjM0QUxBTGQ1R2NQMHU4SHJSN1NEZHVvd1VhZEhsSEZGeGxMZU9MMGVV?=
- =?utf-8?B?Ny9EVjVyVDJlaVRHNEsxb0t5WE1pdHRiZVUyZXZzYkx4YmJsTkhiZU80eUZp?=
- =?utf-8?B?NXc3WFhtR1FZYzVJY2VPandDa1JjcGRtU0JhUjFiWDNCWHVxdWhOR3FzMjh4?=
- =?utf-8?B?NzIybVUrcDhTeGorVVAzUkFXVGRDSFpZTy9LSnEzSVpzeE5CK3lLYWVhMVM5?=
- =?utf-8?B?bkdlK0FtOEg2MnNNbTFNQVBVUjdPektUTEZwdnJoMWl4QWpCQm04MzRkb0Q1?=
- =?utf-8?Q?B+cnND5jr019GVkH6b7Btm2sL2wKOk=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?eFdLMzZ6NXNpbUR0TFB0RnNqdWtac0VrN0trNENlaDUxMGdIL2JIZGxKQ0h5?=
- =?utf-8?B?SEdtTGFiU0hRd1RkRGNoNlNaMG5kVDRrakZLWlBsMGQyU2JSN0lSZHc0ZE5S?=
- =?utf-8?B?NVNKSmM4bXY0WWpMa1hjcDYwa3FMc1FUL2Z4MC9QdWFxY3RhVjdTc1UyOEtl?=
- =?utf-8?B?UjRzbVRQMWhyR2NrVjIzRGpFUkJxUi9iQm9VK3kxc1V6cnRTbGcrR3dNMFpl?=
- =?utf-8?B?QTI1TmxONHphVXl2NmFHUUgrS3VvbE1hNTRETFRvMFNtcGZQYmlycWplaXBX?=
- =?utf-8?B?QWhpTXVlSjRLc2RjaHJtU01vM3RMTml1Z1p5dkdweFZCSFgwalpBdHdKamtR?=
- =?utf-8?B?SFdmcmlvNlFHZWhNZ2NSM2R6Z1J6UlFpVXc2aVF1Unk3UFRFdVJtV0ZJSUZQ?=
- =?utf-8?B?NE9vdU05RmM4UThmbHo0YVJwU0NDcURwTG1CQXRFeCtFRHBXRVVMUXpHK3M2?=
- =?utf-8?B?a0doam9QVFNuMnczNHE3cVFlaDgyOVRuOUk2RnFrQkE0Sm1VTWwrL3BGa2x2?=
- =?utf-8?B?dWZmN1lFUWxoK2tBRWVUQXhEN1p0SE9abW9Yb3ZiV09TY2x3UldzRG5HOWdB?=
- =?utf-8?B?REIyK1A0TThwNFhFbDE4eWVGZXRGeU80Um9LTG5nbHNmUDMwK0Q4YTZiL2Mv?=
- =?utf-8?B?dDQ4QlF3NktZc0NSbVFzRjhIOGJncVpZdjBkYURRVjdYUVhOSTNnRkNKUzFk?=
- =?utf-8?B?VWt2MFdvckdtYmljbmhWaXpobFphNU1SdzBQb3NQSGNaaHk0SEtxaEtJZFhm?=
- =?utf-8?B?UkFZektxenQ1Wmcvb0ptVDIveExqT3VwWGYyaThrb0dmYTVkMXREb093NzYy?=
- =?utf-8?B?b0g5YjhoMHQ1UDl0SlBXYzA4ejkxS0Rsa1k2NlBkempab1V4Vm9WcmRVdllK?=
- =?utf-8?B?dkxNZ3NUdmxRQzZoSjY0S3RZWmQ3WTFPaXVQR0xjSjNENGhlcEduUXJwdTZX?=
- =?utf-8?B?MW1qMTRiMk0wUDc4dlRoenhKRm5JTGY3Wm9OVWhmQ1FUUlZFc3VUWnBqeVFP?=
- =?utf-8?B?RzUrRE1TNWxESE9Wd1VTR0VqOE9PUjN1ajhLWVdqa2NVNUlBZHpJam9UeUxH?=
- =?utf-8?B?Nmg4YzJKd0U5VnNBZXRYSWpKalNvZldTTWZqR25zZ1BiMXRXUzBRSS9XVWJp?=
- =?utf-8?B?cjQ1NUdOeURJRVhOazc2RFlaNUhvTkRXWmNYUkE5UEJPSjh4MWp0eFNTaHVB?=
- =?utf-8?B?YW5leDhlSzQya0Nkb3BRZ052TzZlRGlJUW9WcmhTSXRpcmVReVpWZjlmaVpB?=
- =?utf-8?B?VStYbTd1Q29iSTNMTUt6S2toUHdvNmY2QlJoNmJzNXBVOS94RWtJRUM4ZENF?=
- =?utf-8?B?d2haTUNHYWRtNHZuQ1dITFFHOVVqRldzcHFoZjcwb1pIKy90TDJWT2ZlVndK?=
- =?utf-8?B?WUtock5RTlRMcjFZdXRwOUtPUVFvSFhpb0JNUUlsL1lxSCtFKzBvKy8vVjZx?=
- =?utf-8?B?L3FYMkVxd2V4L2l5a2FyY2gwOEdSbVM4cGRtQjRPRFNxRnVMUFk1cThNVUV0?=
- =?utf-8?B?b3RwV1RHZnh2WVZhYWlhd1cwRzE1TlNlbVMxd1BGVGx2cTB1TWZnaGlJRSta?=
- =?utf-8?B?cXJzZm14eVBWUTNtbHpJS1htc2VLSzJUem9Ia3E3SHNXc3VoOTdpMis0RFpZ?=
- =?utf-8?B?SVU4L2tFcmZLYmhoRXRzckhSSTNFM1J4TWt4QWFSdEE1amM1U3h0Y3JEcnpI?=
- =?utf-8?B?ckpPOE5aVVpvcVNDWTN6WFVvMlhFYkRCUWNWMEJyZFpoL1F4OUhmcXhqSTRi?=
- =?utf-8?B?Mno4SnJjUmIxVEl2VXdRWCt3WXFvMmY0VklnZ0NDbjBBNkJBSkF2c1NJZXZ2?=
- =?utf-8?B?U2poa1FNZ1RYUmx5RVJMVzJIR2I0bjBpS0JENzFzNHk5VG8valFTSHBwRXJC?=
- =?utf-8?B?RHNuR3B4TUFtVWZCQ2h4VStMY0RhNFVMdmRqUk9BU3U2MnlLNFovN2FEMzZE?=
- =?utf-8?B?WENMY1RxQkRJa3ExMmIvOUJFLy8rRnZFNmtUTTJXS0R5dEtESHZZTVFQeGpw?=
- =?utf-8?B?cWdMTXV4M2pGWmNFa2o1NDdWenhmTWtGUGpMaytqa1B5THJYdWNPTXhkbHU4?=
- =?utf-8?B?T3E0a3lYU1Y3SkM2T3JKQmIyV3YwaFN1aGNMa2VCRzFNTXdJVjFoZHkwWllv?=
- =?utf-8?B?N21JYUNuYUNZVVBYVmM5bGxlQlF4NjdiSlhYbWNyRmwrMzdkREpzWTZLY2JU?=
- =?utf-8?Q?4fNDK08Q3OMTSOMtLmlkM2k=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <25DD046D7B09D94C80B8DE08E5FF43E9@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90F819F471;
+	Sun,  1 Jun 2025 16:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748793795; cv=none; b=RMbKAGcHtTu1PWjF+D6Q0lZ2ELt+B2pTuTJHyi2k0YspIinuy2xDGotFnQhGEyZlke8EhB8Tpklyv14oDscKA+DP1y1BvKuAgn6aKv80mP/umER0kQn8IfdMt+TZn6QfQIqeByJY7bHxmfB0z2QVGDaF81FXT4j2XKwefT/+zyw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748793795; c=relaxed/simple;
+	bh=CqNu5CKNnsoXtw6eONVa+80Wv1SuCZ9WHbQ4zCxFe94=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PYtVrAMoinzD+ZxTEyuOKeJSSQ/o/g8Toh5ZKggws/qv/GeyT4gRhTESOtb9tuZYzl57nRu0vxBclZLRjsdR033sHuTLAmsy3iNXWn1sVbKQ6i1Tc2066LlfuJ9v/MvLC1TXmnryPd0t9lWK/t/MGJ27pQaDb4TR4QDLjU4n1SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b1p+hm5e; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-312150900afso3746251a91.1;
+        Sun, 01 Jun 2025 09:03:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748793793; x=1749398593; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UChtZ3RyAoj4ffRZRBtp2eq2BEbfTkn4axpTqzMhb2U=;
+        b=b1p+hm5eugGYY/bhaVOEcA5A6lCH+4NTxmsx2rxZRDMXPntzUXLckU8Vbd6dXBClQ9
+         E+keofYMGwtzgOVUOk8GwC2JawGG3B7+hUEyyBnuS0PJyzo/GKCdx5dvOTzBAKcQWxc5
+         snzIGkk94XyfqwWmo4KFF6Jv/S7gs8cc/8jwc6iwA4ItJVugCoS1PfQdBdmy4/eiNJLF
+         yC/F/NsUhlX9qkOJx0fGz+S4e5J+xF/mOrjSuRr1cuygcc9CbXHxmYHeeO7Jg9X83NTp
+         mv+eUGhesWq36SFCHRpYjTV/QeIZ08obcyYtD/+DylwZUG0eV2yqUrAzyInrVYWxpDBL
+         kOog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748793793; x=1749398593;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UChtZ3RyAoj4ffRZRBtp2eq2BEbfTkn4axpTqzMhb2U=;
+        b=i3lRGbxoPCsLLekRWFwgOcDagWeEQpqkY5JD9FmiFOhN2wNucz6CsrpYnO4Y4+EYW5
+         vIBqLHV+P+07PxV/jXcg7tqdtvKHoZSZRpyb5fMaqvqtC5exbum9ng2EVrIxMB0JQMF4
+         dAj0Jvcvbdf7vqk/n4pH4VPo/ud0OftAVVcgw2FxPStwxi5UnPgzQ6FXccevw1LtmESz
+         SZGBCsubllQN7OAj5flZk0ABowuMnlox0csX0JbzhtUfpvDfs3dhQC+qs+/ogqFJ4G3C
+         I7q1mtkAB12u9mMIRI72sbFVvH7+9ZAr3DvlowOYfMY1PFVhqit315sreeWzKROuLBz3
+         ODQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAxpLk8YZJhgxtxg01joHF6jWvtsgvW7BS6soE5RJmy8b13AsFZwA8WPYQl7TM0bekjIXvQJxuciv7mf6g@vger.kernel.org, AJvYcCUjks8nV5LchdKIcYpAXEBFWaRjpp8pKV9kTuyoR9yPhWFHE26yIimLMLazvev5pSLpUBHvndbrEL5osDEttDdUgQEJ9sjA@vger.kernel.org, AJvYcCX5oseoyIUX9lKUjEiPezIGOxOXdVsHKgXyFbTgenHU1pPh+2ywwSZLBAWl5ybhICndQGw5plo+PWDeKPaV8pI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSoSSi19IpiDVxcnHQOdLrzLa5OpCfeN8wOo7i4U7fVXg64je9
+	VSgFiPfITkv5Ive76CXvCluhnq/siBlkWHaZfzm6liHOj0ekoGpbEVJXtCRU2J5VO9F+TNPEQgt
+	BdHLkPgKDWv6C2MeXi3lFr2ldpLtlqP0=
+X-Gm-Gg: ASbGnct16piaSataTdk8dso5fUzdunX/DvPjoH58dA0r0iPdsbxvwQYitB+VeoekhhJ
+	+TjdlCu0PfI+2oFj0nZ3nt5DzDyJDoW3nGbNxt+75nPPWtzbfwGMG0IkdyBCIaU7yZwzBf3Bbd2
+	PnzS8gGSOpLSXFksnRPTFZJlPakoUuDB/2
+X-Google-Smtp-Source: AGHT+IFSoRVqyxLbsSJrHW3HefdQnYP2eEgVJB20Dqhf3P7M5oJsVb5jw+m8e0ZWx1dIU6mfRzrN92J1oMNUIqt1Kpk=
+X-Received: by 2002:a17:90b:4cce:b0:311:b0ec:1352 with SMTP id
+ 98e67ed59e1d1-3127c6d7762mr8573577a91.11.1748793792994; Sun, 01 Jun 2025
+ 09:03:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f057b158-d8ea-4167-20c0-08dd9f957f22
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 May 2025 16:17:38.8001
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: UAPJo034S5oqcvkLMtXe5drndAatc/CthA86M1N0Jp5T6ct8VFqkq5yYVFKUgv7Dq940QyMPe3x49I6QEHFRUQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR15MB5227
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTMwMDE0MSBTYWx0ZWRfX4mpXn3AS6O4C xjtpMJE3jUwec4NgWFe2tEoDpDnHn4qMNO5DIV0MWyPY7KVxk5wXpU2ipJhm6Kpz6nTiwzYDfkY 29NlF+788eFiNwAAzH5TwYCqueacZqKFS8lsR44OaLkm9Yu3mFzklb/I0JrwK4YUIkdjOQg/PYo
- QT9C/cdqRszjzR9o/fOKI2g0bQASB7zlW7SCHIClZBKqMoN8PhB2LDV8NWJWKjzymyPcWkTPPGz B8TU9zMz4A8mQl0MAg1/yrFIuLO1rm0j3x8K1kmFA06uTJ9I7Emop8HOx9k7QZEjWFSdgOoOL/3 88ZvAPeU1/eiMcQusLHUOBbJVVt7U8ktwN2LxeBi9ahi9MOc8Hr+ExGPPe7dml66hi5i+IzIPm0
- mn++OB0MFbuoYN8mrZJ/hnasqSW/ekWf287ZgTQdpQYrQGwuq4NoyR2DUgNcYiybcPt11IAE
-X-Proofpoint-GUID: TDIgTiavtXgcahCwRItyRgPgSvHeJqm1
-X-Authority-Analysis: v=2.4 cv=WOd/XmsR c=1 sm=1 tr=0 ts=6839da25 cx=c_pps a=lUYDfCFJ8uif96mLs61nOg==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=dt9VzEwgFbYA:10 a=1WtWmnkvAAAA:8 a=WgNERMmzcvXzMJC9dAkA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: 51HvhS4lSX53xvvYv7ZgkeEu5QaXpaYp
-Subject: Re:  [PATCH] ceph: correct superblock flags
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-30_07,2025-05-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- bulkscore=0 lowpriorityscore=0 suspectscore=0 mlxlogscore=999
- impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501
- adultscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505300141
+References: <20250529174453.293618-1-twelho@welho.tech> <d3a0a5caa69d3af5c9e09d1d15979c9306e5ae8e.camel@ibm.com>
+In-Reply-To: <d3a0a5caa69d3af5c9e09d1d15979c9306e5ae8e.camel@ibm.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Sun, 1 Jun 2025 18:03:01 +0200
+X-Gm-Features: AX0GCFvXylcEbDWgCtFU2ySd1l21esyQEnZGJ4j0RJd5cUm9Lox_DNVrQXGxIIU
+Message-ID: <CAOi1vP9q0LAtARP-cyLD3rkChqqQV=LfZARSySSJMGzpJRz0uw@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph: set superblock s_magic for IMA fsmagic matching:
+ up to 60x speedup
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Xiubo Li <xiubli@redhat.com>, 
+	"twelho@welho.tech" <twelho@welho.tech>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "zohar@linux.ibm.com" <zohar@linux.ibm.com>, 
+	"roberto.sassu@huawei.com" <roberto.sassu@huawei.com>, 
+	"eric.snowberg@oracle.com" <eric.snowberg@oracle.com>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>, 
+	"dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>, "serge@hallyn.com" <serge@hallyn.com>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
+	"jmorris@namei.org" <jmorris@namei.org>, "paul@paul-moore.com" <paul@paul-moore.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gRnJpLCAyMDI1LTA1LTMwIGF0IDAyOjQ0IC0wNjAwLCBZYW5ndGFvIExpIHdyb3RlOg0KPiBT
-Ql9OT0FUSU1FIGluY2x1ZGVzIFNCX05PRElSQVRJTUUgYXMgYSBzdWJzZXQuIFRoZXJlZm9yZSwN
-Cj4gc2V0dGluZyBTQl9OT0FUSU1FIGlzIHN1ZmZpY2llbnQgdG8gZGlzYWJsZSBhdGltZSB1cGRh
-dGVzDQo+IGZvciBhbGwgZmlsZXMgYW5kIGRpcmVjdG9yaWVzLg0KPiANCj4gU2lnbmVkLW9mZi1i
-eTogWWFuZ3RhbyBMaSA8ZnJhbmsubGlAdml2by5jb20+DQo+IC0tLQ0KPiAgZnMvY2VwaC9zdXBl
-ci5jIHwgMiArLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9u
-KC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZnMvY2VwaC9zdXBlci5jIGIvZnMvY2VwaC9zdXBlci5j
-DQo+IGluZGV4IGYzOTUxMjUzZTM5My4uN2M5ZTQ5ODdhZGY0IDEwMDY0NA0KPiAtLS0gYS9mcy9j
-ZXBoL3N1cGVyLmMNCj4gKysrIGIvZnMvY2VwaC9zdXBlci5jDQo+IEBAIC0xMjI2LDcgKzEyMjYs
-NyBAQCBzdGF0aWMgaW50IGNlcGhfc2V0X3N1cGVyKHN0cnVjdCBzdXBlcl9ibG9jayAqcywgc3Ry
-dWN0IGZzX2NvbnRleHQgKmZjKQ0KPiAgCXMtPnNfdGltZV9ncmFuID0gMTsNCj4gIAlzLT5zX3Rp
-bWVfbWluID0gMDsNCj4gIAlzLT5zX3RpbWVfbWF4ID0gVTMyX01BWDsNCj4gLQlzLT5zX2ZsYWdz
-IHw9IFNCX05PRElSQVRJTUUgfCBTQl9OT0FUSU1FOw0KPiArCXMtPnNfZmxhZ3MgfD0gU0JfTk9B
-VElNRTsNCj4gIA0KPiAgCWNlcGhfZnNjcnlwdF9zZXRfb3BzKHMpOw0KPiANCg0KVGhpcyBtb2Rp
-ZmljYXRpb24gZG9lc24ndCBtYWtlIHNlbnNlIHRvIG1lLiBBbmQgSSBwcmVmZXIgdG8gYmUgbW9y
-ZSBjb25zZXJ2YXRpdmUNCmhlcmUuIE1vcmVvdmVyLCBmcm9tIG15IHBvaW50IG9mIHZpZXcsIFNC
-X05PRElSQVRJTUUgZmxhZyBpcyBhc3NvY2lhdGVkIHdpdGgNCm5vZGlyYXRpbWUgbW91bnQgb3B0
-aW9uIGFuZCBTQl9OT0FUSU1FIGlzIGFzc29jaWF0ZWQgd2l0aCBub2F0aW1lIG1vdW50IG9wdGlv
-bi4NCkJ5IHNldHRpbmcgdGhlc2UgZmxhZ3MsIHdlIGluc3RydWN0IGhvdyBmaWxlIHN5c3RlbSBu
-ZWVkcyB0byBiZWhhdmUgZm9yIHRoZSBjYXNlDQpvZiBub2RpcmF0aW1lIGFuZCBub2F0aW1lIG1v
-dW50cy4gU28sIHNlbWFudGljYWxseSwgdGhpcyBtb2RpZmljYXRpb24gc291bmRzDQp3cm9uZyB0
-byBtZS4gSSBkb24ndCB0aGluayB0aGF0IHdlIG5lZWQgdG8gYWNjZXB0IHRoaXMgbW9kaWZpY2F0
-aW9uLCBvdGhlcndpc2UsDQpzb21ldGhpbmcgY291bGQgYmUgYnJva2VuLg0KDQpUaGFua3MsDQpT
-bGF2YS4NCg0K
+On Thu, May 29, 2025 at 8:03=E2=80=AFPM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+>
+> On Thu, 2025-05-29 at 17:45 +0000, Dennis Marttinen wrote:
+> > The CephFS kernel driver forgets to set the filesystem magic signature =
+in
+> > its superblock. As a result, IMA policy rules based on fsmagic matching=
+ do
+> > not apply as intended. This causes a major performance regression in Ta=
+los
+> > Linux [1] when mounting CephFS volumes, such as when deploying Rook Cep=
+h
+> > [2]. Talos Linux ships a hardened kernel with the following IMA policy
+> > (irrelevant lines omitted):
+> >
+> > # cat /sys/kernel/security/integrity/ima/policy
+> > [...]
+> > dont_measure fsmagic=3D0xc36400 # CEPH_SUPER_MAGIC
+> > [...]
+> > measure func=3DFILE_CHECK mask=3D^MAY_READ euid=3D0
+> > measure func=3DFILE_CHECK mask=3D^MAY_READ uid=3D0
+> > [...]
+> >
+> > Currently, IMA compares 0xc36400 =3D=3D 0x0 for CephFS files, resulting=
+ in all
+> > files opened with O_RDONLY or O_RDWR getting measured with SHA512 on ev=
+ery
+> > open(2):
+> >
+> > # cat /data/cephfs/test-file
+> > # tail -1 /sys/kernel/security/integrity/ima/ascii_runtime_measurements
+> > 10 69990c87e8af323d47e2d6ae4... ima-ng sha512:<hash> /data/cephfs/test-=
+file
+> >
+> > Since O_WRONLY is rare, this results in an order of magnitude lower
+> > performance than expected for practically all file operations. Properly
+> > setting CEPH_SUPER_MAGIC in the CephFS superblock resolves the regressi=
+on.
+> >
+> > Tests performed on a 3x replicated Ceph v19.3.0 cluster across three
+> > i5-7200U nodes each equipped with one Micron 7400 MAX M.2 disk (BlueSto=
+re)
+> > and Gigabit ethernet, on Talos Linux v1.10.2:
+> >
+> > FS-Mark 3.3
+> > Test: 500 Files, Empty
+> > Files/s > Higher Is Better
+> > 6.12.27-talos . 16.6  |=3D=3D=3D=3D
+> > +twelho patch . 208.4 |=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > FS-Mark 3.3
+> > Test: 500 Files, 1KB Size
+> > Files/s > Higher Is Better
+> > 6.12.27-talos . 15.6  |=3D=3D=3D=3D=3D=3D=3D
+> > +twelho patch . 118.6 |=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > FS-Mark 3.3
+> > Test: 500 Files, 32 Sub Dirs, 1MB Size
+> > Files/s > Higher Is Better
+> > 6.12.27-talos . 12.7 |=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +twelho patch . 44.7 |=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > IO500 [3] 2fcd6d6 results (benchmarks within variance omitted):
+> >
+> > > IO500 benchmark   | 6.12.27-talos  | +twelho patch  | Speedup   |
+> > > -------------------|----------------|----------------|-----------|
+> > > mdtest-easy-write | 0.018524 kIOPS | 1.135027 kIOPS | 6027.33 % |
+> > > mdtest-hard-write | 0.018498 kIOPS | 0.973312 kIOPS | 5161.71 % |
+> > > ior-easy-read     | 0.064727 GiB/s | 0.155324 GiB/s | 139.97 %  |
+> > > mdtest-hard-read  | 0.018246 kIOPS | 0.780800 kIOPS | 4179.29 % |
+> >
+> > This applies outside of synthetic benchmarks as well, for example, the =
+time
+> > to rsync a 55 MiB directory with ~12k of mostly small files drops from =
+an
+> > unusable 10m5s to a reasonable 26s (23x the throughput).
+> >
+> > [1]: https://www.talos.dev/
+> > [2]: https://www.talos.dev/v1.10/kubernetes-guides/configuration/ceph-w=
+ith-rook/
+> > [3]: https://github.com/IO500/io500
+> >
+> > Signed-off-by: Dennis Marttinen <twelho@welho.tech>
+> > ---
+> > It took me a year to hunt this down: profiling distributed filesystems =
+is
+> > non-trivial. Since the regression is associated with IMA use, I receive=
+d a
+> > hint to CC the folks associated with IMA code. The patch targets the 6.=
+12
+> > kernel series currently used by Talos Linux, but should apply on top of
+> > master as well. Please note that this is an independent contribution -
+> > I am not affiliated with any company or organization.
+> >
+> >  fs/ceph/super.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > index 73f321b52895e..9549f97233a9e 100644
+> > --- a/fs/ceph/super.c
+> > +++ b/fs/ceph/super.c
+> > @@ -1217,6 +1217,7 @@ static int ceph_set_super(struct super_block *s, =
+struct fs_context *fc)
+> >       s->s_time_min =3D 0;
+> >       s->s_time_max =3D U32_MAX;
+> >       s->s_flags |=3D SB_NODIRATIME | SB_NOATIME;
+> > +     s->s_magic =3D CEPH_SUPER_MAGIC;
+> >
+>
+> Yeah, makes sense. Thanks a lot for the fix. It's really non-trivial issu=
+e.
+>
+> Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+
+Applied.
+
+Thanks,
+
+                Ilya
 
