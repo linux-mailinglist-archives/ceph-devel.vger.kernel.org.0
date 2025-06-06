@@ -1,76 +1,76 @@
-Return-Path: <ceph-devel+bounces-3075-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3076-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E046AD087A
-	for <lists+ceph-devel@lfdr.de>; Fri,  6 Jun 2025 21:05:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F18BAD087D
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Jun 2025 21:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0BC57A9053
-	for <lists+ceph-devel@lfdr.de>; Fri,  6 Jun 2025 19:03:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5FF03ACB66
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Jun 2025 19:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75C6B1F63F9;
-	Fri,  6 Jun 2025 19:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96CE71EA7CC;
+	Fri,  6 Jun 2025 19:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="fJqf8I80"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="fzY5FDRs"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FE9E1EA7F4
-	for <ceph-devel@vger.kernel.org>; Fri,  6 Jun 2025 19:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C541EA7F4
+	for <ceph-devel@vger.kernel.org>; Fri,  6 Jun 2025 19:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749236697; cv=none; b=bozstGL2gRtzinOGREZzB+n2nLgIli63XK4OHrKK6unDxFPKPe0QxviKFsB5jcM5e5PmrOHHM5Dkh8V/CJxcSQQrtQ4hNPBX0UwoPrX/GXZnLpRFTPlozxrT3YMjVcWMnNL2btWepYdODNGw+yzcEvDOWCHEcldSSucUhSd4q8k=
+	t=1749236734; cv=none; b=Z4IMfyuV1Vqht1tFEuQIqoF++Y1Qw93fDXJZfl5HV4fj0J0LQ13u1FBUwyw6fD3LkXFaehOK7n5Pw2DQHpxeqUo2wSq0c+m0wWm0JlDk+CBjgxkA6pIOCCDr9JztU1/S9ba8p7bRdl7rPGZYFD5jU3cs1UclbRFy0MsZAnBANc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749236697; c=relaxed/simple;
-	bh=1PoYg5xriElbwD7OvrUlYuqU3u4KW6RcM0X9faaV08I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qfso8023fTY8nh8F4hcpPetFtHj/qgzs0CdHofXAt26KhKxwylKkHuwO2HWR3fFGLkC1wsEu0uUo6JMDUgiL2O7gYhZ8O3TT2YpIovQb/ZmidLtFceMBo27nLqjS7CSWYzC3T0oDWIdNf4dN44x6sp7sf7Z3FUDxk0/HqRy3SyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=fJqf8I80; arc=none smtp.client-ip=209.85.210.41
+	s=arc-20240116; t=1749236734; c=relaxed/simple;
+	bh=FzyvGy2hAPm8tiki8XDkDIM8avH1JeaxwzamlaoNBpk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tW7nuN0EUPX6xYRpC/vYo/u0CB9armEtDFiqZEofeqXmBi4Tr27CCY4+Y1brs1neWG9eHJw3uKirc1QUik/qCAP1szvmJeP7VTWygBL2+qZkvpdI+FP7moe9TWsXR1fdj0OhZ+P6Sv96J+1jxbrMU4+Nu+EvlAyc+bj/HU72+MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=fzY5FDRs; arc=none smtp.client-ip=209.85.210.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7303d9d5edeso703120a34.1
-        for <ceph-devel@vger.kernel.org>; Fri, 06 Jun 2025 12:04:55 -0700 (PDT)
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-735b9d558f9so701726a34.2
+        for <ceph-devel@vger.kernel.org>; Fri, 06 Jun 2025 12:05:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1749236694; x=1749841494; darn=vger.kernel.org;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1749236731; x=1749841531; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NegMO1c52fxWWYkRi+/j8SL4P9IJsB3x+6XIFYEGA+I=;
-        b=fJqf8I80FJXVsAmUtCe1U2jVibPTjJVHhHAK9xbgnBFDbMYJmtiyRNJkM5F3sBZ3Ed
-         s1iMoK5LQTx0EoSr6+IezzxNM4CSmRVLMHyaXqPXqCJ0przq9RKFFaL3MqXLqWO3Gy7U
-         VRPQaxCFTKQocDAdTdBnKV5wKjgpr4SHEGRuZW/mFPt/C9B+tvJ/G1bteQo1i2kSchxE
-         Omrj3MJov1U/wL98kd14vcYsqJHhooYMZFiBp7RJkQbCBQVIw9Bqbka4qQ2n5j8/t5HK
-         MJQ3txexpfPivmLmSua+v0baeo8TRSGCB9w0Xbj94BAtaKZckAlWMRXsSsdxeNewOn2V
-         Epgg==
+        bh=icgXmEtc+ZDI8hjFCRJQZVXjCWbg2Rcppod2hJLd9+4=;
+        b=fzY5FDRsAEmFPz/+B8lgb+Zv16GPxd4bEq/ycrmpb7/62sjGqNYgC+yIEbpkW42ayB
+         8PDxFIpYcYjbBPPjEj5veKYZ+N+z9iaFBzZjKVkuDdQ+Q2AGZtiiK5y41on7hYQ1JfRA
+         jaX4rpinkrKx1xXJsIhKEGYCfHUAGVXw5x7Mv+ssmfHKP3lMRazuhSFxiCb2fxp2bXWr
+         iitFIHkNtYvgBQYM5sbYiuX8mlyto+k4tz8ntIpl7Yci+0z9dlHV0hCnbttpFtQSMlu0
+         75PvJet50Jl3V81MiWVUVbvC98uuAVYMqLl+8eQa7hIfSjTTsP9gwGoxO7YpDEBDcCZY
+         17sQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749236694; x=1749841494;
+        d=1e100.net; s=20230601; t=1749236731; x=1749841531;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=NegMO1c52fxWWYkRi+/j8SL4P9IJsB3x+6XIFYEGA+I=;
-        b=tdLQQRaMyr/vF2tZ5XIR+f6P/OBOFhfmv49qBJS5Cq5959hiaIfZ9L3JODI/1ZUQDv
-         JMRlyF8ReelHcOYJS3OS7clgLP6k0dg/kKHUd3iVs7G+g1eUCbDX99O9xR7Z7h1yq/Ly
-         7xi9CjiJd7qMByOA2ZiySzLZwuw7nF4BzF89LFBQPzpawaJCRNIY1AXMalOd1a6lU53u
-         2gHyKswNkiGllzwLV8ltoDSSVeRnVAQtUoKzy6DnhpcSrSNioji4HRhAT2clu478aVF9
-         YXol+A+qX6H3EfvMO38LoMCI7nIh/tF//iVx/RGBmIBQBm2rZtR0a5tg+bNppacLzskz
-         Y4jg==
-X-Gm-Message-State: AOJu0Yzf1pYrdUVxEz6rlOlNAXxY60DSicbiE+FPtqqh5Y6hhuWadGNR
-	DLIQY7NqHE+bdw7/NPORaXropX9pckXCyTctq0HF49Va2NRXS6Y/00JdDM+B7Q7TbCXuaEyaw08
-	N/SCP6qk=
-X-Gm-Gg: ASbGncuq+agN0xczB8hwJdhf9JskmU3WHDsaRl1DxE1xmoCQED+UEQqdgj1QkC0AR9O
-	wPVj6vPToVa2yBdFR0yJjdi71DhV6UNysnvQh7pGBp7RqiQC2cuC6H73JjJma3zMZUV+PHjyX7O
-	jQQuUzkWo5lv97rhfjcjnAX7Qzys0qVOi/oqCVxCl9ichfFLGMt8Mow+8mHSYWHMqRlmXjmCYg1
-	nvqkYV4xEdgNwGFAayuDhAWtrMtXc6NuckpX5vuo7PkFIHETYEfa/1YdTmmLhGhZzlqWaCJVQ4V
-	ZsUY94xy9yoKdui966gtqqo884pXu7uHne8AgkqJt16xlXGwtU1+fRh7qg40dplvXu3+k1cgDNN
-	2lI2O
-X-Google-Smtp-Source: AGHT+IG5V668k4zHZQ9Ar5v+iU5OrTVkUjQGJLKFP3HR2xaAkouPIssZkVherQ5fLsbkebJ2+9n2MA==
-X-Received: by 2002:a05:6870:164f:b0:2e3:ce6a:f18a with SMTP id 586e51a60fabf-2ea0153c5camr2635547fac.33.1749236693650;
-        Fri, 06 Jun 2025 12:04:53 -0700 (PDT)
+        bh=icgXmEtc+ZDI8hjFCRJQZVXjCWbg2Rcppod2hJLd9+4=;
+        b=JFeX8hbgfxZ/E0IQgHeVBaLuN1OA3BWd5ZLNe/3PR8QwLSpeIX6z+NaCq/oJXNUpJQ
+         jFvgQRRgUMv4gSpsxN6P/Tpwkid+HKwXnfae7oKOAn/pdCYXYa2lePpG9spSUgnniwFy
+         YyLek5bS6CFlgMlMzc+16CnqJnEPNUKVZ6TNiSxz5qJGZwN7Btue9SA+oKrWt5Au1lGD
+         9cCXpa6LMBay1Bc6tAUbaK22tuEXM/+gn+POkNKCMk1B1KggoZgJiNfPARW9GuA76+jy
+         ZYJ5W5TOPPd2EGH8u5B+Fvh5m/P15ND1qyFv7TcjPpxdmKd2Sv3Mgdcq1bd/tLuN8Vx3
+         iEfg==
+X-Gm-Message-State: AOJu0YyESIQygON07PS92RCBpWFbXFDXkLGKsHzkEc1oM7f5HMGGGyns
+	0xcpokWjgra4F/ErRe+HgsqRMG8U2H1LxGjqFchr3jKWlMX5sFGVogvnWq+5IR9ScS152ge0BJR
+	vKQ9fjOI=
+X-Gm-Gg: ASbGncu00jz1M/lITKB/9dGuaDXAKFv1pRqboluVhulLipaNu07dnjuancAmPfjp9zl
+	zXdo8FxzsuApIhWaS/8xvREhpI4KYfW62m3debpQDo9cKZ15YH0EF5HreyYKFfI0U66lZu7f6pR
+	iFsUqUHBIfl2HEFlofHdAK+fpX1pbjcLHDNJguFfTTuGF4DQ57eLLenc4SWY7iKAs9iqxT6JlPp
+	w0PA5YgA7UhvS4XBV8UPXG5PGtXQUklTf0RMHTLruyix9+hzEtX8CtqiE1aIGTq6SmZDN3NqQZ8
+	tmWrSpQYvzo+rDLRPWLtkDKtL4hkm/JVp+ta6O75z8BqsYySaZ6KcOMTJR++mX/SwRAioAThE5k
+	u/O4H
+X-Google-Smtp-Source: AGHT+IHk9cym2kIT56CzAKDlIU7Ml6QGRDy1QnHx612oIFzVlPFZO3oCTUJX0/tgFGTK95DSRWzC2Q==
+X-Received: by 2002:a05:6870:1996:b0:2c2:4d76:f1ad with SMTP id 586e51a60fabf-2ea009de8ecmr2591637fac.16.1749236731244;
+        Fri, 06 Jun 2025 12:05:31 -0700 (PDT)
 Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:fe8a:b218:375c:b2ed])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-60f3e83111fsm323711eaf.34.2025.06.06.12.04.51
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2ea073406c7sm464999fac.36.2025.06.06.12.05.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 12:04:52 -0700 (PDT)
+        Fri, 06 Jun 2025 12:05:29 -0700 (PDT)
 From: Viacheslav Dubeyko <slava@dubeyko.com>
 To: ceph-devel@vger.kernel.org
 Cc: idryomov@gmail.com,
@@ -79,9 +79,9 @@ Cc: idryomov@gmail.com,
 	amarkuze@redhat.com,
 	Slava.Dubeyko@ibm.com,
 	slava@dubeyko.com
-Subject: [PATCH] ceph: add checking of wait_for_completion_killable() return value
-Date: Fri,  6 Jun 2025 12:04:32 -0700
-Message-ID: <20250606190432.438187-1-slava@dubeyko.com>
+Subject: [PATCH] ceph: fix wrong sizeof argument issue in register_session()
+Date: Fri,  6 Jun 2025 12:05:21 -0700
+Message-ID: <20250606190521.438216-1-slava@dubeyko.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
@@ -93,41 +93,47 @@ Content-Transfer-Encoding: 8bit
 
 From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-The Coverity Scan service has detected the calling of
-wait_for_completion_killable() without checking the return
-value in ceph_lock_wait_for_completion() [1]. The CID 1636232
-defect contains explanation: "If the function returns an error
-value, the error value may be mistaken for a normal value.
-In ceph_lock_wait_for_completion(): Value returned from
-a function is not checked for errors before being used. (CWE-252)".
+The Coverity Scan service has detected the wrong sizeof
+argument in register_session() [1]. The CID 1598909 defect
+contains explanation: "The wrong sizeof value is used in
+an expression or as argument to a function. The result is
+an incorrect value that may cause unexpected program behaviors.
+In register_session: The sizeof operator is invoked on
+the wrong argument (CWE-569)".
 
-The patch adds the checking of wait_for_completion_killable()
-return value and return the error code from
-ceph_lock_wait_for_completion().
+The patch introduces a ptr_size variable that is initialized
+by sizeof(struct ceph_mds_session *). And this variable is used
+instead of sizeof(void *) in the code.
 
-[1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=1636232
+[1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=1598909
 
 Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 ---
- fs/ceph/locks.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/ceph/mds_client.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
-index ebf4ac0055dd..dd764f9c64b9 100644
---- a/fs/ceph/locks.c
-+++ b/fs/ceph/locks.c
-@@ -221,7 +221,10 @@ static int ceph_lock_wait_for_completion(struct ceph_mds_client *mdsc,
- 	if (err && err != -ERESTARTSYS)
- 		return err;
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 230e0c3f341f..5181798643d7 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -979,14 +979,15 @@ static struct ceph_mds_session *register_session(struct ceph_mds_client *mdsc,
+ 	if (mds >= mdsc->max_sessions) {
+ 		int newmax = 1 << get_count_order(mds + 1);
+ 		struct ceph_mds_session **sa;
++		size_t ptr_size = sizeof(struct ceph_mds_session *);
  
--	wait_for_completion_killable(&req->r_safe_completion);
-+	err = wait_for_completion_killable(&req->r_safe_completion);
-+	if (err)
-+		return err;
-+
- 	return 0;
- }
- 
+ 		doutc(cl, "realloc to %d\n", newmax);
+-		sa = kcalloc(newmax, sizeof(void *), GFP_NOFS);
++		sa = kcalloc(newmax, ptr_size, GFP_NOFS);
+ 		if (!sa)
+ 			goto fail_realloc;
+ 		if (mdsc->sessions) {
+ 			memcpy(sa, mdsc->sessions,
+-			       mdsc->max_sessions * sizeof(void *));
++			       mdsc->max_sessions * ptr_size);
+ 			kfree(mdsc->sessions);
+ 		}
+ 		mdsc->sessions = sa;
 -- 
 2.49.0
 
