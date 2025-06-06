@@ -1,209 +1,166 @@
-Return-Path: <ceph-devel+bounces-3068-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3069-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54D2FACE6C3
-	for <lists+ceph-devel@lfdr.de>; Thu,  5 Jun 2025 00:41:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 415CCACFF10
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Jun 2025 11:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B69116AC11
-	for <lists+ceph-devel@lfdr.de>; Wed,  4 Jun 2025 22:41:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94A493AF157
+	for <lists+ceph-devel@lfdr.de>; Fri,  6 Jun 2025 09:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7594622FAD4;
-	Wed,  4 Jun 2025 22:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16BA2857DE;
+	Fri,  6 Jun 2025 09:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="P3CfjMUn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmRQaE09"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0B522DA0B
-	for <ceph-devel@vger.kernel.org>; Wed,  4 Jun 2025 22:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DCE2853FD;
+	Fri,  6 Jun 2025 09:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749076885; cv=none; b=eOk87aA3Jfm/tB1NWDHN9ScEERUR8F+FMWpyVS3npCjUUqUDQO8M5RRc3+nGBPGiI+D65G4dDSMl1/09+WuLDRPj1MtbkhPUOIHZcyTlgtb6Mvm0tIQwDz3sdwhhhTLUwEKTeXoOrlCiYg7ln/lmyMcnOIRPMu0jVd2i/oKCjEI=
+	t=1749201527; cv=none; b=FtI3bcAToFFanwrjzaEdI/yGbhN6wVCRcIkDNFSEzuhjfY1hSOG+eXh6D2b5gbqHLtVwbadDV373tujCEhvOoK74Xg/wy62Iq4ZD71V2HDhlDitXGsWVPMwNm8HU6cXFxVNACHzeo1KtxNh5IPHzzgtXv+gKblAG8iqSHZMjRHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749076885; c=relaxed/simple;
-	bh=CyCqgcP/8wYlhvYpUL+wYju404rWIxZOeVIW+huRTKc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RmhVDmXdmFbPOPWGq2MoYj+Sh+zVNUmPQGFMk5ndCrV2IFY676qFCCGdIM4gztC0U9RBQmO6Q6WiB1HgOMOmOgBFO0sMQb7KHHWurliFGF7pDwyKBfDWIGcnljCAkGCyPV99KhaG9JgVHuliSxTQhla3eyky45qmzSAoG+e+tWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=P3CfjMUn; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2db2f23f174so212874fac.2
-        for <ceph-devel@vger.kernel.org>; Wed, 04 Jun 2025 15:41:22 -0700 (PDT)
+	s=arc-20240116; t=1749201527; c=relaxed/simple;
+	bh=1HGk21Eiq3Ornoie3mRnUcMbuUSV/KVnZXIdTW4A3hE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VlXRz0Lbgsda5h8t7xnrJxTlzUd6KDrD/ytK3tKXODxJxqssLzMGbOPUOxnM0YWlYQg+AlBYXUfXvo69c7NTpMY/9AxsQqn3BrQSMmk9Y6NpxU3cREzAVqzfJcuNbfOmFuE5Da4yb+5m4Ffjc9iRpsUsZJe6fIEuKl2UdXp1L7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MmRQaE09; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-306bf444ba2so1729857a91.1;
+        Fri, 06 Jun 2025 02:18:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1749076882; x=1749681682; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yvufXqjnJ3qTN2sBGZHkQ2E9AKqOmVfPt2rFXs4VRnE=;
-        b=P3CfjMUn6+gpZPlnqSXgprksJ/VImUK12QdJ/PuW9qU40HcZkR3ODjKn38NaXEV03f
-         kBRS7FDIes2pqZnCrxZkJVfxvNRMumNqRJ2kjE0UNrScb4Hzy60Hvm59WF5KYcutbMr/
-         92CPPV1x0yJ+GbxDjnFzLuL3EHEYNUHiOY8xU7GgRszYZhmYuZ7Cf8qDo4IMxlO401iX
-         Xmup917SPLQ+eFbPioPpIzr5SXkA+VdiPvz9kjydRcbZF006ybpSl88KZgK3IKv1Br02
-         3qMGKDg490Qq6HN1ab28D6tRIUCUANpFQAS351uGBqFjpIy9nIEOg9WVm8/pMLZYmF3c
-         D03Q==
+        d=gmail.com; s=20230601; t=1749201525; x=1749806325; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+IgJlEGMMW0E+kGR6e7y8QkMFTFJ1CqPMoRJ4HFJZyM=;
+        b=MmRQaE09y7PE+5Ku7VKWbdU/8SV/6UElJLi0D1vh7rXOmOjQ7hjWczCOp6UAuiejnS
+         u1rAsDimsUaOTpb3hB6AC2HXB/7TDnnayUUSK7hEitYpOXyfB/mcpxYTbsf9BuLAGmgS
+         XqGxywS9gj1ft5/b+WPzpBmcLDCGQfvSUvL5ERkKhnxdnN8sWea33oykHzXQOJ49rBbQ
+         3J5ptPVytvNKAzrzExt8cwQ8Z2n8Gq4MuMeewG3hs1PMYAzWSUrcEUE8uRYXGY1aFXlF
+         uEgCth0he/b7Z0TNyYFpIB0LOI1xh3OgBMgghBatjuc03zEcDdw0tyBBqnhsQI2NErBf
+         3AnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749076882; x=1749681682;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yvufXqjnJ3qTN2sBGZHkQ2E9AKqOmVfPt2rFXs4VRnE=;
-        b=LTjhF/TzLU5M2qFqfpBL11vRf/HDq4tJe2D7+nwlJ/DxeNLXjHkMVZvgflYNk00zJm
-         6O8R2ZmlV1wD0rl47lRrvM6Rc0PTKCfxKQtjX1hPStI2IP/5x5fhvGolqyWxfdqEH7gk
-         ZVoMasZnHaNp+ATbvUiCBWrIk+Xe/dggptU11CQX+MEZNq5xwfFWYI349PRUY2DtHPCi
-         aepAHl9B2X08YRjI8HADFD/Va/oZ5gk3lpKA/qyUVxuIm2j/tXBK+6+adFN9UoFzdvX0
-         SD7LO0mTaWC6IktA4NpcMwmPTE5ZP2W5LLzFGJGl+JMIJQC5VRRmh/Fl+fXUx+v9Qfwm
-         SzMA==
-X-Gm-Message-State: AOJu0YylEtCBY4gp7y9Mnqje/3TaAuypw2tvo1v2kQRFHomGfQKEHR/z
-	zZdKKZglkFxjSS2P5m3bIh3HTrT6vGSHQnSRuHYpsTDXz31SCYL+T12Iv4XpvrSqt1te/pn3eOt
-	/J0ou
-X-Gm-Gg: ASbGnct6/q8BJ6fgMRCaXptw02aYMVGOYgj7iLUyNmXXc03zyjdNlpzoUzIGqee31aP
-	mdjRe843LKeWhLB7DZYnNmIAtnYRh5BHLR18YC7/UTxVPX09FkMXANErBAsvDjHswl1+FeJ/5PO
-	ijVZb5X9HfTx8tgyvCPPkNVn6/0JaNmqg8DQyFCMAOz+nD9XFz24le0y1prSM2Wnh6WGmnZjRpB
-	23m3oiklbV3ktTrm0PgXdSyHqqk+jzH2oG/h9+Fdm3VhyNV9cIQ5AAc6rufd40tCqBc/onD4V9q
-	7t9U42jDv4tqmPjlrlnc8lHzjrfmKskLaXPZravfIsXmuJQsy+uw/uJhOYCLfZ33bk5Ysg==
-X-Google-Smtp-Source: AGHT+IEgL3SSoqVtCvX5ax2jQoI4T2U4ltupU8SlVFrpe9DhuXyhI/70nvWEs2LXx4OCIXNohaVIWg==
-X-Received: by 2002:a05:6870:2b17:b0:2c1:5674:940e with SMTP id 586e51a60fabf-2e9bf4d1887mr3150201fac.21.1749076881888;
-        Wed, 04 Jun 2025 15:41:21 -0700 (PDT)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:feaf:df32:3afb:acbb])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2e9067afeecsm2811751fac.13.2025.06.04.15.41.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jun 2025 15:41:20 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com
-Subject: [PATCH] ceph: fix overflowed value issue in ceph_submit_write()
-Date: Wed,  4 Jun 2025 15:41:06 -0700
-Message-ID: <20250604224106.396310-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1749201525; x=1749806325;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+IgJlEGMMW0E+kGR6e7y8QkMFTFJ1CqPMoRJ4HFJZyM=;
+        b=sFGFKrYUHCpL9I4iDqr+gEpNZLTE6DJGvNnMu0iJfvySASNmoax/9C8Q+ium81i2zM
+         o/Lyf2xSbFuHbil+jaSC5mcn1288bV2fvx1kC8X+bUaMu1HHXkpp0XFR/yo4JF0QipQe
+         uhfFiKsWZ39MfkHFu33Jt6hhxwAKENhKCzfP7ndt8wH5kp/VjTjjAew/QSD9BopaKPVD
+         gPpfc4aUdCtnUj50n0/EMHmPxyCY9/wPJGCRWFRn1itgxSn9cXysMFhyawXYNSeCgehS
+         tb3Xhs3jOra+GeqcfL7VER5o2qSLlO0szr7vVw90vvdUYvCQiShNoADyEo4MplOnRlDM
+         2rRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnQNcLkh7spBOeGBICVE4YQjcQEBp1QxPtRMq+iYvo6LZQPJO0gEvTTwL3OpqJoPde1uFqxh+xeYo0@vger.kernel.org, AJvYcCVs667DeskcJRd69PsHIULNsnOi6EV+Edt5cxzd33sD/H4TrKMwP7npMDCydZOWEx4WSA05UZBrd2A5jUEpkQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyhn5g5AgJI3GiC6zQd3EQwyxh2UVANT9swAsCQgf1m1U7alAq
+	rSx8z7OtHieIYjDOOHhK/NGls7bBN40VlLpW1Gh3Txq7enbPAG2XU6Qpm6+gXWheVtvpIUgRRTR
+	mqxO5BmhLrB7MgbOFzAw9lD5BNegaxIk=
+X-Gm-Gg: ASbGncuL3xYiC7mRj4DkwRSF39GzgqyIRRdplyg9/fe3J20KIdT1JDfDyFrcW6hlUQX
+	eBBaoK0AEuOjANUWgM/812BdhApqEBG6fI8VzWQEg0Z3egeSFgpwz0nM2Q1NpvoTXw+bll9iVL2
+	KISBH5d92rH69FS7ubc+KgVuVUzutrh30t
+X-Google-Smtp-Source: AGHT+IFtHsXb/wEKlMdKDeBBsR6ve28PtDlk2x+acryGeG4OycoTx65wSY4OMXRPsKs09oPm/G9HBG24JbS2Wkgg+5s=
+X-Received: by 2002:a17:90b:540f:b0:311:a314:c2d1 with SMTP id
+ 98e67ed59e1d1-313472d64a9mr4013077a91.6.1749201525151; Fri, 06 Jun 2025
+ 02:18:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250602184956.58865-1-slava@dubeyko.com> <CAO8a2SgsAQzOGCtejSka0JnvuzoespHDvwa0WNpg4A9L5QJcVA@mail.gmail.com>
+In-Reply-To: <CAO8a2SgsAQzOGCtejSka0JnvuzoespHDvwa0WNpg4A9L5QJcVA@mail.gmail.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Fri, 6 Jun 2025 11:18:32 +0200
+X-Gm-Features: AX0GCFsj9mCnQ7HWKOPCGObzZhsx_cB1gxbgieJN1bK0Zjd3oAMXWBuNR-PnGbw
+Message-ID: <CAOi1vP_g8S_JZOqgoAViEnEAEHeLYF1th6zjpsQD3eXApc9A7Q@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: fix variable dereferenced before check in ceph_umount_begin()
+To: Alex Markuze <amarkuze@redhat.com>
+Cc: Viacheslav Dubeyko <slava@dubeyko.com>, ceph-devel@vger.kernel.org, dan.carpenter@linaro.org, 
+	lkp@intel.com, dhowells@redhat.com, brauner@kernel.org, willy@infradead.org, 
+	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+On Tue, Jun 3, 2025 at 12:25=E2=80=AFPM Alex Markuze <amarkuze@redhat.com> =
+wrote:
+>
+> Reviewed by: Alex Markuze <amarkuze@redhat.com>
+>
+> On Mon, Jun 2, 2025 at 9:50=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.=
+com> wrote:
+> >
+> > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> >
+> > smatch warnings:
+> > fs/ceph/super.c:1042 ceph_umount_begin() warn: variable dereferenced be=
+fore check 'fsc' (see line 1041)
+> >
+> > vim +/fsc +1042 fs/ceph/super.c
+> >
+> > void ceph_umount_begin(struct super_block *sb)
+> > {
+> >         struct ceph_fs_client *fsc =3D ceph_sb_to_fs_client(sb);
+> >
+> >         doutc(fsc->client, "starting forced umount\n");
+> >               ^^^^^^^^^^^
+> > Dereferenced
+> >
+> >         if (!fsc)
+> >             ^^^^
+> > Checked too late.
+> >
+> >                 return;
+> >         fsc->mount_state =3D CEPH_MOUNT_SHUTDOWN;
+> >         __ceph_umount_begin(fsc);
+> > }
+> >
+> > The VFS guarantees that the superblock is still
+> > alive when it calls into ceph via ->umount_begin().
+> > Finally, we don't need to check the fsc and
+> > it should be valid. This patch simply removes
+> > the fsc check.
+> >
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > Closes: https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lore.ker=
+nel.org_r_202503280852.YDB3pxUY-2Dlkp-40intel.com_&d=3DDwIBAg&c=3DBSDicqBQB=
+DjDI9RkVyTcHQ&r=3Dq5bIm4AXMzc8NJu1_RGmnQ2fMWKq4Y4RAkElvUgSs00&m=3DUd7uNdqBY=
+_Z7LJ_oI4fwdhvxOYt_5Q58tpkMQgDWhV3199_TCnINFU28Esc0BaAH&s=3DQOKWZ9HKLyd6XCx=
+W-AUoKiFFg9roId6LOM01202zAk0&e=3D
+> > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> > ---
+> >  fs/ceph/super.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > index f3951253e393..68a6d434093f 100644
+> > --- a/fs/ceph/super.c
+> > +++ b/fs/ceph/super.c
+> > @@ -1033,8 +1033,7 @@ void ceph_umount_begin(struct super_block *sb)
+> >         struct ceph_fs_client *fsc =3D ceph_sb_to_fs_client(sb);
+> >
+> >         doutc(fsc->client, "starting forced umount\n");
+> > -       if (!fsc)
+> > -               return;
+> > +
+> >         fsc->mount_state =3D CEPH_MOUNT_SHUTDOWN;
+> >         __ceph_umount_begin(fsc);
+> >  }
+> > --
+> > 2.49.0
+> >
+>
 
-The Coverity Scan service has detected overflowed value
-issue in ceph_submit_write() [1]. The CID 1646339 defect
-contains explanation: "The overflowed value due to
-arithmetic on constants is too small or unexpectedly
-negative, causing incorrect computations.
-In ceph_submit_write: Integer overflow occurs in
-arithmetic on constant operands (CWE-190)".
+Applied with the Closes tag amended (Proofpoint URL).
 
-This patch adds a check ceph_wbc->locked_pages on
-equality to zero and it exits function if it has
-zero value. Also, it introduces a processed_pages
-variable with the goal of assigning the number of
-processed pages and checking this number on
-equality to zero. The check of processed_pages
-variable on equality to zero should protect from
-overflowed value of index that selects page in
-ceph_wbc->pages[index] array.
+Thanks,
 
-[1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=1646339
-
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
----
- fs/ceph/addr.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
-
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index b95c4cb21c13..afbb7aba283e 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1411,6 +1411,7 @@ int ceph_submit_write(struct address_space *mapping,
- 	bool caching = ceph_is_cache_enabled(inode);
- 	u64 offset;
- 	u64 len;
-+	unsigned processed_pages;
- 	unsigned i;
- 
- new_request:
-@@ -1438,6 +1439,9 @@ int ceph_submit_write(struct address_space *mapping,
- 		BUG_ON(IS_ERR(req));
- 	}
- 
-+	if (ceph_wbc->locked_pages == 0)
-+		return -EINVAL;
-+
- 	page = ceph_wbc->pages[ceph_wbc->locked_pages - 1];
- 	BUG_ON(len < ceph_fscrypt_page_offset(page) + thp_size(page) - offset);
- 
-@@ -1474,6 +1478,7 @@ int ceph_submit_write(struct address_space *mapping,
- 	len = 0;
- 	ceph_wbc->data_pages = ceph_wbc->pages;
- 	ceph_wbc->op_idx = 0;
-+	processed_pages = 0;
- 	for (i = 0; i < ceph_wbc->locked_pages; i++) {
- 		u64 cur_offset;
- 
-@@ -1517,19 +1522,22 @@ int ceph_submit_write(struct address_space *mapping,
- 			ceph_set_page_fscache(page);
- 
- 		len += thp_size(page);
-+		processed_pages++;
- 	}
- 
- 	ceph_fscache_write_to_cache(inode, offset, len, caching);
- 
- 	if (ceph_wbc->size_stable) {
- 		len = min(len, ceph_wbc->i_size - offset);
--	} else if (i == ceph_wbc->locked_pages) {
-+	} else if (processed_pages > 0 &&
-+		   processed_pages == ceph_wbc->locked_pages) {
- 		/* writepages_finish() clears writeback pages
- 		 * according to the data length, so make sure
- 		 * data length covers all locked pages */
- 		u64 min_len = len + 1 - thp_size(page);
-+		unsigned index = processed_pages - 1;
- 		len = get_writepages_data_length(inode,
--						 ceph_wbc->pages[i - 1],
-+						 ceph_wbc->pages[index],
- 						 offset);
- 		len = max(len, min_len);
- 	}
-@@ -1554,17 +1562,17 @@ int ceph_submit_write(struct address_space *mapping,
- 	BUG_ON(ceph_wbc->op_idx + 1 != req->r_num_ops);
- 
- 	ceph_wbc->from_pool = false;
--	if (i < ceph_wbc->locked_pages) {
-+	if (processed_pages < ceph_wbc->locked_pages) {
- 		BUG_ON(ceph_wbc->num_ops <= req->r_num_ops);
- 		ceph_wbc->num_ops -= req->r_num_ops;
--		ceph_wbc->locked_pages -= i;
-+		ceph_wbc->locked_pages -= processed_pages;
- 
- 		/* allocate new pages array for next request */
- 		ceph_wbc->data_pages = ceph_wbc->pages;
- 		__ceph_allocate_page_array(ceph_wbc, ceph_wbc->locked_pages);
--		memcpy(ceph_wbc->pages, ceph_wbc->data_pages + i,
-+		memcpy(ceph_wbc->pages, ceph_wbc->data_pages + processed_pages,
- 			ceph_wbc->locked_pages * sizeof(*ceph_wbc->pages));
--		memset(ceph_wbc->data_pages + i, 0,
-+		memset(ceph_wbc->data_pages + processed_pages, 0,
- 			ceph_wbc->locked_pages * sizeof(*ceph_wbc->pages));
- 	} else {
- 		BUG_ON(ceph_wbc->num_ops != req->r_num_ops);
-@@ -1576,7 +1584,7 @@ int ceph_submit_write(struct address_space *mapping,
- 	ceph_osdc_start_request(&fsc->client->osdc, req);
- 	req = NULL;
- 
--	wbc->nr_to_write -= i;
-+	wbc->nr_to_write -= processed_pages;
- 	if (ceph_wbc->pages)
- 		goto new_request;
- 
--- 
-2.49.0
-
+                Ilya
 
