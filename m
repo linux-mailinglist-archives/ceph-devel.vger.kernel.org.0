@@ -1,91 +1,92 @@
-Return-Path: <ceph-devel+bounces-3079-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3080-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7526AD12D6
-	for <lists+ceph-devel@lfdr.de>; Sun,  8 Jun 2025 17:06:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E61AD12D8
+	for <lists+ceph-devel@lfdr.de>; Sun,  8 Jun 2025 17:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD5573A8FFC
-	for <lists+ceph-devel@lfdr.de>; Sun,  8 Jun 2025 15:06:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F7471683F2
+	for <lists+ceph-devel@lfdr.de>; Sun,  8 Jun 2025 15:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2285C24EA80;
-	Sun,  8 Jun 2025 15:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7110224EAAB;
+	Sun,  8 Jun 2025 15:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="agJPm68L"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AiYWIozn"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E332D24DCE5
-	for <ceph-devel@vger.kernel.org>; Sun,  8 Jun 2025 15:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBB124E014
+	for <ceph-devel@vger.kernel.org>; Sun,  8 Jun 2025 15:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749395178; cv=none; b=NtTWl7C2McZgSRajTftAkLcCF1VwzLsTth9N9mGY2HVi3UA6BvBOhBnQPTTumigDsZGuLZlrohyW0m2MfY6CYylx/jV5yyJ1DvsnYNtGxV+04yEGZ0O8LrKINhS2cQCUOTNIALo+wLGJjF7SjwsC1IWLC6UG5MnxVJYuxSaU9Js=
+	t=1749395211; cv=none; b=k/dRj37mx77yvrfSlU99p6nXkuyBdcC8XU/6kvA7KCeohxi/xXHG0h5HylmfhPctm7tJ8+JURc+LLAzUQI34maZHug41IkrpX7ZnVdvsh1H+8LE4omlKyaHz9lolPL50RgaAWFV507OqWmhLC/KhcJZsYIf7PeWKfa8Z3AlN+Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749395178; c=relaxed/simple;
-	bh=zH9Nns8vl1kmmowzSYl8+S7pPdIbY/kcxjDKUjVu7OA=;
+	s=arc-20240116; t=1749395211; c=relaxed/simple;
+	bh=MITcrC3F5nd5i2+Vqe9MmqvGNbrT9JumcAsIUER5kzg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U6rIpH7xc1HJOaGUfqbL4neJs4rv8CC8jK6niUVQp7DLcBlUqkHHCP9mF5++KnN7QXMsKkcXz2BXSVqhaYvhjfOIhMGa3BIuq1AHCy682x05vVmiqxCljdbT2VrkdXc+/DoiWMIq+y03atolWqlNBgpQLBDGIANdpCBJ9iNNBCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=agJPm68L; arc=none smtp.client-ip=170.10.133.124
+	 To:Cc:Content-Type; b=Fj2RWVY0uHTqL1u2wVxoNFgNW1SAasnvVoX2Jj+YvFY60CyBXOSHkKV2td/k9+nrT/CdH88OXngjWbQ8FPebMuQY9eyyPxZDRLIPRsJXViGRmC60xHwrp444Gc6EXoaBd29LXS0SlFW/hizgV2oyOE/zc7j+cGlx4NtYlNbakvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AiYWIozn; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749395175;
+	s=mimecast20190719; t=1749395208;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jH7Re9mkdM+xpLTZAXbA6I8rMlizU4DOWxxreJlevxc=;
-	b=agJPm68LwayWlTmXkqLEep0f8rPk5uRVAKlukwKtp93dsQ1L021/q9DmnHCEY9e9gXlEbZ
-	3HCyQiMlk5kg8KMsvaGwC2W5soi8vG2sfndVVyXw6OsZC9E+A1ZNnkchqm0ofcy7wuOdTO
-	0eRdL72g7M2mCePgXompjNHoP8eKtys=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=32hTUAw/xpZ+1jdocsdQHGZ/eU502h+xQ6g/nDhB37w=;
+	b=AiYWIoznYT7WOvZUh4UJAbuClntS+A0fLPZcjctjUcAiB1svrcnI2xys8s63oEPz183xkX
+	pFfphBAXxridP0jMzeHD+/6mKMwl0QSfzEfc2k01wPmZ6xumak9V5IIC/AcSeTI+DCAvmZ
+	IoZGL3DO/DHNHeIttTZ5SfM8wRFWxeQ=
+Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
+ [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-240-d_Oa9W-yNTGqKal9iMZs_g-1; Sun, 08 Jun 2025 11:06:13 -0400
-X-MC-Unique: d_Oa9W-yNTGqKal9iMZs_g-1
-X-Mimecast-MFC-AGG-ID: d_Oa9W-yNTGqKal9iMZs_g_1749395173
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c7c30d8986so1129069085a.2
-        for <ceph-devel@vger.kernel.org>; Sun, 08 Jun 2025 08:06:13 -0700 (PDT)
+ us-mta-278-ph7uGIKWNcKo9cFKZR2oQg-1; Sun, 08 Jun 2025 11:06:46 -0400
+X-MC-Unique: ph7uGIKWNcKo9cFKZR2oQg-1
+X-Mimecast-MFC-AGG-ID: ph7uGIKWNcKo9cFKZR2oQg_1749395206
+Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-4e45d9ce7f7so352054137.3
+        for <ceph-devel@vger.kernel.org>; Sun, 08 Jun 2025 08:06:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749395173; x=1749999973;
+        d=1e100.net; s=20230601; t=1749395206; x=1750000006;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jH7Re9mkdM+xpLTZAXbA6I8rMlizU4DOWxxreJlevxc=;
-        b=EKYmkc2w5Uihk7wMbv4FaSn/TA6eP1j8mSxhbJ2nxKshTo+on/990Y5MwIO712ZI9e
-         dDkVTr8ECK3JTOaU4OmiIZRKxv53JLPf7/6xLhwJyLDU9qY2iA9RYKPj/RpIG61ji4yo
-         Md96mh32ftt/z1AHsSBzcchu6P9QyOmMXvBpfqzqwwA88jtL865psC6uBhan5nOGSKLJ
-         Y14Wx1reCGiB70vhgafDdbG4Mtji3axiL31uSr2gOfF7LNbGre2cEseg25Bk50pBKS5u
-         Q2KRyqtYC7zr6iqwELd/A1Q8yb2TDsu9+QWqRaK+yU/p/t+1+SGVaKMpZGplOjCel0zH
-         wbXg==
-X-Gm-Message-State: AOJu0YzBOawDn1iVL7mj1wBCyo3RYxinwOPt5VwxR0ckl4XpyqRyC/Cc
-	6uecNar6FAlwDzwuZn4j/N8qRS5527UAGqMrsCY/eCQhavrn8b7AqRrFOMEUwQtb3HFJxxWMsuY
-	3RyEYx8DAi7kMNGdadAhFDuMSQQIXIL2C/6mHD+CSP/LG4JiOu/gWIhJVAELmqJSRQwwftRw3ZM
-	NNVdxjrLJCznNde4bbIDzyD2x/SGxTZAGakVSF2Q9MggMiZ7dm
-X-Gm-Gg: ASbGncuBJiXKzw7TKTC1MQfhvXTvzVT9JOSuVK69wll+zW7qJDI3y+xUIlKs2wjxqOV
-	At3PV0sO5pmW2UEAJbysEJKlY+lAPxkm5QU3pv8XcuzZv7Wf/2Lvy3liGCXeTZcvKEtF6
-X-Received: by 2002:a05:620a:4692:b0:7cd:43f5:8b27 with SMTP id af79cd13be357-7d229896812mr1581710985a.32.1749395173168;
-        Sun, 08 Jun 2025 08:06:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH0e/3eydri+PI3tWz3yWWM78Pu5wmvMpt57EqP3YQ+30eyMbjPkiS+v/audWIX2So6Pgfk4zp+ch993wnZlbQ=
-X-Received: by 2002:a05:620a:4692:b0:7cd:43f5:8b27 with SMTP id
- af79cd13be357-7d229896812mr1581708585a.32.1749395172898; Sun, 08 Jun 2025
- 08:06:12 -0700 (PDT)
+        bh=32hTUAw/xpZ+1jdocsdQHGZ/eU502h+xQ6g/nDhB37w=;
+        b=jfZm/5ff/BxKwj1xxNaB5Of4ItUhVsOm9LO1j+yehwxjiUEmiwdgAQSVeC64SbVINP
+         et8t1yo96ORwhZfeYo9uEw7De1qzImU/qhwBXRMZp3YbzpsWJEQ8rLzTSExgFSRiqRvn
+         aUPp5xoYpup5ymcPe+j/WHeKCNYyMKEhbHU0vWTBaSyxfHFreZrK7DfmRGDjO3D5f1vT
+         PbwQhDdGdIislc2nLnLpGM/LZGw9dpQ9njszaZl4U6C4EugpTgVwxPQb1FhyTpwDDvED
+         si4K6Egw8qBogPtvHbOWG80X5pLkPf4e42WN6K2vsDVM3eKFQjBnCObxdl5XTtwIkzV6
+         iD+A==
+X-Gm-Message-State: AOJu0YzwBVtqzmhxRc6qoNuyE1Hk9e8ir+jpk9EkqPlZ7TSRwFdnd3y5
+	spMKHru9Lv9/pYNlKGsju2K8Kh9GX9xYXDUAOz3jPNNsKNyY106DtQdVDR4tatiHdJImkS79KkW
+	iOe7eX7bGycNTde8UkRQJWijoxPXWbbFO5AhZuxLybmgnMC0fZXh9mgvUmSCUMljt2njVg/Uh9q
+	BVj8Q9fYbNzRSSkuMFoOrxL3YvrzM07VjKTvl3BA==
+X-Gm-Gg: ASbGncs3EE/kiUyBMaixHxdckb/nR3WgBsUhjqcPhXk9eFt06aD4ouQcNNmyDYDYJyL
+	ARax4OySuTXSrbyLYwMYbepoyBBoCkx4OZZSR9HoSILYVUaBHm7ae99nWfpgxnYXK86uOo9ZHhe
+	eZv+A=
+X-Received: by 2002:a05:6102:458a:b0:4e5:93f5:e834 with SMTP id ada2fe7eead31-4e772ade074mr9247919137.24.1749395206261;
+        Sun, 08 Jun 2025 08:06:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHmU7O5VbKAYIwDPSdC251qcnesmgsa6yOTiFhiI07/Aryqa52oyHAzSdbVa9G2kY63iGJJFwgpJIvbdxMoEH4=
+X-Received: by 2002:a05:6102:458a:b0:4e5:93f5:e834 with SMTP id
+ ada2fe7eead31-4e772ade074mr9247884137.24.1749395205956; Sun, 08 Jun 2025
+ 08:06:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606190545.438240-1-slava@dubeyko.com>
-In-Reply-To: <20250606190545.438240-1-slava@dubeyko.com>
+References: <20250606190521.438216-1-slava@dubeyko.com>
+In-Reply-To: <20250606190521.438216-1-slava@dubeyko.com>
 From: Alex Markuze <amarkuze@redhat.com>
-Date: Sun, 8 Jun 2025 18:06:02 +0300
-X-Gm-Features: AX0GCFvLY3FJz9VLr5GAp5ze3kH5--skSoki5p1hsXZTfcG9gZVXZy6BN03XIyc
-Message-ID: <CAO8a2Sga=KmyqSQFcwCoFXRjDx6ka8i-govhKfBxDSuqt+Qugg@mail.gmail.com>
-Subject: Re: [PATCH] ceph: fix overflowed constant issue in ceph_do_objects_copy()
+Date: Sun, 8 Jun 2025 18:06:35 +0300
+X-Gm-Features: AX0GCFvciVRCAjxa1zpih-dLhNmd4RBOeZ4q6loeeFbMdgN2huyJ_qLoKl-Ggzk
+Message-ID: <CAO8a2SgJd+hB-6f+6i1ViibR=UmHj=kX7c7mnOSO_vWQ4i4UaQ@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix wrong sizeof argument issue in register_session()
 To: Viacheslav Dubeyko <slava@dubeyko.com>
 Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
 	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
@@ -99,53 +100,49 @@ om> wrote:
 >
 > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 >
-> The Coverity Scan service has detected overflowed constant
-> issue in ceph_do_objects_copy() [1]. The CID 1624308
-> defect contains explanation: "The overflowed value due to
-> arithmetic on constants is too small or unexpectedly
-> negative, causing incorrect computations. Expression bytes,
-> which is equal to -95, where ret is known to be equal to -95,
-> underflows the type that receives it, an unsigned integer
-> 64 bits wide. In ceph_do_objects_copy: Integer overflow occurs
-> in arithmetic on constant operands (CWE-190)".
+> The Coverity Scan service has detected the wrong sizeof
+> argument in register_session() [1]. The CID 1598909 defect
+> contains explanation: "The wrong sizeof value is used in
+> an expression or as argument to a function. The result is
+> an incorrect value that may cause unexpected program behaviors.
+> In register_session: The sizeof operator is invoked on
+> the wrong argument (CWE-569)".
 >
-> The patch changes the type of bytes variable from size_t
-> to ssize_t with the goal of to be capable to receive
-> negative values.
+> The patch introduces a ptr_size variable that is initialized
+> by sizeof(struct ceph_mds_session *). And this variable is used
+> instead of sizeof(void *) in the code.
 >
 > [1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIs=
-sue=3D1624308
+sue=3D1598909
 >
 > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 > ---
->  fs/ceph/file.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  fs/ceph/mds_client.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 >
-> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> index 851d70200c6b..e46ff9cb25c5 100644
-> --- a/fs/ceph/file.c
-> +++ b/fs/ceph/file.c
-> @@ -2883,7 +2883,7 @@ static ssize_t ceph_do_objects_copy(struct ceph_ino=
-de_info *src_ci, u64 *src_off
->         struct ceph_object_id src_oid, dst_oid;
->         struct ceph_osd_client *osdc;
->         struct ceph_osd_request *req;
-> -       size_t bytes =3D 0;
-> +       ssize_t bytes =3D 0;
->         u64 src_objnum, src_objoff, dst_objnum, dst_objoff;
->         u32 src_objlen, dst_objlen;
->         u32 object_size =3D src_ci->i_layout.object_size;
-> @@ -2933,7 +2933,7 @@ static ssize_t ceph_do_objects_copy(struct ceph_ino=
-de_info *src_ci, u64 *src_off
->                                         "OSDs don't support copy-from2; d=
-isabling copy offload\n");
->                         }
->                         doutc(cl, "returned %d\n", ret);
-> -                       if (!bytes)
-> +                       if (bytes <=3D 0)
->                                 bytes =3D ret;
->                         goto out;
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 230e0c3f341f..5181798643d7 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -979,14 +979,15 @@ static struct ceph_mds_session *register_session(st=
+ruct ceph_mds_client *mdsc,
+>         if (mds >=3D mdsc->max_sessions) {
+>                 int newmax =3D 1 << get_count_order(mds + 1);
+>                 struct ceph_mds_session **sa;
+> +               size_t ptr_size =3D sizeof(struct ceph_mds_session *);
+>
+>                 doutc(cl, "realloc to %d\n", newmax);
+> -               sa =3D kcalloc(newmax, sizeof(void *), GFP_NOFS);
+> +               sa =3D kcalloc(newmax, ptr_size, GFP_NOFS);
+>                 if (!sa)
+>                         goto fail_realloc;
+>                 if (mdsc->sessions) {
+>                         memcpy(sa, mdsc->sessions,
+> -                              mdsc->max_sessions * sizeof(void *));
+> +                              mdsc->max_sessions * ptr_size);
+>                         kfree(mdsc->sessions);
 >                 }
+>                 mdsc->sessions =3D sa;
 > --
 > 2.49.0
 >
