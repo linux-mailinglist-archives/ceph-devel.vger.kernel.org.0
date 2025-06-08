@@ -1,92 +1,93 @@
-Return-Path: <ceph-devel+bounces-3080-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3081-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48E61AD12D8
-	for <lists+ceph-devel@lfdr.de>; Sun,  8 Jun 2025 17:06:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7283AAD12DA
+	for <lists+ceph-devel@lfdr.de>; Sun,  8 Jun 2025 17:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F7471683F2
-	for <lists+ceph-devel@lfdr.de>; Sun,  8 Jun 2025 15:06:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FCA53A8FFC
+	for <lists+ceph-devel@lfdr.de>; Sun,  8 Jun 2025 15:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7110224EAAB;
-	Sun,  8 Jun 2025 15:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E37024E016;
+	Sun,  8 Jun 2025 15:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AiYWIozn"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NUPBZdvD"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBB124E014
-	for <ceph-devel@vger.kernel.org>; Sun,  8 Jun 2025 15:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B68478C9C
+	for <ceph-devel@vger.kernel.org>; Sun,  8 Jun 2025 15:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749395211; cv=none; b=k/dRj37mx77yvrfSlU99p6nXkuyBdcC8XU/6kvA7KCeohxi/xXHG0h5HylmfhPctm7tJ8+JURc+LLAzUQI34maZHug41IkrpX7ZnVdvsh1H+8LE4omlKyaHz9lolPL50RgaAWFV507OqWmhLC/KhcJZsYIf7PeWKfa8Z3AlN+Uk=
+	t=1749395240; cv=none; b=rgdUMk+ttHsntucTER6Jd+nOy3w2pOY+yyW/PUewUiLc3DAjxEbaIv6hi4hmfX28vL+t+wTzv0p9m8ef9Ja/ULKMuvUWAC3UtFsQZH+x6aI9OYVKzrnanu3xs0TBSmtzAV2sccoCnwhw/SwwkrU59oGZPf5HXh/qSvtYfn3Fxis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749395211; c=relaxed/simple;
-	bh=MITcrC3F5nd5i2+Vqe9MmqvGNbrT9JumcAsIUER5kzg=;
+	s=arc-20240116; t=1749395240; c=relaxed/simple;
+	bh=bWM3F234xLwCvNWi74EmLuLiAWakpD4gug5a93vVJIw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fj2RWVY0uHTqL1u2wVxoNFgNW1SAasnvVoX2Jj+YvFY60CyBXOSHkKV2td/k9+nrT/CdH88OXngjWbQ8FPebMuQY9eyyPxZDRLIPRsJXViGRmC60xHwrp444Gc6EXoaBd29LXS0SlFW/hizgV2oyOE/zc7j+cGlx4NtYlNbakvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AiYWIozn; arc=none smtp.client-ip=170.10.133.124
+	 To:Cc:Content-Type; b=j5izONDHtId+sOAEw5ipUCsnYd++skc+I7GusQEY+URWsKsTHdVGnITO19E1KFC9Rv36jasPOs2/kvNfElyVIoQ81AgYcsrXe8OkZrFXsrTEqUf2FfzZtqd7ermnTNhAUFYBsrmuy+Kput33w5YTI+uEyjgMKpvwJur4u3xcl3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NUPBZdvD; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1749395208;
+	s=mimecast20190719; t=1749395237;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=32hTUAw/xpZ+1jdocsdQHGZ/eU502h+xQ6g/nDhB37w=;
-	b=AiYWIoznYT7WOvZUh4UJAbuClntS+A0fLPZcjctjUcAiB1svrcnI2xys8s63oEPz183xkX
-	pFfphBAXxridP0jMzeHD+/6mKMwl0QSfzEfc2k01wPmZ6xumak9V5IIC/AcSeTI+DCAvmZ
-	IoZGL3DO/DHNHeIttTZ5SfM8wRFWxeQ=
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
- [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=qe8FdhFYZnl5uKznrvXsigqbG5dH1PHILMaKQyy33bQ=;
+	b=NUPBZdvDzsbiJjxzdo7mf1pWZ1b0YNoTgvMBJU0rfd8bxtVoWnFRWhTgqhXooSuQ9p08Ux
+	eXLYiBg063+Q21FjgQIM+/YJRGAIHvJf8/20Mn9w80lG3EMb+/jY0noI07ASKR41DrpbnU
+	N4M/XfjsKjpnTolMQ8I1rFfcAimM5GY=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-278-ph7uGIKWNcKo9cFKZR2oQg-1; Sun, 08 Jun 2025 11:06:46 -0400
-X-MC-Unique: ph7uGIKWNcKo9cFKZR2oQg-1
-X-Mimecast-MFC-AGG-ID: ph7uGIKWNcKo9cFKZR2oQg_1749395206
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-4e45d9ce7f7so352054137.3
-        for <ceph-devel@vger.kernel.org>; Sun, 08 Jun 2025 08:06:46 -0700 (PDT)
+ us-mta-279-F0G2nqNuM4iUD1NgACz3aQ-1; Sun, 08 Jun 2025 11:07:16 -0400
+X-MC-Unique: F0G2nqNuM4iUD1NgACz3aQ-1
+X-Mimecast-MFC-AGG-ID: F0G2nqNuM4iUD1NgACz3aQ_1749395235
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7d2107d6b30so475560585a.0
+        for <ceph-devel@vger.kernel.org>; Sun, 08 Jun 2025 08:07:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749395206; x=1750000006;
+        d=1e100.net; s=20230601; t=1749395235; x=1750000035;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=32hTUAw/xpZ+1jdocsdQHGZ/eU502h+xQ6g/nDhB37w=;
-        b=jfZm/5ff/BxKwj1xxNaB5Of4ItUhVsOm9LO1j+yehwxjiUEmiwdgAQSVeC64SbVINP
-         et8t1yo96ORwhZfeYo9uEw7De1qzImU/qhwBXRMZp3YbzpsWJEQ8rLzTSExgFSRiqRvn
-         aUPp5xoYpup5ymcPe+j/WHeKCNYyMKEhbHU0vWTBaSyxfHFreZrK7DfmRGDjO3D5f1vT
-         PbwQhDdGdIislc2nLnLpGM/LZGw9dpQ9njszaZl4U6C4EugpTgVwxPQb1FhyTpwDDvED
-         si4K6Egw8qBogPtvHbOWG80X5pLkPf4e42WN6K2vsDVM3eKFQjBnCObxdl5XTtwIkzV6
-         iD+A==
-X-Gm-Message-State: AOJu0YzwBVtqzmhxRc6qoNuyE1Hk9e8ir+jpk9EkqPlZ7TSRwFdnd3y5
-	spMKHru9Lv9/pYNlKGsju2K8Kh9GX9xYXDUAOz3jPNNsKNyY106DtQdVDR4tatiHdJImkS79KkW
-	iOe7eX7bGycNTde8UkRQJWijoxPXWbbFO5AhZuxLybmgnMC0fZXh9mgvUmSCUMljt2njVg/Uh9q
-	BVj8Q9fYbNzRSSkuMFoOrxL3YvrzM07VjKTvl3BA==
-X-Gm-Gg: ASbGncs3EE/kiUyBMaixHxdckb/nR3WgBsUhjqcPhXk9eFt06aD4ouQcNNmyDYDYJyL
-	ARax4OySuTXSrbyLYwMYbepoyBBoCkx4OZZSR9HoSILYVUaBHm7ae99nWfpgxnYXK86uOo9ZHhe
-	eZv+A=
-X-Received: by 2002:a05:6102:458a:b0:4e5:93f5:e834 with SMTP id ada2fe7eead31-4e772ade074mr9247919137.24.1749395206261;
-        Sun, 08 Jun 2025 08:06:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHmU7O5VbKAYIwDPSdC251qcnesmgsa6yOTiFhiI07/Aryqa52oyHAzSdbVa9G2kY63iGJJFwgpJIvbdxMoEH4=
-X-Received: by 2002:a05:6102:458a:b0:4e5:93f5:e834 with SMTP id
- ada2fe7eead31-4e772ade074mr9247884137.24.1749395205956; Sun, 08 Jun 2025
- 08:06:45 -0700 (PDT)
+        bh=qe8FdhFYZnl5uKznrvXsigqbG5dH1PHILMaKQyy33bQ=;
+        b=JZh2erIrxPDf3T6faX01w/sQwCnUH+t2NpNH43ghdk7yhyRP97u4bs8qx74XGTN36x
+         rUwpc199W9NLhDdFA6PkhhunCPv7YMxgn37T0DEUkLkNyyb2+6NSc+y32UefN9WHtT9l
+         CKywvNUHjYyBc8PpT1OYdc+be1BrpUxDXFHJDxtHoE3dwkkX55pWToIKTGFllHXt0y0u
+         d/IaLRABPsua4feqY4HHm+Ui/a1lR5BlNnDl7nXGwyfkHggw6yau3m4YcT+LJ7a2hgGB
+         RLvXhN2c8SnACm63UNcEGH0ffxL4GF6uxjnfNCOe9tyb8tfxh5UzCZWiNWugNIP4AIHB
+         yszg==
+X-Gm-Message-State: AOJu0YwwkUiGSjuEJAMU/xzOVddLQtY+qYkJewa70xR09alc0PMgp+1a
+	IRAxS/JZJEeu7D7NiXwVxxcJu+QlrqM16GR1iHy9A3B7992QXeuoa+5lrTI647+1pprxBv3T1y4
+	LyJVYeIlnK2S56a4HvWy/G0kHEd2gX3/zAC7NM6eBbtiJC38B3wFlb3QMLhIiUDM77opZSZfCHe
+	brEEB/09EONsZzJmwsuqpW8ud64wDduvLf073fWw==
+X-Gm-Gg: ASbGnctIzIOi7hhoiO95wmWAd9eUaQ4X73EDa8+GtdJiVsoKglU6InshwREa2yqSazE
+	+bR5HFcJFcSgMmLFIqtUzSFnzx4K/Q+GzS8IgPPnCa/3RQjHtEm0LYPsXsfvNb9OKMzQcyHsoIy
+	QcZps=
+X-Received: by 2002:a05:620a:4447:b0:7d2:25df:4e30 with SMTP id af79cd13be357-7d2298eb391mr1734443385a.48.1749395235456;
+        Sun, 08 Jun 2025 08:07:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFndNHijDgv+d3Mmf8A9vptGVGLU273o7QFaSjhBtY1oc/gyRzlk2eHmaZGE5nkf7EK+zh6gnx0L7wG5IDNUno=
+X-Received: by 2002:a05:620a:4447:b0:7d2:25df:4e30 with SMTP id
+ af79cd13be357-7d2298eb391mr1734440885a.48.1749395235194; Sun, 08 Jun 2025
+ 08:07:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250606190521.438216-1-slava@dubeyko.com>
-In-Reply-To: <20250606190521.438216-1-slava@dubeyko.com>
+References: <20250606190432.438187-1-slava@dubeyko.com>
+In-Reply-To: <20250606190432.438187-1-slava@dubeyko.com>
 From: Alex Markuze <amarkuze@redhat.com>
-Date: Sun, 8 Jun 2025 18:06:35 +0300
-X-Gm-Features: AX0GCFvciVRCAjxa1zpih-dLhNmd4RBOeZ4q6loeeFbMdgN2huyJ_qLoKl-Ggzk
-Message-ID: <CAO8a2SgJd+hB-6f+6i1ViibR=UmHj=kX7c7mnOSO_vWQ4i4UaQ@mail.gmail.com>
-Subject: Re: [PATCH] ceph: fix wrong sizeof argument issue in register_session()
+Date: Sun, 8 Jun 2025 18:07:04 +0300
+X-Gm-Features: AX0GCFsdf9pnv04pEi6pK8zoebl06DM9Jqii1jy1KXPxQIwSvgOtkUp4A4H2Pgc
+Message-ID: <CAO8a2SjAv6TPwVRurTgBq3D2N=N_F=-PBy=Qk=aEesgBkPfgzA@mail.gmail.com>
+Subject: Re: [PATCH] ceph: add checking of wait_for_completion_killable()
+ return value
 To: Viacheslav Dubeyko <slava@dubeyko.com>
 Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
 	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
@@ -95,54 +96,48 @@ Content-Transfer-Encoding: quoted-printable
 
 Reviewed by: Alex Markuze <amarkuze@redhat.com>
 
-On Fri, Jun 6, 2025 at 10:05=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.c=
+On Fri, Jun 6, 2025 at 10:04=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.c=
 om> wrote:
 >
 > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 >
-> The Coverity Scan service has detected the wrong sizeof
-> argument in register_session() [1]. The CID 1598909 defect
-> contains explanation: "The wrong sizeof value is used in
-> an expression or as argument to a function. The result is
-> an incorrect value that may cause unexpected program behaviors.
-> In register_session: The sizeof operator is invoked on
-> the wrong argument (CWE-569)".
+> The Coverity Scan service has detected the calling of
+> wait_for_completion_killable() without checking the return
+> value in ceph_lock_wait_for_completion() [1]. The CID 1636232
+> defect contains explanation: "If the function returns an error
+> value, the error value may be mistaken for a normal value.
+> In ceph_lock_wait_for_completion(): Value returned from
+> a function is not checked for errors before being used. (CWE-252)".
 >
-> The patch introduces a ptr_size variable that is initialized
-> by sizeof(struct ceph_mds_session *). And this variable is used
-> instead of sizeof(void *) in the code.
+> The patch adds the checking of wait_for_completion_killable()
+> return value and return the error code from
+> ceph_lock_wait_for_completion().
 >
 > [1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIs=
-sue=3D1598909
+sue=3D1636232
 >
 > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 > ---
->  fs/ceph/mds_client.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  fs/ceph/locks.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 >
-> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-> index 230e0c3f341f..5181798643d7 100644
-> --- a/fs/ceph/mds_client.c
-> +++ b/fs/ceph/mds_client.c
-> @@ -979,14 +979,15 @@ static struct ceph_mds_session *register_session(st=
-ruct ceph_mds_client *mdsc,
->         if (mds >=3D mdsc->max_sessions) {
->                 int newmax =3D 1 << get_count_order(mds + 1);
->                 struct ceph_mds_session **sa;
-> +               size_t ptr_size =3D sizeof(struct ceph_mds_session *);
+> diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
+> index ebf4ac0055dd..dd764f9c64b9 100644
+> --- a/fs/ceph/locks.c
+> +++ b/fs/ceph/locks.c
+> @@ -221,7 +221,10 @@ static int ceph_lock_wait_for_completion(struct ceph=
+_mds_client *mdsc,
+>         if (err && err !=3D -ERESTARTSYS)
+>                 return err;
 >
->                 doutc(cl, "realloc to %d\n", newmax);
-> -               sa =3D kcalloc(newmax, sizeof(void *), GFP_NOFS);
-> +               sa =3D kcalloc(newmax, ptr_size, GFP_NOFS);
->                 if (!sa)
->                         goto fail_realloc;
->                 if (mdsc->sessions) {
->                         memcpy(sa, mdsc->sessions,
-> -                              mdsc->max_sessions * sizeof(void *));
-> +                              mdsc->max_sessions * ptr_size);
->                         kfree(mdsc->sessions);
->                 }
->                 mdsc->sessions =3D sa;
+> -       wait_for_completion_killable(&req->r_safe_completion);
+> +       err =3D wait_for_completion_killable(&req->r_safe_completion);
+> +       if (err)
+> +               return err;
+> +
+>         return 0;
+>  }
+>
 > --
 > 2.49.0
 >
