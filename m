@@ -1,46 +1,46 @@
-Return-Path: <ceph-devel+bounces-3083-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3084-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB1B3AD29B2
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Jun 2025 00:52:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95659AD29C1
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Jun 2025 00:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A525B1708A2
-	for <lists+ceph-devel@lfdr.de>; Mon,  9 Jun 2025 22:52:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6534D189201B
+	for <lists+ceph-devel@lfdr.de>; Mon,  9 Jun 2025 22:53:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9411B2253F9;
-	Mon,  9 Jun 2025 22:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B96A225412;
+	Mon,  9 Jun 2025 22:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rPUmB/A9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uZM7KTHk"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED92224895;
-	Mon,  9 Jun 2025 22:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03951224895;
+	Mon,  9 Jun 2025 22:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749509555; cv=none; b=g7NaNxCHywgwRKJfVt1pdQ/H38tQKThEwlKoi1PWTH1aVKoaO7yPeAfPa/E85LnsZwFhxIuWuK8lGs+raZ+6gEUKbFh6LhKEJHyk+2WB0xXdZ/jH1Gf62wBmya4qL3exZc816C/xTeWr3lUfk1J4k1rS1X+ZWVDQzX7mfqd6epM=
+	t=1749509584; cv=none; b=WfLHFCUAsf1WpwiEeAcxPbl7b/1uyNJ3+ul8hTUwcuUZoS7sGQ3BCg6/xYsbkRZ6/6igeFWua42EVYf5CBLN1XxIzt4rZkaOCOb2lOXS5R7r4aFDaKLQC9StuZNU4iUFiXXuqAEz+UmMtFHU9OuloWW88sJ0Ttz1dQIXnZ7pXtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749509555; c=relaxed/simple;
+	s=arc-20240116; t=1749509584; c=relaxed/simple;
 	bh=K/3He4YlzTS0OS4zmzm19ApC83LDJtal0YLT3Vtwj88=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PQndgU1IsiwU8gEDDLNjI9eutiAhISXrmmvyVz+/npedDniz8XS9ziJz+5wiT+DUD5OAtvy38icFig/+3PtHqyEbpqevt3uky106KSWP3GgjfMggyFgR5CopfUnVmal21b8HBJ10EdA8FVouBQH6HFij1Ls++mdVJx7jOEVUPMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rPUmB/A9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B20AC4CEED;
-	Mon,  9 Jun 2025 22:52:34 +0000 (UTC)
+	 MIME-Version; b=alWafd3CIyho+31jCvSFAvGcDNza2YcJT7pCsFtkjfsBw42t7medXweZou1qob/onmprrhNsvFU3hZ3aJpzz2q1gZ4AEPi/BhCi767EjHLFIAg87NNJR9IVAh0YwnmY5FgnXQfiVnojD14o6tc6aNTf/GaB8wqrX9wpESfrTr/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uZM7KTHk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB08BC4CEED;
+	Mon,  9 Jun 2025 22:53:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749509555;
+	s=k20201202; t=1749509583;
 	bh=K/3He4YlzTS0OS4zmzm19ApC83LDJtal0YLT3Vtwj88=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rPUmB/A9vyLKOQCB/jPba1/bCpaS8Kz9And7KXmvv8L1rnjplv7U8ic2k9J29JFS3
-	 NBON0JA9AHgQrVK/UvP1xx5jznSNaJRZSrh4RsSS0BuuraToEEf/OzMhhfMyATwDF5
-	 ySNcVQP1YTESOo/jRBnXx9WtAnt8ogYIIyCT0FWICMAHewufZRWDpxvxDqtCGfBY7o
-	 GPJboSgTYJSg+5Pq2XX/dkOUgR1wO6TeGV8Ey4sTYs1qRyPnoLxdKfSOhW16Uw89iS
-	 WdPTm6g6u2r81jNHSMr1tjeJ5oRTdSsae08MNV2J36oK/R+kyVrcTxhcQmGoA4kCFD
-	 9Snv45XzkXDXA==
+	b=uZM7KTHkLgqj3+qmarFKeigirZZdstlOAw4y46RQraDv24ihmKRSHEaP8mDO0lZ29
+	 lEXIi5cINvROks74pMElwkTctWWNe020qw3XBTQUog6rP8yhUJMj1LpYSwgn3ErxkW
+	 6Y07JVOv7vTQWrbDQf8uKZr3Lt00VwU4MHrY2oX4k29He9H2t+sQP0ShwoIxq8w0Tw
+	 hq+OHbVeFMX5wRoMhSWsXDYBdgGCulJm1g1Xqkk0hjduybM2zAAIwolP0wbucrXQwW
+	 gKNeMHvzQmcJRr7FnISkvcO/8GySZOVWXOqb2stbTo0ABUiU/+cS++8K8heHV2u0lo
+	 a5ZhNA0ZGVvbg==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -50,12 +50,12 @@ Cc: Dmitry Kandybka <d.kandybka@gmail.com>,
 	Sasha Levin <sashal@kernel.org>,
 	xiubli@redhat.com,
 	ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.15 08/11] ceph: fix possible integer overflow in ceph_zero_objects()
-Date: Mon,  9 Jun 2025 18:52:13 -0400
-Message-Id: <20250609225217.1443387-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.14 08/11] ceph: fix possible integer overflow in ceph_zero_objects()
+Date: Mon,  9 Jun 2025 18:52:42 -0400
+Message-Id: <20250609225246.1443679-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250609225217.1443387-1-sashal@kernel.org>
-References: <20250609225217.1443387-1-sashal@kernel.org>
+In-Reply-To: <20250609225246.1443679-1-sashal@kernel.org>
+References: <20250609225246.1443679-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.15.1
+X-stable-base: Linux 6.14.10
 Content-Transfer-Encoding: 8bit
 
 From: Dmitry Kandybka <d.kandybka@gmail.com>
