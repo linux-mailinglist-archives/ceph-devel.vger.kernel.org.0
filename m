@@ -1,171 +1,179 @@
-Return-Path: <ceph-devel+bounces-3090-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3091-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B77AD29F9
-	for <lists+ceph-devel@lfdr.de>; Tue, 10 Jun 2025 00:55:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BDABAD427A
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Jun 2025 21:06:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9DE71882FF3
-	for <lists+ceph-devel@lfdr.de>; Mon,  9 Jun 2025 22:54:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80F783A5363
+	for <lists+ceph-devel@lfdr.de>; Tue, 10 Jun 2025 19:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EB1226161;
-	Mon,  9 Jun 2025 22:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5DA2620FA;
+	Tue, 10 Jun 2025 19:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKVJwchH"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="uJrmVteX"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2F12253E8;
-	Mon,  9 Jun 2025 22:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E7125FA03
+	for <ceph-devel@vger.kernel.org>; Tue, 10 Jun 2025 19:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749509663; cv=none; b=nGtN/o/2WW3Y7Pz9nLtSDJdoruaBe2K1IKsl7/vhsZ6CvBFVD5llQQXjEqHPvwoPyOh4Rh1HkH+sYP9dZRA7iezmDsj9q6QSigBEz6B4KiMT5UCHIVRa6A+rPebK02U2TpC7FnmEX2BqeBuHWSxzpv+p6cTID71j5jNcvOt8sgw=
+	t=1749582350; cv=none; b=L717gr73QXDXoUVOfvtSUdRQeFFuJeKQBCNN/UP7qj+wi0Seh1Lgy7447IAHjZhwhXeHn+QywJUCIHfD/clQzCcov6Ap2sl7MSOkvFXN8427C6IZdtfT4M1cR6BmXGBS37LLMi/IgBZiAitVJdCWBJ14iCwP/qE71L6QSRjqFoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749509663; c=relaxed/simple;
-	bh=/Jj1sLFYTdWs2kmmHqsdDWbuKEzZmmUTumn1CDIE144=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sTXYHGzQUc0w6DYq1q51/ODNwlIubC89/ZlPdLNwrYXJUCTsWSAgkWbHXajhZjnLW2bEjUpcDUTtWKJdoi/nsWGawGzTcKLd+EQ6lVf2/y1B5hcOHJc+ig9NUfb1Bu07UwliPA7KQ4KQgKpJMVz6cSw3FFe9EgnDh0ZXgSlYD8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKVJwchH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC62C4CEF3;
-	Mon,  9 Jun 2025 22:54:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749509662;
-	bh=/Jj1sLFYTdWs2kmmHqsdDWbuKEzZmmUTumn1CDIE144=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HKVJwchHcDB2iqfjcLXBVJLwG4Pgb1SyqKp69UlM/kNJd6MmN22eOWyvW12aex30z
-	 5Uhs5FGfofR5VrigVLusy4nZlShLBNHO3H2vGQgDQulqEaaBT5YJNKr65anvmqfpvx
-	 W8i8w/BBEDuHYLL8IRqZKU2Jn4xbInXJCh76qEIpHtbObKKMDvKcCF46hJy9PuEcgv
-	 3JkxcvIYIueHhs2Sw9ECQEQ4obeWNynyOO65EE8YgqX2rtZG/K9LZeqq1CCCaxDU4w
-	 yJLX/LFQPwkw4j1xs98Z/+gaDibVYuvYkRJoUF+tT8IGo86tK328qk9YuJiwhIb2KD
-	 asdYmrmRUdT9Q==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Dmitry Kandybka <d.kandybka@gmail.com>,
-	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Sasha Levin <sashal@kernel.org>,
-	xiubli@redhat.com,
-	ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 2/3] ceph: fix possible integer overflow in ceph_zero_objects()
-Date: Mon,  9 Jun 2025 18:54:17 -0400
-Message-Id: <20250609225419.1444885-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250609225419.1444885-1-sashal@kernel.org>
-References: <20250609225419.1444885-1-sashal@kernel.org>
+	s=arc-20240116; t=1749582350; c=relaxed/simple;
+	bh=Tg699knSwAu7/S2bRyHGf0H8ipYDR18FoTJSAJIzyMQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FCv72v75WoOFIjAWFEu9sFwG8PQg963mgT56rDcpFRWoRC71Db23CQM27XWFmvESXMYjzTMIiH0BFGOMpnFvJrU+0mSuAaFk4eJxvz52PTsxZRcFPW7RmZglR3wfsSzEX0dqsaDkGasYezBhk+BwmYEIpZ9Uvnzv7tw2djs9UH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=uJrmVteX; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-4091180d3e5so1786745b6e.0
+        for <ceph-devel@vger.kernel.org>; Tue, 10 Jun 2025 12:05:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1749582348; x=1750187148; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FSaz2XVQb6c3ZnRbvHxNR/Gxmxkpkd2WgMTi88UzzMM=;
+        b=uJrmVteXrHOyfVDVgePrGN6yaMfo2HxVJcNCxVBCdlXaO4Iv8lODuovi+QFvll+XiL
+         EQcEqWRnT+54M5DYTSW2/fDdoQaw05sxX229ddz0HYm3RIsuTdVImA9YiOondFssvbOr
+         KoO8fSC7IhOo4QP7LhQ4KN2JBNpVBp5RI1fS758XuWkBoyLjH4zLGIhp7m7As5Hyx51B
+         EIsPFlxqcmk7ujO+9nZQlJ24EsRZIacqTc08VcsSX56YXhzrea2CsOIfLMxshllArZdl
+         05atifapnn4N2YCb+Zilf5Tk/xpjRsXCyJ0R3BL+s64SwizjsODTc0llfMIdWo1xI8vX
+         bZrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749582348; x=1750187148;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FSaz2XVQb6c3ZnRbvHxNR/Gxmxkpkd2WgMTi88UzzMM=;
+        b=pXTSFYm4osxVv6WGZ/c8+ZOP1WdnvhMt/hGC4N+rwvDN1SgghtLrZYZHX1ByRkPM7z
+         q0OQ1WUPrQQB0IVZeJwHJUlCbcLImrQwnhXa3tcSt5gjaVCnNwXk5tdmb3W9CCPdl5oj
+         vWSFkNksYjdU97XzewqM8U2PmDNOP3bUCqFe9bp230y1S3czKjFeJHh1VIQGyCUajInl
+         d6Fkqt+dlFzGoBAW/1Bx7KqsKKE5iKX0RI9YtWfTwCnpg4Ak2Pjtrmb8Zx8QUW58V1MF
+         GGIYR1DsOj1d0tf2cD//FwVvmIw2BL4AaKORNIXGwS4dsBUB9yqWvRKnsVGBRqkvcRYp
+         s+Cw==
+X-Gm-Message-State: AOJu0YwTaZXrAZGRW1o+6U/5WkInMiH6rkGcbTeC5NfejbJjr4+FWxJm
+	ddZfw5Q3AjgB0mMQen4NTR+ODkb2SbFsaJdt7bJ6fepK/9F2Sw0qxVJTyXtjOoNsWiIWCFRtS0g
+	r/tCY
+X-Gm-Gg: ASbGncsFAgNN76n99Bo+jKMRLM6x6axJ1BGt1cVuMlXaLlRxFvloBG2QIsQ47oOOw3A
+	lOs4CUuIg0yZ+97IqjZ2uW6XQiLCUYf7v75a47RaUrLr48sJNEsw7+UhYtqi0RNx+J/q8d9Rz6J
+	kAXd7Ge9m2PTCGLsmkL0rynuKVdNuUibrsE9BPww1pv2GoKNrG97WW/u6+mTwhIkBeV1KQG4MuY
+	UKdUZ3qsHa3rtJyInSuR0kgKDLWz0+6HxefoU3HcVLgzv5w3gN0r80K5tew2yQwdI2LR0GoK3tR
+	ApcyT8W+skQ6GvWGrlAkb86GuvES1ElOwB+kFfREDOMZel4avbGkUk6O7YPiuSQFOvRlWVcrW7m
+	/Sp1Iz4HkOMWLwuwbgNdoGzlAHEfqdRB3ABIRVdZy4btkncev08L6ug==
+X-Google-Smtp-Source: AGHT+IE4RCwrwROQPI9KAHBsZxY8PBwtUrCyxVC2tiwe/+NWIB5GTbtZv/R7pqnA/19vQn+Tf5HjkA==
+X-Received: by 2002:a05:6808:1806:b0:408:ed52:c62f with SMTP id 5614622812f47-40a5d0553a5mr391077b6e.2.1749582347461;
+        Tue, 10 Jun 2025 12:05:47 -0700 (PDT)
+Received: from system76-pc.attlocal.net (162-197-212-70.lightspeed.sntcca.sbcglobal.net. [162.197.212.70])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40a5d95e89csm16503b6e.38.2025.06.10.12.05.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Jun 2025 12:05:46 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com
+Subject: [PATCH] ceph: fix potential race condition of i_cap_delay_list access
+Date: Tue, 10 Jun 2025 12:05:29 -0700
+Message-ID: <20250610190529.516586-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.294
 Content-Transfer-Encoding: 8bit
 
-From: Dmitry Kandybka <d.kandybka@gmail.com>
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-[ Upstream commit 0abd87942e0c93964e93224836944712feba1d91 ]
+The Coverity Scan service has detected potential
+race condition of i_cap_delay_list access [1].
+The CID 1596363 contains explanation: "Accessing
+ci->i_cap_delay_list without holding lock
+ceph_mds_client.cap_delay_lock. Elsewhere,
+ceph_inode_info.i_cap_delay_list is written to with
+ceph_mds_client.cap_delay_lock held 9 out of 9 times.
+The value of the shared data will be determined
+by the interleaving of thread execution. In ceph_check_caps:
+Thread shared data is accessed without holding an appropriate
+lock, possibly causing a race condition (CWE-366)".
 
-In 'ceph_zero_objects', promote 'object_size' to 'u64' to avoid possible
-integer overflow.
+The patch reworks __cap_delay_cancel() logic by means
+moving list_empty(&ci->i_cap_delay_list) under
+mdsc->cap_delay_lock protection. Patch introduces
+is_cap_delay_list_empty_safe() function that checks
+the emptiness of i_cap_delay_list under
+mdsc->cap_delay_lock protection. This function is used
+in ceph_check_caps() and __ceph_touch_fmode() methods
+to resolve the race condition issue.
 
-Compile tested only.
+[1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=1596363
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Signed-off-by: Dmitry Kandybka <d.kandybka@gmail.com>
-Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 ---
+ fs/ceph/caps.c | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
-**YES**
-
-This commit should be backported to stable kernel trees. Here's my
-detailed analysis:
-
-## Why This Should Be Backported
-
-### 1. **Clear Bug Fix with User Impact**
-The commit fixes a real integer overflow vulnerability in
-`ceph_zero_objects()` where `s32 object_size` is multiplied by `s32
-stripe_count` to calculate `u64 object_set_size`. When the layout values
-exceed 2^31, the multiplication can underflow, leading to:
-- Incorrect loop bounds in the zeroing logic
-- Potential infinite loops or premature termination
-- Data integrity issues during hole punching operations
-- Incorrect `do_div()` operations
-
-### 2. **Affects Critical Kernel Functionality**
-This bug impacts core filesystem operations that users depend on:
-- `fallocate()` system call with `FALLOC_FL_PUNCH_HOLE`
-- File sparse operations used by databases, VMs, backup tools
-- Copy-on-write optimizations in Ceph filesystems
-
-### 3. **Small, Contained, and Low-Risk Fix**
-The code change is minimal and safe:
-```c
-- u64 object_set_size = object_size * stripe_count;
-+       u64 object_set_size = (u64) object_size * stripe_count;
-```
-
-This fix:
-- Promotes `object_size` to `u64` before multiplication, preventing
-  overflow
-- Has no functional side effects beyond fixing the bug
-- Maintains consistency with the underlying `u32` data types in
-  `ceph_file_layout`
-- Cannot introduce regressions
-
-### 4. **Follows Stable Tree Criteria**
-- **Important bugfix**: Prevents potential data corruption and system
-  instability
-- **Minimal risk**: Single-line change with no architectural impact
-- **Confined scope**: Only affects Ceph filesystem's hole punching logic
-- **No new features**: Pure defensive fix
-
-### 5. **Matches Successful Backport Pattern**
-This commit is very similar to **Similar Commit #1** (marked YES for
-backport) which also:
-- Fixed a type promotion bug affecting critical operations
-- Had minimal code changes with clear safety benefits
-- Addressed potential data integrity issues
-- Was explicitly marked with `Cc: stable@vger.kernel.org`
-
-### 6. **Proactive Hardening Value**
-While the bug requires specific conditions to trigger (large object
-sizes or stripe counts), backporting provides:
-- Defense against potential malicious layouts from compromised metadata
-  servers
-- Protection for users with unusual but valid filesystem configurations
-- General robustness improvement for production systems
-
-The fix has no downside risk and provides meaningful protection against
-a real integer overflow scenario that could affect data integrity in
-Ceph filesystems.
-
- fs/ceph/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 83122fc5f8130..9b10de2276c6f 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1749,7 +1749,7 @@ static int ceph_zero_objects(struct inode *inode, loff_t offset, loff_t length)
- 	s32 stripe_unit = ci->i_layout.stripe_unit;
- 	s32 stripe_count = ci->i_layout.stripe_count;
- 	s32 object_size = ci->i_layout.object_size;
--	u64 object_set_size = object_size * stripe_count;
-+	u64 object_set_size = (u64) object_size * stripe_count;
- 	u64 nearly, t;
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index a8d8b56cf9d2..eceee464ec50 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -566,13 +566,26 @@ static void __cap_delay_cancel(struct ceph_mds_client *mdsc,
+ 	struct inode *inode = &ci->netfs.inode;
  
- 	/* round offset up to next period boundary */
+ 	doutc(mdsc->fsc->client, "%p %llx.%llx\n", inode, ceph_vinop(inode));
+-	if (list_empty(&ci->i_cap_delay_list))
+-		return;
++
+ 	spin_lock(&mdsc->cap_delay_lock);
+-	list_del_init(&ci->i_cap_delay_list);
++	if (!list_empty(&ci->i_cap_delay_list)) {
++		list_del_init(&ci->i_cap_delay_list);
++	}
+ 	spin_unlock(&mdsc->cap_delay_lock);
+ }
+ 
++static inline bool is_cap_delay_list_empty_safe(struct ceph_mds_client *mdsc,
++						struct ceph_inode_info *ci)
++{
++	bool is_empty;
++
++	spin_lock(&mdsc->cap_delay_lock);
++	is_empty = list_empty(&ci->i_cap_delay_list);
++	spin_unlock(&mdsc->cap_delay_lock);
++
++	return is_empty;
++}
++
+ /* Common issue checks for add_cap, handle_cap_grant. */
+ static void __check_cap_issue(struct ceph_inode_info *ci, struct ceph_cap *cap,
+ 			      unsigned issued)
+@@ -2260,7 +2273,7 @@ void ceph_check_caps(struct ceph_inode_info *ci, int flags)
+ 
+ 	/* periodically re-calculate caps wanted by open files */
+ 	if (__ceph_is_any_real_caps(ci) &&
+-	    list_empty(&ci->i_cap_delay_list) &&
++	    is_cap_delay_list_empty_safe(mdsc, ci) &&
+ 	    (file_wanted & ~CEPH_CAP_PIN) &&
+ 	    !(used & (CEPH_CAP_FILE_RD | CEPH_CAP_ANY_FILE_WR))) {
+ 		__cap_delay_requeue(mdsc, ci);
+@@ -4720,7 +4733,7 @@ void __ceph_touch_fmode(struct ceph_inode_info *ci,
+ 	/* queue periodic check */
+ 	if (fmode &&
+ 	    __ceph_is_any_real_caps(ci) &&
+-	    list_empty(&ci->i_cap_delay_list))
++	    is_cap_delay_list_empty_safe(mdsc, ci))
+ 		__cap_delay_requeue(mdsc, ci);
+ }
+ 
 -- 
-2.39.5
+2.49.0
 
 
