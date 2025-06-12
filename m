@@ -1,98 +1,104 @@
-Return-Path: <ceph-devel+bounces-3104-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3108-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A4FAD7404
-	for <lists+ceph-devel@lfdr.de>; Thu, 12 Jun 2025 16:35:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D4FAD775E
+	for <lists+ceph-devel@lfdr.de>; Thu, 12 Jun 2025 18:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F9427AEDA1
-	for <lists+ceph-devel@lfdr.de>; Thu, 12 Jun 2025 14:34:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69111164B5A
+	for <lists+ceph-devel@lfdr.de>; Thu, 12 Jun 2025 15:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2826248878;
-	Thu, 12 Jun 2025 14:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03E0271461;
+	Thu, 12 Jun 2025 15:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SfrpOPeW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kj3syDB7"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DBD24E4A8;
-	Thu, 12 Jun 2025 14:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAFE1B0416;
+	Thu, 12 Jun 2025 15:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749738902; cv=none; b=KA5ZnwSCOV7A4Q4Npog+P5huBOI+XbvOpd/a/Y3mWc8Tx1gTw8LlkgwlOkQxAEKMB+quV47Ul7uPNWLHeao+PCRPhsakzfR1Q72c9a7OATAyTRXoN8p9DKSMkhhK0UT90KXoaJ7T7cVEWjHxjTePs6yq/T8zFtAfu3x556JQ7V8=
+	t=1749743868; cv=none; b=YBVBbOfgsUnIZmknKmtpNWGTOjIKLY/kEf9gda5PfGm4hPIHrM6h+RbRHAOIY2L+cAyGU7PNI1q10q9HCmkAj0LZCq50ZFxKePdKUkE1IpithLZx1sQcUr+2lAON+8wW0jYHvtDy8w5JYDnqVWe7yKtdgZ1uoEXlczTxEKmUqlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749738902; c=relaxed/simple;
-	bh=x47xEvySNBbTPsIUgjRpFi6E+lwckEVa5g4MNNONcgI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c39unsCMbHY2n9ZRXYyr2qAlfX5TvKo40DIE3hop0Zmh8UcakxkgouBindWWyARb5hIxwgJpD+RD8WpQRYNh2d98hSaf//FOjsZ6uv4BYT5BXWd4vtJh0O8LXHX9YOEgWO9owIkh7mEESF+VF6UTDlYN03Jd7bw8Fvg7ZO5FDjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SfrpOPeW; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description;
-	bh=cEUjOGSiAcpALrQTqdsEIZR+Zxcg7kt1Nbfj3HDDR/I=; b=SfrpOPeW7klkIJAUyhQQULU7SH
-	Q9R0mX7rcoR6l2xS9K3G/lNCD5KiielJX7kHygMhoRbiJCrs07s3jQjk8Vga0fbjfklwgY3c5hHEN
-	wL09VaPKXkchOk1g7Wdzg+iBJEbFFn3KDXYb8OfbolPdBrU0WmtDKwSLvXOAt4pT1gWKZfLLiPlHy
-	YqL7Lz4Y/X+tzCj4V1wCnwWR54ElNwP7IuvSxqjudE7RMeLxFol5hSv+/DJ3bX8T1Nz7Kypn8y8mt
-	uLQKwPxUmgPZSl+zD9DhvWsSJxEBvJczfFqWoAji6AzHPV2leQlhqjrZzII7pg/7bpNo/htXsVv6y
-	lNZvZDnA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uPj0y-0000000BwyW-2ow1;
-	Thu, 12 Jun 2025 14:34:48 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	linux-mm@kvack.org,
-	Ira Weiny <ira.weiny@intel.com>,
-	Christoph Hellwig <hch@lst.de>,
-	linux-block@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 5/5] mm: Remove zero_user()
-Date: Thu, 12 Jun 2025 15:34:41 +0100
-Message-ID: <20250612143443.2848197-6-willy@infradead.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250612143443.2848197-1-willy@infradead.org>
-References: <20250612143443.2848197-1-willy@infradead.org>
+	s=arc-20240116; t=1749743868; c=relaxed/simple;
+	bh=I+yj5RaeRFm4XV7nYay72iV3VtIk9fY58cl2ElhN9GY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oOKhmzG43I3qO2lwg4hVwPF+3YhQShu0tpZ3mhYYGxZFT4eOaxkZxOkzqE6YmRg2AJR1ZriaMyqEAu7MwEgG+whGfGGRlUTTe0E85Cj7lRrlqizyG1PgwSmAdyiM2isWhXe8GHGk9QAo0+HOEnbyt0PTztQp4DDiLPhJvB1mZJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kj3syDB7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E397C4CEEB;
+	Thu, 12 Jun 2025 15:57:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749743865;
+	bh=I+yj5RaeRFm4XV7nYay72iV3VtIk9fY58cl2ElhN9GY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kj3syDB7EWGXmmPQEn6faQJJCP8Zx4/ZbWfx7JOkjzRF0b8VXypiFh+vqdaR8hl+p
+	 ioh5TDwlCz6GFe+gIMxEfYVqfpLapRk1/3/fdNPt56AIGQrTtOVSuQlX6VXMXgbPgz
+	 1H1mS98XcOEm0C/62bgT59L+f+uAFOvphLCOqS1N5Ff2+I9VbhNd/R7nmixjuliDT+
+	 0ECTov3sUQ13ituxxnl50KKaOAe7VR/jHdHqVUmefGy91C/DN+y0FzI6a5iphvbODD
+	 q/NVOs5UaO1MPd6POp4EdPrhAFHt+ixI/0LAvQGsIFBVVj8kPrXJc2LfkO+5YDX4IB
+	 YlD+RzbQxcOtg==
+Date: Thu, 12 Jun 2025 15:57:43 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
+Cc: Simon Richter <Simon.Richter@hogyros.de>, linux-fscrypt@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org, linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net, ceph-devel@vger.kernel.org
+Subject: Re: [PATCH] fscrypt: don't use hardware offload Crypto API drivers
+Message-ID: <20250612155743.GA3529549@google.com>
+References: <20250611205859.80819-1-ebiggers@kernel.org>
+ <7f63be76-289b-4a99-b802-afd72e0512b8@hogyros.de>
+ <20250612005914.GA546455@google.com>
+ <20250612062521.GA1838@sol>
+ <aEqU0iU1tBrLEYUq@gcabiddu-mobl.ger.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aEqU0iU1tBrLEYUq@gcabiddu-mobl.ger.corp.intel.com>
 
-All users have now been converted to either memzero_page() or
-folio_zero_range().
+On Thu, Jun 12, 2025 at 09:50:26AM +0100, Giovanni Cabiddu wrote:
+> On Wed, Jun 11, 2025 at 11:25:21PM -0700, Eric Biggers wrote:
+> 
+> ...
+> 
+> > FWIW, here's what happens if you try to use the Intel QAT driver with dm-crypt:
+> > https://lore.kernel.org/r/CACsaVZ+mt3CfdXV0_yJh7d50tRcGcRZ12j3n6-hoX2cz3+njsg@mail.gmail.com/
+> 
+> /s/happens/happened/
+> 
+> ... and it got fixed
+> https://lore.kernel.org/all/20220506082327.21605-1-giovanni.cabiddu@intel.com/
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- include/linux/highmem.h | 6 ------
- 1 file changed, 6 deletions(-)
+But it reached users in the first place, including stable kernels.  And
+apparently the issues were going on for years and were known to the authors of
+the driver
+(https://lore.kernel.org/linux-crypto/91fe9f87-54d7-4140-4d1a-eac8e2081a7c@gmail.com/).
 
-diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-index e48d7f27b0b9..a30526cc53a7 100644
---- a/include/linux/highmem.h
-+++ b/include/linux/highmem.h
-@@ -292,12 +292,6 @@ static inline void zero_user_segment(struct page *page,
- 	zero_user_segments(page, start, end, 0, 0);
- }
- 
--static inline void zero_user(struct page *page,
--	unsigned start, unsigned size)
--{
--	zero_user_segments(page, start, start + size, 0, 0);
--}
--
- #ifndef __HAVE_ARCH_COPY_USER_HIGHPAGE
- 
- static inline void copy_user_highpage(struct page *to, struct page *from,
--- 
-2.47.2
+We simply don't have issues like this with the AES-NI or VAES XTS code.
 
+And separately, QAT was reported to be much slower than AES-NI for synchronous use
+(https://lore.kernel.org/linux-crypto/0171515-7267-624-5a22-238af829698f@redhat.com/)
+
+Later, I added VAES accelerated AES-XTS code which is over twice as fast as
+AES-NI on the latest Intel CPUs, so that likely widened the gap even more.
+
+Yet, the QAT driver registers its "xts(aes)" implementation with priority 4001,
+compared to priority 800 for the VAES accelerated one.  So the QAT one is the
+one that will be used by fscrypt!
+
+That seems like a major issue even just from a performance perspective.
+
+I expect this patch will significantly improve fscrypt performance on Intel
+servers that have QAT.
+
+- Eric
 
