@@ -1,74 +1,120 @@
-Return-Path: <ceph-devel+bounces-3114-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3115-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E518AD8971
-	for <lists+ceph-devel@lfdr.de>; Fri, 13 Jun 2025 12:23:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6586AAD8A0C
+	for <lists+ceph-devel@lfdr.de>; Fri, 13 Jun 2025 13:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E5F81887223
-	for <lists+ceph-devel@lfdr.de>; Fri, 13 Jun 2025 10:24:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18C93B1BAB
+	for <lists+ceph-devel@lfdr.de>; Fri, 13 Jun 2025 11:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881152C159E;
-	Fri, 13 Jun 2025 10:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093A12D4B7C;
+	Fri, 13 Jun 2025 11:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="RDSUp6T+"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZtxBI+Do"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013043.outbound.protection.outlook.com [52.101.127.43])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ADB20DD4B;
-	Fri, 13 Jun 2025 10:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C78F2D4B5D;
+	Fri, 13 Jun 2025 11:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749810228; cv=fail; b=cS2/mmQhKTk6hhN1LKOJ2V2cIZeDaBSHjf0O6BE+G62BezDDrmCaS78T3fNjCuOwRrnocH9z3WDuNo131u/s4KRi1ZncaZ4sXisLD8pKghscwK0+lyalD2v3iqIbX9FCLlNnrehyB7iIlunIKAxBwUePvkhmwI6bNyynt3XOF9c=
+	t=1749813082; cv=fail; b=qpFS6jSeChZg2joZNp22mO5eqRBjKXqwpUY8riS5b4xRQMtUgqDkIrF98qtg1zVV6Kwz/9GvFGG/BL+HZon/Q28utowKXuNt6JGGEFnX3Vpt9t15+rdVCgAX3KxbYXXT7dUFUBjTR2H3QhohO4LSqkXARsoX5vXn3H/kVlaHSVw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749810228; c=relaxed/simple;
-	bh=dsGaqhWlUz3hFrgxaGRl0uA9S1l2xiwLtIu/OBe+5/I=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=COoZe+ZWOSaJd3jHrfEVGOq6dw1EaxNHiks+79hyw79tt3j6vpeIPCIxUdE+2IMUp/o7gX+GZMKBMqlFYh1ZjCJOxH1PQIRn/ORa3qe7whQ4FIus9lsbbnq0laaRv2WDhBSRoyMNv2kTfBbXNwD5zcuRDZom0pj9dbQ7SJH4Yj0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=RDSUp6T+; arc=fail smtp.client-ip=52.101.127.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+	s=arc-20240116; t=1749813082; c=relaxed/simple;
+	bh=l6E6nmJnWscDwtYON7NmvKEMEnam+0no3YBdvlIcDoo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=WSba1qVxyLpohs1giUyVXQiAQtODYcxAt/eaewZ5rQxBIoFEbpd5DkyobukDDLziLnU1EkcDmk8wzTpPznegGxpbMwwp6/1KhLYCf1Xjj86//geCjSmgkplj/YidGc/z4L2lUP1uBx5Cqi/tXRVRNQF6YYI0tqZpk5ypm7KB7Ro=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZtxBI+Do; arc=fail smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1749813081; x=1781349081;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=l6E6nmJnWscDwtYON7NmvKEMEnam+0no3YBdvlIcDoo=;
+  b=ZtxBI+Dop0/G69GoUzdXHTULvGytiEzJ9MEssj8wzB4CvozayIVN/BLC
+   46mTRGlNfniWyTr2m9xUWz6sk1m/t4rs/IAvSts/dY9PuCAQbTbV4ahjH
+   1BodN0rWRlnE8rZELknevqqA1+kufyoT00w9+Y1rKO+nUfe6fvItUvZg7
+   sas6XXDIgEL+pxcCQAa9sJYn1ZeNCEtxgrj2J2XDuLYjJ2cpRLGb06J2A
+   7fMSL3UAT12TywY4ODZEHSEvmuJHdPMXI+plYzqTeNdqYBxFQIRjLjvfn
+   Hgedb0FCqpUfU76vfPZruDyDrtynr9MAtbH+nHExflMBid3E8+LXTLOAW
+   A==;
+X-CSE-ConnectionGUID: l39ogO71TBGu2zaRSheQjw==
+X-CSE-MsgGUID: mCMaDUzmQROjxgMNIxm80Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11462"; a="63434779"
+X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
+   d="scan'208";a="63434779"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 04:11:20 -0700
+X-CSE-ConnectionGUID: w7p/Y9DeSmideVQYZABwhQ==
+X-CSE-MsgGUID: SNlZxnCOTs2L734RXY1LmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,233,1744095600"; 
+   d="scan'208";a="151625404"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jun 2025 04:11:18 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Fri, 13 Jun 2025 04:11:17 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25 via Frontend Transport; Fri, 13 Jun 2025 04:11:17 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.71) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Fri, 13 Jun 2025 04:11:17 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f0SaUQb2YimZs0ApMHOhULCObT1XS+JW/eGJ0lnRShL7pVdhh4Km7UcX5QDroJ6n4J8Uk4xwK/UZcitJsTLUPDZQd64fqfxebP3fUIt9gckXNRqLWE3Mv7PNkgn7WbBy4hW3zFObVcpQdZ8ff8QBdU5l1mvUQ1C6Lo6UV67wcFcJF8H9bYW7X0rFhqZlbAJ27XSNxlEfrj4WG5lrEEResyf4JvbEZAvwTeuqvXex5eJ/dyysbMwPJz1JDg/o/3wHl1OIyYUNUCM9X6kuW0u6FasMY2lONjpqZhN7I7xFu/0bYGNPEKYwtuNf7oi7jPPbTe7rkaDBarwSL9s6usYUMA==
+ b=ACbA7PJQn7cuhFBMPeqDUNdL/RxbCR0QcIMT9s/aNfg5DTllFIiSMCyy/jB0s/lxCCtt+jwouxXx4z5YzqvWHgzsn4OGh7z2IhQJduUqRfEqHn1lJoFQG4BS2yqqgOsvS8yh79I4lYxbRxZNW7YWqKFzttVCAHDVpafqpPDHSdb6E/VCu9qZC3wLQOIY7F1fpTBYiuB9uvqIF27Ine45FxSQ4g+bvtJQk34SyAagaQigVIGX3x/PCzqv3lFIpuvjTTJNAclV1M6aBEwwx4AlrCbNEv42CCRADSgtoEnzdWYkWRULeuvCFekK/DGARA9C6tOJoxuaI3WNo4xtE1l6AA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=t6n1lg8OesHiM2yKEJo0OTuzLt3M8ed2e/p9rUVaDYs=;
- b=C9+zlN4Fg6r8kRVfQb3LOYOqDBuCBZKpVss8YBUH894xiRutq1z5g9vvriYynsIuJEpMovPfsbvCWJ8Hu/eC/FTTwyz9b8m7glBRYHTx8EDilPQgFTmQCcTFO/qBgeW2cQJhYIcIybwP42SrDia2SN8Z8l+Tm2nSe8C6R+WyXgP2nFylRadg3qRlRtndBVve2NMMkoiX61jG1tcpylS6lVG2yefa6KXbtCCHPEDbl0NsrT9L1lm9HBDj85WgcoLLb5Z0njc58808BVWohh+VNoVh1nhIu4R6GnPBUl3iFlnbK9QAWdaZ7+WL+bIqMW7uGQSinGaGbzVMHPPRcwa2Xg==
+ bh=8/Cx+f8rTVJR7E9rFHuhqwRyqcTrLEplvZQgJimvF8k=;
+ b=wDflSDIBirHQtpK4Y2f3xSPIHmbOiLX5VZ6Y9mwKHs+klUtupnvQQ7U5g5STk3LBsGaGKPSIE1DKuGtyBPlzTKeweZbX3KVBDCGu2WWpodcMGy12JhzEFRieGUg/WxJwPSZBT++Bdcs0ElDaZTVOcsJ94AKC49PoWtYWuhJcdawno2OlK9QP9J5ZPHEUl3dpKQpHcG+zshcHRG1rtvjXDY/dO/EwbjyeerslH2YkEsVA5/i2g8QVeXmVA+HweJ9IU0Z/wOqIQwHyjE39akkIb52Pd99J5KmkEF+ZwaBSyq7jCIxSV3jwEPd2ilI2Iv+B7ipG5BPla/WA1fwDGTSzUw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t6n1lg8OesHiM2yKEJo0OTuzLt3M8ed2e/p9rUVaDYs=;
- b=RDSUp6T+HxBwV6JvwtqLSY+RyiASrt+WZTfedD/MHAqoxABn9NobYekBTZF0oeNlhQgdjsAocbiNLHjKA++NU2JCg1SkhtCSz1utyQ1dGRpaV1Cj6R5E/VCJEiOlsUK/h8apc7l/SQoaKzRzk8mqyIQvhPXEvFx7m99hORwMvG8Zq1lSD9ngr75cAVxbLhSTq/AqKbWyi5mygjVbOnuPIYRjHfIXYRuXuqGWyrfam2EXyukiGqjxE/rlEoxF2gpW43y2Ph5Y++2orgA7lOFzyAKzWnluDQGPR5wtj3DT55JKNGMKvYJPDTvsQP6zEqA79wNaF8SJZX0295PnPJKyyw==
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SG2PR06MB4802.apcprd06.prod.outlook.com (2603:1096:4:169::8) by
- SI2PR06MB5018.apcprd06.prod.outlook.com (2603:1096:4:1a2::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8813.24; Fri, 13 Jun 2025 10:23:41 +0000
-Received: from SG2PR06MB4802.apcprd06.prod.outlook.com
- ([fe80::685f:929d:f06c:a349]) by SG2PR06MB4802.apcprd06.prod.outlook.com
- ([fe80::685f:929d:f06c:a349%3]) with mapi id 15.20.8835.018; Fri, 13 Jun 2025
- 10:23:41 +0000
-From: Yuesong Li <liyuesong@vivo.com>
-To: Ilya Dryomov <idryomov@gmail.com>,
-	Xiubo Li <xiubli@redhat.com>,
-	ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Yuesong Li <liyuesong@vivo.com>
-Subject: [PATCH v1] ceph: convert to use secs_to_jiffies
-Date: Fri, 13 Jun 2025 18:23:22 +0800
-Message-Id: <20250613102322.3074153-1-liyuesong@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG3P274CA0011.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::23)
- To SG2PR06MB4802.apcprd06.prod.outlook.com (2603:1096:4:169::8)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY5PR11MB6366.namprd11.prod.outlook.com (2603:10b6:930:3a::8)
+ by CH3PR11MB8187.namprd11.prod.outlook.com (2603:10b6:610:160::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8835.19; Fri, 13 Jun
+ 2025 11:11:02 +0000
+Received: from CY5PR11MB6366.namprd11.prod.outlook.com
+ ([fe80::6826:6928:9e6:d778]) by CY5PR11MB6366.namprd11.prod.outlook.com
+ ([fe80::6826:6928:9e6:d778%3]) with mapi id 15.20.8835.019; Fri, 13 Jun 2025
+ 11:11:02 +0000
+Date: Fri, 13 Jun 2025 12:10:54 +0100
+From: Giovanni Cabiddu <giovanni.cabiddu@intel.com>
+To: Eric Biggers <ebiggers@kernel.org>
+CC: Simon Richter <Simon.Richter@hogyros.de>, <linux-fscrypt@vger.kernel.org>,
+	<linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mtd@lists.infradead.org>, <linux-ext4@vger.kernel.org>,
+	<linux-f2fs-devel@lists.sourceforge.net>, <ceph-devel@vger.kernel.org>
+Subject: Re: [PATCH] fscrypt: don't use hardware offload Crypto API drivers
+Message-ID: <aEwHPjxw4K6t5mgf@gcabiddu-mobl.ger.corp.intel.com>
+References: <20250611205859.80819-1-ebiggers@kernel.org>
+ <7f63be76-289b-4a99-b802-afd72e0512b8@hogyros.de>
+ <20250612005914.GA546455@google.com>
+ <20250612062521.GA1838@sol>
+ <aEqU0iU1tBrLEYUq@gcabiddu-mobl.ger.corp.intel.com>
+ <20250612155743.GA3529549@google.com>
+ <20250613012357.GA3603104@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250613012357.GA3603104@google.com>
+Organization: Intel Research and Development Ireland Ltd - Co. Reg. #308263 -
+ Collinstown Industrial Park, Leixlip, County Kildare - Ireland
+X-ClientProxiedBy: DUZPR01CA0084.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46a::11) To CY5PR11MB6366.namprd11.prod.outlook.com
+ (2603:10b6:930:3a::8)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -76,125 +122,164 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PR06MB4802:EE_|SI2PR06MB5018:EE_
-X-MS-Office365-Filtering-Correlation-Id: 70fd12e9-73ef-4d58-af91-08ddaa645e18
+X-MS-TrafficTypeDiagnostic: CY5PR11MB6366:EE_|CH3PR11MB8187:EE_
+X-MS-Office365-Filtering-Correlation-Id: 93e51119-4945-4527-b9b7-08ddaa6afb78
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9ZAfYnj1gdE0HldzUk7W0+nsWVkIrM3SX2yOLauqNLJThi+0KxJx+rvWq57a?=
- =?us-ascii?Q?Exk6hvHIk794euBZwrnc+JrDgZSF+A32K+DrINw9+92afIk6ZVH+7xaFQWrZ?=
- =?us-ascii?Q?Vke3kiVol8UVXDZxuQY0J4TgTRm0YvsNbO8zPXBUxDAGSg6guxPOmZGQQDC7?=
- =?us-ascii?Q?CzjlmrIXjKs9/zJ9qJFtNGb2d1pnLx9O3LC7cGTZV3QSvjLybwrOp1XEYdnB?=
- =?us-ascii?Q?HAg0GV19ztojiDg3mgCfXAbc59PXsg1Xaf99OrNPuo7pZ6qc5yQh6G2GFggx?=
- =?us-ascii?Q?9WeDWUYku+PFgsZZurAY1VB32P9N7B5mUtl/Tl4Tenm0eYzgliyP2Gj7u4E2?=
- =?us-ascii?Q?80bJA1flMHqe/Z02AufzEXXOveP03sAaTdHd629Z99QiMzkc2iJq7Wd51b5c?=
- =?us-ascii?Q?gAhAMNbHNx+IbyBnVH3s9JvbdPiVPaLmsF+BtpDzy5ncXQ1Q+RgYweJBGRva?=
- =?us-ascii?Q?9EhkintQtzTp3pSDR4QXRHf9nHyvaUjDZDeVqT9HTOnkbD9e7XmRPZbtatiB?=
- =?us-ascii?Q?M7CZpfUMslwuCeOdMoS1WlQ/6cEtWKhLnc4ARRqbCmkAb8c3JXxgg/7HvmqK?=
- =?us-ascii?Q?KXqymUylhfN9+YbZm1KcUplw8IGWJD76ah4wG7JsTWayxsYy4Xo5rcgmbeYT?=
- =?us-ascii?Q?aptfWtu3Oil7sZLFcay5MowA2KsZ41bLfKWmVT0Quw3kZz1u7A1tuQQjTbMp?=
- =?us-ascii?Q?bIkmAMsJy+DUDrh92QIKXgDpcDyOEsdMlK6mg2n22Uu6/p40qXy8axD+vd8W?=
- =?us-ascii?Q?o9/zYWqTvSxeBHXXUUN9xQ6Xugxm7IcyCAgqs+2irrf1r42nJYrXd5PCQnWy?=
- =?us-ascii?Q?kS5uxQ64jU4S395vGDwkRM9CbHwKwQgn54/p9KgJ+ezwsVfNRY0t9n5OMXpC?=
- =?us-ascii?Q?5m2AHMB+WmARq+5XaEPqN3AFiTY0LmaU7abezHevAowp/Nqs2UH1eAHKFebk?=
- =?us-ascii?Q?eX5zXLmD5KgenGMgp9G892D12TiFkGv/exAYHnJftA/VMiuuXC0/s5+ZwcI2?=
- =?us-ascii?Q?f9+TIJ+GxGW5qNfGTDvlEbniz9TUeN3RH3B3Jk5ewYkf63psi1tRPq6thc9e?=
- =?us-ascii?Q?D99X1TUWB/lbSBrq9YtMh4XAyei4NK05yCqS6lVV005hbBMGyH1NtSGpxOxD?=
- =?us-ascii?Q?+w4evu42gLRRm2BUO9RqnNsFhOB8Ks4KnsTO3kFko7sJ4iX4WjNyy6fGhfhU?=
- =?us-ascii?Q?T5a5doTY/TUF0QRIGvDouuepJ+iB+ZAXqmKr0ZGQOmutlBVK+C387hmwB0od?=
- =?us-ascii?Q?AYhkgYJJWzWfcSW9duHQjM+vSEI9MYWpwOyr5FTof6e6iydYvPWwBk1pyt0O?=
- =?us-ascii?Q?jO7yLok9Nip/Gihxi2fMz90TCwP/khBfnD4mtZlqSGgC9kfPuuXu4w7+TA0T?=
- =?us-ascii?Q?E1cPKcagSDavyrRmqskjIhLjM4QjhQ1bSAZJlRbC/mdTlZ6D2ll8VqWMJlDS?=
- =?us-ascii?Q?0WA8Ec0zhfYiMUedBCEbmWhV+zLGIx4tMeGVauZJaIgsdDJBVsmbuA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SG2PR06MB4802.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?RIBXQRQs7G5vfjTuvYdovZpurMsryspUzteje9Acsd228kS5FrH0Nk+OwAoL?=
+ =?us-ascii?Q?lOGpVYArJSlMBUAswjqJe8k1m46JSuY1lHsw4iB0jjZWOOYwmTEs73U7WvAQ?=
+ =?us-ascii?Q?xsZlb51LHXfnpK3BTOp3GESnJIHMj2gbXOkB1Z1G3lOZRzYdaDbV2ldXaVeV?=
+ =?us-ascii?Q?1UK9Ql9MzNpB/m6Tl7s86vXFF6p4bWbxp7szHRMn0KXkC6fHdGIDpUhNpVH2?=
+ =?us-ascii?Q?WvcLdjhI3d9KSD94BdqFgZpyqypRPqzgMgwj5OSbORqcNUBAtLzfR7GMmpZR?=
+ =?us-ascii?Q?khiow99Ycb0OsySU+7oqE4jUSoifCB+AhWpda+Rncr2FRJIV2tzNjvXiotyL?=
+ =?us-ascii?Q?NY8k1QgzI5N8Fg34r5bGJkyiFeBfQdXV56Xjkz+4TSDnxLScV4DdRqEZGWCa?=
+ =?us-ascii?Q?BPpB9h9Txw8lxE0Yj7ViM2/7L9jmuvFiXFSZTDTyrd5GFZikyd6RMfcq2YAC?=
+ =?us-ascii?Q?By7rAPxvbZPiY6Ftn3dTLi36w4qBnj/Nk52wnlZ4eirPqqpOknI4m7kFpHPx?=
+ =?us-ascii?Q?B525FAMNwJeUu7r7Ur+dVwuxIbcUkWPJ9HSwb7wt+xnYBEeiw5ietI+ItoLj?=
+ =?us-ascii?Q?V5YjSMKN8+n8oGK1WSxYCFc2y26i58BCFH2n3SjVJQcM2SUtQrQ/xeRMuz0a?=
+ =?us-ascii?Q?J1wqhiircPSWHVDvmG/T7h60ob1yIhNrJoPowWWoCvsM8/RVAcLkZNGIJhPF?=
+ =?us-ascii?Q?DyMrMHW66XA80V4Mo078gHy3RokY4knIIc/fyrEKpKv27vveIWfGzL81jLc/?=
+ =?us-ascii?Q?eqg7o1fhiNRZvzgQrhvGrfgphhOTFi/Q5jwY0N4JeXBcuO9zKWb1JPE2n4XE?=
+ =?us-ascii?Q?JHss0ws15jGVaAM5FAXIi+NdSMuVenbFqCtJFnmDYq4LP9h8EXIwR4t50606?=
+ =?us-ascii?Q?k81Ddm/DdwNUKhRKr7Gr80ZFmWO/MN1BvXasFJGtuQqn6YIeIiSmHGd/4y+D?=
+ =?us-ascii?Q?XZ/8RhMlnccgd4eZiQbY64iofEpNo5jUS6Hld26VGWeLqflo8Epkqb9a6mDJ?=
+ =?us-ascii?Q?PULem7ad0iJXrF1Rii/lzlMpdi/Ftm7edyUg+OO5nOXOgCFsH8pumABr4Zp5?=
+ =?us-ascii?Q?DLVVcDirtUCHhL/dbH8hTrpctgezXYTPSshC1XkTm4xhMFLpsxPbtGufCYkF?=
+ =?us-ascii?Q?ygCdlLCnL9tjQaZNZVvzqFBLQvNvjWO6Jdy11ioLFYwqRH3MkiGb5j/FIaCO?=
+ =?us-ascii?Q?r1Ofo9/lk8xeLcQHrIp7lLIkMKFMs0mtugLrYRdiI3yp3Awtm4Kbi6TIoMXr?=
+ =?us-ascii?Q?Wui94CpvXZfEkhLFtIszzSgRm+bCwLplQFlyxDXVWNbq7EtSNeaSYdEG0vil?=
+ =?us-ascii?Q?VT/UklxOTOB26TYf5dr2sTHiKvhpjmICDdMj1iDio1gfg8XQI+DVS5M6VynP?=
+ =?us-ascii?Q?QBOGhYiGEKBlIeg0u6efHuavwI8n?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6366.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+Bm/LIEBVPqKSEtyOjGrNFqcKvizfpHqX4N57Csb+3w0nSN0zjRdBEH4UGi0?=
- =?us-ascii?Q?gUvjEXck51gS7zv/iiDaPafXAcoRzHTzCyS9Vpv8UJRJLA0/AHCx4aOhYN5R?=
- =?us-ascii?Q?dIhUXwxaQm82qBXsn6ZN7v0kvw1T0kZZNb28G4a0aarjIpFHCnsgqu+3MN2l?=
- =?us-ascii?Q?YyD0mOLgGdERijNFvunmdEEa432lBwxJo8M/ShHkyB8iitUbxDKFe+4jOv8C?=
- =?us-ascii?Q?W6zg6gBV2lj0rpcMFSmbjz3uWLFih4MXa1KFL8G7yKpABhXmiK8aYYuRrTOX?=
- =?us-ascii?Q?ZNDtKn8HY51li3yFK7z4nJrYL6da0u71I9af3dZL0VlSSlbqoAljPV6ydsC6?=
- =?us-ascii?Q?EEN6muNxFK09ecNtu19MNUnPrJe9KAFwdv3UY5VzrnB/pSVpbmb/84OrZREg?=
- =?us-ascii?Q?gBt/NEvIm8BdWaiOOM6jtWJHo9gxhQxy37uV4tyHKKEbfqjQmv0YlshSKzLy?=
- =?us-ascii?Q?4IkHmXFQnKK3qtsC3qdiXvbFUUHaOYpucW9L1DbuNPFb0M/sJ5M3CCqxjUKf?=
- =?us-ascii?Q?AMfYcIVoUKSkXbi98c9XuM5o2YslBBNwRNtvH2NaNgI7wQPsqduodcJfmNSb?=
- =?us-ascii?Q?JjwMIfCa+sx/rXJoA6W5KC34z5Oh/uTxiWB/B0N/qVSpuptav7A4WSqQL7uX?=
- =?us-ascii?Q?L1Ym926BmkND8w+aeaEfuJ5WpiX0AlfDdMd5QA8MOWL6r1yyQPMHKVrUqPJ7?=
- =?us-ascii?Q?g9IAu4bbU6Vr1SOLOB04W4lxkfA9upB8wusLuIzteFupJVYpRVGwT4K8td2W?=
- =?us-ascii?Q?VHtM0/lqXPv/ud8oyIepzH4YEz5E+q2E4/2yBTPToJo4WzWQYtfVvnPVvVVh?=
- =?us-ascii?Q?vC2vkHIwCt1g0WtXfRcAcx1suop9lIjRls9kk6FRDk4tp33nJ+LjXF2BU2BN?=
- =?us-ascii?Q?UpHRksVgiWDGIbOfp9ZtOQdcYq6L2exErmR5cuNpnXL1EnYNwLwYWBnLEkTd?=
- =?us-ascii?Q?B1znS/6/xn1iU9GTTQWrE4ojwzTrDBCrlKkMB2wgDgZc3YGDDp0YFNhkKcn6?=
- =?us-ascii?Q?0MztLre34rEYFNu1kVJ738ZmXdzs0Q8C4myVAHQbvnKZLs/PIJZ3fo1D7jbD?=
- =?us-ascii?Q?udMgdFlxRBJiibCIfdvVLUktG0ifxeAzj9Ti2Q8jvAdCNPzty5gp+OhKzsNm?=
- =?us-ascii?Q?JjeYjDuFuwwaVElIWvJIxVnTrQAh5degqo76vsh3jWRDUP5RAW9enGtLLZUW?=
- =?us-ascii?Q?VrpCgmT8ZNTunS4lJjKzL22T8W/ee1ARG309YtSBX/05LjfTTvBOnwk8km7I?=
- =?us-ascii?Q?mPZOO4GRheQuic87xMf3+iPbJ1pMCoUXunL7LL7wYrvgavEjclVmH/pW7YMK?=
- =?us-ascii?Q?hbFPbDoei8e/XQMD4xWn3TNJim76rYr3Ak+f0DrHazeb1mqmInZah0LayuKW?=
- =?us-ascii?Q?TpYOJJFt9VforQVoGGtVcHBDP+1feYs4OmRIIMwB4VaZmMtVQawz+6dnQUu5?=
- =?us-ascii?Q?11PghXTuo+1NHFuDfZQZxATRTP+ZRKSFr73LBBNQvrRTFpbv6weSJrDI9CPk?=
- =?us-ascii?Q?Q3I9kmECunQfpPRU5gUDDydeD2pPhe+54jTG28befRqKaK3Gn3iYKKm71JFR?=
- =?us-ascii?Q?vjM7mZnPxFoczeSVNL4Q5xb/HHkd020k6ub5FnJs?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70fd12e9-73ef-4d58-af91-08ddaa645e18
-X-MS-Exchange-CrossTenant-AuthSource: SG2PR06MB4802.apcprd06.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?dfD3g7ZtZREHAAxZbsnboNc+C0VK4eZx7MbMWbBB0FE2uzDjqw+PyC4n0/vk?=
+ =?us-ascii?Q?JY1qDhRY1rU/jLcKChn8k+EQCAqnBn4orhzbpZk+iYmFG9TFNJ2bVi2b4G5X?=
+ =?us-ascii?Q?X36ov5+BBkD0KymgqcWWTmFC0xXrSsAvWfagTMYgJZh0pVjD5RYF8YneV9+O?=
+ =?us-ascii?Q?cvQ2p6CtTUOTEuDAKbw8ohjLup9M744xJL3F01qVcXapVrK3SqCrByxfA2CW?=
+ =?us-ascii?Q?OOWw36GYj0u2GrgwBOwHgMrxAOf+saUibnaYcYkafolOw9w0LJSR2sbjbHPZ?=
+ =?us-ascii?Q?PVuXK8AkN5O/CkvCAiXocBJZmtqxv3xnlCf1sc03LSeuvlrRnINEVHL8gvu9?=
+ =?us-ascii?Q?p3ffTdyqJx+esNrvW4vUNYBiwt6LWB0Qbp0a5cxLavKu7T5Iz/pVQXogSN2c?=
+ =?us-ascii?Q?U72GzeNY1XM2PqWIuSs5fiazrT+7nI7Oan+0vfFmrucaKKD2dTfzvpg+Ws2L?=
+ =?us-ascii?Q?1VBV8IWhDKdQuC2BMzvNJEI++hUbf63mC+L5VinR0dC/jzd/bmjcXrsMK2Qi?=
+ =?us-ascii?Q?IL4kDPODnOI/fTzekFHwFJjFdutVUi3l65iSyImkuaiwbeZbpOsRAW4wX575?=
+ =?us-ascii?Q?08ZpGCbfqnoCmOnF+34G5h2tlB/GIJMIRv/lyFSDC/c00Wu9q076mmErvyfA?=
+ =?us-ascii?Q?uAM5A68hYj925nxRWz/3LgmS7uV674kKbgkI6FDkCdQd/vi/30m5GU6CF38H?=
+ =?us-ascii?Q?fZaZIo7kCYzyONDCPFxYNaFzuo8ZBquowJsSKkgyYpkSIU2m8NF/AUnK9I6I?=
+ =?us-ascii?Q?eJ4KjUE+r5izqwqYTSXs5NJyIi0PQYiPNt5hBstBoxtMkX0d0rmBcyram02i?=
+ =?us-ascii?Q?Loe84CbLZHahc1JAGH04tQh0DdBr0WZeyvuQqmxv7wEzhpd/bkDvbMHRz0eo?=
+ =?us-ascii?Q?k4aFgvzpW8chqa+vGyzkeAfjva0ZhwZmfeI7p5RD0N+FsAFakf5HZT07nuYz?=
+ =?us-ascii?Q?BIqc7sDvkxbx4T0JuF6bnq46o/GcNefUVBp/d2WyXgspF7X+7n9cFVheUqBx?=
+ =?us-ascii?Q?w+6xHyC8h+d5k8adOHYzX7PXrSh7ueklJX3xjgMUMEIOGkOEYYb7pfdwMg4u?=
+ =?us-ascii?Q?RIR9VzZIqTFy676kW6DCQyuUK956/nKj3S6Qw5NXVjdgqGutyY4jp0OTGeW7?=
+ =?us-ascii?Q?EIJM8k/GRTLU3NalgH7a09fEA03OR+ubo3wRH2rOpxP4WxAesjuqjGfVUVF5?=
+ =?us-ascii?Q?a+Cs3TGLPZdCIrQeSoGRFTkWVBm0nth0FBvClB6DWON/iLHSRq1tuC5/VSPd?=
+ =?us-ascii?Q?SgT0iqznOKU9tCi46gtsdWMFigQYnZYXULDUO7Enb3PNbHY3cTQynADIscb3?=
+ =?us-ascii?Q?966d/Ygu4nTylDDkbYGLZrhnI8174aVD4g4yDed4xMzBRUVeIY4Ef2DMRC4z?=
+ =?us-ascii?Q?g8R94o0Iv47sBY5A4287bAqvYMLUHlXAvR8FPUTjO099BoZxb3x7r0ILykv4?=
+ =?us-ascii?Q?OgVUg2pVY9vYt+UjH+HUqd20SKZ2uykBAM9bzwz6CWR1tEdaEuOXAdO85DXD?=
+ =?us-ascii?Q?hACam7+rRI1EmHomQShSO8WAsi2xlk9FzX8ujd2t4hWx9cEiGL7ENVRm+2eC?=
+ =?us-ascii?Q?dLRNHgqOVGXJ1XH79ToAvYvzEMX9XPgpkVP6TtzER5n4M0KIx89awvMu5RUr?=
+ =?us-ascii?Q?Aw=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 93e51119-4945-4527-b9b7-08ddaa6afb78
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6366.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 10:23:41.0690
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2025 11:11:02.0308
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +yf5OL0YHlyTFtE1CyM11p2RUl/8/88zMoj9UAd3KkmA3yT5dNrL3Fnphvuf5uIwwu1H8Cbgsp1on0Oy4mkLaw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR06MB5018
+X-MS-Exchange-CrossTenant-UserPrincipalName: oL9yadlFGCe9eiuPWfqtQy5Oe1kxZDIckPk6V51PoICCK5eppG2vY1zqRQWrYbRxbvZ9ot4xmf56k9TZ6qEMXFVeFR5z8I+93HiFHtNlmPk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8187
+X-OriginatorOrg: intel.com
 
-Since secs_to_jiffies()(commit:b35108a51cf7) has been introduced, we can
-use it to avoid scaling the time to msec.
+On Fri, Jun 13, 2025 at 01:23:57AM +0000, Eric Biggers wrote:
+> On Thu, Jun 12, 2025 at 03:57:43PM +0000, Eric Biggers wrote:
+> > On Thu, Jun 12, 2025 at 09:50:26AM +0100, Giovanni Cabiddu wrote:
+> > > On Wed, Jun 11, 2025 at 11:25:21PM -0700, Eric Biggers wrote:
+> > > 
+> > > ...
+> > > 
+> > > > FWIW, here's what happens if you try to use the Intel QAT driver with dm-crypt:
+> > > > https://lore.kernel.org/r/CACsaVZ+mt3CfdXV0_yJh7d50tRcGcRZ12j3n6-hoX2cz3+njsg@mail.gmail.com/
+> > > 
+> > > /s/happens/happened/
+> > > 
+> > > ... and it got fixed
+> > > https://lore.kernel.org/all/20220506082327.21605-1-giovanni.cabiddu@intel.com/
+> > 
+> > But it reached users in the first place, including stable kernels.  And
+> > apparently the issues were going on for years and were known to the authors of
+> > the driver
+> > (https://lore.kernel.org/linux-crypto/91fe9f87-54d7-4140-4d1a-eac8e2081a7c@gmail.com/).
+> > 
+> > We simply don't have issues like this with the AES-NI or VAES XTS code.
+> > 
+> > And separately, QAT was reported to be much slower than AES-NI for synchronous use
+> > (https://lore.kernel.org/linux-crypto/0171515-7267-624-5a22-238af829698f@redhat.com/)
+> > 
+> > Later, I added VAES accelerated AES-XTS code which is over twice as fast as
+> > AES-NI on the latest Intel CPUs, so that likely widened the gap even more.
+> > 
+> > Yet, the QAT driver registers its "xts(aes)" implementation with priority 4001,
+> > compared to priority 800 for the VAES accelerated one.  So the QAT one is the
+> > one that will be used by fscrypt!
+> > 
+> > That seems like a major issue even just from a performance perspective.
+> > 
+> > I expect this patch will significantly improve fscrypt performance on Intel
+> > servers that have QAT.
+> 
+> I was curious, so I actually ran a benchmark on an Intel Emerald Rapids server.
+> Specifically, I used a kernel module that repeatedly en/decrypted 4096-byte
+> messages with AES-XTS using crypto_skcipher_en/decrypt().  That's basically what
+> fscrypt's file contents encryption does, but here I just measured the raw crypto
+> performance.  I tested both xts-aes-vaes-avx512 and qat_aes_xts.  For both, the
+> difference between encryption and decryption was within the margin of error, so
+> I'll give just one number for each.
+> 
+> Results:
+> 
+>     xts-aes-vaes-avx512: 16171 MB/s
+>     qat_aes_xts: 289 MB/s
+> 
+> So, QAT is 55 times slower than the VAES-optimized software code!
+> 
+> It's even slower than the generic C code:
+>      
+>     xts(ecb(aes-generic)): 305 MB/s
+> 
+> Now, it could be argued that this is user error -- I "should" have created lots
+> of asynchronous crypto requests for 4K blocks, submitted them all at once, and
+> waited for them to complete.  Thus allowing parallel processing by QAT.
+> 
+> But, that's simply not what fscrypt does.  And even if it did, it could only
+> plausibly help for large bios.  Short bios, for which latency is really
+> important, would continue to be massively regressed by using QAT for them.
+> 
+> Even for large bios, it would have to get over 55 times faster to be worth it,
+> which seems (very?) tenuous.
+> 
+> Also, as is known from dm-crypt which does do async processing, the code that's
+> needed to do it is quite complex and error-prone.
+> 
+> In any case, async processing would be a theoretical future improvement.  It's
+> simply not what fscrypt does today, or has ever done.
+> 
+> I also found that, even though I built the QAT driver as a loadable module, it
+> was loaded automatically on the system and prioritized itself over the VAES-
+> accelerated AES-XTS.  Thus, it would be what fscrypt uses on Intel servers where
+> the QAT driver is enabled in kconfig, even just as 'm'.
+I just sent a patch to lower the priority of the skcipher (and aead)
+algorithms in the QAT driver. This should allow xts-aes-vaes-avx512 to be
+selected by default.
 
-Signed-off-by: Yuesong Li <liyuesong@vivo.com>
----
- net/ceph/ceph_common.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+As for the module loading behaviour: loadable modules are automatically
+loaded at startup if hardware that matches the device IDs they support
+is found.
 
-diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-index 4c6441536d55..9ef326b0d50e 100644
---- a/net/ceph/ceph_common.c
-+++ b/net/ceph/ceph_common.c
-@@ -530,26 +530,26 @@ int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
- 		if (result.uint_32 < 1 || result.uint_32 > INT_MAX / 1000)
- 			goto out_of_range;
- 		opt->osd_keepalive_timeout =
--		    msecs_to_jiffies(result.uint_32 * 1000);
-+		    secs_to_jiffies(result.uint_32);
- 		break;
- 	case Opt_osd_idle_ttl:
- 		/* 0 isn't well defined right now, reject it */
- 		if (result.uint_32 < 1 || result.uint_32 > INT_MAX / 1000)
- 			goto out_of_range;
--		opt->osd_idle_ttl = msecs_to_jiffies(result.uint_32 * 1000);
-+		opt->osd_idle_ttl = secs_to_jiffies(result.uint_32);
- 		break;
- 	case Opt_mount_timeout:
- 		/* 0 is "wait forever" (i.e. infinite timeout) */
- 		if (result.uint_32 > INT_MAX / 1000)
- 			goto out_of_range;
--		opt->mount_timeout = msecs_to_jiffies(result.uint_32 * 1000);
-+		opt->mount_timeout = secs_to_jiffies(result.uint_32);
- 		break;
- 	case Opt_osd_request_timeout:
- 		/* 0 is "wait forever" (i.e. infinite timeout) */
- 		if (result.uint_32 > INT_MAX / 1000)
- 			goto out_of_range;
- 		opt->osd_request_timeout =
--		    msecs_to_jiffies(result.uint_32 * 1000);
-+		    secs_to_jiffies(result.uint_32);
- 		break;
- 
- 	case Opt_share:
+Regards,
+
 -- 
-2.34.1
-
+Giovanni
 
