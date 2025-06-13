@@ -1,145 +1,97 @@
-Return-Path: <ceph-devel+bounces-3116-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3117-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB289AD8D3D
-	for <lists+ceph-devel@lfdr.de>; Fri, 13 Jun 2025 15:38:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C38AD8FE4
+	for <lists+ceph-devel@lfdr.de>; Fri, 13 Jun 2025 16:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2308B16E78A
-	for <lists+ceph-devel@lfdr.de>; Fri, 13 Jun 2025 13:38:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB4973A40F6
+	for <lists+ceph-devel@lfdr.de>; Fri, 13 Jun 2025 14:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9AE192590;
-	Fri, 13 Jun 2025 13:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3721E2848;
+	Fri, 13 Jun 2025 14:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b="W80yf5Jc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpFPf1B0"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D801632DF
-	for <ceph-devel@vger.kernel.org>; Fri, 13 Jun 2025 13:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EBC19CD0B;
+	Fri, 13 Jun 2025 14:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749821873; cv=none; b=VQ8GxpuO3ahggqRnfj7H0mZmKY1WZwPUWitZLoQhsJAAyP6yQ62Qa7asJZsrNwyy7oXfJnOhyObEviQKm2z5FaMjQAD0C2ZPjg9iWR9pAzlm7aWCYd7d89cygVf0FFsjJPX1Y21EDPJBk30ViyS0rQRzsJ1wufP8HKqCNTkGnJM=
+	t=1749825787; cv=none; b=snnfulKvSVUJZHtjWkwMgVBQsrXraPmqTsnntheDGvzmssQ8/2vvl5INUq4OZS1w3jYhztR4qAn6IVEykc5DT6QXmdTTISyJISZeyIzN5uPMgB9WbRHHLdjcV8PTWPfkh99h2xNRolaLCLGuEgufu3G5HZmHQ+435UprgahASqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749821873; c=relaxed/simple;
-	bh=BJoef0xWSj+7ZrFt5m5fWdPbULwYKZEpkk2JZYAFbMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YhGPG5DqnAEjdGQl3/487YRVj/w5IVpnGQg4pLXFyadQ8T36Spuozw3EVJvGEewlQGLq2iHLOqG2vVpSSk+AmT2O3eOiRjp6XYSwGhldG4XhhBtG8Upp0uVeVn3Yb1xRI6Mz/oAMCUiflhlqYE79XoH6g2PsVPc4JCq7Hh2yxRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org; spf=pass smtp.mailfrom=ieee.org; dkim=pass (1024-bit key) header.d=ieee.org header.i=@ieee.org header.b=W80yf5Jc; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ieee.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ieee.org
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3dc8265b9b5so19136595ab.1
-        for <ceph-devel@vger.kernel.org>; Fri, 13 Jun 2025 06:37:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ieee.org; s=google; t=1749821869; x=1750426669; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J+r+Bp65bEAZWnWid1OsBGNzxx17ZgRBrVVBgeYnd6A=;
-        b=W80yf5JcFnxbJBJE2+czvUHP+lSXhYAfwc9Fh1A+x1zrJuA8/mCBU4R9VxWdZnsc5S
-         PMbfGFM0Cj4tQLwuxqkqHZfpIlX8syRXYFRBEWWMMG0HMbZ9VQDRozUo6pJR53daBDzT
-         tbRXmBsGrlxQmd5Sex5UTc1HGuoEKnfr4tzEI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749821869; x=1750426669;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J+r+Bp65bEAZWnWid1OsBGNzxx17ZgRBrVVBgeYnd6A=;
-        b=eShuePJDXBdBbywm/4dTkvGLMPbyWUxgcZjX1BORk41WSzxr0Ugk6Y3EWFVMa3VlQ/
-         CdDfR25nVXuNntycBloGSIdEsus1P72e/5kuDyJe1tZMylHjWQliQfQS0mMVNFxHdrqO
-         G+Jfwsn6Y6Dxj+2fZ9jNEb2+7/bZBEvjOJTYx++7iK2qQkKrAtSmbMBY+9HOZ7KyjtYT
-         Uvf/XtHByr7MPrmHYkkdIMHVsQ5907gSLXKwaJrom53mWjGKDwyNSGlEj+ZOR2sBjv/L
-         o+D33CA4z9ntCfkk8uwdRl8kxgJPOs807EXCavyznBQS/FP+PoWkXezmuCnezSasPIMy
-         TKhA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmXIBNjufXUaMwOhzAWXFrxldJnvxAjpStoX0Z1NVEUaBCWGETVqcD3SUwV+OYUKuiMtiX6XoBM/6c@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXAp/Rmp2TjqGp8USDANm/IPeN725uMFuPw8/Mj1Xc4p6Phdz7
-	WV1MrT4bdsxmE4/9G0fac8xikGIpdT7Y0N1CYBeQxsx0rpSf7TAEgSV2ZCVKTqste0DCya0tv73
-	oUUY=
-X-Gm-Gg: ASbGncvaNEJaCI0xBDP8CdQl9DigCtyUeN8ZJrNdtEewTOJ9LHVlVA9fKRHBq386cuq
-	PrJE609kntakHD0AYX00Qttm8iiA/VTr2khiuxx9VULMbqnDkSfiNZOWL7ZhUmDAGnxhQutV+77
-	rUpP4F8t7UZy+dylCnfb+3EZgbUQj6C9y3yExnAHW4AoxvpV60xit7LMBKzMymPrU4iiDSb7Rtz
-	RNzfSgImxLPCwURz1fkbBGjADKlauJvi5ScBRNwdd2vMbQynPkcxs19dc5FKULTg+NK+eZL7z9u
-	uk3iLFa2gE32G0d6m2Ru3rj+5tZMRMmgWKn1YDmra84XC6qjLYhjFE60heFt1rmq60oJNILtcgw
-	fZwQrQpbFzDqQxNl+gDsT
-X-Google-Smtp-Source: AGHT+IHmsqeaMGQ+A9VzBjS2uR5emsuPjFhHVVeYjhQKAzqV/edqTdOsFGFmJAYO4yUNC+PGzl3SQQ==
-X-Received: by 2002:a05:6e02:178d:b0:3dc:87c7:a5b5 with SMTP id e9e14a558f8ab-3de00ad78d0mr34635405ab.3.1749821867585;
-        Fri, 13 Jun 2025 06:37:47 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-50149b7a47dsm301397173.22.2025.06.13.06.37.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Jun 2025 06:37:47 -0700 (PDT)
-Message-ID: <9dfa0d6b-e28d-4e83-acd0-1ad7803d2387@ieee.org>
-Date: Fri, 13 Jun 2025 08:37:45 -0500
+	s=arc-20240116; t=1749825787; c=relaxed/simple;
+	bh=X8uCzsD5itqoI7POYg9wvCv44Y1Bhh9aSVeaZS08ftY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fciH7g8cN8LxkNsg5qXrGfrZQWbFmdlV3DfvBpKx5vykjaRK1YYdX3rTuyt0TUPMg32eCc2mi7iDTiXFLdCl7Z+Iqay+FKihwjYqGhllE9Mu4O2l20Df8d89TfzcXkp2wWIYIIztjLZ5qmbDCW4huZnVW+Lcs2SpBVhWjuWYMeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpFPf1B0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40697C4CEE3;
+	Fri, 13 Jun 2025 14:43:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749825786;
+	bh=X8uCzsD5itqoI7POYg9wvCv44Y1Bhh9aSVeaZS08ftY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cpFPf1B01lZLa94UVQa51/VgBj9RwtCQJaDlD3SVGhwXzEGZYdDlaAcrCnvBSQri7
+	 9DNPosHAUVOyrQMIbBB/+2Wjlt+ohCPB/fNLZk9Q9MK4uf3fMpdAqz2An/+VcoUyuX
+	 xKHKE1bm45MNSEB8bBx2L8WTP1QSY8pnf1lkhFMeMCcomHCxZl3A9uBXRB8jHsJjbs
+	 9IkOmrjHo4lZU7OafX32/ep8bZb8Mp/wowKzwXA/DF1zUYwF5qBR7tCgJKUp9eSzUx
+	 K8fUOcYr8aBDNj2Y1dVSRMJgqyx/oJy1V4XkrJ4m94l2lylSW2dTEnDF+6knaZvHE8
+	 U80TOWjguDBUg==
+Date: Fri, 13 Jun 2025 07:42:39 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Maxime MERE <maxime.mere@foss.st.com>
+Cc: linux-fscrypt@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	ceph-devel@vger.kernel.org
+Subject: Re: [PATCH] fscrypt: don't use hardware offload Crypto API drivers
+Message-ID: <20250613144239.GA1287@sol>
+References: <20250611205859.80819-1-ebiggers@kernel.org>
+ <8f4c2f36-71af-4c84-bcee-2554cea991d0@foss.st.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] ceph: convert to use secs_to_jiffies
-To: Yuesong Li <liyuesong@vivo.com>, Ilya Dryomov <idryomov@gmail.com>,
- Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20250613102322.3074153-1-liyuesong@vivo.com>
-Content-Language: en-US
-From: Alex Elder <elder@ieee.org>
-In-Reply-To: <20250613102322.3074153-1-liyuesong@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f4c2f36-71af-4c84-bcee-2554cea991d0@foss.st.com>
 
-On 6/13/25 5:23 AM, Yuesong Li wrote:
-> Since secs_to_jiffies()(commit:b35108a51cf7) has been introduced, we can
-> use it to avoid scaling the time to msec.
+On Fri, Jun 13, 2025 at 11:01:03AM +0200, Maxime MERE wrote:
+> Hello,
 > 
-> Signed-off-by: Yuesong Li <liyuesong@vivo.com>
-
-Looks good.
-
-Reviewed-by: Alex Elder <elder@riscstar.com>
-
-> ---
->   net/ceph/ceph_common.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
+> On 6/11/25 22:58, Eric Biggers wrote:
+> > To protect users from these buggy and seemingly unhelpful drivers that I
+> > have no way of testing, let's make fscrypt not use them.  Unfortunately
+> > there is no direct support for doing so in the Crypto API, but we can
+> > achieve something very close to it by disallowing algorithms that have
+> > ASYNC, ALLOCATES_MEMORY, or KERN_DRIVER_ONLY set.
 > 
-> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-> index 4c6441536d55..9ef326b0d50e 100644
-> --- a/net/ceph/ceph_common.c
-> +++ b/net/ceph/ceph_common.c
-> @@ -530,26 +530,26 @@ int ceph_parse_param(struct fs_parameter *param, struct ceph_options *opt,
->   		if (result.uint_32 < 1 || result.uint_32 > INT_MAX / 1000)
->   			goto out_of_range;
->   		opt->osd_keepalive_timeout =
-> -		    msecs_to_jiffies(result.uint_32 * 1000);
-> +		    secs_to_jiffies(result.uint_32);
->   		break;
->   	case Opt_osd_idle_ttl:
->   		/* 0 isn't well defined right now, reject it */
->   		if (result.uint_32 < 1 || result.uint_32 > INT_MAX / 1000)
->   			goto out_of_range;
-> -		opt->osd_idle_ttl = msecs_to_jiffies(result.uint_32 * 1000);
-> +		opt->osd_idle_ttl = secs_to_jiffies(result.uint_32);
->   		break;
->   	case Opt_mount_timeout:
->   		/* 0 is "wait forever" (i.e. infinite timeout) */
->   		if (result.uint_32 > INT_MAX / 1000)
->   			goto out_of_range;
-> -		opt->mount_timeout = msecs_to_jiffies(result.uint_32 * 1000);
-> +		opt->mount_timeout = secs_to_jiffies(result.uint_32);
->   		break;
->   	case Opt_osd_request_timeout:
->   		/* 0 is "wait forever" (i.e. infinite timeout) */
->   		if (result.uint_32 > INT_MAX / 1000)
->   			goto out_of_range;
->   		opt->osd_request_timeout =
-> -		    msecs_to_jiffies(result.uint_32 * 1000);
-> +		    secs_to_jiffies(result.uint_32);
->   		break;
->   
->   	case Opt_share:
+> I agree that software drivers are more efficient and less prone to bugs than
+> hardware drivers. However, I would like to highlight the fact that certain
+> ST products (the STM32MP2x series) have features that allow the loading of a
+> secret key via an internal bus from a Secure OS to the CRYP peripheral
+> (usable by the kernel). This enables cryptographic operations to be
+> delegated to the non-secure side (the kernel) without exposing the key.
+> 
+> If fscrypt no longer supports hardware drivers, then this type of
+> functionality could not be used, which I find unfortunate because it is
+> something that might interest users.
 
+What?  fscrypt doesn't support that anyway, and there isn't any path forward to
+supporting it in a way that would actually improve security.  (Considering how
+fscrypt's key derivation etc. works.)
+
+fscrypt does support hardware wrapped *inline encryption* keys, which is
+actually designed properly and does work.
+
+Honestly, the responses to this thread so far have made it even more clear that
+this patch is the right decision.
+
+- Eric
 
