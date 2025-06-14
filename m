@@ -1,85 +1,90 @@
-Return-Path: <ceph-devel+bounces-3121-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3122-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F0CAD95E1
-	for <lists+ceph-devel@lfdr.de>; Fri, 13 Jun 2025 22:04:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0BACAD9A57
+	for <lists+ceph-devel@lfdr.de>; Sat, 14 Jun 2025 08:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 331141E2DCB
-	for <lists+ceph-devel@lfdr.de>; Fri, 13 Jun 2025 20:04:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1BF03BB8F0
+	for <lists+ceph-devel@lfdr.de>; Sat, 14 Jun 2025 06:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED5A23D2A9;
-	Fri, 13 Jun 2025 20:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CA71DE3DF;
+	Sat, 14 Jun 2025 06:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="uR0MtTse"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="sv2H5qJl"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461A51F3B83;
-	Fri, 13 Jun 2025 20:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD0F23DE;
+	Sat, 14 Jun 2025 06:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749845086; cv=none; b=nghwglcI+WfdNecaljR/DFbDdzJB9Mz3EZZchcbZN2f8/f8HxlqufboWBPkvC/o0J+NqJYn79IGzWAZJoLuGAck7LWHgq3rB7jz+U9d/8S5wpCt562+3rjbnNEUoRKgAZooa6zsRM7JNczBvRlJb2BUxsVpD8xRcR34wpCiFjqE=
+	t=1749882055; cv=none; b=kSJ6dt54J8rPhJ9fw2G04w0ZLcRiJx7eGxoC1fZ3skKzsvTEo5yNtelSNGFcBjuPYf2WCVKbN/FwqJKIHGRHimKiM+gebbVmjaM5QXKE+MT3PQ8d0DSNWjQlQE1/oVHzvFzVfeoyzBz6hdLAC4q/a7FMvw/5+NF8Wqg10QZlj+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749845086; c=relaxed/simple;
-	bh=1vsSmmZ1ACTtZ+LU4FX4Fkr0A7F1qz8MU5LJDH6hE0s=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=FD62vVc0D46QKbhioKtNUDOmrQQ993lQ1yYGklQEvm8wVKSzX5aANFZSl+88aSYAeRqY0aabbJwOsCsXjHP3wChjOq7mVgQH7VAWDcFDgY8f4I3hSfs99Yh7iUiFMe0V4AlNfgzJrT5CykF74KYwnae6zhgN7vpU0CO3KBNbKs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=uR0MtTse; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E65DC4CEE3;
-	Fri, 13 Jun 2025 20:04:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1749845085;
-	bh=1vsSmmZ1ACTtZ+LU4FX4Fkr0A7F1qz8MU5LJDH6hE0s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uR0MtTse3NJobk7ndpDlO3mCZtOnoOleS5ge7zjMo/J9hJYL8soqpGK/2rvnmG/L4
-	 9jJlO0u1UkhUxI/GaRKqlyqymKta0fYrCqCaZam/RcEaF/kZvss3Nw2IXrr4O3YjN6
-	 42tdSlI7P/Whb5eQnTSRilfEFAWSmIHa4bEO25Vw=
-Date: Fri, 13 Jun 2025 13:04:44 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org, Ira Weiny
- <ira.weiny@intel.com>, linux-block@vger.kernel.org,
- ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Remove zero_user()
-Message-Id: <20250613130444.9a1affd0ef5ff719be34103e@linux-foundation.org>
-In-Reply-To: <aEyBKksbj0DebCOw@casper.infradead.org>
-References: <20250612143443.2848197-1-willy@infradead.org>
-	<20250613052432.GA8802@lst.de>
-	<aEyBKksbj0DebCOw@casper.infradead.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749882055; c=relaxed/simple;
+	bh=Y4VZ0mIVGO43zUhEHGQbLBdI73QT+rbvtERI624NnCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=MkF5xhNpBlBuiTYnHXYWSFbYih8beQePTOz86MdlI43WQ8vlf7OZOw8AW1SbfZnF2VKMVAObufh85dCh0mszRI/tsOrVsWqG4Z0Q1ErJmrD5Ex0n/0skt9v9w7j/WSnlvNSsFM69o0WGDfCyoK6zGgyc6KlR3Srl7uj0PlVvZvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=sv2H5qJl; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=QPHguXyshzZzTGRSmBks3eALH+eO8BLLetl0Op2INqg=; b=sv2H5qJlSCoVCsa44VsW9MxYJI
+	bmshRvdcGlnm3+dFdo32GglBTwv37Wo8omMFU88WoT1pB2Fso3mYB24F5DkMRo9yGYjiprWN4XEBv
+	Ec7AWxqWc0CyotlCkq7/ZsIgCtMG1bLTVl8O7gWh2B9cQcn4MbeLU47XeBm6LkrT7VCeyihsLGGhT
+	GAL1yJICPolBpsOKvzw5MMvbvTVVaScD9j18XFoDagce1SSk9pEA009p9mSgR+MZngRRXC466lvXB
+	tqIQvndBYvbcWsH0oNSga4pEjyhfOGsKjIWr4780hOAT9oy9jOEAU2osTZbbBnv3eBwATOcK5tBEH
+	Pd8ZlIXg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uQKG3-00000002DtV-3L3c;
+	Sat, 14 Jun 2025 06:20:51 +0000
+Date: Sat, 14 Jun 2025 07:20:51 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, ceph-devel@vger.kernel.org
+Subject: [PATCHES] ceph d_name race fixes
+Message-ID: <20250614062051.GC1880847@ZenIV>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, 13 Jun 2025 20:51:06 +0100 Matthew Wilcox <willy@infradead.org> wrote:
+	Series of race fixes for d_name handling in ceph had been posted
+back in February, but apparently had fallen through the cracks - I expected
+ceph folks to pull (or cherry-pick) it, they apparently thought I'd send
+it to Linus and nobody checked what actually went down...
 
-> On Fri, Jun 13, 2025 at 07:24:32AM +0200, Christoph Hellwig wrote:
-> > On Thu, Jun 12, 2025 at 03:34:36PM +0100, Matthew Wilcox (Oracle) wrote:
-> > > The zero_user() API is almost unused these days.  Finish the job of
-> > > removing it.
-> > 
-> > Both the block layer users really should use bvec based helpers.
-> > I was planning to get to that this merge window.  Can we queue up
-> > just the other two removals for and remove zero_user after -rc1
-> > to reduce conflicts?
-> 
-> If I'd known you were doing that, I wouldn't've bothered.  However,
-> Andrew's taken the patches now, so I'm inclined to leave them in.
-> No matter which tree it gets merged through, this is a relatively easy
-> conflict to resolve (ie just take your version).  I have some more
-> patches which build on the removal of zero_user() so it'd be nice to
-> not hold them up.
+	I've rebased it to 6.16-rc1, with a couple of cosmetical changes
+suggested back then.  Currently it's in
+git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.ceph-d_name-fixes
+Individual patches in followups.
 
-Sure, Christoph, please just proceed with the block changes and we can
-see what the conflicts look like when Stephen hits them.  If Matthew's
-series needs modification then so be it.
+	Folks, could you test and review it?  I really don't care which
+tree would it go through, just let's make sure that everyone agrees who
+pushes it out...
+
+Shortlog:
+Al Viro (3):
+      [ceph] parse_longname(): strrchr() expects NUL-terminated string
+      prep for ceph_encode_encrypted_fname() fixes
+      ceph: fix a race with rename() in ceph_mdsc_build_path()
+
+Diffstat:
+ fs/ceph/caps.c       | 18 +++++-------
+ fs/ceph/crypto.c     | 82 +++++++++++++++++-----------------------------------
+ fs/ceph/crypto.h     | 18 +++---------
+ fs/ceph/dir.c        |  7 ++---
+ fs/ceph/mds_client.c |  4 +--
+ 5 files changed, 43 insertions(+), 86 deletions(-)
 
