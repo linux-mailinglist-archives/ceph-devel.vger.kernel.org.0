@@ -1,60 +1,58 @@
-Return-Path: <ceph-devel+bounces-3125-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3126-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A788AD9A5D
-	for <lists+ceph-devel@lfdr.de>; Sat, 14 Jun 2025 08:23:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BDA9ADA10B
+	for <lists+ceph-devel@lfdr.de>; Sun, 15 Jun 2025 06:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66A80189BCB1
-	for <lists+ceph-devel@lfdr.de>; Sat, 14 Jun 2025 06:23:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACD477A44F2
+	for <lists+ceph-devel@lfdr.de>; Sun, 15 Jun 2025 04:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B511E3DEB;
-	Sat, 14 Jun 2025 06:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4C921B195;
+	Sun, 15 Jun 2025 04:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="s9ryv4WW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ho4jYYIK"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BE01DC07D;
-	Sat, 14 Jun 2025 06:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270B41BC3F;
+	Sun, 15 Jun 2025 04:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749882180; cv=none; b=EltcouEIy2nI79osdWkNnwwqKIaar9LUVWykp8/baOEQ++KIbHSb9PZaEv/fyeWig1z/2pdasYN1D5Mp+tZf5qBwP42OKiBXlwDMdgTRaIxQDVZMZ7hrt4lfheJUjNlqAKpsgXv0HXvRe+DFIX36Ya2pO3PpRERle0xiGp5/kSk=
+	t=1749963226; cv=none; b=P9fC6RKlZ6sgvT+5vmgc+pPweoe9ME9oIKjZXprGqKm/vlyF1j2AknBF7mEE/LO/nsnHG2lTVYm9MkUZS+4Bl24qDnd7PSyarEiCQGQ/bRXyeYvK42jUXkN/SkOKOQ39Hkgcg40l1c3sKNhObuXcx+jp0bXvldXDoXCZDTU04ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749882180; c=relaxed/simple;
-	bh=s8ncKfbjoUuaFvFWw1MFGMiB1D/9Qfk0QPSyrvn+kUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jm2uBcobn8T2vR+UkhKMqP/gd+WJANAf2wNw5NV/aZd0M9znjRC1GsiNx9HTeHfeSWh0RLjHrNvzqYgjsMRf1ENvHPCC/hJlMiLuO1TeQj0oqwGH2WoNtMwAPcaomd23RtVu5Q45qP2rF2NiZV0O2F21ll8bxcOygbMd8nqGz9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=s9ryv4WW; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=ZTfConObul4qVY0QSdQ7t8u8m7+yP1EN+rWNBepTobg=; b=s9ryv4WWeeeCNVc20SjsBha5/i
-	cJNrg8Qtve64SrfFmowo9PWwiUvc2RyasTgn8L69BXec1doOAgdrDMfYVkPpPYDL25IbMwbnjGVfl
-	hZeRTbR6LzaLts3hTFTQNGA4pKN6qpGY2hW9gC0WbnXMPIJfQjxALcE5g8G7/LonjF09eJqwJeE4V
-	3kVDuf8NWkbhcYah+ffe0uCADp2jBxKeu9k8kjH0VVQe57LOYOt0CTZL0JRmx+tIoZJRAwGCm9Ulj
-	ImQtTM24I+pe1Q4UzO9ZMWsmPk4MX7EYb4DGdDA1x5Lz/bY70qbiQ8+QurBtwxz9blDqTVnSCEoO7
-	Hr3KCnSQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uQKI5-00000002FL6-2QzN;
-	Sat, 14 Jun 2025 06:22:57 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Slava.Dubeyko@ibm.com,
-	ceph-devel@vger.kernel.org
-Subject: [PATCH 3/3] ceph: fix a race with rename() in ceph_mdsc_build_path()
-Date: Sat, 14 Jun 2025 07:22:57 +0100
-Message-ID: <20250614062257.535594-3-viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1749963226; c=relaxed/simple;
+	bh=jKskpqcoXOguF1H1TjZ0pWmBZVDnOT0/xNqcoD0cSAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cop3fA0Y+VmkDss/3wxik55bKeBb8btHH/9XKnr48c0Ck0d+935PoyeOiRkdJHqwqDHT1YTH2on5ZpOnpZzwPD7/sh/u7nEGrCk0RW/6xM6W7z5LuT6J2/c4UetT9i0PXF3QYTb2CBcfG6mgpGXwtgoxsw8ftpN9yzEMvtNftDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ho4jYYIK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 560C4C4CEE3;
+	Sun, 15 Jun 2025 04:53:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749963225;
+	bh=jKskpqcoXOguF1H1TjZ0pWmBZVDnOT0/xNqcoD0cSAE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ho4jYYIKxZ5jOqawvrhaEPBhEZPCrM8ChRozSncyaAqNV+riPwKkyanQnMEwAdbVm
+	 /XRV6xyzV0raa/vd5Vhy6VpZ8GrTZtwKLpy7aNs7hKsQojtsMYvTe4DMgacX8pDInr
+	 a0nfAZcxldXCif58iYfsInWiFqV6glddb5yOs9caUGyMCurbwn84kg4SOsvfVqmUGB
+	 Wo3qxBpEPl9p0JEvf41ii0/lxxoogeSXHuFEhDZ2/SG3fUxUxujR9c7exo5bBPUZzE
+	 GPlWpZSiPtJDcT+Br/m9zwgcOyyBKtPXd8G/lx6adWU0CoQnHdvVGNZu/NSTRtgW+q
+	 /J7vgLI1jS06A==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	ceph-devel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] fscrypt: don't use problematic non-inline crypto accelerators
+Date: Sat, 14 Jun 2025 21:51:45 -0700
+Message-ID: <20250615045145.224567-1-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250614062257.535594-1-viro@zeniv.linux.org.uk>
-References: <20250614062051.GC1880847@ZenIV>
- <20250614062257.535594-1-viro@zeniv.linux.org.uk>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -62,186 +60,186 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Lift copying the name into callers of ceph_encode_encrypted_dname()
-that do not have it already copied; ceph_encode_encrypted_fname()
-disappears.
+From: Eric Biggers <ebiggers@google.com>
 
-That fixes a UAF in ceph_mdsc_build_path() - while the initial copy
-of plaintext into buf is done under ->d_lock, we access the
-original name again in ceph_encode_encrypted_fname() and that is
-done without any locking.  With ceph_encode_encrypted_dname() using
-the stable copy the problem goes away.
+Make fscrypt no longer use Crypto API drivers for non-inline crypto
+accelerators, even when the Crypto API prioritizes them over CPU-based
+code (which unfortunately it often does).  These drivers tend to be
+really problematic, especially for fscrypt's synchronous workload.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Specifically, exclude drivers that have CRYPTO_ALG_KERN_DRIVER_ONLY or
+CRYPTO_ALG_ALLOCATES_MEMORY set.  (Later, CRYPTO_ALG_ASYNC should be
+excluded too.  That's omitted for now to keep this commit backportable,
+since until recently some CPU-based code had CRYPTO_ALG_ASYNC set.)
+
+There are two major issues with these drivers: bugs and performance.
+
+First, these drivers tend to be buggy.  They're fundamentally much more
+error-prone and harder to test than the CPU-based code, and they often
+don't get tested before kernel releases.  Released drivers have
+en/decrypted data incorrectly.  These bugs cause real issues for fscrypt
+users who often didn't even want to use these drivers, for example:
+
+- https://github.com/google/fscryptctl/issues/32
+- https://github.com/google/fscryptctl/issues/9
+- https://lore.kernel.org/r/PH0PR02MB731916ECDB6C613665863B6CFFAA2@PH0PR02MB7319.namprd02.prod.outlook.com
+
+These drivers have also caused issues for dm-crypt users, including data
+corruption and deadlocks.  Since Linux v5.10, dm-crypt has disabled most
+of these drivers by excluding CRYPTO_ALG_ALLOCATES_MEMORY.
+
+Second, the CPU-based crypto tends to be faster, often *much* faster.
+This may seem counterintuitive, but benchmarks clearly show it.  There's
+a *lot* of overhead associated with going to a hardware driver, off the
+CPU, and back again.  Measuring synchronous AES-256-XTS encryption of
+4096-byte messages (fscrypt's workload) on two platforms with non-inline
+crypto accelerators that I have access to:
+
+  Intel Emerald Rapids server:
+
+     xts-aes-vaes-avx512:  16171 MB/s  [CPU-based, Vector AES]
+     xts(ecb(aes-generic)):  305 MB/s  [CPU-based, generic C code]
+     qat_aes_xts:            289 MB/s  [Offload, Intel QuickAssist]
+
+  Qualcomm SM8650 HDK:
+
+     xts-aes-ce:            4301 MB/s  [CPU-based, ARMv8 Crypto Extensions]
+     xts(ecb(aes-generic)):  265 MB/s  [CPU-based, generic C code]
+     xts-aes-qce:             73 MB/s  [Offload, Qualcomm Crypto Engine]
+
+So, using the "accelerators" is over 50 times slower than just using the
+CPU.  Not only that, it's even slower than the generic C code, which
+suggests that even on platforms whose CPUs lack AES instructions the
+performance benefit of any accelerator would be marginal at best.
+
+The usefulness of the accelerators could be improved with a different
+software architecture that allows blocks to be efficiently en/decrypted
+in parallel.  But fscrypt does not do that today, and even the async
+support in the Crypto API isn't really all that efficient.  And even if
+the accelerator was used perfectly efficiently, it seems unlikely to
+help on small I/O requests, for which latency is really important.
+
+As of this writing, the Crypto API prioritizes qat_aes_xts over
+xts-aes-vaes-avx512.  Therefore, this commit greatly improves fscrypt
+performance on Intel servers that have QAT and the QAT driver enabled.
+qat_aes_xts is going to be deprioritized in the Crypto API (like I did
+for xts-aes-qce recently too).  But as this seems to be a common pattern
+with all the "accelerators", fscrypt should just disable all of them.
+
+An argument that has been given in favor of non-inline crypto
+accelerators is that they can protect keys in hardware.  But fscrypt
+does not take advantage of that, so it is irrelevant.  (Also, it would
+be quite difficult for fscrypt to do that.)
+
+Note that fscrypt does support inline encryption engines, using raw or
+hardware-wrapped keys.  These actually do work well and are widely used.
+These do not use the "Crypto API" and are unaffected by this commit.
+
+Fixes: b30ab0e03407 ("ext4 crypto: add ext4 encryption facilities")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/ceph/caps.c       | 18 +++++++-----------
- fs/ceph/crypto.c     | 19 ++-----------------
- fs/ceph/crypto.h     | 18 ++++--------------
- fs/ceph/dir.c        |  7 +++----
- fs/ceph/mds_client.c |  4 ++--
- 5 files changed, 18 insertions(+), 48 deletions(-)
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index a8d8b56cf9d2..b1a8ff612c41 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -4957,24 +4957,20 @@ int ceph_encode_dentry_release(void **p, struct dentry *dentry,
- 	cl = ceph_inode_to_client(dir);
- 	spin_lock(&dentry->d_lock);
- 	if (ret && di->lease_session && di->lease_session->s_mds == mds) {
-+		int len = dentry->d_name.len;
- 		doutc(cl, "%p mds%d seq %d\n",  dentry, mds,
- 		      (int)di->lease_seq);
- 		rel->dname_seq = cpu_to_le32(di->lease_seq);
- 		__ceph_mdsc_drop_dentry_lease(dentry);
-+		memcpy(*p, dentry->d_name.name, len);
- 		spin_unlock(&dentry->d_lock);
- 		if (IS_ENCRYPTED(dir) && fscrypt_has_encryption_key(dir)) {
--			int ret2 = ceph_encode_encrypted_fname(dir, dentry, *p);
--
--			if (ret2 < 0)
--				return ret2;
--
--			rel->dname_len = cpu_to_le32(ret2);
--			*p += ret2;
--		} else {
--			rel->dname_len = cpu_to_le32(dentry->d_name.len);
--			memcpy(*p, dentry->d_name.name, dentry->d_name.len);
--			*p += dentry->d_name.len;
-+			len = ceph_encode_encrypted_dname(dir, *p, len);
-+			if (len < 0)
-+				return len;
- 		}
-+		rel->dname_len = cpu_to_le32(len);
-+		*p += len;
- 	} else {
- 		spin_unlock(&dentry->d_lock);
+Changed in v2:
+- Improved commit message and comment
+- Dropped CRYPTO_ALG_ASYNC from the mask, to make this patch
+  backport-friendly
+- Added Fixes and Cc stable
+
+ fs/crypto/fscrypt_private.h | 16 ++++++++++++++++
+ fs/crypto/hkdf.c            |  2 +-
+ fs/crypto/keysetup.c        |  3 ++-
+ fs/crypto/keysetup_v1.c     |  3 ++-
+ 4 files changed, 21 insertions(+), 3 deletions(-)
+
+diff --git a/fs/crypto/fscrypt_private.h b/fs/crypto/fscrypt_private.h
+index c1d92074b65c5..0e95c7a095d49 100644
+--- a/fs/crypto/fscrypt_private.h
++++ b/fs/crypto/fscrypt_private.h
+@@ -43,10 +43,26 @@
+  * hardware-wrapped keys has made it misleading as it's only for raw keys.
+  * Don't use it in kernel code; use one of the above constants instead.
+  */
+ #undef FSCRYPT_MAX_KEY_SIZE
+ 
++/*
++ * This mask is passed as the third argument to the crypto_alloc_*() functions
++ * to prevent fscrypt from using the Crypto API drivers for non-inline crypto
++ * accelerators.  Those drivers have been problematic for fscrypt.  fscrypt
++ * users have reported hangs and even incorrect en/decryption with these
++ * drivers.  Since going to the driver, off CPU, and back again is really slow,
++ * such drivers can be over 50 times slower than the CPU-based code for
++ * fscrypt's synchronous workload.  Even on platforms that lack AES instructions
++ * on the CPU, any performance benefit is likely to be marginal at best.
++ *
++ * Note that fscrypt also supports inline encryption engines.  Those don't use
++ * the Crypto API and work much better than non-inline accelerators.
++ */
++#define FSCRYPT_CRYPTOAPI_MASK \
++	(CRYPTO_ALG_ALLOCATES_MEMORY | CRYPTO_ALG_KERN_DRIVER_ONLY)
++
+ #define FSCRYPT_CONTEXT_V1	1
+ #define FSCRYPT_CONTEXT_V2	2
+ 
+ /* Keep this in sync with include/uapi/linux/fscrypt.h */
+ #define FSCRYPT_MODE_MAX	FSCRYPT_MODE_AES_256_HCTR2
+diff --git a/fs/crypto/hkdf.c b/fs/crypto/hkdf.c
+index 0f3028adc9c72..5b9c21cfe2b45 100644
+--- a/fs/crypto/hkdf.c
++++ b/fs/crypto/hkdf.c
+@@ -56,11 +56,11 @@ int fscrypt_init_hkdf(struct fscrypt_hkdf *hkdf, const u8 *master_key,
+ 	struct crypto_shash *hmac_tfm;
+ 	static const u8 default_salt[HKDF_HASHLEN];
+ 	u8 prk[HKDF_HASHLEN];
+ 	int err;
+ 
+-	hmac_tfm = crypto_alloc_shash(HKDF_HMAC_ALG, 0, 0);
++	hmac_tfm = crypto_alloc_shash(HKDF_HMAC_ALG, 0, FSCRYPT_CRYPTOAPI_MASK);
+ 	if (IS_ERR(hmac_tfm)) {
+ 		fscrypt_err(NULL, "Error allocating " HKDF_HMAC_ALG ": %ld",
+ 			    PTR_ERR(hmac_tfm));
+ 		return PTR_ERR(hmac_tfm);
  	}
-diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index 2aef56fc6275..e312f52f48e4 100644
---- a/fs/ceph/crypto.c
-+++ b/fs/ceph/crypto.c
-@@ -253,23 +253,16 @@ static struct inode *parse_longname(const struct inode *parent,
- 	return dir;
- }
- 
--int ceph_encode_encrypted_dname(struct inode *parent, struct qstr *d_name,
--				char *buf)
-+int ceph_encode_encrypted_dname(struct inode *parent, char *buf, int elen)
+diff --git a/fs/crypto/keysetup.c b/fs/crypto/keysetup.c
+index 0d71843af9469..d8113a7196979 100644
+--- a/fs/crypto/keysetup.c
++++ b/fs/crypto/keysetup.c
+@@ -101,11 +101,12 @@ fscrypt_allocate_skcipher(struct fscrypt_mode *mode, const u8 *raw_key,
+ 			  const struct inode *inode)
  {
- 	struct ceph_client *cl = ceph_inode_to_client(parent);
- 	struct inode *dir = parent;
- 	char *p = buf;
- 	u32 len;
--	int name_len;
--	int elen;
-+	int name_len = elen;
- 	int ret;
- 	u8 *cryptbuf = NULL;
+ 	struct crypto_skcipher *tfm;
+ 	int err;
  
--	memcpy(buf, d_name->name, d_name->len);
--	elen = d_name->len;
--
--	name_len = elen;
--
- 	/* Handle the special case of snapshot names that start with '_' */
- 	if (ceph_snap(dir) == CEPH_SNAPDIR && *p == '_') {
- 		dir = parse_longname(parent, p, &name_len);
-@@ -342,14 +335,6 @@ int ceph_encode_encrypted_dname(struct inode *parent, struct qstr *d_name,
- 	return elen;
- }
- 
--int ceph_encode_encrypted_fname(struct inode *parent, struct dentry *dentry,
--				char *buf)
--{
--	WARN_ON_ONCE(!fscrypt_has_encryption_key(parent));
--
--	return ceph_encode_encrypted_dname(parent, &dentry->d_name, buf);
--}
--
- /**
-  * ceph_fname_to_usr - convert a filename for userland presentation
-  * @fname: ceph_fname to be converted
-diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
-index d0768239a1c9..f752bbb2eb06 100644
---- a/fs/ceph/crypto.h
-+++ b/fs/ceph/crypto.h
-@@ -102,10 +102,7 @@ int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
- 				 struct ceph_acl_sec_ctx *as);
- void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req,
- 				struct ceph_acl_sec_ctx *as);
--int ceph_encode_encrypted_dname(struct inode *parent, struct qstr *d_name,
--				char *buf);
--int ceph_encode_encrypted_fname(struct inode *parent, struct dentry *dentry,
--				char *buf);
-+int ceph_encode_encrypted_dname(struct inode *parent, char *buf, int len);
- 
- static inline int ceph_fname_alloc_buffer(struct inode *parent,
- 					  struct fscrypt_str *fname)
-@@ -194,17 +191,10 @@ static inline void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req,
+-	tfm = crypto_alloc_skcipher(mode->cipher_str, 0, 0);
++	tfm = crypto_alloc_skcipher(mode->cipher_str, 0,
++				    FSCRYPT_CRYPTOAPI_MASK);
+ 	if (IS_ERR(tfm)) {
+ 		if (PTR_ERR(tfm) == -ENOENT) {
+ 			fscrypt_warn(inode,
+ 				     "Missing crypto API support for %s (API name: \"%s\")",
+ 				     mode->friendly_name, mode->cipher_str);
+diff --git a/fs/crypto/keysetup_v1.c b/fs/crypto/keysetup_v1.c
+index b70521c55132b..158ceae8a5bce 100644
+--- a/fs/crypto/keysetup_v1.c
++++ b/fs/crypto/keysetup_v1.c
+@@ -50,11 +50,12 @@ static int derive_key_aes(const u8 *master_key,
  {
- }
+ 	int res = 0;
+ 	struct skcipher_request *req = NULL;
+ 	DECLARE_CRYPTO_WAIT(wait);
+ 	struct scatterlist src_sg, dst_sg;
+-	struct crypto_skcipher *tfm = crypto_alloc_skcipher("ecb(aes)", 0, 0);
++	struct crypto_skcipher *tfm =
++		crypto_alloc_skcipher("ecb(aes)", 0, FSCRYPT_CRYPTOAPI_MASK);
  
--static inline int ceph_encode_encrypted_dname(struct inode *parent,
--					      struct qstr *d_name, char *buf)
-+static inline int ceph_encode_encrypted_dname(struct inode *parent, char *buf,
-+					      int len)
- {
--	memcpy(buf, d_name->name, d_name->len);
--	return d_name->len;
--}
--
--static inline int ceph_encode_encrypted_fname(struct inode *parent,
--					      struct dentry *dentry, char *buf)
--{
--	return -EOPNOTSUPP;
-+	return len;
- }
- 
- static inline int ceph_fname_alloc_buffer(struct inode *parent,
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index a321aa6d0ed2..8478e7e75df6 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -423,17 +423,16 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
- 			req->r_inode_drop = CEPH_CAP_FILE_EXCL;
- 		}
- 		if (dfi->last_name) {
--			struct qstr d_name = { .name = dfi->last_name,
--					       .len = strlen(dfi->last_name) };
-+			int len = strlen(dfi->last_name);
- 
- 			req->r_path2 = kzalloc(NAME_MAX + 1, GFP_KERNEL);
- 			if (!req->r_path2) {
- 				ceph_mdsc_put_request(req);
- 				return -ENOMEM;
- 			}
-+			memcpy(req->r_path2, dfi->last_name, len);
- 
--			err = ceph_encode_encrypted_dname(inode, &d_name,
--							  req->r_path2);
-+			err = ceph_encode_encrypted_dname(inode, req->r_path2, len);
- 			if (err < 0) {
- 				ceph_mdsc_put_request(req);
- 				return err;
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 230e0c3f341f..0f497c39ff82 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2766,8 +2766,8 @@ char *ceph_mdsc_build_path(struct ceph_mds_client *mdsc, struct dentry *dentry,
- 			}
- 
- 			if (fscrypt_has_encryption_key(d_inode(parent))) {
--				len = ceph_encode_encrypted_fname(d_inode(parent),
--								  cur, buf);
-+				len = ceph_encode_encrypted_dname(d_inode(parent),
-+								  buf, len);
- 				if (len < 0) {
- 					dput(parent);
- 					dput(cur);
+ 	if (IS_ERR(tfm)) {
+ 		res = PTR_ERR(tfm);
+ 		tfm = NULL;
+ 		goto out;
+
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
 -- 
-2.39.5
+2.49.0
 
 
