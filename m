@@ -1,46 +1,46 @@
-Return-Path: <ceph-devel+bounces-3170-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3171-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFFDAADCB30
-	for <lists+ceph-devel@lfdr.de>; Tue, 17 Jun 2025 14:24:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E154EADCB20
+	for <lists+ceph-devel@lfdr.de>; Tue, 17 Jun 2025 14:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 456E93AE626
-	for <lists+ceph-devel@lfdr.de>; Tue, 17 Jun 2025 12:22:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CA1B188E8E2
+	for <lists+ceph-devel@lfdr.de>; Tue, 17 Jun 2025 12:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0DBA293C72;
-	Tue, 17 Jun 2025 12:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8692E2EE5;
+	Tue, 17 Jun 2025 12:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4vOjnya"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sN9CEtPa"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1662DE1E0;
-	Tue, 17 Jun 2025 12:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56979238175;
+	Tue, 17 Jun 2025 12:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750162975; cv=none; b=ZzBpiAeIhh9HE+jItTsg3kPm9TPH2D/4BsIgG5W8F+B+MZDsqq2HuuD1gG6DRBbco1I435mjRosgxQBJDJOiGZTFbC4cm5zwAz382HyIZm84d5WB7KeGmyZE+3i/kxpvMUIU1UlwsbAWPGk1LTCH5L2rFQ8PMQhRv7iIe3efaSg=
+	t=1750162995; cv=none; b=Aqzw2/pBHY/TOE26XCxHwCfsiIngLqAglwaq71BOJfSg3ax2lgufPsk0uLkf6ORTlE2D+Qvx9/8oW6EnQHa8WJs0JJN1IBWVhpqk89aMBTNnhhQ6JK/YBqTUXaF7Uk1nz9pH9wEfgOyDEcABuQA4xI5+JVffX84tNc3YEWTAGIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750162975; c=relaxed/simple;
-	bh=w3rMAc32FL+Hfx+deTvd90VRUr2HVHhL8IYAXabtB5g=;
+	s=arc-20240116; t=1750162995; c=relaxed/simple;
+	bh=Qu5vGWhKz2IG4p22DCneVPTfCxcaXUc938AhMdIZx/c=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Pgj3azGyUp+H2mHolXyHvmnXV1JA56Q2nhKTxayDbLzb/wwcNTgzyvTIMzPCZYwHPitVUwLCSP499J2b/vAg3sYsYc8Xm6nRS6kh1VkqHqFe3Eq+cFI/v/IenJitH3gGyJP9KERC/hm/Qzz8T2suWl5o94tbto64iNa/bIpiw40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4vOjnya; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6854C4CEEE;
-	Tue, 17 Jun 2025 12:22:54 +0000 (UTC)
+	 MIME-Version; b=J1BBT3mv3QyzJzCqUzPffMnAoQiJHi85myQPajbjFUKfvLMtS+1tDxxfuwZ8r1awUMhciNVthRlIHQge0MkZXEflWXjoyr6kRnIN4dvqay4PYe9Te5QsFA4RbSuYaYh2Zl3iBmIVE4iSbIig0Y9sUGr1BMwX7AxUDqMFT8Oky2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sN9CEtPa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFFC0C4CEF1;
+	Tue, 17 Jun 2025 12:23:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750162975;
-	bh=w3rMAc32FL+Hfx+deTvd90VRUr2HVHhL8IYAXabtB5g=;
+	s=k20201202; t=1750162994;
+	bh=Qu5vGWhKz2IG4p22DCneVPTfCxcaXUc938AhMdIZx/c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h4vOjnyaYEaqGJZka3e1LMf1uvx/HKF/bIkZH63XHVytRT8ARZxlscREQ0eAn1hKn
-	 yQ6hC3WXcujLUH2+y5nQHxvf8YpDhuY2OBkkEfkgqzwXqxEEFUuC2hdJlBzagUrteL
-	 dixaRVl8doHTwMnDMHx9T1pLiBgkNMQQ0sO4dqko2c44fI1yu+96yd6TcXAOg2l993
-	 wJatb7kVbmOWLQ69ulWXoXWPe82C0KsqJSUKjXaMv66/+SIGuK6H3h5OHYDklC0rtc
-	 +scB9bIgnNV9t1i+RS0Y7FHm6lCsk2KgGtpdWKXxR81kgeMCfEwCCo7ccy/fYbn9Kz
-	 SUaWtDCHWEZmw==
+	b=sN9CEtPa/STQi5g5HKSf2AZj6ODzAKyxJoJ04jJWItmjfGpsI3TGNEqrb0jbl53yM
+	 Zn9ZY+74x3E5BIn6uK9tY3xGnxCVvRjtLl6rZDqZlU/4RLxu+0cgafkpf02XPxG190
+	 +j66jgsdWxuntHfxjWvJ394Ug8zsZN/BcEsRKlHyQqgY7CnUO4aVZaLG8a9n5HtOtJ
+	 ebG6pqz4kLrVLhuadJ5Sp8uC4NPF9usvZyFgJZZDyhaBwabJCQL2dGqSjNG2eE0i3z
+	 5uHZbBd20/DHJPf6QD2WSuXnkB6ln5vcM8fpkQSToxQJG2NNx8MBZCA8owCkQ2udUh
+	 O9HkKY8h6y+Dw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -50,12 +50,12 @@ Cc: Dmitry Kandybka <d.kandybka@gmail.com>,
 	Sasha Levin <sashal@kernel.org>,
 	xiubli@redhat.com,
 	ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 4/9] ceph: fix possible integer overflow in ceph_zero_objects()
-Date: Tue, 17 Jun 2025 08:22:41 -0400
-Message-Id: <20250617122246.1969130-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 4/8] ceph: fix possible integer overflow in ceph_zero_objects()
+Date: Tue, 17 Jun 2025 08:23:01 -0400
+Message-Id: <20250617122306.1969438-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250617122246.1969130-1-sashal@kernel.org>
-References: <20250617122246.1969130-1-sashal@kernel.org>
+In-Reply-To: <20250617122306.1969438-1-sashal@kernel.org>
+References: <20250617122306.1969438-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.93
+X-stable-base: Linux 6.1.141
 Content-Transfer-Encoding: 8bit
 
 From: Dmitry Kandybka <d.kandybka@gmail.com>
@@ -153,10 +153,10 @@ Ceph filesystems.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index a03b11cf78872..e12657b4c3e04 100644
+index 882eccfd67e84..3336647e64df3 100644
 --- a/fs/ceph/file.c
 +++ b/fs/ceph/file.c
-@@ -2513,7 +2513,7 @@ static int ceph_zero_objects(struct inode *inode, loff_t offset, loff_t length)
+@@ -2043,7 +2043,7 @@ static int ceph_zero_objects(struct inode *inode, loff_t offset, loff_t length)
  	s32 stripe_unit = ci->i_layout.stripe_unit;
  	s32 stripe_count = ci->i_layout.stripe_count;
  	s32 object_size = ci->i_layout.object_size;
