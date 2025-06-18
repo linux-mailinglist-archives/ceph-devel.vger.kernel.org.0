@@ -1,257 +1,434 @@
-Return-Path: <ceph-devel+bounces-3190-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3191-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 733A5ADF374
-	for <lists+ceph-devel@lfdr.de>; Wed, 18 Jun 2025 19:06:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71F0CADF6AF
+	for <lists+ceph-devel@lfdr.de>; Wed, 18 Jun 2025 21:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E3EF1BC118A
-	for <lists+ceph-devel@lfdr.de>; Wed, 18 Jun 2025 17:06:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4469189C7F9
+	for <lists+ceph-devel@lfdr.de>; Wed, 18 Jun 2025 19:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641E22F3628;
-	Wed, 18 Jun 2025 17:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0AE1624DF;
+	Wed, 18 Jun 2025 19:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NHroZLiP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G3RePS1F";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NHroZLiP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="G3RePS1F"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="rbQ28Glt"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6380A2FEE1F
-	for <ceph-devel@vger.kernel.org>; Wed, 18 Jun 2025 17:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AEB1E49F
+	for <ceph-devel@vger.kernel.org>; Wed, 18 Jun 2025 19:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750266373; cv=none; b=fGg/5X/T4FXAfWVpsGde2iiBWzUB7C/v57/QKfoJEXlfr2FFASMA/fNr0gSJcLbG6M3SCiE81RF3MyvLHRivNqnDSUgOwrK/2LLEcT4TdmhAFNvx/R19T32G9PfWL07xHVAvk9Vxn/DbK3H+1lqZFhtT+TRgUsjD6GMRDea6YBw=
+	t=1750274217; cv=none; b=gqRxN6ZkHZRoSaihZAJh6SmWZZ+BVR8HOo51lWuQLhpxqiEkRwDx8pVPUL0pxT1T8v6n+er1EiY7uZuqX8zJ5ou7PXZACKwHcVK6dMWGV4gA2o4QtyqSlIJ2tQQu/Tb+twE+TTxCwLsztk8Ot34smCjLohmU4WQ9+1v3aeDCVSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750266373; c=relaxed/simple;
-	bh=u/MUMNb60uBK+vsx1qODNxoJrBOmSeznx6yE9JyHvlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eD77hF/22nEUHH191Ll0CggiYLfNDvJz77AeG8tmGaOjjy/A+iDD1VsNnaovx6Sa4ozU7jC22JrrwvTeHjJhs/yfIarjuVW8ITwTwl4HCVE1b2o2/zGCOymS5ZUz63cHecAnDdZcU+3ivXZ4zAfnClz7pNh3+KDFPjJdYDQ8c84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NHroZLiP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G3RePS1F; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NHroZLiP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=G3RePS1F; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 788C91F7BD;
-	Wed, 18 Jun 2025 17:06:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750266368;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SAxHe4/SFOgVVfwP/YkVikw5O0UdBvLzL0DaWVhZNTM=;
-	b=NHroZLiPV+1/rO8sD9qZX/5PHN5D5Rfo5Zb5aOHdYXCyTajLXhRkymKkUo6NqEKT1i51Wq
-	3jzRv5I50TsK881TQSExVKFBTV1uPJb21aJuIaeXllkCTjwU0SL7U9SX534GcVuTrf9MkN
-	z5adrX6FKDM+9HUfScghJAj+d4/N4Kw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750266368;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SAxHe4/SFOgVVfwP/YkVikw5O0UdBvLzL0DaWVhZNTM=;
-	b=G3RePS1FfsxZPpVKpINLhWACefVqXMozYLP/NJ+59JpdNLld0DBJsRsQUOr6wb7MNlldLN
-	KfEZjWEX4nPtmqCQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1750266368;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SAxHe4/SFOgVVfwP/YkVikw5O0UdBvLzL0DaWVhZNTM=;
-	b=NHroZLiPV+1/rO8sD9qZX/5PHN5D5Rfo5Zb5aOHdYXCyTajLXhRkymKkUo6NqEKT1i51Wq
-	3jzRv5I50TsK881TQSExVKFBTV1uPJb21aJuIaeXllkCTjwU0SL7U9SX534GcVuTrf9MkN
-	z5adrX6FKDM+9HUfScghJAj+d4/N4Kw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1750266368;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SAxHe4/SFOgVVfwP/YkVikw5O0UdBvLzL0DaWVhZNTM=;
-	b=G3RePS1FfsxZPpVKpINLhWACefVqXMozYLP/NJ+59JpdNLld0DBJsRsQUOr6wb7MNlldLN
-	KfEZjWEX4nPtmqCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D50B313721;
-	Wed, 18 Jun 2025 17:06:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4kJvM//xUmgeMgAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 18 Jun 2025 17:06:07 +0000
-Date: Wed, 18 Jun 2025 19:06:06 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	David Sterba <dsterba@suse.com>,
-	David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Benjamin LaHaise <bcrl@kvack.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	"Tigran A . Aivazian" <aivazian.tigran@gmail.com>,
-	Kees Cook <kees@kernel.org>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, Xiubo Li <xiubli@redhat.com>,
-	Ilya Dryomov <idryomov@gmail.com>, Jan Harkes <jaharkes@cs.cmu.edu>,
-	coda@cs.cmu.edu, Tyler Hicks <code@tyhicks.com>,
-	Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-	Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Hongbo Li <lihongbo22@huawei.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Sungjong Seo <sj1557.seo@samsung.com>,
-	Yuezhang Mo <yuezhang.mo@sony.com>, Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Yangtao Li <frank.li@vivo.com>, Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Dave Kleikamp <shaggy@kernel.org>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-	Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Bob Copeland <me@bobcopeland.com>,
-	Mike Marshall <hubcap@omnibond.com>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.org>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Bharath SM <bharathsm@microsoft.com>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	Johannes Thumshirn <jth@kernel.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, v9fs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-	linux-aio@kvack.org, linux-unionfs@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org, linux-mm@kvack.org,
-	linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	codalist@coda.cs.cmu.edu, ecryptfs@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-um@lists.infradead.org, linux-mtd@lists.infradead.org,
-	jfs-discussion@lists.sourceforge.net, linux-nfs@vger.kernel.org,
-	linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
-	ocfs2-devel@lists.linux.dev,
-	linux-karma-devel@lists.sourceforge.net, devel@lists.orangefs.org,
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-	linux-xfs@vger.kernel.org, nvdimm@lists.linux.dev
-Subject: Re: [PATCH 10/10] fs: replace mmap hook with .mmap_prepare for
- simple mappings
-Message-ID: <20250618170606.GI4037@suse.cz>
-Reply-To: dsterba@suse.cz
-References: <cover.1750099179.git.lorenzo.stoakes@oracle.com>
- <f528ac4f35b9378931bd800920fee53fc0c5c74d.1750099179.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1750274217; c=relaxed/simple;
+	bh=uHG+NHfbjfawrGjIADmmEfzLQAnQAZv1xbV3TyPzD90=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TYm7/PB+KdZNIUVv/IVoG6icaH5XsOeAFgs9ftVR+fmvIrStjqGxeqKwWmujr9LnvnTG9gqUA+KBx694oqUyQfIuppNla9uGdJroMIM2MXNgmCbrrIQ9b4TwHVXvHGUBw4jAEXEhgORV99y5/h3aSWAiqaiR4EYfG1ngvKZJvmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=rbQ28Glt; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-73a43d327d6so30545a34.2
+        for <ceph-devel@vger.kernel.org>; Wed, 18 Jun 2025 12:16:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1750274214; x=1750879014; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/d9H1thdQXX8feONir5EG7jw2WbWZx3JAxu3/X6opVE=;
+        b=rbQ28GltFRTDLBzEF3deUqhFSi23LGXoklc/wkNtrf+w1ANjv7rFcvF2kI3iy/JPOq
+         wAFzt1Vh+E+JueviDfYlOTmkgJKKMU9MFhpG1ah7VOdpvUX90D/WaNvRgi+ASNvm4f/z
+         jg9YlSZOvbz5Ttf95TKAMwC7Ko2MNrUlV6cOz5xCHgEAzwsuI4kEgAJLSnZUKfTHysks
+         2tBcbsghYYS2mdV5dqk/Ehmb8k5lLevd7/4DxOg4BztJjg8XAOTP1mOCHjpDLtYbnXgs
+         jXjx2R4iuRoN6fhisB9iN1/Jzu+J0S/mojHgcnA4U5MPjGPAQllIj+gShKg9tHShSEms
+         gbbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1750274214; x=1750879014;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/d9H1thdQXX8feONir5EG7jw2WbWZx3JAxu3/X6opVE=;
+        b=N9s4NLX/mB7Ry24oHxhbeN0nnyi70G2VDkuVST6lTp1ejGDlgHGmttI1R/ulWA6AK3
+         Q4yKHKUAXGE4cqhqRbHSo/1nPZXmgQuzSQKdwvp4q30etzSroDGHCkhu9MIFcUvEr9qg
+         a5v/STWoqzZTSXVjVbgTCfs4FRD6qrFGyXdBw4SUqSwGwYJ+pGeAS40zb++NHHtNYrpL
+         Eh+Mc0DiaoapEgcqe++pUpuyEJugpkqXnaNw72VQAO6ITfXwUHL3UcU6dSvbwpY2Eaxo
+         1EiEuuF1iHlNNRpZD1dSEADqHWy6bXpBbBcdcSs8eZ0308TI0X50KyK2ONc4zrdWqSyP
+         0vVg==
+X-Gm-Message-State: AOJu0YwTUduSZUVkQFYS66pGj2rFupX92nS97tCMJd8AMr/0VAgENCzi
+	ZM9xbQyYj2s4f20+aZqa/faz0zT6RLoMXYAE2ISi2SswB9E81qgHXb/pgKjf+Dmpx//CFRa03Nj
+	+ELHgUP4=
+X-Gm-Gg: ASbGncvh1wsMUAygmVPTI+HPJhlisa0PgRDJai+yDBb1a7qwvBbdodA7TTIgiV0TnTB
+	TnfNu/SinliSAnQoaI6oYTQrSzdrAO4R+fYyTYNaBOAkL998fFC7ZuRvhupgTNhUJ0EIRwH1CO3
+	oyYib4I5Ubm7rOoYQi4OyqJAYSaiFAPlaWqXMjvj4bZej7Sq3Klw9mitA5q+LLgLHZd0nJsc+NY
+	JhagRu26JqOJtgseL2SdeLuptS46RtDVksUxBAHf3SEs+xWaJpkBY/QkPhyOsfYBNnpPtFguhf7
+	0q8HEXIMY+belNFv7ajhveJ7Lx9MxJxuNvQ+6U9JEL1s0JMhb8ncPLFMxvUEUcDTSDPtsGL+iN2
+	XiGfuwWBoraWBEf1UO+TxnjZ4ZPiqRM/L4BjPlbuY2+PAemoS6sn1PQ==
+X-Google-Smtp-Source: AGHT+IEzKlMecHDhWSdXLzkzoYKQOwVWyvCppytiqNm9y8IeoIacXR4CxDrNEIMUsZy/x5Febao7Lg==
+X-Received: by 2002:a05:6808:13c7:b0:403:3fb7:3870 with SMTP id 5614622812f47-40a7c1cbe28mr11071775b6e.10.1750274213617;
+        Wed, 18 Jun 2025 12:16:53 -0700 (PDT)
+Received: from system76-pc.attlocal.net (162-197-212-70.lightspeed.sntcca.sbcglobal.net. [162.197.212.70])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-40a740b2808sm2453797b6e.6.2025.06.18.12.16.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Jun 2025 12:16:52 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org,
+	idryomov@gmail.com
+Cc: dhowells@redhat.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com
+Subject: [PATCH v6] ceph: fix slab-use-after-free in have_mon_and_osd_map()
+Date: Wed, 18 Jun 2025 12:16:35 -0700
+Message-ID: <20250618191635.683070-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f528ac4f35b9378931bd800920fee53fc0c5c74d.1750099179.git.lorenzo.stoakes@oracle.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spamd-Result: default: False [-0.50 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	FORGED_RECIPIENTS(2.00)[m:akpm@linux-foundation.org,m:axboe@kernel.dk,m:rodrigo.vivi@intel.com,m:airlied@gmail.com,m:simona@ffwll.ch,m:ericvh@kernel.org,m:lucho@ionkov.net,m:asmadeus@codewreck.org,m:linux_oss@crudebyte.com,m:marc.dionne@auristor.com,m:viro@zeniv.linux.org.uk,m:brauner@kernel.org,m:bcrl@kvack.org,m:amir73il@gmail.com,m:aivazian.tigran@gmail.com,m:kees@kernel.org,m:clm@fb.com,m:idryomov@gmail.com,m:jaharkes@cs.cmu.edu,m:coda@cs.cmu.edu,m:xiang@kernel.org,m:chao@kernel.org,m:zbestahu@gmail.com,m:dhavale@google.com,m:lihongbo22@huawei.com,m:linkinjeon@kernel.org,m:adilger.kernel@dilger.ca,m:jaegeuk@kernel.org,m:slava@dubeyko.com,m:frank.li@vivo.com,m:anton.ivanov@cambridgegreys.com,m:mikulas@artax.karlin.mff.cuni.cz,m:dwmw2@infradead.org,m:shaggy@kernel.org,m:trondmy@kernel.org,m:anna@kernel.org,m:konishi.ryusuke@gmail.com,m:mark@fasheh.com,m:jlbec@evilplan.org,m:me@bobcopeland.com,m:ronniesahlberg@gmail.com,m:chengzhihao1@huawei.com,m:cem@kernel.org,m:dlemoal@kernel.or
- g,m:naohiro.aota@wdc.com,m:jth@kernel.org,m:dan.j.williams@intel.com,m:willy@infradead.org,m:jannh@google.com,m:linux-aio@kvack.org,m:linux-mm@kvack.org,m:codalist@coda.cs.cmu.edu,s:linux-mtd@lists.infradead.org,s:linux-um@lists.infradead.org,s:ntfs3@lists.linux.dev,s:nvdimm@lists.linux.dev,s:ocfs2-devel@lists.linux.dev,s:devel@lists.orangefs.org,s:samba-technical@lists.samba.org,s:jfs-discussion@lists.sourceforge.net,s:linux-f2fs-devel@lists.sourceforge.net,s:linux-karma-devel@lists.sourceforge.net];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,oracle.com,kernel.dk,linux.intel.com,intel.com,ursulin.net,gmail.com,ffwll.ch,kernel.org,ionkov.net,codewreck.org,crudebyte.com,suse.com,redhat.com,auristor.com,zeniv.linux.org.uk,suse.cz,kvack.org,szeredi.hu,linux.dev,fb.com,toxicpanda.com,cs.cmu.edu,tyhicks.com,linux.alibaba.com,google.com,huawei.com,samsung.com,sony.com,mit.edu,dilger.ca,mail.parknet.co.jp,dubeyko.com,physik.fu-berlin.de,vivo.com,nod.at,cambridgegreys.com,sipsolutions.net,artax.karlin.mff.cuni.cz,infradead.org,paragon-software.com,fasheh.com,evilplan.org,bobcopeland.com,omnibond.com,samba.org,manguebit.org,microsoft.com,talpey.com,wdc.com,suse.de,vger.kernel.org,lists.freedesktop.org,lists.linux.dev,lists.infradead.org,coda.cs.cmu.edu,lists.ozlabs.org,lists.sourceforge.net,lists.orangefs.org,lists.samba.org];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLghqfk66faf4qxrpoiianeeaj)];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[113];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:mid,oracle.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -0.50
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 16, 2025 at 08:33:29PM +0100, Lorenzo Stoakes wrote:
-> Since commit c84bf6dd2b83 ("mm: introduce new .mmap_prepare() file
-> callback"), the f_op->mmap() hook has been deprecated in favour of
-> f_op->mmap_prepare().
-> 
-> This callback is invoked in the mmap() logic far earlier, so error handling
-> can be performed more safely without complicated and bug-prone state
-> unwinding required should an error arise.
-> 
-> This hook also avoids passing a pointer to a not-yet-correctly-established
-> VMA avoiding any issues with referencing this data structure.
-> 
-> It rather provides a pointer to the new struct vm_area_desc descriptor type
-> which contains all required state and allows easy setting of required
-> parameters without any consideration needing to be paid to locking or
-> reference counts.
-> 
-> Note that nested filesystems like overlayfs are compatible with an
-> .mmap_prepare() callback since commit bb666b7c2707 ("mm: add mmap_prepare()
-> compatibility layer for nested file systems").
-> 
-> In this patch we apply this change to file systems with relatively simple
-> mmap() hook logic - exfat, ceph, f2fs, bcachefs, zonefs, btrfs, ocfs2,
-> orangefs, nilfs2, romfs, ramfs and aio.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-For
+The generic/395 and generic/397 is capable of generating
+the oops is on line net/ceph/ceph_common.c:794 with
+KASAN enabled.
 
->  fs/btrfs/file.c       |  7 ++++---
+BUG: KASAN: slab-use-after-free in have_mon_and_osd_map+0x56/0x70
+Read of size 4 at addr ffff88811012d810 by task mount.ceph/13305
 
-Acked-by: David Sterba <dsterba@suse.com>
+CPU: 2 UID: 0 PID: 13305 Comm: mount.ceph Not tainted 6.14.0-rc2-build2+ #1266
+Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
+Call Trace:
+<TASK>
+dump_stack_lvl+0x57/0x80
+? have_mon_and_osd_map+0x56/0x70
+print_address_description.constprop.0+0x84/0x330
+? have_mon_and_osd_map+0x56/0x70
+print_report+0xe2/0x1e0
+? rcu_read_unlock_sched+0x60/0x80
+? kmem_cache_debug_flags+0xc/0x20
+? fixup_red_left+0x17/0x30
+? have_mon_and_osd_map+0x56/0x70
+kasan_report+0x8d/0xc0
+? have_mon_and_osd_map+0x56/0x70
+have_mon_and_osd_map+0x56/0x70
+ceph_open_session+0x182/0x290
+? __pfx_ceph_open_session+0x10/0x10
+? __init_swait_queue_head+0x8d/0xa0
+? __pfx_autoremove_wake_function+0x10/0x10
+? shrinker_register+0xdd/0xf0
+ceph_get_tree+0x333/0x680
+vfs_get_tree+0x49/0x180
+do_new_mount+0x1a3/0x2d0
+? __pfx_do_new_mount+0x10/0x10
+? security_capable+0x39/0x70
+path_mount+0x6dd/0x730
+? __pfx_path_mount+0x10/0x10
+? kmem_cache_free+0x1e5/0x270
+? user_path_at+0x48/0x60
+do_mount+0x99/0xe0
+? __pfx_do_mount+0x10/0x10
+? lock_release+0x155/0x190
+__do_sys_mount+0x141/0x180
+do_syscall_64+0x9f/0x100
+entry_SYSCALL_64_after_hwframe+0x76/0x7e
+RIP: 0033:0x7f01b1b14f3e
+Code: 48 8b 0d d5 3e 0f 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d a2 3e 0f 00 f7 d8 64 89 01 48
+RSP: 002b:00007fffd129fa08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000564ec01a7850 RCX: 00007f01b1b14f3e
+RDX: 0000564ec00f2225 RSI: 00007fffd12a1964 RDI: 0000564ec0147a20
+RBP: 00007fffd129fbd0 R08: 0000564ec014da90 R09: 0000000000000080
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fffd12a194e
+R13: 0000000000000000 R14: 00007fffd129fa50 R15: 00007fffd129fa40
+</TASK>
+
+Allocated by task 13305:
+stack_trace_save+0x8c/0xc0
+kasan_save_stack+0x1e/0x40
+kasan_save_track+0x10/0x30
+__kasan_kmalloc+0x3a/0x50
+__kmalloc_noprof+0x247/0x290
+ceph_osdmap_alloc+0x16/0x130
+ceph_osdc_init+0x27a/0x4c0
+ceph_create_client+0x153/0x190
+create_fs_client+0x50/0x2a0
+ceph_get_tree+0xff/0x680
+vfs_get_tree+0x49/0x180
+do_new_mount+0x1a3/0x2d0
+path_mount+0x6dd/0x730
+do_mount+0x99/0xe0
+__do_sys_mount+0x141/0x180
+do_syscall_64+0x9f/0x100
+entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+Freed by task 9475:
+stack_trace_save+0x8c/0xc0
+kasan_save_stack+0x1e/0x40
+kasan_save_track+0x10/0x30
+kasan_save_free_info+0x3b/0x50
+__kasan_slab_free+0x18/0x30
+kfree+0x212/0x290
+handle_one_map+0x23c/0x3b0
+ceph_osdc_handle_map+0x3c9/0x590
+mon_dispatch+0x655/0x6f0
+ceph_con_process_message+0xc3/0xe0
+ceph_con_v1_try_read+0x614/0x760
+ceph_con_workfn+0x2de/0x650
+process_one_work+0x486/0x7c0
+process_scheduled_works+0x73/0x90
+worker_thread+0x1c8/0x2a0
+kthread+0x2ec/0x300
+ret_from_fork+0x24/0x40
+ret_from_fork_asm+0x1a/0x30
+
+The buggy address belongs to the object at ffff88811012d800
+which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 16 bytes inside of
+freed 512-byte region [ffff88811012d800, ffff88811012da00)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11012c
+head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x200000000000040(head|node=0|zone=2)
+page_type: f5(slab)
+raw: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
+raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+head: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
+head: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+head: 0200000000000002 ffffea0004404b01 ffffffffffffffff 0000000000000000
+head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ffff88811012d700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ffff88811012d780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+
+    ffff88811012d800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+
+^
+ffff88811012d880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ffff88811012d900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb ==================================================================
+Disabling lock debugging due to kernel taint
+libceph: client274326 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+libceph: mon0 (1)90.155.74.19:6789 session established
+libceph: client274327 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+
+We have such scenario:
+
+Thread 1:
+void ceph_osdmap_destroy(...) {
+    <skipped>
+    kfree(map);
+}
+Thread 1 sleep...
+
+Thread 2:
+static bool have_mon_and_osd_map(struct ceph_client *client) {
+    return client->monc.monmap && client->monc.monmap->epoch &&
+        client->osdc.osdmap && client->osdc.osdmap->epoch;
+}
+Thread 2 has oops...
+
+Thread 1 wake up:
+static int handle_one_map(...) {
+    <skipped>
+    osdc->osdmap = newmap;
+    <skipped>
+}
+
+This patch fixes the issue by means of locking
+client->osdc.lock and client->monc.mutex before
+the checking client->osdc.osdmap and
+client->monc.monmap in have_mon_and_osd_map() function.
+Patch adds locking in the ceph_osdc_stop()
+method during the destructruction of osdc->osdmap and
+assigning of NULL to the pointer. The lock is used
+in the ceph_monc_stop() during the freeing of monc->monmap
+and assigning NULL to the pointer too. The monmap_show()
+and osdmap_show() methods were reworked to prevent
+the potential race condition during the methods call.
+
+Reported-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+---
+ net/ceph/ceph_common.c | 34 +++++++++++++++++++++++++++++-----
+ net/ceph/debugfs.c     | 17 +++++++++++++----
+ net/ceph/mon_client.c  |  9 ++++++++-
+ net/ceph/osd_client.c  |  4 ++++
+ 4 files changed, 54 insertions(+), 10 deletions(-)
+
+diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+index 4c6441536d55..a28b29c763ca 100644
+--- a/net/ceph/ceph_common.c
++++ b/net/ceph/ceph_common.c
+@@ -790,8 +790,18 @@ EXPORT_SYMBOL(ceph_reset_client_addr);
+  */
+ static bool have_mon_and_osd_map(struct ceph_client *client)
+ {
+-	return client->monc.monmap && client->monc.monmap->epoch &&
+-	       client->osdc.osdmap && client->osdc.osdmap->epoch;
++	bool have_mon_map = false;
++	bool have_osd_map = false;
++
++	mutex_lock(&client->monc.mutex);
++	have_mon_map = client->monc.monmap && client->monc.monmap->epoch;
++	mutex_unlock(&client->monc.mutex);
++
++	down_read(&client->osdc.lock);
++	have_osd_map = client->osdc.osdmap && client->osdc.osdmap->epoch;
++	up_read(&client->osdc.lock);
++
++	return have_mon_map && have_osd_map;
+ }
+ 
+ /*
+@@ -813,9 +823,23 @@ int __ceph_open_session(struct ceph_client *client, unsigned long started)
+ 
+ 		/* wait */
+ 		dout("mount waiting for mon_map\n");
+-		err = wait_event_interruptible_timeout(client->auth_wq,
+-			have_mon_and_osd_map(client) || (client->auth_err < 0),
+-			ceph_timeout_jiffies(timeout));
++
++		DEFINE_WAIT_FUNC(wait, woken_wake_function);
++
++		add_wait_queue(&client->auth_wq, &wait);
++
++		while (!(have_mon_and_osd_map(client) ||
++					(client->auth_err < 0))) {
++			if (signal_pending(current)) {
++				err = -ERESTARTSYS;
++				break;
++			}
++			wait_woken(&wait, TASK_INTERRUPTIBLE,
++				   ceph_timeout_jiffies(timeout));
++		}
++
++		remove_wait_queue(&client->auth_wq, &wait);
++
+ 		if (err < 0)
+ 			return err;
+ 		if (client->auth_err < 0)
+diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
+index 2110439f8a24..7b45c169a859 100644
+--- a/net/ceph/debugfs.c
++++ b/net/ceph/debugfs.c
+@@ -36,8 +36,10 @@ static int monmap_show(struct seq_file *s, void *p)
+ 	int i;
+ 	struct ceph_client *client = s->private;
+ 
++	mutex_lock(&client->monc.mutex);
++
+ 	if (client->monc.monmap == NULL)
+-		return 0;
++		goto out_unlock;
+ 
+ 	seq_printf(s, "epoch %d\n", client->monc.monmap->epoch);
+ 	for (i = 0; i < client->monc.monmap->num_mon; i++) {
+@@ -48,6 +50,10 @@ static int monmap_show(struct seq_file *s, void *p)
+ 			   ENTITY_NAME(inst->name),
+ 			   ceph_pr_addr(&inst->addr));
+ 	}
++
++out_unlock:
++	mutex_unlock(&client->monc.mutex);
++
+ 	return 0;
+ }
+ 
+@@ -56,13 +62,15 @@ static int osdmap_show(struct seq_file *s, void *p)
+ 	int i;
+ 	struct ceph_client *client = s->private;
+ 	struct ceph_osd_client *osdc = &client->osdc;
+-	struct ceph_osdmap *map = osdc->osdmap;
++	struct ceph_osdmap *map = NULL;
+ 	struct rb_node *n;
+ 
++	down_read(&osdc->lock);
++
++	map = osdc->osdmap;
+ 	if (map == NULL)
+-		return 0;
++		goto out_unlock;
+ 
+-	down_read(&osdc->lock);
+ 	seq_printf(s, "epoch %u barrier %u flags 0x%x\n", map->epoch,
+ 			osdc->epoch_barrier, map->flags);
+ 
+@@ -131,6 +139,7 @@ static int osdmap_show(struct seq_file *s, void *p)
+ 		seq_printf(s, "]\n");
+ 	}
+ 
++out_unlock:
+ 	up_read(&osdc->lock);
+ 	return 0;
+ }
+diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+index ab66b599ac47..b299e5bbddb1 100644
+--- a/net/ceph/mon_client.c
++++ b/net/ceph/mon_client.c
+@@ -1232,6 +1232,7 @@ int ceph_monc_init(struct ceph_mon_client *monc, struct ceph_client *cl)
+ 	ceph_auth_destroy(monc->auth);
+ out_monmap:
+ 	kfree(monc->monmap);
++	monc->monmap = NULL;
+ out:
+ 	return err;
+ }
+@@ -1239,6 +1240,8 @@ EXPORT_SYMBOL(ceph_monc_init);
+ 
+ void ceph_monc_stop(struct ceph_mon_client *monc)
+ {
++	struct ceph_monmap *old_monmap;
++
+ 	dout("stop\n");
+ 
+ 	mutex_lock(&monc->mutex);
+@@ -1266,7 +1269,11 @@ void ceph_monc_stop(struct ceph_mon_client *monc)
+ 	ceph_msg_put(monc->m_subscribe);
+ 	ceph_msg_put(monc->m_subscribe_ack);
+ 
+-	kfree(monc->monmap);
++	mutex_lock(&monc->mutex);
++	old_monmap = monc->monmap;
++	monc->monmap = NULL;
++	mutex_unlock(&monc->mutex);
++	kfree(old_monmap);
+ }
+ EXPORT_SYMBOL(ceph_monc_stop);
+ 
+diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
+index 6664ea73ccf8..7f84db538868 100644
+--- a/net/ceph/osd_client.c
++++ b/net/ceph/osd_client.c
+@@ -5255,6 +5255,7 @@ int ceph_osdc_init(struct ceph_osd_client *osdc, struct ceph_client *client)
+ 	mempool_destroy(osdc->req_mempool);
+ out_map:
+ 	ceph_osdmap_destroy(osdc->osdmap);
++	osdc->osdmap = NULL;
+ out:
+ 	return err;
+ }
+@@ -5283,10 +5284,13 @@ void ceph_osdc_stop(struct ceph_osd_client *osdc)
+ 	WARN_ON(atomic_read(&osdc->num_requests));
+ 	WARN_ON(atomic_read(&osdc->num_homeless));
+ 
++	down_write(&osdc->lock);
+ 	ceph_osdmap_destroy(osdc->osdmap);
++	osdc->osdmap = NULL;
+ 	mempool_destroy(osdc->req_mempool);
+ 	ceph_msgpool_destroy(&osdc->msgpool_op);
+ 	ceph_msgpool_destroy(&osdc->msgpool_op_reply);
++	up_write(&osdc->lock);
+ }
+ 
+ int osd_req_op_copy_from_init(struct ceph_osd_request *req,
+-- 
+2.49.0
+
 
