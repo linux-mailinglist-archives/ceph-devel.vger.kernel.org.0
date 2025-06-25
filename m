@@ -1,97 +1,103 @@
-Return-Path: <ceph-devel+bounces-3239-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3240-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92EDFAE8CC2
-	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 20:42:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1132AE8D0C
+	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 20:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1FA53B51DC
-	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 18:41:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D4DB189F0E0
+	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 18:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE402DAFD1;
-	Wed, 25 Jun 2025 18:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81A42D662D;
+	Wed, 25 Jun 2025 18:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3gbLHlg"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gU6oqjNY"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7129B2DAFBC;
-	Wed, 25 Jun 2025 18:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2547285C82
+	for <ceph-devel@vger.kernel.org>; Wed, 25 Jun 2025 18:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750876747; cv=none; b=WObQjS41eZj/mcgFUoajdZDsVKvKM/ZZhk2kxkmQDlJveM8e8dwhGeVqT5VvR/9KjCZl3BFGC5ha09petX0eJ2P9zu37icRaPZDHqAFbeLrhG96Xp38m3NF4PqP/KCHIoPHQDBBZG/1LFX/Z3NDTsna7MpwO8Z/HJzGzdHf/h+Y=
+	t=1750877597; cv=none; b=Zv/bYplzUbH4lYOWrnmMECzgCcGeGJcQFYBa5p9HE49ZVaxFo4x4DK1scqAZ3mx4zyEWu/61JZ+h2NuBbxfMqxFBu/dX0LdoQlnIAmNDKBJt/UuW8rwI/RU7V/F2kVrceIyTBpZGVKKYGDYThqcDvxXv9Wvlz9uGJ7jicR66NyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750876747; c=relaxed/simple;
-	bh=WRHYPzI57hddDK7CE8Wr1nJ8heCzKe+3hF0K0wP3ejc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F4vGnjV6QPXIxIpwTWjbZqcgnwDQAY6AY+6Ao/hPvv7l2tBubueTlvZ3QE+uBb7AxPRTnwvE+MIBA0ixAsK0RdirgrZUMGEF3mQ1v9diTl1+UDM9TJxsLEWyrGquPvY6yoiw9AhHUfwEhVegQl6WVK/GGBf2QqbAaqweVZ5/TZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3gbLHlg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE3C0C4CEEA;
-	Wed, 25 Jun 2025 18:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1750876747;
-	bh=WRHYPzI57hddDK7CE8Wr1nJ8heCzKe+3hF0K0wP3ejc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q3gbLHlg+Xr2KnUs3hglU2onJJoUGSlohkLlIO0HiHKEfzcHm7gbBX7ehcf6RPYV/
-	 +lZdqAI4YsE3A8mHgnUfSM9Qr3Uqr4VhCyGtockNTKWG0+lc/YO91ybT2218qYd9B8
-	 jOIucmU2Yi99l/8qd4aJIkS2fkjuIddv1w1bJOwL0xgoqCDcWZy9KQ2abe8KvHwn3Y
-	 BpA+FSQrIB4THuqB3RMyQi/a0HkIxNqAHE5vcpF0mV4D0ZBT/g9VXKCrxMjPY5B9lC
-	 SRv0AlpeaFxq62qgpTMg5AGtCYq6KdpB/doP2ovkMnfKnZJimNdBjGwPNThRlOjZ0r
-	 N27ijJqi/rVSg==
-Date: Wed, 25 Jun 2025 11:38:31 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Simon Richter <Simon.Richter@hogyros.de>, linux-fscrypt@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net, ceph-devel@vger.kernel.org
-Subject: Re: [PATCH] fscrypt: don't use hardware offload Crypto API drivers
-Message-ID: <20250625183831.GA1703@sol>
-References: <20250611205859.80819-1-ebiggers@kernel.org>
- <7f63be76-289b-4a99-b802-afd72e0512b8@hogyros.de>
- <20250612005914.GA546455@google.com>
- <20250612062521.GA1838@sol>
- <20250625063252.GD8962@sol>
- <20250625124445.GC28249@mit.edu>
+	s=arc-20240116; t=1750877597; c=relaxed/simple;
+	bh=bS8vPhhMVwxzJT6/BNkoc7Er8p13AErTd9yG5dAIq5s=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=lYu2/WfZlYBpXEGGKRRc5ItPoG0MbFCtRiupQ2B+j7yG0axM0yNOvlC4cnKFWEqL0FMVwfirRYl/xuYeDLq7XujIfEe5awu559rGsWCocy2mkOP/TwC3FaNr3IK3zhTgaUI9oVcZsAtflGjE0UASpMfmQ5V7RqhcBV8ouTM8l80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gU6oqjNY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1750877595;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h6E8oLR88JXaGJ+0hThZ0Yw7Sb6AqN89mXhCvOuzvaE=;
+	b=gU6oqjNY9jLpZdphVIZu5EK3v4r17tVxFQay7KjvedEavSIlQScoTSIc4sY5q+4uUxBo6L
+	t9Rsy7rs/bYA3eUpWP9JO46P8gkxf0HKhhBVl6e5zP27vWvtdl9T/bPbMkCPuniY4wFjI/
+	wZzDjzO254nSAa7cXiMoSWqoxlCo+EA=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-180-ZroNxM6hP7Kh0pBASYoOhA-1; Wed,
+ 25 Jun 2025 14:53:13 -0400
+X-MC-Unique: ZroNxM6hP7Kh0pBASYoOhA-1
+X-Mimecast-MFC-AGG-ID: ZroNxM6hP7Kh0pBASYoOhA_1750877591
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6664219560AA;
+	Wed, 25 Jun 2025 18:53:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8738C180045B;
+	Wed, 25 Jun 2025 18:53:07 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <9e58524a-856c-4efe-80c5-195bc7b55743@talpey.com>
+References: <9e58524a-856c-4efe-80c5-195bc7b55743@talpey.com> <658c6f4f-468b-4233-b49a-4c39a7ab03ab@samba.org> <20250625164213.1408754-1-dhowells@redhat.com> <20250625164213.1408754-13-dhowells@redhat.com> <1422741.1750874135@warthog.procyon.org.uk>
+To: Tom Talpey <tom@talpey.com>
+Cc: dhowells@redhat.com, Stefan Metzmacher <metze@samba.org>,
+    Christian Brauner <christian@brauner.io>,
+    Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+    netfs@lists.linux.dev, linux-afs@lists.infradead.org,
+    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+    Steve French <stfrench@microsoft.com>,
+    Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 12/16] cifs: Fix reading into an ITER_FOLIOQ from the smbdirect code
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250625124445.GC28249@mit.edu>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1425469.1750877586.1@warthog.procyon.org.uk>
+Date: Wed, 25 Jun 2025 19:53:06 +0100
+Message-ID: <1425470.1750877586@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Wed, Jun 25, 2025 at 08:44:45AM -0400, Theodore Ts'o wrote:
-> On Tue, Jun 24, 2025 at 11:32:52PM -0700, Eric Biggers wrote:
-> > 
-> > That was the synchronous throughput.  However, submitting multiple requests
-> > asynchronously (which again, fscrypt doesn't actually do) barely helps.
-> > Apparently the STM32 crypto engine has only one hardware queue.
-> > 
-> > I already strongly suspected that these non-inline crypto engines
-> > aren't worth using.  But I didn't realize they are quite this bad.
-> > Even with AES on a Cortex-A7 CPU that lacks AES instructions, the
-> > CPU is much faster!
-> 
-> I wonder if the primary design goal of the STM32 crypto engine is that
-> it might reduce power consumption --- after all, one of the primary
-> benchmarketing metrics that vendors care about is "hours of You Tube
-> watch time" --- and decryptoing a video stream doesn't require high
-> performance.
-> 
-> Given that the typical benchmarketing number which handset vendors
-> tend to care about is SQLite transactions per second, maybe they
-> wouldn't be all that eager to use the crypto engine.  :-)
-> 
+Tom Talpey <tom@talpey.com> wrote:
 
-My STM32MP157F-DK2 board (with screen removed) is pulling 1.5W regardless of
-whether it's running the benchmark with the STM32 crypto engine or with the NEON
-bit-sliced code.  However, the NEON bit-sliced code finishes 5 times faster.
+> 
+> Shouldn't there be some kind of validity check on the rfc1002 length
+> field before this? For example, the high octet of that field is
+> required to be zero (by SMB) and the 24-bit length is not necessarily
+> checked yet. The original code just returned the decoded value but
+> this sticks it in the msg_iter. If that's safe, then ok but it seems
+> odd.
 
-- Eric
+That should be a separate bugfix, I think.
+
+David
+
 
