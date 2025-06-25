@@ -1,130 +1,126 @@
-Return-Path: <ceph-devel+bounces-3215-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3216-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED46AE87E5
-	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 17:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F9DAAE89DE
+	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 18:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 483FA1C24A82
-	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 15:23:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D76D71898D97
+	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 16:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3CF32BE7AB;
-	Wed, 25 Jun 2025 15:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4FD2D5C81;
+	Wed, 25 Jun 2025 16:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p4zTCpIm"
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="snHTUn8v"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1C129E11A
-	for <ceph-devel@vger.kernel.org>; Wed, 25 Jun 2025 15:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730F92D321A;
+	Wed, 25 Jun 2025 16:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750864935; cv=none; b=P87Wnqqbr6dBIug61TuLJWcwfK8mroTJW0k6BAVN61ytuzW3kGiQwh1JqJGi9yMJKvGxLG4Jk0/2qMO4rV09Hlz5BNHXDjKRYDASDP25dJN3QyDtnHFzqLoK1L8KTGOIzUU+sF8g5bPEiva7YYwLaQqluOoCTfccVv7UHGqKuzc=
+	t=1750869084; cv=none; b=dNghOEJpW0dF7SMuICok794K9/d3bHS+6IkxuUvxDaSjHQFowW9Qpu5qaOYL/aQhKsR1VWfJ4xIVjFcbjmqtvQwmGPhB3spE1XOia3cKLY7oVeHZiGp0/EZYm36eLuYvGAMpDfMFmK2UjBtwW9X4KJRPqD9OgPDIWa3aUU/QWbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750864935; c=relaxed/simple;
-	bh=aTkJQnR/3DETZjCrMFipfbUfY5SsPpOZ1VX4D8ujLV0=;
-	h=Message-ID:Date:From:To:Cc:Subject:MIME-Version:Content-Type:
-	 Content-Disposition; b=XzDapm1f3YPnA3AQmOZg9vyW+mlVEQ28OkTsdS9iwQXmaQ0mLlzz8da3U+GLCltI8Rd0KMgk58UsGi9itLvICHh7p2pJ+kgQ7QJKN7x7e7MpuX7SxOQPOTd34cHOcJ8kAuBMwvzC7Y++BS2oYWLWeT2WbR4HDcP7yiG7z88oiPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p4zTCpIm; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-735b9d558f9so601910a34.2
-        for <ceph-devel@vger.kernel.org>; Wed, 25 Jun 2025 08:22:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1750864933; x=1751469733; darn=vger.kernel.org;
-        h=content-disposition:mime-version:subject:cc:to:from:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=u98SmNY03cRBjpwBKU5+I1U9gP6hvTPRDks/D5f8cPE=;
-        b=p4zTCpImNNnbGlWsO67b4H/W/CW0sjDE6vYfK0JTfFywa0bcYYIzVSNig62b/x39R4
-         JDGiM/OHl+d8uz7zpjMy6OtMtzBDY8iG3Bbg8qBV1FEsh6ZtefUqNxxFM6lsTZyO+eKW
-         UYsD/uFynkjrMFgA/W80A+pGH853Kg2iu0zxZ07hF6K7t07q0qK8ynWNoszVl0mK+iSI
-         IflvDX4+qiZ6LrKrFNAAiSC8sCCkRULMqZ0GpGCWtsmjk5ViyhtHQGcYbvQKIM8bV7hc
-         /TCo+PocYltKNpxDCeHBCsEvTVl46HykTQsXZUt99IqDf6qKQtCzhk5+jhbNqBK/0Uhc
-         d96A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750864933; x=1751469733;
-        h=content-disposition:mime-version:subject:cc:to:from:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u98SmNY03cRBjpwBKU5+I1U9gP6hvTPRDks/D5f8cPE=;
-        b=frhF1CRiiNyoWn9IcTPu5eVnPzcrfGl1z98ZNgUYkDBwxfN8uX4ntUGuOV06l1Ru/v
-         yRBTTG8k3PZcVwccDnSPkk3AQhdZ6nqmOLXCdwq1RBgAh8LBxpspytcptLM6FF/QGJWH
-         nDG2rAx+oCqP4t0WdK6KHzRR8sTxV6c+DozC+R+cnC9fnD8eYk5vDwSHFab/CzL3RSkZ
-         8/EMd8w8aCzqoEf0Hz+9A0i9IC//LkOZfRBQDp6kXXh1PSy//t+LigZ/6dagX0eG7FP3
-         6NVZQ4zDZAtKWxgrpbbcp0K6K/wJvagKWfJCx0BR1udI/g4EMMnudpqxzP3Rnu9VFQLq
-         N1dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUq1olVOSb6Imh9g0aWJTpR+GGxSccLorRcwzOUqYOzHEa69oyQS8VQZ8+8vuvNIAspn98hrIxvDX0L@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfvA5enwhh9XTiZnW4JK93A6fNYCla+/bhKTXTpmjHDsgM9J+o
-	q9yK9V6ASAmViGacL+B3xQHJLkm46Bx3RKKH1Ue2p2gijNj4p60mN5d8QRtGzohkrug=
-X-Gm-Gg: ASbGncvSJhKPmJEiLjg9JqQs2LgNCn35aUoAkM3A/r87/R8QoQNIocfQW+b49g/X3fT
-	RvhVtp64G28g79UdQgzAgXRrt5r0Gp7GUhwUe9mVgpL6CwF1azqbxWlJqZ1PZaO+pqxYblBXBAi
-	y7FL4MB+JaIHf6g2gLUgum+CL2i8JIhyOpLf+bdPeC2eCo+5ouV/6a5RdlYWkz7PCkEzCgcD6Q1
-	TIk4VjjFeIl4U4mIGa0qS3iBVqaRXfTsdIEdTVujXUVJA4p7vITUEmGNGsg5wxSlLtI/sOlSjES
-	BabI+IHADLcZpSeSvPUAxPR7H3rbVdiJm0Kv7PkVBurr/Dpo86aDz4P8JvPuP5n7gAJPdw==
-X-Google-Smtp-Source: AGHT+IHkG6dat7iqtvzwTRnE7a7/Ug1VTKQvcFownkvnX4pRkEWxDAtT4ssRBcmMzlRv3IfqQ4RMqQ==
-X-Received: by 2002:a05:6830:8088:b0:72b:7cc8:422 with SMTP id 46e09a7af769-73adc7eb8eemr1793945a34.20.1750864932939;
-        Wed, 25 Jun 2025 08:22:12 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:1fca:a60b:12ab:43a3])
-        by smtp.gmail.com with UTF8SMTPSA id 46e09a7af769-73a90ca9c12sm2236713a34.50.2025.06.25.08.22.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Jun 2025 08:22:12 -0700 (PDT)
-Message-ID: <685c1424.050a0220.baa8.d6a1@mx.google.com>
-X-Google-Original-Message-ID: <@sabinyo.mountain>
-Date: Wed, 25 Jun 2025 10:22:11 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Xiubo Li <xiubli@redhat.com>
-Cc: Ilya Dryomov <idryomov@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] ceph: fix NULL vs IS_ERR() bug in ceph_zero_partial_page()
+	s=arc-20240116; t=1750869084; c=relaxed/simple;
+	bh=Zj0315h1+Ugs/regjOq5i5dG08rRrPa2Cmoyc3sj6SU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WWurkyqeuC934uhqmdun4PCPdL8rCPrUn3yuaYv7r1TkLl5FJ0n5kUKIjPzsLdedKKPIee/pgWLglhryhoIoO/XH9SSQ2G1UIMGc5sCl61FjDSBHkycjnEJU3qDfqHyDwm+Amtxjo2jFrSQSwqpzuVe7uiRMnRUf3pJcCZotylE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=snHTUn8v; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 55PFvITO009480;
+	Wed, 25 Jun 2025 18:30:47 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	Ar5cY3eqwri9AVFjIOQsbTDZ2wnQ244y0/ufHL/uq/A=; b=snHTUn8v8zy4BnVf
+	bkKsMzALzX/hWB50aMj4MxIHi4bX+SsAYGY3Ta0qS9W+Qov86Hf3IFmC6wwbjXKe
+	z+7twjq4QjRMRhSZLUxgBzx2nUR3tozW2d6dCqKxErksVbCQU6VU/JiwQwzNDwcn
+	U/1p4bdqn33j4ByolMt6WwqjLdE3h61JA8R5yccQhLkGEskbTqOvCPUA7/8p3XmS
+	3qkplYuF9MJHqCdFCqu0QAWkYnOvwX3wSSg4FJ6n+6+HrXVAi9jrPcnDQBoDD8cW
+	6WJ6dlJDiRbtJNS8vh0xlq+UK3j8XGCWgrXg1kalJWT759R+wTleuCh44x8N8dF3
+	PYWGSA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 47dkmjtf7e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 25 Jun 2025 18:30:47 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5E1194002D;
+	Wed, 25 Jun 2025 18:29:58 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DD36CBF53B0;
+	Wed, 25 Jun 2025 18:29:23 +0200 (CEST)
+Received: from [10.48.86.103] (10.48.86.103) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 25 Jun
+ 2025 18:29:23 +0200
+Message-ID: <c1671c5e-d824-4131-861e-470d09371e05@foss.st.com>
+Date: Wed, 25 Jun 2025 18:29:17 +0200
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fscrypt: don't use hardware offload Crypto API drivers
+To: Eric Biggers <ebiggers@kernel.org>
+CC: <linux-fscrypt@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
+        <linux-ext4@vger.kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
+        <ceph-devel@vger.kernel.org>
+References: <20250611205859.80819-1-ebiggers@kernel.org>
+ <8f4c2f36-71af-4c84-bcee-2554cea991d0@foss.st.com>
+ <20250613144239.GA1287@sol>
+Content-Language: en-US
+From: Maxime MERE <maxime.mere@foss.st.com>
+In-Reply-To: <20250613144239.GA1287@sol>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.7,FMLib:17.12.80.40
+ definitions=2025-06-25_05,2025-06-25_01,2025-03-28_01
 
-The filemap_lock_folio() never returns NULL.  It returns error pointers.
-Update the checking to match.
 
-Fixes: 483239f03149 ("ceph: convert ceph_zero_partial_page() to use a folio")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/ceph/file.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index d5c674d2ba8a..f6e63265c516 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -2536,12 +2536,13 @@ static inline void ceph_zero_partial_page(struct inode *inode,
- 	struct folio *folio;
- 
- 	folio = filemap_lock_folio(inode->i_mapping, offset >> PAGE_SHIFT);
--	if (folio) {
--		folio_wait_writeback(folio);
--		folio_zero_range(folio, offset_in_folio(folio, offset), size);
--		folio_unlock(folio);
--		folio_put(folio);
--	}
-+	if (IS_ERR(folio))
-+		return;
-+
-+	folio_wait_writeback(folio);
-+	folio_zero_range(folio, offset_in_folio(folio, offset), size);
-+	folio_unlock(folio);
-+	folio_put(folio);
- }
- 
- static void ceph_zero_pagecache_range(struct inode *inode, loff_t offset,
--- 
-2.47.2
+On 6/13/25 16:42, Eric Biggers wrote:
+> Honestly, the responses to this thread so far have made it even more clear that
+> this patch is the right decision.
 
+The chaining system I previously presented is just an example intended 
+to demonstrate the value of hardware drivers in the context of ST platforms.
+
+The key point is that our hardware IP allows us to securely embed 
+encryption keys directly in hardware, making sure they are never visible 
+or accessible from Linux, which runs in a non-secure environment. Our 
+software architectures rely on a Secure OS running in parallel with 
+Linux, similar to what is done on Android. This Secure OS is responsible 
+for sensitive cryptographic operations.
+
+This Secure OS can manages the keys with a dedicated hardware peripheral 
+(SAES). The Linux side never sees the keys directly. Instead, the Secure 
+OS prepares the keys and shares them securely with the cryptographic 
+engine (CRYP) through a dedicated hardware bus.
+
+This architecture improves security boundary: keys isolated from the 
+non-secure Linux environment. But decryption can be processed by the 
+linux kernel.
+
+In addition, ST’s hardware crypto peripherals come with built-in 
+protections against side-channel attacks and have been certified with 
+SESIP and PSA level 3 security assurance, providing a level of security 
+difficult to achieve with software alone.
+
+Regarding robustness and maintenance, ST ensures regular updates of its 
+drivers and can fix any reported bugs. We have conducted internal tests 
+with dm-crypt that demonstrate the proper functioning of these drivers 
+for this type of application.
+
+Maxime
 
