@@ -1,93 +1,93 @@
-Return-Path: <ceph-devel+bounces-3210-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3211-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3243AE7FBB
-	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 12:40:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A4DAE7FBD
+	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 12:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 703B1188817A
-	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 10:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FA4B3B2EF6
+	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 10:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FB329E0EC;
-	Wed, 25 Jun 2025 10:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A944C29B233;
+	Wed, 25 Jun 2025 10:41:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KhnnHO/K"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SaB+qOtM"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E9129B23C
-	for <ceph-devel@vger.kernel.org>; Wed, 25 Jun 2025 10:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABF725BEF6
+	for <ceph-devel@vger.kernel.org>; Wed, 25 Jun 2025 10:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750848051; cv=none; b=fC83dxXCmh9O0gsFQRC+9JFrIAGR/PGhel/OK4hULWZjcVw67surG9gf7i/TTdocV2SEm2gmu1Wc+A8UNHUwicSD4wWdOWiuW/pOlfgLOe0yHLAWFWvxMq2Zip15d56dkKSzG1uJQJ6I6AYbsXu3bNpO/1LDWyFc//yzlWFZcis=
+	t=1750848073; cv=none; b=LYikdb4rv6UZZQC0jOc4AT15WiY8+T1jcP286SN6w0YiENiS8q+8HOGEYGvEnzbeAP4Cf8OrNID/TbXjPwBXeu4YHuWl2/7qyPnV4+/C0SqrJY41ME37XPcLY4rFg9H4MvQisVeSJyuht7I+unKWVlFIRZ4mN+E/Nn2cipd3ucc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750848051; c=relaxed/simple;
-	bh=kdRywbgWT5zbIjE0V4UnI7MGY64eaZ1GFQ7MxZL739g=;
+	s=arc-20240116; t=1750848073; c=relaxed/simple;
+	bh=AIVz62DuTVWDixko6X2LPuwXhOwmi4DqwR/TSjDPY3E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bu72+6MGv4JD4/Ed7f5DKVYRXfPhNhqmIgoaV9XPHY7E8vZFxsZ68W8JxgziHJkZtT4jeG7dOL0GHJDwwkGM1IlNa5fEAvSvD1pSIoR78n9QKo1Bz5HealHLl9yIKu0GAH6Qu+CO7qUl62vDLSQQo3c3FrZwMDU9/mbdTjXUhIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KhnnHO/K; arc=none smtp.client-ip=170.10.133.124
+	 To:Cc:Content-Type; b=RMWPac1MKpSqDupNVnGevORgY/KeB2WRG5gSw98Z5NLb8aNnVdjzBMcHr0yasgXlEi7pN4TMaJDFtPeb5qnPLAez6pV1ycTCoZChSN/kdk+9hdH6SMZF8T+FvwuHoZmB7q/37dEit3v/ZeHbZ5dLoJ7phEfzqbTsQXUMWwI+l5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SaB+qOtM; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750848049;
+	s=mimecast20190719; t=1750848071;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7h/KHM+Z1ETmgfw7Ga0CGtwnfJFvbJCAzq2poHb47zk=;
-	b=KhnnHO/KR5UCMuhRPDX0/PKx0mo3I+iwdRdWIZqZCDn+rxA5uv4XvBjVGxreVF14/FuhJI
-	vHo2C8YbID148i+n48jBFnShroc+yT6pv2D8NbcNLab8AzjZuR3nOaQcWdU9R0Q8DOAMD0
-	H+uHE4PXeccJZp2EN2+Q/ooOg2PRaxU=
-Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com
- [209.85.217.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=aKr+DQBtFyizAsw1988hOJcgz/t/EULmqa75FsXdoB8=;
+	b=SaB+qOtMuuvj0kM2pUKYH2skTBGcQ826VIyaRBSFOWcRSLTBSOnWIAfbYzF8ipoPrDoon3
+	orODjmr/AJRtjpY1nQvQQc5f/UJqgwN6UqEuFSIDrmhtA2oq7C5BH7el0W8XExV7v/+lZQ
+	g22EsoZ8HmQMbmSEukodNtrn8TTIC3E=
+Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com
+ [209.85.221.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-646-Xfv-yQxqNbmVuB6xjUY88g-1; Wed, 25 Jun 2025 06:40:48 -0400
-X-MC-Unique: Xfv-yQxqNbmVuB6xjUY88g-1
-X-Mimecast-MFC-AGG-ID: Xfv-yQxqNbmVuB6xjUY88g_1750848047
-Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-4e71cf8d0beso6193913137.1
-        for <ceph-devel@vger.kernel.org>; Wed, 25 Jun 2025 03:40:47 -0700 (PDT)
+ us-mta-664-Bx-kpXihNtql653AygOCsQ-1; Wed, 25 Jun 2025 06:41:09 -0400
+X-MC-Unique: Bx-kpXihNtql653AygOCsQ-1
+X-Mimecast-MFC-AGG-ID: Bx-kpXihNtql653AygOCsQ_1750848069
+Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-531566c838cso363952e0c.2
+        for <ceph-devel@vger.kernel.org>; Wed, 25 Jun 2025 03:41:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1750848045; x=1751452845;
+        d=1e100.net; s=20230601; t=1750848069; x=1751452869;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7h/KHM+Z1ETmgfw7Ga0CGtwnfJFvbJCAzq2poHb47zk=;
-        b=BRpndCJs2iIAKrBzp/0sn/PCDwv1UDdQtcygk3wG5Zi7OUM0R0zXFZzo+PD6sapIc5
-         Y9sW7wRkNTCcvdsElqPSRoaKN6vdb1gyPkwNQs5gxkshuovaSY3MLhYkP7SSBCwT9GZo
-         jlVF44m35zljfaND8HwCutasBtpf4ikPNJWrgsNc4HOxOBe0EEcZCJ2K5nfzY6IKqYHz
-         RaQh0DjT9MQJfmLgF6eIpO/aaRKlXoq1IdSNt2Cwtz4z6M2W2T8tWAje/1BdxE2XfnBf
-         p+49uNqPbXGnbm7Xm+iQHJTOhbyAE+5479r2WeK8Eu3ToSNQNSu12lIQeqYiwfKR65jq
-         +7yg==
-X-Forwarded-Encrypted: i=1; AJvYcCWi5NmXV9QqC7CKAuATJmEmLKwRnq1PACKa2XQF/4jhG0ZySJtxZfH4dnqYBV1CNCXRSLmLAJd1u4yQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMhTVr5ShUYxUp9Smv2RV2bm/fJPq9ul84xjADM1cifC5sznGU
-	RimsBjgUpPAzSUmtKrVG2WRVmLmKs2o1gN2+w1MGpY75JQw7xJuVkttEhblElPe02ZWBy/TNKa4
-	T2fhSufxuNyxYPDemG4C2N2PN/ht6IcbPcgX1zs9P1AUlAGgq+3Ams42Y22Ls4qFigfATZJQcNM
-	1hc7pYJM99EWHt64JqeaN7jbom1/vcm9C5tfW7Ag==
-X-Gm-Gg: ASbGncv2LrsSoAtDF9InZ76fqvhkqm7a7sUHGy3r5fslKFqw5358JqS4FJ8yYxCHiMH
-	Mvk5Eg9UIWgvJTIh/c06MlPJeenE/7yIqfZ0h6bEKEgQCB7x0LOosw5qP/curOBUCtZ97fTxB0t
-	99
-X-Received: by 2002:a05:6102:2927:b0:4ec:c548:e57b with SMTP id ada2fe7eead31-4ecc63b0f4fmr1247641137.0.1750848044935;
-        Wed, 25 Jun 2025 03:40:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE7Rrly+INsD2FyLdl36Be/L5V6Eddn3BzuS4sqrDJs6t6pJxfkEkXvuFGZkctU3cnellCkS1CHwmPPaKFihXQ=
-X-Received: by 2002:a05:6102:2927:b0:4ec:c548:e57b with SMTP id
- ada2fe7eead31-4ecc63b0f4fmr1247636137.0.1750848044685; Wed, 25 Jun 2025
- 03:40:44 -0700 (PDT)
+        bh=aKr+DQBtFyizAsw1988hOJcgz/t/EULmqa75FsXdoB8=;
+        b=oLFrFvhqSJWL0Y4dL/Bu38TFhV61O/J3uwvI85Tcca0l/P8vhgcgPSdm8TrDIGKgt4
+         wNnWywNCm6nCmK58+wM3DSi/VHGGRgwnS9nK4FzkYo+XtAWstBTsuQdglnU6zBMDyr+G
+         493R7Hk3/Bp5oJqF3we0ychBpwfvmxFsy0YSFp0+nli1PdqTbc7NNW6tkGZssXYCjEKU
+         u+HdOG87yr2eQJsUSwGRjlNSdDYkuyjUWfrOkuuWDG4PHSN2QdcqTKhysciCr4q67C5/
+         GPLWVjbaBvzPDdVL9+4pRHoQammugh/JYp8XNT+/PnfVMMc+Xw2A5v6Yf+VrIh3vZFpR
+         dJnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGFlOtDzIP6z7CqaSDeopSBgRoSRyc0LFtZreMhMzzjGQd43Q3OCNF6xq9zEET+XvBRWwx75vOYxg2@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBolRtwQgTRZf4XPR5kFzReRbx4kKWBkEuyITA4GF6YuAARu6l
+	QiwuEH6mBb3xsdd71+EF0nKX3lOknP3kfvVTDaZIngqw5cU8P227bQU2oIJuKA+SfrMP0fvc5YA
+	p0Ve7NiUCbA+3h94h1JQRrjQvrSYZ3Qd4AnQIev1B4r2yMEbKE2xxpJMsiA0UtAbrz1KT9EgoLH
+	D7yMGws60Fh1XP2iPLFUttbpfxJb52RUxFtoc2Wg==
+X-Gm-Gg: ASbGnctQDH+JqF6QhzNbH+BiFMQCi2BAe2Bg7oqJFzyEV12ENnzt08ghnHe7sj3jm8t
+	XSzbbKo0Assi7b5SasvbyjUTD5HVz86zBDwrcYVcSqehopg5WUN+dn+BMziDUI2r8v/8paGZ3Sf
+	qN
+X-Received: by 2002:a05:6122:1314:b0:531:312c:a715 with SMTP id 71dfb90a1353d-532ef36d88bmr1312854e0c.2.1750848069184;
+        Wed, 25 Jun 2025 03:41:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEKSrlq1vbTvn3Juc6W5KhrcexBGZURwwZbo6o+xxVCTx25vGfBDJ/xWAUugd4sgcE788El/lgs5X0WkOKHVaQ=
+X-Received: by 2002:a05:6122:1314:b0:531:312c:a715 with SMTP id
+ 71dfb90a1353d-532ef36d88bmr1312845e0c.2.1750848068518; Wed, 25 Jun 2025
+ 03:41:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250612143443.2848197-1-willy@infradead.org> <20250612143443.2848197-4-willy@infradead.org>
-In-Reply-To: <20250612143443.2848197-4-willy@infradead.org>
+References: <20250612143443.2848197-1-willy@infradead.org> <20250612143443.2848197-2-willy@infradead.org>
+In-Reply-To: <20250612143443.2848197-2-willy@infradead.org>
 From: Alex Markuze <amarkuze@redhat.com>
-Date: Wed, 25 Jun 2025 13:40:33 +0300
-X-Gm-Features: Ac12FXyMPBCBLK4e87Hspuz-o2CzX-UVv_jmEtLCyzergMQSVwUQNGmL3GwfGWY
-Message-ID: <CAO8a2Sjtc9xfBjhe+MGjHwc=9vJP7pB1bwno1mgKpfZgAO1QLg@mail.gmail.com>
-Subject: Re: [PATCH 3/5] direct-io: Use memzero_page()
+Date: Wed, 25 Jun 2025 13:40:57 +0300
+X-Gm-Features: Ac12FXyp1o1FcravfvrXONE97kHRXN5UStXCBn6AB_JACNodeZdJ-QuOTaMpRIc
+Message-ID: <CAO8a2ShgtKP-_V=YZ1NUvSUeoS8_mX7de20nP=P=RfdH5n=XTA@mail.gmail.com>
+Subject: Re: [PATCH 1/5] bio: Use memzero_page() in bio_truncate()
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
 	Ira Weiny <ira.weiny@intel.com>, Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org, 
@@ -99,30 +99,37 @@ Good cleanup.
 
 Reviewed-by: Alex Markuze amarkuze@redhat.com
 
-On Thu, Jun 12, 2025 at 5:36=E2=80=AFPM Matthew Wilcox (Oracle)
+On Thu, Jun 12, 2025 at 5:35=E2=80=AFPM Matthew Wilcox (Oracle)
 <willy@infradead.org> wrote:
 >
 > memzero_page() is the new name for zero_user().
 >
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
->  fs/direct-io.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  block/bio.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> diff --git a/fs/direct-io.c b/fs/direct-io.c
-> index bbd05f1a2145..111958634def 100644
-> --- a/fs/direct-io.c
-> +++ b/fs/direct-io.c
-> @@ -996,7 +996,7 @@ static int do_direct_IO(struct dio *dio, struct dio_s=
-ubmit *sdio,
->                                         dio_unpin_page(dio, page);
->                                         goto out;
->                                 }
-> -                               zero_user(page, from, 1 << blkbits);
-> +                               memzero_page(page, from, 1 << blkbits);
->                                 sdio->block_in_file++;
->                                 from +=3D 1 << blkbits;
->                                 dio->result +=3D 1 << blkbits;
+> diff --git a/block/bio.c b/block/bio.c
+> index 3c0a558c90f5..ce16c34ec6de 100644
+> --- a/block/bio.c
+> +++ b/block/bio.c
+> @@ -653,13 +653,13 @@ static void bio_truncate(struct bio *bio, unsigned =
+new_size)
+>
+>         bio_for_each_segment(bv, bio, iter) {
+>                 if (done + bv.bv_len > new_size) {
+> -                       unsigned offset;
+> +                       size_t offset;
+>
+>                         if (!truncated)
+>                                 offset =3D new_size - done;
+>                         else
+>                                 offset =3D 0;
+> -                       zero_user(bv.bv_page, bv.bv_offset + offset,
+> +                       memzero_page(bv.bv_page, bv.bv_offset + offset,
+>                                   bv.bv_len - offset);
+>                         truncated =3D true;
+>                 }
 > --
 > 2.47.2
 >
