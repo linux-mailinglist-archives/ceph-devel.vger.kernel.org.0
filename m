@@ -1,103 +1,114 @@
-Return-Path: <ceph-devel+bounces-3240-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3241-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1132AE8D0C
-	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 20:53:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F90AE8D2D
+	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 20:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D4DB189F0E0
-	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 18:53:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C5175A6175
+	for <lists+ceph-devel@lfdr.de>; Wed, 25 Jun 2025 18:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81A42D662D;
-	Wed, 25 Jun 2025 18:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623912DA755;
+	Wed, 25 Jun 2025 18:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gU6oqjNY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RfXX4gyz"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2547285C82
-	for <ceph-devel@vger.kernel.org>; Wed, 25 Jun 2025 18:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9AD2D5415;
+	Wed, 25 Jun 2025 18:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1750877597; cv=none; b=Zv/bYplzUbH4lYOWrnmMECzgCcGeGJcQFYBa5p9HE49ZVaxFo4x4DK1scqAZ3mx4zyEWu/61JZ+h2NuBbxfMqxFBu/dX0LdoQlnIAmNDKBJt/UuW8rwI/RU7V/F2kVrceIyTBpZGVKKYGDYThqcDvxXv9Wvlz9uGJ7jicR66NyU=
+	t=1750877877; cv=none; b=fGKT2aVW0gqqwzbL+kEOZsVEfT745RWS7GsHRZNGN55AjMEaIZ5fXI9IwfT5ZwaQbmSeBAO5DPH4guiE5PbnoYn6PxGNG3tdBhnDqWlOec7ADgAJ3AeoPcjpEQEuqydDHcr60/1jzVFkyzcBM0Ygu2fU/4oGLjHE2sjjt7aQYK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1750877597; c=relaxed/simple;
-	bh=bS8vPhhMVwxzJT6/BNkoc7Er8p13AErTd9yG5dAIq5s=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=lYu2/WfZlYBpXEGGKRRc5ItPoG0MbFCtRiupQ2B+j7yG0axM0yNOvlC4cnKFWEqL0FMVwfirRYl/xuYeDLq7XujIfEe5awu559rGsWCocy2mkOP/TwC3FaNr3IK3zhTgaUI9oVcZsAtflGjE0UASpMfmQ5V7RqhcBV8ouTM8l80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gU6oqjNY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1750877595;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h6E8oLR88JXaGJ+0hThZ0Yw7Sb6AqN89mXhCvOuzvaE=;
-	b=gU6oqjNY9jLpZdphVIZu5EK3v4r17tVxFQay7KjvedEavSIlQScoTSIc4sY5q+4uUxBo6L
-	t9Rsy7rs/bYA3eUpWP9JO46P8gkxf0HKhhBVl6e5zP27vWvtdl9T/bPbMkCPuniY4wFjI/
-	wZzDjzO254nSAa7cXiMoSWqoxlCo+EA=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-180-ZroNxM6hP7Kh0pBASYoOhA-1; Wed,
- 25 Jun 2025 14:53:13 -0400
-X-MC-Unique: ZroNxM6hP7Kh0pBASYoOhA-1
-X-Mimecast-MFC-AGG-ID: ZroNxM6hP7Kh0pBASYoOhA_1750877591
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6664219560AA;
-	Wed, 25 Jun 2025 18:53:11 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8738C180045B;
-	Wed, 25 Jun 2025 18:53:07 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <9e58524a-856c-4efe-80c5-195bc7b55743@talpey.com>
-References: <9e58524a-856c-4efe-80c5-195bc7b55743@talpey.com> <658c6f4f-468b-4233-b49a-4c39a7ab03ab@samba.org> <20250625164213.1408754-1-dhowells@redhat.com> <20250625164213.1408754-13-dhowells@redhat.com> <1422741.1750874135@warthog.procyon.org.uk>
-To: Tom Talpey <tom@talpey.com>
-Cc: dhowells@redhat.com, Stefan Metzmacher <metze@samba.org>,
-    Christian Brauner <christian@brauner.io>,
-    Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-    netfs@lists.linux.dev, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    Steve French <stfrench@microsoft.com>,
-    Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3 12/16] cifs: Fix reading into an ITER_FOLIOQ from the smbdirect code
+	s=arc-20240116; t=1750877877; c=relaxed/simple;
+	bh=9dMCTDJZVMzbS/zBD503nWWVWKm2FovKnQMyh9fpcro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=okQ7WTg+XMkAU2h4Noh3vqRaAp2X0m8IktTgCIjJ5IJVxuePsmgpH7fRSdKW6vGF2PBCN0tx924DFi6qR4fo8dib9zsfy22xAVQLxqKvdPVyEZxxQ3uEO/TGWfQDfCIsiQx5qrKJVSqB2hnJdMyliwJwg1xnh+COxAZjK1+V5k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RfXX4gyz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47806C4CEF0;
+	Wed, 25 Jun 2025 18:57:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1750877876;
+	bh=9dMCTDJZVMzbS/zBD503nWWVWKm2FovKnQMyh9fpcro=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RfXX4gyzdrSzcJwCnXlcD7dGqdLurOrI0ukuDS2ni26iDSAkow3zKchchRI+UwGL1
+	 CVKaafO3G5sw5GHlEXIh3Nd6XqMu1XckZgzUk0fTVra8Q6hu2OyuukS/LyKTM99iQ0
+	 GU2vTn4zkFANEHPM7nlTTgGrUFfu7jYUY1z36LgXLui0nbyr5/AcWl2u2YAECr2NSc
+	 NhAF455t2SLxIKM4WhoJQbgB2AKEVaCyIXCBcGKejkf6AvfaxoxjTBZWNaOA7ihAlm
+	 rGX+iUEeloK2dGYQQToMRuwVDS6n9Jc0QxIW8RytzIg/Rs/1sFMntTZ5pnUBMgDuyL
+	 pIg6KkFWyV51A==
+Date: Wed, 25 Jun 2025 11:57:21 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Maxime MERE <maxime.mere@foss.st.com>
+Cc: linux-fscrypt@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	ceph-devel@vger.kernel.org
+Subject: Re: [PATCH] fscrypt: don't use hardware offload Crypto API drivers
+Message-ID: <20250625185721.GB1703@sol>
+References: <20250611205859.80819-1-ebiggers@kernel.org>
+ <8f4c2f36-71af-4c84-bcee-2554cea991d0@foss.st.com>
+ <20250613144239.GA1287@sol>
+ <c1671c5e-d824-4131-861e-470d09371e05@foss.st.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1425469.1750877586.1@warthog.procyon.org.uk>
-Date: Wed, 25 Jun 2025 19:53:06 +0100
-Message-ID: <1425470.1750877586@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c1671c5e-d824-4131-861e-470d09371e05@foss.st.com>
 
-Tom Talpey <tom@talpey.com> wrote:
-
+On Wed, Jun 25, 2025 at 06:29:17PM +0200, Maxime MERE wrote:
 > 
-> Shouldn't there be some kind of validity check on the rfc1002 length
-> field before this? For example, the high octet of that field is
-> required to be zero (by SMB) and the 24-bit length is not necessarily
-> checked yet. The original code just returned the decoded value but
-> this sticks it in the msg_iter. If that's safe, then ok but it seems
-> odd.
+> 
+> On 6/13/25 16:42, Eric Biggers wrote:
+> > Honestly, the responses to this thread so far have made it even more clear that
+> > this patch is the right decision.
+> 
+> The chaining system I previously presented is just an example intended to
+> demonstrate the value of hardware drivers in the context of ST platforms.
+> 
+> The key point is that our hardware IP allows us to securely embed encryption
+> keys directly in hardware, making sure they are never visible or accessible
+> from Linux, which runs in a non-secure environment. Our software
+> architectures rely on a Secure OS running in parallel with Linux, similar to
+> what is done on Android. This Secure OS is responsible for sensitive
+> cryptographic operations.
+> 
+> This Secure OS can manages the keys with a dedicated hardware peripheral
+> (SAES). The Linux side never sees the keys directly. Instead, the Secure OS
+> prepares the keys and shares them securely with the cryptographic engine
+> (CRYP) through a dedicated hardware bus.
+> 
+> This architecture improves security boundary: keys isolated from the
+> non-secure Linux environment. But decryption can be processed by the linux
+> kernel.
 
-That should be a separate bugfix, I think.
+Can you please stop hijacking this thread with what is basically an irrelevant
+marketing blurb?  The STM32 driver actually just stores the keys in memory.  See
+stm32_cryp_ctx::key in drivers/crypto/stm32/stm32-cryp.c, and struct
+stm32_hash_ctx::key in drivers/crypto/stm32/stm32-hash.c.
 
-David
+So even if the STM32 crypto engine technically supports hardware keys, the
+potential benefits of that are not actually being realized in Linux.
 
+And for applications like fscrypt that derive a large number of keys, it isn't
+actually possible to use hardware keys even if the driver supported it, without
+key wrapping and proper integration with the key hierarchy.  (FWIW, the
+hardware-wrapped inline encryption keys feature does do that, but that is very
+different from what we're talking about here.)
+
+Also, the STM32 driver does not actually fully support any of fscrypt's file
+contents encryption modes.  It does support AES-256-ECB and AES-128-CBC, so it
+can be used for AES-256-XTS and AES-128-CBC-ESSIV when the CPU handles the XTS
+masking or IV encryption respectively.  But to do that, the CPU needs access to
+part of the secret keys.
+
+- Eric
 
