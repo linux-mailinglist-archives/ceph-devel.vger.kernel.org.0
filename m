@@ -1,239 +1,438 @@
-Return-Path: <ceph-devel+bounces-3260-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3261-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C887AAF014E
-	for <lists+ceph-devel@lfdr.de>; Tue,  1 Jul 2025 19:10:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D72AF0435
+	for <lists+ceph-devel@lfdr.de>; Tue,  1 Jul 2025 21:58:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C5DD1671CB
-	for <lists+ceph-devel@lfdr.de>; Tue,  1 Jul 2025 17:07:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7737816B962
+	for <lists+ceph-devel@lfdr.de>; Tue,  1 Jul 2025 19:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9411B26AD9;
-	Tue,  1 Jul 2025 17:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86407283FE9;
+	Tue,  1 Jul 2025 19:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HqPURpe+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hw+//fCu"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CC97260D;
-	Tue,  1 Jul 2025 17:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE4F200112;
+	Tue,  1 Jul 2025 19:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751389644; cv=none; b=neY9sqfN8zd+MrqO6ukU8dSXtXs2X9wc9Eg1KqVNfu9lwm4bg5YGZzhDIrvCKSmSrPuXdePgno31PQhtf9Jyi6zUyXMv1W4H9CY/kNO4iUcLhYkNBXH89gHUx7sjQwUjTehUqktOkcrx3R2HBmQHLHYJejoGV9G05H3PFVL+Ou8=
+	t=1751399887; cv=none; b=AZb7zclb7Im7r3rS3EiI5w4+zUgRcjFNWewXaWFSrpDDh3iXXL+ULeA19F0EdH0PVi56F2oEfTNVA8GTznoIxYtWiuCM+5Q6qS0ZChui31OlnMUayK1XBIab2/TsqSqCQ22MKc2ATgjY5uz18A8VJMiEflWZr7QEArU8/NnZREM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751389644; c=relaxed/simple;
-	bh=rkq3DGRe/lPxR2ofGTATmveYcwg0fwOyu3wyKRPEeec=;
+	s=arc-20240116; t=1751399887; c=relaxed/simple;
+	bh=mh13/K2C3YH46fd5VgRsKUd7xhh7UShj7//mgZNl1Yw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O/qlzSmpiCo/gyMimiBkxCXoS9cmsif+sI437kqLTtIWmjLemc9GwbAetxHmBLY1riL5Yd9tyTIpskS540uLj+H7I0PF6pfMAeFnDgH7In4pZo0A0uyeHOJzfA58gHceuaOV40bm2wLvwLbwukK5hldYb3bmEqqkWqaxm3kKB6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HqPURpe+; arc=none smtp.client-ip=209.85.219.50
+	 To:Cc:Content-Type; b=b0qgE2+Q717QCC9Eksh9vq3dY27zwR63m7rFkHLmnAD6bvoTFFeWdtTB8cUAulzvDuNjPF5k3UCLJe7kwE2dtSl+bOW6ESERDUbSbvVuPUg9CUPCdcXcpySCHZSYzBmHd2YlDJCuIDRopHlqC7OjzZXBpH5AEUJRTS2BDfqUEC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hw+//fCu; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6fae04a3795so64026306d6.3;
-        Tue, 01 Jul 2025 10:07:22 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2363497cc4dso51620665ad.1;
+        Tue, 01 Jul 2025 12:58:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1751389642; x=1751994442; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1751399885; x=1752004685; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QTazUoyxInDAJ2NwZxhqJI5YRJsIYXcAsvJl7/gp0ws=;
-        b=HqPURpe+umDzQg2yXxIr1AfqeeaQGJ4IPdJ+UtqyaQrNYVsBtqZmMTk0vDEMUaz7ZJ
-         ll2+Q/QiO/d2jXbR3ZcYyqz3U4L77s8tnboVVYpOZTLlqAPm/xUUU0wF0pZMNuz5Bqb7
-         V1GcFRCVuK0jK6nSmmAzdecymBfusP/9cgQNJV7k4pc4udeQcJHnI5jgWHkXYYAeCK2V
-         O3+xDwCF61YSAmW3bXugRvfIeaFxjPFPLMbQgCL6/zwE9K6hnM3PXsxXsYALEWlCuOAX
-         p/D9/Av75V+QZLIbqXAgH+eQwNnn/9rp5eUa9GKRlMlQVI5jbiqMCcwdFj9BJFHxnoqr
-         0Pkw==
+        bh=nmXSKJuzG9fYEMivZ/nOpZUlPnVXgIe5HngikPOgmZk=;
+        b=hw+//fCuBTWsq+w9wYMnVyi3lJpSOl52rm1zyO+Sp2N2J4FhS1lgkedw0nJHJ0Ybol
+         FRhe4pk8p474+Dh3ZpScM5BVM9ZTMeUQer39UqgAkePaHuCt5qAzPBi8qPq2qMpCX8rY
+         IHxaZacRRfTzauxP0OBPkOLjaKvn+32L4XhbbESo0qOgSBJ1/s7VxTBoOXBnecqkrBtF
+         +b0HeRBG7xWFy/VTsgT2An9cuXG1rUqRdf8PHXI6+s541vG57oPSs2ihccMoEaJghoaF
+         i2vgWe0EPLQsTcWcOu66+61auOUv4dLZj7p52L7w8j/OTlx+yfbMyAHUJVwh9igIDyto
+         JVkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1751389642; x=1751994442;
+        d=1e100.net; s=20230601; t=1751399885; x=1752004685;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QTazUoyxInDAJ2NwZxhqJI5YRJsIYXcAsvJl7/gp0ws=;
-        b=n8/gPIUvIxoWrtYHNiEXB143LYQh+2fffnb9nbC9Ke6thOH1JEWt0xreO8cu3QahYG
-         UquBM/pdSul8k7vdwNllflpCvtLGi6v+aBJrk5HB6M6g0n89ffH7S8Jium2JfNcjkJPD
-         S2QnXvpiUBpq4zmeZzwpBd6lBJK1/EylKATEdn+PhBPAWMxpMvvaVJw+5PxDeZj4cQGD
-         UpjuhGCF1/+5AOJXStL+LzdM4Yv9SIot72zLCDidFgAinvR7sDcw5a2zVVOAlWI5JuGl
-         vE4ePU7LVEco8UiEG2ux3GD36+pFmQgobuU2T9XDIpavowp5R/jbVX5LqVO320R9hblX
-         dlrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqdOUH+UYjznilwPYNgDjkhLOvwNyv6qemMX9eWXAj8VcxSkP2wY+TouIN/1HUJAH0W7PlSNg77hVh@vger.kernel.org, AJvYcCVPUj+EMkxFBjN6CrVSY7xUKkWeuXmgc067XXSgof6ByBicLoYfXuyRDNBwk3dDYljgndoBcGYCjxfxXg==@vger.kernel.org, AJvYcCVf07EqyqeuajYlGdwegFlln/IHy0mxi3X+mWyXrAwsP60uLmevWx9DVPe+TLt24EwM2+pYAuRwJJ4CqyQo5Q==@vger.kernel.org, AJvYcCWDh/+Wu36733jKqvXLfETvbSRxfDKdkvAzJrPxGikglxnnVlkMDGTxuHxPd5hzpZwH1rrxi2dE04CubV+A@vger.kernel.org, AJvYcCWERI629SjZyBvsGRuoxywCUOZQAylMsnSAiDGhr9vqgieu7kgPLd3qI0xoejyv/Ba1yQ8Vbi+o6sH5@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSG2GhnkngYn/i7Glt2XLvUt/tXLJRQScTkPmBb/SLV8fTbwq/
-	UN15+SUiRnlzY3PZpUDsUrCRZYznFtZ21sL61s2QiPWknn0QdhRr0TKMc4gmIlVBP1AQHHUtfzT
-	e2oaXsr/HvwNPKR4Jf8hkukPA01Pk218=
-X-Gm-Gg: ASbGnctGHRAGTTi1F//qBOaymeiz66lrZwBJ0dMC4YvwIwdbcglIqni+P5tZr990GtO
-	uwMX0K7t3lvsX7lHWHXQBVgm37bFOJOXK5v/UmodJph5ZYFUHrliPhEVAh0uEjNM+siYAhJUMCM
-	8i0FZtmBoj5v8TCzwnMoVUmUFwr0uPiDlk0kBx4na9Mw==
-X-Google-Smtp-Source: AGHT+IHOCEIHYgm8k1vptLe8LL1tAI0jytjNx1TpB7ZG4wg2ZutjYESoQ25ENjDT+uRfDdRVBd1/zvyP4q+gP4bjeCU=
-X-Received: by 2002:a05:6214:4309:b0:6fa:d956:243b with SMTP id
- 6a1803df08f44-70003c8e7ffmr346050926d6.37.1751389641585; Tue, 01 Jul 2025
- 10:07:21 -0700 (PDT)
+        bh=nmXSKJuzG9fYEMivZ/nOpZUlPnVXgIe5HngikPOgmZk=;
+        b=LZcZbRcKhtJz126ARda1hBzHFLr7K/QoSgJh5bKH96uNMTwZRoZANdO0k5P3EnGIul
+         jhWj4QwAlx2GJ3nXDp+SVYUSyeDcOnxUwop6bDOs44Yhrnv+iB/I42b4S7P6KKtomER+
+         1V3sAGf6+pm0dv3FaD2Mq6cnVNYc/vFGdyS8MoDZEQkk+tPExfCGJVxjIo4oYefPes16
+         9Odb/HKbRPjwPHRyQ8TVej7cIWgopkC3RIXGBpgzKqEa4E2wqw3oBbhMhM6Cj/yJadzd
+         arxj6inrhmooIu+WbnoyvtDYQ4WeIUHIyZOuYVGJDwu/a3Zer6wMNo0LJ6ktZDaglDUF
+         XIOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfMK5mKa7qXOCvEEQc2a48Pz2LEnQx+TG56XxqUO4GKm11LcGReyd2W+gPBssYoQJMy5bdRbSqvgasB87w@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiolUXsjFY4yvxSKL7uimf02TNfTG2NY4dDLucgMo7DQGtE4Ov
+	FwK9arlrAEPsmfl4IuzmltKTkpXosZkSi86YwZ+wSTkQn+a7kU3Meq8Dy78ARCDvdoVA9mOvpJW
+	O4aKOYgu8rzQ4ZglzNFVQy9XrfVWqXe0=
+X-Gm-Gg: ASbGncvf33BL7MzW3lavKQj8hime1BRzb6BhBYYgzJz4jROSYllFN078kOS4RUCNDwx
+	pvcyVlee2m8XzRt+Z80JQn0WAqrRK50TqZ/ZDPgSVTEpiA9gy7zCoW7VOpVSkPMHXGX2/pJUH4D
+	P+HntxJc5rn/kuDSnwfdWiSDvxLqA4GiufpOp+r831omY=
+X-Google-Smtp-Source: AGHT+IHHBwn0oOW7PxvZqPDdPlNvZrpbA5ic4HSrfsn/Iay+n1g4+7/IXt7CCKaQ7cjc+n0tZdaa58yx5CyOIBI65/I=
+X-Received: by 2002:a17:902:e84f:b0:235:f49f:479d with SMTP id
+ d9443c01a7336-23c6e452307mr218215ad.3.1751399884589; Tue, 01 Jul 2025
+ 12:58:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701163852.2171681-1-dhowells@redhat.com> <20250701163852.2171681-10-dhowells@redhat.com>
-In-Reply-To: <20250701163852.2171681-10-dhowells@redhat.com>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 1 Jul 2025 12:07:08 -0500
-X-Gm-Features: Ac12FXwp3sKlhUbj28TBsCjjpDbuA__SF55TZQEDUJu-EBlXwc0hooXFiXTAO58
-Message-ID: <CAH2r5msN59rNqDxJaBTPZQ_smsYOiMbyy4V+cMdWeuGbe9GR1Q@mail.gmail.com>
-Subject: Re: [PATCH 09/13] smb: client: fix warning when reconnecting channel
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev, 
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Paulo Alcantara <pc@manguebit.org>, samba-technical <samba-technical@lists.samba.org>, 
-	Shyam Prasad <nspmangalore@gmail.com>
+References: <20250618191635.683070-1-slava@dubeyko.com>
+In-Reply-To: <20250618191635.683070-1-slava@dubeyko.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Tue, 1 Jul 2025 21:57:52 +0200
+X-Gm-Features: Ac12FXw-CC-ZZW3-erv5j4PL4aQKnA3ZXT-uqCQOMDT9S5JXD34r9yWF-WPaCNE
+Message-ID: <CAOi1vP9_869BCjUMsQkQPZ6now_nvsQxv-SKZrTrCP7YFX1TyQ@mail.gmail.com>
+Subject: Re: [PATCH v6] ceph: fix slab-use-after-free in have_mon_and_osd_map()
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: ceph-devel@vger.kernel.org, dhowells@redhat.com, 
+	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, amarkuze@redhat.com, 
+	Slava.Dubeyko@ibm.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-I already have this patch in my for-next branch (which also includes
-the  Reviewed-by from Shyam)
-
-On Tue, Jul 1, 2025 at 11:44=E2=80=AFAM David Howells <dhowells@redhat.com>=
- wrote:
+On Wed, Jun 18, 2025 at 9:16=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.c=
+om> wrote:
 >
-> From: Paulo Alcantara <pc@manguebit.org>
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 >
-> When reconnecting a channel in smb2_reconnect_server(), a dummy tcon
-> is passed down to smb2_reconnect() with ->query_interface
-> uninitialized, so we can't call queue_delayed_work() on it.
+> The generic/395 and generic/397 is capable of generating
+> the oops is on line net/ceph/ceph_common.c:794 with
+> KASAN enabled.
 >
-> Fix the following warning by ensuring that we're queueing the delayed
-> worker from correct tcon.
+> BUG: KASAN: slab-use-after-free in have_mon_and_osd_map+0x56/0x70
+> Read of size 4 at addr ffff88811012d810 by task mount.ceph/13305
 >
-> WARNING: CPU: 4 PID: 1126 at kernel/workqueue.c:2498 __queue_delayed_work=
-+0x1d2/0x200
-> Modules linked in: cifs cifs_arc4 nls_ucs2_utils cifs_md4 [last unloaded:=
- cifs]
-> CPU: 4 UID: 0 PID: 1126 Comm: kworker/4:0 Not tainted 6.16.0-rc3 #5 PREEM=
-PT(voluntary)
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-4.fc42 04=
-/01/2014
-> Workqueue: cifsiod smb2_reconnect_server [cifs]
-> RIP: 0010:__queue_delayed_work+0x1d2/0x200
-> Code: 41 5e 41 5f e9 7f ee ff ff 90 0f 0b 90 e9 5d ff ff ff bf 02 00
-> 00 00 e8 6c f3 07 00 89 c3 eb bd 90 0f 0b 90 e9 57 f> 0b 90 e9 65 fe
-> ff ff 90 0f 0b 90 e9 72 fe ff ff 90 0f 0b 90 e9
-> RSP: 0018:ffffc900014afad8 EFLAGS: 00010003
-> RAX: 0000000000000000 RBX: ffff888124d99988 RCX: ffffffff81399cc1
-> RDX: dffffc0000000000 RSI: ffff888114326e00 RDI: ffff888124d999f0
-> RBP: 000000000000ea60 R08: 0000000000000001 R09: ffffed10249b3331
-> R10: ffff888124d9998f R11: 0000000000000004 R12: 0000000000000040
-> R13: ffff888114326e00 R14: ffff888124d999d8 R15: ffff888114939020
-> FS:  0000000000000000(0000) GS:ffff88829f7fe000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007ffe7a2b4038 CR3: 0000000120a6f000 CR4: 0000000000750ef0
-> PKRU: 55555554
+> CPU: 2 UID: 0 PID: 13305 Comm: mount.ceph Not tainted 6.14.0-rc2-build2+ =
+#1266
+> Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
 > Call Trace:
->  <TASK>
->  queue_delayed_work_on+0xb4/0xc0
->  smb2_reconnect+0xb22/0xf50 [cifs]
->  smb2_reconnect_server+0x413/0xd40 [cifs]
->  ? __pfx_smb2_reconnect_server+0x10/0x10 [cifs]
->  ? local_clock_noinstr+0xd/0xd0
->  ? local_clock+0x15/0x30
->  ? lock_release+0x29b/0x390
->  process_one_work+0x4c5/0xa10
->  ? __pfx_process_one_work+0x10/0x10
->  ? __list_add_valid_or_report+0x37/0x120
->  worker_thread+0x2f1/0x5a0
->  ? __kthread_parkme+0xde/0x100
->  ? __pfx_worker_thread+0x10/0x10
->  kthread+0x1fe/0x380
->  ? kthread+0x10f/0x380
->  ? __pfx_kthread+0x10/0x10
->  ? local_clock_noinstr+0xd/0xd0
->  ? ret_from_fork+0x1b/0x1f0
->  ? local_clock+0x15/0x30
->  ? lock_release+0x29b/0x390
->  ? rcu_is_watching+0x20/0x50
->  ? __pfx_kthread+0x10/0x10
->  ret_from_fork+0x15b/0x1f0
->  ? __pfx_kthread+0x10/0x10
->  ret_from_fork_asm+0x1a/0x30
->  </TASK>
-> irq event stamp: 1116206
-> hardirqs last  enabled at (1116205): [<ffffffff8143af42>] __up_console_se=
-m+0x52/0x60
-> hardirqs last disabled at (1116206): [<ffffffff81399f0e>] queue_delayed_w=
-ork_on+0x6e/0xc0
-> softirqs last  enabled at (1116138): [<ffffffffc04562fd>] __smb_send_rqst=
-+0x42d/0x950 [cifs]
-> softirqs last disabled at (1116136): [<ffffffff823d35e1>] release_sock+0x=
-21/0xf0
+> <TASK>
+> dump_stack_lvl+0x57/0x80
+> ? have_mon_and_osd_map+0x56/0x70
+> print_address_description.constprop.0+0x84/0x330
+> ? have_mon_and_osd_map+0x56/0x70
+> print_report+0xe2/0x1e0
+> ? rcu_read_unlock_sched+0x60/0x80
+> ? kmem_cache_debug_flags+0xc/0x20
+> ? fixup_red_left+0x17/0x30
+> ? have_mon_and_osd_map+0x56/0x70
+> kasan_report+0x8d/0xc0
+> ? have_mon_and_osd_map+0x56/0x70
+> have_mon_and_osd_map+0x56/0x70
+> ceph_open_session+0x182/0x290
+> ? __pfx_ceph_open_session+0x10/0x10
+> ? __init_swait_queue_head+0x8d/0xa0
+> ? __pfx_autoremove_wake_function+0x10/0x10
+> ? shrinker_register+0xdd/0xf0
+> ceph_get_tree+0x333/0x680
+> vfs_get_tree+0x49/0x180
+> do_new_mount+0x1a3/0x2d0
+> ? __pfx_do_new_mount+0x10/0x10
+> ? security_capable+0x39/0x70
+> path_mount+0x6dd/0x730
+> ? __pfx_path_mount+0x10/0x10
+> ? kmem_cache_free+0x1e5/0x270
+> ? user_path_at+0x48/0x60
+> do_mount+0x99/0xe0
+> ? __pfx_do_mount+0x10/0x10
+> ? lock_release+0x155/0x190
+> __do_sys_mount+0x141/0x180
+> do_syscall_64+0x9f/0x100
+> entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> RIP: 0033:0x7f01b1b14f3e
+> Code: 48 8b 0d d5 3e 0f 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 0=
+0 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 8b 0d a2 3e 0f 00 f7 d8 64 89 01 48
+> RSP: 002b:00007fffd129fa08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000564ec01a7850 RCX: 00007f01b1b14f3e
+> RDX: 0000564ec00f2225 RSI: 00007fffd12a1964 RDI: 0000564ec0147a20
+> RBP: 00007fffd129fbd0 R08: 0000564ec014da90 R09: 0000000000000080
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fffd12a194e
+> R13: 0000000000000000 R14: 00007fffd129fa50 R15: 00007fffd129fa40
+> </TASK>
 >
-> Cc: linux-cifs@vger.kernel.org
+> Allocated by task 13305:
+> stack_trace_save+0x8c/0xc0
+> kasan_save_stack+0x1e/0x40
+> kasan_save_track+0x10/0x30
+> __kasan_kmalloc+0x3a/0x50
+> __kmalloc_noprof+0x247/0x290
+> ceph_osdmap_alloc+0x16/0x130
+> ceph_osdc_init+0x27a/0x4c0
+> ceph_create_client+0x153/0x190
+> create_fs_client+0x50/0x2a0
+> ceph_get_tree+0xff/0x680
+> vfs_get_tree+0x49/0x180
+> do_new_mount+0x1a3/0x2d0
+> path_mount+0x6dd/0x730
+> do_mount+0x99/0xe0
+> __do_sys_mount+0x141/0x180
+> do_syscall_64+0x9f/0x100
+> entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>
+> Freed by task 9475:
+> stack_trace_save+0x8c/0xc0
+> kasan_save_stack+0x1e/0x40
+> kasan_save_track+0x10/0x30
+> kasan_save_free_info+0x3b/0x50
+> __kasan_slab_free+0x18/0x30
+> kfree+0x212/0x290
+> handle_one_map+0x23c/0x3b0
+> ceph_osdc_handle_map+0x3c9/0x590
+> mon_dispatch+0x655/0x6f0
+> ceph_con_process_message+0xc3/0xe0
+> ceph_con_v1_try_read+0x614/0x760
+> ceph_con_workfn+0x2de/0x650
+> process_one_work+0x486/0x7c0
+> process_scheduled_works+0x73/0x90
+> worker_thread+0x1c8/0x2a0
+> kthread+0x2ec/0x300
+> ret_from_fork+0x24/0x40
+> ret_from_fork_asm+0x1a/0x30
+>
+> The buggy address belongs to the object at ffff88811012d800
+> which belongs to the cache kmalloc-512 of size 512
+> The buggy address is located 16 bytes inside of
+> freed 512-byte region [ffff88811012d800, ffff88811012da00)
+>
+> The buggy address belongs to the physical page:
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1101=
+2c
+> head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+> flags: 0x200000000000040(head|node=3D0|zone=3D2)
+> page_type: f5(slab)
+> raw: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
+> raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+> head: 0200000000000040 ffff888100042c80 dead000000000100 dead000000000122
+> head: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+> head: 0200000000000002 ffffea0004404b01 ffffffffffffffff 0000000000000000
+> head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+>
+> Memory state around the buggy address:
+> ffff88811012d700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff88811012d780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>
+>     ffff88811012d800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>
+> ^
+> ffff88811012d880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff88811012d900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb =3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Disabling lock debugging due to kernel taint
+> libceph: client274326 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+> libceph: mon0 (1)90.155.74.19:6789 session established
+> libceph: client274327 fsid 8598140e-35c2-11ee-b97c-001517c545cc
+>
+> We have such scenario:
+>
+> Thread 1:
+> void ceph_osdmap_destroy(...) {
+>     <skipped>
+>     kfree(map);
+> }
+> Thread 1 sleep...
+>
+> Thread 2:
+> static bool have_mon_and_osd_map(struct ceph_client *client) {
+>     return client->monc.monmap && client->monc.monmap->epoch &&
+>         client->osdc.osdmap && client->osdc.osdmap->epoch;
+> }
+> Thread 2 has oops...
+>
+> Thread 1 wake up:
+> static int handle_one_map(...) {
+>     <skipped>
+>     osdc->osdmap =3D newmap;
+>     <skipped>
+> }
+>
+> This patch fixes the issue by means of locking
+> client->osdc.lock and client->monc.mutex before
+> the checking client->osdc.osdmap and
+> client->monc.monmap in have_mon_and_osd_map() function.
+> Patch adds locking in the ceph_osdc_stop()
+> method during the destructruction of osdc->osdmap and
+> assigning of NULL to the pointer. The lock is used
+> in the ceph_monc_stop() during the freeing of monc->monmap
+> and assigning NULL to the pointer too. The monmap_show()
+> and osdmap_show() methods were reworked to prevent
+> the potential race condition during the methods call.
+>
 > Reported-by: David Howells <dhowells@redhat.com>
-> Fixes: 42ca547b13a2 ("cifs: do not disable interface polling on failure")
-> Reviewed-by: David Howells <dhowells@redhat.com>
-> Tested-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Tested-by: Steve French <sfrench@samba.org>
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 > ---
->  fs/smb/client/cifsglob.h |  1 +
->  fs/smb/client/smb2pdu.c  | 10 ++++------
->  2 files changed, 5 insertions(+), 6 deletions(-)
+>  net/ceph/ceph_common.c | 34 +++++++++++++++++++++++++++++-----
+>  net/ceph/debugfs.c     | 17 +++++++++++++----
+>  net/ceph/mon_client.c  |  9 ++++++++-
+>  net/ceph/osd_client.c  |  4 ++++
+>  4 files changed, 54 insertions(+), 10 deletions(-)
 >
-> diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-> index 318a8405d475..fdd95e5100cd 100644
-> --- a/fs/smb/client/cifsglob.h
-> +++ b/fs/smb/client/cifsglob.h
-> @@ -1303,6 +1303,7 @@ struct cifs_tcon {
->         bool use_persistent:1; /* use persistent instead of durable handl=
-es */
->         bool no_lease:1;    /* Do not request leases on files or director=
-ies */
->         bool use_witness:1; /* use witness protocol */
-> +       bool dummy:1; /* dummy tcon used for reconnecting channels */
->         __le32 capabilities;
->         __u32 share_flags;
->         __u32 maximal_access;
-> diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-> index 084ee66e73fd..572cfc42dda8 100644
-> --- a/fs/smb/client/smb2pdu.c
-> +++ b/fs/smb/client/smb2pdu.c
-> @@ -424,9 +424,9 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon =
-*tcon,
->                 free_xid(xid);
->                 ses->flags &=3D ~CIFS_SES_FLAGS_PENDING_QUERY_INTERFACES;
+> diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
+> index 4c6441536d55..a28b29c763ca 100644
+> --- a/net/ceph/ceph_common.c
+> +++ b/net/ceph/ceph_common.c
+> @@ -790,8 +790,18 @@ EXPORT_SYMBOL(ceph_reset_client_addr);
+>   */
+>  static bool have_mon_and_osd_map(struct ceph_client *client)
+>  {
+> -       return client->monc.monmap && client->monc.monmap->epoch &&
+> -              client->osdc.osdmap && client->osdc.osdmap->epoch;
+> +       bool have_mon_map =3D false;
+> +       bool have_osd_map =3D false;
+> +
+> +       mutex_lock(&client->monc.mutex);
+> +       have_mon_map =3D client->monc.monmap && client->monc.monmap->epoc=
+h;
+> +       mutex_unlock(&client->monc.mutex);
+> +
+> +       down_read(&client->osdc.lock);
+> +       have_osd_map =3D client->osdc.osdmap && client->osdc.osdmap->epoc=
+h;
+> +       up_read(&client->osdc.lock);
+> +
+> +       return have_mon_map && have_osd_map;
+>  }
 >
-> -               /* regardless of rc value, setup polling */
-> -               queue_delayed_work(cifsiod_wq, &tcon->query_interfaces,
-> -                                  (SMB_INTERFACE_POLL_INTERVAL * HZ));
-> +               if (!tcon->ipc && !tcon->dummy)
-> +                       queue_delayed_work(cifsiod_wq, &tcon->query_inter=
-faces,
-> +                                          (SMB_INTERFACE_POLL_INTERVAL *=
- HZ));
+>  /*
+> @@ -813,9 +823,23 @@ int __ceph_open_session(struct ceph_client *client, =
+unsigned long started)
 >
->                 mutex_unlock(&ses->session_mutex);
+>                 /* wait */
+>                 dout("mount waiting for mon_map\n");
+> -               err =3D wait_event_interruptible_timeout(client->auth_wq,
+> -                       have_mon_and_osd_map(client) || (client->auth_err=
+ < 0),
+> -                       ceph_timeout_jiffies(timeout));
+> +
+> +               DEFINE_WAIT_FUNC(wait, woken_wake_function);
+> +
+> +               add_wait_queue(&client->auth_wq, &wait);
+> +
+> +               while (!(have_mon_and_osd_map(client) ||
+> +                                       (client->auth_err < 0))) {
+
+Hi Slava,
+
+This looks much better but misses two points raised in the comments on
+previous versions.  The first point is that it would be better to
+access client->auth_err under client->monc.mutex, matching how it's set
+in finish_auth() -- now that locks can be freely taken here it should
+be a trivial change.
+
+> +                       if (signal_pending(current)) {
+> +                               err =3D -ERESTARTSYS;
+> +                               break;
+> +                       }
+> +                       wait_woken(&wait, TASK_INTERRUPTIBLE,
+> +                                  ceph_timeout_jiffies(timeout));
+> +               }
+> +
+> +               remove_wait_queue(&client->auth_wq, &wait);
+> +
+>                 if (err < 0)
+>                         return err;
+>                 if (client->auth_err < 0)
+
+Separately, I wonder if the new nested loop which checks both for the
+presence of maps and client->auth_err could be merged into the existing
+outer loop which currently checks for the presence of maps in the loop
+condition and client->auth_err here in the loop body.  Having a single
+loop with everything checked in just one place would be a lot cleaner.
+
+> diff --git a/net/ceph/debugfs.c b/net/ceph/debugfs.c
+> index 2110439f8a24..7b45c169a859 100644
+> --- a/net/ceph/debugfs.c
+> +++ b/net/ceph/debugfs.c
+> @@ -36,8 +36,10 @@ static int monmap_show(struct seq_file *s, void *p)
+>         int i;
+>         struct ceph_client *client =3D s->private;
 >
-> @@ -4229,10 +4229,8 @@ void smb2_reconnect_server(struct work_struct *wor=
-k)
->                 }
->                 goto done;
+> +       mutex_lock(&client->monc.mutex);
+> +
+>         if (client->monc.monmap =3D=3D NULL)
+> -               return 0;
+> +               goto out_unlock;
+>
+>         seq_printf(s, "epoch %d\n", client->monc.monmap->epoch);
+>         for (i =3D 0; i < client->monc.monmap->num_mon; i++) {
+> @@ -48,6 +50,10 @@ static int monmap_show(struct seq_file *s, void *p)
+>                            ENTITY_NAME(inst->name),
+>                            ceph_pr_addr(&inst->addr));
 >         }
-> -
->         tcon->status =3D TID_GOOD;
-> -       tcon->retry =3D false;
-> -       tcon->need_reconnect =3D false;
-> +       tcon->dummy =3D true;
+> +
+> +out_unlock:
+> +       mutex_unlock(&client->monc.mutex);
+> +
+>         return 0;
+>  }
 >
->         /* now reconnect sessions for necessary channels */
->         list_for_each_entry_safe(ses, ses2, &tmp_ses_list, rlist) {
+> @@ -56,13 +62,15 @@ static int osdmap_show(struct seq_file *s, void *p)
+>         int i;
+>         struct ceph_client *client =3D s->private;
+>         struct ceph_osd_client *osdc =3D &client->osdc;
+> -       struct ceph_osdmap *map =3D osdc->osdmap;
+> +       struct ceph_osdmap *map =3D NULL;
+>         struct rb_node *n;
 >
+> +       down_read(&osdc->lock);
+> +
+> +       map =3D osdc->osdmap;
+>         if (map =3D=3D NULL)
+> -               return 0;
+> +               goto out_unlock;
 >
+> -       down_read(&osdc->lock);
+>         seq_printf(s, "epoch %u barrier %u flags 0x%x\n", map->epoch,
+>                         osdc->epoch_barrier, map->flags);
+>
+> @@ -131,6 +139,7 @@ static int osdmap_show(struct seq_file *s, void *p)
+>                 seq_printf(s, "]\n");
+>         }
+>
+> +out_unlock:
+>         up_read(&osdc->lock);
+>         return 0;
+>  }
+> diff --git a/net/ceph/mon_client.c b/net/ceph/mon_client.c
+> index ab66b599ac47..b299e5bbddb1 100644
+> --- a/net/ceph/mon_client.c
+> +++ b/net/ceph/mon_client.c
+> @@ -1232,6 +1232,7 @@ int ceph_monc_init(struct ceph_mon_client *monc, st=
+ruct ceph_client *cl)
+>         ceph_auth_destroy(monc->auth);
+>  out_monmap:
+>         kfree(monc->monmap);
+> +       monc->monmap =3D NULL;
+>  out:
+>         return err;
+>  }
+> @@ -1239,6 +1240,8 @@ EXPORT_SYMBOL(ceph_monc_init);
+>
+>  void ceph_monc_stop(struct ceph_mon_client *monc)
+>  {
+> +       struct ceph_monmap *old_monmap;
+> +
+>         dout("stop\n");
+>
+>         mutex_lock(&monc->mutex);
+> @@ -1266,7 +1269,11 @@ void ceph_monc_stop(struct ceph_mon_client *monc)
+>         ceph_msg_put(monc->m_subscribe);
+>         ceph_msg_put(monc->m_subscribe_ack);
+>
+> -       kfree(monc->monmap);
+> +       mutex_lock(&monc->mutex);
+> +       old_monmap =3D monc->monmap;
+> +       monc->monmap =3D NULL;
+> +       mutex_unlock(&monc->mutex);
+> +       kfree(old_monmap);
 
+The second point is that locking (or any changes at all) in
+ceph_monc_stop() and ceph_osdc_stop() shouldn't be needed.  As
+mentioned before, it's the point of no return where the entire client
+including monc and osdc parts gets freed very shortly after.
 
---=20
 Thanks,
 
-Steve
+                Ilya
 
