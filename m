@@ -1,225 +1,293 @@
-Return-Path: <ceph-devel+bounces-3268-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3269-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BC1BAF9C4F
-	for <lists+ceph-devel@lfdr.de>; Sat,  5 Jul 2025 00:31:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD876AFA0C8
+	for <lists+ceph-devel@lfdr.de>; Sat,  5 Jul 2025 17:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B458C7A4931
-	for <lists+ceph-devel@lfdr.de>; Fri,  4 Jul 2025 22:30:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6EF43A511E
+	for <lists+ceph-devel@lfdr.de>; Sat,  5 Jul 2025 15:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0F5289819;
-	Fri,  4 Jul 2025 22:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6B21FCFF1;
+	Sat,  5 Jul 2025 15:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RzHoH0Vu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QSOqrcY7"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A9E2E3719
-	for <ceph-devel@vger.kernel.org>; Fri,  4 Jul 2025 22:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4817D1DE3DB;
+	Sat,  5 Jul 2025 15:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1751668312; cv=none; b=nFeW53A8QBDT0NKJ7scpo8q3h8PEhYO5HM9A0jI0ppymewbsHxTTKgjqQyqBWY670EaBP0aRz3/TMFK5ZsS7jWAsb7z8/xBpZ+JUcbk8FPOXQj3+8Zj4Z6KblJccWLOzgmBKqfc8p25AyEHtRI+FYf8eJB/2DEWzrsv3WZD7d5U=
+	t=1751730888; cv=none; b=JvIxjpn/Y5GwPkVwiK8MpO1Tti9Lvxg7vC6+CMtNcTQIS2lvU94gNSxLYqIUYH62OzvF0vb8gcpAroAWEHZxihmoeNKys+e1Z1LJz2RJrBErEuAQ3NL3zx8GQ9ZYvUcND4sEVGfd/3QltEsz7CL5VGsrJsbDQWqbRiE8P8T6GPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1751668312; c=relaxed/simple;
-	bh=PxYBPboDRasXzW6Hx07ve0Ia+g8XeliZMeZoLQ9Ie7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Nn4qEnKF5ISZHZMR7k6YNt7r0AwEOFHCaukXrnUp/M83+iwWohyuxwJf8ZzcMwuI/l0d4z/knBSZjKi1gxYxup0oR41cZ/PeAWfQyMKf1EWaQ/6ydkZ79ImG6PDV3haG5TYNZKZbnuB7slJIfNR8Lbac6Rq99sXyOuhuGHVsfAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RzHoH0Vu; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1751668310; x=1783204310;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=PxYBPboDRasXzW6Hx07ve0Ia+g8XeliZMeZoLQ9Ie7w=;
-  b=RzHoH0VuEpXT2VB4CxAjJ5rVFdp4HMbizPAP0GuuraXd9vSjwwX7SYNa
-   IZKVaQ+nRiQjKURmwTJ13YOnFvcRZuXfw9gwzVbyQju8Ih7bVWuoxIeqA
-   2bEjRmARAtP1+moyx2oBJTAbC2whPXXhW+ClCsGVkzTR6bN1SLG7Haw3g
-   qq3MZmtgY/9Md+9pIpcAW62SZHl2v2ejLRxnGJVuPlokcJDqv+NPIkPik
-   hadJ0tPNW1MPdNIKQ1TYchuh9237Gic2TkXIfCfEtq6KRsxcjq50UMrJ4
-   INKPYILmPrMERGrgbJVGUzSsb9YUw2BGikwtiE1p5h5SNW/6wQzRqinHX
-   w==;
-X-CSE-ConnectionGUID: 3QixaR70RbGq9DV62OpwEA==
-X-CSE-MsgGUID: 4WzLUWEhRPWpjf7o3+5IDw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11484"; a="53214352"
-X-IronPort-AV: E=Sophos;i="6.16,288,1744095600"; 
-   d="scan'208";a="53214352"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2025 15:31:49 -0700
-X-CSE-ConnectionGUID: jyE4BRSUSBmistWw+Nt/Bw==
-X-CSE-MsgGUID: HnvsKqZgQlaT/ONBnsWL7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,288,1744095600"; 
-   d="scan'208";a="154810538"
-Received: from lkp-server01.sh.intel.com (HELO 0b2900756c14) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 04 Jul 2025 15:31:47 -0700
-Received: from kbuild by 0b2900756c14 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uXowb-00047T-1k;
-	Fri, 04 Jul 2025 22:31:45 +0000
-Date: Sat, 5 Jul 2025 06:31:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, ceph-devel@vger.kernel.org
-Subject: [ceph-client:binary_tracing 2/4] net/ceph/ceph_san_logger.c:508:21:
- sparse: sparse: incorrect type in initializer (different address spaces)
-Message-ID: <202507050653.f2vZWkeo-lkp@intel.com>
+	s=arc-20240116; t=1751730888; c=relaxed/simple;
+	bh=QoDGogeRYTYrueryHPf4IWax+j0Vn0fX9BSWLqdqtds=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tUbNoE9Eldn+L6WxcmGGridudQsrVVIygZtViCaXa25phuNAZv6rJfry1kR1WQ9ZzWLVNU5TPyNusi9JrVvZjzjCnFzq3yp1BCFlBJGCS7nQhzuX55HDgYZYlxfIvk9zyhmt1HIcAjUNR7N6JRGX3prDDQthWR1qdhf/7YlNFF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QSOqrcY7; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-235ef62066eso27508475ad.3;
+        Sat, 05 Jul 2025 08:54:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1751730886; x=1752335686; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OKXOhgR8Rxk7mTQK33CJ7OCCW5PMDPG1TwJy9Oc8MUk=;
+        b=QSOqrcY7wW940bOw/xCMeDf2Tm7XvlvFZFuo5254zHXkMMq5UdMp4wZlP6sVw1T9oS
+         GM5sHUJonIR4FOJigjPKi6opgogGgpFWCj0qrH3iL6mShyePpeII11XsskZWd7w3lcWr
+         GdggfSOAMY0ReslhIuPD1WEVIcig0c6I6a/aOq72noSTy9adVP7jdRUqjeoqQBCV0ZoJ
+         m6sOWnJA+h//mAEEnzrYpGaRQjYnyM7Vu7vilP5c+Bjxvv0O/427MgPGNmav/dgqgeJQ
+         CyuPlWEWkyN5PCgSegpQbim6v9UikXCqgYmtS5wmamXf7tNhZezT94EcE/EvTOGk+4J4
+         mQsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1751730886; x=1752335686;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OKXOhgR8Rxk7mTQK33CJ7OCCW5PMDPG1TwJy9Oc8MUk=;
+        b=mZKdaGDAdWVmzJ63PVPdnqKhfo2JVv/KEfcasedv3npgA5X71WCd2ZIvfk+Cg1h/2c
+         FgiOnobTR/zzSr0UOq7wkxLpImqDk/BY91ER+Nl+8pfNHwSRkctsCOliuTLnv8Ri7Paw
+         FHk4IKlrz+TsoEFSfb8StBU4hKrJIiO9nSol+A+TxaTqAPCFKYzFA7P/bM/09Q9BHaf5
+         49nts+4fUDz4A694a9eYUtgEKxN8oCrq7Q0XP9rBYdH/1r1TAsiEiasTVpvHZARZ1g4X
+         kUssU1CTBWPtxHBL+b240wTjOaEmToP7ZnoIqjLIaO2Q/TzsINVe9VwhOyP5/ZeHeBOh
+         3Qow==
+X-Forwarded-Encrypted: i=1; AJvYcCVKo9ncZ6mM9OBTB1rTpOEv8kuKTedClf+MdI/8h9vAH0FVozUhMI6N1na1VG7pFZ2/vO3StNt8iv2M4Yo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyev1+Hd79J4CTn/7ejKRqQYGhgTTiMYoM+Eq1IMUgtCHF4jdim
+	Cps6rxZX88CU7BioypxbtPsVTiWg2bRLmtOA6E/wffdGFWPR4CLEBCQDquJckw==
+X-Gm-Gg: ASbGncuiNxlITcLqaj+3eE3B85tLQqmmU1PzlJ9/ovdkEDBMicw81eyk0vQpsO7jFon
+	W60wtdxD9QWND+KyKtNrIuTWGag9GRXgk/9JLBENpRZddbYGOPZDvP4NxpD3ptYwlOe6dU0g04m
+	3gTq4oHeAhcz3kteP4zZn6zhV5QEzdFljYLULqvHazAJfT0jmkbRCV/h3S2NCHXZXUhzvxvfWR1
+	7f4mvmhxjTmWJjbLUd9Dy4KsCE9jvl9DEnrizIq1SSgEMullbBYGEh8GTCD38jIyYLSRkpkKfZW
+	S+CYNWp9A/S0hiat8vYyrRQnlzjQH+j/AVZB3k8BPkUlzm7fTO4CdH5tOeou1jk5D4fvJagabFh
+	7H4Tadozgf61MB/8=
+X-Google-Smtp-Source: AGHT+IEUKaeAeD1PyKCw8Vb7Uuu4b8zUNH1TFe785TFSy0lODfTG+ODrDrMOrE53KrSqL3ve9AIz0w==
+X-Received: by 2002:a17:902:e54a:b0:238:f2a:8893 with SMTP id d9443c01a7336-23c90fdb5acmr38491375ad.42.1751730886371;
+        Sat, 05 Jul 2025 08:54:46 -0700 (PDT)
+Received: from localhost.localdomain ([2401:4900:882f:293:70ba:30fe:2559:8217])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23c84593e0asm44143855ad.193.2025.07.05.08.54.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 05 Jul 2025 08:54:45 -0700 (PDT)
+From: Abinash Singh <abinashlalotra@gmail.com>
+X-Google-Original-From: Abinash Singh <abinashsinghlalotra@gmail.com>
+To: xiubli@redhat.com,
+	idryomov@gmail.com
+Cc: ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Abinash Singh <abinashsinghlalotra@gmail.com>
+Subject: [PATCH RFC] fs/ceph : fix build warning in ceph_writepages_start()
+Date: Sat,  5 Jul 2025 21:24:22 +0530
+Message-ID: <20250705155422.802775-1-abinashsinghlalotra@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://github.com/ceph/ceph-client.git binary_tracing
-head:   242b3aa593381c5ed2f425dbfb145bf7ca42e1fc
-commit: 8a1cb95e58001067ea33908f1762ca31d6f93b69 [2/4] ceph_san code
-config: x86_64-randconfig-r122-20250704 (https://download.01.org/0day-ci/archive/20250705/202507050653.f2vZWkeo-lkp@intel.com/config)
-compiler: clang version 20.1.7 (https://github.com/llvm/llvm-project 6146a88f60492b520a36f8f8f3231e15f3cc6082)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250705/202507050653.f2vZWkeo-lkp@intel.com/reproduce)
+The function `ceph_writepages_start()` triggers
+a large stack frame warning:
+ld.lld: warning:
+	fs/ceph/addr.c:1632:0: stack frame size (1072) exceeds limit (1024) in function 'ceph_writepages_start.llvm.2555023190050417194'
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507050653.f2vZWkeo-lkp@intel.com/
+fix it by dynamically allocating `ceph_writeback_ctl` struct.
 
-sparse warnings: (new ones prefixed by >>)
->> net/ceph/ceph_san_logger.c:508:21: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct ceph_san_tls_ctx [noderef] __percpu ** @@
-   net/ceph/ceph_san_logger.c:508:21: sparse:     expected void const [noderef] __percpu *__vpp_verify
-   net/ceph/ceph_san_logger.c:508:21: sparse:     got struct ceph_san_tls_ctx [noderef] __percpu **
->> net/ceph/ceph_san_logger.c:508:55: sparse: sparse: incompatible types in comparison expression (different address spaces):
-   net/ceph/ceph_san_logger.c:508:55: sparse:    struct ceph_san_tls_ctx [noderef] __percpu *
-   net/ceph/ceph_san_logger.c:508:55: sparse:    struct ceph_san_tls_ctx *
-   net/ceph/ceph_san_logger.c:567:36: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct ceph_san_tls_ctx [noderef] __percpu ** @@
->> net/ceph/ceph_san_logger.c:567:36: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct ceph_san_tls_ctx *ctx @@     got struct ceph_san_tls_ctx [noderef] __percpu *[assigned] pscr_ret__ @@
-   net/ceph/ceph_san_logger.c:572:13: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct ceph_san_tls_ctx [noderef] __percpu ** @@
-   net/ceph/ceph_san_logger.c:589:5: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected void const [noderef] __percpu *__vpp_verify @@     got struct ceph_san_tls_ctx [noderef] __percpu ** @@
->> net/ceph/ceph_san_logger.c:589:5: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct ceph_san_tls_ctx [noderef] __percpu *pto_tmp__ @@     got struct ceph_san_tls_ctx *ctx @@
->> net/ceph/ceph_san_logger.c:589:5: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct ceph_san_tls_ctx [noderef] __percpu *pto_tmp__ @@     got struct ceph_san_tls_ctx *ctx @@
->> net/ceph/ceph_san_logger.c:589:5: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct ceph_san_tls_ctx [noderef] __percpu *pto_tmp__ @@     got struct ceph_san_tls_ctx *ctx @@
->> net/ceph/ceph_san_logger.c:589:5: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct ceph_san_tls_ctx [noderef] __percpu *pto_tmp__ @@     got struct ceph_san_tls_ctx *ctx @@
+Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
+---
+The high stack usage of ceph_writepages_start() was further 
+confirmed by using -fstack-usage flag :
+...
+fs/ceph/addr.c:1837:ceph_netfs_check_write_begin        104     static
+fs/ceph/addr.c:1630:ceph_writepages_start       648     static
+...
+After optimzations it may go upto 1072 as seen in warning.
+After allocating `ceph_writeback_ctl` struct it is reduced to:
+...
+fs/ceph/addr.c:1630:ceph_writepages_start       288     static
+fs/ceph/addr.c:81:ceph_dirty_folio      72      static
+...
+Is this fun used very frequently ?? or dynamic allocation is 
+a fine fix for reducing the stack usage ?
 
-vim +508 net/ceph/ceph_san_logger.c
+Thank You
+---
+ fs/ceph/addr.c | 82 ++++++++++++++++++++++++++------------------------
+ 1 file changed, 43 insertions(+), 39 deletions(-)
 
-   482	
-   483	    while (entry == NULL) {
-   484	        ctx = ceph_san_get_ctx();
-   485	        if (!ctx) {
-   486	            pr_err("Failed to get TLS context\n");
-   487	            return NULL;
-   488	        }
-   489	        if (!is_valid_kernel_addr(ctx)) {
-   490	            pr_err("ceph_san_log: invalid TLS context address: %pK\n", ctx);
-   491	            return NULL;
-   492	        }
-   493	        if (unlikely(retry_count)) {
-   494	            pr_debug("[%d]Retrying allocation with ctx %llu (%s, pid %d) (retry %d, needed_size=%zu @ %d)\n",
-   495	                     smp_processor_id(), ctx->id, ctx->comm, ctx->pid, retry_count, needed_size, source_id);
-   496	        }
-   497	
-   498	        alloc = cephsan_pagefrag_alloc(&ctx->pf, needed_size);
-   499	        if (alloc == (u64)-ENOMEM) {
-   500	            pr_debug("[%d]ceph_san_log: pagefrag full for ctx %llu (%s, pid %d), refcount=%d. Alloc failed (retry=%d): pf head=%u active_elements=%d alloc_count=%u, needed_size=%zu, pagefrag_size=%u\n",
-   501	                   smp_processor_id(),
-   502	                   ctx->id, ctx->comm, ctx->pid, atomic_read(&ctx->refcount), retry_count, ctx->pf.head,
-   503	                   ctx->pf.active_elements, ctx->pf.alloc_count,
-   504	                   needed_size, CEPHSAN_PAGEFRAG_SIZE);
-   505	
-   506	            /* Invalidate the correct active context slot before releasing and retrying */
-   507	            if (in_serving_softirq()) {
- > 508	                if (this_cpu_read(g_logger.napi_ctxs) == ctx) {
-   509	                    pr_debug("[%d]ceph_san_log: Clearing NAPI slot for ctx %llu (CPU %d) due to ENOMEM.\n", smp_processor_id(), ctx->id, smp_processor_id());
-   510	                    this_cpu_write(g_logger.napi_ctxs, NULL);
-   511	                } else {
-   512	                    pr_warn("[%d]ceph_san_log: ENOMEM for ctx %llu (%s, pid %d) in softirq, but it wasn't in current CPU's NAPI slot. NAPI slot holds %p. Refcount: %d.\n",
-   513	                            smp_processor_id(), ctx->id, ctx->comm, ctx->pid, this_cpu_read(g_logger.napi_ctxs), atomic_read(&ctx->refcount));
-   514	                }
-   515	            } else {
-   516	                if (current->tls_ctx == (void *)&ctx->release) {
-   517	                    pr_debug("[%d]ceph_san_log: Clearing current->tls_ctx for TLS ctx %llu due to ENOMEM.\n", smp_processor_id(), ctx->id);
-   518	                    current->tls_ctx = NULL;
-   519	                } else {
-   520	                    pr_warn("[%d]ceph_san_log: ENOMEM for ctx %llu (%s, pid %d) not in softirq, but it wasn't current->tls_ctx. current->tls_ctx is %p. Refcount: %d.\n",
-   521	                            smp_processor_id(), ctx->id, ctx->comm, ctx->pid, current->tls_ctx, atomic_read(&ctx->refcount));
-   522	                }
-   523	            }
-   524	
-   525	            ++retry_count;
-   526	            ceph_san_tls_release(ctx); /* This decrements refcount, ctx may be reused or freed */
-   527	            entry = NULL; /* Ensure we loop to get a new context */
-   528	            continue;
-   529	        }
-   530	        //TODO:: remove this shit alloc should return a ptr
-   531	        entry = cephsan_pagefrag_get_ptr(&ctx->pf, alloc);
-   532	        if (unlikely(!is_valid_kernel_addr(entry))) {
-   533	            pr_debug("[%d]ceph_san_log: invalid log entry pointer: %llx from ctx %llu (%s, pid %d)\n",
-   534	                     smp_processor_id(), (unsigned long long)entry, ctx->id, ctx->comm, ctx->pid);
-   535	            ceph_san_tls_release(ctx); /* Release the context as we can't use the entry */
-   536	            entry = NULL; /* force retry to get a new context and page */
-   537	            continue;
-   538	        }
-   539	        if (unlikely(retry_count)) {
-   540	            pr_debug("[%d]Successfully allocated with ctx %llu (%s, pid %d) after %d retries (needed_size=%zu @ %d)\n",
-   541	                     smp_processor_id(), ctx->id, ctx->comm, ctx->pid, retry_count, needed_size, source_id);
-   542	        }
-   543	    }
-   544	
-   545	    /* Update last_entry pointer */
-   546	    ctx->pf.last_entry = entry;
-   547	
-   548	    /* Fill in entry details */
-   549	#if CEPH_SAN_DEBUG_POISON
-   550	    entry->debug_poison = CEPH_SAN_LOG_ENTRY_POISON;
-   551	#endif
-   552	    entry->ts_delta = (u32)(jiffies - ctx->base_jiffies);
-   553	    entry->source_id = (u16)source_id;
-   554	    entry->client_id = (u8)client_id;
-   555	    entry->len = (u8)needed_size;
-   556	    return entry->buffer;
-   557	}
-   558	EXPORT_SYMBOL(ceph_san_log);
-   559	
-   560	/**
-   561	 * ceph_san_get_napi_ctx - Get NAPI context for current CPU
-   562	 *
-   563	 * Returns pointer to NAPI context or NULL if not set
-   564	 */
-   565	struct ceph_san_tls_ctx *ceph_san_get_napi_ctx(void)
-   566	{
- > 567	    struct ceph_san_tls_ctx *ctx = this_cpu_read(g_logger.napi_ctxs);
-   568	
-   569	    if (ctx) {
-   570	        if (!is_valid_active_ctx(ctx, "NAPI")) {
-   571	            pr_err("BUG: Invalid NAPI context found for CPU %d, clearing.\n", smp_processor_id());
-   572	            this_cpu_write(g_logger.napi_ctxs, NULL);
-   573	            return NULL;
-   574	        }
-   575	    }
-   576	    return ctx;
-   577	}
-   578	EXPORT_SYMBOL(ceph_san_get_napi_ctx);
-   579	
-   580	/**
-   581	 * ceph_san_set_napi_ctx - Set NAPI context for current CPU
-   582	 * @ctx: Context to set
-   583	 */
-   584	void ceph_san_set_napi_ctx(struct ceph_san_tls_ctx *ctx)
-   585	{
-   586	    if (ctx && !is_valid_active_ctx(ctx, "New NAPI being set")) {
-   587	        BUG(); /* Context should be valid and refcount 1 before being set */
-   588	    }
- > 589	    this_cpu_write(g_logger.napi_ctxs, ctx);
-   590	}
-   591	EXPORT_SYMBOL(ceph_san_set_napi_ctx);
-   592	
-
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 60a621b00c65..503a86c1dda6 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1633,9 +1633,13 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 	struct inode *inode = mapping->host;
+ 	struct ceph_fs_client *fsc = ceph_inode_to_fs_client(inode);
+ 	struct ceph_client *cl = fsc->client;
+-	struct ceph_writeback_ctl ceph_wbc;
++	struct ceph_writeback_ctl *ceph_wbc __free(kfree) = NULL;
+ 	int rc = 0;
+ 
++	ceph_wbc = kmalloc(sizeof(*ceph_wbc), GFP_NOFS);
++	if (!ceph_wbc)
++		return -ENOMEM;
++
+ 	if (wbc->sync_mode == WB_SYNC_NONE && fsc->write_congested)
+ 		return 0;
+ 
+@@ -1648,7 +1652,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 		return -EIO;
+ 	}
+ 
+-	ceph_init_writeback_ctl(mapping, wbc, &ceph_wbc);
++	ceph_init_writeback_ctl(mapping, wbc, ceph_wbc);
+ 
+ 	if (!ceph_inc_osd_stopping_blocker(fsc->mdsc)) {
+ 		rc = -EIO;
+@@ -1656,7 +1660,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 	}
+ 
+ retry:
+-	rc = ceph_define_writeback_range(mapping, wbc, &ceph_wbc);
++	rc = ceph_define_writeback_range(mapping, wbc, ceph_wbc);
+ 	if (rc == -ENODATA) {
+ 		/* hmm, why does writepages get called when there
+ 		   is no dirty data? */
+@@ -1665,55 +1669,55 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 	}
+ 
+ 	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
+-		tag_pages_for_writeback(mapping, ceph_wbc.index, ceph_wbc.end);
++		tag_pages_for_writeback(mapping, ceph_wbc->index, ceph_wbc->end);
+ 
+-	while (!has_writeback_done(&ceph_wbc)) {
+-		ceph_wbc.locked_pages = 0;
+-		ceph_wbc.max_pages = ceph_wbc.wsize >> PAGE_SHIFT;
++	while (!has_writeback_done(ceph_wbc)) {
++		ceph_wbc->locked_pages = 0;
++		ceph_wbc->max_pages = ceph_wbc->wsize >> PAGE_SHIFT;
+ 
+ get_more_pages:
+-		ceph_folio_batch_reinit(&ceph_wbc);
++		ceph_folio_batch_reinit(ceph_wbc);
+ 
+-		ceph_wbc.nr_folios = filemap_get_folios_tag(mapping,
+-							    &ceph_wbc.index,
+-							    ceph_wbc.end,
+-							    ceph_wbc.tag,
+-							    &ceph_wbc.fbatch);
++		ceph_wbc->nr_folios = filemap_get_folios_tag(mapping,
++							    &ceph_wbc->index,
++							    ceph_wbc->end,
++							    ceph_wbc->tag,
++							    &ceph_wbc->fbatch);
+ 		doutc(cl, "pagevec_lookup_range_tag for tag %#x got %d\n",
+-			ceph_wbc.tag, ceph_wbc.nr_folios);
++			ceph_wbc->tag, ceph_wbc->nr_folios);
+ 
+-		if (!ceph_wbc.nr_folios && !ceph_wbc.locked_pages)
++		if (!ceph_wbc->nr_folios && !ceph_wbc->locked_pages)
+ 			break;
+ 
+ process_folio_batch:
+-		rc = ceph_process_folio_batch(mapping, wbc, &ceph_wbc);
++		rc = ceph_process_folio_batch(mapping, wbc, ceph_wbc);
+ 		if (rc)
+ 			goto release_folios;
+ 
+ 		/* did we get anything? */
+-		if (!ceph_wbc.locked_pages)
++		if (!ceph_wbc->locked_pages)
+ 			goto release_folios;
+ 
+-		if (ceph_wbc.processed_in_fbatch) {
+-			ceph_shift_unused_folios_left(&ceph_wbc.fbatch);
++		if (ceph_wbc->processed_in_fbatch) {
++			ceph_shift_unused_folios_left(&ceph_wbc->fbatch);
+ 
+-			if (folio_batch_count(&ceph_wbc.fbatch) == 0 &&
+-			    ceph_wbc.locked_pages < ceph_wbc.max_pages) {
++			if (folio_batch_count(&ceph_wbc->fbatch) == 0 &&
++			    ceph_wbc->locked_pages < ceph_wbc->max_pages) {
+ 				doutc(cl, "reached end fbatch, trying for more\n");
+ 				goto get_more_pages;
+ 			}
+ 		}
+ 
+-		rc = ceph_submit_write(mapping, wbc, &ceph_wbc);
++		rc = ceph_submit_write(mapping, wbc, ceph_wbc);
+ 		if (rc)
+ 			goto release_folios;
+ 
+-		ceph_wbc.locked_pages = 0;
+-		ceph_wbc.strip_unit_end = 0;
++		ceph_wbc->locked_pages = 0;
++		ceph_wbc->strip_unit_end = 0;
+ 
+-		if (folio_batch_count(&ceph_wbc.fbatch) > 0) {
+-			ceph_wbc.nr_folios =
+-				folio_batch_count(&ceph_wbc.fbatch);
++		if (folio_batch_count(&ceph_wbc->fbatch) > 0) {
++			ceph_wbc->nr_folios =
++				folio_batch_count(&ceph_wbc->fbatch);
+ 			goto process_folio_batch;
+ 		}
+ 
+@@ -1724,38 +1728,38 @@ static int ceph_writepages_start(struct address_space *mapping,
+ 		 * we tagged for writeback prior to entering this loop.
+ 		 */
+ 		if (wbc->nr_to_write <= 0 && wbc->sync_mode == WB_SYNC_NONE)
+-			ceph_wbc.done = true;
++			ceph_wbc->done = true;
+ 
+ release_folios:
+ 		doutc(cl, "folio_batch release on %d folios (%p)\n",
+-		      (int)ceph_wbc.fbatch.nr,
+-		      ceph_wbc.fbatch.nr ? ceph_wbc.fbatch.folios[0] : NULL);
+-		folio_batch_release(&ceph_wbc.fbatch);
++		      (int)ceph_wbc->fbatch.nr,
++		      ceph_wbc->fbatch.nr ? ceph_wbc->fbatch.folios[0] : NULL);
++		folio_batch_release(&ceph_wbc->fbatch);
+ 	}
+ 
+-	if (ceph_wbc.should_loop && !ceph_wbc.done) {
++	if (ceph_wbc->should_loop && !ceph_wbc->done) {
+ 		/* more to do; loop back to beginning of file */
+ 		doutc(cl, "looping back to beginning of file\n");
+ 		/* OK even when start_index == 0 */
+-		ceph_wbc.end = ceph_wbc.start_index - 1;
++		ceph_wbc->end = ceph_wbc->start_index - 1;
+ 
+ 		/* to write dirty pages associated with next snapc,
+ 		 * we need to wait until current writes complete */
+-		ceph_wait_until_current_writes_complete(mapping, wbc, &ceph_wbc);
++		ceph_wait_until_current_writes_complete(mapping, wbc, ceph_wbc);
+ 
+-		ceph_wbc.start_index = 0;
+-		ceph_wbc.index = 0;
++		ceph_wbc->start_index = 0;
++		ceph_wbc->index = 0;
+ 		goto retry;
+ 	}
+ 
+-	if (wbc->range_cyclic || (ceph_wbc.range_whole && wbc->nr_to_write > 0))
+-		mapping->writeback_index = ceph_wbc.index;
++	if (wbc->range_cyclic || (ceph_wbc->range_whole && wbc->nr_to_write > 0))
++		mapping->writeback_index = ceph_wbc->index;
+ 
+ dec_osd_stopping_blocker:
+ 	ceph_dec_osd_stopping_blocker(fsc->mdsc);
+ 
+ out:
+-	ceph_put_snap_context(ceph_wbc.last_snapc);
++	ceph_put_snap_context(ceph_wbc->last_snapc);
+ 	doutc(cl, "%llx.%llx dend - startone, rc = %d\n", ceph_vinop(inode),
+ 	      rc);
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
