@@ -1,103 +1,109 @@
-Return-Path: <ceph-devel+bounces-3287-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3288-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08103AFF2E6
-	for <lists+ceph-devel@lfdr.de>; Wed,  9 Jul 2025 22:22:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62601AFF414
+	for <lists+ceph-devel@lfdr.de>; Wed,  9 Jul 2025 23:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A7A545DBE
-	for <lists+ceph-devel@lfdr.de>; Wed,  9 Jul 2025 20:22:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53CF43ADAC3
+	for <lists+ceph-devel@lfdr.de>; Wed,  9 Jul 2025 21:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A6424292E;
-	Wed,  9 Jul 2025 20:22:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A24423FC41;
+	Wed,  9 Jul 2025 21:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dvY8dUBY"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="M+Vjkmar"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BEC1E5B6A
-	for <ceph-devel@vger.kernel.org>; Wed,  9 Jul 2025 20:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDF523B63C
+	for <ceph-devel@vger.kernel.org>; Wed,  9 Jul 2025 21:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752092565; cv=none; b=fj6LM0g8Dx/GCiwURIKdkEc0kDO2XMrmmjwOVFnDqUERvN2Vb0DZJVFSk2MnH0JZNQdd6ICLV6m29XPST7knUm20EVUI+1WrcT4CuFe2iEoL+rIujnyJhaROpqy5lf959VDxtP7bF2e9Gxmia/HTPQqBaqoYXI1SdTi+eTMGzxA=
+	t=1752097457; cv=none; b=MDXAmUnID3ayjjjmxJ+98FARelerWwuptTHOy3xNs38q5V5p0HFyvWtcKZKK9I7hvRVD9qsWW/Djyp6j10Cy84kvv+pa03KDqw+pSJlkufBnDvXMKkD7OzSjRWSgqwVNXhnGQs6FCnspfGFxQZ2UdnBlmUwcnuMSerRYeHag5Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752092565; c=relaxed/simple;
-	bh=/9Kns4ZXz/Qn4PrGGI5OGogJEIPcnnOmSvL0JleJ6ik=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=ZwML1x4EM66gQZt3P/cv/RA/2rMDS+dbz9A5eBvaryx2HZBjZplDCvdyMBJjK40uTG8TemmmCbncLYwpgxhqUFGEXpWMH0zBtHqa31jY1rid70dfRvivYcszs2SYl0F+eRzmzqgtgkJRHJkx/RCSmlKwGs2II0wY4seuGwY3jsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dvY8dUBY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752092562;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kDiGMlKKETCealBEfy16p098aY14pQYAB7sWpWAIJfI=;
-	b=dvY8dUBYjvFTp3eUzIRSPQT+ouX1DBPQ5qmLi61/eRLwFm4vuGdg5OLkPugMh3jtmPYOSe
-	S5JZ4i4jIwPcfBRSK32etoYdpJGeRijkKvNo508W9V095WrZkaTJY8TgdzYadDFMYZtCIG
-	SVNloyNdm6+BNJ+mvrkpjraPnxAIPEM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-441-lFtj-QW-N8iv7MzdbQf7tA-1; Wed,
- 09 Jul 2025 16:22:40 -0400
-X-MC-Unique: lFtj-QW-N8iv7MzdbQf7tA-1
-X-Mimecast-MFC-AGG-ID: lFtj-QW-N8iv7MzdbQf7tA_1752092558
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BF21B180028D;
-	Wed,  9 Jul 2025 20:22:37 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 989511955E85;
-	Wed,  9 Jul 2025 20:22:33 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com>
-References: <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com> <20250701163852.2171681-1-dhowells@redhat.com> <CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=shxyGLwfe-L7AV3DhebS3w@mail.gmail.com> <2724318.1752066097@warthog.procyon.org.uk>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-    netfs@lists.linux.dev, linux-afs@lists.infradead.org,
-    linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
-    ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-    stable@vger.kernel.org
-Subject: Re: [PATCH 00/13] netfs, cifs: Fixes to retry-related code
+	s=arc-20240116; t=1752097457; c=relaxed/simple;
+	bh=QM3ZwKzZ3tmooQKRsyzdW8dMI+e0bgrGReSxQbsBbz4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nhxf74pud0eo8E+W1LTwvAqhKAf+NVi3iKyR9aUidPGr5o2V6nnbRqS9DVvWLxoGhBYTY/zA21OUSfoLHlfT2rpSUymHJCQgF7O3zTht5bjD98gS3MsQwVsh/k9PmXlaBUXEClD4QeTUnm2l+FopTYgg1ytRrZTXK/tjG3sHSPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=M+Vjkmar; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60c93c23b08so495991a12.3
+        for <ceph-devel@vger.kernel.org>; Wed, 09 Jul 2025 14:44:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1752097453; x=1752702253; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J2oOfilMeJ3fSH+1jR5dPS+6bpms3vDBaMx9PS7L2n8=;
+        b=M+Vjkmar2DZR01VBbGidpjLsj5WkhccV4HkYK/+hg7utLrEMINgnjypBRimA/63N9Z
+         yYsj7DHfmQMKO1QAv71VK0sNBQkM9peUJhNd+uT1+KdZik4D91/04Eja8bsYuFfp0NYO
+         FQ3oMpJJIDemPPNuxCCNSfbuS55si7hddv+RnXQA0b+5DhFQB8Z7rNyJQXBnKOOuK4Rl
+         95Iib0HNh/m9cbmeeGI8t7IUpxYr+cfY+DNwK7eo7gUezPshoSEvsBIeAy7Pg6vTmmhV
+         h3t0qqhwOB/bMwwUqNpEiS29wNroRRQR/3a4uP4NUgAMh9KoBsErPHFfXlzrhjWBnwHO
+         DNkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1752097453; x=1752702253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J2oOfilMeJ3fSH+1jR5dPS+6bpms3vDBaMx9PS7L2n8=;
+        b=gk+X+KIIvqkbppOPiogbkQeppwV8kAHGPOznuWOgGsGZRd36pSqhRnWgXGZmOVTvRv
+         T8BYwg18iKUcE1Te4yIAzMdGOibW9Tg03OWtdFzaBPSdRn/t69kr0KNVjhR04fgovq9C
+         YqOUClM1DMTrIsWiWd2JigYDnYLvfC6DV55hiDHSZKhoWb9cwyyxgkupZ+4lZnfKp769
+         V5xyAkcgQZlpwTBevQRdP2GQHhNuqfWBc7V4ls6lgYbPtwx8dP7aVp1wm6e1uSvqgIIp
+         3UFihHDlCFx28ga0P1qe3Q0Y7yZh5BXl25kgwVMo3DBMI8OO0UVcRrGhQgQXT/FM4GVu
+         eAzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPftTZ4Z6/zWmzD483p6GUqkXtGZ6PIkZOmtiZWzy1dFMCdtRDL+Hd+Lv5ZudGs9sCtLoTfwuk7RVQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7+/A4/spnSMwWRx5w1/sglsxpMabW1quk8iPi6aYgDOMtoss7
+	UubId8saYVwxkNahVBlGhqPHm0Cxyj0/fK/4KzN2Ia7LNlIvjRBIlx5cl8jkG4PCga6dzcB9yJJ
+	9tkAl9XWUFlgm5TmWWSvusQ+kXJ4onA2rSh9deRmYug==
+X-Gm-Gg: ASbGncuiNfKR0TjO0a8KN51tmivQwNzDhKfs78IUznobmJSU1eOvy+pHBAKsjIuOsMZ
+	n/8nQ2VzbRweypp31Dkw3oul8n8RAkjwVB6nmZQ054/whD+OWH2aCHQ9OjN31FrAhlpCbcc2wRT
+	p/lOQzGWXbtx4VibZU8hqKTVk6+qAhT7lPlh8DT5iv5Myx2ET85glOy96ZD8s3M1Cgn6n+UhA=
+X-Google-Smtp-Source: AGHT+IHRfBgI+JpvIFW5bdEhu8EMbBsinsmaICn0S2xVCrLK7zPglEC6AbVpvLywHBFg/8fSMjerPI4gbWHSZhnMN/4=
+X-Received: by 2002:a17:906:46d9:b0:ae3:d1fe:f953 with SMTP id
+ a640c23a62f3a-ae6e7099e16mr25848366b.43.1752097453229; Wed, 09 Jul 2025
+ 14:44:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2738561.1752092552.1@warthog.procyon.org.uk>
-Date: Wed, 09 Jul 2025 21:22:32 +0100
-Message-ID: <2738562.1752092552@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20250701163852.2171681-1-dhowells@redhat.com> <CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=shxyGLwfe-L7AV3DhebS3w@mail.gmail.com>
+ <2724318.1752066097@warthog.procyon.org.uk> <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com>
+ <2738562.1752092552@warthog.procyon.org.uk>
+In-Reply-To: <2738562.1752092552@warthog.procyon.org.uk>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Wed, 9 Jul 2025 23:44:02 +0200
+X-Gm-Features: Ac12FXwGyOaYIBhD6kJLi5Rdp0KMSI4jWTqWW8bY_UVcRj5P-WQCdanG6BjA4Q0
+Message-ID: <CAKPOu+-qYtC0iFWv856JZinO-0E=SEoQ6pOLvc0bZfsbSakR8w@mail.gmail.com>
+Subject: Re: [PATCH 00/13] netfs, cifs: Fixes to retry-related code
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>, Steve French <sfrench@samba.org>, 
+	Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev, linux-afs@lists.infradead.org, 
+	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Max Kellermann <max.kellermann@ionos.com> wrote:
-
->      kworker/8:1-437     [008] ...1.   107.149531: netfs_rreq:
-> R=00000065 2C WAKE-Q  f=80002020
+On Wed, Jul 9, 2025 at 10:22=E2=80=AFPM David Howells <dhowells@redhat.com>=
+ wrote:
+> > (The above was 6.15.5 plus all patches in this PR.)
 >
-> ...
-> (The above was 6.15.5 plus all patches in this PR.)
+> Can you check that, please?  If you have patch 12 applied, then the flags
+> should be renumbered and there shouldn't be a NETFS_RREQ_ flag with 13, b=
+ut
+> f=3D80002020 would seem to have 0x2000 (ie. bit 13) set in it.
 
-Can you check that, please?  If you have patch 12 applied, then the flags
-should be renumbered and there shouldn't be a NETFS_RREQ_ flag with 13, but
-f=80002020 would seem to have 0x2000 (ie. bit 13) set in it.
-
-If you do have it applied, then this might be an indicator of the issue.
-
-David
-
+Oh, I was slightly wrong, I merged only 12 patches, omitting the
+renumbering patch because it had conflicts with my branch, and it was
+only a cosmetic change, not relevant for the bug. Sorry for the
+confusion!
 
