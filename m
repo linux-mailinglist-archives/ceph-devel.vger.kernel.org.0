@@ -1,71 +1,71 @@
-Return-Path: <ceph-devel+bounces-3301-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3302-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DD02B00764
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Jul 2025 17:44:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3DCB008C9
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Jul 2025 18:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090BB1895B10
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Jul 2025 15:40:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 122276424A3
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Jul 2025 16:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DD22EB5C3;
-	Thu, 10 Jul 2025 15:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A952F0033;
+	Thu, 10 Jul 2025 16:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N4hVv+hw"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bfLrr06J"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983AF2EB5CA
-	for <ceph-devel@vger.kernel.org>; Thu, 10 Jul 2025 15:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6381D2F0054
+	for <ceph-devel@vger.kernel.org>; Thu, 10 Jul 2025 16:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752161545; cv=none; b=afNNpyQy2EALID+hvrhxolwtqmUEGUh1Hda+XLndepBL/V9piENYQhiIpWtZaioMpaWCN5GIsmR4zeLeA7bkoUHdH7pZAM7YqSFStgXnFzlpWfljs0ftPM20ETSFoUkpoMRU64F6qJHthPUkZfqnPG9UszQj+TtEwwcxwfXP6Fc=
+	t=1752165114; cv=none; b=WkTdW2TgBi+VZyoTGhAPq+TUECqR9k4nB8Ap7kDTs0nF58W81hgxXrT3PB9689oi8YAkaKU7lOeG2Rrzj8acSKfXUdaX2bBfuaT77cUZQisI/nRnfvWzTXvC8amwYAtD5cfFAfR1bQrPjcAO1AI3GbFEO42qMbgyx0R2WF0uBF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752161545; c=relaxed/simple;
-	bh=Vxu02Vwi4MaffP6w0cS3WO4VpSM+VZ0mD3ULV1BoI0g=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=RSJkXPK1wnYPq4lvat3jDUquULmi6QdLu2e7wdr3vZ1HYO+Bh9aXkGEjXcAqccoPFGIT7Onb+MO8QZDX3isknFiAWXF37ay31ES3X/y4/2JQmfMjAnf/qpZ/2DzAyNiRZC/FuECU8IbMTW89/N4rGXEBg7ac8lT/Ja4Jxg1nVgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N4hVv+hw; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1752165114; c=relaxed/simple;
+	bh=0/7e0fhDD+nhfhomUm5QCNroWeBizuBJN14rsfB0VjY=;
+	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
+	 Date:Message-ID; b=k1O3oxbhCp5aovJKlNkSCglDtKVNHapSemtJQE91HoSVRXC1nHP9DzykMdmhXAvpbblEu7t+A8azsZHrA1c7tjH1MK3VhGFDKIn+PmPAHIol/UIis6NvCAwUYeI+5ZGvD4/7Nex4Er1OF4qdRgv+RZWxC5M1KJDsMfDMKfWNw8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bfLrr06J; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1752161542;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=mimecast20190719; t=1752165111;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YqxxYoPuA3Pg0BrSQIdZ1K/riWGooZPHA4u4TO5UqfQ=;
-	b=N4hVv+hw/gYQYhRBPP8KOWL7CKydFOhhnGitSYvM9HLexQytEnlVvZdlTNg7C5WeL9PTUK
-	U3MuT28QLIqSjBPraLo5llKdInY9avL6NvXdPD+J+yoqoLeh+pg+mYW5b5tp+ynLhnzvMA
-	E+xbFXNJyn+7I7nyvu2L4YpLEDkzLLM=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=XbVgBYU1j7RlLF0+RFun00uhaSaH2KoCdahv4lEZ8ho=;
+	b=bfLrr06JsLYqti0/PQQzHrVxB9TIvNicSdzD/25mT37NxGa/J7+qP83Y/fgNnTbB51tI2d
+	5/xf7uPD+cv5UMeuxN2ESjMcLJaJ9iD7KDxOuYy3hpYtilXH9OyrR/DRxOD+TL0aMr6UL4
+	/qt1qP8aIVSSMpZhv8LSCdle2H8+pqM=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-637-NYRrLi8ZMBeZ8SKv7q75hw-1; Thu,
- 10 Jul 2025 11:32:19 -0400
-X-MC-Unique: NYRrLi8ZMBeZ8SKv7q75hw-1
-X-Mimecast-MFC-AGG-ID: NYRrLi8ZMBeZ8SKv7q75hw_1752161537
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-416-77Io-M4CMMG3K5g-BpBdDw-1; Thu,
+ 10 Jul 2025 12:31:46 -0400
+X-MC-Unique: 77Io-M4CMMG3K5g-BpBdDw-1
+X-Mimecast-MFC-AGG-ID: 77Io-M4CMMG3K5g-BpBdDw_1752165099
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6990719560B5;
-	Thu, 10 Jul 2025 15:32:16 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F8AF18001D1;
+	Thu, 10 Jul 2025 16:31:39 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2F971180035C;
-	Thu, 10 Jul 2025 15:32:11 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6CC423000221;
+	Thu, 10 Jul 2025 16:31:35 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
 	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
 	Kingdom.
 	Registered in England and Wales under Company Registration No. 3798903
 From: David Howells <dhowells@redhat.com>
-In-Reply-To: <CAKPOu+9TN4hza48+uT_9W5wEYhZGLc2F57xxKDiyhy=pay5XAw@mail.gmail.com>
-References: <CAKPOu+9TN4hza48+uT_9W5wEYhZGLc2F57xxKDiyhy=pay5XAw@mail.gmail.com> <20250701163852.2171681-1-dhowells@redhat.com> <CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=shxyGLwfe-L7AV3DhebS3w@mail.gmail.com> <2724318.1752066097@warthog.procyon.org.uk> <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com> <2738562.1752092552@warthog.procyon.org.uk> <CAKPOu+-qYtC0iFWv856JZinO-0E=SEoQ6pOLvc0bZfsbSakR8w@mail.gmail.com> <2807750.1752144428@warthog.procyon.org.uk>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+In-Reply-To: <2904424.1752161530@warthog.procyon.org.uk>
+References: <2904424.1752161530@warthog.procyon.org.uk> <CAKPOu+9TN4hza48+uT_9W5wEYhZGLc2F57xxKDiyhy=pay5XAw@mail.gmail.com> <20250701163852.2171681-1-dhowells@redhat.com> <CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=shxyGLwfe-L7AV3DhebS3w@mail.gmail.com> <2724318.1752066097@warthog.procyon.org.uk> <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com> <2738562.1752092552@warthog.procyon.org.uk> <CAKPOu+-qYtC0iFWv856JZinO-0E=SEoQ6pOLvc0bZfsbSakR8w@mail.gmail.com> <2807750.1752144428@warthog.procyon.org.uk>
+Cc: dhowells@redhat.com, Max Kellermann <max.kellermann@ionos.com>,
+    Christian Brauner <christian@brauner.io>,
     Viacheslav Dubeyko <slava@dubeyko.com>,
     Alex Markuze <amarkuze@redhat.com>, Steve French <sfrench@samba.org>,
     Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev,
@@ -81,23 +81,27 @@ List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2904423.1752161530.1@warthog.procyon.org.uk>
+Content-ID: <2919958.1752165094.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
-Date: Thu, 10 Jul 2025 16:32:10 +0100
-Message-ID: <2904424.1752161530@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Date: Thu, 10 Jul 2025 17:31:34 +0100
+Message-ID: <2919959.1752165094@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Max,
+David Howells <dhowells@redhat.com> wrote:
 
-Depending on what you're doing on ceph, you might need the attached patch =
-as
-well.  I managed to reproduce it by doing a git clone and kernel build on =
-a
-ceph mount with cachefiles active.
+> Depending on what you're doing on ceph, you might need the attached patc=
+h as
+> well.  I managed to reproduce it by doing a git clone and kernel build o=
+n a
+> ceph mount with cachefiles active.
+
+Here's a version of the patch that conditionally does the needed wakeup.  =
+I
+don't want to force processing if there's no need.
 
 David
-----
-commit 6c24e7124642846b628274c845cd6de252f1dfbf
+---
+commit 1fe42a9a7f0b2f51107574f0b8e151d13dc766cc
 Author: David Howells <dhowells@redhat.com>
 Date:   Thu Jul 10 15:02:57 2025 +0100
 
@@ -174,7 +178,7 @@ fe-L7AV3DhebS3w@mail.gmail.com/
     cc: stable@vger.kernel.org
 
 diff --git a/fs/netfs/read_pgpriv2.c b/fs/netfs/read_pgpriv2.c
-index 080d2a6a51d9..889ff7954f8c 100644
+index 080d2a6a51d9..8097bc069c1d 100644
 --- a/fs/netfs/read_pgpriv2.c
 +++ b/fs/netfs/read_pgpriv2.c
 @@ -111,6 +111,7 @@ static struct netfs_io_request *netfs_pgpriv2_begin_co=
@@ -187,13 +191,14 @@ py_to_cache(
  	trace_netfs_write(creq, netfs_write_trace_copy_to_cache);
  	netfs_stat(&netfs_n_wh_copy_to_cache);
  	rreq->copy_to_cache =3D creq;
-@@ -155,6 +156,8 @@ void netfs_pgpriv2_end_copy_to_cache(struct netfs_io_r=
+@@ -155,6 +156,9 @@ void netfs_pgpriv2_end_copy_to_cache(struct netfs_io_r=
 equest *rreq)
  	netfs_issue_write(creq, &creq->io_streams[1]);
  	smp_wmb(); /* Write lists before ALL_QUEUED. */
  	set_bit(NETFS_RREQ_ALL_QUEUED, &creq->flags);
 +	trace_netfs_rreq(rreq, netfs_rreq_trace_end_copy_to_cache);
-+	netfs_wake_collector(creq);
++	if (list_empty_careful(&creq->io_streams[1].subrequests))
++		netfs_wake_collector(creq);
  =
 
  	netfs_put_request(creq, netfs_rreq_trace_put_return);
