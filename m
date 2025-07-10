@@ -1,109 +1,107 @@
-Return-Path: <ceph-devel+bounces-3288-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3289-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62601AFF414
-	for <lists+ceph-devel@lfdr.de>; Wed,  9 Jul 2025 23:44:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114B5AFF95D
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Jul 2025 08:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53CF43ADAC3
-	for <lists+ceph-devel@lfdr.de>; Wed,  9 Jul 2025 21:44:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53D9E1C8605C
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Jul 2025 06:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A24423FC41;
-	Wed,  9 Jul 2025 21:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC44E288528;
+	Thu, 10 Jul 2025 06:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="M+Vjkmar"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9Zov/HU"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDF523B63C
-	for <ceph-devel@vger.kernel.org>; Wed,  9 Jul 2025 21:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB4428750F;
+	Thu, 10 Jul 2025 06:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752097457; cv=none; b=MDXAmUnID3ayjjjmxJ+98FARelerWwuptTHOy3xNs38q5V5p0HFyvWtcKZKK9I7hvRVD9qsWW/Djyp6j10Cy84kvv+pa03KDqw+pSJlkufBnDvXMKkD7OzSjRWSgqwVNXhnGQs6FCnspfGFxQZ2UdnBlmUwcnuMSerRYeHag5Lc=
+	t=1752127804; cv=none; b=oNA3GbYkbBr4qcXR8f1MbV/ieqhXVCPqnAS4ILPhmWTyE5mM4MCImC4O2GpRiUY0Y9c5gG5uUJBD5VoXQv7jbjau7B0tWvTor7RUuip0X7P25CMbgrZm0r8ENTOxrm2BGowqZJp61bbHrvTQVpIU/4mKLo8kIA9XfPah9+bRTUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752097457; c=relaxed/simple;
-	bh=QM3ZwKzZ3tmooQKRsyzdW8dMI+e0bgrGReSxQbsBbz4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nhxf74pud0eo8E+W1LTwvAqhKAf+NVi3iKyR9aUidPGr5o2V6nnbRqS9DVvWLxoGhBYTY/zA21OUSfoLHlfT2rpSUymHJCQgF7O3zTht5bjD98gS3MsQwVsh/k9PmXlaBUXEClD4QeTUnm2l+FopTYgg1ytRrZTXK/tjG3sHSPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=M+Vjkmar; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60c93c23b08so495991a12.3
-        for <ceph-devel@vger.kernel.org>; Wed, 09 Jul 2025 14:44:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1752097453; x=1752702253; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J2oOfilMeJ3fSH+1jR5dPS+6bpms3vDBaMx9PS7L2n8=;
-        b=M+Vjkmar2DZR01VBbGidpjLsj5WkhccV4HkYK/+hg7utLrEMINgnjypBRimA/63N9Z
-         yYsj7DHfmQMKO1QAv71VK0sNBQkM9peUJhNd+uT1+KdZik4D91/04Eja8bsYuFfp0NYO
-         FQ3oMpJJIDemPPNuxCCNSfbuS55si7hddv+RnXQA0b+5DhFQB8Z7rNyJQXBnKOOuK4Rl
-         95Iib0HNh/m9cbmeeGI8t7IUpxYr+cfY+DNwK7eo7gUezPshoSEvsBIeAy7Pg6vTmmhV
-         h3t0qqhwOB/bMwwUqNpEiS29wNroRRQR/3a4uP4NUgAMh9KoBsErPHFfXlzrhjWBnwHO
-         DNkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1752097453; x=1752702253;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J2oOfilMeJ3fSH+1jR5dPS+6bpms3vDBaMx9PS7L2n8=;
-        b=gk+X+KIIvqkbppOPiogbkQeppwV8kAHGPOznuWOgGsGZRd36pSqhRnWgXGZmOVTvRv
-         T8BYwg18iKUcE1Te4yIAzMdGOibW9Tg03OWtdFzaBPSdRn/t69kr0KNVjhR04fgovq9C
-         YqOUClM1DMTrIsWiWd2JigYDnYLvfC6DV55hiDHSZKhoWb9cwyyxgkupZ+4lZnfKp769
-         V5xyAkcgQZlpwTBevQRdP2GQHhNuqfWBc7V4ls6lgYbPtwx8dP7aVp1wm6e1uSvqgIIp
-         3UFihHDlCFx28ga0P1qe3Q0Y7yZh5BXl25kgwVMo3DBMI8OO0UVcRrGhQgQXT/FM4GVu
-         eAzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPftTZ4Z6/zWmzD483p6GUqkXtGZ6PIkZOmtiZWzy1dFMCdtRDL+Hd+Lv5ZudGs9sCtLoTfwuk7RVQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7+/A4/spnSMwWRx5w1/sglsxpMabW1quk8iPi6aYgDOMtoss7
-	UubId8saYVwxkNahVBlGhqPHm0Cxyj0/fK/4KzN2Ia7LNlIvjRBIlx5cl8jkG4PCga6dzcB9yJJ
-	9tkAl9XWUFlgm5TmWWSvusQ+kXJ4onA2rSh9deRmYug==
-X-Gm-Gg: ASbGncuiNfKR0TjO0a8KN51tmivQwNzDhKfs78IUznobmJSU1eOvy+pHBAKsjIuOsMZ
-	n/8nQ2VzbRweypp31Dkw3oul8n8RAkjwVB6nmZQ054/whD+OWH2aCHQ9OjN31FrAhlpCbcc2wRT
-	p/lOQzGWXbtx4VibZU8hqKTVk6+qAhT7lPlh8DT5iv5Myx2ET85glOy96ZD8s3M1Cgn6n+UhA=
-X-Google-Smtp-Source: AGHT+IHRfBgI+JpvIFW5bdEhu8EMbBsinsmaICn0S2xVCrLK7zPglEC6AbVpvLywHBFg/8fSMjerPI4gbWHSZhnMN/4=
-X-Received: by 2002:a17:906:46d9:b0:ae3:d1fe:f953 with SMTP id
- a640c23a62f3a-ae6e7099e16mr25848366b.43.1752097453229; Wed, 09 Jul 2025
- 14:44:13 -0700 (PDT)
+	s=arc-20240116; t=1752127804; c=relaxed/simple;
+	bh=A3irvs3v7PeKCQdQ382HRWJhQhk42uJw8OaFzTK/jwY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nz5zKewoGzxqwZXzKaCuKTMUsdq1CMl0tymMdjzer4tcJOJU+FvuvZnVHcRVSQAd6+M1vJvTmFsrDeVjXomITj6TNn/eJsZqo3A6oYG1zQnfHNzlAhXKDzhwi5rm3DNcrespcWppY8w8aVRT9w0n91J/iUqvXRhpo3cQH1LZjok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9Zov/HU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8A90C4CEE3;
+	Thu, 10 Jul 2025 06:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1752127804;
+	bh=A3irvs3v7PeKCQdQ382HRWJhQhk42uJw8OaFzTK/jwY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=s9Zov/HUucOp8tvLbXEgwce5AL6ve4tknQy4CUaMJSs32zOki/FDKYJ+T4ISkPv4f
+	 5OnIcVmzIBJsAguAGhqYWArSGIfvUG9cGL1pF4TPDA2vTb9dqivxAb1t6fxOsOljIW
+	 tC9CbGFllXrNC5+7hZ9ZnIaWCNHIc0iwBsbQhncDdFG0kmc5k5Hx/6Eh7iAy8eBv0V
+	 LeaVm9fr03M8tjFggiVDqe4/dUj8QIlekG7LjnG96rctZ/+qFDLvnNNH93t0L2lXcY
+	 gX+70CUs9eri1BkneIBwFfnCuixDGPWsWKJTrioINVNN82f24Yo/BpUaKYGhfItrQW
+	 rjxOGfkQ1MgFA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-fscrypt@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org,
+	Yuwen Chen <ywen.chen@foxmail.com>,
+	linux-mtd@lists.infradead.org,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH v2 0/6] fscrypt: Switch to sync_skcipher and on-stack requests
+Date: Wed,  9 Jul 2025 23:07:47 -0700
+Message-ID: <20250710060754.637098-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701163852.2171681-1-dhowells@redhat.com> <CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=shxyGLwfe-L7AV3DhebS3w@mail.gmail.com>
- <2724318.1752066097@warthog.procyon.org.uk> <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com>
- <2738562.1752092552@warthog.procyon.org.uk>
-In-Reply-To: <2738562.1752092552@warthog.procyon.org.uk>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 9 Jul 2025 23:44:02 +0200
-X-Gm-Features: Ac12FXwGyOaYIBhD6kJLi5Rdp0KMSI4jWTqWW8bY_UVcRj5P-WQCdanG6BjA4Q0
-Message-ID: <CAKPOu+-qYtC0iFWv856JZinO-0E=SEoQ6pOLvc0bZfsbSakR8w@mail.gmail.com>
-Subject: Re: [PATCH 00/13] netfs, cifs: Fixes to retry-related code
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, Steve French <sfrench@samba.org>, 
-	Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev, linux-afs@lists.infradead.org, 
-	linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 9, 2025 at 10:22=E2=80=AFPM David Howells <dhowells@redhat.com>=
- wrote:
-> > (The above was 6.15.5 plus all patches in this PR.)
->
-> Can you check that, please?  If you have patch 12 applied, then the flags
-> should be renumbered and there shouldn't be a NETFS_RREQ_ flag with 13, b=
-ut
-> f=3D80002020 would seem to have 0x2000 (ie. bit 13) set in it.
+Simplify the code and eliminate per-encryption-op dynamic memory
+allocations by switching from crypto_skcipher to crypto_sync_skcipher,
+and from dynamic request allocation to SYNC_SKCIPHER_REQUEST_ON_STACK.
 
-Oh, I was slightly wrong, I merged only 12 patches, omitting the
-renumbering patch because it had conflicts with my branch, and it was
-only a cosmetic change, not relevant for the bug. Sorry for the
-confusion!
+Previously, this change would have made the x86 accelerated AES code no
+longer be used, which would have been very bad.  However, I fixed that
+in 6.16.  So we can make this simplification now.
+
+This patchset applies to fscrypt/for-next.  The base-commit (listed
+below) can be found in next-20250708
+
+Changed in v2:
+- Added patches that remove the gfp_t argument from functions that no
+  longer need it.
+- Eliminated the goto in derive_key_aes().
+- Improved commit messages.
+
+Eric Biggers (6):
+  fscrypt: Don't use asynchronous CryptoAPI algorithms
+  fscrypt: Drop FORBID_WEAK_KEYS flag for AES-ECB
+  fscrypt: Switch to sync_skcipher and on-stack requests
+  fscrypt: Remove gfp_t argument from fscrypt_crypt_data_unit()
+  fscrypt: Remove gfp_t argument from fscrypt_encrypt_block_inplace()
+  ceph: Remove gfp_t argument from ceph_fscrypt_encrypt_*()
+
+ fs/ceph/crypto.c            | 13 +++-----
+ fs/ceph/crypto.h            | 10 +++---
+ fs/ceph/file.c              |  3 +-
+ fs/ceph/inode.c             |  3 +-
+ fs/crypto/bio.c             |  3 +-
+ fs/crypto/crypto.c          | 44 +++++++++-----------------
+ fs/crypto/fname.c           | 63 +++++++++++++------------------------
+ fs/crypto/fscrypt_private.h | 10 +++---
+ fs/crypto/keysetup.c        | 23 +++++++-------
+ fs/crypto/keysetup_v1.c     | 56 ++++++++++++++-------------------
+ fs/ubifs/crypto.c           |  2 +-
+ include/linux/fscrypt.h     |  5 ++-
+ 12 files changed, 91 insertions(+), 144 deletions(-)
+
+
+base-commit: b41c1d8d07906786c60893980d52688f31d114a6
+-- 
+2.50.1
+
 
