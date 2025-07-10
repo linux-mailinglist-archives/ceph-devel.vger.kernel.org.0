@@ -1,223 +1,145 @@
-Return-Path: <ceph-devel+bounces-3295-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3296-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3BCBAFF96B
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Jul 2025 08:14:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE829AFFF94
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Jul 2025 12:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E97744E13DF
-	for <lists+ceph-devel@lfdr.de>; Thu, 10 Jul 2025 06:13:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAFA54E1F5D
+	for <lists+ceph-devel@lfdr.de>; Thu, 10 Jul 2025 10:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C458291C0D;
-	Thu, 10 Jul 2025 06:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B382E265B;
+	Thu, 10 Jul 2025 10:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PYovnpkz"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BKk6Jbww"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C192900A0;
-	Thu, 10 Jul 2025 06:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C17B2E0B64
+	for <ceph-devel@vger.kernel.org>; Thu, 10 Jul 2025 10:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1752127806; cv=none; b=BI7gJZzNyOYaD0H6x4HIeiKdbi72lfImofzS41xPHonOVtQ8iclgJMx2uRK2132cluAHRESEw/0c28uxF/TUFok0kgb2h3HaMk+5kv8toRd3b1AVgHxgIfqJ9kCgZAG9wGFF+bZSe79fl+cUQlEFgNmS8VGAEEMR9LArifcBVtI=
+	t=1752144441; cv=none; b=YH848zbyx06H+MKaw1gtW33wnzTpaXbctH1l/tRUVY1jYLzgAMcNu29pamskfBuxiS8Etp4Ouyw2Zm8MEz1ag3zr0k+XOrVuU3wAU+R2ntxYKiK+XTYWGho723A60kcyveYnisEkIjspFei78MkzfNuRzUEDaorTjHEDGyAiLak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1752127806; c=relaxed/simple;
-	bh=ISOZqqMIoJ6Bo5XTcKQL1qoCe0p7TsANa33nW9/riCk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g9IT1n2qmGRYtH+NVjIJsUpOR+jva02GvnZ5a1UnLvz1B9f4si617msRQLJmfQjjO602KW//ivN949nJesPneF17une3sUVWRFJ//Vwo625WyJ+ShmPfLbWX0ZZJ0iSXGDji1VYQfERVoSsljaO8AKeaMuJpDv+4pKhbT26+/Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PYovnpkz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 117B6C4CEF5;
-	Thu, 10 Jul 2025 06:10:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1752127806;
-	bh=ISOZqqMIoJ6Bo5XTcKQL1qoCe0p7TsANa33nW9/riCk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PYovnpkzkt5PCA7vwOfL7C9eve152diJJlXfQx15ECLzlSRHlPsJXGI7QIgDzWuoP
-	 KudQTYDaakvkIV42pmfVyvPlJa9ZF74H5TewLj2ilLCEeTo3pna7RkK0mGcIk6yvvo
-	 5FxRLBVr6R79yOMb1tCqOk6u+95B63IVaZeFE/rwBYd1ch+ESB5jj1VHX08Y4jhOBH
-	 59teAf9H1O4Ztnx0cJeZWnu+2mUyKUeAvwwofKB9C4FLCdRinGdO5fULHMSzLgu93W
-	 p7TdAuxyh4mVuB10S9v+8y+T03k3vfl/ITOeeGJufJA03zOH7HGV8ORpz3aoe4a4ca
-	 hJl5D/+QR0cJw==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-fscrypt@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org,
-	Yuwen Chen <ywen.chen@foxmail.com>,
-	linux-mtd@lists.infradead.org,
-	ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v2 6/6] ceph: Remove gfp_t argument from ceph_fscrypt_encrypt_*()
-Date: Wed,  9 Jul 2025 23:07:53 -0700
-Message-ID: <20250710060754.637098-7-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250710060754.637098-1-ebiggers@kernel.org>
-References: <20250710060754.637098-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1752144441; c=relaxed/simple;
+	bh=SOep39LCruQJ5eUJmcxYU0zPt7Rxb5VZwOl88D+y7tQ=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=grochlNozvh/56U3aCb4yOwr5yVpKViGzB8vYGwmsTEB3Y2O9WbdJ+MWJjJmRaPhqeq5pDkCiYTdwCjH3MM9M+L3TJoap8W+QEFJvdpHRNKlIQiwTADm0Eo9DqLbdifwxUbDYiHOt0YLDsENPDDBNn0uBflqiNQisfXFu1Hm5Ts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BKk6Jbww; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1752144439;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q0u3HIoTZyqgg631O8XZeTrysi+dlK3ZJXgoQ/uYQ84=;
+	b=BKk6Jbww2FSrepC5BeSV/XFncmwRmMhgnhmgTd7M6V+y0Cfv53s1qBnI0dfw5iNsxOvxjy
+	4CRZJ1ypVF3lPJFGe3oml2St1AFYiBPvOUw/I8wgjmrXrzNb1pOvRJUvI8liGyCBvsv4mp
+	yMI7fW12/dStW9Eqfuz8Z8M6JK418is=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-408-Qs5apeF0MfKwPreNiR2KRQ-1; Thu,
+ 10 Jul 2025 06:47:16 -0400
+X-MC-Unique: Qs5apeF0MfKwPreNiR2KRQ-1
+X-Mimecast-MFC-AGG-ID: Qs5apeF0MfKwPreNiR2KRQ_1752144434
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D985519560B0;
+	Thu, 10 Jul 2025 10:47:13 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.81])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 488C719373D8;
+	Thu, 10 Jul 2025 10:47:09 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <CAKPOu+-qYtC0iFWv856JZinO-0E=SEoQ6pOLvc0bZfsbSakR8w@mail.gmail.com>
+References: <CAKPOu+-qYtC0iFWv856JZinO-0E=SEoQ6pOLvc0bZfsbSakR8w@mail.gmail.com> <20250701163852.2171681-1-dhowells@redhat.com> <CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=shxyGLwfe-L7AV3DhebS3w@mail.gmail.com> <2724318.1752066097@warthog.procyon.org.uk> <CAKPOu+_ZXJqftqFj6fZ=hErPMOuEEtjhnQ3pxMr9OAtu+sw=KQ@mail.gmail.com> <2738562.1752092552@warthog.procyon.org.uk>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+    Viacheslav Dubeyko <slava@dubeyko.com>,
+    Alex Markuze <amarkuze@redhat.com>, Steve French <sfrench@samba.org>,
+    Paulo Alcantara <pc@manguebit.com>, netfs@lists.linux.dev,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 00/13] netfs, cifs: Fixes to retry-related code
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2807749.1752144428.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 10 Jul 2025 11:47:08 +0100
+Message-ID: <2807750.1752144428@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-This argument is no longer used, so remove it.
+Hi Max,
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+I managed to reproduce it on my test machine with ceph + fscache.
+
+Does this fix the problem for you?
+
+David
 ---
- fs/ceph/crypto.c | 10 ++++------
- fs/ceph/crypto.h | 10 ++++------
- fs/ceph/file.c   |  3 +--
- fs/ceph/inode.c  |  3 +--
- 4 files changed, 10 insertions(+), 16 deletions(-)
+netfs: Fix copy-to-cache so that it performs collection with ceph+fscache
 
-diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index 6d04d528ed038..91e62db0c2050 100644
---- a/fs/ceph/crypto.c
-+++ b/fs/ceph/crypto.c
-@@ -514,12 +514,11 @@ int ceph_fscrypt_decrypt_block_inplace(const struct inode *inode,
- 	return fscrypt_decrypt_block_inplace(inode, page, len, offs, lblk_num);
- }
- 
- int ceph_fscrypt_encrypt_block_inplace(const struct inode *inode,
- 				  struct page *page, unsigned int len,
--				  unsigned int offs, u64 lblk_num,
--				  gfp_t gfp_flags)
-+				  unsigned int offs, u64 lblk_num)
- {
- 	struct ceph_client *cl = ceph_inode_to_client(inode);
- 
- 	doutc(cl, "%p %llx.%llx len %u offs %u blk %llu\n", inode,
- 	      ceph_vinop(inode), len, offs, lblk_num);
-@@ -639,21 +638,20 @@ int ceph_fscrypt_decrypt_extents(struct inode *inode, struct page **page,
-  * ceph_fscrypt_encrypt_pages - encrypt an array of pages
-  * @inode: pointer to inode associated with these pages
-  * @page: pointer to page array
-  * @off: offset into the file that the data starts
-  * @len: max length to encrypt
-- * @gfp: gfp flags to use for allocation
-  *
-- * Decrypt an array of cleartext pages and return the amount of
-+ * Encrypt an array of cleartext pages and return the amount of
-  * data encrypted. Any data in the page prior to the start of the
-  * first complete block in the read is ignored. Any incomplete
-  * crypto blocks at the end of the array are ignored.
-  *
-  * Returns the length of the encrypted data or a negative errno.
-  */
- int ceph_fscrypt_encrypt_pages(struct inode *inode, struct page **page, u64 off,
--				int len, gfp_t gfp)
-+				int len)
- {
- 	int i, num_blocks;
- 	u64 baseblk = off >> CEPH_FSCRYPT_BLOCK_SHIFT;
- 	int ret = 0;
- 
-@@ -670,11 +668,11 @@ int ceph_fscrypt_encrypt_pages(struct inode *inode, struct page **page, u64 off,
- 		unsigned int pgoffs = offset_in_page(blkoff);
- 		int fret;
- 
- 		fret = ceph_fscrypt_encrypt_block_inplace(inode, page[pgidx],
- 				CEPH_FSCRYPT_BLOCK_SIZE, pgoffs,
--				baseblk + i, gfp);
-+				baseblk + i);
- 		if (fret < 0) {
- 			if (ret == 0)
- 				ret = fret;
- 			break;
- 		}
-diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
-index d0768239a1c9c..6db28464ff803 100644
---- a/fs/ceph/crypto.h
-+++ b/fs/ceph/crypto.h
-@@ -153,19 +153,18 @@ static inline void ceph_fscrypt_adjust_off_and_len(struct inode *inode,
- int ceph_fscrypt_decrypt_block_inplace(const struct inode *inode,
- 				  struct page *page, unsigned int len,
- 				  unsigned int offs, u64 lblk_num);
- int ceph_fscrypt_encrypt_block_inplace(const struct inode *inode,
- 				  struct page *page, unsigned int len,
--				  unsigned int offs, u64 lblk_num,
--				  gfp_t gfp_flags);
-+				  unsigned int offs, u64 lblk_num);
- int ceph_fscrypt_decrypt_pages(struct inode *inode, struct page **page,
- 			       u64 off, int len);
- int ceph_fscrypt_decrypt_extents(struct inode *inode, struct page **page,
- 				 u64 off, struct ceph_sparse_extent *map,
- 				 u32 ext_cnt);
- int ceph_fscrypt_encrypt_pages(struct inode *inode, struct page **page, u64 off,
--			       int len, gfp_t gfp);
-+			       int len);
- 
- static inline struct page *ceph_fscrypt_pagecache_page(struct page *page)
- {
- 	return fscrypt_is_bounce_page(page) ? fscrypt_pagecache_page(page) : page;
- }
-@@ -244,12 +243,11 @@ static inline int ceph_fscrypt_decrypt_block_inplace(const struct inode *inode,
- 	return 0;
- }
- 
- static inline int ceph_fscrypt_encrypt_block_inplace(const struct inode *inode,
- 					  struct page *page, unsigned int len,
--					  unsigned int offs, u64 lblk_num,
--					  gfp_t gfp_flags)
-+					  unsigned int offs, u64 lblk_num)
- {
- 	return 0;
- }
- 
- static inline int ceph_fscrypt_decrypt_pages(struct inode *inode,
-@@ -267,11 +265,11 @@ static inline int ceph_fscrypt_decrypt_extents(struct inode *inode,
- 	return 0;
- }
- 
- static inline int ceph_fscrypt_encrypt_pages(struct inode *inode,
- 					     struct page **page, u64 off,
--					     int len, gfp_t gfp)
-+					     int len)
- {
- 	return 0;
- }
- 
- static inline struct page *ceph_fscrypt_pagecache_page(struct page *page)
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index a7254cab44cc2..9b79da6d1aee7 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -1990,12 +1990,11 @@ ceph_sync_write(struct kiocb *iocb, struct iov_iter *from, loff_t pos,
- 			break;
- 		}
- 
- 		if (IS_ENCRYPTED(inode)) {
- 			ret = ceph_fscrypt_encrypt_pages(inode, pages,
--							 write_pos, write_len,
--							 GFP_KERNEL);
-+							 write_pos, write_len);
- 			if (ret < 0) {
- 				doutc(cl, "encryption failed with %d\n", ret);
- 				ceph_release_page_vector(pages, num_pages);
- 				break;
- 			}
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 06cd2963e41ee..fc543075b827a 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -2434,12 +2434,11 @@ static int fill_fscrypt_truncate(struct inode *inode,
- 		memset(iov.iov_base + boff, 0, PAGE_SIZE - boff);
- 
- 		/* encrypt the last block */
- 		ret = ceph_fscrypt_encrypt_block_inplace(inode, page,
- 						    CEPH_FSCRYPT_BLOCK_SIZE,
--						    0, block,
--						    GFP_KERNEL);
-+						    0, block);
- 		if (ret)
- 			goto out;
- 	}
- 
- 	/* Insert the header */
--- 
-2.50.1
+The netfs copy-to-cache that is used by Ceph with local caching sets up a
+new request to write data just read to the cache.  The request is started
+and then left to look after itself whilst the app continues.  The request
+gets notified by the backing fs upon completion of the async DIO write, bu=
+t
+then tries to wake up the app because NETFS_RREQ_OFFLOAD_COLLECTION isn't
+set - but the app isn't waiting there, and so the request just hangs.
+
+Fix this by setting NETFS_RREQ_OFFLOAD_COLLECTION which causes the
+notification from the backing filesystem to put the collection onto a work
+queue instead.
+
+Fixes: e2d46f2ec332 ("netfs: Change the read result collector to only use =
+one work item")
+Reported-by: Max Kellermann <max.kellermann@ionos.com>
+Link: https://lore.kernel.org/r/CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=3DshxyGLwfe-L=
+7AV3DhebS3w@mail.gmail.com/
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Paulo Alcantara <pc@manguebit.org>
+cc: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: netfs@lists.linux.dev
+cc: ceph-devel@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+cc: stable@vger.kernel.org
+---
+ fs/netfs/read_pgpriv2.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/netfs/read_pgpriv2.c b/fs/netfs/read_pgpriv2.c
+index 5bbe906a551d..080d2a6a51d9 100644
+--- a/fs/netfs/read_pgpriv2.c
++++ b/fs/netfs/read_pgpriv2.c
+@@ -110,6 +110,7 @@ static struct netfs_io_request *netfs_pgpriv2_begin_co=
+py_to_cache(
+ 	if (!creq->io_streams[1].avail)
+ 		goto cancel_put;
+ =
+
++	__set_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &creq->flags);
+ 	trace_netfs_write(creq, netfs_write_trace_copy_to_cache);
+ 	netfs_stat(&netfs_n_wh_copy_to_cache);
+ 	rreq->copy_to_cache =3D creq;
 
 
