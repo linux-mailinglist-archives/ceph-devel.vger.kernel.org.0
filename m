@@ -1,608 +1,128 @@
-Return-Path: <ceph-devel+bounces-3320-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3321-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4404EB0D971
-	for <lists+ceph-devel@lfdr.de>; Tue, 22 Jul 2025 14:23:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83B28B0DDCD
+	for <lists+ceph-devel@lfdr.de>; Tue, 22 Jul 2025 16:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90120AA35BC
-	for <lists+ceph-devel@lfdr.de>; Tue, 22 Jul 2025 12:22:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9455F1888B6B
+	for <lists+ceph-devel@lfdr.de>; Tue, 22 Jul 2025 14:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1C02E9EAE;
-	Tue, 22 Jul 2025 12:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594162ECD1A;
+	Tue, 22 Jul 2025 14:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LGG+/9Bh"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xTi2UDEU"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02BC2E9EA6
-	for <ceph-devel@vger.kernel.org>; Tue, 22 Jul 2025 12:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEBB2ECD06;
+	Tue, 22 Jul 2025 14:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753186795; cv=none; b=IUrq5QFlEswjSBd5GkrZ046JbGnY1mDdORwrYqV0DA7KHjEAh04U1if8WqzUyzwU5wlya7dARUipHza6r4ZYF3408yR+aqgI4T09f+AI4vl9sD0+U+yrIfaPqJzBUcu5n6CfELwALnJFNQA5OBR+r7GJMhvphD3mEFSJxa8ypDI=
+	t=1753193371; cv=none; b=PNsq2pycRuXwWCr7MUK8IB6Y71O9gKkB9WjRa06NgyhKQJ56TALkr3S9gipOVRNMf3P9Os7edjIcq5B9sd3vdUW2eFwvuK99gsZOo0T27Wh1TA76S/JBulaLhVEf/a+m4W0za0Wyob2izpTzLA61tLYdA8itbLBC9fJeKv34kJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753186795; c=relaxed/simple;
-	bh=zfLyhbChwVVeeY5lYB9E4Ys7lJFoRjDHbCfIOZnAWOI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QDdtFlwZ5sCQWWLReVaNAh5TypKUuN8PzRWarcqjiautbmjysgWitSWc+RQBnEFk8p50J4KWhUvMn2mueA5+jSlR3QXuswGRkHAqTcxL9o1O98HKeLQ7lfCPN6dgQicRMsqmGxU6moC+QzInHiEHnOvJHM1+8qp5GGqMWe9W1kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LGG+/9Bh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753186791;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ChV8arQrMQSJi89/NCGPfMeYqktq5h11pl5AQ2NWhNw=;
-	b=LGG+/9BhVNbVhCHSNsCprrt0N+cKKmqs6yazAJQt81sXIauqF4K9Z5FNpw2MkQlBkACjb1
-	r68JyDGstvnidtxQBiklLurVi324TOXaShBDXJFqSSlmBRjGAd9nHMjWZKMg8avzPWTspd
-	bLtT+Zg6zr02V88qoNzJT2SUPnEZx8o=
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
- [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-345-ogE79CPFPMyWiYlSJHzsIg-1; Tue, 22 Jul 2025 08:19:50 -0400
-X-MC-Unique: ogE79CPFPMyWiYlSJHzsIg-1
-X-Mimecast-MFC-AGG-ID: ogE79CPFPMyWiYlSJHzsIg_1753186790
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-4f32e552e80so306070137.3
-        for <ceph-devel@vger.kernel.org>; Tue, 22 Jul 2025 05:19:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753186790; x=1753791590;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ChV8arQrMQSJi89/NCGPfMeYqktq5h11pl5AQ2NWhNw=;
-        b=pov9ldG7rCWKZwtUfrim4J4uro5mtqPTDsQBAnfit4ER7B1PhvtlJd2RilzT7uR5xA
-         MaFXZgoJlVsKDPFL2ilqBq2MeIsMv3I7IqqurT/q9elT3Rlz/qqzj+XEf0KGAcY+P4Dw
-         By9NTg0E2bWZfPZ1qggvxQccKJDYBIF0TCU13E8XQzNxeaerz2dJ7lVenIy5Uq/M2hYo
-         Ydn+Eemc5aYg7Asvk0zHrAWr+8AdJhpjPlOdsl9fK4zG7BcgRHPqRznkGaxFrl1LVJTL
-         Pl9dJYyBGkETYip2xpRdJlqx7TfYpKitniHrK+Dz59kVYegJpuJ9W+shemVafGwXs0Aw
-         e4bQ==
-X-Gm-Message-State: AOJu0YxTk6O1LXlFTCK5utarPHhuXRVbd6aR9lt4ab9cVxuyGFLyDfCR
-	+6iijYt99UzR9+ghczj+ltwDP5gjIrDdhNnMRAFoOiXaXFK/gJbQpeI57TFlqmpDbe9Eqj0uWYO
-	4p/qAxrcYGacJ7D6dgGaKn3uY3x8IZV30SJbs/L9+8rWMEwGq/Q67HiaeKR6keaFjnP/K8gRT3t
-	43hFzZISAt1WQV/sB1CNbWc7Iauiqtw6Xa2YKSaA==
-X-Gm-Gg: ASbGncvJMNlw3Z6Vchvg1cvGJ88+Ts4EGwzWk2QUshbuXbkxLHqebci9MC+gsZTJupS
-	57OUPkCUtWCih8Hsq3ZyFBd6wYUcbh9+S9M1RuMjBckfxGtDqE2bHuHuNTFVbVXSFTc7aYj+V6H
-	D17uF/S/nSplRav2fdKSOy
-X-Received: by 2002:a05:6102:508e:b0:4e5:980a:d164 with SMTP id ada2fe7eead31-4f997d25158mr11871052137.0.1753186789559;
-        Tue, 22 Jul 2025 05:19:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGVWd7OdP74xeiYuFXtx1VFeGyOgV3ps2F4IzvY0B2mSzAXwy8C/Ctjn/V1TY8U0DqSfNcyheEsg4MoSQETA4A=
-X-Received: by 2002:a05:6102:508e:b0:4e5:980a:d164 with SMTP id
- ada2fe7eead31-4f997d25158mr11871038137.0.1753186789151; Tue, 22 Jul 2025
- 05:19:49 -0700 (PDT)
+	s=arc-20240116; t=1753193371; c=relaxed/simple;
+	bh=Z9qSj0KE84oYYRUfkF3tr8G0dEelpY7HNF4AVG43U3c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Rratcu+ENFdMvLoXpW6KsXjyiH1rtJe1WP298LmGtuoPH1Z/hU1Aq+UJs4fCrQzbnQr1/Hd/wEQjGZSziPsg9E98qwFRLZfkSU232kZq9l61NBhmGi73OBB3OM77NfFsYaFWNKa3SVkgxR5T8c/xoDQ87PpRhJZIn6m4HQBcj38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xTi2UDEU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5597DC4CEEB;
+	Tue, 22 Jul 2025 14:09:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753193370;
+	bh=Z9qSj0KE84oYYRUfkF3tr8G0dEelpY7HNF4AVG43U3c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=xTi2UDEUYZT8TVw+R/R5JK9TJ49vK8C50mVXMklYZrCviE73M8Mx8WgDfMDm0MUSV
+	 jVPYGaKKlVMaxEo72tl2BEy7O2Z3nHM6TpPKozbQ9fRy+j4nO6ToqObNffFvGYZCor
+	 h86j21M+D7GMJ5mxD7FQ41I8ADD+5GNTj11jXcJc=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Max Kellermann <max.kellermann@ionos.com>,
+	David Howells <dhowells@redhat.com>,
+	"Paulo Alcantara (Red Hat)" <pc@manguebit.org>,
+	Viacheslav Dubeyko <slava@dubeyko.com>,
+	Alex Markuze <amarkuze@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	netfs@lists.linux.dev,
+	ceph-devel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 6.15 038/187] netfs: Fix copy-to-cache so that it performs collection with ceph+fscache
+Date: Tue, 22 Jul 2025 15:43:28 +0200
+Message-ID: <20250722134347.177757976@linuxfoundation.org>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250722134345.761035548@linuxfoundation.org>
+References: <20250722134345.761035548@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250721221606.1011604-1-slava@dubeyko.com>
-In-Reply-To: <20250721221606.1011604-1-slava@dubeyko.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Tue, 22 Jul 2025 16:19:38 +0400
-X-Gm-Features: Ac12FXy7iodGS58yhxJqNKGQqA0mSGjYwB7zM_87afP6u_vMVYbJhtYIGjM9G-0
-Message-ID: <CAO8a2ShpORYPW6XewdgaBCvc8qW=FJ_AwJj--foGJcx2UG9LtA@mail.gmail.com>
-Subject: Re: [PATCH] ceph: cleanup of processing ci->i_ceph_flags bits in caps.c
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
-	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Slava,
+6.15-stable review patch.  If anyone has any objections, please let me know.
 
-Thanks for the patch.
+------------------
 
-The fix for the race condition in ceph_check_delayed_caps() is correct
-and necessary. The systematic change to use atomic bit operations like
-set_bit() and clear_bit() with the proper memory barriers is a
-significant improvement for safety and readability.
+From: David Howells <dhowells@redhat.com>
 
-One minor critique for a follow-up patch:
+commit 4c238e30774e3022a505fa54311273add7570f13 upstream.
 
-The refactoring in fs/ceph/super.h to use named _BIT definitions is a
-great idea, but the cleanup is incomplete. Several definitions were
-not converted and still use hardcoded bit-shift numbers . For example,
+The netfs copy-to-cache that is used by Ceph with local caching sets up a
+new request to write data just read to the cache.  The request is started
+and then left to look after itself whilst the app continues.  The request
+gets notified by the backing fs upon completion of the async DIO write, but
+then tries to wake up the app because NETFS_RREQ_OFFLOAD_COLLECTION isn't
+set - but the app isn't waiting there, and so the request just hangs.
 
-CEPH_I_POOL_RD, CEPH_I_POOL_WR, and CEPH_I_ODIRECT still use (1 << 4),
-(1 << 5), and (1 << 11) respectively. It would be good to finish this
-refactoring for consistency.
+Fix this by setting NETFS_RREQ_OFFLOAD_COLLECTION which causes the
+notification from the backing filesystem to put the collection onto a work
+queue instead.
+
+Fixes: e2d46f2ec332 ("netfs: Change the read result collector to only use one work item")
+Reported-by: Max Kellermann <max.kellermann@ionos.com>
+Link: https://lore.kernel.org/r/CAKPOu+8z_ijTLHdiCYGU_Uk7yYD=shxyGLwfe-L7AV3DhebS3w@mail.gmail.com/
+Signed-off-by: David Howells <dhowells@redhat.com>
+Link: https://lore.kernel.org/20250711151005.2956810-2-dhowells@redhat.com
+Reviewed-by: Paulo Alcantara (Red Hat) <pc@manguebit.org>
+cc: Paulo Alcantara <pc@manguebit.org>
+cc: Viacheslav Dubeyko <slava@dubeyko.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: netfs@lists.linux.dev
+cc: ceph-devel@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+cc: stable@vger.kernel.org
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/netfs/read_pgpriv2.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/netfs/read_pgpriv2.c b/fs/netfs/read_pgpriv2.c
+index 5bbe906a551d..080d2a6a51d9 100644
+--- a/fs/netfs/read_pgpriv2.c
++++ b/fs/netfs/read_pgpriv2.c
+@@ -110,6 +110,7 @@ static struct netfs_io_request *netfs_pgpriv2_begin_copy_to_cache(
+ 	if (!creq->io_streams[1].avail)
+ 		goto cancel_put;
+ 
++	__set_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &creq->flags);
+ 	trace_netfs_write(creq, netfs_write_trace_copy_to_cache);
+ 	netfs_stat(&netfs_n_wh_copy_to_cache);
+ 	rreq->copy_to_cache = creq;
+-- 
+2.50.1
 
 
-On Tue, Jul 22, 2025 at 2:16=E2=80=AFAM Viacheslav Dubeyko <slava@dubeyko.c=
-om> wrote:
->
-> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
->
-> The Coverity Scan service has detected potential
-> race condition in ceph_check_delayed_caps() [1].
->
-> The CID 1590633 contains explanation: "Accessing
-> ci->i_ceph_flags without holding lock
-> ceph_inode_info.i_ceph_lock. The value of the shared data
-> will be determined by the interleaving of thread execution.
-> Thread shared data is accessed without holding an appropriate
-> lock, possibly causing a race condition (CWE-366)".
->
-> The patch reworks the logic of accessing ci->i_ceph_flags.
-> At first, it removes ci item from a mdsc->cap_delay_list.
-> Then it unlocks mdsc->cap_delay_lock and it locks
-> ci->i_ceph_lock. Then, it calls smp_mb__before_atomic()
-> to be sure that ci->i_ceph_flags has consistent state of
-> the bits. The is_metadata_under_flush variable stores
-> the state of CEPH_I_FLUSH_BIT. Finally, it unlocks
-> the ci->i_ceph_lock and it locks the mdsc->cap_delay_lock.
-> The is_metadata_under_flush is used to check the condition
-> that ci needs to be removed from mdsc->cap_delay_list.
-> If it is not the case, then ci will be added into the head of
-> mdsc->cap_delay_list.
->
-> This patch reworks the logic of checking the CEPH_I_FLUSH_BIT,
-> CEPH_I_FLUSH_SNAPS_BIT, CEPH_I_KICK_FLUSH_BIT,
-> CEPH_ASYNC_CREATE_BIT, CEPH_I_ERROR_FILELOCK_BIT by test_bit()
-> method and calling smp_mb__before_atomic() to ensure that
-> bit state is consistent. It switches on calling the set_bit(),
-> clear_bit() for these bits, and calling smp_mb__after_atomic()
-> after these methods to ensure that modified bit is visible.
->
-> Additionally, __must_hold() has been added for
-> __cap_delay_requeue(), __cap_delay_requeue_front(), and
-> __prep_cap() to help the sparse with lock checking and
-> it was commented that caller of __cap_delay_requeue_front()
-> and __prep_cap() must lock the ci->i_ceph_lock.
->
-> [1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIs=
-sue=3D1590633
->
-> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> cc: Alex Markuze <amarkuze@redhat.com>
-> cc: Ilya Dryomov <idryomov@gmail.com>
-> cc: Ceph Development <ceph-devel@vger.kernel.org>
-> ---
->  fs/ceph/caps.c  | 132 +++++++++++++++++++++++++++++++++++++-----------
->  fs/ceph/super.h |  38 ++++++++------
->  2 files changed, 125 insertions(+), 45 deletions(-)
->
-> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-> index a8d8b56cf9d2..9c82cda33ee5 100644
-> --- a/fs/ceph/caps.c
-> +++ b/fs/ceph/caps.c
-> @@ -516,6 +516,7 @@ static void __cap_set_timeouts(struct ceph_mds_client=
- *mdsc,
->   */
->  static void __cap_delay_requeue(struct ceph_mds_client *mdsc,
->                                 struct ceph_inode_info *ci)
-> +               __must_hold(ci->i_ceph_lock)
->  {
->         struct inode *inode =3D &ci->netfs.inode;
->
-> @@ -525,7 +526,9 @@ static void __cap_delay_requeue(struct ceph_mds_clien=
-t *mdsc,
->         if (!mdsc->stopping) {
->                 spin_lock(&mdsc->cap_delay_lock);
->                 if (!list_empty(&ci->i_cap_delay_list)) {
-> -                       if (ci->i_ceph_flags & CEPH_I_FLUSH)
-> +                       /* ensure that bit state is consistent */
-> +                       smp_mb__before_atomic();
-> +                       if (test_bit(CEPH_I_FLUSH_BIT, &ci->i_ceph_flags)=
-)
->                                 goto no_change;
->                         list_del_init(&ci->i_cap_delay_list);
->                 }
-> @@ -540,15 +543,20 @@ static void __cap_delay_requeue(struct ceph_mds_cli=
-ent *mdsc,
->   * Queue an inode for immediate writeback.  Mark inode with I_FLUSH,
->   * indicating we should send a cap message to flush dirty metadata
->   * asap, and move to the front of the delayed cap list.
-> + *
-> + * Caller must hold i_ceph_lock.
->   */
->  static void __cap_delay_requeue_front(struct ceph_mds_client *mdsc,
->                                       struct ceph_inode_info *ci)
-> +               __must_hold(ci->i_ceph_lock)
->  {
->         struct inode *inode =3D &ci->netfs.inode;
->
->         doutc(mdsc->fsc->client, "%p %llx.%llx\n", inode, ceph_vinop(inod=
-e));
->         spin_lock(&mdsc->cap_delay_lock);
-> -       ci->i_ceph_flags |=3D CEPH_I_FLUSH;
-> +       set_bit(CEPH_I_FLUSH_BIT, &ci->i_ceph_flags);
-> +       /* ensure modified bit is visible */
-> +       smp_mb__after_atomic();
->         if (!list_empty(&ci->i_cap_delay_list))
->                 list_del_init(&ci->i_cap_delay_list);
->         list_add(&ci->i_cap_delay_list, &mdsc->cap_delay_list);
-> @@ -1386,10 +1394,13 @@ void __ceph_remove_caps(struct ceph_inode_info *c=
-i)
->   *
->   * Make note of max_size reported/requested from mds, revoked caps
->   * that have now been implemented.
-> + *
-> + * Caller must hold i_ceph_lock.
->   */
->  static void __prep_cap(struct cap_msg_args *arg, struct ceph_cap *cap,
->                        int op, int flags, int used, int want, int retain,
->                        int flushing, u64 flush_tid, u64 oldest_flush_tid)
-> +               __must_hold(ci->i_ceph_lock)
->  {
->         struct ceph_inode_info *ci =3D cap->ci;
->         struct inode *inode =3D &ci->netfs.inode;
-> @@ -1408,7 +1419,9 @@ static void __prep_cap(struct cap_msg_args *arg, st=
-ruct ceph_cap *cap,
->               ceph_cap_string(revoking));
->         BUG_ON((retain & CEPH_CAP_PIN) =3D=3D 0);
->
-> -       ci->i_ceph_flags &=3D ~CEPH_I_FLUSH;
-> +       clear_bit(CEPH_I_FLUSH_BIT, &ci->i_ceph_flags);
-> +       /* ensure modified bit is visible */
-> +       smp_mb__after_atomic();
->
->         cap->issued &=3D retain;  /* drop bits we don't want */
->         /*
-> @@ -1665,7 +1678,9 @@ static void __ceph_flush_snaps(struct ceph_inode_in=
-fo *ci,
->                 last_tid =3D capsnap->cap_flush.tid;
->         }
->
-> -       ci->i_ceph_flags &=3D ~CEPH_I_FLUSH_SNAPS;
-> +       clear_bit(CEPH_I_FLUSH_SNAPS_BIT, &ci->i_ceph_flags);
-> +       /* ensure modified bit is visible */
-> +       smp_mb__after_atomic();
->
->         while (first_tid <=3D last_tid) {
->                 struct ceph_cap *cap =3D ci->i_auth_cap;
-> @@ -1728,7 +1743,9 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
->                 session =3D *psession;
->  retry:
->         spin_lock(&ci->i_ceph_lock);
-> -       if (!(ci->i_ceph_flags & CEPH_I_FLUSH_SNAPS)) {
-> +       /* ensure that bit state is consistent */
-> +       smp_mb__before_atomic();
-> +       if (!test_bit(CEPH_I_FLUSH_SNAPS_BIT, &ci->i_ceph_flags)) {
->                 doutc(cl, " no capsnap needs flush, doing nothing\n");
->                 goto out;
->         }
-> @@ -1752,7 +1769,9 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
->         }
->
->         // make sure flushsnap messages are sent in proper order.
-> -       if (ci->i_ceph_flags & CEPH_I_KICK_FLUSH)
-> +       /* ensure that bit state is consistent */
-> +       smp_mb__before_atomic();
-> +       if (test_bit(CEPH_I_KICK_FLUSH_BIT, &ci->i_ceph_flags))
->                 __kick_flushing_caps(mdsc, session, ci, 0);
->
->         __ceph_flush_snaps(ci, session);
-> @@ -2024,15 +2043,21 @@ void ceph_check_caps(struct ceph_inode_info *ci, =
-int flags)
->         struct ceph_mds_session *session =3D NULL;
->
->         spin_lock(&ci->i_ceph_lock);
-> -       if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE) {
-> -               ci->i_ceph_flags |=3D CEPH_I_ASYNC_CHECK_CAPS;
-> +       /* ensure that bit state is consistent */
-> +       smp_mb__before_atomic();
-> +       if (test_bit(CEPH_ASYNC_CREATE_BIT, &ci->i_ceph_flags)) {
-> +               set_bit(CEPH_I_ASYNC_CHECK_CAPS_BIT, &ci->i_ceph_flags);
-> +               /* ensure modified bit is visible */
-> +               smp_mb__after_atomic();
->
->                 /* Don't send messages until we get async create reply */
->                 spin_unlock(&ci->i_ceph_lock);
->                 return;
->         }
->
-> -       if (ci->i_ceph_flags & CEPH_I_FLUSH)
-> +       /* ensure that bit state is consistent */
-> +       smp_mb__before_atomic();
-> +       if (test_bit(CEPH_I_FLUSH_BIT, &ci->i_ceph_flags))
->                 flags |=3D CHECK_CAPS_FLUSH;
->  retry:
->         /* Caps wanted by virtue of active open files. */
-> @@ -2196,7 +2221,10 @@ void ceph_check_caps(struct ceph_inode_info *ci, i=
-nt flags)
->                                 doutc(cl, "flushing dirty caps\n");
->                                 goto ack;
->                         }
-> -                       if (ci->i_ceph_flags & CEPH_I_FLUSH_SNAPS) {
-> +
-> +                       /* ensure that bit state is consistent */
-> +                       smp_mb__before_atomic();
-> +                       if (test_bit(CEPH_I_FLUSH_SNAPS_BIT, &ci->i_ceph_=
-flags)) {
->                                 doutc(cl, "flushing snap caps\n");
->                                 goto ack;
->                         }
-> @@ -2220,12 +2248,14 @@ void ceph_check_caps(struct ceph_inode_info *ci, =
-int flags)
->
->                 /* kick flushing and flush snaps before sending normal
->                  * cap message */
-> +               /* ensure that bit state is consistent */
-> +               smp_mb__before_atomic();
->                 if (cap =3D=3D ci->i_auth_cap &&
->                     (ci->i_ceph_flags &
->                      (CEPH_I_KICK_FLUSH | CEPH_I_FLUSH_SNAPS))) {
-> -                       if (ci->i_ceph_flags & CEPH_I_KICK_FLUSH)
-> +                       if (test_bit(CEPH_I_KICK_FLUSH_BIT, &ci->i_ceph_f=
-lags))
->                                 __kick_flushing_caps(mdsc, session, ci, 0=
-);
-> -                       if (ci->i_ceph_flags & CEPH_I_FLUSH_SNAPS)
-> +                       if (test_bit(CEPH_I_FLUSH_SNAPS_BIT, &ci->i_ceph_=
-flags))
->                                 __ceph_flush_snaps(ci, session);
->
->                         goto retry;
-> @@ -2297,11 +2327,17 @@ static int try_flush_caps(struct inode *inode, u6=
-4 *ptid)
->                         goto out;
->                 }
->
-> +               /* ensure that bit state is consistent */
-> +               smp_mb__before_atomic();
->                 if (ci->i_ceph_flags &
->                     (CEPH_I_KICK_FLUSH | CEPH_I_FLUSH_SNAPS)) {
-> -                       if (ci->i_ceph_flags & CEPH_I_KICK_FLUSH)
-> +                       /* ensure that bit state is consistent */
-> +                       smp_mb__before_atomic();
-> +                       if (test_bit(CEPH_I_KICK_FLUSH_BIT, &ci->i_ceph_f=
-lags))
->                                 __kick_flushing_caps(mdsc, session, ci, 0=
-);
-> -                       if (ci->i_ceph_flags & CEPH_I_FLUSH_SNAPS)
-> +                       /* ensure that bit state is consistent */
-> +                       smp_mb__before_atomic();
-> +                       if (test_bit(CEPH_I_FLUSH_SNAPS_BIT, &ci->i_ceph_=
-flags))
->                                 __ceph_flush_snaps(ci, session);
->                         goto retry_locked;
->                 }
-> @@ -2573,10 +2609,14 @@ static void __kick_flushing_caps(struct ceph_mds_=
-client *mdsc,
->         u64 last_snap_flush =3D 0;
->
->         /* Don't do anything until create reply comes in */
-> -       if (ci->i_ceph_flags & CEPH_I_ASYNC_CREATE)
-> +       /* ensure that bit state is consistent */
-> +       smp_mb__before_atomic();
-> +       if (test_bit(CEPH_ASYNC_CREATE_BIT, &ci->i_ceph_flags))
->                 return;
->
-> -       ci->i_ceph_flags &=3D ~CEPH_I_KICK_FLUSH;
-> +       clear_bit(CEPH_I_KICK_FLUSH_BIT, &ci->i_ceph_flags);
-> +       /* ensure modified bit is visible */
-> +       smp_mb__after_atomic();
->
->         list_for_each_entry_reverse(cf, &ci->i_cap_flush_list, i_list) {
->                 if (cf->is_capsnap) {
-> @@ -2685,7 +2725,9 @@ void ceph_early_kick_flushing_caps(struct ceph_mds_=
-client *mdsc,
->                         __kick_flushing_caps(mdsc, session, ci,
->                                              oldest_flush_tid);
->                 } else {
-> -                       ci->i_ceph_flags |=3D CEPH_I_KICK_FLUSH;
-> +                       set_bit(CEPH_I_KICK_FLUSH_BIT, &ci->i_ceph_flags)=
-;
-> +                       /* ensure modified bit is visible */
-> +                       smp_mb__after_atomic();
->                 }
->
->                 spin_unlock(&ci->i_ceph_lock);
-> @@ -2720,7 +2762,10 @@ void ceph_kick_flushing_caps(struct ceph_mds_clien=
-t *mdsc,
->                         spin_unlock(&ci->i_ceph_lock);
->                         continue;
->                 }
-> -               if (ci->i_ceph_flags & CEPH_I_KICK_FLUSH) {
-> +
-> +               /* ensure that bit state is consistent */
-> +               smp_mb__before_atomic();
-> +               if (test_bit(CEPH_I_KICK_FLUSH_BIT, &ci->i_ceph_flags)) {
->                         __kick_flushing_caps(mdsc, session, ci,
->                                              oldest_flush_tid);
->                 }
-> @@ -2827,8 +2872,10 @@ static int try_get_cap_refs(struct inode *inode, i=
-nt need, int want,
->  again:
->         spin_lock(&ci->i_ceph_lock);
->
-> +       /* ensure that bit state is consistent */
-> +       smp_mb__before_atomic();
->         if ((flags & CHECK_FILELOCK) &&
-> -           (ci->i_ceph_flags & CEPH_I_ERROR_FILELOCK)) {
-> +           test_bit(CEPH_I_ERROR_FILELOCK_BIT, &ci->i_ceph_flags)) {
->                 doutc(cl, "%p %llx.%llx error filelock\n", inode,
->                       ceph_vinop(inode));
->                 ret =3D -EIO;
-> @@ -3205,8 +3252,11 @@ static int ceph_try_drop_cap_snap(struct ceph_inod=
-e_info *ci,
->                 doutc(cl, "%p follows %llu\n", capsnap, capsnap->follows)=
-;
->                 BUG_ON(capsnap->cap_flush.tid > 0);
->                 ceph_put_snap_context(capsnap->context);
-> -               if (!list_is_last(&capsnap->ci_item, &ci->i_cap_snaps))
-> -                       ci->i_ceph_flags |=3D CEPH_I_FLUSH_SNAPS;
-> +               if (!list_is_last(&capsnap->ci_item, &ci->i_cap_snaps)) {
-> +                       set_bit(CEPH_I_FLUSH_SNAPS_BIT, &ci->i_ceph_flags=
-);
-> +                       /* ensure modified bit is visible */
-> +                       smp_mb__after_atomic();
-> +               }
->
->                 list_del(&capsnap->ci_item);
->                 ceph_put_cap_snap(capsnap);
-> @@ -3395,7 +3445,10 @@ void ceph_put_wrbuffer_cap_refs(struct ceph_inode_=
-info *ci, int nr,
->                                 if (ceph_try_drop_cap_snap(ci, capsnap)) =
-{
->                                         put++;
->                                 } else {
-> -                                       ci->i_ceph_flags |=3D CEPH_I_FLUS=
-H_SNAPS;
-> +                                       set_bit(CEPH_I_FLUSH_SNAPS_BIT,
-> +                                               &ci->i_ceph_flags);
-> +                                       /* ensure modified bit is visible=
- */
-> +                                       smp_mb__after_atomic();
->                                         flush_snaps =3D true;
->                                 }
->                         }
-> @@ -3646,8 +3699,11 @@ static void handle_cap_grant(struct inode *inode,
->                 rcu_assign_pointer(ci->i_layout.pool_ns, extra_info->pool=
-_ns);
->
->                 if (ci->i_layout.pool_id !=3D old_pool ||
-> -                   extra_info->pool_ns !=3D old_ns)
-> -                       ci->i_ceph_flags &=3D ~CEPH_I_POOL_PERM;
-> +                   extra_info->pool_ns !=3D old_ns) {
-> +                       clear_bit(CEPH_I_POOL_PERM_BIT, &ci->i_ceph_flags=
-);
-> +                       /* ensure modified bit is visible */
-> +                       smp_mb__after_atomic();
-> +               }
->
->                 extra_info->pool_ns =3D old_ns;
->
-> @@ -4613,6 +4669,7 @@ unsigned long ceph_check_delayed_caps(struct ceph_m=
-ds_client *mdsc)
->         unsigned long delay_max =3D opt->caps_wanted_delay_max * HZ;
->         unsigned long loop_start =3D jiffies;
->         unsigned long delay =3D 0;
-> +       bool is_metadata_under_flush;
->
->         doutc(cl, "begin\n");
->         spin_lock(&mdsc->cap_delay_lock);
-> @@ -4625,11 +4682,24 @@ unsigned long ceph_check_delayed_caps(struct ceph=
-_mds_client *mdsc)
->                         delay =3D ci->i_hold_caps_max;
->                         break;
->                 }
-> -               if ((ci->i_ceph_flags & CEPH_I_FLUSH) =3D=3D 0 &&
-> -                   time_before(jiffies, ci->i_hold_caps_max))
-> -                       break;
-> +
->                 list_del_init(&ci->i_cap_delay_list);
->
-> +               spin_unlock(&mdsc->cap_delay_lock);
-> +               spin_lock(&ci->i_ceph_lock);
-> +               /* ensure that bit state is consistent */
-> +               smp_mb__before_atomic();
-> +               is_metadata_under_flush =3D
-> +                       test_bit(CEPH_I_FLUSH_BIT, &ci->i_ceph_flags);
-> +               spin_unlock(&ci->i_ceph_lock);
-> +               spin_lock(&mdsc->cap_delay_lock);
-> +
-> +               if (!is_metadata_under_flush &&
-> +                   time_before(jiffies, ci->i_hold_caps_max)) {
-> +                       list_add(&ci->i_cap_delay_list, &mdsc->cap_delay_=
-list);
-> +                       break;
-> +               }
-> +
->                 inode =3D igrab(&ci->netfs.inode);
->                 if (inode) {
->                         spin_unlock(&mdsc->cap_delay_lock);
-> @@ -4811,7 +4881,9 @@ int ceph_drop_caps_for_unlink(struct inode *inode)
->                         doutc(mdsc->fsc->client, "%p %llx.%llx\n", inode,
->                               ceph_vinop(inode));
->                         spin_lock(&mdsc->cap_delay_lock);
-> -                       ci->i_ceph_flags |=3D CEPH_I_FLUSH;
-> +                       set_bit(CEPH_I_FLUSH_BIT, &ci->i_ceph_flags);
-> +                       /* ensure modified bit is visible */
-> +                       smp_mb__after_atomic();
->                         if (!list_empty(&ci->i_cap_delay_list))
->                                 list_del_init(&ci->i_cap_delay_list);
->                         list_add_tail(&ci->i_cap_delay_list,
-> @@ -5080,7 +5152,9 @@ int ceph_purge_inode_cap(struct inode *inode, struc=
-t ceph_cap *cap, bool *invali
->
->                 if (atomic_read(&ci->i_filelock_ref) > 0) {
->                         /* make further file lock syscall return -EIO */
-> -                       ci->i_ceph_flags |=3D CEPH_I_ERROR_FILELOCK;
-> +                       set_bit(CEPH_I_ERROR_FILELOCK_BIT, &ci->i_ceph_fl=
-ags);
-> +                       /* ensure modified bit is visible */
-> +                       smp_mb__after_atomic();
->                         pr_warn_ratelimited_client(cl,
->                                 " dropping file locks for %p %llx.%llx\n"=
-,
->                                 inode, ceph_vinop(inode));
-> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-> index bb0db0cc8003..3921fefe4481 100644
-> --- a/fs/ceph/super.h
-> +++ b/fs/ceph/super.h
-> @@ -628,22 +628,28 @@ static inline struct inode *ceph_find_inode(struct =
-super_block *sb,
->  /*
->   * Ceph inode.
->   */
-> -#define CEPH_I_DIR_ORDERED     (1 << 0)  /* dentries in dir are ordered =
-*/
-> -#define CEPH_I_FLUSH           (1 << 2)  /* do not delay flush of dirty =
-metadata */
-> -#define CEPH_I_POOL_PERM       (1 << 3)  /* pool rd/wr bits are valid */
-> -#define CEPH_I_POOL_RD         (1 << 4)  /* can read from pool */
-> -#define CEPH_I_POOL_WR         (1 << 5)  /* can write to pool */
-> -#define CEPH_I_SEC_INITED      (1 << 6)  /* security initialized */
-> -#define CEPH_I_KICK_FLUSH      (1 << 7)  /* kick flushing caps */
-> -#define CEPH_I_FLUSH_SNAPS     (1 << 8)  /* need flush snapss */
-> -#define CEPH_I_ERROR_WRITE     (1 << 9) /* have seen write errors */
-> -#define CEPH_I_ERROR_FILELOCK  (1 << 10) /* have seen file lock errors *=
-/
-> -#define CEPH_I_ODIRECT         (1 << 11) /* inode in direct I/O mode */
-> -#define CEPH_ASYNC_CREATE_BIT  (12)      /* async create in flight for t=
-his */
-> -#define CEPH_I_ASYNC_CREATE    (1 << CEPH_ASYNC_CREATE_BIT)
-> -#define CEPH_I_SHUTDOWN                (1 << 13) /* inode is no longer u=
-sable */
-> -#define CEPH_I_ASYNC_CHECK_CAPS        (1 << 14) /* check caps immediate=
-ly after async
-> -                                            creating finishes */
-> +#define CEPH_I_DIR_ORDERED             (1 << 0)  /* dentries in dir are =
-ordered */
-> +#define CEPH_I_FLUSH_BIT               (2)       /* do not delay flush o=
-f dirty metadata */
-> +#define CEPH_I_FLUSH                   (1 << CEPH_I_FLUSH_BIT)
-> +#define CEPH_I_POOL_PERM_BIT           (3)  /* pool rd/wr bits are valid=
- */
-> +#define CEPH_I_POOL_PERM               (1 << CEPH_I_POOL_PERM_BIT)
-> +#define CEPH_I_POOL_RD                 (1 << 4)  /* can read from pool *=
-/
-> +#define CEPH_I_POOL_WR                 (1 << 5)  /* can write to pool */
-> +#define CEPH_I_SEC_INITED              (1 << 6)  /* security initialized=
- */
-> +#define CEPH_I_KICK_FLUSH_BIT          (7)  /* kick flushing caps */
-> +#define CEPH_I_KICK_FLUSH              (1 << CEPH_I_KICK_FLUSH_BIT)
-> +#define CEPH_I_FLUSH_SNAPS_BIT         (8)  /* need flush snapss */
-> +#define CEPH_I_FLUSH_SNAPS             (1 << CEPH_I_FLUSH_SNAPS_BIT)
-> +#define CEPH_I_ERROR_WRITE             (1 << 9) /* have seen write error=
-s */
-> +#define CEPH_I_ERROR_FILELOCK_BIT      (10) /* have seen file lock error=
-s */
-> +#define CEPH_I_ERROR_FILELOCK          (1 << CEPH_I_ERROR_FILELOCK_BIT)
-> +#define CEPH_I_ODIRECT                 (1 << 11) /* inode in direct I/O =
-mode */
-> +#define CEPH_ASYNC_CREATE_BIT          (12)      /* async create in flig=
-ht for this */
-> +#define CEPH_I_ASYNC_CREATE            (1 << CEPH_ASYNC_CREATE_BIT)
-> +#define CEPH_I_SHUTDOWN                        (1 << 13) /* inode is no =
-longer usable */
-> +#define CEPH_I_ASYNC_CHECK_CAPS_BIT    (14) /* check caps immediately af=
-ter async
-> +                                               creating finishes */
-> +#define CEPH_I_ASYNC_CHECK_CAPS                (1 << CEPH_I_ASYNC_CHECK_=
-CAPS_BIT)
->
->  /*
->   * Masks of ceph inode work.
-> --
-> 2.50.1
->
 
 
