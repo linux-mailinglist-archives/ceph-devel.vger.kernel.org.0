@@ -1,97 +1,79 @@
-Return-Path: <ceph-devel+bounces-3327-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3328-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E36DB129B9
-	for <lists+ceph-devel@lfdr.de>; Sat, 26 Jul 2025 10:08:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B064DB144F3
+	for <lists+ceph-devel@lfdr.de>; Tue, 29 Jul 2025 01:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 670DA4E28E8
-	for <lists+ceph-devel@lfdr.de>; Sat, 26 Jul 2025 08:07:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 098BB1AA1531
+	for <lists+ceph-devel@lfdr.de>; Mon, 28 Jul 2025 23:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D85C205AA8;
-	Sat, 26 Jul 2025 08:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490C0289805;
+	Mon, 28 Jul 2025 23:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XDo5EKIL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtuaYSMN"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635AF78F4C;
-	Sat, 26 Jul 2025 08:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31A82459FB;
+	Mon, 28 Jul 2025 23:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753517288; cv=none; b=STORqDKw02q85BrHB0NTO4Shm3T8NLDi1UOrgUdPp84fqkFw57gblDAzl4eUDRf87DGYe/o79Z5oKaLpG563vXy/8AVH//IYqQ5YoBqxBZ5e6353t8Cxuzq5cH4vHKcOxRY6Dt+taJw4vyZuyATb7zH+n1CjBovAtW7Nv/5IGdY=
+	t=1753746053; cv=none; b=QUUcZ/SPxhbQ7q9tnS905xPAdSSal5AFViyNrMcJdxC1+QzDyIZtJxcxFG2U/SjWirbFTECLUaaxIQaf8Zkm8hHC642nuO2nXxsi8VvgoQFfuw38pOw36exjvYpkwxS8jdw7+n7+9XpAp3rE7p/VvzWKo9YybXCi6oerW9e29ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753517288; c=relaxed/simple;
-	bh=PIME5krYw/4wF0yEsLfgsRKVMgxPXM9zQyhJIyzEHdE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hpl7PkjBdVR8lWUHJXg+N2UcJCD9FeunMTj2/WKdy72igjssH7AAuFkYrM9m9wSV+pBQVBaxGBH73KBVgylcrBOpOhSBes/K9PQyPpQHt38ba32aQPAtkz6BVDZTl7iQLwkOmxOB6yS9zr6fLnPm422/Yo5MdGKDfqK22bLQJ+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XDo5EKIL; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=kLbJ+qa/ClK46vQiE5cu2nwPz1qsNq4U7we8ArGeAjM=; b=XDo5EKILGiL+1hmeK+0GezWRs3
-	M5t/gYXHhiGpJnOkOvb/yl/JUtW3+PG2w/KwY8Z4HPwXTbS2Ty33t90SoN6BAYTiqm4pwMCCesU9+
-	0OXT5ydX1Zx2im3CikS5VFBZqkqtlzE7akMZ1M9aa4qMGhxkDVfyyBa7HDgnOzgr1oWZNDEtGMtrd
-	JwoFVrOjuISMPxLwkbdAcFleS/n1D/QdWdj5c8oQGHIRsupykh6yjHDcRJ8mFxCACNxrIv3OAI5WK
-	5eVLEu+GpyStqkipqN/PNIYX58t1BfIeVrUUnrS8LhaAMGG66K1Vpje9WgMadxRrNO24ZAvjTA4pU
-	5LtAOenA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ufZwr-000000069lg-1Eak;
-	Sat, 26 Jul 2025 08:08:05 +0000
-Date: Sat, 26 Jul 2025 09:08:05 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-	ceph-devel@vger.kernel.org
-Subject: [git pull][6.17] vfs.git 7/9: ceph d_name fixes
-Message-ID: <20250726080805.GF1456602@ZenIV>
-References: <20250726080119.GA222315@ZenIV>
+	s=arc-20240116; t=1753746053; c=relaxed/simple;
+	bh=7EtMfIonVA4ygPkf9GP/w+5SgZerqqzYw8v/JFBzi1I=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=vEk4D66+Y+v39WEhe9xvLoRFtBfT8PWUZJu0iQ/fSo0AhRxQfOQ8Yc6R7qtpDDnefhhPwuWbg8P89gxk0BA7rlUEp6aUhAvahZtRhJx5OVbs88btlw73/dyVTGSMLg0QG+rRhqJfRDrB5rFDJj/QsMyuOI6Zyby//lFyrSt6GmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CtuaYSMN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C62DFC4CEF6;
+	Mon, 28 Jul 2025 23:40:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753746052;
+	bh=7EtMfIonVA4ygPkf9GP/w+5SgZerqqzYw8v/JFBzi1I=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=CtuaYSMNpWTbaLbscHo1PvgLMA5GRivxrEGSDhueeoS8CdoQev7dyJWcMz02Q7CQW
+	 +M9L4FxE8vEkTQ2gZw8GKbCQrS8HOtPy7Z199jUZEo45XVBzjT4A/5bT10wlIJl1eB
+	 zE2PccAEbEEIzHAY99wOxx0zeiWWfy6up4BlnrNitXh88X/Wz6cUZbF9bh4lt6kccR
+	 RsocoYv0j15up3PmSIS6XIki6/U715s6k5bwSfvO1fD8OFOKfug/9al3gEd/Nwda62
+	 4jArpQ1TtGAKjSy6lirDk/Ooi2Jz41HY+UAkRhgsHUdZ/mxINz1mR9NVIwamhSk8Nr
+	 A/YLjyqj8i/Aw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 998AA383BF60;
+	Mon, 28 Jul 2025 23:41:10 +0000 (UTC)
+Subject: Re: [git pull][6.17] vfs.git 7/9: ceph d_name fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250726080805.GF1456602@ZenIV>
+References: <20250726080119.GA222315@ZenIV> <20250726080805.GF1456602@ZenIV>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250726080805.GF1456602@ZenIV>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-ceph-d_name-fixes
+X-PR-Tracked-Commit-Id: 0d2da2561bdeb459b6c540c2417a15c1f8732e6a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 815d3c16280ce289c558255acc4296b36383d1a4
+Message-Id: <175374606955.885311.4809090447449390422.pr-tracker-bot@kernel.org>
+Date: Mon, 28 Jul 2025 23:41:09 +0000
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, ceph-devel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250726080119.GA222315@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-stuff that had fallen through the cracks back in February; ceph folks tested
-that pile and said they prefer to have it go through my tree...
+The pull request you sent on Sat, 26 Jul 2025 09:08:05 +0100:
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-ceph-d_name-fixes
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/815d3c16280ce289c558255acc4296b36383d1a4
 
-are available in the Git repository at:
+Thank you!
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-ceph-d_name-fixes
-
-for you to fetch changes up to 0d2da2561bdeb459b6c540c2417a15c1f8732e6a:
-
-  ceph: fix a race with rename() in ceph_mdsc_build_path() (2025-06-17 17:58:14 -0400)
-
-----------------------------------------------------------------
-ceph ->d_name race fixes
-
-----------------------------------------------------------------
-Al Viro (3):
-      [ceph] parse_longname(): strrchr() expects NUL-terminated string
-      prep for ceph_encode_encrypted_fname() fixes
-      ceph: fix a race with rename() in ceph_mdsc_build_path()
-
- fs/ceph/caps.c       | 18 +++++-------
- fs/ceph/crypto.c     | 82 +++++++++++++++++-----------------------------------
- fs/ceph/crypto.h     | 18 +++---------
- fs/ceph/dir.c        |  7 ++---
- fs/ceph/mds_client.c |  4 +--
- 5 files changed, 43 insertions(+), 86 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
