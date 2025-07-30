@@ -1,175 +1,205 @@
-Return-Path: <ceph-devel+bounces-3336-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3337-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2891B16381
-	for <lists+ceph-devel@lfdr.de>; Wed, 30 Jul 2025 17:19:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 575E8B16698
+	for <lists+ceph-devel@lfdr.de>; Wed, 30 Jul 2025 20:54:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4DA8169F45
-	for <lists+ceph-devel@lfdr.de>; Wed, 30 Jul 2025 15:19:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DFA717CE1E
+	for <lists+ceph-devel@lfdr.de>; Wed, 30 Jul 2025 18:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97F92110E;
-	Wed, 30 Jul 2025 15:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DAE2E266C;
+	Wed, 30 Jul 2025 18:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SaOhGQ1R"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="gfEuhADa"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8BD192D6B
-	for <ceph-devel@vger.kernel.org>; Wed, 30 Jul 2025 15:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08A22DC343
+	for <ceph-devel@vger.kernel.org>; Wed, 30 Jul 2025 18:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753888764; cv=none; b=HZN1AcCd4uv+BLsOIyN3MqlYSLEr17uF/mmz+mTS4ygYTqjXF48VHT+CbXnFs12QkLdn6mTld/S6zZHcE0jpyPdciuC6bNXUW6PsEpOZMu/gdHdnuZwgYqpIuTQXg5Vh8vt+kS3Y0SF6lGE7RppyrryJk+4I50/kjv2iD9CJJr0=
+	t=1753901665; cv=none; b=rl8kDaCU9qRs/6YDptufHifhKwVhhLD1GBVObmcLZkbArfREUfwIJQEpHZJuGvmB5PJunKzysKIMfQFu0YuYNsKCLBYMfVQwbLhHPganM7Fv5OQILs7bDPbZlsJoGO/k1bleERomBmIgOzeh5NiJRFkO21GAXhGzaNqDoux4sBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753888764; c=relaxed/simple;
-	bh=6nfA3oThlIKf7RJ0EkMHH8F3YKcGIZY0D3Cwv1K2TPg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l2+TndSgnggqc0dq2fxuwnVcz3iylqUnjeD/yRRi7eVqTgkg5M8YXvObtz/oUpcJboXFQC1FWNkUMXJ+mYxT5XAXq4iOQVR5FuwRXYeIQAPJQYvbjVGmErvCn5+/OY0m3QGlvcgDOmuayFFjlDr9/XO6BSfSlN4O8Yj3B5sYv50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SaOhGQ1R; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753888761;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K5eudngtJP8VUCvyP2XAUo7CX+0NxAuDo0XqglIVzH8=;
-	b=SaOhGQ1RkShj04suZC5v7AkuHP3SzC0HTm2vFrLi8I5HYDaiyd6aZipnktQunUMYNeEZl/
-	CllwI047iJXS7FfLmNZqdUqqpThl3bgGZtMoBj+DcLnPLyQNUeoynUaU5oUBUNsmx+cDWD
-	lWM/rcsDtA6kIacWL9uB57lwvxMswBo=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-684-aeIIvYUCNqCRlZ-oQRBUVA-1; Wed, 30 Jul 2025 11:19:20 -0400
-X-MC-Unique: aeIIvYUCNqCRlZ-oQRBUVA-1
-X-Mimecast-MFC-AGG-ID: aeIIvYUCNqCRlZ-oQRBUVA_1753888760
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-7074f138855so15541006d6.1
-        for <ceph-devel@vger.kernel.org>; Wed, 30 Jul 2025 08:19:20 -0700 (PDT)
+	s=arc-20240116; t=1753901665; c=relaxed/simple;
+	bh=XtM6JG/OpIBpA8abZfcJPmuPS2KKJYSZyVLxQ1FWo2o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eCZ3UEkWeL+Vq3rSvWWcRl8zbwCTvD/dGngMT4mOD5IfjcCJivqxUL7Ib+ZK2t+U/vsJnPVa2oiqhhhykzobOQlRk1PNLh+ECHX0OqEUk83kPQRtMHitJETcHhNfeNVlqH0M6ASgppWfpkj+vrKn81GyjjOrmuMfWd/LphvzslA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=gfEuhADa; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-71b4fc462ddso1454317b3.1
+        for <ceph-devel@vger.kernel.org>; Wed, 30 Jul 2025 11:54:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1753901661; x=1754506461; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BOBue1rW0D08akK+2cb46wz7cLtVwQa85mat/MzXO7Y=;
+        b=gfEuhADaYvo4GQeJTjn9FcN/fdIsgvc8qHw7q3XNqrfYr0MUPUDpBEl4CoCd0ZdHEx
+         ae9i/tWKK3DJAW8kiOB0hs+s8HH+cjZdiYhvjkPl6hI4z3StMKGES0oJEoWgUtRvw+x0
+         4Bihhbq1BEfpx5kDCDX6zKzz+m8ZNtg+fOk27BMtQ/GeKiWnABXRSl26wRtoMT02yKj3
+         MVvZMLHZbavXeJtYTJfy59LzE65Q5maXy3SYpsWZrA3gc0RSt3lt8mxoTMmS8MWMExVo
+         /g6mTKHOewVnPN4/9G+DDMUVb2Tsfx4k++R59MEtJpzBPrBzTMf8U8fKuJcRlQBTCw0Z
+         XBIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753888759; x=1754493559;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K5eudngtJP8VUCvyP2XAUo7CX+0NxAuDo0XqglIVzH8=;
-        b=nBzuD7xNEyMUNIFx0RJkNicYz90XZnEXWIAud3tUCDwKc7CxN6OBTwGboFixbGV4Ag
-         FSysuSzIBF6QRVnLlAA1wkQN/3kVUteEKH3hO8UhED+SqNC7SP7xpwEdKHBiqDtJjqd6
-         iAFs1FjOQaRZY022Ufx2yTtJjbrpVIt0Xpm6SfZ/YQCv0LoqXDKb90Ggp+b9x/BSNuN0
-         MyDvbwPts7lYNmTcfY0xR2cQboxS7QsEr36kMWiDTQd3VmfkN5SrtUxlHh9LE72kbfZ/
-         UzwYSHzM0tThP0sDmaSmV6g3fCRUFkEvDLfj0MmmAbuQhrrl5jyF7XCzYloTj6kGxgVb
-         G3HA==
-X-Gm-Message-State: AOJu0YxUO4ZbJglnLhuVikxtGLHHUcljOJQJgZ7dsx/fAt1G3hwSCoz/
-	oiru7D7Ee36uMA0hSal58x3TKeBpwGDasK+Gv4KvOSmB8WBkhNsBDF3tpICZutMFSgVH6MWWzsG
-	KjYvKOviUbdgT5g9mL2bTIU6FAqS0m6ikLK/VDLNA9BFXgtCm8o6jv6Dg86RcxpFpbILykISXFp
-	BffvmRK2wKaMqcIx84ZYCYlJJgTVjPv4JU503VRFLag3um7bkvzEJ0
-X-Gm-Gg: ASbGncvDJIy3/dbaM5olAcEuQMquCjGD26t1op59clM2DGNGGEdZlsjUdv3kKRjOMdg
-	tG6QhU58XCRF7DeLBs60nnbHEay++wKWhC0YQoUEWziZULdBvlEF8b3dTcTP6/C+LwV6CRPbopH
-	kdfBJEZNa+UOBBloVFwAGxWtywXA/ulyj0NuJU836VqJ+kz9mV/WoWCFA8MkHy6bjDB9uP8mcjR
-	mimKTX2eBHDuvWrXjEc9y/rw9JmcxO1omPJR1rO/hcfHtGLQc4TyAXeHhhyuV7MM8ZMK6p0rDZ2
-	MvRwkvFGcRsaS8dmEiZs2poNl3odBLs7Cbn7m3nVxahS/SpR73YFo6QPSyv8D3iVtQAjE3BJcw=
-	=
-X-Received: by 2002:a05:6214:dcc:b0:704:8afa:250c with SMTP id 6a1803df08f44-70766e6de7fmr41314876d6.15.1753888759156;
-        Wed, 30 Jul 2025 08:19:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGklFJMvpw0WUka98XQ/5Ou+viWmghHs9bkGCnAKxXi4N2QA2NCQESRY83EPnGZlWHdHJFayA==
-X-Received: by 2002:a05:6214:dcc:b0:704:8afa:250c with SMTP id 6a1803df08f44-70766e6de7fmr41313976d6.15.1753888757916;
-        Wed, 30 Jul 2025 08:19:17 -0700 (PDT)
-Received: from cluster.. (4f.55.790d.ip4.static.sl-reverse.com. [13.121.85.79])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7076ba8834asm11322986d6.25.2025.07.30.08.19.17
+        d=1e100.net; s=20230601; t=1753901661; x=1754506461;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BOBue1rW0D08akK+2cb46wz7cLtVwQa85mat/MzXO7Y=;
+        b=No6ioI6JexNHmKzAuWPpmp8L/jQ6xb/rOrkqJxom1hO33R/XNNinfvof3ZysTDmksc
+         uopuPI3w8Va+WmgNRgOvsPnkvavhs2GhxAmH8QJkNZ6lshN7EYLYEWVwdczkpbDWsqrl
+         Dm226+hYivQYPDNt53COeSHA2lOtOIgEV7dxTbkD5zoRMATKhvedbnnL1MUVsXkrbTz7
+         Lw9TPuxi864hNP/YIZW0vlg5VkJC1l+Kk0oZ6hv2OQ3KKw110yin3TfoniYyZdhjWbJJ
+         0c9ojHPUr8zRmbYqpA3JRfiP2Q3+TYNoQfmd5V4Xu68gi3AcDUR13n0tRXK/AB2czEF5
+         Yhzg==
+X-Gm-Message-State: AOJu0Yy4f0PpYlVq0aoWEphivuM6UuZXExZOwtXY8uW1LOV/nd47fQlN
+	GGFGYIyG4Ei1RP/uuueRaVt/YNOL4BtavahHBxbn714p6q7y9w08JdRDWObyi3nFJFBgXIXtaqo
+	TKAxk
+X-Gm-Gg: ASbGncveWnox2YfQse1Wg0MsFIWTR7Rf3D4/PpdCxD5cznji3vutFhA2DDYM34gPiyO
+	0FXyp/NaPKGbmkWmMHd1ZddNJo5bCLUCzvOXtcz71FsXXWYOGNUO+tI5zJiGmhS78JyFx2t7ino
+	6nnPVmyXswCiiLNUn9ZGq8A4XDCNlL+T/WyW0v3FhPuov8vZM69tnFcKplpq0SM6DDy+g1m86Zd
+	IZJmRZY1gSK3Heg0JZ0t6w//iOT1RmIdiSWgcwGV4onrKOwe6HZr1gs7o+rdp7A+nNJ5aPXPcuj
+	V5OJsdCU2mKG2uzxV+rzEJX43XVGCKjMQRT4KCcrtyDbIvK/tDwcrQxCypHRBao/T0VQPJ9PddB
+	x5dsrJCw/JsogfZi0uf3BSyz2ePwN85xMGfGifM8=
+X-Google-Smtp-Source: AGHT+IE8po90BmWOmy7rifQVl+VDOjBkYeJfiHVERW3g0hFbqcBJv78cTBAuYI4Ph44Wm5OU0ChShQ==
+X-Received: by 2002:a05:690c:7408:b0:71a:3484:abe8 with SMTP id 00721157ae682-71a466ada6dmr67298137b3.34.1753901660815;
+        Wed, 30 Jul 2025 11:54:20 -0700 (PDT)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:4964:e64f:4b7:1866])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-719f23e0f06sm25597707b3.71.2025.07.30.11.54.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 08:19:17 -0700 (PDT)
-From: Alex Markuze <amarkuze@redhat.com>
+        Wed, 30 Jul 2025 11:54:19 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
 To: ceph-devel@vger.kernel.org
-Cc: Slava.Dubeyko@ibm.com,
-	Alex Markuze <amarkuze@redhat.com>
-Subject: [PATCH 2/2] ceph: fix client race condition where r_parent becomes stale before sending message
-Date: Wed, 30 Jul 2025 15:19:00 +0000
-Message-Id: <20250730151900.1591177-3-amarkuze@redhat.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250730151900.1591177-1-amarkuze@redhat.com>
-References: <20250730151900.1591177-1-amarkuze@redhat.com>
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com
+Subject: [PATCH] ceph: cleanup in __ceph_do_pending_vmtruncate() method
+Date: Wed, 30 Jul 2025 11:54:11 -0700
+Message-ID: <20250730185411.1105738-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-When the parent directory's i_rwsem is not locked, req->r_parent may become
-stale due to concurrent operations (e.g. rename) between dentry lookup and
-message creation. Validate that r_parent matches the encoded parent inode
-and update to the correct inode if a mismatch is detected.
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+
+The Coverity Scan service has detected an unchecked return
+value in __ceph_do_pending_vmtruncate() method [1].
+
+The CID 114041 contains explanation: " Calling
+filemap_write_and_wait_range without checking return value.
+If the function returns an error value, the error value
+may be mistaken for a normal value. Value returned from
+a function is not checked for errors before being used.
+(CWE-252)".
+
+The patch adds the checking of returned value of
+filemap_write_and_wait_range() and reporting the error
+message if something wrong is happened during the call.
+It reworks the logic by removing the jump to retry
+label because it could be the reason of potential
+infinite loop in the case of error condition during
+the filemap_write_and_wait_range() call. It was removed
+the check to == ci->i_truncate_pagecache_size because
+the to variable is set by ci->i_truncate_pagecache_size
+in the above code logic. The uneccessary finish variable
+has been removed because the to variable always has
+ci->i_truncate_pagecache_size value. Now if the condition
+ci->i_truncate_pending == 0 is true then logic will jump
+to the end of the function and wake_up_all(&ci->i_cap_wq)
+will be called.
+
+[1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=114041
+
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Ceph Development <ceph-devel@vger.kernel.org>
 ---
- fs/ceph/inode.c | 44 ++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 42 insertions(+), 2 deletions(-)
+ fs/ceph/inode.c | 32 +++++++++++++++++---------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
 
 diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 814f9e9656a0..49fb1e3a02e8 100644
+index fc543075b827..53ce776b04b5 100644
 --- a/fs/ceph/inode.c
 +++ b/fs/ceph/inode.c
-@@ -56,6 +56,46 @@ static int ceph_set_ino_cb(struct inode *inode, void *data)
- 	return 0;
- }
+@@ -2203,17 +2203,17 @@ void __ceph_do_pending_vmtruncate(struct inode *inode)
+ 	struct ceph_client *cl = ceph_inode_to_client(inode);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	u64 to;
+-	int wrbuffer_refs, finish = 0;
++	int wrbuffer_refs;
++	int err;
  
-+/*
-+ * Validate that the directory inode referenced by @req->r_parent matches the
-+ * inode number and snapshot id contained in the reply's directory record.  If
-+ * they do not match – which can theoretically happen if the parent dentry was
-+ * moved between the time the request was issued and the reply arrived – fall
-+ * back to looking up the correct inode in the inode cache.
-+ *
-+ * A reference is *always* returned.  Callers that receive a different inode
-+ * than the original @parent are responsible for dropping the extra reference
-+ * once the reply has been processed.
-+ */
-+static struct inode *ceph_get_reply_dir(struct super_block *sb,
-+                                       struct inode *parent,
-+                                       struct ceph_mds_reply_info_parsed *rinfo)
-+{
-+    struct ceph_vino vino;
+ 	mutex_lock(&ci->i_truncate_mutex);
+-retry:
+ 	spin_lock(&ci->i_ceph_lock);
 +
-+    if (unlikely(!rinfo->diri.in))
-+        return parent; /* nothing to compare against */
-+
-+    /* If we didn't have a cached parent inode to begin with, just bail out. */
-+    if (!parent)
-+        return NULL;
-+
-+    vino.ino  = le64_to_cpu(rinfo->diri.in->ino);
-+    vino.snap = le64_to_cpu(rinfo->diri.in->snapid);
-+
-+    if (likely(parent && ceph_ino(parent) == vino.ino && ceph_snap(parent) == vino.snap))
-+        return parent; /* matches – use the original reference */
-+
-+    /* Mismatch – this should be rare.  Emit a WARN and obtain the correct inode. */
-+    WARN(1, "ceph: reply dir mismatch (parent %s %llx.%llx reply %llx.%llx)\n",
-+         parent ? "valid" : "NULL",
-+         parent ? ceph_ino(parent) : 0ULL,
-+         parent ? ceph_snap(parent) : 0ULL,
-+         vino.ino, vino.snap);
-+
-+    return ceph_get_inode(sb, vino, NULL);
-+}
-+
- /**
-  * ceph_new_inode - allocate a new inode in advance of an expected create
-  * @dir: parent directory for new inode
-@@ -1548,8 +1588,8 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
++	wrbuffer_refs = ci->i_wrbuffer_ref;
+ 	if (ci->i_truncate_pending == 0) {
+ 		doutc(cl, "%p %llx.%llx none pending\n", inode,
+ 		      ceph_vinop(inode));
+-		spin_unlock(&ci->i_ceph_lock);
+-		mutex_unlock(&ci->i_truncate_mutex);
+-		return;
++		goto out_unlock;
  	}
  
- 	if (rinfo->head->is_dentry) {
--		struct inode *dir = req->r_parent;
--
-+		/* r_parent may be stale, in cases when R_PARENT_LOCKED is not set, so we need to get the correct inode */
-+		struct inode *dir = ceph_get_reply_dir(sb, req->r_parent, rinfo);
- 		if (dir) {
- 			err = ceph_fill_inode(dir, NULL, &rinfo->diri,
- 					      rinfo->dirfrag, session, -1,
+ 	/*
+@@ -2224,9 +2224,14 @@ void __ceph_do_pending_vmtruncate(struct inode *inode)
+ 		spin_unlock(&ci->i_ceph_lock);
+ 		doutc(cl, "%p %llx.%llx flushing snaps first\n", inode,
+ 		      ceph_vinop(inode));
+-		filemap_write_and_wait_range(&inode->i_data, 0,
+-					     inode->i_sb->s_maxbytes);
+-		goto retry;
++		err = filemap_write_and_wait_range(&inode->i_data, 0,
++						   inode->i_sb->s_maxbytes);
++		spin_lock(&ci->i_ceph_lock);
++
++		if (unlikely(err)) {
++			pr_err_client(cl, "failed of flushing snaps: err %d\n",
++					err);
++		}
+ 	}
+ 
+ 	/* there should be no reader or writer */
+@@ -2242,20 +2247,17 @@ void __ceph_do_pending_vmtruncate(struct inode *inode)
+ 	truncate_pagecache(inode, to);
+ 
+ 	spin_lock(&ci->i_ceph_lock);
+-	if (to == ci->i_truncate_pagecache_size) {
+-		ci->i_truncate_pending = 0;
+-		finish = 1;
+-	}
+-	spin_unlock(&ci->i_ceph_lock);
+-	if (!finish)
+-		goto retry;
++	ci->i_truncate_pending = 0;
+ 
++out_unlock:
++	spin_unlock(&ci->i_ceph_lock);
+ 	mutex_unlock(&ci->i_truncate_mutex);
+ 
+ 	if (wrbuffer_refs == 0)
+ 		ceph_check_caps(ci, 0);
+ 
+ 	wake_up_all(&ci->i_cap_wq);
++	return;
+ }
+ 
+ static void ceph_inode_work(struct work_struct *work)
 -- 
-2.34.1
+2.50.1
 
 
