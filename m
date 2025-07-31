@@ -1,358 +1,247 @@
-Return-Path: <ceph-devel+bounces-3339-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3340-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB056B168E9
-	for <lists+ceph-devel@lfdr.de>; Thu, 31 Jul 2025 00:10:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CDC0B16CB1
+	for <lists+ceph-devel@lfdr.de>; Thu, 31 Jul 2025 09:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0EAA5A3BA8
-	for <lists+ceph-devel@lfdr.de>; Wed, 30 Jul 2025 22:09:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F7823AD0CE
+	for <lists+ceph-devel@lfdr.de>; Thu, 31 Jul 2025 07:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588AB2288F7;
-	Wed, 30 Jul 2025 22:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F82F29C35C;
+	Thu, 31 Jul 2025 07:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PJMZQBQD"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HBzK74qL"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49291132103
-	for <ceph-devel@vger.kernel.org>; Wed, 30 Jul 2025 22:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753913409; cv=fail; b=Zv28bHo72JGHxqat57gnwtr425DM4Grkv9YqPgz7qcrubPMpIHSuFfAdPOoCePQlx5ry+5E+vGL2DZLASnDrdSCfC1Em86zDBfx/NoVp6lND7AHBk0JmiDOOxEkE0mP/QbfNhADC8gqSP+L+coed4AZJ6K3vb1Zr1pz3BwgO8oU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753913409; c=relaxed/simple;
-	bh=WixhZx3RSoD5q8/qY5E6pfXEbBKBUxU3VTZd4tmuZTI=;
-	h=From:To:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=LGEC//gx3bkdSMl5bB9t9NCQdF+MvZiKfICO4OhWRL/hT775R8QkWafq58ThgEapqDSsXC3PT4bhh8PXzMdbBo1Q1tbSQqJHyebhBfzrlOsez6yTfUmZ3+veUqxisK6BJFRt6YTHkDn0s52qomzxyTKCBySQ5lnZlTBybw01kuw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PJMZQBQD; arc=fail smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56UDFIAh002109;
-	Wed, 30 Jul 2025 22:10:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=WixhZx3RSoD5q8/qY5E6pfXEbBKBUxU3VTZd4tmuZTI=; b=PJMZQBQD
-	wliqHWMTARDFH5e4QD8ODsJ757SAdK63obCKHYEk93USEPo/Ogqbqayvmjsl0sgP
-	2PPLX8tHrONUmcH7RU45pB5cTe/mRYhP1a3iqZJ0oG5o3ro8I71oZVSI7oI2xjXz
-	qfLrx3doQ7jvUUXO9isF2oW6sp7GvfEYWQtwHzzVXjHO1VwihEcNXTJhjBE8S7GV
-	Zye1rBR4XpfABHXx8T69srsPMqr8MquVdaoAmoHtHyuA48KLMrUPwRWAXi+ZAD8R
-	Y9T+PBuVwaddgJl6YzbYnKfL97pisWMJ1IBeRjOUbjJ7U4Clug2ZckwbxbKhGEHI
-	7Q5HSmCzTZDa+w==
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02on2046.outbound.protection.outlook.com [40.107.95.46])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 486c6hwcm2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Jul 2025 22:10:03 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=C7cXAFzDEeean2rvM84MPWPk6ofEPwh3zfvlFdH6Jml0KySpw6sPUDvLTjESZOAtOwqQ+NQfFPQ0HZWMPzciki7bkKlLiScd3hfy/Qr6KJy6RAi5ENsUyq2inKxD5mftFS7CdlY09hAaLb5FIVhL6GtptskAjk6+5XYHv9mpv15raWhfCTklubYcM+t98yM3E0uclapB3dx1V4YcZMLsF/BNd9KnGL0eN+v4GyX5DFbDpBWlwx3ytIHBH9FYCcwZrX+m/A/RsGJrklyVIdp7pWgI23r/aDU1B+rPLr99Pvrh/Dv2So5Mz2+Ovl6QGp6dYxQTdwX5xWYJinSHwoQJhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WixhZx3RSoD5q8/qY5E6pfXEbBKBUxU3VTZd4tmuZTI=;
- b=XeRUTz25Ydrze+rbzdhOqpiQOGLqHgwEvthac3HMnqaz0bBRe7Xo05w2JTjQq1xLSNjinUqXCE6IZ9f0/tMSETGl9A3/FKCIFbiUq7OPq8rLYPtJyjbynWKyG1SZTKpiA5k4QpNbrIJU5+8MjmAqA0p0REzvZX1/ejxV0mapjnDZgLNzoFStBra5ocmp4m2oqTlQ9GrQtETP7+uzJBZLATn9T6qaiqJYugMKnyLUkFEjp1XiENhLyfQdO0OzufutNydma/kpxq3nSeyw3ODOM6vjRa+LF7G/JCHIFVTo3578OnJPFuwiPZHtr92WS1XURpqaZy7A7CpSOPNbed8aAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by CY8PR15MB5508.namprd15.prod.outlook.com (2603:10b6:930:93::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.27; Wed, 30 Jul
- 2025 22:09:59 +0000
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b]) by SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b%7]) with mapi id 15.20.8880.026; Wed, 30 Jul 2025
- 22:09:58 +0000
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: Alex Markuze <amarkuze@redhat.com>,
-        "ceph-devel@vger.kernel.org"
-	<ceph-devel@vger.kernel.org>
-Thread-Topic: [EXTERNAL] [PATCH 1/2] ceph: fix client race condition
- validating r_parent before applying state
-Thread-Index: AQHcAWVVHLVwZub+5EmhtdRWJ97LxLRLOpOA
-Date: Wed, 30 Jul 2025 22:09:57 +0000
-Message-ID: <012cf478bb6e118912b189dd4cfbdfa7d5249fd7.camel@ibm.com>
-References: <20250730151900.1591177-1-amarkuze@redhat.com>
-	 <20250730151900.1591177-2-amarkuze@redhat.com>
-In-Reply-To: <20250730151900.1591177-2-amarkuze@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|CY8PR15MB5508:EE_
-x-ms-office365-filtering-correlation-id: e30c2d05-4545-4ac8-2314-08ddcfb5d246
-x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|1800799024|10070799003|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?Nkhya216TzJkV1NBQk9yQ2dBcUIvZWFmOW5NdEF6NVlrOS9WUUZtVGN5Tnd4?=
- =?utf-8?B?SU0vS05LVCt1UDZ2OUNXQVJ3cGhKd0VNSmVMU1I1ZXVJZTJGNGovNFlwOEdy?=
- =?utf-8?B?RVQxL1h0U3EyOWtnYVlPb04xR0h5QUlLNEZFRU1kL20wUVREenBTTGhpRDBY?=
- =?utf-8?B?V0V4S1BnWjkvNitueHRnczBEYjl6OVByQUs4cmF0RG5QZSthZnZUYk96bUJv?=
- =?utf-8?B?QXF6b0xYS29nbU9mSmdzUWFIa2FRMm5BVFVhVThBTVkzUTJqamVEZUxENzBj?=
- =?utf-8?B?UUlHQnRvTzZiYXJMYkdSWitNcUo1RGQyaGEzalNoYXhLZnNpSklNamFYTmJo?=
- =?utf-8?B?ZU10TkhHZjEyT0hIeDFSalNPTzFTQXBJMjJZUzhXUHl0MUUrNDZDRFZlbk1L?=
- =?utf-8?B?QXQvTldFbUcvQjJHUi9YbXBGM0xJVEZHNEFCM3R5TWYwaE5zK1BxZGw3Y0wr?=
- =?utf-8?B?MnVLZDU3NUVaZlgxSlY1WTIrb1BVZnJLSFNYS0VlMWlpY2IwMElHTTdtakNH?=
- =?utf-8?B?b0R6VDZlUGtvSy9kVnRUTHZPMGM5cmNZRXNpTnc3U1ZIb0JwM0x6aXcwZjlq?=
- =?utf-8?B?UUpzb0lTa2xsTTBVRis5Z051QlkyNmI0czlRUm1kU3hkTmxtbmRBY2hpaUtF?=
- =?utf-8?B?OXN3akJRR2wyRy9IYTRtRi9SSmVNSFBZWDQ4SGdja0ljVkFPdW1CNVhkZUlu?=
- =?utf-8?B?a0FaTS9hdUdkMktVNUxTYmRFWEM5eDY4dlNkb3I2V1VoSEg0STI2OUlXQUZ5?=
- =?utf-8?B?cE5GYmxJNGZKV2lsTzdFSWp5V1IzWTk1R0V5bjI1c0lOQ0lYblViN21rRTJN?=
- =?utf-8?B?bERxcTBTaVI4eE84Nlp4TEhkWTd6YmUxbFVjZjltMDVQUi9NWm5zZTlJSXdD?=
- =?utf-8?B?LzNHR1picnIreVlrdXM4Z0tGRk9oTTRLUU16U1E5UWV1bVpwZk0rN0t0MVUx?=
- =?utf-8?B?L0V2VEhUVlhiM3ZxVUZkZEZ5T2dIa1pMTHlNY0xOcTQ0TlVOWVBuUjN0VFdC?=
- =?utf-8?B?Z256QmNOSkpYRmlYV3Y5YWk0WW1SeW5Ta3UzaXVucGdWV2RzUEpCclU0em92?=
- =?utf-8?B?NGFuV2JCNnc2YjBlYWFMYXEydUpCYW1NdjNmc0VzcC9Cb00wNFZlL2hrblRk?=
- =?utf-8?B?WGt3WU9weEJTcXVYNE5aY201Wkl0R0xLdWlnWE9xT2tpVy81RDJJZmhYdDN3?=
- =?utf-8?B?a2thNitJSHVFQnhqU3RCWHJINU1ZbC8zR3l0U3B2d1FxMC96VXp1MTZxZERF?=
- =?utf-8?B?VHd5QmUzQXJXZEVoVFdzdUFXa3FzWUJ6N1U2L2xUb2ZKbHZoR29ZZkxSNlI5?=
- =?utf-8?B?L1JaZk9pMG5MOGVIbzBWM1ZDaGNtZWp2OW1oL3V1VDhvUTBIYjBCUS9IWUx6?=
- =?utf-8?B?ZnNDb1NQa3FkUTd5bGlNazN5cW5Melk2WFU0VnNnNTg0SmJCSmk1OHoraGVY?=
- =?utf-8?B?TE5iR1IyTUt0eHVWV1hOQ0IzbHpvSm9mTXNLUndvMU44U0diKytWVTBaUGVu?=
- =?utf-8?B?b2hsb05MSEMzdk15MTVMRE9GajJyNDdVV1hUL2h4aG1aNk5WeWN5MDJ4OEpJ?=
- =?utf-8?B?RHQxM0Jsd3VMRUk5WG92RFJIcTROeXp4blhabFFSczJ6d3lDSzVBckhWLzRk?=
- =?utf-8?B?dUY2cEN5eUpvNTZKcjF6dmpIN0tFZTUyL29SSWRSQ0N2RDVSaUx6Ukw1V0ZC?=
- =?utf-8?B?N2h0bnd0d29QUU05VEhOdTcyeUptc1dQd1ZxYW5LZHVCREJrWnpjeE81NGkr?=
- =?utf-8?B?c2hKRWVqNlAxVTlZT21VejlUaU1VdlI4eDBVVVdwQXVndlhCZWxMYUE5WmdP?=
- =?utf-8?B?aWhiSUZCQ1pqQXVmYzRpVlJ1TUwvUFNLbHpKWWNSTThDVFRSWmNvdW53NE5r?=
- =?utf-8?B?WHBHeTkyYlpobWEvTVZxT1J4dE9lUlBidDFRYTE5QnhVRmpGWEU4bjF0T2JR?=
- =?utf-8?B?eTFidWtnS0NSaXRjd2dCa01oMElKblp2KzV1ZkxVeE9tNXFJTXAxZnhKaFZM?=
- =?utf-8?B?ZkE3UUY1elVnPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(10070799003)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?bzhTcHFUWEIweHVUU3VpQnd3RlBWWlVsVUIwWEpEcWpBRDc3cWdJbnI5Vkli?=
- =?utf-8?B?L0NQaWhnK05UU3kxRGVIdHNyRkJITzk4QitDQTlvcktiNjNpa0VqZWRIR2F5?=
- =?utf-8?B?ZzVMb1NGY0puZ09Sa3pXdm92M0EwTnUza1dRWDM4SW9vY1A2R05KSWg1QUdK?=
- =?utf-8?B?VHY3SGE4bCtGdmJaQytrOG1UR0VMT3FpaFRVMnVMRUNCL3ZWaE9TN0JyNVV4?=
- =?utf-8?B?ZW9mbVJFemRiQ25LdTFHdVVNYi9zTElLMmN4N25FMTJyTkJzY1YyeEt4OGNw?=
- =?utf-8?B?UUJJejVIaFVybXErY0gxd1VBYjY4ZlljaDR5TmJWTllCV1VZRWdYZEpyMVkz?=
- =?utf-8?B?N1RBclFOdzl6VVNBRUZKazJhUll0VmR0b3ZBcVJoNG44Y2ZYS3JBdklsVmho?=
- =?utf-8?B?NGFoTFBVcGFZd1V1V0QrM1p4aC8zZUpZOW9KZHpqanNwQW1jRDhEcEl3OUhr?=
- =?utf-8?B?eVBvREZUeEJFK3JEdTUxd01pVlhSN1FDMWRFbWxmZUxnVm04cjdtUmFmcFF1?=
- =?utf-8?B?ZWdpcGNLQk1tWmhnTEJ1VnZDeS9CSDhPcHZsRVNOalRRUEZYdzgwZFlCM2Jz?=
- =?utf-8?B?d3dzZ2E4dEUzcWM5czhILzR4TnF1TjBuQ0k0UDBnRDNPYTFha2JpOExwQnBa?=
- =?utf-8?B?dy9zUjdveThIMFBBS0FtcDNkYUMzd1A2VHBBcXNaaE1wdlFsM20wemgzSE9G?=
- =?utf-8?B?ZTFNTzczcnZlbGxnUldzbEwwQXpiQ3JDeWFQeVAwaDF5U0NzeUZrQStkUExR?=
- =?utf-8?B?cnExTUVDVGRPbEw5U2Zmc0lQMlhUcHBpNERScit5aVNEeHFJWEdKNERYUlJ6?=
- =?utf-8?B?L1hZTUw0RWRTNVg1TDBpMUJZeFNlVFlCWlF4K3ZZQkJ1dExoNDdBL01uWmN3?=
- =?utf-8?B?cmhCN1dvZDZUdlF0U1drZEVSNUlqZWFCdG8xcVFlWTNBMWtuVG9xcXU4NXRm?=
- =?utf-8?B?TC9rUTQ1L1ozZEdrMnppM0t4UjZwTE9iei9RSExsOUxaWXJ5MEQ4Qitvb2Jr?=
- =?utf-8?B?MGRVMEJPWTZLZGlxOWc4TGRGd2ZCdmgrV2loWkEvak1qOEM1QUFTbytDczMv?=
- =?utf-8?B?SjRuWmVVbjBhZ2V3cFFMZXhIK2tmWkNKQkYvcEtGa3pjWkZ5azM5d1RnZUl6?=
- =?utf-8?B?d1ErNVo1SXdrQ1ZaV09ZZlpxaVFyeDE4UHl4L2I1d2lFSlh2dkpZRVhWS3FI?=
- =?utf-8?B?NjhoVEZzdGxzdFBxUUU3b21LL2I5U1FQZEQ1cURZb3I2dlFVTW1tR0lUajQ3?=
- =?utf-8?B?MWF2c1hsL0loNDQ1b09SMjRKODVJVGtoSXBPM285cTM2QitSMVN4SFpRZnR5?=
- =?utf-8?B?RTJ2R1lQMGpuQk9qSGUyZjlOUmtRZGZvUHZvQ0ZvM000OGFDWS9aelAwZno2?=
- =?utf-8?B?dGVUd29VSjRVMWFLVnlDRXdEYmpsZ0hweEppb1RNdzl6UW5RMkxFMnI3QjVt?=
- =?utf-8?B?ZU9RaERJbXF0VUZwajVOeVRISW54a3N4cGI5aURVb2VhNTQ1NmNFa0JoOWsx?=
- =?utf-8?B?VW9UbWVTOE55UUsrK0hGQ005WHlZemV4V2huckthY1Ird01OclF3YzhWMUFD?=
- =?utf-8?B?UFBZSDY2ZGEvMlU2VWIyeTJsd2pWa2Fzc0NLdEpna2h0M3EvL0ZWQVNsbjZV?=
- =?utf-8?B?RXRGMUEzSTB0RUFYSmwrK0FYRUg0ME8zL2VYWnREbXR5MmRQaitSUG93YnFl?=
- =?utf-8?B?WVVDOVZYQmg5eHIxeEY3YW4xZXo4NWZyM1NvTlFoNEliOFdLem1CcVRsRW9x?=
- =?utf-8?B?TnZXMU91UlNtU1Ezdk5Cc25uSllOZVNuV0JhNDhQaEpuelpPRFZvNlF6ZWxs?=
- =?utf-8?B?akhFUyt2Q05pRWp0WmFZYnFFK2hzNldXSGUrWnVoTVp1c1JxenU4QlM3c0U2?=
- =?utf-8?B?c0FlQjJody9Xd1AxNjVTSHBJUlRWMjFQN1dJbU11M2hUNmZNcjdYUFBKRU9a?=
- =?utf-8?B?OEJoNUtoTjZOMjIxZ3QrNG9vSUR1RmhLbzFNM2pWQXhtTU1YZTArOTZqS1dO?=
- =?utf-8?B?UjY3d1VhZHlzY0pETEVmOWZJeG9DdUNLUkdiOXFTUWpjdEplSmtGMnlub00y?=
- =?utf-8?B?YkhQU2s5aFJoQWhyZmMyL3dyZEpMRUNRcEZBbEFySkhKU1BlWWJ3ZDZ6dnlS?=
- =?utf-8?B?d3hiUFI4ZzhTTUVYRC9zS0tjeFNCSDBYcmd3SVpUY2F6S1paQzZiZGkxMlRB?=
- =?utf-8?Q?dWPQvff6EeQPcldNCGXCDgY=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DA0017297CC31943820804892E48F0EC@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3920B1F4CBF
+	for <ceph-devel@vger.kernel.org>; Thu, 31 Jul 2025 07:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753946685; cv=none; b=M3ebBCMvb/4K2K3ERe+LPULZnrg4lV+0wgFlJ2tN2/dCU8J6dujPc7BzILEsvqBpnYW02DNVAA90DySduFVPkrhVvLGh4X/xkg8b28n3tzeAixTPnnG2itva5aIC9GAy5smXQbhOtBGpluxnn5Chci1RnPzO/fYpsyHRZ2Cfy34=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753946685; c=relaxed/simple;
+	bh=UWc7EMe+rjVWd0xnyGHGQsGnsgAL4BFn/kcNu30IEUg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fXEG+q5QlHl4yNjzZhjjRl49VS73M4dxl0lrMsFeq/iq+DrHxcfgMCoEPVvpEY2c4MEUyA/dTK8h/kK13qUzoxWK+hIuBYPK7dHunUmQ6h4HyEDHxcI2ZPJM2FFdUaZvjFeZCZ+Hp8Vdb5A9yt+ndMzT6VdeiBDJhbUGk+PmGnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HBzK74qL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753946682;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dCXF+ofc1ksuIi92Ur4/RviW6uHbykewCF5+ABWAhew=;
+	b=HBzK74qLgT5AsiUZHdAKSwA4eYLPCt/lWkP4v67fgCd51SG9/rqnBQZKVVhQDGXgWBKBYI
+	Su2EFAC2v1SUdsDNWmP8f7Phe7FnoaVgvlvPDFTj/g4uNzktqnomYbI63Bt5mFOSrWB1Fj
+	s/j1Qsc/ZDtTOyMqtIt53QkH9Rjczmw=
+Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com
+ [209.85.221.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-85-zisgVYaQPxivvMS1NxALlQ-1; Thu, 31 Jul 2025 03:24:40 -0400
+X-MC-Unique: zisgVYaQPxivvMS1NxALlQ-1
+X-Mimecast-MFC-AGG-ID: zisgVYaQPxivvMS1NxALlQ_1753946679
+Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-53157659c58so1631357e0c.1
+        for <ceph-devel@vger.kernel.org>; Thu, 31 Jul 2025 00:24:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753946679; x=1754551479;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dCXF+ofc1ksuIi92Ur4/RviW6uHbykewCF5+ABWAhew=;
+        b=QidjIysfzI/WG5hYw+go+CYa1b4Ev3KYCMOdqN7CX3qn0CL2ch9qyEZJrA/gr1oC3Z
+         vrMzc7R/dUvl5yhud/SwveH7uywhWeot5WqH66DYSO353N3/K9XCqFwJ98aDs3U0un+g
+         rJz8/aG4xFTFgcfF+h0tRj1yxtFfC54lRQG6oEFMKNGlBNIlj3Lal4HO5y/ypZbUBTgY
+         ApOwBk9Ja3eoYndhML/vICI2h8hpAKhX8FVLrSR1imbHmih8r3F/rgs2SBPw5vb4N/nF
+         F+s5Y4v5cz7lCOQ5oKjVJw1IUBCgW+3Kzrl4WViDSAI1cBt+lnE8dcfnpKjKBqcm/4oL
+         13zw==
+X-Gm-Message-State: AOJu0Ywp9oTAyrklS/1mwWx0YBBW+VtTDtxhWH+kKqpbJ5yDRnu9N/YH
+	KBPVI8K18JBoFp22aX5jNrmWMW/hIiYqyZlVKvERItH03SdUyS7YDI3FMsehtxB7OEX0YFOJ0G5
+	5aUIM3a9w0WmeNl84MAztuOyqaFRw5FSx6YOiaCWUccyPgTS2DNoGVQS/m9gHff8rHDiipTf31d
+	0cZM8Ujr2Wj3OUcYCgvYoCQW2nuc74pTYdrCOwReGlKGZeZK+n+hqRs11V
+X-Gm-Gg: ASbGnct1Pq9Dl1JkwX/IIV5HiNPOHrhsMfbOIy9/vrSjFW1G3Th440fEfAkYaxe1r9u
+	hf9L2VTimGexua2+8aqa9KEYfxnMK9Hbkolv8e6Rr8E7te0oeZDkyoX6wE/VyTMg6GagSYIB1aW
+	w97IawOuFaVjqjie0V/0xVz8DHuhfU+Qs+K1J0vg==
+X-Received: by 2002:a05:6122:208f:b0:535:ed79:2aed with SMTP id 71dfb90a1353d-5393859a191mr415049e0c.2.1753946679339;
+        Thu, 31 Jul 2025 00:24:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3xO+JW44TTaxYyhohHvH8ki6jvVp+MCsZhdj1HhZi4ipLl9i4NDfjn/akYsn1R4lBXIi6wUuUHXbH/HdkWno=
+X-Received: by 2002:a05:6122:208f:b0:535:ed79:2aed with SMTP id
+ 71dfb90a1353d-5393859a191mr415042e0c.2.1753946678956; Thu, 31 Jul 2025
+ 00:24:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e30c2d05-4545-4ac8-2314-08ddcfb5d246
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2025 22:09:57.9999
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rZZAs4TVr3gRT9igVnS2IgR4siJx/jb2cI/NBXzdQ/ssKb8sV7YXWJriF5q+nfciqmzNww6/rw3OjqqooyVIvg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR15MB5508
-X-Proofpoint-GUID: 8RSGLEXoT4Zj2283-QeSHXV4kTHkaLuF
-X-Authority-Analysis: v=2.4 cv=Mbtsu4/f c=1 sm=1 tr=0 ts=688a983b cx=c_pps
- a=IAf6EKO8/SCKw3mV+MJJPg==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=Wb1JkmetP80A:10 a=pZHCfZ0tdO2-PF1f398A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: 8RSGLEXoT4Zj2283-QeSHXV4kTHkaLuF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDE2MSBTYWx0ZWRfX5P536FPtHPii
- NoITgaMBcDFzZzZtBUzC8XrZoH6GKUIPZPDSX8f0ERBootF8Lv8sTRYKY5/MyXODtVtoH/gUjWm
- ZnVUuGaMinpWnAGobZwuNj92MweRC+Abe50c4qna5TeGzkTtlOykty7ZwUkJIdRqWn7+5ZPNuaY
- 3H0MOLTNmTV3dMY68XX/Rdo0U3KeH69oj/ZSVcH9Qo2FmdP2lXiFsKEDMq0oYPSf5vHNQGSrw0G
- N/W0w5k+Zv9yj6eVOXu93JqPJ/ByG2IARpN1eYgib6Os7sy1v3BxQJ1a0frsBetuwWghcGO7mr7
- ozmwYSqsTYYro3/qbi8xz65z1b7dqQ/ZausOcDWu1eNnvk5iXxvgJvcYOT3MUIegzpfEb6PUhYL
- SVMVfkJuJ8ms1DxS9KPgp1UQZESwMuS7pWW7s/MbFFM7uX/M6zNwcQoD3BKhjYsHIkXxYw3Z
-Subject: Re:  [PATCH 1/2] ceph: fix client race condition validating r_parent
- before applying state
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-30_06,2025-07-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 adultscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- spamscore=0 mlxscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507300161
+References: <20250730151900.1591177-1-amarkuze@redhat.com> <20250730151900.1591177-3-amarkuze@redhat.com>
+ <4b14172543092167ca910eaf886b5bda06c32bc4.camel@ibm.com>
+In-Reply-To: <4b14172543092167ca910eaf886b5bda06c32bc4.camel@ibm.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Thu, 31 Jul 2025 11:24:28 +0400
+X-Gm-Features: Ac12FXyiCN5i3Pjf5_Dl3Px8OZT7agpYePC_ofihURh5brMgLubBAvzuGA_nL7k
+Message-ID: <CAO8a2Si-1grAicbkLKFK5BQXJAbpLJyD0p2wmvGU=jOO1Ztk+g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ceph: fix client race condition where r_parent
+ becomes stale before sending message
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gV2VkLCAyMDI1LTA3LTMwIGF0IDE1OjE4ICswMDAwLCBBbGV4IE1hcmt1emUgd3JvdGU6DQo+
-IEFkZCB2YWxpZGF0aW9uIHRvIGVuc3VyZSB0aGUgY2FjaGVkIHBhcmVudCBkaXJlY3RvcnkgaW5v
-ZGUgbWF0Y2hlcyB0aGUNCj4gZGlyZWN0b3J5IGluZm8gaW4gTURTIHJlcGxpZXMuIFRoaXMgcHJl
-dmVudHMgY2xpZW50LXNpZGUgcmFjZSBjb25kaXRpb25zDQo+IHdoZXJlIGNvbmN1cnJlbnQgb3Bl
-cmF0aW9ucyAoZS5nLiByZW5hbWUpIGNhdXNlIHJfcGFyZW50IHRvIGJlY29tZSBzdGFsZQ0KPiBi
-ZXR3ZWVuIHJlcXVlc3QgaW5pdGlhdGlvbiBhbmQgcmVwbHkgcHJvY2Vzc2luZywgd2hpY2ggY291
-bGQgbGVhZCB0bw0KPiBhcHBseWluZyBzdGF0ZSBjaGFuZ2VzIHRvIGluY29ycmVjdCBkaXJlY3Rv
-cnkgaW5vZGVzLg0KPiAtLS0NCj4gIGZzL2NlcGgvbWRzX2NsaWVudC5jIHwgNjcgKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCA0
-NyBpbnNlcnRpb25zKCspLCAyMCBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9mcy9j
-ZXBoL21kc19jbGllbnQuYyBiL2ZzL2NlcGgvbWRzX2NsaWVudC5jDQo+IGluZGV4IDhkOWZjNWUx
-OGIxNy4uYTE2NDc4M2ZjMWUxIDEwMDY0NA0KPiAtLS0gYS9mcy9jZXBoL21kc19jbGllbnQuYw0K
-PiArKysgYi9mcy9jZXBoL21kc19jbGllbnQuYw0KPiBAQCAtMjg1Myw3ICsyODUzLDcgQEAgY2hh
-ciAqY2VwaF9tZHNjX2J1aWxkX3BhdGgoc3RydWN0IGNlcGhfbWRzX2NsaWVudCAqbWRzYywgc3Ry
-dWN0IGRlbnRyeSAqZGVudHJ5LA0KPiAgDQo+ICBzdGF0aWMgaW50IGJ1aWxkX2RlbnRyeV9wYXRo
-KHN0cnVjdCBjZXBoX21kc19jbGllbnQgKm1kc2MsIHN0cnVjdCBkZW50cnkgKmRlbnRyeSwNCj4g
-IAkJCSAgICAgc3RydWN0IGlub2RlICpkaXIsIGNvbnN0IGNoYXIgKipwcGF0aCwgaW50ICpwcGF0
-aGxlbiwNCj4gLQkJCSAgICAgdTY0ICpwaW5vLCBib29sICpwZnJlZXBhdGgsIGJvb2wgcGFyZW50
-X2xvY2tlZCkNCj4gKwkJCSAgICAgc3RydWN0IGNlcGhfdmlubyAqcHZpbm8sIGJvb2wgKnBmcmVl
-cGF0aCwgYm9vbCBwYXJlbnRfbG9ja2VkKQ0KDQpXZSBoYXZlIHRvbyBtdWNoIGFyZ3VtZW50cyBo
-ZXJlLiBJdCBsb29rcyBsaWtlIHdlIG5lZWQgdG8gaW50cm9kdWNlIHNvbWUNCnN0cnVjdHVyZS4N
-Cg0KPiAgew0KPiAgCWNoYXIgKnBhdGg7DQo+ICANCj4gQEAgLTI4NjIsMjMgKzI4NjIsMjkgQEAg
-c3RhdGljIGludCBidWlsZF9kZW50cnlfcGF0aChzdHJ1Y3QgY2VwaF9tZHNfY2xpZW50ICptZHNj
-LCBzdHJ1Y3QgZGVudHJ5ICpkZW50cnkNCj4gIAkJZGlyID0gZF9pbm9kZV9yY3UoZGVudHJ5LT5k
-X3BhcmVudCk7DQo+ICAJaWYgKGRpciAmJiBwYXJlbnRfbG9ja2VkICYmIGNlcGhfc25hcChkaXIp
-ID09IENFUEhfTk9TTkFQICYmDQo+ICAJICAgICFJU19FTkNSWVBURUQoZGlyKSkgew0KPiAtCQkq
-cGlubyA9IGNlcGhfaW5vKGRpcik7DQo+ICsJCXB2aW5vLT5pbm8gPSBjZXBoX2lubyhkaXIpOw0K
-PiArCQlwdmluby0+c25hcCA9IGNlcGhfc25hcChkaXIpOw0KPiAgCQlyY3VfcmVhZF91bmxvY2so
-KTsNCj4gIAkJKnBwYXRoID0gZGVudHJ5LT5kX25hbWUubmFtZTsNCj4gIAkJKnBwYXRobGVuID0g
-ZGVudHJ5LT5kX25hbWUubGVuOw0KPiAgCQlyZXR1cm4gMDsNCj4gIAl9DQo+ICAJcmN1X3JlYWRf
-dW5sb2NrKCk7DQo+IC0JcGF0aCA9IGNlcGhfbWRzY19idWlsZF9wYXRoKG1kc2MsIGRlbnRyeSwg
-cHBhdGhsZW4sIHBpbm8sIDEpOw0KPiArCXBhdGggPSBjZXBoX21kc2NfYnVpbGRfcGF0aChtZHNj
-LCBkZW50cnksIHBwYXRobGVuLCAmcHZpbm8tPmlubywgMSk7DQo+ICAJaWYgKElTX0VSUihwYXRo
-KSkNCj4gIAkJcmV0dXJuIFBUUl9FUlIocGF0aCk7DQo+ICAJKnBwYXRoID0gcGF0aDsNCj4gIAkq
-cGZyZWVwYXRoID0gdHJ1ZTsNCj4gKwkvKiBGb3IgcGF0aHMgYnVpbHQgYnkgY2VwaF9tZHNjX2J1
-aWxkX3BhdGgsIHdlIG5lZWQgdG8gZ2V0IHNuYXAgZnJvbSBkZW50cnkgKi8NCg0KSSBiZWxpZXZl
-IHRoZSBtdWx0aS1saW5lIGNvbW1lbnQgY291bGQgYmUgZ29vZCBoZXJlLg0KDQo+ICsJaWYgKGRl
-bnRyeSAmJiBkX2lub2RlKGRlbnRyeSkpDQoNCkNvdWxkIGRlbnRyeSBiZSByZWFsbHkgTlVMTCBo
-ZXJlPw0KDQo+ICsJCXB2aW5vLT5zbmFwID0gY2VwaF9zbmFwKGRfaW5vZGUoZGVudHJ5KSk7DQo+
-ICsJZWxzZQ0KPiArCQlwdmluby0+c25hcCA9IENFUEhfTk9TTkFQOw0KPiAgCXJldHVybiAwOw0K
-PiAgfQ0KPiAgDQo+ICBzdGF0aWMgaW50IGJ1aWxkX2lub2RlX3BhdGgoc3RydWN0IGlub2RlICpp
-bm9kZSwNCj4gLQkJCSAgICBjb25zdCBjaGFyICoqcHBhdGgsIGludCAqcHBhdGhsZW4sIHU2NCAq
-cGlubywNCj4gKwkJCSAgICBjb25zdCBjaGFyICoqcHBhdGgsIGludCAqcHBhdGhsZW4sIHN0cnVj
-dCBjZXBoX3Zpbm8gKnB2aW5vLA0KPiAgCQkJICAgIGJvb2wgKnBmcmVlcGF0aCkNCg0KV2UgaGF2
-ZSB0b28gbXVjaCBhcmd1bWVudHMgaGVyZSB0b28uDQoNCj4gIHsNCj4gIAlzdHJ1Y3QgY2VwaF9t
-ZHNfY2xpZW50ICptZHNjID0gY2VwaF9zYl90b19tZHNjKGlub2RlLT5pX3NiKTsNCj4gQEAgLTI4
-ODYsMTcgKzI4OTIsMTkgQEAgc3RhdGljIGludCBidWlsZF9pbm9kZV9wYXRoKHN0cnVjdCBpbm9k
-ZSAqaW5vZGUsDQo+ICAJY2hhciAqcGF0aDsNCj4gIA0KPiAgCWlmIChjZXBoX3NuYXAoaW5vZGUp
-ID09IENFUEhfTk9TTkFQKSB7DQo+IC0JCSpwaW5vID0gY2VwaF9pbm8oaW5vZGUpOw0KPiArCQlw
-dmluby0+aW5vID0gY2VwaF9pbm8oaW5vZGUpOw0KPiArCQlwdmluby0+c25hcCA9IGNlcGhfc25h
-cChpbm9kZSk7DQo+ICAJCSpwcGF0aGxlbiA9IDA7DQo+ICAJCXJldHVybiAwOw0KPiAgCX0NCj4g
-IAlkZW50cnkgPSBkX2ZpbmRfYWxpYXMoaW5vZGUpOw0KPiAtCXBhdGggPSBjZXBoX21kc2NfYnVp
-bGRfcGF0aChtZHNjLCBkZW50cnksIHBwYXRobGVuLCBwaW5vLCAxKTsNCj4gKwlwYXRoID0gY2Vw
-aF9tZHNjX2J1aWxkX3BhdGgobWRzYywgZGVudHJ5LCBwcGF0aGxlbiwgJnB2aW5vLT5pbm8sIDEp
-Ow0KPiAgCWRwdXQoZGVudHJ5KTsNCj4gIAlpZiAoSVNfRVJSKHBhdGgpKQ0KPiAgCQlyZXR1cm4g
-UFRSX0VSUihwYXRoKTsNCj4gIAkqcHBhdGggPSBwYXRoOw0KPiAgCSpwZnJlZXBhdGggPSB0cnVl
-Ow0KPiArCXB2aW5vLT5zbmFwID0gY2VwaF9zbmFwKGlub2RlKTsNCj4gIAlyZXR1cm4gMDsNCj4g
-IH0NCj4gIA0KPiBAQCAtMjkwNyw3ICsyOTE1LDcgQEAgc3RhdGljIGludCBidWlsZF9pbm9kZV9w
-YXRoKHN0cnVjdCBpbm9kZSAqaW5vZGUsDQo+ICBzdGF0aWMgaW50IHNldF9yZXF1ZXN0X3BhdGhf
-YXR0cihzdHJ1Y3QgY2VwaF9tZHNfY2xpZW50ICptZHNjLCBzdHJ1Y3QgaW5vZGUgKnJpbm9kZSwN
-Cj4gIAkJCQkgc3RydWN0IGRlbnRyeSAqcmRlbnRyeSwgc3RydWN0IGlub2RlICpyZGlyaSwNCj4g
-IAkJCQkgY29uc3QgY2hhciAqcnBhdGgsIHU2NCByaW5vLCBjb25zdCBjaGFyICoqcHBhdGgsDQo+
-IC0JCQkJIGludCAqcGF0aGxlbiwgdTY0ICppbm8sIGJvb2wgKmZyZWVwYXRoLA0KPiArCQkJCSBp
-bnQgKnBhdGhsZW4sIHN0cnVjdCBjZXBoX3Zpbm8gKnBfdmlubywgYm9vbCAqZnJlZXBhdGgsDQo+
-ICAJCQkJIGJvb2wgcGFyZW50X2xvY2tlZCkNCg0KRGl0dG8uIDopDQoNClRoYW5rcywNClNsYXZh
-Lg0KDQo+ICB7DQo+ICAJc3RydWN0IGNlcGhfY2xpZW50ICpjbCA9IG1kc2MtPmZzYy0+Y2xpZW50
-Ow0KPiBAQCAtMjkxNSwxNiArMjkyMywxNyBAQCBzdGF0aWMgaW50IHNldF9yZXF1ZXN0X3BhdGhf
-YXR0cihzdHJ1Y3QgY2VwaF9tZHNfY2xpZW50ICptZHNjLCBzdHJ1Y3QgaW5vZGUgKnJpbg0KPiAg
-CWludCByID0gMDsNCj4gIA0KPiAgCWlmIChyaW5vZGUpIHsNCj4gLQkJciA9IGJ1aWxkX2lub2Rl
-X3BhdGgocmlub2RlLCBwcGF0aCwgcGF0aGxlbiwgaW5vLCBmcmVlcGF0aCk7DQo+ICsJCXIgPSBi
-dWlsZF9pbm9kZV9wYXRoKHJpbm9kZSwgcHBhdGgsIHBhdGhsZW4sIHBfdmlubywgZnJlZXBhdGgp
-Ow0KPiAgCQlib3V0YyhjbCwgIiBpbm9kZSAlcCAlbGx4LiVsbHhcbiIsIHJpbm9kZSwgY2VwaF9p
-bm8ocmlub2RlKSwNCj4gLQkJICAgICAgY2VwaF9zbmFwKHJpbm9kZSkpOw0KPiArCQljZXBoX3Nu
-YXAocmlub2RlKSk7DQo+ICAJfSBlbHNlIGlmIChyZGVudHJ5KSB7DQo+IC0JCXIgPSBidWlsZF9k
-ZW50cnlfcGF0aChtZHNjLCByZGVudHJ5LCByZGlyaSwgcHBhdGgsIHBhdGhsZW4sIGlubywNCj4g
-LQkJCQkJZnJlZXBhdGgsIHBhcmVudF9sb2NrZWQpOw0KPiArCQlyID0gYnVpbGRfZGVudHJ5X3Bh
-dGgobWRzYywgcmRlbnRyeSwgcmRpcmksIHBwYXRoLCBwYXRobGVuLCBwX3Zpbm8sDQo+ICsJCQkJ
-ICAgICAgIGZyZWVwYXRoLCBwYXJlbnRfbG9ja2VkKTsNCj4gIAkJQ0VQSF9TQU5fU1RSTkNQWShy
-ZXN1bHRfc3RyLCBzaXplb2YocmVzdWx0X3N0ciksICpwcGF0aCwgKnBhdGhsZW4pOw0KPiAtCQli
-b3V0YyhjbCwgIiBkZW50cnkgJXAgJWxseC8lc1xuIiwgcmRlbnRyeSwgKmlubywgcmVzdWx0X3N0
-cik7DQo+ICsJCWJvdXRjKGNsLCAiIGRlbnRyeSAlcCAlbGx4LyVzXG4iLCByZGVudHJ5LCBwX3Zp
-bm8tPmlubywgcmVzdWx0X3N0cik7DQo+ICAJfSBlbHNlIGlmIChycGF0aCB8fCByaW5vKSB7DQo+
-IC0JCSppbm8gPSByaW5vOw0KPiArCQlwX3Zpbm8tPmlubyA9IHJpbm87DQo+ICsJCXBfdmluby0+
-c25hcCA9IENFUEhfTk9TTkFQOw0KPiAgCQkqcHBhdGggPSBycGF0aDsNCj4gIAkJKnBhdGhsZW4g
-PSBycGF0aCA/IHN0cmxlbihycGF0aCkgOiAwOw0KPiAgCQlDRVBIX1NBTl9TVFJOQ1BZKHJlc3Vs
-dF9zdHIsIHNpemVvZihyZXN1bHRfc3RyKSwgcnBhdGgsICpwYXRobGVuKTsNCj4gQEAgLTMwMDcs
-NyArMzAxNiw3IEBAIHN0YXRpYyBzdHJ1Y3QgY2VwaF9tc2cgKmNyZWF0ZV9yZXF1ZXN0X21lc3Nh
-Z2Uoc3RydWN0IGNlcGhfbWRzX3Nlc3Npb24gKnNlc3Npb24sDQo+ICAJc3RydWN0IGNlcGhfbWRz
-X3JlcXVlc3RfaGVhZF9sZWdhY3kgKmxoZWFkOw0KPiAgCWNvbnN0IGNoYXIgKnBhdGgxID0gTlVM
-TDsNCj4gIAljb25zdCBjaGFyICpwYXRoMiA9IE5VTEw7DQo+IC0JdTY0IGlubzEgPSAwLCBpbm8y
-ID0gMDsNCj4gKwlzdHJ1Y3QgY2VwaF92aW5vIHZpbm8xID0gezB9LCB2aW5vMiA9IHswfTsNCj4g
-IAlpbnQgcGF0aGxlbjEgPSAwLCBwYXRobGVuMiA9IDA7DQo+ICAJYm9vbCBmcmVlcGF0aDEgPSBm
-YWxzZSwgZnJlZXBhdGgyID0gZmFsc2U7DQo+ICAJc3RydWN0IGRlbnRyeSAqb2xkX2RlbnRyeSA9
-IE5VTEw7DQo+IEBAIC0zMDE5LDE3ICszMDI4LDM1IEBAIHN0YXRpYyBzdHJ1Y3QgY2VwaF9tc2cg
-KmNyZWF0ZV9yZXF1ZXN0X21lc3NhZ2Uoc3RydWN0IGNlcGhfbWRzX3Nlc3Npb24gKnNlc3Npb24s
-DQo+ICAJdTE2IHJlcXVlc3RfaGVhZF92ZXJzaW9uID0gbWRzX3N1cHBvcnRlZF9oZWFkX3ZlcnNp
-b24oc2Vzc2lvbik7DQo+ICAJa3VpZF90IGNhbGxlcl9mc3VpZCA9IHJlcS0+cl9jcmVkLT5mc3Vp
-ZDsNCj4gIAlrZ2lkX3QgY2FsbGVyX2ZzZ2lkID0gcmVxLT5yX2NyZWQtPmZzZ2lkOw0KPiArCWJv
-b2wgcGFyZW50X2xvY2tlZCA9IHRlc3RfYml0KENFUEhfTURTX1JfUEFSRU5UX0xPQ0tFRCwgJnJl
-cS0+cl9yZXFfZmxhZ3MpOw0KPiAgDQo+ICAJcmV0ID0gc2V0X3JlcXVlc3RfcGF0aF9hdHRyKG1k
-c2MsIHJlcS0+cl9pbm9kZSwgcmVxLT5yX2RlbnRyeSwNCj4gIAkJCSAgICAgIHJlcS0+cl9wYXJl
-bnQsIHJlcS0+cl9wYXRoMSwgcmVxLT5yX2lubzEuaW5vLA0KPiAtCQkJICAgICAgJnBhdGgxLCAm
-cGF0aGxlbjEsICZpbm8xLCAmZnJlZXBhdGgxLA0KPiAtCQkJICAgICAgdGVzdF9iaXQoQ0VQSF9N
-RFNfUl9QQVJFTlRfTE9DS0VELA0KPiAtCQkJCQkmcmVxLT5yX3JlcV9mbGFncykpOw0KPiArCQkJ
-ICAgICAgJnBhdGgxLCAmcGF0aGxlbjEsICZ2aW5vMSwgJmZyZWVwYXRoMSwNCj4gKwkJCSAgICAg
-IHBhcmVudF9sb2NrZWQpOw0KPiAgCWlmIChyZXQgPCAwKSB7DQo+ICAJCW1zZyA9IEVSUl9QVFIo
-cmV0KTsNCj4gIAkJZ290byBvdXQ7DQo+ICAJfQ0KPiAgDQo+ICsJLyoNCj4gKwkgKiBXaGVuIHRo
-ZSBwYXJlbnQgZGlyZWN0b3J5J3MgaV9yd3NlbSBpcyAqbm90KiBsb2NrZWQsIHJlcS0+cl9wYXJl
-bnQgbWF5DQo+ICsJICogaGF2ZSBiZWNvbWUgc3RhbGUgKGUuZy4gYWZ0ZXIgYSBjb25jdXJyZW50
-IHJlbmFtZSkgYmV0d2VlbiB0aGUgdGltZSB0aGUNCj4gKwkgKiBkZW50cnkgd2FzIGxvb2tlZCB1
-cCBhbmQgbm93LiAgSWYgd2UgZGV0ZWN0IHRoYXQgdGhlIHN0b3JlZCByX3BhcmVudA0KPiArCSAq
-IGRvZXMgbm90IG1hdGNoIHRoZSBpbm9kZSBudW1iZXIgd2UganVzdCBlbmNvZGVkIGZvciB0aGUg
-cmVxdWVzdCwgc3dpdGNoDQo+ICsJICogdG8gdGhlIGNvcnJlY3QgaW5vZGUgc28gdGhhdCB0aGUg
-TURTIHJlY2VpdmVzIGEgdmFsaWQgcGFyZW50IHJlZmVyZW5jZS4NCj4gKwkgKi8NCj4gKwlpZiAo
-IXBhcmVudF9sb2NrZWQgJiYNCj4gKwkgICAgcmVxLT5yX3BhcmVudCAmJiB2aW5vMS5pbm8gJiYg
-Y2VwaF9pbm8ocmVxLT5yX3BhcmVudCkgIT0gdmlubzEuaW5vKSB7DQo+ICsJCXN0cnVjdCBpbm9k
-ZSAqY29ycmVjdF9kaXIgPSBjZXBoX2dldF9pbm9kZShtZHNjLT5mc2MtPnNiLCB2aW5vMSwgTlVM
-TCk7DQo+ICsJCWlmICghSVNfRVJSKGNvcnJlY3RfZGlyKSkgew0KPiArCQkJV0FSTigxLCAiY2Vw
-aDogcl9wYXJlbnQgbWlzbWF0Y2ggKGhhZCAlbGx4IHdhbnRlZCAlbGx4KSAtIHVwZGF0aW5nXG4i
-LA0KPiArCQkJICAgICBjZXBoX2lubyhyZXEtPnJfcGFyZW50KSwgdmlubzEuaW5vKTsNCj4gKwkJ
-CWlwdXQocmVxLT5yX3BhcmVudCk7DQo+ICsJCQlyZXEtPnJfcGFyZW50ID0gY29ycmVjdF9kaXI7
-DQo+ICsJCX0NCj4gKwl9DQo+ICsNCj4gIAkvKiBJZiByX29sZF9kZW50cnkgaXMgc2V0LCB0aGVu
-IGFzc3VtZSB0aGF0IGl0cyBwYXJlbnQgaXMgbG9ja2VkICovDQo+ICAJaWYgKHJlcS0+cl9vbGRf
-ZGVudHJ5ICYmDQo+ICAJICAgICEocmVxLT5yX29sZF9kZW50cnktPmRfZmxhZ3MgJiBEQ0FDSEVf
-RElTQ09OTkVDVEVEKSkNCj4gQEAgLTMwMzcsNyArMzA2NCw3IEBAIHN0YXRpYyBzdHJ1Y3QgY2Vw
-aF9tc2cgKmNyZWF0ZV9yZXF1ZXN0X21lc3NhZ2Uoc3RydWN0IGNlcGhfbWRzX3Nlc3Npb24gKnNl
-c3Npb24sDQo+ICAJcmV0ID0gc2V0X3JlcXVlc3RfcGF0aF9hdHRyKG1kc2MsIE5VTEwsIG9sZF9k
-ZW50cnksDQo+ICAJCQkgICAgICByZXEtPnJfb2xkX2RlbnRyeV9kaXIsDQo+ICAJCQkgICAgICBy
-ZXEtPnJfcGF0aDIsIHJlcS0+cl9pbm8yLmlubywNCj4gLQkJCSAgICAgICZwYXRoMiwgJnBhdGhs
-ZW4yLCAmaW5vMiwgJmZyZWVwYXRoMiwgdHJ1ZSk7DQo+ICsJCQkgICAgICAmcGF0aDIsICZwYXRo
-bGVuMiwgJnZpbm8yLCAmZnJlZXBhdGgyLCB0cnVlKTsNCj4gIAlpZiAocmV0IDwgMCkgew0KPiAg
-CQltc2cgPSBFUlJfUFRSKHJldCk7DQo+ICAJCWdvdG8gb3V0X2ZyZWUxOw0KPiBAQCAtMzE5MSw4
-ICszMjE4LDggQEAgc3RhdGljIHN0cnVjdCBjZXBoX21zZyAqY3JlYXRlX3JlcXVlc3RfbWVzc2Fn
-ZShzdHJ1Y3QgY2VwaF9tZHNfc2Vzc2lvbiAqc2Vzc2lvbiwNCj4gIAlsaGVhZC0+aW5vID0gY3B1
-X3RvX2xlNjQocmVxLT5yX2RlbGVnX2lubyk7DQo+ICAJbGhlYWQtPmFyZ3MgPSByZXEtPnJfYXJn
-czsNCj4gIA0KPiAtCWNlcGhfZW5jb2RlX2ZpbGVwYXRoKCZwLCBlbmQsIGlubzEsIHBhdGgxKTsN
-Cj4gLQljZXBoX2VuY29kZV9maWxlcGF0aCgmcCwgZW5kLCBpbm8yLCBwYXRoMik7DQo+ICsJY2Vw
-aF9lbmNvZGVfZmlsZXBhdGgoJnAsIGVuZCwgdmlubzEuaW5vLCBwYXRoMSk7DQo+ICsJY2VwaF9l
-bmNvZGVfZmlsZXBhdGgoJnAsIGVuZCwgdmlubzIuaW5vLCBwYXRoMik7DQo+ICANCj4gIAkvKiBt
-YWtlIG5vdGUgb2YgcmVsZWFzZSBvZmZzZXQsIGluIGNhc2Ugd2UgbmVlZCB0byByZXBsYXkgKi8N
-Cj4gIAlyZXEtPnJfcmVxdWVzdF9yZWxlYXNlX29mZnNldCA9IHAgLSBtc2ctPmZyb250Lmlvdl9i
-YXNlOw0K
+This fix comes after an analysis of trace from a client bug:
+RCA:
+Usually two operations cant interleave due to extensive VFS locking.
+But CEPH maintains leases for cached dentry structures, when these
+leases expire the client may create a lookup request without taking
+VFS locks, this is done by choice. But it does leave a window for this
+type of a race that we have witnessed. The reply handler in one
+specific place doesn't make sure that the appropriate locks are held
+but still trusts the r_parent pointer that now holds an incorrect
+value due to the rename operation. I prepared a fix that now compares
+the cached r_parent and the ino from the reply. I'll ask @Andr=C3=A9 to
+prepare a new image; this image should also resolve the boot issue for
+the previous debug version.
+
+It's the message handling code, so the request is always valid but not
+every request will have a parent. R_PARENT_LOCKED may not be set by
+design, it's a valid state.
+
+On Thu, Jul 31, 2025 at 1:39=E2=80=AFAM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+>
+> On Wed, 2025-07-30 at 15:19 +0000, Alex Markuze wrote:
+> > When the parent directory's i_rwsem is not locked, req->r_parent may be=
+come
+> > stale due to concurrent operations (e.g. rename) between dentry lookup =
+and
+> > message creation. Validate that r_parent matches the encoded parent ino=
+de
+> > and update to the correct inode if a mismatch is detected.
+>
+> Could we share any description of crash or workload misbehavior that can
+> illustrate the symptoms of the issue?
+>
+> > ---
+> >  fs/ceph/inode.c | 44 ++++++++++++++++++++++++++++++++++++++++++--
+> >  1 file changed, 42 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+> > index 814f9e9656a0..49fb1e3a02e8 100644
+> > --- a/fs/ceph/inode.c
+> > +++ b/fs/ceph/inode.c
+> > @@ -56,6 +56,46 @@ static int ceph_set_ino_cb(struct inode *inode, void=
+ *data)
+> >       return 0;
+> >  }
+> >
+> > +/*
+> > + * Validate that the directory inode referenced by @req->r_parent matc=
+hes the
+> > + * inode number and snapshot id contained in the reply's directory rec=
+ord.  If
+> > + * they do not match =E2=80=93 which can theoretically happen if the p=
+arent dentry was
+> > + * moved between the time the request was issued and the reply arrived=
+ =E2=80=93 fall
+> > + * back to looking up the correct inode in the inode cache.
+> > + *
+> > + * A reference is *always* returned.  Callers that receive a different=
+ inode
+> > + * than the original @parent are responsible for dropping the extra re=
+ference
+> > + * once the reply has been processed.
+> > + */
+> > +static struct inode *ceph_get_reply_dir(struct super_block *sb,
+> > +                                       struct inode *parent,
+> > +                                       struct ceph_mds_reply_info_pars=
+ed *rinfo)
+> > +{
+> > +    struct ceph_vino vino;
+> > +
+> > +    if (unlikely(!rinfo->diri.in))
+> > +        return parent; /* nothing to compare against */
+>
+> If we could receive parent =3D=3D NULL, then is it possible to receive ri=
+nfo =3D=3D
+> NULL?
+>
+> > +
+> > +    /* If we didn't have a cached parent inode to begin with, just bai=
+l out. */
+> > +    if (!parent)
+> > +        return NULL;
+>
+> Is it normal workflow that parent =3D=3D NULL? Should we complain about i=
+t here?
+>
+> > +
+> > +    vino.ino  =3D le64_to_cpu(rinfo->diri.in->ino);
+> > +    vino.snap =3D le64_to_cpu(rinfo->diri.in->snapid);
+> > +
+> > +    if (likely(parent && ceph_ino(parent) =3D=3D vino.ino && ceph_snap=
+(parent) =3D=3D vino.snap))
+>
+> It looks like long line. Could we introduce a inline static function with=
+ good
+> name here?
+>
+> We already checked that parent is not NULL above. Does it makes sense to =
+have
+> this duplicated check here?
+>
+> > +        return parent; /* matches =E2=80=93 use the original reference=
+ */
+> > +
+> > +    /* Mismatch =E2=80=93 this should be rare.  Emit a WARN and obtain=
+ the correct inode. */
+> > +    WARN(1, "ceph: reply dir mismatch (parent %s %llx.%llx reply %llx.=
+%llx)\n",
+> > +         parent ? "valid" : "NULL",
+>
+> How parent can be NULL here? We already checked this pointer. And this
+> construction looks pretty complicated.
+>
+> > +         parent ? ceph_ino(parent) : 0ULL,
+> > +         parent ? ceph_snap(parent) : 0ULL,
+> > +         vino.ino, vino.snap);
+> > +
+> > +    return ceph_get_inode(sb, vino, NULL);
+> > +}
+> > +
+> >  /**
+> >   * ceph_new_inode - allocate a new inode in advance of an expected cre=
+ate
+> >   * @dir: parent directory for new inode
+> > @@ -1548,8 +1588,8 @@ int ceph_fill_trace(struct super_block *sb, struc=
+t ceph_mds_request *req)
+> >       }
+> >
+> >       if (rinfo->head->is_dentry) {
+> > -             struct inode *dir =3D req->r_parent;
+> > -
+> > +             /* r_parent may be stale, in cases when R_PARENT_LOCKED i=
+s not set, so we need to get the correct inode */
+>
+> Comment is too long for one line. We could have multi-line comment here. =
+If
+> R_PARENT_LOCKED is not set, then, is it normal execution flow or not? Sho=
+uld we
+> fix the use-case of not setting R_PARENT_LOCKED?
+>
+> Thanks,
+> Slava.
+>
+> > +             struct inode *dir =3D ceph_get_reply_dir(sb, req->r_paren=
+t, rinfo);
+> >               if (dir) {
+> >                       err =3D ceph_fill_inode(dir, NULL, &rinfo->diri,
+> >                                             rinfo->dirfrag, session, -1=
+,
+
 
