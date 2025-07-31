@@ -1,247 +1,348 @@
-Return-Path: <ceph-devel+bounces-3340-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3341-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CDC0B16CB1
-	for <lists+ceph-devel@lfdr.de>; Thu, 31 Jul 2025 09:25:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 409CBB16CC3
+	for <lists+ceph-devel@lfdr.de>; Thu, 31 Jul 2025 09:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F7823AD0CE
-	for <lists+ceph-devel@lfdr.de>; Thu, 31 Jul 2025 07:24:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0141C3A713B
+	for <lists+ceph-devel@lfdr.de>; Thu, 31 Jul 2025 07:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F82F29C35C;
-	Thu, 31 Jul 2025 07:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB41F29E0FF;
+	Thu, 31 Jul 2025 07:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HBzK74qL"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J+IkKnSE"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3920B1F4CBF
-	for <ceph-devel@vger.kernel.org>; Thu, 31 Jul 2025 07:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2B129DB77
+	for <ceph-devel@vger.kernel.org>; Thu, 31 Jul 2025 07:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753946685; cv=none; b=M3ebBCMvb/4K2K3ERe+LPULZnrg4lV+0wgFlJ2tN2/dCU8J6dujPc7BzILEsvqBpnYW02DNVAA90DySduFVPkrhVvLGh4X/xkg8b28n3tzeAixTPnnG2itva5aIC9GAy5smXQbhOtBGpluxnn5Chci1RnPzO/fYpsyHRZ2Cfy34=
+	t=1753947068; cv=none; b=Weu4Wc5wWMKq8hOC2CxQsHLSyal2+wYqSAJbr+r/0x5pgPa5TvAqOyDkLbCx4M+AJqfIK+Btpp8qdrnESwcgjqHmtgLEHl58uMBYORwXIJgr89Att69ZMtT1AG2ueyMY/NJNT7lYLdStCrgPPdjWt52jkKjjGujpOBisjmJc8Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753946685; c=relaxed/simple;
-	bh=UWc7EMe+rjVWd0xnyGHGQsGnsgAL4BFn/kcNu30IEUg=;
+	s=arc-20240116; t=1753947068; c=relaxed/simple;
+	bh=8JnscfoNZlOSW1qUXmJ2olTtH1A1S+cokm7plJKNKEY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fXEG+q5QlHl4yNjzZhjjRl49VS73M4dxl0lrMsFeq/iq+DrHxcfgMCoEPVvpEY2c4MEUyA/dTK8h/kK13qUzoxWK+hIuBYPK7dHunUmQ6h4HyEDHxcI2ZPJM2FFdUaZvjFeZCZ+Hp8Vdb5A9yt+ndMzT6VdeiBDJhbUGk+PmGnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HBzK74qL; arc=none smtp.client-ip=170.10.129.124
+	 To:Cc:Content-Type; b=fQ7R4GY+WSN+EYHC1SpISAC/yzjzjbupzn6ixDABU/MVKfzb0XCXk9y3kY5J7mFoO+A/4UZbJ6Nl5xzEP8hLcNPXk9gTs2eWSmX2ce7EQXybyFbjWpBVrisvWOZ1C5yhIMKKU8gzRRqkwetj3AFf+Qfz56HTbIKhwudggcljk3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J+IkKnSE; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753946682;
+	s=mimecast20190719; t=1753947065;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dCXF+ofc1ksuIi92Ur4/RviW6uHbykewCF5+ABWAhew=;
-	b=HBzK74qLgT5AsiUZHdAKSwA4eYLPCt/lWkP4v67fgCd51SG9/rqnBQZKVVhQDGXgWBKBYI
-	Su2EFAC2v1SUdsDNWmP8f7Phe7FnoaVgvlvPDFTj/g4uNzktqnomYbI63Bt5mFOSrWB1Fj
-	s/j1Qsc/ZDtTOyMqtIt53QkH9Rjczmw=
-Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com
- [209.85.221.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=RfbWAg9p4xTBdky7exRWGNasdirgkwRfRGPwjUGYwSA=;
+	b=J+IkKnSEUjlP8NGe7IC3p0SppkJPgI0MbyM6nh9q7WlUJsmrXACZb4b7OKbtSHQgt4XkXB
+	tEs4VFKPyjxxo6h2eZNIvC/cA0SQ48tBBwEsLwPRNnYqzcSMPKR+f9WmJ24EGAz2fZhkG1
+	c9ZL5kLApJ8bqogVPA5HCJ654KeQAZQ=
+Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com
+ [209.85.221.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-85-zisgVYaQPxivvMS1NxALlQ-1; Thu, 31 Jul 2025 03:24:40 -0400
-X-MC-Unique: zisgVYaQPxivvMS1NxALlQ-1
-X-Mimecast-MFC-AGG-ID: zisgVYaQPxivvMS1NxALlQ_1753946679
-Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-53157659c58so1631357e0c.1
-        for <ceph-devel@vger.kernel.org>; Thu, 31 Jul 2025 00:24:40 -0700 (PDT)
+ us-mta-397-xx9fq_hBNSCIDVr9joao8A-1; Thu, 31 Jul 2025 03:31:03 -0400
+X-MC-Unique: xx9fq_hBNSCIDVr9joao8A-1
+X-Mimecast-MFC-AGG-ID: xx9fq_hBNSCIDVr9joao8A_1753947063
+Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-539393fdacbso111128e0c.2
+        for <ceph-devel@vger.kernel.org>; Thu, 31 Jul 2025 00:31:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753946679; x=1754551479;
+        d=1e100.net; s=20230601; t=1753947063; x=1754551863;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dCXF+ofc1ksuIi92Ur4/RviW6uHbykewCF5+ABWAhew=;
-        b=QidjIysfzI/WG5hYw+go+CYa1b4Ev3KYCMOdqN7CX3qn0CL2ch9qyEZJrA/gr1oC3Z
-         vrMzc7R/dUvl5yhud/SwveH7uywhWeot5WqH66DYSO353N3/K9XCqFwJ98aDs3U0un+g
-         rJz8/aG4xFTFgcfF+h0tRj1yxtFfC54lRQG6oEFMKNGlBNIlj3Lal4HO5y/ypZbUBTgY
-         ApOwBk9Ja3eoYndhML/vICI2h8hpAKhX8FVLrSR1imbHmih8r3F/rgs2SBPw5vb4N/nF
-         F+s5Y4v5cz7lCOQ5oKjVJw1IUBCgW+3Kzrl4WViDSAI1cBt+lnE8dcfnpKjKBqcm/4oL
-         13zw==
-X-Gm-Message-State: AOJu0Ywp9oTAyrklS/1mwWx0YBBW+VtTDtxhWH+kKqpbJ5yDRnu9N/YH
-	KBPVI8K18JBoFp22aX5jNrmWMW/hIiYqyZlVKvERItH03SdUyS7YDI3FMsehtxB7OEX0YFOJ0G5
-	5aUIM3a9w0WmeNl84MAztuOyqaFRw5FSx6YOiaCWUccyPgTS2DNoGVQS/m9gHff8rHDiipTf31d
-	0cZM8Ujr2Wj3OUcYCgvYoCQW2nuc74pTYdrCOwReGlKGZeZK+n+hqRs11V
-X-Gm-Gg: ASbGnct1Pq9Dl1JkwX/IIV5HiNPOHrhsMfbOIy9/vrSjFW1G3Th440fEfAkYaxe1r9u
-	hf9L2VTimGexua2+8aqa9KEYfxnMK9Hbkolv8e6Rr8E7te0oeZDkyoX6wE/VyTMg6GagSYIB1aW
-	w97IawOuFaVjqjie0V/0xVz8DHuhfU+Qs+K1J0vg==
-X-Received: by 2002:a05:6122:208f:b0:535:ed79:2aed with SMTP id 71dfb90a1353d-5393859a191mr415049e0c.2.1753946679339;
-        Thu, 31 Jul 2025 00:24:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3xO+JW44TTaxYyhohHvH8ki6jvVp+MCsZhdj1HhZi4ipLl9i4NDfjn/akYsn1R4lBXIi6wUuUHXbH/HdkWno=
-X-Received: by 2002:a05:6122:208f:b0:535:ed79:2aed with SMTP id
- 71dfb90a1353d-5393859a191mr415042e0c.2.1753946678956; Thu, 31 Jul 2025
- 00:24:38 -0700 (PDT)
+        bh=RfbWAg9p4xTBdky7exRWGNasdirgkwRfRGPwjUGYwSA=;
+        b=u+7Ni27nAfp5px2OfvZguzGnaC7UpfbKNhIYzkuZVrYrQmlZs2B/5r6LDwEl5CjMUW
+         5kA7w/NthE1fJaw67lVfMdQ4OP7x0u9nUbZqmd3u1k1AjZEH0stwGa/r4+OGN6GfD/e0
+         S377hya742eJtlbuMN0wDaskfHlJ5xJZHLlIKIX44klG8lIAiXUNRwtpR87rmgj3K041
+         bvGvSNfr+43wHUwJjSTAkzBoQuZQq76n9pnfVWpr9aNu63VlNZ/J10gkxi0uLhjBcUEl
+         CigZBm/cOA+czdpQKKirgQNoz3hTKYwJKNI9p5XT94CzfWiomJW0Qe2d9Y990EbKC/pn
+         DW0Q==
+X-Gm-Message-State: AOJu0Yyf/RLDGc/1iXNrF5N8tjgible2zZPT/yfA5ngFSp4/pZTHkEcj
+	EkykgRacrKx0gtIMjm12ffAaFJdeOw6zf5iI/PSuPHg+XY/WoYdiwuHt5VZXYkhcQwo2KVMWcJ3
+	FoGGhvV+lxC8cpsBzoQgvq0oUt5EBOTWAf3eoo35XrRWKvPLTJDR2DgATLgq1EnCUrlVBs6MQyT
+	tgDQtMDaQ4r1aheAxSQZd3UiSFdlufitr11FhNLcE+FtCS7gN7p3hlkmEp
+X-Gm-Gg: ASbGnctf5kY3F+hgduRHQ5js8iuE2wd+CCvQr7PnNFk0pnVrwWkhi6bdr3nTBeBwS3l
+	z97eOAb4VSa6DYxoOkPTESybU6wZ0wsvhh8DI0+gv4WPw0SE+HJTXJOvkfru51GVxmd/OUJWyXE
+	Yb/bjhLzfHU10SA3wznq4WmHBXgM7RT0GsTMhJeQ==
+X-Received: by 2002:a67:e011:0:10b0:4fb:f2ff:dd16 with SMTP id ada2fe7eead31-4fbf2ffe298mr1745206137.17.1753947062646;
+        Thu, 31 Jul 2025 00:31:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGXSkwVI99FwoLi84iLKMYCeA3Q8vS/B6i1Lxa063a84F4H+syzQ8eyh4iwWs1hVLEUC3WgEthXRvxdTyjiucg=
+X-Received: by 2002:a67:e011:0:10b0:4fb:f2ff:dd16 with SMTP id
+ ada2fe7eead31-4fbf2ffe298mr1745204137.17.1753947062175; Thu, 31 Jul 2025
+ 00:31:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730151900.1591177-1-amarkuze@redhat.com> <20250730151900.1591177-3-amarkuze@redhat.com>
- <4b14172543092167ca910eaf886b5bda06c32bc4.camel@ibm.com>
-In-Reply-To: <4b14172543092167ca910eaf886b5bda06c32bc4.camel@ibm.com>
+References: <20250730151900.1591177-1-amarkuze@redhat.com> <20250730151900.1591177-2-amarkuze@redhat.com>
+ <012cf478bb6e118912b189dd4cfbdfa7d5249fd7.camel@ibm.com>
+In-Reply-To: <012cf478bb6e118912b189dd4cfbdfa7d5249fd7.camel@ibm.com>
 From: Alex Markuze <amarkuze@redhat.com>
-Date: Thu, 31 Jul 2025 11:24:28 +0400
-X-Gm-Features: Ac12FXyiCN5i3Pjf5_Dl3Px8OZT7agpYePC_ofihURh5brMgLubBAvzuGA_nL7k
-Message-ID: <CAO8a2Si-1grAicbkLKFK5BQXJAbpLJyD0p2wmvGU=jOO1Ztk+g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ceph: fix client race condition where r_parent
- becomes stale before sending message
+Date: Thu, 31 Jul 2025 11:30:50 +0400
+X-Gm-Features: Ac12FXwzpiuBrEG7_p1P8gWK3GeGH6v-mRK-DtFo1_6wiBIw_OktRR2xxVFrn2k
+Message-ID: <CAO8a2SjJmWGM0HbR9LVzXcSmf3_WqyYB6YWMmj4Ut_ofoLM4XA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ceph: fix client race condition validating r_parent
+ before applying state
 To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-This fix comes after an analysis of trace from a client bug:
-RCA:
-Usually two operations cant interleave due to extensive VFS locking.
-But CEPH maintains leases for cached dentry structures, when these
-leases expire the client may create a lookup request without taking
-VFS locks, this is done by choice. But it does leave a window for this
-type of a race that we have witnessed. The reply handler in one
-specific place doesn't make sure that the appropriate locks are held
-but still trusts the r_parent pointer that now holds an incorrect
-value due to the rename operation. I prepared a fix that now compares
-the cached r_parent and the ino from the reply. I'll ask @Andr=C3=A9 to
-prepare a new image; this image should also resolve the boot issue for
-the previous debug version.
+No new parameters were added, a u64 ino value was changed to struct ceph_vi=
+no.
+I prefer not to mix functional changes with aesthetic ones, I can add
+a separate patch, but it is unrelated to the bug fix here.
 
-It's the message handling code, so the request is always valid but not
-every request will have a parent. R_PARENT_LOCKED may not be set by
-design, it's a valid state.
-
-On Thu, Jul 31, 2025 at 1:39=E2=80=AFAM Viacheslav Dubeyko
+On Thu, Jul 31, 2025 at 2:10=E2=80=AFAM Viacheslav Dubeyko
 <Slava.Dubeyko@ibm.com> wrote:
 >
-> On Wed, 2025-07-30 at 15:19 +0000, Alex Markuze wrote:
-> > When the parent directory's i_rwsem is not locked, req->r_parent may be=
-come
-> > stale due to concurrent operations (e.g. rename) between dentry lookup =
-and
-> > message creation. Validate that r_parent matches the encoded parent ino=
-de
-> > and update to the correct inode if a mismatch is detected.
->
-> Could we share any description of crash or workload misbehavior that can
-> illustrate the symptoms of the issue?
->
+> On Wed, 2025-07-30 at 15:18 +0000, Alex Markuze wrote:
+> > Add validation to ensure the cached parent directory inode matches the
+> > directory info in MDS replies. This prevents client-side race condition=
+s
+> > where concurrent operations (e.g. rename) cause r_parent to become stal=
+e
+> > between request initiation and reply processing, which could lead to
+> > applying state changes to incorrect directory inodes.
 > > ---
-> >  fs/ceph/inode.c | 44 ++++++++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 42 insertions(+), 2 deletions(-)
+> >  fs/ceph/mds_client.c | 67 +++++++++++++++++++++++++++++++-------------
+> >  1 file changed, 47 insertions(+), 20 deletions(-)
 > >
-> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > index 814f9e9656a0..49fb1e3a02e8 100644
-> > --- a/fs/ceph/inode.c
-> > +++ b/fs/ceph/inode.c
-> > @@ -56,6 +56,46 @@ static int ceph_set_ino_cb(struct inode *inode, void=
- *data)
+> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > index 8d9fc5e18b17..a164783fc1e1 100644
+> > --- a/fs/ceph/mds_client.c
+> > +++ b/fs/ceph/mds_client.c
+> > @@ -2853,7 +2853,7 @@ char *ceph_mdsc_build_path(struct ceph_mds_client=
+ *mdsc, struct dentry *dentry,
+> >
+> >  static int build_dentry_path(struct ceph_mds_client *mdsc, struct dent=
+ry *dentry,
+> >                            struct inode *dir, const char **ppath, int *=
+ppathlen,
+> > -                          u64 *pino, bool *pfreepath, bool parent_lock=
+ed)
+> > +                          struct ceph_vino *pvino, bool *pfreepath, bo=
+ol parent_locked)
+>
+> We have too much arguments here. It looks like we need to introduce some
+> structure.
+>
+> >  {
+> >       char *path;
+> >
+> > @@ -2862,23 +2862,29 @@ static int build_dentry_path(struct ceph_mds_cl=
+ient *mdsc, struct dentry *dentry
+> >               dir =3D d_inode_rcu(dentry->d_parent);
+> >       if (dir && parent_locked && ceph_snap(dir) =3D=3D CEPH_NOSNAP &&
+> >           !IS_ENCRYPTED(dir)) {
+> > -             *pino =3D ceph_ino(dir);
+> > +             pvino->ino =3D ceph_ino(dir);
+> > +             pvino->snap =3D ceph_snap(dir);
+> >               rcu_read_unlock();
+> >               *ppath =3D dentry->d_name.name;
+> >               *ppathlen =3D dentry->d_name.len;
+> >               return 0;
+> >       }
+> >       rcu_read_unlock();
+> > -     path =3D ceph_mdsc_build_path(mdsc, dentry, ppathlen, pino, 1);
+> > +     path =3D ceph_mdsc_build_path(mdsc, dentry, ppathlen, &pvino->ino=
+, 1);
+> >       if (IS_ERR(path))
+> >               return PTR_ERR(path);
+> >       *ppath =3D path;
+> >       *pfreepath =3D true;
+> > +     /* For paths built by ceph_mdsc_build_path, we need to get snap f=
+rom dentry */
+>
+> I believe the multi-line comment could be good here.
+>
+> > +     if (dentry && d_inode(dentry))
+>
+> Could dentry be really NULL here?
+>
+> > +             pvino->snap =3D ceph_snap(d_inode(dentry));
+> > +     else
+> > +             pvino->snap =3D CEPH_NOSNAP;
 > >       return 0;
 > >  }
 > >
-> > +/*
-> > + * Validate that the directory inode referenced by @req->r_parent matc=
-hes the
-> > + * inode number and snapshot id contained in the reply's directory rec=
-ord.  If
-> > + * they do not match =E2=80=93 which can theoretically happen if the p=
-arent dentry was
-> > + * moved between the time the request was issued and the reply arrived=
- =E2=80=93 fall
-> > + * back to looking up the correct inode in the inode cache.
-> > + *
-> > + * A reference is *always* returned.  Callers that receive a different=
- inode
-> > + * than the original @parent are responsible for dropping the extra re=
-ference
-> > + * once the reply has been processed.
-> > + */
-> > +static struct inode *ceph_get_reply_dir(struct super_block *sb,
-> > +                                       struct inode *parent,
-> > +                                       struct ceph_mds_reply_info_pars=
-ed *rinfo)
-> > +{
-> > +    struct ceph_vino vino;
-> > +
-> > +    if (unlikely(!rinfo->diri.in))
-> > +        return parent; /* nothing to compare against */
+> >  static int build_inode_path(struct inode *inode,
+> > -                         const char **ppath, int *ppathlen, u64 *pino,
+> > +                         const char **ppath, int *ppathlen, struct cep=
+h_vino *pvino,
+> >                           bool *pfreepath)
 >
-> If we could receive parent =3D=3D NULL, then is it possible to receive ri=
-nfo =3D=3D
-> NULL?
+> We have too much arguments here too.
 >
-> > +
-> > +    /* If we didn't have a cached parent inode to begin with, just bai=
-l out. */
-> > +    if (!parent)
-> > +        return NULL;
->
-> Is it normal workflow that parent =3D=3D NULL? Should we complain about i=
-t here?
->
-> > +
-> > +    vino.ino  =3D le64_to_cpu(rinfo->diri.in->ino);
-> > +    vino.snap =3D le64_to_cpu(rinfo->diri.in->snapid);
-> > +
-> > +    if (likely(parent && ceph_ino(parent) =3D=3D vino.ino && ceph_snap=
-(parent) =3D=3D vino.snap))
->
-> It looks like long line. Could we introduce a inline static function with=
- good
-> name here?
->
-> We already checked that parent is not NULL above. Does it makes sense to =
-have
-> this duplicated check here?
->
-> > +        return parent; /* matches =E2=80=93 use the original reference=
- */
-> > +
-> > +    /* Mismatch =E2=80=93 this should be rare.  Emit a WARN and obtain=
- the correct inode. */
-> > +    WARN(1, "ceph: reply dir mismatch (parent %s %llx.%llx reply %llx.=
-%llx)\n",
-> > +         parent ? "valid" : "NULL",
->
-> How parent can be NULL here? We already checked this pointer. And this
-> construction looks pretty complicated.
->
-> > +         parent ? ceph_ino(parent) : 0ULL,
-> > +         parent ? ceph_snap(parent) : 0ULL,
-> > +         vino.ino, vino.snap);
-> > +
-> > +    return ceph_get_inode(sb, vino, NULL);
-> > +}
-> > +
-> >  /**
-> >   * ceph_new_inode - allocate a new inode in advance of an expected cre=
-ate
-> >   * @dir: parent directory for new inode
-> > @@ -1548,8 +1588,8 @@ int ceph_fill_trace(struct super_block *sb, struc=
-t ceph_mds_request *req)
-> >       }
+> >  {
+> >       struct ceph_mds_client *mdsc =3D ceph_sb_to_mdsc(inode->i_sb);
+> > @@ -2886,17 +2892,19 @@ static int build_inode_path(struct inode *inode=
+,
+> >       char *path;
 > >
-> >       if (rinfo->head->is_dentry) {
-> > -             struct inode *dir =3D req->r_parent;
-> > -
-> > +             /* r_parent may be stale, in cases when R_PARENT_LOCKED i=
-s not set, so we need to get the correct inode */
+> >       if (ceph_snap(inode) =3D=3D CEPH_NOSNAP) {
+> > -             *pino =3D ceph_ino(inode);
+> > +             pvino->ino =3D ceph_ino(inode);
+> > +             pvino->snap =3D ceph_snap(inode);
+> >               *ppathlen =3D 0;
+> >               return 0;
+> >       }
+> >       dentry =3D d_find_alias(inode);
+> > -     path =3D ceph_mdsc_build_path(mdsc, dentry, ppathlen, pino, 1);
+> > +     path =3D ceph_mdsc_build_path(mdsc, dentry, ppathlen, &pvino->ino=
+, 1);
+> >       dput(dentry);
+> >       if (IS_ERR(path))
+> >               return PTR_ERR(path);
+> >       *ppath =3D path;
+> >       *pfreepath =3D true;
+> > +     pvino->snap =3D ceph_snap(inode);
+> >       return 0;
+> >  }
+> >
+> > @@ -2907,7 +2915,7 @@ static int build_inode_path(struct inode *inode,
+> >  static int set_request_path_attr(struct ceph_mds_client *mdsc, struct =
+inode *rinode,
+> >                                struct dentry *rdentry, struct inode *rd=
+iri,
+> >                                const char *rpath, u64 rino, const char =
+**ppath,
+> > -                              int *pathlen, u64 *ino, bool *freepath,
+> > +                              int *pathlen, struct ceph_vino *p_vino, =
+bool *freepath,
+> >                                bool parent_locked)
 >
-> Comment is too long for one line. We could have multi-line comment here. =
-If
-> R_PARENT_LOCKED is not set, then, is it normal execution flow or not? Sho=
-uld we
-> fix the use-case of not setting R_PARENT_LOCKED?
+> Ditto. :)
 >
 > Thanks,
 > Slava.
 >
-> > +             struct inode *dir =3D ceph_get_reply_dir(sb, req->r_paren=
-t, rinfo);
-> >               if (dir) {
-> >                       err =3D ceph_fill_inode(dir, NULL, &rinfo->diri,
-> >                                             rinfo->dirfrag, session, -1=
-,
+> >  {
+> >       struct ceph_client *cl =3D mdsc->fsc->client;
+> > @@ -2915,16 +2923,17 @@ static int set_request_path_attr(struct ceph_md=
+s_client *mdsc, struct inode *rin
+> >       int r =3D 0;
+> >
+> >       if (rinode) {
+> > -             r =3D build_inode_path(rinode, ppath, pathlen, ino, freep=
+ath);
+> > +             r =3D build_inode_path(rinode, ppath, pathlen, p_vino, fr=
+eepath);
+> >               boutc(cl, " inode %p %llx.%llx\n", rinode, ceph_ino(rinod=
+e),
+> > -                   ceph_snap(rinode));
+> > +             ceph_snap(rinode));
+> >       } else if (rdentry) {
+> > -             r =3D build_dentry_path(mdsc, rdentry, rdiri, ppath, path=
+len, ino,
+> > -                                     freepath, parent_locked);
+> > +             r =3D build_dentry_path(mdsc, rdentry, rdiri, ppath, path=
+len, p_vino,
+> > +                                    freepath, parent_locked);
+> >               CEPH_SAN_STRNCPY(result_str, sizeof(result_str), *ppath, =
+*pathlen);
+> > -             boutc(cl, " dentry %p %llx/%s\n", rdentry, *ino, result_s=
+tr);
+> > +             boutc(cl, " dentry %p %llx/%s\n", rdentry, p_vino->ino, r=
+esult_str);
+> >       } else if (rpath || rino) {
+> > -             *ino =3D rino;
+> > +             p_vino->ino =3D rino;
+> > +             p_vino->snap =3D CEPH_NOSNAP;
+> >               *ppath =3D rpath;
+> >               *pathlen =3D rpath ? strlen(rpath) : 0;
+> >               CEPH_SAN_STRNCPY(result_str, sizeof(result_str), rpath, *=
+pathlen);
+> > @@ -3007,7 +3016,7 @@ static struct ceph_msg *create_request_message(st=
+ruct ceph_mds_session *session,
+> >       struct ceph_mds_request_head_legacy *lhead;
+> >       const char *path1 =3D NULL;
+> >       const char *path2 =3D NULL;
+> > -     u64 ino1 =3D 0, ino2 =3D 0;
+> > +     struct ceph_vino vino1 =3D {0}, vino2 =3D {0};
+> >       int pathlen1 =3D 0, pathlen2 =3D 0;
+> >       bool freepath1 =3D false, freepath2 =3D false;
+> >       struct dentry *old_dentry =3D NULL;
+> > @@ -3019,17 +3028,35 @@ static struct ceph_msg *create_request_message(=
+struct ceph_mds_session *session,
+> >       u16 request_head_version =3D mds_supported_head_version(session);
+> >       kuid_t caller_fsuid =3D req->r_cred->fsuid;
+> >       kgid_t caller_fsgid =3D req->r_cred->fsgid;
+> > +     bool parent_locked =3D test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r=
+_req_flags);
+> >
+> >       ret =3D set_request_path_attr(mdsc, req->r_inode, req->r_dentry,
+> >                             req->r_parent, req->r_path1, req->r_ino1.in=
+o,
+> > -                           &path1, &pathlen1, &ino1, &freepath1,
+> > -                           test_bit(CEPH_MDS_R_PARENT_LOCKED,
+> > -                                     &req->r_req_flags));
+> > +                           &path1, &pathlen1, &vino1, &freepath1,
+> > +                           parent_locked);
+> >       if (ret < 0) {
+> >               msg =3D ERR_PTR(ret);
+> >               goto out;
+> >       }
+> >
+> > +     /*
+> > +      * When the parent directory's i_rwsem is *not* locked, req->r_pa=
+rent may
+> > +      * have become stale (e.g. after a concurrent rename) between the=
+ time the
+> > +      * dentry was looked up and now.  If we detect that the stored r_=
+parent
+> > +      * does not match the inode number we just encoded for the reques=
+t, switch
+> > +      * to the correct inode so that the MDS receives a valid parent r=
+eference.
+> > +      */
+> > +     if (!parent_locked &&
+> > +         req->r_parent && vino1.ino && ceph_ino(req->r_parent) !=3D vi=
+no1.ino) {
+> > +             struct inode *correct_dir =3D ceph_get_inode(mdsc->fsc->s=
+b, vino1, NULL);
+> > +             if (!IS_ERR(correct_dir)) {
+> > +                     WARN(1, "ceph: r_parent mismatch (had %llx wanted=
+ %llx) - updating\n",
+> > +                          ceph_ino(req->r_parent), vino1.ino);
+> > +                     iput(req->r_parent);
+> > +                     req->r_parent =3D correct_dir;
+> > +             }
+> > +     }
+> > +
+> >       /* If r_old_dentry is set, then assume that its parent is locked =
+*/
+> >       if (req->r_old_dentry &&
+> >           !(req->r_old_dentry->d_flags & DCACHE_DISCONNECTED))
+> > @@ -3037,7 +3064,7 @@ static struct ceph_msg *create_request_message(st=
+ruct ceph_mds_session *session,
+> >       ret =3D set_request_path_attr(mdsc, NULL, old_dentry,
+> >                             req->r_old_dentry_dir,
+> >                             req->r_path2, req->r_ino2.ino,
+> > -                           &path2, &pathlen2, &ino2, &freepath2, true)=
+;
+> > +                           &path2, &pathlen2, &vino2, &freepath2, true=
+);
+> >       if (ret < 0) {
+> >               msg =3D ERR_PTR(ret);
+> >               goto out_free1;
+> > @@ -3191,8 +3218,8 @@ static struct ceph_msg *create_request_message(st=
+ruct ceph_mds_session *session,
+> >       lhead->ino =3D cpu_to_le64(req->r_deleg_ino);
+> >       lhead->args =3D req->r_args;
+> >
+> > -     ceph_encode_filepath(&p, end, ino1, path1);
+> > -     ceph_encode_filepath(&p, end, ino2, path2);
+> > +     ceph_encode_filepath(&p, end, vino1.ino, path1);
+> > +     ceph_encode_filepath(&p, end, vino2.ino, path2);
+> >
+> >       /* make note of release offset, in case we need to replay */
+> >       req->r_request_release_offset =3D p - msg->front.iov_base;
 
 
