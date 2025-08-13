@@ -1,276 +1,485 @@
-Return-Path: <ceph-devel+bounces-3436-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3437-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870F2B2429A
-	for <lists+ceph-devel@lfdr.de>; Wed, 13 Aug 2025 09:26:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6814B242B5
+	for <lists+ceph-devel@lfdr.de>; Wed, 13 Aug 2025 09:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 839D7725E2B
-	for <lists+ceph-devel@lfdr.de>; Wed, 13 Aug 2025 07:23:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AECC87BAD25
+	for <lists+ceph-devel@lfdr.de>; Wed, 13 Aug 2025 07:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818742E3B17;
-	Wed, 13 Aug 2025 07:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D43B2D3209;
+	Wed, 13 Aug 2025 07:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gz8Lvcac"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hIey/Pqb"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714142D73AC;
-	Wed, 13 Aug 2025 07:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72B62DAFB1
+	for <ceph-devel@vger.kernel.org>; Wed, 13 Aug 2025 07:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1755069743; cv=none; b=jovuaCTf0n8ov2Ciirt2pvnpkLmNaW3SRUf7NEmAg030ePIMDtL9woDXh6cHe0ghUpFpGaRapj6R7SfrBxDfuml5UOT0folwAFO0Ea/Y270udmyw7CcDWGKG/mx2sxHWlZzOOre/gtUplbUlpJtnOeyiIc+ccrACyEZ7xJmPt88=
+	t=1755070128; cv=none; b=BNwvTVZBHHDxC2ZxSAJB09Z6pFSImQqwBH8/wnFp9CUYhYByJ7Ojn/KumjEPq9cf+CUTQPUGv9j/7o7VidJr2sgkYpWX7EYWW6qu28vDdRW8j4ghd5Nv1sgli0QpwDKzxVP/LJasQqztSuwH07iAiJPToeAb/Vg/CH8sVK/pteI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1755069743; c=relaxed/simple;
-	bh=qvHDqa87IahpN0q2iuMXBlLhZe40i3HpmTPbG77YsM4=;
+	s=arc-20240116; t=1755070128; c=relaxed/simple;
+	bh=LdS4uyNM1qznT6RFjLHDvCRZf+2/+IDTNqSHneCeav0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sr+RLc14h6JOJPu2XncsUuSoz0+1VRWdCLw3xnSH+3Q5prlXwanGNz6Q+xtDw6XWjpip5K26yFG77ikv7+SIBPqtuXDH4EnTEUSkWjpNmf0quv/vyvsngNnDxnFEa3K+lFePedXZLSLGizFdxeyPZdpdaDr2hLGhtfR6ZF6C1is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gz8Lvcac; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61521cd7be2so8670276a12.3;
-        Wed, 13 Aug 2025 00:22:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1755069740; x=1755674540; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=orpa4r8gH8eS0evni3lIuGSBjIWNZOO2BZpAbJmaB6A=;
-        b=Gz8LvcacbCeoVBbVHGUvd4invCp8VBYpACYWP6fTn1qnXNB7qtVgLVO5s3rdsL+v84
-         IWWVgVkxgnR3hM0nD6Y6k4KcGmysOaXgj25vcZBTzfyf4yxuQPYu0HImmVYjVOFCor1u
-         X5nnLN3U9cblxJLiGhB847LsO/IuSnxMGqu/gSx+fJTm2LrYO1HH80e7SwEoTyJgEbWX
-         KBzED01YQBGhi0lLhghy/JknItL3j1L1b0yd/1Yv8tSHebsixrwohAIPqQ/5JLj4Nf1K
-         eWf346DFBVfQqvHEcCgCYfp2mF+QoxRBgQQTUh4BCFVHzmGpzZRWgSdCnLWX/+Xc/Vgy
-         aUvA==
+	 Cc:Content-Type; b=Fk1MWgzEcG44GLIpNceO6oJd33rqr8kK8mUTFUUk/n1MPaHTtE/QqxOu0jh7kvCHMJOTWeXsF4uWCvBn9p5fOQW+D0GAHuDaAdpWARrlrfLNI0bgFw62BaPcgr0LuDWOeW4CJ27WTN+7O80qaUA6TX7KJ47PmEj5s+wEE5ZJSfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hIey/Pqb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1755070124;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6RR0nADgokkkHbu1xEGDKmVwqxonLHxC0qQLcT1qV84=;
+	b=hIey/Pqbbc9KlJWSzYDJ+w4jIOEjFrBzmM9Clrks3LROrSdZudGQTI5co19z2Pq3raufpG
+	xIcITVoGmixxG12a1oeBapKiNKun9rWZ5INnX1jezBc83SYmpVXd4rhak0wABEtYK8n9vW
+	NUmHQB2c6/9w/5xwANDLgd6BiLBsSgQ=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-280--MCjyHlAOvC_Qd_gg0eThA-1; Wed, 13 Aug 2025 03:28:43 -0400
+X-MC-Unique: -MCjyHlAOvC_Qd_gg0eThA-1
+X-Mimecast-MFC-AGG-ID: -MCjyHlAOvC_Qd_gg0eThA_1755070122
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-31f729bf733so10898462a91.1
+        for <ceph-devel@vger.kernel.org>; Wed, 13 Aug 2025 00:28:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1755069740; x=1755674540;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1755070122; x=1755674922;
+        h=content-transfer-encoding:cc:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=orpa4r8gH8eS0evni3lIuGSBjIWNZOO2BZpAbJmaB6A=;
-        b=RH+wALy9nx21a2EQ+/Mz9Tr1fhZiCk1ftVM8Krfv4+kxI2Anlg/KwWhQVy7MpRYokI
-         +RIoEFA/6VHvRq/ctBhVdaHn4zSdQrToRhlRTllcLQPKjd6F7U4s4VcS1gsLE23qZHou
-         PB6eDnZqEL7q3QgOJMweiw5Xjvt8fX5UBJnbPXU5TvYjYj2Ry2Xiv8LuQVfZHPU4DLgm
-         HdvlY+NDZJKDwNIPIPnmUY8wCOcU+SdgTWj9pQszOqOrMQvWpGaHf3+p7WMkY3T64cmv
-         LYZ0s3WWKGUR4pZL0q5gU9hyRTC55PPjE7hzuPoOtOAvX7/yvXkUQT3e/jvs7XRktKKX
-         kRrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUzsafoI5hhscoRO1otNAWoiH9wV/LwyW+jktxULz6pcwmdGEk5UD+cnqtV4frlMgE1ImZEvf7tLgHAuxp@vger.kernel.org, AJvYcCUgh5gqpq4Xia5HtwAvfLPrhS5Vhl7Q+sH+iQWEu6RLop4PCtt9bv5doPSFnUphqv9JBJwwUQ3DvTHV/2p6YA==@vger.kernel.org, AJvYcCVK4p+lrp1A1rr+M/FHnsiLZv/x/gJyudOsoC+3uOikCtwTIdlc94bsny7lB5XZxLRb5x3yyLYVyN4a@vger.kernel.org, AJvYcCVTXkMVk5NQP/0RhJaeiC+gxaAuc+gsbdVPShDriZOJQBGOcNgAwT7RnPdt18fBttCMc/RQWxYTxE7wdvqUSw==@vger.kernel.org, AJvYcCWTaMnThHNPBrGPV+dGezp++IC4/GsLsXpxbvlK7rndEDKzvDvOXi8XOkm27VoNfrjcPSROXDeMsBM0@vger.kernel.org, AJvYcCWVjDh50wTyCVJggDHDARgy8AxzYFvOC1Ro7o+MsRByfWx4ejf9pia2UCAo4WFeKBoDFtH+06j5sPI=@vger.kernel.org, AJvYcCXC1DdOwnviHWHe78IERtKF7c0O23hd1z0Rdc5uhwanxGM+a5qUJC1VOiptxz+Gv2WIp9P4v6RmDJzw@vger.kernel.org, AJvYcCXFmz61pbor7HqnQ/4LbxPlwEx+QKIn9YPraZsMJwbcAPhBfqx2sFrgI149r9KPb5P5+FP425Qd1og27A==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7mKiBu+t/fKdW+lntXixfw9W4DGhO3oiN0f6N/pNljczL2kbt
-	FhJb0vHAAd3UkAe7/wTo2eL5Mr4iePWKrSewAiJqZDTLVzmi4afnCs0c8+p19dtYe1JIR6I7Ocn
-	Wq2xm4eFxPxWJ96CZMV9LT/lTNP5qfvU=
-X-Gm-Gg: ASbGncvl2nwrIoKl8PWlxbeucOEnryJWudMHZEmZmppCnfqrJzMm3gRdJxugB9/3WfH
-	EzOv/EA7hZ95yz8nsFdnc0v1Hy0i+aCr1IJJ7+iQLxb7bjqN3ilpcR03VV9FpoXrs+Ox1k7+Aeo
-	YngYEodukheWxiCrcsK523sLpfmDGLOayAEgSUIeZDSrNetCnsbQTAAl2eYOvjoPBM0qUQ9ZIpr
-	g/CivuRoHact4006g==
-X-Google-Smtp-Source: AGHT+IGOXg/qO7nOvSc+9upBTuFdN9gkoZr2ooHCH00oHdLGmBP/f/jaP6ih0T+T7ZtaDnRktY5n/bEZet/hUzbOyNs=
-X-Received: by 2002:a17:907:7f90:b0:af9:6bfb:58b7 with SMTP id
- a640c23a62f3a-afca4ccbdf5mr186837966b.5.1755069739183; Wed, 13 Aug 2025
- 00:22:19 -0700 (PDT)
+        bh=6RR0nADgokkkHbu1xEGDKmVwqxonLHxC0qQLcT1qV84=;
+        b=OuFNasDHpDoWk6Lt1wUeGui0C5L5endqmDRawIUMDgdbdHI0KzbsVSU7oMsHBdNtEY
+         U20SS4NQPDt6/u6ArCenflj3i6PTRD2JEsOzSlORFcS9+yJunipDV9xWl8MKaBXeVdIg
+         UbHV/kxHUrwhOvRrqN2ZnVjNF97dMrXKxPNuECrGmGDvPNNuxmbCHgUCV1+pQMPOMcS2
+         G2luWxY96/GwmmzHBILWdFa5Zs0uQ+/BYw42eJCfb2DycOwlC3qJHMNu0X0z1b/XlVGN
+         HtmRZMBCOuUCSAlorKUyAbctXyICDo3lZ4w2URLEBT809Nd98JH6yrDfKVZEMd1oq3bj
+         2jtA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1b0cG2WNIwZNFkXuDkP8pxOZcKyS4nfSjn2H3O14NVibxfziOnP1z/oeyp1Gg/bTDSfJLBTvD0hih@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn14cdufiFRU9YUXtUp3l5BXaEHn+/zI9Kj69c73oKqjKASDCy
+	gpHwGqB3dEZIOF6F6GE4eDVMWykWMlG7nDbHswa/SvlF2q9iv0/y4T9bym1uKKxFc5c7hzRqnL1
+	alVbt5MOQU4DHWWzICF9dsBT2EIte9GeqWCOfYfTkZifXXuCEeZ9simZvZntRCLff7MgYng++8p
+	c1QG/Wr466I8DYcKNu+6y6h2URoN3VWvy75zhxZkmhtEAP
+X-Gm-Gg: ASbGncsaX6sj6NixVfvDIUSV3lqweKkvOFueoPWr+TTIXNsBvTupjBUWh1vRm4f1L8/
+	Rm+Mx0mSx6oHWpHQNGm/cBK5TX1Ekc0A0w/NEm0Th1cljUKcjIIL4lYADCN+zgNcnhs4KlucKKD
+	VE5TMLqla7g4z4A6J5
+X-Google-Smtp-Source: AGHT+IGoJZYXsJYPK5MXgZZk+9nAPlOuel6Fapq794erhMMs/fqCOxrpsQOTc19DnLOud2FEDRQz182XLWwTphtouhY=
+X-Received: by 2002:a17:90b:3fcc:b0:31f:2ef4:bc04 with SMTP id 98e67ed59e1d1-321d0db3fe8mr2952202a91.14.1755070121461;
+        Wed, 13 Aug 2025 00:28:41 -0700 (PDT)
+X-Received: by 2002:a17:90b:3fcc:b0:31f:2ef4:bc04 with SMTP id
+ 98e67ed59e1d1-321d0db3fe8mt2949531a91.14.1755070120820; Wed, 13 Aug 2025
+ 00:28:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250812235228.3072318-1-neil@brown.name> <20250812235228.3072318-8-neil@brown.name>
-In-Reply-To: <20250812235228.3072318-8-neil@brown.name>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 13 Aug 2025 09:22:08 +0200
-X-Gm-Features: Ac12FXwtRWkT3_8pRQNxkfPe9bIkc7MlydN-xB3KA9S7ZYYDtuYZQn46STskK1g
-Message-ID: <CAOQ4uxhU12U8g_EYkUyc4Jdpzjy3hT1hZYB0L1THwvTsti8mTw@mail.gmail.com>
-Subject: Re: [PATCH 07/11] VFS: Change vfs_mkdir() to unlock on failure.
-To: NeilBrown <neil@brown.name>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>, 
-	Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, Tyler Hicks <code@tyhicks.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Richard Weinberger <richard@nod.at>, 
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	Steve French <sfrench@samba.org>, Namjae Jeon <linkinjeon@kernel.org>, 
-	Carlos Maiolino <cem@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-afs@lists.infradead.org, netfs@lists.linux.dev, 
-	ceph-devel@vger.kernel.org, ecryptfs@vger.kernel.org, 
-	linux-um@lists.infradead.org, linux-nfs@vger.kernel.org, 
-	linux-unionfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250729170240.118794-1-khiremat@redhat.com> <3dbbabbd68b58c95a73d02380ce6e48b5803adf2.camel@ibm.com>
+ <CAPgWtC4s6Yhjp0_pnrcU5Cv3ptLe+4uL6+whQK4y398JCcNLnA@mail.gmail.com>
+ <6ec6e3f45e4b90c2b56f4732e0e56fb389442c6e.camel@ibm.com> <CAPgWtC5muDGHsd5A=5bE4OCxYtiKRTLUa1KjU348qnfPDb54_Q@mail.gmail.com>
+ <75632a861cf3c3fe77bbc384a805e9e4e77b95a8.camel@ibm.com> <CAPgWtC4z2G5GuWjzTf4oRc=h=Vx7_0=S4FHvRMe-fmKFgrAdUQ@mail.gmail.com>
+ <185b42f5e88db732e299ca5f8323306951b08c88.camel@ibm.com>
+In-Reply-To: <185b42f5e88db732e299ca5f8323306951b08c88.camel@ibm.com>
+From: Kotresh Hiremath Ravishankar <khiremat@redhat.com>
+Date: Wed, 13 Aug 2025 12:58:28 +0530
+X-Gm-Features: Ac12FXyc2YbgH1WfKp4BbmsvVG253d-B6RYft-MYnTtWNFI3vkXAoKZjxmBW7Z8
+Message-ID: <CAPgWtC5EVzdWZbF3NgntHaT03fiqH=NM-HTUPunE6GeJD1QPSw@mail.gmail.com>
+Subject: Re: [PATCH] ceph: Fix multifs mds auth caps issue
+Cc: "idryomov@gmail.com" <idryomov@gmail.com>, Alex Markuze <amarkuze@redhat.com>, 
+	Venky Shankar <vshankar@redhat.com>, Patrick Donnelly <pdonnell@redhat.com>, 
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Gregory Farnum <gfarnum@redhat.com>, 
+	Viacheslav Dubeyko <slava.dubeyko@ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 13, 2025 at 1:53=E2=80=AFAM NeilBrown <neil@brown.name> wrote:
+On Wed, Aug 13, 2025 at 1:22=E2=80=AFAM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
 >
-> Proposed changes to directory-op locking will lock the dentry rather
-> than the whole directory.  So the dentry will need to be unlocked.
+> On Tue, 2025-08-12 at 14:37 +0530, Kotresh Hiremath Ravishankar wrote:
+> > On Tue, Aug 12, 2025 at 2:50=E2=80=AFAM Viacheslav Dubeyko
+> > <Slava.Dubeyko@ibm.com> wrote:
+> > >
+> > > On Wed, 2025-08-06 at 14:23 +0530, Kotresh Hiremath Ravishankar wrote=
+:
+> > > > On Sat, Aug 2, 2025 at 1:=E2=80=8A31 AM Viacheslav Dubeyko <Slava.=
+=E2=80=8ADubeyko@=E2=80=8Aibm.=E2=80=8Acom> wrote: > > On Fri, 2025-08-01 a=
+t 22:=E2=80=8A59 +0530, Kotresh Hiremath Ravishankar wrote: > > > > Hi, > >=
+ > > 1. I will modify the commit message
+> > > >
+> > > > On Sat, Aug 2, 2025 at 1:31=E2=80=AFAM Viacheslav Dubeyko <Slava.Du=
+beyko@ibm.com> wrote:
+> > > > >
+> > > > > On Fri, 2025-08-01 at 22:59 +0530, Kotresh Hiremath Ravishankar w=
+rote:
+> > > > > >
+> > > > > > Hi,
+> > > > > >
+> > > > > > 1. I will modify the commit message to clearly explain the issu=
+e in the next revision.
+> > > > > > 2. The maximum possible length for the fsname is not defined in=
+ mds side. I didn't find any restriction imposed on the length. So we need =
+to live with it.
+> > > > >
+> > > > > We have two constants in Linux kernel [1]:
+> > > > >
+> > > > > #define NAME_MAX         255    /* # chars in a file name */
+> > > > > #define PATH_MAX        4096    /* # chars in a path name includi=
+ng nul */
+> > > > >
+> > > > > I don't think that fsname can be bigger than PATH_MAX.
+> > > >
+> > > > As I had mentioned earlier, the CephFS server side code is not rest=
+ricting the filesystem name
+> > > > during creation. I validated the creation of a filesystem name with=
+ a length of 5000.
+> > > > Please try the following.
+> > > >
+> > > > [kotresh@fedora build]$ alpha_str=3D$(< /dev/urandom tr -dc 'a-zA-Z=
+' | head -c 5000)
+> > > > [kotresh@fedora build]$ ceph fs new $alpha_str cephfs_data cephfs_m=
+etadata
+> > > > [kotresh@fedora build]$ bin/ceph fs ls
+> > > >
+> > > > So restricting the fsname length in the kclient would likely cause =
+issues. If we need to enforce the limitation, I think, it should be done at=
+ server side first and it=E2=80=99s a separate effort.
+> > > >
+> > >
+> > > I am not sure that Linux kernel is capable to digest any name bigger =
+than
+> > > NAME_MAX. Are you sure that we can pass xfstests with filesystem name=
+ bigger
+> > > than NAME_MAX? Another point here that we can put buffer with name in=
+line
+> > > into struct ceph_mdsmap if the name cannot be bigger than NAME_MAX, f=
+or example.
+> > > In this case we don't need to allocate fs_name memory for every
+> > > ceph_mdsmap_decode() call.
+> >
+> > Well, I haven't tried xfstests with a filesystem name bigger than
+> > NAME_MAX. But I did try mounting a ceph filesystem name bigger than
+> > NAME_MAX and it works.
+> > But mounting a ceph filesystem name bigger than PATH_MAX didn't work.
+> > Note that the creation of a ceph filesystem name bigger than PATH_MAX
+> > works and
+> > mounting with the same using fuse client works as well.
+> >
 >
-> vfs_mkdir() consumes the dentry on error, so there will be no dentry to
-> be unlocked.
+> The mount operation creates only root folder. So, probably, kernel can su=
+rvive
+> by creating root folder if filesystem name fits into PATH_MAX. However, i=
+f we
+> will try to create another folders and files in the root folder, then pat=
+h
+> becomes bigger and bigger. And I think that total path name length should=
+ be
+> lesser than PATH_MAX. So, I could say that it is much safer to assume tha=
+t
+> filesystem name should fit into NAME_MAX.
 
-Why does it need to consume the dentry on error?
-Why can't it leave the state as is on error and let the caller handle
-its own cleanup?
+I didn't spend time root causing this issue. But logically, it makes
+sense to fit the NAME_MAX to adhere to PATH_MAX.
+But where does the filesystem name get used as a path component
+internally so that it affects functionality ? I can think of
+/etc/fstab and /proc/mounts, but can that affect functionality ?
 
 >
-> So this patch changes vfs_mkdir() to unlock on error as well as
-> releasing the dentry.  This requires various other functions in various
-> callers to also unlock on error - particularly in nfsd and overlayfs.
+> > I was going through ceph kernel client code, historically, the
+> > filesystem name is stored as a char pointer. The filesystem name from
+> > mount options is stored
+> > into 'struct ceph_mount_options' in 'ceph_parse_new_source' and the
+> > same is used to compare against the fsmap received from the mds in
+> > 'ceph_mdsc_handle_fsmap'
+> >
+> > struct ceph_mount_options {
+> >     ...
+> >     char *mds_namespace;  /* default NULL */
+> >     ...
+> > };
+> >
 >
-> At present this results in some clumsy code.  Once the transition to
-> dentry locking is complete the clumsiness will be gone.
->
-> Callers of vfs_mkdir() in ecrypytfs, nfsd, xfs, cachefiles, and
-> overlayfs are changed to make the new behaviour.
+> There is no historical traditions here. :) It is only question of efficie=
+ncy. If
+> we know the limit of name, then it could be more efficient to have static=
+ name
+> buffer embedded into the structure instead of dynamic memory allocation.
+> Because, we allocate memory for frequently accessed objects from kmem_cac=
+he or
+> memory_pool. And allocating memory from SLUB allocator could be not only
+> inefficient but the allocation request could fail if the system is under =
+memory
+> pressure.
 
-I will let Al do the vfs review of this and will speak up on behalf of
-the vfs users of the API
+Yes, absolutely correctness and efficiency is what matters. On the
+correctness part,
+there are multiple questions/points to be considered.
 
-One problem with a change like this - subtle change to semantics
-with no function prototype change is that it is a "backporting land mine"
-both AUTOSEL and human can easily not be aware of the subtle
-semantic change in a future time when a fix is being backported
-across this semantic change.
+1. What happens to existing filesystems whose name length is greater
+than NAME_MAX ?
+2. We should restrict creation of filesystem names greater than NAME_MAX le=
+ngth.
+3. We should also enforce the same on fuse clients.
+4. We should do it in all the places in the kernel code where the
+fsname is stored and used.
 
-Now there was a prototype change in c54b386969a5 ("VFS: Change
-vfs_mkdir() to return the dentry.") in v6.15 not long ago, so (big) if this
-semantic change (or the one that follows it) both get into the 2025 LTS
-kernel, we are in less of a problem, but if they don't, it's kind of a big
-problem for the stability of those subsystems in LTS kernels IMO -
-not being able to use "cleanly applies and build" as an indication to
-"likelihood of a correct backport".
-
-and now onto review of ovl code...
-
-> diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> index 70b8687dc45e..24f7e28b9a4f 100644
-> --- a/fs/overlayfs/dir.c
-> +++ b/fs/overlayfs/dir.c
-> @@ -162,14 +162,18 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, st=
-ruct dentry *dir,
->         goto out;
->  }
->
-> +/* dir will be unlocked on return */
->  struct dentry *ovl_create_real(struct ovl_fs *ofs, struct dentry *parent=
-,
-> -                              struct dentry *newdentry, struct ovl_cattr=
- *attr)
-> +                              struct dentry *newdentry_arg, struct ovl_c=
-attr *attr)
->  {
->         struct inode *dir =3D parent->d_inode;
-> +       struct dentry *newdentry __free(dentry_lookup) =3D newdentry_arg;
->         int err;
->
-> -       if (IS_ERR(newdentry))
-> +       if (IS_ERR(newdentry)) {
-> +               inode_unlock(dir);
->                 return newdentry;
-> +       }
->
->         err =3D -ESTALE;
->         if (newdentry->d_inode)
-> @@ -213,12 +217,9 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, s=
-truct dentry *parent,
->                 err =3D -EIO;
->         }
->  out:
-> -       if (err) {
-> -               if (!IS_ERR(newdentry))
-> -                       dput(newdentry);
-> +       if (err)
->                 return ERR_PTR(err);
-> -       }
-> -       return newdentry;
-> +       return dget(newdentry);
->  }
->
->  struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct dentry *workdi=
-r,
-> @@ -228,7 +229,6 @@ struct dentry *ovl_create_temp(struct ovl_fs *ofs, st=
-ruct dentry *workdir,
->         inode_lock(workdir->d_inode);
->         ret =3D ovl_create_real(ofs, workdir,
->                               ovl_lookup_temp(ofs, workdir), attr);
-> -       inode_unlock(workdir->d_inode);
-
-Things like that putting local code out of balance make my life as
-maintainer very hard.
-
-I prefer that you leave the explicit dir unlock in the callers until the ti=
-me
-that you change the create() API not require holding the dir lock.
-
-I don't even understand how you changed the call semantics to an ovl
-function that creates a directory or non-directory when your patch only
-changes mkdir semantics, but I don't want to know, because even if this
-works and I cannot easily understand how, then I do not want the confusing
-semantics in ovl code.
-
-I think you should be able to scope ovl_lookup_temp() with
-dentry_lookup*() { } done_dentry_lookup() and use whichever semantics
-you like about dir lock inside the helpers, as long as ovl code looks and f=
-eels
-balanced.
-
->         return ret;
->  }
->
-> @@ -336,7 +336,6 @@ static int ovl_create_upper(struct dentry *dentry, st=
-ruct inode *inode,
->                                     ovl_lookup_upper(ofs, dentry->d_name.=
-name,
->                                                      upperdir, dentry->d_=
-name.len),
->                                     attr);
-> -       inode_unlock(udir);
->         if (IS_ERR(newdentry))
->                 return PTR_ERR(newdentry);
->
-> diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> index 4f84abaa0d68..238c26142318 100644
-> --- a/fs/overlayfs/overlayfs.h
-> +++ b/fs/overlayfs/overlayfs.h
-> @@ -250,6 +250,7 @@ static inline struct dentry *ovl_do_mkdir(struct ovl_=
-fs *ofs,
->
->         ret =3D vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode);
->         pr_debug("mkdir(%pd2, 0%o) =3D %i\n", dentry, mode, PTR_ERR_OR_ZE=
-RO(ret));
-> +       /* Note: dir will have been unlocked on failure */
->         return ret;
->  }
->
-> diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> index df85a76597e9..5a4b0a05139c 100644
-> --- a/fs/overlayfs/super.c
-> +++ b/fs/overlayfs/super.c
-> @@ -328,11 +328,13 @@ static struct dentry *ovl_workdir_create(struct ovl=
-_fs *ofs,
->                 }
->
->                 work =3D ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
-> -               inode_unlock(dir);
->                 err =3D PTR_ERR(work);
->                 if (IS_ERR(work))
->                         goto out_err;
->
-> +               dget(work); /* Need to return this */
-> +
-> +               done_dentry_lookup(work);
-
-Another weird example.
-I would expect that dentry_lookup*()/done_dentry_lookup()
-would be introduced to users in the same commit, so the code
-always remains balanced.
-
-All in all, I think you should drop this patch from the series altogether
-and drop dir unlock from callers only later after they have been
-converted to use the new API.
-
-Am I misunderstanding something that prevents you from doing that?
+Thinking on the above lines, enforcing fs name length limitation
+should be a separate
+effort and is outside the scope of this patch is my opinion.
 
 Thanks,
-Amir.
+Kotresh H R
+
+>
+> > I am not sure what's the right approach to choose here. In kclient,
+> > assuming ceph fsname not to be bigger than PATH_MAX seems to be safe
+> > as the kclient today is
+> > not able to mount the ceph fsname bigger than PATH_MAX. I also
+> > observed that the kclient failed to mount the ceph fsname with length
+> > little less than
+> > PATH_MAX (4090). So it's breaking somewhere with the entire path
+> > component being considered. Anyway, I will open the discussion to
+> > everyone here.
+> > If we are restricting the max fsname length, we need to restrict it
+> > while creating it in my opinion and fix it across the project both in
+> > kclient fuse.
+> >
+> >
+>
+> I could say that it is much safer to assume that filesystem name should f=
+it into
+> NAME_MAX.
+>
+>
+> Thanks,
+> Slava.
+>
+> > >
+> > > > >
+> > > > > > 3. I will fix up doutc in the next revision.
+> > > > > > 4. The fs_name is part of the mdsmap in the server side [1]. Th=
+e kernel client decodes only necessary fields from the mdsmap sent by the s=
+erver. Until now, the fs_name
+> > > > > >     was not being decoded, as part of this fix, it's required a=
+nd being decoded.
+> > > > > >
+> > > > >
+> > > > > Correct me if I am wrong. I can create a Ceph cluster with severa=
+l MDS servers.
+> > > > > In this cluster, I can create multiple file system volumes. And e=
+very file
+> > > > > system volume will have some name (fs_name). So, if we store fs_n=
+ame into
+> > > > > mdsmap, then which name do we imply here? Do we imply cluster nam=
+e as fs_name or
+> > > > > name of particular file system volume?
+> > > >
+> > > > In CephFS, we mainly deal with two maps MDSMap[1] and FSMap[2]. The=
+ MDSMap represents
+> > > > the state for a particular single filesystem. So the =E2=80=98fs_na=
+me=E2=80=99 in the MDSMap points to a file system
+> > > > name that the MDSMap represents. Each filesystem will have a distin=
+ct MDSMap. The FSMap was
+> > > > introduced to support multiple filesystems in the cluster. The FSMa=
+p holds all the filesystems in the
+> > > > cluster using the MDSMap of each file system. The clients subscribe=
+ to these maps. So when kclient
+> > > > is receiving a mdsmap, it=E2=80=99s corresponding to the filesystem=
+ it=E2=80=99s dealing with.
+> > > >
+> > >
+> > > So, it's sounds to me that MDS keeps multiple MDSMaps for multiple fi=
+le systems.
+> > > And kernel side receives only MDSMap for operations. The FSMap is kep=
+t on MDS
+> > > side and kernel never receives it. Am I right here?
+> >
+> > No, not really. The kclient decodes the FSMap as well. The fsname and
+> > monitor ip are passed in the mount command, the kclient
+> > contacts the monitor and receives the list of the file systems in the
+> > cluster via FSMap. The passed fsname from the
+> > mount command is compared against the list of file systems in the
+> > FSMap decoded. If the fsname is found, it fetches
+> > the fscid and requests the corresponding mdsmap from the respective
+> > mds using fscid.
+> >
+> > >
+> > > Thanks,
+> > > Slava.
+> > >
+> > > > [1] https://github.com/ceph/ceph/blob/main/src/mds/MDSMap.h
+> > > > [2] https://github.com/ceph/ceph/blob/main/src/mds/FSMap.h
+> > > >
+> > > > Thanks,
+> > > > Kotresh H R
+> > > >
+> > > > >
+> > > > > Thanks,
+> > > > > Slava.
+> > > > >
+> > > > > >
+> > > > > >
+> > > > >
+> > > > > [1]
+> > > > > https://elixir.bootlin.com/linux/v6.16/source/include/uapi/linux/=
+limits.h#L12
+> > > > >
+> > > > > > [1] https://github.com/ceph/ceph/blob/main/src/mds/MDSMap.h#L59=
+6
+> > > > > >
+> > > > > > On Tue, Jul 29, 2025 at 11:57=E2=80=AFPM Viacheslav Dubeyko <Sl=
+ava.Dubeyko@ibm.com> wrote:
+> > > > > > > On Tue, 2025-07-29 at 22:32 +0530, khiremat@redhat.com wrote:
+> > > > > > > > From: Kotresh HR <khiremat@redhat.com>
+> > > > > > > >
+> > > > > > > > The mds auth caps check should also validate the
+> > > > > > > > fsname along with the associated caps. Not doing
+> > > > > > > > so would result in applying the mds auth caps of
+> > > > > > > > one fs on to the other fs in a multifs ceph cluster.
+> > > > > > > > The patch fixes the same.
+> > > > > > > >
+> > > > > > > > Steps to Reproduce (on vstart cluster):
+> > > > > > > > 1. Create two file systems in a cluster, say 'a' and 'b'
+> > > > > > > > 2. ceph fs authorize a client.usr / r
+> > > > > > > > 3. ceph fs authorize b client.usr / rw
+> > > > > > > > 4. ceph auth get client.usr >> ./keyring
+> > > > > > > > 5. sudo bin/mount.ceph usr@.a=3D/ /kmnt_a_usr/
+> > > > > > > > 6. touch /kmnt_a_usr/file1 (SHOULD NOT BE ALLOWED)
+> > > > > > > > 7. sudo bin/mount.ceph admin@.a=3D/ /kmnt_a_admin
+> > > > > > > > 8. echo "data" > /kmnt_a_admin/admin_file1
+> > > > > > > > 9. rm -f /kmnt_a_usr/admin_file1 (SHOULD NOT BE ALLOWED)
+> > > > > > > >
+> > > > > > >
+> > > > > > > I think we are missing to explain here which problem or
+> > > > > > > symptoms will see the user that has this issue. I assume that
+> > > > > > > this will be seen as the issue reproduction:
+> > > > > > >
+> > > > > > > With client_3 which has only 1 filesystem in caps is working =
+as expected
+> > > > > > > mkdir /mnt/client_3/test_3
+> > > > > > > mkdir: cannot create directory =E2=80=98/mnt/client_3/test_3=
+=E2=80=99: Permission denied
+> > > > > > >
+> > > > > > > Am I correct here?
+> > > > > > >
+> > > > > > > > URL: https://tracker.ceph.com/issues/72167
+> > > > > > > > Signed-off-by: Kotresh HR <khiremat@redhat.com>
+> > > > > > > > ---
+> > > > > > > >   fs/ceph/mds_client.c | 10 ++++++++++
+> > > > > > > >   fs/ceph/mdsmap.c     | 11 ++++++++++-
+> > > > > > > >   fs/ceph/mdsmap.h     |  1 +
+> > > > > > > >   3 files changed, 21 insertions(+), 1 deletion(-)
+> > > > > > > >
+> > > > > > > > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > > > > > > > index 9eed6d73a508..ba91f3360ff6 100644
+> > > > > > > > --- a/fs/ceph/mds_client.c
+> > > > > > > > +++ b/fs/ceph/mds_client.c
+> > > > > > > > @@ -5640,11 +5640,21 @@ static int ceph_mds_auth_match(stru=
+ct ceph_mds_client *mdsc,
+> > > > > > > >        u32 caller_uid =3D from_kuid(&init_user_ns, cred->fs=
+uid);
+> > > > > > > >        u32 caller_gid =3D from_kgid(&init_user_ns, cred->fs=
+gid);
+> > > > > > > >        struct ceph_client *cl =3D mdsc->fsc->client;
+> > > > > > > > +     const char *fs_name =3D mdsc->mdsmap->fs_name;
+> > > > > > > >        const char *spath =3D mdsc->fsc->mount_options->serv=
+er_path;
+> > > > > > > >        bool gid_matched =3D false;
+> > > > > > > >        u32 gid, tlen, len;
+> > > > > > > >        int i, j;
+> > > > > > > >
+> > > > > > > > +     if (auth->match.fs_name && strcmp(auth->match.fs_name=
+, fs_name)) {
+> > > > > > >
+> > > > > > > Should we consider to use strncmp() here?
+> > > > > > > We should have the limitation of maximum possible name length=
+.
+> > > > > > >
+> > > > > > > > +             doutc(cl, "fsname check failed fs_name=3D%s  =
+match.fs_name=3D%s\n",
+> > > > > > > > +                   fs_name, auth->match.fs_name);
+> > > > > > > > +             return 0;
+> > > > > > > > +     } else {
+> > > > > > > > +             doutc(cl, "fsname check passed fs_name=3D%s  =
+match.fs_name=3D%s\n",
+> > > > > > > > +                   fs_name, auth->match.fs_name);
+> > > > > > >
+> > > > > > > I assume that we could call the doutc with auth->match.fs_nam=
+e =3D=3D NULL. So, I am
+> > > > > > > expecting to have a crash here.
+> > > > > > >
+> > > > > > > > +     }
+> > > > > > > > +
+> > > > > > > >        doutc(cl, "match.uid %lld\n", auth->match.uid);
+> > > > > > > >        if (auth->match.uid !=3D MDS_AUTH_UID_ANY) {
+> > > > > > > >                if (auth->match.uid !=3D caller_uid)
+> > > > > > > > diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+> > > > > > > > index 8109aba66e02..f1431ba0b33e 100644
+> > > > > > > > --- a/fs/ceph/mdsmap.c
+> > > > > > > > +++ b/fs/ceph/mdsmap.c
+> > > > > > > > @@ -356,7 +356,15 @@ struct ceph_mdsmap *ceph_mdsmap_decode=
+(struct ceph_mds_client *mdsc, void **p,
+> > > > > > > >                /* enabled */
+> > > > > > > >                ceph_decode_8_safe(p, end, m->m_enabled, bad=
+_ext);
+> > > > > > > >                /* fs_name */
+> > > > > > > > -             ceph_decode_skip_string(p, end, bad_ext);
+> > > > > > > > +             m->fs_name =3D ceph_extract_encoded_string(p,=
+ end, NULL, GFP_NOFS);
+> > > > > > > > +             if (IS_ERR(m->fs_name)) {
+> > > > > > > > +                     err =3D PTR_ERR(m->fs_name);
+> > > > > > > > +                     m->fs_name =3D NULL;
+> > > > > > > > +                     if (err =3D=3D -ENOMEM)
+> > > > > > > > +                             goto out_err;
+> > > > > > > > +                     else
+> > > > > > > > +                             goto bad;
+> > > > > > > > +             }
+> > > > > > > >        }
+> > > > > > > >        /* damaged */
+> > > > > > > >        if (mdsmap_ev >=3D 9) {
+> > > > > > > > @@ -418,6 +426,7 @@ void ceph_mdsmap_destroy(struct ceph_md=
+smap *m)
+> > > > > > > >                kfree(m->m_info);
+> > > > > > > >        }
+> > > > > > > >        kfree(m->m_data_pg_pools);
+> > > > > > > > +     kfree(m->fs_name);
+> > > > > > > >        kfree(m);
+> > > > > > > >   }
+> > > > > > > >
+> > > > > > > > diff --git a/fs/ceph/mdsmap.h b/fs/ceph/mdsmap.h
+> > > > > > > > index 1f2171dd01bf..acb0a2a3627a 100644
+> > > > > > > > --- a/fs/ceph/mdsmap.h
+> > > > > > > > +++ b/fs/ceph/mdsmap.h
+> > > > > > > > @@ -45,6 +45,7 @@ struct ceph_mdsmap {
+> > > > > > > >        bool m_enabled;
+> > > > > > > >        bool m_damaged;
+> > > > > > > >        int m_num_laggy;
+> > > > > > > > +     char *fs_name;
+> > > > > > >
+> > > > > > > The ceph_mdsmap structure describes servers in the mds cluste=
+r [1].
+> > > > > > > Semantically, I don't see any relation of fs_name with this s=
+tructure.
+> > > > > > > As a result, I don't see the point to keep this pointer in th=
+is structure.
+> > > > > > > Why the fs_name has been placed in this structure?
+> > > > > > >
+> > > > > > > Thanks,
+> > > > > > > Slava.
+> > > > > > >
+> > > > > > > >   };
+> > > > > > > >
+> > > > > > > >   static inline struct ceph_entity_addr *
+> > > > > > >
+> > > > > > > [1] https://elixir.bootlin.com/linux/v6.16/source/fs/ceph/mds=
+map.h#L11
+> > > > > > >
+>
+
 
