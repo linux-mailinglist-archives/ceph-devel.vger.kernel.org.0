@@ -1,90 +1,88 @@
-Return-Path: <ceph-devel+bounces-3479-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3480-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42422B38962
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 Aug 2025 20:17:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB755B389FC
+	for <lists+ceph-devel@lfdr.de>; Wed, 27 Aug 2025 21:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1706B7A20E0
-	for <lists+ceph-devel@lfdr.de>; Wed, 27 Aug 2025 18:15:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D950462609
+	for <lists+ceph-devel@lfdr.de>; Wed, 27 Aug 2025 19:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88AC62D9EC8;
-	Wed, 27 Aug 2025 18:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74582239E75;
+	Wed, 27 Aug 2025 19:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="eKZ9EQ9V"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="Z+AtUD9l"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975752D836A
-	for <ceph-devel@vger.kernel.org>; Wed, 27 Aug 2025 18:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383B97464
+	for <ceph-devel@vger.kernel.org>; Wed, 27 Aug 2025 19:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756318636; cv=none; b=i6LsIXpITSMrPbywZqTx0+Qq1JcEu60N9NLXeJnoN4Yyoa4689Z3eeSChprYi2ccRtCBwn379nwSDa/WdMXnSTMpK8spdQau2jIYKBZyWS6csx8XC1FUTv3BxO6emp1i/3D3hBYMpli82UGmuoLFD49sZ+SYxQxWakUwSK4lrGs=
+	t=1756321315; cv=none; b=m1nLwlt0zJPpeA4ZGsf9JrAlnB4K7QYzNmT89z3nX6iVdOuui8CWlSjIFaK9BOC0UDHEhU54fyKn2CMPRqVTOYM22cLwMCvqx+S6I7TgB3tA7pDglcGkrt/z2NVcK1zxoiwGwC0e9QGic3UFQCDOpOSz/xcC1Fw3bNAw1+KQOTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756318636; c=relaxed/simple;
-	bh=Qgu6/RdKA4nKwsBeRMdnCSK3IDF8FjZbqqOVA6mr5MU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gbrTBNbeu67QmVbaTduiZGTGh6moXno7FQyZQOJ6Kw1WE3bRwocusSSmAIICAfS0xTm0fixidDNL1UI/UPQduUBuS0WOJgOG1b/su4uMuyzera1MCg+gNMfx0m7PAkvlWii8qtnIl/eHgGlsWHE12dEAKuFRqhTQGBDxjZfRExQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=eKZ9EQ9V; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45b6b5ccad6so505135e9.2
-        for <ceph-devel@vger.kernel.org>; Wed, 27 Aug 2025 11:17:12 -0700 (PDT)
+	s=arc-20240116; t=1756321315; c=relaxed/simple;
+	bh=jTXCrqurI35lVDo9byI/H5H5ftA0NEhdYNk09tAKuDk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Blqq5Mx5Ue0QRbiDqwd+mvbgk3nQsQYQYerBl+fAEJaHUcQ6nG6+PakTB7jviFwvfehNussf/5PKbgQinkYy/Z8/taJEVZ11AWY22MqOv68yMqH1bTjcjN70+BJzFcYRH7Jj4d/Z3tXgo4dzkIuGTqGGjWARJ9WBb/S6TyYE8ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=Z+AtUD9l; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-71d603b60cbso1286667b3.1
+        for <ceph-devel@vger.kernel.org>; Wed, 27 Aug 2025 12:01:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756318631; x=1756923431; darn=vger.kernel.org;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1756321312; x=1756926112; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lfiFhb80UdeegfuksVoSRuVkJVqC353CpIpZ8GK/9hE=;
-        b=eKZ9EQ9Van4InK0MfGmq2nY/g3UasJFQ4uviwUW0aemsqGN1cqe5fvYjCiyN5+M82O
-         l+orjaUnkuTz9zc9S/6uepU1nwq558N6xmcmpfARpzLE4sbODCA/3qyG7s2rmXh5F7/P
-         gqNAcTvxUP3cqIXiU97nko92LMB0VtXrrixn2h1Kiq16jDgv8GmCXOLYOnKL87qi1l2n
-         /5auYM4wgYW6MAE1G87uOue0r5FHQxXlB/Qslkj80Ge1nISb0AEbsxVdiFmsw9zN9VGU
-         r3MeVLnkvc4jw+vRM4/iOdS9Ncxje5bKq9d+gZ0M9AGe0HpqRx+wIrTvi2+mUNwh0fve
-         88fw==
+        bh=W6gehJLOxzkyNftXjEdQOXi6ukSj/HJus3mrt7hMc1g=;
+        b=Z+AtUD9lIHHTQgHBSFoAtNxq7of4yQuLEDSLqWfxxPSpRuuUaifXZztx5kGJcex/AC
+         fl+/9f4sJDiC7xKOnAdE56IHFQhajRnvBl/PU7jJ2IscFiM/awFGzi3x5SSXqjCdy86U
+         Hs7M1m+CbK+pmJlPWC6Um6DrZcoJwYeZ17M/Lm0cBKr6tgh7JrEusXzlrXbSHFtu2x6G
+         0bEeaCwNAB91lZ0Mue7y8Qe0P1KeR0K9Gn3KexbPdOOuj/Ncl7jVM9+eOXohneAA9OEo
+         ccAo60kt9AZf/Yn2yZAgNnuShcSj+9Is2F1ikrE1mM7uEE+bzkYl01gCadPVYglL4Xrr
+         OARg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756318631; x=1756923431;
+        d=1e100.net; s=20230601; t=1756321312; x=1756926112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lfiFhb80UdeegfuksVoSRuVkJVqC353CpIpZ8GK/9hE=;
-        b=BP8slsZYFl98v/n/v3bYYNc4DX7SR+2w/WKJmjpGRwf6HWANFY3FDIeEg+QAXw5A3a
-         i6CkG5UkRz61sQmVHOPDEs6Xw57BX1Yi+Um8hY/+lmz3xoJ4VBsjcCSgL51fs0Le5I//
-         KG+AdodZQewvjKdVs+kqoPia8grWblzgUZ0MYBX9TxivpaA81NNVur8b0NlBKGzElVTD
-         8Un6ZBJJVNU6oor5I6YxXnYuAAteWFno8fd/1y/wYkYFaX6+35DVM9wVcusHLWnbF1jD
-         vMcAb7fnxunUZjVXnWeOKE32+uIAcQP0eV42Sfhxp8KF5PxOooGs/OpMS/7VYaVOsPnD
-         /kVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbgl6cYA1eEBRd+P2PgUcKsGjhsRJ6h/2dGifH1QX3J2ltT3YTc2/pRN7iwcH2MTsgyx7ZPTa7K4Gk@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjZOWH/jPHU9+P36E6z1ddiSw7Gmya8Z4sylUoh91oOZVtTUPS
-	G6lAv7Y5Tu2d1hHn2SSPgt6NFGZ2cDlL3qTLimDod418F5+Ig7zidTOEeD1hMibBqiM=
-X-Gm-Gg: ASbGncv2lpNwar5n0JmBaqb0y/UHkDdvq+GBYb5kp1lg+HWY3Xq2VvAgwc8cnxNnazu
-	vAmUBdMAjn7IuvUgxin4THGgRKmj//icfZocExslIKfwUbTeLKjHQPb24Ynlb7gqTH7M3KGc3OB
-	ccrsuQenHwiH2UKe87Ufv2OPl7ML6+oaB027uduFYBEmi5ZVGgMYMBxTRzAwfMXp6Ljw9o/meh4
-	jMA+2Nk39eO2wMJntCQsA0iW67P0JsQ97UIXuenk4QMZ9f5Ese7ZrgWLoe5TXQIIYufAQ6+hEkS
-	LAVLgNRWRnLeRS9FIqG2cjD8aP1BGfoBJcWZzgW5cMdCceD60L9Gvt8EFNbPpFt9vnoHc9VXeb8
-	i63BW9nZVerDFKnOKavJB3sguDlVFOqfVfba9FYHuXRPMR8k7zyT1KYRWJwfEwTgtq2JpYWDHj1
-	bSCfyS6vB1T1a8vk+aANKpOw==
-X-Google-Smtp-Source: AGHT+IGqJ/GzQEWFQVd2ZnAV2tc6BCr/NnNnCcxzUwX006UuCMKNuwXKfoncaQGKE/l2cQi85xDhag==
-X-Received: by 2002:a05:600c:1c25:b0:45b:7608:3ca1 with SMTP id 5b1f17b1804b1-45b76212044mr6014835e9.23.1756318630791;
-        Wed, 27 Aug 2025 11:17:10 -0700 (PDT)
-Received: from raven.intern.cm-ag (p200300dc6f1d0f00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f1d:f00:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f0c8bedsm42223905e9.1.2025.08.27.11.17.10
+        bh=W6gehJLOxzkyNftXjEdQOXi6ukSj/HJus3mrt7hMc1g=;
+        b=dxHQB3VoNIFDRo7QUmfU1+TSJMAh/E144rRXnIV25bG7Rr1WzcP1d3ub0ZXBbi7O1W
+         pHvG8S3T16MLHFn7uSFQ2U22Xx6CYe/tyazjWKFZ3jBZ0bAd8fsaloBsP4qI9qpOYEFr
+         cHuKUuZNoxfxeKmAPFgJR5CRhp/0jkv42c709goqYuoF+5CL3f1rlWfOMYDUn/fM5GIR
+         knlUi2lrHjlH8vfyqSxPijkaEdnNBp+dULDxbTP9sEatF+Ysh5W71W9oH+XMlfvthjh/
+         agMrwnexWH5lV6+Wx+6Zs2DoleSSOH0Bz/UNqkDzQUwLDAFgq4nDqZu4Ou/4Ie/d7JWY
+         BmFA==
+X-Gm-Message-State: AOJu0YwE4q9GDV5sOrCJvtKWkBb+3uwlvH2UTnbDFBP90DpNVbZ67pzq
+	gzsJUxJCKTeyGaTqP5djkHchme/108y8vdS5xN28VE6nezxG3GN7RWqEmN8P/fLSDnQ3WxVT9Q1
+	bZYz8/JOmvQ==
+X-Gm-Gg: ASbGncu+hRpJyeqb8xJ5Bezy5YOwW6Efg31/uQ7c3e03NLl5nlw6Un7a37bZkx1A3lQ
+	x2O6Q4hJ/PDaj26P4fhM+Bg8a+3gq2sXm6tCDuK/ALseviG2eRDnbneFkOXUvdQctoOkhmi5HEo
+	pWIvP2zuBdHfT/orMtWPbr6wFDqfcWuOkQO/upnPG6E/I9QRx20eza2vIvJzOYosN82Si5eFaBq
+	+A021v57C9CGBGQB3iIz6kay8Kh8lquCwG3cY5mqwA5UJS+k+cgrDvSJRl2h3qsqe6Q0XSlr5D9
+	rLi10EC2svHLw6eKXYYXBOhHmbVxlRyMIkfy1yxhCNF4X6oJ+18v5dBW7iqrqQiRwzEUQkw+4ss
+	Xfhh5MIagDoeUOtPyaVgQWN0Fxa61P73OaveC1I++
+X-Google-Smtp-Source: AGHT+IHwoKF0+aFawZrS0k1KCAl1JFeBaHRBi5bmOFhJNIPcL8cXpeT52Jm5OpxDriusRFF4u/5jJA==
+X-Received: by 2002:a05:690c:6106:b0:720:4ec:3f89 with SMTP id 00721157ae682-72004ec4967mr133070077b3.46.1756321311471;
+        Wed, 27 Aug 2025 12:01:51 -0700 (PDT)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:4e16:8eb2:d704:13fb])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71ff18aea32sm32951437b3.53.2025.08.27.12.01.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 Aug 2025 11:17:10 -0700 (PDT)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: Slava.Dubeyko@ibm.com,
-	xiubli@redhat.com,
-	idryomov@gmail.com,
+        Wed, 27 Aug 2025 12:01:50 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
 	amarkuze@redhat.com,
-	ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Max Kellermann <max.kellermann@ionos.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] fs/ceph/addr: always call ceph_shift_unused_folios_left()
-Date: Wed, 27 Aug 2025 20:17:08 +0200
-Message-ID: <20250827181708.314248-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.47.2
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com
+Subject: [PATCH] ceph: fix potential NULL dereferenced issue in ceph_fill_trace()
+Date: Wed, 27 Aug 2025 12:01:23 -0700
+Message-ID: <20250827190122.74614-2-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -93,106 +91,87 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The function ceph_process_folio_batch() sets folio_batch entries to
-NULL, which is an illegal state.  Before folio_batch_release() crashes
-due to this API violation, the function
-ceph_shift_unused_folios_left() is supposed to remove those NULLs from
-the array.
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-However, since commit ce80b76dd327 ("ceph: introduce
-ceph_process_folio_batch() method"), this shifting doesn't happen
-anymore because the "for" loop got moved to
-ceph_process_folio_batch(), and now the `i` variable that remains in
-ceph_writepages_start() doesn't get incremented anymore, making the
-shifting effectively unreachable much of the time.
+The Coverity Scan service has detected a potential dereference of
+an explicit NULL value in ceph_fill_trace() [1].
 
-Later, commit 1551ec61dc55 ("ceph: introduce ceph_submit_write()
-method") added more preconditions for doing the shift, replacing the
-`i` check (with something that is still just as broken):
+The variable in is declared in the beggining of
+ceph_fill_trace() [2]:
 
-- if ceph_process_folio_batch() fails, shifting never happens
+struct inode *in = NULL;
 
-- if ceph_move_dirty_page_in_page_array() was never called (because
-  ceph_process_folio_batch() has returned early for some of various
-  reasons), shifting never happens
+However, the initialization of the variable is happening under
+condition [3]:
 
-- if `processed_in_fbatch` is zero (because ceph_process_folio_batch()
-  has returned early for some of the reasons mentioned above or
-  because ceph_move_dirty_page_in_page_array() has failed), shifting
-  never happens
+if (rinfo->head->is_target) {
+    <skipped>
+    in = req->r_target_inode;
+    <skipped>
+}
 
-Since those two commits, any problem in ceph_process_folio_batch()
-could crash the kernel, e.g. this way:
+Potentially, if rinfo->head->is_target == FALSE, then
+in variable continues to be NULL and later the dereference of
+NULL value could happen in ceph_fill_trace() logic [4,5]:
 
- BUG: kernel NULL pointer dereference, address: 0000000000000034
- #PF: supervisor write access in kernel mode
- #PF: error_code(0x0002) - not-present page
- PGD 0 P4D 0
- Oops: Oops: 0002 [#1] SMP NOPTI
- CPU: 172 UID: 0 PID: 2342707 Comm: kworker/u778:8 Not tainted 6.15.10-cm4all1-es #714 NONE
- Hardware name: Dell Inc. PowerEdge R7615/0G9DHV, BIOS 1.6.10 12/08/2023
- Workqueue: writeback wb_workfn (flush-ceph-1)
- RIP: 0010:folios_put_refs+0x85/0x140
- Code: 83 c5 01 39 e8 7e 76 48 63 c5 49 8b 5c c4 08 b8 01 00 00 00 4d 85 ed 74 05 41 8b 44 ad 00 48 8b 15 b0 >
- RSP: 0018:ffffb880af8db778 EFLAGS: 00010207
- RAX: 0000000000000001 RBX: 0000000000000000 RCX: 0000000000000003
- RDX: ffffe377cc3b0000 RSI: 0000000000000000 RDI: ffffb880af8db8c0
- RBP: 0000000000000000 R08: 000000000000007d R09: 000000000102b86f
- R10: 0000000000000001 R11: 00000000000000ac R12: ffffb880af8db8c0
- R13: 0000000000000000 R14: 0000000000000000 R15: ffff9bd262c97000
- FS:  0000000000000000(0000) GS:ffff9c8efc303000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 0000000000000034 CR3: 0000000160958004 CR4: 0000000000770ef0
- PKRU: 55555554
- Call Trace:
-  <TASK>
-  ceph_writepages_start+0xeb9/0x1410
+else if ((req->r_op == CEPH_MDS_OP_LOOKUPSNAP ||
+            req->r_op == CEPH_MDS_OP_MKSNAP) &&
+            test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags) &&
+             !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
+<skipped>
+     ihold(in);
+     err = splice_dentry(&req->r_dentry, in);
+     if (err < 0)
+         goto done;
+}
 
-The crash can be reproduced easily by changing the
-ceph_check_page_before_write() return value to `-E2BIG`.
+This patch adds the checking of in variable for NULL value
+and it returns -EINVAL error code if it has NULL value.
 
-(Interestingly, the crash happens only if `huge_zero_folio` has
-already been allocated; without `huge_zero_folio`,
-is_huge_zero_folio(NULL) returns true and folios_put_refs() skips NULL
-entries instead of dereferencing them.  That makes reproducing the bug
-somewhat unreliable.  See
-https://lore.kernel.org/20250826231626.218675-1-max.kellermann@ionos.com
-for a discussion of this detail.)
+[1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=1141197
+[2] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1522
+[3] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1629
+[4] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1745
+[5] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1777
 
-My suggestion is to move the ceph_shift_unused_folios_left() to right
-after ceph_process_folio_batch() to ensure it always gets called to
-fix up the illegal folio_batch state.
-
-Fixes: ce80b76dd327 ("ceph: introduce ceph_process_folio_batch() method")
-Link: https://lore.kernel.org/ceph-devel/aK4v548CId5GIKG1@swift.blarg.de/
-Cc: stable@vger.kernel.org
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Ceph Development <ceph-devel@vger.kernel.org>
 ---
- fs/ceph/addr.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/ceph/inode.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 8b202d789e93..8bc66b45dade 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1687,6 +1687,7 @@ static int ceph_writepages_start(struct address_space *mapping,
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index fc543075b827..dee2793d822f 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1739,6 +1739,11 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 			goto done;
+ 		}
  
- process_folio_batch:
- 		rc = ceph_process_folio_batch(mapping, wbc, &ceph_wbc);
-+		ceph_shift_unused_folios_left(&ceph_wbc.fbatch);
- 		if (rc)
- 			goto release_folios;
- 
-@@ -1695,8 +1696,6 @@ static int ceph_writepages_start(struct address_space *mapping,
- 			goto release_folios;
- 
- 		if (ceph_wbc.processed_in_fbatch) {
--			ceph_shift_unused_folios_left(&ceph_wbc.fbatch);
--
- 			if (folio_batch_count(&ceph_wbc.fbatch) == 0 &&
- 			    ceph_wbc.locked_pages < ceph_wbc.max_pages) {
- 				doutc(cl, "reached end fbatch, trying for more\n");
++		if (!in) {
++			err = -EINVAL;
++			goto done;
++		}
++
+ 		/* attach proper inode */
+ 		if (d_really_is_negative(dn)) {
+ 			ceph_dir_clear_ordered(dir);
+@@ -1774,6 +1779,12 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 		doutc(cl, " linking snapped dir %p to dn %p\n", in,
+ 		      req->r_dentry);
+ 		ceph_dir_clear_ordered(dir);
++
++		if (!in) {
++			err = -EINVAL;
++			goto done;
++		}
++
+ 		ihold(in);
+ 		err = splice_dentry(&req->r_dentry, in);
+ 		if (err < 0)
 -- 
-2.47.2
+2.51.0
 
 
