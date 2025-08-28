@@ -1,151 +1,181 @@
-Return-Path: <ceph-devel+bounces-3487-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3488-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61779B3A9C8
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Aug 2025 20:20:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA32AB3AA31
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Aug 2025 20:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 278B1203A26
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Aug 2025 18:20:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D8471713C3
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Aug 2025 18:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC05A26FD86;
-	Thu, 28 Aug 2025 18:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7F42D23B6;
+	Thu, 28 Aug 2025 18:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="Fphc74rK"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="mWn2IuPG"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA41A2236F3
-	for <ceph-devel@vger.kernel.org>; Thu, 28 Aug 2025 18:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A51E27934E
+	for <ceph-devel@vger.kernel.org>; Thu, 28 Aug 2025 18:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756405207; cv=none; b=HHYGKFJoL4svi8P+IPUwDJIrvYxtqsCQnzmc3LE2OOpiDb20qyiTZIgkTooVl76fRHNr83qylWG4SxKX/hSrBmB2Jxu3HQSkC6LdVKlOloxEacK7Mgb4L1uJ71VS07sY7tt605gnuU+5LQFKlxmCJ+RcFURYnaSeUsq9L7uO2Vw=
+	t=1756406708; cv=none; b=nCFm4PY7rry8dHUsmLWmRyBUuPmZ32I9LANoeyS0loB7K4mWa79SmQNiQviH7VPe3eaIiZM+Gt1O+HM9vLMYeeNp724sfHq7XiNXG2J9TPVDqm/IHj3OopmSpN+U62qO+29PzWZ5K3YxfRmnB+Wpq5r1/mIuIh6aO3DlE2KsDxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756405207; c=relaxed/simple;
-	bh=4AK6is4nBJ4xlFletQWEvPRtDtC7sLAk86TBvPR0LNA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ni6DTkKn61ikiL0MF/pScD5GJ3z1FdcdlzJ3vZ4empixHW2t5EDmMRqNxa73665diD2ic9X6z6E1n7swrOHC9alhoLQvI0DsJ9WICNZh+jCrXmaoLSiOPAYskwvMLNOXG8oe6v1QMQ9X0pMwms4N/2T5hiSgJfLD3+RzKaXVCHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=Fphc74rK; arc=none smtp.client-ip=209.85.128.172
+	s=arc-20240116; t=1756406708; c=relaxed/simple;
+	bh=x8ELUEO4zpbibIvbx2fhkv24vwSibg539brPVKqK0Ew=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SqClZUXmlze1Z86OpPSqkhcLh/GdzWO/WQwRNZz7PbgFtfuJjfN1ddee+dKi7hA94sAP/LqJ7OpNcyGitg0/n+QigHEIqf+3O380ALNtTooLSadkVim9n4b+XDgTSrHyChEiQOKn/PKiboSCeerPHT7/WWFU5PFIbsRD/lwnsg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=mWn2IuPG; arc=none smtp.client-ip=209.85.128.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71d605c6501so10836107b3.3
-        for <ceph-devel@vger.kernel.org>; Thu, 28 Aug 2025 11:20:04 -0700 (PDT)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-72019872530so11004637b3.1
+        for <ceph-devel@vger.kernel.org>; Thu, 28 Aug 2025 11:45:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1756405204; x=1757010004; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4AK6is4nBJ4xlFletQWEvPRtDtC7sLAk86TBvPR0LNA=;
-        b=Fphc74rKgUTzlTy2gxr6Pa/uVU/Ejb+mOhk+d9RpNNpHS1etEEeKmrgckavAmFqkOi
-         qAUza1f7+UsuKDTsf9uguiIlW384bWRMlbCCm+PriUAqXsGv9jLfw/FcPwoda0OeCASW
-         DL4i0Jjhy97eikcDtU4bgjHlMbnUuJnFvlsZksm2WXbrnxgjap3nNmiLCWAAi0y3aldw
-         7gM2ncEg9u5VuZNa673JFnDiHMKrJnVqSQh31tQkdDVPbeHu5zGyvRgf8tpNPhFpMKAy
-         /LezjCnQkuLYp/zLPWLmyC81Uam9OpWJ/wOhD1GkkLMmztPFWuGVigKvLmOU7HiY4CBx
-         Ptdw==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1756406705; x=1757011505; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NJJoCqafY2R71TzE6L9BGRudxdiRZ8yK2jVs5bHbWUY=;
+        b=mWn2IuPGl3/RVh4OAW8wrzLoYwnK+asL5arwy4hrcnSMdGuud1uOOPSI5zgHD2tZcN
+         PigPulkEV597Qdd9vSBuBAWogj7WCFSS02CpKFBVq0B0rlYf8OE017nxNZNlunm7pVjn
+         ckac6IB0DvS3cR5DedaQV9hbjKFXJjf1hWjoIn/bwN+Tvt6zRyUaBOOlXlDgcJ9gIxdB
+         VIQ8ZgoFRsBvpsziwQJg88wjLBUZE2ikoa+U127+NqFnzDMMV/pB510BQOCA94HUXVVw
+         Bz8bINWyZ3r3SGV7obzELHBYnBy/hduodKvUTbsDS8hMeZWL/Mz/YtXw5irmQ/weVS3W
+         jU9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756405204; x=1757010004;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4AK6is4nBJ4xlFletQWEvPRtDtC7sLAk86TBvPR0LNA=;
-        b=Td9RrB2yQQPFRKQLg89RxsazVpcnF4mJfkS9je8nGxneLOmhOmY69Kjn7t97GqfO1i
-         AzgxIlK4by5WJSTGQfnsadNMNMdF5ggOXmUCh7PWJf1su5LebDxb1aME0ziMkhrELvUO
-         5CJrTEQfbCcGMBji/SMF1+F4oOKhblr3TuKmOIYZTRKNOZMywjzQpnwyBon7tVZbIjXD
-         rJJdXCpwNtpBF9UnRmCMttx4gvEQKIjtPgrz3B7CFaXfsLgjyk0webc2lHnPf7yUAgSB
-         RDxCFRvdXmkTKU7Ec+NIRE94pkx0imgw8dHqaGW6V8zRUVh5G9U3abEJitfzdBmv/JE7
-         1Msg==
-X-Gm-Message-State: AOJu0YwYmxpCX/mxmuH2I6AWSAmK1vHHCS3zUaz0du8KHzz+QLMkfGA1
-	ZOk3EisGE8tTGqYXWaOFGixI3JEsBOLXJVOSNzYpQgqBBVyUpIOy5QYc3UXhMmyNV6M=
-X-Gm-Gg: ASbGncvDP6fCOdSdGQGLDGCskPP+FT33j22j9ASgiC6MeGvmbur+5TXa40lhXSmQoig
-	YO6qM2djSp+pOYdqifTNfVQmIs+2l0sQkkA4ttWoQSaVqO6HB1OujfQzm/USE0kGeCZhVQJZ9iy
-	CdVV3KTpAS9uhBrNwfwPunbtxxu+v3Vlqc9VPHMA/+UoZsRQJO64B+M3rBSYMCH7gY2GrK8GmZ6
-	5t4s4w4QmUPiJ4e6Br5SeVj1F0mEzooccPw+LBW5HP1EbbdEqnvv6WKN7JyTSXGHljiPlnWsKuL
-	As6ON3NlsZpqJryzjM0Y1VtrU+VLjIXL1k1gvg0pWOQe5wxfF8XU1L6sJZVbwSLML6n4bJ56Nvx
-	M+XkYFIjZHJf94WotTa3LIUTqAovAIAQ=
-X-Google-Smtp-Source: AGHT+IEOAOhSE1G9xGVbfOyFmVr+k1ZRdTfzwWiTTet43dmEyPN9wlUJd3nRPz4Bn4Ls4/qoF5gVeA==
-X-Received: by 2002:a05:690c:3707:b0:721:694f:f3dd with SMTP id 00721157ae682-72169503106mr24413367b3.1.1756405202859;
-        Thu, 28 Aug 2025 11:20:02 -0700 (PDT)
-Received: from pop-os.attlocal.net ([2600:1700:6476:1430:697:39a:28c3:6906])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-721ce5b72adsm1120107b3.51.2025.08.28.11.20.01
+        d=1e100.net; s=20230601; t=1756406705; x=1757011505;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NJJoCqafY2R71TzE6L9BGRudxdiRZ8yK2jVs5bHbWUY=;
+        b=b1OgJNbgOKOMfXxmLQDyFCdqPetCdRevwGs5Fn6/Vz74dTb2oQLH0Wcp1GegCd3fsx
+         4K41ecljG3yaxNRh6+/zEFsv+4g77xJS/sZ4vnPT/CNxgc+Sio30kWViqmPbXl44X89u
+         qsdOuBEKeWWfEfWcl+ub2LoXbXvpipAEExvlEW1xIHtukLVzJvdADpmu5Z/CPGQOKs+S
+         5D7C9ihhn6e7RUU3c30lx1+5BV5uL8GpKqXqXiVDbsEJw9hRq3gv9aT+PqBzMq8PR8ON
+         46IrZ0bqKQjUf66B0n+zki76SQPJl5p6JDMlvsraG9FzGT3BAsW0cSeYxPSCN/3g+n6Z
+         63Rw==
+X-Gm-Message-State: AOJu0YzGBBWSORz0QcBvniCWF1gidkfefDi0K0ENLLzBfHucV6B0Ejma
+	AaP76Z3A78G8nkrSRFwt4biSlMaXANu1J/Bqb9pca5lsB0W0gMvuDyvcWpZ6B2f5JlYTmluXkgK
+	yJ/L3SZkDpw==
+X-Gm-Gg: ASbGnctIWp/D1k99L08xyWrZJN/8lCZPPMM8zNw4mZTzhmyxDHsBn+FzT/ZM0Uo8va0
+	sc/i8vZbdPfrN2jdlkzPZg1janZjHT2k5PQBkDccLVMaVg79LUX9eU6/DJul2PTAsZsLQa6SZsX
+	TrrLqPQz7nqgmF8nft7CPbUBVpRxj/7W4n9/bw0VTLfZQylJmnEgI21aZXElrwTeNYJQZIwfM+0
+	UyRKvbx3/+RydrnqqjYrm0PYizbJuJW2s8Islo7QrVyAdr1dGUAiDfehri8XwRDYGV+lFVBy6r4
+	mxpKYSXMdmZl8cmi0Tpfwlx/JcUgYsZpo8l85imG28ZvmbU3CZfLgSe7YhQi7EovuI/897gLOy7
+	J60SciZVgPdgPlLzbHjNj9UDdyLdeVOPpereQaIOVbQ6Bbqp7lss=
+X-Google-Smtp-Source: AGHT+IG3GoqyBGLBmGPhmOHqb16rK9P6upQaQINamt65amR5WQ/XeYvsof2WnR1hFv8BsS3/5X3Z2w==
+X-Received: by 2002:a05:690c:968b:b0:71b:f56a:d116 with SMTP id 00721157ae682-71fdc2d2454mr278404217b3.2.1756406704820;
+        Thu, 28 Aug 2025 11:45:04 -0700 (PDT)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:450d:fa44:b650:10d9])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-721c630cc83sm1339417b3.11.2025.08.28.11.45.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 11:20:02 -0700 (PDT)
-Message-ID: <45351c2e913498c2f7a535bd06ce6badeb74dff0.camel@dubeyko.com>
-Subject: Re: [PATCH] ceph: fix potential NULL dereferenced issue in
- ceph_fill_trace()
+        Thu, 28 Aug 2025 11:45:04 -0700 (PDT)
 From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
-	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
-Date: Thu, 28 Aug 2025 11:20:00 -0700
-In-Reply-To: <CAO8a2Sj1QUPbhqCYftMXC1E8+Dd=Ob+BrdTULPO7477yhkk39w@mail.gmail.com>
-References: <20250827190122.74614-2-slava@dubeyko.com>
-	 <CAO8a2Sj1QUPbhqCYftMXC1E8+Dd=Ob+BrdTULPO7477yhkk39w@mail.gmail.com>
-Autocrypt: addr=slava@dubeyko.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (by Flathub.org) 
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com
+Subject: [PATCH v2] ceph: fix potential NULL dereferenced issue in ceph_fill_trace()
+Date: Thu, 28 Aug 2025 11:44:42 -0700
+Message-ID: <20250828184441.83336-2-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-08-28 at 12:28 +0300, Alex Markuze wrote:
-> Considering we hadn't seen any related issues, I would add an
-> unlikely
-> macro for that if.
->=20
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-Makes sense to me. Let me rework the patch.
+The Coverity Scan service has detected a potential dereference of
+an explicit NULL value in ceph_fill_trace() [1].
 
-Thanks,
-Slava.
+The variable in is declared in the beggining of
+ceph_fill_trace() [2]:
+
+struct inode *in = NULL;
+
+However, the initialization of the variable is happening under
+condition [3]:
+
+if (rinfo->head->is_target) {
+    <skipped>
+    in = req->r_target_inode;
+    <skipped>
+}
+
+Potentially, if rinfo->head->is_target == FALSE, then
+in variable continues to be NULL and later the dereference of
+NULL value could happen in ceph_fill_trace() logic [4,5]:
+
+else if ((req->r_op == CEPH_MDS_OP_LOOKUPSNAP ||
+            req->r_op == CEPH_MDS_OP_MKSNAP) &&
+            test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags) &&
+             !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
+<skipped>
+     ihold(in);
+     err = splice_dentry(&req->r_dentry, in);
+     if (err < 0)
+         goto done;
+}
+
+This patch adds the checking of in variable for NULL value
+and it returns -EINVAL error code if it has NULL value.
+
+v2
+Alex Markuze suggested to add unlikely macro
+in the checking condition.
+
+[1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=1141197
+[2] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1522
+[3] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1629
+[4] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1745
+[5] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L1777
+
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Ceph Development <ceph-devel@vger.kernel.org>
+---
+ fs/ceph/inode.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index fc543075b827..8ef6b3e561cf 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1739,6 +1739,11 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 			goto done;
+ 		}
+ 
++		if (unlikely(!in)) {
++			err = -EINVAL;
++			goto done;
++		}
++
+ 		/* attach proper inode */
+ 		if (d_really_is_negative(dn)) {
+ 			ceph_dir_clear_ordered(dir);
+@@ -1774,6 +1779,12 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
+ 		doutc(cl, " linking snapped dir %p to dn %p\n", in,
+ 		      req->r_dentry);
+ 		ceph_dir_clear_ordered(dir);
++
++		if (unlikely(!in)) {
++			err = -EINVAL;
++			goto done;
++		}
++
+ 		ihold(in);
+ 		err = splice_dentry(&req->r_dentry, in);
+ 		if (err < 0)
+-- 
+2.51.0
 
 
