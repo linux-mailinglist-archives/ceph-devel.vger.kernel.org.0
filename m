@@ -1,77 +1,77 @@
-Return-Path: <ceph-devel+bounces-3485-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3486-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2645B39C2F
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Aug 2025 14:06:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 415F4B39C4C
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Aug 2025 14:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7DE17B0035
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Aug 2025 12:03:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D607986FCA
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Aug 2025 12:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE59D30F949;
-	Thu, 28 Aug 2025 12:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E3E30F95C;
+	Thu, 28 Aug 2025 12:08:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="JlW4VNX6"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="Gr8R7XHl"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0A830F818
-	for <ceph-devel@vger.kernel.org>; Thu, 28 Aug 2025 12:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5D730F801
+	for <ceph-devel@vger.kernel.org>; Thu, 28 Aug 2025 12:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756382703; cv=none; b=nGmNIzqbbNZVDBmj6fvwLckXpYUb45buJSTyuT4hqJZz+FTMNqc7wu+8gSsDYqAfP2YqupAFMz6JEE0DqGSDXeJBkzkEtuZpXoPEXYovKp4a1OQbYPdkcwEYR1QsSLQXRLql/VJJf5cKut4toebzGyZavg9ID5quIVEi33kwdMM=
+	t=1756382904; cv=none; b=f/tMNYLrHvzl0LICXnkJ55Eeo0BVtLCGiVxp9XfHrGcx3yUN6oKAozqKn4BLR0SpwE2anmf5fpi7iVRR6MmXKxAPC6fmZ8gnI2Nux0T3/i5SfgqHHgr0m5YPeFd2kCRcqmuQZnRLsYDuje0ircWWi35Tc6zLxGhSSGRuv/n2pMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756382703; c=relaxed/simple;
-	bh=LbO1QOgysbdLndSSd76TuWypzxpCmVsAoAlB9MGwu3U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UZ6MqiyDkiwgUyIbGAlTw1mY+Xc/ksCnKAsdFHg/uE7vJnWOfHgGMAuUdZvvfR2FkU43Kj1UoR2DIgQ3AnOd47afZMkr6v4xV9gyMT6qJx2urF91L9Nz+tRhECO8jTxSBZ9th4aV6lKti7qAkGLaEX/8NpeoV47FQsuZAZwk60g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=JlW4VNX6; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1756382904; c=relaxed/simple;
+	bh=dvFy0GvyED3/N0rdK6Pd8G6BU5DSoCUAM+z9gA8HfzM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fsnE6JhVYbRpO/+SAYslxnTBVZjK2b+ywOazDieCWsy8KMVs9dEqejNjrirnMxGeII5+7ECYx/rZRANuRqsRzW5sDNUkECiQWRoHf0scdLNbP9AU+snLYmiH+moIjI2EyCRBwkwM3gG1rF4DxOLmWXbBAgfuLpCdC6U078x/XEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=Gr8R7XHl; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3c7ba0f6983so589115f8f.0
-        for <ceph-devel@vger.kernel.org>; Thu, 28 Aug 2025 05:05:00 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45a20c51c40so7025565e9.3
+        for <ceph-devel@vger.kernel.org>; Thu, 28 Aug 2025 05:08:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1756382699; x=1756987499; darn=vger.kernel.org;
+        d=ionos.com; s=google; t=1756382900; x=1756987700; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+BOPqGhZLfbIfYuD0MGvXzD0+z188+PonWYLkcs9RNE=;
-        b=JlW4VNX6BdqYWS9szkD275BDdXumBiLaRT1RFXj+sRqpD1k5UwVH1LuZvisO1oJp5f
-         mFa2YKdBVoP0GaXkrE/kKjKdQYWwjncGfQXPfsqo7IqOhXZF/1tm0ctQw+DkT1W2h+H7
-         eE65Qq9Ha8y47q4eWJS0/mM0PuIezOjImV8YL/Xxywyp/gYtbXz8yGFo2qPRdrYUdJ7c
-         GmYKZrUnGVEnJSVtdsPtAGT5kkEr9fIQ8QBZeBJ3CgJe2gMKN1O/eqr3vekcboG0HAuh
-         6Rq0nfcohKrdlKzVv40HSvg+UGCIAbnhYz0ov703+Pe2nt1gT6waLzhDz/RSdhW1rd51
-         eNCg==
+        bh=1KGYCo47M8HnSkDcYvSaLWw6pGEaggMof1VkMNBF1tM=;
+        b=Gr8R7XHlAScTlK7jkBoRJGCb2ztYSNVONoneSBIMa9uc+oFMhLn/RwiMd99VPvK6Hs
+         WaZta+CZbnWtArlHZuWZYYZU8sRejKHgNNFAIJ50O+3GGoH7J0xYq9zIma2MYSviq/GW
+         9M3UQbuyOQzMM3aXCStBcbwZAkxQg47VVJBk5OT8UWHV9SChWQH3BcqsDqzpx6WStIN3
+         0ornb2bOrgGk9NCAsf/2bxwo4gzOieMPvDe4+6Nb2+RrzG/M6QYQiGbE8LcLph3WFjrx
+         8TETr9Xb9iNQQzd6bf2nSDDJ+absI5Usw4J0xaFQKbSxskNgcp5/8dT+hs7OC8qzPBPD
+         fz9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756382699; x=1756987499;
+        d=1e100.net; s=20230601; t=1756382900; x=1756987700;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+BOPqGhZLfbIfYuD0MGvXzD0+z188+PonWYLkcs9RNE=;
-        b=xUgbK4Na4M5hPz3LmL2XlXE6N5wVsXSHdXGgGG8TWjqyY8TWy0FkCHrJGZ65dWeBV4
-         djT07zB5zk9AAV4LqYeZEYuVnH25FjVu+bX3fZWELZAY+vTqdCv3OjHhbMlD/ziSarZX
-         XaeBDCCThHtVx+09gnKYe+xxx50qlZJmFH59kmrbqdAuzQkuwteq01va7oNSdImwqB0E
-         4vQL+Y5fK6IyybMeQJb+FZ1FHOScm/wsu9xJKSc21/f3QkjG+gyNJJK0VoKVz4P3wCI/
-         Tm13q2KHYDmbDYbvaHekHrwDMldd7R7/afcgimlGtCMNKrwWJHnqznZaze4rM8RyxOpB
-         l85g==
-X-Forwarded-Encrypted: i=1; AJvYcCWzIBSmbx6nw/j7GQYwr/rMit5jVZ9ugn5kLefPHxEAMIbhPcSBiZ8Qu1zlEBUS9J8Qjtc8cB0vQab6@vger.kernel.org
-X-Gm-Message-State: AOJu0YytoiO8/DipKArDJYiJ94cKYrLdkZRJGIfBAgJVsxpWixcjWOfN
-	OTOfM5ovZh4AenoE0je2FfFe4oHz3fZo6WXcEnSufOEWAEz+K/SsMUGIxL/W1mejvCg=
-X-Gm-Gg: ASbGncsS9ixc+26tPul9KCkaOj8tvRS/wxzEokel7NvNbc4OOMdtzVwFmoQBkxU1gnb
-	1ZHwBZE4PtfrXLJJXXJ+/6tmNGJ0YUhZCx8kfiW4h0SrKxD7IAo/9fGwiMf976p+5J3sZ0/QSGP
-	w6GDDdP31NeVOaN7usHak8glGGqAOcMukrV7XCtNEkMQ+0GWoTy3pZSzOYrils0O87t0t1qDJyj
-	J0d0Pc5UuIcpuagHXrA0eHxu+WQ4GqDOab1xlPhzvnzprUukUS/rfFeO7dj4cCpSKUMnbnrj7l/
-	0SqtubfP3n74VgA174gjr6YYBZ70iQLuqI6WtaWAZoLoRbZGN5iFQDUe+3sfQHy4pzbv7uuwM27
-	0SwhB/Y8h//zguyHLczPJVkIY4orlrwZ1NRQ/3JrM7YyaciWOnEjLyG0zOMUYugDq/EGJBuJzv4
-	q5rPbmJMINBJN7ggf/hkNRsA==
-X-Google-Smtp-Source: AGHT+IGzoTsypgvoIpQsTCGny5L+jcRoWYZSRf2lTXtYqJtN0aGMGTRo6Dqju9vXNW8/IdhIYpWfbg==
-X-Received: by 2002:a5d:4f89:0:b0:3ce:5696:39f1 with SMTP id ffacd0b85a97d-3ce56963e87mr831053f8f.22.1756382699180;
-        Thu, 28 Aug 2025 05:04:59 -0700 (PDT)
+        bh=1KGYCo47M8HnSkDcYvSaLWw6pGEaggMof1VkMNBF1tM=;
+        b=ocxvVAwIhJUPYp34Bf6tPYQ4RMIxSEU7XurW5Oycpx1PStibIKkGCouObm+cnPmkWm
+         uFt1KhxrhqITarppIljT00YBTsFtoUcOCQMwQUxvo31m97xohhwJ+zPT4Y76pzjYNLsC
+         z+vPIOAWn4xzT4fqZR6aVRCyMUTzhpqn4RuwSAwfI35bHZB+Cmy9VdjHhcPkeHcKje4t
+         4nQmt7UJ32kxdEQaw1YZhs3YXN0LprpmeR30ZJHInMJNrryty7IrYbLndDtEJ7s/VIoV
+         Y20PSu4F8Y9v4L+LFWPU+ffoYn1BaV/7xO9QvUj1ebcxRBbnb6C0PG4NyvEoh0/r3UC5
+         Oyrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnxklHdZhSyCBjbN1Xuv53QEsD7p1F1jLs89jS28K2Oqehl3LfrW7Nivat0KTpryMmEmDzYf9J1WJM@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq21doQEdogRMXiRCrfKIqnrjFCDL377KqLKGmXjcPq2tVj/oI
+	uxgBNs2dwLHl5wSXtQSwSkH48HczupYVuLYSGgrS1RphkBg/27oQTOWb0/bsekWPdGE=
+X-Gm-Gg: ASbGncsmSvXUkk8FU4PNLJV64tTAOJ4SXSP1R9oLcCpZ+x1cXm+VrPq8tQIh+UUTyyB
+	bEdTZx0FMJjGTqMBZ5c61poFAy7g9ihNglnJMk6cgCkWVvrJE7EggzQdZ+J8779UgmF+rONHBuX
+	qrfoI9fratnZG2+W0uc2uJAOLybsZsvtoGnlxMqDiOxBtcvcGhdqgBghHiOBM6sOHlNBJ2Uxx30
+	0ZLozCXD7IysapgA5VgABONz0hW/PtqWyvhormErdas7yRLCgSv67bU23ILutICDaACDo9MWFAO
+	aK8Wc4HjQm1C4PGlhUpkt1mWVjKB3tMZJ67TJK0mpallFnGhg+bvHkEowJX4+BIOfpM79iMuLYh
+	9+5s/Ekf2Eno6oxlxygWUV6klQP4zHzOlkNeBSlyhOxNAjO+bcWCjJmVMnZ7mYEPXXIWXHS6pnS
+	9iPPWjE9nAIrE4irpDU+Y83g==
+X-Google-Smtp-Source: AGHT+IECbDtWH0zZDMSKQZOU5aAbQreBTJQRG/QRaYxDFV+HkzE+dMQ4ECYxCUIikuFUOY4MkAjhIA==
+X-Received: by 2002:a05:600c:1d10:b0:458:b01c:8f with SMTP id 5b1f17b1804b1-45b51798f30mr224386925e9.8.1756382898974;
+        Thu, 28 Aug 2025 05:08:18 -0700 (PDT)
 Received: from raven.intern.cm-ag (p200300dc6f1d0f00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f1d:f00:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b797e5cd5sm30266815e9.22.2025.08.28.05.04.57
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b797e5cd5sm30382385e9.22.2025.08.28.05.08.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Aug 2025 05:04:57 -0700 (PDT)
+        Thu, 28 Aug 2025 05:08:18 -0700 (PDT)
 From: Max Kellermann <max.kellermann@ionos.com>
 To: Slava.Dubeyko@ibm.com,
 	xiubli@redhat.com,
@@ -80,9 +80,9 @@ To: Slava.Dubeyko@ibm.com,
 	ceph-devel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH] fs/ceph/addr: convert `op_idx`, `data_pages` back to a local variables
-Date: Thu, 28 Aug 2025 14:04:53 +0200
-Message-ID: <20250828120453.748058-1-max.kellermann@ionos.com>
+Subject: [PATCH v2] fs/ceph/addr: convert `op_idx`, `data_pages` back to a local variables
+Date: Thu, 28 Aug 2025 14:08:16 +0200
+Message-ID: <20250828120816.752278-1-max.kellermann@ionos.com>
 X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
@@ -104,14 +104,24 @@ confusing to me.
 
 Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 ---
- fs/ceph/addr.c | 39 ++++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
+v1 -> v2: now really removed "op_idx" from the struct (d'oh)
+---
+ fs/ceph/addr.c | 40 ++++++++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
 
 diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 8b202d789e93..fc3192c79072 100644
+index 8b202d789e93..88dea8887ef7 100644
 --- a/fs/ceph/addr.c
 +++ b/fs/ceph/addr.c
-@@ -611,7 +611,6 @@ struct ceph_writeback_ctl
+@@ -601,7 +601,6 @@ struct ceph_writeback_ctl
+ 	unsigned int max_pages;
+ 	unsigned int locked_pages;
+ 
+-	int op_idx;
+ 	int num_ops;
+ 	u64 offset;
+ 	u64 len;
+@@ -611,7 +610,6 @@ struct ceph_writeback_ctl
  
  	bool from_pool;
  	struct page **pages;
@@ -119,7 +129,7 @@ index 8b202d789e93..fc3192c79072 100644
  };
  
  /*
-@@ -1051,7 +1050,6 @@ void ceph_init_writeback_ctl(struct address_space *mapping,
+@@ -1051,7 +1049,6 @@ void ceph_init_writeback_ctl(struct address_space *mapping,
  		ceph_wbc->tag = PAGECACHE_TAG_DIRTY;
  	}
  
@@ -127,7 +137,7 @@ index 8b202d789e93..fc3192c79072 100644
  	ceph_wbc->num_ops = 0;
  	ceph_wbc->offset = 0;
  	ceph_wbc->len = 0;
-@@ -1060,7 +1058,6 @@ void ceph_init_writeback_ctl(struct address_space *mapping,
+@@ -1060,7 +1057,6 @@ void ceph_init_writeback_ctl(struct address_space *mapping,
  	ceph_folio_batch_init(ceph_wbc);
  
  	ceph_wbc->pages = NULL;
@@ -135,7 +145,7 @@ index 8b202d789e93..fc3192c79072 100644
  }
  
  static inline
-@@ -1417,10 +1414,12 @@ int ceph_submit_write(struct address_space *mapping,
+@@ -1417,10 +1413,12 @@ int ceph_submit_write(struct address_space *mapping,
  	struct ceph_vino vino = ceph_vino(inode);
  	struct ceph_osd_request *req = NULL;
  	struct page *page = NULL;
@@ -144,11 +154,11 @@ index 8b202d789e93..fc3192c79072 100644
  	u64 offset;
  	u64 len;
  	unsigned i;
-+	unsigned op_idx;
++	int op_idx;
  
  new_request:
  	offset = ceph_fscrypt_page_offset(ceph_wbc->pages[0]);
-@@ -1481,8 +1480,8 @@ int ceph_submit_write(struct address_space *mapping,
+@@ -1481,8 +1479,8 @@ int ceph_submit_write(struct address_space *mapping,
  
  	/* Format the osd request message and submit the write */
  	len = 0;
@@ -159,7 +169,7 @@ index 8b202d789e93..fc3192c79072 100644
  	for (i = 0; i < ceph_wbc->locked_pages; i++) {
  		u64 cur_offset;
  
-@@ -1495,29 +1494,29 @@ int ceph_submit_write(struct address_space *mapping,
+@@ -1495,29 +1493,29 @@ int ceph_submit_write(struct address_space *mapping,
  		 */
  		if (offset + len != cur_offset) {
  			/* If it's full, stop here */
@@ -196,7 +206,7 @@ index 8b202d789e93..fc3192c79072 100644
  		}
  
  		set_page_writeback(page);
-@@ -1555,25 +1554,27 @@ int ceph_submit_write(struct address_space *mapping,
+@@ -1555,25 +1553,27 @@ int ceph_submit_write(struct address_space *mapping,
  			offset, len);
  	}
  
