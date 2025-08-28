@@ -1,193 +1,149 @@
-Return-Path: <ceph-devel+bounces-3483-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3484-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE37AB39846
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Aug 2025 11:29:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB532B39B4B
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Aug 2025 13:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70D4D5E887B
-	for <lists+ceph-devel@lfdr.de>; Thu, 28 Aug 2025 09:29:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6755E466630
+	for <lists+ceph-devel@lfdr.de>; Thu, 28 Aug 2025 11:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D182EB84B;
-	Thu, 28 Aug 2025 09:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEBE2D738E;
+	Thu, 28 Aug 2025 11:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QQjMW8bq"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="UzYBM3Yp"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4232E0901
-	for <ceph-devel@vger.kernel.org>; Thu, 28 Aug 2025 09:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F02815B0FE
+	for <ceph-devel@vger.kernel.org>; Thu, 28 Aug 2025 11:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756373313; cv=none; b=P0qncYns4+nokBeYnMnXk9cpSlvwceQxecgaVX0llZdSrsn+6G72SkVNs1i7/j5fvbbkTawUFp/B3VigbrAcqjNUCrnAIiM2baPx71qvGKAFl+PyvHQ/veIXnL2yJ6ZIPgJTyedeVK/gOhO60Xb6QlIU4em8H5PW741JOzxJ9vM=
+	t=1756379766; cv=none; b=oDwBpMkR0cozQTR+xJPUIjZl7+E9XRqB9lEPoCo1b4RdlVg6JecCW7Q9UOkxMyTTpRZTtArwrR7fzDd7KgElspw+tAyIt75jR8qP1JJMVmLAbvEhyjY9pdo/82fUeqRP/LQ42sxZbJdWaR0uqgQdP0dBMPx0b5H3Fk0A2NLTjJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756373313; c=relaxed/simple;
-	bh=41vsgwcYkQ4IUFYJ2M85ThOCWhadNmIJp+OoxRrHBUs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QS7MbSj2r2tvdrSC7WWVodof6M3Dk1s3NJkOiDak8gZ/4xs34YeFl4SA8r5jw8B+qMVZgYHFlY9WXUxKypAud/NuRP1rP7wX5jOPrTy5EUJdtxfURJb3oi7IjhGh61Al1jCH7y9v0eQmHxrDzdqGx9h4trFVUSdOMrehfkKPqYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QQjMW8bq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756373310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GZjQmtd/MKJDkd12hmfrf8B5oKv442M44MRUvmxo1TY=;
-	b=QQjMW8bqL5fzXbmEy6eZZcUD4CP700914RQqHZ4eVAhFa+8L7Um8ecm00/cCaOOtBGpjXj
-	FEkoe1wTrI5KJnaM+ZslzroFQF6dQGx0QCqzJgc6WK4ORNHjrGJoO9jYLXtG5IVjgPfpN6
-	qMmpSIBauGUCnSRpgR7zTjCDpSXc1/Q=
-Received: from mail-ua1-f72.google.com (mail-ua1-f72.google.com
- [209.85.222.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-257-o32d7RKdP8izHJIYsLQ_Ew-1; Thu, 28 Aug 2025 05:28:28 -0400
-X-MC-Unique: o32d7RKdP8izHJIYsLQ_Ew-1
-X-Mimecast-MFC-AGG-ID: o32d7RKdP8izHJIYsLQ_Ew_1756373308
-Received: by mail-ua1-f72.google.com with SMTP id a1e0cc1a2514c-8940ebd2ab8so1664590241.1
-        for <ceph-devel@vger.kernel.org>; Thu, 28 Aug 2025 02:28:28 -0700 (PDT)
+	s=arc-20240116; t=1756379766; c=relaxed/simple;
+	bh=x2CwY0f27ONX+8fmDC68h7bPHgxl9g7WINlENPZM7FQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ULKjfd2ne2YqEEpTZec/iP0g6ZGvH+cIlzSwz5ITYvHiqin2ulYqddds7M7297MrtrQ/ai6AyWMFyomSpaOOcMVm8GmdYnuNtPj97O1uj9Tg0L1fJH1ePomNHz9nnu+mWt76u3IX+y65OFzUxL+ArQUp/quKn0IUwJwnFT5r5dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=UzYBM3Yp; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b7da4101fso123215e9.3
+        for <ceph-devel@vger.kernel.org>; Thu, 28 Aug 2025 04:16:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1756379763; x=1756984563; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/QHBOrXAja8iWLDpJiD9eodym9F/g93zNuwCDVC3UT0=;
+        b=UzYBM3YpxrIrUDUDvNEAWw2vlcnHMx9856CwgCzIbpqufWz5OIC7H3YnE9AEr+5ViS
+         CX0GWtKb0n7Rke7qJPva1KgsXh7vscFoPb9p955qR5TqOlqnGH99lfR9htG0G+yoZfVP
+         wWaXDhQCVi+E/lshbryHpuCGuFUB6qUIu23Xi7K4Up92Tws8mHzDJm4Wip5NA0axCmt7
+         WcTcEbMjBpxuJBxhdaXo6XEUx67BWrIP3HYEs6FjNoO62dUJuncyzJLJbYhLvVOFVMaS
+         YFdGN6iYOJ9culihj1bkvcuzxY1IDmnAYuAdwrMhrTxIkUBtUgYREytBFt8MQO6UhAUq
+         gj3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756373308; x=1756978108;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GZjQmtd/MKJDkd12hmfrf8B5oKv442M44MRUvmxo1TY=;
-        b=aa9cdMV1caNkpp6QHCub/68pp226xnkNiat6NzC8KMdcHU0flW2FygavrLSrIg1bjJ
-         /ENbWexr7IO8CSmOh7nGLTFjYnW89pZHn6ZNYIBS8314qNmSd60xJtbQUP83lYM01wwm
-         JqssJarPkpN1WzkdeLyz18amDmneZ+jzxhj3KivxTQEUS1PHsC5AfE1Bi1pPNlopOfXh
-         VpLw+EoYQlwNAtM2bAz/I1+51YW9A6oVmwaqwzgdUoKu1ovvAoF7D4rwcLg1wVVHXtGq
-         e5eXkQ0wGh3E33CU7X1EDNrX5NOxW4KRgSQClOAuSlHB5yACgPB+jx9483xmdnCRWhBn
-         udqA==
-X-Gm-Message-State: AOJu0Yw84Xwtu2M/ya6NUl241BogsaaaVmgq/by1xKs88WpBGLR3exqW
-	9mxSzKAVfV5FbmJmF7qq/v8HzdZW0oflWtkNPU4X+nlAFoEQKI40wWyUfFuY4GxT84D0/ynf7aY
-	lHVjEQyGSspT/jsDpNZybMfBAvhskSFSumApeOWvVHA1BbFzQd9eJFHMUFo80nDs2CZYJzNKKME
-	P/LqH74pg66P338RTkRJ9EGWdFDydzjtTLMlXm+g==
-X-Gm-Gg: ASbGnctO24/HyN+DPW0a0mjLyaPVvGTi4OYh89PVsJ4ptfhERuTSgVrqpU2KZlZ3Hj3
-	jENi/o5vpC1izga2pR96VVqqk5brbhj+Ptn7RJiyOmm2/DYL3F+4LuLAIYQcfyRbfs0Rqet5Y2g
-	N6cxqLV0JVZOgPssCvusKCDA==
-X-Received: by 2002:a05:6102:50a9:b0:4e9:963f:286a with SMTP id ada2fe7eead31-5248bbc85b1mr2551657137.5.1756373307750;
-        Thu, 28 Aug 2025 02:28:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEm4A6m5qS0r2rDm6mJAmMGLAW1wODkxU8Jua/Ytk8QtlvJstKwpAv88Zef4Dv97F7VVvFIWy1VDwj3wGe/xM8=
-X-Received: by 2002:a05:6102:50a9:b0:4e9:963f:286a with SMTP id
- ada2fe7eead31-5248bbc85b1mr2551646137.5.1756373307388; Thu, 28 Aug 2025
- 02:28:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756379763; x=1756984563;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/QHBOrXAja8iWLDpJiD9eodym9F/g93zNuwCDVC3UT0=;
+        b=oTu/gUJDfXrYzw8kshyY8nHWZ0/qsfIaEpoHOSyAkT6r/7lBtbDJesg2E/madnYSBM
+         Cd5OH3uD3ZsCgmNqMIwEQ+szFrK7iCIWMKsrgrN8W6uP9UK5LiVmZViV85VBwoOgk9TI
+         GYyZaDz9a614IQldYOtjG8A+SdBcAsfp9GK2VKtMJl4KBZIiLyw5spUSk/7mscOalbEc
+         v9yG6zYsN80HX845+NgxbfgKRg0lldBfj6W+WupGsgWNMOWRjHd457RKTRBmiShX8Y0z
+         KdADM7NBIhbXCYf3Jgfr6Nmag/Z5ilCnVvuXcf/qfFK/bMPfvPzJjtJfEvHnajzhR55/
+         2sfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+OsIKqG/3GDvjDaspEqNBFvZlNgA//kN+ut2Dv851kzJ9VX3ojpbLkzIfjQIdXa0BD2C42Hg0Hsu0@vger.kernel.org
+X-Gm-Message-State: AOJu0YznwJWRXfWRXIZSIiV3Eb92BXVjSDmb8gJZ0hJ2lv78RyTwarHq
+	X+sLXtUL6nQuE3QOAOXvdNzxx2+pbq0x4OMaz9hdakMWaiHrXK+3+pHMbnkA12l8yrE=
+X-Gm-Gg: ASbGnctx38R5crBpxQvlX44+EXfkETVrdnP1sQzRxzGzwItdgUKi0EgHmk9mdk0b88q
+	q3SkXgFnQLcXkXZdkoLgx5ZMgVdDsajBbmdqAkg7mzjWS/dlhIWaLvHtiflQPzNDEH3yo+tEbTp
+	B6xTIV6yHtuOqWCDPwJ/UsS5Ij7CWsuBp9q4YWKg7//ELkCGEgUpmUSS9GURvZgwkoW1VB13VC2
+	uMUTAMcd750HVxSJgGRAh1/++2tFqnRQ/I5rKcZLTAVDyFYCc0I2mvoCQMDcJO6MHlCbfOP2tSk
+	8YNHmixUxDQ3W734ykRJr9hadVC37auU/lrvFXs7A33+pZzqxqc5rlVeuezkKKmC1Ib2jIP9ddT
+	a4qFlKOhTsj3wEm4y6LtvVJwaXNhnCVFzChQhEhC2vY0hPW8Ieqvr469l0eb1O3JqPD1rakHFJL
+	iwAERMcXHjVxd0oUX3v7A9El+S/tDBSWPd
+X-Google-Smtp-Source: AGHT+IErHCmWbg2YMUeSrTBCHGmKcPBhN8tMdoOfMQOVPGyHr5ox98O0LhP5cUl5kKNQOFlN8MsLNw==
+X-Received: by 2002:a05:600c:35c9:b0:458:b7d1:99f9 with SMTP id 5b1f17b1804b1-45b517a0655mr207154405e9.11.1756379762476;
+        Thu, 28 Aug 2025 04:16:02 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f1d0f00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f1d:f00:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45b6f306c93sm69608945e9.14.2025.08.28.04.16.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Aug 2025 04:16:01 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: Slava.Dubeyko@ibm.com,
+	xiubli@redhat.com,
+	idryomov@gmail.com,
+	amarkuze@redhat.com,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	brauner@kernel.org
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] fs/ceph/addr: fix crash after fscrypt_encrypt_pagecache_blocks() error
+Date: Thu, 28 Aug 2025 13:15:52 +0200
+Message-ID: <20250828111552.686973-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827190122.74614-2-slava@dubeyko.com>
-In-Reply-To: <20250827190122.74614-2-slava@dubeyko.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Thu, 28 Aug 2025 12:28:15 +0300
-X-Gm-Features: Ac12FXxTATopapzxEeYLFAQyFqACGNij-rBWX3RuRiINATrRYSK_I8XLw7mJ33o
-Message-ID: <CAO8a2Sj1QUPbhqCYftMXC1E8+Dd=Ob+BrdTULPO7477yhkk39w@mail.gmail.com>
-Subject: Re: [PATCH] ceph: fix potential NULL dereferenced issue in ceph_fill_trace()
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
-	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Considering we hadn't seen any related issues, I would add an unlikely
-macro for that if.
+The function move_dirty_folio_in_page_array() was created by commit
+ce80b76dd327 ("ceph: introduce ceph_process_folio_batch() method") by
+moving code from ceph_writepages_start() to this function.
 
-On Wed, Aug 27, 2025 at 10:02=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.=
-com> wrote:
->
-> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
->
-> The Coverity Scan service has detected a potential dereference of
-> an explicit NULL value in ceph_fill_trace() [1].
->
-> The variable in is declared in the beggining of
-> ceph_fill_trace() [2]:
->
-> struct inode *in =3D NULL;
->
-> However, the initialization of the variable is happening under
-> condition [3]:
->
-> if (rinfo->head->is_target) {
->     <skipped>
->     in =3D req->r_target_inode;
->     <skipped>
-> }
->
-> Potentially, if rinfo->head->is_target =3D=3D FALSE, then
-> in variable continues to be NULL and later the dereference of
-> NULL value could happen in ceph_fill_trace() logic [4,5]:
->
-> else if ((req->r_op =3D=3D CEPH_MDS_OP_LOOKUPSNAP ||
->             req->r_op =3D=3D CEPH_MDS_OP_MKSNAP) &&
->             test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags) &&
->              !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
-> <skipped>
->      ihold(in);
->      err =3D splice_dentry(&req->r_dentry, in);
->      if (err < 0)
->          goto done;
-> }
->
-> This patch adds the checking of in variable for NULL value
-> and it returns -EINVAL error code if it has NULL value.
->
-> [1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIs=
-sue=3D1141197
-> [2] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L15=
-22
-> [3] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L16=
-29
-> [4] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L17=
-45
-> [5] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L17=
-77
->
-> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> cc: Alex Markuze <amarkuze@redhat.com>
-> cc: Ilya Dryomov <idryomov@gmail.com>
-> cc: Ceph Development <ceph-devel@vger.kernel.org>
-> ---
->  fs/ceph/inode.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index fc543075b827..dee2793d822f 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -1739,6 +1739,11 @@ int ceph_fill_trace(struct super_block *sb, struct=
- ceph_mds_request *req)
->                         goto done;
->                 }
->
-> +               if (!in) {
-> +                       err =3D -EINVAL;
-> +                       goto done;
-> +               }
-> +
->                 /* attach proper inode */
->                 if (d_really_is_negative(dn)) {
->                         ceph_dir_clear_ordered(dir);
-> @@ -1774,6 +1779,12 @@ int ceph_fill_trace(struct super_block *sb, struct=
- ceph_mds_request *req)
->                 doutc(cl, " linking snapped dir %p to dn %p\n", in,
->                       req->r_dentry);
->                 ceph_dir_clear_ordered(dir);
-> +
-> +               if (!in) {
-> +                       err =3D -EINVAL;
-> +                       goto done;
-> +               }
-> +
->                 ihold(in);
->                 err =3D splice_dentry(&req->r_dentry, in);
->                 if (err < 0)
-> --
-> 2.51.0
->
+This new function is supposed to return an error code which is checked
+by the caller (now ceph_process_folio_batch()), and on error, the
+caller invokes redirty_page_for_writepage() and then breaks from the
+loop.
+
+However, the refactoring commit has gone wrong, and it by accident, it
+always returns 0 (= success) because it first NULLs the pointer and
+then returns PTR_ERR(NULL) which is always 0.  This means errors are
+silently ignored, leaving NULL entries in the page array, which may
+later crash the kernel.
+
+The simple solution is to call PTR_ERR() before clearing the pointer.
+
+Fixes: ce80b76dd327 ("ceph: introduce ceph_process_folio_batch() method")
+Link: https://lore.kernel.org/ceph-devel/aK4v548CId5GIKG1@swift.blarg.de/
+Cc: stable@vger.kernel.org
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/ceph/addr.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 8b202d789e93..e3e0d477f3f7 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1264,7 +1264,9 @@ static inline int move_dirty_folio_in_page_array(struct address_space *mapping,
+ 								0,
+ 								gfp_flags);
+ 		if (IS_ERR(pages[index])) {
+-			if (PTR_ERR(pages[index]) == -EINVAL) {
++			int err = PTR_ERR(pages[index]);
++
++			if (err == -EINVAL) {
+ 				pr_err_client(cl, "inode->i_blkbits=%hhu\n",
+ 						inode->i_blkbits);
+ 			}
+@@ -1273,7 +1275,7 @@ static inline int move_dirty_folio_in_page_array(struct address_space *mapping,
+ 			BUG_ON(ceph_wbc->locked_pages == 0);
+ 
+ 			pages[index] = NULL;
+-			return PTR_ERR(pages[index]);
++			return err;
+ 		}
+ 	} else {
+ 		pages[index] = &folio->page;
+-- 
+2.47.2
 
 
