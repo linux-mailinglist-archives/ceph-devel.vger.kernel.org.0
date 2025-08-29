@@ -1,196 +1,167 @@
-Return-Path: <ceph-devel+bounces-3493-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3494-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8DFDB3B793
-	for <lists+ceph-devel@lfdr.de>; Fri, 29 Aug 2025 11:36:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02400B3C441
+	for <lists+ceph-devel@lfdr.de>; Fri, 29 Aug 2025 23:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 379AE7B2909
-	for <lists+ceph-devel@lfdr.de>; Fri, 29 Aug 2025 09:34:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA0BC4E2604
+	for <lists+ceph-devel@lfdr.de>; Fri, 29 Aug 2025 21:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6360A2F0C62;
-	Fri, 29 Aug 2025 09:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9837286435;
+	Fri, 29 Aug 2025 21:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Futjb47b"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="mV1k6mT2"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BAD26E712
-	for <ceph-devel@vger.kernel.org>; Fri, 29 Aug 2025 09:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A7B220F2C
+	for <ceph-devel@vger.kernel.org>; Fri, 29 Aug 2025 21:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756460180; cv=none; b=TnD2InKqqIGpjLQSdXhtNIHBSQ+Y82YPWi6ROTb6q8/d8OGOrGCl9yiZeARhc27qioHnPRDWVaJOqNv+/SoOyd5Z7CK5PftEx36ZkaBkTXppDy11ZjeV6Oi19RQ9DyG35pd3PdD5T82X9l7oFmm7+gYEgxC/IIXEelyxN3pcA9k=
+	t=1756502966; cv=none; b=RoMDb/Y5xKlquVDn49dbkW3OGY/ifEt30klKdhLdykpMAtupr4kgd8Qt5rxx6Mr+SdqcmdSZOkAMOKkYdpaM29PZ1lyHO4Px/cLE3xl2NnINq6IM5E4NKjTtAcE/mDuJ6niy/ysLHjkzl1EPxAIZ9YxqOhi/h6Azs/X187Whb/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756460180; c=relaxed/simple;
-	bh=fQkfpmLakVR8TBAul9808wWECjr1KhWDC5ssSn54a40=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cgYsvjoOaPQ8z2nkW7dll/uATF0MSlbtpqC9n8TnwF+ad1vIW1jZKMNZSJy2S6EXmG91suWcdG9grmB5oTG0DQWvuuKB9hntwTOl7nYwDlbHs97tL4RPcw7c8AxxKiPTzjNVv30K+bynwnJ4DPp88+aesTwiit9+/Wb2aybuP0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Futjb47b; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756460177;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZqS4Bkc3I0NVeANvpIab5dENRqxqrs5p3VIvl6dIMa8=;
-	b=Futjb47bvfN1NaRx2DU4rEPHdS6Y3sdfaMaRIQzRuffBDPfbcvMGg5aH5fBDMRZ9CmKX4P
-	T+kcXZjVqRrXvfTSeIFTB63wj+vg0l9XAa5voS0Y5li2Tt4XPF50QW3OyQn4X6h5RtpN8s
-	P4oEZ2MDRoQH/Ovh/5MXX+ZW+XyuvB8=
-Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com
- [209.85.221.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-641-ZxPlTQQwMqGrs5uV2jSu6Q-1; Fri, 29 Aug 2025 05:36:15 -0400
-X-MC-Unique: ZxPlTQQwMqGrs5uV2jSu6Q-1
-X-Mimecast-MFC-AGG-ID: ZxPlTQQwMqGrs5uV2jSu6Q_1756460174
-Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-543b5b67fd6so2676837e0c.0
-        for <ceph-devel@vger.kernel.org>; Fri, 29 Aug 2025 02:36:14 -0700 (PDT)
+	s=arc-20240116; t=1756502966; c=relaxed/simple;
+	bh=hV78b/+JhSlZkaNyoJ0dw59qNlc4TBxbCEcPm5DhfUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oFkSici/uypVTLz8pJqTp2QBvzoCEpzjoYcKyP9Pk512ZwMsHA2v7TSRouWspAfPMUfmw64GnosDLo0W5BYueABLwPVg2vsDIUQcZGNFSbscXh3WNYCZ66PoYo59SQ9dse2wK8VIski6b9WsJhUp8HHdCKkr0p5ZOB9SSbvmlBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=mV1k6mT2; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-72199d5a30aso15336397b3.3
+        for <ceph-devel@vger.kernel.org>; Fri, 29 Aug 2025 14:29:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1756502963; x=1757107763; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rxWMp4YUoI/SPFDj6FZN1x6cHgl9fGez73Zz5i+2+aU=;
+        b=mV1k6mT2kLW4yyUop4sg0oTa7WuYlKJ5udrynsGjwc/ZQ5impSCQFjW3c83Y+pgIIg
+         ObjDyqV0e15koW/7QgjsgDI//brx5OIk2DfS/TJ+i2AkuBjoqdHjn6HEdJH0Wat10LaI
+         NUWeP4abPsYmmEGoFuhXcDv8W20NpD6M02vfg5DOBdVRKHDnxq5J9H/u9ik9LFGrKQ+6
+         N5rfJKdibDeQl1WEhUtjhCWAaVt9oDSdgXQoPdWQFAwoX9f6IpqmzF935EtVuTvDVklQ
+         l9Jfn8Jj/CxuriWW6Wrrzj8Sw+n/jEzz/TQg1HIyWR6zyqYpXRTmo3w5wcxBEXdAYkh2
+         yLXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756460174; x=1757064974;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZqS4Bkc3I0NVeANvpIab5dENRqxqrs5p3VIvl6dIMa8=;
-        b=pghM5so8YNOgkealnSIUvPk1GuUx61wvJ5wguaOF4MKyDBvpMASMHwdZmvCoUqtqG4
-         Tkq7FXNwPpWpWu8UoPrTD9FygpkI2V0nmTlmxPZUa7uqJUO8cgbsLiMg66tTgn7CZMJJ
-         HUeGCa4dZO6c9J4BSRG1JRGq06c3Kj7GbRjtDdhOswlvEE4R1IAt+u6OBEHa+P+cOSN3
-         SggJZ539J1KFwyKnntnkfrv/bzmN9zkvyJoNXUpKYBG/9Jg9Rqev7Ba7taxg7O5cHlfb
-         Yoc/ayHMXs1vEX+Mllebjo2AaR4XuBTxrPhtZG7iSbcth2TdSPguQKKDzr+1te7r5xDz
-         52ug==
-X-Gm-Message-State: AOJu0YyACAvTUSnmzR1NNM0HhcPLFMHcL5U+AYBrihlcwUnEjXiPwYSl
-	ZklwofgCOhhh7L+mK9+92/vWCQpSXURiwkCoudD5oFO2I6lF9Nu8OsrWCE1kgzjAuTv0tMJTgWh
-	0BfxzE8MwG7PI1rQR/rr7uyZ8eJKtF+3zh/JbXHYIG9BzS2K+xg670rM3RoqwiVJapc4xv4XhRM
-	tpw7zo1uk6m6iqVWhPPkQ4MK+5jv7DRPrzmZNDag==
-X-Gm-Gg: ASbGncurIx4NMG+A2/rEm5WEOKAbzBwSlZDCa3jAKPTT2Jk7PCigjPghAyj5jrg+ovD
-	Wgl7Ln7CBVz0mvc2at20Vs/j+GgPI09MSrAv212kymNLWwKSbiqN0KIwXRN66hM0mzHf/BNcnr6
-	ohO5ExBdWNcM9ceepLZ0xG1J+ZIBfneKgYuv6QuVM=
-X-Received: by 2002:a05:6122:801a:20b0:544:9147:52 with SMTP id 71dfb90a1353d-54491470524mr301445e0c.5.1756460174396;
-        Fri, 29 Aug 2025 02:36:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE1iToO96wAeCdOEEwKrA8/gDyY87Iy/xg2/A0fn48S5IH+AgPRuSVKQE9N7BA4e2+T0JB5rtS1xZVbrS33GkA=
-X-Received: by 2002:a05:6122:801a:20b0:544:9147:52 with SMTP id
- 71dfb90a1353d-54491470524mr301435e0c.5.1756460174080; Fri, 29 Aug 2025
- 02:36:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1756502963; x=1757107763;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rxWMp4YUoI/SPFDj6FZN1x6cHgl9fGez73Zz5i+2+aU=;
+        b=b9CRGIElzAilTZRGesL+95W5dsXhnKRh8kIPkYtzAsduGWeS5gd9AL4UVvEWEvvneV
+         PiG0EcsxABiAMXJWg9stsvyPp/7CSYRpqlz2ZM6HIorQGADfM3+fvBi56bjRLj3oEizF
+         rYN7hdV3U2s/34x8AIMGUm4VYAPBdWblxJ26UVnrnsgc72Qwavs9GKzcovsuKxAADErG
+         FbS9EU6eO32O2ztkevwIcF72AwCdOiILfZv9pY5Kht69vR/r3+U2hztrQxBYg0p2TjrD
+         TgXdCxGQSvjS+9wQVttHr5INwBIU4bP16WPiJfih0R1R0pBNYkKwbpuLOW8Y7PmCk6Cb
+         LZbQ==
+X-Gm-Message-State: AOJu0Yxr74lIVovILMWTIMsjjfbYuvrGuj2VmCyjiPjQ16+azGJcY3bb
+	fpEWKAWEEwMI1ZEsPeVTgvx5oXMccabUw8Cim0tJ6a5jaIoEhWCZYujqDKKoLtvCmB11u4RSd5U
+	PHAA2lig=
+X-Gm-Gg: ASbGncsNutzfid8SWC8CNejBxuaK2qxaOjy4MKlH+Pd/dICIwKyHfM41ivt1UI2r220
+	u4oPEZYQv8efipldTuBAGP6eJuG1VDfQNbMWUgE9YN5DOlXKA7CUBfitm55z9V4WMMQlVYjElf6
+	+vwXlxo6BaTVxhf0896RzAJenDslueZ58VgIOw2K6b5o31y/Lhm1XcKA6wZaDyYRyx//jZl5IZe
+	RFDVhuW40PJ67nT7OWAj2NlS5trA3QyEkCjiOa+uDK07bwKTGnFxZ4vn/uQbaEtJtk5j4f6b9Uj
+	N9XjcCAOiEbW3sHEt+Ngi3b+2GO/qTSe+eyGIkj3yrjZr+sAq1/26O8I2JjY7adqNVjKb9sq/2t
+	EE9vt6ubJhw+DeeOtUHxjkJUlif9OSswEmUk+QaAe
+X-Google-Smtp-Source: AGHT+IE02pn+a3WHTvbWPCwPPFbpk7f3pdsrPjHknBBOH1cB2cQAaz5ypmDb+KWYVcf1Nx9T/vSuWA==
+X-Received: by 2002:a05:690c:648a:b0:720:c65:eee0 with SMTP id 00721157ae682-722764052b0mr1306607b3.19.1756502962836;
+        Fri, 29 Aug 2025 14:29:22 -0700 (PDT)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:ae3e:85f2:13ac:70a5])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-721c634891csm9891787b3.20.2025.08.29.14.29.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Aug 2025 14:29:22 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com,
+	vdubeyko@redhat.com
+Subject: [PATCH] ceph: cleanup in ceph_alloc_readdir_reply_buffer()
+Date: Fri, 29 Aug 2025 14:29:00 -0700
+Message-ID: <20250829212859.93312-2-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250828184441.83336-2-slava@dubeyko.com>
-In-Reply-To: <20250828184441.83336-2-slava@dubeyko.com>
-From: Alex Markuze <amarkuze@redhat.com>
-Date: Fri, 29 Aug 2025 12:36:01 +0300
-X-Gm-Features: Ac12FXxfvqq3UfxdkD_792piihHsjv5TRejTfdpLuR5jpE7R_lciWBSBxLK59NY
-Message-ID: <CAO8a2SgP6gK_jBkOFcMNbc4T5oWvnHi_OfM3QQ0JeUeLa8CGjQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: fix potential NULL dereferenced issue in ceph_fill_trace()
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
-	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Reviewed-by: Alex Markuze amarkuze@redhat.com
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-On Thu, Aug 28, 2025 at 9:45=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.c=
-om> wrote:
->
-> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
->
-> The Coverity Scan service has detected a potential dereference of
-> an explicit NULL value in ceph_fill_trace() [1].
->
-> The variable in is declared in the beggining of
-> ceph_fill_trace() [2]:
->
-> struct inode *in =3D NULL;
->
-> However, the initialization of the variable is happening under
-> condition [3]:
->
-> if (rinfo->head->is_target) {
->     <skipped>
->     in =3D req->r_target_inode;
->     <skipped>
-> }
->
-> Potentially, if rinfo->head->is_target =3D=3D FALSE, then
-> in variable continues to be NULL and later the dereference of
-> NULL value could happen in ceph_fill_trace() logic [4,5]:
->
-> else if ((req->r_op =3D=3D CEPH_MDS_OP_LOOKUPSNAP ||
->             req->r_op =3D=3D CEPH_MDS_OP_MKSNAP) &&
->             test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags) &&
->              !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
-> <skipped>
->      ihold(in);
->      err =3D splice_dentry(&req->r_dentry, in);
->      if (err < 0)
->          goto done;
-> }
->
-> This patch adds the checking of in variable for NULL value
-> and it returns -EINVAL error code if it has NULL value.
->
-> v2
-> Alex Markuze suggested to add unlikely macro
-> in the checking condition.
->
-> [1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIs=
-sue=3D1141197
-> [2] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L15=
-22
-> [3] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L16=
-29
-> [4] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L17=
-45
-> [5] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/inode.c#L17=
-77
->
-> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> cc: Alex Markuze <amarkuze@redhat.com>
-> cc: Ilya Dryomov <idryomov@gmail.com>
-> cc: Ceph Development <ceph-devel@vger.kernel.org>
-> ---
->  fs/ceph/inode.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index fc543075b827..8ef6b3e561cf 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -1739,6 +1739,11 @@ int ceph_fill_trace(struct super_block *sb, struct=
- ceph_mds_request *req)
->                         goto done;
->                 }
->
-> +               if (unlikely(!in)) {
-> +                       err =3D -EINVAL;
-> +                       goto done;
-> +               }
-> +
->                 /* attach proper inode */
->                 if (d_really_is_negative(dn)) {
->                         ceph_dir_clear_ordered(dir);
-> @@ -1774,6 +1779,12 @@ int ceph_fill_trace(struct super_block *sb, struct=
- ceph_mds_request *req)
->                 doutc(cl, " linking snapped dir %p to dn %p\n", in,
->                       req->r_dentry);
->                 ceph_dir_clear_ordered(dir);
-> +
-> +               if (unlikely(!in)) {
-> +                       err =3D -EINVAL;
-> +                       goto done;
-> +               }
-> +
->                 ihold(in);
->                 err =3D splice_dentry(&req->r_dentry, in);
->                 if (err < 0)
-> --
-> 2.51.0
->
+The Coverity Scan service has reported potential issue
+in ceph_alloc_readdir_reply_buffer() [1]. If order could
+be negative one, then it expects the issue in the logic:
+
+num_entries = (PAGE_SIZE << order) / size;
+
+Technically speaking, this logic [2] should prevent from
+making the order variable negative:
+
+if (!rinfo->dir_entries)
+    return -ENOMEM;
+
+However, the allocation logic requires some cleanup.
+This patch makes sure that calculated bytes count
+will never exceed ULONG_MAX before get_order()
+calculation. And it adds the checking of order
+variable on negative value to guarantee that second
+half of the function's code will never operate by
+negative value of order variable even if something
+will be wrong or to be changed in the first half of
+the function's logic.
+
+[1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=1198252
+[2] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/mds_client.c#L2553
+
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Ceph Development <ceph-devel@vger.kernel.org>
+---
+ fs/ceph/mds_client.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 0f497c39ff82..d783326d6183 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2532,6 +2532,7 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds_request *req,
+ 	struct ceph_mount_options *opt = req->r_mdsc->fsc->mount_options;
+ 	size_t size = sizeof(struct ceph_mds_reply_dir_entry);
+ 	unsigned int num_entries;
++	u64 bytes_count;
+ 	int order;
+ 
+ 	spin_lock(&ci->i_ceph_lock);
+@@ -2540,7 +2541,11 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds_request *req,
+ 	num_entries = max(num_entries, 1U);
+ 	num_entries = min(num_entries, opt->max_readdir);
+ 
+-	order = get_order(size * num_entries);
++	bytes_count = (u64)size * num_entries;
++	if (bytes_count > ULONG_MAX)
++		bytes_count = ULONG_MAX;
++
++	order = get_order((unsigned long)bytes_count);
+ 	while (order >= 0) {
+ 		rinfo->dir_entries = (void*)__get_free_pages(GFP_KERNEL |
+ 							     __GFP_NOWARN |
+@@ -2550,7 +2555,7 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds_request *req,
+ 			break;
+ 		order--;
+ 	}
+-	if (!rinfo->dir_entries)
++	if (!rinfo->dir_entries || order < 0)
+ 		return -ENOMEM;
+ 
+ 	num_entries = (PAGE_SIZE << order) / size;
+-- 
+2.51.0
 
 
