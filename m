@@ -1,145 +1,187 @@
-Return-Path: <ceph-devel+bounces-3507-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3508-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645B0B4180A
-	for <lists+ceph-devel@lfdr.de>; Wed,  3 Sep 2025 10:10:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B2DB4181A
+	for <lists+ceph-devel@lfdr.de>; Wed,  3 Sep 2025 10:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4A011B219EC
-	for <lists+ceph-devel@lfdr.de>; Wed,  3 Sep 2025 08:10:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C09BD3BF73A
+	for <lists+ceph-devel@lfdr.de>; Wed,  3 Sep 2025 08:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC172E6CA0;
-	Wed,  3 Sep 2025 08:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740082E8896;
+	Wed,  3 Sep 2025 08:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LAmTNsU4"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NXyHSDiG"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F152E717C;
-	Wed,  3 Sep 2025 08:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38C02E62C3
+	for <ceph-devel@vger.kernel.org>; Wed,  3 Sep 2025 08:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756887016; cv=none; b=rnwnzwf+rwhvoUIBk4HVDiDRYsHl/qDwkJlmWls31fSgrvGJoqLPm5TlhJZo7HZN+K8xM+kfm30LHJwgNeNE77KKzyULSk3+qxrptwjALQzw4/RVSf8aARYMtPaYQrtffC1w23ftn5+/b0fXyQqyqGPmEImZAkTK5y3qu4BRrLc=
+	t=1756887096; cv=none; b=pTs1Zxk/aNWyVHr3mbyAecNmKRgLaz6ZfH8mLgMyrxhFD5BIcaTdexLN+wsycL1hAMGMEG+Zs5potBeJVYn2xOCmWwD929Eiq4lXYp21+vhY8AJzGj524eQLudZr6+CpgYPbEa6Wi8RImCS1Nm789ntkzaPEaY/Cjljdk0W2VrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756887016; c=relaxed/simple;
-	bh=VfaCq80owY5zLWJX+gDkWw66Sb+Orzm0ucUHP5iyN68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJ8kNJFORu95w66NPaOCElR95H7cxIpnIJZFI9cr2K5JBrZC7ndMnDOvu6r7uGf/K26WE3fDdF9X1kL/hUWmU/XSHg2BczV2BIv8BZFwJOibqLiQ6LY0qHDni8apF4nqoAeq8XIm/PNAW/v8RZNxpqNKyfzv+Te6Va7LcO2qwTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LAmTNsU4; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-329e47dfa3eso1412742a91.1;
-        Wed, 03 Sep 2025 01:10:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756887014; x=1757491814; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8nLTCkRe0AkcGEGb8s2DM+RZJeechQxS5KtsRb6Dd7o=;
-        b=LAmTNsU4QfA/pxLowxk3vQUyyQHQtMN/tB0tZfEiR8ZDHvuRkk9LSYxBzUs0UDJ4YL
-         hJghnr7pmaAZx1xDjFgFQEfZAqVaGY8VIGqe0+E6vFUnFHofq/+9axiv0qxkFJz2XOrt
-         pgWJlMrT5HeAmUQi16DWpJMmlcdFe/C7g1QJdZLa7d41Zupx1oLoT2dJ6c95/T7tOFQ0
-         6YuUwI3moYvyHHWsZvtETiP83ZHZOtMgzFmQ2nCThX7QRoIIdjKJOihMlUGvpBP6HET4
-         JO3J13L7ZWSXDoqa4pWhCrJM0IlvFwp+Imaue3iKIuw4anW98nOSH6N9dyJm97bTrl1G
-         hmLw==
+	s=arc-20240116; t=1756887096; c=relaxed/simple;
+	bh=yPPFHPVGkTfhQqnYgocV38mjxCEjrrdjnK5uTBkj6f8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F5HfUdn0HQ3g7Kw2ZFjmhwzFlEM0I2dsRWfofjb5qbB9x+FNMTtyxYzFSc5RKis1Pq/NsR58rI/27xsqHZ+N7B9lS7JHVIbzgW/oXTEY93Vxvwj9wg0Wr7Qfyd9D5RQ/V1Rpwi5bardgx2nXNnMXH2dADIsgHGAlPYlE5Np0qV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NXyHSDiG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1756887093;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AWbrsDPZF5rw/2MySsWvOtVkJCl17t5vDebsQXLakRA=;
+	b=NXyHSDiG2wFS1FpMfrbWBS/EB7K5MD32NcHkniVwJ1kO9MhaT1DVT1vaGfIM4dUyhZnPru
+	m5+JeLhagPvEE/XimMtH6B9lAGlMvtjJvKhyceHzkuaeGeTqpcY4hIEps+58d1TwK5JCSG
+	Av4smUpgUHqmw1Gkw1hZnsV5Bryi9ZI=
+Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com
+ [209.85.221.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-583-pOJc5ieVPUiLQSnUy84rvQ-1; Wed, 03 Sep 2025 04:11:32 -0400
+X-MC-Unique: pOJc5ieVPUiLQSnUy84rvQ-1
+X-Mimecast-MFC-AGG-ID: pOJc5ieVPUiLQSnUy84rvQ_1756887091
+Received: by mail-vk1-f200.google.com with SMTP id 71dfb90a1353d-53b1736edb9so6743487e0c.1
+        for <ceph-devel@vger.kernel.org>; Wed, 03 Sep 2025 01:11:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756887014; x=1757491814;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8nLTCkRe0AkcGEGb8s2DM+RZJeechQxS5KtsRb6Dd7o=;
-        b=OGStM9qo3rmQZ1WEBBdkL0bC84esAH1cnbxdAkKj5vHOIP5unFxr6NezwaPW72MiIW
-         KpW0hL89HidBTRJGImNreJESenuLa1p2JTvPF9PqdwVNN8lpc64u7/WObv0cPEC24QkA
-         ElISQVPG8L2nWekh0vH+MOe2Vz0F696DbYiPtFoMrU33iucUm2hGqYtJSPTLiK3JGBm+
-         BW0PRTMoInrkwmTgBD5MpewO6vMEjQVP0vQQ6aNoiWssxcOGgybCGxMx8IBi5UaeGwCm
-         3SKLkWo6cr8P5bTAWm0iPBbfVPb3Krm9DarTm+faZBCAEMeuKCmYM1G7+moSPadTdm4N
-         0/IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2xQvausUcgXMQLdL/zKNWgqueVLeG+i/yGLt5frn2QWE4yDKEwYACUDfC9dseACYQek0bdL2NNK6uzmQ1@vger.kernel.org, AJvYcCWbiF4Ch2oFJ3c/KiyyEVvWZMUJSk07PnICBQFyzKtr6XBdGjkx6CAYaK07eizGGDnaJiwdSXlE7j6J@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsaLRnim1pmsI5QXmlYY0THbLQxnrXsvRMoenWbiXjOviCAcs8
-	jCpwqZ/8rSaWaF9rSg9T8CP2P78Vz23zxU7prnaiuopmIAE5LiXQagv0uL2Sso9b
-X-Gm-Gg: ASbGnctii0fD2P6OQhBX70F/Ae+YxBlL4R6eYCs9ex8pLWpaNraNy70XFs6G4N1iuux
-	kt3hlvk3zBjNt7iUcKWl0gkSQ7WUl9RtslNHm6rcqr6bcZCSuDQBmuPM/51uUdD+tEboYMquuJ2
-	QPNg9K0gwmXvqWAu9Tmp58D1LPISLrEqfXBa9Pru/G9qSeskjVpDLsArJtMIpdTzQQWNIglRry9
-	I+2zQHP15En9Uz+9j9vyfXWexcMNMeyi6w59pzuOyNpIUqH5PzRDJhHC1ZxujcdW5PfOpt8ZZhf
-	Afds+ieZ6q3iTuJX2ftgONsN59JJxKTUedAggBgN/VBcdwIwx7xY7H0D6WmZLFWpfd9Su7oRHvY
-	/1JKt5IoINV9d7Jd5sij92Kb69bt5qujXDWU8yYoZNFcG1rs5TZrLEzVsFfsK
-X-Google-Smtp-Source: AGHT+IE8Tp+ko/yGOuPYB+iCHClScqH+Y6HDa2+oTz418oyuUhltMnIr5gMdAWkIiVssOpGt715qOQ==
-X-Received: by 2002:a17:90b:5865:b0:328:a89:3dc8 with SMTP id 98e67ed59e1d1-3281543cc5emr18706748a91.14.1756887013677;
-        Wed, 03 Sep 2025 01:10:13 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32b50a35ca0sm2491467a91.12.2025.09.03.01.10.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Sep 2025 01:10:13 -0700 (PDT)
-Date: Wed, 3 Sep 2025 16:10:10 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Luis Henriques <luis@igalia.com>
-Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-	"409411716@gms.tku.edu.tw" <409411716@gms.tku.edu.tw>,
-	Xiubo Li <xiubli@redhat.com>,
-	"idryomov@gmail.com" <idryomov@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
-Subject: Re: [PATCH] ceph: optimize ceph_base64_encode() with block processing
-Message-ID: <aLf34hrnwULGA+0m@visitorckw-System-Product-Name>
-References: <20250830132822.7827-1-409411716@gms.tku.edu.tw>
- <fce1adab2b450097edbcea3ec83420257997ec00.camel@ibm.com>
- <aLdcNhKrPXxaEUtm@visitorckw-System-Product-Name>
- <f4f33ae461e0f1cf2f28d1c22546bd67cd9c4da3.camel@ibm.com>
- <aLf0eJcvCj9zcn-g@igalia.com>
+        d=1e100.net; s=20230601; t=1756887091; x=1757491891;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AWbrsDPZF5rw/2MySsWvOtVkJCl17t5vDebsQXLakRA=;
+        b=ncSkYa0wFrwS8JmNm8+oqC8A6T3XzPpq3K4gtpfm2p6Cx4rBxEeomiEShvnzpH8HZ5
+         T4BGDn4ShAn84e91VkbtS43CBMlPoFUShg7NyA+5tiYK5S7Tx8ZzdOr0BPA4ACUX8vnY
+         vc5W4IU0Bkd74cOmzF7MzwlF3i/CiQIEhxMGI2oDeWV5Q4y27XjxIeP80R4dyRo1CLbD
+         lMjROGDk70eOp96k6SRJsIlqoZTwOT7zAJfwX/ttcrRXZtFLs7ahCoo3rA27OBF68qOL
+         LIb9Imht78sMFiC8IFzYhPCBnzUzPzcX2QBcfpJuDYzZ8zYA3YgD5C1AkdVfUyXERKSo
+         t57Q==
+X-Gm-Message-State: AOJu0Yx0g6VfLm0pIKvwpQN3HATTwXxuNsBAskRC5qXMPo4yI/au+0Wg
+	PZd8sFTah7FCgBe7Tc82mFR7cO9N35Kj1tS/Bax0z/0twbwE+d3aZAjJIFx5OzyTE41icKfiP3Y
+	pg6sBAObJoE3vAOgaEUkGhNNZYxKBxv4iFRzDLf/bL4OGUcuD4j+ovsuXjuSLHO0dywPuD9XOrq
+	EFUY1b02COp/+sfN6XEt2psiRjzB2ZLQ5Yw4JqQw==
+X-Gm-Gg: ASbGncu+VekY9/P0SP0J9phl6qLghEZA2G3JK7fCpidylfRQHv++y/nIABKJxApdaoR
+	iOMGPH11ruNSp9FeUPg5vDpVnmA6OdqtCQeoniDmWN0jZ0NUURUK+ffs2qAc/SXOppNMcb12PJB
+	bVyid0VtZZRJIj6vbe2pe3CVJbZ7a0wQFE7sTKg/zW
+X-Received: by 2002:a05:6102:2ace:b0:51f:66fc:53af with SMTP id ada2fe7eead31-52b1ca8bc34mr5404000137.34.1756887091466;
+        Wed, 03 Sep 2025 01:11:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFNvHtMHPVAafc4aTNTJCTpPkPmS0akJQxiG4M2z+jxVTI14cy7yMkFg6QtV2L/JKlMlIBUcv9RdqlgrQ6Z3lw=
+X-Received: by 2002:a05:6102:2ace:b0:51f:66fc:53af with SMTP id
+ ada2fe7eead31-52b1ca8bc34mr5403991137.34.1756887091163; Wed, 03 Sep 2025
+ 01:11:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aLf0eJcvCj9zcn-g@igalia.com>
+References: <20250902190844.125833-2-slava@dubeyko.com>
+In-Reply-To: <20250902190844.125833-2-slava@dubeyko.com>
+From: Alex Markuze <amarkuze@redhat.com>
+Date: Wed, 3 Sep 2025 11:11:20 +0300
+X-Gm-Features: Ac12FXwqnTvEhufT7NqXho7_gzKmdz5V3KCi9PNhaAIIdUHVlfJLCJRKfS2xYLU
+Message-ID: <CAO8a2SjMCTmwpSDRKE-_EuZt5AHn1gcH9CmZMn7V7ju4rt1sqQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: cleanup in ceph_alloc_readdir_reply_buffer()
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com, 
+	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com, 
+	vdubeyko@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 03, 2025 at 08:55:36AM +0100, Luis Henriques wrote:
-> On Tue, Sep 02, 2025 at 09:21:14PM +0000, Viacheslav Dubeyko wrote:
-> > On Wed, 2025-09-03 at 05:05 +0800, Kuan-Wei Chiu wrote:
-> > > On Tue, Sep 02, 2025 at 07:37:22PM +0000, Viacheslav Dubeyko wrote:
-> > > > On Sat, 2025-08-30 at 21:28 +0800, Guan-Chun Wu wrote:
-> > > > > Previously, ceph_base64_encode() used a bitstream approach, handling one
-> > > > > input byte at a time and performing extra bit operations. While correct,
-> > > > > this method was suboptimal.
-> > > > > 
-> > > > 
-> > > > Sounds interesting!
-> > > > 
-> > > > Is ceph_base64_decode() efficient then?
-> > > > Do we have something in crypto library of Linux kernel? Maybe we can use
-> > > > something efficient enough from there?
-> > > > 
-> > > Hi Viacheslav,
-> > > 
-> > > FYI, we already have base64 encode/decode implementations in
-> > > lib/base64.c. As discussed in another thread [1], I think we can put
-> > > the optimized version there and have users switch to call the library
-> > > functions.
-> > > 
-> > > [1]: https://lore.kernel.org/lkml/38753d95-8503-4b72-9590-cb129aa49a41@t-8ch.de/  
-> > > 
-> > > 
-> > 
-> > Sounds great! Generalized version of this algorithm is much better than
-> > supporting some implementation in Ceph code.
-> 
-> Please note that ceph can not use the default base64 implementation because
-> it uses the '_' character in the encoding, as explained in commit
-> 
->   64e86f632bf1 ("ceph: add base64 endcoding routines for encrypted names")
-> 
-> That's why it implements it's own version according to an IMAP RFC, which
-> uses '+' and ',' instead of '-' and '_'.
-> 
-Perhaps we could modify the API to allow users to provide a custom
-base64 table or an extra parameter to specify which RFC standard to use
-for encoding/decoding?
+Reviewed-by: Alex Markuze <amarkuze@redhat.com>
 
-Regards,
-Kuan-Wei
+On Tue, Sep 2, 2025 at 10:09=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.c=
+om> wrote:
+>
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+>
+> The Coverity Scan service has reported potential issue
+> in ceph_alloc_readdir_reply_buffer() [1]. If order could
+> be negative one, then it expects the issue in the logic:
+>
+> num_entries =3D (PAGE_SIZE << order) / size;
+>
+> Technically speaking, this logic [2] should prevent from
+> making the order variable negative:
+>
+> if (!rinfo->dir_entries)
+>     return -ENOMEM;
+>
+> However, the allocation logic requires some cleanup.
+> This patch makes sure that calculated bytes count
+> will never exceed ULONG_MAX before get_order()
+> calculation. And it adds the checking of order
+> variable on negative value to guarantee that second
+> half of the function's code will never operate by
+> negative value of order variable even if something
+> will be wrong or to be changed in the first half of
+> the function's logic.
+>
+> v2
+> Alex Markuze suggested to add unlikely() macro
+> for introduced condition checks.
+>
+> [1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIs=
+sue=3D1198252
+> [2] https://elixir.bootlin.com/linux/v6.17-rc3/source/fs/ceph/mds_client.=
+c#L2553
+>
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> cc: Alex Markuze <amarkuze@redhat.com>
+> cc: Ilya Dryomov <idryomov@gmail.com>
+> cc: Ceph Development <ceph-devel@vger.kernel.org>
+> ---
+>  fs/ceph/mds_client.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index 0f497c39ff82..992987801753 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -2532,6 +2532,7 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds=
+_request *req,
+>         struct ceph_mount_options *opt =3D req->r_mdsc->fsc->mount_option=
+s;
+>         size_t size =3D sizeof(struct ceph_mds_reply_dir_entry);
+>         unsigned int num_entries;
+> +       u64 bytes_count;
+>         int order;
+>
+>         spin_lock(&ci->i_ceph_lock);
+> @@ -2540,7 +2541,11 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_md=
+s_request *req,
+>         num_entries =3D max(num_entries, 1U);
+>         num_entries =3D min(num_entries, opt->max_readdir);
+>
+> -       order =3D get_order(size * num_entries);
+> +       bytes_count =3D (u64)size * num_entries;
+> +       if (unlikely(bytes_count > ULONG_MAX))
+> +               bytes_count =3D ULONG_MAX;
+> +
+> +       order =3D get_order((unsigned long)bytes_count);
+>         while (order >=3D 0) {
+>                 rinfo->dir_entries =3D (void*)__get_free_pages(GFP_KERNEL=
+ |
+>                                                              __GFP_NOWARN=
+ |
+> @@ -2550,7 +2555,7 @@ int ceph_alloc_readdir_reply_buffer(struct ceph_mds=
+_request *req,
+>                         break;
+>                 order--;
+>         }
+> -       if (!rinfo->dir_entries)
+> +       if (!rinfo->dir_entries || unlikely(order < 0))
+>                 return -ENOMEM;
+>
+>         num_entries =3D (PAGE_SIZE << order) / size;
+> --
+> 2.51.0
+>
+
 
