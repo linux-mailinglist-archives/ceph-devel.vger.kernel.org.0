@@ -1,214 +1,332 @@
-Return-Path: <ceph-devel+bounces-3516-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3517-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30284B43864
-	for <lists+ceph-devel@lfdr.de>; Thu,  4 Sep 2025 12:18:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1796B438A1
+	for <lists+ceph-devel@lfdr.de>; Thu,  4 Sep 2025 12:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B73117AB6F
-	for <lists+ceph-devel@lfdr.de>; Thu,  4 Sep 2025 10:17:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88C30162510
+	for <lists+ceph-devel@lfdr.de>; Thu,  4 Sep 2025 10:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE4C2FAC1E;
-	Thu,  4 Sep 2025 10:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C23A2EB854;
+	Thu,  4 Sep 2025 10:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BfR4sS3o"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ca9nmzxM"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798CA2F998A
-	for <ceph-devel@vger.kernel.org>; Thu,  4 Sep 2025 10:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C6522E3E9;
+	Thu,  4 Sep 2025 10:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756980764; cv=none; b=cfoYXVbCbp0jp5wtRbmSgyR7z/kp4GC/IVctby2Le0/BQgEGMkMflYqJalO1GIU+VXWL/8iZ7UBkuA6Tf5O5MSwxVRYIAvDm86nBGeYrdhyudLmpXAzFYDEL7vSGydOJzNEk5lsyWRJE4v3Doim+k2AQ8IIqoH2caj69PzEdBEg=
+	t=1756981462; cv=none; b=Zc8qdDAByucfYW6P8Xg/NussXPCLVr+l/8fF81osECKFRgZCfcPfyeYRd2z6Sevz8UJX2MQZ8KHS83on76bnOk2/ZDqUniH3ftrK6Naj66w+GE3XTvp9YlyCO2BgC9fGKVzkYfXowQLL7mQSsXVlK1xcpo6frpi4+8sZyIRbqnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756980764; c=relaxed/simple;
-	bh=+uMYP2uW1nW7hKYFC4QWMKbYzHHQg2YgG9k4JO4Cwac=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HNqPLbABsbf8ag4TuLa1XJMlT8UIQj+xVBs6ItMKxgV1Fy5JiNAnPxKXXexiGWF/TMgT8X02qlo11rR5PTMoru1xgBXR/BZUGGoeX1ronem8w6Qwm7vbtcuN8WZvOdfRB9AMmAjjNRQj1QmyIWQTsvatXILHDKxExWIiCd6Gx10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BfR4sS3o; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1756980761;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=UFmPjeed1+G8MbqZG8Hbk52yIxOOxNCzUZSme1htoZc=;
-	b=BfR4sS3oneBZylDy8vyEPOJY2ALsKAtqmw7zqUgzc3tNsohjeuCT5IQJ4RJ1EkZh5ilV8e
-	MHTz+8cGQWtOY6xTWPso4SzM0LUS1O8vw1l1CL7OIW1/FKYUZnp1RWa0jCF9S4W4OzIFXE
-	GqMMrSPCyddHRz/O2yJG4UmvUleW66E=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-98-tZMZKga6M5ucFwLDjxCjhQ-1; Thu, 04 Sep 2025 06:12:40 -0400
-X-MC-Unique: tZMZKga6M5ucFwLDjxCjhQ-1
-X-Mimecast-MFC-AGG-ID: tZMZKga6M5ucFwLDjxCjhQ_1756980760
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7ea01ed5d7cso92011385a.3
-        for <ceph-devel@vger.kernel.org>; Thu, 04 Sep 2025 03:12:40 -0700 (PDT)
+	s=arc-20240116; t=1756981462; c=relaxed/simple;
+	bh=c2gpxeWGrJmTuWMNi5PLcSU/Z+KrnMmz3jdOctjwprU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TtkZFx7V8egF2ojzQj/kXIgdr+ydnWqiIfKlbSlIZC/KYipiovUJBJlpMd2qvdSm80CdItmsUBAyKgPIsq7LiE/ZfJ9UBU0KDWDXEWoLqjI5LD81DVOHEa8O6R2/aI6bCLFJN3SMwVnCBfHchCA+PLglUG6w6O5P+u5s5rGOOwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ca9nmzxM; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b49cf1d4f6fso590727a12.3;
+        Thu, 04 Sep 2025 03:24:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1756981460; x=1757586260; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Fe9Vrd7TWrwfDgopYRzH6xudKvXJ+7N0vfpOqJW1Gs=;
+        b=Ca9nmzxMFXems4idKtLDG84YKKwnFISNQOJ8emxJAFkPQzK9StM2Z/Q97isenyVolt
+         wn4NBv1hDO/pyVWmh5UPnnEl/5W+xLdCHof7PLwhmUOKdF3fgNwJH8wc6b2W3bstW/Oo
+         Tj1TGVfDBSXp5bjlHI7rEH0OefipVBCJy2lARNZtl2U35iGIUGuTHGvLRzcJpf5gd8Kg
+         83sQECF2EvcrYsPgfxA0nizVHARIrT3zzpBRO7rge4Lm1r/u2yqjCwW1v0s3elQLPY9F
+         EOUY5GOgUda85k2e0LiIU7XQErQ3Hr5qW4KfyZG8bz7bCJGzQ2dnQkaIG0jdYSinrVTc
+         Qzqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756980760; x=1757585560;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UFmPjeed1+G8MbqZG8Hbk52yIxOOxNCzUZSme1htoZc=;
-        b=bpjn6cxSpcoIPFQhzQgUm7BWRPIAe33LFSTueLQHPEpPQI9c+3Bm8vjOP7OLGPaqLE
-         mjleJXeTxf14y/BQDhWYAPDUreAM1RSvHXRvxtHT0EAL0C49VQ16ktkkayDlG1Y4qqVU
-         LrtkteLNyYO9QAUAZma14lGouB1inAX0MfjgI98IVlu6b/hHYpoy9Xfeol7AL1R9X0j6
-         +hUQ5zkTBCKw0yaPXk9O7wknnfBNLaSvbKdPwBFsds6YIUbFOoX6JhLD4c5OEN/lAonZ
-         z0ZU9CsiICWxp0HTv+F932NPlfi594Ed+3B/zCJFs148oHGOasd2qB/bwk3WZ0LUPmHl
-         O4oQ==
-X-Gm-Message-State: AOJu0YyTQqcUyiYU6NsZBG8yPliHr3REW/SmxxxqN5MbOt+hueJaLYoW
-	yomF9KOzScZa1+gs5oUo8Llbl5OcDfrzzsyLDTy+i6/ZjyaHD8H/CByciGqRcrsDPCKmx9l1x8G
-	Qbtl/D2x79iHjlOq9m5NSdTI2YSXzrLqmRHIbez68oY7y+2Bqswcx3zk+8HF6T9ReYEGBc4/h9x
-	7m9WniV9hnQKK52oUPYdDJsoknMulMo7tFxsKNZr9MKBggdZzesg==
-X-Gm-Gg: ASbGnct6axZp+DLF2beRywnuG87exIONayfIbO7GL1SXUjtVoFyWu5634VfuGpv3dWL
-	dgWqWnWSaHeQoRdHLoWFpr84V0TxLgBLxUEmXFTkMALGn9udXtn1EarYvdif/h5SFz6AQUN5Y1m
-	oll8DLMR5IAgH5uIlkHrKIWdza3DZ0rw3DNsZwWyquX32wXy29I+/FvIGBz8LI04akXL6sW/gs6
-	Fh2GQ+tzu7MocPupb67RHrNwHOhjjKQLicdfZ+Lh6RGMK3iAqVm9gZrDnW6zwuIh4qekqoJx11c
-	yD0P/xH1AWJqBkWrK6bmFwz0IuwLi9SZ18d10uzqG5BOueaFJ9S9hOIdQkE4arNge9X/BhzLuQ=
-	=
-X-Received: by 2002:a05:620a:4546:b0:800:a501:a352 with SMTP id af79cd13be357-800a501a36dmr2440072285a.22.1756980759831;
-        Thu, 04 Sep 2025 03:12:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFL1gCgjDR/UJSPyS0pDCnJsbNgq3Th9S3r7HPQW0fM0NwOvfg+53mJUbtTccsFXLpcIYIZXg==
-X-Received: by 2002:a05:620a:4546:b0:800:a501:a352 with SMTP id af79cd13be357-800a501a36dmr2440067485a.22.1756980759198;
-        Thu, 04 Sep 2025 03:12:39 -0700 (PDT)
-Received: from cluster.. (4f.55.790d.ip4.static.sl-reverse.com. [13.121.85.79])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-80b105e1ce6sm231267385a.67.2025.09.04.03.12.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Sep 2025 03:12:38 -0700 (PDT)
-From: Alex Markuze <amarkuze@redhat.com>
-To: ceph-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Slava.Dubeyko@ibm.com,
-	idryomov@gmail.com,
-	Alex Markuze <amarkuze@redhat.com>
-Subject: [PATCH v2 2/2] ceph/inode: drop extra reference from ceph_get_reply_dir() in ceph_fill_trace()
-Date: Thu,  4 Sep 2025 10:12:34 +0000
-Message-Id: <20250904101234.1258643-1-amarkuze@redhat.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1756981460; x=1757586260;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8Fe9Vrd7TWrwfDgopYRzH6xudKvXJ+7N0vfpOqJW1Gs=;
+        b=n9QdqeZKo0/K2DLejSqVN+Hon74e7qgQoEl8ikCI/z/VSJtM7ts8SeJuvyDdjyTynZ
+         aRj/Cb7kzgDU/an6z5SFnG8zUb10fsxszUXxLLBdiEcapgxjn7ys51hPQUwA6KixtFZB
+         TI318227aNcjQ/CF6c2DYgQPlqaFZpkOswmMTIj4IYvsKNR0IiqB8n7aWfk0YHmTSSv9
+         Q2elSZ4zgre7oT/9ChsPkg1sogeyAkir82iUwgZA7AsheAdvc2a5bw1C9x0te6o4BreV
+         GOUR/ZTAQ50D75V8e4+WrIbmSj5ExLE55tIxe89BbbggJDbvhCr/zeFzlDNetqtwQx2H
+         K1IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUH0do78B6Q0FpC8bq4eoF/Qwe5YKd2MOSQB0Pwybps83b5Aiil+4bzRncWat66v3iKfFQNRCskNp/LuD4=@vger.kernel.org, AJvYcCW+3RfRpeUBZlovbHIb0C1Xs+SuLGFO7m31uMa7/fh5oZKjXiLoZqhyF6BMU1ojRfyQH2Q53EZZq4+F6sY9@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR3v5tOQbU7/9TV10jbhZURDGWaA8XPLJMPRHvyecRMi/pAgSo
+	HHRpcBGwrFY/pXmPXnNKm2DeNtIvHXfVEe7wPpraiKqMgY7L32qsasmOLuzfttRpqsY/MuFXqqw
+	bgS8EQHZh5hIZWvIaWEnXJCbTrf3+J9aznZbt
+X-Gm-Gg: ASbGncsL8s147Pgch7gjMp2TOVpWHFLYf07lJVG+mwLrcASYgFqYqoYGHdFvOiXv/qP
+	GPHxutNLu3zUm5WPJ8nkJ2RE5lDlLASj2bVl1rs6BN1PrqI0xmNbHIB3jocs+Q3tFj1k6upgiMM
+	Zd1KjY9vsyLzr/7UxJV0C/dqHLAFVtqLdTlB+kwVefY9zxNS2NBKcocTeTG2L5LP1fXSAW4lXz8
+	wiu2DY=
+X-Google-Smtp-Source: AGHT+IH9VpJBoSfgQBCfvbGtEx4wYfgn64e9slTSFU2ij5LeTLT1TqslheTZVnmVXilTg/N3w6YIGcjf5Bbu/LkEWFo=
+X-Received: by 2002:a17:903:1b0e:b0:24c:b69f:e4ce with SMTP id
+ d9443c01a7336-24cb69ffb36mr43092035ad.11.1756981460256; Thu, 04 Sep 2025
+ 03:24:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250731190227.16187-1-ebiggers@kernel.org>
+In-Reply-To: <20250731190227.16187-1-ebiggers@kernel.org>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Thu, 4 Sep 2025 12:24:08 +0200
+X-Gm-Features: Ac12FXy0ozdf-dNaaNLVwpGZ5ILF_7vcxieASaQ3Bfv0DQ4Tdi_TYnNZHpVReFg
+Message-ID: <CAOi1vP9QRWKoQuYHynTXuupJ=VHhLLtN3s2FE6a+gG6gvrA6SQ@mail.gmail.com>
+Subject: Re: [PATCH] libceph: Use HMAC-SHA256 library instead of crypto_shash
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ceph_get_reply_dir() may return a different, referenced inode when r_parent is stale and the parent directory lock is not held.
-ceph_fill_trace() used that inode but failed to drop the reference when it differed from req->r_parent, leaking an inode reference.
+On Thu, Jul 31, 2025 at 9:03=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> =
+wrote:
+>
+> Use the HMAC-SHA256 library functions instead of crypto_shash.  This is
+> simpler and faster.
+>
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> ---
+>  include/linux/ceph/messenger.h |  4 +-
+>  net/ceph/Kconfig               |  3 +-
+>  net/ceph/messenger_v2.c        | 77 ++++++++++------------------------
+>  3 files changed, 26 insertions(+), 58 deletions(-)
+>
+> diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenge=
+r.h
+> index 1717cc57cdacd..4b49592a738fc 100644
+> --- a/include/linux/ceph/messenger.h
+> +++ b/include/linux/ceph/messenger.h
+> @@ -1,9 +1,10 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  #ifndef __FS_CEPH_MESSENGER_H
+>  #define __FS_CEPH_MESSENGER_H
+>
+> +#include <crypto/sha2.h>
+>  #include <linux/bvec.h>
+>  #include <linux/crypto.h>
+>  #include <linux/kref.h>
+>  #include <linux/mutex.h>
+>  #include <linux/net.h>
+> @@ -410,11 +411,12 @@ struct ceph_connection_v2_info {
+>
+>         struct ceph_frame_desc in_desc;
+>         struct ceph_msg_data_cursor in_cursor;
+>         struct ceph_msg_data_cursor out_cursor;
+>
+> -       struct crypto_shash *hmac_tfm;  /* post-auth signature */
+> +       struct hmac_sha256_key hmac_key;  /* post-auth signature */
+> +       bool hmac_key_set;
+>         struct crypto_aead *gcm_tfm;  /* on-wire encryption */
+>         struct aead_request *gcm_req;
+>         struct crypto_wait gcm_wait;
+>         struct ceph_gcm_nonce in_gcm_nonce;
+>         struct ceph_gcm_nonce out_gcm_nonce;
+> diff --git a/net/ceph/Kconfig b/net/ceph/Kconfig
+> index 0aa21fcbf6ece..ea60e3ef08343 100644
+> --- a/net/ceph/Kconfig
+> +++ b/net/ceph/Kconfig
+> @@ -4,12 +4,11 @@ config CEPH_LIB
+>         depends on INET
+>         select CRC32
+>         select CRYPTO_AES
+>         select CRYPTO_CBC
+>         select CRYPTO_GCM
+> -       select CRYPTO_HMAC
+> -       select CRYPTO_SHA256
+> +       select CRYPTO_LIB_SHA256
+>         select CRYPTO
+>         select KEYS
+>         default n
+>         help
+>           Choose Y or M here to include cephlib, which provides the
+> diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+> index 5483b4eed94e1..c54c8b5a65261 100644
+> --- a/net/ceph/messenger_v2.c
+> +++ b/net/ceph/messenger_v2.c
+> @@ -707,11 +707,11 @@ static int setup_crypto(struct ceph_connection *con=
+,
+>         unsigned int noio_flag;
+>         int ret;
+>
+>         dout("%s con %p con_mode %d session_key_len %d con_secret_len %d\=
+n",
+>              __func__, con, con->v2.con_mode, session_key_len, con_secret=
+_len);
+> -       WARN_ON(con->v2.hmac_tfm || con->v2.gcm_tfm || con->v2.gcm_req);
+> +       WARN_ON(con->v2.hmac_key_set || con->v2.gcm_tfm || con->v2.gcm_re=
+q);
+>
+>         if (con->v2.con_mode !=3D CEPH_CON_MODE_CRC &&
+>             con->v2.con_mode !=3D CEPH_CON_MODE_SECURE) {
+>                 pr_err("bad con_mode %d\n", con->v2.con_mode);
+>                 return -EINVAL;
+> @@ -721,26 +721,12 @@ static int setup_crypto(struct ceph_connection *con=
+,
+>                 WARN_ON(con->v2.con_mode !=3D CEPH_CON_MODE_CRC);
+>                 WARN_ON(con_secret_len);
+>                 return 0;  /* auth_none */
+>         }
+>
+> -       noio_flag =3D memalloc_noio_save();
+> -       con->v2.hmac_tfm =3D crypto_alloc_shash("hmac(sha256)", 0, 0);
+> -       memalloc_noio_restore(noio_flag);
+> -       if (IS_ERR(con->v2.hmac_tfm)) {
+> -               ret =3D PTR_ERR(con->v2.hmac_tfm);
+> -               con->v2.hmac_tfm =3D NULL;
+> -               pr_err("failed to allocate hmac tfm context: %d\n", ret);
+> -               return ret;
+> -       }
+> -
+> -       ret =3D crypto_shash_setkey(con->v2.hmac_tfm, session_key,
+> -                                 session_key_len);
+> -       if (ret) {
+> -               pr_err("failed to set hmac key: %d\n", ret);
+> -               return ret;
+> -       }
+> +       hmac_sha256_preparekey(&con->v2.hmac_key, session_key, session_ke=
+y_len);
+> +       con->v2.hmac_key_set =3D true;
+>
+>         if (con->v2.con_mode =3D=3D CEPH_CON_MODE_CRC) {
+>                 WARN_ON(con_secret_len);
+>                 return 0;  /* auth_x, plain mode */
+>         }
+> @@ -791,42 +777,30 @@ static int setup_crypto(struct ceph_connection *con=
+,
+>                con_secret + CEPH_GCM_KEY_LEN + CEPH_GCM_IV_LEN,
+>                CEPH_GCM_IV_LEN);
+>         return 0;  /* auth_x, secure mode */
+>  }
+>
+> -static int ceph_hmac_sha256(struct ceph_connection *con,
+> -                           const struct kvec *kvecs, int kvec_cnt, u8 *h=
+mac)
+> +static void ceph_hmac_sha256(struct ceph_connection *con,
+> +                            const struct kvec *kvecs, int kvec_cnt,
+> +                            u8 hmac[SHA256_DIGEST_SIZE])
+>  {
+> -       SHASH_DESC_ON_STACK(desc, con->v2.hmac_tfm);  /* tfm arg is ignor=
+ed */
+> -       int ret;
+> +       struct hmac_sha256_ctx ctx;
+>         int i;
+>
+> -       dout("%s con %p hmac_tfm %p kvec_cnt %d\n", __func__, con,
+> -            con->v2.hmac_tfm, kvec_cnt);
+> +       dout("%s con %p hmac_key_set %d kvec_cnt %d\n", __func__, con,
+> +            con->v2.hmac_key_set, kvec_cnt);
+>
+> -       if (!con->v2.hmac_tfm) {
+> +       if (!con->v2.hmac_key_set) {
+>                 memset(hmac, 0, SHA256_DIGEST_SIZE);
+> -               return 0;  /* auth_none */
+> +               return;  /* auth_none */
+>         }
+>
+> -       desc->tfm =3D con->v2.hmac_tfm;
+> -       ret =3D crypto_shash_init(desc);
+> -       if (ret)
+> -               goto out;
+> -
+> -       for (i =3D 0; i < kvec_cnt; i++) {
+> -               ret =3D crypto_shash_update(desc, kvecs[i].iov_base,
+> -                                         kvecs[i].iov_len);
+> -               if (ret)
+> -                       goto out;
+> -       }
+> -
+> -       ret =3D crypto_shash_final(desc, hmac);
+> -
+> -out:
+> -       shash_desc_zero(desc);
+> -       return ret;  /* auth_x, both plain and secure modes */
+> +       /* auth_x, both plain and secure modes */
+> +       hmac_sha256_init(&ctx, &con->v2.hmac_key);
+> +       for (i =3D 0; i < kvec_cnt; i++)
+> +               hmac_sha256_update(&ctx, kvecs[i].iov_base, kvecs[i].iov_=
+len);
+> +       hmac_sha256_final(&ctx, hmac);
+>  }
+>
+>  static void gcm_inc_nonce(struct ceph_gcm_nonce *nonce)
+>  {
+>         u64 counter;
+> @@ -1453,21 +1427,18 @@ static int prepare_auth_request_more(struct ceph_=
+connection *con,
+>  }
+>
+>  static int prepare_auth_signature(struct ceph_connection *con)
+>  {
+>         void *buf;
+> -       int ret;
+>
+>         buf =3D alloc_conn_buf(con, head_onwire_len(SHA256_DIGEST_SIZE,
+>                                                   con_secure(con)));
+>         if (!buf)
+>                 return -ENOMEM;
+>
+> -       ret =3D ceph_hmac_sha256(con, con->v2.in_sign_kvecs,
+> -                              con->v2.in_sign_kvec_cnt, CTRL_BODY(buf));
+> -       if (ret)
+> -               return ret;
+> +       ceph_hmac_sha256(con, con->v2.in_sign_kvecs, con->v2.in_sign_kvec=
+_cnt,
+> +                        CTRL_BODY(buf));
+>
+>         return prepare_control(con, FRAME_TAG_AUTH_SIGNATURE, buf,
+>                                SHA256_DIGEST_SIZE);
+>  }
+>
+> @@ -2458,14 +2429,12 @@ static int process_auth_signature(struct ceph_con=
+nection *con,
+>         if (con->state !=3D CEPH_CON_S_V2_AUTH_SIGNATURE) {
+>                 con->error_msg =3D "protocol error, unexpected auth_signa=
+ture";
+>                 return -EINVAL;
+>         }
+>
+> -       ret =3D ceph_hmac_sha256(con, con->v2.out_sign_kvecs,
+> -                              con->v2.out_sign_kvec_cnt, hmac);
+> -       if (ret)
+> -               return ret;
+> +       ceph_hmac_sha256(con, con->v2.out_sign_kvecs, con->v2.out_sign_kv=
+ec_cnt,
+> +                        hmac);
+>
+>         ceph_decode_need(&p, end, SHA256_DIGEST_SIZE, bad);
+>         if (crypto_memneq(p, hmac, SHA256_DIGEST_SIZE)) {
+>                 con->error_msg =3D "integrity error, bad auth signature";
+>                 return -EBADMSG;
+> @@ -3812,14 +3781,12 @@ void ceph_con_v2_reset_protocol(struct ceph_conne=
+ction *con)
+>
+>         con->v2.con_mode =3D CEPH_CON_MODE_UNKNOWN;
+>         memzero_explicit(&con->v2.in_gcm_nonce, CEPH_GCM_IV_LEN);
+>         memzero_explicit(&con->v2.out_gcm_nonce, CEPH_GCM_IV_LEN);
+>
+> -       if (con->v2.hmac_tfm) {
+> -               crypto_free_shash(con->v2.hmac_tfm);
+> -               con->v2.hmac_tfm =3D NULL;
+> -       }
+> +       memzero_explicit(&con->v2.hmac_key, sizeof(con->v2.hmac_key));
+> +       con->v2.hmac_key_set =3D false;
 
-Keep the directory inode in a local and iput() it at function end if it does not match req->r_parent.
+Hi Eric,
 
-Signed-off-by: Alex Markuze <amarkuze@redhat.com>
----
- fs/ceph/inode.c | 30 +++++++++++++++++++-----------
- 1 file changed, 19 insertions(+), 11 deletions(-)
+Since we have hmac_key_set anyway, could the call to memzero_explicit()
+be conditioned on it?
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 470ee595ecf2..cffa2cd7b530 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -1584,6 +1584,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 	struct ceph_vino tvino, dvino;
- 	struct ceph_fs_client *fsc = ceph_sb_to_fs_client(sb);
- 	struct ceph_client *cl = fsc->client;
-+	struct inode *parent_dir = NULL;
- 	int err = 0;
- 
- 	doutc(cl, "%p is_dentry %d is_target %d\n", req,
-@@ -1601,9 +1602,13 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 		 * r_parent may be stale, in cases when R_PARENT_LOCKED is not set,
- 		 * so we need to get the correct inode
- 		 */
--		struct inode *dir = ceph_get_reply_dir(sb, req->r_parent, rinfo);
--		if (dir) {
--			err = ceph_fill_inode(dir, NULL, &rinfo->diri,
-+		parent_dir = ceph_get_reply_dir(sb, req->r_parent, rinfo);
-+		if (unlikely(IS_ERR(parent_dir))) {
-+			err = PTR_ERR(parent_dir);
-+			goto done;
-+		}
-+		if (parent_dir) {
-+			err = ceph_fill_inode(parent_dir, NULL, &rinfo->diri,
- 					      rinfo->dirfrag, session, -1,
- 					      &req->r_caps_reservation);
- 			if (err < 0)
-@@ -1612,14 +1617,14 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 			WARN_ON_ONCE(1);
- 		}
- 
--		if (dir && req->r_op == CEPH_MDS_OP_LOOKUPNAME &&
-+		if (parent_dir && req->r_op == CEPH_MDS_OP_LOOKUPNAME &&
- 		    test_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags) &&
- 		    !test_bit(CEPH_MDS_R_ABORTED, &req->r_req_flags)) {
- 			bool is_nokey = false;
- 			struct qstr dname;
- 			struct dentry *dn, *parent;
- 			struct fscrypt_str oname = FSTR_INIT(NULL, 0);
--			struct ceph_fname fname = { .dir	= dir,
-+			struct ceph_fname fname = { .dir	= parent_dir,
- 						    .name	= rinfo->dname,
- 						    .ctext	= rinfo->altname,
- 						    .name_len	= rinfo->dname_len,
-@@ -1628,10 +1633,10 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 			BUG_ON(!rinfo->head->is_target);
- 			BUG_ON(req->r_dentry);
- 
--			parent = d_find_any_alias(dir);
-+			parent = d_find_any_alias(parent_dir);
- 			BUG_ON(!parent);
- 
--			err = ceph_fname_alloc_buffer(dir, &oname);
-+			err = ceph_fname_alloc_buffer(parent_dir, &oname);
- 			if (err < 0) {
- 				dput(parent);
- 				goto done;
-@@ -1640,7 +1645,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 			err = ceph_fname_to_usr(&fname, NULL, &oname, &is_nokey);
- 			if (err < 0) {
- 				dput(parent);
--				ceph_fname_free_buffer(dir, &oname);
-+				ceph_fname_free_buffer(parent_dir, &oname);
- 				goto done;
- 			}
- 			dname.name = oname.name;
-@@ -1659,7 +1664,7 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 				      dname.len, dname.name, dn);
- 				if (!dn) {
- 					dput(parent);
--					ceph_fname_free_buffer(dir, &oname);
-+					ceph_fname_free_buffer(parent_dir, &oname);
- 					err = -ENOMEM;
- 					goto done;
- 				}
-@@ -1674,12 +1679,12 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 				    ceph_snap(d_inode(dn)) != tvino.snap)) {
- 				doutc(cl, " dn %p points to wrong inode %p\n",
- 				      dn, d_inode(dn));
--				ceph_dir_clear_ordered(dir);
-+				ceph_dir_clear_ordered(parent_dir);
- 				d_delete(dn);
- 				dput(dn);
- 				goto retry_lookup;
- 			}
--			ceph_fname_free_buffer(dir, &oname);
-+			ceph_fname_free_buffer(parent_dir, &oname);
- 
- 			req->r_dentry = dn;
- 			dput(parent);
-@@ -1869,6 +1874,9 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 					    &dvino, ptvino);
- 	}
- done:
-+	/* Drop extra ref from ceph_get_reply_dir() if it returned a new inode */
-+	if (unlikely(!IS_ERR_OR_NULL(parent_dir) && parent_dir != req->r_parent))
-+		iput(parent_dir);
- 	doutc(cl, "done err=%d\n", err);
- 	return err;
- }
--- 
-2.34.1
+Thanks,
 
+                Ilya
 
