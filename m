@@ -1,114 +1,134 @@
-Return-Path: <ceph-devel+bounces-3518-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3519-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6034B438B8
-	for <lists+ceph-devel@lfdr.de>; Thu,  4 Sep 2025 12:28:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F43B4391E
+	for <lists+ceph-devel@lfdr.de>; Thu,  4 Sep 2025 12:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B431D168FE3
-	for <lists+ceph-devel@lfdr.de>; Thu,  4 Sep 2025 10:28:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7113D483B9B
+	for <lists+ceph-devel@lfdr.de>; Thu,  4 Sep 2025 10:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC052ED15F;
-	Thu,  4 Sep 2025 10:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC33A2D3EE1;
+	Thu,  4 Sep 2025 10:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bXcGOsDR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcZXvVZQ"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2E72135B9;
-	Thu,  4 Sep 2025 10:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AB313B5AE;
+	Thu,  4 Sep 2025 10:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1756981691; cv=none; b=qznWt/2l7UFxbl5fJzVGAGzxlZXGgkVXwL6niCfS58SWz/MOJbbBGyLWo6+m6VJZduMOuxTETDnUExSDM0HtlWq6xpjeHdWZq1PvT9eu81Cu5mFgjntGWnLvpvCDFRo5PVTOqEfkBAtE2AMUNh7VPrzdfOG/4k1Kk4rWe9D1muo=
+	t=1756982760; cv=none; b=nR4l0RNhtxvJCWHv/NK0V3MLlN3z+QStdBDvSXklKnNRxhyY61qCbinxTvca2AVETzkGj4+esGbxwtstGCLMp+8+GrGclQltyFJ1BrO+zHlblBeXiYh6U1Gh4N5VHX5CauccY0xZnbilv2aEyJkngmX/gMq6bgNPf3t8PnztdDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1756981691; c=relaxed/simple;
-	bh=NRzH55jONxH+rCjNDk211Letjrdg5CgZVJ2sebEPB4U=;
+	s=arc-20240116; t=1756982760; c=relaxed/simple;
+	bh=MPUjHFlTdbieZ7QdRWGUV5AExD6awTtz6i3IwwWE+LA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sjVpEp/3r2F5BDUxEdEkCOS5PyhPmEVXVnDUiwDFyrtpMQ9uNazTSu9b+Cpg9b+ijkUqj8qc1eKlbCEGxLHCVU3vV4ZnQgrrL6nFGW3Ecem/yO/T4e7CxJ01bfLkc/2EvZVpYfNhbP3mXWvp5ThqIAjcaPlKNl/QCwwW2f7B+qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bXcGOsDR; arc=none smtp.client-ip=209.85.214.171
+	 To:Cc:Content-Type; b=G+hzBhV4AwSCWzkUKUg1oyMi7fgJAfigNjYBxcksOAhItY68K22+k8if6kExNFLgPux8GZYmWn63UcjAKv9Df8U4FiIn+pG1XvUUmF9Bp/pcS1pEqyGXrJmqY/DPPTMaRGdrxLiAa/EOsJzCYvRV4eiVeJExLY7jaJQr9DiDQAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NcZXvVZQ; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24c784130e6so10750385ad.3;
-        Thu, 04 Sep 2025 03:28:10 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7725fb32e1bso1020967b3a.1;
+        Thu, 04 Sep 2025 03:45:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1756981690; x=1757586490; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1756982758; x=1757587558; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JB6NwnF428v+yfjdc9D/K3OP6jAS1mel0lhGpjrU8is=;
-        b=bXcGOsDRX12IGHIZjBtW2zPhmYjGpqF9Jz6I+xn7A+jnSNoEam6XUc8kdm8fn81xJO
-         TjNFs+wPtW+gkxr/gwp0WU6c77d6z6oMoFCwekbfRwmrbsA3/29FdudBelhdVR0OIW4d
-         9aKPsnz/k3NSopgmoBTL2I4duggdwXrf+tf/eV9FwgR5RT2rgsBK7tytRlnU1uPh7zMR
-         JzixIrsUzuHpEpb/hf9mp1KAIjKtiriR/ufBz1V5q+C84I02KzPANch3NncNvjnek6Uw
-         oCzA/dVmXaaj/AWEfLQ+xKdc+723iFYEmoFb2UkHq/mRG2UdcveGurIQ0GLibpn4bdug
-         YuLw==
+        bh=1SCRhDwaQOzRQIc0c0iIQrCD/f9DriLrJWRg8T3EfRk=;
+        b=NcZXvVZQLpzCa/Uv24QmqicgMrCA2NRXAjaBl1wzguxX1tFhUsksDI7AivcIeul+kQ
+         L/W+d5wcxZ3IojAlRSLFdnm15djb4CkGdLavD3zIaootMYuXcgXYz8e0+Lylnxg69ALy
+         duJA4Vyy39MvPqwlRO7IaKbS9bFZzyxlUnzUzyHeUzVFhr/mr11KhAMhmvJHK8iJgB0e
+         +1Z6kSyO32BsEF8Eeg8GS8fulH+Q/fzgewcAe2kzbTCWPy666d5x+z4uhOjGzIp8G1mG
+         po0Z4ZDQ7Ui5KjKpgIleOPbnaWLjXJ6joisBDjx7zjzQL2gE0VEWPAXVfzIsbPNt2XK6
+         kNZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1756981690; x=1757586490;
+        d=1e100.net; s=20230601; t=1756982758; x=1757587558;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JB6NwnF428v+yfjdc9D/K3OP6jAS1mel0lhGpjrU8is=;
-        b=c8x0HHjcm/QKfFniOKDaGtQkke+doSzlHMOxHSfEPBBPg8j3K8jVeXtzHzpZwmz+NU
-         Ey7Zy/OSJQphaviCThsjH3p2lgTeTAo1TRDB7nioPzgiqllDWcPRlrdd8F2NhoqLssNa
-         WMAJ43Y/EoMF0LUBC8vCCOtHqK/Y8n9VBnQxzpq93lMxZ4glSEiw4ympM/Spf/j6G9KL
-         dmVspfYgyDfweU6oc9ZXbAd1mKxM1oJNkDh3J958V6n5Z+yuq0BEidxSCUrURXg7JL/m
-         p/nX7pBL1js71ojpPV30Eu/qWgsfIMWHupX7m3uiciY6L71u7pXNM9nuVZmV1h0EMqKn
-         hOyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUpyj6ZcTnpvXP7u+V6bmXsfY5y6hpANGjOprlHU+x6Jd/JBRb3nBgQLAKitM4BIRo5vF0oWe5ZRBS2TZL9@vger.kernel.org, AJvYcCVnMX5xsS/Mtm0ndXaVrN0H7bvISfVes5yltSZir6qN2GntBw/Ko2SldaLNIJq0vF7GQmLPDlm5Xd5AmLI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLIOalmxafgBjoVr/88iBrJUhhNf91MG1bhuhYGLynp//bIM1y
-	FxcFdMsevjuBdYdAnqeV7XuR2e7wloKnVUjDzKitvYwFLNLzsBHu2gWSkfC9IhW5YGGH1XCOBGe
-	LVQxKAVJbxFzJo8VtauD7Ew2O5+GEZrQ=
-X-Gm-Gg: ASbGncvLOCPyE+3lUl3uGHP/1GLcPRm6HNmvJEPQCFLvHr33xyn2BOuAljMOrYceHYx
-	0KyymrAkdqQF38cw7jGdsc0cvb2Ena15uREirzd4aZwJa+hfpO3t9rbe2ucjMdDZxcuP57XSwG5
-	DvUsu/CBPHn39+iT8C6g2K04SNTGHC6dYJP5goGMOyeFUSxdtpEJKWhAoojfcNfnulP3PFnofmu
-	pQBlCa7aE7Pe3zmlg==
-X-Google-Smtp-Source: AGHT+IFaYFkEtDVz7Q2KPdDxYXNvVJPsCmyx5FmMtsCw7+ohSf3tqFm1nqPR9XzUqGCY0agzxRySD4GwkV0gpUuGCJY=
-X-Received: by 2002:a17:902:e5c9:b0:24b:24dc:91a7 with SMTP id
- d9443c01a7336-24b24dcc751mr99772375ad.45.1756981689787; Thu, 04 Sep 2025
- 03:28:09 -0700 (PDT)
+        bh=1SCRhDwaQOzRQIc0c0iIQrCD/f9DriLrJWRg8T3EfRk=;
+        b=WHubvV0Mds3bUYG7Iuh2S6LgBIfA4j8+qIPzv0n/4BRsvGBcvTC0pwo7/Xq0wpJFut
+         6u+fwsbTqkDJHRlhuLNJBz9rzrfrDX0HurqbLtGLq44t8fmCrI5POmr8JeeULbpX2VAr
+         8fbvT6xiuLUPD/6FbxQJ7BV6zTwc5bmpwK0Z+uBRdqP7B7DdtHdWGJkIouoW0+nFMFw3
+         30UE2Kggw2nLL4swZQz3YRX+zEO4kSfVLbqYlLI6ndyO+2jHv0Mkw/X7hLLgEy1YMfzq
+         VgQQH9t5/l9GzJu9/540ZHkR3P6FPRTv32XFtvhkOVaTQsAOlDkWSGQ67X/vy0WP1wal
+         sBsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWP3No6Qxsz04iokxZLfsw6T9vudhNDxP16SUgC8FS5micdEIjChvkrJYkk7PxcpfyDu2eVzJvcO3nDbYBk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFPuHHMUlhaIBRxH3UC/TtcKv3ol6iu9y3uytDOXqzdXqZbhch
+	45GvQKUB02kdg9MlGWZEsZmo4O2wHyBFggrTcZhAGndb8chl7jQz4FXQXu24huP6YIS5z9qgBys
+	GK5+Yj14CLyz9EFaDluUpGN/i5LFOlpf9+iUb
+X-Gm-Gg: ASbGncunvtB6jRHta7y+dDgLhFhKDKYnwpDO8J5IUHJGTomUa8tFrmJe7CsVFrHh25Q
+	V3ll0aBLI56gyv5Rst/nzR4ztw+/XoF3Ke7noBDkDC49qSC2Ff82J7ekmvoPBc3Md5aXVzHj1BK
+	ppRpF1oaE6DUDoBxXj58I+etDRCSNJ0JuJ84yDJWzo8gnBjIyeUKNPzJJJjWKQEW1ODuMsNNi/D
+	5Ozpx0=
+X-Google-Smtp-Source: AGHT+IF59zH2WgDB6HBgQikxu9GD5try7UuoPGvAebnaHS8rgS5yy68P60dU4XI8CDcYUG0rfwwma1dQ2XO7O3vFKzQ=
+X-Received: by 2002:a05:6300:8002:b0:243:f86b:3868 with SMTP id
+ adf61e73a8af0-243f87ac2cfmr16515853637.48.1756982758482; Thu, 04 Sep 2025
+ 03:45:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731190227.16187-1-ebiggers@kernel.org> <20250904023110.GB1345@sol>
-In-Reply-To: <20250904023110.GB1345@sol>
+References: <20250902200957.126211-2-slava@dubeyko.com>
+In-Reply-To: <20250902200957.126211-2-slava@dubeyko.com>
 From: Ilya Dryomov <idryomov@gmail.com>
-Date: Thu, 4 Sep 2025 12:27:57 +0200
-X-Gm-Features: Ac12FXz-pyeV3U00wIVRC3GGv63KNkeqEaAkMIZIbstLZ_i8PafVhipUNItEUdY
-Message-ID: <CAOi1vP_7=hXNhD+f9BV8WP+5cyr6RhMridOa86EE7=nKJN92DA@mail.gmail.com>
-Subject: Re: [PATCH] libceph: Use HMAC-SHA256 library instead of crypto_shash
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 4 Sep 2025 12:45:46 +0200
+X-Gm-Features: Ac12FXz0QF7y-TvbkxXiUkz2-PTO1-BpZKSlHWRWC5zYF7UDv-zJABChXGAPvcg
+Message-ID: <CAOi1vP8Og5phUw3LO3Fv3yfnSSx3FhuSmj7j4pHrF00t-MGS9w@mail.gmail.com>
+Subject: Re: [PATCH] ceph: add in MAINTAINERS bug tracking system info
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	pdonnell@redhat.com, amarkuze@redhat.com, Slava.Dubeyko@ibm.com, 
+	vdubeyko@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 4, 2025 at 4:32=E2=80=AFAM Eric Biggers <ebiggers@kernel.org> w=
-rote:
+On Tue, Sep 2, 2025 at 10:10=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.c=
+om> wrote:
 >
-> On Thu, Jul 31, 2025 at 12:02:27PM -0700, Eric Biggers wrote:
-> > Use the HMAC-SHA256 library functions instead of crypto_shash.  This is
-> > simpler and faster.
-> >
-> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> > ---
-> >  include/linux/ceph/messenger.h |  4 +-
-> >  net/ceph/Kconfig               |  3 +-
-> >  net/ceph/messenger_v2.c        | 77 ++++++++++------------------------
-> >  3 files changed, 26 insertions(+), 58 deletions(-)
+> From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 >
-> Looks like this patch hasn't been applied yet.  Can it be taken through
-> the ceph tree?  Thanks,
+> CephFS kernel client depends on declaractions in
+> include/linux/ceph/. So, this folder with Ceph
+> declarations should be mentioned for CephFS kernel
+> client. Also, this patch adds information about
 
-Hi Eric,
+Hi Slava,
 
-I have just posted a small nit/question on the patch itself.  If you
-agree, I can make the edit and stage the patch later today.
+This argument can be extended to everything that falls under CEPH
+COMMON CODE (LIBCEPH) entry and then be applied to RBD as well.
+Instead of duplicating include/linux/ceph/ path, I'd suggest replacing
+Xiubo with yourself and/or Alex under LIBCEPH and CEPH entries so that
+you get CCed on all patches.  That would appropriately reflect the
+status quo IMO.
+
+> Ceph bug tracking system.
+>
+> Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> cc: Alex Markuze <amarkuze@redhat.com>
+> cc: Ilya Dryomov <idryomov@gmail.com>
+> cc: Ceph Development <ceph-devel@vger.kernel.org>
+> ---
+>  MAINTAINERS | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 6dcfbd11efef..70fc6435f784 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5625,6 +5625,7 @@ M:        Xiubo Li <xiubli@redhat.com>
+>  L:     ceph-devel@vger.kernel.org
+>  S:     Supported
+>  W:     http://ceph.com/
+> +B:     https://tracker.ceph.com/
+
+Let's add this for RADOS BLOCK DEVICE (RBD) entry too.
 
 Thanks,
 
