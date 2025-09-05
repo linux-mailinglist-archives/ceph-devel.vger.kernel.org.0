@@ -1,121 +1,151 @@
-Return-Path: <ceph-devel+bounces-3527-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3528-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8608FB46253
-	for <lists+ceph-devel@lfdr.de>; Fri,  5 Sep 2025 20:35:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F5AB46416
+	for <lists+ceph-devel@lfdr.de>; Fri,  5 Sep 2025 22:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E9FB5E0465
-	for <lists+ceph-devel@lfdr.de>; Fri,  5 Sep 2025 18:35:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 27C274E2A9E
+	for <lists+ceph-devel@lfdr.de>; Fri,  5 Sep 2025 20:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9A426FA5A;
-	Fri,  5 Sep 2025 18:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDD128488D;
+	Fri,  5 Sep 2025 20:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="gF0ZI/5t"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="3F3aTWeV"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E087C249F9
-	for <ceph-devel@vger.kernel.org>; Fri,  5 Sep 2025 18:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2890121B905
+	for <ceph-devel@vger.kernel.org>; Fri,  5 Sep 2025 20:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757097319; cv=none; b=S0FZqtLt/D/ZYzCDng2JgvTLwQE18WYKN4eGgNVNLksx8wx+I7XZ3LYlkvnpBphALuS0aKbEALc6ixtilnbboy/uToynxNkK0sK8PS2ZbRVPaICJTdqEI4EnOjqCMDj/6kj7yAOFKO9FkMcD16NjKFKp4o1sLX1d4HeFyfE+mwE=
+	t=1757102510; cv=none; b=VUQ17Ges93DNWwaIYaCdPfDkt8emqxG5RlKPBE+cejKlKm2YM2fSIPLcXg1jZEES85HB5FhvJO23OmKbLNuQruQK0sLk+6/Zd1+YZARtTOymV9wZa75rFhMrVKQ5ReWrwKIUyOBf11UOsM6f3/CF4VtTXdkDF/MUe3NUpSBTW48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757097319; c=relaxed/simple;
-	bh=KRLb9ZnkF4pEhXEUSBJPf6M16zLAfnT4g7wGxS2/IZE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tof3RH5RAaDTP4VK0JJVuRE7PFg0mkpqZi8xR01M2+6apQdqwSkuc+qE5yKzBvJ342KNtnmT/FiB5JnXbuxe8r49qi0bVAa5o3Cp3y448R3u/xjATADSsayaBNj/Lc6qBDBwtYhPU+YukP4CGc8UU3dHvLCDzQHwVY32FtOqO6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=gF0ZI/5t; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b04770a25f2so371347066b.2
-        for <ceph-devel@vger.kernel.org>; Fri, 05 Sep 2025 11:35:17 -0700 (PDT)
+	s=arc-20240116; t=1757102510; c=relaxed/simple;
+	bh=CIt2rudRtW4UBrSZeLFjRUpcL/34sCPSMHO4G+HzerI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L4DeIlrslDPKa0OvlpWHzgFLpQ06r39t6Ka7VGYwy3s/w+ZuQhB4LIUwsX96LyvXrAKsbY3pOYScQuK4sWUcC9+4bbVmwunMo/c5aRAHWossTaTu1KSHzIOzKitiQ8Zxjd6xoMDQSaIU3/AXppPVobW2dErVq2qQTKxyeREAXbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=3F3aTWeV; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-723ae0bb4e4so28928097b3.1
+        for <ceph-devel@vger.kernel.org>; Fri, 05 Sep 2025 13:01:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1757097316; x=1757702116; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KRLb9ZnkF4pEhXEUSBJPf6M16zLAfnT4g7wGxS2/IZE=;
-        b=gF0ZI/5t05ui/KNeP70q5M1ZmEhk4ju6Laq4nbTCTBM2vTW+gF45DpQhLCXCqNw5x2
-         tmKBVRncX6Vn5JLAv45QXeS+vQzRvJWzQiCvU5U1LyevzVg0kC1IbuwDO7i/4p0NZ0Q4
-         OhBX/XYz7AaHz2DC/dS+cZxTQHJn08f18F5svQGw9osegxfpvCDPmJDzk4HKqI8zL65S
-         VsL2gs3XE0p+rNmqjJ3zAbTtx+OvGCrnxZ0LPD6SZmHmHAZ588/JYmJQ10NFILrMCepT
-         pytBBNjS/9B+ImV84Tldrb4l1GFP2vM8AOaTfepnebiS40boqiDrakS4r44wtgul7wc0
-         UARA==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1757102505; x=1757707305; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jOy/Lx1hali3hqni7ugXsZX+qSqE1qh4LpVXkqYzo1w=;
+        b=3F3aTWeVRG9DQesHQ95dW/ZLjipg1N52Qoxfgnc8uk1S3x8ne6qRrPGapWfCDB2Mpe
+         /ckbbbTu1EJTh32mawJFf/zEVAr4UwxQMJ2mm9L+a+ZE7HQ3nmt0DyaonpDrqcgUIa0C
+         bN6NtVTj4GyDa5g4IqMQedCS/P2NsAJlh2e5DkaQq0OPXeG5NiqKaUP0pocUCasvSqQY
+         umwwgltqis3VwpLY0X+pWaQnr/rxJuYho81CeAV2nsuv+hhL0qlbIdXp8TN33KKYV6wc
+         b5STtHAH0ep6mymockMqm0Ezcf8jp2gN0g00ATux1X/889KvmyQ8DJfQFVGcH5nyDPPn
+         fqRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757097316; x=1757702116;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KRLb9ZnkF4pEhXEUSBJPf6M16zLAfnT4g7wGxS2/IZE=;
-        b=Qcj3dF/7HR05ZKoL5nBc6gpj+NvyxFZ8+R0pIPBEsttXh6b45uYDQRYuc0LDbeKIhF
-         zhAW6agTaiq7ihPivFV848xAkBmTA9O2LmEkNFPr+E0Kae9o3mQudsmt66ARjXZSy7Lg
-         WirfxD3TJIBRJYIgJJJr2vpLFDmWnpjXklr5MH69kCBS3hLQkKxmsiOeKw7NuL9L2MrC
-         4aQIS9z2WKdRM1TPYScS/KIfeoZOOj6eZdrUui/7Hn/Rq/PcaY9gNmUI6tZa+4E873JJ
-         rblJ3eDdwXhC86+JahnKSsJRNIYr5SoHWxHIdynbhh8xHIh+M8M1k3uuGJBSXmU2IEc9
-         uGYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlM8Mo9U1KwYoMJokZtN5RKhn7zMX4MsU+vCwS4pBjy/pM42p38i8iMH0ixFKwFMaZDjAN4jVowLIe@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVF1OSS9OPk1dnCHzdOpMeggi8DHgK5l3VoM2gnM6sz91RGdBY
-	LOAShDSyIujAC1exe4NQkhjuRAt31aVjkgVDDp04+fg77OSnBaDRJx2Evuft+33QkGy5TJKyOmk
-	ujCTgO1764pg7I7wVHw8HVDLERh9Dx466vgrkZzi/AA==
-X-Gm-Gg: ASbGncuHMuBcT7H1XEWMK0S6gjsnOdQt9/ibn50Dz038gULHWc3Hqauj+yzwMIR27OP
-	nTFXvJlvEcgBUKh7d/isdIFZp2Pi1w1v63jWNgNr6HNddM/9QkbHTNEpUMNWb3ryAWf54jDkumF
-	6tCxrnIXW8PSUPHWn62NYui7XrrKOp+n+oYCTPqQz7d4ZE0hJsq3zE1pxjvkwzWzg1zdb306e+O
-	eCI19STTGRy62Oqqj/HLHMSU/99V4XQYZBJKNH2z815PQacsz/OUee1SQ==
-X-Google-Smtp-Source: AGHT+IFM2GeY32KhIS5FtgWmgvnq0vzOyjWdw+oC8TH5aziQiwP7KgrJ3yKotRAZRwqa38zXBGqPyxV/r0ULShzUXzQ=
-X-Received: by 2002:a17:907:1c8c:b0:b04:563f:e120 with SMTP id
- a640c23a62f3a-b04563fe48fmr1484767066b.53.1757097316133; Fri, 05 Sep 2025
- 11:35:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757102505; x=1757707305;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jOy/Lx1hali3hqni7ugXsZX+qSqE1qh4LpVXkqYzo1w=;
+        b=vjNvtNbs1bvfN/XeCtxiAExRTSZNiF2ZDE+gKPOsPqhOTTthp2Es/UX0rUjzkRmEVy
+         BvebAc2yzhGxZqm0oZh+0GTB1vZX6MdoeGjTPh9NTmYc56kmOAOVBZk4XopE28+zpi7x
+         G+WWz8l0P7XiM8PQh/+ptiPIiesSeL1ZM6pW+PGU5/DbNI1ZQHaV/IOqfiwdXDV9mncY
+         WC6jGvdNUp0NeJM0tsFIawN5wq/ZjTzTx6BiEk+aOWpPfEOQWd/biphwwh/zOVHVrCDX
+         Sy+hxoUYZ12XYwGcHswaIvBJuoPq3BDV+pr/XAXP5AbQTos/ze96WO+IeOv3IUkdS0vX
+         vJ+A==
+X-Gm-Message-State: AOJu0YzYpTkgrnQL3mCy6XWl6Ko4GwtEcUzNoRNBkqxKLXDVp81EHSNd
+	eZPDWh9NuBkxLOmpIZUqpx51IqEv6Pgfv5amUrwg/q8POeje74Uz46wgH5JlceATyRlgwP3eiBK
+	tZcmfqFs=
+X-Gm-Gg: ASbGncuzvYyoZmxIX7i5QHWb66Nf5tOp86Cn60l+qd7EU3kaJmXTdvmnMELZ9xYYdAs
+	L13JEnla6l6bNyVuXc4+Aky6RV7MyXP6nfQ8qQIov+UsiBGQZ8Z+13T/AFWGfwdAigWjTjNBklB
+	SkM3Uc4LEqih6FimSBvXybTgcxJdOnJ8fQQjDqwuKJ4v1DYqwXQbQwm1cxuJnRmbCVjjsRjbZMH
+	/b7BKeCdzjsDHxd3LC50kaU83NnVAww9LEZeK2a/5z+eXChWcpmNJW6rgBUBOCQ27KV3qAFiODL
+	2MgCDKfDMHNy84gfj5FbR/XJ6McMi9095MvegqXjlzxeA0bul0JGTPLIfW9ZopDcbevfEuhOage
+	H4T4WOjZdxXcXSD5G1rea6mrcZxiedgxDrFvNPQBNo0PKbThLuu8=
+X-Google-Smtp-Source: AGHT+IEr/a6oBelU2QV3zVFEFZ3TC++egfhB+J+cNPqYIHA9Iy874iEk3OeK+W4CA42HPxHoko/Auw==
+X-Received: by 2002:a05:690c:620d:b0:722:875f:5ba7 with SMTP id 00721157ae682-727f6b21ff2mr1152567b3.39.1757102505276;
+        Fri, 05 Sep 2025 13:01:45 -0700 (PDT)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:2479:21e9:a32d:d3ee])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a834c9adsm32360857b3.28.2025.09.05.13.01.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Sep 2025 13:01:44 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com,
+	vdubeyko@redhat.com
+Subject: [RFC PATCH 00/20] add comments in include/linux/ceph/*.h
+Date: Fri,  5 Sep 2025 13:00:48 -0700
+Message-ID: <20250905200108.151563-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250827181708.314248-1-max.kellermann@ionos.com>
- <791306ab6884aa732c58ccabd9b89e3fd92d2cb0.camel@ibm.com> <CAOi1vP_pCbVJFG4DqLWGmc6tfzcHvOADt75rryEyaMjtuggcUA@mail.gmail.com>
- <9af154da6bc21654135631d1b5040dcdb97d9e3f.camel@ibm.com> <CAKPOu+8Eae6nXWPxV+BGLBVNwSu5dFEtbmo3geZi+uprkisMbg@mail.gmail.com>
- <25a072e4691ec1ec56149c7266825cee4f82dee3.camel@ibm.com> <CAKPOu+9MLQ5rH-eQ6SuiXTzFCEhmaZ9s-nKKQ4vpUCyvc9ho8g@mail.gmail.com>
- <b3d2da1abe05087f52a8e770bd8eac04c46b3370.camel@ibm.com>
-In-Reply-To: <b3d2da1abe05087f52a8e770bd8eac04c46b3370.camel@ibm.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Fri, 5 Sep 2025 20:35:04 +0200
-X-Gm-Features: Ac12FXzHHlOx1CsaHx5BR6NbVbREi1ylMDBin7Wxfqwc3b_z5BTef3YpbT5tW9I
-Message-ID: <CAKPOu+-HZQa_p3JUXeQY+KZL1yAFK29A6PD2KartKTT6zA785w@mail.gmail.com>
-Subject: Re: [PATCH] fs/ceph/addr: always call ceph_shift_unused_folios_left()
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>, 
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, Xiubo Li <xiubli@redhat.com>, 
-	Alex Markuze <amarkuze@redhat.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "idryomov@gmail.com" <idryomov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 5, 2025 at 7:11=E2=80=AFPM Viacheslav Dubeyko <Slava.Dubeyko@ib=
-m.com> wrote:
->
-> On Fri, 2025-09-05 at 05:41 +0200, Max Kellermann wrote:
-> > Thanks, I'm glad you could verify the bug and my fix. In case this
-> > wasn't clear: you saw just a warning, but this is usually a kernel
-> > crash due to NULL pointer dereference. If you only got a warning but
-> > no crash, it means your test VM does not use transparent huge pages
-> > (no huge_zero_folio allocated yet). In a real workload, the kernel
-> > would have crashed.
->
-> I would like to reproduce the crash. But you've share only these steps.
-> And it looks like that it's not the complete recipe. So, something was mi=
-ssing.
-> If you could share more precise explanation of steps, it will be great.
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-The email you just cited explains the circumstances that are necessary
-for the crash to occur.
+We have a lot of declarations and not enough good
+comments on it.
 
-Let me repeat it for you: you have to ensure that huge_zero_folio gets
-allocated (or else the code that dereferences the NULL pointer and
-crashes gets skipped).
+Claude AI generated comments for CephFS metadata structure
+declarations in include/linux/ceph/*.h. These comments
+have been reviewed, checked, and corrected.
 
-Got it now?
+Viacheslav Dubeyko (20):
+  ceph: add comments to metadata structures in auth.h
+  ceph: add comments to metadata structures in buffer.h
+  ceph: add comments in ceph_debug.h
+  ceph: add comments to declarations in ceph_features.h
+  ceph: rework comments in ceph_frag.h
+  ceph: add comments to metadata structures in ceph_fs.h
+  ceph: add comments in ceph_hash.h
+  ceph: add comments to metadata structures in cls_lock_client.h
+  ceph: add comments to metadata structures in libceph.h
+  ceph: add comments to metadata structures in messenger.h
+  ceph: add comments to metadata structures in mon_client.h
+  ceph: add comments to metadata structures in msgpool.h
+  ceph: add comments to metadata structures in msgr.h
+  ceph: add comments to metadata structures in osd_client.h
+  ceph: add comments to metadata structures in osdmap.h
+  ceph: add comments to metadata structures in pagelist.h
+  ceph: add comments to metadata structures in rados.h
+  ceph: add comments to metadata structures in string_table.h
+  ceph: add comments to metadata structures in striper.h
+  ceph: add comments to metadata structures in types.h
+
+ include/linux/ceph/auth.h            |  59 +-
+ include/linux/ceph/buffer.h          |   9 +-
+ include/linux/ceph/ceph_debug.h      |  25 +-
+ include/linux/ceph/ceph_features.h   |  47 +-
+ include/linux/ceph/ceph_frag.h       |  24 +-
+ include/linux/ceph/ceph_fs.h         | 792 ++++++++++++++++++---------
+ include/linux/ceph/ceph_hash.h       |  21 +-
+ include/linux/ceph/cls_lock_client.h |  34 +-
+ include/linux/ceph/libceph.h         |  50 +-
+ include/linux/ceph/messenger.h       | 449 +++++++++++----
+ include/linux/ceph/mon_client.h      |  93 +++-
+ include/linux/ceph/msgpool.h         |  15 +-
+ include/linux/ceph/msgr.h            | 162 +++++-
+ include/linux/ceph/osd_client.h      | 407 ++++++++++++--
+ include/linux/ceph/osdmap.h          | 124 ++++-
+ include/linux/ceph/pagelist.h        |  13 +
+ include/linux/ceph/rados.h           |  91 ++-
+ include/linux/ceph/string_table.h    |  11 +
+ include/linux/ceph/striper.h         |  16 +
+ include/linux/ceph/types.h           |  14 +-
+ 20 files changed, 1907 insertions(+), 549 deletions(-)
+
+-- 
+2.51.0
+
 
