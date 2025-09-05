@@ -1,93 +1,90 @@
-Return-Path: <ceph-devel+bounces-3548-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3549-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F037B4643F
-	for <lists+ceph-devel@lfdr.de>; Fri,  5 Sep 2025 22:05:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4431B4654F
+	for <lists+ceph-devel@lfdr.de>; Fri,  5 Sep 2025 23:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0884188B3C2
-	for <lists+ceph-devel@lfdr.de>; Fri,  5 Sep 2025 20:05:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F678A44D30
+	for <lists+ceph-devel@lfdr.de>; Fri,  5 Sep 2025 21:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 256C7305940;
-	Fri,  5 Sep 2025 20:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5062F1FF4;
+	Fri,  5 Sep 2025 21:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="hlM+HBLh"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="QEqt2BR6"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2AE303A2F
-	for <ceph-devel@vger.kernel.org>; Fri,  5 Sep 2025 20:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E402F0681
+	for <ceph-devel@vger.kernel.org>; Fri,  5 Sep 2025 21:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757102543; cv=none; b=AoHS/BXFSxbJg8WQGRzpH3j0nyhmmx5kkvLVeWQkbmHH5CkOMsLVBrQVLqQ10cb8k5Z70PcpDFcKeexW4g/dwUfyTsoRppmhlSr2YYLniyXfTUruHTyfRGGs+dTtkfw/tprpz9+J4N8imnmxv8wXqzvvHARw26AOflL+ItcFKfE=
+	t=1757106941; cv=none; b=Qm8tsXcgekrIovSSlzXTWKA57lMazLatWCG/slhDtSfCaw9/7Bu06kGOm8UhYc7G0W4Z4nKppP6xsY3YvaMvAFg1Fbvke+1PM9yD6vSJDOJCvBU+4UBtWLKh2ES+FrHdBkujEld2855Nmxe73+RVeGo98tQ1YhMQSGRlcu1Sodg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757102543; c=relaxed/simple;
-	bh=elXegIfp06UvQ3ZBvL3K2a7cSQ/TfQ317ejtVGBqJMs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nmfbdBFJuzBTSEZrDPwoX4P1yyNYN3eoaKaSDELUAhKbNrZYjj7VzSglpnFLoLYJXiJX6qAkoJzBGe8h8UHL4N0nYz2jv8tEKr6QKSDttTWhHVeNT3fiPoLIVigYALc4HwGA/Zi0DfLyXq5f9r5VW/idbtcEILlDHPvAMi3yJJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=hlM+HBLh; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e96ff16fea1so2649918276.0
-        for <ceph-devel@vger.kernel.org>; Fri, 05 Sep 2025 13:02:22 -0700 (PDT)
+	s=arc-20240116; t=1757106941; c=relaxed/simple;
+	bh=ZbpTJpgq5eLZVl33raMdiFnvHNLuPpzwtxq8hWiMSh4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=InC/Edph4RrtoHW98oonibJumfILHc1GEgikKYtBQyKWOEcf/6BPftXEl+SMVp8NCPijGRMpIC3Hxh/UZFwWnaDbDoeqP8lNEx85bQ4Y4gpA69CHIalKN9DzTyo3cd/kBOIxWv+J1vyVMTTLRfzBmchQRArq0sI2qk2EeGhB83w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=QEqt2BR6; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b042cc3954fso450673866b.0
+        for <ceph-devel@vger.kernel.org>; Fri, 05 Sep 2025 14:15:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1757102541; x=1757707341; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SqXD0VXFoBYU6cJ8Lcdh6/Uq/24eOSrXykVwDRLc2Ss=;
-        b=hlM+HBLhyQLOK33F2JAKPy0AzmqZ53wDaAwOcx5TDXFvo73AaTSqzfz5OUaKWlCjQD
-         nouznFBzJURnT5UZGNBjh9bRynBui8nwmSGbkAItEN8dNYbC6jTfpipoLzOZwoWaRN/P
-         ZHGzkI+bdzuo9zJzYleZyrLtqz9z1dVRHxUJuDZAkTL4US7s8D8q0NR1hdTgqtFfVljJ
-         C+VPKKARyL+CSelctt8AXyghbC9h95qgSaWb5GRFm355/xDpPdMeEJWQYRPUZXLy8FDs
-         pbj/eUs0jLWuTEHo+yb87UXMZ2dtl3zTSa6G8iwQmgY7OVqvXt3+FeJr3TK6T0gB7oGm
-         WQhg==
+        d=ionos.com; s=google; t=1757106936; x=1757711736; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wo0Nm6QkVqDa5/FEJy5jxjvhuwrT2EEIYGSEnkzS3xU=;
+        b=QEqt2BR6/Y+P4loZL4Fxi4YgPMVPzPDPExdrMSbcCzjV+Li2LxmIWA1JRN9IRDDJ3H
+         STy7JFQnEmUgSpb6aa2g/JsGfyA+Abu1gFOLAnb9qTqmC0wJi7zXrxCj4MEaEiuMyeTJ
+         +xNSOUFn0lS4VoaDn0mLoju+Vrd5z1M0ouuJBTk8l+Z/BsVL43/1SPld+0M+CsMky1jl
+         8G2efjJGK6WylmPdsVcWlk6Zk/GmB84lhOpKw4OBd1nxE6Wl+9d7JZ2tN+S0ma06Phei
+         M/LgcdA/srbQm4l+tgGs6F0CvoKSjsCGC0o5yDwLI30hCoBCJ33HrgoWFhuzFSAxjszd
+         ouEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757102541; x=1757707341;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SqXD0VXFoBYU6cJ8Lcdh6/Uq/24eOSrXykVwDRLc2Ss=;
-        b=lr9V4rVvyhwio2dQAVuXS5/812ZQ/HmyQEeH7l5HHtjbxxi6NJpN9+X/alVJaXnxCy
-         hc2ByJ+Y7VErZ8BzNRK5QT8HAYvoSefsTQjh86UnOPJQv7sSk6o0HeJxtn8VklhX6VSK
-         2yLnKqIashLGnTl6f6NY3cm364PCgT6U/azK8o2vfuCma6JRgPTFk1gy6uHvXTx0/LUp
-         8qdUxIs0n5qABbbPHSiIVsn9UwwJMa99hDH014XLutstq5QZygaH0pZv9d0/U8Qqx3kl
-         BTJSdLo9oeqSGB2GdJ/FDLkZ5/ux7WrV2QMQOI/OBSAoxAU4jifbA+mj5nr6Upg5skOD
-         ji1w==
-X-Gm-Message-State: AOJu0Yw3+yu8YwXU2/C62RK4WldvnjmCFl8Tv0X8FCDyloSHhqdLUVs+
-	XQArovHHYZQTYrPbsfUehtZvR3swwrjTdFzGgYPUorXNOZnwziw18RNMFU1+gaxDGIncish9EBO
-	iQPdl8Bs=
-X-Gm-Gg: ASbGncvRBBNvv24tIwDmx1hAPLwZNwgd0bWiytMrbQUI0YjNmt459O736zbCSUK+KKz
-	9nCpKzVU+fjeUvQniyHP8fOYOPJX3BWemAqtSZLxvuwvOtUcaiDeUwBg333nhuMfIj5pjvN9H+2
-	K8M4Epbhecul6fP9d6589aZDckdvQREWuY3sPAMoHXyUil8I3FZ0c6QPk0R+BKzFboIwXzReTE2
-	tKWn3NwsElgM/twlFquQ4DmlG4lwbtFDMaIJg6EpwvdWfSCt+cCZ7So2eaVIejm4LEE78k4vapV
-	S82zEoshKgjE/9+5cQZ94JiTGTHn5pPQhobfVeMDJX13oyhe1JGqzPoR5s5nOLyqxAwlGPRW1GL
-	CBItOChW/SHEs+MFu6VDr96sDVPlFZv0OipFrKvCsTArjxsk3KOA=
-X-Google-Smtp-Source: AGHT+IF0RPvY2dcjsztligiYELPKSNmT6JTy56lcJSET5h1grWi9u8ykkmcx52gOkw15c48qJRX0yw==
-X-Received: by 2002:a05:690c:6485:b0:720:d27:5d0 with SMTP id 00721157ae682-727ef8d7f3amr1959347b3.0.1757102541016;
-        Fri, 05 Sep 2025 13:02:21 -0700 (PDT)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:2479:21e9:a32d:d3ee])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-723a834c9adsm32360857b3.28.2025.09.05.13.02.19
+        d=1e100.net; s=20230601; t=1757106936; x=1757711736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wo0Nm6QkVqDa5/FEJy5jxjvhuwrT2EEIYGSEnkzS3xU=;
+        b=TFpxz002PkA/G6idYV6TnCKipzlB7by327iXLbELbuo9n2/iJVk6mDXrEGGojaU2/0
+         SaLeO8OIRf0s8F/1IOQfFkRnSbL7b+vdIG5oYXrgJwEh+MolKJZ37EAt4vX4K1rj0g99
+         OepgIUefBTs+qeKVO4nIZQ5A1J/+Xn2VekIdCUUnKvdN/tmoX0De6hNnVR6aYSJFQdR3
+         MTafX1bxkXcsXQorrqICA1OZVumtTly8OmZRIYYlbH85AQTVTM+U+gD8JuQmEIMhNRm/
+         dNlIhOeIFqGTY8tud4Exrh90LPJLtRcD3zwdx3narbWldjiO3RtwVFDP4EuHWQA0wAo6
+         O+yg==
+X-Forwarded-Encrypted: i=1; AJvYcCVybnkWf3YlDAXdJ90H3Lgs9zndtX3wKdCb5pt0nD86fsZNCB92+fNGQpnEx3m/cVYyNcOEwr/jSRF9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5xVpOqjB5anrYG4w5anGR6pg9rmX3UKE5SUO4jrJoAeoOSMi+
+	Yu7jfjqdV/OH3iHmb+doeJnNRvb54JGCBbWBjjgR8FXPoJEtsX8vSmGGCuyy+/w+CyI=
+X-Gm-Gg: ASbGncuRbEJV5ZhOH7YwJVl2qivVVA9/7Q2AAcU5yA4OC/n01lvhudXu6TxnZzf6gXh
+	W4JVq1zS4XR2diKzmcW87wonUhFhaqdoBfI5NA/sPTdQ3vosM1IZu9+JbEIBBw+5bW0HtWx185H
+	iS0XB5w5JlQmvrJuCX6RAJwjeZvNMjNR+REPJbVVL8GogOPwH5sAo+9KHlUwdtEYyhaXq9Z1dMQ
+	zc047OcHowg12HVhQQw5Uq+LQdgGgWT0iY3Ql1HiEs745vnkiTefZv7M77PYGP6HsyAT9q9/usB
+	e8gk2vVlMpGiXCBHo/JK6/+ay9IdUXChUr1E1y94XTe/AK5VeluIkYXIfwPbWHGjsFLw1aq379u
+	2pYP75Mkrvm1lb1XeeBl4ymTxtOlOXwhmhDcLyex6jzyGcfQFKKz9WzN6K3om/8BeNiUzQnfTWr
+	85eCwCZEj97TgPWzQpwVpjtGqGd/4o8oLAJLRVgIJtkFfa
+X-Google-Smtp-Source: AGHT+IEI0UMFbxLDbFHi93Xgr79JgLgv6e0CgFXtb2r6z2caSDYapP71MxTt7L0Jmccte/7ICI7YVw==
+X-Received: by 2002:a17:907:3c92:b0:b04:1249:2b24 with SMTP id a640c23a62f3a-b04b1696062mr15691166b.37.1757106936248;
+        Fri, 05 Sep 2025 14:15:36 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f356800023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f35:6800:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b047373afcesm604498166b.57.2025.09.05.14.15.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Sep 2025 13:02:20 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
+        Fri, 05 Sep 2025 14:15:35 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: slava.dubeyko@ibm.com,
+	xiubli@redhat.com,
+	idryomov@gmail.com,
 	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com,
-	vdubeyko@redhat.com
-Subject: [RFC PATCH 20/20] ceph: add comments to metadata structures in types.h
-Date: Fri,  5 Sep 2025 13:01:08 -0700
-Message-ID: <20250905200108.151563-21-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250905200108.151563-1-slava@dubeyko.com>
-References: <20250905200108.151563-1-slava@dubeyko.com>
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] fs/ceph/dir: fix `i_nlink` underrun during async unlink
+Date: Fri,  5 Sep 2025 23:15:30 +0200
+Message-ID: <20250905211530.43296-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -96,61 +93,118 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+During async unlink, we drop the `i_nlink` counter before we receive
+the completion (that will eventually update the `i_nlink`) because "we
+assume that the unlink will succeed".  That is not a bad idea, but it
+races against deletions by other clients (or against the completion of
+our own unlink) and can lead to an underrun which emits a WARNING like
+this one:
 
-We have a lot of declarations and not enough good
-comments on it.
+ WARNING: CPU: 85 PID: 25093 at fs/inode.c:407 drop_nlink+0x50/0x68
+ Modules linked in:
+ CPU: 85 UID: 3221252029 PID: 25093 Comm: php-cgi8.1 Not tainted 6.14.11-cm4all1-ampere #655
+ Hardware name: Supermicro ARS-110M-NR/R12SPD-A, BIOS 1.1b 10/17/2023
+ pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+ pc : drop_nlink+0x50/0x68
+ lr : ceph_unlink+0x6c4/0x720
+ sp : ffff80012173bc90
+ x29: ffff80012173bc90 x28: ffff086d0a45aaf8 x27: ffff0871d0eb5680
+ x26: ffff087f2a64a718 x25: 0000020000000180 x24: 0000000061c88647
+ x23: 0000000000000002 x22: ffff07ff9236d800 x21: 0000000000001203
+ x20: ffff07ff9237b000 x19: ffff088b8296afc0 x18: 00000000f3c93365
+ x17: 0000000000070000 x16: ffff08faffcbdfe8 x15: ffff08faffcbdfec
+ x14: 0000000000000000 x13: 45445f65645f3037 x12: 34385f6369706f74
+ x11: 0000a2653104bb20 x10: ffffd85f26d73290 x9 : ffffd85f25664f94
+ x8 : 00000000000000c0 x7 : 0000000000000000 x6 : 0000000000000002
+ x5 : 0000000000000081 x4 : 0000000000000481 x3 : 0000000000000000
+ x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff08727d3f91e8
+ Call trace:
+  drop_nlink+0x50/0x68 (P)
+  vfs_unlink+0xb0/0x2e8
+  do_unlinkat+0x204/0x288
+  __arm64_sys_unlinkat+0x3c/0x80
+  invoke_syscall.constprop.0+0x54/0xe8
+  do_el0_svc+0xa4/0xc8
+  el0_svc+0x18/0x58
+  el0t_64_sync_handler+0x104/0x130
+  el0t_64_sync+0x154/0x158
 
-Claude AI generated comments for CephFS metadata structure
-declarations in include/linux/ceph/*.h. These comments
-have been reviewed, checked, and corrected.
+In ceph_unlink(), a call to ceph_mdsc_submit_request() submits the
+CEPH_MDS_OP_UNLINK to the MDS, but does not wait for completion.
 
-This patch adds comments for struct ceph_vino,
-struct ceph_cap_reservation in /include/linux/ceph/types.h.
+Meanwhile, between this call and the following drop_nlink() call, a
+worker thread may process a CEPH_CAP_OP_IMPORT, CEPH_CAP_OP_GRANT or
+just a CEPH_MSG_CLIENT_REPLY (the latter of which could be our own
+completion).  These will lead to a set_nlink() call, updating the
+`i_nlink` counter to the value received from the MDS.  If that new
+`i_nlink` value happens to be zero, it is illegal to decrement it
+further.  But that is exactly what ceph_unlink() will do then.
 
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-cc: Alex Markuze <amarkuze@redhat.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: Ceph Development <ceph-devel@vger.kernel.org>
+The WARNING can be reproduced this way:
+
+1. Force async unlink; only the async code path is affected.  Having
+   no real clue about Ceph internals, I was unable to find out why the
+   MDS wouldn't give me the "Fxr" capabilities, so I patched
+   get_caps_for_async_unlink() to always succeed.
+
+   (Note that the WARNING dump above was found on an unpatched kernel,
+   without this kludge - this is not a theoretical bug.)
+
+2. Add a sleep call after ceph_mdsc_submit_request() so the unlink
+   completion gets handled by a worker thread before drop_nlink() is
+   called.  This guarantees that the `i_nlink` is already zero before
+   drop_nlink() runs.
+
+The solution is to skip the counter decrement when it is already zero,
+but doing so without a lock is still racy (TOCTOU).  Since
+ceph_fill_inode() and handle_cap_grant() both hold the
+`ceph_inode_info.i_ceph_lock` spinlock while set_nlink() runs, this
+seems like the proper lock to protect the `i_nlink` updates.
+
+I found prior art in NFS and SMB (using `inode.i_lock`) and AFS (using
+`afs_vnode.cb_lock`).  All three have the zero check as well.
+
+Fixes: 2ccb45462aea ("ceph: perform asynchronous unlink if we have sufficient caps")
+Cc: stable@vger.kernel.org
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 ---
- include/linux/ceph/types.h | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ fs/ceph/dir.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/ceph/types.h b/include/linux/ceph/types.h
-index bd3d532902d7..beda96d2c872 100644
---- a/include/linux/ceph/types.h
-+++ b/include/linux/ceph/types.h
-@@ -13,17 +13,27 @@
- #include <linux/ceph/ceph_hash.h>
- 
- /*
-- * Identify inodes by both their ino AND snapshot id (a u64).
-+ * Virtual inode identifier metadata: Uniquely identifies an inode within
-+ * the CephFS namespace by combining the inode number with a snapshot ID.
-+ * This allows the same inode to exist in multiple snapshots simultaneously.
-  */
- struct ceph_vino {
-+	/* Inode number within the filesystem */
- 	u64 ino;
-+	/* Snapshot ID (CEPH_NOSNAP for head/live version) */
- 	u64 snap;
- };
- 
- 
--/* context for the caps reservation mechanism */
-+/*
-+ * Capability reservation context metadata: Tracks reserved capabilities
-+ * for atomic operations that require multiple caps. Prevents deadlocks
-+ * by pre-reserving the required capabilities before starting operations.
-+ */
- struct ceph_cap_reservation {
-+	/* Total number of capabilities reserved */
- 	int count;
-+	/* Number of reserved capabilities already consumed */
- 	int used;
- };
- 
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index 8478e7e75df6..67f04e23f78a 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1341,6 +1341,7 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
+ 	struct ceph_client *cl = fsc->client;
+ 	struct ceph_mds_client *mdsc = fsc->mdsc;
+ 	struct inode *inode = d_inode(dentry);
++	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_mds_request *req;
+ 	bool try_async = ceph_test_mount_opt(fsc, ASYNC_DIROPS);
+ 	struct dentry *dn;
+@@ -1427,7 +1428,19 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
+ 			 * We have enough caps, so we assume that the unlink
+ 			 * will succeed. Fix up the target inode and dcache.
+ 			 */
+-			drop_nlink(inode);
++
++			/*
++			 * Protect the i_nlink update with i_ceph_lock
++			 * to precent racing against ceph_fill_inode()
++			 * handling our completion on a worker thread
++			 * and don't decrement if i_nlink has already
++			 * been updated to zero by this completion.
++			 */
++			spin_lock(&ci->i_ceph_lock);
++			if (inode->i_nlink > 0)
++				drop_nlink(inode);
++			spin_unlock(&ci->i_ceph_lock);
++
+ 			d_delete(dentry);
+ 		} else {
+ 			spin_lock(&fsc->async_unlink_conflict_lock);
 -- 
-2.51.0
+2.47.2
 
 
