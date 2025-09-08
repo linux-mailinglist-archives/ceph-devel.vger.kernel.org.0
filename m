@@ -1,138 +1,119 @@
-Return-Path: <ceph-devel+bounces-3553-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3554-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DC2B46686
-	for <lists+ceph-devel@lfdr.de>; Sat,  6 Sep 2025 00:19:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15958B48891
+	for <lists+ceph-devel@lfdr.de>; Mon,  8 Sep 2025 11:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D29783AF32C
-	for <lists+ceph-devel@lfdr.de>; Fri,  5 Sep 2025 22:19:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990BE18967FC
+	for <lists+ceph-devel@lfdr.de>; Mon,  8 Sep 2025 09:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA32C2727FC;
-	Fri,  5 Sep 2025 22:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA4221C186;
+	Mon,  8 Sep 2025 09:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1EayQX1"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from swift.blarg.de (swift.blarg.de [138.201.185.127])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3B31D7995;
-	Fri,  5 Sep 2025 22:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=138.201.185.127
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2670828371;
+	Mon,  8 Sep 2025 09:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757110737; cv=none; b=WzoVh1qesMKgg9maxlxbNL3IrsbDTzRcZ+q0Cebn2BxKtElKq4KX2LqNOHNi3yyX5IULIePukqERotzEs+x/G802rTm07AjHTD7AKxAYhmkSuP1DIfxGXbj0hultezcLgDbXIPCvfV2XRBhLUOnhFgLr6DfFzeaeCU7ikQOYjx4=
+	t=1757323968; cv=none; b=uUg/3KykRLe58QoUbgqsXYBGLtoLkBiCB3PeECMrA2MHYJpERC9ZhT+EuRegTJJk61NV1PDzamk2YSElfrxtQlfsdy7VZ9zn8zvvtaNbxUgIPtfcZzxpSKzyEOMp6/R6W3i5GLNcxXSIYPXRZMYWD/cru9NbWI7y5bn6pMcFJj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757110737; c=relaxed/simple;
-	bh=mRZfHDJpq1cAATIN4Rfd7d+AbqOqAHjI9ZorsEgGci8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GDGjAUJYXRVf7ApRad/W0suBhGd5SHFbvazeKsovVa6CvNuj3sjbZHwVyOe7/ZFPa9dKUpWmXPCKMSpmEYI1ri3FEYNbhWSB5IJWEJLnp2SiPYfXUWTbaX1vB6cOzyYK4V2/y9aKfw91m1ECGuRPrP2fpfQmalbaDEQOVqgc4II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blarg.de; spf=pass smtp.mailfrom=blarg.de; arc=none smtp.client-ip=138.201.185.127
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blarg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=blarg.de
-Received: from swift.blarg.de (swift.blarg.de [IPv6:2a01:4f8:c17:52a8::2])
-	(Authenticated sender: max)
-	by swift.blarg.de (Postfix) with ESMTPSA id 6B60B40C96;
-	Sat,  6 Sep 2025 00:18:53 +0200 (CEST)
-Date: Sat, 6 Sep 2025 00:18:52 +0200
-From: Max Kellermann <max@blarg.de>
-To: Viacheslav Dubeyko <slava@dubeyko.com>
-Cc: ceph-devel@vger.kernel.org, idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com,
-	amarkuze@redhat.com, Slava.Dubeyko@ibm.com, vdubeyko@redhat.com
-Subject: Re: [RFC PATCH 13/20] ceph: add comments to metadata structures in
- msgr.h
-Message-ID: <aLthzKYmppZzgfU0@swift.blarg.de>
-References: <20250905200108.151563-1-slava@dubeyko.com>
- <20250905200108.151563-14-slava@dubeyko.com>
+	s=arc-20240116; t=1757323968; c=relaxed/simple;
+	bh=+Pz7YkO46IdueWY2ZlJ9XrXqxlWSnyPj4XKKpBVqIf8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fdoyFVyzMrZgHCDiCp409bW2i1vuUYsY62AMJiXSakua1ovIXKsOXkuaYZ+QzVPB7NRr0G1UHD13qaMJKtvbH7vpAsc/dDZ39rfGRCOpbhTr/hV5R5URe8xq0zDJkMggkT4Ca57dGukqUqUt2fCRHEK40o1eAqbIdRxr+RwyVnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m1EayQX1; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-244580523a0so43190735ad.1;
+        Mon, 08 Sep 2025 02:32:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757323966; x=1757928766; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xUPhDujEwhIwtnferG2DkQfBY8cKDI03hizB52EofeM=;
+        b=m1EayQX1mGHq9kijDtnRd9SDnIEVO7nf/nUCnSw7deDBovBucuf401X2nKXEf48muS
+         ex3mpUssCHDuzXYqFk0pPWQlnjZU7bsV8gtwImKTg0Y0pbA5Wt0Q5IseZx2l40N1QWg+
+         BiwNvo03LSzEfX5aKhRMsQF7W4C0cxt0HeldnAQ7whhSl+IZyBYRTtJjZT/jWwz1QKCF
+         Tu7+yf7YApExOoAaMojA78waqVFKz2yCwzsHvp4Cp09KSRmyLeWqm8Mwnea+WBF3xiiZ
+         oLcABAy9PxLpCy0OTVinaVFNeCSrlfVE2+FBJsktv5tuaWL4CqRZgJw3NPZ0EShJluxT
+         2isA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757323966; x=1757928766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xUPhDujEwhIwtnferG2DkQfBY8cKDI03hizB52EofeM=;
+        b=pRVixiYYVwhn+Ye5UYzMurjK+fRN0ckjHt927b5rW6m3IKY3L4wiEepS3vtDx5yE2z
+         wjSDd6JcjxcUeS4BitWys0qE/A1C95L/yRnAqYAMprFtyD2v4o8E6K9MnzOm8+z/yX+7
+         iJ29JsZ+rx3v9Id3RyfL0MOAUV8sw9yj/HJkIg4bQMuDD4riT9/lDZ2d+V7RBW6VEx1r
+         tukpQuLg/munn3mxsBiNn3jvxe13QJqUAZ/MIXfYj/+zDS46CAzKGInVKJtA+yE9wfUQ
+         R6ngtpBBzddgCDIWxHIrLC5NolHXMbsCI/9fCwx28pmK/j/4j48SJjTv/kViydLlrZEH
+         3yBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOQAxY9wYKiQKfDjs3MDaFKGSgVm3ERFxee9nOa8hz9wrnKA2tDnFhnVIrAyQMsleyLLt8XMeAN3FoCorB@vger.kernel.org, AJvYcCUdvdN1Wle222EySM5DVfIq26VwFIF0u5whHF9ZyQgoSxFqa6INGNCPOFys82OxURNHlXivMHvIOEHPH8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8eHDpwdz94EJa1Vuv32cbrfarAIi7lUgsFpRnn6pfrc37x/uQ
+	QY/k0XUbo5d13uDEG/9Ud5qP0IuDjP7umpMlhT2mQ33YF2spchaJ2Hi4VLmHNdJnBGE9WUb2zdK
+	aLhIOAWnKxYdtEUvUzUBtn8gJz1sN/hw=
+X-Gm-Gg: ASbGncvoItmerI3kzzzd2oVy80sllhF+3JIS2YUvHkVo/2hG8Aem3Q8AbTJljskFFHx
+	jJAM+dt4MwAe8rt+8asvCnm7D3UPh9stTeAvf5z1JiNaV+e76sBX8tXnC5grloXtTTMgzGBIoA2
+	C1WtSsPSY9z3UDL+uFbyaWyJ9zJMLiSFHefmH4oe1dQPki/W4T2A5UbNT0yzGHOon8+/C7/FV7p
+	phE4GYHIpXhBs6CVw==
+X-Google-Smtp-Source: AGHT+IE3dYnmkmEZ9lVXzHrTwi3LW3qAVqQrqJtINr0Ph6peALIMf/dG/dCmGmq4ODNYwmIJkGVwFcL82GHy2zRvaGM=
+X-Received: by 2002:a17:903:2286:b0:24e:6362:8c97 with SMTP id
+ d9443c01a7336-2516ce60405mr73974355ad.9.1757323966359; Mon, 08 Sep 2025
+ 02:32:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250905200108.151563-14-slava@dubeyko.com>
+References: <20250731190227.16187-1-ebiggers@kernel.org> <CAOi1vP9QRWKoQuYHynTXuupJ=VHhLLtN3s2FE6a+gG6gvrA6SQ@mail.gmail.com>
+ <20250904172558.GA854551@google.com>
+In-Reply-To: <20250904172558.GA854551@google.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Mon, 8 Sep 2025 11:32:34 +0200
+X-Gm-Features: Ac12FXyt88t5mUdH3bQ8VdW9m3S1OAwUoiJg0zeZiVzYQiXfTpzPJpAgykQw6xM
+Message-ID: <CAOi1vP8DuaVr=A7gg54RutSgoudOjnH70n9Q4=gLukRWJ5OHiA@mail.gmail.com>
+Subject: Re: [PATCH] libceph: Use HMAC-SHA256 library instead of crypto_shash
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: ceph-devel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/09/05 22:01, Viacheslav Dubeyko <slava@dubeyko.com> wrote:
-> Claude AI generated comments for CephFS metadata structure
-> declarations in include/linux/ceph/*.h. These comments
-> have been reviewed, checked, and corrected.
+On Thu, Sep 4, 2025 at 7:26=E2=80=AFPM Eric Biggers <ebiggers@kernel.org> w=
+rote:
+>
+> On Thu, Sep 04, 2025 at 12:24:08PM +0200, Ilya Dryomov wrote:
+> > > -       if (con->v2.hmac_tfm) {
+> > > -               crypto_free_shash(con->v2.hmac_tfm);
+> > > -               con->v2.hmac_tfm =3D NULL;
+> > > -       }
+> > > +       memzero_explicit(&con->v2.hmac_key, sizeof(con->v2.hmac_key))=
+;
+> > > +       con->v2.hmac_key_set =3D false;
+> >
+> > Hi Eric,
+> >
+> > Since we have hmac_key_set anyway, could the call to memzero_explicit()
+> > be conditioned on it?
+>
+> If you want.  It's less code to just do it unconditionally.
 
-After looking at several of your patches, I doubt the value of this
-effort.  This is mostly just redundant noise being added.
+Double checking the surrounding code, the only case where hmac_key_set
+would remain false is auth_none protocol (i.e. no authentication at the
+Ceph level at all).  This is extremely rare, so I'm leaving the patch
+as is.
 
->  struct ceph_entity_addr {
-> +	/* Address type identifier */
->  	__le32 type;  /* CEPH_ENTITY_ADDR_TYPE_* */
+Thanks,
 
-The old comment, which you (accidently?) left in there, is better than
-your new comment.  It specifies what values are possible.
-
-"Address type identifier" means nothing to me, no more than "type" of
-"ceph_entity_addr".
-
-> -	__le32 nonce;  /* unique id for process (e.g. pid) */
-> +	/* Unique process identifier (typically PID) */
-> +	__le32 nonce;
-
-No improvement here.  Just rephrased to be a bit more verbose without
-adding any information.
-
-> +	/* Socket address (IPv4/IPv6) */
->  	struct sockaddr_storage in_addr;
-
-Surprise - a "struct sockaddr_storage" is a socket address?  Does this
-need to be explained?
-
-What is the value of pointing out that it can be IPv4 or IPv6?  You
-asked Claude to generate tokens, and so it did.  But do these tokens
-add any value?  I don't think so.
-
->  struct ceph_entity_inst {
-> +	/* Logical entity name (type + number) */
->  	struct ceph_entity_name name;
-
-I don't understand this comment.  Okay, so the entity name is an
-entity name, but what does it mean for a name to be "logical"?  What
-is this "type" and "number" and how do you add them?
-
-> +	/* Network address for this entity */
->  	struct ceph_entity_addr addr;
-
-Oh well.  The address is an address.
-
-> +	/* Wire protocol version */
->  	__le32 protocol_version;
-
-The protocol version is one for the wire.  A-ha.
-
-> +	/* Connection flags (lossy, etc.) */
->  	__u8  flags;         /* CEPH_MSG_CONNECT_* */
-
-The old comment looked fine.  I can "git grep CEPH_MSG_CONNECT_" and
-see possible values.
-
-The new comment says these flags are for the connection.  Okay.  And
-the flags can be lossy, can't they?  No, one of the possibly flags is
-just "CEPH_MSG_CONNECT_LOSSY" and Claude confusingly rephrased this to
-"lossy".  And "etc.", but what is "etc."?  Nothing, there are no other
-flags.  The "etc." is just noise.
-
-What would have been valuable pointing out is that this is a bit mask
-(but this can be guessed easily).
-
-Just leave the old comment, it's fine and enough.
-
->  struct ceph_msg_connect_reply {
-> +	/* Reply tag (ready, retry, error, etc.) */
->  	__u8 tag;
-
-How does "ready", "retry" etc. fit into a __u8?  Claude unhelpfully
-omitted technical details by rephrasing the macro names.
-
-
-(That's all I'm going to comment on now.  I could go on for hours, but
-I feel this is a waste of time.)
-
+                Ilya
 
