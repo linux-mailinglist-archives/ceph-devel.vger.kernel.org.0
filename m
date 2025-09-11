@@ -1,80 +1,79 @@
-Return-Path: <ceph-devel+bounces-3585-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3586-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED736B53937
-	for <lists+ceph-devel@lfdr.de>; Thu, 11 Sep 2025 18:28:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4909FB5396E
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 Sep 2025 18:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D87991C81018
-	for <lists+ceph-devel@lfdr.de>; Thu, 11 Sep 2025 16:28:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E009A5A34BE
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 Sep 2025 16:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A6A35A2AF;
-	Thu, 11 Sep 2025 16:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF203570CB;
+	Thu, 11 Sep 2025 16:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jry+YZnD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Og4OG157"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0FD3570D4
-	for <ceph-devel@vger.kernel.org>; Thu, 11 Sep 2025 16:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A072835A289
+	for <ceph-devel@vger.kernel.org>; Thu, 11 Sep 2025 16:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757607965; cv=none; b=eacbsedozB8nYdTaG1Q4Zteu5JWHtaL2n+XK1Qou3af3zYNJldLhuEpBZQziMT28zV5aLNkOmulPtBjhe8SuOpWGS5owmVkBseWJRqlXjeh746k9ZpIg5upAwOdi5SY/MUSpHZnoiHiPtcRCHSXLM6reTEJ5TSZSpzebMq9Op7g=
+	t=1757608708; cv=none; b=tyoAv627/riDei7EQy//E0n3mkNo23h8i34GOy0z6h2WD0S+IaicGxU9hX3lKXJzwoXobUM0h0wW0FyH9ojD/lyVOro9r99BA5GwKwV2k+8USRO0rRmYjFQjBEBfD99iiryQ4903VXC8pdd4lnJ71PFBC91Coz+Ev3nATSeh2iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757607965; c=relaxed/simple;
-	bh=xEu6d8AtFvjOtKDch5SoL6gLndpC5XUwr+/2i0wUO2M=;
+	s=arc-20240116; t=1757608708; c=relaxed/simple;
+	bh=7NgZ+ki7Jpk38+35vOYlyLMHAwb0CdRdix5vu5oMJcY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gtWldCDyfGlgt/7qIvduHtHRbBIx/3pTGLKwX8hwAL1cDkArVa4H43+n+7IcBRIX+kIGoh45rG5LybOLTdRH5E/RavZWBns0Xo+6rY69JkAtKnKZ5yN5GwU/CzeVcAVaAjH3/e/Gd+KaBvet0yKlxDebes7MCgKOKKr0fVdFeX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jry+YZnD; arc=none smtp.client-ip=209.85.214.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=i/vH72TR3X2JqEy/2nuSoIyk9dFzqnWV/AErE4qq/D7mRzJs+2HJdMr3h97TG08cDQdDULHHuipgv7vRHhpl0VlzJNTeEDCH8Zt/i9DHzm5G5fIU3aKJ5Xp2yEQQxVm40PpzDzcVYZ8i5HDyhIcBSRBnxvu9xhOMR1Sfhx6XYcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Og4OG157; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2445824dc27so7084555ad.3
-        for <ceph-devel@vger.kernel.org>; Thu, 11 Sep 2025 09:26:03 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24cb39fbd90so8357015ad.3
+        for <ceph-devel@vger.kernel.org>; Thu, 11 Sep 2025 09:38:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757607963; x=1758212763; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757608706; x=1758213506; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=UqP0yh780QZSEn09Gu4Ub7K64FPut2woI/zF5kWSvDk=;
-        b=Jry+YZnD7JhqOsaDnYKuOXA/WycJ3UPoEkNmzmbgPVbB5BNrhFqGKNxiOJqeTboM7q
-         i4K1mhmTATZT8Xvh4s5dtA5AhEjcKRbhTN/8zImPc69RcrZfs4MuP6mI1ToRq5W65X+w
-         XKPtoOGc56vcUDxQDWBeZCu2q4h04RCVPi+hIrYF/gNqshpUzBVrWq0MFrlW1OzhVF0H
-         iRYcI1VZLQ7eB0G2hxOyaLcyq2/nTgfbgyjdLJl64TPQhJgSU2HCvd0YRyySaQcU4ToS
-         pTvIj4BDYhotgqykivlaNgs/SoFN2qGAReUJABANkxYNBEBf6DIKl+zKo0n7ADSYpdUK
-         uE5A==
+        bh=mNfZ+THGjVnPfKEQVjfAvTl//pe2jY0CkLSpKpP2yFk=;
+        b=Og4OG157EORSn1qNZOlUl4xWUwzxVe3G+JkEuPeUiUnUHK80RjkF25Cb57eWnstdOm
+         nkGiiigL2jN2+c/F6zXxLki+giGMqO8ugU4e23d9BKr8cO0mcJ/PaQGV6KPZBDg4MwBV
+         AiAK9I+k14z8yb16SHLjXage6gqzUZouBWLvo1K2Ddr5xQXTiK+7cWBDj/Bt0/4YNydW
+         pQKk10dn9qWfcDt3VR4WoaeP90l4ng6m72CVy7AeYgVDUSzs7puOlZR3WvEg6hTVmEe5
+         Wg7Agok5k86bHSG4qoS4AMtVwQ1Q+zeUs85f4cok+SgIBeUbq3tfe1sBDbigCZJiZE8L
+         U23w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757607963; x=1758212763;
+        d=1e100.net; s=20230601; t=1757608706; x=1758213506;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UqP0yh780QZSEn09Gu4Ub7K64FPut2woI/zF5kWSvDk=;
-        b=N7hQwqI+BxULVe88J/zUGGl224EVU9gpTS0rWtid8G24OUIxdlUdulTFwdEjzjhOIE
-         /LEfJUiHIa8dufkoGsgGuU8wd2WA/ksiXvmwiEUo5AbOZk4fylNyPPziRRPBXRYzZDS3
-         Uu8HHTKZkVOPqbMNxF28QKzHfy0gNJf1GRlBcAce67drtYkX+4PfwfV18//RnnkifyeU
-         t4H7mwrsmLcRSiY9K/SxVrVymS8zTJScuf2tkEuV8JEGBDr4zjsp4junQHlhMr8BiPuK
-         ztJ6Sb0Alc6H2q6UKOuBKO0d1mqXsrFMJ1pJo57LnwPfE3WwDe5+zcjlO9/q++UWu0PN
-         /CqA==
-X-Forwarded-Encrypted: i=1; AJvYcCX4kGfiQJa/HKpBphEHk88xLZ6axUVplczqiySrudu0Pg3nSrXM+uSpUp3jDmXLqGbyBDRZa6QpApmH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh/gFUWXfZfPU11FXI/uJgw7f9kS8WFxHyMyEACgWXCRq0nNR0
-	4sBFjiww4cvIQlmMrO+IrRwN/NYmrqfJ2N6IPa26DLJ/HqPom+SNsCX6
-X-Gm-Gg: ASbGncvAOsosdQ0/5mNVhgOgEOjPg/NUkkw47UBIDbsSGU4RObp3URThq0N9b1F5RYq
-	QTU4Vv1QGvXdu0ZZ5ihUXWw2MpwnEl0W4wgNVWl1zRc/7gjafzQwK30MecU7YUx538K1t3vKrU/
-	wtMxJRruhtwlmc8/tlM7knsWz7wZn+gUAGdk6moqmK8Vv6MPvi5VgLgLGC+HluWSLw1g/bssh9h
-	sDhV7dDTIKrSZM9+Hl9+L3Yf9IcrXi+4mLteIsrI4wC6e7axhDSyYBJtlSDXxjadLIJExbIxtkI
-	prMhpYkfmNP0aKRESbuFA1StvKVrwG+sEABMMDfhjolH7jOJjWA7wuGByeJGU49TnEMhT8V4kmC
-	9E/zNH8EcrwthyltbzVCdhIGVlfJA0BWbL4/jcxytPlWt9a9xrgo1wryA7FIuWElRbpzLPXHiYD
-	M347BOdQ==
-X-Google-Smtp-Source: AGHT+IH5XMd0HGbOFMyruweaNH1fol7mWk5Y5V4J67dhEP3/uGyRjyhKDuxNRCKL+82zJXTUnSBwfw==
-X-Received: by 2002:a17:903:228f:b0:24c:be1f:c204 with SMTP id d9443c01a7336-25d24da3763mr450845ad.22.1757607962668;
-        Thu, 11 Sep 2025 09:26:02 -0700 (PDT)
+        bh=mNfZ+THGjVnPfKEQVjfAvTl//pe2jY0CkLSpKpP2yFk=;
+        b=FaLHR/THkoc88clzyeEm2LeAReH0ztpTUQ3UlJTg0bhmt1PNnWMZgNB/qLzo7ztJlq
+         VNCJIEmo6HWUm2BO25ohgJugItaH9Ur1oCC4AOjYPivMBH54GngJl+bn9Z80iO320QzS
+         o27fLsXX/1HlGeC+3zo5T4nVth3Zx/+78XVYdLMPZu6b1nh28lUg2MSzdm5eSVnsBH/L
+         KG+9ej+snAa1/fWnGaE85n83F9FS1uopE+7aCKDrCWPIoMCau59XYJAkd/YtT4ceIhuI
+         YqhKCi61R+pKtceQeVrSONdfmlSjt8Nd9ruEq+/EddKgsYSeg5VTF7CZ7/LYE0EByt6t
+         9JfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtMrIBuBe68oBeB2cT4A/b+tHkVXudM6nIi3xSSl+1fBaAETpxNvD+T8i8yA4i8umXu0hg7VvIOWql@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJCUc138GkUqA75TI92qLE3SgbOanVxc4SpDlPjwc3Ux7/fzTc
+	tIMnpxd2TVAs6CSH0jq3mUdzO/z7B4BHqS9AK0ASTTFgFMUcKyp5giTV
+X-Gm-Gg: ASbGncvWdipowdAWtwRT0ibR0UFT/YWi/0mQBY2R8G1Y6/7fWSIyw7FS0pNwzHPC326
+	Ib5ylA1Zh2ADA9ZaMJBUqCZAPWqy+cdd9TU/TiZt6N+/NYxqst1p25Ipcgxtc+SUTNTv5+gyYdY
+	oOpgXTm31tasajNviRTDjQwTEqeK+t7Ls7ymr7rVLMgNoCSdPITd/enDwGh+h9HlwmAhDji0uGl
+	maY2Mdk9zLVUUmh4WCGlnGC6TK5bRHZW+pGNqaDZYaMfHXcQnspP2WZRr5LzRFKbgv9V/SL1du4
+	+wyhmGcwEa3cuomHBdTdQEBK2qPeFZqx3qNwErvE4VpJ/t9fXtR7+CSLC59b2HWodGSEWWd6jnh
+	GWhAAxgbsyByx+LmjIbR6+yCbyGuAB7UjTxYelaXeRjTWPKjNi07RBI9kY6oKFQp45d3DqWA=
+X-Google-Smtp-Source: AGHT+IE0FiJZ1Xof1YnqAKXUYRLvK9Rwr7P7SSvXPPnTPHIg+AFxKr0A7VxsEXWSG4uIu8QKuqN0+Q==
+X-Received: by 2002:a17:902:e38a:b0:248:cd0b:3434 with SMTP id d9443c01a7336-25d26e43dc6mr435495ad.36.1757608705609;
+        Thu, 11 Sep 2025 09:38:25 -0700 (PDT)
 Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dd98e7647sm2677426a91.21.2025.09.11.09.25.59
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3786807fsm24328675ad.62.2025.09.11.09.38.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 09:26:02 -0700 (PDT)
-Date: Fri, 12 Sep 2025 00:25:56 +0800
+        Thu, 11 Sep 2025 09:38:25 -0700 (PDT)
+Date: Fri, 12 Sep 2025 00:38:20 +0800
 From: Kuan-Wei Chiu <visitorckw@gmail.com>
 To: Caleb Sander Mateos <csander@purestorage.com>
 Cc: Guan-Chun Wu <409411716@gms.tku.edu.tw>, akpm@linux-foundation.org,
@@ -86,10 +85,11 @@ Cc: Guan-Chun Wu <409411716@gms.tku.edu.tw>, akpm@linux-foundation.org,
 	xiubli@redhat.com
 Subject: Re: [PATCH v2 1/5] lib/base64: Replace strchr() for better
  performance
-Message-ID: <aML4FLHPvjELZR4W@visitorckw-System-Product-Name>
+Message-ID: <aML6/BuXLf4s/XYX@visitorckw-System-Product-Name>
 References: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
  <20250911073204.574742-1-409411716@gms.tku.edu.tw>
  <CADUfDZqe2x+xaqs6M_BZm3nR=Ahu-quKbFNmKCv2QFb39qAYXg@mail.gmail.com>
+ <aML4FLHPvjELZR4W@visitorckw-System-Product-Name>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -99,108 +99,116 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZqe2x+xaqs6M_BZm3nR=Ahu-quKbFNmKCv2QFb39qAYXg@mail.gmail.com>
+In-Reply-To: <aML4FLHPvjELZR4W@visitorckw-System-Product-Name>
 
-Hi Caleb,
-
-On Thu, Sep 11, 2025 at 08:50:12AM -0700, Caleb Sander Mateos wrote:
-> On Thu, Sep 11, 2025 at 12:33 AM Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
-> >
-> > From: Kuan-Wei Chiu <visitorckw@gmail.com>
-> >
-> > The base64 decoder previously relied on strchr() to locate each
-> > character in the base64 table. In the worst case, this requires
-> > scanning all 64 entries, and even with bitwise tricks or word-sized
-> > comparisons, still needs up to 8 checks.
-> >
-> > Introduce a small helper function that maps input characters directly
-> > to their position in the base64 table. This reduces the maximum number
-> > of comparisons to 5, improving decoding efficiency while keeping the
-> > logic straightforward.
-> >
-> > Benchmarks on x86_64 (Intel Core i7-10700 @ 2.90GHz, averaged
-> > over 1000 runs, tested with KUnit):
-> >
-> > Decode:
-> >  - 64B input: avg ~1530ns -> ~126ns (~12x faster)
-> >  - 1KB input: avg ~27726ns -> ~2003ns (~14x faster)
-> >
-> > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-> > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-> > ---
-> >  lib/base64.c | 17 ++++++++++++++++-
-> >  1 file changed, 16 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/lib/base64.c b/lib/base64.c
-> > index b736a7a43..9416bded2 100644
-> > --- a/lib/base64.c
-> > +++ b/lib/base64.c
-> > @@ -18,6 +18,21 @@
-> >  static const char base64_table[65] =
-> >         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+On Fri, Sep 12, 2025 at 12:26:02AM +0800, Kuan-Wei Chiu wrote:
+> Hi Caleb,
 > 
-> Does base64_table still need to be NUL-terminated?
+> On Thu, Sep 11, 2025 at 08:50:12AM -0700, Caleb Sander Mateos wrote:
+> > On Thu, Sep 11, 2025 at 12:33 AM Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
+> > >
+> > > From: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > >
+> > > The base64 decoder previously relied on strchr() to locate each
+> > > character in the base64 table. In the worst case, this requires
+> > > scanning all 64 entries, and even with bitwise tricks or word-sized
+> > > comparisons, still needs up to 8 checks.
+> > >
+> > > Introduce a small helper function that maps input characters directly
+> > > to their position in the base64 table. This reduces the maximum number
+> > > of comparisons to 5, improving decoding efficiency while keeping the
+> > > logic straightforward.
+> > >
+> > > Benchmarks on x86_64 (Intel Core i7-10700 @ 2.90GHz, averaged
+> > > over 1000 runs, tested with KUnit):
+> > >
+> > > Decode:
+> > >  - 64B input: avg ~1530ns -> ~126ns (~12x faster)
+> > >  - 1KB input: avg ~27726ns -> ~2003ns (~14x faster)
+> > >
+> > > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > > ---
+> > >  lib/base64.c | 17 ++++++++++++++++-
+> > >  1 file changed, 16 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/lib/base64.c b/lib/base64.c
+> > > index b736a7a43..9416bded2 100644
+> > > --- a/lib/base64.c
+> > > +++ b/lib/base64.c
+> > > @@ -18,6 +18,21 @@
+> > >  static const char base64_table[65] =
+> > >         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+> > 
+> > Does base64_table still need to be NUL-terminated?
+> > 
+> Right, it doesn't need to be nul-terminated.
 > 
-Right, it doesn't need to be nul-terminated.
-
-> >
-> > +static inline const char *find_chr(const char *base64_table, char ch)
+> > >
+> > > +static inline const char *find_chr(const char *base64_table, char ch)
+> > 
+> > Don't see a need to pass in base64_table, the function could just
+> > access the global variable directly.
+> > 
+> > > +{
+> > > +       if ('A' <= ch && ch <= 'Z')
+> > > +               return base64_table + ch - 'A';
+> > > +       if ('a' <= ch && ch <= 'z')
+> > > +               return base64_table + 26 + ch - 'a';
+> > > +       if ('0' <= ch && ch <= '9')
+> > > +               return base64_table + 26 * 2 + ch - '0';
+> > > +       if (ch == base64_table[26 * 2 + 10])
+> > > +               return base64_table + 26 * 2 + 10;
+> > > +       if (ch == base64_table[26 * 2 + 10 + 1])
+> > > +               return base64_table + 26 * 2 + 10 + 1;
+> > > +       return NULL;
+> > 
+> > This is still pretty branchy. One way to avoid the branches would be
+> > to define a reverse lookup table mapping base64 chars to their values
+> > (or a sentinel value for invalid chars). Have you benchmarked that
+> > approach?
+> > 
+> We've considered that approach and agree it could very likely be faster.
+> However, since a later patch in this series will add support for users to
+> provide their own base64 table, adopting a reverse lookup table would also
+> require each user to supply a corresponding reverse table. We're not sure
+> whether the extra memory overhead in exchange for runtime speed would be
+> an acceptable tradeoff for everyone, and it might also cause confusion on
+> the API side as to why it's mandatory to pass in a reverse table.
 > 
-> Don't see a need to pass in base64_table, the function could just
-> access the global variable directly.
+> By contrast, the simple inline function gives us a clear performance
+> improvement without additional memory cost or complicating the API. That
+> said, if there's consensus that a reverse lookup table is worthwhile, we
+> can certainly revisit the idea.
 > 
-> > +{
-> > +       if ('A' <= ch && ch <= 'Z')
-> > +               return base64_table + ch - 'A';
-> > +       if ('a' <= ch && ch <= 'z')
-> > +               return base64_table + 26 + ch - 'a';
-> > +       if ('0' <= ch && ch <= '9')
-> > +               return base64_table + 26 * 2 + ch - '0';
-> > +       if (ch == base64_table[26 * 2 + 10])
-> > +               return base64_table + 26 * 2 + 10;
-> > +       if (ch == base64_table[26 * 2 + 10 + 1])
-> > +               return base64_table + 26 * 2 + 10 + 1;
-> > +       return NULL;
-> 
-> This is still pretty branchy. One way to avoid the branches would be
-> to define a reverse lookup table mapping base64 chars to their values
-> (or a sentinel value for invalid chars). Have you benchmarked that
-> approach?
-> 
-We've considered that approach and agree it could very likely be faster.
-However, since a later patch in this series will add support for users to
-provide their own base64 table, adopting a reverse lookup table would also
-require each user to supply a corresponding reverse table. We're not sure
-whether the extra memory overhead in exchange for runtime speed would be
-an acceptable tradeoff for everyone, and it might also cause confusion on
-the API side as to why it's mandatory to pass in a reverse table.
-
-By contrast, the simple inline function gives us a clear performance
-improvement without additional memory cost or complicating the API. That
-said, if there's consensus that a reverse lookup table is worthwhile, we
-can certainly revisit the idea.
+Or I just realized that since different base64 tables only differ in the
+last two characters, we could allocate a 256 entry reverse table inside
+the base64 function and set the mapping for those two characters. That
+way, users wouldn't need to pass in a reverse table. The downside is that
+this would significantly increase the function's stack size.
 
 Regards,
 Kuan-Wei
 
 > 
-> > +}
-> > +
-> >  /**
-> >   * base64_encode() - base64-encode some binary data
-> >   * @src: the binary data to encode
-> > @@ -78,7 +93,7 @@ int base64_decode(const char *src, int srclen, u8 *dst)
-> >         u8 *bp = dst;
-> >
-> >         for (i = 0; i < srclen; i++) {
-> > -               const char *p = strchr(base64_table, src[i]);
-> > +               const char *p = find_chr(base64_table, src[i]);
-> >
-> >                 if (src[i] == '=') {
-> >                         ac = (ac << 6);
-> > --
-> > 2.34.1
-> >
-> >
+> > 
+> > > +}
+> > > +
+> > >  /**
+> > >   * base64_encode() - base64-encode some binary data
+> > >   * @src: the binary data to encode
+> > > @@ -78,7 +93,7 @@ int base64_decode(const char *src, int srclen, u8 *dst)
+> > >         u8 *bp = dst;
+> > >
+> > >         for (i = 0; i < srclen; i++) {
+> > > -               const char *p = strchr(base64_table, src[i]);
+> > > +               const char *p = find_chr(base64_table, src[i]);
+> > >
+> > >                 if (src[i] == '=') {
+> > >                         ac = (ac << 6);
+> > > --
+> > > 2.34.1
+> > >
+> > >
 
