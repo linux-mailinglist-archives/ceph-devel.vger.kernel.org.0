@@ -1,211 +1,193 @@
-Return-Path: <ceph-devel+bounces-3592-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3593-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2891AB53BF0
-	for <lists+ceph-devel@lfdr.de>; Thu, 11 Sep 2025 20:56:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D1BB53C08
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 Sep 2025 21:01:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1F4DAA176F
-	for <lists+ceph-devel@lfdr.de>; Thu, 11 Sep 2025 18:56:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E6345C02FD
+	for <lists+ceph-devel@lfdr.de>; Thu, 11 Sep 2025 19:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6526241663;
-	Thu, 11 Sep 2025 18:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489ED25A2CD;
+	Thu, 11 Sep 2025 19:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="kxMjW9G9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fvrkqwEJ"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91A522759C
-	for <ceph-devel@vger.kernel.org>; Thu, 11 Sep 2025 18:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FCD258ED9
+	for <ceph-devel@vger.kernel.org>; Thu, 11 Sep 2025 19:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757616998; cv=none; b=SDw1u4zDU16swtGuB2bdD6a+iujIMN0anQqKlsfJbRhrwnNVQQJHSZsZClL+CMc99vGojd1wb5NCGLV9yaAGZDrYdu/YOlhK6vx1uNRWuIbhJwNI6RbSMqGe7vRf8a7gCDkmK6kksoNiv4M/DyYZL3pRXg33xfIMeaTWneUnoS0=
+	t=1757617254; cv=none; b=UA9vpnuq5PqTmu+2UIWVYIqOArXWextDrOA0anDckQvBZ0NVYTRIxOR3ZLFYzxipOdVFa84wUbyeCAeoeJhzM3KF/ENRA/oCJ+y0GXIVFgJs+e7BNrViq0pKov3EDHrZq5UM2LyFYLJ4ujccGriH7H5WwcXiK0skLW83tKhlkwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757616998; c=relaxed/simple;
-	bh=hTvxzK5eRPWRfPFlDepcqAzln9GI868z9klyCRJyfX8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OJBXx/lA4NKc299RldBDJkywWP+HEo39y8GL7cReB1KsZy4Lo8kvz0zOTPxyOusEpnoJO10CCSJFoHJV39xG4iEiCtlGe6iaWgQEqadi4YRy8Aj6QlOvoRnO8pZdYO+KOsoyIY32n061wqDjpGkhp1rf8rDi4ve1eKo3vwfSLv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=kxMjW9G9; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-71d603cebd9so9653317b3.1
-        for <ceph-devel@vger.kernel.org>; Thu, 11 Sep 2025 11:56:36 -0700 (PDT)
+	s=arc-20240116; t=1757617254; c=relaxed/simple;
+	bh=CMQbWvL35NGiKpRsKtPmgoLpczTG57AawYwSUnRe08I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EV6wFo9/5968/XWls7XkT3DKIBXTHD5d+LpSkDwy81GHIB4qwFQaX838XbKmtcjpw7IZBg1lQ36e9vGnMzDJCE3vCLvNcfTCKNx+DsGc+Rger3n3Ct+S1WJv9gkP5/SpmEgBNUAXMrX5GkFEyrrB1gBMc/TD5bp7/nvOnBHBedU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fvrkqwEJ; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7724df82cabso1197131b3a.2
+        for <ceph-devel@vger.kernel.org>; Thu, 11 Sep 2025 12:00:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1757616995; x=1758221795; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zaiAeYjg7LcccrfKBhuPH2GoCvPSyBTTXPMo/F9FiZY=;
-        b=kxMjW9G9KLPpj3bd6/pvzeBMcbS2ej0rVNkCvwyl5tINQIDyyUyi6Fc5t3KSBgvqGN
-         wSSBypOWkyKSFK3JPvgM+mqDW40PQr4xx08//H1HgWiErfGrtB720wSAKooc23ZTsiGM
-         yCstzoB/C8KCNDAGRAUJ124NOvd5o+TT7hd6veKcKkbdHfvPrHNKvS1DKHS5Q9+PR1O5
-         xqX/BRkmgsAJdhtxXb1LaHo7Xh1qX71QtzBXuqf3aSRbvmHEIqYBhsmKaDYqnDhKNAOz
-         0cwG0sPsKKQ8ldhHceshl/gfE3zeNaPv04GbUeKwLNZdnOf+tfnK1Eq3n9WKxov6x4dy
-         4iGw==
+        d=gmail.com; s=20230601; t=1757617252; x=1758222052; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tF1OTr2rtCxy3jTEKLVALatHVlDvvfc6+FzIrMIIxc4=;
+        b=fvrkqwEJEBXaGtXnPKVpZjXRogDl2sRl5XFL/z3EhlUYNsWS/iUenkeQxK2O18JYQN
+         kuTbtQg34JDgnEfLYFnzoWP1J9E1TItNMbOYdv2CpgD1GFCN3SQ0V2XUtEbBsi5tQGBe
+         OHEW0bbfhvW4Q6Gt3mhSxRsmhO4qqhFYKhP+Fxyf434GuIUu6o139SLi8HBEacqTdY8R
+         UusgJ4dDuMyZVFQ7WwQ0BDu5ARo+KzYEoI9YZALidF5qutfa3KddZtPMT7E+jwTBK4qe
+         YpnANLsU0QaChQIEbb1qVIiBE3I2jTMjJ8Zg3OAIlW0EbXIBxSMVnf/lh7H2sQGyNVkg
+         PESQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757616995; x=1758221795;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zaiAeYjg7LcccrfKBhuPH2GoCvPSyBTTXPMo/F9FiZY=;
-        b=Tx2sgdn5N8Arlb9AxFLRBiWxDimypRYMQkB+RqjYwG3iq79IBb0upWiNVuBZALGMBq
-         UTp3db0hIJDohrGfrND7fLo5PtqbSszSQmM+gUQAudLQH8XHNEVhVo6KDvGNBuyfuDZe
-         Em8MDoFy8bgAvpqpsc+HDHOsVHqZQrmHjNlVdWYFGJxazR+1YIO/Pxs7nhnUHXwcL/yy
-         6wWbAS4UvwfXv7GTJCmv6EsAdCqGEdjdccWcxdhqE6sB7G+sDBn5aOUcWwxyxD5vmg7G
-         wy15eIx+z8pBeZKCNZvmyjIZTLHt+eRpRhXbvUoCWxRumFZtU/QfVvyaJBflC1Mps9RM
-         jXjQ==
-X-Gm-Message-State: AOJu0Yzm6Qy9UNfgNah6btsIb6PUjiTut5k3yUIXHAY3Gs0N138ftCD5
-	LwCB+/pDHhmFteenFODgc25XyHUDVHxPaqFDGxLjSQ8OGzD2gMkyLd8m5LCpZBusyWLbXch6FTX
-	YkbnNX0F+Gg==
-X-Gm-Gg: ASbGncstSt6Hl39hkyywKHrj1jsHbkpqX1eR0RwEA7RmIYrBc7GzpdWKrdxjx7q2ZAs
-	XbT8l8+oQ9L4cwaPF3xTZJ9m5kBLpyn20zWfbkobt/8Me1nyzH2uk8a2Y5lh08hTuReO+0Uq9CP
-	fR3kP84bTr2zwgf+6Vaaq9QPoZxTReFaGGNHlfKDyZug5TAAgfp9vBO0vfKD1GDy0LdzDkA5TFx
-	p7lPD1/kJ5VHmVv1jZZLjGRGrQRJUPW8jnqbRmuVwhSktdojSf1WoveYeICiozKjUQnEH+Nr0FM
-	TkZynCjfXXBcIx2ALZ9OFncfJkMFWkBjDc5Txi9h9GSygMs/2fT/igDCdOICPpnGBugMqBVztxH
-	QFgsALYgo/ZpG+o1kssik+xxvKo3HqHQe1g2Uhlp/
-X-Google-Smtp-Source: AGHT+IEgeo84/80WeDM7c7sjg8xaKt4oy6SyUvPSUe+Ndqnyq06r2+2kq8Mt0pOCg96d/zQOrTTSyQ==
-X-Received: by 2002:a05:690c:260a:b0:724:72f0:50d5 with SMTP id 00721157ae682-730626d1c5emr4440587b3.5.1757616994815;
-        Thu, 11 Sep 2025 11:56:34 -0700 (PDT)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:82bf:9e11:b6c8:e795])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-72f73353c02sm5507877b3.0.2025.09.11.11.56.33
+        d=1e100.net; s=20230601; t=1757617252; x=1758222052;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tF1OTr2rtCxy3jTEKLVALatHVlDvvfc6+FzIrMIIxc4=;
+        b=cF+nhmnml62uQKn/TcvspJ5npWfT+kmWGwLyYz6Yo5rQjQJ0foCgn5JJmIRmDHiUGU
+         K+rlDhDZvG0eoMqUrGILffRegvGx6pA6gZOdZmmzPqmFkwZSMdbZoG2hh3h4oACMjvRb
+         qRJbycLRn9fIBoTgRjFGCVXeQTwzLamx4fT7UStiTJEySvPA8C4mkLObVBCbiwoI5UUd
+         gw+ig9vDLFeMVUfqGDSI+owhwsyyQ9An3tarEbH+8dybO93z4cGGyYnY1kzRLwaeziod
+         zbjwXu/pKqn0K0/ku3R47P78i1Fbif4GJBVfrKccEGkpN9KLk12H/ej9sM1XMN7tMKha
+         2xrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVC3SyjAzblBm+eAFgbe8innkN4P4mqtsT9VnYUCv/j6qtQGe7ej/GJqhMVJr7zIUqM8a1Q1asSBoXM@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywqy+3jbeA8Z/3Of5kB8/99tZLyX+Z42VVBgWCr2K4Juiw6enFE
+	xv7wgziO+SLNusiVoGyHbhNqm6uqHc8uihRsT0lVUKBtT5wSwJ0/RMlj
+X-Gm-Gg: ASbGncugEXhQxmDJj4mt95MoV9AGZdiYDLjZH+X9ijU017zoGP8iG83IWkyNmD6U1Wr
+	osxR0AfU4NNhZCkwEyPvvU88yT3PvesTXHKR7TGvqnpcy3kP1U+cUYKQtP51o4LwbdymRj1mGHC
+	b665CWtyK5GNtNDy/l6JIGadYp0COgGj4fwL6xirhwzlzs/I85CWOZtyb/uEPxsirU/lVOt1r7w
+	mnW1kUEH4SovlmR9rg98pwIvT+0AT+INg7U6+nrm+dTOg8mirKuy87AsxlDM2GZfHf/PwRivWQn
+	P6Oru1oTa/dmiatqove171y9TFIq0bddGW4lTaWJ6zTBU4G1mF3DBFG/n1OC82rAb2NeXaK7aPH
+	heTG3UET5uIz6BvKjuxtU3+HwezWzorXRcMMhOHGdsWUBMI4jWwzAGy+jZMpyv5uSPxXyX/rMT4
+	Dg7PG5yQ==
+X-Google-Smtp-Source: AGHT+IFKgGjLknGkp8jc1chBYIIHFKqurKXfUj4cl8o1arPPk6MKDJNmBOPLMnF+vJ6NN+q1YLvRog==
+X-Received: by 2002:a05:6a00:2307:b0:772:4b05:78c1 with SMTP id d2e1a72fcca58-77612079eeamr536333b3a.3.1757617251633;
+        Thu, 11 Sep 2025 12:00:51 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b340ffsm2810127b3a.76.2025.09.11.12.00.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 11:56:34 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com,
-	vdubeyko@redhat.com
-Subject: [PATCH] ceph: cleanup in check_new_map() method
-Date: Thu, 11 Sep 2025 11:56:08 -0700
-Message-ID: <20250911185607.323452-2-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 11 Sep 2025 12:00:51 -0700 (PDT)
+Date: Fri, 12 Sep 2025 03:00:47 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Guan-Chun Wu <409411716@gms.tku.edu.tw>, akpm@linux-foundation.org,
+	axboe@kernel.dk, ceph-devel@vger.kernel.org, hch@lst.de,
+	home7438072@gmail.com, idryomov@gmail.com, jaegeuk@kernel.org,
+	kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	sagi@grimberg.me, tytso@mit.edu, xiubli@redhat.com
+Subject: Re: [PATCH v2 1/5] lib/base64: Replace strchr() for better
+ performance
+Message-ID: <aMMcX8jEoBjBUeyj@visitorckw-System-Product-Name>
+References: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
+ <20250911073204.574742-1-409411716@gms.tku.edu.tw>
+ <20250911181418.GB1376@sol>
+ <aMMYmfVfmkm7Ei+6@visitorckw-System-Product-Name>
+ <20250911184935.GE1376@sol>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250911184935.GE1376@sol>
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+On Thu, Sep 11, 2025 at 11:49:35AM -0700, Eric Biggers wrote:
+> On Fri, Sep 12, 2025 at 02:44:41AM +0800, Kuan-Wei Chiu wrote:
+> > Hi Eric,
+> > 
+> > On Thu, Sep 11, 2025 at 11:14:18AM -0700, Eric Biggers wrote:
+> > > On Thu, Sep 11, 2025 at 03:32:04PM +0800, Guan-Chun Wu wrote:
+> > > > From: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > > 
+> > > > The base64 decoder previously relied on strchr() to locate each
+> > > > character in the base64 table. In the worst case, this requires
+> > > > scanning all 64 entries, and even with bitwise tricks or word-sized
+> > > > comparisons, still needs up to 8 checks.
+> > > > 
+> > > > Introduce a small helper function that maps input characters directly
+> > > > to their position in the base64 table. This reduces the maximum number
+> > > > of comparisons to 5, improving decoding efficiency while keeping the
+> > > > logic straightforward.
+> > > > 
+> > > > Benchmarks on x86_64 (Intel Core i7-10700 @ 2.90GHz, averaged
+> > > > over 1000 runs, tested with KUnit):
+> > > > 
+> > > > Decode:
+> > > >  - 64B input: avg ~1530ns -> ~126ns (~12x faster)
+> > > >  - 1KB input: avg ~27726ns -> ~2003ns (~14x faster)
+> > > > 
+> > > > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > > Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > > > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > > > ---
+> > > >  lib/base64.c | 17 ++++++++++++++++-
+> > > >  1 file changed, 16 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/lib/base64.c b/lib/base64.c
+> > > > index b736a7a43..9416bded2 100644
+> > > > --- a/lib/base64.c
+> > > > +++ b/lib/base64.c
+> > > > @@ -18,6 +18,21 @@
+> > > >  static const char base64_table[65] =
+> > > >  	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+> > > >  
+> > > > +static inline const char *find_chr(const char *base64_table, char ch)
+> > > > +{
+> > > > +	if ('A' <= ch && ch <= 'Z')
+> > > > +		return base64_table + ch - 'A';
+> > > > +	if ('a' <= ch && ch <= 'z')
+> > > > +		return base64_table + 26 + ch - 'a';
+> > > > +	if ('0' <= ch && ch <= '9')
+> > > > +		return base64_table + 26 * 2 + ch - '0';
+> > > > +	if (ch == base64_table[26 * 2 + 10])
+> > > > +		return base64_table + 26 * 2 + 10;
+> > > > +	if (ch == base64_table[26 * 2 + 10 + 1])
+> > > > +		return base64_table + 26 * 2 + 10 + 1;
+> > > > +	return NULL;
+> > > > +}
+> > > > +
+> > > >  /**
+> > > >   * base64_encode() - base64-encode some binary data
+> > > >   * @src: the binary data to encode
+> > > > @@ -78,7 +93,7 @@ int base64_decode(const char *src, int srclen, u8 *dst)
+> > > >  	u8 *bp = dst;
+> > > >  
+> > > >  	for (i = 0; i < srclen; i++) {
+> > > > -		const char *p = strchr(base64_table, src[i]);
+> > > > +		const char *p = find_chr(base64_table, src[i]);
+> > > >  
+> > > >  		if (src[i] == '=') {
+> > > >  			ac = (ac << 6);
+> > > 
+> > > But this makes the contents of base64_table no longer be used, except
+> > > for entries 62 and 63.  So this patch doesn't make sense.  Either we
+> > > should actually use base64_table, or we should remove base64_table and
+> > > do the mapping entirely in code.
+> > > 
+> > For base64_decode(), you're right. After this patch it only uses the last
+> > two entries of base64_table. However, base64_encode() still makes use of
+> > the entire table.
+> > 
+> > I'm a bit unsure why it would be unacceptable if only one of the two
+> > functions relies on the full base64 table.
+> 
+> Well, don't remove the table then.  But please don't calculate pointers
+> into it, only to take the offset from the beginning and never actually
+> dereference them.  You should just generate the offset directly.
+> 
+Agreed. Thanks for the review.
+I'll make that change in the next version.
 
-The Coverity Scan service has reported a potential issue
-in check_new_map() method [1]. The check_new_map() executes
-checking of newmap->m_info on NULL in the beginning of
-the method. However, it operates by newmap->m_info later
-in the method without any check on NULL. Analysis of the code
-flow shows that ceph_mdsmap_decode() guarantees the allocation
-of m_info array. And check_new_map() never will be called
-with newmap->m_info not allocated.
-
-This patch exchanges checking of newmap->m_info on BUG_ON()
-pattern because the situation of having NULL in newmap->m_info
-during check_new_map() is not expecting event. Also, this patch
-reworks logic of __open_export_target_sessions(),
-ceph_mdsmap_get_addr(), ceph_mdsmap_get_state(), and
-ceph_mdsmap_is_laggy() by checking mdsmap->m_info on NULL value.
-
-[1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=1491799
-
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-cc: Alex Markuze <amarkuze@redhat.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: Ceph Development <ceph-devel@vger.kernel.org>
----
- fs/ceph/debugfs.c    | 11 +++++++++--
- fs/ceph/mds_client.c | 14 +++++++++-----
- fs/ceph/mdsmap.h     |  6 +++++-
- 3 files changed, 23 insertions(+), 8 deletions(-)
-
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index fdd404fc8112..f1c49232eee0 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -37,8 +37,15 @@ static int mdsmap_show(struct seq_file *s, void *p)
- 	seq_printf(s, "session_timeout %d\n", mdsmap->m_session_timeout);
- 	seq_printf(s, "session_autoclose %d\n", mdsmap->m_session_autoclose);
- 	for (i = 0; i < mdsmap->possible_max_rank; i++) {
--		struct ceph_entity_addr *addr = &mdsmap->m_info[i].addr;
--		int state = mdsmap->m_info[i].state;
-+		struct ceph_entity_addr *addr;
-+		int state;
-+
-+		if (unlikely(!mdsmap->m_info))
-+			break;
-+
-+		addr = &mdsmap->m_info[i].addr;
-+		state = mdsmap->m_info[i].state;
-+
- 		seq_printf(s, "\tmds%d\t%s\t(%s)\n", i,
- 			       ceph_pr_addr(addr),
- 			       ceph_mds_state_name(state));
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 0f497c39ff82..501b78f9de56 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -1737,6 +1737,9 @@ static void __open_export_target_sessions(struct ceph_mds_client *mdsc,
- 	if (mds >= mdsc->mdsmap->possible_max_rank)
- 		return;
- 
-+	if (unlikely(!mdsc->mdsmap->m_info))
-+		return;
-+
- 	mi = &mdsc->mdsmap->m_info[mds];
- 	doutc(cl, "for mds%d (%d targets)\n", session->s_mds,
- 	      mi->num_export_targets);
-@@ -5015,11 +5018,12 @@ static void check_new_map(struct ceph_mds_client *mdsc,
- 
- 	doutc(cl, "new %u old %u\n", newmap->m_epoch, oldmap->m_epoch);
- 
--	if (newmap->m_info) {
--		for (i = 0; i < newmap->possible_max_rank; i++) {
--			for (j = 0; j < newmap->m_info[i].num_export_targets; j++)
--				set_bit(newmap->m_info[i].export_targets[j], targets);
--		}
-+	/* ceph_mdsmap_decode() should guarantee m_info allocation */
-+	BUG_ON(!newmap->m_info);
-+
-+	for (i = 0; i < newmap->possible_max_rank; i++) {
-+		for (j = 0; j < newmap->m_info[i].num_export_targets; j++)
-+			set_bit(newmap->m_info[i].export_targets[j], targets);
- 	}
- 
- 	for (i = 0; i < oldmap->possible_max_rank && i < mdsc->max_sessions; i++) {
-diff --git a/fs/ceph/mdsmap.h b/fs/ceph/mdsmap.h
-index 1f2171dd01bf..12530f25a63b 100644
---- a/fs/ceph/mdsmap.h
-+++ b/fs/ceph/mdsmap.h
-@@ -52,6 +52,8 @@ ceph_mdsmap_get_addr(struct ceph_mdsmap *m, int w)
- {
- 	if (w >= m->possible_max_rank)
- 		return NULL;
-+	if (unlikely(!m->m_info))
-+		return NULL;
- 	return &m->m_info[w].addr;
- }
- 
-@@ -60,12 +62,14 @@ static inline int ceph_mdsmap_get_state(struct ceph_mdsmap *m, int w)
- 	BUG_ON(w < 0);
- 	if (w >= m->possible_max_rank)
- 		return CEPH_MDS_STATE_DNE;
-+	if (unlikely(!m->m_info))
-+		return CEPH_MDS_STATE_DNE;
- 	return m->m_info[w].state;
- }
- 
- static inline bool ceph_mdsmap_is_laggy(struct ceph_mdsmap *m, int w)
- {
--	if (w >= 0 && w < m->possible_max_rank)
-+	if (w >= 0 && w < m->possible_max_rank && m->m_info)
- 		return m->m_info[w].laggy;
- 	return false;
- }
--- 
-2.51.0
+Regards,
+Kuan-Wei
 
 
