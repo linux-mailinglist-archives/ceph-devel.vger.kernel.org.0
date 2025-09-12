@@ -1,112 +1,298 @@
-Return-Path: <ceph-devel+bounces-3596-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3597-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73529B54355
-	for <lists+ceph-devel@lfdr.de>; Fri, 12 Sep 2025 08:53:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04966B5435F
+	for <lists+ceph-devel@lfdr.de>; Fri, 12 Sep 2025 08:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDAF41C864FD
-	for <lists+ceph-devel@lfdr.de>; Fri, 12 Sep 2025 06:53:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABA6F56137E
+	for <lists+ceph-devel@lfdr.de>; Fri, 12 Sep 2025 06:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D10F2951B3;
-	Fri, 12 Sep 2025 06:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7552128CF50;
+	Fri, 12 Sep 2025 06:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="nSe9+r/Z"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XgL8QEsi"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B8F28A3F2
-	for <ceph-devel@vger.kernel.org>; Fri, 12 Sep 2025 06:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01B728D830
+	for <ceph-devel@vger.kernel.org>; Fri, 12 Sep 2025 06:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757659980; cv=none; b=LKuD8TH6i0sdxF6X7AfNb8EqgXfpvrmdo03bSgGMW5kKHRzBQjgT6143Fpzj7IvOVKJ0yjcsDYHFnZ6SSyOJ+ABZmkAmlVXR4EWoj+oCjtdt/E10I+yltG6mwfRe9KXTqYoul/59JbhlV2b9YWYxVnL8By06kUcBRIxYMAutzY8=
+	t=1757660164; cv=none; b=COWk8maQ4/gHuX4slHuh05/sejM6o2Z6997Linh3IwHWOl30ksvpYnvAlsi307y0LbH1LO4dE3UoN9denUcUvWgzcMSJLeMiwvsaw/qDwFXP9iiz3JV4dDXI5aTmtAJQhPtxiM9RSc24GjdI4T7GxQwExnArp45glHU9cttB0Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757659980; c=relaxed/simple;
-	bh=AMQ9UJhJn6NJ6YO0XjNRfud58VDObW+dwpThmQIOhd8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=F2D7UJa7fN9scjVBgO/jyVPj10Uz3UihrilrMeuzsnRYtILT/YhqqXxusRj2on0X3MNp7FdKznvqv3pSduKCeInmnQm6TVbrGgrQrqHsb9gzk9HyJmhFXvnXL/2d/VjiRykqKsXiwkYoH6sZn8eV++pSf2gGlDv6BCnTXxV0ZGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=nSe9+r/Z; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-772301f8a4cso2169395b3a.3
-        for <ceph-devel@vger.kernel.org>; Thu, 11 Sep 2025 23:52:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1757659978; x=1758264778; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AMQ9UJhJn6NJ6YO0XjNRfud58VDObW+dwpThmQIOhd8=;
-        b=nSe9+r/ZU5y7WEJgrf9f3rUh1nS6uir2QVa1uhENhODP3KSZhst0fiV8hwOMzKe3uV
-         BaXXTCHv7KBAQcEhfcXOYvF0AFuOzMOPY8u0hpVN7GDLeAxRyEOckWk5sD2PXkPIv0xg
-         hx7VMz6C0YF6URuzBm0+PlinXwn3/cUi6RHIR+vNHqPW+du2i0dFk1qf7jnnYYcjzi7I
-         crwNb53jn0Dt3y/rVPffjs+Nzh81BOZOZLT4iwUQzdKLzd+ZDi2ipqBHsBkb26TEJInc
-         Zy6iq8s8ufk66lTTGc7ZOnUdpIWOdVM0shpZPuB4XpCoQZxg3akIVNVIYw5GDpfXUqqa
-         RQxQ==
+	s=arc-20240116; t=1757660164; c=relaxed/simple;
+	bh=/z8ot0JT0zPWbokHld1RS0mlLyDvNugqF7EyZVbrb20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HyyRNjmk+cPu7C+IzxJqA/ijszkepp5SmPRG117N9nHwZeYYJGGZr9NFknxJK/bVcMzpyDJCKosZp7Ms4LdnD5exaY4vszRCVNK7Bco94h/WOiF+dhKk3fCbjd+kQLK6B+c646Bj2JZB5zI1V5EUgVXmTLh2ffZC39lz8Pjo55U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XgL8QEsi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757660160;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZO0t1f2Gv/bX1YwrJH8MspeGFXNwMntfs+nxiHs4xfI=;
+	b=XgL8QEsiSHYaVlgT9Sum+JM+7XqqJR/vYDaiXj/bcBfDYkBssCsr4XwBmX6WWaGwpqi0NO
+	1YKLRppMjMYuyKYeKWxwUxMdUmD4Jz4MriaykPx+D7ZF2C7NvlaAuVztV9tUOzsXJ/HX7k
+	lAr5bntc6h3P+i9Wo3EzHzI3JBkmEuw=
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-606-tInWvUzTN0KTaZzrOgNoGA-1; Fri, 12 Sep 2025 02:55:58 -0400
+X-MC-Unique: tInWvUzTN0KTaZzrOgNoGA-1
+X-Mimecast-MFC-AGG-ID: tInWvUzTN0KTaZzrOgNoGA_1757660158
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-7724688833bso1517163b3a.2
+        for <ceph-devel@vger.kernel.org>; Thu, 11 Sep 2025 23:55:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757659978; x=1758264778;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757660158; x=1758264958;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AMQ9UJhJn6NJ6YO0XjNRfud58VDObW+dwpThmQIOhd8=;
-        b=qz1yMD19AYlGyFE1yz0mPE++ip44LDT6KPm0UZN5amGQ7s4PGGqDXkLKQNZTUZQarS
-         ZLbgjWmv6gWu0nK5+p5EhfYYD1zk6uXSPWKWbQOpm1BKSxS4aDi5zFGDQPS1hS5JX5vJ
-         WqeKOJb7izupZC5qHluuekveSqEiZn2FRzFnL1oJvQyNdyCo0G2QmDeFqL3GiuVsTzao
-         kje7oabt+5OHOXazZ4/4zXktJrH9whqbxso3DRh13Kqmq8xkgUNwcbxe9lSg02QSlzMe
-         JV/KoQyMB/vGsYD+ESB1ZvCgzYze2WH6uZ7fNS1h0mQdz1CYL555qG8MyV3Xrvzs2sJG
-         hQ4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUFGTSJ990ZajggHusgWyAN8iPQL1bV2VATEgL+DGot38WHo70jjoHSZkzuWkOD0EXqNrE998JgtgKS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHaPE7tMJw+A2RBWnpe/rd7wt7SRgKyTRMlzZrXr/R5Zu1MAu7
-	k7q/su1FXvX5TwG/NTJKCh2Wh7Kuvza8cne9DC+2jAaVxsw8KVb+SvJNn95CHbEHJg4=
-X-Gm-Gg: ASbGncuDl3VARQImVjoMc5yK2RfjqLilzq0dzMvt62SxEc0F69V5Gm9VgK3rYBtr+eJ
-	zJsYvd2MaMAcNAs7UaqiXCxf1yJaWLOLk6lQeX1Ml3fv4Cbl1WrTxvaTbqAbv78D2KNqtELMLuf
-	NGaAozsuEiPKuIrR5E7qZP3wlt2rzLl2ivs6FVdf+qak5CmUUqIHSpDbN9g0N+Ud8r2B+Z9jTPe
-	61U7I+JvEWMOJM93u0GWS026QNXkdE18MQGCRTcJhrhubrcPcxjLrVaeribkSt8ssijCtQT1IfP
-	1QrQx253OpHFcHIpp9BQ6vE1tc8XLQQ1Ti6W8o3nbO7LSNJEU3WX7A831P4jq+E8a3J8E81i+56
-	1EcdmOn3e+pb3whEbzj9/mPOioSCE64g8z6qOVLYc7CRIanQ=
-X-Google-Smtp-Source: AGHT+IFQKeePLPos3Wc/vCSrtfD9DK3M1OpdAn6C2aQwDSA3Qht9Qgg36mVj/vePp62ddGIi74wlig==
-X-Received: by 2002:a05:6a00:2ea2:b0:76e:2eff:7ae9 with SMTP id d2e1a72fcca58-77612092482mr1980655b3a.12.1757659977712;
-        Thu, 11 Sep 2025 23:52:57 -0700 (PDT)
-Received: from wu-Pro-E500-G6-WS720T.. ([2001:288:7001:2703:9e14:1074:637d:9ff6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607c49fe4sm4410985b3a.101.2025.09.11.23.52.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 23:52:56 -0700 (PDT)
-From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: 409411716@gms.tku.edu.tw
-Cc: akpm@linux-foundation.org,
-	axboe@kernel.dk,
-	ceph-devel@vger.kernel.org,
-	ebiggers@kernel.org,
-	hch@lst.de,
-	home7438072@gmail.com,
-	idryomov@gmail.com,
-	jaegeuk@kernel.org,
-	kbusch@kernel.org,
-	linux-fscrypt@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	sagi@grimberg.me,
-	tytso@mit.edu,
-	visitorckw@gmail.com,
-	xiubli@redhat.com
-Subject: Re: [PATCH v2 2/5] lib/base64: rework encoder/decoder with customizable support and update nvme-auth
-Date: Fri, 12 Sep 2025 14:52:52 +0800
-Message-Id: <20250912065252.857420-1-409411716@gms.tku.edu.tw>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <aMO/woLrAN7bn9Fd@wu-Pro-E500-G6-WS720T>
-References: <aMO/woLrAN7bn9Fd@wu-Pro-E500-G6-WS720T>
+        bh=ZO0t1f2Gv/bX1YwrJH8MspeGFXNwMntfs+nxiHs4xfI=;
+        b=tbrgWneIkhUpM2lIZuv2EiOrhZ0WhKRbecCRYnFVCiB54c3dOLWuq/JPyzLImUUCbC
+         yM6pklgcMJrIt++Bjj0cl1WewJF1qBv29MB76uQxyTrA/yRWBOZMrBQAc+0IgjnDCeLw
+         z/8lBZ3VQKwjxEERgf1khKlK/1Ae/OZyGEjFLGrB9K6tYTQKCfIBATQBXcib5lLlUptH
+         XhuceZIE7MSXJCPxYYwKqffpX5/d2Lll3JcBGZaGSIx/tmcX4bCkjiJBaCYjYVyQlzSn
+         LLzo4XsqdEvFVU7zozcWEDlFbwzUnBMSKiFsZDp03lZxCWkEQ09huLmqVfcSEd2P7ZoI
+         flTQ==
+X-Gm-Message-State: AOJu0YzfkGPj+9FSw1C/B2BltrXKWz6hH+8MZjA8QFsPCqZqN88CYcaF
+	mJbGT5U45NIIvhF+BxCnTHhUf9ZFzkhe5feEpRl1grvRb61qSoJVQ/TqFXAyJJNQSbE1oKzzaWc
+	nZaIHIT8qAuVxF4GIwYlO620rKyXGO2wEyIA4F/UziEd+XpQAqpBvOi4alGcTkig5xHuS0Vl5ch
+	ppaDBmws345DqXTILcz7VLvVux4GKuLHXFn81b
+X-Gm-Gg: ASbGncvQibXWoAb+zx1LeiXZVPw0Zk+ptPKfNDvdQDd3g2HOYTeMyxogACk6P7YGHI+
+	y3HrGg4fVEBk8rz5toGBdEJ5maqiPaZtZ02N5haC386MAQA7c/pHtWU6B9rT+4ROx31S/OAFFQi
+	cRb4lQt2Jqpu0Ga4Nh9Ke6ow==
+X-Received: by 2002:a05:6a20:748d:b0:243:fedf:b413 with SMTP id adf61e73a8af0-2602c43623cmr2614560637.33.1757660157795;
+        Thu, 11 Sep 2025 23:55:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdYK11qTPNOQNJIrLmapgWo23HUMlcLgE7VRLTnl4bq0lxzxcs8Nj/5Wh3Z4lxXMmma21kCd8WBka/TxvrJfw=
+X-Received: by 2002:a05:6a20:748d:b0:243:fedf:b413 with SMTP id
+ adf61e73a8af0-2602c43623cmr2614528637.33.1757660157375; Thu, 11 Sep 2025
+ 23:55:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250911093235.29845-1-khiremat@redhat.com> <bf1a10a3d6a85bb95f58327b6155f09abf283db4.camel@ibm.com>
+In-Reply-To: <bf1a10a3d6a85bb95f58327b6155f09abf283db4.camel@ibm.com>
+From: Kotresh Hiremath Ravishankar <khiremat@redhat.com>
+Date: Fri, 12 Sep 2025 12:25:45 +0530
+X-Gm-Features: Ac12FXzdNGc1XD0MSbdmnzzLjkaiUJe2Et28hNr9TKmHDY5OTw0Zx9sWE-3Oy5A
+Message-ID: <CAPgWtC5dB4UHio9RroKwT2jh+yRc=hDjLCoBvxJArYj7i8TcVw@mail.gmail.com>
+Subject: Re: [PATCH v4] ceph: Fix multifs mds auth caps issue
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, "idryomov@gmail.com" <idryomov@gmail.com>, 
+	Alex Markuze <amarkuze@redhat.com>, Patrick Donnelly <pdonnell@redhat.com>, 
+	Venky Shankar <vshankar@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sorry, please ignore my previous email. My email client was not configured correctly.
+On Fri, Sep 12, 2025 at 12:46=E2=80=AFAM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+>
+> On Thu, 2025-09-11 at 15:02 +0530, khiremat@redhat.com wrote:
+> > From: Kotresh HR <khiremat@redhat.com>
+> >
+> > The mds auth caps check should also validate the
+> > fsname along with the associated caps. Not doing
+> > so would result in applying the mds auth caps of
+> > one fs on to the other fs in a multifs ceph cluster.
+> > The bug causes multiple issues w.r.t user
+> > authentication, following is one such example.
+> >
+> > Steps to Reproduce (on vstart cluster):
+> > 1. Create two file systems in a cluster, say 'fsname1' and 'fsname2'
+> > 2. Authorize read only permission to the user 'client.usr' on fs 'fsnam=
+e1'
+> >     $ceph fs authorize fsname1 client.usr / r
+> > 3. Authorize read and write permission to the same user 'client.usr' on=
+ fs 'fsname2'
+> >     $ceph fs authorize fsname2 client.usr / rw
+> > 4. Update the keyring
+> >     $ceph auth get client.usr >> ./keyring
+> >
+> > With above permssions for the user 'client.usr', following is the
+> > expectation.
+> >   a. The 'client.usr' should be able to only read the contents
+> >      and not allowed to create or delete files on file system 'fsname1'=
+.
+> >   b. The 'client.usr' should be able to read/write on file system 'fsna=
+me2'.
+> >
+> > But, with this bug, the 'client.usr' is allowed to read/write on file
+> > system 'fsname1'. See below.
+> >
+> > 5. Mount the file system 'fsname1' with the user 'client.usr'
+> >      $sudo bin/mount.ceph usr@.fsname1=3D/ /kmnt_fsname1_usr/
+> > 6. Try creating a file on file system 'fsname1' with user 'client.usr'.=
+ This
+> >    should fail but passes with this bug.
+> >      $touch /kmnt_fsname1_usr/file1
+> > 7. Mount the file system 'fsname1' with the user 'client.admin' and cre=
+ate a
+> >    file.
+> >      $sudo bin/mount.ceph admin@.fsname1=3D/ /kmnt_fsname1_admin
+> >      $echo "data" > /kmnt_fsname1_admin/admin_file1
+> > 8. Try removing an existing file on file system 'fsname1' with the user
+> >    'client.usr'. This shoudn't succeed but succeeds with the bug.
+> >      $rm -f /kmnt_fsname1_usr/admin_file1
+> >
+> > For more information, please take a look at the corresponding mds/fuse =
+patch
+> > and tests added by looking into the tracker mentioned below.
+> >
+> > v2: Fix a possible null dereference in doutc
+> > v3: Don't store fsname from mdsmap, validate against
+> >     ceph_mount_options's fsname and use it
+> > v4: Code refactor, better warning message and
+> >     fix possible compiler warning
+> >
+> > URL: https://tracker.ceph.com/issues/72167
+> > Signed-off-by: Kotresh HR <khiremat@redhat.com>
+> > ---
+> >  fs/ceph/mds_client.c |  8 ++++++++
+> >  fs/ceph/mdsmap.c     | 13 ++++++++++++-
+> >  fs/ceph/super.c      | 14 --------------
+> >  fs/ceph/super.h      | 14 ++++++++++++++
+> >  4 files changed, 34 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> > index 179130948041..97f9de888713 100644
+> > --- a/fs/ceph/mds_client.c
+> > +++ b/fs/ceph/mds_client.c
+> > @@ -5689,11 +5689,19 @@ static int ceph_mds_auth_match(struct ceph_mds_=
+client *mdsc,
+> >       u32 caller_uid =3D from_kuid(&init_user_ns, cred->fsuid);
+> >       u32 caller_gid =3D from_kgid(&init_user_ns, cred->fsgid);
+> >       struct ceph_client *cl =3D mdsc->fsc->client;
+> > +     const char *fs_name =3D mdsc->fsc->mount_options->mds_namespace;
+> >       const char *spath =3D mdsc->fsc->mount_options->server_path;
+> >       bool gid_matched =3D false;
+> >       u32 gid, tlen, len;
+> >       int i, j;
+> >
+> > +     doutc(cl, "fsname check fs_name=3D%s  match.fs_name=3D%s\n",
+> > +           fs_name, auth->match.fs_name ? auth->match.fs_name : "");
+> > +     if (auth->match.fs_name && strcmp(auth->match.fs_name, fs_name)) =
+{
+> > +             /* fsname check failed, try next one */
+>
+> I am still thinking that "check failed" sounds too strong here. Names sim=
+ply
+> don't match to each others and we need to check next one. But "check fail=
+ed"
+> sounds like error condition but not the normal flow. Potentially, I used =
+the
+> word "fail" too frequently for commenting the error conditions. :)
 
-Best regards,
-Guan-chun
+Yeah, 'fsname mismatch, try next one' is a better choice. Please feel free
+to change that while you submit.
+
+>
+> > +             return 0;
+> > +     }
+> > +
+> >       doutc(cl, "match.uid %lld\n", auth->match.uid);
+> >       if (auth->match.uid !=3D MDS_AUTH_UID_ANY) {
+> >               if (auth->match.uid !=3D caller_uid)
+> > diff --git a/fs/ceph/mdsmap.c b/fs/ceph/mdsmap.c
+> > index 8109aba66e02..de457470d07c 100644
+> > --- a/fs/ceph/mdsmap.c
+> > +++ b/fs/ceph/mdsmap.c
+> > @@ -353,10 +353,21 @@ struct ceph_mdsmap *ceph_mdsmap_decode(struct cep=
+h_mds_client *mdsc, void **p,
+> >               __decode_and_drop_type(p, end, u8, bad_ext);
+> >       }
+> >       if (mdsmap_ev >=3D 8) {
+> > +             u32 fsname_len;
+> >               /* enabled */
+> >               ceph_decode_8_safe(p, end, m->m_enabled, bad_ext);
+> >               /* fs_name */
+> > -             ceph_decode_skip_string(p, end, bad_ext);
+> > +             ceph_decode_32_safe(p, end, fsname_len, bad_ext);
+> > +
+> > +             /* validate fsname against mds_namespace */
+> > +             if (!namespace_equals(mdsc->fsc->mount_options, (const ch=
+ar *)*p, fsname_len)) {
+> > +                     pr_warn_client(cl, "fsname %*pE doesn't match mds=
+_namespace %s\n",
+> > +                                    (int)fsname_len, (char *)*p,
+> > +                                    mdsc->fsc->mount_options->mds_name=
+space);
+> > +                     goto bad;
+> > +             }
+> > +             // skip fsname after validation
+> > +             ceph_decode_skip_n(p, end, fsname_len, bad);
+> >       }
+> >       /* damaged */
+> >       if (mdsmap_ev >=3D 9) {
+> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > index 0e6787501b2f..2c6c45b2056d 100644
+> > --- a/fs/ceph/super.c
+> > +++ b/fs/ceph/super.c
+> > @@ -246,20 +246,6 @@ static void canonicalize_path(char *path)
+> >       path[j] =3D '\0';
+> >  }
+> >
+> > -/*
+> > - * Check if the mds namespace in ceph_mount_options matches
+> > - * the passed in namespace string. First time match (when
+> > - * ->mds_namespace is NULL) is treated specially, since
+> > - * ->mds_namespace needs to be initialized by the caller.
+> > - */
+> > -static int namespace_equals(struct ceph_mount_options *fsopt,
+> > -                         const char *namespace, size_t len)
+> > -{
+> > -     return !(fsopt->mds_namespace &&
+> > -              (strlen(fsopt->mds_namespace) !=3D len ||
+> > -               strncmp(fsopt->mds_namespace, namespace, len)));
+> > -}
+> > -
+> >  static int ceph_parse_old_source(const char *dev_name, const char *dev=
+_name_end,
+> >                                struct fs_context *fc)
+> >  {
+> > diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> > index 8cba1ce3b8b0..bb992f12e3b0 100644
+> > --- a/fs/ceph/super.h
+> > +++ b/fs/ceph/super.h
+> > @@ -104,6 +104,20 @@ struct ceph_mount_options {
+> >       struct fscrypt_dummy_policy dummy_enc_policy;
+> >  };
+> >
+> > +/*
+> > + * Check if the mds namespace in ceph_mount_options matches
+> > + * the passed in namespace string. First time match (when
+> > + * ->mds_namespace is NULL) is treated specially, since
+> > + * ->mds_namespace needs to be initialized by the caller.
+> > + */
+> > +static inline int namespace_equals(struct ceph_mount_options *fsopt,
+> > +                                const char *namespace, size_t len)
+> > +{
+> > +     return !(fsopt->mds_namespace &&
+> > +              (strlen(fsopt->mds_namespace) !=3D len ||
+> > +               strncmp(fsopt->mds_namespace, namespace, len)));
+> > +}
+> > +
+> >  /* mount state */
+> >  enum {
+> >       CEPH_MOUNT_MOUNTING,
+>
+> Looks good.
+>
+> Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+>
+> Let me run xfstests on your patch. I'll be back with the results ASAP.
+>
+> Thanks,
+> Slava.
+>
+
 
