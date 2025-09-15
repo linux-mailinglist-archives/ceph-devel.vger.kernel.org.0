@@ -1,190 +1,156 @@
-Return-Path: <ceph-devel+bounces-3609-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3610-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C1A8B56E74
-	for <lists+ceph-devel@lfdr.de>; Mon, 15 Sep 2025 04:52:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ADEEB57202
+	for <lists+ceph-devel@lfdr.de>; Mon, 15 Sep 2025 09:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 674D27ACC42
-	for <lists+ceph-devel@lfdr.de>; Mon, 15 Sep 2025 02:50:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F9807A1141
+	for <lists+ceph-devel@lfdr.de>; Mon, 15 Sep 2025 07:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA04215F42;
-	Mon, 15 Sep 2025 02:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58580EEAB;
+	Mon, 15 Sep 2025 07:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QHLoIWMf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WFwBi5al"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0041D20296E
-	for <ceph-devel@vger.kernel.org>; Mon, 15 Sep 2025 02:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1571C84B2
+	for <ceph-devel@vger.kernel.org>; Mon, 15 Sep 2025 07:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757904714; cv=none; b=WC94IH8qp8VfQpkyewU4LW7DunbB8QRlpPGKlOifiypnkJUYIA0ejmmMF3eJlLhXcZwE4bdTSMPc0BegNxWZ2e3/OO31nEXmRBce9+JWx307i8DGQGcHj5Hg/IMDHZ5/BzgGCSldtUutll7APUgvyL8JdQkgt6ymvBZfU8tu03A=
+	t=1757922625; cv=none; b=oR6J4C8972lA/0SU7KZjzSRjCyWy990sYBIiNCcwUCiSi3hXDRwnKGycNrWosXK+qpTswZL0z/zOyjwpiHOsrp8H2PgPpcBjLbAHrCrYaZYk5jInBfjbhZ8A/gMxN4Vkbv/FXe2uGpGcr1Oau9Ck4faSem2hK1is6kHXDA7OHk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757904714; c=relaxed/simple;
-	bh=EHCSfQ2XnebCHi96Y4dD+dNrHULC6WpUjEi9/5mfeAs=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dankivrtt8crbfrVOrFmdW4yeneOk0bQOzkXHFIAin2qqxC/vTg+Q4+72xkx6rIUuq7i31+q+dXSuBbbIDI6hHWymNxubW982xISveD4aoY/P7UJBTQEabRlfsmb7diKDs1Le542pVQbSfuYHs/6uujVECx0Fvkpm80OWr0Cq/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QHLoIWMf; arc=none smtp.client-ip=209.85.219.54
+	s=arc-20240116; t=1757922625; c=relaxed/simple;
+	bh=4x0K4C7BS/KwAtlKECA00SnfM/ZMwosnoHpPoGRiQlA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aH+v3b9J/qyTZ4PQVyDv4v4VETZcYgXPZN6axnN7EgznMJ9LInQNPdFWAAk/W7f6x6QarfbsokJExhZoFez6OCfdI6CgEQBZSJcXzSzX+zQ6F0iHGMKmNTzTtW542TlYojLDywHX5uFFRnm80wIsPCod4dQQ8jO3xW1HGigpmsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WFwBi5al; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-76b8fd4ba2cso19648396d6.3
-        for <ceph-devel@vger.kernel.org>; Sun, 14 Sep 2025 19:51:52 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-77264a94031so2793724b3a.2
+        for <ceph-devel@vger.kernel.org>; Mon, 15 Sep 2025 00:50:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757904712; x=1758509512; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EHCSfQ2XnebCHi96Y4dD+dNrHULC6WpUjEi9/5mfeAs=;
-        b=QHLoIWMfVplcun/lEerfYdg/bUv0X5hCUd/1WvfoqWyjD+DD7EByyKr9BIgS2w3tLu
-         cUa3eF/zO1fZQ45n4VsIojB9YAw0fnCzEtFaABgm1r5y2kDFy9VSe15779sgE3n4dj68
-         KxErNSoCdCdNt+2WRZOmVXAGuog9F2z44HJEoKq/qcN5+IzlaN7QU0aVjEmUZNsU8TL8
-         2F/P56uKAj/YcpNocJ8PYz2IjqVaNO5HXe5L1Mt9YB+GuBINAP6KV6UGpN1LhGG5QwkC
-         lWrTgXFGLwbq8JQmyl/t7sHPqGjk0JK84OJq3b8uzWzkcN/lhc8eNONutc3Sc3Rp1/rn
-         /HFA==
+        d=gmail.com; s=20230601; t=1757922623; x=1758527423; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dcMYUn+TNptTLlFhWnaY6U4bXh0X9SnLYkpEfFnsdG4=;
+        b=WFwBi5alFZCWpua/X9WOy1zjfkhRaxpF0KB4vE8hYiQ4A9o7HLApZWW0J8MRuF8sH/
+         qQg7yb4dSEMLwCeoZN0alpy0eQwr5TcclcsisWxy/oMX3iOV86YMxQ4GAJF1SbvYbYbw
+         RUszJhQflV5fUdHRJafnsfoB1mtVA21EsljFemtbGXuYWTU65is0MbCfrAgCEtCGlnVe
+         A+JCZAWCfD/Dk41+Ayq43d4waZjOUaoRFSIGLB/24G1kwYN2b593rwSf6Sdxj3z9rKxx
+         eNBTcBxoxsJydB3eKf70eHTflDTK4mH6y7m9oUx7SEKkB9Q1koZhiZN/Bd0gneR84D3p
+         ADEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757904712; x=1758509512;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EHCSfQ2XnebCHi96Y4dD+dNrHULC6WpUjEi9/5mfeAs=;
-        b=mQJpPsXpZ3BGk66c0rnbkv6ubs0xi0OCMYDZsWJh1pn767H2VrQTgflNeerRO5VVtW
-         5kQIWftenOYPgTB7U1t9vMDM065QEofXvlzJrRCn51AMCKG2kp9C0qsXGCR3hV9xllvV
-         XAuIPOjUuQv+xtMEqOngWvwsNNqL1E50r0ZTj6Z2mnWh0hW2kk1uaG1Lu8aEzVCdNtYW
-         juVWapMLMWi+sD5MtJTs9E/+xQmCB+5oFqqLWCPlrjr/rY2N1x44zgkS4IzCcJmrtChC
-         Wv+pu6tn9xxttl3rnm00VB/ZilrwIB7dJFBSbtrmLzlOMmGkFhXQPlNt0KoF1J2jTI+O
-         mQ6g==
-X-Forwarded-Encrypted: i=1; AJvYcCV7Rqib6FBOvpiGDE+I/GHPMeGHJACtREuVJNxWQVHJS5tIaGVz7E3D9M6JcYEDGewB4QKLVE080qW3@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUjuNbjhNqumo2nQ7qKW3/tovdU5pA9z+S1e7lxedVU2nkATZs
-	+gZkZN71kftoV0An/AVM0NAB4V/Of2QnWGGO+lB7SbkLXszolRfjf4d2MCj6MzpAcAolQKioUwF
-	J9gpAb+tKPtuB2jNqw3i/55rXmRB2zww=
-X-Gm-Gg: ASbGncvv3iDg2oTyl7owxNaL2RUmORrESVfe6LhDa+6mhMneMBh94VSA+QAHOzl5/J3
-	Ocdam0OnEeym2fsZNna+cL2i/4R/fudJf9txYcpqgxZQrP/sriJdvh6yumWcdkNs1+6x/aGjAYI
-	XHcxxD6Ib4HnkDR2lrFp44CXYFzMNYIOS0jHd163yGmnAV6YKmxdUNpaBA8efVtwCgJh3f1+IB6
-	Vt2GxybA0aJ9TcBb5g0
-X-Google-Smtp-Source: AGHT+IFP8eaILsH9go5zyLSWkPywDlTf0zFbEuxeMo96jyMKBC6y8FwuOWf/q4q8WZnK3lNGYAepz88m6iC+xXZJxTk=
-X-Received: by 2002:a05:6214:5f81:b0:767:c73e:88d4 with SMTP id
- 6a1803df08f44-767c73e8a77mr124152186d6.8.1757904711760; Sun, 14 Sep 2025
- 19:51:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757922623; x=1758527423;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dcMYUn+TNptTLlFhWnaY6U4bXh0X9SnLYkpEfFnsdG4=;
+        b=E2qFgZEVUbn2cXkC5DJH8qNII7C2yR299w8kvGbaiWklcgeKEIWcaIiuesTGRVtNzL
+         eOlL03C0z4bWqRrUrWFnk2cyvQnjmlZctVU2P/+KdbdMLsw9pK08cr2wELkISzNspIs5
+         QfJSplfuknsi9Ei/p1+xh+F6bk0qgy+aeDS7FiN9ib1jmC4Y+Ihxks0FiojqjoUQ/TMc
+         C/nN5woBb8hMYLV7VIQ9HxNm4XnUwlxXpLkGdprsS9XL2CL3+cpi0pMlzT9HxnwDl7XO
+         cUbCk/PpaWmXGMBlU4h3uzUXiQ4WeSd3CA6Raf8tfSKVG0TsJy0CJKCxkt4GZyHV0CZQ
+         c1yg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmtQq0hVU5arBfGZE4HEQq8j7lfMRamluqXNNg5wHdPGtgmzS+RyW4ZGYagj8QHpTcrfBmqQRXPpRz@vger.kernel.org
+X-Gm-Message-State: AOJu0YykZ8WkOYEI1RvFlTJoswHMH9s2F35mQoGZGogAyYlD5Nq8xKkd
+	EqCHAI2tU3I9vyWdkN8mWyfFpKg9WjZw4SJ4jM1w22KRHA6WblAJ9KPG
+X-Gm-Gg: ASbGnctV8f/U2kzO0iqqV9HhhY8I+6is+KSgQeiP//OfV2fxpXYYNV7Y4zi3QBFk1aF
+	OwzjdeihtQA/hCWzdUwvqnCkCx/xfDXPCQf27YEG+9fni4hIS7fMlhnvepqrk9sR9HXWobkgkGC
+	9diUmp/uphZWTSueyEFaoDqR0pA36hSzi0xTXu+cyTK5o+iy1rIqCoFC+9VcLaXCK+i+/qn4qog
+	AqkS72IjkYixYZMgzMBXJWWz8eXq/p32x36SOje9/cA4mJMySFzIQ7xldpQowfcOStzXF84EGST
+	QhpnAA7/wHlfK8kKfeaT/xnDB+rybRsyuOLjM6Z1wlb2ux6MGCokLgZ4xiiaUzoyI+oawOdcRLO
+	7vTtbAK5kg3xZNYMFPK/an81p8vzlQM3QZgZNV4rznLvcef80K29jupgqFxk9EKY1/pezEco=
+X-Google-Smtp-Source: AGHT+IHTVtvEPQ/WLcfDtdAFIsV0pStIbm5dUP0xXRfmxVxAtPMNXCVUzOVfpPLSg5MbeMeLt+S6Fw==
+X-Received: by 2002:a05:6a00:21cb:b0:771:fbc3:f151 with SMTP id d2e1a72fcca58-77612163666mr14541329b3a.15.1757922622731;
+        Mon, 15 Sep 2025 00:50:22 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607c471dcsm12492926b3a.96.2025.09.15.00.50.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Sep 2025 00:50:22 -0700 (PDT)
+Date: Mon, 15 Sep 2025 15:50:18 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	Guan-Chun Wu <409411716@gms.tku.edu.tw>, akpm@linux-foundation.org,
+	axboe@kernel.dk, ceph-devel@vger.kernel.org, ebiggers@kernel.org,
+	hch@lst.de, home7438072@gmail.com, idryomov@gmail.com,
+	jaegeuk@kernel.org, kbusch@kernel.org,
+	linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, sagi@grimberg.me, tytso@mit.edu,
+	xiubli@redhat.com
+Subject: Re: [PATCH v2 1/5] lib/base64: Replace strchr() for better
+ performance
+Message-ID: <aMfFOoQIIdMkVdYl@visitorckw-System-Product-Name>
+References: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
+ <20250911073204.574742-1-409411716@gms.tku.edu.tw>
+ <CADUfDZqe2x+xaqs6M_BZm3nR=Ahu-quKbFNmKCv2QFb39qAYXg@mail.gmail.com>
+ <aML4FLHPvjELZR4W@visitorckw-System-Product-Name>
+ <aML6/BuXLf4s/XYX@visitorckw-System-Product-Name>
+ <20250914211243.74bdee2a@pumpkin>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: =?UTF-8?B?6ZmI5Y2O5pit?= <lyican53@gmail.com>
-Date: Mon, 15 Sep 2025 10:51:38 +0800
-X-Gm-Features: AS18NWCYV1ejkfb-hhHGxKG9Jq-ZiN_AIhYVPE02h-fdGA1vS5JP9-9rQn3NWAQ
-Message-ID: <CAN53R8HxFvf9fAiF1vacCAdsx+m+Zcv1_vxEiq4CwoHLu17hNg@mail.gmail.com>
-Subject: [RFC] Fix potential undefined behavior in __builtin_clz usage with
- GCC 11.1.0
-To: linux-kernel@vger.kernel.org
-Cc: idryomov@gmail.com, xiubli@redhat.com, ceph-devel@vger.kernel.org, 
-	jejb@linux.ibm.com, martin.petersen@oracle.com, linux-scsi@vger.kernel.org, 
-	pbonzini@redhat.com, seanjc@google.com, kvm@vger.kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250914211243.74bdee2a@pumpkin>
 
-Hi all,
+On Sun, Sep 14, 2025 at 09:12:43PM +0100, David Laight wrote:
+> On Fri, 12 Sep 2025 00:38:20 +0800
+> Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
+> 
+> ... 
+> > Or I just realized that since different base64 tables only differ in the
+> > last two characters, we could allocate a 256 entry reverse table inside
+> > the base64 function and set the mapping for those two characters. That
+> > way, users wouldn't need to pass in a reverse table. The downside is that
+> > this would significantly increase the function's stack size.
+> 
+> How many different variants are there?
 
-I've identified several instances in the Linux kernel where __builtin_clz()
-is used without proper zero-value checking, which may trigger undefined
-behavior when compiled with GCC 11.1.0 using -march=x86-64-v3 -O1 optimization.
+Currently there are 3 variants:
+RFC 4648 (standard), RFC 4648 (base64url), and RFC 3501.
+They use "+/", "-_", and "+," respectively for the last two characters.
 
-PROBLEM DESCRIPTION:
-===================
+> IIRC there are only are two common ones.
+> (and it might not matter is the decoder accepted both sets since I'm
+> pretty sure the issue is that '/' can't be used because it has already
+> been treated as a separator.)
+> 
+> Since the code only has to handle in-kernel users - which presumably
+> use a fixed table for each call site, they only need to pass in
+> an identifier for the table.
+> That would mean they can use the same identifier for encode and decode,
+> and the tables themselves wouldn't be replicated and would be part of
+> the implementation.
+> 
+So maybe we can define an enum in the header like this:
 
-GCC bug 101175 (https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101175) causes
-__builtin_clz() to generate BSR instructions without proper zero handling when
-compiled with specific optimization flags. The BSR instruction has undefined
-behavior when the source operand is zero, potentially causing incorrect results.
+enum base64_variant {
+    BASE64_STD,       /* RFC 4648 (standard) */ 
+    BASE64_URLSAFE,   /* RFC 4648 (base64url) */ 
+    BASE64_IMAP,      /* RFC 3501 */ 
+};
 
-The issue manifests when:
-- GCC version: 11.1.0 (potentially other versions)
-- Compilation flags: -march=x86-64-v3 -O1
-- Code pattern: __builtin_clz(value) where value might be 0
+Then the enum value can be passed as a parameter to base64_encode/decode,
+and in base64.c we can define the tables and reverse tables like this:
 
-AFFECTED LOCATIONS:
-==================
+static const char base64_tables[][64] = {
+    [BASE64_STD] = "ABC...+/",
+    [BASE64_URLSAFE] = "ABC...-_",
+    [BASE64_IMAP] = "ABC...+,",
+};
 
-1. HIGH RISK: net/ceph/crush/mapper.c:265
-Problem: __builtin_clz(x & 0x1FFFF) when (x & 0x1FFFF) could be 0
-Impact: CRUSH hash algorithm corruption in Ceph storage
+What do you think about this approach?
 
-2. HIGH RISK: drivers/scsi/elx/libefc_sli/sli4.h:3796
-Problem: __builtin_clz(mask) in sli_convert_mask_to_count() with no zero check
-Impact: Incorrect count calculations in SCSI operations
+Regards,
+Kuan-Wei
 
-3. HIGH RISK: tools/testing/selftests/kvm/dirty_log_test.c:314
-Problem: Two __builtin_clz() calls without zero validation
-Impact: KVM selftest framework reliability
-
-4. MEDIUM RISK: drivers/clk/clk-versaclock7.c:322
-Problem: __builtin_clzll(den) but prior checks likely prevent den=0
-Impact: Clock driver calculations (lower risk due to existing checks)
-
-COMPARISON WITH SAFE PATTERNS:
-=============================
-
-The kernel already implements safe patterns in many places:
-
-// Safe pattern from include/asm-generic/bitops/builtin-fls.h
-return x ? sizeof(x) * 8 - __builtin_clz(x) : 0;
-
-// Safe pattern from arch/powerpc/lib/sstep.c
-op->val = (val ? __builtin_clz(val) : 32);
-
-PROPOSED FIXES:
-==============
-
-1. net/ceph/crush/mapper.c:
-- int bits = __builtin_clz(x & 0x1FFFF) - 16;
-+ u32 masked = x & 0x1FFFF;
-+ int bits = masked ? __builtin_clz(masked) - 16 : 16;
-
-2. drivers/scsi/elx/libefc_sli/sli4.h:
-if (method) {
-- count = 1 << (31 - __builtin_clz(mask));
-+ count = mask ? 1 << (31 - __builtin_clz(mask)) : 0;
-count *= 16;
-
-3. tools/testing/selftests/kvm/dirty_log_test.c:
-- limit = 1 << (31 - __builtin_clz(pages));
-- test_dirty_ring_count = 1 << (31 - __builtin_clz(test_dirty_ring_count));
-+ limit = pages ? 1 << (31 - __builtin_clz(pages)) : 1;
-+ test_dirty_ring_count = test_dirty_ring_count ?
-+ 1 << (31 - __builtin_clz(test_dirty_ring_count)) : 1;
-
-REPRODUCTION:
-============
-
-Based on the GCC bug report and analysis of the kernel code patterns, this
-issue can be reproduced by:
-
-1. Compiling affected code with: gcc -march=x86-64-v3 -O1
-2. Examining generated assembly for BSR instructions
-3. Triggering code paths where the __builtin_clz argument could be zero
-
-QUESTIONS:
-=========
-
-1. Should I prepare formal patches for each affected subsystem?
-2. Are there other instances I should investigate?
-3. Would adding a kernel-wide safe wrapper for __builtin_clz be appropriate?
-4. Would the maintainers like me to create a proof-of-concept test case?
-
-This analysis is based on static code review and comparison with the known
-GCC bug behavior. Further testing by the respective subsystem maintainers
-would be valuable to confirm the impact.
-
-Best regards,
-Huazhao Chen
-lyican53@gmail.com
-
----
-
-This analysis affects multiple subsystems and should be addressed to ensure
-deterministic behavior across different GCC versions and optimization levels.
-I'm happy to assist with testing or patch development if the maintainers
-confirm this is indeed an issue worth addressing.
 
