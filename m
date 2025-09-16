@@ -1,338 +1,170 @@
-Return-Path: <ceph-devel+bounces-3629-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3630-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F0EB59F86
-	for <lists+ceph-devel@lfdr.de>; Tue, 16 Sep 2025 19:39:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 873B8B5A102
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Sep 2025 21:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BD8E1C03BF2
-	for <lists+ceph-devel@lfdr.de>; Tue, 16 Sep 2025 17:39:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 615477B377F
+	for <lists+ceph-devel@lfdr.de>; Tue, 16 Sep 2025 19:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28E5313D6F;
-	Tue, 16 Sep 2025 17:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B532DE707;
+	Tue, 16 Sep 2025 19:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfH0Cx3B"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="CNLos0Tq"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4BA2F5A2E
-	for <ceph-devel@vger.kernel.org>; Tue, 16 Sep 2025 17:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF5E2D7398
+	for <ceph-devel@vger.kernel.org>; Tue, 16 Sep 2025 19:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758044328; cv=none; b=nt1D0iXIyahcYjS843doTn+4u2Wd3u16MSGVaA00BqfijVpstnfpGWZ6NZDuIuU3yOpsVPTmA7gz2XSbKXN1NB10XOL5laYj1fUBwANBBNagp1CWblj7tEP/mOouv2bK44tshEiUgv+daYiWUwjeO2u8l9KzTAByFNjObGQI4tw=
+	t=1758049876; cv=none; b=C1Xw/7yQz54akcUCNJYUnHmOyufRyn2E2bxIA5MzbIwWguqA+sPt0aWHlovIMz2/p0kROxv9Jmbtfb7BoQKhQndmjHsJAmxBixU0iZNELE7tKzp/FzEFuMN27YY4SPVTQxs8tUbx6Z3/JBwl87nqxheyEtVndXX9M4krzUEiZa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758044328; c=relaxed/simple;
-	bh=zKUgt0gUNcL0CAw+ftmR3WEbBxbg+hYQUd2BC5lpGxI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rzzaURiFGCgYPpE8Kbrwhc8bHr22/v152ltFikyiH88Nk7LV5rHHK+sIjVPhDKH1mJnF2CHgxfNbmgIppW5jcXifj7nUOlfcUqYAGH66WhAdtP89dr//iSBSB82e3OYwM8xSg7TmLBP7yYAnLWFcti55Yy2cjYezqFMrAChW3DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GfH0Cx3B; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-62f24b7be4fso2654818a12.0
-        for <ceph-devel@vger.kernel.org>; Tue, 16 Sep 2025 10:38:45 -0700 (PDT)
+	s=arc-20240116; t=1758049876; c=relaxed/simple;
+	bh=JQYkjz/tXf7d/SYvDSq1GiiZGTTEL+cmVmMScaES8bA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vFVcEqNzzgVuTYnx9vizykkTDVLsmFHyTGiy6CRr/1nKHQv5zkKo0/9cWs+cxFs1HB8YmwaI11KxkTzczszo8wo8LsHHKAsXWAX4Z+oIj2Q8ipcPr1BLAwI+w6A9S9pCcYgo31Bxcj2vDqfv+Kj5fjvAuN15wfD5QEINGSp4EZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=CNLos0Tq; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7341b13f2dcso20538177b3.3
+        for <ceph-devel@vger.kernel.org>; Tue, 16 Sep 2025 12:11:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758044324; x=1758649124; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p3TcgADr/097b4uZyQGdMCl4rLNQ0NPXzmfPchyLdPQ=;
-        b=GfH0Cx3ByMZLLxuxss1hw9y6ViWjc6GFXUTwh8wxiFuQyv1UNTF3+pkG1NAcvjRS54
-         cAqDndDj82iHj5Dj9+66Ku5azYCOnuzXOZa8RPNrUPX6BXwBggfcPSOzDDN0usx73RnO
-         kQlsYc+f10/0RLCOTYmKSAvOtFPwrlhNpM8vpEh0u3Pf3+kRtbfM5Udwf2CtpX5axh6I
-         Ur0Osf4gvnN39m61oQpRMIa5G7es8Y84Gaq2QZvbkoj3aLr55nKqwHnLF59H1+wHRD4E
-         fIBjOc/qiILJj1W02mnrxmslq4kG2lFtO1RGBGaXj9Uof0wRO3cabDN7waUHM0Vrkco5
-         SdaQ==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1758049873; x=1758654673; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3TvpNjNfXgTalwqDVj/2NqZE6nMjrCbJzcEExPw5piU=;
+        b=CNLos0Tqd8a0A2r/zxol15dVnKxYCxNaH6cW/Pf/YX/c652/0/v9cMlTUxcZ2eUoKD
+         0qNnfIUK4EFFedyPmhlZGO9W6Vo71iSHPBIe/Gn6RCMhXkI0pLtRbmPDgm+Pamk+u3gY
+         TXofVT5u3FPPhV/Y32i9D48w/HCN3UC9FnUPyRiTbxR/EWjizamvPE0FmIH4aO4xAULR
+         bvZylqJ1W7OmGGp0FHc/4kvfUZzdHcLZNE+ykxT6VATCRnKncyIF+//fxWzmQbybv6Y6
+         GyETvSwcovQGE4h9Nm+19m6c4t/cfE8BAqlg4gyxQZGUb6iU8dEBgoeKgNzFmQqhY117
+         hGXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758044324; x=1758649124;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p3TcgADr/097b4uZyQGdMCl4rLNQ0NPXzmfPchyLdPQ=;
-        b=trWdNjrhFLyaQkdLifawl7JKNgTZcdpXxfNd+8zWvDmntyz4utByfZTen/v9LxJX9x
-         toXqFJHDORfLl6CQ0Igo6ZvG3p0COH6Uyb78Sk7Frbi6Z6AB6DpbtEBEPkxweNhr+2bC
-         Q43MH2AGMwNclRR9ZUKWO7mTJiFUfxm4LgGFPDlJdlOAuR98YYZvllM/PoG8wtv/5g+V
-         y51v/oKGdk2jbP/Ry8qjnbe40vR57cG1DUN2iVdqTapl2tl16b6ODSShnNnleAzE+b5y
-         a6eAajLb5q06csdXxH3HxBhoXhr7qVNBUmZciWdnEKXvIBLnoqFxEzAYXczkkYbcjOVO
-         +EhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUvD20zbNp117ZK7DV1kj/TJLFg/iXBUOm3ceSajtcURyNiQQeYMBSksUJad/3tVe7+I+eU0ETQPs8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3MVvtVns93ZMHMcHB0SssXrZaoXwUFObjynE226sOfDP8PQ2d
-	Dxs5DHoJCiv68FPhrECCWmCKdStSSHJ4WDRGfbooxoO76XnDrHj/pzzP+AzHmsI7XrgrWfqiuW2
-	+T/LpXGwZzvlIPacrdEuLV+4iGGcu15U=
-X-Gm-Gg: ASbGnctXr9g8e9e0GJKIt40d+cQnvG8LztVdpKOVsKGvgoK2s1bTxd0H0iX41Y+nQLO
-	wAhcyATZrnqqdZpf5oXIJo5Nsy+JmisJqny7wPRPxlkGQ/ZmDHDEoFpiWenyOOZGIuRW9HJkfVl
-	4Sfh8qzEwEfxcw2wNuXuPwpE0Icfrml6Vj7oZ42htHk4/PTlnD1C730BOgRmsOn8L4QjHCjuuhI
-	o6tRLY0UOhh+beFwNF0Eo+hVILJz5j+sa1LiHY=
-X-Google-Smtp-Source: AGHT+IEQAizvJyfl6mOXg4hBBS+TalumNbe7qc/OZyNcho/cVYkSxvxPEoWzONM4gKvQT/mtpDeTEZzuaP3ja1SqEuc=
-X-Received: by 2002:a05:6402:21ce:b0:61c:7b6e:b242 with SMTP id
- 4fb4d7f45d1cf-62ed69e016amr15383132a12.0.1758044323803; Tue, 16 Sep 2025
- 10:38:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1758049873; x=1758654673;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3TvpNjNfXgTalwqDVj/2NqZE6nMjrCbJzcEExPw5piU=;
+        b=SRV2/0cWKb23wla15ArjbXybSsaSNi8t0aaflcTnFMlCbZgXGwFoLRvlzyYdyITTyF
+         YBZjA4A7ekik3jb+qysfRqjae3HAQzvv005If5wL5kSfCmug3FTwmh4gYZdY66PsX/dy
+         /xYtLzCrObtkqER7cYDoI6UOAxwR0PI5KK7qXh8Sr4OEmsWMKsHFvKQaFweLwTgIk/Hf
+         NfJBSHtTorjg93tTIzD2b2VjIYxy175jvP5i6tcbZP3Cl/efGOqojK6mspzS2Rr6DJHj
+         XwazjrMcAT2eaT1ytWdvGGyO1mI3x5UCTTdu0FHt40WlmlaN7N0ZjvsRFl2ZCKPNFhZI
+         DI9A==
+X-Gm-Message-State: AOJu0YxAtt1KmhWq842APepssEo07EztGZMLcmsRMES3i9V3F/X94Fuf
+	mu+W9qIuXJP2r3sDHYv20xYcfgE9SvXzYmI2TuZJJr1/B6Jy4s2D9UBzB015GF2pS4ZlNlYqtGv
+	4pFtL/GY=
+X-Gm-Gg: ASbGnct3i4DTdJXjs1QZXf3BIYwBhEvo3Y1IsDxctbpwyVNNtuk6MOPPr6c09L2jzTL
+	KjlrOcwZ1E8SgHyjb4niNAo8sXlrqcT4/Fj23G6QAjBpM+chgvWydGbzToXZMHI6+J2b6obVOTe
+	uRyLjNipwr1SE1YMQI1emjFADm3gFkj3oNxlXmynyxHtsNoJ5TGXp0GHqWr46uWxWIRw940tTel
+	NSmsWecfP2apjUr0YyQmxKPxqfmXR3ua8NwQ3PjjIInJ4nZCP2wVDGOMv0RO8syWdrVSbEErYtl
+	KB/5WjHWc/IHNeiYeY6CWVg3NOCW/x2CjA3g6Wu3lmEDyCfuT3/6tsCTUQTT9xotoai05RlaOeC
+	Hh6PKnxSsSbpMpzehKMevQFK9eXqIt/TMkE3dsBZU
+X-Google-Smtp-Source: AGHT+IHil1gr51LI7xjg/42gWZmcXvSxhtj9s8Bt65HqQdbE2moQKNAOxJBU538skxGILgfFZprkOg==
+X-Received: by 2002:a05:690c:600a:b0:734:81fb:8ba0 with SMTP id 00721157ae682-73481fba2afmr75450197b3.19.1758049872579;
+        Tue, 16 Sep 2025 12:11:12 -0700 (PDT)
+Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:a504:df7d:48b8:47b7])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-736ad7b2aafsm9436757b3.5.2025.09.16.12.11.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Sep 2025 12:11:11 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: ceph-devel@vger.kernel.org,
+	viro@zeniv.linux.org.uk
+Cc: idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	pdonnell@redhat.com,
+	amarkuze@redhat.com,
+	Slava.Dubeyko@ibm.com,
+	slava@dubeyko.com,
+	vdubeyko@redhat.com
+Subject: [PATCH] ceph: fix potential overflow in parse_reply_info_dir()
+Date: Tue, 16 Sep 2025 12:10:47 -0700
+Message-ID: <20250916191046.400201-2-slava@dubeyko.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916135900.2170346-1-mjguzik@gmail.com> <20250916135900.2170346-11-mjguzik@gmail.com>
- <81eada571cb7892a5df26e50884ed0cbeed6220e.camel@ibm.com>
-In-Reply-To: <81eada571cb7892a5df26e50884ed0cbeed6220e.camel@ibm.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 16 Sep 2025 19:38:30 +0200
-X-Gm-Features: AS18NWAmVDlsNyi6dtnYK_j30gOV-5wVdqXuIOB6nJEDQ-VrcixkXRBh_VFTN3g
-Message-ID: <CAGudoHGxxf_vXB-J8SWwaq6MFdK-+H=-q1+tx4pDNT8mTgHYug@mail.gmail.com>
-Subject: Re: [PATCH v4 10/12] ceph: use the new ->i_state accessors
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>, 
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
-	"linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>, "kernel-team@fb.com" <kernel-team@fb.com>, 
-	"josef@toxicpanda.com" <josef@toxicpanda.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"amir73il@gmail.com" <amir73il@gmail.com>, 
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 16, 2025 at 7:36=E2=80=AFPM Viacheslav Dubeyko
-<Slava.Dubeyko@ibm.com> wrote:
->
-> On Tue, 2025-09-16 at 15:58 +0200, Mateusz Guzik wrote:
-> > Change generated with coccinelle and fixed up by hand as appropriate.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > ---
-> >  fs/ceph/cache.c  |  2 +-
-> >  fs/ceph/crypto.c |  4 ++--
-> >  fs/ceph/file.c   |  4 ++--
-> >  fs/ceph/inode.c  | 28 ++++++++++++++--------------
-> >  4 files changed, 19 insertions(+), 19 deletions(-)
-> >
->
-> Looks good. I simply started to guess. Do we need a method something like=
- this?
->
-> bool inode_is_new(struct inode *inode)
-> {
->     return inode_state_read_once(inode) & I_NEW;
-> }
->
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
 
-Helpers of the sort might show up later after the flag situation gets
-sorted out, for now it's baby steps.
+The parse_reply_info_dir() logic tries to parse
+a dir fragment:
 
-> Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
->
-> Thanks,
-> Slava.
->
-> > diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
-> > index 930fbd54d2c8..f678bab189d8 100644
-> > --- a/fs/ceph/cache.c
-> > +++ b/fs/ceph/cache.c
-> > @@ -26,7 +26,7 @@ void ceph_fscache_register_inode_cookie(struct inode =
-*inode)
-> >               return;
-> >
-> >       /* Only new inodes! */
-> > -     if (!(inode->i_state & I_NEW))
-> > +     if (!(inode_state_read_once(inode) & I_NEW))
-> >               return;
-> >
-> >       WARN_ON_ONCE(ci->netfs.cache);
-> > diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-> > index 7026e794813c..928746b92512 100644
-> > --- a/fs/ceph/crypto.c
-> > +++ b/fs/ceph/crypto.c
-> > @@ -329,7 +329,7 @@ int ceph_encode_encrypted_dname(struct inode *paren=
-t, char *buf, int elen)
-> >  out:
-> >       kfree(cryptbuf);
-> >       if (dir !=3D parent) {
-> > -             if ((dir->i_state & I_NEW))
-> > +             if ((inode_state_read_once(dir) & I_NEW))
-> >                       discard_new_inode(dir);
-> >               else
-> >                       iput(dir);
-> > @@ -438,7 +438,7 @@ int ceph_fname_to_usr(const struct ceph_fname *fnam=
-e, struct fscrypt_str *tname,
-> >       fscrypt_fname_free_buffer(&_tname);
-> >  out_inode:
-> >       if (dir !=3D fname->dir) {
-> > -             if ((dir->i_state & I_NEW))
-> > +             if ((inode_state_read_once(dir) & I_NEW))
-> >                       discard_new_inode(dir);
-> >               else
-> >                       iput(dir);
-> > diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-> > index c02f100f8552..59f2be41c9aa 100644
-> > --- a/fs/ceph/file.c
-> > +++ b/fs/ceph/file.c
-> > @@ -744,7 +744,7 @@ static int ceph_finish_async_create(struct inode *d=
-ir, struct inode *inode,
-> >                     vino.ino, ceph_ino(dir), dentry->d_name.name);
-> >               ceph_dir_clear_ordered(dir);
-> >               ceph_init_inode_acls(inode, as_ctx);
-> > -             if (inode->i_state & I_NEW) {
-> > +             if (inode_state_read_once(inode) & I_NEW) {
-> >                       /*
-> >                        * If it's not I_NEW, then someone created this b=
-efore
-> >                        * we got here. Assume the server is aware of it =
-at
-> > @@ -907,7 +907,7 @@ int ceph_atomic_open(struct inode *dir, struct dent=
-ry *dentry,
-> >                               new_inode =3D NULL;
-> >                               goto out_req;
-> >                       }
-> > -                     WARN_ON_ONCE(!(new_inode->i_state & I_NEW));
-> > +                     WARN_ON_ONCE(!(inode_state_read_once(new_inode) &=
- I_NEW));
-> >
-> >                       spin_lock(&dentry->d_lock);
-> >                       di->flags |=3D CEPH_DENTRY_ASYNC_CREATE;
-> > diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> > index 480cb3a1d639..6786ec955a87 100644
-> > --- a/fs/ceph/inode.c
-> > +++ b/fs/ceph/inode.c
-> > @@ -86,7 +86,7 @@ struct inode *ceph_new_inode(struct inode *dir, struc=
-t dentry *dentry,
-> >                       goto out_err;
-> >       }
-> >
-> > -     inode->i_state =3D 0;
-> > +     inode_state_set_raw(inode, 0);
-> >       inode->i_mode =3D *mode;
-> >
-> >       err =3D ceph_security_init_secctx(dentry, *mode, as_ctx);
-> > @@ -155,7 +155,7 @@ struct inode *ceph_get_inode(struct super_block *sb=
-, struct ceph_vino vino,
-> >
-> >       doutc(cl, "on %llx=3D%llx.%llx got %p new %d\n",
-> >             ceph_present_inode(inode), ceph_vinop(inode), inode,
-> > -           !!(inode->i_state & I_NEW));
-> > +           !!(inode_state_read_once(inode) & I_NEW));
-> >       return inode;
-> >  }
-> >
-> > @@ -182,7 +182,7 @@ struct inode *ceph_get_snapdir(struct inode *parent=
-)
-> >               goto err;
-> >       }
-> >
-> > -     if (!(inode->i_state & I_NEW) && !S_ISDIR(inode->i_mode)) {
-> > +     if (!(inode_state_read_once(inode) & I_NEW) && !S_ISDIR(inode->i_=
-mode)) {
-> >               pr_warn_once_client(cl, "bad snapdir inode type (mode=3D0=
-%o)\n",
-> >                                   inode->i_mode);
-> >               goto err;
-> > @@ -215,7 +215,7 @@ struct inode *ceph_get_snapdir(struct inode *parent=
-)
-> >               }
-> >       }
-> >  #endif
-> > -     if (inode->i_state & I_NEW) {
-> > +     if (inode_state_read_once(inode) & I_NEW) {
-> >               inode->i_op =3D &ceph_snapdir_iops;
-> >               inode->i_fop =3D &ceph_snapdir_fops;
-> >               ci->i_snap_caps =3D CEPH_CAP_PIN; /* so we can open */
-> > @@ -224,7 +224,7 @@ struct inode *ceph_get_snapdir(struct inode *parent=
-)
-> >
-> >       return inode;
-> >  err:
-> > -     if ((inode->i_state & I_NEW))
-> > +     if ((inode_state_read_once(inode) & I_NEW))
-> >               discard_new_inode(inode);
-> >       else
-> >               iput(inode);
-> > @@ -698,7 +698,7 @@ void ceph_evict_inode(struct inode *inode)
-> >
-> >       netfs_wait_for_outstanding_io(inode);
-> >       truncate_inode_pages_final(&inode->i_data);
-> > -     if (inode->i_state & I_PINNING_NETFS_WB)
-> > +     if (inode_state_read_once(inode) & I_PINNING_NETFS_WB)
-> >               ceph_fscache_unuse_cookie(inode, true);
-> >       clear_inode(inode);
-> >
-> > @@ -967,7 +967,7 @@ int ceph_fill_inode(struct inode *inode, struct pag=
-e *locked_page,
-> >             le64_to_cpu(info->version), ci->i_version);
-> >
-> >       /* Once I_NEW is cleared, we can't change type or dev numbers */
-> > -     if (inode->i_state & I_NEW) {
-> > +     if (inode_state_read_once(inode) & I_NEW) {
-> >               inode->i_mode =3D mode;
-> >       } else {
-> >               if (inode_wrong_type(inode, mode)) {
-> > @@ -1044,7 +1044,7 @@ int ceph_fill_inode(struct inode *inode, struct p=
-age *locked_page,
-> >
-> >  #ifdef CONFIG_FS_ENCRYPTION
-> >       if (iinfo->fscrypt_auth_len &&
-> > -         ((inode->i_state & I_NEW) || (ci->fscrypt_auth_len =3D=3D 0))=
-) {
-> > +         ((inode_state_read_once(inode) & I_NEW) || (ci->fscrypt_auth_=
-len =3D=3D 0))) {
-> >               kfree(ci->fscrypt_auth);
-> >               ci->fscrypt_auth_len =3D iinfo->fscrypt_auth_len;
-> >               ci->fscrypt_auth =3D iinfo->fscrypt_auth;
-> > @@ -1638,13 +1638,13 @@ int ceph_fill_trace(struct super_block *sb, str=
-uct ceph_mds_request *req)
-> >                       pr_err_client(cl, "badness %p %llx.%llx\n", in,
-> >                                     ceph_vinop(in));
-> >                       req->r_target_inode =3D NULL;
-> > -                     if (in->i_state & I_NEW)
-> > +                     if (inode_state_read_once(in) & I_NEW)
-> >                               discard_new_inode(in);
-> >                       else
-> >                               iput(in);
-> >                       goto done;
-> >               }
-> > -             if (in->i_state & I_NEW)
-> > +             if (inode_state_read_once(in) & I_NEW)
-> >                       unlock_new_inode(in);
-> >       }
-> >
-> > @@ -1830,11 +1830,11 @@ static int readdir_prepopulate_inodes_only(stru=
-ct ceph_mds_request *req,
-> >                       pr_err_client(cl, "inode badness on %p got %d\n",=
- in,
-> >                                     rc);
-> >                       err =3D rc;
-> > -                     if (in->i_state & I_NEW) {
-> > +                     if (inode_state_read_once(in) & I_NEW) {
-> >                               ihold(in);
-> >                               discard_new_inode(in);
-> >                       }
-> > -             } else if (in->i_state & I_NEW) {
-> > +             } else if (inode_state_read_once(in) & I_NEW) {
-> >                       unlock_new_inode(in);
-> >               }
-> >
-> > @@ -2046,7 +2046,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_requ=
-est *req,
-> >                       pr_err_client(cl, "badness on %p %llx.%llx\n", in=
-,
-> >                                     ceph_vinop(in));
-> >                       if (d_really_is_negative(dn)) {
-> > -                             if (in->i_state & I_NEW) {
-> > +                             if (inode_state_read_once(in) & I_NEW) {
-> >                                       ihold(in);
-> >                                       discard_new_inode(in);
-> >                               }
-> > @@ -2056,7 +2056,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_requ=
-est *req,
-> >                       err =3D ret;
-> >                       goto next_item;
-> >               }
-> > -             if (in->i_state & I_NEW)
-> > +             if (inode_state_read_once(in) & I_NEW)
-> >                       unlock_new_inode(in);
-> >
-> >               if (d_really_is_negative(dn)) {
+struct ceph_mds_reply_dirfrag {
+	__le32 frag;            /* fragment */
+	__le32 auth;            /* auth mds, if this is a delegation point */
+	__le32 ndist;           /* number of mds' this is replicated on */
+	__le32 dist[];
+} __attribute__ ((packed));
+
+Potentially, ndist field could be corrupted or to have
+invalid or malicious value. As a result, this logic
+could result in overflow:
+
+*p += sizeof(**dirfrag) + sizeof(u32) * le32_to_cpu((*dirfrag)->ndist);
+
+Al Viro suggested the initial vision of the fix.
+The suggested fix was partially reworked.
+
+This patch adds the checking that ndist is not bigger
+than (U32_MAX / sizeof(u32)) and to check that we have
+enough space in memory buffer by means of ceph_decode_need().
+
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+cc: Alex Markuze <amarkuze@redhat.com>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: Ceph Development <ceph-devel@vger.kernel.org>
+---
+ fs/ceph/mds_client.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 3bc72b47fe4d..245f5fb97f2e 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -283,6 +283,11 @@ static int parse_reply_info_dir(void **p, void *end,
+ 				struct ceph_mds_reply_dirfrag **dirfrag,
+ 				u64 features)
+ {
++	size_t item_size = sizeof(u32);
++	size_t dirfrag_size;
++	u32 ndist;
++	u32 array_size;
++
+ 	if (features == (u64)-1) {
+ 		u8 struct_v, struct_compat;
+ 		u32 struct_len;
+@@ -297,11 +302,16 @@ static int parse_reply_info_dir(void **p, void *end,
+ 		end = *p + struct_len;
+ 	}
+ 
+-	ceph_decode_need(p, end, sizeof(**dirfrag), bad);
++	dirfrag_size = sizeof(**dirfrag);
++	ceph_decode_need(p, end, dirfrag_size, bad);
+ 	*dirfrag = *p;
+-	*p += sizeof(**dirfrag) + sizeof(u32) * le32_to_cpu((*dirfrag)->ndist);
+-	if (unlikely(*p > end))
++	*p += dirfrag_size;
++	ndist = le32_to_cpu((*dirfrag)->ndist);
++	if (unlikely(ndist > (U32_MAX / item_size)))
+ 		goto bad;
++	array_size = ndist * item_size;
++	ceph_decode_need(p, end, array_size, bad);
++	*p += array_size;
+ 	if (features == (u64)-1)
+ 		*p = end;
+ 	return 0;
+-- 
+2.51.0
+
 
