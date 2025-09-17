@@ -1,388 +1,575 @@
-Return-Path: <ceph-devel+bounces-3638-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3639-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B251FB7DD9B
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 14:35:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CC9B7E431
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 14:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C0D93B1D6E
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 10:05:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2572916AAA4
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 12:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02018353344;
-	Wed, 17 Sep 2025 10:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB686298CB7;
+	Wed, 17 Sep 2025 12:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rq1FFDLU"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="i6yoUGp+"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB98302770
-	for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 10:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2ED1F4192
+	for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 12:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758103510; cv=none; b=tqvgo3Umngefjx77Y10LJF3lukfcxSK4xzkYS/pDzuwgotDbxDYsI4beVJ6gUHJ7qftD2QvFIj98Yt3rDhHt5CZ0AKjlEPkP/aLkKu9eNmyUpLKMGm9paXhFagB9DgMe295ARxP8xeyH63aONqwnwPVdm/0AlK3sSnEkeFOSU8w=
+	t=1758113059; cv=none; b=dbOOiTP/hhM85lSerXgh2wyz4QXpGopscWLPIW4hBTLaILTDb9hc7KoqSVo9ExesmZIEi31q51ojUmsuOIaou6oGkptT5LBjxN1TS2KxZ781v2iOwLm6PFaBUA17/2EDZaXk55d8dWocwnS20NCT29mLeaFDNRqdBhSt3hOmp4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758103510; c=relaxed/simple;
-	bh=tWVdEkVHEy6G4nvyP0NsCicBdSwaQuQTYho95ChUS6o=;
-	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
-	 In-Reply-To:Cc:To:References; b=haAPuL+0tLV3APnP4wCG+CFM7krszGE/WziRqa6xJaspu0n0mT1zIQrsQYvzbgwPrC8PFi7IJsVOuXQ3MqO1oEtRGfqN5bDaLBSnJy/MQ/qwSMVoEI8aDjnqkJryOcN/lWcQomtFicOrDyUvx95PXdfwqvSuk/MW574flmckKAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rq1FFDLU; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-267dff524d1so11525275ad.3
-        for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 03:05:08 -0700 (PDT)
+	s=arc-20240116; t=1758113059; c=relaxed/simple;
+	bh=zWs2wuzXHBJXv3Z5dfMDy4ueJCLkuAWkBbG43eZc0+k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CNOUl0KuQ+jO7rmYyZUD85PuJHd/Hf/sWoG/R5FENBu3bknAGarToS5TsyLxSUfL5gFICPyyz6/1Ew+ZjuANl/fNa31xBNQVWaGiT5aAtSQ7lO0PcMb5Ruxc/xlbsaYN3moNpWQGI2m7DoMT+3r1C/UZ4M25cU0tDezp41fJEJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=i6yoUGp+; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3ea7af25f8aso1368164f8f.0
+        for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 05:44:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758103508; x=1758708308; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D+6IorbE+hVHYQT1y6KYFtDWV5rbTEqJlJVBp1L7jsE=;
-        b=Rq1FFDLURHXgOnSUcHhtnbPAHCvWvFYfTFAxWMctnQdjfF/7l/3+D3xTfYKUtBEeo8
-         irZpvK0Cf4ABKA3AQfNvytKCfl/SEhbKVBozXpg6OvHQXC/lLnZxnE61jDv852KznPqB
-         DQtpyCD0S4qssmEwYsb0BKWJnY6x6gM2gD7mAz0B/8ZWrcxZ/UHhS2S0fCFYz12/pQnm
-         VIzGm9CJklkg2E1T5fXK74SG1+mTRsDXqjl0efPFJ5PUzftH62VdwfTmbjbZqvcPYWVe
-         JAp3qYMLy6EjGbgxu9SRBQR1kD+VqhoTdQeQjJ20az4qLvgdi4a0sR2Bh/AHoVw7b6nj
-         aMWA==
+        d=ionos.com; s=google; t=1758113055; x=1758717855; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9l0LphDpIed2apeZeQd/qdzJBq9hA/Hrk7IvDg8Z+No=;
+        b=i6yoUGp+SGYnDqtJK9zdipjNmGhyWS81bEMayhIYia/iKQ8ti/YyilKkXMzxU3zAiX
+         BU31zYt1R53NvnEfExF1ZfNQB4s+/+1mKeAMtnsXW5kjCUC+2TO4NFH5f4Q88bT0nWhP
+         00oz+ifMeK+nIGVEGIovhFLeEG06zXhQ+5fw08Tn7GbC7Bf687xaW9Yan2J20JoaGUf+
+         BnDEvj3Yt/3MHbiOkZpTRrQHS+8PI4OisndtTezQCtlh8Xh2XyLD1YZ2LBTrwB9g8kZ6
+         wggpwKPfwqHzjJFPPhOU5+25Goh81CqUoBuQufabOUzGBdhZxb8DeignmLykTpb23Oh9
+         M9nA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758103508; x=1758708308;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D+6IorbE+hVHYQT1y6KYFtDWV5rbTEqJlJVBp1L7jsE=;
-        b=sEH9Z3c37aLFEs9uIftmZ6P3fC+LvZMZfxra6EWfiBlZGMJdZ59tFzQxtGh4yCJocB
-         ldlS4shlV1RZIin4cNGLNu+LZip1d8qd0mQRvFTDKcnK1zXnJ2qmGw72lqO9UzH5RCuq
-         RN0Hw61ekFPYQ42xeh2t1ugTxSL7yE91DVqepK8YPQ2sxvGXmQTt4ZEz6/C/Qak3Gzbp
-         GJUj+kGJpvMbh64MD1yuASP2Z5S5W+cPBLh6KmEtMx6C7onjNm66wrgQYUgpgP7vSY5f
-         Q/WwVtOMaBhkn9blh62InTsH/N/+9a6vzGMpCfp3JXoMKkg1dsxRmvLXX79O3Uu6uqUX
-         /bDw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6tHM6v+yJDeCQtEZHio6guf4MfCi5RPpeOlE3qcYv82EATWEZHCZcL5e54StJ3TC+Y2+1LzxAjbxS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzxFPmRfWBXQrVh7+MkigqGFTP9R/YS+h+j3K2DcLbMQGYJzTQ
-	kjhQRrfIEIe1mpRAZg8thGKTeNKAEmmrlhYjOQDilWU7ovOyX1AvVOAk
-X-Gm-Gg: ASbGncuz515cB8TzM76VUVHfN02UM/pRrjVVdbUks6QDQUIdFsrtBNElBvx3c45IK6s
-	o5RyNMgJ24hWErhv5tFJFDrl7PVLPb1vuE2CMRPoAq1IQ0ufraID+nj2jMHViVZI3+2ffR4magz
-	n4c9mm+RDvLzwgi1YxBDs4JrTBwFKNAIFxKqM05ClLb8c8UZdP/17UuPDxxd6gmWrN1vNOB8RkP
-	75djZLy5z3q0qCGPYuK/wSU9nvpVE5j7rz29P38BYPvde+h4OApf6BYJ7pn69YLB9d/P2UwQr3J
-	n/DkE3mArzKjX6ztZl+fB8XEKh3rxWgaMg4pdX2/MmDyCCF7tpxV4BuaNp2spKEvKbk71izYQoH
-	kwQE8hcpCX6asefKt2SZcFWb4H0KltSDwJg==
-X-Google-Smtp-Source: AGHT+IEiR4kh9mVtSzNMjEftFLhPALxfP/hsstIkQAwhXKSGkdzbtgoEyucYxbCGe/rfuGnCliJOwg==
-X-Received: by 2002:a17:902:cccf:b0:24a:a2c5:a0a1 with SMTP id d9443c01a7336-2681228b1bfmr19765135ad.21.1758103508125;
-        Wed, 17 Sep 2025 03:05:08 -0700 (PDT)
-Received: from smtpclient.apple ([58.247.22.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32ed278b065sm1997701a91.29.2025.09.17.03.04.59
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 17 Sep 2025 03:05:07 -0700 (PDT)
-From: =?utf-8?B?6ZmI5Y2O5pit77yITHlpY2Fu77yJ?= <lyican53@gmail.com>
-Message-Id: <FF69D584-EEF9-4B5A-BE30-24EEBF354780@gmail.com>
-Content-Type: multipart/mixed;
-	boundary="Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2"
+        d=1e100.net; s=20230601; t=1758113055; x=1758717855;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9l0LphDpIed2apeZeQd/qdzJBq9hA/Hrk7IvDg8Z+No=;
+        b=J0fO9aoJbTo1DoKsDxQodzU8MSxJ4t01AvrZ+MSJXZcSOUtdh1yOi0Dfceb0C+e6oB
+         W1BcjEJdvTFkoAIOIjJE04/09Dt73fI/+cM+z71l3VHbOVGbYlNopjG9nfBIa/0Gdqft
+         eL8zoi7xleywBG8Rbj1Uu2TKbIeXsCYfehhg5iYaMwL7/GwWjyS7FMxDWPDctJPh7HnY
+         WwYDIXImmN/ilsFVnRapNzKJmo2Tki+wxOSDecWDW1szWxWSixlBS/IKrIQrKG7yLKiE
+         pzlQvrQhXQ6GT0FjUXIouxYN/LXsmURaM0KX3qvUdMSsbUXiVmtUqVXOnV/BBulTHcvd
+         oQIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVEHXikbvgHcrXcAlXxCrVYYkWogfPAVVMwlkrGvqbqLKeUOC5AakZd0kOfAFye6tJZLcRnUX2qj1Z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd5D/9chkT5AYON1zMHoYDe4DwYyj4s5hVMcMIv/CKza7xNuEM
+	sqZXNzXadO0UJGPviUR9/sT6GtyPsAafU+kQ9KiwmFvLVqmf9PaugJVZRomxQMD8TC8=
+X-Gm-Gg: ASbGncs+vWvX3mKiQg5UDsEQa3t5ta1Me0FsTilbitgYa6iEUwMQemcvxx66OgeaCCM
+	02Yb2e6Z+PakjNOF8GXyGymuqtmecynjowto4wcMHG6MI02pi/Y2ZGe2xRXA0GV1ChcJs6vPatj
+	ViEBtEqqKDgRYW3yByK0qVnwNjSknUIDuZ8ooGEs1RcoOPErFuW2mrkW/gIZRy1jOUFI0qk6Y10
+	A18+uqLpSRXApcokWX/Ky8Y4qUZ92Q6mUzaCCHm2iH7gxuuTjWVTAIgR3ePlUYVtiZWKg7RGy4D
+	9w7R/SKW2I3oQog37nx32c13dBfDtdF9ADeMVzfqtM+01WP4lij7hdytliBHLbMhDQi9LhhKhci
+	WHTeCcIStXtQl4V9ReiyPrw5hMbc2iusxwPRff1BMN72uk4bba5bKW83dQDpCups91JkSe+2cEy
+	lLTP3kskNh3eOiXV2bdqfFsdU=
+X-Google-Smtp-Source: AGHT+IF7AMRjJCUMpWdVV80XxP+tuE6ks4cuUZ2jcLKtlygZeus2PQ2aAb4owd/otxyO12EkLJN4/A==
+X-Received: by 2002:a05:6000:1acf:b0:3ea:4b52:af6f with SMTP id ffacd0b85a97d-3ecdf9b24b0mr1619522f8f.9.1758113054838;
+        Wed, 17 Sep 2025 05:44:14 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f055a00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f05:5a00:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613e849a41sm35238205e9.20.2025.09.17.05.44.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Sep 2025 05:44:14 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: slava.dubeyko@ibm.com,
+	xiubli@redhat.com,
+	idryomov@gmail.com,
+	amarkuze@redhat.com,
+	ceph-devel@vger.kernel.org,
+	netfs@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	Max Kellermann <max.kellermann@ionos.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] ceph: fix deadlock bugs by making iput() calls asynchronous
+Date: Wed, 17 Sep 2025 14:44:04 +0200
+Message-ID: <20250917124404.2207918-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [RFC] Fix potential undefined behavior in __builtin_clz usage
- with GCC 11.1.0
-Date: Wed, 17 Sep 2025 18:04:42 +0800
-In-Reply-To: <80e107f13c239f5a8f9953dad634c7419c34e31b.camel@ibm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
- Xiubo Li <xiubli@redhat.com>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- Paolo Bonzini <pbonzini@redhat.com>,
- "idryomov@gmail.com" <idryomov@gmail.com>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
- "seanjc@google.com" <seanjc@google.com>
-References: <CAN53R8HxFvf9fAiF1vacCAdsx+m+Zcv1_vxEiq4CwoHLu17hNg@mail.gmail.com>
- <80e107f13c239f5a8f9953dad634c7419c34e31b.camel@ibm.com>
-X-Mailer: Apple Mail (2.3826.700.81)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+The iput() function is a dangerous one - if the reference counter goes
+to zero, the function may block for a long time due to:
 
---Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+- inode_wait_for_writeback() waits until writeback on this inode
+  completes
 
-Hi Slava and Sean,
+- the filesystem-specific "evict_inode" callback can do similar
+  things; e.g. all netfs-based filesystems will call
+  netfs_wait_for_outstanding_io() which is similar to
+  inode_wait_for_writeback()
 
-Thank you for the valuable feedback!
+Therefore, callers must carefully evaluate the context they're in and
+check whether invoking iput() is a good idea at all.
 
-CEPH FORMAL PATCH:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Most of the time, this is not a problem because the dcache holds
+references to all inodes, and the dcache is usually the one to release
+the last reference.  But this assumption is fragile.  For example,
+under (memcg) memory pressure, the dcache shrinker is more likely to
+release inode references, moving the inode eviction to contexts where
+that was extremely unlikely to occur.
 
-As requested by Slava, I've prepared a formal patch for the Ceph case.
-The patch adds proper zero checking before __builtin_clz() to prevent
-undefined behavior. Please find it attached as ceph_patch.patch.
+Our production servers "found" at least two deadlock bugs in the Ceph
+filesystem that were caused by this iput() behavior:
 
-PROOF-OF-CONCEPT TEST CASE:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
+1. Writeback may lead to iput() calls in Ceph (e.g. from
+   ceph_put_wrbuffer_cap_refs()) which deadlocks in
+   inode_wait_for_writeback().  Waiting for writeback completion from
+   within writeback will obviously never be able to make any progress.
+   This leads to blocked kworkers like this:
 
-I've also created a proof-of-concept test case that demonstrates the
-problematic input values that could trigger this bug. The test =
-identifies
-specific input values where (x & 0x1FFFF) becomes zero after the =
-increment
-and condition check.
+    INFO: task kworker/u777:6:1270802 blocked for more than 122 seconds.
+          Not tainted 6.16.7-i1-es #773
+    task:kworker/u777:6  state:D stack:0 pid:1270802 tgid:1270802 ppid:2
+          task_flags:0x4208060 flags:0x00004000
+    Workqueue: writeback wb_workfn (flush-ceph-3)
+    Call Trace:
+     <TASK>
+     __schedule+0x4ea/0x17d0
+     schedule+0x1c/0xc0
+     inode_wait_for_writeback+0x71/0xb0
+     evict+0xcf/0x200
+     ceph_put_wrbuffer_cap_refs+0xdd/0x220
+     ceph_invalidate_folio+0x97/0xc0
+     ceph_writepages_start+0x127b/0x14d0
+     do_writepages+0xba/0x150
+     __writeback_single_inode+0x34/0x290
+     writeback_sb_inodes+0x203/0x470
+     __writeback_inodes_wb+0x4c/0xe0
+     wb_writeback+0x189/0x2b0
+     wb_workfn+0x30b/0x3d0
+     process_one_work+0x143/0x2b0
+     worker_thread+0x30a/0x450
 
-Key findings from the test:
-- Inputs like 0x7FFFF, 0x9FFFF, 0xBFFFF, 0xDFFFF, 0xFFFFF can trigger =
-the bug
-- These correspond to x+1 values where (x+1 & 0x18000) =3D=3D 0 and (x+1 =
-& 0x1FFFF) =3D=3D 0
+2. In the Ceph messenger thread (net/ceph/messenger*.c), any iput()
+   call may invoke ceph_evict_inode() which will deadlock in
+   netfs_wait_for_outstanding_io(); since this blocks the messenger
+   thread, completions from the Ceph servers will not ever be received
+   and handled.
 
-The test can be integrated into Ceph's existing test framework or =
-adapted
-for KUnit testing as you suggested. Please find it as ceph_poc_test.c.
+It looks like these deadlock bugs have been in the Ceph filesystem
+code since forever (therefore no "Fixes" tag in this patch).  There
+may be various ways to solve this:
 
-KVM CASE CLARIFICATION:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+- make iput() asynchronous and defer the actual eviction like fput()
+  (may add overhead)
 
-Thank you Sean for the detailed explanation about the KVM case. You're
-absolutely right that pages and test_dirty_ring_count are guaranteed to
-be non-zero in practice. I'll remove this from my analysis and focus on
-the genuine issues.
+- make iput() only asynchronous if I_SYNC is set (doesn't solve random
+  things happening inside the "evict_inode" callback)
 
-BITOPS WRAPPER DISCUSSION:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+- add iput_deferred() to make this asynchronous behavior/overhead
+  optional and explicit
 
+- refactor Ceph to avoid iput() calls from within writeback and
+  messenger (if that is even possible)
 
-I appreciate you bringing Yuri into the discussion. The idea of using
-existing fls()/fls64() functions or creating new fls8()/fls16() variants
-sounds promising. Many __builtin_clz() calls in the kernel could indeed
-benefit from these safer alternatives.
+- add a Ceph-specific workaround
 
-STATUS UPDATE:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+After advice from Mateusz Guzik, I decided to do the latter.  The
+implementation is simple because it piggybacks on the existing
+work_struct for ceph_queue_inode_work() - ceph_inode_work() calls
+iput() at the end which means we can donate the last reference to it.
 
-1. Ceph: Formal patch and test case ready for review
-2. KVM: Confirmed not an issue in practice (thanks Sean)
-3. SCSI: Still investigating the drivers/scsi/elx/libefc_sli/sli4.h case
-4. Bitops: Awaiting input from Yuri on kernel-wide improvements
+Since Ceph has a few iput() callers in a loop, it seemed simple enough
+to pass this counter and use atomic_sub() instead of atomic_dec().
 
-NEXT STEPS:
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+This patch adds ceph_iput_n_async() and converts lots of iput() calls
+to it - at least those that may come through writeback and the
+messenger.
 
-1. Please review the Ceph patch and test case (Slava)
-2. Happy to work with Yuri on bitops improvements if there's interest
-3. For SCSI maintainers: would you like me to prepare a similar analysis =
-for the sli_convert_mask_to_count() function?
-4. Can prepare additional patches for any other confirmed cases
-
-Questions for maintainers:
-- Slava: Should the Ceph patch go through ceph-devel first, or directly =
-to you?
-- Any specific requirements for the test case integration?
-- SCSI maintainers: Is the drivers/scsi/elx/libefc_sli/sli4.h case worth =
-investigating further?
-
-Best regards,
-Huazhao Chen
-lyican53@gmail.com
-
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: stable@vger.kernel.org
 ---
+ fs/ceph/addr.c       |  2 +-
+ fs/ceph/caps.c       | 21 ++++++++++-----------
+ fs/ceph/dir.c        |  2 +-
+ fs/ceph/inode.c      | 42 ++++++++++++++++++++++++++++++++++++++++++
+ fs/ceph/mds_client.c | 32 ++++++++++++++++----------------
+ fs/ceph/quota.c      |  4 ++--
+ fs/ceph/snap.c       | 10 +++++-----
+ fs/ceph/super.h      |  7 +++++++
+ 8 files changed, 84 insertions(+), 36 deletions(-)
 
-Attachments:
-- ceph_patch.patch: Formal patch for net/ceph/crush/mapper.c
-- ceph_poc_test.c: Proof-of-concept test case demonstrating the issue
-
---Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2
-Content-Disposition: attachment;
-	filename=ceph_poc_test.c
-Content-Type: application/octet-stream;
-	x-unix-mode=0644;
-	name="ceph_poc_test.c"
-Content-Transfer-Encoding: quoted-printable
-
-/*=0A=20*=20Proof-of-concept=20test=20case=20for=20Ceph=20CRUSH=20mapper=20=
-GCC=20101175=20bug=0A=20*=20=0A=20*=20This=20test=20demonstrates=20the=20=
-potential=20undefined=20behavior=20in=20crush_ln()=0A=20*=20when=20=
-__builtin_clz()=20is=20called=20with=20zero=20argument.=0A=20*=20=0A=20*=20=
-Can=20be=20integrated=20into=20existing=20Ceph=20unit=20test=20framework=20=
-or=20adapted=0A=20*=20for=20KUnit=20testing=20as=20suggested=20by=20=
-Slava.=0A=20*/=0A=0A#include=20<stdio.h>=0A#include=20<stdint.h>=0A=
-#include=20<assert.h>=0A=0A/*=20Simplified=20version=20of=20the=20=
-problematic=20crush_ln=20function=20*/=0Astatic=20uint64_t=20=
-crush_ln_original(unsigned=20int=20xin)=0A{=0A=20=20=20=20unsigned=20int=20=
-x=20=3D=20xin;=0A=20=20=20=20int=20iexpon=20=3D=2015;=0A=20=20=20=20=0A=20=
-=20=20=20x++;=0A=20=20=20=20=0A=20=20=20=20/*=20This=20is=20where=20the=20=
-bug=20can=20occur=20*/=0A=20=20=20=20if=20(!(x=20&=200x18000))=20{=0A=20=20=
-=20=20=20=20=20=20/*=20PROBLEMATIC:=20no=20zero=20check=20before=20=
-__builtin_clz=20*/=0A=20=20=20=20=20=20=20=20int=20bits=20=3D=20=
-__builtin_clz(x=20&=200x1FFFF)=20-=2016;=0A=20=20=20=20=20=20=20=20x=20=
-<<=3D=20bits;=0A=20=20=20=20=20=20=20=20iexpon=20=3D=2015=20-=20bits;=0A=20=
-=20=20=20}=0A=20=20=20=20=0A=20=20=20=20return=20(uint64_t)x=20|=20=
-((uint64_t)iexpon=20<<=2032);=0A}=0A=0A/*=20Fixed=20version=20with=20=
-zero=20check=20*/=0Astatic=20uint64_t=20crush_ln_fixed(unsigned=20int=20=
-xin)=0A{=0A=20=20=20=20unsigned=20int=20x=20=3D=20xin;=0A=20=20=20=20int=20=
-iexpon=20=3D=2015;=0A=20=20=20=20=0A=20=20=20=20x++;=0A=20=20=20=20=0A=20=
-=20=20=20if=20(!(x=20&=200x18000))=20{=0A=20=20=20=20=20=20=20=20=
-uint32_t=20masked=20=3D=20x=20&=200x1FFFF;=0A=20=20=20=20=20=20=20=20/*=20=
-FIXED:=20add=20zero=20check=20*/=0A=20=20=20=20=20=20=20=20int=20bits=20=
-=3D=20masked=20?=20__builtin_clz(masked)=20-=2016=20:=2016;=0A=20=20=20=20=
-=20=20=20=20x=20<<=3D=20bits;=0A=20=20=20=20=20=20=20=20iexpon=20=3D=20=
-15=20-=20bits;=0A=20=20=20=20}=0A=20=20=20=20=0A=20=20=20=20return=20=
-(uint64_t)x=20|=20((uint64_t)iexpon=20<<=2032);=0A}=0A=0A/*=20Test=20=
-function=20to=20find=20problematic=20input=20values=20*/=0Avoid=20=
-test_crush_ln_edge_cases(void)=0A{=0A=20=20=20=20printf("=3D=3D=3D=20=
-Ceph=20CRUSH=20Mapper=20GCC=20101175=20Bug=20Test=20=3D=3D=3D\n\n");=0A=20=
-=20=20=20=0A=20=20=20=20/*=20Test=20values=20that=20could=20trigger=20=
-the=20bug=20*/=0A=20=20=20=20unsigned=20int=20problematic_inputs[]=20=3D=20=
-{=0A=20=20=20=20=20=20=20=200x17FFF,=20=20=20=20/*=20x+1=20=3D=20=
-0x18000,=20(x+1=20&=200x18000)=20=3D=200x18000=20-=20not=20triggered=20=
-*/=0A=20=20=20=20=20=20=20=200x7FFF,=20=20=20=20=20/*=20x+1=20=3D=20=
-0x8000,=20=20(x+1=20&=200x18000)=20=3D=200=20and=20(x+1=20&=200x1FFFF)=20=
-=3D=200x8000=20-=20safe=20*/=0A=20=20=20=20=20=20=20=200xFFFF,=20=20=20=20=
-=20/*=20x+1=20=3D=200x10000,=20(x+1=20&=200x18000)=20=3D=200=20and=20=
-(x+1=20&=200x1FFFF)=20=3D=200x10000=20-=20safe=20*/=0A=20=20=20=20=20=20=20=
-=200x7FFFF,=20=20=20=20/*=20x+1=20=3D=200x80000,=20(x+1=20&=200x18000)=20=
-=3D=200=20and=20(x+1=20&=200x1FFFF)=20=3D=200=20-=20PROBLEMATIC!=20*/=0A=20=
-=20=20=20=20=20=20=200x9FFFF,=20=20=20=20/*=20x+1=20=3D=200xA0000,=20=
-(x+1=20&=200x18000)=20=3D=200=20and=20(x+1=20&=200x1FFFF)=20=3D=200=20-=20=
-PROBLEMATIC!=20*/=0A=20=20=20=20=20=20=20=200xBFFFF,=20=20=20=20/*=20x+1=20=
-=3D=200xC0000,=20(x+1=20&=200x18000)=20=3D=200=20and=20(x+1=20&=20=
-0x1FFFF)=20=3D=200=20-=20PROBLEMATIC!=20*/=0A=20=20=20=20=20=20=20=20=
-0xDFFFF,=20=20=20=20/*=20x+1=20=3D=200xE0000,=20(x+1=20&=200x18000)=20=3D=20=
-0=20and=20(x+1=20&=200x1FFFF)=20=3D=200=20-=20PROBLEMATIC!=20*/=0A=20=20=20=
-=20=20=20=20=200xFFFFF,=20=20=20=20/*=20x+1=20=3D=200x100000,=20(x+1=20&=20=
-0x18000)=20=3D=200=20and=20(x+1=20&=200x1FFFF)=20=3D=200=20-=20=
-PROBLEMATIC!=20*/=0A=20=20=20=20};=0A=20=20=20=20=0A=20=20=20=20int=20=
-num_tests=20=3D=20sizeof(problematic_inputs)=20/=20=
-sizeof(problematic_inputs[0]);=0A=20=20=20=20int=20bugs_found=20=3D=200;=0A=
-=20=20=20=20=0A=20=20=20=20printf("Testing=20%d=20potentially=20=
-problematic=20input=20values:\n\n",=20num_tests);=0A=20=20=20=20=
-printf("Input=20=20=20=20|=20x+1=20=20=20=20=20=20|=20Condition=20Check=20=
-|=20Masked=20Value=20|=20Status\n");=0A=20=20=20=20=
-printf("---------|----------|-----------------|--------------|--------\n")=
-;=0A=20=20=20=20=0A=20=20=20=20for=20(int=20i=20=3D=200;=20i=20<=20=
-num_tests;=20i++)=20{=0A=20=20=20=20=20=20=20=20unsigned=20int=20input=20=
-=3D=20problematic_inputs[i];=0A=20=20=20=20=20=20=20=20unsigned=20int=20=
-x=20=3D=20input=20+=201;=0A=20=20=20=20=20=20=20=20bool=20condition_met=20=
-=3D=20!(x=20&=200x18000);=0A=20=20=20=20=20=20=20=20unsigned=20int=20=
-masked=20=3D=20x=20&=200x1FFFF;=0A=20=20=20=20=20=20=20=20=0A=20=20=20=20=
-=20=20=20=20printf("0x%06X=20|=200x%06X=20|=20%-15s=20|=200x%05X=20=20=20=
-=20|=20",=20=0A=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20input,=20x,=20=
-=0A=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20condition_met=20?=20=
-"TRUE"=20:=20"FALSE",=20=0A=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-masked);=0A=20=20=20=20=20=20=20=20=0A=20=20=20=20=20=20=20=20if=20=
-(condition_met=20&&=20masked=20=3D=3D=200)=20{=0A=20=20=20=20=20=20=20=20=
-=20=20=20=20printf("BUG!=20Zero=20passed=20to=20__builtin_clz\n");=0A=20=20=
-=20=20=20=20=20=20=20=20=20=20bugs_found++;=0A=20=20=20=20=20=20=20=20}=20=
-else=20if=20(condition_met)=20{=0A=20=20=20=20=20=20=20=20=20=20=20=20=
-printf("Safe=20(non-zero=20argument)\n");=0A=20=20=20=20=20=20=20=20}=20=
-else=20{=0A=20=20=20=20=20=20=20=20=20=20=20=20printf("Condition=20not=20=
-met=20(safe)\n");=0A=20=20=20=20=20=20=20=20}=0A=20=20=20=20}=0A=20=20=20=
-=20=0A=20=20=20=20printf("\n=3D=3D=3D=20Summary=20=3D=3D=3D\n");=0A=20=20=
-=20=20printf("Total=20tests:=20%d\n",=20num_tests);=0A=20=20=20=20=
-printf("Potential=20bugs=20found:=20%d\n",=20bugs_found);=0A=20=20=20=20=0A=
-=20=20=20=20if=20(bugs_found=20>=200)=20{=0A=20=20=20=20=20=20=20=20=
-printf("\n=E2=9A=A0=EF=B8=8F=20=20WARNING:=20Found=20inputs=20that=20=
-could=20trigger=20undefined=20behavior!\n");=0A=20=20=20=20=20=20=20=20=
-printf("These=20inputs=20cause=20__builtin_clz(0)=20to=20be=20called,=20=
-which=20has\n");=0A=20=20=20=20=20=20=20=20printf("undefined=20behavior=20=
-when=20compiled=20with=20GCC=2011.1.0=20-march=3Dx86-64-v3=20-O1\n");=0A=20=
-=20=20=20}=20else=20{=0A=20=20=20=20=20=20=20=20printf("\n=E2=9C=85=20No=20=
-obvious=20problematic=20inputs=20found=20in=20this=20test=20set.\n");=0A=20=
-=20=20=20}=0A=20=20=20=20=0A=20=20=20=20/*=20Test=20that=20fixed=20=
-version=20handles=20problematic=20cases=20*/=0A=20=20=20=20if=20=
-(bugs_found=20>=200)=20{=0A=20=20=20=20=20=20=20=20printf("\n=3D=3D=3D=20=
-Testing=20Fixed=20Version=20=3D=3D=3D\n");=0A=20=20=20=20=20=20=20=20for=20=
-(int=20i=20=3D=200;=20i=20<=20num_tests;=20i++)=20{=0A=20=20=20=20=20=20=20=
-=20=20=20=20=20unsigned=20int=20input=20=3D=20problematic_inputs[i];=0A=20=
-=20=20=20=20=20=20=20=20=20=20=20unsigned=20int=20x=20=3D=20input=20+=20=
-1;=0A=20=20=20=20=20=20=20=20=20=20=20=20if=20(!(x=20&=200x18000)=20&&=20=
-(x=20&=200x1FFFF)=20=3D=3D=200)=20{=0A=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20uint64_t=20result=20=3D=20crush_ln_fixed(input);=0A=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20printf("Fixed=20version=20handles=20=
-input=200x%06X=20->=20result=200x%016lX\n",=20=0A=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20input,=20result);=0A=20=20=20=
-=20=20=20=20=20=20=20=20=20}=0A=20=20=20=20=20=20=20=20}=0A=20=20=20=20}=0A=
-}=0A=0Aint=20main(void)=0A{=0A=20=20=20=20printf("NOTE:=20This=20is=20a=20=
-proof-of-concept=20test=20case=20to=20demonstrate\n");=0A=20=20=20=20=
-printf("=20=20=20=20=20=20the=20potential=20GCC=20101175=20bug=20in=20=
-Ceph's=20crush_ln().\n");=0A=20=20=20=20printf("=20=20=20=20=20=20=
-Maintainers=20can=20compile=20and=20run=20this=20to=20verify=20the=20=
-issue.\n\n");=0A=20=20=20=20=0A=20=20=20=20test_crush_ln_edge_cases();=0A=
-=20=20=20=20=0A=20=20=20=20printf("\n=3D=3D=3D=20Compilation=20Test=20=
-=3D=3D=3D\n");=0A=20=20=20=20printf("To=20reproduce=20the=20GCC=20bug,=20=
-compile=20with:\n");=0A=20=20=20=20printf("gcc=20-march=3Dx86-64-v3=20=
--O1=20-S=20-o=20test_crush.s=20ceph_poc_test.c\n");=0A=20=20=20=20=
-printf("Then=20examine=20the=20assembly=20for=20BSR=20instructions=20=
-without=20zero=20checks.\n");=0A=20=20=20=20=0A=20=20=20=20return=200;=0A=
-}=0A=0A/*=0A=20*=20Expected=20problematic=20assembly=20with=20GCC=20=
-11.1.0=20-march=3Dx86-64-v3=20-O1:=0A=20*=20=0A=20*=20In=20=
-crush_ln_original,=20you=20might=20see:=0A=20*=20=20=20=20=20bsr=20eax,=20=
-[masked_value]=20=20=20=20#=20<--=20UNDEFINED=20if=20masked_value=20is=20=
-0=0A=20*=20=20=20=20=20=0A=20*=20While=20crush_ln_fixed=20should=20=
-generate=20proper=20conditional=20logic=20or=20use=20LZCNT.=0A=20*=20=0A=20=
-*=20Integration=20suggestions=20for=20Ceph:=0A=20*=201.=20Add=20this=20=
-as=20a=20KUnit=20test=20in=20net/ceph/=0A=20*=202.=20Include=20in=20=
-existing=20Ceph=20test=20suite=0A=20*=203.=20Add=20to=20crush=20unit=20=
-tests=0A=20*/=0A=
-
---Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2
-Content-Disposition: attachment;
-	filename=ceph_patch.patch
-Content-Type: application/octet-stream;
-	x-unix-mode=0644;
-	name="ceph_patch.patch"
-Content-Transfer-Encoding: 7bit
-
-From: Huazhao Chen <lyican53@gmail.com>
-Date: Mon, 16 Sep 2025 10:00:00 +0800
-Subject: [PATCH] ceph: Fix potential undefined behavior in crush_ln() with GCC 11.1.0
-
-When compiled with GCC 11.1.0 and -march=x86-64-v3 -O1 optimization flags,
-__builtin_clz() may generate BSR instructions without proper zero handling.
-The BSR instruction has undefined behavior when the source operand is zero,
-which could occur when (x & 0x1FFFF) equals 0 in the crush_ln() function.
-
-This issue is documented in GCC bug 101175:
-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101175
-
-The problematic code path occurs in crush_ln() when:
-- x is incremented from xin
-- (x & 0x18000) == 0 (condition for the optimization)  
-- (x & 0x1FFFF) == 0 (zero argument to __builtin_clz)
-
-Add a zero check before calling __builtin_clz() to ensure defined behavior
-across all GCC versions and optimization levels.
-
-Signed-off-by: Huazhao Chen <lyican53@gmail.com>
----
- net/ceph/crush/mapper.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/net/ceph/crush/mapper.c b/net/ceph/crush/mapper.c
-index 1234567..abcdef0 100644
---- a/net/ceph/crush/mapper.c
-+++ b/net/ceph/crush/mapper.c
-@@ -262,7 +262,8 @@ static __u64 crush_ln(unsigned int xin)
- 	 * do it in one step instead of iteratively
- 	 */
- 	if (!(x & 0x18000)) {
--		int bits = __builtin_clz(x & 0x1FFFF) - 16;
-+		u32 masked = x & 0x1FFFF;
-+		int bits = masked ? __builtin_clz(masked) - 16 : 16;
- 		x <<= bits;
- 		iexpon = 15 - bits;
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 322ed268f14a..fc497c91530e 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -265,7 +265,7 @@ static void finish_netfs_read(struct ceph_osd_request *req)
+ 	subreq->error = err;
+ 	trace_netfs_sreq(subreq, netfs_sreq_trace_io_progress);
+ 	netfs_read_subreq_terminated(subreq);
+-	iput(req->r_inode);
++	ceph_iput_async(req->r_inode);
+ 	ceph_dec_osd_stopping_blocker(fsc->mdsc);
+ }
+ 
+diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+index b1a8ff612c41..bd88b5287a2b 100644
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -1771,7 +1771,7 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
+ 	spin_unlock(&mdsc->snap_flush_lock);
+ 
+ 	if (need_put)
+-		iput(inode);
++		ceph_iput_async(inode);
+ }
+ 
+ /*
+@@ -3318,8 +3318,8 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
  	}
+ 	if (wake)
+ 		wake_up_all(&ci->i_cap_wq);
+-	while (put-- > 0)
+-		iput(inode);
++	if (put > 0)
++		ceph_iput_n_async(inode, put);
+ }
+ 
+ void ceph_put_cap_refs(struct ceph_inode_info *ci, int had)
+@@ -3418,9 +3418,8 @@ void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int nr,
+ 	}
+ 	if (complete_capsnap)
+ 		wake_up_all(&ci->i_cap_wq);
+-	while (put-- > 0) {
+-		iput(inode);
+-	}
++	if (put > 0)
++		ceph_iput_n_async(inode, put);
+ }
+ 
+ /*
+@@ -3917,7 +3916,7 @@ static void handle_cap_flush_ack(struct inode *inode, u64 flush_tid,
+ 	if (wake_mdsc)
+ 		wake_up_all(&mdsc->cap_flushing_wq);
+ 	if (drop)
+-		iput(inode);
++		ceph_iput_async(inode);
+ }
+ 
+ void __ceph_remove_capsnap(struct inode *inode, struct ceph_cap_snap *capsnap,
+@@ -4008,7 +4007,7 @@ static void handle_cap_flushsnap_ack(struct inode *inode, u64 flush_tid,
+ 			wake_up_all(&ci->i_cap_wq);
+ 		if (wake_mdsc)
+ 			wake_up_all(&mdsc->cap_flushing_wq);
+-		iput(inode);
++		ceph_iput_async(inode);
+ 	}
+ }
+ 
+@@ -4557,7 +4556,7 @@ void ceph_handle_caps(struct ceph_mds_session *session,
+ done:
+ 	mutex_unlock(&session->s_mutex);
+ done_unlocked:
+-	iput(inode);
++	ceph_iput_async(inode);
+ out:
+ 	ceph_dec_mds_stopping_blocker(mdsc);
+ 
+@@ -4636,7 +4635,7 @@ unsigned long ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
+ 			doutc(cl, "on %p %llx.%llx\n", inode,
+ 			      ceph_vinop(inode));
+ 			ceph_check_caps(ci, 0);
+-			iput(inode);
++			ceph_iput_async(inode);
+ 			spin_lock(&mdsc->cap_delay_lock);
+ 		}
+ 
+@@ -4675,7 +4674,7 @@ static void flush_dirty_session_caps(struct ceph_mds_session *s)
+ 		spin_unlock(&mdsc->cap_dirty_lock);
+ 		ceph_wait_on_async_create(inode);
+ 		ceph_check_caps(ci, CHECK_CAPS_FLUSH);
+-		iput(inode);
++		ceph_iput_async(inode);
+ 		spin_lock(&mdsc->cap_dirty_lock);
+ 	}
+ 	spin_unlock(&mdsc->cap_dirty_lock);
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index 32973c62c1a2..ec73ed52a227 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -1290,7 +1290,7 @@ static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
+ 		ceph_mdsc_free_path_info(&path_info);
+ 	}
+ out:
+-	iput(req->r_old_inode);
++	ceph_iput_async(req->r_old_inode);
+ 	ceph_mdsc_release_dir_caps(req);
+ }
+ 
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index f67025465de0..385d5261632d 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -2191,6 +2191,48 @@ void ceph_queue_inode_work(struct inode *inode, int work_bit)
+ 	}
+ }
+ 
++/**
++ * Queue an asynchronous iput() call in a worker thread.  Use this
++ * instead of iput() in contexts where evicting the inode is unsafe.
++ * For example, inode eviction may cause deadlocks in
++ * inode_wait_for_writeback() (when called from within writeback) or
++ * in netfs_wait_for_outstanding_io() (when called from within the
++ * Ceph messenger).
++ *
++ * @n: how many references to put
++ */
++void ceph_iput_n_async(struct inode *inode, int n)
++{
++	if (unlikely(!inode))
++		return;
++
++	if (likely(atomic_sub_return(n, &inode->i_count) > 0))
++		/* somebody else is holding another reference -
++		 * nothing left to do for us
++		 */
++		return;
++
++	doutc(ceph_inode_to_fs_client(inode)->client, "%p %llx.%llx\n", inode, ceph_vinop(inode));
++
++	/* the reference counter is now 0, i.e. nobody else is holding
++	 * a reference to this inode; restore it to 1 and donate it to
++	 * ceph_inode_work() which will call iput() at the end
++	 */
++	atomic_set(&inode->i_count, 1);
++
++	/* simply queue a ceph_inode_work() without setting
++	 * i_work_mask bit; other than putting the reference, there is
++	 * nothing to do
++	 */
++	WARN_ON_ONCE(!queue_work(ceph_inode_to_fs_client(inode)->inode_wq,
++				 &ceph_inode(inode)->i_work));
++
++	/* note: queue_work() cannot fail; it i_work were already
++	 * queued, then it would be holding another reference, but no
++	 * such reference exists
++	 */
++}
++
+ static void ceph_do_invalidate_pages(struct inode *inode)
+ {
+ 	struct ceph_client *cl = ceph_inode_to_client(inode);
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 3bc72b47fe4d..d7fce1ad8073 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -1097,14 +1097,14 @@ void ceph_mdsc_release_request(struct kref *kref)
+ 		ceph_msg_put(req->r_reply);
+ 	if (req->r_inode) {
+ 		ceph_put_cap_refs(ceph_inode(req->r_inode), CEPH_CAP_PIN);
+-		iput(req->r_inode);
++		ceph_iput_async(req->r_inode);
+ 	}
+ 	if (req->r_parent) {
+ 		ceph_put_cap_refs(ceph_inode(req->r_parent), CEPH_CAP_PIN);
+-		iput(req->r_parent);
++		ceph_iput_async(req->r_parent);
+ 	}
+-	iput(req->r_target_inode);
+-	iput(req->r_new_inode);
++	ceph_iput_async(req->r_target_inode);
++	ceph_iput_async(req->r_new_inode);
+ 	if (req->r_dentry)
+ 		dput(req->r_dentry);
+ 	if (req->r_old_dentry)
+@@ -1118,7 +1118,7 @@ void ceph_mdsc_release_request(struct kref *kref)
+ 		 */
+ 		ceph_put_cap_refs(ceph_inode(req->r_old_dentry_dir),
+ 				  CEPH_CAP_PIN);
+-		iput(req->r_old_dentry_dir);
++		ceph_iput_async(req->r_old_dentry_dir);
+ 	}
+ 	kfree(req->r_path1);
+ 	kfree(req->r_path2);
+@@ -1240,7 +1240,7 @@ static void __unregister_request(struct ceph_mds_client *mdsc,
+ 	}
+ 
+ 	if (req->r_unsafe_dir) {
+-		iput(req->r_unsafe_dir);
++		ceph_iput_async(req->r_unsafe_dir);
+ 		req->r_unsafe_dir = NULL;
+ 	}
+ 
+@@ -1413,7 +1413,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
+ 		cap = rb_entry(rb_first(&ci->i_caps), struct ceph_cap, ci_node);
+ 	if (!cap) {
+ 		spin_unlock(&ci->i_ceph_lock);
+-		iput(inode);
++		ceph_iput_async(inode);
+ 		goto random;
+ 	}
+ 	mds = cap->session->s_mds;
+@@ -1422,7 +1422,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
+ 	      cap == ci->i_auth_cap ? "auth " : "", cap);
+ 	spin_unlock(&ci->i_ceph_lock);
+ out:
+-	iput(inode);
++	ceph_iput_async(inode);
+ 	return mds;
+ 
+ random:
+@@ -1841,7 +1841,7 @@ int ceph_iterate_session_caps(struct ceph_mds_session *session,
+ 		spin_unlock(&session->s_cap_lock);
+ 
+ 		if (last_inode) {
+-			iput(last_inode);
++			ceph_iput_async(last_inode);
+ 			last_inode = NULL;
+ 		}
+ 		if (old_cap) {
+@@ -1874,7 +1874,7 @@ int ceph_iterate_session_caps(struct ceph_mds_session *session,
+ 	session->s_cap_iterator = NULL;
+ 	spin_unlock(&session->s_cap_lock);
+ 
+-	iput(last_inode);
++	ceph_iput_async(last_inode);
+ 	if (old_cap)
+ 		ceph_put_cap(session->s_mdsc, old_cap);
+ 
+@@ -1903,8 +1903,8 @@ static int remove_session_caps_cb(struct inode *inode, int mds, void *arg)
+ 		wake_up_all(&ci->i_cap_wq);
+ 	if (invalidate)
+ 		ceph_queue_invalidate(inode);
+-	while (iputs--)
+-		iput(inode);
++	if (iputs > 0)
++		ceph_iput_n_async(inode, iputs);
+ 	return 0;
+ }
+ 
+@@ -1944,7 +1944,7 @@ static void remove_session_caps(struct ceph_mds_session *session)
+ 			spin_unlock(&session->s_cap_lock);
+ 
+ 			inode = ceph_find_inode(sb, vino);
+-			iput(inode);
++			ceph_iput_async(inode);
+ 
+ 			spin_lock(&session->s_cap_lock);
+ 		}
+@@ -2512,7 +2512,7 @@ static void ceph_cap_unlink_work(struct work_struct *work)
+ 			doutc(cl, "on %p %llx.%llx\n", inode,
+ 			      ceph_vinop(inode));
+ 			ceph_check_caps(ci, CHECK_CAPS_FLUSH);
+-			iput(inode);
++			ceph_iput_async(inode);
+ 			spin_lock(&mdsc->cap_delay_lock);
+ 		}
+ 	}
+@@ -3933,7 +3933,7 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
+ 		    !req->r_reply_info.has_create_ino) {
+ 			/* This should never happen on an async create */
+ 			WARN_ON_ONCE(req->r_deleg_ino);
+-			iput(in);
++			ceph_iput_async(in);
+ 			in = NULL;
+ 		}
+ 
+@@ -5313,7 +5313,7 @@ static void handle_lease(struct ceph_mds_client *mdsc,
+ 
+ out:
+ 	mutex_unlock(&session->s_mutex);
+-	iput(inode);
++	ceph_iput_async(inode);
+ 
+ 	ceph_dec_mds_stopping_blocker(mdsc);
+ 	return;
+diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
+index d90eda19bcc4..bba00f8926e6 100644
+--- a/fs/ceph/quota.c
++++ b/fs/ceph/quota.c
+@@ -76,7 +76,7 @@ void ceph_handle_quota(struct ceph_mds_client *mdsc,
+ 		            le64_to_cpu(h->max_files));
+ 	spin_unlock(&ci->i_ceph_lock);
+ 
+-	iput(inode);
++	ceph_iput_async(inode);
+ out:
+ 	ceph_dec_mds_stopping_blocker(mdsc);
+ }
+@@ -190,7 +190,7 @@ void ceph_cleanup_quotarealms_inodes(struct ceph_mds_client *mdsc)
+ 		node = rb_first(&mdsc->quotarealms_inodes);
+ 		qri = rb_entry(node, struct ceph_quotarealm_inode, node);
+ 		rb_erase(node, &mdsc->quotarealms_inodes);
+-		iput(qri->inode);
++		ceph_iput_async(qri->inode);
+ 		kfree(qri);
+ 	}
+ 	mutex_unlock(&mdsc->quotarealms_inodes_mutex);
+diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
+index c65f2b202b2b..19f097e79b3c 100644
+--- a/fs/ceph/snap.c
++++ b/fs/ceph/snap.c
+@@ -735,7 +735,7 @@ static void queue_realm_cap_snaps(struct ceph_mds_client *mdsc,
+ 		if (!inode)
+ 			continue;
+ 		spin_unlock(&realm->inodes_with_caps_lock);
+-		iput(lastinode);
++		ceph_iput_async(lastinode);
+ 		lastinode = inode;
+ 
+ 		/*
+@@ -762,7 +762,7 @@ static void queue_realm_cap_snaps(struct ceph_mds_client *mdsc,
+ 		spin_lock(&realm->inodes_with_caps_lock);
+ 	}
+ 	spin_unlock(&realm->inodes_with_caps_lock);
+-	iput(lastinode);
++	ceph_iput_async(lastinode);
+ 
+ 	if (capsnap)
+ 		kmem_cache_free(ceph_cap_snap_cachep, capsnap);
+@@ -955,7 +955,7 @@ static void flush_snaps(struct ceph_mds_client *mdsc)
+ 		ihold(inode);
+ 		spin_unlock(&mdsc->snap_flush_lock);
+ 		ceph_flush_snaps(ci, &session);
+-		iput(inode);
++		ceph_iput_async(inode);
+ 		spin_lock(&mdsc->snap_flush_lock);
+ 	}
+ 	spin_unlock(&mdsc->snap_flush_lock);
+@@ -1116,12 +1116,12 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
+ 			ceph_get_snap_realm(mdsc, realm);
+ 			ceph_change_snap_realm(inode, realm);
+ 			spin_unlock(&ci->i_ceph_lock);
+-			iput(inode);
++			ceph_iput_async(inode);
+ 			continue;
+ 
+ skip_inode:
+ 			spin_unlock(&ci->i_ceph_lock);
+-			iput(inode);
++			ceph_iput_async(inode);
+ 		}
+ 
+ 		/* we may have taken some of the old realm's children. */
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index cf176aab0f82..15c09b6c94aa 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -1085,6 +1085,13 @@ static inline void ceph_queue_flush_snaps(struct inode *inode)
+ 	ceph_queue_inode_work(inode, CEPH_I_WORK_FLUSH_SNAPS);
+ }
+ 
++void ceph_iput_n_async(struct inode *inode, int n);
++
++static inline void ceph_iput_async(struct inode *inode)
++{
++	ceph_iput_n_async(inode, 1);
++}
++
+ extern int ceph_try_to_choose_auth_mds(struct inode *inode, int mask);
+ extern int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
+ 			     int mask, bool force);
 -- 
-2.40.1
+2.47.3
 
---Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii
-
-
-
-
---Apple-Mail=_4690181B-0FED-42CB-AB79-5BCD1270BAD2--
 
