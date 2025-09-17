@@ -1,234 +1,194 @@
-Return-Path: <ceph-devel+bounces-3671-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3672-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F01A7B82319
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 Sep 2025 00:51:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A545B82376
+	for <lists+ceph-devel@lfdr.de>; Thu, 18 Sep 2025 00:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 428901C2436B
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 22:51:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 670603A72BB
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 22:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E32430F80F;
-	Wed, 17 Sep 2025 22:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891A830FC0F;
+	Wed, 17 Sep 2025 22:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="TAU1Xqlv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWM9xtQI"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F39309F19
-	for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 22:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A70B30EF67
+	for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 22:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758149471; cv=none; b=QtO+CtxxcvLyrf7ANVWsTfmkvQL/zZk3ieB8Y//bupPp40aL8+X7Q4QbXN8RSb2jig11LImPJcQ7nVted8552hcA4jY9xNRXugsp5IgkflK8sUK36Jx4Si3YuTmnC/SNZSQyy9aKB/elljEGG5urBfT/Zm5P13bdv3ziBZqYhI4=
+	t=1758149935; cv=none; b=OGNqKub9mJW2OMZzEmrew42KnrOTLUageohZDTJDDT6vwius2j877BUBsx0VcmT2u8r7TC3YamskMDN2kpI55RMh3eKCts2hLsBIRTCiBT4nb5SpKDzIySum08dlwLm4yXHhCvI2GZMT54MnFVJOyoDAHsq/dJSrBkXfVkNQHtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758149471; c=relaxed/simple;
-	bh=uXQN6FSQJnpjKMExP2GtxNzt35X+QqvTVhfhqwNmWL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BQqsf7vmrezUeRMHimGTxuWd6uBYKWvfK8OH0dNhQ/TJ0fpink1Gq4g6IX8fS7VlpRtkr/ET2+AvkNeDl/s7/ckgsMlHcY6ZNrCL+lAdLZVr7eP6UltsvrMQ04xmm8F67yWH0+ydagJ9zNm/AMXxt2kE0lYGfijH6+TvFTOYwuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=TAU1Xqlv; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77ce812f200so286082b3a.1
-        for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 15:51:08 -0700 (PDT)
+	s=arc-20240116; t=1758149935; c=relaxed/simple;
+	bh=IOOEuCzwU/igj7JGu+xvf0xOgf+56/p3/Y92ibzkIqY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f5lpJCtbfvZiFhHnMXO0TD8vGGmJrodBI3UHyqF3YB16+gwyYmK8l2NUqwF9LqcyNTmaZxSYWMis+9vLMRycMoRC7dGTryks/rKtgx0heZguCQboJYWVBg/rdNM8CR+zO7sJaKWKL+vQdm3hW2tQwGfC3MnuqyLX+0EwWIqtEms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hWM9xtQI; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-62f0411577aso568038a12.1
+        for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 15:58:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1758149468; x=1758754268; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KiBmD6NJZU/wz6ZMowNVOrSIvY548tKi0Wxl6W6YNg4=;
-        b=TAU1XqlvofEukbAmjo+VEdU5Mnx4ijqoqqVdK4YJmfIgs3W3oZ9Va28Y3p5GNmQqaP
-         2eCsNtv73V9mqG8Vz4tGT1eaI04u3D6rgyZkkjQyadATFjWgJpvN162qHscx5AwDYfui
-         5HVJQrD1tChDcQYEkpQaSnmLyxuBN5TH+oZ9tATUKM69Ydmtq1eFB0cWbAPqOm2eaUNc
-         KBKxlO0assKAZ9UinfpobX+W7PxzbxLBVtlGeV5DH5I75vtlw2E2IKaDc6CBbVJAxQ1c
-         ALFl3Hy7QQNzg96L5iWPxGBF6zCDv0gklfw8kJ33gJvlSO2eVl20VgOthX7j+YIpjpYO
-         nB9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758149468; x=1758754268;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1758149932; x=1758754732; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KiBmD6NJZU/wz6ZMowNVOrSIvY548tKi0Wxl6W6YNg4=;
-        b=fjukhNzJKHrj8ZpWcH2j2MexGGfWe9hvoTyKTqLvReVSujpvLRGCxU0Lg9zdnVPRVd
-         nsDylK/SttjmW0zA79DWMj9QRS24pkaJOUvRmS0qF1zvsWAxdJgoNoB4QFZ5+vafm3mL
-         jOl2JlFTyHK1i14B2uJjhaOPzlx6UrAWq/o7thxNkH+Swpj9VdwnvLbWNQ3pVnMwWX/p
-         1KM/48kTb+RqAI4JW81tuBs/K8gOqayhBqTBngc5BYi41/NfPWCaSOyywA5HTdjwRC/7
-         HvB6ogeA/o+bSFhimupZb+19GMHB6I7T3Ojopy07802++5sFMelZbFvbmGir/UHxzypy
-         ckhg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTJOQNptPDeJ2pLDxvOmU577UveyIWaGHXOKMvZ+hAuhyx40Qx32St9jGCG5NXqmceNvBZXwxeMXq5@vger.kernel.org
-X-Gm-Message-State: AOJu0YxriNj4gHjc5YzUgmF38UKFmVDfC1kQl3x7GDZJLjtYTkGALbhz
-	nCj3AiaIsYqdnjYt8S/GQUJKI9yNznF/LlIIWI1LwAjrkyWrvd5lmE+Y1blM9rvLcJI=
-X-Gm-Gg: ASbGncu+cp7EGdh8PjMAjtub46AdKNCEaOnjWnLoWG9HOYG7rBejniHkSmDUSYqX/MK
-	Zl6tqflCUILa2DW05QKOfBOy2hw1sEQkgxmVDDm7qY7hJT89KWKim81Qfif8mKqXZjQPSykMlFg
-	TakimvtqNKNPJWNkcVI5RYvIeHPW2QyMRZY9hxiAO1TZrmn8qHr8lpMsI7CqBfVNANU7A2hfFaj
-	qXGBZ9Tl8JJ5deEqVCd4pUbxhG8bSH6ehkUo/kVNCRu9su9fBWNedXfKYha10A2uy7yXzo/fC+i
-	x9KGNC7UvaAGwINokC4KHAJz56wLJBAzh0G6Ye6tzqvFgEvdD56MllrPz/eiSXxeIJo9Y9cDUGk
-	C+wp3xYJzIW8ASpJ3Xee8S55QsDtxcovvwFBRC+TS72OMIjmCEawtTyKSC0GzymzZ8YMdiToYcS
-	2PCCI2KA==
-X-Google-Smtp-Source: AGHT+IFwfCQkVNjD6CXMbnqb6iNxIizQ9+fDYixTv2KRx6v3UbkFCsyowVxUeZhQg3zfx+PNmkXznA==
-X-Received: by 2002:a05:6a20:a127:b0:24d:d206:69ac with SMTP id adf61e73a8af0-284522d3d4fmr1738503637.14.1758149468140;
-        Wed, 17 Sep 2025 15:51:08 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77cfc248fa0sm454091b3a.30.2025.09.17.15.51.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 15:51:07 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1uz0zR-00000003IYr-0zrK;
-	Thu, 18 Sep 2025 08:51:05 +1000
-Date: Thu, 18 Sep 2025 08:51:05 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: slava.dubeyko@ibm.com, xiubli@redhat.com, idryomov@gmail.com,
-	amarkuze@redhat.com, ceph-devel@vger.kernel.org,
-	netfs@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] ceph: fix deadlock bugs by making iput() calls
- asynchronous
-Message-ID: <aMs7WYubsgGrcSXB@dread.disaster.area>
-References: <20250917124404.2207918-1-max.kellermann@ionos.com>
+        bh=it0hw7STF0VKiuKn78g4szyYtwsB+CgMo5LILw/Kbs0=;
+        b=hWM9xtQIwFG1wV4HY6dDMwLX4kOKsVZWGZSlvh8BkW9fYDKridKMl83N3naNd+jG+k
+         RXZZfXYXUmBtjWMGmdN0++ax46/tcOTPFfJ4JyEIT+dlgarIfSq3GYx+4RUAE8F9Ef0q
+         s4+8VpWwtWw6zEfxWaNzgPc6oBv0XnLn4d5Xc4p2Kp2Vdkoi2pLsVOu5jqrlPgzIKCzi
+         /54QnEbH8jVUwWV+jZPCq0kTElBlUViyfyQtb4SF6DX505fWjuei5IWhvyhUdQRR0kCP
+         dCaceJINB+fPdUxTtFE7lyY062lYVu9KbOcTdajyoX6HgmEulSgNh6xFahm7ieuiVh1A
+         ekSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758149932; x=1758754732;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=it0hw7STF0VKiuKn78g4szyYtwsB+CgMo5LILw/Kbs0=;
+        b=vb9tdMuN6rka5PA11cLRez0rOVrHmbi6pgv82x5W9KhqDQ8TJIvG+Tcq3gQZqX4zat
+         /Niw1Wcgnq3dwzOztBAtvr+Pg7iPls0jrQiNkujlqJhz3/PVyVBcteTSPxsckla95Jbo
+         +d1fC+ujpvRno83KT8lUVMFhv8h0/DqSDBQD+CRat1Lv1UrGhg5uUzOyFMWgAFXDx9uG
+         vHYigmT4u8ePDOJWoomddmpojFqqsViqc4ONCDfPGWWp7SgU4Hrnk52r+JmU7m+4/KhD
+         dXEJii3Po+RXf5+YuDtJBuE4ccJZ9j4d3OtUAxfL5aHX95SnjKAREexDPClLF37VujO9
+         9T+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUHS8Gd3TMZk9PAxASxr8aPz1am+1i4/Ilm0IADXjKZ2vd89I+BSwA70dY/KXLUUqIlxmVUqlxyJeXR@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkHgzdvenLON6w7CWccmdNI3t8ZZfUNjdqMdd0ZWNMcww4nZez
+	4qU429dz1j9XkL6ttm9HbjVMuB/2hol43LhhwT9tpOiR4TPzjh5oX8Mp65Qf84qvZDp3egVo6fC
+	bfkP1ZiZeSZn11kXtKzcHiVR0GwmOfW8=
+X-Gm-Gg: ASbGncvvaBr7OSUMlfGS5zuoy0VsYD6EvjEuTgjpxKVN/Ba7l3+YbTTYEB4EfFr3kmQ
+	OiKQSK/cVdjn1FTmujJ+8pGKRwsOaqjd8yxau69crRQzXPamTtNoPgGNS6qnHqKigvZzbkiuu7i
+	Iw7n4BP7xb3zQgV8Bnx5FBi5CgT+nT50SwSLeGVucnO0P9g4Jz81ZjiglgyfhAvcrPlO+Ot5pNW
+	oKwwTgu1P7sq9GD/8cuAmrS3h+c3MnWMhBMow4roLScYQA+GwhK49th2A==
+X-Google-Smtp-Source: AGHT+IF5Oo0BBvrA+aww1rEutWij2SvX5Gh4f+3J9obY0bllBpPQD0meffz5TJgyN0dgQ74slyUif+t8TL+R1MHOPhY=
+X-Received: by 2002:a05:6402:a0c1:b0:61d:249a:43fe with SMTP id
+ 4fb4d7f45d1cf-62f842322cbmr3728400a12.24.1758149931621; Wed, 17 Sep 2025
+ 15:58:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250917124404.2207918-1-max.kellermann@ionos.com>
+References: <CAKPOu+-QRTC_j15=Cc4YeU3TAcpQCrFWmBZcNxfnw1LndVzASg@mail.gmail.com>
+ <4z3imll6zbzwqcyfl225xn3rc4mev6ppjnx5itmvznj2yormug@utk6twdablj3>
+ <CAKPOu+--m8eppmF5+fofG=AKAMu5K_meF44UH4XiL8V3_X_rJg@mail.gmail.com>
+ <CAGudoHEqNYWMqDiogc9Q_s9QMQHB6Rm_1dUzcC7B0GFBrqS=1g@mail.gmail.com>
+ <20250917201408.GX39973@ZenIV> <CAGudoHFEE4nS_cWuc3xjmP=OaQSXMCg0eBrKCBHc3tf104er3A@mail.gmail.com>
+ <20250917203435.GA39973@ZenIV> <CAGudoHGDW9yiROidHio8Ow-yZb8uY7wMBjx94fJ7zTkL+rVAFg@mail.gmail.com>
+ <20250917210241.GD39973@ZenIV> <20250917214229.GF39973@ZenIV>
+In-Reply-To: <20250917214229.GF39973@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Thu, 18 Sep 2025 00:58:39 +0200
+X-Gm-Features: AS18NWA2xDDd90TP4hQffjy7fu0y29jV2cuqbrh0s-lIAc7yHea5fW1K7iRdEx8
+Message-ID: <CAGudoHHzZ1DEEg2YHT4_+48-Y1gc7=uW_gOe3c0o6wsm7pWEXQ@mail.gmail.com>
+Subject: Re: Need advice with iput() deadlock during writeback
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Max Kellermann <max.kellermann@ionos.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Linux Memory Management List <linux-mm@kvack.org>, ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 02:44:04PM +0200, Max Kellermann wrote:
-> The iput() function is a dangerous one - if the reference counter goes
-> to zero, the function may block for a long time due to:
-> 
-> - inode_wait_for_writeback() waits until writeback on this inode
->   completes
-> 
-> - the filesystem-specific "evict_inode" callback can do similar
->   things; e.g. all netfs-based filesystems will call
->   netfs_wait_for_outstanding_io() which is similar to
->   inode_wait_for_writeback()
-> 
-> Therefore, callers must carefully evaluate the context they're in and
-> check whether invoking iput() is a good idea at all.
-> 
-> Most of the time, this is not a problem because the dcache holds
-> references to all inodes, and the dcache is usually the one to release
-> the last reference.  But this assumption is fragile.  For example,
-> under (memcg) memory pressure, the dcache shrinker is more likely to
-> release inode references, moving the inode eviction to contexts where
-> that was extremely unlikely to occur.
-> 
-> Our production servers "found" at least two deadlock bugs in the Ceph
-> filesystem that were caused by this iput() behavior:
-> 
-> 1. Writeback may lead to iput() calls in Ceph (e.g. from
->    ceph_put_wrbuffer_cap_refs()) which deadlocks in
->    inode_wait_for_writeback().  Waiting for writeback completion from
->    within writeback will obviously never be able to make any progress.
->    This leads to blocked kworkers like this:
-> 
->     INFO: task kworker/u777:6:1270802 blocked for more than 122 seconds.
->           Not tainted 6.16.7-i1-es #773
->     task:kworker/u777:6  state:D stack:0 pid:1270802 tgid:1270802 ppid:2
->           task_flags:0x4208060 flags:0x00004000
->     Workqueue: writeback wb_workfn (flush-ceph-3)
->     Call Trace:
->      <TASK>
->      __schedule+0x4ea/0x17d0
->      schedule+0x1c/0xc0
->      inode_wait_for_writeback+0x71/0xb0
->      evict+0xcf/0x200
->      ceph_put_wrbuffer_cap_refs+0xdd/0x220
->      ceph_invalidate_folio+0x97/0xc0
->      ceph_writepages_start+0x127b/0x14d0
->      do_writepages+0xba/0x150
->      __writeback_single_inode+0x34/0x290
->      writeback_sb_inodes+0x203/0x470
->      __writeback_inodes_wb+0x4c/0xe0
->      wb_writeback+0x189/0x2b0
->      wb_workfn+0x30b/0x3d0
->      process_one_work+0x143/0x2b0
->      worker_thread+0x30a/0x450
-> 
-> 2. In the Ceph messenger thread (net/ceph/messenger*.c), any iput()
->    call may invoke ceph_evict_inode() which will deadlock in
->    netfs_wait_for_outstanding_io(); since this blocks the messenger
->    thread, completions from the Ceph servers will not ever be received
->    and handled.
-> 
-> It looks like these deadlock bugs have been in the Ceph filesystem
-> code since forever (therefore no "Fixes" tag in this patch).  There
-> may be various ways to solve this:
-> 
-> - make iput() asynchronous and defer the actual eviction like fput()
->   (may add overhead)
-> 
-> - make iput() only asynchronous if I_SYNC is set (doesn't solve random
->   things happening inside the "evict_inode" callback)
-> 
-> - add iput_deferred() to make this asynchronous behavior/overhead
->   optional and explicit
-> 
-> - refactor Ceph to avoid iput() calls from within writeback and
->   messenger (if that is even possible)
-> 
-> - add a Ceph-specific workaround
+On Wed, Sep 17, 2025 at 11:42=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> =
+wrote:
+>
+> On Wed, Sep 17, 2025 at 10:02:41PM +0100, Al Viro wrote:
+> > On Wed, Sep 17, 2025 at 10:39:22PM +0200, Mateusz Guzik wrote:
+> >
+> > > Linux has to have something of the sort for dentries, otherwise the
+> > > current fput stuff would not be safe. I find it surprising to learn
+> > > inodes are treated differently.
+> >
+> > If you are looking at vnode counterparts, dentries are closer to that.
+> > Inodes are secondary.
+> >
+> > And no, it's not a "wait for references to go away" - every file holds
+> > a _pair_ of references, one to mount and another to dentry.
+> >
+> > Additional references to mount =3D> umount() gets -EBUSY, lazy umount()
+> > (with MNT_DETACH) gets the sucker removed from the mount tree, with
+> > shutdown deferred (at least) until the last reference to mount goes awa=
+y.
+> >
+> > Once the mount refcount hits zero and the damn thing gets taken apart,
+> > an active reference to superblock (i.e. to filesystem instance) is
+> > dropped.
+> >
+> > If that was not the last one (e.g. it's mounted elsewhere as well), we
+> > are not waiting for anything.  If it *was* the last active ref, we
+> > shut the filesystem instance down; that's _it_ - once you are into
+> > ->kill_sb(), it's all over.
+> >
+> > Linux VFS is seriously different from Heidemann's-derived ones you'll f=
+ind in
+> > BSD land these days.  Different taxonomy of objects, among other things=
+...
+>
+> FWIW, the basic overview of objects:
+>
+> super_block: filesystem instance.  Two refcounts (passive and active, hav=
+ing
+> positive active refcount counts as one passive reference).  Shutdown when
+> active refcount gets to zero; freeing of in-core struct super_block - whe=
+n
+> passive gets there.
+>
+> mount: a subtree of an active filesystem.  Most of them are in mount tree=
+(s),
+> but they might exist on their own - e.g. pipefs one, etc.  Has a refcount=
+,
+> bears an active reference to fs instance (super_block) *and* a reference =
+to
+> a dentry belonging to that instance - root of the (sub)tree visible in
+> it.  Shutdown when refcount hits zero.  Being in mount tree contributes
+> to refcount; that contribution goes away when it's detached from the tree
+> (on umount, normally).  Refcount is responsible for -EBUSY from non-lazy
+> umount; lazy one (umount -l, umount2(path, MNT_DETACH)) dissolves the ent=
+ire
+> subtree that used to be mounted at that point and shuts down everything
+> that had refcounts reach zero, leaving the rest until their refcounts dro=
+p
+> to zero too.  Shutdown drops the superblock and root dentry refs.
+>
+> inode & dentry: that's what vnodes map onto.  Dentry is the main object,
+> inode is secondary.  Each belongs to a specific fs instance for the entir=
+e
+> lifetime.  Dentries form a forest; inodes are attached to some of them.
+> Details are a lot more involved than anything that would fit into a short
+> overview.  Both are refcounted, attaching dentry to an inode contributes
+> 1 to inode's refcount.  Child dentry contributes 1 to refcount of parent.
+> Shutdown does *not* happen until the dentry refcount hits zero; once it's
+> zero, the normal policy is "keep it around if it's still hashed", but
+> filesystem may say "no point keeping it".  Memory pressure =3D> kill the
+> ones with zero refcount (and if their parents had been pinned only by
+> those children, take the parents out as well, etc.).  Filesystem shutdown=
+ =3D>
+> kick out everything with zero refcount, complain if anything's left after
+> that (shrink_dcache_for_umount() does it, so if filesystem kept anything
+> pinned internally, it would better drop those before we get to that
+> point).  evict_inodes() does the same to inodes.
+>
+> file: the usual; open IO channel, as on any Unix.  Carries a reference to
+> dentry and to mount.  Shutdown happens when refcount goes to zero, normal=
+ly
+> delayed until return to userland, when we are on shallow stack and withou=
+t
+> any locks held.  Incidentally, sockets and pipes come with those as well =
+-
+> none of the "sockets don't have a vnode" headache.
+>
+> cwd (and process's root as well): a pair of mount and dentry references.
 
-- wait for Josef to finish his inode refcount rework patchset that
-  gets rid of this whole "writeback doesn't hold an inode reference"
-  problem that is the root cause of this the deadlock.
+I groked most of it from my prior poking around, thanks for the write up th=
+ough.
 
-All that adding a whacky async iput work around does right now is
-make it harder for Josef to land the patchset that makes this
-problem go away entirely....
-
-> diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-> index f67025465de0..385d5261632d 100644
-> --- a/fs/ceph/inode.c
-> +++ b/fs/ceph/inode.c
-> @@ -2191,6 +2191,48 @@ void ceph_queue_inode_work(struct inode *inode, int work_bit)
->  	}
->  }
->  
-> +/**
-> + * Queue an asynchronous iput() call in a worker thread.  Use this
-> + * instead of iput() in contexts where evicting the inode is unsafe.
-> + * For example, inode eviction may cause deadlocks in
-> + * inode_wait_for_writeback() (when called from within writeback) or
-> + * in netfs_wait_for_outstanding_io() (when called from within the
-> + * Ceph messenger).
-> + *
-> + * @n: how many references to put
-> + */
-> +void ceph_iput_n_async(struct inode *inode, int n)
-> +{
-> +	if (unlikely(!inode))
-> +		return;
-> +
-> +	if (likely(atomic_sub_return(n, &inode->i_count) > 0))
-> +		/* somebody else is holding another reference -
-> +		 * nothing left to do for us
-> +		 */
-> +		return;
-> +
-> +	doutc(ceph_inode_to_fs_client(inode)->client, "%p %llx.%llx\n", inode, ceph_vinop(inode));
-> +
-> +	/* the reference counter is now 0, i.e. nobody else is holding
-> +	 * a reference to this inode; restore it to 1 and donate it to
-> +	 * ceph_inode_work() which will call iput() at the end
-> +	 */
-> +	atomic_set(&inode->i_count, 1);
-
-If you must do this, please have a look at how
-btrfs_add_delayed_iput() handles detecting the last inode reference
-and punting it to an async queue without needing to drop the last
-reference at all.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+The real question though is how can a filesystem safely manage keeping
+extra refs on inodes vs unmount. Per your explanation the usual safety
+net does not apply. Frankly it makes igrab/iput sound very dangerous
+in their own right.
 
