@@ -1,575 +1,103 @@
-Return-Path: <ceph-devel+bounces-3639-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3640-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CC9B7E431
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 14:45:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE4F0B7E8C1
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 14:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2572916AAA4
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 12:44:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 840B64A1FB4
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 12:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB686298CB7;
-	Wed, 17 Sep 2025 12:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5BE31BC88;
+	Wed, 17 Sep 2025 12:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="i6yoUGp+"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="ETkHo1t5"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2ED1F4192
-	for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 12:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9D631A81D
+	for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 12:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758113059; cv=none; b=dbOOiTP/hhM85lSerXgh2wyz4QXpGopscWLPIW4hBTLaILTDb9hc7KoqSVo9ExesmZIEi31q51ojUmsuOIaou6oGkptT5LBjxN1TS2KxZ781v2iOwLm6PFaBUA17/2EDZaXk55d8dWocwnS20NCT29mLeaFDNRqdBhSt3hOmp4I=
+	t=1758113305; cv=none; b=rMTN0FH10uLsxu+UIL4PtP2/MY2WYaDk+ixiUL2twzvv+lSAf3b668gnwumikzMIHe9SAtr1VKap9HqyanQ0LUGOMAb66bMsXTWR9JwX5+ePUyLW5xCrlYLc8gMuN2gWeknaaFgdJqzoEICrSrdryASXDe/rPZQGMUFPCUHm/xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758113059; c=relaxed/simple;
-	bh=zWs2wuzXHBJXv3Z5dfMDy4ueJCLkuAWkBbG43eZc0+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CNOUl0KuQ+jO7rmYyZUD85PuJHd/Hf/sWoG/R5FENBu3bknAGarToS5TsyLxSUfL5gFICPyyz6/1Ew+ZjuANl/fNa31xBNQVWaGiT5aAtSQ7lO0PcMb5Ruxc/xlbsaYN3moNpWQGI2m7DoMT+3r1C/UZ4M25cU0tDezp41fJEJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=i6yoUGp+; arc=none smtp.client-ip=209.85.221.47
+	s=arc-20240116; t=1758113305; c=relaxed/simple;
+	bh=mzoJJTaUHkHZHToYowEQCZnMPpDM4R66Ou5zGDbIBXA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o/VD6SJJzTMW96rVe62Mbitq9LHkEuJLgkfA4Ppl5d3S2nGspqVTnbuEI35EWxSj3ab4CM0Aros4EUdoaQvqFsn+8S1qUBM/D/ML+wDJq5G5J6i4I009JyfUVK+7lqua09x3pArzhvp7Zx624ApRsGvzB6BpKPcLqln4qih/f4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=ETkHo1t5; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3ea7af25f8aso1368164f8f.0
-        for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 05:44:16 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b04b55d5a2cso1137618066b.2
+        for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 05:48:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1758113055; x=1758717855; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9l0LphDpIed2apeZeQd/qdzJBq9hA/Hrk7IvDg8Z+No=;
-        b=i6yoUGp+SGYnDqtJK9zdipjNmGhyWS81bEMayhIYia/iKQ8ti/YyilKkXMzxU3zAiX
-         BU31zYt1R53NvnEfExF1ZfNQB4s+/+1mKeAMtnsXW5kjCUC+2TO4NFH5f4Q88bT0nWhP
-         00oz+ifMeK+nIGVEGIovhFLeEG06zXhQ+5fw08Tn7GbC7Bf687xaW9Yan2J20JoaGUf+
-         BnDEvj3Yt/3MHbiOkZpTRrQHS+8PI4OisndtTezQCtlh8Xh2XyLD1YZ2LBTrwB9g8kZ6
-         wggpwKPfwqHzjJFPPhOU5+25Goh81CqUoBuQufabOUzGBdhZxb8DeignmLykTpb23Oh9
-         M9nA==
+        d=ionos.com; s=google; t=1758113302; x=1758718102; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mzoJJTaUHkHZHToYowEQCZnMPpDM4R66Ou5zGDbIBXA=;
+        b=ETkHo1t5/fH68nL00o46lcBWJ+P0Ki2i8Dg7OMeHJO7xeiNHWbhkWjnnOKKctte3o6
+         054nQ1yd/BCp0Cq8Nbi3C0tH8YKyIfubSIDa9JzNlqqUfXSdFF4dXBVQjhSBMhiqVTgh
+         x089w+kboEtFFzIC18olyp8s22J8J1yZ7UUoIYUOUoTY3ZUdRmOZSuSgngKae/oOOMo1
+         0vj7jnDDOmVM3KL6JGyEGoATB8ShHuRgNDRARwDh2idMpVlWlr1GptF/uYONU386kt1r
+         qGNbcCZquEMTJ/ZpQU98fM+1zqONG1yIuxzsFbcfba4BiIdKM4uq6wvzlbffuBMco0cK
+         J8cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758113055; x=1758717855;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9l0LphDpIed2apeZeQd/qdzJBq9hA/Hrk7IvDg8Z+No=;
-        b=J0fO9aoJbTo1DoKsDxQodzU8MSxJ4t01AvrZ+MSJXZcSOUtdh1yOi0Dfceb0C+e6oB
-         W1BcjEJdvTFkoAIOIjJE04/09Dt73fI/+cM+z71l3VHbOVGbYlNopjG9nfBIa/0Gdqft
-         eL8zoi7xleywBG8Rbj1Uu2TKbIeXsCYfehhg5iYaMwL7/GwWjyS7FMxDWPDctJPh7HnY
-         WwYDIXImmN/ilsFVnRapNzKJmo2Tki+wxOSDecWDW1szWxWSixlBS/IKrIQrKG7yLKiE
-         pzlQvrQhXQ6GT0FjUXIouxYN/LXsmURaM0KX3qvUdMSsbUXiVmtUqVXOnV/BBulTHcvd
-         oQIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVEHXikbvgHcrXcAlXxCrVYYkWogfPAVVMwlkrGvqbqLKeUOC5AakZd0kOfAFye6tJZLcRnUX2qj1Z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd5D/9chkT5AYON1zMHoYDe4DwYyj4s5hVMcMIv/CKza7xNuEM
-	sqZXNzXadO0UJGPviUR9/sT6GtyPsAafU+kQ9KiwmFvLVqmf9PaugJVZRomxQMD8TC8=
-X-Gm-Gg: ASbGncs+vWvX3mKiQg5UDsEQa3t5ta1Me0FsTilbitgYa6iEUwMQemcvxx66OgeaCCM
-	02Yb2e6Z+PakjNOF8GXyGymuqtmecynjowto4wcMHG6MI02pi/Y2ZGe2xRXA0GV1ChcJs6vPatj
-	ViEBtEqqKDgRYW3yByK0qVnwNjSknUIDuZ8ooGEs1RcoOPErFuW2mrkW/gIZRy1jOUFI0qk6Y10
-	A18+uqLpSRXApcokWX/Ky8Y4qUZ92Q6mUzaCCHm2iH7gxuuTjWVTAIgR3ePlUYVtiZWKg7RGy4D
-	9w7R/SKW2I3oQog37nx32c13dBfDtdF9ADeMVzfqtM+01WP4lij7hdytliBHLbMhDQi9LhhKhci
-	WHTeCcIStXtQl4V9ReiyPrw5hMbc2iusxwPRff1BMN72uk4bba5bKW83dQDpCups91JkSe+2cEy
-	lLTP3kskNh3eOiXV2bdqfFsdU=
-X-Google-Smtp-Source: AGHT+IF7AMRjJCUMpWdVV80XxP+tuE6ks4cuUZ2jcLKtlygZeus2PQ2aAb4owd/otxyO12EkLJN4/A==
-X-Received: by 2002:a05:6000:1acf:b0:3ea:4b52:af6f with SMTP id ffacd0b85a97d-3ecdf9b24b0mr1619522f8f.9.1758113054838;
-        Wed, 17 Sep 2025 05:44:14 -0700 (PDT)
-Received: from raven.intern.cm-ag (p200300dc6f055a00023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f05:5a00:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4613e849a41sm35238205e9.20.2025.09.17.05.44.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 05:44:14 -0700 (PDT)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: slava.dubeyko@ibm.com,
-	xiubli@redhat.com,
-	idryomov@gmail.com,
-	amarkuze@redhat.com,
-	ceph-devel@vger.kernel.org,
-	netfs@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	Max Kellermann <max.kellermann@ionos.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] ceph: fix deadlock bugs by making iput() calls asynchronous
-Date: Wed, 17 Sep 2025 14:44:04 +0200
-Message-ID: <20250917124404.2207918-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.47.3
+        d=1e100.net; s=20230601; t=1758113302; x=1758718102;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mzoJJTaUHkHZHToYowEQCZnMPpDM4R66Ou5zGDbIBXA=;
+        b=Wxrr7O1pBG49Ad2xx2G7UjuRh7fFPNzcGPhEUnonbx9lpUrgRTmrlJ8/xLGfGFPUs0
+         azIDgdFkr3Ob9azZHzG3JhVTJpRwDH0/6/nwrHwS5SZZMsBDmcO4AvWSj9RMXHU6d+k3
+         GioN+BcV/ooyaPs4yS+opyA2ao4SmoXdCfVH8WupOTkutFifnavEax7eRlEZlv5m14rg
+         1AyyanYs7z2lsqStWZw29VJM7lS7hpb5Uyy/v7hZDQhFMD/hIubo+EyUX22xiOQkKqVZ
+         hVjpUf+nB3t3lH15rVDrMUfuunfD0UJwXwaBhdbQg0g4xo1xA4CUpdLQwGruwi5hUZoY
+         1F3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUEIeZxkCvauRaWxXn4MFbQlV68d/6+DtGYFgibI8JN3RgX6uUce0CXUydN5SPAKFGeZDsmnyMC9nil@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj++6KOeijZyNX2jmGn/yyS7GZbF5rja6TMyJjm6vvn/c8bbVv
+	U4isQKDoPDy6dT5JnjjaSSXqK2X/4Mk1TNdQ7odl0JZggnck/HFn53U3/1oU7QwTZQBk1YzAfA8
+	wutSa5x/B/j6c1KJbF0pHZs5ZMCxS0ahsjRI3ZHuemq0+lpGSxILR
+X-Gm-Gg: ASbGncsxRe/KQ6v7vyh1HP/l570eZUNm3eLZNQRUSeaHtpINT+qtU2vsRAW93ZUe9iL
+	WJuZEe7kS/IFtCq+sdiz7TrRakLrnP+3b6kd+cJ25PkfvTCPsP8mLncZ0I2KFrpd9MCFy1SgpmV
+	0hDZzTErOgbw9RqpQlorLiQsOOsDuGMaaU6AMbfKJUI6leDe90uVfmgbN+D+F0fETnr7f20GewW
+	6xsZ9S9Ndhtr/ypTIVJmucRoV3fDuzHStLs
+X-Google-Smtp-Source: AGHT+IGxLydLDJb0VdYSaq6Lk+OQ4q1aEqSqriHtwbCsy+e8WDZN7b+TQjeMCOhaF7PVT8Bkog08GU6BKCkdGttIS0I=
+X-Received: by 2002:a17:907:3e27:b0:b09:6ff1:e65d with SMTP id
+ a640c23a62f3a-b1bc2778d71mr257244066b.61.1758113298807; Wed, 17 Sep 2025
+ 05:48:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAKPOu+-QRTC_j15=Cc4YeU3TAcpQCrFWmBZcNxfnw1LndVzASg@mail.gmail.com>
+ <4z3imll6zbzwqcyfl225xn3rc4mev6ppjnx5itmvznj2yormug@utk6twdablj3>
+ <CAKPOu+--m8eppmF5+fofG=AKAMu5K_meF44UH4XiL8V3_X_rJg@mail.gmail.com>
+ <CAGudoHEqNYWMqDiogc9Q_s9QMQHB6Rm_1dUzcC7B0GFBrqS=1g@mail.gmail.com> <CAKPOu+_B=0G-csXEw2OshD6ZJm0+Ex9dRNf6bHpVuQFgBB7-Zw@mail.gmail.com>
+In-Reply-To: <CAKPOu+_B=0G-csXEw2OshD6ZJm0+Ex9dRNf6bHpVuQFgBB7-Zw@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Wed, 17 Sep 2025 14:48:07 +0200
+X-Gm-Features: AS18NWBvdouXUe1Mvci0ghTgQgjd6tzI9CRI7bVed8MohvrSsbtpRmVZImWkHk8
+Message-ID: <CAKPOu+-xr+nQuzfjtQCgZCqPtec=8uQiz29H5+5AeFzTbp=1rw@mail.gmail.com>
+Subject: Re: Need advice with iput() deadlock during writeback
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Linux Memory Management List <linux-mm@kvack.org>, ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The iput() function is a dangerous one - if the reference counter goes
-to zero, the function may block for a long time due to:
+On Wed, Sep 17, 2025 at 11:20=E2=80=AFAM Max Kellermann
+<max.kellermann@ionos.com> wrote:
+> I had already started writing exactly this, very similar to your
+> sketch.
 
-- inode_wait_for_writeback() waits until writeback on this inode
-  completes
-
-- the filesystem-specific "evict_inode" callback can do similar
-  things; e.g. all netfs-based filesystems will call
-  netfs_wait_for_outstanding_io() which is similar to
-  inode_wait_for_writeback()
-
-Therefore, callers must carefully evaluate the context they're in and
-check whether invoking iput() is a good idea at all.
-
-Most of the time, this is not a problem because the dcache holds
-references to all inodes, and the dcache is usually the one to release
-the last reference.  But this assumption is fragile.  For example,
-under (memcg) memory pressure, the dcache shrinker is more likely to
-release inode references, moving the inode eviction to contexts where
-that was extremely unlikely to occur.
-
-Our production servers "found" at least two deadlock bugs in the Ceph
-filesystem that were caused by this iput() behavior:
-
-1. Writeback may lead to iput() calls in Ceph (e.g. from
-   ceph_put_wrbuffer_cap_refs()) which deadlocks in
-   inode_wait_for_writeback().  Waiting for writeback completion from
-   within writeback will obviously never be able to make any progress.
-   This leads to blocked kworkers like this:
-
-    INFO: task kworker/u777:6:1270802 blocked for more than 122 seconds.
-          Not tainted 6.16.7-i1-es #773
-    task:kworker/u777:6  state:D stack:0 pid:1270802 tgid:1270802 ppid:2
-          task_flags:0x4208060 flags:0x00004000
-    Workqueue: writeback wb_workfn (flush-ceph-3)
-    Call Trace:
-     <TASK>
-     __schedule+0x4ea/0x17d0
-     schedule+0x1c/0xc0
-     inode_wait_for_writeback+0x71/0xb0
-     evict+0xcf/0x200
-     ceph_put_wrbuffer_cap_refs+0xdd/0x220
-     ceph_invalidate_folio+0x97/0xc0
-     ceph_writepages_start+0x127b/0x14d0
-     do_writepages+0xba/0x150
-     __writeback_single_inode+0x34/0x290
-     writeback_sb_inodes+0x203/0x470
-     __writeback_inodes_wb+0x4c/0xe0
-     wb_writeback+0x189/0x2b0
-     wb_workfn+0x30b/0x3d0
-     process_one_work+0x143/0x2b0
-     worker_thread+0x30a/0x450
-
-2. In the Ceph messenger thread (net/ceph/messenger*.c), any iput()
-   call may invoke ceph_evict_inode() which will deadlock in
-   netfs_wait_for_outstanding_io(); since this blocks the messenger
-   thread, completions from the Ceph servers will not ever be received
-   and handled.
-
-It looks like these deadlock bugs have been in the Ceph filesystem
-code since forever (therefore no "Fixes" tag in this patch).  There
-may be various ways to solve this:
-
-- make iput() asynchronous and defer the actual eviction like fput()
-  (may add overhead)
-
-- make iput() only asynchronous if I_SYNC is set (doesn't solve random
-  things happening inside the "evict_inode" callback)
-
-- add iput_deferred() to make this asynchronous behavior/overhead
-  optional and explicit
-
-- refactor Ceph to avoid iput() calls from within writeback and
-  messenger (if that is even possible)
-
-- add a Ceph-specific workaround
-
-After advice from Mateusz Guzik, I decided to do the latter.  The
-implementation is simple because it piggybacks on the existing
-work_struct for ceph_queue_inode_work() - ceph_inode_work() calls
-iput() at the end which means we can donate the last reference to it.
-
-Since Ceph has a few iput() callers in a loop, it seemed simple enough
-to pass this counter and use atomic_sub() instead of atomic_dec().
-
-This patch adds ceph_iput_n_async() and converts lots of iput() calls
-to it - at least those that may come through writeback and the
-messenger.
-
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: stable@vger.kernel.org
----
- fs/ceph/addr.c       |  2 +-
- fs/ceph/caps.c       | 21 ++++++++++-----------
- fs/ceph/dir.c        |  2 +-
- fs/ceph/inode.c      | 42 ++++++++++++++++++++++++++++++++++++++++++
- fs/ceph/mds_client.c | 32 ++++++++++++++++----------------
- fs/ceph/quota.c      |  4 ++--
- fs/ceph/snap.c       | 10 +++++-----
- fs/ceph/super.h      |  7 +++++++
- 8 files changed, 84 insertions(+), 36 deletions(-)
-
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index 322ed268f14a..fc497c91530e 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -265,7 +265,7 @@ static void finish_netfs_read(struct ceph_osd_request *req)
- 	subreq->error = err;
- 	trace_netfs_sreq(subreq, netfs_sreq_trace_io_progress);
- 	netfs_read_subreq_terminated(subreq);
--	iput(req->r_inode);
-+	ceph_iput_async(req->r_inode);
- 	ceph_dec_osd_stopping_blocker(fsc->mdsc);
- }
- 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index b1a8ff612c41..bd88b5287a2b 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -1771,7 +1771,7 @@ void ceph_flush_snaps(struct ceph_inode_info *ci,
- 	spin_unlock(&mdsc->snap_flush_lock);
- 
- 	if (need_put)
--		iput(inode);
-+		ceph_iput_async(inode);
- }
- 
- /*
-@@ -3318,8 +3318,8 @@ static void __ceph_put_cap_refs(struct ceph_inode_info *ci, int had,
- 	}
- 	if (wake)
- 		wake_up_all(&ci->i_cap_wq);
--	while (put-- > 0)
--		iput(inode);
-+	if (put > 0)
-+		ceph_iput_n_async(inode, put);
- }
- 
- void ceph_put_cap_refs(struct ceph_inode_info *ci, int had)
-@@ -3418,9 +3418,8 @@ void ceph_put_wrbuffer_cap_refs(struct ceph_inode_info *ci, int nr,
- 	}
- 	if (complete_capsnap)
- 		wake_up_all(&ci->i_cap_wq);
--	while (put-- > 0) {
--		iput(inode);
--	}
-+	if (put > 0)
-+		ceph_iput_n_async(inode, put);
- }
- 
- /*
-@@ -3917,7 +3916,7 @@ static void handle_cap_flush_ack(struct inode *inode, u64 flush_tid,
- 	if (wake_mdsc)
- 		wake_up_all(&mdsc->cap_flushing_wq);
- 	if (drop)
--		iput(inode);
-+		ceph_iput_async(inode);
- }
- 
- void __ceph_remove_capsnap(struct inode *inode, struct ceph_cap_snap *capsnap,
-@@ -4008,7 +4007,7 @@ static void handle_cap_flushsnap_ack(struct inode *inode, u64 flush_tid,
- 			wake_up_all(&ci->i_cap_wq);
- 		if (wake_mdsc)
- 			wake_up_all(&mdsc->cap_flushing_wq);
--		iput(inode);
-+		ceph_iput_async(inode);
- 	}
- }
- 
-@@ -4557,7 +4556,7 @@ void ceph_handle_caps(struct ceph_mds_session *session,
- done:
- 	mutex_unlock(&session->s_mutex);
- done_unlocked:
--	iput(inode);
-+	ceph_iput_async(inode);
- out:
- 	ceph_dec_mds_stopping_blocker(mdsc);
- 
-@@ -4636,7 +4635,7 @@ unsigned long ceph_check_delayed_caps(struct ceph_mds_client *mdsc)
- 			doutc(cl, "on %p %llx.%llx\n", inode,
- 			      ceph_vinop(inode));
- 			ceph_check_caps(ci, 0);
--			iput(inode);
-+			ceph_iput_async(inode);
- 			spin_lock(&mdsc->cap_delay_lock);
- 		}
- 
-@@ -4675,7 +4674,7 @@ static void flush_dirty_session_caps(struct ceph_mds_session *s)
- 		spin_unlock(&mdsc->cap_dirty_lock);
- 		ceph_wait_on_async_create(inode);
- 		ceph_check_caps(ci, CHECK_CAPS_FLUSH);
--		iput(inode);
-+		ceph_iput_async(inode);
- 		spin_lock(&mdsc->cap_dirty_lock);
- 	}
- 	spin_unlock(&mdsc->cap_dirty_lock);
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 32973c62c1a2..ec73ed52a227 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1290,7 +1290,7 @@ static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
- 		ceph_mdsc_free_path_info(&path_info);
- 	}
- out:
--	iput(req->r_old_inode);
-+	ceph_iput_async(req->r_old_inode);
- 	ceph_mdsc_release_dir_caps(req);
- }
- 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index f67025465de0..385d5261632d 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -2191,6 +2191,48 @@ void ceph_queue_inode_work(struct inode *inode, int work_bit)
- 	}
- }
- 
-+/**
-+ * Queue an asynchronous iput() call in a worker thread.  Use this
-+ * instead of iput() in contexts where evicting the inode is unsafe.
-+ * For example, inode eviction may cause deadlocks in
-+ * inode_wait_for_writeback() (when called from within writeback) or
-+ * in netfs_wait_for_outstanding_io() (when called from within the
-+ * Ceph messenger).
-+ *
-+ * @n: how many references to put
-+ */
-+void ceph_iput_n_async(struct inode *inode, int n)
-+{
-+	if (unlikely(!inode))
-+		return;
-+
-+	if (likely(atomic_sub_return(n, &inode->i_count) > 0))
-+		/* somebody else is holding another reference -
-+		 * nothing left to do for us
-+		 */
-+		return;
-+
-+	doutc(ceph_inode_to_fs_client(inode)->client, "%p %llx.%llx\n", inode, ceph_vinop(inode));
-+
-+	/* the reference counter is now 0, i.e. nobody else is holding
-+	 * a reference to this inode; restore it to 1 and donate it to
-+	 * ceph_inode_work() which will call iput() at the end
-+	 */
-+	atomic_set(&inode->i_count, 1);
-+
-+	/* simply queue a ceph_inode_work() without setting
-+	 * i_work_mask bit; other than putting the reference, there is
-+	 * nothing to do
-+	 */
-+	WARN_ON_ONCE(!queue_work(ceph_inode_to_fs_client(inode)->inode_wq,
-+				 &ceph_inode(inode)->i_work));
-+
-+	/* note: queue_work() cannot fail; it i_work were already
-+	 * queued, then it would be holding another reference, but no
-+	 * such reference exists
-+	 */
-+}
-+
- static void ceph_do_invalidate_pages(struct inode *inode)
- {
- 	struct ceph_client *cl = ceph_inode_to_client(inode);
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 3bc72b47fe4d..d7fce1ad8073 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -1097,14 +1097,14 @@ void ceph_mdsc_release_request(struct kref *kref)
- 		ceph_msg_put(req->r_reply);
- 	if (req->r_inode) {
- 		ceph_put_cap_refs(ceph_inode(req->r_inode), CEPH_CAP_PIN);
--		iput(req->r_inode);
-+		ceph_iput_async(req->r_inode);
- 	}
- 	if (req->r_parent) {
- 		ceph_put_cap_refs(ceph_inode(req->r_parent), CEPH_CAP_PIN);
--		iput(req->r_parent);
-+		ceph_iput_async(req->r_parent);
- 	}
--	iput(req->r_target_inode);
--	iput(req->r_new_inode);
-+	ceph_iput_async(req->r_target_inode);
-+	ceph_iput_async(req->r_new_inode);
- 	if (req->r_dentry)
- 		dput(req->r_dentry);
- 	if (req->r_old_dentry)
-@@ -1118,7 +1118,7 @@ void ceph_mdsc_release_request(struct kref *kref)
- 		 */
- 		ceph_put_cap_refs(ceph_inode(req->r_old_dentry_dir),
- 				  CEPH_CAP_PIN);
--		iput(req->r_old_dentry_dir);
-+		ceph_iput_async(req->r_old_dentry_dir);
- 	}
- 	kfree(req->r_path1);
- 	kfree(req->r_path2);
-@@ -1240,7 +1240,7 @@ static void __unregister_request(struct ceph_mds_client *mdsc,
- 	}
- 
- 	if (req->r_unsafe_dir) {
--		iput(req->r_unsafe_dir);
-+		ceph_iput_async(req->r_unsafe_dir);
- 		req->r_unsafe_dir = NULL;
- 	}
- 
-@@ -1413,7 +1413,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
- 		cap = rb_entry(rb_first(&ci->i_caps), struct ceph_cap, ci_node);
- 	if (!cap) {
- 		spin_unlock(&ci->i_ceph_lock);
--		iput(inode);
-+		ceph_iput_async(inode);
- 		goto random;
- 	}
- 	mds = cap->session->s_mds;
-@@ -1422,7 +1422,7 @@ static int __choose_mds(struct ceph_mds_client *mdsc,
- 	      cap == ci->i_auth_cap ? "auth " : "", cap);
- 	spin_unlock(&ci->i_ceph_lock);
- out:
--	iput(inode);
-+	ceph_iput_async(inode);
- 	return mds;
- 
- random:
-@@ -1841,7 +1841,7 @@ int ceph_iterate_session_caps(struct ceph_mds_session *session,
- 		spin_unlock(&session->s_cap_lock);
- 
- 		if (last_inode) {
--			iput(last_inode);
-+			ceph_iput_async(last_inode);
- 			last_inode = NULL;
- 		}
- 		if (old_cap) {
-@@ -1874,7 +1874,7 @@ int ceph_iterate_session_caps(struct ceph_mds_session *session,
- 	session->s_cap_iterator = NULL;
- 	spin_unlock(&session->s_cap_lock);
- 
--	iput(last_inode);
-+	ceph_iput_async(last_inode);
- 	if (old_cap)
- 		ceph_put_cap(session->s_mdsc, old_cap);
- 
-@@ -1903,8 +1903,8 @@ static int remove_session_caps_cb(struct inode *inode, int mds, void *arg)
- 		wake_up_all(&ci->i_cap_wq);
- 	if (invalidate)
- 		ceph_queue_invalidate(inode);
--	while (iputs--)
--		iput(inode);
-+	if (iputs > 0)
-+		ceph_iput_n_async(inode, iputs);
- 	return 0;
- }
- 
-@@ -1944,7 +1944,7 @@ static void remove_session_caps(struct ceph_mds_session *session)
- 			spin_unlock(&session->s_cap_lock);
- 
- 			inode = ceph_find_inode(sb, vino);
--			iput(inode);
-+			ceph_iput_async(inode);
- 
- 			spin_lock(&session->s_cap_lock);
- 		}
-@@ -2512,7 +2512,7 @@ static void ceph_cap_unlink_work(struct work_struct *work)
- 			doutc(cl, "on %p %llx.%llx\n", inode,
- 			      ceph_vinop(inode));
- 			ceph_check_caps(ci, CHECK_CAPS_FLUSH);
--			iput(inode);
-+			ceph_iput_async(inode);
- 			spin_lock(&mdsc->cap_delay_lock);
- 		}
- 	}
-@@ -3933,7 +3933,7 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
- 		    !req->r_reply_info.has_create_ino) {
- 			/* This should never happen on an async create */
- 			WARN_ON_ONCE(req->r_deleg_ino);
--			iput(in);
-+			ceph_iput_async(in);
- 			in = NULL;
- 		}
- 
-@@ -5313,7 +5313,7 @@ static void handle_lease(struct ceph_mds_client *mdsc,
- 
- out:
- 	mutex_unlock(&session->s_mutex);
--	iput(inode);
-+	ceph_iput_async(inode);
- 
- 	ceph_dec_mds_stopping_blocker(mdsc);
- 	return;
-diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-index d90eda19bcc4..bba00f8926e6 100644
---- a/fs/ceph/quota.c
-+++ b/fs/ceph/quota.c
-@@ -76,7 +76,7 @@ void ceph_handle_quota(struct ceph_mds_client *mdsc,
- 		            le64_to_cpu(h->max_files));
- 	spin_unlock(&ci->i_ceph_lock);
- 
--	iput(inode);
-+	ceph_iput_async(inode);
- out:
- 	ceph_dec_mds_stopping_blocker(mdsc);
- }
-@@ -190,7 +190,7 @@ void ceph_cleanup_quotarealms_inodes(struct ceph_mds_client *mdsc)
- 		node = rb_first(&mdsc->quotarealms_inodes);
- 		qri = rb_entry(node, struct ceph_quotarealm_inode, node);
- 		rb_erase(node, &mdsc->quotarealms_inodes);
--		iput(qri->inode);
-+		ceph_iput_async(qri->inode);
- 		kfree(qri);
- 	}
- 	mutex_unlock(&mdsc->quotarealms_inodes_mutex);
-diff --git a/fs/ceph/snap.c b/fs/ceph/snap.c
-index c65f2b202b2b..19f097e79b3c 100644
---- a/fs/ceph/snap.c
-+++ b/fs/ceph/snap.c
-@@ -735,7 +735,7 @@ static void queue_realm_cap_snaps(struct ceph_mds_client *mdsc,
- 		if (!inode)
- 			continue;
- 		spin_unlock(&realm->inodes_with_caps_lock);
--		iput(lastinode);
-+		ceph_iput_async(lastinode);
- 		lastinode = inode;
- 
- 		/*
-@@ -762,7 +762,7 @@ static void queue_realm_cap_snaps(struct ceph_mds_client *mdsc,
- 		spin_lock(&realm->inodes_with_caps_lock);
- 	}
- 	spin_unlock(&realm->inodes_with_caps_lock);
--	iput(lastinode);
-+	ceph_iput_async(lastinode);
- 
- 	if (capsnap)
- 		kmem_cache_free(ceph_cap_snap_cachep, capsnap);
-@@ -955,7 +955,7 @@ static void flush_snaps(struct ceph_mds_client *mdsc)
- 		ihold(inode);
- 		spin_unlock(&mdsc->snap_flush_lock);
- 		ceph_flush_snaps(ci, &session);
--		iput(inode);
-+		ceph_iput_async(inode);
- 		spin_lock(&mdsc->snap_flush_lock);
- 	}
- 	spin_unlock(&mdsc->snap_flush_lock);
-@@ -1116,12 +1116,12 @@ void ceph_handle_snap(struct ceph_mds_client *mdsc,
- 			ceph_get_snap_realm(mdsc, realm);
- 			ceph_change_snap_realm(inode, realm);
- 			spin_unlock(&ci->i_ceph_lock);
--			iput(inode);
-+			ceph_iput_async(inode);
- 			continue;
- 
- skip_inode:
- 			spin_unlock(&ci->i_ceph_lock);
--			iput(inode);
-+			ceph_iput_async(inode);
- 		}
- 
- 		/* we may have taken some of the old realm's children. */
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index cf176aab0f82..15c09b6c94aa 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -1085,6 +1085,13 @@ static inline void ceph_queue_flush_snaps(struct inode *inode)
- 	ceph_queue_inode_work(inode, CEPH_I_WORK_FLUSH_SNAPS);
- }
- 
-+void ceph_iput_n_async(struct inode *inode, int n);
-+
-+static inline void ceph_iput_async(struct inode *inode)
-+{
-+	ceph_iput_n_async(inode, 1);
-+}
-+
- extern int ceph_try_to_choose_auth_mds(struct inode *inode, int mask);
- extern int __ceph_do_getattr(struct inode *inode, struct page *locked_page,
- 			     int mask, bool force);
--- 
-2.47.3
-
+I just submitted the patch, and it was even simpler than my first
+draft, because I could use the existing work_struct in ceph_inode_info
+and donate the inode reference to it.
+I'd welcome your opinion on this approach.
 
