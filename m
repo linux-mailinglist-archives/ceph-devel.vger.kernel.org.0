@@ -1,164 +1,142 @@
-Return-Path: <ceph-devel+bounces-3632-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3633-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F99B7C5CE
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 13:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D038B7CF1F
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 14:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31F8F188C6D2
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 08:24:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E8091C070D8
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 08:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0A53090EF;
-	Wed, 17 Sep 2025 08:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E827130BBAC;
+	Wed, 17 Sep 2025 08:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0dvV/9/"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="Fz6P+5/5"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECE829AB13
-	for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 08:23:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054483054C6
+	for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 08:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758097432; cv=none; b=nsT8TpuxW0JUujzGU/vlAkRDEB7i1pGsDp0ptAP6hrLfXThpREEJPH4Fb+2BNbqA6nx5bz2IptGpv3e7XQccgZINudPbMvB1+fnFoQqs2nd0PU0MH+XdoVx067hB1v4uvHYzcDgYKyRwFfW/RO1tqi0ottqe2UKPxNHV4D/2YlE=
+	t=1758098312; cv=none; b=FRHQ972ShcT9l6cwmI8X8rIkxvb/+RPzUlz7BvG/6geUtpcEx3/WUD5v54WFBOisSHboXVVtyYHy749Ie3MtROcdIoMRUEHbpzQcW/D0kxm3d7/LMIz89OvDAWfRsyh64aY9VQrpzNlgYYFVD8neiBhu2usQXkD8JR2eZ9iPBq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758097432; c=relaxed/simple;
-	bh=mhLSR++8oh48OFsFslw+TVcT7JWmq9x/XBi/kIafei8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V3mdht6colA0crTVRFkCWMJnYBtFRzsizKqq3DypXHejqM4ysc7nJGtMJk0gXa8kVkLFBAcxbhuguxbxRwiOTaHcZOOblNPUdf0//0lq2Hh2MtPXtnTtrH5agUY9uj74A1viAQxu8/AqKiWul5E0jXYvVv8r/36a8vqJjQGLxMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N0dvV/9/; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3eb3f05c35bso2294963f8f.1
-        for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 01:23:50 -0700 (PDT)
+	s=arc-20240116; t=1758098312; c=relaxed/simple;
+	bh=KBHmJ3YGPWtw0TVBcuf6xQxYfSMlt+upAEuM25ZvfTw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VZjAO/b8Knvd9UHaH9mSO5qFaGWzfjPSXzdr2dPl7loKaI2COVv0FCrhgFjRM0i3xBHH92liLPjkdsEO5Zh3bkouroEhrXqTRIrEzGT3k3mA17pAP8FFLcuvsHA+k+9ywkb+BpyTwl02Uvm7hIn46nKIko4CI17iaikBG5r1NcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=Fz6P+5/5; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb7322da8so482880966b.0
+        for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 01:38:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758097429; x=1758702229; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nKoz1wwq4W5nsOBVejmSw904t2QivJCV9ZZ14IEmXqc=;
-        b=N0dvV/9/kBiocbwVdb0YYYxasmRGTHiWkz8XK1E5bDEs8h4kitT/61U2VWvtBjeux4
-         Ptr0XY6kQwviTfwsd61UHGDZn5lk/ZhuA9vri2yK4igN2CVQd8SNtONzx+PasNohnKOx
-         T6fmcZggTtGrGQqrRKtzxZqbWXzo6mh3X9d7fBt5cndRgfGN75owW8ZTSPtUllJL37S5
-         eJhNnkvcYNPJZyawkUHZU9vB4H1RYSfAHBjcdVPpAAR0Jvx+cYErpNq26wXKPI5F7Rrm
-         FoTMRg5yzfEkiXeKOdcPdvD+xc+BO85cHWbYj6zzYpjN6pyjJaTcCtgxOrkl5Fb/2BsQ
-         potw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758097429; x=1758702229;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=ionos.com; s=google; t=1758098308; x=1758703108; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nKoz1wwq4W5nsOBVejmSw904t2QivJCV9ZZ14IEmXqc=;
-        b=A8i+5L69Zb6uIoJ/AzLDOb/eqgsjWPU1eGmhNMDSnPF/rdeAh854Ilcackv4qI3eIp
-         tLUTyjKOOygsSifu8u/8I+19nC4Lh9SYAvTIFd41DpLjVp9ufLQPDLmdhw0RUy9cpRXN
-         T9lZSs3PNwGPtoSbZzOkvDAQG7VR5rEDGTR/w2nVrwuK8GnRZD0pkXR9UedHevf0gsiu
-         Qb4ldycahuOztdP5sL4S0hfph3hgMPK5YaXT8xecYFDUuC1ZNVQe3iQTorBDWfiUgxcd
-         RmWBCLDLpHtE2nestHceKX60xK0sZljwg26XMH1OjZUm9WZwK6q2DObWpLxZ7Q/n/sro
-         KFZw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCYeekF8AZMQSAou61ayGP+GDCfQc2K55p9cKjKZggjeZdd7kHHcm4vTkBvp/wqKtnYggr8EDAD5Fb@vger.kernel.org
-X-Gm-Message-State: AOJu0YwubUrE4gGOIRttoaCigJIcBU93lZNXGI2h1I2Asn1tUQ9tcNHU
-	gVCEtOKRA1MuPeCTIpMRGjY6fQ12En/cSeeqVr1c1DbdxCQ3eZI9crW4vwbPlNsF
-X-Gm-Gg: ASbGncvi1Qo/omqEPQUyWTvAFd7BJuFsAfzYo/i8FGZFyIOa2OcV1c2gZDvRI2NdLB3
-	ZJKTA18AsWMP7bvDbc8kQRzUvcW5k1OqVCf0l08YcQwY9XZLh84E6kvNKUUWrq5/IcwgBbBRh0P
-	Hg0rpr4w2xWRTZB3rob62nD3i2RgbZJMHUXQB4DGDL2vIOTGbLaW0hTvplkyFZI+Eox/IqqyP17
-	HUDfj/nhEomebfKnfR9PsyVOCoQn2FvtKbEEth9HWoguzowwyDaT6veUWIyajFJW6TL9WMr0Uud
-	gtVfaX+XIE9UxR3nCWGdDWvHeQG11X9UbZYwlYlu+5xPgP4TCgDg9K9etdzDFybEMPZoAwTHlZC
-	jdhK+3bH7WggEdx2gEzaWtnk6jJSSzo6QpZBTzpBemfh/YNMI4Lz9Sedf66mUUfd0wJlXgA==
-X-Google-Smtp-Source: AGHT+IFKMCiumtXuFHiGcWUdk7gpPAgdJxoS/pj8Bc5c/MZoNMZOI0Hlp4G3KTEeO9vtK7wNlz2G/w==
-X-Received: by 2002:a5d:508f:0:b0:3ec:e226:d458 with SMTP id ffacd0b85a97d-3ece226d48dmr52888f8f.0.1758097428696;
-        Wed, 17 Sep 2025 01:23:48 -0700 (PDT)
-Received: from f (cst-prg-88-146.cust.vodafone.cz. [46.135.88.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e8b7b6ff8fsm17004415f8f.61.2025.09.17.01.23.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Sep 2025 01:23:48 -0700 (PDT)
-Date: Wed, 17 Sep 2025 10:23:03 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Linux Memory Management List <linux-mm@kvack.org>, ceph-devel@vger.kernel.org
-Subject: Re: Need advice with iput() deadlock during writeback
-Message-ID: <4z3imll6zbzwqcyfl225xn3rc4mev6ppjnx5itmvznj2yormug@utk6twdablj3>
-References: <CAKPOu+-QRTC_j15=Cc4YeU3TAcpQCrFWmBZcNxfnw1LndVzASg@mail.gmail.com>
+        bh=KBHmJ3YGPWtw0TVBcuf6xQxYfSMlt+upAEuM25ZvfTw=;
+        b=Fz6P+5/5S0HPbLu5ZcKN4CRqFhCXQkaQqzn3gvxAxrpqYi347vsVH+bSInBXXg3LZ1
+         MJe0hJOWQ7H68bA3Fb86ikAAUgoN6NMw10SXlFpoHoZLTE27CIYSQNJdsyJpKhCsALqI
+         u/PtC8JOjzZQEpl/sWXMvNl2n2F+HbgboaInG4YswfUpUlJI/i6umW5vIh+mfj3ux6yg
+         v99K2p2iQ6pUa2Uj7wkyxgQYzLNcbmhElhtX3KcpcXyQyAo5n2Y/i6EOjcW+Vx3rMeBd
+         g4OUTACl/hLc3vGseFlAD/S+EIGVE5q1SnJSaJCSUYpBEhbIwo7xAlV5jIyZe4op52Sg
+         h6zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758098308; x=1758703108;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KBHmJ3YGPWtw0TVBcuf6xQxYfSMlt+upAEuM25ZvfTw=;
+        b=Ely4tjy2HQGcdZCbvWkF0NMdVgTciw2mCobMjZ2ijOXA1ZTQlZmLU8B72Vkk6NGPuy
+         duAbLEK7R86gJfJZMZS6Nn0J+Comz6CsuCBnq6aa+n6ZFh5Vydqg5prel/zPqGcYN9i5
+         BSkIrHGwvpFEGT8oxcXUN9xh7bh27mD8gQTTTF62jpbgP+DTHwn1I6rhoPoauSlD9VKD
+         mnRyzfCbc9IX3JJVcmHEn0GK8LJs0TP7KFjyM/hHtkHL6rlQ7ApRex7V2x+7BDoOaIhr
+         CoPE1/lVfoMJF362ROCrb+ve/5aLzs/6lnCwx5Tmv3xYoZOeokdlDteq/oOk+XxHrDs2
+         AR5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVokrxq7YRUSJxk7AIraAzEGxq0gPDHWrY95PN+sg6xKL4WeQdZEAjmG73WQB7eff+UDvqG0q3xd1Qs@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUYSO8YvrK2a5rxXFr38utZSej7DCH3bYXHAqKMLw4+7uPe8CQ
+	Oz2iLxfCCLKgcpqbG2LVQB982OifhOEnu2EouNjwEcB8fEIjZ9/RryGKT1zYWUaixpq9iwtMd2I
+	EgsCKbIQTf7ybvS4a7WE+jLo85XE7W/0k1TSh3IdjlCW0I7w9jab+lg70mw==
+X-Gm-Gg: ASbGncu678BfzaeX8s03go28A0VkPSw9PcMCbbJGaWgt6rKQkR9cSIIK7Ir2qwJ3sX5
+	LQ8skMl3aDpUQnhRrkhaw7ii1HpiSEyoVaokTqHPB9pCmC/MheD0T/4owZydvlNiH9Ij3A+Eryu
+	Pv/HI34hm/Q0C4opdEJOayl8ey7Gkf4kIhf4k5iKN0sG9d6vWMEpZmQJvngKo9WiHxd6tS7ZCRi
+	x/2RtqxZBGd38FKoGgHpiaa7rAJkD1CIIWb
+X-Google-Smtp-Source: AGHT+IEMhj2KG5qf8fnmY8YQ236Z2f/mZuBCacS/ZiY/DG7jAo8+3I46DBQR8FMyLwnPYtxjdsnW2tAHRfHmFvDQvtc=
+X-Received: by 2002:a17:906:6a03:b0:b0f:7d24:589e with SMTP id
+ a640c23a62f3a-b1bb2ef9ac7mr134196066b.24.1758098307607; Wed, 17 Sep 2025
+ 01:38:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKPOu+-QRTC_j15=Cc4YeU3TAcpQCrFWmBZcNxfnw1LndVzASg@mail.gmail.com>
+References: <CAKPOu+-QRTC_j15=Cc4YeU3TAcpQCrFWmBZcNxfnw1LndVzASg@mail.gmail.com>
+ <4z3imll6zbzwqcyfl225xn3rc4mev6ppjnx5itmvznj2yormug@utk6twdablj3>
+In-Reply-To: <4z3imll6zbzwqcyfl225xn3rc4mev6ppjnx5itmvznj2yormug@utk6twdablj3>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Wed, 17 Sep 2025 10:38:16 +0200
+X-Gm-Features: AS18NWA-wrbT4q0S-rkaZcoEEdey-hG5hsxUREPMlCw6I5wTNJXSuzY62UoJVKM
+Message-ID: <CAKPOu+--m8eppmF5+fofG=AKAMu5K_meF44UH4XiL8V3_X_rJg@mail.gmail.com>
+Subject: Re: Need advice with iput() deadlock during writeback
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Linux Memory Management List <linux-mm@kvack.org>, ceph-devel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 10:07:11AM +0200, Max Kellermann wrote:
-> Hi,
-> 
-> I am currently hunting several deadlock bugs in the Ceph filesystem
-> that have been causing server downtimes repeatedly.
-> 
-> One of the deadlocks looks like this:
-> 
->  INFO: task kworker/u777:6:1270802 blocked for more than 122 seconds.
->        Not tainted 6.16.7-i1-es #773
->  task:kworker/u777:6  state:D stack:0     pid:1270802 tgid:1270802
-> ppid:2      task_flags:0x4208060 flags:0x00004000
->  Workqueue: writeback wb_workfn (flush-ceph-3)
->  Call Trace:
->   <TASK>
->   __schedule+0x4ea/0x17d0
->   schedule+0x1c/0xc0
->   inode_wait_for_writeback+0x71/0xb0
->   evict+0xcf/0x200
->   ceph_put_wrbuffer_cap_refs+0xdd/0x220
->   ceph_invalidate_folio+0x97/0xc0
->   ceph_writepages_start+0x127b/0x14d0
->   do_writepages+0xba/0x150
->   __writeback_single_inode+0x34/0x290
->   writeback_sb_inodes+0x203/0x470
->   __writeback_inodes_wb+0x4c/0xe0
->   wb_writeback+0x189/0x2b0
->   wb_workfn+0x30b/0x3d0
->   process_one_work+0x143/0x2b0
-> 
-> There's a writeback, and during that writeback, Ceph invokes iput()
-> releasing the last reference to that inode; iput() sees there's
-> pending writeback and waits for writeback to complete. But there's
-> nobody who will ever be able to finish writeback, because this is the
-> very thread that is supposed to finish writeback, so it's waiting for
-> itself.
-> 
+On Wed, Sep 17, 2025 at 10:23=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> =
+wrote:
+> So that we are clear, this is a legally held ref by ceph and you are
+> legally releasing it? It's not that the code assumes there is a ref
+> because it came from writeback?
 
-So that we are clear, this is a legally held ref by ceph and you are
-legally releasing it? It's not that the code assumes there is a ref
-because it came from writeback?
+Porbably yes, but I'm not 100% sure - Ceph code looks weird to me. A
+reference is released that was previously taken by
+ceph_take_cap_refs(), but there's another condition that causes an
+iput() call - if ceph_try_drop_cap_snap() returns true - but I don't
+see where that reference was taken.
 
-> Anyway, I was wondering who is usually supposed to hold the inode
-> reference during writeback. If there is pending writeback, somebody
-> must still have a reference, or else the inode could have been evicted
-> before writeback even started - does that lead to UAF when writeback
-> actually happens?
-> 
+> One of the ways to stall inode teardown is to have writeback running. It
+> does not need a reference because inode_wait_for_writeback() explicitly
+> waits for it like in the very deadlock you encountered.
 
-One of the ways to stall inode teardown is to have writeback running. It
-does not need a reference because inode_wait_for_writeback() explicitly
-waits for it like in the very deadlock you encountered.
+Ah, right. No UAF. But I wonder if that's the best way to do it - why
+not let writeback hold its own reference, and eliminate
+inode_wait_for_writeback()? (and its latency)
 
-> One idea would be to postpone iput() calls to a workqueue to have it
-> in a different, safe context. Of course, that sounds overhead - and it
-> feels like a lousy kludge. There must be another way, a canonical
-> approach to avoiding this deadlock. I have a feeling that Ceph is
-> behaving weirdly, that Ceph is "holding it wrong".
+> However, assuming that's not avoidable, iput_async() or whatever could
+> be added to sort this out in a similar way fput() is.
+>
+> As a temporary bandaid iput() itself could check if I_SYNC is set and if
+> so roll with the iput_async() option.
+>
+> I can cook something up later.
 
-Doing it *by default* is indeed a no-go.
+My idea was something like iput_safe() and that function would defer
+the actual iput() call if the reference counter is 1 (i.e. the caller
+is holding the last reference).
 
-I don't know what other filesystems are doing, I would consider iput()
-from writeback to be a bug.
+That would avoid the other Ceph deadlock bug I found - because Ceph,
+like all filesystems that are built on top netfs, uses
+netfs_wait_for_outstanding_io() in the evict_inode callback. Because
+guess what happens when the Ceph messenger worker that handles I/O
+completion decides to call iput()...
+Due to the evict_inode callback and the unknowns hidden behind it,
+checking I_SYNC is not enough.
 
-However, assuming that's not avoidable, iput_async() or whatever could
-be added to sort this out in a similar way fput() is.
+Almost all iput() calls are fine because they just do an atomic
+decrement, but all kinds of scary stuff can happen if the last
+reference is released. Callers that are not confident that this is
+safe shall then use my new iput_safe() instead of iput().
 
-As a temporary bandaid iput() itself could check if I_SYNC is set and if
-so roll with the iput_async() option.
+I can write such a patch, but I wanted you experts to first confirm
+that this is a good idea that would be acceptable for merging (or
+maybe Ceph is just weird and there's a simpler way to avoid this).
 
-I can cook something up later.
+Max
 
