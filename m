@@ -1,136 +1,102 @@
-Return-Path: <ceph-devel+bounces-3664-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3665-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C668B81CB9
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 22:39:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7367FB81DA1
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 23:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 005D77AA75D
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 20:38:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D29A3BBE4A
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 21:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1CF24395C;
-	Wed, 17 Sep 2025 20:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5E61B85F8;
+	Wed, 17 Sep 2025 21:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rf6BtZd5"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="jm2dPY4E"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C17234BA30
-	for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 20:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C8881749;
+	Wed, 17 Sep 2025 21:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758141578; cv=none; b=fPyzRZgda58k+RQ9+AxJNCX+kYioI5ZXb7gEzbXh0M82WPRpZWT5UJEmG58y3lfFTEm2ng69TzyVnx5347YmJQ21RNdnHn+aCvRA3rVSXjWvA28aPzzuVkqITbXxicOsS/4oVjNkqtPsWvDVY0qqM1JoOAiVnJgskmtS1pUMyEw=
+	t=1758142966; cv=none; b=rMj2owNNWW42Em2xCOezy8te4ShSuPTFAqemsD0CSKHcLrYc1wFfjQ5UuZkq8AJiZn9nAVE994fEDUG6hQU3Y2YIBUpM+8PaqA3rJwlTfH2LgIRkIXCm/4LdVq+GU8wD1/7JoPnR3VAqyWbUHGPRyvwZep7QB+Q1ltn7TfbOK84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758141578; c=relaxed/simple;
-	bh=BebIfPKMuviYRuRYSLWRfv2JJQg0blZwV/yFP6rqZes=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RErvnYOrXqBOnk63pFbZUMMDaH1muiD8ez9uHWRlHuaUhMJhlO/cPNZAtWSZ4PYotoMTH8F3eD4z/9llieepSm7teQSlzD5UB24KtyIA9dtjISFAVQrwYTlRSZZfLYsq63suE6zU5MYwYlD1XOQMJmp7jvPs0Ew2jX7xG5kT2n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rf6BtZd5; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b04ba3de760so30789566b.0
-        for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 13:39:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758141575; x=1758746375; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v2kzkQ4aOmc8N9K5jIReO5F0CstRjbfQHaSb2cVdK+0=;
-        b=Rf6BtZd5px5DWAIkVIE9JOgUV/0HNpaeamtT0X0mALWjo99TurpXoMdIgbbOvCKctP
-         RjNiEdUnPfFaY6wePSf37AxssgfZtXpGBuIlvy8buKj4TdCcGIGv7wdBPCSCnozZ3vck
-         lRptCX3XMLus2nriTHhhMwv6GWWp0DyZv3TPmHqm839XLtputx2MPCx6iP81SDmYIrg5
-         1aHwPfD4AqH+vloPmjtX0qP8m2aIXY1/hzS9aXIBerfAzgWDKOD7vI/azpH8sZMXxwi5
-         nhGWyyAQasRVDu4xelsR4aQhAm2OUVJ5jCpYt4HanPcYSjuQ/oAhBE8wy0yOwbH1m++f
-         Feww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758141575; x=1758746375;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v2kzkQ4aOmc8N9K5jIReO5F0CstRjbfQHaSb2cVdK+0=;
-        b=lM5QSIXJL3J6IEEZh48m0RBDW3As6SunLZNQ7OyDBMkIZtuVkBo/s/3MzHPt/QXSSl
-         5s8oC5X0FEPXfQ74fsEEIrTmBoqZeFiqoVcH7ZVLK32fPu2vyfIaJZBZD3j9+RsrggcM
-         xmiYLq3rjr1567LzocAJi34ykrnkKETk0ZBA+i66zkVRMiO7ovXFSuDbvkTuVYY+Eepd
-         iqSUg3I715Q4Dt81TmmWJXpUlaspFUEbm80RaPDDS1PbdmYY9XrTC/splCky8whFnqyJ
-         /hNB+iVq1muGyJVmXGRjwXCPdjf620XTKRR7RQ0ZXY6+r7ftIQI+rlmkCI7T4oAmaGs1
-         9Chw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2kPkYIjyXBFhUAeVszrtpz+7FHVSsyBJNdsLPS6Elu2WBp5xflq2nf2sFufH0GzKfg9F0WYfpEeBG@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmYh2ryE/UOac/UhjlPtY7sAxj/TgrS/S6hJBki0Q4pnUa8xxK
-	CcbIBkGV4u7QBQrfyKMvoeYDq9GJ8192hfrUnyIelEdV3SWJK7AYv/I/wIcAsjg7jcXuLVFypr7
-	eF3MwNN7HfQv5gYWUZ+cyrDCupgKVSbY4VwqR
-X-Gm-Gg: ASbGncsRresLULEOHaw+xRmreqEoUVc07HaU4i19gH4ucaO7DSlhHzr1suXRLZq8hKW
-	+p/se5uleYZxt2Z2EkTy/FEnp3J30Y4OaHY4zrR0yROB0p/crvUK3OGSvSEgbX3nfJxTvUAGaYW
-	qXFxGRtHHkP2YWUpXPBtsNxTBHbg3tMM+5DRYm0qNymwM04A2ZhEnlowqKOvCqrdJeZGQIIS1mO
-	LmesevgZ40PmFKChh+2H8QD7HUrJZodExpTcro=
-X-Google-Smtp-Source: AGHT+IFrI9fhyiOasqs7aFU5vuu3zzSapgEYvzTIhik4QC4sPMRAXmiqTqntHyu9WssGZGcjsazcwAN0AhwUJFXW33A=
-X-Received: by 2002:a17:907:6d11:b0:b07:cf04:8a43 with SMTP id
- a640c23a62f3a-b1bb7d41abemr393772266b.41.1758141574464; Wed, 17 Sep 2025
- 13:39:34 -0700 (PDT)
+	s=arc-20240116; t=1758142966; c=relaxed/simple;
+	bh=LyhvicWtF9CdTY/2mJIMEAR0j94Wdt3is2ANloITX/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nxw01Q7Jjx4mYWlJJNwsfGRkkBHKf2TQEKQecsd9sGKtsBjE9hkBCTCQVmrtJF/wHC5SpICZ46Y6gA+0fBT9QIjtMfvDbup/4NkgFznY1JpGocw66fsgLJxyC+54sqg+/wbuTfi2zqGKXvBJdNcmvK4aPEef7gj7RfSJWd3HsXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=jm2dPY4E; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=EVcQN4CUaNeIIDcnRPUab1KqeMqVv+hmGQzK9DEwlHc=; b=jm2dPY4EnEb9IXg4jThEJJVy6o
+	skgTybswqe0hqewnJWG88Bf9HuBeVrsAagf8+J0AIHZlE0OyfcIexwPnJUd/404FBDjmsmR+xAl9C
+	H7IsXKyXyTJEeVN6EhxLe4LjwjQK4tPgKarf4JVQeQr3Z9KgFTdX90NC2Uq8yU0cmkJn2Qbjdvs/O
+	oIeGUqSsZFkHm81TxKPfR5wI+j1hPdvqpItQHY/13FkYD/O9E0sCzbP2pQ8MjNGOuOgbi2QFgE/5t
+	cgSE810nP9M7HVEOcEuAqMdrHo/b5G0lxxAFlN/D6YE3/D5rDGuApTV8lyD1JvcJj/lKihahnZhKB
+	5un50hrg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uyzIX-00000008Qkh-3252;
+	Wed, 17 Sep 2025 21:02:41 +0000
+Date: Wed, 17 Sep 2025 22:02:41 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	ceph-devel@vger.kernel.org
+Subject: Re: Need advice with iput() deadlock during writeback
+Message-ID: <20250917210241.GD39973@ZenIV>
+References: <CAKPOu+-QRTC_j15=Cc4YeU3TAcpQCrFWmBZcNxfnw1LndVzASg@mail.gmail.com>
+ <4z3imll6zbzwqcyfl225xn3rc4mev6ppjnx5itmvznj2yormug@utk6twdablj3>
+ <CAKPOu+--m8eppmF5+fofG=AKAMu5K_meF44UH4XiL8V3_X_rJg@mail.gmail.com>
+ <CAGudoHEqNYWMqDiogc9Q_s9QMQHB6Rm_1dUzcC7B0GFBrqS=1g@mail.gmail.com>
+ <20250917201408.GX39973@ZenIV>
+ <CAGudoHFEE4nS_cWuc3xjmP=OaQSXMCg0eBrKCBHc3tf104er3A@mail.gmail.com>
+ <20250917203435.GA39973@ZenIV>
+ <CAGudoHGDW9yiROidHio8Ow-yZb8uY7wMBjx94fJ7zTkL+rVAFg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKPOu+-QRTC_j15=Cc4YeU3TAcpQCrFWmBZcNxfnw1LndVzASg@mail.gmail.com>
- <4z3imll6zbzwqcyfl225xn3rc4mev6ppjnx5itmvznj2yormug@utk6twdablj3>
- <CAKPOu+--m8eppmF5+fofG=AKAMu5K_meF44UH4XiL8V3_X_rJg@mail.gmail.com>
- <CAGudoHEqNYWMqDiogc9Q_s9QMQHB6Rm_1dUzcC7B0GFBrqS=1g@mail.gmail.com>
- <20250917201408.GX39973@ZenIV> <CAGudoHFEE4nS_cWuc3xjmP=OaQSXMCg0eBrKCBHc3tf104er3A@mail.gmail.com>
- <20250917203435.GA39973@ZenIV>
-In-Reply-To: <20250917203435.GA39973@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 17 Sep 2025 22:39:22 +0200
-X-Gm-Features: AS18NWAETzz-YcBQYRqakGPsgrcnxDdpvhBGhjX9-5GcpAybEJQMsj_xDszE9Ik
-Message-ID: <CAGudoHGDW9yiROidHio8Ow-yZb8uY7wMBjx94fJ7zTkL+rVAFg@mail.gmail.com>
-Subject: Re: Need advice with iput() deadlock during writeback
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Max Kellermann <max.kellermann@ionos.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Linux Memory Management List <linux-mm@kvack.org>, ceph-devel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHGDW9yiROidHio8Ow-yZb8uY7wMBjx94fJ7zTkL+rVAFg@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Sep 17, 2025 at 10:34=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> =
-wrote:
->
-> On Wed, Sep 17, 2025 at 10:23:00PM +0200, Mateusz Guzik wrote:
->
-> > This should be equivalent to some random piece of code holding onto a
-> > reference for a time.
->
-> As in "Busy inodes after unmount"?
->
+On Wed, Sep 17, 2025 at 10:39:22PM +0200, Mateusz Guzik wrote:
 
-Where I'm from (the BSD land) vnodes (the "inode" equivalent) are the
-base object if you will.
+> Linux has to have something of the sort for dentries, otherwise the
+> current fput stuff would not be safe. I find it surprising to learn
+> inodes are treated differently.
 
-If there are busy inodes and you want to unmount, it fails. If you
-force an unmount, there is some shenanigans, but it ultimately waits
-for inodes to disappear.
+If you are looking at vnode counterparts, dentries are closer to that.
+Inodes are secondary.
 
-Linux has to have something of the sort for dentries, otherwise the
-current fput stuff would not be safe. I find it surprising to learn
-inodes are treated differently.
+And no, it's not a "wait for references to go away" - every file holds
+a _pair_ of references, one to mount and another to dentry.
 
-> > I would expect whatever unmount/other teardown would proceed after it
-> > gets rid of it.
->
-> Gets rid of it how, exactly?
->
+Additional references to mount => umount() gets -EBUSY, lazy umount()
+(with MNT_DETACH) gets the sucker removed from the mount tree, with
+shutdown deferred (at least) until the last reference to mount goes away.
 
-In this context I mean whatever code holding onto it stopped.
+Once the mount refcount hits zero and the damn thing gets taken apart,
+an active reference to superblock (i.e. to filesystem instance) is
+dropped.
 
-> > Although for the queue at hand something can force flush it.
->
-> Suppose two threads do umount() on two different filesystems.  The first
-> one to flush picks *everything* you've delayed and starts handling that.
-> The second sees nothing to do and proceeds to taking the filesystem
-> it's unmounting apart, right under the nose of the first thread doing
-> work on both filesystems...
+If that was not the last one (e.g. it's mounted elsewhere as well), we
+are not waiting for anything.  If it *was* the last active ref, we
+shut the filesystem instance down; that's _it_ - once you are into
+->kill_sb(), it's all over.
 
-Per the above, the assumption was unmount would stall waiting for
-these inodes to get processed.
+Linux VFS is seriously different from Heidemann's-derived ones you'll find in
+BSD land these days.  Different taxonomy of objects, among other things...
 
