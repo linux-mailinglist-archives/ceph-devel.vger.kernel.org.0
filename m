@@ -1,88 +1,89 @@
-Return-Path: <ceph-devel+bounces-3644-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3645-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AAC4B7F862
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 15:47:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C8A7B7FBED
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 16:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B1861892656
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 13:42:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 362FBB634D2
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 13:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9817E31A7E6;
-	Wed, 17 Sep 2025 13:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46979332A24;
+	Wed, 17 Sep 2025 13:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="WMHj4Kqu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OtTJ71C2"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA172EAB89
-	for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 13:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C626C332A5E
+	for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 13:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758116394; cv=none; b=QaMsjDL+czl2c7bSBPk+m7YVptZ/Thlzh2U3CgdluVJEjI0bYixMj6wxh7YrprgoJMjePEH0d8hOtWP0M/nz7VgL+YaDnC7a7m24z/NWEAQuYMtkIT8nZh5k2jzRr0boRcivnbO968xlRW2wAT3x4bT3Rbeqotsq3b569Htw900=
+	t=1758116733; cv=none; b=AhIzqsZMHQfeFkoaNTJicXpyq/x/ZWz73qenFV2d94KzKgeo0r4Ht9MPWCfvsxKEheEgyC47Ah7JAwI72xC97cVykXOCnSVzSVEx5t1EzjJaAuzz4Isw/DQgrS3Ggy0ay/p9L3pEyxgykQFkBMQTMA9zLfHz5B1tyhwGBOuaC1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758116394; c=relaxed/simple;
-	bh=CBeHfXnYYlNYf7/y5kYqb3+gL7o7P/FRLBOn34fqRSY=;
+	s=arc-20240116; t=1758116733; c=relaxed/simple;
+	bh=4rCjPUqBe5hDzKQsNZsZO0Si8lwcnSgwqoA91a8w/qA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m3cYwFmVHaM7W/eHSlCDqUOuryMBsMNu2tohazQLanVMOELr3Oz10aUmAX8OF+cbAmiENRUCq22aOLyyEnzlGwUKYbGTE4wjwY1iQl+x0eT9I8EdrpPIpd0YW6D2IrRqBo2EYEW3pDu9zZk1N+EUtS5TpDXwC13u8O2DCJMkeCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=WMHj4Kqu; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b149efbed4eso372847166b.1
-        for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 06:39:52 -0700 (PDT)
+	 To:Cc:Content-Type; b=ugkPCDBs0DwnPhSXfb4i8tvqKznWDnHTjNy/GPWA3Rl3km7SHy31uUoeyT2KbCSVyqV2zudfVIkRM0LEG2ajw7V1AIoZ7OcU0MJO5jUaQIUT9RfYr+wjBCSxcPl0HfGUGXCcGnoIY9R1r53yR6QeiibtJpjTKwxVO3r2+/Ro1uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OtTJ71C2; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b07883a5feeso1158434266b.1
+        for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 06:45:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1758116391; x=1758721191; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1758116729; x=1758721529; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CBeHfXnYYlNYf7/y5kYqb3+gL7o7P/FRLBOn34fqRSY=;
-        b=WMHj4Kquf++/0XnW5YC9J7arXXohiQsxOYLXNSGWpEwSWxTZm3dA5ZfkRVvmrPMpxi
-         OaHNNUiU4DJvvGYMqtj53GtqsEV5o90ZkfVzhh2J9olnk2AQ+nDUI6VtPii+JHT7an7z
-         FU3Htq5MZlkeX878lHh43KqdqgUfAJnF+Z8Ilrin+oHGViB4Nd1nVMIFBDrW/NuJ6QWH
-         /Kd1FroK9Ehdh4d+d5qQvKMxMf1ENpFNyqs65ZY8uGYv7JL299Lu0Idi5w1pLZibh22J
-         vSijhuR40zd05xAkZdOiKk+Kp8Mp0cBX7F0nY3+Q6m1mJGHDDMbIlLLr/NOi6dOxm2ht
-         6btg==
+        bh=4rCjPUqBe5hDzKQsNZsZO0Si8lwcnSgwqoA91a8w/qA=;
+        b=OtTJ71C2+f60SZTiEhIWHBQ4o7kLP6xIlRwXDOQmyb2tfI7Ixqe3jdodyDCZ6I/pci
+         VrYugBtsM39gl26uU6q8zCgyF3duHSoLIBD9gl91+nd7Px5uTUgcH93KyfqjILZ45oob
+         2hyQT1b5NVbgDk8Otqi+IB+ja1semJyZPKvQsfEAC7hIng7aXqM1XAr15ts6n9oJs0l/
+         gNxXp4EOLAnzzRWO/qH2GU7yPe4BIjcYQBgQAwknAMvNqZL7IxAeaJvAQQmxzrM6U+58
+         Kh1khv7J8EK+n1DRN18PQrohtPa6NfRFhGUeWL6KmBB8uCPW5EUPeAG+sA/Av8BLTks9
+         vfxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758116391; x=1758721191;
+        d=1e100.net; s=20230601; t=1758116729; x=1758721529;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CBeHfXnYYlNYf7/y5kYqb3+gL7o7P/FRLBOn34fqRSY=;
-        b=ls55/kZl4A656+g+6/0PMJ07Ys14zagM1hask+K2DwFvVfWhfyxR4YQ0/bbLLvdCBI
-         eC9pd0+BUotVYjjmab5VKQ6jk0J0CPisKcsnhO47zSusgcU+yCebAU5ES+inSOV0KrHi
-         kn7kDVyYTsjR3cC60sNcNBQgRhvOOFSJ07gcDwzpNHgmS7yJJ0tmqUVmfEVAsEDnsVa4
-         kvFAPR0/JCq/LlOx6QY2VzSObykW4BuqgOg0fdi2wa/y/usyv6gRkLhwOP30V9jalyvQ
-         QLbeSlTffc8ttjJt7mhAckp9ETomL6rObHp9b5gl+aKmdXlmNc+U0adKNzrYj0PQ52sf
-         u5ow==
-X-Forwarded-Encrypted: i=1; AJvYcCXx//Zwwj2DiH3vmWQWqvVEUSgJI4upiffsm8JIOrqc5GI9KjwOqt4GsMC+1fGD0kOd3Gvd4AIXGuip@vger.kernel.org
-X-Gm-Message-State: AOJu0YywYl6r+v5ZVGQ6T21eoM1gjzWGXBtcjDXTv9maFWjiYsaxGqRb
-	rRmetXEvX3YsFgV/7D/6ZO17GFrUiPD25Cgymk9autHYPBaKrQQv3dc1eCE8ntBfvuLPLvHMEm1
-	Oa/WacbF8QKSpVt0wP6w7nvsp8GXoqZeI0u0KG1W8iw==
-X-Gm-Gg: ASbGncsj3l/ZwRnrKAG5GekEbgMdPpr6bt0gOp8NUWkl2yiDILH5NUbM6AdwSOpt/ob
-	SgFTrztqgjRNUuaSCMl4dylRycaWz3cYwI5pKlO1MZ5FbDcY5EaB0YyARSgRVfc0NCU9gaOI9k7
-	URz3Oq7vM4nMv7nb6pXOHoL9X5YUYAw/zEmzavbUfXiDKEc8Bk8786+r+egWf3pz0hicKXf1emQ
-	jEmInk0YCvdqGxmKxfC4gCK7KIZBSsuaQue
-X-Google-Smtp-Source: AGHT+IGqqKefXP8WxcN/+l1jwy9unDcdcYQ+LOIaW5Cks3BIj9V+aI0trws7o6JbFaSx8xHpY7sjGGzFBBSJONjxZms=
-X-Received: by 2002:a17:907:9687:b0:aff:9906:e452 with SMTP id
- a640c23a62f3a-b1bbb0678f2mr302885666b.31.1758116390548; Wed, 17 Sep 2025
- 06:39:50 -0700 (PDT)
+        bh=4rCjPUqBe5hDzKQsNZsZO0Si8lwcnSgwqoA91a8w/qA=;
+        b=Ftlx7FobwarcM8i8hBufo0iq2yqVATYOI7qW4Ilf76PhkTeHPiIDshWrUZFlgp/POn
+         aKR9UoLEpn93rYxwEfWMrxP8tjEMO2x1hYJShTa5OMDI7M8nVqLX5BDV7cRdXiZtG0mX
+         rCEDlZrvOOgSX2H22ONpGv9DKJiGSX+PlRf+NbHHyVcOOPoOAK9yaCODBUbZKwBrWmBw
+         /hC31tYqwEWfJLioCmtiBct6UwKmgkO6IOXBlPUKnSO2f/pE3PuZAkIaASPzJeQxoTVh
+         YjO1wTM9hLgozDPlvd2eMNZlieRpzPS06uo6TIv/HWl2axYwdMPgBYfeAhRN0/sSSb7A
+         2dEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWTSnXAmMRpxOTfW4R1igHAdPmfNQXDQN9UzZtteeu3W6M/OLgGrKpQLX/W+ksEEIaXeqWNmII4X+o7@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH+1H0YGV2WpDhf/hNRmf9QqYdCYUTcXtPRDq5dlJsH3ZOwkk5
+	FjG2LdT4V7l8yOGV3pd4RyDZ4WujHaTpzT1ExYJHcbHw/Jmp0AYU9lCTe2S19rFBpUrzx1yrgK/
+	H2YjNaQ7Mw/Dd5zzoGD2N/ehI4eGYd3k=
+X-Gm-Gg: ASbGncs3y09s5jVnHkHhGzmSzHg5Eny+OY6oR9QDiZ9tzL/fIP2GKznJWPutR7DT9U3
+	phQSsgQseyyxnkeoG67jmCkGp4UtKd0PSDA1t+3D8JGRgbmokQiaJzTz8VgJnXidGFx/3Cjzhws
+	CGIBNgJGNC4BMdAhy2fET/XFkJwqfxZqt1QfTf2vQqPpqCuJwjenBN51GmVSjWz71lg+tj3B/9j
+	u8x9IyYk5xroQ65qK45deP8Pimc+GCkNiuuR1hvhP7rcNLL2Q==
+X-Google-Smtp-Source: AGHT+IHJjSAqFzQR7vsvzpBHIle/SM7pkbfcfwBMTr+P1896d+alN/SQihemXVKbkiSRCNaNWJtZu6qP46KZEuNFGWc=
+X-Received: by 2002:a17:907:3c8b:b0:b04:aadd:b8d7 with SMTP id
+ a640c23a62f3a-b1bb5e56d85mr276690166b.13.1758116728681; Wed, 17 Sep 2025
+ 06:45:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917124404.2207918-1-max.kellermann@ionos.com> <CAGudoHHSpP_x8MN5wS+e6Ea9UhOfF0PHii=hAx9XwFLbv2EJsg@mail.gmail.com>
-In-Reply-To: <CAGudoHHSpP_x8MN5wS+e6Ea9UhOfF0PHii=hAx9XwFLbv2EJsg@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 17 Sep 2025 15:39:39 +0200
-X-Gm-Features: AS18NWCdr6GqUOQd4v8IrrCyA7jXtDhoQx-mp5NUMtPzl5TNlq5K2XQ23QjAEV8
-Message-ID: <CAKPOu+9nLUhtVBuMtsTP=7cUR29kY01VedUvzo=GMRez0ZX9rw@mail.gmail.com>
+References: <20250917124404.2207918-1-max.kellermann@ionos.com>
+ <CAGudoHHSpP_x8MN5wS+e6Ea9UhOfF0PHii=hAx9XwFLbv2EJsg@mail.gmail.com> <CAKPOu+9nLUhtVBuMtsTP=7cUR29kY01VedUvzo=GMRez0ZX9rw@mail.gmail.com>
+In-Reply-To: <CAKPOu+9nLUhtVBuMtsTP=7cUR29kY01VedUvzo=GMRez0ZX9rw@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 17 Sep 2025 15:45:16 +0200
+X-Gm-Features: AS18NWBMJGX1M7gmLnyGCZI8UTIw8c6hYUtKDGdB2cO4qtZ9mDWgO1MIhRf_XYA
+Message-ID: <CAGudoHEhvNyQhHG516a6R+vz3b69d-5dCU=_8JpXdRdGnGsjew@mail.gmail.com>
 Subject: Re: [PATCH] ceph: fix deadlock bugs by making iput() calls asynchronous
-To: Mateusz Guzik <mjguzik@gmail.com>
+To: Max Kellermann <max.kellermann@ionos.com>
 Cc: slava.dubeyko@ibm.com, xiubli@redhat.com, idryomov@gmail.com, 
 	amarkuze@redhat.com, ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
@@ -90,30 +91,48 @@ Cc: slava.dubeyko@ibm.com, xiubli@redhat.com, idryomov@gmail.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 17, 2025 at 3:14=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
-> Does the patch convert literally all iput calls within ceph into the
-> async variant? I would be worried that mandatory deferral of literally
-> all final iputs may be a regression from perf standpoint.
+On Wed, Sep 17, 2025 at 3:39=E2=80=AFPM Max Kellermann <max.kellermann@iono=
+s.com> wrote:
+>
+> On Wed, Sep 17, 2025 at 3:14=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com>=
+ wrote:
+> > Does the patch convert literally all iput calls within ceph into the
+> > async variant? I would be worried that mandatory deferral of literally
+> > all final iputs may be a regression from perf standpoint.
+>
 
-(Forgot to reply to this part)
-No, I changed just the ones that are called from Writeback+Messenger.
+ok, in that case i have no further commentary
 
-I don't think this affects performance at all. It almost never happens
-that the last reference gets dropped by somebody other than dcache
-(which only happens under memory pressure).
-It was very difficult to reproduce this bug:
-- "echo 2 >drop_caches" in a loop
-- a kernel patch that adds msleep() to several functions
-- another kernel patch that allows me to disconnect the Ceph server via ioc=
-tl
-The latter was to free inode references that are held by Ceph caps.
-For this deadlock to occur, all references other than
-writeback/messenger must be gone already.
-(It did happen on our production servers, crashing all of them a few
-days ago causing a major service outage, but apparently in all these
-years we're the first ones to observe this deadlock bug.)
+> I don't think this affects performance at all. It almost never happens
+> that the last reference gets dropped by somebody other than dcache
+> (which only happens under memory pressure).
 
-(I don't know the iput() ordering on umount/shutdown - that might be
-worth a closer look.)
+Well only changing the problematic consumers as opposed *everyone*
+should be the end of it.
+
+> (Forgot to reply to this part)
+> No, I changed just the ones that are called from Writeback+Messenger.
+>
+> I don't think this affects performance at all. It almost never happens
+> that the last reference gets dropped by somebody other than dcache
+> (which only happens under memory pressure).
+> It was very difficult to reproduce this bug:
+> - "echo 2 >drop_caches" in a loop
+> - a kernel patch that adds msleep() to several functions
+> - another kernel patch that allows me to disconnect the Ceph server via i=
+octl
+> The latter was to free inode references that are held by Ceph caps.
+> For this deadlock to occur, all references other than
+> writeback/messenger must be gone already.
+> (It did happen on our production servers, crashing all of them a few
+> days ago causing a major service outage, but apparently in all these
+> years we're the first ones to observe this deadlock bug.)
+>
+
+This makes sense to me.
+
+The VFS layer is hopefully going to get significantly better assert
+coverage, so I expect this kind of trouble will be reported on without
+having to actually run into it. Presumably including
+yet-to-be-discovered deadlocks. ;)
 
