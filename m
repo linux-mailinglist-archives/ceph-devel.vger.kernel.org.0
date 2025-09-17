@@ -1,119 +1,106 @@
-Return-Path: <ceph-devel+bounces-3659-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3660-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D78C2B81C1A
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 22:28:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3CBDB81C2F
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 22:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA9867B9AAD
-	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 20:26:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35CEC7A6666
+	for <lists+ceph-devel@lfdr.de>; Wed, 17 Sep 2025 20:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FEA2C21D8;
-	Wed, 17 Sep 2025 20:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CEE2C026D;
+	Wed, 17 Sep 2025 20:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="agoz5p2l"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wFEBCd+F"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C6D2749E4
-	for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 20:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1457D258ECA;
+	Wed, 17 Sep 2025 20:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758140877; cv=none; b=BwGfatqpOlPy2OyiRxOXCAVhYSAvwGIoJUnssMAjQBevecrsBLErd55zO/r2ysq3tuEap0mEtt8pjrSXFugLvJrbP7CNTSG6L0/x1Yn/pS+wjF7GwN+VSu4iN0FpHcrDW3Y/Pl/ZcIRStn01UjRlhOLuPDpGWS//X6fSGG9SguA=
+	t=1758140957; cv=none; b=A5BeQxbRMajtIzMaTeWFk9K/akkRl5EXj7BR+jvV1ec1UOY1QpJ075iWiyTNRj2cM435mdDNisXVNvOO/8ttZI44P8gy0J6PuiJ7CxOAQzLyD9tN7nb7xVmiVG9kUgTmVWkYmmwajZfwKiB3buu/njE9oiRtmTfW43gXVdyW+RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758140877; c=relaxed/simple;
-	bh=7ftGvN/R/Ps0GPIX85RpurbPLiXS1I3fprN0bjaLYGU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fC0utrr9Mgrqe3yC1t3VauA4f8ncoSWiHfVXwMnmIQ1WpWJ4WelZ5eqqAyAksKr3+wbC8uBA0wh3TDVRK02kO7cvuid0ZdGrtH54efJIcU7QSsLlzAwb0r1u3v/RFlvotr3DBsOHnfmMfe1UctLO/BQ1iiJktiftfsmgEAcKkSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=agoz5p2l; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b149efbed4eso34571466b.1
-        for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 13:27:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1758140874; x=1758745674; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z4mlHJ7N2GtjpEnD9iNY8gv7p0x+AwcaIWO1wg2Altw=;
-        b=agoz5p2lO+XoTPQ7Zg4tde1jUMGrm1CG/PinADYgfLY/uup0E54BFjrUKl179+uZul
-         vCZCD5S/b1zLgFYMMl1rZnMR5D92TmfZGfhoOxuHyN19OBKicPHS/vFusG+MbBR8Lctt
-         Yb56njz0jtkPxVtWEtG2EErvFTneR1bsyTlXc20Cnw2DlsqqIAUTBTrMPIjze56qtkcD
-         gbtx5vRdK2w1k51QBJP6q05jQxhl2Vk5grH0M5RGL5+eJTbQuCstt95+CL9hp/hb8s5V
-         aFGUnneQk2rSJIr3YREy+zgPRyg/fceIh0hvup4/HPfUF7gJq4Fu28L2sPa2cEeUNr7B
-         BDXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758140874; x=1758745674;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z4mlHJ7N2GtjpEnD9iNY8gv7p0x+AwcaIWO1wg2Altw=;
-        b=dua+dqnPAIWx3O4/9gs+ReCIySl2JV+Mqe9eHy+x7zGbgbaY5mZGbaXtXDViT7CcVJ
-         0ODBZUXFTDHnVez0VyiaJ/nZfa7D0U1DYTTAmK/4jBAbAX4+dH5j53dB/sBjQV8EDich
-         ZWNxCTWVdGTkt2FqH06yW9CrartEHXst3hzLRq4CKIWMPozdAzMLMvagJL85oPIcdbn9
-         SMHT9puuLsw9rizcYXd1oNmkMoBr1B00n+2N+isa+szlftUNU1OOVbGZHQLqLHdQ3777
-         /RgtXLG43tmdQzdkF4cihayo8JGiydnxDE4oA9IvgmYW60gkgOZWhN4DBFHtb8s8A0Do
-         4ztg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnI+q0NzH3zysrZzpXbNHNj2vj9YieG00ccGsl4w9cLvNFVzjFzbPkuQSgwS6I1d9yvmM9xaT/JHxV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa8caG87Ct8+OgGbrMhpX5kMU3zc8qPAbODsUDqHzLT8GUNzRc
-	H6HKtxVcnckzYu1fuiMItTPY6WevWWLhSI89k5kF9na93RqWabvndYy6VzGdldwZyqWFpsvawLD
-	5XVpGWxC9Vee1URx8517EWJ8qgeqmFacRXUKcIm8vSg==
-X-Gm-Gg: ASbGncuxk8orkje+PIs493GnoLbBMuR89uVPbgogDvVyR47CHfxGl1A8yj/GaObSl5m
-	cpG/6XITLrFxE1X4ZXL3xFk7ITrdtXWgrSWe6JW3Ijqzqh/MWzK2fdcXT0221F4ksbw6aJ3dFMU
-	d1MYoznAkXfC/qznfydEApJSemqWx8Xmw1T2msDjS82hKutWB26kkZnIgxO0zkQfDi80T9w3c+F
-	LX739Lt4unzu+J09sjaU1vjizT3KycWZYuBbw+TAk7YPN38L2EHKmw=
-X-Google-Smtp-Source: AGHT+IHTHtpXLrzOlNF8ItBS1Dao3rHs8rUuADCH4WTPP8QnLumlzZRuwQZByHIaY7Yr6edfpyVLQ1M4x0U8xNNPnIY=
-X-Received: by 2002:a17:907:7b8c:b0:b04:6338:c95a with SMTP id
- a640c23a62f3a-b1bbc5490a6mr373843166b.45.1758140873916; Wed, 17 Sep 2025
- 13:27:53 -0700 (PDT)
+	s=arc-20240116; t=1758140957; c=relaxed/simple;
+	bh=Wwm75Y+VjbsmOrjDmc9L1GO1Rf1S/aoh9sefJX7djiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DShuLc2jRvws1PD2a4pUAzCuytNdiyyCz6+brBer2KEXX5flHL5S3xZ0hYuehXUsdPdCLq71wZehNoOsVKzZ8hGIoo44Od4PEaBRTN1GE/8IgDz0jO2mv7w9MMQhuXLGJ+icL+UQpoHg3XEvm9iVpX+qhhCED5+dhJnTyxMovjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=wFEBCd+F; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=w1fulQ0gQjzyFPF7toelr6M7l0Oc8OAf+GJq3MYg+zc=; b=wFEBCd+FzEQc7BlKjb+v53jCY6
+	JCiORP3QCMwGeNazAdH3o3scAQiI4/Z/E0SYboN2gfHysz+J44RBzGMy+qDQpmvcV8Ht+HL/bq3Rj
+	R+D+36kVQPIjBho1YiVAg5qleJ6TyNmitB62iEOnQwU9WoLAnunQdSYXpVfvfFC8q9pAUFEOd0R6a
+	+F/VSP16v1Tavpahim8UWx++scDN+ntaVdlBywL6U9lWWKY4g4vdj8gGGDSHe80YPcebaM/RFUTzi
+	IIkw/O8wQr8ki3yF8y93qUfRAHW/nrRLfSN1CTRYoxiDvjwqP1GZzCcIW9CDoJ9G3itL2R/1htLop
+	RN8WvW5A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uyymA-00000007q9U-0IXT;
+	Wed, 17 Sep 2025 20:29:14 +0000
+Date: Wed, 17 Sep 2025 21:29:14 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	ceph-devel@vger.kernel.org
+Subject: Re: Need advice with iput() deadlock during writeback
+Message-ID: <20250917202914.GZ39973@ZenIV>
+References: <CAKPOu+-QRTC_j15=Cc4YeU3TAcpQCrFWmBZcNxfnw1LndVzASg@mail.gmail.com>
+ <4z3imll6zbzwqcyfl225xn3rc4mev6ppjnx5itmvznj2yormug@utk6twdablj3>
+ <CAKPOu+--m8eppmF5+fofG=AKAMu5K_meF44UH4XiL8V3_X_rJg@mail.gmail.com>
+ <CAGudoHEqNYWMqDiogc9Q_s9QMQHB6Rm_1dUzcC7B0GFBrqS=1g@mail.gmail.com>
+ <20250917201408.GX39973@ZenIV>
+ <CAKPOu+_WNgA=8jUa5BiB0_3c+4EoKJdoh9S-tCEuz=3o0WpsiA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917135907.2218073-1-max.kellermann@ionos.com>
- <20250917202033.GY39973@ZenIV> <CAKPOu+8eEQ6VjTHamxZRgdUM8E7z_yd3buK2jvCiG1m3k-x_0A@mail.gmail.com>
-In-Reply-To: <CAKPOu+8eEQ6VjTHamxZRgdUM8E7z_yd3buK2jvCiG1m3k-x_0A@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 17 Sep 2025 22:27:42 +0200
-X-Gm-Features: AS18NWD_SzRUSSGY7GiasnnPbKogXv5-_s8RWyt66I7bKnW_Disajb-Bt-pl0Fc
-Message-ID: <CAKPOu+8vf5DbR=cJ5dArut=QamTu-EdpJVta_Dsk+dQDpY68UQ@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: fix deadlock bugs by making iput() calls asynchronous
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: slava.dubeyko@ibm.com, xiubli@redhat.com, idryomov@gmail.com, 
-	amarkuze@redhat.com, ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Mateusz Guzik <mjguzik@gmail.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKPOu+_WNgA=8jUa5BiB0_3c+4EoKJdoh9S-tCEuz=3o0WpsiA@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Sep 17, 2025 at 10:25=E2=80=AFPM Max Kellermann
-<max.kellermann@ionos.com> wrote:
->
-> On Wed, Sep 17, 2025 at 10:20=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk=
-> wrote:
-> >
-> > On Wed, Sep 17, 2025 at 03:59:07PM +0200, Max Kellermann wrote:
-> >
-> > > After advice from Mateusz Guzik, I decided to do the latter.  The
-> > > implementation is simple because it piggybacks on the existing
-> > > work_struct for ceph_queue_inode_work() - ceph_inode_work() calls
-> > > iput() at the end which means we can donate the last reference to it.
-> > >
-> > > This patch adds ceph_iput_async() and converts lots of iput() calls t=
-o
-> > > it - at least those that may come through writeback and the messenger=
-.
-> >
-> > What would force those delayed calls through at fs shutdown time?
->
-> I was wondering the same a few days ago, but found no code to enforce
-> wait for work completion during shutdown
+On Wed, Sep 17, 2025 at 10:19:27PM +0200, Max Kellermann wrote:
+> On Wed, Sep 17, 2025 at 10:14 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > Looks rather dangerous - what do you do on fs shutdown?
+> 
+> Sorry, I'm new to this, I don't know how fs shutdown works - stupid
+> question: is my code any more dangerous than what's already happening
+> with ceph_queue_inode_work()?
 
-What about flush_fs_workqueues() in fs/ceph/super.c? Is this what
-you're looking for, Al?
+umount /wherever/the/fuck/it/is/mounted
+
+calls umount(2), which removes the mount from the tree, then calls
+deactivate_super(), dropping the active reference to superblock.
+If it hadn't been mounted elsewhere, that's the last reference and
+we this:
+		shrinker_free(s->s_shrink);
+		fs->kill_sb(s);
+
+		kill_super_notify(s);
+
+		/*
+		 * Since list_lru_destroy() may sleep, we cannot call it from
+		 * put_super(), where we hold the sb_lock. Therefore we destroy
+		 * the lru lists right now.
+		 */
+		list_lru_destroy(&s->s_dentry_lru);
+		list_lru_destroy(&s->s_inode_lru);
+
+		put_filesystem(fs);
+		put_super(s);
+At some point ->kill_sb() will call generic_shutdown_super() (in case of ceph
+that's done via kill_anon_super()), where we get to evict_inodes().  Any
+busy inode at that point is a bad problem...
 
