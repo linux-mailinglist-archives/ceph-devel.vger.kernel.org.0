@@ -1,108 +1,158 @@
-Return-Path: <ceph-devel+bounces-3679-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3680-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54F13B82E65
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 Sep 2025 06:43:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B79B82E83
+	for <lists+ceph-devel@lfdr.de>; Thu, 18 Sep 2025 06:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D6EB1C06C54
-	for <lists+ceph-devel@lfdr.de>; Thu, 18 Sep 2025 04:44:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D06D93B4C84
+	for <lists+ceph-devel@lfdr.de>; Thu, 18 Sep 2025 04:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9BE274B46;
-	Thu, 18 Sep 2025 04:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A3D2749C5;
+	Thu, 18 Sep 2025 04:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="PNBi5cJd"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="idI6twVp"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0023B2727EE
-	for <ceph-devel@vger.kernel.org>; Thu, 18 Sep 2025 04:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE987258EDB
+	for <ceph-devel@vger.kernel.org>; Thu, 18 Sep 2025 04:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758170612; cv=none; b=a3H2kYEZdb4dJgG5VJmZ2sn9/MlcBVXZifqmaFYvH4mPZuh6Cy3MFlloq27EobDVR1iYQ6+PjsfRIMbJCshgkv0p5PnwfkC63cntmLt7nlXbBz/Hu2+pLGUKeBJWphwl5goVXFhcj+43aq8M0yUXN6Wsl/pt+AEOCQCJ5+DtGww=
+	t=1758171157; cv=none; b=Zkpl6ppd90LuwBfrfHi/KYvLZXOUVdxKR8L96//0oGjhd4Hc0QImGOKbErdbHYZG6dxrK6e0qfHo7r8YfAKwuYYqx8+l1NU/WPuwFV+UUlX+UXeaQsL50neiY6MMwEX0a8T9DICPXW4zmXlu6eBPGxyciPCGZZ4sC0oB+70aZcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758170612; c=relaxed/simple;
-	bh=bvQKqbZUHSmC9Cgyqlv2yW20y6m1kbKZ+PzcmlxuJdg=;
+	s=arc-20240116; t=1758171157; c=relaxed/simple;
+	bh=roMRSfTHwvWbIYHIw5SlvXsbEkqQ/myQD+bxde55/zk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TTlhG/4RNaQ2gdFD8Ss611UMbMmVtAmDEn0D6V08ccgD26YU/cmcJcZpHtCUfNPvd2AMeASu8KpRa8ihcrZ97nyMM/Z8mQgJvXKaLf1pzzZ+D8Exqt2LofBL6f9M7Eu81pB5G6o17hTx0myDQzspE9JZ1zvMfdjWP0L5krK/ERw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=PNBi5cJd; arc=none smtp.client-ip=209.85.218.41
+	 To:Cc:Content-Type; b=HNTswbvfDpCiCqj5JSre2imgm3vZLEyzvpqscfFkm3byt3Js7bw2bTG0AcrJb1RU2jJ6Vh+tTwt42pUjj/JkABiwazPlFG/8ifzsQx8CTMDSwFPRsQvs7/e3IsBvjxKIUFkY1n2IRzaLjZneFUqYPD717pdT363P+rh6ykHlJMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=idI6twVp; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b0473327e70so88209766b.3
-        for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 21:43:28 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b07dac96d1eso245655566b.1
+        for <ceph-devel@vger.kernel.org>; Wed, 17 Sep 2025 21:52:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1758170607; x=1758775407; darn=vger.kernel.org;
+        d=ionos.com; s=google; t=1758171154; x=1758775954; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FF2mZRwJKtzsGK7DJVHcrnEuIs9i65jp/kWrZEcj7/k=;
-        b=PNBi5cJdKb61AR69OvOnVOEoyrnSW+Jt3k9rfHifyaHDfqLk3ptS1BvpdF7s9Awy9F
-         LYiAS9VDemdh4t0hw+LfbNvUgY2qs8iqsBlZOBQg1UvMHpeFuldby4a9vhaWZpii0PQh
-         2F+hg/AVVZ53AiT+o+/XelJr35ZQECe/OM0sxGaXVxiVzGdn9QYzqhefC6pmCGEB8dXF
-         KjpJr0Xz5SPKJMMVrqVGdfZ+4yFgyPdDLNP0RQXdi6oJumbGczqIEM2WgZfN148p0Xpk
-         GLpu5lYnraC+JB4opqDja1lDF97artNDYpERNrjlEvCZ5T12gn6wrHXGP+BjEJzocwlV
-         ODnQ==
+        bh=A9QRU1VKJtdE0ZocHMFrYMEWDnZZ/HDzFw4qL2PHiIk=;
+        b=idI6twVp7T8x/SEXiTdGr76RIW/PQHsBT9ZgX7wHMdhcQriS/6tAHinzSMFwEXrkhJ
+         zd6LHHTSr2P3h8YjXbj8yiCmrZzQycEN7zaIYG1sZP+SxkaG0rh0uSPavCn5678DDtvP
+         qbKmMP4yZ/JgKinx0SWgpQi+ysvzHZyfp7ClW3vZNGn4QXs15wwcrM3dMLfsQcOz+aie
+         10fc0LE2geYsqA0D9afY7OwhLlJ6olB/AWxap93eyCKwT18WhN0XP1H0a2M/aAwbdTFE
+         9Sq56lwclcSKDvksOkFNl6XRO4MF098SdY8gN49GKESi09nKIBwodaWppKrEM815B4gz
+         q9sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758170607; x=1758775407;
+        d=1e100.net; s=20230601; t=1758171154; x=1758775954;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FF2mZRwJKtzsGK7DJVHcrnEuIs9i65jp/kWrZEcj7/k=;
-        b=bf1ivkoJIjYFqNa0efyuipleG9mHgHy/FXz6xGkob27Vy0wVSVRRc21KMKYLmQsOhc
-         tHCtjqtSwRrNhL+M/Hq0cngqZ4nnvXKr3lHjtz0tP7OhgeRD3Hd++j3O31AF7zGErss2
-         H1Q3yqKAU9AZBL4fapJREbSpo/b6AdJeAKPt8k+mZojHe891JS4x01vn7XNLacS/Gsh+
-         yygQkVkylxaaPhq3WhhUl33O21a+EHMpueXTalmPQo6sVgFEMSpi+tMb4pHO8FfgPnJa
-         9p8mrTQKd/PayLLNFfRghQkV89CNBhM0bYUTa7C7Aq3qd9p1T8RqPo7bzomuS40rxWGq
-         KU/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXklgTUDAK+Nw8oQdR6a3ihXjtw6WG+iY956FZR0q+TZFfwtOWU8sJ/1BE6Tgf3Rg+pdt5quP59zA6h@vger.kernel.org
-X-Gm-Message-State: AOJu0YydGBfp3Ad1c1xkS8GiZWwErXVIf61Q0l4ATtaIjjRv2ef3lu5B
-	5ErQbArXVTJiKM8XCAIUeoKmZ31NXkQczW9zcrxAfsPH55uoUZCUhaqohS6exPj7PkTiVJEdDBp
-	dSxcep0EcuA1lz26oAKuOAAn7mwc6s3PtZchcIWlNag==
-X-Gm-Gg: ASbGncuqkjb2ONFNXiTVgLZZdEfsEUbn4Q6mbI2Htg8YmY2tTZrY3SOGCL0XrIKtMJF
-	38DrfWjtrhK7HsQred5NIyjHrejya78v3PIy2dfrYKax7OGGOo2AqjrU6RLSnVLkDeLbPQ2FY67
-	QU2YiVDMjKBqYbu+xcl/1nxUEFGNbqHFBbQ9cyCxl6zqZqY5xhLVlrnKOuhYImwaDjKRvzqgCLm
-	vJRpJUaoioaFn6eAJnxw+vHY0lyw1kKN9igp/arPyNDaWj36bRvhCI=
-X-Google-Smtp-Source: AGHT+IFdanVNfWfNv8HWsgTltRUqGbgVYdYb/7YWgH/k9KVu04DfDvwoBsaR56HasWl+Vm1bcuV82HMzZ0TGHEI2ctM=
-X-Received: by 2002:a17:906:4fca:b0:ae3:8c9b:bd61 with SMTP id
- a640c23a62f3a-b1bb17c9028mr565217566b.12.1758170607385; Wed, 17 Sep 2025
- 21:43:27 -0700 (PDT)
+        bh=A9QRU1VKJtdE0ZocHMFrYMEWDnZZ/HDzFw4qL2PHiIk=;
+        b=ck6gM4hs58aOf9d/mYjIZoa1xN//Ba2o3MO/iRZk88LzdjUroSWRr846hR8ZYrO9zy
+         CehEPKnNJ+qfHhefXKzYPgBfaDm8zYsMU9CljEYIyNqiKkxJeq1bWd0xYq3e+lehjeEB
+         8E1goWYonXSRGEjBbkFQ93HfZo5exw9nCQdBTfq2nSJTG63uQL31PUEuprl9Z3TQSX9F
+         IxvxRAwrWCm+kllH7qMfUiD0yXWCYxJ3B89zWOmeKsZOVMTxLEgBVWkqZct+cz9pp0nZ
+         P5mUBtgXyKapmPe9EPM3F+TYFF850GQf1DGQ8KisOlGU6lSw2T8CQ6u6mciBt7eluqyJ
+         eFLA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHS+VEJaYIT+LKBI3WcNX14NWe2vXeuPajervPmmg5lqGiDxP1kotym9ogf23JvIkMl2JHDi2wMhMz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk71aQjxlZ1d1vrj1vdlPLi0lLb5eLk57S1SMVuWmkLWd+Sho9
+	2zV23HP6pwey3JTzgjx+ykPS4oW23DwxhNY1z6damHgLnS76kJAsBkIFpmTxyhHfvZy3BWSdw4X
+	DzvEs8M9VhMBOyQd6a9D9+wO6yv0dcn0WooaNls388w==
+X-Gm-Gg: ASbGncvQS80WWBQLukvqJdaTpYXOUZ1IhJI5Od8/EuLYuv+EID6piwxzfRZ07DSj8m5
+	Xxjzet+MrxDRb4AZISTNs5P1P8bdtUpDpL/UF/zJQTbQZlF8gNADVyke/4j/BdTuGfUQ+tmA3MW
+	YozwFdZXbLPBBd+DiETAPMXoXZVtcpOT9dSmlgvDL3nuJUtDQuj1sS5oHa7/T1bjVptTj9HEmsK
+	e6vTQIrj8DKSc3hsnj4bHPqWDtPOBTEH44KapIUWagz/590rKCUBms=
+X-Google-Smtp-Source: AGHT+IH78/YwtfdEEvgvHSMTlAUPH/eYqgNUZ9char1Npv5jG23ahXW8pg2svda031uaJNRKWZjE53pxWARfwi2BnY0=
+X-Received: by 2002:a17:906:9fc5:b0:b19:f444:5bc8 with SMTP id
+ a640c23a62f3a-b1faef71aa1mr223957466b.31.1758171154075; Wed, 17 Sep 2025
+ 21:52:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917124404.2207918-1-max.kellermann@ionos.com> <aMs7WYubsgGrcSXB@dread.disaster.area>
-In-Reply-To: <aMs7WYubsgGrcSXB@dread.disaster.area>
+References: <20250917135907.2218073-1-max.kellermann@ionos.com>
+In-Reply-To: <20250917135907.2218073-1-max.kellermann@ionos.com>
 From: Max Kellermann <max.kellermann@ionos.com>
-Date: Thu, 18 Sep 2025 06:43:15 +0200
-X-Gm-Features: AS18NWC_NdTi_yqxzEjcc4DGgSbWqBjqdGn8xuCbd_fnQdBXhfAk81_WXjHssKE
-Message-ID: <CAKPOu+9io3n=PzwFPPgmGSE0moe3KDbyp7MXmwx=xU=Hsvqrvw@mail.gmail.com>
-Subject: Re: [PATCH] ceph: fix deadlock bugs by making iput() calls asynchronous
-To: Dave Chinner <david@fromorbit.com>
-Cc: xiubli@redhat.com, idryomov@gmail.com, amarkuze@redhat.com, 
+Date: Thu, 18 Sep 2025 06:52:23 +0200
+X-Gm-Features: AS18NWAZzXNs77ONQtxSPqI0-tNgs2QxD25qWiDPS307ZO8zwzS3_Wc3r2CSBy0
+Message-ID: <CAKPOu+9o4FfXQU5O=iEhi=aFWfTUZ-mJVD6qqVi3UTSsy44agA@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: fix deadlock bugs by making iput() calls asynchronous
+To: xiubli@redhat.com, idryomov@gmail.com, amarkuze@redhat.com, 
 	ceph-devel@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Mateusz Guzik <mjguzik@gmail.com>, stable@vger.kernel.org
+	linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Dave Chinner <david@fromorbit.com>, Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 18, 2025 at 12:51=E2=80=AFAM Dave Chinner <david@fromorbit.com>=
- wrote:
-> - wait for Josef to finish his inode refcount rework patchset that
->   gets rid of this whole "writeback doesn't hold an inode reference"
->   problem that is the root cause of this the deadlock.
+On Wed, Sep 17, 2025 at 3:59=E2=80=AFPM Max Kellermann <max.kellermann@iono=
+s.com> wrote:
+> +void ceph_iput_async(struct inode *inode)
+> +{
+> +       if (unlikely(!inode))
+> +               return;
+> +
+> +       if (likely(atomic_add_unless(&inode->i_count, -1, 1)))
+> +               /* somebody else is holding another reference -
+> +                * nothing left to do for us
+> +                */
+> +               return;
+> +
+> +       doutc(ceph_inode_to_fs_client(inode)->client, "%p %llx.%llx\n", i=
+node, ceph_vinop(inode));
+> +
+> +       /* simply queue a ceph_inode_work() (donating the remaining
+> +        * reference) without setting i_work_mask bit; other than
+> +        * putting the reference, there is nothing to do
+> +        */
+> +       WARN_ON_ONCE(!queue_work(ceph_inode_to_fs_client(inode)->inode_wq=
+,
+> +                                &ceph_inode(inode)->i_work));
+> +
+> +       /* note: queue_work() cannot fail; it i_work were already
+> +        * queued, then it would be holding another reference, but no
+> +        * such reference exists
+> +        */
+> +}
 
-No, it is necessary to have a minimal fix that is eligible for stable backp=
-orts.
+Folks! Guess what I just found in Linux 5.13: commit 23c2c76ead54
+("ceph: eliminate ceph_async_iput()")
 
-Of course, my patch is a kludge; this problem is much larger and a
-general, global solution should be preferred. But my patch is minimal,
-easy to understand, doesn't add overhead and piggybacks on an existing
-Ceph feature (per-inode work) that is considered mature and stable.
-It can be backported easily to 6.12 and 6.6 (with minor conflicts due
-to renamed netfs functions in adjacent lines).
+-/*
+- * Put reference to inode, but avoid calling iput_final() in current threa=
+d.
+- * iput_final() may wait for reahahead pages. The wait can cause deadlock =
+in
+- * some contexts.
+- */
+-void ceph_async_iput(struct inode *inode)
+-{
+-       if (!inode)
+-               return;
+-       for (;;) {
+-               if (atomic_add_unless(&inode->i_count, -1, 1))
+-                       break;
+-               if (queue_work(ceph_inode_to_client(inode)->inode_wq,
+-                              &ceph_inode(inode)->i_work))
+-                       break;
+-               /* queue work failed, i_count must be at least 2 */
+-       }
+-}
+
+This looks very much like the code I wrote - only with a loop for
+queue_work() failures that cannot happen here.
+
+Jeff Layton removed this because "Now that we don't need to hold
+session->s_mutex or the snap_rwsem when calling ceph_check_caps, we
+can eliminate ceph_async_iput and just use normal iput calls."
+Our servers proved this assessment wrong. Calling iput() while holding
+a lock is obviously bad, but there are more reasons why iput() calls
+can be dangerous and inappropriate.
+I guess I can add a "Fixes" tag, after all.
 
