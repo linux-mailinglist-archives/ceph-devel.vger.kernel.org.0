@@ -1,86 +1,72 @@
-Return-Path: <ceph-devel+bounces-3683-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3684-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61830B87D05
-	for <lists+ceph-devel@lfdr.de>; Fri, 19 Sep 2025 05:30:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B88BB896B1
+	for <lists+ceph-devel@lfdr.de>; Fri, 19 Sep 2025 14:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F0558154D
-	for <lists+ceph-devel@lfdr.de>; Fri, 19 Sep 2025 03:30:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92B907A98BC
+	for <lists+ceph-devel@lfdr.de>; Fri, 19 Sep 2025 12:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D60923A98D;
-	Fri, 19 Sep 2025 03:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D67C3101CD;
+	Fri, 19 Sep 2025 12:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAfF/VaV"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [111.22.67.135])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA1626B0AE;
-	Fri, 19 Sep 2025 03:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.135
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167031C862F;
+	Fri, 19 Sep 2025 12:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758252629; cv=none; b=b3Lvv8OAcLAdbP7nYoHaGoQ5lM/dsQDIAC3ewsFGWnPyMJnUrxrYrjmzfvgFP/af9UQn+dI3zIejElqOkgrHD/om/IrphC/S87ALoo9AnFt2s6BoVBuLLi61d+Is8oeX/uz+z9YXoRXUFdOn43gj+uohsGzw8FqUEMfIMtadpqw=
+	t=1758284387; cv=none; b=lZTMdSNduXZZJqnP08DBzbgzNSU3YL8to8RirOLV98zuAfTKJ5GRKVbuC7DMwwXq2sjEdMGAo/xY03e0tNY2EY3i958zdjChqHZR/jMLP4GHQFJsJ9eQbKsrbMrXm8kxR5xRYyMqxIYgbBenfV/CVxscO1/bnIZIK8EJXdUlkxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758252629; c=relaxed/simple;
-	bh=ZS5Ns/hrI4Zq127OgXmQHHOyaTk4eyHQnoUF3TgClKc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iygWnVi0WYyExar+3cIIeGFY9nVVVARKR3BiEdThX8mDEsvxn4gCG/DGOtbbm3Z7w3qMx+7yC+tNNTXAygu1JtW80uNQO12MMTdBQ4taMqP8sAgmIRy0pYPTM7JE9vd7Ds1h1BZ0AaSl28IAnR0pwI1Rmvo6jZE5K+PVPhWl5Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee768cccd93771-1182f;
-	Fri, 19 Sep 2025 11:27:15 +0800 (CST)
-X-RM-TRANSID:2ee768cccd93771-1182f
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[10.55.1.70])
-	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee968cccd919d8-13bf4;
-	Fri, 19 Sep 2025 11:27:15 +0800 (CST)
-X-RM-TRANSID:2ee968cccd919d8-13bf4
-From: liujing <liujing@cmss.chinamobile.com>
-To: idryomov@gmail.com
-Cc: xiubli@redhat.com,
-	ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liujing <liujing@cmss.chinamobile.com>
-Subject: [PATCH] ceph: Fix the wrong format specifier
-Date: Fri, 19 Sep 2025 11:27:13 +0800
-Message-Id: <20250919032713.6534-1-liujing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1758284387; c=relaxed/simple;
+	bh=tYmBGEwPJSwXIyoVjGOWTLy8eAt7mXQHCx5978tooBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GiELqB35CjewvC90uWfQminJYVJ1uc21GaBgiCoMUGtphnzbdNxbTg3msPEHGcTLzu0koTuPCrsSVH00zQvww78dIrYBqvetMeISCX1m01g5PwaYWpR4aRcR9mV9o2XROF+EWugP7ZmurhbpW16aLn80N90cXAgdgzBHVKLI598=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAfF/VaV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52E26C4CEF0;
+	Fri, 19 Sep 2025 12:19:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1758284386;
+	bh=tYmBGEwPJSwXIyoVjGOWTLy8eAt7mXQHCx5978tooBQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LAfF/VaV9k2+0G3zC6iEf+mvMoX8OOowfZhUYE7NtQOA3wR6hsFdVeN24/bjTERPV
+	 NWmStu1E0Rbe26YykEfKPZelDvsZb1Po0z5tHjBoXA5Qtr93TLOwwLnu4OqIHuyG+b
+	 uXc60q+Fr8a+uWPGeMzqkZChdvprKuAX4xYjAXmcs8TppW5j/62RvkNpfHMS3JyuIn
+	 KRTszs+mKwcPBcag3ypM7rERbkmHMHQb7+2sY2fmV0SSYEm1YChwd1Cw6w4b4FMWQu
+	 wpMrX2XLxcnN5cPc3IeL7IySixe5wxF+J3teBhg/XTCDN5AfwYV+NSCHQTN2EiP3iD
+	 9TtAzT0XmKlwQ==
+Date: Fri, 19 Sep 2025 14:19:41 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com, 
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v4 00/12] hide ->i_state behind accessors
+Message-ID: <20250919-unmotiviert-dankt-40775a34d7a7@brauner>
+References: <20250916135900.2170346-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250916135900.2170346-1-mjguzik@gmail.com>
 
-in the ceph_common.c file, to strictly comply with the requirements
-of the %x format specifier and avoid type mismatch and overflow
-issues, d should be defined as an unsigned int type.
+On Tue, Sep 16, 2025 at 03:58:48PM +0200, Mateusz Guzik wrote:
+> This is generated against:
+> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.18.inode.refcount.preliminaries
 
-Signed-off-by: liujing <liujing@cmss.chinamobile.com>
----
- net/ceph/ceph_common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/ceph/ceph_common.c b/net/ceph/ceph_common.c
-index 4c6441536d55..d3c19a63cadd 100644
---- a/net/ceph/ceph_common.c
-+++ b/net/ceph/ceph_common.c
-@@ -195,7 +195,7 @@ int ceph_parse_fsid(const char *str, struct ceph_fsid *fsid)
- 	int i = 0;
- 	char tmp[3];
- 	int err = -EINVAL;
--	int d;
-+	unsigned int d;
- 
- 	dout("%s '%s'\n", __func__, str);
- 	tmp[2] = 0;
--- 
-2.27.0
-
-
-
+Given how late in the cycle it is I'm going to push this into the v6.19
+merge window. You don't need to resend. We might get by with applying
+and rebasing given that it's fairly mechanincal overall. Objections
+Mateusz?
 
