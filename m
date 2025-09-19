@@ -1,1491 +1,249 @@
-Return-Path: <ceph-devel+bounces-3694-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3695-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD7AB8AE0D
-	for <lists+ceph-devel@lfdr.de>; Fri, 19 Sep 2025 20:13:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EBA1B8AF38
+	for <lists+ceph-devel@lfdr.de>; Fri, 19 Sep 2025 20:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E5A11B20762
-	for <lists+ceph-devel@lfdr.de>; Fri, 19 Sep 2025 18:13:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8C637C4B7F
+	for <lists+ceph-devel@lfdr.de>; Fri, 19 Sep 2025 18:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD6025DD0B;
-	Fri, 19 Sep 2025 18:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D47255E34;
+	Fri, 19 Sep 2025 18:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="qLrWIJ1j"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lmZSjqyw"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8042571C5
-	for <ceph-devel@vger.kernel.org>; Fri, 19 Sep 2025 18:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758305605; cv=none; b=FOLilbOwL/852ndnio4W6U9qCajg1mxxV6W8W7e8M7rERTgVMGecZPwFak0DcvMNGfZf1JQMmAwmlQXNLU8emHLdAcgJXI6lbLSAN9fFSWaiOX7f0RjEXdUx16W/1SHeitO7vdaKYsrwZHAWdExljFKsLX9FjDKH76r45f3p7qA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758305605; c=relaxed/simple;
-	bh=DYW8HTrHRBV7FVxZLp+MK4a2XXbDEa2/KmeYSYfx0n8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rc+vO7jfPfdYNpX5l1k40KfwHv4RNMVfnLiwE4gt3WjxxQQNSXN1c73zM12iqw5egprQSLaBelraoXadIMQqoTd7mN5SEtrug5YtdU88Ki/pSNY2h3WX7enFjqmMFwFGjMKtXniePiAf/OzIvdomHZwr+pJDJ7grtJvaA1sAjEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=qLrWIJ1j; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-739b67d0423so13265617b3.3
-        for <ceph-devel@vger.kernel.org>; Fri, 19 Sep 2025 11:13:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1758305600; x=1758910400; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+U/cJZaRNUw3u/uaI5oytsoPz67oZg+zcxOrzWdTIak=;
-        b=qLrWIJ1j0Z1mRqS3LPa97qfnPGnPUdBV2078ks7KYgW2O6+6oVTQheaUgoLJ3mYYD9
-         FcGkXcFo+LHe9X9wwyM6hmK2X/6xH1bOkwlP2OP4WdnlqThZhk636lA+YIMKSomxSYov
-         xsfVYfj20RCPz42s/DaGCiW0vG/VP1076rkAk8koYqUuI3u/71nmhrX0Kfe2dqg6S6yZ
-         24sxIt/7fqGMHEWwbuwBtLowfD753IG0gFoSpaHMQO8Xxes8IZ1DzMmm5h5TKvYQO5tu
-         oHoTL8OTk8WSmZ95Bqo8/r78a4I0wfDlnXwz1LgdHLw1Byc2Vm0nnVQMsWoFytrtQBCJ
-         vXHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758305600; x=1758910400;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+U/cJZaRNUw3u/uaI5oytsoPz67oZg+zcxOrzWdTIak=;
-        b=wUfq91RHABd0r193IBH/tk0v4muTK7Q4KNpxUXmUUqCMGpl5u0i1kU9KzFNT0X0CJZ
-         kLs0ijyFDmpRt4tuYcXM3GTOq/xzC1tLs/8YIkIXd0VbdiGCdl1sG2ofxuva9G3s4Llc
-         DHsE+Af104IcSStAm4HewVodQ9bR8c9cxiP8wlUqeZLX1kJd6rCRVVnR5Y/X3AAAqXjN
-         OjxECnMb4wWX/4Xi0tmsrEepPZhc98963Vy9uy+jh70PoDM2fjMs0sWeWJV4fhOwj+Gf
-         sez017mb+hBKuoLeR/yYMe/Q1pRyh0aRJkljwSvIS9qOfWtqBOsGxwgenzJeIjgMMQHz
-         nWYA==
-X-Gm-Message-State: AOJu0YwJaKdKVBTta4qkL+DgTuv5KBZDV0DjqGCw+J437LXLccHYUSK/
-	wOu+zzy9GfP9rFl/vLVfLOygn7TM03qjR3LqA5e0LCNQCKXjsnXuAUdfp1j1T1/egSAQgXPQFTO
-	9CJSA
-X-Gm-Gg: ASbGncu+EniYjfodtBGveOfWVe2uxGdryni1vtxRWHDBNdSqsGJTXSFAZg+hEy15mm8
-	7LduRVxKpskPVGUWfvi3ajGxFO+Qy87+/CL9LoXDJYhkGO03XEz0Cz2joOnnopZlq8kIR1ess7v
-	0dRNhlDXbh8nBBZ34na9mKLErfuhGQwpHQFNXil4O+ca62+tygKinBCZs7N7SAgOEOCjGqOXs9z
-	+nqG5LgFJuTZD5qv+9uzb/IKgGnoQ2dIjqqb1WS5T8fkB9s7kkJG/guWqzKlaM0QheM9lfMTgmo
-	NGeHtf4gJ6Pv96v9N7RFaZaMek0Ci4Dr6+2QbvPNzCYAeUjdVaxnR0EaLrroQbqtHOhvhfkUPid
-	FWlRg59xRY1AyfwgfNA3596W36boZXfTnq6gTWsSx
-X-Google-Smtp-Source: AGHT+IGEm/BWXkyApZuirv6N2knESHcrMqyDRAZx9UXGgu1zl5ApC0aybfr+LUhxobQfwMMmrBCpVw==
-X-Received: by 2002:a05:690c:6205:b0:73f:b061:55da with SMTP id 00721157ae682-73fb0615830mr27920487b3.17.1758305599878;
-        Fri, 19 Sep 2025 11:13:19 -0700 (PDT)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:2dd0:9c45:8027:2e45])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-73975ca9147sm13920077b3.37.2025.09.19.11.13.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Sep 2025 11:13:18 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com,
-	vdubeyko@redhat.com
-Subject: [PATCH] ceph: introduce Kunit based unit-tests for string operations
-Date: Fri, 19 Sep 2025 11:11:50 -0700
-Message-ID: <20250919181149.500408-2-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0A8258ED2;
+	Fri, 19 Sep 2025 18:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.158.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1758307148; cv=fail; b=hY4GHnAplE+MFfXq89zsBkwAaLJ90CwG42QlkRK5VEPse+CRdwNYFqZ90b8Eo5/ntf101lZwno+U2+t4e7nUGytLEr7fNI1KfNztvUv3FiRobtaTaC/ny2TxpYG7+jrjMBSvmUoqYv5/GfVlLdHWuMUWUSpZ/RvPk1tSl9YJ2xo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1758307148; c=relaxed/simple;
+	bh=bEvH5wG2wU/8sRtGTYXi8VUlaGt4yVAmaohv8xv5sdg=;
+	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
+	 MIME-Version:Subject; b=NIGI2MxVK/ljWBSGNDp+hGpblqNRay3I5bk9JGl2fR8sGQGqHnPteGKXYwY3grwLdYwvvlOYBP/53547rOnMce/6K+lhN4/MBKvWb58KjCu3wS3NrMjBcdUJDjXnJLX1aj27Wt11HRrRIeGhH7n6uV3F/fYRrjj0QrWLDv5tV6U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lmZSjqyw; arc=fail smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58JEkqmq024719;
+	Fri, 19 Sep 2025 18:39:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	pp1; bh=bEvH5wG2wU/8sRtGTYXi8VUlaGt4yVAmaohv8xv5sdg=; b=lmZSjqyw
+	RqtP53KEZeuu0wEc4EmzjTZvxL4riW/DBFOS6/2ppeee93YoodS9lM5UNJnY1o3v
+	rEs/JH61FzcnDWrm3qeJaLcoMVV1L5pcHsS5qV2gn6oEQ/kP28oZAuW9lUr1bkMq
+	Tl6zkcY5QF8y8BgycEVh7Kc5cWta2bovokfnTCGkf59L6N7Xmm90bDA7FJ8Nq81I
+	YT/jmSX/L1JX8Ed8FifCabxqeFcW4NPikp066DEXRxSOtnkOTnOg8Qab3QsFkWT3
+	JXhE1linkBRqqclCeyBrql/Dwr5Hk1nQfDm3bbF6/vSjLRuTFS5uBEfqQvcfXffU
+	HYa59jbmYN4qHw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4r1rwn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Sep 2025 18:38:59 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58JIMoY9026007;
+	Fri, 19 Sep 2025 18:38:59 GMT
+Received: from cy3pr05cu001.outbound.protection.outlook.com (mail-westcentralusazon11013049.outbound.protection.outlook.com [40.93.201.49])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 497g4r1rwk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 19 Sep 2025 18:38:59 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FsrnrJWH36+H9lJOR6IW6CDToDHhYuNFI9/Nf9CUe+Dxi6pKERxl5eoC+kVATwr8jyuGxT6vrkdsUXGwvfGmz0wfz0XQuspciufSSC4LBWGX2N5b1MvnMzRFeryiiTOyxxBwifbVJ60r9AmhGotmi6RtgzYGDoAMS1RqxMg5Sdt5/TANdeEhY9vj20ghcq7aUOmDUsdKM+7gYUkrOErkubiZNMg7JdpVGNbFtczhLdkLFh0W/0v4uBvRR9deE9IAD6M+vLY13bQaY1ijD6osXFxQ12twfNbxc6NO67AA4JCDb8ehjGPBMiUOXRqhdZ8XN6QOlJP+PUgT1CjhX1vWaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bEvH5wG2wU/8sRtGTYXi8VUlaGt4yVAmaohv8xv5sdg=;
+ b=xfcufMxFz/gyf2lXNlzQLySK8CqF9OYXblh3jf7it0HEgGdY5crcrM1EQvQ1XJX8qk6j1WFwtdr4rQbjGspCs2r6KHCZoez4nNoyLhRAzEcqONg91Of5rwA+tYadMlboKyhchfmDAjOebenrO/aoNrtpXPtpzayYiTo03IlVRomTZt5ENkfR+7xu99vVWQiLLgiLw3KHF9+oprs0stLd01a/ArXe6euvqkmL86DKTby953MtJuEsQ9pTSsdszmHulvNgCv9MYt3cWn71duOGl68VDm5IOb/XGTOT/BeMoFUOyuQTadRessSVr+2t1F4pxDgEHFITsIMoLAmF5oESgg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
+ header.d=ibm.com; arc=none
+Received: from SJ0PR15MB5821.namprd15.prod.outlook.com (2603:10b6:a03:4e4::8)
+ by SN7PR15MB5795.namprd15.prod.outlook.com (2603:10b6:806:32e::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 19 Sep
+ 2025 18:38:55 +0000
+Received: from SJ0PR15MB5821.namprd15.prod.outlook.com
+ ([fe80::7a72:f65e:b0be:f93f]) by SJ0PR15MB5821.namprd15.prod.outlook.com
+ ([fe80::7a72:f65e:b0be:f93f%6]) with mapi id 15.20.9115.018; Fri, 19 Sep 2025
+ 18:38:54 +0000
+From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+To: "idryomov@gmail.com" <idryomov@gmail.com>,
+        "liujing@cmss.chinamobile.com"
+	<liujing@cmss.chinamobile.com>
+CC: Xiubo Li <xiubli@redhat.com>,
+        "ceph-devel@vger.kernel.org"
+	<ceph-devel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Thread-Topic: [EXTERNAL] [PATCH] ceph: Fix the wrong format specifier
+Thread-Index: AQHcKRXPVl+Y/5zLDEqlsXTOFxF4ibSa1yCA
+Date: Fri, 19 Sep 2025 18:38:54 +0000
+Message-ID: <2542244617e984f3cbb3f64b3383065cf55bbe59.camel@ibm.com>
+References: <20250919032713.6534-1-liujing@cmss.chinamobile.com>
+In-Reply-To: <20250919032713.6534-1-liujing@cmss.chinamobile.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ0PR15MB5821:EE_|SN7PR15MB5795:EE_
+x-ms-office365-filtering-correlation-id: 1852ac04-e5ec-4e6a-57e7-08ddf7abc92c
+x-ld-processed: fcf67057-50c9-4ad4-98f3-ffca64add9e9,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|10070799003|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?OVdsZ0FsbmtnRk5kaWRrOGx5Um1DTmxtTk9aWXpIRVkxcnR0a3MvWkR1SzZ0?=
+ =?utf-8?B?OHp6Y3NvMktOZFJ0ZHNpUHk2b1lBMElqZHNFV1FCVmFvVEU4RXFYUkQzTkZ0?=
+ =?utf-8?B?NVJHVU8rT3pVZDBON0Q0bU1YZXEwbUpRTUNEa0liZmxnRjRLTkdFM1Fjb3lR?=
+ =?utf-8?B?cGgzQXFFTi9ubko2Zkc0K3NmSTREd0JhUms2V3lHaGx6d1B6SExmd2hzTWQ1?=
+ =?utf-8?B?eHp4azhTbnJWZU5RYVYwMysrMzRoZXp1S2pSVDFDcGtVbVNQNzJtRzdVKzJz?=
+ =?utf-8?B?OTQyblBBbHR4akNUT205OTJlUlBJcWV2RU1MaG5WcERRWVNDZEtDdm1neGdO?=
+ =?utf-8?B?QlByVitYU0ZvQlY0bVMvUDFLZThPTjJjOFJaT0ZqU2RlaklCbU5NZld0RDgv?=
+ =?utf-8?B?SHpseXp3Qk1CZmk5anhqZUNKWXVpWlkwVDlaWStGZXZiWk1FNHMza3FHZzQ3?=
+ =?utf-8?B?RG0wMnF2QjkxY3Q5U3BQSW9sTUVmcmgxcmNGSXBOWHNiVE0vb3Z6K0p1VTV4?=
+ =?utf-8?B?QStMdi9sYU83dytoVFV6alRoRVp6WmtUOWluaGl4dU9LOXRkTHFNM1FKRG9P?=
+ =?utf-8?B?VVdQK2JJKzBWbDFNTHdQSnVZRDhOQWxCQW8zWmM1eklSMnI0NWFJOGxzT2Fx?=
+ =?utf-8?B?RTIyVFhza2pPVi9ZNWFGaTBRcnhHR0lzOTN5Z0U0T3hLNzFMK3IxcnF5RmFV?=
+ =?utf-8?B?WmJVMkR5M0o1S2p3dkNxSFRaK1RNemZxQjFQNVdUQjBBOHg5RmR2VU9DQjZw?=
+ =?utf-8?B?MzJxRWdvaTdFQXp0d1J1TzQvenoxS2ZxWlZ6QmVqR2t5U1hjZ0dxdU02aTNU?=
+ =?utf-8?B?YnFNSVNPaXltMGVJQkUyOVRiWWphbER0bzVxcWJUeVFZWk1SZFZobDJLMmFI?=
+ =?utf-8?B?RS9kZFZ5U0pjZ2hjZWJrRjRGSnpjQk1hYTdDYUNlOXE4RTRHN0lyM09sREFr?=
+ =?utf-8?B?SDU1cjQzWXNkSDBwNFNLaHFOVkVLMVpNK3lmazJHVXNFTzR1bG84QUcrZnZp?=
+ =?utf-8?B?V3YweDhaeXhUdmo1U2ZkNDV0T2hHMUlPMllFWGJNZldNdThYQTd2NmlSSUI4?=
+ =?utf-8?B?c2hNN0ZhVVY4a0ppRkVjSkNYOGNCMmsrcFJrSTUzQjB0OVdrYUkxRkRIdmJX?=
+ =?utf-8?B?bW91TjNKTlFoaHYxMjdIUGp1SW5neVBQWDRrR1FQNW52cTd2NE9LQUw4S2M4?=
+ =?utf-8?B?RHZrNVJON2VwSVg3VXJyek11MEw3bnFzNDY0QzB4UEtCbEluWFQ3UGt3QVhw?=
+ =?utf-8?B?OS9qK0IwbzBGb1llclU5bDdXcW9UM1pLL3V6V2ptZWxkNjBVdWx1TG9USFVG?=
+ =?utf-8?B?WCtJZkZsUy9OSFptTnpMQ1Z4bHVpMjZNdWRMSHVYNm5jaklqN3NiTlhiUm94?=
+ =?utf-8?B?Zm9kSnBDRHl1Zlg4VG1TR1h4ZFpPUHViNC83bHdKTS9yc2ZXdG9pNmlPOUUr?=
+ =?utf-8?B?VUE4UnlqQTdVYXViaUdhNjhUd0tmSERZQ0dQOVQxdHNBTzZlOWQrZTc5Z0NW?=
+ =?utf-8?B?bFI5eHRndnFwMEdRQm1pMTVydUlrNHlDenNpdGRXaCt1Sk9ZdWt0L2VGa1pU?=
+ =?utf-8?B?eHZSYTg0cXloTnFxeGhTWGhDdWtnajdDOHZ3dmkzeWVSVmlXVitJNzZUeUhE?=
+ =?utf-8?B?TEllTzMxT0JaYzlKYnVwWXRBVmdXby85T0d0MUZldGt4K2xpdWVNV0RxblV6?=
+ =?utf-8?B?eTIwR3V3TGJrYiswSktFK2dEbHNSeWpCMlk2V1ZpTGFTNVhZYzJXemtQTVY3?=
+ =?utf-8?B?OXdBdjAxUzFyZEVGODlObkVhazUyTkxPcWJQY05RaFNVTFIyK0IvTmVkZUE1?=
+ =?utf-8?B?c1YxSzVCeG83RW50dFpMNm5SRnZFbU9qclFqVmg3ek01dzJlSFRpMDMwN3RD?=
+ =?utf-8?B?UHdCeWdkaTlTSnFwaTRVUzdkNFZIV1hkNFBsbi9aNWp5VkRuc3kvdExxUnpT?=
+ =?utf-8?Q?66FyU0cZfPQ=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR15MB5821.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(10070799003)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?bHBqanFGcDVtQSs1UmpuWk1JdXA3elBod3k4MitwZVdVOUpMWGN2cU5DTVB0?=
+ =?utf-8?B?S0R4ZmVRYVVZWGQwTzlpMGxwYnI4RnVFTitJUStJRlZLem80Q0p6Q21ycmZF?=
+ =?utf-8?B?cmhBQlk5a0E2bStkaWlmbExhaGpCa3FiM2QxdUhyOUxzUXVub2p5VXFOakJI?=
+ =?utf-8?B?QlhFNnMvSnVNcVVBVWtyVElnSEgwWFZUc1VJTHV2K0hqbE9XaXpiUEFBa290?=
+ =?utf-8?B?MGduS3NiN2xiMldCUXJPV1pUOGZ5SzRteHd1VzY5WTdaTmVtcGpXQzNuVmhY?=
+ =?utf-8?B?R2g5QytETVBMa1VhNGIya3RVbmVob1h4UGpCRDM5U21wSTlKM2lyNGJwVTNY?=
+ =?utf-8?B?UTdvOUxFUWhnMWJYMmlZVDhxTWtVS3lzR3ZIM3E2MTNXNC9QK2djTWdxZE02?=
+ =?utf-8?B?U3JoS1kyM01jdmlHeDZFK21PdklTNEdITmpLUnVpcm5zZFhHdnZXUFpocGth?=
+ =?utf-8?B?MEh4S0cyZXJoaXNialNNVE9Qdnh5VkJLUTZmeUI0cGxqK1lkMTZCU0F3YmdP?=
+ =?utf-8?B?ZjN3WWNNOWxGNnVONUtWNDJRY1M2ZnpBYVU4NGQyK0FRTkwxWVBHbmF2bkJj?=
+ =?utf-8?B?NlBiUXUwV1cwS25NT05NTGpjN01obmt1UEtiNXY4QWRUQTNmMkVTY2xQVGVw?=
+ =?utf-8?B?M05HNlI2UjV1ZUEzWnY2S2dkRTdlTkJ1YzhKNnhtTlFiWk5TQ2tYOXJ6V1gx?=
+ =?utf-8?B?NlVZQXFjV2FLSU1TTjhIaXFZdnJNa3JqRmE4eHA3V3BHTVRkVUhJQkVWQUVS?=
+ =?utf-8?B?VmZLRUplV25oV21qVERMK2JlNlNtSmdHcWtzemVUYUlsQ0psMVNqRTFrTHls?=
+ =?utf-8?B?SDRxWWY2b05IaUZONm9rd1lONG95eHNjdExyeldzeEViS2xFN2VsSVZMYjBX?=
+ =?utf-8?B?VGpoZTZzQngyUVU5c1pNSzJzdE5PRHNJSlZ6MnFBUlZodjU5ODErY0VIWjFY?=
+ =?utf-8?B?MkpmYW1mMHpKU1NNalF3NmNsUEl1dyszZzFKcU9vUldpbXRTRGczNXV2dVJY?=
+ =?utf-8?B?MGtZQ1Z4TkpyN3JOWHJ5c0pPUllpWGI5UktZQWxYdm96VitpOG4rQ1VKZkZM?=
+ =?utf-8?B?T1h1cmpUeUZvYXY1bUpqeFVQWDNEdEZKdmJhS29kanVFMjZGZ2VCWU9acUY3?=
+ =?utf-8?B?cXZMN3YvejVrbmNrM1pQKytIZ010SHFJSnJEdlIxRk1WQ2lxdEx3c0dvUVZy?=
+ =?utf-8?B?WXY4c1Yxc3J2UTZrdysxWEN3eFd1UlFzYUI0MUc3UGtuM3NqK20zdklpYkI2?=
+ =?utf-8?B?ZFd6ZVJoOGcyUXYxL0dJeXYveWtvWGJaaFZnZEdUbXZrd3FnZVVpRE5oZElk?=
+ =?utf-8?B?Mm5CUWFXcGZHSHBSakVzRDVCZnRPOFhPNkxzTkQyUWs0MWdkbE1xNmx4WmJ4?=
+ =?utf-8?B?SXlkTE9hTS94VElMeEtHcXlwN0U2dlpKK0tLN2gvM0JBb3pKRjN5UnU2TFZQ?=
+ =?utf-8?B?OTNpZ2hudlNSd1VaMFJwRWVnNWhvMERxNGc4Q2hYdDZiK1haOEcza1ZVdlVm?=
+ =?utf-8?B?MVBsRGdESTJweW96VHcxMXNPUkxKOWVUdHdBbWFyQi9PZ1VRdW9UQnBjb1da?=
+ =?utf-8?B?WmFFMGZ1NHVvTlVJb1lSbWNSWTVyWFliK2VwVmUwTXI4clZNeHhqRDlrOFh2?=
+ =?utf-8?B?QXJORGZDQ2tnNzk0VE9BS0E5SGFZNWZhUTA3ajZIMUM1YW4wNjR3U0pPTVBP?=
+ =?utf-8?B?RFVzMHIrOXVUVGlnWGtTY2pyNkdQdVZNaEFDTDZHQUhiWk8vTDlXYllOV2Fq?=
+ =?utf-8?B?K0V2a0Z6UUNVOG5IUHQ1V1NlUGx0d0JqRE1LS2pYWDNhOVFkc0ZVRFQ4d3Az?=
+ =?utf-8?B?YTNCTFc3bTcwVU5EeHpmUWY0ZGwrelBDWm1ZczV2Njhrd3BWREZXYnpvKzds?=
+ =?utf-8?B?dE9qc3d4TENiOFE0aExrMXhBdExMU2Z3UkYrMW55dnhiSGVJazVvWWoyMFdQ?=
+ =?utf-8?B?bWRsa01SWmFnSWR0bXFvbmdIZmV6bmVIZEtnZkwxOWFJejBibWl0MkVUSEtI?=
+ =?utf-8?B?b1hiQ1phMkN1VDc4RFdoTWJHR1UrY1FURGVZNlcvTk9YTnpoWDdCSGtveWhI?=
+ =?utf-8?B?cjhwM3ZxcnlBTWxKYmd0UXFlLzdZYlNYTUhRd3U1VE14Tnd5dXJLMjA3ejRi?=
+ =?utf-8?B?Rzg3cDV4amVXRTJ5TWEzV2FUVlFSdVRtbGFTVTdRY0U4YlNWQXdxMnRIRGtj?=
+ =?utf-8?Q?8VNtYyKLUuEkWf9RtuVHObQ=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <58E9C5609833394D8696DC82D735F9F9@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: ibm.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR15MB5821.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1852ac04-e5ec-4e6a-57e7-08ddf7abc92c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Sep 2025 18:38:54.2967
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: q+jplXLgS/CGKDjGvl0AcBUrZcTuXtoWqeXPO1DGr2kSejWIFvgqwK7gTqJbtK/NfB2SSHfjh/nknC6JCCAW5Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR15MB5795
+X-Proofpoint-ORIG-GUID: 4Nk4uFxBwDVVaabQVHCbFFkdsd4HKF7K
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTE2MDIwNCBTYWx0ZWRfX2fD9+LyhuQRm
+ JPPv2XNgKYaPA0egKtuZMoSn/jEYJ4+TLnEEeTTI20hHxJEAD9T5N5Cj991JPZ1mWTpFI65AxmL
+ KOBfs74OZKIAfcbn4hhGu1YSFXoWdztbB92F9pmEzxibDHAnQk0jsF6QZ9vqZo/5QEgrh/7jamr
+ jI1gZhTy7rfKx8W1JiftInj0T0z0ug/rvBfwZZjikFyD0DgSTKnFby2ntKM8gm3EZdyUweVCGto
+ 4Pqm+EX8WbW2oVz3C/6dB4V3jTypyh1jRT3YVIYGs6YDarktpEqsCBmi4xzGk+ZIjH2FHVTpbmn
+ QlTDxy7feUrMEukS6sp4z+ypNUCZqmtMsmLF2g7iXFoPKU1TAJ73crhX7pwiVKpc3g4t0myNTt6
+ Um7sNots
+X-Authority-Analysis: v=2.4 cv=R8oDGcRX c=1 sm=1 tr=0 ts=68cda343 cx=c_pps
+ a=onUmW/TBZy4T/WhMO3N4DQ==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=yJojWOMRYYMA:10 a=P-IC7800AAAA:8 a=R5C9hjxsAAAA:8 a=G2SUqctSMXRlfaBlJskA:9
+ a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22
+X-Proofpoint-GUID: YsDI-NRihT4r5mRSCYQG7WeVFz8o1mKa
+Subject: Re:  [PATCH] ceph: Fix the wrong format specifier
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-19_02,2025-09-19_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 suspectscore=0 malwarescore=0 bulkscore=0 spamscore=0
+ adultscore=0 impostorscore=0 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509160204
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-
-This patch implements the Kunit based set of
-unit tests for string operations. It checks
-functionality of ceph_mds_state_name(),
-ceph_session_op_name(), ceph_mds_op_name(),
-ceph_cap_op_name(), ceph_lease_op_name(), and
-ceph_snap_op_name().
-
-./tools/testing/kunit/kunit.py run --kunitconfig ./fs/ceph/.kunitconfig
-[11:05:53] Configuring KUnit Kernel ...
-[11:05:53] Building KUnit Kernel ...
-Populating config with:
-$ make ARCH=um O=.kunit olddefconfig
-Building with:
-$ make all compile_commands.json scripts_gdb ARCH=um O=.kunit --jobs=22
-[11:06:01] Starting KUnit Kernel (1/1)...
-[11:06:01] ============================================================
-Running tests with:
-$ .kunit/linux kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
-[11:06:01] ================ ceph_strings (6 subtests) =================
-[11:06:01] [PASSED] ceph_mds_state_name_test
-[11:06:01] [PASSED] ceph_session_op_name_test
-[11:06:01] [PASSED] ceph_mds_op_name_test
-[11:06:01] [PASSED] ceph_cap_op_name_test
-[11:06:01] [PASSED] ceph_lease_op_name_test
-[11:06:01] [PASSED] ceph_snap_op_name_test
-[11:06:01] ================== [PASSED] ceph_strings ===================
-[11:06:01] ============================================================
-[11:06:01] Testing complete. Ran 6 tests: passed: 6
-[11:06:01] Elapsed time: 8.286s total, 0.002s configuring, 8.117s building, 0.128s running
-
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-cc: Alex Markuze <amarkuze@redhat.com>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: Ceph Development <ceph-devel@vger.kernel.org>
----
- fs/ceph/.kunitconfig         |  16 +
- fs/ceph/Kconfig              |  12 +
- fs/ceph/Makefile             |   2 +
- fs/ceph/kunit_tests.h        |  30 ++
- fs/ceph/strings.c            | 381 +++++++++++++++++------
- fs/ceph/strings_test.c       | 588 +++++++++++++++++++++++++++++++++++
- include/linux/ceph/ceph_fs.h | 191 ++++++++----
- 7 files changed, 1062 insertions(+), 158 deletions(-)
- create mode 100644 fs/ceph/.kunitconfig
- create mode 100644 fs/ceph/kunit_tests.h
- create mode 100644 fs/ceph/strings_test.c
-
-diff --git a/fs/ceph/.kunitconfig b/fs/ceph/.kunitconfig
-new file mode 100644
-index 000000000000..f342622020a6
---- /dev/null
-+++ b/fs/ceph/.kunitconfig
-@@ -0,0 +1,16 @@
-+CONFIG_KUNIT=y
-+CONFIG_NET=y
-+CONFIG_INET=y
-+CONFIG_IPV6=y
-+CONFIG_CRYPTO=y
-+CONFIG_CRC32=y
-+CONFIG_CRYPTO_AES=y
-+CONFIG_CRYPTO_CBC=y
-+CONFIG_CRYPTO_GCM=y
-+CONFIG_CRYPTO_HMAC=y
-+CONFIG_CRYPTO_SHA256=y
-+CONFIG_KEYS=y
-+CONFIG_NETFS_SUPPORT=y
-+CONFIG_CEPH_LIB=y
-+CONFIG_CEPH_FS=y
-+CONFIG_CEPH_FS_KUNIT_TEST=y
-diff --git a/fs/ceph/Kconfig b/fs/ceph/Kconfig
-index 3e7def3d31c1..2091fa12ed26 100644
---- a/fs/ceph/Kconfig
-+++ b/fs/ceph/Kconfig
-@@ -50,3 +50,15 @@ config CEPH_FS_SECURITY_LABEL
- 
- 	  If you are not using a security module that requires using
- 	  extended attributes for file security labels, say N.
-+
-+config CEPH_FS_KUNIT_TEST
-+	tristate "KUnit tests for Ceph FS" if !KUNIT_ALL_TESTS
-+	depends on CEPH_FS && KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  This builds KUnit tests for Ceph file system functions.
-+
-+	  For more information on KUnit and unit tests in general, please refer
-+	  to the KUnit documentation in Documentation/dev-tools/kunit.
-+
-+	  If unsure, say N.
-diff --git a/fs/ceph/Makefile b/fs/ceph/Makefile
-index 1f77ca04c426..a27309c6500a 100644
---- a/fs/ceph/Makefile
-+++ b/fs/ceph/Makefile
-@@ -13,3 +13,5 @@ ceph-y := super.o inode.o dir.o file.o locks.o addr.o ioctl.o \
- ceph-$(CONFIG_CEPH_FSCACHE) += cache.o
- ceph-$(CONFIG_CEPH_FS_POSIX_ACL) += acl.o
- ceph-$(CONFIG_FS_ENCRYPTION) += crypto.o
-+
-+obj-$(CONFIG_CEPH_FS_KUNIT_TEST) += strings_test.o
-diff --git a/fs/ceph/kunit_tests.h b/fs/ceph/kunit_tests.h
-new file mode 100644
-index 000000000000..73a83e570e0a
---- /dev/null
-+++ b/fs/ceph/kunit_tests.h
-@@ -0,0 +1,30 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * KUnit tests declarations
-+ *
-+ * Copyright (C) 2025, IBM Corporation
-+ *
-+ * Author: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-+ */
-+
-+#ifndef _CEPH_KUNIT_TESTS_H
-+#define _CEPH_KUNIT_TESTS_H
-+
-+#include <kunit/visibility.h>
-+
-+#if IS_ENABLED(CONFIG_KUNIT)
-+int ceph_mds_state_2_str_idx(int mds_state);
-+extern const char *ceph_mds_state_name_strings[];
-+int ceph_session_op_2_str_idx(int op);
-+extern const char *ceph_session_op_name_strings[];
-+int ceph_mds_op_2_str_idx(int op);
-+extern const char *ceph_mds_op_name_strings[];
-+int ceph_cap_op_2_str_idx(int op);
-+extern const char *ceph_cap_op_name_strings[];
-+int ceph_lease_op_2_str_idx(int op);
-+extern const char *ceph_lease_op_name_strings[];
-+int ceph_snap_op_2_str_idx(int op);
-+extern const char *ceph_snap_op_name_strings[];
-+#endif
-+
-+#endif /* _CEPH_KUNIT_TESTS_H */
-diff --git a/fs/ceph/strings.c b/fs/ceph/strings.c
-index e36e8948e728..6585a8b12028 100644
---- a/fs/ceph/strings.c
-+++ b/fs/ceph/strings.c
-@@ -5,126 +5,319 @@
- #include <linux/module.h>
- #include <linux/ceph/types.h>
- 
-+#include "kunit_tests.h"
- 
--const char *ceph_mds_state_name(int s)
-+const char *ceph_mds_state_name_strings[] = {
-+/* 0 */		"down:dne",
-+/* 1 */		"down:stopped",
-+/* 2 */		"up:boot",
-+/* 3 */		"up:standby",
-+/* 4 */		"up:standby-replay",
-+/* 5 */		"up:oneshot-replay",
-+/* 6 */		"up:creating",
-+/* 7 */		"up:starting",
-+/* 8 */		"up:replay",
-+/* 9 */		"up:resolve",
-+/* 10 */	"up:reconnect",
-+/* 11 */	"up:rejoin",
-+/* 12 */	"up:clientreplay",
-+/* 13 */	"up:active",
-+/* 14 */	"up:stopping",
-+/* 15 */	"???"
-+};
-+EXPORT_SYMBOL_IF_KUNIT(ceph_mds_state_name_strings);
-+
-+VISIBLE_IF_KUNIT
-+int ceph_mds_state_2_str_idx(int mds_state)
- {
--	switch (s) {
-+	switch (mds_state) {
- 		/* down and out */
--	case CEPH_MDS_STATE_DNE:        return "down:dne";
--	case CEPH_MDS_STATE_STOPPED:    return "down:stopped";
-+	case CEPH_MDS_STATE_DNE:
-+		return CEPH_MDS_STATE_DNE_STR_IDX;		/* 0 */
-+	case CEPH_MDS_STATE_STOPPED:
-+		return CEPH_MDS_STATE_STOPPED_STR_IDX;		/* 1 */
- 		/* up and out */
--	case CEPH_MDS_STATE_BOOT:       return "up:boot";
--	case CEPH_MDS_STATE_STANDBY:    return "up:standby";
--	case CEPH_MDS_STATE_STANDBY_REPLAY:    return "up:standby-replay";
--	case CEPH_MDS_STATE_REPLAYONCE: return "up:oneshot-replay";
--	case CEPH_MDS_STATE_CREATING:   return "up:creating";
--	case CEPH_MDS_STATE_STARTING:   return "up:starting";
-+	case CEPH_MDS_STATE_BOOT:
-+		return CEPH_MDS_STATE_BOOT_STR_IDX;		/* 2 */
-+	case CEPH_MDS_STATE_STANDBY:
-+		return CEPH_MDS_STATE_STANDBY_STR_IDX;		/* 3 */
-+	case CEPH_MDS_STATE_STANDBY_REPLAY:
-+		return CEPH_MDS_STATE_CREATING_STR_IDX;		/* 4 */
-+	case CEPH_MDS_STATE_REPLAYONCE:
-+		return CEPH_MDS_STATE_STARTING_STR_IDX;		/* 5 */
-+	case CEPH_MDS_STATE_CREATING:
-+		return CEPH_MDS_STATE_STANDBY_REPLAY_STR_IDX;	/* 6 */
-+	case CEPH_MDS_STATE_STARTING:
-+		return CEPH_MDS_STATE_REPLAYONCE_STR_IDX;	/* 7 */
- 		/* up and in */
--	case CEPH_MDS_STATE_REPLAY:     return "up:replay";
--	case CEPH_MDS_STATE_RESOLVE:    return "up:resolve";
--	case CEPH_MDS_STATE_RECONNECT:  return "up:reconnect";
--	case CEPH_MDS_STATE_REJOIN:     return "up:rejoin";
--	case CEPH_MDS_STATE_CLIENTREPLAY: return "up:clientreplay";
--	case CEPH_MDS_STATE_ACTIVE:     return "up:active";
--	case CEPH_MDS_STATE_STOPPING:   return "up:stopping";
-+	case CEPH_MDS_STATE_REPLAY:
-+		return CEPH_MDS_STATE_REPLAY_STR_IDX;		/* 8 */
-+	case CEPH_MDS_STATE_RESOLVE:
-+		return CEPH_MDS_STATE_RESOLVE_STR_IDX;		/* 9 */
-+	case CEPH_MDS_STATE_RECONNECT:
-+		return CEPH_MDS_STATE_RECONNECT_STR_IDX;	/* 10 */
-+	case CEPH_MDS_STATE_REJOIN:
-+		return CEPH_MDS_STATE_REJOIN_STR_IDX;		/* 11 */
-+	case CEPH_MDS_STATE_CLIENTREPLAY:
-+		return CEPH_MDS_STATE_CLIENTREPLAY_STR_IDX;	/* 12 */
-+	case CEPH_MDS_STATE_ACTIVE:
-+		return CEPH_MDS_STATE_ACTIVE_STR_IDX;		/* 13 */
-+	case CEPH_MDS_STATE_STOPPING:
-+		return CEPH_MDS_STATE_STOPPING_STR_IDX;		/* 14 */
-+	default:
-+		/* do nothing */
-+		break;
- 	}
--	return "???";
-+
-+	return CEPH_MDS_STATE_UNKNOWN_NAME_STR_IDX;
-+}
-+EXPORT_SYMBOL_IF_KUNIT(ceph_mds_state_2_str_idx);
-+
-+const char *ceph_mds_state_name(int s)
-+{
-+	return ceph_mds_state_name_strings[ceph_mds_state_2_str_idx(s)];
-+}
-+EXPORT_SYMBOL_IF_KUNIT(ceph_mds_state_name);
-+
-+const char *ceph_session_op_name_strings[] = {
-+/* 0 */		"request_open",
-+/* 1 */		"open",
-+/* 2 */		"request_close",
-+/* 3 */		"close",
-+/* 4 */		"request_renewcaps",
-+/* 5 */		"renewcaps",
-+/* 6 */		"stale",
-+/* 7 */		"recall_state",
-+/* 8 */		"flushmsg",
-+/* 9 */		"flushmsg_ack",
-+/* 10 */	"force_ro",
-+/* 11 */	"reject",
-+/* 12 */	"flush_mdlog",
-+/* 13 */	"???"
-+};
-+EXPORT_SYMBOL_IF_KUNIT(ceph_session_op_name_strings);
-+
-+VISIBLE_IF_KUNIT
-+int ceph_session_op_2_str_idx(int op)
-+{
-+	if (op < CEPH_SESSION_REQUEST_OPEN ||
-+	    op >= CEPH_SESSION_UNKNOWN_NAME)
-+		return CEPH_SESSION_UNKNOWN_NAME;
-+
-+	return op;
- }
-+EXPORT_SYMBOL_IF_KUNIT(ceph_session_op_2_str_idx);
- 
- const char *ceph_session_op_name(int op)
-+{
-+	return ceph_session_op_name_strings[ceph_session_op_2_str_idx(op)];
-+}
-+EXPORT_SYMBOL_IF_KUNIT(ceph_session_op_name);
-+
-+const char *ceph_mds_op_name_strings[] = {
-+/* 0 */		"lookup",
-+/* 1 */		"getattr",
-+/* 2 */		"lookuphash",
-+/* 3 */		"lookupparent",
-+/* 4 */		"lookupino",
-+/* 5 */		"lookupname",
-+/* 6 */		"getvxattr",
-+/* 7 */		"setxattr",
-+/* 8 */		"rmxattr",
-+/* 9 */		"setlayou",
-+/* 10 */	"setattr",
-+/* 11 */	"setfilelock",
-+/* 12 */	"getfilelock",
-+/* 13 */	"setdirlayout",
-+/* 14 */	"mknod",
-+/* 15 */	"link",
-+/* 16 */	"unlink",
-+/* 17 */	"rename",
-+/* 18 */	"mkdir",
-+/* 19 */	"rmdir",
-+/* 20 */	"symlink",
-+/* 21 */	"create",
-+/* 22 */	"open",
-+/* 23 */	"readdir",
-+/* 24 */	"lookupsnap",
-+/* 25 */	"mksnap",
-+/* 26 */	"rmsnap",
-+/* 27 */	"lssnap",
-+/* 28 */	"renamesnap",
-+/* 29 */	"???"
-+};
-+EXPORT_SYMBOL_IF_KUNIT(ceph_mds_op_name_strings);
-+
-+VISIBLE_IF_KUNIT
-+int ceph_mds_op_2_str_idx(int op)
- {
- 	switch (op) {
--	case CEPH_SESSION_REQUEST_OPEN: return "request_open";
--	case CEPH_SESSION_OPEN: return "open";
--	case CEPH_SESSION_REQUEST_CLOSE: return "request_close";
--	case CEPH_SESSION_CLOSE: return "close";
--	case CEPH_SESSION_REQUEST_RENEWCAPS: return "request_renewcaps";
--	case CEPH_SESSION_RENEWCAPS: return "renewcaps";
--	case CEPH_SESSION_STALE: return "stale";
--	case CEPH_SESSION_RECALL_STATE: return "recall_state";
--	case CEPH_SESSION_FLUSHMSG: return "flushmsg";
--	case CEPH_SESSION_FLUSHMSG_ACK: return "flushmsg_ack";
--	case CEPH_SESSION_FORCE_RO: return "force_ro";
--	case CEPH_SESSION_REJECT: return "reject";
--	case CEPH_SESSION_REQUEST_FLUSH_MDLOG: return "flush_mdlog";
-+	case CEPH_MDS_OP_LOOKUP:
-+		return CEPH_MDS_OP_LOOKUP_STR_IDX;		/* 0 */
-+	case CEPH_MDS_OP_LOOKUPHASH:
-+		return CEPH_MDS_OP_LOOKUPHASH_STR_IDX;		/* 2 */
-+	case CEPH_MDS_OP_LOOKUPPARENT:
-+		return CEPH_MDS_OP_LOOKUPPARENT_STR_IDX;	/* 3 */
-+	case CEPH_MDS_OP_LOOKUPINO:
-+		return CEPH_MDS_OP_LOOKUPINO_STR_IDX;		/* 4 */
-+	case CEPH_MDS_OP_LOOKUPNAME:
-+		return CEPH_MDS_OP_LOOKUPNAME_STR_IDX;		/* 5 */
-+	case CEPH_MDS_OP_GETATTR:
-+		return CEPH_MDS_OP_GETATTR_STR_IDX;		/* 1 */
-+	case CEPH_MDS_OP_GETVXATTR:
-+		return CEPH_MDS_OP_GETVXATTR_STR_IDX;		/* 6 */
-+	case CEPH_MDS_OP_SETXATTR:
-+		return CEPH_MDS_OP_SETXATTR_STR_IDX;		/* 7 */
-+	case CEPH_MDS_OP_SETATTR:
-+		return CEPH_MDS_OP_SETATTR_STR_IDX;		/* 10 */
-+	case CEPH_MDS_OP_RMXATTR:
-+		return CEPH_MDS_OP_RMXATTR_STR_IDX;		/* 8 */
-+	case CEPH_MDS_OP_SETLAYOUT:
-+		return CEPH_MDS_OP_SETLAYOUT_STR_IDX;		/* 9 */
-+	case CEPH_MDS_OP_SETDIRLAYOUT:
-+		return CEPH_MDS_OP_SETDIRLAYOUT_STR_IDX;	/* 13 */
-+	case CEPH_MDS_OP_READDIR:
-+		return CEPH_MDS_OP_READDIR_STR_IDX;		/* 23 */
-+	case CEPH_MDS_OP_MKNOD:
-+		return CEPH_MDS_OP_MKNOD_STR_IDX;		/* 14 */
-+	case CEPH_MDS_OP_LINK:
-+		return CEPH_MDS_OP_LINK_STR_IDX;		/* 15 */
-+	case CEPH_MDS_OP_UNLINK:
-+		return CEPH_MDS_OP_UNLINK_STR_IDX;		/* 16 */
-+	case CEPH_MDS_OP_RENAME:
-+		return CEPH_MDS_OP_RENAME_STR_IDX;		/* 17 */
-+	case CEPH_MDS_OP_MKDIR:
-+		return CEPH_MDS_OP_MKDIR_STR_IDX;		/* 18 */
-+	case CEPH_MDS_OP_RMDIR:
-+		return CEPH_MDS_OP_RMDIR_STR_IDX;		/* 19 */
-+	case CEPH_MDS_OP_SYMLINK:
-+		return CEPH_MDS_OP_SYMLINK_STR_IDX;		/* 20 */
-+	case CEPH_MDS_OP_CREATE:
-+		return CEPH_MDS_OP_CREATE_STR_IDX;		/* 21 */
-+	case CEPH_MDS_OP_OPEN:
-+		return CEPH_MDS_OP_OPEN_STR_IDX;		/* 22 */
-+	case CEPH_MDS_OP_LOOKUPSNAP:
-+		return CEPH_MDS_OP_LOOKUPSNAP_STR_IDX;		/* 24 */
-+	case CEPH_MDS_OP_LSSNAP:
-+		return CEPH_MDS_OP_LSSNAP_STR_IDX;		/* 27 */
-+	case CEPH_MDS_OP_MKSNAP:
-+		return CEPH_MDS_OP_MKSNAP_STR_IDX;		/* 25 */
-+	case CEPH_MDS_OP_RMSNAP:
-+		return CEPH_MDS_OP_RMSNAP_STR_IDX;		/* 26 */
-+	case CEPH_MDS_OP_RENAMESNAP:
-+		return CEPH_MDS_OP_RENAMESNAP_STR_IDX;		/* 28 */
-+	case CEPH_MDS_OP_SETFILELOCK:
-+		return CEPH_MDS_OP_SETFILELOCK_STR_IDX;		/* 11 */
-+	case CEPH_MDS_OP_GETFILELOCK:
-+		return CEPH_MDS_OP_GETFILELOCK_STR_IDX;		/* 12 */
-+	default:
-+		/* do nothing */
-+		break;
- 	}
--	return "???";
-+
-+	return CEPH_MDS_OP_UNKNOWN_NAME_STR_IDX;
- }
-+EXPORT_SYMBOL_IF_KUNIT(ceph_mds_op_2_str_idx);
- 
- const char *ceph_mds_op_name(int op)
- {
--	switch (op) {
--	case CEPH_MDS_OP_LOOKUP:  return "lookup";
--	case CEPH_MDS_OP_LOOKUPHASH:  return "lookuphash";
--	case CEPH_MDS_OP_LOOKUPPARENT:  return "lookupparent";
--	case CEPH_MDS_OP_LOOKUPINO:  return "lookupino";
--	case CEPH_MDS_OP_LOOKUPNAME:  return "lookupname";
--	case CEPH_MDS_OP_GETATTR:  return "getattr";
--	case CEPH_MDS_OP_GETVXATTR:  return "getvxattr";
--	case CEPH_MDS_OP_SETXATTR: return "setxattr";
--	case CEPH_MDS_OP_SETATTR: return "setattr";
--	case CEPH_MDS_OP_RMXATTR: return "rmxattr";
--	case CEPH_MDS_OP_SETLAYOUT: return "setlayou";
--	case CEPH_MDS_OP_SETDIRLAYOUT: return "setdirlayout";
--	case CEPH_MDS_OP_READDIR: return "readdir";
--	case CEPH_MDS_OP_MKNOD: return "mknod";
--	case CEPH_MDS_OP_LINK: return "link";
--	case CEPH_MDS_OP_UNLINK: return "unlink";
--	case CEPH_MDS_OP_RENAME: return "rename";
--	case CEPH_MDS_OP_MKDIR: return "mkdir";
--	case CEPH_MDS_OP_RMDIR: return "rmdir";
--	case CEPH_MDS_OP_SYMLINK: return "symlink";
--	case CEPH_MDS_OP_CREATE: return "create";
--	case CEPH_MDS_OP_OPEN: return "open";
--	case CEPH_MDS_OP_LOOKUPSNAP: return "lookupsnap";
--	case CEPH_MDS_OP_LSSNAP: return "lssnap";
--	case CEPH_MDS_OP_MKSNAP: return "mksnap";
--	case CEPH_MDS_OP_RMSNAP: return "rmsnap";
--	case CEPH_MDS_OP_RENAMESNAP: return "renamesnap";
--	case CEPH_MDS_OP_SETFILELOCK: return "setfilelock";
--	case CEPH_MDS_OP_GETFILELOCK: return "getfilelock";
--	}
--	return "???";
-+	return ceph_mds_op_name_strings[ceph_mds_op_2_str_idx(op)];
- }
-+EXPORT_SYMBOL_IF_KUNIT(ceph_mds_op_name);
-+
-+const char *ceph_cap_op_name_strings[] = {
-+/* 0 */		"grant",
-+/* 1 */		"revoke",
-+/* 2 */		"trunc",
-+/* 3 */		"export",
-+/* 4 */		"import",
-+/* 5 */		"update",
-+/* 6 */		"drop",
-+/* 7 */		"flush",
-+/* 8 */		"flush_ack",
-+/* 9 */		"flushsnap",
-+/* 10 */	"flushsnap_ack",
-+/* 11 */	"release",
-+/* 12 */	"renew",
-+/* 13 */	"???"
-+};
-+EXPORT_SYMBOL_IF_KUNIT(ceph_cap_op_name_strings);
-+
-+VISIBLE_IF_KUNIT
-+int ceph_cap_op_2_str_idx(int op)
-+{
-+	if (op < CEPH_CAP_OP_GRANT ||
-+	    op >= CEPH_CAP_OP_UNKNOWN_NAME)
-+		return CEPH_SESSION_UNKNOWN_NAME;
-+
-+	return op;
-+}
-+EXPORT_SYMBOL_IF_KUNIT(ceph_cap_op_2_str_idx);
- 
- const char *ceph_cap_op_name(int op)
-+{
-+	return ceph_cap_op_name_strings[ceph_cap_op_2_str_idx(op)];
-+}
-+EXPORT_SYMBOL_IF_KUNIT(ceph_cap_op_name);
-+
-+const char *ceph_lease_op_name_strings[] = {
-+/* 0 */		"revoke",
-+/* 1 */		"release",
-+/* 2 */		"renew",
-+/* 3 */		"revoke_ack",
-+/* 4 */		"???"
-+};
-+EXPORT_SYMBOL_IF_KUNIT(ceph_lease_op_name_strings);
-+
-+VISIBLE_IF_KUNIT
-+int ceph_lease_op_2_str_idx(int op)
- {
- 	switch (op) {
--	case CEPH_CAP_OP_GRANT: return "grant";
--	case CEPH_CAP_OP_REVOKE: return "revoke";
--	case CEPH_CAP_OP_TRUNC: return "trunc";
--	case CEPH_CAP_OP_EXPORT: return "export";
--	case CEPH_CAP_OP_IMPORT: return "import";
--	case CEPH_CAP_OP_UPDATE: return "update";
--	case CEPH_CAP_OP_DROP: return "drop";
--	case CEPH_CAP_OP_FLUSH: return "flush";
--	case CEPH_CAP_OP_FLUSH_ACK: return "flush_ack";
--	case CEPH_CAP_OP_FLUSHSNAP: return "flushsnap";
--	case CEPH_CAP_OP_FLUSHSNAP_ACK: return "flushsnap_ack";
--	case CEPH_CAP_OP_RELEASE: return "release";
--	case CEPH_CAP_OP_RENEW: return "renew";
-+	case CEPH_MDS_LEASE_REVOKE:
-+		return CEPH_MDS_LEASE_REVOKE_STR_IDX;
-+	case CEPH_MDS_LEASE_RELEASE:
-+		return CEPH_MDS_LEASE_RELEASE_STR_IDX;
-+	case CEPH_MDS_LEASE_RENEW:
-+		return CEPH_MDS_LEASE_RENEW_STR_IDX;
-+	case CEPH_MDS_LEASE_REVOKE_ACK:
-+		return CEPH_MDS_LEASE_REVOKE_ACK_STR_IDX;
-+	default:
-+		/* do nothing */
-+		break;
- 	}
--	return "???";
-+
-+	return CEPH_MDS_LEASE_UNKNOWN_NAME_STR_IDX;
- }
-+EXPORT_SYMBOL_IF_KUNIT(ceph_lease_op_2_str_idx);
- 
--const char *ceph_lease_op_name(int o)
-+const char *ceph_lease_op_name(int op)
- {
--	switch (o) {
--	case CEPH_MDS_LEASE_REVOKE: return "revoke";
--	case CEPH_MDS_LEASE_RELEASE: return "release";
--	case CEPH_MDS_LEASE_RENEW: return "renew";
--	case CEPH_MDS_LEASE_REVOKE_ACK: return "revoke_ack";
--	}
--	return "???";
-+	return ceph_lease_op_name_strings[ceph_lease_op_2_str_idx(op)];
- }
-+EXPORT_SYMBOL_IF_KUNIT(ceph_lease_op_name);
- 
--const char *ceph_snap_op_name(int o)
-+const char *ceph_snap_op_name_strings[] = {
-+/* 0 */		"update",
-+/* 1 */		"create",
-+/* 2 */		"destroy",
-+/* 3 */		"split",
-+/* 4 */		"???"
-+};
-+EXPORT_SYMBOL_IF_KUNIT(ceph_snap_op_name_strings);
-+
-+VISIBLE_IF_KUNIT
-+int ceph_snap_op_2_str_idx(int op)
- {
--	switch (o) {
--	case CEPH_SNAP_OP_UPDATE: return "update";
--	case CEPH_SNAP_OP_CREATE: return "create";
--	case CEPH_SNAP_OP_DESTROY: return "destroy";
--	case CEPH_SNAP_OP_SPLIT: return "split";
--	}
--	return "???";
-+	if (op < CEPH_SNAP_OP_UPDATE ||
-+	    op >= CEPH_SNAP_OP_UNKNOWN_NAME)
-+		return CEPH_SNAP_OP_UNKNOWN_NAME;
-+
-+	return op;
-+}
-+EXPORT_SYMBOL_IF_KUNIT(ceph_snap_op_2_str_idx);
-+
-+const char *ceph_snap_op_name(int op)
-+{
-+	return ceph_snap_op_name_strings[ceph_snap_op_2_str_idx(op)];
- }
-+EXPORT_SYMBOL_IF_KUNIT(ceph_snap_op_name);
-diff --git a/fs/ceph/strings_test.c b/fs/ceph/strings_test.c
-new file mode 100644
-index 000000000000..9e5204508192
---- /dev/null
-+++ b/fs/ceph/strings_test.c
-@@ -0,0 +1,588 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * KUnit tests for fs/ceph/strings.c
-+ *
-+ * Copyright (C) 2025, IBM Corporation
-+ *
-+ * Author: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-+ */
-+
-+#include <kunit/test.h>
-+#include <linux/ceph/types.h>
-+
-+#include "kunit_tests.h"
-+
-+#define CEPH_KUNIT_STRINGS_TEST_RANGE		(20)
-+#define CEPH_KUNIT_OP_INVALID_MIN		(-999)
-+#define CEPH_KUNIT_OP_INVALID_MAX		(999)
-+
-+typedef int (*next_op_func)(int);
-+
-+struct ceph_op_iterator {
-+	int start;
-+	int cur;
-+	int next;
-+	int end;
-+	next_op_func get_next_op;
-+};
-+
-+static inline
-+void ceph_op_iterator_init(struct ceph_op_iterator *iter,
-+			   int start, int end,
-+			   next_op_func get_next_op)
-+{
-+	if (!iter || !get_next_op)
-+		return;
-+
-+	iter->start = iter->cur = start;
-+	iter->end = end;
-+	iter->get_next_op = get_next_op;
-+	iter->next = iter->get_next_op(start);
-+}
-+
-+static inline
-+int ceph_op_iterator_next(struct ceph_op_iterator *iter)
-+{
-+	int threshold1, threshold2;
-+
-+	if (!iter)
-+		return CEPH_KUNIT_OP_INVALID_MAX;
-+
-+	if (iter->cur >= iter->end)
-+		return CEPH_KUNIT_OP_INVALID_MAX;
-+
-+	threshold1 = iter->start + CEPH_KUNIT_STRINGS_TEST_RANGE;
-+	if (threshold1 > iter->next)
-+		threshold1 = iter->next;
-+
-+	threshold2 = iter->next - CEPH_KUNIT_STRINGS_TEST_RANGE;
-+	if (threshold2 < threshold1)
-+		threshold2 = iter->next;
-+
-+	iter->cur++;
-+
-+	if (iter->cur <= threshold1)
-+		goto finish_method;
-+
-+	if (iter->cur >= threshold2 && iter->cur <= iter->next)
-+		goto finish_method;
-+
-+	iter->start = iter->next;
-+	iter->next = iter->get_next_op(iter->start);
-+
-+	if (iter->start >= iter->next)
-+		iter->next = iter->end;
-+
-+finish_method:
-+	return iter->cur;
-+}
-+
-+static inline
-+bool ceph_op_iterator_valid(struct ceph_op_iterator *iter)
-+{
-+	if (!iter)
-+		return false;
-+
-+	return iter->cur < iter->end;
-+}
-+
-+static inline
-+int __ceph_next_op(int prev, int lower_bound, int upper_bound)
-+{
-+	if (prev < lower_bound)
-+		return lower_bound;
-+
-+	if (prev >= lower_bound && prev < upper_bound)
-+		return prev + 1;
-+
-+	return upper_bound;
-+}
-+
-+#define CEPH_MDS_STATE_STR_COUNT	(CEPH_MDS_STATE_UNKNOWN_NAME_STR_IDX)
-+const int ceph_str_idx_2_mds_state[CEPH_MDS_STATE_STR_COUNT] = {
-+/* 0 */		CEPH_MDS_STATE_DNE,
-+/* 1 */		CEPH_MDS_STATE_STOPPED,
-+/* 2 */		CEPH_MDS_STATE_BOOT,
-+/* 3 */		CEPH_MDS_STATE_STANDBY,
-+/* 4 */		CEPH_MDS_STATE_STANDBY_REPLAY,
-+/* 5 */		CEPH_MDS_STATE_REPLAYONCE,
-+/* 6 */		CEPH_MDS_STATE_CREATING,
-+/* 7 */		CEPH_MDS_STATE_STARTING,
-+/* 8 */		CEPH_MDS_STATE_REPLAY,
-+/* 9 */		CEPH_MDS_STATE_RESOLVE,
-+/* 10 */	CEPH_MDS_STATE_RECONNECT,
-+/* 11 */	CEPH_MDS_STATE_REJOIN,
-+/* 12 */	CEPH_MDS_STATE_CLIENTREPLAY,
-+/* 13 */	CEPH_MDS_STATE_ACTIVE,
-+/* 14 */	CEPH_MDS_STATE_STOPPING
-+};
-+
-+static int ceph_mds_state_next_op(int prev)
-+{
-+	if (prev < CEPH_MDS_STATE_REPLAYONCE)
-+		return CEPH_MDS_STATE_REPLAYONCE;
-+
-+	/* [-9..-4] */
-+	if (prev >= CEPH_MDS_STATE_REPLAYONCE &&
-+	    prev < CEPH_MDS_STATE_BOOT)
-+		return prev + 1;
-+
-+	/* [-4..-1] */
-+	if (prev == CEPH_MDS_STATE_BOOT)
-+		return CEPH_MDS_STATE_STOPPED;
-+
-+	/* [-1..0] */
-+	if (prev >= CEPH_MDS_STATE_STOPPED &&
-+	    prev < CEPH_MDS_STATE_DNE)
-+		return prev + 1;
-+
-+	/* [0..8] */
-+	if (prev == CEPH_MDS_STATE_DNE)
-+		return CEPH_MDS_STATE_REPLAY;
-+
-+	/* [8..14] */
-+	if (prev >= CEPH_MDS_STATE_REPLAY &&
-+	    prev < CEPH_MDS_STATE_STOPPING)
-+		return prev + 1;
-+
-+	return CEPH_MDS_STATE_STOPPING;
-+}
-+
-+static void ceph_mds_state_name_test(struct kunit *test)
-+{
-+	const char *unknown_name =
-+		ceph_mds_state_name_strings[CEPH_MDS_STATE_UNKNOWN_NAME_STR_IDX];
-+	struct ceph_op_iterator iter;
-+	int start, end;
-+	int i;
-+
-+	/* Test valid MDS states */
-+	for (i = 0; i < CEPH_MDS_STATE_STR_COUNT; i++) {
-+		KUNIT_EXPECT_STREQ(test,
-+			   ceph_mds_state_name(ceph_str_idx_2_mds_state[i]),
-+			   ceph_mds_state_name_strings[i]);
-+	}
-+
-+	/* Test invalid/unknown states */
-+	start = CEPH_MDS_STATE_REPLAYONCE - CEPH_KUNIT_STRINGS_TEST_RANGE;
-+	end = CEPH_MDS_STATE_STOPPING + CEPH_KUNIT_STRINGS_TEST_RANGE;
-+	ceph_op_iterator_init(&iter, start, end, ceph_mds_state_next_op);
-+
-+	while (ceph_op_iterator_valid(&iter)) {
-+		switch (ceph_mds_state_2_str_idx(iter.cur)) {
-+		case CEPH_MDS_STATE_UNKNOWN_NAME_STR_IDX:
-+			KUNIT_EXPECT_STREQ(test,
-+					   ceph_mds_state_name(iter.cur),
-+					   unknown_name);
-+			break;
-+
-+		default:
-+			/* do nothing */
-+			break;
-+		}
-+
-+		ceph_op_iterator_next(&iter);
-+	}
-+
-+	KUNIT_EXPECT_STREQ(test,
-+			   ceph_mds_state_name(CEPH_KUNIT_OP_INVALID_MIN),
-+			   unknown_name);
-+	KUNIT_EXPECT_STREQ(test,
-+			   ceph_mds_state_name(CEPH_KUNIT_OP_INVALID_MAX),
-+			   unknown_name);
-+}
-+
-+static int ceph_session_next_op(int prev)
-+{
-+	return __ceph_next_op(prev,
-+			      CEPH_SESSION_REQUEST_OPEN,
-+			      CEPH_SESSION_REQUEST_FLUSH_MDLOG);
-+}
-+
-+static void ceph_session_op_name_test(struct kunit *test)
-+{
-+	const char *unknown_name =
-+			ceph_session_op_name_strings[CEPH_SESSION_UNKNOWN_NAME];
-+	struct ceph_op_iterator iter;
-+	int start, end;
-+	int i;
-+
-+	/* Test valid session operations */
-+	for (i = CEPH_SESSION_REQUEST_OPEN; i < CEPH_SESSION_UNKNOWN_NAME; i++) {
-+		KUNIT_EXPECT_STREQ(test,
-+				   ceph_session_op_name(i),
-+				   ceph_session_op_name_strings[i]);
-+	}
-+
-+	/* Test invalid/unknown operations */
-+	start = CEPH_SESSION_REQUEST_OPEN - CEPH_KUNIT_STRINGS_TEST_RANGE;
-+	end = CEPH_SESSION_REQUEST_FLUSH_MDLOG + CEPH_KUNIT_STRINGS_TEST_RANGE;
-+	ceph_op_iterator_init(&iter, start, end, ceph_session_next_op);
-+
-+	while (ceph_op_iterator_valid(&iter)) {
-+		switch (ceph_session_op_2_str_idx(iter.cur)) {
-+		case CEPH_SESSION_UNKNOWN_NAME:
-+			KUNIT_EXPECT_STREQ(test,
-+					   ceph_session_op_name(iter.cur),
-+					   unknown_name);
-+			break;
-+
-+		default:
-+			/* do nothing */
-+			break;
-+		}
-+
-+		ceph_op_iterator_next(&iter);
-+	}
-+
-+	KUNIT_EXPECT_STREQ(test,
-+			   ceph_session_op_name(CEPH_KUNIT_OP_INVALID_MIN),
-+			   unknown_name);
-+	KUNIT_EXPECT_STREQ(test,
-+			   ceph_session_op_name(CEPH_KUNIT_OP_INVALID_MAX),
-+			   unknown_name);
-+}
-+
-+#define CEPH_MDS_OP_STR_COUNT	(CEPH_MDS_OP_UNKNOWN_NAME_STR_IDX)
-+const int ceph_str_idx_2_mds_op[CEPH_MDS_OP_STR_COUNT] = {
-+/* 0 */		CEPH_MDS_OP_LOOKUP,
-+/* 1 */		CEPH_MDS_OP_GETATTR,
-+/* 2 */		CEPH_MDS_OP_LOOKUPHASH,
-+/* 3 */		CEPH_MDS_OP_LOOKUPPARENT,
-+/* 4 */		CEPH_MDS_OP_LOOKUPINO,
-+/* 5 */		CEPH_MDS_OP_LOOKUPNAME,
-+/* 6 */		CEPH_MDS_OP_GETVXATTR,
-+/* 7 */		CEPH_MDS_OP_SETXATTR,
-+/* 8 */		CEPH_MDS_OP_RMXATTR,
-+/* 9 */		CEPH_MDS_OP_SETLAYOUT,
-+/* 10 */	CEPH_MDS_OP_SETATTR,
-+/* 11 */	CEPH_MDS_OP_SETFILELOCK,
-+/* 12 */	CEPH_MDS_OP_GETFILELOCK,
-+/* 13 */	CEPH_MDS_OP_SETDIRLAYOUT,
-+/* 14 */	CEPH_MDS_OP_MKNOD,
-+/* 15 */	CEPH_MDS_OP_LINK,
-+/* 16 */	CEPH_MDS_OP_UNLINK,
-+/* 17 */	CEPH_MDS_OP_RENAME,
-+/* 18 */	CEPH_MDS_OP_MKDIR,
-+/* 19 */	CEPH_MDS_OP_RMDIR,
-+/* 20 */	CEPH_MDS_OP_SYMLINK,
-+/* 21 */	CEPH_MDS_OP_CREATE,
-+/* 22 */	CEPH_MDS_OP_OPEN,
-+/* 23 */	CEPH_MDS_OP_READDIR,
-+/* 24 */	CEPH_MDS_OP_LOOKUPSNAP,
-+/* 25 */	CEPH_MDS_OP_MKSNAP,
-+/* 26 */	CEPH_MDS_OP_RMSNAP,
-+/* 27 */	CEPH_MDS_OP_LSSNAP,
-+/* 28 */	CEPH_MDS_OP_RENAMESNAP
-+};
-+
-+static int ceph_mds_next_op(int prev)
-+{
-+	if (prev < CEPH_MDS_OP_LOOKUP)
-+		return CEPH_MDS_OP_LOOKUP;
-+
-+	/* [0x00100..0x00106] */
-+	if (prev >= CEPH_MDS_OP_LOOKUP &&
-+	    prev < CEPH_MDS_OP_GETVXATTR)
-+		return prev + 1;
-+
-+	/* [0x00106..0x00110] */
-+	if (prev >= CEPH_MDS_OP_GETVXATTR &&
-+	    prev < CEPH_MDS_OP_GETFILELOCK)
-+		return CEPH_MDS_OP_GETFILELOCK;
-+
-+	/* [0x00110..0x00302] */
-+	if (prev >= CEPH_MDS_OP_GETFILELOCK &&
-+	    prev < CEPH_MDS_OP_OPEN)
-+		return CEPH_MDS_OP_OPEN;
-+
-+	/* [0x00302..0x00305] */
-+	if (prev >= CEPH_MDS_OP_OPEN &&
-+	    prev < CEPH_MDS_OP_READDIR)
-+		return CEPH_MDS_OP_READDIR;
-+
-+	/* [0x00305..0x00400] */
-+	if (prev >= CEPH_MDS_OP_READDIR &&
-+	    prev < CEPH_MDS_OP_LOOKUPSNAP)
-+		return CEPH_MDS_OP_LOOKUPSNAP;
-+
-+	/* [0x00400..0x00402] */
-+	if (prev >= CEPH_MDS_OP_LOOKUPSNAP &&
-+	    prev < CEPH_MDS_OP_LSSNAP)
-+		return CEPH_MDS_OP_LSSNAP;
-+
-+	/* [0x00402..0x01105] */
-+	if (prev >= CEPH_MDS_OP_LSSNAP &&
-+	    prev < CEPH_MDS_OP_SETXATTR)
-+		return CEPH_MDS_OP_SETXATTR;
-+
-+	/* [0x01105..0x0110a] */
-+	if (prev >= CEPH_MDS_OP_SETXATTR &&
-+	    prev < CEPH_MDS_OP_SETDIRLAYOUT)
-+		return prev + 1;
-+
-+	/* [0x0110a..0x01201] */
-+	if (prev >= CEPH_MDS_OP_SETDIRLAYOUT &&
-+	    prev < CEPH_MDS_OP_MKNOD)
-+		return CEPH_MDS_OP_MKNOD;
-+
-+	/* [0x01201..0x01204] */
-+	if (prev >= CEPH_MDS_OP_MKNOD &&
-+	    prev < CEPH_MDS_OP_RENAME)
-+		return prev + 1;
-+
-+	/* [0x01204..0x01220] */
-+	if (prev >= CEPH_MDS_OP_RENAME &&
-+	    prev < CEPH_MDS_OP_MKDIR)
-+		return CEPH_MDS_OP_MKDIR;
-+
-+	/* [0x01220..0x01222] */
-+	if (prev >= CEPH_MDS_OP_MKDIR &&
-+	    prev < CEPH_MDS_OP_SYMLINK)
-+		return prev + 1;
-+
-+	/* [0x01222..0x01301] */
-+	if (prev >= CEPH_MDS_OP_SYMLINK &&
-+	    prev < CEPH_MDS_OP_CREATE)
-+		return CEPH_MDS_OP_CREATE;
-+
-+	/* [0x01301..0x01400] */
-+	if (prev >= CEPH_MDS_OP_CREATE &&
-+	    prev < CEPH_MDS_OP_MKSNAP)
-+		return CEPH_MDS_OP_MKSNAP;
-+
-+	/* [0x01400..0x01401] */
-+	if (prev >= CEPH_MDS_OP_MKSNAP &&
-+	    prev < CEPH_MDS_OP_RMSNAP)
-+		return prev + 1;
-+
-+	/* [0x01401..0x01403] */
-+	if (prev >= CEPH_MDS_OP_RMSNAP &&
-+	    prev < CEPH_MDS_OP_RENAMESNAP)
-+		return CEPH_MDS_OP_RENAMESNAP;
-+
-+	return CEPH_MDS_OP_RENAMESNAP;
-+}
-+
-+static void ceph_mds_op_name_test(struct kunit *test)
-+{
-+	const char *unknown_name =
-+		ceph_mds_op_name_strings[CEPH_MDS_OP_UNKNOWN_NAME_STR_IDX];
-+	struct ceph_op_iterator iter;
-+	int start, end;
-+	int i;
-+
-+	/* Test valid MDS operations */
-+	for (i = 0; i < CEPH_MDS_OP_STR_COUNT; i++) {
-+		KUNIT_EXPECT_STREQ(test,
-+				   ceph_mds_op_name(ceph_str_idx_2_mds_op[i]),
-+				   ceph_mds_op_name_strings[i]);
-+	}
-+
-+	/* Test invalid/unknown operations */
-+	start = CEPH_MDS_OP_LOOKUP - CEPH_KUNIT_STRINGS_TEST_RANGE;
-+	end = CEPH_MDS_OP_RENAMESNAP + CEPH_KUNIT_STRINGS_TEST_RANGE;
-+	ceph_op_iterator_init(&iter, start, end, ceph_mds_next_op);
-+
-+	while (ceph_op_iterator_valid(&iter)) {
-+		switch (ceph_mds_op_2_str_idx(iter.cur)) {
-+		case CEPH_MDS_OP_UNKNOWN_NAME_STR_IDX:
-+			KUNIT_EXPECT_STREQ(test,
-+					   ceph_mds_op_name(iter.cur),
-+					   unknown_name);
-+			break;
-+
-+		default:
-+			/* do nothing */
-+			break;
-+		}
-+
-+		ceph_op_iterator_next(&iter);
-+	}
-+
-+	KUNIT_EXPECT_STREQ(test, ceph_mds_op_name(-0x99999), unknown_name);
-+	KUNIT_EXPECT_STREQ(test, ceph_mds_op_name(0x99999), unknown_name);
-+}
-+
-+static int ceph_cap_next_op(int prev)
-+{
-+	return __ceph_next_op(prev,
-+			      CEPH_CAP_OP_GRANT,
-+			      CEPH_CAP_OP_RENEW);
-+}
-+
-+static void ceph_cap_op_name_test(struct kunit *test)
-+{
-+	const char *unknown_name =
-+			ceph_cap_op_name_strings[CEPH_CAP_OP_UNKNOWN_NAME];
-+	struct ceph_op_iterator iter;
-+	int start, end;
-+	int i;
-+
-+	/* Test valid capability operations */
-+	for (i = 0; i < CEPH_CAP_OP_UNKNOWN_NAME; i++) {
-+		KUNIT_EXPECT_STREQ(test,
-+				   ceph_cap_op_name(i),
-+				   ceph_cap_op_name_strings[i]);
-+	}
-+
-+	/* Test invalid/unknown operations */
-+	start = CEPH_CAP_OP_GRANT - CEPH_KUNIT_STRINGS_TEST_RANGE;
-+	end = CEPH_CAP_OP_RENEW + CEPH_KUNIT_STRINGS_TEST_RANGE;
-+	ceph_op_iterator_init(&iter, start, end, ceph_cap_next_op);
-+
-+	while (ceph_op_iterator_valid(&iter)) {
-+		switch (ceph_cap_op_2_str_idx(iter.cur)) {
-+		case CEPH_CAP_OP_UNKNOWN_NAME:
-+			KUNIT_EXPECT_STREQ(test,
-+					   ceph_cap_op_name(iter.cur),
-+					   unknown_name);
-+			break;
-+
-+		default:
-+			/* do nothing */
-+			break;
-+		}
-+
-+		ceph_op_iterator_next(&iter);
-+	}
-+
-+	KUNIT_EXPECT_STREQ(test,
-+			   ceph_cap_op_name(CEPH_KUNIT_OP_INVALID_MIN),
-+			   unknown_name);
-+	KUNIT_EXPECT_STREQ(test,
-+			   ceph_cap_op_name(CEPH_KUNIT_OP_INVALID_MAX),
-+			   unknown_name);
-+}
-+
-+#define CEPH_MDS_LEASE_OP_STR_COUNT	(CEPH_MDS_LEASE_UNKNOWN_NAME_STR_IDX)
-+const int ceph_str_idx_2_lease_op[CEPH_MDS_LEASE_OP_STR_COUNT] = {
-+/* 0 */		CEPH_MDS_LEASE_REVOKE,
-+/* 1 */		CEPH_MDS_LEASE_RELEASE,
-+/* 2 */		CEPH_MDS_LEASE_RENEW,
-+/* 3 */		CEPH_MDS_LEASE_REVOKE_ACK
-+};
-+
-+static int ceph_lease_next_op(int prev)
-+{
-+	return __ceph_next_op(prev,
-+			      CEPH_MDS_LEASE_REVOKE,
-+			      CEPH_MDS_LEASE_REVOKE_ACK);
-+}
-+
-+static void ceph_lease_op_name_test(struct kunit *test)
-+{
-+	const char *unknown_name =
-+		ceph_lease_op_name_strings[CEPH_MDS_LEASE_UNKNOWN_NAME_STR_IDX];
-+	struct ceph_op_iterator iter;
-+	int start, end;
-+	int i;
-+
-+	/* Test valid lease operations */
-+	for (i = 0; i < CEPH_MDS_LEASE_OP_STR_COUNT; i++) {
-+		KUNIT_EXPECT_STREQ(test,
-+				   ceph_lease_op_name(ceph_str_idx_2_lease_op[i]),
-+				   ceph_lease_op_name_strings[i]);
-+	}
-+
-+	/* Test invalid/unknown operations */
-+	start = CEPH_MDS_LEASE_REVOKE - CEPH_KUNIT_STRINGS_TEST_RANGE;
-+	end = CEPH_MDS_LEASE_REVOKE_ACK + CEPH_KUNIT_STRINGS_TEST_RANGE;
-+	ceph_op_iterator_init(&iter, start, end, ceph_lease_next_op);
-+
-+	while (ceph_op_iterator_valid(&iter)) {
-+		switch (ceph_lease_op_2_str_idx(iter.cur)) {
-+		case CEPH_MDS_LEASE_UNKNOWN_NAME_STR_IDX:
-+			KUNIT_EXPECT_STREQ(test,
-+					   ceph_lease_op_name(iter.cur),
-+					   unknown_name);
-+			break;
-+
-+		default:
-+			/* do nothing */
-+			break;
-+		}
-+
-+		ceph_op_iterator_next(&iter);
-+	}
-+
-+	KUNIT_EXPECT_STREQ(test,
-+			   ceph_lease_op_name(CEPH_KUNIT_OP_INVALID_MIN),
-+			   unknown_name);
-+	KUNIT_EXPECT_STREQ(test,
-+			   ceph_lease_op_name(CEPH_KUNIT_OP_INVALID_MAX),
-+			   unknown_name);
-+}
-+
-+static int ceph_snap_next_op(int prev)
-+{
-+	return __ceph_next_op(prev,
-+			      CEPH_SNAP_OP_UPDATE,
-+			      CEPH_SNAP_OP_SPLIT);
-+}
-+
-+static void ceph_snap_op_name_test(struct kunit *test)
-+{
-+	const char *unknown_name =
-+		ceph_snap_op_name_strings[CEPH_SNAP_OP_UNKNOWN_NAME];
-+	struct ceph_op_iterator iter;
-+	int start, end;
-+	int i;
-+
-+	/* Test valid snapshot operations */
-+	for (i = 0; i < CEPH_SNAP_OP_UNKNOWN_NAME; i++) {
-+		KUNIT_EXPECT_STREQ(test,
-+				   ceph_snap_op_name(i),
-+				   ceph_snap_op_name_strings[i]);
-+	}
-+
-+	/* Test invalid/unknown operations */
-+	start = CEPH_SNAP_OP_UPDATE - CEPH_KUNIT_STRINGS_TEST_RANGE;
-+	end = CEPH_SNAP_OP_SPLIT + CEPH_KUNIT_STRINGS_TEST_RANGE;
-+	ceph_op_iterator_init(&iter, start, end, ceph_snap_next_op);
-+
-+	while (ceph_op_iterator_valid(&iter)) {
-+		switch (ceph_snap_op_2_str_idx(iter.cur)) {
-+		case CEPH_MDS_LEASE_UNKNOWN_NAME_STR_IDX:
-+			KUNIT_EXPECT_STREQ(test,
-+					   ceph_snap_op_name(iter.cur),
-+					   unknown_name);
-+			break;
-+
-+		default:
-+			/* do nothing */
-+			break;
-+		}
-+
-+		ceph_op_iterator_next(&iter);
-+	}
-+
-+	KUNIT_EXPECT_STREQ(test,
-+			   ceph_snap_op_name(CEPH_KUNIT_OP_INVALID_MIN),
-+			   unknown_name);
-+	KUNIT_EXPECT_STREQ(test,
-+			   ceph_snap_op_name(CEPH_KUNIT_OP_INVALID_MAX),
-+			   unknown_name);
-+}
-+
-+static struct kunit_case ceph_strings_test_cases[] = {
-+	KUNIT_CASE(ceph_mds_state_name_test),
-+	KUNIT_CASE(ceph_session_op_name_test),
-+	KUNIT_CASE(ceph_mds_op_name_test),
-+	KUNIT_CASE(ceph_cap_op_name_test),
-+	KUNIT_CASE(ceph_lease_op_name_test),
-+	KUNIT_CASE(ceph_snap_op_name_test),
-+	{}
-+};
-+
-+static struct kunit_suite ceph_strings_test_suite = {
-+	.name = "ceph_strings",
-+	.test_cases = ceph_strings_test_cases,
-+};
-+
-+kunit_test_suites(&ceph_strings_test_suite);
-+
-+MODULE_AUTHOR("Viacheslav Dubeyko <slava@dubeyko.com>");
-+MODULE_DESCRIPTION("KUnit tests for ceph strings functions");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
-diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
-index c7f2c63b3bc3..c41d3996a2b1 100644
---- a/include/linux/ceph/ceph_fs.h
-+++ b/include/linux/ceph/ceph_fs.h
-@@ -262,6 +262,25 @@ struct ceph_mon_subscribe_ack {
- #define CEPH_MDS_STATE_ACTIVE       13 /* up, active */
- #define CEPH_MDS_STATE_STOPPING     14 /* up, but exporting metadata */
- 
-+enum {
-+/* 0 */		CEPH_MDS_STATE_DNE_STR_IDX,
-+/* 1 */		CEPH_MDS_STATE_STOPPED_STR_IDX,
-+/* 2 */		CEPH_MDS_STATE_BOOT_STR_IDX,
-+/* 3 */		CEPH_MDS_STATE_STANDBY_STR_IDX,
-+/* 4 */		CEPH_MDS_STATE_CREATING_STR_IDX,
-+/* 5 */		CEPH_MDS_STATE_STARTING_STR_IDX,
-+/* 6 */		CEPH_MDS_STATE_STANDBY_REPLAY_STR_IDX,
-+/* 7 */		CEPH_MDS_STATE_REPLAYONCE_STR_IDX,
-+/* 8 */		CEPH_MDS_STATE_REPLAY_STR_IDX,
-+/* 9 */		CEPH_MDS_STATE_RESOLVE_STR_IDX,
-+/* 10 */	CEPH_MDS_STATE_RECONNECT_STR_IDX,
-+/* 11 */	CEPH_MDS_STATE_REJOIN_STR_IDX,
-+/* 12 */	CEPH_MDS_STATE_CLIENTREPLAY_STR_IDX,
-+/* 13 */	CEPH_MDS_STATE_ACTIVE_STR_IDX,
-+/* 14 */	CEPH_MDS_STATE_STOPPING_STR_IDX,
-+/* 15 */	CEPH_MDS_STATE_UNKNOWN_NAME_STR_IDX
-+};
-+
- extern const char *ceph_mds_state_name(int s);
- 
- 
-@@ -287,19 +306,20 @@ extern const char *ceph_mds_state_name(int s);
- 
- /* client_session ops */
- enum {
--	CEPH_SESSION_REQUEST_OPEN,
--	CEPH_SESSION_OPEN,
--	CEPH_SESSION_REQUEST_CLOSE,
--	CEPH_SESSION_CLOSE,
--	CEPH_SESSION_REQUEST_RENEWCAPS,
--	CEPH_SESSION_RENEWCAPS,
--	CEPH_SESSION_STALE,
--	CEPH_SESSION_RECALL_STATE,
--	CEPH_SESSION_FLUSHMSG,
--	CEPH_SESSION_FLUSHMSG_ACK,
--	CEPH_SESSION_FORCE_RO,
--	CEPH_SESSION_REJECT,
--	CEPH_SESSION_REQUEST_FLUSH_MDLOG,
-+/* 0 */		CEPH_SESSION_REQUEST_OPEN,
-+/* 1 */		CEPH_SESSION_OPEN,
-+/* 2 */		CEPH_SESSION_REQUEST_CLOSE,
-+/* 3 */		CEPH_SESSION_CLOSE,
-+/* 4 */		CEPH_SESSION_REQUEST_RENEWCAPS,
-+/* 5 */		CEPH_SESSION_RENEWCAPS,
-+/* 6 */		CEPH_SESSION_STALE,
-+/* 7 */		CEPH_SESSION_RECALL_STATE,
-+/* 8 */		CEPH_SESSION_FLUSHMSG,
-+/* 9 */		CEPH_SESSION_FLUSHMSG_ACK,
-+/* 10 */	CEPH_SESSION_FORCE_RO,
-+/* 11 */	CEPH_SESSION_REJECT,
-+/* 12 */	CEPH_SESSION_REQUEST_FLUSH_MDLOG,
-+/* 13 */	CEPH_SESSION_UNKNOWN_NAME
- };
- 
- #define CEPH_SESSION_BLOCKLISTED	(1 << 0)  /* session blocklisted */
-@@ -322,39 +342,39 @@ struct ceph_mds_session_head {
-  */
- #define CEPH_MDS_OP_WRITE        0x001000
- enum {
--	CEPH_MDS_OP_LOOKUP     = 0x00100,
--	CEPH_MDS_OP_GETATTR    = 0x00101,
--	CEPH_MDS_OP_LOOKUPHASH = 0x00102,
--	CEPH_MDS_OP_LOOKUPPARENT = 0x00103,
--	CEPH_MDS_OP_LOOKUPINO  = 0x00104,
--	CEPH_MDS_OP_LOOKUPNAME = 0x00105,
--	CEPH_MDS_OP_GETVXATTR  = 0x00106,
--
--	CEPH_MDS_OP_SETXATTR   = 0x01105,
--	CEPH_MDS_OP_RMXATTR    = 0x01106,
--	CEPH_MDS_OP_SETLAYOUT  = 0x01107,
--	CEPH_MDS_OP_SETATTR    = 0x01108,
--	CEPH_MDS_OP_SETFILELOCK= 0x01109,
--	CEPH_MDS_OP_GETFILELOCK= 0x00110,
--	CEPH_MDS_OP_SETDIRLAYOUT=0x0110a,
--
--	CEPH_MDS_OP_MKNOD      = 0x01201,
--	CEPH_MDS_OP_LINK       = 0x01202,
--	CEPH_MDS_OP_UNLINK     = 0x01203,
--	CEPH_MDS_OP_RENAME     = 0x01204,
--	CEPH_MDS_OP_MKDIR      = 0x01220,
--	CEPH_MDS_OP_RMDIR      = 0x01221,
--	CEPH_MDS_OP_SYMLINK    = 0x01222,
--
--	CEPH_MDS_OP_CREATE     = 0x01301,
--	CEPH_MDS_OP_OPEN       = 0x00302,
--	CEPH_MDS_OP_READDIR    = 0x00305,
--
--	CEPH_MDS_OP_LOOKUPSNAP = 0x00400,
--	CEPH_MDS_OP_MKSNAP     = 0x01400,
--	CEPH_MDS_OP_RMSNAP     = 0x01401,
--	CEPH_MDS_OP_LSSNAP     = 0x00402,
--	CEPH_MDS_OP_RENAMESNAP = 0x01403,
-+/* 0 */		CEPH_MDS_OP_LOOKUP		= 0x00100,
-+/* 1 */		CEPH_MDS_OP_GETATTR		= 0x00101,
-+/* 2 */		CEPH_MDS_OP_LOOKUPHASH		= 0x00102,
-+/* 3 */		CEPH_MDS_OP_LOOKUPPARENT	= 0x00103,
-+/* 4 */		CEPH_MDS_OP_LOOKUPINO		= 0x00104,
-+/* 5 */		CEPH_MDS_OP_LOOKUPNAME		= 0x00105,
-+/* 6 */		CEPH_MDS_OP_GETVXATTR		= 0x00106,
-+
-+/* 7 */		CEPH_MDS_OP_SETXATTR		= 0x01105,
-+/* 8 */		CEPH_MDS_OP_RMXATTR		= 0x01106,
-+/* 9 */		CEPH_MDS_OP_SETLAYOUT		= 0x01107,
-+/* 10 */	CEPH_MDS_OP_SETATTR		= 0x01108,
-+/* 11 */	CEPH_MDS_OP_SETFILELOCK		= 0x01109,
-+/* 12 */	CEPH_MDS_OP_GETFILELOCK		= 0x00110,
-+/* 13 */	CEPH_MDS_OP_SETDIRLAYOUT	= 0x0110a,
-+
-+/* 14 */	CEPH_MDS_OP_MKNOD		= 0x01201,
-+/* 15 */	CEPH_MDS_OP_LINK		= 0x01202,
-+/* 16 */	CEPH_MDS_OP_UNLINK		= 0x01203,
-+/* 17 */	CEPH_MDS_OP_RENAME		= 0x01204,
-+/* 18 */	CEPH_MDS_OP_MKDIR		= 0x01220,
-+/* 19 */	CEPH_MDS_OP_RMDIR		= 0x01221,
-+/* 20 */	CEPH_MDS_OP_SYMLINK		= 0x01222,
-+
-+/* 21 */	CEPH_MDS_OP_CREATE		= 0x01301,
-+/* 22 */	CEPH_MDS_OP_OPEN		= 0x00302,
-+/* 23 */	CEPH_MDS_OP_READDIR		= 0x00305,
-+
-+/* 24 */	CEPH_MDS_OP_LOOKUPSNAP		= 0x00400,
-+/* 25 */	CEPH_MDS_OP_MKSNAP		= 0x01400,
-+/* 26 */	CEPH_MDS_OP_RMSNAP		= 0x01401,
-+/* 27 */	CEPH_MDS_OP_LSSNAP		= 0x00402,
-+/* 28 */	CEPH_MDS_OP_RENAMESNAP		= 0x01403,
- };
- 
- #define IS_CEPH_MDS_OP_NEWINODE(op) (op == CEPH_MDS_OP_CREATE     || \
-@@ -362,6 +382,39 @@ enum {
- 				     op == CEPH_MDS_OP_MKDIR      || \
- 				     op == CEPH_MDS_OP_SYMLINK)
- 
-+enum {
-+/* 0 */		CEPH_MDS_OP_LOOKUP_STR_IDX,
-+/* 1 */		CEPH_MDS_OP_GETATTR_STR_IDX,
-+/* 2 */		CEPH_MDS_OP_LOOKUPHASH_STR_IDX,
-+/* 3 */		CEPH_MDS_OP_LOOKUPPARENT_STR_IDX,
-+/* 4 */		CEPH_MDS_OP_LOOKUPINO_STR_IDX,
-+/* 5 */		CEPH_MDS_OP_LOOKUPNAME_STR_IDX,
-+/* 6 */		CEPH_MDS_OP_GETVXATTR_STR_IDX,
-+/* 7 */		CEPH_MDS_OP_SETXATTR_STR_IDX,
-+/* 8 */		CEPH_MDS_OP_RMXATTR_STR_IDX,
-+/* 9 */		CEPH_MDS_OP_SETLAYOUT_STR_IDX,
-+/* 10 */	CEPH_MDS_OP_SETATTR_STR_IDX,
-+/* 11 */	CEPH_MDS_OP_SETFILELOCK_STR_IDX,
-+/* 12 */	CEPH_MDS_OP_GETFILELOCK_STR_IDX,
-+/* 13 */	CEPH_MDS_OP_SETDIRLAYOUT_STR_IDX,
-+/* 14 */	CEPH_MDS_OP_MKNOD_STR_IDX,
-+/* 15 */	CEPH_MDS_OP_LINK_STR_IDX,
-+/* 16 */	CEPH_MDS_OP_UNLINK_STR_IDX,
-+/* 17 */	CEPH_MDS_OP_RENAME_STR_IDX,
-+/* 18 */	CEPH_MDS_OP_MKDIR_STR_IDX,
-+/* 19 */	CEPH_MDS_OP_RMDIR_STR_IDX,
-+/* 20 */	CEPH_MDS_OP_SYMLINK_STR_IDX,
-+/* 21 */	CEPH_MDS_OP_CREATE_STR_IDX,
-+/* 22 */	CEPH_MDS_OP_OPEN_STR_IDX,
-+/* 23 */	CEPH_MDS_OP_READDIR_STR_IDX,
-+/* 24 */	CEPH_MDS_OP_LOOKUPSNAP_STR_IDX,
-+/* 25 */	CEPH_MDS_OP_MKSNAP_STR_IDX,
-+/* 26 */	CEPH_MDS_OP_RMSNAP_STR_IDX,
-+/* 27 */	CEPH_MDS_OP_LSSNAP_STR_IDX,
-+/* 28 */	CEPH_MDS_OP_RENAMESNAP_STR_IDX,
-+/* 29 */	CEPH_MDS_OP_UNKNOWN_NAME_STR_IDX
-+};
-+
- extern const char *ceph_mds_op_name(int op);
- 
- #define CEPH_SETATTR_MODE              (1 << 0)
-@@ -739,19 +792,20 @@ int ceph_flags_to_mode(int flags);
- int ceph_caps_for_mode(int mode);
- 
- enum {
--	CEPH_CAP_OP_GRANT,         /* mds->client grant */
--	CEPH_CAP_OP_REVOKE,        /* mds->client revoke */
--	CEPH_CAP_OP_TRUNC,         /* mds->client trunc notify */
--	CEPH_CAP_OP_EXPORT,        /* mds has exported the cap */
--	CEPH_CAP_OP_IMPORT,        /* mds has imported the cap */
--	CEPH_CAP_OP_UPDATE,        /* client->mds update */
--	CEPH_CAP_OP_DROP,          /* client->mds drop cap bits */
--	CEPH_CAP_OP_FLUSH,         /* client->mds cap writeback */
--	CEPH_CAP_OP_FLUSH_ACK,     /* mds->client flushed */
--	CEPH_CAP_OP_FLUSHSNAP,     /* client->mds flush snapped metadata */
--	CEPH_CAP_OP_FLUSHSNAP_ACK, /* mds->client flushed snapped metadata */
--	CEPH_CAP_OP_RELEASE,       /* client->mds release (clean) cap */
--	CEPH_CAP_OP_RENEW,         /* client->mds renewal request */
-+/* 0 */		CEPH_CAP_OP_GRANT,         /* mds->client grant */
-+/* 1 */		CEPH_CAP_OP_REVOKE,        /* mds->client revoke */
-+/* 2 */		CEPH_CAP_OP_TRUNC,         /* mds->client trunc notify */
-+/* 3 */		CEPH_CAP_OP_EXPORT,        /* mds has exported the cap */
-+/* 4 */		CEPH_CAP_OP_IMPORT,        /* mds has imported the cap */
-+/* 5 */		CEPH_CAP_OP_UPDATE,        /* client->mds update */
-+/* 6 */		CEPH_CAP_OP_DROP,          /* client->mds drop cap bits */
-+/* 7 */		CEPH_CAP_OP_FLUSH,         /* client->mds cap writeback */
-+/* 8 */		CEPH_CAP_OP_FLUSH_ACK,     /* mds->client flushed */
-+/* 9 */		CEPH_CAP_OP_FLUSHSNAP,     /* client->mds flush snapped metadata */
-+/* 10 */	CEPH_CAP_OP_FLUSHSNAP_ACK, /* mds->client flushed snapped metadata */
-+/* 11 */	CEPH_CAP_OP_RELEASE,       /* client->mds release (clean) cap */
-+/* 12 */	CEPH_CAP_OP_RENEW,         /* client->mds renewal request */
-+/* 13 */	CEPH_CAP_OP_UNKNOWN_NAME
- };
- 
- extern const char *ceph_cap_op_name(int op);
-@@ -816,7 +870,15 @@ struct ceph_mds_cap_item {
- #define CEPH_MDS_LEASE_RENEW            3  /* client <-> mds    */
- #define CEPH_MDS_LEASE_REVOKE_ACK       4  /* client  -> mds    */
- 
--extern const char *ceph_lease_op_name(int o);
-+enum {
-+/* 0 */		CEPH_MDS_LEASE_REVOKE_STR_IDX,
-+/* 1 */		CEPH_MDS_LEASE_RELEASE_STR_IDX,
-+/* 2 */		CEPH_MDS_LEASE_RENEW_STR_IDX,
-+/* 3 */		CEPH_MDS_LEASE_REVOKE_ACK_STR_IDX,
-+/* 4 */		CEPH_MDS_LEASE_UNKNOWN_NAME_STR_IDX
-+};
-+
-+extern const char *ceph_lease_op_name(int op);
- 
- /* lease msg header */
- struct ceph_mds_lease {
-@@ -860,10 +922,11 @@ struct ceph_mds_snaprealm_reconnect {
-  * snaps
-  */
- enum {
--	CEPH_SNAP_OP_UPDATE,  /* CREATE or DESTROY */
--	CEPH_SNAP_OP_CREATE,
--	CEPH_SNAP_OP_DESTROY,
--	CEPH_SNAP_OP_SPLIT,
-+/* 0 */		CEPH_SNAP_OP_UPDATE,  /* CREATE or DESTROY */
-+/* 1 */		CEPH_SNAP_OP_CREATE,
-+/* 2 */		CEPH_SNAP_OP_DESTROY,
-+/* 3 */		CEPH_SNAP_OP_SPLIT,
-+/* 4 */		CEPH_SNAP_OP_UNKNOWN_NAME
- };
- 
- extern const char *ceph_snap_op_name(int o);
--- 
-2.51.0
-
+T24gRnJpLCAyMDI1LTA5LTE5IGF0IDExOjI3ICswODAwLCBsaXVqaW5nIHdyb3RlOg0KPiBpbiB0
+aGUgY2VwaF9jb21tb24uYyBmaWxlLCB0byBzdHJpY3RseSBjb21wbHkgd2l0aCB0aGUgcmVxdWly
+ZW1lbnRzDQo+IG9mIHRoZSAleCBmb3JtYXQgc3BlY2lmaWVyIGFuZCBhdm9pZCB0eXBlIG1pc21h
+dGNoIGFuZCBvdmVyZmxvdw0KPiBpc3N1ZXMsIGQgc2hvdWxkIGJlIGRlZmluZWQgYXMgYW4gdW5z
+aWduZWQgaW50IHR5cGUuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBsaXVqaW5nIDxsaXVqaW5nQGNt
+c3MuY2hpbmFtb2JpbGUuY29tPg0KPiAtLS0NCj4gIG5ldC9jZXBoL2NlcGhfY29tbW9uLmMgfCAy
+ICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4g
+DQo+IGRpZmYgLS1naXQgYS9uZXQvY2VwaC9jZXBoX2NvbW1vbi5jIGIvbmV0L2NlcGgvY2VwaF9j
+b21tb24uYw0KPiBpbmRleCA0YzY0NDE1MzZkNTUuLmQzYzE5YTYzY2FkZCAxMDA2NDQNCj4gLS0t
+IGEvbmV0L2NlcGgvY2VwaF9jb21tb24uYw0KPiArKysgYi9uZXQvY2VwaC9jZXBoX2NvbW1vbi5j
+DQo+IEBAIC0xOTUsNyArMTk1LDcgQEAgaW50IGNlcGhfcGFyc2VfZnNpZChjb25zdCBjaGFyICpz
+dHIsIHN0cnVjdCBjZXBoX2ZzaWQgKmZzaWQpDQo+ICAJaW50IGkgPSAwOw0KPiAgCWNoYXIgdG1w
+WzNdOw0KPiAgCWludCBlcnIgPSAtRUlOVkFMOw0KPiAtCWludCBkOw0KPiArCXVuc2lnbmVkIGlu
+dCBkOw0KPiAgDQo+ICAJZG91dCgiJXMgJyVzJ1xuIiwgX19mdW5jX18sIHN0cik7DQo+ICAJdG1w
+WzJdID0gMDsNCg0KVGhlIG1haW4gYWN0aW9uIGhhcHBlbnMgaGVyZSBbMV06DQoNCnRtcFswXSA9
+IHN0clswXTsNCnRtcFsxXSA9IHN0clsxXTsNCmlmIChzc2NhbmYodG1wLCAiJXgiLCAmZCkgPCAx
+KQ0KCWJyZWFrOw0KZnNpZC0+ZnNpZFtpXSA9IGQgJiAweGZmOw0KDQpTbywgdG1wIGlzIHR3byBz
+eW1ib2xzIGFycmF5IHdpdGggdGVybWluYXRpbmcgJ1wwJyBzeW1ib2wuDQpGaW5hbGx5LCB3ZSBt
+YWtlIGNvbnZlcnNpb24gb2YgdHdvIGRpZ2l0cyAob3IgdHdvIGJ5dGVzKSBzdHJpbmcNCmludG8g
+dGhlIG51bWJlci4gVGhlIG1heGltdW0gcG9zc2libGUgbnVtYmVyIGNvdWxkIGJlIDB4RkZGRiAo
+NjU1MzUpLg0KRnJhbmtseSBzcGVha2luZywgSSBkb24ndCBzZWUgaG93IHdlIGNhbiBoYXZlIHRo
+ZSBvdmVyZmxvdyBpc3N1ZSBoZXJlLg0KQ291bGQgeW91IHBsZWFzZSBleHBsYWluIG1vcmUgY2xl
+YXJseSB5b3VyIHBvaW50Pw0KDQpUaGFua3MsDQpTbGF2YS4NCg0KWzFdIA0KaHR0cHM6Ly9lbGl4
+aXIuYm9vdGxpbi5jb20vbGludXgvdjYuMTctcmM2L3NvdXJjZS9uZXQvY2VwaC9jZXBoX2NvbW1v
+bi5jI0wyMTENCg==
 
