@@ -1,239 +1,193 @@
-Return-Path: <ceph-devel+bounces-3699-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3700-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8518B8C7A0
-	for <lists+ceph-devel@lfdr.de>; Sat, 20 Sep 2025 14:07:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E696BB90649
+	for <lists+ceph-devel@lfdr.de>; Mon, 22 Sep 2025 13:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62A153A9D53
-	for <lists+ceph-devel@lfdr.de>; Sat, 20 Sep 2025 12:07:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EB6216616B
+	for <lists+ceph-devel@lfdr.de>; Mon, 22 Sep 2025 11:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65FA25783F;
-	Sat, 20 Sep 2025 12:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371F8307AF2;
+	Mon, 22 Sep 2025 11:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQNJ9Kvg"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RxR8QPeJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tp9CHrZS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RxR8QPeJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tp9CHrZS"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101E31D416E
-	for <ceph-devel@vger.kernel.org>; Sat, 20 Sep 2025 12:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1101307AF5
+	for <ceph-devel@vger.kernel.org>; Mon, 22 Sep 2025 11:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758370026; cv=none; b=a4JbjhOmLgfoGzvKk56LaFZeC2d7q6Ue4cMRca4X+pPq7zkRcdz5KjOmNCTctFRapVqR0J1x16Hzs1MPFLsC1DnZAgzFSrZjCuPdgnsuYK0pV3dHjHrzBBTRmtJOZ93+02zf3VKDdhwskb93b+mSgWud+7X9gTovmc7dz+ah4xg=
+	t=1758540687; cv=none; b=dcXvxtlsTOyxdtt1FyCqiLkMI4FMUa8wjEAbrNCIAEI6qhVGEIgsrO7D64JVqplDo0tCrWuprFaS7wY71w8QhuNNmlDVwILDLFHZySBg081P+cD+inX7SxKLScdYoKYQ/AmKzc2PBUZzncIsq0XvaQTogSEO+MwiI50wx4KFqUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758370026; c=relaxed/simple;
-	bh=wRfe16rjqxi2xuffa0AZufUXEu2URptMaXK4aGux90c=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=IvVVgL+3kYv22Mi8XPMhI56EkuWCXzib89z5DKUuYiYcO59Yhy3TVMwp5KQ0Fh+ooeL67ajXqsXbOc/mHI8S0fcyj0iVriRHwHoA0er8cT4aqcUGbSDp69OEaXlPoM/QaI3CieqPSuaMVgf0a0nogXH2sPS4YUU9Vl4lQleRnLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SQNJ9Kvg; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-25669596955so26699425ad.0
-        for <ceph-devel@vger.kernel.org>; Sat, 20 Sep 2025 05:07:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1758370024; x=1758974824; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lMb8VWE+6URytkIT382Ezy+2ljI6Cia6SMvGCKjJfW4=;
-        b=SQNJ9KvgkCS7UTrUppMDU9mHcLiPrTVmuV/0CdIpaS2wj1oQpBqwooNztICSb81yqy
-         R9S++Brg/8Oewk87HxYZQffPvpKDT+8ko69zgKqkWSjAkEWFRSP9Fy8HA5+2NNxUBJqj
-         2VwXxTWCSm8N5Vz1F8oRq5rFO7AIM/dWEDrAGynd0eLqbTFJF7+8smp3Aike6CnR1/cN
-         q1todUKZwWwS4MTUbAraCktMW639yu7e99O3sWgt6uvL7DQimb8STaQrQ7B1AJc6pEmH
-         ESkrr9O4NIVtvamkniJ/p6r+6Ihk1PyC7gn9eyJQFUnbQxDzD4fmKMtdpf4nt9ZX7ZIM
-         5jlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758370024; x=1758974824;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lMb8VWE+6URytkIT382Ezy+2ljI6Cia6SMvGCKjJfW4=;
-        b=e8DaDxh4UY0Vo/gKS29tmZsJpV/tORPs6RsPUzumYG449pW0VoLu6ilhCIp8qogC4h
-         3bBggf0caidu4c1cRYZb5BkkCOys4BhuDDojVqkwZpHznsUXQEqFrnbuqyqOuJxEFwoQ
-         6pW4NXq739uqctjcvYKAuehg5IUSlZDuVZhIue7hwR0IKyRm6mqxjmf4yzcCGNGycMYz
-         1vHDZEtXauOUvvUXYnntOZeQBVLa2a/Wp9/Cr6nqCTbn+3Oubsy3UM0KFYqPkpf4eZ1R
-         y8pQuxsXDwtyDh6jnAiOHxsf4TLIBYF6O0JUrzCPkpZV4lCMlf0imc5eOTo+Uf6mm7mf
-         bN+A==
-X-Gm-Message-State: AOJu0Yy4wE4sem6w+lufi5ntfgGygzdjWSqS6Rp+sj13iSeRPHhU49LJ
-	uu9X5ZZlcFlIGTmVB7M78V5pZjqPrU2OkSfO3d8mqsQQwflYzktJVw3i
-X-Gm-Gg: ASbGnctAejRVrOMG9ae1cbrpnnVCiFSsPtFwjkVjFO9YqUo4+G2+eaopzfPLhwZg2n1
-	e7fZPcBTWTPl+kTeRWDSAYH+pScp5Gq9tTyK5uwQ9yHrNpUc5Qzevwj0hz6o4mwft/ap2CUHBW4
-	OlRJlPceDu8G01Invax7Jxt2FDOvur3995o3e1ivnaUOdd+6iqe43kXXRg8tufs1c64Mki9X6va
-	SaS7ZpsvebnTx9PkDOLwN6nFOOxOMKlqJ4aWk3O2i4Eh1+4xMbUCiD47IQjWl8z71kADTbIdzJZ
-	F45dwcnv/lDOrqSdMQ9/5zyrZdjIQt5kDmb6cFQlNDVOYceVretE+A7kPHE96vwuqpY4doduFxh
-	2mJMVFYuTBmhK513Ys+PniN2t4+6xS/VN55eAlrMfS0Z2AqxH
-X-Google-Smtp-Source: AGHT+IHvMLKv3j9HfmbwyBfZaaEcYq1hRS0Aah0Qh5jJRqgSuw36FXvoywwNIGGE9sU1vW9GdPrT9Q==
-X-Received: by 2002:a17:902:f541:b0:270:8ae3:a6f1 with SMTP id d9443c01a7336-2708ae3a911mr33570055ad.46.1758370024250;
-        Sat, 20 Sep 2025 05:07:04 -0700 (PDT)
-Received: from smtpclient.apple ([2403:d400:1000:7:c4a:831d:b386:ef7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2698035d337sm80068635ad.139.2025.09.20.05.07.02
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 20 Sep 2025 05:07:03 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1758540687; c=relaxed/simple;
+	bh=reYfWOi918Ulg2cuhqR/zeKkhW2tpcQpYWtD59+SRjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q3SLJgnfsZLh6WxrpsVcY6frFze/k0JAAwMOW20geAVhpOp/7dqVqzaoOvKeagPvJEd9g+hDHc9QES6KipLE7nTELd77t8N2B8bP40759uQ4MfMtDKb9NmkhulRNA81tpTv6uhmy9jLDFhXaN7P366gIVHAdMV0yUTeqeurZog0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RxR8QPeJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tp9CHrZS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RxR8QPeJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tp9CHrZS; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1B66F211EA;
+	Mon, 22 Sep 2025 11:31:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758540684; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M0WtXU1txr+PudB85nWSdZWaXTLDKrsojYDBAhwl6do=;
+	b=RxR8QPeJhVIxQivbpihvOVQjcFhAUNQK4/NGyXgyoKBVUxqzsR/wCn4nEVuO855ROjSlQm
+	znLbrkIF7uIODcO09pmQ46kW+7Kjmfp+Yl94r5nAFAeL+bKmVxr3Dyps9NZWeZlB7hwqR/
+	iuIwYD7uPT0h18XnnKsSHSJZX7B6kLY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758540684;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M0WtXU1txr+PudB85nWSdZWaXTLDKrsojYDBAhwl6do=;
+	b=tp9CHrZSq2rYbHd/6HmiFXRo1FHoFuVJfr2xr/zUul+EmLNB24sXyOILl+oAyYCjELDkuT
+	ejFL12khUrdIx3AQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=RxR8QPeJ;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=tp9CHrZS
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758540684; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M0WtXU1txr+PudB85nWSdZWaXTLDKrsojYDBAhwl6do=;
+	b=RxR8QPeJhVIxQivbpihvOVQjcFhAUNQK4/NGyXgyoKBVUxqzsR/wCn4nEVuO855ROjSlQm
+	znLbrkIF7uIODcO09pmQ46kW+7Kjmfp+Yl94r5nAFAeL+bKmVxr3Dyps9NZWeZlB7hwqR/
+	iuIwYD7uPT0h18XnnKsSHSJZX7B6kLY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758540684;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M0WtXU1txr+PudB85nWSdZWaXTLDKrsojYDBAhwl6do=;
+	b=tp9CHrZSq2rYbHd/6HmiFXRo1FHoFuVJfr2xr/zUul+EmLNB24sXyOILl+oAyYCjELDkuT
+	ejFL12khUrdIx3AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0F34E1388C;
+	Mon, 22 Sep 2025 11:31:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NbexA4wz0WhYUgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 22 Sep 2025 11:31:24 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id BBCD2A07C4; Mon, 22 Sep 2025 13:31:23 +0200 (CEST)
+Date: Mon, 22 Sep 2025 13:31:23 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	kernel-team@fb.com, amir73il@gmail.com, linux-btrfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v5 3/4] Manual conversion of ->i_state uses
+Message-ID: <ayjwe2moaswosrvcv6mhd2wztwvexfjgy6dfnxxegnhppca7ac@75h6kmoj32e6>
+References: <20250919154905.2592318-1-mjguzik@gmail.com>
+ <20250919154905.2592318-4-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH] ceph: Fix potential undefined behavior in crush_ln() with
- GCC 11.1.0
-From: =?utf-8?B?6ZmI5Y2O5pit77yITHlpY2Fu77yJ?= <lyican53@gmail.com>
-In-Reply-To: <d6ccd709466d1460baf6e9b0bcec212007172622.camel@ibm.com>
-Date: Sat, 20 Sep 2025 20:06:48 +0800
-Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
- "idryomov@gmail.com" <idryomov@gmail.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Xiubo Li <xiubli@redhat.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A246BD33-C009-4C12-94E7-E95CABB94D04@gmail.com>
-References: <1AD55673-B7F4-4DB7-AE80-1AC81709F65A@gmail.com>
- <e6987f0268bd7bceddbd6ec53fa174d07cfa3114.camel@ibm.com>
- <C8E92D42-0336-45DD-A415-EA8588DE731D@gmail.com>
- <d6ccd709466d1460baf6e9b0bcec212007172622.camel@ibm.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-X-Mailer: Apple Mail (2.3826.700.81)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919154905.2592318-4-mjguzik@gmail.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org,toxicpanda.com,fb.com,gmail.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 1B66F211EA
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
 
+On Fri 19-09-25 17:49:03, Mateusz Guzik wrote:
+> Takes care of spots not converted by coccinelle.
+> 
+> Nothing to look at with one exception: smp_store_release and
+> smp_load_acquire pair replaced with a manual store/load +
+> smb_wmb()/smp_rmb(), see I_WB_SWITCH.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-> 2025=E5=B9=B49=E6=9C=8820=E6=97=A5 02:51=EF=BC=8CViacheslav Dubeyko =
-<Slava.Dubeyko@ibm.com> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On Fri, 2025-09-19 at 10:34 +0800, =E9=99=88=E5=8D=8E=E6=98=AD=EF=BC=88L=
-yican=EF=BC=89 wrote:
->>> 2025=E5=B9=B49=E6=9C=8819=E6=97=A5 02:07=EF=BC=8CViacheslav Dubeyko =
-<Slava.Dubeyko@ibm.com> =E5=86=99=E9=81=93=EF=BC=9A
->>>=20
->=20
-> <skipped>
-> I still have the same issue with the new patch. Your patch is trying =
-to modify
-> the line 262. However, we have comments on this line [1]:
->=20
-> 260 /*
-> 261 * figure out number of bits we need to shift and
-> 262 * do it in one step instead of iteratively
-> 263 */
-> 264 if (!(x & 0x18000)) {
-> 265 int bits =3D __builtin_clz(x & 0x1FFFF) - 16;
-> 266 x <<=3D bits;
-> 267 iexpon =3D 15 - bits;
-> 268 }
->=20
-> Thanks,
-> Slava.
->=20
-> [1]
-> =
-https://elixir.bootlin.com/linux/v6.17-rc6/source/net/ceph/crush/mapper.c#=
-L262
-Hi Slava,
+...
 
-Thank you for your patience with this patch. I want to clarify the =
-confusion about the line numbering.
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 0e9e96f10dd4..745df148baaa 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -478,8 +478,8 @@ static bool inode_do_switch_wbs(struct inode *inode,
+>  	 * Paired with load_acquire in unlocked_inode_to_wb_begin() and
+>  	 * ensures that the new wb is visible if they see !I_WB_SWITCH.
+>  	 */
+> -	smp_store_release(&inode->i_state,
+> -			  inode_state_read(inode) & ~I_WB_SWITCH);
+> +	smp_wmb();
+> +	inode_state_del(inode, I_WB_SWITCH);
+>  
+>  	xa_unlock_irq(&mapping->i_pages);
+>  	spin_unlock(&inode->i_lock);
 
-The patch header "@@ -262,7 +262,7 @@" was automatically generated by =
-git format-patch - I did not manually specify line 262. This is how git =
-diff format works: it shows context lines starting from line 262, but =
-the actual code modification is on line 265 where the `__builtin_clz()` =
-call is located (exactly as you referenced in [1]).
+Comments need updating here and in backing-dev.h...
 
-To be absolutely clear:
-- I am NOT trying to modify line 262 (which contains comments)
-- I AM modifying line 265: `int bits =3D __builtin_clz(x & 0x1FFFF) - =
-16;`
-- The "@@ -262,7 +262,7 @@" header is git's standard way of providing =
-context
-- Git automatically chooses how many context lines to show and where to =
-start them
+> diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
+> index e721148c95d0..720e5f8ad782 100644
+> --- a/include/linux/backing-dev.h
+> +++ b/include/linux/backing-dev.h
+> @@ -292,7 +292,8 @@ unlocked_inode_to_wb_begin(struct inode *inode, struct wb_lock_cookie *cookie)
+>  	 * Paired with store_release in inode_switch_wbs_work_fn() and
+>  	 * ensures that we see the new wb if we see cleared I_WB_SWITCH.
+>  	 */
+> -	cookie->locked = smp_load_acquire(&inode->i_state) & I_WB_SWITCH;
+> +	cookie->locked = inode_state_read(inode) & I_WB_SWITCH;
+> +	smp_rmb();
+>  
+>  	if (unlikely(cookie->locked))
+>  		xa_lock_irqsave(&inode->i_mapping->i_pages, cookie->flags);
 
-The patch content clearly shows the actual change:
-```diff
-- int bits =3D __builtin_clz(x & 0x1FFFF) - 16;
-+ int bits =3D (x & 0x1FFFF) ? __builtin_clz(x & 0x1FFFF) - 16 : 16;
-```
-
-This line-by-line diff shows exactly what gets modified - line 265 in =
-the official kernel source.
-
-Here is the git-generated patch:
-
----
-
-=46rom ac3a55a6a18761d613971ef6f78fa39e6d7d2172 Mon Sep 17 00:00:00 2001
-From: Huazhao Chen <lyican53@gmail.com>
-Date: Sat, 20 Sep 2025 19:42:54 +0800
-Subject: [PATCH] ceph: Fix potential undefined behavior in crush_ln() =
-with GCC
- 11.1.0
-
-When x & 0x1FFFF equals zero, __builtin_clz() is called with a zero
-argument, which results in undefined behavior. This can happen during
-ceph's consistent hashing calculations and may lead to incorrect
-placement group mappings.
-
-Fix by checking if the masked value is non-zero before calling
-__builtin_clz(). If the masked value is zero, use the expected result
-of 16 directly.
-
-Signed-off-by: Huazhao Chen <lyican53@gmail.com>
----
- net/ceph/crush/mapper.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/ceph/crush/mapper.c b/net/ceph/crush/mapper.c
-index 3a5bd1cd1..000f7a633 100644
---- a/net/ceph/crush/mapper.c
-+++ b/net/ceph/crush/mapper.c
-@@ -262,7 +262,7 @@ static __u64 crush_ln(unsigned int xin)
-  * do it in one step instead of iteratively
-  */
-  if (!(x & 0x18000)) {
-- int bits =3D __builtin_clz(x & 0x1FFFF) - 16;
-+ int bits =3D (x & 0x1FFFF) ? __builtin_clz(x & 0x1FFFF) - 16 : 16;
-  x <<=3D bits;
-  iexpon =3D 15 - bits;
-  }
---=20
-2.39.5 (Apple Git-154)
-
----
-
-To demonstrate that this is git's automatic behavior and not my manual =
-choice, I can provide the same fix with different context formatting. =
-Here's an alternative patch with less context (generated using `git =
-format-patch -U1`):
-
-```diff
-@@ -264,3 +264,3 @@ static __u64 crush_ln(unsigned int xin)
-  if (!(x & 0x18000)) {
-- int bits =3D __builtin_clz(x & 0x1FFFF) - 16;
-+ int bits =3D (x & 0x1FFFF) ? __builtin_clz(x & 0x1FFFF) - 16 : 16;
-  x <<=3D bits;
-```
-
-As you can see, this version shows "@@ -264,3 +264,3 @@" but still =
-modifies the exact same line - line 265 where `__builtin_clz()` is =
-called. The line numbers in the @@ header are just context indicators, =
-not the target of the modification.
-
-Both patches apply successfully to commit =
-f83ec76bf285bea5727f478a68b894f5543ca76e (Linux 6.17-rc6). I've tested =
-both locally with `git am`. The actual code change is identical in both =
-cases - we're fixing the undefined behavior in the `__builtin_clz()` =
-call on line 265.
-
-I hope this clarifies that the git-generated diff headers don't indicate =
-which line I'm trying to modify, but rather where git chooses to show =
-the context for the patch.
-
-Best regards,
-Huazhao Chen
-
-[1] =
-https://elixir.bootlin.com/linux/v6.17-rc6/source/net/ceph/crush/mapper.c#=
-L265=
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
