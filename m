@@ -1,144 +1,260 @@
-Return-Path: <ceph-devel+bounces-3705-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3706-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67406B9576C
-	for <lists+ceph-devel@lfdr.de>; Tue, 23 Sep 2025 12:40:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6001DB957C5
+	for <lists+ceph-devel@lfdr.de>; Tue, 23 Sep 2025 12:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A0A22E5184
-	for <lists+ceph-devel@lfdr.de>; Tue, 23 Sep 2025 10:40:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13FB93AA474
+	for <lists+ceph-devel@lfdr.de>; Tue, 23 Sep 2025 10:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF68302CA6;
-	Tue, 23 Sep 2025 10:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA7A32144A;
+	Tue, 23 Sep 2025 10:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b="XL/+ytS+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TBo+ivWt"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-router1.rz.tu-ilmenau.de (mail-router1.rz.tu-ilmenau.de [141.24.179.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66875221F00
-	for <ceph-devel@vger.kernel.org>; Tue, 23 Sep 2025 10:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.24.179.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A1C320CCC
+	for <ceph-devel@vger.kernel.org>; Tue, 23 Sep 2025 10:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758624041; cv=none; b=l4leMiF9z47Hbw70FPE/pgzo6cWQ5ieVr7shmwUakUMF1TMGavN2Hj4VONfzZsAiO1Q96qCqKvZkSeuS6UcbPGL3yXZm9X1mKL3Gu0gO1EFiaMHeoBBFof2n6sI25ig4yX9r5EkKUOLlaY+yMmD2eRMWqDE6bTMahTD4i8inJE8=
+	t=1758624446; cv=none; b=pDiry7Ubs5bVAwJ1UpMJLIul2lTFVJU5WOGW0E9aOFZHmowtuI3jBVR2c5JdLw/9OYmOK4A3ckIYObQP6VZTLXPS7hSOrzTA8EMuh1qUMmVOp+oerduNQ2GGSaOG7nBJ4JLxmSvEbORx9FZ2lv/uVDWhO+7qUaeZnYlr/myTDmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758624041; c=relaxed/simple;
-	bh=K2WawpECvL3B/+4mspErYLijlHbTA+5LapGnyddXM9M=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=EXIQkPHWXV9HtxpNbswmwINRXZd7rRkL5tAkFiyhBGDz+/NFdRWs+95Uy4UMhKeR9+0z9+HCInqtfUL5B85GsAWijTB+sM9eEVvUq11BaagoO5CCjq7PWYCIsl/REeQ8ObZVQ/2+8U2gZaEFPeST+VdsAKvgwSV0CyiuQKktgvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de; spf=pass smtp.mailfrom=tu-ilmenau.de; dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b=XL/+ytS+; arc=none smtp.client-ip=141.24.179.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-ilmenau.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-ilmenau.de;
- i=@tu-ilmenau.de; q=dns/txt; s=tuil-dkim-1; t=1758623925; h=message-id
- : date : mime-version : to : cc : from : subject : content-type :
- content-transfer-encoding : from;
- bh=K2WawpECvL3B/+4mspErYLijlHbTA+5LapGnyddXM9M=;
- b=XL/+ytS+m2g5dNeXrLtNOCBzAh81Keaea+2qpyZ/QQ2kgvjYG5j04cpqIzR57W6ksym4P
- RmY/NMLI5QaA8I+XzGjD82nBnLvJoB2TA1og9TMQhymTsT9JHosLbnsWnm3g9Ev53ECiJUK
- wBGuluVLZluDJTituif5WKRm1mRmU6ooXSf9xL5ZDkmZXWiOdDlCNi8EbtsrLzKQrE4PQav
- YtCT/uABJ9w1IuQrIkmxYh3cxbcUco9k2xgrPy82sTSfppgC7jeinjcU5z1EP4pl1yC1m0X
- X0OD6cKTw5rikwmY5QdPBnJoE2QgooaSu+1xdcR0JX0dHb6Wviorj8/caHWg==
-Received: from mail-front1.rz.tu-ilmenau.de (mail-front1.rz.tu-ilmenau.de [141.24.179.32])
-	by mail-router1.rz.tu-ilmenau.de (Postfix) with ESMTPS id 480DE5FA8D;
-	Tue, 23 Sep 2025 12:38:45 +0200 (CEST)
-Received: from [141.24.212.106] (unknown [141.24.212.106])
-	by mail-front1.rz.tu-ilmenau.de (Postfix) with ESMTPSA id 2CACB5FC47;
-	Tue, 23 Sep 2025 12:38:45 +0200 (CEST)
-Message-ID: <36681e9d-fde6-4c5d-bf35-db9d85865900@tu-ilmenau.de>
-Date: Tue, 23 Sep 2025 12:38:44 +0200
+	s=arc-20240116; t=1758624446; c=relaxed/simple;
+	bh=y/G4XbLsOtwbe7wZLOUdsUIV02Do/ytAsS2jVq680LY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P3WBBXpt9T4kp2SOj26g32G5sCbJ/yq+xeJjYPVQSkkuA/Y9tWajboY5BuOHr7olf/wgRK1doq8ZqPp/cXBIS9qLLV6uS/Oif7RBY+Ro1sbd2R0P/0Dzx2dkbm6gyIV+beAZULCScy2XTkKsKKR2jtDb5CxPDx2v4XIwQjTVMwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TBo+ivWt; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45f2cf99bbbso25678695e9.0
+        for <ceph-devel@vger.kernel.org>; Tue, 23 Sep 2025 03:47:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1758624442; x=1759229242; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NQ/yJT0cXoTi93BkEkS2U1cj1fcL5N5BV/EnPhmld9E=;
+        b=TBo+ivWtKLw2hvE4/ADdLULoCxdkqBngZ17HuFzdjLfw12wejEHkhAMxEp3Ee+g4r/
+         QkY+gyF49Zdjshfp2GkfrTXeAkGqlPQPAwE5XnEKSBlx7KePFyhqCq5xtq2poZu3WhTU
+         tosNaDOevVyDAjGj57CGR/WNm4sSmAc1pvRLpDxuXhPArh3IRdKSfwacAoyRWbOsMVEL
+         +35zAFhSYquvoPUN4+OUJngaR3cg/BGoGVAU9OQF/nMXU6B0pjoZeTUj1l7jRA9Li5nm
+         cslIYloBZQl8e+x/dmZ4oq3JQBz6BExLlD7Qx/73qgdd+i3Wit9F0JWCDrQ/QGaSftPX
+         bGAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1758624442; x=1759229242;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NQ/yJT0cXoTi93BkEkS2U1cj1fcL5N5BV/EnPhmld9E=;
+        b=YdNftxIuYwSpnwfkLLuAWA2nXZy6/2e+mcQVnH2/6hpmNjv3ZvX8z/rTbhgQbcp75v
+         LXIvb4WnFE/bVe6577wYTSAw3GbTMnKJrlUPCrBZG4wd42KbEBwiCylr3F+KL3Fv3gBK
+         ESJC9cQp6IA8RWDAVPeHm/14ahK0Zuf5NjQQjIerSr2shPpXVFS4oZs/ElVLViF8kWhl
+         snSKJtd36hCVZOoVQ7JfnnX5W56DhbRtHt/uj3kqmPtu14EP8ZbL+rLtgKGdtfVFK4/+
+         wrYsg5dbWQ5148mMqo56wAuAd0ARRaYKTlqCSKM3QACdIAkuh//HF35MAs4Pp5VQNYhq
+         FfcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDLcNERIYJiLGSyrH1Bx0dJM1PRTJlQOJtdDfIIYr/Bcoj893PmEa5DpfxvXa5nHdjoQ5qsih/ib61@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWikwEHTV98QFmUaStQNLYMT3G7w69d0ilWWjVIUbLGG92LK1e
+	qdqQj9BOHyYFnvcbPAt7rVd1m+1gkpaBEXbtEiOEK2csUFDeBeN4Clmp
+X-Gm-Gg: ASbGncuI1Oc92gpyHRY7VL4gbO1ozZVJdJri9+SIAuh6YrFL9ffE3XsTu0ZpbjCOJok
+	8Ic1y8p3RVTspHLWtWNTvYlwY+OOSYSX9FAtLD5a1qsDaTepZ1kbIwoEmJcAkOamhv6pcKkq6I5
+	H+KsBBzhxjR4UB1ffNJBNIK50Iwy170w/Dq7goRTni2I3hJ3xxUkxlQR/kjkfMNKkbOA+Jxa7Lq
+	iF6EHHvtYzyZ2j6V/kVqxmygYKT9scdDJF6GGkJxhgTFBrXiQfG10mu/TvQrkcJI2OyOnZrB5fe
+	fCYmxF4Y6F6i2zbnldEOHAjqW6paqqCHuH3Bs1lFeGS/Y5LsqwFOQEj8xc1jhhx80V0KHv7gebv
+	kgdnfu8FTaKU0oR5z8HP3DV3xa5KDk0BIxkse9jlX6xo2VrAlxt0/8VDzLhd3coT77OTuXA==
+X-Google-Smtp-Source: AGHT+IGft/P7UVkw9hjNEMIp8gNGN2bfm7hLyZ+3GJgcSiUgUNJfZvWbxjLWOrPgRhiQYwqyWsexaA==
+X-Received: by 2002:a05:600c:3baa:b0:46e:1f92:49aa with SMTP id 5b1f17b1804b1-46e1f924cd6mr18699845e9.15.1758624442124;
+        Tue, 23 Sep 2025 03:47:22 -0700 (PDT)
+Received: from f.. (cst-prg-21-74.cust.vodafone.cz. [46.135.21.74])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e23adce1bsm9710525e9.24.2025.09.23.03.47.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Sep 2025 03:47:21 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	josef@toxicpanda.com,
+	kernel-team@fb.com,
+	amir73il@gmail.com,
+	linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v6 0/4] hide ->i_state behind accessors
+Date: Tue, 23 Sep 2025 12:47:06 +0200
+Message-ID: <20250923104710.2973493-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>
-Cc: ceph-devel@vger.kernel.org
-From: Raphael Zimmer <raphael.zimmer@tu-ilmenau.de>
-Subject: [bug report] rbd unmap hangs after pausing and unpausing I/O
-Autocrypt: addr=raphael.zimmer@tu-ilmenau.de; keydata=
- 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
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hello,
+First commit message quoted verbatim with rationable + API:
 
-I encountered an error with the kernel Ceph client (specifically using 
-an RBD device) when pausing I/O on the cluster by setting and unsetting 
-pauserd and pausewr flags. An error was seen with two different setups, 
-which I believe is due to the same problem.
+[quote]
+Open-coded accesses prevent asserting they are done correctly. One
+obvious aspect is locking, but significantly more can checked. For
+example it can be detected when the code is clearing flags which are
+already missing, or is setting flags when it is illegal (e.g., I_FREEING
+when ->i_count > 0).
 
-1) When pausing and later unpausing I/O on the cluster, everything seems 
-to work as expected until trying to unmap an RBD device from the kernel. 
-In this case, the rbd unmap command hangs and also can't be killed. To 
-get back to a normally working state, a system reboot is needed. This 
-behavior was observed on different systems (Debian 12 and 13) and could 
-also be reproduced with an installation of the mainline kernel (v6.17-rc6).
+Given the late stage of the release cycle this patchset only aims to
+hide access, it does not provide any of the checks.
 
-Steps to reproduce:
-- Connect kernel client to RBD device (rbd map)
-- Pause I/O on cluster (ceph osd pause)
-- Wait some time (3 minutes should be enough)
-- Unpause I/O on cluster
-- Try to unmap RBD device on client
+Consumers can be trivially converted. Suppose flags I_A and I_B are to
+be handled, then:
+
+state = inode->i_state          => state = inode_state_read(inode)
+inode->i_state |= (I_A | I_B)   => inode_state_set(inode, I_A | I_B)
+inode->i_state &= ~(I_A | I_B)  => inode_state_clear(inode, I_A | I_B)
+inode->i_state = I_A | I_B      => inode_state_assign(inode, I_A | I_B)
+[/quote]
+
+Right now this is one big NOP, except for READ_ONCE/WRITE_ONCE for every access.
+
+Given this, I decided to not submit any per-fs patches. Instead, the
+conversion is done in 2 parts: coccinelle and whatever which was missed.
+
+Generated against:
+https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.18.inode.refcount.preliminaries
+
+v6:
+- rename routines:
+set -> assign; add -> set; del -> clear
+- update commentary in patch 3 replacing smp_store/load with smp_wmb/rmb
+
+v5:
+- drop lockdep for the time being
+
+v4:
+https://lore.kernel.org/linux-fsdevel/CAGudoHFViBUZ4TPNuLWC7qyK0v8LRwxbpZd9Mx3rHdh5GW9CrQ@mail.gmail.com/T/#m866b3b5740691de9b4008184a9a3f922dfa8e439
 
 
-2) When using an application that internally uses the kernel Ceph client 
-code, I observed the following behavior:
+Mateusz Guzik (4):
+  fs: provide accessors for ->i_state
+  Convert the kernel to use ->i_state accessors
+  Manual conversion of ->i_state uses
+  fs: make plain ->i_state access fail to compile
 
-Pausing I/O leads to a watch error after some time (same as with failing 
-OSDs or e.g. when pool quota is reached). In rbd_watch_errcb 
-(drivers/block/rbd.c), the watch_dwork gets scheduled, which leads to a 
-call of rbd_reregister_watch -> __rbd_register_watch -> ceph_osdc_watch 
-(net/ceph/osd_client.c) -> linger_reg_commit_wait -> 
-wait_for_completion_killable. At this point, it waits without any 
-timeout for the completion. The normal behavior is to wait until the 
-causing condition is resolved and then return. With pausing and 
-unpausing I/O, wait_for_completion_killable does not return even after 
-unpausing because no call to complete or complete_all happens. I would 
-guess that on unpausing some call is missing so that committing the 
-linger request never completes.
+ Documentation/filesystems/porting.rst |   2 +-
+ block/bdev.c                          |   4 +-
+ drivers/dax/super.c                   |   2 +-
+ fs/9p/vfs_inode.c                     |   2 +-
+ fs/9p/vfs_inode_dotl.c                |   2 +-
+ fs/affs/inode.c                       |   2 +-
+ fs/afs/dynroot.c                      |   6 +-
+ fs/afs/inode.c                        |   6 +-
+ fs/bcachefs/fs.c                      |   8 +-
+ fs/befs/linuxvfs.c                    |   2 +-
+ fs/bfs/inode.c                        |   2 +-
+ fs/btrfs/inode.c                      |  10 +--
+ fs/buffer.c                           |   4 +-
+ fs/ceph/cache.c                       |   2 +-
+ fs/ceph/crypto.c                      |   4 +-
+ fs/ceph/file.c                        |   4 +-
+ fs/ceph/inode.c                       |  28 +++---
+ fs/coda/cnode.c                       |   4 +-
+ fs/cramfs/inode.c                     |   2 +-
+ fs/crypto/keyring.c                   |   2 +-
+ fs/crypto/keysetup.c                  |   2 +-
+ fs/dcache.c                           |   8 +-
+ fs/drop_caches.c                      |   2 +-
+ fs/ecryptfs/inode.c                   |   6 +-
+ fs/efs/inode.c                        |   2 +-
+ fs/erofs/inode.c                      |   2 +-
+ fs/ext2/inode.c                       |   2 +-
+ fs/ext4/inode.c                       |  10 +--
+ fs/ext4/orphan.c                      |   4 +-
+ fs/f2fs/data.c                        |   2 +-
+ fs/f2fs/inode.c                       |   2 +-
+ fs/f2fs/namei.c                       |   4 +-
+ fs/f2fs/super.c                       |   2 +-
+ fs/freevxfs/vxfs_inode.c              |   2 +-
+ fs/fs-writeback.c                     | 123 +++++++++++++-------------
+ fs/fuse/inode.c                       |   4 +-
+ fs/gfs2/file.c                        |   2 +-
+ fs/gfs2/glops.c                       |   2 +-
+ fs/gfs2/inode.c                       |   4 +-
+ fs/gfs2/ops_fstype.c                  |   2 +-
+ fs/hfs/btree.c                        |   2 +-
+ fs/hfs/inode.c                        |   2 +-
+ fs/hfsplus/super.c                    |   2 +-
+ fs/hostfs/hostfs_kern.c               |   2 +-
+ fs/hpfs/dir.c                         |   2 +-
+ fs/hpfs/inode.c                       |   2 +-
+ fs/inode.c                            | 100 ++++++++++-----------
+ fs/isofs/inode.c                      |   2 +-
+ fs/jffs2/fs.c                         |   4 +-
+ fs/jfs/file.c                         |   4 +-
+ fs/jfs/inode.c                        |   2 +-
+ fs/jfs/jfs_txnmgr.c                   |   2 +-
+ fs/kernfs/inode.c                     |   2 +-
+ fs/libfs.c                            |   6 +-
+ fs/minix/inode.c                      |   2 +-
+ fs/namei.c                            |   8 +-
+ fs/netfs/misc.c                       |   8 +-
+ fs/netfs/read_single.c                |   6 +-
+ fs/nfs/inode.c                        |   2 +-
+ fs/nfs/pnfs.c                         |   2 +-
+ fs/nfsd/vfs.c                         |   2 +-
+ fs/nilfs2/cpfile.c                    |   2 +-
+ fs/nilfs2/dat.c                       |   2 +-
+ fs/nilfs2/ifile.c                     |   2 +-
+ fs/nilfs2/inode.c                     |  10 +--
+ fs/nilfs2/sufile.c                    |   2 +-
+ fs/notify/fsnotify.c                  |   2 +-
+ fs/ntfs3/inode.c                      |   2 +-
+ fs/ocfs2/dlmglue.c                    |   2 +-
+ fs/ocfs2/inode.c                      |  10 +--
+ fs/omfs/inode.c                       |   2 +-
+ fs/openpromfs/inode.c                 |   2 +-
+ fs/orangefs/inode.c                   |   2 +-
+ fs/orangefs/orangefs-utils.c          |   6 +-
+ fs/overlayfs/dir.c                    |   2 +-
+ fs/overlayfs/inode.c                  |   6 +-
+ fs/overlayfs/util.c                   |  10 +--
+ fs/pipe.c                             |   2 +-
+ fs/qnx4/inode.c                       |   2 +-
+ fs/qnx6/inode.c                       |   2 +-
+ fs/quota/dquot.c                      |   2 +-
+ fs/romfs/super.c                      |   2 +-
+ fs/smb/client/cifsfs.c                |   2 +-
+ fs/smb/client/inode.c                 |  14 +--
+ fs/squashfs/inode.c                   |   2 +-
+ fs/sync.c                             |   2 +-
+ fs/ubifs/file.c                       |   2 +-
+ fs/ubifs/super.c                      |   2 +-
+ fs/udf/inode.c                        |   2 +-
+ fs/ufs/inode.c                        |   2 +-
+ fs/xfs/scrub/common.c                 |   2 +-
+ fs/xfs/scrub/inode_repair.c           |   2 +-
+ fs/xfs/scrub/parent.c                 |   2 +-
+ fs/xfs/xfs_bmap_util.c                |   2 +-
+ fs/xfs/xfs_health.c                   |   4 +-
+ fs/xfs/xfs_icache.c                   |   6 +-
+ fs/xfs/xfs_inode.c                    |   6 +-
+ fs/xfs/xfs_inode_item.c               |   4 +-
+ fs/xfs/xfs_iops.c                     |   2 +-
+ fs/xfs/xfs_reflink.h                  |   2 +-
+ fs/zonefs/super.c                     |   4 +-
+ include/linux/backing-dev.h           |   7 +-
+ include/linux/fs.h                    |  42 ++++++++-
+ include/linux/writeback.h             |   4 +-
+ include/trace/events/writeback.h      |   8 +-
+ mm/backing-dev.c                      |   2 +-
+ security/landlock/fs.c                |   2 +-
+ 107 files changed, 345 insertions(+), 307 deletions(-)
 
- From what I am seeing, it seems like this missing completion in the 
-second case is also the cause of the hanging rbd unmap with the 
-unmodified kernel.
+-- 
+2.43.0
 
-
-Best regards,
-
-Raphael
 
