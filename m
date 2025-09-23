@@ -1,110 +1,306 @@
-Return-Path: <ceph-devel+bounces-3711-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3712-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB32B95927
-	for <lists+ceph-devel@lfdr.de>; Tue, 23 Sep 2025 13:09:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A892B9599D
+	for <lists+ceph-devel@lfdr.de>; Tue, 23 Sep 2025 13:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55E1E18A7CA6
-	for <lists+ceph-devel@lfdr.de>; Tue, 23 Sep 2025 11:09:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48ABF1893B4B
+	for <lists+ceph-devel@lfdr.de>; Tue, 23 Sep 2025 11:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044D932252F;
-	Tue, 23 Sep 2025 11:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F34A321F20;
+	Tue, 23 Sep 2025 11:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b="X7XWgLE4"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vCAyZfiF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pdRGFNqs";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vCAyZfiF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pdRGFNqs"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-router1.rz.tu-ilmenau.de (mail-router1.rz.tu-ilmenau.de [141.24.179.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D900A321F59;
-	Tue, 23 Sep 2025 11:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.24.179.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B830321294
+	for <ceph-devel@vger.kernel.org>; Tue, 23 Sep 2025 11:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758625699; cv=none; b=E1tHDdgKSEvyPLL8h9KdIDIqvMu4o10K4W9YgwZH7ZpIvWycb007DnjhCyW/gn7f2zO+NjnrW+vbELL1YNK9X5M7l9LRpYQ26Zf7tSNGDVTyk3JtCbBH5lOrxJJv5EG9uNPy1CmoUcTCr+KA79ItjR5qvCbevn29gViEIi6fTmY=
+	t=1758626227; cv=none; b=b/BX3HH0XCKA9pB5JfHftJE1rPU6ddhOSJ5QiN5/8pitLXyIdDpvGSIyIsqSrw6Ji7kaIIVMD2GomfjtP6EUW+u1lvOHwvtvgLZv1f0fTY35Rau5vja/dripiSgeP914pBX8mS/Qsld4jQWiMFJUjgF2A9sLgv18aRjeUgR5cLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758625699; c=relaxed/simple;
-	bh=5qeN5FB8P5BaSOId1z/zwYvT0pAjQ0vFVZ9LpT3nZKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ldSZCJ9SrW+KumD27LfhKBAYGBLOxENBvYDx3GGzzoHdEJKyLJoQ8YhPhwlN0ummc4hzT3b2NcuAMw/XXZ14QNgKOFffsT0AHEZfcpA8Dt356/9dGdOFZ0/znWgBQkm5pADetghGLmGy21uyYSUJW5ltJgV1M/H4a71tDjswcP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de; spf=pass smtp.mailfrom=tu-ilmenau.de; dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b=X7XWgLE4; arc=none smtp.client-ip=141.24.179.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-ilmenau.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-ilmenau.de;
- i=@tu-ilmenau.de; q=dns/txt; s=tuil-dkim-1; t=1758625694; h=from : to
- : cc : subject : date : message-id : mime-version :
- content-transfer-encoding : from;
- bh=5qeN5FB8P5BaSOId1z/zwYvT0pAjQ0vFVZ9LpT3nZKg=;
- b=X7XWgLE4DvlyeBhulkQJJ60ZpYXkvC2psZDFACpg/LTTzhP8odzLJ14/rkBF49h4EH35c
- SAzdYe83gOXGJoEB70A0p4xhBNZm/pdvcR19fj3ryh2D2fqr9zne2gLz5kV5WGioy+6MT4u
- SERNs8mQGxHWXSu3btGIUbxt11EURGXUCgHNcorV1iW4sD+e6ARbGMHyGXqk3cSQ40cRBSi
- fRLISNHAZfz4DDtWt3PSEP/mrGMkL8A4IN/SCbQMU6c9Ya7AmA23sihMQ17Z9OzgXEir0U5
- UdLxKBXbZBrUw+XrdLu81dqgjIvhv3iK9rne0JaYhFoRfLE7y5qNBpJhQAJA==
-Received: from mail-front1.rz.tu-ilmenau.de (mail-front1.rz.tu-ilmenau.de [141.24.179.32])
-	by mail-router1.rz.tu-ilmenau.de (Postfix) with ESMTPS id B924C5FCF4;
-	Tue, 23 Sep 2025 13:08:14 +0200 (CEST)
-Received: from silenos (unknown [141.24.207.96])
-	by mail-front1.rz.tu-ilmenau.de (Postfix) with ESMTPSA id 9F1025FC67;
-	Tue, 23 Sep 2025 13:08:14 +0200 (CEST)
-From: Simon Buttgereit <simon.buttgereit@tu-ilmenau.de>
-To: ceph-devel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	idryomov@gmail.com,
-	xiubli@redhat.com,
-	Simon Buttgereit <simon.buttgereit@tu-ilmenau.de>
-Subject: [PATCH] ceph: Fix log output race condition in osd client
-Date: Tue, 23 Sep 2025 13:08:09 +0200
-Message-ID: <20250923110809.3610872-1-simon.buttgereit@tu-ilmenau.de>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1758626227; c=relaxed/simple;
+	bh=zhhqZ83dce0MR01fXWXPs8Ou8y5BhNyOlncGG1KZhSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a3/Mkek7h8PEfazdGLlCXjwSI3ZNjnBvhxHLNM1JWKWUhhljJVnHfhf+oJxa3GcKN51F4O5/fWyCXiqxER9C/C7HNrwJTXupe7va8Elz6STQJED5v64ILCCWh8C08qHI2W1Tq59CsksalHdaifTaERcwpMFl2UbbYIVUzie5bD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vCAyZfiF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pdRGFNqs; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vCAyZfiF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pdRGFNqs; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 659FD1F795;
+	Tue, 23 Sep 2025 11:17:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758626222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Aj6XB5cLlYFGBMoCl3L4Eyrz0r1NoVev57mbCf3LkRU=;
+	b=vCAyZfiFHvOhW40ItlyGOFTW76xeijcAnO2VK2e9LM7XQaTqEQcrTrYGfSl1qnGuXkIiCD
+	dGj/bqSYmW2VVsyUazzsBeMlBP98W7du0yYTePAwN+uEGQOgIdEkY0nwd2vV96H5g6jfCF
+	fodRy0NpT0eR2qRDf/oNgjzoXNE9ntg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758626222;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Aj6XB5cLlYFGBMoCl3L4Eyrz0r1NoVev57mbCf3LkRU=;
+	b=pdRGFNqsL0tnq/fPbd9rih75BlPn2dAJaEE+CpCm5ldl3lvJTLaOkFoZWVoX89xfkqfSaH
+	u/WrYphjGLjbVRAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1758626222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Aj6XB5cLlYFGBMoCl3L4Eyrz0r1NoVev57mbCf3LkRU=;
+	b=vCAyZfiFHvOhW40ItlyGOFTW76xeijcAnO2VK2e9LM7XQaTqEQcrTrYGfSl1qnGuXkIiCD
+	dGj/bqSYmW2VVsyUazzsBeMlBP98W7du0yYTePAwN+uEGQOgIdEkY0nwd2vV96H5g6jfCF
+	fodRy0NpT0eR2qRDf/oNgjzoXNE9ntg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1758626222;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Aj6XB5cLlYFGBMoCl3L4Eyrz0r1NoVev57mbCf3LkRU=;
+	b=pdRGFNqsL0tnq/fPbd9rih75BlPn2dAJaEE+CpCm5ldl3lvJTLaOkFoZWVoX89xfkqfSaH
+	u/WrYphjGLjbVRAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 51D561388C;
+	Tue, 23 Sep 2025 11:17:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id qIv0E66B0mgvfgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 23 Sep 2025 11:17:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0FE3AA09AF; Tue, 23 Sep 2025 13:16:58 +0200 (CEST)
+Date: Tue, 23 Sep 2025 13:16:58 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, 
+	kernel-team@fb.com, amir73il@gmail.com, linux-btrfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, ceph-devel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] hide ->i_state behind accessors
+Message-ID: <bh5kbxlwoavjgliq2m2fco2ahg2ub25ldl4keojewzfadpocv7@3wdcjneve3iw>
+References: <20250923104710.2973493-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923104710.2973493-1-mjguzik@gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org,toxicpanda.com,fb.com,gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-OSD client logging has a problem in get_osd() and put_osd().
-For one logging output refcount_read() is called twice. If recount
-value changes between both calls logging output is not consistent.
+On Tue 23-09-25 12:47:06, Mateusz Guzik wrote:
+> First commit message quoted verbatim with rationable + API:
+> 
+> [quote]
+> Open-coded accesses prevent asserting they are done correctly. One
+> obvious aspect is locking, but significantly more can checked. For
+> example it can be detected when the code is clearing flags which are
+> already missing, or is setting flags when it is illegal (e.g., I_FREEING
+> when ->i_count > 0).
+> 
+> Given the late stage of the release cycle this patchset only aims to
+> hide access, it does not provide any of the checks.
+> 
+> Consumers can be trivially converted. Suppose flags I_A and I_B are to
+> be handled, then:
+> 
+> state = inode->i_state          => state = inode_state_read(inode)
+> inode->i_state |= (I_A | I_B)   => inode_state_set(inode, I_A | I_B)
+> inode->i_state &= ~(I_A | I_B)  => inode_state_clear(inode, I_A | I_B)
+> inode->i_state = I_A | I_B      => inode_state_assign(inode, I_A | I_B)
+> [/quote]
+> 
+> Right now this is one big NOP, except for READ_ONCE/WRITE_ONCE for every access.
+> 
+> Given this, I decided to not submit any per-fs patches. Instead, the
+> conversion is done in 2 parts: coccinelle and whatever which was missed.
 
-This patch adds an additional variable to store the current refcount
-before using it in the logging macro.
+This looks good to me now. Feel free to add:
 
-Signed-off-by: Simon Buttgereit <simon.buttgereit@tu-ilmenau.de>
----
- net/ceph/osd_client.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index 6664ea73ccf8..b8d20ab1976e 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -1280,8 +1280,9 @@ static struct ceph_osd *create_osd(struct ceph_osd_client *osdc, int onum)
- static struct ceph_osd *get_osd(struct ceph_osd *osd)
- {
- 	if (refcount_inc_not_zero(&osd->o_ref)) {
--		dout("get_osd %p %d -> %d\n", osd, refcount_read(&osd->o_ref)-1,
--		     refcount_read(&osd->o_ref));
-+		unsigned int refcount = refcount_read(&osd->o_ref);
-+
-+		dout("get_osd %p %d -> %d\n", osd, refcount - 1, refcount);
- 		return osd;
- 	} else {
- 		dout("get_osd %p FAIL\n", osd);
-@@ -1291,8 +1292,9 @@ static struct ceph_osd *get_osd(struct ceph_osd *osd)
- 
- static void put_osd(struct ceph_osd *osd)
- {
--	dout("put_osd %p %d -> %d\n", osd, refcount_read(&osd->o_ref),
--	     refcount_read(&osd->o_ref) - 1);
-+	unsigned int refcount = refcount_read(&osd->o_ref);
-+
-+	dout("put_osd %p %d -> %d\n", osd, refcount, refcount - 1);
- 	if (refcount_dec_and_test(&osd->o_ref)) {
- 		osd_cleanup(osd);
- 		kfree(osd);
+								Honza
+
+> 
+> Generated against:
+> https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.18.inode.refcount.preliminaries
+> 
+> v6:
+> - rename routines:
+> set -> assign; add -> set; del -> clear
+> - update commentary in patch 3 replacing smp_store/load with smp_wmb/rmb
+> 
+> v5:
+> - drop lockdep for the time being
+> 
+> v4:
+> https://lore.kernel.org/linux-fsdevel/CAGudoHFViBUZ4TPNuLWC7qyK0v8LRwxbpZd9Mx3rHdh5GW9CrQ@mail.gmail.com/T/#m866b3b5740691de9b4008184a9a3f922dfa8e439
+> 
+> 
+> Mateusz Guzik (4):
+>   fs: provide accessors for ->i_state
+>   Convert the kernel to use ->i_state accessors
+>   Manual conversion of ->i_state uses
+>   fs: make plain ->i_state access fail to compile
+> 
+>  Documentation/filesystems/porting.rst |   2 +-
+>  block/bdev.c                          |   4 +-
+>  drivers/dax/super.c                   |   2 +-
+>  fs/9p/vfs_inode.c                     |   2 +-
+>  fs/9p/vfs_inode_dotl.c                |   2 +-
+>  fs/affs/inode.c                       |   2 +-
+>  fs/afs/dynroot.c                      |   6 +-
+>  fs/afs/inode.c                        |   6 +-
+>  fs/bcachefs/fs.c                      |   8 +-
+>  fs/befs/linuxvfs.c                    |   2 +-
+>  fs/bfs/inode.c                        |   2 +-
+>  fs/btrfs/inode.c                      |  10 +--
+>  fs/buffer.c                           |   4 +-
+>  fs/ceph/cache.c                       |   2 +-
+>  fs/ceph/crypto.c                      |   4 +-
+>  fs/ceph/file.c                        |   4 +-
+>  fs/ceph/inode.c                       |  28 +++---
+>  fs/coda/cnode.c                       |   4 +-
+>  fs/cramfs/inode.c                     |   2 +-
+>  fs/crypto/keyring.c                   |   2 +-
+>  fs/crypto/keysetup.c                  |   2 +-
+>  fs/dcache.c                           |   8 +-
+>  fs/drop_caches.c                      |   2 +-
+>  fs/ecryptfs/inode.c                   |   6 +-
+>  fs/efs/inode.c                        |   2 +-
+>  fs/erofs/inode.c                      |   2 +-
+>  fs/ext2/inode.c                       |   2 +-
+>  fs/ext4/inode.c                       |  10 +--
+>  fs/ext4/orphan.c                      |   4 +-
+>  fs/f2fs/data.c                        |   2 +-
+>  fs/f2fs/inode.c                       |   2 +-
+>  fs/f2fs/namei.c                       |   4 +-
+>  fs/f2fs/super.c                       |   2 +-
+>  fs/freevxfs/vxfs_inode.c              |   2 +-
+>  fs/fs-writeback.c                     | 123 +++++++++++++-------------
+>  fs/fuse/inode.c                       |   4 +-
+>  fs/gfs2/file.c                        |   2 +-
+>  fs/gfs2/glops.c                       |   2 +-
+>  fs/gfs2/inode.c                       |   4 +-
+>  fs/gfs2/ops_fstype.c                  |   2 +-
+>  fs/hfs/btree.c                        |   2 +-
+>  fs/hfs/inode.c                        |   2 +-
+>  fs/hfsplus/super.c                    |   2 +-
+>  fs/hostfs/hostfs_kern.c               |   2 +-
+>  fs/hpfs/dir.c                         |   2 +-
+>  fs/hpfs/inode.c                       |   2 +-
+>  fs/inode.c                            | 100 ++++++++++-----------
+>  fs/isofs/inode.c                      |   2 +-
+>  fs/jffs2/fs.c                         |   4 +-
+>  fs/jfs/file.c                         |   4 +-
+>  fs/jfs/inode.c                        |   2 +-
+>  fs/jfs/jfs_txnmgr.c                   |   2 +-
+>  fs/kernfs/inode.c                     |   2 +-
+>  fs/libfs.c                            |   6 +-
+>  fs/minix/inode.c                      |   2 +-
+>  fs/namei.c                            |   8 +-
+>  fs/netfs/misc.c                       |   8 +-
+>  fs/netfs/read_single.c                |   6 +-
+>  fs/nfs/inode.c                        |   2 +-
+>  fs/nfs/pnfs.c                         |   2 +-
+>  fs/nfsd/vfs.c                         |   2 +-
+>  fs/nilfs2/cpfile.c                    |   2 +-
+>  fs/nilfs2/dat.c                       |   2 +-
+>  fs/nilfs2/ifile.c                     |   2 +-
+>  fs/nilfs2/inode.c                     |  10 +--
+>  fs/nilfs2/sufile.c                    |   2 +-
+>  fs/notify/fsnotify.c                  |   2 +-
+>  fs/ntfs3/inode.c                      |   2 +-
+>  fs/ocfs2/dlmglue.c                    |   2 +-
+>  fs/ocfs2/inode.c                      |  10 +--
+>  fs/omfs/inode.c                       |   2 +-
+>  fs/openpromfs/inode.c                 |   2 +-
+>  fs/orangefs/inode.c                   |   2 +-
+>  fs/orangefs/orangefs-utils.c          |   6 +-
+>  fs/overlayfs/dir.c                    |   2 +-
+>  fs/overlayfs/inode.c                  |   6 +-
+>  fs/overlayfs/util.c                   |  10 +--
+>  fs/pipe.c                             |   2 +-
+>  fs/qnx4/inode.c                       |   2 +-
+>  fs/qnx6/inode.c                       |   2 +-
+>  fs/quota/dquot.c                      |   2 +-
+>  fs/romfs/super.c                      |   2 +-
+>  fs/smb/client/cifsfs.c                |   2 +-
+>  fs/smb/client/inode.c                 |  14 +--
+>  fs/squashfs/inode.c                   |   2 +-
+>  fs/sync.c                             |   2 +-
+>  fs/ubifs/file.c                       |   2 +-
+>  fs/ubifs/super.c                      |   2 +-
+>  fs/udf/inode.c                        |   2 +-
+>  fs/ufs/inode.c                        |   2 +-
+>  fs/xfs/scrub/common.c                 |   2 +-
+>  fs/xfs/scrub/inode_repair.c           |   2 +-
+>  fs/xfs/scrub/parent.c                 |   2 +-
+>  fs/xfs/xfs_bmap_util.c                |   2 +-
+>  fs/xfs/xfs_health.c                   |   4 +-
+>  fs/xfs/xfs_icache.c                   |   6 +-
+>  fs/xfs/xfs_inode.c                    |   6 +-
+>  fs/xfs/xfs_inode_item.c               |   4 +-
+>  fs/xfs/xfs_iops.c                     |   2 +-
+>  fs/xfs/xfs_reflink.h                  |   2 +-
+>  fs/zonefs/super.c                     |   4 +-
+>  include/linux/backing-dev.h           |   7 +-
+>  include/linux/fs.h                    |  42 ++++++++-
+>  include/linux/writeback.h             |   4 +-
+>  include/trace/events/writeback.h      |   8 +-
+>  mm/backing-dev.c                      |   2 +-
+>  security/landlock/fs.c                |   2 +-
+>  107 files changed, 345 insertions(+), 307 deletions(-)
+> 
+> -- 
+> 2.43.0
+> 
 -- 
-2.51.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
