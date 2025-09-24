@@ -1,54 +1,54 @@
-Return-Path: <ceph-devel+bounces-3721-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3722-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8302DB99A73
-	for <lists+ceph-devel@lfdr.de>; Wed, 24 Sep 2025 13:51:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3981AB99C0D
+	for <lists+ceph-devel@lfdr.de>; Wed, 24 Sep 2025 14:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F57D3ABC3A
-	for <lists+ceph-devel@lfdr.de>; Wed, 24 Sep 2025 11:51:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 952A47A33D4
+	for <lists+ceph-devel@lfdr.de>; Wed, 24 Sep 2025 12:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FCD02FDC43;
-	Wed, 24 Sep 2025 11:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D162FF140;
+	Wed, 24 Sep 2025 12:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b="sk/Wcmwt"
+	dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b="J3iSCVjL"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from mail-router1.rz.tu-ilmenau.de (mail-router1.rz.tu-ilmenau.de [141.24.179.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFCAD531
-	for <ceph-devel@vger.kernel.org>; Wed, 24 Sep 2025 11:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6061287267
+	for <ceph-devel@vger.kernel.org>; Wed, 24 Sep 2025 12:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.24.179.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758714689; cv=none; b=WY8Cn34sH2zm6gXbCo8JavfI6TdRnOWyh5y1To77Js82EmjRj/PvvB74zDoI/lkliIuWZlNqmUwX8mtUv/FmwoEO9j07ovLxSMiCw6QrF4rRsw0tnOhWBC1ALTCNi+S+O601BscgDmgdYGUm8W8P7cC+0tHZvTJ41Tbk8Z1hBnw=
+	t=1758715550; cv=none; b=IVMPQPKshQNg4g+twp1VzUHwViK+w+m5w1ZJCgcTHXXk6Pp6GFctqtjV7IAdWwfj7MdK6gN9J1RdTq3W/Asw7UXAKJ1htYa11OMXS0Fag0d/ktfcIdlq/Zp5X1i5N/aStat6sZKytg3mnUw62axl3DJAHKV58wIQmsw7mBgyM58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758714689; c=relaxed/simple;
-	bh=ChrYsW8mNJMdwM7ERGnBD1QRWVmvrWVGN1Y79RzZW7s=;
+	s=arc-20240116; t=1758715550; c=relaxed/simple;
+	bh=5VogsxSo4S1p4PMq9a7yb6QLDqA2DXehDgnU+qRL0KU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gbmeKha4KURqVwwvvJNIFVLcP3yAgWrbB2XHLrzsij5AUpqvW5XRuR9zThHSQHLstaWzkwcuVLLdsDwV8J0cfRXW6EtrK7QjYdCD+aHyp+CTat465ZsE5vhUtUdscZQKyPBRfZ9VnVBghbfLLe55ezsRr5K9vkQQ9tMURcn0uJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de; spf=pass smtp.mailfrom=tu-ilmenau.de; dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b=sk/Wcmwt; arc=none smtp.client-ip=141.24.179.34
+	 In-Reply-To:Content-Type; b=JDMvqaB6zqXr3BV3zP+hmildWh4PBaY/c677kNo0KJYk7hOCc45WmIymizfw4E0k3nE5BybaT6hoSattz9xwWmUS6Dp/LBGuEA2xEgcD8AMQ62URSEkIAaWjzodazepX5GNeVidHnDG+nJigsHoZpdT10wtnfSwoFs+VbGtMYTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de; spf=pass smtp.mailfrom=tu-ilmenau.de; dkim=pass (2048-bit key) header.d=tu-ilmenau.de header.i=@tu-ilmenau.de header.b=J3iSCVjL; arc=none smtp.client-ip=141.24.179.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tu-ilmenau.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tu-ilmenau.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tu-ilmenau.de;
- i=@tu-ilmenau.de; q=dns/txt; s=tuil-dkim-1; t=1758714673; h=message-id
+ i=@tu-ilmenau.de; q=dns/txt; s=tuil-dkim-1; t=1758715545; h=message-id
  : date : mime-version : subject : to : cc : references : from :
  in-reply-to : content-type : content-transfer-encoding : from;
- bh=ChrYsW8mNJMdwM7ERGnBD1QRWVmvrWVGN1Y79RzZW7s=;
- b=sk/WcmwtK/Mpe5aOuuqhLbwGmdym2RwkoBNJg4rSNfwsewmy46uRkZLPCddq8Ted3w/bs
- /dCAkgwLwKso/QMVOqB8NMqyV3K8xHBgmR+jcVe+th4hiOSq9GjK3vXtle3g3DV4oEt2V8O
- OiankJTQu2Yv1RVUGLNXLGQYF783edf1Y4gOr7ca7b27urtcVIXRReSZmxMq9dKeZB690mt
- lS3X/3uJxzXNqgq67K46t+fwRcRxgn9ZrLRp90GOTyfdqjkIyflfyOqlsO9SLXSY58NeuiD
- Aqgj5LtqPqG0la9mM0xh7k1IWrfeMOOnoa237yN0Bs0g3sl1Ec1OtO9gD+IA==
+ bh=5VogsxSo4S1p4PMq9a7yb6QLDqA2DXehDgnU+qRL0KU=;
+ b=J3iSCVjLY9hrePxIicdYAsMNDEsCZYxYMb/porfASu+uGYkWkD6Fud62Fkj3q4lhLLaKw
+ HCTSTAosb5iWCJMi4F+f/SS/IrMYXDY7DyxL86hesugSnA91t1J7qlKZ0c/EKYllN6pRyx1
+ mP5XacdEdc2rTQVW/vMyZ4dPBSmuyaWJ4L/hMtNeb3S5ImNc6W3cov10LonFd4+R0a+0spx
+ ZXJr1U2juHkIwepSKhWVRFC2mBd93MI1UT88Y2TAPROtUHbMcLM46E6tIxzzKl2Rdd6wrVR
+ 0KkKlGsNl36LFE+MIU7Xd0VSwD+Z4j1W/8zt8M/XswV6ODZNhov0D1II/6iw==
 Received: from mail-front1.rz.tu-ilmenau.de (mail-front1.rz.tu-ilmenau.de [141.24.179.32])
-	by mail-router1.rz.tu-ilmenau.de (Postfix) with ESMTPS id 2EEC95FC04;
-	Wed, 24 Sep 2025 13:51:13 +0200 (CEST)
+	by mail-router1.rz.tu-ilmenau.de (Postfix) with ESMTPS id D82DF5FB79;
+	Wed, 24 Sep 2025 14:05:45 +0200 (CEST)
 Received: from [141.24.212.106] (unknown [141.24.212.106])
-	by mail-front1.rz.tu-ilmenau.de (Postfix) with ESMTPSA id 0F0575FA96;
-	Wed, 24 Sep 2025 13:51:13 +0200 (CEST)
-Message-ID: <9c9e1775-63ad-422d-b8a2-5cd55c7fa5e9@tu-ilmenau.de>
-Date: Wed, 24 Sep 2025 13:51:12 +0200
+	by mail-front1.rz.tu-ilmenau.de (Postfix) with ESMTPSA id C54665FA96;
+	Wed, 24 Sep 2025 14:05:45 +0200 (CEST)
+Message-ID: <9324e5fb-67fa-43a1-8d1f-00fea4ceb63c@tu-ilmenau.de>
+Date: Wed, 24 Sep 2025 14:05:45 +0200
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -57,11 +57,10 @@ List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [bug report] rbd unmap hangs after pausing and unpausing I/O
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
- "idryomov@gmail.com" <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>
-Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
+To: Ilya Dryomov <idryomov@gmail.com>
+Cc: Xiubo Li <xiubli@redhat.com>, ceph-devel@vger.kernel.org
 References: <36681e9d-fde6-4c5d-bf35-db9d85865900@tu-ilmenau.de>
- <b94f8a4b7d70a9fd3603a1cfcb6a708cf6bd44b9.camel@ibm.com>
+ <CAOi1vP_8MXfbM=dncfNXvPXvUO2dXr-9rj1YVEMYPLjj-Ox4ng@mail.gmail.com>
 Content-Language: en-US
 From: Raphael Zimmer <raphael.zimmer@tu-ilmenau.de>
 Autocrypt: addr=raphael.zimmer@tu-ilmenau.de; keydata=
@@ -96,26 +95,38 @@ Autocrypt: addr=raphael.zimmer@tu-ilmenau.de; keydata=
  34trtXRwZ01FMY+gDNJ2mNbGaVFEMtc93pfCeAQYEQgAIBYhBHbZm4xTFs3WZnPvUz0NmUsZ
  bkJlBQJm3+1mAhsMAAoJED0NmUsZbkJlG4EA/2mxLyHTXwvYnXfwm5Pz0DkpSaGFkPK8i1fU
  ZE1wCR13AP9CWbNf5w1p7sE4muaP2NRCQaG9mdOWsCM7mRnNmH6MiA==
-In-Reply-To: <b94f8a4b7d70a9fd3603a1cfcb6a708cf6bd44b9.camel@ibm.com>
+In-Reply-To: <CAOi1vP_8MXfbM=dncfNXvPXvUO2dXr-9rj1YVEMYPLjj-Ox4ng@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
-On 23.09.25 19:42, Viacheslav Dubeyko wrote:
-> Hi Raphael,
-> 
-> On Tue, 2025-09-23 at 12:38 +0200, Raphael Zimmer wrote:
+On 23.09.25 20:33, Ilya Dryomov wrote:
+> On Tue, Sep 23, 2025 at 12:38 PM Raphael Zimmer
+> <raphael.zimmer@tu-ilmenau.de> wrote:
+>>
 >> Hello,
 >>
 >> I encountered an error with the kernel Ceph client (specifically using
 >> an RBD device) when pausing I/O on the cluster by setting and unsetting
 >> pauserd and pausewr flags. An error was seen with two different setups,
 >> which I believe is due to the same problem.
+> 
+> Hi Raphael,
+> 
+> What is your use case for applying pauserd and pausewr?  I'm curious
+> because it's not something that I have seen used in normal operation
+> and most Ceph users probably aren't even aware of these flags.
+> 
+
+Hi Ilya,
+I was doing some robustness tests with an application and a debug 
+cluster trying out various cluster operations/configurations, when I 
+discovered the bug.
+
+But I heard from a colleague about a real use case where the same issue 
+was also observed. They used it in a data center to temporarily stop all 
+I/O during a major cluster maintenance.
+
 >>
-> 
-> Thanks a lot for the report. Could you please create the ticket in a tracker
-> system [1]?
-> 
 >> 1) When pausing and later unpausing I/O on the cluster, everything seems
 >> to work as expected until trying to unmap an RBD device from the kernel.
 >> In this case, the rbd unmap command hangs and also can't be killed. To
@@ -130,40 +141,6 @@ On 23.09.25 19:42, Viacheslav Dubeyko wrote:
 >> - Unpause I/O on cluster
 >> - Try to unmap RBD device on client
 >>
-> 
-> Do you have a script? Could you please share the sequence of commands that you
-> used in command line to reproduce the issue?
-> 
-> Have you created any folders/files before pause/unpause the I/O requests on
-> cluster?
-> How have you initiated the I/O operations before pausing the I/O requests on
-> cluster?
-> Have you observed any warnings, call traces, or crashes from CephFS kernel
-> client in system log when rbd unmap command hangs (usually, kernel complains if
-> something is hanging significant amount of time)?
-> 
-> Thanks,
-> Slava.
-> 
-
-Hi Slava,
-
-I haven't used CephFS. Only an RBD image.
-The behavior is completely independent of whether I initiate any I/O 
-operations on the RBD image or not. You can reproduce the behavior by 
-following the exact steps from above:
-- rbd map <image-name> for an arbitrary image on the client host
-- ceph osd pause on the cluster
-- after some time: ceph osd unpause on the cluster
-- rbd unmap <image-name> on the client host
-You don't need to do anything else in between.
-
-Since Ilya has already identified the issue and will attempt to fix it, 
-do you still want me to create the ticket in the tracker system?
-
-Best regards,
-Raphael
-
 >>
 >> 2) When using an application that internally uses the kernel Ceph client
 >> code, I observed the following behavior:
@@ -184,12 +161,20 @@ Raphael
 >>   From what I am seeing, it seems like this missing completion in the
 >> second case is also the cause of the hanging rbd unmap with the
 >> unmodified kernel.
->>
->>
->> Best regards,
->>
->> Raphael
 > 
-> [1] https://tracker.ceph.com
+> You are pretty close ;)  The completion is indeed missing, but it's
+> more of a side effect than the root cause.  The root cause is that the
+> watch request doesn't get resubmitted on paused -> unpaused transitions
+> like it happens on e.g. full -> no-longer-full transitions -- the logic
+> around forming need_resend_linger list isn't quite right.  I'll try to
+> put together a fix in the coming days.
+> 
+> Thanks,
+> 
+>                  Ilya
 
+Thanks for looking into it. That's pretty much what I thought was going on.
+
+Best regards,
+Raphael
 
