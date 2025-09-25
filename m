@@ -1,494 +1,299 @@
-Return-Path: <ceph-devel+bounces-3732-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3733-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285CCB9ECC2
-	for <lists+ceph-devel@lfdr.de>; Thu, 25 Sep 2025 12:48:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35FEEB9F681
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Sep 2025 15:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BEDD174D38
-	for <lists+ceph-devel@lfdr.de>; Thu, 25 Sep 2025 10:47:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9AE1BC7605
+	for <lists+ceph-devel@lfdr.de>; Thu, 25 Sep 2025 13:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90B22EE611;
-	Thu, 25 Sep 2025 10:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1CF20DD42;
+	Thu, 25 Sep 2025 13:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="PerBj9k2"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZaWOt+R+"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F7E2E8DFD
-	for <ceph-devel@vger.kernel.org>; Thu, 25 Sep 2025 10:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFFC1FF1AD;
+	Thu, 25 Sep 2025 13:05:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758797132; cv=none; b=iIDz3bZ1dE9TUkgPHq0uUEPwHFV8Yxw/oCLtV0YalhrgvRGwzJ7DaSfWcP9gsUS+84QdHRrOlXa+OR0IZNrvD3F32Ii+qVOUpFEdQEmFxs3cWRYVApDDth9YYNE/wIDdxw2q//vfgWXy1ZPZR69tQRNMDfX+GGqGtT3CzZENPpA=
+	t=1758805544; cv=none; b=OnmbQX0ChA9bFNNbhAzRDDX9ke9e2fE2E+8mB0DsXN8oUqEYcqRghcGVqO6FBXoT1GdJl4RmLLEv1iBX4HPMDw6L3nyNr8s+9xo74M0oj0m/EfQQd6JEWqNYNPnJpO7jxbR6V0WblAnvi0saFDgpWFsiSjypCOZb3Rocr4nVZ0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758797132; c=relaxed/simple;
-	bh=2Y/Etx7wsAJuNVlBBeFuTxyOUrSl8OleFgQbVZG+ERY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=pu86auMfIxHbCl0bQTHd3Ky7RcPZx5kbyEryXU4dKUfrihcLJDRDXJ+hokx5cFf5h4UeN1ltKl44WRk+uSIoYKWBEOUEDFyaES+rKsQacOb0DAj4x7Dob850GP+eUQyex2k3+fhuryzqLhkvXKe0i5xU9DBomrH7FgDBFpL9YrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=PerBj9k2; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3f0ae439bc3so324013f8f.1
-        for <ceph-devel@vger.kernel.org>; Thu, 25 Sep 2025 03:45:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1758797127; x=1759401927; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rD5bRVS4j89IYhbkqtvwQE1tWcEcavfJ8B+snILPpnk=;
-        b=PerBj9k2eLBk54O4yxN4q+etTdHjV8pImoynQo5XJutfbJFWirX5lKz0qRskLZHxvd
-         Ufv2LDMc5QHmy6CONNM3t9WadmEZoU20bwZdUwL5MKXc7JzDlRBZKISU8zac1yZj+7wi
-         zC1QfZlTcougW4R0KoueDUqLkNB/X3w5GuaqSxdaJ0NjJoeErKQcEnXERF9YKuV15yPD
-         WN7kcD6mKIRRnBnOQyQVG1Ci4zToDzign5lgW7W9Zngkb8M+eYexBvVU6YF6bOyL3Ho2
-         2Wvk4OIO8KDvxkmrFkRkgDdIM/8riJhf9jGoexYxEYx+CBBRDG7rWkUIK07rnu5I44xG
-         D5Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758797127; x=1759401927;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rD5bRVS4j89IYhbkqtvwQE1tWcEcavfJ8B+snILPpnk=;
-        b=kWdDymtm+excXXgT4U0SAGQLiRq8y3tCbzn9cuf2QC7HrjC556ETEcQfMAoDjRmwfX
-         MhIYHF0bxULTH/ED39Xw7hM0pgAhJ73gRQWtBkVJIS/gJ0HzN1WcglcuCW+F0rmzZGrG
-         veknIAAdTUER+gjHBOavXJbZimfNnVJNwY4pBWiALrVdnclcHqETRZDKiiptJkClN2no
-         olmtbf2VLAWaYDMwhKPCxnBws49ekylYBR7TfLoJzk1eKAjDo6Oej6hvbwF81HZNpd2b
-         JrOpt8e4Fn/6RgEMvJUNW3ZG6YJU6TMI0i+800OvG/OlFSAjbs3TdiEFDw+zSWb7vW9V
-         Dspw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSLk6gx/0pkjyCeTD/P5BwIBgOUuzC7O289EHVGwmoOfI2/SbN52VdGiy20HVaWu9dlCwh/8fiyMov@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmsL6m4CU6P4kckTqDmjbyAnI0qIBzS30CLxfe5w61D2dkXQGR
-	/R57Kt2CaJzBPayaFZ7NXlW+IrWgJv0v/Gsk+dXSP+LHUW6UZlnc/yjOSU+ozKANxno=
-X-Gm-Gg: ASbGnctygXl/Yf1f8YpY/nT0MCxDhd55osyJV3fsq8fjeVzDYPcjmtOLTSauAuQBcD1
-	FH0VZ05bFp1Oe5M5hDooXCei6M+CE4ciRaK2WnAGQZpNdCyJ2CCiDRsdfn0zJ6Dr5i0VC16hrJg
-	nF+qf1XCF3JfvOa6SgLefd5BqA5RWhV5aTUwRDsq+nxRFD+gDe0RFUuaVpY2mA25CCbqE2vuEyy
-	MT9rOXpd6cquDscK9BQ2e5wv5snNBzC2aBBK/D3xIZBFbYYQxnzD0DLlIGUZNiwWTQhhLcPELKD
-	5Yt9TBOglS/UZPSkaj5eooNE4GPvJV8VsWIQrGakPPm+yOnAnyVje+8Ro4/L5CpQDnAK34X1op4
-	LO/haLPQZC9RKniTAKeAn1MqHmRUDCianXwILYfjKPk9qyhjPhdeYnjtThldIafWtx5FhjfUrXm
-	FVIpTbSsJe3W8VpKsKqi5GGA==
-X-Google-Smtp-Source: AGHT+IHT1KVxlBNxyFDCaHu545shG2L21DrIcoORWPTFR8KKA/HztsEYb06C5+5BWMpDJhnIrFGDBA==
-X-Received: by 2002:a05:6000:2891:b0:3ea:80ec:8552 with SMTP id ffacd0b85a97d-40e4ce4bc13mr2854165f8f.57.1758797126522;
-        Thu, 25 Sep 2025 03:45:26 -0700 (PDT)
-Received: from raven.intern.cm-ag (p200300dc6f090200023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f09:200:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e32b4f336sm16058985e9.0.2025.09.25.03.45.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 03:45:25 -0700 (PDT)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: Xiubo Li <xiubli@redhat.com>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Max Kellermann <max.kellermann@ionos.com>,
-	linux-kernel@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] ceph: add trace points to the MDS client
-Date: Thu, 25 Sep 2025 12:45:12 +0200
-Message-ID: <20250925104522.3501812-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1758805544; c=relaxed/simple;
+	bh=Gp4c6egSDZppUvv2xr9l0RgLesVaqe1pJuC3fuLHLQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=keh7sLw1Aqb2kf9sGNtEXVRZ7JRwXFCQkj8A9nrg+GN74mpLcsmKKBR1DOegjRDD14BvR9Y0psrWZFhoqrNXDWlWjfPeSpoAm2S1g/piLmHipSf9Ac6rJbHhrWNTQV7Xkg+E5qOqCg2bMhUlBNLmnTxojOm+uNjU1kkUH+tthiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZaWOt+R+; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1758805542; x=1790341542;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Gp4c6egSDZppUvv2xr9l0RgLesVaqe1pJuC3fuLHLQs=;
+  b=ZaWOt+R+vRlfJzTyDzmhz+/0ERE0Z8+bo9Y3BVeXqVEv6aeKk/HAlnW8
+   zkPfjt7Dsee8d7GqQO0GDl7Z5e/6N2UgbOJorRrHSXQQGFF3B0cyKWCX4
+   oifGDxLZl9VWtrTXk5BxHIbo/8NGMpBGz8qD2I9EFrDYblP3mDIpAy2Tx
+   SxzZAmS3Xxbb2FzUjNtw4tECWfYZ2EYNW4ezwpL108I9BiFeQP2GXvz9+
+   odCToJPpYoC+KZDdoQv9h/mh78pXRNHOCvjqVTqJgdTUytBI1C3U5Wp9j
+   FkOtKaFf0JCbWpsxesj5RZUg+uG2LlQ/1ujHzq44PWP7VgU4tVTs4eVOi
+   g==;
+X-CSE-ConnectionGUID: jobh8eYaRb2vMZjL6sp0Hw==
+X-CSE-MsgGUID: W9+zNA7mTuC5HxqoNKV9gQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11563"; a="72222912"
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="72222912"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Sep 2025 06:05:41 -0700
+X-CSE-ConnectionGUID: UdGNHChTSnyqdweHc6+WWg==
+X-CSE-MsgGUID: SWWgNa2fQKOF8Kzeo62Yqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,292,1751266800"; 
+   d="scan'208";a="214457447"
+Received: from lkp-server02.sh.intel.com (HELO 84c55410ccf6) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 25 Sep 2025 06:05:39 -0700
+Received: from kbuild by 84c55410ccf6 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v1lfE-0005Ev-1N;
+	Thu, 25 Sep 2025 13:05:36 +0000
+Date: Thu, 25 Sep 2025 21:04:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Viacheslav Dubeyko <slava@dubeyko.com>, ceph-devel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, idryomov@gmail.com,
+	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com,
+	amarkuze@redhat.com, Slava.Dubeyko@ibm.com, slava@dubeyko.com,
+	vdubeyko@redhat.com
+Subject: Re: [PATCH] ceph: introduce Kunit based unit-tests for string
+ operations
+Message-ID: <202509252015.tfuSHe3S-lkp@intel.com>
+References: <20250919181149.500408-2-slava@dubeyko.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250919181149.500408-2-slava@dubeyko.com>
 
-This patch adds trace points to the Ceph filesystem MDS client:
+Hi Viacheslav,
 
-- request submission (CEPH_MSG_CLIENT_REQUEST) and completion
-  (CEPH_MSG_CLIENT_REPLY)
-- capabilities (CEPH_MSG_CLIENT_CAPS)
+kernel test robot noticed the following build warnings:
 
-These are the central pieces that are useful for analyzing MDS
-latency/performance problems from the client's perspective.
+[auto build test WARNING on ceph-client/testing]
+[also build test WARNING on ceph-client/for-linus linus/master v6.17-rc7 next-20250924]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-In the long run, all doutc() calls should be replaced with
-tracepoints.  This way, the Ceph filesystem can be traced at any time
-(without spamming the kernel log).  Additionally, trace points can be
-used in BPF programs (which can even deference the pointer parameters
-and extract more values).
+url:    https://github.com/intel-lab-lkp/linux/commits/Viacheslav-Dubeyko/ceph-introduce-Kunit-based-unit-tests-for-string-operations/20250920-021357
+base:   https://github.com/ceph/ceph-client.git testing
+patch link:    https://lore.kernel.org/r/20250919181149.500408-2-slava%40dubeyko.com
+patch subject: [PATCH] ceph: introduce Kunit based unit-tests for string operations
+config: loongarch-randconfig-r133-20250925 (https://download.01.org/0day-ci/archive/20250925/202509252015.tfuSHe3S-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250925/202509252015.tfuSHe3S-lkp@intel.com/reproduce)
 
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- fs/ceph/caps.c              |   4 +
- fs/ceph/mds_client.c        |  20 ++-
- fs/ceph/super.c             |   3 +
- include/trace/events/ceph.h | 234 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 259 insertions(+), 2 deletions(-)
- create mode 100644 include/trace/events/ceph.h
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509252015.tfuSHe3S-lkp@intel.com/
 
-diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index b1a8ff612c41..2f663972da99 100644
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -18,6 +18,7 @@
- #include "crypto.h"
- #include <linux/ceph/decode.h>
- #include <linux/ceph/messenger.h>
-+#include <trace/events/ceph.h>
- 
- /*
-  * Capability management
-@@ -4452,6 +4453,9 @@ void ceph_handle_caps(struct ceph_mds_session *session,
- 	      session->s_mds, ceph_cap_op_name(op), vino.ino, vino.snap, inode,
- 	      seq, issue_seq, mseq);
- 
-+	trace_ceph_handle_caps(mdsc, session, op, &vino, ceph_inode(inode),
-+			       seq, issue_seq, mseq);
-+
- 	mutex_lock(&session->s_mutex);
- 
- 	if (!inode) {
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index 3bc72b47fe4d..90e4268b24f9 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -24,6 +24,7 @@
- #include <linux/ceph/pagelist.h>
- #include <linux/ceph/auth.h>
- #include <linux/ceph/debugfs.h>
-+#include <trace/events/ceph.h>
- 
- #define RECONNECT_MAX_SIZE (INT_MAX - PAGE_SIZE)
- 
-@@ -3282,6 +3283,8 @@ static void complete_request(struct ceph_mds_client *mdsc,
- {
- 	req->r_end_latency = ktime_get();
- 
-+	trace_ceph_mdsc_complete_request(mdsc, req);
-+
- 	if (req->r_callback)
- 		req->r_callback(mdsc, req);
- 	complete_all(&req->r_completion);
-@@ -3413,6 +3416,8 @@ static int __send_request(struct ceph_mds_session *session,
- {
- 	int err;
- 
-+	trace_ceph_mdsc_send_request(session, req);
-+
- 	err = __prepare_send_request(session, req, drop_cap_releases);
- 	if (!err) {
- 		ceph_msg_get(req->r_request);
-@@ -3464,6 +3469,8 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 		}
- 		if (mdsc->mdsmap->m_epoch == 0) {
- 			doutc(cl, "no mdsmap, waiting for map\n");
-+			trace_ceph_mdsc_suspend_request(mdsc, session, req,
-+							ceph_mdsc_suspend_reason_no_mdsmap);
- 			list_add(&req->r_wait, &mdsc->waiting_for_map);
- 			return;
- 		}
-@@ -3485,6 +3492,8 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 			goto finish;
- 		}
- 		doutc(cl, "no mds or not active, waiting for map\n");
-+		trace_ceph_mdsc_suspend_request(mdsc, session, req,
-+						ceph_mdsc_suspend_reason_no_active_mds);
- 		list_add(&req->r_wait, &mdsc->waiting_for_map);
- 		return;
- 	}
-@@ -3530,9 +3539,11 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 		 * it to the mdsc queue.
- 		 */
- 		if (session->s_state == CEPH_MDS_SESSION_REJECTED) {
--			if (ceph_test_mount_opt(mdsc->fsc, CLEANRECOVER))
-+			if (ceph_test_mount_opt(mdsc->fsc, CLEANRECOVER)) {
-+				trace_ceph_mdsc_suspend_request(mdsc, session, req,
-+								ceph_mdsc_suspend_reason_rejected);
- 				list_add(&req->r_wait, &mdsc->waiting_for_map);
--			else
-+			} else
- 				err = -EACCES;
- 			goto out_session;
- 		}
-@@ -3546,6 +3557,8 @@ static void __do_request(struct ceph_mds_client *mdsc,
- 			if (random)
- 				req->r_resend_mds = mds;
- 		}
-+		trace_ceph_mdsc_suspend_request(mdsc, session, req,
-+						ceph_mdsc_suspend_reason_session);
- 		list_add(&req->r_wait, &session->s_waiting);
- 		goto out_session;
- 	}
-@@ -3646,6 +3659,7 @@ static void __wake_requests(struct ceph_mds_client *mdsc,
- 		list_del_init(&req->r_wait);
- 		doutc(cl, " wake request %p tid %llu\n", req,
- 		      req->r_tid);
-+		trace_ceph_mdsc_resume_request(mdsc, req);
- 		__do_request(mdsc, req);
- 	}
- }
-@@ -3672,6 +3686,7 @@ static void kick_requests(struct ceph_mds_client *mdsc, int mds)
- 		    req->r_session->s_mds == mds) {
- 			doutc(cl, " kicking tid %llu\n", req->r_tid);
- 			list_del_init(&req->r_wait);
-+			trace_ceph_mdsc_resume_request(mdsc, req);
- 			__do_request(mdsc, req);
- 		}
- 	}
-@@ -3718,6 +3733,7 @@ int ceph_mdsc_submit_request(struct ceph_mds_client *mdsc, struct inode *dir,
- 	doutc(cl, "submit_request on %p for inode %p\n", req, dir);
- 	mutex_lock(&mdsc->mutex);
- 	__register_request(mdsc, req, dir);
-+	trace_ceph_mdsc_submit_request(mdsc, req);
- 	__do_request(mdsc, req);
- 	err = req->r_err;
- 	mutex_unlock(&mdsc->mutex);
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index c3eb651862c5..f119d7260496 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -30,6 +30,9 @@
- 
- #include <uapi/linux/magic.h>
- 
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/ceph.h>
-+
- static DEFINE_SPINLOCK(ceph_fsc_lock);
- static LIST_HEAD(ceph_fsc_list);
- 
-diff --git a/include/trace/events/ceph.h b/include/trace/events/ceph.h
-new file mode 100644
-index 000000000000..08cb0659fbfc
---- /dev/null
-+++ b/include/trace/events/ceph.h
-@@ -0,0 +1,234 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* Ceph filesystem support module tracepoints
-+ *
-+ * Copyright (C) 2025 IONOS SE. All Rights Reserved.
-+ * Written by Max Kellermann (max.kellermann@ionos.com)
-+ */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM ceph
-+
-+#if !defined(_TRACE_CEPH_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_CEPH_H
-+
-+#include <linux/tracepoint.h>
-+
-+#define ceph_mdsc_suspend_reasons						\
-+	EM(ceph_mdsc_suspend_reason_no_mdsmap,		"no-mdsmap")		\
-+	EM(ceph_mdsc_suspend_reason_no_active_mds,	"no-active-mds")	\
-+	EM(ceph_mdsc_suspend_reason_rejected,		"rejected")		\
-+	E_(ceph_mdsc_suspend_reason_session,		"session")
-+
-+#ifndef __NETFS_DECLARE_TRACE_ENUMS_ONCE_ONLY
-+#define __NETFS_DECLARE_TRACE_ENUMS_ONCE_ONLY
-+
-+#undef EM
-+#undef E_
-+#define EM(a, b) a,
-+#define E_(a, b) a
-+
-+enum ceph_mdsc_suspend_reason { ceph_mdsc_suspend_reasons } __mode(byte);
-+
-+#endif
-+
-+/*
-+ * Export enum symbols via userspace.
-+ */
-+#undef EM
-+#undef E_
-+#define EM(a, b) TRACE_DEFINE_ENUM(a);
-+#define E_(a, b) TRACE_DEFINE_ENUM(a);
-+
-+ceph_mdsc_suspend_reasons;
-+
-+/*
-+ * Now redefine the EM() and E_() macros to map the enums to the strings that
-+ * will be printed in the output.
-+ */
-+#undef EM
-+#undef E_
-+#define EM(a, b)	{ a, b },
-+#define E_(a, b)	{ a, b }
-+
-+TRACE_EVENT(ceph_mdsc_submit_request,
-+	TP_PROTO(struct ceph_mds_client *mdsc,
-+		 struct ceph_mds_request *req),
-+
-+	TP_ARGS(mdsc, req),
-+
-+	TP_STRUCT__entry(
-+		__field(u64,	tid)
-+		__field(int,	op)
-+		__field(u64,	ino)
-+		__field(u64,	snap)
-+	),
-+
-+	TP_fast_assign(
-+		struct inode *inode;
-+
-+		__entry->tid = req->r_tid;
-+		__entry->op = req->r_op;
-+
-+		inode = req->r_inode;
-+		if (inode == NULL && req->r_dentry)
-+			inode = d_inode(req->r_dentry);
-+
-+		if (inode) {
-+			__entry->ino = ceph_ino(inode);
-+			__entry->snap = ceph_snap(inode);
-+		} else {
-+			__entry->ino = __entry->snap = 0;
-+		}
-+	),
-+
-+	TP_printk("R=%llu op=%s ino=%llx,%llx",
-+		  __entry->tid,
-+		  ceph_mds_op_name(__entry->op),
-+		  __entry->ino, __entry->snap)
-+);
-+
-+TRACE_EVENT(ceph_mdsc_suspend_request,
-+	TP_PROTO(struct ceph_mds_client *mdsc,
-+		     struct ceph_mds_session *session,
-+		     struct ceph_mds_request *req,
-+		     enum ceph_mdsc_suspend_reason reason),
-+
-+	TP_ARGS(mdsc, session, req, reason),
-+
-+	TP_STRUCT__entry(
-+		__field(u64,				tid)
-+		__field(int,				op)
-+		__field(int,				mds)
-+		__field(enum ceph_mdsc_suspend_reason,	reason)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->tid = req->r_tid;
-+		__entry->op = req->r_op;
-+		__entry->mds = session ? session->s_mds : -1;
-+		__entry->reason = reason;
-+	),
-+
-+	TP_printk("R=%llu op=%s reason=%s",
-+		  __entry->tid,
-+		  ceph_mds_op_name(__entry->op),
-+		  __print_symbolic(__entry->reason, ceph_mdsc_suspend_reasons))
-+);
-+
-+TRACE_EVENT(ceph_mdsc_resume_request,
-+	TP_PROTO(struct ceph_mds_client *mdsc,
-+		 struct ceph_mds_request *req),
-+
-+	TP_ARGS(mdsc, req),
-+
-+	TP_STRUCT__entry(
-+		__field(u64,				tid)
-+		__field(int,				op)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->tid = req->r_tid;
-+		__entry->op = req->r_op;
-+	),
-+
-+	TP_printk("R=%llu op=%s",
-+		  __entry->tid,
-+		  ceph_mds_op_name(__entry->op))
-+);
-+
-+TRACE_EVENT(ceph_mdsc_send_request,
-+	TP_PROTO(struct ceph_mds_session *session,
-+		 struct ceph_mds_request *req),
-+
-+	TP_ARGS(session, req),
-+
-+	TP_STRUCT__entry(
-+		__field(u64,		tid)
-+		__field(int,		op)
-+		__field(int,		mds)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->tid = req->r_tid;
-+		__entry->op = req->r_op;
-+		__entry->mds = session->s_mds;
-+	),
-+
-+	TP_printk("R=%llu op=%s mds=%d",
-+		  __entry->tid,
-+		  ceph_mds_op_name(__entry->op),
-+		  __entry->mds)
-+);
-+
-+TRACE_EVENT(ceph_mdsc_complete_request,
-+	TP_PROTO(struct ceph_mds_client *mdsc,
-+		     struct ceph_mds_request *req),
-+
-+	TP_ARGS(mdsc, req),
-+
-+	TP_STRUCT__entry(
-+		__field(u64,			tid)
-+		__field(int,			op)
-+		__field(int,			err)
-+		__field(unsigned long,		latency_ns)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->tid = req->r_tid;
-+		__entry->op = req->r_op;
-+		__entry->err = req->r_err;
-+		__entry->latency_ns = req->r_end_latency - req->r_start_latency;
-+	),
-+
-+	TP_printk("R=%llu op=%s err=%d latency_ns=%lu",
-+		  __entry->tid,
-+		  ceph_mds_op_name(__entry->op),
-+		  __entry->err,
-+		  __entry->latency_ns)
-+);
-+
-+TRACE_EVENT(ceph_handle_caps,
-+	TP_PROTO(struct ceph_mds_client *mdsc,
-+		 struct ceph_mds_session *session,
-+		 int op,
-+		 const struct ceph_vino *vino,
-+		 struct ceph_inode_info *inode,
-+		 u32 seq, u32 mseq, u32 issue_seq),
-+
-+	TP_ARGS(mdsc, session, op, vino, inode, seq, mseq, issue_seq),
-+
-+	TP_STRUCT__entry(
-+		__field(int,	mds)
-+		__field(int,	op)
-+		__field(u64,	ino)
-+		__field(u64,	snap)
-+		__field(u32,	seq)
-+		__field(u32,	mseq)
-+		__field(u32,	issue_seq)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->mds = session->s_mds;
-+		__entry->op = op;
-+		__entry->ino = vino->ino;
-+		__entry->snap = vino->snap;
-+		__entry->seq = seq;
-+		__entry->mseq = mseq;
-+		__entry->issue_seq = issue_seq;
-+	),
-+
-+	TP_printk("mds=%d op=%s vino=%llx.%llx seq=%u iseq=%u mseq=%u",
-+		  __entry->mds,
-+		  ceph_cap_op_name(__entry->op),
-+		  __entry->ino,
-+		  __entry->snap,
-+		  __entry->seq,
-+		  __entry->issue_seq,
-+		  __entry->mseq)
-+);
-+
-+#undef EM
-+#undef E_
-+#endif /* _TRACE_CEPH_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
+sparse warnings: (new ones prefixed by >>)
+>> fs/ceph/strings_test.c:102:11: sparse: sparse: symbol 'ceph_str_idx_2_mds_state' was not declared. Should it be static?
+>> fs/ceph/strings_test.c:247:11: sparse: sparse: symbol 'ceph_str_idx_2_mds_op' was not declared. Should it be static?
+>> fs/ceph/strings_test.c:459:11: sparse: sparse: symbol 'ceph_str_idx_2_lease_op' was not declared. Should it be static?
+
+vim +/ceph_str_idx_2_mds_state +102 fs/ceph/strings_test.c
+
+   100	
+   101	#define CEPH_MDS_STATE_STR_COUNT	(CEPH_MDS_STATE_UNKNOWN_NAME_STR_IDX)
+ > 102	const int ceph_str_idx_2_mds_state[CEPH_MDS_STATE_STR_COUNT] = {
+   103	/* 0 */		CEPH_MDS_STATE_DNE,
+   104	/* 1 */		CEPH_MDS_STATE_STOPPED,
+   105	/* 2 */		CEPH_MDS_STATE_BOOT,
+   106	/* 3 */		CEPH_MDS_STATE_STANDBY,
+   107	/* 4 */		CEPH_MDS_STATE_STANDBY_REPLAY,
+   108	/* 5 */		CEPH_MDS_STATE_REPLAYONCE,
+   109	/* 6 */		CEPH_MDS_STATE_CREATING,
+   110	/* 7 */		CEPH_MDS_STATE_STARTING,
+   111	/* 8 */		CEPH_MDS_STATE_REPLAY,
+   112	/* 9 */		CEPH_MDS_STATE_RESOLVE,
+   113	/* 10 */	CEPH_MDS_STATE_RECONNECT,
+   114	/* 11 */	CEPH_MDS_STATE_REJOIN,
+   115	/* 12 */	CEPH_MDS_STATE_CLIENTREPLAY,
+   116	/* 13 */	CEPH_MDS_STATE_ACTIVE,
+   117	/* 14 */	CEPH_MDS_STATE_STOPPING
+   118	};
+   119	
+   120	static int ceph_mds_state_next_op(int prev)
+   121	{
+   122		if (prev < CEPH_MDS_STATE_REPLAYONCE)
+   123			return CEPH_MDS_STATE_REPLAYONCE;
+   124	
+   125		/* [-9..-4] */
+   126		if (prev >= CEPH_MDS_STATE_REPLAYONCE &&
+   127		    prev < CEPH_MDS_STATE_BOOT)
+   128			return prev + 1;
+   129	
+   130		/* [-4..-1] */
+   131		if (prev == CEPH_MDS_STATE_BOOT)
+   132			return CEPH_MDS_STATE_STOPPED;
+   133	
+   134		/* [-1..0] */
+   135		if (prev >= CEPH_MDS_STATE_STOPPED &&
+   136		    prev < CEPH_MDS_STATE_DNE)
+   137			return prev + 1;
+   138	
+   139		/* [0..8] */
+   140		if (prev == CEPH_MDS_STATE_DNE)
+   141			return CEPH_MDS_STATE_REPLAY;
+   142	
+   143		/* [8..14] */
+   144		if (prev >= CEPH_MDS_STATE_REPLAY &&
+   145		    prev < CEPH_MDS_STATE_STOPPING)
+   146			return prev + 1;
+   147	
+   148		return CEPH_MDS_STATE_STOPPING;
+   149	}
+   150	
+   151	static void ceph_mds_state_name_test(struct kunit *test)
+   152	{
+   153		const char *unknown_name =
+   154			ceph_mds_state_name_strings[CEPH_MDS_STATE_UNKNOWN_NAME_STR_IDX];
+   155		struct ceph_op_iterator iter;
+   156		int start, end;
+   157		int i;
+   158	
+   159		/* Test valid MDS states */
+   160		for (i = 0; i < CEPH_MDS_STATE_STR_COUNT; i++) {
+   161			KUNIT_EXPECT_STREQ(test,
+   162				   ceph_mds_state_name(ceph_str_idx_2_mds_state[i]),
+   163				   ceph_mds_state_name_strings[i]);
+   164		}
+   165	
+   166		/* Test invalid/unknown states */
+   167		start = CEPH_MDS_STATE_REPLAYONCE - CEPH_KUNIT_STRINGS_TEST_RANGE;
+   168		end = CEPH_MDS_STATE_STOPPING + CEPH_KUNIT_STRINGS_TEST_RANGE;
+   169		ceph_op_iterator_init(&iter, start, end, ceph_mds_state_next_op);
+   170	
+   171		while (ceph_op_iterator_valid(&iter)) {
+   172			switch (ceph_mds_state_2_str_idx(iter.cur)) {
+   173			case CEPH_MDS_STATE_UNKNOWN_NAME_STR_IDX:
+   174				KUNIT_EXPECT_STREQ(test,
+   175						   ceph_mds_state_name(iter.cur),
+   176						   unknown_name);
+   177				break;
+   178	
+   179			default:
+   180				/* do nothing */
+   181				break;
+   182			}
+   183	
+   184			ceph_op_iterator_next(&iter);
+   185		}
+   186	
+   187		KUNIT_EXPECT_STREQ(test,
+   188				   ceph_mds_state_name(CEPH_KUNIT_OP_INVALID_MIN),
+   189				   unknown_name);
+   190		KUNIT_EXPECT_STREQ(test,
+   191				   ceph_mds_state_name(CEPH_KUNIT_OP_INVALID_MAX),
+   192				   unknown_name);
+   193	}
+   194	
+   195	static int ceph_session_next_op(int prev)
+   196	{
+   197		return __ceph_next_op(prev,
+   198				      CEPH_SESSION_REQUEST_OPEN,
+   199				      CEPH_SESSION_REQUEST_FLUSH_MDLOG);
+   200	}
+   201	
+   202	static void ceph_session_op_name_test(struct kunit *test)
+   203	{
+   204		const char *unknown_name =
+   205				ceph_session_op_name_strings[CEPH_SESSION_UNKNOWN_NAME];
+   206		struct ceph_op_iterator iter;
+   207		int start, end;
+   208		int i;
+   209	
+   210		/* Test valid session operations */
+   211		for (i = CEPH_SESSION_REQUEST_OPEN; i < CEPH_SESSION_UNKNOWN_NAME; i++) {
+   212			KUNIT_EXPECT_STREQ(test,
+   213					   ceph_session_op_name(i),
+   214					   ceph_session_op_name_strings[i]);
+   215		}
+   216	
+   217		/* Test invalid/unknown operations */
+   218		start = CEPH_SESSION_REQUEST_OPEN - CEPH_KUNIT_STRINGS_TEST_RANGE;
+   219		end = CEPH_SESSION_REQUEST_FLUSH_MDLOG + CEPH_KUNIT_STRINGS_TEST_RANGE;
+   220		ceph_op_iterator_init(&iter, start, end, ceph_session_next_op);
+   221	
+   222		while (ceph_op_iterator_valid(&iter)) {
+   223			switch (ceph_session_op_2_str_idx(iter.cur)) {
+   224			case CEPH_SESSION_UNKNOWN_NAME:
+   225				KUNIT_EXPECT_STREQ(test,
+   226						   ceph_session_op_name(iter.cur),
+   227						   unknown_name);
+   228				break;
+   229	
+   230			default:
+   231				/* do nothing */
+   232				break;
+   233			}
+   234	
+   235			ceph_op_iterator_next(&iter);
+   236		}
+   237	
+   238		KUNIT_EXPECT_STREQ(test,
+   239				   ceph_session_op_name(CEPH_KUNIT_OP_INVALID_MIN),
+   240				   unknown_name);
+   241		KUNIT_EXPECT_STREQ(test,
+   242				   ceph_session_op_name(CEPH_KUNIT_OP_INVALID_MAX),
+   243				   unknown_name);
+   244	}
+   245	
+   246	#define CEPH_MDS_OP_STR_COUNT	(CEPH_MDS_OP_UNKNOWN_NAME_STR_IDX)
+ > 247	const int ceph_str_idx_2_mds_op[CEPH_MDS_OP_STR_COUNT] = {
+   248	/* 0 */		CEPH_MDS_OP_LOOKUP,
+   249	/* 1 */		CEPH_MDS_OP_GETATTR,
+   250	/* 2 */		CEPH_MDS_OP_LOOKUPHASH,
+   251	/* 3 */		CEPH_MDS_OP_LOOKUPPARENT,
+   252	/* 4 */		CEPH_MDS_OP_LOOKUPINO,
+   253	/* 5 */		CEPH_MDS_OP_LOOKUPNAME,
+   254	/* 6 */		CEPH_MDS_OP_GETVXATTR,
+   255	/* 7 */		CEPH_MDS_OP_SETXATTR,
+   256	/* 8 */		CEPH_MDS_OP_RMXATTR,
+   257	/* 9 */		CEPH_MDS_OP_SETLAYOUT,
+   258	/* 10 */	CEPH_MDS_OP_SETATTR,
+   259	/* 11 */	CEPH_MDS_OP_SETFILELOCK,
+   260	/* 12 */	CEPH_MDS_OP_GETFILELOCK,
+   261	/* 13 */	CEPH_MDS_OP_SETDIRLAYOUT,
+   262	/* 14 */	CEPH_MDS_OP_MKNOD,
+   263	/* 15 */	CEPH_MDS_OP_LINK,
+   264	/* 16 */	CEPH_MDS_OP_UNLINK,
+   265	/* 17 */	CEPH_MDS_OP_RENAME,
+   266	/* 18 */	CEPH_MDS_OP_MKDIR,
+   267	/* 19 */	CEPH_MDS_OP_RMDIR,
+   268	/* 20 */	CEPH_MDS_OP_SYMLINK,
+   269	/* 21 */	CEPH_MDS_OP_CREATE,
+   270	/* 22 */	CEPH_MDS_OP_OPEN,
+   271	/* 23 */	CEPH_MDS_OP_READDIR,
+   272	/* 24 */	CEPH_MDS_OP_LOOKUPSNAP,
+   273	/* 25 */	CEPH_MDS_OP_MKSNAP,
+   274	/* 26 */	CEPH_MDS_OP_RMSNAP,
+   275	/* 27 */	CEPH_MDS_OP_LSSNAP,
+   276	/* 28 */	CEPH_MDS_OP_RENAMESNAP
+   277	};
+   278	
+
 -- 
-2.47.3
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
