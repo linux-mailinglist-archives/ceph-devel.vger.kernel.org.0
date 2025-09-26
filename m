@@ -1,78 +1,78 @@
-Return-Path: <ceph-devel+bounces-3738-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3739-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A964BA294A
-	for <lists+ceph-devel@lfdr.de>; Fri, 26 Sep 2025 08:55:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6BB5BA2959
+	for <lists+ceph-devel@lfdr.de>; Fri, 26 Sep 2025 08:56:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CA661B24AF9
-	for <lists+ceph-devel@lfdr.de>; Fri, 26 Sep 2025 06:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D287388431
+	for <lists+ceph-devel@lfdr.de>; Fri, 26 Sep 2025 06:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1DD27E074;
-	Fri, 26 Sep 2025 06:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E373527E1B1;
+	Fri, 26 Sep 2025 06:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="ojqeY5vJ"
+	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="JN7Jyh35"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459AB27D784
-	for <ceph-devel@vger.kernel.org>; Fri, 26 Sep 2025 06:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FDA2AE8D
+	for <ceph-devel@vger.kernel.org>; Fri, 26 Sep 2025 06:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1758869723; cv=none; b=q5tj/WirTeFWwBs9VWIUrEDwXJ9kA/mXrrg5qF5CeLzWF7dDo/PJTQyI5guxbmklk7dbjLpcnRT3D64gOkNjSwHpdG29v5xPW6yq7pW/151teR1VN4ch0pVHugcOt+U1laoyu7Qz7Vv1WgI5X+uAtJoXQbNWIlZVatKYvniiUC8=
+	t=1758869765; cv=none; b=akDeT4QMaiytDxg/30X98jR8JYhiwV2Y/arDb+zDl2NT4PxdXAHa5tUYITEKohWE90sxdf3Bz6hIopFlGDpO1a3Oh1S5eTmMTilNIFnZF5O/0dFMqW7lunbrEOpcZN20h4ATQwQdNjDLbydoV9o7FRO0UXT2wM4QfMQnAlDN5Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1758869723; c=relaxed/simple;
-	bh=aeR0jKC5/gtxKlaD5MnxYFmC8w01kOImtqSZxxRwN6g=;
+	s=arc-20240116; t=1758869765; c=relaxed/simple;
+	bh=+4YCN2dmmyfb7+Hl1S6/hlw/+FbPhHYA7RWFcIkHebg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JCq0QO/T0dd9CWQqr54CThCrX7+hVpI3aIwkxnJP1jHySzOerwqvGaZzeygPgerSkoUaGbtz3beRVahdtBHXaxTeHHDmKdiMC16LdDquaGCLhyNczZ+xh1hhD2x5S5PbsFsXX420MlPkdcvzITEoX2vAgr3sleNqUgP/VGx48Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=ojqeY5vJ; arc=none smtp.client-ip=209.85.215.176
+	 MIME-Version; b=TiBRXZYXQ3sWmt93dVistcgdw21kx1qTraC1DqXOIzMPkLgtSbQGWHV7mBPExxmAZ/9iuOJkIMXLUImGkca3ikwCHPYtVoxr87KHOli0p+UCmpj0qknIiTwZ0u4nNIAe1WEgwe+r9At0zv0og6c/YHmKoc7IT9bDTASg4AeY2mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=JN7Jyh35; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b55517e74e3so1875988a12.2
-        for <ceph-devel@vger.kernel.org>; Thu, 25 Sep 2025 23:55:21 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-77716518125so967873b3a.3
+        for <ceph-devel@vger.kernel.org>; Thu, 25 Sep 2025 23:56:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1758869720; x=1759474520; darn=vger.kernel.org;
+        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1758869763; x=1759474563; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vj5UPqG+5RgyX7bCn1GnWx3nhSDF8xeGhtJtpVZ8+PA=;
-        b=ojqeY5vJGVrUy2066SXDaV8raKhpMZSwysegw5Yl0pXwi0STOOE574Kgk4r/8OOv0y
-         2OosDwp5iGcV1GS58X/KkNfaafyDZoSIQdaRYUBZvHO4yFVCXKlQss33DrOSSlPL3EKb
-         zFlNNbct5luuMocyzL+4x7oGGYzOuS+uIrlTCGirmwadB1STmcZk4HCGSgsL2lLlh6+K
-         d5S9yq+UTkFwcUk4YiscsPPlbf1PxKwywywEf7wb7R5vWVNwY/Q8unoNP2ugVVt70IX2
-         NCdtDKzmdCdM7VgKlKsc7Ljz0LgNElGTj7sqvFECllind2tFL+LEfyxQDS+8Bz1G/iej
-         YvcQ==
+        bh=eoUrxrA1gUNwCBEXabdQA4Jiv6vtYFchaTivJjmbSzM=;
+        b=JN7Jyh35hvJxqKA0eciejU9HR/AggXWfxW842Us2/elza8ebZl/M6tJUk52hsdIqBW
+         W9IS4Xp8Pmwht4WnmsBpoUkWYsIaf9NgkaqfoHv7yzgRQU0alsC7PXfOQEDm6ztWlcLR
+         D8hXDXByInnZymjNFQEi7JhMcfOasIcjNRMqgKpPIYweTZlekjs45IDHAjYQCRCRmE6u
+         PuM1043istvCMg45FJxoFhOwPscckrfvPXLKoEnw6i43TDTDMjHqJB3oBUGVYJOvqZFF
+         zxFY/AC2EuU186MUEDhdxVWbKcgnNyj8dDVeBtg1ZfwxG7gml+pwFKYvbZk8uiKL/fJT
+         dqhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1758869720; x=1759474520;
+        d=1e100.net; s=20230601; t=1758869763; x=1759474563;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vj5UPqG+5RgyX7bCn1GnWx3nhSDF8xeGhtJtpVZ8+PA=;
-        b=i+5yzOnvpSIqSUcXbQTZYfAOQcr5f2K3cb9gxkJktHE971uDmLaU7xvxKWHRkWUS2a
-         kqZSbroZmFWkIops3RanQxk/7S+dr1Dgvj87GOvQmGuvqiRAVCmcVMHkCnQ7bGXn5wRe
-         W4ht32tKKTnrp+01yhjBqc/Bbnw428k7E4i1Rail8w+7l424HV22IHMmrwrWL1JJ5gdc
-         D2f6pyLhs9M57PrJRfnhGm5JKSc9lSK0LIFFF+BedkpxOl6w8m9lXTqUj8HOgS6+ImHZ
-         vy0RTTcLREP1LqqMBzCzRwgqlwHwrb98KJPNULCvKCYoPsR61b1BW2qy8/WIpglY5Mze
-         LZqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOhZilUeUgD3h0cGT8impaFfsPJ55wAPnXTk0erCYYomxWkfdeWgFTc9WVr8FR9FE+rtBKz1vXbzFP@vger.kernel.org
-X-Gm-Message-State: AOJu0YzX3/2G4bANgHCMiVdaWiIhx4LQ8aj5XZJDFso8ctHcYdfYVkD3
-	hLaB9TIQ7d2PmSMi40XKUAXj4VFABIrnNiRona6YbEzjjTCeQnxiQRtQxHSeIoxu1c8=
-X-Gm-Gg: ASbGncvnpQ7BuO5GAwReDiW6HS8TApEbH5pn/neFa8BdHeueaGx0zTlsV+pGXPxnlD4
-	lCUiQSo5qmi2vrIhMixF34nnEauGfErw7znLs38AL3vVIMqhoKeeHYiP+SMUmJAhSucQFDZSp5x
-	S1tqhNnKk77xNav+gTtrA7JsDcMJUd/QHB5TGm4LfjFm1O0VQRv8wbkEOwo7y5fHxJQVxWPPKuQ
-	XZALEsibkYnOcoYmwcLQdeEO+vuWoK1mch71gchXn4tHDBOP8kyJynw6pEgpjsxzxcFYOEnDyEW
-	3LGQqFYijfGX8biY9JEuLHx9U2Z/gzyjmktYR67EUp/Ug75UH3SuYnEpswDo65e/dzRovmSJEPi
-	zM/fX57UmeUJG43efctOTzF8L4V2fQU4w7M2hvH7YmO8TRXg=
-X-Google-Smtp-Source: AGHT+IEkWnB3Y/bobVLXTDCV7iCFw6lqnV0G3iUe38ErBh+GUhNpr3gTNCP4/CRqqoUyTcF+cvJjXA==
-X-Received: by 2002:a17:902:f647:b0:269:a8a8:4029 with SMTP id d9443c01a7336-27ed49df2c1mr81059935ad.5.1758869720526;
-        Thu, 25 Sep 2025 23:55:20 -0700 (PDT)
+        bh=eoUrxrA1gUNwCBEXabdQA4Jiv6vtYFchaTivJjmbSzM=;
+        b=oq4pPgq5tCVNE8a7NumU3oR6ZYtPTgDzXnE9OT/jNnIV2ZkZ67U+uCWmCCb0toPDRE
+         plsLR7hGCQgYYpEXl4JLaEpHFCmbwObuoiW8mbPdtw4MLqgUwFrzyysw1zhM/n3RsodV
+         a0CIF5M/lqYekC8K67y4vlGXYbqa4cHCLJQztlMY+9QBZgJXja6PsIBFvTKC3uLtcQVt
+         51C7ZdejP3jj0MnrwaGPxYLKUdbjPIJznE3fNFqAhGdiG8SzmPWOF+exQCkuyvNc9AUB
+         s1midytGnFlOKIm4ldSNRXVFf2epYZw0uC+673qqXt/yCM75jb8QW6sNzE2fpvQbwq1R
+         4Heg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrqRtKHn65fQmiM8mCy9cCnuFkMNkyPsVh0FwLclDhlZj0xV27MSNyfWdwYNPqA5DKJNWiRlIS4OLg@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKJyQU4EhkvDfawYdLut1wfho/1geLvjXaix550vqGDz4erO3B
+	0oWxWji3Oe7pfy9Es/PoVVlbR0oO1oLwNdmB/Nas+IQsGN8brv/wa6gwo0L7yxT97dY=
+X-Gm-Gg: ASbGncupf19IQ8sQCuFf1qI9wGZ5a+Ld6uRtpf2zlD2uM2gOvDr0MJIJ3V7O/htXx2v
+	5+2vNYMsRV/6EN7JsjlATgyRDGbChc/2QEYUO0GI+Nhnppc7SgPZ2U/GD/RROp+uuoj0bcHk4dC
+	/6BHDpbyZ2k0nQRQkSZsO2vi3O7tdPO+QRVRSS78xQf2Yq6Toq3BhPLKFclrHtB/vEmm4//NPTa
+	pRwSsf5jIunJ7cRNEKurItEqLt0zQMqFVrLTO5DQci4kc1iYaOW9/EVIc+WlqqoY5msbkDpEgTh
+	6S0jM7i3kmq01OX+M84nBcSzRNykDjdHSIhbJATTSewmQU3VRrq0LNjTqIN3txQcF8s3pCTWqF0
+	27RBwA5YKAxURdEpuIZqazZKLBFvJ3NmMCn0/rZ0nlE9VHCQ=
+X-Google-Smtp-Source: AGHT+IGYm5AiCHUG81wKjmGsOZM0oMcXTABlIBjc3hApVwgc3SyeCPuiUQVrAgnYuzKJCyjqVgplKg==
+X-Received: by 2002:a17:902:d4c8:b0:24c:ed95:2725 with SMTP id d9443c01a7336-27ed4a06ca7mr77835285ad.4.1758869763210;
+        Thu, 25 Sep 2025 23:56:03 -0700 (PDT)
 Received: from wu-Pro-E500-G6-WS720T.. ([2001:288:7001:2703:94ad:363a:4161:464c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6882227sm44681455ad.82.2025.09.25.23.55.17
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed672aa0asm45307415ad.62.2025.09.25.23.55.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 25 Sep 2025 23:55:19 -0700 (PDT)
+        Thu, 25 Sep 2025 23:56:02 -0700 (PDT)
 From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
 To: 409411716@gms.tku.edu.tw
 Cc: akpm@linux-foundation.org,
@@ -91,9 +91,9 @@ Cc: akpm@linux-foundation.org,
 	tytso@mit.edu,
 	visitorckw@gmail.com,
 	xiubli@redhat.com
-Subject: [PATCH v3 1/6] lib/base64: Add support for multiple variants
-Date: Fri, 26 Sep 2025 14:55:12 +0800
-Message-Id: <20250926065512.13881-1-409411716@gms.tku.edu.tw>
+Subject: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with reverse lookup tables
+Date: Fri, 26 Sep 2025 14:55:56 +0800
+Message-Id: <20250926065556.14250-1-409411716@gms.tku.edu.tw>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
 References: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
@@ -107,157 +107,115 @@ Content-Transfer-Encoding: 8bit
 
 From: Kuan-Wei Chiu <visitorckw@gmail.com>
 
-Extend the base64 API to support multiple variants (standard, URL-safe,
-and IMAP) as defined in RFC 4648 and RFC 3501. The API now takes a
-variant parameter and an option to control padding. Update NVMe auth
-code to use the new interface with BASE64_STD.
+Replace the use of strchr() in base64_decode() with precomputed reverse
+lookup tables for each variant. This avoids repeated string scans and
+improves performance. Use -1 in the tables to mark invalid characters.
+
+Decode:
+  64B   ~1530ns  ->  ~75ns    (~20.4x)
+  1KB  ~27726ns  -> ~1165ns   (~23.8x)
 
 Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
 Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
 ---
- drivers/nvme/common/auth.c |  4 ++--
- include/linux/base64.h     | 10 ++++++++--
- lib/base64.c               | 39 ++++++++++++++++++++++----------------
- 3 files changed, 33 insertions(+), 20 deletions(-)
+ lib/base64.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 61 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/nvme/common/auth.c b/drivers/nvme/common/auth.c
-index 91e273b89..5fecb53cb 100644
---- a/drivers/nvme/common/auth.c
-+++ b/drivers/nvme/common/auth.c
-@@ -178,7 +178,7 @@ struct nvme_dhchap_key *nvme_auth_extract_key(unsigned char *secret,
- 	if (!key)
- 		return ERR_PTR(-ENOMEM);
- 
--	key_len = base64_decode(secret, allocated_len, key->key);
-+	key_len = base64_decode(secret, allocated_len, key->key, true, BASE64_STD);
- 	if (key_len < 0) {
- 		pr_debug("base64 key decoding error %d\n",
- 			 key_len);
-@@ -663,7 +663,7 @@ int nvme_auth_generate_digest(u8 hmac_id, u8 *psk, size_t psk_len,
- 	if (ret)
- 		goto out_free_digest;
- 
--	ret = base64_encode(digest, digest_len, enc);
-+	ret = base64_encode(digest, digest_len, enc, true, BASE64_STD);
- 	if (ret < hmac_len) {
- 		ret = -ENOKEY;
- 		goto out_free_digest;
-diff --git a/include/linux/base64.h b/include/linux/base64.h
-index 660d4cb1e..a2c6c9222 100644
---- a/include/linux/base64.h
-+++ b/include/linux/base64.h
-@@ -8,9 +8,15 @@
- 
- #include <linux/types.h>
- 
-+enum base64_variant {
-+	BASE64_STD,       /* RFC 4648 (standard) */
-+	BASE64_URLSAFE,   /* RFC 4648 (base64url) */
-+	BASE64_IMAP,      /* RFC 3501 */
-+};
-+
- #define BASE64_CHARS(nbytes)   DIV_ROUND_UP((nbytes) * 4, 3)
- 
--int base64_encode(const u8 *src, int len, char *dst);
--int base64_decode(const char *src, int len, u8 *dst);
-+int base64_encode(const u8 *src, int len, char *dst, bool padding, enum base64_variant variant);
-+int base64_decode(const char *src, int len, u8 *dst, bool padding, enum base64_variant variant);
- 
- #endif /* _LINUX_BASE64_H */
 diff --git a/lib/base64.c b/lib/base64.c
-index b736a7a43..1af557785 100644
+index 1af557785..b20fdf168 100644
 --- a/lib/base64.c
 +++ b/lib/base64.c
-@@ -1,12 +1,12 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * base64.c - RFC4648-compliant base64 encoding
-+ * base64.c - Base64 with support for multiple variants
-  *
-  * Copyright (c) 2020 Hannes Reinecke, SUSE
-  *
-  * Based on the base64url routines from fs/crypto/fname.c
-- * (which are using the URL-safe base64 encoding),
-- * modified to use the standard coding table from RFC4648 section 4.
-+ * (which are using the URL-safe Base64 encoding),
-+ * modified to support multiple Base64 variants.
-  */
+@@ -21,6 +21,63 @@ static const char base64_tables[][65] = {
+ 	[BASE64_IMAP] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,",
+ };
  
- #include <linux/kernel.h>
-@@ -15,26 +15,31 @@
- #include <linux/string.h>
- #include <linux/base64.h>
- 
--static const char base64_table[65] =
--	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-+static const char base64_tables[][65] = {
-+	[BASE64_STD] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
-+	[BASE64_URLSAFE] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_",
-+	[BASE64_IMAP] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,",
++static const s8 base64_rev_tables[][256] = {
++	[BASE64_STD] = {
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  62,  -1,  -1,  -1,  63,
++	 52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
++	 15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,  -1,  -1,  -1,  -1,
++	 -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,
++	 41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	},
++	[BASE64_URLSAFE] = {
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  62,  -1,  -1,
++	 52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
++	 15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,  -1,  -1,  -1,  63,
++	 -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,
++	 41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	},
++	[BASE64_IMAP] = {
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  62,  63,  -1,  -1,  -1,
++	 52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
++	 15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,  -1,  -1,  -1,  -1,
++	 -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,
++	 41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
++	},
 +};
- 
++
  /**
-- * base64_encode() - base64-encode some binary data
-+ * base64_encode() - Base64-encode some binary data
+  * base64_encode() - Base64-encode some binary data
   * @src: the binary data to encode
-  * @srclen: the length of @src in bytes
-- * @dst: (output) the base64-encoded string.  Not NUL-terminated.
-+ * @dst: (output) the Base64-encoded string.  Not NUL-terminated.
-+ * @padding: whether to append '=' padding characters
-+ * @variant: which base64 variant to use
-  *
-- * Encodes data using base64 encoding, i.e. the "Base 64 Encoding" specified
-- * by RFC 4648, including the  '='-padding.
-+ * Encodes data using the selected Base64 variant.
-  *
-- * Return: the length of the resulting base64-encoded string in bytes.
-+ * Return: the length of the resulting Base64-encoded string in bytes.
-  */
--int base64_encode(const u8 *src, int srclen, char *dst)
-+int base64_encode(const u8 *src, int srclen, char *dst, bool padding, enum base64_variant variant)
- {
- 	u32 ac = 0;
- 	int bits = 0;
- 	int i;
- 	char *cp = dst;
-+	const char *base64_table = base64_tables[variant];
- 
- 	for (i = 0; i < srclen; i++) {
- 		ac = (ac << 8) | src[i];
-@@ -57,25 +62,27 @@ int base64_encode(const u8 *src, int srclen, char *dst)
- EXPORT_SYMBOL_GPL(base64_encode);
- 
- /**
-- * base64_decode() - base64-decode a string
-+ * base64_decode() - Base64-decode a string
-  * @src: the string to decode.  Doesn't need to be NUL-terminated.
-  * @srclen: the length of @src in bytes
-  * @dst: (output) the decoded binary data
-+ * @padding: whether to append '=' padding characters
-+ * @variant: which base64 variant to use
-  *
-- * Decodes a string using base64 encoding, i.e. the "Base 64 Encoding"
-- * specified by RFC 4648, including the  '='-padding.
-+ * Decodes a string using the selected Base64 variant.
-  *
-  * This implementation hasn't been optimized for performance.
-  *
-  * Return: the length of the resulting decoded binary data in bytes,
-- *	   or -1 if the string isn't a valid base64 string.
-+ *	   or -1 if the string isn't a valid Base64 string.
-  */
--int base64_decode(const char *src, int srclen, u8 *dst)
-+int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base64_variant variant)
- {
- 	u32 ac = 0;
+@@ -82,11 +139,9 @@ int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base6
  	int bits = 0;
  	int i;
  	u8 *bp = dst;
-+	const char *base64_table = base64_tables[variant];
+-	const char *base64_table = base64_tables[variant];
++	s8 ch;
  
  	for (i = 0; i < srclen; i++) {
- 		const char *p = strchr(base64_table, src[i]);
+-		const char *p = strchr(base64_table, src[i]);
+-
+ 		if (src[i] == '=') {
+ 			ac = (ac << 6);
+ 			bits += 6;
+@@ -94,9 +149,10 @@ int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base6
+ 				bits -= 8;
+ 			continue;
+ 		}
+-		if (p == NULL || src[i] == 0)
++		ch = base64_rev_tables[variant][(u8)src[i]];
++		if (ch == -1)
+ 			return -1;
+-		ac = (ac << 6) | (p - base64_table);
++		ac = (ac << 6) | ch;
+ 		bits += 6;
+ 		if (bits >= 8) {
+ 			bits -= 8;
 -- 
 2.34.1
 
