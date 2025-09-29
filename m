@@ -1,236 +1,111 @@
-Return-Path: <ceph-devel+bounces-3751-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3752-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B00BA7678
-	for <lists+ceph-devel@lfdr.de>; Sun, 28 Sep 2025 20:57:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D17BA8A0C
+	for <lists+ceph-devel@lfdr.de>; Mon, 29 Sep 2025 11:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C5753B6662
-	for <lists+ceph-devel@lfdr.de>; Sun, 28 Sep 2025 18:57:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EEBA188BA4F
+	for <lists+ceph-devel@lfdr.de>; Mon, 29 Sep 2025 09:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A8A238D32;
-	Sun, 28 Sep 2025 18:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49CF2868A7;
+	Mon, 29 Sep 2025 09:30:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q9GL2V4j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uhqAqq8z"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8201D9A5F
-	for <ceph-devel@vger.kernel.org>; Sun, 28 Sep 2025 18:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449472857DE;
+	Mon, 29 Sep 2025 09:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759085862; cv=none; b=Eqifsd0rqlrc3mKu1rEySPY8Ta/zrfCLJkWVcXQIuxWvKJPxUYiuFa6ybU+WJ/2ubWgZ4Hlf/6OpgsLvS3c8n9PrV6XuCFzt/gAqmNJeugy1Pssj/qffzTpnCmdB0rUFacNso2McEvu+S9dQ5mfeVzMnEMqwfx41zQPZcDldU/c=
+	t=1759138227; cv=none; b=srEbxrArybjW32WmAG+eCXbYe38+v8IhwJK2Q9o/oc/LhUhmeloE9FP4d7l0e/iIh2QQHqBPzC6OXb7ULhBhZ/nkDmI5/XIsqpdRfFN1+dgsmNkNj5IpZQptrYit/+ZcE84TYz74eiUdURq2GktuXGmO7kt1Su0gxwANTSn4/rQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759085862; c=relaxed/simple;
-	bh=ODBJzFhKiIsXXG5/GMJYfh0owtM2QlHLhb+LFU0LClY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ot5taEc5gWjWIT2vWTRD1r0rsWZp8n3Jrd/9mXp8sAQEbMMxYNGGT+G2jkXiFgpHfOm+rp+VhYW9mTxdNtlZXs9qNnd+YxcRgVd+7JFMnBJ6UzU9h+p0nkeuBvAA5QiAQGIocVa2+mXOSsWagaLhDJYG5aXDMbE8H2KKMoGbYCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q9GL2V4j; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e42deffa8so25698545e9.0
-        for <ceph-devel@vger.kernel.org>; Sun, 28 Sep 2025 11:57:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759085859; x=1759690659; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zmGgp8LZB8H7aPG6SX5XQzX0Iik7pnp4RAkYSd2NXzI=;
-        b=Q9GL2V4jKB5V+gexC4MKH9kQpcSbZ+02RVLZFXBu7l4rC6dslLO03SHeisaFGl+oG5
-         ObF6iSIN33pjcSQuURCOW5eL0C2bCv5x35xS+1riA4dBaFTZ5/m5lGkefWTz1lGrF4Pm
-         4VUqeFpgOxMtjxn4ZXSvOPirmfTXCJH8xfmvRV3hdvfrv80aLcAuW9EXSG1FzQNbduTB
-         SqgAamI9zyWLLXgltdKR8RzAyc9VtPjv2oB1dKmFs/GdTffDKGDLBdAMGO2psQ+IJVYc
-         WJSFD6U/X8cypGckMw4Aq4ozkbCQBn+Kw9kot/ofKHTzW4uRXE/HF2tYVKJU02KuTWQM
-         5hPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759085859; x=1759690659;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zmGgp8LZB8H7aPG6SX5XQzX0Iik7pnp4RAkYSd2NXzI=;
-        b=iecWriT+TkEAQbD9G4NLFlgGkeESq6patyKRJ+URLme513g0ZWm3sdg+BeXZBlyrZT
-         PYDPfLDXvJHp5JTKPIgmEMWiOUnN/k+qpEytFLM0IlXHudveZhkvYiDAo18yAc2YISXX
-         oo2h0zlivfrP4GpNM81ug4DBe73VFZGvGSoIPuoZiy3IgoSc+jGKZm4lUILCeWonnZvk
-         QEP7vk9ceVZQzkfQ90frXbCLdqaG1IuGXEIVJTSg36D3vHhEYh4NcplNbtM4TBfI0v4m
-         dVEufMjR7vII/4zgjgxBjBuupCFemJQSgH5kX4MdW29HGHcSviox2d1TBS2YzvDUq4fe
-         GFqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFV6gdLnQoQq8Rzn3CHUzXZGJeWXaadYqqCtTvF0YQaqVzhjN2ctIwujlRImfro3gyHRi0LzVoInmQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVd54vPyO3qhQ0KDxGEzRC6Psl1IUojKVJXL6nFrPDRC3rckTi
-	IAfppgrr+NHVL1USyhsN8Qcm2ry3ho22kIpjuoLaxSy8IsMlcq1oj3Qe
-X-Gm-Gg: ASbGncsr2VGLHoOISTv2oJCi3aNVPuk4cEkaBko6DLUO6ZjQ2xmtzIcyQTFpU9sEe+e
-	JxnXGhKSvHJCJaeyw84Gw5dExR5RTEXsTzR1QbdXfReSQb6ZqFiVMeNYsjIhm2C3w1wH9RwCBIB
-	5r+ZWJzn/U2bK4uJSVf90p+GhbBpB8hbdzJIVFxZ/EDTeJem1Hft4WcLiLbQOkSTu38fpoWS67T
-	KaLKYgSK+vtcJW/ZhuyOPwtj3XJrbM2fclMVZL9FnApWYHPBjNjD/NpeHmBa4icQYvscylraM0A
-	HkVnk4JP264PD5rLYZSA5V8tUUp4rOuLEU0ToafEn/I3TFge+co4CxgpggpUyRIs4Pf+ZzwuoBb
-	wI1fLjNZ2BhAbx9MqaF7SEk95qsC5rIa2WnCw5qIeLKpL63dw8O3suWGYnPN4goSscVZWS1SW7Q
-	Q=
-X-Google-Smtp-Source: AGHT+IFdXSUmu1jDu9C+PMSkYOzc5SUURLTfRIaH+ROSnCKAviW3HCbfr6MunNZeaSZVBZNwp+b1tQ==
-X-Received: by 2002:a05:600c:4508:b0:46e:3e72:a56 with SMTP id 5b1f17b1804b1-46e3e720b94mr81111745e9.1.1759085858562;
-        Sun, 28 Sep 2025 11:57:38 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a9ac5basm222579525e9.7.2025.09.28.11.57.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 28 Sep 2025 11:57:38 -0700 (PDT)
-Date: Sun, 28 Sep 2025 19:57:36 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-Cc: akpm@linux-foundation.org, axboe@kernel.dk, ceph-devel@vger.kernel.org,
- ebiggers@kernel.org, hch@lst.de, home7438072@gmail.com, idryomov@gmail.com,
- jaegeuk@kernel.org, kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
- sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com, xiubli@redhat.com
-Subject: Re: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with
- reverse lookup tables
-Message-ID: <20250928195736.71bec9ae@pumpkin>
-In-Reply-To: <20250926065556.14250-1-409411716@gms.tku.edu.tw>
-References: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
-	<20250926065556.14250-1-409411716@gms.tku.edu.tw>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1759138227; c=relaxed/simple;
+	bh=Xt+H00FTwMgNX3FYouX/B0DyHS064YKeIo3w5xZa1CM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WLuL33Ye07+Fn7HGCEgWu9t8OgKQF8rZAo3pQASJQYQnTVD+6Xht5PxHikAr37u2hZu87c5g25WD49wXzL+2cBaywCW0hGFtD3nzq6WZymFROUMQEJQkjJOnb/MaMnc9uC0HCelRs/CIh5ygCkJ1TIqozrk4g1YufYv6F8cG2q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uhqAqq8z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4277C4CEF4;
+	Mon, 29 Sep 2025 09:30:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759138226;
+	bh=Xt+H00FTwMgNX3FYouX/B0DyHS064YKeIo3w5xZa1CM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=uhqAqq8zY56VNaNn7XJMxLgA0BQhSL4pZ+0ry3mEDg3zt5W0rO/j78IQzJo5c+ZWM
+	 /vInMRN1VI6KhEnBPdyshEe7Cga1YyQ4YQZbRN8fCG5Pm3gJl6tn+YxECxu8G6FJR9
+	 lBz+v1bjpkWv3Omy4DirbyRGKviSXKAnJDXDHvW+SLHwyXi7aOlI6m1r8vXU3lca+V
+	 lnSx6VrVKnaFVJCT0GEi9/mVt0O19yBRXlxQtIUYRext/rX2zTExmuMG+j+pqyWqhs
+	 M2hjPTlbLXq/3xSEINOvx4lbYJnU8zhm+Co/dka6V9xZpxXoP/Zp74DZqGt1Xyh1SS
+	 HO4J0eV0iHkDA==
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	josef@toxicpanda.com,
+	kernel-team@fb.com,
+	amir73il@gmail.com,
+	linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] hide ->i_state behind accessors
+Date: Mon, 29 Sep 2025 11:30:17 +0200
+Message-ID: <20250929-samstag-unkenntlich-623abeff6085@brauner>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250923104710.2973493-1-mjguzik@gmail.com>
+References: <20250923104710.2973493-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1536; i=brauner@kernel.org; h=from:subject:message-id; bh=Xt+H00FTwMgNX3FYouX/B0DyHS064YKeIo3w5xZa1CM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTcClyT3LTLJ3nizG/bpjn01Su9D9eJyliz15U3esO6R uFEjtjLHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpADdZmuG/+/fNU37Ep5o4VrTn Xs8QNxL9qu7C+SMiasej7JjOMxrTGP77d/tIL30g93KOe8uORyZP/t3aIPije1VW8qfW9nmxKWf 5AA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, 26 Sep 2025 14:55:56 +0800
-Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
-
-> From: Kuan-Wei Chiu <visitorckw@gmail.com>
+On Tue, 23 Sep 2025 12:47:06 +0200, Mateusz Guzik wrote:
+> First commit message quoted verbatim with rationable + API:
 > 
-> Replace the use of strchr() in base64_decode() with precomputed reverse
-> lookup tables for each variant. This avoids repeated string scans and
-> improves performance. Use -1 in the tables to mark invalid characters.
+> [quote]
+> Open-coded accesses prevent asserting they are done correctly. One
+> obvious aspect is locking, but significantly more can checked. For
+> example it can be detected when the code is clearing flags which are
+> already missing, or is setting flags when it is illegal (e.g., I_FREEING
+> when ->i_count > 0).
 > 
-> Decode:
->   64B   ~1530ns  ->  ~75ns    (~20.4x)
->   1KB  ~27726ns  -> ~1165ns   (~23.8x)
-> 
-> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-> Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-> ---
->  lib/base64.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 61 insertions(+), 5 deletions(-)
-> 
-> diff --git a/lib/base64.c b/lib/base64.c
-> index 1af557785..b20fdf168 100644
-> --- a/lib/base64.c
-> +++ b/lib/base64.c
-> @@ -21,6 +21,63 @@ static const char base64_tables[][65] = {
->  	[BASE64_IMAP] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,",
->  };
->  
-> +static const s8 base64_rev_tables[][256] = {
-> +	[BASE64_STD] = {
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  62,  -1,  -1,  -1,  63,
-> +	 52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
-> +	 15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,
-> +	 41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	},
+> [...]
 
-Using:
-	[BASE64_STD] = {
-	[0 ... 255] = -1,
-	['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
-		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
-	['a'] = 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
-		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 48, 50, 51,
-	['0'] = 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
-	['+'] = 62,
-	['/'] = 63};
-would be more readable.
-(Assuming no one has turned on a warning that stops you defaulting the entries to -1.)
+Applied to the vfs-6.19.inode branch of the vfs/vfs.git tree.
+Patches in the vfs-6.19.inode branch should appear in linux-next soon.
 
-The is also definitely scope for a #define to common things up.
-Even if it has to have the values for all the 5 special characters (-1 if not used)
-rather than the characters for 62 and 63.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-	David
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> +	[BASE64_URLSAFE] = {
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  62,  -1,  -1,
-> +	 52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
-> +	 15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,  -1,  -1,  -1,  63,
-> +	 -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,
-> +	 41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	},
-> +	[BASE64_IMAP] = {
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  62,  63,  -1,  -1,  -1,
-> +	 52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,
-> +	 15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,
-> +	 41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-> +	},
-> +};
-> +
->  /**
->   * base64_encode() - Base64-encode some binary data
->   * @src: the binary data to encode
-> @@ -82,11 +139,9 @@ int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base6
->  	int bits = 0;
->  	int i;
->  	u8 *bp = dst;
-> -	const char *base64_table = base64_tables[variant];
-> +	s8 ch;
->  
->  	for (i = 0; i < srclen; i++) {
-> -		const char *p = strchr(base64_table, src[i]);
-> -
->  		if (src[i] == '=') {
->  			ac = (ac << 6);
->  			bits += 6;
-> @@ -94,9 +149,10 @@ int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base6
->  				bits -= 8;
->  			continue;
->  		}
-> -		if (p == NULL || src[i] == 0)
-> +		ch = base64_rev_tables[variant][(u8)src[i]];
-> +		if (ch == -1)
->  			return -1;
-> -		ac = (ac << 6) | (p - base64_table);
-> +		ac = (ac << 6) | ch;
->  		bits += 6;
->  		if (bits >= 8) {
->  			bits -= 8;
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.19.inode
+
+[1/4] fs: provide accessors for ->i_state
+      https://git.kernel.org/vfs/vfs/c/e9d1a9abd054
+[2/4] Convert the kernel to use ->i_state accessors
+      https://git.kernel.org/vfs/vfs/c/67d2f3e3d033
+[3/4] Manual conversion of ->i_state uses
+      https://git.kernel.org/vfs/vfs/c/b8173a2f1a0a
+[4/4] fs: make plain ->i_state access fail to compile
+      https://git.kernel.org/vfs/vfs/c/3c2b8d921da8
 
