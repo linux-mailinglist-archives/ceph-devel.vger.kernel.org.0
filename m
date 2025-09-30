@@ -1,267 +1,119 @@
-Return-Path: <ceph-devel+bounces-3761-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3762-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42AB9BAAAA4
-	for <lists+ceph-devel@lfdr.de>; Mon, 29 Sep 2025 23:47:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04171BAAE8D
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Sep 2025 03:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C471E1C41EC
-	for <lists+ceph-devel@lfdr.de>; Mon, 29 Sep 2025 21:47:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F60B1895849
+	for <lists+ceph-devel@lfdr.de>; Tue, 30 Sep 2025 01:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCED1225416;
-	Mon, 29 Sep 2025 21:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79FA31A0711;
+	Tue, 30 Sep 2025 01:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ePmZrFkX"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SX7reB4g"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BEA2236FA
-	for <ceph-devel@vger.kernel.org>; Mon, 29 Sep 2025 21:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3A516A956;
+	Tue, 30 Sep 2025 01:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759182405; cv=none; b=EdMQl++ZHpJhKdR2vjmoeKkIS5EAYLRnUbl1Kd9ZrR3v4boB6wHubC16SEuN05y6LYpSYeu8vBRHf2Awa8SWqmB/1yute0eBMU30EPpA5vnSNfHwbJMGSkdX4ZdibrtLitMjb3F9hm9CB2U7dNuJaKpyysFfGj/64xC7PNzkHww=
+	t=1759196865; cv=none; b=FAY3AcyxvlW7LMp3xjBBsPc3tZNSfdSFVQpmSvCqau+yk33Onc04IPJux3N7mQiYI65qnLSgssc/gPU2ZMByeTcb9V2RLAWHq+sHpNFpxlYiEHIonkcUfs/pab0ufYLBc1LSJ2IUgHkXe0m7ra5AV4HqF5FdKR7vQ0EnOfCz0zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759182405; c=relaxed/simple;
-	bh=8+CjnvXZ9bKHU9NoIwXjmxWvO9fLdof4asOnxs6Y3J4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ds6z8TzX+Iu424HB9emwMb7Sm0HwMSSHeJKOh8axdAoYnTW82w1sb92qRU2HNnl4wxwliSR5Oi53WdUFblAZgiUo/+tkG1rCqLaDM1XzwNsHczRAm93a+ktPx7vEaE2TcvY6LYCLA0i7FJj52dmE/whcMrMM0AXBfeIbSikM7rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ePmZrFkX; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3e8ef75b146so3616955f8f.0
-        for <ceph-devel@vger.kernel.org>; Mon, 29 Sep 2025 14:46:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759182400; x=1759787200; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=JBQVuh0pyfNoSFHzgB4ISgtBSFYpT2CuO6PbFEJ29As=;
-        b=ePmZrFkXscGHM3Mx2Tht/ZW6Y8qBkDjo3gj5Ci+dcCXgENZsThlMGhVbS5YjCSg5Oa
-         tnJkcvYouCh60eczIPVKyJLi2b3pXINwKx5q5f1kWGxe0M+3BIMdQ+alXJH9t5PYyHVe
-         UQqyF54M/JUp2MBW/FQ8B6Z5D5qLVnBA8lHbhYTdhyVh4+2UkGvmAq5s40sMphgelvq3
-         MLjV6lrd6NKtZOiDUmHQGcQdeZ+v0ligsofS4gV+m4rSGT0p3XdCUEcnjC+FWu83TcNr
-         6mwq2Z578qn1dhZ5pWrackSfy7ba0bBi4n8tKFeLGeV5ZLEGRPTUeXtnLbhyyWttM6ir
-         JQAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759182400; x=1759787200;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JBQVuh0pyfNoSFHzgB4ISgtBSFYpT2CuO6PbFEJ29As=;
-        b=Zf06EmAHyT6bXb00FeUPjHHZYe5KuECQW0iuOV+C8vheYwWeBIHBh9dNbrj9RqPGqQ
-         RrKsPRWsX8hM43S8ct8uAY3rNeBvArP2fQ7si/DtkiIUygln/bU+UlylooD3AeZi6QSl
-         9T843T+CqU9+AT9LqCkVNoTosO6euqGC3RfEE/D6DG5Ag5kS8ectdEvvnPjZCXcCYLSm
-         1C6/jM70oREk/3PejJ12cowdz93NDIlM3dvId5xhgUIjXnuKqAcgye5z/F3NuVGXg7Cl
-         bC7yXeNRjP1vnvimsv7zG2GwgGVZuObbNSQLJFbx6fgiEOxuAmEiffk32sI9cTPc16yo
-         veLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKcQ5Lee13kHvYppskTBt0ciNdP2t5HG2e0cMCS4kMJA90NPG70/ksulSzSDQMS1j5fNy/o0tOki44@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+7Vq6KmdEXHFy+qvx+CbR5iexwKGBg2cQG28HaxeVuQB4aamz
-	vli/CsPKo0HWmDwLltKtYQJ0+W08RAYHkGi/ZD4AWi7w08uS8U66wz+QQjlKXV0v6so=
-X-Gm-Gg: ASbGncuYjcwQa1EwK/RIcp0Bb02Uc7CyQpTZu3bo2bSyujeMO+u7kZXSS9IlOwVKUio
-	3sd8waZZ2jYP/Y2D9QnvRwiKACb8APHvYqSpxHaaSJV8fe8yBbAbD7hdv2b39gRGQSE83519uSQ
-	miE/829n5Ds5YPlmjykfC0wle/fcY1Tm0WOGeN2/6UHL7WEyQqPRHL1P77Bfep8moM0ry2YzDAE
-	Yy+sm6L9YbVFC2s0OS2Yr6h8UGsRz8CyscibRfcHgfPNqdZWmEyVoeXT94szYe4+Q3hQvBXyK/O
-	fKGhVXlvkHrmabUvrdBdaoST+WALp8/3Dt2KqZsuNJ4CnpuqnqGNmKAgCaPqTgoT6dYMkBEzKPq
-	boz03GwkbB0N5NXGIc1VgTKBbb/4hCkLyeOg2fXCQsdP/8AwHOhA=
-X-Google-Smtp-Source: AGHT+IG7ucdybca5Y/dTjKqQS2GBXbxdNdgaDavgXtAwspTObB7YcHr+aCoGLrIQFmroKJMVje+VYw==
-X-Received: by 2002:a05:6000:2002:b0:3ee:126a:7aab with SMTP id ffacd0b85a97d-40e4dabf373mr17095040f8f.57.1759182400198;
-        Mon, 29 Sep 2025 14:46:40 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7820d7020a8sm6234755b3a.93.2025.09.29.14.46.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 14:46:39 -0700 (PDT)
-Message-ID: <356ac25e-496e-4192-a3e6-2f9f41aa4864@suse.com>
-Date: Tue, 30 Sep 2025 07:16:30 +0930
+	s=arc-20240116; t=1759196865; c=relaxed/simple;
+	bh=HgStWjYtyMljxtoehnaC6lpeJVqBYQGuOxxP3cAccdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jy/dkjDbFHBxdbXgKfcbUJpnJ1PorazpTynLcfj2au7AX0n2BtQWHse8v/zK8GBWI0gYABdWZep8ZCHLCoidn8Q8BakWPxFcbVCzmKGQA5bHSyQTclCkJHutzPG9KX6LWOpnCZyra4XDLPxgReKsflw5Qqag5rZ3azuqiNHcCec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SX7reB4g; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759196863; x=1790732863;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HgStWjYtyMljxtoehnaC6lpeJVqBYQGuOxxP3cAccdo=;
+  b=SX7reB4gVCAQUD9IzDUK226+xSQ2f2iYapIrxNETlDYlhPIZAHBl6BD6
+   VooHxfwmze/12erEjqP4wZCgJfDQZ2xCWiwco2TZQGphZXPkl4kBRWgND
+   cj4ya4dK9pCxrs2W3DBGHiVNRaQdXXb+an6x/USlHPKs1QzTJyW2d9Hkm
+   20+4ICnz5w0F9+9nZeeHxBvD+8y/Nn5Fv06ZuStH01fsEGlnfW0kePc0z
+   x3zlAXn0VX2/GUOaiXBRa+/prbvJWqIUY9g2pqo2wsxbvnDy8b2kfKNWo
+   0GQPKWYRWIsHz45f2KKvoijt07NujGQ61ZmPaQmo0+BRkPqjxU/enh3ws
+   w==;
+X-CSE-ConnectionGUID: f74dK5EmQ1+LUvw+F/owiw==
+X-CSE-MsgGUID: CoDFkA7oQn2kwx4fv9zvfg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="61404394"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="61404394"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 18:47:42 -0700
+X-CSE-ConnectionGUID: MC0JFXgtTmCRKCgKeYCDXg==
+X-CSE-MsgGUID: FGhQtfEzRxa6drq++mMHtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,303,1751266800"; 
+   d="scan'208";a="209335217"
+Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 29 Sep 2025 18:47:39 -0700
+Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v3PSq-0000ol-2H;
+	Tue, 30 Sep 2025 01:47:36 +0000
+Date: Tue, 30 Sep 2025 09:47:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Julian Sun <sunjunchao@bytedance.com>, linux-fsdevel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
+	ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, clm@fb.com, dsterba@suse.com,
+	xiubli@redhat.com, idryomov@gmail.com, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jaegeuk@kernel.org, chao@kernel.org,
+	willy@infradead.org, jack@suse.cz, brauner@kernel.org,
+	agruenba@redhat.com
+Subject: Re: [PATCH] fs: Make wbc_to_tag() extern and use it in fs.
+Message-ID: <202509300954.4OaImb0r-lkp@intel.com>
+References: <20250929095544.308392-1-sunjunchao@bytedance.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs: Make wbc_to_tag() inline and use it in fs.
-To: Julian Sun <sunjunchao@bytedance.com>, linux-fsdevel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-ext4@vger.kernel.org,
- ceph-devel@vger.kernel.org, linux-btrfs@vger.kernel.org
-Cc: clm@fb.com, dsterba@suse.com, xiubli@redhat.com, idryomov@gmail.com,
- tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
- chao@kernel.org, willy@infradead.org, jack@suse.cz, brauner@kernel.org,
- agruenba@redhat.com
-References: <20250929111349.448324-1-sunjunchao@bytedance.com>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <20250929111349.448324-1-sunjunchao@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929095544.308392-1-sunjunchao@bytedance.com>
 
+Hi Julian,
 
+kernel test robot noticed the following build errors:
 
-在 2025/9/29 20:43, Julian Sun 写道:
-> The logic in wbc_to_tag() is widely used in file systems, so modify this
-> function to be inline and use it in file systems.
-> 
-> This patch has only passed compilation tests, but it should be fine.
-> 
-> Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
+[auto build test ERROR on kdave/for-next]
+[also build test ERROR on ceph-client/testing ceph-client/for-linus tytso-ext4/dev jaegeuk-f2fs/dev-test jaegeuk-f2fs/dev gfs2/for-next akpm-mm/mm-everything linus/master v6.17 next-20250929]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Reviewed-by: Qu Wenruo <wqu@suse.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Julian-Sun/fs-Make-wbc_to_tag-extern-and-use-it-in-fs/20250929-175656
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250929095544.308392-1-sunjunchao%40bytedance.com
+patch subject: [PATCH] fs: Make wbc_to_tag() extern and use it in fs.
+config: s390-randconfig-001-20250930 (https://download.01.org/0day-ci/archive/20250930/202509300954.4OaImb0r-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 12.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250930/202509300954.4OaImb0r-lkp@intel.com/reproduce)
 
-Thanks,
-Qu
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509300954.4OaImb0r-lkp@intel.com/
 
-> ---
->   fs/btrfs/extent_io.c      | 5 +----
->   fs/ceph/addr.c            | 6 +-----
->   fs/ext4/inode.c           | 5 +----
->   fs/f2fs/data.c            | 5 +----
->   fs/gfs2/aops.c            | 5 +----
->   include/linux/writeback.h | 7 +++++++
->   mm/page-writeback.c       | 6 ------
->   7 files changed, 12 insertions(+), 27 deletions(-)
-> 
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index b21cb72835cc..0fea58287175 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -2390,10 +2390,7 @@ static int extent_write_cache_pages(struct address_space *mapping,
->   			       &BTRFS_I(inode)->runtime_flags))
->   		wbc->tagged_writepages = 1;
->   
-> -	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
-> -		tag = PAGECACHE_TAG_TOWRITE;
-> -	else
-> -		tag = PAGECACHE_TAG_DIRTY;
-> +	tag = wbc_to_tag(wbc);
->   retry:
->   	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
->   		tag_pages_for_writeback(mapping, index, end);
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 322ed268f14a..63b75d214210 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -1045,11 +1045,7 @@ void ceph_init_writeback_ctl(struct address_space *mapping,
->   	ceph_wbc->index = ceph_wbc->start_index;
->   	ceph_wbc->end = -1;
->   
-> -	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages) {
-> -		ceph_wbc->tag = PAGECACHE_TAG_TOWRITE;
-> -	} else {
-> -		ceph_wbc->tag = PAGECACHE_TAG_DIRTY;
-> -	}
-> +	ceph_wbc->tag = wbc_to_tag(wbc);
->   
->   	ceph_wbc->op_idx = -1;
->   	ceph_wbc->num_ops = 0;
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 5b7a15db4953..196eba7fa39c 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -2619,10 +2619,7 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
->   	handle_t *handle = NULL;
->   	int bpp = ext4_journal_blocks_per_folio(mpd->inode);
->   
-> -	if (mpd->wbc->sync_mode == WB_SYNC_ALL || mpd->wbc->tagged_writepages)
-> -		tag = PAGECACHE_TAG_TOWRITE;
-> -	else
-> -		tag = PAGECACHE_TAG_DIRTY;
-> +	tag = wbc_to_tag(mpd->wbc);
->   
->   	mpd->map.m_len = 0;
->   	mpd->next_pos = mpd->start_pos;
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 7961e0ddfca3..101e962845db 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -3003,10 +3003,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->   		if (wbc->range_start == 0 && wbc->range_end == LLONG_MAX)
->   			range_whole = 1;
->   	}
-> -	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
-> -		tag = PAGECACHE_TAG_TOWRITE;
-> -	else
-> -		tag = PAGECACHE_TAG_DIRTY;
-> +	tag = wbc_to_tag(wbc);
->   retry:
->   	retry = 0;
->   	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
-> diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
-> index 47d74afd63ac..12394fc5dd29 100644
-> --- a/fs/gfs2/aops.c
-> +++ b/fs/gfs2/aops.c
-> @@ -311,10 +311,7 @@ static int gfs2_write_cache_jdata(struct address_space *mapping,
->   			range_whole = 1;
->   		cycled = 1; /* ignore range_cyclic tests */
->   	}
-> -	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
-> -		tag = PAGECACHE_TAG_TOWRITE;
-> -	else
-> -		tag = PAGECACHE_TAG_DIRTY;
-> +	tag = wbc_to_tag(wbc);
->   
->   retry:
->   	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
-> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-> index a2848d731a46..dde77d13a200 100644
-> --- a/include/linux/writeback.h
-> +++ b/include/linux/writeback.h
-> @@ -240,6 +240,13 @@ static inline void inode_detach_wb(struct inode *inode)
->   	}
->   }
->   
-> +static inline xa_mark_t wbc_to_tag(struct writeback_control *wbc)
-> +{
-> +	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
-> +		return PAGECACHE_TAG_TOWRITE;
-> +	return PAGECACHE_TAG_DIRTY;
-> +}
-> +
->   void wbc_attach_fdatawrite_inode(struct writeback_control *wbc,
->   		struct inode *inode);
->   
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 3e248d1c3969..ae1181a46dea 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2434,12 +2434,6 @@ static bool folio_prepare_writeback(struct address_space *mapping,
->   	return true;
->   }
->   
-> -static xa_mark_t wbc_to_tag(struct writeback_control *wbc)
-> -{
-> -	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
-> -		return PAGECACHE_TAG_TOWRITE;
-> -	return PAGECACHE_TAG_DIRTY;
-> -}
->   
->   static pgoff_t wbc_end(struct writeback_control *wbc)
->   {
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-mmio.o
+>> ERROR: modpost: "wbc_to_tag" [fs/btrfs/btrfs.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
