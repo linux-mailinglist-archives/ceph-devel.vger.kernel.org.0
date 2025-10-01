@@ -1,211 +1,291 @@
-Return-Path: <ceph-devel+bounces-3774-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3775-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5284ABB0AFD
-	for <lists+ceph-devel@lfdr.de>; Wed, 01 Oct 2025 16:23:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0A6BB13CC
+	for <lists+ceph-devel@lfdr.de>; Wed, 01 Oct 2025 18:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EECAA3C7F6A
-	for <lists+ceph-devel@lfdr.de>; Wed,  1 Oct 2025 14:22:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64B0F1927934
+	for <lists+ceph-devel@lfdr.de>; Wed,  1 Oct 2025 16:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55410257AD3;
-	Wed,  1 Oct 2025 14:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6126283FEB;
+	Wed,  1 Oct 2025 16:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XaHMKLG+"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="DUdfSOGD"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FBD25E44E
-	for <ceph-devel@vger.kernel.org>; Wed,  1 Oct 2025 14:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8601531C8
+	for <ceph-devel@vger.kernel.org>; Wed,  1 Oct 2025 16:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759328551; cv=none; b=H+I8aisBMcAyqeOV5e8Ds6HVBdbUt9Wi8SBit2l2WFqn/BSwKCqEXObVzhuMtG4oYECYyKsmF+Zp9j9l94opOwp+zxcaEVVlsuRPdcifsFXCVZdz++DpRC9E62i27fywcx7vHDTOFK9hp6axwzSSITgrndNGz3uqHnBkQBWzu2I=
+	t=1759335641; cv=none; b=RBC2bJieLAdFtKEhwoepuwpqaDASxMrUpuiQuVXQLU+fm2qi8NNhiW0xQ2qJ5hPIpTGDQxrwbS0UlB/TOHMxwPYWaodYxUKSqtPUEUPaidaW5rsaM9mIOdTAGyGMCUhxp800cQ8p5ccU2siL/9//mWdX0+1YntVbKhmdgY3cJq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759328551; c=relaxed/simple;
-	bh=D7mVDGZAz+OQrTd235FOz3Zo7U/7fserTMD3kjcTn5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AcxAVma0eSL8TvoD/Uddyhwws5+qLiASwwACKxGJnUQ+VTT5BYBLZn/fBYELQOLruW3E4BFt/i49BsHchbyhJNSOdAxRFPakC1qk/HMsiEJ0d0AoeId5x0COopi6LPzzAYNcXw5L0aSErQZEx1ELIRcE9zpMetA/QfTTs4e/6+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XaHMKLG+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759328548;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JoPvLlbCSML6XwkftITPfIg8xOvQBqiE6ulvHio3xoY=;
-	b=XaHMKLG+vmNzP9ZV/PwBaF+KoHGe3L2j1/GMfwnV3UxjvxL/iRhwhLDizPHdrNc1gKqJGm
-	+VLkTJJ/IkUxSV3xkrV04zArd05P1A3GXgYIBOolrndOnZAr3yvxuwVIIrAT8FfJ4yMyq4
-	p67KCuWkutsJXr/0cbaQulAqfN7MDG8=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-275-sm5etZg7N-WMMnYZYMXyMg-1; Wed, 01 Oct 2025 10:22:25 -0400
-X-MC-Unique: sm5etZg7N-WMMnYZYMXyMg-1
-X-Mimecast-MFC-AGG-ID: sm5etZg7N-WMMnYZYMXyMg_1759328544
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-32ec67fcb88so6544619a91.3
-        for <ceph-devel@vger.kernel.org>; Wed, 01 Oct 2025 07:22:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759328544; x=1759933344;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1759335641; c=relaxed/simple;
+	bh=bF4TapeByMmf2QIMlt+i6IMuYCh0cZxcnHBpdua+9A8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cu4DoczWoOh1x22C5acmpwhl3ZT6yinQEUqj6RFbMS8JWmNuvyFZFdOM8AoiuKxC/jUcnhJPxpxqKJpXG7tK2ZZJquP1rJthxcg2oCgnDXymkAfkwZqdKPA3JgBFr9ldZXz5zQ7evg2VbfrPw+aFP2ujh/HczDtwsjgwr0shWAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=DUdfSOGD; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-280fc0e9f50so10696245ad.3
+        for <ceph-devel@vger.kernel.org>; Wed, 01 Oct 2025 09:20:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1759335639; x=1759940439; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JoPvLlbCSML6XwkftITPfIg8xOvQBqiE6ulvHio3xoY=;
-        b=IRr0aIaIfP2Tx7Wi/oMCS2dfEOgGrEPb0Uck+GImQRVYwQT4mHNp8qMJB19WHBEHAo
-         VRyaVtPRIuXahjTGbsGGh/WReIuoo/UiV6b87sDxlYelDWvcF0P7PMH+XJenBIRgK7qx
-         Pzx4cXWms/1drPiRBpxZs98CkrWruuX8oLxrqh0IAgjXVB3K6bawUjccaOIT9HrP+niD
-         XPulPPwS6Gudf636GyFyORP/u64e7p8qm7aVw4dprC9HharaKrWmcLdgILrHarqAefXk
-         v2g4uzzKEpJ3LLTRWGjjux44qCQ2BXmWSEsMQthh0qVRYCr8FpNpGfMtFDncwbzJpsZ7
-         UJ3g==
-X-Forwarded-Encrypted: i=1; AJvYcCV/5IDUswdztMIIn+94SfQQtzGMtNsLHLQRKNWr8Q/hue3cAikfHOZ+DdVB2ELigoCc6qfuQ3vmnhyt@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0m77u2UW2N6LsMviCDIshRfDXaAavInWFKTl2wy7aeASUB8xO
-	DXH+e+QnuaqnQHv9TWjUk3LVg7saUp+xWYrREbjCnPuC/JNw/zd7WqNwAlkjz5B9y3XD0FmAuh5
-	HmLNIbgObyK+P3f7fla5AGB5q4BVsKwAWZhncDXKZOpdiveDGWbvf9ffc4A/3da0=
-X-Gm-Gg: ASbGncsOp7JVpN/q0z5YDyG2VY4rVSNZynLgENlMk9Ym1Qs95Mv8m8g6vnQd+Q6nlk/
-	R/jkO4Ldr0R8VU+3gXmu8UvnFWPt3gY27W+RNB0ITcD/8FBtn96UqKO5CUU+LvF+MhVzajejV6w
-	+9yTsPuy7yqYSb7toHhd1BjLO/7ivBz7Rc1es7MytTVK8ctgBChlFGAjpDwoSU3M3eAVwQtV5in
-	78G+n/z/rkgMsbuNG98eim0Lqic0K53fv67+6PJIqatdmwKF2C65xuf6emv/WOelnHx95anZUvf
-	zRGxAtGP3pbsR//eL+8R5dZsTVi/QvLfLDkjpmJrsgqECEjDIBUs61wwpBtxAlKUezjX6ll0/Jt
-	qgCM34/NjGQ==
-X-Received: by 2002:a17:90b:1c86:b0:32e:b87e:a961 with SMTP id 98e67ed59e1d1-339a6e28253mr4100166a91.5.1759328544111;
-        Wed, 01 Oct 2025 07:22:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEiE8E8JpUc+mHC5geLw3ziv7M/Gy1hwfOav0RRD8KAg2+oypacVIJZ920PB0HXVVKODZBYBg==
-X-Received: by 2002:a17:90b:1c86:b0:32e:b87e:a961 with SMTP id 98e67ed59e1d1-339a6e28253mr4100113a91.5.1759328543484;
-        Wed, 01 Oct 2025 07:22:23 -0700 (PDT)
-Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a6ff0d4esm2543782a91.17.2025.10.01.07.22.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 07:22:23 -0700 (PDT)
-Date: Wed, 1 Oct 2025 22:22:18 +0800
-From: Zorro Lang <zlang@redhat.com>
-To: ethanwu <ethanwu@synology.com>
-Cc: fstests@vger.kernel.org, ceph-devel@vger.kernel.org,
-	Slava.Dubeyko@ibm.com, ethan198912@gmail.com
-Subject: Re: [PATCH] ceph/006: test snapshot data integrity after punch hole
- operations
-Message-ID: <20251001142218.zjhquaouttns7yxx@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-References: <20250930075743.2404523-1-ethanwu@synology.com>
+        bh=EI/Oh8/PCAXf06I9PHPDwi4/0WefIWbrMGoTUuWrnBM=;
+        b=DUdfSOGDFCywLhx0j2i0vLoE8X4BVHdwdrcXz3ZjbU07xeYqThI9ADFAKfBi93nAAz
+         wJCGan0IRGr9c30eRpUvcx7/u8I5/0pRfJTPRuL2qwoBaOJF4XXxS93GfAHsKkxrPaeU
+         2EiJLBlTW0l41mvZ3gPyFIkuXXvbou9blXA8wJHx1+n59bK3pZLGV+WEwqxfcPUIQtOk
+         9ELe+XZrVaMn5N9aHFbNFKSKiPn9HJACpMv9bNB9xkKdYxTpkaHtNIqrB8ANdFOdZJwx
+         q2XAehQO30P5rgEgVIy/1N9JXVjCQ6nekoCj801KgQpQXXEFUWwPsTFEQpLFtC1x470h
+         wiXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759335639; x=1759940439;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EI/Oh8/PCAXf06I9PHPDwi4/0WefIWbrMGoTUuWrnBM=;
+        b=Rm/v1GDFuyXw+4+nfYQuzi1MNkKIcHMBx30veXTBC/2BDeYkTWkqY8Fj2y1aknFvfd
+         djJ6Tbjs1EDWGc4XTwyiAp75Z9ih2NpbFcyjt5p1wbXY3bg1YAcsZGFp0Tixdso50v64
+         /ZZW8wyOwc885cNEF5le8t41useVeplXefsOPvnCg+y9eLjvrSEIK8SlTjLl77/dDfXg
+         Q4kkROAg35n9hIKdRBi14Wx42U2saqvrhxgpfrC1vGmvIhsL4hPBuzbT3Q3lHVxxPF7v
+         dCGZmL+xVJVVwkZceT8+nenXRC8JBsWcsv/rSVQq3x+R50Wrz8YEy0LUOLYdZV5gy7Bl
+         tpBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0dikXqMvbAIqlo8OfE3+Ih0JaNEXXT1WRfplQjpZxVRw7ecYt/QCR06woSlDS6ZXBo96KwFOQWZm9@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ7B0yxqfaHkv0xiWGNXi5AXXu8sj7r36i3cqy2kmbV0ON+bL9
+	WIieOibFbmY8hB2rzHYUM/eSpWXvn09fHtlZCPS0wfjCVU8HWZkmGd04s5dlv4owVg92KpahEJ4
+	lmM04DpSUc4hkxRY1aie7DLT46t7raUVp3uPUOVIS1Q==
+X-Gm-Gg: ASbGnctE/YAnLMW9S6B1A23H/xyctlAVzXZqGP3ERvqa0RzBlNi3ZysVezYEyZ6AXmp
+	x6uTye9Lskvp+MFa3mJ/+FC7Tx4FnNDqm3mfUm/7w7EN+OO6OdGWVjoF7cH+G1riPFRfybB8+Qm
+	OwWe9KdXh5c9hyw+QET6ZZd1UCEnSKnFJRScJ6dbpNcVD3DykeNvBg95mc+1RGXpl+2oo5DeD02
+	/2bUPPDmo+RzEYbHBTd3BJOivu1fDKauIRRcNKaZlL/KxjnfQWX+3lajMl5DIs=
+X-Google-Smtp-Source: AGHT+IFEIVnwr9ffJLEbYBthH98BS7huehwg+w3NxStPuNakBsASPv0qGndqlXbX/5EasnFoRUMSG34ReEMFLmrZsgY=
+X-Received: by 2002:a17:902:c945:b0:258:a3a1:9aa5 with SMTP id
+ d9443c01a7336-28e7ec77957mr31137405ad.0.1759335639054; Wed, 01 Oct 2025
+ 09:20:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930075743.2404523-1-ethanwu@synology.com>
+References: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
+ <20250926065556.14250-1-409411716@gms.tku.edu.tw> <CADUfDZruZWyrsjRCs_Y5gjsbfU7dz_ALGG61pQ8qCM7K2_DjmA@mail.gmail.com>
+ <aNz/+xLDnc2mKsKo@wu-Pro-E500-G6-WS720T>
+In-Reply-To: <aNz/+xLDnc2mKsKo@wu-Pro-E500-G6-WS720T>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Wed, 1 Oct 2025 09:20:27 -0700
+X-Gm-Features: AS18NWBzCQmPAr3kMe6kx-SwiJLpviu4tbIvpBzEeM52yLj1pwkHP5C3EVtP6wc
+Message-ID: <CADUfDZq4c3dRgWpevv3+29frvd6L8G9RRdoVFpFnyRsF3Eve1Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with reverse
+ lookup tables
+To: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+Cc: akpm@linux-foundation.org, axboe@kernel.dk, ceph-devel@vger.kernel.org, 
+	ebiggers@kernel.org, hch@lst.de, home7438072@gmail.com, idryomov@gmail.com, 
+	jaegeuk@kernel.org, kbusch@kernel.org, linux-fscrypt@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com, xiubli@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30, 2025 at 03:57:42PM +0800, ethanwu wrote:
-> Add test to verify that Ceph snapshots preserve original file data
-> when the live file is modified with punch hole operations. The test
-> creates a file, takes a snapshot, punches multiple holes in the
-> original file, then verifies the snapshot data remains unchanged.
-> 
-> Signed-off-by: ethanwu <ethanwu@synology.com>
-> ---
+On Wed, Oct 1, 2025 at 3:18=E2=80=AFAM Guan-Chun Wu <409411716@gms.tku.edu.=
+tw> wrote:
+>
+> On Fri, Sep 26, 2025 at 04:33:12PM -0700, Caleb Sander Mateos wrote:
+> > On Thu, Sep 25, 2025 at 11:59=E2=80=AFPM Guan-Chun Wu <409411716@gms.tk=
+u.edu.tw> wrote:
+> > >
+> > > From: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > >
+> > > Replace the use of strchr() in base64_decode() with precomputed rever=
+se
+> > > lookup tables for each variant. This avoids repeated string scans and
+> > > improves performance. Use -1 in the tables to mark invalid characters=
+.
+> > >
+> > > Decode:
+> > >   64B   ~1530ns  ->  ~75ns    (~20.4x)
+> > >   1KB  ~27726ns  -> ~1165ns   (~23.8x)
+> > >
+> > > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > > ---
+> > >  lib/base64.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++--=
+--
+> > >  1 file changed, 61 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/lib/base64.c b/lib/base64.c
+> > > index 1af557785..b20fdf168 100644
+> > > --- a/lib/base64.c
+> > > +++ b/lib/base64.c
+> > > @@ -21,6 +21,63 @@ static const char base64_tables[][65] =3D {
+> > >         [BASE64_IMAP] =3D "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnop=
+qrstuvwxyz0123456789+,",
+> > >  };
+> > >
+> > > +static const s8 base64_rev_tables[][256] =3D {
+> > > +       [BASE64_STD] =3D {
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  62,  =
+-1,  -1,  -1,  63,
+> > > +        52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  =
+11,  12,  13,  14,
+> > > +        15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  =
+37,  38,  39,  40,
+> > > +        41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +       },
+> > > +       [BASE64_URLSAFE] =3D {
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  62,  -1,  -1,
+> > > +        52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  =
+11,  12,  13,  14,
+> > > +        15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,  =
+-1,  -1,  -1,  63,
+> > > +        -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  =
+37,  38,  39,  40,
+> > > +        41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +       },
+> > > +       [BASE64_IMAP] =3D {
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  62,  =
+63,  -1,  -1,  -1,
+> > > +        52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  =
+11,  12,  13,  14,
+> > > +        15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  =
+37,  38,  39,  40,
+> > > +        41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  =
+-1,  -1,  -1,  -1,
+> > > +       },
+> >
+> > Do we actually need 3 separate lookup tables? It looks like all 3
+> > variants agree on the value of any characters they have in common. So
+> > we could combine them into a single lookup table that would work for a
+> > valid base64 string of any variant. The only downside I can see is
+> > that base64 strings which are invalid in some variants might no longer
+> > be rejected by base64_decode().
+> >
+>
+> In addition to the approach David mentioned, maybe we can use a common
+> lookup table for A=E2=80=93Z, a=E2=80=93z, and 0=E2=80=939, and then hand=
+le the variant-specific
+> symbols with a switch.
+>
+> For example:
+>
+> static const s8 base64_rev_common[256] =3D {
+>     [0 ... 255] =3D -1,
+>     ['A'] =3D 0, ['B'] =3D 1, /* ... */, ['Z'] =3D 25,
+>     ['a'] =3D 26, /* ... */, ['z'] =3D 51,
+>     ['0'] =3D 52, /* ... */, ['9'] =3D 61,
+> };
+>
+> static inline int base64_rev_lookup(u8 c, enum base64_variant variant) {
+>     s8 v =3D base64_rev_common[c];
+>     if (v !=3D -1)
+>         return v;
+>
+>     switch (variant) {
+>     case BASE64_STD:
+>         if (c =3D=3D '+') return 62;
+>         if (c =3D=3D '/') return 63;
+>         break;
+>     case BASE64_IMAP:
+>         if (c =3D=3D '+') return 62;
+>         if (c =3D=3D ',') return 63;
+>         break;
+>     case BASE64_URLSAFE:
+>         if (c =3D=3D '-') return 62;
+>         if (c =3D=3D '_') return 63;
+>         break;
+>     }
+>     return -1;
+> }
+>
+> What do you think?
 
-Thanks for the new test case from ceph list :) I have two questions
-about this patch (see below...)
+That adds several branches in the hot loop, at least 2 of which are
+unpredictable for valid base64 input of a given variant (v !=3D -1 as
+well as the first c check in the applicable switch case). That seems
+like it would hurt performance, no? I think having 3 separate tables
+would be preferable to making the hot loop more branchy.
 
->  tests/ceph/006     | 58 ++++++++++++++++++++++++++++++++++++++++++++++
->  tests/ceph/006.out |  2 ++
->  2 files changed, 60 insertions(+)
->  create mode 100755 tests/ceph/006
->  create mode 100644 tests/ceph/006.out
-> 
-> diff --git a/tests/ceph/006 b/tests/ceph/006
-> new file mode 100755
-> index 00000000..3f4b4547
-> --- /dev/null
-> +++ b/tests/ceph/006
-> @@ -0,0 +1,58 @@
-> +#!/bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (C) 2025 Synology All Rights Reserved.
-> +#
-> +# FS QA Test No. ceph/006
-> +#
-> +# Test that snapshot data remains intact after punch hole operations
-> +# on the original file.
-> +#
-> +. ./common/preamble
-> +_begin_fstest auto quick snapshot
-> +
-> +. common/filter
-
-I didn't see you use any filter helpers, this might not needed :)
-
-> +
-> +_require_test
-> +_require_xfs_io_command "pwrite"
-> +_require_xfs_io_command "fpunch"
-> +_exclude_test_mount_option "test_dummy_encryption"
-> +
-> +# TODO: Update with final commit SHA when merged
-> +_fixed_by_kernel_commit 1b7b474b3a78 \
-> +	"ceph: fix snapshot context missing in ceph_zero_partial_object"
-
-This test case uncovers a ceph known issue, but I didn't find any ceph
-specific test steps in this case, so how about move this case to be a
-generic test case (in tests/generic/ directory) ?
-
-> +
-> +workdir=$TEST_DIR/test-$seq
-> +snapdir=$workdir/.snap/snap1
-> +rmdir $snapdir 2>/dev/null
-> +rm -rf $workdir
-> +mkdir $workdir
-> +
-> +$XFS_IO_PROG -f -c "pwrite -S 0xab 0 1048576" $workdir/foo > /dev/null
-> +
-> +mkdir $snapdir
-> +
-> +original_md5=$(md5sum $snapdir/foo | cut -d' ' -f1)
-> +
-> +# Punch several holes of various sizes at different offsets
-> +$XFS_IO_PROG -c "fpunch 0 4096" $workdir/foo
-> +$XFS_IO_PROG -c "fpunch 16384 8192" $workdir/foo
-> +$XFS_IO_PROG -c "fpunch 65536 16384" $workdir/foo
-> +$XFS_IO_PROG -c "fpunch 262144 32768" $workdir/foo
-> +$XFS_IO_PROG -c "fpunch 1024000 4096" $workdir/foo
-
-We're used to 4k block size by default, but now the LBS(large block size) is
-more and more popularizes, so if you can reproduce this bug after replace
-above 4k with 64k, how about using bigger hole size.
-
-> +
-> +# Make sure we don't read from cache
-> +echo 3 > /proc/sys/vm/drop_caches
-> +
-> +snapshot_md5=$(md5sum $snapdir/foo | cut -d' ' -f1)
-> +
-> +if [ "$original_md5" != "$snapshot_md5" ]; then
-> +    echo "FAIL: Snapshot data changed after punch hole operations"
-> +    echo "Original md5sum: $original_md5"
-> +    echo "Snapshot md5sum: $snapshot_md5"
-> +fi
-> +
-> +echo "Silence is golden"
-> +
-> +# success, all done
-> +status=0
-> +exit
-> diff --git a/tests/ceph/006.out b/tests/ceph/006.out
-> new file mode 100644
-> index 00000000..675c1b7c
-> --- /dev/null
-> +++ b/tests/ceph/006.out
-> @@ -0,0 +1,2 @@
-> +QA output created by 006
-> +Silence is golden
-> -- 
-> 2.43.0
-> 
-> 
-> Disclaimer: The contents of this e-mail message and any attachments are confidential and are intended solely for addressee. The information may also be legally privileged. This transmission is sent in trust, for the sole purpose of delivery to the intended recipient. If you have received this transmission in error, any use, reproduction or dissemination of this transmission is strictly prohibited. If you are not the intended recipient, please immediately notify the sender by reply e-mail or phone and delete this message and its attachments, if any.
-> 
-
+Best,
+Caleb
 
