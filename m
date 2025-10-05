@@ -1,288 +1,337 @@
-Return-Path: <ceph-devel+bounces-3780-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3781-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29063BB4476
-	for <lists+ceph-devel@lfdr.de>; Thu, 02 Oct 2025 17:12:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0E5BB99F5
+	for <lists+ceph-devel@lfdr.de>; Sun, 05 Oct 2025 19:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC38A7A2502
-	for <lists+ceph-devel@lfdr.de>; Thu,  2 Oct 2025 15:10:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C91663B2804
+	for <lists+ceph-devel@lfdr.de>; Sun,  5 Oct 2025 17:18:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A035175D53;
-	Thu,  2 Oct 2025 15:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691DC2441A6;
+	Sun,  5 Oct 2025 17:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gOJMTxZB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U/a6KOF0"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A3286342
-	for <ceph-devel@vger.kernel.org>; Thu,  2 Oct 2025 15:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387CE2B9B9
+	for <ceph-devel@vger.kernel.org>; Sun,  5 Oct 2025 17:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759417918; cv=none; b=BpoXfLeWfucG6ELSrbG7+AEef/BM/g/Qhw7sQuZPuoJnJWHEvdEquOAFxulxO7BQpJxcTjbeOrQ+Iony6uwMyXG1A9eOexiUAx3yv/cBGGKa4AHoLEWY/4M7Qoqe9fKZ9kagEvO4Mtjgp0UFC4TTsqKg7yGsndfPd8zNbdYouKo=
+	t=1759684734; cv=none; b=IaT+AKk57mUFQ2eqAx72pwDaQZdqN3JzpeCwO/WBbVprqwr2jbxC8+bXfYinRoDe7VRjONgca6EIf32RXD9iCxLg8/v5Y+XM9QsvHiE6kJp70tYlXXvwC8ngz1i0HkwzBVrl2mGW3S2yqilM/0zaileXex5J2pSXMnY0kiUxZ2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759417918; c=relaxed/simple;
-	bh=gGB7ckyqXFa86rzwX+H8nmXRPnHiX7BecDh9NHgQNpg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jSdiRaDITZ6UBj2cJNdTM3/fan0nV+CnZQqADRi8xBRzawCgxiIha8JM3a48wqPYiU1k7oqA8dnIn/VxQ4Rjvix6D28PpjfyN+/vQL63CbywPvXkB1qjR4QjFnJ5VYiXl/wy6AU2lEIvyBBAGm0W439JikLx/qyvAlLhfeiAGMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gOJMTxZB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759417915;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aPKN+b5RaTQYrPpBPzObIbYQCQUPU2rx+bPhErBJqgY=;
-	b=gOJMTxZBa26jxo2SXnAgMX8X+Oap3IZdzNhu3JZ8OFpmJAn/K66UdHn4kF8qDvCTaQqqZW
-	jrIlytgdtzZcnjXbxVX0Vv+UxDw94K+VVPb8utJ0pbydT5LeJtpyULlzVEvDFeXlCfeTOQ
-	55fkA8huNrU5WOlPkwogWUaplBfoLto=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-658-bN1LClAHOW-9H4wxFJjEyw-1; Thu, 02 Oct 2025 11:11:54 -0400
-X-MC-Unique: bN1LClAHOW-9H4wxFJjEyw-1
-X-Mimecast-MFC-AGG-ID: bN1LClAHOW-9H4wxFJjEyw_1759417913
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-277f0ea6ee6so15578195ad.0
-        for <ceph-devel@vger.kernel.org>; Thu, 02 Oct 2025 08:11:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759417913; x=1760022713;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1759684734; c=relaxed/simple;
+	bh=xDzUfeZ1vAo8rCEH7eM2+z4x0GgHtGzJwAUEEuMZBE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J2KKN5hVDqYFRfS5HROLFY0XCZi5M4rsJbWwrX7K9MhiiSJgrPTU8zsJQ+e4Iz0AdUDLnCNkBs6ef5b9HLVf1hGPjZqCtCAKM432/+9gdJtNnqLkw4hH60Q9SuT046rY+JahsUtNq0dV8bfehnqGWVb1b3pPpKOfKJHWBRouRgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U/a6KOF0; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e34052bb7so43158625e9.2
+        for <ceph-devel@vger.kernel.org>; Sun, 05 Oct 2025 10:18:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759684730; x=1760289530; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aPKN+b5RaTQYrPpBPzObIbYQCQUPU2rx+bPhErBJqgY=;
-        b=USGdEmrZollgj9GO9klf6AjulQWMCJgYp9wGPbzcvyBXMHFFQG4t9j/w8I0ce1LQTj
-         p0gOYkEziMosdtNakSYZejdpwFkdMMnOSKOJG043yEHS7Ii0Lh9u2Mga0Uh2jY0SliJS
-         CEjDOSOsT98sJfsP/uFUilVqKyh8kU+MpsuuFTl1RzPJ06Uod2JiYCxL4yLEfg7ucQ3s
-         t4pU9QYI3xonTWipwwI58VVvDry33zuuTRwdii5PSouMogfcw45FQEFm0hrxWR0xM+ua
-         SqnnYpKEN9ywJ5PeYdxW0q3NkdLHH8Y3noxdDEH/j8T/grYX3cRJawl9LZuUC1W8+Xl6
-         56FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUg0+QaCe98/3TNvx5V4QBkdoMmzlqFdY1rM00weLVhVzUnB4mmaumzyU9JfpbpxJyPUw/tiBnwWu/7@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTN8Jto1SDzOP9wWjw87Ec5Q0k87Iwd+PMCRaOCCITDNAzriO8
-	hznIzhya0oWW3iR+8ENVURRzJ+kaEZq/Yi5wqV0CGXuOTGDr7kOA0WEMeaeMNYUFpnqw7fDXd+v
-	TTf0qIDNUPvwfWjDa3jAp/BDwUj8IE9LXO5NAUc7CHed/aAHx6R027r7cUAO4ylM=
-X-Gm-Gg: ASbGncuhQDcoVIL9r86TIXh7euqJxLuWtleRyhEF8DhCwce1t19x5bkCTyg6fWGlJb4
-	jc66y8t/MPKwgaCBdaOmL5IK9IrpLIGF1j/8+rt9Bxl6bmwGoKQQth5kDlH/eLdo3nt0ZLlbayq
-	JVxtWHqJE3tsb5/4hWRP0VaJsOV5skucOEBnRrRw3dCGheYDjhGta22jTfX4rSQk92m1SKOZ4e0
-	vdm9Z72wWIDa+CpUtFeLFiKxZsaqCoFwdKGX8oJi1qrHPnqRdDnLOPUWSFIYDVlpkA4AY+bn6AR
-	xXo7/YkVnLA9e5TqTi9N1iKSnBkzgAmGlxWeEMglhLKlOldewTKtkqEvgR0ybpLHd/lVjL+1hks
-	XJZ6IWO1T+g==
-X-Received: by 2002:a17:903:3847:b0:264:567b:dd92 with SMTP id d9443c01a7336-28e7f457c56mr100829115ad.52.1759417912959;
-        Thu, 02 Oct 2025 08:11:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHDH7Q8nGL0cm7VMMea4yG9nJOgLM7yL5VARcgRy1IlnWgysfaPV6XhBSWrX8XlXno44YRHdw==
-X-Received: by 2002:a17:903:3847:b0:264:567b:dd92 with SMTP id d9443c01a7336-28e7f457c56mr100828645ad.52.1759417912336;
-        Thu, 02 Oct 2025 08:11:52 -0700 (PDT)
-Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1ef43fsm24406875ad.122.2025.10.02.08.11.50
+        bh=J0ULdM4RO6Y+nM8oAEAyBDinfjXj2njenLfdZojAe+c=;
+        b=U/a6KOF0o7PmOgekaFIC06kTQ5M2VEZpOGt4ub0puAflHyGdQZpivc/4WYK6mss4Un
+         OQmGDbJgYZ8oGcm5DTav2XSATvBb75kdbw1klT2injCuP4mNKHG1s9oW1ZsuQLxaYsmF
+         z8fK2Qovds5/gPWsH9aAOJ2D9XoTvlC4UNWPnQu+WAB3xzUtZaZKPhYNQ/uNZNB1jWl6
+         67HwzsfyX9La3/kv3z6DPQmwcJaC4d0cyLvtug5dRIOpzmAq57eCGuOlLbCvlmDg3CeE
+         WGqCCDxeJC9urbU0ycV7z/mdSUDE7dz2ZGiTYGg4oj3eqMagUMrqzWMxuCgCWt9z+zjH
+         Cs2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759684730; x=1760289530;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J0ULdM4RO6Y+nM8oAEAyBDinfjXj2njenLfdZojAe+c=;
+        b=gb4b/in7EKYulKCdIrcX5lFbX8tFUvT0mbvcZNQcA+P3vWpeJF6OCVA5jtwTGvfiLH
+         9/dLmGPoj8tnyHUUM6rAu+oSt+t5LKmuW8POqEPa5mAgzf6Vn2Q613rW4+2X0tr9KkSc
+         3FsONZZ5njGe78eemU3tKtFI/gPukt7HoJQB+mmBVhKC5TVRZvdHBijuiGowmd9OBF0I
+         wE/WeaybYmBFrZMJKTM/KzrVEGzJWQEPM3h0Ce/+Yf1Ruvf6BX0WsdbYm+CTf8KMePiB
+         R8q/tJGoP93d/q5MLmgkZkYkhKft4KZx76j9YNI8QF6qPchHkmTaj2g0lattXT3PhxUi
+         yUlA==
+X-Forwarded-Encrypted: i=1; AJvYcCWEmE/5nMH/ViXlFbMbX93ncjNcT/qgTPnuDoVNGv3dwl57uRWh3vV2v46/qywWh3Uy/ULIfkWKQSZK@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE2tEB4Wi/l10tmPKyk26Yf5ls2sMn/eA2BPiLSkG1FAusIszl
+	sIQXDordgH7Y+2PvpOLDlTG3tSzP99QD+dEL3WTOIAQe+34f4olDax6h
+X-Gm-Gg: ASbGncu9UyhL7y/JDOcWKSNpbE8jkqp05jKYCbBcWSQHHG2SFcgHYg96x9O/evdbrSt
+	VTK6lgK19WfNyzFiZKRxa+y7Vgf2hW9pSlnbRXspbXATsPFjJ4Rnh09mWAS+e6fxf0bJHCuFx69
+	UzE8kUQ4LLct3GdCi+CPqfzNY9rBWApTFRplQrdVdwhvcJSYjMlR+Ar8I/nm+jHOJd7C4VOhIrd
+	mjPYPXpHfyhbH63Rj9HlR481VE/gldcLlefujQXIwHaKL08sQP95F9Fj0+/8mkY6uO9JeEV4CZM
+	mgOTAThHDTcsGR2tS+/EwAPcyBWJaSRVunr+CtYxXzsVBZ9PUblgV7LZynjzAofbmhueLir29O0
+	JQLn9mKHmO0m+vPiE+q+FhWQ9ekZ4WGMjo3hhTYvewH08yrJVFf79C092C5YFSoSmd+VatnDmIU
+	0KvVW+SbIZ096u
+X-Google-Smtp-Source: AGHT+IGVjN1kbt6UIzDiRaCKMzUM7GpwndVH8xqVRWPwdEAZd+Z/455EHR7od34KWx6ewjDoMtzyzw==
+X-Received: by 2002:a05:600c:a14:b0:46e:3403:63df with SMTP id 5b1f17b1804b1-46e711043a5mr72182845e9.8.1759684730254;
+        Sun, 05 Oct 2025 10:18:50 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f02a8sm17320240f8f.39.2025.10.05.10.18.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 08:11:51 -0700 (PDT)
-Date: Thu, 2 Oct 2025 23:11:47 +0800
-From: Zorro Lang <zlang@redhat.com>
-To: ethanwu <ethanwu@synology.com>
-Cc: fstests@vger.kernel.org, ceph-devel@vger.kernel.org,
-	Slava.Dubeyko@ibm.com, ethan198912@gmail.com
-Subject: Re: [PATCH v2] generic/778: test snapshot data integrity after punch
- hole operations
-Message-ID: <20251002151147.hcojczrc4xn7ikiz@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-References: <20251002083035.3274508-1-ethanwu@synology.com>
+        Sun, 05 Oct 2025 10:18:49 -0700 (PDT)
+Date: Sun, 5 Oct 2025 18:18:03 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Guan-Chun Wu <409411716@gms.tku.edu.tw>, akpm@linux-foundation.org,
+ axboe@kernel.dk, ceph-devel@vger.kernel.org, ebiggers@kernel.org,
+ hch@lst.de, home7438072@gmail.com, idryomov@gmail.com, jaegeuk@kernel.org,
+ kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+ sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com, xiubli@redhat.com
+Subject: Re: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with
+ reverse lookup tables
+Message-ID: <20251005181803.0ba6aee4@pumpkin>
+In-Reply-To: <CADUfDZq4c3dRgWpevv3+29frvd6L8G9RRdoVFpFnyRsF3Eve1Q@mail.gmail.com>
+References: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
+	<20250926065556.14250-1-409411716@gms.tku.edu.tw>
+	<CADUfDZruZWyrsjRCs_Y5gjsbfU7dz_ALGG61pQ8qCM7K2_DjmA@mail.gmail.com>
+	<aNz/+xLDnc2mKsKo@wu-Pro-E500-G6-WS720T>
+	<CADUfDZq4c3dRgWpevv3+29frvd6L8G9RRdoVFpFnyRsF3Eve1Q@mail.gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002083035.3274508-1-ethanwu@synology.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 02, 2025 at 04:30:35PM +0800, ethanwu wrote:
-> Add test to verify that snapshots preserve original file data
-> when the live file is modified with punch hole operations. The test
-> creates a file, takes a snapshot, punches multiple holes in the
-> original file, then verifies the snapshot data remains unchanged.
-> 
-> Signed-off-by: ethanwu <ethanwu@synology.com>
-> ---
-> v1->v2: previous version is 'ceph/006: test snapshot data integrity after
-> 	punch hole'.
-> 	1. move it to generic and add _require_snapshot check.
-> 	2. modify punch hole offset/len to be 64K aligned
-> ---
->  common/rc             | 20 +++++++++++
->  tests/generic/778     | 80 +++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/778.out |  2 ++
->  3 files changed, 102 insertions(+)
->  create mode 100755 tests/generic/778
->  create mode 100644 tests/generic/778.out
-> 
-> diff --git a/common/rc b/common/rc
-> index 81587dad..eec028e7 100644
-> --- a/common/rc
-> +++ b/common/rc
-> @@ -5978,6 +5978,26 @@ _require_inplace_writes()
->  	fi
->  }
->  
-> +# this test requires filesystem snapshot support
-> +_require_snapshot()
+On Wed, 1 Oct 2025 09:20:27 -0700
+Caleb Sander Mateos <csander@purestorage.com> wrote:
 
-There's snapshot on device mapper layout, so how about change this function
-name to _require_fs_snapshot() .
+> On Wed, Oct 1, 2025 at 3:18=E2=80=AFAM Guan-Chun Wu <409411716@gms.tku.ed=
+u.tw> wrote:
+> >
+> > On Fri, Sep 26, 2025 at 04:33:12PM -0700, Caleb Sander Mateos wrote: =20
+> > > On Thu, Sep 25, 2025 at 11:59=E2=80=AFPM Guan-Chun Wu <409411716@gms.=
+tku.edu.tw> wrote: =20
+> > > >
+> > > > From: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > >
+> > > > Replace the use of strchr() in base64_decode() with precomputed rev=
+erse
+> > > > lookup tables for each variant. This avoids repeated string scans a=
+nd
+> > > > improves performance. Use -1 in the tables to mark invalid characte=
+rs.
+> > > >
+> > > > Decode:
+> > > >   64B   ~1530ns  ->  ~75ns    (~20.4x)
+> > > >   1KB  ~27726ns  -> ~1165ns   (~23.8x)
+> > > >
+> > > > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > > Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > > > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> > > > ---
+> > > >  lib/base64.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++++=
+----
+> > > >  1 file changed, 61 insertions(+), 5 deletions(-)
+> > > >
+> > > > diff --git a/lib/base64.c b/lib/base64.c
+> > > > index 1af557785..b20fdf168 100644
+> > > > --- a/lib/base64.c
+> > > > +++ b/lib/base64.c
+> > > > @@ -21,6 +21,63 @@ static const char base64_tables[][65] =3D {
+> > > >         [BASE64_IMAP] =3D "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmn=
+opqrstuvwxyz0123456789+,",
+> > > >  };
+> > > >
+> > > > +static const s8 base64_rev_tables[][256] =3D {
+> > > > +       [BASE64_STD] =3D {
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  62,=
+  -1,  -1,  -1,  63,
+> > > > +        52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,=
+  11,  12,  13,  14,
+> > > > +        15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,=
+  37,  38,  39,  40,
+> > > > +        41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +       },
+> > > > +       [BASE64_URLSAFE] =3D {
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  62,  -1,  -1,
+> > > > +        52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,=
+  11,  12,  13,  14,
+> > > > +        15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,=
+  -1,  -1,  -1,  63,
+> > > > +        -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,=
+  37,  38,  39,  40,
+> > > > +        41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +       },
+> > > > +       [BASE64_IMAP] =3D {
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  62,=
+  63,  -1,  -1,  -1,
+> > > > +        52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,=
+  11,  12,  13,  14,
+> > > > +        15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,=
+  37,  38,  39,  40,
+> > > > +        41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +        -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,=
+  -1,  -1,  -1,  -1,
+> > > > +       }, =20
+> > >
+> > > Do we actually need 3 separate lookup tables? It looks like all 3
+> > > variants agree on the value of any characters they have in common. So
+> > > we could combine them into a single lookup table that would work for a
+> > > valid base64 string of any variant. The only downside I can see is
+> > > that base64 strings which are invalid in some variants might no longer
+> > > be rejected by base64_decode().
+> > > =20
+> >
+> > In addition to the approach David mentioned, maybe we can use a common
+> > lookup table for A=E2=80=93Z, a=E2=80=93z, and 0=E2=80=939, and then ha=
+ndle the variant-specific
+> > symbols with a switch.
 
-> +{
-> +	case "$FSTYP" in
-> +	ceph)
-> +		local check_dir=$1
-> +		[ -z "$check_dir" ] && _fail "_require_snapshot: directory argument required for ceph"
-> +		local test_snapdir="$check_dir/.snap/test_snap_$$"
-> +		mkdir "$test_snapdir" 2>/dev/null || _notrun "Ceph snapshots not supported (requires fs flag 'allow_snaps' and client auth capability 'snap')"
-> +		rmdir "$test_snapdir"
-> +		;;
-> +	btrfs)
-> +		# btrfs always supports snapshots, no check needed
-> +		;;
-> +	*)
-> +		_notrun "Snapshots not supported on $FSTYP"
-> +		;;
-> +	esac
-> +}
-> +
->  ################################################################################
->  # make sure this script returns success
->  /bin/true
-> diff --git a/tests/generic/778 b/tests/generic/778
-> new file mode 100755
-> index 00000000..96a8f1c8
-> --- /dev/null
-> +++ b/tests/generic/778
-> @@ -0,0 +1,80 @@
-> +#!/bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (C) 2025 Synology All Rights Reserved.
-> +#
-> +# FS QA Test No. generic/778
-> +#
-> +# Test that snapshot data remains intact after punch hole operations
-> +# on the original file.
-> +#
-> +. ./common/preamble
-> +_begin_fstest auto quick snapshot
-> +
-> +# Override the default cleanup function
-> +_cleanup()
-> +{
-> +	cd /
-> +	rm -rf $tmp.*
-> +	if [ -n "$snapdir" ]; then
-> +		case "$FSTYP" in
-> +		ceph)
-> +			rmdir $snapdir 2>/dev/null
-> +			;;
-> +		btrfs)
-> +			$BTRFS_UTIL_PROG subvolume delete $snapdir > /dev/null
-> +			;;
-> +		esac
-> +	fi
-> +}
-> +
-> +_require_test
-> +_require_xfs_io_command "pwrite"
-> +_require_xfs_io_command "fpunch"
-> +_require_snapshot $TEST_DIR
-> +_exclude_test_mount_option "test_dummy_encryption"
-> +
-> +# TODO: Update with final commit SHA when merged
-> +[ "$FSTYP" = "ceph" ] && _fixed_by_kernel_commit 1b7b474b3a78 \
-> +	"ceph: fix snapshot context missing in ceph_zero_partial_object"
-> +
-> +workdir=$TEST_DIR/test-$seq
-> +rm -rf $workdir
-> +mkdir $workdir
-> +
-> +$XFS_IO_PROG -f -c "pwrite -S 0xab 0 1048576" $workdir/foo > /dev/null
-> +
-> +# Create snapshot - filesystem specific
-> +case "$FSTYP" in
-> +ceph)
-> +	snapdir=$TEST_DIR/.snap/snap1
-> +	mkdir $snapdir
-> +	;;
-> +btrfs)
-> +	snapdir=$TEST_DIR/snap1
-> +	$BTRFS_UTIL_PROG subvolume snapshot ${TEST_DIR} $snapdir > /dev/null
-> +	;;
-> +esac
+It is certainly possible to generate the initialiser from a #define to
+avoid all the replicated source.
 
-Sorry to make this test case to be more complicated, I didn't realize ".snap"
-is a special directory for ceph. I think you have two choices:
+> >
+> > For example:
+> >
+> > static const s8 base64_rev_common[256] =3D {
+> >     [0 ... 255] =3D -1,
+> >     ['A'] =3D 0, ['B'] =3D 1, /* ... */, ['Z'] =3D 25,
 
-1) Move this case back to be a ceph only test case.
-2) Write more common snapshot related helpers, e.g:
-    _require_fs_snapshot (you've written it)
-    _create_fs_snapshot  (to replace above creating snapshot part)
-    _destroy_fs_snapshot (for above cleanup part)
+If you assume ASCII (I doubt Linux runs on any EBCDIC systems) you
+can assume the characters are sequential and miss ['B'] =3D etc to
+reduce the the line lengths.
+(Even EBCDIC has A-I J-R S-Z and 0-9 as adjacent values)
 
-Both are good to me, depends on which one you prefer :)
+> >     ['a'] =3D 26, /* ... */, ['z'] =3D 51,
+> >     ['0'] =3D 52, /* ... */, ['9'] =3D 61,
+> > };
+> >
+> > static inline int base64_rev_lookup(u8 c, enum base64_variant variant) {
+> >     s8 v =3D base64_rev_common[c];
+> >     if (v !=3D -1)
+> >         return v;
+> >
+> >     switch (variant) {
+> >     case BASE64_STD:
+> >         if (c =3D=3D '+') return 62;
+> >         if (c =3D=3D '/') return 63;
+> >         break;
+> >     case BASE64_IMAP:
+> >         if (c =3D=3D '+') return 62;
+> >         if (c =3D=3D ',') return 63;
+> >         break;
+> >     case BASE64_URLSAFE:
+> >         if (c =3D=3D '-') return 62;
+> >         if (c =3D=3D '_') return 63;
+> >         break;
+> >     }
+> >     return -1;
+> > }
+> >
+> > What do you think? =20
+>=20
+> That adds several branches in the hot loop, at least 2 of which are
+> unpredictable for valid base64 input of a given variant (v !=3D -1 as
+> well as the first c check in the applicable switch case).
 
-...
+I'd certainly pass in the character values for 62 and 63 so they are
+determined well outside the inner loop.
+Possibly even going as far as #define BASE64_STD ('+' << 8 | '/').
 
-For the ".snap" directory, as you said it can be changed by mount option,
-so I'm wondering if you can get the "real" snapshot dir name at first, then
-do other steps, e.g.
+> That seems like it would hurt performance, no?
+> I think having 3 separate tables
+> would be preferable to making the hot loop more branchy.
 
-snapdir=$(_get_ceph_snapshot_dir)  (or whatever name you prefer:)
-testdir=$TEST_DIR/$snapdir
+Depends how common you think 62 and 63 are...
+I guess 63 comes from 0xff bytes - so might be quite common.
 
-  _require_fs_snapshot $testdir
-  _create_fs_snapshot $testdir/...
-  _destroy_fs_snapshot $testdir/...
+One thing I think you've missed is that the decode converts 4 characters
+into 24 bits - which then need carefully writing into the output buffer.
+There is no need to check whether each character is valid.
+After:
+	val_24 =3D t[b[0]] | t[b[1]] << 6 | t[b[2]] << 12 | t[b[3]] << 18;
+val_24 will be negative iff one of b[0..3] is invalid.
+So you only need to check every 4 input characters, not for every one.
+That does require separate tables.
+(Or have a decoder that always maps "+-" to 62 and "/,_" to 63.)
 
-or
-  you only test with ceph
+	David
 
-Thanks,
-Zorro
-
-> +
-> +original_md5=$(md5sum $snapdir/test-$seq/foo | cut -d' ' -f1)
-> +
-> +# Punch several holes of various sizes at different offsets
-> +$XFS_IO_PROG -c "fpunch 0 65536" $workdir/foo
-> +$XFS_IO_PROG -c "fpunch 131072 65536" $workdir/foo
-> +$XFS_IO_PROG -c "fpunch 262144 65536" $workdir/foo
-> +$XFS_IO_PROG -c "fpunch 393216 65536" $workdir/foo
-> +
-> +# Make sure we don't read from cache
-> +echo 3 > /proc/sys/vm/drop_caches
-> +
-> +snapshot_md5=$(md5sum $snapdir/test-$seq/foo | cut -d' ' -f1)
-> +
-> +if [ "$original_md5" != "$snapshot_md5" ]; then
-> +    echo "FAIL: Snapshot data changed after punch hole operations"
-> +    echo "Original md5sum: $original_md5"
-> +    echo "Snapshot md5sum: $snapshot_md5"
-> +fi
-> +
-> +echo "Silence is golden"
-> +
-> +status=0
-> +exit
-> diff --git a/tests/generic/778.out b/tests/generic/778.out
-> new file mode 100644
-> index 00000000..e80f72a3
-> --- /dev/null
-> +++ b/tests/generic/778.out
-> @@ -0,0 +1,2 @@
-> +QA output created by 778
-> +Silence is golden
-> -- 
-> 2.43.0
-> 
-> 
-> Disclaimer: The contents of this e-mail message and any attachments are confidential and are intended solely for addressee. The information may also be legally privileged. This transmission is sent in trust, for the sole purpose of delivery to the intended recipient. If you have received this transmission in error, any use, reproduction or dissemination of this transmission is strictly prohibited. If you are not the intended recipient, please immediately notify the sender by reply e-mail or phone and delete this message and its attachments, if any.
-> 
+>=20
+> Best,
+> Caleb
+>=20
 
 
