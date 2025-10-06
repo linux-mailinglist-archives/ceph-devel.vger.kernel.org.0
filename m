@@ -1,143 +1,75 @@
-Return-Path: <ceph-devel+bounces-3782-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3783-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D2EBBDB1B
-	for <lists+ceph-devel@lfdr.de>; Mon, 06 Oct 2025 12:31:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CE72BBDE49
+	for <lists+ceph-devel@lfdr.de>; Mon, 06 Oct 2025 13:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53B9B18920D2
-	for <lists+ceph-devel@lfdr.de>; Mon,  6 Oct 2025 10:32:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03B474ED843
+	for <lists+ceph-devel@lfdr.de>; Mon,  6 Oct 2025 11:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F88C23D294;
-	Mon,  6 Oct 2025 10:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AAD270ED7;
+	Mon,  6 Oct 2025 11:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JiOpXpLX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpA9I2lN"
 X-Original-To: ceph-devel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF76723BD1A;
-	Mon,  6 Oct 2025 10:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256012652B0;
+	Mon,  6 Oct 2025 11:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759746695; cv=none; b=EBRtJ8cbyfY4J5gfyIyF2bCkUyt5AYRFk/8vkB3lHvT1cDm4DbEaQmUKeqzCTHNW5WIzMmR3alxcesF0P2KmcQ6EANo47vTCAgJhEL2U4UPtqMiBoFaggNzI0GgzqENGYbBjjqv3/18UBqvOzUL/0ynCSbq3r2AjFisqd1k4yr0=
+	t=1759750737; cv=none; b=IHzKyqbkX8P50sCEIimxacaZOc2Jio6kHnzZ6U97qFnLmHQz4NU+5L6GDBY3k/L3RdekS+cmgacOFrvF7G2v9CIar0+6ann0o9Jx4tN9Svkm8ks4BlEZrFiWMdE7rJaFy8+uNZKOnppU/ju9bwKr2gZt1LzS5y2u2PRlV5E7nxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759746695; c=relaxed/simple;
-	bh=cG36zcMsqBxk2WJ2EVZoOITToowjiuE8hiD3wFiNkKw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WNUPYoQhwg2WKwqhDpmnFAgQ67AuhIz/FhSJgBGTBB7u8SNUnGBZWo46lB94nxw/d17BepGY8LKOpb7RF6CAMQ1CgooMxCQhvrnqz4LADMlqo4/AXFy2RFP/GOyroqiBpEOT/iOYhcXNUeAjeR7ArgzoEUjzvJcP+jH3TP3eI28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JiOpXpLX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BF7AC4CEF5;
-	Mon,  6 Oct 2025 10:31:31 +0000 (UTC)
+	s=arc-20240116; t=1759750737; c=relaxed/simple;
+	bh=BQj54SuWzow3A4cUupmYN72ZEMbzW/KGXnzHQtj/5/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z0aaE0BpCn9JONTewF5+xObe7x9YKbgaaP/KYS0nhogI8EFAx2p9NIx7Bh/U55H73YvcOfpY2AEUSnuqreLfV3vnxnsw9e5l5fk27fDNFid0y8ETekMt/0rszXrFCE+V+nZL/ZIr7+cRbC3TbT0QP7fW9OTw5PTkCccSPuy58Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpA9I2lN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C168FC4CEF5;
+	Mon,  6 Oct 2025 11:38:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759746695;
-	bh=cG36zcMsqBxk2WJ2EVZoOITToowjiuE8hiD3wFiNkKw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JiOpXpLX1LOti/71X2UY6glPDDySKuuiLbKds+cJJHu0B1lKcZpieTyywhNJwGyE3
-	 eXIQGEKdFFgQ955uRo8h9VPQr+NGSUISfwLhN7OpNU8QxYJebWD2rKAB2lWg30g1Ri
-	 P21jCrkS0KGwVUGnoD6kECgMatJl7mnewiAo9TVuIfBiuY06ihWPPbrcGBXoDQhgy7
-	 aJ2iIL5m4R+10hJD19JsyvaasBoEOSGFgBSLO7jUKzHX7s6kB23SaNYfwZEqp1qY5R
-	 w4tWBg5qfQz6MgAlnVxmZ7nlZnn5JiNCz238vF5GWTJDh78sUjIbFVH/ADKbnJLcfB
-	 hfDxUZ3MbpfNQ==
+	s=k20201202; t=1759750736;
+	bh=BQj54SuWzow3A4cUupmYN72ZEMbzW/KGXnzHQtj/5/U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NpA9I2lNG0BgWGyKw3qyntnw8CCChSWltPmAnbK8646ulyoOyfrsnXKA3cyRenq5J
+	 bueKrGO+VIY9JLb0JPyrCPxinku9qZW0s5o6rY5XScR/Wd8GX9bk64wSVQjj4biHre
+	 LQM4Du2DQDbZgB8YATlPldMdykf6eZyjS99KgfJK5qg/almvHLTu7J5sourozxgWKV
+	 R7WBROU5TBHe9Ih/zwDMa6Ok7aGE2lnEToIzj3b7PvbChouP7ya0M//21zZd0Rv7Cy
+	 AeuFkQnvCvyIwT3DFN6mz8akA+8nVmJqz5C8wW0G9iwR0NHyrelz4qlyKA8AunMD6J
+	 QYKuvuroo44Pg==
+Date: Mon, 6 Oct 2025 13:38:51 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Julian Sun <sunjunchao@bytedance.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	clm@fb.com,
-	dsterba@suse.com,
-	xiubli@redhat.com,
-	idryomov@gmail.com,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jaegeuk@kernel.org,
-	chao@kernel.org,
-	willy@infradead.org,
-	jack@suse.cz,
-	agruenba@redhat.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-ext4@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org
-Subject: Re: [PATCH v2] fs: Make wbc_to_tag() inline and use it in fs.
-Date: Mon,  6 Oct 2025 12:30:44 +0200
-Message-ID: <20251006-exhumieren-staub-bbd9b043162d@brauner>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250929111349.448324-1-sunjunchao@bytedance.com>
-References: <20250929111349.448324-1-sunjunchao@bytedance.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com, 
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] hide ->i_state behind accessors
+Message-ID: <20251006-kernlos-etablieren-25b07b5ea9b3@brauner>
+References: <20250923104710.2973493-1-mjguzik@gmail.com>
+ <20250929-samstag-unkenntlich-623abeff6085@brauner>
+ <CAGudoHFm9_-AuRh52-KRCADQ8suqUMmYUUsg126kmA+N8Ah+6g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2176; i=brauner@kernel.org; h=from:subject:message-id; bh=cG36zcMsqBxk2WJ2EVZoOITToowjiuE8hiD3wFiNkKw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQ8nlX/0Jvr3gGB1U+cVD/bOZmZhZ/Zqn9B+WvB+U6zF KZpPi+Pd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwk+jAjw8qd51l/at8+xuU3 e0Hd3EPTu6JebI0xStikH9h9cJnw8ScM/2z/sHCHmyuJGqS7vu+vmb3+6kYehrkssi19t6seP1d 04gEA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAGudoHFm9_-AuRh52-KRCADQ8suqUMmYUUsg126kmA+N8Ah+6g@mail.gmail.com>
 
-On Mon, 29 Sep 2025 19:13:49 +0800, Julian Sun wrote:
-> The logic in wbc_to_tag() is widely used in file systems, so modify this
-> function to be inline and use it in file systems.
-> 
-> This patch has only passed compilation tests, but it should be fine.
-> 
-> 
+On Mon, Sep 29, 2025 at 02:56:23PM +0200, Mateusz Guzik wrote:
+> This was a stripped down version (no lockdep) in hopes of getting into
+> 6.18. It also happens to come with some renames.
 
-Folding:
+That was not obvious at all and I didn't read that anywhere in the
+commit messages?
 
-diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-index dde77d13a200..1e60d463f226 100644
---- a/include/linux/writeback.h
-+++ b/include/linux/writeback.h
-@@ -196,6 +196,13 @@ static inline void wait_on_inode(struct inode *inode)
-                       !(READ_ONCE(inode->i_state) & I_NEW));
- }
-
-+static inline xa_mark_t wbc_to_tag(struct writeback_control *wbc)
-+{
-+       if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
-+               return PAGECACHE_TAG_TOWRITE;
-+       return PAGECACHE_TAG_DIRTY;
-+}
-+
- #ifdef CONFIG_CGROUP_WRITEBACK
-
- #include <linux/cgroup.h>
-@@ -240,13 +247,6 @@ static inline void inode_detach_wb(struct inode *inode)
-        }
- }
-
--static inline xa_mark_t wbc_to_tag(struct writeback_control *wbc)
--{
--       if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages)
--               return PAGECACHE_TAG_TOWRITE;
--       return PAGECACHE_TAG_DIRTY;
--}
--
- void wbc_attach_fdatawrite_inode(struct writeback_control *wbc,
-                struct inode *inode);
-
-since wbc_to_tag() cannot be conditional on cgroup writeback.
-
----
-
-Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.19.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.19.misc
-
-[1/1] fs: Make wbc_to_tag() inline and use it in fs.
-      https://git.kernel.org/vfs/vfs/c/48b6926673f7
+Anyway, please resend on top of vfs-6.19.inode where I applied your
+other patches! Thank you!
 
