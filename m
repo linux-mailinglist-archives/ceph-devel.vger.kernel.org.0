@@ -1,98 +1,60 @@
-Return-Path: <ceph-devel+bounces-3787-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3788-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB96BC0B47
-	for <lists+ceph-devel@lfdr.de>; Tue, 07 Oct 2025 10:39:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D43F6BC1154
+	for <lists+ceph-devel@lfdr.de>; Tue, 07 Oct 2025 13:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66D4719A0A18
-	for <lists+ceph-devel@lfdr.de>; Tue,  7 Oct 2025 08:39:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D27C3C799E
+	for <lists+ceph-devel@lfdr.de>; Tue,  7 Oct 2025 11:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB902D8DDD;
-	Tue,  7 Oct 2025 08:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC2E2D879B;
+	Tue,  7 Oct 2025 11:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="vRD1lfta"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPI2eury"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522012D8DBD
-	for <ceph-devel@vger.kernel.org>; Tue,  7 Oct 2025 08:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB08165F16;
+	Tue,  7 Oct 2025 11:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759826081; cv=none; b=Nk9gO8rqrK1O4W4hO7BuQ84CcbfA2rYufCbFDklt16JWpRX11XR7wBKet4Zwtubl1/GS9sbT5nFUEhO38BxbVKk2u5Mciz5nIY4RgQXN7Sbo008SMxjf/X9epz7Iqwd+QyPeiUVLW83d+T5omr2xZtEgNmogJvD2/1LdTHRmFbM=
+	t=1759835277; cv=none; b=oW+3NWw6VGlfqHFDwocwJoJCeuFYppOhRr8987sxFSAjUxErI3UHNEUaSwD/3ERxtZwc0PNU2oMFmFVY+oH6VOZa+3i+XKOA8FMKt/2YmU6kDLu9b5qZ1sVHSZgEY19dTkMjaenrgN6xVF1+IgAIffhZmDUsDRQqcsI1bJh2tPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759826081; c=relaxed/simple;
-	bh=pdTwjOm0vpFq+a+kN6s7hTsZhY51AQgE7JhmI/mwkZE=;
+	s=arc-20240116; t=1759835277; c=relaxed/simple;
+	bh=eC6s5Z4dbum2VX6t+mnZh8hkQrlFQpqrsujSHhwkOTc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kindFRWqavH9VBmnnBoz12jZc3sGsLbDjr1lk4Htd/Vfs6gE2MrIlfnZ4JwXiJ6/xG/zlwH6je2MIP/CX2arAJoVeVsaW+wDaaqIMh3jGu2nSesLwqccnw7is6apa/DROfoNXG4d8RSnNJzAc0ZcIANnZTMLWL9CaelbRv0asKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=vRD1lfta; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-330469eb750so7094259a91.2
-        for <ceph-devel@vger.kernel.org>; Tue, 07 Oct 2025 01:34:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1759826076; x=1760430876; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KgqhrnFFLcx9NWAAafw0DUJGNd8Ld5Si5GTZSSnF9u4=;
-        b=vRD1lftanMtJGUpysw3W7joTCgKUMh1bEIEgkK+a6ixT4LTBpNNwyzXPzq927t0xdh
-         8qXdXLL5xrx7my5pmV8mjxYfhjr1PbA0gQvNEUT5RYWbuigFVNJE5JebL6NSKj5AgfLg
-         CVzNEnnBrUEZ43JGPZgho6NmS3y7DVKU+CJoS+wgnh3KpN3WvKd2c3ylRpUAmEcGMoK3
-         Pid9zKVH12znNom4Rh9KuTtjYbPD3Zg+2D0PSNcODquRsEtktZYv3+cFIrGyCKXObMfb
-         oV6L4BPBVnv5HIgHWu9dq4bnQfAb9kYblc9hyLLb6l9crsD0gl5ZZvdZciaQ0fQuC7k6
-         LzFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759826076; x=1760430876;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KgqhrnFFLcx9NWAAafw0DUJGNd8Ld5Si5GTZSSnF9u4=;
-        b=gqfSEqCK3fZkbjfJVrls0q6jOsBuSdenkf/zPybYPqeKtsq2zzpElEC0wM2koGSumk
-         HdNqZrl/CEvba/eHUMYkJNBLhKCU+IeHykcWjcx/4crqyezdiH4Js/P9pSF066iCUQ/u
-         wSzWmh7ZnqxL56kcH1JTVlOsSRtyeHjx76ozZqvnw6Su/k6245ZSrRjaqLFL9+QaiCnH
-         8ED7yvBVK+TrlGKzEOzBrNu5LJiMRS33Swz88o3B/mloWxrBOg1xNKcv/Kwo7ezjYP1F
-         vy3kL3A0rBinasytpx0/CtHhlqnSDsJS7K96+94gL7EvnzX2eZvYEDIbQ7HeQnvZeRbL
-         zDWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZBlTjk8bFqiPkJnv6qHa2LWHUsPDSkDrwA7mr/AG85hGAfO4mThJZ1zg15R0TAlzZcKWP/b/Z7udR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsHYWFe0+MMry2MLxJuFy33DBscd1Reqb94hZrQpN4b+r2bLsk
-	II1pfmJe07MMcW38g3rZVuFg0bHpra/mOkoz5pvNVPr4wizkU/027nQd5WkMfny3A0c=
-X-Gm-Gg: ASbGncvyu02ivgKoN19X7F5Q13GvirAQk3XHSGnqZnXO/R1Izk0HtBKRnVyexYb/VRb
-	t6CRkghhEidjxA2XXMURB0MpV9VKqWT/Vuhh+kCiutBjfpbF+C/nT7tf7j/6riKy5mmlf7mps2T
-	quLGAdKmOdrcnnoNnxCruVTJUnZUFwixWNoKDPj8gFy2IgSIGW8q5HbfEr/0vJuNdchsD4DN4s8
-	wr8Dmov0a6zZ2Stmw1BX629yVFpkqfBG5QOoWhOqDNsch3pVtbn0PzfkLh67elXONBVxExQiO/5
-	ao/8yPobRMQyif0j8iIE8sb5zWqf881NWQKdhKKDpfY7tWM6Bfege6qm6n1NpfIMlr+XnOwgjKJ
-	8NB9cp+GwiGBICJXOWTHk3Vqmy14t6AvYSbjRjXeOT0eUZYGjVTWgHQ1c4I1siinOQy24w1Kerv
-	s0xo0=
-X-Google-Smtp-Source: AGHT+IG4PiJ7Ahe7MRzt+nwIi/+/a1f2W0pJRvgQ363IH2MoiBd+l107hDp6w8HAEeTEgfYg+b91IA==
-X-Received: by 2002:a17:90b:1b01:b0:335:2a00:6842 with SMTP id 98e67ed59e1d1-339c279e4b8mr20038971a91.26.1759826076585;
-        Tue, 07 Oct 2025 01:34:36 -0700 (PDT)
-Received: from wu-Pro-E500-G6-WS720T ([2001:288:7001:2703:5196:9a8f:bb54:f0db])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339c4a19fe4sm13597424a91.8.2025.10.07.01.34.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 01:34:36 -0700 (PDT)
-Date: Tue, 7 Oct 2025 16:34:31 +0800
-From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	akpm@linux-foundation.org, axboe@kernel.dk,
-	ceph-devel@vger.kernel.org, ebiggers@kernel.org, hch@lst.de,
-	home7438072@gmail.com, idryomov@gmail.com, jaegeuk@kernel.org,
-	kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com,
-	xiubli@redhat.com
-Subject: Re: [PATCH v3 3/6] lib/base64: rework encode/decode for speed and
- stricter validation
-Message-ID: <aOTQl2SD5W8zBuNl@wu-Pro-E500-G6-WS720T>
-References: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
- <20250926065617.14361-1-409411716@gms.tku.edu.tw>
- <CADUfDZpu=rK4WwSmhNgxHQd2zeNvn8a7TmKCYuTL5T7dZ0x_4A@mail.gmail.com>
- <aNz21InCM4Pa93TL@wu-Pro-E500-G6-WS720T>
- <20251006215212.2920d571@pumpkin>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mbaCO2qVxFBXUNqjcetnLnv7RPokQutGFbouZ1dkGZu9idfSUyNicbM0owyp5rIklKDtTHIOwq1kIbeb9QQQMff7m1K42gWn1auFpSFtE0sowlkqwTc5Vyd3u19SFXXNxiOzmTSt6MH8UegOIm/PYdfKvSrogMY7e+btpoc9Uhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPI2eury; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1DF8C4CEF1;
+	Tue,  7 Oct 2025 11:07:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759835276;
+	bh=eC6s5Z4dbum2VX6t+mnZh8hkQrlFQpqrsujSHhwkOTc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qPI2euryOCDC/73P1JU2bmweSbpUlA/XB1kB7ZiI+jAn40y0iHOH1AOAXHz1alUBu
+	 eV79zL6t2+Ea6eRP0P+b7QOGJkP6SwKm88EChzNXIcOnco+XbOyeE4RPu9IQOsaBKf
+	 ASQfNsRW6UiXzKrvcoDfe3wk5+FpVMuRkxlSJiOb6u2ErNzjAtQjVaoWsJcaVw0HSx
+	 iZrK2w8Ar13PM267BjS3NWkbUZfXhQbqZkLrtHEZTfMVZMcOILUlduWfMMRtuanPjZ
+	 zw9g8tMfEqldOocIsNLSaHLxAwhsJQWBHpPCMVmvPEJEapU8jtwdIFtozxr4sjmgmc
+	 FJK2XGGysXIGA==
+Date: Tue, 7 Oct 2025 13:07:51 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com, 
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] hide ->i_state behind accessors
+Message-ID: <20251007-warnt-abrutschen-7a6363ce6c54@brauner>
+References: <20250923104710.2973493-1-mjguzik@gmail.com>
+ <20250929-samstag-unkenntlich-623abeff6085@brauner>
+ <CAGudoHFm9_-AuRh52-KRCADQ8suqUMmYUUsg126kmA+N8Ah+6g@mail.gmail.com>
+ <20251006-kernlos-etablieren-25b07b5ea9b3@brauner>
+ <CAGudoHGZreXKHGBvkEPOkf=tL69rJD0sTYAV0NJRVS2aA+B5_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
@@ -102,289 +64,17 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251006215212.2920d571@pumpkin>
+In-Reply-To: <CAGudoHGZreXKHGBvkEPOkf=tL69rJD0sTYAV0NJRVS2aA+B5_g@mail.gmail.com>
 
-On Mon, Oct 06, 2025 at 09:52:12PM +0100, David Laight wrote:
-> On Wed, 1 Oct 2025 17:39:32 +0800
-> Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
+> I rebased the patchset on top of vfs-6.19.inode and got a build failure:
 > 
-> > On Tue, Sep 30, 2025 at 05:11:12PM -0700, Caleb Sander Mateos wrote:
-> > > On Fri, Sep 26, 2025 at 12:01 AM Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:  
-> > > >
-> > > > The old base64 implementation relied on a bit-accumulator loop, which was
-> > > > slow for larger inputs and too permissive in validation. It would accept
-> > > > extra '=', missing '=', or even '=' appearing in the middle of the input,
-> > > > allowing malformed strings to pass. This patch reworks the internals to
-> > > > improve performance and enforce stricter validation.
-> > > >
-> > > > Changes:
-> > > >  - Encoder:
-> > > >    * Process input in 3-byte blocks, mapping 24 bits into four 6-bit
-> > > >      symbols, avoiding bit-by-bit shifting and reducing loop iterations.
-> > > >    * Handle the final 1-2 leftover bytes explicitly and emit '=' only when
-> > > >      requested.
-> > > >  - Decoder:
-> > > >    * Based on the reverse lookup tables from the previous patch, decode
-> > > >      input in 4-character groups.
-> > > >    * Each group is looked up directly, converted into numeric values, and
-> > > >      combined into 3 output bytes.
-> > > >    * Explicitly handle padded and unpadded forms:
-> > > >       - With padding: input length must be a multiple of 4, and '=' is
-> > > >         allowed only in the last two positions. Reject stray or early '='.
-> > > >       - Without padding: validate tail lengths (2 or 3 chars) and require
-> > > >         unused low bits to be zero.
-> > > >    * Removed the bit-accumulator style loop to reduce loop iterations.
-> > > >
-> > > > Performance (x86_64, Intel Core i7-10700 @ 2.90GHz, avg over 1000 runs,
-> > > > KUnit):
-> > > >
-> > > > Encode:
-> > > >   64B   ~90ns   -> ~32ns   (~2.8x)
-> > > >   1KB  ~1332ns  -> ~510ns  (~2.6x)
-> > > >
-> > > > Decode:
-> > > >   64B  ~1530ns  -> ~64ns   (~23.9x)
-> > > >   1KB ~27726ns  -> ~982ns  (~28.3x)
-> > > >
-> > > > Co-developed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > > > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > > > Co-developed-by: Yu-Sheng Huang <home7438072@gmail.com>
-> > > > Signed-off-by: Yu-Sheng Huang <home7438072@gmail.com>
-> > > > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-> > > > ---
-> > > >  lib/base64.c | 150 +++++++++++++++++++++++++++++++++++++--------------
-> > > >  1 file changed, 110 insertions(+), 40 deletions(-)
-> > > >
-> > > > diff --git a/lib/base64.c b/lib/base64.c
-> > > > index b20fdf168..fd1db4611 100644
-> > > > --- a/lib/base64.c
-> > > > +++ b/lib/base64.c
-> > > > @@ -93,26 +93,43 @@ static const s8 base64_rev_tables[][256] = {
-> > > >  int base64_encode(const u8 *src, int srclen, char *dst, bool padding, enum base64_variant variant)
-> > > >  {
-> > > >         u32 ac = 0;
-> > > > -       int bits = 0;
-> > > > -       int i;
-> > > >         char *cp = dst;
-> > > >         const char *base64_table = base64_tables[variant];
-> > > >
-> > > > -       for (i = 0; i < srclen; i++) {
-> > > > -               ac = (ac << 8) | src[i];
-> > > > -               bits += 8;
-> > > > -               do {
-> > > > -                       bits -= 6;
-> > > > -                       *cp++ = base64_table[(ac >> bits) & 0x3f];
-> > > > -               } while (bits >= 6);
-> > > > -       }
-> > > > -       if (bits) {
-> > > > -               *cp++ = base64_table[(ac << (6 - bits)) & 0x3f];
-> > > > -               bits -= 6;
-> > > > +       while (srclen >= 3) {
-> > > > +               ac = ((u32)src[0] << 16) |
-> > > > +                        ((u32)src[1] << 8) |
-> > > > +                        (u32)src[2];
-> > > > +
-> > > > +               *cp++ = base64_table[ac >> 18];
-> > > > +               *cp++ = base64_table[(ac >> 12) & 0x3f];
-> > > > +               *cp++ = base64_table[(ac >> 6) & 0x3f];
-> > > > +               *cp++ = base64_table[ac & 0x3f];
-> > > > +
-> > > > +               src += 3;
-> > > > +               srclen -= 3;
-> > > >         }
-> > > > -       while (bits < 0) {
-> > > > -               *cp++ = '=';
-> > > > -               bits += 2;
-> > > > +
-> > > > +       switch (srclen) {
-> > > > +       case 2:
-> > > > +               ac = ((u32)src[0] << 16) |
-> > > > +                    ((u32)src[1] << 8);
-> > > > +
-> > > > +               *cp++ = base64_table[ac >> 18];
-> > > > +               *cp++ = base64_table[(ac >> 12) & 0x3f];
-> > > > +               *cp++ = base64_table[(ac >> 6) & 0x3f];
-> > > > +               if (padding)
-> > > > +                       *cp++ = '=';
-> > > > +               break;
-> > > > +       case 1:
-> > > > +               ac = ((u32)src[0] << 16);
-> > > > +               *cp++ = base64_table[ac >> 18];
-> > > > +               *cp++ = base64_table[(ac >> 12) & 0x3f];
-> > > > +               if (padding) {
-> > > > +                       *cp++ = '=';
-> > > > +                       *cp++ = '=';
-> > > > +               }
-> > > > +               break;
-> > > >         }
-> > > >         return cp - dst;
-> > > >  }
-> > > > @@ -128,39 +145,92 @@ EXPORT_SYMBOL_GPL(base64_encode);
-> > > >   *
-> > > >   * Decodes a string using the selected Base64 variant.
-> > > >   *
-> > > > - * This implementation hasn't been optimized for performance.
-> > > > - *
-> > > >   * Return: the length of the resulting decoded binary data in bytes,
-> > > >   *        or -1 if the string isn't a valid Base64 string.
-> > > >   */
-> > > >  int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base64_variant variant)
-> > > >  {
-> > > > -       u32 ac = 0;
-> > > > -       int bits = 0;
-> > > > -       int i;
-> > > >         u8 *bp = dst;
-> > > > -       s8 ch;
-> > > > -
-> > > > -       for (i = 0; i < srclen; i++) {
-> > > > -               if (src[i] == '=') {
-> > > > -                       ac = (ac << 6);
-> > > > -                       bits += 6;
-> > > > -                       if (bits >= 8)
-> > > > -                               bits -= 8;
-> > > > -                       continue;
-> > > > -               }
-> > > > -               ch = base64_rev_tables[variant][(u8)src[i]];
-> > > > -               if (ch == -1)
-> > > > +       s8 input1, input2, input3, input4;
-> > > > +       u32 val;
-> > > > +
-> > > > +       if (srclen == 0)
-> > > > +               return 0;  
-> > > 
-> > > Doesn't look like this special case is necessary; all the if and while
-> > > conditions below are false if srclen == 0, so the function will just
-> > > end up returning 0 in that case anyways. It would be nice to avoid
-> > > this branch, especially as it seems like an uncommon case.
-> > >  
-> > 
-> > You're right. I'll remove it. Thanks.
-> > 
-> > > > +
-> > > > +       /* Validate the input length for padding */
-> > > > +       if (unlikely(padding && (srclen & 0x03) != 0))
-> > > > +               return -1;
-> > > > +
-> > > > +       while (srclen >= 4) {
-> > > > +               /* Decode the next 4 characters */
-> > > > +               input1 = base64_rev_tables[variant][(u8)src[0]];
-> > > > +               input2 = base64_rev_tables[variant][(u8)src[1]];
-> > > > +               input3 = base64_rev_tables[variant][(u8)src[2]];
-> > > > +               input4 = base64_rev_tables[variant][(u8)src[3]];
-> > > > +
-> > > > +               /* Return error if any Base64 character is invalid */
-> > > > +               if (unlikely(input1 < 0 || input2 < 0 || (!padding && (input3 < 0 || input4 < 0))))
-> > > > +                       return -1;
-> > > > +
-> > > > +               /* Handle padding */
-> > > > +               if (unlikely(padding && ((input3 < 0 && input4 >= 0) ||
-> > > > +                                        (input3 < 0 && src[2] != '=') ||
-> > > > +                                        (input4 < 0 && src[3] != '=') ||
-> > > > +                                        (srclen > 4 && (input3 < 0 || input4 < 0)))))  
-> > > 
-> > > Would be preferable to check and strip the padding (i.e. decrease
-> > > srclen) before this main loop. That way we could avoid several
-> > > branches in this hot loop that are only necessary to handle the
-> > > padding chars.
-> > >   
-> > 
-> > You're right. As long as we check and strip the padding first, the
-> > behavior with or without padding can be the same, and it could also
-> > reduce some unnecessary branches. I'll make the change.
+> fs/ocfs2/super.c:132:27: error: ‘inode_just_drop’ undeclared here (not
+> in a function)
+>   132 |         .drop_inode     = inode_just_drop,
+>       |                           ^~~~~~~~~~~~~~~
 > 
-> As I said earlier.
-> Calculate 'val' first using signed arithmetic.
-> If it is non-negative there are three bytes to write.
-> If negative then check for src[2] and src[3] being '=' (etc) before erroring out.
-> 
-> That way there is only one check in the normal path.
-> 
-> 	David
->
+> and sure enough the commit renaming that helper is missing. Can you
+> please rebase the branch?
 
-Thanks for the feedback. We’ll update the implementation accordingly.
-
-Best regards,
-Guan-Chun
-
-> > 
-> > Best regards,
-> > Guan-Chun
-> > 
-> > > > +                       return -1;
-> > > > +               val = ((u32)input1 << 18) |
-> > > > +                     ((u32)input2 << 12) |
-> > > > +                     ((u32)((input3 < 0) ? 0 : input3) << 6) |
-> > > > +                     (u32)((input4 < 0) ? 0 : input4);
-> > > > +
-> > > > +               *bp++ = (u8)(val >> 16);
-> > > > +
-> > > > +               if (input3 >= 0)
-> > > > +                       *bp++ = (u8)(val >> 8);
-> > > > +               if (input4 >= 0)
-> > > > +                       *bp++ = (u8)val;
-> > > > +
-> > > > +               src += 4;
-> > > > +               srclen -= 4;
-> > > > +       }
-> > > > +
-> > > > +       /* Handle leftover characters when padding is not used */
-> > > > +       if (!padding && srclen > 0) {
-> > > > +               switch (srclen) {
-> > > > +               case 2:
-> > > > +                       input1 = base64_rev_tables[variant][(u8)src[0]];
-> > > > +                       input2 = base64_rev_tables[variant][(u8)src[1]];
-> > > > +                       if (unlikely(input1 < 0 || input2 < 0))
-> > > > +                               return -1;
-> > > > +
-> > > > +                       val = ((u32)input1 << 6) | (u32)input2; /* 12 bits */
-> > > > +                       if (unlikely(val & 0x0F))
-> > > > +                               return -1; /* low 4 bits must be zero */
-> > > > +
-> > > > +                       *bp++ = (u8)(val >> 4);
-> > > > +                       break;
-> > > > +               case 3:
-> > > > +                       input1 = base64_rev_tables[variant][(u8)src[0]];
-> > > > +                       input2 = base64_rev_tables[variant][(u8)src[1]];
-> > > > +                       input3 = base64_rev_tables[variant][(u8)src[2]];
-> > > > +                       if (unlikely(input1 < 0 || input2 < 0 || input3 < 0))
-> > > > +                               return -1;
-> > > > +
-> > > > +                       val = ((u32)input1 << 12) |
-> > > > +                             ((u32)input2 << 6) |
-> > > > +                             (u32)input3; /* 18 bits */
-> > > > +
-> > > > +                       if (unlikely(val & 0x03))
-> > > > +                               return -1; /* low 2 bits must be zero */
-> > > > +
-> > > > +                       *bp++ = (u8)(val >> 10);
-> > > > +                       *bp++ = (u8)((val >> 2) & 0xFF);  
-> > > 
-> > > "& 0xFF" is redundant with the cast to u8.
-> > > 
-> > > Best,
-> > > Caleb
-> > >   
-> > > > +                       break;
-> > > > +               default:
-> > > >                         return -1;
-> > > > -               ac = (ac << 6) | ch;
-> > > > -               bits += 6;
-> > > > -               if (bits >= 8) {
-> > > > -                       bits -= 8;
-> > > > -                       *bp++ = (u8)(ac >> bits);
-> > > >                 }
-> > > >         }
-> > > > -       if (ac & ((1 << bits) - 1))
-> > > > -               return -1;
-> > > > +
-> > > >         return bp - dst;
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(base64_decode);
-> > > > --
-> > > > 2.34.1
-> > > >
-> > > >  
-> > 
-> 
+Done. Thanks!
 
