@@ -1,247 +1,193 @@
-Return-Path: <ceph-devel+bounces-3807-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3808-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4286FBC8582
-	for <lists+ceph-devel@lfdr.de>; Thu, 09 Oct 2025 11:41:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC56BC8BCC
+	for <lists+ceph-devel@lfdr.de>; Thu, 09 Oct 2025 13:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E4FD1893FB6
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Oct 2025 09:41:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DDF1A4F5BAD
+	for <lists+ceph-devel@lfdr.de>; Thu,  9 Oct 2025 11:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03B12D838C;
-	Thu,  9 Oct 2025 09:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF4D2E092E;
+	Thu,  9 Oct 2025 11:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=synology.com header.i=@synology.com header.b="NtaBS8Bp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KoSNf3xl"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail.synology.com (mail.synology.com [211.23.38.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25AF42D6E7F;
-	Thu,  9 Oct 2025 09:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.23.38.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E5B2E0410
+	for <ceph-devel@vger.kernel.org>; Thu,  9 Oct 2025 11:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760002872; cv=none; b=u4M5f/N7wsFWezxJAtOfIHa67WAzeaqgZnRezvrv/V8bOsqBnQ++9/CKmiWSpwgIZppXQm3pAwsCepCxsr1BwaXbB5sBfl02HCRwAnA8NaPvHNzSsJFH27RVgT1plLm0ZxuAySnPJwkJn8s1NA3mtET30IiSW9775OYSQP/0Fu8=
+	t=1760008710; cv=none; b=k6unkCe8xpsae6vRispIJdeopibpvYNLmCC9PqfFdMyD+5tMmCXAXH5Vp2K89J4CW+2YwG/+ULEm0s7waxB+UQ4GqjUS8SU0S7IuPemw2k637HomXIiZlhKD0vNsSp2PgLicfqrZju8Y89bGwWiQR6NS+yAa4yj/GO20F+ERwwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760002872; c=relaxed/simple;
-	bh=JioEsW4Ahw1bsNv4Qggu+h+dmUhXBrPXrXh9I+wL6Kc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VUtve7pZ5co5zOOMtkZ2nqZOMHPdPLe4jW8CjQOus+sfxCkx5Rnnj3UK5mXwyEum7gwpJPw/rEZHzD8CWAP/M1kNRalHJbl1xMqIiTOLFbeNFc3IfLWju4pYsV6uxTnvhlx8BT71fBc4HYG6dlAXRTuOPRRydfabent4H56ZXkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synology.com; spf=pass smtp.mailfrom=synology.com; dkim=pass (1024-bit key) header.d=synology.com header.i=@synology.com header.b=NtaBS8Bp; arc=none smtp.client-ip=211.23.38.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=synology.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=synology.com
-From: ethanwu <ethanwu@synology.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synology.com; s=123;
-	t=1760002299; bh=JioEsW4Ahw1bsNv4Qggu+h+dmUhXBrPXrXh9I+wL6Kc=;
-	h=From:To:Cc:Subject:Date;
-	b=NtaBS8Bpy4XRPKapQMP3HBYDwhZ2JrEgG1peYvOjmcNOOgEhbwiYv4mAYH2ajE0mO
-	 0hGvlvFubYjq+2HePrG4I8ttwILud4k3qxm4p6a+fekV1f4EXiaSLZlRJDUvWMmpr+
-	 0olE+fdyWV/FRYjVembj6tuVFCAMWcHhu6iiK+GU=
-To: fstests@vger.kernel.org
-Cc: zlang@redhat.com,
-	ceph-devel@vger.kernel.org,
-	Slava.Dubeyko@ibm.com,
-	ethan198912@gmail.com,
-	ethanwu <ethanwu@synology.com>
-Subject: [PATCH v3] ceph/006: test snapshot data integrity after punch hole operations
-Date: Thu,  9 Oct 2025 17:31:29 +0800
-Message-ID: <20251009093129.2437815-1-ethanwu@synology.com>
+	s=arc-20240116; t=1760008710; c=relaxed/simple;
+	bh=KhiBEQ1gBj6N/wX9SxoVMA19u0YnGN1VD1SS7ME84vw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f2yuUreLFa8eGZg0+8bIkIEkSwuu/Wn0S69b8YRCIzjt70jvEgQnrZfCCMhtb2A3zUDoVBPcB6+PGXfd2ZBJSeEkyrsJg6WaXtqf4/zaFwIxABoR06y4lQfBeb+2os9TeOpBxEe9qJvlETNKAo88l2CBxYRdQYycdrbWt+ek+7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KoSNf3xl; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b632a6b9effso518462a12.1
+        for <ceph-devel@vger.kernel.org>; Thu, 09 Oct 2025 04:18:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760008708; x=1760613508; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iqfRaZoQUI4dNFSPZo9GyySQC2vIhVGnsV8QxQuw7pA=;
+        b=KoSNf3xlHwsIU5mJeeMtTH9JboKnK6HUHzBfNkobUe3mc7l1xBIH9Jtwy2FzEsX1nO
+         qEc8xiErlOlepn2KH/f9s5ZDj07EPe99iJO02EgEJkH/L17PPlVWisyKfcf8YkVirI6H
+         nRiYamT7UtnlqNqPb3DgyJ/hs+KHqVtiDCQ+TQ7cpM8WaVrbTXcqwCvfSrRXPx0V+E/G
+         NBHbUk0Pp/g+HdmeuFt0BvfwggqLI9ZatLuEJjl6b9OB8xIChbhNDLfl8SPTXE4dfhtN
+         oJgmwGHh/s+JxCxAPOOBCUERPtBISGEGk24RvR3GEmoayO+y9SewuITwGDcwGbA/2oHe
+         YjMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760008708; x=1760613508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iqfRaZoQUI4dNFSPZo9GyySQC2vIhVGnsV8QxQuw7pA=;
+        b=rYd+Q1d1w0q4nrj6N760YWPdBXI8Tu2/UxIzrl1tYnoWHIDnN4x6HxU7WEuwJNG2pP
+         G3p32KjFwIawHn+pIMoNNMXiTIoP0Ip4t7AS/QIhFZsOPtYL0w38Nu5zr0S57Q+k+nIc
+         QgwxR7IMYnb93knJ5aS4rAUOtUtudBu9/9AJnj4ZXI0fRWZ53mCCIfYCihHZK3sqxGJa
+         48C5JaW7QsHLcWpawsrUN7Tv3Miz2Fycu1Ww29YceNcqH1i9T1nf9lVQEuL2m6ZQh3g5
+         Ri8YOk/t8f/az0wSuBO7m1poo2IleNgRnV3Nj6E/6gJsZqXdo60kMOWhobznLT4lZRHY
+         DTNA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6n8htRZ9ML9XQ2B3CqIYG5sVqPYDTIDhrwhUa96aSPzlTFXkCcVpWhRZVkSTjKfp0JeBX9I6lKr57@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeQ8iqOg+A/pRAw1/PrL+6lTmchoxsTvrZi4HHSUqHe/DEfEQM
+	9YL6qzTwM8PCuhFIpQG2XBjikbrRaWOP87R2vZKTee/yrhpPjEeYLWcOr6wgrRpdUeTJmDJlqa8
+	Wa/Lis/BqDE0792bEBnJ+MUKIkw9J+gc=
+X-Gm-Gg: ASbGncso59LWzAw8J1HVP9J7dCoNThVZKuhPDjV1/sZYQOiDzCV3OVej3JM54LB1OnV
+	ZZFssP86dA9YVtGzTstujoyWzMMAPuCfcjBkZ0smhXnKs4chWLEU8Vw5pnmjexjH/R2y1Cvhkbn
+	6xx7eotyrzpXoHr8B1Ra1JfmkZz1qVIyQEZLGF+8vxUc0Ff6nHlQe79NF93yzT9EfEHBH0ZWy8J
+	1y2zeKV9EqMkcs6whkUwrBd8B77kxw=
+X-Google-Smtp-Source: AGHT+IGcTXsPBhZTmdsjcj1YrtEGdE4o7S5DX96nyjsPy2BgZaV1B0w17FZSDPhHO/AfhGjc60kGCKFbyKvnjNaAjuQ=
+X-Received: by 2002:a17:902:e94e:b0:270:4aa8:2dcc with SMTP id
+ d9443c01a7336-2902737c5e9mr93104295ad.19.1760008707755; Thu, 09 Oct 2025
+ 04:18:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Synology-MCP-Status: no
-X-Synology-Spam-Status: score=0, required 6, WHITELIST_FROM_ADDRESS 0
-X-Synology-Spam-Flag: no
-X-Synology-Virus-Status: no
-Content-Type: text/plain
+References: <20250806094855.268799-1-max.kellermann@ionos.com> <20250806094855.268799-4-max.kellermann@ionos.com>
+In-Reply-To: <20250806094855.268799-4-max.kellermann@ionos.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Thu, 9 Oct 2025 13:18:15 +0200
+X-Gm-Features: AS18NWAi8TGwpk5qdmtF-1FkOPvzEwGccMEEtDCCNUrhBLZHkJ86tq0vDug7F0g
+Message-ID: <CAOi1vP_m5ovLLxpzyexq0vhVV8JPXAYcbzUqrQmn7jZkdhfmNA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] net/ceph/messenger: add empty check to ceph_con_get_out_msg()
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: xiubli@redhat.com, amarkuze@redhat.com, ceph-devel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add test to verify that Ceph snapshots preserve original file data
-when the live file is modified with punch hole operations. The test
-creates a file, takes a snapshot, punches multiple holes in the
-original file, then verifies the snapshot data remains unchanged.
+On Wed, Aug 6, 2025 at 11:49=E2=80=AFAM Max Kellermann <max.kellermann@iono=
+s.com> wrote:
+>
+> This moves the list_empty() checks from the two callers (v1 and v2)
+> into the base messenger.c library.  Now the v1/v2 specializations do
+> not need to know about con->out_queue; that implementation detail is
+> now hidden behind the ceph_con_get_out_msg() function.
+>
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> ---
+>  net/ceph/messenger.c    |  4 +++-
+>  net/ceph/messenger_v1.c | 15 ++++++++++-----
+>  net/ceph/messenger_v2.c |  4 ++--
+>  3 files changed, 15 insertions(+), 8 deletions(-)
+>
+> diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+> index 424fb2769b71..8886c38a55d2 100644
+> --- a/net/ceph/messenger.c
+> +++ b/net/ceph/messenger.c
+> @@ -2113,7 +2113,9 @@ struct ceph_msg *ceph_con_get_out_msg(struct ceph_c=
+onnection *con)
+>  {
+>         struct ceph_msg *msg;
+>
+> -       BUG_ON(list_empty(&con->out_queue));
+> +       if (list_empty(&con->out_queue))
+> +               return NULL;
+> +
+>         msg =3D list_first_entry(&con->out_queue, struct ceph_msg, list_h=
+ead);
+>         WARN_ON(msg->con !=3D con);
+>
+> diff --git a/net/ceph/messenger_v1.c b/net/ceph/messenger_v1.c
+> index 516f2eeb122a..5eb6cfdbc494 100644
+> --- a/net/ceph/messenger_v1.c
+> +++ b/net/ceph/messenger_v1.c
+> @@ -189,12 +189,18 @@ static void prepare_write_message_footer(struct cep=
+h_connection *con, struct cep
+>
+>  /*
+>   * Prepare headers for the next outgoing message.
+> + *
+> + * @return false if there are no outgoing messages
+>   */
+> -static void prepare_write_message(struct ceph_connection *con)
+> +static bool prepare_write_message(struct ceph_connection *con)
+>  {
+>         struct ceph_msg *m;
+>         u32 crc;
+>
+> +       m =3D ceph_con_get_out_msg(con);
+> +       if (m =3D=3D NULL)
+> +               return false;
+> +
+>         con_out_kvec_reset(con);
+>         con->v1.out_msg_done =3D false;
+>
+> @@ -208,8 +214,6 @@ static void prepare_write_message(struct ceph_connect=
+ion *con)
+>                         &con->v1.out_temp_ack);
+>         }
+>
+> -       m =3D ceph_con_get_out_msg(con);
+> -
+>         dout("prepare_write_message %p seq %lld type %d len %d+%d+%zd\n",
+>              m, con->out_seq, le16_to_cpu(m->hdr.type),
+>              le32_to_cpu(m->hdr.front_len), le32_to_cpu(m->hdr.middle_len=
+),
+> @@ -256,6 +260,8 @@ static void prepare_write_message(struct ceph_connect=
+ion *con)
+>         }
+>
+>         ceph_con_flag_set(con, CEPH_CON_F_WRITE_PENDING);
+> +
+> +       return true;
+>  }
+>
+>  /*
+> @@ -1543,8 +1549,7 @@ int ceph_con_v1_try_write(struct ceph_connection *c=
+on)
+>                         goto more;
+>                 }
+>                 /* is anything else pending? */
+> -               if (!list_empty(&con->out_queue)) {
+> -                       prepare_write_message(con);
+> +               if (prepare_write_message(con)) {
 
-Signed-off-by: ethanwu <ethanwu@synology.com>
----
- v1->v2: previous version is 'ceph/006: test snapshot data integrity
- after punch hole'.
-    1. move it to generic and add _require_snapshot check.
-    2. modify punch hole offset/len to be 64K aligned
- v2->v3:
-    1. move test back to ceph specific since it uses ceph snapshot API.
-    2. support custom snapdirname mount option.
-    3. add _ceph_remove_snapshot and _ceph_create_snapshot functions.
+Hi Max,
 
----
- common/ceph        | 76 ++++++++++++++++++++++++++++++++++++++++++++++
- tests/ceph/006     | 58 +++++++++++++++++++++++++++++++++++
- tests/ceph/006.out |  2 ++
- 3 files changed, 136 insertions(+)
- create mode 100755 tests/ceph/006
- create mode 100644 tests/ceph/006.out
+I made a change to net/ceph/messenger_v1.c hunks of this patch to
+follow what is done for msgr2 where ceph_con_get_out_msg() is called
+outside of the prepare helper and the new message is passed in.
+prepare_write_message() doesn't need to return a bool anymore.
 
-diff --git a/common/ceph b/common/ceph
-index df7a6814..6a19527e 100644
---- a/common/ceph
-+++ b/common/ceph
-@@ -38,3 +38,79 @@ _ceph_get_client_id()
- {
- 	$GETFATTR_PROG --only-values -n "ceph.client_id" $TEST_DIR 2>/dev/null
- }
-+
-+# Get the snapshot directory name from mount options
-+# Defaults to ".snap" if snapdirname option is not set
-+_ceph_get_snapdirname()
-+{
-+	local mnt_point=$1
-+	local snapdirname
-+
-+	# Extract snapdirname from mount options
-+	snapdirname=$(findmnt -n -o OPTIONS "$mnt_point" | grep -o 'snapdirname=[^,]*' | cut -d'=' -f2)
-+
-+	# Default to .snap if not set
-+	if [ -z "$snapdirname" ]; then
-+		echo ".snap"
-+	else
-+		echo "$snapdirname"
-+	fi
-+}
-+
-+# Create a CephFS snapshot
-+# _ceph_create_snapshot <directory_path> <snapshot_name>
-+# Creates a snapshot under <directory_path>/.snap/<snapshot_name>
-+# or <directory_path>/<custom_snapdir>/<snapshot_name> if snapdirname is set
-+_ceph_create_snapshot()
-+{
-+	local dir_path=$1
-+	local snap_name=$2
-+	local snapdirname
-+	local snapdir
-+	local mnt_point
-+
-+	if [ -z "$dir_path" ] || [ -z "$snap_name" ]; then
-+		echo "Usage: _ceph_create_snapshot <directory_path> <snapshot_name>"
-+		return 1
-+	fi
-+
-+	# Find the mount point for this directory
-+	mnt_point=$(df -P "$dir_path" | tail -1 | awk '{print $NF}')
-+	snapdirname=$(_ceph_get_snapdirname "$mnt_point")
-+	snapdir="$dir_path/$snapdirname/$snap_name"
-+
-+	mkdir "$snapdir" || return 1
-+	echo "$snapdir"
-+}
-+
-+# Remove a CephFS snapshot
-+# _ceph_remove_snapshot <directory_path> <snapshot_name>
-+_ceph_remove_snapshot()
-+{
-+	local dir_path=$1
-+	local snap_name=$2
-+	local snapdirname
-+	local snapdir
-+	local mnt_point
-+
-+	if [ -z "$dir_path" ] || [ -z "$snap_name" ]; then
-+		echo "Usage: _ceph_remove_snapshot <directory_path> <snapshot_name>"
-+		return 1
-+	fi
-+
-+	# Find the mount point for this directory
-+	mnt_point=$(df -P "$dir_path" | tail -1 | awk '{print $NF}')
-+	snapdirname=$(_ceph_get_snapdirname "$mnt_point")
-+	snapdir="$dir_path/$snapdirname/$snap_name"
-+
-+	rmdir "$snapdir" 2>/dev/null
-+}
-+
-+# this test requires ceph snapshot support
-+_require_ceph_snapshot()
-+{
-+	local snapdirname=$(_ceph_get_snapdirname "$TEST_DIR")
-+	local test_snapdir="$TEST_DIR/$snapdirname/test_snap_$$"
-+	mkdir "$test_snapdir" 2>/dev/null || _notrun "Ceph snapshots not supported (requires fs flag 'allow_snaps' and client auth capability 'snap')"
-+	rmdir "$test_snapdir"
-+}
-diff --git a/tests/ceph/006 b/tests/ceph/006
-new file mode 100755
-index 00000000..a5af6ca3
---- /dev/null
-+++ b/tests/ceph/006
-@@ -0,0 +1,58 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (C) 2025 Synology All Rights Reserved.
-+#
-+# FS QA Test No. ceph/006
-+#
-+# Test that snapshot data remains intact after punch hole operations
-+# on the original file.
-+#
-+. ./common/preamble
-+_begin_fstest auto quick snapshot
-+
-+. common/ceph
-+
-+_require_test
-+_require_xfs_io_command "pwrite"
-+_require_xfs_io_command "fpunch"
-+_require_ceph_snapshot
-+_exclude_test_mount_option "test_dummy_encryption"
-+
-+# TODO: commit is not merged yet. Update with final commit SHA once merged.
-+_fixed_by_kernel_commit 1b7b474b3a78 \
-+	"ceph: fix snapshot context missing in ceph_zero_partial_object"
-+
-+workdir=$TEST_DIR/test-$seq
-+_ceph_remove_snapshot $workdir snap1
-+rm -rf $workdir
-+mkdir $workdir
-+
-+$XFS_IO_PROG -f -c "pwrite -S 0xab 0 1048576" $workdir/foo > /dev/null
-+
-+snapdir=$(_ceph_create_snapshot $workdir snap1)
-+
-+original_md5=$(md5sum $snapdir/foo | cut -d' ' -f1)
-+
-+$XFS_IO_PROG -c "fpunch 0 65536" $workdir/foo
-+$XFS_IO_PROG -c "fpunch 131072 65536" $workdir/foo
-+$XFS_IO_PROG -c "fpunch 262144 65536" $workdir/foo
-+$XFS_IO_PROG -c "fpunch 393216 65536" $workdir/foo
-+
-+# Make sure we don't read from cache
-+echo 3 > /proc/sys/vm/drop_caches
-+
-+snapshot_md5=$(md5sum $snapdir/foo | cut -d' ' -f1)
-+
-+if [ "$original_md5" != "$snapshot_md5" ]; then
-+    echo "FAIL: Snapshot data changed after punch hole operations"
-+    echo "Original md5sum: $original_md5"
-+    echo "Snapshot md5sum: $snapshot_md5"
-+fi
-+
-+_ceph_remove_snapshot $workdir snap1
-+
-+echo "Silence is golden"
-+
-+# success, all done
-+status=0
-+exit
-diff --git a/tests/ceph/006.out b/tests/ceph/006.out
-new file mode 100644
-index 00000000..675c1b7c
---- /dev/null
-+++ b/tests/ceph/006.out
-@@ -0,0 +1,2 @@
-+QA output created by 006
-+Silence is golden
--- 
-2.43.0
+Let me know if you see something wrong there:
 
+https://github.com/ceph/ceph-client/commit/6140f1d43ba9425dc55b12bdfd8877b0=
+c5118d9a
 
-Disclaimer: The contents of this e-mail message and any attachments are confidential and are intended solely for addressee. The information may also be legally privileged. This transmission is sent in trust, for the sole purpose of delivery to the intended recipient. If you have received this transmission in error, any use, reproduction or dissemination of this transmission is strictly prohibited. If you are not the intended recipient, please immediately notify the sender by reply e-mail or phone and delete this message and its attachments, if any.
+Thanks,
+
+                Ilya
 
