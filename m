@@ -1,127 +1,350 @@
-Return-Path: <ceph-devel+bounces-3811-lists+ceph-devel=lfdr.de@vger.kernel.org>
+Return-Path: <ceph-devel+bounces-3812-lists+ceph-devel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+ceph-devel@lfdr.de
 Delivered-To: lists+ceph-devel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 461A1BC928D
-	for <lists+ceph-devel@lfdr.de>; Thu, 09 Oct 2025 15:01:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C79BBCC701
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 Oct 2025 11:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D11E54EF17F
-	for <lists+ceph-devel@lfdr.de>; Thu,  9 Oct 2025 13:01:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FD7819E6911
+	for <lists+ceph-devel@lfdr.de>; Fri, 10 Oct 2025 09:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A432E1F10;
-	Thu,  9 Oct 2025 13:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750FF2C0299;
+	Fri, 10 Oct 2025 09:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bSrqB3rC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YU0Ny0HD"
 X-Original-To: ceph-devel@vger.kernel.org
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E4211713
-	for <ceph-devel@vger.kernel.org>; Thu,  9 Oct 2025 13:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6500920A5EA
+	for <ceph-devel@vger.kernel.org>; Fri, 10 Oct 2025 09:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760014907; cv=none; b=Ipn9brC4NFlLRij7Xr4lqE81r+70DPs4aL9vNNvVbmbt3T/vu9FFKu5XBhZMf3AEIq2uYvVRzFqpHUFdYokB8AjK8fnRgbMv9seTMURaBE903Ysl+5k2LwwBoZ+61ffAFJGlgQH5Hr7SOx7r2tL0IJFmlgpew1XVC4S1jMcBjv8=
+	t=1760089907; cv=none; b=urCdrAnAjjYiAS7t4xvpE7Po5biu66Ks4pTCCT3hYAVAPvwBhlT8RNXzR4To3NG8N/PB37EI1k/kCmNU9Y43oTXvrlLxTtwkIxmmj1oSgEHZS5yreEhCySHer83aJIE+gvxH7xRMwOoDQ+fdzZQbDgfflJGp1Cy8lFnjzRNsjIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760014907; c=relaxed/simple;
-	bh=Gs47qKyjjCbUeDk5wi2/Q6Ba91DMd60WfEY1F85BEAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ai71Az22211RLpFuRRByEgxoAOJD3p4GX7f748F+zs3DrD7kPh7GBsEmiu4ncu779vRqKy5rKhe8abTFLsbzQvWliTHxPcme716B9YJIflJn24hcrDIYCwdAg3pev8UCHxQQnz76en3hTmTc/hWbTdAZQeTyTgmHwJMiUl9ynyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bSrqB3rC; arc=none smtp.client-ip=209.85.215.182
+	s=arc-20240116; t=1760089907; c=relaxed/simple;
+	bh=0gpFLDbwtlyVkGYGGMoUWd2mlJVVmwWM/n+HgLvMV+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BMYzFMh49B0iwTaDXUAk/CbgGqXS90zMVflOraxdvjHEKoXWWBSgdOllR8v2XQ35Y7ATWIS93H3TkQ6Luz8Tl0eRGSWpsxMMMm6pGnZs1AWzPhXyu4FPqR3IvmDFr55SXjibmrg9AS3wqrs+KtqWOWrKRVqi3Cil2tLMRaAFLPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YU0Ny0HD; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b4755f37c3eso780309a12.3
-        for <ceph-devel@vger.kernel.org>; Thu, 09 Oct 2025 06:01:45 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ee130237a8so1571458f8f.0
+        for <ceph-devel@vger.kernel.org>; Fri, 10 Oct 2025 02:51:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760014905; x=1760619705; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1760089904; x=1760694704; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YcgGyufeWrwbNvU76gdgcnETjaPRCIETyHV991hM71k=;
-        b=bSrqB3rCEnP8PsQUegBgfVVmHsiLaCuvDfV15AkZEaP/yCojaX6oE3kDqO1aoh2rVw
-         kHcok5YYKxEqwIR8yJkLZlKfO/cKn0XMbB3YCx0bpY2SwZXgOd4vYhw3TSDGysjW8slz
-         dl4rNGYXdL4qhF/hmZPMnXH+7i/xozM8MqemOwrtna3GY2gOjlqlobm4g/2rk9JtKXTv
-         Z1wMckwYZx1mULsXIHlFR0WRaxxEnLAUz6N14vwLiQVPlvUilLWhQPEZgSgiqBOX+FbW
-         7ge8N8iOQrZwo4+TdqTAI0jY7rpgWsfw5lx+kLBxbqtnzPzOwzW2ebwp2Zqtl/d/YdDQ
-         ISSw==
+        bh=eV0VkyvZwjNec7z9vbdRZ7vdRavcOqLYA4ozWnex1xw=;
+        b=YU0Ny0HDH31cOZUgDkKteUlHTCWyIiusJtOAfkapl1o2AwMGd1reGGslLpSjwVa3Zh
+         j4JZggt41K3ZroaZ4+zdSaKgRlRGqQnE6gXFsiqlhHj208ffPHToYRUlBaOiOHkizkfT
+         T2HJTTdrn3LQvCPXk1A26MlM5L/SPjNrA6ivBzI0YwfFUEyQuHpb9s8KDUV8NBfOOZIc
+         ZjUKpKra7YNc5TFmhwmtDHJsUiMBp9rYviraibsv1fjdMW29cDqavKIdbBwQzI+RKEPe
+         Y/udO4bQCK4mTj23ZrGO9lix2gHkr6sEr4sNKW73j/+l8IW+C/Tc8TGvJzI+7EA7r2Ez
+         8GWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760014905; x=1760619705;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1760089904; x=1760694704;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YcgGyufeWrwbNvU76gdgcnETjaPRCIETyHV991hM71k=;
-        b=gjyG69njuzt4Bch20DTzl1MHxniUV6VKGZRbWF/KuYhwkgmZUlkDvJ6atQdG1w8iuA
-         OIl5aK6Laj/vy89JSEaYE2fqbSwmiY6huPis8DmpWCijuxMfecvnYbR79l0PBJXNFO3B
-         Z97jiHOXoalYHPqIOvEeRSmzGG4fENNqM9zyrqlgC/aayHRDJha7IBiWiR6R0eb4LOLF
-         yRMgwN7R3BRwgF5MaSfRJVFS9pm2dBz2KORA4Aqph0LkIG4RYb/uMPWdbZuTImGEtQb0
-         ZlhblhIJzGkk2eXP6wLSEzwqvkvhn1HClpLrcLX0oBYQh/8QE6gRUo6HCYh3ihZjHbe0
-         ytgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFBlnPBR4m2aaA1ejmOtt1IWdb/bhFcEOv9fMoc6JUm8OV3ipNWOa0J/hfX4DOd7YgJ5RdF3xyPwhK@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd5Ub1sZIWsZXQGc0pNl2gav4ZxM6EJODpTX7gjs5AwsgF5go0
-	lf3Yvc6BK9AHhefeCkKtxsNKZ538k1grFDCiJNoR3WGRtzdK1CBwqjmFB/Do/2QBFJwmy+ZSYDn
-	o4d49nwEeoTMQSDXXaCxAfUfK/S66E7E=
-X-Gm-Gg: ASbGnct0k689JYbnuF/FlunCoan55Iv7FH48cw+196FnNjjE18bA3jdG+lARaHO0Udc
-	tYoOKS07EygkHIiISTOTRAujYEdXEn1xFtah2fvvitoZPfFFiw/SxvjOOBwi5HhhwVE1y0q/MpR
-	yP0E8rfSbZiUmjzejuuKgJO3n4ZhOu0WZVInQRpICYj5jsKfEH6cWgTrLPa/1mNo5R8fmp2nt48
-	qPJl2jYFW/3RlNOLSMg17Bc2VBp4VMR9RGMR2ARkA==
-X-Google-Smtp-Source: AGHT+IGYLUuOBqqW0GFGNDMWTwHGx99IL3xPXeKehrsNaPNEIwJoQjw5SqCX43PuDYbkab8vCV+1w3CcEjSwf8x0pa0=
-X-Received: by 2002:a17:903:3848:b0:272:a900:c42e with SMTP id
- d9443c01a7336-290273ef069mr91199775ad.35.1760014905030; Thu, 09 Oct 2025
- 06:01:45 -0700 (PDT)
+        bh=eV0VkyvZwjNec7z9vbdRZ7vdRavcOqLYA4ozWnex1xw=;
+        b=G4mtNhg41JboHB5eN97svnku2pbvt6zsUgZMoyxX0RMdB37JYxUukjYB04k6c1iXD9
+         LFW6wj1zi/hitEAxV0lIdqGAcs4G44LTSXhnm09YbJwJIL/a16lrBKjRIXC1OIG7Vk6V
+         qkIQIaM395Y02GoiXo4O90pwa50BJw8WRfyA/UADuvAjbib1Mmn/xEOz/rz2QjYhsB4Q
+         c5xrhoHrSi0N9SF2hFOvp07lCfhpVNKkQfoxEmOUsEbe84rj53VcyAD/ZW+ewmY6j2Qu
+         s8oDKwbPfiBvAIXAFJGQ0LU6lUQp6mv0ZNAJ+2ySquxN4G3upPtGEP1X1qGrqvdgvLqL
+         E3BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUt2rrp0CQ8NLwLxzN7/dY5HdiR1hz8wWEkdAcrXq3rdQKL5LP0Rhbt9a8uBu4Wp3XrU3ya+W8GH/yL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye/ugk5CVM1wM67VRPU2odvZcwHKszF/Ibaev13tGLZR0omW2p
+	COgQ+Nv2hfb0idxFSeIAg7GCwp67ICNlyl73C1jxDrG9coNnWCqMe/1B
+X-Gm-Gg: ASbGncvmjkBEf8jwLyl6thg7Fa58HjGNVF/pRdGHC0VAoPX9Fu/OZ/FuGxC4PdWXo29
+	BtwB5X5ZBvOi+p4G5wr6kzilaqRq5cD3vrrjkqEUz1gOK0IVArm7fOw609wo3HYpF2yNt/RC4Ap
+	jH80mdIONcJ7MFkOAwOfqONJ1FxO4POTupo8R+Fm8DS7zyzhYPe4tYABi0jxlIuksdQ6+5x/rjM
+	UY8DkGJA+rCmqrZErLZ87rb/XuLYYS9agPX0kcKYE05RJ+hG/WUL6a3FwbbR35w/picVuLX+Zv4
+	pydbKOu4IMAPUW4f2zmdfFqIjZsYWfQEixRMr9S3WygsMYxTo9vJlCNQCtGL34I08DPGqFYP2As
+	oYaj8TARnDa44DPI3qMFnqHtsBDIC/U86NnNqgT5zwgXEuY6iXCWWU0KVLPxUhewP/7uuxBRect
+	Z9raJ4OzY=
+X-Google-Smtp-Source: AGHT+IEA2a9V9moY9Q0X8l4fa8n2FoyS2Xm8feyo+zRRNYARtth7YTtorp1JP7E6mAtA18UXC+S7bw==
+X-Received: by 2002:a05:6000:603:b0:401:41a9:524f with SMTP id ffacd0b85a97d-4266e7d452bmr7539955f8f.29.1760089903522;
+        Fri, 10 Oct 2025 02:51:43 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e83e1sm3392578f8f.51.2025.10.10.02.51.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Oct 2025 02:51:43 -0700 (PDT)
+Date: Fri, 10 Oct 2025 10:51:38 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+ akpm@linux-foundation.org, axboe@kernel.dk, ceph-devel@vger.kernel.org,
+ ebiggers@kernel.org, hch@lst.de, home7438072@gmail.com, idryomov@gmail.com,
+ jaegeuk@kernel.org, kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+ sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com, xiubli@redhat.com
+Subject: Re: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with
+ reverse lookup tables
+Message-ID: <20251010105138.0356ad75@pumpkin>
+In-Reply-To: <aOeprat4/97oSWE0@wu-Pro-E500-G6-WS720T>
+References: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
+	<20250926065556.14250-1-409411716@gms.tku.edu.tw>
+	<CADUfDZruZWyrsjRCs_Y5gjsbfU7dz_ALGG61pQ8qCM7K2_DjmA@mail.gmail.com>
+	<aNz/+xLDnc2mKsKo@wu-Pro-E500-G6-WS720T>
+	<CADUfDZq4c3dRgWpevv3+29frvd6L8G9RRdoVFpFnyRsF3Eve1Q@mail.gmail.com>
+	<20251005181803.0ba6aee4@pumpkin>
+	<aOTPMGQbUBfgdX4u@wu-Pro-E500-G6-WS720T>
+	<CADUfDZp6TA_S72+JDJRmObJgmovPgit=-Zf+-oC+r0wUsyg9Jg@mail.gmail.com>
+	<20251007192327.57f00588@pumpkin>
+	<aOeprat4/97oSWE0@wu-Pro-E500-G6-WS720T>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: ceph-devel@vger.kernel.org
 List-Id: <ceph-devel.vger.kernel.org>
 List-Subscribe: <mailto:ceph-devel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:ceph-devel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250806094855.268799-1-max.kellermann@ionos.com>
- <20250806094855.268799-4-max.kellermann@ionos.com> <CAOi1vP_m5ovLLxpzyexq0vhVV8JPXAYcbzUqrQmn7jZkdhfmNA@mail.gmail.com>
- <CAKPOu+8a7yswmSQppossXDnLVzgg0Xd-cESMbJniCWnnMJYttQ@mail.gmail.com>
-In-Reply-To: <CAKPOu+8a7yswmSQppossXDnLVzgg0Xd-cESMbJniCWnnMJYttQ@mail.gmail.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Thu, 9 Oct 2025 15:01:31 +0200
-X-Gm-Features: AS18NWDgVXdJzaBexOMeDAOr15F2R2gpSg5qJuQMSqlDa3Ke0Sh3XNjKn1-fGxQ
-Message-ID: <CAOi1vP-FVKUUvQQT7=EuHij9uerqRvdrTQegMch4_JYQp64Qvg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] net/ceph/messenger: add empty check to ceph_con_get_out_msg()
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: xiubli@redhat.com, amarkuze@redhat.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 9, 2025 at 1:47=E2=80=AFPM Max Kellermann <max.kellermann@ionos=
-.com> wrote:
->
-> On Thu, Oct 9, 2025 at 1:18=E2=80=AFPM Ilya Dryomov <idryomov@gmail.com> =
-wrote:
-> > I made a change to net/ceph/messenger_v1.c hunks of this patch to
-> > follow what is done for msgr2 where ceph_con_get_out_msg() is called
-> > outside of the prepare helper and the new message is passed in.
-> > prepare_write_message() doesn't need to return a bool anymore.
->
-> But ... why?
-> Your change is not bad, but I don't believe it belongs in this patch,
-> because it is out of this patch's scope. It would have been a good
-> follow-up patch.
+On Thu, 9 Oct 2025 20:25:17 +0800
+Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
 
-Changing a function to return a bool only to immediately undo that
-change in a follow-up patch (both touching the same 10-15 lines of
-code) seemed like pointless churn to me.
+...
+> As Eric mentioned, the decoder in fs/crypto/ needs to reject invalid inpu=
+t.
 
->
-> There are lots of unnecessary (and sometimes confusing) differences
-> between the v1 and v2 messengers, but unifying these is out of the
-> scope of my patch. All my patch does is remove visibility of a
-> messenger.c implementation detail from the v1/v2 specializations.
+(to avoid two different input buffers giving the same output)
 
-ceph_con_get_out_msg() is a common helper and given that this series
-changed its signature and how it's supposed to be used, I wouldn't say
-that adjusting the specializations to do the same thing with it is out
-of scope.  This isn't unifying some completely unrelated aspect of v1
-vs v2 and the resulting patch actually ended up being smaller.
+Which is annoyingly reasonable.
 
-Thanks,
+> One possible solution I came up with is to first create a shared
+> base64_rev_common lookup table as the base for all Base64 variants.
+> Then, depending on the variant (e.g., BASE64_STD, BASE64_URLSAFE, etc.), =
+we
+> can dynamically adjust the character mappings for position 62 and positio=
+n 63
+> at runtime, based on the variant.
+>=20
+> Here are the changes to the code:
+>=20
+> static const s8 base64_rev_common[256] =3D {
+> 	[0 ... 255] =3D -1,
+> 	['A'] =3D  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12,
+> 		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+> 	['a'] =3D 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38,
+> 		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+> 	['0'] =3D 52, 53, 54, 55, 56, 57, 58, 59, 60, 61,
+> };
+>=20
+> static const struct {
+> 	char char62, char63;
+> } base64_symbols[] =3D {
+> 	[BASE64_STD] =3D { '+', '/' },
+> 	[BASE64_URLSAFE] =3D { '-', '_' },
+> 	[BASE64_IMAP] =3D { '+', ',' },
+> };
+>=20
+> int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enu=
+m base64_variant variant)
+> {
+> 	u8 *bp =3D dst;
+> 	u8 pad_cnt =3D 0;
+> 	s8 input1, input2, input3, input4;
+> 	u32 val;
+> 	s8 base64_rev_tables[256];
+>=20
+> 	/* Validate the input length for padding */
+> 	if (unlikely(padding && (srclen & 0x03) !=3D 0))
+> 		return -1;
 
-                Ilya
+There is no need for an early check.
+Pick it up after the loop when 'srclen !=3D 0'.
+
+>=20
+> 	memcpy(base64_rev_tables, base64_rev_common, sizeof(base64_rev_common));
+
+Ugg - having a memcpy() here is not a good idea.
+It really is better to have 3 arrays, but use a 'mostly common' initialiser.
+Perhaps:
+#define BASE64_REV_INIT(ch_62, ch_63) =3D { \
+	[0 ... 255] =3D -1, \
+	['A'] =3D  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, \
+		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, \
+	['a'] =3D 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, \
+		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, \
+	['0'] =3D 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
+	[ch_62] =3D 62, [ch_63] =3D 63, \
+}
+
+static const s8 base64_rev_maps[][256] =3D {
+	[BASE64_STD] =3D BASE64_REV_INIT('+', '/'),
+	[BASE64_URLSAFE] =3D BASE64_REV_INIT('-', '_'),
+	[BASE64_IMAP] =3D BASE64_REV_INIT('+', ',')
+};
+
+Then (after validating variant):
+	const s8 *map =3D base64_rev_maps[variant];
+
+>=20
+> 	if (variant < BASE64_STD || variant > BASE64_IMAP)
+> 		return -1;
+>=20
+> 	base64_rev_tables[base64_symbols[variant].char62] =3D 62;
+> 	base64_rev_tables[base64_symbols[variant].char63] =3D 63;
+>=20
+> 	while (padding && srclen > 0 && src[srclen - 1] =3D=3D '=3D') {
+> 		pad_cnt++;
+> 		srclen--;
+> 		if (pad_cnt > 2)
+> 			return -1;
+> 	}
+
+I'm not sure I'd to that there.
+You are (in some sense) optimising for padding.
+=46rom what I remember, "abcd" gives 24 bits, "abc=3D" 16 and "ab=3D=3D" 8.
+
+>=20
+> 	while (srclen >=3D 4) {
+> 		/* Decode the next 4 characters */
+> 		input1 =3D base64_rev_tables[(u8)src[0]];
+> 		input2 =3D base64_rev_tables[(u8)src[1]];
+> 		input3 =3D base64_rev_tables[(u8)src[2]];
+> 		input4 =3D base64_rev_tables[(u8)src[3]];
+
+I'd be tempted to make src[] unsigned - probably be assigning the parameter
+to a local at the top of the function.
+
+Also you have input3 =3D ... src[2]...
+Perhaps they should be input[0..3] instead.
+
+>=20
+> 		val =3D (input1 << 18) |
+> 		      (input2 << 12) |
+> 		      (input3 << 6) |
+> 		      input4;
+
+Four lines is excessive, C doesn't require the () and I'm not sure the
+compilers complain about << and |.
+
+>=20
+> 		if (unlikely((s32)val < 0))
+> 			return -1;
+
+Make 'val' signed - then you don't need the cast.
+You can pick up the padding check here, something like:
+			val =3D input1 << 18 | input2 << 12;
+			if (!padding || val < 0 || src[3] !=3D '=3D')
+				return -1;
+			*bp++ =3D val >> 16;
+			if (src[2] =3D=3D '=3D')
+				return bp - dst;
+			if (input3 < 0)
+				return -1;
+			val |=3D input3 << 6;
+			*bp++ =3D val >> 8;
+			return bp - dst;
+
+Or, if you really want to use the code below the loop:
+			if (!padding || src[3] !=3D '=3D')
+				return -1;
+			padding =3D 0;
+			srclen -=3D 1 + (src[2] =3D=3D '=3D');
+			break;
+
+
+>=20
+> 		*bp++ =3D (u8)(val >> 16);
+> 		*bp++ =3D (u8)(val >> 8);
+> 		*bp++ =3D (u8)val;
+
+You don't need those casts.
+
+>=20
+> 		src +=3D 4;
+> 		srclen -=3D 4;
+> 	}
+>=20
+> 	/* Handle leftover characters when padding is not used */
+
+You are coming here with padding.
+I'm not sure what should happen without padding.
+For a multi-line file decode I suspect the characters need adding to
+the start of the next line (ie lines aren't required to contain
+multiples of 4 characters - even though they almost always will).
+
+> 	if (srclen > 0) {
+> 		switch (srclen) {
+
+You don't need an 'if' and a 'switch'.
+srclen is likely to be zero, but perhaps write as:
+	if (likely(!srclen))
+		return bp - dst;
+	if (padding || srclen =3D=3D 1)
+		return -1;
+
+	val =3D base64_rev_tables[(u8)src[0]] << 12 | base64_rev_tables[(u8)src[1]=
+] << 6;
+	*bp++ =3D val >> 10;
+	if (srclen =3D=3D 1) {
+		if (val & 0x800003ff)
+			return -1;
+	} else {
+		val |=3D base64_rev_tables[(u8)src[2]];
+		if (val & 0x80000003)
+			return -1;
+		*bp++ =3D val >> 2;
+	}
+	return bp - dst;
+}
+
+	David
+
+> 		case 2:
+> 			input1 =3D base64_rev_tables[(u8)src[0]];
+> 			input2 =3D base64_rev_tables[(u8)src[1]];
+> 			val =3D (input1 << 6) | input2; /* 12 bits */
+> 			if (unlikely((s32)val < 0 || val & 0x0F))
+> 				return -1;
+>=20
+> 			*bp++ =3D (u8)(val >> 4);
+> 			break;
+> 		case 3:
+> 			input1 =3D base64_rev_tables[(u8)src[0]];
+> 			input2 =3D base64_rev_tables[(u8)src[1]];
+> 			input3 =3D base64_rev_tables[(u8)src[2]];
+>=20
+> 			val =3D (input1 << 12) |
+> 			      (input2 << 6) |
+> 			      input3; /* 18 bits */
+> 			if (unlikely((s32)val < 0 || val & 0x03))
+> 				return -1;
+>=20
+> 			*bp++ =3D (u8)(val >> 10);
+> 			*bp++ =3D (u8)(val >> 2);
+> 			break;
+> 		default:
+> 			return -1;
+> 		}
+> 	}
+>=20
+> 	return bp - dst;
+> }
+> Based on KUnit testing, the performance results are as follows:
+> 	base64_performance_tests: [64B] decode run : 40ns
+> 	base64_performance_tests: [1KB] decode run : 463ns
+>=20
+> However, this approach introduces an issue. It uses 256 bytes of memory
+> on the stack for base64_rev_tables, which might not be ideal. Does anyone
+> have any thoughts or alternative suggestions to solve this issue, or is it
+> not really a concern?
+>=20
+> Best regards,
+> Guan-Chun
+>=20
+> > >=20
+> > > Best,
+> > > Caleb =20
+> >  =20
+
 
